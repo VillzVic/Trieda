@@ -8,6 +8,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -35,22 +36,24 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public AreasTitulacaoExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.AREAS_TITULACAO.getSheetName();
-		this.initialRow = 6;
+	public AreasTitulacaoExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+			this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
-	
-	public AreasTitulacaoExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+
+	public AreasTitulacaoExportExcel( boolean removeUnusedSheets,
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.AREAS_TITULACAO.getSheetName();
 		this.initialRow = 6;
 	}
-	
+
 	@Override
 	public String getFileName() {
 		return getI18nConstants().areasTitulacao();
@@ -67,23 +70,30 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<AreaTitulacao> areas = AreaTitulacao.findAll();
-		
-		if (!areas.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.sheetName,workbook);
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< AreaTitulacao > areas
+			= AreaTitulacao.findAll( this.instituicaoEnsino );
+
+		if ( !areas.isEmpty() )
+		{
+			if ( this.removeUnusedSheets )
+			{
+				removeUnusedSheets( this.sheetName, workbook );
 			}
-			HSSFSheet sheet = workbook.getSheet(this.sheetName);
-			fillInCellStyles(sheet);
+
+			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
-			for (AreaTitulacao area : areas) {
-				nextRow = writeData(area,nextRow,sheet);
+
+			for ( AreaTitulacao area : areas )
+			{
+				nextRow = writeData( area, nextRow, sheet );
 			}
-			
+
 			return true;
 		}
-		
+
 		return false;
 	}
 	

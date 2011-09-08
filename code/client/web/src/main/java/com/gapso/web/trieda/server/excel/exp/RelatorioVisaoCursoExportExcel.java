@@ -22,6 +22,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
@@ -76,29 +77,31 @@ public class RelatorioVisaoCursoExportExcel
 	private RelatorioVisaoCursoFiltroExcel relatorioFiltro;
 
 	public RelatorioVisaoCursoExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, null );
+		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoCursoExportExcel( boolean removeUnusedSheets,
 		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages )
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null );
+		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoCursoExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, filter );
+		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoCursoExportExcel( boolean removeUnusedSheets,
-			Cenario cenario, TriedaI18nConstants i18nConstants,
-			TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
@@ -145,10 +148,10 @@ public class RelatorioVisaoCursoExportExcel
 	public Set< Map< String, Object > > opcoesBuscaOperacional( Cenario cenario )
 	{
 		List< AtendimentoTatico > atdTaticoList
-			= AtendimentoTatico.findByCenario( cenario );
+			= AtendimentoTatico.findByCenario( this.instituicaoEnsino, cenario );
 
 		List< AtendimentoOperacional > atdOperacionalList
-			= AtendimentoOperacional.findByCenario( cenario );
+			= AtendimentoOperacional.findByCenario( cenario, this.instituicaoEnsino );
 
 		List< AtendimentoRelatorioDTO > atdRelatorioList
 			= new ArrayList< AtendimentoRelatorioDTO >(
@@ -227,21 +230,21 @@ public class RelatorioVisaoCursoExportExcel
 		for ( Map< String, Object > opcao : opcoes )
 		{
 			Long curriculoId = (Long) opcao.get( "CurriculoDTO" );
-			Curriculo curriculo = Curriculo.find( curriculoId );
+			Curriculo curriculo = Curriculo.find( curriculoId, this.instituicaoEnsino );
 			CurriculoDTO curriculoDTO = ConvertBeans.toCurriculoDTO( curriculo );
 
 			Integer periodo = (Integer) opcao.get( "Periodo" );
 
 			Long turnoId = (Long) opcao.get( "TurnoDTO" );
-			Turno turno = Turno.find( turnoId );
+			Turno turno = Turno.find( turnoId, this.instituicaoEnsino );
 			TurnoDTO turnoDTO = ConvertBeans.toTurnoDTO( turno );
 
 			Long campusId = (Long) opcao.get( "CampusDTO" );
-			Campus campus = Campus.find( campusId );
+			Campus campus = Campus.find( campusId, this.instituicaoEnsino );
 			CampusDTO campusDTO = ConvertBeans.toCampusDTO( campus );
 
 			Long cursoId = (Long) opcao.get( "CursoDTO" );
-			Curso curso = Curso.find( cursoId );
+			Curso curso = Curso.find( cursoId, this.instituicaoEnsino );
 			CursoDTO cursoDTO = ConvertBeans.toCursoDTO( curso );
 
 			ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parAtendimentos
@@ -322,7 +325,7 @@ public class RelatorioVisaoCursoExportExcel
 				}
 
 				Oferta oferta = Oferta.find(
-					atdRelatorioList.get( 0 ).getOfertaId() );
+					atdRelatorioList.get( 0 ).getOfertaId(), this.instituicaoEnsino );
 
 				Integer periodo = Integer.valueOf(
 					atdRelatorioList.get( 0 ).getPeriodoString() );

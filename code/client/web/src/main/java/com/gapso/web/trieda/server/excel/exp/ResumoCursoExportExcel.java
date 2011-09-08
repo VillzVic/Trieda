@@ -11,6 +11,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.CursosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -57,27 +58,28 @@ public class ResumoCursoExportExcel
 	private int initialRow;
 
 	public ResumoCursoExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, null );
+		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
 	public ResumoCursoExportExcel( boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null );
+		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
-	
+		
 	public ResumoCursoExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, filter );
+		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
 	}
 
 	public ResumoCursoExportExcel( boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
@@ -85,7 +87,7 @@ public class ResumoCursoExportExcel
 		this.initialRow = 6;
 		this.setFilter( filter );
 	}
-	
+
 	@Override
 	public String getFileName()
 	{
@@ -115,7 +117,7 @@ public class ResumoCursoExportExcel
 			|| this.getFilter().getCampusDTO() == null
 			|| this.getFilter().getCampusDTO().getId() == null )
 		{
-			List< Campus > campi = Campus.findAll();
+			List< Campus > campi = Campus.findAll( this.instituicaoEnsino );
 			campusDTOList = new ArrayList< CampusDTO >( campi.size() );
 
 			for ( Campus campus : campi )

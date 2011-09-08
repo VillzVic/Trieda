@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.google.gwt.dev.util.collect.HashSet;
@@ -33,15 +34,18 @@ public abstract class AbstractExportExcel
 	private Cenario cenario;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
+	protected InstituicaoEnsino instituicaoEnsino;
 
 	protected AbstractExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
 		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
+		this.instituicaoEnsino = instituicaoEnsino;
 	}
 
 	protected abstract String getPathExcelTemplate();

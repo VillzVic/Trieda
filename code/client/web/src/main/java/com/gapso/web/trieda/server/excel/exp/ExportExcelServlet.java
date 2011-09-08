@@ -9,8 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.GTriedaI18nConstants;
 import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -29,15 +33,39 @@ public class ExportExcelServlet extends HttpServlet
 		i18nMessages = new GTriedaI18nMessages();
 	}
 
+	private InstituicaoEnsino getInstituicaoEnsino()
+	{
+		SecurityContext context = SecurityContextHolder.getContext();
+		String username = context.getAuthentication().getName();
+		Usuario usuario = Usuario.find( username );
+		return ( usuario == null ? null : usuario.getInstituicaoEnsino() );
+	}
+
 	@Override
 	protected void doGet( HttpServletRequest request, HttpServletResponse response )
 		throws ServletException, IOException
 	{
-		cenario = Cenario.findMasterData();
-
 		// Obtém os parâmetros
 		String informationToBeExported = request.getParameter(
 				ExcelInformationType.getInformationParameterName() );
+
+		Long instituicaoEnsinoId = null;
+		
+		try
+		{
+			instituicaoEnsinoId = Long.parseLong(
+				request.getParameter( "instituicaoEnsinoId" ) );
+		}
+		catch( Exception e )
+		{
+			System.out.println(
+				"Não foi informado a instituição de ensino: " + informationToBeExported );
+		}
+
+		InstituicaoEnsino instituicaoEnsino
+			= InstituicaoEnsino.find( instituicaoEnsinoId );
+
+		cenario = Cenario.findMasterData( instituicaoEnsino );
 
 		if ( !informationToBeExported.isEmpty() )
 		{
@@ -70,7 +98,8 @@ public class ExportExcelServlet extends HttpServlet
 
 			// Get Excel Data
 			IExportExcel exporter = ExportExcelFactory.createExporter(
-				informationToBeExported, cenario, i18nConstants, i18nMessages, filter );
+				informationToBeExported, cenario, i18nConstants,
+				i18nMessages, filter, getInstituicaoEnsino() );
 
 			HSSFWorkbook workbook = exporter.export();
 
@@ -131,6 +160,7 @@ public class ExportExcelServlet extends HttpServlet
 		Long turnoId = null;
 		Long professorId = null;
 		Long professorVirtualId = null;
+		Long instituicaoEnsinoId = null;
 
 		try
 		{
@@ -138,12 +168,14 @@ public class ExportExcelServlet extends HttpServlet
 			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
 			professorId = Long.parseLong( request.getParameter( "professorId" ) );
 			professorVirtualId = Long.parseLong( request.getParameter( "professorVirtualId" ) );
+			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
 
 		}
 		catch( Exception ex ) { return null; }
 
 		RelatorioVisaoProfessorFiltroExcel filtro = new RelatorioVisaoProfessorFiltroExcel(
-			campusId, turnoId, professorId, professorVirtualId );
+			campusId, turnoId, professorId, professorVirtualId, instituicaoEnsinoId );
+
 		return filtro;
 	}
 
@@ -154,6 +186,7 @@ public class ExportExcelServlet extends HttpServlet
 		Long campusId = null;
 		Integer periodoId = null;
 		Long turnoId = null;
+		Long instituicaoEnsinoId = null;
 
 		try
 		{
@@ -162,11 +195,12 @@ public class ExportExcelServlet extends HttpServlet
 			campusId = Long.parseLong( request.getParameter( "campusId" ) );
 			periodoId = Integer.parseInt( request.getParameter( "periodoId" ) );
 			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
+			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
 		}
 		catch( Exception ex ) { return null; }
 
 		RelatorioVisaoCursoFiltroExcel filtro = new RelatorioVisaoCursoFiltroExcel(
-			cursoId, curriculoId, campusId, periodoId, turnoId );
+			cursoId, curriculoId, campusId, periodoId, turnoId, instituicaoEnsinoId );
 		return filtro;
 	}
 	
@@ -176,37 +210,63 @@ public class ExportExcelServlet extends HttpServlet
 		Long unidadeId = null;
 		Long salaId = null;
 		Long turnoId = null;
+		Long instituicaoEnsinoId = null;
+
 		try
 		{
 			campusId = Long.parseLong( request.getParameter( "campusId" ) );
 			unidadeId = Long.parseLong( request.getParameter( "unidadeId" ) );
 			salaId = Long.parseLong( request.getParameter( "salaId" ) );
 			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
+			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
 		}
 		catch( Exception ex ) { return null; }
 
 		RelatorioVisaoSalaFiltroExcel filtro = new RelatorioVisaoSalaFiltroExcel(
-			campusId, unidadeId, salaId, turnoId );
+			campusId, unidadeId, salaId, turnoId, instituicaoEnsinoId );
+
 		return filtro;
 	}
 
 	private ResumoDisciplinaFiltroExcel verificaParametrosResumoDisciplina( HttpServletRequest request )
 	{
 		Long campusId = null;
-		try { campusId = Long.parseLong( request.getParameter( "campusId" ) ); }
-		catch( Exception ex ) { return null; }
+		Long instituicaoEnsinoId = null;
 
-		ResumoDisciplinaFiltroExcel filtro = new ResumoDisciplinaFiltroExcel( campusId );
+		try
+		{
+			campusId = Long.parseLong( request.getParameter( "campusId" ) );
+			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
+		}
+		catch( Exception ex )
+		{
+			return null;
+		}
+
+		ResumoDisciplinaFiltroExcel filtro
+			= new ResumoDisciplinaFiltroExcel( instituicaoEnsinoId, campusId );
+
 		return filtro;
 	}
 
 	private ResumoCursoFiltroExcel verificaParametrosResumoCurso( HttpServletRequest request )
 	{
 		Long campusId = null;
-		try { campusId = Long.parseLong( request.getParameter( "campusId" ) ); }
-		catch( Exception ex ) { return null; }
+		Long instituicaoEnsinoId = null;
 
-		ResumoCursoFiltroExcel filtro = new ResumoCursoFiltroExcel( campusId );
+		try
+		{
+			campusId = Long.parseLong( request.getParameter( "campusId" ) );
+			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
+		}
+		catch( Exception ex )
+		{
+			return null;
+		}
+
+		ResumoCursoFiltroExcel filtro
+			= new ResumoCursoFiltroExcel( instituicaoEnsinoId, campusId );
+
 		return filtro;
 	}
 }

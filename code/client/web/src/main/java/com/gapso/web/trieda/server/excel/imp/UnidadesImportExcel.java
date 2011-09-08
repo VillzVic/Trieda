@@ -146,10 +146,13 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 		}
 	}
 	
-	private void checkNonRegisteredCampus(List<UnidadesImportExcelBean> sheetContent) {
-		// [CódigoCampus -> Campus]
-		Map<String,Campus> campiBDMap = Campus.buildCampusCodigoToCampusMap(Campus.findByCenario(getCenario()));
-		
+	private void checkNonRegisteredCampus(
+		List< UnidadesImportExcelBean > sheetContent )
+	{
+		// [ CódigoCampus -> Campus ]
+		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
+			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 		for (UnidadesImportExcelBean bean : sheetContent) {
 			Campus campus = campiBDMap.get(bean.getCodigoCampusStr());
@@ -166,24 +169,32 @@ public class UnidadesImportExcel extends AbstractImportExcel<UnidadesImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<UnidadesImportExcelBean> sheetContent) {
-		Map<String,Unidade> unidadesBDMap = Unidade.buildUnidadeCodigoToUnidadeMap(Unidade.findByCenario(getCenario()));
-		
-		for (UnidadesImportExcelBean unidadeExcel : sheetContent) {
-			Unidade unidadeBD = unidadesBDMap.get(unidadeExcel.getCodigoStr());
-			if (unidadeBD != null) {
-				// update
-				unidadeBD.setNome(unidadeExcel.getNomeStr());
-				unidadeBD.setCampus(unidadeExcel.getCampus());
-				
+	private void updateDataBase( String sheetName,
+		List< UnidadesImportExcelBean > sheetContent )
+	{
+		Map< String, Unidade > unidadesBDMap = Unidade.buildUnidadeCodigoToUnidadeMap(
+			Unidade.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
+		for ( UnidadesImportExcelBean unidadeExcel : sheetContent )
+		{
+			Unidade unidadeBD = unidadesBDMap.get( unidadeExcel.getCodigoStr() );
+			if ( unidadeBD != null )
+			{
+				// Update
+				unidadeBD.setNome( unidadeExcel.getNomeStr() );
+				unidadeBD.setCampus( unidadeExcel.getCampus() );
+
 				unidadeBD.merge();
-			} else {
-				// insert
+			}
+			else
+			{
+				// Insert
 				Unidade newUnidade = new Unidade();
-				newUnidade.setCodigo(unidadeExcel.getCodigoStr());
-				newUnidade.setNome(unidadeExcel.getNomeStr());
-				newUnidade.setCampus(unidadeExcel.getCampus());
-				
+
+				newUnidade.setCodigo( unidadeExcel.getCodigoStr() );
+				newUnidade.setNome( unidadeExcel.getNomeStr() );
+				newUnidade.setCampus( unidadeExcel.getCampus() );
+
 				newUnidade.persist();
 			}
 		}

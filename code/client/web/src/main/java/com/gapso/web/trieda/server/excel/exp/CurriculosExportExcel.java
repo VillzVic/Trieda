@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -37,22 +38,23 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public CurriculosExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.CURRICULOS.getSheetName();
-		this.initialRow = 6;
+	public CurriculosExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
-	
-	public CurriculosExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+
+	public CurriculosExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.CURRICULOS.getSheetName();
 		this.initialRow = 6;
 	}
-	
+
 	@Override
 	public String getFileName() {
 		return getI18nConstants().curriculos();
@@ -69,32 +71,56 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Curriculo> curriculos = Curriculo.findByCenario(getCenario());
-		
-		if (!curriculos.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.sheetName,workbook);
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< Curriculo > curriculos
+			= Curriculo.findByCenario(
+				this.instituicaoEnsino, getCenario() );
+
+		if ( curriculos != null && !curriculos.isEmpty() )
+		{
+			if ( this.removeUnusedSheets )
+			{
+				removeUnusedSheets( this.sheetName, workbook );
 			}
-			
-			HSSFSheet sheet = workbook.getSheet(this.sheetName);
-			fillInCellStyles(sheet);
+
+			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			fillInCellStyles( sheet );
 			
 			int nextRow = this.initialRow;
-			for (Curriculo c : curriculos) {
-				nextRow = writeData(c,nextRow,sheet);
+			for ( Curriculo c : curriculos )
+			{
+				nextRow = writeData( c, nextRow, sheet );
 			}
 
 			return true;
 		}
-		
+
 		return false;
 	}
 	
-	private int writeData(Curriculo curriculo, int row, HSSFSheet sheet) {
-		for (Integer periodo : curriculo.getPeriodos()) {
-			List<CurriculoDisciplina> disciplinasDeUmPeriodo = curriculo.getCurriculoDisciplinasByPeriodo(periodo);
-			for (CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo) {
+	private int writeData( Curriculo curriculo, int row, HSSFSheet sheet )
+	{
+		List< Integer > listPeriodos
+			= curriculo.getPeriodos( this.instituicaoEnsino );
+
+		if ( listPeriodos == null || listPeriodos.size() == 0 )
+		{
+			return row;
+		}
+
+		for ( Integer periodo : listPeriodos )
+		{
+			List< CurriculoDisciplina > disciplinasDeUmPeriodo
+				= curriculo.getCurriculoDisciplinasByPeriodo( this.instituicaoEnsino, periodo );
+
+			if ( disciplinasDeUmPeriodo == null || disciplinasDeUmPeriodo.size() == 0 )
+			{
+				continue;
+			}
+
+			for ( CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo )
+			{
 				// Curso
 				setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getCurso().getCodigo());
 				// Código

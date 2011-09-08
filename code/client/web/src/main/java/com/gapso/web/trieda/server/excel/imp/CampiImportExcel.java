@@ -219,7 +219,7 @@ public class CampiImportExcel
 		List< CampiImportExcelBean > sheetContent )
 	{
 		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
-			Campus.findByCenario( getCenario() ) );
+			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( CampiImportExcelBean campusExcel : sheetContent )
 		{

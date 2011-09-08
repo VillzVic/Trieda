@@ -145,7 +145,8 @@ public class AreasTitulacaoImportExcel extends AbstractImportExcel<AreasTitulaca
 		List< AreasTitulacaoImportExcelBean > sheetContent )
 	{
 		Map< String, AreaTitulacao > areasTitulacaoBDMap
-			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap( AreaTitulacao.findAll() );
+			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(
+				AreaTitulacao.findAll( this.instituicaoEnsino ) );
 
 		for ( AreasTitulacaoImportExcelBean areaExcel : sheetContent )
 		{

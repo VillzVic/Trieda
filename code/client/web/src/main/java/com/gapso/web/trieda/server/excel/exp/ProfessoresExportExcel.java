@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -47,15 +48,17 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	private int initialRow;
 
 	public ProfessoresExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages );
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
 	public ProfessoresExportExcel( boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
@@ -81,7 +84,7 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	@Override
 	protected boolean fillInExcel( HSSFWorkbook workbook )
 	{
-		List< Professor > professores = Professor.findByCenario( getCenario() );
+		List< Professor > professores = Professor.findByCenario( this.instituicaoEnsino, getCenario() );
 
 		if ( !professores.isEmpty() )
 		{

@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -30,23 +31,25 @@ public class SalasExportExcel extends AbstractExportExcel {
 			return col;
 		}
 	}
-	private HSSFCellStyle[] cellStyles;
-	
+
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
-	
-	public SalasExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.SALAS.getSheetName();
-		this.initialRow = 6;
+
+	public SalasExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 	
-	public SalasExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+	public SalasExportExcel( boolean removeUnusedSheets,
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.SALAS.getSheetName();
 		this.initialRow = 6;
@@ -68,18 +71,24 @@ public class SalasExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Sala> salas = Sala.findByCenario(getCenario());
-		
-		if (!salas.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.sheetName,workbook);
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< Sala > salas = Sala.findByCenario( this.instituicaoEnsino, getCenario() );
+
+		if ( !salas.isEmpty() )
+		{
+			if ( this.removeUnusedSheets )
+			{
+				removeUnusedSheets( this.sheetName, workbook );
 			}
-			HSSFSheet sheet = workbook.getSheet(this.sheetName);
-			fillInCellStyles(sheet);
+
+			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
-			for (Sala s : salas) {
-				nextRow = writeData(s,nextRow,sheet);
+
+			for ( Sala s : salas )
+			{
+				nextRow = writeData( s, nextRow, sheet );
 			}
 
 			return true;

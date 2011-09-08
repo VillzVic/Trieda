@@ -222,8 +222,8 @@ public class HabilitacoesProfessoresImportExcel
 		List< HabilitacoesProfessoresImportExcelBean > sheetContent )
 	{
 		// [ CódigoDisciplina -> Disciplina ]
-		Map<String,Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-			Disciplina.findByCenario( getCenario() ) );
+		Map< String, Disciplina > disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
+			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 
@@ -253,7 +253,7 @@ public class HabilitacoesProfessoresImportExcel
 	{
 		// [ CpfProfessor -> Professor ]
 		Map< String, Professor > professoresBDMap = Professor.buildProfessorCpfToProfessorMap(
-			Professor.findByCenario( getCenario() ) );
+			Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 
@@ -283,7 +283,8 @@ public class HabilitacoesProfessoresImportExcel
 		List< HabilitacoesProfessoresImportExcelBean > sheetContent )
 	{
 		Map< String, ProfessorDisciplina > professoresDisciplinasBDMap
-			= ProfessorDisciplina.buildCursoNaturalKeyToProfessorDisciplinaMap( ProfessorDisciplina.findAll() );
+			= ProfessorDisciplina.buildCursoNaturalKeyToProfessorDisciplinaMap(
+				ProfessorDisciplina.findAll( this.instituicaoEnsino ) );
 
 		for ( HabilitacoesProfessoresImportExcelBean pdExcel : sheetContent )
 		{

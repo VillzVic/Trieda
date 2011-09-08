@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
@@ -19,12 +20,17 @@ public class RelatorioVisaoSalaFiltroExcel
 	private TurnoDTO turnoDTO;
 
 	public RelatorioVisaoSalaFiltroExcel( Long campusId,
-		Long unidadeId, Long salaId, Long turnoId )
+		Long unidadeId, Long salaId, Long turnoId, Long instituicaoEnsinoId )
 	{
-		this.campusDTO = ConvertBeans.toCampusDTO( Campus.find( campusId ) );
-		this.unidadeDTO = ConvertBeans.toUnidadeDTO( Unidade.find( unidadeId ) );
-		this.salaDTO = ConvertBeans.toSalaDTO( Sala.find( salaId ) );
-		this.turnoDTO = ConvertBeans.toTurnoDTO( Turno.find( turnoId ) );
+		InstituicaoEnsino instituicaoEnsino
+			= InstituicaoEnsino.find( instituicaoEnsinoId );
+
+		this.campusDTO = ConvertBeans.toCampusDTO( Campus.find( campusId, instituicaoEnsino ) );
+		this.unidadeDTO = ConvertBeans.toUnidadeDTO( Unidade.find( unidadeId, instituicaoEnsino ) );
+		this.salaDTO = ConvertBeans.toSalaDTO( Sala.find( salaId, instituicaoEnsino ) );
+
+		this.turnoDTO = ConvertBeans.toTurnoDTO(
+			Turno.find( turnoId, instituicaoEnsino ) );
 	}
 
 	public CampusDTO getCampusDTO() {

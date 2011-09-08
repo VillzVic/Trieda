@@ -9,6 +9,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -38,22 +39,25 @@ public class CursosExportExcel extends AbstractExportExcel {
 	private String sheetName;
 	private int initialRow;
 	
-	public CursosExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.CURSOS.getSheetName();
-		this.initialRow = 6;
+	public CursosExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
-	
-	public CursosExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+
+	public CursosExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.CURSOS.getSheetName();
 		this.initialRow = 6;
 	}
-	
+
 	@Override
 	public String getFileName() {
 		return getI18nConstants().cursos();
@@ -70,8 +74,10 @@ public class CursosExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Curso> cursos = Curso.findByCenario(getCenario());
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< Curso > cursos = Curso.findByCenario(
+			this.instituicaoEnsino, getCenario() );
 		
 		if (!cursos.isEmpty()) {
 			if (this.removeUnusedSheets) {

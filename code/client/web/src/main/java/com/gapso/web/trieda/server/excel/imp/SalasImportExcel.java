@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -191,10 +193,13 @@ public class SalasImportExcel
 		}
 	}
 	
-	private void checkNonRegisteredUnidade(List<SalasImportExcelBean> sheetContent) {
-		// [CódigoUnidade -> Unidade]
-		Map<String,Unidade> unidadeBDMap = Unidade.buildUnidadeCodigoToUnidadeMap(Unidade.findByCenario(getCenario()));
-		
+	private void checkNonRegisteredUnidade(
+		List< SalasImportExcelBean > sheetContent )
+	{
+		// [ CódigoUnidade -> Unidade ]
+		Map< String, Unidade> unidadeBDMap = Unidade.buildUnidadeCodigoToUnidadeMap(
+			Unidade.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 		for (SalasImportExcelBean bean : sheetContent) {
 			Unidade unidade = unidadeBDMap.get(bean.getCodigoUnidadeStr());
@@ -209,23 +214,33 @@ public class SalasImportExcel
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(UNIDADE_COLUMN_NAME,rowsWithErrors.toString()));
 		}
 	}
-	
-	private void checkNonRegisteredTipoSala(List<SalasImportExcelBean> sheetContent) {
-		// [NomeTipoSala -> TipoSala]
-		Map<String,TipoSala> tiposSalaBDMap = TipoSala.buildTipoSalaNomeToTipoSalaMap(TipoSala.findAll());
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (SalasImportExcelBean bean : sheetContent) {
-			TipoSala tipoSala = tiposSalaBDMap.get(bean.getTipoStr());
-			if (tipoSala != null) {
-				bean.setTipo(tipoSala);
+
+	private void checkNonRegisteredTipoSala(
+		List< SalasImportExcelBean > sheetContent )
+	{
+		SemanaLetiva sl = this.getCenario().getSemanaLetiva();
+		InstituicaoEnsino instituicaoEnsino = sl.getInstituicaoEnsino(); 
+
+		// [ NomeTipoSala -> TipoSala ]
+		Map<String,TipoSala> tiposSalaBDMap = TipoSala.buildTipoSalaNomeToTipoSalaMap(
+			TipoSala.findAll( instituicaoEnsino ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		for ( SalasImportExcelBean bean : sheetContent )
+		{
+			TipoSala tipoSala = tiposSalaBDMap.get( bean.getTipoStr() );
+			if ( tipoSala != null )
+			{
+				bean.setTipo( tipoSala );
 			} else {
-				rowsWithErrors.add(bean.getRow());
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TIPO_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				TIPO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
@@ -234,7 +249,7 @@ public class SalasImportExcel
 		List< SalasImportExcelBean > sheetContent )
 	{
 		Map< String, Sala > salasBDMap = Sala.buildSalaCodigoToSalaMap(
-			Sala.findByCenario( getCenario() ) );
+			Sala.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( SalasImportExcelBean salaExcel : sheetContent )
 		{

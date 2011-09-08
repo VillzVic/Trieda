@@ -15,13 +15,15 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class DisciplinasImportExcel extends AbstractImportExcel<DisciplinasImportExcelBean> {
-	
+public class DisciplinasImportExcel
+	extends AbstractImportExcel< DisciplinasImportExcelBean >
+{
 	static public String CODIGO_COLUMN_NAME;
 	static public String NOME_COLUMN_NAME;
 	static public String CRED_TEORICOS_COLUMN_NAME;
@@ -33,20 +35,27 @@ public class DisciplinasImportExcel extends AbstractImportExcel<DisciplinasImpor
 	static public String MAX_ALUNOS_PRATICOS_COLUMN_NAME;
 	
 	private List<String> headerColumnsNames;
+	private InstituicaoEnsino instituicaoEnsino;
 	
-	public DisciplinasImportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
+	public DisciplinasImportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
-		this.headerColumnsNames = new ArrayList<String>();
-		this.headerColumnsNames.add(CODIGO_COLUMN_NAME);
-		this.headerColumnsNames.add(NOME_COLUMN_NAME);
-		this.headerColumnsNames.add(CRED_TEORICOS_COLUMN_NAME);
-		this.headerColumnsNames.add(CRED_PRATICOS_COLUMN_NAME);
-		this.headerColumnsNames.add(USA_LABORATORIO_COLUMN_NAME);
-		this.headerColumnsNames.add(TIPO_COLUMN_NAME);
-		this.headerColumnsNames.add(NIVEL_DIFICULDADE_COLUMN_NAME);
-		this.headerColumnsNames.add(MAX_ALUNOS_TEORICOS_COLUMN_NAME);
-		this.headerColumnsNames.add(MAX_ALUNOS_PRATICOS_COLUMN_NAME);
+
+		this.instituicaoEnsino
+			= cenario.getSemanaLetiva().getInstituicaoEnsino();
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CODIGO_COLUMN_NAME );
+		this.headerColumnsNames.add( NOME_COLUMN_NAME );
+		this.headerColumnsNames.add( CRED_TEORICOS_COLUMN_NAME );
+		this.headerColumnsNames.add( CRED_PRATICOS_COLUMN_NAME );
+		this.headerColumnsNames.add( USA_LABORATORIO_COLUMN_NAME );
+		this.headerColumnsNames.add( TIPO_COLUMN_NAME );
+		this.headerColumnsNames.add( NIVEL_DIFICULDADE_COLUMN_NAME );
+		this.headerColumnsNames.add( MAX_ALUNOS_TEORICOS_COLUMN_NAME );
+		this.headerColumnsNames.add( MAX_ALUNOS_PRATICOS_COLUMN_NAME );
 	}
 
 	@Override
@@ -169,29 +178,45 @@ public class DisciplinasImportExcel extends AbstractImportExcel<DisciplinasImpor
 		}
 	}
 	
-	private void checkNonRegisteredTipoDisciplina(List<DisciplinasImportExcelBean> sheetContent) {
-		// [NomeTipoDisciplina -> TipoDisciplina]
-		Map<String,TipoDisciplina> tiposDisciplinaBDMap = TipoDisciplina.buildTipoDisciplinaNomeToTipoDisciplinaMap(TipoDisciplina.findAll());
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (DisciplinasImportExcelBean bean : sheetContent) {
-			TipoDisciplina tipoDisciplina = tiposDisciplinaBDMap.get(bean.getTipoStr());
-			if (tipoDisciplina != null) {
-				bean.setTipo(tipoDisciplina);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+	private void checkNonRegisteredTipoDisciplina(
+		List< DisciplinasImportExcelBean > sheetContent )
+	{
+		// [ NomeTipoDisciplina -> TipoDisciplina ]
+		Map< String, TipoDisciplina > tiposDisciplinaBDMap
+			= TipoDisciplina.buildTipoDisciplinaNomeToTipoDisciplinaMap(
+				TipoDisciplina.findAll( this.instituicaoEnsino ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+
+		for ( DisciplinasImportExcelBean bean : sheetContent )
+		{
+			TipoDisciplina tipoDisciplina
+				= tiposDisciplinaBDMap.get( bean.getTipoStr() );
+
+			if ( tipoDisciplina != null )
+			{
+				bean.setTipo( tipoDisciplina );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TIPO_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				TIPO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<DisciplinasImportExcelBean> sheetContent) {
-		Map<String,Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(getCenario()));
-		
+	private void updateDataBase(
+		String sheetName, List< DisciplinasImportExcelBean > sheetContent )
+	{
+		Map< String, Disciplina > disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
+			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
 		for (DisciplinasImportExcelBean disciplinaExcel : sheetContent) {
 			Disciplina disciplinaBD = disciplinasBDMap.get(disciplinaExcel.getCodigoStr());
 			if (disciplinaBD != null) {

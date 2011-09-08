@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -38,12 +39,16 @@ public class DemandasImportExcel
 	static public String DEMANDA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
+	private InstituicaoEnsino instituicaoEnsino;
 
 	public DemandasImportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
 	{
 		super( cenario, i18nConstants, i18nMessages );
 		resolveHeaderColumnNames();
+
+		this.instituicaoEnsino
+			= cenario.getSemanaLetiva().getInstituicaoEnsino();
 
 		this.headerColumnsNames = new ArrayList< String >();
 		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
@@ -239,7 +244,7 @@ public class DemandasImportExcel
 	{
 		// [ CódidoCampus -> Campus ]
 		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
-			Campus.findByCenario( getCenario() ) );
+			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( DemandasImportExcelBean bean : sheetContent )
@@ -266,7 +271,9 @@ public class DemandasImportExcel
 		List< DemandasImportExcelBean > sheetContent )
 	{
 		// [ NomeTurno -> Turno ]
-		Map< String, Turno > turnosBDMap = Turno.buildTurnoNomeToTurnoMap(Turno.findAll() );
+		Map< String, Turno > turnosBDMap = Turno.buildTurnoNomeToTurnoMap(
+			Turno.findAll( this.instituicaoEnsino ) );
+
 		List< Integer > rowsWithErrors = new ArrayList<Integer >();
 
 		for ( DemandasImportExcelBean bean : sheetContent )
@@ -294,12 +301,14 @@ public class DemandasImportExcel
 	{
 		// [ CódigoCurso -> Curso ]
 		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap(
-			Curso.findByCenario( getCenario() ) );
-	
+			Curso.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
 			Curso curso = cursosBDMap.get( bean.getCursoStr() );
+
 			if ( curso != null )
 			{
 				bean.setCurso( curso );
@@ -322,7 +331,7 @@ public class DemandasImportExcel
 	{
 		// [ CódigoDisciplina -> Disciplina ]
 		Map<String,Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-			Disciplina.findByCenario( getCenario() ) );
+			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( DemandasImportExcelBean bean : sheetContent )
@@ -350,8 +359,8 @@ public class DemandasImportExcel
 	{
 		// [ CodigoCurriculo -> Curriculo ]
 		Map< String, Curriculo > curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(
-			Curriculo.findByCenario( getCenario() ) );
-		
+			Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
@@ -379,7 +388,7 @@ public class DemandasImportExcel
 		// [ ChaveNaturalCurriculo -> Curriculo ]
 		Map< String, CurriculoDisciplina > curriculosDisciplinasBDMap
 			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
-				CurriculoDisciplina.findByCenario( getCenario() ) );
+				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 		
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( DemandasImportExcelBean bean : sheetContent )
@@ -405,10 +414,11 @@ public class DemandasImportExcel
 		List< DemandasImportExcelBean > sheetContent )
 	{
 		Map< String, Demanda > demandasBDMap
-			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap( Demanda.findAll() );
+			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(
+				Demanda.findAll( this.instituicaoEnsino ) );
 
 		Map< String, Oferta > ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(
-			Oferta.findByCenario( getCenario() ) );
+			Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( DemandasImportExcelBean demandasExcel : sheetContent )
 		{

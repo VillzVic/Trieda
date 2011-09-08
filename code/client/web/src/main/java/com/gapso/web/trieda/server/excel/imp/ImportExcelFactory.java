@@ -7,11 +7,15 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public class ImportExcelFactory {
 	
-	static public IImportExcel createImporter(String infoToBeImported, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
+	static public IImportExcel createImporter( String infoToBeImported, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
 		IImportExcel importer = null;
-		
-		ExcelInformationType informationToBeImported = ExcelInformationType.valueOf(infoToBeImported);
-		switch (informationToBeImported) {
+		ExcelInformationType informationToBeImported
+			= ExcelInformationType.valueOf( infoToBeImported );
+
+		switch ( informationToBeImported )
+		{
 			case TUDO: importer = new TRIEDAImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CAMPI: importer = new CampiImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case CURRICULOS: importer = new CurriculosImportExcel(cenario,i18nConstants,i18nMessages); break;
@@ -28,7 +32,7 @@ public class ImportExcelFactory {
 			case DEMANDAS: importer = new DemandasImportExcel(cenario,i18nConstants,i18nMessages); break;
 			case HABILITACAO_PROFESSORES: importer = new HabilitacoesProfessoresImportExcel(cenario,i18nConstants,i18nMessages); break;
 		}
-		
+
 		return importer;
 	}
 }

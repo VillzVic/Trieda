@@ -141,45 +141,71 @@ public class EquivalenciasImportExcel extends AbstractImportExcel<EquivalenciasI
 		}
 	}
 	
-	private void checkNonRegisteredDisciplina(List<EquivalenciasImportExcelBean> sheetContent) {
-		// [CódigoDisciplina -> Disciplina]
-		Map<String, Disciplina> disciplinaBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(Disciplina.findByCenario(getCenario()));
-		
-		List<Integer> rowsWithErrorsCursou = new ArrayList<Integer>();
-		for (EquivalenciasImportExcelBean bean : sheetContent) {
-			Disciplina disciplina = disciplinaBDMap.get(bean.getCursouStr());
-			if (disciplina != null) {
-				bean.setDisciplinaCursou(disciplina);
-			} else {
-				rowsWithErrorsCursou.add(bean.getRow());
+	private void checkNonRegisteredDisciplina(
+		List< EquivalenciasImportExcelBean > sheetContent )
+	{
+		// [ CódigoDisciplina -> Disciplina ]
+		Map< String, Disciplina > disciplinaBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
+			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
+		List< Integer > rowsWithErrorsCursou = new ArrayList< Integer >();
+		for ( EquivalenciasImportExcelBean bean : sheetContent )
+		{
+			Disciplina disciplina
+				= disciplinaBDMap.get( bean.getCursouStr() );
+
+			if ( disciplina != null )
+			{
+				bean.setDisciplinaCursou( disciplina );
+			}
+			else
+			{
+				rowsWithErrorsCursou.add( bean.getRow() );
 			}
 		}
-		
-		List<Integer> rowsWithErrorsElimina = new ArrayList<Integer>();
-		for (EquivalenciasImportExcelBean bean : sheetContent) {
-			String[] eliminaList = bean.getEliminaStr().split(";");
-			for(String eliminaString : eliminaList) {
-				Disciplina disciplina = disciplinaBDMap.get(eliminaString.trim());
-				if (disciplina != null) {
-					bean.getDisciplinasElimina().add(disciplina);
-				} else {
-					rowsWithErrorsCursou.add(bean.getRow());
+
+		List< Integer > rowsWithErrorsElimina= new ArrayList< Integer >();
+
+		for ( EquivalenciasImportExcelBean bean : sheetContent )
+		{
+			String[] eliminaList = bean.getEliminaStr().split( ";" );
+
+			for ( String eliminaString : eliminaList )
+			{
+				Disciplina disciplina = disciplinaBDMap.get( eliminaString.trim() );
+
+				if ( disciplina != null )
+				{
+					bean.getDisciplinasElimina().add( disciplina );
+				}
+				else
+				{
+					rowsWithErrorsCursou.add( bean.getRow() );
 				}
 			}
 		}
-		
-		if (!rowsWithErrorsCursou.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(CURSOU_COLUMN_NAME,rowsWithErrorsCursou.toString()));
+
+		if ( !rowsWithErrorsCursou.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				CURSOU_COLUMN_NAME, rowsWithErrorsCursou.toString() ) );
 		}
-		if (!rowsWithErrorsElimina.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(ELIMINA_COLUMN_NAME,rowsWithErrorsElimina.toString()));
+
+		if ( !rowsWithErrorsElimina.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				ELIMINA_COLUMN_NAME, rowsWithErrorsElimina.toString() ) );
 		}
 	}
 
 	@Transactional
-	private void updateDataBase(String sheetName, List<EquivalenciasImportExcelBean> sheetContent) {
-		Map<String, Equivalencia> equivalenciasBDMap = Equivalencia.buildEquivalenciaCursouCodigoToEquivalenciaMap(Equivalencia.findAll());
-		
+	private void updateDataBase( String sheetName,
+		List< EquivalenciasImportExcelBean > sheetContent )
+	{
+		Map< String, Equivalencia > equivalenciasBDMap
+			= Equivalencia.buildEquivalenciaCursouCodigoToEquivalenciaMap(
+				Equivalencia.findAll( this.instituicaoEnsino ) );
+
 		for (EquivalenciasImportExcelBean equivalenciaExcel : sheetContent) {
 			Equivalencia equivalenciaBD = equivalenciasBDMap.get(equivalenciaExcel.getCursouStr());
 			if (equivalenciaBD != null) {

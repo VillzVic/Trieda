@@ -14,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
@@ -24,6 +25,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	protected List< String > warnings;
 
 	private Cenario cenario;
+	protected InstituicaoEnsino instituicaoEnsino;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
 
@@ -31,6 +33,8 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages )
 	{
+		this.instituicaoEnsino = cenario.getSemanaLetiva().getInstituicaoEnsino();
+
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
 

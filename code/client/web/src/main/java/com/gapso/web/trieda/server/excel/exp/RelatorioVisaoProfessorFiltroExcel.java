@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Turno;
@@ -19,19 +20,29 @@ public class RelatorioVisaoProfessorFiltroExcel
 	private ProfessorVirtualDTO professorVirtualDTO;
 
 	public RelatorioVisaoProfessorFiltroExcel( Long campusId, Long turnoId,
-		Long professorId, Long professorVirtualId )
+		Long professorId, Long professorVirtualId, Long instituicaoEnsinoId )
 	{
-		this.campusDTO = ConvertBeans.toCampusDTO( Campus.find( campusId ) );
-		this.turnoDTO = ConvertBeans.toTurnoDTO( Turno.find( turnoId ) );
+		InstituicaoEnsino instituicaoEnsino
+			= InstituicaoEnsino.find( instituicaoEnsinoId ); 
+
+		Campus campus = Campus.find( campusId, instituicaoEnsino );
+
+		this.campusDTO = ConvertBeans.toCampusDTO( campus );
+		this.turnoDTO = ConvertBeans.toTurnoDTO(
+			Turno.find( turnoId, instituicaoEnsino ) );
 
 		if ( professorId == null || professorId < 0 )
 		{
 			professorDTO = null;
-			professorVirtualDTO = ConvertBeans.toProfessorVirtualDTO( ProfessorVirtual.find( professorVirtualId ) );
+
+			professorVirtualDTO = ConvertBeans.toProfessorVirtualDTO(
+				ProfessorVirtual.find( professorVirtualId, instituicaoEnsino ) );
 		}
 		else if ( professorVirtualId == null || professorVirtualId < 0 )
 		{
-			professorDTO = ConvertBeans.toProfessorDTO( Professor.find( professorId ) );;
+			professorDTO = ConvertBeans.toProfessorDTO(
+				Professor.find( professorId, instituicaoEnsino ) );
+
 			professorVirtualDTO = null;
 		}
 	}

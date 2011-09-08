@@ -9,50 +9,58 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class DisciplinasExportExcel extends AbstractExportExcel {
+public class DisciplinasExportExcel
+	extends AbstractExportExcel
+{
+	enum ExcelCellStyleReference
+	{
+		TEXT(6, 2),
+		NUMBER(6, 4);
 
-	enum ExcelCellStyleReference {
-		TEXT(6, 2), NUMBER(6, 4);
 		private int row;
 		private int col;
 
-		private ExcelCellStyleReference(int row, int col) {
+		private ExcelCellStyleReference(int row, int col)
+		{
 			this.row = row;
 			this.col = col;
 		}
 
-		public int getRow() {
+		public int getRow()
+		{
 			return row;
 		}
 
-		public int getCol() {
+		public int getCol()
+		{
 			return col;
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
-
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
 
-	public DisciplinasExportExcel(Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario, i18nConstants, i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.DISCIPLINAS.getSheetName();
-		this.initialRow = 6;
+	public DisciplinasExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
-	public DisciplinasExportExcel(boolean removeUnusedSheets, Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario, i18nConstants, i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+	public DisciplinasExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.DISCIPLINAS.getSheetName();
 		this.initialRow = 6;
@@ -74,8 +82,10 @@ public class DisciplinasExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Disciplina> disciplinas = Disciplina.findByCenario(getCenario());
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< Disciplina > disciplinas
+			= Disciplina.findByCenario( this.instituicaoEnsino, getCenario() );
 
 		if (!disciplinas.isEmpty()) {
 			if (this.removeUnusedSheets) {

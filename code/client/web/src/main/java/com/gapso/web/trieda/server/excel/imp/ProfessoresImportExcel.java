@@ -180,27 +180,45 @@ public class ProfessoresImportExcel extends AbstractImportExcel<ProfessoresImpor
 		}
 	}
 	
-	private void checkNonRegisteredTipoContrato(List<ProfessoresImportExcelBean> sheetContent) {
-		// [NomeTipoContrato -> TipoContrato]
-		Map<String,TipoContrato> tiposContratoBDMap = TipoContrato.buildTipoContratoNomeToTipoContratoMap(TipoContrato.findAll());
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (ProfessoresImportExcelBean bean : sheetContent) {
-			TipoContrato tipoContrato = tiposContratoBDMap.get(bean.getTipoStr());
-			if (tipoContrato != null) {
-				bean.setTipo(tipoContrato);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+	private void checkNonRegisteredTipoContrato(
+		List< ProfessoresImportExcelBean > sheetContent )
+	{
+		// [ NomeTipoContrato -> TipoContrato ]
+		Map< String, TipoContrato > tiposContratoBDMap
+			= TipoContrato.buildTipoContratoNomeToTipoContratoMap(
+				TipoContrato.findAll( this.instituicaoEnsino ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		for ( ProfessoresImportExcelBean bean : sheetContent )
+		{
+			TipoContrato tipoContrato
+				= tiposContratoBDMap.get( bean.getTipoStr() );
+
+			if ( tipoContrato != null )
+			{
+				bean.setTipo( tipoContrato );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TIPO_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				TIPO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
-	private void checkNonRegisteredTitulacao(List<ProfessoresImportExcelBean> sheetContent) {
-		// [NomeTitulacao -> Titulacao]
-		Map<String,Titulacao> titulacoesBDMap = Titulacao.buildTitulacaoNomeToTitulacaoMap(Titulacao.findAll());
-		
+
+	private void checkNonRegisteredTitulacao(
+		List< ProfessoresImportExcelBean > sheetContent )
+	{
+		// [ NomeTitulacao -> Titulacao ]
+		Map< String, Titulacao > titulacoesBDMap
+			= Titulacao.buildTitulacaoNomeToTitulacaoMap(
+				Titulacao.findAll( this.instituicaoEnsino ) );
+
 		List<Integer> rowsWithErrors = new ArrayList<Integer>();
 		for (ProfessoresImportExcelBean bean : sheetContent) {
 			Titulacao titulacao = titulacoesBDMap.get(bean.getTitulacaoStr());
@@ -214,21 +232,35 @@ public class ProfessoresImportExcel extends AbstractImportExcel<ProfessoresImpor
 			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(TITULACAO_COLUMN_NAME,rowsWithErrors.toString()));
 		}
 	}
-	private void checkNonRegisteredAreaTitulacao(List<ProfessoresImportExcelBean> sheetContent) {
-		// [CodigoAreaTitulacao -> AeraTitulacao]
-		Map<String,AreaTitulacao> areasTitulacoesBDMap = AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(AreaTitulacao.findAll());
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (ProfessoresImportExcelBean bean : sheetContent) {
-			AreaTitulacao areaTitulacao = areasTitulacoesBDMap.get(bean.getAreaTitulacaoStr());
-			if (areaTitulacao != null) {
-				bean.setAreaTitulacao(areaTitulacao);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+	private void checkNonRegisteredAreaTitulacao(
+		List< ProfessoresImportExcelBean > sheetContent )
+	{
+		// [ CodigoAreaTitulacao -> AeraTitulacao ]
+		Map< String, AreaTitulacao > areasTitulacoesBDMap
+			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(
+				AreaTitulacao.findAll( this.instituicaoEnsino ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+
+		for ( ProfessoresImportExcelBean bean : sheetContent )
+		{
+			AreaTitulacao areaTitulacao
+				= areasTitulacoesBDMap.get( bean.getAreaTitulacaoStr() );
+
+			if ( areaTitulacao != null )
+			{
+				bean.setAreaTitulacao( areaTitulacao );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(AREA_TITULACAO_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				AREA_TITULACAO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
@@ -237,7 +269,7 @@ public class ProfessoresImportExcel extends AbstractImportExcel<ProfessoresImpor
 		List< ProfessoresImportExcelBean > sheetContent )
 	{
 		Map< String, Professor > professoresBDMap = Professor.buildProfessorCpfToProfessorMap(
-			Professor.findByCenario( getCenario() ) );
+			Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( ProfessoresImportExcelBean professorExcel : sheetContent )
 		{

@@ -11,6 +11,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.CurriculoDisciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -44,22 +45,24 @@ public class DisciplinasSalasExportExcel
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
 
 	public DisciplinasSalasExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages );
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
 	public DisciplinasSalasExportExcel( boolean removeUnusedSheets,
 		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages )
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.DISCIPLINAS_SALAS.getSheetName();
@@ -87,7 +90,8 @@ public class DisciplinasSalasExportExcel
 	@Override
 	protected boolean fillInExcel( HSSFWorkbook workbook )
 	{
-		List< Sala > salas = Sala.findByCenario( getCenario() );
+		List< Sala > salas = Sala.findByCenario(
+			this.instituicaoEnsino, getCenario() );
 
 		if ( !salas.isEmpty() )
 		{

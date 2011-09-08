@@ -295,10 +295,17 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 		}
 	}
 
-	private void checkNonRegisteredCurso( List< CurriculosImportExcelBean > sheetContent )
+	private void checkNonRegisteredCurso(
+		List< CurriculosImportExcelBean > sheetContent )
 	{
-		// [CodigoCurso -> Curso]
-		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap( Curso.findByCenario( getCenario() ) );
+		// [ CodigoCurso -> Curso ]
+		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap(
+			Curso.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
+		if ( cursosBDMap == null || cursosBDMap.size() == 0 )
+		{
+			return;
+		}
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 
@@ -328,7 +335,7 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 
 		// [CodigoDisciplina -> Disciplina]
 		Map< String, Disciplina > disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-			Disciplina.findByCenario( getCenario() ) );
+			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( CurriculosImportExcelBean bean : sheetContent )
@@ -358,7 +365,7 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 
 		// [CodCurriculo -> Curriculo]
 		Map< String, Curriculo > curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(
-			Curriculo.findByCenario( getCenario() ) );
+			Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		// [CodCurriculo -> CurriculosImportExcelBean]
 		Map< String, CurriculosImportExcelBean > curriculosExcelMap
@@ -396,9 +403,10 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 		// ATUALIZA CURRICULOS-DISCIPLINAS ------------------------------------------
 		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
 
-		// [CodCurso-CodCurriculo-Periodo-CodDisciplina -> CurriculoDisciplina]
+		// [ CodCurso - CodCurriculo - Periodo - CodDisciplina -> CurriculoDisciplina ]
 		Map< String, CurriculoDisciplina > curriculosDisciplinasBDMap
-			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap( CurriculoDisciplina.findByCenario( getCenario() ) );
+			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
+				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( CurriculosImportExcelBean curriculoExcel : sheetContent )
 		{

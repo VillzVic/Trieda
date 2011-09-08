@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -31,28 +32,31 @@ public class CurriculosExportExcelWithMergedCells extends AbstractExportExcel {
 			return col;
 		}
 	}
-	private HSSFCellStyle[] cellStyles;
-	
+
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
-	
-	public CurriculosExportExcelWithMergedCells(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.CURRICULOS.getSheetName();
-		this.initialRow = 6;
+
+	public CurriculosExportExcelWithMergedCells( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
-	
-	public CurriculosExportExcelWithMergedCells(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+
+	public CurriculosExportExcelWithMergedCells( boolean removeUnusedSheets,
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.CURRICULOS.getSheetName();
 		this.initialRow = 6;
 	}
-	
+
 	@Override
 	public String getFileName() {
 		return getI18nConstants().curriculos();
@@ -69,9 +73,11 @@ public class CurriculosExportExcelWithMergedCells extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Curriculo> curriculo = Curriculo.findByCenario(getCenario());
-		
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< Curriculo > curriculo
+			= Curriculo.findByCenario( this.instituicaoEnsino, getCenario() );
+
 		if (!curriculo.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);
@@ -100,23 +106,34 @@ public class CurriculosExportExcelWithMergedCells extends AbstractExportExcel {
 		// Descrição
 		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getDescricao());
 		
-		for (Integer periodo : curriculo.getPeriodos()) {
+		List< Integer > listPeriodos
+			= curriculo.getPeriodos( this.instituicaoEnsino );
+
+		for ( Integer periodo : listPeriodos )
+		{
 			int initialRowPeriodo = row;
-			
+
 			// Período
 			setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],periodo);
 			
-			List<CurriculoDisciplina> disciplinasDeUmPeriodo = curriculo.getCurriculoDisciplinasByPeriodo(periodo);
-			for (CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo) {
+			List< CurriculoDisciplina > disciplinasDeUmPeriodo
+				= curriculo.getCurriculoDisciplinasByPeriodo(
+					this.instituicaoEnsino, periodo );
+
+			for ( CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo )
+			{
 				// Disciplina
-				setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],disciplinaDeUmPeriodo.getDisciplina().getCodigo());
+				setCell( row, 6, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+					disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
+
 				row++;
 			}
-			
+
 			// Merge - Período
-			mergeCells(initialRowPeriodo,row-1,5,5,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()]);
+			mergeCells( initialRowPeriodo, row - 1 , 5, 5, sheet,
+				cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ] );
 		}
-		
+
 		// Merge - Curso
 		mergeCells(initialRowCurriculo,row-1,2,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()]);
 		// Merge - Código

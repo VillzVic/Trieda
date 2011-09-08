@@ -15,6 +15,8 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -234,9 +236,13 @@ public class CursosImportExcel
 	private void checkNonRegisteredTipoCurso(
 		List< CursosImportExcelBean > sheetContent )
 	{
+		SemanaLetiva sl = this.getCenario().getSemanaLetiva();
+		InstituicaoEnsino instituicaoEnsino = sl.getInstituicaoEnsino();
+
 		// [ CódigoTipoCurso -> TipoCurso ]
 		Map< String, TipoCurso > tiposCursoBDMap
-			= TipoCurso.buildTipoCursoCodigoToTipoCursoMap( TipoCurso.findAll() );
+			= TipoCurso.buildTipoCursoCodigoToTipoCursoMap(
+				TipoCurso.findAll( instituicaoEnsino ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( CursosImportExcelBean bean : sheetContent )
@@ -263,7 +269,8 @@ public class CursosImportExcel
 	private void updateDataBase( String sheetName,
 		List< CursosImportExcelBean > sheetContent )
 	{
-		Map<String,Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap( Curso.findByCenario( getCenario() ) );
+		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap(
+			Curso.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( CursosImportExcelBean cursoExcel : sheetContent )
 		{

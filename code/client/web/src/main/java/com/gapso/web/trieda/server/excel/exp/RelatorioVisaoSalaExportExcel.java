@@ -19,6 +19,7 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
@@ -69,32 +70,36 @@ public class RelatorioVisaoSalaExportExcel
 	private RelatorioVisaoSalaFiltroExcel relatorioFiltro;
 
 	public RelatorioVisaoSalaExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, null );
+		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoSalaExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, filter );
+		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoSalaExportExcel(boolean removeUnusedSheets,
-		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null );
+		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoSalaExportExcel(boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter )
+	public RelatorioVisaoSalaExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName();
 		this.initialRow = 5;
+
 		this.setFilter( filter );
 	}
 
@@ -140,20 +145,31 @@ public class RelatorioVisaoSalaExportExcel
 
 		if ( this.getFilter() == null )
 		{
-			atdTaticoList = AtendimentoTatico.findByCenario( cenario );
-			atdOperacionalList = AtendimentoOperacional.findByCenario( cenario );
+			atdTaticoList = AtendimentoTatico.findByCenario(
+				this.instituicaoEnsino, cenario );
+
+			atdOperacionalList = AtendimentoOperacional.findByCenario(
+				cenario, this.instituicaoEnsino );
 		}
 		else
 		{
-			Campus campus = Campus.find( this.getFilter().getCampusDTO().getId() );
-			Unidade unidade = Unidade.find( this.getFilter().getUnidadeDTO().getId() ) ;
-			Sala sala = Sala.find( this.getFilter().getSalaDTO().getId() );
-			Turno turno = Turno.find( this.getFilter().getTurnoDTO().getId() );
+			Campus campus = Campus.find(
+				this.getFilter().getCampusDTO().getId(), this.instituicaoEnsino );
+
+			Unidade unidade = Unidade.find(
+				this.getFilter().getUnidadeDTO().getId(), this.instituicaoEnsino );
+
+			Sala sala = Sala.find(
+				this.getFilter().getSalaDTO().getId(), this.instituicaoEnsino );
+
+			Turno turno = Turno.find(
+				this.getFilter().getTurnoDTO().getId(), this.instituicaoEnsino );
 
 			atdTaticoList = AtendimentoTatico.findByCenario(
-					cenario, campus, unidade, sala, turno );
+				this.instituicaoEnsino, cenario, campus, unidade, sala, turno );
+
 			atdOperacionalList = AtendimentoOperacional.findByCenario(
-				cenario, campus, unidade, sala, turno );
+				this.instituicaoEnsino, cenario, campus, unidade, sala, turno );
 		}
 
 		List< AtendimentoRelatorioDTO > atdRelatorioList
@@ -196,8 +212,8 @@ public class RelatorioVisaoSalaExportExcel
 
 			for ( AtendimentoRelatorioDTO atendimento : atdRelatorioList )
 			{
-				Sala sala = Sala.find( atendimento.getSalaId() );
-				Turno turno = Turno.find( atendimento.getTurnoId() );
+				Sala sala = Sala.find( atendimento.getSalaId(), this.instituicaoEnsino );
+				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
 
 				Map< Turno, List< AtendimentoRelatorioDTO > > mapNivel2 = mapNivel1.get( sala );
 				if ( mapNivel2 == null )

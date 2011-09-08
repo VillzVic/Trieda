@@ -165,16 +165,22 @@ public class CursoAreasTitulacaoImportExcel
 		List< CursoAreasTitulacaoImportExcelBean > sheetContent )
 	{
 		// [ CódidoCurso -> Curso ]
-		Map<String, Curso> cursosBDMap = Curso.buildCursoCodigoToCursoMap(
-			Curso.findByCenario( getCenario() ) );
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (CursoAreasTitulacaoImportExcelBean bean : sheetContent) {
-			Curso curso = cursosBDMap.get(bean.getCursoStr());
-			if (curso != null) {
-				bean.setCurso(curso);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap(
+			Curso.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+
+		for ( CursoAreasTitulacaoImportExcelBean bean : sheetContent )
+		{
+			Curso curso = cursosBDMap.get( bean.getCursoStr() );
+
+			if ( curso != null )
+			{
+				bean.setCurso( curso );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
 
@@ -190,15 +196,23 @@ public class CursoAreasTitulacaoImportExcel
 	{
 		// [ CódidoAreaTitulacao -> AreaTitulacao ]
 		Map< String, AreaTitulacao > areasBDMap
-			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap( AreaTitulacao.findAll() );
-		
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (CursoAreasTitulacaoImportExcelBean bean : sheetContent) {
-			AreaTitulacao areaTitulacao = areasBDMap.get(bean.getAreaTitulacaoStr());
-			if (areaTitulacao != null) {
-				bean.setAreaTitulacao(areaTitulacao);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(
+				AreaTitulacao.findAll( this.instituicaoEnsino ) );
+
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+	
+		for ( CursoAreasTitulacaoImportExcelBean bean : sheetContent )
+		{
+			AreaTitulacao areaTitulacao
+				= areasBDMap.get( bean.getAreaTitulacaoStr() );
+
+			if ( areaTitulacao != null )
+			{
+				bean.setAreaTitulacao( areaTitulacao );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
 

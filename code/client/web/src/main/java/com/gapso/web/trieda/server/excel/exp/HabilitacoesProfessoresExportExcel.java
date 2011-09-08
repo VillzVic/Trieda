@@ -12,6 +12,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -52,22 +53,24 @@ public class HabilitacoesProfessoresExportExcel
 	private int initialRow;
 
 	public HabilitacoesProfessoresExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages );
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
 	public HabilitacoesProfessoresExportExcel( boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.HABILITACAO_PROFESSORES.getSheetName();
 		this.initialRow = 6;
 	}
-	
+
 	@Override
 	public String getFileName()
 	{
@@ -89,9 +92,11 @@ public class HabilitacoesProfessoresExportExcel
 	@Override
 	protected boolean fillInExcel( HSSFWorkbook workbook )
 	{
-		List< ProfessorDisciplina > professoresDisciplinas = ProfessorDisciplina.findAll();
+		List< ProfessorDisciplina > professoresDisciplinas
+			= ProfessorDisciplina.findAll( this.instituicaoEnsino );
 
-		Map< String, Boolean > registeredData = new HashMap< String, Boolean >();
+		Map< String, Boolean > registeredData
+			= new HashMap< String, Boolean >();
 
 		if ( !professoresDisciplinas.isEmpty() )
 		{

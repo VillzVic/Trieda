@@ -7,50 +7,63 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class UnidadesExportExcel extends AbstractExportExcel {
-	
-	enum ExcelCellStyleReference {
-		TEXT(6,2);
+public class UnidadesExportExcel
+	extends AbstractExportExcel
+{
+	enum ExcelCellStyleReference
+	{
+		TEXT( 6, 2 );
+
 		private int row;
 		private int col;
-		private ExcelCellStyleReference(int row, int col) {
+
+		private ExcelCellStyleReference( int row, int col )
+		{
 			this.row = row;
 			this.col = col;
 		}
-		public int getRow() {
+
+		public int getRow()
+		{
 			return row;
 		}
-		public int getCol() {
+
+		public int getCol()
+		{
 			return col;
 		}
 	}
-	private HSSFCellStyle[] cellStyles;
-	
+
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
-	
-	public UnidadesExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
-		this.removeUnusedSheets = true;
-		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
-		this.initialRow = 6;
+
+	public UnidadesExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
-	
-	public UnidadesExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages) {
-		super(cenario,i18nConstants,i18nMessages);
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+
+	public UnidadesExportExcel( boolean removeUnusedSheets,
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	{
+		super( cenario,i18nConstants,i18nMessages, instituicaoEnsino );
+
+		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.sheetName = ExcelInformationType.UNIDADES.getSheetName();
 		this.initialRow = 6;
 	}
-	
+
 	@Override
 	public String getFileName() {
 		return getI18nConstants().unidades();
@@ -67,9 +80,11 @@ public class UnidadesExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		List<Unidade> unidades = Unidade.findByCenario(getCenario());
-		
+	protected boolean fillInExcel( HSSFWorkbook workbook )
+	{
+		List< Unidade > unidades = Unidade.findByCenario(
+		 	this.instituicaoEnsino, getCenario() );
+
 		if (!unidades.isEmpty()) {
 			if (this.removeUnusedSheets) {
 				removeUnusedSheets(this.sheetName,workbook);

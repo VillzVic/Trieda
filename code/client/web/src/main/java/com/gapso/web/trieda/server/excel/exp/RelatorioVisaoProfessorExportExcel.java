@@ -20,6 +20,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Turno;
@@ -71,29 +72,29 @@ public class RelatorioVisaoProfessorExportExcel
 	private boolean isVisaoProfessor;
 
 	public RelatorioVisaoProfessorExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, boolean isVisaoProfessor )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor );
+		this( true, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoProfessorExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, boolean isVisaoProfessor )
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, filter, isVisaoProfessor );
+		this( true, cenario, i18nConstants, i18nMessages, filter, isVisaoProfessor, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets,
 		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor )
+		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor );
+		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, boolean isVisaoProfessor )
+		ExportExcelFilter filter, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
@@ -104,7 +105,9 @@ public class RelatorioVisaoProfessorExportExcel
 
 		if ( this.relatorioFiltro != null )
 		{
-			this.campus = Campus.find( this.relatorioFiltro.getCampusDTO().getId() );
+			this.campus = Campus.find(
+				this.relatorioFiltro.getCampusDTO().getId(),
+				this.instituicaoEnsino );
 		}
 	}
 
@@ -165,10 +168,10 @@ public class RelatorioVisaoProfessorExportExcel
 		if ( relatorioFiltro != null )
 		{
 			Professor professor = ( relatorioFiltro.getProfessorDTO() == null ? null :
-				Professor.find( relatorioFiltro.getProfessorDTO().getId() ) );
+				Professor.find( relatorioFiltro.getProfessorDTO().getId(), this.instituicaoEnsino ) );
 
 			ProfessorVirtual professorVirtual = ( relatorioFiltro.getProfessorVirtualDTO() == null ? null :
-				ProfessorVirtual.find( relatorioFiltro.getProfessorVirtualDTO().getId() ) );
+				ProfessorVirtual.find( relatorioFiltro.getProfessorVirtualDTO().getId(), this.instituicaoEnsino ) );
 
 			if ( professor != null )
 			{
@@ -182,11 +185,11 @@ public class RelatorioVisaoProfessorExportExcel
 			}
 
 			Turno turno = ( relatorioFiltro.getTurnoDTO() == null ? null :
-				Turno.find( relatorioFiltro.getTurnoDTO().getId() ) );
+				Turno.find( relatorioFiltro.getTurnoDTO().getId(), this.instituicaoEnsino ) );
 
 			if ( turno == null )
 			{
-				turnos = Turno.findAll();
+				turnos = Turno.findAll( this.instituicaoEnsino );
 			}
 			else
 			{
@@ -197,9 +200,9 @@ public class RelatorioVisaoProfessorExportExcel
 		else
 		{
 			// Relatorio solicitado a partir da opção de 'exportar tudo'
-			professores = Professor.findAll();
-			professoresVirtuais = ProfessorVirtual.findAll();
-			turnos = Turno.findAll();
+			professores = Professor.findAll( this.instituicaoEnsino );
+			professoresVirtuais = ProfessorVirtual.findAll( this.instituicaoEnsino );
+			turnos = Turno.findAll( this.instituicaoEnsino );
 		}
 
 		Set< AtendimentoOperacional > atendimentosOperacional
@@ -213,7 +216,7 @@ public class RelatorioVisaoProfessorExportExcel
 				for ( Turno turno : turnos )
 				{
 					List< AtendimentoOperacional > atendimentos
-						= AtendimentoOperacional.getAtendimentosOperacional(
+						= AtendimentoOperacional.getAtendimentosOperacional( instituicaoEnsino,
 							idAdmin, professor, null, turno, this.isVisaoProfessor() );
 
 					atendimentosOperacional.addAll( atendimentos );
@@ -229,7 +232,7 @@ public class RelatorioVisaoProfessorExportExcel
 				for ( Turno turno : turnos )
 				{
 					List< AtendimentoOperacional > atendimentos
-						= AtendimentoOperacional.getAtendimentosOperacional(
+						= AtendimentoOperacional.getAtendimentosOperacional( instituicaoEnsino,
 							idAdmin, null, professorVirtual, turno, this.isVisaoProfessor() );
 
 					atendimentosOperacional.addAll( atendimentos );
@@ -279,20 +282,23 @@ public class RelatorioVisaoProfessorExportExcel
 			{
 				if ( this.campus == null )
 				{
-					this.campus = Campus.find( atendimento.getCampusId() );
+					this.campus = Campus.find(
+						atendimento.getCampusId(), this.instituicaoEnsino );
 				}
 
 				if ( atendimento.getProfessorId() != null )
 				{
-					professor = Professor.find( atendimento.getProfessorId() );
+					professor = Professor.find(
+						atendimento.getProfessorId(), this.instituicaoEnsino );
 				}
 				else
 				{
-					professorVirtual = ProfessorVirtual.find( atendimento.getProfessorVirtualId() );
+					professorVirtual = ProfessorVirtual.find(
+						atendimento.getProfessorVirtualId(), this.instituicaoEnsino );
 				}
 
 				Long professorId = ( professor == null ? professorVirtual.getId() : professor.getId() );
-				Turno turno = Turno.find( atendimento.getTurnoId() );
+				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
 
 				Map< Turno, List< AtendimentoOperacionalDTO > > mapNivel2 = mapNivel1.get( professorId );
 				if ( mapNivel2 == null )
@@ -323,10 +329,11 @@ public class RelatorioVisaoProfessorExportExcel
 				Map< Turno, List< AtendimentoOperacionalDTO > > mapNivel2 = mapNivel1.get( profId );
 				for ( Turno turno : mapNivel2.keySet() )
 				{
-					professor = Professor.find( profId );
+					professor = Professor.find( profId, this.instituicaoEnsino );
 					if ( professor == null )
 					{
-						professorVirtual = ProfessorVirtual.find( profId );
+						professorVirtual = ProfessorVirtual.find(
+							profId, this.instituicaoEnsino );
 					}
 
 					if ( professor != null )

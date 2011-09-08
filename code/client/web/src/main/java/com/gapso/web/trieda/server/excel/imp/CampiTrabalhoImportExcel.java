@@ -169,7 +169,7 @@ public class CampiTrabalhoImportExcel
 	{
 		// [ CódidoCampus -> Campus ]
 		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
-			Campus.findByCenario( getCenario() ) );
+			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( CampiTrabalhoImportExcelBean bean : sheetContent )
@@ -197,7 +197,7 @@ public class CampiTrabalhoImportExcel
 	{
 		// [ CodidoCampus -> Campus ]
 		Map< String, Professor > professoresBDMap = Professor.buildProfessorCpfToProfessorMap(
-			Professor.findByCenario( getCenario() ) );
+			Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 

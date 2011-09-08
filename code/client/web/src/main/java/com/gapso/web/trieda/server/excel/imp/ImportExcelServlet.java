@@ -16,6 +16,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.util.GTriedaI18nConstants;
 import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -33,12 +34,28 @@ public class ImportExcelServlet extends HttpServlet
 		i18nConstants = new GTriedaI18nConstants();
 		i18nMessages = new GTriedaI18nMessages();
 	}
-	
+
 	@Override
 	protected void doPost( HttpServletRequest request, HttpServletResponse response )
 		throws ServletException, IOException
 	{
-		cenario = Cenario.findMasterData();
+		Long instituicaoEnsinoId = null;
+		
+		try
+		{
+			instituicaoEnsinoId = Long.parseLong(
+				request.getParameter( "instituicaoEnsinoId" ) );
+		}
+		catch( Exception e )
+		{
+			System.out.println(
+				"Não foi informado a instituição de ensino. " );
+		}
+
+		InstituicaoEnsino instituicaoEnsino
+			= InstituicaoEnsino.find( instituicaoEnsinoId );
+
+		cenario = Cenario.findMasterData( instituicaoEnsino );
 
 		FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
@@ -47,19 +64,20 @@ public class ImportExcelServlet extends HttpServlet
         try
         {
         	@SuppressWarnings("unchecked")
-			List<FileItem> itens = upload.parseRequest( request );
+			List< FileItem > itens = upload.parseRequest( request );
 
         	String fileName = null;
         	String informationToBeImported = null;
+
 			for ( FileItem iten : itens )
 			{
 				if ( iten.getFieldName().equals(
-						ExcelInformationType.getInformationParameterName() ) )
+					ExcelInformationType.getInformationParameterName() ) )
 				{
 					informationToBeImported = iten.getString();
 				}
 				else if ( iten.getFieldName().equals(
-						ExcelInformationType.getFileParameterName() ) )
+					ExcelInformationType.getFileParameterName() ) )
 				{
 					fileName = iten.getName();
 					inputStream = iten.getInputStream();
