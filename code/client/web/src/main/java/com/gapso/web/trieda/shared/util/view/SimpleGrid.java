@@ -24,32 +24,37 @@ import com.extjs.gxt.ui.client.widget.toolbar.PagingToolBar;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.google.gwt.user.client.Element;
 
-public class SimpleGrid<M extends BaseModel> extends ContentPanel {
+public class SimpleGrid< M extends BaseModel >
+	extends ContentPanel
+{
+	private Grid< M > grid;
+	private RpcProxy< PagingLoadResult< M > > proxy;
+	private PagingLoader< PagingLoadResult< ModelData > > loader;
+	private List< ColumnConfig > columnList;
+	private List< ComponentPlugin > plugins = new ArrayList< ComponentPlugin >();
 
-	private Grid<M> grid;
-	private RpcProxy<PagingLoadResult<M>> proxy;
-	private PagingLoader<PagingLoadResult<ModelData>> loader;
-	private List<ColumnConfig> columnList;
-	private List<ComponentPlugin> plugins = new ArrayList<ComponentPlugin>();
-	
 	private ITriedaI18nGateway i18nGateway;
-	
-	public SimpleGrid(List<ColumnConfig> columnList, ITriedaI18nGateway i18nGateway) {
-		super(new FitLayout());
+
+	public SimpleGrid( List< ColumnConfig > columnList,
+		ITriedaI18nGateway i18nGateway )
+	{
+		super( new FitLayout() );
+
 		this.columnList = columnList;
 		this.i18nGateway = i18nGateway;
-		setHeaderVisible(false);
+		setHeaderVisible( false );
 	}
 
 	@Override
-	protected void beforeRender() {
+	protected void beforeRender()
+	{
 		super.beforeRender();
-		
-		loader = new BasePagingLoader<PagingLoadResult<ModelData>>(proxy);
-		loader.setRemoteSort(true);
-		
-		ListStore<M> store = new ListStore<M>(loader);  
-		
+
+		loader = new BasePagingLoader< PagingLoadResult< ModelData > >( proxy );
+		loader.setRemoteSort( true );
+
+		ListStore< M > store = new ListStore< M >( loader );  
+
 		grid = new Grid<M>(store, new ColumnModel(columnList));
 		grid.setStripeRows(true);
 		grid.setBorders(true);

@@ -22,8 +22,10 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class TiposCursosView extends MyComposite implements TiposCursosPresenter.Display {
-
+public class TiposCursosView
+	extends MyComposite
+	implements TiposCursosPresenter.Display
+{
 	private SimpleToolBar toolBar;
 	private SimpleGrid<TipoCursoDTO> gridPanel;
 	private SimpleFilter filter;
@@ -32,18 +34,21 @@ public class TiposCursosView extends MyComposite implements TiposCursosPresenter
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
-	public TiposCursosView() {
+	public TiposCursosView()
+	{
 		initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Tipos de Curso");
+
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeading( "Master Data » Tipos de Curso" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( tabItem );
 	}
 
 	private void createTabItem() {
