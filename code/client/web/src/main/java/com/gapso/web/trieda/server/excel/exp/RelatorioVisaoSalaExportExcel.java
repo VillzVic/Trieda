@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -173,17 +174,20 @@ public class RelatorioVisaoSalaExportExcel
 		}
 
 		List< AtendimentoRelatorioDTO > atdRelatorioList
-			= new ArrayList< AtendimentoRelatorioDTO >( atdTaticoList.size() + atdOperacionalList.size() );
+			= new ArrayList< AtendimentoRelatorioDTO >(
+				atdTaticoList.size() + atdOperacionalList.size() );
 
-		for ( AtendimentoTatico atdTatico : atdTaticoList )
-		{
-			atdRelatorioList.add( ConvertBeans.toAtendimentoTaticoDTO( atdTatico ) );
-		}
+		List< AtendimentoTaticoDTO > listAtendTaticoDTO
+			= ConvertBeans.toListAtendimentoTaticoDTO( atdTaticoList );
 
-		for ( AtendimentoOperacional atdOperacional : atdOperacionalList )
-		{
-			atdRelatorioList.add( ConvertBeans.toAtendimentoOperacionalDTO( atdOperacional ) );
-		}
+		List< AtendimentoOperacionalDTO > listAtendOpDTO
+			= ConvertBeans.toListAtendimentoOperacionalDTO( atdOperacionalList );
+
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		listAtendOpDTO = service.ordenaPorHorarioAula( listAtendOpDTO );
+
+		atdRelatorioList.addAll( listAtendTaticoDTO );
+		atdRelatorioList.addAll( listAtendOpDTO );
 
 		return atdRelatorioList;
 	}
@@ -205,8 +209,10 @@ public class RelatorioVisaoSalaExportExcel
 			Iterator< HSSFComment> itExcelCommentsPool = excelCommentsPool.iterator();
 
 			List< HSSFCellStyle > excelColorsPool = buildColorPaletteCellStyles( workbook );
+
 			Map< String, HSSFCellStyle > codigoDisciplinaToColorMap
 				= new HashMap< String, HSSFCellStyle >();
+
 			Map< Sala, Map< Turno, List< AtendimentoRelatorioDTO > > > mapNivel1
 				= new TreeMap< Sala, Map< Turno, List< AtendimentoRelatorioDTO > > >();
 
@@ -216,6 +222,7 @@ public class RelatorioVisaoSalaExportExcel
 				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
 
 				Map< Turno, List< AtendimentoRelatorioDTO > > mapNivel2 = mapNivel1.get( sala );
+
 				if ( mapNivel2 == null )
 				{
 					mapNivel2 = new HashMap< Turno, List< AtendimentoRelatorioDTO > >();
@@ -231,11 +238,16 @@ public class RelatorioVisaoSalaExportExcel
 
 				list.add( atendimento );
 
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get( atendimento.getDisciplinaString() );
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
+					atendimento.getDisciplinaString() );
+
 				if ( style == null )
 				{
 					int index = ( codigoDisciplinaToColorMap.size() % excelColorsPool.size() );
-					codigoDisciplinaToColorMap.put( atendimento.getDisciplinaString(), excelColorsPool.get( index ) );
+
+					codigoDisciplinaToColorMap.put(
+						atendimento.getDisciplinaString(),
+						excelColorsPool.get( index ) );
 				}
 			}
 
@@ -243,6 +255,7 @@ public class RelatorioVisaoSalaExportExcel
 			for ( Sala sala : mapNivel1.keySet() )
 			{
 				Map< Turno, List< AtendimentoRelatorioDTO > > mapNivel2 = mapNivel1.get( sala );
+
 				for ( Turno turno : mapNivel2.keySet() )
 				{
 					nextRow = writeSala( sala, turno, mapNivel2.get( turno ),
@@ -291,10 +304,13 @@ public class RelatorioVisaoSalaExportExcel
 			col = 2;
 		}
 
-		// Processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
+		// Processa os atendimentos lidos do BD para
+		// que os mesmos sejam visualizados na visão sala
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
 		List< AtendimentoRelatorioDTO > atendimentosParaVisaoSala
 			= atendimentosService.montaListaParaVisaoSala( atendimentos );
+
+		atendimentosParaVisaoSala = ordenaHorarioAula( atendimentosParaVisaoSala );
 
 		// Agrupa os atendimentos por dia da semana
 		Map< Integer, List< AtendimentoRelatorioDTO > > diaSemanaToAtendimentosMap
@@ -320,6 +336,7 @@ public class RelatorioVisaoSalaExportExcel
 			row = initialRow;
 
 			Semanas diaSemana = Semanas.get( diaSemanaInt );
+
 			switch ( diaSemana )
 			{
 				case SEG: { col = 3; break; }
@@ -334,16 +351,49 @@ public class RelatorioVisaoSalaExportExcel
 			List< AtendimentoRelatorioDTO > atedimentosDiaSemana
 				= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
+			if ( atedimentosDiaSemana == null || atedimentosDiaSemana.size() == 0 )
+			{
+				continue;
+			}
+
+			// Calcular quantas colunas deverão ser
+			// 'saltadas' para escrever o primeiro atendimento do dia
+			if ( atedimentosDiaSemana.get( 0 ) instanceof AtendimentoOperacionalDTO )
+			{
+				List< AtendimentoOperacionalDTO > listOp
+					= new ArrayList< AtendimentoOperacionalDTO >();
+
+				for ( AtendimentoRelatorioDTO ar : atedimentosDiaSemana )
+				{
+					listOp.add( (AtendimentoOperacionalDTO) ar );
+				}
+
+				// TODO -- Visão Sala
+				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+				row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, listOp );
+
+				atedimentosDiaSemana.clear();
+
+				for ( AtendimentoOperacionalDTO atOp : listOp )
+				{
+					atedimentosDiaSemana.add( atOp );
+				}
+			}
+			////
+
 			for ( AtendimentoRelatorioDTO atendimento : atedimentosDiaSemana )
 			{
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get( atendimento.getDisciplinaString() );
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
+					atendimento.getDisciplinaString() );
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoSala(), this.getExcelCommentVisaoSala( atendimento ) );
+					atendimento.getExcelContentVisaoSala(),
+					this.getExcelCommentVisaoSala( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
-				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ), col, col, sheet, style );
+				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
+					col, col, sheet, style );
 
 				row += atendimento.getTotalCreditos();
 			}
@@ -386,7 +436,7 @@ public class RelatorioVisaoSalaExportExcel
 				+ periodo + atOp.getPeriodoString() + "\n"
 				+ "Quantidade: " + atOp.getQuantidadeAlunosString() + "\n"
 				+ "Sala: " + atOp.getSalaString() + "\n"
-				+ "Professor: " + (atOp.getProfessorId() != null ? atOp.getProfessorString() : atOp.getProfessorVirtualString());
+				+ "Professor: " + (atOp.getProfessorId() != null ? atOp.getProfessorString() : atOp.getProfessorVirtualString() );
 		}
 
 		return "";
@@ -515,5 +565,40 @@ public class RelatorioVisaoSalaExportExcel
 		}
 
 		return excelCommentsPool;
+	}
+
+	private List< AtendimentoRelatorioDTO > ordenaHorarioAula(
+		List< AtendimentoRelatorioDTO > list )
+	{
+		if ( list == null || list.size() == 0 )
+		{
+			return Collections.< AtendimentoRelatorioDTO > emptyList();
+		}
+			
+		if ( list.get( 0 ) instanceof AtendimentoTaticoDTO )
+		{
+			return list;
+		}
+
+		List< AtendimentoOperacionalDTO > opList
+			= new ArrayList< AtendimentoOperacionalDTO >();
+
+		for ( AtendimentoRelatorioDTO ar : list )
+		{
+			opList.add( (AtendimentoOperacionalDTO) ar );
+		}
+			
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		opList = service.ordenaPorHorarioAula( opList );
+
+		List< AtendimentoRelatorioDTO > result
+			= new ArrayList< AtendimentoRelatorioDTO >();
+
+		for ( AtendimentoOperacionalDTO atOp : opList )
+		{
+			result.add( (AtendimentoRelatorioDTO) atOp );
+		}
+
+		return result;
 	}
 }

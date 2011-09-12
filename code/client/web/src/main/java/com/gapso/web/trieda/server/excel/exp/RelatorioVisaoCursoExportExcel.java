@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -217,9 +218,11 @@ public class RelatorioVisaoCursoExportExcel
 	{
 		List< List< AtendimentoRelatorioDTO > > atdRelatoriosList
 			= new ArrayList< List< AtendimentoRelatorioDTO > >();
-		List< List< Integer > > tamanhosSemanaList = new ArrayList< List< Integer > >();
 
-		AtendimentosServiceImpl atendimentosServiceImpl = new AtendimentosServiceImpl();
+		List< List< Integer > > tamanhosSemanaList
+			= new ArrayList< List< Integer > >();
+
+		AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
 		Set< Map< String, Object > > opcoes = opcoesBuscaOperacional( cenario );
 
 		if ( this.relatorioFiltro != null )
@@ -248,7 +251,7 @@ public class RelatorioVisaoCursoExportExcel
 			CursoDTO cursoDTO = ConvertBeans.toCursoDTO( curso );
 
 			ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parAtendimentos
-				= atendimentosServiceImpl.getBusca( curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
+				= atService.getBusca( curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
 
 			List< AtendimentoRelatorioDTO > atdRelatorioList
 				= new ArrayList< AtendimentoRelatorioDTO >( parAtendimentos.getPrimeiro() );
@@ -285,9 +288,14 @@ public class RelatorioVisaoCursoExportExcel
 			HSSFSheet sheet = workbook.getSheet( this.sheetName );
 			fillInCellStyles( sheet );
 
-			List< HSSFComment > excelCommentsPool = buildExcelCommentsPool( workbook );
-			Iterator< HSSFComment > itExcelCommentsPool = excelCommentsPool.iterator();
-			List< HSSFCellStyle > excelColorsPool = buildColorPaletteCellStyles( workbook );
+			List< HSSFComment > excelCommentsPool
+				= buildExcelCommentsPool( workbook );
+
+			Iterator< HSSFComment > itExcelCommentsPool
+				= excelCommentsPool.iterator();
+
+			List< HSSFCellStyle > excelColorsPool
+				= buildColorPaletteCellStyles( workbook );
 
 			Map< String, HSSFCellStyle > codigoDisciplinaToColorMap
 				= new HashMap< String, HSSFCellStyle >();
@@ -303,8 +311,7 @@ public class RelatorioVisaoCursoExportExcel
 					{
 						int index = ( codigoDisciplinaToColorMap.size() % excelColorsPool.size() );
 
-						codigoDisciplinaToColorMap.put(
-							atendimento.getDisciplinaString(),
+						codigoDisciplinaToColorMap.put( atendimento.getDisciplinaString(),
 							excelColorsPool.get( index ) );
 					}
 				}
@@ -317,12 +324,14 @@ public class RelatorioVisaoCursoExportExcel
 				List< AtendimentoRelatorioDTO > atdRelatorioList
 					= atdRelatoriosList.get( i );
 
-				List< Integer > tamanhoSemanaList = tamanhosSemanaList.get( i );
-
 				if ( atdRelatorioList.isEmpty() )
 				{
 					continue;
 				}
+
+				atdRelatorioList = this.ordenaHorarioAula( atdRelatorioList );
+
+				List< Integer > tamanhoSemanaList = tamanhosSemanaList.get( i );
 
 				Oferta oferta = Oferta.find(
 					atdRelatorioList.get( 0 ).getOfertaId(), this.instituicaoEnsino );
@@ -330,7 +339,7 @@ public class RelatorioVisaoCursoExportExcel
 				Integer periodo = Integer.valueOf(
 					atdRelatorioList.get( 0 ).getPeriodoString() );
 
-				nextRow = this.writeSala( oferta, periodo, atdRelatorioList,
+				nextRow = this.writeCurso( oferta, periodo, atdRelatorioList,
 					tamanhoSemanaList, nextRow, sheet, itExcelCommentsPool,
 					codigoDisciplinaToColorMap );
 			}
@@ -345,9 +354,44 @@ public class RelatorioVisaoCursoExportExcel
 
 		return result;
 	}
+	
+	private List< AtendimentoRelatorioDTO > ordenaHorarioAula(
+		List< AtendimentoRelatorioDTO > list )
+	{
+		if ( list == null || list.size() == 0 )
+		{
+			return Collections.< AtendimentoRelatorioDTO > emptyList();
+		}
+		
+		if ( list.get( 0 ) instanceof AtendimentoTaticoDTO )
+		{
+			return list;
+		}
+
+		List< AtendimentoOperacionalDTO > opList
+			= new ArrayList< AtendimentoOperacionalDTO >();
+
+		for ( AtendimentoRelatorioDTO ar : list )
+		{
+			opList.add( (AtendimentoOperacionalDTO) ar );
+		}
+		
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		opList = service.ordenaPorHorarioAula( opList );
+
+		List< AtendimentoRelatorioDTO > result
+			= new ArrayList< AtendimentoRelatorioDTO >();
+
+		for ( AtendimentoOperacionalDTO atOp : opList )
+		{
+			result.add( (AtendimentoRelatorioDTO) atOp );
+		}
+
+		return result;
+	}
 
 	@SuppressWarnings("unused")
-	private int writeSala( Oferta oferta, Integer periodo,
+	private int writeCurso( Oferta oferta, Integer periodo,
 		List< AtendimentoRelatorioDTO > atendimentos, List< Integer > tamanhoSemanaList,
 		int row, HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
@@ -406,9 +450,41 @@ public class RelatorioVisaoCursoExportExcel
 			// coluna para esse dia da semana. Logo, teremos colunas com valor superior
 			// a 8 (o que não é consistente com o valor de dia da semana.
 			col = diaSemanaInt + 1;
+			
+			List< AtendimentoRelatorioDTO > atendimentosDia
+				= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
-			for ( AtendimentoRelatorioDTO atendimento
-				: diaSemanaToAtendimentosMap.get( diaSemanaInt ) )
+			if ( atendimentosDia == null || atendimentosDia.size() == 0 )
+			{
+				continue;
+			}
+
+			// Calcular quantas colunas deverão ser
+			// 'saltadas' para escrever o primeiro atendimento do dia
+			if ( atendimentosDia.get( 0 ) instanceof AtendimentoOperacionalDTO )
+			{
+				List< AtendimentoOperacionalDTO > listOp
+					= new ArrayList< AtendimentoOperacionalDTO >();
+
+				for ( AtendimentoRelatorioDTO ar : atendimentosDia )
+				{
+					listOp.add( (AtendimentoOperacionalDTO) ar );
+				}
+
+				// TODO -- Visão Curso
+				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+				row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, listOp );
+
+				atendimentosDia.clear();
+
+				for ( AtendimentoOperacionalDTO atOp : listOp )
+				{
+					atendimentosDia.add( atOp );
+				}
+			}
+			////
+
+			for ( AtendimentoRelatorioDTO atendimento : atendimentosDia )
 			{
 				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
 					atendimento.getDisciplinaString() );
@@ -428,6 +504,7 @@ public class RelatorioVisaoCursoExportExcel
 
 		return ( initialRow + maxCreditos + 1 );
 	}
+
 
 	private String getExcelCommentVisaoCurso( AtendimentoRelatorioDTO atendimento )
 	{
@@ -467,6 +544,7 @@ public class RelatorioVisaoCursoExportExcel
 		
 		return "";
 	}
+
 	
 	private int writeHeader( Oferta oferta, Integer periodo,
 		List< Integer > tamanhoSemanaList, int row, HSSFSheet sheet )
@@ -542,6 +620,7 @@ public class RelatorioVisaoCursoExportExcel
 		return row;
 	}
 
+
 	private void fillInCellStyles( HSSFSheet sheet )
 	{
 		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
@@ -550,6 +629,7 @@ public class RelatorioVisaoCursoExportExcel
 				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}
+
 
 	private List< HSSFCellStyle > buildColorPaletteCellStyles( HSSFWorkbook workbook )
 	{
@@ -578,6 +658,7 @@ public class RelatorioVisaoCursoExportExcel
 
 		return colorPalleteCellStylesList;
 	}
+
 
 	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
 	{

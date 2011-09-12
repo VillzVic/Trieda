@@ -12,10 +12,7 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-/**
- * The client side stub for the RPC service.
- */
-@RemoteServiceRelativePath("semanasLetiva")
+@RemoteServiceRelativePath( "semanasLetiva" )
 public interface SemanasLetivaService
 	extends RemoteService
 {

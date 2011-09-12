@@ -21,6 +21,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
@@ -48,7 +49,9 @@ public class AtendimentosServiceImpl
 	@Override
 	public PagingLoadResult< AtendimentoTaticoDTO > getList()
 	{
-		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
+		List< AtendimentoTaticoDTO > list
+			= new ArrayList< AtendimentoTaticoDTO >();
+
 		List< AtendimentoTatico > atendimentosTatico
 			= AtendimentoTatico.findAll( getInstituicaoEnsinoUser() );
 
@@ -73,7 +76,8 @@ public class AtendimentosServiceImpl
 		List< AtendimentoRelatorioDTO > arDTOList
 			= new ArrayList< AtendimentoRelatorioDTO >();
 
-		List< AtendimentoTaticoDTO > taticoList = getBuscaTatico( salaDTO, turnoDTO );
+		List< AtendimentoTaticoDTO > taticoList
+			= getBuscaTatico( salaDTO, turnoDTO );
 
 		if ( !taticoList.isEmpty() )
 		{
@@ -102,7 +106,9 @@ public class AtendimentosServiceImpl
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List< AtendimentoOperacionalDTO > list = new ArrayList< AtendimentoOperacionalDTO >();
+		List< AtendimentoOperacionalDTO > list
+			= new ArrayList< AtendimentoOperacionalDTO >();
+
 		List< AtendimentoOperacional > atendimentosOperacional
 			= AtendimentoOperacional.findBySalaAndTurno( sala, turno, getInstituicaoEnsinoUser() );
 
@@ -162,41 +168,26 @@ public class AtendimentosServiceImpl
 			dtoList.add( dto );
 		}
 
-		final Map< Long, HorarioAula > horarios
-			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap(
-				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
-
 		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry
 			: atendimentoTaticoDTOMap.entrySet() )
 		{
-			List< AtendimentoRelatorioDTO > ordenadoPorHorario
-				= new ArrayList< AtendimentoRelatorioDTO >( entry.getValue() );
+			List< AtendimentoOperacionalDTO > ordenadoPorHorario
+				= new ArrayList< AtendimentoOperacionalDTO >();
 
-			Collections.sort( ordenadoPorHorario,
-					new Comparator< AtendimentoRelatorioDTO >()
-					{
-						@Override
-						public int compare( AtendimentoRelatorioDTO a1,
-								AtendimentoRelatorioDTO a2 )
-						{
-							AtendimentoOperacionalDTO arg1 = ( AtendimentoOperacionalDTO ) a1;
-							AtendimentoOperacionalDTO arg2 = ( AtendimentoOperacionalDTO ) a2;
+			for ( AtendimentoRelatorioDTO ar : entry.getValue() )
+			{
+				ordenadoPorHorario.add( (AtendimentoOperacionalDTO) ar );
+			}
 
-							HorarioAula h1 = horarios.get( arg1.getHorarioId() );
-							HorarioAula h2 = horarios.get( arg2.getHorarioId() );
+			ordenadoPorHorario = this.ordenaPorHorarioAula( ordenadoPorHorario );
 
-							return h1.getHorario().compareTo( h2.getHorario() );
-						}
-					});
-
-			AtendimentoOperacionalDTO dtoMain
-				= ( AtendimentoOperacionalDTO ) ordenadoPorHorario.get( 0 );
+			AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get( 0 );
 
 			int count = 1;
 			for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
 			{
-				AtendimentoOperacionalDTO h0 = ( AtendimentoOperacionalDTO ) ordenadoPorHorario.get( i - 1 );
-				AtendimentoOperacionalDTO h1 = ( AtendimentoOperacionalDTO ) ordenadoPorHorario.get( i );
+				AtendimentoOperacionalDTO h0 = ordenadoPorHorario.get( i - 1 );
+				AtendimentoOperacionalDTO h1 = ordenadoPorHorario.get( i );
 
 				if ( !h0.getHorarioId().equals( h1.getHorarioId() ) )
 				{
@@ -215,7 +206,7 @@ public class AtendimentosServiceImpl
 		List< AtendimentoRelatorioDTO > list )
 	{
 		if ( !list.isEmpty()
-				&& ( list.get( 0 ) instanceof AtendimentoOperacionalDTO ) )
+			&& ( list.get( 0 ) instanceof AtendimentoOperacionalDTO ) )
 		{
 			List< AtendimentoOperacionalDTO > operacionalList
 				= new ArrayList< AtendimentoOperacionalDTO >( list.size() );
@@ -253,6 +244,7 @@ public class AtendimentosServiceImpl
 		// concatena as informações de todos em um único DTO.
 		List< AtendimentoRelatorioDTO > processedList
 			= new ArrayList< AtendimentoRelatorioDTO >();
+
 		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry
 			: atendimentoTaticoDTOMap.entrySet() )
 		{
@@ -263,6 +255,7 @@ public class AtendimentosServiceImpl
 			else
 			{
 				AtendimentoRelatorioDTO dtoMain = entry.getValue().get( 0 );
+
 				for ( int i = 1; i < entry.getValue().size(); i++ )
 				{
 					AtendimentoRelatorioDTO dtoCurrent = entry.getValue().get( i );
@@ -302,6 +295,7 @@ public class AtendimentosServiceImpl
 				= montaListaParaVisaoCursoTatico( turnoDTO, taticoList );
 
 			parDTOTempl.setSegundo( parDTO.getSegundo() );
+
 			for ( AtendimentoTaticoDTO atdto : parDTO.getPrimeiro() )
 			{
 				parDTOTempl.getPrimeiro().add( atdto );
@@ -316,6 +310,7 @@ public class AtendimentosServiceImpl
 				= montaListaParaVisaoCursoOperacional( turnoDTO, operacionalList );
 
 			parDTOTempl.setSegundo( parDTO.getSegundo() );
+
 			for ( AtendimentoOperacionalDTO atdto : parDTO.getPrimeiro() )
 			{
 				parDTOTempl.getPrimeiro().add( atdto );
@@ -379,7 +374,86 @@ public class AtendimentosServiceImpl
 			list.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
 		}
 
+		list = agrupaAtendimentosOperacionalMesmaAula( list );
+
 		return list;
+	}
+
+	private List< AtendimentoOperacionalDTO > agrupaAtendimentosOperacionalMesmaAula(
+		List< AtendimentoOperacionalDTO > list )
+	{
+		// Agrupa os DTOS pela chave [ Curso - Disciplina - Turma - DiaSemana - Sala ]
+		Map< String, List< AtendimentoOperacionalDTO > > atendimentoOperacionalDTOMap
+			= new HashMap< String, List< AtendimentoOperacionalDTO > >();
+
+		for ( AtendimentoOperacionalDTO dto : list )
+		{
+			String key = dto.getCursoString()
+				+ "-" + dto.getDisciplinaString() + "-" + dto.getTurma()
+				+ "-" + dto.getSemana() + "-" + dto.getSalaId();
+
+			List< AtendimentoOperacionalDTO > dtoList
+				= atendimentoOperacionalDTOMap.get( key );
+
+			if ( dtoList == null )
+			{
+				dtoList = new ArrayList< AtendimentoOperacionalDTO >();
+				atendimentoOperacionalDTOMap.put( key, dtoList );
+			}
+
+			dtoList.add( dto );
+		}
+		////
+
+		// Quando há mais de um DTO por chave
+		// [ Curso - Disciplina - Turma - DiaSemana - Sala ],
+		// concatena as informações de todos em um único DTO.
+		List< AtendimentoOperacionalDTO > processedList
+			= new ArrayList< AtendimentoOperacionalDTO >();
+
+		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry
+			: atendimentoOperacionalDTOMap.entrySet() )
+		{
+			List< AtendimentoOperacionalDTO > ordenadoPorHorario = null;
+			
+			if ( entry.getValue().size() == 1 )
+			{
+				ordenadoPorHorario = new ArrayList< AtendimentoOperacionalDTO >( entry.getValue() );
+			}
+			else
+			{
+				ordenadoPorHorario = this.ordenaPorHorarioAula( entry.getValue() );
+			}
+
+			if ( ordenadoPorHorario.size() == 1 )
+			{
+				AtendimentoOperacionalDTO dto = ordenadoPorHorario.get( 0 );
+				dto.setTotalCreditos( 1 );
+				processedList.add( dto );
+			}
+			else
+			{
+				AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get( 0 ) ;
+
+				// Procura pelo horário correspondente ao início da aula
+				HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
+				    ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ), getInstituicaoEnsinoUser() );
+
+				for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
+				{
+					AtendimentoOperacionalDTO dtoCurrent = ordenadoPorHorario.get( i );
+					dtoMain.concatenateVisaoCurso( dtoCurrent );
+				}
+
+				dtoMain.setHorarioId( menorHorario.getId() );
+				dtoMain.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
+				dtoMain.setTotalCreditos( entry.getValue().size() );
+
+				processedList.add( dtoMain );
+			}
+		}
+
+		return processedList;
 	}
 
 	private ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > montaListaParaVisaoCursoTatico(
@@ -493,18 +567,6 @@ public class AtendimentosServiceImpl
 	private ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > montaListaParaVisaoCursoOperacional(
 		TurnoDTO turnoDTO, List< AtendimentoOperacionalDTO > list )
 	{
-		if ( !list.isEmpty()
-			&& ( list.get( 0 ) instanceof AtendimentoOperacionalDTO ) )
-		{
-			List< AtendimentoRelatorioDTO > arList = preMontaListaOperacional( list );
-			list.clear();
-
-			for ( AtendimentoRelatorioDTO ar : arList )
-			{
-				list.add( (AtendimentoOperacionalDTO) ar );
-			}
-		}
-
 		// Agrupa os DTOS pelo dia da semana
 		Map< Integer, List< AtendimentoOperacionalDTO > > diaSemanaToAtendimentoOperacionalDTOMap
 			= new TreeMap< Integer, List< AtendimentoOperacionalDTO > >();
@@ -543,6 +605,7 @@ public class AtendimentosServiceImpl
 
 		// Para cada dia da semana
 		int countSemanaSize = 2;
+
 		for ( Entry< Integer, List< AtendimentoOperacionalDTO > > entry :
 				diaSemanaToAtendimentoOperacionalDTOMap.entrySet() )
 		{
@@ -567,6 +630,9 @@ public class AtendimentosServiceImpl
 					AtendimentoOperacionalDTO dtoCurrent = listDTOs.get( i );
 					dtoCurrent.setSemana( dtoMain.getSemana() + i );
 				}
+
+				// Ordenando por horário de início da aula
+				listDTOs = this.ordenaPorHorarioAula( listDTOs );
 
 				finalProcessedList.addAll( listDTOs );
 			}
@@ -819,6 +885,7 @@ public class AtendimentosServiceImpl
 			else
 			{
 				boolean wasDTOProcessed = false;
+
 				for ( List< AtendimentoTaticoDTO > listDTO : listListDTO )
 				{
 					boolean wasDTORejected = false;
@@ -980,10 +1047,6 @@ public class AtendimentosServiceImpl
 			dtoList.add( dto );
 		}
 
-		final Map< Long, HorarioAula > horarios
-			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap(
-				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
-
 		// Quando há mais de um DTO por chave
 		// [ Curso - Disciplina - Turma - DiaSemana - Sala ],
 		// concatena as informações de todos em um único DTO.
@@ -993,22 +1056,16 @@ public class AtendimentosServiceImpl
 		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry
 			: atendimentoOperacionalDTOMap.entrySet() )
 		{
-			List< AtendimentoOperacionalDTO > ordenadoPorHorario
-				= new ArrayList< AtendimentoOperacionalDTO >( entry.getValue() );
-
-			Collections.sort( ordenadoPorHorario,
-				new Comparator< AtendimentoOperacionalDTO >()
+			List< AtendimentoOperacionalDTO > ordenadoPorHorario = null;
+			
+			if ( entry.getValue().size() == 1 )
 			{
-				@Override
-				public int compare( AtendimentoOperacionalDTO arg1,
-									AtendimentoOperacionalDTO arg2 )
-				{
-					HorarioAula h1 = horarios.get( arg1.getHorarioId() );
-					HorarioAula h2 = horarios.get( arg2.getHorarioId() );
-
-					return h1.getHorario().compareTo( h2.getHorario() );
-				}
-			});
+				ordenadoPorHorario = new ArrayList< AtendimentoOperacionalDTO >( entry.getValue() );
+			}
+			else
+			{
+				ordenadoPorHorario = this.ordenaPorHorarioAula( entry.getValue() );
+			}
 
 			if ( ordenadoPorHorario.size() == 1 )
 			{
@@ -1021,17 +1078,8 @@ public class AtendimentosServiceImpl
 				AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get( 0 ) ;
 
 				// Procura pelo horário correspondente ao início da aula
-				HorarioAula menorHorario = horarios.get( dtoMain.getHorarioId() );
-				for ( AtendimentoOperacionalDTO dto : ordenadoPorHorario )
-				{
-					HorarioAula h = horarios.get( dto.getHorarioId() );
-
-					if ( h.getHorario().compareTo( menorHorario.getHorario() ) < 0 )
-					{
-						menorHorario = h;
-					}
-				}
-				////
+				HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
+				    ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ), getInstituicaoEnsinoUser() );
 
 				for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
 				{
@@ -1074,10 +1122,6 @@ public class AtendimentosServiceImpl
 			dtoList.add( dto );
 		}
 
-		final Map< Long, HorarioAula > horarios
-			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap(
-				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
-
 		// Quando há mais de um DTO por chave
 		// [ Disciplina - Turma - DiaSemana - Sala ],
 		// concatena as informações de todos em um único DTO.
@@ -1087,38 +1131,41 @@ public class AtendimentosServiceImpl
 		for ( Entry< String, List< AtendimentoOperacionalDTO > > entry
 			: atendimentoOperacionalDTOMap.entrySet() )
 		{
+			List< AtendimentoOperacionalDTO > ordenadoPorHorario = null;
+			
 			if ( entry.getValue().size() == 1 )
 			{
-				AtendimentoOperacionalDTO dto = entry.getValue().get( 0 );
+				ordenadoPorHorario = new ArrayList< AtendimentoOperacionalDTO >( entry.getValue() );
+			}
+			else
+			{
+				ordenadoPorHorario = this.ordenaPorHorarioAula( entry.getValue() );
+			}
+
+			if ( ordenadoPorHorario.size() == 1 )
+			{
+				AtendimentoOperacionalDTO dto = ordenadoPorHorario.get( 0 );
 				dto.setTotalCreditos( 1 );
 				processedList.add( dto );
 			}
 			else
 			{
-				AtendimentoOperacionalDTO dtoMain = entry.getValue().get( 0 );
+				AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get( 0 );
 
 				// Procura pelo horário correspondente ao início da aula
-				HorarioAula menorHorario = horarios.get( dtoMain.getHorarioId() );
-				for ( AtendimentoOperacionalDTO dto : entry.getValue() )
-				{
-					HorarioAula h = horarios.get( dto.getHorarioId() );
+				HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
+					ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ), getInstituicaoEnsinoUser() );
 
-					if ( h.getHorario().compareTo( menorHorario.getHorario() ) < 0 )
-					{
-						menorHorario = h;
-					}
-				}
-				////
-
-				for ( int i = 1; i < entry.getValue().size(); i++ )
+				for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
 				{
-					AtendimentoOperacionalDTO dtoCurrent = entry.getValue().get( i );
+					AtendimentoOperacionalDTO dtoCurrent = ordenadoPorHorario.get( i );
 					dtoMain.concatenateVisaoProfessor( dtoCurrent );
 				}
 
 				dtoMain.setHorarioId( menorHorario.getId() );
 				dtoMain.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
-				dtoMain.setTotalCreditos( entry.getValue().size() );
+				dtoMain.setTotalCreditos( ordenadoPorHorario.size() );
+
 				processedList.add( dtoMain );
 			}
 		}
@@ -1145,5 +1192,106 @@ public class AtendimentosServiceImpl
 		}
 
 		return new BaseListLoadResult< ProfessorVirtualDTO >( professoresVirtuaisDTO );
+	}
+
+	public List< AtendimentoOperacionalDTO > ordenaPorHorarioAula(
+		List< AtendimentoOperacionalDTO > listAtendimentos )
+	{
+		if ( listAtendimentos == null || listAtendimentos.size() == 0 )
+		{
+			return Collections.< AtendimentoOperacionalDTO > emptyList();
+		}
+
+		if ( listAtendimentos.size() == 1 )
+		{
+			return new ArrayList< AtendimentoOperacionalDTO >( listAtendimentos );
+		}
+
+		List< AtendimentoOperacionalDTO > result
+			= new ArrayList< AtendimentoOperacionalDTO >( listAtendimentos );
+
+		final Map< Long, HorarioAula > mapHorarios
+			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap(
+				HorarioAula.findAll( getInstituicaoEnsinoUser() ) );
+
+		Collections.sort( result,
+			new Comparator< AtendimentoOperacionalDTO >()
+		{
+			@Override
+			public int compare( AtendimentoOperacionalDTO arg1,
+								AtendimentoOperacionalDTO arg2 )
+			{
+				HorarioAula h1 = mapHorarios.get( arg1.getHorarioId() );
+				HorarioAula h2 = mapHorarios.get( arg2.getHorarioId() );
+
+				return h1.getHorario().compareTo( h2.getHorario() );
+			}
+		});
+
+		return result;
+	}
+
+	public int deslocarLinhasExportExcel(
+		InstituicaoEnsino instituicaoEnsino,
+		List< AtendimentoOperacionalDTO > atendimentosDia )
+	{
+		if ( atendimentosDia == null || atendimentosDia.size() == 0 )
+		{
+			return 0;
+		}
+
+		final List< HorarioAula > listAll
+			= HorarioAula.findAll( instituicaoEnsino );
+
+		final Map< Long, HorarioAula > mapHorarios
+			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap( listAll );
+
+		// Procura pelo menor horário de
+		// início de aula entre os atendimentos do dia
+		HorarioAula menorHorario = mapHorarios.get(
+			atendimentosDia.get( 0 ).getHorarioId() );
+
+		for ( AtendimentoOperacionalDTO atDTO : atendimentosDia )
+		{
+			HorarioAula ha = mapHorarios.get( atDTO.getHorarioId() );
+
+			if ( ha.getHorario().compareTo( menorHorario.getHorario() ) < 0 )
+			{
+				menorHorario = ha;
+			}
+		}
+		////
+
+		// Ordenamos os atendimentos por horário de início da aula
+		List< HorarioAula > horariosOrdenados
+			= new ArrayList< HorarioAula >( listAll );
+
+		Collections.sort( horariosOrdenados,
+			new Comparator< HorarioAula >()
+		{
+			@Override
+			public int compare( HorarioAula arg1,
+								HorarioAula arg2 )
+			{
+				return arg1.getHorario().compareTo( arg2.getHorario() );
+			}
+		});
+		////
+
+		// Procuramos a posição do primeiro horário de aula do dia
+		// em relação a todos os horários de aula cadastrados na base de dados.
+		// Com isso, sabemos quantas colunas da planilha excel deverão ser
+		// deixadas em branco antes de se preencher o primeiro atendimento do dia.
+		for ( int index = 0; index < horariosOrdenados.size(); index++ )
+		{
+			HorarioAula ha = horariosOrdenados.get( index );
+
+			if ( ha.getId() == menorHorario.getId() )
+			{
+				return index;
+			}
+		}
+
+		return 0;
 	}
 }

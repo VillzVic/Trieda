@@ -24,18 +24,21 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HorarioDisponivelCenarioFormPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class HorarioDisponivelCenarioFormPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getSalvarButton();
 		SemanaLetivaDTO getSemanaLetivaDTO();
 		SimpleModal getSimpleModal();
-		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
-		ListStore<HorarioDisponivelCenarioDTO> getStore();
+		void setProxy( RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy );
+		ListStore< HorarioDisponivelCenarioDTO > getStore();
 		Button getAdicionarHorarioBT();
 		Button getRemoverHorarioBT();
 		TurnoComboBox getTurnoCB();
-		TextField<String> getHorarioInicioTF();
+		TextField< String > getHorarioInicioTF();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -54,53 +57,85 @@ public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy
+			= new RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.semanasLetiva().getHorariosDisponiveisCenario(getDTO(), callback);
+			protected void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback)
+			{
+				Services.semanasLetiva().getHorariosDisponiveisCenario( getDTO(), callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getStore().commitChanges();
-				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
-				
-				Services.semanasLetiva().saveHorariosDisponiveisCenario(getDTO(), hdcDTOList, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+				List< HorarioDisponivelCenarioDTO > hdcDTOList = display.getStore().getModels();
+
+				Services.semanasLetiva().saveHorariosDisponiveisCenario( getDTO(), hdcDTOList,
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void onSuccess(Void result) {
-						Info.display("Atualizado", "Horários atualizados com sucesso!");
+					public void onSuccess( Void result )
+					{
+						Info.display( "Atualizado",
+							"Horários atualizados com sucesso!" );
+
 						display.getSimpleModal().hide();
 					}
-					
 				});
 			}
 		});
-		display.getAdicionarHorarioBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getAdicionarHorarioBT().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Services.horariosAula().save(getHorarioAulaDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				Services.horariosAula().save( getHorarioAulaDTO(),
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getStore().getLoader().load();
-						Info.display("Adicionado", "Horário adicionado com sucesso!");
+
+						Info.display("Adicionado",
+							"Horário adicionado com sucesso!" );
 					}
 				});
 			}
 		});
-		display.getRemoverHorarioBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getRemoverHorarioBT().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Services.horariosAula().removeWithHorario(getHorarioAulaDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				Services.horariosAula().removeWithHorario( getHorarioAulaDTO(),
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getStore().getLoader().load();
-						Info.display("Removido", "Horário removido com sucesso!");
+
+						Info.display("Removido",
+							"Horário removido com sucesso!" );
 					}
 				});
 			}
@@ -120,14 +155,14 @@ public class HorarioDisponivelCenarioFormPresenter implements Presenter {
 
 		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		dto.setSemanaLetivaId( semanaLetiva.getId() );
-		dto.setTurnoId( display.getTurnoCB().getSelection().get(0).getId() );
+		dto.setTurnoId( display.getTurnoCB().getSelection().get( 0 ).getId() );
 
 		DateTimeFormat df = DateTimeFormat.getFormat( "HH:mm" );
 		dto.setInicio( df.parse( display.getHorarioInicioTF().getValue() ) );
 
 		return dto;
 	}
-	
+
 	@Override
 	public void go( Widget widget )
 	{

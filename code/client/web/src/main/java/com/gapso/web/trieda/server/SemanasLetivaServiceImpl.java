@@ -65,19 +65,28 @@ public class SemanasLetivaServiceImpl
 	}
 
 	@Override
-	public ListLoadResult<SemanaLetivaDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(loadConfig.get("query").toString(), null, loadConfig);
+	public ListLoadResult< SemanaLetivaDTO > getList( BasePagingLoadConfig loadConfig )
+	{
+		return getBuscaList( loadConfig.get( "query" ).toString(), null, loadConfig );
 	}
-	
+
 	@Override
-	public PagingLoadResult<SemanaLetivaDTO> getBuscaList(String codigo, String descricao, PagingLoadConfig config) {
-		List<SemanaLetivaDTO> list = new ArrayList<SemanaLetivaDTO>();
+	public PagingLoadResult< SemanaLetivaDTO > getBuscaList( String codigo,
+		String descricao, PagingLoadConfig config )
+	{
+		List< SemanaLetivaDTO > list = new ArrayList< SemanaLetivaDTO >();
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
 
@@ -92,9 +101,11 @@ public class SemanasLetivaServiceImpl
 
 		BasePagingLoadResult< SemanaLetivaDTO > result
 			= new BasePagingLoadResult< SemanaLetivaDTO >( list );
+
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( SemanaLetiva.count(
 			getInstituicaoEnsinoUser(), codigo, descricao ) );
+
 		return result;
 	}
 	
@@ -235,13 +246,17 @@ public class SemanasLetivaServiceImpl
 		SemanaLetiva semanaLetiva = SemanaLetiva.find(
 			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List<HorarioDisponivelCenario> todosQueJaTinhamList = new ArrayList<HorarioDisponivelCenario>();
-		for(HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-			todosQueJaTinhamList.addAll(horarioAula.getHorariosDisponiveisCenario());
+		List< HorarioDisponivelCenario > todosQueJaTinhamList
+			= new ArrayList< HorarioDisponivelCenario >();
+
+		for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
+		{
+			todosQueJaTinhamList.addAll( horarioAula.getHorariosDisponiveisCenario() );
 		}
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >( todosQueJaTinhamList );
+
 		removerList.removeAll( listSelecionados );
 
 		for ( HorarioAula horariosAula : semanaLetiva.getHorariosAula() )
@@ -255,21 +270,24 @@ public class SemanasLetivaServiceImpl
 
 		adicionarList.removeAll( todosQueJaTinhamList );
 
-		List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
-		List< Unidade > unidades = Unidade.findAll( getInstituicaoEnsinoUser() );
-		List< Sala > salas = Sala.findAll( getInstituicaoEnsinoUser() );
-		List< Disciplina > disciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
-		List< Professor > professores = Professor.findAll( getInstituicaoEnsinoUser() );
-
-		for ( HorarioDisponivelCenario o : adicionarList )
+		if ( adicionarList != null && adicionarList.size() > 0 )
 		{
-			o.getCampi().addAll( campi );
-			o.getUnidades().addAll( unidades );
-			o.getSalas().addAll( salas );
-			o.getDisciplinas().addAll( disciplinas );
-			o.getProfessores().addAll( professores );
-
-			o.merge();
+			List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
+			List< Unidade > unidades = Unidade.findAll( getInstituicaoEnsinoUser() );
+			List< Sala > salas = Sala.findAll( getInstituicaoEnsinoUser() );
+			List< Disciplina > disciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
+			List< Professor > professores = Professor.findAll( getInstituicaoEnsinoUser() );
+	
+			for ( HorarioDisponivelCenario o : adicionarList )
+			{
+				o.getCampi().addAll( campi );
+				o.getUnidades().addAll( unidades );
+				o.getSalas().addAll( salas );
+				o.getDisciplinas().addAll( disciplinas );
+				o.getProfessores().addAll( professores );
+	
+				o.merge();
+			}
 		}
 	}
 }

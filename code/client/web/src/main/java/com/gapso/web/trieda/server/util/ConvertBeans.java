@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1920,6 +1921,82 @@ public class ConvertBeans
 		return dto;
 	}
 
+	public static List < AtendimentoOperacional > toListAtendimentoOperacional(
+		List< AtendimentoOperacionalDTO > listDTO )
+	{
+		if ( listDTO == null )
+		{
+			return Collections.< AtendimentoOperacional > emptyList();
+		}
+
+		List< AtendimentoOperacional > listDomains
+			= new ArrayList< AtendimentoOperacional >();
+
+		for ( AtendimentoOperacionalDTO dto : listDTO )
+		{
+			listDomains.add( ConvertBeans.toAtendimentoOperacional( dto ) );
+		}
+
+		return listDomains;
+	}
+
+	public static List < AtendimentoTatico > toListAtendimentoTatico(
+			List< AtendimentoTaticoDTO > listDTO )
+	{
+		if ( listDTO == null )
+		{
+			return Collections.< AtendimentoTatico > emptyList();
+		}
+
+		List< AtendimentoTatico > listDomains
+			= new ArrayList< AtendimentoTatico >();
+
+		for ( AtendimentoTaticoDTO dto : listDTO )
+		{
+			listDomains.add( ConvertBeans.toAtendimentoTatico( dto ) );
+		}
+
+		return listDomains;
+	}
+
+	public static List < AtendimentoOperacionalDTO > toListAtendimentoOperacionalDTO(
+		List< AtendimentoOperacional > listDomains )
+	{
+		if ( listDomains == null )
+		{
+			return Collections.< AtendimentoOperacionalDTO > emptyList();
+		}
+
+		List< AtendimentoOperacionalDTO > listDTOs
+			= new ArrayList< AtendimentoOperacionalDTO >();
+
+		for ( AtendimentoOperacional domain : listDomains )
+		{
+			listDTOs.add( ConvertBeans.toAtendimentoOperacionalDTO( domain ) );
+		}
+
+		return listDTOs;
+	}
+
+	public static List < AtendimentoTaticoDTO > toListAtendimentoTaticoDTO(
+		List< AtendimentoTatico > listDomains )
+	{
+		if ( listDomains == null )
+		{
+			return Collections.< AtendimentoTaticoDTO > emptyList();
+		}
+
+		List< AtendimentoTaticoDTO > listDTOs
+			= new ArrayList< AtendimentoTaticoDTO >();
+
+		for ( AtendimentoTatico domain : listDomains )
+		{
+			listDTOs.add( ConvertBeans.toAtendimentoTaticoDTO( domain ) );
+		}
+
+		return listDTOs;
+	}
+
 	// ATENDIMENTO OPERACIONAL
 	public static AtendimentoOperacional toAtendimentoOperacional(
 		AtendimentoOperacionalDTO dto )
@@ -1936,8 +2013,8 @@ public class ConvertBeans
 		domain.setCenario( Cenario.find( dto.getCenarioId(), instituicaoEnsino ) );
 		domain.setSala( Sala.find( dto.getSalaId(), instituicaoEnsino ) );
 
-		domain.setHorarioDisponivelCenario(
-			HorarioDisponivelCenario.find( dto.getHorarioId(), instituicaoEnsino ) );
+		domain.setHorarioDisponivelCenario( HorarioDisponivelCenario.find(
+			dto.getHorarioDisponivelCenarioId(), instituicaoEnsino ) );
 
 		domain.setProfessor( Professor.find(
 			dto.getProfessorId(), instituicaoEnsino ) );
@@ -1973,6 +2050,7 @@ public class ConvertBeans
 		dto.setSalaString( domain.getSala().getNumero() );
 
 		HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
+		dto.setHorarioDisponivelCenarioId( hdc.getId() );
 		dto.setSemana( Semanas.toInt( hdc.getSemana() ) );
 
 		HorarioAula ha = hdc.getHorarioAula();

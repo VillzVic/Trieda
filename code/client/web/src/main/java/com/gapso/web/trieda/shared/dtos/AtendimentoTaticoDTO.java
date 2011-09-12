@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
@@ -307,32 +309,68 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 		return ( getCreditosTeorico() + getCreditosPratico() );
 	}
 
+	private Set< Long > idsCursosAdicionadosVisaoSala = new HashSet< Long >();
+	private Set< Long > idsCurriculosAdicionadosVisaoSala = new HashSet< Long >();
+	private Set< Integer > idsPeriodosAdicionadosVisaoSala = new HashSet< Integer >();
+
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other )
 	{
-		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
-		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
-		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
-		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		idsCursosAdicionadosVisaoSala.add( this.getCursoId() );
+		idsCurriculosAdicionadosVisaoSala.add( this.getCurriculoId() );
+		idsPeriodosAdicionadosVisaoSala.add( this.getPeriodo() );
+
+		if ( !idsCursosAdicionadosVisaoSala.contains( other.getCursoId() ) )
+		{
+			setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+			idsCursosAdicionadosVisaoSala.add( other.getCursoId() );
+		}
+
+		if ( !idsCurriculosAdicionadosVisaoSala.contains( other.getCurriculoId() ) )
+		{
+			setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+			idsCurriculosAdicionadosVisaoSala.add( other.getCurriculoId() );
+		}
+		
+		if ( !idsPeriodosAdicionadosVisaoSala.contains( other.getPeriodo() ) )
+		{
+			setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+			idsPeriodosAdicionadosVisaoSala.add( other.getPeriodo() );
+		}
+
+		// setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 	}
+
+	private Set< Long > idsCursosAdicionadosVisaoCurso = new HashSet< Long >();
+	private Set< Long > idsCurriculosAdicionadosVisaoCurso = new HashSet< Long >();
+	private Set< Integer > idsPeriodosAdicionadosVisaoCurso = new HashSet< Integer >();
 
 	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other )
 	{
-		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
-		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
-		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
-		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
-		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
-	}
+		idsCursosAdicionadosVisaoCurso.add( this.getCursoId() );
+		idsCurriculosAdicionadosVisaoCurso.add( this.getCurriculoId() );
+		idsPeriodosAdicionadosVisaoCurso.add( this.getPeriodo() );
 
-	public void concatenateVisaoCurso( AtendimentoTaticoDTO other )
-	{
-		setDisciplinaString( getDisciplinaString() + "/" + other.getDisciplinaString() );
-		setTurma( getTurma() + "/" + other.getTurma() );
-		setCampusString( getCampusString() + "/" + other.getCampusString() );
-		setUnidadeString( getUnidadeString() + "/" + other.getUnidadeString() );
-		setSalaString( getSalaString() + "/" + other.getSalaString() );
-		setQuantidadeAlunosString( getQuantidadeAlunosString() + "/" + other.getQuantidadeAlunosString() );
+		if ( !idsCursosAdicionadosVisaoCurso.contains( other.getCursoId() ) )
+		{
+			setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+			idsCursosAdicionadosVisaoCurso.add( other.getCursoId() );
+		}
+
+		if ( !idsCurriculosAdicionadosVisaoCurso.add( other.getCurriculoId() ) )
+		{
+			setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+			idsCurriculosAdicionadosVisaoCurso.add( other.getCurriculoId() );
+		}
+
+		if ( !idsPeriodosAdicionadosVisaoCurso.contains( other.getPeriodo() ) )
+		{
+			setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+			idsPeriodosAdicionadosVisaoCurso.add( other.getPeriodo() );
+		}
+
+		// setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 	}
 
 	public String getContentVisaoSala()

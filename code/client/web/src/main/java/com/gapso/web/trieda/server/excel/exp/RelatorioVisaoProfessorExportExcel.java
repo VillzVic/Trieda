@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,11 +29,13 @@ import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-@SuppressWarnings("unused")
+@SuppressWarnings( "unused" )
 public class RelatorioVisaoProfessorExportExcel
 	extends AbstractExportExcel
 {
@@ -63,7 +66,7 @@ public class RelatorioVisaoProfessorExportExcel
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
@@ -72,22 +75,25 @@ public class RelatorioVisaoProfessorExportExcel
 	private boolean isVisaoProfessor;
 
 	public RelatorioVisaoProfessorExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoProfessorExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoProfessorExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		ExportExcelFilter filter, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, filter, isVisaoProfessor, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets,
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoProfessorExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
+		this( removeUnusedSheets, cenario, i18nConstants,
+			  i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets, Cenario cenario,
@@ -148,7 +154,7 @@ public class RelatorioVisaoProfessorExportExcel
 	{
 		if ( filter instanceof RelatorioVisaoProfessorFiltroExcel )
 		{
-			this.relatorioFiltro = (RelatorioVisaoProfessorFiltroExcel)filter;
+			this.relatorioFiltro = (RelatorioVisaoProfessorFiltroExcel) filter;
 		}
 		else
 		{
@@ -249,6 +255,9 @@ public class RelatorioVisaoProfessorExportExcel
 				ConvertBeans.toAtendimentoOperacionalDTO( domain ) );
 		}
 
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		atendimentosOperacionalDTO = service.ordenaPorHorarioAula( atendimentosOperacionalDTO );
+
 		return atendimentosOperacionalDTO;
 	}
 	
@@ -278,6 +287,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 			Professor professor = null;
 			ProfessorVirtual professorVirtual = null;
+
 			for ( AtendimentoOperacionalDTO atendimento : atendimentos )
 			{
 				if ( this.campus == null )
@@ -301,6 +311,7 @@ public class RelatorioVisaoProfessorExportExcel
 				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
 
 				Map< Turno, List< AtendimentoOperacionalDTO > > mapNivel2 = mapNivel1.get( professorId );
+
 				if ( mapNivel2 == null )
 				{
 					mapNivel2 = new HashMap< Turno, List< AtendimentoOperacionalDTO > >();
@@ -308,6 +319,7 @@ public class RelatorioVisaoProfessorExportExcel
 				}
 
 				List< AtendimentoOperacionalDTO > list = mapNivel2.get( turno );
+
 				if ( list == null )
 				{
 					list = new ArrayList< AtendimentoOperacionalDTO >();
@@ -315,21 +327,28 @@ public class RelatorioVisaoProfessorExportExcel
 				}
 
 				list.add( atendimento );
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get( atendimento.getDisciplinaString() );
+
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
+					atendimento.getDisciplinaString() );
+
 				if ( style == null )
 				{
 					int index = ( codigoDisciplinaToColorMap.size() % excelColorsPool.size() );
-					codigoDisciplinaToColorMap.put( atendimento.getDisciplinaString(), excelColorsPool.get( index ) );
+					codigoDisciplinaToColorMap.put(
+						atendimento.getDisciplinaString(), excelColorsPool.get( index ) );
 				}
 			}
 
 			int nextRow = this.initialRow;
+
 			for ( Long profId : mapNivel1.keySet() )
 			{
 				Map< Turno, List< AtendimentoOperacionalDTO > > mapNivel2 = mapNivel1.get( profId );
+
 				for ( Turno turno : mapNivel2.keySet() )
 				{
 					professor = Professor.find( profId, this.instituicaoEnsino );
+
 					if ( professor == null )
 					{
 						professorVirtual = ProfessorVirtual.find(
@@ -373,6 +392,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 		// Preenche grade com créditos e células vazias
 		int maxCreditos = turno.calculaMaxCreditos();
+
 		for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ )
 		{
 			// Créditos
@@ -395,6 +415,8 @@ public class RelatorioVisaoProfessorExportExcel
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
 		List< AtendimentoOperacionalDTO > atendimentosParaVisaoProfessor
 			= atendimentosService.montaListaParaVisaoProfessor( atendimentos );
+
+		atendimentosParaVisaoProfessor = this.ordenaHorarioAula( atendimentosParaVisaoProfessor );
 
 		// Agrupa os atendimentos por dia da semana
 		Map< Integer, List< AtendimentoOperacionalDTO > > diaSemanaToAtendimentosMap
@@ -420,6 +442,7 @@ public class RelatorioVisaoProfessorExportExcel
 			row = initialRow;
 
 			Semanas diaSemana = Semanas.get( diaSemanaInt );
+
 			switch ( diaSemana )
 			{
 				case SEG: { col = 3; break; }
@@ -433,6 +456,10 @@ public class RelatorioVisaoProfessorExportExcel
 
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana
 				= diaSemanaToAtendimentosMap.get( diaSemanaInt );
+
+			// TODO -- Visão Professor
+			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+			row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, atedimentosDiaSemana );
 
 			for ( AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana )
 			{
@@ -508,6 +535,8 @@ public class RelatorioVisaoProfessorExportExcel
 		List< AtendimentoOperacionalDTO > atendimentosParaVisaoProfessor
 			= atendimentosService.montaListaParaVisaoProfessor( atendimentos );
 
+		atendimentosParaVisaoProfessor = this.ordenaHorarioAula( atendimentosParaVisaoProfessor );
+
 		// Agrupa os atendimentos por dia da semana
 		Map< Integer, List< AtendimentoOperacionalDTO > > diaSemanaToAtendimentosMap
 			= new HashMap< Integer, List< AtendimentoOperacionalDTO > >();
@@ -530,8 +559,8 @@ public class RelatorioVisaoProfessorExportExcel
 		for ( Integer diaSemanaInt : diaSemanaToAtendimentosMap.keySet() )
 		{
 			row = initialRow;
-
 			Semanas diaSemana = Semanas.get( diaSemanaInt );
+
 			switch ( diaSemana )
 			{
 				case SEG: { col = 3; break; }
@@ -545,6 +574,10 @@ public class RelatorioVisaoProfessorExportExcel
 
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana
 					= diaSemanaToAtendimentosMap.get( diaSemanaInt );
+
+			// TODO -- Visão Professor (Virtual)
+			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+			row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, atedimentosDiaSemana );
 
 			for ( AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana )
 			{
@@ -705,5 +738,22 @@ public class RelatorioVisaoProfessorExportExcel
 		}
 
 		return excelCommentsPool;
+	}
+
+	private List< AtendimentoOperacionalDTO > ordenaHorarioAula(
+			List< AtendimentoOperacionalDTO > list )
+	{
+		if ( list == null || list.size() == 0 )
+		{
+			return Collections.< AtendimentoOperacionalDTO > emptyList();
+		}
+		
+		List< AtendimentoOperacionalDTO > opList
+			= new ArrayList< AtendimentoOperacionalDTO >( list );
+
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		opList = service.ordenaPorHorarioAula( opList );
+
+		return opList;
 	}
 }

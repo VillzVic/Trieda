@@ -38,55 +38,55 @@ public class AtendimentoOperacional
 	private static final long serialVersionUID = -1061352455612316076L;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Cenario.class)
-	@JoinColumn(name = "CEN_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
 	private Cenario cenario;
 
 	@NotNull
 	private String turma;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Sala.class)
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = Sala.class )
 	@JoinColumn(name = "SAL_ID")
 	private Sala sala;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = HorarioDisponivelCenario.class)
-	@JoinColumn(name = "HDC_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = HorarioDisponivelCenario.class )
+	@JoinColumn( name = "HDC_ID" )
 	private HorarioDisponivelCenario HorarioDisponivelCenario;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Oferta.class)
-	@JoinColumn(name = "OFE_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = Oferta.class)
+	@JoinColumn( name = "OFE_ID" )
 	private Oferta oferta;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Disciplina.class)
-	@JoinColumn(name = "DIS_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = Disciplina.class )
+	@JoinColumn( name = "DIS_ID" )
 	private Disciplina disciplina;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Professor.class )
-	@JoinColumn(name = "PRF_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = Professor.class )
+	@JoinColumn( name = "PRF_ID" )
 	private Professor professor;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = ProfessorVirtual.class )
-	@JoinColumn(name = "PRV_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = ProfessorVirtual.class )
+	@JoinColumn( name = "PRV_ID" )
 	private ProfessorVirtual professorVirtual;
 
-	@Column(name = "ATP_CREDITOTEOTICO")
+	@Column( name = "ATP_CREDITOTEOTICO" )
 	private Boolean creditoTeorico;
 
 	@NotNull
-	@Column(name = "ATP_QUANTIDADE")
-	@Min(0L)
-	@Max(999L)
+	@Column( name = "ATP_QUANTIDADE" )
+	@Min( 0L )
+	@Max( 999L )
 	private Integer quantidadeAlunos;
 
 	@NotNull
@@ -134,42 +134,54 @@ public class AtendimentoOperacional
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "ATP_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "ATP_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 	}
 
 	@Transactional
@@ -207,17 +219,25 @@ public class AtendimentoOperacional
 	}
 
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
 	@Transactional
-	public AtendimentoOperacional merge() {
-		if (this.entityManager == null)
+	public AtendimentoOperacional merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		AtendimentoOperacional merged = this.entityManager.merge(this);
+		}
+
+		AtendimentoOperacional merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
@@ -259,7 +279,7 @@ public class AtendimentoOperacional
 		Cenario cenario, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE cenario = :cenario " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino" );
 
@@ -275,7 +295,7 @@ public class AtendimentoOperacional
 		Campus campus, Unidade unidade, Sala sala, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o "
+			"SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
 			+ " WHERE cenario = :cenario "
 			+ " AND o.oferta.turno = :turno "
 			+ " AND o.oferta.campus = :campus "
@@ -298,7 +318,7 @@ public class AtendimentoOperacional
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT o FROM AtendimentoOperacional o " +
+			"SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			"WHERE o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
@@ -312,7 +332,7 @@ public class AtendimentoOperacional
 		InstituicaoEnsino instituicaoEnsino, Professor professor, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.turno = :turno " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.professor = :professor " );
@@ -337,7 +357,7 @@ public class AtendimentoOperacional
 			publicado = ( " AND o.oferta.campus.publicado = :publicado " );
 		}
 
-		String queryString = "SELECT o FROM AtendimentoOperacional o"
+		String queryString = "SELECT DISTINCT ( o ) FROM AtendimentoOperacional o"
 			+ " WHERE o.oferta.turno = :turno "
 			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
 			+ " AND o.professor = :professor " + publicado;
@@ -370,7 +390,7 @@ public class AtendimentoOperacional
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.turno = :turno " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.professorVirtual = :professorVirtual " + publicado );
@@ -392,7 +412,7 @@ public class AtendimentoOperacional
 		Curso curso, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.curriculo.curso = :curso " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
@@ -407,7 +427,7 @@ public class AtendimentoOperacional
 		Oferta oferta, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta = :oferta " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino" );
 
@@ -422,7 +442,7 @@ public class AtendimentoOperacional
 		Campus campus, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.campus = :campus " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino" );
 
@@ -437,7 +457,7 @@ public class AtendimentoOperacional
 		Campus campus, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.campus = :campus " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino" +
 			" AND o.oferta.turno = :turno" );
@@ -474,7 +494,7 @@ public class AtendimentoOperacional
 		Sala sala, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.sala = :sala " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino" +
 			" AND o.oferta.turno = :turno" );
@@ -498,7 +518,7 @@ public class AtendimentoOperacional
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.curriculo = :curriculo " +
 			" AND o.oferta.campus = :campus " + cursoQuery +
 			" AND o.oferta.turno = :turno " +
@@ -661,7 +681,7 @@ public class AtendimentoOperacional
 		InstituicaoEnsino instituicaoEnsino, Demanda demanda )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta = :oferta " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.disciplina = :disciplina " );
@@ -686,7 +706,7 @@ public class AtendimentoOperacional
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.oferta.campus = :campus " +
 			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
@@ -737,5 +757,35 @@ public class AtendimentoOperacional
 		return ( validaTurma && validaSala && validaHdc && validaOferta
 			&& validaDisciplina && validaProfessor &&  validaProfessorVirtual
 			&&  validaCreditoTeorico && validaInstituicaoEnsino );
+	}
+
+	public static HorarioAula retornaAtendimentoMenorHorarioAula(
+		List< AtendimentoOperacional > listAtendimentos, InstituicaoEnsino instituicaoEnsino )
+	{
+		if ( listAtendimentos == null || listAtendimentos.size() == 0 )
+		{
+			return null;
+		}
+
+		if ( listAtendimentos.size() == 1 )
+		{
+			return listAtendimentos.get( 0 ).getHorarioDisponivelCenario().getHorarioAula();
+		}
+
+		// Procura pelo horário correspondente ao início da aula
+		HorarioAula menorHorario = listAtendimentos.get( 0 ).getHorarioDisponivelCenario().getHorarioAula();
+
+		for ( int i = 1; i < listAtendimentos.size(); i++ )
+		{
+			HorarioAula h = listAtendimentos.get( i ).getHorarioDisponivelCenario().getHorarioAula();
+
+			if ( h.getHorario().compareTo( menorHorario.getHorario() ) < 0 )
+			{
+				menorHorario = h;
+			}
+		}
+		////
+
+		return menorHorario;
 	}
 }
