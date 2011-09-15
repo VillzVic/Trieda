@@ -1,13 +1,13 @@
 #include "Demanda.h"
 
-Demanda::Demanda(void)
+Demanda::Demanda( void )
 {
 	oferta = NULL;
 	disciplina = NULL;
    quantidade = -1;
 }
 
-Demanda::Demanda(Demanda const & demanda)
+Demanda::Demanda( Demanda const & demanda )
 {
    quantidade = demanda.quantidade;
    disciplina_id = demanda.disciplina_id;
@@ -24,48 +24,84 @@ Demanda::~Demanda( void )
 
 void Demanda::le_arvore( ItemDemanda & elem )
 {
-	quantidade = elem.quantidade();
-	disciplina_id = elem.disciplinaId();
-	oferta_id = elem.ofertaCursoCampiId();
+   this->setId( elem.id() );
+	this->setQuantidade( elem.quantidade() );
+	this->setDisciplinaId( elem.disciplinaId() );
+	this->setOfertaId( elem.ofertaCursoCampiId() );
 }
 
 bool Demanda::operator < ( const Demanda& right )
 {
-   if(quantidade < right.quantidade) return true;
-   if(quantidade > right.quantidade) return false;
+   if ( quantidade < right.quantidade )
+   {
+      return true;
+   }
+   else if ( quantidade > right.quantidade )
+   {
+      return false;
+   }
 
-   if(disciplina_id < right.disciplina_id) return true;
-   if(disciplina_id > right.disciplina_id) return false;
+   if ( disciplina_id < right.disciplina_id )
+   {
+      return true;
+   }
+   else if ( disciplina_id > right.disciplina_id )
+   {
+      return false;
+   }
 
-   if(oferta_id < right.oferta_id) return true;
-   if(oferta_id > right.oferta_id) return false;
+   if ( oferta_id < right.oferta_id )
+   {
+      return true;
+   }
+   else if ( oferta_id > right.oferta_id )
+   {
+      return false;
+   }
 
    return false;
 }
 
 bool Demanda::operator > ( const Demanda& right )
 {
-   if(quantidade < right.quantidade) return false;
-   if(quantidade > right.quantidade) return true;
+   if ( quantidade < right.quantidade )
+   {
+      return false;
+   }
+   else if ( quantidade > right.quantidade )
+   {
+      return true;
+   }
 
-   if(disciplina_id < right.disciplina_id) return false;
-   if(disciplina_id > right.disciplina_id) return true;
+   if ( disciplina_id < right.disciplina_id )
+   {
+      return false;
+   }
+   else if ( disciplina_id > right.disciplina_id )
+   {
+      return true;
+   }
 
-   if(oferta_id < right.oferta_id) return false;
-   if(oferta_id > right.oferta_id) return true;
+   if ( oferta_id < right.oferta_id )
+   {
+      return false;
+   }
+   else if ( oferta_id > right.oferta_id )
+   {
+      return true;
+   }
 
    return false;
 }
 
 bool Demanda::operator == ( const Demanda & right )
 {
-   return (
-      (quantidade == right.quantidade) && 
-      (disciplina_id == right.disciplina_id) && 
-      (oferta_id == right.oferta_id));
+   return ( ( quantidade == right.quantidade )
+     && ( disciplina_id == right.disciplina_id )
+     && ( oferta_id == right.oferta_id ) );
 }
 
 bool Demanda::operator != ( const Demanda & right )
 {
-   return !(*this == right);
+   return !( *this == right );
 }

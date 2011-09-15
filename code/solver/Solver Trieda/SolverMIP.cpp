@@ -2203,6 +2203,17 @@ int SolverMIP::solve()
    return status;
 }
 
+// Método que relaciona cada demanda atendida aos
+// correspondentes alunos que assistirão as aulas 
+void SolverMIP::relacionaAlunosDemandas()
+{
+   // TODO
+   ITERA_GGROUP_LESSPTR( it_aluno_demanda, problemData->alunosDemanda, AlunoDemanda )
+   {
+      problemSolution->alunosDemanda->add( ( *it_aluno_demanda ) );
+   }
+}
+
 void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 {
    Campus * campus = NULL;
@@ -2978,10 +2989,11 @@ void SolverMIP::getSolution( ProblemSolution * problem_solution )
          getSolutionTatico();
       }
 
-      //getSolutionOperacional();
+      // getSolutionOperacional();
       getSolutionOperacionalMIP();
-      
    }
+
+   relacionaAlunosDemandas();
 }
 
 // ==============================================================
@@ -6705,7 +6717,7 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
                   c.setDia( *itDiasLetCjtSala );
 
                   sprintf( name, "%s", c.toString().c_str() );
-                  if ( cHash.find(c) != cHash.end() )
+                  if ( cHash.find( c ) != cHash.end() )
                   {
                      continue;
                   }
@@ -6713,7 +6725,10 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
                   nnz = 0;
                   ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
                   {
-                     nnz += ( itDisc->getNumTurmas() );
+                     if ( itDisc->getNumTurmas() >= 0 )
+                     {
+                        nnz += ( itDisc->getNumTurmas() );
+                     }
                   }
 
                   int maxCreds = itCjtSala->maxCredsPermitidos( *itDiasLetCjtSala );
@@ -6972,11 +6987,12 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
                   disciplina = disciplina_equivalente;
                }
 
-               GGroup< int /*Dias*/ >::iterator itDiscSala_Dias =
-                  problemData->disc_Conjutno_Salas__Dias
+               GGroup< int /*Dias*/ >::iterator itDiscSala_Dias = problemData->disc_Conjutno_Salas__Dias
                   [ std::make_pair< int, int > ( disciplina->getId(), itCjtSala->getId() ) ].begin();
-               for(; itDiscSala_Dias != problemData->disc_Conjutno_Salas__Dias[
-                  std::make_pair< int, int > ( disciplina->getId(), itCjtSala->getId() ) ].end(); itDiscSala_Dias++ )
+
+               for (; itDiscSala_Dias != problemData->disc_Conjutno_Salas__Dias[
+                      std::make_pair< int, int > ( disciplina->getId(), itCjtSala->getId() ) ].end();
+                      itDiscSala_Dias++ )
                   {
                      for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
                      {
@@ -7344,7 +7360,7 @@ int SolverMIP::cria_restricao_turma_sala(void)
          disciplina = disciplina_equivalente;
       }
 
-      for (int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+      for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
       {
          c.reset();
          c.setType( Constraint::C_TURMA_SALA );
@@ -8043,11 +8059,11 @@ demanda da disciplina $d$ da oferta $oft$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
+int SolverMIP::cria_restricao_cap_aloc_dem_disc( void )
 {
    int restricoes = 0;
    char name[ 100 ];
-   int nnz;
+   int nnz = 0;
 
    Constraint c;
    Variable v;
@@ -8091,6 +8107,11 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
             continue;
          }
 
+         if ( disciplina->getNumTurmas() <= 0 )
+         {
+            continue;
+         }
+
          nnz = disciplina->getNumTurmas();
          int rhs = 0;
 
@@ -8105,6 +8126,7 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc(void)
          }
 
          OPT_ROW row( nnz , OPT_ROW::EQUAL, rhs , name );
+
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
             v.reset();
@@ -9348,7 +9370,13 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
                               continue;
                            }
 
+                           if ( disciplina->getNumTurmas() < 0 )
+                           {
+                              continue;
+                           }
+
                            nnz = ( problemData->totalConjuntosSalas * disciplina->getNumTurmas() + 1 );
+
                            OPT_ROW row( nnz, OPT_ROW::EQUAL , 0.0 , name );
 
                            if ( it_fix->sala != NULL )

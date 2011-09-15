@@ -217,14 +217,17 @@ public:
    void getSolutionOperacional();
    void getSolutionOperacionalMIP();
    void geraProfessoresVirtuaisMIP();
-   Professor* criaProfessorVirtual( HorarioDia *, int, std::set< std::pair< Professor *, HorarioDia * > > & );
+   Professor * criaProfessorVirtual( HorarioDia *, int,
+      std::set< std::pair< Professor *, HorarioDia * > > & );
    void preencheOutputOperacional( ProblemSolution * );
    void preencheOutputOperacionalMIP( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
-   vector< Variable * > variaveisAlunosAtendidos( Curso *, Disciplina * );
-   vector< Variable * > variaveisCreditosAtendidos( Disciplina * );
+   std::vector< Variable * > variaveisAlunosAtendidos( Curso *, Disciplina * );
+   std::vector< Variable * > variaveisCreditosAtendidos( Disciplina * );
    void criaVariaveisAlunosDisciplinasSubstituidas();
    void criaVariaveisCreditosDisciplinasSubstituidas();
+
+   void relacionaAlunosDemandas();
 
    Variable * criaVariavelAlunos(
       Campus *, Unidade *, ConjuntoSala *, Sala *,

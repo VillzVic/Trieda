@@ -93,7 +93,7 @@ int main( int argc, char** argv )
    // Input file name
    strcat( inputFile, path );
    strcat( inputFile, "input" );
-   strcat( inputFile, argv[1] );
+   strcat( inputFile, argv[ 1 ] );
 
    dataLoader = new ProblemDataLoader( inputFile, data );
    dataLoader->load();
@@ -108,7 +108,7 @@ int main( int argc, char** argv )
    // Output file name
    strcat( outputFile, path );
    strcat( outputFile, "output" );
-   strcat( outputFile, argv[1] );
+   strcat( outputFile, argv[ 1 ] );
    strcat( outputFile, "F" );
 
    dtOutput.solution = solution;
@@ -136,7 +136,7 @@ int main( int argc, char** argv )
       catch( int & status )
       {
          char mensagem[ 200 ];
-         sprintf( mensagem, "Não foi possível processar o modelo matemático (erro %d)", status );
+         sprintf( mensagem, "Não foi possível processar o modelo matemático ( erro %d )", status );
          ErrorHandler::addErrorMessage(
             UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
 
@@ -151,6 +151,7 @@ int main( int argc, char** argv )
       catch ( int & status )
       {
          char mensagem[ 200 ];
+
          sprintf( mensagem, "Não foi possível escrever a solução. Error code: %d.", status );
          ErrorHandler::addErrorMessage(
 			   UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
@@ -163,12 +164,12 @@ int main( int argc, char** argv )
    catch( std::exception & e )
    {
       if( ErrorHandler::getErrorMessages().size() == 0 )
-	  {
-		  std::string message = "Ocorreu um erro interno no resolvedor.";
+	   {
+		    std::string message = "Ocorreu um erro interno no resolvedor.";
 
           ErrorHandler::addErrorMessage(
              UNEXPECTED_ERROR, message, "main.cpp", true );
-	  }
+	   }
 
       printf( "\n\nERROR: %s\n", e.what() );
       error = true;
@@ -201,14 +202,14 @@ void writeOutput( ProblemSolution * solution,
 
 void _signals()
 {
-   signal( SIGINT, _tprocesshandler );         //  (2) interrupt
-   signal( SIGILL, _tprocesshandler );         //  (4) illegal instruction - invalid function image
-//   signal( SIGABRT_COMPAT, _tprocesshandler ); //  (6) abnormal termination triggered by abort call
-   signal( SIGFPE, _tprocesshandler );         //  (8) floating point exception
-   signal( SIGSEGV, _tprocesshandler );        // (11) segment violation
-   signal( SIGTERM, _tprocesshandler );        // (15) software termination signal from kill
-//   signal( SIGBREAK, _tprocesshandler );       // (21) Ctrl-Break sequence
-   signal( SIGABRT, _tprocesshandler );        // (22) abnormal termination triggered by abort call
+   signal( SIGINT, _tprocesshandler );           //  (2) interrupt
+   signal( SIGILL, _tprocesshandler );           //  (4) illegal instruction - invalid function image
+   //signal( SIGABRT_COMPAT, _tprocesshandler ); //  (6) abnormal termination triggered by abort call
+   signal( SIGFPE, _tprocesshandler );           //  (8) floating point exception
+   signal( SIGSEGV, _tprocesshandler );          // (11) segment violation
+   signal( SIGTERM, _tprocesshandler );          // (15) software termination signal from kill
+   //signal( SIGBREAK, _tprocesshandler );       // (21) Ctrl-Break sequence
+   signal( SIGABRT, _tprocesshandler );          // (22) abnormal termination triggered by abort call
 }
 
 void _tprocesshandler( int _code )

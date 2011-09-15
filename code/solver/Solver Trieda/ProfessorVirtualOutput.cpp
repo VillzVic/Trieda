@@ -21,26 +21,27 @@ std::ostream & operator << ( std::ostream & out, ProfessorVirtualOutput & profes
    out << "<id>" << professor_virtual.getId() << "</id>" << std::endl;
 
    out << "<chMin>" << professor_virtual.getChMin()
-	   << "</chMin>" << std::endl;
+	    << "</chMin>" << std::endl;
 
    out << "<chMax>" << professor_virtual.getChMax()
-	   << "</chMax>" << std::endl;
+	    << "</chMax>" << std::endl;
 
    out << "<titulacaoId>" << professor_virtual.getTitulacaoId()
-	   << "</titulacaoId>" << std::endl;
+	    << "</titulacaoId>" << std::endl;
 
    if ( professor_virtual.getAreaTitulacaoId() > 0 )
    {
 		out << "<areaTitulacaoId>"
-			<< professor_virtual.getAreaTitulacaoId()
-			<< "</areaTitulacaoId>" << std::endl;
+			 << professor_virtual.getAreaTitulacaoId()
+			 << "</areaTitulacaoId>" << std::endl;
    }
 
    out << "<disciplinas>" << std::endl;
    GGroup< int >::iterator it_disciplina
 	   = professor_virtual.disciplinas.begin();
-   for(; it_disciplina != professor_virtual.disciplinas.end();
-		 it_disciplina++ )
+
+   for (; it_disciplina != professor_virtual.disciplinas.end();
+		    it_disciplina++ )
    {
 		out << "<id>";
 		out << ( *it_disciplina );

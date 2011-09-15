@@ -1605,7 +1605,7 @@ void ProblemDataLoader::find_and_set( int id, GGroup< T * > & haystack,
 
 template< class T > 
 void ProblemDataLoader::find_and_set_lessptr( int id, GGroup< T *, LessPtr< T > > & haystack, 
-                                             T * & needle, bool print = false )
+                                              T * & needle, bool print = false )
 {
    T * finder = new T;
    finder->setId( id );
@@ -1635,9 +1635,9 @@ void ProblemDataLoader::find_and_set_lessptr( int id, GGroup< T *, LessPtr< T > 
    else
    {
       std::cout << "Warnning: Problema na funcao"
-         << "FindAndSet do ProblemDataLoader." << std::endl;
+                << "FindAndSet do ProblemDataLoader." << std::endl;
 
-      exit(1);
+      exit( 1 );
    }
 
    delete finder;
@@ -2475,8 +2475,7 @@ void ProblemDataLoader::gera_refs()
          if ( it_fix->turno != NULL )
          {
             find_and_set_lessptr( it_fix->getHorarioAulaId(),
-               it_fix->turno->horarios_aula,
-               it_fix->horario_aula, false );
+               it_fix->turno->horarios_aula, it_fix->horario_aula, false );
          }
          else
          {
@@ -2484,6 +2483,7 @@ void ProblemDataLoader::gera_refs()
             // aula foi, então procuramos o horário aula fixado
             // dentre todos os horários aula (entre todos os turnos)
             GGroup< HorarioAula * > todos_horarios_aula;
+
             ITERA_GGROUP_LESSPTR( it_turno, problemData->todos_turnos, Turno )
             {
                ITERA_GGROUP_LESSPTR( it_horario_aula, it_turno->horarios_aula, HorarioAula )
@@ -2492,8 +2492,8 @@ void ProblemDataLoader::gera_refs()
                }
             }
 
-            find_and_set( it_fix->getHorarioAulaId(), todos_horarios_aula,
-               it_fix->horario_aula, false );
+            find_and_set( it_fix->getHorarioAulaId(),
+               todos_horarios_aula, it_fix->horario_aula, false );
          }
       }
 
@@ -2502,8 +2502,8 @@ void ProblemDataLoader::gera_refs()
          // Seta a referência ao professor da fixação
          if ( it_fix->getProfessorId() >= 0 )
          {
-            find_and_set_lessptr( it_fix->getProfessorId(), it_campi->professores,
-               it_fix->professor, false );
+            find_and_set_lessptr( it_fix->getProfessorId(),
+               it_campi->professores, it_fix->professor, false );
          }
 
          // Seta a referência à sala da fixação
@@ -2511,8 +2511,8 @@ void ProblemDataLoader::gera_refs()
          {
             ITERA_GGROUP_LESSPTR( it_unidades, it_campi->unidades, Unidade )
             {
-               find_and_set_lessptr( it_fix->getSalaId(), it_unidades->salas,
-                  it_fix->sala, false );
+               find_and_set_lessptr( it_fix->getSalaId(),
+                  it_unidades->salas, it_fix->sala, false );
             }
          }
       }
@@ -2523,10 +2523,20 @@ void ProblemDataLoader::gera_refs()
       ITERA_GGROUP_LESSPTR( it_unidades, it_campi->unidades, Unidade ) 
       {
          it_unidades->setIdCampus( it_campi->getId() );
+
          ITERA_GGROUP_LESSPTR( it_salas, it_unidades->salas, Sala ) 
          {
             it_salas->setIdUnidade( it_unidades->getId() );
          }
+      }
+   }
+
+   ITERA_GGROUP_LESSPTR( it_aluno_demanda, problemData->alunosDemanda, AlunoDemanda )
+   {
+      if ( it_aluno_demanda->getDemandaId() >= 0 )
+      {
+         find_and_set_lessptr( it_aluno_demanda->getDemandaId(),
+            problemData->demandas, it_aluno_demanda->demanda, false );
       }
    }
 }

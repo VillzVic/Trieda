@@ -16,20 +16,17 @@ class ProblemSolution
 {
 public:
    // Constructor
-   //ProblemSolution();
-
-   ProblemSolution(bool modoOtmTatico = true);
+   // ProblemSolution();
+   ProblemSolution( bool = true );
 
    // Destructor
    virtual ~ProblemSolution(); 
 
    RestricaoVioladaGroup * getFolgas() const { return folgas; }
-
    GGroup< AtendimentoCampus * > * atendimento_campus;
    SolucaoOperacional * solucao_operacional;
-
    GGroup< ProfessorVirtualOutput * > * professores_virtuais;
-
+   GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > * alunosDemanda;
    bool modoOtmTatico;
 
 private:
@@ -44,7 +41,6 @@ private:
    // abaixo, visa armazenar todas as salas em que uma disciplina 
    // pode ser alocada levando em conta o resultado do solver.
    // std::map< int /*Id Disc*/, GGroup< Sala * > > discSalas;
-
 };
 
 std::ostream & operator << ( std::ostream &, ProblemSolution & );

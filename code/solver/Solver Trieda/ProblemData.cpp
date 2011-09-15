@@ -79,15 +79,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    LE_SEQ( disciplinas, raiz.disciplinas(), Disciplina );
    LE_SEQ( cursos, raiz.cursos(), Curso );
    LE_SEQ( demandas, raiz.demandas(), Demanda );
-
-   int id = 1;
-   Demanda * demanda = NULL;
-   ITERA_GGROUP_LESSPTR( it_demanda, demandas, Demanda )
-   {
-	   demanda = ( *it_demanda );
-	   demanda->setId( id );
-	   id++;
-   }
+   LE_SEQ( alunosDemanda, raiz.alunosDemanda(), AlunoDemanda );
 
    ITERA_SEQ( it_oferta, raiz.ofertaCursosCampi(), OfertaCurso )
    {

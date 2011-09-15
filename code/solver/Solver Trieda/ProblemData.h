@@ -8,6 +8,7 @@
 #include <map>
 
 #include "Calendario.h"
+#include "AlunoDemanda.h"
 #include "TipoSala.h"
 #include "TipoContrato.h"
 #include "TipoTitulacao.h"
@@ -57,6 +58,7 @@ public:
    GGroup< Oferta *, LessPtr< Oferta > > ofertas;
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
+   GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
 
    GGroup< HorarioDia *, LessPtr< HorarioDia > > horariosDia;
    std::vector< HorarioDia * > horariosDiaIdx;

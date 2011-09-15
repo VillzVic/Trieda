@@ -110,6 +110,70 @@ turnos (::std::auto_ptr< turnos_type > x)
 }
 
 
+// ItemAlunoDemanda
+// 
+
+const ItemAlunoDemanda::alunoId_type& ItemAlunoDemanda::
+alunoId () const
+{
+  return this->alunoId_.get ();
+}
+
+ItemAlunoDemanda::alunoId_type& ItemAlunoDemanda::
+alunoId ()
+{
+  return this->alunoId_.get ();
+}
+
+void ItemAlunoDemanda::
+alunoId (const alunoId_type& x)
+{
+  this->alunoId_.set (x);
+}
+
+const ItemAlunoDemanda::nomeAluno_type& ItemAlunoDemanda::
+nomeAluno () const
+{
+  return this->nomeAluno_.get ();
+}
+
+ItemAlunoDemanda::nomeAluno_type& ItemAlunoDemanda::
+nomeAluno ()
+{
+  return this->nomeAluno_.get ();
+}
+
+void ItemAlunoDemanda::
+nomeAluno (const nomeAluno_type& x)
+{
+  this->nomeAluno_.set (x);
+}
+
+void ItemAlunoDemanda::
+nomeAluno (::std::auto_ptr< nomeAluno_type > x)
+{
+  this->nomeAluno_.set (x);
+}
+
+const ItemAlunoDemanda::demandaId_type& ItemAlunoDemanda::
+demandaId () const
+{
+  return this->demandaId_.get ();
+}
+
+ItemAlunoDemanda::demandaId_type& ItemAlunoDemanda::
+demandaId ()
+{
+  return this->demandaId_.get ();
+}
+
+void ItemAlunoDemanda::
+demandaId (const demandaId_type& x)
+{
+  this->demandaId_.set (x);
+}
+
+
 // ItemTurno
 // 
 
@@ -2579,6 +2643,24 @@ receita (const receita_type& x)
 // ItemDemanda
 // 
 
+const ItemDemanda::id_type& ItemDemanda::
+id () const
+{
+  return this->id_.get ();
+}
+
+ItemDemanda::id_type& ItemDemanda::
+id ()
+{
+  return this->id_.get ();
+}
+
+void ItemDemanda::
+id (const id_type& x)
+{
+  this->id_.set (x);
+}
+
 const ItemDemanda::ofertaCursoCampiId_type& ItemDemanda::
 ofertaCursoCampiId () const
 {
@@ -3559,6 +3641,28 @@ void GrupoCalendario::
 Calendario (const Calendario_sequence& s)
 {
   this->Calendario_ = s;
+}
+
+
+// GrupoAlunoDemanda
+// 
+
+const GrupoAlunoDemanda::AlunoDemanda_sequence& GrupoAlunoDemanda::
+AlunoDemanda () const
+{
+  return this->AlunoDemanda_;
+}
+
+GrupoAlunoDemanda::AlunoDemanda_sequence& GrupoAlunoDemanda::
+AlunoDemanda ()
+{
+  return this->AlunoDemanda_;
+}
+
+void GrupoAlunoDemanda::
+AlunoDemanda (const AlunoDemanda_sequence& s)
+{
+  this->AlunoDemanda_ = s;
 }
 
 
@@ -5099,6 +5203,30 @@ demandas (::std::auto_ptr< demandas_type > x)
   this->demandas_.set (x);
 }
 
+const TriedaInput::alunosDemanda_type& TriedaInput::
+alunosDemanda () const
+{
+  return this->alunosDemanda_.get ();
+}
+
+TriedaInput::alunosDemanda_type& TriedaInput::
+alunosDemanda ()
+{
+  return this->alunosDemanda_.get ();
+}
+
+void TriedaInput::
+alunosDemanda (const alunosDemanda_type& x)
+{
+  this->alunosDemanda_.set (x);
+}
+
+void TriedaInput::
+alunosDemanda (::std::auto_ptr< alunosDemanda_type > x)
+{
+  this->alunosDemanda_.set (x);
+}
+
 const TriedaInput::parametrosPlanejamento_type& TriedaInput::
 parametrosPlanejamento () const
 {
@@ -5503,6 +5631,130 @@ _clone (::xml_schema::flags f,
 
 ItemCalendario::
 ~ItemCalendario ()
+{
+}
+
+// ItemAlunoDemanda
+//
+
+ItemAlunoDemanda::
+ItemAlunoDemanda (const alunoId_type& alunoId,
+                  const nomeAluno_type& nomeAluno,
+                  const demandaId_type& demandaId)
+: ::xml_schema::type (),
+  alunoId_ (alunoId, ::xml_schema::flags (), this),
+  nomeAluno_ (nomeAluno, ::xml_schema::flags (), this),
+  demandaId_ (demandaId, ::xml_schema::flags (), this)
+{
+}
+
+ItemAlunoDemanda::
+ItemAlunoDemanda (const ItemAlunoDemanda& x,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  alunoId_ (x.alunoId_, f, this),
+  nomeAluno_ (x.nomeAluno_, f, this),
+  demandaId_ (x.demandaId_, f, this)
+{
+}
+
+ItemAlunoDemanda::
+ItemAlunoDemanda (const ::xercesc::DOMElement& e,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  alunoId_ (f, this),
+  nomeAluno_ (f, this),
+  demandaId_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void ItemAlunoDemanda::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // alunoId
+    //
+    if (n.name () == "alunoId" && n.namespace_ ().empty ())
+    {
+      if (!alunoId_.present ())
+      {
+        this->alunoId_.set (alunoId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // nomeAluno
+    //
+    if (n.name () == "nomeAluno" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< nomeAluno_type > r (
+        nomeAluno_traits::create (i, f, this));
+
+      if (!nomeAluno_.present ())
+      {
+        this->nomeAluno_.set (r);
+        continue;
+      }
+    }
+
+    // demandaId
+    //
+    if (n.name () == "demandaId" && n.namespace_ ().empty ())
+    {
+      if (!demandaId_.present ())
+      {
+        this->demandaId_.set (demandaId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!alunoId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "alunoId",
+      "");
+  }
+
+  if (!nomeAluno_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "nomeAluno",
+      "");
+  }
+
+  if (!demandaId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "demandaId",
+      "");
+  }
+}
+
+ItemAlunoDemanda* ItemAlunoDemanda::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ItemAlunoDemanda (*this, f, c);
+}
+
+ItemAlunoDemanda::
+~ItemAlunoDemanda ()
 {
 }
 
@@ -9632,10 +9884,12 @@ ItemOfertaCurso::
 //
 
 ItemDemanda::
-ItemDemanda (const ofertaCursoCampiId_type& ofertaCursoCampiId,
+ItemDemanda (const id_type& id,
+             const ofertaCursoCampiId_type& ofertaCursoCampiId,
              const disciplinaId_type& disciplinaId,
              const quantidade_type& quantidade)
 : ::xml_schema::type (),
+  id_ (id, ::xml_schema::flags (), this),
   ofertaCursoCampiId_ (ofertaCursoCampiId, ::xml_schema::flags (), this),
   disciplinaId_ (disciplinaId, ::xml_schema::flags (), this),
   quantidade_ (quantidade, ::xml_schema::flags (), this)
@@ -9647,6 +9901,7 @@ ItemDemanda (const ItemDemanda& x,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  id_ (x.id_, f, this),
   ofertaCursoCampiId_ (x.ofertaCursoCampiId_, f, this),
   disciplinaId_ (x.disciplinaId_, f, this),
   quantidade_ (x.quantidade_, f, this)
@@ -9658,6 +9913,7 @@ ItemDemanda (const ::xercesc::DOMElement& e,
              ::xml_schema::flags f,
              ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  id_ (f, this),
   ofertaCursoCampiId_ (f, this),
   disciplinaId_ (f, this),
   quantidade_ (f, this)
@@ -9678,6 +9934,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // id
+    //
+    if (n.name () == "id" && n.namespace_ ().empty ())
+    {
+      if (!id_.present ())
+      {
+        this->id_.set (id_traits::create (i, f, this));
+        continue;
+      }
+    }
 
     // ofertaCursoCampiId
     //
@@ -9713,6 +9980,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!id_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
   }
 
   if (!ofertaCursoCampiId_.present ())
@@ -10931,6 +11205,76 @@ _clone (::xml_schema::flags f,
 
 GrupoCalendario::
 ~GrupoCalendario ()
+{
+}
+
+// GrupoAlunoDemanda
+//
+
+GrupoAlunoDemanda::
+GrupoAlunoDemanda ()
+: ::xml_schema::type (),
+  AlunoDemanda_ (::xml_schema::flags (), this)
+{
+}
+
+GrupoAlunoDemanda::
+GrupoAlunoDemanda (const GrupoAlunoDemanda& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  AlunoDemanda_ (x.AlunoDemanda_, f, this)
+{
+}
+
+GrupoAlunoDemanda::
+GrupoAlunoDemanda (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  AlunoDemanda_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void GrupoAlunoDemanda::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // AlunoDemanda
+    //
+    if (n.name () == "AlunoDemanda" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< AlunoDemanda_type > r (
+        AlunoDemanda_traits::create (i, f, this));
+
+      this->AlunoDemanda_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+GrupoAlunoDemanda* GrupoAlunoDemanda::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class GrupoAlunoDemanda (*this, f, c);
+}
+
+GrupoAlunoDemanda::
+~GrupoAlunoDemanda ()
 {
 }
 
@@ -14134,6 +14478,7 @@ TriedaInput (const calendarios_type& calendarios,
              const cursos_type& cursos,
              const ofertaCursosCampi_type& ofertaCursosCampi,
              const demandas_type& demandas,
+             const alunosDemanda_type& alunosDemanda,
              const parametrosPlanejamento_type& parametrosPlanejamento,
              const fixacoes_type& fixacoes)
 : ::xml_schema::type (),
@@ -14153,6 +14498,7 @@ TriedaInput (const calendarios_type& calendarios,
   cursos_ (cursos, ::xml_schema::flags (), this),
   ofertaCursosCampi_ (ofertaCursosCampi, ::xml_schema::flags (), this),
   demandas_ (demandas, ::xml_schema::flags (), this),
+  alunosDemanda_ (alunosDemanda, ::xml_schema::flags (), this),
   parametrosPlanejamento_ (parametrosPlanejamento, ::xml_schema::flags (), this),
   fixacoes_ (fixacoes, ::xml_schema::flags (), this),
   atendimentosTatico_ (::xml_schema::flags (), this)
@@ -14176,6 +14522,7 @@ TriedaInput (::std::auto_ptr< calendarios_type >& calendarios,
              ::std::auto_ptr< cursos_type >& cursos,
              ::std::auto_ptr< ofertaCursosCampi_type >& ofertaCursosCampi,
              ::std::auto_ptr< demandas_type >& demandas,
+             ::std::auto_ptr< alunosDemanda_type >& alunosDemanda,
              ::std::auto_ptr< parametrosPlanejamento_type >& parametrosPlanejamento,
              ::std::auto_ptr< fixacoes_type >& fixacoes)
 : ::xml_schema::type (),
@@ -14195,6 +14542,7 @@ TriedaInput (::std::auto_ptr< calendarios_type >& calendarios,
   cursos_ (cursos, ::xml_schema::flags (), this),
   ofertaCursosCampi_ (ofertaCursosCampi, ::xml_schema::flags (), this),
   demandas_ (demandas, ::xml_schema::flags (), this),
+  alunosDemanda_ (alunosDemanda, ::xml_schema::flags (), this),
   parametrosPlanejamento_ (parametrosPlanejamento, ::xml_schema::flags (), this),
   fixacoes_ (fixacoes, ::xml_schema::flags (), this),
   atendimentosTatico_ (::xml_schema::flags (), this)
@@ -14222,6 +14570,7 @@ TriedaInput (const TriedaInput& x,
   cursos_ (x.cursos_, f, this),
   ofertaCursosCampi_ (x.ofertaCursosCampi_, f, this),
   demandas_ (x.demandas_, f, this),
+  alunosDemanda_ (x.alunosDemanda_, f, this),
   parametrosPlanejamento_ (x.parametrosPlanejamento_, f, this),
   fixacoes_ (x.fixacoes_, f, this),
   atendimentosTatico_ (x.atendimentosTatico_, f, this)
@@ -14249,6 +14598,7 @@ TriedaInput (const ::xercesc::DOMElement& e,
   cursos_ (f, this),
   ofertaCursosCampi_ (f, this),
   demandas_ (f, this),
+  alunosDemanda_ (f, this),
   parametrosPlanejamento_ (f, this),
   fixacoes_ (f, this),
   atendimentosTatico_ (f, this)
@@ -14494,6 +14844,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // alunosDemanda
+    //
+    if (n.name () == "alunosDemanda" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< alunosDemanda_type > r (
+        alunosDemanda_traits::create (i, f, this));
+
+      if (!alunosDemanda_.present ())
+      {
+        this->alunosDemanda_.set (r);
+        continue;
+      }
+    }
+
     // parametrosPlanejamento
     //
     if (n.name () == "parametrosPlanejamento" && n.namespace_ ().empty ())
@@ -14648,6 +15012,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "demandas",
+      "");
+  }
+
+  if (!alunosDemanda_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "alunosDemanda",
       "");
   }
 

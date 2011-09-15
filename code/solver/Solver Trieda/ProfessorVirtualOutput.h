@@ -18,17 +18,17 @@ public:
 
 	GGroup< int > disciplinas;
 
-	void setId(int value) { id = value; }
-	void setChMin(int value) { ch_min = value; }
-	void setChMax(int value) { ch_max = value; }
-	void setTitulacaoId(int value) { titulacao_id = value; }
-	void setAreaTitulacaoId(int value) { area_titulacao_id = value; }
+	void setId( int value ) { id = value; }
+	void setChMin( int value ) { ch_min = value; }
+	void setChMax( int value ) { ch_max = value; }
+	void setTitulacaoId( int value ) { titulacao_id = value; }
+	void setAreaTitulacaoId( int value ) { area_titulacao_id = value; }
 
-	int getId() { return id; }
-	int getChMin() { return ch_min; }
-	int getChMax() { return ch_max; }
-	int getTitulacaoId() { return titulacao_id; }
-	int getAreaTitulacaoId() { return area_titulacao_id; }
+	int getId() const { return id; }
+	int getChMin() const { return ch_min; }
+	int getChMax() const { return ch_max; }
+	int getTitulacaoId() const { return titulacao_id; }
+	int getAreaTitulacaoId() const { return area_titulacao_id; }
 
 private:
 	int id;

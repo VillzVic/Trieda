@@ -222,6 +222,7 @@ namespace xml_schema
 // Forward declarations.
 //
 class ItemCalendario;
+class ItemAlunoDemanda;
 class ItemTurno;
 class ItemHorarioAula;
 class ItemTipoSala;
@@ -251,6 +252,7 @@ class ItemFixacao;
 class ItemParametrosPlanejamento;
 class ItemNivelDificuldadeHorario;
 class GrupoCalendario;
+class GrupoAlunoDemanda;
 class GrupoTurno;
 class GrupoHorarioAula;
 class GrupoDiaSemana;
@@ -395,6 +397,88 @@ class ItemCalendario: public ::xml_schema::type
   ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< codigo_type > codigo_;
   ::xsd::cxx::tree::one< turnos_type > turnos_;
+};
+
+class ItemAlunoDemanda: public ::xml_schema::type
+{
+  public:
+  // alunoId
+  // 
+  typedef ::xml_schema::int_ alunoId_type;
+  typedef ::xsd::cxx::tree::traits< alunoId_type, char > alunoId_traits;
+
+  const alunoId_type&
+  alunoId () const;
+
+  alunoId_type&
+  alunoId ();
+
+  void
+  alunoId (const alunoId_type& x);
+
+  // nomeAluno
+  // 
+  typedef ::xml_schema::string nomeAluno_type;
+  typedef ::xsd::cxx::tree::traits< nomeAluno_type, char > nomeAluno_traits;
+
+  const nomeAluno_type&
+  nomeAluno () const;
+
+  nomeAluno_type&
+  nomeAluno ();
+
+  void
+  nomeAluno (const nomeAluno_type& x);
+
+  void
+  nomeAluno (::std::auto_ptr< nomeAluno_type > p);
+
+  // demandaId
+  // 
+  typedef ::xml_schema::int_ demandaId_type;
+  typedef ::xsd::cxx::tree::traits< demandaId_type, char > demandaId_traits;
+
+  const demandaId_type&
+  demandaId () const;
+
+  demandaId_type&
+  demandaId ();
+
+  void
+  demandaId (const demandaId_type& x);
+
+  // Constructors.
+  //
+  ItemAlunoDemanda (const alunoId_type&,
+                    const nomeAluno_type&,
+                    const demandaId_type&);
+
+  ItemAlunoDemanda (const ::xercesc::DOMElement& e,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
+
+  ItemAlunoDemanda (const ItemAlunoDemanda& x,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
+
+  virtual ItemAlunoDemanda*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemAlunoDemanda ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< alunoId_type > alunoId_;
+  ::xsd::cxx::tree::one< nomeAluno_type > nomeAluno_;
+  ::xsd::cxx::tree::one< demandaId_type > demandaId_;
 };
 
 class ItemTurno: public ::xml_schema::type
@@ -3210,6 +3294,20 @@ class ItemOfertaCurso: public ::xml_schema::type
 class ItemDemanda: public ::xml_schema::type
 {
   public:
+  // id
+  // 
+  typedef ::xml_schema::int_ id_type;
+  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+
+  const id_type&
+  id () const;
+
+  id_type&
+  id ();
+
+  void
+  id (const id_type& x);
+
   // ofertaCursoCampiId
   // 
   typedef ::xml_schema::int_ ofertaCursoCampiId_type;
@@ -3254,7 +3352,8 @@ class ItemDemanda: public ::xml_schema::type
 
   // Constructors.
   //
-  ItemDemanda (const ofertaCursoCampiId_type&,
+  ItemDemanda (const id_type&,
+               const ofertaCursoCampiId_type&,
                const disciplinaId_type&,
                const quantidade_type&);
 
@@ -3281,6 +3380,7 @@ class ItemDemanda: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
+  ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< ofertaCursoCampiId_type > ofertaCursoCampiId_;
   ::xsd::cxx::tree::one< disciplinaId_type > disciplinaId_;
   ::xsd::cxx::tree::one< quantidade_type > quantidade_;
@@ -4207,6 +4307,56 @@ class GrupoCalendario: public ::xml_schema::type
 
   protected:
   Calendario_sequence Calendario_;
+};
+
+class GrupoAlunoDemanda: public ::xml_schema::type
+{
+  public:
+  // AlunoDemanda
+  // 
+  typedef ::ItemAlunoDemanda AlunoDemanda_type;
+  typedef ::xsd::cxx::tree::sequence< AlunoDemanda_type > AlunoDemanda_sequence;
+  typedef AlunoDemanda_sequence::iterator AlunoDemanda_iterator;
+  typedef AlunoDemanda_sequence::const_iterator AlunoDemanda_const_iterator;
+  typedef ::xsd::cxx::tree::traits< AlunoDemanda_type, char > AlunoDemanda_traits;
+
+  const AlunoDemanda_sequence&
+  AlunoDemanda () const;
+
+  AlunoDemanda_sequence&
+  AlunoDemanda ();
+
+  void
+  AlunoDemanda (const AlunoDemanda_sequence& s);
+
+  // Constructors.
+  //
+  GrupoAlunoDemanda ();
+
+  GrupoAlunoDemanda (const ::xercesc::DOMElement& e,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  GrupoAlunoDemanda (const GrupoAlunoDemanda& x,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  virtual GrupoAlunoDemanda*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoAlunoDemanda ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  AlunoDemanda_sequence AlunoDemanda_;
 };
 
 class GrupoTurno: public ::xml_schema::type
@@ -6704,6 +6854,23 @@ class TriedaInput: public ::xml_schema::type
   void
   demandas (::std::auto_ptr< demandas_type > p);
 
+  // alunosDemanda
+  // 
+  typedef ::GrupoAlunoDemanda alunosDemanda_type;
+  typedef ::xsd::cxx::tree::traits< alunosDemanda_type, char > alunosDemanda_traits;
+
+  const alunosDemanda_type&
+  alunosDemanda () const;
+
+  alunosDemanda_type&
+  alunosDemanda ();
+
+  void
+  alunosDemanda (const alunosDemanda_type& x);
+
+  void
+  alunosDemanda (::std::auto_ptr< alunosDemanda_type > p);
+
   // parametrosPlanejamento
   // 
   typedef ::ItemParametrosPlanejamento parametrosPlanejamento_type;
@@ -6777,6 +6944,7 @@ class TriedaInput: public ::xml_schema::type
                const cursos_type&,
                const ofertaCursosCampi_type&,
                const demandas_type&,
+               const alunosDemanda_type&,
                const parametrosPlanejamento_type&,
                const fixacoes_type&);
 
@@ -6796,6 +6964,7 @@ class TriedaInput: public ::xml_schema::type
                ::std::auto_ptr< cursos_type >&,
                ::std::auto_ptr< ofertaCursosCampi_type >&,
                ::std::auto_ptr< demandas_type >&,
+               ::std::auto_ptr< alunosDemanda_type >&,
                ::std::auto_ptr< parametrosPlanejamento_type >&,
                ::std::auto_ptr< fixacoes_type >&);
 
@@ -6838,6 +7007,7 @@ class TriedaInput: public ::xml_schema::type
   ::xsd::cxx::tree::one< cursos_type > cursos_;
   ::xsd::cxx::tree::one< ofertaCursosCampi_type > ofertaCursosCampi_;
   ::xsd::cxx::tree::one< demandas_type > demandas_;
+  ::xsd::cxx::tree::one< alunosDemanda_type > alunosDemanda_;
   ::xsd::cxx::tree::one< parametrosPlanejamento_type > parametrosPlanejamento_;
   ::xsd::cxx::tree::one< fixacoes_type > fixacoes_;
   atendimentosTatico_optional atendimentosTatico_;

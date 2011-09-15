@@ -301,6 +301,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AlunoDemanda.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="AreaTitulacao.cpp" />
     <ClCompile Include="AtendimentoCampusSolucao.cpp" />
@@ -393,6 +394,7 @@
     <ClCompile Include="TRIEDA-OutputXSD.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlunoDemanda.h" />
     <ClInclude Include="AreaTitulacao.h" />
     <ClInclude Include="AtendimentoCampusSolucao.h" />
     <ClInclude Include="AtendimentoDiaSemanaSolucao.h" />
