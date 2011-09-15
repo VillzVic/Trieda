@@ -205,34 +205,26 @@ public class InstituicaoEnsino
 	@Override
 	public boolean equals( Object obj )
 	{
-		if ( obj == null )
-		{
-			return false;
-		}
-
-		if ( !( obj instanceof InstituicaoEnsino ) )
+		if ( obj == null || !( obj instanceof InstituicaoEnsino ) )
 		{
 			return false;
 		}
 
 		InstituicaoEnsino other = (InstituicaoEnsino) obj;
 
-		if ( this.getId() == null )
+		if ( id == null )
 		{
-			if ( other.getId() != null )
+			if ( other.id != null )
 			{
 				return false;
 			}
 		}
-		else
+		else if ( !id.equals( other.id ) )
 		{
-			if ( other.getId() == null )
-			{
-				return false;
-			}
+			return false;
 		}
 
-		return this.getId().equals( other.getId() );
+		return true;
 	}
 
 	@Override

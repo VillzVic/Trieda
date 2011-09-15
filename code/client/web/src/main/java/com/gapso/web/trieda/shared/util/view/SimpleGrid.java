@@ -32,7 +32,6 @@ public class SimpleGrid< M extends BaseModel >
 	private PagingLoader< PagingLoadResult< ModelData > > loader;
 	private List< ColumnConfig > columnList;
 	private List< ComponentPlugin > plugins = new ArrayList< ComponentPlugin >();
-
 	private ITriedaI18nGateway i18nGateway;
 
 	public SimpleGrid( List< ColumnConfig > columnList,
@@ -50,67 +49,82 @@ public class SimpleGrid< M extends BaseModel >
 	{
 		super.beforeRender();
 
-		loader = new BasePagingLoader< PagingLoadResult< ModelData > >( proxy );
-		loader.setRemoteSort( true );
+		this.loader = new BasePagingLoader< PagingLoadResult< ModelData > >( this.proxy );
+		this.loader.setRemoteSort( true );
 
-		ListStore< M > store = new ListStore< M >( loader );  
+		ListStore< M > store = new ListStore< M >( this.loader );  
 
-		grid = new Grid<M>(store, new ColumnModel(columnList));
-		grid.setStripeRows(true);
-		grid.setBorders(true);
-		grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
-		for(ComponentPlugin plugin : plugins) {
-			grid.addPlugin(plugin);
+		this.grid = new Grid< M >( store, new ColumnModel( this.columnList ) );
+		this.grid.setStripeRows( true );
+		this.grid.setBorders( true );
+		this.grid.getSelectionModel().setSelectionMode( SelectionMode.MULTI );
+
+		for( ComponentPlugin plugin : plugins )
+		{
+			this.grid.addPlugin(plugin);
 		}
-		grid.setBorders(false);
+
+		this.grid.setBorders( false );
 		pagingPanel();
 		addLoadingListener();
-		add(grid);
+		add( this.grid );
 	}
 
-	private void addLoadingListener() {
-		loader.addLoadListener(new LoadListener() {
+	private void addLoadingListener()
+	{
+		this.loader.addLoadListener( new LoadListener()
+		{
 			@Override
-			public void loaderBeforeLoad(LoadEvent le) {
-				grid.mask(i18nGateway.getI18nMessages().loading(), "loading");
+			public void loaderBeforeLoad( LoadEvent le )
+			{
+				grid.mask( i18nGateway.getI18nMessages().loading(), "loading" );
 			}
+
 			@Override
-			public void loaderLoad(LoadEvent le) {
+			public void loaderLoad( LoadEvent le )
+			{
 				grid.unmask();
 			}
 		});
 	}
-	
+
 	@Override
-	protected void onRender(Element parent, int pos) {
-		super.onRender(parent, pos);
-		loader.load();
+	protected void onRender( Element parent, int pos )
+	{
+		super.onRender( parent, pos );
+		this.loader.load();
 	}
 
-	public Grid<M> getGrid() {
-		return grid;
+	public Grid< M > getGrid()
+	{
+		return this.grid;
 	}
-	
-	public void updateList() {
-		loader.load();
+
+	public void updateList()
+	{
+		this.loader.load();
 	}
-	
-	public void addPlugin(ComponentPlugin plugin) {
-		this.plugins.add(plugin);
+
+	public void addPlugin( ComponentPlugin plugin )
+	{
+		this.plugins.add( plugin );
 	}
-	
-	private void pagingPanel() {
-		PagingToolBar paggingToolBar = new PagingToolBar(25);
-		paggingToolBar.bind(loader);
-		setBottomComponent(paggingToolBar);
+
+	private void pagingPanel()
+	{
+		PagingToolBar paggingToolBar = new PagingToolBar( 25 );
+		paggingToolBar.bind( this.loader );
+		setBottomComponent( paggingToolBar );
 	}
-	
-	public GridSelectionModel<M> getSelectionModel() {
-		return grid.getSelectionModel();
+
+	public GridSelectionModel< M > getSelectionModel()
+	{
+		return this.grid.getSelectionModel();
 	}
-	
-	public void setProxy(RpcProxy<PagingLoadResult<M>> proxy) {
+
+	public void setProxy(
+		RpcProxy< PagingLoadResult< M > > proxy )
+	{
 		this.proxy = proxy;
 	}
-	
 }

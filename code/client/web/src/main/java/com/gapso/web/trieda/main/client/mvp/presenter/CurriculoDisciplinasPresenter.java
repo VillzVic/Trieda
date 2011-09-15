@@ -24,21 +24,24 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CurriculoDisciplinasPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class CurriculoDisciplinasPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getRemoveButton();
 		CurriculoDTO getCurriculoDTO();
-		Grid<CurriculoDisciplinaDTO> getGrid();
+		Grid< CurriculoDisciplinaDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<ListLoadResult<CurriculoDisciplinaDTO>> proxy);
+		void setProxy( RpcProxy< ListLoadResult< CurriculoDisciplinaDTO > > proxy );
 	}
-	
+
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private GTab gTab;
-	
+
 	public CurriculoDisciplinasPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
 	{
@@ -49,13 +52,19 @@ public class CurriculoDisciplinasPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final CurriculosServiceAsync service = Services.curriculos();
-		RpcProxy<ListLoadResult<CurriculoDisciplinaDTO>> proxy = new RpcProxy<ListLoadResult<CurriculoDisciplinaDTO>>() {
+
+		RpcProxy< ListLoadResult< CurriculoDisciplinaDTO > > proxy =
+			new RpcProxy< ListLoadResult< CurriculoDisciplinaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CurriculoDisciplinaDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< ListLoadResult< CurriculoDisciplinaDTO > > callback )
+			{
 				CurriculoDTO curriculoDTO = display.getCurriculoDTO();
-				service.getDisciplinasList(curriculoDTO, callback);
+				service.getDisciplinasList( curriculoDTO, callback );
 			}
 		};
 
@@ -77,26 +86,34 @@ public class CurriculoDisciplinasPresenter implements Presenter {
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<CurriculoDisciplinaDTO> list = display.getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
 				final CurriculosServiceAsync service = Services.curriculos();
-				service.removeDisciplina(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+				List< CurriculoDisciplinaDTO > list
+					= display.getGrid().getSelectionModel().getSelectedItems();
+
+				service.removeDisciplina( list,
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().getStore().getLoader().load();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display( "Removido", "Item removido com sucesso!" );
 					}
 				});
 			}
 		});
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		gTab = (GTab) widget;
+		gTab.add( (GTabItem) display.getComponent() );
+	}
 }

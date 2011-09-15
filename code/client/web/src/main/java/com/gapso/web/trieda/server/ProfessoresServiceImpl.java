@@ -230,6 +230,7 @@ public class ProfessoresServiceImpl
 		onlyAdministrador();
 
 		Professor professor = ConvertBeans.toProfessor( professorDTO );
+
 		if ( professor.getId() != null && professor.getId() > 0 )
 		{
 			professor.merge();

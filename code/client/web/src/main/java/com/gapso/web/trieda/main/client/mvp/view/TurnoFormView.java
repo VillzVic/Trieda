@@ -12,8 +12,10 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
-public class TurnoFormView extends MyComposite implements TurnoFormPresenter.Display {
-
+public class TurnoFormView
+	extends MyComposite
+	implements TurnoFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private TextField<String> nomeTF;

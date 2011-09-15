@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.server;
 
+import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -41,6 +42,7 @@ public class UniquesServiceImpl
 			case CURSO: exist = checkCurso( cenario, value ); break;
 			case SEMANA_LETIVA: exist = checkSemanaLetiva( cenario, value ); break;
 			case PROFESSOR: exist = checkProfessor( cenario, value ); break;
+			case ALUNO: exist = checkAluno( cenario, value ); break;
 			case DISCIPLINA: exist = checkDisciplina( cenario, value ); break;
 			case MATRIZ_CURRICULAR: exist = checkMatrizCurricular( cenario, value ); break;
 			case USUARIO: exist = checkUsuario( cenario, value ); break;
@@ -49,7 +51,8 @@ public class UniquesServiceImpl
 		return exist;
 	}
 
-	private Boolean checkCampus(Cenario cenario, String value) {
+	private Boolean checkCampus( Cenario cenario, String value )
+	{
 		return Campus.checkCodigoUnique(
 			this.getInstituicaoEnsinoUser(), cenario, value);
 	}
@@ -66,8 +69,10 @@ public class UniquesServiceImpl
 			getInstituicaoEnsinoUser() ,cenario, value );
 	}
 
-	private Boolean checkGrupoSala(Cenario cenario, String value) {
-		return GrupoSala.checkCodigoUnique( getInstituicaoEnsinoUser(), cenario, value );
+	private Boolean checkGrupoSala( Cenario cenario, String value )
+	{
+		return GrupoSala.checkCodigoUnique(
+			getInstituicaoEnsinoUser(), cenario, value );
 	}
 
 	private Boolean checkCurso( Cenario cenario, String value )
@@ -82,8 +87,16 @@ public class UniquesServiceImpl
 			getInstituicaoEnsinoUser(), cenario, value );
 	}
 
-	private Boolean checkProfessor(Cenario cenario, String value) {
-		return Professor.checkCodigoUnique( getInstituicaoEnsinoUser(), cenario, value);
+	private Boolean checkProfessor( Cenario cenario, String value )
+	{
+		return Professor.checkCodigoUnique(
+			getInstituicaoEnsinoUser(), cenario, value);
+	}
+
+	private Boolean checkAluno( Cenario cenario, String value )
+	{
+		return Aluno.checkCodigoUnique(
+			getInstituicaoEnsinoUser(), cenario, value );
 	}
 
 	private Boolean checkDisciplina( Cenario cenario, String value )

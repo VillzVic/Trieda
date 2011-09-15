@@ -16,42 +16,59 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
+public class DisciplinaComboBox
+	extends ComboBox< DisciplinaDTO >
+{
+	private ListStore< DisciplinaDTO > store;
 
-	private ListStore<DisciplinaDTO> store;
-	
-	public DisciplinaComboBox() {
-		this(false);
+	public DisciplinaComboBox()
+	{
+		this( false );
 	}
-	public DisciplinaComboBox(boolean readOnly) {
-		setReadOnly(readOnly);
-		
-		if(!readOnly) {
-			RpcProxy<ListLoadResult<DisciplinaDTO>> proxy = new RpcProxy<ListLoadResult<DisciplinaDTO>>() {
+
+	public DisciplinaComboBox( boolean readOnly )
+	{
+		setReadOnly( readOnly );
+
+		if ( !readOnly )
+		{
+			RpcProxy< ListLoadResult< DisciplinaDTO > > proxy =
+				new RpcProxy< ListLoadResult< DisciplinaDTO > >()
+			{
 				@Override
-				public void load(Object loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback) {
-					Services.disciplinas().getList((BasePagingLoadConfig)loadConfig, callback);
+				public void load( Object loadConfig,
+					AsyncCallback< ListLoadResult< DisciplinaDTO > > callback )
+				{
+					Services.disciplinas().getList( (BasePagingLoadConfig) loadConfig, callback );
 				}
 			};
-			ListLoader<BaseListLoadResult<DisciplinaDTO>> load = new BaseListLoader<BaseListLoadResult<DisciplinaDTO>>(proxy);
-			load.addListener(Loader.BeforeLoad, new Listener<LoadEvent>() {
-				public void handleEvent(LoadEvent be) {
-					be.<ModelData> getConfig().set("offset", 0);
-					be.<ModelData> getConfig().set("limit", 10);
+
+			ListLoader< BaseListLoadResult< DisciplinaDTO > > load
+				= new BaseListLoader< BaseListLoadResult< DisciplinaDTO > >( proxy );
+
+			load.addListener( Loader.BeforeLoad, new Listener< LoadEvent >()
+			{
+				public void handleEvent( LoadEvent be )
+				{
+					be.< ModelData > getConfig().set( "offset", 0 );
+					be.< ModelData > getConfig().set( "limit", 10 );
 				}
 			});
-			store = new ListStore<DisciplinaDTO>(load);
-		} else {
-			store = new ListStore<DisciplinaDTO>();
+
+			store = new ListStore< DisciplinaDTO >( load );
 		}
-		
-		setFieldLabel("Disciplina");
-		setDisplayField(DisciplinaDTO.PROPERTY_CODIGO);
-		setStore(store);
-		setHideTrigger(true);  
-		setTriggerAction(TriggerAction.QUERY);
-		setTemplate(getTemplateCB());
-		setMinChars(1);
+		else
+		{
+			store = new ListStore< DisciplinaDTO >();
+		}
+
+		setFieldLabel( "Disciplina" );
+		setDisplayField( DisciplinaDTO.PROPERTY_CODIGO );
+		setStore( store );
+		setHideTrigger( true );  
+		setTriggerAction( TriggerAction.QUERY );
+		setTemplate( getTemplateCB() );
+		setMinChars( 1 );
 	}
 
 	private native String getTemplateCB() /*-{
@@ -61,5 +78,4 @@ public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 			'</tpl>'
 		].join("");
 	}-*/;
-	
 }

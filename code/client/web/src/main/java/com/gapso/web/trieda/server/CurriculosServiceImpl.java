@@ -24,7 +24,8 @@ import com.gapso.web.trieda.shared.services.CurriculosService;
 
 @Transactional
 public class CurriculosServiceImpl
-	extends RemoteService implements CurriculosService
+	extends RemoteService
+	implements CurriculosService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
 
@@ -52,7 +53,7 @@ public class CurriculosServiceImpl
 
 		return new BaseListLoadResult< CurriculoDTO >( curriculosDTO );
 	}
-	
+
 	@Override
 	public ListLoadResult< CurriculoDTO > getListByCurso( CursoDTO cursoDTO )
 	{
@@ -71,11 +72,13 @@ public class CurriculosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult<CurriculoDTO> getList(BasePagingLoadConfig config) {
-		CursoDTO cursoDTO = config.get("cursoDTO");
-		return getBuscaList(cursoDTO, config.get("query").toString(), null, config);
+	public ListLoadResult< CurriculoDTO > getList( BasePagingLoadConfig config )
+	{
+		CursoDTO cursoDTO = config.get( "cursoDTO" );
+
+		return getBuscaList( cursoDTO, config.get( "query" ).toString(), null, config );
 	}
-	
+
 	@Override
 	public PagingLoadResult< CurriculoDTO > getBuscaList( CursoDTO cursoDTO,
 		String codigo, String descricao, PagingLoadConfig config )
@@ -136,12 +139,14 @@ public class CurriculosServiceImpl
 	}
 
 	@Override
-	public void remove(List<CurriculoDTO> curriculoDTOList) {
-		for(CurriculoDTO curriculoDTO : curriculoDTOList) {
-			ConvertBeans.toCurriculo(curriculoDTO).remove();
+	public void remove( List< CurriculoDTO > curriculoDTOList )
+	{
+		for ( CurriculoDTO curriculoDTO : curriculoDTOList )
+		{
+			ConvertBeans.toCurriculo( curriculoDTO ).remove();
 		}
 	}
-	
+
 	@Override
 	public ListLoadResult< CurriculoDisciplinaDTO > getDisciplinasList( CurriculoDTO curriculoDTO )
 	{
@@ -161,7 +166,7 @@ public class CurriculosServiceImpl
 
 		return new BaseListLoadResult< CurriculoDisciplinaDTO >( listCurriculoDisciplinaDTO );
 	}
-	
+
 	@Override
 	public List< Integer > getPeriodos( CurriculoDTO curriculoDTO )
 	{
@@ -175,7 +180,7 @@ public class CurriculosServiceImpl
 
 		return curriculo.getPeriodos( getInstituicaoEnsinoUser() );
 	}
-	
+
 	@Override
 	public void saveDisciplina( CurriculoDTO curriculoDTO,
 		CurriculoDisciplinaDTO curriculoDisciplinaDTO )
@@ -189,12 +194,13 @@ public class CurriculosServiceImpl
 		curriculoDisciplina.setCurriculo( curriculo );
 		curriculoDisciplina.persist();
 	}
-	
+
 	@Override
-	public void removeDisciplina(List<CurriculoDisciplinaDTO> curriculoDisciplinaDTOList) {
-		for(CurriculoDisciplinaDTO curriculoDisciplinaDTO : curriculoDisciplinaDTOList) {
-			ConvertBeans.toCurriculoDisciplina(curriculoDisciplinaDTO).remove();
+	public void removeDisciplina( List< CurriculoDisciplinaDTO > curriculoDisciplinaDTOList )
+	{
+		for ( CurriculoDisciplinaDTO curriculoDisciplinaDTO : curriculoDisciplinaDTOList )
+		{
+			ConvertBeans.toCurriculoDisciplina( curriculoDisciplinaDTO ).remove();
 		}
 	}
-	
 }

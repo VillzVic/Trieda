@@ -352,11 +352,16 @@ public class CampiServiceImpl extends RemoteService
 	}
 
 	@Override
-	public void save(CampusDTO campusDTO) {
-		Campus campus = ConvertBeans.toCampus(campusDTO);
-		if (campus.getId() != null && campus.getId() > 0) {
+	public void save( CampusDTO campusDTO )
+	{
+		Campus campus = ConvertBeans.toCampus( campusDTO );
+
+		if ( campus.getId() != null && campus.getId() > 0 )
+		{
 			campus.merge();
-		} else {
+		}
+		else
+		{
 			campus.persist();
 		}
 	}

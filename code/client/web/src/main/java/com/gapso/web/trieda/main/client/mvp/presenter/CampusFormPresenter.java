@@ -52,6 +52,7 @@ public class CampusFormPresenter
 		this( cenario, display, null );
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 	}
+
 	public CampusFormPresenter( CenarioDTO cenario,
 		Display display, SimpleGrid< CampusDTO > gridPanel )
 	{
@@ -66,20 +67,30 @@ public class CampusFormPresenter
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
+				if ( isValid() )
+				{
 					final CampiServiceAsync service = Services.campi();
-					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+
+					service.save( getDTO(),
+						new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+					{
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess( Void result )
+						{
 							display.getSimpleModal().hide();
-							if(gridPanel != null) {
+
+							if ( gridPanel != null )
+							{
 								gridPanel.updateList();
 							}
-							Info.display("Salvo", "Item salvo com sucesso!");
+
+							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
 				}
 			}
 		});

@@ -30,8 +30,8 @@ public class ProfessorFormPresenter
 {
 	public interface Display
 	{
-		TextField<String> getCpfTextField();
-		TextField<String> getNomeTextField();
+		TextField< String > getCpfTextField();
+		TextField< String > getNomeTextField();
 		TipoContratoComboBox getTipoContratoComboBox();
 		NumberField getCargaHorariaMaxNumberField();
 		NumberField getCargaHorariaMinNumberField();
@@ -69,7 +69,8 @@ public class ProfessorFormPresenter
 
 	private void setListeners()
 	{
-		display.getSalvarButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -96,7 +97,7 @@ public class ProfessorFormPresenter
 								gridPanel.updateList();
 							}
 
-							Info.display("Salvo", "Item salvo com sucesso!");
+							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
 				}

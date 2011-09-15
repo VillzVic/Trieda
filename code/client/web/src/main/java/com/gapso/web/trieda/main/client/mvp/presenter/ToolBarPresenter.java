@@ -7,6 +7,8 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
+import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
@@ -43,6 +45,7 @@ import com.gapso.web.trieda.main.client.mvp.view.UnidadesDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.UnidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
+import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -106,6 +109,9 @@ public class ToolBarPresenter
 		Button getEquivalenciasListDisciplinasButton();
 		Button getCompatibilidadesListDisciplinasButton();
 
+		Button getAlunosNovoAlunoButton();
+		Button getAlunosListAlunosButton();
+
 		Button getProfessoresNovoProfessoresButton();
 		Button getProfessoresListProfessoresButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
@@ -150,6 +156,32 @@ public class ToolBarPresenter
 
 	private void addListeners()
 	{
+		toolBar.getAlunosNovoAlunoButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new AlunosFormPresenter( instituicaoEnsinoDTO,
+					cenarioDTO, new AlunosFormView( cenarioDTO, new AlunoDTO() ) );
+
+				presenter.go( null );
+			}
+		});
+
+		toolBar.getAlunosListAlunosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new AlunosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new AlunosView() );
+
+				presenter.go( gTab );
+			}
+		});
+
 		toolBar.getTurnosListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
@@ -557,9 +589,12 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getImportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getImportarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			// Fazendo com que importe todos dados do masterdata.
 			// Lembrando que uma importação nunca exclui dados, apenas modifica e adiciona
+
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
@@ -573,7 +608,9 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getExportarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		toolBar.getExportarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			// Fazendo com que exporte todos dados do masterdata.
 			@Override
 			public void componentSelected( ButtonEvent ce )

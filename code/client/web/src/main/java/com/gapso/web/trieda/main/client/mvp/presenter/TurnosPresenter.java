@@ -73,6 +73,7 @@ public class TurnosPresenter
 			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				Number tempo = display.getTempoBuscaTextField().getValue();
+
 				service.getBuscaList( nome, ( tempo == null ) ? null :
 					tempo.intValue(), (PagingLoadConfig) loadConfig, callback );
 			}

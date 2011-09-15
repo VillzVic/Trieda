@@ -871,7 +871,8 @@ public class Campus implements Serializable, Comparable< Campus >
 			|| isOtimizadoOperacional( instituicaoEnsino ) );
 	}
 
-	public static boolean checkCodigoUnique( InstituicaoEnsino instituicaoEnsino,
+	public static boolean checkCodigoUnique(
+		InstituicaoEnsino instituicaoEnsino,
 		Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(

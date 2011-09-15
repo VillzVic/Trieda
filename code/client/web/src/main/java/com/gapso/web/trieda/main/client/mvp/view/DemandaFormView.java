@@ -21,19 +21,18 @@ import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
-public class DemandaFormView extends MyComposite implements
-		DemandaFormPresenter.Display {
-
+public class DemandaFormView
+	extends MyComposite
+	implements DemandaFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-
 	private CampusComboBox campusCB;
 	private CursoComboBox cursoCB;
 	private CurriculoComboBox curriculoCB;
 	private TurnoComboBox turnoCB;
 	private DisciplinaComboBox disciplinaCB;
 	private NumberField demandaTF;
-
 	private DemandaDTO demandaDTO;
 	private CampusDTO campusDTO;
 	private CursoDTO cursoDTO;
@@ -41,124 +40,150 @@ public class DemandaFormView extends MyComposite implements
 	private TurnoDTO turnoDTO;
 	private DisciplinaDTO disciplinaDTO;
 
-	public DemandaFormView(DemandaDTO demandaDTO, CampusDTO campusDTO,
-			CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO,
-			DisciplinaDTO disciplinaDTO) {
+	public DemandaFormView( DemandaDTO demandaDTO,
+		CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
+		TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO )
+	{
 		this.demandaDTO = demandaDTO;
 		this.campusDTO = campusDTO;
 		this.cursoDTO = cursoDTO;
 		this.curriculoDTO = curriculoDTO;
 		this.turnoDTO = turnoDTO;
 		this.disciplinaDTO = disciplinaDTO;
+
 		initUI();
 	}
 
-	private void initUI() {
-		String title = (demandaDTO.getId() == null) ? "Inserção de Demanda"
-				: "Edição de Demanda";
-		simpleModal = new SimpleModal(title, Resources.DEFAULTS.demanda16());
-		simpleModal.setHeight(280);
+	private void initUI()
+	{
+		String title = ( ( demandaDTO.getId() == null ) ?
+			"Inserção de Demanda" : "Edição de Demanda" );
+
+		simpleModal = new SimpleModal(
+			title, Resources.DEFAULTS.demanda16() );
+
+		simpleModal.setHeight( 280 );
 		createForm();
-		simpleModal.setContent(formPanel);
+		simpleModal.setContent( formPanel );
 	}
 
-	private void createForm() {
-		FormData formData = new FormData("-20");
-		formPanel = new FormPanel();
-		formPanel.setHeaderVisible(false);
+	private void createForm()
+	{
+		FormData formData = new FormData( "-20" );
+		this.formPanel = new FormPanel();
+		this.formPanel.setHeaderVisible( false );
 
-		campusCB = new CampusComboBox();
-		campusCB.setAllowBlank(false);
-		campusCB.setValue(campusDTO);
-		campusCB.setEmptyText("Selecione o campus");
-		formPanel.add(campusCB, formData);
+		this.campusCB = new CampusComboBox();
+		this.campusCB.setAllowBlank( false );
+		this.campusCB.setValue( this.campusDTO );
+		this.campusCB.setEmptyText( "Selecione o campus" );
+		this.formPanel.add( this.campusCB, formData );
 
-		cursoCB = new CursoComboBox();
-		cursoCB.setAllowBlank(false);
-		cursoCB.setValue(cursoDTO);
-		cursoCB.setEmptyText("Selecione o curso");
-		formPanel.add(cursoCB, formData);
+		this.cursoCB = new CursoComboBox();
+		this.cursoCB.setAllowBlank( false );
+		this.cursoCB.setValue( this.cursoDTO );
+		this.cursoCB.setEmptyText( "Selecione o curso" );
+		this.formPanel.add( this.cursoCB, formData );
 
-		curriculoCB = new CurriculoComboBox();
-		curriculoCB.setAllowBlank(false);
-		curriculoCB.setValue(curriculoDTO);
-		curriculoCB.setEmptyText("Selecione o curriculo");
-		formPanel.add(curriculoCB, formData);
+		this.curriculoCB = new CurriculoComboBox();
+		this.curriculoCB.setAllowBlank( false );
+		this.curriculoCB.setValue( this.curriculoDTO );
+		this.curriculoCB.setEmptyText( "Selecione o curriculo" );
+		this.formPanel.add( this.curriculoCB, formData );
 
-		turnoCB = new TurnoComboBox();
-		turnoCB.setAllowBlank(false);
-		turnoCB.setValue(turnoDTO);
-		turnoCB.setEmptyText("Selecione o turno");
-		formPanel.add(turnoCB, formData);
+		this.turnoCB = new TurnoComboBox();
+		this.turnoCB.setAllowBlank( false );
+		this.turnoCB.setValue( this.turnoDTO );
+		this.turnoCB.setEmptyText( "Selecione o turno" );
+		this.formPanel.add( this.turnoCB, formData );
 
-		disciplinaCB = new DisciplinaComboBox();
-		disciplinaCB.setAllowBlank(false);
-		disciplinaCB.setValue(disciplinaDTO);
-		disciplinaCB.setEmptyText("Selecione a disciplina");
-		formPanel.add(disciplinaCB, formData);
+		this.disciplinaCB = new DisciplinaComboBox();
+		this.disciplinaCB.setAllowBlank( false );
+		this.disciplinaCB.setValue( this.disciplinaDTO );
+		this.disciplinaCB.setEmptyText( "Selecione a disciplina" );
+		this.formPanel.add( this.disciplinaCB, formData );
 
-		demandaTF = new NumberField();
-		demandaTF.setValue(demandaDTO.getDemanda());
-		demandaTF.setFieldLabel("Quantidade");
-		demandaTF.setAllowBlank(false);
-		demandaTF.setAllowNegative(false);
-		demandaTF.setAllowDecimals(false);
-		demandaTF.setEmptyText("Selecione a quantidade");
-		formPanel.add(demandaTF, formData);
+		this.demandaTF = new NumberField();
+		this.demandaTF.setValue( this.demandaDTO.getDemanda() );
+		this.demandaTF.setFieldLabel( "Quantidade" );
+		this.demandaTF.setAllowBlank( false );
+		this.demandaTF.setAllowNegative( false );
+		this.demandaTF.setAllowDecimals( false );
+		this.demandaTF.setEmptyText( "Selecione a quantidade" );
 
-		FormButtonBinding binding = new FormButtonBinding(formPanel);
-		binding.addButton(simpleModal.getSalvarBt());
+		if ( this.demandaDTO.getQuantidadeDemandaEnable() == true )
+		{
+			this.demandaTF.setEnabled( true );
+		}
+		else
+		{
+			this.demandaTF.setEnabled( false );
+		}
 
-		simpleModal.setFocusWidget(campusCB);
+		this.formPanel.add( this.demandaTF, formData );
+
+		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
+		binding.addButton( this.simpleModal.getSalvarBt() );
+
+		this.simpleModal.setFocusWidget( this.campusCB );
 	}
 
-	public boolean isValid() {
+	public boolean isValid()
+	{
 		return formPanel.isValid();
 	}
 
 	@Override
-	public Button getSalvarButton() {
+	public Button getSalvarButton()
+	{
 		return simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public SimpleModal getSimpleModal() {
+	public SimpleModal getSimpleModal()
+	{
 		return simpleModal;
 	}
 
 	@Override
-	public DemandaDTO getDemandaDTO() {
+	public DemandaDTO getDemandaDTO()
+	{
 		return demandaDTO;
 	}
 
 	@Override
-	public CampusComboBox getCampusComboBox() {
+	public CampusComboBox getCampusComboBox()
+	{
 		return campusCB;
 	}
 
 	@Override
-	public CursoComboBox getCursoComboBox() {
+	public CursoComboBox getCursoComboBox()
+	{
 		return cursoCB;
 	}
 
 	@Override
-	public CurriculoComboBox getCurriculoComboBox() {
+	public CurriculoComboBox getCurriculoComboBox()
+	{
 		return curriculoCB;
 	}
 
 	@Override
-	public TurnoComboBox getTurnoComboBox() {
+	public TurnoComboBox getTurnoComboBox()
+	{
 		return turnoCB;
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox() {
+	public DisciplinaComboBox getDisciplinaComboBox()
+	{
 		return disciplinaCB;
 	}
 
 	@Override
-	public NumberField getDemandaTextField() {
+	public NumberField getDemandaTextField()
+	{
 		return demandaTF;
 	}
-
 }

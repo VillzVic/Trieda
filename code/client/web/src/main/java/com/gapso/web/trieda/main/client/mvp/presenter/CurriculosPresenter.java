@@ -227,6 +227,7 @@ public class CurriculosPresenter
 					CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 					Presenter presenter = new CurriculoDisciplinasPresenter( instituicaoEnsinoDTO,
 						new CurriculoDisciplinasView( curriculoDTO ) );
+
 					presenter.go( gTab );
 				}
 		});
@@ -235,7 +236,7 @@ public class CurriculosPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		gTab = (GTab)widget;
-		gTab.add( (GTabItem)display.getComponent() );
+		gTab = (GTab) widget;
+		gTab.add( (GTabItem) display.getComponent() );
 	}
 }

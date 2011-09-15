@@ -48,53 +48,68 @@ public class CurriculoDisciplinaFormPresenter
 
 	private void setListeners()
 	{
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				if ( isValid() )
+				{
 					final CurriculosServiceAsync service = Services.curriculos();
-					service.saveDisciplina(display.getCurriculoDTO(), getDTO(), new AsyncCallback<Void>() {
+
+					service.saveDisciplina( display.getCurriculoDTO(), getDTO(), new AsyncCallback< Void >()
+					{
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 						}
+
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess( Void result )
+						{
 							display.getSimpleModal().hide();
 							grid.getStore().getLoader().load();
-							Info.display("Salvo", "Item salvo com sucesso!");
+							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
 				}
 			}
 		});
 	}
-	
-	private boolean isValid() {
+
+	private boolean isValid()
+	{
 		return display.isValid();
 	}
-	
+
 	private CurriculoDisciplinaDTO getDTO()
 	{
 		CurriculoDisciplinaDTO curriculoDisciplinaDTO = display.getCurriculoDisciplinaDTO();
 
 		curriculoDisciplinaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		curriculoDisciplinaDTO.setDisciplinaId(display.getDisciplinaComboBox().getValue().getId());
-		curriculoDisciplinaDTO.setDisciplinaString(display.getDisciplinaComboBox().getValue().getCodigo());
-		curriculoDisciplinaDTO.setPeriodo(display.getPeriodoTextField().getValue().intValue());
+		curriculoDisciplinaDTO.setDisciplinaId( display.getDisciplinaComboBox().getValue().getId() );
+		curriculoDisciplinaDTO.setDisciplinaString( display.getDisciplinaComboBox().getValue().getCodigo() );
+		curriculoDisciplinaDTO.setPeriodo( display.getPeriodoTextField().getValue().intValue() );
+
 		Integer crTeorico = display.getDisciplinaComboBox().getValue().getCreditosTeorico();
 		Integer crPratico = display.getDisciplinaComboBox().getValue().getCreditosPratico();
-		curriculoDisciplinaDTO.setCreditosTeorico(crTeorico);
-		curriculoDisciplinaDTO.setCreditosPratico(crPratico);
-		curriculoDisciplinaDTO.setCreditosTotal(crTeorico + crPratico);
+
+		curriculoDisciplinaDTO.setCreditosTeorico( crTeorico );
+		curriculoDisciplinaDTO.setCreditosPratico( crPratico );
+		curriculoDisciplinaDTO.setCreditosTotal( crTeorico + crPratico );
+
 		return curriculoDisciplinaDTO;
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		display.getSimpleModal().show();
 	}
-
 }

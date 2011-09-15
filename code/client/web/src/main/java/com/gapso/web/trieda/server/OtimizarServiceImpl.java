@@ -192,15 +192,21 @@ public class OtimizarServiceImpl
 			if ( cenario.getUltimoParametro( this.getInstituicaoEnsinoUser() ).isTatico() )
 			{
 				solverOutput.generateAtendimentosTatico();
+
 				solverOutput.salvarAtendimentosTatico(
 					parametro.getCampus(), parametro.getTurno() );
 			}
 			else
 			{
 				solverOutput.generateAtendimentosOperacional();
+
 				solverOutput.salvarAtendimentosOperacional(
 					parametro.getCampus(), parametro.getTurno() );
 			}
+
+			solverOutput.generateAlunosDemanda();
+			solverOutput.salvarAlunosDemanda(
+				parametro.getCampus(), parametro.getTurno() );
 		}
 		catch ( JAXBException e )
 		{

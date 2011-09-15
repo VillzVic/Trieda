@@ -55,6 +55,7 @@ public class CurriculosView extends MyComposite
 	{
 		panel = new ContentPanel( new BorderLayout() );
 		panel.setHeading( "Master Data » Matrizes Curriculares" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
@@ -94,8 +95,8 @@ public class CurriculosView extends MyComposite
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
 		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_CURSO_STRING, getI18nConstants().codigoCurso(), 250 ) );
-		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_CODIGO, getI18nConstants().codigoCurriculo(), 100 ) );
-		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_DESCRICAO, getI18nConstants().descricaoCurriculo(), 100 ) );
+		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_CODIGO, getI18nConstants().codigoCurriculo(), 120 ) );
+		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_DESCRICAO, getI18nConstants().descricaoCurriculo(), 150 ) );
 		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_PERIODOS, getI18nConstants().periodos(), 110 ) );
 		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_SEMANA_LETIVA_STRING, getI18nConstants().semanaLetiva(), 110 ) );
 

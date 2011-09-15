@@ -77,7 +77,6 @@ public class UniqueTextField
 				error = false;
 				checking = false;
 				setReadOnly( false );
-				
 			}
 
 			@Override

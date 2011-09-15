@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
@@ -42,6 +43,7 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.xml.input.GrupoAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.GrupoAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoCalendario;
 import com.gapso.web.trieda.server.xml.input.GrupoCampus;
@@ -71,6 +73,7 @@ import com.gapso.web.trieda.server.xml.input.GrupoTipoSala;
 import com.gapso.web.trieda.server.xml.input.GrupoTipoTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoTurno;
 import com.gapso.web.trieda.server.xml.input.GrupoUnidade;
+import com.gapso.web.trieda.server.xml.input.ItemAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.ItemAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoCampusSolucao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoDiaSemanaSolucao;
@@ -128,8 +131,8 @@ public class SolverInput
 	{
 		this.cenario = cenario;
 		this.parametro = parametro;
-
 		this.campi = new ArrayList< Campus >();
+
 		for ( Campus c : campi )
 		{
 			if ( c.getInstituicaoEnsino() == instituicaoEnsino )
@@ -140,7 +143,6 @@ public class SolverInput
 
 		this.turno = turno;
 		this.instituicaoEnsino = instituicaoEnsino;
-
 		this.of = new ObjectFactory();
 		this.triedaInput = of.createTriedaInput();
 		this.semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
@@ -179,6 +181,7 @@ public class SolverInput
 		generateCurso();
 		generateOfertaCursoCampi();
 		generateDemandas();
+		generateAlunosDemanda();
 		generateParametrosPlanejamento(tatico);
 		generateFixacoes();
 
@@ -818,7 +821,6 @@ public class SolverInput
 			{
 				if ( !oferta.getTurno().equals( turno ) )
 				{
-					// TODO -- considerar mais de um turno
 					continue;
 				}
 
@@ -860,6 +862,7 @@ public class SolverInput
 				{
 					ItemDemanda itemDemanda = of.createItemDemanda();
 
+					itemDemanda.setId( demanda.getId().intValue() );
 					itemDemanda.setOfertaCursoCampiId( oferta.getId().intValue() );
 					itemDemanda.setDisciplinaId( demanda.getDisciplina().getId().intValue() );
 					itemDemanda.setQuantidade( demanda.getQuantidade() );
@@ -872,10 +875,31 @@ public class SolverInput
 		triedaInput.setDemandas( grupoDemanda );
 	}
 
+	private void generateAlunosDemanda()
+	{
+		GrupoAlunoDemanda grupoAlunosDemanda = of.createGrupoAlunoDemanda();
+		List< AlunoDemanda > alunos = AlunoDemanda.findAll( this.instituicaoEnsino );
+
+		for ( AlunoDemanda aluno : alunos )
+		{
+			if ( aluno.getDemanda() != null
+				&& aluno.getDemanda().getOferta().getCampus().getInstituicaoEnsino() == instituicaoEnsino )
+			{
+				ItemAlunoDemanda itemAlunoDemanda = of.createItemAlunoDemanda();
+
+				itemAlunoDemanda.setAlunoId( aluno.getId().intValue() );
+				itemAlunoDemanda.setNomeAluno( aluno.getAluno().getNome() );
+				itemAlunoDemanda.setDemandaId( aluno.getDemanda().getId().intValue() );
+
+				grupoAlunosDemanda.getAlunoDemanda().add( itemAlunoDemanda );
+			}
+		}
+
+		triedaInput.setAlunosDemanda( grupoAlunosDemanda );
+	}
+	
 	private void generateParametrosPlanejamento( boolean tatico )
 	{
-		// Parametro parametro = cenario.getParametro();
-
 		ItemParametrosPlanejamento itemParametrosPlanejamento
 			= of.createItemParametrosPlanejamento();
 
@@ -1072,7 +1096,6 @@ public class SolverInput
 				{
 					if ( !horario.getHorarioAula().getTurno().equals( this.turno ) )
 					{
-						// TODO -- considerar mais de um turno
 						continue;
 					}
 
@@ -1144,7 +1167,6 @@ public class SolverInput
 			if ( !at.getOferta().getTurno().equals( turno )
 					|| !at.getOferta().getCampus().equals( campi.get( 0 ) ) )
 			{
-				// TODO -- considerar mais de um turno
 				continue;
 			}
 
@@ -1414,7 +1436,6 @@ public class SolverInput
 			{
 				if ( !horarioAula.getTurno().equals( turno ) )
 				{
-					// TODO -- considerar mais de um turno
 					continue;
 				}
 
@@ -1447,7 +1468,6 @@ public class SolverInput
 			{
 				if ( !turno.equals( this.turno ) )
 				{
-					// TODO -- considerar mais de um turno
 					continue;
 				}
 

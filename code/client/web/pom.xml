@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<spring-security.version>3.0.3.RELEASE</spring-security.version>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -125,6 +125,8 @@
 		</dependency>
 	</dependencies>
 	<profiles>
+
+
 		<profile>
 			<id>inputTRIEDA</id>
 			<build>
@@ -153,37 +155,11 @@
 			</build>
 		</profile>
 
-		<!-- 
-		<profile>
-			<id>outputTRIEDA</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jvnet.jaxb2.maven2</groupId>
-						<artifactId>maven-jaxb2-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>generate</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<generateDirectory>src/main/java</generateDirectory>
-							<generatePackage>com.gapso.web.trieda.server.xml.output
-							</generatePackage>
-							<includeSchemas>
-								<includeSchema>TRIEDA-OutputXSD.xsd</includeSchema>
-							</includeSchemas>
-							<verbose>true</verbose>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		-->
-		
+
+
+
 	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>

@@ -7,10 +7,13 @@ import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -22,6 +25,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.xml.output.ItemAlunoDemanda;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoHorarioAula;
@@ -41,6 +45,7 @@ public class SolverOutput
 	private TriedaOutput triedaOutput;
 	private List< AtendimentoTatico > atendimentosTatico;
 	private List< AtendimentoOperacional > atendimentosOperacional;
+	private List< AlunoDemanda > alunosDemanda;
 	protected Map< Integer, ProfessorVirtual > professoresVirtuais
 		= new HashMap< Integer, ProfessorVirtual >();
 
@@ -53,6 +58,7 @@ public class SolverOutput
 
 		this.atendimentosTatico = new ArrayList< AtendimentoTatico >();
 		this.atendimentosOperacional = new ArrayList< AtendimentoOperacional >();
+		this.alunosDemanda = new ArrayList< AlunoDemanda >();
 	}
 
 	@Transactional
@@ -390,6 +396,52 @@ public class SolverOutput
 		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
 		{
 			atendimentoOperacional.remove();
+		}
+	}
+
+	@Transactional
+	public void generateAlunosDemanda()
+	{
+		List< ItemAlunoDemanda > itensAlunosDemanda
+			= triedaOutput.getAlunosDemanda().getAlunoDemanda();
+
+		for (  ItemAlunoDemanda item : itensAlunosDemanda )
+		{
+			AlunoDemanda alunoDemanda = new AlunoDemanda();
+
+			Demanda demanda = Demanda.find(
+				Long.valueOf( item.getDemandaId() ), this.instituicaoEnsino ) ;
+
+			Aluno aluno = Aluno.find(
+				Long.valueOf( item.getAlunoId() ), this.instituicaoEnsino ) ;
+
+			alunoDemanda.setAluno( aluno );
+			alunoDemanda.setDemanda( demanda );
+
+			this.alunosDemanda.add( alunoDemanda );
+		}
+	}
+
+	@Transactional
+	public void salvarAlunosDemanda( Campus campus, Turno turno  )
+	{
+		removerAlunosDemandaJaSalvos( campus, turno );
+
+		for (  AlunoDemanda aluno : this.alunosDemanda )
+		{
+			aluno.persist();
+		}
+	}
+
+	@Transactional
+	private void removerAlunosDemandaJaSalvos( Campus campus, Turno turno )
+	{
+		List< AlunoDemanda > alunosDemanda = AlunoDemanda.findByCampusAndTurno(
+			this.instituicaoEnsino, campus, turno );
+
+		for ( AlunoDemanda aluno : alunosDemanda )
+		{
+			aluno.remove();
 		}
 	}
 }

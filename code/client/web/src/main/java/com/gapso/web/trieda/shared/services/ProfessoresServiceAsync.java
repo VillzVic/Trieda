@@ -15,25 +15,28 @@ import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
-public interface ProfessoresServiceAsync {
-
-	void getProfessor(Long id, AsyncCallback<ProfessorDTO> callback);
-	void getList(AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
-	void getBuscaList(String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback);
-	void getTipoContrato(Long id, AsyncCallback<TipoContratoDTO> callback);
-	void getTiposContratoAll(AsyncCallback<ListLoadResult<TipoContratoDTO>> callback);
-	void getTitulacao(Long id, AsyncCallback<TitulacaoDTO> callback);
-	void getTitulacoesAll(AsyncCallback<ListLoadResult<TitulacaoDTO>> callback);
-	void save(ProfessorDTO professorDTO, AsyncCallback<Void> callback);
-	void remove(List<ProfessorDTO> professorDTOList, AsyncCallback<Void> callback);
-	void getHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
-	void saveHorariosDisponiveis(ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
-	void getProfessorCampusList(CampusDTO campusDTO, ProfessorDTO professorDTO, AsyncCallback<PagingLoadResult<ProfessorCampusDTO>> callback);
-	void removeProfessorCampus(List<ProfessorCampusDTO> professorCampusDTOList, AsyncCallback<Void> callback);
-	void getProfessoresEmCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
-	void getProfessoresNaoEmCampus(CampusDTO campusDTO, AsyncCallback<List<ProfessorDTO>> callback);
-	void salvarProfessorCampus(CampusDTO campusDTO, List<ProfessorDTO> professorDTOList, AsyncCallback<Void> callback);
-	void getProfessorCampusByCurrentProfessor(AsyncCallback<PagingLoadResult<ProfessorCampusDTO>> callback);
-	
+public interface ProfessoresServiceAsync
+{
+	void getProfessor( Long id, AsyncCallback< ProfessorDTO > callback );
+	void getList( AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
+	void getBuscaList( String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
+		AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config,
+		AsyncCallback< PagingLoadResult< ProfessorDTO > > callback );
+	void getTipoContrato( Long id, AsyncCallback< TipoContratoDTO > callback );
+	void getTiposContratoAll( AsyncCallback< ListLoadResult< TipoContratoDTO > > callback );
+	void getTitulacao( Long id, AsyncCallback< TitulacaoDTO > callback );
+	void getTitulacoesAll( AsyncCallback< ListLoadResult< TitulacaoDTO > > callback );
+	void save( ProfessorDTO professorDTO, AsyncCallback< Void > callback );
+	void remove( List< ProfessorDTO > professorDTOList, AsyncCallback< Void > callback );
+	void getHorariosDisponiveis( ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO,
+		AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
+	void saveHorariosDisponiveis( ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
+	void getProfessorCampusList( CampusDTO campusDTO, ProfessorDTO professorDTO,
+		AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
+	void removeProfessorCampus( List< ProfessorCampusDTO > professorCampusDTOList, AsyncCallback< Void > callback );
+	void getProfessoresEmCampus( CampusDTO campusDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
+	void getProfessoresNaoEmCampus( CampusDTO campusDTO, AsyncCallback< List< ProfessorDTO > > callback );
+	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList, AsyncCallback< Void > callback );
+	void getProfessorCampusByCurrentProfessor( AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
 }

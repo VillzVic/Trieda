@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandasPresenter;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -26,10 +27,12 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
-public class DemandasView extends MyComposite implements DemandasPresenter.Display {
-
+public class DemandasView
+	extends MyComposite
+	implements DemandasPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<DemandaDTO> gridPanel;
+	private SimpleGrid< DemandaDTO > gridPanel;
 	private SimpleFilter filter;
 	private CampusComboBox campusBuscaCB;
 	private CursoComboBox cursoBuscaCB;
@@ -38,140 +41,186 @@ public class DemandasView extends MyComposite implements DemandasPresenter.Displ
 	private DisciplinaComboBox disciplinaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
-	public DemandasView() {
-		initUI();
+	private Button associarAlunosDemandaBT;
+
+	public DemandasView()
+	{
+		this.initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Demandas");
+
+	private void initUI()
+	{
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Demandas" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( this.tabItem );
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem("Demandas", Resources.DEFAULTS.demanda16());
-		tabItem.setContent(panel);
+	private void createTabItem()
+	{
+		this.tabItem = new GTabItem(
+			"Demandas", Resources.DEFAULTS.demanda16() );
+
+		this.tabItem.setContent( this.panel );
 	}
 	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		panel.setTopComponent(toolBar);
-	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<DemandaDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+	private void createToolBar()
+	{
+		this.toolBar = new SimpleToolBar( this );
+		this.toolBar.add( new SeparatorToolItem() );
+
+		this.associarAlunosDemandaBT = this.toolBar.createButton(
+			"Associar Alunos à Demanda", Resources.DEFAULTS.disciplina16() );
+		this.toolBar.add( this.associarAlunosDemandaBT );
+
+		this.panel.setTopComponent( this.toolBar );
 	}
 
-	private List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(DemandaDTO.PROPERTY_CAMPUS_STRING, "Campus", 100));
-		list.add(new ColumnConfig(DemandaDTO.PROPERTY_TURNO_STRING, "Turno", 100));
-		list.add(new ColumnConfig(DemandaDTO.PROPERTY_CURSO_STRING, "Curso", 100));
-		list.add(new ColumnConfig(DemandaDTO.PROPERTY_CURRICULO_STRING, "Código de Matriz Curricular", 100));
-		list.add(new ColumnConfig(DemandaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 100));
-		list.add(new ColumnConfig(DemandaDTO.PROPERTY_DEMANDA, "Demanda de Alunos", 100));
+	private void createGrid()
+	{
+		BorderLayoutData bld
+			= new BorderLayoutData( LayoutRegion.CENTER );
+
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    this.gridPanel = new SimpleGrid< DemandaDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
+	}
+
+	private List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_CAMPUS_STRING, "Campus", 100 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_TURNO_STRING, "Turno", 100 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_CURSO_STRING, "Curso", 180 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_CURRICULO_STRING, "Código de Matriz Curricular", 150 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 100 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_DEMANDA, "Demanda de Alunos", 150 ) );
+
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
-		filter = new SimpleFilter();
-		
-		campusBuscaCB = new CampusComboBox();
-		cursoBuscaCB = new CursoComboBox();
-		curriculoBuscaCB = new CurriculoComboBox();
-		turnoBuscaCB = new TurnoComboBox();
-		disciplinaBuscaCB = new DisciplinaComboBox();
-		
-		filter.addField(campusBuscaCB);
-		filter.addField(cursoBuscaCB);
-		filter.addField(curriculoBuscaCB);
-		filter.addField(turnoBuscaCB);
-		filter.addField(disciplinaBuscaCB);
-		
-		panel.add(filter, bld);
+	private void createFilter()
+	{
+		BorderLayoutData bld
+			= new BorderLayoutData( LayoutRegion.EAST );
+
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
+		this.filter = new SimpleFilter();
+
+		this.campusBuscaCB = new CampusComboBox();
+		this.filter.addField( this.campusBuscaCB );
+
+		this.cursoBuscaCB = new CursoComboBox();
+		this.filter.addField( this.cursoBuscaCB );
+
+		this.curriculoBuscaCB = new CurriculoComboBox();
+		this.filter.addField( this.curriculoBuscaCB );
+
+		this.turnoBuscaCB = new TurnoComboBox();
+		this.filter.addField( this.turnoBuscaCB );
+
+		this.disciplinaBuscaCB = new DisciplinaComboBox();
+		this.filter.addField( this.disciplinaBuscaCB );
+
+		this.panel.add( this.filter, bld );
 	}
 
 	@Override
-	public Button getImportExcelButton() {
-		return toolBar.getImportExcelButton();
+	public Button getImportExcelButton()
+	{
+		return this.toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
-	}
-	
-	@Override
-	public SimpleGrid<DemandaDTO> getGrid() {
-		return gridPanel;
-	}
-	
-	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<DemandaDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public Button getExportExcelButton()
+	{
+		return this.toolBar.getExportExcelButton();
 	}
 
 	@Override
-	public Button getNewButton() {
-		return toolBar.getNewButton();
+	public SimpleGrid< DemandaDTO > getGrid()
+	{
+		return this.gridPanel;
 	}
 
 	@Override
-	public Button getEditButton() {
-		return toolBar.getEditButton();
+	public void setProxy(
+		RpcProxy< PagingLoadResult< DemandaDTO > > proxy )
+	{
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public Button getRemoveButton() {
-		return toolBar.getRemoveButton();
+	public Button getNewButton()
+	{
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
-	public CampusComboBox getCampusBuscaComboBox() {
-		return campusBuscaCB;
+	public Button getEditButton()
+	{
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
-	public CursoComboBox getCursoBuscaComboBox() {
-		return cursoBuscaCB;
+	public Button getRemoveButton()
+	{
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
-	public CurriculoComboBox getCurriculoBuscaComboBox() {
-		return curriculoBuscaCB;
+	public CampusComboBox getCampusBuscaComboBox()
+	{
+		return this.campusBuscaCB;
 	}
 
 	@Override
-	public TurnoComboBox getTurnoBuscaComboBox() {
-		return turnoBuscaCB;
+	public CursoComboBox getCursoBuscaComboBox()
+	{
+		return this.cursoBuscaCB;
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaBuscaComboBox() {
-		return disciplinaBuscaCB;
+	public CurriculoComboBox getCurriculoBuscaComboBox()
+	{
+		return this.curriculoBuscaCB;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
-		return filter.getSubmitButton();
+	public TurnoComboBox getTurnoBuscaComboBox()
+	{
+		return this.turnoBuscaCB;
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
-		return filter.getResetButton();
+	public DisciplinaComboBox getDisciplinaBuscaComboBox()
+	{
+		return this.disciplinaBuscaCB;
 	}
 
+	@Override
+	public Button getSubmitBuscaButton()
+	{
+		return this.filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton()
+	{
+		return this.filter.getResetButton();
+	}
+
+	@Override
+	public Button getAssociarAlunosDemanda()
+	{
+		return this.associarAlunosDemandaBT;
+	}
 }

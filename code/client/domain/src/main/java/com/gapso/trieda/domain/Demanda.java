@@ -33,50 +33,58 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "DEM_ID")
-@Table(name = "DEMANDAS")
+@RooEntity( identifierColumn = "DEM_ID" )
+@Table( name = "DEMANDAS" )
 public class Demanda
 	implements Serializable
 {
 	private static final long serialVersionUID = -3935898184270072639L;
 
     @NotNull
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Oferta.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "OFE_ID")
+    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+    	CascadeType.REFRESH }, targetEntity = Oferta.class, fetch = FetchType.LAZY )
+    @JoinColumn( name = "OFE_ID" )
     private Oferta oferta;
 
     @NotNull
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Disciplina.class)
-    @JoinColumn(name = "DIS_ID")
+    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+    	CascadeType.REFRESH }, targetEntity = Disciplina.class )
+    @JoinColumn( name = "DIS_ID" )
     private Disciplina disciplina;
 
     @NotNull
-    @Column(name = "DEM_QUANTIDADE")
-    @Min(1L)
-    @Max(999L)
+    @Column( name = "DEM_QUANTIDADE" )
+    @Min( 1L )
+    @Max( 999L )
     private Integer quantidade;
 
-	public Oferta getOferta() {
+	public Oferta getOferta()
+	{
         return this.oferta;
     }
 
-	public void setOferta(Oferta oferta) {
+	public void setOferta( Oferta oferta )
+	{
         this.oferta = oferta;
     }
 
-	public Disciplina getDisciplina() {
+	public Disciplina getDisciplina()
+	{
         return this.disciplina;
     }
 
-	public void setDisciplina(Disciplina disciplina) {
+	public void setDisciplina( Disciplina disciplina )
+	{
         this.disciplina = disciplina;
     }
 
-	public Integer getQuantidade() {
+	public Integer getQuantidade()
+	{
         return this.quantidade;
     }
 
-	public void setQuantidade(Integer quantidade) {
+	public void setQuantidade( Integer quantidade )
+	{
         this.quantidade = quantidade;
     }
 
@@ -84,64 +92,97 @@ public class Demanda
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "DEM_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "DEM_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
-	
+
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Demanda attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            Demanda attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public Demanda merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Demanda merged = this.entityManager.merge(this);
-        //this.entityManager.flush();
+    public Demanda merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        Demanda merged = this.entityManager.merge( this );
         return merged;
     }
 
@@ -213,7 +254,7 @@ public class Demanda
 		q.setParameter( "campus", campus );
 
 		Object rs = q.getSingleResult();
-		return ( rs == null ? 0 : ( (Number) rs).intValue() );
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -224,6 +265,23 @@ public class Demanda
         	" SELECT o FROM Demanda o " +
         	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " )
         	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+    }
+
+    public static Demanda findbyOfertaAndDisciplina(
+    	InstituicaoEnsino instituicaoEnsino, Oferta oferta, Disciplina disciplina )
+    {
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM Demanda o " +
+    		" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.oferta = :oferta " +
+    		" AND o.disciplina = :disciplina " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "disciplina", disciplina );
+		q.setParameter( "oferta", oferta );
+
+        return (Demanda) q.getSingleResult();
     }
 
 	@SuppressWarnings("unchecked")
@@ -312,7 +370,7 @@ public class Demanda
 		return ( (Number)q.getSingleResult() ).intValue();
 	}
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
 	public static List< Demanda > findBy( InstituicaoEnsino instituicaoEnsino,
 		Campus campus, Curso curso, Curriculo curriculo,
 		Turno turno, Disciplina disciplina,

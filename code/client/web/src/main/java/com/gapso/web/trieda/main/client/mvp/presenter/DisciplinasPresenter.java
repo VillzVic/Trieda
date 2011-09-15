@@ -78,18 +78,29 @@ implements Presenter
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final DisciplinasServiceAsync service = Services.disciplinas();
-		RpcProxy<PagingLoadResult<DisciplinaDTO>> proxy = new RpcProxy<PagingLoadResult<DisciplinaDTO>>() {
+
+		RpcProxy< PagingLoadResult< DisciplinaDTO > > proxy =
+			new RpcProxy< PagingLoadResult< DisciplinaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<DisciplinaDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< DisciplinaDTO > > callback )
+			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
-				TipoDisciplinaDTO tipoDisciplinaDTO = display.getTipoDisciplinaBuscaComboBox().getValue();
-				service.getBuscaList(nome, codigo, tipoDisciplinaDTO, (PagingLoadConfig)loadConfig, callback);
+
+				TipoDisciplinaDTO tipoDisciplinaDTO
+					= display.getTipoDisciplinaBuscaComboBox().getValue();
+
+				service.getBuscaList( nome, codigo, tipoDisciplinaDTO,
+					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
 	
 	private void setListeners()
@@ -135,25 +146,39 @@ implements Presenter
 				});
 			}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<DisciplinaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
+				List< DisciplinaDTO > list
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
 				final DisciplinasServiceAsync service = Services.disciplinas();
-				service.remove(list, new AsyncCallback<Void>() {
+
+				service.remove( list, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 					}
+
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display( "Removido", "Item removido com sucesso!" );
 					}
 				});
 			}
 		});
-		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getImportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
@@ -166,7 +191,10 @@ implements Presenter
 				importExcelFormView.show();
 			}
 		});
-		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
@@ -179,68 +207,98 @@ implements Presenter
 				e.submit();
 			}
 		});
-		display.getDisponibilidadeButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		display.getDisponibilidadeButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+			public void componentSelected( ButtonEvent ce )
+			{
+				final DisciplinaDTO disciplinaDTO
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
 				SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-				semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
-				
-				Services.disciplinas().getHorariosDisponiveis(disciplinaDTO, semanaLetivaDTO, new AsyncCallback<List<HorarioDisponivelCenarioDTO>>() {
+				semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
+
+				Services.disciplinas().getHorariosDisponiveis( disciplinaDTO, semanaLetivaDTO,
+					new AsyncCallback< List< HorarioDisponivelCenarioDTO > >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 					}
+
 					@Override
-					public void onSuccess(List<HorarioDisponivelCenarioDTO> result) {
+					public void onSuccess( List< HorarioDisponivelCenarioDTO > result )
+					{
 						SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
-						semanaLetiva.setId(cenario.getSemanaLetivaId());
+						semanaLetiva.setId( cenario.getSemanaLetivaId() );
 
 						Presenter presenter = new HorarioDisponivelDisciplinaFormPresenter(
 							instituicaoEnsinoDTO, cenario, semanaLetiva,
 							new HorarioDisponivelDisciplinaFormView( disciplinaDTO, result ) );
 
-						presenter.go(null);
+						presenter.go( null );
 					}
 				});
 			}
 		});
-		display.getDivisaoCreditoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		display.getDivisaoCreditoButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Services.disciplinas().getDivisaoCredito(disciplinaDTO, new AbstractAsyncCallbackWithDefaultOnFailure<DivisaoCreditoDTO>(display) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				final DisciplinaDTO disciplinaDTO
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
+				Services.disciplinas().getDivisaoCredito( disciplinaDTO,
+					new AbstractAsyncCallbackWithDefaultOnFailure< DivisaoCreditoDTO >( display )
+				{
 					@Override
-					public void onSuccess(DivisaoCreditoDTO result) {
+					public void onSuccess( DivisaoCreditoDTO result )
+					{
 						Presenter presenter = new DivisaoCreditoDisciplinaFormPresenter(
-							instituicaoEnsinoDTO, cenario, new DivisaoCreditoDisciplinaFormView(result, disciplinaDTO ) );
+							instituicaoEnsinoDTO, cenario,
+							new DivisaoCreditoDisciplinaFormView( result, disciplinaDTO ) );
 
-						presenter.go(null);
+						presenter.go( null );
 					}
 				});
 			}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getNomeBuscaTextField().setValue(null);
-				display.getCodigoBuscaTextField().setValue(null);
-				display.getTipoDisciplinaBuscaComboBox().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getNomeBuscaTextField().setValue( null );
+				display.getCodigoBuscaTextField().setValue( null );
+				display.getTipoDisciplinaBuscaComboBox().setValue( null );
+
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		gTab = (GTab) widget;
+		gTab.add( (GTabItem) display.getComponent() );
+	}
 }
