@@ -2238,7 +2238,8 @@ void SolverMIP::relacionaAlunosDemandas()
                dia_semana = it_At_DiaSemana->getDiaSemana();
 
                // Modelo Tático
-               if ( it_At_DiaSemana->atendimentos_tatico != NULL )
+               if ( it_At_DiaSemana->atendimentos_tatico != NULL
+                  && it_At_DiaSemana->atendimentos_tatico->size() > 0 )
                {
                   ITERA_GGROUP( it_at_tatico,
                      ( *it_At_DiaSemana->atendimentos_tatico ), AtendimentoTatico )
@@ -2249,7 +2250,8 @@ void SolverMIP::relacionaAlunosDemandas()
                   }
                }
                // Modelo Operacional
-               else if ( it_At_DiaSemana->atendimentos_turno != NULL )
+               else if ( it_At_DiaSemana->atendimentos_turno != NULL
+                  && it_At_DiaSemana->atendimentos_turno->size() > 0 )
                {
                   ITERA_GGROUP( it_at_turno,
                      ( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
