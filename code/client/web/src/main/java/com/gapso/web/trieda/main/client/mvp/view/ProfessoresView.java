@@ -39,29 +39,30 @@ public class ProfessoresView extends MyComposite
 	private Button disponibilidadeBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-
+	
 	public ProfessoresView()
 	{
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
 	{
-		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Professores" );
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Professores" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent( tabItem );
+		initComponent( this.tabItem );
 	}
 
 	private void createTabItem()
 	{
-		tabItem = new GTabItem(
+		this.tabItem = new GTabItem(
 			"Professores", Resources.DEFAULTS.professor16() );
 
-		tabItem.setContent( panel );
+		this.tabItem.setContent( this.panel );
 	}
 
 	private void createToolBar()
@@ -81,8 +82,8 @@ public class ProfessoresView extends MyComposite
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-		gridPanel = new SimpleGrid< ProfessorDTO >( getColumnList(), this );
-		panel.add( gridPanel, bld );
+		this.gridPanel = new SimpleGrid< ProfessorDTO >( getColumnList(), this );
+		this.panel.add( this.gridPanel, bld );
 	}
 
 	private void createFilter()
@@ -92,20 +93,20 @@ public class ProfessoresView extends MyComposite
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
-		filter = new SimpleFilter();
+		this.filter = new SimpleFilter();
 
-		cpfBuscaTF = new TextField< String >();
-		cpfBuscaTF.setFieldLabel( "CPF" );
-		tipoContratoBuscaCB = new TipoContratoComboBox();
-		titulacaoBuscaCB = new TitulacaoComboBox();
-		areaTitulacaoBuscaCB = new AreaTitulacaoComboBox();
+		this.cpfBuscaTF = new TextField< String >();
+		this.cpfBuscaTF.setFieldLabel( "CPF" );
+		this.tipoContratoBuscaCB = new TipoContratoComboBox();
+		this.titulacaoBuscaCB = new TitulacaoComboBox();
+		this.areaTitulacaoBuscaCB = new AreaTitulacaoComboBox();
 
-		filter.addField( cpfBuscaTF );
-		filter.addField( tipoContratoBuscaCB );
-		filter.addField( titulacaoBuscaCB );
-		filter.addField( areaTitulacaoBuscaCB );
+		this.filter.addField( this.cpfBuscaTF );
+		this.filter.addField( this.tipoContratoBuscaCB );
+		this.filter.addField( this.titulacaoBuscaCB );
+		this.filter.addField( this.areaTitulacaoBuscaCB );
 
-		panel.add( filter, bld );
+		this.panel.add( this.filter, bld );
 	}
 
 	public List< ColumnConfig > getColumnList()
@@ -115,32 +116,32 @@ public class ProfessoresView extends MyComposite
 		list.add( new ColumnConfig(
 			ProfessorDTO.PROPERTY_CPF, getI18nConstants().cpf(), 100 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_NOME,
-			getI18nConstants().nomeProfessor(), 100 ) );
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_NOME,
+			getI18nConstants().nomeProfessor(), 120 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_TIPO_CONTRATO_STRING,
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TIPO_CONTRATO_STRING,
 			getI18nConstants().tipoContrato(), 100 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN,
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN,
 			getI18nConstants().cargaHorariaMin(), 100 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX,
-			getI18nConstants().cargaHorariaMax(), 100 ) );
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX,
+			getI18nConstants().cargaHorariaMax(), 110 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_TITULACAO_STRING,
-			getI18nConstants().titulacao(), 100 ) );
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TITULACAO_STRING,
+			getI18nConstants().titulacao(), 60 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_AREA_TITULACAO_STRING,
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_AREA_TITULACAO_STRING,
 			getI18nConstants().areaTitulacao(), 100 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_NOTA_DESEMPENHO,
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_NOTA_DESEMPENHO,
 			getI18nConstants().notaDesempenho(), 100 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_CREDITO_ANTERIOR,
-			getI18nConstants().cargaHorariaAnterior(), 100 ) );
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CREDITO_ANTERIOR,
+			getI18nConstants().cargaHorariaAnterior(), 150 ) );
 
-		list.add( new ColumnConfig(ProfessorDTO.PROPERTY_VALOR_CREDITO,
-			getI18nConstants().valorCredito(), 100 ) );
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_VALOR_CREDITO,
+			getI18nConstants().valorCredito(), 170 ) );
 
 		return list;
 	}
@@ -148,84 +149,84 @@ public class ProfessoresView extends MyComposite
 	@Override
 	public Button getNewButton()
 	{
-		return toolBar.getNewButton();
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
 	public Button getEditButton()
 	{
-		return toolBar.getEditButton();
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
 	public Button getRemoveButton()
 	{
-		return toolBar.getRemoveButton();
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
 	public Button getImportExcelButton()
 	{
-		return toolBar.getImportExcelButton();
+		return this.toolBar.getImportExcelButton();
 	}
 
 	@Override
 	public Button getExportExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return this.toolBar.getExportExcelButton();
 	}
 
 	@Override
 	public SimpleGrid< ProfessorDTO > getGrid()
 	{
-		return gridPanel;
+		return this.gridPanel;
 	}
 
 	@Override
 	public void setProxy( RpcProxy< PagingLoadResult< ProfessorDTO > > proxy )
 	{
-		gridPanel.setProxy( proxy );
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
 	public TextField< String > getCpfBuscaTextField()
 	{
-		return cpfBuscaTF;
+		return this.cpfBuscaTF;
 	}
 
 	@Override
 	public TipoContratoComboBox getTipoContratoBuscaComboBox()
 	{
-		return tipoContratoBuscaCB;
+		return this.tipoContratoBuscaCB;
 	}
 
 	@Override
 	public TitulacaoComboBox getTitulacaoBuscaComboBox()
 	{
-		return titulacaoBuscaCB;
+		return this.titulacaoBuscaCB;
 	}
 
 	@Override
 	public AreaTitulacaoComboBox getAreaTitulacaoBuscaComboBox()
 	{
-		return areaTitulacaoBuscaCB;
+		return this.areaTitulacaoBuscaCB;
 	}
 
 	@Override
 	public Button getSubmitBuscaButton()
 	{
-		return filter.getSubmitButton();
+		return this.filter.getSubmitButton();
 	}
 
 	@Override
 	public Button getResetBuscaButton()
 	{
-		return filter.getResetButton();
+		return this.filter.getResetButton();
 	}
 
 	@Override
 	public Button getDisponibilidadeButton()
 	{
-		return disponibilidadeBT;
+		return this.disponibilidadeBT;
 	}
 }

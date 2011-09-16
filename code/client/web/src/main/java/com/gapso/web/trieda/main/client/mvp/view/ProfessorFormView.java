@@ -27,7 +27,6 @@ public class ProfessorFormView
 {
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-
 	private TextField< String > cpfTF;
 	private TextField< String > nomeTF;
 	private TipoContratoComboBox tipoContratoCB;
@@ -62,178 +61,178 @@ public class ProfessorFormView
 	
 	private void initUI()
 	{
-		String title = ( ( professorDTO.getId() == null ) ?
+		String title = ( ( this.professorDTO.getId() == null ) ?
 			"Inserção de Professor" : "Edição de Professor" );
 
-		simpleModal = new SimpleModal(
+		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		simpleModal.setHeight( 395 );
+		this.simpleModal.setHeight( 395 );
 		createForm();
-		simpleModal.setContent( formPanel );
+		this.simpleModal.setContent( this.formPanel );
 	}
 
 	private void createForm()
 	{
 		FormData formData = new FormData( "-20" );
-		formPanel = new FormPanel();
-		formPanel.setHeaderVisible( false );
+		this.formPanel = new FormPanel();
+		this.formPanel.setHeaderVisible( false );
 
-		cpfTF = new UniqueTextField( cenarioDTO, UniqueDomain.PROFESSOR );
-		cpfTF.setName( ProfessorDTO.PROPERTY_CPF );
-		cpfTF.setValue( professorDTO.getCpf() );
-		cpfTF.setFieldLabel( "CPF" );
-		cpfTF.setAllowBlank( false );
-		cpfTF.setMaxLength( 14 );
-		cpfTF.setMinLength( 14 );
-		cpfTF.setEmptyText( "Preencha o CPF" );
-		formPanel.add( cpfTF, formData );
+		this.cpfTF = new UniqueTextField( this.cenarioDTO, UniqueDomain.PROFESSOR );
+		this.cpfTF.setName( ProfessorDTO.PROPERTY_CPF );
+		this.cpfTF.setValue( professorDTO.getCpf() );
+		this.cpfTF.setFieldLabel( "CPF" );
+		this.cpfTF.setAllowBlank( false );
+		this.cpfTF.setMaxLength( 14 );
+		this.cpfTF.setMinLength( 14 );
+		this.cpfTF.setEmptyText( "Preencha o CPF" );
+		this.formPanel.add( this.cpfTF, formData );
 
-		nomeTF = new TextField< String >();
-		nomeTF.setName( ProfessorDTO.PROPERTY_NOME );
-		nomeTF.setValue( professorDTO.getNome() );
-		nomeTF.setFieldLabel( "Nome" );
-		nomeTF.setAllowBlank( false );
-		nomeTF.setMinLength( 3 );
-		nomeTF.setMaxLength( 50 );
-		nomeTF.setEmptyText( "Preencha o nome" );
-		formPanel.add( nomeTF, formData );
+		this.nomeTF = new TextField< String >();
+		this.nomeTF.setName( ProfessorDTO.PROPERTY_NOME );
+		this.nomeTF.setValue( this.professorDTO.getNome() );
+		this.nomeTF.setFieldLabel( "Nome" );
+		this.nomeTF.setAllowBlank( false );
+		this.nomeTF.setMinLength( 3 );
+		this.nomeTF.setMaxLength( 50 );
+		this.nomeTF.setEmptyText( "Preencha o nome" );
+		this.formPanel.add( this.nomeTF, formData );
 
-		tipoContratoCB = new TipoContratoComboBox();
-		tipoContratoCB.setAllowBlank( false );
-		tipoContratoCB.setValue( tipoContratoDTO );
-		formPanel.add( tipoContratoCB, formData );
+		this.tipoContratoCB = new TipoContratoComboBox();
+		this.tipoContratoCB.setAllowBlank( false );
+		this.tipoContratoCB.setValue( this.tipoContratoDTO );
+		this.formPanel.add( this.tipoContratoCB, formData );
 
-		cargaHorariaMaxNF = new NumberField();
-		cargaHorariaMaxNF.setName( ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX );
-		cargaHorariaMaxNF.setValue( professorDTO.getCargaHorariaMax() );
-		cargaHorariaMaxNF.setFieldLabel( "Carga Horária Máx." );
-		cargaHorariaMaxNF.setAllowBlank( false );
-		cargaHorariaMaxNF.setAllowDecimals( false );
-		cargaHorariaMaxNF.setMaxValue( 99 );
-		cargaHorariaMaxNF.setEmptyText( "Somente números" );
-		formPanel.add( cargaHorariaMaxNF, formData );
+		this.cargaHorariaMaxNF = new NumberField();
+		this.cargaHorariaMaxNF.setName( ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX );
+		this.cargaHorariaMaxNF.setValue( this.professorDTO.getCargaHorariaMax() );
+		this.cargaHorariaMaxNF.setFieldLabel( "Carga Horária Máx." );
+		this.cargaHorariaMaxNF.setAllowBlank( false );
+		this.cargaHorariaMaxNF.setAllowDecimals( false );
+		this.cargaHorariaMaxNF.setMaxValue( 99 );
+		this.cargaHorariaMaxNF.setEmptyText( "Somente números" );
+		this.formPanel.add( this.cargaHorariaMaxNF, formData );
 
-		cargaHorariaMinNF = new NumberField();
-		cargaHorariaMinNF.setName( ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN );
-		cargaHorariaMinNF.setValue( professorDTO.getCargaHorariaMin() );
-		cargaHorariaMinNF.setFieldLabel( "Carga Horária Min." );
-		cargaHorariaMinNF.setAllowBlank( false );
-		cargaHorariaMinNF.setAllowDecimals( false );
-		cargaHorariaMinNF.setMaxValue( 99 );
-		cargaHorariaMinNF.setEmptyText( "Somente números" );
-		formPanel.add( cargaHorariaMinNF, formData );
+		this.cargaHorariaMinNF = new NumberField();
+		this.cargaHorariaMinNF.setName( ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN );
+		this.cargaHorariaMinNF.setValue( this.professorDTO.getCargaHorariaMin() );
+		this.cargaHorariaMinNF.setFieldLabel( "Carga Horária Min." );
+		this.cargaHorariaMinNF.setAllowBlank( false );
+		this.cargaHorariaMinNF.setAllowDecimals( false );
+		this.cargaHorariaMinNF.setMaxValue( 99 );
+		this.cargaHorariaMinNF.setEmptyText( "Somente números" );
+		this.formPanel.add( this.cargaHorariaMinNF, formData );
 
-		titulacaoCB = new TitulacaoComboBox();
-		titulacaoCB.setAllowBlank( false );
-		titulacaoCB.setValue( titulacaoDTO );
-		formPanel.add( titulacaoCB, formData );
+		this.titulacaoCB = new TitulacaoComboBox();
+		this.titulacaoCB.setAllowBlank( false );
+		this.titulacaoCB.setValue( this.titulacaoDTO );
+		this.formPanel.add( this.titulacaoCB, formData );
 
-		areaTitulacaoCB = new AreaTitulacaoComboBox();
-		areaTitulacaoCB.setAllowBlank( false );
-		areaTitulacaoCB.setValue( areaTitulacaoDTO );
-		formPanel.add( areaTitulacaoCB, formData );
+		this.areaTitulacaoCB = new AreaTitulacaoComboBox();
+		this.areaTitulacaoCB.setAllowBlank( false );
+		this.areaTitulacaoCB.setValue( this.areaTitulacaoDTO );
+		this.formPanel.add( this.areaTitulacaoCB, formData );
 
-		creditoAnteriorNF = new NumberField();
-		creditoAnteriorNF.setName( ProfessorDTO.PROPERTY_CREDITO_ANTERIOR );
-		creditoAnteriorNF.setValue( professorDTO.getCreditoAnterior() );
-		creditoAnteriorNF.setFieldLabel( "Carga Horária Anterior" );
-		creditoAnteriorNF.setAllowBlank( false );
-		creditoAnteriorNF.setAllowDecimals( false );
-		creditoAnteriorNF.setMaxValue( 99 );
-		creditoAnteriorNF.setEmptyText( "Somente números" );
-		formPanel.add( creditoAnteriorNF, formData );
+		this.creditoAnteriorNF = new NumberField();
+		this.creditoAnteriorNF.setName( ProfessorDTO.PROPERTY_CREDITO_ANTERIOR );
+		this.creditoAnteriorNF.setValue( this.professorDTO.getCreditoAnterior() );
+		this.creditoAnteriorNF.setFieldLabel( "Carga Horária Anterior" );
+		this.creditoAnteriorNF.setAllowBlank( false );
+		this.creditoAnteriorNF.setAllowDecimals( false );
+		this.creditoAnteriorNF.setMaxValue( 99 );
+		this.creditoAnteriorNF.setEmptyText( "Somente números" );
+		this.formPanel.add( this.creditoAnteriorNF, formData );
 
-		valorCreditoNF = new NumberField();
-		valorCreditoNF.setName( ProfessorDTO.PROPERTY_VALOR_CREDITO );
-		valorCreditoNF.setValue( professorDTO.getValorCredito().getDoubleValue() );
-		valorCreditoNF.setFieldLabel( "Crédito (R$)" );
-		valorCreditoNF.setAllowBlank( false );
-		valorCreditoNF.setAllowDecimals( true );
-		valorCreditoNF.setMaxValue( 999999 );
-		valorCreditoNF.setEmptyText( "Somente números" );
-		formPanel.add( valorCreditoNF, formData );
+		this.valorCreditoNF = new NumberField();
+		this.valorCreditoNF.setName( ProfessorDTO.PROPERTY_VALOR_CREDITO );
+		this.valorCreditoNF.setValue( this.professorDTO.getValorCredito().getDoubleValue() );
+		this.valorCreditoNF.setFieldLabel( "Crédito (R$)" );
+		this.valorCreditoNF.setAllowBlank( false );
+		this.valorCreditoNF.setAllowDecimals( true );
+		this.valorCreditoNF.setMaxValue( 999999 );
+		this.valorCreditoNF.setEmptyText( "Somente números" );
+		this.formPanel.add( this.valorCreditoNF, formData );
 
-		FormButtonBinding binding = new FormButtonBinding( formPanel );
-		binding.addButton( simpleModal.getSalvarBt() );
+		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
+		binding.addButton( this.simpleModal.getSalvarBt() );
 
-		simpleModal.setFocusWidget( cpfTF );
+		this.simpleModal.setFocusWidget( this.cpfTF );
 	}
-	
+
 	public boolean isValid()
 	{
-		return formPanel.isValid();
+		return this.formPanel.isValid();
 	}
-	
+
 	@Override
 	public Button getSalvarButton()
 	{
-		return simpleModal.getSalvarBt();
+		return this.simpleModal.getSalvarBt();
 	}
 
 	@Override
 	public SimpleModal getSimpleModal()
 	{
-		return simpleModal;
+		return this.simpleModal;
 	}
 
 	@Override
 	public TextField< String > getNomeTextField()
 	{
-		return nomeTF;
+		return this.nomeTF;
 	}
 
 	@Override
 	public TextField< String > getCpfTextField()
 	{
-		return cpfTF;
+		return this.cpfTF;
 	}
 
 	@Override
 	public TipoContratoComboBox getTipoContratoComboBox()
 	{
-		return tipoContratoCB;
+		return this.tipoContratoCB;
 	}
 
 	@Override
 	public NumberField getCargaHorariaMaxNumberField()
 	{
-		return cargaHorariaMaxNF;
+		return this.cargaHorariaMaxNF;
 	}
 
 	@Override
 	public NumberField getCargaHorariaMinNumberField()
 	{
-		return cargaHorariaMinNF;
+		return this.cargaHorariaMinNF;
 	}
 
 	@Override
 	public TitulacaoComboBox getTitulacaoComboBox()
 	{
-		return titulacaoCB;
+		return this.titulacaoCB;
 	}
 
 	@Override
 	public AreaTitulacaoComboBox getAreaTitulacaoComboBox()
 	{
-		return areaTitulacaoCB;
+		return this.areaTitulacaoCB;
 	}
 
 	@Override
 	public NumberField getCreditoAnteriorNumberField()
 	{
-		return creditoAnteriorNF;
+		return this.creditoAnteriorNF;
 	}
 
 	@Override
 	public NumberField getValorCreditoNumberField()
 	{
-		return valorCreditoNF;
+		return this.valorCreditoNF;
 	}
 
 	@Override
 	public ProfessorDTO getProfessorDTO()
 	{
-		return professorDTO;
+		return this.professorDTO;
 	}
 }

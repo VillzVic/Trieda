@@ -106,7 +106,6 @@ public class AlunoDemandaView
 
 		GroupingStore< AlunoDemandaDTO > store
 			= new GroupingStore< AlunoDemandaDTO >( loader );
-		store.groupBy( AlunoDemandaDTO.PROPERTY_DEMANDA_ID );
 
 		final ColumnModel columnModel = new ColumnModel( getColumnList() );
 		grid = new Grid< AlunoDemandaDTO >( store, columnModel );
@@ -137,15 +136,8 @@ public class AlunoDemandaView
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
-		// Id da demanda, para agrupar os alunos
-		SummaryColumnConfig< Integer > cc1 = new SummaryColumnConfig< Integer >(
-			AlunoDemandaDTO.PROPERTY_DEMANDA_ID, "Demanda", 50 );
-
-		cc1.setSummaryType( SummaryType.COUNT );
-		list.add( cc1 );
-
 		// Nome do aluno
-		cc1 = new SummaryColumnConfig< Integer >(
+		SummaryColumnConfig< Integer > cc1 = new SummaryColumnConfig< Integer >(
 			AlunoDemandaDTO.PROPERTY_DISPLAY_TEXT, "Alunos", 50 );
 		cc1.setSummaryType( SummaryType.COUNT );
 		cc1.setSummaryRenderer( new SummaryRenderer()
@@ -155,7 +147,11 @@ public class AlunoDemandaView
 				return ( value.intValue() > 1 ? "(" + value.intValue() + " Alunos)" : "(1 Aluno)" );  
 			}  
 		});
+		list.add( cc1 );
 
+		// Informa se o aluno foi ou não atendido na otimização
+		cc1 = new SummaryColumnConfig< Integer >(
+			AlunoDemandaDTO.PROPERTY_ALUNO_ATENDIDO_STRING, "Atendido", 50 );
 		list.add( cc1 );
 
 		return list;

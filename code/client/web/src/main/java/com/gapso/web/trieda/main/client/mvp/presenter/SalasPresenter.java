@@ -92,6 +92,7 @@ public class SalasPresenter
 			{
 				CampusDTO campusDTO = display.getCampusCB().getValue();
 				UnidadeDTO unidadeDTO = display.getUnidadeCB().getValue();
+
 				service.getList( campusDTO, unidadeDTO,
 					(PagingLoadConfig) loadConfig, callback );
 			}
@@ -116,7 +117,7 @@ public class SalasPresenter
 		});
 
 		display.getEditButton().addSelectionListener(
-			new SelectionListener<ButtonEvent>()
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -138,7 +139,7 @@ public class SalasPresenter
 				{
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!", "Não foi possível editar a sala", null );
 					}
 
 					public void onSuccess( Boolean result )
@@ -148,7 +149,8 @@ public class SalasPresenter
 						TipoSalaDTO tipoSalaDTO = futureSalaDTO.result();
 
 						Presenter presenter = new SalaFormPresenter(
-							new SalaFormView( salaDTO, campusDTO, unidadeDTO, tipoSalaDTO, cenario ), display.getGrid() );
+							new SalaFormView( salaDTO, campusDTO, unidadeDTO,
+								tipoSalaDTO, cenario ), display.getGrid() );
 
 						presenter.go( null );
 					}
@@ -157,124 +159,143 @@ public class SalasPresenter
 		});
 
 		display.getRemoveButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final SalasServiceAsync service = Services.salas();
+
+				final List< SalaDTO > list
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
+				service.remove( list,
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void componentSelected(ButtonEvent ce) {
-						final List<SalaDTO> list = display.getGrid().getGrid()
-								.getSelectionModel().getSelectedItems();
-						final SalasServiceAsync service = Services.salas();
-						service.remove(
-								list,
-								new AbstractAsyncCallbackWithDefaultOnFailure<Void>(
-										display) {
-									@Override
-									public void onSuccess(Void result) {
-										display.getGrid().updateList();
-										Info.display(
-												display.getI18nConstants()
-														.informacao(),
-												display.getI18nMessages()
-														.sucessoRemoverDoBD(
-																list.toString()));
-									}
-								});
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Não foi possível remover a(s) sala(s)", null );
+					}
+
+					@Override
+					public void onSuccess( Void result )
+					{
+						display.getGrid().updateList();
+
+						Info.display( display.getI18nConstants().informacao(),
+							display.getI18nMessages().sucessoRemoverDoBD( list.toString() ) );
 					}
 				});
+			}
+		});
+
 		display.getImportExcelButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected( ButtonEvent ce )
-					{
-						ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.SALAS, instituicaoEnsinoDTO );
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.SALAS, instituicaoEnsinoDTO );
 
-						ImportExcelFormView importExcelFormView
-							= new ImportExcelFormView( parametros, display.getGrid() );
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, display.getGrid() );
 
-						importExcelFormView.show();
-					}
-				});
+				importExcelFormView.show();
+			}
+		});
+
 		display.getExportExcelButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected( ButtonEvent ce )
-					{
-						ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.SALAS, instituicaoEnsinoDTO );
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.SALAS, instituicaoEnsinoDTO );
 						
-						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-								parametros, display.getI18nConstants(),
-									display.getI18nMessages() );
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
 
-						e.submit();
-					}
-				});
+				e.submit();
+			}
+		});
+
 		display.getDisponibilidadeButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
+				semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
 
-						final SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-						semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
+				final SalaDTO salaDTO
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-						final SalaDTO salaDTO = display.getGrid().getGrid()
-								.getSelectionModel().getSelectedItem();
+				final FutureResult< UnidadeDTO > futureUnidadeDTO = new FutureResult< UnidadeDTO >();
+				final FutureResult< List< HorarioDisponivelCenarioDTO > > futureHorarioDisponivelCenarioDTOList
+					= new FutureResult< List< HorarioDisponivelCenarioDTO > >();
 
-						final FutureResult<UnidadeDTO> futureUnidadeDTO = new FutureResult<UnidadeDTO>();
-						final FutureResult<List<HorarioDisponivelCenarioDTO>> futureHorarioDisponivelCenarioDTOList = new FutureResult<List<HorarioDisponivelCenarioDTO>>();
+				Services.unidades().getUnidade( salaDTO.getUnidadeId(), futureUnidadeDTO );
+				Services.salas().getHorariosDisponiveis( salaDTO, semanaLetivaDTO,
+					futureHorarioDisponivelCenarioDTOList );
 
-						Services.unidades().getUnidade(salaDTO.getUnidadeId(),
-								futureUnidadeDTO);
-						Services.salas().getHorariosDisponiveis(salaDTO,
-								semanaLetivaDTO,
-								futureHorarioDisponivelCenarioDTOList);
+				FutureSynchronizer synch = new FutureSynchronizer(
+					futureUnidadeDTO, futureHorarioDisponivelCenarioDTOList );
 
-						FutureSynchronizer synch = new FutureSynchronizer(
-								futureUnidadeDTO,
-								futureHorarioDisponivelCenarioDTOList);
-						synch.addCallback(new AsyncCallback<Boolean>() {
-							public void onFailure(Throwable caught) {
-								MessageBox.alert("ERRO!",
-										"Deu falha na conexão", null);
-							}
+				synch.addCallback( new AsyncCallback< Boolean >()
+				{
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
+					}
 
-							public void onSuccess( Boolean result )
-							{
-								UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
+					public void onSuccess( Boolean result )
+					{
+						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 
-								List< HorarioDisponivelCenarioDTO > horarioDisponivelCenarioDTOList
-									= futureHorarioDisponivelCenarioDTOList.result();
+						List< HorarioDisponivelCenarioDTO > horarioDisponivelCenarioDTOList
+							= futureHorarioDisponivelCenarioDTOList.result();
 
-								Presenter presenter = new HorarioDisponivelSalaFormPresenter(
-									instituicaoEnsinoDTO, unidadeDTO, semanaLetivaDTO,
-									new HorarioDisponivelSalaFormView( salaDTO, horarioDisponivelCenarioDTOList ) );
+						Presenter presenter = new HorarioDisponivelSalaFormPresenter(
+							instituicaoEnsinoDTO, unidadeDTO, semanaLetivaDTO,
+							new HorarioDisponivelSalaFormView( salaDTO, horarioDisponivelCenarioDTOList ) );
 
-								presenter.go( null );
-							}
-						});
+						presenter.go( null );
 					}
 				});
+			}
+		});
+
 		display.getResetBuscaButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						display.getUnidadeCB().setValue(null);
-						display.getCampusCB().setValue(null);
-						display.getGrid().updateList();
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getUnidadeCB().setValue( null );
+				display.getCampusCB().setValue( null );
+				display.getGrid().updateList();
+			}
+		});
+
 		display.getSubmitBuscaButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						display.getGrid().updateList();
-					}
-				});
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getGrid().updateList();
+			}
+		});
 	}
 
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		GTab tab = (GTab) widget;
-		tab.add((GTabItem) display.getComponent());
+		tab.add( (GTabItem) display.getComponent() );
 	}
 }

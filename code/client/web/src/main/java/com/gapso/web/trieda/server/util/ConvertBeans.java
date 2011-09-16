@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.springframework.web.util.HtmlUtils;
+
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AreaTitulacao;
@@ -2883,6 +2885,7 @@ public class ConvertBeans
 
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
+		domain.setAtendido( ( dto.getAlunoAtendido() == null ) ? false : dto.getAlunoAtendido() );
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
@@ -2905,6 +2908,16 @@ public class ConvertBeans
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
 		dto.setDisplayText( domain.getAluno().getNome() );
+		dto.setAlunoAtendido( ( domain.getAtendido() == null ) ? false : domain.getAtendido() );
+
+		if ( dto.getAlunoAtendido() )
+		{
+			dto.setAlunoAtendidoString( "Sim" );
+		}
+		else
+		{
+			dto.setAlunoAtendidoString( HtmlUtils.htmlUnescape( "N&atilde;o" ) );
+		}
 
 		// Aluno
 		dto.setIdAluno( domain.getAluno().getId() );

@@ -163,14 +163,14 @@ implements Presenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!", "Não foi possível remover a(s) disciplina(s)", null );
 					}
 
 					@Override
 					public void onSuccess( Void result )
 					{
 						display.getGrid().updateList();
-						Info.display( "Removido", "Item removido com sucesso!" );
+						Info.display( "Removido", "Item(s) removido(s) com sucesso!" );
 					}
 				});
 			}
@@ -226,7 +226,7 @@ implements Presenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
 					}
 
 					@Override

@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity( identifierColumn = "ALN_ID" )
 @Table( name = "ALUNOS", uniqueConstraints =
-@UniqueConstraint( columnNames = { "ALN_CPF" } ) )
+@UniqueConstraint( columnNames = { "ALN_CPF", "CEN_ID" } ) )
 public class Aluno
 	implements Serializable, Comparable< Aluno >
 {
@@ -323,6 +323,7 @@ public class Aluno
 
 		Aluno other = (Aluno) obj;
 
+		// Comparando os id's
 		if ( id == null )
 		{
 			if ( other.id != null )
@@ -331,6 +332,19 @@ public class Aluno
 			}
 		}
 		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		// Comparando os cpf's
+		if ( cpf == null )
+		{
+			if ( other.cpf != null )
+			{
+				return false;
+			}
+		}
+		else if ( !cpf.equals( other.cpf ) )
 		{
 			return false;
 		}

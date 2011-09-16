@@ -79,23 +79,29 @@ public class CampiPresenter
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final CampiServiceAsync service = Services.campi();
-		RpcProxy<PagingLoadResult<CampusDTO>> proxy = new RpcProxy<PagingLoadResult<CampusDTO>>() {
+
+		RpcProxy< PagingLoadResult< CampusDTO > > proxy =
+			new RpcProxy< PagingLoadResult< CampusDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig,
-					AsyncCallback<PagingLoadResult<CampusDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< CampusDTO > > callback )
+			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String estado = null;
-				String municipio = display.getMunicipioBuscaTextField()
-						.getValue();
+				String municipio = display.getMunicipioBuscaTextField().getValue();
 				String bairro = display.getBairroBuscaTextField().getValue();
-				service.getBuscaList(cenario, nome, codigo, estado, municipio,
-						bairro, (PagingLoadConfig) loadConfig, callback);
+
+				service.getBuscaList( cenario, nome, codigo, estado, municipio,
+					bairro, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		display.setProxy( proxy );
 	}
 
 	private void setListeners()
@@ -130,25 +136,36 @@ public class CampiPresenter
 		});
 
 		display.getRemoveButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final CampiServiceAsync service = Services.campi();
+
+				List< CampusDTO > list
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
+				service.remove( list,
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void componentSelected(ButtonEvent ce) {
-						List<CampusDTO> list = display.getGrid().getGrid()
-								.getSelectionModel().getSelectedItems();
-						final CampiServiceAsync service = Services.campi();
-						service.remove(
-								list,
-								new AbstractAsyncCallbackWithDefaultOnFailure<Void>(
-										display) {
-									@Override
-									public void onSuccess(Void result) {
-										display.getGrid().updateList();
-										Info.display("Removido",
-												"Item removido com sucesso!");
-									}
-								});
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Não foi possível remover o(s) campus/campi", null );
+					}
+
+					@Override
+					public void onSuccess( Void result )
+					{
+						display.getGrid().updateList();
+
+						Info.display( "Removido", "Item removido com sucesso!" );
 					}
 				});
+			}
+		});
+
 		display.getImportExcelButton().addSelectionListener(
 				new SelectionListener<ButtonEvent>() {
 					@Override
@@ -218,7 +235,7 @@ public class CampiPresenter
 							@Override
 							public void onFailure( Throwable caught )
 							{
-								MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+								MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
 							}
 
 							@Override

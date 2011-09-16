@@ -112,35 +112,46 @@ public class SemanasLetivaPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<SemanaLetivaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
 				final SemanasLetivaServiceAsync service = Services.semanasLetiva();
-				service.remove(list, new AsyncCallback<Void>() {
+				List< SemanaLetivaDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
+				service.remove( list, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Não foi possível remover a(s) semana(s) letiva(s)", null );
 					}
+
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display( "Removido", "Ite(s) removido(s) com sucesso!" );
 					}
 				});
 			}
 		});
 
-		display.getDiasDeAulaButton().addSelectionListener(new SelectionListener<ButtonEvent>()
+		display.getDiasDeAulaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected(ButtonEvent ce)
 			{
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
 				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(
 						instituicaoEnsinoDTO, dto, new HorarioDisponivelCenarioFormView(dto ) );
 
-				presenter.go(null);
+				presenter.go( null );
 			}
 		});
 

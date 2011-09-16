@@ -61,10 +61,12 @@ public class AlunosView
 
 	private void createToolBar()
 	{
-		this.toolBar = new SimpleToolBar( this );
+		this.toolBar = new SimpleToolBar(
+			true, true, true, false, false, this );
+
 		this.panel.setTopComponent( this.toolBar );
 	}
-	
+
 	private void createGrid()
 	{
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
@@ -124,18 +126,6 @@ public class AlunosView
 		return toolBar.getRemoveButton();
 	}
 
-	@Override
-	public Button getImportExcelButton()
-	{
-		return toolBar.getImportExcelButton();
-	}
-
-	@Override
-	public Button getExportExcelButton()
-	{
-		return toolBar.getExportExcelButton();
-	}
-	
 	@Override
 	public SimpleGrid< AlunoDTO > getGrid()
 	{

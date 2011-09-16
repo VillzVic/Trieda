@@ -518,4 +518,30 @@ public class Demanda
 
         return sb.toString();
     }
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Demanda ) )
+		{
+			return false;
+		}
+
+		Demanda other = (Demanda) obj;
+
+		// Comparando os id's
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
 }

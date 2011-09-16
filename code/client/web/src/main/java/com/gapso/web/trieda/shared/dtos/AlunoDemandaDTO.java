@@ -9,6 +9,8 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_ALUNO_DEMANDA_ID = "alunoDemandaId";
 	public static final String PROPERTY_ALUNO_ID = "alunoId";
 	public static final String PROPERTY_ALUNO_STRING = "alunoString";
+	public static final String PROPERTY_ALUNO_ATENDIDO = "alunoAtendido";
+	public static final String PROPERTY_ALUNO_ATENDIDO_STRING = "alunoAtendidoString";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_DEMANDA_ID = "demandaId";
 	public static final String PROPERTY_DEMANDA_STRING = "demandaString";
@@ -58,6 +60,26 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public String getAlunoString()
 	{
 		return get( PROPERTY_ALUNO_STRING );
+	}
+
+	public void setAlunoAtendido( Boolean value )
+	{
+		set( PROPERTY_ALUNO_ATENDIDO, value );
+	}
+
+	public Boolean getAlunoAtendido()
+	{
+		return get( PROPERTY_ALUNO_ATENDIDO );
+	}
+
+	public void setAlunoAtendidoString( String value )
+	{
+		set( PROPERTY_ALUNO_ATENDIDO_STRING, value );
+	}
+
+	public String getAlunoAtendidoString()
+	{
+		return get( PROPERTY_ALUNO_ATENDIDO_STRING );
 	}
 
 	public Long getDisciplinaId()

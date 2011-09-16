@@ -32,8 +32,6 @@ public class AlunosPresenter
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
-		Button getImportExcelButton();
-		Button getExportExcelButton();
 		TextField< String > getNomeBuscaTextField();
 		TextField< String > getCpfBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -122,14 +120,14 @@ public class AlunosPresenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!", "Não foi possível remover o(s) aluno(s)", null );
 					}
 
 					@Override
 					public void onSuccess( Void result )
 					{
 						display.getGrid().updateList();
-						Info.display( "Removido", "Item removido com sucesso!" );
+						Info.display( "Removido", "Aluno removido com sucesso!" );
 					}
 				});
 			}

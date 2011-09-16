@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -30,7 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooEntity( identifierColumn = "ALD_ID" )
-@Table( name = "ALUNOS_DEMANDA" )
+@Table( name = "ALUNOS_DEMANDA", uniqueConstraints =
+@UniqueConstraint( columnNames = { "ALN_ID", "DEM_ID" } ) )
 public class AlunoDemanda
 	implements Serializable, Comparable< AlunoDemanda >
 {
@@ -176,7 +178,7 @@ public class AlunoDemanda
 		}
 
 		AlunoDemanda merged = this.entityManager.merge( this );
-		this.entityManager.flush();
+		//this.entityManager.flush();
 		return merged;
 	}
 
@@ -308,6 +310,8 @@ public class AlunoDemanda
 
 		result = ( prime * result + ( ( this.getId() == null ) ? 0 : this.getId().hashCode() ) );
 		result = ( prime * result + ( ( this.getVersion() == null ) ? 0 : this.getVersion().hashCode() ) );
+		result = ( prime * result + ( ( this.getDemanda() == null ) ? 0 : this.getDemanda().hashCode() ) );
+		result = ( prime * result + ( ( this.getAluno() == null ) ? 0 : this.getAluno().hashCode() ) );
 
 		return result;
 	}
@@ -322,14 +326,28 @@ public class AlunoDemanda
 
 		AlunoDemanda other = (AlunoDemanda) obj;
 
-		if ( id == null )
+		// Comparando as demandas
+		if ( getDemanda() == null )
 		{
-			if ( other.id != null )
+			if ( other.getDemanda() != null )
 			{
 				return false;
 			}
 		}
-		else if ( !id.equals( other.id ) )
+		else if ( !getDemanda().equals( other.getDemanda() ) )
+		{
+			return false;
+		}
+
+		// Comparando os alunos
+		if ( getAluno() == null )
+		{
+			if ( other.getAluno() != null )
+			{
+				return false;
+			}
+		}
+		else if ( !getAluno().equals( other.getAluno() ) )
 		{
 			return false;
 		}
@@ -341,7 +359,7 @@ public class AlunoDemanda
 	public int compareTo( AlunoDemanda o )
 	{
 		int compare = this.getDemanda().getId().compareTo( o.getDemanda().getId() );
-		
+
 		if ( compare == 0 )
 		{
 			compare = this.getAluno().getId().compareTo( o.getAluno().getId() );

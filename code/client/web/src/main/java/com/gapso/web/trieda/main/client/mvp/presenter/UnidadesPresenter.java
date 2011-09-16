@@ -147,16 +147,32 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				final List<UnidadeDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
 				final UnidadesServiceAsync service = Services.unidades();
-				service.remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+
+				final List< UnidadeDTO > list
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
+				service.remove( list, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void onSuccess(Void result) {
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Não foi possível remover a(s) unidade(s)", null );
+					}
+
+					@Override
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display(display.getI18nConstants().informacao(), display.getI18nMessages().sucessoRemoverDoBD(list.toString()));
+
+						Info.display( display.getI18nConstants().informacao(),
+							display.getI18nMessages().sucessoRemoverDoBD( list.toString() ) );
 					}
 				});
 			}
@@ -261,7 +277,7 @@ public class UnidadesPresenter
 				{
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
 					}
 
 					public void onSuccess( Boolean result )
@@ -270,7 +286,7 @@ public class UnidadesPresenter
 						List< HorarioDisponivelCenarioDTO > horarioDisponivelCenarioDTOList
 							= futureHorarioDisponivelCenarioDTOList.result().getData();
 
-						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter( instituicaoEnsinoDTO, campusDTO,	semanaLetivaDTO,
+						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter( instituicaoEnsinoDTO, campusDTO, semanaLetivaDTO,
 							new HorarioDisponivelUnidadeFormView( unidadeDTO, horarioDisponivelCenarioDTOList ) );
 
 						presenter.go( null );
