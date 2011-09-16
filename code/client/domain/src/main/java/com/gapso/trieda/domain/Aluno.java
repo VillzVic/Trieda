@@ -224,7 +224,7 @@ public class Aluno
 		return em;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Aluno > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -234,20 +234,20 @@ public class Aluno
 			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Aluno > findByNomeCpf(
 		InstituicaoEnsino instituicaoEnsino, String nome, String cpf )
 	{
 		String nomeQuery = "";
 		if ( nome != null )
 		{
-			nomeQuery = " AND o.nome = :nome ";
+			nomeQuery = " AND LOWER ( :nome ) LIKE LOWER ( o.nome ) ";
 		}
 
 		String cpfQuery = "";
 		if ( cpf != null )
 		{
-			cpfQuery = " AND o.cpf = :cpf ";
+			cpfQuery = " AND LOWER ( :cpf ) LIKE LOWER ( o.cpf ) ";
 		}
 
 		Query q = entityManager().createQuery(
@@ -288,7 +288,7 @@ public class Aluno
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static boolean checkCodigoUnique(
 		InstituicaoEnsino instituicaoEnsino,
 		Cenario cenario, String cpf )

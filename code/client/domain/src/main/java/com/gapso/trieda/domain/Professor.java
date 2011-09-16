@@ -48,49 +48,49 @@ public class Professor
 	private static final long serialVersionUID = 265242535107921721L;
 
 	@NotNull
-	@ManyToOne(targetEntity = Cenario.class)
-	@JoinColumn(name = "CEN_ID")
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
 	private Cenario cenario;
 
 	@NotNull
-	@ManyToOne(targetEntity = TipoContrato.class)
-	@JoinColumn(name = "TCO_ID")
+	@ManyToOne( targetEntity = TipoContrato.class )
+	@JoinColumn( name = "TCO_ID" )
 	private TipoContrato tipoContrato;
 
 	@NotNull
-	@ManyToOne(targetEntity = Titulacao.class)
-	@JoinColumn(name = "TIT_ID")
+	@ManyToOne( targetEntity = Titulacao.class )
+	@JoinColumn( name = "TIT_ID" )
 	private Titulacao titulacao;
 
 	@NotNull
-	@ManyToOne(targetEntity = AreaTitulacao.class)
-	@JoinColumn(name = "ATI_ID")
+	@ManyToOne( targetEntity = AreaTitulacao.class )
+	@JoinColumn( name = "ATI_ID" )
 	private AreaTitulacao areaTitulacao;
 
 	@NotNull
-	@Column(name = "PRF_CPF")
-	@Size(min = 14, max = 14)
+	@Column( name = "PRF_CPF" )
+	@Size( min = 14, max = 14 )
 	private String cpf;
 
 	@NotNull
-	@Column(name = "PRF_NOME")
-	@Size(min = 3, max = 20)
+	@Column( name = "PRF_NOME" )
+	@Size( min = 3, max = 20 )
 	private String nome;
 
-	@Column(name = "PRF_CH_MIN")
-	@Max(999L)
+	@Column( name = "PRF_CH_MIN" )
+	@Max( 999L )
 	private Integer cargaHorariaMin;
 
-	@Column(name = "PRF_CH_MAX")
-	@Max(999L)
+	@Column( name = "PRF_CH_MAX" )
+	@Max( 999L )
 	private Integer cargaHorariaMax;
 
-	@Column(name = "PRF_CRED_ANTERIOR")
-	@Max(999L)
+	@Column( name = "PRF_CRED_ANTERIOR" )
+	@Max( 999L )
 	private Integer creditoAnterior;
 
-	@Column(name = "PRF_VALOR_CREDITO")
-	@Digits(integer = 6, fraction = 2)
+	@Column( name = "PRF_VALOR_CREDITO" )
+	@Digits( integer = 6, fraction = 2 )
 	private Double valorCredito;
 
 	@ManyToMany
@@ -134,124 +134,154 @@ public class Professor
 		return sb.toString();
 	}
 
-	public Cenario getCenario() {
+	public Cenario getCenario()
+	{
 		return this.cenario;
 	}
 
-	public void setCenario(Cenario cenario) {
+	public void setCenario( Cenario cenario )
+	{
 		this.cenario = cenario;
 	}
 
-	public TipoContrato getTipoContrato() {
+	public TipoContrato getTipoContrato()
+	{
 		return this.tipoContrato;
 	}
 
-	public void setTipoContrato(TipoContrato tipoContrato) {
+	public void setTipoContrato( TipoContrato tipoContrato )
+	{
 		this.tipoContrato = tipoContrato;
 	}
 
-	public Titulacao getTitulacao() {
+	public Titulacao getTitulacao()
+	{
 		return this.titulacao;
 	}
 
-	public void setTitulacao(Titulacao titulacao) {
+	public void setTitulacao( Titulacao titulacao )
+	{
 		this.titulacao = titulacao;
 	}
 
-	public AreaTitulacao getAreaTitulacao() {
+	public AreaTitulacao getAreaTitulacao()
+	{
 		return this.areaTitulacao;
 	}
 
-	public void setAreaTitulacao(AreaTitulacao areaTitulacao) {
+	public void setAreaTitulacao( AreaTitulacao areaTitulacao )
+	{
 		this.areaTitulacao = areaTitulacao;
 	}
 
-	public String getCpf() {
+	public String getCpf()
+	{
 		return this.cpf;
 	}
 
-	public void setCpf(String cpf) {
+	public void setCpf( String cpf )
+	{
 		this.cpf = cpf;
 	}
 
-	public String getNome() {
+	public String getNome()
+	{
 		return this.nome;
 	}
 
-	public void setNome(String nome) {
+	public void setNome( String nome )
+	{
 		this.nome = nome;
 	}
 
-	public Integer getCargaHorariaMin() {
+	public Integer getCargaHorariaMin()
+	{
 		return this.cargaHorariaMin;
 	}
 
-	public void setCargaHorariaMin(Integer cargaHorariaMin) {
+	public void setCargaHorariaMin( Integer cargaHorariaMin )
+	{
 		this.cargaHorariaMin = cargaHorariaMin;
 	}
 
-	public Integer getCargaHorariaMax() {
+	public Integer getCargaHorariaMax()
+	{
 		return this.cargaHorariaMax;
 	}
 
-	public void setCargaHorariaMax(Integer cargaHorariaMax) {
+	public void setCargaHorariaMax( Integer cargaHorariaMax )
+	{
 		this.cargaHorariaMax = cargaHorariaMax;
 	}
 
-	public Integer getCreditoAnterior() {
+	public Integer getCreditoAnterior()
+	{
 		return this.creditoAnterior;
 	}
 
-	public void setCreditoAnterior(Integer creditoAnterior) {
+	public void setCreditoAnterior( Integer creditoAnterior )
+	{
 		this.creditoAnterior = creditoAnterior;
 	}
 
-	public Double getValorCredito() {
+	public Double getValorCredito()
+	{
 		return this.valorCredito;
 	}
 
-	public void setValorCredito(Double valorCredito) {
+	public void setValorCredito( Double valorCredito )
+	{
 		this.valorCredito = valorCredito;
 	}
 
-	public Set<Campus> getCampi() {
+	public Set< Campus > getCampi()
+	{
 		return this.campi;
 	}
 
-	public void setCampi(Set<Campus> campi) {
+	public void setCampi( Set< Campus > campi )
+	{
 		this.campi = campi;
 	}
 
-	private Set<HorarioDisponivelCenario> getHorarios() {
+	private Set< HorarioDisponivelCenario > getHorarios()
+	{
 		return this.horarios;
 	}
 
-	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
+	public void setHorarios( Set< HorarioDisponivelCenario > horarios )
+	{
 		this.horarios = horarios;
 	}
 
-	public Set<ProfessorDisciplina> getDisciplinas() {
+	public Set< ProfessorDisciplina > getDisciplinas()
+	{
 		return this.disciplinas;
 	}
 
-	public void setDisciplinas(Set<ProfessorDisciplina> disciplinas) {
+	public void setDisciplinas( Set< ProfessorDisciplina > disciplinas )
+	{
 		this.disciplinas = disciplinas;
 	}
 
-	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+	public Set< AtendimentoOperacional > getAtendimentosOperacionais()
+	{
 		return this.atendimentosOperacionais;
 	}
 
 	public void setAtendimentosOperacionais(
-			Set<AtendimentoOperacional> atendimentosOperacionais) {
+		Set< AtendimentoOperacional > atendimentosOperacionais )
+	{
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 
-	public Set<Usuario> getUsuario() {
+	public Set< Usuario > getUsuario()
+	{
 		return usuario;
 	}
 
-	public void setUsuario(Set<Usuario> usuario) {
+	public void setUsuario( Set< Usuario > usuario )
+	{
 		this.usuario = usuario;
 	}
 
@@ -259,27 +289,31 @@ public class Professor
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "PRF_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "PRF_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
@@ -308,8 +342,8 @@ public class Professor
 
 	public void preencheHorarios()
 	{
-		List< SemanaLetiva > listDomains
-			= SemanaLetiva.findAll( this.getTipoContrato().getInstituicaoEnsino() );
+		List< SemanaLetiva > listDomains = SemanaLetiva.findAll(
+			this.getTipoContrato().getInstituicaoEnsino() );
 
 		for ( SemanaLetiva semanaLetiva : listDomains )
 		{
@@ -352,6 +386,7 @@ public class Professor
 	public void removeHorariosDisponivelCenario()
 	{
 		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+
 		for ( HorarioDisponivelCenario horario : horarios )
 		{
 			horario.getProfessores().remove( this );
@@ -397,7 +432,7 @@ public class Professor
 		return em;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -407,7 +442,7 @@ public class Professor
 			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findByCampus(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -490,7 +525,7 @@ public class Professor
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findBy( InstituicaoEnsino instituicaoEnsino,
 		String cpf, TipoContrato tipoContrato, Titulacao titulacao,
 		AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy )
@@ -573,7 +608,7 @@ public class Professor
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Professor > find(
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults )
@@ -585,7 +620,7 @@ public class Professor
 			.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
 		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
 	{

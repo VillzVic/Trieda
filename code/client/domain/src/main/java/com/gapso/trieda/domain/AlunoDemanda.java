@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,15 +50,18 @@ public class AlunoDemanda
 
     @NotNull
     @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-    	CascadeType.REFRESH }, targetEntity = Aluno.class )
+    	CascadeType.REFRESH }, targetEntity = Aluno.class, fetch = FetchType.LAZY )
     @JoinColumn( name = "ALN_ID" )
     private Aluno aluno;
 
     @NotNull
     @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-    	CascadeType.REFRESH }, targetEntity = Demanda.class )
+    	CascadeType.REFRESH }, targetEntity = Demanda.class , fetch = FetchType.LAZY )
     @JoinColumn( name = "DEM_ID" )
     private Demanda demanda;
+
+	@Column(name = "ALD_ATENDIDO")
+	private Boolean atendido;
 
 	public Long getId()
 	{
@@ -91,12 +95,22 @@ public class AlunoDemanda
 
 	public Demanda getDemanda()
 	{
-		return demanda;
+		return this.demanda;
 	}
 
 	public void setDemanda( Demanda demanda )
 	{
 		this.demanda = demanda;
+	}
+
+	public Boolean getAtendido()
+	{
+		return atendido;
+	}
+
+	public void setAtendido( Boolean atendido )
+	{
+		this.atendido = atendido;
 	}
 
 	@Transactional
@@ -228,6 +242,25 @@ public class AlunoDemanda
 		return q.getResultList();
 	}
 
+	@SuppressWarnings( "unchecked" )
+	public static AlunoDemanda findByDemandaAndAluno(
+		InstituicaoEnsino instituicaoEnsino, Demanda demanda, Aluno aluno )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.aluno.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda = :demanda " +
+			" AND o.aluno = :aluno " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "demanda", demanda );
+		q.setParameter( "aluno", aluno );
+
+		List< AlunoDemanda > result = q.getResultList(); 
+		return ( ( result == null ) || ( result.size() == 0 ) ? null : result.get( 0 ) );
+	}
+
 	public static AlunoDemanda find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -307,6 +340,13 @@ public class AlunoDemanda
 	@Override
 	public int compareTo( AlunoDemanda o )
 	{
-		return this.getId().compareTo( o.getId() );
+		int compare = this.getDemanda().getId().compareTo( o.getDemanda().getId() );
+		
+		if ( compare == 0 )
+		{
+			compare = this.getAluno().getId().compareTo( o.getAluno().getId() );
+		}
+
+		return compare;
 	}
 }

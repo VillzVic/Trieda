@@ -121,19 +121,19 @@ public class SolverInput
 	private ObjectFactory of;
 	private TriedaInput triedaInput;
 	private List< Campus > campi;
-	private Turno turno;
 	private Parametro parametro;
 	private List< SemanaLetiva > semanasLetivas;
 	private InstituicaoEnsino instituicaoEnsino;
 
 	public SolverInput( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Parametro parametro, List< Campus > campi, Turno turno )
+		Parametro parametro, List< Campus > listCampi )
 	{
 		this.cenario = cenario;
 		this.parametro = parametro;
-		this.campi = new ArrayList< Campus >();
 
-		for ( Campus c : campi )
+		// Está sendo enviado apenas um campus nessa lista
+		this.campi = new ArrayList< Campus >();
+		for ( Campus c : listCampi )
 		{
 			if ( c.getInstituicaoEnsino() == instituicaoEnsino )
 			{
@@ -141,7 +141,6 @@ public class SolverInput
 			}
 		}
 
-		this.turno = turno;
 		this.instituicaoEnsino = instituicaoEnsino;
 		this.of = new ObjectFactory();
 		this.triedaInput = of.createTriedaInput();
@@ -152,14 +151,14 @@ public class SolverInput
 	public TriedaInput generateTaticoTriedaInput()
 	{
 		generate( true );
-		return triedaInput;
+		return this.triedaInput;
 	}
 
 	@Transactional
 	public TriedaInput generateOperacionalTriedaInput()
 	{
 		generate( false );
-		return triedaInput;
+		return this.triedaInput;
 	}
 
 	@Transactional
@@ -393,7 +392,7 @@ public class SolverInput
 		GrupoDivisaoCreditos grupoDivisaoCreditos
 			= of.createGrupoDivisaoCreditos();
 
-		Set< DivisaoCredito > regras = cenario.getDivisoesCredito();
+		Set< DivisaoCredito > regras = this.cenario.getDivisoesCredito();
 
 		for ( DivisaoCredito regra : regras )
 		{
@@ -419,7 +418,7 @@ public class SolverInput
 	{
 		GrupoCampus grupoCampus = of.createGrupoCampus();
 
-		for ( Campus campus : campi )
+		for ( Campus campus : this.campi )
 		{
 			ItemCampus itemCampus = of.createItemCampus();
 
@@ -534,11 +533,13 @@ public class SolverInput
 				
 				List< HorarioDisponivelCenario > horariosCenario
 					=  professor.getHorarios( this.instituicaoEnsino, this.semanasLetivas );
+
 				itemProfessor.setHorariosDisponiveis(
 					createGrupoHorario( horariosCenario ) );
 
 				GrupoProfessorDisciplina grupoProfessorDisciplina	
 					= of.createGrupoProfessorDisciplina();
+
 				Set< ProfessorDisciplina > professorDisciplinas = professor.getDisciplinas();
 
 				for ( ProfessorDisciplina professorDisciplina : professorDisciplinas )
@@ -571,7 +572,7 @@ public class SolverInput
 	{
 		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
 
-		for ( Campus campus : campi )
+		for ( Campus campus : this.campi )
 		{
 			Set< DeslocamentoCampus > deslocamentos = campus.getDeslocamentos();
 
@@ -597,7 +598,7 @@ public class SolverInput
 	{
 		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
 
-		for ( Campus campus : campi )
+		for ( Campus campus : this.campi )
 		{
 			Set< Unidade > unidades = campus.getUnidades();
 
@@ -819,7 +820,7 @@ public class SolverInput
 
 			for ( Oferta oferta : ofertas )
 			{
-				if ( !oferta.getTurno().equals( turno ) )
+				if ( !oferta.getTurno().equals( this.parametro.getTurno() ) )
 				{
 					continue;
 				}
@@ -845,13 +846,13 @@ public class SolverInput
 	{
 		GrupoDemanda grupoDemanda = of.createGrupoDemanda();
 
-		for ( Campus campus : campi )
+		for ( Campus campus : this.campi )
 		{
 			Set< Oferta > ofertas = campus.getOfertas();
 
 			for ( Oferta oferta : ofertas )
 			{
-				if ( oferta.getTurno() != this.turno )
+				if ( oferta.getTurno() != this.parametro.getTurno() )
 				{
 					continue;
 				}
@@ -878,16 +879,18 @@ public class SolverInput
 	private void generateAlunosDemanda()
 	{
 		GrupoAlunoDemanda grupoAlunosDemanda = of.createGrupoAlunoDemanda();
-		List< AlunoDemanda > alunos = AlunoDemanda.findAll( this.instituicaoEnsino );
+
+		List< AlunoDemanda > alunos = AlunoDemanda.findByCampusAndTurno(
+			this.instituicaoEnsino, this.parametro.getCampus(), this.parametro.getTurno() );
 
 		for ( AlunoDemanda aluno : alunos )
 		{
 			if ( aluno.getDemanda() != null
-				&& aluno.getDemanda().getOferta().getCampus().getInstituicaoEnsino() == instituicaoEnsino )
+				&& aluno.getDemanda().getOferta().getCampus().getInstituicaoEnsino() == this.instituicaoEnsino )
 			{
 				ItemAlunoDemanda itemAlunoDemanda = of.createItemAlunoDemanda();
 
-				itemAlunoDemanda.setAlunoId( aluno.getId().intValue() );
+				itemAlunoDemanda.setAlunoId( aluno.getAluno().getId().intValue() );
 				itemAlunoDemanda.setNomeAluno( aluno.getAluno().getNome() );
 				itemAlunoDemanda.setDemandaId( aluno.getDemanda().getId().intValue() );
 
@@ -897,7 +900,7 @@ public class SolverInput
 
 		triedaInput.setAlunosDemanda( grupoAlunosDemanda );
 	}
-	
+
 	private void generateParametrosPlanejamento( boolean tatico )
 	{
 		ItemParametrosPlanejamento itemParametrosPlanejamento
@@ -1094,7 +1097,7 @@ public class SolverInput
 			{
 				for ( HorarioDisponivelCenario horario : horarios )
 				{
-					if ( !horario.getHorarioAula().getTurno().equals( this.turno ) )
+					if ( !horario.getHorarioAula().getTurno().equals( parametro.getTurno() ) )
 					{
 						continue;
 					}
@@ -1164,8 +1167,8 @@ public class SolverInput
 
 		for ( AtendimentoTatico at : ats )
 		{
-			if ( !at.getOferta().getTurno().equals( turno )
-					|| !at.getOferta().getCampus().equals( campi.get( 0 ) ) )
+			if ( !at.getOferta().getTurno().equals( parametro.getTurno() )
+					|| !at.getOferta().getCampus().equals( parametro.getCampus() ) )
 			{
 				continue;
 			}
@@ -1434,7 +1437,7 @@ public class SolverInput
 			}
 			else
 			{
-				if ( !horarioAula.getTurno().equals( turno ) )
+				if ( !horarioAula.getTurno().equals( parametro.getTurno() ) )
 				{
 					continue;
 				}
@@ -1466,7 +1469,7 @@ public class SolverInput
 		{
 			for ( Turno turno : cenario.getTurnos() )
 			{
-				if ( !turno.equals( this.turno ) )
+				if ( !turno.equals( parametro.getTurno() ) )
 				{
 					continue;
 				}

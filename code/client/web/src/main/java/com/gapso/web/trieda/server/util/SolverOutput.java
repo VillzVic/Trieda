@@ -69,21 +69,11 @@ public class SolverOutput
 
 		for ( ItemAtendimentoCampus itemAtendimentoCampus : itemAtendimentoCampusList )
 		{
-			// Não há necessidade de procurar campus, pq essa informação já
-			// existe em sala
-			// Campus campus =
-			// Campus.find( Long.valueOf( itemAtendimentoCampus.getCampusId() ) );
-
 			List< ItemAtendimentoUnidade > itemAtendimentoUnidadeList
 				= itemAtendimentoCampus.getAtendimentosUnidades().getAtendimentoUnidade();
 
 			for ( ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList )
 			{
-				// Não há necessidade de procurar campus, pq essa informação já
-				// existe em sala
-				// Unidade unidade =
-				// Unidade.find( Long.valueOf( itemAtendimentoUnidade.getUnidadeId() ) );
-
 				List< ItemAtendimentoSala > itemAtendimentoSalaList
 					= itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
 
@@ -163,21 +153,11 @@ public class SolverOutput
 		for ( ItemAtendimentoCampus itemAtendimentoCampus
 			: itemAtendimentoCampusList )
 		{
-			// Não há necessidade de procurar campus, pq essa informação já
-			// existe em sala
-			// Campus campus =
-			// Campus.find( Long.valueOf( itemAtendimentoCampus.getCampusId() ) );
-
 			List< ItemAtendimentoUnidade > itemAtendimentoUnidadeList
 				= itemAtendimentoCampus.getAtendimentosUnidades().getAtendimentoUnidade();
 
 			for ( ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList )
 			{
-				// Não há necessidade de procurar campus, pq essa informação já
-				// existe em sala
-				// Unidade unidade =
-				// Unidade.find( Long.valueOf( itemAtendimentoUnidade.getUnidadeId() ) );
-
 				List< ItemAtendimentoSala > itemAtendimentoSalaList
 					= itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
 
@@ -207,11 +187,7 @@ public class SolverOutput
 						for ( ItemAtendimentoTurno itemAtendimentoTurno
 							: itemAtendimentoTurnoList )
 						{
-							// Não há necessidade do turno
-							// Turno turno =
-							// Turno.find( Long.valueOf( itemAtendimentoTurno.getTurnoId() ) );
-
-							List<ItemAtendimentoHorarioAula> itemAtendimentoHorarioAulaList
+							List< ItemAtendimentoHorarioAula > itemAtendimentoHorarioAulaList
 								= itemAtendimentoTurno.getAtendimentosHorariosAula().getAtendimentoHorarioAula();
 
 							for ( ItemAtendimentoHorarioAula itemAtendimentoHorarioAula
@@ -407,16 +383,14 @@ public class SolverOutput
 
 		for (  ItemAlunoDemanda item : itensAlunosDemanda )
 		{
-			AlunoDemanda alunoDemanda = new AlunoDemanda();
-
 			Demanda demanda = Demanda.find(
 				Long.valueOf( item.getDemandaId() ), this.instituicaoEnsino ) ;
 
 			Aluno aluno = Aluno.find(
 				Long.valueOf( item.getAlunoId() ), this.instituicaoEnsino ) ;
 
-			alunoDemanda.setAluno( aluno );
-			alunoDemanda.setDemanda( demanda );
+			AlunoDemanda alunoDemanda = AlunoDemanda.findByDemandaAndAluno(
+				instituicaoEnsino, demanda, aluno );
 
 			this.alunosDemanda.add( alunoDemanda );
 		}
@@ -425,23 +399,21 @@ public class SolverOutput
 	@Transactional
 	public void salvarAlunosDemanda( Campus campus, Turno turno  )
 	{
-		removerAlunosDemandaJaSalvos( campus, turno );
+		List< AlunoDemanda > listAll = AlunoDemanda.findByCampusAndTurno(
+			instituicaoEnsino, campus, turno );
 
-		for (  AlunoDemanda aluno : this.alunosDemanda )
+		for (  AlunoDemanda aluno : listAll )
 		{
-			aluno.persist();
-		}
-	}
+			if ( this.alunosDemanda.contains( aluno ) )
+			{
+				aluno.setAtendido( true );
+			}
+			else
+			{
+				aluno.setAtendido( false );
+			}
 
-	@Transactional
-	private void removerAlunosDemandaJaSalvos( Campus campus, Turno turno )
-	{
-		List< AlunoDemanda > alunosDemanda = AlunoDemanda.findByCampusAndTurno(
-			this.instituicaoEnsino, campus, turno );
-
-		for ( AlunoDemanda aluno : alunosDemanda )
-		{
-			aluno.remove();
+			aluno.merge();
 		}
 	}
 }

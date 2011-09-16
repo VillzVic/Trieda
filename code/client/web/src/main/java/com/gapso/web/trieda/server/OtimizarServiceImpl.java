@@ -90,11 +90,10 @@ public class OtimizarServiceImpl
 		cenario.getParametros().add( parametro );
 		List< Campus > campi = new ArrayList< Campus >( 1 );
 		campi.add( parametro.getCampus() );
-		Turno turno = parametro.getTurno();
 
 		TriedaInput triedaInput = null;
 		SolverInput solverInput = new SolverInput(
-			getInstituicaoEnsinoUser(), cenario, parametro, campi, turno );
+			getInstituicaoEnsinoUser(), cenario, parametro, campi );
 
 		if ( parametro.isTatico() )
 		{
@@ -189,6 +188,10 @@ public class OtimizarServiceImpl
 			SolverOutput solverOutput = new SolverOutput(
 				getInstituicaoEnsinoUser(), cenario, triedaOutput );
 
+			solverOutput.generateAlunosDemanda();
+			solverOutput.salvarAlunosDemanda(
+				parametro.getCampus(), parametro.getTurno() );
+
 			if ( cenario.getUltimoParametro( this.getInstituicaoEnsinoUser() ).isTatico() )
 			{
 				solverOutput.generateAtendimentosTatico();
@@ -203,10 +206,6 @@ public class OtimizarServiceImpl
 				solverOutput.salvarAtendimentosOperacional(
 					parametro.getCampus(), parametro.getTurno() );
 			}
-
-			solverOutput.generateAlunosDemanda();
-			solverOutput.salvarAlunosDemanda(
-				parametro.getCampus(), parametro.getTurno() );
 		}
 		catch ( JAXBException e )
 		{
