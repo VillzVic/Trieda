@@ -324,6 +324,13 @@ public:
    GGroup< Disciplina *, LessPtr< Disciplina > > novasDisciplinas;
 
    std::map< Professor *, GGroup< std::pair< Aula *, Disciplina * > >, LessPtr< Professor > > mapProfessorDisciplinas;
+
+   // PAra cada demanda, relacionamos os alunos que estão associados a ela
+   std::map< Demanda *, GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > > mapDemandaAlunos;
+
+   // Dados os ids de uma oferta e uma disciplina,
+   // retorna a demanda correspondente, caso exista
+   Demanda * buscaDemanda( int, int );
 };
 
 #endif

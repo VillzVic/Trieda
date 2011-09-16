@@ -86,6 +86,9 @@ public:
    void print_stats();
 
    /* */
+   void relacionaDemandaAlunos();
+
+   /* */
    void cache();
 
    /* */

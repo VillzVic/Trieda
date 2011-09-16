@@ -228,9 +228,8 @@ bool ordenaVarsX( Variable * left, Variable * right )
 }
 
 SolverMIP::SolverMIP( ProblemData * aProblemData,
-                     ProblemSolution * _ProblemSolution,
-                     ProblemDataLoader * _problemDataLoader )
-                     :Solver( aProblemData )
+  ProblemSolution * _ProblemSolution, ProblemDataLoader * _problemDataLoader )
+   : Solver( aProblemData )
 {
    problemSolution = _ProblemSolution;
    problemDataLoader = _problemDataLoader;
@@ -1311,7 +1310,7 @@ void SolverMIP::getSolutionTatico()
                std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
 
                // NOVA UNIDADE
-               exit(1);
+               exit( 1 );
             }
             else
             {
@@ -1328,7 +1327,7 @@ void SolverMIP::getSolutionTatico()
                         std::cout << "Achei que nao era pra cair aqui <dbg2>" << std::endl;
 
                         // NOVA SALA
-                        exit(1);
+                        exit( 1 );
                      }
                      else
                      {
@@ -1345,7 +1344,7 @@ void SolverMIP::getSolutionTatico()
                                  std::cout << "Achei que nao era pra cair aqui <dbg3>" << std::endl;
 
                                  // NOVO DIA SEMANA
-                                 exit(1);
+                                 exit( 1 );
                               }
                               else
                               {
@@ -1362,7 +1361,7 @@ void SolverMIP::getSolutionTatico()
                                           std::cout << "Achei que nao era pra cair aqui <dbg4>" << std::endl;
 
                                           // NOVO ATENDIMENTO
-                                          exit(1);                                             
+                                          exit( 1 );                                             
                                        }
                                        else
                                        {
@@ -1911,26 +1910,27 @@ void SolverMIP::getSolutionOperacional()
    }
 }
 
-Professor* SolverMIP::criaProfessorVirtual(HorarioDia *horario, int cred, std::set<std::pair<Professor*,HorarioDia*> > &profVirtualList)
+Professor * SolverMIP::criaProfessorVirtual( HorarioDia * horario, int cred,
+   std::set< std::pair< Professor *, HorarioDia * > > & profVirtualList )
 {
    // Procura primeiro professor virtual livre no horario
-   Professor *prof = NULL;
+   Professor * prof = NULL;
 
-   for (int i = 0; i < (int)problemData->professores_virtuais.size(); i++ )
+   for ( int i = 0; i < (int)problemData->professores_virtuais.size(); i++ )
    {
-      std::pair<Professor*,HorarioDia*> auxPair;
+      std::pair< Professor *, HorarioDia * > auxPair;
 
       // Tenta professor livre para todos os creditos
-      int horIdx = problemData->getHorarioDiaIdx(horario);
+      int horIdx = problemData->getHorarioDiaIdx( horario );
 
       bool profOK = true;
 
-      for (int hi = horIdx; hi < horIdx + cred; hi++)
+      for ( int hi = horIdx; hi < horIdx + cred; hi++ )
       { 
-         auxPair.first = problemData->professores_virtuais[i];
-         auxPair.second = problemData->horariosDiaIdx[hi];
+         auxPair.first = problemData->professores_virtuais[ i ];
+         auxPair.second = problemData->horariosDiaIdx[ hi ];
 
-         if ( profVirtualList.find(auxPair) != profVirtualList.end() )
+         if ( profVirtualList.find( auxPair ) != profVirtualList.end() )
          {
             profOK = false;
             break;
@@ -1939,14 +1939,16 @@ Professor* SolverMIP::criaProfessorVirtual(HorarioDia *horario, int cred, std::s
 
       if ( profOK )
       {
-         prof = problemData->professores_virtuais[i];
+         prof = problemData->professores_virtuais[ i ];
+
          for (int hi = horIdx; hi < horIdx + cred; hi++)
          { 
             auxPair.first = prof;
-            auxPair.second = problemData->horariosDiaIdx[hi];
+            auxPair.second = problemData->horariosDiaIdx[ hi ];
 
-            profVirtualList.insert(auxPair);
+            profVirtualList.insert( auxPair );
          }
+
          break;
       }
    }
@@ -1958,12 +1960,12 @@ Professor* SolverMIP::criaProfessorVirtual(HorarioDia *horario, int cred, std::s
 
    // Criando um professor virtual.
    prof = new Professor( true );
-   int idProf = -1 * (int)(problemData->professores_virtuais.size());
+   int idProf = -1 * (int)( problemData->professores_virtuais.size() );
    idProf--;
-   prof->setId(idProf);
+   prof->setId( idProf );
 
    // Setando alguns dados para o novo professor
-   prof->tipo_contrato = *(problemData->tipos_contrato.begin());
+   prof->tipo_contrato = ( *problemData->tipos_contrato.begin() );
 
    // Temporariamente vou setar os ids dos magistérios com valores negativos.
    int idMag = 0;
@@ -1986,15 +1988,15 @@ Professor* SolverMIP::criaProfessorVirtual(HorarioDia *horario, int cred, std::s
 
    problemData->professores_virtuais.push_back( prof );
 
-   std::pair<Professor*,HorarioDia*> auxPair;
-   int horIdx = problemData->getHorarioDiaIdx(horario);
+   std::pair< Professor *, HorarioDia * > auxPair;
+   int horIdx = problemData->getHorarioDiaIdx( horario );
 
    for (int hi = horIdx; hi < horIdx + cred; hi++)
    { 
       auxPair.first = prof;
-      auxPair.second = problemData->horariosDiaIdx[hi];
+      auxPair.second = problemData->horariosDiaIdx[ hi ];
 
-      profVirtualList.insert(auxPair);
+      profVirtualList.insert( auxPair );
    }
 
    return prof;
@@ -2207,10 +2209,119 @@ int SolverMIP::solve()
 // correspondentes alunos que assistirão as aulas 
 void SolverMIP::relacionaAlunosDemandas()
 {
-   // TODO
-   ITERA_GGROUP_LESSPTR( it_aluno_demanda, problemData->alunosDemanda, AlunoDemanda )
+   Campus * campus = NULL;
+   Unidade * unidade = NULL;
+   Sala * sala = NULL;
+   int dia_semana = 0;
+
+   // Lendo os atendimentos oferta da soluão
+   GGroup< AtendimentoOferta * > atendimentosOferta;
+
+   ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
    {
-      problemSolution->alunosDemanda->add( ( *it_aluno_demanda ) );
+      // Campus do atendimento
+      campus = it_At_Campus->campus;
+
+      ITERA_GGROUP( it_At_Unidade, ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+      {
+         // Unidade do atendimento
+         unidade = problemData->refUnidade[ it_At_Unidade->getId() ];
+
+         ITERA_GGROUP( it_At_Sala, ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+         {
+            // Sala do atendimento
+            sala = problemData->refSala[ it_At_Sala->getId() ];
+
+            ITERA_GGROUP( it_At_DiaSemana, ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            {
+               // Dia da semana do atendimento
+               dia_semana = it_At_DiaSemana->getDiaSemana();
+
+               // Modelo Tático
+               if ( it_At_DiaSemana->atendimentos_tatico != NULL )
+               {
+                  ITERA_GGROUP( it_at_tatico,
+                     ( *it_At_DiaSemana->atendimentos_tatico ), AtendimentoTatico )
+                  {
+                     AtendimentoTatico * at_tatico = ( *it_at_tatico );
+
+                     atendimentosOferta.add( at_tatico->atendimento_oferta );
+                  }
+               }
+               // Modelo Operacional
+               else if ( it_At_DiaSemana->atendimentos_turno != NULL )
+               {
+                  ITERA_GGROUP( it_at_turno,
+                     ( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
+                  {
+                     AtendimentoTurno * at_turno = ( *it_at_turno );
+
+                     ITERA_GGROUP( it_horario_aula,
+                        ( *at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                     {
+                        AtendimentoHorarioAula * horario_aula = ( *it_horario_aula );
+
+                        ITERA_GGROUP( it_oferta,
+                           ( *it_horario_aula->atendimentos_ofertas ), AtendimentoOferta )
+                        {
+                           AtendimentoOferta * oferta = ( *it_oferta );
+
+                           atendimentosOferta.add( oferta );
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+   // Fim da leitura dos atendimentos oferta
+
+   // Armazenando a informação de quantos alunos
+   // de cada demanda foram atendidos pela solução
+   std::map< Demanda *, int > quantidadeAlunosAtendidosDemanda;
+
+   ITERA_GGROUP( it_at_oferta, atendimentosOferta, AtendimentoOferta )
+   {
+      AtendimentoOferta * at_oferta = ( *it_at_oferta );
+
+      int id_oferta = atoi( at_oferta->getOfertaCursoCampiId().c_str() );
+      int id_disciplina = at_oferta->getDisciplinaId();
+
+      Demanda * demanda = this->problemData->buscaDemanda( id_oferta, id_disciplina );
+      quantidadeAlunosAtendidosDemanda[ demanda ] = at_oferta->getQuantidade();
+   }
+   ////
+
+   // De acordo com o total de alunos de cada demanda que foram atendidos,
+   // adicionamos os alunos na lista de atendidos da solução
+   std::map< Demanda *, int >::iterator it_alunos_atendidos =
+      quantidadeAlunosAtendidosDemanda.begin();
+
+   for (; it_alunos_atendidos != quantidadeAlunosAtendidosDemanda.end();
+          it_alunos_atendidos++ )
+   {
+      Demanda * demanda = it_alunos_atendidos->first;
+      int alunos_atendidos = it_alunos_atendidos->second;
+
+      GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda =
+         this->problemData->mapDemandaAlunos[ demanda ];
+
+      int cont = 0;
+
+      ITERA_GGROUP_LESSPTR( it_atendidos, alunosDemanda, AlunoDemanda )
+      {
+         // Mais um aluno dessa demanda foi atendido
+         cont++;
+
+         AlunoDemanda * aluno_demanda = ( *it_atendidos );
+         problemSolution->alunosDemanda->add( aluno_demanda );
+
+         if ( cont == alunos_atendidos )
+         {
+            break;
+         }
+      }
    }
 }
 
@@ -2821,6 +2932,7 @@ std::vector< Variable * > SolverMIP::variaveisAlunosAtendidos( Curso * curso, Di
    std::vector< Variable * > variaveis;
 
    vars__A___i_d_o::iterator it_a = vars_a.begin();
+
    for (; it_a != vars_a.end(); it_a++ )
    {
       std::vector< Variable * >::iterator it_variable = it_a->second.begin();
@@ -2880,8 +2992,9 @@ Variable * SolverMIP::criaVariavelAlunos(
 }
 
 Variable * SolverMIP::criaVariavelCreditos(
-   Campus * campus, Unidade * unidade, ConjuntoSala * cjtSala, Sala * sala,
-   int dia_semana, Oferta * oferta, Curso * curso, Disciplina * disciplina, int turma, BlocoCurricular * bloco_curricular )
+   Campus * campus, Unidade * unidade, ConjuntoSala * cjtSala,
+   Sala * sala, int dia_semana, Oferta * oferta, Curso * curso,
+   Disciplina * disciplina, int turma, BlocoCurricular * bloco_curricular )
 {
    Variable * v = new Variable();
 
@@ -2943,12 +3056,11 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
 
       lp->updateLP();
 
-      lp->setNodeLimit(100000000);
-      lp->setTimeLimit(1200);
-      lp->setNodeLimit(1);
-      lp->setMIPEmphasis(1);
-      lp->setHeurFrequency(1.0);
-
+      lp->setNodeLimit( 100000000 );
+      lp->setTimeLimit( 1200 );
+      lp->setNodeLimit( 1 );
+      lp->setMIPEmphasis( 1 );
+      lp->setHeurFrequency( 1.0 );
       lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
 
       status = lp->optimize( METHOD_MIP );
@@ -2960,11 +3072,11 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
 
       lp->getX( xSol );
 
-      int *idxs = new int[1];
-      idxs[0] = lp->getNumRows() - 1;
-      lp->delSetRows(1,idxs);
+      int * idxs = new int[ 1 ];
+      idxs[ 0 ] = lp->getNumRows() - 1;
+      lp->delSetRows( 1, idxs );
       lp->updateLP();
-      delete[] idxs;
+      delete [] idxs;
       nIter++;
    }
 

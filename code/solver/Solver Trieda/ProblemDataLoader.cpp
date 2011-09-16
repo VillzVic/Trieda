@@ -30,6 +30,9 @@ void ProblemDataLoader::load()
    std::cout << "Some preprocessing..." << std::endl;
 
    // ---------
+   relacionaDemandaAlunos();
+
+   // ---------
    relacionaCalendarioHorariosAula();
 
    // ---------
@@ -147,6 +150,32 @@ void ProblemDataLoader::load()
 
    // ---------
    print_stats();
+}
+
+void ProblemDataLoader::relacionaDemandaAlunos()
+{
+   ITERA_GGROUP_LESSPTR( it_demanda,
+      this->problemData->demandas, Demanda )
+   {
+      Demanda * demanda = ( *it_demanda );
+
+      ITERA_GGROUP_LESSPTR( it_aluno_demanda,
+         this->problemData->alunosDemanda, AlunoDemanda )
+      {
+         AlunoDemanda * aluno_demanda = ( *it_aluno_demanda );
+
+         if ( demanda->getId() == aluno_demanda->getDemandaId() )
+         {
+            this->problemData->mapDemandaAlunos[ demanda ].add( aluno_demanda );
+         }
+      }
+
+      int quantidade = this->problemData->mapDemandaAlunos[ demanda ].size();
+      if ( quantidade > 0 )
+      {
+         demanda->setQuantidade( quantidade );
+      }
+   }
 }
 
 // Método relacionado com a issue TRIEDA-1054

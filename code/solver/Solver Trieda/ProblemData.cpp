@@ -278,7 +278,8 @@ GGroup< Demanda *, LessPtr< Demanda > >
 	return demandas_disciplina;
 }
 
-Demanda * ProblemData::buscaDemanda( Curso * curso, Disciplina * disciplina )
+Demanda * ProblemData::buscaDemanda(
+  Curso * curso, Disciplina * disciplina )
 {
    Demanda * demanda = NULL;
 
@@ -295,7 +296,8 @@ Demanda * ProblemData::buscaDemanda( Curso * curso, Disciplina * disciplina )
 	return demanda;
 }
 
-Disciplina * ProblemData::retornaDisciplinaSubstituta( Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
+Disciplina * ProblemData::retornaDisciplinaSubstituta(
+  Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
 {
    std::map< std::pair< Curso *, Curriculo * >,
       std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
@@ -305,6 +307,7 @@ Disciplina * ProblemData::retornaDisciplinaSubstituta( Curso * curso, Curriculo 
    {
       std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
          it_disciplinas = it_map->second.begin();
+
       for (; it_disciplinas != it_map->second.end(); it_disciplinas++ )
       {
          Disciplina * disciplina_substituta = it_disciplinas->first;
@@ -504,4 +507,28 @@ bool ProblemData::verificaUltimaPrimeiraAulas( HorarioDia * h1, HorarioDia * h2 
    }
 
    return false;
+}
+
+Demanda * ProblemData::buscaDemanda( int id_oferta, int id_disciplina )
+{
+   Demanda * demanda = NULL;
+
+   ITERA_GGROUP_LESSPTR( it_demanda,
+     this->demandas, Demanda )
+   {
+      demanda = ( *it_demanda );
+
+      if ( demanda == NULL )
+      {
+         continue;
+      }
+
+      if ( demanda->getOfertaId() == id_oferta
+         && demanda->getDisciplinaId() == id_disciplina )
+      {
+         break;
+      }
+   }
+
+   return demanda;
 }
