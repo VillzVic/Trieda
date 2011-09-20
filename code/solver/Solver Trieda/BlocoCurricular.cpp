@@ -1,6 +1,6 @@
 #include "BlocoCurricular.h"
 
-BlocoCurricular::BlocoCurricular(void)
+BlocoCurricular::BlocoCurricular( void )
 {
    periodo = -1;
    curso = NULL;
@@ -9,6 +9,7 @@ BlocoCurricular::BlocoCurricular(void)
    curriculo = NULL;
 }
 
-BlocoCurricular::~BlocoCurricular(void)
+BlocoCurricular::~BlocoCurricular( void )
 {
+
 }

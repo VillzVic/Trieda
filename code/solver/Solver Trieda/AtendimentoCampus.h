@@ -10,13 +10,16 @@ class AtendimentoCampus:
 {
 public:
    AtendimentoCampus();
-   
    virtual ~AtendimentoCampus();
 
-   std::string campus_id;
+   GGroup< AtendimentoUnidade * > * atendimentos_unidades;
    Campus * campus;
 
-   GGroup< AtendimentoUnidade * > * atendimentos_unidades;
+   void setCampusId( std::string s ) { this->campus_id = s; }
+   std::string getCampusId() const { return this->campus_id; }
+
+private:
+   std::string campus_id;
 };
 
 std::ostream& operator << ( std::ostream &, AtendimentoCampus & );

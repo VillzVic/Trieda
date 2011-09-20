@@ -21,7 +21,8 @@ void Curriculo::le_arvore( ItemCurriculo & elem )
 		int periodo = it_dp->periodo();
 		int disc_id = it_dp->disciplinaId();
 
-		this->ids_disciplinas_periodo.add( std::make_pair( periodo, disc_id ) );
+		this->ids_disciplinas_periodo.add(
+         std::make_pair( periodo, disc_id ) );
 	}
 }
 
@@ -43,7 +44,9 @@ void Curriculo::refDisciplinaPeriodo(
 		{
 			if ( it_disc->getId() == id_disciplina )
 			{
-				disciplinas_periodo.add( std::make_pair( id_periodo, ( *it_disc ) ) );
+				disciplinas_periodo.add(
+               std::make_pair( id_periodo, ( *it_disc ) ) );
+
 				break;
 			}
 		}

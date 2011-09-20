@@ -15,7 +15,7 @@ public:
    GGroup< AtendimentoHorarioAula * > * atendimentos_horarios_aula;
 
    void setTurnoId( int value ) { turno_id = value; }
-   int getTurnoId() { return turno_id; }
+   int getTurnoId() const { return turno_id; }
 
 private:
    int turno_id;

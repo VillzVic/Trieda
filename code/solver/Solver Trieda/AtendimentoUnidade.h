@@ -17,7 +17,7 @@ public:
    GGroup< AtendimentoSala * > * atendimentos_salas;
 
    void setCodigoUnidade( std::string value ) { codigo_unidade = value; }
-   std::string getCodigoUnidade() { return codigo_unidade; }
+   std::string getCodigoUnidade() const { return codigo_unidade; }
 
 private:
    std::string codigo_unidade;

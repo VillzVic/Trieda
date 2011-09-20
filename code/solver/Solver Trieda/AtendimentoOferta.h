@@ -19,10 +19,10 @@ public:
    void setQuantidade( int value ) { quantidade = value; }
    void setTurma( int value ) { turma = value; }
 
-   std::string getOfertaCursoCampiId() { return oferta_curso_campi_id; }
-   int getDisciplinaId() { return disciplina_id; }
-   int getQuantidade() { return quantidade; }
-   int getTurma() { return turma; }
+   std::string getOfertaCursoCampiId() const { return oferta_curso_campi_id; }
+   int getDisciplinaId() const { return disciplina_id; }
+   int getQuantidade() const { return quantidade; }
+   int getTurma() const { return turma; }
 
 private:
    std::string oferta_curso_campi_id;

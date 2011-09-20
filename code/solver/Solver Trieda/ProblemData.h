@@ -37,8 +37,8 @@ class ProblemData
 	: public OFBase
 {
 public:
-   ProblemData();
-   virtual ~ProblemData();
+   ProblemData( void );
+   virtual ~ProblemData( void );
 
    GGroup< Calendario *, LessPtr< Calendario > > calendarios;
    GGroup< TipoSala * > tipos_sala;
@@ -331,6 +331,12 @@ public:
    // Dados os ids de uma oferta e uma disciplina,
    // retorna a demanda correspondente, caso exista
    Demanda * buscaDemanda( int, int );
+
+   Turno * findTurno( int );
+   HorarioAula * findHorarioAula( int );
+
+   GGroup< Professor *, LessPtr< Professor > > getProfessores();
+   Professor * findProfessor( int );
 };
 
 #endif

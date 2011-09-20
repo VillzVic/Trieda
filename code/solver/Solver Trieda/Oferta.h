@@ -22,13 +22,12 @@ public:
    void setCampusId( int v ) { campus_id = v; }
    void setReceita( double v ) { receita = v; }
 
-   int getCurriculoId() { return curriculo_id; }
-   int getCursoId() { return curso_id; }
-   int getTurnoId() { return turno_id; }
-   int getCampusId() { return campus_id; }
-   double getReceita() { return receita; }
+   int getCurriculoId() const { return curriculo_id; }
+   int getCursoId() const { return curso_id; }
+   int getTurnoId() const { return turno_id; }
+   int getCampusId() const { return campus_id; }
+   double getReceita() const { return receita; }
 
-   // Dados pré-processados
    Curriculo * curriculo;
    Curso * curso;
    Turno * turno;
@@ -40,7 +39,7 @@ private:
    int turno_id;
    int campus_id;
 
-   // TRIEDA-958 (Apenas a leitura, falta associar à func. obj.)
+   // TRIEDA-958 ( Apenas a leitura, falta associar à func. obj. )
    double receita;
 };
 

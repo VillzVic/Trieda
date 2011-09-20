@@ -12,19 +12,19 @@ class AtendimentoSala:
    public OFBase
 {
 public:
-   AtendimentoSala(void);
-   virtual ~AtendimentoSala(void);
+   AtendimentoSala( void );
+   virtual ~AtendimentoSala( void );
 
    GGroup< AtendimentoDiaSemana * > * atendimentos_dias_semana;
    Sala * sala;
 
-   void setSalaId(std::string s) { sala_id = s; }
-   std::string getSalaId() { return sala_id; }
+   void setSalaId( std::string s ) { sala_id = s; }
+   std::string getSalaId() const { return sala_id; }
 
 private:
    std::string sala_id;
 };
 
-std::ostream& operator << (std::ostream& out, AtendimentoSala& sala);
+std::ostream& operator << ( std::ostream &, AtendimentoSala & );
 
 #endif

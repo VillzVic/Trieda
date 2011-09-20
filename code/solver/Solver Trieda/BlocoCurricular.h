@@ -29,8 +29,8 @@ public:
    // suas respectivas demandas - IGNORANDO TURNO
    std::map< Disciplina *, Demanda * > disciplina_Demanda;
 
-   void setPeriodo(int value) { this->periodo = value; }
-   void setTotalTurmas(int value) { this->total_turmas = value; }
+   void setPeriodo( int value ) { this->periodo = value; }
+   void setTotalTurmas( int value ) { this->total_turmas = value; }
 
    int getPeriodo() const { return this->periodo; }
    int getTotalTurmas() const { return this->total_turmas; }

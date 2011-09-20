@@ -355,6 +355,7 @@
     <ClCompile Include="ConstraintOp.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="SolverMIP.cpp" />
+    <ClCompile Include="ValidateSolution.cpp" />
     <ClCompile Include="Variable.cpp" />
     <ClCompile Include="VariableOp.cpp" />
     <ClCompile Include="Aula.cpp" />
@@ -465,6 +466,7 @@
     <ClInclude Include="ConstraintOp.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="SolverMIP.h" />
+    <ClInclude Include="ValidateSolution.h" />
     <ClInclude Include="Variable.h" />
     <ClInclude Include="VariableOp.h" />
     <ClInclude Include="Aula.h" />

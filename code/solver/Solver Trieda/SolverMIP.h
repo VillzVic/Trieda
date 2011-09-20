@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ValidateSolution.h"
 #include "Solver.h"
 #include "Variable.h"
 #include "Constraint.h"
@@ -41,38 +42,21 @@
 #endif
 // -----------------------------------
 
-/*
- * Implements a MIP Solver.
- */
 class SolverMIP : public Solver
 {
 public:
-   /**
-   * Default Constructor.
-   * @param aProblemData The problem's input data.
-   */
-   SolverMIP( ProblemData *, ProblemSolution *, ProblemDataLoader * );
 
-   /** Destructor. */
+   SolverMIP( ProblemData *, ProblemSolution *, ProblemDataLoader * );
    virtual ~SolverMIP();
 
-   /**
-   * Solves the MIP previously created.
-   * @return The status returned by GUROBI.
-   */
    int solve();
-
-   /**
-   * Processes the variable values and populates the output class.
-   * @param ps A reference to the class to be populated.
-   */
    void getSolution( ProblemSolution * );
 
    /********************************************************************
    **                      VARIABLE CREATION                          **
    *********************************************************************/
 
-   int cria_variaveis(void);
+   int cria_variaveis( void );
 
    int cria_variavel_creditos(void);   // x_{i,d,u,tps,t}
    int cria_variavel_creditos_permitir_alunos_varios_campi(void);   // x_{i,d,u,tps,t}
@@ -110,7 +94,7 @@ public:
    **                    CONSTRAINT CREATION                          **
    *********************************************************************/
 
-   int cria_restricoes(void);
+   int cria_restricoes( void  );
 
    int cria_restricao_carga_horaria(void);					// Restricao 1.2.2
    int cria_restricao_max_cred_sd(void);					// Restricao 1.2.3
@@ -147,59 +131,61 @@ public:
    int cria_restricao_folga_abertura_bloco_mesmoTPS(void);  // Restricao 1.2.34
 
    // Criacao de variaveis operacional
-   int criaVariaveisOperacional();
-   int criaVariavelProfessorAulaHorario();
-   int criaVariavelProfessorDisciplina();
-   int criaVariavelDisciplinaHorario();
-   int criaVariavelFolgaFixProfDiscSalaDiaHor();
-   int criaVariavelFolgaFixProfDiscDiaHor();
-   int criaVariavelFolgaFixProfDisc();
-   int criaVariavelFolgaFixProfDiscSala();
-   int criaVariavelFolgaFixProfSala();
-   int criaVariavelFolgaDisciplinaHorario();
-   int criaVariavelProfessorCurso();
-   int criaVariavelAvaliacaoCorpoDocente();
-   int criaVariavelCustoCorpoDocente();
-   int criaVariavelDiasProfessoresMinistramAulas();
-   int criaVariavelFolgaUltimaPrimeiraAulas();
-   int criaVariavelFolgaMinimoMestresCurso();
-   int criaVariavelFolgaMinimoDoutoresCurso();
-   int criaVariavelMaxDiscProfCurso();
-   int criaVariavelFolgaMaxDiscProfCurso();
-   int criaVariavelFolgaCargaHorariaMinimaProfessor();
-   int criaVariavelFolgaCargaHorariaMinimaProfessorSemana();
-   int criaVariavelFolgaCargaHorariaMaximaProfessorSemana();
-   int criaVariavelGapsProfessores();
+   int criaVariaveisOperacional( void );
+
+   int criaVariavelProfessorAulaHorario( void );
+   int criaVariavelProfessorDisciplina( void );
+   int criaVariavelDisciplinaHorario( void );
+   int criaVariavelFolgaFixProfDiscSalaDiaHor( void );
+   int criaVariavelFolgaFixProfDiscDiaHor( void );
+   int criaVariavelFolgaFixProfDisc( void );
+   int criaVariavelFolgaFixProfDiscSala( void );
+   int criaVariavelFolgaFixProfSala( void );
+   int criaVariavelFolgaDisciplinaHorario( void );
+   int criaVariavelProfessorCurso( void );
+   int criaVariavelAvaliacaoCorpoDocente( void );
+   int criaVariavelCustoCorpoDocente( void );
+   int criaVariavelDiasProfessoresMinistramAulas( void );
+   int criaVariavelFolgaUltimaPrimeiraAulas( void );
+   int criaVariavelFolgaMinimoMestresCurso( void );
+   int criaVariavelFolgaMinimoDoutoresCurso( void );
+   int criaVariavelMaxDiscProfCurso( void );
+   int criaVariavelFolgaMaxDiscProfCurso( void );
+   int criaVariavelFolgaCargaHorariaMinimaProfessor( void );
+   int criaVariavelFolgaCargaHorariaMinimaProfessorSemana( void );
+   int criaVariavelFolgaCargaHorariaMaximaProfessorSemana( void );
+   int criaVariavelGapsProfessores( void );
 
    // Criacao de restrições operacional
-   int criaRestricoesOperacional();
-   int criaRestricaoSalaHorario();
-   int criaRestricaoProfessorHorario();
-   int criaRestricaoBlocoHorario();
-   int criaRestricaoAlocAula();
-   int criaRestricaoProfessorDisciplina();
-   int criaRestricaoProfessorDisciplinaUnico();
-   int criaRestricaoFixProfDiscSalaDiaHor();
-   int criaRestricaoFixProfDiscDiaHor();
-   int criaRestricaoFixProfDisc();
-   int criaRestricaoFixProfDiscSala();
-   int criaRestricaoFixProfSala();
-   int criaRestricaoDisciplinaMesmoHorario();
-   int criaRestricaoDisciplinaHorarioUnico();
-   int criaRestricaoDeslocamentoViavel(); // x3
-   int criaRestricaoDeslocamentoProfessor(); // x5
-   int criaRestricaoAvaliacaoCorpoDocente(); // x6
-   int criaRestricaoCustoCorpoDocente(); // x7
-   int criaRestricaoRelacionaVariavelXDiaProf(); // x9
-   int criaRestricaoCargaHorariaMinimaProfessor(); // x10
-   int criaRestricaoUltimaPrimeiraAulas(); // x11
-   int criaRestricaoAlocacaoProfessorCurso(); // x12
-   int criaRestricaoMinimoMestresCurso(); // x12
-   int criaRestricaoMinimoDoutoresCurso(); // x12
-   int criaRestricaoMaxDiscProfCurso(); // x13
-   int criaRestricaoCargaHorariaMinimaProfessorSemana(); // x14
-   int criaRestricaoCargaHorariaMaximaProfessorSemana(); // x15
-   int criaRestricaoGapsProfessores();
+   int criaRestricoesOperacional( void );
+
+   int criaRestricaoSalaHorario( void );
+   int criaRestricaoProfessorHorario( void );
+   int criaRestricaoBlocoHorario( void );
+   int criaRestricaoAlocAula( void );
+   int criaRestricaoProfessorDisciplina( void );
+   int criaRestricaoProfessorDisciplinaUnico( void );
+   int criaRestricaoFixProfDiscSalaDiaHor( void );
+   int criaRestricaoFixProfDiscDiaHor( void );
+   int criaRestricaoFixProfDisc( void );
+   int criaRestricaoFixProfDiscSala( void );
+   int criaRestricaoFixProfSala( void );
+   int criaRestricaoDisciplinaMesmoHorario( void );
+   int criaRestricaoDisciplinaHorarioUnico( void );
+   int criaRestricaoDeslocamentoViavel( void ); // x3
+   int criaRestricaoDeslocamentoProfessor( void ); // x5
+   int criaRestricaoAvaliacaoCorpoDocente( void ); // x6
+   int criaRestricaoCustoCorpoDocente( void ); // x7
+   int criaRestricaoRelacionaVariavelXDiaProf( void ); // x9
+   int criaRestricaoCargaHorariaMinimaProfessor( void ); // x10
+   int criaRestricaoUltimaPrimeiraAulas( void ); // x11
+   int criaRestricaoAlocacaoProfessorCurso( void ); // x12
+   int criaRestricaoMinimoMestresCurso( void ); // x12
+   int criaRestricaoMinimoDoutoresCurso( void ); // x12
+   int criaRestricaoMaxDiscProfCurso( void ); // x13
+   int criaRestricaoCargaHorariaMinimaProfessorSemana( void ); // x14
+   int criaRestricaoCargaHorariaMaximaProfessorSemana( void ); // x15
+   int criaRestricaoGapsProfessores( void );
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
@@ -293,6 +279,8 @@ private:
          return ( xI.front() > xJ.front() );
       }
    } ordenaPorCreditos;
+
+   void buscaLocalTempoDeslocamentoSolucao();
 };
 
 #endif

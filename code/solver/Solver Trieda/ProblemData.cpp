@@ -532,3 +532,72 @@ Demanda * ProblemData::buscaDemanda( int id_oferta, int id_disciplina )
 
    return demanda;
 }
+
+Turno * ProblemData::findTurno( int turno_id )
+{
+   ITERA_GGROUP_LESSPTR( it_turno, this->todos_turnos, Turno )
+   {
+      Turno * turno = ( *it_turno );
+
+      if ( turno != NULL && turno->getId() == turno_id )
+      {
+         return turno;
+      }
+   }
+
+   return NULL;
+}
+
+HorarioAula * ProblemData::findHorarioAula( int id_horario_aula )
+{
+   ITERA_GGROUP_LESSPTR( it_horario_dia, this->horariosDia, HorarioDia )
+   {
+      HorarioAula * horario_aula = it_horario_dia->getHorarioAula();
+
+      if ( horario_aula != NULL
+         && horario_aula->getId() == id_horario_aula )
+      {
+         return horario_aula;
+      }
+   }
+
+   return NULL;
+}
+
+GGroup< Professor *, LessPtr< Professor > > ProblemData::getProfessores()
+{
+   // Armazenando todos os professores
+   GGroup< Professor *, LessPtr< Professor > > professores;
+
+   ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )
+   {
+      Campus * campus = ( *it_campi );
+
+      ITERA_GGROUP_LESSPTR( it_prof, it_campi->professores, Professor )
+      {
+         Professor * professor = ( *it_prof );
+
+         professores.add( professor );
+      }
+   }
+   ////
+
+   return professores;
+}
+
+Professor * ProblemData::findProfessor( int id )
+{
+   GGroup< Professor *, LessPtr< Professor > > professores = this->getProfessores();
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      if ( professor->getId() == id )
+      {
+         return professor;
+      }
+   }
+
+   return NULL;
+}
