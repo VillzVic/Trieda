@@ -13,7 +13,8 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class CampiExportExcel extends AbstractExportExcel
+public class CampiExportExcel
+	extends AbstractExportExcel
 {
 	enum ExcelCellStyleReference
 	{
@@ -40,19 +41,23 @@ public class CampiExportExcel extends AbstractExportExcel
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
 
 	public CampiExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
 	public CampiExportExcel( boolean removeUnusedSheets, Cenario cenario,
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+			TriedaI18nConstants i18nConstants,
+			TriedaI18nMessages i18nMessages,
+			InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 

@@ -134,6 +134,18 @@ public enum ImportExcelError
 
 	TUDO_VAZIO,
 
+	ALUNO_DEMANDA_CAMPUS_VAZIO,
+	ALUNO_DEMANDA_CURSO_VAZIO,
+	ALUNO_DEMANDA_CURRICULO_VAZIO,
+	ALUNO_DEMANDA_TURNO_VAZIO,
+	ALUNO_DEMANDA_DISCIPLINA_VAZIO,
+	ALUNO_DEMANDA_NOME_ALUNO_VAZIO,
+	ALUNO_DEMANDA_MATRICULA_ALUNO_VAZIO,
+	ALUNO_DEMANDA_PERIODO_FORMATO_INVALIDO,
+	ALUNO_DEMANDA_PERIODO_NEGATIVO,
+	ALUNO_DEMANDA_PRIORIDADE_FORMATO_INVALIDO,
+	ALUNO_DEMANDA_PRIORIDADE_NEGATIVO,
+
 	UNIDADE_CAMPUS_VAZIO,
 	UNIDADE_CODIGO_VAZIO,
 	UNIDADE_NOME_VAZIO;
@@ -232,11 +244,23 @@ public enum ImportExcelError
 			case SALA_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.TIPO_COLUMN_NAME);
 			case SALA_UNIDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.UNIDADE_COLUMN_NAME);
 
-			case TUDO_VAZIO: return i18nMessages.excelErroSintaticoLinhaVazia(param1);
+			case TUDO_VAZIO: return i18nMessages.excelErroSintaticoLinhaVazia( param1 );
 
-			case UNIDADE_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,UnidadesImportExcel.CAMPUS_COLUMN_NAME);
-			case UNIDADE_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,UnidadesImportExcel.CODIGO_COLUMN_NAME);
-			case UNIDADE_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,UnidadesImportExcel.NOME_COLUMN_NAME);
+			case UNIDADE_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,UnidadesImportExcel.CAMPUS_COLUMN_NAME );
+			case UNIDADE_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,UnidadesImportExcel.CODIGO_COLUMN_NAME );
+			case UNIDADE_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,UnidadesImportExcel.NOME_COLUMN_NAME );
+
+			case ALUNO_DEMANDA_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CAMPUS_COLUMN_NAME );
+			case ALUNO_DEMANDA_CURSO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CURSO_COLUMN_NAME );
+			case ALUNO_DEMANDA_CURRICULO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CURRICULO_COLUMN_NAME );
+			case ALUNO_DEMANDA_TURNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.TURNO_COLUMN_NAME );
+			case ALUNO_DEMANDA_DISCIPLINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.DISCIPLINA_COLUMN_NAME );
+			case ALUNO_DEMANDA_NOME_ALUNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.NOME_ALUNO_COLUMN_NAME );
+			case ALUNO_DEMANDA_MATRICULA_ALUNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.MATRICULA_ALUNO_COLUMN_NAME );
+			case ALUNO_DEMANDA_PERIODO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido( param1, AlunosDemandaImportExcel.PERIODO_COLUMN_NAME );
+			case ALUNO_DEMANDA_PERIODO_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, AlunosDemandaImportExcel.PERIODO_COLUMN_NAME );
+			case ALUNO_DEMANDA_PRIORIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido( param1, AlunosDemandaImportExcel.PRIORIDADE_COLUMN_NAME );
+			case ALUNO_DEMANDA_PRIORIDADE_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, AlunosDemandaImportExcel.PRIORIDADE_COLUMN_NAME );
 		}
 
 		return "";

@@ -17,13 +17,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.UsuariosServiceImpl;
 import com.gapso.web.trieda.server.util.GTriedaI18nConstants;
 import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class ImportExcelServlet extends HttpServlet
+public class ImportExcelServlet
+	extends HttpServlet
 {
 	private static final long serialVersionUID = 1889121953846517684L;
 	private static TriedaI18nConstants i18nConstants = null;
@@ -36,34 +38,31 @@ public class ImportExcelServlet extends HttpServlet
 	}
 
 	@Override
-	protected void doPost( HttpServletRequest request, HttpServletResponse response )
+	protected void doPost(
+		HttpServletRequest request, HttpServletResponse response )
 		throws ServletException, IOException
 	{
-		Long instituicaoEnsinoId = null;
-		
-		try
-		{
-			instituicaoEnsinoId = Long.parseLong(
-				request.getParameter( "instituicaoEnsinoId" ) );
-		}
-		catch( Exception e )
-		{
-			System.out.println(
-				"Não foi informado a instituição de ensino. " );
-		}
-
+		UsuariosServiceImpl usuariosService = new UsuariosServiceImpl();
 		InstituicaoEnsino instituicaoEnsino
-			= InstituicaoEnsino.find( instituicaoEnsinoId );
+			= usuariosService.getInstituicaoEnsinoUser();
 
-		cenario = Cenario.findMasterData( instituicaoEnsino );
+		if ( instituicaoEnsino == null )
+		{
+			System.out.println( "A instituicao de ensino nao foi informada. " +
+				"A importacao dos dados nao podera ser realizada." );
+
+			return;
+		}
+
+		this.cenario = Cenario.findMasterData( instituicaoEnsino );
 
 		FileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
+        ServletFileUpload upload = new ServletFileUpload( factory );
         InputStream inputStream = null;
 
         try
         {
-        	@SuppressWarnings("unchecked")
+        	@SuppressWarnings( "unchecked" )
 			List< FileItem > itens = upload.parseRequest( request );
 
         	String fileName = null;
@@ -86,8 +85,8 @@ public class ImportExcelServlet extends HttpServlet
 
 			if ( inputStream != null && informationToBeImported != null )
 			{
-				IImportExcel importer = ImportExcelFactory.createImporter(
-					informationToBeImported, cenario, i18nConstants, i18nMessages );
+				IImportExcel importer = ImportExcelFactory.createImporter( informationToBeImported,
+					this.cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 				if ( importer != null )
 				{
@@ -112,6 +111,7 @@ public class ImportExcelServlet extends HttpServlet
 				else
 				{
 					response.setContentType( "text/html" );
+
 					response.getWriter().println(
 						ExcelInformationType.prefixError() +
 						i18nMessages.excelErroImportadorNulo( informationToBeImported ) );

@@ -15,6 +15,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -34,9 +35,10 @@ public class HabilitacoesProfessoresImportExcel
 
 	public HabilitacoesProfessoresImportExcel(
 		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages )
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
@@ -162,8 +164,11 @@ public class HabilitacoesProfessoresImportExcel
 		// Coleta os erros e adiciona os mesmos na lista de mensagens
 		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
 		{
-			List< Integer > linhasComErro = syntacticErrorsMap.get( error );
-			getErrors().add( error.getMessage( linhasComErro.toString(), getI18nMessages() ) );
+			List< Integer > linhasComErro
+				= syntacticErrorsMap.get( error );
+
+			getErrors().add( error.getMessage(
+				linhasComErro.toString(), getI18nMessages() ) );
 		}
 
 		return syntacticErrorsMap.isEmpty();
@@ -222,14 +227,17 @@ public class HabilitacoesProfessoresImportExcel
 		List< HabilitacoesProfessoresImportExcelBean > sheetContent )
 	{
 		// [ CódigoDisciplina -> Disciplina ]
-		Map< String, Disciplina > disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map< String, Disciplina > disciplinasBDMap
+			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
+				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
 
 		for ( HabilitacoesProfessoresImportExcelBean bean : sheetContent )
 		{
-			Disciplina disciplina = disciplinasBDMap.get( bean.getCodigoDisciplinaStr() );
+			Disciplina disciplina = disciplinasBDMap.get(
+				bean.getCodigoDisciplinaStr() );
 
 			if ( disciplina != null )
 			{
@@ -252,14 +260,17 @@ public class HabilitacoesProfessoresImportExcel
 		List< HabilitacoesProfessoresImportExcelBean > sheetContent )
 	{
 		// [ CpfProfessor -> Professor ]
-		Map< String, Professor > professoresBDMap = Professor.buildProfessorCpfToProfessorMap(
-			Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map< String, Professor > professoresBDMap
+			= Professor.buildProfessorCpfToProfessorMap(
+				Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
 
 		for ( HabilitacoesProfessoresImportExcelBean bean : sheetContent )
 		{
-			Professor professor = professoresBDMap.get( bean.getCpfProfessorStr() );
+			Professor professor = professoresBDMap.get(
+				bean.getCpfProfessorStr() );
 
 			if ( professor != null )
 			{

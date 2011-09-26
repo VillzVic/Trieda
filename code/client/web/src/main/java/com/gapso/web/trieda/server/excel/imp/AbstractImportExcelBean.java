@@ -32,8 +32,10 @@ public abstract class AbstractImportExcelBean
 		}
 	}
 
-	protected Double checkNonNegativeDoubleField( String value, ImportExcelError doubleErrorType,
-		ImportExcelError nonNegativeErrorType, List< ImportExcelError > errorsList )
+	protected Double checkNonNegativeDoubleField(
+		String value, ImportExcelError doubleErrorType,
+		ImportExcelError nonNegativeErrorType,
+		List< ImportExcelError > errorsList )
 	{
 		Double doubleValue = null;
 
@@ -58,8 +60,10 @@ public abstract class AbstractImportExcelBean
 		return doubleValue;
 	}
 	
-	protected Integer checkNonNegativeIntegerField( String value, ImportExcelError integerErrorType,
-		ImportExcelError nonNegativeErrorType, List< ImportExcelError > errorsList )
+	protected Integer checkNonNegativeIntegerField(
+		String value, ImportExcelError integerErrorType,
+		ImportExcelError nonNegativeErrorType,
+		List< ImportExcelError > errorsList )
 	{
 		Integer integerValue = null;
 
@@ -84,7 +88,8 @@ public abstract class AbstractImportExcelBean
 		return integerValue;
 	}
 
-	protected Boolean checkBooleanField( String value, ImportExcelError errorType,
+	protected Boolean checkBooleanField(
+		String value, ImportExcelError errorType,
 		List< ImportExcelError > errorsList )
 	{
 		Boolean booleanValue = null;

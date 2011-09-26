@@ -38,14 +38,16 @@ public abstract class AbstractExportExcel
 
 	protected AbstractExportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this.errors = new ArrayList< String >();
-		this.warnings = new ArrayList< String >();
+		this.instituicaoEnsino = instituicaoEnsino;
 		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
-		this.instituicaoEnsino = instituicaoEnsino;
+
+		this.errors = new ArrayList< String >();
+		this.warnings = new ArrayList< String >();
 	}
 
 	protected abstract String getPathExcelTemplate();

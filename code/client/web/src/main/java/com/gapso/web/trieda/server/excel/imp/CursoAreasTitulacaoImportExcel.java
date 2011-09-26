@@ -17,6 +17,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -31,9 +32,10 @@ public class CursoAreasTitulacaoImportExcel
 
 	public CursoAreasTitulacaoImportExcel(
 		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages )
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();

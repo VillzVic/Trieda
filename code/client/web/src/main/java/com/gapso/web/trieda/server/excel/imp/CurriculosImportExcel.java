@@ -21,24 +21,28 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportExcelBean> {
-	
+public class CurriculosImportExcel
+	extends AbstractImportExcel< CurriculosImportExcelBean >
+{
 	static public String CURSO_COLUMN_NAME;
 	static public String CODIGO_COLUMN_NAME;
 	static public String DESCRICAO_COLUMN_NAME;
 	static public String DISCIPLINA_COLUMN_NAME;
 	static public String PERIODO_COLUMN_NAME;
-	
-	private List<String> headerColumnsNames;
-	
-	public CurriculosImportExcel(
-		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+
+	private List< String > headerColumnsNames;
+
+	public CurriculosImportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
@@ -50,104 +54,162 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 	}
 
 	@Override
-	protected boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		String sheetName = workbook.getSheetName(sheetIndex);
-		return ExcelInformationType.CURRICULOS.getSheetName().equals(sheetName);
+	protected boolean sheetMustBeProcessed(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		String sheetName = workbook.getSheetName( sheetIndex );
+		return ExcelInformationType.CURRICULOS.getSheetName().equals( sheetName );
 	}
-	
+
 	@Override
-	protected List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
+	protected List< String > getHeaderColumnsNames(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
-	protected CurriculosImportExcelBean createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook) {
-		CurriculosImportExcelBean bean = new CurriculosImportExcelBean(row.getRowNum()+1);
-        for (int cellIndex = row.getFirstCellNum(); cellIndex <= row.getLastCellNum(); cellIndex++) {
-            HSSFCell cell = row.getCell(cellIndex);        	
-        	if (cell != null) {
-        		HSSFCell headerCell = header.getCell(cell.getColumnIndex());
-        		if (headerCell != null) {
+	protected CurriculosImportExcelBean createExcelBean(
+		HSSFRow header, HSSFRow row, int sheetIndex,
+		HSSFSheet sheet, HSSFWorkbook workbook )
+	{
+		CurriculosImportExcelBean bean
+			= new CurriculosImportExcelBean( row.getRowNum() + 1 );
+
+        for ( int cellIndex = row.getFirstCellNum();
+        	  cellIndex <= row.getLastCellNum(); cellIndex++ )
+        {
+            HSSFCell cell = row.getCell( cellIndex );
+
+        	if ( cell != null )
+        	{
+        		HSSFCell headerCell = header.getCell( cell.getColumnIndex() );
+
+        		if ( headerCell != null )
+        		{
         			String columnName = headerCell.getRichStringCellValue().getString();
-					String cellValue = getCellValue(cell);
-					if (CURSO_COLUMN_NAME.endsWith(columnName)) {
-						bean.setCursoCodigoStr(cellValue);
-					} else if (CODIGO_COLUMN_NAME.equals(columnName)) {
-						bean.setCodigoStr(cellValue);
-					} else if (DESCRICAO_COLUMN_NAME.endsWith(columnName)) {
-						bean.setDescricaoStr(cellValue);
-					} else if (DISCIPLINA_COLUMN_NAME.endsWith(columnName)) {
-						bean.setDisciplinaCodigoStr(cellValue);
-					} else if (PERIODO_COLUMN_NAME.endsWith(columnName)) {
-						bean.setPeriodoStr(cellValue);
+					String cellValue = getCellValue( cell );
+
+					if ( CURSO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setCursoCodigoStr( cellValue );
+					}
+					else if ( CODIGO_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setCodigoStr( cellValue );
+					}
+					else if ( DESCRICAO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setDescricaoStr( cellValue );
+					}
+					else if ( DISCIPLINA_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setDisciplinaCodigoStr( cellValue );
+					}
+					else if ( PERIODO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setPeriodoStr( cellValue );
 					}
         		}
         	}
         }
+
 		return bean;
 	}
 
 	@Override
-	protected String getHeaderToString() {
+	protected String getHeaderToString()
+	{
 		return this.headerColumnsNames.toString();
 	}
 
 	@Override
-	public String getSheetName() {
+	public String getSheetName()
+	{
 		return ExcelInformationType.CURRICULOS.getSheetName();
 	}
-	
+
 	@Override
-	protected void processSheetContent(String sheetName, List<CurriculosImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
-			updateDataBase(sheetName,sheetContent);
+	protected void processSheetContent(
+		String sheetName, List< CurriculosImportExcelBean > sheetContent )
+	{
+		if ( doSyntacticValidation( sheetName, sheetContent )
+			&& doLogicValidation( sheetName, sheetContent ) )
+		{
+			updateDataBase( sheetName, sheetContent );
 		}
 	}
 
-	private boolean doSyntacticValidation(String sheetName, List<CurriculosImportExcelBean> sheetContent) {
-		// map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
-		// [ImportExcelError -> Lista de linhas onde o erro ocorre]
-		Map<ImportExcelError,List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError,List<Integer>>();
+	private boolean doSyntacticValidation(
+		String sheetName, List< CurriculosImportExcelBean > sheetContent )
+	{
+		// Map utilizado para associar um erro
+		// às linhas do arquivo onde o mesmo ocorre
+		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
+		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
+			= new HashMap< ImportExcelError, List< Integer > >();
 
-		for (CurriculosImportExcelBean bean : sheetContent) {
-			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
-			for (ImportExcelError error : errorsBean) {
-				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
-				if (rowsWithErrors == null) {
-					rowsWithErrors = new ArrayList<Integer>();
-					syntacticErrorsMap.put(error,rowsWithErrors);
+		for ( CurriculosImportExcelBean bean : sheetContent )
+		{
+			List< ImportExcelError > errorsBean
+				= bean.checkSyntacticErrors();
+
+			for ( ImportExcelError error : errorsBean )
+			{
+				List< Integer > rowsWithErrors
+					= syntacticErrorsMap.get( error );
+
+				if ( rowsWithErrors == null )
+				{
+					rowsWithErrors = new ArrayList< Integer >();
+					syntacticErrorsMap.put( error, rowsWithErrors );
 				}
-				rowsWithErrors.add(bean.getRow());
+
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		// coleta os erros e adiciona os mesmos na lista de mensagens
-		for (ImportExcelError error : syntacticErrorsMap.keySet()) {
-			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
-			getErrors().add(error.getMessage(linhasComErro.toString(),getI18nMessages()));
+
+		// Coleta os erros e adiciona os mesmos na lista de mensagens
+		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		{
+			List< Integer > linhasComErro
+				= syntacticErrorsMap.get( error );
+
+			getErrors().add( error.getMessage(
+				linhasComErro.toString(), getI18nMessages() ) );
 		}
-		
+
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(String sheetName, List<CurriculosImportExcelBean> sheetContent) {
-		// verifica se alguma matriz curricular apareceu mais de uma vez no arquivo de entrada
-		checkUniquenessCurriculo(sheetContent);
-		// verifica se alguma disciplina apareceu mais de uma vez para um par (Curriculo,Período) no arquivo de entrada
-		checkUniquenessDisciplina(sheetContent);
-		// verifica se há referência a algum curso não cadastrado
-		checkNonRegisteredCurso(sheetContent);
-		// verifica se há referência a alguma disciplina não cadastrada
-		checkNonRegisteredDisciplina(sheetContent);
-		
+	private boolean doLogicValidation(
+		String sheetName, List< CurriculosImportExcelBean > sheetContent )
+	{
+		// Verifica se alguma matriz curricular
+		// apareceu mais de uma vez no arquivo de entrada
+		checkUniquenessCurriculo( sheetContent );
+
+		// Verifica se alguma disciplina
+		// apareceu mais de uma vez para um par
+		// ( Curriculo, Período ) no arquivo de entrada
+		checkUniquenessDisciplina( sheetContent );
+
+		// Verifica se há referência a algum curso não cadastrado
+		checkNonRegisteredCurso( sheetContent );
+
+		// Verifica se há referência a alguma disciplina não cadastrada
+		checkNonRegisteredDisciplina( sheetContent );
+
 		return getErrors().isEmpty();
 	}
-	
-	private void checkUniquenessCurriculo(List<CurriculosImportExcelBean> sheetContent) {
-		checkUniquenessCurriculoByCurso(sheetContent);
-		checkUniquenessCurriculoByDescricao(sheetContent);
+
+	private void checkUniquenessCurriculo(
+		List< CurriculosImportExcelBean > sheetContent )
+	{
+		checkUniquenessCurriculoByCurso( sheetContent );
+		checkUniquenessCurriculoByDescricao( sheetContent );
 	}
-	
+
 	private void checkUniquenessCurriculoByCurso(List<CurriculosImportExcelBean> sheetContent) {
 		// map com o CodCurriculo e o conjunto de pares (CodCurriculo-CodCurso) em que o mesmo aparece
 		// [CodCurriculo -> Conjunto de pares (CodCurriculo-CodCurso)]
@@ -312,6 +374,7 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 		for ( CurriculosImportExcelBean bean : sheetContent )
 		{
 			Curso curso = cursosBDMap.get( bean.getCursoCodigoStr() );
+
 			if ( curso != null )
 			{
 				bean.setCurso( curso );
@@ -329,15 +392,19 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 		}
 	}
 
-	private void checkNonRegisteredDisciplina( List< CurriculosImportExcelBean > sheetContent )
+	private void checkNonRegisteredDisciplina(
+		List< CurriculosImportExcelBean > sheetContent )
 	{
 		// Codigo referente á issue http://jira.gapso.com.br/browse/TRIEDA-791
 
-		// [CodigoDisciplina -> Disciplina]
-		Map< String, Disciplina > disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		// [ CodigoDisciplina -> Disciplina ]
+		Map< String, Disciplina > disciplinasBDMap
+			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
+				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
+
 		for ( CurriculosImportExcelBean bean : sheetContent )
 		{
 			Disciplina disciplina = disciplinasBDMap.get( bean.getDisciplinaCodigoStr() );
@@ -359,7 +426,8 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 	}
 
 	@Transactional
-	private void updateDataBase( String sheetName, List< CurriculosImportExcelBean > sheetContent )
+	private void updateDataBase(
+		String sheetName, List< CurriculosImportExcelBean > sheetContent )
 	{
 		// ATUALIZA CURRICULOS ------------------------------------------
 
@@ -367,7 +435,7 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 		Map< String, Curriculo > curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(
 			Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		// [CodCurriculo -> CurriculosImportExcelBean]
+		// [ CodCurriculo -> CurriculosImportExcelBean ]
 		Map< String, CurriculosImportExcelBean > curriculosExcelMap
 			= CurriculosImportExcelBean.buildCurriculoCodigoToImportExcelBeanMap( sheetContent ); 
 
@@ -378,7 +446,7 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 
 			if ( curriculoBD != null )
 			{
-				// update
+				// Update
 				curriculoBD.setDescricao( curriculoExcel.getDescricaoStr() );
 				curriculoBD.setCurso( curriculoExcel.getCurso() );
 
@@ -386,13 +454,14 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 			}
 			else
 			{
-				// insert
+				// Insert
 				Curriculo newCurriculo = new Curriculo();
 
 				newCurriculo.setCenario( getCenario() );
 				newCurriculo.setCodigo( curriculoExcel.getCodigoStr() );
 				newCurriculo.setDescricao( curriculoExcel.getDescricaoStr() );
 				newCurriculo.setCurso( curriculoExcel.getCurso() );
+				newCurriculo.setSemanaLetiva( getCenario().getSemanaLetiva() );
 
 				newCurriculo.persist();
 
@@ -415,14 +484,19 @@ public class CurriculosImportExcel extends AbstractImportExcel<CurriculosImportE
 
 			if ( curriculoDisciplinaBD == null )
 			{
-				// insert
+				// Insert
 				CurriculoDisciplina newCurriculoDisciplina = new CurriculoDisciplina();
 
 				newCurriculoDisciplina.setPeriodo( curriculoExcel.getPeriodo() );
 				newCurriculoDisciplina.setDisciplina( curriculoExcel.getDisciplina() );
 				newCurriculoDisciplina.setCurriculo( curriculosBDMap.get( curriculoExcel.getCodigoStr() ) );
 
-				newCurriculoDisciplina.persist();
+				if ( newCurriculoDisciplina.getPeriodo() != null
+					&& newCurriculoDisciplina.getDisciplina() != null
+					&& newCurriculoDisciplina.getCurriculo() != null )
+				{
+					newCurriculoDisciplina.persist();
+				}
 			}
 		}
 	}

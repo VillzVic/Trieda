@@ -16,6 +16,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -28,12 +29,14 @@ public class CampiTrabalhoImportExcel
 	static public String CPF_COLUMN_NAME;
 	static public String PROFESSOR_COLUMN_NAME;
 
-	private List<String> headerColumnsNames;
+	private List< String > headerColumnsNames;
 
 	public CampiTrabalhoImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino)
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
@@ -62,7 +65,8 @@ public class CampiTrabalhoImportExcel
 		HSSFRow header, HSSFRow row, int sheetIndex,
 		HSSFSheet sheet, HSSFWorkbook workbook )
 	{
-		CampiTrabalhoImportExcelBean bean = new CampiTrabalhoImportExcelBean( row.getRowNum() + 1 );
+		CampiTrabalhoImportExcelBean bean
+			= new CampiTrabalhoImportExcelBean( row.getRowNum() + 1 );
 
         for ( int cellIndex = row.getFirstCellNum();
         	  cellIndex <= row.getLastCellNum(); cellIndex++ )

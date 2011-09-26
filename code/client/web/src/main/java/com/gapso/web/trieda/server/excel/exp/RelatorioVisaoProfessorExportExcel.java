@@ -457,7 +457,6 @@ public class RelatorioVisaoProfessorExportExcel
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana
 				= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
-			// TODO -- Visão Professor
 			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 			row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, atedimentosDiaSemana );
 
@@ -575,7 +574,6 @@ public class RelatorioVisaoProfessorExportExcel
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana
 					= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
-			// TODO -- Visão Professor (Virtual)
 			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 			row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, atedimentosDiaSemana );
 

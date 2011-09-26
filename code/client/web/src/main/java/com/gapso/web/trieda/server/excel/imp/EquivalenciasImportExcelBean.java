@@ -7,36 +7,49 @@ import java.util.Set;
 
 import com.gapso.trieda.domain.Disciplina;
 
-public class EquivalenciasImportExcelBean extends AbstractImportExcelBean implements Comparable<EquivalenciasImportExcelBean> {
-	
+public class EquivalenciasImportExcelBean
+	extends AbstractImportExcelBean
+	implements Comparable< EquivalenciasImportExcelBean >
+{
 	private String cursouStr;
 	private String eliminaStr;
-	
+
 	private Disciplina disciplinaCursou;
-	private Set<Disciplina> disciplinasElimina = new HashSet<Disciplina>();
-	
-	public EquivalenciasImportExcelBean(int row) {
-		super(row);
+	private Set< Disciplina > disciplinasElimina = new HashSet< Disciplina >();
+
+	public EquivalenciasImportExcelBean( int row )
+	{
+		super( row );
 	}
-	
-	public List<ImportExcelError> checkSyntacticErrors() {
-		List<ImportExcelError> erros = new ArrayList<ImportExcelError>();
-		if (!tudoVazio()) {
-			checkMandatoryField(cursouStr,ImportExcelError.EQUIVALENCIA_CURSOU_VAZIO,erros);
-			checkMandatoryField(eliminaStr,ImportExcelError.EQUIVALENCIA_ELIMINA_VAZIO,erros);
-		} else {
-			erros.add(ImportExcelError.TUDO_VAZIO);
+
+	public List< ImportExcelError > checkSyntacticErrors()
+	{
+		List< ImportExcelError > erros
+			= new ArrayList< ImportExcelError >();
+
+		if ( !tudoVazio() )
+		{
+			checkMandatoryField( cursouStr, ImportExcelError.EQUIVALENCIA_CURSOU_VAZIO, erros );
+			checkMandatoryField( eliminaStr, ImportExcelError.EQUIVALENCIA_ELIMINA_VAZIO, erros );
 		}
+		else
+		{
+			erros.add( ImportExcelError.TUDO_VAZIO );
+		}
+
 		return erros;
 	}
-	
-	private boolean tudoVazio() {
-		return isEmptyField(cursouStr) && isEmptyField(eliminaStr);
+
+	private boolean tudoVazio()
+	{
+		return ( isEmptyField( cursouStr )
+			&& isEmptyField( eliminaStr ) );
 	}
 
 	public String getCursouStr() {
 		return cursouStr;
 	}
+
 	public void setCursouStr(String cursouStr) {
 		this.cursouStr = cursouStr;
 	}
@@ -44,6 +57,7 @@ public class EquivalenciasImportExcelBean extends AbstractImportExcelBean implem
 	public String getEliminaStr() {
 		return eliminaStr;
 	}
+
 	public void setEliminaStr(String eliminaStr) {
 		this.eliminaStr = eliminaStr;
 	}
@@ -51,6 +65,7 @@ public class EquivalenciasImportExcelBean extends AbstractImportExcelBean implem
 	public Disciplina getDisciplinaCursou() {
 		return disciplinaCursou;
 	}
+
 	public void setDisciplinaCursou(Disciplina disciplinaCursou) {
 		this.disciplinaCursou = disciplinaCursou;
 	}
@@ -58,6 +73,7 @@ public class EquivalenciasImportExcelBean extends AbstractImportExcelBean implem
 	public Set<Disciplina> getDisciplinasElimina() {
 		return disciplinasElimina;
 	}
+
 	public void setDisciplinasElimina(Set<Disciplina> disciplinasElimina) {
 		this.disciplinasElimina = disciplinasElimina;
 	}

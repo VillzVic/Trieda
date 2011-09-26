@@ -471,7 +471,6 @@ public class RelatorioVisaoCursoExportExcel
 					listOp.add( (AtendimentoOperacionalDTO) ar );
 				}
 
-				// TODO -- Visão Curso
 				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 				row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, listOp );
 

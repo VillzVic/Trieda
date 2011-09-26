@@ -34,14 +34,15 @@ public class CursosImportExcel
 	static public String MIN_TEMPO_INTEGRAL_COLUMN_NAME;
 	static public String MAX_DISC_PROF_COLUMN_NAME;
 	static public String MAIS_DE_UMA_DISC_PROF_COLUMN_NAME;
-	
-	private List<String> headerColumnsNames;
-	
-	public CursosImportExcel(
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages )
+
+	private List< String > headerColumnsNames;
+
+	public CursosImportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
@@ -248,6 +249,7 @@ public class CursosImportExcel
 		for ( CursosImportExcelBean bean : sheetContent )
 		{
 			TipoCurso tipoCurso = tiposCursoBDMap.get( bean.getTipoStr() );
+
 			if ( tipoCurso != null )
 			{
 				bean.setTipo( tipoCurso );

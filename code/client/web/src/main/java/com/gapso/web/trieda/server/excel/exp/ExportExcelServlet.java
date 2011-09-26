@@ -42,7 +42,8 @@ public class ExportExcelServlet extends HttpServlet
 	}
 
 	@Override
-	protected void doGet( HttpServletRequest request, HttpServletResponse response )
+	protected void doGet(
+		HttpServletRequest request, HttpServletResponse response )
 		throws ServletException, IOException
 	{
 		// Obtém os parâmetros

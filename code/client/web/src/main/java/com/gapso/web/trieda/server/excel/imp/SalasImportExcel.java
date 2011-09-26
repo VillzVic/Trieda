@@ -36,9 +36,11 @@ public class SalasImportExcel
 	private List< String > headerColumnsNames;
 
 	public SalasImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
@@ -75,7 +77,8 @@ public class SalasImportExcel
         for ( int cellIndex = row.getFirstCellNum();
         	  cellIndex <= row.getLastCellNum(); cellIndex++ )
         {
-            HSSFCell cell = row.getCell( cellIndex );        	
+            HSSFCell cell = row.getCell( cellIndex );
+
         	if ( cell != null )
         	{
         		HSSFCell headerCell = header.getCell( cell.getColumnIndex() );
@@ -117,82 +120,120 @@ public class SalasImportExcel
 	}
 
 	@Override
-	protected String getHeaderToString() {
+	protected String getHeaderToString()
+	{
 		return this.headerColumnsNames.toString();
 	}
 
 	@Override
-	public String getSheetName() {
+	public String getSheetName()
+	{
 		return ExcelInformationType.SALAS.getSheetName();
 	}
 	
 	@Override
-	protected void processSheetContent(String sheetName, List<SalasImportExcelBean> sheetContent) {
-		if (doSyntacticValidation(sheetName,sheetContent) && doLogicValidation(sheetName,sheetContent)) {
-			updateDataBase(sheetName,sheetContent);
+	protected void processSheetContent(
+		String sheetName, List< SalasImportExcelBean > sheetContent )
+	{
+		if ( doSyntacticValidation( sheetName, sheetContent )
+			&& doLogicValidation( sheetName, sheetContent ) )
+		{
+			updateDataBase( sheetName, sheetContent );
 		}
 	}
 
-	private boolean doSyntacticValidation(String sheetName, List<SalasImportExcelBean> sheetContent) {
-		// map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
-		// [ImportExcelError -> Lista de linhas onde o erro ocorre]
-		Map<ImportExcelError,List<Integer>> syntacticErrorsMap = new HashMap<ImportExcelError,List<Integer>>();
+	private boolean doSyntacticValidation(
+		String sheetName, List< SalasImportExcelBean > sheetContent )
+	{
+		// Map utilizado para associar um erro
+		// às linhas do arquivo onde o mesmo ocorre
+		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
+		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
+			= new HashMap< ImportExcelError, List< Integer > >();
 
-		for (SalasImportExcelBean bean : sheetContent) {
-			List<ImportExcelError> errorsBean = bean.checkSyntacticErrors();
-			for (ImportExcelError error : errorsBean) {
-				List<Integer> rowsWithErrors = syntacticErrorsMap.get(error);
-				if (rowsWithErrors == null) {
-					rowsWithErrors = new ArrayList<Integer>();
-					syntacticErrorsMap.put(error,rowsWithErrors);
+		for ( SalasImportExcelBean bean : sheetContent )
+		{
+			List< ImportExcelError > errorsBean
+				= bean.checkSyntacticErrors();
+
+			for ( ImportExcelError error : errorsBean )
+			{
+				List< Integer > rowsWithErrors
+					= syntacticErrorsMap.get( error );
+
+				if ( rowsWithErrors == null )
+				{
+					rowsWithErrors = new ArrayList< Integer >();
+					syntacticErrorsMap.put( error, rowsWithErrors );
 				}
-				rowsWithErrors.add(bean.getRow());
+
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		// coleta os erros e adiciona os mesmos na lista de mensagens
-		for (ImportExcelError error : syntacticErrorsMap.keySet()) {
-			List<Integer> linhasComErro = syntacticErrorsMap.get(error);
-			getErrors().add(error.getMessage(linhasComErro.toString(),getI18nMessages()));
+
+		// Coleta os erros e adiciona os mesmos na lista de mensagens
+		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
+		{
+			List< Integer > linhasComErro
+				= syntacticErrorsMap.get( error );
+
+			getErrors().add( error.getMessage(
+				linhasComErro.toString(), getI18nMessages() ) );
 		}
-		
+
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(String sheetName, List<SalasImportExcelBean> sheetContent) {
-		// verifica se alguma sala apareceu mais de uma vez no arquivo de entrada
-		checkUniqueness(sheetContent);
+	private boolean doLogicValidation(
+		String sheetName, List< SalasImportExcelBean > sheetContent )
+	{
+		// Verifica se alguma sala apareceu
+		// mais de uma vez no arquivo de entrada
+		checkUniqueness( sheetContent );
+
 		// verifica se há referência a alguma unidade não cadastrada
-		checkNonRegisteredUnidade(sheetContent);
+		checkNonRegisteredUnidade( sheetContent );
+
 		// verifica se há referência a algum tipo de sala não cadastrado
-		checkNonRegisteredTipoSala(sheetContent);
-		
+		checkNonRegisteredTipoSala( sheetContent );
+
 		return getErrors().isEmpty();
 	}
 
-	private void checkUniqueness(List<SalasImportExcelBean> sheetContent) {
-		// map com os códigos das salas e as linhas em que a mesma aparece no arquivo de entrada
-		// [CódigoSala -> Lista de Linhas do Arquivo de Entrada]
-		Map<String,List<Integer>> salaCodigoToRowsMap = new HashMap<String,List<Integer>>();
-		
-		// 
-		for (SalasImportExcelBean bean : sheetContent) {
-			List<Integer> rows = salaCodigoToRowsMap.get(bean.getCodigoStr());
-			if (rows == null) {
-				rows = new ArrayList<Integer>();
-				salaCodigoToRowsMap.put(bean.getCodigoStr(),rows);
+	private void checkUniqueness(
+		List< SalasImportExcelBean > sheetContent )
+	{
+		// Map com os códigos das salas e as linhas
+		// em que a mesma aparece no arquivo de entrada
+		// [ CódigoSala -> Lista de Linhas do Arquivo de Entrada ]
+		Map< String, List< Integer > > salaCodigoToRowsMap
+			= new HashMap< String, List< Integer > >();
+
+		for ( SalasImportExcelBean bean : sheetContent )
+		{
+			List< Integer > rows = salaCodigoToRowsMap.get( bean.getCodigoStr() );
+
+			if ( rows == null )
+			{
+				rows = new ArrayList< Integer >();
+				salaCodigoToRowsMap.put( bean.getCodigoStr(), rows );
 			}
-			rows.add(bean.getRow());
+
+			rows.add( bean.getRow() );
 		}
 		
-		// verifica se alguma sala apareceu mais de uma vez no arquivo de entrada
-		for (Entry<String,List<Integer>> entry : salaCodigoToRowsMap.entrySet()) {
-			if (entry.getValue().size() > 1) {
-				getErrors().add(getI18nMessages().excelErroLogicoUnicidadeViolada(entry.getKey(),entry.getValue().toString()));
+		// Verifica se alguma sala apareceu mais de uma vez no arquivo de entrada
+		for ( Entry< String, List< Integer > > entry
+			: salaCodigoToRowsMap.entrySet() )
+		{
+			if ( entry.getValue().size() > 1 )
+			{
+				getErrors().add( getI18nMessages().excelErroLogicoUnicidadeViolada(
+					entry.getKey(), entry.getValue().toString() ) );
 			}
 		}
 	}
-	
+
 	private void checkNonRegisteredUnidade(
 		List< SalasImportExcelBean > sheetContent )
 	{
@@ -200,18 +241,28 @@ public class SalasImportExcel
 		Map< String, Unidade> unidadeBDMap = Unidade.buildUnidadeCodigoToUnidadeMap(
 			Unidade.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		List<Integer> rowsWithErrors = new ArrayList<Integer>();
-		for (SalasImportExcelBean bean : sheetContent) {
-			Unidade unidade = unidadeBDMap.get(bean.getCodigoUnidadeStr());
-			if (unidade != null) {
-				bean.setUnidade(unidade);
-			} else {
-				rowsWithErrors.add(bean.getRow());
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
+
+		for ( SalasImportExcelBean bean : sheetContent )
+		{
+			Unidade unidade = unidadeBDMap.get(
+				bean.getCodigoUnidadeStr() );
+
+			if ( unidade != null )
+			{
+				bean.setUnidade( unidade );
+			}
+			else
+			{
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
-		
-		if (!rowsWithErrors.isEmpty()) {
-			getErrors().add(getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(UNIDADE_COLUMN_NAME,rowsWithErrors.toString()));
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				UNIDADE_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
 
@@ -222,17 +273,23 @@ public class SalasImportExcel
 		InstituicaoEnsino instituicaoEnsino = sl.getInstituicaoEnsino(); 
 
 		// [ NomeTipoSala -> TipoSala ]
-		Map<String,TipoSala> tiposSalaBDMap = TipoSala.buildTipoSalaNomeToTipoSalaMap(
-			TipoSala.findAll( instituicaoEnsino ) );
+		Map< String, TipoSala > tiposSalaBDMap
+			= TipoSala.buildTipoSalaNomeToTipoSalaMap(
+				TipoSala.findAll( instituicaoEnsino ) );
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
+
 		for ( SalasImportExcelBean bean : sheetContent )
 		{
 			TipoSala tipoSala = tiposSalaBDMap.get( bean.getTipoStr() );
+
 			if ( tipoSala != null )
 			{
 				bean.setTipo( tipoSala );
-			} else {
+			}
+			else
+			{
 				rowsWithErrors.add( bean.getRow() );
 			}
 		}

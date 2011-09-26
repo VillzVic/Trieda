@@ -24,30 +24,39 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	protected List< String > errors;
 	protected List< String > warnings;
 
-	private Cenario cenario;
+	protected Cenario cenario;
 	protected InstituicaoEnsino instituicaoEnsino;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
 
 	protected AbstractImportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages )
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this.instituicaoEnsino = cenario.getSemanaLetiva().getInstituicaoEnsino();
-
-		this.errors = new ArrayList< String >();
-		this.warnings = new ArrayList< String >();
-
+		this.instituicaoEnsino = instituicaoEnsino;
 		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
+
+		this.errors = new ArrayList< String >();
+		this.warnings = new ArrayList< String >();
 	}
 
-	protected abstract boolean sheetMustBeProcessed(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
-	protected abstract List<String> getHeaderColumnsNames(int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
-	protected abstract ExcelBeanType createExcelBean(HSSFRow header, HSSFRow row, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook);
+	protected abstract boolean sheetMustBeProcessed(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook );
+
+	protected abstract List< String > getHeaderColumnsNames(
+		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook );
+
+	protected abstract ExcelBeanType createExcelBean(
+		HSSFRow header, HSSFRow row, int sheetIndex,
+		HSSFSheet sheet, HSSFWorkbook workbook );
+
 	protected abstract String getHeaderToString();
-	protected abstract void processSheetContent(String sheetName, List<ExcelBeanType> sheetContent);
+
+	protected abstract void processSheetContent(
+		String sheetName, List< ExcelBeanType > sheetContent );
 
 	@Override
 	public boolean load( String fileName, HSSFWorkbook workbook )
@@ -62,7 +71,8 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		{
 			try
 			{
-				for ( Entry< String, List< ExcelBeanType > > entry : excelBeansMap.entrySet() )
+				for ( Entry< String, List< ExcelBeanType > > entry
+					: excelBeansMap.entrySet() )
 				{
 					processSheetContent( entry.getKey(), entry.getValue() );
 				}
@@ -70,7 +80,9 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 			catch ( Exception e )
 			{
 				e.printStackTrace();
-				errors.add( getI18nMessages().excelErroBD( fileName, extractMessage( e ) ) );
+
+				errors.add( getI18nMessages().excelErroBD(
+					fileName, extractMessage( e ) ) );
 			}
 		}
 
@@ -78,133 +90,200 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	}
 
 	@Override
-	public boolean load(String fileName, InputStream inputStream) {
+	public boolean load( String fileName, InputStream inputStream )
+	{
 		errors.clear();
 		warnings.clear();
-		
-		Map<String,List<ExcelBeanType>> excelBeansMap = readInputStream(fileName,inputStream, null);
-		if (errors.isEmpty()) {
-			try {
-				for (Entry<String,List<ExcelBeanType>> entry : excelBeansMap.entrySet()) {
-					processSheetContent(entry.getKey(),entry.getValue());
+
+		Map< String, List< ExcelBeanType > > excelBeansMap
+			= readInputStream( fileName,inputStream, null );
+
+		if ( errors.isEmpty() )
+		{
+			try
+			{
+				for ( Entry< String, List< ExcelBeanType > > entry
+					: excelBeansMap.entrySet() )
+				{
+					processSheetContent(
+						entry.getKey(), entry.getValue() );
 				}
-			} catch (Exception e) {
+			}
+			catch ( Exception e )
+			{
 				e.printStackTrace();
-				errors.add(getI18nMessages().excelErroBD(fileName,extractMessage(e)));
+
+				errors.add( getI18nMessages().excelErroBD(
+					fileName, extractMessage( e ) ) );
 			}
 		}
-		
+
 		return errors.isEmpty();
 	}
-	
+
 	@Override
-	public List<String> getErrors() {
+	public List< String > getErrors()
+	{
 		return errors;
 	}
 
 	@Override
-	public List<String> getWarnings() {
+	public List< String > getWarnings()
+	{
 		return warnings;
 	}
-	
-	private Map<String,List<ExcelBeanType>> readInputStream(String fileName, InputStream inputStream, HSSFWorkbook workbook) {
-		// [SheetName, List<ExcelBeanType>]
-		Map<String,List<ExcelBeanType>> excelBeansMap = new HashMap<String,List<ExcelBeanType>>();
-		
-		try {
-			if(workbook == null) {
-				POIFSFileSystem poifs = new POIFSFileSystem(inputStream);
-				workbook = new HSSFWorkbook(poifs);
+
+	private Map< String, List< ExcelBeanType > > readInputStream(
+		String fileName, InputStream inputStream, HSSFWorkbook workbook )
+	{
+		// [ SheetName, List< ExcelBeanType > ]
+		Map< String, List< ExcelBeanType > > excelBeansMap
+			= new HashMap< String, List< ExcelBeanType > >();
+
+		try
+		{
+			if ( workbook == null )
+			{
+				POIFSFileSystem poifs = new POIFSFileSystem( inputStream );
+				workbook = new HSSFWorkbook( poifs );
 			}
-			
-			for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-				HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
-				
-				// verifica se a aba deve ou não ser processada
-				if (sheetMustBeProcessed(sheetIndex,sheet,workbook)) {
-					List<ExcelBeanType> excelBeansList = new ArrayList<ExcelBeanType>();
-					excelBeansMap.put(workbook.getSheetName(sheetIndex),excelBeansList);
-					
-					// procura cabeçalho
-					List<String> headerColumnsNames = getHeaderColumnsNames(sheetIndex,sheet,workbook);
+
+			for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
+			{
+				HSSFSheet sheet = workbook.getSheetAt( sheetIndex );
+
+				// Verifica se a aba deve ou não ser processada
+				if ( sheetMustBeProcessed( sheetIndex, sheet, workbook ) )
+				{
+					List< ExcelBeanType > excelBeansList = new ArrayList< ExcelBeanType >();
+					excelBeansMap.put( workbook.getSheetName( sheetIndex ), excelBeansList );
+
+					// Procura cabeçalho
+					List< String > headerColumnsNames
+						= getHeaderColumnsNames( sheetIndex, sheet, workbook );
+
 					int rowIndex = sheet.getFirstRowNum();
-	                HSSFRow header = sheet.getRow(rowIndex);
-	                boolean validHeader = isHeaderValid(header,sheetIndex,sheet,workbook,headerColumnsNames);
-	                while ((rowIndex < sheet.getLastRowNum()) && !validHeader) {
-	                	header = sheet.getRow(rowIndex++);
-	                	validHeader = isHeaderValid(header,sheetIndex,sheet,workbook,headerColumnsNames);
+	                HSSFRow header = sheet.getRow( rowIndex );
+
+	                boolean validHeader = isHeaderValid(
+	                	header, sheetIndex, sheet, workbook, headerColumnsNames );
+
+	                while ( ( rowIndex < sheet.getLastRowNum() ) && !validHeader )
+	                {
+	                	header = sheet.getRow( rowIndex++ );
+
+	                	validHeader = isHeaderValid(
+	                		header, sheetIndex, sheet, workbook, headerColumnsNames );
 	                }
-	                
-	                if (validHeader) {
-	                	List<Integer> nullRows = new ArrayList<Integer>();
-	                	
-	                	// efetua a leitura dos dados do arquivo
-	                    for (; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-	                    	HSSFRow row = sheet.getRow(rowIndex);
-	                    	if (row != null) {
-	                    		excelBeansList.add(createExcelBean(header,row,sheetIndex,sheet,workbook));
-	                    	} else {
-	                    		nullRows.add(rowIndex);
+
+	                if ( validHeader )
+	                {
+	                	List< Integer > nullRows = new ArrayList< Integer >();
+
+	                	// Efetua a leitura dos dados do arquivo
+	                    for (; rowIndex <= sheet.getLastRowNum(); rowIndex++ )
+	                    {
+	                    	HSSFRow row = sheet.getRow( rowIndex );
+
+	                    	if ( row != null )
+	                    	{
+	                    		excelBeansList.add( createExcelBean(
+	                    			header, row, sheetIndex, sheet, workbook ) );
+	                    	}
+	                    	else
+	                    	{
+	                    		nullRows.add( rowIndex );
 	                    	}
 	                    }
-	                    
-	                    // verifica se existem linhas nulas
-	                    if (!nullRows.isEmpty()) {
-	                    	errors.add(getI18nMessages().excelErroSintaticoLinhasInvalidas(nullRows.toString(),fileName));
+
+	                    // Verifica se existem linhas nulas
+	                    if ( !nullRows.isEmpty() )
+	                    {
+	                    	errors.add( getI18nMessages().excelErroSintaticoLinhasInvalidas(
+	                    		nullRows.toString(), fileName ) );
 	                    }
-	                } else {
-	                	errors.add(getI18nMessages().excelErroSintaticoCabecalhoAusente(getHeaderToString(),fileName));
+	                }
+	                else
+	                {
+	                	errors.add( getI18nMessages().excelErroSintaticoCabecalhoAusente(
+	                		getHeaderToString(), fileName ) );
 	                }
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch ( Exception e )
+		{
 			e.printStackTrace();
-			errors.add(getI18nMessages().excelErroArquivoInvalido(fileName,extractMessage(e)));
-		} finally {
-//			if (inputStream != null) {
-//				try {
+			errors.add( getI18nMessages().excelErroArquivoInvalido(
+				fileName, extractMessage( e ) ) );
+		}
+		finally
+		{
+//			if ( inputStream != null )
+//			{
+//				try
+//				{
 //					inputStream.close();
-//				} catch (IOException e) {
-//					errors.add(extractMessage(e));
+//				}
+//			catch ( IOException e )
+//			{
+//					errors.add( extractMessage( e ) );
 //					e.printStackTrace();
 //				}
 //			}
 		}
-		
+
 		return excelBeansMap;
 	}
-	
-	private boolean isHeaderValid(HSSFRow candidateHeader, int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook, List<String> headerColumnsNames) {
-		if (candidateHeader != null) {
-    		boolean[] columnStatus = new boolean[headerColumnsNames.size()];
-    		
-    		// para cada coluna da linha a ser verificada
-            for (int cellIndex = candidateHeader.getFirstCellNum(); cellIndex <= candidateHeader.getLastCellNum(); cellIndex++) {
-            	HSSFCell cell = candidateHeader.getCell(cellIndex);
-            	if (cell != null && cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+
+	private boolean isHeaderValid( HSSFRow candidateHeader, int sheetIndex,
+		HSSFSheet sheet, HSSFWorkbook workbook, List< String > headerColumnsNames )
+	{
+		if ( candidateHeader != null )
+		{
+    		boolean [] columnStatus = new boolean[ headerColumnsNames.size() ];
+
+    		// Para cada coluna da linha a ser verificada
+            for ( int cellIndex = candidateHeader.getFirstCellNum();
+            	  cellIndex <= candidateHeader.getLastCellNum(); cellIndex++ )
+            {
+            	HSSFCell cell = candidateHeader.getCell( cellIndex );
+
+            	if ( cell != null && cell.getCellType() == HSSFCell.CELL_TYPE_STRING )
+            	{
 	            	String columnName = cell.getRichStringCellValue().getString();
-	                // para cada coluna no header
-	            	for (int headerColumnIndex = 0; headerColumnIndex < headerColumnsNames.size(); headerColumnIndex++) {
-	            		if (headerColumnsNames.get(headerColumnIndex).equals(columnName)) {
-	            			columnStatus[headerColumnIndex] = true;
+
+	                // Para cada coluna no header
+	            	for ( int headerColumnIndex = 0;
+	            		  headerColumnIndex < headerColumnsNames.size(); headerColumnIndex++ )
+	            	{
+	            		if ( headerColumnsNames.get(headerColumnIndex).equals( columnName ) )
+	            		{
+	            			columnStatus[ headerColumnIndex ] = true;
 	            		}
 	            	}
             	}
             }
-            
-            // verifica se todas as colunas necessárias foram encontradas no header
+
+            // Verifica se todas as colunas
+            // necessárias foram encontradas no header
             boolean test = true;
-            for (int i = 0; i < columnStatus.length; i++) {
-            	test = test && columnStatus[i];
+
+            for ( int i = 0; i < columnStatus.length; i++ )
+            {
+            	test = ( test && columnStatus[ i ] );
             }
+
             return test;
     	}
+
     	return false;
 	}
 	
 	private String extractMessage( Exception e )
 	{
 		StringBuffer msg = new StringBuffer();
+
 		msg.append( e.getMessage() );
 
 		if ( e.getCause() != null )
@@ -232,15 +311,18 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		return null;
 	}
 
-	protected Cenario getCenario() {
+	protected Cenario getCenario()
+	{
 		return cenario;
 	}
-	
-	protected TriedaI18nConstants getI18nConstants() {
+
+	protected TriedaI18nConstants getI18nConstants()
+	{
 		return i18nConstants;
 	}
-	
-	protected TriedaI18nMessages getI18nMessages() {
+
+	protected TriedaI18nMessages getI18nMessages()
+	{
 		return i18nMessages;
 	}
 }

@@ -23,96 +23,130 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 		super(row);
 	}
 	
-	public List<ImportExcelError> checkSyntacticErrors() {
-		List<ImportExcelError> erros = new ArrayList<ImportExcelError>();
-		if (!tudoVazio()) {
-			checkMandatoryField(codigoStr,ImportExcelError.SALA_CODIGO_VAZIO,erros);
-			checkMandatoryField(codigoUnidadeStr,ImportExcelError.SALA_UNIDADE_VAZIO,erros);
-			checkMandatoryField(tipoStr,ImportExcelError.SALA_TIPO_VAZIO,erros);
-			checkMandatoryField(numeroStr,ImportExcelError.SALA_NUMERO_VAZIO,erros);
-			checkMandatoryField(andarStr,ImportExcelError.SALA_ANDAR_VAZIO,erros);
-			checkMandatoryField(capacidadeStr,ImportExcelError.SALA_CAPACIDADE_VAZIO,erros);
-			capacidade = checkNonNegativeIntegerField(capacidadeStr,ImportExcelError.SALA_CAPACIDADE_FORMATO_INVALIDO,ImportExcelError.SALA_CAPACIDADE_VALOR_NEGATIVO,erros);
-		} else {
-			erros.add(ImportExcelError.TUDO_VAZIO);
+	public List< ImportExcelError > checkSyntacticErrors()
+	{
+		List< ImportExcelError > erros
+			= new ArrayList< ImportExcelError >();
+
+		if ( !tudoVazio() )
+		{
+			checkMandatoryField( codigoStr,ImportExcelError.SALA_CODIGO_VAZIO, erros );
+			checkMandatoryField( codigoUnidadeStr,ImportExcelError.SALA_UNIDADE_VAZIO, erros );
+			checkMandatoryField( tipoStr,ImportExcelError.SALA_TIPO_VAZIO, erros );
+			checkMandatoryField( numeroStr,ImportExcelError.SALA_NUMERO_VAZIO, erros );
+			checkMandatoryField( andarStr,ImportExcelError.SALA_ANDAR_VAZIO, erros );
+			checkMandatoryField( capacidadeStr,ImportExcelError.SALA_CAPACIDADE_VAZIO, erros );
+
+			capacidade = checkNonNegativeIntegerField( capacidadeStr,
+				ImportExcelError.SALA_CAPACIDADE_FORMATO_INVALIDO,
+				ImportExcelError.SALA_CAPACIDADE_VALOR_NEGATIVO, erros );
 		}
+		else
+		{
+			erros.add( ImportExcelError.TUDO_VAZIO );
+		}
+
 		return erros;
 	}
 	
-	private boolean tudoVazio() {
-		return isEmptyField(codigoStr) && isEmptyField(codigoUnidadeStr) && isEmptyField(tipoStr) && isEmptyField(numeroStr) && isEmptyField(andarStr)&& isEmptyField(capacidadeStr);
+	private boolean tudoVazio()
+	{
+		return ( isEmptyField( codigoStr )
+			&& isEmptyField( codigoUnidadeStr )
+			&& isEmptyField( tipoStr )
+			&& isEmptyField( numeroStr )
+			&& isEmptyField( andarStr )
+			&& isEmptyField( capacidadeStr ) );
 	}
 
-	public String getCodigoStr() {
+	public String getCodigoStr()
+	{
 		return codigoStr;
 	}
 
-	public void setCodigoStr(String codigoStr) {
+	public void setCodigoStr( String codigoStr )
+	{
 		this.codigoStr = codigoStr;
 	}
 
-	public String getCodigoUnidadeStr() {
+	public String getCodigoUnidadeStr()
+	{
 		return codigoUnidadeStr;
 	}
 
-	public void setCodigoUnidadeStr(String codigoUnidadeStr) {
+	public void setCodigoUnidadeStr( String codigoUnidadeStr )
+	{
 		this.codigoUnidadeStr = codigoUnidadeStr;
 	}
 
-	public String getTipoStr() {
+	public String getTipoStr()
+	{
 		return tipoStr;
 	}
 
-	public void setTipoStr(String tipoStr) {
+	public void setTipoStr( String tipoStr )
+	{
 		this.tipoStr = tipoStr;
 	}
 
-	public String getNumeroStr() {
+	public String getNumeroStr()
+	{
 		return numeroStr;
 	}
 
-	public void setNumeroStr(String numeroStr) {
+	public void setNumeroStr( String numeroStr )
+	{
 		this.numeroStr = numeroStr;
 	}
 
-	public String getAndarStr() {
+	public String getAndarStr()
+	{
 		return andarStr;
 	}
 
-	public void setAndarStr(String andarStr) {
+	public void setAndarStr( String andarStr )
+	{
 		this.andarStr = andarStr;
 	}
 
-	public String getCapacidadeStr() {
+	public String getCapacidadeStr()
+	{
 		return capacidadeStr;
 	}
 
-	public void setCapacidadeStr(String capacidadeStr) {
+	public void setCapacidadeStr( String capacidadeStr )
+	{
 		this.capacidadeStr = capacidadeStr;
 	}
 
-	public Unidade getUnidade() {
+	public Unidade getUnidade()
+	{
 		return unidade;
 	}
 
-	public void setUnidade(Unidade unidade) {
+	public void setUnidade( Unidade unidade )
+	{
 		this.unidade = unidade;
 	}
 
-	public TipoSala getTipo() {
+	public TipoSala getTipo()
+	{
 		return tipo;
 	}
 
-	public void setTipo(TipoSala tipo) {
+	public void setTipo( TipoSala tipo )
+	{
 		this.tipo = tipo;
 	}
 
-	public Integer getCapacidade() {
+	public Integer getCapacidade()
+	{
 		return capacidade;
 	}
 
 	@Override
-	public int compareTo(SalasImportExcelBean o) {
-		return getCodigoStr().compareTo(o.getCodigoStr());
+	public int compareTo( SalasImportExcelBean o )
+	{
+		return getCodigoStr().compareTo( o.getCodigoStr() );
 	}
 }

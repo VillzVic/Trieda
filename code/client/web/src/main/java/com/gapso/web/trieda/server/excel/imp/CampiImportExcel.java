@@ -15,6 +15,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -32,9 +33,11 @@ public class CampiImportExcel
 	private List< String > headerColumnsNames;
 
 	public CampiImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario,i18nConstants, i18nMessages );
+		super( cenario,i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
@@ -150,6 +153,7 @@ public class CampiImportExcel
 			for ( ImportExcelError error : errorsBean )
 			{
 				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
+
 				if ( rowsWithErrors == null )
 				{
 					rowsWithErrors = new ArrayList< Integer >();
@@ -164,6 +168,7 @@ public class CampiImportExcel
 		for ( ImportExcelError error : syntacticErrorsMap.keySet() )
 		{
 			List< Integer > linhasComErro = syntacticErrorsMap.get( error );
+
 			getErrors().add( error.getMessage(
 				linhasComErro.toString(), getI18nMessages() ) );
 		}
@@ -192,6 +197,7 @@ public class CampiImportExcel
 		for ( CampiImportExcelBean bean : sheetContent )
 		{
 			List< Integer > rows = campusCodigoToRowsMap.get( bean.getCodigoStr() );
+
 			if ( rows == null )
 			{
 				rows = new ArrayList< Integer >();
@@ -224,9 +230,11 @@ public class CampiImportExcel
 		for ( CampiImportExcelBean campusExcel : sheetContent )
 		{
 			Campus campusBD = campiBDMap.get( campusExcel.getCodigoStr() );
+
 			if ( campusBD != null )
 			{
 				// Update
+				campusBD.setInstituicaoEnsino( this.instituicaoEnsino );
 				campusBD.setNome( campusExcel.getNomeStr() );
 				campusBD.setEstado( campusExcel.getEstado() );
 				campusBD.setMunicipio( campusExcel.getMunicipioStr() );
@@ -241,6 +249,7 @@ public class CampiImportExcel
 				// Insert
 				Campus newCampus = new Campus();
 
+				newCampus.setInstituicaoEnsino( this.instituicaoEnsino );
 				newCampus.setCenario( getCenario() );
 				newCampus.setCodigo( campusExcel.getCodigoStr() );
 				newCampus.setNome( campusExcel.getNomeStr() );

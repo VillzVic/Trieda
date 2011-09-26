@@ -9,6 +9,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -21,16 +22,20 @@ public class TRIEDAImportExcel
 	private Cenario cenario;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
+	private InstituicaoEnsino instituicaoEnsino;
 
 	protected TRIEDAImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		this.errors = new ArrayList< String >();
-		this.warnings = new ArrayList< String >();
-
+		this.instituicaoEnsino = instituicaoEnsino;
 		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
+
+		this.errors = new ArrayList< String >();
+		this.warnings = new ArrayList< String >();
 	}
 
 	@Override
@@ -51,20 +56,21 @@ public class TRIEDAImportExcel
 
 			List< IImportExcel > importers = new ArrayList< IImportExcel >();
 
-			importers.add( new CampiImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new UnidadesImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new SalasImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new DisciplinasImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new AreasTitulacaoImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new ProfessoresImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new CursosImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new CursoAreasTitulacaoImportExcel( cenario, i18nConstants, i18nMessages ) ); 
-			importers.add( new CurriculosImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new DisciplinasSalasImportExcel( cenario, i18nConstants, i18nMessages ) ); 
-			importers.add( new EquivalenciasImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new DemandasImportExcel( cenario, i18nConstants, i18nMessages ) ); 
-			importers.add( new CampiTrabalhoImportExcel( cenario, i18nConstants, i18nMessages ) );
-			importers.add( new HabilitacoesProfessoresImportExcel( cenario, i18nConstants, i18nMessages ) ); 
+			importers.add( new CampiImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new UnidadesImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new SalasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new DisciplinasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new AreasTitulacaoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new ProfessoresImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new CursosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new CursoAreasTitulacaoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) ); 
+			importers.add( new CurriculosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new DisciplinasSalasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) ); 
+			importers.add( new EquivalenciasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new DemandasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) ); 
+			importers.add( new AlunosDemandaImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new CampiTrabalhoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) );
+			importers.add( new HabilitacoesProfessoresImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ) ); 
 
 			for ( IImportExcel importer : importers )
 			{

@@ -9,8 +9,10 @@ import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Turno;
 
-public class DemandasImportExcelBean extends AbstractImportExcelBean implements Comparable<DemandasImportExcelBean> {
-	
+public class DemandasImportExcelBean
+	extends AbstractImportExcelBean
+	implements Comparable< DemandasImportExcelBean >
+{
 	private String campusStr;
 	private String turnoStr;
 	private String cursoStr;
@@ -28,7 +30,7 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 	private Disciplina disciplina;
 	private Integer demanda;
 	private Double receita;
-	
+
 	public DemandasImportExcelBean(int row) {
 		super(row);
 	}
@@ -40,13 +42,13 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField(campusStr,ImportExcelError.DEMANDA_CAMPUS_VAZIO,erros);
-			checkMandatoryField(turnoStr,ImportExcelError.DEMANDA_TURNO_VAZIO,erros);
-			checkMandatoryField(cursoStr,ImportExcelError.DEMANDA_CURSO_VAZIO,erros);
-			checkMandatoryField(matrizCurricularStr,ImportExcelError.DEMANDA_MATRIZ_CURRIULAR_VAZIO,erros);
-			checkMandatoryField(periodoStr,ImportExcelError.DEMANDA_PERIODO_VAZIO,erros);
-			checkMandatoryField(disciplinaStr,ImportExcelError.DEMANDA_DISCIPLINA_VAZIO,erros);
-			checkMandatoryField(demandaStr,ImportExcelError.DEMANDA_DEMANDA_VAZIO,erros);
+			checkMandatoryField( campusStr, ImportExcelError.DEMANDA_CAMPUS_VAZIO, erros );
+			checkMandatoryField( turnoStr, ImportExcelError.DEMANDA_TURNO_VAZIO, erros );
+			checkMandatoryField( cursoStr, ImportExcelError.DEMANDA_CURSO_VAZIO, erros );
+			checkMandatoryField( matrizCurricularStr, ImportExcelError.DEMANDA_MATRIZ_CURRIULAR_VAZIO, erros );
+			checkMandatoryField( periodoStr, ImportExcelError.DEMANDA_PERIODO_VAZIO, erros );
+			checkMandatoryField( disciplinaStr, ImportExcelError.DEMANDA_DISCIPLINA_VAZIO, erros );
+			checkMandatoryField( demandaStr, ImportExcelError.DEMANDA_DEMANDA_VAZIO, erros );
 
 			receita = checkNonNegativeDoubleField( receitaStr,
 				ImportExcelError.DEMANDA_RECEITA_FORMATO_INVALIDO,
@@ -68,15 +70,16 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 		return erros;
 	}
 
-	private boolean tudoVazio() {
-		return isEmptyField(campusStr) &&
-			isEmptyField(turnoStr) &&
-			isEmptyField(cursoStr) &&
-			isEmptyField(matrizCurricularStr) &&
-			isEmptyField(periodoStr) &&
-			isEmptyField(disciplinaStr) &&
-			isEmptyField(demandaStr) &&
-			isEmptyField(receitaStr);
+	private boolean tudoVazio()
+	{
+		return ( isEmptyField( campusStr )
+			&& isEmptyField( turnoStr )
+			&& isEmptyField( cursoStr )
+			&& isEmptyField( matrizCurricularStr )
+			&& isEmptyField( periodoStr )
+			&& isEmptyField( disciplinaStr )
+			&& isEmptyField( demandaStr )
+			&& isEmptyField( receitaStr ) );
 	}
 
 	public String getReceitaStr() {
@@ -196,21 +199,30 @@ public class DemandasImportExcelBean extends AbstractImportExcelBean implements 
 	}
 
 	@Override
-	public int compareTo(DemandasImportExcelBean o) {
-		int result = getCampusStr().compareTo(o.getCampusStr());
-		if (result == 0) {
-			result = getTurnoStr().compareTo(o.getTurnoStr());
-			if (result == 0) {
-				result = getCursoStr().compareTo(o.getCursoStr());
-				if (result == 0) {
-					result = getMatrizCurricularStr().compareTo(o.getMatrizCurricularStr());
-					if (result == 0) {
-						result = getDisciplinaStr().compareTo(o.getDisciplinaStr());
+	public int compareTo( DemandasImportExcelBean o )
+	{
+		int result = getCampusStr().compareTo( o.getCampusStr() );
+
+		if ( result == 0 )
+		{
+			result = getTurnoStr().compareTo( o.getTurnoStr() );
+
+			if ( result == 0 )
+			{
+				result = getCursoStr().compareTo( o.getCursoStr() );
+
+				if ( result == 0 )
+				{
+					result = getMatrizCurricularStr().compareTo( o.getMatrizCurricularStr() );
+
+					if ( result == 0 )
+					{
+						result = getDisciplinaStr().compareTo( o.getDisciplinaStr() );
 					}
 				}
 			}
 		}
+
 		return result;
 	}
-	
 }

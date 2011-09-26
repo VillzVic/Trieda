@@ -39,16 +39,14 @@ public class DemandasImportExcel
 	static public String DEMANDA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
-	private InstituicaoEnsino instituicaoEnsino;
 
 	public DemandasImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages );
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
-
-		this.instituicaoEnsino
-			= cenario.getSemanaLetiva().getInstituicaoEnsino();
 
 		this.headerColumnsNames = new ArrayList< String >();
 		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
@@ -80,7 +78,8 @@ public class DemandasImportExcel
 		HSSFRow header, HSSFRow row, int sheetIndex,
 		HSSFSheet sheet, HSSFWorkbook workbook )
 	{
-		DemandasImportExcelBean bean = new DemandasImportExcelBean( row.getRowNum() + 1 );
+		DemandasImportExcelBean bean
+			= new DemandasImportExcelBean( row.getRowNum() + 1 );
 
         for ( int cellIndex = row.getFirstCellNum();
         	  cellIndex <= row.getLastCellNum(); cellIndex++ )
@@ -279,13 +278,14 @@ public class DemandasImportExcel
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
 			Turno turno = turnosBDMap.get( bean.getTurnoStr() );
+
 			if ( turno != null )
 			{
-				bean.setTurno(turno );
+				bean.setTurno( turno );
 			}
 			else
 			{
-				rowsWithErrors.add(bean.getRow() );
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
 
@@ -330,13 +330,17 @@ public class DemandasImportExcel
 		List< DemandasImportExcelBean > sheetContent )
 	{
 		// [ CódigoDisciplina -> Disciplina ]
-		Map<String,Disciplina> disciplinasBDMap = Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-			Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map< String, Disciplina > disciplinasBDMap
+			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
+				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
+
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
 			Disciplina disciplina = disciplinasBDMap.get(bean.getDisciplinaStr() );
+
 			if ( disciplina != null )
 			{
 				bean.setDisciplina( disciplina );
@@ -358,10 +362,13 @@ public class DemandasImportExcel
 		List< DemandasImportExcelBean > sheetContent )
 	{
 		// [ CodigoCurriculo -> Curriculo ]
-		Map< String, Curriculo > curriculosBDMap = Curriculo.buildCurriculoCodigoToCurriculoMap(
-			Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map< String, Curriculo > curriculosBDMap	
+			= Curriculo.buildCurriculoCodigoToCurriculoMap(
+				Curriculo.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
+
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
 			Curriculo curriculo = curriculosBDMap.get( bean.getMatrizCurricularStr() );
@@ -383,14 +390,17 @@ public class DemandasImportExcel
 		}
 	}
 
-	private void checkNonRegisteredDisciplinaEmCurricular( List< DemandasImportExcelBean > sheetContent )
+	private void checkNonRegisteredDisciplinaEmCurricular(
+		List< DemandasImportExcelBean > sheetContent )
 	{
-		// [ ChaveNaturalCurriculo -> Curriculo ]
+		// [ NaturalKeyCurriculo -> Curriculo ]
 		Map< String, CurriculoDisciplina > curriculosDisciplinasBDMap
 			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
 				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
-		
-		List< Integer > rowsWithErrors = new ArrayList< Integer >();
+
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
+
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
 			CurriculoDisciplina curriculoDisciplina = curriculosDisciplinasBDMap.get(
@@ -494,7 +504,8 @@ public class DemandasImportExcel
 			+ "-" + bean.getMatrizCurricularStr();
 	}
 
-	public String getNaturalKeyStringDeCurriculoDisciplina( DemandasImportExcelBean bean )
+	public String getNaturalKeyStringDeCurriculoDisciplina(
+		DemandasImportExcelBean bean )
 	{
 		return bean.getCursoStr()
 			+ "-" + bean.getMatrizCurricularStr()
