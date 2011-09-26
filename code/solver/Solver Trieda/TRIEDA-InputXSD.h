@@ -402,6 +402,20 @@ class ItemCalendario: public ::xml_schema::type
 class ItemAlunoDemanda: public ::xml_schema::type
 {
   public:
+  // id
+  // 
+  typedef ::xml_schema::int_ id_type;
+  typedef ::xsd::cxx::tree::traits< id_type, char > id_traits;
+
+  const id_type&
+  id () const;
+
+  id_type&
+  id ();
+
+  void
+  id (const id_type& x);
+
   // alunoId
   // 
   typedef ::xml_schema::int_ alunoId_type;
@@ -449,7 +463,8 @@ class ItemAlunoDemanda: public ::xml_schema::type
 
   // Constructors.
   //
-  ItemAlunoDemanda (const alunoId_type&,
+  ItemAlunoDemanda (const id_type&,
+                    const alunoId_type&,
                     const nomeAluno_type&,
                     const demandaId_type&);
 
@@ -476,6 +491,7 @@ class ItemAlunoDemanda: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
+  ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< alunoId_type > alunoId_;
   ::xsd::cxx::tree::one< nomeAluno_type > nomeAluno_;
   ::xsd::cxx::tree::one< demandaId_type > demandaId_;

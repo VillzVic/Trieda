@@ -113,6 +113,24 @@ turnos (::std::auto_ptr< turnos_type > x)
 // ItemAlunoDemanda
 // 
 
+const ItemAlunoDemanda::id_type& ItemAlunoDemanda::
+id () const
+{
+  return this->id_.get ();
+}
+
+ItemAlunoDemanda::id_type& ItemAlunoDemanda::
+id ()
+{
+  return this->id_.get ();
+}
+
+void ItemAlunoDemanda::
+id (const id_type& x)
+{
+  this->id_.set (x);
+}
+
 const ItemAlunoDemanda::alunoId_type& ItemAlunoDemanda::
 alunoId () const
 {
@@ -5638,10 +5656,12 @@ ItemCalendario::
 //
 
 ItemAlunoDemanda::
-ItemAlunoDemanda (const alunoId_type& alunoId,
+ItemAlunoDemanda (const id_type& id,
+                  const alunoId_type& alunoId,
                   const nomeAluno_type& nomeAluno,
                   const demandaId_type& demandaId)
 : ::xml_schema::type (),
+  id_ (id, ::xml_schema::flags (), this),
   alunoId_ (alunoId, ::xml_schema::flags (), this),
   nomeAluno_ (nomeAluno, ::xml_schema::flags (), this),
   demandaId_ (demandaId, ::xml_schema::flags (), this)
@@ -5653,6 +5673,7 @@ ItemAlunoDemanda (const ItemAlunoDemanda& x,
                   ::xml_schema::flags f,
                   ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  id_ (x.id_, f, this),
   alunoId_ (x.alunoId_, f, this),
   nomeAluno_ (x.nomeAluno_, f, this),
   demandaId_ (x.demandaId_, f, this)
@@ -5664,6 +5685,7 @@ ItemAlunoDemanda (const ::xercesc::DOMElement& e,
                   ::xml_schema::flags f,
                   ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  id_ (f, this),
   alunoId_ (f, this),
   nomeAluno_ (f, this),
   demandaId_ (f, this)
@@ -5684,6 +5706,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // id
+    //
+    if (n.name () == "id" && n.namespace_ ().empty ())
+    {
+      if (!id_.present ())
+      {
+        this->id_.set (id_traits::create (i, f, this));
+        continue;
+      }
+    }
 
     // alunoId
     //
@@ -5722,6 +5755,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!id_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
   }
 
   if (!alunoId_.present ())

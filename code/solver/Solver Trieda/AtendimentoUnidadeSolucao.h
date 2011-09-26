@@ -28,8 +28,8 @@ public:
 	   return ( unidadeId == right.getUnidadeId() );
    }
 
-   void setUnidadeId(int v) { unidadeId = v; }
-   void setUnidadeCodigo(std::string s) { unidadeCodigo = s; }
+   void setUnidadeId( int v ) { unidadeId = v; }
+   void setUnidadeCodigo( std::string s ) { unidadeCodigo = s; }
 
    int getUnidadeId() { return unidadeId; }
    std::string getUnidadeCodigo() { return unidadeCodigo; }

@@ -473,38 +473,41 @@ int SolverMIP::solveTatico()
    int status = 0;
 
 #ifndef READ_SOLUTION_TATICO_BIN
+
    // Muda FO para considerar somente atendimento
    double * objOrig = new double[ lp->getNumCols() ];
+
    lp->getObj( 0, lp->getNumCols()-1, objOrig );
    double * objNova = new double[ lp->getNumCols() ];
    int * idxNova = new int[ lp->getNumCols() ];
 
-   for (int i=0; i < lp->getNumCols(); i++)
+   for ( int i = 0; i < lp->getNumCols(); i++ )
    {
-      objNova[i] = 0;
-      idxNova[i] = i;
+      objNova[ i ] = 0;
+      idxNova[ i ] = i;
    }
 
    VariableHash::iterator vit = vHash.begin();
-   while ( vit != vHash.end() )
+
+   for (; vit != vHash.end(); vit++ )
    {
       if ( vit->first.getType() == Variable::V_SLACK_DEMANDA )
       {
          objNova[ vit->second ] = 1.0;
       }
-      vit++;
+      
    }
 
    lp->chgObj( lp->getNumCols(), idxNova, objNova );
 
-   //lp->setHeurFrequency(1.0);
-   lp->setTimeLimit(2400);
+   //lp->setHeurFrequency( 1.0 );
+   lp->setTimeLimit( 3600 );
    //lp->setMIPStartAlg( METHOD_PRIMAL );
-   lp->setMIPEmphasis(0);
-   lp->setMIPScreenLog(4);
-   // lp->setMIPRelTol(0.02);
+   lp->setMIPEmphasis( 0 );
+   lp->setMIPScreenLog( 4 );
+   // lp->setMIPRelTol( 0.02 );
    // lp->setNoCuts();
-   // lp->setNodeLimit(1);
+   // lp->setNodeLimit( 1 );
    lp->setPreSolve( OPT_TRUE );
 
    // Resolve problema olhando somente atendimento
@@ -512,7 +515,7 @@ int SolverMIP::solveTatico()
 
    // Passa solucao inicial obtida e fixa atendimento
    double * xSolInic = new double[ lp->getNumCols() ];
-   lp->getX(xSolInic);
+   lp->getX( xSolInic );
 
    double lbAtend = lp->getBestObj();
    double ubAtend = lp->getObjVal();
@@ -521,33 +524,33 @@ int SolverMIP::solveTatico()
    OPT_ROW rowUB( 100, OPT_ROW::LESS , ubAtend , "UBATEND" );
 
    vit = vHash.begin();
-   while ( vit != vHash.end() )
+
+   for (; vit != vHash.end(); vit++ )
    {
       if ( vit->first.getType() == Variable::V_SLACK_DEMANDA )
       {
-         rowLB.insert(vit->second,1.0);
-         rowUB.insert(vit->second,1.0);
+         rowLB.insert( vit->second, 1.0 );
+         rowUB.insert( vit->second, 1.0 );
       }
+
       if ( vit->first.getType() == Variable::V_N_SUBBLOCOS )
       {
          xSolInic[ vit->second ] = GRB_UNDEFINED;
       }
-
-      vit++;
    }
 
    lp->addRow( rowLB );
    lp->addRow( rowUB );
    lp->updateLP();
 
-   lp->setHeurFrequency(1.0);
-   lp->setTimeLimit(1200);
+   lp->setHeurFrequency( 1.0 );
+   lp->setTimeLimit( 3600 );
    // lp->setMIPStartAlg( METHOD_PRIMAL );
-   lp->setMIPEmphasis(1);
-   lp->setMIPScreenLog(4);
-   // lp->setMIPRelTol(0.02);
+   lp->setMIPEmphasis( 1 );
+   lp->setMIPScreenLog( 4 );
+   // lp->setMIPRelTol( 0.02 );
    // lp->setNoCuts();
-   // lp->setNodeLimit(1);
+   // lp->setNodeLimit( 1 );
    lp->setPreSolve( OPT_TRUE );
    lp->copyMIPStartSol( lp->getNumCols(), idxNova, xSolInic );
    lp->chgObj( lp->getNumCols(), idxNova, objOrig );
@@ -575,7 +578,7 @@ int SolverMIP::solveTatico()
 
    fclose( fout );
 
-   delete[] xSol;
+   delete [] xSol;
 #endif
 
    return status;
@@ -624,9 +627,8 @@ int SolverMIP::solveTaticoBasico()
 
    int status = 0;
 
-   lp->setTimeLimit(1200);
-   lp->setMIPScreenLog(4);
-
+   lp->setTimeLimit( 60 );
+   lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
 
 #ifndef READ_SOLUTION_TATICO_BIN
@@ -1768,7 +1770,8 @@ int SolverMIP::solveOperacionalMIP()
       lp = new OPT_GUROBI();
    }
 
-   lp->createLP( "SolverOperacional", OPTSENSE_MINIMIZE, PROB_MIP );
+   lp->createLP( "SolverOperacional",
+      OPTSENSE_MINIMIZE, PROB_MIP );
 
 #ifdef DEBUG
    printf( "Creating LP...\n" );
@@ -1798,26 +1801,33 @@ int SolverMIP::solveOperacionalMIP()
 
    int status = 0;
 
-   lp->setTimeLimit( 1200 );
+   lp->setTimeLimit( 3600 );
    lp->setMIPScreenLog( 4 );
 
    status = lp->optimize( METHOD_MIP );
 
    double * x = new double[ lp->getNumCols() ];
 
-   lp->getX(x);
+   lp->getX( x );
 
+   VariableOpHash::iterator vit;
    FILE * fout = fopen( "solucaoOp.txt", "wt" );
    solVarsOp.clear();
-   for ( VariableOpHash::iterator vit = vHashOp.begin(); vit != vHashOp.end(); vit++ )
+
+   vit = vHashOp.begin();
+
+   for (; vit != vHashOp.end(); vit++ )
    {
       VariableOp v = vit->first;
 
       if ( x[ vit->second ] > 0.01 )
       {
          VariableOp * newVar = new VariableOp( v );
+
          newVar->setValue( x[ vit->second ] );
-         fprintf( fout, "%s = %f\n", v.toString().c_str(), x[ vit->second ] );
+         fprintf( fout, "%s = %f\n",
+            v.toString().c_str(), x[ vit->second ] );
+
          solVarsOp.push_back( newVar );
       }
    }
@@ -1877,6 +1887,7 @@ void SolverMIP::getSolutionOperacional()
    // Preenche a lista de professores virtuais do output
    MatrizSolucao * matriz_solucao
       = problemSolution->solucao_operacional->getMatrizAulas();
+
    for (; i < (int)this->problemData->professores_virtuais.size(); i++ )
    {
       // Devo apenas analisar os professores virtuais
@@ -2299,7 +2310,8 @@ void SolverMIP::relacionaAlunosDemandas()
       int id_disciplina = at_oferta->getDisciplinaId();
 
       Demanda * demanda = this->problemData->buscaDemanda( id_oferta, id_disciplina );
-      quantidadeAlunosAtendidosDemanda[ demanda ] = at_oferta->getQuantidade();
+
+      quantidadeAlunosAtendidosDemanda[ demanda ] += at_oferta->getQuantidade();
    }
    ////
 
@@ -2325,7 +2337,7 @@ void SolverMIP::relacionaAlunosDemandas()
          cont++;
 
          AlunoDemanda * aluno_demanda = ( *it_atendidos );
-         problemSolution->alunosDemanda->add( aluno_demanda );
+         this->problemSolution->alunosDemanda->add( aluno_demanda );
 
          if ( cont == alunos_atendidos )
          {
@@ -2969,7 +2981,7 @@ std::vector< Variable * > SolverMIP::variaveisCreditosAtendidos( Disciplina * di
 
    for ( int i = 0; i < (int)vars_x.size(); i++ )
    {
-      Variable * v = vars_x[i];
+      Variable * v = vars_x[ i ];
 
       if ( abs( v->getDisciplina()->getId() ) == abs( disciplina->getId() ) )
       {
@@ -3033,10 +3045,10 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
 
    for ( int i = 0; i < lp->getNumCols(); i++ )
    {
-      idxSol[i] = i;
+      idxSol[ i ] = i;
    }
 
-   while ( nIter < 3 )
+   for (; nIter < 3; nIter++ )
    {
       VariableHash::iterator vit = vHash.begin();
 
@@ -3067,7 +3079,7 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
       lp->updateLP();
 
       lp->setNodeLimit( 100000000 );
-      lp->setTimeLimit( 1200 );
+      lp->setTimeLimit( 3600 );
       lp->setNodeLimit( 1 );
       lp->setMIPEmphasis( 1 );
       lp->setHeurFrequency( 1.0 );
@@ -3087,7 +3099,6 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
       lp->delSetRows( 1, idxs );
       lp->updateLP();
       delete [] idxs;
-      nIter++;
    }
 
    delete [] idxSol;
