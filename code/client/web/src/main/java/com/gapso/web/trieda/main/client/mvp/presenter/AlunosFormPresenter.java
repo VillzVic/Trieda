@@ -23,7 +23,7 @@ public class AlunosFormPresenter
 {
 	public interface Display
 	{
-		UniqueTextField getCpfTextField();
+		UniqueTextField getMatriculaTextField();
 		TextField< String > getNomeTextField();
 		Button getSalvarButton();
 		AlunoDTO getAlunoDTO();
@@ -70,7 +70,7 @@ public class AlunosFormPresenter
 						@Override
 						public void onFailure( Throwable caught )
 						{
-							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+							MessageBox.alert( "ERRO!", "Não foi possível salvar os dados do aluno", null );
 						}
 
 						@Override
@@ -106,7 +106,7 @@ public class AlunosFormPresenter
 
 		alunoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		alunoDTO.setNome( this.display.getNomeTextField().getValue() );
-		alunoDTO.setCpf( this.display.getCpfTextField().getValue() );
+		alunoDTO.setMatricula( this.display.getMatriculaTextField().getValue() );
 		alunoDTO.setCenarioId( this.cenarioDTO.getId() );
 
 		return alunoDTO;

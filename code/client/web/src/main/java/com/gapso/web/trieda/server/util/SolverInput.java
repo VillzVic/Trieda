@@ -833,7 +833,7 @@ public class SolverInput
 				itemOfertaCurso.setCursoId( curriculo.getCurso().getId().intValue() );
 				itemOfertaCurso.setTurnoId( oferta.getTurno().getId().intValue() );
 				itemOfertaCurso.setCampusId( campus.getId().intValue() );
-				itemOfertaCurso.setReceita( oferta.getReceita() );
+				itemOfertaCurso.setReceita( oferta.getReceita() == null ? 0.0 : oferta.getReceita() );
 
 				grupoOfertaCurso.getOfertaCurso().add( itemOfertaCurso );
 			}
@@ -866,7 +866,7 @@ public class SolverInput
 					itemDemanda.setId( demanda.getId().intValue() );
 					itemDemanda.setOfertaCursoCampiId( oferta.getId().intValue() );
 					itemDemanda.setDisciplinaId( demanda.getDisciplina().getId().intValue() );
-					itemDemanda.setQuantidade( demanda.getQuantidade() );
+					itemDemanda.setQuantidade( demanda.getQuantidade() == null ? 0 : demanda.getQuantidade() );
 
 					grupoDemanda.getDemanda().add( itemDemanda );
 				}
@@ -883,16 +883,17 @@ public class SolverInput
 		List< AlunoDemanda > alunos = AlunoDemanda.findByCampusAndTurno(
 			this.instituicaoEnsino, this.parametro.getCampus(), this.parametro.getTurno() );
 
-		for ( AlunoDemanda aluno : alunos )
+		for ( AlunoDemanda alunoDemanda : alunos )
 		{
-			if ( aluno.getDemanda() != null
-				&& aluno.getDemanda().getOferta().getCampus().getInstituicaoEnsino() == this.instituicaoEnsino )
+			if ( alunoDemanda.getDemanda() != null
+				&& alunoDemanda.getDemanda().getOferta().getCampus().getInstituicaoEnsino() == this.instituicaoEnsino )
 			{
 				ItemAlunoDemanda itemAlunoDemanda = of.createItemAlunoDemanda();
 
-				itemAlunoDemanda.setAlunoId( aluno.getAluno().getId().intValue() );
-				itemAlunoDemanda.setNomeAluno( aluno.getAluno().getNome() );
-				itemAlunoDemanda.setDemandaId( aluno.getDemanda().getId().intValue() );
+				itemAlunoDemanda.setId( alunoDemanda.getId().intValue() );
+				itemAlunoDemanda.setAlunoId( alunoDemanda.getAluno().getId().intValue() );
+				itemAlunoDemanda.setNomeAluno( alunoDemanda.getAluno().getNome() );
+				itemAlunoDemanda.setDemandaId( alunoDemanda.getDemanda().getId().intValue() );
 
 				grupoAlunosDemanda.getAlunoDemanda().add( itemAlunoDemanda );
 			}

@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "CEN_ID" )
 @Table( name = "CENARIOS" )
 public class Cenario
-	implements Serializable
+	implements Serializable, Comparable< Cenario >
 {
 	private static final long serialVersionUID = -8610380359760552949L;
 
@@ -130,43 +130,29 @@ public class Cenario
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("CriadoPor: ").append(getCriadoPor()).append(", ");
-		sb.append("AtualizadoPor: ").append(getAtualizadoPor()).append(", ");
-		sb.append("MasterData: ").append(getMasterData()).append(", ");
-		sb.append("Nome: ").append(getNome()).append(", ");
-		sb.append("Ano: ").append(getAno()).append(", ");
-		sb.append("Semestre: ").append(getSemestre()).append(", ");
-		sb.append("DataCriacao: ").append(getDataCriacao()).append(", ");
-		sb.append("DataAtualizacao: ").append(getDataAtualizacao())
-				.append(", ");
-		sb.append("Comentario: ").append(getComentario()).append(", ");
-		sb.append("Oficial: ").append(getOficial()).append(", ");
-		sb.append("SemanaLetiva: ").append(getSemanaLetiva()).append(", ");
-		sb.append("DivisoesCredito: ").append(
-				getDivisoesCredito() == null ? "null" : getDivisoesCredito()
-						.size());
-		sb.append("Turnos: ").append(
-				getTurnos() == null ? "null" : getTurnos().size());
-		sb.append("Cursos: ").append(
-				getCursos() == null ? "null" : getCursos().size());
-		sb.append("Campi: ").append(
-				getCampi() == null ? "null" : getCampi().size());
-		sb.append("Disciplinas: ").append(
-				getDisciplinas() == null ? "null" : getDisciplinas().size());
-		sb.append("Professores: ").append(
-				getProfessores() == null ? "null" : getProfessores().size());
-		sb.append("Curriculos: ").append(
-				getCurriculos() == null ? "null" : getCurriculos().size());
-		sb.append("Atendimentos Operacionais: ").append(
-				getAtendimentosOperacionais() == null ? "null"
-						: getAtendimentosOperacionais().size());
-		sb.append("Atendimentos Taticos: ").append(
-				getAtendimentosTaticos() == null ? "null"
-						: getAtendimentosTaticos().size());
-		sb.append("Parametros: ").append(
-				getParametros() == null ? "null" : getParametros().size());
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "CriadoPor: " ).append( getCriadoPor() ).append( ", " );
+		sb.append( "AtualizadoPor: " ).append( getAtualizadoPor() ).append( ", " );
+		sb.append( "MasterData: " ).append( getMasterData() ).append( ", " );
+		sb.append( "Nome: " ).append( getNome() ).append( ", " );
+		sb.append( "Ano: " ).append( getAno() ).append( ", " );
+		sb.append( "Semestre: " ).append( getSemestre() ).append( ", " );
+		sb.append( "DataCriacao: " ).append( getDataCriacao() ).append( ", " );
+		sb.append( "DataAtualizacao: " ).append( getDataAtualizacao() ).append( ", " );
+		sb.append( "Comentario: " ).append( getComentario() ).append( ", " );
+		sb.append( "Oficial: " ).append( getOficial() ).append( ", " );
+		sb.append( "SemanaLetiva: " ).append( getSemanaLetiva() ).append( ", " );
+		sb.append( "DivisoesCredito: " ).append( getDivisoesCredito() == null ? "null" : getDivisoesCredito().size() );
+		sb.append( "Turnos: " ).append( getTurnos() == null ? "null" : getTurnos().size() );
+		sb.append( "Cursos: " ).append( getCursos() == null ? "null" : getCursos().size() );
+		sb.append( "Campi: " ).append( getCampi() == null ? "null" : getCampi().size() );
+		sb.append( "Disciplinas: " ).append( getDisciplinas() == null ? "null" : getDisciplinas().size() );
+		sb.append( "Professores: " ).append( getProfessores() == null ? "null" : getProfessores().size() );
+		sb.append( "Curriculos: " ).append( getCurriculos() == null ? "null" : getCurriculos().size() );
+		sb.append( "Atendimentos Operacionais: " ).append( getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size() );
+		sb.append( "Atendimentos Taticos: " ).append( getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size() );
+		sb.append( "Parametros: " ).append( getParametros() == null ? "null" : getParametros().size() );
 
 		return sb.toString();
 	}
@@ -175,80 +161,112 @@ public class Cenario
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "CEN_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "CEN_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 	}
 
 	@Transactional
-	public void remove() {
-		if (this.entityManager == null)
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		if (this.entityManager.contains(this)) {
+		}
+
+		if ( this.entityManager.contains( this ) )
+		{
 			removeDivisoesCredito();
-			this.entityManager.remove(this);
-		} else {
-			Cenario attached = this.entityManager
-					.find(this.getClass(), this.id);
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			Cenario attached = this.entityManager.find(
+				this.getClass(), this.id );
+
 			attached.removeDivisoesCredito();
-			this.entityManager.remove(attached);
+			this.entityManager.remove( attached );
 		}
 	}
 
 	@Transactional
-	public void removeDivisoesCredito() {
-		Set<DivisaoCredito> divisoesCredito = this.getDivisoesCredito();
-		for (DivisaoCredito divisaoCredito : divisoesCredito) {
-			divisaoCredito.getCenario().remove(this);
+	public void removeDivisoesCredito()
+	{
+		Set< DivisaoCredito > divisoesCredito
+			= this.getDivisoesCredito();
+
+		for ( DivisaoCredito divisaoCredito : divisoesCredito )
+		{
+			divisaoCredito.getCenario().remove( this );
 			divisaoCredito.merge();
 		}
 	}
 
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
 	@Transactional
-	public Cenario merge() {
-		if (this.entityManager == null)
+	public Cenario merge()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		Cenario merged = this.entityManager.merge(this);
+		}
+
+		Cenario merged = this.entityManager.merge( this );
 		this.entityManager.flush();
 		return merged;
 	}
@@ -300,7 +318,7 @@ public class Cenario
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Cenario > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -335,7 +353,7 @@ public class Cenario
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static Cenario findMasterData(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -369,7 +387,7 @@ public class Cenario
 		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Cenario > find( InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
 	{
@@ -388,7 +406,7 @@ public class Cenario
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Cenario > findByAnoAndSemestre(
 		InstituicaoEnsino instituicaoEnsino, Integer ano,
 		Integer semestre, int firstResult, int maxResults, String orderBy )
@@ -432,173 +450,219 @@ public class Cenario
 		return q.getResultList();
 	}
 
-	public Usuario getCriadoPor() {
+	public Usuario getCriadoPor()
+	{
 		return this.criadoPor;
 	}
 
-	public void setCriadoPor(Usuario criadoPor) {
+	public void setCriadoPor( Usuario criadoPor )
+	{
 		this.criadoPor = criadoPor;
 	}
 
-	public Usuario getAtualizadoPor() {
+	public Usuario getAtualizadoPor()
+	{
 		return this.atualizadoPor;
 	}
 
-	public void setAtualizadoPor(Usuario atualizadoPor) {
+	public void setAtualizadoPor( Usuario atualizadoPor )
+	{ 
 		this.atualizadoPor = atualizadoPor;
 	}
 
-	public Boolean getMasterData() {
+	public Boolean getMasterData()
+	{
 		return masterData;
 	}
 
-	public void setMasterData(Boolean masterData) {
+	public void setMasterData( Boolean masterData )
+	{
 		this.masterData = masterData;
 	}
 
-	public String getNome() {
+	public String getNome()
+	{
 		return this.nome;
 	}
 
-	public void setNome(String nome) {
+	public void setNome( String nome )
+	{
 		this.nome = nome;
 	}
 
-	public Integer getAno() {
+	public Integer getAno()
+	{
 		return this.ano;
 	}
 
-	public void setAno(Integer ano) {
+	public void setAno( Integer ano )
+	{
 		this.ano = ano;
 	}
 
-	public Integer getSemestre() {
+	public Integer getSemestre()
+	{
 		return this.semestre;
 	}
 
-	public void setSemestre(Integer semestre) {
+	public void setSemestre( Integer semestre )
+	{
 		this.semestre = semestre;
 	}
 
-	public Date getDataCriacao() {
+	public Date getDataCriacao()
+	{
 		return this.dataCriacao;
 	}
 
-	public void setDataCriacao(Date dataCriacao) {
+	public void setDataCriacao( Date dataCriacao )
+	{
 		this.dataCriacao = dataCriacao;
 	}
 
-	public Date getDataAtualizacao() {
+	public Date getDataAtualizacao()
+	{
 		return this.dataAtualizacao;
 	}
 
-	public void setDataAtualizacao(Date dataAtualizacao) {
+	public void setDataAtualizacao( Date dataAtualizacao )
+	{
 		this.dataAtualizacao = dataAtualizacao;
 	}
 
-	public String getComentario() {
+	public String getComentario()
+	{
 		return this.comentario;
 	}
 
-	public void setComentario(String comentario) {
+	public void setComentario( String comentario )
+	{
 		this.comentario = comentario;
 	}
 
-	public Boolean getOficial() {
+	public Boolean getOficial()
+	{
 		return this.oficial;
 	}
 
-	public void setOficial(Boolean oficial) {
+	public void setOficial( Boolean oficial )
+	{
 		this.oficial = oficial;
 	}
 
-	public SemanaLetiva getSemanaLetiva() {
+	public SemanaLetiva getSemanaLetiva()
+	{
 		return this.semanaLetiva;
 	}
 
-	public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
+	public void setSemanaLetiva( SemanaLetiva semanaLetiva )
+	{
 		this.semanaLetiva = semanaLetiva;
 	}
 
-	public Set<DivisaoCredito> getDivisoesCredito() {
+	public Set< DivisaoCredito > getDivisoesCredito()
+	{
 		return this.divisoesCredito;
 	}
 
-	public void setDivisoesCredito(Set<DivisaoCredito> divisoesCredito) {
+	public void setDivisoesCredito(
+		Set< DivisaoCredito > divisoesCredito )
+	{
 		this.divisoesCredito = divisoesCredito;
 	}
 
-	public Set<Turno> getTurnos() {
+	public Set< Turno > getTurnos()
+	{
 		return this.turnos;
 	}
 
-	public void setTurnos(Set<Turno> turnos) {
+	public void setTurnos( Set< Turno > turnos )
+	{
 		this.turnos = turnos;
 	}
 
-	public Set<Curso> getCursos() {
+	public Set< Curso > getCursos()
+	{
 		return this.cursos;
 	}
 
-	public void setCursos(Set<Curso> cursos) {
+	public void setCursos( Set< Curso > cursos )
+	{
 		this.cursos = cursos;
 	}
 
-	public Set<Campus> getCampi() {
+	public Set< Campus > getCampi()
+	{
 		return this.campi;
 	}
 
-	public void setCampi(Set<Campus> campi) {
+	public void setCampi( Set< Campus > campi )
+	{
 		this.campi = campi;
 	}
 
-	public Set<Disciplina> getDisciplinas() {
+	public Set< Disciplina > getDisciplinas()
+	{
 		return this.disciplinas;
 	}
 
-	public void setDisciplinas(Set<Disciplina> disciplinas) {
+	public void setDisciplinas(
+		Set< Disciplina > disciplinas )
+	{
 		this.disciplinas = disciplinas;
 	}
 
-	public Set<Professor> getProfessores() {
+	public Set< Professor > getProfessores()
+	{
 		return this.professores;
 	}
 
-	public void setProfessores(Set<Professor> professores) {
+	public void setProfessores( Set< Professor > professores )
+	{
 		this.professores = professores;
 	}
 
-	public Set<Curriculo> getCurriculos() {
+	public Set< Curriculo > getCurriculos()
+	{
 		return this.curriculos;
 	}
 
-	public void setCurriculos(Set<Curriculo> curriculos) {
+	public void setCurriculos(
+		Set< Curriculo > curriculos )
+	{
 		this.curriculos = curriculos;
 	}
 
-	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+	public Set< AtendimentoOperacional > getAtendimentosOperacionais()
+	{
 		return this.atendimentosOperacionais;
 	}
 
 	public void setAtendimentosOperacionais(
-			Set<AtendimentoOperacional> atendimentosOperacionais) {
+		Set< AtendimentoOperacional > atendimentosOperacionais )
+	{
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 
-	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+	public Set< AtendimentoTatico > getAtendimentosTaticos()
+	{
 		return this.atendimentosTaticos;
 	}
 
 	public void setAtendimentosTaticos(
-			Set<AtendimentoTatico> atendimentosTaticos) {
+		Set< AtendimentoTatico > atendimentosTaticos )
+	{
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
 
-	public Set<Parametro> getParametros() {
+	public Set< Parametro > getParametros()
+	{
 		return parametros;
 	}
 
-	public void setParametro(Set<Parametro> parametros) {
+	public void setParametro(
+		Set< Parametro > parametros )
+	{
 		this.parametros = parametros;
 	}
 
@@ -625,5 +689,18 @@ public class Cenario
 		}
 
 		return true;
+	}
+
+	@Override
+	public int compareTo( Cenario o )
+	{
+		int result = getSemanaLetiva().compareTo( o.getSemanaLetiva() );
+
+		if ( result == 0 )
+		{
+			result = getNome().compareTo( o.getNome() );
+		}
+
+		return result;
 	}
 }

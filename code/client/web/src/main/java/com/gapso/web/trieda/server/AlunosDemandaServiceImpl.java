@@ -61,8 +61,6 @@ public class AlunosDemandaServiceImpl
 		BasePagingLoadResult< AlunoDemandaDTO > result
 			= new BasePagingLoadResult< AlunoDemandaDTO >( list );
 
-		// TODO
-		// result.setOffset( config.getOffset() );
 		result.setTotalLength( list.size() );
 
 		return result;

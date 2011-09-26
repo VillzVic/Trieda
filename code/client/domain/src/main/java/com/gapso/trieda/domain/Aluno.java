@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity( identifierColumn = "ALN_ID" )
 @Table( name = "ALUNOS", uniqueConstraints =
-@UniqueConstraint( columnNames = { "ALN_CPF", "CEN_ID" } ) )
+@UniqueConstraint( columnNames = { "ALN_MATRICULA", "CEN_ID" } ) )
 public class Aluno
 	implements Serializable, Comparable< Aluno >
 {
@@ -48,9 +50,9 @@ public class Aluno
 	private InstituicaoEnsino instituicaoEnsino;
 
 	@NotNull
-	@Column( name = "ALN_CPF")
-	@Size( min = 14, max = 14 )
-	private String cpf;
+	@Column( name = "ALN_MATRICULA")
+	@Size( min = 1, max = 50 )
+	private String matricula;
 
 	@NotNull
 	@Column( name = "ALN_NOME" )
@@ -64,20 +66,20 @@ public class Aluno
 		sb.append( "Id: " ).append( getId() ).append( ", " );
 		sb.append( "Version: " ).append( getVersion() ).append( ", " );
 		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-		sb.append( "Cpf: " ).append( getCpf() ).append( ", " );
-		sb.append( "Nome: " ).append( getNome() );
+		sb.append( "Nome: " ).append( getNome() ).append( ", " );
+		sb.append( "Matricula: " ).append( getMatricula() );
 
 		return sb.toString();
 	}
 
-	public String getCpf()
+	public String getMatricula()
 	{
-		return this.cpf;
+		return matricula;
 	}
 
-	public void setCpf( String cpf )
+	public void setMatricula( String matricula )
 	{
-		this.cpf = cpf;
+		this.matricula = matricula;
 	}
 
 	public String getNome()
@@ -234,9 +236,23 @@ public class Aluno
 			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 
-	@SuppressWarnings( "unchecked" )
+	public static List< Aluno > findByMatricula(
+		InstituicaoEnsino instituicaoEnsino, String matricula )
+	{
+		return Aluno.findByNomeCpfMatricula(
+			instituicaoEnsino, null, null, matricula );
+	}
+
 	public static List< Aluno > findByNomeCpf(
 		InstituicaoEnsino instituicaoEnsino, String nome, String cpf )
+	{
+		return Aluno.findByNomeCpfMatricula(
+			instituicaoEnsino, nome, cpf, null );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public static List< Aluno > findByNomeCpfMatricula(
+		InstituicaoEnsino instituicaoEnsino, String nome, String cpf, String matricula )
 	{
 		String nomeQuery = "";
 		if ( nome != null )
@@ -250,10 +266,16 @@ public class Aluno
 			cpfQuery = " AND LOWER ( :cpf ) LIKE LOWER ( o.cpf ) ";
 		}
 
+		String matriculaQuery = "";
+		if ( matricula != null )
+		{
+			matriculaQuery = " AND LOWER ( :matricula ) LIKE LOWER ( o.matricula ) ";
+		}
+
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Aluno o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			nomeQuery + cpfQuery );
+			nomeQuery + cpfQuery + matriculaQuery );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
@@ -267,10 +289,16 @@ public class Aluno
 			q.setParameter( "cpf", cpf );	
 		}
 
+		if ( matricula != null )
+		{
+			q.setParameter( "matricula", matricula );	
+		}
+
 		return q.getResultList();
 	}
 
-	public static Aluno find( Long id, InstituicaoEnsino instituicaoEnsino )
+	public static Aluno find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
 		if ( id == null || instituicaoEnsino == null )
 		{
@@ -291,16 +319,16 @@ public class Aluno
 	@SuppressWarnings( "unchecked" )
 	public static boolean checkCodigoUnique(
 		InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, String cpf )
+		Cenario cenario, String matricula )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Aluno o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.cpf = :cpf " +
+			" AND o.matricula = :matricula " +
 			" AND o.cenario = :cenario " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "cpf", cpf );
+		q.setParameter( "matricula", matricula );
 		q.setParameter( "cenario", cenario );
 
 		List< Aluno > listAlunos = q.getResultList();
@@ -336,19 +364,20 @@ public class Aluno
 			return false;
 		}
 
-		// Comparando os cpf's
-		if ( cpf == null )
+		return true;
+	}
+
+	public static Map< String, Aluno > buildMatriculaAlunoToAlunoMap( 
+		List< Aluno > alunos )
+	{
+		Map< String, Aluno > alunosMap
+			= new HashMap< String, Aluno >();
+
+		for ( Aluno aluno : alunos )
 		{
-			if ( other.cpf != null )
-			{
-				return false;
-			}
-		}
-		else if ( !cpf.equals( other.cpf ) )
-		{
-			return false;
+			alunosMap.put( aluno.getMatricula(), aluno );
 		}
 
-		return true;
+		return alunosMap;
 	}
 }

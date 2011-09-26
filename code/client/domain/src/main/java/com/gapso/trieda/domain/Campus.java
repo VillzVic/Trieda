@@ -44,7 +44,8 @@ import com.gapso.trieda.misc.Estados;
 @RooEntity( identifierColumn = "CAM_ID" )
 @Table( name = "CAMPI", uniqueConstraints =
 @UniqueConstraint( columnNames = { "CAM_CODIGO", "CEN_ID" } ) )
-public class Campus implements Serializable, Comparable< Campus >
+public class Campus
+	implements Serializable, Comparable< Campus >
 {
 	private static final long serialVersionUID = 6690100103369325015L;
 

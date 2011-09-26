@@ -38,7 +38,8 @@ import com.gapso.web.trieda.shared.services.OtimizarService;
 @Service
 @Repository
 public class OtimizarServiceImpl
-	extends RemoteService implements OtimizarService
+	extends RemoteService
+	implements OtimizarService
 {
 	private static final long serialVersionUID = 5716065588362358065L;
 	private static final String linkSolverDefault = "http://localhost:3402/SolverWS";
@@ -192,7 +193,7 @@ public class OtimizarServiceImpl
 			solverOutput.salvarAlunosDemanda(
 				parametro.getCampus(), parametro.getTurno() );
 
-			if ( cenario.getUltimoParametro( this.getInstituicaoEnsinoUser() ).isTatico() )
+			if ( parametro.isTatico() )
 			{
 				solverOutput.generateAtendimentosTatico();
 
@@ -219,7 +220,7 @@ public class OtimizarServiceImpl
 
 	private String getLinkSolver()
 	{
-		// TODO -- ler o link do solver a partir do arquivo properties
+		// TODO -- Ler o link do solver a partir do arquivo properties
 		String link = OtimizarServiceImpl.linkSolverDefault;
 		return link;
 	}

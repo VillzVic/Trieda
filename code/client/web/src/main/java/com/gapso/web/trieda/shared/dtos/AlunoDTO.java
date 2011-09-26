@@ -8,8 +8,8 @@ public class AlunoDTO extends AbstractDTO< String >
 	// Propriedades
 	public static final String PROPERTY_ALUNO_ID = "alunoId";
 	public static final String PROPERTY_VERSION = "version";
-	public static final String PROPERTY_ALUNO_CPF = "alunoCpf";
 	public static final String PROPERTY_ALUNO_NOME = "alunoNome";
+	public static final String PROPERTY_ALUNO_MATRICULA = "alunoMatricula";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	public AlunoDTO()
@@ -57,20 +57,20 @@ public class AlunoDTO extends AbstractDTO< String >
 		return get( PROPERTY_ALUNO_NOME );
 	}
 
-	public String getCpf()
+	public void setMatricula( String value )
 	{
-		return get( PROPERTY_ALUNO_CPF );
+		set( PROPERTY_ALUNO_MATRICULA, value );
 	}
 
-	public void setCpf( String value )
+	public String getMatricula()
 	{
-		set( PROPERTY_ALUNO_CPF, value );
+		return get( PROPERTY_ALUNO_MATRICULA );
 	}
 
 	@Override
 	public String getNaturalKey()
 	{
-		return getInstituicaoEnsinoId() + "-" + getCpf();
+		return getInstituicaoEnsinoId() + "-" + getMatricula();
 	}
 
 	@Override

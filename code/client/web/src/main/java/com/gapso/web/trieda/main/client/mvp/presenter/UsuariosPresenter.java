@@ -52,7 +52,7 @@ public class UsuariosPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private CenarioDTO cenario;
-	
+
 	public UsuariosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
@@ -131,41 +131,54 @@ public class UsuariosPresenter
 		});
 
 
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<UsuarioDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce)
+			{
+				List< UsuarioDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final UsuariosServiceAsync service = Services.usuarios();
-				service.remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+
+				service.remove( list, new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display( "Removido", "Item removido com sucesso!" );
 					}
 				});
 			}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getNomeBuscaTextField().setValue(null);
-				display.getUsernameBuscaTextField().setValue(null);
-				display.getEmailBuscaTextField().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getNomeBuscaTextField().setValue( null );
+				display.getUsernameBuscaTextField().setValue( null );
+				display.getEmailBuscaTextField().setValue( null );
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		GTab tab = (GTab) widget;
+		tab.add( (GTabItem) display.getComponent() );
+	}
 }

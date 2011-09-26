@@ -31,24 +31,27 @@ public class ProfessorComboBox
 		this( campusCB, false );
 	}
 
-	public ProfessorComboBox( CampusComboBox campusCB, boolean readOnly )
+	public ProfessorComboBox(
+		CampusComboBox campusCB, boolean readOnly )
 	{
 		this.campusComboBox = campusCB;
 		this.readOnly = readOnly;
-
-		setReadOnly( this.readOnly );
+		this.setReadOnly( readOnly );
 
 		if ( !this.readOnly )
 		{
-			RpcProxy< ListLoadResult< ProfessorDTO > > proxy = new RpcProxy< ListLoadResult< ProfessorDTO > >()
+			RpcProxy< ListLoadResult< ProfessorDTO > > proxy =
+				new RpcProxy< ListLoadResult< ProfessorDTO > >()
 			{
 				@Override
-				public void load( Object loadConfig, AsyncCallback< ListLoadResult< ProfessorDTO > > callback )
+				public void load( Object loadConfig,
+					AsyncCallback< ListLoadResult< ProfessorDTO > > callback )
 				{
 					if ( campusComboBox != null
 						&& campusComboBox.getValue() != null )
 					{
-						Services.professores().getProfessoresEmCampus( campusComboBox.getValue(), callback );
+						Services.professores().getProfessoresEmCampus(
+							campusComboBox.getValue(), callback );
 					}
 					else
 					{
@@ -62,9 +65,9 @@ public class ProfessorComboBox
 		}
 		else
 		{
-			setStore(new ListStore<ProfessorDTO>());
+			setStore( new ListStore< ProfessorDTO >() );
 		}
-		
+
 		setDisplayField( ProfessorDTO.PROPERTY_NOME );
 		setFieldLabel( "Professor" );
 		setEmptyText( "Selecione o professor" );

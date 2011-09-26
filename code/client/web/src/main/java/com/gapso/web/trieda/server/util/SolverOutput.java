@@ -7,13 +7,11 @@ import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -131,7 +129,7 @@ public class SolverOutput
 							atendimentoTatico.setDisciplina( disciplina );
 							atendimentoTatico.setQuantidadeAlunos( quantidade );
 
-							atendimentosTatico.add( atendimentoTatico );
+							this.atendimentosTatico.add( atendimentoTatico );
 						}
 					}
 				}
@@ -148,7 +146,7 @@ public class SolverOutput
 			= new HashMap< Integer, ProfessorVirtual >();
 
 		List< ItemAtendimentoCampus > itemAtendimentoCampusList
-			= triedaOutput.getAtendimentos().getAtendimentoCampus();
+			= this.triedaOutput.getAtendimentos().getAtendimentoCampus();
 
 		for ( ItemAtendimentoCampus itemAtendimentoCampus
 			: itemAtendimentoCampusList )
@@ -238,7 +236,7 @@ public class SolverOutput
 									AtendimentoOperacional atendimentoOperacional = new AtendimentoOperacional();
 
 									atendimentoOperacional.setInstituicaoEnsino( this.instituicaoEnsino );
-									atendimentoOperacional.setCenario( cenario );
+									atendimentoOperacional.setCenario( this.cenario );
 									atendimentoOperacional.setTurma( turma );
 									atendimentoOperacional.setSala( sala );
 									atendimentoOperacional.setOferta( oferta );
@@ -261,7 +259,7 @@ public class SolverOutput
 
 									atendimentoOperacional.setHorarioDisponivelCenario( horarioDisponivelCenario );
 
-									atendimentosOperacional.add( atendimentoOperacional );
+									this.atendimentosOperacional.add( atendimentoOperacional );
 								}
 							}
 						}
@@ -275,14 +273,16 @@ public class SolverOutput
 
 	private ProfessorVirtual getProfessorVirtual( Integer idAux )
 	{
-		ProfessorVirtual professorVirtualAux = professoresVirtuais.get( idAux );
+		ProfessorVirtual professorVirtualAux
+			= this.professoresVirtuais.get( idAux );
+
 		if ( professorVirtualAux != null )
 		{
 			return professorVirtualAux;
 		}
 
 		for ( ItemProfessorVirtual pvAux :
-			triedaOutput.getProfessoresVirtuais().getProfessorVirtual() )
+			this.triedaOutput.getProfessoresVirtuais().getProfessorVirtual() )
 		{
 			if ( idAux.equals( pvAux.getId() * -1 ) )
 			{
@@ -302,7 +302,7 @@ public class SolverOutput
 					pvAux.getTitulacaoId() ).longValue(), this.instituicaoEnsino ) );
 
 				pv.persist();
-				professoresVirtuais.put( idAux, pv );
+				this.professoresVirtuais.put( idAux, pv );
 
 				return pv;
 			}
@@ -317,9 +317,10 @@ public class SolverOutput
 		removerTodosAtendimentosTaticoJaSalvos( campus, turno );
 		removerTodosAtendimentosOperacionalJaSalvos( campus, turno );
 
-		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
+		for ( AtendimentoTatico at : this.atendimentosTatico )
 		{
-			atendimentoTatico.persist();
+			at.detach();
+			at.persist();
 		}
 	}
 
@@ -329,9 +330,10 @@ public class SolverOutput
 		removerTodosAtendimentosTaticoJaSalvos( campus, turno );
 		removerTodosAtendimentosOperacionalJaSalvos( campus, turno );
 
-		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
+		for ( AtendimentoOperacional at : this.atendimentosOperacional )
 		{
-			atendimentoOperacional.persist();
+			at.detach();
+			at.persist();
 		}
 	}
 
@@ -340,11 +342,12 @@ public class SolverOutput
 		Campus campus, Turno turno )
 	{
 		List< AtendimentoTatico > atendimentosTatico	
-			= AtendimentoTatico.findAllBy( this.instituicaoEnsino, campus, turno );
+			= AtendimentoTatico.findAllBy(
+				this.instituicaoEnsino, campus, turno );
 
-		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
+		for ( AtendimentoTatico at : atendimentosTatico )
 		{
-			atendimentoTatico.remove();
+			at.remove();
 		}
 	}
 
@@ -352,8 +355,11 @@ public class SolverOutput
 	private void removerTodosAtendimentosOperacionalJaSalvos(
 		Campus campus, Turno turno )
 	{
-		InstituicaoEnsino instituicaoEnsinoCampus = ( campus == null ? null : campus.getInstituicaoEnsino() );  
-		InstituicaoEnsino instituicaoEnsinoTurno = ( turno == null ? null : turno.getInstituicaoEnsino() );
+		InstituicaoEnsino instituicaoEnsinoCampus = ( campus == null ?
+			null : campus.getInstituicaoEnsino() );
+
+		InstituicaoEnsino instituicaoEnsinoTurno = ( turno == null ?
+			null : turno.getInstituicaoEnsino() );
 
 		if ( instituicaoEnsinoCampus != null
 			&& instituicaoEnsinoTurno != null
@@ -369,9 +375,9 @@ public class SolverOutput
 		List< AtendimentoOperacional > atendimentosOperacional
 			= AtendimentoOperacional.findAllBy( campus, turno, instituicaoEnsinoCampus );
 
-		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
+		for ( AtendimentoOperacional at : atendimentosOperacional )
 		{
-			atendimentoOperacional.remove();
+			at.remove();
 		}
 	}
 
@@ -379,20 +385,16 @@ public class SolverOutput
 	public void generateAlunosDemanda()
 	{
 		List< ItemAlunoDemanda > itensAlunosDemanda
-			= triedaOutput.getAlunosDemanda().getAlunoDemanda();
+			= this.triedaOutput.getAlunosDemanda().getAlunoDemanda();
 
 		for (  ItemAlunoDemanda item : itensAlunosDemanda )
 		{
-			Demanda demanda = Demanda.find(
-				Long.valueOf( item.getDemandaId() ), this.instituicaoEnsino ) ;
-
-			Aluno aluno = Aluno.find(
-				Long.valueOf( item.getAlunoId() ), this.instituicaoEnsino ) ;
-
-			AlunoDemanda alunoDemanda = AlunoDemanda.findByDemandaAndAluno(
-				instituicaoEnsino, demanda, aluno );
+			long id = item.getId();
+			AlunoDemanda alunoDemanda
+				= AlunoDemanda.find( id, this.instituicaoEnsino );
 
 			this.alunosDemanda.add( alunoDemanda );
+			
 		}
 	}
 
@@ -402,18 +404,29 @@ public class SolverOutput
 		List< AlunoDemanda > listAll = AlunoDemanda.findByCampusAndTurno(
 			instituicaoEnsino, campus, turno );
 
-		for (  AlunoDemanda aluno : listAll )
+		for (  AlunoDemanda alunoDemanda : listAll )
 		{
-			if ( this.alunosDemanda.contains( aluno ) )
+			boolean encontrou = false;
+
+			for ( AlunoDemanda find : this.alunosDemanda )
 			{
-				aluno.setAtendido( true );
+				if ( alunoDemanda.getId() == find.getId() )
+				{
+					encontrou = true;
+					break;
+				}
+			}
+
+			if ( encontrou )
+			{
+				alunoDemanda.setAtendido( true );
 			}
 			else
 			{
-				aluno.setAtendido( false );
+				alunoDemanda.setAtendido( false );
 			}
 
-			aluno.merge();
+			alunoDemanda.merge();
 		}
 	}
 }

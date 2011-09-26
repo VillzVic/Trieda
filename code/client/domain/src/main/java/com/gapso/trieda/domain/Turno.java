@@ -43,7 +43,7 @@ import com.gapso.trieda.misc.Semanas;
 @RooEntity( identifierColumn = "TUR_ID" )
 @Table( name = "TURNOS" )
 public class Turno
-	implements Serializable
+	implements Serializable, Comparable< Turno >
 {
 	private static final long serialVersionUID = 2608398950191790873L;
 
@@ -443,4 +443,11 @@ public class Turno
 
         return sb.toString();
     }
+
+	@Override
+	public int compareTo( Turno o )
+	{
+		int result = getNome().compareTo( o.getNome() );
+		return result;
+	}
 }

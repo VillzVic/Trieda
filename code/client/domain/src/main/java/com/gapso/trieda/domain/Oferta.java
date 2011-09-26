@@ -37,7 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooToString
 @RooEntity(identifierColumn = "OFE_ID")
 @Table(name = "OFERTAS")
-public class Oferta implements Serializable, Comparable< Oferta >
+public class Oferta
+	implements Serializable, Comparable< Oferta >
 {
 	private static final long serialVersionUID = -976299446108675926L;
 

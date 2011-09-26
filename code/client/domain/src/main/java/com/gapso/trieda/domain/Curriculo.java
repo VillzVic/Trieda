@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "CURRICULOS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "CRC_COD", "CUR_ID" } ) )
 public class Curriculo
-	implements Serializable
+	implements Serializable, Comparable< Curriculo >
 {
 	private static final long serialVersionUID = -9204016994046445376L;
 
@@ -473,7 +473,7 @@ public class Curriculo
     	return (Integer) q.getSingleResult();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public List< Integer > getPeriodos(
     	InstituicaoEnsino instituicaoEnsino )
     {
@@ -525,4 +525,27 @@ public class Curriculo
 
         return sb.toString();
     }
+
+	@Override
+	public int compareTo( Curriculo o )
+	{
+		int result = getCurso().compareTo( o.getCurso() );
+		
+		if ( result == 0 )
+		{
+			result = getSemanaLetiva().compareTo( o.getSemanaLetiva() );
+	
+			if ( result == 0 )
+			{
+				result = getCenario().compareTo( o.getCenario() );
+
+				if ( result == 0 )
+				{
+					result = getCodigo().compareTo( o.getCodigo() );
+				}
+			}
+		}
+
+		return result;
+	}
 }

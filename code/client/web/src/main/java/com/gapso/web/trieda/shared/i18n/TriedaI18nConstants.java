@@ -2,8 +2,10 @@ package com.gapso.web.trieda.shared.i18n;
 
 import com.google.gwt.i18n.client.Constants;
 
-public interface TriedaI18nConstants extends Constants {
-
+public interface TriedaI18nConstants
+	extends Constants
+{
+	String alunosDemanda();
 	String adicionar();
 	String andar();
 	String areaTitulacao();
@@ -66,6 +68,7 @@ public interface TriedaI18nConstants extends Constants {
 	String maisDeUmaDisciplinaProfessor();
 	String margem();
 	String margemPercente();
+	String matriculaAluno();
 	String matrizCurricular();
 	String maxAlunosPratico();
 	String maxAlunosTeorico();
@@ -80,6 +83,7 @@ public interface TriedaI18nConstants extends Constants {
 	String nao();
 	String nivelDificuldade();
 	String nome();
+	String nomeAluno();
 	String nomeCurso();
 	String nomeDisciplina();
 	String nomeProfessor();
@@ -93,6 +97,7 @@ public interface TriedaI18nConstants extends Constants {
 	String preenchaA();
 	String preenchaO();
 	String preferencia();
+	String prioridadeAlunoDemanda();
 	String professor();
 	String professores();
 	String publicado();

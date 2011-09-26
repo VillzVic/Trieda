@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +34,18 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "TDI_ID" )
 @Table( name = "TIPOS_DISCIPLINA" )
 public class TipoDisciplina
-	implements java.io.Serializable
+	implements Serializable, Comparable< TipoDisciplina >
 {
 	private static final long serialVersionUID = 3145587865770084666L;
 
     @NotNull
-    @Column(name = "TDI_NOME")
-    @Size(min = 1, max = 50)
+    @Column( name = "TDI_NOME" )
+    @Size( min = 1, max = 50 )
     private String nome;
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
-		targetEntity = InstituicaoEnsino.class )
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH }, targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
 
@@ -53,7 +54,8 @@ public class TipoDisciplina
 		return instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
@@ -62,10 +64,10 @@ public class TipoDisciplina
 	{
         StringBuilder sb = new StringBuilder();
 
-        sb.append( "Id: " ).append(getId()).append(", ");
-        sb.append( "Version: " ).append(getVersion()).append(", ");
+        sb.append( "Id: " ).append( getId() ).append(", ");
+        sb.append( "Version: " ).append( getVersion() ).append(", ");
         sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-        sb.append( "Nome: " ).append(getNome());
+        sb.append( "Nome: " ).append( getNome() );
 
         return sb.toString();
     }
@@ -74,57 +76,86 @@ public class TipoDisciplina
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TDI_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "TDI_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            TipoDisciplina attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            TipoDisciplina attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public TipoDisciplina merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        TipoDisciplina merged = this.entityManager.merge(this);
+    public TipoDisciplina merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        TipoDisciplina merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -143,18 +174,19 @@ public class TipoDisciplina
         return em;
     }
 
-	public static int count( InstituicaoEnsino instituicaoEnsino )
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino )
 	{
         return TipoDisciplina.findAll( instituicaoEnsino ).size();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< TipoDisciplina > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
 		Query q = entityManager().createQuery(
 	    	" SELECT o FROM TipoDisciplina o " +
-	    	" WHERE o.instituicaoEnsino = :instituicaoEnsino" );
+	    	" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
@@ -177,7 +209,8 @@ public class TipoDisciplina
 		return tiposDisciplinaMap;
 	}
 
-	public static TipoDisciplina find( Long id, InstituicaoEnsino instituicaoEnsino )
+	public static TipoDisciplina find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
         if ( id == null || instituicaoEnsino == null )
         {
@@ -185,6 +218,7 @@ public class TipoDisciplina
         }
 
         TipoDisciplina td = entityManager().find( TipoDisciplina.class, id );
+
         if ( td != null
         	&& td.getInstituicaoEnsino() != null
         	&& td.getInstituicaoEnsino() == instituicaoEnsino )
@@ -195,7 +229,7 @@ public class TipoDisciplina
         return null;
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< TipoDisciplina > find(
     	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults )
@@ -221,4 +255,56 @@ public class TipoDisciplina
 	{
         this.nome = nome;
     }
+
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+
+		result = ( prime * result + ( ( this.getId() == null ) ? 0 : this.getId().hashCode() ) );
+		result = ( prime * result + ( ( this.getVersion() == null ) ? 0 : this.getVersion().hashCode() ) );
+
+		return result;
+	}
+
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof TipoDisciplina ) )
+		{
+			return false;
+		}
+
+		TipoDisciplina other = (TipoDisciplina) obj;
+
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int compareTo( TipoDisciplina o )
+	{
+		int result = this.getInstituicaoEnsino().compareTo( o.getInstituicaoEnsino() );
+
+		if ( result == 0 )
+		{
+			result = this.getId().compareTo( o.getId() );
+		}
+
+		return result;
+	}
 }

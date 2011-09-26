@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table( name = "SEMANA_LETIVA", uniqueConstraints =
 @UniqueConstraint( columnNames = { "SLE_CODIGO" } ) )
 public class SemanaLetiva
-	implements Serializable
+	implements Serializable, Comparable< SemanaLetiva >
 {
 	private static final long serialVersionUID = 6807360646327130208L;
 
@@ -487,5 +487,18 @@ public class SemanaLetiva
 		}
 
 		return true;
+	}
+
+	@Override
+	public int compareTo( SemanaLetiva o )
+	{
+		int result = getInstituicaoEnsino().compareTo( o.getInstituicaoEnsino() );
+		
+		if ( result == 0 )
+		{
+			result = getCodigo().compareTo( o.getCodigo() );
+		}
+
+		return result;
 	}
 }

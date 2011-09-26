@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,6 +20,8 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
@@ -62,8 +66,14 @@ public class AlunoDemanda
     @JoinColumn( name = "DEM_ID" )
     private Demanda demanda;
 
-	@Column(name = "ALD_ATENDIDO")
+	@Column( name = "ALD_ATENDIDO" )
 	private Boolean atendido;
+
+	@NotNull
+	@Column( name = "ALD_PRIORIDADE" )
+	@Min( 0L )
+	@Max( 10L )
+	private Integer prioridade;
 
 	public Long getId()
 	{
@@ -114,6 +124,18 @@ public class AlunoDemanda
 	{
 		this.atendido = atendido;
 	}
+
+	public Integer getPrioridade()
+	{
+		return prioridade;
+	}
+
+
+	public void setPrioridade( Integer prioridade )
+	{
+		this.prioridade = prioridade;
+	}
+
 
 	@Transactional
 	public void detach()
@@ -366,5 +388,20 @@ public class AlunoDemanda
 		}
 
 		return compare;
+	}
+
+	public static Map< String, AlunoDemanda > buildMatriculaAlunoToAlunoDemandaMap(
+		List< AlunoDemanda > alunosDemanda )
+	{
+		Map< String, AlunoDemanda > alunosDemandaMap
+			= new HashMap< String, AlunoDemanda >();
+
+		for ( AlunoDemanda alunoDemanda : alunosDemanda )
+		{
+			String codigo = alunoDemanda.getAluno().getMatricula();
+			alunosDemandaMap.put( codigo, alunoDemanda );
+		}
+
+		return alunosDemandaMap;
 	}
 }

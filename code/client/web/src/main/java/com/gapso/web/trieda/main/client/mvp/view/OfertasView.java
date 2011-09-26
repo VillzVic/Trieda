@@ -25,10 +25,12 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
-public class OfertasView extends MyComposite implements OfertasPresenter.Display {
-
+public class OfertasView
+	extends MyComposite
+	implements OfertasPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<OfertaDTO> gridPanel;
+	private SimpleGrid< OfertaDTO > gridPanel;
 	private SimpleFilter filter;
 	private TurnoComboBox turnoBuscaComboBox;
 	private CampusComboBox campusBuscaComboBox;
@@ -36,135 +38,160 @@ public class OfertasView extends MyComposite implements OfertasPresenter.Display
 	private CurriculoComboBox curriculoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
-	public OfertasView() {
+
+	public OfertasView()
+	{
 		initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Oferta de Cursos em Campi");
+
+	private void initUI()
+	{
+		panel = new ContentPanel( new BorderLayout() );
+		panel.setHeading( "Master Data » Oferta de Cursos em Campi" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( tabItem );
 	}
 	
-	private void createTabItem() {
-		tabItem = new GTabItem("Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso16());
-		tabItem.setContent(panel);
+	private void createTabItem()
+	{
+		tabItem = new GTabItem( "Oferta de Cursos em Campi",
+			Resources.DEFAULTS.ofertaCurso16() );
+
+		tabItem.setContent( panel );
 	}
 	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		panel.setTopComponent(toolBar);
+	private void createToolBar()
+	{
+		toolBar = new SimpleToolBar( this );
+		panel.setTopComponent( toolBar );
 	}
 	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 	    
-	    gridPanel = new SimpleGrid<OfertaDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+	    gridPanel = new SimpleGrid< OfertaDTO >( getColumnList(), this );
+	    panel.add( gridPanel, bld );
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(OfertaDTO.PROPERTY_CAMPUS_STRING, "Campus", 100));
-		list.add(new ColumnConfig(OfertaDTO.PROPERTY_CURSO_STRING, "Curso", 100));
-		list.add(new ColumnConfig(OfertaDTO.PROPERTY_MATRIZ_CURRICULAR_STRING, "Matriz Curricular", 100));
-		list.add(new ColumnConfig(OfertaDTO.PROPERTY_TURNO_STRING, "Turno", 200));
-		list.add(new ColumnConfig(OfertaDTO.PROPERTY_RECEITA, "Receita", 100));
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_CAMPUS_STRING, "Campus", 100 ) );
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_CURSO_STRING, "Curso", 100 ) );
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_MATRIZ_CURRICULAR_STRING, "Matriz Curricular", 100 ) );
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_TURNO_STRING, "Turno", 200 ) );
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_RECEITA, "Receita", 100 ) );
+
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
 		filter = new SimpleFilter();
 		turnoBuscaComboBox = new TurnoComboBox();
-		turnoBuscaComboBox.setFieldLabel("Turno");
+		turnoBuscaComboBox.setFieldLabel( "Turno" );
 		campusBuscaComboBox = new CampusComboBox();
-		campusBuscaComboBox.setFieldLabel("Campus");
+		campusBuscaComboBox.setFieldLabel( "Campus" );
 		cursoBuscaComboBox = new CursoComboBox();
-		cursoBuscaComboBox.setFieldLabel("Curso");
+		cursoBuscaComboBox.setFieldLabel( "Curso" );
 		curriculoBuscaComboBox = new CurriculoComboBox();
-		curriculoBuscaComboBox.setFieldLabel("Matriz Curricular");
-		
-		filter.addField(turnoBuscaComboBox);
-		filter.addField(campusBuscaComboBox);
-		filter.addField(cursoBuscaComboBox);
-		filter.addField(curriculoBuscaComboBox);
-		
-		panel.add(filter, bld);
+		curriculoBuscaComboBox.setFieldLabel( "Matriz Curricular" );
+
+		filter.addField( turnoBuscaComboBox );
+		filter.addField( campusBuscaComboBox );
+		filter.addField( cursoBuscaComboBox );
+		filter.addField( curriculoBuscaComboBox );
+
+		panel.add( filter, bld );
 	}
-	
+
 	@Override
-	public Button getNewButton() {
+	public Button getNewButton()
+	{
 		return toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
+	public Button getEditButton()
+	{
 		return toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
+	public Button getRemoveButton()
+	{
 		return toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
+	public Button getImportExcelButton()
+	{
 		return toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
+	public Button getExportExcelButton()
+	{
 		return toolBar.getExportExcelButton();
 	}
-	
+
 	@Override
-	public SimpleGrid<OfertaDTO> getGrid() {
+	public SimpleGrid< OfertaDTO > getGrid()
+	{
 		return gridPanel;
 	}
-	
+
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<OfertaDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy(
+		RpcProxy< PagingLoadResult< OfertaDTO > > proxy )
+	{
+		gridPanel.setProxy( proxy );
 	}
-	
+
 	@Override
-	public TurnoComboBox getTurnoBuscaComboBox() {
+	public TurnoComboBox getTurnoBuscaComboBox()
+	{
 		return turnoBuscaComboBox;
 	}
-	
+
 	@Override
-	public CampusComboBox getCampusBuscaComboBox() {
+	public CampusComboBox getCampusBuscaComboBox()
+	{
 		return campusBuscaComboBox;
 	}
-	
+
 	@Override
-	public CursoComboBox getCursoBuscaComboBox() {
+	public CursoComboBox getCursoBuscaComboBox()
+	{
 		return cursoBuscaComboBox;
 	}
-	
+
 	@Override
-	public CurriculoComboBox getCurriculoBuscaComboBox() {
+	public CurriculoComboBox getCurriculoBuscaComboBox()
+	{
 		return curriculoBuscaComboBox;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
+	public Button getSubmitBuscaButton()
+	{
 		return filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
+	public Button getResetBuscaButton()
+	{
 		return filter.getResetButton();
 	}
-
 }

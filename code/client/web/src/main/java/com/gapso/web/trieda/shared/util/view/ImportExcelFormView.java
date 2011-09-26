@@ -34,9 +34,6 @@ public class ImportExcelFormView
 
 		initUI( parametros.getInfo(), gridToBeUpdated );
 		initActions();
-
-		addParameter( "instituicaoEnsinoId",
-			this.instituicaoEnsinoDTO.getId().toString() );
 	}
 
 	public InstituicaoEnsinoDTO getInstituicaoEnsinoDTO()
@@ -96,14 +93,6 @@ public class ImportExcelFormView
 
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
-	}
-
-	public void addParameter( String name, String value )
-	{
-		HiddenField< String > hiddenField = new HiddenField< String >();
-		hiddenField.setName( name );
-		hiddenField.setValue( value );
-		this.formPanel.add( hiddenField );
 	}
 
 	private void initActions()

@@ -20,7 +20,7 @@ public class AlunosFormView
 {
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-	private UniqueTextField cpfTF;
+	private UniqueTextField matriculaTF;
 	private TextField< String > nomeTF;
 	private AlunoDTO alunoDTO;
 	private CenarioDTO cenarioDTO;
@@ -63,15 +63,15 @@ public class AlunosFormView
 		nomeTF.setEmptyText( "Preencha o nome" );
 		formPanel.add( nomeTF, formData );
 
-		cpfTF = new UniqueTextField( cenarioDTO, UniqueDomain.ALUNO );
-		cpfTF.setName( AlunoDTO.PROPERTY_ALUNO_CPF );
-		cpfTF.setValue( alunoDTO.getCpf() );
-		cpfTF.setFieldLabel( "CPF" );
-		cpfTF.setAllowBlank( false );
-		cpfTF.setMinLength( 14 );
-		cpfTF.setMaxLength( 14 );
-		cpfTF.setEmptyText( "Preencha o CPF" );
-		formPanel.add( cpfTF, formData );
+		matriculaTF = new UniqueTextField( cenarioDTO, UniqueDomain.ALUNO );
+		matriculaTF.setName( AlunoDTO.PROPERTY_ALUNO_MATRICULA );
+		matriculaTF.setValue( alunoDTO.getMatricula() );
+		matriculaTF.setFieldLabel( "Matrícula" );
+		matriculaTF.setAllowBlank( false );
+		matriculaTF.setMinLength( 1 );
+		matriculaTF.setMaxLength( 50 );
+		matriculaTF.setEmptyText( "Preencha a matrícula" );
+		formPanel.add( matriculaTF, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );
 		binding.addButton( simpleModal.getSalvarBt() );
@@ -103,14 +103,14 @@ public class AlunosFormView
 	}
 
 	@Override
-	public UniqueTextField getCpfTextField()
-	{
-		return cpfTF;
-	}
-
-	@Override
 	public AlunoDTO getAlunoDTO()
 	{
 		return alunoDTO;
+	}
+
+	@Override
+	public UniqueTextField getMatriculaTextField()
+	{
+		return matriculaTF;
 	}
 }

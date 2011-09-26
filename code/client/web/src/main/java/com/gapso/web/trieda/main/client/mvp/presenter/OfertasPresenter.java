@@ -40,9 +40,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class OfertasPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class OfertasPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
@@ -54,9 +57,9 @@ public class OfertasPresenter implements Presenter {
 		CurriculoComboBox getCurriculoBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<OfertaDTO> getGrid();
+		SimpleGrid< OfertaDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<OfertaDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< OfertaDTO > > proxy );
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -72,16 +75,24 @@ public class OfertasPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final OfertasServiceAsync service = Services.ofertas();
-		RpcProxy<PagingLoadResult<OfertaDTO>> proxy = new RpcProxy<PagingLoadResult<OfertaDTO>>() {
+
+		RpcProxy< PagingLoadResult< OfertaDTO > > proxy =
+			new RpcProxy< PagingLoadResult< OfertaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<OfertaDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< OfertaDTO > > callback )
+			{
 				TurnoDTO turnoDTO = display.getTurnoBuscaComboBox().getValue();
 				CampusDTO campusDTO = display.getCampusBuscaComboBox().getValue();
 				CursoDTO cursoDTO = display.getCursoBuscaComboBox().getValue();
 				CurriculoDTO curriculoDTO = display.getCurriculoBuscaComboBox().getValue();
-				service.getBuscaList(turnoDTO, campusDTO, cursoDTO, curriculoDTO, (PagingLoadConfig)loadConfig, callback);
+
+				service.getBuscaList( turnoDTO, campusDTO, cursoDTO,
+					curriculoDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -103,24 +114,29 @@ public class OfertasPresenter implements Presenter {
 			}
 		});
 
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				final OfertaDTO ofertaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				
+
 				final TurnosServiceAsync turnosService = Services.turnos();
 				final CampiServiceAsync campiService = Services.campi();
 				final CurriculosServiceAsync curriculosService = Services.curriculos();
+
+				final FutureResult< TurnoDTO > futureTurnoDTO = new FutureResult< TurnoDTO >();
+				final FutureResult< CampusDTO > futureCampusDTO = new FutureResult< CampusDTO >();
+				final FutureResult< CurriculoDTO > futureCurriculoDTO = new FutureResult< CurriculoDTO >();
+
+				turnosService.getTurno( ofertaDTO.getTurnoId(), futureTurnoDTO );
+				campiService.getCampus( ofertaDTO.getCampusId(), futureCampusDTO );
+				curriculosService.getCurriculo( ofertaDTO.getMatrizCurricularId(), futureCurriculoDTO );
 				
-				final FutureResult<TurnoDTO> futureTurnoDTO = new FutureResult<TurnoDTO>();
-				final FutureResult<CampusDTO> futureCampusDTO = new FutureResult<CampusDTO>();
-				final FutureResult<CurriculoDTO> futureCurriculoDTO = new FutureResult<CurriculoDTO>();
-				
-				turnosService.getTurno(ofertaDTO.getTurnoId(), futureTurnoDTO);
-				campiService.getCampus(ofertaDTO.getCampusId(), futureCampusDTO);
-				curriculosService.getCurriculo(ofertaDTO.getMatrizCurricularId(), futureCurriculoDTO);
-				
-				FutureSynchronizer synch = new FutureSynchronizer(futureTurnoDTO, futureCampusDTO, futureCurriculoDTO);
+				FutureSynchronizer synch = new FutureSynchronizer(
+					futureTurnoDTO, futureCampusDTO, futureCurriculoDTO );
+
 				synch.addCallback( new AsyncCallback< Boolean >()
 				{
 					@Override
@@ -144,32 +160,49 @@ public class OfertasPresenter implements Presenter {
 				});
 			}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<OfertaDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
+				List< OfertaDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final OfertasServiceAsync service = Services.ofertas();
-				service.remove(list, new AsyncCallback<Void>() {
+
+				service.remove( list, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 					}
+
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display( "Removido", "Item removido com sucesso!" );
 					}
 				});
 			}
 		});
-		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getImportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				//ImportExcelFormView importExcelFormView = new ImportExcelFormView(ExcelInformationType.DEMANDAS,display.getGrid());
-				//importExcelFormView.show();
+			public void componentSelected( ButtonEvent ce )
+			{
+				// ImportExcelFormView importExcelFormView = new ImportExcelFormView(
+				// 	ExcelInformationType.DEMANDAS,display.getGrid() );
+				// importExcelFormView.show();
 			}
 		});
-		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
@@ -177,33 +210,42 @@ public class OfertasPresenter implements Presenter {
 					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-					parametros,display.getI18nConstants(),display.getI18nMessages() );
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
 
 				e.submit();
 			}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getTurnoBuscaComboBox().setValue(null);
-				display.getCampusBuscaComboBox().setValue(null);
-				display.getCursoBuscaComboBox().setValue(null);
-				display.getCurriculoBuscaComboBox().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getTurnoBuscaComboBox().setValue( null );
+				display.getCampusBuscaComboBox().setValue( null );
+				display.getCursoBuscaComboBox().setValue( null );
+				display.getCurriculoBuscaComboBox().setValue( null );
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
-		GTab gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
+	public void go( Widget widget )
+	{
+		GTab gTab = (GTab) widget;
+		gTab.add( (GTabItem) display.getComponent() );
 	}
 
 }

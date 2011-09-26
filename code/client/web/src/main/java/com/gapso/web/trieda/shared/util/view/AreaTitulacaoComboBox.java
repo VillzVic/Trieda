@@ -11,21 +11,28 @@ import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AreaTitulacaoComboBox extends ComboBox<AreaTitulacaoDTO> {
-	
-	public AreaTitulacaoComboBox() {
-		RpcProxy<ListLoadResult<AreaTitulacaoDTO>> proxy = new RpcProxy<ListLoadResult<AreaTitulacaoDTO>>() {
+public class AreaTitulacaoComboBox
+	extends ComboBox< AreaTitulacaoDTO >
+{
+	public AreaTitulacaoComboBox()
+	{
+		RpcProxy< ListLoadResult< AreaTitulacaoDTO > > proxy =
+			new RpcProxy< ListLoadResult< AreaTitulacaoDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<AreaTitulacaoDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< ListLoadResult< AreaTitulacaoDTO > > callback )
+			{
 				Services.areasTitulacao().getListAll(callback);
 			}
 		};
-		
-		setStore(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<BaseListLoadResult<AreaTitulacaoDTO>>(proxy)));
-		setFieldLabel("Área de Titulação");
-		setDisplayField(AbstractDTO.PROPERTY_DISPLAY_TEXT);
-		setEditable(false);
-		setTriggerAction(TriggerAction.ALL);
-	}
 
+		setStore( new ListStore< AreaTitulacaoDTO >(
+			new BaseListLoader< BaseListLoadResult< AreaTitulacaoDTO > >( proxy ) ) );
+
+		setFieldLabel( "Área de Titulação" );
+		setDisplayField( AbstractDTO.PROPERTY_DISPLAY_TEXT );
+		setEditable( false );
+		setTriggerAction( TriggerAction.ALL );
+	}
 }

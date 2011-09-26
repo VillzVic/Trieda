@@ -260,6 +260,7 @@ public class DemandasPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				DemandaDTO demandaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
 				Presenter presenter = new AlunosDemandaPresenter(
 					instituicaoEnsinoDTO, new AlunoDemandaView( demandaDTO ) );
 

@@ -592,8 +592,9 @@ public class ToolBarPresenter
 		toolBar.getImportarButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
-			// Fazendo com que importe todos dados do masterdata.
-			// Lembrando que uma importação nunca exclui dados, apenas modifica e adiciona
+			// Fazendo com que importe todos dados do
+			// masterdata. Lembrando que uma importação
+			// nunca exclui dados, apenas modifica e adiciona
 
 			@Override
 			public void componentSelected( ButtonEvent ce )

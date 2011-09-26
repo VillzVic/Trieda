@@ -107,12 +107,12 @@ public class ConvertBeans
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
 
 		domain.setInstituicaoEnsino( instituicaoEnsino );
-		domain.setVersion(dto.getVersion());
-		domain.setNome(dto.getNome());
-		domain.setEmail(dto.getEmail());
-		domain.setUsername(dto.getUsername());
-		domain.setPassword(dto.getPassword());
-		domain.setEnabled(dto.getEnabled());
+		domain.setVersion( dto.getVersion() );
+		domain.setNome( dto.getNome() );
+		domain.setEmail( dto.getEmail() );
+		domain.setUsername( dto.getUsername() );
+		domain.setPassword( dto.getPassword() );
+		domain.setEnabled( dto.getEnabled() );
 		domain.setProfessor( Professor.find(
 			dto.getProfessorId(), instituicaoEnsino ) );
 
@@ -190,18 +190,11 @@ public class ConvertBeans
 		dto.setSemestre( domain.getSemestre() );
 		dto.setComentario( domain.getComentario() );
 
-		SemanaLetiva semanaLetiva = null;
-		if ( !domain.getMasterData() )
+		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
+		if ( semanaLetiva == null )
 		{
 			List< SemanaLetiva > list = SemanaLetiva.findAll( instituicaoEnsino );
 			semanaLetiva = ( list == null ? null : list.get( 0 ) );
-			// semanaLetiva = SemanaLetiva.getByOficial();
-		}
-		else
-		{
-			List< SemanaLetiva > list = SemanaLetiva.findAll( instituicaoEnsino );
-			semanaLetiva = ( list == null ? null : list.get( 0 ) );
-			// semanaLetiva = SemanaLetiva.getByOficial();
 		}
 
 		dto.setSemanaLetivaId( ( ( semanaLetiva == null ) ? null : semanaLetiva.getId() ) );
@@ -290,7 +283,7 @@ public class ConvertBeans
 			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 		}
 
-		dto.setPublicado(domain.getPublicado() == null ? false : domain.getPublicado());
+		dto.setPublicado( domain.getPublicado() == null ? false : domain.getPublicado() );
 		dto.setOtimizadoTatico( domain.isOtimizadoTatico( instituicaoEnsino ) );
 		dto.setOtimizadoOperacional( domain.isOtimizadoOperacional( instituicaoEnsino ) );
 
@@ -388,8 +381,11 @@ public class ConvertBeans
 
 			if ( campus.getInstituicaoEnsino() != null )
 			{
-				dto.setInstituicaoEnsinoId( campus.getInstituicaoEnsino().getId() );
-				dto.setInstituicaoEnsinoString( campus.getInstituicaoEnsino().getNomeInstituicao() );
+				dto.setInstituicaoEnsinoId(
+					campus.getInstituicaoEnsino().getId() );
+
+				dto.setInstituicaoEnsinoString(
+					campus.getInstituicaoEnsino().getNomeInstituicao() );
 			}
 
 			dto.setProfessorId( professor.getId() );
@@ -433,7 +429,8 @@ public class ConvertBeans
 		dto.setVersion( domain.getVersion() );
 		dto.setNome( domain.getNome() );
 		dto.setDescricao( domain.getDescricao() );
-		dto.setDisplayText( domain.getNome() + " (" + domain.getDescricao() + ")" );
+		dto.setDisplayText( domain.getNome()
+			+ " (" + domain.getDescricao() + ")" );
 
 		if ( instituicaoEnsino != null )
 		{
@@ -445,7 +442,8 @@ public class ConvertBeans
 	}
 
 	// SALA
-	public static Collection< SalaDTO > toSalaDTO( Collection< Sala > domains )
+	public static Collection< SalaDTO > toSalaDTO(
+		Collection< Sala > domains )
 	{
 		Collection< SalaDTO > list
 			= new ArrayList< SalaDTO >( domains.size() );
@@ -816,6 +814,7 @@ public class ConvertBeans
 			if ( dto.getQuarta() )
 			{
 				domain = null;
+
 				if ( dto.getQuartaId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
@@ -837,6 +836,7 @@ public class ConvertBeans
 			if ( dto.getQuinta() )
 			{
 				domain = null;
+
 				if ( dto.getQuintaId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
@@ -939,40 +939,41 @@ public class ConvertBeans
 		dto.setSabado( false );
 		dto.setDomingo( false );
 
-		for ( HorarioDisponivelCenario o : domain.getHorariosDisponiveisCenario() )
+		for ( HorarioDisponivelCenario o
+			: domain.getHorariosDisponiveisCenario() )
 		{
 			switch ( o.getSemana() )
 			{
-			case SEG:
-				dto.setSegunda(true);
-				dto.setSegundaId(o.getId());
-				break;
-			case TER:
-				dto.setTerca(true);
-				dto.setTercaId(o.getId());
-				break;
-			case QUA:
-				dto.setQuarta(true);
-				dto.setQuartaId(o.getId());
-				break;
-			case QUI:
-				dto.setQuinta(true);
-				dto.setQuintaId(o.getId());
-				break;
-			case SEX:
-				dto.setSexta(true);
-				dto.setSextaId(o.getId());
-				break;
-			case SAB:
-				dto.setSabado(true);
-				dto.setSabadoId(o.getId());
-				break;
-			case DOM:
-				dto.setDomingo(true);
-				dto.setDomingoId(o.getId());
-				break;
-			default:
-				break;
+				case SEG:
+					dto.setSegunda( true );
+					dto.setSegundaId( o.getId() );
+					break;
+				case TER:
+					dto.setTerca( true );
+					dto.setTercaId( o.getId() );
+					break;
+				case QUA:
+					dto.setQuarta( true );
+					dto.setQuartaId( o.getId() );
+					break;
+				case QUI:
+					dto.setQuinta( true );
+					dto.setQuintaId( o.getId() );
+					break;
+				case SEX:
+					dto.setSexta( true );
+					dto.setSextaId( o.getId() );
+					break;
+				case SAB:
+					dto.setSabado( true );
+					dto.setSabadoId( o.getId() );
+					break;
+				case DOM:
+					dto.setDomingo( true );
+					dto.setDomingoId( o.getId() );
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -984,8 +985,11 @@ public class ConvertBeans
 		if ( domain.getSemanaLetiva() != null
 			&& domain.getSemanaLetiva().getInstituicaoEnsino() != null )
 		{
-			dto.setInstituicaoEnsinoId( domain.getSemanaLetiva().getInstituicaoEnsino().getId() );
-			dto.setInstituicaoEnsinoString( domain.getSemanaLetiva().getInstituicaoEnsino().getNomeInstituicao() );
+			dto.setInstituicaoEnsinoId(
+				domain.getSemanaLetiva().getInstituicaoEnsino().getId() );
+
+			dto.setInstituicaoEnsinoString(
+				domain.getSemanaLetiva().getInstituicaoEnsino().getNomeInstituicao() );
 		}
 
 		dto.setDisplayText( dto.getHorarioString() );
@@ -1045,36 +1049,36 @@ public class ConvertBeans
 			{
 				switch ( o.getSemana() )
 				{
-				case SEG:
-					dto.setSegunda(true);
-					dto.setSegundaId(o.getId());
-					break;
-				case TER:
-					dto.setTerca(true);
-					dto.setTercaId(o.getId());
-					break;
-				case QUA:
-					dto.setQuarta(true);
-					dto.setQuartaId(o.getId());
-					break;
-				case QUI:
-					dto.setQuinta(true);
-					dto.setQuintaId(o.getId());
-					break;
-				case SEX:
-					dto.setSexta(true);
-					dto.setSextaId(o.getId());
-					break;
-				case SAB:
-					dto.setSabado(true);
-					dto.setSabadoId(o.getId());
-					break;
-				case DOM:
-					dto.setDomingo(true);
-					dto.setDomingoId(o.getId());
-					break;
-				default:
-					break;
+					case SEG:
+						dto.setSegunda( true );
+						dto.setSegundaId( o.getId() );
+						break;
+					case TER:
+						dto.setTerca( true );
+						dto.setTercaId( o.getId() );
+						break;
+					case QUA:
+						dto.setQuarta( true );
+						dto.setQuartaId( o.getId() );
+						break;
+					case QUI:
+						dto.setQuinta( true );
+						dto.setQuintaId( o.getId() );
+						break;
+					case SEX:
+						dto.setSexta( true );
+						dto.setSextaId( o.getId() );
+						break;
+					case SAB:
+						dto.setSabado( true );
+						dto.setSabadoId( o.getId() );
+						break;
+					case DOM:
+						dto.setDomingo( true );
+						dto.setDomingoId( o.getId() );
+						break;
+					default:
+						break;
 				}
 			}
 
@@ -1180,8 +1184,11 @@ public class ConvertBeans
 		if ( domain.getTipoCurso() != null
 			&& domain.getTipoCurso().getInstituicaoEnsino() != null )
 		{
-			dto.setInstituicaoEnsinoId( domain.getTipoCurso().getInstituicaoEnsino().getId() );
-			dto.setInstituicaoEnsinoString( domain.getTipoCurso().getInstituicaoEnsino().getNomeInstituicao() );
+			dto.setInstituicaoEnsinoId(
+				domain.getTipoCurso().getInstituicaoEnsino().getId() );
+
+			dto.setInstituicaoEnsinoString(
+				domain.getTipoCurso().getInstituicaoEnsino().getNomeInstituicao() );
 		}
 
 		dto.setDisplayText( domain.getNome() + " (" + domain.getCodigo() + ")" );
@@ -1552,15 +1559,15 @@ public class ConvertBeans
 		Cenario cenario = Cenario.find(
 			dto.getCenarioId(), instituicaoEnsino );
 
-		domain.setCenario(cenario);
-		domain.setCodigo(dto.getCodigo());
-		domain.setNome(dto.getNome());
-		domain.setCreditosPratico(dto.getCreditosPratico());
-		domain.setCreditosTeorico(dto.getCreditosTeorico());
-		domain.setLaboratorio(dto.getLaboratorio());
-		domain.setMaxAlunosTeorico(dto.getMaxAlunosTeorico());
-		domain.setMaxAlunosPratico(dto.getMaxAlunosPratico());
-		domain.setDificuldade(Dificuldades.get(dto.getDificuldade()));
+		domain.setCenario( cenario );
+		domain.setCodigo( dto.getCodigo() );
+		domain.setNome( dto.getNome() );
+		domain.setCreditosPratico( dto.getCreditosPratico() );
+		domain.setCreditosTeorico( dto.getCreditosTeorico() );
+		domain.setLaboratorio( dto.getLaboratorio() );
+		domain.setMaxAlunosTeorico( dto.getMaxAlunosTeorico() );
+		domain.setMaxAlunosPratico( dto.getMaxAlunosPratico() );
+		domain.setDificuldade( Dificuldades.get( dto.getDificuldade() ) );
 
 		domain.setTipoDisciplina( TipoDisciplina.find(
 			dto.getTipoId(), instituicaoEnsino ) );
@@ -1650,8 +1657,10 @@ public class ConvertBeans
 
 		Curso curso = domain.getCurso();
 		dto.setCursoId( curso.getId() );
-		dto.setCursoString( curso.getCodigo() + " (" + curso.getNome() + ")" );
-		dto.setDisplayText( domain.getCodigo() + " (" + curso.getNome()	+ ") Periodos: " + periodos );
+		dto.setCursoString( curso.getCodigo()
+			+ " (" + curso.getNome() + ")" );
+		dto.setDisplayText( domain.getCodigo() + " ("
+			+ curso.getNome()	+ ") Periodos: " + periodos );
 
 		SemanaLetiva sl = domain.getSemanaLetiva(); 
 		dto.setSemanaLetivaId( sl == null ? null : sl.getId() );
@@ -1659,8 +1668,11 @@ public class ConvertBeans
 
 		if ( sl != null && sl.getInstituicaoEnsino() != null )
 		{
-			dto.setInstituicaoEnsinoId( sl.getInstituicaoEnsino().getId() );
-			dto.setInstituicaoEnsinoString( sl.getInstituicaoEnsino().getNomeInstituicao() );
+			dto.setInstituicaoEnsinoId(
+				sl.getInstituicaoEnsino().getId() );
+
+			dto.setInstituicaoEnsinoString(
+				sl.getInstituicaoEnsino().getNomeInstituicao() );
 		}
 
 		return dto;
@@ -1711,8 +1723,11 @@ public class ConvertBeans
 		dto.setCreditosTotal( crTeorico + crPratico );
 		dto.setCurriculoId( domain.getCurriculo().getId() );
 
-		dto.setInstituicaoEnsinoId( domain.getDisciplina().getTipoDisciplina().getInstituicaoEnsino().getId() );
-		dto.setInstituicaoEnsinoString( domain.getDisciplina().getTipoDisciplina().getInstituicaoEnsino().getNomeInstituicao() );
+		dto.setInstituicaoEnsinoId(
+				domain.getDisciplina().getTipoDisciplina().getInstituicaoEnsino().getId() );
+
+		dto.setInstituicaoEnsinoString(
+			domain.getDisciplina().getTipoDisciplina().getInstituicaoEnsino().getNomeInstituicao() );
 
 		dto.setDisplayText( disciplina.getCodigo() + " (" + disciplina.getNome() + ")" );
 
@@ -2175,15 +2190,17 @@ public class ConvertBeans
 
 		if ( domain.getCenario().size() > 0 )
 		{
-			dto.setCenarioId( ( new ArrayList< Cenario >( domain.getCenario() ) ).get( 0 ).getId() );
+			dto.setCenarioId( ( new ArrayList< Cenario >(
+				domain.getCenario() ) ).get( 0 ).getId() );
 		}
 
 		Disciplina disciplina = domain.getDisciplina();
+
 		if ( disciplina != null )
 		{
 			dto.setDisciplinaId( disciplina.getId() );
-			dto.setDisciplinaString(
-				disciplina.getCodigo() + " (" + disciplina.getNome() + ")" );
+			dto.setDisciplinaString( disciplina.getCodigo()
+				+ " (" + disciplina.getNome() + ")" );
 		}
 
 		dto.setDia1( domain.getDia1() );
@@ -2194,10 +2211,13 @@ public class ConvertBeans
 		dto.setDia6( domain.getDia6() );
 		dto.setDia7( domain.getDia7() );
 		dto.setTotalCreditos( dto.getDia1() + dto.getDia2() + dto.getDia3()
-				+ dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7() );
+			+ dto.getDia4() + dto.getDia5() + dto.getDia6() + dto.getDia7() );
 
-		dto.setInstituicaoEnsinoId( disciplina.getTipoDisciplina().getInstituicaoEnsino().getId() );
-		dto.setInstituicaoEnsinoString( disciplina.getTipoDisciplina().getInstituicaoEnsino().getNomeInstituicao() );
+		dto.setInstituicaoEnsinoId(
+			disciplina.getTipoDisciplina().getInstituicaoEnsino().getId() );
+
+		dto.setInstituicaoEnsinoString(
+			disciplina.getTipoDisciplina().getInstituicaoEnsino().getNomeInstituicao() );
 
 		return dto;
 	}
@@ -2328,8 +2348,8 @@ public class ConvertBeans
 		dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
 		dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 
-		dto.setDisplayText( domain.getDisciplina().getCodigo() +
-			"-" + domain.getProfessor().getNome() );
+		dto.setDisplayText( domain.getDisciplina().getCodigo()
+			+ "-" + domain.getProfessor().getNome() );
 
 		return dto;
 	}
@@ -2385,8 +2405,11 @@ public class ConvertBeans
 
 		if ( domain.getInstituicaoEnsino() != null )
 		{
-			dto.setInstituicaoEnsinoId( domain.getInstituicaoEnsino().getId() );
-			dto.setInstituicaoEnsinoString( domain.getInstituicaoEnsino().getNomeInstituicao() );
+			dto.setInstituicaoEnsinoId(
+				domain.getInstituicaoEnsino().getId() );
+
+			dto.setInstituicaoEnsinoString(
+				domain.getInstituicaoEnsino().getNomeInstituicao() );
 		}
 
 		return dto;
@@ -2544,8 +2567,11 @@ public class ConvertBeans
 
 		if ( instituicaoEnsino != null )
 		{
-			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
-			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+			dto.setInstituicaoEnsinoId(
+				instituicaoEnsino.getId() );
+
+			dto.setInstituicaoEnsinoString(
+				instituicaoEnsino.getNomeInstituicao() );
 		}
 
 		dto.setDisplayText( domain.getCodigo() );
@@ -2586,57 +2612,39 @@ public class ConvertBeans
 		turno.flush();
 		domain.setTurno( turno );
 
-		domain.setCargaHorariaAluno(dto.getCargaHorariaAluno());
-		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
-		domain.setAlunoDePeriodoMesmaSala(dto.getAlunoDePeriodoMesmaSala());
-		domain.setAlunoEmMuitosCampi(dto.getAlunoEmMuitosCampi());
-		domain.setMinimizarDeslocamentoAluno(dto
-				.getMinimizarDeslocamentoAluno());
-		domain.setCargaHorariaProfessor(dto.getCargaHorariaProfessor());
-		domain.setCargaHorariaProfessorSel(dto.getCargaHorariaProfessorSel());
-		domain.setProfessorEmMuitosCampi(dto.getProfessorEmMuitosCampi());
-		domain.setMinimizarDeslocamentoProfessor(dto
-				.getMinimizarDeslocamentoProfessor());
-		domain.setMinimizarDeslocamentoProfessorValue(dto
-				.getMinimizarDeslocamentoProfessorValue());
-		domain.setMinimizarGapProfessor(dto.getMinimizarGapProfessor());
-		domain.setEvitarReducaoCargaHorariaProfessor(dto
-				.getEvitarReducaoCargaHorariaProfessor());
-		domain.setEvitarReducaoCargaHorariaProfessorValue(dto
-				.getEvitarReducaoCargaHorariaProfessorValue());
-		domain.setEvitarUltimoEPrimeiroHorarioProfessor(dto
-				.getEvitarUltimoEPrimeiroHorarioProfessor());
-		domain.setPreferenciaDeProfessores(dto.getPreferenciaDeProfessores());
-		domain.setAvaliacaoDesempenhoProfessor(dto
-				.getAvaliacaoDesempenhoProfessor());
-		domain.setConsiderarEquivalencia(dto.getConsiderarEquivalencia());
-		domain.setMinAlunosParaAbrirTurma(dto.getMinAlunosParaAbrirTurma());
-		domain.setMinAlunosParaAbrirTurmaValue(dto
-				.getMinAlunosParaAbrirTurmaValue());
-		domain.setNivelDificuldadeDisciplina(dto
-				.getNivelDificuldadeDisciplina());
-		domain.setCompatibilidadeDisciplinasMesmoDia(dto
-				.getCompatibilidadeDisciplinasMesmoDia());
-		domain.setRegrasGenericasDivisaoCredito(dto
-				.getRegrasGenericasDivisaoCredito());
-		domain.setRegrasEspecificasDivisaoCredito(dto
-				.getRegrasEspecificasDivisaoCredito());
-		domain.setMaximizarNotaAvaliacaoCorpoDocente(dto
-				.getMaximizarNotaAvaliacaoCorpoDocente());
-		domain.setMinimizarCustoDocenteCursos(dto
-				.getMinimizarCustoDocenteCursos());
-		domain.setCompartilharDisciplinasCampi(dto
-				.getCompartilharDisciplinasCampi());
-		domain.setPercentuaisMinimosMestres(dto.getPercentuaisMinimosMestres());
-		domain.setPercentuaisMinimosDoutores(dto
-				.getPercentuaisMinimosDoutores());
-		domain.setAreaTitulacaoProfessoresECursos(dto
-				.getAreaTitulacaoProfessoresECursos());
-		domain.setLimitarMaximoDisciplinaProfessor(dto
-				.getLimitarMaximoDisciplinaProfessor());
-		domain.setCargaHorariaAlunoSel(dto.getCargaHorariaAlunoSel());
-		domain.setCargaHorariaProfessorSel(dto.getCargaHorariaProfessorSel());
-		domain.setFuncaoObjetivo(dto.getFuncaoObjetivo());
+		domain.setCargaHorariaAluno( dto.getCargaHorariaAluno() );
+		domain.setCargaHorariaAlunoSel( dto.getCargaHorariaAlunoSel() );
+		domain.setAlunoDePeriodoMesmaSala( dto.getAlunoDePeriodoMesmaSala() );
+		domain.setAlunoEmMuitosCampi( dto.getAlunoEmMuitosCampi() );
+		domain.setMinimizarDeslocamentoAluno( dto.getMinimizarDeslocamentoAluno() );
+		domain.setCargaHorariaProfessor( dto.getCargaHorariaProfessor() );
+		domain.setCargaHorariaProfessorSel( dto.getCargaHorariaProfessorSel() );
+		domain.setProfessorEmMuitosCampi( dto.getProfessorEmMuitosCampi() );
+		domain.setMinimizarDeslocamentoProfessor( dto.getMinimizarDeslocamentoProfessor() );
+		domain.setMinimizarDeslocamentoProfessorValue( dto.getMinimizarDeslocamentoProfessorValue() );
+		domain.setMinimizarGapProfessor( dto.getMinimizarGapProfessor() );
+		domain.setEvitarReducaoCargaHorariaProfessor( dto.getEvitarReducaoCargaHorariaProfessor() );
+		domain.setEvitarReducaoCargaHorariaProfessorValue( dto.getEvitarReducaoCargaHorariaProfessorValue() );
+		domain.setEvitarUltimoEPrimeiroHorarioProfessor( dto.getEvitarUltimoEPrimeiroHorarioProfessor() );
+		domain.setPreferenciaDeProfessores( dto.getPreferenciaDeProfessores() );
+		domain.setAvaliacaoDesempenhoProfessor( dto.getAvaliacaoDesempenhoProfessor() );
+		domain.setConsiderarEquivalencia( dto.getConsiderarEquivalencia() );
+		domain.setMinAlunosParaAbrirTurma( dto.getMinAlunosParaAbrirTurma() );
+		domain.setMinAlunosParaAbrirTurmaValue( dto.getMinAlunosParaAbrirTurmaValue() );
+		domain.setNivelDificuldadeDisciplina( dto.getNivelDificuldadeDisciplina() );
+		domain.setCompatibilidadeDisciplinasMesmoDia( dto.getCompatibilidadeDisciplinasMesmoDia() );
+		domain.setRegrasGenericasDivisaoCredito( dto.getRegrasGenericasDivisaoCredito() );
+		domain.setRegrasEspecificasDivisaoCredito( dto.getRegrasEspecificasDivisaoCredito() );
+		domain.setMaximizarNotaAvaliacaoCorpoDocente( dto.getMaximizarNotaAvaliacaoCorpoDocente() );
+		domain.setMinimizarCustoDocenteCursos( dto.getMinimizarCustoDocenteCursos() );
+		domain.setCompartilharDisciplinasCampi( dto.getCompartilharDisciplinasCampi() );
+		domain.setPercentuaisMinimosMestres( dto.getPercentuaisMinimosMestres() );
+		domain.setPercentuaisMinimosDoutores( dto.getPercentuaisMinimosDoutores() );
+		domain.setAreaTitulacaoProfessoresECursos( dto.getAreaTitulacaoProfessoresECursos() );
+		domain.setLimitarMaximoDisciplinaProfessor( dto.getLimitarMaximoDisciplinaProfessor() );
+		domain.setCargaHorariaAlunoSel( dto.getCargaHorariaAlunoSel() );
+		domain.setCargaHorariaProfessorSel( dto.getCargaHorariaProfessorSel() );
+		domain.setFuncaoObjetivo( dto.getFuncaoObjetivo() );
 
 		for ( CursoDTO cursoDTO
 			: dto.getMaximizarNotaAvaliacaoCorpoDocenteList() )
@@ -2692,6 +2700,7 @@ public class ConvertBeans
 		dto.setModoOtimizacao( domain.getModoOtimizacao() );
 
 		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
+
 		if ( semanaLetiva == null )
 		{
 			List< SemanaLetiva > list = new ArrayList< SemanaLetiva >(
@@ -2713,6 +2722,7 @@ public class ConvertBeans
 		dto.setSemanaLetivaDisplay( semanaLetiva.getCodigo() );
 
 		Campus campus = domain.getCampus();
+
 		if ( campus != null )
 		{
 			dto.setCampusId( campus.getId() );
@@ -2720,6 +2730,7 @@ public class ConvertBeans
 		}
 
 		Turno turno = domain.getTurno();
+
 		if ( turno != null )
 		{
 			dto.setTurnoId( turno.getId() );
@@ -2771,6 +2782,7 @@ public class ConvertBeans
 		Set< Curso > cursosMinCustList = domain.getCursosMinCust();
 		List< CursoDTO > cursosMinCustDTOList
 			= new ArrayList< CursoDTO >( cursosMinCustList.size() );
+
 		for ( Curso curso : cursosMinCustList )
 		{
 			cursosMinCustDTOList.add( ConvertBeans.toCursoDTO( curso ) );
@@ -2813,13 +2825,13 @@ public class ConvertBeans
 			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 		}
 
-		dto.setId(domain.getId());
-		dto.setVersion(domain.getVersion());
-		dto.setCurso1Id(domain.getCurso1().getId());
-		dto.setCurso1Display(domain.getCurso1().getNome());
-		dto.setCurso2Id(domain.getCurso2().getId());
-		dto.setCurso2Display(domain.getCurso2().getNome());
-		dto.setParametroId(domain.getParametro().getId());
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setCurso1Id( domain.getCurso1().getId() );
+		dto.setCurso1Display( domain.getCurso1().getNome() );
+		dto.setCurso2Id( domain.getCurso2().getId() );
+		dto.setCurso2Display( domain.getCurso2().getNome() );
+		dto.setParametroId( domain.getParametro().getId() );
 
 		return dto;
 	}
@@ -2885,7 +2897,8 @@ public class ConvertBeans
 
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
-		domain.setAtendido( ( dto.getAlunoAtendido() == null ) ? false : dto.getAlunoAtendido() );
+		domain.setAtendido( ( dto.getAlunoAtendido() == null ) ?
+			false : dto.getAlunoAtendido() );
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
@@ -2908,7 +2921,8 @@ public class ConvertBeans
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
 		dto.setDisplayText( domain.getAluno().getNome() );
-		dto.setAlunoAtendido( ( domain.getAtendido() == null ) ? false : domain.getAtendido() );
+		dto.setAlunoAtendido( ( domain.getAtendido() == null ) ?
+			false : domain.getAtendido() );
 
 		if ( dto.getAlunoAtendido() )
 		{
@@ -2916,7 +2930,8 @@ public class ConvertBeans
 		}
 		else
 		{
-			dto.setAlunoAtendidoString( HtmlUtils.htmlUnescape( "N&atilde;o" ) );
+			dto.setAlunoAtendidoString(
+				HtmlUtils.htmlUnescape( "N&atilde;o" ) );
 		}
 
 		// Aluno
@@ -2933,8 +2948,11 @@ public class ConvertBeans
 		dto.setDemandaString( demandaStr );
 
 		// Instituição de Ensino
-		dto.setInstituicaoEnsinoId( domain.getDemanda().getOferta().getCampus().getInstituicaoEnsino().getId() );
-		dto.setInstituicaoEnsinoString( domain.getDemanda().getOferta().getCampus().getInstituicaoEnsino().getNomeInstituicao() );
+		dto.setInstituicaoEnsinoId( domain.getDemanda().getOferta()
+			.getCampus().getInstituicaoEnsino().getId() );
+
+		dto.setInstituicaoEnsinoString( domain.getDemanda().getOferta()
+			.getCampus().getInstituicaoEnsino().getNomeInstituicao() );
 		
 		// Disciplina
 		dto.setDisciplinaId( domain.getDemanda().getDisciplina().getId() );
@@ -2994,7 +3012,7 @@ public class ConvertBeans
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 		domain.setNome( dto.getNome() );
-		domain.setCpf( dto.getCpf() );
+		domain.setMatricula( dto.getMatricula() );
 		domain.setCenario( cenario );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 
@@ -3008,7 +3026,7 @@ public class ConvertBeans
 		dto.setId( domain.getId() );
 		dto.setNome( domain.getNome() );
 		dto.setVersion( domain.getVersion() );
-		dto.setCpf( domain.getCpf() );
+		dto.setMatricula( domain.getMatricula() );
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setInstituicaoEnsinoId( domain.getInstituicaoEnsino().getId() );
 		dto.setInstituicaoEnsinoString( domain.getInstituicaoEnsino().getNomeInstituicao() );

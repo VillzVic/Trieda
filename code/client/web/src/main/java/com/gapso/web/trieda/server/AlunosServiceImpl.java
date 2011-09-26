@@ -39,7 +39,7 @@ public class AlunosServiceImpl
 			= Aluno.findByNomeCpf( getInstituicaoEnsinoUser(), nome, cpf );
 
 		list.addAll( ConvertBeans.toListAlunoDTO( listDomains ) );
-	
+
 		Collections.sort( list, new Comparator< AlunoDTO >()
 		{
 			@Override
@@ -48,12 +48,10 @@ public class AlunosServiceImpl
 				return o1.getNome().compareTo( o2.getNome() );
 			}
 		});
-	
+
 		BasePagingLoadResult< AlunoDTO > result
 			= new BasePagingLoadResult< AlunoDTO >( list );
 
-		// TODO
-		// result.setOffset( config.getOffset() );
 		result.setTotalLength( list.size() );
 
 		return result;

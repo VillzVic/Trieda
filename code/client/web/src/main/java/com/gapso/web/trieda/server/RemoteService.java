@@ -35,7 +35,9 @@ public class RemoteService
 		if ( !isProfessor() )
 		{
 			throw new RuntimeException(
-				"Permissão negada, usuário \"" + getUsuario().getUsername() + "\" não é de Professor" );
+				"Permissão negada, usuário \""
+				+ getUsuario().getUsername()
+				+ "\" não é de Professor" );
 		}
 	}
 
@@ -49,7 +51,9 @@ public class RemoteService
 		if ( !isAdministrador() )
 		{
 			throw new RuntimeException(
-				"Permissão negada, usuário \"" + getUsuario().getUsername() + "\" não é de Administrador" );
+				"Permissão negada, usuário \""
+				+ getUsuario().getUsername()
+				+ "\" não é de Administrador" );
 		}
 	}
 }

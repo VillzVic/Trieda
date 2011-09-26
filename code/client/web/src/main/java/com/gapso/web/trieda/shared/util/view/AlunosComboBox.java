@@ -22,44 +22,30 @@ public class AlunosComboBox
 
 	public AlunosComboBox()
 	{
-		this( false );
-	}
-
-	public AlunosComboBox( boolean readOnly )
-	{
-		setReadOnly( readOnly );
-
-		if ( !readOnly )
+		RpcProxy< PagingLoadResult< AlunoDTO > > proxy =
+			new RpcProxy< PagingLoadResult< AlunoDTO > >()
 		{
-			RpcProxy< PagingLoadResult< AlunoDTO > > proxy =
-				new RpcProxy< PagingLoadResult< AlunoDTO > >()
+			@Override
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< AlunoDTO > > callback )
 			{
-				@Override
-				public void load( Object loadConfig,
-					AsyncCallback< PagingLoadResult< AlunoDTO > > callback )
-				{
-					Services.alunos().getAlunosList( null, null, callback );
-				}
-			};
+				Services.alunos().getAlunosList( null, null, callback );
+			}
+		};
 
-			ListLoader< BaseListLoadResult< AlunoDTO > > load
-				= new BaseListLoader< BaseListLoadResult< AlunoDTO > >( proxy );
+		ListLoader< BaseListLoadResult< AlunoDTO > > load
+			= new BaseListLoader< BaseListLoadResult< AlunoDTO > >( proxy );
 
-			load.addListener( Loader.BeforeLoad, new Listener< LoadEvent >()
-			{
-				public void handleEvent( LoadEvent be )
-				{
-					be.< ModelData > getConfig().set( "offset", 0 );
-					be.< ModelData > getConfig().set( "limit", 10 );
-				}
-			});
-
-			this.store = new ListStore< AlunoDTO >( load );
-		}
-		else
+		load.addListener( Loader.BeforeLoad, new Listener< LoadEvent >()
 		{
-			this.store = new ListStore< AlunoDTO >();
-		}
+			public void handleEvent( LoadEvent be )
+			{
+				be.< ModelData > getConfig().set( "offset", 0 );
+				be.< ModelData > getConfig().set( "limit", 10 );
+			}
+		});
+
+		this.store = new ListStore< AlunoDTO >( load );
 
 		setFieldLabel( "Aluno" );
 		setDisplayField( AlunoDTO.PROPERTY_ALUNO_NOME );
@@ -73,9 +59,8 @@ public class AlunosComboBox
 	private native String getTemplateCB() /*-{
 		return  [
 			'<tpl for=".">',
-			'<div class="x-combo-list-item">{alunoNome} ({alunoCpf})</div>',
+			'<div class="x-combo-list-item">{nome} ({matricula})</div>',
 			'</tpl>'
 		].join("");
 	}-*/;
 }
-

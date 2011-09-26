@@ -30,7 +30,7 @@ public class AlunosView
 	private SimpleGrid< AlunoDTO > gridPanel;
 	private SimpleFilter filter;
 	private TextField< String > nomeBuscaTextField;
-	private TextField< String > cpfBuscaTextField;
+	private TextField< String > matriculaBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 
@@ -83,7 +83,7 @@ public class AlunosView
 			= new ArrayList< ColumnConfig >();
 
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_NOME, "Nome", 250 ) );
-		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_CPF, "CPF", 150 ) );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, "Matricula" , 150 ) );
 
 		return list;
 	}
@@ -98,16 +98,15 @@ public class AlunosView
 
 		this.nomeBuscaTextField = new TextField< String >();
 		this.nomeBuscaTextField.setFieldLabel( "Nome" );
-
-		this.cpfBuscaTextField = new TextField< String >();
-		this.cpfBuscaTextField.setFieldLabel( "CPF" );
-
 		this.filter.addField( this.nomeBuscaTextField );
-		this.filter.addField( this.cpfBuscaTextField );
+
+		this.matriculaBuscaTextField = new TextField< String >();
+		this.matriculaBuscaTextField.setFieldLabel( "Matricula" );
+		this.filter.addField( this.matriculaBuscaTextField );
 
 		this.panel.add( this.filter, bld );
 	}
-	
+
 	@Override
 	public Button getNewButton()
 	{
@@ -146,9 +145,9 @@ public class AlunosView
 	}
 
 	@Override
-	public TextField< String > getCpfBuscaTextField()
+	public TextField< String > getMatriculaBuscaTextField()
 	{
-		return this.cpfBuscaTextField;
+		return this.matriculaBuscaTextField;
 	}
 
 	@Override

@@ -49,9 +49,12 @@ public class ExportExcelFormSubmit
 
 	public void addParameter( String name, String value )
 	{
-		HiddenField< String > hiddenField = new HiddenField< String >();
+		HiddenField< String > hiddenField
+			= new HiddenField< String >();
+
 		hiddenField.setName( name );
 		hiddenField.setValue( value );
+
 		this.formPanel.add( hiddenField );
 	}
 

@@ -19,7 +19,8 @@ import com.gapso.web.trieda.shared.services.UsuariosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class UsuariosServiceImpl
-	extends RemoteService implements UsuariosService
+	extends RemoteService
+	implements UsuariosService
 {
 	private static final long serialVersionUID = 5672570072070386404L;
 

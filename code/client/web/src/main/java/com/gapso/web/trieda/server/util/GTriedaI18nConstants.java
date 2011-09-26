@@ -544,112 +544,158 @@ public class GTriedaI18nConstants
 	}
 
 	@Override
-	public String otimizadoTatico() {
-		return languageManager.getText("otimizadoTatico");
+	public String otimizadoTatico()
+	{
+		return languageManager.getText( "otimizadoTatico" );
 	}
 
 	@Override
-	public String otimizadoOperacional() {
-		return languageManager.getText("otimizadoOperacional");
+	public String otimizadoOperacional()
+	{
+		return languageManager.getText( "otimizadoOperacional" );
 	}
 
 	@Override
-	public String relatorioVisaoCurso() {
-		return languageManager.getText("relatorioVisaoCurso");
+	public String relatorioVisaoCurso()
+	{
+		return languageManager.getText( "relatorioVisaoCurso" );
 	}
 
 	@Override
-	public String capacidadeAlunos() {
-		return languageManager.getText("capacidadeAlunos");
+	public String capacidadeAlunos()
+	{
+		return languageManager.getText( "capacidadeAlunos" );
 	}
 
 	@Override
-	public String codigoAreaTitulacao() {
-		return languageManager.getText("codigoAreaTitulacao");
+	public String codigoAreaTitulacao()
+	{
+		return languageManager.getText( "codigoAreaTitulacao" );
 	}
 
 	@Override
-	public String codigoCampus() {
-		return languageManager.getText("codigoCampus");
+	public String codigoCampus()
+	{
+		return languageManager.getText( "codigoCampus" );
 	}
 
 	@Override
-	public String codigoCurriculo() {
-		return languageManager.getText("codigoCurriculo");
+	public String codigoCurriculo()
+	{
+		return languageManager.getText( "codigoCurriculo" );
 	}
 
 	@Override
-	public String codigoCurso() {
-		return languageManager.getText("codigoCurso");
+	public String codigoCurso()
+	{
+		return languageManager.getText( "codigoCurso" );
 	}
 
 	@Override
-	public String codigoDisciplina() {
-		return languageManager.getText("codigoDisciplina");
+	public String codigoDisciplina()
+	{
+		return languageManager.getText( "codigoDisciplina" );
 	}
 
 	@Override
-	public String codigoMatrizCurricular() {
-		return languageManager.getText("codigoMatrizCurricular");
+	public String codigoMatrizCurricular()
+	{
+		return languageManager.getText( "codigoMatrizCurricular" );
 	}
 
 	@Override
-	public String codigoSala() {
-		return languageManager.getText("codigoSala");
+	public String codigoSala()
+	{
+		return languageManager.getText( "codigoSala" );
 	}
 
 	@Override
-	public String codigoUnidade() {
-		return languageManager.getText("codigoUnidade");
+	public String codigoUnidade()
+	{
+		return languageManager.getText( "codigoUnidade" );
 	}
 
 	@Override
-	public String descricaoCurriculo() {
-		return languageManager.getText("descricaoCurriculo");
+	public String descricaoCurriculo()
+	{
+		return languageManager.getText( "descricaoCurriculo" );
 	}
 
 	@Override
-	public String nomeCurso() {
-		return languageManager.getText("nomeCurso");
+	public String nomeCurso()
+	{
+		return languageManager.getText( "nomeCurso" );
 	}
 
 	@Override
-	public String nomeDisciplina() {
-		return languageManager.getText("nomeDisciplina");
+	public String nomeDisciplina()
+	{
+		return languageManager.getText( "nomeDisciplina" );
 	}
 
 	@Override
-	public String nomeProfessor() {
-		return languageManager.getText("nomeProfessor");
+	public String nomeProfessor()
+	{
+		return languageManager.getText( "nomeProfessor" );
 	}
 
 	@Override
-	public String tipoCurso() {
-		return languageManager.getText("tipoCurso");
+	public String tipoCurso()
+	{
+		return languageManager.getText( "tipoCurso" );
 	}
 
 	@Override
-	public String tipoDisciplina() {
-		return languageManager.getText("tipoDisciplina");
+	public String tipoDisciplina()
+	{
+		return languageManager.getText( "tipoDisciplina" );
 	}
 
 	@Override
-	public String relatorioVisaoProfessor() {
-		return languageManager.getText("relatorioVisaoProfessor");
+	public String relatorioVisaoProfessor()
+	{
+		return languageManager.getText( "relatorioVisaoProfessor" );
 	}
 
 	@Override
-	public String mensagemAlerta() {
-		return languageManager.getText("mensagemAlerta");
+	public String mensagemAlerta()
+	{
+		return languageManager.getText( "mensagemAlerta" );
 	}
 
 	@Override
-	public String periodos() {
-		return languageManager.getText("periodos");
+	public String periodos()
+	{
+		return languageManager.getText( "periodos" );
 	}
 
 	@Override
-	public String semanaLetiva() {
-		return languageManager.getText("semanaLetiva");
+	public String semanaLetiva()
+	{
+		return languageManager.getText( "semanaLetiva" );
+	}
+
+	@Override
+	public String matriculaAluno()
+	{
+		return languageManager.getText( "matriculaAluno" );
+	}
+
+	@Override
+	public String nomeAluno()
+	{
+		return languageManager.getText( "nomeAluno" );
+	}
+
+	@Override
+	public String prioridadeAlunoDemanda()
+	{
+		return languageManager.getText( "prioridadeAlunoDemanda" );
+	}
+
+	@Override
+	public String alunosDemanda()
+	{
+		return languageManager.getText( "alunosDemanda" );
 	}
 }

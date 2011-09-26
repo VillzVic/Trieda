@@ -43,30 +43,38 @@ public class CurriculoDisciplina
 	private static final long serialVersionUID = -5429743673577487971L;
 
     @NotNull
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Curriculo.class)
-    @JoinColumn(name = "CRC_ID")
+    @ManyToOne( cascade = { CascadeType.PERSIST,
+    	CascadeType.MERGE, CascadeType.REFRESH },
+    	targetEntity = Curriculo.class )
+    @JoinColumn( name = "CRC_ID" )
     private Curriculo curriculo;
 
     @NotNull
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, targetEntity = Disciplina.class)
-    @JoinColumn(name = "DIS_ID")
+    @ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+    	CascadeType.REFRESH },
+    	targetEntity = Disciplina.class )
+    @JoinColumn( name = "DIS_ID" )
     private Disciplina disciplina;
 
     @NotNull
-    @Column(name = "CDI_PERIODO")
-    @Min(1L)
-    @Max(99L)
+    @Column( name = "CDI_PERIODO" )
+    @Min( 1L )
+    @Max( 99L )
     private Integer periodo;
 
-    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    	CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
     private Set< Sala > salas = new HashSet< Sala >();
 
-    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    	CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
     	mappedBy = "curriculoDisciplinas" )
     private Set< GrupoSala > gruposSala = new HashSet< GrupoSala >();
 
-	public String toString() {
+	public String toString()
+	{
         StringBuilder sb = new StringBuilder();
+
         sb.append("Id: ").append(getId()).append(", ");
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Curriculo: ").append(getCurriculo()).append(", ");
@@ -119,10 +127,12 @@ public class CurriculoDisciplina
 	
 	public String getNaturalKeyString()
 	{
-		return getCurriculo().getCurso().getCodigo()
+		String key = ( getCurriculo().getCurso().getCodigo()
 			+ "-" + getCurriculo().getCodigo()
 			+ "-" + getPeriodo().toString()
-			+ "-" + getDisciplina().getCodigo();
+			+ "-" + getDisciplina().getCodigo() );
+
+		return key;
 	}
 
 	@PersistenceContext

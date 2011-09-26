@@ -33,7 +33,7 @@ public class AlunosPresenter
 		Button getEditButton();
 		Button getRemoveButton();
 		TextField< String > getNomeBuscaTextField();
-		TextField< String > getCpfBuscaTextField();
+		TextField< String > getMatriculaBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< AlunoDTO > getGrid();
@@ -68,9 +68,9 @@ public class AlunosPresenter
 				AsyncCallback< PagingLoadResult< AlunoDTO > > callback )
 			{
 				String nome = display.getNomeBuscaTextField().getValue();
-				String cpf = display.getCpfBuscaTextField().getValue();
+				String matricula = display.getMatriculaBuscaTextField().getValue();
 
-				service.getAlunosList( nome, cpf, callback );
+				service.getAlunosList( nome, matricula, callback );
 			}
 		};
 
@@ -140,7 +140,7 @@ public class AlunosPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				display.getNomeBuscaTextField().setValue( null );
-				display.getCpfBuscaTextField().setValue( null );
+				display.getMatriculaBuscaTextField().setValue( null );
 				display.getGrid().updateList();
 			}
 		});
