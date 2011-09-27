@@ -272,6 +272,7 @@ public class SemanaLetiva
 	public static Set< SemanaLetiva > getByOficial(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
+		/*
 		if ( campus == null || instituicaoEnsino == null )
 		{
 			return new HashSet< SemanaLetiva >();
@@ -296,6 +297,10 @@ public class SemanaLetiva
 		}
 
 		return semanasLetivas;
+		*/
+
+		return new HashSet< SemanaLetiva >(
+			SemanaLetiva.findAll( instituicaoEnsino ) );
 	}
 
 	@SuppressWarnings("unchecked")

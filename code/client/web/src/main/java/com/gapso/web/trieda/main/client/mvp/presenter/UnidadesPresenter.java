@@ -105,7 +105,7 @@ public class UnidadesPresenter
 	
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -118,7 +118,7 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -147,7 +147,7 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -178,7 +178,9 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getImportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		this.display.getImportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
@@ -186,13 +188,14 @@ public class UnidadesPresenter
 						ExcelInformationType.UNIDADES, instituicaoEnsinoDTO );
 
 				ImportExcelFormView importExcelFormView
-					= new ImportExcelFormView( parametros,display.getGrid() );
+					= new ImportExcelFormView( parametros, display.getGrid() );
 
 				importExcelFormView.show();
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		this.display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -207,17 +210,22 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		this.display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getNomeBuscaTextField().setValue(null);
-				display.getCodigoBuscaTextField().setValue(null);
-				display.getCampusBuscaComboBox().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getNomeBuscaTextField().setValue( null );
+				display.getCodigoBuscaTextField().setValue( null );
+				display.getCampusBuscaComboBox().setValue( null );
+
 				display.getGrid().updateList();
 			}
 		});
 
-		display.getSubmitBuscaButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		this.display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -226,7 +234,8 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getSalasButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		this.display.getSalasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -255,7 +264,7 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getDisponibilidadeButton().addSelectionListener(
+		this.display.getDisponibilidadeButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -265,19 +274,24 @@ public class UnidadesPresenter
 				semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
 
 				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
 				final FutureResult< CampusDTO > futureCampusDTO = new FutureResult< CampusDTO >();
 				final FutureResult< PagingLoadResult< HorarioDisponivelCenarioDTO > > futureHorarioDisponivelCenarioDTOList
 					= new FutureResult< PagingLoadResult< HorarioDisponivelCenarioDTO > >();
 
 				Services.campi().getCampus( unidadeDTO.getCampusId(), futureCampusDTO );
-				Services.unidades().getHorariosDisponiveis( unidadeDTO, semanaLetivaDTO, futureHorarioDisponivelCenarioDTOList );
-				FutureSynchronizer synch = new FutureSynchronizer( futureCampusDTO, futureHorarioDisponivelCenarioDTOList );
+				Services.unidades().getHorariosDisponiveis( unidadeDTO,
+					semanaLetivaDTO, futureHorarioDisponivelCenarioDTOList );
+
+				FutureSynchronizer synch = new FutureSynchronizer(
+					futureCampusDTO, futureHorarioDisponivelCenarioDTOList );
 
 				synch.addCallback( new AsyncCallback< Boolean >()
 				{
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi posssível exibir as tela de disponiblidade", null );
 					}
 
 					public void onSuccess( Boolean result )
@@ -286,8 +300,10 @@ public class UnidadesPresenter
 						List< HorarioDisponivelCenarioDTO > horarioDisponivelCenarioDTOList
 							= futureHorarioDisponivelCenarioDTOList.result().getData();
 
-						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter( instituicaoEnsinoDTO, campusDTO, semanaLetivaDTO,
-							new HorarioDisponivelUnidadeFormView( unidadeDTO, horarioDisponivelCenarioDTOList ) );
+						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter(
+							instituicaoEnsinoDTO, campusDTO, semanaLetivaDTO,
+							new HorarioDisponivelUnidadeFormView(
+								unidadeDTO, horarioDisponivelCenarioDTOList ) );
 
 						presenter.go( null );
 					}
@@ -295,7 +311,8 @@ public class UnidadesPresenter
 			}
 		});
 
-		display.getDeslocamentoUnidadesButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		this.display.getDeslocamentoUnidadesButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -311,7 +328,7 @@ public class UnidadesPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		gTab = (GTab)widget;
-		gTab.add( (GTabItem) display.getComponent() );
+		this.gTab = (GTab)widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
 	}
 }

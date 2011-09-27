@@ -37,7 +37,8 @@ import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @Transactional
 public class UnidadesServiceImpl
-	extends RemoteService implements UnidadesService
+	extends RemoteService
+	implements UnidadesService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
 
@@ -60,9 +61,11 @@ public class UnidadesServiceImpl
 		List< SemanaLetiva > semanasLetivas
 			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
-		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >();
+		List< HorarioDisponivelCenario > list
+			= new ArrayList< HorarioDisponivelCenario >();
 
-		Unidade unidade = Unidade.find(	unidadeDTO.getId(), getInstituicaoEnsinoUser() );
+		Unidade unidade = Unidade.find(
+			unidadeDTO.getId(), getInstituicaoEnsinoUser() );
 
 		if ( unidade != null )
 		{
@@ -90,30 +93,44 @@ public class UnidadesServiceImpl
 			horarios.add( o );
 		}
 
-		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry : horariosTurnos.entrySet() )
+		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
+			: horariosTurnos.entrySet() )
 		{
 			Collections.sort( entry.getValue() );
 		}
-		
-		Map<Date, List<String>> horariosFinalTurnos = new TreeMap<Date, List<String>>();
-		for(Entry<String, List<HorarioDisponivelCenarioDTO>> entry : horariosTurnos.entrySet()) {
-			Date ultimoHorario = entry.getValue().get(entry.getValue().size()-1).getHorario();
-			List<String> turnos = horariosFinalTurnos.get(ultimoHorario);
-			if (turnos == null) {
-				turnos = new ArrayList<String>();
-				horariosFinalTurnos.put(ultimoHorario,turnos);
+
+		Map< Date, List< String > > horariosFinalTurnos
+			= new TreeMap< Date, List< String > >();
+
+		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
+			: horariosTurnos.entrySet() )
+		{
+			Date ultimoHorario = entry.getValue().get(
+				entry.getValue().size() - 1 ).getHorario();
+
+			List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
+
+			if ( turnos == null )
+			{
+				turnos = new ArrayList< String >();
+				horariosFinalTurnos.put( ultimoHorario, turnos );
 			}
-			turnos.add(entry.getKey());
+
+			turnos.add( entry.getKey() );
 		}
-		
+
 		listDTO.clear();
-		for(Entry<Date, List<String>> entry : horariosFinalTurnos.entrySet()) {
-			for (String turno : entry.getValue()) {
-				listDTO.addAll(horariosTurnos.get(turno));
+
+		for ( Entry< Date, List< String > > entry
+			: horariosFinalTurnos.entrySet() )
+		{
+			for ( String turno : entry.getValue() )
+			{
+				listDTO.addAll( horariosTurnos.get( turno ) );
 			}
 		}
-		
-		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
+
+		return new BasePagingLoadResult< HorarioDisponivelCenarioDTO >( listDTO );
 	}
 	
 	@Override
@@ -137,6 +154,7 @@ public class UnidadesServiceImpl
 				unidade.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) );
 
 		removerList.removeAll( listSelecionados );
+
 		for ( HorarioDisponivelCenario o : removerList )
 		{
 			o.getUnidades().remove( unidade );
@@ -163,7 +181,7 @@ public class UnidadesServiceImpl
 		BasePagingLoadConfig loadConfig )
 	{
 		Long campusID = loadConfig.get( "campusId" );
-		System.out.println( "Buscando: "+ campusID );
+		System.out.println( "Buscando: " + campusID );
 		CampusDTO campusDTO = null;
 
 		if ( campusID != null )
@@ -177,19 +195,31 @@ public class UnidadesServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult<UnidadeDTO> getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config) {
-		List<UnidadeDTO> list = new ArrayList<UnidadeDTO>();
+	public PagingLoadResult< UnidadeDTO > getBuscaList(
+		CampusDTO campusDTO, String nome,
+		String codigo, PagingLoadConfig config )
+	{
+		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
 		String orderBy = config.getSortField();
-		if(orderBy != null) {
-			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
 				orderBy = orderBy + " asc";
-			} else {
+			}
+			else
+			{
 				orderBy = orderBy + " desc";
 			}
 		}
+
 		Campus campus = null;
-		if(campusDTO != null) {
-			campus = ConvertBeans.toCampus(campusDTO);
+
+		if ( campusDTO != null )
+		{
+			campus = ConvertBeans.toCampus( campusDTO );
 		}
 
 		List< Unidade > listUnidades = Unidade.findBy(
@@ -214,9 +244,9 @@ public class UnidadesServiceImpl
 
 		return result;
 	}
-	
+
 	@Override
-	public ListLoadResult<UnidadeDTO> getListByCampus( CampusDTO campusDTO )
+	public ListLoadResult< UnidadeDTO > getListByCampus( CampusDTO campusDTO )
 	{
 		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
 		Campus campus = Campus.find(
@@ -232,7 +262,7 @@ public class UnidadesServiceImpl
 
 		return new BaseListLoadResult< UnidadeDTO >( list );
 	}
-	
+
 	@Override
 	public ListLoadResult< UnidadeDTO > getList()
 	{
@@ -247,30 +277,43 @@ public class UnidadesServiceImpl
 
 		return new BaseListLoadResult< UnidadeDTO >( list );
 	}
-	
+
 	@Override
-	public void save(UnidadeDTO unidadeDTO) {
-		Unidade unidade = ConvertBeans.toUnidade(unidadeDTO);
-		if(unidade.getId() != null && unidade.getId() > 0) {
+	public void save( UnidadeDTO unidadeDTO )
+	{
+		Unidade unidade = ConvertBeans.toUnidade( unidadeDTO );
+
+		if ( unidade.getId() != null
+			&& unidade.getId() > 0 )
+		{
 			unidade.merge();
-		} else {
+		}
+		else
+		{
 			unidade.persist();
 		}
 	}
-	
+
 	@Override
-	public void remove(List<UnidadeDTO> unidadeDTOList) throws TriedaException {
-		try {
-			for(UnidadeDTO unidadeDTO : unidadeDTOList) {
-				ConvertBeans.toUnidade(unidadeDTO).remove();
+	public void remove( List< UnidadeDTO > unidadeDTOList )
+		throws TriedaException
+	{
+		try
+		{
+			for ( UnidadeDTO unidadeDTO : unidadeDTOList )
+			{
+				ConvertBeans.toUnidade( unidadeDTO ).remove();
 			}
-		} catch (Exception e) {
-			throw new TriedaException(e);
+		}
+		catch ( Exception e )
+		{
+			throw new TriedaException( e );
 		}
 	}
-	
+
 	@Override
-	public List<DeslocamentoUnidadeDTO> getDeslocamento(CampusDTO campusDTO) {
+	public List< DeslocamentoUnidadeDTO > getDeslocamento( CampusDTO campusDTO )
+	{
 		List< DeslocamentoUnidadeDTO > list
 			= new ArrayList< DeslocamentoUnidadeDTO >();
 

@@ -113,7 +113,7 @@ public class HorarioDisponivelCenarioFormPresenter
 					{
 						display.getStore().getLoader().load();
 
-						Info.display("Adicionado",
+						Info.display( "Adicionado",
 							"Horário adicionado com sucesso!" );
 					}
 				});
@@ -134,7 +134,7 @@ public class HorarioDisponivelCenarioFormPresenter
 					{
 						display.getStore().getLoader().load();
 
-						Info.display("Removido",
+						Info.display( "Removido",
 							"Horário removido com sucesso!" );
 					}
 				});

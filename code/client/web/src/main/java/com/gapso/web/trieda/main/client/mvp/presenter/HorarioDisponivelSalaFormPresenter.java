@@ -20,14 +20,16 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HorarioDisponivelSalaFormPresenter implements Presenter {
-
-	public interface Display {
+public class HorarioDisponivelSalaFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		SimpleModal getSimpleModal();
 		SalaDTO getSalaDTO();
-		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
-		ListStore<HorarioDisponivelCenarioDTO> getStore();
+		void setProxy( RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy );
+		ListStore< HorarioDisponivelCenarioDTO > getStore();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -35,8 +37,9 @@ public class HorarioDisponivelSalaFormPresenter implements Presenter {
 	private UnidadeDTO unidade;
 	private SemanaLetivaDTO semanaLetiva;
 
-	public HorarioDisponivelSalaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		UnidadeDTO unidade, SemanaLetivaDTO semanaLetiva, Display display )
+	public HorarioDisponivelSalaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, UnidadeDTO unidade,
+		SemanaLetivaDTO semanaLetiva, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.unidade = unidade;
@@ -47,50 +50,69 @@ public class HorarioDisponivelSalaFormPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy =
+			new RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.unidades().getHorariosDisponiveis(unidade, semanaLetiva, callback);
+			protected void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
+			{
+				Services.unidades().getHorariosDisponiveis(
+					unidade, semanaLetiva, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		this.display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getStore().commitChanges();
-				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
-				
-				Services.salas().saveHorariosDisponiveis(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
+				List< HorarioDisponivelCenarioDTO > hdcDTOList
+					= display.getStore().getModels();
+
+				Services.salas().saveHorariosDisponiveis(
+					getDTO(), hdcDTOList, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(Void result) {
-						Info.display("Atualizado", "Horários atualizados com sucesso!");
+					public void onSuccess( Void result )
+					{
+						Info.display( "Atualizado",
+							"Horários atualizados com sucesso!" );
+
 						display.getSimpleModal().hide();
 					}
-					
 				});
 			}
 		});
-		
 	}
 
 	private SalaDTO getDTO()
 	{
-		SalaDTO dto = display.getSalaDTO();
-		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		SalaDTO dto = this.display.getSalaDTO();
+		dto.setInstituicaoEnsinoId(
+			this.instituicaoEnsinoDTO.getId() );
+
 		return dto;
 	}
 
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

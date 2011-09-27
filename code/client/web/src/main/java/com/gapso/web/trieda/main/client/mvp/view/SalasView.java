@@ -26,10 +26,12 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 
-public class SalasView extends MyComposite implements SalasPresenter.Display {
-
+public class SalasView
+	extends MyComposite
+	implements SalasPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<SalaDTO> gridPanel;
+	private SimpleGrid< SalaDTO > gridPanel;
 	private SimpleFilter filter;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -42,164 +44,201 @@ public class SalasView extends MyComposite implements SalasPresenter.Display {
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
 
-	public SalasView() {
-		this(null, null);
+	public SalasView()
+	{
+		this( null, null );
 	}
 
-	public SalasView(CampusDTO campusDTO, UnidadeDTO unidadeDTO) {
+	public SalasView(
+		CampusDTO campusDTO, UnidadeDTO unidadeDTO )
+	{
 		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
+
 		initUI();
 	}
 
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading(getI18nConstants().salasHeadingPanel());
+	private void initUI()
+	{
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( getI18nConstants().salasHeadingPanel() );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( this.tabItem );
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem(getI18nConstants().salas(),
-				Resources.DEFAULTS.sala16());
-		tabItem.setContent(panel);
+	private void createTabItem()
+	{
+		this.tabItem = new GTabItem(
+			getI18nConstants().salas(), Resources.DEFAULTS.sala16() );
+
+		this.tabItem.setContent( this.panel );
 	}
 
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		toolBar.add(new SeparatorToolItem());
-		disciplinasAssociadasBT = toolBar.createButton(getI18nConstants()
-				.disciplinasAssociadas(), Resources.DEFAULTS.disciplina16());
-		toolBar.add(disciplinasAssociadasBT);
-		gruposDeSalasBT = toolBar.createButton(
-				getI18nConstants().gruposSalas(), Resources.DEFAULTS.sala16());
-		toolBar.add(gruposDeSalasBT);
-		disponibilidadeBT = toolBar.createButton(getI18nConstants()
-				.disponibilidadesSemanaLetiva(), Resources.DEFAULTS
-				.disponibilidade16());
-		toolBar.add(disponibilidadeBT);
-		panel.setTopComponent(toolBar);
+	private void createToolBar()
+	{
+		this.toolBar = new SimpleToolBar( this );
+		this.toolBar.add( new SeparatorToolItem() );
+
+		this.disciplinasAssociadasBT = this.toolBar.createButton(
+			getI18nConstants() .disciplinasAssociadas(),
+			Resources.DEFAULTS.disciplina16() );
+
+		this.toolBar.add( this.disciplinasAssociadasBT );
+
+		this.gruposDeSalasBT = toolBar.createButton(
+			getI18nConstants().gruposSalas(),
+			Resources.DEFAULTS.sala16() );
+
+		this.toolBar.add( this.gruposDeSalasBT );
+		this.disponibilidadeBT = this.toolBar.createButton(
+			getI18nConstants().disponibilidadesSemanaLetiva(),
+			Resources.DEFAULTS.disponibilidade16() );
+
+		this.toolBar.add( this.disponibilidadeBT );
+		this.panel.setTopComponent( this.toolBar );
 	}
 
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-		bld.setMargins(new Margins(5, 5, 5, 5));
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-		gridPanel = new SimpleGrid<SalaDTO>(getColumnList(), this);
-		panel.add(gridPanel, bld);
+		this.gridPanel = new SimpleGrid< SalaDTO >( getColumnList(), this );
+		this.panel.add( this.gridPanel, bld );
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_CODIGO, getI18nConstants()
-				.codigoSala(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_TIPO_STRING,
-				getI18nConstants().tipo(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_UNIDADE_STRING,
-				getI18nConstants().codigoUnidade(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_NUMERO, getI18nConstants()
-				.numero(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_ANDAR, getI18nConstants()
-				.andar(), 100));
-		list.add(new ColumnConfig(SalaDTO.PROPERTY_CAPACIDADE,
-				getI18nConstants().capacidadeAlunos(), 100));
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_CODIGO,
+			getI18nConstants().codigoSala(), 100 ) );
+
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_TIPO_STRING,
+			getI18nConstants().tipo(), 100 ) );
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_UNIDADE_STRING,
+			getI18nConstants().codigoUnidade(), 100 ) );
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_NUMERO,
+			getI18nConstants().numero(), 100 ) );
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_ANDAR,
+			getI18nConstants().andar(), 100 ) );
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_CAPACIDADE,
+			getI18nConstants().capacidadeAlunos(), 130 ) );
+
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
 
-		filter = new SimpleFilter();
+		this.filter = new SimpleFilter();
 
-		campusCB = new CampusComboBox();
-		campusCB.setValue(campusDTO);
-		unidadeCB = new UnidadeComboBox(campusCB);
-		unidadeCB.setValue(unidadeDTO);
+		this.campusCB = new CampusComboBox();
+		this.campusCB.setValue( this.campusDTO );
+		this.unidadeCB = new UnidadeComboBox( this.campusCB );
+		this.unidadeCB.setValue( this.unidadeDTO );
 
-		filter.addField(campusCB);
-		filter.addField(unidadeCB);
+		this.filter.addField( this.campusCB );
+		this.filter.addField( this.unidadeCB );
 
-		panel.add(filter, bld);
+		this.panel.add( this.filter, bld );
 	}
 
 	@Override
-	public Button getNewButton() {
+	public Button getNewButton()
+	{
 		return toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
+	public Button getEditButton()
+	{
 		return toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
+	public Button getRemoveButton()
+	{
 		return toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
+	public Button getImportExcelButton()
+	{
 		return toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
+	public Button getExportExcelButton()
+	{
 		return toolBar.getExportExcelButton();
 	}
 
 	@Override
-	public GTabItem getGTabItem() {
+	public GTabItem getGTabItem()
+	{
 		return tabItem;
 	}
 
 	@Override
-	public SimpleGrid<SalaDTO> getGrid() {
+	public SimpleGrid< SalaDTO > getGrid()
+	{
 		return gridPanel;
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<SalaDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy(
+		RpcProxy< PagingLoadResult< SalaDTO > > proxy )
+	{
+		gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public Button getDisciplinasAssociadasButton() {
+	public Button getDisciplinasAssociadasButton()
+	{
 		return disciplinasAssociadasBT;
 	}
 
 	@Override
-	public Button getGruposDeSalasButton() {
+	public Button getGruposDeSalasButton()
+	{
 		return gruposDeSalasBT;
 	}
 
 	@Override
-	public Button getDisponibilidadeButton() {
+	public Button getDisponibilidadeButton()
+	{
 		return disponibilidadeBT;
 	}
 
 	@Override
-	public UnidadeComboBox getUnidadeCB() {
+	public UnidadeComboBox getUnidadeCB()
+	{
 		return unidadeCB;
 	}
 
 	@Override
-	public CampusComboBox getCampusCB() {
+	public CampusComboBox getCampusCB()
+	{
 		return campusCB;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
+	public Button getSubmitBuscaButton()
+	{
 		return filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
+	public Button getResetBuscaButton()
+	{
 		return filter.getResetButton();
 	}
-
 }

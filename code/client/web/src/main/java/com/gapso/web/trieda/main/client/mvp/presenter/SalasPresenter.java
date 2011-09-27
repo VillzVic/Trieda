@@ -57,7 +57,7 @@ public class SalasPresenter
 		CampusComboBox getCampusCB();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<SalaDTO> getGrid();
+		SimpleGrid< SalaDTO > getGrid();
 		GTabItem getGTabItem();
 		Button getDisponibilidadeButton();
 		Component getComponent();
@@ -103,7 +103,7 @@ public class SalasPresenter
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener<ButtonEvent>()
 		{
 			@Override
@@ -116,7 +116,7 @@ public class SalasPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -158,7 +158,7 @@ public class SalasPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -190,7 +190,7 @@ public class SalasPresenter
 			}
 		});
 
-		display.getImportExcelButton().addSelectionListener(
+		this.display.getImportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -206,7 +206,7 @@ public class SalasPresenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
+		this.display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -222,7 +222,7 @@ public class SalasPresenter
 			}
 		});
 
-		display.getDisponibilidadeButton().addSelectionListener(
+		this.display.getDisponibilidadeButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -249,7 +249,8 @@ public class SalasPresenter
 				{
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi posssível exibir as tela de disponiblidade", null );
 					}
 
 					public void onSuccess( Boolean result )
@@ -269,7 +270,7 @@ public class SalasPresenter
 			}
 		});
 
-		display.getResetBuscaButton().addSelectionListener(
+		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -277,11 +278,12 @@ public class SalasPresenter
 			{
 				display.getUnidadeCB().setValue( null );
 				display.getCampusCB().setValue( null );
+
 				display.getGrid().updateList();
 			}
 		});
 
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override

@@ -16,64 +16,76 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
-public class HorarioDisponivelSalaFormView extends MyComposite implements HorarioDisponivelSalaFormPresenter.Display {
-
+public class HorarioDisponivelSalaFormView
+	extends MyComposite
+	implements HorarioDisponivelSalaFormPresenter.Display
+{
 	private SimpleModal simpleModal;
 	private ContentPanel contentPanel;
-	private SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO> gridPanel;
-	private List<HorarioDisponivelCenarioDTO> horariosDisponiveis;
+	private SemanaLetivaDoCenarioGrid< HorarioDisponivelCenarioDTO > gridPanel;
+	private List< HorarioDisponivelCenarioDTO > horariosDisponiveis;
 	private SalaDTO salaDTO;
-	
-	public HorarioDisponivelSalaFormView(SalaDTO salaDTO, List<HorarioDisponivelCenarioDTO> horariosDisponiveis) {
+
+	public HorarioDisponivelSalaFormView( SalaDTO salaDTO,
+		List< HorarioDisponivelCenarioDTO > horariosDisponiveis )
+	{
 		this.salaDTO = salaDTO;
 		this.horariosDisponiveis = horariosDisponiveis;
+
 		initUI();
 		createGrid();
 	}
-	
+
 	private void initUI()
 	{
-		simpleModal = new SimpleModal("Disponibilidade da Sala (" + salaDTO.getCodigo() + ")", Resources.DEFAULTS.sala16());
-		simpleModal.setHeight(500);
-		simpleModal.setWidth(600);
+		this.simpleModal = new SimpleModal( "Disponibilidade da Sala (" +
+			this.salaDTO.getCodigo() + ")", Resources.DEFAULTS.sala16() );
+
+		this.simpleModal.setHeight( 500 );
+		this.simpleModal.setWidth( 600 );
 	}
 
 	private void createGrid()
 	{
-		contentPanel = new ContentPanel(new FitLayout());
-		contentPanel.setHeaderVisible(false);
-		contentPanel.setBodyBorder(false);
-	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
-	    	horariosDisponiveis,HorarioDisponivelCenarioDTO.PROPERTY_ID);
-	    contentPanel.add(gridPanel);
-		simpleModal.setContent(contentPanel);
+		this.contentPanel = new ContentPanel( new FitLayout() );
+
+		this.contentPanel.setHeaderVisible( false );
+		this.contentPanel.setBodyBorder( false );
+		this.gridPanel = new SemanaLetivaDoCenarioGrid< HorarioDisponivelCenarioDTO >(
+			this.horariosDisponiveis, HorarioDisponivelCenarioDTO.PROPERTY_ID );
+
+		this.contentPanel.add( this.gridPanel );
+		this.simpleModal.setContent( this.contentPanel );
 	}
 
 	@Override
-	public Button getSalvarButton() {
-		return simpleModal.getSalvarBt();
+	public Button getSalvarButton()
+	{
+		return this.simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public SalaDTO getSalaDTO() {
-		return salaDTO;
+	public SalaDTO getSalaDTO()
+	{
+		return this.salaDTO;
 	}
 
 	@Override
-	public SimpleModal getSimpleModal() {
-		return simpleModal;
+	public SimpleModal getSimpleModal()
+	{
+		return this.simpleModal;
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy(
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy )
+	{
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public ListStore<HorarioDisponivelCenarioDTO> getStore() {
-		return gridPanel.getStore();
+	public ListStore< HorarioDisponivelCenarioDTO > getStore()
+	{
+		return this.gridPanel.getStore();
 	}
-
-	
-
 }

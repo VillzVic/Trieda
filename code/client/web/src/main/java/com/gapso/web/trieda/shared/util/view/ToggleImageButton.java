@@ -7,34 +7,43 @@ import com.extjs.gxt.ui.client.widget.button.ToggleButton;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class ToggleImageButton extends ToggleButton {
+public class ToggleImageButton
+	extends ToggleButton
+{
+	private ImageResource iconSelect;
+	private ImageResource iconNotSelect;
 
-	private ImageResource iconSelect, iconNotSelect;
-	
-	public ToggleImageButton(Boolean value, ImageResource iconSelect, ImageResource iconNotSelect) {
+	public ToggleImageButton( Boolean value,
+		ImageResource iconSelect, ImageResource iconNotSelect )
+	{
 		super();
+
 		this.iconSelect = iconSelect;
 		this.iconNotSelect = iconNotSelect;
-		toggle(value, false);
+
+		toggle( value, false );
 		configuration();
 	}
 
-	private void configuration() {
-		addStyleName("toggle-image-button");
+	private void configuration()
+	{
+		addStyleName( "toggle-image-button" );
 		updateIcon();
-		setIconAlign(IconAlign.LEFT);
-		addSelectionListener(new SelectionListener<ButtonEvent>() {
+		setIconAlign( IconAlign.LEFT );
+
+		addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				updateIcon();
 			}
 	    });
 	}
-	
-	private void updateIcon() {
-		setIcon(AbstractImagePrototype.create(isPressed()?iconSelect:iconNotSelect));
-	}
 
-	
-	
+	private void updateIcon()
+	{
+		setIcon( AbstractImagePrototype.create(
+			isPressed() ? iconSelect : iconNotSelect ) );
+	}
 }

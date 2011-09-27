@@ -106,7 +106,7 @@ public class CampiPresenter
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -119,7 +119,7 @@ public class CampiPresenter
 				}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -135,7 +135,7 @@ public class CampiPresenter
 				}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -152,7 +152,8 @@ public class CampiPresenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Não foi possível remover o(s) campus/campi", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi possível remover o(s) campus/campi", null );
 					}
 
 					@Override
@@ -166,58 +167,65 @@ public class CampiPresenter
 			}
 		});
 
-		display.getImportExcelButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected( ButtonEvent ce )
+		this.display.getImportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.CAMPI, instituicaoEnsinoDTO );
+
+				ImportExcelFormView importExcelFormView
+					= new ImportExcelFormView( parametros, display.getGrid() );
+
+				importExcelFormView.show();
+			}
+		});
+
+		this.display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.CAMPI, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+
+		this.display.getUnidadeDeslocamentosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				UnidadesServiceAsync service = Services.unidades();
+				final CampusDTO campusDTO
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
+				service.getDeslocamento( campusDTO,
+					new AbstractAsyncCallbackWithDefaultOnFailure< List< DeslocamentoUnidadeDTO > >( display )
 					{
-						ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.CAMPI, instituicaoEnsinoDTO );
+						@Override
+						public void onSuccess(
+							List<DeslocamentoUnidadeDTO> result )
+						{
+							Presenter presenter = new UnidadesDeslocamentoPresenter(
+								new UnidadesDeslocamentoView( campusDTO, result ) );
 
-						ImportExcelFormView importExcelFormView
-							= new ImportExcelFormView( parametros, display.getGrid() );
+							presenter.go( gTab );
+						}
+					});
+			}
+		});
 
-						importExcelFormView.show();
-					}
-				});
-		display.getExportExcelButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected( ButtonEvent ce )
-					{
-						ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.CAMPI, instituicaoEnsinoDTO );
-
-						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-							parametros, display.getI18nConstants(), display.getI18nMessages() );
-
-						e.submit();
-					}
-				});
-		display.getUnidadeDeslocamentosButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected( ButtonEvent ce )
-					{
-						UnidadesServiceAsync service = Services.unidades();
-						final CampusDTO campusDTO = display.getGrid().getGrid()
-								.getSelectionModel().getSelectedItem();
-						service.getDeslocamento( campusDTO,
-							new AbstractAsyncCallbackWithDefaultOnFailure< List< DeslocamentoUnidadeDTO > >( display )
-							{
-								@Override
-								public void onSuccess(
-									List<DeslocamentoUnidadeDTO> result )
-								{
-									Presenter presenter = new UnidadesDeslocamentoPresenter(
-										new UnidadesDeslocamentoView( campusDTO, result ) );
-
-									presenter.go( gTab );
-								}
-							});
-					}
-				});
-		display.getDisponibilidadeButton().addSelectionListener(
+		this.display.getDisponibilidadeButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -230,12 +238,13 @@ public class CampiPresenter
 						= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 					Services.campi().getHorariosDisponiveis( campusDTO, semanaLetivaDTO,
-						new AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>>()
+						new AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
 						{
 							@Override
 							public void onFailure( Throwable caught )
 							{
-								MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
+								MessageBox.alert( "ERRO!",
+									"Não foi posssível exibir as tela de disponiblidade", null );
 							}
 
 							@Override
@@ -254,7 +263,8 @@ public class CampiPresenter
 						});
 				}
 			});
-		display.getResetBuscaButton().addSelectionListener(
+
+		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -269,21 +279,22 @@ public class CampiPresenter
 					display.getGrid().updateList();
 				}
 			});
-		display.getSubmitBuscaButton().addSelectionListener(
+
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
 			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					display.getGrid().updateList();
-				}
-			});
+				display.getGrid().updateList();
+			}
+		});
 	}
 
 	@Override
 	public void go( Widget widget )
 	{
-		gTab = (GTab) widget;
-		gTab.add( (GTabItem) display.getComponent() );
+		this.gTab = (GTab) widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
 	}
 }

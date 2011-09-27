@@ -20,25 +20,28 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HorarioDisponivelCampusFormPresenter implements Presenter {
-
-	public interface Display {
+public class HorarioDisponivelCampusFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		SimpleModal getSimpleModal();
 		CampusDTO getCampusDTO();
-		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
-		ListStore<HorarioDisponivelCenarioDTO> getStore();
+		void setProxy( RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy );
+		ListStore< HorarioDisponivelCenarioDTO > getStore();
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings( "unused" )
 	private CenarioDTO cenario;
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private SemanaLetivaDTO semanaLetiva;
-	
-	public HorarioDisponivelCampusFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display )
+
+	public HorarioDisponivelCampusFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario,
+		SemanaLetivaDTO semanaLetiva, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
@@ -49,49 +52,66 @@ public class HorarioDisponivelCampusFormPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy =
+			new RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.semanasLetiva().getHorariosDisponiveisCenario(semanaLetiva, callback);
+			protected void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
+			{
+				Services.semanasLetiva().getHorariosDisponiveisCenario( semanaLetiva, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		this.display.setProxy( proxy );
 	}
 	
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getStore().commitChanges();
-				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
-				
-				Services.campi().saveHorariosDisponiveis(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
+				List< HorarioDisponivelCenarioDTO > hdcDTOList
+					= display.getStore().getModels();
+
+				Services.campi().saveHorariosDisponiveis(
+					getDTO(), hdcDTOList, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(Void result) {
-						Info.display("Atualizado", "Horários atualizados com sucesso!");
+					public void onSuccess( Void result )
+					{
+						Info.display( "Atualizado",
+							"Horários atualizados com sucesso!" );
+
 						display.getSimpleModal().hide();
 					}
 				});
 			}
 		});
-		
 	}
 
 	private CampusDTO getDTO()
 	{
-		CampusDTO dto = display.getCampusDTO();
-		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		CampusDTO dto = this.display.getCampusDTO();
+		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		return dto;
 	}
 
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

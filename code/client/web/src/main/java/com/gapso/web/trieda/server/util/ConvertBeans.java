@@ -1021,16 +1021,14 @@ public class ConvertBeans
 		{
 			HorarioDisponivelCenarioDTO dto = new HorarioDisponivelCenarioDTO();
 
-			InstituicaoEnsino instituicaoEnsino = null;
-			if ( horarioAula.getSemanaLetiva() != null )
+			if ( horarioAula.getSemanaLetiva() != null
+				&& horarioAula.getSemanaLetiva().getInstituicaoEnsino() != null )
 			{
-				instituicaoEnsino = horarioAula.getSemanaLetiva().getInstituicaoEnsino();
-			}
+				dto.setInstituicaoEnsinoId(
+					horarioAula.getSemanaLetiva().getInstituicaoEnsino().getId() );
 
-			if ( instituicaoEnsino != null )
-			{
-				dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
-				dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+				dto.setInstituicaoEnsinoString(
+					horarioAula.getSemanaLetiva().getInstituicaoEnsino().getNomeInstituicao() );
 			}
 
 			dto.setHorarioDeAulaId( horarioAula.getId() );
