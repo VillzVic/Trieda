@@ -19,7 +19,8 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.TurnosService;
 
 public class TurnosServiceImpl
-	extends RemoteService implements TurnosService
+	extends RemoteService
+	implements TurnosService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
 

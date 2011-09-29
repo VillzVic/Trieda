@@ -5,7 +5,6 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -17,14 +16,14 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SemanaLetivaFormPresenter implements Presenter {
-
+public class SemanaLetivaFormPresenter
+	implements Presenter
+{
 	public interface Display
 	{
 		Button getSalvarButton();
 		TextField< String > getCodigoTextField();
 		TextField< String > getDescricaoTextField();
-		CheckBox getOficialCheckBox();
 		SemanaLetivaDTO getSemanaLetivaDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
@@ -34,7 +33,8 @@ public class SemanaLetivaFormPresenter implements Presenter {
 	private SimpleGrid< SemanaLetivaDTO > gridPanel;
 	private Display display;
 
-	public SemanaLetivaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public SemanaLetivaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< SemanaLetivaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -44,10 +44,14 @@ public class SemanaLetivaFormPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				if ( isValid() )
 				{
 					final SemanasLetivaServiceAsync service = Services.semanasLetiva();
@@ -72,7 +76,8 @@ public class SemanaLetivaFormPresenter implements Presenter {
 				}
 				else
 				{
-					MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
 				}
 			}
 		});
@@ -80,17 +85,16 @@ public class SemanaLetivaFormPresenter implements Presenter {
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		return this.display.isValid();
 	}
 
 	private SemanaLetivaDTO getDTO()
 	{
-		SemanaLetivaDTO dto = display.getSemanaLetivaDTO();
+		SemanaLetivaDTO dto = this.display.getSemanaLetivaDTO();
 
-		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		dto.setCodigo( display.getCodigoTextField().getValue() );
-		dto.setDescricao( display.getDescricaoTextField().getValue() );
-		dto.setOficial( display.getOficialCheckBox().getValue() );
+		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		dto.setCodigo( this.display.getCodigoTextField().getValue() );
+		dto.setDescricao( this.display.getDescricaoTextField().getValue() );
 
 		return dto;
 	}
@@ -98,6 +102,6 @@ public class SemanaLetivaFormPresenter implements Presenter {
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

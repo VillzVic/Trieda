@@ -73,6 +73,7 @@ public class OtimizarServiceImpl
 		parametro.setCenario( cenario );
 		parametro.setCampus( ( listCampus == null || listCampus.size() == 0 ? null : listCampus.get( 0 ) ) );
 		parametro.setTurno( ( listTurnos == null || listTurnos.size() == 0 ? null : listTurnos.get( 0 ) ) );
+		parametro.setSemanaLetiva( cenario.getSemanaLetiva() );
 
 		return parametro;
 	}

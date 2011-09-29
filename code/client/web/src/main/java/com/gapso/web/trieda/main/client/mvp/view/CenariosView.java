@@ -24,134 +24,166 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class CenariosView extends MyComposite implements CenariosPresenter.Display {
-
+public class CenariosView
+	extends MyComposite
+	implements CenariosPresenter.Display
+{
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CenarioDTO> gridPanel;
 	private Button abrirCenarioBT;
 	private Button clonarCenarioBT;
 	private SimpleFilter filter;
-	private TextField<Integer> anoBuscaTextField;
-	private TextField<Integer> semestreBuscaTextField;
+	private TextField< Integer > anoBuscaTextField;
+	private TextField< Integer > semestreBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
-	public CenariosView() {
+
+	public CenariosView()
+	{
 		initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Cenários");
+
+	private void initUI()
+	{
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Cenários" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
-	}
-	
-	private void createTabItem() {
-		tabItem = new GTabItem("Cenário", Resources.DEFAULTS.cenario16());
-		tabItem.setContent(panel);
-	}
-	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		toolBar.add(new SeparatorToolItem());
-		clonarCenarioBT = toolBar.createButton("Clonar cenário", Resources.DEFAULTS.cenarioClonar16());
-		toolBar.add(clonarCenarioBT);
-		abrirCenarioBT = toolBar.createButton("Adicionar na árvore de cenários", Resources.DEFAULTS.cenarioAbrir16());
-		toolBar.add(abrirCenarioBT);
-		panel.setTopComponent(toolBar);
-	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<CenarioDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+		initComponent( this.tabItem );
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new CheckColumnConfig(CenarioDTO.PROPERTY_OFICIAL, "Oficial", 40));
-		list.add(new ColumnConfig(CenarioDTO.PROPERTY_NOME, "Nome", 100));
-		list.add(new ColumnConfig(CenarioDTO.PROPERTY_ANO, "Ano", 100));
-		list.add(new ColumnConfig(CenarioDTO.PROPERTY_SEMESTRE, "Semestre", 100));
-		list.add(new ColumnConfig(CenarioDTO.PROPERTY_SEMANA_LETIVA_STRING, "Semana Letiva", 100));
+	private void createTabItem()
+	{
+		this.tabItem = new GTabItem(
+			"Cenário", Resources.DEFAULTS.cenario16() );
+
+		this.tabItem.setContent( this.panel );
+	}
+	
+	private void createToolBar()
+	{
+		this.toolBar = new SimpleToolBar( this );
+		this.toolBar.add( new SeparatorToolItem() );
+
+		this.clonarCenarioBT = toolBar.createButton(
+			"Clonar cenário", Resources.DEFAULTS.cenarioClonar16() );
+
+		this.toolBar.add( this.clonarCenarioBT );
+
+		this.abrirCenarioBT = toolBar.createButton(
+			"Adicionar na árvore de cenários",
+			Resources.DEFAULTS.cenarioAbrir16() );
+
+		this.toolBar.add( this.abrirCenarioBT );
+		this.panel.setTopComponent( this.toolBar );
+	}
+	
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    this.gridPanel = new SimpleGrid< CenarioDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
+	}
+
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+
+		list.add( new CheckColumnConfig( CenarioDTO.PROPERTY_OFICIAL, "Oficial", 40 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_NOME, "Nome", 100 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_ANO, "Ano", 100 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_SEMESTRE, "Semestre", 100 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_SEMANA_LETIVA_STRING, "Semana Letiva", 100 ) );
+
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
-		filter = new SimpleFilter();
-		anoBuscaTextField = new TextField<Integer>();
-		anoBuscaTextField.setFieldLabel("Ano");
-		semestreBuscaTextField = new TextField<Integer>();
-		semestreBuscaTextField.setFieldLabel("Semestre");
-		filter.addField(anoBuscaTextField);
-		filter.addField(semestreBuscaTextField); 
-		
-		panel.add(filter, bld);
-	}
-	
-	@Override
-	public Button getNewButton() {
-		return toolBar.getNewButton();
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
+		this.filter = new SimpleFilter();
+		this.anoBuscaTextField = new TextField< Integer >();
+		this.anoBuscaTextField.setFieldLabel( "Ano" );
+		this.semestreBuscaTextField = new TextField< Integer >();
+		this.semestreBuscaTextField.setFieldLabel( "Semestre" );
+		this.filter.addField( this.anoBuscaTextField );
+		this.filter.addField( this.semestreBuscaTextField ); 
+
+		this.panel.add( this.filter, bld );
 	}
 
 	@Override
-	public Button getEditButton() {
-		return toolBar.getEditButton();
+	public Button getNewButton()
+	{
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
-		return toolBar.getRemoveButton();
+	public Button getEditButton()
+	{
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
-	public SimpleGrid<CenarioDTO> getGrid() {
-		return gridPanel;
+	public Button getRemoveButton()
+	{
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<CenarioDTO>> proxy) {
-		gridPanel.setProxy(proxy);
-	}
-	
-	@Override
-	public TextField<Integer> getAnoBuscaTextField() {
-		return anoBuscaTextField;
+	public SimpleGrid< CenarioDTO > getGrid()
+	{
+		return this.gridPanel;
 	}
 
 	@Override
-	public TextField<Integer> getSemestreBuscaTextField() {
-		return semestreBuscaTextField;
+	public void setProxy(
+		RpcProxy< PagingLoadResult< CenarioDTO > > proxy )
+	{
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
-		return filter.getSubmitButton();
+	public TextField< Integer > getAnoBuscaTextField()
+	{
+		return this.anoBuscaTextField;
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
-		return filter.getResetButton();
+	public TextField< Integer > getSemestreBuscaTextField()
+	{
+		return this.semestreBuscaTextField;
 	}
 
 	@Override
-	public Button getAbrirCenarioButton() {
-		return abrirCenarioBT;
+	public Button getSubmitBuscaButton()
+	{
+		return this.filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getClonarCenarioButton() {
-		return clonarCenarioBT;
+	public Button getResetBuscaButton()
+	{
+		return this.filter.getResetButton();
 	}
-	
+
+	@Override
+	public Button getAbrirCenarioButton()
+	{
+		return this.abrirCenarioBT;
+	}
+
+	@Override
+	public Button getClonarCenarioButton()
+	{
+		return this.clonarCenarioBT;
+	}
 }

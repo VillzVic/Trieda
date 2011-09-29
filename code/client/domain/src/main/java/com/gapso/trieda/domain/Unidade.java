@@ -217,14 +217,17 @@ public class Unidade implements Serializable
 		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll(
 			this.getCampus().getInstituicaoEnsino() );
 
-		List< HorarioDisponivelCenario > listHdcs
-			= this.getCampus().getHorarios(
-				this.getCampus().getInstituicaoEnsino(), semanasLetivas );
-
-		for ( HorarioDisponivelCenario hdc : listHdcs )
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
 		{
-			hdc.getUnidades().add( this );
-			hdc.merge();
+			List< HorarioDisponivelCenario > listHdcs
+				= this.getCampus().getHorarios(
+					this.getCampus().getInstituicaoEnsino(), semanaLetiva );
+
+			for ( HorarioDisponivelCenario hdc : listHdcs )
+			{
+				hdc.getUnidades().add( this );
+				hdc.merge();
+			}
 		}
 	}
 
@@ -494,29 +497,25 @@ public class Unidade implements Serializable
         return q.getResultList();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
+		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
 	{
-		Set< HorarioDisponivelCenario > horarios
-			= new HashSet< HorarioDisponivelCenario >();
+		List< HorarioDisponivelCenario > horarios
+			= new ArrayList< HorarioDisponivelCenario >();
 
-		for ( SemanaLetiva semanaLetiva : semanasLetivas )
-		{
-			Query q = entityManager().createQuery(
-				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.unidades ) u " +
-				" WHERE u = :unidade " +
-				" AND u.campus.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+		Query q = entityManager().createQuery(
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.unidades ) u " +
+			" WHERE u = :unidade " +
+			" AND u.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
 
-			q.setParameter( "unidade", this );
-			q.setParameter( "semanaLetiva", semanaLetiva );
-			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "unidade", this );
+		q.setParameter( "semanaLetiva", semanaLetiva );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-			horarios.addAll( q.getResultList() );
-		}
-
-		return new ArrayList< HorarioDisponivelCenario >( horarios ); 
+		horarios.addAll( q.getResultList() );
+		return horarios; 
 	}
 
 	public static boolean checkCodigoUnique( 

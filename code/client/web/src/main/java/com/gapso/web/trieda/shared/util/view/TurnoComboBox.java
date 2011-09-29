@@ -28,14 +28,17 @@ public class TurnoComboBox
 		this( campusCB, false );
 	}
 
-	public TurnoComboBox( CampusComboBox campusCB, final boolean somenteOtimizadoOperacional )
+	public TurnoComboBox( CampusComboBox campusCB,
+		final boolean somenteOtimizadoOperacional )
 	{
 		this.campusComboBox = campusCB;
 
-		RpcProxy< ListLoadResult< TurnoDTO > > proxy = new RpcProxy<ListLoadResult< TurnoDTO > >()
+		RpcProxy< ListLoadResult< TurnoDTO > > proxy =
+			new RpcProxy<ListLoadResult< TurnoDTO > >()
 		{
 			@Override
-			public void load( Object loadConfig, AsyncCallback< ListLoadResult< TurnoDTO > > callback )
+			public void load( Object loadConfig,
+				AsyncCallback< ListLoadResult< TurnoDTO > > callback )
 			{
 				if ( campusComboBox != null )
 				{
@@ -58,7 +61,7 @@ public class TurnoComboBox
 		setStore( new ListStore< TurnoDTO >(
 			new BaseListLoader< BaseListLoadResult< TurnoDTO > >( proxy ) ) );
 
-		if ( campusComboBox != null )
+		if ( this.campusComboBox != null )
 		{
 			setEnabled( false );
 			addListeners();
@@ -67,14 +70,15 @@ public class TurnoComboBox
 		setDisplayField( TurnoDTO.PROPERTY_NOME );
 		setFieldLabel( "Turno" );
 		setEmptyText( "Selecione o turno" );
-		setSimpleTemplate( "{" + TurnoDTO.PROPERTY_NOME + "} ({" + TurnoDTO.PROPERTY_TEMPO + "}min)" );
+		setSimpleTemplate( "{" + TurnoDTO.PROPERTY_NOME +
+			"} ({" + TurnoDTO.PROPERTY_TEMPO + "}min)" );
 		setEditable( false );
 		setTriggerAction( TriggerAction.ALL );
 	}
 
 	private void addListeners()
 	{
-		campusComboBox.addSelectionChangedListener(
+		this.campusComboBox.addSelectionChangedListener(
 			new SelectionChangedListener< CampusDTO >()
 		{
 			@Override

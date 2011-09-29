@@ -54,11 +54,11 @@ public class ProfessoresServiceImpl
 		Professor professor = Professor.find(
 			professorDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > list = professor.getHorarios(
-			getInstituicaoEnsinoUser(), semanasLetivas );
+			getInstituicaoEnsinoUser(), semanaLetiva );
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
@@ -70,11 +70,8 @@ public class ProfessoresServiceImpl
 	public void saveHorariosDisponiveis( ProfessorDTO professorDTO,
 		SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >();
 		SemanaLetiva semanaLetiva = SemanaLetiva.find(
 			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
-		semanasLetivas.add( semanaLetiva );
 
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -86,11 +83,11 @@ public class ProfessoresServiceImpl
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( professor.getHorarios(
-			getInstituicaoEnsinoUser(), semanasLetivas ) );
+			getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >( professor.getHorarios(
-				getInstituicaoEnsinoUser(), semanasLetivas ) );
+				getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		removerList.removeAll( listSelecionados );
 
@@ -241,28 +238,12 @@ public class ProfessoresServiceImpl
 
 			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 
-			Professor p = Professor.find(
-				professorDTO.getId(), getInstituicaoEnsinoUser() );
+			List< SemanaLetiva > semanasLetivas
+				= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
 
-			Set< Campus > campiProfessor = new HashSet< Campus >();
-			if ( p != null )
+			for ( SemanaLetiva semanaLetiva : semanasLetivas )
 			{
-				campiProfessor = Professor.find(
-					professorDTO.getId(), getInstituicaoEnsinoUser() ).getCampi();
-			}
-
-			for ( Campus campus : campiProfessor )
-			{
-				Set< SemanaLetiva > semanasLetivas
-					= SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus );
-
-				if ( semanasLetivas != null && semanasLetivas.size() > 0 )
-				{
-					for ( SemanaLetiva semanaLetiva : semanasLetivas )
-					{
-						horariosAula.addAll( semanaLetiva.getHorariosAula() );
-					}
-				}
+				horariosAula.addAll( semanaLetiva.getHorariosAula() );
 			}
 
 			for ( HorarioAula horarioAula : horariosAula )

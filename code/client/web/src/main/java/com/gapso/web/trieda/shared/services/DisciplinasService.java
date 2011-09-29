@@ -25,33 +25,33 @@ import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-/**
- * The client side stub for the RPC service.
- */
-@RemoteServiceRelativePath("disciplinas")
-public interface DisciplinasService extends RemoteService {
-
-	DisciplinaDTO getDisciplina(Long id);
-	ListLoadResult<DisciplinaDTO> getList(BasePagingLoadConfig loadConfig);
-	PagingLoadResult<DisciplinaDTO> getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config);
-	void save(DisciplinaDTO disciplinaDTO);
-	void remove(List<DisciplinaDTO> disciplinaDTOList);
-	ListLoadResult<TipoDisciplinaDTO> getTipoDisciplinaList();
-	TipoDisciplinaDTO getTipoDisciplina(Long id);
-	ListLoadResult<DisciplinaDTO> getListByCursos(List<CursoDTO> cursos);
-	List<TreeNodeDTO> getFolderChildren(TreeNodeDTO loadConfig);
-	void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO);
-	void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO);
-	void removeDisciplinaToSala(SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO);
-	void removeDisciplinaToSala(GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO);
-	void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO,List<HorarioDisponivelCenarioDTO> listDTO);
-	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO);
-	List<TreeNodeDTO> getDisciplinasByTreeSalas(TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO);
-	List<TreeNodeDTO> getDisciplinasByTreeGrupoSalas(TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO);
-	List<DisciplinaIncompativelDTO> getDisciplinasIncompativeis(CurriculoDTO curriculoDTO, Integer periodo);
-	void saveDisciplinasIncompativeis(List<DisciplinaIncompativelDTO> list);
-	void salvarDivisaoCredito(DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO);
-	DivisaoCreditoDTO getDivisaoCredito(DisciplinaDTO disciplinaDTO);
-	List<ResumoDisciplinaDTO> getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO);
-	
+@RemoteServiceRelativePath( "disciplinas" )
+public interface DisciplinasService
+	extends RemoteService
+{
+	DisciplinaDTO getDisciplina( Long id );
+	ListLoadResult< DisciplinaDTO > getList( BasePagingLoadConfig loadConfig );
+	PagingLoadResult<DisciplinaDTO> getBuscaList( String nome, String codigo,
+		TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config );
+	void save( DisciplinaDTO disciplinaDTO );
+	void remove( List< DisciplinaDTO > disciplinaDTOList );
+	ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList();
+	TipoDisciplinaDTO getTipoDisciplina( Long id );
+	ListLoadResult< DisciplinaDTO > getListByCursos( List< CursoDTO > cursos );
+	List< TreeNodeDTO > getFolderChildren( TreeNodeDTO loadConfig );
+	void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO);
+	void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO);
+	void removeDisciplinaToSala( SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO);
+	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO);
+	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
+	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO );
+	List< TreeNodeDTO > getDisciplinasByTreeSalas( TreeNodeDTO salaTreeNodeDTO,
+		TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO );
+	List< TreeNodeDTO > getDisciplinasByTreeGrupoSalas( TreeNodeDTO grupoSalaTreeNodeDTO,
+		TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO );
+	List< DisciplinaIncompativelDTO > getDisciplinasIncompativeis( CurriculoDTO curriculoDTO, Integer periodo );
+	void saveDisciplinasIncompativeis( List< DisciplinaIncompativelDTO > list );
+	void salvarDivisaoCredito( DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO );
+	DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO );
+	List< ResumoDisciplinaDTO > getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 }

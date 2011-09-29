@@ -75,10 +75,9 @@ public class CenariosServiceImpl
 			// Semana letiva padrão do novo cenário
 			SemanaLetiva semanaLetivaCenario = new SemanaLetiva();
 
-			semanaLetivaCenario.setCodigo( HtmlUtils.htmlUnescape( "Semana Padrão" ) );
-			semanaLetivaCenario.setDescricao( HtmlUtils.htmlUnescape( "Semana Letiva Padrão" ) );
+			semanaLetivaCenario.setCodigo( HtmlUtils.htmlUnescape( "Semana Padr&atilde;o" ) );
+			semanaLetivaCenario.setDescricao( HtmlUtils.htmlUnescape( "Semana Letiva Padr&atilde;o" ) );
 			semanaLetivaCenario.setInstituicaoEnsino( instituicaoEnsino );
-			semanaLetivaCenario.setOficial( true );
 
 			Set< Campus > campi = new HashSet< Campus >(
 				Campus.findAll( instituicaoEnsino ) );
@@ -158,8 +157,9 @@ public class CenariosServiceImpl
 			}
 		}
 
-		List< Cenario > listCenarios = Cenario.findByAnoAndSemestre( this.getInstituicaoEnsinoUser(),
-			ano, semestre, config.getOffset(), config.getLimit(), orderBy );
+		List< Cenario > listCenarios = Cenario.findByAnoAndSemestre(
+			this.getInstituicaoEnsinoUser(), ano, semestre,
+			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Cenario cenario : listCenarios )
 		{

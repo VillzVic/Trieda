@@ -104,7 +104,7 @@ public class HorariosAulaServiceImpl
 
 				HorarioDisponivelCenario hdc = new HorarioDisponivelCenario();
 
-				hdc.setSemana( semana );
+				hdc.setDiaSemana( semana );
 				hdc.setHorarioAula( horarioDeAula );
 
 				hdc.getCampi().addAll( campi );
@@ -119,9 +119,11 @@ public class HorariosAulaServiceImpl
 	}
 	
 	@Override
-	public void remove(List<HorarioAulaDTO> horariosAulaDTOList) {
-		for(HorarioAulaDTO horarioAulaDTO : horariosAulaDTOList) {
-			ConvertBeans.toHorarioAula(horarioAulaDTO).remove();
+	public void remove( List< HorarioAulaDTO > horariosAulaDTOList )
+	{
+		for ( HorarioAulaDTO horarioAulaDTO : horariosAulaDTOList )
+		{
+			ConvertBeans.toHorarioAula( horarioAulaDTO ).remove();
 		}
 	}
 

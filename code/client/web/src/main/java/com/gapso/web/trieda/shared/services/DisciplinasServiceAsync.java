@@ -24,29 +24,36 @@ import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface DisciplinasServiceAsync {
-	
-	void getDisciplina(Long id, AsyncCallback<DisciplinaDTO> callback);
-	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
-	void getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<DisciplinaDTO>> callback);
-	void save(DisciplinaDTO disciplinaDTO, AsyncCallback<Void> callback);
-	void remove(List<DisciplinaDTO> disciplinaDTOList, AsyncCallback<Void> callback);
-	void getTipoDisciplinaList(AsyncCallback<ListLoadResult<TipoDisciplinaDTO>> callback);
-	void getTipoDisciplina(Long id, AsyncCallback<TipoDisciplinaDTO> callback);
-	void getListByCursos(List<CursoDTO> cursos, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
-	void getFolderChildren(TreeNodeDTO loadConfig, AsyncCallback<List<TreeNodeDTO>> callback);
-	void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO, AsyncCallback<Void> callback);
-	void saveDisciplinaToSala(OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO, AsyncCallback<Void> callback);
-	void removeDisciplinaToSala(SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback<Void> callback);
-	void removeDisciplinaToSala(GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback<Void> callback);
-	void saveHorariosDisponiveis(DisciplinaDTO disciplinaDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
-	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
-	void getDisciplinasByTreeSalas(TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO, AsyncCallback<List<TreeNodeDTO>> callback);
-	void getDisciplinasByTreeGrupoSalas(TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO, AsyncCallback<List<TreeNodeDTO>> callback);
-	void getDisciplinasIncompativeis(CurriculoDTO curriculoDTO, Integer periodo, AsyncCallback<List<DisciplinaIncompativelDTO>> callback);
-	void saveDisciplinasIncompativeis(List<DisciplinaIncompativelDTO> list, AsyncCallback<Void> callback);
-	void salvarDivisaoCredito(DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO, AsyncCallback<Void> callback);
-	void getDivisaoCredito(DisciplinaDTO disciplinaDTO, AsyncCallback<DivisaoCreditoDTO> callback);
-	void getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback<List<ResumoDisciplinaDTO>> callback);
-	
+public interface DisciplinasServiceAsync
+{
+	void getDisciplina( Long id, AsyncCallback< DisciplinaDTO > callback );
+	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
+	void getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO,
+		PagingLoadConfig config, AsyncCallback< PagingLoadResult< DisciplinaDTO > > callback );
+	void save( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
+	void remove( List< DisciplinaDTO > disciplinaDTOList, AsyncCallback< Void > callback );
+	void getTipoDisciplinaList( AsyncCallback< ListLoadResult< TipoDisciplinaDTO > > callback );
+	void getTipoDisciplina( Long id, AsyncCallback< TipoDisciplinaDTO > callback );
+	void getListByCursos( List< CursoDTO > cursos, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
+	void getFolderChildren( TreeNodeDTO loadConfig, AsyncCallback< List< TreeNodeDTO > > callback );
+	void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo,
+		CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO, AsyncCallback< Void > callback );
+	void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo,
+		CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO, AsyncCallback< Void > callback );
+	void removeDisciplinaToSala( SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback< Void > callback );
+	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback< Void > callback );
+	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
+	void getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
+		AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
+	void getDisciplinasByTreeSalas( TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
+		TreeNodeDTO curriculoDisciplinaTreeNodeDTO, AsyncCallback< List< TreeNodeDTO > > callback );
+	void getDisciplinasByTreeGrupoSalas( TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
+		TreeNodeDTO curriculoDisciplinaTreeNodeDTO, AsyncCallback< List< TreeNodeDTO > > callback );
+	void getDisciplinasIncompativeis( CurriculoDTO curriculoDTO, Integer periodo,
+		AsyncCallback< List< DisciplinaIncompativelDTO > > callback );
+	void saveDisciplinasIncompativeis( List< DisciplinaIncompativelDTO > list, AsyncCallback< Void > callback );
+	void salvarDivisaoCredito( DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO, AsyncCallback< Void > callback );
+	void getDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< DivisaoCreditoDTO > callback );
+	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoDisciplinaDTO > > callback );
 }

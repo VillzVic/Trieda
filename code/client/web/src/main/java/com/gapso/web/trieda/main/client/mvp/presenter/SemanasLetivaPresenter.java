@@ -50,7 +50,8 @@ public class SemanasLetivaPresenter
 	private Display display; 
 	private CenarioDTO cenario;
 
-	public SemanasLetivaPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public SemanasLetivaPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -79,12 +80,12 @@ public class SemanasLetivaPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -97,7 +98,7 @@ public class SemanasLetivaPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -112,7 +113,7 @@ public class SemanasLetivaPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -140,7 +141,7 @@ public class SemanasLetivaPresenter
 			}
 		});
 
-		display.getDiasDeAulaButton().addSelectionListener(
+		this.display.getDiasDeAulaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -149,32 +150,39 @@ public class SemanasLetivaPresenter
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(
-						instituicaoEnsinoDTO, dto, new HorarioDisponivelCenarioFormView(dto ) );
+					instituicaoEnsinoDTO, dto, new HorarioDisponivelCenarioFormView(dto ) );
 
 				presenter.go( null );
 			}
 		});
 
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		this.display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getCodigoBuscaTextField().setValue(null);
-				display.getDescricaoBuscaTextField().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getCodigoBuscaTextField().setValue( null );
+				display.getDescricaoBuscaTextField().setValue( null );
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		GTab tab = (GTab) widget;
+		tab.add( (GTabItem) this.display.getComponent() );
+	}
 }

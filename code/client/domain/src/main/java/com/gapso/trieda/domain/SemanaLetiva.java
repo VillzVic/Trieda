@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -55,9 +57,6 @@ public class SemanaLetiva
 	@Size( max = 50 )
 	private String descricao;
 
-	@Column( name = "SLE_OFICIAL" )
-	private Boolean oficial;
-
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
 	private Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 
@@ -75,20 +74,22 @@ public class SemanaLetiva
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
-		return instituicaoEnsino;
+		return this.instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
 
 	public Set< Curriculo > getCurriculos()
 	{
-		return curriculos;
+		return this.curriculos;
 	}
 
-	public void setCurriculos( Set< Curriculo > curriculos )
+	public void setCurriculos(
+		Set< Curriculo > curriculos )
 	{
 		this.curriculos = curriculos;
 	}
@@ -123,32 +124,24 @@ public class SemanaLetiva
 		this.descricao = descricao;
 	}
 
-	public Boolean getOficial()
-	{
-		return oficial;
-	}
-
-	public void setOficial( Boolean oficial )
-	{
-		this.oficial = oficial;
-	}
-
 	public Set< HorarioAula > getHorariosAula()
 	{
 		return this.horariosAula;
 	}
 
-	public void setHorariosAula( Set< HorarioAula > horariosAula )
+	public void setHorariosAula(
+		Set< HorarioAula > horariosAula )
 	{
 		this.horariosAula = horariosAula;
 	}
 
 	public Set< Parametro > getParametros()
 	{
-		return parametros;
+		return this.parametros;
 	}
 
-	public void setParametros( Set< Parametro > parametros )
+	public void setParametros(
+		Set< Parametro > parametros )
 	{
 		this.parametros = parametros;
 	}
@@ -269,41 +262,21 @@ public class SemanaLetiva
 		return em;
 	}
 
-	public static Set< SemanaLetiva > getByOficial(
-		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	public static Map< String, SemanaLetiva > buildSemanaLetivaCodigoToSemanaLetivaMap(
+		List< SemanaLetiva > semanasLetivas )
 	{
-		/*
-		if ( campus == null || instituicaoEnsino == null )
+		Map< String, SemanaLetiva> semanasLetivasMap
+			= new HashMap< String, SemanaLetiva >();
+
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
 		{
-			return new HashSet< SemanaLetiva >();
+			semanasLetivasMap.put( semanaLetiva.getCodigo(), semanaLetiva );
 		}
 
-		Set< Curriculo > curriculosCampus = new HashSet< Curriculo >();
-		for ( Unidade unidade : campus.getUnidades() )
-		{
-			List< Sala > salas = Sala.findByUnidade( instituicaoEnsino, unidade );
-
-			for ( Sala sala : salas )
-			{
-				curriculosCampus.addAll( sala.getCurriculos( instituicaoEnsino ) );
-			}
-		}
-
-		Set< SemanaLetiva > semanasLetivas = new HashSet< SemanaLetiva >();
-
-		for ( Curriculo curriculo : curriculosCampus )
-		{
-			semanasLetivas.add( curriculo.getSemanaLetiva() );
-		}
-
-		return semanasLetivas;
-		*/
-
-		return new HashSet< SemanaLetiva >(
-			SemanaLetiva.findAll( instituicaoEnsino ) );
+		return semanasLetivasMap;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< SemanaLetiva > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -327,7 +300,8 @@ public class SemanaLetiva
 		return result;
 	}
 
-	public static SemanaLetiva find( Long id, InstituicaoEnsino instituicaoEnsino )
+	public static SemanaLetiva find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
 		if ( id == null || instituicaoEnsino == null )
 		{
@@ -347,13 +321,14 @@ public class SemanaLetiva
 		return null;
 	}
 
-	public static List< SemanaLetiva > find( InstituicaoEnsino instituicaoEnsino,
+	public static List< SemanaLetiva > find(
+		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults )
 	{
 		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< SemanaLetiva > find(
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
@@ -371,7 +346,8 @@ public class SemanaLetiva
 		return q.getResultList();
 	}
 
-	public static int count( InstituicaoEnsino instituicaoEnsino,
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino,
 		String codigo, String descricao )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
@@ -393,7 +369,7 @@ public class SemanaLetiva
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< SemanaLetiva > findBy(
 		InstituicaoEnsino instituicaoEnsino, String codigo,
 		String descricao, int firstResult, int maxResults, String orderBy )
@@ -437,20 +413,6 @@ public class SemanaLetiva
 		return ( size.intValue() > 0 );
 	}
 
-	@Transactional
-	public void markOficial( InstituicaoEnsino instituicaoEnsino )
-	{
-		Query q = entityManager().createQuery(
-			" UPDATE SemanaLetiva o SET o.oficial = false " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.oficial = true AND o <> :semanaLetiva " );
-
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "semanaLetiva", this );
-
-		q.executeUpdate();
-	}
-
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
@@ -479,14 +441,14 @@ public class SemanaLetiva
 
 		SemanaLetiva other = (SemanaLetiva) obj;
 
-		if ( id == null )
+		if ( this.id == null )
 		{
 			if ( other.id != null )
 			{
 				return false;
 			}
 		}
-		else if ( !id.equals( other.id ) )
+		else if ( !this.id.equals( other.id ) )
 		{
 			return false;
 		}

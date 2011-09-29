@@ -29,13 +29,11 @@ import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-@SuppressWarnings( "unused" )
+
 public class RelatorioVisaoProfessorExportExcel
 	extends AbstractExportExcel
 {
@@ -96,7 +94,7 @@ public class RelatorioVisaoProfessorExportExcel
 			  i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets, Cenario cenario,
+	public RelatorioVisaoProfessorExportExcel( boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		ExportExcelFilter filter, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -119,7 +117,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 	public boolean isVisaoProfessor()
 	{
-		return isVisaoProfessor;
+		return this.isVisaoProfessor;
 	}
 
 	public void setVisaoProfessor( boolean isVisaoProfessor )
@@ -130,7 +128,7 @@ public class RelatorioVisaoProfessorExportExcel
 	@Override
 	public String getFileName()
 	{
-		return getI18nConstants().relatorioVisaoProfessor();
+		return this.getI18nConstants().relatorioVisaoProfessor();
 	}
 
 	@Override
@@ -142,12 +140,12 @@ public class RelatorioVisaoProfessorExportExcel
 	@Override
 	protected String getReportName()
 	{
-		return getI18nConstants().relatorioVisaoProfessor();
+		return this.getI18nConstants().relatorioVisaoProfessor();
 	}
 
 	public RelatorioVisaoProfessorFiltroExcel getFilter()
 	{
-		return relatorioFiltro;
+		return this.relatorioFiltro;
 	}
 
 	public void setFilter( ExportExcelFilter filter )
@@ -385,7 +383,8 @@ public class RelatorioVisaoProfessorExportExcel
 		Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
-		row = writeHeaderProfessor( campus, professor, turno, row, sheet );
+		row = writeHeaderProfessor(
+			campus, professor, turno, row, sheet );
 
 		int initialRow = row;
 		int col = 2;
@@ -393,17 +392,18 @@ public class RelatorioVisaoProfessorExportExcel
 		// Preenche grade com créditos e células vazias
 		int maxCreditos = turno.calculaMaxCreditos();
 
-		for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ )
+		for ( int indexCredito = 1;
+			  indexCredito <= maxCreditos; indexCredito++ )
 		{
 			// Créditos
 			setCell( row, col++, sheet,
-				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
+					this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
 
 			// Dias Semana
-			for ( Semanas semanas : Semanas.values() )
+			for ( int i = 0; i < Semanas.values().length; i++ )
 			{
 				setCell( row, col++, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+					this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
 			}
 
 			row++;
@@ -416,13 +416,15 @@ public class RelatorioVisaoProfessorExportExcel
 		List< AtendimentoOperacionalDTO > atendimentosParaVisaoProfessor
 			= atendimentosService.montaListaParaVisaoProfessor( atendimentos );
 
-		atendimentosParaVisaoProfessor = this.ordenaHorarioAula( atendimentosParaVisaoProfessor );
+		atendimentosParaVisaoProfessor
+			= this.ordenaHorarioAula( atendimentosParaVisaoProfessor );
 
 		// Agrupa os atendimentos por dia da semana
 		Map< Integer, List< AtendimentoOperacionalDTO > > diaSemanaToAtendimentosMap
 			= new HashMap< Integer, List< AtendimentoOperacionalDTO > >();
 
-		for ( AtendimentoOperacionalDTO atendimento : atendimentosParaVisaoProfessor )
+		for ( AtendimentoOperacionalDTO atendimento
+			: atendimentosParaVisaoProfessor )
 		{
 			List< AtendimentoOperacionalDTO > list
 				= diaSemanaToAtendimentosMap.get( atendimento.getSemana() );
@@ -457,19 +459,22 @@ public class RelatorioVisaoProfessorExportExcel
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana
 				= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
-			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-			row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, atedimentosDiaSemana );
+			row += atendimentosService.deslocarLinhasExportExcel(
+				this.instituicaoEnsino, atedimentosDiaSemana );
 
 			for ( AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana )
 			{
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get( atendimento.getDisciplinaString() );
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
+					atendimento.getDisciplinaString() );
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoProfessor(), this.getExcelCommentVisaoProfessor( atendimento ) );
+					atendimento.getExcelContentVisaoProfessor(),
+					this.getExcelCommentVisaoProfessor( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
-				mergeCells( row, ( row + atendimento.getTotalLinhas() - 1 ), col, col, sheet, style );
+				mergeCells( row, ( row + atendimento.getTotalLinhas() - 1 ),
+					col, col, sheet, style );
 
 				row += atendimento.getTotalLinhas();
 			}
@@ -505,42 +510,47 @@ public class RelatorioVisaoProfessorExportExcel
 		Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
-		row = writeHeaderProfessorVirtual( campus, professorVirtual, turno, row, sheet );
+		row = writeHeaderProfessorVirtual(
+			campus, professorVirtual, turno, row, sheet );
 
 		int initialRow = row;
 		int col = 2;
 
 		// Preenche grade com créditos e células vazias
 		int maxCreditos = turno.calculaMaxCreditos();
-		for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ )
+		for ( int indexCredito = 1;
+			  indexCredito <= maxCreditos; indexCredito++ )
 		{
 			// Créditos
 			setCell( row, col++, sheet,
-				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
+				this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
 
 			// Dias Semana
-			for ( Semanas semanas : Semanas.values() )
+			for ( int i = 0; i < Semanas.values().length; i++ )
 			{
 				setCell( row, col++, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+					this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
 			}
 
 			row++;
 			col = 2;
 		}
 
-		// Processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão professor
+		// Processa os atendimentos lidos do BD para
+		// que os mesmos sejam visualizados na visão professor
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
 		List< AtendimentoOperacionalDTO > atendimentosParaVisaoProfessor
 			= atendimentosService.montaListaParaVisaoProfessor( atendimentos );
 
-		atendimentosParaVisaoProfessor = this.ordenaHorarioAula( atendimentosParaVisaoProfessor );
+		atendimentosParaVisaoProfessor
+			= this.ordenaHorarioAula( atendimentosParaVisaoProfessor );
 
 		// Agrupa os atendimentos por dia da semana
 		Map< Integer, List< AtendimentoOperacionalDTO > > diaSemanaToAtendimentosMap
 			= new HashMap< Integer, List< AtendimentoOperacionalDTO > >();
 
-		for ( AtendimentoOperacionalDTO atendimento : atendimentosParaVisaoProfessor )
+		for ( AtendimentoOperacionalDTO atendimento
+			: atendimentosParaVisaoProfessor )
 		{
 			List< AtendimentoOperacionalDTO > list
 				= diaSemanaToAtendimentosMap.get( atendimento.getSemana() );
@@ -574,24 +584,27 @@ public class RelatorioVisaoProfessorExportExcel
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana
 					= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
-			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-			row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, atedimentosDiaSemana );
+			row += atendimentosService.deslocarLinhasExportExcel(
+				this.instituicaoEnsino, atedimentosDiaSemana );
 
 			for ( AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana )
 			{
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get( atendimento.getDisciplinaString() );
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
+					atendimento.getDisciplinaString() );
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoProfessor(), this.getExcelCommentVisaoProfessor( atendimento ) );
+					atendimento.getExcelContentVisaoProfessor(),
+					this.getExcelCommentVisaoProfessor( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
-				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ), col, col, sheet, style );
+				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
+					col, col, sheet, style );
 
 				row += atendimento.getTotalCreditos();
 			}
 		}
-					
+
 		return ( initialRow + maxCreditos + 1 );
 	}
 
@@ -634,7 +647,7 @@ public class RelatorioVisaoProfessorExportExcel
 		row++;
 		return row;
 	}
-	
+
 	private int writeHeaderProfessorVirtual( Campus campus, ProfessorVirtual professorVirtual,
 		Turno turno, int row, HSSFSheet sheet )
 	{
@@ -739,7 +752,7 @@ public class RelatorioVisaoProfessorExportExcel
 	}
 
 	private List< AtendimentoOperacionalDTO > ordenaHorarioAula(
-			List< AtendimentoOperacionalDTO > list )
+		List< AtendimentoOperacionalDTO > list )
 	{
 		if ( list == null || list.size() == 0 )
 		{

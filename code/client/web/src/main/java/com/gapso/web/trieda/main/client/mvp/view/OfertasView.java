@@ -46,46 +46,47 @@ public class OfertasView
 
 	private void initUI()
 	{
-		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Oferta de Cursos em Campi" );
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading(
+			"Master Data » Oferta de Cursos em Campi" );
 
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent( tabItem );
+		initComponent( this.tabItem );
 	}
-	
+
 	private void createTabItem()
 	{
-		tabItem = new GTabItem( "Oferta de Cursos em Campi",
+		this.tabItem = new GTabItem( "Oferta de Cursos em Campi",
 			Resources.DEFAULTS.ofertaCurso16() );
 
-		tabItem.setContent( panel );
+		this.tabItem.setContent( this.panel );
 	}
-	
+
 	private void createToolBar()
 	{
-		toolBar = new SimpleToolBar( this );
-		panel.setTopComponent( toolBar );
+		this.toolBar = new SimpleToolBar( this );
+		this.panel.setTopComponent( this.toolBar );
 	}
-	
+
 	private void createGrid()
 	{
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
-	    
-	    gridPanel = new SimpleGrid< OfertaDTO >( getColumnList(), this );
-	    panel.add( gridPanel, bld );
+
+	    this.gridPanel = new SimpleGrid< OfertaDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
 	}
 
 	public List< ColumnConfig > getColumnList()
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
-		list.add( new ColumnConfig( OfertaDTO.PROPERTY_CAMPUS_STRING, "Campus", 100 ) );
-		list.add( new ColumnConfig( OfertaDTO.PROPERTY_CURSO_STRING, "Curso", 100 ) );
-		list.add( new ColumnConfig( OfertaDTO.PROPERTY_MATRIZ_CURRICULAR_STRING, "Matriz Curricular", 100 ) );
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_CAMPUS_STRING, "Campus", 150 ) );
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_CURSO_STRING, "Curso", 150 ) );
+		list.add( new ColumnConfig( OfertaDTO.PROPERTY_MATRIZ_CURRICULAR_STRING, "Matriz Curricular", 150 ) );
 		list.add( new ColumnConfig( OfertaDTO.PROPERTY_TURNO_STRING, "Turno", 200 ) );
 		list.add( new ColumnConfig( OfertaDTO.PROPERTY_RECEITA, "Receita", 100 ) );
 
@@ -98,100 +99,100 @@ public class OfertasView
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
-		filter = new SimpleFilter();
-		turnoBuscaComboBox = new TurnoComboBox();
-		turnoBuscaComboBox.setFieldLabel( "Turno" );
-		campusBuscaComboBox = new CampusComboBox();
-		campusBuscaComboBox.setFieldLabel( "Campus" );
-		cursoBuscaComboBox = new CursoComboBox();
-		cursoBuscaComboBox.setFieldLabel( "Curso" );
-		curriculoBuscaComboBox = new CurriculoComboBox();
-		curriculoBuscaComboBox.setFieldLabel( "Matriz Curricular" );
+		this.filter = new SimpleFilter();
+		this.turnoBuscaComboBox = new TurnoComboBox();
+		this.turnoBuscaComboBox.setFieldLabel( "Turno" );
+		this.campusBuscaComboBox = new CampusComboBox();
+		this.campusBuscaComboBox.setFieldLabel( "Campus" );
+		this.cursoBuscaComboBox = new CursoComboBox();
+		this.cursoBuscaComboBox.setFieldLabel( "Curso" );
+		this.curriculoBuscaComboBox = new CurriculoComboBox();
+		this.curriculoBuscaComboBox.setFieldLabel( "Matriz Curricular" );
 
-		filter.addField( turnoBuscaComboBox );
-		filter.addField( campusBuscaComboBox );
-		filter.addField( cursoBuscaComboBox );
-		filter.addField( curriculoBuscaComboBox );
+		this.filter.addField( this.turnoBuscaComboBox );
+		this.filter.addField( this.campusBuscaComboBox );
+		this.filter.addField( this.cursoBuscaComboBox );
+		this.filter.addField( this.curriculoBuscaComboBox );
 
-		panel.add( filter, bld );
+		this.panel.add( this.filter, bld );
 	}
 
 	@Override
 	public Button getNewButton()
 	{
-		return toolBar.getNewButton();
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
 	public Button getEditButton()
 	{
-		return toolBar.getEditButton();
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
 	public Button getRemoveButton()
 	{
-		return toolBar.getRemoveButton();
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
 	public Button getImportExcelButton()
 	{
-		return toolBar.getImportExcelButton();
+		return this.toolBar.getImportExcelButton();
 	}
 
 	@Override
 	public Button getExportExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return this.toolBar.getExportExcelButton();
 	}
 
 	@Override
 	public SimpleGrid< OfertaDTO > getGrid()
 	{
-		return gridPanel;
+		return this.gridPanel;
 	}
 
 	@Override
 	public void setProxy(
 		RpcProxy< PagingLoadResult< OfertaDTO > > proxy )
 	{
-		gridPanel.setProxy( proxy );
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
 	public TurnoComboBox getTurnoBuscaComboBox()
 	{
-		return turnoBuscaComboBox;
+		return this.turnoBuscaComboBox;
 	}
 
 	@Override
 	public CampusComboBox getCampusBuscaComboBox()
 	{
-		return campusBuscaComboBox;
+		return this.campusBuscaComboBox;
 	}
 
 	@Override
 	public CursoComboBox getCursoBuscaComboBox()
 	{
-		return cursoBuscaComboBox;
+		return this.cursoBuscaComboBox;
 	}
 
 	@Override
 	public CurriculoComboBox getCurriculoBuscaComboBox()
 	{
-		return curriculoBuscaComboBox;
+		return this.curriculoBuscaComboBox;
 	}
 
 	@Override
 	public Button getSubmitBuscaButton()
 	{
-		return filter.getSubmitButton();
+		return this.filter.getSubmitButton();
 	}
 
 	@Override
 	public Button getResetBuscaButton()
 	{
-		return filter.getResetButton();
+		return this.filter.getResetButton();
 	}
 }

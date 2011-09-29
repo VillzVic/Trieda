@@ -87,8 +87,8 @@ public class DisciplinasServiceImpl
 	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		Disciplina disciplina = Disciplina.find(
 			disciplinaDTO.getId(), getInstituicaoEnsinoUser() ); 
@@ -102,7 +102,7 @@ public class DisciplinasServiceImpl
 		}
 
 		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-			disciplina.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) );
+			disciplina.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		listDTO.addAll( ConvertBeans.toHorarioDisponivelCenarioDTO( list ) );
 
@@ -110,7 +110,8 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
+	public void saveHorariosDisponiveis(
+		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
@@ -127,16 +128,16 @@ public class DisciplinasServiceImpl
 		List< HorarioDisponivelCenario > adicionarList
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
-		List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >();
 
-		if ( semanasLetivas != null && semanasLetivas.size() > 0 )
+		if ( semanaLetiva != null )
 		{
 			List< HorarioDisponivelCenario > listTemp
-				= disciplina.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas );
+				= disciplina.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva );
 
 			adicionarList.removeAll( listTemp );
 			removerList.addAll(	listTemp );
@@ -1060,8 +1061,8 @@ public class DisciplinasServiceImpl
 					atendimento.getOfertaId(), getInstituicaoEnsinoUser() );
 
 				Campus campus = null;
-				Double docente = 0.0;
-				Double receita = 0.0;
+				double docente = 0.0;
+				double receita = 0.0;
 
 				if ( ofertaAtendimento != null )
 				{

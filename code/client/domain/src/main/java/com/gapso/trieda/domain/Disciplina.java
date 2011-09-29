@@ -642,28 +642,24 @@ public class Disciplina
 
 	@SuppressWarnings("unchecked")
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
+		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
 	{
-		Set< HorarioDisponivelCenario > horarios
-			= new HashSet< HorarioDisponivelCenario >();
+		List< HorarioDisponivelCenario > horarios
+			= new ArrayList< HorarioDisponivelCenario >();
 
-		for ( SemanaLetiva semanaLetiva : semanasLetivas )
-		{
-			Query q = entityManager().createQuery(
-				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.disciplinas ) c " +
-				" WHERE c.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-				" AND c = :disciplina " +
-				" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
-				" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+		Query q = entityManager().createQuery(
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.disciplinas ) c " +
+			" WHERE c.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c = :disciplina " +
+			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
-			q.setParameter( "disciplina", this );
-			q.setParameter( "semanaLetiva", semanaLetiva );
-			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "disciplina", this );
+		q.setParameter( "semanaLetiva", semanaLetiva );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-			horarios.addAll( q.getResultList() );
-		}
-
-		return new ArrayList< HorarioDisponivelCenario >( horarios );
+		horarios.addAll( q.getResultList() );
+		return horarios;
 	}
 
 	public static boolean checkCodigoUnique(

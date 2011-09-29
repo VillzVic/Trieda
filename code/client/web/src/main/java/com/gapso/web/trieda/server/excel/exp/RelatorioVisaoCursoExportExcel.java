@@ -113,7 +113,7 @@ public class RelatorioVisaoCursoExportExcel
 
 	public ExportExcelFilter getFilter()
 	{
-		return relatorioFiltro;
+		return this.relatorioFiltro;
 	}
 
 	public void setFilter( ExportExcelFilter filter )
@@ -131,7 +131,7 @@ public class RelatorioVisaoCursoExportExcel
 	@Override
 	public String getFileName()
 	{
-		return getI18nConstants().relatorioVisaoCurso();
+		return this.getI18nConstants().relatorioVisaoCurso();
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class RelatorioVisaoCursoExportExcel
 	@Override
 	protected String getReportName()
 	{
-		return getI18nConstants().relatorioVisaoCurso();
+		return this.getI18nConstants().relatorioVisaoCurso();
 	}
 
 	public Set< Map< String, Object > > opcoesBuscaOperacional( Cenario cenario )
@@ -390,7 +390,6 @@ public class RelatorioVisaoCursoExportExcel
 		return result;
 	}
 
-	@SuppressWarnings("unused")
 	private int writeCurso( Oferta oferta, Integer periodo,
 		List< AtendimentoRelatorioDTO > atendimentos, List< Integer > tamanhoSemanaList,
 		int row, HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
@@ -407,13 +406,13 @@ public class RelatorioVisaoCursoExportExcel
 		{
 			// Créditos
 			setCell( row, col++, sheet,
-				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
+				this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
 
 			// Dias Semana
-			for ( Semanas semanas : Semanas.values() )
+			for ( int i = 0; i < Semanas.values().length; i++ )
 			{
 				setCell( row, col++, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+					this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
 			}
 
 			row++;
@@ -504,7 +503,6 @@ public class RelatorioVisaoCursoExportExcel
 		return ( initialRow + maxCreditos + 1 );
 	}
 
-
 	private String getExcelCommentVisaoCurso( AtendimentoRelatorioDTO atendimento )
 	{
 		String creditos = HtmlUtils.htmlUnescape( "Cr&eacute;dito(s) " );
@@ -544,7 +542,6 @@ public class RelatorioVisaoCursoExportExcel
 		return "";
 	}
 
-	
 	private int writeHeader( Oferta oferta, Integer periodo,
 		List< Integer > tamanhoSemanaList, int row, HSSFSheet sheet )
 	{
@@ -552,29 +549,29 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Curso
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().curso() ) );
+			this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().curso() ) );
 
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			oferta.getCurriculo().getCurso().getCodigo() );
 
 		// Campus
 		setCell(row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().campus() ) );
+			this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().campus() ) );
 
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			oferta.getCampus().getCodigo() );
 
 		// Turno
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().turno() ) );
+			this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().turno() ) );
 
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			oferta.getTurno().getNome() );
 
 		row++;
@@ -582,35 +579,35 @@ public class RelatorioVisaoCursoExportExcel
 
 		// Curriculo
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().matrizCurricular() ) );
+			this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().matrizCurricular() ) );
 
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			oferta.getCurriculo().getCodigo() );
 
 		// Periodo
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().periodo() ) );
+			this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().periodo() ) );
 
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], periodo );
+			this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], periodo );
 
 		row++;
 		col = 2;
 
 		// Créditos
 		setCell( row, col++, sheet,
-			cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().creditos() ) );
+			this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().creditos() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )
 		{
 			int qtd = tamanhoSemanaList.get( Semanas.toInt( semanas ) );
 			setCell( row, col, sheet, semanas.name() );
-			HSSFCellStyle style = cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ];
+			HSSFCellStyle style = this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ];
 			mergeCells( row, row, col, col + qtd - 1, sheet, style );
 			col = col + qtd;
 		}
@@ -619,16 +616,14 @@ public class RelatorioVisaoCursoExportExcel
 		return row;
 	}
 
-
 	private void fillInCellStyles( HSSFSheet sheet )
 	{
 		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
 		{
-			cellStyles[ cellStyleReference.ordinal() ] = getCell(
+			this.cellStyles[ cellStyleReference.ordinal() ] = getCell(
 				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}
-
 
 	private List< HSSFCellStyle > buildColorPaletteCellStyles( HSSFWorkbook workbook )
 	{
@@ -657,7 +652,6 @@ public class RelatorioVisaoCursoExportExcel
 
 		return colorPalleteCellStylesList;
 	}
-
 
 	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
 	{

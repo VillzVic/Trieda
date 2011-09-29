@@ -381,7 +381,7 @@ public class CurriculoDisciplina
 			" WHERE sala = :sala " +
 			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-			" AND sala.unidade.campus.instituicaoEnsino = :instituicaoEnsinos " );
+			" AND sala.unidade.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "sala", sala );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );

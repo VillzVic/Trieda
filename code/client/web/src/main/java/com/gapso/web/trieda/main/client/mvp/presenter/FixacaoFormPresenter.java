@@ -40,8 +40,8 @@ public class FixacaoFormPresenter
 	public interface Display
 	{
 		Button getSalvarButton();
-		TextField<String> getCodigoTextField();
-		TextField<String> getDescricaoTextField();
+		TextField< String > getCodigoTextField();
+		TextField< String > getDescricaoTextField();
 		DisciplinaComboBox getDisciplinaComboBox();
 		CampusComboBox getCampusComboBox();
 		UnidadeComboBox getUnidadeComboBox();
@@ -53,9 +53,7 @@ public class FixacaoFormPresenter
 		ProfessorComboBox getProfessorComboBox();
 	}
 
-	@SuppressWarnings("unused")
 	private CenarioDTO cenario;
-
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< FixacaoDTO > gridPanel;
 	private Display display;
@@ -72,105 +70,156 @@ public class FixacaoFormPresenter
 		setListeners();
 	}
 
-	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy =
+			new RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
+			protected void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
+			{
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
 				SalaDTO salaDTO = display.getSalaComboBox().getValue();
 				ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();
-				Services.fixacoes().getHorariosDisponiveis(professorDTO, disciplinaDTO, salaDTO, callback);
+
+				Services.fixacoes().getHorariosDisponiveis( professorDTO,
+					cenario.getSemanaLetivaId(), disciplinaDTO, salaDTO, callback );
 			}
 		};
-		display.getGrid().setProxy(proxy);
+
+		this.display.getGrid().setProxy( proxy );
 	}
 	
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
-					List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getGrid().getStore().getModels();
-					Services.fixacoes().save(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
+			public void componentSelected( ButtonEvent ce )
+			{
+				if ( isValid() )
+				{
+					List< HorarioDisponivelCenarioDTO > hdcDTOList
+						= display.getGrid().getStore().getModels();
+
+					Services.fixacoes().save( getDTO(), hdcDTOList, new AsyncCallback< Void >()
+					{
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
 						}
+
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess( Void result )
+						{
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display("Salvo", "Item salvo com sucesso!");
+
+							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
 				}
 			}
 		});
-		display.getProfessorComboBox().addSelectionChangedListener(new SelectionChangedListener<ProfessorDTO>(){
+
+		this.display.getProfessorComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< ProfessorDTO >()
+		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se) {
+			public void selectionChanged( SelectionChangedEvent< ProfessorDTO > se )
+			{
 				display.getGrid().updateList();
 			}
 		});
-		display.getDisciplinaComboBox().addSelectionChangedListener(new SelectionChangedListener<DisciplinaDTO>(){
+
+		this.display.getDisciplinaComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< DisciplinaDTO >()
+		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent<DisciplinaDTO> se) {
+			public void selectionChanged( SelectionChangedEvent< DisciplinaDTO > se )
+			{
 				display.getGrid().updateList();
 			}
 		});
-		display.getSalaComboBox().addSelectionChangedListener(new SelectionChangedListener<SalaDTO>(){
+
+		this.display.getSalaComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< SalaDTO >()
+		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent<SalaDTO> se) {
+			public void selectionChanged( SelectionChangedEvent< SalaDTO > se )
+			{
 				display.getGrid().updateList();
 			}
 		});
 	}
 
-	private boolean isValid() {
-		return display.isValid();
+	private boolean isValid()
+	{
+		return this.display.isValid();
 	}
-	
+
 	private FixacaoDTO getDTO()
 	{
-		FixacaoDTO fixacaoDTO = display.getFixacaoDTO();
+		FixacaoDTO fixacaoDTO = this.display.getFixacaoDTO();
 
-		fixacaoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		fixacaoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		fixacaoDTO.setCodigo( this.display.getCodigoTextField().getValue() );
+		fixacaoDTO.setDescricao( this.display.getDescricaoTextField().getValue() );
 
-		fixacaoDTO.setCodigo(display.getCodigoTextField().getValue());
-		fixacaoDTO.setDescricao(display.getDescricaoTextField().getValue());
-		ProfessorDTO professor = display.getProfessorComboBox().getValue();
-		if(professor != null) {
-			fixacaoDTO.setProfessorId(professor.getId());
-			fixacaoDTO.setProfessorString(professor.getNome());
+		ProfessorDTO professor = this.display.getProfessorComboBox().getValue();
+
+		if ( professor != null )
+		{
+			fixacaoDTO.setProfessorId( professor.getId() );
+			fixacaoDTO.setProfessorString( professor.getNome() );
 		}
-		DisciplinaDTO disciplina = display.getDisciplinaComboBox().getValue();
-		if(disciplina != null) {
-			fixacaoDTO.setDisciplinaId(disciplina.getId());
-			fixacaoDTO.setDisciplinaString(disciplina.getCodigo());
+
+		DisciplinaDTO disciplina = this.display.getDisciplinaComboBox().getValue();
+
+		if ( disciplina != null )
+		{
+			fixacaoDTO.setDisciplinaId( disciplina.getId() );
+			fixacaoDTO.setDisciplinaString( disciplina.getCodigo() );
 		}
-		CampusDTO campus = display.getCampusComboBox().getValue();
-		if(campus != null) {
-			fixacaoDTO.setCampusId(campus.getId());
-			fixacaoDTO.setCampusString(campus.getCodigo());
+
+		CampusDTO campus = this.display.getCampusComboBox().getValue();
+
+		if ( campus != null )
+		{
+			fixacaoDTO.setCampusId( campus.getId() );
+			fixacaoDTO.setCampusString( campus.getCodigo() );
 		}
-		UnidadeDTO unidade = display.getUnidadeComboBox().getValue();
-		if(unidade != null) {
-			fixacaoDTO.setUnidadeId(unidade.getId());
-			fixacaoDTO.setUnidadeString(unidade.getCodigo());
+
+		UnidadeDTO unidade = this.display.getUnidadeComboBox().getValue();
+
+		if ( unidade != null )
+		{
+			fixacaoDTO.setUnidadeId( unidade.getId() );
+			fixacaoDTO.setUnidadeString( unidade.getCodigo() );
 		}
-		SalaDTO sala = display.getSalaComboBox().getValue();
-		if(sala != null) {
-			fixacaoDTO.setSalaId(sala.getId());
-			fixacaoDTO.setSalaString(sala.getCodigo());
+
+		SalaDTO sala = this.display.getSalaComboBox().getValue();
+
+		if ( sala != null )
+		{
+			fixacaoDTO.setSalaId( sala.getId() );
+			fixacaoDTO.setSalaString( sala.getCodigo() );
 		}
+
 		return fixacaoDTO;
 	}
 	
 	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
 	}
-
 }

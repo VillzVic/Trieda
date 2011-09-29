@@ -61,13 +61,13 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	@Override
 	public boolean load( String fileName, HSSFWorkbook workbook )
 	{
-		errors.clear();
-		warnings.clear();
+		this.errors.clear();
+		this.warnings.clear();
 
 		Map< String, List< ExcelBeanType > > excelBeansMap
 			= readInputStream( fileName, null, workbook );
 
-		if ( errors.isEmpty() )
+		if ( this.errors.isEmpty() )
 		{
 			try
 			{
@@ -81,24 +81,24 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 			{
 				e.printStackTrace();
 
-				errors.add( getI18nMessages().excelErroBD(
+				this.errors.add( getI18nMessages().excelErroBD(
 					fileName, extractMessage( e ) ) );
 			}
 		}
 
-		return errors.isEmpty();
+		return this.errors.isEmpty();
 	}
 
 	@Override
 	public boolean load( String fileName, InputStream inputStream )
 	{
-		errors.clear();
-		warnings.clear();
+		this.errors.clear();
+		this.warnings.clear();
 
 		Map< String, List< ExcelBeanType > > excelBeansMap
 			= readInputStream( fileName,inputStream, null );
 
-		if ( errors.isEmpty() )
+		if ( this.errors.isEmpty() )
 		{
 			try
 			{
@@ -113,24 +113,24 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 			{
 				e.printStackTrace();
 
-				errors.add( getI18nMessages().excelErroBD(
+				this.errors.add( getI18nMessages().excelErroBD(
 					fileName, extractMessage( e ) ) );
 			}
 		}
 
-		return errors.isEmpty();
+		return this.errors.isEmpty();
 	}
 
 	@Override
 	public List< String > getErrors()
 	{
-		return errors;
+		return this.errors;
 	}
 
 	@Override
 	public List< String > getWarnings()
 	{
-		return warnings;
+		return this.warnings;
 	}
 
 	private Map< String, List< ExcelBeanType > > readInputStream(
@@ -199,13 +199,13 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	                    // Verifica se existem linhas nulas
 	                    if ( !nullRows.isEmpty() )
 	                    {
-	                    	errors.add( getI18nMessages().excelErroSintaticoLinhasInvalidas(
+	                    	this.errors.add( getI18nMessages().excelErroSintaticoLinhasInvalidas(
 	                    		nullRows.toString(), fileName ) );
 	                    }
 	                }
 	                else
 	                {
-	                	errors.add( getI18nMessages().excelErroSintaticoCabecalhoAusente(
+	                	this.errors.add( getI18nMessages().excelErroSintaticoCabecalhoAusente(
 	                		getHeaderToString(), fileName ) );
 	                }
 				}
@@ -214,23 +214,9 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		catch ( Exception e )
 		{
 			e.printStackTrace();
-			errors.add( getI18nMessages().excelErroArquivoInvalido(
+
+			this.errors.add( getI18nMessages().excelErroArquivoInvalido(
 				fileName, extractMessage( e ) ) );
-		}
-		finally
-		{
-//			if ( inputStream != null )
-//			{
-//				try
-//				{
-//					inputStream.close();
-//				}
-//			catch ( IOException e )
-//			{
-//					errors.add( extractMessage( e ) );
-//					e.printStackTrace();
-//				}
-//			}
 		}
 
 		return excelBeansMap;
@@ -257,7 +243,12 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	            	for ( int headerColumnIndex = 0;
 	            		  headerColumnIndex < headerColumnsNames.size(); headerColumnIndex++ )
 	            	{
-	            		if ( headerColumnsNames.get(headerColumnIndex).equals( columnName ) )
+	            		String str1 = ( headerColumnsNames.get( headerColumnIndex ) == null ? "" :
+	            			headerColumnsNames.get( headerColumnIndex ).trim() );
+
+	            		String str2 = ( columnName == null ? "" : columnName.trim() );
+
+	            		if ( str1.equals( str2 ) )
 	            		{
 	            			columnStatus[ headerColumnIndex ] = true;
 	            		}
@@ -313,16 +304,16 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 
 	protected Cenario getCenario()
 	{
-		return cenario;
+		return this.cenario;
 	}
 
 	protected TriedaI18nConstants getI18nConstants()
 	{
-		return i18nConstants;
+		return this.i18nConstants;
 	}
 
 	protected TriedaI18nMessages getI18nMessages()
 	{
-		return i18nMessages;
+		return this.i18nMessages;
 	}
 }

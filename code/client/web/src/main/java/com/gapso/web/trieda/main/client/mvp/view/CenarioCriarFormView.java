@@ -31,7 +31,7 @@ public class CenarioCriarFormView extends MyComposite
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private CheckBox oficialCB;
-	private TextField<String> nomeTF;
+	private TextField< String > nomeTF;
 	private NumberField anoTF;
 	private NumberField semestreTF;
 	private TextField< String > comentarioTF;
@@ -42,6 +42,7 @@ public class CenarioCriarFormView extends MyComposite
 	public CenarioCriarFormView( CenarioDTO cenarioDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
+
 		initUI();
 	}
 

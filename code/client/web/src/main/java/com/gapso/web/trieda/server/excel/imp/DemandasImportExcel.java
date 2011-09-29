@@ -339,7 +339,8 @@ public class DemandasImportExcel
 
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
-			Disciplina disciplina = disciplinasBDMap.get(bean.getDisciplinaStr() );
+			Disciplina disciplina
+				= disciplinasBDMap.get( bean.getDisciplinaStr() );
 
 			if ( disciplina != null )
 			{
@@ -371,7 +372,8 @@ public class DemandasImportExcel
 
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
-			Curriculo curriculo = curriculosBDMap.get( bean.getMatrizCurricularStr() );
+			Curriculo curriculo
+				= curriculosBDMap.get( bean.getMatrizCurricularStr() );
 
 			if ( curriculo != null )
 			{
@@ -504,6 +506,7 @@ public class DemandasImportExcel
 			+ "-" + bean.getMatrizCurricularStr();
 	}
 
+	// Curso + Curriculo + Período + Disciplina
 	public String getNaturalKeyStringDeCurriculoDisciplina(
 		DemandasImportExcelBean bean )
 	{

@@ -59,13 +59,12 @@ public class SalasServiceImpl
 		SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
-		Campus campus = sala.getUnidade().getCampus();
 
-		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus ) );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() ); 
 
 		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-			sala.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) );
+			sala.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
@@ -130,14 +129,13 @@ public class SalasServiceImpl
 
 	@Override
 	public void saveHorariosDisponiveis(
-		SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
+		SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		Campus campus = sala.getUnidade().getCampus();
-
-		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus ) );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -146,11 +144,11 @@ public class SalasServiceImpl
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( sala.getHorarios(
-			getInstituicaoEnsinoUser(), semanasLetivas ) );
+			getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		List< HorarioDisponivelCenario > removerList
-			= new ArrayList< HorarioDisponivelCenario >( sala.getHorarios(
-				getInstituicaoEnsinoUser(), semanasLetivas ) );
+			= new ArrayList< HorarioDisponivelCenario >(
+				sala.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		removerList.removeAll( listSelecionados );
 

@@ -80,18 +80,17 @@ public class CampiServiceImpl extends RemoteService
 		CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
 		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
-		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus ) );
+
+		SemanaLetiva semanaLetiva
+			= SemanaLetiva.find( semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario>();
-		
-		Campus c = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		if ( c != null )
+		if ( campus != null )
 		{
 			List< HorarioDisponivelCenario > listHorarios
-				= c.getHorarios( this.getInstituicaoEnsinoUser(), semanasLetivas ); 
-			
+				= campus.getHorarios( this.getInstituicaoEnsinoUser(), semanaLetiva ); 
+
 			if ( listHorarios != null )
 			{
 				list.addAll( listHorarios );
@@ -144,6 +143,7 @@ public class CampiServiceImpl extends RemoteService
 		}
 
 		listDTO.clear();
+
 		for ( Entry< Date, List< String > > entry
 			: horariosFinalTurnos.entrySet() )
 		{
@@ -158,15 +158,16 @@ public class CampiServiceImpl extends RemoteService
 
 	@Override
 	public void saveHorariosDisponiveis(
-		CampusDTO campusDTO, List< HorarioDisponivelCenarioDTO > listDTO )
+		CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		List<HorarioDisponivelCenario> listSelecionados
+		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
 		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		List< SemanaLetiva > semanasLetivas = new ArrayList< SemanaLetiva >(
-			SemanaLetiva.getByOficial( getInstituicaoEnsinoUser(), campus ) );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		List< Unidade > unidades = Unidade.findByCampus(
 			getInstituicaoEnsinoUser(), campus );
@@ -180,7 +181,7 @@ public class CampiServiceImpl extends RemoteService
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				campus.getHorarios( this.getInstituicaoEnsinoUser(), semanasLetivas ) );
+				campus.getHorarios( this.getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		removerList.removeAll( listSelecionados );
 		for ( HorarioDisponivelCenario o : removerList )
@@ -195,7 +196,7 @@ public class CampiServiceImpl extends RemoteService
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( campus.getHorarios(
-			this.getInstituicaoEnsinoUser(), semanasLetivas ) );
+			this.getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{

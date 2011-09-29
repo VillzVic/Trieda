@@ -732,8 +732,8 @@ public class AtendimentoOperacional
 
 		boolean validaHdc = ( this.getHorarioDisponivelCenario().getHorarioAula().equals(
 			other.getHorarioDisponivelCenario().getHorarioAula() ) );
-		validaHdc = ( validaHdc && this.getHorarioDisponivelCenario().getSemana().equals(
-			other.getHorarioDisponivelCenario().getSemana() ) ); 
+		validaHdc = ( validaHdc && this.getHorarioDisponivelCenario().getDiaSemana().equals(
+			other.getHorarioDisponivelCenario().getDiaSemana() ) ); 
 
 		boolean validaOferta = ( this.getOferta().equals( other.getOferta() ) );
 		boolean validaDisciplina = ( this.getDisciplina().equals( other.getDisciplina() ) );

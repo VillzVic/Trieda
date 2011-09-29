@@ -242,7 +242,7 @@ public class SolverInput
 
 					for ( HorarioDisponivelCenario hdc : horariosDisponivelCenario )
 					{
-						grupoDiasSemana.getDiaSemana().add( Semanas.toInt( hdc.getSemana() ) );
+						grupoDiasSemana.getDiaSemana().add( Semanas.toInt( hdc.getDiaSemana() ) );
 					}
 
 					itemHorarioAula.setDiasSemana( grupoDiasSemana );
@@ -430,8 +430,18 @@ public class SolverInput
 			itemCampus.setId( campus.getId().intValue() );
 			itemCampus.setCodigo( campus.getCodigo() );
 			itemCampus.setNome( campus.getNome() );
+			
+			Set< HorarioDisponivelCenario > horarios
+				= new HashSet< HorarioDisponivelCenario >();
+
+			for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
+			{
+				horarios.addAll( campus.getHorarios(
+					this.instituicaoEnsino, semanaLetiva ) );
+			}
+
 			itemCampus.setHorariosDisponiveis( createGrupoHorario(
-				campus.getHorarios(	this.instituicaoEnsino, this.semanasLetivas ) ) );
+				new ArrayList< HorarioDisponivelCenario >( horarios ) ) );
 
 			itemCampus.setCusto( campus.getValorCredito() );
 
@@ -448,8 +458,21 @@ public class SolverInput
 				itemUnidade.setId( unidade.getId().intValue() );
 				itemUnidade.setCodigo( unidade.getCodigo() );
 				itemUnidade.setNome( unidade.getNome() );
-				itemUnidade.setHorariosDisponiveis(	createGrupoHorario(
-					unidade.getHorarios( this.instituicaoEnsino, this.semanasLetivas ) ) );
+
+				Set< HorarioDisponivelCenario > setHorariosUnidade
+				= new HashSet< HorarioDisponivelCenario >();
+
+				for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
+				{
+					setHorariosUnidade.addAll( unidade.getHorarios(
+						this.instituicaoEnsino, semanaLetiva ) );
+				}
+
+				List< HorarioDisponivelCenario > listHorariosUnidade
+					= new ArrayList< HorarioDisponivelCenario >( setHorariosUnidade );
+
+				itemUnidade.setHorariosDisponiveis(
+					createGrupoHorario( listHorariosUnidade ) );
 
 				GrupoSala grupoSala = of.createGrupoSala();
 				Set< Sala > salas = unidade.getSalas();
@@ -466,21 +489,30 @@ public class SolverInput
 						sala.getTipoSala().getId().intValue() );
 					itemSala.setCapacidade( sala.getCapacidade() );
 
+					Set< HorarioDisponivelCenario > setHorariosSala
+						= new HashSet< HorarioDisponivelCenario >();
+					
+					for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
+					{
+						setHorariosSala.addAll( sala.getHorarios(
+							this.instituicaoEnsino, semanaLetiva ) );
+					}
+
 					// Carregando 'CRÉDITOS' ( modelo tático )
 					// ou 'HORÁRIOS' ( modelo operacional )
-					List< HorarioDisponivelCenario > listHorarios
-						= sala.getHorarios( this.instituicaoEnsino, this.semanasLetivas );
+					List< HorarioDisponivelCenario > listHorariosSala
+						= new ArrayList< HorarioDisponivelCenario >( setHorariosSala );
 
 					if ( tatico )
 					{
 						// Tático
 						itemSala.setCreditosDisponiveis(
-							createCreditosDisponiveis( createGrupoHorario( listHorarios ) ) );
+							createCreditosDisponiveis( createGrupoHorario( listHorariosSala ) ) );
 					}
 					else
 					{
 						// Operacional
-						itemSala.setHorariosDisponiveis( createGrupoHorario( listHorarios ) );
+						itemSala.setHorariosDisponiveis( createGrupoHorario( listHorariosSala ) );
 					}
 
 					GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
@@ -535,12 +567,21 @@ public class SolverInput
 
 				itemProfessor.setCredAnterior( professor.getCreditoAnterior() );
 				itemProfessor.setValorCred( professor.getValorCredito() );
-				
-				List< HorarioDisponivelCenario > horariosCenario
-					=  professor.getHorarios( this.instituicaoEnsino, this.semanasLetivas );
+
+				Set< HorarioDisponivelCenario > setHorarios
+					= new HashSet< HorarioDisponivelCenario >();
+			
+				for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
+				{
+					setHorarios.addAll( professor.getHorarios(
+						this.instituicaoEnsino, semanaLetiva ) );
+				}
+
+				List< HorarioDisponivelCenario > listHorarios
+					= new ArrayList< HorarioDisponivelCenario >( setHorarios );
 
 				itemProfessor.setHorariosDisponiveis(
-					createGrupoHorario( horariosCenario ) );
+					createGrupoHorario( listHorarios ) );
 
 				GrupoProfessorDisciplina grupoProfessorDisciplina	
 					= of.createGrupoProfessorDisciplina();
@@ -717,8 +758,20 @@ public class SolverInput
 
 			itemDisciplina.setDisciplinasIncompativeis( grupoIdentificadorIncompativeis );
 
-			itemDisciplina.setHorariosDisponiveis( createGrupoHorario(
-				disciplina.getHorarios( this.instituicaoEnsino, this.semanasLetivas ) ) );
+			Set< HorarioDisponivelCenario > setHorarios
+				= new HashSet< HorarioDisponivelCenario >();
+			
+			for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
+			{
+				setHorarios.addAll( disciplina.getHorarios(
+					this.instituicaoEnsino, semanaLetiva ) );
+			}
+
+			List< HorarioDisponivelCenario > listHorarios
+				= new ArrayList< HorarioDisponivelCenario >( setHorarios );
+			
+			itemDisciplina.setHorariosDisponiveis(
+				createGrupoHorario( listHorarios ) );
 
 			grupoDisciplina.getDisciplina().add( itemDisciplina );
 		}
@@ -1113,7 +1166,7 @@ public class SolverInput
 					ItemFixacao itemFixacao = this.of.createItemFixacao();
 
 					itemFixacao.setId( id++ );
-					itemFixacao.setDiaSemana( Semanas.toInt( horario.getSemana() ) );
+					itemFixacao.setDiaSemana( Semanas.toInt( horario.getDiaSemana() ) );
 					itemFixacao.setTurnoId( horario.getHorarioAula().getTurno().getId().intValue() );
 					itemFixacao.setHorarioAulaId( horario.getHorarioAula().getId().intValue() );
 
@@ -1427,7 +1480,7 @@ public class SolverInput
 		for ( HorarioDisponivelCenario horarioDisponivelCenario : horarios )
 		{
 			HorarioAula horarioAula = horarioDisponivelCenario.getHorarioAula();
-			Semanas semana = horarioDisponivelCenario.getSemana();
+			Semanas semana = horarioDisponivelCenario.getDiaSemana();
 			ItemHorario itemHorarioAux = null;
 
 			for ( ItemHorario itemHorario : grupoHorario.getHorario() )

@@ -616,7 +616,7 @@ public class ConvertBeans
 		{
 			for ( HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario() )
 			{
-				int semanaInt = Semanas.toInt( hdc.getSemana() );
+				int semanaInt = Semanas.toInt( hdc.getDiaSemana() );
 				Integer value = countHorariosAula.get( semanaInt );
 				value = ( ( value == null ) ? 0 : value );
 
@@ -667,7 +667,6 @@ public class ConvertBeans
 		domain.setCodigo( dto.getCodigo() );
 		domain.setDescricao( dto.getDescricao() );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
-		domain.setOficial( dto.getOficial() );
 
 		return domain;
 	}
@@ -689,7 +688,6 @@ public class ConvertBeans
 		dto.setVersion( domain.getVersion() );
 		dto.setCodigo( domain.getCodigo() );
 		dto.setDescricao( domain.getDescricao() );
-		dto.setOficial( domain.getOficial() );
 		dto.setDisplayText( domain.getCodigo() + " (" + domain.getDescricao() + ")" );
 
 		return dto;
@@ -775,7 +773,7 @@ public class ConvertBeans
 				if ( dto.getSegundaId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
-					domain.setSemana( Semanas.SEG );
+					domain.setDiaSemana( Semanas.SEG );
 					domain.setHorarioAula( horarioAula );
 				}
 				else
@@ -796,7 +794,7 @@ public class ConvertBeans
 				if ( dto.getTercaId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
-					domain.setSemana( Semanas.TER );
+					domain.setDiaSemana( Semanas.TER );
 					domain.setHorarioAula( horarioAula );
 				}
 				else
@@ -818,7 +816,7 @@ public class ConvertBeans
 				if ( dto.getQuartaId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
-					domain.setSemana( Semanas.QUA );
+					domain.setDiaSemana( Semanas.QUA );
 					domain.setHorarioAula( horarioAula );
 				}
 				else
@@ -840,7 +838,7 @@ public class ConvertBeans
 				if ( dto.getQuintaId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
-					domain.setSemana( Semanas.QUI );
+					domain.setDiaSemana( Semanas.QUI );
 					domain.setHorarioAula( horarioAula );
 				}
 				else
@@ -861,7 +859,7 @@ public class ConvertBeans
 				if ( dto.getSextaId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
-					domain.setSemana( Semanas.SEX );
+					domain.setDiaSemana( Semanas.SEX );
 					domain.setHorarioAula( horarioAula );
 				}
 				else
@@ -882,7 +880,7 @@ public class ConvertBeans
 				if ( dto.getSabadoId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
-					domain.setSemana( Semanas.SAB );
+					domain.setDiaSemana( Semanas.SAB );
 					domain.setHorarioAula( horarioAula );
 				}
 				else
@@ -903,7 +901,7 @@ public class ConvertBeans
 				if ( dto.getDomingoId() == null )
 				{
 					domain = new HorarioDisponivelCenario();
-					domain.setSemana( Semanas.DOM );
+					domain.setDiaSemana( Semanas.DOM );
 					domain.setHorarioAula( horarioAula );
 				}
 				else
@@ -942,7 +940,7 @@ public class ConvertBeans
 		for ( HorarioDisponivelCenario o
 			: domain.getHorariosDisponiveisCenario() )
 		{
-			switch ( o.getSemana() )
+			switch ( o.getDiaSemana() )
 			{
 				case SEG:
 					dto.setSegunda( true );
@@ -1045,7 +1043,7 @@ public class ConvertBeans
 
 			for ( HorarioDisponivelCenario o : horariosAula.get( horarioAula ) )
 			{
-				switch ( o.getSemana() )
+				switch ( o.getDiaSemana() )
 				{
 					case SEG:
 						dto.setSegunda( true );
@@ -2091,7 +2089,7 @@ public class ConvertBeans
 
 		HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
 		dto.setHorarioDisponivelCenarioId( hdc.getId() );
-		dto.setSemana( Semanas.toInt( hdc.getSemana() ) );
+		dto.setSemana( Semanas.toInt( hdc.getDiaSemana() ) );
 
 		HorarioAula ha = hdc.getHorarioAula();
 		dto.setHorarioId( ha.getId() );
@@ -2697,24 +2695,8 @@ public class ConvertBeans
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setModoOtimizacao( domain.getModoOtimizacao() );
 
+		// TODO -- Verificar se este campo não está vindo NULL
 		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
-
-		if ( semanaLetiva == null )
-		{
-			List< SemanaLetiva > list = new ArrayList< SemanaLetiva >(
-				SemanaLetiva.getByOficial( instituicaoEnsino, domain.getCampus() ) );
-
-			if ( !( list == null || list.size() == 0 ) )
-			{
-				semanaLetiva = list.get( 0 );
-			}
-			else
-			{
-				list = new ArrayList< SemanaLetiva >( SemanaLetiva.findAll( instituicaoEnsino ) );
-
-				semanaLetiva = ( ( list == null || list.size() == 0 ) ? null : list.get( 0 ) );				
-			}
-		}
 
 		dto.setSemanaLetivaId( semanaLetiva.getId() );
 		dto.setSemanaLetivaDisplay( semanaLetiva.getCodigo() );

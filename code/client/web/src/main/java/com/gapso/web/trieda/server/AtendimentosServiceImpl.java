@@ -995,9 +995,9 @@ public class AtendimentosServiceImpl
 			for ( AtendimentoOperacional at2 : atendimentosOperacionalDistinct )
 			{
 				if ( at.getHorarioDisponivelCenario().getHorarioAula()
-					== at2.getHorarioDisponivelCenario().getHorarioAula()
-					&& at.getHorarioDisponivelCenario().getSemana()
-					== at2.getHorarioDisponivelCenario().getSemana() )
+						== at2.getHorarioDisponivelCenario().getHorarioAula()
+					&& at.getHorarioDisponivelCenario().getDiaSemana()
+						== at2.getHorarioDisponivelCenario().getDiaSemana() )
 				{
 					encontrou = true;
 					break;
@@ -1240,8 +1240,11 @@ public class AtendimentosServiceImpl
 			return 0;
 		}
 
+		Turno turno = Turno.find(
+			atendimentosDia.get( 0 ).getTurnoId() , instituicaoEnsino );
+
 		final List< HorarioAula > listAll
-			= HorarioAula.findAll( instituicaoEnsino );
+			= HorarioAula.findByTurno( instituicaoEnsino, turno );
 
 		final Map< Long, HorarioAula > mapHorarios
 			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap( listAll );
@@ -1251,8 +1254,9 @@ public class AtendimentosServiceImpl
 		HorarioAula menorHorario = mapHorarios.get(
 			atendimentosDia.get( 0 ).getHorarioId() );
 
-		for ( AtendimentoOperacionalDTO atDTO : atendimentosDia )
+		for ( int i = 1; i < atendimentosDia.size(); i++ )
 		{
+			AtendimentoOperacionalDTO atDTO = atendimentosDia.get( i );
 			HorarioAula ha = mapHorarios.get( atDTO.getHorarioId() );
 
 			if ( ha.getHorario().compareTo( menorHorario.getHorario() ) < 0 )

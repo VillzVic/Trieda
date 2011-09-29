@@ -33,6 +33,6 @@ public interface SalasService
 	List< GrupoSalaDTO > getGruposDeSalas( Long unidadeId );
 	ListLoadResult< SalaDTO > getBuscaList( UnidadeDTO unidadeDTO );
 	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO );
-	void saveHorariosDisponiveis( SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
+	void saveHorariosDisponiveis( SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	ListLoadResult< SalaDTO > getSalasDoAndareList( UnidadeDTO unidade, List< String > andares );
 }

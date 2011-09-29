@@ -185,7 +185,22 @@ public class HorarioAula
         return em;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
+    public static List< HorarioAula > findByTurno(
+    	InstituicaoEnsino instituicaoEnsino, Turno turno )
+    {
+    	Query q = entityManager().createQuery(
+            " SELECT o FROM HorarioAula o " +
+    		" WHERE o.turno = :turno " +
+    		" AND o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+    	q.setParameter( "turno", turno );
+
+        return q.getResultList();
+    }
+
+    @SuppressWarnings( "unchecked" )
     public static List< HorarioAula > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
@@ -222,7 +237,7 @@ public class HorarioAula
         return find( instituicaoEnsino, firstResult, maxResults, null );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static List< HorarioAula > find(
    		InstituicaoEnsino instituicaoEnsino,
    		int firstResult, int maxResults, String orderBy )
@@ -240,8 +255,8 @@ public class HorarioAula
     	SemanaLetiva semanaLetiva, Turno turno, Date horario )
     {
     	String horarioQuery = ( ( horario == null )? "" : " o.horario = :horario AND " );
-    	String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : " o.semanaLetiva = :semanaLetiva AND " );
-    	String turnoQuery = ( ( turno == null )? "" : " o.turno = :turno AND " );
+    	String semanaLetivaQuery = ( ( semanaLetiva == null ) ? "" : " o.semanaLetiva = :semanaLetiva AND " );
+    	String turnoQuery = ( ( turno == null ) ? "" : " o.turno = :turno AND " );
 
     	Query q = entityManager().createQuery(
     		" SELECT COUNT( o ) FROM HorarioAula o " +
@@ -262,13 +277,13 @@ public class HorarioAula
 
     	if ( turno != null )
     	{
-    		q.setParameter("turno", turno );
+    		q.setParameter( "turno", turno );
     	}
 
-    	return ( ( (Number)q.getSingleResult() ).intValue() );
+    	return ( ( (Number) q.getSingleResult() ).intValue() );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static List< HorarioAula > findBy( InstituicaoEnsino instituicaoEnsino,
     	SemanaLetiva semanaLetiva, Turno turno, Date horario,
     	int firstResult, int maxResults, String orderBy )
@@ -307,7 +322,7 @@ public class HorarioAula
         return q.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static List< HorarioAula > findHorarioAulasBySemanaLetivaAndTurno(
     	InstituicaoEnsino instituicaoEnsino,
     	SemanaLetiva semanaLetiva, Turno turno )

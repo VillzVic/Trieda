@@ -18,15 +18,17 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CenarioEditarFormPresenter implements Presenter {
-
-	public interface Display {
+public class CenarioEditarFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		CheckBox getOficialCheckBox();
-		TextField<String> getNomeTextField();
+		TextField< String > getNomeTextField();
 		NumberField getAnoTextField();
 		NumberField getSemestreTextField();
-		TextField<String> getComentarioTextField();
+		TextField< String > getComentarioTextField();
 		CenarioDTO getCenarioDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
@@ -36,7 +38,8 @@ public class CenarioEditarFormPresenter implements Presenter {
 	private SimpleGrid< CenarioDTO > gridPanel;
 	private Display display;
 
-	public CenarioEditarFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public CenarioEditarFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< CenarioDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -46,52 +49,68 @@ public class CenarioEditarFormPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				if ( isValid() )
+				{
 					final CenariosServiceAsync service = Services.cenarios();
-					service.editar(getDTO(), new AsyncCallback<Void>() {
+
+					service.editar( getDTO(), new AsyncCallback< Void >()
+					{
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!",
+								"Deu falha na conexão", null );
 						}
+
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess( Void result )
+						{
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display("Salvo", "Item salvo com sucesso!");
+							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
 				}
 			}
 		});
 	}
-	
-	private boolean isValid() {
-		return display.isValid();
+
+	private boolean isValid()
+	{
+		return this.display.isValid();
 	}
 	
 	private CenarioDTO getDTO()
 	{
-		CenarioDTO cenarioDTO = display.getCenarioDTO();
+		CenarioDTO cenarioDTO = this.display.getCenarioDTO();
 
-		cenarioDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		cenarioDTO.setMasterData(false);
-		cenarioDTO.setOficial(display.getOficialCheckBox().getValue());
-		cenarioDTO.setNome(display.getNomeTextField().getValue());
-		cenarioDTO.setAno(display.getAnoTextField().getValue().intValue());
-		cenarioDTO.setSemestre(display.getSemestreTextField().getValue().intValue());
-		cenarioDTO.setComentario(display.getComentarioTextField().getValue());
+		cenarioDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		cenarioDTO.setMasterData( false );
+		cenarioDTO.setOficial( this.display.getOficialCheckBox().getValue() );
+		cenarioDTO.setNome( this.display.getNomeTextField().getValue() );
+		cenarioDTO.setAno( this.display.getAnoTextField().getValue().intValue() );
+		cenarioDTO.setSemestre( this.display.getSemestreTextField().getValue().intValue() );
+		cenarioDTO.setComentario( this.display.getComentarioTextField().getValue() );
+
 		return cenarioDTO;
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
+	}
 }

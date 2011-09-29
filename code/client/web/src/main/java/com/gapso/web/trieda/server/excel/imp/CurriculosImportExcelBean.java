@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.SemanaLetiva;
 
 public class CurriculosImportExcelBean
 	extends AbstractImportExcelBean
@@ -17,10 +18,12 @@ public class CurriculosImportExcelBean
 	private String cursoCodigoStr;
 	private String periodoStr;
 	private String disciplinaCodigoStr;
+	private String semanaLetivaCodigoStr;
 
 	private Curso curso;
 	private Integer periodo;
 	private Disciplina disciplina;
+	private SemanaLetiva semanaLetiva;
 
 	public CurriculosImportExcelBean( int row )
 	{
@@ -34,13 +37,14 @@ public class CurriculosImportExcelBean
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( codigoStr, ImportExcelError.CURRICULO_CODIGO_VAZIO, erros );
-			checkMandatoryField( descricaoStr, ImportExcelError.CURRICULO_DESCRICAO_VAZIO, erros );
-			checkMandatoryField( cursoCodigoStr, ImportExcelError.CURRICULO_CURSO_VAZIO, erros );
-			checkMandatoryField( periodoStr, ImportExcelError.CURRICULO_PERIODO_VAZIO, erros );
-			checkMandatoryField( disciplinaCodigoStr, ImportExcelError.CURRICULO_DISCIPLINA_VAZIO, erros );
+			checkMandatoryField( this.codigoStr, ImportExcelError.CURRICULO_CODIGO_VAZIO, erros );
+			checkMandatoryField( this.descricaoStr, ImportExcelError.CURRICULO_DESCRICAO_VAZIO, erros );
+			checkMandatoryField( this.cursoCodigoStr, ImportExcelError.CURRICULO_CURSO_VAZIO, erros );
+			checkMandatoryField( this.periodoStr, ImportExcelError.CURRICULO_PERIODO_VAZIO, erros );
+			checkMandatoryField( this.disciplinaCodigoStr, ImportExcelError.CURRICULO_DISCIPLINA_VAZIO, erros );
+			checkMandatoryField( this.semanaLetivaCodigoStr, ImportExcelError.CURRICULO_SEMANA_LETIVA_VAZIA, erros );
 
-			periodo = checkNonNegativeIntegerField( periodoStr,
+			this.periodo = checkNonNegativeIntegerField( this.periodoStr,
 				ImportExcelError.CURRICULO_PERIODO_FORMATO_INVALIDO,
 				ImportExcelError.CURRICULO_PERIODO_VALOR_NEGATIVO, erros );
 		}
@@ -52,89 +56,128 @@ public class CurriculosImportExcelBean
 		return erros;
 	}
 	
-	public boolean tudoVazio() {
-		return ( isEmptyField( codigoStr )
-			&& isEmptyField( descricaoStr )
-			&& isEmptyField( cursoCodigoStr )
-			&& isEmptyField( periodoStr )
-			&& isEmptyField( disciplinaCodigoStr ) );
+	public boolean tudoVazio()
+	{
+		return ( isEmptyField( this.codigoStr )
+			&& isEmptyField( this.descricaoStr )
+			&& isEmptyField( this.cursoCodigoStr )
+			&& isEmptyField( this.periodoStr )
+			&& isEmptyField( this.disciplinaCodigoStr )
+			&& isEmptyField( this.semanaLetivaCodigoStr ) );
 	}
 
 	public String getNaturalKeyString()
 	{
-		return getCursoCodigoStr() +
-			"-" + getCodigoStr() +
-			"-" + getPeriodo().toString() +
-			"-" + getDisciplinaCodigoStr();
+		return this.getCursoCodigoStr() +
+			"-" + this.getCodigoStr() +
+			"-" + this.getPeriodo().toString() +
+			"-" + this.getDisciplinaCodigoStr();
 	}
 
-	public String getCodigoStr() {
-		return codigoStr;
+	public String getCodigoStr()
+	{
+		return this.codigoStr;
 	}
 
-	public void setCodigoStr(String codigoStr) {
+	public void setCodigoStr( String codigoStr )
+	{
 		this.codigoStr = codigoStr;
 	}
 
-	public String getDescricaoStr() {
-		return descricaoStr;
+	public String getDescricaoStr()
+	{
+		return this.descricaoStr;
 	}
 
-	public void setDescricaoStr(String descricaoStr) {
+	public void setDescricaoStr( String descricaoStr )
+	{
 		this.descricaoStr = descricaoStr;
 	}
 
-	public String getCursoCodigoStr() {
-		return cursoCodigoStr;
+	public String getCursoCodigoStr()
+	{
+		return this.cursoCodigoStr;
 	}
 
-	public void setCursoCodigoStr(String cursoCodigoStr) {
+	public void setCursoCodigoStr( String cursoCodigoStr )
+	{
 		this.cursoCodigoStr = cursoCodigoStr;
 	}
 
-	public String getPeriodoStr() {
-		return periodoStr;
+	public String getPeriodoStr()
+	{
+		return this.periodoStr;
 	}
 
-	public void setPeriodoStr(String periodoStr) {
+	public void setPeriodoStr( String periodoStr )
+	{
 		this.periodoStr = periodoStr;
 	}
 
-	public String getDisciplinaCodigoStr() {
-		return disciplinaCodigoStr;
+	public String getSemanaLetivaCodigoStr()
+	{
+		return this.semanaLetivaCodigoStr;
 	}
 
-	public void setDisciplinaCodigoStr(String disciplinaCodigoStr) {
+	public void setSemanaLetivaCodigoStr( String semanaLetivaCodigoStr )
+	{
+		this.semanaLetivaCodigoStr = semanaLetivaCodigoStr;
+	}
+
+	public String getDisciplinaCodigoStr()
+	{
+		return this.disciplinaCodigoStr;
+	}
+
+	public void setDisciplinaCodigoStr( String disciplinaCodigoStr )
+	{
 		this.disciplinaCodigoStr = disciplinaCodigoStr;
 	}
 
-	public Curso getCurso() {
-		return curso;
+	public Curso getCurso()
+	{
+		return this.curso;
 	}
 
-	public void setCurso(Curso curso) {
+	public void setCurso( Curso curso )
+	{
 		this.curso = curso;
 	}
 
-	public Disciplina getDisciplina() {
-		return disciplina;
+	public Disciplina getDisciplina()
+	{
+		return this.disciplina;
 	}
 
-	public void setDisciplina(Disciplina disciplina) {
+	public void setDisciplina( Disciplina disciplina )
+	{
 		this.disciplina = disciplina;
 	}
 
-	public Integer getPeriodo() {
-		return periodo;
+	public SemanaLetiva getSemanaLetiva()
+	{
+		return this.semanaLetiva;
 	}
 
-	public void setPeriodo(Integer periodo) {
+	public void setSemanaLetiva( SemanaLetiva semanaLetiva )
+	{
+		this.semanaLetiva = semanaLetiva;
+	}
+
+	public Integer getPeriodo()
+	{
+		return this.periodo;
+	}
+
+	public void setPeriodo( Integer periodo )
+	{
 		this.periodo = periodo;
 	}
 
 	@Override
-	public int compareTo(CurriculosImportExcelBean o) {
-		return getCodigoStr().compareTo(o.getCodigoStr());
+	public int compareTo( CurriculosImportExcelBean o )
+	{
+		return getCodigoStr().compareTo( o.getCodigoStr() );
 	}
 
 	public static Map< String, CurriculosImportExcelBean > buildCurriculoCodigoToImportExcelBeanMap(

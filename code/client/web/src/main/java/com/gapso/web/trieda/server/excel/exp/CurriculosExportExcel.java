@@ -14,38 +14,48 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class CurriculosExportExcel extends AbstractExportExcel {
-	
-	enum ExcelCellStyleReference {
-		TEXT(6,2),
-		NUMBER(6,5);
+public class CurriculosExportExcel
+	extends AbstractExportExcel
+{
+	enum ExcelCellStyleReference
+	{
+		TEXT( 6, 2 ),
+		NUMBER( 6, 5 );
+
 		private int row;
 		private int col;
-		private ExcelCellStyleReference(int row, int col) {
+
+		private ExcelCellStyleReference( int row, int col )
+		{
 			this.row = row;
 			this.col = col;
 		}
-		public int getRow() {
+
+		public int getRow()
+		{
 			return row;
 		}
-		public int getCol() {
+
+		public int getCol()
+		{
 			return col;
 		}
 	}
-	private HSSFCellStyle[] cellStyles;
-	
+
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
-	
-	public CurriculosExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+
+	public CurriculosExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
 	public CurriculosExportExcel( boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
@@ -56,17 +66,20 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	public String getFileName() {
+	public String getFileName()
+	{
 		return getI18nConstants().curriculos();
 	}
 	
 	@Override
-	protected String getPathExcelTemplate() {
+	protected String getPathExcelTemplate()
+	{
 		return "/templateExport.xls";
 	}
 
 	@Override
-	protected String getReportName() {
+	protected String getReportName()
+	{
 		return getI18nConstants().curriculos();
 	}
 
@@ -86,8 +99,8 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 
 			HSSFSheet sheet = workbook.getSheet( this.sheetName );
 			fillInCellStyles( sheet );
-			
 			int nextRow = this.initialRow;
+
 			for ( Curriculo c : curriculos )
 			{
 				nextRow = writeData( c, nextRow, sheet );
@@ -122,25 +135,41 @@ public class CurriculosExportExcel extends AbstractExportExcel {
 			for ( CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo )
 			{
 				// Curso
-				setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getCurso().getCodigo());
+				setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+					curriculo.getCurso().getCodigo() );
+
 				// Código
-				setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getCodigo());
+				setCell( row, 3, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+					curriculo.getCodigo() );
+
 				// Descrição
-				setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],curriculo.getDescricao());
+				setCell( row, 4, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+					curriculo.getDescricao() );
+
 				// Período
-				setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],periodo);
+				setCell( row, 5, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], periodo );
+
 				// Disciplina
-				setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],disciplinaDeUmPeriodo.getDisciplina().getCodigo());
+				setCell( row, 6, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+					disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
+
+				// Semana Letiva
+				setCell( row, 7, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+					disciplinaDeUmPeriodo.getCurriculo().getSemanaLetiva().getCodigo() );
+
 				row++;
 			}
 		}
-				
+
 		return row;
 	}
-	
-	private void fillInCellStyles(HSSFSheet sheet) {
-		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
-			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
+
+	private void fillInCellStyles( HSSFSheet sheet )
+	{
+		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
+		{
+			this.cellStyles[ cellStyleReference.ordinal() ] = getCell(
+				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}
 }

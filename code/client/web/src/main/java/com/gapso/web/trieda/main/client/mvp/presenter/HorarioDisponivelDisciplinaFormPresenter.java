@@ -20,73 +20,91 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HorarioDisponivelDisciplinaFormPresenter implements Presenter {
-
-	public interface Display {
+public class HorarioDisponivelDisciplinaFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		SimpleModal getSimpleModal();
 		DisciplinaDTO getDisciplinaDTO();
-		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
-		ListStore<HorarioDisponivelCenarioDTO> getStore();
+		void setProxy( RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy );
+		ListStore< HorarioDisponivelCenarioDTO > getStore();
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings( "unused" )
 	private CenarioDTO cenario;
-
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
-	private SemanaLetivaDTO semanaLetiva;
-	
-	public HorarioDisponivelDisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display )
+	private SemanaLetivaDTO semanaLetivaDTO;
+
+	public HorarioDisponivelDisciplinaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario,
+		SemanaLetivaDTO semanaLetivaDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
-		this.semanaLetiva = semanaLetiva;
+		this.semanaLetivaDTO = semanaLetivaDTO;
 		this.display = display;
 
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy =
+			new RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.semanasLetiva().getHorariosDisponiveisCenario(semanaLetiva, callback);
+			protected void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
+			{
+				Services.semanasLetiva().getHorariosDisponiveisCenario( semanaLetivaDTO, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		this.display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getStore().commitChanges();
-				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
-				
-				Services.disciplinas().saveHorariosDisponiveis(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
+				List< HorarioDisponivelCenarioDTO > hdcDTOList
+					= display.getStore().getModels();
+
+				Services.disciplinas().saveHorariosDisponiveis( getDTO(),
+					semanaLetivaDTO, hdcDTOList, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(Void result) {
-						Info.display("Atualizado", "Horários atualizados com sucesso!");
+					public void onSuccess( Void result )
+					{
+						Info.display( "Atualizado",
+							"Horários atualizados com sucesso!" );
+
 						display.getSimpleModal().hide();
 					}
-					
 				});
 			}
 		});
-		
 	}
 
 	private DisciplinaDTO getDTO()
 	{
-		DisciplinaDTO dto = display.getDisciplinaDTO();
-		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		DisciplinaDTO dto = this.display.getDisciplinaDTO();
+		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		return dto;
 	}
 

@@ -58,8 +58,8 @@ public class UnidadesServiceImpl
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > list
 			= new ArrayList< HorarioDisponivelCenario >();
@@ -70,7 +70,7 @@ public class UnidadesServiceImpl
 		if ( unidade != null )
 		{
 			list.addAll( unidade.getHorarios(
-				getInstituicaoEnsinoUser(), semanasLetivas ) );
+				getInstituicaoEnsinoUser(), semanaLetiva ) );
 		}
 
 		List< HorarioDisponivelCenarioDTO > listDTO
@@ -134,7 +134,8 @@ public class UnidadesServiceImpl
 	}
 	
 	@Override
-	public void saveHorariosDisponiveis( UnidadeDTO unidadeDTO,
+	public void saveHorariosDisponiveis(
+		UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
@@ -146,12 +147,12 @@ public class UnidadesServiceImpl
 		List< Sala > salas = Sala.findByUnidade(
 			getInstituicaoEnsinoUser(), unidade );
 
-		List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				unidade.getHorarios( getInstituicaoEnsinoUser(), semanasLetivas ) );
+				unidade.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		removerList.removeAll( listSelecionados );
 
@@ -166,7 +167,7 @@ public class UnidadesServiceImpl
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( unidade.getHorarios(
-			getInstituicaoEnsinoUser(), semanasLetivas ) );
+			getInstituicaoEnsinoUser(), semanaLetiva ) );
 
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{

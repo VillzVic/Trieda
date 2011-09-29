@@ -13,18 +13,20 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface UnidadesServiceAsync {
-
-	void getList(AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
-	void save(UnidadeDTO unidadeDTO, AsyncCallback<Void> callback);
-	void remove(List<UnidadeDTO> unidadeDTOList, AsyncCallback<Void> callback);
-	void getBuscaList(CampusDTO campusDTO, String nome, String codigo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<UnidadeDTO>> callback);
-	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
-	void getUnidade(Long id, AsyncCallback<UnidadeDTO> callback);
-	void getDeslocamento(CampusDTO campusDTO, AsyncCallback<List<DeslocamentoUnidadeDTO>> callback);
-	void getListByCampus(CampusDTO campusDTO, AsyncCallback<ListLoadResult<UnidadeDTO>> callback);
-	void saveHorariosDisponiveis(UnidadeDTO unidadeDTO, List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
-	void saveDeslocamento(CampusDTO campus, List<DeslocamentoUnidadeDTO> list, AsyncCallback<Void> callback);
-	void getHorariosDisponiveis(UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
-	
+public interface UnidadesServiceAsync
+{
+	void getList( AsyncCallback< ListLoadResult< UnidadeDTO > > callback );
+	void save( UnidadeDTO unidadeDTO, AsyncCallback< Void > callback );
+	void remove( List< UnidadeDTO > unidadeDTOList, AsyncCallback< Void > callback );
+	void getBuscaList( CampusDTO campusDTO, String nome, String codigo,
+		PagingLoadConfig config, AsyncCallback< PagingLoadResult< UnidadeDTO > > callback );
+	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< UnidadeDTO > > callback );
+	void getUnidade( Long id, AsyncCallback< UnidadeDTO > callback );
+	void getDeslocamento( CampusDTO campusDTO, AsyncCallback< List< DeslocamentoUnidadeDTO > > callback );
+	void getListByCampus( CampusDTO campusDTO, AsyncCallback< ListLoadResult< UnidadeDTO > > callback );
+	void saveHorariosDisponiveis( UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
+	void saveDeslocamento( CampusDTO campus, List< DeslocamentoUnidadeDTO > list, AsyncCallback< Void > callback );
+	void getHorariosDisponiveis( UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO,
+		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
 }

@@ -54,8 +54,8 @@ public class HorarioDisponivelCenarioFormView
 			"Dias e Horários de Aula",
 			Resources.DEFAULTS.semanaLetiva16() );
 
-		this.simpleModal.setHeight( 500 );
-		this.simpleModal.setWidth( 600 );
+		this.simpleModal.setHeight( 580 );
+		this.simpleModal.setWidth( 620 );
 	}
 
 	private void createGrid()

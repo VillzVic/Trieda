@@ -60,49 +60,49 @@ public class Campus
 	private String codigo;
 
 	@NotNull
-	@Column(name = "CAM_NOME")
-	@Size(min = 1, max = 50)
+	@Column( name = "CAM_NOME" )
+	@Size( min = 1, max = 50 )
 	private String nome;
 
-	@Column(name = "CAM_VALOR_CREDITO")
-	@Digits(integer = 6, fraction = 2)
+	@Column( name = "CAM_VALOR_CREDITO" )
+	@Digits( integer = 6, fraction = 2 )
 	private Double valorCredito;
 
 	@Enumerated
-	@Column(name = "CAM_ESTADO")
+	@Column( name = "CAM_ESTADO" )
 	private Estados estado;
 
-	@Column(name = "CAM_MUNICIPIO")
-	@Size(max = 25)
+	@Column( name = "CAM_MUNICIPIO" )
+	@Size( max = 25 )
 	private String municipio;
 
-	@Column(name = "CAM_BAIRRO")
-	@Size(max = 25)
+	@Column( name = "CAM_BAIRRO" )
+	@Size( max = 25 )
 	private String bairro;
 
-	@Column(name = "CAM_PUBLICAR")
+	@Column( name = "CAM_PUBLICAR" )
 	private Boolean publicado;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "campus")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
 	private Set< Unidade > unidades = new HashSet< Unidade >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "origem" )
 	private Set< DeslocamentoCampus > deslocamentos = new HashSet< DeslocamentoCampus >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "destino")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "destino" )
 	private Set< DeslocamentoCampus > deslocamentosDestino = new HashSet< DeslocamentoCampus >();
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "campi")
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "campi" )
 	private Set< Professor > professores = new HashSet< Professor >();
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "campi")
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "campi" )
 	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
 	@NotNull
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "campus")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
 	private Set< Oferta > ofertas = new HashSet< Oferta >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "campus")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
 	private Set< Parametro > parametros = new HashSet< Parametro >();
 
 	@NotNull
@@ -276,12 +276,12 @@ public class Campus
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "CAM_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "CAM_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
 	public Long getId()
@@ -784,30 +784,26 @@ public class Campus
 		return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
+		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
 	{
-		Set< HorarioDisponivelCenario > horarios
-			= new HashSet< HorarioDisponivelCenario >();
+		List< HorarioDisponivelCenario > horarios
+			= new ArrayList< HorarioDisponivelCenario >();
 
-		for ( SemanaLetiva semanaLetiva : semanasLetivas )
-		{
-			Query q = entityManager().createQuery(
-				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.campi ) c " +
-				" WHERE c.instituicaoEnsino = :instituicaoEnsino " +
-				" AND c = :campus " +
-				" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
-				" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+		Query q = entityManager().createQuery(
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.campi ) c " +
+			" WHERE c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c = :campus " +
+			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
-			q.setParameter( "campus", this );
-			q.setParameter( "semanaLetiva", semanaLetiva );
-			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campus", this );
+		q.setParameter( "semanaLetiva", semanaLetiva );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-			horarios.addAll( q.getResultList() );
-		}
-
-		return new ArrayList< HorarioDisponivelCenario >( horarios );
+		horarios.addAll( q.getResultList() );
+		return horarios;
 	}
 
 	@SuppressWarnings("unchecked")

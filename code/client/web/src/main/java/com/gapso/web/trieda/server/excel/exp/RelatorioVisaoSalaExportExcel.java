@@ -64,7 +64,7 @@ public class RelatorioVisaoSalaExportExcel
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
@@ -83,7 +83,7 @@ public class RelatorioVisaoSalaExportExcel
 		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoSalaExportExcel(boolean removeUnusedSheets,
+	public RelatorioVisaoSalaExportExcel( boolean removeUnusedSheets,
 		Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -107,7 +107,7 @@ public class RelatorioVisaoSalaExportExcel
 	@Override
 	public String getFileName()
 	{
-		return getI18nConstants().relatorioVisaoSala();
+		return this.getI18nConstants().relatorioVisaoSala();
 	}
 
 	@Override
@@ -119,12 +119,12 @@ public class RelatorioVisaoSalaExportExcel
 	@Override
 	protected String getReportName()
 	{
-		return getI18nConstants().relatorioVisaoSala();
+		return this.getI18nConstants().relatorioVisaoSala();
 	}
 
 	public RelatorioVisaoSalaFiltroExcel getFilter()
 	{
-		return relatorioFiltro;
+		return this.relatorioFiltro;
 	}
 
 	public void setFilter( ExportExcelFilter filter )
@@ -252,6 +252,7 @@ public class RelatorioVisaoSalaExportExcel
 			}
 
 			int nextRow = this.initialRow;
+
 			for ( Sala sala : mapNivel1.keySet() )
 			{
 				Map< Turno, List< AtendimentoRelatorioDTO > > mapNivel2 = mapNivel1.get( sala );
@@ -274,7 +275,6 @@ public class RelatorioVisaoSalaExportExcel
 		return result;
 	}
 
-	@SuppressWarnings("unused")
 	private int writeSala( Sala sala, Turno turno,
 		List< AtendimentoRelatorioDTO > atendimentos, int row, HSSFSheet sheet,
 		Iterator< HSSFComment > itExcelCommentsPool,
@@ -291,13 +291,13 @@ public class RelatorioVisaoSalaExportExcel
 		{
 			// Créditos
 			setCell( row, col++, sheet,
-				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
+				this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
 
 			// Dias Semana
-			for ( Semanas semanas : Semanas.values() )
+			for ( int i = 0; i < Semanas.values().length; i++ )
 			{
 				setCell( row, col++, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+					this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
 			}
 
 			row++;
@@ -400,7 +400,7 @@ public class RelatorioVisaoSalaExportExcel
 				
 		return ( initialRow + maxCreditos + 1 );
 	}
-	
+
 	private String getExcelCommentVisaoSala( AtendimentoRelatorioDTO atendimento )
 	{
 		String creditos = HtmlUtils.htmlUnescape( "Cr&eacute;dito(s) " );
@@ -435,7 +435,8 @@ public class RelatorioVisaoSalaExportExcel
 				+ periodo + atOp.getPeriodoString() + "\n"
 				+ "Quantidade: " + atOp.getQuantidadeAlunosString() + "\n"
 				+ "Sala: " + atOp.getSalaString() + "\n"
-				+ "Professor: " + (atOp.getProfessorId() != null ? atOp.getProfessorString() : atOp.getProfessorVirtualString() );
+				+ "Professor: " + (atOp.getProfessorId() != null ?
+					atOp.getProfessorString() : atOp.getProfessorVirtualString() );
 		}
 
 		return "";
@@ -446,69 +447,69 @@ public class RelatorioVisaoSalaExportExcel
 		int col = 3;
 
 		// Campus
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().campus() ) );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().campus() ) );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getUnidade().getCampus().getCodigo() );
 
 		// Sala
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().sala() ) );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().sala() ) );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getCodigo() );
 
 		// Capacidade
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().capacidade() ) );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().capacidade() ) );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getCapacidade() );
 
 		row++;
 		col = 3;
 
 		// Unidade
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().unidade() ) );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().unidade() ) );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getUnidade().getCodigo() );
 
 		// Turno
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().turno() ) );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().turno() ) );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			turno.getNome() );
 
 		// Tipo
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().tipo() ) );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().tipo() ) );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
 			sala.getTipoSala().getNome() );
 
 		row++;
 		col = 2;
 
 		// Créditos
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( getI18nConstants().creditos() ) );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
+			HtmlUtils.htmlUnescape( this.getI18nConstants().creditos() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )
 		{
 			setCell( row, col++, sheet,
-				cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
+				this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
 				semanas.name() );
 		}
 
 		row++;
 		return row;
 	}
-	
+
 	private void fillInCellStyles( HSSFSheet sheet )
 	{
 		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
 		{
-			cellStyles[ cellStyleReference.ordinal() ]
-				= getCell( cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
+			this.cellStyles[ cellStyleReference.ordinal() ] = getCell(
+				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}
 
@@ -540,7 +541,9 @@ public class RelatorioVisaoSalaExportExcel
 
 	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
 	{
-		List< HSSFComment > excelCommentsPool = new ArrayList< HSSFComment >();
+		List< HSSFComment > excelCommentsPool
+			= new ArrayList< HSSFComment >();
+
 		HSSFSheet sheet = workbook.getSheet(
 			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName() );
 

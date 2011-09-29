@@ -49,7 +49,8 @@ public class TurnosPresenter
 	private CenarioDTO cenario;
 	private Display display; 
 
-	public TurnosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public TurnosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.cenario = cenario;
@@ -79,14 +80,17 @@ public class TurnosPresenter
 			}
 		};
 
-		display.setProxy(proxy);
+		this.display.setProxy( proxy );
 	}
 	
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+		this.display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				Presenter presenter = new TurnoFormPresenter( instituicaoEnsinoDTO, cenario,
 					new TurnoFormView( new TurnoDTO() ), display.getGrid() );
 
@@ -94,7 +98,7 @@ public class TurnosPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -108,44 +112,64 @@ public class TurnosPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		this.display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<TurnoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
+				List< TurnoDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final TurnosServiceAsync service = Services.turnos();
-				service.remove(list, new AsyncCallback<Void>() {
+
+				service.remove(list, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Deu falha na conexão", null );
 					}
+
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+
+						Info.display( "Removido",
+							"Item removido com sucesso!" );
 					}
 				});
 			}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getNomeBuscaTextField().setValue(null);
-				display.getTempoBuscaTextField().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getNomeBuscaTextField().setValue( null );
+				display.getTempoBuscaTextField().setValue( null );
+
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		GTab tab = (GTab) widget;
+		tab.add( (GTabItem) this.display.getComponent() );
+	}
 }

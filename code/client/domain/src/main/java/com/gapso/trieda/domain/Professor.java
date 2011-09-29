@@ -622,27 +622,23 @@ public class Professor
 
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
+		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
 	{
-		Set< HorarioDisponivelCenario > horarios
-			= new HashSet< HorarioDisponivelCenario >();
+		List< HorarioDisponivelCenario > horarios
+			= new ArrayList< HorarioDisponivelCenario >();
 
-		for ( SemanaLetiva semanaLetiva : semanasLetivas )
-		{
-			Query q = entityManager().createQuery(
-				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.professores ) c " +
-				" WHERE c.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
-				" AND c = :professor " +
-				" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+		Query q = entityManager().createQuery(
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.professores ) c " +
+			" WHERE c.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c = :professor " +
+			" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
 
-			q.setParameter( "professor", this );
-			q.setParameter( "semanaLetiva", semanaLetiva );
-			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "professor", this );
+		q.setParameter( "semanaLetiva", semanaLetiva );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-			horarios.addAll( q.getResultList() );
-		}
-
-		return new ArrayList< HorarioDisponivelCenario >( horarios );
+		horarios.addAll( q.getResultList() );
+		return horarios;
 	}
 
 	public static Map< String, Professor > buildProfessorCpfToProfessorMap(

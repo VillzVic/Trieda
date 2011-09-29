@@ -11,14 +11,13 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
-public interface FixacoesServiceAsync {
-
-	void getFixacao(Long id, AsyncCallback<FixacaoDTO> callback);
-	void getBuscaList(String codigo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<FixacaoDTO>> callback);
-	void save(FixacaoDTO fixacaoDTO, List<HorarioDisponivelCenarioDTO> hdcDTOList, AsyncCallback<Void> callback);
-	void remove(List<FixacaoDTO> fixacaoDTOList, AsyncCallback<Void> callback);
-	void getHorariosSelecionados(FixacaoDTO fixacaoDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
-	void getHorariosDisponiveis( ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback);
-	
+public interface FixacoesServiceAsync
+{
+	void getFixacao( Long id, AsyncCallback< FixacaoDTO > callback );
+	void getBuscaList( String codigo, PagingLoadConfig config, AsyncCallback< PagingLoadResult< FixacaoDTO > > callback );
+	void save( FixacaoDTO fixacaoDTO, List< HorarioDisponivelCenarioDTO > hdcDTOList, AsyncCallback< Void > callback );
+	void remove( List< FixacaoDTO > fixacaoDTOList, AsyncCallback< Void > callback );
+	void getHorariosSelecionados( FixacaoDTO fixacaoDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
+	void getHorariosDisponiveis( ProfessorDTO professorDTO, Long semanaLetivaId,
+		DisciplinaDTO disciplinaDTO, SalaDTO salaDTO, AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
 }

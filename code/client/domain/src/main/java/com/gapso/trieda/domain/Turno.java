@@ -110,7 +110,7 @@ public class Turno
 		{
 			for ( HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario() )
 			{
-				int semanaInt = Semanas.toInt( hdc.getSemana() );
+				int semanaInt = Semanas.toInt( hdc.getDiaSemana() );
 				Integer value = countHorariosAula.get( semanaInt );
 				value = ( ( value == null ) ? 0 : value );
 				countHorariosAula.put( semanaInt, value + 1 );
@@ -187,7 +187,7 @@ public class Turno
         return em;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static List< Turno > findBy(
     	InstituicaoEnsino instituicaoEnsino, Campus campus )
     {

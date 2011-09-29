@@ -1,7 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -23,7 +22,6 @@ public class SemanaLetivaFormView
 	private FormPanel formPanel;
 	private TextField< String > codigoTF;
 	private TextField< String > descricaoTF;
-	private CheckBox oficialCB;
 	private SemanaLetivaDTO semanaLetivaDTO;
 	private CenarioDTO cenarioDTO;
 
@@ -55,79 +53,67 @@ public class SemanaLetivaFormView
 	private void createForm()
 	{
 		FormData formData = new FormData( "-20" );
-		formPanel = new FormPanel();
-		formPanel.setHeaderVisible( false );
+		this.formPanel = new FormPanel();
+		this.formPanel.setHeaderVisible( false );
 
-		codigoTF = new UniqueTextField(
-			cenarioDTO, UniqueDomain.SEMANA_LETIVA );
-		codigoTF.setName( SemanaLetivaDTO.PROPERTY_CODIGO );
-		codigoTF.setValue( semanaLetivaDTO.getCodigo() );
-		codigoTF.setFieldLabel( "Codigo" );
-		codigoTF.setAllowBlank( false );
-		codigoTF.setMinLength( 1 );
-		codigoTF.setMaxLength( 20 );
-		codigoTF.setEmptyText( "Preencha o código" );
-		formPanel.add( codigoTF, formData );
+		this.codigoTF = new UniqueTextField(
+			this.cenarioDTO, UniqueDomain.SEMANA_LETIVA );
+		this.codigoTF.setName( SemanaLetivaDTO.PROPERTY_CODIGO );
+		this.codigoTF.setValue( this.semanaLetivaDTO.getCodigo() );
+		this.codigoTF.setFieldLabel( "Codigo" );
+		this.codigoTF.setAllowBlank( false );
+		this.codigoTF.setMinLength( 1 );
+		this.codigoTF.setMaxLength( 20 );
+		this.codigoTF.setEmptyText( "Preencha o código" );
+		this.formPanel.add( this.codigoTF, formData );
 
-		descricaoTF = new TextField< String >();
-		descricaoTF.setName( SemanaLetivaDTO.PROPERTY_DESCRICAO );
-		descricaoTF.setValue( semanaLetivaDTO.getDescricao() );
-		descricaoTF.setFieldLabel( "Descrição" );
-		descricaoTF.setAllowBlank( false );
-		descricaoTF.setMaxLength( 50 );
-		descricaoTF.setEmptyText( "Preencha uma descrição" );
-		formPanel.add( descricaoTF, formData );
+		this.descricaoTF = new TextField< String >();
+		this.descricaoTF.setName( SemanaLetivaDTO.PROPERTY_DESCRICAO );
+		this.descricaoTF.setValue( this.semanaLetivaDTO.getDescricao() );
+		this.descricaoTF.setFieldLabel( "Descrição" );
+		this.descricaoTF.setAllowBlank( false );
+		this.descricaoTF.setMaxLength( 50 );
+		this.descricaoTF.setEmptyText( "Preencha uma descrição" );
+		this.formPanel.add( this.descricaoTF, formData );
 
-		oficialCB = new CheckBox();
-		oficialCB.setName( SemanaLetivaDTO.PROPERTY_OFICIAL );
-		oficialCB.setValue( semanaLetivaDTO.getOficial() );
-		oficialCB.setFieldLabel( "Oficial?" );
-		formPanel.add( oficialCB, formData );
+		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
+		binding.addButton( this.simpleModal.getSalvarBt() );
 
-		FormButtonBinding binding = new FormButtonBinding( formPanel );
-		binding.addButton( simpleModal.getSalvarBt() );
-
-		simpleModal.setFocusWidget( codigoTF );
+		this.simpleModal.setFocusWidget( this.codigoTF );
 	}
 
 	public boolean isValid()
 	{
-		return formPanel.isValid();
+		return this.formPanel.isValid();
 	}
 
 	@Override
 	public Button getSalvarButton()
 	{
-		return simpleModal.getSalvarBt();
+		return this.simpleModal.getSalvarBt();
 	}
 
 	@Override
 	public TextField< String > getCodigoTextField()
 	{
-		return codigoTF;
+		return this.codigoTF;
 	}
 
 	@Override
 	public SimpleModal getSimpleModal()
 	{
-		return simpleModal;
+		return this.simpleModal;
 	}
 
 	@Override
 	public TextField< String > getDescricaoTextField()
 	{
-		return descricaoTF;
+		return this.descricaoTF;
 	}
 
 	@Override
 	public SemanaLetivaDTO getSemanaLetivaDTO()
 	{
-		return semanaLetivaDTO;
-	}
-
-	@Override
-	public CheckBox getOficialCheckBox()
-	{
-		return oficialCB;
+		return this.semanaLetivaDTO;
 	}
 }

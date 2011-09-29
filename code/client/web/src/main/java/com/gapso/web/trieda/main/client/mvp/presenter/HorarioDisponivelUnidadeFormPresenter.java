@@ -35,63 +35,80 @@ public class HorarioDisponivelUnidadeFormPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private CampusDTO campus;
-	private SemanaLetivaDTO semanaLetiva;
-	
+	private SemanaLetivaDTO semanaLetivaDTO;
+
 	public HorarioDisponivelUnidadeFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CampusDTO campus, SemanaLetivaDTO semanaLetiva, Display display )
+		CampusDTO campus, SemanaLetivaDTO semanaLetivaDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.campus = campus;
-		this.semanaLetiva = semanaLetiva;
+		this.semanaLetivaDTO = semanaLetivaDTO;
 		this.display = display;
 
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy =
+			new RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.campi().getHorariosDisponiveis(campus, semanaLetiva, callback);
+			protected void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
+			{
+				Services.campi().getHorariosDisponiveis( campus, semanaLetivaDTO, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		this.display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getStore().commitChanges();
-				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
-				
-				Services.unidades().saveHorariosDisponiveis(getDTO(), hdcDTOList, new AsyncCallback<Void>() {
+				List< HorarioDisponivelCenarioDTO > hdcDTOList
+					= display.getStore().getModels();
+
+				Services.unidades().saveHorariosDisponiveis( getDTO(),
+					semanaLetivaDTO, hdcDTOList, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(Void result) {
-						Info.display("Atualizado", "Horários atualizados com sucesso!");
+					public void onSuccess( Void result )
+					{
+						Info.display( "Atualizado",
+							"Horários atualizados com sucesso!" );
+
 						display.getSimpleModal().hide();
 					}
-					
 				});
 			}
 		});
-		
 	}
 
 	private UnidadeDTO getDTO()
 	{
-		UnidadeDTO dto = display.getUnidadeDTO();
-		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		UnidadeDTO dto = this.display.getUnidadeDTO();
+		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		return dto;
 	}
 
 	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
 	}
 }

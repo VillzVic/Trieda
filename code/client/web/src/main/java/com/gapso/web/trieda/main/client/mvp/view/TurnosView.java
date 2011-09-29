@@ -23,124 +23,151 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class TurnosView extends MyComposite implements TurnosPresenter.Display {
-
+public class TurnosView
+	extends MyComposite
+	implements TurnosPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<TurnoDTO> gridPanel;
+	private SimpleGrid< TurnoDTO > gridPanel;
 	private SimpleFilter filter;
-	private TextField<String> nomeBuscaTextField;
+	private TextField< String > nomeBuscaTextField;
 	private NumberField tempoBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
-	public TurnosView() {
+
+	public TurnosView()
+	{
 		initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Turnos");
+
+	private void initUI()
+	{
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Turnos" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( this.tabItem );
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem("Turnos", Resources.DEFAULTS.turno16());
-		tabItem.setContent(panel);
-	}
-	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		panel.setTopComponent(toolBar);
-	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<TurnoDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+	private void createTabItem()
+	{
+		this.tabItem = new GTabItem(
+			"Turnos", Resources.DEFAULTS.turno16() );
+
+		this.tabItem.setContent( this.panel );
 	}
 
-	private List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(TurnoDTO.PROPERTY_NOME, "Nome", 100));
-		list.add(new ColumnConfig(TurnoDTO.PROPERTY_TEMPO, "Duração da Aula (min)", 100));
+	private void createToolBar()
+	{
+		this.toolBar = new SimpleToolBar( this );
+		this.panel.setTopComponent( this.toolBar );
+	}
+
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    this.gridPanel = new SimpleGrid< TurnoDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
+	}
+
+	private List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+		list.add( new ColumnConfig( TurnoDTO.PROPERTY_NOME, "Nome", 150 ) );
+		list.add( new ColumnConfig( TurnoDTO.PROPERTY_TEMPO, "Duração da Aula (min)", 150 ) );
+
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
-		filter = new SimpleFilter();
-		nomeBuscaTextField = new TextField<String>();
-		nomeBuscaTextField.setFieldLabel("Nome");
-		tempoBuscaTextField = new NumberField();
-		tempoBuscaTextField.setFieldLabel("Duração da Aula (min)");
-		filter.addField(nomeBuscaTextField);
-		filter.addField(tempoBuscaTextField);
-		
-		panel.add(filter, bld);
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
+		this.filter = new SimpleFilter();
+
+		this.nomeBuscaTextField = new TextField< String >();
+		this.nomeBuscaTextField.setFieldLabel( "Nome" );
+
+		this.tempoBuscaTextField = new NumberField();
+		this.tempoBuscaTextField.setFieldLabel( "Duração da Aula (min)" );
+
+		this.filter.addField( this.nomeBuscaTextField );
+		this.filter.addField( this.tempoBuscaTextField );
+
+		this.panel.add( this.filter, bld );
 	}
 	
 	@Override
-	public Button getNewButton() {
-		return toolBar.getNewButton();
+	public Button getNewButton()
+	{
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
-		return toolBar.getEditButton();
+	public Button getEditButton()
+	{
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
-		return toolBar.getRemoveButton();
+	public Button getRemoveButton()
+	{
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
-		return toolBar.getImportExcelButton();
+	public Button getImportExcelButton()
+	{
+		return this.toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
-	}
-	
-	@Override
-	public SimpleGrid<TurnoDTO> getGrid() {
-		return gridPanel;
-	}
-	
-	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<TurnoDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public Button getExportExcelButton()
+	{
+		return this.toolBar.getExportExcelButton();
 	}
 
 	@Override
-	public TextField<String> getNomeBuscaTextField() {
-		return nomeBuscaTextField;
+	public SimpleGrid< TurnoDTO > getGrid()
+	{
+		return this.gridPanel;
 	}
 
 	@Override
-	public NumberField getTempoBuscaTextField() {
-		return tempoBuscaTextField;
+	public void setProxy(
+		RpcProxy< PagingLoadResult< TurnoDTO > > proxy )
+	{
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
-		return filter.getSubmitButton();
+	public TextField< String > getNomeBuscaTextField()
+	{
+		return this.nomeBuscaTextField;
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
-		return filter.getResetButton();
+	public NumberField getTempoBuscaTextField()
+	{
+		return this.tempoBuscaTextField;
 	}
 
+	@Override
+	public Button getSubmitBuscaButton()
+	{
+		return this.filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton()
+	{
+		return this.filter.getResetButton();
+	}
 }

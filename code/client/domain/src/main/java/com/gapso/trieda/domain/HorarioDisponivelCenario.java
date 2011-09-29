@@ -43,12 +43,12 @@ public class HorarioDisponivelCenario
 	private static final long serialVersionUID = 9128639869205918403L;
 
     @NotNull
-    @ManyToOne(targetEntity = HorarioAula.class, fetch=FetchType.LAZY)
-    @JoinColumn(name = "HOR_ID")
+    @ManyToOne( targetEntity = HorarioAula.class, fetch=FetchType.LAZY )
+    @JoinColumn( name = "HOR_ID" )
     private HorarioAula horarioAula;
 
     @Enumerated
-    private Semanas semana;
+    private Semanas diaSemana;
 
     @ManyToMany
     private Set< Campus > campi = new HashSet< Campus >();
@@ -68,19 +68,19 @@ public class HorarioDisponivelCenario
     @ManyToMany
     private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
 
-    @OneToMany(mappedBy="HorarioDisponivelCenario")
+    @OneToMany( mappedBy="HorarioDisponivelCenario" )
     private Set< AtendimentoOperacional > atendimentosOperacionais =  new HashSet< AtendimentoOperacional >();
 
 	@PersistenceContext
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "HDC_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "HDC_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
 	public Long getId()
@@ -130,6 +130,7 @@ public class HorarioDisponivelCenario
         {
             HorarioDisponivelCenario attached
             	= this.entityManager.find( this.getClass(), this.id );
+
             this.entityManager.remove( attached );
         }
     }
@@ -192,7 +193,7 @@ public class HorarioDisponivelCenario
         	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getSingleResult() ).longValue();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< HorarioDisponivelCenario > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
@@ -201,7 +202,7 @@ public class HorarioDisponivelCenario
         	" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
         	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
-	
+
 	public static HorarioDisponivelCenario find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -232,33 +233,35 @@ public class HorarioDisponivelCenario
 			" SELECT o FROM HorarioDisponivelCenario o " +
 			" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.horarioAula = :horarioAula " +
-			" AND o.semana = :semana " );
+			" AND o.diaSemana = :diaSemana " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "horarioAula", horarioAula );
-		q.setParameter( "semana", semana );
+		q.setParameter( "diaSemana", semana );
 
 		return (HorarioDisponivelCenario) q.getSingleResult();
 	}
-	
+
+	public Semanas getDiaSemana()
+	{
+		return diaSemana;
+	}
+
+	public void setDiaSemana(
+		Semanas diaSemana )
+	{
+		this.diaSemana = diaSemana;
+	}
+
 	public HorarioAula getHorarioAula()
 	{
         return this.horarioAula;
     }
 
-	public void setHorarioAula( HorarioAula horarioAula )
+	public void setHorarioAula(
+		HorarioAula horarioAula )
 	{
         this.horarioAula = horarioAula;
-    }
-
-	public Semanas getSemana()
-	{
-        return this.semana;
-    }
-
-	public void setSemana( Semanas semana )
-	{
-        this.semana = semana;
     }
 
 	public Set< Campus > getCampi()
@@ -266,7 +269,8 @@ public class HorarioDisponivelCenario
         return this.campi;
     }
 
-	public void setCampi( Set< Campus > campi )
+	public void setCampi(
+		Set< Campus > campi )
 	{
         this.campi = campi;
     }
@@ -276,7 +280,8 @@ public class HorarioDisponivelCenario
         return this.unidades;
     }
 
-	public void setUnidades( Set< Unidade > unidades )
+	public void setUnidades(
+		Set< Unidade > unidades )
 	{
         this.unidades = unidades;
     }
@@ -296,7 +301,8 @@ public class HorarioDisponivelCenario
         return this.disciplinas;
     }
 
-	public void setDisciplinas( Set< Disciplina > disciplinas )
+	public void setDisciplinas(
+		Set< Disciplina > disciplinas )
 	{
         this.disciplinas = disciplinas;
     }
@@ -306,7 +312,8 @@ public class HorarioDisponivelCenario
         return this.professores;
     }
 
-	public void setProfessores( Set< Professor > professores )
+	public void setProfessores(
+		Set< Professor > professores )
 	{
         this.professores = professores;
     }
@@ -316,7 +323,8 @@ public class HorarioDisponivelCenario
 		return this.fixacoes;
 	}
 
-	public void setFixacoes( Set< Fixacao > fixacoes )
+	public void setFixacoes(
+		Set< Fixacao > fixacoes )
 	{
 		this.fixacoes = fixacoes;
 	}
@@ -326,7 +334,8 @@ public class HorarioDisponivelCenario
 		return this.atendimentosOperacionais;
 	}
 
-	public void setAtendimentosOperacionais( Set< AtendimentoOperacional > atendimentosOperacionais )
+	public void setAtendimentosOperacionais(
+		Set< AtendimentoOperacional > atendimentosOperacionais )
 	{
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
@@ -338,7 +347,7 @@ public class HorarioDisponivelCenario
         sb.append( "Id: ").append( getId() ).append( ", " );
         sb.append( "Version: ").append( getVersion() ).append( ", " );
         sb.append( "HorarioAula: " ).append( getHorarioAula() ).append( ", " );
-        sb.append( "Semana: " ).append( getSemana() ).append( ", " );
+        sb.append( "Dia da Semana: " ).append( getDiaSemana() ).append( ", " );
         sb.append( "Campi: " ).append( getCampi() == null ? "null" : getCampi().size() ).append( ", " );
         sb.append( "Unidades: " ).append( getUnidades() == null ? "null" : getUnidades().size() ).append( ", " );
         sb.append( "Salas: " ).append( getSalas() == null ? "null" : getSalas().size() ).append( ", " );
