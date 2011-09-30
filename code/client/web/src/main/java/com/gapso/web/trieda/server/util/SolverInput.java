@@ -193,19 +193,19 @@ public class SolverInput
 	@Transactional
 	private void generateCalendario()
 	{
-		GrupoCalendario grupoCalendario = of.createGrupoCalendario();
+		GrupoCalendario grupoCalendario = this.of.createGrupoCalendario();
 
 		List< SemanaLetiva > semanasLetivas	
 			= SemanaLetiva.findAll( this.instituicaoEnsino );
 
 		for ( SemanaLetiva calendario : semanasLetivas )
 		{
-			ItemCalendario itemCalendario = of.createItemCalendario();
+			ItemCalendario itemCalendario = this.of.createItemCalendario();
 
 			itemCalendario.setId( calendario.getId().intValue() );
 			itemCalendario.setCodigo( calendario.getCodigo() );
 
-			GrupoTurno grupoTurno = of.createGrupoTurno();
+			GrupoTurno grupoTurno = this.of.createGrupoTurno();
 
 			List< Turno > turnos = Turno.findByCalendario(
 				this.instituicaoEnsino, calendario );
@@ -218,25 +218,25 @@ public class SolverInput
 					continue;
 				}
 
-				ItemTurno itemTurno = of.createItemTurno();
+				ItemTurno itemTurno = this.of.createItemTurno();
 
 				itemTurno.setId( turno.getId().intValue() );
 				itemTurno.setNome( turno.getNome() );
 				itemTurno.setTempoAula( turno.getTempo() );
 
 				// Lendo horários de aula
-				GrupoHorarioAula grupoHorarioAula = of.createGrupoHorarioAula();
+				GrupoHorarioAula grupoHorarioAula = this.of.createGrupoHorarioAula();
 				Set< HorarioAula > horariosAula = turno.getHorariosAula();
 
 				for ( HorarioAula horarioAula : horariosAula )
 				{
-					ItemHorarioAula itemHorarioAula = of.createItemHorarioAula();
+					ItemHorarioAula itemHorarioAula = this.of.createItemHorarioAula();
 
 					itemHorarioAula.setId( horarioAula.getId().intValue() );
 					itemHorarioAula.setInicio( new XMLGregorianCalendarUtil(
 						horarioAula.getHorario() ) );
 
-					GrupoDiaSemana grupoDiasSemana = of.createGrupoDiaSemana();
+					GrupoDiaSemana grupoDiasSemana = this.of.createGrupoDiaSemana();
 					Set< HorarioDisponivelCenario > horariosDisponivelCenario
 						= horarioAula.getHorariosDisponiveisCenario();
 
@@ -257,17 +257,17 @@ public class SolverInput
 			grupoCalendario.getCalendario().add( itemCalendario );
 		}
 
-		triedaInput.setCalendarios( grupoCalendario );
+		this.triedaInput.setCalendarios( grupoCalendario );
 	}
 
 	private void generateTiposSala()
 	{
-		GrupoTipoSala grupoTipoSala = of.createGrupoTipoSala();
+		GrupoTipoSala grupoTipoSala = this.of.createGrupoTipoSala();
 		List< TipoSala > tipos = TipoSala.findAll( this.instituicaoEnsino );
 
 		for ( TipoSala tipo : tipos )
 		{
-			ItemTipoSala itemTipoSala = of.createItemTipoSala();
+			ItemTipoSala itemTipoSala = this.of.createItemTipoSala();
 
 			itemTipoSala.setId( tipo.getId().intValue() );
 			itemTipoSala.setNome( tipo.getNome() );
@@ -275,19 +275,19 @@ public class SolverInput
 			grupoTipoSala.getTipoSala().add( itemTipoSala );
 		}
 
-		triedaInput.setTiposSala( grupoTipoSala );
+		this.triedaInput.setTiposSala( grupoTipoSala );
 	}
 
 	private void generateTiposContrato()
 	{
-		GrupoTipoContrato grupoTipoContrato = of.createGrupoTipoContrato();
+		GrupoTipoContrato grupoTipoContrato = this.of.createGrupoTipoContrato();
 
 		List< TipoContrato > listTiposContrato
 			= TipoContrato.findAll( this.instituicaoEnsino );
 
 		for ( TipoContrato tipo : listTiposContrato )
 		{
-			ItemTipoContrato itemTipoContrato = of.createItemTipoContrato();
+			ItemTipoContrato itemTipoContrato = this.of.createItemTipoContrato();
 
 			itemTipoContrato.setId( tipo.getId().intValue() );
 			itemTipoContrato.setNome( tipo.getNome() );
@@ -295,17 +295,17 @@ public class SolverInput
 			grupoTipoContrato.getTipoContrato().add( itemTipoContrato );
 		}
 
-		triedaInput.setTiposContrato( grupoTipoContrato );
+		this.triedaInput.setTiposContrato( grupoTipoContrato );
 	}
 
 	private void generateTiposTitulacao()
 	{
-		GrupoTipoTitulacao grupoTipoTitulacao = of.createGrupoTipoTitulacao();
+		GrupoTipoTitulacao grupoTipoTitulacao = this.of.createGrupoTipoTitulacao();
 		List< Titulacao > tipos = Titulacao.findAll( this.instituicaoEnsino );
 
 		for ( Titulacao tipo : tipos )
 		{
-			ItemTipoTitulacao itemTipoTitulacao = of.createItemTipoTitulacao();
+			ItemTipoTitulacao itemTipoTitulacao = this.of.createItemTipoTitulacao();
 
 			itemTipoTitulacao.setId( tipo.getId().intValue() );
 			itemTipoTitulacao.setNome( tipo.getNome() );
@@ -313,17 +313,17 @@ public class SolverInput
 			grupoTipoTitulacao.getTipoTitulacao().add( itemTipoTitulacao );
 		}
 
-		triedaInput.setTiposTitulacao( grupoTipoTitulacao );
+		this.triedaInput.setTiposTitulacao( grupoTipoTitulacao );
 	}
 
 	private void generateAreasTitulacao()
 	{
-		GrupoAreaTitulacao grupoAreaTitulacao = of.createGrupoAreaTitulacao();
+		GrupoAreaTitulacao grupoAreaTitulacao = this.of.createGrupoAreaTitulacao();
 		List< AreaTitulacao > tipos = AreaTitulacao.findAll( this.instituicaoEnsino );
 
 		for ( AreaTitulacao tipo : tipos )
 		{
-			ItemAreaTitulacao itemAreaTitulacao = of.createItemAreaTitulacao();
+			ItemAreaTitulacao itemAreaTitulacao = this.of.createItemAreaTitulacao();
 
 			itemAreaTitulacao.setId( tipo.getId().intValue() );
 			itemAreaTitulacao.setNome( tipo.getCodigo() );
@@ -331,13 +331,13 @@ public class SolverInput
 			grupoAreaTitulacao.getAreaTitulacao().add( itemAreaTitulacao );
 		}
 
-		triedaInput.setAreasTitulacao( grupoAreaTitulacao );
+		this.triedaInput.setAreasTitulacao( grupoAreaTitulacao );
 	}
 
 	private void generateTiposDisciplina()
 	{
 		GrupoTipoDisciplina grupoTipoDisciplina
-			= of.createGrupoTipoDisciplina();
+			= this.of.createGrupoTipoDisciplina();
 
 		List< TipoDisciplina > tipos	
 			= TipoDisciplina.findAll( this.instituicaoEnsino );
@@ -345,7 +345,7 @@ public class SolverInput
 		for ( TipoDisciplina tipo : tipos )
 		{
 			ItemTipoDisciplina itemTipoDisciplina
-				= of.createItemTipoDisciplina();
+				= this.of.createItemTipoDisciplina();
 
 			itemTipoDisciplina.setId( tipo.getId().intValue() );
 			itemTipoDisciplina.setNome( tipo.getNome() );
@@ -353,18 +353,18 @@ public class SolverInput
 			grupoTipoDisciplina.getTipoDisciplina().add( itemTipoDisciplina );
 		}
 
-		triedaInput.setTiposDisciplina( grupoTipoDisciplina );
+		this.triedaInput.setTiposDisciplina( grupoTipoDisciplina );
 	}
 
 	private void generateNiveisDificuldade()
 	{
 		GrupoNivelDificuldade grupoNivelDificuldade
-			= of.createGrupoNivelDificuldade();
+			= this.of.createGrupoNivelDificuldade();
 
 		for ( Dificuldades dificuldade : Dificuldades.values() )
 		{
 			ItemNivelDificuldade itemNivelDificuldade
-				= of.createItemNivelDificuldade();
+				= this.of.createItemNivelDificuldade();
 
 			itemNivelDificuldade.setId( Dificuldades.toInt( dificuldade ) );
 			itemNivelDificuldade.setNome( dificuldade.name() );
@@ -372,36 +372,36 @@ public class SolverInput
 			grupoNivelDificuldade.getNivelDificuldade().add( itemNivelDificuldade );
 		}
 
-		triedaInput.setNiveisDificuldade( grupoNivelDificuldade );
+		this.triedaInput.setNiveisDificuldade( grupoNivelDificuldade );
 	}
 
 	private void generateTiposCurso()
 	{
-		GrupoTipoCurso grupoTipoCurso = of.createGrupoTipoCurso();
+		GrupoTipoCurso grupoTipoCurso = this.of.createGrupoTipoCurso();
 		List< TipoCurso > tipos = TipoCurso.findAll( this.instituicaoEnsino );
 
 		for ( TipoCurso tipo : tipos )
 		{
-			ItemTipoCurso itemTipoCurso = of.createItemTipoCurso();
+			ItemTipoCurso itemTipoCurso = this.of.createItemTipoCurso();
 
 			itemTipoCurso.setId( tipo.getId().intValue() );
 			itemTipoCurso.setNome( tipo.getCodigo() );
 			grupoTipoCurso.getTipoCurso().add( itemTipoCurso );
 		}
 
-		triedaInput.setTiposCurso( grupoTipoCurso );
+		this.triedaInput.setTiposCurso( grupoTipoCurso );
 	}
 
 	private void generateDivisoesDeCredito()
 	{
 		GrupoDivisaoCreditos grupoDivisaoCreditos
-			= of.createGrupoDivisaoCreditos();
+			= this.of.createGrupoDivisaoCreditos();
 
 		Set< DivisaoCredito > regras = this.cenario.getDivisoesCredito();
 
 		for ( DivisaoCredito regra : regras )
 		{
-			ItemDivisaoCreditos item = of.createItemDivisaoCreditos();
+			ItemDivisaoCreditos item = this.of.createItemDivisaoCreditos();
 
 			item.setId( regra.getId().intValue() );
 			item.setCreditos( regra.getCreditos() );
@@ -416,16 +416,16 @@ public class SolverInput
 			grupoDivisaoCreditos.getDivisaoCreditos().add( item );
 		}
 
-		triedaInput.setRegrasDivisaoCredito( grupoDivisaoCreditos );
+		this.triedaInput.setRegrasDivisaoCredito( grupoDivisaoCreditos );
 	}
 
 	private void generateCampi( boolean tatico )
 	{
-		GrupoCampus grupoCampus = of.createGrupoCampus();
+		GrupoCampus grupoCampus = this.of.createGrupoCampus();
 
 		for ( Campus campus : this.campi )
 		{
-			ItemCampus itemCampus = of.createItemCampus();
+			ItemCampus itemCampus = this.of.createItemCampus();
 
 			itemCampus.setId( campus.getId().intValue() );
 			itemCampus.setCodigo( campus.getCodigo() );
@@ -448,12 +448,12 @@ public class SolverInput
 			Set< String > salasJaAssociadasADisciplina = new HashSet< String >();
 
 			// COLETANDO UNIDADES
-			GrupoUnidade grupoUnidade = of.createGrupoUnidade();
+			GrupoUnidade grupoUnidade = this.of.createGrupoUnidade();
 			Set< Unidade > unidades = campus.getUnidades();
 
 			for ( Unidade unidade : unidades )
 			{
-				ItemUnidade itemUnidade = of.createItemUnidade();
+				ItemUnidade itemUnidade = this.of.createItemUnidade();
 
 				itemUnidade.setId( unidade.getId().intValue() );
 				itemUnidade.setCodigo( unidade.getCodigo() );
@@ -474,12 +474,12 @@ public class SolverInput
 				itemUnidade.setHorariosDisponiveis(
 					createGrupoHorario( listHorariosUnidade ) );
 
-				GrupoSala grupoSala = of.createGrupoSala();
+				GrupoSala grupoSala = this.of.createGrupoSala();
 				Set< Sala > salas = unidade.getSalas();
 
 				for ( Sala sala : salas )
 				{
-					ItemSala itemSala = of.createItemSala();
+					ItemSala itemSala = this.of.createItemSala();
 
 					itemSala.setId( sala.getId().intValue() );
 					itemSala.setCodigo( sala.getCodigo() );
@@ -515,7 +515,7 @@ public class SolverInput
 						itemSala.setHorariosDisponiveis( createGrupoHorario( listHorariosSala ) );
 					}
 
-					GrupoIdentificador grupoIdentificador = of.createGrupoIdentificador();
+					GrupoIdentificador grupoIdentificador = this.of.createGrupoIdentificador();
 
 					Set< CurriculoDisciplina > curriculoDisciplinas = sala.getCurriculoDisciplinas();
 
@@ -542,12 +542,12 @@ public class SolverInput
 			itemCampus.setUnidades( grupoUnidade );
 
 			// COLETANDO PROFESSORES
-			GrupoProfessor grupoProfessor = of.createGrupoProfessor();
+			GrupoProfessor grupoProfessor = this.of.createGrupoProfessor();
 			Set< Professor > professores = campus.getProfessores();
 
 			for ( Professor professor : professores )
 			{
-				ItemProfessor itemProfessor = of.createItemProfessor();
+				ItemProfessor itemProfessor = this.of.createItemProfessor();
 
 				itemProfessor.setId( professor.getId().intValue() );
 				itemProfessor.setCpf( professor.getCpf() );
@@ -584,14 +584,14 @@ public class SolverInput
 					createGrupoHorario( listHorarios ) );
 
 				GrupoProfessorDisciplina grupoProfessorDisciplina	
-					= of.createGrupoProfessorDisciplina();
+					= this.of.createGrupoProfessorDisciplina();
 
 				Set< ProfessorDisciplina > professorDisciplinas = professor.getDisciplinas();
 
 				for ( ProfessorDisciplina professorDisciplina : professorDisciplinas )
 				{
 					ItemProfessorDisciplina itemProfessorDisciplina
-						= of.createItemProfessorDisciplina();
+						= this.of.createItemProfessorDisciplina();
 
 					itemProfessorDisciplina.setNota( professorDisciplina.getNota() );
 					itemProfessorDisciplina.setPreferencia( professorDisciplina.getPreferencia() );
@@ -611,12 +611,12 @@ public class SolverInput
 			grupoCampus.getCampus().add( itemCampus );
 		}
 
-		triedaInput.setCampi( grupoCampus );
+		this.triedaInput.setCampi( grupoCampus );
 	}
 
 	private void generateDeslocamentoCampi()
 	{
-		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
+		GrupoDeslocamento grupoDeslocamento = this.of.createGrupoDeslocamento();
 
 		for ( Campus campus : this.campi )
 		{
@@ -624,7 +624,7 @@ public class SolverInput
 
 			for ( DeslocamentoCampus deslocamento : deslocamentos )
 			{
-				ItemDeslocamento itemDeslocamento = of.createItemDeslocamento();
+				ItemDeslocamento itemDeslocamento = this.of.createItemDeslocamento();
 
 				itemDeslocamento.setOrigemId(
 					deslocamento.getOrigem().getId().intValue() );
@@ -637,12 +637,12 @@ public class SolverInput
 			}
 		}
 
-		triedaInput.setTemposDeslocamentosCampi( grupoDeslocamento );
+		this.triedaInput.setTemposDeslocamentosCampi( grupoDeslocamento );
 	}
 
 	private void generateDeslocamentoUnidades()
 	{
-		GrupoDeslocamento grupoDeslocamento = of.createGrupoDeslocamento();
+		GrupoDeslocamento grupoDeslocamento = this.of.createGrupoDeslocamento();
 
 		for ( Campus campus : this.campi )
 		{
@@ -656,7 +656,7 @@ public class SolverInput
 				for ( DeslocamentoUnidade deslocamento : deslocamentos )
 				{
 					ItemDeslocamento itemDeslocamento
-						= of.createItemDeslocamento();
+						= this.of.createItemDeslocamento();
 
 					itemDeslocamento.setOrigemId(
 						deslocamento.getOrigem().getId().intValue() );
@@ -670,17 +670,25 @@ public class SolverInput
 			}
 		}
 
-		triedaInput.setTemposDeslocamentosUnidades( grupoDeslocamento );
+		this.triedaInput.setTemposDeslocamentosUnidades( grupoDeslocamento );
 	}
 
 	private void generateDisciplinas()
 	{
-		GrupoDisciplina grupoDisciplina = of.createGrupoDisciplina();
-		Set< Disciplina > disciplinas = cenario.getDisciplinas();
+		GrupoDisciplina grupoDisciplina = this.of.createGrupoDisciplina();
+		Set< Disciplina > disciplinas = this.cenario.getDisciplinas();
 
 		for ( Disciplina disciplina : disciplinas )
 		{
-			ItemDisciplina itemDisciplina = of.createItemDisciplina();
+			boolean existeDemanda = Demanda.existeDemanda(
+				this.instituicaoEnsino, null, disciplina );
+
+			if ( !existeDemanda )
+			{
+				continue;
+			}
+
+			ItemDisciplina itemDisciplina = this.of.createItemDisciplina();
 
 			itemDisciplina.setId( disciplina.getId().intValue() );
 			itemDisciplina.setCodigo( disciplina.getCodigo() );
@@ -695,13 +703,13 @@ public class SolverInput
 
 			DivisaoCredito divisaoCredito = null;
 
-			if ( parametro.getRegrasEspecificasDivisaoCredito() )
+			if ( this.parametro.getRegrasEspecificasDivisaoCredito() )
 			{
 				divisaoCredito = disciplina.getDivisaoCreditos();
 			}
 
 			if ( divisaoCredito == null
-				&& parametro.getRegrasGenericasDivisaoCredito() )
+				&& this.parametro.getRegrasGenericasDivisaoCredito() )
 			{
 				divisaoCredito = DivisaoCredito.findByCredito(
 					disciplina.getTotalCreditos(), this.instituicaoEnsino );
@@ -709,7 +717,7 @@ public class SolverInput
 
 			if ( divisaoCredito != null )
 			{
-				ItemDivisaoCreditos itemDivisaoCreditos = of.createItemDivisaoCreditos();
+				ItemDivisaoCreditos itemDivisaoCreditos = this.of.createItemDivisaoCreditos();
 
 				itemDivisaoCreditos.setId( divisaoCredito.getId().intValue() );
 				itemDivisaoCreditos.setCreditos( divisaoCredito.getCreditos() );
@@ -724,9 +732,9 @@ public class SolverInput
 				itemDisciplina.setDivisaoDeCreditos( itemDivisaoCreditos );
 			}
 
-			GrupoIdentificador grupoIdentificadorEquivalencias = of.createGrupoIdentificador();
+			GrupoIdentificador grupoIdentificadorEquivalencias = this.of.createGrupoIdentificador();
 
-			if ( parametro.getConsiderarEquivalencia() )
+			if ( this.parametro.getConsiderarEquivalencia() )
 			{
 				Set< Equivalencia > equivalencias = disciplina.getEquivalencias();
 
@@ -747,7 +755,7 @@ public class SolverInput
 
 			itemDisciplina.setDisciplinasEquivalentes( grupoIdentificadorEquivalencias );
 
-			GrupoIdentificador grupoIdentificadorIncompativeis = of.createGrupoIdentificador();
+			GrupoIdentificador grupoIdentificadorIncompativeis = this.of.createGrupoIdentificador();
 			Set< Incompatibilidade > incompatibilidades = disciplina.getIncompatibilidades();
 
 			for ( Incompatibilidade incompatibilidade : incompatibilidades )
@@ -776,7 +784,7 @@ public class SolverInput
 			grupoDisciplina.getDisciplina().add( itemDisciplina );
 		}
 
-		triedaInput.setDisciplinas( grupoDisciplina );
+		this.triedaInput.setDisciplinas( grupoDisciplina );
 	}
 
 	private void generateCurso()
@@ -843,6 +851,14 @@ public class SolverInput
 
 				for ( CurriculoDisciplina curriculoPeriodo : curriculoPeriodos )
 				{
+					boolean existeDemanda = Demanda.existeDemanda( this.instituicaoEnsino,
+						curriculoPeriodo.getCurriculo(), curriculoPeriodo.getDisciplina() );
+
+					if ( !existeDemanda )
+					{
+						continue;
+					}
+					
 					ItemDisciplinaPeriodo itemDisciplinaPeriodo	
 						= this.of.createItemDisciplinaPeriodo();
 

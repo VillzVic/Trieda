@@ -544,4 +544,31 @@ public class Demanda
 
 		return true;
 	}
+
+	public static boolean existeDemanda(
+		InstituicaoEnsino instituicaoEnsino,
+		Curriculo curriculo, Disciplina disciplina )
+	{
+		String queryCurriculo = "";
+
+		if ( curriculo != null )
+		{
+			queryCurriculo = " AND o.oferta.curriculo = :curriculo ";
+		}
+
+        Query q = entityManager().createQuery(
+           	" SELECT o FROM Demanda o " +
+           	" WHERE o.disciplina = :disciplina " + queryCurriculo +
+           	" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "disciplina", disciplina );
+
+        if ( curriculo != null )
+        {
+        	q.setParameter( "curriculo", curriculo );
+        }
+
+		return ( q.getResultList().size() > 0 );
+	}
 }

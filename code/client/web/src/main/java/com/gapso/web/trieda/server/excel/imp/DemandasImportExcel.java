@@ -429,8 +429,9 @@ public class DemandasImportExcel
 			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(
 				Demanda.findAll( this.instituicaoEnsino ) );
 
-		Map< String, Oferta > ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(
-			Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		Map< String, Oferta > ofertasBDMap
+			= Oferta.buildCampusTurnoCurriculoToOfertaMap(
+				Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( DemandasImportExcelBean demandasExcel : sheetContent )
 		{
@@ -474,7 +475,7 @@ public class DemandasImportExcel
 			}
 		}
 	}
-	
+
 	private void resolveHeaderColumnNames()
 	{
 		if ( CAMPUS_COLUMN_NAME == null )

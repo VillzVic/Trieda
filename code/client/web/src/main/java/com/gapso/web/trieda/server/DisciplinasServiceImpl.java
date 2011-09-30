@@ -1067,8 +1067,8 @@ public class DisciplinasServiceImpl
 				if ( ofertaAtendimento != null )
 				{
 					campus = ofertaAtendimento.getCampus();
-					docente = campus.getValorCredito();
-					receita = ofertaAtendimento.getReceita();
+					docente = ( campus.getValorCredito() == null ? 0 : campus.getValorCredito() );
+					receita = ( ofertaAtendimento.getReceita() == null ? 0 : ofertaAtendimento.getReceita() );
 				}
 
 				int qtdAlunos = atendimento.getQuantidadeAlunos();

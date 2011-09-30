@@ -75,53 +75,66 @@ public class CurriculoDisciplina
 	{
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Id: ").append(getId()).append(", ");
-        sb.append("Version: ").append(getVersion()).append(", ");
-        sb.append("Curriculo: ").append(getCurriculo()).append(", ");
-        sb.append("Disciplina: ").append(getDisciplina()).append(", ");
-        sb.append("Periodo: ").append(getPeriodo());
-        sb.append("Salas: ").append(getSalas() == null ? "null" : getSalas().size()).append(", ");
-        sb.append("GruposSala: ").append(getGruposSala() == null ? "null" : getGruposSala().size()).append(", ");
+        sb.append( "Id: " ).append( getId() ).append( ", " );
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Curriculo: " ).append( getCurriculo() ).append( ", " );
+        sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+        sb.append( "Periodo: " ).append( getPeriodo() );
+        sb.append( "Salas: " ).append( getSalas() == null ? "null" :
+        	getSalas().size() ).append( ", " );
+        sb.append( "GruposSala: " ).append( getGruposSala() == null ? "null" :
+        	getGruposSala().size() );
+
         return sb.toString();
     }
 
-	public Curriculo getCurriculo() {
+	public Curriculo getCurriculo()
+	{
         return this.curriculo;
     }
 
-	public void setCurriculo(Curriculo curriculo) {
+	public void setCurriculo( Curriculo curriculo )
+	{
         this.curriculo = curriculo;
     }
 
-	public Disciplina getDisciplina() {
+	public Disciplina getDisciplina()
+	{
         return this.disciplina;
     }
 
-	public void setDisciplina(Disciplina disciplina) {
+	public void setDisciplina( Disciplina disciplina )
+	{
         this.disciplina = disciplina;
     }
 
-	public Integer getPeriodo() {
+	public Integer getPeriodo()
+	{
         return this.periodo;
     }
 
-	public void setPeriodo(Integer periodo) {
+	public void setPeriodo( Integer periodo )
+	{
         this.periodo = periodo;
     }
 
-	public Set<Sala> getSalas() {
+	public Set< Sala > getSalas()
+	{
         return this.salas;
     }
 
-	public void setSalas(Set<Sala> salas) {
+	public void setSalas( Set< Sala > salas )
+	{
         this.salas = salas;
     }
 
-	public Set<GrupoSala> getGruposSala() {
+	public Set< GrupoSala > getGruposSala()
+	{
         return this.gruposSala;
     }
 
-	public void setGruposSala(Set<GrupoSala> gruposSala) {
+	public void setGruposSala( Set< GrupoSala > gruposSala )
+	{
         this.gruposSala = gruposSala;
     }
 	
@@ -139,74 +152,110 @@ public class CurriculoDisciplina
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "CDI_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "CDI_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
 	
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
         	this.removeGruposSala();
-            this.entityManager.remove(this);
-        } else {
-            CurriculoDisciplina attached = this.entityManager.find(this.getClass(), this.id);
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            CurriculoDisciplina attached
+            	= this.entityManager.find( this.getClass(), this.id );
+
             attached.removeGruposSala();
-            this.entityManager.remove(attached);
+            this.entityManager.remove( attached );
         }
     }
 
     @Transactional
-    public void removeGruposSala() {
-    	Set<GrupoSala> gruposSala = this.getGruposSala();
-    	for(GrupoSala grupoSala : gruposSala) {
-    		grupoSala.getCurriculoDisciplinas().remove(this);
+    public void removeGruposSala()
+    {
+    	Set< GrupoSala > gruposSala = this.getGruposSala();
+    	for ( GrupoSala grupoSala : gruposSala )
+    	{
+    		grupoSala.getCurriculoDisciplinas().remove( this );
     		grupoSala.merge();
     	}
     }
-	
+
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public CurriculoDisciplina merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        CurriculoDisciplina merged = this.entityManager.merge(this);
+    public CurriculoDisciplina merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        CurriculoDisciplina merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -228,11 +277,7 @@ public class CurriculoDisciplina
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino )
 	{
-        return ( (Number) entityManager().createQuery(
-        	" SELECT COUNT ( o ) FROM CurriculoDisciplina o " +
-        	" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getSingleResult() ).intValue();
+        return CurriculoDisciplina.findAll( instituicaoEnsino ).size();
     }
 
 	public static Map< String, CurriculoDisciplina > buildNaturalKeyToCurriculoDisciplinaMap(
@@ -250,7 +295,7 @@ public class CurriculoDisciplina
 		return curriculosDisciplinaMap;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -266,12 +311,13 @@ public class CurriculoDisciplina
     	return q.getResultList();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findAllPeriodosBy(
 		InstituicaoEnsino instituicaoEnsino, Sala sala, Oferta oferta )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM CurriculoDisciplina o, IN ( o.salas ) sala, IN ( o.curriculo.ofertas ) oferta " +
+			" SELECT o FROM CurriculoDisciplina o, " +
+			" IN ( o.salas ) sala, IN ( o.curriculo.ofertas ) oferta " +
 			" WHERE sala = :sala " +
 			" AND oferta = :oferta " +
 			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
@@ -287,12 +333,13 @@ public class CurriculoDisciplina
 		return q.getResultList();		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findAllPeriodosBy(
 		InstituicaoEnsino instituicaoEnsino, GrupoSala grupoSala, Oferta oferta )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM CurriculoDisciplina o, IN ( o.gruposSala ) grupoSala, IN ( o.curriculo.ofertas ) oferta " +
+			" SELECT o FROM CurriculoDisciplina o, " +
+			" IN ( o.gruposSala ) grupoSala, IN ( o.curriculo.ofertas ) oferta " +
 			" WHERE grupoSala = :grupoSala " +
 			" AND grupoSala.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
 			" AND oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
@@ -308,7 +355,7 @@ public class CurriculoDisciplina
 		return q.getResultList();		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findAllByCurriculoAndPeriodo(
 		InstituicaoEnsino instituicaoEnsino, Curriculo curriculo, Integer periodo )
 	{
@@ -326,13 +373,14 @@ public class CurriculoDisciplina
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findBy(
 		InstituicaoEnsino instituicaoEnsino,
 		GrupoSala grupoSala, Oferta oferta, Integer periodo )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM CurriculoDisciplina o, IN ( o.gruposSala ) grupoSala " +
+			" SELECT o FROM CurriculoDisciplina o, " +
+			" IN ( o.gruposSala ) grupoSala " +
 			" WHERE o.periodo = :periodo " +
 			" AND o.curriculo = :curriculo " +
 			" AND grupoSala = :grupoSala " +
@@ -348,7 +396,7 @@ public class CurriculoDisciplina
 		return q.getResultList();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findBy(
 		InstituicaoEnsino instituicaoEnsino,
 		Sala sala, Oferta oferta, Integer periodo )
@@ -371,7 +419,7 @@ public class CurriculoDisciplina
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findBySala(
 		InstituicaoEnsino instituicaoEnsino, Sala sala )
 	{
@@ -389,7 +437,7 @@ public class CurriculoDisciplina
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< CurriculoDisciplina > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
@@ -425,7 +473,7 @@ public class CurriculoDisciplina
         return null;
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< CurriculoDisciplina > find(
     	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults )
