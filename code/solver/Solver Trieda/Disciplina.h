@@ -73,6 +73,8 @@ public:
    // Informa se uma dada disciplina é equivalente à esta disciplina
    bool eh_equivalente( Disciplina * );
 
+   int getTotalCreditos() const { return this->getCredTeoricos() + this->getCredPraticos(); }
+
 private:
    // Soma das demandas de uma disciplina.
    int demanda_total;

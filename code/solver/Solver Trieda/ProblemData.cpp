@@ -601,3 +601,22 @@ Professor * ProblemData::findProfessor( int id )
 
    return NULL;
 }
+
+int ProblemData::totalHorariosTurnoAula( Aula * aula )
+{
+   int totalHorarios = 0;
+
+   Oferta * oferta = ( aula->ofertas.size() == 0 ? NULL : *aula->ofertas.begin() );
+
+   if ( oferta != NULL )
+   {
+      Turno * turno = this->findTurno( oferta->getTurnoId() );
+
+      if ( turno != NULL )
+      {
+         totalHorarios = turno->horarios_aula.size();
+      }
+   }
+
+   return totalHorarios;
+}

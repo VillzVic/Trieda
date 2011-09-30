@@ -804,10 +804,10 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
             // Se tiver mais de um, quando cair aqui, nada pode-se afirmar
             // sobre a corretude da instância.
             std::cerr << "ERRO: Bloco Curricular e Campus Incompativeis. "
-               << "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())"
-               << std::endl;
+                      << "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())"
+                      << std::endl;
 
-            exit(1);
+            exit( 1 );
          }
       }
    }
@@ -1624,9 +1624,9 @@ void ProblemDataLoader::find_and_set( int id, GGroup< T * > & haystack,
    else
    {
       std::cout << "Warnning: Problema na funcao"
-         << "FindAndSet do ProblemDataLoader." << std::endl;
+                << "FindAndSet do ProblemDataLoader." << std::endl;
 
-      exit(1);
+      exit( 1 );
    }
 
    delete finder;
@@ -2620,7 +2620,8 @@ void ProblemDataLoader::cria_blocos_curriculares()
                it_disc_periodo = curriculo->disciplinas_periodo.begin();
 
             // Percorrendo todas as disciplinas de
-            // um curso cadastradas para um currículo.
+            // um curso cadastradas para um currículo
+
             for (; it_disc_periodo != curriculo->disciplinas_periodo.end();
                    it_disc_periodo++ )
             {
@@ -2664,13 +2665,24 @@ void ProblemDataLoader::cria_blocos_curriculares()
                             << "\nOferta : " << id_oferta
                             << std::endl << std::endl;
 
-                  exit( 1 );
+                  // exit( 1 );
+
+                  demanda = new Demanda();
+                  demanda->setDisciplinaId( id_disciplina );
+                  demanda->disciplina = disciplina;
+                  demanda->setOfertaId( id_oferta );
+                  demanda->oferta = oferta;
+                  demanda->setQuantidade( 0 );
+
+                  problemData->map_campus_curso_demanda[ campus_curso ].add( demanda );
+                  problemData->demandas.add( demanda );
                }
 
                bool found = false;
 
                // Verificando a existência do bloco
                // curricular para a disciplina em questão.
+
                ITERA_GGROUP_LESSPTR( it_bloco_curricular, problemData->blocos, BlocoCurricular )
                {
                   if ( it_bloco_curricular->campus->getId() == campus->getId()
@@ -2708,6 +2720,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
 
    // Setando os dias letivos de cada bloco.
    BlocoCurricular * bloco = NULL;
+
    ITERA_GGROUP_LESSPTR( it_bc, problemData->blocos, BlocoCurricular )
    {
       bloco = ( *it_bc );
@@ -3666,7 +3679,7 @@ void ProblemDataLoader::geraHorariosDia()
 
    problemData->maxHorariosDif = 0;
 
-   ITERA_GGROUP_LESSPTR(itTurno,problemData->todos_turnos,Turno)
+   ITERA_GGROUP_LESSPTR( itTurno, problemData->todos_turnos, Turno )
    {
       Turno * turno = ( *itTurno );
 
@@ -3724,7 +3737,7 @@ void ProblemDataLoader::geraHorariosDia()
                auxHD->setHorarioAula( horario->horario_aula );
                auxHD->setHorarioAulaId( horario->getHorarioAulaId() );
 
-               GGroup< HorarioDia*, LessPtr< HorarioDia > >::iterator
+               GGroup< HorarioDia *, LessPtr< HorarioDia > >::iterator
                   itHorarioAula = problemData->horariosDia.find( auxHD );
 
                if ( itHorarioAula == problemData->horariosDia.end() )

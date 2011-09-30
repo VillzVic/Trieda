@@ -52,10 +52,12 @@ bool ValidateSolutionOp::checkSolution( ProblemSolution *  sol )
       return false;
    }
 
+   /*
    if ( !checkRestricaoFixProfDiscDiaHor() )
    {
       return false;
    }
+   */
 
    if ( !checkRestricaoDisciplinaMesmoHorario() )
    {
@@ -229,7 +231,7 @@ bool ValidateSolutionOp::checkRestricaoSalaHorario()
 bool ValidateSolutionOp::checkRestricaoBlocoHorario()
 {
    // Relaciona cada sala com os dias e horários que elas possuem aulas alocadas na solução
-   std::map< std::string, bool > mapBlocoDiaHorario;
+   std::map< std::string, Disciplina * > mapBlocoDiaHorario;
 
    ITERA_GGROUP_LESSPTR( it_bloco, pData->blocos, BlocoCurricular )
    {
@@ -265,6 +267,7 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario()
 
                            Oferta * oferta = pData->refOfertas[ id_oferta ];
                            Disciplina * disciplina = pData->refDisciplinas[ it_at_oferta->getDisciplinaId() ];
+                           int turma = it_at_oferta->getTurma();
 
                            // Procuramos o período no qual a disciplina é ministrada a esse bloco curricular
                            int periodoDisciplina = -1;
@@ -295,25 +298,30 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario()
                            std::stringstream out;
 
                            // key = campus + curso + curriculo + periodo + dia + horário
-                           out << oferta->campus->getId() << "-"
-                               << oferta->curso->getId() << "-"
-                               << oferta->curriculo->getId() << "-"
-                               << periodoDisciplina << "-"
-                               << dia_semana << "-"
-                               << horario_aula->getId();
+                           out << "-Campus: " << oferta->campus->getId() << "\n"
+                               << "-Curso: " << oferta->curso->getId() << "\n"
+                               << "-Curriculo: " << oferta->curriculo->getId() << "\n"
+                               << "-Periodo: " << periodoDisciplina << "\n"
+                               << "-Turma: " << turma << "\n"
+                               << "-Dia: " << dia_semana << "\n"
+                               << "-Horario: " << horario_aula->getId();
 
                            key += out.str();
-
-                           std::map< std::string, bool >::iterator
+   
+                           std::map< std::string, Disciplina * >::iterator
                               it_find = mapBlocoDiaHorario.find( key );
 
                            // Já temos esse dia/horário ocupados para o bloco curricular em questão
-                           if ( it_find != mapBlocoDiaHorario.end() && it_find->second == true )
+                           if ( it_find != mapBlocoDiaHorario.end()
+                              && it_find->second->getId() != disciplina->getId() )
                            {
-                              std::cout << "\nTentativa de alocar mais de uma "
-                                        << "aula ao bloco curricular " << key
-                                        << ", no dia " << dia_semana
-                                        << " e horario " << horario_aula->getId()
+                              std::cout << "\nTentativa de alocar mais \nde uma "
+                                        << "aula ao bloco curricular \n\n" << key
+                                        << std::endl << std::endl;
+
+                              std::cout << "Disciplinas : "
+                                        << it_find->second->getId() 
+                                        << " e " << disciplina->getId()
                                         << std::endl << std::endl;
 
                               return false;
@@ -321,7 +329,7 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario()
                            else
                            {
                               // Informamos que esse dia/horário estão ocupados para essa slaa
-                              mapBlocoDiaHorario[ key ] = true;
+                              mapBlocoDiaHorario[ key ] = disciplina;
                            }
                         }
                      } // Horário de aula
@@ -617,7 +625,6 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
                            continue;
                         }
 
-                        // TODO
                         AtendimentoBase * atendimento = new AtendimentoBase();
 
                         atendimento->setProfessor( professor );
@@ -913,15 +920,17 @@ bool ValidateSolutionOp::checkRestricaoDisciplinaMesmoHorario()
    {
       Disciplina * disciplina = it_map->first;
 
-      int creditos_disciplina = ( disciplina->getCredTeoricos() +
-         disciplina->getCredPraticos() );
-
+      int creditos_disciplina = disciplina->getTotalCreditos();
       int horarios_alocados = it_map->second.size();
       double dias_letivos_disciplina = mapDisciplinaDiasLetivos[ disciplina ].size();
 
-      // Se Horários > ( Créditos / DiasLetivos ), ENTÃO a regra foi violada
+      // SE Horários > ( Créditos / Dias Letivos ), ENTÃO a regra foi violada
       if ( horarios_alocados > ( creditos_disciplina / dias_letivos_disciplina ) )
       {
+         std::cout << "\nA disciplina " << disciplina->getId()
+                   << " nao obedece a alocacao \nde de mesmos "
+                   << "horarios em dias letivos distintos." << std::endl;
+
          return false;
       }
    }

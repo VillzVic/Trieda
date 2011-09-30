@@ -16,7 +16,6 @@ class ProblemSolution
 {
 public:
    // Constructor
-   // ProblemSolution();
    ProblemSolution( bool = true );
 
    // Destructor

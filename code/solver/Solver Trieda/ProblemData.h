@@ -323,7 +323,8 @@ public:
    // criadas após a execução do método de divisão de disciplinas.
    GGroup< Disciplina *, LessPtr< Disciplina > > novasDisciplinas;
 
-   std::map< Professor *, GGroup< std::pair< Aula *, Disciplina * > >, LessPtr< Professor > > mapProfessorDisciplinas;
+   std::map< Professor *, GGroup< std::pair< Aula *, Disciplina * > >,
+      LessPtr< Professor > > mapProfessorDisciplinas;
 
    // PAra cada demanda, relacionamos os alunos que estão associados a ela
    std::map< Demanda *, GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > > mapDemandaAlunos;
@@ -337,6 +338,10 @@ public:
 
    GGroup< Professor *, LessPtr< Professor > > getProfessores();
    Professor * findProfessor( int );
+
+   // Para uma dada aula, retorna-se o total de
+   // horários do turno ao qual essa aula está alocada
+   int totalHorariosTurnoAula( Aula * );
 };
 
 #endif

@@ -268,9 +268,9 @@ SolverMIP::~SolverMIP()
 
    for ( i = 0; i < (int)solVars.size(); i++ )
    {
-      if ( solVars[i] != NULL )
+      if ( solVars[ i ] != NULL )
       {
-         delete solVars[i];
+         delete solVars[ i ];
       }
    }
 
@@ -627,7 +627,7 @@ int SolverMIP::solveTaticoBasico()
 
    int status = 0;
 
-   lp->setTimeLimit( 60 );
+   lp->setTimeLimit( 30 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
 
@@ -2214,7 +2214,7 @@ int SolverMIP::solve()
          // Resolvendo o modelo operacional
          solveOperacionalMIP();
 
-         // Preenche as classes do output ooperacional
+         // Preenche as classes do output operacional
          preencheOutputOperacionalMIP( problemSolution );
       }
    }
@@ -11246,154 +11246,176 @@ int SolverMIP::criaVariaveisOperacional()
    numVars += criaVariavelProfessorAulaHorario(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_X_PROF_AULA_HOR: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_X_PROF_AULA_HOR: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelProfessorDisciplina(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_Y_PROF_DISCIPLINA: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_Y_PROF_DISCIPLINA: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelDisciplinaHorario(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_Z_DISCIPLINA_HOR: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_Z_DISCIPLINA_HOR: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaDisciplinaHorario(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_DISC_HOR: " << (numVars - numVarsAnterior) << std::endl;
+   std::cout << "numVars V_F_DISC_HOR: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaFixProfDiscSalaDiaHor(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_FIX_PROF_DISC_SALA_DIA_HOR: " << (numVars - numVarsAnterior) << std::endl;
+   std::cout << "numVars V_F_FIX_PROF_DISC_SALA_DIA_HOR: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaFixProfDiscDiaHor(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_FIX_PROF_DISC_DIA_HOR: " << (numVars - numVarsAnterior) << std::endl;
+   std::cout << "numVars V_F_FIX_PROF_DISC_DIA_HOR: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaFixProfDisc(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_FIX_PROF_DISC: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_FIX_PROF_DISC: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaFixProfDiscSala(); 
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_FIX_PROF_DISC_SALA: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_FIX_PROF_DISC_SALA: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaFixProfSala();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_FIX_PROF_SALA: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_FIX_PROF_SALA: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelProfessorCurso();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_PROF_CURSO: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_PROF_CURSO: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelAvaliacaoCorpoDocente();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_AVALIACAO_CORPO_DOCENTE: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_AVALIACAO_CORPO_DOCENTE: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelCustoCorpoDocente();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_CUSTO_CORPO_DOCENTE: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_CUSTO_CORPO_DOCENTE: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelDiasProfessoresMinistramAulas();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_DIAS_PROF_MINISTRA_AULAS: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_DIAS_PROF_MINISTRA_AULAS: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaMinimoMestresCurso();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_MIN_MEST_CURSO: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_MIN_MEST_CURSO: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaMinimoDoutoresCurso();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_MIN_DOUT_CURSO: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_MIN_DOUT_CURSO: "  
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelMaxDiscProfCurso();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_MAX_DISC_PROF_CURSO: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_MAX_DISC_PROF_CURSO: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaMaxDiscProfCurso();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_MAX_DISC_PROF_CURSO: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_MAX_DISC_PROF_CURSO: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaCargaHorariaMinimaProfessor();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_CARGA_HOR_MIN_PROF: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_CARGA_HOR_MIN_PROF: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaCargaHorariaMinimaProfessorSemana();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_CARGA_HOR_MIN_PROF_SEMANA: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_CARGA_HOR_MIN_PROF_SEMANA: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaCargaHorariaMaximaProfessorSemana();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_F_CARGA_HOR_MAX_PROF_SEMANA: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_F_CARGA_HOR_MAX_PROF_SEMANA: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelGapsProfessores();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_GAPS_PROFESSORES: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_GAPS_PROFESSORES: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
    numVars += criaVariavelFolgaUltimaPrimeiraAulas();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_PREF_DISCIPLINAS: " << ( numVars - numVarsAnterior ) << std::endl;
+   std::cout << "numVars V_PREF_DISCIPLINAS: "
+             << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
 
@@ -11406,7 +11428,10 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
    int num_vars = 0;
    double coeff = 0.0;
 
-   ITERA_GGROUP_LESSPTR( itProfessor, ( *problemData->campi.begin() )->professores, Professor )
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
+
+   ITERA_GGROUP_LESSPTR( itProfessor, professores, Professor )
    {
       ITERA_GGROUP_LESSPTR( itMagisterio, itProfessor->magisterio, Magisterio )
       {
@@ -11504,7 +11529,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
             vHashOp[ v ] = lp->getNumCols();
 
             OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-               ( char * )v.toString().c_str() );
+               ( char * ) v.toString().c_str() );
 
             lp->newCol( col );
             num_vars++;
@@ -11581,7 +11606,7 @@ int SolverMIP::criaVariavelProfessorDisciplina()
                vHashOp[ v ] = lp->getNumCols();
 
                OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-                  ( char * )v.toString().c_str() );
+                  ( char * ) v.toString().c_str() );
 
                lp->newCol( col );
                num_vars++;
@@ -11602,13 +11627,15 @@ int SolverMIP::criaVariavelDisciplinaHorario()
    {
       Disciplina * discAula = itAula->getDisciplina();
 
-      // Retorna lista de horarios possiveis para o professor, aula e sala
+      // Retorna lista de horarios possiveis para a aula e a sala
       std::list< HorarioDia * > listaHorarios;
 
       retornaHorariosPossiveis( NULL, *itAula, listaHorarios );
 
-      for ( std::list< HorarioDia * >::iterator itHor = listaHorarios.begin();
-            itHor != listaHorarios.end(); itHor++ )
+      std::list< HorarioDia * >::iterator
+         itHor = listaHorarios.begin();
+
+      for (; itHor != listaHorarios.end(); itHor++ )
       {
          HorarioDia * horarioDia = ( *itHor );
 
@@ -11627,7 +11654,7 @@ int SolverMIP::criaVariavelDisciplinaHorario()
             vHashOp[ v ] = lp->getNumCols();
 
             OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-               ( char * )v.toString().c_str() );
+               ( char * ) v.toString().c_str() );
 
             lp->newCol( col );
             num_vars++;
@@ -11643,12 +11670,16 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
 {
    listaHor.clear();
 
+   // Verifica-se a disponibilidade do
+   // professor, da disciplina e da sala
    if ( prof != NULL )
    {
       Disciplina * disc = aula->getDisciplina();
       Sala * sala = aula->getSala();
 
       int nCred = aula->getTotalCreditos();
+      // int nCred = this->problemData->totalHorariosTurnoAula( aula );
+
       int diaS = aula->getDiaSemana();
 
       for ( int i = 0; i <= problemData->maxHorariosDif; i++ )
@@ -11734,12 +11765,16 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
          }
       }
    }
+   // Como se trata de um professor virtual, iremos
+   // verificar apenas a disponibilidade da disciplina e da sala
    else
    {
       Disciplina * disc = aula->getDisciplina();
       Sala * sala = aula->getSala();
 
       int nCred = aula->getTotalCreditos();
+      // int nCred = this->problemData->totalHorariosTurnoAula( aula );
+
       int diaS = aula->getDiaSemana();
 
       for ( int i = 0; i <= problemData->maxHorariosDif; i++ )
@@ -11757,12 +11792,12 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
          bool horarioOK = true;
 
          // Verifica se disciplina e sala possuem o horario
-         if ( sala->horariosDia.find(horarioDia) == sala->horariosDia.end() )
+         if ( sala->horariosDia.find( horarioDia ) == sala->horariosDia.end() )
          {
             continue;
          }
 
-         if ( disc->horariosDia.find(horarioDia) == disc->horariosDia.end() )
+         if ( disc->horariosDia.find( horarioDia ) == disc->horariosDia.end() )
          {
             continue;
          }
@@ -12650,7 +12685,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoSalaHorario();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_SALA_HORARIO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_SALA_HORARIO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12658,7 +12694,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoProfessorHorario();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_PROFESSOR_HORARIO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_PROFESSOR_HORARIO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12666,7 +12703,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoBlocoHorario();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_BLOCO_HORARIO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_BLOCO_HORARIO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12674,7 +12712,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoAlocAula();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_ALOC_AULA: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_ALOC_AULA: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12682,7 +12721,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoProfessorDisciplina();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_PROF_DISC: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_PROF_DISC: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12690,7 +12730,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoProfessorDisciplinaUnico();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_PROF_DISC_UNI: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_PROF_DISC_UNI: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12698,7 +12739,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoDisciplinaMesmoHorario();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DISC_HORARIO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_DISC_HORARIO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12706,7 +12748,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoDisciplinaHorarioUnico();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DISC_HORARIO_UNICO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_DISC_HORARIO_UNICO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12714,7 +12757,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoFixProfDiscSalaDiaHor();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_FIX_PROF_DISC_SALA_DIA_HOR: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_FIX_PROF_DISC_SALA_DIA_HOR: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12722,7 +12766,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoFixProfDiscDiaHor();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_FIX_PROF_DISC_DIA_HOR: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_FIX_PROF_DISC_DIA_HOR: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12730,7 +12775,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoFixProfDisc();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_FIX_PROF_DISC: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_FIX_PROF_DISC: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12738,7 +12784,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoFixProfDiscSala();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_FIX_PROF_DISC_SALA: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_FIX_PROF_DISC_SALA: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12746,7 +12793,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoFixProfSala();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_FIX_PROF_SALA: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_FIX_PROF_SALA: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12754,7 +12802,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoDeslocamentoViavel();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DESLOC_VIAVEL: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_DESLOC_VIAVEL: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12762,7 +12811,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoDeslocamentoProfessor();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DESLOC_PROF: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_DESLOC_PROF: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12770,7 +12820,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoAvaliacaoCorpoDocente();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_AVALIACAO_CORPO_DOCENTE: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_AVALIACAO_CORPO_DOCENTE: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12778,7 +12829,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoCustoCorpoDocente();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_CUSTO_CORPO_DOCENTE: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_CUSTO_CORPO_DOCENTE: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12786,7 +12838,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoRelacionaVariavelXDiaProf();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_DIAS_PROF_MINISTRA_AULA: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_DIAS_PROF_MINISTRA_AULA: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12794,7 +12847,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoMinimoMestresCurso();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_MIN_MEST_CURSO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_MIN_MEST_CURSO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12802,7 +12856,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoMinimoDoutoresCurso();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_MIN_DOUT_CURSO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_MIN_DOUT_CURSO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12810,7 +12865,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoUltimaPrimeiraAulas();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_ULTIMA_PRIMEIRA_AULA_PROF: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_ULTIMA_PRIMEIRA_AULA_PROF: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12818,7 +12874,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoAlocacaoProfessorCurso();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_ALOC_PROF_CURSO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_ALOC_PROF_CURSO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12826,7 +12883,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoCargaHorariaMinimaProfessor();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_CARGA_HOR_MIN_PROF: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_CARGA_HOR_MIN_PROF: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12834,7 +12892,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoMaxDiscProfCurso();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_MAX_DISC_PROF_CURSO: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_MAX_DISC_PROF_CURSO: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12842,7 +12901,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoCargaHorariaMinimaProfessorSemana();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_CARGA_HOR_MIN_PROF_SEMANA: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_CARGA_HOR_MIN_PROF_SEMANA: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12850,7 +12910,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoCargaHorariaMaximaProfessorSemana();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_CARGA_HOR_MAX_PROF_SEMANA: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_CARGA_HOR_MAX_PROF_SEMANA: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12858,7 +12919,8 @@ int SolverMIP::criaRestricoesOperacional()
    restricoes += criaRestricaoGapsProfessores();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest C_GAPS_PROFESSORES: " << ( restricoes - numRestAnterior ) << std::endl;
+   std::cout << "numRest C_GAPS_PROFESSORES: "
+             << ( restricoes - numRestAnterior ) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -12925,6 +12987,7 @@ int SolverMIP::criaRestricaoSalaHorario()
          c.setHorario( problemData->horariosDiaIdx[ h ] );
 
          cit = cHashOp.find( c );
+
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
@@ -12991,6 +13054,7 @@ int SolverMIP::criaRestricaoProfessorHorario()
          c.setHorario( problemData->horariosDiaIdx[ h ] );
 
          cit = cHashOp.find( c );
+
          if ( cit != cHashOp.end() )
          {
             auxCoef.first = cit->second;
@@ -15392,5 +15456,83 @@ void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
    {
       std::cout << "\nSolucao invalida." << std::endl;
    }
-   ////
+
+   /*
+   // Alterando a solução
+   bool removeu = false;
+
+   ITERA_GGROUP( it_at_campi, ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
+   {
+      Campus * campus = this->problemData->refCampus[ it_at_campi->getId() ];
+
+      ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+      {
+         Unidade * unidade = this->problemData->refUnidade[ it_at_unidade->getId() ];
+
+         ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+         {
+            Sala * sala = this->problemData->refSala[ it_at_sala->getId() ];
+
+            ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            {
+               int dia_semana = it_at_dia->getDiaSemana();
+
+               ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               {
+                  Turno * turno = this->problemData->findTurno( it_at_turno->getTurnoId() );
+
+                  ITERA_GGROUP( it_at_horario,
+                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                  {
+                     HorarioAula * horario_aula = this->problemData->findHorarioAula(
+                        it_at_horario->getHorarioAulaId() );
+
+                     AtendimentoHorarioAula * at = ( *it_at_horario );
+                     at = NULL;
+                     removeu = true;
+                     break;
+                  } // Horário de aula
+
+                  if ( removeu )
+                  {
+                  break;
+                  }
+               } // Turno
+
+               if ( removeu )
+               {
+                  break;
+               }
+            } // Dia da semana
+
+            if ( removeu )
+            {
+               break;
+            }
+         } // Sala
+
+         if ( removeu )
+         {
+            break;
+         }
+      } // Unidade
+
+      if ( removeu )
+      {
+         break;
+      }
+   } // Campus
+
+   // TODO -- verificar novamente a solução
+   solutionOk = validate->checkSolution( this->problemSolution );
+
+   if ( solutionOk )
+   {
+      std::cout << "\nSolucao verificada com sucesso." << std::endl;
+   }
+   else
+   {
+      std::cout << "\nSolucao invalida." << std::endl;
+   }
+   */
 }

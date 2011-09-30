@@ -1,24 +1,23 @@
 #include "Campus.h"
 
-#include <iostream>
-
-Campus::Campus(void)
+Campus::Campus( void )
 {
    totalSalas = 0;
    maiorSala  = 0;
    custo = 0;
 }
 
-Campus::~Campus(void)
+Campus::~Campus( void )
 {
+
 }
 
-void Campus::le_arvore(ItemCampus& elem) 
+void Campus::le_arvore( ItemCampus & elem ) 
 {
    this->setId( elem.id() );
-   codigo = elem.codigo();
-   nome = elem.nome();
-   custo = elem.custo();
+   this->setCodigo( elem.codigo() );
+   this->setNome( elem.nome() );
+   this->setCusto( elem.custo() );
 
    ITERA_SEQ( it_unidades, elem.unidades(), Unidade )
    {
@@ -32,6 +31,7 @@ void Campus::le_arvore(ItemCampus& elem)
    // da solução. O id_operacional deve ser preenchido de forma
    // sequencial, começando a partir de zero.
    int id_operacional_professor = 0;
+
    ITERA_SEQ( it_professores, elem.professores(), Professor )
    {
       Professor * professor = new Professor();

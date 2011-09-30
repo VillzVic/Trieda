@@ -1,8 +1,9 @@
 #ifndef _CAMPUS_H_
 #define _CAMPUS_H_
 
-#include "ofbase.h"
+#include <iostream>
 
+#include "ofbase.h"
 #include "Unidade.h"
 #include "Professor.h"
 #include "Horario.h"
@@ -14,8 +15,8 @@ class Campus:
    public OFBase
 {
 public:
-   Campus(void);
-   virtual ~Campus(void);
+   Campus( void );
+   virtual ~Campus( void );
 
    GGroup< Unidade *, LessPtr< Unidade > > unidades;
    GGroup< Professor *, LessPtr< Professor > > professores;
@@ -32,17 +33,17 @@ public:
 
    virtual void le_arvore( ItemCampus & );
 
-   void setCodigo(std::string s) { codigo = s; }
-   void setNome(std::string s) { nome = s; }
-   void setTotalSalas(int value) { totalSalas = value; }
-   void setMaiorSala(int value) { maiorSala = value; }
-   void setCusto(double c) { custo = c; }
+   void setCodigo( std::string s ) { this->codigo = s; }
+   void setNome( std::string s ) { this->nome = s; }
+   void setTotalSalas( int value ) { this->totalSalas = value; }
+   void setMaiorSala( int value ) { this->maiorSala = value; }
+   void setCusto( double c ) { this->custo = c; }
 
-   std::string getCodigo() { return codigo; }
-   std::string getNome(std::string s) { return nome; }
-   int getTotalSalas() { return totalSalas; }
-   int getMaiorSala() { return maiorSala; }
-   double getCusto() { return custo; }
+   std::string getCodigo() const { return this->codigo; }
+   std::string getNome() const { return this->nome; }
+   int getTotalSalas() const { return this->totalSalas; }
+   int getMaiorSala() const { return this->maiorSala; }
+   double getCusto() const { return this->custo; }
 
 private:
    std::string codigo;
