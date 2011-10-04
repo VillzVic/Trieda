@@ -20,30 +20,31 @@ public class SolverClient
 	{
 		this.url = url;
 		this.problemName = problemName;
-		client = Client.create();
-		webResource = client.resource( getUrl() );
+		this.client = Client.create();
+		this.webResource = this.client.resource( getUrl() );
 	}
 
 	public String getUrl()
 	{
-		return url;
+		return this.url;
 	}
 
 	public String getProblemName()
 	{
-		return problemName;
+		return this.problemName;
 	}
 
 	@Override
 	public String help()
 	{
-		return webResource.path( "/help" ).get( String.class );
+		return this.webResource.path(
+			"/help" ).get( String.class );
 	}
 
 	@Override
 	public String version()
 	{
-		return webResource.path( "/version" ).get( String.class );
+		return this.webResource.path( "/version" ).get( String.class );
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class SolverClient
 		MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
 
 		queryParams.add( "round", round );
-		SolverResponse sr = webResource.path(
+		SolverResponse sr = this.webResource.path(
 			"/containsResult/" + getProblemName() + "/" )
 			.queryParams(queryParams).post( SolverResponse.class );
 
@@ -75,16 +76,16 @@ public class SolverClient
 	@Override
 	public long requestOptimization( byte [] fileBytes )
 	{
-		webResource = webResource.path(
+		this.webResource = this.webResource.path(
 			"/requestOptimization/"	+ getProblemName() + "/" );
 
 		MultiPart multiPart = new MultiPart().bodyPart(
 			new BodyPart( fileBytes, MediaType.APPLICATION_OCTET_STREAM_TYPE ) );
 
-		SolverResponse sr = webResource.type(
+		SolverResponse sr = this.webResource.type(
 			"multipart/mixed" ).post( SolverResponse.class, multiPart );
 
-		return ( ( sr.getStatus() ) ? (Long) sr.getObject() : -1 );
+		return ( sr.getStatus() ? (Long) sr.getObject() : -1 );
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public class SolverClient
 
 		queryParams.add( "round", round );
 
-		SolverResponse sr = webResource.path(
+		SolverResponse sr = this.webResource.path(
 			"/getContent/" + getProblemName() + "/" )
 			.queryParams( queryParams ).post( SolverResponse.class );
 

@@ -15,7 +15,8 @@ public interface AreasTitulacaoServiceAsync
 	void remove( List< AreaTitulacaoDTO > areaTitulacaoDTOList, AsyncCallback< Boolean > callback );
 	void getListAll( AsyncCallback< ListLoadResult< AreaTitulacaoDTO > > callback );
 	void save( AreaTitulacaoDTO areaTitulacaoDTO, AsyncCallback< Void > callback );
-	void getBuscaList( String nome, String descricao, PagingLoadConfig config, AsyncCallback< PagingLoadResult< AreaTitulacaoDTO > > callback );
+	void getBuscaList( String nome, String descricao, PagingLoadConfig config,
+		AsyncCallback< PagingLoadResult< AreaTitulacaoDTO > > callback );
 	void getListVinculadas( CursoDTO cursoDTO, AsyncCallback< List< AreaTitulacaoDTO > > callback );
 	void getListNaoVinculadas( CursoDTO cursoDTO, AsyncCallback< List< AreaTitulacaoDTO > > callback );
 	void vincula( CursoDTO cursoDTO, List< AreaTitulacaoDTO > areasTitulacaoDTO, AsyncCallback< Void > callback );

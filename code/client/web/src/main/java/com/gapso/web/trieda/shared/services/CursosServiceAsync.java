@@ -13,16 +13,16 @@ import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
-public interface CursosServiceAsync {
-
-	void getCurso(Long id, AsyncCallback<CursoDTO> callback);
-	void getList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<CursoDTO>> callback);
-	void getBuscaList(String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config, AsyncCallback<PagingLoadResult<CursoDTO>> callback);
-	void save(CursoDTO cursoDTO, AsyncCallback<Void> callback);
-	void remove(List<CursoDTO> cursoDTOList, AsyncCallback<Void> callback);
-	void getListAll(AsyncCallback<ListLoadResult<CursoDTO>> callback);
-	void getListByCampus(CampusDTO campusDTO, List<CursoDTO> retirarCursosDTO, AsyncCallback<ListLoadResult<CursoDTO>> callback);
-	void getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback<List<ResumoCursoDTO>> callback);
-	
+public interface CursosServiceAsync
+{
+	void getCurso( Long id, AsyncCallback< CursoDTO > callback );
+	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CursoDTO > > callback );
+	void getBuscaList( String nome, String codigo, TipoCursoDTO tipoCurso,
+		PagingLoadConfig config, AsyncCallback< PagingLoadResult< CursoDTO > > callback );
+	void save( CursoDTO cursoDTO, AsyncCallback< Void > callback );
+	void remove( List< CursoDTO > cursoDTOList, AsyncCallback< Void > callback );
+	void getListAll( AsyncCallback< ListLoadResult< CursoDTO > > callback );
+	void getListByCampus( CampusDTO campusDTO, List< CursoDTO > retirarCursosDTO,
+		AsyncCallback< ListLoadResult< CursoDTO > > callback );
+	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoCursoDTO > > callback );
 }

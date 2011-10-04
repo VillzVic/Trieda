@@ -22,6 +22,7 @@ public class SimpleModal extends Window
 	{
 		this.textSalvar = textSalvar;
 		this.textCancelar = textCancelar;
+
 		setHeading( heading );
 		setIcon( AbstractImagePrototype.create( icon ) );
 		configuration();
@@ -50,21 +51,20 @@ public class SimpleModal extends Window
 
 	private void addButtons()
 	{
-		if ( textSalvar != null )
+		if ( this.textSalvar != null )
 		{
-			salvarBt = new Button( textSalvar,
+			this.salvarBt = new Button( this.textSalvar,
 				AbstractImagePrototype.create( Resources.DEFAULTS.save16() ) );
 
-			addButton( salvarBt );
-			setDefaultButton( salvarBt );
+			addButton( this.salvarBt );
 		}
 
-		if ( textCancelar != null )
+		if ( this.textCancelar != null )
 		{
-			cancelarBt = new Button( textCancelar,
+			this.cancelarBt = new Button( this.textCancelar,
 				AbstractImagePrototype.create( Resources.DEFAULTS.cancel16() ) );
 
-			cancelarBt.addSelectionListener( new SelectionListener< ButtonEvent >()
+			this.cancelarBt.addSelectionListener( new SelectionListener< ButtonEvent >()
 			{
 				@Override
 				public void componentSelected( ButtonEvent ce )
@@ -73,37 +73,17 @@ public class SimpleModal extends Window
 				}
 			});
 
-			addButton( cancelarBt );
+			addButton( this.cancelarBt );
 		}
-	}
-
-	public void setDefaultButton( final Button button )
-	{
-		/*
-		 * Esse método foi removido para corrigir o erro na issue
-		 * http://jira.gapso.com.br/browse/TRIEDA-996  
-		 * */
-
-		/*
-		new KeyNav< ComponentEvent >( this )
-		{
-			@Override
-			public void onEnter( ComponentEvent ce )
-			{
-				super.onEnter( ce );
-				button.fireEvent( Events.Select );
-			}
-		};
-		*/
 	}
 
 	public Button getSalvarBt()
 	{
-		return salvarBt;
+		return this.salvarBt;
 	}
 
 	public Button getCancelarBt()
 	{
-		return cancelarBt;
+		return this.cancelarBt;
 	}
 }

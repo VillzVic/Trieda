@@ -2,7 +2,8 @@ package com.gapso.web.trieda.shared.dtos;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 
-public abstract class AbstractDTO< NKType > extends BaseModel
+public abstract class AbstractDTO< NKType >
+	extends BaseModel
 {
 	private static final long serialVersionUID = 2957871960531183286L;
 

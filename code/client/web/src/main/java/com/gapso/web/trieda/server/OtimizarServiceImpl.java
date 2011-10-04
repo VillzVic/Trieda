@@ -31,6 +31,7 @@ import com.gapso.web.trieda.server.xml.output.ItemError;
 import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.services.OtimizarService;
 
@@ -77,7 +78,57 @@ public class OtimizarServiceImpl
 
 		return parametro;
 	}
-	
+
+	@Override
+	@Transactional
+	public ErrorsWarningsInputSolverDTO validaInput( ParametroDTO parametroDTO )
+	{
+		Parametro parametro = ConvertBeans.toParametro( parametroDTO );
+
+		parametro.setId( null );
+		parametro.flush();
+		parametro.save();
+
+		Cenario cenario = parametro.getCenario();
+		cenario.getParametros().add( parametro );
+		List< Campus > campi = new ArrayList< Campus >( 1 );
+		campi.add( parametro.getCampus() );
+
+		TriedaInput triedaInput = null;
+		SolverInput solverInput = new SolverInput(
+			getInstituicaoEnsinoUser(), cenario, parametro, campi );
+
+		if ( parametro.isTatico() )
+		{
+			triedaInput = solverInput.generateTaticoTriedaInput();
+		}
+		else
+		{
+			triedaInput = solverInput.generateOperacionalTriedaInput();
+		}
+
+		ErrorsWarningsInputSolverDTO response
+			= new ErrorsWarningsInputSolverDTO();
+
+		response.setValidInput( triedaInput != null );
+
+		if ( solverInput.getErrors().size() > 0
+			|| solverInput.getWarnings().size() > 0 )
+		{
+			for ( String error : solverInput.getErrors() )
+			{
+				response.getErrorsWarnings().get( "errors" ).add( error );
+			}
+
+			for ( String warning : solverInput.getWarnings() )
+			{
+				response.getErrorsWarnings().get( "warnings" ).add( warning );
+			}
+		}
+
+		return response;
+	}
+
 	@Override
 	@Transactional
 	public Long sendInput( ParametroDTO parametroDTO )
@@ -107,6 +158,7 @@ public class OtimizarServiceImpl
 		}
 
 		byte [] fileBytes = null;
+
 		try
 		{
 			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
@@ -125,14 +177,18 @@ public class OtimizarServiceImpl
 			e.printStackTrace();
 		}
 
-		SolverClient solverClient = new SolverClient( getLinkSolver(), "trieda" );
+		SolverClient solverClient
+			= new SolverClient( getLinkSolver(), "trieda" );
+
 		return solverClient.requestOptimization( fileBytes );
 	}
 
 	@Override
 	public Boolean isOptimizing( Long round )
 	{
-		SolverClient solverClient = new SolverClient( getLinkSolver(), "trieda" );
+		SolverClient solverClient
+			= new SolverClient( getLinkSolver(), "trieda" );
+
 		return ( !solverClient.isFinished( round ) );
 	}
 

@@ -124,8 +124,11 @@ public class SolverInput
 	private Parametro parametro;
 	private List< SemanaLetiva > semanasLetivas;
 	private InstituicaoEnsino instituicaoEnsino;
+	private List< String > errors;
+	private List< String > warnings;
 
-	public SolverInput( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+	public SolverInput(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		Parametro parametro, List< Campus > listCampi )
 	{
 		this.cenario = cenario;
@@ -133,6 +136,7 @@ public class SolverInput
 
 		// Está sendo enviado apenas um campus nessa lista
 		this.campi = new ArrayList< Campus >();
+
 		for ( Campus c : listCampi )
 		{
 			if ( c.getInstituicaoEnsino() == instituicaoEnsino )
@@ -145,6 +149,30 @@ public class SolverInput
 		this.of = new ObjectFactory();
 		this.triedaInput = of.createTriedaInput();
 		this.semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
+		this.errors = new ArrayList< String >();
+		this.warnings = new ArrayList< String >();
+	}
+
+	public List< String > getErrors()
+	{
+		return this.errors;
+	}
+
+	public void setErrors(
+		List< String > errors )
+	{
+		this.errors = errors;
+	}
+
+	public List< String > getWarnings()
+	{
+		return this.warnings;
+	}
+
+	public void setWarnings(
+		List< String > warnings )
+	{
+		this.warnings = warnings;
 	}
 
 	@Transactional
@@ -181,7 +209,7 @@ public class SolverInput
 		generateOfertaCursoCampi();
 		generateDemandas();
 		generateAlunosDemanda();
-		generateParametrosPlanejamento(tatico);
+		generateParametrosPlanejamento( tatico );
 		generateFixacoes();
 
 		if ( !tatico )
@@ -193,14 +221,16 @@ public class SolverInput
 	@Transactional
 	private void generateCalendario()
 	{
-		GrupoCalendario grupoCalendario = this.of.createGrupoCalendario();
+		GrupoCalendario grupoCalendario
+			= this.of.createGrupoCalendario();
 
 		List< SemanaLetiva > semanasLetivas	
 			= SemanaLetiva.findAll( this.instituicaoEnsino );
 
 		for ( SemanaLetiva calendario : semanasLetivas )
 		{
-			ItemCalendario itemCalendario = this.of.createItemCalendario();
+			ItemCalendario itemCalendario
+				= this.of.createItemCalendario();
 
 			itemCalendario.setId( calendario.getId().intValue() );
 			itemCalendario.setCodigo( calendario.getCodigo() );
@@ -225,24 +255,30 @@ public class SolverInput
 				itemTurno.setTempoAula( turno.getTempo() );
 
 				// Lendo horários de aula
-				GrupoHorarioAula grupoHorarioAula = this.of.createGrupoHorarioAula();
+				GrupoHorarioAula grupoHorarioAula
+					= this.of.createGrupoHorarioAula();
+
 				Set< HorarioAula > horariosAula = turno.getHorariosAula();
 
 				for ( HorarioAula horarioAula : horariosAula )
 				{
-					ItemHorarioAula itemHorarioAula = this.of.createItemHorarioAula();
+					ItemHorarioAula itemHorarioAula
+						= this.of.createItemHorarioAula();
 
 					itemHorarioAula.setId( horarioAula.getId().intValue() );
 					itemHorarioAula.setInicio( new XMLGregorianCalendarUtil(
 						horarioAula.getHorario() ) );
 
-					GrupoDiaSemana grupoDiasSemana = this.of.createGrupoDiaSemana();
+					GrupoDiaSemana grupoDiasSemana
+						= this.of.createGrupoDiaSemana();
+
 					Set< HorarioDisponivelCenario > horariosDisponivelCenario
 						= horarioAula.getHorariosDisponiveisCenario();
 
 					for ( HorarioDisponivelCenario hdc : horariosDisponivelCenario )
 					{
-						grupoDiasSemana.getDiaSemana().add( Semanas.toInt( hdc.getDiaSemana() ) );
+						grupoDiasSemana.getDiaSemana().add(
+									Semanas.toInt( hdc.getDiaSemana() ) );
 					}
 
 					itemHorarioAula.setDiasSemana( grupoDiasSemana );
@@ -262,12 +298,16 @@ public class SolverInput
 
 	private void generateTiposSala()
 	{
-		GrupoTipoSala grupoTipoSala = this.of.createGrupoTipoSala();
-		List< TipoSala > tipos = TipoSala.findAll( this.instituicaoEnsino );
+		GrupoTipoSala grupoTipoSala
+			= this.of.createGrupoTipoSala();
+
+		List< TipoSala > tipos
+			= TipoSala.findAll( this.instituicaoEnsino );
 
 		for ( TipoSala tipo : tipos )
 		{
-			ItemTipoSala itemTipoSala = this.of.createItemTipoSala();
+			ItemTipoSala itemTipoSala
+				= this.of.createItemTipoSala();
 
 			itemTipoSala.setId( tipo.getId().intValue() );
 			itemTipoSala.setNome( tipo.getNome() );
@@ -280,14 +320,16 @@ public class SolverInput
 
 	private void generateTiposContrato()
 	{
-		GrupoTipoContrato grupoTipoContrato = this.of.createGrupoTipoContrato();
+		GrupoTipoContrato grupoTipoContrato
+			= this.of.createGrupoTipoContrato();
 
 		List< TipoContrato > listTiposContrato
 			= TipoContrato.findAll( this.instituicaoEnsino );
 
 		for ( TipoContrato tipo : listTiposContrato )
 		{
-			ItemTipoContrato itemTipoContrato = this.of.createItemTipoContrato();
+			ItemTipoContrato itemTipoContrato
+				= this.of.createItemTipoContrato();
 
 			itemTipoContrato.setId( tipo.getId().intValue() );
 			itemTipoContrato.setNome( tipo.getNome() );
@@ -300,8 +342,11 @@ public class SolverInput
 
 	private void generateTiposTitulacao()
 	{
-		GrupoTipoTitulacao grupoTipoTitulacao = this.of.createGrupoTipoTitulacao();
-		List< Titulacao > tipos = Titulacao.findAll( this.instituicaoEnsino );
+		GrupoTipoTitulacao grupoTipoTitulacao
+			= this.of.createGrupoTipoTitulacao();
+
+		List< Titulacao > tipos
+			= Titulacao.findAll( this.instituicaoEnsino );
 
 		for ( Titulacao tipo : tipos )
 		{
@@ -318,12 +363,16 @@ public class SolverInput
 
 	private void generateAreasTitulacao()
 	{
-		GrupoAreaTitulacao grupoAreaTitulacao = this.of.createGrupoAreaTitulacao();
-		List< AreaTitulacao > tipos = AreaTitulacao.findAll( this.instituicaoEnsino );
+		GrupoAreaTitulacao grupoAreaTitulacao
+			= this.of.createGrupoAreaTitulacao();
+
+		List< AreaTitulacao > tipos
+			= AreaTitulacao.findAll( this.instituicaoEnsino );
 
 		for ( AreaTitulacao tipo : tipos )
 		{
-			ItemAreaTitulacao itemAreaTitulacao = this.of.createItemAreaTitulacao();
+			ItemAreaTitulacao itemAreaTitulacao
+				= this.of.createItemAreaTitulacao();
 
 			itemAreaTitulacao.setId( tipo.getId().intValue() );
 			itemAreaTitulacao.setNome( tipo.getCodigo() );
@@ -642,7 +691,8 @@ public class SolverInput
 
 	private void generateDeslocamentoUnidades()
 	{
-		GrupoDeslocamento grupoDeslocamento = this.of.createGrupoDeslocamento();
+		GrupoDeslocamento grupoDeslocamento
+			= this.of.createGrupoDeslocamento();
 
 		for ( Campus campus : this.campi )
 		{
@@ -685,6 +735,8 @@ public class SolverInput
 
 			if ( !existeDemanda )
 			{
+				createNoDemandWarningMessage( disciplina );
+
 				continue;
 			}
 
@@ -856,9 +908,11 @@ public class SolverInput
 
 					if ( !existeDemanda )
 					{
+						createNoDemandWarningMessage( curriculoPeriodo.getDisciplina() );
+
 						continue;
 					}
-					
+
 					ItemDisciplinaPeriodo itemDisciplinaPeriodo	
 						= this.of.createItemDisciplinaPeriodo();
 
@@ -952,7 +1006,8 @@ public class SolverInput
 
 	private void generateAlunosDemanda()
 	{
-		GrupoAlunoDemanda grupoAlunosDemanda = this.of.createGrupoAlunoDemanda();
+		GrupoAlunoDemanda grupoAlunosDemanda
+			= this.of.createGrupoAlunoDemanda();
 
 		List< AlunoDemanda > alunos = AlunoDemanda.findByCampusAndTurno(
 			this.instituicaoEnsino, this.parametro.getCampus(), this.parametro.getTurno() );
@@ -1288,7 +1343,7 @@ public class SolverInput
 	private ItemAtendimentoUnidadeSolucao getItemAtendimentoUnidadeSolucao( Unidade unidade )
 	{
 		for ( ItemAtendimentoCampusSolucao atCampusSolucao
-			: triedaInput.getAtendimentosTatico().getAtendimentoCampus() )
+			: this.triedaInput.getAtendimentosTatico().getAtendimentoCampus() )
 		{
 			if ( atCampusSolucao.getAtendimentosUnidades() == null )
 			{
@@ -1575,5 +1630,18 @@ public class SolverInput
 		}
 
 		return grupoCreditoDisponivel;
+	}
+
+	private void createNoDemandWarningMessage( Disciplina disciplina )
+	{
+		if ( this.getWarnings().size() >= 5 || disciplina == null )
+		{
+			return;
+		}
+
+		String errorMessage = "Não existe demanda cadastrada " +
+			"para a disciplina " + disciplina.getCodigo();
+
+		this.getWarnings().add( errorMessage );
 	}
 }

@@ -1,23 +1,24 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.gapso.web.trieda.main.client.mvp.presenter.OtimizarMessagesPresenter;
+import com.gapso.web.trieda.main.client.mvp.presenter.ErrorsWarningsInputSolverPresenter;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class OtimizarMessagesView
+public class ErrorsWarningsInputSolverView
 	extends MyComposite
-	implements OtimizarMessagesPresenter.Display
+	implements ErrorsWarningsInputSolverPresenter.Display
 {
 	private ContentPanel panel;
 	private SimpleModal simpleModal;
 	private ContentPanel messagesWarningPanel;
 	private ContentPanel messagesErrorPanel;
 
-	public OtimizarMessagesView()
+	public ErrorsWarningsInputSolverView()
 	{
 		initUI();
 	}
@@ -26,8 +27,8 @@ public class OtimizarMessagesView
 	{
 		String title = "Alertas e Erros";
 
-		this.simpleModal = new SimpleModal( null,
-			"Fechar", title, Resources.DEFAULTS.serverWarning16() );
+		this.simpleModal = new SimpleModal( "Gerar Grade",
+			"Cancelar", title, Resources.DEFAULTS.serverWarning16() );
 
 		this.simpleModal.setAutoHeight( true );
 		this.panel = new ContentPanel( new RowLayout() );
@@ -48,9 +49,9 @@ public class OtimizarMessagesView
 		this.messagesErrorPanel.setBodyBorder( false );
 		this.messagesErrorPanel.addStyleName( "errorList" );
 		this.panel.add( this.messagesErrorPanel );
-		
-		this.panel.setAutoHeight(true);
-		
+
+		this.panel.setAutoHeight( true );
+
 		this.simpleModal.setContent( this.panel );
 		this.simpleModal.setWidth( 500 );
 	}
@@ -71,5 +72,17 @@ public class OtimizarMessagesView
 	public ContentPanel getMessagesErrorPanel()
 	{
 		return this.messagesErrorPanel;
+	}
+
+	@Override
+	public Button getSubmitButton()
+	{
+		return this.simpleModal.getSalvarBt();
+	}
+
+	@Override
+	public Button getCancelButton()
+	{
+		return this.simpleModal.getCancelarBt();
 	}
 }

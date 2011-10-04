@@ -17,12 +17,14 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.gapso.web.trieda.main.client.mvp.view.CompartilharCursosView;
+import com.gapso.web.trieda.main.client.mvp.view.ErrorsWarningsInputSolverView;
 import com.gapso.web.trieda.main.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.main.client.mvp.view.SelecionarCursosView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
+import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -97,12 +99,12 @@ public class ParametrosPresenter
 	}
 
 	private Display display; 
-	private CenarioDTO cenario;
+	private CenarioDTO cenarioDTO;
 
 	public ParametrosPresenter(
-		CenarioDTO cenario, Display display )
+		CenarioDTO cenarioDTO, Display display )
 	{
-		this.cenario = cenario;
+		this.cenarioDTO = cenarioDTO;
 		this.display = display;
 
 		selectComboBoxs();
@@ -111,43 +113,44 @@ public class ParametrosPresenter
 
 	private void selectComboBoxs()
 	{
-		Services.otimizar().getParametro( this.cenario,
+		final OtimizarServiceAsync service = Services.otimizar(); 
+
+		service.getParametro( this.cenarioDTO,
 			new AbstractAsyncCallbackWithDefaultOnFailure< ParametroDTO >( this.display )
+		{
+			@Override
+			public void onSuccess( ParametroDTO parametroDTO )
 			{
-				@Override
-				public void onSuccess( ParametroDTO parametroDTO )
+				if ( TriedaUtil.isBlank( parametroDTO.getCampusId() )
+					&& TriedaUtil.isBlank( parametroDTO.getTurnoId() ) )
 				{
-					if ( TriedaUtil.isBlank( parametroDTO.getCampusId() )
-							&& TriedaUtil.isBlank( parametroDTO.getTurnoId() ) )
-					{
-						return;
-					}
-
-					final CampiServiceAsync campiService = Services.campi();
-					final TurnosServiceAsync turnosService = Services.turnos();
-
-					final FutureResult< CampusDTO > futureCampusDTO = new FutureResult< CampusDTO >();
-					final FutureResult< TurnoDTO > futureTurnoDTO = new FutureResult< TurnoDTO >();
-
-					campiService.getCampus( parametroDTO.getCampusId(), futureCampusDTO );
-					turnosService.getTurno( parametroDTO.getTurnoId(), futureTurnoDTO );
-
-					FutureSynchronizer synch = new FutureSynchronizer( futureCampusDTO, futureTurnoDTO );
-
-					synch.addCallback(
-						new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( display )
-						{
-							@Override
-							public void onSuccess( Boolean result )
-							{
-								CampusDTO campusDTO = futureCampusDTO.result();
-								TurnoDTO turnoDTO = futureTurnoDTO.result();
-
-								display.getCampusComboBox().setValue( campusDTO );
-								display.getTurnoComboBox().setValue( turnoDTO );
-							}
-						});
+					return;
 				}
+
+				final CampiServiceAsync campiService = Services.campi();
+				final TurnosServiceAsync turnosService = Services.turnos();
+
+				final FutureResult< CampusDTO > futureCampusDTO = new FutureResult< CampusDTO >();
+				final FutureResult< TurnoDTO > futureTurnoDTO = new FutureResult< TurnoDTO >();
+
+				campiService.getCampus( parametroDTO.getCampusId(), futureCampusDTO );
+				turnosService.getTurno( parametroDTO.getTurnoId(), futureTurnoDTO );
+				FutureSynchronizer synch = new FutureSynchronizer( futureCampusDTO, futureTurnoDTO );
+
+				synch.addCallback(
+					new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( display )
+				{
+					@Override
+					public void onSuccess( Boolean result )
+					{
+						CampusDTO campusDTO = futureCampusDTO.result();
+						TurnoDTO turnoDTO = futureTurnoDTO.result();
+
+						display.getCampusComboBox().setValue( campusDTO );
+						display.getTurnoComboBox().setValue( turnoDTO );
+					}
+				});
+			}
 		});
 	}
 
@@ -160,6 +163,7 @@ public class ParametrosPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				desabilitaBotao();
+				final OtimizarServiceAsync service = Services.otimizar();
 
 				MessageBox.confirm( "Otimizar?", "Deseja otimizar o cenário?",
 					new Listener< MessageBoxEvent >()
@@ -169,14 +173,59 @@ public class ParametrosPresenter
 						{
 							if ( be.getButtonClicked().getText().equalsIgnoreCase( "yes" ) )
 							{
-								Services.otimizar().sendInput( getDTO(),
-									new AbstractAsyncCallbackWithDefaultOnFailure< Long >( display )
+								service.validaInput( getDTO(),
+									new AbstractAsyncCallbackWithDefaultOnFailure< ErrorsWarningsInputSolverDTO >( display )
 									{
 										@Override
-										public void onSuccess( final Long round )
+										public void onFailure( Throwable caught )
 										{
-											Info.display( "Otimizando", "Otimizando com sucesso!" );
-											checkSolver( round );	
+											MessageBox.alert( "ERRO!",
+												"Não foi possível gerar a grade.", null );
+
+											habilitarBotao();
+										}
+
+										@Override
+										public void onSuccess( final ErrorsWarningsInputSolverDTO dto )
+										{
+											if ( dto.getValidInput() == true
+												&& dto.getTotalErrorsWarnings() == 0 )
+											{
+												service.sendInput( getDTO(),
+													new AbstractAsyncCallbackWithDefaultOnFailure< Long >( display )
+													{
+														@Override
+														public void onFailure( Throwable caught )
+														{
+															MessageBox.alert( "ERRO!",
+																"Não foi possível gerar a grade.", null );
+
+															habilitarBotao();
+														}
+
+														@Override
+														public void onSuccess( final Long round )
+														{
+															Info.display( "Otimizando",
+																"Otimizando com sucesso!" );
+
+															checkSolver( round );
+															habilitarBotao();
+														}
+													});
+											}
+											else
+											{
+												List< String > errors = dto.getErrorsWarnings().get( "errors" );
+												List< String > warnings = dto.getErrorsWarnings().get( "warnings" );
+
+												Presenter presenter = new ErrorsWarningsInputSolverPresenter(
+												 	dto.getValidInput(), cenarioDTO, getDTO(), errors,
+												 	warnings, new ErrorsWarningsInputSolverView() );
+
+												presenter.go( null );
+												habilitarBotao();
+											}
 										}
 									});
 							}
@@ -248,90 +297,6 @@ public class ParametrosPresenter
 			});
 	}
 
-	private void checkSolver( final Long round )
-	{
-		final Timer t = new Timer()
-		{
-			@Override
-			public void run()
-			{
-				final OtimizarServiceAsync otimizarService = Services.otimizar();
-				final FutureResult< Boolean > futureBoolean = new FutureResult< Boolean >();
-				otimizarService.isOptimizing( round, futureBoolean );
-				FutureSynchronizer synch = new FutureSynchronizer( futureBoolean );
-
-				synch.addCallback( new AsyncCallback< Boolean >()
-				{
-					@Override
-					public void onFailure( Throwable caught )
-					{
-						MessageBox.alert( "ERRO!",
-							"Impossível de verificar, servidor fora do ar", null );
-
-						habilitarBotao();
-					}
-
-					@Override
-					public void onSuccess( Boolean result )
-					{
-						if ( futureBoolean.result() )
-						{
-							checkSolver( round );
-						}
-						else
-						{
-							Info.display( "OTIMIZADO", "Otimização finalizada!" );
-							atualizaSaida( round );
-							habilitarBotao();
-						}
-					}
-				});
-			}
-		};
-
-		t.schedule( 5 * 1000 );
-	}
-
-	private void atualizaSaida( final Long round )
-	{
-		final OtimizarServiceAsync otimizarService = Services.otimizar();
-		final FutureResult< Map< String, List< String > > > futureBoolean
-			= new FutureResult< Map< String, List< String > > >();
-
-		otimizarService.saveContent( cenario, round, futureBoolean );
-		FutureSynchronizer synch = new FutureSynchronizer( futureBoolean );
-		synch.addCallback( new AsyncCallback< Boolean >()
-		{
-			@Override
-			public void onFailure( Throwable caught )
-			{
-				MessageBox.alert( "ERRO!",
-					"Erro ao pegar a saída", null );
-			}
-
-			@Override
-			public void onSuccess( Boolean result )
-			{
-				Map< String, List< String > > ret = futureBoolean.result();
-
-				if ( ret.get( "warning" ).isEmpty()
-					&& ret.get( "error" ).isEmpty() )
-				{
-					MessageBox.alert( "OTIMIZADO",
-						"Saída salva com sucesso", null );
-				}
-				else
-				{
-					Presenter presenter = new OtimizarMessagesPresenter(
-						ret.get( "warning" ), ret.get( "error" ),
-						new OtimizarMessagesView() );
-
-					presenter.go( null );
-				}
-			}
-		});
-	}
-
 	private ParametroDTO getDTO()
 	{
 		ParametroDTO dto = this.display.getParametroDTO();
@@ -379,9 +344,7 @@ public class ParametrosPresenter
 			evitarReducaoCargaHorariaProfessorValue = 0;
 		}
 
-		dto.setEvitarReducaoCargaHorariaProfessorValue(
-			evitarReducaoCargaHorariaProfessorValue.intValue() );
-
+		dto.setEvitarReducaoCargaHorariaProfessorValue( evitarReducaoCargaHorariaProfessorValue.intValue() );
 		dto.setEvitarUltimoEPrimeiroHorarioProfessor( this.display.getEvitarUltimoEPrimeiroHorarioProfessorCheckBox().getValue() );
 		dto.setPreferenciaDeProfessores( this.display.getPreferenciaDeProfessoresCheckBox().getValue() );
 		dto.setAvaliacaoDesempenhoProfessor( this.display.getAvaliacaoDesempenhoProfessorCheckBox().getValue() );
@@ -416,18 +379,109 @@ public class ParametrosPresenter
 
 	private void desabilitaBotao()
 	{
-		this.display.getSubmitButton().setIcon(
-			AbstractImagePrototype.create( Resources.DEFAULTS.ajax16() ) );
+		if ( this.display.getSubmitButton().isEnabled() )
+		{
+			this.display.getSubmitButton().setIcon(
+				AbstractImagePrototype.create( Resources.DEFAULTS.ajax16() ) );
 
-		this.display.getSubmitButton().disable();
+			this.display.getSubmitButton().disable();
+		}
 	}
 
 	private void habilitarBotao()
 	{
-		this.display.getSubmitButton().enable();
+		if ( !this.display.getSubmitButton().isEnabled() )
+		{
+			this.display.getSubmitButton().enable();
 
-		this.display.getSubmitButton().setIcon(
-			AbstractImagePrototype.create( Resources.DEFAULTS.gerarGrade16() ) );
+			this.display.getSubmitButton().setIcon(
+				AbstractImagePrototype.create( Resources.DEFAULTS.gerarGrade16() ) );
+		}
+	}
+
+	private void checkSolver( final Long round )
+	{
+		final Timer t = new Timer()
+		{
+			@Override
+			public void run()
+			{
+				final OtimizarServiceAsync service = Services.otimizar();
+				final FutureResult< Boolean > futureBoolean = new FutureResult< Boolean >();
+
+				service.isOptimizing( round, futureBoolean );
+				FutureSynchronizer synch = new FutureSynchronizer( futureBoolean );
+
+				synch.addCallback( new AsyncCallback< Boolean >()
+				{
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Impossível de verificar, servidor fora do ar", null );
+					}
+
+					@Override
+					public void onSuccess( Boolean result )
+					{
+						if ( futureBoolean.result() )
+						{
+							checkSolver( round );
+						}
+						else
+						{
+							Info.display( "OTIMIZADO",
+								"Otimização finalizada!" );
+
+							atualizaSaida( round );
+						}
+					}
+				});
+			}
+		};
+
+		t.schedule( 5 * 1000 );
+	}
+
+	private void atualizaSaida( final Long round )
+	{
+		final OtimizarServiceAsync service = Services.otimizar();
+		final FutureResult< Map< String, List< String > > > futureBoolean
+			= new FutureResult< Map< String, List< String > > >();
+
+		service.saveContent( cenarioDTO, round, futureBoolean );
+		FutureSynchronizer synch = new FutureSynchronizer( futureBoolean );
+
+		synch.addCallback( new AsyncCallback< Boolean >()
+		{
+			@Override
+			public void onFailure( Throwable caught )
+			{
+				MessageBox.alert( "ERRO!",
+					"Erro ao pegar a saída", null );
+			}
+
+			@Override
+			public void onSuccess( Boolean result )
+			{
+				Map< String, List< String > > ret = futureBoolean.result();
+
+				if ( ret.get( "warning" ).isEmpty()
+					&& ret.get( "error" ).isEmpty() )
+				{
+					MessageBox.alert( "OTIMIZADO",
+						"Saída salva com sucesso", null );
+				}
+				else
+				{
+					Presenter presenter = new OtimizarMessagesPresenter(
+						ret.get( "warning" ), ret.get( "error" ),
+						new OtimizarMessagesView() );
+
+					presenter.go( null );
+				}
+			}
+		});
 	}
 
 	@Override

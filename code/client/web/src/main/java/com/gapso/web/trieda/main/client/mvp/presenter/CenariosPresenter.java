@@ -37,26 +37,28 @@ public class CenariosPresenter
 		Button getRemoveButton();
 		Button getAbrirCenarioButton();
 		Button getClonarCenarioButton();
-		TextField<Integer> getAnoBuscaTextField();
-		TextField<Integer> getSemestreBuscaTextField();
+		TextField< Integer > getAnoBuscaTextField();
+		TextField< Integer > getSemestreBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<CenarioDTO> getGrid();
+		SimpleGrid< CenarioDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<CenarioDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< CenarioDTO > > proxy );
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private GTab gTab;
 	private CenarioPanel cenarioPanel;
-	
-	public CenariosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+
+	public CenariosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioPanel cenarioPanel, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		this.cenarioPanel = cenarioPanel;
+
 		configureProxy();
 		setListeners();
 	}
@@ -65,21 +67,27 @@ public class CenariosPresenter
 	{
 		final CenariosServiceAsync service = Services.cenarios();
 
-		RpcProxy<PagingLoadResult<CenarioDTO>> proxy = new RpcProxy<PagingLoadResult<CenarioDTO>>() {
+		RpcProxy< PagingLoadResult< CenarioDTO > > proxy =
+			new RpcProxy< PagingLoadResult< CenarioDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<CenarioDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< CenarioDTO > > callback )
+			{
 				Integer ano = display.getAnoBuscaTextField().getValue();
 				Integer semestre = display.getSemestreBuscaTextField().getValue();
-				service.getBuscaList(ano, semestre, (PagingLoadConfig)loadConfig, callback);
+
+				service.getBuscaList( ano, semestre,
+					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
-		display.setProxy(proxy);
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -92,7 +100,7 @@ public class CenariosPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -101,51 +109,78 @@ public class CenariosPresenter
 				CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				Presenter presenter = new CenarioEditarFormPresenter( instituicaoEnsinoDTO,
-					new CenarioEditarFormView(cenarioDTO), display.getGrid() );
+					new CenarioEditarFormView( cenarioDTO ), display.getGrid() );
 
-				presenter.go(null);
+				presenter.go( null );
 			}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<CenarioDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
 				final CenariosServiceAsync service = Services.cenarios();
-				service.remove(list, new AsyncCallback<Void>() {
+				List< CenarioDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
+				service.remove( list, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Deu falha na conexão", null );
 					}
+
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+						Info.display( "Removido",
+							"Item removido com sucesso!" );
 					}
 				});
 			}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getAnoBuscaTextField().setValue(null);
-				display.getSemestreBuscaTextField().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getAnoBuscaTextField().setValue( null );
+				display.getSemestreBuscaTextField().setValue( null );
+
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
-		display.getAbrirCenarioButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getAbrirCenarioButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				CenarioDTO cenarioDTO = display.getGrid().getSelectionModel().getSelectedItem();
-				cenarioPanel.addCenario(cenarioDTO);
+				cenarioPanel.addCenario( cenarioDTO );
 			}
 		});
-		display.getClonarCenarioButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		this.display.getClonarCenarioButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
@@ -158,11 +193,11 @@ public class CenariosPresenter
 			}
 		});
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		this.gTab = (GTab) widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
+	}
 }

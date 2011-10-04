@@ -2695,7 +2695,6 @@ public class ConvertBeans
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setModoOtimizacao( domain.getModoOtimizacao() );
 
-		// TODO -- Verificar se este campo não está vindo NULL
 		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
 
 		dto.setSemanaLetivaId( semanaLetiva.getId() );

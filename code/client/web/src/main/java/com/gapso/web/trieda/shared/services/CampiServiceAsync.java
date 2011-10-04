@@ -23,8 +23,9 @@ public interface CampiServiceAsync
 	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CampusDTO > > callback );
 	void save( CampusDTO campusDTO, AsyncCallback< Void > callback );
 	void remove( List< CampusDTO > campusDTOList, AsyncCallback< Void > callback );
-	void getBuscaList(CenarioDTO cenario, String nome, String codigo, String estadoString,
-		String municipio, String bairro, PagingLoadConfig config, AsyncCallback< PagingLoadResult< CampusDTO > > callback );
+	void getBuscaList( CenarioDTO cenario, String nome, String codigo, String estadoString,
+		String municipio, String bairro, PagingLoadConfig config,
+		AsyncCallback< PagingLoadResult< CampusDTO > > callback );
 	void getCampus( Long id, AsyncCallback< CampusDTO > callback );
 	void getDeslocamentos( AsyncCallback< List< DeslocamentoCampusDTO > > callback );
 	void saveHorariosDisponiveis( CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO,

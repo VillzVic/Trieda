@@ -18,9 +18,11 @@ public interface CenariosServiceAsync
 	void getMasterData( AsyncCallback< CenarioDTO > callback );
 	void getCenario( Long id, AsyncCallback< CenarioDTO > callback );
 	void getList( PagingLoadConfig config, AsyncCallback< PagingLoadResult< CenarioDTO > > callback );
-	void getBuscaList( Integer ano, Integer semestre, PagingLoadConfig config, AsyncCallback< PagingLoadResult< CenarioDTO > > callback );
+	void getBuscaList( Integer ano, Integer semestre, PagingLoadConfig config,
+		AsyncCallback< PagingLoadResult< CenarioDTO > > callback );
 	void editar( CenarioDTO cenarioDTO, AsyncCallback< Void > callback );
-	void criar( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO, Set<CampusDTO> campiDTO, AsyncCallback< Void > callback );
+	void criar( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO,
+		Set< CampusDTO > campiDTO, AsyncCallback< Void > callback );
 	void clonar( CenarioDTO cenarioDTO, AsyncCallback< Void > callback );
 	void remove( List< CenarioDTO > cenarioDTOList, AsyncCallback< Void > callback );
 	void getResumos( CenarioDTO cenario, AsyncCallback< List< TreeNodeDTO > > callback );

@@ -3,7 +3,9 @@ package com.gapso.web.trieda.shared.dtos;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class CampusDTO extends AbstractDTO< String > implements Comparable< CampusDTO >
+public class CampusDTO
+	extends AbstractDTO< String >
+	implements Comparable< CampusDTO >
 {
 	private static final long serialVersionUID = -5134820110949139907L;
 

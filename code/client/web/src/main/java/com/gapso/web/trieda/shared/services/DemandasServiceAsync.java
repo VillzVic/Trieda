@@ -12,11 +12,11 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
-public interface DemandasServiceAsync {
-
-	void getBuscaList(CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<DemandaDTO>> callback);
-	void save(DemandaDTO demandaDTO, AsyncCallback<Void> callback);
-	void remove(List<DemandaDTO> demandaDTOList, AsyncCallback<Void> callback);
-
+public interface DemandasServiceAsync
+{
+	void getBuscaList( CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
+		TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config,
+		AsyncCallback< PagingLoadResult< DemandaDTO > > callback );
+	void save( DemandaDTO demandaDTO, AsyncCallback< Void > callback );
+	void remove( List< DemandaDTO > demandaDTOList, AsyncCallback< Void > callback );
 }

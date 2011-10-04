@@ -13,12 +13,13 @@ import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface OfertasServiceAsync {
-
-	void getOferta(Long id, AsyncCallback<OfertaDTO> callback);
-	void getBuscaList(TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<OfertaDTO>> callback);
-	void save(OfertaDTO ofertaDTO, AsyncCallback<Void> callback);
-	void remove(List<OfertaDTO> ofertaDTOList, AsyncCallback<Void> callback);
-	void getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO, AsyncCallback<ListLoadResult<TreeNodeDTO>> callback);
-	
+public interface OfertasServiceAsync
+{
+	void getOferta( Long id, AsyncCallback< OfertaDTO > callback );
+	void getBuscaList( TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
+		PagingLoadConfig config, AsyncCallback< PagingLoadResult< OfertaDTO > > callback );
+	void save( OfertaDTO ofertaDTO, AsyncCallback<Void> callback);
+	void remove( List< OfertaDTO > ofertaDTOList, AsyncCallback< Void > callback);
+	void getListByCampusAndTurno( CampusDTO campusDTO, TurnoDTO turnoDTO,
+		AsyncCallback< ListLoadResult< TreeNodeDTO > > callback );
 }

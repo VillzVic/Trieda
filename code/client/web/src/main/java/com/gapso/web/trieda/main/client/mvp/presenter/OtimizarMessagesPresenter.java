@@ -27,28 +27,29 @@ public class OtimizarMessagesPresenter
 		this.display = display;
 		this.warnings = warnings;
 		this.errors = errors;
+
 		populationMessages();
 	}
 
 	private void populationMessages()
 	{
-		for ( String msg : warnings )
+		for ( String msg : this.warnings )
 		{
-			display.getMessagesWarningPanel().addText( "• " + msg );
+			this.display.getMessagesWarningPanel().addText( "• " + msg );
 		}
 
-		for ( String msg : errors )
+		for ( String msg : this.errors )
 		{
-			display.getMessagesErrorPanel().addText( "• " + msg );
+			this.display.getMessagesErrorPanel().addText( "• " + msg );
 		}
 
-		display.getMessagesWarningPanel().setVisible( !warnings.isEmpty() );
-		display.getMessagesErrorPanel().setVisible( !errors.isEmpty() );
+		this.display.getMessagesWarningPanel().setVisible( !this.warnings.isEmpty() );
+		this.display.getMessagesErrorPanel().setVisible( !this.errors.isEmpty() );
 	}
 
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

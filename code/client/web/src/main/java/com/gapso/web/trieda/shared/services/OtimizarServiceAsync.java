@@ -4,15 +4,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-
-public interface OtimizarServiceAsync {
-
-	void sendInput(ParametroDTO parametroDTO, AsyncCallback<Long> callback);
-	void isOptimizing(Long round, AsyncCallback<Boolean> callback);
-	void saveContent(CenarioDTO cenarioDTO, Long round, AsyncCallback<Map<String, List<String>>> callback);
-	void getParametro(CenarioDTO cenarioDTO, AsyncCallback<ParametroDTO> callback);
-	
+public interface OtimizarServiceAsync
+{
+	void sendInput( ParametroDTO parametroDTO, AsyncCallback< Long > callback );
+	void isOptimizing( Long round, AsyncCallback< Boolean > callback );
+	void saveContent( CenarioDTO cenarioDTO, Long round,
+		AsyncCallback< Map< String, List< String > > > callback );
+	void getParametro( CenarioDTO cenarioDTO, AsyncCallback< ParametroDTO > callback );
+	void validaInput( ParametroDTO parametroDTO, AsyncCallback< ErrorsWarningsInputSolverDTO > callback );
 }
