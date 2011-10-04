@@ -15,9 +15,11 @@ import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
@@ -40,17 +42,20 @@ public class ErrorsWarningsInputSolverPresenter
 	private List< String > errors;
 	private Display display;
 	private Boolean validInput;
+	private Button submitButtonParametros;
 
 	public ErrorsWarningsInputSolverPresenter(
-		Boolean validInput, CenarioDTO cenarioDTO, ParametroDTO parametroDTO,
-		List< String > warnings, List< String > errors, Display display )
+		Boolean validInput, CenarioDTO cenarioDTO,
+		ParametroDTO parametroDTO, List< String > errors,
+		List< String > warnings, Display display, Button submitButtonParametros )
 	{
 		this.validInput = validInput;
 		this.cenarioDTO = cenarioDTO;
 		this.parametroDTO = parametroDTO;
 		this.display = display;
-		this.warnings = warnings;
 		this.errors = errors;
+		this.warnings = warnings;
+		this.submitButtonParametros = submitButtonParametros;
 
 		initUI();
 		setListeners();
@@ -83,6 +88,7 @@ public class ErrorsWarningsInputSolverPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
+				desabilitaBotaoParametros();
 				final OtimizarServiceAsync service = Services.otimizar();
 
 				service.sendInput( parametroDTO, new AsyncCallback< Long >()
@@ -94,6 +100,7 @@ public class ErrorsWarningsInputSolverPresenter
 							"Não foi possível gerar a grade.", null );
 
 						display.getSimpleModal().hide();
+						habilitarBotaoParametros();
 					}
 
 					@Override
@@ -145,6 +152,7 @@ public class ErrorsWarningsInputSolverPresenter
 								"Otimização finalizada!" );
 
 							atualizaSaida( round );
+							habilitarBotaoParametros();
 						}
 					}
 				});
@@ -193,6 +201,22 @@ public class ErrorsWarningsInputSolverPresenter
 				}
 			}
 		});
+	}
+
+	private void desabilitaBotaoParametros()
+	{
+		this.submitButtonParametros.setIcon(
+			AbstractImagePrototype.create( Resources.DEFAULTS.ajax16() ) );
+
+		this.submitButtonParametros.disable();
+	}
+
+	private void habilitarBotaoParametros()
+	{
+		this.submitButtonParametros.enable();
+
+		this.submitButtonParametros.setIcon(
+			AbstractImagePrototype.create( Resources.DEFAULTS.gerarGrade16() ) );
 	}
 
 	@Override

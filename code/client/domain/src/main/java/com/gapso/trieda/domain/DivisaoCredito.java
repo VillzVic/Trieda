@@ -35,97 +35,104 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "DCR_ID")
-@Table(name = "DIVISOES_CREDITO")
+@RooEntity( identifierColumn = "DCR_ID" )
+@Table( name = "DIVISOES_CREDITO" )
 public class DivisaoCredito
 	implements Serializable
 {
 	private static final long serialVersionUID = 4185000264330934580L;
 
     @NotNull
-    @Column(name = "DRC_CREDITOS")
-    @Min(1L)
-    @Max(99L)
+    @Column( name = "DRC_CREDITOS" )
+    @Min( 1L )
+    @Max( 99L )
     private Integer creditos;
 
     @NotNull
-    @Column(name = "DRC_DIA1")
-    @Min(0L)
-    @Max(99L)
+    @Column( name = "DRC_DIA1" )
+    @Min( 0L )
+    @Max( 99L )
     private Integer dia1;
 
     @NotNull
-    @Column(name = "DRC_DIA2")
-    @Min(0L)
-    @Max(99L)
+    @Column( name = "DRC_DIA2" )
+    @Min( 0L )
+    @Max( 99L )
     private Integer dia2;
 
     @NotNull
-    @Column(name = "DRC_DIA3")
-    @Min(0L)
-    @Max(99L)
+    @Column( name = "DRC_DIA3" )
+    @Min( 0L )
+    @Max( 99L )
     private Integer dia3;
 
     @NotNull
-    @Column(name = "DRC_DIA4")
-    @Min(0L)
-    @Max(99L)
+    @Column( name = "DRC_DIA4" )
+    @Min( 0L )
+    @Max( 99L )
     private Integer dia4;
 
     @NotNull
-    @Column(name = "DRC_DIA5")
-    @Min(0L)
-    @Max(99L)
+    @Column( name = "DRC_DIA5" )
+    @Min( 0L )
+    @Max( 99L )
     private Integer dia5;
 
     @NotNull
-    @Column(name = "DRC_DIA6")
-    @Min(0L)
-    @Max(99L)
+    @Column( name = "DRC_DIA6" )
+    @Min( 0L )
+    @Max( 99L )
     private Integer dia6;
 
     @NotNull
-    @Column(name = "DRC_DIA7")
-    @Min(0L)
-    @Max(99L)
+    @Column( name = "DRC_DIA7" )
+    @Min( 0L )
+    @Max( 99L )
     private Integer dia7;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    	CascadeType.MERGE, CascadeType.REFRESH } )
     private Set< Cenario > cenario = new HashSet< Cenario >();
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = Disciplina.class, mappedBy = "divisaoCreditos")
+    @OneToOne( cascade = CascadeType.ALL,
+    	targetEntity = Disciplina.class, mappedBy = "divisaoCreditos" )
     private Disciplina disciplina;
     
 	@PersistenceContext
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "DCR_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "DCR_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
@@ -135,54 +142,92 @@ public class DivisaoCredito
 		return instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
-	
+
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-        	removeCenario(this);
-            this.entityManager.remove(this);
-        } else {
-            DivisaoCredito attached = this.entityManager.find(this.getClass(), this.id);
-            removeCenario(attached);
-            this.entityManager.remove(attached);
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+        	removeCenario( this );
+            this.entityManager.remove( this );
+        }
+        else
+        {
+        	DivisaoCredito attached
+        		= this.entityManager.find( this.getClass(), this.id );
+
+            removeCenario( attached );
+
+            this.entityManager.remove( attached );
         }
     }
 
-	private void removeCenario(DivisaoCredito cd) {
-		if(cd.getCenario() != null) return;
-		for(Cenario cenario : cd.getCenario()) {
-			cenario.getDivisoesCredito().remove(cd);
+	private void removeCenario( DivisaoCredito cd )
+	{
+		if ( cd.getCenario() != null )
+		{
+			return;
+		}
+
+		for ( Cenario cenario : cd.getCenario() )
+		{
+			cenario.getDivisoesCredito().remove( cd );
 			cenario.merge();
 		}
 	}
-	
+
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public DivisaoCredito merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        DivisaoCredito merged = this.entityManager.merge(this);
+    public DivisaoCredito merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        DivisaoCredito merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -201,7 +246,8 @@ public class DivisaoCredito
         return em;
     }
 
-	public static int count( Cenario cenario, InstituicaoEnsino instituicaoEnsino )
+	public static int count(
+		Cenario cenario, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM DivisaoCredito o, IN ( o.cenario ) c " +
@@ -215,7 +261,8 @@ public class DivisaoCredito
         return ( (Number) q.getSingleResult() ).intValue();
     }
 
-	public static DivisaoCredito find( Long id, InstituicaoEnsino instituicaoEnsino )
+	public static DivisaoCredito find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
         if ( id == null || instituicaoEnsino == null )
         {
@@ -254,7 +301,7 @@ public class DivisaoCredito
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< DivisaoCredito > findWithoutDisciplina(
     	Cenario cenario, int firstResult,
     	int maxResults, InstituicaoEnsino instituicaoEnsino )
@@ -294,83 +341,104 @@ public class DivisaoCredito
         return sb.toString();
     }
 
-	public Integer getCreditos() {
+	public Integer getCreditos()
+	{
         return this.creditos;
     }
 
-	public void setCreditos(Integer creditos) {
+	public void setCreditos( Integer creditos )
+	{
         this.creditos = creditos;
     }
 
-	public Integer getDia1() {
+	public Integer getDia1()
+	{
         return this.dia1;
     }
 
-	public void setDia1(Integer dia1) {
+	public void setDia1( Integer dia1 )
+	{
         this.dia1 = dia1;
     }
 
-	public Integer getDia2() {
+	public Integer getDia2()
+	{
         return this.dia2;
     }
 
-	public void setDia2(Integer dia2) {
+	public void setDia2( Integer dia2 )
+	{
         this.dia2 = dia2;
     }
 
-	public Integer getDia3() {
+	public Integer getDia3()
+	{
         return this.dia3;
     }
 
-	public void setDia3(Integer dia3) {
+	public void setDia3( Integer dia3 )
+	{
         this.dia3 = dia3;
     }
 
-	public Integer getDia4() {
+	public Integer getDia4()
+	{
         return this.dia4;
     }
 
-	public void setDia4(Integer dia4) {
+	public void setDia4( Integer dia4 )
+	{
         this.dia4 = dia4;
     }
 
-	public Integer getDia5() {
+	public Integer getDia5()
+	{
         return this.dia5;
     }
 
-	public void setDia5(Integer dia5) {
+	public void setDia5( Integer dia5 )
+	{
         this.dia5 = dia5;
     }
 
-	public Integer getDia6() {
+	public Integer getDia6()
+	{
         return this.dia6;
     }
 
-	public void setDia6(Integer dia6) {
+	public void setDia6( Integer dia6 )
+	{
         this.dia6 = dia6;
     }
 
-	public Integer getDia7() {
+	public Integer getDia7()
+	{
         return this.dia7;
     }
 
-	public void setDia7(Integer dia7) {
+	public void setDia7( Integer dia7 )
+	{
         this.dia7 = dia7;
     }
 
-	public Set<Cenario> getCenario() {
+	public Set< Cenario > getCenario()
+	{
         return this.cenario;
     }
 
-	public void setCenario(Set<Cenario> cenario) {
+	public void setCenario(
+		Set< Cenario > cenario )
+	{
         this.cenario = cenario;
     }
 
-	public Disciplina getDisciplina() {
+	public Disciplina getDisciplina()
+	{
 		return disciplina;
 	}
 
-	public void setDisciplina(Disciplina disciplina) {
+	public void setDisciplina( Disciplina disciplina )
+	{
 		this.disciplina = disciplina;
 	}
 }

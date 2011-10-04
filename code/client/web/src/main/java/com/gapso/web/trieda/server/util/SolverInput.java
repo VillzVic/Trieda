@@ -189,6 +189,114 @@ public class SolverInput
 		return this.triedaInput;
 	}
 
+	private void checkErrorsWarnings()
+	{
+		// PRIMEIRA VERIFICAÇÃO
+
+		// Verificar se existem disciplinas que não
+		// foram associadas a nenhuma matriz curricular
+		Set< Disciplina > disciplinas = new HashSet< Disciplina >();
+
+		for ( Curso curso : this.cenario.getCursos() )
+		{
+			for ( Curriculo curriculo : curso.getCurriculos() )
+			{
+				for ( CurriculoDisciplina curriculoDisciplina : curriculo.getDisciplinas() )
+				{
+					disciplinas.add( curriculoDisciplina.getDisciplina() );
+				}
+			}
+		}
+
+		for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
+		{
+			boolean encontrou = false;
+
+			for ( Disciplina disciplinaCurriculos : disciplinas )
+			{
+				if ( disciplinaCurriculos.getId() == disciplinaCenario.getId() )
+				{
+					encontrou = true;
+					break;
+				}
+			}
+
+			if ( !encontrou )
+			{
+				String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
+					+ " não foi associada a nenhuma matriz curricular.";
+
+				createWarningMessage( warningMessage );
+			}
+		}
+
+		// SEGUNDA VERIFICAÇÃO
+
+		// Fixação de disciplina com qtde de horários
+		// menores do que a qtde de créditos da disciplinas
+		List< Fixacao > fixacoes
+			= Fixacao.findAll( this.instituicaoEnsino );
+
+		for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
+		{
+			for ( Fixacao fixacao : fixacoes )
+			{
+				Integer totalCreditos = fixacao.getHorarios(
+					instituicaoEnsino, this.semanasLetivas ).size();
+
+				Disciplina disciplinaFixacao = fixacao.getDisciplina();
+
+				if ( totalCreditos != null && totalCreditos > 0
+					&& disciplinaFixacao != null
+					&& disciplinaFixacao.getId() == disciplinaCenario.getId()
+					&& totalCreditos < disciplinaCenario.getTotalCreditos() )
+				{
+					String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
+						+ ", que possui " + disciplinaCenario.getTotalCreditos() + " créditos,"
+						+ " tem uma fixação de apenas " + totalCreditos.toString() + ".";
+
+					createWarningMessage( warningMessage );
+
+					break;
+				}
+			}
+		}
+
+		// TERCEIRA VERIFICAÇÃO
+
+		// Impossibilidade de associar uma regra
+		// genérica de divisão de créditos a uma disciplina
+		Set< DivisaoCredito > regras
+			= this.cenario.getDivisoesCredito();
+
+		if ( regras.size() > 0 )
+		{
+			for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
+			{
+				int creditosDisciplina = disciplinaCenario.getTotalCreditos();
+
+				boolean encontrou = false;
+
+				for ( DivisaoCredito divisaoCredito : regras )
+				{
+					if ( divisaoCredito.getCreditos() >= creditosDisciplina )
+					{
+						encontrou = true;
+						break;
+					}
+				}
+
+				if ( !encontrou )
+				{
+					String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
+						+ " não possui nenhuma regra de créditos genérica "
+						+ "que atenda ao total de créditos da disciplina.";
+					createWarningMessage( warningMessage );
+				}
+			}
+		}
+	}
+
 	@Transactional
 	private void generate( boolean tatico )
 	{
@@ -216,6 +324,8 @@ public class SolverInput
 		{
 			generateTaticoInput();
 		}
+
+		checkErrorsWarnings();
 	}
 
 	@Transactional
@@ -448,6 +558,16 @@ public class SolverInput
 
 		Set< DivisaoCredito > regras = this.cenario.getDivisoesCredito();
 
+		if ( this.parametro.getRegrasGenericasDivisaoCredito()
+			&& regras.size() == 0 )
+		{
+			String warningMessage = "O campo de regras genéricas " +
+				"de créditos está selecionado nos parâmetros, mas não " +
+				"há nenhuma regra de crédito cadastrada no sistema";
+
+			createWarningMessage( warningMessage );
+		}
+
 		for ( DivisaoCredito regra : regras )
 		{
 			ItemDivisaoCreditos item = this.of.createItemDivisaoCreditos();
@@ -472,6 +592,17 @@ public class SolverInput
 	{
 		GrupoCampus grupoCampus = this.of.createGrupoCampus();
 
+		String warningMessage = "";
+		String errorMessage = "";
+
+		boolean existeUnidades = false;
+		boolean campusSemUnidades = false;
+
+		boolean existeSalas = false;
+		boolean unidadeSemSalas = false;
+
+		boolean grupoSalaVazio = false;
+
 		for ( Campus campus : this.campi )
 		{
 			ItemCampus itemCampus = this.of.createItemCampus();
@@ -489,8 +620,33 @@ public class SolverInput
 					this.instituicaoEnsino, semanaLetiva ) );
 			}
 
+			if ( horarios.size() == 0 )
+			{
+				warningMessage = "O campus " + campus.getCodigo()
+					+ " não possui nenhum horário disponível na grade.";
+
+				createWarningMessage( warningMessage );
+			}
+
 			itemCampus.setHorariosDisponiveis( createGrupoHorario(
 				new ArrayList< HorarioDisponivelCenario >( horarios ) ) );
+
+			if ( campus.getValorCredito() == null
+				|| campus.getValorCredito() == 0 )
+			{
+				if ( campus.getValorCredito() == null )
+				{
+					warningMessage = "O campus " + campus.getCodigo()
+						+ " não possui cadastrado o custo médio do crédito.";
+				}
+				else
+				{
+					warningMessage = "O campus " + campus.getCodigo()
+						+ " possui cadastrado o custo médio do crédito com valor zero.";
+				}
+
+				this.createWarningMessage( warningMessage );
+			}
 
 			itemCampus.setCusto( campus.getValorCredito() );
 
@@ -499,6 +655,15 @@ public class SolverInput
 			// COLETANDO UNIDADES
 			GrupoUnidade grupoUnidade = this.of.createGrupoUnidade();
 			Set< Unidade > unidades = campus.getUnidades();
+
+			if ( unidades.size() != 0 )
+			{
+				existeUnidades = true;
+			}
+			else
+			{
+				campusSemUnidades = true;
+			}
 
 			for ( Unidade unidade : unidades )
 			{
@@ -520,11 +685,28 @@ public class SolverInput
 				List< HorarioDisponivelCenario > listHorariosUnidade
 					= new ArrayList< HorarioDisponivelCenario >( setHorariosUnidade );
 
+				if ( listHorariosUnidade.size() == 0 )
+				{
+					warningMessage = "A unidade " + unidade.getCodigo()
+						+ " não possui nenhum horário disponível na grade.";
+
+					createWarningMessage( warningMessage );
+				}
+				
 				itemUnidade.setHorariosDisponiveis(
 					createGrupoHorario( listHorariosUnidade ) );
 
 				GrupoSala grupoSala = this.of.createGrupoSala();
 				Set< Sala > salas = unidade.getSalas();
+
+				if ( salas.size() != 0 )
+				{
+					existeSalas = true;
+				}
+				else
+				{
+					unidadeSemSalas = true;
+				}
 
 				for ( Sala sala : salas )
 				{
@@ -583,6 +765,11 @@ public class SolverInput
 					grupoSala.getSala().add( itemSala );
 				}
 
+				if ( grupoSala.getSala().size() == 0 )
+				{
+					grupoSalaVazio = true;
+				}
+
 				itemUnidade.setSalas( grupoSala );
 
 				grupoUnidade.getUnidade().add( itemUnidade );
@@ -637,6 +824,22 @@ public class SolverInput
 
 				Set< ProfessorDisciplina > professorDisciplinas = professor.getDisciplinas();
 
+				if ( professorDisciplinas.size() == 0 )
+				{
+					warningMessage = "O professor " + professor.getNome()
+						+ " não possui nenhuma habilitação de disciplina associada a ele.";
+
+					createWarningMessage( warningMessage );
+				}
+
+				if ( professor.getCampi().size() == 0 )
+				{
+					warningMessage = "O professor " + professor.getNome()
+						+ " não possui nenhum campi de trabalho associado a ele.";
+
+					createWarningMessage( warningMessage );
+				}
+
 				for ( ProfessorDisciplina professorDisciplina : professorDisciplinas )
 				{
 					ItemProfessorDisciplina itemProfessorDisciplina
@@ -658,6 +861,38 @@ public class SolverInput
 			itemCampus.setProfessores( grupoProfessor );
 
 			grupoCampus.getCampus().add( itemCampus );
+		}
+
+		// Input inválido
+		if ( !existeUnidades )
+		{
+			errorMessage = "Não há nenhuma unidade cadastrada no sistema.";
+			createErrorMessage( errorMessage );
+		}
+		// Input válido, com alertas
+		else if( campusSemUnidades )
+		{
+			warningMessage = "Existem campus sem nenhuma unidade cadastrada no sistema.";
+			createWarningMessage( warningMessage );
+		}
+
+		// Input inválido
+		if ( !existeSalas )
+		{
+			errorMessage = "Não há nenhuma sala cadastrada no sistema.";
+			createErrorMessage( errorMessage );
+		}
+		// Input válido, com alertas
+		else if( unidadeSemSalas )
+		{
+			warningMessage = "Existem unidades sem nenhuma sala cadastrada no sistema.";
+			createWarningMessage( warningMessage );
+		}
+
+		if ( grupoSalaVazio == true )
+		{
+			warningMessage = "Existe(m) unidade(s) que possuem grupo(s) de salas vazios.";
+			createWarningMessage( warningMessage );
 		}
 
 		this.triedaInput.setCampi( grupoCampus );
@@ -686,6 +921,17 @@ public class SolverInput
 			}
 		}
 
+		int totalDeslocamentos = this.campi.size() * ( this.campi.size() - 1 );
+		int numDeslocamentos = grupoDeslocamento.getDeslocamento().size();
+
+		if ( this.campi.size() > 1 && numDeslocamentos < totalDeslocamentos )
+		{
+			String warningMessage = "Existem campi que não " +
+				"possuem cadastrados o delocamento entre eles.";
+
+			createWarningMessage( warningMessage );
+		}
+
 		this.triedaInput.setTemposDeslocamentosCampi( grupoDeslocamento );
 	}
 
@@ -693,15 +939,26 @@ public class SolverInput
 	{
 		GrupoDeslocamento grupoDeslocamento
 			= this.of.createGrupoDeslocamento();
+		
+		boolean warningDeslocamentos = false;
 
 		for ( Campus campus : this.campi )
 		{
 			Set< Unidade > unidades = campus.getUnidades();
 
+			final int totalUnidades = unidades.size();
+
 			for ( Unidade unidade : unidades )
 			{
 				Set< DeslocamentoUnidade > deslocamentos
 					= unidade.getDeslocamentos();
+
+				final int totalDeslocamentos = totalUnidades - 1;
+
+				if ( totalUnidades > 1 && deslocamentos.size() < totalDeslocamentos )
+				{
+					warningDeslocamentos = true;
+				}
 
 				for ( DeslocamentoUnidade deslocamento : deslocamentos )
 				{
@@ -720,6 +977,14 @@ public class SolverInput
 			}
 		}
 
+		if ( warningDeslocamentos )
+		{
+			String warningMessage = "Existem unidades que não possuem cadastrados todos " +
+				"os deslocamentos entre as demais unidades do mesmo campus.";
+
+			createWarningMessage( warningMessage );
+		}
+
 		this.triedaInput.setTemposDeslocamentosUnidades( grupoDeslocamento );
 	}
 
@@ -735,7 +1000,10 @@ public class SolverInput
 
 			if ( !existeDemanda )
 			{
-				createNoDemandWarningMessage( disciplina );
+				String warningMessage = "Não existe demanda " +
+					"cadastrada para a disciplina " + disciplina.getCodigo();
+
+				createWarningMessage( warningMessage );
 
 				continue;
 			}
@@ -844,6 +1112,18 @@ public class SolverInput
 		GrupoCurso grupoCurso = this.of.createGrupoCurso();
 		Set< Curso > cursos = this.cenario.getCursos();
 
+		String errorMessage = "";
+		String warningMessage = "";
+
+		boolean existeCurriculo = false;
+		boolean cursoSemCurriculo = false;
+
+		boolean existeCurriculoComDisciplinas = false;
+		boolean curriculoSemDisciplinas = false;
+
+		boolean existeCurriculoComOfertas = false;
+		boolean curriculoSemOfertas = false;
+
 		for ( Curso curso : cursos )
 		{
 			ItemCurso itemCurso = this.of.createItemCurso();
@@ -855,7 +1135,7 @@ public class SolverInput
 			ItemPercentualMinimo itemPercentualMinimoMestres
 				= this.of.createItemPercentualMinimo();
 
-			itemPercentualMinimoMestres.setPercMinimo(curso.getNumMinMestres());
+			itemPercentualMinimoMestres.setPercMinimo( curso.getNumMinMestres() );
 			itemPercentualMinimoMestres.setTipoTitulacaoId( 4 );
 			itemCurso.setRegraPercMinMestres( itemPercentualMinimoMestres );
 
@@ -871,10 +1151,10 @@ public class SolverInput
 			itemCurso.setQtdMaxProfDisc( curso.getMaxDisciplinasPeloProfessor() );
 			itemCurso.setMaisDeUmaDiscPeriodo( curso.getAdmMaisDeUmDisciplina() );
 
+			Set< AreaTitulacao > areas = curso.getAreasTitulacao();
 			GrupoIdentificador grupoIdentificadorAreasTitulacao
 				= this.of.createGrupoIdentificador();
 
-			Set< AreaTitulacao > areas = curso.getAreasTitulacao();
 			for ( AreaTitulacao area : areas )
 			{
 				grupoIdentificadorAreasTitulacao.getId().add(
@@ -886,9 +1166,27 @@ public class SolverInput
 			GrupoCurriculo grupoCurriculo = this.of.createGrupoCurriculo();
 			Set< Curriculo > curriculos = curso.getCurriculos();
 
+			if ( curriculos.size() > 0 )
+			{
+				existeCurriculo = true;
+			}
+			else
+			{
+				cursoSemCurriculo = true;
+			}
+
 			for ( Curriculo curriculo : curriculos )
 			{
 				ItemCurriculo itemCurriculo = this.of.createItemCurriculo();
+
+				if ( curriculo.getOfertas().size() != 0 )
+				{
+					existeCurriculoComOfertas = true;
+				}
+				else
+				{
+					curriculoSemOfertas = true;
+				}
 
 				itemCurriculo.setId( curriculo.getId().intValue() );
 				itemCurriculo.setCodigo( curriculo.getCodigo() );
@@ -901,6 +1199,15 @@ public class SolverInput
 				Set< CurriculoDisciplina > curriculoPeriodos
 					= curriculo.getDisciplinas();
 
+				if ( curriculoPeriodos.size() != 0 )
+				{
+					existeCurriculoComDisciplinas = true;
+				}
+				else
+				{
+					curriculoSemDisciplinas = true;
+				}
+				
 				for ( CurriculoDisciplina curriculoPeriodo : curriculoPeriodos )
 				{
 					boolean existeDemanda = Demanda.existeDemanda( this.instituicaoEnsino,
@@ -908,7 +1215,10 @@ public class SolverInput
 
 					if ( !existeDemanda )
 					{
-						createNoDemandWarningMessage( curriculoPeriodo.getDisciplina() );
+						warningMessage = "Não existe demanda cadastrada para a disciplina "
+							+ curriculoPeriodo.getDisciplina().getCodigo();
+
+						createWarningMessage( warningMessage );
 
 						continue;
 					}
@@ -935,6 +1245,45 @@ public class SolverInput
 			grupoCurso.getCurso().add( itemCurso );
 		}
 
+		// Input inválido
+		if ( !existeCurriculo )
+		{
+			errorMessage = "Nenhum curso possui curriculo cadastrado.";
+			createErrorMessage( errorMessage );
+		}
+		// Input válido, com algum alerta
+		else if ( cursoSemCurriculo )
+		{
+			warningMessage = "Existe(m) curso(s) sem nenhum curriculo cadastrado.";
+			createWarningMessage( warningMessage );
+		}
+
+		// Input inválido
+		if ( !existeCurriculoComDisciplinas )
+		{
+			errorMessage = "Nenhum curriculo possui disciplinas cadastradas.";
+			createErrorMessage( errorMessage );
+		}
+		// Input válido, com algum alerta
+		else if ( curriculoSemDisciplinas )
+		{
+			warningMessage = "Existe(m) curriculo(s) sem nenhuma disciplina cadastrada.";
+			createWarningMessage( warningMessage );
+		}
+
+		// Input inválido
+		if ( !existeCurriculoComOfertas )
+		{
+			errorMessage = "Nenhum curriculo possui ofertas relacionadas.";
+			createErrorMessage( errorMessage );
+		}
+		// Input válido, com algum alerta
+		else if ( curriculoSemOfertas )
+		{
+			warningMessage = "Existe(m) curriculo(s) sem nenhuma oferta relacionada.";
+			createWarningMessage( warningMessage );
+		}
+
 		this.triedaInput.setCursos( grupoCurso );
 	}
 
@@ -942,9 +1291,24 @@ public class SolverInput
 	{
 		GrupoOfertaCurso grupoOfertaCurso = this.of.createGrupoOfertaCurso();
 
+		String warningMessage = "";
+		String errorMessage = "";
+
+		boolean existeOferta = false;
+		boolean campusSemOferta = false;
+
 		for ( Campus campus : this.campi )
 		{
 			Set< Oferta > ofertas = campus.getOfertas();
+
+			if ( ofertas.size() != 0 )
+			{
+				existeOferta = true;
+			}
+			else
+			{
+				campusSemOferta = true;
+			}
 
 			for ( Oferta oferta : ofertas )
 			{
@@ -965,6 +1329,19 @@ public class SolverInput
 
 				grupoOfertaCurso.getOfertaCurso().add( itemOfertaCurso );
 			}
+		}
+
+		if ( !existeOferta )
+		{
+			errorMessage = "Não há nenhuma oferta cadastrada no sistema.";
+
+			createErrorMessage( errorMessage );
+		}
+		else if ( campusSemOferta )
+		{
+			warningMessage = "Existem campus sem nenhuma oferta cadastrada.";
+
+			createWarningMessage( warningMessage );
 		}
 
 		this.triedaInput.setOfertaCursosCampi( grupoOfertaCurso );
@@ -1632,16 +2009,13 @@ public class SolverInput
 		return grupoCreditoDisponivel;
 	}
 
-	private void createNoDemandWarningMessage( Disciplina disciplina )
+	private void createWarningMessage( String warningMessage )
 	{
-		if ( this.getWarnings().size() >= 5 || disciplina == null )
-		{
-			return;
-		}
+		this.getWarnings().add( warningMessage );
+	}
 
-		String errorMessage = "Não existe demanda cadastrada " +
-			"para a disciplina " + disciplina.getCodigo();
-
-		this.getWarnings().add( errorMessage );
+	private void createErrorMessage( String errorMessage )
+	{
+		this.getErrors().add( errorMessage );
 	}
 }

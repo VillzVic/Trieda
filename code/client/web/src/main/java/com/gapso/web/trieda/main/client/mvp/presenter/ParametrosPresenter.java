@@ -221,10 +221,9 @@ public class ParametrosPresenter
 
 												Presenter presenter = new ErrorsWarningsInputSolverPresenter(
 												 	dto.getValidInput(), cenarioDTO, getDTO(), errors,
-												 	warnings, new ErrorsWarningsInputSolverView() );
+												 	warnings, new ErrorsWarningsInputSolverView(), display.getSubmitButton() );
 
 												presenter.go( null );
-												habilitarBotao();
 											}
 										}
 									});
@@ -379,24 +378,18 @@ public class ParametrosPresenter
 
 	private void desabilitaBotao()
 	{
-		if ( this.display.getSubmitButton().isEnabled() )
-		{
-			this.display.getSubmitButton().setIcon(
-				AbstractImagePrototype.create( Resources.DEFAULTS.ajax16() ) );
+		this.display.getSubmitButton().setIcon(
+			AbstractImagePrototype.create( Resources.DEFAULTS.ajax16() ) );
 
-			this.display.getSubmitButton().disable();
-		}
+		this.display.getSubmitButton().disable();
 	}
 
 	private void habilitarBotao()
 	{
-		if ( !this.display.getSubmitButton().isEnabled() )
-		{
-			this.display.getSubmitButton().enable();
+		this.display.getSubmitButton().enable();
 
-			this.display.getSubmitButton().setIcon(
-				AbstractImagePrototype.create( Resources.DEFAULTS.gerarGrade16() ) );
-		}
+		this.display.getSubmitButton().setIcon(
+			AbstractImagePrototype.create( Resources.DEFAULTS.gerarGrade16() ) );
 	}
 
 	private void checkSolver( final Long round )

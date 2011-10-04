@@ -42,63 +42,68 @@ public class Fixacao
 	private static final long serialVersionUID = -7545908494415718467L;
 
 	@NotNull
-    @Column(name = "FIX_CODIGO")
-    @Size(min = 1, max = 50)
+    @Column( name = "FIX_CODIGO" )
+    @Size( min = 1, max = 50 )
     private String codigo;
     
     @NotNull
-    @Column(name = "FIX_DESCRICAO")
-    @Size(min = 1, max = 50)
+    @Column( name = "FIX_DESCRICAO" )
+    @Size( min = 1, max = 50 )
     private String descricao;
     
-    @ManyToOne(targetEntity = Professor.class, fetch=FetchType.LAZY)
-    @JoinColumn(name = "PRF_ID")
+    @ManyToOne( targetEntity = Professor.class, fetch=FetchType.LAZY )
+    @JoinColumn( name = "PRF_ID" )
     private Professor professor;
 	
-    @ManyToOne(targetEntity = Disciplina.class, fetch=FetchType.LAZY)
-    @JoinColumn(name = "DIS_ID")
+    @ManyToOne( targetEntity = Disciplina.class, fetch=FetchType.LAZY )
+    @JoinColumn( name = "DIS_ID" )
     private Disciplina disciplina;
     
-    @ManyToOne(targetEntity = Campus.class)
-    @JoinColumn(name = "CAM_ID")
+    @ManyToOne( targetEntity = Campus.class )
+    @JoinColumn( name = "CAM_ID" )
     private Campus campus;
     
-    @ManyToOne(targetEntity = Unidade.class)
-    @JoinColumn(name = "UNI_ID")
+    @ManyToOne( targetEntity = Unidade.class )
+    @JoinColumn( name = "UNI_ID" )
     private Unidade unidade;
     
-    @ManyToOne(targetEntity = Sala.class)
-    @JoinColumn(name = "SAL_ID")
+    @ManyToOne( targetEntity = Sala.class )
+    @JoinColumn( name = "SAL_ID" )
     private Sala sala;
     
-    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "fixacoes" )
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    	CascadeType.MERGE }, mappedBy = "fixacoes" )
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
     @PersistenceContext
     transient EntityManager entityManager;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "FIX_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "FIX_ID" )
     private Long id;
 
     @Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-    public Long getId() {
+    public Long getId()
+    {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId( Long id )
+    {
         this.id = id;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return this.version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion( Integer version )
+    {
         this.version = version;
     }
 
@@ -113,7 +118,8 @@ public class Fixacao
 		return instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
@@ -156,6 +162,7 @@ public class Fixacao
     public void removeHorariosDisponivelCenario()
     {
     	Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+
     	for ( HorarioDisponivelCenario horario : horarios )
     	{
     		horario.getFixacoes().remove( this );
@@ -164,21 +171,36 @@ public class Fixacao
     }
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
     
     @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
     @Transactional
-    public Fixacao merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Fixacao merged = this.entityManager.merge(this);
+    public Fixacao merge()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+	
+        Fixacao merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -197,14 +219,16 @@ public class Fixacao
         return em;
     }
 
-    public static int count( InstituicaoEnsino instituicaoEnsino )
+    public static int count(
+    	InstituicaoEnsino instituicaoEnsino )
     {
     	List< Fixacao > list = Fixacao.findAll( instituicaoEnsino );
         return ( list == null ? 0 : list.size() );
     }
 
-    @SuppressWarnings("unchecked")
-    public static List< Fixacao > findAll( InstituicaoEnsino instituicaoEnsino )
+    @SuppressWarnings( "unchecked" )
+    public static List< Fixacao > findAll(
+    	InstituicaoEnsino instituicaoEnsino )
     {
         Query q = entityManager().createQuery(
         	" SELECT o FROM Fixacao o " +
@@ -216,7 +240,8 @@ public class Fixacao
         return list;
     }
 
-    public static Fixacao find( Long id, InstituicaoEnsino instituicaoEnsino )
+    public static Fixacao find(
+    	Long id, InstituicaoEnsino instituicaoEnsino )
     {
         if ( id == null || instituicaoEnsino == null )
         {
@@ -235,14 +260,17 @@ public class Fixacao
         return null;
     }
 
-    public static List< Fixacao > find( InstituicaoEnsino instituicaoEnsino,
+    public static List< Fixacao > find(
+    	InstituicaoEnsino instituicaoEnsino,
         int firstResult, int maxResults )
     {
-        return find( instituicaoEnsino, firstResult, maxResults, null );
+        return Fixacao.find( instituicaoEnsino,
+        	firstResult, maxResults, null );
     }
 
-    @SuppressWarnings("unchecked")
-    public static List< Fixacao > find( InstituicaoEnsino instituicaoEnsino,
+    @SuppressWarnings( "unchecked" )
+    public static List< Fixacao > find(
+    	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults, String orderBy )
     {
         orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
@@ -259,7 +287,7 @@ public class Fixacao
         return list;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static List< Fixacao > findAllBy(
     	InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
     {
@@ -275,9 +303,10 @@ public class Fixacao
         return list;
     }
     
-    @SuppressWarnings("unchecked")
-    public static List< Fixacao > findBy( InstituicaoEnsino instituicaoEnsino,
-    	String codigo, int firstResult, int maxResults, String orderBy )
+    @SuppressWarnings( "unchecked" )
+    public static List< Fixacao > findBy(
+    	InstituicaoEnsino instituicaoEnsino, String codigo,
+    	int firstResult, int maxResults, String orderBy )
     {
     	codigo = ( ( codigo == null || codigo.length() == 0 ) ? "" : codigo );
         codigo = codigo.replace( '*', '%' );
@@ -308,89 +337,124 @@ public class Fixacao
         return list;
     }
 
-	@SuppressWarnings("unchecked")
+    public List< HorarioDisponivelCenario > getHorarios(
+    	InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
+    {
+    	Set< HorarioDisponivelCenario > horarios
+    		= new HashSet< HorarioDisponivelCenario >();
+
+    	for ( SemanaLetiva semanaLetiva : semanasLetivas )
+    	{
+    		horarios.addAll( this.getHorarios( instituicaoEnsino, semanaLetiva ) );
+    	}
+
+    	return new ArrayList< HorarioDisponivelCenario>( horarios );
+    }
+
+	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
+		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
 	{
 		Set< HorarioDisponivelCenario > horarios
 			= new HashSet< HorarioDisponivelCenario >();
 
-		for ( SemanaLetiva semanaLetiva : semanasLetivas )
-		{
-			Query q = entityManager().createQuery(
-				" SELECT o FROM HorarioDisponivelCenario o, IN ( o.fixacoes ) c " +
-				" WHERE c = :fixacao " +
-				" AND c.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
-				" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+		Query q = entityManager().createQuery(
+			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.fixacoes ) c " +
+			" WHERE c = :fixacao " +
+			" AND c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
-			q.setParameter( "fixacao", this );
-			q.setParameter( "semanaLetiva", semanaLetiva );
-			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "fixacao", this );
+		q.setParameter( "semanaLetiva", semanaLetiva );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-			horarios.addAll( q.getResultList() );
-		}
+		horarios.addAll( q.getResultList() );
 
 		return new ArrayList< HorarioDisponivelCenario >( horarios );
 	}
 
-    public String getCodigo() {
+    public String getCodigo()
+    {
         return this.codigo;
     }
-    public void setCodigo(String codigo) {
+
+    public void setCodigo( String codigo )
+    {
         this.codigo = codigo;
     }
-    
-    public String getDescricao() {
+
+    public String getDescricao()
+    {
     	return this.descricao;
     }
-    public void setDescricao(String descricao) {
+
+    public void setDescricao( String descricao )
+    {
     	this.descricao = descricao;
     }
-    
-    public Professor getProfessor() {
+
+    public Professor getProfessor()
+    {
     	return this.professor;
     }
-    public void setProfessor(Professor professor) {
+
+    public void setProfessor( Professor professor )
+    {
     	this.professor = professor;
     }
 
-	public Disciplina getDisciplina() {
+	public Disciplina getDisciplina()
+	{
         return this.disciplina;
     }
-	public void setDisciplina(Disciplina disciplina) {
+
+	public void setDisciplina( Disciplina disciplina )
+	{
         this.disciplina = disciplina;
     }
-	
-	public Campus getCampus() {
+
+	public Campus getCampus()
+	{
 		return this.campus;
 	}
-	public void setCampus(Campus campus) {
+
+	public void setCampus( Campus campus )
+	{
 		this.campus = campus;
 	}
-	
-	public Unidade getUnidade() {
+
+	public Unidade getUnidade()
+	{
 		return this.unidade;
 	}
-	public void setUnidade(Unidade unidade) {
+
+	public void setUnidade( Unidade unidade )
+	{
 		this.unidade = unidade;
 	}
-	
-	public Sala getSala() {
+
+	public Sala getSala()
+	{
 		return this.sala;
 	}
-	public void setSala(Sala sala) {
+
+	public void setSala( Sala sala )
+	{
 		this.sala = sala;
 	}
 
-	private Set<HorarioDisponivelCenario> getHorarios() {
+	private Set< HorarioDisponivelCenario > getHorarios()
+	{
         return this.horarios;
     }
 
-	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
+	public void setHorarios(
+		Set< HorarioDisponivelCenario > horarios )
+	{
         this.horarios = horarios;
     }
-	
+
 	public String toString()
 	{
         StringBuilder sb = new StringBuilder();
@@ -406,7 +470,7 @@ public class Fixacao
         sb.append( "Unidade: " ).append( getUnidade() ).append( ", " );
         sb.append( "Sala: " ).append( getSala() ).append( ", " );
         sb.append( "Horarios: " ).append( getHorarios() == null ?
-        	"null" : getHorarios().size() ).append( ", " );
+        	"null" : getHorarios().size() );
 
         return sb.toString();
     }
@@ -442,6 +506,7 @@ public class Fixacao
 		}
 
 		Fixacao other = (Fixacao) obj;
+
 		if ( id == null )
 		{
 			if ( other.id != null )
