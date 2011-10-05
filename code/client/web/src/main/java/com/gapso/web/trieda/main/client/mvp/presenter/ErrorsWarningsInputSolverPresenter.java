@@ -115,6 +115,16 @@ public class ErrorsWarningsInputSolverPresenter
 				});
 			}
 		});
+
+		this.display.getCancelButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					habilitarBotaoParametros();
+				}
+			});
 	}
 
 	private void checkSolver( final Long round )

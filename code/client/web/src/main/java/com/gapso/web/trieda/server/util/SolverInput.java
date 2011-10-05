@@ -1148,8 +1148,17 @@ public class SolverInput
 
 			itemCurso.setMinTempoIntegralParcial( curso.getMinTempoIntegralParcial() );
 			itemCurso.setMinTempoIntegral( curso.getMinTempoIntegral() );
-			itemCurso.setQtdMaxProfDisc( curso.getMaxDisciplinasPeloProfessor() );
 			itemCurso.setMaisDeUmaDiscPeriodo( curso.getAdmMaisDeUmDisciplina() );
+
+			if ( curso.getMaxDisciplinasPeloProfessor() == 0 )
+			{
+				errorMessage = "O curso " + curso.getCodigo()
+					+ " possui o limite de disciplinas por professor zerado.";
+
+				createErrorMessage( errorMessage );
+			}
+
+			itemCurso.setQtdMaxProfDisc( curso.getMaxDisciplinasPeloProfessor() );
 
 			Set< AreaTitulacao > areas = curso.getAreasTitulacao();
 			GrupoIdentificador grupoIdentificadorAreasTitulacao
@@ -2011,11 +2020,17 @@ public class SolverInput
 
 	private void createWarningMessage( String warningMessage )
 	{
-		this.getWarnings().add( warningMessage );
+		if ( this.getWarnings().size() <= 10 )
+		{
+			this.getWarnings().add( warningMessage );
+		}
 	}
 
 	private void createErrorMessage( String errorMessage )
 	{
-		this.getErrors().add( errorMessage );
+		if ( this.getErrors().size() <= 10 )
+		{
+			this.getErrors().add( errorMessage );
+		}
 	}
 }
