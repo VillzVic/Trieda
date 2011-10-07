@@ -1,17 +1,20 @@
 #include "AtendimentoCampus.h"
 
-AtendimentoCampus::AtendimentoCampus()
+AtendimentoCampus::AtendimentoCampus( int id )
 {
-   atendimentos_unidades = new GGroup< AtendimentoUnidade * >();
-   campus = NULL;
+   this->setId( id );
+   this->atendimentos_unidades = new GGroup< AtendimentoUnidade * >();
+   this->campus = NULL;
 }
 
-AtendimentoCampus::~AtendimentoCampus(void)
+AtendimentoCampus::~AtendimentoCampus( void )
 {
+   this->setId( -1 );
+
    if ( atendimentos_unidades != NULL )
    {
-      atendimentos_unidades->deleteElements();
-      delete atendimentos_unidades;
+      this->atendimentos_unidades->deleteElements();
+      delete this->atendimentos_unidades;
    }
 }
 

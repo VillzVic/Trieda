@@ -1374,7 +1374,9 @@ void SolverMIP::getSolutionTatico()
                                                         vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
                                                         ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
                                           {
-                                             AtendimentoTatico * at_Tatico = new AtendimentoTatico();
+                                             AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+                                                this->problemSolution->getIdAtendimentos(),
+                                                this->problemSolution->getIdAtendimentos() );
 
                                              // Verificando se a disicplina é de carater prático ou teórico.
                                              if ( ( *it_Vars_x )->getDisciplina()->getId() > 0
@@ -1387,7 +1389,8 @@ void SolverMIP::getSolutionTatico()
                                                 at_Tatico->setQtdCreditosPraticos( (int)( ( *it_Vars_x )->getValue() ) );
                                              }
 
-                                             AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+                                             AtendimentoOferta * at_Oferta = new AtendimentoOferta(
+                                                this->problemSolution->getIdAtendimentos() );
 
                                              stringstream str;
                                              str << ( *it_Vars_a )->getOferta()->getId();
@@ -1417,16 +1420,18 @@ void SolverMIP::getSolutionTatico()
                                  if ( novo_Dia )
                                  {
                                     // Cadastrando o dia da semana
-                                    AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+                                    AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana(
+                                       this->problemSolution->getIdAtendimentos() );
 
                                     at_Dia_Semana->setDiaSemana( ( *it_Vars_x )->getDia() );
 
                                     // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-                                    ITERA_VECTOR( it_Vars_a,
-                                                  vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
-                                                  ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
+                                    ITERA_VECTOR( it_Vars_a, vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
+                                       ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
                                     {
-                                       AtendimentoTatico * at_Tatico = new AtendimentoTatico();
+                                       AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+                                          this->problemSolution->getIdAtendimentos(),
+                                          this->problemSolution->getIdAtendimentos() );
 
                                        // Verificando se a disicplina é de carater prático ou teórico.
                                        if (  ( *it_Vars_x )->getDisciplina()->getId() > 0
@@ -1439,7 +1444,8 @@ void SolverMIP::getSolutionTatico()
                                           at_Tatico->setQtdCreditosPraticos( (int)( ( *it_Vars_x )->getValue() ) );
                                        }
 
-                                       AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+                                       AtendimentoOferta * at_Oferta = new AtendimentoOferta(
+                                          this->problemSolution->getIdAtendimentos() );
 
                                        stringstream str;
                                        str << ( *it_Vars_a )->getOferta()->getId();
@@ -1472,22 +1478,26 @@ void SolverMIP::getSolutionTatico()
                         if ( nova_Sala )
                         {
                            // Cadastrando a Sala
-                           AtendimentoSala * at_Sala = new AtendimentoSala();
+                           AtendimentoSala * at_Sala = new AtendimentoSala(
+                              this->problemSolution->getIdAtendimentos() );
 
                            at_Sala->setId( ( *it_Vars_x )->getSala()->getId() );
                            at_Sala->setSalaId( ( *it_Vars_x )->getSala()->getCodigo() );
                            at_Sala->sala = ( *it_Vars_x )->getSala();
 
                            // Cadastrando o dia da semana
-                           AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+                           AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana(
+                              this->problemSolution->getIdAtendimentos() );
+
                            at_Dia_Semana->setDiaSemana( ( *it_Vars_x )->getDia() );
 
                            // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-                           ITERA_VECTOR( it_Vars_a,
-                                         vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
-                                         ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
+                           ITERA_VECTOR( it_Vars_a, vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
+                              ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
                            {
-                              AtendimentoTatico * at_Tatico = new AtendimentoTatico();
+                              AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+                                 this->problemSolution->getIdAtendimentos(),
+                                 this->problemSolution->getIdAtendimentos() );
 
                               // Verificando se a disicplina é de carater prático ou teórico.
                               if (  ( *it_Vars_x )->getDisciplina()->getId() > 0
@@ -1500,7 +1510,8 @@ void SolverMIP::getSolutionTatico()
                                  at_Tatico->setQtdCreditosPraticos( (int)( ( *it_Vars_x )->getValue() ) );
                               }
 
-                              AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+                              AtendimentoOferta * at_Oferta = new AtendimentoOferta(
+                                 this->problemSolution->getIdAtendimentos() );
 
                               stringstream str;
                               str << ( *it_Vars_a )->getOferta()->getId();
@@ -1533,30 +1544,34 @@ void SolverMIP::getSolutionTatico()
                if ( nova_Unidade )
                {
                   // Cadastrando a Unidade
-                  AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
+                  AtendimentoUnidade * at_Unidade = new AtendimentoUnidade(
+                     this->problemSolution->getIdAtendimentos() );
 
                   at_Unidade->setId( ( *it_Vars_x )->getUnidade()->getId() );
                   at_Unidade->setCodigoUnidade( ( *it_Vars_x )->getUnidade()->getCodigo() );
                   at_Unidade->unidade = ( *it_Vars_x )->getUnidade();
 
                   // Cadastrando a Sala
-                  AtendimentoSala * at_Sala = new AtendimentoSala();
+                  AtendimentoSala * at_Sala = new AtendimentoSala(
+                     this->problemSolution->getIdAtendimentos() );
 
                   at_Sala->setId( ( *it_Vars_x )->getSala()->getId() );
                   at_Sala->setSalaId( ( *it_Vars_x )->getSala()->getCodigo() );
                   at_Sala->sala = ( *it_Vars_x )->getSala();
 
                   // Cadastrando o dia da semana
-                  AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+                  AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana(
+                     this->problemSolution->getIdAtendimentos() );
 
                   at_Dia_Semana->setDiaSemana( ( *it_Vars_x )->getDia() );
 
                   // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-                  ITERA_VECTOR( it_Vars_a,
-                                vars_a.find( std::make_pair( (*it_Vars_x)->getTurma(),
-                                ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
+                  ITERA_VECTOR( it_Vars_a, vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
+                     ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
                   {
-                     AtendimentoTatico * at_Tatico = new AtendimentoTatico();
+                     AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+                        this->problemSolution->getIdAtendimentos(),
+                        this->problemSolution->getIdAtendimentos() );
 
                      // Verificando se a disicplina é de carater prático ou teórico.
                      if (  ( *it_Vars_x )->getDisciplina()->getId() > 0
@@ -1569,7 +1584,8 @@ void SolverMIP::getSolutionTatico()
                         at_Tatico->setQtdCreditosPraticos( (int)( ( *it_Vars_x )->getValue() ) );
                      }
 
-                     AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+                     AtendimentoOferta * at_Oferta = new AtendimentoOferta(
+                        this->problemSolution->getIdAtendimentos() );
 
                      stringstream str;
                      str << ( *it_Vars_a )->getOferta()->getId();
@@ -1602,36 +1618,42 @@ void SolverMIP::getSolutionTatico()
 
       if ( novo_Campus )
       {
-         AtendimentoCampus * at_Campus = new AtendimentoCampus();
+         AtendimentoCampus * at_Campus = new AtendimentoCampus(
+            this->problemSolution->getIdAtendimentos() );
 
          at_Campus->setId( campus->getId() );
          at_Campus->setCampusId( campus->getCodigo() );
          at_Campus->campus = campus;
 
          // Cadastrando a Unidade
-         AtendimentoUnidade * at_Unidade = new AtendimentoUnidade();
+         AtendimentoUnidade * at_Unidade = new AtendimentoUnidade(
+            this->problemSolution->getIdAtendimentos() );
+
          at_Unidade->setId( ( *it_Vars_x )->getUnidade()->getId() );
          at_Unidade->setCodigoUnidade( ( *it_Vars_x )->getUnidade()->getCodigo() );
          at_Unidade->unidade = ( *it_Vars_x )->getUnidade();
 
          // Cadastrando a Sala
-         AtendimentoSala * at_Sala = new AtendimentoSala();
+         AtendimentoSala * at_Sala = new AtendimentoSala(
+            this->problemSolution->getIdAtendimentos() );
 
          at_Sala->setId( ( *it_Vars_x )->getSala()->getId() );
          at_Sala->setSalaId( ( *it_Vars_x )->getSala()->getCodigo() );
          at_Sala->sala = ( *it_Vars_x )->getSala();
 
          // Cadastrando o dia da semana
-         AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana();
+         AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana(
+            this->problemSolution->getIdAtendimentos() );
 
          at_Dia_Semana->setDiaSemana( ( *it_Vars_x )->getDia() );
 
          // Para cada variavel a__i_d_o existem para a variavel x__i_d_u_s_t em questão.
-         ITERA_VECTOR( it_Vars_a,
-                       vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
-                       ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
+         ITERA_VECTOR( it_Vars_a, vars_a.find( std::make_pair( ( *it_Vars_x )->getTurma(),
+            ( *it_Vars_x )->getDisciplina() ) )->second, Variable )
          {
-            AtendimentoTatico * at_Tatico = new AtendimentoTatico();
+            AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+               this->problemSolution->getIdAtendimentos(),
+               this->problemSolution->getIdAtendimentos() );
 
             // Verificando se a disicplina é de carater prático ou teórico.
             if ( ( *it_Vars_x )->getDisciplina()->getId() > 0
@@ -1644,7 +1666,8 @@ void SolverMIP::getSolutionTatico()
                at_Tatico->setQtdCreditosPraticos( (int)( ( *it_Vars_x )->getValue() ) );
             }
 
-            AtendimentoOferta * at_Oferta = new AtendimentoOferta();
+            AtendimentoOferta * at_Oferta = new AtendimentoOferta(
+               this->problemSolution->getIdAtendimentos() );
 
             stringstream str;
             str << ( *it_Vars_a )->getOferta()->getId();
@@ -2116,7 +2139,8 @@ int SolverMIP::solve()
          { 
             Campus * campus = problemData->refCampus[ itAtTat->getCampusId() ];
 
-            AtendimentoCampus * atCampus = new AtendimentoCampus();
+            AtendimentoCampus * atCampus = new AtendimentoCampus(
+                  this->problemSolution->getIdAtendimentos() );
 
             atCampus->setId( campus->getId() );
             atCampus->setCampusId( campus->getCodigo() );
@@ -2126,25 +2150,30 @@ int SolverMIP::solve()
             {
                Unidade * unidade = problemData->refUnidade[ itAtUnd->getUnidadeId() ];
 
-               AtendimentoUnidade * atUnidade = new AtendimentoUnidade();
+               AtendimentoUnidade * atUnidade = new AtendimentoUnidade(
+                  this->problemSolution->getIdAtendimentos() );
 
                atUnidade->setId( unidade->getId() );
                atUnidade->setCodigoUnidade( unidade->getCodigo() );
                atUnidade->unidade = unidade;
 
-               ITERA_GGROUP( itAtSala, itAtUnd->atendimentosSalas, AtendimentoSalaSolucao )
+               ITERA_GGROUP( itAtSala,
+                  itAtUnd->atendimentosSalas, AtendimentoSalaSolucao )
                {
                   Sala * sala = problemData->refSala[ itAtSala->getSalaId() ];
 
-                  AtendimentoSala * atSala = new AtendimentoSala();
+                  AtendimentoSala * atSala = new AtendimentoSala(
+                     this->problemSolution->getIdAtendimentos() );
 
                   atSala->setId( sala->getId() );
                   atSala->setSalaId( sala->getCodigo() );
                   atSala->sala = sala;
 
-                  ITERA_GGROUP( itAtDiaSemana, itAtSala->atendimentosDiasSemana, AtendimentoDiaSemanaSolucao )
+                  ITERA_GGROUP( itAtDiaSemana,
+                     itAtSala->atendimentosDiasSemana, AtendimentoDiaSemanaSolucao )
                   {
-                     AtendimentoDiaSemana * atDiaSemana = new AtendimentoDiaSemana();
+                     AtendimentoDiaSemana * atDiaSemana = new AtendimentoDiaSemana(
+                        this->problemSolution->getIdAtendimentos() );
 
                      atDiaSemana->setDiaSemana( itAtDiaSemana->getDiaSemana() );
 
@@ -2354,22 +2383,26 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
    Sala * sala = NULL;
    int dia_semana = 0;
 
-   ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
+   ITERA_GGROUP( it_At_Campus,
+      ( *problemSolution->atendimento_campus ), AtendimentoCampus )
    {
       // Campus do atendimento
       campus = it_At_Campus->campus;
 
-      ITERA_GGROUP( it_At_Unidade, ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+      ITERA_GGROUP( it_At_Unidade,
+         ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
       {
          // Unidade do atendimento
          unidade = problemData->refUnidade[ it_At_Unidade->getId() ];
 
-         ITERA_GGROUP( it_At_Sala, ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+         ITERA_GGROUP( it_At_Sala,
+            ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
          {
             // Sala do atendimento
             sala = problemData->refSala[ it_At_Sala->getId() ];
 
-            ITERA_GGROUP( it_At_DiaSemana, ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            ITERA_GGROUP( it_At_DiaSemana,
+               ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
             {
                // Dia da semana do atendimento
                dia_semana = it_At_DiaSemana->getDiaSemana();
@@ -2403,7 +2436,8 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 
                   //-------------------------------------------------------------------------------------
                   AtendimentoTurno * atendimento_turno = NULL;
-                  ITERA_GGROUP( it, ( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
+                  ITERA_GGROUP( it,
+                     ( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
                   {
                      if ( it->getTurnoId() == turno )
                      {
@@ -2414,7 +2448,8 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 
                   if ( atendimento_turno == NULL )
                   {
-                     atendimento_turno = new AtendimentoTurno();
+                     atendimento_turno = new AtendimentoTurno(
+                        this->problemSolution->getIdAtendimentos());
 
                      atendimento_turno->setId( turno );
                      atendimento_turno->setTurnoId( turno );
@@ -2424,9 +2459,10 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 
                   int horIdx = problemData->getHorarioDiaIdx( v->getHorario() );
 
-                  for (int hi = horIdx; hi < horIdx + aula->getTotalCreditos(); hi++)
+                  for ( int hi = horIdx; hi < horIdx + aula->getTotalCreditos(); hi++ )
                   {
-                     AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula();
+                     AtendimentoHorarioAula * atendimento_horario_aula = new AtendimentoHorarioAula(
+                        this->problemSolution->getIdAtendimentos() );
 
                      HorarioAula * horario_aula = problemData->horariosDiaIdx[ hi ]->getHorarioAula();
                      Professor * professor = v->getProfessor();
@@ -2443,7 +2479,8 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
                      for (; it_oferta != aula->ofertas.end(); ++it_oferta )
                      {
                         Oferta * oferta = ( *it_oferta );
-                        AtendimentoOferta * atendimento_oferta = new AtendimentoOferta();
+                        AtendimentoOferta * atendimento_oferta = new AtendimentoOferta(
+                           this->problemSolution->getIdAtendimentos() );
 
                         atendimento_oferta->setId( oferta->getId() );
                         atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
@@ -15443,10 +15480,9 @@ int SolverMIP::criaRestricaoGapsProfessores()
 
 void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
 {
-   ValidateSolutionOp * validate = new ValidateSolutionOp( this->problemData );
-
    // Solução gerada pelo solver
-   bool solutionOk = validate->checkSolution( this->problemSolution );
+   this->validateSolution = new ValidateSolutionOp( this->problemData );
+   bool solutionOk = this->validateSolution->checkSolution( this->problemSolution );
 
    if ( solutionOk )
    {
@@ -15456,28 +15492,35 @@ void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
    {
       std::cout << "\nSolucao invalida." << std::endl;
    }
+   ////
 
-   /*
-   // Alterando a solução
-   bool removeu = false;
+   // Dado um turno e um dia da semana, temos
+   // a lista de atendimentos de cada professor
+   std::map< Professor *, std::map< int, GGroup< AtendimentoBase *,
+      LessPtr< AtendimentoBase > > >, LessPtr< Professor > > mapProfessorDiaAtendimentos;
 
-   ITERA_GGROUP( it_at_campi, ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
+   ITERA_GGROUP( it_at_campi,
+      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
    {
       Campus * campus = this->problemData->refCampus[ it_at_campi->getId() ];
 
-      ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+      ITERA_GGROUP( it_at_unidade,
+         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
          Unidade * unidade = this->problemData->refUnidade[ it_at_unidade->getId() ];
 
-         ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+         ITERA_GGROUP( it_at_sala,
+            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
             Sala * sala = this->problemData->refSala[ it_at_sala->getId() ];
 
-            ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            ITERA_GGROUP( it_at_dia,
+               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
             {
                int dia_semana = it_at_dia->getDiaSemana();
 
-               ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               ITERA_GGROUP( it_at_turno,
+                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                {
                   Turno * turno = this->problemData->findTurno( it_at_turno->getTurnoId() );
 
@@ -15487,52 +15530,166 @@ void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
                      HorarioAula * horario_aula = this->problemData->findHorarioAula(
                         it_at_horario->getHorarioAulaId() );
 
-                     AtendimentoHorarioAula * at = ( *it_at_horario );
-                     at = NULL;
-                     removeu = true;
-                     break;
-                  } // Horário de aula
+                     Professor * professor = this->problemData->findProfessor(
+                        it_at_horario->getProfessorId() );
 
-                  if ( removeu )
-                  {
-                  break;
-                  }
+                     AtendimentoBase * atendimento = new AtendimentoBase();
+
+                     atendimento->setCampus( campus );
+                     atendimento->setUnidade( unidade );
+                     atendimento->setSala( sala );
+                     atendimento->setDiaSemana( dia_semana );
+                     atendimento->setTurno( turno );
+                     atendimento->setHorarioAula( horario_aula );
+                     atendimento->setProfessor( professor );
+                     atendimento->setIdAtHorario( it_at_horario->getId() );
+
+                     mapProfessorDiaAtendimentos[ professor ][ dia_semana ].add( atendimento );
+                  } // Horário da Aula
                } // Turno
-
-               if ( removeu )
-               {
-                  break;
-               }
             } // Dia da semana
+         } // Sala
+      } // Unidade
+   } // Campus
 
-            if ( removeu )
+   std::map< Professor *, std::map< int, GGroup< AtendimentoBase *,
+      LessPtr< AtendimentoBase > > >, LessPtr< Professor > >::iterator
+      it_map = mapProfessorDiaAtendimentos.begin();
+
+   for (; it_map != mapProfessorDiaAtendimentos.end();
+          it_map++ )
+   {
+      Professor * professor = it_map->first;
+
+      std::map< int, GGroup< AtendimentoBase *,
+         LessPtr< AtendimentoBase > > > professorDia = it_map->second;
+
+      std::map< int, GGroup< AtendimentoBase *,
+         LessPtr< AtendimentoBase > > >::iterator it_prof_dia = professorDia.begin();
+
+      for (; it_prof_dia != professorDia.end();
+             it_prof_dia++ )
+      {
+         int dia_semana = it_prof_dia->first;
+         GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentos = it_prof_dia->second;
+
+         if ( atendimentos.size() <= 1 )
+         {
+            continue;
+         }
+
+         // Enquanto houverem 'idas e vindas' do professor
+         while ( true )
+         {
+            // Verifica se existe algum deslocamento entre unidades
+            bool deslocamento = existeDeslocamentoUnidades( atendimentos );
+
+            if ( !deslocamento )
             {
                break;
             }
-         } // Sala
 
-         if ( removeu )
+            // Realiza as possíveis trocas de horários do professor
+            trocaProfessorHorariosAula( atendimentos );
+         }
+      }
+   }
+}
+
+int sortAtendimentosBasePorHorarioAula(
+   AtendimentoBase * at1, AtendimentoBase * at2 )
+{
+   return ( at1->getHorarioAula()->getInicio()
+      < at2->getHorarioAula()->getInicio() );
+}
+
+bool SolverMIP::existeDeslocamentoUnidades(
+  GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentos )
+{
+   // Ordena os atendimentos do dia pelos seus horários de início da aula
+   std::vector< AtendimentoBase * > vectorAtendimentos;
+   ITERA_GGROUP_LESSPTR( it_at, atendimentos, AtendimentoBase )
+   {
+      vectorAtendimentos.push_back( *it_at );
+   }
+
+   std::sort( vectorAtendimentos.begin(), vectorAtendimentos.end(),
+      sortAtendimentosBasePorHorarioAula );
+
+   // Verifica se ocorreu uma 'ida e vinda' do professor entre diferentes unidades
+   for ( int i = 0; i < (int)vectorAtendimentos.size(); i++ )
+   {
+      AtendimentoBase * at1 = vectorAtendimentos.at( i );
+
+      bool trocouDeUnidade = false;
+      int idSwap = -1;
+
+      for ( int j = i + 1; j < (int)vectorAtendimentos.size(); j++ )
+      {
+         AtendimentoBase * at2 = vectorAtendimentos.at( j );
+
+         // Temos que o professor tem que voltar
+         // a uma unidade que já deu aula nesse dia
+         if ( trocouDeUnidade
+            && at1->getUnidade() == at2->getUnidade() )
          {
+            vectorAtendimentos.at( idSwap )->setSwap( true );
+            at2->setSwap( true );
+
+            return true;
+         }
+
+         // Informa que houve deslocamento entre unidades e armazena-se
+         // ó índice para qual unidade o professor teve que se deslocar
+         if ( at1->getUnidade() != at2->getUnidade() )
+         {
+            trocouDeUnidade = true;
+            idSwap = j;
+         }
+      }
+   }
+
+   return false;
+}
+
+void SolverMIP::trocaProfessorHorariosAula(
+  GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentos )
+{
+   AtendimentoBase * at1 = NULL;
+   AtendimentoBase * at2 = NULL;
+
+   ITERA_GGROUP_LESSPTR( it_at, atendimentos, AtendimentoBase )
+   {
+      AtendimentoBase * atendimento_base = ( *it_at );
+
+      if ( atendimento_base->isSwap() )
+      {
+         if ( at1 == NULL )
+         {
+            at1 = atendimento_base;
+         }
+         else
+         {
+            at2 = atendimento_base;
             break;
          }
-      } // Unidade
-
-      if ( removeu )
-      {
-         break;
       }
-   } // Campus
-
-   // TODO -- verificar novamente a solução
-   solutionOk = validate->checkSolution( this->problemSolution );
-
-   if ( solutionOk )
-   {
-      std::cout << "\nSolucao verificada com sucesso." << std::endl;
    }
-   else
+
+   if ( at1 == NULL || at2 == NULL )
    {
-      std::cout << "\nSolucao invalida." << std::endl;
+      return;
    }
-   */
+
+   at1->setSwap( false );
+   at2->setSwap( false );
+
+   std::cout << "Realizou uma troca de atendimentos." << std::endl;
+   std::swap( at1, at2 );
+
+   if ( !this->validateSolution->checkSolution( this->problemSolution ) )
+   {
+      std::cout << "Desfez a troca de atendimentos." << std::endl;
+      std::swap( at1, at2 );
+   }
 }

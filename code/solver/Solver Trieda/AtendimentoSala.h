@@ -12,14 +12,14 @@ class AtendimentoSala:
    public OFBase
 {
 public:
-   AtendimentoSala( void );
+   AtendimentoSala( int );
    virtual ~AtendimentoSala( void );
 
    GGroup< AtendimentoDiaSemana * > * atendimentos_dias_semana;
    Sala * sala;
 
-   void setSalaId( std::string s ) { sala_id = s; }
-   std::string getSalaId() const { return sala_id; }
+   void setSalaId( std::string s ) { this->sala_id = s; }
+   std::string getSalaId() const { return this->sala_id; }
 
 private:
    std::string sala_id;

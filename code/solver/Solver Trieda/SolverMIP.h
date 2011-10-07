@@ -281,6 +281,14 @@ private:
    } ordenaPorCreditos;
 
    void buscaLocalTempoDeslocamentoSolucao();
+
+   bool existeDeslocamentoUnidades(
+      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > );
+
+   void trocaProfessorHorariosAula(
+      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > );
+
+   ValidateSolutionOp * validateSolution;
 };
 
 #endif

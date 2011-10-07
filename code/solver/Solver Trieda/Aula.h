@@ -120,15 +120,14 @@ public:
 
    virtual bool operator == ( Aula const & right )
    { 
-      return  (
-         ( turma == right.getTurma() ) &&
-         ( *disciplina == *right.getDisciplina() ) &&
-         ( ofertas == right.ofertas ) &&
-         ( *sala == *right.getSala() ) &&
-         ( dia_semana == right.getDiaSemana() ) &&
-         ( creditos_teoricos == right.getCreditosTeoricos() ) &&
-         ( creditos_praticos == right.getCreditosPraticos() ) &&
-         ( quantidade == right.quantidade ));
+      return  ( ( turma == right.getTurma() )
+         && ( *disciplina == *right.getDisciplina() )
+         && ( ofertas == right.ofertas )
+         && ( *sala == *right.getSala() )
+         && ( dia_semana == right.getDiaSemana() )
+         && ( creditos_teoricos == right.getCreditosTeoricos() )
+         && ( creditos_praticos == right.getCreditosPraticos() )
+         && ( quantidade == right.quantidade ) );
    }
 
    virtual bool operator != ( Aula const & right )

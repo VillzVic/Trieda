@@ -1,15 +1,17 @@
 #include "AtendimentoSala.h"
 
-AtendimentoSala::AtendimentoSala(void)
+AtendimentoSala::AtendimentoSala( int id )
 {
-   atendimentos_dias_semana = new GGroup<AtendimentoDiaSemana*>();
-   //atendimentos_dias_semana = NULL;
+   this->setId( id );
+   this->atendimentos_dias_semana = new GGroup<AtendimentoDiaSemana*>();
 
    sala = NULL;
 }
 
 AtendimentoSala::~AtendimentoSala(void)
 {
+   this->setId( -1 );
+
    if( atendimentos_dias_semana != NULL )
    {
       atendimentos_dias_semana->deleteElements();

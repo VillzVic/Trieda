@@ -9,20 +9,20 @@ class AtendimentoOferta :
    public OFBase
 {
 public:
-   AtendimentoOferta( void );
+   AtendimentoOferta( int );
    virtual ~AtendimentoOferta( void );
 
    Oferta * oferta;
 
-   void setOfertaCursoCampiId( std::string value ) { oferta_curso_campi_id = value; }
-   void setDisciplinaId( int value ) { disciplina_id = value; }
-   void setQuantidade( int value ) { quantidade = value; }
-   void setTurma( int value ) { turma = value; }
+   void setOfertaCursoCampiId( std::string value ) { this->oferta_curso_campi_id = value; }
+   void setDisciplinaId( int value ) { this->disciplina_id = value; }
+   void setQuantidade( int value ) { this->quantidade = value; }
+   void setTurma( int value ) { this->turma = value; }
 
-   std::string getOfertaCursoCampiId() const { return oferta_curso_campi_id; }
-   int getDisciplinaId() const { return disciplina_id; }
-   int getQuantidade() const { return quantidade; }
-   int getTurma() const { return turma; }
+   std::string getOfertaCursoCampiId() const { return this->oferta_curso_campi_id; }
+   int getDisciplinaId() const { return this->disciplina_id; }
+   int getQuantidade() const { return this->quantidade; }
+   int getTurma() const { return this->turma; }
 
 private:
    std::string oferta_curso_campi_id;

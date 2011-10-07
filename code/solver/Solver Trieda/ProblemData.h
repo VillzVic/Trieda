@@ -77,7 +77,7 @@ public:
    // Informa quantos minutos há entre os dados DateTime's
    int minutosIntervalo( DateTime dt1, DateTime dt2 );
 
-   // Verifica a ocorrência de última aula do dia (D) e primeira aula do dia (D+1)
+   // Verifica a ocorrência de última aula do dia ( D ) e primeira aula do dia ( D + 1 )
    bool verificaUltimaPrimeiraAulas( HorarioDia *, HorarioDia * );
 
    std::map< Calendario *, std::vector< HorarioAula * > > mapCalendarioHorariosAulaOrdenados;
@@ -136,7 +136,7 @@ public:
 
    //------------------
    // Essa estrutura ficaria melhor dentro das disciplinas !!!!
-   // Armazena todas as salas (sala de aula ou lab) em que uma 
+   // Armazena todas as salas ( sala de aula ou lab ) em que uma 
    // disciplina pode ser oferecida.
    std::map< Disciplina *, std::vector< Sala * >, LessPtr< Disciplina > > discSalas;
 

@@ -8,6 +8,7 @@ ProblemSolution::ProblemSolution( bool _modoOtmTatico )
    atendimento_campus = new GGroup< AtendimentoCampus * >();
    professores_virtuais = new GGroup< ProfessorVirtualOutput * >();
    alunosDemanda = new GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > >();
+   idsAtendimentos = 1;
 }
 
 ProblemSolution::~ProblemSolution()

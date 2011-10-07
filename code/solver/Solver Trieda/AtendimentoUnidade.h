@@ -10,7 +10,7 @@ class AtendimentoUnidade :
    public OFBase
 {
 public:
-   AtendimentoUnidade( void );
+   AtendimentoUnidade( int );
    virtual ~AtendimentoUnidade( void );
 
    Unidade * unidade;

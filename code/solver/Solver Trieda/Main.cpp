@@ -153,6 +153,7 @@ int main( int argc, char** argv )
          char mensagem[ 200 ];
 
          sprintf( mensagem, "Não foi possível escrever a solução. Error code: %d.", status );
+
          ErrorHandler::addErrorMessage(
 			   UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
 
@@ -176,7 +177,7 @@ int main( int argc, char** argv )
    }
 #endif
 
-   if( error )
+   if ( error )
    {
       return 0;
    }

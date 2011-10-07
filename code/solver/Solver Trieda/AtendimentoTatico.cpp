@@ -1,16 +1,19 @@
 #include "AtendimentoTatico.h"
 
-AtendimentoTatico::AtendimentoTatico(void)
+AtendimentoTatico::AtendimentoTatico( int idAtTatico, int idAtOferta )
 {
-   atendimento_oferta = new AtendimentoOferta();
+   this->setId( idAtTatico );
+   this->atendimento_oferta = new AtendimentoOferta( idAtOferta );
 
-   qtde_creditos_teoricos = 0;
-   qtde_creditos_praticos = 0;
+   this->qtde_creditos_teoricos = 0;
+   this->qtde_creditos_praticos = 0;
 }
 
-AtendimentoTatico::~AtendimentoTatico(void)
+AtendimentoTatico::~AtendimentoTatico( void )
 {
-   if( atendimento_oferta != NULL )
+   this->setId( -1 );
+
+   if ( atendimento_oferta != NULL )
    {
        delete atendimento_oferta;
    }
@@ -23,8 +26,8 @@ std::ostream & operator << ( std::ostream& out, AtendimentoTatico & tatico )
    if ( tatico.atendimento_oferta )
    {
       out << "<atendimentoOferta>" << std::endl
-		  << ( *tatico.atendimento_oferta )
-		  << "</atendimentoOferta>" << std::endl;
+		    << ( *tatico.atendimento_oferta )
+		    << "</atendimentoOferta>" << std::endl;
    }
    else
    {
@@ -32,10 +35,10 @@ std::ostream & operator << ( std::ostream& out, AtendimentoTatico & tatico )
    }
 
    out << "<qtdeCreditosTeoricos>" << tatico.getQtdCreditosTeoricos()
-	   << "</qtdeCreditosTeoricos>" << std::endl;
+	    << "</qtdeCreditosTeoricos>" << std::endl;
 
    out << "<qtdeCreditosPraticos>" << tatico.getQtdCreditosPraticos()
-	   << "</qtdeCreditosPraticos>" << std::endl;
+	    << "</qtdeCreditosPraticos>" << std::endl;
 
    out << "</AtendimentoTatico>" << std::endl;
 

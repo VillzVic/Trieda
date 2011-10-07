@@ -1,23 +1,24 @@
 #include "AtendimentoUnidade.h"
 
-AtendimentoUnidade::AtendimentoUnidade(void)
+AtendimentoUnidade::AtendimentoUnidade( int id )
 {
-   //atendimentos_salas = NULL;
-   atendimentos_salas = new GGroup<AtendimentoSala*>();
-
+   this->setId( id );
+   atendimentos_salas = new GGroup< AtendimentoSala * >();
    unidade = NULL;
 }
 
-AtendimentoUnidade::~AtendimentoUnidade(void)
+AtendimentoUnidade::~AtendimentoUnidade( void )
 {
-   if( atendimentos_salas != NULL )
+   this->setId( -1 );
+
+   if ( atendimentos_salas != NULL )
    {
       atendimentos_salas->deleteElements();
       delete atendimentos_salas;
    }
 }
 
-std::ostream& operator << ( std::ostream & out, AtendimentoUnidade & unidade )
+std::ostream&  operator << ( std::ostream & out, AtendimentoUnidade & unidade )
 {
    out << "<AtendimentoUnidade>" << std::endl;
    out << "<unidadeId>" << unidade.getId() << "</unidadeId>" << std::endl;

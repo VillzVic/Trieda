@@ -10,14 +10,14 @@ class AtendimentoDiaSemana:
    public OFBase
 {
 public:
-   AtendimentoDiaSemana( void );
+   AtendimentoDiaSemana( int );
    virtual ~AtendimentoDiaSemana( void );
 
    GGroup< AtendimentoTatico * > * atendimentos_tatico;
    GGroup< AtendimentoTurno * > * atendimentos_turno;
 
-   void setDiaSemana( int value ) { dia_semana = value; }
-   int getDiaSemana() const { return dia_semana; }
+   void setDiaSemana( int value ) { this->dia_semana = value; }
+   int getDiaSemana() const { return this->dia_semana; }
 
 private:
    int dia_semana;

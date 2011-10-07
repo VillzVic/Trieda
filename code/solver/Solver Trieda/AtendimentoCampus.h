@@ -9,8 +9,8 @@ class AtendimentoCampus:
    public OFBase
 {
 public:
-   AtendimentoCampus();
-   virtual ~AtendimentoCampus();
+   AtendimentoCampus( int );
+   virtual ~AtendimentoCampus( void );
 
    GGroup< AtendimentoUnidade * > * atendimentos_unidades;
    Campus * campus;

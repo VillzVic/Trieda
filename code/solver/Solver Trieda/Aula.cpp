@@ -94,7 +94,7 @@ int Aula::getCreditosPraticos() const
 
 int Aula::getTotalCreditos() const
 {
-   return (creditos_praticos+creditos_teoricos);
+   return ( this->getCreditosTeoricos() + this->getCreditosPraticos() );
 }
 
 bool Aula::eVirtual() const

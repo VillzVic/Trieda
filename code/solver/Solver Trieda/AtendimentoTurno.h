@@ -9,13 +9,13 @@ class AtendimentoTurno :
    public OFBase
 {
 public:
-   AtendimentoTurno( void );
+   AtendimentoTurno( int );
    virtual ~AtendimentoTurno( void );
 
    GGroup< AtendimentoHorarioAula * > * atendimentos_horarios_aula;
 
-   void setTurnoId( int value ) { turno_id = value; }
-   int getTurnoId() const { return turno_id; }
+   void setTurnoId( int value ) { this->turno_id = value; }
+   int getTurnoId() const { return this->turno_id; }
 
 private:
    int turno_id;

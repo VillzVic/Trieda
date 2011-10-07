@@ -9,17 +9,22 @@ RestricaoViolada::RestricaoViolada()
 
 RestricaoViolada::~RestricaoViolada()
 {
+
 }
 
-bool RestricaoViolada::operator <(RestricaoViolada& right)
+bool RestricaoViolada::operator < ( const RestricaoViolada & right )
 {
 	if ( restricao != right.restricao )
+   {
 		return ( restricao < right.restricao );
+   }
    else
+   {
       return false;
+   }
 }
 
-std::ostream& operator <<(std::ostream& out, RestricaoViolada& right)
+std::ostream & operator << ( std::ostream & out, RestricaoViolada & right )
 {
 	out << "<restricaoViolada>\n";
 	out << "<restricao>" << right.getRestricao().c_str() << "</restricao>\n";

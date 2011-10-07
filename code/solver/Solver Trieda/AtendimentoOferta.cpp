@@ -1,17 +1,23 @@
 #include "AtendimentoOferta.h"
 
-AtendimentoOferta::AtendimentoOferta( void )
+AtendimentoOferta::AtendimentoOferta( int id )
 {
-   oferta_curso_campi_id = "";
-   disciplina_id = -1;
-   quantidade = 0;
-   turma = 99999999;
-   oferta = NULL;
+   this->setId( id );
+   this->oferta_curso_campi_id = "";
+   this->disciplina_id = -1;
+   this->quantidade = 0;
+   this->turma = 99999999;
+   this->oferta = NULL;
 }
 
 AtendimentoOferta::~AtendimentoOferta( void )
 {
-
+   this->setId( -1 );
+   this->oferta_curso_campi_id = "";
+   this->disciplina_id = -1;
+   this->quantidade = 0;
+   this->turma = 99999999;
+   this->oferta = NULL;
 }
 
 std::ostream & operator << ( std::ostream & out, AtendimentoOferta & oferta )

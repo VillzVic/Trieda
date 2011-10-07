@@ -15,21 +15,20 @@
 class ProblemSolution
 {
 public:
-   // Constructor
    ProblemSolution( bool = true );
-
-   // Destructor
    virtual ~ProblemSolution(); 
 
-   RestricaoVioladaGroup * getFolgas() const { return folgas; }
+   RestricaoVioladaGroup * getFolgas() const { return this->folgas; }
    GGroup< AtendimentoCampus * > * atendimento_campus;
    SolucaoOperacional * solucao_operacional;
    GGroup< ProfessorVirtualOutput * > * professores_virtuais;
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > * alunosDemanda;
    bool modoOtmTatico;
+   int getIdAtendimentos() { return this->idsAtendimentos++; }
 
 private:
    RestricaoVioladaGroup * folgas;
+   int idsAtendimentos;
 
    // Armazena todas as salas (sala de aula ou lab) em que uma
    // disciplina pode ser oferecida. Pode ser que uma disciplina

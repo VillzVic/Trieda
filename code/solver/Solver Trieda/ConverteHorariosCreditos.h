@@ -1,5 +1,5 @@
-#ifndef _CONVERTEHORARIOSCREDITOS_H_
-#define _CONVERTEHORARIOSCREDITOS_H_
+#ifndef _CONVERTE_HORARIOS_CREDITOS_H_
+#define _CONVERTE_HORARIOS_CREDITOS_H_
 
 #include "ofbase.h"
 
@@ -7,30 +7,29 @@ class ConverteHorariosCreditos :
    public OFBase
 {
 public:
-   ConverteHorariosCreditos(void);
-   ~ConverteHorariosCreditos(void);
+   ConverteHorariosCreditos( void );
+   virtual ~ConverteHorariosCreditos( void );
 
    // Métodos get
-   int getTurno() { return turno; }
-   int getDiaSemana() { return dia_semana; }
+   int getTurno() const { return this->turno; }
+   int getDiaSemana() const { return this->dia_semana; }
 
    // Métodos set
-   void setTurno(int t) { turno = t; }
-   void setDiaSemana(int ds) { dia_semana = ds; }
+   void setTurno( int t ) { this->turno = t; }
+   void setDiaSemana( int ds ) { this->dia_semana = ds; }
 
-   GGroup<int> horarios;
+   GGroup< int > horarios;
 
-   virtual bool operator < (ConverteHorariosCreditos & right) 
+   virtual bool operator < ( const ConverteHorariosCreditos & right )
    { 
-      return 
-         ((turno < right.getTurno()) &&
-		 (dia_semana < right.getDiaSemana()));
+      return ( ( this->turno < right.getTurno() )
+         && ( this->dia_semana < right.getDiaSemana() ) );
    }
 
-   virtual bool operator == (ConverteHorariosCreditos & right)
+   virtual bool operator == ( const ConverteHorariosCreditos & right )
    { 
-      return (turno == right.getTurno() &&
-			  dia_semana == right.getDiaSemana());
+      return ( this->turno == right.getTurno()
+         && this->dia_semana == right.getDiaSemana() );
    }
 
 private:

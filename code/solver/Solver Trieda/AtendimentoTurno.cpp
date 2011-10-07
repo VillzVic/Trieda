@@ -1,13 +1,15 @@
 #include "AtendimentoTurno.h"
 
-AtendimentoTurno::AtendimentoTurno(void)
+AtendimentoTurno::AtendimentoTurno( int id )
 {
-   //atendimentos_horarios_aula = NULL;
-   atendimentos_horarios_aula = new GGroup<AtendimentoHorarioAula*>();
+   this->setId( id );
+   atendimentos_horarios_aula = new GGroup< AtendimentoHorarioAula * >();
 }
 
-AtendimentoTurno::~AtendimentoTurno(void)
+AtendimentoTurno::~AtendimentoTurno( void )
 {
+   this->setId( -1 );
+
    if( atendimentos_horarios_aula != NULL )
    {
       atendimentos_horarios_aula->deleteElements();
