@@ -67,7 +67,8 @@ implements Presenter
 	private Display display; 
 	private GTab gTab;
 
-	public DisciplinasPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public DisciplinasPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -100,12 +101,12 @@ implements Presenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 	
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -118,7 +119,7 @@ implements Presenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -147,7 +148,7 @@ implements Presenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -176,7 +177,7 @@ implements Presenter
 			}
 		});
 
-		display.getImportExcelButton().addSelectionListener(
+		this.display.getImportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -192,7 +193,7 @@ implements Presenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
+		this.display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -208,7 +209,7 @@ implements Presenter
 			}
 		});
 
-		display.getDisponibilidadeButton().addSelectionListener(
+		this.display.getDisponibilidadeButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -226,7 +227,8 @@ implements Presenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Não foi posssível exibir as tela de disponiblidade", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi posssível exibir as tela de disponiblidade", null );
 					}
 
 					@Override
@@ -245,7 +247,7 @@ implements Presenter
 			}
 		});
 
-		display.getDivisaoCreditoButton().addSelectionListener(
+		this.display.getDivisaoCreditoButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -270,7 +272,7 @@ implements Presenter
 			}
 		});
 
-		display.getResetBuscaButton().addSelectionListener(
+		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -284,7 +286,7 @@ implements Presenter
 			}
 		});
 
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -298,7 +300,7 @@ implements Presenter
 	@Override
 	public void go( Widget widget )
 	{
-		gTab = (GTab) widget;
-		gTab.add( (GTabItem) display.getComponent() );
+		this.gTab = (GTab) widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
 	}
 }

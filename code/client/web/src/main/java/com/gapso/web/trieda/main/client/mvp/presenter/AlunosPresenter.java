@@ -45,7 +45,8 @@ public class AlunosPresenter
 	private Display display;
 	private CenarioDTO cenarioDTO;
 
-	public AlunosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public AlunosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenarioDTO, Display display )
 	{
 		this.cenarioDTO = cenarioDTO;
@@ -74,12 +75,12 @@ public class AlunosPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -92,7 +93,7 @@ public class AlunosPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -106,7 +107,7 @@ public class AlunosPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -127,13 +128,13 @@ public class AlunosPresenter
 					public void onSuccess( Void result )
 					{
 						display.getGrid().updateList();
-						Info.display( "Removido", "Aluno removido com sucesso!" );
+						Info.display( "Removido", "Aluno(s) removido(s) com sucesso!" );
 					}
 				});
 			}
 		});
 
-		display.getResetBuscaButton().addSelectionListener(
+		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -145,7 +146,7 @@ public class AlunosPresenter
 			}
 		});
 
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -160,6 +161,6 @@ public class AlunosPresenter
 	public void go( Widget widget )
 	{
 		GTab tab = (GTab) widget;
-		tab.add( (GTabItem) display.getComponent() );
+		tab.add( (GTabItem) this.display.getComponent() );
 	}
 }

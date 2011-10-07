@@ -50,13 +50,13 @@ public class Campus
 	private static final long serialVersionUID = 6690100103369325015L;
 
 	@NotNull
-	@ManyToOne(targetEntity = Cenario.class)
-	@JoinColumn(name = "CEN_ID")
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
 	private Cenario cenario;
 
 	@NotNull
-	@Column(name = "CAM_CODIGO")
-	@Size(min = 1, max = 20)
+	@Column( name = "CAM_CODIGO" )
+	@Size( min = 1, max = 20 )
 	private String codigo;
 
 	@NotNull
@@ -113,10 +113,11 @@ public class Campus
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
-		return instituicaoEnsino;
+		return this.instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
@@ -163,7 +164,7 @@ public class Campus
 
 	public Estados getEstado()
 	{
-		return estado;
+		return this.estado;
 	}
 
 	public void setEstado( Estados estado )
@@ -173,7 +174,7 @@ public class Campus
 
 	public String getMunicipio()
 	{
-		return municipio;
+		return this.municipio;
 	}
 
 	public void setMunicipio( String municipio )
@@ -183,7 +184,7 @@ public class Campus
 
 	public String getBairro()
 	{
-		return bairro;
+		return this.bairro;
 	}
 
 	public void setBairro( String bairro )
@@ -227,7 +228,8 @@ public class Campus
 		return this.professores;
 	}
 
-	public void setProfessores( Set< Professor > professores )
+	public void setProfessores(
+		Set< Professor > professores )
 	{
 		this.professores = professores;
 	}
@@ -237,7 +239,8 @@ public class Campus
 		return this.horarios;
 	}
 
-	public void setHorarios( Set< HorarioDisponivelCenario > horarios )
+	public void setHorarios(
+		Set< HorarioDisponivelCenario > horarios )
 	{
 		this.horarios = horarios;
 	}
@@ -254,7 +257,7 @@ public class Campus
 
 	public Boolean getPublicado()
 	{
-		return publicado;
+		return this.publicado;
 	}
 
 	public void setPublicado( Boolean publicado )
@@ -264,7 +267,7 @@ public class Campus
 
 	public Set< Parametro > getParametros()
 	{
-		return parametros;
+		return this.parametros;
 	}
 
 	public void setParametros( Set< Parametro > parametros )
@@ -412,9 +415,11 @@ public class Campus
 
 		for ( SemanaLetiva semanaLetiva : listDomains )
 		{
-			for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
+			for ( HorarioAula horarioAula
+				: semanaLetiva.getHorariosAula() )
 			{
-				for ( HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario() )
+				for ( HorarioDisponivelCenario hdc
+					: horarioAula.getHorariosDisponiveisCenario() )
 				{
 					hdc.getCampi().add( this );
 					hdc.merge();
@@ -555,18 +560,20 @@ public class Campus
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{ 
-		return entityManager().createQuery(
+		Query q = entityManager().createQuery(
 			" SELECT o FROM Campus o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino" )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
-			.getResultList();
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino" );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findAllOtimized(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -581,7 +588,7 @@ public class Campus
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -634,22 +641,26 @@ public class Campus
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults )
 	{
-		return find( instituicaoEnsino, firstResult, maxResults, null );
+		return Campus.find( instituicaoEnsino,
+			firstResult, maxResults, null );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Campus > find(
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-		return entityManager().createQuery(
+		Query q = entityManager().createQuery(
 			" SELECT o FROM Campus o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
-			.setFirstResult( firstResult )
-			.setMaxResults( maxResults ).getResultList();
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
 	public static Campus getByCodigo(
@@ -669,7 +680,8 @@ public class Campus
 		return (Campus) q.getSingleResult();
 	}
 
-	public static int count( InstituicaoEnsino instituicaoEnsino,
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino,
 		Cenario cenario, String nome, String codigo,
 		Estados estado, String municipio, String bairro )
 	{
@@ -726,10 +738,11 @@ public class Campus
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List< Campus > findBy( InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, String nome, String codigo, Estados estado,
-		String municipio, String bairro, int firstResult, int maxResults, String orderBy )
+	@SuppressWarnings( "unchecked" )
+	public static List< Campus > findBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		String nome, String codigo, Estados estado, String municipio,
+		String bairro, int firstResult, int maxResults, String orderBy )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -781,7 +794,10 @@ public class Campus
 			q.setParameter( "bairro", bairro );
 		}
 
-		return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -806,7 +822,7 @@ public class Campus
 		return horarios;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findByCurriculo(
 		InstituicaoEnsino instituicaoEnsino, Curriculo curriculo )
 	{
@@ -929,14 +945,14 @@ public class Campus
 
 		Campus other = (Campus) obj;
 
-		if ( id == null )
+		if ( this.id == null )
 		{
 			if ( other.id != null )
 			{
 				return false;
 			}
 		}
-		else if ( !id.equals( other.id ) )
+		else if ( !this.id.equals( other.id ) )
 		{
 			return false;
 		}

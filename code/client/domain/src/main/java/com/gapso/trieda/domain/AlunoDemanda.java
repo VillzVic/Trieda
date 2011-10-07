@@ -117,7 +117,7 @@ public class AlunoDemanda
 
 	public Boolean getAtendido()
 	{
-		return atendido;
+		return this.atendido;
 	}
 
 	public void setAtendido( Boolean atendido )
@@ -127,7 +127,7 @@ public class AlunoDemanda
 
 	public Integer getPrioridade()
 	{
-		return prioridade;
+		return this.prioridade;
 	}
 
 
@@ -200,7 +200,6 @@ public class AlunoDemanda
 		}
 
 		AlunoDemanda merged = this.entityManager.merge( this );
-		//this.entityManager.flush();
 		return merged;
 	}
 

@@ -62,7 +62,8 @@ public class CursosPresenter
 	private Display display; 
 	private GTab gTab;
 
-	public CursosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public CursosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -92,12 +93,12 @@ public class CursosPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -110,7 +111,7 @@ public class CursosPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -139,7 +140,7 @@ public class CursosPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -166,7 +167,7 @@ public class CursosPresenter
 			}
 		});
 
-		display.getImportExcelButton().addSelectionListener(
+		this.display.getImportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -182,7 +183,7 @@ public class CursosPresenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
+		this.display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -198,7 +199,7 @@ public class CursosPresenter
 			}
 		});
 
-		display.getResetBuscaButton().addSelectionListener(
+		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -212,7 +213,7 @@ public class CursosPresenter
 			}
 		});
 
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -222,7 +223,7 @@ public class CursosPresenter
 			}
 		});
 
-		display.getCurriculosButton().addSelectionListener(
+		this.display.getCurriculosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override

@@ -138,7 +138,7 @@ public class ProfessoresView extends MyComposite
 			getI18nConstants().notaDesempenho(), 100 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CREDITO_ANTERIOR,
-			getI18nConstants().cargaHorariaAnterior(), 150 ) );
+			getI18nConstants().cargaHorariaAnterior(), 170 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_VALOR_CREDITO,
 			getI18nConstants().valorCredito(), 170 ) );

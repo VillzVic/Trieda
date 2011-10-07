@@ -25,51 +25,65 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TipoCursoComboBox;
 
-public class CursosView extends MyComposite implements CursosPresenter.Display {
-
+public class CursosView
+	extends MyComposite
+	implements CursosPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<CursoDTO> gridPanel;
+	private SimpleGrid< CursoDTO > gridPanel;
 	private SimpleFilter filter;
-	private TextField<String> nomeBuscaTextField;
-	private TextField<String> codigoBuscaTextField;
+	private TextField< String > nomeBuscaTextField;
+	private TextField< String > codigoBuscaTextField;
 	private TipoCursoComboBox tipoCursoBuscaComboBox;
 	private Button curriculosBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
-	public CursosView() {
-		initUI();
+
+	public CursosView()
+	{
+		this.initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Cursos");
+
+	private void initUI()
+	{
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Cursos" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( this.tabItem );
+	}
+
+	private void createTabItem()
+	{
+		this.tabItem = new GTabItem(
+			"Cursos", Resources.DEFAULTS.curso16() );
+
+		this.tabItem.setContent( this.panel );
 	}
 	
-	private void createTabItem() {
-		tabItem = new GTabItem("Cursos", Resources.DEFAULTS.curso16());
-		tabItem.setContent(panel);
+	private void createToolBar()
+	{
+		this.toolBar = new SimpleToolBar( this );
+		this.toolBar.add( new SeparatorToolItem() );
+
+		this.curriculosBT = toolBar.createButton(
+			"Matrizes Curriculares",
+			Resources.DEFAULTS.matrizCurricular16() );
+
+		this.toolBar.add( this.curriculosBT );
+		this.panel.setTopComponent( this.toolBar );
 	}
-	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		toolBar.add(new SeparatorToolItem());
-		curriculosBT = toolBar.createButton("Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular16());
-		toolBar.add(curriculosBT);
-		panel.setTopComponent(toolBar);
-	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<CursoDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    this.gridPanel = new SimpleGrid< CursoDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
 	}
 
 	public List< ColumnConfig > getColumnList()
@@ -89,89 +103,103 @@ public class CursosView extends MyComposite implements CursosPresenter.Display {
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
-		filter = new SimpleFilter();
-		tipoCursoBuscaComboBox = new TipoCursoComboBox();
-		tipoCursoBuscaComboBox.setFieldLabel("Tipo");
-		nomeBuscaTextField = new TextField<String>();
-		nomeBuscaTextField.setFieldLabel("Nome");
-		codigoBuscaTextField = new TextField<String>();
-		codigoBuscaTextField.setFieldLabel("Código");
-		
-		filter.addField(tipoCursoBuscaComboBox);
-		filter.addField(nomeBuscaTextField);
-		filter.addField(codigoBuscaTextField);
-		
-		panel.add(filter, bld);
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
+		this.filter = new SimpleFilter();
+		this.tipoCursoBuscaComboBox = new TipoCursoComboBox();
+		this.tipoCursoBuscaComboBox.setFieldLabel( "Tipo" );
+		this.nomeBuscaTextField = new TextField< String >();
+		this.nomeBuscaTextField.setFieldLabel( "Nome" );
+		this.codigoBuscaTextField = new TextField< String >();
+		this.codigoBuscaTextField.setFieldLabel( "Código" );
+
+		this.filter.addField( this.tipoCursoBuscaComboBox );
+		this.filter.addField( this.nomeBuscaTextField );
+		this.filter.addField( this.codigoBuscaTextField );
+
+		this.panel.add( this.filter, bld );
 	}
 	
 	@Override
-	public Button getNewButton() {
-		return toolBar.getNewButton();
+	public Button getNewButton()
+	{
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
-		return toolBar.getEditButton();
+	public Button getEditButton()
+	{
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
-		return toolBar.getRemoveButton();
+	public Button getRemoveButton()
+	{
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
-		return toolBar.getImportExcelButton();
+	public Button getImportExcelButton()
+	{
+		return this.toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
+	public Button getExportExcelButton()
+	{
+		return this.toolBar.getExportExcelButton();
 	}
 	
 	@Override
-	public SimpleGrid<CursoDTO> getGrid() {
-		return gridPanel;
+	public SimpleGrid< CursoDTO > getGrid()
+	{
+		return this.gridPanel;
 	}
 	
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<CursoDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy(
+		RpcProxy< PagingLoadResult< CursoDTO > > proxy )
+	{
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public TextField<String> getNomeBuscaTextField() {
-		return nomeBuscaTextField;
+	public TextField< String > getNomeBuscaTextField()
+	{
+		return this.nomeBuscaTextField;
 	}
 
 	@Override
-	public TextField<String> getCodigoBuscaTextField() {
-		return codigoBuscaTextField;
+	public TextField< String > getCodigoBuscaTextField()
+	{
+		return this.codigoBuscaTextField;
 	}
 	
 	@Override
-	public TipoCursoComboBox getTipoCursoBuscaComboBox() {
-		return tipoCursoBuscaComboBox;
+	public TipoCursoComboBox getTipoCursoBuscaComboBox()
+	{
+		return this.tipoCursoBuscaComboBox;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
-		return filter.getSubmitButton();
+	public Button getSubmitBuscaButton()
+	{
+		return this.filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
-		return filter.getResetButton();
+	public Button getResetBuscaButton()
+	{
+		return this.filter.getResetButton();
 	}
 
 	@Override
-	public Button getCurriculosButton() {
-		return curriculosBT;
+	public Button getCurriculosButton()
+	{
+		return this.curriculosBT;
 	}
-
 }

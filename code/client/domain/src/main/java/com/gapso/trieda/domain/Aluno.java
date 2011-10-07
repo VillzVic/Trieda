@@ -74,7 +74,7 @@ public class Aluno
 
 	public String getMatricula()
 	{
-		return matricula;
+		return this.matricula;
 	}
 
 	public void setMatricula( String matricula )
@@ -126,7 +126,7 @@ public class Aluno
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
-		return instituicaoEnsino;
+		return this.instituicaoEnsino;
 	}
 
 	public void setInstituicaoEnsino(
@@ -137,7 +137,7 @@ public class Aluno
 
 	public Cenario getCenario()
 	{
-		return cenario;
+		return this.cenario;
 	}
 
 	public void setCenario( Cenario cenario )
@@ -236,57 +236,61 @@ public class Aluno
 			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 
+	@SuppressWarnings( "unchecked" )
+	public static List< Aluno > findMaxResults(
+		InstituicaoEnsino instituicaoEnsino, int maxResults )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Aluno o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
+	}
+
 	public static List< Aluno > findByMatricula(
 		InstituicaoEnsino instituicaoEnsino, String matricula )
 	{
-		return Aluno.findByNomeCpfMatricula(
-			instituicaoEnsino, null, null, matricula );
+		return Aluno.findByNomeMatricula(
+			instituicaoEnsino, null, matricula );
 	}
 
-	public static List< Aluno > findByNomeCpf(
-		InstituicaoEnsino instituicaoEnsino, String nome, String cpf )
+	public static List< Aluno > findByNome(
+		InstituicaoEnsino instituicaoEnsino, String nome )
 	{
-		return Aluno.findByNomeCpfMatricula(
-			instituicaoEnsino, nome, cpf, null );
+		return Aluno.findByNomeMatricula(
+			instituicaoEnsino, nome, null );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static List< Aluno > findByNomeCpfMatricula(
-		InstituicaoEnsino instituicaoEnsino, String nome, String cpf, String matricula )
+	public static List< Aluno > findByNomeMatricula(
+		InstituicaoEnsino instituicaoEnsino,
+		String nome, String matricula )
 	{
 		String nomeQuery = "";
 		if ( nome != null )
 		{
-			nomeQuery = " AND LOWER ( :nome ) LIKE LOWER ( o.nome ) ";
-		}
-
-		String cpfQuery = "";
-		if ( cpf != null )
-		{
-			cpfQuery = " AND LOWER ( :cpf ) LIKE LOWER ( o.cpf ) ";
+			nomeQuery = " AND LOWER ( o.nome ) LIKE LOWER ( :nome ) ";
 		}
 
 		String matriculaQuery = "";
 		if ( matricula != null )
 		{
-			matriculaQuery = " AND LOWER ( :matricula ) LIKE LOWER ( o.matricula ) ";
+			matriculaQuery = " AND LOWER ( o.matricula ) LIKE LOWER ( :matricula ) ";
 		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Aluno o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			nomeQuery + cpfQuery + matriculaQuery );
+			nomeQuery + matriculaQuery );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( nome != null )
 		{
 			q.setParameter( "nome", nome );
-		}
-
-		if ( cpf != null )
-		{
-			q.setParameter( "cpf", cpf );	
 		}
 
 		if ( matricula != null )

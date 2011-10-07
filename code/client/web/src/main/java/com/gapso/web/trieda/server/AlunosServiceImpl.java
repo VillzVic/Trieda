@@ -30,13 +30,27 @@ public class AlunosServiceImpl
 
 	@Override
 	public PagingLoadResult< AlunoDTO > getAlunosList(
-		String nome, String cpf )
+		String nome, String matricula )
 	{
+		List< Aluno > listDomains = null;
+
+		// Carregar uma quantidade menor de dados
+		if ( ( nome == null || nome.equals( "" ) )
+			&& ( matricula == null || matricula.equals( "" ) ) )
+		{
+			listDomains = Aluno.findMaxResults(
+				getInstituicaoEnsinoUser(), 20 );
+		}
+		// Todos os alunos que segundo
+		// à busca realizada pelo usuário
+		else
+		{
+			listDomains = Aluno.findByNomeMatricula(
+				getInstituicaoEnsinoUser(), nome, matricula );
+		}
+
 		List< AlunoDTO > list	
 			= new ArrayList< AlunoDTO >();
-
-		List< Aluno > listDomains
-			= Aluno.findByNomeCpf( getInstituicaoEnsinoUser(), nome, cpf );
 
 		list.addAll( ConvertBeans.toListAlunoDTO( listDomains ) );
 

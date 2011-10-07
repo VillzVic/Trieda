@@ -152,6 +152,7 @@ public class Demanda
 
         if ( this.entityManager.contains( this ) )
         {
+        	this.removeAlunosDemanda();
             this.entityManager.remove( this );
         }
         else
@@ -159,9 +160,22 @@ public class Demanda
             Demanda attached = this.entityManager.find(
             	this.getClass(), this.id );
 
+            attached.removeAlunosDemanda();
             this.entityManager.remove( attached );
         }
     }
+
+	@Transactional
+    public void removeAlunosDemanda()
+	{
+		List< AlunoDemanda > alunosDemanda = AlunoDemanda.findByDemanda(
+			this.getOferta().getCampus().getInstituicaoEnsino(), this );
+
+		for ( AlunoDemanda alunoDemanda : alunosDemanda )
+		{
+			alunoDemanda.remove();
+		}
+	}
 
 	@Transactional
     public void flush()

@@ -36,7 +36,7 @@ public class AlunosView
 
 	public AlunosView()
 	{
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
@@ -110,13 +110,13 @@ public class AlunosView
 	@Override
 	public Button getNewButton()
 	{
-		return toolBar.getNewButton();
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
 	public Button getEditButton()
 	{
-		return toolBar.getEditButton();
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
@@ -128,7 +128,7 @@ public class AlunosView
 	@Override
 	public SimpleGrid< AlunoDTO > getGrid()
 	{
-		return gridPanel;
+		return this.gridPanel;
 	}
 
 	@Override
