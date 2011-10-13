@@ -117,7 +117,7 @@ public class ProfessoresView extends MyComposite
 			ProfessorDTO.PROPERTY_CPF, getI18nConstants().cpf(), 100 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_NOME,
-			getI18nConstants().nomeProfessor(), 120 ) );
+			getI18nConstants().nomeProfessor(), 115 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TIPO_CONTRATO_STRING,
 			getI18nConstants().tipoContrato(), 100 ) );

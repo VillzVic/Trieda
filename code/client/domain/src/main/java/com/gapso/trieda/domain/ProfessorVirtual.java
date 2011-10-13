@@ -33,38 +33,39 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "PRV_ID")
-@Table(name = "PROFESSORES_VIRTUAIS")
+@RooEntity( identifierColumn = "PRV_ID" )
+@Table( name = "PROFESSORES_VIRTUAIS" )
 public class ProfessorVirtual
 	implements Serializable, Comparable< ProfessorVirtual >
 {
 	private static final long serialVersionUID = 265242535107921721L;
 
-	@ManyToOne(targetEntity = Titulacao.class)
-	@JoinColumn(name = "TIT_ID")
+	@ManyToOne( targetEntity = Titulacao.class )
+	@JoinColumn( name = "TIT_ID" )
 	private Titulacao titulacao;
 
-	@ManyToOne(targetEntity = AreaTitulacao.class)
-	@JoinColumn(name = "ATI_ID")
+	@ManyToOne( targetEntity = AreaTitulacao.class )
+	@JoinColumn( name = "ATI_ID" )
 	private AreaTitulacao areaTitulacao;
 
-	@Column(name = "PRF_CH_MIN")
-	@Max(999L)
+	@Column( name = "PRF_CH_MIN" )
+	@Max( 999L )
 	private Integer cargaHorariaMin;
 
-	@Column(name = "PRF_CH_MAX")
-	@Max(999L)
+	@Column( name = "PRF_CH_MAX" )
+	@Max( 999L )
 	private Integer cargaHorariaMax;
 
-	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH } )
+	@ManyToMany( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH } )
 	private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
 
-	@OneToMany(mappedBy = "professorVirtual", cascade = CascadeType.ALL)
+	@OneToMany( mappedBy = "professorVirtual", cascade = CascadeType.ALL )
 	private Set< AtendimentoOperacional > atendimentos = new HashSet< AtendimentoOperacional >();
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
-		targetEntity = InstituicaoEnsino.class )
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
 
@@ -159,12 +160,12 @@ public class ProfessorVirtual
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "PRF_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "PRF_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
 	public Long getId()
@@ -185,6 +186,12 @@ public class ProfessorVirtual
 	public void setVersion( Integer version )
 	{
 		this.version = version;
+	}
+
+	public String getNome()
+	{
+		return "Professor Virtual "
+			+ ( this.getId() == null ? "" : this.getId() );
 	}
 
 	@Transactional
@@ -288,7 +295,7 @@ public class ProfessorVirtual
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< ProfessorVirtual > findBy(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
@@ -304,7 +311,7 @@ public class ProfessorVirtual
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< ProfessorVirtual > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{

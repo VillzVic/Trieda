@@ -844,6 +844,15 @@ public class SolverInput
 
 				for ( ProfessorDisciplina professorDisciplina : professorDisciplinas )
 				{
+					boolean existeDemanda = Demanda.existeDemanda(
+						this.instituicaoEnsino, null,
+						professorDisciplina.getDisciplina() );
+
+					if ( !existeDemanda )
+					{
+						continue;
+					}
+
 					ItemProfessorDisciplina itemProfessorDisciplina
 						= this.of.createItemProfessorDisciplina();
 

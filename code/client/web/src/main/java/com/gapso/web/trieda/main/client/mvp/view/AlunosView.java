@@ -122,7 +122,7 @@ public class AlunosView
 	@Override
 	public Button getRemoveButton()
 	{
-		return toolBar.getRemoveButton();
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override

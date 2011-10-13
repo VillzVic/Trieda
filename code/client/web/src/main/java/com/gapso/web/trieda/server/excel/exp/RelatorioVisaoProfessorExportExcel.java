@@ -283,11 +283,11 @@ public class RelatorioVisaoProfessorExportExcel
 			Map< Long, Map< Turno, List< AtendimentoOperacionalDTO > > > mapNivel1
 				= new TreeMap< Long, Map< Turno, List< AtendimentoOperacionalDTO > > >();
 
-			Professor professor = null;
-			ProfessorVirtual professorVirtual = null;
-
 			for ( AtendimentoOperacionalDTO atendimento : atendimentos )
 			{
+				Professor professor = null;
+				ProfessorVirtual professorVirtual = null;
+
 				if ( this.campus == null )
 				{
 					this.campus = Campus.find(
@@ -345,6 +345,9 @@ public class RelatorioVisaoProfessorExportExcel
 
 				for ( Turno turno : mapNivel2.keySet() )
 				{
+					Professor professor = null;
+					ProfessorVirtual professorVirtual = null;
+
 					professor = Professor.find( profId, this.instituicaoEnsino );
 
 					if ( professor == null )
@@ -378,9 +381,10 @@ public class RelatorioVisaoProfessorExportExcel
 		return result;
 	}
 
-	private int writeProfessor( Campus campus, Professor professor, Turno turno,
-		List< AtendimentoOperacionalDTO > atendimentos, int row, HSSFSheet sheet,
-		Iterator< HSSFComment > itExcelCommentsPool,
+	private int writeProfessor(
+		Campus campus, Professor professor, Turno turno,
+		List< AtendimentoOperacionalDTO > atendimentos,
+		int row, HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
 		row = writeHeaderProfessor(
@@ -670,7 +674,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 		// Professor Virtual
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Professor Virtual" );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professorVirtual.getId() );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professorVirtual.getNome() );
 
 		row++;
 		col = 2;
