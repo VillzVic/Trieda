@@ -98,7 +98,8 @@ int main( int argc, char** argv )
    dataLoader = new ProblemDataLoader( inputFile, data );
    dataLoader->load();
 
-   solution = new ProblemSolution( ( data->parametros->modo_otimizacao == "TATICO" ) );
+   solution = new ProblemSolution(
+      data->parametros->modo_otimizacao == "TATICO" );
 
    // Temporary output file name
    strcat( tempOutput, path );
@@ -130,6 +131,7 @@ int main( int argc, char** argv )
          solver = new SolverMIP( data, solution, dataLoader );
          solver->solve();
          solver->getSolution( solution );
+
          delete solver;
          delete dataLoader;
       }
@@ -137,6 +139,7 @@ int main( int argc, char** argv )
       {
          char mensagem[ 200 ];
          sprintf( mensagem, "Não foi possível processar o modelo matemático ( erro %d )", status );
+
          ErrorHandler::addErrorMessage(
             UNEXPECTED_ERROR, std::string( mensagem ), "Solver::main()", false );
 
@@ -203,14 +206,14 @@ void writeOutput( ProblemSolution * solution,
 
 void _signals()
 {
-   signal( SIGINT, _tprocesshandler );           //  (2) interrupt
-   signal( SIGILL, _tprocesshandler );           //  (4) illegal instruction - invalid function image
-   //signal( SIGABRT_COMPAT, _tprocesshandler ); //  (6) abnormal termination triggered by abort call
-   signal( SIGFPE, _tprocesshandler );           //  (8) floating point exception
-   signal( SIGSEGV, _tprocesshandler );          // (11) segment violation
-   signal( SIGTERM, _tprocesshandler );          // (15) software termination signal from kill
-   //signal( SIGBREAK, _tprocesshandler );       // (21) Ctrl-Break sequence
-   signal( SIGABRT, _tprocesshandler );          // (22) abnormal termination triggered by abort call
+   signal( SIGINT, _tprocesshandler );            //  (2) interrupt
+   signal( SIGILL, _tprocesshandler );            //  (4) illegal instruction - invalid function image
+   // signal( SIGABRT_COMPAT, _tprocesshandler ); //  (6) abnormal termination triggered by abort call
+   signal( SIGFPE, _tprocesshandler );            //  (8) floating point exception
+   signal( SIGSEGV, _tprocesshandler );           // (11) segment violation
+   signal( SIGTERM, _tprocesshandler );           // (15) software termination signal from kill
+   // signal( SIGBREAK, _tprocesshandler );       // (21) Ctrl-Break sequence
+   signal( SIGABRT, _tprocesshandler );           // (22) abnormal termination triggered by abort call
 }
 
 void _tprocesshandler( int _code )
@@ -221,6 +224,8 @@ void _tprocesshandler( int _code )
    ErrorHandler::addErrorMessage(
 	   UNEXPECTED_ERROR, mensagem, "Solver::main()", false );
 
-   writeOutput( dtOutput.solution, dtOutput.outputFile, dtOutput.tempOutput );
+   writeOutput( dtOutput.solution,
+      dtOutput.outputFile, dtOutput.tempOutput );
+
    exit( _code );
 }

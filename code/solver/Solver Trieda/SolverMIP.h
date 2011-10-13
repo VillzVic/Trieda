@@ -231,7 +231,8 @@ private:
    std::vector< Variable > filtraVariaveisAlunos( std::vector< Variable > );
    std::vector< Variable > filtraVariaveisCreditos( std::vector< Variable > );
 
-   void retornaHorariosPossiveis(Professor *prof, Aula *aula, std::list<HorarioDia*> &listaHor);
+   void retornaHorariosPossiveis(
+     Professor *, Aula *, std::list< HorarioDia * > &);
 
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do  tipo V_CREDITOS com credito(s) alocado(s).
@@ -242,7 +243,7 @@ private:
    typedef std::map< std::pair< int /*turma*/, Disciplina * >,
 					      std::vector< Variable * > > vars__A___i_d_o;
 
-   void chgCoeffList( std::vector< std::pair< int, int > > cL, std::vector< double > cLV );
+   void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 
    vars__X___i_d_u_tps_t vars_x;
    vars__A___i_d_o vars_a;
@@ -282,13 +283,11 @@ private:
 
    void buscaLocalTempoDeslocamentoSolucao();
 
-   bool existeDeslocamentoUnidades(
-      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > );
-
-   void trocaProfessorHorariosAula(
-      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > );
-
    ValidateSolutionOp * validateSolution;
+
+   int alteraHorarioAulaAtendimento( int, int );
+
+   int calculaDeslocamentoUnidades( int, int );
 };
 
 #endif

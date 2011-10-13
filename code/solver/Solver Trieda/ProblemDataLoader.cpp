@@ -293,15 +293,19 @@ void ProblemDataLoader::criaListaHorariosOrdenados()
 {
    GGroup< HorarioAula * > horarios_aula;
 
+   std::map< int, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator it_map_horarios
+      = problemData->horarios_aula_dia_semana.begin();
+
    // Adiciona os horários de aula, sem repetição
-   ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
+   for (; it_map_horarios != problemData->horarios_aula_dia_semana.end();
+          it_map_horarios++ )
    {
-      ITERA_GGROUP_LESSPTR( it_professor, it_campi->professores, Professor )
+      GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios
+         = it_map_horarios->second;
+
+      ITERA_GGROUP_LESSPTR( it_horario, horarios, HorarioAula )
       {
-         ITERA_GGROUP( it_horario, it_professor->horarios, Horario )
-         {
-            horarios_aula.add( it_horario->horario_aula );
-         }
+         horarios_aula.add( *it_horario );
       }
    }
 

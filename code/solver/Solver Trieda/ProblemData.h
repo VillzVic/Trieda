@@ -7,6 +7,7 @@
 #include <cmath>
 #include <map>
 
+#include "combinatoria.h"
 #include "Calendario.h"
 #include "AlunoDemanda.h"
 #include "TipoSala.h"

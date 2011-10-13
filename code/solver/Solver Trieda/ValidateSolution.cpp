@@ -1,8 +1,10 @@
 #include "ValidateSolution.h"
 
-// Método utilizado para ordenas os atendimentos de acordo com o horário de aula,
-// considerando que todos esses atendimentos pertencem ao mesmo dia da semana
-int sortAtendimentosBase( AtendimentoBase * at1, AtendimentoBase * at2 )
+// Método utilizado para ordenas os atendimentos de
+// acordo com o horário de aula, considerando que todos
+// esses atendimentos pertencem ao mesmo dia da semana
+int sortAtendimentosBase(
+   AtendimentoBase * at1, AtendimentoBase * at2 )
 {
    if ( at1->getHorarioAula() < at2->getHorarioAula() )
    {
@@ -24,8 +26,7 @@ ValidateSolutionOp::ValidateSolutionOp( ProblemData * data  )
 
 ValidateSolutionOp::~ValidateSolutionOp()
 {
-   this->pData = NULL;
-   this->solution = NULL;
+
 }
 
 bool ValidateSolutionOp::checkSolution( ProblemSolution *  sol )
@@ -85,9 +86,11 @@ bool ValidateSolutionOp::checkSolution( ProblemSolution *  sol )
 bool ValidateSolutionOp::checkRestricaoProfessorHorario()
 {
    // Armazenando todos os professores
-   GGroup< Professor *, LessPtr< Professor > > professores = pData->getProfessores();
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = pData->getProfessores();
 
-   // Relaciona cada professor com os dias e horários que eles possuem aulas alocadas na solução
+   // Relaciona cada professor com os dias e
+   // horários que eles possuem aulas alocadas na solução
    std::map< std::string, bool > mapProfessorDiaHorario;
 
    // Percorrendo a solução procurando por conflitos
@@ -95,29 +98,36 @@ bool ValidateSolutionOp::checkRestricaoProfessorHorario()
    {
       Professor * professor = ( *it_prof );
 
-      ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+      ITERA_GGROUP( it_at_campi,
+         ( *solution->atendimento_campus ), AtendimentoCampus )
       {
          Campus * campus = pData->refCampus[ it_at_campi->getId() ];
 
-         ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+         ITERA_GGROUP( it_at_unidade,
+            ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
          {
             Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
 
-            ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+            ITERA_GGROUP( it_at_sala,
+               ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
             {
                Sala * sala = pData->refSala[ it_at_sala->getId() ];
 
-               ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+               ITERA_GGROUP( it_at_dia,
+                  ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
                {
                   int dia_semana = it_at_dia->getDiaSemana();
 
-                  ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+                  ITERA_GGROUP( it_at_turno,
+                     ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                   {
                      Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
 
-                     ITERA_GGROUP( it_at_horario, ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                     ITERA_GGROUP( it_at_horario,
+                        ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                      {
-                        HorarioAula * horario_aula = pData->findHorarioAula( it_at_horario->getHorarioAulaId() );
+                        HorarioAula * horario_aula = pData->findHorarioAula(
+                           it_at_horario->getHorarioAulaId() );
 
                         if ( it_at_horario->getProfessorId() != professor->getId() )
                         {
@@ -168,27 +178,33 @@ bool ValidateSolutionOp::checkRestricaoSalaHorario()
    // Relaciona cada sala com os dias e horários que elas possuem aulas alocadas na solução
    std::map< std::string, bool > mapSalaDiaHorario;
 
-   ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+   ITERA_GGROUP( it_at_campi,
+      ( *solution->atendimento_campus ), AtendimentoCampus )
    {
       Campus * campus = pData->refCampus[ it_at_campi->getId() ];
 
-      ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+      ITERA_GGROUP( it_at_unidade,
+         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
          Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
 
-         ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+         ITERA_GGROUP( it_at_sala,
+            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
             Sala * sala = pData->refSala[ it_at_sala->getId() ];
 
-            ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            ITERA_GGROUP( it_at_dia,
+               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
             {
                int dia_semana = it_at_dia->getDiaSemana();
 
-               ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               ITERA_GGROUP( it_at_turno,
+                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                {
                   Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
 
-                  ITERA_GGROUP( it_at_horario, ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                  ITERA_GGROUP( it_at_horario,
+                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                   {
                      HorarioAula * horario_aula = pData->findHorarioAula(
                         it_at_horario->getHorarioAulaId() );
@@ -418,7 +434,8 @@ bool ValidateSolutionOp::checkRestricaoFixProfDiscSalaDiaHorario()
 
    // Dado que agora sabemos quais foram as combinações de prof/disc/sala/dia/horário
    // atribuídas na solução, podemos então verificar se as fixações foram todas atendidas
-   ITERA_GGROUP_LESSPTR( it_fix, pData->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+   ITERA_GGROUP_LESSPTR( it_fix,
+      pData->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
    {
       Fixacao * fixacao = ( *it_fix );
 
@@ -533,7 +550,8 @@ bool ValidateSolutionOp::checkRestricaoFixProfDiscDiaHor()
 
    // Dado que agora sabemos quais foram as combinações de prof/disc/sala/dia/horário
    // atribuídas na solução, podemos então verificar se as fixações foram todas atendidas
-   ITERA_GGROUP_LESSPTR( it_fix, pData->fixacoes_Prof_Disc_Dia_Horario, Fixacao )
+   ITERA_GGROUP_LESSPTR( it_fix,
+      pData->fixacoes_Prof_Disc_Dia_Horario, Fixacao )
    {
       Fixacao * fixacao = ( *it_fix );
 
@@ -652,12 +670,15 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
       } // Campus
    } // Profesor
 
+   // Inicialmente, a solução é válida
+   bool result = true;
+
    // Procura por deslocamentos inviáveis na solução
    std::map< std::pair< Professor *, int >,
       GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > >::iterator
       it_map = mapProfessorAtendimentos.begin();
 
-   for (; it_map != mapProfessorAtendimentos.end();
+   for (; it_map != mapProfessorAtendimentos.end() && result;
           it_map++ )
    {
       Professor * professor = it_map->first.first;
@@ -684,13 +705,28 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
 
          if ( !deslocViavel )
          {
-            return false;
+            // A solução não é válida
+            result = false;
+            break;
          }
       }
    }
+   
+   // Desalocando os objetos "AtendimentoBase"
+   it_map = mapProfessorAtendimentos.begin();
 
-   // A solução é válida
-   return true;
+   for (; it_map != mapProfessorAtendimentos.end();
+          it_map++ )
+   {
+      Professor * professor = it_map->first.first;
+      int dia_semana = it_map->first.second;
+      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosProf = it_map->second;
+
+      atendimentosProf.deleteElements();
+      atendimentosProf.clear();
+   }
+
+   return result;
 }
 
 bool ValidateSolutionOp::deslocamentoViavel(
@@ -823,12 +859,15 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
       } // Campus
    } // Bloco Curricular
 
+   // Inicialmente, a solução é válida
+   bool result = true;
+
    // Procura por deslocamentos inviáveis na solução
    std::map< std::pair< BlocoCurricular *, int >,
       GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > >::iterator
       it_map = mapBlocoAtendimentos.begin();
 
-   for (; it_map != mapBlocoAtendimentos.end();
+   for (; it_map != mapBlocoAtendimentos.end() && result;
           it_map++ )
    {
       BlocoCurricular * bloco_curricular = it_map->first.first;
@@ -855,13 +894,28 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
 
          if ( !deslocViavel )
          {
-            return false;
+            // A solução não é válida
+            result = false;
+            break;
          }
       }
    }
 
-   // A solução é válida
-   return true;
+   // Desalocando os objetos "AtendimentoBase"
+   it_map = mapBlocoAtendimentos.begin();
+
+   for (; it_map != mapBlocoAtendimentos.end();
+          it_map++ )
+   {
+      BlocoCurricular * bloco_curricular = it_map->first.first;
+      int dia_semana = it_map->first.second;
+      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosBloco = it_map->second;
+
+      atendimentosBloco.deleteElements();
+      atendimentosBloco.clear();
+   }
+
+   return result;
 }
 
 bool ValidateSolutionOp::checkRestricaoDisciplinaMesmoHorario()
@@ -1059,6 +1113,20 @@ bool ValidateSolutionOp::checkRestricaoAlocacaoAulas()
          aula->toString();
          aulasNaoAtendidas++;
       }
+   }
+   
+   // Desalocando os objetos "AtendimentoBase"
+   std::map< Aula *, GGroup< AtendimentoBase *,
+      LessPtr< AtendimentoBase > >, LessPtr< Aula > >::iterator it_map = mapAulaAtendimentos.begin();
+
+   for (; it_map != mapAulaAtendimentos.end();
+      it_map++ )
+   {
+      Aula * aulaAtendida = it_map->first;
+      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosAula = it_map->second;
+
+      atendimentosAula.deleteElements();
+      atendimentosAula.clear();
    }
 
    if ( aulasNaoAtendidas != 0 )

@@ -626,7 +626,6 @@ int SolverMIP::solveTaticoBasico()
 #endif
 
    int status = 0;
-
    lp->setTimeLimit( 30 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
@@ -642,10 +641,10 @@ int SolverMIP::solveTaticoBasico()
    FILE * fout = fopen( "solBin.bin", "wb" );
    int nCols = lp->getNumCols();
 
-   fwrite( &nCols, sizeof(int), 1, fout );
+   fwrite( &nCols, sizeof( int ), 1, fout );
    for ( int i = 0; i < lp->getNumCols(); i++ )
    {
-      fwrite( &( xSol[i] ), sizeof( double ), 1, fout );
+      fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
    }
 
    fclose( fout );
@@ -1824,7 +1823,7 @@ int SolverMIP::solveOperacionalMIP()
 
    int status = 0;
 
-   lp->setTimeLimit( 3600 );
+   lp->setTimeLimit( 30 );
    lp->setMIPScreenLog( 4 );
 
    status = lp->optimize( METHOD_MIP );
@@ -1881,7 +1880,7 @@ void SolverMIP::relacionaProfessoresDisciplinas()
          Disciplina * disciplina = aula->getDisciplina();
 
          // TODO -- como recuperar o professor que foi alocado à aula ???
-         std::pair< int, int > professor_disciplina (
+         std::pair< int, int > professor_disciplina(
             professor->getId(), disciplina->getId() );
 
          // Se o professor e a disciplina da aula em questão se relacionarem
@@ -2001,10 +2000,12 @@ Professor * SolverMIP::criaProfessorVirtual( HorarioDia * horario, int cred,
    // Setando alguns dados para o novo professor
    prof->tipo_contrato = ( *problemData->tipos_contrato.begin() );
 
-   // Temporariamente vou setar os ids dos magistérios com valores negativos.
+   // Temporariamente vou setar os ids
+   // dos magistérios com valores negativos.
    int idMag = 0;
 
-   ITERA_GGROUP_LESSPTR( itDisciplina, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( itDisciplina,
+      problemData->disciplinas, Disciplina )
    {
       Magisterio * mag = new Magisterio();
 
@@ -2038,7 +2039,7 @@ Professor * SolverMIP::criaProfessorVirtual( HorarioDia * horario, int cred,
 
 void SolverMIP::geraProfessoresVirtuaisMIP()
 {
-   std::set<std::pair<Professor*,HorarioDia*> > profVirtualList;
+   std::set<std::pair< Professor *, HorarioDia * > > profVirtualList;
 
    // Procura variaveis que usem professor virtual
    for ( int i = 0; i < (int) solVarsOp.size(); i++ )
@@ -2076,7 +2077,8 @@ void SolverMIP::getSolutionOperacionalMIP()
          continue;
       }
 
-      if ( v->getProfessor() == NULL || !v->getProfessor()->eVirtual() )
+      if ( v->getProfessor() == NULL
+         || !v->getProfessor()->eVirtual() )
       {
          continue;
       }
@@ -2090,6 +2092,7 @@ void SolverMIP::getSolutionOperacionalMIP()
          if ( professor_virtual->getId() == v->getProfessor()->getId() )
          {
             achou = true;
+
             professor_virtual->disciplinas.add(
                v->getAula()->getDisciplina()->getId() );
 
@@ -2135,7 +2138,8 @@ int SolverMIP::solve()
       if ( problemData->atendimentosTatico != NULL
             && problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP( itAtTat, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
+         ITERA_GGROUP( itAtTat,
+            ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
          { 
             Campus * campus = problemData->refCampus[ itAtTat->getCampusId() ];
 
@@ -2146,7 +2150,8 @@ int SolverMIP::solve()
             atCampus->setCampusId( campus->getCodigo() );
             atCampus->campus = campus;
 
-            ITERA_GGROUP( itAtUnd, itAtTat->atendimentosUnidades, AtendimentoUnidadeSolucao )
+            ITERA_GGROUP( itAtUnd,
+               itAtTat->atendimentosUnidades, AtendimentoUnidadeSolucao )
             {
                Unidade * unidade = problemData->refUnidade[ itAtUnd->getUnidadeId() ];
 
@@ -2214,22 +2219,31 @@ int SolverMIP::solve()
          getSolutionTatico();
 
          // Preenchendo a estrutura "atendimentosTatico".
-         problemData->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * >();
-         ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
+         problemData->atendimentosTatico
+               = new GGroup< AtendimentoCampusSolucao * >();
+
+         ITERA_GGROUP( it_At_Campus,
+            ( *problemSolution->atendimento_campus ), AtendimentoCampus )
          {
-            problemData->atendimentosTatico->add( new AtendimentoCampusSolucao( **it_At_Campus ) );
+            problemData->atendimentosTatico->add(
+               new AtendimentoCampusSolucao( **it_At_Campus ) );
          }
 
          // Remove a referência para os atendimentos tático (que pertencem ao output tático)
-         ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
+         ITERA_GGROUP( it_At_Campus,
+            ( *problemSolution->atendimento_campus ), AtendimentoCampus )
          {
-            ITERA_GGROUP( it_At_Unidade, ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+            ITERA_GGROUP( it_At_Unidade,
+               ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
             {
-               ITERA_GGROUP( it_At_Sala, ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+               ITERA_GGROUP( it_At_Sala,
+                  ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
                {
-                  ITERA_GGROUP( it_At_DiaSemana, ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+                  ITERA_GGROUP( it_At_DiaSemana,
+                     ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
                   {
-                     GGroup< AtendimentoTatico * > * atendimentos_tatico = it_At_DiaSemana->atendimentos_tatico;
+                     GGroup< AtendimentoTatico * > * atendimentos_tatico
+                           = it_At_DiaSemana->atendimentos_tatico;
 
                      atendimentos_tatico->clear();
                   }
@@ -2237,18 +2251,19 @@ int SolverMIP::solve()
             }
          }
 
-         // Criando as aulas que serão utilizadas para resolver o modelo operacional
+         // Criando as aulas que serão utilizadas
+         // para resolver o modelo operacional
          problemDataLoader->criaAulas();
 
          // Resolvendo o modelo operacional
-         solveOperacionalMIP();
+         status = solveOperacionalMIP();
 
          // Preenche as classes do output operacional
          preencheOutputOperacionalMIP( problemSolution );
       }
    }
 
-   buscaLocalTempoDeslocamentoSolucao();
+   // buscaLocalTempoDeslocamentoSolucao();
 
    return status;
 }
@@ -2265,22 +2280,26 @@ void SolverMIP::relacionaAlunosDemandas()
    // Lendo os atendimentos oferta da soluão
    GGroup< AtendimentoOferta * > atendimentosOferta;
 
-   ITERA_GGROUP( it_At_Campus, ( *problemSolution->atendimento_campus ), AtendimentoCampus )
+   ITERA_GGROUP( it_At_Campus,
+      ( *problemSolution->atendimento_campus ), AtendimentoCampus )
    {
       // Campus do atendimento
       campus = it_At_Campus->campus;
 
-      ITERA_GGROUP( it_At_Unidade, ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
+      ITERA_GGROUP( it_At_Unidade,
+         ( *it_At_Campus->atendimentos_unidades ), AtendimentoUnidade )
       {
          // Unidade do atendimento
          unidade = problemData->refUnidade[ it_At_Unidade->getId() ];
 
-         ITERA_GGROUP( it_At_Sala, ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
+         ITERA_GGROUP( it_At_Sala,
+            ( *it_At_Unidade->atendimentos_salas ), AtendimentoSala )
          {
             // Sala do atendimento
             sala = problemData->refSala[ it_At_Sala->getId() ];
 
-            ITERA_GGROUP( it_At_DiaSemana, ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            ITERA_GGROUP( it_At_DiaSemana,
+               ( *it_At_Sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
             {
                // Dia da semana do atendimento
                dia_semana = it_At_DiaSemana->getDiaSemana();
@@ -2434,7 +2453,6 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
                   Oferta * temp = ( *( aula->ofertas.begin() ) );
                   int turno = temp->getTurnoId();
 
-                  //-------------------------------------------------------------------------------------
                   AtendimentoTurno * atendimento_turno = NULL;
                   ITERA_GGROUP( it,
                      ( *it_At_DiaSemana->atendimentos_turno ), AtendimentoTurno )
@@ -3111,10 +3129,9 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
       }
 
       nR.setRhs( rhsLB );
+
       lp->addRow( nR );
-
       lp->updateLP();
-
       lp->setNodeLimit( 100000000 );
       lp->setTimeLimit( 3600 );
       lp->setNodeLimit( 1 );
@@ -15564,132 +15581,274 @@ void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
       std::map< int, GGroup< AtendimentoBase *,
          LessPtr< AtendimentoBase > > > professorDia = it_map->second;
 
-      std::map< int, GGroup< AtendimentoBase *,
-         LessPtr< AtendimentoBase > > >::iterator it_prof_dia = professorDia.begin();
+      std::map< int, GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > >::iterator
+         it_prof_dia = professorDia.begin();
 
       for (; it_prof_dia != professorDia.end();
              it_prof_dia++ )
       {
          int dia_semana = it_prof_dia->first;
+
+         // Para haver possibilidade de alterarmos o deslocamento
+         // entre unidades, deve existir pelo menos três atendimentos
+         // para o professor no mesmo dia, e em no mínimo duas unidades distintas
+
+         // Verifica se há pelo menos 3 atendimentos
          GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentos = it_prof_dia->second;
 
-         if ( atendimentos.size() <= 1 )
+         if ( atendimentos.size() <= 2 )
          {
             continue;
          }
 
-         // Enquanto houverem 'idas e vindas' do professor
-         while ( true )
-         {
-            // Verifica se existe algum deslocamento entre unidades
-            bool deslocamento = existeDeslocamentoUnidades( atendimentos );
+         // Verifica se há pelo menos 2 unidades
+         GGroup< Unidade *, LessPtr< Unidade > > unidadesDistintas;
 
-            if ( !deslocamento )
+         GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > >::iterator
+            it_at = atendimentos.begin();
+
+         for (; it_at != atendimentos.end();
+                it_at++ )
+         {
+            unidadesDistintas.add( it_at->getUnidade() );
+         }
+
+         if ( unidadesDistintas.size() <= 1 )
+         {
+            continue;
+         }
+
+         std::vector< AtendimentoBase * > vectorAtendimentos;
+         ITERA_GGROUP_LESSPTR( it_at, atendimentos, AtendimentoBase )
+         {
+            vectorAtendimentos.push_back( *it_at );
+         }
+
+         // Armazena todas as combinações possíveis dos
+         // atendimentos noso horários de aula do turno atual
+         std::vector< std::vector< HorarioAula * > > arranjosHorariosDia;
+
+         Combinatoria< HorarioAula * >::arranjos(
+            problemData->horarios_aula_ordenados,
+            (int)atendimentos.size(),  arranjosHorariosDia );
+
+         std::vector< std::vector< HorarioAula * > >::iterator
+            it_arranjosHorariosDia = arranjosHorariosDia.begin();
+
+         for (; it_arranjosHorariosDia != arranjosHorariosDia.end();
+                it_arranjosHorariosDia++ )
+         {
+            std::vector< HorarioAula * > horarios = ( *it_arranjosHorariosDia );
+            std::vector< int > ids_horarios_antigos;
+
+            int deslocamentoAnterior = calculaDeslocamentoUnidades(
+               professor->getId(), dia_semana );
+
+            // Realiza a troca de horários
+            for ( int i = 0; i < (int)horarios.size(); i++ )
             {
-               break;
+               AtendimentoBase * atendimento_base = vectorAtendimentos.at( i );
+               HorarioAula * horario_aula = horarios.at( i );
+
+               ids_horarios_antigos.push_back( alteraHorarioAulaAtendimento(
+                  horario_aula->getId(), atendimento_base->getIdAtHorario() ) );
             }
 
-            // Realiza as possíveis trocas de horários do professor
-            trocaProfessorHorariosAula( atendimentos );
+            int deslocamentoPosterior = calculaDeslocamentoUnidades(
+               professor->getId(), dia_semana );
+
+            bool solucaoValida = validateSolution->checkSolution( problemSolution );
+            bool melhorouSolucao = ( deslocamentoPosterior < deslocamentoAnterior );
+
+            // Verifica se a troca é viável e diminuiu o deslocamento
+            if ( !solucaoValida || !melhorouSolucao )
+            {
+               for ( int i = 0; i < (int)horarios.size(); i++ )
+               {
+                  AtendimentoBase * atendimento_base = vectorAtendimentos.at( i );
+                  int horario_antigo = ids_horarios_antigos.at( i );
+
+                  alteraHorarioAulaAtendimento(
+                     horario_antigo, atendimento_base->getIdAtHorario() );
+               }
+            }
+            else
+            {
+               std::cout << "Troca realizada com sucesso." << std::endl;
+            }
          }
+      }
+   }
+
+   // Desalocando os objetos "AtendimentoBase"
+   it_map = mapProfessorDiaAtendimentos.begin();
+
+   for (; it_map != mapProfessorDiaAtendimentos.end();
+          it_map++ )
+   {
+      std::map< int, GGroup< AtendimentoBase *,
+         LessPtr< AtendimentoBase > > > professorDia = it_map->second;
+
+      std::map< int, GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > >::iterator
+         it_prof_dia = professorDia.begin();
+
+      for (; it_prof_dia != professorDia.end();
+             it_prof_dia++ )
+      {
+         GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosDia = it_prof_dia->second;
+
+         atendimentosDia.deleteElements();
+         atendimentosDia.clear();
       }
    }
 }
 
-int sortAtendimentosBasePorHorarioAula(
+int SolverMIP::alteraHorarioAulaAtendimento(
+   int id_novo_horario_aula, int id_at_horario )
+{
+   ITERA_GGROUP( it_at_campi,
+      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
+   {
+      Campus * campus = this->problemData->refCampus[ it_at_campi->getId() ];
+
+      ITERA_GGROUP( it_at_unidade,
+         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+      {
+         Unidade * unidade = this->problemData->refUnidade[ it_at_unidade->getId() ];
+
+         ITERA_GGROUP( it_at_sala,
+            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+         {
+            Sala * sala = this->problemData->refSala[ it_at_sala->getId() ];
+
+            ITERA_GGROUP( it_at_dia,
+               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            {
+               int dia_semana = it_at_dia->getDiaSemana();
+
+               ITERA_GGROUP( it_at_turno,
+                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               {
+                  Turno * turno = this->problemData->findTurno( it_at_turno->getTurnoId() );
+
+                  ITERA_GGROUP( it_at_horario,
+                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                  {
+                     AtendimentoHorarioAula * at_h = ( *it_at_horario );
+
+                     if ( at_h->getId() == id_novo_horario_aula )
+                     {
+                        int id_horario_aula = at_h->getHorarioAulaId();
+                        at_h->setHorarioAulaId( id_novo_horario_aula );
+                        return id_horario_aula;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   return -1;
+}
+
+int sortAtendimentosPorHorario(
    AtendimentoBase * at1, AtendimentoBase * at2 )
 {
-   return ( at1->getHorarioAula()->getInicio()
-      < at2->getHorarioAula()->getInicio() );
+   return E_MENOR( at1->getHorarioAula(), at1->getHorarioAula() );
 }
 
-bool SolverMIP::existeDeslocamentoUnidades(
-  GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentos )
+int SolverMIP::calculaDeslocamentoUnidades(
+   int id_prof, int dia )
 {
-   // Ordena os atendimentos do dia pelos seus horários de início da aula
-   std::vector< AtendimentoBase * > vectorAtendimentos;
-   ITERA_GGROUP_LESSPTR( it_at, atendimentos, AtendimentoBase )
+   std::vector< AtendimentoBase * > atendimentos;
+
+   ITERA_GGROUP( it_at_campi,
+      ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )
    {
-      vectorAtendimentos.push_back( *it_at );
-   }
+      Campus * campus = this->problemData->refCampus[ it_at_campi->getId() ];
 
-   std::sort( vectorAtendimentos.begin(), vectorAtendimentos.end(),
-      sortAtendimentosBasePorHorarioAula );
-
-   // Verifica se ocorreu uma 'ida e vinda' do professor entre diferentes unidades
-   for ( int i = 0; i < (int)vectorAtendimentos.size(); i++ )
-   {
-      AtendimentoBase * at1 = vectorAtendimentos.at( i );
-
-      bool trocouDeUnidade = false;
-      int idSwap = -1;
-
-      for ( int j = i + 1; j < (int)vectorAtendimentos.size(); j++ )
+      ITERA_GGROUP( it_at_unidade,
+         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
-         AtendimentoBase * at2 = vectorAtendimentos.at( j );
+         Unidade * unidade = this->problemData->refUnidade[ it_at_unidade->getId() ];
 
-         // Temos que o professor tem que voltar
-         // a uma unidade que já deu aula nesse dia
-         if ( trocouDeUnidade
-            && at1->getUnidade() == at2->getUnidade() )
+         ITERA_GGROUP( it_at_sala,
+            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
-            vectorAtendimentos.at( idSwap )->setSwap( true );
-            at2->setSwap( true );
+            Sala * sala = this->problemData->refSala[ it_at_sala->getId() ];
 
-            return true;
-         }
+            ITERA_GGROUP( it_at_dia,
+               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            {
+               int dia_semana = it_at_dia->getDiaSemana();
 
-         // Informa que houve deslocamento entre unidades e armazena-se
-         // ó índice para qual unidade o professor teve que se deslocar
-         if ( at1->getUnidade() != at2->getUnidade() )
-         {
-            trocouDeUnidade = true;
-            idSwap = j;
+               if ( dia_semana != dia )
+               {
+                  continue;
+               }
+
+               ITERA_GGROUP( it_at_turno,
+                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               {
+                  Turno * turno = this->problemData->findTurno( it_at_turno->getTurnoId() );
+
+                  ITERA_GGROUP( it_at_horario,
+                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                  {
+                     AtendimentoHorarioAula * at_h = ( *it_at_horario );
+
+                     HorarioAula * horario_aula = problemData->findHorarioAula(
+                        at_h->getHorarioAulaId() );
+
+                     Professor * professor = problemData->findProfessor(
+                        at_h->getProfessorId() );
+
+                     if ( at_h->getProfessorId() != id_prof )
+                     {
+                        continue;
+                     }
+
+                     AtendimentoBase * atendimento = new AtendimentoBase();
+
+                     atendimento->setCampus( campus );
+                     atendimento->setUnidade( unidade );
+                     atendimento->setSala( sala );
+                     atendimento->setDiaSemana( dia_semana );
+                     atendimento->setTurno( turno );
+                     atendimento->setHorarioAula( horario_aula );
+                     atendimento->setProfessor( professor );
+                     atendimento->setIdAtHorario( it_at_horario->getId() );
+
+                     atendimentos.push_back( atendimento );
+                  }
+               }
+            }
          }
       }
    }
 
-   return false;
-}
+   int contDeslocamentos = 0;
 
-void SolverMIP::trocaProfessorHorariosAula(
-  GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentos )
-{
-   AtendimentoBase * at1 = NULL;
-   AtendimentoBase * at2 = NULL;
+   std::sort( atendimentos.begin(),
+      atendimentos.end(), sortAtendimentosPorHorario );
 
-   ITERA_GGROUP_LESSPTR( it_at, atendimentos, AtendimentoBase )
+   for ( int i = 0; i < (int)atendimentos.size() - 1; i++ )
    {
-      AtendimentoBase * atendimento_base = ( *it_at );
-
-      if ( atendimento_base->isSwap() )
+      if ( atendimentos.at( i )->getUnidade()->getId()
+         != atendimentos.at( i + 1 )->getUnidade()->getId() )
       {
-         if ( at1 == NULL )
-         {
-            at1 = atendimento_base;
-         }
-         else
-         {
-            at2 = atendimento_base;
-            break;
-         }
+         contDeslocamentos++;
       }
    }
 
-   if ( at1 == NULL || at2 == NULL )
+   // Desalocando os objetos "AtendimentoBase"
+   while( !atendimentos.empty() )
    {
-      return;
+      AtendimentoBase * at = ( atendimentos.back() );
+      delete at;
+      atendimentos.pop_back();
    }
 
-   at1->setSwap( false );
-   at2->setSwap( false );
-
-   std::cout << "Realizou uma troca de atendimentos." << std::endl;
-   std::swap( at1, at2 );
-
-   if ( !this->validateSolution->checkSolution( this->problemSolution ) )
-   {
-      std::cout << "Desfez a troca de atendimentos." << std::endl;
-      std::swap( at1, at2 );
-   }
+   return contDeslocamentos;
 }

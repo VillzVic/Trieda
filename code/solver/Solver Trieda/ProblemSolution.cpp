@@ -38,7 +38,8 @@ ProblemSolution::~ProblemSolution()
    }
 }
 
-std::ostream & operator << ( std::ostream & out, ProblemSolution & solution )
+std::ostream & operator << (
+   std::ostream & out, ProblemSolution & solution )
 {
    // TATICO
    if ( solution.modoOtmTatico )

@@ -18,7 +18,7 @@ class AtendimentoBase
 public:
 
    AtendimentoBase() { this->reset(); }
-   virtual ~AtendimentoBase() { this->reset(); }
+   virtual ~AtendimentoBase() { }
 
    virtual bool operator < ( const AtendimentoBase & right )
    { 
