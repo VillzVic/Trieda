@@ -124,6 +124,8 @@ public class AlunosDemandaImportExcel
 					}
 					else if ( MATRICULA_ALUNO_COLUMN_NAME.endsWith( columnName ) )
 					{
+						cell.setCellType( HSSFCell.CELL_TYPE_STRING );
+						cellValue = getCellValue( cell );
 						bean.setMatriculaAlunoStr( cellValue );
 					}
 					else if ( NOME_ALUNO_COLUMN_NAME.endsWith( columnName ) )

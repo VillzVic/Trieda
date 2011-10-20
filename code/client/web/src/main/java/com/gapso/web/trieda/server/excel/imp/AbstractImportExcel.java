@@ -291,15 +291,25 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		{
     		case HSSFCell.CELL_TYPE_STRING:
     		{
-    			return cell.getRichStringCellValue().getString().trim();
+    			return getCellStringValue( cell );
     		}
     		case HSSFCell.CELL_TYPE_NUMERIC:
     		{
-    			return Double.toString( cell.getNumericCellValue() );
+    			return getCellNumericValue( cell );
     		}
     	}
 
 		return null;
+	}
+
+	protected String getCellStringValue( HSSFCell cell )
+	{
+		return cell.getRichStringCellValue().getString().trim();
+	}
+
+	protected String getCellNumericValue( HSSFCell cell )
+	{
+		return Double.toString( cell.getNumericCellValue() );
 	}
 
 	protected Cenario getCenario()

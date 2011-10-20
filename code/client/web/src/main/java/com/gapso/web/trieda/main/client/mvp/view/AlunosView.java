@@ -82,7 +82,7 @@ public class AlunosView
 		List< ColumnConfig > list
 			= new ArrayList< ColumnConfig >();
 
-		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_NOME, "Nome", 250 ) );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_NOME, "Nome", 400 ) );
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, "Matricula" , 150 ) );
 
 		return list;
