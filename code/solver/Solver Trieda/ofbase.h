@@ -28,7 +28,7 @@
 #endif
 
 #ifndef ITERA_GGROUP
-#define ITERA_GGROUP(it,ggroup,type) for ( GGroup<type *>::iterator it = (ggroup).begin(); it != (ggroup).end(); ++it )
+#define ITERA_GGROUP( it, ggroup, type ) for ( GGroup< type * >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
 #endif
 
 #ifndef ITERA_GGROUP_LESSPTR
@@ -40,12 +40,12 @@
 #endif
 
 #ifndef ITERA_GGROUP_N_PT
-#define ITERA_GGROUP_N_PT(it,ggroup,type) for ( GGroup<type>::iterator it = (ggroup).begin(); it != (ggroup).end(); ++it )
+#define ITERA_GGROUP_N_PT( it, ggroup, type ) for ( GGroup< type >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
 #endif
 
 // A macro abaixo serve para iterar em vectors da STL
 #ifndef ITERA_VECTOR
-#define ITERA_VECTOR(it,vt,type) for ( std::vector<type *>::iterator it = (vt).begin(); it != (vt).end(); ++it)
+#define ITERA_VECTOR( it, vt, type ) for ( std::vector< type * >::iterator it = ( vt ).begin(); it != ( vt ).end(); ++it )
 #endif
 
 class OFBase
@@ -59,22 +59,22 @@ public:
 
    virtual void le_arvore( ::xml_schema::type & raiz ) { };
 
-   virtual bool operator < ( const OFBase& right )
+   virtual bool operator < ( const OFBase & right ) const
    { 
       return ( getId() < right.getId() );
    }
 
-   virtual bool operator > ( const OFBase& right )
+   virtual bool operator > ( const OFBase & right ) const
    { 
       return ( getId() > right.getId() );
    }
 
-   virtual bool operator == ( const OFBase & right )
+   virtual bool operator == ( const OFBase & right ) const
    { 
       return ( getId() == right.getId() );
    }
 
-   virtual bool operator != ( const OFBase & right )
+   virtual bool operator != ( const OFBase & right ) const
    { 
       return !( getId() == right.getId() );
    }

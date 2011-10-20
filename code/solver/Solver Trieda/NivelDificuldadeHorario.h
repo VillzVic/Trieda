@@ -8,15 +8,15 @@ class NivelDificuldadeHorario :
    public OFBase
 {
 public:
-   NivelDificuldadeHorario(void);
-   ~NivelDificuldadeHorario(void);
+   NivelDificuldadeHorario( void );
+   virtual ~NivelDificuldadeHorario( void );
 
    int nivel_dificuldade_id;
-   GGroup<int> horarios_aula; 
+   GGroup< int > horarios_aula; 
 
-   virtual void le_arvore(ItemNivelDificuldadeHorario& elem);
+   virtual void le_arvore( ItemNivelDificuldadeHorario & );
 
-   NivelDificuldade* nivel_dificuldade;
+   NivelDificuldade * nivel_dificuldade;
 };
  
 #endif

@@ -7,16 +7,16 @@ class DivisaoCreditos :
    public OFBase
 {
 public:
-   DivisaoCreditos(void);   
-   ~DivisaoCreditos(void);
-   DivisaoCreditos(DivisaoCreditos const & div_Creds);
+   DivisaoCreditos( void );
+   DivisaoCreditos( DivisaoCreditos const & );
+   virtual ~DivisaoCreditos( void );
 
-   virtual void le_arvore(ItemDivisaoCreditos& elem);
+   virtual void le_arvore( ItemDivisaoCreditos & );
 
-   int dia[8];
+   int dia[ 8 ];
 
-   void setCreditos(int value) { creditos = value; }
-   int getCreditos() const { return creditos; }
+   void setCreditos( int value ) { this->creditos = value; }
+   int getCreditos() const { return this->creditos; }
 
 private:
    int creditos;

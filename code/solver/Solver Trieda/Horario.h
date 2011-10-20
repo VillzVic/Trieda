@@ -10,8 +10,8 @@ class Horario :
    public OFBase
 {
 public:
-   Horario(void);
-   virtual ~Horario(void);
+   Horario( void );
+   virtual ~Horario( void );
 
    virtual void le_arvore( ItemHorario & );
 
@@ -20,26 +20,30 @@ public:
 
    GGroup< int > dias_semana;
 
-   void setHorarioAulaId(int v) { horarioAulaId = v; }
-   void setTurnoId(int v) { turnoId = v; }
+   void setHorarioAulaId( int v ) { horarioAulaId = v; }
+   void setTurnoId( int v ) { turnoId = v; }
 
    int getHorarioAulaId() const { return horarioAulaId; }
    int getTurnoId() const { return turnoId; }
 
-   virtual bool operator < ( Horario const & right ) 
+   virtual bool operator < ( Horario const & right ) const
    {
-      if(horario_aula)
-         return ( (*horario_aula) <  (*right.horario_aula) );
+      if ( horario_aula )
+      {
+         return ( ( *horario_aula ) <  ( *right.horario_aula ) );
+      }
 
-      return horarioAulaId < right.horarioAulaId;
+      return ( horarioAulaId < right.horarioAulaId );
    }
 
-   virtual bool operator == ( Horario const & right ) 
+   virtual bool operator == ( Horario const & right ) const
    {
-      if(horario_aula)
-         return ( (*horario_aula) ==  (*right.horario_aula) );
+      if ( horario_aula )
+      {
+         return ( ( *horario_aula ) ==  ( *right.horario_aula ) );
+      }
 
-      return horarioAulaId == right.horarioAulaId;
+      return ( horarioAulaId == right.horarioAulaId );
    }
 
 private:

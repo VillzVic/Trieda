@@ -17,7 +17,7 @@ void Magisterio::le_arvore( ItemProfessorDisciplina & elem )
 	disciplina_id = elem.disciplinaId();
 }
 
-bool Magisterio::operator < ( const Magisterio & right )
+bool Magisterio::operator < ( const Magisterio & right ) const
 {
    if ( disciplina_id < right.disciplina_id ) return true;
    if ( disciplina_id > right.disciplina_id ) return false;
@@ -31,7 +31,7 @@ bool Magisterio::operator < ( const Magisterio & right )
    return false;
 }
 
-bool Magisterio::operator > ( const Magisterio & right )
+bool Magisterio::operator > ( const Magisterio & right ) const
 {
    if ( disciplina_id < right.disciplina_id ) return false;
    if ( disciplina_id > right.disciplina_id ) return true;
@@ -45,7 +45,7 @@ bool Magisterio::operator > ( const Magisterio & right )
    return false;
 }
 
-bool Magisterio::operator == ( const Magisterio & right )
+bool Magisterio::operator == ( const Magisterio & right ) const
 {
    return (
       ( disciplina_id == right.disciplina_id ) && 
@@ -53,7 +53,7 @@ bool Magisterio::operator == ( const Magisterio & right )
       ( preferencia == right.preferencia ) );
 }
 
-bool Magisterio::operator != ( const Magisterio & right )
+bool Magisterio::operator != ( const Magisterio & right ) const
 {
    return !( *this == right );
 }

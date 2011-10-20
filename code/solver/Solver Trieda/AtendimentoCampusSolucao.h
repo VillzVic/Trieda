@@ -9,29 +9,29 @@ class AtendimentoCampusSolucao :
    public OFBase
 {
 public:
-   AtendimentoCampusSolucao();
-   AtendimentoCampusSolucao(AtendimentoCampus &);
-   virtual ~AtendimentoCampusSolucao();
+   AtendimentoCampusSolucao( void );
+   AtendimentoCampusSolucao( AtendimentoCampus & );
+   virtual ~AtendimentoCampusSolucao( void );
 
    virtual void le_arvore( ItemAtendimentoCampusSolucao & );
 
    GGroup< AtendimentoUnidadeSolucao * > atendimentosUnidades;
 
-   virtual bool operator < ( AtendimentoCampusSolucao & right )
+   virtual bool operator < ( AtendimentoCampusSolucao & right ) const
    { 
-      return ( campusId < right.getCampusId() );
+      return ( this->campusId < right.getCampusId() );
    }
 
-   virtual bool operator == ( AtendimentoCampusSolucao & right )
+   virtual bool operator == ( AtendimentoCampusSolucao & right ) const
    { 
-	   return ( campusId == right.getCampusId() );
+	   return ( this->campusId == right.getCampusId() );
    }
 
-   void setCampusId( int v ) { campusId = v; }
-   void setCampusCodigo( std::string s ) { campusCodigo = s; }
+   void setCampusId( int v ) { this->campusId = v; }
+   void setCampusCodigo( std::string s ) { this->campusCodigo = s; }
 
-   int getCampusId() { return campusId; }
-   std::string getCampusCodigo() { return campusCodigo; }
+   int getCampusId() const { return this->campusId; }
+   std::string getCampusCodigo() const { return this->campusCodigo; }
 
 private:
    int campusId;

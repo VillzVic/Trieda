@@ -1,81 +1,61 @@
 #include "ValidateSolution.h"
 
-// Método utilizado para ordenas os atendimentos de
-// acordo com o horário de aula, considerando que todos
-// esses atendimentos pertencem ao mesmo dia da semana
-int sortAtendimentosBase(
-   AtendimentoBase * at1, AtendimentoBase * at2 )
-{
-   if ( at1->getHorarioAula() < at2->getHorarioAula() )
-   {
-      return -1;
-   }
-   else if ( at2->getHorarioAula() < at1->getHorarioAula() )
-   {
-      return 1;
-   }
-
-   return 0;
-}
-
-ValidateSolutionOp::ValidateSolutionOp( ProblemData * data  )
-{
-   this->pData = data;
-   this->solution = NULL;
-}
-
-ValidateSolutionOp::~ValidateSolutionOp()
+ValidateSolutionOp::ValidateSolutionOp( void )
 {
 
 }
 
-bool ValidateSolutionOp::checkSolution( ProblemSolution *  sol )
+ValidateSolutionOp::~ValidateSolutionOp( void )
 {
-   this->setSolution( sol );
 
-   if ( !checkRestricaoAlocacaoAulas() )
+}
+
+bool ValidateSolutionOp::checkSolution(
+   const ProblemData * pData, const ProblemSolution * sol )
+{
+   if ( !checkRestricaoAlocacaoAulas( pData, sol ) )
    {
       return false;
    }
 
-   if ( !checkRestricaoProfessorHorario() )
+   if ( !checkRestricaoProfessorHorario( pData, sol ) )
    {
       return false;
    }
 
-   if ( !checkRestricaoSalaHorario() )
+   if ( !checkRestricaoSalaHorario( pData, sol ) )
    {
       return false;
    }
 
-   if ( !checkRestricaoBlocoHorario() )
+   if ( !checkRestricaoBlocoHorario( pData, sol ) )
    {
       return false;
    }
 
-   if ( !checkRestricaoFixProfDiscSalaDiaHorario() )
+   if ( !checkRestricaoFixProfDiscSalaDiaHorario( pData, sol ) )
    {
       return false;
    }
 
-   if ( !checkRestricaoFixProfDiscDiaHor() )
+   if ( !checkRestricaoFixProfDiscDiaHor( pData, sol ) )
    {
       return false;
    }
 
    /*
-   if ( !checkRestricaoDisciplinaMesmoHorario() )
+   if ( !checkRestricaoDisciplinaMesmoHorario( pData, sol ) )
    {
       return false;
    }
    */
 
-   if ( !checkRestricaoDeslocamentoViavel() )
+   if ( !checkRestricaoDeslocamentoViavel( pData, sol ) )
    {
       return false;
    }
 
-   if ( !checkRestricaoDeslocamentoProfessor() )
+   if ( !checkRestricaoDeslocamentoProfessor( pData, sol ) )
    {
       return false;
    }
@@ -83,15 +63,19 @@ bool ValidateSolutionOp::checkSolution( ProblemSolution *  sol )
    return true;
 }
 
-bool ValidateSolutionOp::checkRestricaoProfessorHorario()
+bool ValidateSolutionOp::checkRestricaoProfessorHorario(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
+   bool result = true;
+
    // Armazenando todos os professores
    GGroup< Professor *, LessPtr< Professor > > professores
       = pData->getProfessores();
 
    // Relaciona cada professor com os dias e
    // horários que eles possuem aulas alocadas na solução
-   std::map< std::string, bool > mapProfessorDiaHorario;
+   std::map< Professor *, GGroup< AtendimentoBase >,
+      LessPtr< Professor > > mapProfessorDiaHorario;
 
    // Percorrendo a solução procurando por conflitos
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
@@ -99,19 +83,19 @@ bool ValidateSolutionOp::checkRestricaoProfessorHorario()
       Professor * professor = ( *it_prof );
 
       ITERA_GGROUP( it_at_campi,
-         ( *solution->atendimento_campus ), AtendimentoCampus )
+         ( *sol->atendimento_campus ), AtendimentoCampus )
       {
-         Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+         Campus * campus = it_at_campi->campus;
 
          ITERA_GGROUP( it_at_unidade,
             ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
          {
-            Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+            Unidade * unidade = it_at_unidade->unidade;
 
             ITERA_GGROUP( it_at_sala,
                ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
             {
-               Sala * sala = pData->refSala[ it_at_sala->getId() ];
+               Sala * sala = it_at_sala->sala;
 
                ITERA_GGROUP( it_at_dia,
                   ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
@@ -121,45 +105,55 @@ bool ValidateSolutionOp::checkRestricaoProfessorHorario()
                   ITERA_GGROUP( it_at_turno,
                      ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                   {
-                     Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                     Turno * turno = it_at_turno->turno;
 
                      ITERA_GGROUP( it_at_horario,
                         ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                      {
-                        HorarioAula * horario_aula = pData->findHorarioAula(
-                           it_at_horario->getHorarioAulaId() );
-
                         if ( it_at_horario->getProfessorId() != professor->getId() )
                         {
                            continue;
                         }
 
-                        std::string key = "";
-                        std::stringstream out;
+                        HorarioAula * horario_aula = it_at_horario->horario_aula;
 
-                        out << professor->getId() << "-"
-                            << dia_semana << "-"
-                            << horario_aula->getId();
+                        AtendimentoBase atendimento;
 
-                        key += out.str();
+                        atendimento.professor = professor;
+                        atendimento.dia_semana = dia_semana;
+                        atendimento.horario_aula = horario_aula;
 
-                        std::map< std::string, bool >::iterator
-                           it_find = mapProfessorDiaHorario.find( key );
+                        std::map< Professor *, GGroup< AtendimentoBase >,
+                           LessPtr< Professor > >::iterator
+                           it_find = mapProfessorDiaHorario.find( professor );
 
                         // Já temos esse dia/horário ocupados para o professor em questão
-                        if ( it_find != mapProfessorDiaHorario.end() && it_find->second == true )
+                        if ( it_find != mapProfessorDiaHorario.end() )
                         {
-                           std::cout << "\nTentativa de alocar o professor " << professor->getId()
-                                     << " no dia " << dia_semana
-                                     << " e horario " << horario_aula->getId()
-                                     << " em mais de uma aula." << std::endl << std::endl;
+                           GGroup< AtendimentoBase > atendimentosProf = it_find->second;
 
-                           return false;
+                           bool horarioOcupado = ( atendimentosProf.find( atendimento ) == atendimentosProf.end() );
+
+                           if ( horarioOcupado )
+                           {
+                              #ifdef DEBUG
+                              std::cout << "\nTentativa de alocar o professor " << professor->getId()
+                                        << " no dia " << dia_semana
+                                        << " e horario " << horario_aula->getId()
+                                        << " em mais de uma aula." << std::endl << std::endl;
+                              #endif
+
+                              // A solução não é válida
+                              result = false;
+                           }
+                           else
+                           {
+                              it_find->second.add( atendimento );
+                           }
                         }
                         else
                         {
-                           // Informamos que esse dia/horário estão ocupados para esse professor
-                           mapProfessorDiaHorario[ key ] = true;
+                           mapProfessorDiaHorario[ professor ].add( atendimento );
                         }
                      } // Horário de aula
                   } // Turno
@@ -169,29 +163,29 @@ bool ValidateSolutionOp::checkRestricaoProfessorHorario()
       } // Campus
    } // Profesor
 
-   // A solução é válida
-   return true;
+   return result;
 }
 
-bool ValidateSolutionOp::checkRestricaoSalaHorario()
+bool ValidateSolutionOp::checkRestricaoSalaHorario(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
    // Relaciona cada sala com os dias e horários que elas possuem aulas alocadas na solução
    std::map< std::string, bool > mapSalaDiaHorario;
 
    ITERA_GGROUP( it_at_campi,
-      ( *solution->atendimento_campus ), AtendimentoCampus )
+      ( *sol->atendimento_campus ), AtendimentoCampus )
    {
-      Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+      Campus * campus = it_at_campi->campus;
 
       ITERA_GGROUP( it_at_unidade,
          ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
-         Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+         Unidade * unidade = it_at_unidade->unidade;
 
          ITERA_GGROUP( it_at_sala,
             ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
-            Sala * sala = pData->refSala[ it_at_sala->getId() ];
+            Sala * sala = it_at_sala->sala;
 
             ITERA_GGROUP( it_at_dia,
                ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
@@ -201,13 +195,12 @@ bool ValidateSolutionOp::checkRestricaoSalaHorario()
                ITERA_GGROUP( it_at_turno,
                   ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                {
-                  Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                  Turno * turno = it_at_turno->turno;;
 
                   ITERA_GGROUP( it_at_horario,
                      ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                   {
-                     HorarioAula * horario_aula = pData->findHorarioAula(
-                        it_at_horario->getHorarioAulaId() );
+                     HorarioAula * horario_aula = it_at_horario->horario_aula;
 
                      std::string key = "";
                      std::stringstream out;
@@ -225,11 +218,13 @@ bool ValidateSolutionOp::checkRestricaoSalaHorario()
                      if ( it_find != mapSalaDiaHorario.end()
                         && it_find->second == true )
                      {
+                        #ifdef DEBUG
                         std::cout << "\nTentativa de alocar mais de uma "
                                   << "aula na sala " << sala->getId()
                                   << ", no dia " << dia_semana
                                   << " e horario " << horario_aula->getId()
                                   << std::endl << std::endl;
+                        #endif
 
                         return false;
                      }
@@ -249,7 +244,8 @@ bool ValidateSolutionOp::checkRestricaoSalaHorario()
    return true;
 }
 
-bool ValidateSolutionOp::checkRestricaoBlocoHorario()
+bool ValidateSolutionOp::checkRestricaoBlocoHorario(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
    // Relaciona cada sala com os dias e horários que elas possuem aulas alocadas na solução
    std::map< std::string, Disciplina * > mapBlocoDiaHorario;
@@ -258,39 +254,47 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario()
    {
       BlocoCurricular * bloco_curricular = ( *it_bloco );
 
-      ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+      ITERA_GGROUP( it_at_campi,
+         ( *sol->atendimento_campus ), AtendimentoCampus )
       {
-         Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+         Campus * campus = it_at_campi->campus;
 
-         ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+         ITERA_GGROUP( it_at_unidade,
+            ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
          {
-            Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+            Unidade * unidade = it_at_unidade->unidade;
 
-            ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+            ITERA_GGROUP( it_at_sala,
+               ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
             {
-               Sala * sala = pData->refSala[ it_at_sala->getId() ];
+               Sala * sala = it_at_sala->sala;
 
-               ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+               ITERA_GGROUP( it_at_dia,
+                  ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
                {
                   int dia_semana = it_at_dia->getDiaSemana();
 
-                  ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+                  ITERA_GGROUP( it_at_turno,
+                     ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                   {
-                     Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                     Turno * turno = it_at_turno->turno;
 
-                     ITERA_GGROUP( it_at_horario, ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                     ITERA_GGROUP( it_at_horario,
+                        ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                      {
-                        HorarioAula * horario_aula = pData->findHorarioAula( it_at_horario->getHorarioAulaId() );
+                        HorarioAula * horario_aula = it_at_horario->horario_aula;
 
-                        ITERA_GGROUP( it_at_oferta, ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
+                        ITERA_GGROUP( it_at_oferta,
+                           ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
                         {
                            int id_oferta = atoi( it_at_oferta->getOfertaCursoCampiId().c_str() );
 
-                           Oferta * oferta = pData->refOfertas[ id_oferta ];
-                           Disciplina * disciplina = pData->refDisciplinas[ it_at_oferta->getDisciplinaId() ];
+                           Oferta * oferta = pData->findOferta( id_oferta );
+                           Disciplina * disciplina = it_at_oferta->disciplina;
                            int turma = it_at_oferta->getTurma();
 
-                           // Procuramos o período no qual a disciplina é ministrada a esse bloco curricular
+                           // Procuramos o período no qual a disciplina
+                           // é ministrada para esse bloco curricular
                            int periodoDisciplina = -1;
 
                            GGroup< std::pair< int, Disciplina * > >::iterator
@@ -336,6 +340,7 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario()
                            if ( it_find != mapBlocoDiaHorario.end()
                               && it_find->second->getId() != disciplina->getId() )
                            {
+                              #ifdef DEBUG
                               std::cout << "\nTentativa de alocar mais \nde uma "
                                         << "aula ao bloco curricular \n\n" << key
                                         << std::endl << std::endl;
@@ -344,6 +349,7 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario()
                                         << it_find->second->getId() 
                                         << " e " << disciplina->getId()
                                         << std::endl << std::endl;
+                              #endif;
 
                               return false;
                            }
@@ -365,7 +371,8 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario()
    return true;
 }
 
-bool ValidateSolutionOp::checkRestricaoFixProfDiscSalaDiaHorario()
+bool ValidateSolutionOp::checkRestricaoFixProfDiscSalaDiaHorario(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
    // Caso não exista nenhuma fixação do tipo
    // 'ProfDiscSalaDiaHorario' não é necessário verificar a solução
@@ -378,37 +385,42 @@ bool ValidateSolutionOp::checkRestricaoFixProfDiscSalaDiaHorario()
    // para todos os professores, disciplinas, salas, dias e horários
    std::map< std::string, bool > mapProfDiscSalaDiaHorario;
 
-   ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+   ITERA_GGROUP( it_at_campi,
+      ( *sol->atendimento_campus ), AtendimentoCampus )
    {
-      Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+      Campus * campus = it_at_campi->campus;
 
-      ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+      ITERA_GGROUP( it_at_unidade,
+         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
-         Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+         Unidade * unidade = it_at_unidade->unidade;
 
-         ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+         ITERA_GGROUP( it_at_sala,
+            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
-            Sala * sala = pData->refSala[ it_at_sala->getId() ];
+            Sala * sala = it_at_sala->sala;
 
-            ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            ITERA_GGROUP( it_at_dia,
+               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
             {
                int dia_semana = it_at_dia->getDiaSemana();
 
-               ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               ITERA_GGROUP( it_at_turno,
+                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                {
-                  Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                  Turno * turno = it_at_turno->turno;
 
-                  ITERA_GGROUP( it_at_horario, ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                  ITERA_GGROUP( it_at_horario,
+                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                   {
-                     Professor * professor = pData->findProfessor( it_at_horario->getProfessorId() );
+                     Professor * professor = it_at_horario->professor;
+                     HorarioAula * horario_aula = it_at_horario->horario_aula;
 
-                     HorarioAula * horario_aula = pData->findHorarioAula(
-                        it_at_horario->getHorarioAulaId() );
-
-                     ITERA_GGROUP( it_at_oferta, ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
+                     ITERA_GGROUP( it_at_oferta,
+                        ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
                      {
                         int id_oferta = atoi( it_at_oferta->getOfertaCursoCampiId().c_str() );
-                        Oferta * oferta = pData->refOfertas[ id_oferta ];
+                        Oferta * oferta = pData->findOferta( id_oferta );
 
                         std::string key = "";
                         std::stringstream out;
@@ -482,7 +494,8 @@ bool ValidateSolutionOp::checkRestricaoFixProfDiscSalaDiaHorario()
    return true;
 }
 
-bool ValidateSolutionOp::checkRestricaoFixProfDiscDiaHor()
+bool ValidateSolutionOp::checkRestricaoFixProfDiscDiaHor(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
    // Caso não exista nenhuma fixação do tipo
    // 'ProfDiscDiaHor' não é necessário verificar a solução
@@ -495,37 +508,43 @@ bool ValidateSolutionOp::checkRestricaoFixProfDiscDiaHor()
    // para todos os professores, disciplinas, salas, dias e horários
    std::map< std::string, bool > mapProfDiscDiaHorario;
 
-   ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+   ITERA_GGROUP( it_at_campi,
+      ( *sol->atendimento_campus ), AtendimentoCampus )
    {
-      Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+      Campus * campus = it_at_campi->campus;
 
-      ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+      ITERA_GGROUP( it_at_unidade,
+         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
-         Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+         Unidade * unidade = it_at_unidade->unidade;
 
-         ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+         ITERA_GGROUP( it_at_sala,
+            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
-            Sala * sala = pData->refSala[ it_at_sala->getId() ];
+            Sala * sala = it_at_sala->sala;
 
-            ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            ITERA_GGROUP( it_at_dia,
+               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
             {
                int dia_semana = it_at_dia->getDiaSemana();
 
-               ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               ITERA_GGROUP( it_at_turno,
+                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                {
-                  Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                  Turno * turno = it_at_turno->turno;
 
-                  ITERA_GGROUP( it_at_horario, ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                  ITERA_GGROUP( it_at_horario,
+                     ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                   {
-                     Professor * professor = pData->findProfessor( it_at_horario->getProfessorId() );
+                     Professor * professor = it_at_horario->professor;
 
-                     HorarioAula * horario_aula = pData->findHorarioAula(
-                        it_at_horario->getHorarioAulaId() );
+                     HorarioAula * horario_aula = it_at_horario->horario_aula;
 
-                     ITERA_GGROUP( it_at_oferta, ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
+                     ITERA_GGROUP( it_at_oferta,
+                        ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
                      {
                         int id_oferta = atoi( it_at_oferta->getOfertaCursoCampiId().c_str() );
-                        Oferta * oferta = pData->refOfertas[ id_oferta ];
+                        Oferta * oferta = pData->findOferta( id_oferta );
 
                         std::string key = "";
                         std::stringstream out;
@@ -597,7 +616,8 @@ bool ValidateSolutionOp::checkRestricaoFixProfDiscDiaHor()
    return true;
 }
 
-bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
+bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor(
+   const ProblemData * pData, const ProblemSolution * sol  )
 {
    // Não foram cadastradas as informações
    // de deslocamento entre campus e unidades
@@ -619,29 +639,35 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
    {
       Professor * professor = ( *it_prof );
 
-      ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+      ITERA_GGROUP( it_at_campi,
+         ( *sol->atendimento_campus ), AtendimentoCampus )
       {
-         Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+         Campus * campus = it_at_campi->campus;
 
-         ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+         ITERA_GGROUP( it_at_unidade,
+            ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
          {
-            Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+            Unidade * unidade = it_at_unidade->unidade;
 
-            ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+            ITERA_GGROUP( it_at_sala,
+               ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
             {
-               Sala * sala = pData->refSala[ it_at_sala->getId() ];
+               Sala * sala = it_at_sala->sala;
 
-               ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+               ITERA_GGROUP( it_at_dia,
+                  ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
                {
                   int dia_semana = it_at_dia->getDiaSemana();
 
-                  ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+                  ITERA_GGROUP( it_at_turno,
+                     ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                   {
-                     Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                     Turno * turno = it_at_turno->turno;
 
-                     ITERA_GGROUP( it_at_horario, ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                     ITERA_GGROUP( it_at_horario,
+                        ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                      {
-                        HorarioAula * horario_aula = pData->findHorarioAula( it_at_horario->getHorarioAulaId() );
+                        HorarioAula * horario_aula = it_at_horario->horario_aula;
 
                         if ( it_at_horario->getProfessorId() != professor->getId() )
                         {
@@ -650,12 +676,12 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
 
                         AtendimentoBase * atendimento = new AtendimentoBase();
 
-                        atendimento->setProfessor( professor );
-                        atendimento->setCampus( campus );
-                        atendimento->setUnidade( unidade );
-                        atendimento->setSala( sala );
-                        atendimento->setTurno( turno );
-                        atendimento->setHorarioAula( horario_aula );
+                        atendimento->professor = professor;
+                        atendimento->campus = campus;
+                        atendimento->unidade = unidade;
+                        atendimento->sala = sala;
+                        atendimento->turno = turno;
+                        atendimento->horario_aula = horario_aula;
 
                         std::pair< Professor *, int > professor_dia
                            = std::make_pair( professor, dia_semana );
@@ -693,15 +719,14 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
          atProfVector.push_back( at );
       }
 
-      std::sort( atProfVector.begin(),
-         atProfVector.end(), sortAtendimentosBase );
+      // TODO -- ordenar 'atProfVector' por horario
 
       for ( int i = 0; i < (int)( atProfVector.size() - 1 ); i++ ) 
       {
          AtendimentoBase * at1 = atProfVector.at( i );
          AtendimentoBase * at2 = atProfVector.at( i + 1 );
 
-         bool deslocViavel = deslocamentoViavel( at1, at2 );
+         bool deslocViavel = deslocamentoViavel( pData, at1, at2 );
 
          if ( !deslocViavel )
          {
@@ -729,13 +754,17 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor()
    return result;
 }
 
-bool ValidateSolutionOp::deslocamentoViavel(
-   AtendimentoBase * at1, AtendimentoBase * at2 )
+bool ValidateSolutionOp::deslocamentoViavel( const ProblemData * pData,
+   const AtendimentoBase * at1, const AtendimentoBase * at2 )
 {
-   DateTime dt1 = at1->getHorarioAula()->getInicio();
-   dt1.addMinutes( at1->getTurno()->getTempoAula() );
+   Turno * turno = at1->turno;
+   HorarioAula * horario_aula1 = at1->horario_aula;
+   HorarioAula * horario_aula2 = at2->horario_aula;
 
-   DateTime dt2 = at2->getHorarioAula()->getInicio();
+   DateTime dt1 = horario_aula1->getInicio();
+   dt1.addMinutes( turno->getTempoAula() );
+
+   DateTime dt2 = horario_aula2->getInicio();
    DateTime diff = dt2 - dt1;
 
    int minutosDisponiveis = diff.getDateMinutes();
@@ -751,8 +780,11 @@ bool ValidateSolutionOp::deslocamentoViavel(
       int id_unidade1 = it_desloc->getOrigemId();
       int id_unidade2 = it_desloc->getDestinoId();
 
-      if ( ( id_unidade1 == at1->getUnidade()->getId() && id_unidade2 == at2->getUnidade()->getId() )
-         || ( id_unidade2 == at1->getUnidade()->getId() && id_unidade1 == at2->getUnidade()->getId() ) )
+      Unidade * unidade1 = pData->refUnidade.find( id_unidade1 )->second;
+      Unidade * unidade2 = pData->refUnidade.find( id_unidade2 )->second;
+
+      if ( ( id_unidade1 == unidade1->getId() && id_unidade2 == unidade2->getId() )
+         || ( id_unidade2 == unidade1->getId() && id_unidade1 == unidade2->getId() ) )
       {
          minutosNecessarios = it_desloc->getTempo();
          break;
@@ -762,7 +794,8 @@ bool ValidateSolutionOp::deslocamentoViavel(
    return ( minutosNecessarios <= minutosDisponiveis );
 }
 
-bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
+bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
    if ( pData->tempo_campi.size() == 0
       && pData->tempo_unidades.size() == 0 )
@@ -774,42 +807,51 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
    std::map< std::pair< BlocoCurricular *, int > ,
       GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > > mapBlocoAtendimentos;
 
-   ITERA_GGROUP_LESSPTR( it_bloco, pData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( it_bloco,
+      pData->blocos, BlocoCurricular )
    {
       BlocoCurricular * bloco_curricular = ( *it_bloco );
 
-      ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+      ITERA_GGROUP( it_at_campi,
+         ( *sol->atendimento_campus ), AtendimentoCampus )
       {
-         Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+         Campus * campus = it_at_campi->campus;
 
-         ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+         ITERA_GGROUP( it_at_unidade,
+            ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
          {
-            Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+            Unidade * unidade = it_at_unidade->unidade;
 
-            ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+            ITERA_GGROUP( it_at_sala,
+               ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
             {
-               Sala * sala = pData->refSala[ it_at_sala->getId() ];
+               Sala * sala = it_at_sala->sala;
 
-               ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+               ITERA_GGROUP( it_at_dia,
+                  ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
                {
                   int dia_semana = it_at_dia->getDiaSemana();
 
-                  ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+                  ITERA_GGROUP( it_at_turno,
+                     ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                   {
-                     Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                     Turno * turno = it_at_turno->turno;
 
-                     ITERA_GGROUP( it_at_horario, ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
+                     ITERA_GGROUP( it_at_horario,
+                        ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                      {
-                        HorarioAula * horario_aula = pData->findHorarioAula( it_at_horario->getHorarioAulaId() );
+                        HorarioAula * horario_aula = it_at_horario->horario_aula;
 
-                        ITERA_GGROUP( it_at_oferta, ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
+                        ITERA_GGROUP( it_at_oferta,
+                           ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
                         {
                            int id_oferta = atoi( it_at_oferta->getOfertaCursoCampiId().c_str() );
 
-                           Oferta * oferta = pData->refOfertas[ id_oferta ];
-                           Disciplina * disciplina = pData->refDisciplinas[ it_at_oferta->getDisciplinaId() ];
+                           Oferta * oferta = pData->findOferta( id_oferta );
+                           Disciplina * disciplina = it_at_oferta->disciplina;
 
-                           // Procuramos o período no qual a disciplina é ministrada a esse bloco curricular
+                           // Procuramos o período no qual a disciplina
+                           // é ministrada para esse bloco curricular
                            int periodoDisciplina = -1;
 
                            GGroup< std::pair< int, Disciplina * > >::iterator
@@ -834,17 +876,16 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
                               continue;
                            }
 
+                           Professor * professor = it_at_horario->professor;
+
                            AtendimentoBase * atendimento = new AtendimentoBase();
 
-                           Professor * professor = pData->findProfessor(
-                              it_at_horario->getProfessorId() );
-
-                           atendimento->setProfessor( professor );
-                           atendimento->setCampus( campus );
-                           atendimento->setUnidade( unidade );
-                           atendimento->setSala( sala );
-                           atendimento->setTurno( turno );
-                           atendimento->setHorarioAula( horario_aula );
+                           atendimento->professor = professor;
+                           atendimento->campus = campus;
+                           atendimento->unidade = unidade;
+                           atendimento->sala = sala;
+                           atendimento->turno = turno;
+                           atendimento->horario_aula = horario_aula;
 
                            std::pair< BlocoCurricular *, int > bloco_dia
                               = std::make_pair( bloco_curricular, dia_semana );
@@ -872,25 +913,26 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
    {
       BlocoCurricular * bloco_curricular = it_map->first.first;
       int dia_semana = it_map->first.second;
-      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosBloco = it_map->second;
+      GGroup< AtendimentoBase *,
+         LessPtr< AtendimentoBase > > atendimentosBloco = it_map->second;
 
       std::vector< AtendimentoBase * > atBlocoVector;
 
-      ITERA_GGROUP_LESSPTR( it_at, atendimentosBloco, AtendimentoBase )
+      ITERA_GGROUP_LESSPTR( it_at,
+         atendimentosBloco, AtendimentoBase )
       {
          AtendimentoBase * at = ( *it_at );
          atBlocoVector.push_back( at );
       }
 
-      std::sort( atBlocoVector.begin(),
-         atBlocoVector.end(), sortAtendimentosBase );
+      // TODO -- ordenar 'atBlocoVector' por horário
 
       for ( int i = 0; i < (int)( atBlocoVector.size() - 1 ); i++ ) 
       {
          AtendimentoBase * at1 = atBlocoVector.at( i );
          AtendimentoBase * at2 = atBlocoVector.at( i + 1 );
 
-         bool deslocViavel = deslocamentoViavel( at1, at2 );
+         bool deslocViavel = deslocamentoViavel( pData, at1, at2 );
 
          if ( !deslocViavel )
          {
@@ -909,7 +951,8 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
    {
       BlocoCurricular * bloco_curricular = it_map->first.first;
       int dia_semana = it_map->first.second;
-      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosBloco = it_map->second;
+      GGroup< AtendimentoBase *,
+         LessPtr< AtendimentoBase > > atendimentosBloco = it_map->second;
 
       atendimentosBloco.deleteElements();
       atendimentosBloco.clear();
@@ -918,47 +961,52 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel()
    return result;
 }
 
-bool ValidateSolutionOp::checkRestricaoDisciplinaMesmoHorario()
+bool ValidateSolutionOp::checkRestricaoDisciplinaMesmoHorario(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
-   // Relaciona cada disciplina com os horários nos quais estão alocadas na solução
-   std::map< Disciplina *, GGroup< HorarioAula *, LessPtr< HorarioAula > > > mapDisciplinaHorarioAula;
+   // Relaciona cada disciplina com os
+   // horários nos quais estão alocadas na solução
+   std::map< Disciplina *, GGroup< HorarioAula *,
+      LessPtr< HorarioAula > > > mapDisciplinaHorarioAula;
 
    std::map< Disciplina *, GGroup< int > > mapDisciplinaDiasLetivos;
 
-   ITERA_GGROUP( it_at_campi, ( *solution->atendimento_campus ), AtendimentoCampus )
+   ITERA_GGROUP( it_at_campi,
+      ( *sol->atendimento_campus ), AtendimentoCampus )
    {
-      Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+      Campus * campus = it_at_campi->campus;
 
-      ITERA_GGROUP( it_at_unidade, ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
+      ITERA_GGROUP( it_at_unidade,
+         ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
-         Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+         Unidade * unidade = it_at_unidade->unidade;
 
-         ITERA_GGROUP( it_at_sala, ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
+         ITERA_GGROUP( it_at_sala,
+            ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
-            Sala * sala = pData->refSala[ it_at_sala->getId() ];
+            Sala * sala = it_at_sala->sala;
 
-            ITERA_GGROUP( it_at_dia, ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
+            ITERA_GGROUP( it_at_dia,
+               ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
             {
                int dia_semana = it_at_dia->getDiaSemana();
 
-               ITERA_GGROUP( it_at_turno, ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
+               ITERA_GGROUP( it_at_turno,
+                  ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                {
-                  Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                  Turno * turno = it_at_turno->turno;
 
                   ITERA_GGROUP( it_at_horario,
                      ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                   {
-                     HorarioAula * horario_aula = pData->findHorarioAula(
-                        it_at_horario->getHorarioAulaId() );
+                     HorarioAula * horario_aula = it_at_horario->horario_aula;
 
                      ITERA_GGROUP( it_at_oferta,
                         ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
                      {
-                        Disciplina * disciplina = pData->refDisciplinas
-                           [ it_at_oferta->getDisciplinaId() ];
+                        Disciplina * disciplina = it_at_oferta->disciplina;
 
                         mapDisciplinaHorarioAula[ disciplina ].add( horario_aula );
-
                         mapDisciplinaDiasLetivos[ disciplina ].add( dia_semana );
                      }
                   } // Horário de aula
@@ -998,26 +1046,27 @@ bool ValidateSolutionOp::checkRestricaoDisciplinaMesmoHorario()
    return true;
 }
 
-bool ValidateSolutionOp::checkRestricaoAlocacaoAulas()
+bool ValidateSolutionOp::checkRestricaoAlocacaoAulas(
+   const ProblemData * pData, const ProblemSolution * sol )
 {
    // Para cada par professor/dia, armazena os atendimentos correspondentes
    std::map< Aula * , GGroup< AtendimentoBase *,
       LessPtr< AtendimentoBase > >, LessPtr< Aula > > mapAulaAtendimentos;
 
    ITERA_GGROUP( it_at_campi,
-      ( *solution->atendimento_campus ), AtendimentoCampus )
+      ( *sol->atendimento_campus ), AtendimentoCampus )
    {
-      Campus * campus = pData->refCampus[ it_at_campi->getId() ];
+      Campus * campus = it_at_campi->campus;
 
       ITERA_GGROUP( it_at_unidade,
          ( *it_at_campi->atendimentos_unidades ), AtendimentoUnidade )
       {
-         Unidade * unidade = pData->refUnidade[ it_at_unidade->getId() ];
+         Unidade * unidade = it_at_unidade->unidade;
 
          ITERA_GGROUP( it_at_sala,
             ( *it_at_unidade->atendimentos_salas ), AtendimentoSala )
          {
-            Sala * sala = pData->refSala[ it_at_sala->getId() ];
+            Sala * sala = it_at_sala->sala;
 
             ITERA_GGROUP( it_at_dia,
                ( *it_at_sala->atendimentos_dias_semana ), AtendimentoDiaSemana )
@@ -1027,37 +1076,33 @@ bool ValidateSolutionOp::checkRestricaoAlocacaoAulas()
                ITERA_GGROUP( it_at_turno,
                   ( *it_at_dia->atendimentos_turno ), AtendimentoTurno )
                {
-                  Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                  // Turno * turno = pData->findTurno( it_at_turno->getTurnoId() );
+                  Turno * turno = it_at_turno->turno;
 
                   ITERA_GGROUP( it_at_horario,
                      ( *it_at_turno->atendimentos_horarios_aula ), AtendimentoHorarioAula )
                   {
-                     HorarioAula * horario_aula = pData->findHorarioAula(
-                        it_at_horario->getHorarioAulaId() );
-
-                     Professor * professor = pData->findProfessor(
-                        it_at_horario->getProfessorId() );
+                     HorarioAula * horario_aula = it_at_horario->horario_aula;
+                     Professor * professor = it_at_horario->professor;
 
                      ITERA_GGROUP( it_oferta,
                         ( *it_at_horario->atendimentos_ofertas ), AtendimentoOferta )
                      {
+                        int turma = it_oferta->getTurma();
+                        Disciplina * disciplina = it_oferta->disciplina;
+
                         AtendimentoBase * atendimento = new AtendimentoBase();
 
-                        int turma = it_oferta->getTurma();
-
-                        Disciplina * disciplina
-                              = pData->refDisciplinas[ it_oferta->getDisciplinaId() ];
-
-                        atendimento->setProfessor( professor );
-                        atendimento->setTurno( turno );
-                        atendimento->setDisciplina( disciplina );
-                        atendimento->setCampus( campus );
-                        atendimento->setUnidade( unidade );
-                        atendimento->setSala( sala );
-                        atendimento->setDiaSemana( dia_semana );
-                        atendimento->setTurma( turma );
-                        atendimento->setQuantidade( it_oferta->getQuantidade() );
-                        atendimento->setHorarioAula( horario_aula );
+                        atendimento->professor = professor;
+                        atendimento->turno = turno;
+                        atendimento->disciplina = disciplina;
+                        atendimento->campus = campus;
+                        atendimento->unidade = unidade;
+                        atendimento->sala = sala;
+                        atendimento->dia_semana = dia_semana;
+                        atendimento->turma = turma;
+                        atendimento->quantidade = it_oferta->getQuantidade();
+                        atendimento->horario_aula = horario_aula;
 
                         Aula * aula = new Aula();
 
@@ -1085,14 +1130,15 @@ bool ValidateSolutionOp::checkRestricaoAlocacaoAulas()
       bool encontrou = false;
 
       // Aulas que foram atendidas na solução
-      std::map< Aula *, GGroup< AtendimentoBase *,
-         LessPtr< AtendimentoBase > >, LessPtr< Aula > >::iterator it_map = mapAulaAtendimentos.begin();
+      std::map< Aula *, GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > >,
+         LessPtr< Aula > >::iterator it_map = mapAulaAtendimentos.begin();
 
       for (; it_map != mapAulaAtendimentos.end();
              it_map++ )
       {
          Aula * aulaAtendida = it_map->first;
-         GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosAula = it_map->second;
+         GGroup< AtendimentoBase *,
+            LessPtr< AtendimentoBase > > atendimentosAula = it_map->second;
 
          int creditosAtendidos = atendimentosAula.size();
 
@@ -1116,14 +1162,15 @@ bool ValidateSolutionOp::checkRestricaoAlocacaoAulas()
    }
    
    // Desalocando os objetos "AtendimentoBase"
-   std::map< Aula *, GGroup< AtendimentoBase *,
-      LessPtr< AtendimentoBase > >, LessPtr< Aula > >::iterator it_map = mapAulaAtendimentos.begin();
+   std::map< Aula *, GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > >,
+      LessPtr< Aula > >::iterator it_map = mapAulaAtendimentos.begin();
 
    for (; it_map != mapAulaAtendimentos.end();
       it_map++ )
    {
       Aula * aulaAtendida = it_map->first;
-      GGroup< AtendimentoBase *, LessPtr< AtendimentoBase > > atendimentosAula = it_map->second;
+      GGroup< AtendimentoBase *,
+         LessPtr< AtendimentoBase > > atendimentosAula = it_map->second;
 
       atendimentosAula.deleteElements();
       atendimentosAula.clear();

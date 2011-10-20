@@ -7,14 +7,14 @@ class TipoTitulacao :
    public OFBase
 {
 public:
-   TipoTitulacao(void);
-   virtual ~TipoTitulacao(void);
+   TipoTitulacao( void );
+   virtual ~TipoTitulacao( void );
 
-   virtual void le_arvore(ItemTipoTitulacao& elem);
+   virtual void le_arvore( ItemTipoTitulacao &  );
 
    void setNome( std::string s ) { nome = s; }
 
-   std::string getNome() { return nome; }
+   std::string getNome() const { return nome; }
 
 private:
    std::string nome;

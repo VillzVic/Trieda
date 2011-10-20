@@ -10,29 +10,29 @@ class AtendimentoSalaSolucao :
    public OFBase
 {
 public:
-   AtendimentoSalaSolucao(void);
+   AtendimentoSalaSolucao( void );
    AtendimentoSalaSolucao( AtendimentoSala & );
-   virtual ~AtendimentoSalaSolucao(void);
+   virtual ~AtendimentoSalaSolucao( void );
 
    virtual void le_arvore( ItemAtendimentoSalaSolucao & elem );
 
    GGroup< AtendimentoDiaSemanaSolucao * > atendimentosDiasSemana;
 
-   virtual bool operator < ( AtendimentoSalaSolucao & right )
+   virtual bool operator < ( AtendimentoSalaSolucao & right ) const
    { 
-	   return ( salaId < right.getSalaId() );
+	   return ( this->salaId < right.getSalaId() );
    }
 
-   virtual bool operator == ( AtendimentoSalaSolucao & right )
+   virtual bool operator == ( AtendimentoSalaSolucao & right ) const
    { 
-	   return ( salaId == right.getSalaId() );
+	   return ( this->salaId == right.getSalaId() );
    }
 
-   void setSalaId(int v) { salaId = v; }
-   void setSalaNome(std::string s) { salaNome = s; }
+   void setSalaId( int v ) { this->salaId = v; }
+   void setSalaNome( std::string s ) { this->salaNome = s; }
 
-   int getSalaId() { return salaId; }
-   std::string getSalaNome() { return salaNome; }
+   int getSalaId() { return this->salaId; }
+   std::string getSalaNome() const { return this->salaNome; }
 
 private:
    int salaId;

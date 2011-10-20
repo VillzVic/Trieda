@@ -15,13 +15,13 @@ class Sala :
 	public OFBase
 {
 public:
-	Sala(void);
-	virtual ~Sala(void);
+	Sala( void );
+	virtual ~Sala( void );
 
 	GGroup< Horario * > horarios_disponiveis;
 	GGroup< CreditoDisponivel * > creditos_disponiveis;
 
-   GGroup< HorarioDia *> horariosDia;
+   GGroup< HorarioDia * > horariosDia;
 
 	// Alterar para ref, depois
 	GGroup< int > disciplinas_associadas;
@@ -62,12 +62,12 @@ public:
 
 	void construirCreditosHorarios( ItemSala &, std::string, bool );
 
-    virtual bool operator < ( Sala & right ) 
+    virtual bool operator < ( Sala & right ) const
     { 
        return ( getId() < right.getId() );
     }
 
-    virtual bool operator == ( Sala & right )
+    virtual bool operator == ( Sala & right ) const
     { 
 		return ( getId() == right.getId() );
     }
@@ -75,7 +75,7 @@ public:
 private:
 	std::string codigo;
 	std::string andar;
-    std::string numero;
+   std::string numero;
 
 	// Alterar para ref, depois
 	int tipo_sala_id;

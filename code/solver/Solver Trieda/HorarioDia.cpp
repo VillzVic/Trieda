@@ -14,7 +14,7 @@ HorarioDia::~HorarioDia()
    horarioAula = NULL;
 }
 
-HorarioDia::HorarioDia(const HorarioDia &right)
+HorarioDia::HorarioDia( const HorarioDia & right )
 {
    dia = right.dia;
    id = right.id;
@@ -22,12 +22,16 @@ HorarioDia::HorarioDia(const HorarioDia &right)
    idHorarioAula = right.idHorarioAula;
 }
 
-bool HorarioDia::operator < ( const HorarioDia & right )
+bool HorarioDia::operator < ( const HorarioDia & right ) const 
 {
    if ( dia < right.dia )
+   {
       return true;
+   }
    else if ( dia > right.dia )
+   {
       return false;
+   }
 
-   return (idHorarioAula < right.idHorarioAula);
+   return ( idHorarioAula < right.idHorarioAula );
 }

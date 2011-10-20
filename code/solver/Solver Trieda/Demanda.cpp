@@ -30,7 +30,7 @@ void Demanda::le_arvore( ItemDemanda & elem )
 	this->setOfertaId( elem.ofertaCursoCampiId() );
 }
 
-bool Demanda::operator < ( const Demanda& right )
+bool Demanda::operator < ( const Demanda & right ) const
 {
    if ( quantidade < right.quantidade )
    {
@@ -62,7 +62,7 @@ bool Demanda::operator < ( const Demanda& right )
    return false;
 }
 
-bool Demanda::operator > ( const Demanda& right )
+bool Demanda::operator > ( const Demanda & right ) const
 {
    if ( quantidade < right.quantidade )
    {
@@ -94,14 +94,14 @@ bool Demanda::operator > ( const Demanda& right )
    return false;
 }
 
-bool Demanda::operator == ( const Demanda & right )
+bool Demanda::operator == ( const Demanda & right ) const
 {
    return ( ( quantidade == right.quantidade )
      && ( disciplina_id == right.disciplina_id )
      && ( oferta_id == right.oferta_id ) );
 }
 
-bool Demanda::operator != ( const Demanda & right )
+bool Demanda::operator != ( const Demanda & right ) const
 {
    return !( *this == right );
 }

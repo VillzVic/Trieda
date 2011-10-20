@@ -20,13 +20,13 @@ public:
 
    GGroup< int > horarios;
 
-   virtual bool operator < ( const ConverteHorariosCreditos & right )
+   virtual bool operator < ( const ConverteHorariosCreditos & right ) const
    { 
       return ( ( this->turno < right.getTurno() )
          && ( this->dia_semana < right.getDiaSemana() ) );
    }
 
-   virtual bool operator == ( const ConverteHorariosCreditos & right )
+   virtual bool operator == ( const ConverteHorariosCreditos & right ) const
    { 
       return ( this->turno == right.getTurno()
          && this->dia_semana == right.getDiaSemana() );

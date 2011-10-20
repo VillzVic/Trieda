@@ -16,13 +16,13 @@ public:
 
    virtual void le_arvore( ItemCalendario & );
 
-   void setCodigo( std::string s ) { codigo = s; }
-   void setDescricao( std::string s ) { descricao = s; }
-   void setTempoAula( int value ) { tempo_aula = value; }
+   void setCodigo( std::string s ) { this->codigo = s; }
+   void setDescricao( std::string s ) { this->descricao = s; }
+   void setTempoAula( int value ) { this->tempo_aula = value; }
 
-   std::string getCodigo() { return codigo; }
-   std::string getDescricao() { return descricao; }
-   int getTempoAula() { return tempo_aula; }
+   std::string getCodigo() const { return this->codigo; }
+   std::string getDescricao() const { return this->descricao; }
+   int getTempoAula() const { return this->tempo_aula; }
 
 private:   
    std::string codigo;

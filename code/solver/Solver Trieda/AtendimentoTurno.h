@@ -17,6 +17,8 @@ public:
    void setTurnoId( int value ) { this->turno_id = value; }
    int getTurnoId() const { return this->turno_id; }
 
+   Turno * turno;
+
 private:
    int turno_id;
 };

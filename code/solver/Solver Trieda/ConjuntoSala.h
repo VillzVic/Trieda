@@ -28,11 +28,11 @@ public:
    virtual ~ConjuntoSala() { }
 
    // Seta a capacidade da(s) sala(s) que o conjunto representa
-   void setCapacidadeRepr( int cap ) { cap_Representada = cap; }
-   void setTipoSalasRepr( int tpSalas ) { tipo_Salas_Representada = tpSalas; }
+   void setCapacidadeRepr( int cap ) { this->cap_Representada = cap; }
+   void setTipoSalasRepr( int tpSalas ) { this->tipo_Salas_Representada = tpSalas; }
 
-   int getCapacidadeRepr() const { return cap_Representada; }
-   int getTipoSalasRepr() const { return tipo_Salas_Representada; }
+   int getCapacidadeRepr() const { return this->cap_Representada; }
+   int getTipoSalasRepr() const { return this->tipo_Salas_Representada; }
 
    Sala * getSala( int idSala ) const
    {

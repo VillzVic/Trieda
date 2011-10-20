@@ -24,6 +24,9 @@ public:
    bool getCreditoTeorico() const { return this->credito_teorico; }
    bool profVirtual() const { return this->_profVirtual; }
 
+   HorarioAula * horario_aula;
+   Professor * professor;
+
 private:
    int horario_aula_id;
    int professor_id;

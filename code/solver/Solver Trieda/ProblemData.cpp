@@ -564,7 +564,7 @@ HorarioAula * ProblemData::findHorarioAula( int id_horario_aula )
    return NULL;
 }
 
-GGroup< Professor *, LessPtr< Professor > > ProblemData::getProfessores()
+GGroup< Professor *, LessPtr< Professor > > ProblemData::getProfessores() const
 {
    // Armazenando todos os professores
    GGroup< Professor *, LessPtr< Professor > > professores;
@@ -619,4 +619,20 @@ int ProblemData::totalHorariosTurnoAula( Aula * aula )
    }
 
    return totalHorarios;
+}
+
+Oferta * ProblemData::findOferta( int id_oferta ) const
+{
+   Oferta * oferta = NULL;
+
+   try
+   {
+      oferta = refOfertas.find( id_oferta )->second;
+   }
+   catch( std::exception ex )
+   {
+      oferta = NULL;
+   }
+
+   return oferta;
 }

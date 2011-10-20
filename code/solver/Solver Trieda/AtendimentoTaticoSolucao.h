@@ -10,31 +10,31 @@ class AtendimentoTaticoSolucao :
    public OFBase
 {
 public:
-   AtendimentoTaticoSolucao(void);
+   AtendimentoTaticoSolucao( void );
    AtendimentoTaticoSolucao( AtendimentoTatico & );
-   virtual ~AtendimentoTaticoSolucao(void);
+   virtual ~AtendimentoTaticoSolucao( void );
 
    virtual void le_arvore( ItemAtendimentoTaticoSolucao & );
 
    AtendimentoOfertaSolucao * atendimento_oferta;
 
-   virtual bool operator < ( AtendimentoTaticoSolucao & right ) 
+   virtual bool operator < ( AtendimentoTaticoSolucao & right ) const
    { 
-	   return ( ( qtdeCreditosTeoricos < right.getQtdeCreditosTeoricos() ) &&
-				( qtdeCreditosPraticos < right.getQtdeCreditosPraticos() ) );
+	   return ( ( this->qtdeCreditosTeoricos < right.getQtdeCreditosTeoricos() )
+         && ( this->qtdeCreditosPraticos < right.getQtdeCreditosPraticos() ) );
    }
 
-   virtual bool operator == ( AtendimentoTaticoSolucao & right )
+   virtual bool operator == ( AtendimentoTaticoSolucao & right ) const
    { 
-	   return ( ( qtdeCreditosTeoricos == right.getQtdeCreditosTeoricos() ) &&
-				( qtdeCreditosPraticos == right.getQtdeCreditosPraticos() ) );
+	   return ( ( this->qtdeCreditosTeoricos == right.getQtdeCreditosTeoricos() )
+         && ( this->qtdeCreditosPraticos == right.getQtdeCreditosPraticos() ) );
    }
 
-   void setQtdeCreditosTeoricos(int v) { qtdeCreditosTeoricos = v; }
-   void setQtdeCreditosPraticos(int v) { qtdeCreditosPraticos = v; }
+   void setQtdeCreditosTeoricos( int v ) { this->qtdeCreditosTeoricos = v; }
+   void setQtdeCreditosPraticos( int v ) { this->qtdeCreditosPraticos = v; }
 
-   int getQtdeCreditosTeoricos() { return qtdeCreditosTeoricos; }
-   int getQtdeCreditosPraticos() { return qtdeCreditosPraticos; }
+   int getQtdeCreditosTeoricos() const { return this->qtdeCreditosTeoricos; }
+   int getQtdeCreditosPraticos() const { return this->qtdeCreditosPraticos; }
 
 private:
    int qtdeCreditosTeoricos;

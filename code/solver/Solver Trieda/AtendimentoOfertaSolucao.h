@@ -10,35 +10,35 @@ class AtendimentoOfertaSolucao :
    public OFBase
 {
 public:
-   AtendimentoOfertaSolucao(void);
+   AtendimentoOfertaSolucao( void );
    AtendimentoOfertaSolucao( AtendimentoOferta & );
-   virtual ~AtendimentoOfertaSolucao(void);
+   virtual ~AtendimentoOfertaSolucao( void );
 
    virtual void le_arvore( ItemAtendimentoOfertaSolucao & );
 
-   virtual bool operator < ( AtendimentoOfertaSolucao & right ) 
+   virtual bool operator < ( AtendimentoOfertaSolucao & right ) const
    { 
-	   return ( ( ofertaCursoCampiId < right.getOfertaCursoCampiId() ) &&
-				( disciplinaId < right.getDisciplinaId() ) &&
-				( turma < right.getTurma() ) );
+	   return ( ( this->ofertaCursoCampiId < right.getOfertaCursoCampiId() )
+         && ( this->disciplinaId < right.getDisciplinaId() )
+         && ( this->turma < right.getTurma() ) );
    }
 
-   virtual bool operator == ( AtendimentoOfertaSolucao & right )
+   virtual bool operator == ( AtendimentoOfertaSolucao & right ) const
    { 
-	   return ( ( ofertaCursoCampiId == right.getOfertaCursoCampiId() ) &&
-				( disciplinaId == right.getDisciplinaId() ) &&
-				( turma == right.getTurma() ) );
+	   return ( ( this->ofertaCursoCampiId == right.getOfertaCursoCampiId() )
+         && ( this->disciplinaId == right.getDisciplinaId() )
+         && ( this->turma == right.getTurma() ) );
    }
 
-   void setOfertaCursoCampiId(int v) { ofertaCursoCampiId = v; }
-   void setDisciplinaId(int v) { disciplinaId = v; }
-   void setQuantidade(int v) { quantidade = v; }
-   void setTurma(std::string s) { turma = s; }
+   void setOfertaCursoCampiId( int v ) { this->ofertaCursoCampiId = v; }
+   void setDisciplinaId( int v ) { this->disciplinaId = v; }
+   void setQuantidade( int v ) { this->quantidade = v; }
+   void setTurma( std::string s ) { this->turma = s; }
 
-   int getOfertaCursoCampiId() { return ofertaCursoCampiId; }
-   int getDisciplinaId() { return disciplinaId; }
-   int getQuantidade() { return quantidade; }
-   std::string getTurma() { return turma; }
+   int getOfertaCursoCampiId() const { return this->ofertaCursoCampiId; }
+   int getDisciplinaId() const { return this->disciplinaId; }
+   int getQuantidade() const { return this->quantidade; }
+   std::string getTurma() const { return this->turma; }
 
 private:
    int ofertaCursoCampiId;

@@ -175,6 +175,9 @@ public:
    // Listando todas as ofertas que contem uma disciplina especificada.
    std::map< int, GGroup< Oferta *, LessPtr< Oferta > > > ofertasDisc;
 
+   std::map< int, HorarioAula * > refHorarioAula;
+   std::map< int, Turno * > refTurnos;
+
    // =============================================================================================
    // Estruturas conflitantes !!!
 
@@ -334,10 +337,11 @@ public:
    // retorna a demanda correspondente, caso exista
    Demanda * buscaDemanda( int, int );
 
+   Oferta * findOferta( int ) const;
    Turno * findTurno( int );
    HorarioAula * findHorarioAula( int );
 
-   GGroup< Professor *, LessPtr< Professor > > getProfessores();
+   GGroup< Professor *, LessPtr< Professor > > getProfessores() const;
    Professor * findProfessor( int );
 
    // Para uma dada aula, retorna-se o total de

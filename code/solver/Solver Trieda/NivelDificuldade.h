@@ -7,13 +7,13 @@ class NivelDificuldade :
    public OFBase
 {
 public:
-   NivelDificuldade(void);
-   ~NivelDificuldade(void);
+   NivelDificuldade( void );
+   virtual ~NivelDificuldade( void );
    
    virtual void le_arvore(ItemNivelDificuldade& raiz);
 
-   void setNome(std::string s) { nome = s; }
-   std::string getNome() { return nome; }
+   void setNome( std::string s ) { this->nome = s; }
+   std::string getNome() const { return this->nome; }
 
 private:
    std::string nome;

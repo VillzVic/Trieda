@@ -10,26 +10,26 @@ class AtendimentoDiaSemanaSolucao :
    public OFBase
 {
 public:
-   AtendimentoDiaSemanaSolucao(void);
+   AtendimentoDiaSemanaSolucao( void );
    AtendimentoDiaSemanaSolucao( AtendimentoDiaSemana & );
-   virtual ~AtendimentoDiaSemanaSolucao(void);
+   virtual ~AtendimentoDiaSemanaSolucao( void );
 
    virtual void le_arvore( ItemAtendimentoDiaSemanaSolucao & );
 
    GGroup< AtendimentoTaticoSolucao * > atendimentosTatico;
 
-   virtual bool operator < ( AtendimentoDiaSemanaSolucao & right )
+   virtual bool operator < ( AtendimentoDiaSemanaSolucao & right ) const
    { 
-       return ( diaSemana < right.getDiaSemana() );
+       return ( this->diaSemana < right.getDiaSemana() );
    }
 
-   virtual bool operator == ( AtendimentoDiaSemanaSolucao & right )
+   virtual bool operator == ( AtendimentoDiaSemanaSolucao & right ) const
    { 
-	   return ( diaSemana == right.getDiaSemana() );
+	   return ( this->diaSemana == right.getDiaSemana() );
    }
 
-   void setDiaSemana(int v) { diaSemana = v; }
-   int getDiaSemana() { return diaSemana; }
+   void setDiaSemana( int v ) { this->diaSemana = v; }
+   int getDiaSemana() const { return this->diaSemana; }
 
 private:
 	int diaSemana;

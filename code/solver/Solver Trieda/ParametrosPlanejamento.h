@@ -9,8 +9,8 @@ class ParametrosPlanejamento:
    public OFBase
 {
 public:
-   ParametrosPlanejamento(void);
-   virtual ~ParametrosPlanejamento(void);
+   ParametrosPlanejamento( void );
+   virtual ~ParametrosPlanejamento( void );
 
    std::string modo_otimizacao;
    GGroup< NivelDificuldadeHorario * > niveis_dificuldade_horario;

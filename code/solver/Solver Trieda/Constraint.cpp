@@ -1,9 +1,9 @@
 #include "Constraint.h"
 #include "HashUtil.h"
 
-#define E_MENOR(a,b) \
-   (a == NULL && b != NULL) || \
-   (b != NULL && a != NULL && (*a < *b))
+#define E_MENOR( a, b ) \
+   ( a == NULL && b != NULL) || \
+   ( b != NULL && a != NULL && ( *a < *b ) )
 
 Constraint::Constraint()
 {

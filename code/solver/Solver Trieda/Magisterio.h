@@ -23,10 +23,10 @@ public:
    int getPreferencia() const { return preferencia; }
    int getDisciplinaId() const { return disciplina_id; }
 
-   virtual bool operator < ( const Magisterio & right );
-   virtual bool operator > ( const Magisterio & right );
-   virtual bool operator == ( const Magisterio & right );
-   virtual bool operator != ( const Magisterio & right );
+   virtual bool operator < ( const Magisterio & ) const;
+   virtual bool operator > ( const Magisterio & ) const;
+   virtual bool operator == ( const Magisterio & ) const;
+   virtual bool operator != ( const Magisterio & ) const;
 
 private:
    int nota;

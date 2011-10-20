@@ -11,28 +11,28 @@ class AtendimentoUnidadeSolucao :
 {
 public:
    AtendimentoUnidadeSolucao();
-   AtendimentoUnidadeSolucao(AtendimentoUnidade &);
+   AtendimentoUnidadeSolucao( AtendimentoUnidade & );
    virtual ~AtendimentoUnidadeSolucao();
 
    virtual void le_arvore( ItemAtendimentoUnidadeSolucao & );
 
    GGroup< AtendimentoSalaSolucao * > atendimentosSalas;
 
-   virtual bool operator < ( AtendimentoUnidadeSolucao & right )
+   virtual bool operator < ( AtendimentoUnidadeSolucao & right ) const
    { 
-	   return ( unidadeId < right.getUnidadeId() );
+	   return ( this->unidadeId < right.getUnidadeId() );
    }
 
-   virtual bool operator == ( AtendimentoUnidadeSolucao & right )
+   virtual bool operator == ( AtendimentoUnidadeSolucao & right ) const
    { 
-	   return ( unidadeId == right.getUnidadeId() );
+	   return ( this->unidadeId == right.getUnidadeId() );
    }
 
-   void setUnidadeId( int v ) { unidadeId = v; }
-   void setUnidadeCodigo( std::string s ) { unidadeCodigo = s; }
+   void setUnidadeId( int v ) { this->unidadeId = v; }
+   void setUnidadeCodigo( std::string s ) { this->unidadeCodigo = s; }
 
-   int getUnidadeId() { return unidadeId; }
-   std::string getUnidadeCodigo() { return unidadeCodigo; }
+   int getUnidadeId() const { return this->unidadeId; }
+   std::string getUnidadeCodigo() const { return this->unidadeCodigo; }
 
 private:
    int unidadeId;

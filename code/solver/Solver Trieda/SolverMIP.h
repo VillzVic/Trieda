@@ -285,9 +285,9 @@ private:
 
    ValidateSolutionOp * validateSolution;
 
-   int alteraHorarioAulaAtendimento( int, int );
+   int alteraHorarioAulaAtendimento( const int, const int );
 
-   int calculaDeslocamentoUnidades( int, int );
+   int calculaDeslocamentoUnidades( const int, const int );
 };
 
 #endif

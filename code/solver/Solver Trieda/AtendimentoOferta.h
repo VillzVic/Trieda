@@ -24,6 +24,8 @@ public:
    int getQuantidade() const { return this->quantidade; }
    int getTurma() const { return this->turma; }
 
+   Disciplina * disciplina;
+
 private:
    std::string oferta_curso_campi_id;
    int disciplina_id;

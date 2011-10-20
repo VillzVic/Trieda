@@ -13,19 +13,17 @@ public:
    HorarioDia( const HorarioDia & );
    virtual ~HorarioDia();
 
-   bool operator < ( const HorarioDia & );
+   bool operator < ( const HorarioDia & ) const;
 
-   int getId() { return id; }
-   void setId( int i ) { id = i; }
+   int getId() const { return this->id; }
+   int getHorarioAulaId() const { return this->idHorarioAula; }
+   HorarioAula * getHorarioAula() const { return this->horarioAula; }
+   int getDia() const { return this->dia; }
 
-   int getHorarioAulaId() { return idHorarioAula; }
-   void setHorarioAulaId( int i ) { idHorarioAula = i; }
-
-   HorarioAula * getHorarioAula() { return horarioAula; }
-   void setHorarioAula( HorarioAula * ha ) { horarioAula = ha; }
-
-   int getDia() { return dia; }
-   void setDia( int d ) { dia = d; }
+   void setId( int i ) { this->id = i; }
+   void setHorarioAulaId( int i ) { this->idHorarioAula = i; }
+   void setHorarioAula( HorarioAula * ha ) { this->horarioAula = ha; }
+   void setDia( int d ) { this->dia = d; }
 
 private:
    int id;

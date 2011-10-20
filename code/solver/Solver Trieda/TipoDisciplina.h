@@ -7,13 +7,13 @@ class TipoDisciplina :
    public OFBase
 {
 public:
-   TipoDisciplina(void);
-   virtual ~TipoDisciplina(void);
+   TipoDisciplina( void );
+   virtual ~TipoDisciplina( void );
 
    virtual void le_arvore( ItemTipoDisciplina & );
 
-   void setNome(std::string s) { nome = s; }
-   std::string getNome() const { return nome; }
+   void setNome( std::string s ) { this->nome = s; }
+   std::string getNome() const { return this->nome; }
 
 private:
    std::string nome;

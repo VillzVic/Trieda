@@ -161,7 +161,7 @@ private:
 */
 typedef std::map< Variable, int > VariableHash;
 
-//class VariableHasher : public stdext::hash_compare<Variable>
+//class VariableHasher : public stdext::hash_compare< Variable >
 //{
 //public:
 //   // Less operator

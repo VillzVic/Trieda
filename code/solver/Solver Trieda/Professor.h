@@ -65,7 +65,8 @@ private:
    double valor_credito;
    int id_operacional;
 
-   // Utilizado na função de prioridade para o modelo operacional.
+   // Utilizado na função de
+   // prioridade para o modelo operacional.
    int custoDispProf;
    bool is_virtual;
 };

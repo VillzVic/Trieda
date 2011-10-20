@@ -191,7 +191,7 @@ int main( int argc, char** argv )
 }
 
 void writeOutput( ProblemSolution * solution,
-				      char * outputFile, char * tempOutput )
+   char * outputFile, char * tempOutput )
 {
    // Write output
    remove( tempOutput );

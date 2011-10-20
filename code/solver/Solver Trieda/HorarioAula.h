@@ -24,12 +24,12 @@ public:
    void setInicio( DateTime dt ) { this->inicio = dt; }
    void setCalendario( Calendario * c ) { this->calendario = c; }
 
-   virtual bool operator < ( HorarioAula const & right ) 
+   virtual bool operator < ( HorarioAula const & right ) const
    { 
       return ( this->getInicio() < right.getInicio() );
    }
 
-   virtual bool operator == ( HorarioAula const & right ) 
+   virtual bool operator == ( HorarioAula const & right ) const
    { 
 	   if ( this->getInicio() == right.getInicio() )
 	   {

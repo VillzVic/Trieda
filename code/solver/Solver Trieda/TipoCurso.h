@@ -12,8 +12,8 @@ public:
 
    virtual void le_arvore( ItemTipoCurso & );
 
-   void setNome( std::string s ) { nome  = s; }
-   std::string getNome() const { return nome; }
+   void setNome( std::string s ) { this->nome  = s; }
+   std::string getNome() const { return this->nome; }
 
 private:
    std::string nome;
