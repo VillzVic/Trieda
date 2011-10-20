@@ -468,8 +468,7 @@ public class ParametrosPresenter
 				else
 				{
 					Presenter presenter = new OtimizarMessagesPresenter(
-						ret.get( "warning" ), ret.get( "error" ),
-						new OtimizarMessagesView() );
+						ret.get( "warning" ), ret.get( "error" ), new OtimizarMessagesView() );
 
 					presenter.go( null );
 				}

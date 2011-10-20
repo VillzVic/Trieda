@@ -1,7 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -337,41 +336,20 @@ public class Fixacao
         return list;
     }
 
-    public List< HorarioDisponivelCenario > getHorarios(
-    	InstituicaoEnsino instituicaoEnsino, List< SemanaLetiva > semanasLetivas )
-    {
-    	Set< HorarioDisponivelCenario > horarios
-    		= new HashSet< HorarioDisponivelCenario >();
-
-    	for ( SemanaLetiva semanaLetiva : semanasLetivas )
-    	{
-    		horarios.addAll( this.getHorarios( instituicaoEnsino, semanaLetiva ) );
-    	}
-
-    	return new ArrayList< HorarioDisponivelCenario>( horarios );
-    }
-
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		Set< HorarioDisponivelCenario > horarios
-			= new HashSet< HorarioDisponivelCenario >();
-
 		Query q = entityManager().createQuery(
 			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.fixacoes ) c " +
 			" WHERE c = :fixacao " +
 			" AND c.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
 			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "fixacao", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		horarios.addAll( q.getResultList() );
-
-		return new ArrayList< HorarioDisponivelCenario >( horarios );
+		return q.getResultList();
 	}
 
     public String getCodigo()

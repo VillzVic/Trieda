@@ -58,7 +58,8 @@ public class FixacaoFormPresenter
 	private SimpleGrid< FixacaoDTO > gridPanel;
 	private Display display;
 
-	public FixacaoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public FixacaoFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display, SimpleGrid< FixacaoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

@@ -24,15 +24,14 @@ public class SalaFormPresenter implements Presenter
 	public interface Display
 	{
 		Button getSalvarButton();
-		TextField<String> getCodigoTextField();
-		TextField<String> getNumeroTextField();
-		TextField<String> getAndarTextField();
+		TextField< String > getCodigoTextField();
+		TextField< String > getNumeroTextField();
+		TextField< String > getAndarTextField();
 		NumberField getCapacidadeNumberField();
 		UnidadeComboBox getUnidadeComboBox();
 		TipoSalaComboBox getTipoComboBox();
 		SalaDTO getSalaDTO();
 		boolean isValid();
-
 		SimpleModal getSimpleModal();
 	}
 
@@ -40,16 +39,20 @@ public class SalaFormPresenter implements Presenter
 	private SimpleGrid< SalaDTO > gridPanel;
 	private Display display;
 
-	public SalaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+	public SalaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
 	{
-		this( display, null );
-		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this( instituicaoEnsinoDTO, display, null );
 	}
 
-	public SalaFormPresenter( Display display, SimpleGrid< SalaDTO > gridPanel )
+	public SalaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, 
+		Display display, SimpleGrid< SalaDTO > gridPanel )
 	{
 		this.gridPanel = gridPanel;
 		this.display = display;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		setListeners();
 	}
 

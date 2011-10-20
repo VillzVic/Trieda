@@ -22,7 +22,6 @@ import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
-import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -60,11 +59,11 @@ public class SalasServiceImpl
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() ); 
+//		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+//			semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() ); 
 
 		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-			sala.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
+			sala.getHorarios( getInstituicaoEnsinoUser() ) );
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
@@ -129,13 +128,9 @@ public class SalasServiceImpl
 
 	@Override
 	public void saveHorariosDisponiveis(
-		SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO,
-		List< HorarioDisponivelCenarioDTO > listDTO )
+		SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
-
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -144,11 +139,11 @@ public class SalasServiceImpl
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( sala.getHorarios(
-			getInstituicaoEnsinoUser(), semanaLetiva ) );
+			getInstituicaoEnsinoUser() ) );
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				sala.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
+				sala.getHorarios( getInstituicaoEnsinoUser() ) );
 
 		removerList.removeAll( listSelecionados );
 

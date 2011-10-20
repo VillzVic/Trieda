@@ -68,7 +68,8 @@ public class CampiPresenter
 	private Display display;
 	private GTab gTab;
 
-	public CampiPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public CampiPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -101,7 +102,7 @@ public class CampiPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
@@ -112,7 +113,7 @@ public class CampiPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					Presenter presenter = new CampusFormPresenter(
+					Presenter presenter = new CampusFormPresenter( instituicaoEnsinoDTO,
 						cenario, new CampusFormView( cenario, new CampusDTO() ), display.getGrid() );
 
 					presenter.go( null );
@@ -128,7 +129,7 @@ public class CampiPresenter
 					CampusDTO campusDTO = display.getGrid().getGrid()
 						.getSelectionModel().getSelectedItem();
 
-					Presenter presenter = new CampusFormPresenter( cenario,
+					Presenter presenter = new CampusFormPresenter( instituicaoEnsinoDTO, cenario,
 						new CampusFormView( cenario, campusDTO ), display.getGrid() );
 
 					presenter.go( null );
@@ -237,7 +238,7 @@ public class CampiPresenter
 					final CampusDTO campusDTO
 						= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-					Services.campi().getHorariosDisponiveis( campusDTO, semanaLetivaDTO,
+					Services.campi().getHorariosDisponiveis( campusDTO,
 						new AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > >()
 						{
 							@Override

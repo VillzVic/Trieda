@@ -37,26 +37,29 @@ public class UsuarioFormPresenter
 		SimpleModal getSimpleModal();
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings( "unused" )
 	private CenarioDTO cenario;
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< UsuarioDTO > gridPanel;
 	private Display display;
 	
-	public UsuarioFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display, SimpleGrid< UsuarioDTO > gridPanel )
+	public UsuarioFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display,
+		SimpleGrid< UsuarioDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 
 	private void setListeners()
 	{
-		display.getSalvarButton().addSelectionListener(
+		this.display.getSalvarButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -87,19 +90,19 @@ public class UsuarioFormPresenter
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		return this.display.isValid();
 	}
 
 	private UsuarioDTO getDTO()
 	{
-		UsuarioDTO usuarioDTO = display.getUsuarioDTO();
+		UsuarioDTO usuarioDTO = this.display.getUsuarioDTO();
 
-		usuarioDTO.setNome( display.getNomeTextField().getValue());
-		usuarioDTO.setEmail( display.getEmailTextField().getValue());
-		usuarioDTO.setUsername( display.getUsernameTextField().getValue());
-		usuarioDTO.setPassword( display.getPasswordTextField().getValue());
-		usuarioDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		ProfessorDTO professor = display.getProfessorComboBox().getValue();
+		usuarioDTO.setNome( this.display.getNomeTextField().getValue());
+		usuarioDTO.setEmail( this.display.getEmailTextField().getValue());
+		usuarioDTO.setUsername( this.display.getUsernameTextField().getValue());
+		usuarioDTO.setPassword( this.display.getPasswordTextField().getValue());
+		usuarioDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		ProfessorDTO professor = this.display.getProfessorComboBox().getValue();
 
 		if ( professor != null )
 		{
@@ -113,6 +116,6 @@ public class UsuarioFormPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

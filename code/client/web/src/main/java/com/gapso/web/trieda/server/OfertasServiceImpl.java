@@ -119,6 +119,7 @@ public class OfertasServiceImpl
 	public void save( OfertaDTO ofertaDTO )
 	{
 		Oferta oferta = ConvertBeans.toOferta( ofertaDTO );
+
 		if ( oferta.getId() != null
 			&& oferta.getId() > 0 )
 		{

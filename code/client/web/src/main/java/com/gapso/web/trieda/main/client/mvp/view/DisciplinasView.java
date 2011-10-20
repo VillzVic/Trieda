@@ -103,7 +103,7 @@ public class DisciplinasView
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CREDITOS_PRATICO, getI18nConstants().creditosPraticos(), 100 ) );
 		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_LABORATORIO, getI18nConstants().usaLaboratorio(), 100 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_TIPO_STRING, getI18nConstants().tipoDisciplina(), 100 ) );
-		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_DIFICULDADE, getI18nConstants().nivelDificuldade(), 100 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_DIFICULDADE, getI18nConstants().nivelDificuldade(), 120 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, getI18nConstants().maxAlunosTeorico(), 120 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, getI18nConstants().maxAlunosPratico(), 120 ) );
 

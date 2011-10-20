@@ -22,127 +22,153 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class AreasTitulacaoView extends MyComposite implements AreasTitulacaoPresenter.Display {
-
+public class AreasTitulacaoView
+	extends MyComposite
+	implements AreasTitulacaoPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<AreaTitulacaoDTO> gridPanel;
+	private SimpleGrid< AreaTitulacaoDTO > gridPanel;
 	private SimpleFilter filter;
-	private TextField<String> codigoBuscaTextField;
-	private TextField<String> descricaoBuscaTextField;
+	private TextField< String > codigoBuscaTextField;
+	private TextField< String > descricaoBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
-	
-	public AreasTitulacaoView() {
-		initUI();
+
+	public AreasTitulacaoView()
+	{
+		this.initUI();
 	}
-	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Áreas de Titulação");
+
+	private void initUI()
+	{
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Áreas de Titulação" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent(tabItem);
+		initComponent( this.tabItem );
 	}
 
-	private void createTabItem() {
-		tabItem = new GTabItem("Áreas de Titulação", Resources.DEFAULTS.areaTitulacao16());
-		tabItem.setContent(panel);
+	private void createTabItem()
+	{
+		this.tabItem = new GTabItem( "Áreas de Titulação",
+			Resources.DEFAULTS.areaTitulacao16() );
+
+		this.tabItem.setContent( this.panel );
 	}
-	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
-		panel.setTopComponent(toolBar);
+
+	private void createToolBar()
+	{
+		this.toolBar = new SimpleToolBar( this );
+		this.panel.setTopComponent( this.toolBar );
 	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<AreaTitulacaoDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    this.gridPanel = new SimpleGrid< AreaTitulacaoDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
 	}
 
 	private List< ColumnConfig > getColumnList()
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
-		list.add( new ColumnConfig( AreaTitulacaoDTO.PROPERTY_CODIGO, getI18nConstants().codigoAreaTitulacao(), 100 ) );
+		list.add( new ColumnConfig( AreaTitulacaoDTO.PROPERTY_CODIGO,
+			getI18nConstants().codigoAreaTitulacao(), 150 ) );
 		list.add( new ColumnConfig( AreaTitulacaoDTO.PROPERTY_DESCRICAO, "Descrição", 300 ) );
 
 		return list;
 	}
 
-	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
-		bld.setMargins(new Margins(5, 5, 5, 0));
-		bld.setCollapsible(true);
-		
-		filter = new SimpleFilter();
-		codigoBuscaTextField = new TextField<String>();
-		codigoBuscaTextField.setFieldLabel("Código");
-		descricaoBuscaTextField = new TextField<String>();
-		descricaoBuscaTextField.setFieldLabel("Descrição");
-		filter.addField(codigoBuscaTextField);
-		filter.addField(descricaoBuscaTextField);
-		
-		panel.add(filter, bld);
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins(5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
+		this.filter = new SimpleFilter();
+
+		this.codigoBuscaTextField = new TextField< String >();
+		this.codigoBuscaTextField.setFieldLabel( "Código" );
+
+		this.descricaoBuscaTextField = new TextField< String >();
+		this.descricaoBuscaTextField.setFieldLabel( "Descrição" );
+
+		this.filter.addField( this.codigoBuscaTextField );
+		this.filter.addField( this.descricaoBuscaTextField );
+
+		this.panel.add( this.filter, bld );
 	}
 	
 	@Override
-	public Button getNewButton() {
-		return toolBar.getNewButton();
+	public Button getNewButton()
+	{
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
-	public Button getEditButton() {
-		return toolBar.getEditButton();
+	public Button getEditButton()
+	{
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
-	public Button getRemoveButton() {
-		return toolBar.getRemoveButton();
+	public Button getRemoveButton()
+	{
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
-	public Button getImportExcelButton() {
-		return toolBar.getImportExcelButton();
+	public Button getImportExcelButton()
+	{
+		return this.toolBar.getImportExcelButton();
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
+	public Button getExportExcelButton()
+	{
+		return this.toolBar.getExportExcelButton();
 	}
 	
 	@Override
-	public SimpleGrid<AreaTitulacaoDTO> getGrid() {
-		return gridPanel;
+	public SimpleGrid< AreaTitulacaoDTO > getGrid()
+	{
+		return this.gridPanel;
 	}
 	
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<AreaTitulacaoDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy(
+		RpcProxy< PagingLoadResult< AreaTitulacaoDTO > > proxy )
+	{
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
-	public TextField<String> getCodigoBuscaTextField() {
-		return codigoBuscaTextField;
+	public TextField< String > getCodigoBuscaTextField()
+	{
+		return this.codigoBuscaTextField;
 	}
 
 	@Override
-	public TextField<String> getDescricaoBuscaTextField() {
-		return descricaoBuscaTextField;
+	public TextField< String > getDescricaoBuscaTextField()
+	{
+		return this.descricaoBuscaTextField;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton() {
-		return filter.getSubmitButton();
+	public Button getSubmitBuscaButton()
+	{
+		return this.filter.getSubmitButton();
 	}
 
 	@Override
-	public Button getResetBuscaButton() {
-		return filter.getResetButton();
+	public Button getResetBuscaButton()
+	{
+		return this.filter.getResetButton();
 	}
-
 }

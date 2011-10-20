@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
-public class AlunoDTO extends AbstractDTO< String >
+public class AlunoDTO
+	extends AbstractDTO< String >
 	implements Comparable< AlunoDTO >
 {
 	private static final long serialVersionUID = -5134820110949139907L;
@@ -76,11 +77,12 @@ public class AlunoDTO extends AbstractDTO< String >
 	@Override
 	public int compareTo( AlunoDTO o )
 	{
-		int result = getInstituicaoEnsinoId().compareTo( o.getInstituicaoEnsinoId() );
+		int result = this.getInstituicaoEnsinoId().compareTo(
+			o.getInstituicaoEnsinoId() );
 
 		if ( result == 0 )
 		{
-			result = getId().compareTo( o.getId() );
+			result = this.getNome().compareTo( o.getNome() );
 		}
 
 		return result;

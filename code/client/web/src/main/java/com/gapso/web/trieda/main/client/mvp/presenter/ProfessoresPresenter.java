@@ -68,7 +68,8 @@ public class ProfessoresPresenter implements Presenter
 	private Display display;
 	private GTab gTab;
 
-	public ProfessoresPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public ProfessoresPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO  = instituicaoEnsinoDTO;

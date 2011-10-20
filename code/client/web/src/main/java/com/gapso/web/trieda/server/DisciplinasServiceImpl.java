@@ -87,8 +87,8 @@ public class DisciplinasServiceImpl
 	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
+//		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+//			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		Disciplina disciplina = Disciplina.find(
 			disciplinaDTO.getId(), getInstituicaoEnsinoUser() ); 
@@ -102,7 +102,7 @@ public class DisciplinasServiceImpl
 		}
 
 		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-			disciplina.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
+			disciplina.getHorarios( getInstituicaoEnsinoUser() ) );
 
 		listDTO.addAll( ConvertBeans.toHorarioDisponivelCenarioDTO( list ) );
 
@@ -111,8 +111,7 @@ public class DisciplinasServiceImpl
 
 	@Override
 	public void saveHorariosDisponiveis(
-		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
-		List< HorarioDisponivelCenarioDTO > listDTO )
+		DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -128,20 +127,14 @@ public class DisciplinasServiceImpl
 		List< HorarioDisponivelCenario > adicionarList
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >();
 
-		if ( semanaLetiva != null )
-		{
-			List< HorarioDisponivelCenario > listTemp
-				= disciplina.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva );
+		List< HorarioDisponivelCenario > listTemp
+			= disciplina.getHorarios( getInstituicaoEnsinoUser() );
 
-			adicionarList.removeAll( listTemp );
-			removerList.addAll(	listTemp );
-		}
+		adicionarList.removeAll( listTemp );
+		removerList.addAll(	listTemp );
 
 		removerList.removeAll( listSelecionados );
 

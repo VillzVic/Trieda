@@ -37,27 +37,27 @@ public class Usuario
 	private static final long serialVersionUID = 2505879126546359228L;
 
     @NotNull
-    @Column(name = "USU_NOME")
-    @Size(min = 1, max = 50)
+    @Column( name = "USU_NOME" )
+    @Size( min = 1, max = 50 )
     private String nome;
 
-    @Column(name = "USU_EMAIL")
-    @Size(min = 5, max = 100)
+    @Column( name = "USU_EMAIL" )
+    @Size( min = 5, max = 100 )
     private String email;
 
     @Id
     @NotNull
-    @Column(name = "USERNAME", unique = true)
-    @Size(min = 5, max = 50)
+    @Column( name = "USERNAME", unique = true )
+    @Size( min = 5, max = 50 )
     private String username;
 
     @NotNull
-    @Column(name = "PASSWORD")
-    @Size(min = 5, max = 255)
+    @Column( name = "PASSWORD" )
+    @Size( min = 5, max = 255 )
     private String password;
     
     @NotNull
-    @Column(name = "ENABLED")
+    @Column( name = "ENABLED" )
     private Boolean enabled;
     
     @ManyToOne( cascade = {
@@ -66,87 +66,110 @@ public class Usuario
     @JoinColumn( name = "PRF_ID" )
     private Professor professor;
 
-    @OneToOne(targetEntity = Authority.class, fetch=FetchType.LAZY)
-    @JoinColumn(name = "USERNAME")
+    @OneToOne( targetEntity = Authority.class, fetch=FetchType.LAZY )
+    @JoinColumn( name = "USERNAME" )
     private Authority authority;
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
-		return instituicaoEnsino;
+		return this.instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
 
-	public String getNome() {
+	public String getNome()
+	{
         return this.nome;
     }
-	public void setNome(String nome) {
+
+	public void setNome( String nome )
+	{
         this.nome = nome;
     }
 
-	public String getEmail() {
+	public String getEmail()
+	{
         return this.email;
     }
-	public void setEmail(String email) {
+
+	public void setEmail( String email )
+	{
         this.email = email;
     }
 
-	public String getUsername() {
+	public String getUsername()
+	{
         return this.username;
     }
-	public void setUsername(String username) {
+
+	public void setUsername( String username )
+	{
         this.username = username;
     }
 
-	public String getPassword() {
+	public String getPassword()
+	{
         return this.password;
     }
-	public void setPassword(String password) {
+
+	public void setPassword( String password )
+	{
         this.password = password;
     }
 
-	public Boolean getEnabled() {
+	public Boolean getEnabled()
+	{
         return this.enabled;
     }
-	public void setEnabled(Boolean enabled) {
+
+	public void setEnabled( Boolean enabled )
+	{
         this.enabled = enabled;
     }
-	
-	public Professor getProfessor() {
-		return professor;
+
+	public Professor getProfessor()
+	{
+		return this.professor;
 	}
-	public void setProfessor(Professor professor) {
+
+	public void setProfessor( Professor professor )
+	{
 		this.professor = professor;
 	}
-	
-	public Authority getAuthority() {
-		return authority;
+
+	public Authority getAuthority()
+	{
+		return this.authority;
 	}
-	public void setAuthority(Authority authority) {
+
+	public void setAuthority( Authority authority )
+	{
 		this.authority = authority;
 	}
-	
+
 	public String toString()
 	{
         StringBuilder sb = new StringBuilder();
 
-        sb.append( "Version: " ).append( getVersion() ).append(", ");
-        sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-        sb.append( "Nome: " ).append( getNome() ).append(", ");
-        sb.append( "Email: " ).append( getEmail() ).append(", ");
-        sb.append( "Username: " ).append( getUsername() ).append(", ");
-        sb.append( "Password: " ).append( getPassword() ).append(", ");
-        sb.append( "Enabled: " ).append( getEnabled() ).append(", ");
-        sb.append( "Professor: " ).append( getProfessor() ).append(", ");
+        sb.append( "Version: " ).append( getVersion() ).append( ", " );
+        sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", "  );
+        sb.append( "Nome: " ).append( getNome() ).append( ", " );
+        sb.append( "Email: " ).append( getEmail() ).append( ", " );
+        sb.append( "Username: " ).append( getUsername() ).append( ", " );
+        sb.append( "Password: " ).append( getPassword() ).append( ", " );
+        sb.append( "Enabled: " ).append( getEnabled() ).append( ", " );
+        sb.append( "Professor: " ).append( getProfessor() ).append(", " );
         sb.append( "Authority: " ).append( getAuthority() );
 
         return sb.toString();
@@ -156,46 +179,81 @@ public class Usuario
     transient EntityManager entityManager;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-        	if(this.getAuthority() != null) this.getAuthority().remove();
-            this.entityManager.remove(this);
-        } else {
-            Usuario attached = this.entityManager.find(this.getClass(), this.username);
-            if(attached.getAuthority() != null) attached.getAuthority().remove();
-            this.entityManager.remove(attached);
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+        	if ( this.getAuthority() != null )
+        	{
+        		this.getAuthority().remove();
+        	}
+
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            Usuario attached = this.entityManager.find(
+            	this.getClass(), this.username );
+
+            if ( attached.getAuthority() != null )
+            {
+            	attached.getAuthority().remove();
+            }
+
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public Usuario merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Usuario merged = this.entityManager.merge(this);
+    public Usuario merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        Usuario merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -236,7 +294,7 @@ public class Usuario
         return ( (Number) q.getSingleResult() ).intValue();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< Usuario > findAllBy( String nome, String username,
     	String email, int firstResult, int maxResults,
     	String orderBy, InstituicaoEnsino instituicaoEnsino )
@@ -250,16 +308,18 @@ public class Usuario
 			" o.instituicaoEnsino = :instituicaoEnsino AND " +
 			" LOWER( o.email ) LIKE LOWER ( :email ) " + orderBy );
 
-		nome = "%" + nome.replace('*', '%') + "%";
-		username = "%" + username.replace('*', '%') + "%";
-		email = "%" + email.replace('*', '%') + "%";
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		username = ( "%" + username.replace( '*', '%' ) + "%" );
+		email = ( "%" + email.replace( '*', '%' ) + "%" );
 
 		q.setParameter( "nome", nome );
 		q.setParameter( "username", username );
 		q.setParameter( "email", email );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
 
-        return q.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+        return q.getResultList();
     }
 
 	public static Usuario find( String username )

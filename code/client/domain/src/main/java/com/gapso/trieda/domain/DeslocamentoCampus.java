@@ -155,15 +155,18 @@ public class DeslocamentoCampus
 		return findAllDeslocamentoCampuses( instituicaoEnsino ).size();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< DeslocamentoCampus > findAllDeslocamentoCampuses(
     	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery(
-        	" SELECT o FROM DeslocamentoCampus o " +
-        	" WHERE o.origem.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND o.destino.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM DeslocamentoCampus o " +
+	        " WHERE o.origem.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.destino.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
 	public static DeslocamentoCampus findDeslocamentoCampus(

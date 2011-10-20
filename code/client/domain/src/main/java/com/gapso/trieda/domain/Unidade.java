@@ -154,6 +154,7 @@ public class Unidade implements Serializable
         	}
 
         	this.removeSalas( false );
+        	this.removeDeslocamentos();
 
             this.entityManager.remove( this );
         }
@@ -175,6 +176,7 @@ public class Unidade implements Serializable
 	        	}
 
             	attached.removeSalas( false );
+            	attached.removeDeslocamentos();
 
             	this.entityManager.remove( attached );
 			}
@@ -214,6 +216,16 @@ public class Unidade implements Serializable
 
 	private void preencheHorarios()
 	{
+		List< HorarioDisponivelCenario > listHdcs = this.getCampus().getHorarios(
+				this.getCampus().getInstituicaoEnsino() );
+
+		for ( HorarioDisponivelCenario hdc : listHdcs )
+		{
+			hdc.getUnidades().add( this );
+			hdc.merge();
+		}
+
+		/*
 		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll(
 			this.getCampus().getInstituicaoEnsino() );
 
@@ -229,6 +241,7 @@ public class Unidade implements Serializable
 				hdc.merge();
 			}
 		}
+		*/
 	}
 
     @Transactional
@@ -255,6 +268,19 @@ public class Unidade implements Serializable
     		horario.merge();
     	}
     }
+
+	@Transactional
+	private void removeDeslocamentos()
+	{
+		List< DeslocamentoUnidade > deslocamentos
+			= DeslocamentoUnidade.findAllByUnidade(
+				this.getCampus().getInstituicaoEnsino(), this );
+
+		for ( DeslocamentoUnidade deslocamento : deslocamentos )
+		{
+			deslocamento.remove();
+		}
+	}
 
 	@Transactional
 	private void removeSalas( boolean removeCurriculosDisciplinas )
@@ -499,23 +525,17 @@ public class Unidade implements Serializable
 
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		List< HorarioDisponivelCenario > horarios
-			= new ArrayList< HorarioDisponivelCenario >();
-
 		Query q = entityManager().createQuery(
 			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.unidades ) u " +
 			" WHERE u = :unidade " +
-			" AND u.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+			" AND u.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "unidade", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		horarios.addAll( q.getResultList() );
-		return horarios; 
+		return q.getResultList(); 
 	}
 
 	public static boolean checkCodigoUnique( 

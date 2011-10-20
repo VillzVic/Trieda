@@ -32,15 +32,14 @@ public class TurnoFormPresenter
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
-	private CenarioDTO cenario;
 	private SimpleGrid< TurnoDTO > gridPanel;
 	private Display display;
 
-	public TurnoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public TurnoFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display,
 		SimpleGrid< TurnoDTO > gridPanel )
 	{
-		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -50,7 +49,7 @@ public class TurnoFormPresenter
 
 	private void setListeners()
 	{
-		display.getSalvarButton().addSelectionListener(
+		this.display.getSalvarButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -65,7 +64,8 @@ public class TurnoFormPresenter
 						@Override
 						public void onFailure( Throwable caught )
 						{
-							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+							MessageBox.alert( "ERRO!",
+								"Deu falha na conexão", null );
 						}
 
 						@Override
@@ -73,13 +73,16 @@ public class TurnoFormPresenter
 						{
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display( "Salvo", "Item salvo com sucesso!" );
+
+							Info.display( "Salvo",
+								"Item salvo com sucesso!" );
 						}
 					});
 				}
 				else
 				{
-					MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
 				}
 			}
 		});
@@ -87,17 +90,16 @@ public class TurnoFormPresenter
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		return this.display.isValid();
 	}
 	
 	private TurnoDTO getDTO()
 	{
-		TurnoDTO turnoDTO = display.getTurnoDTO();
+		TurnoDTO turnoDTO = this.display.getTurnoDTO();
 
-		turnoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		turnoDTO.setCenarioId( cenario.getId() );
-		turnoDTO.setNome( display.getNomeTextField().getValue() );
-		turnoDTO.setTempo( display.getTempoTextField().getValue().intValue() );
+		turnoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		turnoDTO.setNome( this.display.getNomeTextField().getValue() );
+		turnoDTO.setTempo( this.display.getTempoTextField().getValue().intValue() );
 
 		return turnoDTO;
 	}
@@ -105,6 +107,6 @@ public class TurnoFormPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

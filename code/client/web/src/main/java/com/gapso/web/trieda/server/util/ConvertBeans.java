@@ -582,7 +582,7 @@ public class ConvertBeans
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 
-		Cenario cenario = Cenario.find(
+		 Cenario cenario = Cenario.find(
 			dto.getCenarioId(), instituicaoEnsino );
 
 		domain.setCenario( cenario );
@@ -614,7 +614,8 @@ public class ConvertBeans
 
 		for ( HorarioAula ha : horarios )
 		{
-			for ( HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario() )
+			for ( HorarioDisponivelCenario hdc
+				: ha.getHorariosDisponiveisCenario() )
 			{
 				int semanaInt = Semanas.toInt( hdc.getDiaSemana() );
 				Integer value = countHorariosAula.get( semanaInt );
@@ -921,13 +922,14 @@ public class ConvertBeans
 	}
 
 	public static HorarioDisponivelCenarioDTO toHorarioDisponivelCenarioDTO(
-			HorarioAula domain) {
-
+		HorarioAula domain )
+	{
 		HorarioDisponivelCenarioDTO dto = new HorarioDisponivelCenarioDTO();
 
 		dto.setHorarioDeAulaId( domain.getId() );
 		dto.setHorarioDeAulaVersion( domain.getVersion() );
 		dto.setTurnoString( domain.getTurno().getNome() );
+		dto.setSemanaLetivaId( domain.getSemanaLetiva().getId() );
 
 		dto.setSegunda( false );
 		dto.setTerca( false );
@@ -1022,6 +1024,8 @@ public class ConvertBeans
 			if ( horarioAula.getSemanaLetiva() != null
 				&& horarioAula.getSemanaLetiva().getInstituicaoEnsino() != null )
 			{
+				dto.setSemanaLetivaId( horarioAula.getSemanaLetiva().getId() );
+
 				dto.setInstituicaoEnsinoId(
 					horarioAula.getSemanaLetiva().getInstituicaoEnsino().getId() );
 
@@ -1046,35 +1050,51 @@ public class ConvertBeans
 				switch ( o.getDiaSemana() )
 				{
 					case SEG:
+					{
 						dto.setSegunda( true );
 						dto.setSegundaId( o.getId() );
 						break;
+					}
 					case TER:
+					{
 						dto.setTerca( true );
 						dto.setTercaId( o.getId() );
 						break;
+					}
 					case QUA:
+					{
 						dto.setQuarta( true );
 						dto.setQuartaId( o.getId() );
 						break;
+					}
 					case QUI:
+					{
 						dto.setQuinta( true );
 						dto.setQuintaId( o.getId() );
 						break;
+					}
 					case SEX:
+					{
 						dto.setSexta( true );
 						dto.setSextaId( o.getId() );
 						break;
+					}
 					case SAB:
+					{
 						dto.setSabado( true );
 						dto.setSabadoId( o.getId() );
 						break;
+					}
 					case DOM:
+					{
 						dto.setDomingo( true );
 						dto.setDomingoId( o.getId() );
 						break;
+					}
 					default:
+					{
 						break;
+					}
 				}
 			}
 
@@ -1200,16 +1220,11 @@ public class ConvertBeans
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
 
-		if ( instituicaoEnsino != null )
-		{
-			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
-			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
-		}
-
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 		domain.setCodigo( dto.getCodigo() );
 		domain.setDescricao( dto.getDescricao() );
+		domain.setInstituicaoEnsino( instituicaoEnsino );
 
 		return domain;
 	}
@@ -1747,7 +1762,10 @@ public class ConvertBeans
 
 		domain.setCurso( domain.getCurriculo().getCurso() );
 		domain.setTurno( Turno.find( dto.getTurnoId(), instituicaoEnsino ) );
-		domain.setReceita( dto.getReceita().getDoubleValue() );
+
+		Double receita = ( dto.getReceita().getDoubleValue() == null ?
+			0.0 : dto.getReceita().getDoubleValue() );
+		domain.setReceita( receita );
 
 		return domain;
 	}

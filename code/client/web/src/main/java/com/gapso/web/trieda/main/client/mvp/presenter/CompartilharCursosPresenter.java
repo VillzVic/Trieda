@@ -16,9 +16,12 @@ import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CompartilharCursosPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class CompartilharCursosPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		CursoComboBox getCurso1ComboBox();
 		CursoComboBox getCurso2ComboBox();
 		Grid<CursoDescompartilhaDTO> getGrid();
@@ -26,20 +29,23 @@ public class CompartilharCursosPresenter implements Presenter {
 		Button getFecharBT();
 		Button getAdicionarBT();
 		Button getRemoverBT();
-		List<CursoDescompartilhaDTO> getCursos();
+		List< CursoDescompartilhaDTO > getCursos();
 		Component getComponent();
-		
 		SimpleModal getSimpleModal();
 	}
+
 	private Display display;
-	
-	public CompartilharCursosPresenter(Display display) {
+
+	public CompartilharCursosPresenter( Display display )
+	{
 		this.display = display;
+
 		setListeners();
 	}
 	
-	private void setListeners() {
-		display.getAdicionarBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getAdicionarBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				CursoDescompartilhaDTO cd = new CursoDescompartilhaDTO();
@@ -54,7 +60,8 @@ public class CompartilharCursosPresenter implements Presenter {
 				display.getCursos().add(cd);
 			}
 		});
-		display.getRemoverBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getRemoverBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<CursoDescompartilhaDTO> cds = display.getGrid().getSelectionModel().getSelectedItems();
@@ -64,17 +71,18 @@ public class CompartilharCursosPresenter implements Presenter {
 				}
 			}
 		});
-		display.getFecharBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getFecharBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				display.getSimpleModal().hide();
 			}
 		});
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
+	}
 }

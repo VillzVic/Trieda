@@ -112,7 +112,7 @@ public class UnidadesPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new UnidadeFormPresenter(
-					new UnidadeFormView( cenario ), display.getGrid() );
+					instituicaoEnsinoDTO, new UnidadeFormView( cenario ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -138,7 +138,7 @@ public class UnidadesPresenter
 					@Override
 					public void onSuccess( CampusDTO campusDTO )
 					{
-						Presenter presenter = new UnidadeFormPresenter(
+						Presenter presenter = new UnidadeFormPresenter( instituicaoEnsinoDTO,
 							new UnidadeFormView( unidadeDTO, campusDTO, cenario ), display.getGrid() );
 
 						presenter.go( null );
@@ -281,7 +281,7 @@ public class UnidadesPresenter
 
 				Services.campi().getCampus( unidadeDTO.getCampusId(), futureCampusDTO );
 				Services.unidades().getHorariosDisponiveis( unidadeDTO,
-					semanaLetivaDTO, futureHorarioDisponivelCenarioDTOList );
+					futureHorarioDisponivelCenarioDTOList );
 
 				FutureSynchronizer synch = new FutureSynchronizer(
 					futureCampusDTO, futureHorarioDisponivelCenarioDTOList );

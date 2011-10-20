@@ -20,7 +20,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SalasService
 	extends RemoteService
 {
-	PagingLoadResult< SalaDTO > getList( CampusDTO campusDTO, UnidadeDTO unidadeDTO, PagingLoadConfig config );
+	PagingLoadResult< SalaDTO > getList( CampusDTO campusDTO,
+		UnidadeDTO unidadeDTO, PagingLoadConfig config );
 	ListLoadResult< SalaDTO > getList();
 	void save( SalaDTO salaDTO );
 	void remove( List< SalaDTO > salaDTOList );
@@ -32,7 +33,8 @@ public interface SalasService
 	Map< String, List< SalaDTO > > getSalasEAndareMap( Long unidadeId );
 	List< GrupoSalaDTO > getGruposDeSalas( Long unidadeId );
 	ListLoadResult< SalaDTO > getBuscaList( UnidadeDTO unidadeDTO );
-	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO );
-	void saveHorariosDisponiveis( SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
+	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
+		SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO );
+	void saveHorariosDisponiveis( SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	ListLoadResult< SalaDTO > getSalasDoAndareList( UnidadeDTO unidade, List< String > andares );
 }

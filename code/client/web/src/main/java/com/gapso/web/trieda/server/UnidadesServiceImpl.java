@@ -24,13 +24,11 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
-import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.UnidadesService;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -56,11 +54,8 @@ public class UnidadesServiceImpl
 	
 	@Override
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO )
+		UnidadeDTO unidadeDTO )
 	{
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
 		List< HorarioDisponivelCenario > list
 			= new ArrayList< HorarioDisponivelCenario >();
 
@@ -70,7 +65,7 @@ public class UnidadesServiceImpl
 		if ( unidade != null )
 		{
 			list.addAll( unidade.getHorarios(
-				getInstituicaoEnsinoUser(), semanaLetiva ) );
+				getInstituicaoEnsinoUser() ) );
 		}
 
 		List< HorarioDisponivelCenarioDTO > listDTO
@@ -135,8 +130,7 @@ public class UnidadesServiceImpl
 	
 	@Override
 	public void saveHorariosDisponiveis(
-		UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO,
-		List< HorarioDisponivelCenarioDTO > listDTO )
+		UnidadeDTO unidadeDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -147,12 +141,9 @@ public class UnidadesServiceImpl
 		List< Sala > salas = Sala.findByUnidade(
 			getInstituicaoEnsinoUser(), unidade );
 
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				unidade.getHorarios( getInstituicaoEnsinoUser(), semanaLetiva ) );
+				unidade.getHorarios( getInstituicaoEnsinoUser() ) );
 
 		removerList.removeAll( listSelecionados );
 
@@ -167,7 +158,7 @@ public class UnidadesServiceImpl
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( unidade.getHorarios(
-			getInstituicaoEnsinoUser(), semanaLetiva ) );
+			getInstituicaoEnsinoUser() ) );
 
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{

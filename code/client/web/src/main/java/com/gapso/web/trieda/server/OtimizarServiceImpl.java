@@ -71,6 +71,13 @@ public class OtimizarServiceImpl
 		List< Campus > listCampus = Campus.findAll( instituicaoEnsino );
 		List< Turno > listTurnos = Turno.findAll( instituicaoEnsino );
 
+		if ( cenario == null )
+		{
+			CenariosServiceImpl cenariosService = new CenariosServiceImpl();
+			CenarioDTO cenarioDTO = cenariosService.getMasterData();
+			cenario = Cenario.find( cenarioDTO.getId(), instituicaoEnsino );
+		}
+
 		parametro.setCenario( cenario );
 		parametro.setCampus( ( listCampus == null || listCampus.size() == 0 ? null : listCampus.get( 0 ) ) );
 		parametro.setTurno( ( listTurnos == null || listTurnos.size() == 0 ? null : listTurnos.get( 0 ) ) );

@@ -36,8 +36,10 @@ public class AlunosFormPresenter
 	private Display display;
 	private CenarioDTO cenarioDTO;
 
-	public AlunosFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenarioDTO, Display display, SimpleGrid< AlunoDTO > gridPanel )
+	public AlunosFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenarioDTO, Display display,
+		SimpleGrid< AlunoDTO > gridPanel )
 	{
 		this.cenarioDTO = cenarioDTO;
 		this.gridPanel = gridPanel;

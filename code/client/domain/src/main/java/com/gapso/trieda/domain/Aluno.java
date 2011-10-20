@@ -342,7 +342,14 @@ public class Aluno
 	@Override
 	public int compareTo( Aluno o )
 	{
-		return this.getNome().compareTo( o.getNome() );
+		int result = this.getInstituicaoEnsino().compareTo( o.getInstituicaoEnsino() );
+
+		if ( result == 0 )
+		{
+			result = this.getNome().compareTo( o.getNome() );
+		}
+
+		return result;
 	}
 
 	@Override

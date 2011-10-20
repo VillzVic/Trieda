@@ -40,8 +40,10 @@ public class DivisaoCreditosFormPresenter
 	private SimpleGrid< DivisaoCreditoDTO > gridPanel;
 	private Display display;
 
-	public DivisaoCreditosFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display, SimpleGrid< DivisaoCreditoDTO > gridPanel )
+	public DivisaoCreditosFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display,
+		SimpleGrid< DivisaoCreditoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;

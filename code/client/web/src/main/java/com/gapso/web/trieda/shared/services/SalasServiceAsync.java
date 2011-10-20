@@ -32,7 +32,8 @@ public interface SalasServiceAsync
 	void getBuscaList( UnidadeDTO unidadeDTO, AsyncCallback< ListLoadResult< SalaDTO > > callback );
 	void getHorariosDisponiveis( SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO,
 		AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
-	void saveHorariosDisponiveis( SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO,
+	void saveHorariosDisponiveis( SalaDTO salaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
-	void getSalasDoAndareList( UnidadeDTO unidade, List< String > andares, AsyncCallback< ListLoadResult< SalaDTO > > callback );
+	void getSalasDoAndareList( UnidadeDTO unidade, List< String > andares,
+		AsyncCallback< ListLoadResult< SalaDTO > > callback );
 }

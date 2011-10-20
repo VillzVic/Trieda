@@ -31,7 +31,7 @@ public interface ProfessoresService
 	void save( ProfessorDTO professorDTO );
 	void remove( List< ProfessorDTO > professorDTOList );
 	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO );
-	void saveHorariosDisponiveis( ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
+	void saveHorariosDisponiveis( ProfessorDTO professorDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusList( CampusDTO campusDTO, ProfessorDTO professorDTO );
 	void removeProfessorCampus( List< ProfessorCampusDTO > professorCampusDTOList );
 	ListLoadResult<ProfessorDTO> getProfessoresEmCampus( CampusDTO campusDTO );

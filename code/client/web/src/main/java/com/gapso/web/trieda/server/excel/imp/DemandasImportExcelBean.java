@@ -31,10 +31,14 @@ public class DemandasImportExcelBean
 	private Integer demanda;
 	private Double receita;
 
-	public DemandasImportExcelBean(int row) {
-		super(row);
+	public DemandasImportExcelBean( int row )
+	{
+		super( row );
+
+		this.receita = 0.0;
+		this.receitaStr = this.receita.toString();
 	}
-	
+
 	public List< ImportExcelError > checkSyntacticErrors()
 	{
 		List< ImportExcelError > erros
@@ -42,23 +46,23 @@ public class DemandasImportExcelBean
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( campusStr, ImportExcelError.DEMANDA_CAMPUS_VAZIO, erros );
-			checkMandatoryField( turnoStr, ImportExcelError.DEMANDA_TURNO_VAZIO, erros );
-			checkMandatoryField( cursoStr, ImportExcelError.DEMANDA_CURSO_VAZIO, erros );
-			checkMandatoryField( matrizCurricularStr, ImportExcelError.DEMANDA_MATRIZ_CURRIULAR_VAZIO, erros );
-			checkMandatoryField( periodoStr, ImportExcelError.DEMANDA_PERIODO_VAZIO, erros );
-			checkMandatoryField( disciplinaStr, ImportExcelError.DEMANDA_DISCIPLINA_VAZIO, erros );
-			checkMandatoryField( demandaStr, ImportExcelError.DEMANDA_DEMANDA_VAZIO, erros );
+			checkMandatoryField( this.campusStr, ImportExcelError.DEMANDA_CAMPUS_VAZIO, erros );
+			checkMandatoryField( this.turnoStr, ImportExcelError.DEMANDA_TURNO_VAZIO, erros );
+			checkMandatoryField( this.cursoStr, ImportExcelError.DEMANDA_CURSO_VAZIO, erros );
+			checkMandatoryField( this.matrizCurricularStr, ImportExcelError.DEMANDA_MATRIZ_CURRIULAR_VAZIO, erros );
+			checkMandatoryField( this.periodoStr, ImportExcelError.DEMANDA_PERIODO_VAZIO, erros );
+			checkMandatoryField( this.disciplinaStr, ImportExcelError.DEMANDA_DISCIPLINA_VAZIO, erros );
+			checkMandatoryField( this.demandaStr, ImportExcelError.DEMANDA_DEMANDA_VAZIO, erros );
 
-			receita = checkNonNegativeDoubleField( receitaStr,
+			this.receita = checkNonNegativeDoubleField( this.receitaStr,
 				ImportExcelError.DEMANDA_RECEITA_FORMATO_INVALIDO,
 				ImportExcelError.DEMANDA_RECEITA_VALOR_NEGATIVO, erros );
 
-			periodo = checkNonNegativeIntegerField( periodoStr,
+			this.periodo = checkNonNegativeIntegerField( this.periodoStr,
 				ImportExcelError.DEMANDA_PERIODO_FORMATO_INVALIDO,
 				ImportExcelError.DEMANDA_PERIODO_VALOR_NEGATIVO, erros );
 
-			demanda = checkNonNegativeIntegerField( demandaStr,
+			this.demanda = checkNonNegativeIntegerField( this.demandaStr,
 				ImportExcelError.DEMANDA_DEMANDA_FORMATO_INVALIDO,
 				ImportExcelError.DEMANDA_DEMANDA_VALOR_NEGATIVO, erros );
 		}
@@ -72,152 +76,197 @@ public class DemandasImportExcelBean
 
 	private boolean tudoVazio()
 	{
-		return ( isEmptyField( campusStr )
-			&& isEmptyField( turnoStr )
-			&& isEmptyField( cursoStr )
-			&& isEmptyField( matrizCurricularStr )
-			&& isEmptyField( periodoStr )
-			&& isEmptyField( disciplinaStr )
-			&& isEmptyField( demandaStr )
-			&& isEmptyField( receitaStr ) );
+		return ( isEmptyField( this.campusStr )
+			&& isEmptyField( this.turnoStr )
+			&& isEmptyField( this.cursoStr )
+			&& isEmptyField( this.matrizCurricularStr )
+			&& isEmptyField( this.periodoStr )
+			&& isEmptyField( this.disciplinaStr )
+			&& isEmptyField( this.demandaStr )
+			&& isEmptyField( this.receitaStr ) );
 	}
 
-	public String getReceitaStr() {
-		return receitaStr;
+	public String getReceitaStr()
+	{
+		return this.receitaStr;
 	}
 
-	public void setReceitaStr(String receitaStr) {
+	public void setReceitaStr( String receitaStr )
+	{
 		this.receitaStr = receitaStr;
 	}
 
-	public Double getReceita() {
-		return receita;
+	public Double getReceita()
+	{
+		return this.receita;
 	}
 
-	public void setReceita(Double receita) {
+	public void setReceita( Double receita )
+	{
 		this.receita = receita;
 	}
 
-	public String getCampusStr() {
-		return campusStr;
+	public String getCampusStr()
+	{
+		return this.campusStr;
 	}
 
-	public void setCampusStr(String campusStr) {
+	public void setCampusStr( String campusStr )
+	{
 		this.campusStr = campusStr;
 	}
 
-	public String getTurnoStr() {
-		return turnoStr;
+	public String getTurnoStr()
+	{
+		return this.turnoStr;
 	}
 
-	public void setTurnoStr(String turnoStr) {
+	public void setTurnoStr( String turnoStr )
+	{
 		this.turnoStr = turnoStr;
 	}
 
-	public String getCursoStr() {
-		return cursoStr;
+	public String getCursoStr()
+	{
+		return this.cursoStr;
 	}
-	public void setCursoStr(String cursoStr) {
+
+	public void setCursoStr( String cursoStr )
+	{
 		this.cursoStr = cursoStr;
 	}
 
-	public String getMatrizCurricularStr() {
-		return matrizCurricularStr;
+	public String getMatrizCurricularStr()
+	{
+		return this.matrizCurricularStr;
 	}
-	public void setMatrizCurricularStr(String matrizCurricularStr) {
+
+	public void setMatrizCurricularStr( String matrizCurricularStr )
+	{
 		this.matrizCurricularStr = matrizCurricularStr;
 	}
 
-	public String getPeriodoStr() {
-		return periodoStr;
+	public String getPeriodoStr()
+	{
+		return this.periodoStr;
 	}
-	public void setPeriodoStr(String periodoStr) {
+
+	public void setPeriodoStr( String periodoStr )
+	{
 		this.periodoStr = periodoStr;
 	}
 
-	public String getDisciplinaStr() {
-		return disciplinaStr;
+	public String getDisciplinaStr()
+	{
+		return this.disciplinaStr;
 	}
-	public void setDisciplinaStr(String disciplinaStr) {
+
+	public void setDisciplinaStr( String disciplinaStr )
+	{
 		this.disciplinaStr = disciplinaStr;
 	}
 
-	public String getDemandaStr() {
-		return demandaStr;
+	public String getDemandaStr()
+	{
+		return this.demandaStr;
 	}
-	public void setDemandaStr(String demandaStr) {
+
+	public void setDemandaStr( String demandaStr )
+	{
 		this.demandaStr = demandaStr;
 	}
 
-	public Campus getCampus() {
-		return campus;
+	public Campus getCampus()
+	{
+		return this.campus;
 	}
-	public void setCampus(Campus campus) {
+
+	public void setCampus( Campus campus )
+	{
 		this.campus = campus;
 	}
 
-	public Turno getTurno() {
-		return turno;
+	public Turno getTurno()
+	{
+		return this.turno;
 	}
-	public void setTurno(Turno turno) {
+
+	public void setTurno( Turno turno )
+	{
 		this.turno = turno;
 	}
 
-	public Curso getCurso() {
-		return curso;
+	public Curso getCurso()
+	{
+		return this.curso;
 	}
-	public void setCurso(Curso curso) {
+
+	public void setCurso( Curso curso )
+	{
 		this.curso = curso;
 	}
 
-	public Curriculo getMatrizCurricular() {
-		return matrizCurricular;
+	public Curriculo getMatrizCurricular()
+	{
+		return this.matrizCurricular;
 	}
-	public void setMatrizCurricular(Curriculo matrizCurricular) {
+
+	public void setMatrizCurricular(
+		Curriculo matrizCurricular )
+	{
 		this.matrizCurricular = matrizCurricular;
 	}
 
-	public Integer getPeriodo() {
-		return periodo;
+	public Integer getPeriodo()
+	{
+		return this.periodo;
 	}
-	public void setPeriodo(Integer periodo) {
+
+	public void setPeriodo( Integer periodo )
+	{
 		this.periodo = periodo;
 	}
 
-	public Disciplina getDisciplina() {
-		return disciplina;
+	public Disciplina getDisciplina()
+	{
+		return this.disciplina;
 	}
-	public void setDisciplina(Disciplina disciplina) {
+
+	public void setDisciplina( Disciplina disciplina )
+	{
 		this.disciplina = disciplina;
 	}
 
-	public Integer getDemanda() {
-		return demanda;
+	public Integer getDemanda()
+	{
+		return this.demanda;
 	}
-	public void setDemanda(Integer demanda) {
+
+	public void setDemanda( Integer demanda )
+	{
 		this.demanda = demanda;
 	}
 
 	@Override
 	public int compareTo( DemandasImportExcelBean o )
 	{
-		int result = getCampusStr().compareTo( o.getCampusStr() );
+		int result = this.getCampusStr().compareTo( o.getCampusStr() );
 
 		if ( result == 0 )
 		{
-			result = getTurnoStr().compareTo( o.getTurnoStr() );
+			result = this.getTurnoStr().compareTo( o.getTurnoStr() );
 
 			if ( result == 0 )
 			{
-				result = getCursoStr().compareTo( o.getCursoStr() );
+				result = this.getCursoStr().compareTo( o.getCursoStr() );
 
 				if ( result == 0 )
 				{
-					result = getMatrizCurricularStr().compareTo( o.getMatrizCurricularStr() );
+					result = this.getMatrizCurricularStr().compareTo( o.getMatrizCurricularStr() );
 
 					if ( result == 0 )
 					{
-						result = getDisciplinaStr().compareTo( o.getDisciplinaStr() );
+						result = this.getDisciplinaStr().compareTo( o.getDisciplinaStr() );
 					}
 				}
 			}

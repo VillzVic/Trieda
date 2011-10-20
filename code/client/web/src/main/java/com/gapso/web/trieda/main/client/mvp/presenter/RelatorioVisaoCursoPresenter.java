@@ -36,7 +36,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class RelatorioVisaoCursoPresenter
 	implements Presenter
 {
-	public interface Display extends ITriedaI18nGateway
+	public interface Display
+		extends ITriedaI18nGateway
 	{
 		Button getSubmitBuscaButton();
 		CampusComboBox getCampusComboBox();
@@ -58,6 +59,7 @@ public class RelatorioVisaoCursoPresenter
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+
 		setListeners();
 	}
 

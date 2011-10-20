@@ -34,7 +34,8 @@ public class AlunosDemandaFormPresenter
 	private Grid< AlunoDemandaDTO > grid;
 	private Display display;
 
-	public AlunosDemandaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public AlunosDemandaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, Grid< AlunoDemandaDTO > grid )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -46,7 +47,7 @@ public class AlunosDemandaFormPresenter
 
 	private void setListeners()
 	{
-		display.getSalvarButton().addSelectionListener(
+		this.display.getSalvarButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -84,17 +85,17 @@ public class AlunosDemandaFormPresenter
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		return this.display.isValid();
 	}
 
 	private AlunoDemandaDTO getDTO()
 	{
-		AlunoDemandaDTO alunoDemandaDTO = display.getAlunoDemandaDTO();
+		AlunoDemandaDTO alunoDemandaDTO = this.display.getAlunoDemandaDTO();
 
-		alunoDemandaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		alunoDemandaDTO.setIdAluno( display.getAlunoComboBox().getValue().getId() );
-		alunoDemandaDTO.setAlunoString( display.getAlunoComboBox().getValue().getNome() );
-		alunoDemandaDTO.setDemandaId( display.getDemandaDTO().getId() );
+		alunoDemandaDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		alunoDemandaDTO.setIdAluno( this.display.getAlunoComboBox().getValue().getId() );
+		alunoDemandaDTO.setAlunoString( this.display.getAlunoComboBox().getValue().getNome() );
+		alunoDemandaDTO.setDemandaId( this.display.getDemandaDTO().getId() );
 
 		return alunoDemandaDTO;
 	}
@@ -102,6 +103,6 @@ public class AlunosDemandaFormPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

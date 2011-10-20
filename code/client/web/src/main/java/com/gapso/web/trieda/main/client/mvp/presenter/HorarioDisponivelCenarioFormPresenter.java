@@ -70,12 +70,12 @@ public class HorarioDisponivelCenarioFormPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
 	{
-		display.getSalvarButton().addSelectionListener(
+		this.display.getSalvarButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -99,7 +99,7 @@ public class HorarioDisponivelCenarioFormPresenter
 			}
 		});
 
-		display.getAdicionarHorarioBT().addSelectionListener(
+		this.display.getAdicionarHorarioBT().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -120,7 +120,7 @@ public class HorarioDisponivelCenarioFormPresenter
 			}
 		});
 
-		display.getRemoverHorarioBT().addSelectionListener(
+		this.display.getRemoverHorarioBT().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -144,8 +144,8 @@ public class HorarioDisponivelCenarioFormPresenter
 
 	private SemanaLetivaDTO getDTO()
 	{
-		SemanaLetivaDTO dto = display.getSemanaLetivaDTO();
-		dto.setInstituicaoEnsinoId( semanaLetiva.getInstituicaoEnsinoId() );
+		SemanaLetivaDTO dto = this.display.getSemanaLetivaDTO();
+		dto.setInstituicaoEnsinoId( this.semanaLetiva.getInstituicaoEnsinoId() );
 		return dto;
 	}
 
@@ -153,12 +153,12 @@ public class HorarioDisponivelCenarioFormPresenter
 	{
 		HorarioAulaDTO dto = new HorarioAulaDTO();
 
-		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		dto.setSemanaLetivaId( semanaLetiva.getId() );
-		dto.setTurnoId( display.getTurnoCB().getSelection().get( 0 ).getId() );
+		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		dto.setSemanaLetivaId( this.semanaLetiva.getId() );
+		dto.setTurnoId( this.display.getTurnoCB().getSelection().get( 0 ).getId() );
 
 		DateTimeFormat df = DateTimeFormat.getFormat( "HH:mm" );
-		dto.setInicio( df.parse( display.getHorarioInicioTF().getValue() ) );
+		dto.setInicio( df.parse( this.display.getHorarioInicioTF().getValue() ) );
 
 		return dto;
 	}
@@ -166,6 +166,6 @@ public class HorarioDisponivelCenarioFormPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

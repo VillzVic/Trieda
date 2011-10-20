@@ -24,29 +24,33 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DivisoesCreditosPresenter implements Presenter {
-
-	public interface Display {
+public class DivisoesCreditosPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		SimpleGrid<DivisaoCreditoDTO> getGrid();
+		SimpleGrid< DivisaoCreditoDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<DivisaoCreditoDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< DivisaoCreditoDTO > > proxy );
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
 	
-	public DivisoesCreditosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public DivisoesCreditosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}

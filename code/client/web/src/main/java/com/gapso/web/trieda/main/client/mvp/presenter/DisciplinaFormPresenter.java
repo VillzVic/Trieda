@@ -46,14 +46,17 @@ public class DisciplinaFormPresenter
 	private SimpleGrid< DisciplinaDTO > gridPanel;
 	private Display display;
 
-	public DisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public DisciplinaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this( instituicaoEnsinoDTO, cenario, display, null );
 	}
 
-	public DisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display, SimpleGrid< DisciplinaDTO > gridPanel )
+	public DisciplinaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display,
+		SimpleGrid< DisciplinaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;

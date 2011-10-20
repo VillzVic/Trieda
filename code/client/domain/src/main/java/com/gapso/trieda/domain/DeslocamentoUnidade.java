@@ -1,5 +1,6 @@
 package com.gapso.trieda.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -30,61 +31,69 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "DEU_ID")
-@Table(name = "DESLOCAMENTOS_UNIDADES")
+@RooEntity( identifierColumn = "DEU_ID" )
+@Table( name = "DESLOCAMENTOS_UNIDADES" )
 public class DeslocamentoUnidade
-	implements java.io.Serializable
+	implements Serializable
 {
 	private static final long serialVersionUID = -8847212098556601964L;
 
     @NotNull
-    @ManyToOne(targetEntity = Unidade.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "UNI_ORIG_ID")
+    @ManyToOne( targetEntity = Unidade.class, fetch = FetchType.LAZY )
+    @JoinColumn( name = "UNI_ORIG_ID" )
     private Unidade origem;
 
     @NotNull
-    @ManyToOne(targetEntity = Unidade.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "UNI_DEST_ID")
+    @ManyToOne( targetEntity = Unidade.class, fetch = FetchType.LAZY )
+    @JoinColumn( name = "UNI_DEST_ID" )
     private Unidade destino;
 
-    @Column(name = "DEC_TEMPO")
-    @Min(0L)
-    @Max(999L)
+    @Column( name = "DEC_TEMPO" )
+    @Min( 0L )
+    @Max( 999L )
     private Integer tempo;
-    
-    @Column(name = "DEC_CUSTO")
-    @Digits(integer = 4, fraction = 2)
+
+    @Column( name = "DEC_CUSTO" )
+    @Digits( integer = 4, fraction = 2 )
     private Double custo;
 
-	public Unidade getOrigem() {
+	public Unidade getOrigem()
+	{
         return this.origem;
     }
 
-	public void setOrigem(Unidade origem) {
+	public void setOrigem( Unidade origem )
+	{
         this.origem = origem;
     }
 
-	public Unidade getDestino() {
+	public Unidade getDestino()
+	{
         return this.destino;
     }
 
-	public void setDestino(Unidade destino) {
+	public void setDestino( Unidade destino )
+	{
         this.destino = destino;
     }
 
-	public Integer getTempo() {
+	public Integer getTempo()
+	{
         return this.tempo;
     }
 
-	public void setTempo(Integer tempo) {
+	public void setTempo( Integer tempo )
+	{
         this.tempo = tempo;
     }
-	
-	public Double getCusto() {
+
+	public Double getCusto()
+	{
 		return this.custo;
 	}
-	
-	public void setCusto(Double custo) {
+
+	public void setCusto( Double custo )
+	{
 		this.custo = custo;
 	}
 
@@ -92,63 +101,97 @@ public class DeslocamentoUnidade
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "DEU_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "DEU_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
-	
+
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+	
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            DeslocamentoUnidade attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            DeslocamentoUnidade attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public DeslocamentoUnidade merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        DeslocamentoUnidade merged = this.entityManager.merge(this);
+    public DeslocamentoUnidade merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        DeslocamentoUnidade merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -170,18 +213,21 @@ public class DeslocamentoUnidade
 	public static long count(
 		InstituicaoEnsino instituicaoEnsino )
 	{
-        return findAll( instituicaoEnsino ).size();
+        return DeslocamentoUnidade.findAll( instituicaoEnsino ).size();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< DeslocamentoUnidade > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery(
-        	" SELECT o FROM DeslocamentoUnidade o " +
-        	" WHERE o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM DeslocamentoUnidade o " +
+	        " WHERE o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
 	public static DeslocamentoUnidade find(
@@ -208,20 +254,24 @@ public class DeslocamentoUnidade
         return null;
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< DeslocamentoUnidade > find(
     	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults )
     {
-        return entityManager().createQuery(
-        	" SELECT o FROM DeslocamentoUnidade o " +
-        	" WHERE o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
-        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM DeslocamentoUnidade o " +
+	        " WHERE o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+        return q.getResultList();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< DeslocamentoUnidade > findAllByCampus(
     	InstituicaoEnsino instituicaoEnsino, Campus campus )
     {
@@ -233,6 +283,22 @@ public class DeslocamentoUnidade
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "campus", campus );
+
+        return q.getResultList();
+    }
+
+	@SuppressWarnings( "unchecked" )
+    public static List< DeslocamentoUnidade > findAllByUnidade(
+    	InstituicaoEnsino instituicaoEnsino, Unidade unidade )
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM DeslocamentoUnidade o " +
+			" WHERE ( o.origem = :unidade OR o.destino = :unidade ) " +
+			" AND o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "unidade", unidade );
 
         return q.getResultList();
     }

@@ -230,6 +230,6 @@ public class InstituicaoEnsino
 	@Override
 	public int compareTo( InstituicaoEnsino o )
 	{
-		return this.getId().compareTo( o.getId() );
+		return this.getNomeInstituicao().compareTo( o.getNomeInstituicao() );
 	}
 }

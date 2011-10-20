@@ -340,12 +340,12 @@ public class Campus
 
 		if ( this.entityManager.contains( this ) )
 		{
-			removeCurriculoDisciplinas();
-
-			removeProfessores();
-			removeHorariosDisponivelCenario();
-			removeDeslocamentosDestino();
-			removeUnidades();
+			this.removeCurriculoDisciplinas();
+			this.removeProfessores();
+			this.removeHorariosDisponivelCenario();
+			this.removeDeslocamentosDestino();
+			this.removeUnidades();
+			this.removeDeslocamentos();
 
 			this.entityManager.remove( this );
 		}
@@ -356,18 +356,36 @@ public class Campus
 
 			if ( attached != null )
 			{
-				removeCurriculoDisciplinas();
+				this.removeCurriculoDisciplinas();
 				
 				attached.removeProfessores();
 				attached.removeHorariosDisponivelCenario();
 				attached.removeDeslocamentosDestino();
 				attached.removeUnidades();
+				attached.removeDeslocamentos();
 
 				this.entityManager.remove( attached );
 			}
 		}
 	}
-	
+
+	@Transactional
+	private void removeDeslocamentos()
+	{
+		List< DeslocamentoCampus > deslocamentos
+			= DeslocamentoCampus.findAllDeslocamentoCampuses(
+				this.getInstituicaoEnsino() );
+
+		for ( DeslocamentoCampus deslocamento : deslocamentos )
+		{
+			if ( deslocamento.getOrigem().getId() == this.getId()
+				|| deslocamento.getDestino().getId() == this.getId() )
+			{
+				deslocamento.remove();
+			}
+		}
+	}
+
     @Transactional
     private void removeCurriculoDisciplinas()
     {
@@ -802,24 +820,18 @@ public class Campus
 
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		List< HorarioDisponivelCenario > horarios
-			= new ArrayList< HorarioDisponivelCenario >();
-
 		Query q = entityManager().createQuery(
 			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.campi ) c " +
 			" WHERE c.instituicaoEnsino = :instituicaoEnsino " +
 			" AND c = :campus " +
-			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
 			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "campus", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		horarios.addAll( q.getResultList() );
-		return horarios;
+		return q.getResultList();
 	}
 
 	@SuppressWarnings( "unchecked" )

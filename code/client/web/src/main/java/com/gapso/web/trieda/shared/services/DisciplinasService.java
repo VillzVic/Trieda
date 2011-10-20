@@ -43,7 +43,7 @@ public interface DisciplinasService
 	void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO);
 	void removeDisciplinaToSala( SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO);
 	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO);
-	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
+	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO );
 	List< TreeNodeDTO > getDisciplinasByTreeSalas( TreeNodeDTO salaTreeNodeDTO,
 		TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO );

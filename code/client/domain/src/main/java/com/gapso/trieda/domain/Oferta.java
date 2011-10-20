@@ -35,57 +35,57 @@ import org.springframework.transaction.annotation.Transactional;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "OFE_ID")
-@Table(name = "OFERTAS")
+@RooEntity( identifierColumn = "OFE_ID" )
+@Table( name = "OFERTAS" )
 public class Oferta
 	implements Serializable, Comparable< Oferta >
 {
 	private static final long serialVersionUID = -976299446108675926L;
 
 	@NotNull
-	@ManyToOne(targetEntity = Curriculo.class)
-	@JoinColumn(name = "CRC_ID")
+	@ManyToOne( targetEntity = Curriculo.class )
+	@JoinColumn( name = "CRC_ID" )
 	private Curriculo curriculo;
 
 	@NotNull
-	@ManyToOne(targetEntity = Campus.class)
-	@JoinColumn(name = "CAM_ID")
+	@ManyToOne( targetEntity = Campus.class )
+	@JoinColumn( name = "CAM_ID" )
 	private Campus campus;
 
 	@NotNull
-	@ManyToOne(targetEntity = Turno.class)
-	@JoinColumn(name = "TUR_ID")
+	@ManyToOne( targetEntity = Turno.class )
+	@JoinColumn( name = "TUR_ID" )
 	private Turno turno;
 
 	@NotNull
-	@ManyToOne(targetEntity = Curso.class)
-	@JoinColumn(name = "CUR_ID")
+	@ManyToOne( targetEntity = Curso.class )
+	@JoinColumn( name = "CUR_ID" )
 	private Curso curso;
 
-	@Column(name = "OFE_RECEITA")
-	@Digits(integer = 6, fraction = 2)
+	@Column( name = "OFE_RECEITA" )
+	@Digits( integer = 6, fraction = 2 )
 	private Double receita;
 
 	@NotNull
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "oferta" )
 	private Set< Demanda > demandas = new HashSet< Demanda >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "oferta" )
 	private Set< AtendimentoOperacional > atendimentosOperacionais = new HashSet< AtendimentoOperacional >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "oferta")
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "oferta" )
 	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
 
 	@PersistenceContext
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "CAC_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "OFE_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
 	public Long getId()
@@ -188,7 +188,7 @@ public class Oferta
 		return em;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Oferta > findAllBy(
 		InstituicaoEnsino instituicaoEnsino, Sala sala )
 	{
@@ -212,7 +212,7 @@ public class Oferta
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Oferta > findAllBy(
 		InstituicaoEnsino instituicaoEnsino, GrupoSala grupoSala )
 	{
@@ -236,7 +236,7 @@ public class Oferta
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Oferta > findByCampusAndTurno(
 		InstituicaoEnsino instituicaoEnsino, Campus campus, Turno turno )
 	{
@@ -253,7 +253,7 @@ public class Oferta
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Oferta > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -268,7 +268,7 @@ public class Oferta
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Oferta > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -305,7 +305,7 @@ public class Oferta
 		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Oferta > find(
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
@@ -357,7 +357,7 @@ public class Oferta
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List<Oferta> findBy( InstituicaoEnsino instituicaoEnsino,
 		Turno turno, Campus campus, Curso curso, Curriculo curriculo,
 		int firstResult, int maxResults, String orderBy )
@@ -411,7 +411,7 @@ public class Oferta
 		return codigo;
 	}
 	
-	public static Map<String, Oferta> buildCampusTurnoCurriculoToOfertaMap(
+	public static Map< String, Oferta > buildCampusTurnoCurriculoToOfertaMap(
 		List< Oferta > ofertas )
 	{
 		Map< String, Oferta > ofertasMap
@@ -426,69 +426,86 @@ public class Oferta
 		return ofertasMap;
 	}
 
-	public Curriculo getCurriculo() {
+	public Curriculo getCurriculo()
+	{
 		return this.curriculo;
 	}
 
-	public void setCurriculo(Curriculo curriculo) {
+	public void setCurriculo( Curriculo curriculo )
+	{
 		this.curriculo = curriculo;
 	}
 
-	public Campus getCampus() {
+	public Campus getCampus()
+	{
 		return this.campus;
 	}
 
-	public void setCampus(Campus campus) {
+	public void setCampus( Campus campus )
+	{
 		this.campus = campus;
 	}
 
-	public Turno getTurno() {
+	public Turno getTurno()
+	{
 		return this.turno;
 	}
 
-	public void setTurno(Turno turno) {
+	public void setTurno( Turno turno )
+	{
 		this.turno = turno;
 	}
 
-	public Curso getCurso() {
+	public Curso getCurso()
+	{
 		return this.curso;
 	}
 
-	public void setCurso(Curso curso) {
+	public void setCurso( Curso curso )
+	{
 		this.curso = curso;
 	}
 
-	public Set<Demanda> getDemandas() {
+	public Set< Demanda > getDemandas()
+	{
 		return this.demandas;
 	}
 
-	public void setDemandas(Set<Demanda> demandas) {
+	public void setDemandas(
+		Set< Demanda > demandas )
+	{
 		this.demandas = demandas;
 	}
 
-	public Double getReceita() {
-		return receita;
+	public Double getReceita()
+	{
+		return this.receita;
 	}
 
-	public void setReceita(Double receita) {
+	public void setReceita( Double receita )
+	{
 		this.receita = receita;
 	}
 
-	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+	public Set< AtendimentoOperacional > getAtendimentosOperacionais()
+	{
 		return this.atendimentosOperacionais;
 	}
 
 	public void setAtendimentosOperacionais(
-			Set<AtendimentoOperacional> atendimentosOperacionais) {
+			Set< AtendimentoOperacional > atendimentosOperacionais )
+	{
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 
-	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+	public Set< AtendimentoTatico > getAtendimentosTaticos()
+	{
 		return this.atendimentosTaticos;
 	}
 
 	public void setAtendimentosTaticos(
-			Set<AtendimentoTatico> atendimentosTaticos) {
+		Set< AtendimentoTatico > atendimentosTaticos )
+	{
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
 
@@ -496,20 +513,18 @@ public class Oferta
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Curriculo: ").append(getCurriculo().getCodigo()).append(", ");
-		sb.append("Campus: ").append(getCampus().getCodigo()).append(", ");
-		sb.append("Turno: ").append(getTurno().getNome()).append(", ");
-		sb.append("Demandas: ").append(
-			getDemandas() == null ? "null" : getDemandas().size() );
-		sb.append("Receita: ").append(getReceita()).append(", ");
-		sb.append("Atendimentos Operacionais: ").append(
-			getAtendimentosOperacionais() == null ? "null"
-				: getAtendimentosOperacionais().size() );
-		sb.append("Atendimentos Taticos: ").append(
-			getAtendimentosTaticos() == null ? "null"
-				: getAtendimentosTaticos().size() );
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Curriculo: " ).append( getCurriculo().getCodigo() ).append( ", " );
+		sb.append( "Campus: " ).append( getCampus().getCodigo() ).append( ", " );
+		sb.append( "Turno: " ).append( getTurno().getNome() ).append( ", " );
+		sb.append( "Demandas: " ).append( getDemandas() == null ?
+			"null" : getDemandas().size() ).append( ", " );
+		sb.append( "Receita: " ).append( getReceita() ).append( ", " );
+		sb.append( "Atendimentos Operacionais: " ).append( getAtendimentosOperacionais() == null ?
+			"null" : getAtendimentosOperacionais().size() ).append( ", " );
+		sb.append( "Atendimentos Taticos: " ).append( getAtendimentosTaticos() == null ?
+			"null" : getAtendimentosTaticos().size() );
 
 		return sb.toString();
 	}

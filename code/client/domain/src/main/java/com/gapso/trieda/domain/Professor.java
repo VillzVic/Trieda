@@ -1,7 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -622,23 +621,17 @@ public class Professor
 
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		List< HorarioDisponivelCenario > horarios
-			= new ArrayList< HorarioDisponivelCenario >();
-
 		Query q = entityManager().createQuery(
 			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.professores ) c " +
 			" WHERE c.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
-			" AND c = :professor " +
-			" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+			" AND c = :professor " );
 
 		q.setParameter( "professor", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		horarios.addAll( q.getResultList() );
-		return horarios;
+		return q.getResultList();
 	}
 
 	public static Map< String, Professor > buildProfessorCpfToProfessorMap(

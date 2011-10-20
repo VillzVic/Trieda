@@ -82,27 +82,31 @@ public class HorarioAula
     transient EntityManager entityManager;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "HOR_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "HOR_ID" )
     private Long id;
 
     @Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-    public Long getId() {
+    public Long getId()
+    {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId( Long id )
+    {
         this.id = id;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return this.version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion( Integer version )
+    {
         this.version = version;
     }
 
@@ -131,7 +135,9 @@ public class HorarioAula
         }
         else
         {
-            HorarioAula attached = this.entityManager.find( this.getClass(), this.id );
+            HorarioAula attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
             this.entityManager.remove( attached );
         }
     }
@@ -291,7 +297,7 @@ public class HorarioAula
     	orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
         String horarioQuery = ( ( horario == null )? "" : " o.horario = :horario AND " );
-        String semanaLetivaQuery = ( ( semanaLetiva == null )? "" : " o.semanaLetiva = :semanaLetiva AND " );
+        String semanaLetivaQuery = ( ( semanaLetiva == null ) ? "" : " o.semanaLetiva = :semanaLetiva AND " );
         String turnoQuery = ( ( turno == null )? "" : " o.turno = :turno AND " );
 
         Query q = entityManager().createQuery(

@@ -49,7 +49,8 @@ public class EquivalenciaFormPresenter
 	private SimpleGrid< EquivalenciaDTO > gridPanel;
 	private Display display;
 
-	public EquivalenciaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public EquivalenciaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< EquivalenciaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

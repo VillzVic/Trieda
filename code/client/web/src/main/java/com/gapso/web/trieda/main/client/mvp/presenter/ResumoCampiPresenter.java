@@ -20,17 +20,22 @@ public class ResumoCampiPresenter
 		Component getComponent();
 	}
 
+	@SuppressWarnings( "unused" )
+	private CenarioDTO cenario;
+
 	private Display display; 
 	
 	public ResumoCampiPresenter(
 		CenarioDTO cenario, Display display )
 	{
 		this.display = display;
+		this.cenario = cenario;
 	}
 
 	@Override
-	public void go( Widget widget ){
+	public void go( Widget widget )
+	{
 		GTab tab = (GTab)widget;
-		tab.add( (GTabItem)display.getComponent() );
+		tab.add( (GTabItem) this.display.getComponent() );
 	}
 }

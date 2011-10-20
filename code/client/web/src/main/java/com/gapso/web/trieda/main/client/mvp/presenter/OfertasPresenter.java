@@ -69,8 +69,8 @@ public class OfertasPresenter
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}

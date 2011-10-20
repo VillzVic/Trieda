@@ -40,12 +40,14 @@ public class OfertaFormPresenter
 	private SimpleGrid< OfertaDTO > gridPanel;
 	private Display display;
 
-	public OfertaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public OfertaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< OfertaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+
 		setListeners();
 	}
 

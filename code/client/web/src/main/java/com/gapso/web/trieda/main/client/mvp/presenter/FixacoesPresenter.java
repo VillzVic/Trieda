@@ -32,27 +32,30 @@ import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-public class FixacoesPresenter implements Presenter {
-
-	public interface Display {
+public class FixacoesPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		TextField<String> getCodigoBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<FixacaoDTO> getGrid();
+		SimpleGrid< FixacaoDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<FixacaoDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< FixacaoDTO > > proxy );
 	}
-	
+
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private Display display; 
-	
-	public FixacoesPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+
+	public FixacoesPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

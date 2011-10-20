@@ -35,14 +35,13 @@ public class HorarioDisponivelUnidadeFormPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private CampusDTO campus;
-	private SemanaLetivaDTO semanaLetivaDTO;
 
-	public HorarioDisponivelUnidadeFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public HorarioDisponivelUnidadeFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CampusDTO campus, SemanaLetivaDTO semanaLetivaDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.campus = campus;
-		this.semanaLetivaDTO = semanaLetivaDTO;
 		this.display = display;
 
 		configureProxy();
@@ -58,7 +57,7 @@ public class HorarioDisponivelUnidadeFormPresenter
 			protected void load( Object loadConfig,
 				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
 			{
-				Services.campi().getHorariosDisponiveis( campus, semanaLetivaDTO, callback );
+				Services.campi().getHorariosDisponiveis( campus, callback );
 			}
 		};
 
@@ -78,7 +77,7 @@ public class HorarioDisponivelUnidadeFormPresenter
 					= display.getStore().getModels();
 
 				Services.unidades().saveHorariosDisponiveis( getDTO(),
-					semanaLetivaDTO, hdcDTOList, new AsyncCallback< Void >()
+					hdcDTOList, new AsyncCallback< Void >()
 				{
 					@Override
 					public void onFailure( Throwable caught )

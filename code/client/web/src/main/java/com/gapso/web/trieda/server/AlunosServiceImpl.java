@@ -2,7 +2,6 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +23,20 @@ public class AlunosServiceImpl
 	@Override
 	public AlunoDTO getAluno( Long id )
 	{
-		return ConvertBeans.toAlunoDTO(
-			Aluno.find( id, getInstituicaoEnsinoUser() ) );
+		if ( id == null )
+		{
+			return null;
+		}
+
+		Aluno aluno = Aluno.find(
+			id, getInstituicaoEnsinoUser() );
+
+		if ( aluno == null )
+		{
+			return null;
+		}
+
+		return ConvertBeans.toAlunoDTO( aluno );
 	}
 
 	@Override
@@ -54,14 +65,7 @@ public class AlunosServiceImpl
 
 		list.addAll( ConvertBeans.toListAlunoDTO( listDomains ) );
 
-		Collections.sort( list, new Comparator< AlunoDTO >()
-		{
-			@Override
-			public int compare( AlunoDTO o1, AlunoDTO o2 )
-			{
-				return o1.getNome().compareTo( o2.getNome() );
-			}
-		});
+		Collections.sort( list );
 
 		BasePagingLoadResult< AlunoDTO > result
 			= new BasePagingLoadResult< AlunoDTO >( list );

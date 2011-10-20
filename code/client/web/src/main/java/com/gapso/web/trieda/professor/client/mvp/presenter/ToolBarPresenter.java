@@ -36,7 +36,8 @@ public class ToolBarPresenter
 	private Display toolBar;
 	private GTab gTab;
 
-	public ToolBarPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public ToolBarPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO masterData, UsuarioDTO usuario, Display toolBar )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -49,7 +50,7 @@ public class ToolBarPresenter
 
 	private void addListeners()
 	{
-		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(
+		this.toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -63,7 +64,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(
+		this.toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -77,7 +78,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getDisponibilidadeProfessorButton().addSelectionListener(
+		this.toolBar.getDisponibilidadeProfessorButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -90,7 +91,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(
+		this.toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -110,6 +111,6 @@ public class ToolBarPresenter
 	{
 		AppPresenter.Display container = (AppPresenter.Display) widget;
 		this.gTab = container.getGTab();
-		container.getPanel().setTopComponent( toolBar.getComponent() );
+		container.getPanel().setTopComponent( this.toolBar.getComponent() );
 	}
 }

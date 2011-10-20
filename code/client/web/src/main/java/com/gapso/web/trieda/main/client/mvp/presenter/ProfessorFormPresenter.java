@@ -50,14 +50,17 @@ public class ProfessorFormPresenter
 	private Display display;
 	private CenarioDTO cenario;
 
-	public ProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public ProfessorFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this( instituicaoEnsinoDTO, cenario, display, null );
 	}
 
-	public ProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display, SimpleGrid< ProfessorDTO > gridPanel )
+	public ProfessorFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display,
+		SimpleGrid< ProfessorDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;

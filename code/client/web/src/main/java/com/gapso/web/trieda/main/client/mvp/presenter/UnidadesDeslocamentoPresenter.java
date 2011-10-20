@@ -23,28 +23,33 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UnidadesDeslocamentoPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class UnidadesDeslocamentoPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getSaveButton();
 		Button getCancelButton();
 		Button getSimetricaButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		CampusComboBox getCampusComboBox();
-		DeslocamentoGrid<DeslocamentoUnidadeDTO> getGrid();
+		DeslocamentoGrid< DeslocamentoUnidadeDTO > getGrid();
 		Component getComponent();
 		CampusDTO getCampusDTO();
 	}
+
 	private Display display; 
 	private GTab gTab;
-	
-	public UnidadesDeslocamentoPresenter(Display display) {
+
+	public UnidadesDeslocamentoPresenter( Display display )
+	{
 		this.display = display;
-//		configureProxy();
+		//configureProxy();
 		setListeners();
 	}
-	
+
 //	private void configureProxy() {
 //		UnidadesServiceAsync service = Services.unidades();
 //		CampusDTO campusDTO = display.getCampusDTO();

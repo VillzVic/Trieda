@@ -75,7 +75,8 @@ public class DemandasPresenter
 	private Display display; 
 	private GTab gTab;
 
-	public DemandasPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public DemandasPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

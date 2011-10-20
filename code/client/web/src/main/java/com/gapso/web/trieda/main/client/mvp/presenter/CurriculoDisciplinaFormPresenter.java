@@ -36,7 +36,8 @@ public class CurriculoDisciplinaFormPresenter
 	private Grid< CurriculoDisciplinaDTO > grid;
 	private Display display;
 
-	public CurriculoDisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public CurriculoDisciplinaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, Grid< CurriculoDisciplinaDTO > grid )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

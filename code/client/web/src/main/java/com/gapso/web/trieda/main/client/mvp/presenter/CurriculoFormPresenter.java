@@ -39,8 +39,10 @@ public class CurriculoFormPresenter
 	private SimpleGrid< CurriculoDTO > gridPanel;
 	private Display display;
 
-	public CurriculoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display, SimpleGrid< CurriculoDTO > gridPanel )
+	public CurriculoFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display,
+		SimpleGrid< CurriculoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;

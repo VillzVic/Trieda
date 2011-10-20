@@ -6,40 +6,50 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
-public class OtimizarMessagesPresenter implements Presenter {
-
-	public interface Display {
+public class OtimizarMessagesPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		ContentPanel getMessagesWarningPanel();
 		ContentPanel getMessagesErrorPanel();
 		SimpleModal getSimpleModal();
 	}
 
-	private List<String> warnings;
-	private List<String> errors;
+	private List< String > warnings;
+	private List< String > errors;
 	private Display display;
 
-	public OtimizarMessagesPresenter(List<String> warnings,
-			List<String> errors, Display display) {
+	public OtimizarMessagesPresenter(
+		List< String > warnings,
+		List< String > errors, Display display )
+	{
 		this.display = display;
 		this.warnings = warnings;
 		this.errors = errors;
+
 		populationMessages();
 	}
 
-	private void populationMessages() {
-		for(String msg : warnings) {
-			display.getMessagesWarningPanel().addText("• "+msg);
+	private void populationMessages()
+	{
+		for ( String msg : this.warnings )
+		{
+			this.display.getMessagesWarningPanel().addText( "• " + msg );
 		}
-		for(String msg : errors) {
-			display.getMessagesErrorPanel().addText("• "+msg);
+
+		for ( String msg : this.errors )
+		{
+			this.display.getMessagesErrorPanel().addText( "• " + msg );
 		}
-		display.getMessagesWarningPanel().setVisible(!warnings.isEmpty());
-		display.getMessagesErrorPanel().setVisible(!errors.isEmpty());
+
+		this.display.getMessagesWarningPanel().setVisible( !this.warnings.isEmpty() );
+		this.display.getMessagesErrorPanel().setVisible( !this.errors.isEmpty() );
 	}
 
 	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
 	}
-
 }

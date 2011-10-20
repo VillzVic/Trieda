@@ -42,7 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "SAL_ID" )
 @Table( name = "SALAS", uniqueConstraints =
 @UniqueConstraint( columnNames = { "UNI_ID", "SAL_CODIGO" } ) )
-public class Sala implements Serializable, Comparable< Sala >
+public class Sala
+	implements Serializable, Comparable< Sala >
 {
 	private static final long serialVersionUID = -2533999449644229682L;
 
@@ -188,6 +189,16 @@ public class Sala implements Serializable, Comparable< Sala >
 		InstituicaoEnsino instituicaoEnsino
 			= this.getUnidade().getCampus().getInstituicaoEnsino();
 
+		List< HorarioDisponivelCenario > listHdcs
+			= this.getUnidade().getHorarios( instituicaoEnsino );
+
+		for ( HorarioDisponivelCenario hdc : listHdcs )
+		{
+			hdc.getSalas().add( this );
+			hdc.merge();
+		}
+
+		/*
 		List< SemanaLetiva > listSemanasLetivas
 			= SemanaLetiva.findAll( instituicaoEnsino );
 
@@ -202,6 +213,7 @@ public class Sala implements Serializable, Comparable< Sala >
 				hdc.merge();
 			}
 		}
+		*/
 	}
 
 	@Transactional
@@ -692,23 +704,17 @@ public class Sala implements Serializable, Comparable< Sala >
 
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		List< HorarioDisponivelCenario > horarios
-			= new ArrayList< HorarioDisponivelCenario >();
-
 		Query q = entityManager().createQuery(
 			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.salas ) c " +
 			" WHERE c.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND c = :sala " +
-			" AND o.horarioAula.semanaLetiva = :semanaLetiva " );
+			" AND c = :sala " );
 
 		q.setParameter( "sala", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		horarios.addAll( q.getResultList() );
-		return horarios;
+		return q.getResultList();
 	}
 
 	public static boolean checkCodigoUnique(

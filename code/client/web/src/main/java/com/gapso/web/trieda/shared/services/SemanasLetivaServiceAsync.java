@@ -14,11 +14,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface SemanasLetivaServiceAsync
 {
 	void getList( AsyncCallback< ListLoadResult< SemanaLetivaDTO > > callback );
-	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< SemanaLetivaDTO > > callback );
-	void getBuscaList( String codigo, String descricao, PagingLoadConfig config, AsyncCallback< PagingLoadResult< SemanaLetivaDTO > > callback );
+	void getList( BasePagingLoadConfig loadConfig,
+		AsyncCallback< ListLoadResult< SemanaLetivaDTO > > callback );
+	void getBuscaList( String codigo, String descricao, PagingLoadConfig config,
+		AsyncCallback< PagingLoadResult< SemanaLetivaDTO > > callback );
 	void save( SemanaLetivaDTO semanaLetivaDTO, AsyncCallback< Void > callback );
 	void remove( List< SemanaLetivaDTO > semanaLetivaDTOList, AsyncCallback< Void > callback );
-	void getHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO, AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
-	void saveHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
+	void getHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO,
+		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
+	void getAllHorariosDisponiveisCenario( AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
+	void saveHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 	void getSemanaLetiva( CenarioDTO cenario, AsyncCallback< SemanaLetivaDTO > callback );
 }

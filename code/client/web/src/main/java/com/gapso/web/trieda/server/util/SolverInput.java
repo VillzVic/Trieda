@@ -123,7 +123,7 @@ public class SolverInput
 	private TriedaInput triedaInput;
 	private List< Campus > campi;
 	private Parametro parametro;
-	private List< SemanaLetiva > semanasLetivas;
+	//private List< SemanaLetiva > semanasLetivas;
 	private InstituicaoEnsino instituicaoEnsino;
 	private List< String > errors;
 	private List< String > warnings;
@@ -149,7 +149,7 @@ public class SolverInput
 		this.instituicaoEnsino = instituicaoEnsino;
 		this.of = new ObjectFactory();
 		this.triedaInput = of.createTriedaInput();
-		this.semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
+		//this.semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
 	}
@@ -243,7 +243,7 @@ public class SolverInput
 			for ( Fixacao fixacao : fixacoes )
 			{
 				Integer totalCreditos = fixacao.getHorarios(
-					instituicaoEnsino, this.semanasLetivas ).size();
+					this.instituicaoEnsino  ).size();
 
 				Disciplina disciplinaFixacao = fixacao.getDisciplina();
 
@@ -616,11 +616,7 @@ public class SolverInput
 			Set< HorarioDisponivelCenario > horarios
 				= new HashSet< HorarioDisponivelCenario >();
 
-			for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
-			{
-				horarios.addAll( campus.getHorarios(
-					this.instituicaoEnsino, semanaLetiva ) );
-			}
+			horarios.addAll( campus.getHorarios( this.instituicaoEnsino ) );
 
 			if ( horarios.size() == 0 )
 			{
@@ -676,13 +672,18 @@ public class SolverInput
 				itemUnidade.setNome( unidade.getNome() );
 
 				Set< HorarioDisponivelCenario > setHorariosUnidade
-				= new HashSet< HorarioDisponivelCenario >();
+					= new HashSet< HorarioDisponivelCenario >();
 
+				setHorariosUnidade.addAll(
+					unidade.getHorarios( this.instituicaoEnsino ) );
+
+				/*
 				for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
 				{
 					setHorariosUnidade.addAll( unidade.getHorarios(
 						this.instituicaoEnsino, semanaLetiva ) );
 				}
+				*/
 
 				List< HorarioDisponivelCenario > listHorariosUnidade
 					= new ArrayList< HorarioDisponivelCenario >( setHorariosUnidade );
@@ -724,12 +725,8 @@ public class SolverInput
 
 					Set< HorarioDisponivelCenario > setHorariosSala
 						= new HashSet< HorarioDisponivelCenario >();
-					
-					for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
-					{
-						setHorariosSala.addAll( sala.getHorarios(
-							this.instituicaoEnsino, semanaLetiva ) );
-					}
+
+					setHorariosSala.addAll( sala.getHorarios( this.instituicaoEnsino ) );
 
 					// Carregando 'CRÉDITOS' ( modelo tático )
 					// ou 'HORÁRIOS' ( modelo operacional )
@@ -808,12 +805,8 @@ public class SolverInput
 
 				Set< HorarioDisponivelCenario > setHorarios
 					= new HashSet< HorarioDisponivelCenario >();
-			
-				for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
-				{
-					setHorarios.addAll( professor.getHorarios(
-						this.instituicaoEnsino, semanaLetiva ) );
-				}
+
+				setHorarios.addAll( professor.getHorarios( this.instituicaoEnsino ) );
 
 				List< HorarioDisponivelCenario > listHorarios
 					= new ArrayList< HorarioDisponivelCenario >( setHorarios );
@@ -1099,12 +1092,8 @@ public class SolverInput
 
 			Set< HorarioDisponivelCenario > setHorarios
 				= new HashSet< HorarioDisponivelCenario >();
-			
-			for ( SemanaLetiva semanaLetiva : this.semanasLetivas )
-			{
-				setHorarios.addAll( disciplina.getHorarios(
-					this.instituicaoEnsino, semanaLetiva ) );
-			}
+
+			setHorarios.addAll( disciplina.getHorarios( this.instituicaoEnsino ) );
 
 			List< HorarioDisponivelCenario > listHorarios
 				= new ArrayList< HorarioDisponivelCenario >( setHorarios );
@@ -1617,7 +1606,7 @@ public class SolverInput
 		for ( Fixacao fixacao : fixacoes )
 		{
 			List< HorarioDisponivelCenario > horarios
-				= fixacao.getHorarios( this.instituicaoEnsino, this.semanasLetivas );
+				= fixacao.getHorarios( this.instituicaoEnsino );
 
 			if ( horarios.size() > 0 )
 			{

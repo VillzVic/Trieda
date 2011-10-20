@@ -42,7 +42,7 @@ public interface DisciplinasServiceAsync
 		CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO, AsyncCallback< Void > callback );
 	void removeDisciplinaToSala( SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback< Void > callback );
 	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback< Void > callback );
-	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
+	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 	void getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
 		AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );

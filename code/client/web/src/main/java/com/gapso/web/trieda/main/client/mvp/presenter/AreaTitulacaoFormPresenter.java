@@ -35,7 +35,8 @@ public class AreaTitulacaoFormPresenter
 	private SimpleGrid< AreaTitulacaoDTO > gridPanel;
 	private Display display;
 
-	public AreaTitulacaoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public AreaTitulacaoFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< AreaTitulacaoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

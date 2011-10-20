@@ -49,24 +49,29 @@ public class CampusFormPresenter
 	public CampusFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
-		this( cenario, display, null );
-		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this( instituicaoEnsinoDTO, cenario, display, null );
 	}
 
-	public CampusFormPresenter( CenarioDTO cenario,
+	public CampusFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,CenarioDTO cenario,
 		Display display, SimpleGrid< CampusDTO > gridPanel )
 	{
 		this.cenario = cenario;
 		this.gridPanel = gridPanel;
 		this.display = display;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 
 		setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				if ( isValid() )
 				{
 					final CampiServiceAsync service = Services.campi();
@@ -84,7 +89,7 @@ public class CampusFormPresenter
 								gridPanel.updateList();
 							}
 
-							Info.display( "Salvo", "Item salvo com sucesso!" );
+							Info.display( "Salvo", "Campus salvo com sucesso!" );
 						}
 					});
 				}
@@ -98,30 +103,30 @@ public class CampusFormPresenter
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		return this.display.isValid();
 	}
 
 	private CampusDTO getDTO()
 	{
-		CampusDTO campusDTO = display.getCampusDTO();
+		CampusDTO campusDTO = this.display.getCampusDTO();
 
-		campusDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		campusDTO.setCenarioId(cenario.getId());
-		campusDTO.setNome(display.getNomeTextField().getValue());
-		campusDTO.setCodigo(display.getCodigoTextField().getValue());
+		campusDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		campusDTO.setCenarioId( this.cenario.getId() );
+		campusDTO.setNome( this.display.getNomeTextField().getValue() );
+		campusDTO.setCodigo(display.getCodigoTextField().getValue() );
 		campusDTO.setValorCredito( new TriedaCurrency(
-			display.getValorCreditoNumberField().getValue().doubleValue() ) );
-		campusDTO.setEstado(display.getEstadoComboBox().getValue().getValue().name());
-		campusDTO.setMunicipio(display.getMunicipioTextField().getValue());
-		campusDTO.setBairro(display.getBairroTextField().getValue());
-		campusDTO.setPublicado(display.getPublicadoCheckBox().getValue());
+			this.display.getValorCreditoNumberField().getValue().doubleValue() ) );
+		campusDTO.setEstado( this.display.getEstadoComboBox().getValue().getValue().name() );
+		campusDTO.setMunicipio( this.display.getMunicipioTextField().getValue() );
+		campusDTO.setBairro( this.display.getBairroTextField().getValue() );
+		campusDTO.setPublicado( this.display.getPublicadoCheckBox().getValue() );
 
 		return campusDTO;
 	}
 	
 	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
 	}
-
 }

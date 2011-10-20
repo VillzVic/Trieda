@@ -35,12 +35,15 @@ import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VincularAreasTitulacaoPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class VincularAreasTitulacaoPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		CursoComboBox getCursoComboBox();
-		ListView<AreaTitulacaoDTO> getNaoVinculadaList();
-		ListView<AreaTitulacaoDTO> getVinculadaList();
+		ListView< AreaTitulacaoDTO > getNaoVinculadaList();
+		ListView< AreaTitulacaoDTO > getVinculadaList();
 		Button getAdicionaBT();
 		Button getRemoveBT();
 		Button getImportExcelButton();

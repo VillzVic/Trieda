@@ -30,21 +30,24 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AreasTitulacaoPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class AreasTitulacaoPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		TextField<String> getCodigoBuscaTextField();
-		TextField<String> getDescricaoBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
+		TextField< String > getDescricaoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		SimpleGrid<AreaTitulacaoDTO> getGrid();
+		SimpleGrid< AreaTitulacaoDTO > getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<AreaTitulacaoDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< AreaTitulacaoDTO > > proxy );
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -60,22 +63,30 @@ public class AreasTitulacaoPresenter implements Presenter {
 		setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final AreasTitulacaoServiceAsync service = Services.areasTitulacao();
-		RpcProxy<PagingLoadResult<AreaTitulacaoDTO>> proxy = new RpcProxy<PagingLoadResult<AreaTitulacaoDTO>>() {
+
+		RpcProxy< PagingLoadResult< AreaTitulacaoDTO > > proxy =
+			new RpcProxy< PagingLoadResult< AreaTitulacaoDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<AreaTitulacaoDTO>> callback) {
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< AreaTitulacaoDTO > > callback )
+			{
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
-				service.getBuscaList(codigo, descricao, (PagingLoadConfig)loadConfig, callback);
+
+				service.getBuscaList( codigo, descricao, (PagingLoadConfig)loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		this.display.setProxy( proxy );
 	}
-	
+
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -88,13 +99,14 @@ public class AreasTitulacaoPresenter implements Presenter {
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				AreaTitulacaoDTO areaTitulacaoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				AreaTitulacaoDTO areaTitulacaoDTO
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				Presenter presenter = new AreaTitulacaoFormPresenter( instituicaoEnsinoDTO,
 					new AreaTitulacaoFormView( areaTitulacaoDTO ), display.getGrid() );
@@ -103,7 +115,8 @@ public class AreasTitulacaoPresenter implements Presenter {
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		this.display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override	
 			public void componentSelected( ButtonEvent ce )
@@ -133,7 +146,7 @@ public class AreasTitulacaoPresenter implements Presenter {
 			}
 		});
 
-		display.getImportExcelButton().addSelectionListener(
+		this.display.getImportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -149,7 +162,7 @@ public class AreasTitulacaoPresenter implements Presenter {
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
+		this.display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -164,26 +177,34 @@ public class AreasTitulacaoPresenter implements Presenter {
 				e.submit();
 			}
 		});
-		display.getResetBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				display.getCodigoBuscaTextField().setValue(null);
-				display.getDescricaoBuscaTextField().setValue(null);
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getCodigoBuscaTextField().setValue( null );
+				display.getDescricaoBuscaTextField().setValue( null );
 				display.getGrid().updateList();
 			}
 		});
-		display.getSubmitBuscaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getGrid().updateList();
 			}
 		});
-	}
-	
-	@Override
-	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
 	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		GTab tab = (GTab)widget;
+		tab.add( (GTabItem) this.display.getComponent() );
+	}
 }

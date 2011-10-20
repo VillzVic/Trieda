@@ -4,13 +4,15 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SimpleModal extends Window
+public class SimpleModal
+	extends Window
 {
 	private Button salvarBt;
 	private Button cancelarBt;
@@ -85,5 +87,10 @@ public class SimpleModal extends Window
 	public Button getCancelarBt()
 	{
 		return this.cancelarBt;
+	}
+
+	public ToolButton getCloseBt()
+	{
+		return this.closeBtn;
 	}
 }

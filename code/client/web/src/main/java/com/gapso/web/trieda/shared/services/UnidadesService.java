@@ -9,7 +9,6 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -28,9 +27,7 @@ public interface UnidadesService
 	UnidadeDTO getUnidade( Long id );
 	List< DeslocamentoUnidadeDTO > getDeslocamento( CampusDTO campusDTO );
 	ListLoadResult< UnidadeDTO > getListByCampus( CampusDTO campusDTO );
-	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		UnidadeDTO unidadeDTO, SemanaLetivaDTO semanaLetivaDTO );
-	void saveHorariosDisponiveis( UnidadeDTO unidadeDTO,
-		SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
+	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( UnidadeDTO unidadeDTO );
+	void saveHorariosDisponiveis( UnidadeDTO unidadeDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	void saveDeslocamento( CampusDTO campus, List< DeslocamentoUnidadeDTO > list );
 }

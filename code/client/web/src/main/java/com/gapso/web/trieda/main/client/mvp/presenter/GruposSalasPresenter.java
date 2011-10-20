@@ -42,7 +42,7 @@ public class GruposSalasPresenter
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		Button getAssociarSalasButton();
-		SimpleGrid<GrupoSalaDTO> getGrid();
+		SimpleGrid< GrupoSalaDTO > getGrid();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< GrupoSalaDTO > > proxy );
 	}
@@ -51,7 +51,8 @@ public class GruposSalasPresenter
 	private Display display; 
 	private CenarioDTO cenario;
 
-	public GruposSalasPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public GruposSalasPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

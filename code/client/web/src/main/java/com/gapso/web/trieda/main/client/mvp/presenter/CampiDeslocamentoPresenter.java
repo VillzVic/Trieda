@@ -19,28 +19,35 @@ import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CampiDeslocamentoPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class CampiDeslocamentoPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getSaveButton();
 		Button getCancelButton();
 		Button getSimetricaButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		DeslocamentoGrid<DeslocamentoCampusDTO> getGrid();
+		DeslocamentoGrid< DeslocamentoCampusDTO > getGrid();
 		Component getComponent();
 	}
+
 	private Display display; 
 	private GTab gTab;
 	private CenarioDTO cenario;
-	
-	public CampiDeslocamentoPresenter(CenarioDTO cenario, Display display) {
+
+	public CampiDeslocamentoPresenter(
+		CenarioDTO cenario, Display display )
+	{
 		this.display = display;
 		this.cenario = cenario;
-//		configureProxy();
+
+		//configureProxy();
 		setListeners();
 	}
-	
+
 //	private void configureProxy() {
 //		CampiServiceAsync service = Services.campi();
 //		final FutureResult<List<DeslocamentoCampusDTO>> futureDeslocamentoCampusDTOList = new FutureResult<List<DeslocamentoCampusDTO>>();
@@ -58,9 +65,10 @@ public class CampiDeslocamentoPresenter implements Presenter {
 //			}
 //		});
 //	}
-	
-	private void setListeners() {
-		display.getSaveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		this.display.getSaveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				List<DeslocamentoCampusDTO> list = display.getGrid().getStore().getModels();
@@ -74,25 +82,28 @@ public class CampiDeslocamentoPresenter implements Presenter {
 				});
 			}
 		});
-		display.getCancelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getCancelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				display.getGrid().getStore().rejectChanges();
 				Info.display("Cancelado", "Alterações canceladas com sucesso");
 			}
 		});
-		display.getSimetricaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getSimetricaButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				display.getGrid().igualarOrigemDestino();
 			}
 		});
 	}
-	
+
 	@Override
-	public void go(Widget widget) {
-		gTab = (GTab)widget;
-		gTab.add((GTabItem)display.getComponent());
+	public void go( Widget widget )
+	{
+		this.gTab = (GTab)widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
 	}
 
 }

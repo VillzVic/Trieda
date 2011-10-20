@@ -46,17 +46,19 @@ public class RelatorioVisaoSalaPresenter implements Presenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 
-	public RelatorioVisaoSalaPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public RelatorioVisaoSalaPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+
 		setListeners();
 	}
 
 	private void setListeners()
 	{
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -64,61 +66,61 @@ public class RelatorioVisaoSalaPresenter implements Presenter
 				{
 					display.getGrid().setSalaDTO( display.getSalaComboBox().getValue() );
 					display.getGrid().setTurnoDTO( display.getTurnoComboBox().getValue() );
-					display.getGrid().requestAtendimentos();
-				}
-			});
+				display.getGrid().requestAtendimentos();
+			}
+		});
 
-		display.getSalaComboBox().addSelectionChangedListener(
+		this.display.getSalaComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< SalaDTO >()
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent< SalaDTO > se )
 			{
-				@Override
-				public void selectionChanged(SelectionChangedEvent< SalaDTO > se )
+				final SalaDTO salaDTO = se.getSelectedItem();
+				if ( salaDTO == null )
 				{
-					final SalaDTO salaDTO = se.getSelectedItem();
-					if ( salaDTO == null )
-					{
-						display.getCapacidadeTextField().setValue( "" );
-						display.getTipoTextField().setValue( "" );
-					}
-					else
-					{
-						display.getCapacidadeTextField().setValue( salaDTO.getCapacidade().toString() );
-						display.getTipoTextField().setValue( salaDTO.getTipoString() );
-					}
+					display.getCapacidadeTextField().setValue( "" );
+					display.getTipoTextField().setValue( "" );
 				}
-			});
-
-		display.getExportExcelButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+				else
 				{
-					@Override
-					public void componentSelected( ButtonEvent ce )
-					{
-						ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.RELATORIO_VISAO_SALA, instituicaoEnsinoDTO );
+					display.getCapacidadeTextField().setValue( salaDTO.getCapacidade().toString() );
+					display.getTipoTextField().setValue( salaDTO.getTipoString() );
+				}
+			}
+		});
 
-						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-							parametros, display.getI18nConstants(), display.getI18nMessages() );
+		this.display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.RELATORIO_VISAO_SALA, instituicaoEnsinoDTO );
 
-						CampusDTO campusDTO = display.getCampusComboBox().getValue();
-						UnidadeDTO unidadeDTO = display.getUnidadeComboBox().getValue();
-						SalaDTO salaDTO = display.getSalaComboBox().getValue();
-						TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
 
-						e.addParameter( "campusId", campusDTO.getId().toString() );
-						e.addParameter( "unidadeId", unidadeDTO.getId().toString() );
-						e.addParameter( "salaId", salaDTO.getId().toString() );
-						e.addParameter( "turnoId", turnoDTO.getId().toString() );
+				CampusDTO campusDTO = display.getCampusComboBox().getValue();
+				UnidadeDTO unidadeDTO = display.getUnidadeComboBox().getValue();
+				SalaDTO salaDTO = display.getSalaComboBox().getValue();
+				TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
 
-						e.submit();
-					}
-				});
+				e.addParameter( "campusId", campusDTO.getId().toString() );
+				e.addParameter( "unidadeId", unidadeDTO.getId().toString() );
+				e.addParameter( "salaId", salaDTO.getId().toString() );
+				e.addParameter( "turnoId", turnoDTO.getId().toString() );
+
+				e.submit();
+			}
+		});
 	}
-	
+
 	@Override
 	public void go( Widget widget )
 	{
 		GTab tab = (GTab)widget;
-		tab.add( (GTabItem)display.getComponent() );
+		tab.add( (GTabItem) this.display.getComponent() );
 	}
 }

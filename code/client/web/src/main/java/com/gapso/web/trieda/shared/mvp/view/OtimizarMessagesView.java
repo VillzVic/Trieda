@@ -7,13 +7,15 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class OtimizarMessagesView extends MyComposite implements OtimizarMessagesPresenter.Display {
-
+public class OtimizarMessagesView
+	extends MyComposite
+	implements OtimizarMessagesPresenter.Display
+{
 	private ContentPanel panel;
 	private SimpleModal simpleModal;
 	private ContentPanel messagesWarningPanel;
 	private ContentPanel messagesErrorPanel;
-	
+
 	public OtimizarMessagesView()
 	{
 		initUI();
@@ -22,46 +24,51 @@ public class OtimizarMessagesView extends MyComposite implements OtimizarMessage
 	private void initUI()
 	{
 		String title = "Alertas e Erros";
-		simpleModal = new SimpleModal( null, "Fechar", title, Resources.DEFAULTS.serverWarning16() );
-		simpleModal.setAutoHeight(true);
-		panel = new ContentPanel(new RowLayout());
-		panel.setHeaderVisible(false);
 
-		messagesWarningPanel = new ContentPanel();
-		messagesWarningPanel.setHeading("Alertas");
-		messagesWarningPanel.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.warning16()));
-		messagesWarningPanel.setBodyBorder(false);
-		messagesWarningPanel.addStyleName("errorList");
-		panel.add(messagesWarningPanel);
+		this.simpleModal = new SimpleModal( null, "Fechar",
+			title, Resources.DEFAULTS.serverWarning16() );
+		this.simpleModal.setAutoHeight( true );
 
-		messagesErrorPanel = new ContentPanel();
-		messagesErrorPanel.setHeading("Erros");
-		messagesErrorPanel.setIcon( AbstractImagePrototype.create( Resources.DEFAULTS.error16() ) );
-		messagesErrorPanel.setBodyBorder(false);
-		messagesErrorPanel.addStyleName("errorList");
-		panel.add(messagesErrorPanel);
+		this.panel = new ContentPanel(new RowLayout());
+		this.panel.setHeaderVisible(false);
 
-		panel.setAutoHeight(true);
+		this.messagesWarningPanel = new ContentPanel();
+		this.messagesWarningPanel.setHeading( "Alertas" );
+		this.messagesWarningPanel.setIcon( AbstractImagePrototype.create(
+			Resources.DEFAULTS.warning16() ) );
+		this.messagesWarningPanel.setBodyBorder( false );
+		this.messagesWarningPanel.addStyleName( "errorList" );
+		this.panel.add( this.messagesWarningPanel );
 
-		simpleModal.setContent(panel);
-		simpleModal.setWidth(500);
+		this.messagesErrorPanel = new ContentPanel();
+		this.messagesErrorPanel.setHeading( "Erros" );
+		this.messagesErrorPanel.setIcon( AbstractImagePrototype.create(
+			Resources.DEFAULTS.error16() ) );
+		this.messagesErrorPanel.setBodyBorder( false );
+		this.messagesErrorPanel.addStyleName( "errorList" );
+		this.panel.add( this.messagesErrorPanel );
+
+		this.panel.setAutoHeight( true );
+
+		this.simpleModal.setContent( this.panel );
+		this.simpleModal.setWidth( 500 );
 	}
 
 	@Override
 	public SimpleModal getSimpleModal()
 	{
-		return simpleModal;
+		return this.simpleModal;
 	}
 
 	@Override
 	public ContentPanel getMessagesWarningPanel()
 	{
-		return messagesWarningPanel;
+		return this.messagesWarningPanel;
 	}
 
 	@Override
 	public ContentPanel getMessagesErrorPanel()
 	{
-		return messagesErrorPanel;
+		return this.messagesErrorPanel;
 	}
 }

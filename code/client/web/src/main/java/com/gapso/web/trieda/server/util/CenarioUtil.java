@@ -83,16 +83,15 @@ public class CenarioUtil
 	{
 		if ( cenario == null )
 		{
-			System.out.println( "Erro ao criar um novo cenário: cenário inválido." );
+			System.out.println(
+				"Erro ao criar um novo cenário: cenário inválido." );
+
 			return;
 		}
 
 		new Clonar( cenario );
 	}
 
-	/* *************************** */
-	/* ** CRIAR UM NOVO CENÁRIO ** */
-	/* *************************** */
 	@Transactional
 	private class Criar
 	{
@@ -169,9 +168,6 @@ public class CenarioUtil
 		}
 	}
 
-	/* ********************************** */
-	/* ** CLONAR A PARTIR DE UM CENÁRIO ** */
-	/* ********************************** */
 	@Transactional
 	private class Clonar
 	{
@@ -247,127 +243,132 @@ public class CenarioUtil
 	@Transactional
 	private void detachList()
 	{
-		semanaLetiva.setId( null );
-		semanaLetiva.detach();
+		this.semanaLetiva.setId( null );
+		this.semanaLetiva.detach();
 
-		cenario.setId( null );
-		cenario.detach();
+		this.cenario.setId( null );
+		this.cenario.detach();
 
-		for ( Turno o : turnoList )
+		for ( Turno o : this.turnoList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( HorarioAula o : horarioAulaList )
+		for ( HorarioAula o : this.horarioAulaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Curso o : cursoList )
+		for ( Curso o : this.cursoList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Campus o : campusList )
+		for ( Campus o : this.campusList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( DeslocamentoCampus o : deslocamentoCampusList )
+		for ( DeslocamentoCampus o
+				: this.deslocamentoCampusList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Unidade o : unidadeList )
+		for ( Unidade o : this.unidadeList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( DeslocamentoUnidade o : deslocamentoUnidadeList )
+		for ( DeslocamentoUnidade o
+				: this.deslocamentoUnidadeList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Sala o : salaList )
+		for ( Sala o : this.salaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( GrupoSala o : grupoSalaList )
+		for ( GrupoSala o : this.grupoSalaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Disciplina o : disciplinaList )
+		for ( Disciplina o : this.disciplinaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Incompatibilidade o : compatibilidadeList )
+		for ( Incompatibilidade o : this.compatibilidadeList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Equivalencia o : equivalenciaList ) 	
+		for ( Equivalencia o : this.equivalenciaList ) 	
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( DivisaoCredito o : divisaoCreditoList )  
+		for ( DivisaoCredito o : this.divisaoCreditoList )  
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Professor o : professorList )
+		for ( Professor o : this.professorList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( ProfessorDisciplina o : professorDisciplinaList )
+		for ( ProfessorDisciplina o
+				: this.professorDisciplinaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Curriculo o : curriculoList )
+		for ( Curriculo o : this.curriculoList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( CurriculoDisciplina o : curriculoDisciplinaList )
+		for ( CurriculoDisciplina o
+				: this.curriculoDisciplinaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Oferta o : ofertaList )
+		for ( Oferta o : this.ofertaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( Demanda o : demandaList )
+		for ( Demanda o : this.demandaList )
 		{
 			o.setId( null );
 			o.detach();
 		}
 
-		for ( HorarioDisponivelCenario o : horarioDisponivelCenarioList )
+		for ( HorarioDisponivelCenario o
+				: this.horarioDisponivelCenarioList )
 		{
 			o.setId( null );
 			o.detach();
@@ -377,108 +378,115 @@ public class CenarioUtil
 	@Transactional
 	private void saveList()
 	{
-		semanaLetiva.persist();
-		cenario.persist();
+		this.semanaLetiva.persist();
+		this.cenario.persist();
 
-		semanaLetiva.setCenario( cenario );
-		semanaLetiva.merge();
+		this.semanaLetiva.setCenario( this.cenario );
+		this.semanaLetiva.merge();
 
-		for ( Turno o : turnoList ) 			
+		for ( Turno o : this.turnoList )
 		{
 			o.persist();
 		}
 
-		for ( HorarioAula o : horarioAulaList )							
+		for ( HorarioAula o : this.horarioAulaList )
 		{
 			o.persist();
 		}
 
-		for ( Curso o : cursoList ) 
+		for ( Curso o : this.cursoList ) 
 		{
 			o.persist();
 		}
 
-		for ( Campus o : campusList ) 						
+		for ( Campus o : this.campusList )
 		{
 			o.persist();
 		}
 
-		for ( DeslocamentoCampus o : deslocamentoCampusList ) 	
+		for ( DeslocamentoCampus o
+				: this.deslocamentoCampusList )
 		{
 			o.persist();
 		}
 
-		for ( Unidade o : unidadeList ) 						
+		for ( Unidade o : this.unidadeList )
 		{
 			o.persist();
 		}
 
-		for ( DeslocamentoUnidade o : deslocamentoUnidadeList ) 			
+		for ( DeslocamentoUnidade o
+				: this.deslocamentoUnidadeList )
 		{
 			o.persist();
 		}
 
-		for ( Sala o : salaList ) 			
+		for ( Sala o : this.salaList )
 		{
 			o.persist();
 		}
 
-		for ( GrupoSala o : grupoSalaList ) 
+		for ( GrupoSala o : this.grupoSalaList )
 		{
 			o.persist();
 		}
 
-		for ( Disciplina o : disciplinaList ) 			
+		for ( Disciplina o : this.disciplinaList )
 		{
 			o.persist();
 		}
 
-		for ( Incompatibilidade o : compatibilidadeList ) 					
+		for ( Incompatibilidade o : this.compatibilidadeList )
 		{
 			o.persist();
 		}
 
-		for ( Equivalencia o : equivalenciaList ) 		
+		for ( Equivalencia o : this.equivalenciaList )
 		{
 			o.persist();
 		}
 
-		for ( DivisaoCredito o : divisaoCreditoList )
+		for ( DivisaoCredito o : this.divisaoCreditoList )
 		{
 			o.persist();
 		}
 
-		for ( Professor o : professorList) 						
+		for ( Professor o : this.professorList )
 		{
 			o.persist();
 		}
 
-		for ( ProfessorDisciplina o : professorDisciplinaList ) 			
+		for ( ProfessorDisciplina o
+				: this.professorDisciplinaList )
 		{
 			o.persist();
 		}
 
-		for ( Curriculo o : curriculoList ) 								
+		for ( Curriculo o : this.curriculoList )
 		{
 			o.persist();
 		}
 
-		for ( CurriculoDisciplina o : curriculoDisciplinaList ) 			
+		for ( CurriculoDisciplina o
+				: this.curriculoDisciplinaList )
 		{
 			o.persist();
 		}
 
-		for ( Oferta o : ofertaList ) 										
+		for ( Oferta o : this.ofertaList )
+		{
+			Double receita = ( o.getReceita() == null ? 0.0 : o.getReceita() );
+			o.setReceita( receita );
+			o.persist();
+		}
+
+		for ( Demanda o : this.demandaList )
 		{
 			o.persist();
 		}
 
-		for ( Demanda o : demandaList )									
-		{
-			o.persist();
-		}
-
-		for ( HorarioDisponivelCenario o : horarioDisponivelCenarioList )
+		for ( HorarioDisponivelCenario o
+				: this.horarioDisponivelCenarioList )
 		{
 			o.persist();
 		}

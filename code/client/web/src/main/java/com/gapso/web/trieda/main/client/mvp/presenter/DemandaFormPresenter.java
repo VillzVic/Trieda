@@ -42,7 +42,8 @@ public class DemandaFormPresenter
 	private SimpleGrid< DemandaDTO > gridPanel;
 	private Display display;
 
-	public DemandaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public DemandaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< DemandaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

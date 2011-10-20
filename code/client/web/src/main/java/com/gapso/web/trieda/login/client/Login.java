@@ -29,16 +29,11 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
-/**
- * Entry point classes define <code>onModuleLoad()</code>.
- */
-public class Login implements EntryPoint
+public class Login
+	implements EntryPoint
 {
 	private Viewport viewport;
-	
-	/**
-	 * This is the entry point method.
-	 */
+
 	public void onModuleLoad()
 	{
 		redirect();
@@ -46,10 +41,14 @@ public class Login implements EntryPoint
 
 	public void redirect()
 	{
+		final FutureResult< UsuarioDTO > futureUsuarioDTO
+			= new FutureResult< UsuarioDTO >();
+
 		UsuariosServiceAsync usuarioService = Services.usuarios();
-		final FutureResult< UsuarioDTO > futureUsuarioDTO = new FutureResult< UsuarioDTO >();
 		usuarioService.getCurrentUser( futureUsuarioDTO );
-		FutureSynchronizer synch = new FutureSynchronizer( futureUsuarioDTO );
+
+		FutureSynchronizer synch
+			= new FutureSynchronizer( futureUsuarioDTO );
 
 		synch.addCallback( new AsyncCallback< Boolean >()
 		{
@@ -57,32 +56,37 @@ public class Login implements EntryPoint
 			public void onSuccess( Boolean result )
 			{
 				UsuarioDTO usuario = futureUsuarioDTO.result();
+
 				if ( usuario == null )
 				{
 					loadLogin();
 				}
 				else if( usuario.isAdministrador() )
 				{
-					 Window.open( "../trieda/" + TriedaUtil.paramsDebug(), "_self", "" ); 
+					 Window.open( "../trieda/"
+						+ TriedaUtil.paramsDebug(), "_self", "" ); 
 				}
 				else if ( usuario.isProfessor() )
 				{
-					 Window.open( "../professor/" + TriedaUtil.paramsDebug(), "_self", "" ); 
+					 Window.open( "../professor/"
+						+ TriedaUtil.paramsDebug(), "_self", "" ); 
 				}
 			}
 
 			@Override
 			public void onFailure( Throwable caught )
 			{
-				MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+				MessageBox.alert( "ERRO!",
+					"Não foi possível realizar o login", null );
 			}
 		});
 	}
 
 	private void loadLogin()
 	{
-		viewport = new Viewport();
-		viewport.setLayout( new FitLayout() );
+		this.viewport = new Viewport();
+		this.viewport.setLayout( new FitLayout() );
+
 		ContentPanel panel = new ContentPanel( new CenterLayout() );
 
 		final FormPanel form = new FormPanel()
@@ -128,7 +132,8 @@ public class Login implements EntryPoint
 		form.add( passwordTF, formData );
 
 		Button enviarBt = new Button( "Acessar" );
-		enviarBt.addSelectionListener( new SelectionListener< ButtonEvent >()
+		enviarBt.addSelectionListener(
+			new SelectionListener< ButtonEvent >()
 		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
@@ -142,12 +147,13 @@ public class Login implements EntryPoint
 
 		panel.add( form );
 
-		viewport.add( panel );
+		this.viewport.add( panel );
 		RootPanel.get().add( viewport );
 		RootPanel.get( "loading" ).setVisible( false );
 	}
 
-	public void setDefaultButton( Component comp, final Button button )
+	public void setDefaultButton(
+		Component comp, final Button button )
 	{
 		new KeyNav< ComponentEvent >( comp )
 		{

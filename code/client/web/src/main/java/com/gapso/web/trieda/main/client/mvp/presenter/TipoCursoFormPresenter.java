@@ -33,7 +33,8 @@ public class TipoCursoFormPresenter
 	private SimpleGrid< TipoCursoDTO > gridPanel;
 	private Display display;
 
-	public TipoCursoFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public TipoCursoFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< TipoCursoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;

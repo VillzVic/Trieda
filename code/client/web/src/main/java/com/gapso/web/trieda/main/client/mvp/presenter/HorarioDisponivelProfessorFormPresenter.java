@@ -20,78 +20,92 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class HorarioDisponivelProfessorFormPresenter implements Presenter {
-
-	public interface Display {
+public class HorarioDisponivelProfessorFormPresenter
+	implements Presenter
+{
+	public interface Display
+	{
 		Button getSalvarButton();
 		SimpleModal getSimpleModal();
 		ProfessorDTO getProfessorDTO();
-		void setProxy(RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy);
-		ListStore<HorarioDisponivelCenarioDTO> getStore();
+		void setProxy( RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy );
+		ListStore< HorarioDisponivelCenarioDTO > getStore();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
-	private CenarioDTO cenario;
-	private SemanaLetivaDTO semanaLetiva;
 
-	public HorarioDisponivelProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public HorarioDisponivelProfessorFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, SemanaLetivaDTO semanaLetiva, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-		this.cenario = cenario;
-		this.semanaLetiva = semanaLetiva;
 		this.display = display;
 
 		configureProxy();
 		setListeners();
 	}
 
-	private void configureProxy() {
-		RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>> proxy = new RpcProxy<PagingLoadResult<HorarioDisponivelCenarioDTO>>() {
+	private void configureProxy()
+	{
+		RpcProxy< PagingLoadResult< HorarioDisponivelCenarioDTO > > proxy
+			= new RpcProxy< PagingLoadResult<HorarioDisponivelCenarioDTO > >()
+		{
 			@Override
-			protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<HorarioDisponivelCenarioDTO>> callback) {
-				Services.semanasLetiva().getHorariosDisponiveisCenario(semanaLetiva, callback);
+			protected void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
+			{
+				Services.semanasLetiva().getAllHorariosDisponiveisCenario( callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		this.display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected( ButtonEvent ce )
+			{
 				display.getStore().commitChanges();
-				List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
-				SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-				semanaLetivaDTO.setId(cenario.getSemanaLetivaId());
-				Services.professores().saveHorariosDisponiveis(getDTO(), semanaLetivaDTO, hdcDTOList, new AsyncCallback<Void>() {
+				List< HorarioDisponivelCenarioDTO > hdcDTOList
+					= display.getStore().getModels();
+
+				Services.professores().saveHorariosDisponiveis( getDTO(),
+					hdcDTOList, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onFailure( Throwable caught )
+					{
 						caught.printStackTrace();
 					}
+
 					@Override
-					public void onSuccess(Void result) {
-						Info.display("Atualizado", "Horários atualizados com sucesso!");
+					public void onSuccess( Void result )
+					{
+						Info.display( "Atualizado",
+							"Horários atualizados com sucesso!" );
+
 						display.getSimpleModal().hide();
 					}
-					
 				});
 			}
 		});
-		
 	}
 
 	private ProfessorDTO getDTO()
 	{
-		ProfessorDTO dto = display.getProfessorDTO();
-		dto.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		ProfessorDTO dto = this.display.getProfessorDTO();
+		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		return dto;
 	}
 
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

@@ -27,19 +27,23 @@ public class UsuariosServiceImpl
 	@Override
 	public UsuarioDTO getUsuario( String username )
 	{
-		return ConvertBeans.toUsuarioDTO( Usuario.find( username ) );
+		return ConvertBeans.toUsuarioDTO(
+			Usuario.find( username ) );
 	}
 
 	@Override
 	public UsuarioDTO getCurrentUser()
 	{
 		Usuario usuario = getUsuario();
-		return ( ( usuario == null ) ? null : ConvertBeans.toUsuarioDTO( usuario ) );
+
+		return ( ( usuario == null ) ? null
+			: ConvertBeans.toUsuarioDTO( usuario ) );
 	}
 
 	@Override
 	public PagingLoadResult< UsuarioDTO > getBuscaList(
-		String nome, String username, String email, PagingLoadConfig config )
+		String nome, String username,
+		String email, PagingLoadConfig config )
 	{
 		List< UsuarioDTO > list = new ArrayList< UsuarioDTO >();
 		String orderBy = config.getSortField();
@@ -73,7 +77,8 @@ public class UsuariosServiceImpl
 			= new BasePagingLoadResult< UsuarioDTO >( list );
 
 		result.setOffset( config.getOffset() );
-		result.setTotalLength( Usuario.count( nome, username, email, instituicaoEnsino ) );
+		result.setTotalLength( Usuario.count(
+			nome, username, email, instituicaoEnsino ) );
 
 		return result;
 	}
@@ -116,11 +121,13 @@ public class UsuariosServiceImpl
 	}
 
 	@Override
-	public void remove( List< UsuarioDTO > usuarioDTOList )
+	public void remove(
+		List< UsuarioDTO > usuarioDTOList )
 	{
 		for ( UsuarioDTO usuarioDTO : usuarioDTOList )
 		{
-			Usuario usuario = Usuario.find( usuarioDTO.getUsername() );
+			Usuario usuario = Usuario.find(
+				usuarioDTO.getUsername() );
 
 			if ( usuario != null )
 			{
@@ -138,7 +145,8 @@ public class UsuariosServiceImpl
 	@Override
 	public InstituicaoEnsinoDTO getInstituicaoEnsinoUserDTO()
 	{
-		InstituicaoEnsino instituicaoEnsino = this.getInstituicaoEnsinoUser();
+		InstituicaoEnsino instituicaoEnsino
+			= this.getInstituicaoEnsinoUser();
 
 		return ( instituicaoEnsino == null ? null :
 			ConvertBeans.toInstituicaoEnsinoDTO( instituicaoEnsino ) );

@@ -68,7 +68,8 @@ public class SalasPresenter
 	private Display display;
 	private CenarioDTO cenario;
 
-	public SalasPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public SalasPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -98,7 +99,7 @@ public class SalasPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
@@ -110,7 +111,7 @@ public class SalasPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new SalaFormPresenter(
-					new SalaFormView( cenario ), display.getGrid() );
+					instituicaoEnsinoDTO, new SalaFormView( cenario ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -139,7 +140,8 @@ public class SalasPresenter
 				{
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Não foi possível editar a sala", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi possível editar a sala", null );
 					}
 
 					public void onSuccess( Boolean result )
@@ -148,9 +150,9 @@ public class SalasPresenter
 						UnidadeDTO unidadeDTO = futureUnidadeDTO.result();
 						TipoSalaDTO tipoSalaDTO = futureSalaDTO.result();
 
-						Presenter presenter = new SalaFormPresenter(
+						Presenter presenter = new SalaFormPresenter( instituicaoEnsinoDTO,
 							new SalaFormView( salaDTO, campusDTO, unidadeDTO,
-								tipoSalaDTO, cenario ), display.getGrid() );
+							tipoSalaDTO, cenario ), display.getGrid() );
 
 						presenter.go( null );
 					}
@@ -175,7 +177,8 @@ public class SalasPresenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Não foi possível remover a(s) sala(s)", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi possível remover a(s) sala(s)", null );
 					}
 
 					@Override
@@ -298,6 +301,6 @@ public class SalasPresenter
 	public void go( Widget widget )
 	{
 		GTab tab = (GTab) widget;
-		tab.add( (GTabItem) display.getComponent() );
+		tab.add( (GTabItem) this.display.getComponent() );
 	}
 }

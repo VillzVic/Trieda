@@ -15,7 +15,8 @@ public class RemoteService
 	final public InstituicaoEnsino getInstituicaoEnsinoUser()
 	{
 		Usuario usuario = this.getUsuario();
-		return ( usuario == null ? null : usuario.getInstituicaoEnsino() );
+		return ( usuario == null ? null
+			: usuario.getInstituicaoEnsino() );
 	}
 
 	final protected Usuario getUsuario()

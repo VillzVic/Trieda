@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.IconButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.gapso.web.trieda.main.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -34,6 +36,7 @@ public class ErrorsWarningsInputSolverPresenter
 		SimpleModal getSimpleModal();
 		Button getSubmitButton();
 		Button getCancelButton();
+		ToolButton getCloseButton();
 	}
 
 	private CenarioDTO cenarioDTO;
@@ -44,10 +47,10 @@ public class ErrorsWarningsInputSolverPresenter
 	private Boolean validInput;
 	private Button submitButtonParametros;
 
-	public ErrorsWarningsInputSolverPresenter(
-		Boolean validInput, CenarioDTO cenarioDTO,
-		ParametroDTO parametroDTO, List< String > errors,
-		List< String > warnings, Display display, Button submitButtonParametros )
+	public ErrorsWarningsInputSolverPresenter( Boolean validInput,
+		CenarioDTO cenarioDTO, ParametroDTO parametroDTO,
+		List< String > errors, List< String > warnings,
+		Display display, Button submitButtonParametros )
 	{
 		this.validInput = validInput;
 		this.cenarioDTO = cenarioDTO;
@@ -117,14 +120,28 @@ public class ErrorsWarningsInputSolverPresenter
 		});
 
 		this.display.getCancelButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				habilitarBotaoParametros();
+			}
+		});
+
+		// TODO
+		if ( this.display.getCloseButton() != null )
+		{
+			this.display.getCloseButton().addSelectionListener(
+				new SelectionListener< IconButtonEvent >()
 			{
 				@Override
-				public void componentSelected( ButtonEvent ce )
+				public void componentSelected( IconButtonEvent ce )
 				{
 					habilitarBotaoParametros();
 				}
 			});
+		}
 	}
 
 	private void checkSolver( final Long round )
@@ -187,7 +204,7 @@ public class ErrorsWarningsInputSolverPresenter
 			public void onFailure( Throwable caught )
 			{
 				MessageBox.alert( "ERRO!",
-					"Erro ao pegar a saída", null );
+					"Erro ao ler a saída do solver", null );
 			}
 
 			@Override
@@ -204,8 +221,7 @@ public class ErrorsWarningsInputSolverPresenter
 				else
 				{
 					Presenter presenter = new OtimizarMessagesPresenter(
-						ret.get( "warning" ), ret.get( "error" ),
-						new OtimizarMessagesView() );
+						ret.get( "warning" ), ret.get( "error" ), new OtimizarMessagesView() );
 
 					presenter.go( null );
 				}

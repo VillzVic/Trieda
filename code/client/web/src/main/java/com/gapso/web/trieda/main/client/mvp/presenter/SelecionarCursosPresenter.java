@@ -25,12 +25,15 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SelecionarCursosPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class SelecionarCursosPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		CampusComboBox getCampusComboBox();
-		ListView<CursoDTO> getNaoSelecionadoList();
-		ListView<CursoDTO> getSelecionadoList();
+		ListView< CursoDTO > getNaoSelecionadoList();
+		ListView< CursoDTO > getSelecionadoList();
 		Button getAdicionaBT();
 		Button getRemoveBT();
 		Button getFecharBT();
@@ -38,13 +41,16 @@ public class SelecionarCursosPresenter implements Presenter {
 		
 		SimpleModal getSimpleModal();
 	}
-	
+
 	private Display display;
-	private List<CursoDTO> cursos;
-	
-	public SelecionarCursosPresenter(List<CursoDTO> cursos, Display display) {
+	private List< CursoDTO > cursos;
+
+	public SelecionarCursosPresenter(
+		List< CursoDTO > cursos, Display display )
+	{
 		this.display = display;
 		this.cursos = cursos;
+
 		configureProxy();
 		setListeners();
 		display.getNaoSelecionadoList().getStore().getLoader().load();

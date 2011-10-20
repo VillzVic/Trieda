@@ -31,9 +31,12 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EquivalenciasPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
+public class EquivalenciasPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
 		Button getNewButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
@@ -44,7 +47,7 @@ public class EquivalenciasPresenter implements Presenter {
 		Button getResetBuscaButton();
 		SimpleGrid<EquivalenciaDTO> getGrid();
 		Component getComponent();
-		void setProxy(RpcProxy<PagingLoadResult<EquivalenciaDTO>> proxy);
+		void setProxy( RpcProxy< PagingLoadResult< EquivalenciaDTO > > proxy );
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -55,8 +58,8 @@ public class EquivalenciasPresenter implements Presenter {
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-
 		this.display = display;
+
 		configureProxy();
 		setListeners();
 	}

@@ -53,278 +53,330 @@ import com.googlecode.future.FutureSynchronizer;
 public class DisciplinasAssociarSalaPresenter
 	implements Presenter
 {
-	public interface Display extends ITriedaI18nGateway
+	public interface Display
+		extends ITriedaI18nGateway
 	{
 		CampusComboBox getCampusComboBox();
 		TurnoComboBox getTurnoComboBox();
 		UnidadeComboBox getUnidadeSalaComboBox();
 		UnidadeComboBox getUnidadeGrupoSalaComboBox();
-		SimpleComboBox<String> getAndarComboBox();
-		TreePanel<TreeNodeDTO> getDisciplinasList();
-		TreePanel<TreeNodeDTO> getSalasList();
+		SimpleComboBox< String> getAndarComboBox();
+		TreePanel< TreeNodeDTO > getDisciplinasList();
+		TreePanel< TreeNodeDTO > getSalasList();
 		ToolButton getRemoveButton();
 		Button getImportExcelButton();
 		Button getExportExcelButton();
-		void setTabEnabled(boolean flag);
+		void setTabEnabled( boolean flag );
 		Component getComponent();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
-	private Map<String, List<SalaDTO>> andaresSalasMap;
+	private Map< String, List< SalaDTO > > andaresSalasMap;
 
 	public DisciplinasAssociarSalaPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-
 		this.display = display;
+
 		setListeners();
 	}
 
 	private void setListeners()
 	{
-		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>() {
+		this.display.getCampusComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< CampusDTO >()
+		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
-				// obtém o campo selecionado pelo usuário na combobox
+			public void selectionChanged( SelectionChangedEvent< CampusDTO > se )
+			{
+				// Obtém o campo selecionado pelo usuário na combobox
 				final CampusDTO selectedCampus = se.getSelectedItem();
-				// verifica se há turnos associados ao campus selecionado (a associação entre turnos e campus ocorre através do cadastro de uma oferta)
-				Services.turnos().getListByCampus(selectedCampus, new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<TurnoDTO>> (display) {
+
+				// Verifica se há turnos associados ao campus
+				// selecionado ( a associação entre turnos e campus
+				// ocorre através do cadastro de uma oferta )
+				Services.turnos().getListByCampus( selectedCampus,
+					new AbstractAsyncCallbackWithDefaultOnFailure< ListLoadResult< TurnoDTO > >( display )
+				{
 					@Override
-					public void onSuccess(ListLoadResult<TurnoDTO> result) {
-						// exibe uma msg de alerta caso não haja turnos associados ao campus selecionado
-						if (result.getData().isEmpty()) {
-							MessageBox.alert(display.getI18nConstants().mensagemAlerta(),display.getI18nMessages().ofertasNaoCadastradas(selectedCampus.getNome()),null);
+					public void onSuccess( ListLoadResult< TurnoDTO > result )
+					{
+						// Exibe uma msg de alerta caso não haja
+						// turnos associados ao campus selecionado
+						if ( result.getData().isEmpty() )
+						{
+							MessageBox.alert( display.getI18nConstants().mensagemAlerta(),
+								display.getI18nMessages().ofertasNaoCadastradas( selectedCampus.getNome() ), null );
 						}
 					}
 				});
 			}
 		});
-		
-		display.getTurnoComboBox().addSelectionChangedListener(
-				new SelectionChangedListener<TurnoDTO>() {
+
+		this.display.getTurnoComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< TurnoDTO >()
+		{
+			@Override
+			public void selectionChanged(
+				SelectionChangedEvent< TurnoDTO > se )
+			{
+				display.getDisciplinasList().mask(
+					display.getI18nMessages().loading(), "loading" );
+
+				CampusDTO campusDTO = display.getCampusComboBox().getValue();
+				TurnoDTO turnoDTO = se.getSelectedItem();
+
+				final FutureResult< ListLoadResult< TreeNodeDTO > > futureOfertaDTOList
+					= new FutureResult< ListLoadResult< TreeNodeDTO > >();
+
+				Services.ofertas().getListByCampusAndTurno(
+					campusDTO, turnoDTO, futureOfertaDTOList );
+
+				FutureSynchronizer synch = new FutureSynchronizer( futureOfertaDTOList );
+				synch.addCallback( new AsyncCallback< Boolean >()
+				{
 					@Override
-					public void selectionChanged(
-							SelectionChangedEvent<TurnoDTO> se) {
-						display.getDisciplinasList().mask(
-								display.getI18nMessages().loading(), "loading");
+					public void onFailure( Throwable caught )
+					{
+						display.getTurnoComboBox().disable();
+						caught.printStackTrace();
+						display.getDisciplinasList().unmask();
+					}
 
-						CampusDTO campusDTO = display.getCampusComboBox()
-								.getValue();
-						TurnoDTO turnoDTO = se.getSelectedItem();
+					@Override
+					public void onSuccess( Boolean result )
+					{
+						ListLoadResult< TreeNodeDTO > ofertaDTOList
+							= futureOfertaDTOList.result();
 
-						final FutureResult<ListLoadResult<TreeNodeDTO>> futureOfertaDTOList
-							= new FutureResult<ListLoadResult<TreeNodeDTO>>();
+						TreeStore< TreeNodeDTO > treeStore
+							= display.getDisciplinasList().getStore();
 
-						Services.ofertas().getListByCampusAndTurno(campusDTO,
-								turnoDTO, futureOfertaDTOList);
+						treeStore.removeAll();
+						treeStore.add( ofertaDTOList.getData(), true );
 
-						FutureSynchronizer synch = new FutureSynchronizer( futureOfertaDTOList );
-						synch.addCallback( new AsyncCallback< Boolean >()
+						boolean existeOferta = !ofertaDTOList.getData().isEmpty();
+						
+						display.setTabEnabled( existeOferta );
+						display.getDisciplinasList().setEnabled( existeOferta );
+						display.getDisciplinasList().unmask();
+					}
+				});
+			}
+		});
+
+		this.display.getUnidadeSalaComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< UnidadeDTO >()
+		{
+			@Override
+			public void selectionChanged(
+				SelectionChangedEvent< UnidadeDTO > se )
+			{
+				UnidadeDTO unidadeDTO = se.getSelectedItem();
+
+				if ( unidadeDTO != null )
+				{
+					SalasServiceAsync salasService = Services.salas();
+
+					salasService.getSalasEAndareMap( unidadeDTO.getId(),
+						new AsyncCallback< Map< String, List< SalaDTO > > >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							caught.printStackTrace();
+						}
+
+						@Override
+						public void onSuccess( Map< String, List< SalaDTO > > result )
+						{
+							andaresSalasMap = result;
+							display.getAndarComboBox().getStore().removeAll();
+
+							List< String > andares = new ArrayList< String >();
+							andares.addAll( result.keySet() );
+							display.getAndarComboBox().add( andares );
+							display.getAndarComboBox().setEnabled( !andares.isEmpty() );
+						}
+					});
+				}
+			}
+		});
+
+		this.display.getAndarComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< SimpleComboValue< String > >()
+		{
+			@Override
+			public void selectionChanged(
+				SelectionChangedEvent< SimpleComboValue< String > > se )
+			{
+				display.getSalasList().mask(
+					display.getI18nMessages().loading(), "loading" );
+
+				display.getSalasList().setEnabled( se.getSelectedItem() != null );
+
+				if ( se.getSelectedItem() != null )
+				{
+					display.getSalasList().getStore().removeAll();
+
+					List< SalaDTO > salaDTOList = andaresSalasMap.get(
+						se.getSelectedItem().getValue() );
+
+					List< TreeNodeDTO > treeNodesList
+						= new ArrayList< TreeNodeDTO >( salaDTOList.size() );
+
+					for ( SalaDTO salaDTO : salaDTOList )
+					{
+						TreeNodeDTO nodeDTO = new TreeNodeDTO( salaDTO );
+
+						nodeDTO.setEmpty( !salaDTO .getContainsCurriculoDisciplina() );
+						treeNodesList.add( nodeDTO );
+					}
+
+					Collections.sort( treeNodesList );
+
+					display.getSalasList().getStore().add( treeNodesList, true );
+					display.getSalasList().unmask();
+				}
+			}
+		});
+
+		this.display.getUnidadeGrupoSalaComboBox().addSelectionChangedListener(
+			new SelectionChangedListener< UnidadeDTO >()
+		{
+			@Override
+			public void selectionChanged(
+				SelectionChangedEvent< UnidadeDTO > se )
+			{
+				display.getSalasList().mask(
+					display.getI18nMessages().loading(), "loading" );
+
+				UnidadeDTO unidadeDTO = se.getSelectedItem();
+
+				if ( unidadeDTO != null )
+				{
+					SalasServiceAsync salasService = Services.salas();
+
+					salasService.getGruposDeSalas( unidadeDTO.getId(),
+						new AsyncCallback< List< GrupoSalaDTO > >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							caught.printStackTrace();
+							display.getSalasList().unmask();
+						}
+
+						@Override
+						public void onSuccess( List< GrupoSalaDTO > result )
+						{
+							display.getSalasList().enable();
+							display.getSalasList().getStore().removeAll();
+
+							for ( GrupoSalaDTO grupoSalaDTO : result )
+							{
+								TreeNodeDTO nodeDTO = new TreeNodeDTO( grupoSalaDTO );
+
+								display.getSalasList().getStore().add( nodeDTO, true );
+								display.getSalasList().unmask();
+							}
+						}
+					});
+				}
+			}
+		});
+
+		this.display.getRemoveButton().addListener( Events.Select,
+			new SelectionListener< IconButtonEvent >()
+		{
+			@Override
+			public void componentSelected( IconButtonEvent ce )
+			{
+				TreeNodeDTO selectedNodeDTO
+					= display.getSalasList().getSelectionModel().getSelectedItem();
+
+				TreeNodeDTO cdTreeNodeDTO = null;
+				CurriculoDisciplinaDTO cdDTO = null;
+				SalaDTO salaDTO = null;
+				GrupoSalaDTO grupoSalaDTO = null;
+
+				if ( selectedNodeDTO.getLeaf() )
+				{
+					cdTreeNodeDTO = selectedNodeDTO;
+					cdDTO = (CurriculoDisciplinaDTO) selectedNodeDTO.getContent();
+
+					AbstractDTO< ? > nodeContent = selectedNodeDTO.getParent()
+						.getParent().getParent().getContent();
+
+					if ( nodeContent instanceof SalaDTO )
+					{
+						salaDTO = (SalaDTO) nodeContent;
+					}
+					else
+					{
+						grupoSalaDTO = (GrupoSalaDTO) nodeContent;
+					}
+				}
+				else
+				{
+					Info.display( "Erro", "Selecione uma disciplina!" );
+				}
+
+				final TreeNodeDTO cdTreeNodeDTORemove = cdTreeNodeDTO;
+
+				if ( cdDTO != null )
+				{
+					DisciplinasServiceAsync salasService = Services.disciplinas();
+
+					if ( salaDTO != null )
+					{
+						salasService.removeDisciplinaToSala( salaDTO, cdDTO,
+							new AsyncCallback< Void >()
 						{
 							@Override
 							public void onFailure( Throwable caught )
 							{
-								display.getTurnoComboBox().disable();
 								caught.printStackTrace();
-								display.getDisciplinasList().unmask();
 							}
 
 							@Override
-							public void onSuccess( Boolean result )
+							public void onSuccess( Void result )
 							{
-								ListLoadResult<TreeNodeDTO> ofertaDTOList
-									= futureOfertaDTOList.result();
-								TreeStore<TreeNodeDTO> treeStore
-									= display.getDisciplinasList().getStore();
-								treeStore.removeAll();
+								display.getSalasList().getStore().remove( cdTreeNodeDTORemove );
 
-								treeStore.add(ofertaDTOList.getData(), true);
-								boolean existeOferta = !ofertaDTOList.getData().isEmpty();
-								display.setTabEnabled( existeOferta );
-								display.getDisciplinasList().setEnabled( existeOferta );
-								display.getDisciplinasList().unmask();
+								Info.display( "Removido",
+									"Disciplinas removidas com sucesso!" );
 							}
 						});
 					}
-				});
-		display.getUnidadeSalaComboBox().addSelectionChangedListener(
-				new SelectionChangedListener<UnidadeDTO>() {
-					@Override
-					public void selectionChanged(
-							SelectionChangedEvent<UnidadeDTO> se) {
-						UnidadeDTO unidadeDTO = se.getSelectedItem();
-						if (unidadeDTO != null) {
-							SalasServiceAsync salasService = Services.salas();
-							salasService.getSalasEAndareMap(
-									unidadeDTO.getId(),
-									new AsyncCallback<Map<String, List<SalaDTO>>>() {
-										@Override
-										public void onFailure(Throwable caught) {
-											caught.printStackTrace();
-										}
-
-										@Override
-										public void onSuccess(
-												Map<String, List<SalaDTO>> result) {
-											andaresSalasMap = result;
-											display.getAndarComboBox()
-													.getStore().removeAll();
-											List<String> andares = new ArrayList<String>();
-											andares.addAll(result.keySet());
-											display.getAndarComboBox().add(
-													andares);
-											display.getAndarComboBox()
-													.setEnabled(
-															!andares.isEmpty());
-										}
-									});
-						}
-					}
-				});
-		display.getAndarComboBox().addSelectionChangedListener(
-				new SelectionChangedListener<SimpleComboValue<String>>() {
-					@Override
-					public void selectionChanged(
-							SelectionChangedEvent<SimpleComboValue<String>> se) {
-						display.getSalasList().mask(
-								display.getI18nMessages().loading(), "loading");
-						display.getSalasList().setEnabled(
-								se.getSelectedItem() != null);
-						if (se.getSelectedItem() != null) {
-							display.getSalasList().getStore().removeAll();
-							List<SalaDTO> salaDTOList = andaresSalasMap.get(se
-									.getSelectedItem().getValue());
-							List<TreeNodeDTO> treeNodesList = new ArrayList<TreeNodeDTO>(
-									salaDTOList.size());
-							for (SalaDTO salaDTO : salaDTOList) {
-								TreeNodeDTO nodeDTO = new TreeNodeDTO(salaDTO);
-								nodeDTO.setEmpty(!salaDTO
-										.getContainsCurriculoDisciplina());
-								treeNodesList.add(nodeDTO);
+					else
+					{
+						salasService.removeDisciplinaToSala( grupoSalaDTO, cdDTO,
+							new AsyncCallback< Void >()
+						{
+							@Override
+							public void onFailure( Throwable caught )
+							{
+								caught.printStackTrace();
 							}
 
-							Collections.sort(treeNodesList);
+							@Override
+							public void onSuccess( Void result )
+							{
+								display.getSalasList().getStore().remove( cdTreeNodeDTORemove );
 
-							display.getSalasList().getStore()
-									.add(treeNodesList, true);
-							display.getSalasList().unmask();
-						}
-					}
-				});
-		display.getUnidadeGrupoSalaComboBox().addSelectionChangedListener(
-				new SelectionChangedListener<UnidadeDTO>() {
-					@Override
-					public void selectionChanged(
-							SelectionChangedEvent<UnidadeDTO> se) {
-						display.getSalasList().mask(
-								display.getI18nMessages().loading(), "loading");
-						UnidadeDTO unidadeDTO = se.getSelectedItem();
-						if (unidadeDTO != null) {
-							SalasServiceAsync salasService = Services.salas();
-							salasService.getGruposDeSalas(unidadeDTO.getId(),
-									new AsyncCallback<List<GrupoSalaDTO>>() {
-										@Override
-										public void onFailure(Throwable caught) {
-											caught.printStackTrace();
-											display.getSalasList().unmask();
-										}
-
-										@Override
-										public void onSuccess(
-												List<GrupoSalaDTO> result) {
-											display.getSalasList().enable();
-											display.getSalasList().getStore()
-													.removeAll();
-											for (GrupoSalaDTO grupoSalaDTO : result) {
-												TreeNodeDTO nodeDTO = new TreeNodeDTO(
-														grupoSalaDTO);
-												display.getSalasList()
-														.getStore()
-														.add(nodeDTO, true);
-												display.getSalasList().unmask();
-											}
-										}
-									});
-						}
-					}
-				});
-		display.getRemoveButton().addListener(Events.Select,
-				new SelectionListener<IconButtonEvent>() {
-					@Override
-					public void componentSelected(IconButtonEvent ce) {
-						TreeNodeDTO selectedNodeDTO = display.getSalasList()
-								.getSelectionModel().getSelectedItem();
-
-						TreeNodeDTO cdTreeNodeDTO = null;
-						CurriculoDisciplinaDTO cdDTO = null;
-						SalaDTO salaDTO = null;
-						GrupoSalaDTO grupoSalaDTO = null;
-
-						if (selectedNodeDTO.getLeaf()) {
-							cdTreeNodeDTO = selectedNodeDTO;
-							cdDTO = (CurriculoDisciplinaDTO) selectedNodeDTO
-									.getContent();
-							AbstractDTO<?> nodeContent = selectedNodeDTO
-									.getParent().getParent().getParent()
-									.getContent();
-							if (nodeContent instanceof SalaDTO) {
-								salaDTO = (SalaDTO) nodeContent;
-							} else {
-								grupoSalaDTO = (GrupoSalaDTO) nodeContent;
+								Info.display( "Removido",
+									"Disciplinas removidas com sucesso!" );
 							}
-						} else {
-							Info.display("Erro", "Selecione uma disciplina!");
-						}
-
-						final TreeNodeDTO cdTreeNodeDTORemove = cdTreeNodeDTO;
-
-						if (cdDTO != null) {
-							DisciplinasServiceAsync salasService = Services
-									.disciplinas();
-							if (salaDTO != null) {
-								salasService.removeDisciplinaToSala(salaDTO,
-										cdDTO, new AsyncCallback<Void>() {
-											@Override
-											public void onFailure(
-													Throwable caught) {
-												caught.printStackTrace();
-											}
-
-											@Override
-											public void onSuccess(Void result) {
-												display.getSalasList()
-														.getStore()
-														.remove(cdTreeNodeDTORemove);
-												Info.display("Removido",
-														"Disciplinas removidas com sucesso!");
-											}
-										});
-							} else {
-								salasService.removeDisciplinaToSala(
-										grupoSalaDTO, cdDTO,
-										new AsyncCallback<Void>() {
-											@Override
-											public void onFailure(
-													Throwable caught) {
-												caught.printStackTrace();
-											}
-
-											@Override
-											public void onSuccess(Void result) {
-												display.getSalasList()
-														.getStore()
-														.remove(cdTreeNodeDTORemove);
-												Info.display("Removido",
-														"Disciplinas removidas com sucesso!");
-											}
-										});
-							}
-						}
+						});
 					}
-				});
-		display.getImportExcelButton().addSelectionListener(
+				}
+			}
+		});
+
+		this.display.getImportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -340,26 +392,27 @@ public class DisciplinasAssociarSalaPresenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected( ButtonEvent ce )
-					{
-						ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO );
+		this.display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO );
 
-						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-							parametros, display.getI18nConstants(), display.getI18nMessages() );
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
 
-						e.submit();
-					}
-				});
+				e.submit();
+			}
+		});
 	}
 
 	@Override
-	public void go(Widget widget) {
+	public void go( Widget widget )
+	{
 		GTab gTab = (GTab) widget;
-		gTab.add((GTabItem) display.getComponent());
+		gTab.add( (GTabItem) this.display.getComponent() );
 	}
-
 }

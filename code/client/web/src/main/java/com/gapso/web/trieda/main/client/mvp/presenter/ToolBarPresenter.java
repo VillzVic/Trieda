@@ -142,7 +142,8 @@ public class ToolBarPresenter
 	private Display toolBar;
 	private GTab gTab;
 
-	public ToolBarPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public ToolBarPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO masterData, UsuarioDTO usuario,
 		CenarioPanel cenarioPanel, Display toolBar )
 	{
@@ -156,7 +157,7 @@ public class ToolBarPresenter
 
 	private void addListeners()
 	{
-		toolBar.getAlunosNovoAlunoButton().addSelectionListener(
+		this.toolBar.getAlunosNovoAlunoButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -169,7 +170,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getAlunosListAlunosButton().addSelectionListener(
+		this.toolBar.getAlunosListAlunosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -182,7 +183,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getTurnosListCampiButton().addSelectionListener(
+		this.toolBar.getTurnosListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -195,7 +196,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getSemanasLetivaListCampiButton().addSelectionListener(
+		this.toolBar.getSemanasLetivaListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -208,7 +209,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCampiNovoCampiButton().addSelectionListener(
+		this.toolBar.getCampiNovoCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -221,7 +222,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCampiListCampiButton().addSelectionListener(
+		this.toolBar.getCampiListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -234,7 +235,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getUnidadesNovoUnidadesButton().addSelectionListener(
+		this.toolBar.getUnidadesNovoUnidadesButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -247,7 +248,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getUnidadesListUnidadesButton().addSelectionListener(
+		this.toolBar.getUnidadesListUnidadesButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -260,7 +261,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getSalasNovoSalasButton().addSelectionListener(
+		this.toolBar.getSalasNovoSalasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -273,7 +274,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getSalasListSalasButton().addSelectionListener(
+		this.toolBar.getSalasListSalasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -286,7 +287,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getGruposSalasListSalasButton().addSelectionListener(
+		this.toolBar.getGruposSalasListSalasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -299,7 +300,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getTiposCursosListCursosButton().addSelectionListener(
+		this.toolBar.getTiposCursosListCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -312,7 +313,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getAreasTitulacaoListCursosButton().addSelectionListener(
+		this.toolBar.getAreasTitulacaoListCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -325,7 +326,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getVincularAreasTitulacaoListCursosButton().addSelectionListener(
+		this.toolBar.getVincularAreasTitulacaoListCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -338,7 +339,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getUnidadeDeslocamentoListUnidadesButton().addSelectionListener(
+		this.toolBar.getUnidadeDeslocamentoListUnidadesButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -351,7 +352,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCampusDeslocamentoListCampiButton().addSelectionListener(
+		this.toolBar.getCampusDeslocamentoListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -364,7 +365,8 @@ public class ToolBarPresenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi possível listar os deslocamentos.", null );
 					}
 
 					@Override
@@ -379,7 +381,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCursosNovoCursosButton().addSelectionListener(
+		this.toolBar.getCursosNovoCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -392,7 +394,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCursosListCursosButton().addSelectionListener(
+		this.toolBar.getCursosListCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 				@Override
@@ -405,7 +407,7 @@ public class ToolBarPresenter
 				}
 		});
 
-		toolBar.getDisciplinasNovoDisciplinasButton().addSelectionListener(
+		this.toolBar.getDisciplinasNovoDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -418,7 +420,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getDisciplinasListDisciplinasButton().addSelectionListener(
+		this.toolBar.getDisciplinasListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -431,7 +433,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCurriculosListCursosButton().addSelectionListener(
+		this.toolBar.getCurriculosListCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -444,7 +446,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCurriculosListDisciplinasButton().addSelectionListener(
+		this.toolBar.getCurriculosListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -457,7 +459,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getDivisaoCreditosListDisciplinasButton().addSelectionListener(
+		this.toolBar.getDivisaoCreditosListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -470,7 +472,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getEquivalenciasListDisciplinasButton().addSelectionListener(
+		this.toolBar.getEquivalenciasListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -483,7 +485,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getFixacoesListButton().addSelectionListener(
+		this.toolBar.getFixacoesListButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -496,7 +498,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getCompatibilidadesListDisciplinasButton().addSelectionListener(
+		this.toolBar.getCompatibilidadesListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -509,7 +511,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getProfessoresNovoProfessoresButton().addSelectionListener(
+		this.toolBar.getProfessoresNovoProfessoresButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -522,7 +524,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getProfessoresListProfessoresButton().addSelectionListener(
+		this.toolBar.getProfessoresListProfessoresButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -535,7 +537,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(
+		this.toolBar.getProfessoresDisciplinaListProfessoresButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -549,7 +551,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(
+		this.toolBar.getProfessoresCampusListprofessoresBt().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -563,7 +565,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getOfertasListCampiButton().addSelectionListener(
+		this.toolBar.getOfertasListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -576,7 +578,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getUsuariosListButton().addSelectionListener(
+		this.toolBar.getUsuariosListButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -589,7 +591,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getImportarButton().addSelectionListener(
+		this.toolBar.getImportarButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			// Fazendo com que importe todos dados do
@@ -609,7 +611,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getExportarButton().addSelectionListener(
+		this.toolBar.getExportarButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			// Fazendo com que exporte todos dados do masterdata.
@@ -626,7 +628,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getOfertasListCursosButton().addSelectionListener(
+		this.toolBar.getOfertasListCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -639,7 +641,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getAssociarDisciplinasSalasListSalasButton().addSelectionListener(
+		this.toolBar.getAssociarDisciplinasSalasListSalasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -652,7 +654,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getAssociarDisciplinasSalasListDisciplinasButton().addSelectionListener(
+		this.toolBar.getAssociarDisciplinasSalasListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -665,7 +667,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getDemandasDisciplinasButton().addSelectionListener(
+		this.toolBar.getDemandasDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -678,7 +680,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getRelatorioVisaoSalaButton().addSelectionListener(
+		this.toolBar.getRelatorioVisaoSalaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -691,7 +693,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getParametrosButton().addSelectionListener(
+		this.toolBar.getParametrosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -703,7 +705,8 @@ public class ToolBarPresenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi possível abrir a tela de parâmetros", null );
 					}
 
 					@Override
@@ -718,7 +721,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getRelatorioVisaoCursoButton().addSelectionListener(
+		this.toolBar.getRelatorioVisaoCursoButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -731,7 +734,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(
+		this.toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -745,7 +748,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getResumoCenarioButton().addSelectionListener(
+		this.toolBar.getResumoCenarioButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -758,7 +761,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getResumoCampiButton().addSelectionListener(
+		this.toolBar.getResumoCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -771,7 +774,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getResumoCursosButton().addSelectionListener(
+		this.toolBar.getResumoCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -784,7 +787,7 @@ public class ToolBarPresenter
 			}
 		});
 
-		toolBar.getResumoDisciplinasButton().addSelectionListener(
+		this.toolBar.getResumoDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -803,6 +806,6 @@ public class ToolBarPresenter
 	{
 		AppPresenter.Display container = (AppPresenter.Display) widget;
 		this.gTab = container.getGTab();
-		container.getPanel().setTopComponent( toolBar.getComponent() );
+		container.getPanel().setTopComponent( this.toolBar.getComponent() );
 	}
 }

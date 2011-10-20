@@ -21,7 +21,8 @@ public class OtimizarMessagesPresenter
 	private List< String > errors;
 	private Display display;
 
-	public OtimizarMessagesPresenter( List< String > warnings,
+	public OtimizarMessagesPresenter(
+		List< String > warnings,
 		List< String > errors, Display display )
 	{
 		this.display = display;

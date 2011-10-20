@@ -143,16 +143,20 @@ public class Cenario
 		sb.append( "Comentario: " ).append( getComentario() ).append( ", " );
 		sb.append( "Oficial: " ).append( getOficial() ).append( ", " );
 		sb.append( "SemanaLetiva: " ).append( getSemanaLetiva() ).append( ", " );
-		sb.append( "DivisoesCredito: " ).append( getDivisoesCredito() == null ? "null" : getDivisoesCredito().size() );
-		sb.append( "Turnos: " ).append( getTurnos() == null ? "null" : getTurnos().size() );
-		sb.append( "Cursos: " ).append( getCursos() == null ? "null" : getCursos().size() );
-		sb.append( "Campi: " ).append( getCampi() == null ? "null" : getCampi().size() );
-		sb.append( "Disciplinas: " ).append( getDisciplinas() == null ? "null" : getDisciplinas().size() );
-		sb.append( "Professores: " ).append( getProfessores() == null ? "null" : getProfessores().size() );
-		sb.append( "Curriculos: " ).append( getCurriculos() == null ? "null" : getCurriculos().size() );
-		sb.append( "Atendimentos Operacionais: " ).append( getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size() );
-		sb.append( "Atendimentos Taticos: " ).append( getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size() );
-		sb.append( "Parametros: " ).append( getParametros() == null ? "null" : getParametros().size() );
+		sb.append( "DivisoesCredito: " ).append( getDivisoesCredito() == null ?
+			"null" : getDivisoesCredito().size() ).append( ", " );
+		sb.append( "Turnos: " ).append( getTurnos() == null ? "null" : getTurnos().size() ).append( ", " );
+		sb.append( "Cursos: " ).append( getCursos() == null ? "null" : getCursos().size() ).append( ", " );
+		sb.append( "Campi: " ).append( getCampi() == null ? "null" : getCampi().size() ).append( ", " );
+		sb.append( "Disciplinas: " ).append( getDisciplinas() == null ? "null" : getDisciplinas().size() ).append( ", " );
+		sb.append( "Professores: " ).append( getProfessores() == null ? "null" : getProfessores().size() ).append( ", " );
+		sb.append( "Curriculos: " ).append( getCurriculos() == null ? "null" : getCurriculos().size() ).append( ", " );
+		sb.append( "Atendimentos Operacionais: " ).append( getAtendimentosOperacionais() == null ?
+			"null" : getAtendimentosOperacionais().size() ).append( ", " );
+		sb.append( "Atendimentos Taticos: " ).append( getAtendimentosTaticos() == null ?
+			"null" : getAtendimentosTaticos().size() ).append( ", " );
+		sb.append( "Parametros: " ).append( getParametros() == null ?
+			"null" : getParametros().size() );
 
 		return sb.toString();
 	}

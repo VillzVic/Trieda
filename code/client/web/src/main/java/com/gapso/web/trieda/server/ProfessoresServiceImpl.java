@@ -32,7 +32,8 @@ import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresService;
 
 public class ProfessoresServiceImpl
-	extends RemoteService implements ProfessoresService
+	extends RemoteService
+	implements ProfessoresService
 {
 	private static final long serialVersionUID = -1972558331232685995L;
 
@@ -44,7 +45,8 @@ public class ProfessoresServiceImpl
 			return null;
 		}
 
-		return ConvertBeans.toProfessorDTO( Professor.find( id, getInstituicaoEnsinoUser() ) );
+		return ConvertBeans.toProfessorDTO(
+			Professor.find( id, getInstituicaoEnsinoUser() ) );
 	}
 
 	@Override
@@ -54,11 +56,11 @@ public class ProfessoresServiceImpl
 		Professor professor = Professor.find(
 			professorDTO.getId(), getInstituicaoEnsinoUser() );
 
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
+//		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+//			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List< HorarioDisponivelCenario > list = professor.getHorarios(
-			getInstituicaoEnsinoUser(), semanaLetiva );
+		List< HorarioDisponivelCenario > list
+			= professor.getHorarios( getInstituicaoEnsinoUser() );
 
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
@@ -67,12 +69,9 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public void saveHorariosDisponiveis( ProfessorDTO professorDTO,
-		SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
+	public void saveHorariosDisponiveis(
+		ProfessorDTO professorDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
@@ -83,11 +82,11 @@ public class ProfessoresServiceImpl
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( professor.getHorarios(
-			getInstituicaoEnsinoUser(), semanaLetiva ) );
+			getInstituicaoEnsinoUser() ) );
 
 		List< HorarioDisponivelCenario > removerList
-			= new ArrayList< HorarioDisponivelCenario >( professor.getHorarios(
-				getInstituicaoEnsinoUser(), semanaLetiva ) );
+			= new ArrayList< HorarioDisponivelCenario >(
+				professor.getHorarios( getInstituicaoEnsinoUser() ) );
 
 		removerList.removeAll( listSelecionados );
 
@@ -152,8 +151,8 @@ public class ProfessoresServiceImpl
 
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		List< Professor > listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
-			cpf, tipoContrato, titulacao, areaTitulacao, config.getOffset(),
-			config.getLimit(), orderBy );
+			cpf, tipoContrato, titulacao, areaTitulacao,
+			config.getOffset(), config.getLimit(), orderBy );
 
 		if ( listDomains != null )
 		{
@@ -169,7 +168,8 @@ public class ProfessoresServiceImpl
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( Professor.count(
-				getInstituicaoEnsinoUser(), cpf, tipoContrato, titulacao, areaTitulacao ) );
+			getInstituicaoEnsinoUser(), cpf,
+			tipoContrato, titulacao, areaTitulacao ) );
 
 		return result;
 	}
@@ -184,7 +184,9 @@ public class ProfessoresServiceImpl
 	@Override
 	public ListLoadResult< TipoContratoDTO > getTiposContratoAll()
 	{
-		List< TipoContratoDTO > listDTO = new ArrayList< TipoContratoDTO >();
+		List< TipoContratoDTO > listDTO
+			= new ArrayList< TipoContratoDTO >();
+
 		List< TipoContrato > listTiposContrato
 			= TipoContrato.findAll( getInstituicaoEnsinoUser() );
 
@@ -210,8 +212,7 @@ public class ProfessoresServiceImpl
 	public ListLoadResult< TitulacaoDTO > getTitulacoesAll()
 	{
 		List< TitulacaoDTO > listDTO = new ArrayList< TitulacaoDTO >();
-		List< Titulacao > list
-			= Titulacao.findAll( this.getInstituicaoEnsinoUser() );
+		List< Titulacao > list = Titulacao.findAll( this.getInstituicaoEnsinoUser() );
 
 		for ( Titulacao titulacao : list )
 		{

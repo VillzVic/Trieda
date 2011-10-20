@@ -2,6 +2,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.ErrorsWarningsInputSolverPresenter;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -48,8 +49,8 @@ public class ErrorsWarningsInputSolverView
 			Resources.DEFAULTS.error16() ) );
 		this.messagesErrorPanel.setBodyBorder( false );
 		this.messagesErrorPanel.addStyleName( "errorList" );
-		this.panel.add( this.messagesErrorPanel );
 
+		this.panel.add( this.messagesErrorPanel );
 		this.panel.setAutoHeight( true );
 
 		this.simpleModal.setContent( this.panel );
@@ -84,5 +85,11 @@ public class ErrorsWarningsInputSolverView
 	public Button getCancelButton()
 	{
 		return this.simpleModal.getCancelarBt();
+	}
+
+	@Override
+	public ToolButton getCloseButton()
+	{
+		return this.simpleModal.getCloseBt();
 	}
 }

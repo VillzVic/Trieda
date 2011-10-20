@@ -2,7 +2,8 @@ package com.gapso.web.trieda.shared.dtos;
 
 import java.util.Date;
 
-public class HorarioAulaDTO extends AbstractDTO< String >
+public class HorarioAulaDTO
+	extends AbstractDTO< String >
 	implements Comparable< HorarioAulaDTO >
 {
 	private static final long serialVersionUID = -4670030478798237916L;
@@ -10,6 +11,7 @@ public class HorarioAulaDTO extends AbstractDTO< String >
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 	public static final String PROPERTY_SEMANA_LETIVA_STRING = "semanaLetivaString";
 	public static final String PROPERTY_TURNO_ID = "turnoId";
@@ -22,100 +24,124 @@ public class HorarioAulaDTO extends AbstractDTO< String >
 		super();
 	}
 
-	public HorarioAulaDTO(Long id, Long semanaLetivaId,
-			String semanaLetivaString, String turnoString, Long turnoId,
-			Date inicio, Date fim, Integer version) {
-		setId(id);
-		setSemanaLetivaId(semanaLetivaId);
-		setSemanaLetivaString(semanaLetivaString);
-		setTurnoId(turnoId);
-		setTurnoString(turnoString);
-		setInicio(inicio);
-		setFim(fim);
-		setVersion(version);
+	public void setId( Long value )
+	{
+		set( PROPERTY_ID, value );
 	}
 
-	public void setId(Long value) {
-		set(PROPERTY_ID, value);
+	public Long getId()
+	{
+		return get( PROPERTY_ID );
 	}
 
-	public Long getId() {
-		return get(PROPERTY_ID);
+	public void setCenarioId( Long value )
+	{
+		set( PROPERTY_CENARIO_ID, value );
 	}
 
-	public void setVersion(Integer value) {
-		set(PROPERTY_VERSION, value);
+	public Long getCenarioId()
+	{
+		return get( PROPERTY_CENARIO_ID );
 	}
 
-	public Integer getVersion() {
-		return get(PROPERTY_VERSION);
+	public void setVersion( Integer value )
+	{
+		set( PROPERTY_VERSION, value );
 	}
 
-	public void setSemanaLetivaId(Long value) {
-		set(PROPERTY_SEMANA_LETIVA_ID, value);
+	public Integer getVersion()
+	{
+		return get( PROPERTY_VERSION );
 	}
 
-	public Long getSemanaLetivaId() {
-		return get(PROPERTY_SEMANA_LETIVA_ID);
+	public void setSemanaLetivaId( Long value )
+	{
+		set( PROPERTY_SEMANA_LETIVA_ID, value );
 	}
 
-	public void setSemanaLetivaString(String value) {
-		set(PROPERTY_SEMANA_LETIVA_STRING, value);
+	public Long getSemanaLetivaId()
+	{
+		return get( PROPERTY_SEMANA_LETIVA_ID );
 	}
 
-	public String getSemanaLetivaString() {
-		return get(PROPERTY_SEMANA_LETIVA_STRING);
+	public void setSemanaLetivaString( String value )
+	{
+		set( PROPERTY_SEMANA_LETIVA_STRING, value );
 	}
 
-	public void setTurnoId(Long value) {
-		set(PROPERTY_TURNO_ID, value);
+	public String getSemanaLetivaString()
+	{
+		return get( PROPERTY_SEMANA_LETIVA_STRING );
 	}
 
-	public Long getTurnoId() {
-		return get(PROPERTY_TURNO_ID);
+	public void setTurnoId( Long value )
+	{
+		set( PROPERTY_TURNO_ID, value );
 	}
 
-	public void setTurnoString(String value) {
-		set(PROPERTY_TURNO_STRING, value);
+	public Long getTurnoId()
+	{
+		return get( PROPERTY_TURNO_ID );
 	}
 
-	public String getTurnoString() {
-		return get(PROPERTY_TURNO_STRING);
+	public void setTurnoString( String value )
+	{
+		set( PROPERTY_TURNO_STRING, value );
 	}
 
-	public void setInicio(Date value) {
-		set(PROPERTY_INICIO, value);
+	public String getTurnoString()
+	{
+		return get( PROPERTY_TURNO_STRING );
 	}
 
-	public Date getInicio() {
-		return get(PROPERTY_INICIO);
+	public void setInicio( Date value )
+	{
+		set( PROPERTY_INICIO, value );
 	}
 
-	public void setFim(Date value) {
-		set(PROPERTY_FIM, value);
+	public Date getInicio()
+	{
+		return get( PROPERTY_INICIO );
 	}
 
-	public Date getFim() {
-		return get(PROPERTY_FIM);
+	public void setFim( Date value )
+	{
+		set( PROPERTY_FIM, value );
+	}
+
+	public Date getFim()
+	{
+		return get( PROPERTY_FIM );
 	}
 
 	@Override
-	public String getNaturalKey() {
-		return getSemanaLetivaString() + "-" + getTurnoString() + "-"
-				+ getInicio() + "-" + getFim();
+	public String getNaturalKey()
+	{
+		return getSemanaLetivaString()
+			+ "-" + getTurnoString()
+			+ "-" + getInicio()
+			+ "-" + getFim();
 	}
 
 	@Override
-	public int compareTo(HorarioAulaDTO o) {
-		int compareSemanaLetiva = getSemanaLetivaString().compareTo(
-				o.getSemanaLetivaString());
-		if (compareSemanaLetiva == 0) {
-			int compareTurno = getTurnoString().compareTo(o.getTurnoString());
-			if (compareTurno == 0) {
-				return getInicio().compareTo(o.getInicio());
+	public int compareTo( HorarioAulaDTO o )
+	{
+		int compareSemanaLetiva = getSemanaLetivaString()
+			.compareTo( o.getSemanaLetivaString() );
+
+		if ( compareSemanaLetiva == 0 )
+		{
+			int compareTurno = getTurnoString()
+				.compareTo( o.getTurnoString() );
+
+			if ( compareTurno == 0 )
+			{
+				return getInicio().compareTo( o.getInicio() );
 			}
+
 			return compareTurno;
 		}
+
 		return compareSemanaLetiva;
 	}
 }

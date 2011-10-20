@@ -1,7 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -60,38 +59,39 @@ public class Disciplina
 	private Cenario cenario;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = TipoDisciplina.class, fetch = FetchType.LAZY )
-	@JoinColumn(name = "TDI_ID")
+	@JoinColumn( name = "TDI_ID" )
 	private TipoDisciplina tipoDisciplina;
 
-	@OneToOne(cascade = CascadeType.ALL, targetEntity = DivisaoCredito.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "DCR_ID")
+	@OneToOne( cascade = CascadeType.ALL,
+		targetEntity = DivisaoCredito.class, fetch = FetchType.LAZY )
+	@JoinColumn( name = "DCR_ID" )
 	private DivisaoCredito divisaoCreditos;
 
 	@NotNull
-	@Column(name = "DIS_CODIGO")
-	@Size(min = 1, max = 20)
+	@Column( name = "DIS_CODIGO" )
+	@Size( min = 1, max = 20 )
 	private String codigo;
 
 	@NotNull
-	@Column(name = "DIS_NOME")
-	@Size(min = 1, max = 50)
+	@Column( name = "DIS_NOME" )
+	@Size( min = 1, max = 50 )
 	private String nome;
 
 	@NotNull
-	@Column(name = "DIS_CRED_TEORICO")
-	@Min(0L)
-	@Max(99L)
+	@Column( name = "DIS_CRED_TEORICO" )
+	@Min( 0L )
+	@Max( 99L )
 	private Integer creditosTeorico;
 
 	@NotNull
-	@Column(name = "DIS_CRED_PRATICO")
-	@Min(0L)
-	@Max(99L)
+	@Column( name = "DIS_CRED_PRATICO" )
+	@Min( 0L )
+	@Max( 99L )
 	private Integer creditosPratico;
 
-	@Column(name = "DIS_LABORATORIO")
+	@Column( name = "DIS_LABORATORIO" )
 	private Boolean laboratorio;
 
 	@NotNull
@@ -99,52 +99,54 @@ public class Disciplina
 	private Dificuldades dificuldade;
 
 	@NotNull
-	@Column(name = "DIS_MAX_ALUN_TEORICO")
-	@Min(0L)
-	@Max(999L)
+	@Column( name = "DIS_MAX_ALUN_TEORICO" )
+	@Min( 0L )
+	@Max( 999L )
 	private Integer maxAlunosTeorico;
 
 	@NotNull
-	@Column(name = "DIS_MAX_ALUN_PRATICO")
-	@Min(0L)
-	@Max(999L)
+	@Column( name = "DIS_MAX_ALUN_PRATICO" )
+	@Min( 0L )
+	@Max( 999L )
 	private Integer maxAlunosPratico;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "disciplinas")
-	private Set<HorarioDisponivelCenario> horarios = new HashSet<HorarioDisponivelCenario>();
+	@ManyToMany(cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE }, mappedBy = "disciplinas")
+	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
 	@NotNull
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-	private Set<ProfessorDisciplina> professores = new HashSet<ProfessorDisciplina>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
+	private Set< ProfessorDisciplina > professores = new HashSet< ProfessorDisciplina >();
 
 	@NotNull
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina1")
-	private Set<Incompatibilidade> incompatibilidades = new HashSet<Incompatibilidade>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina1" )
+	private Set< Incompatibilidade > incompatibilidades = new HashSet< Incompatibilidade >();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cursou")
-	private Set<Equivalencia> equivalencias = new HashSet<Equivalencia>();
+	private Set<Equivalencia> equivalencias = new HashSet< Equivalencia >();
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "elimina")
-	private Set<Equivalencia> eliminadaPor = new HashSet<Equivalencia>();
-
-	@NotNull
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-	private Set<CurriculoDisciplina> curriculos = new HashSet<CurriculoDisciplina>();
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "elimina" )
+	private Set< Equivalencia > eliminadaPor = new HashSet< Equivalencia >();
 
 	@NotNull
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-	private Set<Demanda> demandas = new HashSet<Demanda>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
+	private Set< CurriculoDisciplina > curriculos = new HashSet< CurriculoDisciplina >();
 
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "disciplina")
-	private Set<Fixacao> fixacoes = new HashSet<Fixacao>();
+	@NotNull
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
+	private Set< Demanda > demandas = new HashSet< Demanda >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-	private Set<AtendimentoOperacional> atendimentosOperacionais = new HashSet<AtendimentoOperacional>();
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "disciplina" )
+	private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "disciplina")
-	private Set<AtendimentoTatico> atendimentosTaticos = new HashSet<AtendimentoTatico>();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
+	private Set< AtendimentoOperacional > atendimentosOperacionais = new HashSet< AtendimentoOperacional >();
 
-	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }, mappedBy="disciplinas" )
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
+	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
+
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, mappedBy="disciplinas" )
 	private Set< ProfessorVirtual > professoresVirtuais = new HashSet< ProfessorVirtual >();
 
 	public String toString()
@@ -640,26 +642,20 @@ public class Disciplina
 		return ( ( (Number) q.getSingleResult() ).intValue() > 0 );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino )
 	{
-		List< HorarioDisponivelCenario > horarios
-			= new ArrayList< HorarioDisponivelCenario >();
-
 		Query q = entityManager().createQuery(
 			" SELECT o FROM HorarioDisponivelCenario o, IN ( o.disciplinas ) c " +
 			" WHERE c.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND c = :disciplina " +
-			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
 			" AND o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "disciplina", this );
-		q.setParameter( "semanaLetiva", semanaLetiva );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		horarios.addAll( q.getResultList() );
-		return horarios;
+		return q.getResultList();
 	}
 
 	public static boolean checkCodigoUnique(

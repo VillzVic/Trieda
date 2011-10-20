@@ -25,7 +25,8 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class CampiView extends MyComposite
+public class CampiView
+	extends MyComposite
 	implements CampiPresenter.Display
 {
 	private SimpleToolBar toolBar;
@@ -43,42 +44,45 @@ public class CampiView extends MyComposite
 
 	public CampiView()
 	{
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
 	{
-		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( getI18nConstants().campiHeadingPanel() );
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( getI18nConstants().campiHeadingPanel() );
 
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent( tabItem );
+		initComponent( this.tabItem );
 	}
 
 	private void createTabItem()
 	{
-		tabItem = new GTabItem( getI18nConstants().campi(), Resources.DEFAULTS.campus16() );
-		tabItem.setContent( panel );
+		this.tabItem = new GTabItem( getI18nConstants().campi(),
+			Resources.DEFAULTS.campus16() );
+
+		this.tabItem.setContent( this.panel );
 	}
 
 	private void createToolBar()
 	{
-		toolBar = new SimpleToolBar( this );
-		toolBar.add( new SeparatorToolItem() );
-		unidadesDeslocamentoBT = toolBar.createButton(
+		this.toolBar = new SimpleToolBar( this );
+		this.toolBar.add( new SeparatorToolItem() );
+
+		this.unidadesDeslocamentoBT = this.toolBar.createButton(
 			getI18nConstants().deslocamentoUnidadesCampus(),
 			Resources.DEFAULTS.deslocamentoUnidade16() );
 
-		toolBar.add( unidadesDeslocamentoBT );
-		disponibilidadeBT = toolBar.createButton(
+		this.toolBar.add( this.unidadesDeslocamentoBT );
+		this.disponibilidadeBT = toolBar.createButton(
 			getI18nConstants().disponibilidadesSemanaLetiva(),
 			Resources.DEFAULTS.disponibilidade16() );
 
-		toolBar.add( disponibilidadeBT );
-		panel.setTopComponent( toolBar );
+		this.toolBar.add( this.disponibilidadeBT );
+		this.panel.setTopComponent( this.toolBar );
 	}
 
 	private void createGrid()
@@ -86,8 +90,8 @@ public class CampiView extends MyComposite
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-	    gridPanel = new SimpleGrid< CampusDTO >( getColumnList(), this );
-	    panel.add( gridPanel, bld );
+	    this.gridPanel = new SimpleGrid< CampusDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
 	}
 
 	public List< ColumnConfig > getColumnList()
@@ -113,118 +117,125 @@ public class CampiView extends MyComposite
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
-		filter = new SimpleFilter();
-		nomeBuscaTextField = new TextField< String >();
-		nomeBuscaTextField.setFieldLabel( getI18nConstants().nome() );
-		codigoBuscaTextField = new TextField< String >();
-		codigoBuscaTextField.setFieldLabel( getI18nConstants().codigo() );
-		estadoBuscaComboBox = new EstadoComboBox();
-		estadoBuscaComboBox.setFieldLabel( getI18nConstants().estado() );
-		municipioBuscaTextField = new TextField< String >();
-		municipioBuscaTextField.setFieldLabel( getI18nConstants().municipio() );
-		bairroBuscaTextField = new TextField< String >();
-		bairroBuscaTextField.setFieldLabel( getI18nConstants().bairro() );
-		filter.addField( nomeBuscaTextField );
-		filter.addField( codigoBuscaTextField ); 
-		filter.addField( municipioBuscaTextField ); 
-		filter.addField( bairroBuscaTextField ); 
+		this.filter = new SimpleFilter();
 
-		panel.add( filter, bld );
+		this.nomeBuscaTextField = new TextField< String >();
+		this.nomeBuscaTextField.setFieldLabel( getI18nConstants().nome() );
+
+		this.codigoBuscaTextField = new TextField< String >();
+		this.codigoBuscaTextField.setFieldLabel( getI18nConstants().codigo() );
+
+		this.estadoBuscaComboBox = new EstadoComboBox();
+		this.estadoBuscaComboBox.setFieldLabel( getI18nConstants().estado() );
+
+		this.municipioBuscaTextField = new TextField< String >();
+		this.municipioBuscaTextField.setFieldLabel( getI18nConstants().municipio() );
+
+		this.bairroBuscaTextField = new TextField< String >();
+		this.bairroBuscaTextField.setFieldLabel( getI18nConstants().bairro() );
+
+		this.filter.addField( nomeBuscaTextField );
+		this.filter.addField( codigoBuscaTextField ); 
+		this.filter.addField( municipioBuscaTextField ); 
+		this.filter.addField( bairroBuscaTextField ); 
+
+		this.panel.add( this.filter, bld );
 	}
 
 	@Override
 	public Button getNewButton()
 	{
-		return toolBar.getNewButton();
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
 	public Button getEditButton()
 	{
-		return toolBar.getEditButton();
+		return this.toolBar.getEditButton();
 	}
 
 	@Override
 	public Button getRemoveButton()
 	{
-		return toolBar.getRemoveButton();
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
 	public Button getImportExcelButton()
 	{
-		return toolBar.getImportExcelButton();
+		return this.toolBar.getImportExcelButton();
 	}
 
 	@Override
 	public Button getExportExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return this.toolBar.getExportExcelButton();
 	}
 
 	@Override
 	public SimpleGrid< CampusDTO > getGrid()
 	{
-		return gridPanel;
+		return this.gridPanel;
 	}
 
 	@Override
-	public void setProxy( RpcProxy< PagingLoadResult< CampusDTO > > proxy )
+	public void setProxy(
+		RpcProxy< PagingLoadResult< CampusDTO > > proxy )
 	{
-		gridPanel.setProxy( proxy );
+		this.gridPanel.setProxy( proxy );
 	}
 
 	@Override
 	public TextField< String > getNomeBuscaTextField()
 	{
-		return nomeBuscaTextField;
+		return this.nomeBuscaTextField;
 	}
 
 	@Override
 	public TextField< String > getCodigoBuscaTextField()
 	{
-		return codigoBuscaTextField;
+		return this.codigoBuscaTextField;
 	}
 
 	@Override
 	public Button getSubmitBuscaButton()
 	{
-		return filter.getSubmitButton();
+		return this.filter.getSubmitButton();
 	}
 
 	@Override
 	public Button getResetBuscaButton()
 	{
-		return filter.getResetButton();
+		return this.filter.getResetButton();
 	}
 
 	@Override
 	public EstadoComboBox getEstadoBuscaComboBox()
 	{
-		return estadoBuscaComboBox;
+		return this.estadoBuscaComboBox;
 	}
 
 	@Override
-	public TextField<String> getMunicipioBuscaTextField()
+	public TextField< String > getMunicipioBuscaTextField()
 	{
-		return municipioBuscaTextField;
+		return this.municipioBuscaTextField;
 	}
 
 	@Override
-	public TextField<String> getBairroBuscaTextField()
+	public TextField< String > getBairroBuscaTextField()
 	{
-		return bairroBuscaTextField;
+		return this.bairroBuscaTextField;
 	}
 
 	@Override
 	public Button getUnidadeDeslocamentosButton()
 	{
-		return unidadesDeslocamentoBT;
+		return this.unidadesDeslocamentoBT;
 	}
 
 	@Override
 	public Button getDisponibilidadeButton()
 	{
-		return disponibilidadeBT;
+		return this.disponibilidadeBT;
 	}
 }

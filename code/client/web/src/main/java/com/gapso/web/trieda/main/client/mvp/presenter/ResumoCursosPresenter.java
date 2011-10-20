@@ -43,7 +43,8 @@ public class ResumoCursosPresenter
 	private CenarioDTO cenario;
 	private Display display;
 
-	public ResumoCursosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public ResumoCursosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.cenario = cenario;

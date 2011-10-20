@@ -31,7 +31,6 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
-import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
@@ -44,7 +43,6 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.CampiService;
@@ -77,19 +75,18 @@ public class CampiServiceImpl extends RemoteService
 
 	@Override
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO )
+		CampusDTO campusDTO )
 	{
-		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
-		SemanaLetiva semanaLetiva
-			= SemanaLetiva.find( semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() );
-
-		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario>();
+		List< HorarioDisponivelCenario > list
+			= new ArrayList< HorarioDisponivelCenario>();
 
 		if ( campus != null )
 		{
 			List< HorarioDisponivelCenario > listHorarios
-				= campus.getHorarios( this.getInstituicaoEnsinoUser(), semanaLetiva ); 
+				= campus.getHorarios( this.getInstituicaoEnsinoUser() ); 
 
 			if ( listHorarios != null )
 			{
@@ -158,16 +155,13 @@ public class CampiServiceImpl extends RemoteService
 
 	@Override
 	public void saveHorariosDisponiveis(
-		CampusDTO campusDTO, SemanaLetivaDTO semanaLetivaDTO,
-		List< HorarioDisponivelCenarioDTO > listDTO )
+		CampusDTO campusDTO, List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
-		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
-
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find(
+			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		List< Unidade > unidades = Unidade.findByCampus(
 			getInstituicaoEnsinoUser(), campus );
@@ -176,14 +170,16 @@ public class CampiServiceImpl extends RemoteService
 
 		for ( Unidade unidade : unidades )
 		{
-			salas.addAll( Sala.findByUnidade( getInstituicaoEnsinoUser(), unidade ) );
+			salas.addAll( Sala.findByUnidade(
+				getInstituicaoEnsinoUser(), unidade ) );
 		}
 
 		List< HorarioDisponivelCenario > removerList
 			= new ArrayList< HorarioDisponivelCenario >(
-				campus.getHorarios( this.getInstituicaoEnsinoUser(), semanaLetiva ) );
+				campus.getHorarios( this.getInstituicaoEnsinoUser() ) );
 
 		removerList.removeAll( listSelecionados );
+
 		for ( HorarioDisponivelCenario o : removerList )
 		{
 			o.getCampi().remove( campus );
@@ -196,7 +192,7 @@ public class CampiServiceImpl extends RemoteService
 			= new ArrayList< HorarioDisponivelCenario >( listSelecionados );
 
 		adicionarList.removeAll( campus.getHorarios(
-			this.getInstituicaoEnsinoUser(), semanaLetiva ) );
+			this.getInstituicaoEnsinoUser() ) );
 
 		for ( HorarioDisponivelCenario o : adicionarList )
 		{
@@ -208,7 +204,7 @@ public class CampiServiceImpl extends RemoteService
 	}
 
 	@Override
-	public ListLoadResult<CampusDTO> getListByCurriculo(
+	public ListLoadResult< CampusDTO > getListByCurriculo(
 		CurriculoDTO curriculoDTO )
 	{
 		Curriculo curriculo = Curriculo.find(
@@ -240,18 +236,25 @@ public class CampiServiceImpl extends RemoteService
 	}
 
 	@Override
-	public PagingLoadResult<CampusDTO> getList(PagingLoadConfig config) {
-		List<CampusDTO> list = new ArrayList<CampusDTO>();
+	public PagingLoadResult< CampusDTO > getList(
+		PagingLoadConfig config )
+	{
+		List< CampusDTO > list = new ArrayList< CampusDTO >();
 		String orderBy = config.getSortField();
-		if (orderBy != null) {
-			if (config.getSortDir() != null
-					&& config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
-		
+
 		List< Campus > listDomains = Campus.find(
 			this.getInstituicaoEnsinoUser(),
 			config.getOffset(), config.getLimit(),	orderBy ); 
@@ -268,19 +271,22 @@ public class CampiServiceImpl extends RemoteService
 			= new BasePagingLoadResult< CampusDTO >( list );
 
 		result.setOffset( config.getOffset() );
-		result.setTotalLength( Campus.count( this.getInstituicaoEnsinoUser() ) );
+		result.setTotalLength( Campus.count(
+			this.getInstituicaoEnsinoUser() ) );
 
 		return result;
 	}
 
 	@Override
-	public ListLoadResult< CampusDTO > getList( BasePagingLoadConfig loadConfig )
+	public ListLoadResult< CampusDTO > getList(
+		BasePagingLoadConfig loadConfig )
 	{
 		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO(
 			Cenario.findMasterData( this.getInstituicaoEnsinoUser() ) );
 
-		return getBuscaList(cenarioDTO, null, loadConfig.get("query")
-				.toString(), null, null, null, loadConfig);
+		return getBuscaList( cenarioDTO, null,
+			loadConfig.get( "query" ).toString(),
+			null, null, null, loadConfig);
 	}
 
 	@Override
@@ -299,18 +305,22 @@ public class CampiServiceImpl extends RemoteService
 			if ( config.getSortDir() != null
 				&& config.getSortDir().equals( SortDir.DESC ) )
 			{
-				orderBy = orderBy + " asc";
+				orderBy = ( orderBy + " asc" );
 			}
 			else
 			{
-				orderBy = orderBy + " desc";
+				orderBy = ( orderBy + " desc" );
 			}
 		}
 
 		Estados estadoDomain = null;
-		if (estadoString != null) {
-			for (Estados estado : Estados.values()) {
-				if (estado.name().equals(estadoString)) {
+
+		if ( estadoString != null )
+		{
+			for ( Estados estado : Estados.values() )
+			{
+				if ( estado.name().equals( estadoString ) )
+				{
 					estadoDomain = estado;
 					break;
 				}

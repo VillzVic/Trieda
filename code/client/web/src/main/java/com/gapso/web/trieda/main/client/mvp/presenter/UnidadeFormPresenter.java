@@ -25,8 +25,8 @@ public class UnidadeFormPresenter
 	public interface Display
 	{
 		Button getSalvarButton();
-		TextField<String> getNomeTextField();
-		TextField<String> getCodigoTextField();
+		TextField< String > getNomeTextField();
+		TextField< String > getCodigoTextField();
 		CampusComboBox getCampusComboBox();
 		UnidadeDTO getUnidadeDTO();
 		boolean isValid();
@@ -42,42 +42,61 @@ public class UnidadeFormPresenter
 	public UnidadeFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
 	{
-		this( display, null );
-		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this( instituicaoEnsinoDTO, display, null );
 	}
 
-	public UnidadeFormPresenter(Display display, SimpleGrid<UnidadeDTO> gridPanel) {
+	public UnidadeFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		Display display, SimpleGrid< UnidadeDTO > gridPanel )
+	{
 		this.gridPanel = gridPanel;
 		this.display = display;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+
 		setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				if ( isValid() )
+				{
 					final UnidadesServiceAsync service = Services.unidades();
 					final UnidadeDTO dto = getDTO();
-					service.save(dto, new AsyncCallback<Void>() {
+
+					service.save( dto, new AsyncCallback< Void >()
+					{
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!",
+								"Deu falha na conexão", null );
 						}
+
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess( Void result )
+						{
 							display.getSimpleModal().hide();
-							if(gridPanel != null) {
+
+							if ( gridPanel != null )
+							{
 								gridPanel.updateList();
 							}
-							Info.display(
-								display.getI18nConstants().informacao(),
-								display.getI18nMessages().sucessoSalvarNoBD(dto.getCodigo())
-							);
+
+							Info.display( display.getI18nConstants().informacao(),
+								display.getI18nMessages().sucessoSalvarNoBD( dto.getCodigo() ) );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
 				}
 			}
 		});
@@ -85,18 +104,18 @@ public class UnidadeFormPresenter
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		return this.display.isValid();
 	}
 
 	private UnidadeDTO getDTO()
 	{
-		UnidadeDTO unidadeDTO = display.getUnidadeDTO();
+		UnidadeDTO unidadeDTO = this.display.getUnidadeDTO();
 
-		unidadeDTO.setNome( display.getNomeTextField().getValue() );
-		unidadeDTO.setCodigo( display.getCodigoTextField().getValue() );
-		unidadeDTO.setCampusId( display.getCampusComboBox().getSelection().get(0).getId() );
-		unidadeDTO.setCampusString( display.getCampusComboBox().getSelection().get(0).getCodigo() );
-		unidadeDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
+		unidadeDTO.setNome( this.display.getNomeTextField().getValue() );
+		unidadeDTO.setCodigo( this.display.getCodigoTextField().getValue() );
+		unidadeDTO.setCampusId( this.display.getCampusComboBox().getSelection().get( 0 ).getId() );
+		unidadeDTO.setCampusString( this.display.getCampusComboBox().getSelection().get( 0 ).getCodigo() );
+		unidadeDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 
 		return unidadeDTO;
 	}
@@ -104,6 +123,6 @@ public class UnidadeFormPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

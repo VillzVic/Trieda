@@ -32,19 +32,14 @@ public class HorarioDisponivelDisciplinaFormPresenter
 		ListStore< HorarioDisponivelCenarioDTO > getStore();
 	}
 
-	@SuppressWarnings( "unused" )
-	private CenarioDTO cenario;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
-	private SemanaLetivaDTO semanaLetivaDTO;
 
 	public HorarioDisponivelDisciplinaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario,
 		SemanaLetivaDTO semanaLetivaDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-		this.cenario = cenario;
-		this.semanaLetivaDTO = semanaLetivaDTO;
 		this.display = display;
 
 		configureProxy();
@@ -60,7 +55,7 @@ public class HorarioDisponivelDisciplinaFormPresenter
 			protected void load( Object loadConfig,
 				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
 			{
-				Services.semanasLetiva().getHorariosDisponiveisCenario( semanaLetivaDTO, callback );
+				Services.semanasLetiva().getAllHorariosDisponiveisCenario( callback );
 			}
 		};
 
@@ -80,7 +75,7 @@ public class HorarioDisponivelDisciplinaFormPresenter
 					= display.getStore().getModels();
 
 				Services.disciplinas().saveHorariosDisponiveis( getDTO(),
-					semanaLetivaDTO, hdcDTOList, new AsyncCallback< Void >()
+					hdcDTOList, new AsyncCallback< Void >()
 				{
 					@Override
 					public void onFailure( Throwable caught )
@@ -111,6 +106,6 @@ public class HorarioDisponivelDisciplinaFormPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

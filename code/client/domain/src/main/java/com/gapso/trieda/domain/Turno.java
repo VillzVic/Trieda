@@ -86,7 +86,8 @@ public class Turno
     private Integer version;
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
@@ -96,7 +97,8 @@ public class Turno
 		return instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
@@ -108,7 +110,8 @@ public class Turno
 
 		for ( HorarioAula ha : getHorariosAula() )
 		{
-			for ( HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario() )
+			for ( HorarioDisponivelCenario hdc
+				: ha.getHorariosDisponiveisCenario() )
 			{
 				int semanaInt = Semanas.toInt( hdc.getDiaSemana() );
 				Integer value = countHorariosAula.get( semanaInt );
@@ -120,24 +123,29 @@ public class Turno
 		return Collections.max( countHorariosAula.values() );
     }
 
-    public Long getId() {
+    public Long getId()
+    {
         return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId( Long id )
+    {
         this.id = id;
     }
 
-    public Integer getVersion() {
+    public Integer getVersion()
+    {
         return this.version;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion( Integer version )
+    {
         this.version = version;
     }
 
     @Transactional
-    public void persist() {
+    public void persist()
+    {
         if (this.entityManager == null) this.entityManager = entityManager();
         this.entityManager.persist(this);
     }
@@ -385,10 +393,13 @@ public class Turno
 		return result;
 	}
 
-	public Cenario getCenario() {
+	public Cenario getCenario()
+	{
         return this.cenario;
     }
-	public void setCenario(Cenario cenario) {
+
+	public void setCenario( Cenario cenario )
+	{
         this.cenario = cenario;
     }
 

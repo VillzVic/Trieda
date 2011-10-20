@@ -42,7 +42,8 @@ public class CampusFormView
 		this( cenarioDTO, new CampusDTO() );
 	}
 
-	public CampusFormView( CenarioDTO cenarioDTO, CampusDTO campusDTO )
+	public CampusFormView(
+		CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = campusDTO;
@@ -52,159 +53,173 @@ public class CampusFormView
 	
 	private void initUI()
 	{
-		String title = ( ( campusDTO.getId() == null )? "Inserção de Campus" : "Edição de Campus" );
-		simpleModal = new SimpleModal( title, Resources.DEFAULTS.campus16() );
-		simpleModal.setHeight( 350 );
-		simpleModal.setWidth( 320 );
+		String title = ( ( campusDTO.getId() == null ) ?
+			"Inserção de Campus" : "Edição de Campus" );
+
+		this.simpleModal = new SimpleModal(
+			title, Resources.DEFAULTS.campus16() );
+		this.simpleModal.setHeight( 350 );
+		this.simpleModal.setWidth( 320 );
 		createForm();
-		simpleModal.setContent( formPanel );
+		this.simpleModal.setContent( this.formPanel );
 	}
 
 	private void createForm()
 	{
 		FormData formData = new FormData( "-20" );
 
-		formPanel = new FormPanel();
-		formPanel.setHeaderVisible(false);
-		formPanel.setLayout(new FlowLayout());
-		
-		FieldSet geralFS = new FieldSet();
-		FormLayout formLayout = new FormLayout(LabelAlign.RIGHT);
-		formLayout.setLabelWidth(75);
-		geralFS.setLayout(formLayout);
-		geralFS.setHeading("Informações Gerais");
-		
-		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.CAMPI );
-		codigoTF.setName(CampusDTO.PROPERTY_CODIGO);
-		codigoTF.setValue(campusDTO.getCodigo());
-		codigoTF.setFieldLabel("Código");
-		codigoTF.setAllowBlank(false);
-		codigoTF.setMinLength(1);
-		codigoTF.setMaxLength(20);
-		codigoTF.setEmptyText("Preencha o código");
-		geralFS.add(codigoTF, formData);
-		
-		nomeTF = new TextField<String>();
-		nomeTF.setName(CampusDTO.PROPERTY_NOME);
-		nomeTF.setValue(campusDTO.getNome());
-		nomeTF.setFieldLabel("Nome");
-		nomeTF.setAllowBlank(false);
-		nomeTF.setMinLength(1);
-		nomeTF.setMaxLength(50);
-		nomeTF.setEmptyText("Preencha o nome");
-		geralFS.add( nomeTF, formData );
-		
-		valorCreditoNF = new NumberField();
-		valorCreditoNF.setName(CampusDTO.PROPERTY_VALOR_CREDITO);
-		valorCreditoNF.setValue( campusDTO.getValorCredito().getDoubleValue() );
-		valorCreditoNF.setFieldLabel("Custo (R$)");
-		valorCreditoNF.setAllowBlank(false);
-		valorCreditoNF.setAllowDecimals(true);
-		valorCreditoNF.setMaxValue(999999);
-		valorCreditoNF.setEmptyText("Custo médio do crédito (R$)");
-		geralFS.add(valorCreditoNF, formData);
+		this.formPanel = new FormPanel();
+		this.formPanel.setHeaderVisible(false);
+		this.formPanel.setLayout(new FlowLayout());
 
-		publicadoCB = new CheckBox();
-		publicadoCB.setName(CampusDTO.PROPERTY_PUBLICADO);
-		if(campusDTO.getPublicado() != null) {
-			publicadoCB.setValue(campusDTO.getPublicado());
+		FieldSet geralFS = new FieldSet();
+		FormLayout formLayout = new FormLayout( LabelAlign.RIGHT );
+		formLayout.setLabelWidth( 75 );
+		geralFS.setLayout( formLayout );
+		geralFS.setHeading( "Informações Gerais" );
+
+		this.codigoTF = new UniqueTextField( this.cenarioDTO, UniqueDomain.CAMPI );
+		this.codigoTF.setName( CampusDTO.PROPERTY_CODIGO );
+		this.codigoTF.setValue( this.campusDTO.getCodigo() );
+		this.codigoTF.setFieldLabel( "Código" );
+		this.codigoTF.setAllowBlank( false );
+		this.codigoTF.setMinLength( 1 );
+		this.codigoTF.setMaxLength( 20 );
+		this.codigoTF.setEmptyText( "Preencha o código" );
+		geralFS.add( this.codigoTF, formData );
+
+		this.nomeTF = new TextField< String >();
+		this.nomeTF.setName( CampusDTO.PROPERTY_NOME );
+		this.nomeTF.setValue( this.campusDTO.getNome() );
+		this.nomeTF.setFieldLabel( "Nome" );
+		this.nomeTF.setAllowBlank( false );
+		this.nomeTF.setMinLength( 1 );
+		this.nomeTF.setMaxLength( 50 );
+		this.nomeTF.setEmptyText( "Preencha o nome" );
+		geralFS.add( this.nomeTF, formData );
+
+		this.valorCreditoNF = new NumberField();
+		this.valorCreditoNF.setName( CampusDTO.PROPERTY_VALOR_CREDITO );
+		this.valorCreditoNF.setValue( this.campusDTO.getValorCredito().getDoubleValue() );
+		this.valorCreditoNF.setFieldLabel( "Custo (R$)" );
+		this.valorCreditoNF.setAllowBlank( false );
+		this.valorCreditoNF.setAllowDecimals( true );
+		this.valorCreditoNF.setMaxValue( 999999 );
+		this.valorCreditoNF.setEmptyText( "Custo médio do crédito (R$)" );
+		geralFS.add( this.valorCreditoNF, formData );
+
+		this.publicadoCB = new CheckBox();
+		this.publicadoCB.setName( CampusDTO.PROPERTY_PUBLICADO );
+		if ( campusDTO.getPublicado() != null )
+		{
+			this.publicadoCB.setValue( this.campusDTO.getPublicado() );
 		}
 
-		publicadoCB.setFieldLabel("Publicar?");
-		publicadoCB.setLabelSeparator("");
-		geralFS.add(publicadoCB, formData);
+		this.publicadoCB.setFieldLabel( "Publicar?" );
+		this.publicadoCB.setLabelSeparator( "" );
+		geralFS.add( this.publicadoCB, formData );
 
-		formPanel.add(geralFS, formData);
+		this.formPanel.add( geralFS, formData );
 
 		FieldSet enderecoFS = new FieldSet();
-		formLayout = new FormLayout(LabelAlign.RIGHT);
+		formLayout = new FormLayout( LabelAlign.RIGHT );
 		formLayout.setLabelWidth(75);
-		enderecoFS.setLayout(formLayout);
-		enderecoFS.setHeading("Endereço");
+		enderecoFS.setLayout( formLayout );
+		enderecoFS.setHeading( "Endereço" );
 
-		estadoCB = new EstadoComboBox();
-		estadoCB.setName(CampusDTO.PROPERTY_ESTADO);
-		estadoCB.setValue(campusDTO.getEstado());
-		estadoCB.setFieldLabel("Estado");
-		estadoCB.setEmptyText("Selecione o estado");
-		enderecoFS.add(estadoCB, formData);
+		this.estadoCB = new EstadoComboBox();
+		this.estadoCB.setName( CampusDTO.PROPERTY_ESTADO );
+		this.estadoCB.setValue( this.campusDTO.getEstado() );
+		this.estadoCB.setFieldLabel( "Estado" );
+		this.estadoCB.setEmptyText( "Selecione o estado" );
+		enderecoFS.add( this.estadoCB, formData );
 
-		municipioTF = new TextField<String>();
-		municipioTF.setName(CampusDTO.PROPERTY_MUNICIPIO);
-		municipioTF.setValue(campusDTO.getMunicipio());
-		municipioTF.setFieldLabel("Município");
-		municipioTF.setMaxLength(20);
-		municipioTF.setEmptyText("Preencha o município");
-		enderecoFS.add(municipioTF, formData);
+		this.municipioTF = new TextField< String >();
+		this.municipioTF.setName( CampusDTO.PROPERTY_MUNICIPIO );
+		this.municipioTF.setValue( this.campusDTO.getMunicipio() );
+		this.municipioTF.setFieldLabel( "Município" );
+		this.municipioTF.setMaxLength( 20 );
+		this.municipioTF.setEmptyText( "Preencha o município" );
+		enderecoFS.add( this.municipioTF, formData );
 
-		bairroTF = new TextField<String>();
-		bairroTF.setName(CampusDTO.PROPERTY_BAIRRO);
-		bairroTF.setValue(campusDTO.getBairro());
-		bairroTF.setFieldLabel("Bairro");
-		bairroTF.setMaxLength(20);
-		bairroTF.setEmptyText("Preencha o bairro");
-		enderecoFS.add(bairroTF, formData);
+		this.bairroTF = new TextField< String >();
+		this.bairroTF.setName( CampusDTO.PROPERTY_BAIRRO );
+		this.bairroTF.setValue( this.campusDTO.getBairro() );
+		bairroTF.setFieldLabel( "Bairro" );
+		bairroTF.setMaxLength( 20 );
+		bairroTF.setEmptyText( "Preencha o bairro" );
+		enderecoFS.add( this.bairroTF, formData );
 
-		formPanel.add(enderecoFS, formData);
+		this.formPanel.add( enderecoFS, formData );
 
-		FormButtonBinding binding = new FormButtonBinding( formPanel );
-		binding.addButton( simpleModal.getSalvarBt() );
+		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
+		binding.addButton( this.simpleModal.getSalvarBt() );
 		
-		simpleModal.setFocusWidget(codigoTF);
+		this.simpleModal.setFocusWidget( this.codigoTF );
 	}
 
-	public boolean isValid() {
-		return formPanel.isValid();
+	public boolean isValid()
+	{
+		return this.formPanel.isValid();
 	}
 	
 	@Override
-	public Button getSalvarButton() {
-		return simpleModal.getSalvarBt();
+	public Button getSalvarButton()
+	{
+		return this.simpleModal.getSalvarBt();
 	}
 
 	@Override
-	public TextField<String> getNomeTextField() {
-		return nomeTF;
+	public TextField< String > getNomeTextField()
+	{
+		return this.nomeTF;
 	}
 	
 	@Override
-	public SimpleModal getSimpleModal() {
-		return simpleModal;
+	public SimpleModal getSimpleModal()
+	{
+		return this.simpleModal;
 	}
 
 	@Override
-	public TextField<String> getCodigoTextField() {
-		return codigoTF;
+	public TextField< String > getCodigoTextField()
+	{
+		return this.codigoTF;
 	}
 
 	@Override
-	public NumberField getValorCreditoNumberField() {
-		return valorCreditoNF;
+	public NumberField getValorCreditoNumberField()
+	{
+		return this.valorCreditoNF;
 	}
 
 	@Override
-	public CampusDTO getCampusDTO() {
-		return campusDTO;
+	public CampusDTO getCampusDTO()
+	{
+		return this.campusDTO;
 	}
 
 	@Override
-	public EstadoComboBox getEstadoComboBox() {
-		return estadoCB;
+	public EstadoComboBox getEstadoComboBox()
+	{
+		return this.estadoCB;
 	}
 
 	@Override
-	public TextField<String> getMunicipioTextField() {
-		return municipioTF;
+	public TextField< String > getMunicipioTextField()
+	{
+		return this.municipioTF;
 	}
 
 	@Override
-	public TextField<String> getBairroTextField() {
-		return bairroTF;
+	public TextField< String > getBairroTextField()
+	{
+		return this.bairroTF;
 	}
-	@Override
-	public CheckBox getPublicadoCheckBox() {
-		return publicadoCB;
-	}
-	
 
+	@Override
+	public CheckBox getPublicadoCheckBox()
+	{
+		return this.publicadoCB;
+	}
 }

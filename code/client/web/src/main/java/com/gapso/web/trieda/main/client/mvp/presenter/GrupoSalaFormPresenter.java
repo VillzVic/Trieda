@@ -38,7 +38,8 @@ public class GrupoSalaFormPresenter
 	private SimpleGrid< GrupoSalaDTO > gridPanel;
 	private Display display;
 
-	public GrupoSalaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public GrupoSalaFormPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		Display display, SimpleGrid< GrupoSalaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
@@ -50,81 +51,90 @@ public class GrupoSalaFormPresenter
 
 	private void setListeners()
 	{
-		display.getSalvarButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						if (isValid()) {
-							final GruposSalasServiceAsync service = Services
-									.gruposSalas();
-							service.save(
-									getDTO(),
-									new AbstractAsyncCallbackWithDefaultOnFailure<GrupoSalaDTO>(
-											display) {
-										@Override
-										public void onSuccess(
-												GrupoSalaDTO result) {
-											display.getSimpleModal().hide();
-											gridPanel.updateList();
-											Info.display("Salvo",
-													"Item salvo com sucesso!");
-										}
-									});
-						} else {
-							MessageBox.alert("ERRO!",
-									"Verifique os campos digitados", null);
-						}
-					}
-				});
-		display.getSalvarEAssociarButton().addSelectionListener(
-				new SelectionListener<ButtonEvent>() {
-					@Override
-					public void componentSelected(ButtonEvent ce) {
-						if (isValid()) {
-							final GruposSalasServiceAsync service = Services
-									.gruposSalas();
-							service.save(
-									getDTO(),
-									new AbstractAsyncCallbackWithDefaultOnFailure<GrupoSalaDTO>(
-											display) {
-										@Override
-										public void onSuccess(
-												GrupoSalaDTO result) {
-											display.getSimpleModal().hide();
-											gridPanel.updateList();
-											Info.display("Salvo",
-													"Item salvo com sucesso!");
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				if ( isValid() )
+				{
+					final GruposSalasServiceAsync service = Services.gruposSalas();
 
-											Presenter presenter = new GrupoSalaAssociarSalaPresenter(
-													new GrupoSalaAssociarSalaView(
-															result), gridPanel);
-											presenter.go(null);
-										}
-									});
-						} else {
-							MessageBox.alert("ERRO!",
-									"Verifique os campos digitados", null);
+					service.save( getDTO(),
+						new AbstractAsyncCallbackWithDefaultOnFailure< GrupoSalaDTO >( display )
+						{
+							@Override
+							public void onSuccess( GrupoSalaDTO result )
+							{
+								display.getSimpleModal().hide();
+								gridPanel.updateList();
+
+								Info.display( "Salvo",
+									"Item salvo com sucesso!" );
+							}
+						});
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
+				}
+			}
+		});
+
+		this.display.getSalvarEAssociarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				if ( isValid() )
+				{
+					final GruposSalasServiceAsync service = Services.gruposSalas();
+
+					service.save( getDTO(),
+						new AbstractAsyncCallbackWithDefaultOnFailure< GrupoSalaDTO >( display )
+					{
+						@Override
+						public void onSuccess( GrupoSalaDTO result )
+						{
+							display.getSimpleModal().hide();
+							gridPanel.updateList();
+
+							Info.display( "Salvo",
+								"Item salvo com sucesso!" );
+
+							Presenter presenter = new GrupoSalaAssociarSalaPresenter(
+								new GrupoSalaAssociarSalaView( result ), gridPanel );
+
+							presenter.go( null );
 						}
-					}
-				});
+					});
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
+				}
+			}
+		});
 	}
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		return this.display.isValid();
 	}
 
 	private GrupoSalaDTO getDTO()
 	{
-		GrupoSalaDTO grupoSalaDTO = display.getSalaDTO();
+		GrupoSalaDTO grupoSalaDTO = this.display.getSalaDTO();
 
-		grupoSalaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		grupoSalaDTO.setCodigo( display.getCodigoTextField().getValue() );
-		grupoSalaDTO.setNome( display.getNomeTextField().getValue() );
-		grupoSalaDTO.setUnidadeId(
-			display.getUnidadeComboBox().getSelection().get(0).getId() );
-		grupoSalaDTO.setUnidadeString(
-			display.getUnidadeComboBox().getSelection().get(0).getCodigo() );
+		grupoSalaDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		grupoSalaDTO.setCodigo( this.display.getCodigoTextField().getValue() );
+		grupoSalaDTO.setNome( this.display.getNomeTextField().getValue() );
+		grupoSalaDTO.setUnidadeId( this.display.getUnidadeComboBox().getSelection().get( 0 ).getId() );
+		grupoSalaDTO.setUnidadeString( this.display.getUnidadeComboBox().getSelection().get( 0 ).getCodigo() );
 
 		return grupoSalaDTO;
 	}
@@ -132,6 +142,6 @@ public class GrupoSalaFormPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		display.getSimpleModal().show();
+		this.display.getSimpleModal().show();
 	}
 }

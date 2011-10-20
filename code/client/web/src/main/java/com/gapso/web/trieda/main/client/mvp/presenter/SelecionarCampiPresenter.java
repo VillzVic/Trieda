@@ -27,16 +27,18 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SelecionarCampiPresenter implements Presenter {
-
-	public interface Display extends ITriedaI18nGateway {
-		ListView<CampusDTO> getNaoSelecionadoList();
-		ListView<CampusDTO> getSelecionadoList();
+public class SelecionarCampiPresenter
+	implements Presenter
+{
+	public interface Display
+		extends ITriedaI18nGateway
+	{
+		ListView< CampusDTO > getNaoSelecionadoList();
+		ListView< CampusDTO > getSelecionadoList();
 		Button getAdicionaBT();
 		Button getRemoveBT();
 		Button getFecharBT();
 		Component getComponent();
-		
 		SimpleModal getSimpleModal();
 	}
 	
@@ -44,9 +46,12 @@ public class SelecionarCampiPresenter implements Presenter {
 	private CenarioDTO cenario;
 	private GTab gTab;
 	
-	public SelecionarCampiPresenter(CenarioDTO cenario, Display display) {
+	public SelecionarCampiPresenter(
+		CenarioDTO cenario, Display display )
+	{
 		this.display = display;
 		this.cenario = cenario;
+
 		configureProxy();
 		setListeners();
 	}

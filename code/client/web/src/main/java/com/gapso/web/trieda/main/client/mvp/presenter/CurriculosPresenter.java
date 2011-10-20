@@ -61,7 +61,8 @@ public class CurriculosPresenter
 	private Display display; 
 	private GTab gTab;
 
-	public CurriculosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+	public CurriculosPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
