@@ -153,29 +153,39 @@ public class Disciplina
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("Cenario: ").append(getCenario()).append(", ");
-		sb.append("TipoDisciplina: ").append(getTipoDisciplina()).append(", ");
-		sb.append("DivisaoCreditos: ").append(getDivisaoCreditos()).append(", ");
-		sb.append("Codigo: ").append(getCodigo()).append(", ");
-		sb.append("Nome: ").append(getNome()).append(", ");
-		sb.append("CreditosTeorico: ").append(getCreditosTeorico()).append(", ");
-		sb.append("CreditosPratico: ").append(getCreditosPratico()).append(", ");
-		sb.append("Laboratorio: ").append(getLaboratorio()).append(", ");
-		sb.append("Dificuldade: ").append(getDificuldade()).append(", ");
-		sb.append("MaxAlunosTeorico: ").append(getMaxAlunosTeorico()).append(", ");
-		sb.append("MaxAlunosPratico: ").append(getMaxAlunosPratico()).append(", ");
-		sb.append("Horarios: ").append(getHorarios() == null ? "null" : getHorarios().size()).append(", ");
-		sb.append("Professores: ").append(getProfessores() == null ? "null" : getProfessores().size()).append(", ");
-		sb.append("Incompatibilidades: ").append(getIncompatibilidades() == null ? "null" : getIncompatibilidades().size()).append(", ");
-		sb.append("Equivalencias: ").append(getEquivalencias() == null ? "null" : getEquivalencias().size()).append(", ");
-		sb.append("EliminadaPor: ").append(getEliminadaPor() == null ? "null" : getEliminadaPor().size()).append(", ");
-		sb.append("Curriculos: ").append(getCurriculos() == null ? "null" : getCurriculos().size()).append(", ");
-		sb.append("Demandas: ").append( getDemandas() == null ? "null" : getDemandas().size() );
-		sb.append("Fixacoes: ").append( getFixacoes() == null ? "null" : getFixacoes().size() );
-		sb.append("Atendimentos Operacionais: ").append( getAtendimentosOperacionais() == null ? "null" : getAtendimentosOperacionais().size() );
-		sb.append("Atendimentos Taticos: ").append( getAtendimentosTaticos() == null ? "null" : getAtendimentosTaticos().size() );
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
+		sb.append( "TipoDisciplina: " ).append( getTipoDisciplina() ).append( ", " );
+		sb.append( "DivisaoCreditos: " ).append( getDivisaoCreditos() ).append( ", " );
+		sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+		sb.append( "Nome: " ).append( getNome() ).append( ", " );
+		sb.append( "CreditosTeorico: " ).append( getCreditosTeorico() ).append( ", " );
+		sb.append( "CreditosPratico: " ).append( getCreditosPratico() ).append( ", " );
+		sb.append( "Laboratorio: " ).append( getLaboratorio() ).append( ", " );
+		sb.append( "Dificuldade: " ).append( getDificuldade() ).append( ", " );
+		sb.append( "MaxAlunosTeorico: " ).append( getMaxAlunosTeorico() ).append( ", " );
+		sb.append( "MaxAlunosPratico: " ).append( getMaxAlunosPratico() ).append( ", " );
+		sb.append( "Horarios: " ).append( getHorarios() == null ?
+			"null" : getHorarios().size() ).append( ", " );
+		sb.append( "Professores: " ).append( getProfessores() == null ?
+			"null" : getProfessores().size() ).append( ", "  );
+		sb.append( "Incompatibilidades: " ).append( getIncompatibilidades() == null ?
+			"null" : getIncompatibilidades().size() ).append( ", " );
+		sb.append( "Equivalencias: " ).append( getEquivalencias() == null ?
+			"null" : getEquivalencias().size() ).append( ", " );
+		sb.append( "EliminadaPor: " ).append( getEliminadaPor() == null ?
+			"null" : getEliminadaPor().size() ).append( ", " );
+		sb.append( "Curriculos: " ).append( getCurriculos() == null ?
+			"null" : getCurriculos().size() ).append( ", " );
+		sb.append( "Demandas: " ).append( getDemandas() == null ?
+			"null" : getDemandas().size() ).append( ", " );
+		sb.append( "Fixacoes: " ).append( getFixacoes() == null ?
+			"null" : getFixacoes().size() ).append( ", " );
+		sb.append( "Atendimentos Operacionais: " ).append( getAtendimentosOperacionais() == null ?
+			"null" : getAtendimentosOperacionais().size() ).append( ", " );
+		sb.append( "Atendimentos Taticos: " ).append( getAtendimentosTaticos() == null ?
+			"null" : getAtendimentosTaticos().size() );
 
 		return sb.toString();
 	}
@@ -184,42 +194,54 @@ public class Disciplina
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "DIS_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "DIS_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null)
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.detach(this);
+		}
+
+		this.entityManager.detach( this );
 	}
 
 	@Transactional
-	public void persist() {
-		if (this.entityManager == null)
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
-		this.entityManager.persist(this);
+		}
+
+		this.entityManager.persist( this );
 		preencheHorarios();
 	}
 
@@ -281,7 +303,8 @@ public class Disciplina
 
 	private void removeDisciplinasAssociadasProfessor( Disciplina d )
 	{
-		if ( d.professores != null && d.professores.size() > 0 )
+		if ( d.professores != null
+			&& d.professores.size() > 0 )
 		{
 			for( ProfessorDisciplina pd : d.professores )
 			{
@@ -295,7 +318,8 @@ public class Disciplina
 	@Transactional
 	public void removeProfessoresVirtuais()
 	{
-		Set< ProfessorVirtual > professoresVirtuais = this.getProfessoresVirtuais();
+		Set< ProfessorVirtual > professoresVirtuais
+			= this.getProfessoresVirtuais();
 
 		for ( ProfessorVirtual professorVirtual : professoresVirtuais )
 		{
@@ -309,7 +333,8 @@ public class Disciplina
 		return this.professoresVirtuais;
 	}
 
-	public void setProfessoresVirtuais( Set< ProfessorVirtual > professoresVirtuais )
+	public void setProfessoresVirtuais(
+		Set< ProfessorVirtual > professoresVirtuais )
 	{
 		this.professoresVirtuais = professoresVirtuais;
 	}
@@ -318,6 +343,7 @@ public class Disciplina
 	public void removeHorariosDisponivelCenario()
 	{
 		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+
 		for ( HorarioDisponivelCenario horario : horarios )
 		{
 			horario.getDisciplinas().remove( this );
@@ -329,6 +355,7 @@ public class Disciplina
 	public void removeEliminadasPor()
 	{
 		Set< Equivalencia > eliminadasPor = this.getEliminadaPor();
+
 		for ( Equivalencia equivalencia : eliminadasPor )
 		{
 			equivalencia.getElimina().remove( this );
@@ -337,9 +364,13 @@ public class Disciplina
 	}
 
 	@Transactional
-	public void flush() {
-		if (this.entityManager == null)
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
 			this.entityManager = entityManager();
+		}
+
 		this.entityManager.flush();
 	}
 
@@ -411,18 +442,21 @@ public class Disciplina
 		return ( (Number)q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Disciplina > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery(
+		Query q = entityManager().createQuery(
 			" SELECT o FROM Disciplina o " +
-			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
 	public static Map< String, Disciplina > buildDisciplinaCodigoToDisciplinaMap(
-			List< Disciplina > disciplinas )
+		List< Disciplina > disciplinas )
 	{
 		Map< String, Disciplina > disciplinasMap
 			= new HashMap< String, Disciplina >();
@@ -463,21 +497,25 @@ public class Disciplina
 		return find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Disciplina > find(
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-		return entityManager().createQuery(
-			" SELECT o FROM Disciplina o " +
-			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " + orderBy )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
-			.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+		Query q = entityManager().createQuery(
+				" SELECT o FROM Disciplina o " +
+				" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Disciplina > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -492,50 +530,56 @@ public class Disciplina
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Disciplina > findBySalas(
 		InstituicaoEnsino instituicaoEnsino, List< Sala > salas )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o.disciplina ) FROM SalasDisciplinas o " +
+			" SELECT DISTINCT ( o.disciplina ) " +
+			" FROM SalasDisciplinas o " +
 			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.sala IN ( :salas ) " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
-			.setParameter( "salas", salas );
+			" AND o.sala IN ( :salas ) " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "salas", salas );
 
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Disciplina > findByCursos(
 		InstituicaoEnsino instituicaoEnsino, List< Curso > cursos )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o.disciplina ) FROM CurriculoDisciplina o " +
+			" SELECT DISTINCT ( o.disciplina ) " +
+			" FROM CurriculoDisciplina o " +
 			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.curriculo IN " +
-			" ( SELECT c FROM Curriculo c WHERE c.curso IN ( :cursos ) ) " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
-			.setParameter( "cursos", cursos );
+			" ( SELECT c FROM Curriculo c WHERE c.curso IN ( :cursos ) ) " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cursos", cursos );
 
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Disciplina > findByCampusAndTurnoAndPeriodo(
 		InstituicaoEnsino instituicaoEnsino,
 		Campus campus, Turno turno, Integer periodo )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o.disciplina ) FROM CurriculoDisciplina o " +
+			" SELECT DISTINCT ( o.disciplina ) " +
+			" FROM CurriculoDisciplina o " +
 			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.periodo = :periodo " +
 			" AND o.curriculo.turno = :turno " +
-			" AND o.curriculo.campus = :campus " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
-			.setParameter( "campus", campus )
-			.setParameter( "turno", turno )
-			.setParameter( "periodo", periodo );
+			" AND o.curriculo.campus = :campus " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campus", campus );
+		q.setParameter( "turno", turno );
+		q.setParameter( "periodo", periodo );
 
 		return q.getResultList();
 	}
@@ -554,7 +598,8 @@ public class Disciplina
 		return (Disciplina) q.getSingleResult();
 	}
 
-	public static int count( InstituicaoEnsino instituicaoEnsino,
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino,
 		String codigo, String nome, TipoDisciplina tipoDisciplina )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
@@ -587,8 +632,9 @@ public class Disciplina
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List< Disciplina > findBy( InstituicaoEnsino instituicaoEnsino,
+	@SuppressWarnings( "unchecked" )
+	public static List< Disciplina > findBy(
+		InstituicaoEnsino instituicaoEnsino,
 		String codigo, String nome, TipoDisciplina tipoDisciplina,
 		int firstResult, int maxResults, String orderBy )
 	{
@@ -676,181 +722,239 @@ public class Disciplina
 		return ( size.intValue() > 0 );
 	}
 
-	public Integer getCreditosTotal() {
-		return getCreditosPratico() + getCreditosTeorico();
+	public Integer getCreditosTotal()
+	{
+		return ( getCreditosPratico() + getCreditosTeorico() );
 	}
 
-	public Cenario getCenario() {
+	public Cenario getCenario()
+	{
 		return this.cenario;
 	}
 
-	public Integer getTotalCreditos() {
+	public Integer getTotalCreditos()
+	{
 		return getCreditosPratico() + getCreditosTeorico();
 	}
 
-	public void setCenario(Cenario cenario) {
+	public void setCenario( Cenario cenario )
+	{
 		this.cenario = cenario;
 	}
 
-	public TipoDisciplina getTipoDisciplina() {
+	public TipoDisciplina getTipoDisciplina()
+	{
 		return this.tipoDisciplina;
 	}
 
-	public void setTipoDisciplina(TipoDisciplina tipoDisciplina) {
+	public void setTipoDisciplina(
+		TipoDisciplina tipoDisciplina )
+	{
 		this.tipoDisciplina = tipoDisciplina;
 	}
 
-	public DivisaoCredito getDivisaoCreditos() {
+	public DivisaoCredito getDivisaoCreditos()
+	{
 		return this.divisaoCreditos;
 	}
 
-	public void setDivisaoCreditos(DivisaoCredito divisaoCreditos) {
+	public void setDivisaoCreditos(
+		DivisaoCredito divisaoCreditos )
+	{
 		this.divisaoCreditos = divisaoCreditos;
 	}
 
-	public String getCodigo() {
+	public String getCodigo()
+	{
 		return this.codigo;
 	}
 
-	public void setCodigo(String codigo) {
+	public void setCodigo( String codigo )
+	{
 		this.codigo = codigo;
 	}
 
-	public String getNome() {
+	public String getNome()
+	{
 		return this.nome;
 	}
 
-	public void setNome(String nome) {
+	public void setNome( String nome )
+	{
 		this.nome = nome;
 	}
 
-	public Integer getCreditosTeorico() {
+	public Integer getCreditosTeorico()
+	{
 		return this.creditosTeorico;
 	}
 
-	public void setCreditosTeorico(Integer creditosTeorico) {
+	public void setCreditosTeorico(
+		Integer creditosTeorico )
+	{
 		this.creditosTeorico = creditosTeorico;
 	}
 
-	public Integer getCreditosPratico() {
+	public Integer getCreditosPratico()
+	{
 		return this.creditosPratico;
 	}
 
-	public void setCreditosPratico(Integer creditosPratico) {
+	public void setCreditosPratico(
+		Integer creditosPratico )
+	{
 		this.creditosPratico = creditosPratico;
 	}
 
-	public Boolean getLaboratorio() {
+	public Boolean getLaboratorio()
+	{
 		return this.laboratorio;
 	}
 
-	public void setLaboratorio(Boolean laboratorio) {
+	public void setLaboratorio( Boolean laboratorio )
+	{
 		this.laboratorio = laboratorio;
 	}
 
-	public Dificuldades getDificuldade() {
+	public Dificuldades getDificuldade()
+	{
 		return this.dificuldade;
 	}
 
-	public void setDificuldade(Dificuldades dificuldade) {
+	public void setDificuldade(
+		Dificuldades dificuldade )
+	{
 		this.dificuldade = dificuldade;
 	}
 
-	public Integer getMaxAlunosTeorico() {
+	public Integer getMaxAlunosTeorico()
+	{
 		return this.maxAlunosTeorico;
 	}
 
-	public void setMaxAlunosTeorico(Integer maxAlunosTeorico) {
+	public void setMaxAlunosTeorico(
+		Integer maxAlunosTeorico )
+	{
 		this.maxAlunosTeorico = maxAlunosTeorico;
 	}
 
-	public Integer getMaxAlunosPratico() {
+	public Integer getMaxAlunosPratico()
+	{
 		return this.maxAlunosPratico;
 	}
 
-	public void setMaxAlunosPratico(Integer maxAlunosPratico) {
+	public void setMaxAlunosPratico(
+		Integer maxAlunosPratico )
+	{
 		this.maxAlunosPratico = maxAlunosPratico;
 	}
 
-	private Set<HorarioDisponivelCenario> getHorarios() {
+	private Set< HorarioDisponivelCenario > getHorarios()
+	{
 		return this.horarios;
 	}
 
-	public void setHorarios(Set<HorarioDisponivelCenario> horarios) {
+	public void setHorarios( Set< HorarioDisponivelCenario > horarios )
+	{
 		this.horarios = horarios;
 	}
 
-	public Set<ProfessorDisciplina> getProfessores() {
+	public Set< ProfessorDisciplina > getProfessores()
+	{
 		return this.professores;
 	}
 
-	public void setProfessores(Set<ProfessorDisciplina> professores) {
+	public void setProfessores(
+		Set< ProfessorDisciplina > professores )
+	{
 		this.professores = professores;
 	}
 
-	public Set<Incompatibilidade> getIncompatibilidades() {
+	public Set< Incompatibilidade > getIncompatibilidades()
+	{
 		return this.incompatibilidades;
 	}
 
-	public void setIncompatibilidades(Set<Incompatibilidade> incompatibilidades) {
+	public void setIncompatibilidades(
+		Set< Incompatibilidade > incompatibilidades )
+	{
 		this.incompatibilidades = incompatibilidades;
 	}
 
-	public Set<Equivalencia> getEquivalencias() {
+	public Set< Equivalencia > getEquivalencias()
+	{
 		return this.equivalencias;
 	}
 
-	public void setEquivalencias(Set<Equivalencia> equivalencias) {
+	public void setEquivalencias(
+		Set< Equivalencia > equivalencias )
+	{
 		this.equivalencias = equivalencias;
 	}
 
-	public Set<Equivalencia> getEliminadaPor() {
+	public Set< Equivalencia > getEliminadaPor()
+	{
 		return this.eliminadaPor;
 	}
 
-	public void setEliminadaPor(Set<Equivalencia> eliminadaPor) {
+	public void setEliminadaPor(
+		Set< Equivalencia > eliminadaPor )
+	{
 		this.eliminadaPor = eliminadaPor;
 	}
 
-	public Set<CurriculoDisciplina> getCurriculos() {
+	public Set< CurriculoDisciplina > getCurriculos()
+	{
 		return this.curriculos;
 	}
 
-	public void setCurriculos(Set<CurriculoDisciplina> curriculos) {
+	public void setCurriculos(
+		Set< CurriculoDisciplina > curriculos )
+	{
 		this.curriculos = curriculos;
 	}
 
-	public Set<Demanda> getDemandas() {
+	public Set< Demanda > getDemandas()
+	{
 		return this.demandas;
 	}
 
-	public void setDemandas(Set<Demanda> demandas) {
+	public void setDemandas(
+		Set< Demanda > demandas )
+	{
 		this.demandas = demandas;
 	}
 
-	public Set<Fixacao> getFixacoes() {
+	public Set< Fixacao > getFixacoes()
+	{
 		return this.fixacoes;
 	}
 
-	public void setFixacoes(Set<Fixacao> fixacoes) {
+	public void setFixacoes(
+		Set< Fixacao > fixacoes )
+	{
 		this.fixacoes = fixacoes;
 	}
 
-	public Set<AtendimentoOperacional> getAtendimentosOperacionais() {
+	public Set< AtendimentoOperacional > getAtendimentosOperacionais()
+	{
 		return this.atendimentosOperacionais;
 	}
 
 	public void setAtendimentosOperacionais(
-			Set<AtendimentoOperacional> atendimentosOperacionais) {
+		Set< AtendimentoOperacional > atendimentosOperacionais )
+	{
 		this.atendimentosOperacionais = atendimentosOperacionais;
 	}
 
-	public Set<AtendimentoTatico> getAtendimentosTaticos() {
+	public Set< AtendimentoTatico > getAtendimentosTaticos()
+	{
 		return this.atendimentosTaticos;
 	}
 
 	public void setAtendimentosTaticos(
-			Set<AtendimentoTatico> atendimentosTaticos) {
+		Set< AtendimentoTatico > atendimentosTaticos )
+	{
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
 

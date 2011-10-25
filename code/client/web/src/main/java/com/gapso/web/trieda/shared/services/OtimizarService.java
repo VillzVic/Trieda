@@ -17,5 +17,5 @@ public interface OtimizarService
 	Boolean isOptimizing( Long round );
 	Map< String, List< String > > saveContent( CenarioDTO cenarioDTO, Long round );
 	ParametroDTO getParametro( CenarioDTO cenarioDTO );
-	ErrorsWarningsInputSolverDTO validaInput( ParametroDTO parametroDTO );
+	ErrorsWarningsInputSolverDTO validaInput( ParametroDTO parametroDTO ) throws Exception;
 }

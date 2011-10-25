@@ -1,12 +1,20 @@
 package com.gapso.web.trieda.shared.util.view;
 
-public class TriedaException extends Exception {
+import java.io.Serializable;
 
+public class TriedaException
+	extends Exception
+	implements Serializable
+{
 	private static final long serialVersionUID = 7252239658737885318L;
-	
-	public TriedaException( ) {}
-	
-	public TriedaException(Exception e) {
-		super(e.getMessage(),e.getCause());
+
+	public TriedaException( )
+	{
+		super();
+	}
+
+	public TriedaException( Exception e )
+	{
+		super( e.getMessage(), e.getCause() );
 	}
 }

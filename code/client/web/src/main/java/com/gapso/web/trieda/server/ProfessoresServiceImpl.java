@@ -56,9 +56,6 @@ public class ProfessoresServiceImpl
 		Professor professor = Professor.find(
 			professorDTO.getId(), getInstituicaoEnsinoUser() );
 
-//		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-//			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
 		List< HorarioDisponivelCenario > list
 			= professor.getHorarios( getInstituicaoEnsinoUser() );
 

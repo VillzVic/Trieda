@@ -10,22 +10,29 @@ import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TipoContratoComboBox extends ComboBox<TipoContratoDTO> {
-	
-	public TipoContratoComboBox() {
-		RpcProxy<ListLoadResult<TipoContratoDTO>> proxy = new RpcProxy<ListLoadResult<TipoContratoDTO>>() {
+public class TipoContratoComboBox
+	extends ComboBox< TipoContratoDTO >
+{
+	public TipoContratoComboBox()
+	{
+		RpcProxy< ListLoadResult< TipoContratoDTO > > proxy =
+			new RpcProxy< ListLoadResult< TipoContratoDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<TipoContratoDTO>> callback) {
-				Services.professores().getTiposContratoAll(callback);
+			public void load( Object loadConfig,
+				AsyncCallback< ListLoadResult< TipoContratoDTO > > callback )
+			{
+				Services.professores().getTiposContratoAll( callback );
 			}
 		};
-		
-		setStore(new ListStore<TipoContratoDTO>(new BaseListLoader<BaseListLoadResult<TipoContratoDTO>>(proxy)));
-		setFieldLabel("Tipo de Contrato");
-		setDisplayField(TipoContratoDTO.PROPERTY_NOME);
-		setEmptyText("Selecione tipo de contrato");
-		setEditable(false);
-		setTriggerAction(TriggerAction.ALL);
-	}
 
+		setStore( new ListStore< TipoContratoDTO >(
+			new BaseListLoader< BaseListLoadResult< TipoContratoDTO > >( proxy ) ) );
+
+		setFieldLabel( "Tipo de Contrato" );
+		setDisplayField( TipoContratoDTO.PROPERTY_NOME );
+		setEmptyText( "Selecione tipo de contrato" );
+		setEditable( false );
+		setTriggerAction( TriggerAction.ALL );
+	}
 }

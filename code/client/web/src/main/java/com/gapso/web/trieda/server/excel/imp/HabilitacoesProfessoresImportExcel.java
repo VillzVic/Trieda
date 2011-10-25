@@ -21,6 +21,7 @@ import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class HabilitacoesProfessoresImportExcel
 	extends AbstractImportExcel< HabilitacoesProfessoresImportExcelBean >
@@ -92,6 +93,11 @@ public class HabilitacoesProfessoresImportExcel
 					}
 					else if ( CPF_PROFESSOR_COLUMN_NAME.endsWith( columnName ) )
 					{
+						cell.setCellType( HSSFCell.CELL_TYPE_STRING );
+
+						cellValue = TriedaUtil.formatStringCPF(
+							cell.getRichStringCellValue().getString().trim() );
+
 						bean.setCpfProfessorStr( cellValue );
 					}
 					else if ( DISCIPLINA_COLUMN_NAME.endsWith( columnName ) )
@@ -139,7 +145,9 @@ public class HabilitacoesProfessoresImportExcel
 	private boolean doSyntacticValidation( String sheetName,
 		List< HabilitacoesProfessoresImportExcelBean > sheetContent )
 	{
-		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
+		// Map utilizado para associar um erro
+		// às linhas do arquivo onde o mesmo ocorre
+
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
 		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
 			= new HashMap< ImportExcelError, List< Integer > >();
@@ -181,7 +189,8 @@ public class HabilitacoesProfessoresImportExcel
 		// apareceu mais de uma vez no arquivo de entrada
 		checkUniqueness( sheetContent );
 
-		// Verifica se há referência a algum tipo de curso não cadastrado
+		// Verifica se há referência a algum
+		// professor ou disciplina não cadastrados
 		checkNonRegisteredDisciplina( sheetContent );
 		checkNonRegisteredProfessor( sheetContent );
 

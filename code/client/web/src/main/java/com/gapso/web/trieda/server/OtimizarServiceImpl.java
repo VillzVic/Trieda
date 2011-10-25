@@ -16,6 +16,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
@@ -34,6 +35,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.services.OtimizarService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @Transactional
 @Service
@@ -88,8 +90,30 @@ public class OtimizarServiceImpl
 
 	@Override
 	@Transactional
-	public ErrorsWarningsInputSolverDTO validaInput( ParametroDTO parametroDTO )
+	public ErrorsWarningsInputSolverDTO validaInput(
+		ParametroDTO parametroDTO ) throws Exception
 	{
+		if ( parametroDTO.getCampusId() == null
+			|| parametroDTO.getTurnoId() == null )
+		{
+			String message = "";
+
+			if ( parametroDTO.getCampusId() == null )
+			{
+				message += "o campus n&atilde;o foi informado, ";
+			}
+
+			if ( parametroDTO.getTurnoId() == null )
+			{
+				message += "o turno n&atilde;o foi informado, ";
+			}
+
+			message = message.substring( 0, message.length() - 2 );
+
+			throw new TriedaException( new Exception(
+				HtmlUtils.htmlUnescape( message ) ) );
+		}
+
 		Parametro parametro = ConvertBeans.toParametro( parametroDTO );
 
 		parametro.setId( null );
@@ -140,6 +164,25 @@ public class OtimizarServiceImpl
 	@Transactional
 	public Long sendInput( ParametroDTO parametroDTO )
 	{
+		if ( parametroDTO.getCampusId() == null
+			|| parametroDTO.getTurnoId() == null )
+		{
+			String message = "";
+
+			if ( parametroDTO.getCampusId() == null )
+			{
+				message += "o campus não foi informado, ";
+			}
+
+			if ( parametroDTO.getTurnoId() == null )
+			{
+				message += "o turno não foi informado, ";
+			}
+
+			message = message.substring( 0, message.length() - 2 );
+			throw new RuntimeException( message );
+		}
+
 		Parametro parametro = ConvertBeans.toParametro( parametroDTO );
 
 		parametro.setId( null );

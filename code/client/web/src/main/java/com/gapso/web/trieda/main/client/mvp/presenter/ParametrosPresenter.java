@@ -173,60 +173,68 @@ public class ParametrosPresenter
 						{
 							if ( be.getButtonClicked().getText().equalsIgnoreCase( "yes" ) )
 							{
-								service.validaInput( getDTO(),
-									new AbstractAsyncCallbackWithDefaultOnFailure< ErrorsWarningsInputSolverDTO >( display )
-									{
-										@Override
-										public void onFailure( Throwable caught )
+								try
+								{
+									service.validaInput( getDTO(),
+										new AbstractAsyncCallbackWithDefaultOnFailure< ErrorsWarningsInputSolverDTO >( display )
 										{
-											MessageBox.alert( "ERRO!",
-												"Não foi possível gerar a grade.", null );
-
-											habilitarBotao();
-										}
-
-										@Override
-										public void onSuccess( final ErrorsWarningsInputSolverDTO dto )
-										{
-											if ( dto.getValidInput() == true
-												&& dto.getTotalErrorsWarnings() == 0 )
+											@Override
+											public void onFailure( Throwable caught )
 											{
-												service.sendInput( getDTO(),
-													new AbstractAsyncCallbackWithDefaultOnFailure< Long >( display )
-													{
-														@Override
-														public void onFailure( Throwable caught )
-														{
-															MessageBox.alert( "ERRO!",
-																"Não foi possível gerar a grade.", null );
+												MessageBox.alert( "ERRO!",
+													"Não foi possível gerar a grade : " + caught.getMessage(), null );
 
-															habilitarBotao();
-														}
-
-														@Override
-														public void onSuccess( final Long round )
-														{
-															Info.display( "Otimizando",
-																"Otimizando com sucesso!" );
-
-															checkSolver( round );
-															habilitarBotao();
-														}
-													});
+												habilitarBotao();
 											}
-											else
+
+											@Override
+											public void onSuccess( final ErrorsWarningsInputSolverDTO dto )
 											{
-												List< String > errors = dto.getErrorsWarnings().get( "errors" );
-												List< String > warnings = dto.getErrorsWarnings().get( "warnings" );
+												if ( dto.getValidInput() == true
+													&& dto.getTotalErrorsWarnings() == 0 )
+												{
+													service.sendInput( getDTO(),
+														new AbstractAsyncCallbackWithDefaultOnFailure< Long >( display )
+														{
+															@Override
+															public void onFailure( Throwable caught )
+															{
+																MessageBox.alert( "ERRO!",
+																	"Não foi possível gerar a grade : " + caught.getMessage(), null );
 
-												Presenter presenter = new ErrorsWarningsInputSolverPresenter(
-												 	dto.getValidInput(), cenarioDTO, getDTO(), errors,
-												 	warnings, new ErrorsWarningsInputSolverView(), display.getSubmitButton() );
+																habilitarBotao();
+															}
 
-												presenter.go( null );
+															@Override
+															public void onSuccess( final Long round )
+															{
+																Info.display( "Otimizando", "Otimizando!" );
+																checkSolver( round );
+																habilitarBotao();
+															}
+														});
+												}
+												else
+												{
+													List< String > errors = dto.getErrorsWarnings().get( "errors" );
+													List< String > warnings = dto.getErrorsWarnings().get( "warnings" );
+
+													Presenter presenter = new ErrorsWarningsInputSolverPresenter(
+													 	dto.getValidInput(), cenarioDTO, getDTO(), errors,
+													 	warnings, new ErrorsWarningsInputSolverView(), display.getSubmitButton() );
+
+													presenter.go( null );
+												}
 											}
-										}
-									});
+										});
+								}
+								catch( Exception e )
+								{
+									MessageBox.alert( "ERRO!",
+										"Não foi possível gerar a grade : " + e.getMessage(), null );
+
+									habilitarBotao();
+								}
 							}
 							else
 							{
@@ -305,12 +313,18 @@ public class ParametrosPresenter
 		dto.setFuncaoObjetivo( this.display.getFuncaoObjetivoComboBox().getValue().getValue().ordinal() );
 
 		CampusDTO campusDTO = this.display.getCampusComboBox().getValue();
-		dto.setCampusId( campusDTO.getId() );
-		dto.setCampusDisplay( campusDTO.getDisplayText() );
+		if ( campusDTO != null )
+		{
+			dto.setCampusId( campusDTO.getId() );
+			dto.setCampusDisplay( campusDTO.getDisplayText() );
+		}
 
 		TurnoDTO turnoDTO = this.display.getTurnoComboBox().getValue();
-		dto.setTurnoId( turnoDTO.getId() );
-		dto.setTurnoDisplay( turnoDTO.getDisplayText() );
+		if ( turnoDTO != null )
+		{
+			dto.setTurnoId( turnoDTO.getId() );
+			dto.setTurnoDisplay( turnoDTO.getDisplayText() );
+		}
 
 		dto.setCargaHorariaAluno( this.display.getCargaHorariaAlunoCheckBox().getValue() );
 		dto.setCargaHorariaAlunoSel( this.display.getCargaHorariaAlunoComboBox().getValueString() );
@@ -342,8 +356,8 @@ public class ParametrosPresenter
 		{
 			evitarReducaoCargaHorariaProfessorValue = 0;
 		}
-
 		dto.setEvitarReducaoCargaHorariaProfessorValue( evitarReducaoCargaHorariaProfessorValue.intValue() );
+
 		dto.setEvitarUltimoEPrimeiroHorarioProfessor( this.display.getEvitarUltimoEPrimeiroHorarioProfessorCheckBox().getValue() );
 		dto.setPreferenciaDeProfessores( this.display.getPreferenciaDeProfessoresCheckBox().getValue() );
 		dto.setAvaliacaoDesempenhoProfessor( this.display.getAvaliacaoDesempenhoProfessorCheckBox().getValue() );
@@ -363,9 +377,7 @@ public class ParametrosPresenter
 		{
 			minAlunosParaAbrirTurmaValue = 0;
 		}
-
-		dto.setMinAlunosParaAbrirTurmaValue(
-			minAlunosParaAbrirTurmaValue.intValue() );
+		dto.setMinAlunosParaAbrirTurmaValue( minAlunosParaAbrirTurmaValue.intValue() );
 
 		dto.setCompartilharDisciplinasCampi( this.display.getCompartilharDisciplinasCampiCheckBox().getValue() );
 		dto.setPercentuaisMinimosMestres( this.display.getPercentuaisMinimosMestresCheckBox().getValue() );
@@ -411,7 +423,7 @@ public class ParametrosPresenter
 					public void onFailure( Throwable caught )
 					{
 						MessageBox.alert( "ERRO!",
-							"Impossível de verificar, servidor fora do ar", null );
+							"A comunicação com o servidor de otimização foi perdida.", null );
 					}
 
 					@Override
@@ -424,7 +436,7 @@ public class ParametrosPresenter
 						else
 						{
 							Info.display( "OTIMIZADO",
-								"Otimização finalizada!" );
+								"Otimização finalizada com sucesso!" );
 
 							atualizaSaida( round );
 						}
@@ -442,7 +454,7 @@ public class ParametrosPresenter
 		final FutureResult< Map< String, List< String > > > futureBoolean
 			= new FutureResult< Map< String, List< String > > >();
 
-		service.saveContent( cenarioDTO, round, futureBoolean );
+		service.saveContent( this.cenarioDTO, round, futureBoolean );
 		FutureSynchronizer synch = new FutureSynchronizer( futureBoolean );
 
 		synch.addCallback( new AsyncCallback< Boolean >()
@@ -451,7 +463,7 @@ public class ParametrosPresenter
 			public void onFailure( Throwable caught )
 			{
 				MessageBox.alert( "ERRO!",
-					"Erro ao pegar a saída", null );
+					"Erro ao ler a saída do solver", null );
 			}
 
 			@Override
@@ -463,7 +475,7 @@ public class ParametrosPresenter
 					&& ret.get( "error" ).isEmpty() )
 				{
 					MessageBox.alert( "OTIMIZADO",
-						"Saída salva com sucesso", null );
+						"Grade de horários salva com sucesso", null );
 				}
 				else
 				{

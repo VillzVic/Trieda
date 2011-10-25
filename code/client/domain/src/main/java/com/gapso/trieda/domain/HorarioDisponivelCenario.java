@@ -187,20 +187,27 @@ public class HorarioDisponivelCenario
 	public static long countHorarioDisponivelCenarios(
 		InstituicaoEnsino instituicaoEnsino )
 	{
-        return ( (Number) entityManager().createQuery(
-        	" SELECT COUNT ( o ) FROM HorarioDisponivelCenario o " +
-        	" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getSingleResult() ).longValue();
+		Query q = entityManager().createQuery(
+	        " SELECT COUNT ( o ) " +
+	        " FROM HorarioDisponivelCenario o " +
+    		" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return ( (Number) q.getSingleResult() ).longValue();
     }
 
 	@SuppressWarnings( "unchecked" )
     public static List< HorarioDisponivelCenario > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery(
-        	" SELECT o FROM HorarioDisponivelCenario o " +
-        	" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM HorarioDisponivelCenario o " +
+    		" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
 	public static HorarioDisponivelCenario find(
@@ -244,7 +251,7 @@ public class HorarioDisponivelCenario
 
 	public Semanas getDiaSemana()
 	{
-		return diaSemana;
+		return this.diaSemana;
 	}
 
 	public void setDiaSemana(
@@ -366,8 +373,8 @@ public class HorarioDisponivelCenario
 		final int prime = 31;
 		int result = 1;
 
-		result = ( prime * result + ( ( id == null ) ? 0 : id.hashCode() ) );
-		result = ( prime * result + ( ( version == null ) ? 0 : version.hashCode() ) );
+		result = ( prime * result + ( ( this.id == null ) ? 0 : this.id.hashCode() ) );
+		result = ( prime * result + ( ( this.version == null ) ? 0 : this.version.hashCode() ) );
 
 		return result;
 	}
@@ -375,11 +382,6 @@ public class HorarioDisponivelCenario
 	@Override
 	public boolean equals( Object obj )
 	{
-		if ( this == obj )
-		{
-			return true;
-		}
-
 		if ( obj == null )
 		{
 			return false;
@@ -392,26 +394,28 @@ public class HorarioDisponivelCenario
 
 		HorarioDisponivelCenario other = (HorarioDisponivelCenario) obj;
 
-		if ( id == null )
+		// Compara os dias da semana
+		if ( this.getDiaSemana() == null )
 		{
-			if ( other.id != null )
+			if ( other.getDiaSemana() != null )
 			{
 				return false;
 			}
 		}
-		else if ( !id.equals( other.id ) )
+		else if ( !this.getDiaSemana().equals( other.getDiaSemana() ) )
 		{
 			return false;
 		}
 
-		if ( version == null )
+		// Compara o horário de início da aula
+		if ( this.getHorarioAula() == null )
 		{
-			if ( other.version != null )
+			if ( other.getHorarioAula() != null )
 			{
 				return false;
 			}
 		}
-		else if ( !version.equals( other.version ) )
+		else if ( !this.getHorarioAula().equals( other.getHorarioAula() ) )
 		{
 			return false;
 		}

@@ -73,7 +73,7 @@ public class Professor
 
 	@NotNull
 	@Column( name = "PRF_NOME" )
-	@Size( min = 3, max = 20 )
+	@Size( min = 3, max = 500 )
 	private String nome;
 
 	@Column( name = "PRF_CH_MIN" )
@@ -248,7 +248,8 @@ public class Professor
 		return this.horarios;
 	}
 
-	public void setHorarios( Set< HorarioDisponivelCenario > horarios )
+	public void setHorarios(
+		Set< HorarioDisponivelCenario > horarios )
 	{
 		this.horarios = horarios;
 	}
@@ -258,7 +259,8 @@ public class Professor
 		return this.disciplinas;
 	}
 
-	public void setDisciplinas( Set< ProfessorDisciplina > disciplinas )
+	public void setDisciplinas(
+		Set< ProfessorDisciplina > disciplinas )
 	{
 		this.disciplinas = disciplinas;
 	}
@@ -435,20 +437,26 @@ public class Professor
 	public static List< Professor > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery(
+		Query q = entityManager().createQuery(
 			" SELECT o FROM Professor o " +
-			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findByCampus(
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		return entityManager().createQuery(
+		Query q = entityManager().createQuery(
 			" SELECT o FROM Professor o " +
-			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")

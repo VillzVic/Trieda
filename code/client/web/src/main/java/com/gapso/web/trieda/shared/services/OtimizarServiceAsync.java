@@ -15,5 +15,5 @@ public interface OtimizarServiceAsync
 	void saveContent( CenarioDTO cenarioDTO, Long round,
 		AsyncCallback< Map< String, List< String > > > callback );
 	void getParametro( CenarioDTO cenarioDTO, AsyncCallback< ParametroDTO > callback );
-	void validaInput( ParametroDTO parametroDTO, AsyncCallback< ErrorsWarningsInputSolverDTO > callback );
+	void validaInput( ParametroDTO parametroDTO, AsyncCallback< ErrorsWarningsInputSolverDTO > callback ) throws Exception;
 }

@@ -21,6 +21,7 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class CampiTrabalhoImportExcel
 	extends AbstractImportExcel< CampiTrabalhoImportExcelBean >
@@ -34,7 +35,7 @@ public class CampiTrabalhoImportExcel
 	public CampiTrabalhoImportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino)
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
@@ -85,8 +86,14 @@ public class CampiTrabalhoImportExcel
 					if ( CAMPUS_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setCampusStr( cellValue );
-					} else if ( CPF_COLUMN_NAME.equals( columnName ) )
+					}
+					else if ( CPF_COLUMN_NAME.equals( columnName ) )
 					{
+						cell.setCellType( HSSFCell.CELL_TYPE_STRING );
+
+						cellValue = TriedaUtil.formatStringCPF(
+							cell.getRichStringCellValue().getString().trim() );
+
 						bean.setCpfStr( cellValue );
 					}
 					else if ( PROFESSOR_COLUMN_NAME.equals( columnName ) )

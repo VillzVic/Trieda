@@ -162,7 +162,9 @@ public class DisciplinasImportExcel
 	private boolean doSyntacticValidation(
 		String sheetName, List< DisciplinasImportExcelBean > sheetContent )
 	{
-		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
+		// Map utilizado para associar um erro
+		// às linhas do arquivo onde o mesmo ocorre
+
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
 		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
 			= new HashMap< ImportExcelError, List< Integer > >();
@@ -216,6 +218,7 @@ public class DisciplinasImportExcel
 	{
 		// Map com os códigos das disciplinas e as
 		// linhas em que o mesmo aparece no arquivo de entrada
+
 		// [ CódigoDisciplina -> Lista de Linhas do Arquivo de Entrada ]
 		Map< String, List< Integer > > disciplinaCodigoToRowsMap
 			= new HashMap< String, List< Integer > >();
@@ -233,7 +236,8 @@ public class DisciplinasImportExcel
 			rows.add( bean.getRow() );
 		}
 
-		// Verifica se alguma disciplina apareceu mais de uma vez no arquivo de entrada
+		// Verifica se alguma disciplina apareceu
+		// mais de uma vez no arquivo de entrada
 		for ( Entry< String, List< Integer > > entry
 			: disciplinaCodigoToRowsMap.entrySet() )
 		{

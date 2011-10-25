@@ -22,6 +22,7 @@ import com.gapso.trieda.domain.Titulacao;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class ProfessoresImportExcel
 	extends AbstractImportExcel< ProfessoresImportExcelBean >
@@ -99,6 +100,11 @@ public class ProfessoresImportExcel
 
 					if ( CPF_COLUMN_NAME.equals( columnName ) )
 					{
+						cell.setCellType( HSSFCell.CELL_TYPE_STRING );
+
+						cellValue = TriedaUtil.formatStringCPF(
+							cell.getRichStringCellValue().getString().trim() );
+
 						bean.setCpfStr( cellValue );
 					}
 					else if ( NOME_COLUMN_NAME.equals( columnName ) )

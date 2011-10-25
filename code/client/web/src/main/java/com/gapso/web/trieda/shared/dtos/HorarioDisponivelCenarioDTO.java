@@ -253,4 +253,34 @@ public class HorarioDisponivelCenarioDTO
 
 		return result;
 	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null )
+		{
+			return false;
+		}
+		
+		if ( this.getClass() != obj.getClass() )
+		{
+			return false;
+		}
+
+		HorarioDisponivelCenarioDTO other = (HorarioDisponivelCenarioDTO)obj;
+
+		if ( this.getHorario() == null )
+		{
+			if ( other.getHorario() != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.getHorario().equals( other.getHorario() ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
 }

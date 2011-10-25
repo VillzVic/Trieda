@@ -39,14 +39,16 @@ public class TRIEDAImportExcel
 	}
 
 	@Override
-	public boolean load( String fileName, HSSFWorkbook workbook )
+	public boolean load(
+		String fileName, HSSFWorkbook workbook )
 	{
 		return false;
 	}
 
 	@Transactional
 	@Override
-	public boolean load( String fileName, InputStream inputStream )
+	public boolean load(
+		String fileName, InputStream inputStream )
 	{
 		boolean flag = true;
 		try
@@ -98,28 +100,28 @@ public class TRIEDAImportExcel
 	@Override
 	public List< String > getErrors()
 	{
-		return errors;
+		return this.errors;
 	}
 
 	@Override
 	public List< String > getWarnings()
 	{
-		return warnings;
+		return this.warnings;
 	}
 
 	protected Cenario getCenario()
 	{
-		return cenario;
+		return this.cenario;
 	}
 
 	protected TriedaI18nConstants getI18nConstants()
 	{
-		return i18nConstants;
+		return this.i18nConstants;
 	}
 
 	protected TriedaI18nMessages getI18nMessages()
 	{
-		return i18nMessages;
+		return this.i18nMessages;
 	}
 
 	@Override

@@ -7,6 +7,62 @@ import com.google.gwt.user.client.Window.Location;
 
 public class TriedaUtil
 {
+	static public String formatStringCPF( String number )
+	{
+		if ( number.length() > 11 )
+		{
+			return number;
+		}
+
+		if ( number.length() < 11 )
+		{
+			String temp = "";
+			int cont = ( 11 - number.length() );
+
+			while ( cont-- > 0 )
+			{
+				temp += "0";
+			}
+
+			number = temp + number;
+		}
+
+		int index = 0;
+		String result = "";
+
+		for ( int i = 0; i < 3; i++ )
+		{
+			result += number.charAt( index );
+			index++;
+		}
+
+		result += ".";
+
+		for ( int i = 0; i < 3; i++ )
+		{
+			result += number.charAt( index );
+			index++;
+		}
+
+		result += ".";
+
+		for ( int i = 0; i < 3; i++ )
+		{
+			result += number.charAt( index );
+			index++;
+		}
+		
+		result += "-";
+
+		for ( int i = 0; i < 2; i++ )
+		{
+			result += number.charAt( index );
+			index++;
+		}
+
+		return result;
+	}
+
 	static public double round( double value, int precision )
 	{
 		if ( precision != 0 )
@@ -107,7 +163,7 @@ public class TriedaUtil
 		return ( (double) y / 100 );
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings( "deprecation" )
 	static public String shortTimeString( Date date )
 	{
 		if ( date == null )
