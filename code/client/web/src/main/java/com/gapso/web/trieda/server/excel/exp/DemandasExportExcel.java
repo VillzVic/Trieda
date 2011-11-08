@@ -1,8 +1,10 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -18,40 +20,51 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class DemandasExportExcel extends AbstractExportExcel {
-	
-	enum ExcelCellStyleReference {
-		TEXT(6,2),
-		NUMBER(6,6);
+public class DemandasExportExcel
+	extends AbstractExportExcel
+{
+	enum ExcelCellStyleReference
+	{
+		TEXT( 6, 2 ),
+		NUMBER( 6, 6 );
+
 		private int row;
 		private int col;
-		private ExcelCellStyleReference(int row, int col) {
+
+		private ExcelCellStyleReference( int row, int col )
+		{
 			this.row = row;
 			this.col = col;
 		}
-		public int getRow() {
-			return row;
+
+		public int getRow()
+		{
+			return this.row;
 		}
-		public int getCol() {
-			return col;
+
+		public int getCol()
+		{
+			return this.col;
 		}
 	}
+
 	private HSSFCellStyle[] cellStyles;
 	
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
+	private Map< String, Boolean > mapDemandasExportadas = new HashMap< String, Boolean >();
 
-	public DemandasExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public DemandasExportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
-	public DemandasExportExcel( boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public DemandasExportExcel(
+		boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
@@ -62,46 +75,54 @@ public class DemandasExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	public String getFileName() {
-		return getI18nConstants().ofertasEDemandas();
+	public String getFileName()
+	{
+		return this.getI18nConstants().ofertasEDemandas();
 	}
 	
 	@Override
-	protected String getPathExcelTemplate() {
+	protected String getPathExcelTemplate()
+	{
 		return "/templateExport.xls";
 	}
 
 	@Override
-	protected String getReportName() {
-		return getI18nConstants().ofertasEDemandas();
+	protected String getReportName()
+	{
+		return this.getI18nConstants().ofertasEDemandas();
 	}
 
 	@Override
 	protected boolean fillInExcel( HSSFWorkbook workbook )
 	{
-		List< Oferta > ofertas = Oferta.findByCenario(
+		boolean result = false;
+		
+		List< Oferta > listOfertas = Oferta.findByCenario(
 				this.instituicaoEnsino, getCenario() );
+
+		Set< Oferta > ofertas
+			= new HashSet< Oferta >( listOfertas );
 
 		if ( !ofertas.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.sheetName, workbook );
-			}
-
 			HSSFSheet sheet = workbook.getSheet( this.sheetName );
 			fillInCellStyles( sheet );
 
 			int nextRow = this.initialRow;
 			for ( Oferta oferta : ofertas )
 			{
-				nextRow = writeData( oferta, nextRow,sheet );
+				nextRow = writeData( oferta, nextRow, sheet );
 			}
 
-			return true;
+			result = true;
 		}
 
-		return false;
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.sheetName, workbook );
+		}
+
+		return result;
 	}
 	
 	private int writeData( Oferta oferta, int row, HSSFSheet sheet )
@@ -109,11 +130,11 @@ public class DemandasExportExcel extends AbstractExportExcel {
 		if ( oferta.getDemandas().isEmpty() )
 		{
 			// Campus
-			setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				oferta.getCampus().getCodigo() );
 
 			// Turno
-			setCell( row, 3, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			setCell( row, 3, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				oferta.getTurno().getNome() );
 
 			row++;
@@ -153,35 +174,61 @@ public class DemandasExportExcel extends AbstractExportExcel {
 
 					for ( CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo )
 					{
-						// Campus
-						setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							oferta.getCampus().getCodigo() );
-
-						// Turno
-						setCell( row, 3, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							oferta.getTurno().getNome() );
-
-						// Curso
-						setCell( row, 4, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							curriculo.getCurso().getCodigo() );
-
-						// Matriz Curricular
-						setCell( row, 5, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							curriculo.getCodigo() );
-
-						// Período
-						setCell( row, 6, sheet, cellStyles[ ExcelCellStyleReference.NUMBER.ordinal()], periodo );
-
-						// Disciplina
-						setCell( row, 7, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-							disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
-
-						// Demanda de Alunos
 						Demanda demanda = demandasMap.get(
 							disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
 
-						setCell( row, 8, sheet, cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ],
-							( demanda != null ? demanda.getQuantidade() : 0 ) );
+						int quantidade = ( demanda == null ? 0 : demanda.getQuantidade() );
+
+						if ( quantidade == 0 )
+						{
+							continue;
+						}
+
+						// Chegando nesse ponto, temos que mais uma linha será escrita
+						// na planilha de exportação. Assim, registramos essa linha
+						String key = "";
+
+						key += oferta.getCampus().getCodigo();
+						key += "-" + oferta.getTurno().getNome();
+						key += "-" + curriculo.getCurso().getCodigo();
+						key += "-" + curriculo.getCodigo();
+						key += "-" + periodo;
+						key += "-" + disciplinaDeUmPeriodo.getDisciplina().getCodigo();
+
+						if ( this.mapDemandasExportadas.containsKey( key ) )
+						{
+							continue;
+						}
+						else
+						{
+							this.mapDemandasExportadas.put( key, true );
+						}
+
+						// Campus
+						setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+							oferta.getCampus().getCodigo() );
+
+						// Turno
+						setCell( row, 3, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+							oferta.getTurno().getNome() );
+
+						// Curso
+						setCell( row, 4, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+							curriculo.getCurso().getCodigo() );
+
+						// Matriz Curricular
+						setCell( row, 5, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+							curriculo.getCodigo() );
+
+						// Período
+						setCell( row, 6, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], periodo );
+
+						// Disciplina
+						setCell( row, 7, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+							disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
+
+						// Demanda de Alunos
+						setCell( row, 8, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidade );
 
 						row++;
 					}
@@ -191,10 +238,14 @@ public class DemandasExportExcel extends AbstractExportExcel {
 
 		return row;
 	}
-	
-	private void fillInCellStyles(HSSFSheet sheet) {
-		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
-			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
+
+	private void fillInCellStyles( HSSFSheet sheet )
+	{
+		for ( ExcelCellStyleReference cellStyleReference
+			: ExcelCellStyleReference.values() )
+		{
+			this.cellStyles[ cellStyleReference.ordinal() ] = getCell(
+				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlunosDemandaFormPresenter;
@@ -22,13 +23,13 @@ public class AlunosDemandaFormView
 	private FormPanel formPanel;
 	private AlunoDemandaDTO alunoDemandaDTO;
 	private DemandaDTO demandaDTO;
+	private NumberField periodoNF;
 
 	public AlunosDemandaFormView(
 		AlunoDemandaDTO alunoDemandaDTO, DemandaDTO demandaDTO )
 	{
 		this.alunoDemandaDTO = alunoDemandaDTO;
 		this.demandaDTO = demandaDTO;
-
 		this.initUI();
 	}
 
@@ -38,7 +39,7 @@ public class AlunosDemandaFormView
 		this.simpleModal = new SimpleModal( title,
 			Resources.DEFAULTS.disciplina16() );
 
-		this.simpleModal.setHeight( 250 );
+		this.simpleModal.setHeight( 280 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
 	}
@@ -76,6 +77,17 @@ public class AlunosDemandaFormView
 		disciplinaTF.setFieldLabel( "Disciplina" );
 		disciplinaTF.setReadOnly( true );
 		this.formPanel.add( disciplinaTF, formData );
+
+		// Período
+		this.periodoNF = new NumberField();
+		this.periodoNF.setName( AlunoDemandaDTO.PROPERTY_PERIODO_STRING );
+		this.periodoNF.setValue( this.alunoDemandaDTO.getPeriodo() );
+		this.periodoNF.setFieldLabel( "Período" );
+		this.periodoNF.setAllowBlank( false );
+		this.periodoNF.setAllowDecimals( false );
+		this.periodoNF.setMaxValue( 999999 );
+		this.periodoNF.setEmptyText( "Período" );
+		this.formPanel.add( this.periodoNF, formData );
 
 		// Aluno
 		this.alunosComboBox = new AlunosComboBox();
@@ -124,5 +136,11 @@ public class AlunosDemandaFormView
 	public AlunosComboBox getAlunoComboBox()
 	{
 		return this.alunosComboBox;
+	}
+
+	@Override
+	public NumberField getPeriodoNumberField()
+	{
+		return this.periodoNF;
 	}
 }

@@ -61,7 +61,7 @@ public class Campus
 
 	@NotNull
 	@Column( name = "CAM_NOME" )
-	@Size( min = 1, max = 50 )
+	@Size( min = 1, max = 500 )
 	private String nome;
 
 	@Column( name = "CAM_VALOR_CREDITO" )

@@ -575,7 +575,6 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 			idsPeriodosAdicionadosVisaoProfessor.add( other.getPeriodo() );
 		}
 
-		// setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 		setTotalLinhas( getTotalLinhas() + other.getTotalLinhas() );
 	}

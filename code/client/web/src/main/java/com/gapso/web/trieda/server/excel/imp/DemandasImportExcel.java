@@ -164,16 +164,18 @@ public class DemandasImportExcel
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
 			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+
 			for ( ImportExcelError error : errorsBean )
 			{
 				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
+
 				if ( rowsWithErrors == null )
 				{
 					rowsWithErrors = new ArrayList< Integer >();
 					syntacticErrorsMap.put( error, rowsWithErrors );
 				}
 
-				rowsWithErrors.add(bean.getRow() );
+				rowsWithErrors.add( bean.getRow() );
 			}
 		}
 
@@ -191,7 +193,7 @@ public class DemandasImportExcel
 		List< DemandasImportExcelBean > sheetContent )
 	{
 		// Verifica se uma demanda ( Campus + Turno + Matriz Curricular +
-		// Disciplina ) é adicionada mais de uma vez no arquivo de entrada
+		// Disciplina + Período ) é adicionada mais de uma vez no arquivo de entrada
 		checkUniqueness( sheetContent );
 
 		// Verifica se há referência a algum tipo de contrato não cadastrado
@@ -205,7 +207,8 @@ public class DemandasImportExcel
 		return getErrors().isEmpty();
 	}
 
-	private void checkUniqueness( List< DemandasImportExcelBean > sheetContent )
+	private void checkUniqueness(
+		List< DemandasImportExcelBean > sheetContent )
 	{
 		// Map com os códigos " Campus + Turno + Matriz Curricular + Período +
 		// Disciplina" e as linhas em que o mesmo aparece no arquivo de entrada
@@ -217,17 +220,20 @@ public class DemandasImportExcel
 
 		for ( DemandasImportExcelBean bean : sheetContent )
 		{
-			List< Integer > rows = demandasToRowsMap.get( getCodeDemanda( bean ) );
+			String demandaPeriodo = ( getCodeDemanda( bean ) + bean.getPeriodoStr() );
+			List< Integer > rows = demandasToRowsMap.get( demandaPeriodo );
+
 			if ( rows == null )
 			{
 				rows = new ArrayList< Integer >();
-				demandasToRowsMap.put( getCodeDemanda( bean ), rows );
+				demandasToRowsMap.put( demandaPeriodo, rows );
 			}
 
 			rows.add( bean.getRow() );
 		}
 
-		// Verifica se algum professor apareceu mais de uma vez no arquivo de entrada
+		// Verifica se alguma demanda de disciplina / período
+		// apareceu mais de uma vez no arquivo de entrada
 		for ( Entry< String, List< Integer > > entry : demandasToRowsMap.entrySet() )
 		{
 			if ( entry.getValue().size() > 1 )
@@ -449,7 +455,7 @@ public class DemandasImportExcel
 				oferta.setTurno( demandasExcel.getTurno() );
 				oferta.setCurriculo( demandasExcel.getMatrizCurricular() );
 				oferta.setCurso( demandasExcel.getCurso() );
-				oferta.setReceita( demandasExcel.getReceita() );
+				oferta.setReceita( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
 
 				oferta.persist();
 
@@ -471,6 +477,7 @@ public class DemandasImportExcel
 				newDemanda.setDisciplina( demandasExcel.getDisciplina() );
 				newDemanda.setOferta( oferta );
 				newDemanda.setQuantidade( demandasExcel.getDemanda() );
+
 				newDemanda.persist();
 			}
 		}

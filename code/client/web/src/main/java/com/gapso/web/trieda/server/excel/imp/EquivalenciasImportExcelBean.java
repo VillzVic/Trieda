@@ -29,8 +29,8 @@ public class EquivalenciasImportExcelBean
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( cursouStr, ImportExcelError.EQUIVALENCIA_CURSOU_VAZIO, erros );
-			checkMandatoryField( eliminaStr, ImportExcelError.EQUIVALENCIA_ELIMINA_VAZIO, erros );
+			checkMandatoryField( this.cursouStr, ImportExcelError.EQUIVALENCIA_CURSOU_VAZIO, erros );
+			checkMandatoryField( this.eliminaStr, ImportExcelError.EQUIVALENCIA_ELIMINA_VAZIO, erros );
 		}
 		else
 		{
@@ -42,44 +42,54 @@ public class EquivalenciasImportExcelBean
 
 	private boolean tudoVazio()
 	{
-		return ( isEmptyField( cursouStr )
-			&& isEmptyField( eliminaStr ) );
+		return ( isEmptyField( this.cursouStr )
+			&& isEmptyField( this.eliminaStr ) );
 	}
 
-	public String getCursouStr() {
-		return cursouStr;
+	public String getCursouStr()
+	{
+		return this.cursouStr;
 	}
 
-	public void setCursouStr(String cursouStr) {
+	public void setCursouStr( String cursouStr )
+	{
 		this.cursouStr = cursouStr;
 	}
 
-	public String getEliminaStr() {
-		return eliminaStr;
+	public String getEliminaStr()
+	{
+		return this.eliminaStr;
 	}
 
-	public void setEliminaStr(String eliminaStr) {
+	public void setEliminaStr( String eliminaStr )
+	{
 		this.eliminaStr = eliminaStr;
 	}
 
-	public Disciplina getDisciplinaCursou() {
-		return disciplinaCursou;
+	public Disciplina getDisciplinaCursou()
+	{
+		return this.disciplinaCursou;
 	}
 
-	public void setDisciplinaCursou(Disciplina disciplinaCursou) {
+	public void setDisciplinaCursou( Disciplina disciplinaCursou )
+	{
 		this.disciplinaCursou = disciplinaCursou;
 	}
 
-	public Set<Disciplina> getDisciplinasElimina() {
-		return disciplinasElimina;
+	public Set< Disciplina > getDisciplinasElimina()
+	{
+		return this.disciplinasElimina;
 	}
 
-	public void setDisciplinasElimina(Set<Disciplina> disciplinasElimina) {
+	public void setDisciplinasElimina(
+		Set< Disciplina > disciplinasElimina )
+	{
 		this.disciplinasElimina = disciplinasElimina;
 	}
 
 	@Override
-	public int compareTo(EquivalenciasImportExcelBean o) {
-		return getCursouStr().compareTo(o.getCursouStr());
+	public int compareTo( EquivalenciasImportExcelBean o )
+	{
+		return getCursouStr().compareTo( o.getCursouStr() );
 	}
 }

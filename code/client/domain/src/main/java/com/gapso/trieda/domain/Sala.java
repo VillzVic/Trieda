@@ -59,12 +59,12 @@ public class Sala
 
     @NotNull
     @Column(name = "SAL_CODIGO")
-    @Size(min = 1, max = 20)
+    @Size(min = 1, max = 200)
     private String codigo;
 
     @NotNull
     @Column(name = "SAL_NUMERO")
-    @Size(min = 1, max = 20)
+    @Size(min = 1, max = 200)
     private String numero;
 
     @NotNull

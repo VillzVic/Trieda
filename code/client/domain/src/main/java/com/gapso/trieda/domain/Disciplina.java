@@ -76,7 +76,7 @@ public class Disciplina
 
 	@NotNull
 	@Column( name = "DIS_NOME" )
-	@Size( min = 1, max = 50 )
+	@Size( min = 1, max = 500 )
 	private String nome;
 
 	@NotNull
@@ -122,10 +122,10 @@ public class Disciplina
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina1" )
 	private Set< Incompatibilidade > incompatibilidades = new HashSet< Incompatibilidade >();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cursou")
-	private Set<Equivalencia> equivalencias = new HashSet< Equivalencia >();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cursou" )
+	private Set< Equivalencia > equivalencias = new HashSet< Equivalencia >();
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "elimina" )
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "elimina" )
 	private Set< Equivalencia > eliminadaPor = new HashSet< Equivalencia >();
 
 	@NotNull
@@ -962,5 +962,30 @@ public class Disciplina
 	public int compareTo( Disciplina o )
 	{
 		return getCodigo().compareTo( o.getCodigo() );
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Disciplina ) )
+		{
+			return false;
+		}
+
+		Disciplina other = (Disciplina) obj;
+
+		if ( this.id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

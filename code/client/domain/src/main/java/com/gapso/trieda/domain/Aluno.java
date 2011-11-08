@@ -56,7 +56,7 @@ public class Aluno
 
 	@NotNull
 	@Column( name = "ALN_NOME" )
-	@Size( min = 3, max = 50 )
+	@Size( min = 3, max = 500 )
 	private String nome;
 
 	public String toString()
@@ -363,14 +363,14 @@ public class Aluno
 		Aluno other = (Aluno) obj;
 
 		// Comparando os id's
-		if ( id == null )
+		if ( this.id == null )
 		{
 			if ( other.id != null )
 			{
 				return false;
 			}
 		}
-		else if ( !id.equals( other.id ) )
+		else if ( !this.id.equals( other.id ) )
 		{
 			return false;
 		}

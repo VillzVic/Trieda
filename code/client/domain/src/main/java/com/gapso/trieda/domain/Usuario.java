@@ -38,7 +38,7 @@ public class Usuario
 
     @NotNull
     @Column( name = "USU_NOME" )
-    @Size( min = 1, max = 50 )
+    @Size( min = 1, max = 500 )
     private String nome;
 
     @Column( name = "USU_EMAIL" )

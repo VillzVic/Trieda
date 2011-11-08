@@ -54,7 +54,7 @@ public class Turno
 
     @NotNull
     @Column( name = "TUR_NOME" )
-    @Size( min = 1, max = 50 )
+    @Size( min = 1, max = 500 )
     private String nome;
 
     @NotNull
@@ -460,5 +460,30 @@ public class Turno
 	{
 		int result = getNome().compareTo( o.getNome() );
 		return result;
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Turno ) )
+		{
+			return false;
+		}
+
+		Turno other = (Turno) obj;
+
+		if ( this.id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

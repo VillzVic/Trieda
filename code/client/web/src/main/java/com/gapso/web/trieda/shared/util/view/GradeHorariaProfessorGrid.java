@@ -48,14 +48,14 @@ public class GradeHorariaProfessorGrid
 	public GradeHorariaProfessorGrid( boolean isVisaoProfessor )
 	{
 		super( new FitLayout() );
-		this.isVisaoProfessor = isVisaoProfessor; 
 
-		setHeaderVisible( false );
+		this.isVisaoProfessor = isVisaoProfessor; 
+		this.setHeaderVisible( false );
 	}
 
 	public boolean isVisaoProfessor()
 	{
-		return isVisaoProfessor;
+		return this.isVisaoProfessor;
 	}
 
 	public void setVisaoProfessor( boolean isVisaoProfessor )
@@ -68,13 +68,13 @@ public class GradeHorariaProfessorGrid
 	{
 		super.beforeRender();
 
-		grid = new Grid< LinhaDeCredito >( getListStore(),
+		this.grid = new Grid< LinhaDeCredito >( getListStore(),
 			new ColumnModel( getColumnList() ) );
 
-		grid.setTrackMouseOver( false );
-		grid.setStyleName( "GradeHorariaGrid" );
+		this.grid.setTrackMouseOver( false );
+		this.grid.setStyleName( "GradeHorariaGrid" );
 
-		grid.addListener( Events.BeforeSelect,
+		this.grid.addListener( Events.BeforeSelect,
 			new Listener< GridEvent< LinhaDeCredito > >()
 		{
 			@Override
@@ -84,10 +84,10 @@ public class GradeHorariaProfessorGrid
 			}
 		});
 
-		grid.getView().setEmptyText( emptyTextBeforeSearch );
-		quickTip = new QuickTip( grid );
-		quickTip.getToolTipConfig().setDismissDelay( 0 );
-		add( grid );
+		this.grid.getView().setEmptyText( this.emptyTextBeforeSearch );
+		this.quickTip = new QuickTip( this.grid );
+		this.quickTip.getToolTipConfig().setDismissDelay( 0 );
+		this.add( this.grid );
 
 		requestAtendimentos();
 	}
@@ -95,21 +95,23 @@ public class GradeHorariaProfessorGrid
 	public void requestAtendimentos()
 	{
 		if ( getTurnoDTO() == null
-				|| ( getProfessorDTO() == null && getProfessorVirtualDTO() == null ) )
+			|| ( getProfessorDTO() == null && getProfessorVirtualDTO() == null ) )
 		{
 			return;
 		}
 
-		grid.mask( "Carregando os dados, aguarde alguns instantes", "loading" );
+		this.grid.mask( "Carregando os dados, " +
+			"aguarde alguns instantes", "loading" );
 
-		Services.atendimentos().getAtendimentosOperacional(
-			getProfessorDTO(), getProfessorVirtualDTO(), getTurnoDTO(), this.isVisaoProfessor(),
+		Services.atendimentos().getAtendimentosOperacional( getProfessorDTO(),
+			getProfessorVirtualDTO(), getTurnoDTO(), this.isVisaoProfessor(),
 			new AsyncCallback< List< AtendimentoOperacionalDTO > >()
 			{
 				@Override
 				public void onFailure( Throwable caught )
 				{
-					MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+					MessageBox.alert( "ERRO!",
+						"Não foi possível carregar a grade de horários", null );
 				}
 
 				@Override
@@ -127,26 +129,27 @@ public class GradeHorariaProfessorGrid
 
 	public ListStore< LinhaDeCredito > getListStore()
 	{
-		if ( store == null )
+		if ( this.store == null )
 		{
-			store = new ListStore< LinhaDeCredito >();
+			this.store = new ListStore< LinhaDeCredito >();
 		}
 		else
 		{
-			store.removeAll();
+			this.store.removeAll();
 		}
 
 		Set< LinhaDeCredito > setLinhaDeCredito
 			= new HashSet< LinhaDeCredito >();
 
-		if ( turnoDTO != null )
+		if ( this.turnoDTO != null )
 		{
-			for ( Long horarioId : turnoDTO.getHorariosStringMap().keySet() )
+			for ( Long horarioId : this.turnoDTO.getHorariosStringMap().keySet() )
 			{
-				String horarioStr = turnoDTO.getHorariosStringMap().get( horarioId ); 
-				Date horarioInicio = turnoDTO.getHorariosInicioMap().get( horarioId );
+				String horarioStr = this.turnoDTO.getHorariosStringMap().get( horarioId ); 
+				Date horarioInicio = this.turnoDTO.getHorariosInicioMap().get( horarioId );
 
-				setLinhaDeCredito.add( new LinhaDeCredito( horarioId, horarioStr, horarioInicio ) );
+				setLinhaDeCredito.add( new LinhaDeCredito(
+					horarioId, horarioStr, horarioInicio ) );
 			}
 		}
 
@@ -157,10 +160,10 @@ public class GradeHorariaProfessorGrid
 
 		for ( LinhaDeCredito lc : listLinhaDeCredito )
 		{
-			store.add( lc );
+			this.store.add( lc );
 		}
 
-		return store;
+		return this.store;
 	}
 
 	@Override
@@ -185,9 +188,11 @@ public class GradeHorariaProfessorGrid
 		return list;
 	}
 
-	private void addColumn( List< ColumnConfig > list, String id, String name )
+	private void addColumn(
+		List< ColumnConfig > list, String id, String name )
 	{
-		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer< LinhaDeCredito >()
+		GridCellRenderer< LinhaDeCredito > change
+			= new GridCellRenderer< LinhaDeCredito >()
 		{
 			public Html render( LinhaDeCredito model, String property,
 				ColumnData config, int rowIndex, int colIndex,
@@ -203,7 +208,8 @@ public class GradeHorariaProfessorGrid
 
 			private Html content( long horarioId, int rowIndex, int colIndex )
 			{
-				if ( atendimentos == null || atendimentos.size() == 0 )
+				if ( atendimentos == null
+					|| atendimentos.size() == 0 )
 				{
 					new Html( "" );
 				}
@@ -285,9 +291,9 @@ public class GradeHorariaProfessorGrid
 	private AtendimentoOperacionalDTO getAtendimento(
 		Long horarioId, Integer semana )
 	{
-		if ( atendimentos != null )
+		if ( this.atendimentos != null )
 		{
-			for ( AtendimentoOperacionalDTO at : atendimentos )
+			for ( AtendimentoOperacionalDTO at : this.atendimentos )
 			{
 				if ( at.getHorarioId().equals( horarioId )
 					&& at.getSemana().equals( semana ) )
@@ -302,27 +308,29 @@ public class GradeHorariaProfessorGrid
 
 	public ProfessorDTO getProfessorDTO()
 	{
-		return professorDTO;
+		return this.professorDTO;
 	}
 
-	public void setProfessorDTO( ProfessorDTO professorDTO )
+	public void setProfessorDTO(
+		ProfessorDTO professorDTO )
 	{
 		this.professorDTO = professorDTO;
 	}
 
 	public ProfessorVirtualDTO getProfessorVirtualDTO()
 	{
-		return professorVirtualDTO;
+		return this.professorVirtualDTO;
 	}
 
-	public void setProfessorVirtualDTO( ProfessorVirtualDTO professorVirtualDTO )
+	public void setProfessorVirtualDTO(
+		ProfessorVirtualDTO professorVirtualDTO )
 	{
 		this.professorVirtualDTO = professorVirtualDTO;
 	}
 
 	public TurnoDTO getTurnoDTO()
 	{
-		return turnoDTO;
+		return this.turnoDTO;
 	}
 
 	public void setTurnoDTO( TurnoDTO turnoDTO )
@@ -332,7 +340,7 @@ public class GradeHorariaProfessorGrid
 
 	public String getCssDisciplina( long id )
 	{
-		int index = disciplinasCores.indexOf( id );
+		int index = this.disciplinasCores.indexOf( id );
 
 		if ( index < 0 || index > 14 )
 		{
@@ -346,13 +354,13 @@ public class GradeHorariaProfessorGrid
 	{
 		Set< Long > set = new HashSet< Long >();
 
-		for ( AtendimentoOperacionalDTO a : atendimentos )
+		for ( AtendimentoOperacionalDTO a : this.atendimentos )
 		{
 			set.add( a.getDisciplinaId() );
 		}
 
-		disciplinasCores.clear();
-		disciplinasCores.addAll( set );
+		this.disciplinasCores.clear();
+		this.disciplinasCores.addAll( set );
 	}
 
 	public class LinhaDeCredito
@@ -364,16 +372,18 @@ public class GradeHorariaProfessorGrid
 		private Long horarioId;
 		private Date horarioInicio;
 
-		public LinhaDeCredito( Long horarioId, String horarioString, Date horarioInicio )
+		public LinhaDeCredito( Long horarioId,
+			String horarioString, Date horarioInicio )
 		{
-			setHorario( horarioString );
+			this.setHorario( horarioString );
+
 			this.horarioId = horarioId;
 			this.horarioInicio = horarioInicio;
 		}
 
 		public Date getHorarioInicio()
 		{
-			return horarioInicio;
+			return this.horarioInicio;
 		}
 
 		public void setHorarioInicio( Date horarioInicio )
@@ -383,7 +393,7 @@ public class GradeHorariaProfessorGrid
 
 		public Long getHorarioId()
 		{
-			return horarioId;
+			return this.horarioId;
 		}
 
 		public String getHorario()
@@ -484,17 +494,20 @@ public class GradeHorariaProfessorGrid
 				return 1;
 			}
 
-			if ( this.getHorarioInicio() == null && o.getHorarioInicio() == null )
+			if ( this.getHorarioInicio() == null
+				&& o.getHorarioInicio() == null )
 			{
 				return -1;
 			}
 
-			if ( this.getHorarioInicio() != null && o.getHorarioInicio() == null )
+			if ( this.getHorarioInicio() != null
+				&& o.getHorarioInicio() == null )
 			{
 				return 1;
 			}
 
-			if ( this.getHorarioInicio() == null && o.getHorarioInicio() != null )
+			if ( this.getHorarioInicio() == null
+				&& o.getHorarioInicio() != null )
 			{
 				return -1;
 			}

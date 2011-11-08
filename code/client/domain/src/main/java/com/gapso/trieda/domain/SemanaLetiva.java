@@ -49,12 +49,12 @@ public class SemanaLetiva
 
 	@NotNull
 	@Column( name = "SLE_CODIGO" )
-	@Size( min = 1, max = 20 )
+	@Size( min = 1, max = 500 )
 	private String codigo;
 
 	@NotNull
 	@Column( name = "SLE_DESCRICAO" )
-	@Size( max = 50 )
+	@Size( max = 500 )
 	private String descricao;
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )

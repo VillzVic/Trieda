@@ -74,7 +74,7 @@ public abstract class AbstractDTO< NKType >
 			return false;
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings( "unchecked" )
 		AbstractDTO< NKType > other
 			= ( AbstractDTO< NKType > ) obj;
 

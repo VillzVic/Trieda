@@ -180,6 +180,20 @@ public class CurriculosImportExcelBean
 		return getCodigoStr().compareTo( o.getCodigoStr() );
 	}
 
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null
+			|| !( obj instanceof CurriculosImportExcelBean )  )
+		{
+			return false;
+		}
+
+		CurriculosImportExcelBean other = (CurriculosImportExcelBean) obj;
+
+		return this.getNaturalKeyString().equals( other.getNaturalKeyString() );
+	}
+
 	public static Map< String, CurriculosImportExcelBean > buildCurriculoCodigoToImportExcelBeanMap(
 		List< CurriculosImportExcelBean > beans )
 	{

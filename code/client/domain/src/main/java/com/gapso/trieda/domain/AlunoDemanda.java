@@ -75,6 +75,12 @@ public class AlunoDemanda
 	@Max( 10L )
 	private Integer prioridade;
 
+	@NotNull
+	@Column( name = "ALD_PERIODO" )
+	@Min( 0L )
+	@Max( 10L )
+	private Integer periodo;
+
 	public Long getId()
 	{
 		return this.id;
@@ -130,12 +136,20 @@ public class AlunoDemanda
 		return this.prioridade;
 	}
 
-
 	public void setPrioridade( Integer prioridade )
 	{
 		this.prioridade = prioridade;
 	}
 
+	public Integer getPeriodo()
+	{
+		return this.periodo;
+	}
+
+	public void setPeriodo( Integer periodo )
+	{
+		this.periodo = periodo;
+	}
 
 	@Transactional
 	public void detach()
@@ -280,8 +294,8 @@ public class AlunoDemanda
 		q.setParameter( "demanda", demanda );
 		q.setParameter( "aluno", aluno );
 
-		List< AlunoDemanda > result = q.getResultList(); 
-		return ( ( result == null ) || ( result.size() == 0 ) ? null : result.get( 0 ) );
+		List< AlunoDemanda > alunosDemanda = q.getResultList();
+		return ( alunosDemanda.size() == 0 ? null : alunosDemanda.get( 0 ) );
 	}
 
 	public static AlunoDemanda find(
@@ -318,6 +332,7 @@ public class AlunoDemanda
 		sb.append( "Id: " ).append( getId() ).append( ", " );
 		sb.append( "Version: " ).append( getVersion() ).append( ", " );
 		sb.append( "Aluno: " ).append( getAluno() ).append( ", " );
+		sb.append( "Periodo: " ).append( getPeriodo() ).append( ", " );
 		sb.append( "Demanda: " ).append( getDemanda() );
 
 		return sb.toString();
@@ -340,7 +355,8 @@ public class AlunoDemanda
 	@Override
 	public boolean equals( Object obj )
 	{
-		if ( obj == null || !( obj instanceof AlunoDemanda ) )
+		if ( obj == null
+			|| !( obj instanceof AlunoDemanda ) )
 		{
 			return false;
 		}
@@ -389,7 +405,7 @@ public class AlunoDemanda
 		return compare;
 	}
 
-	public static Map< String, AlunoDemanda > buildMatriculaAlunoToAlunoDemandaMap(
+	public static Map< String, AlunoDemanda > buildCodAlunoCodDemandaToAlunosDemandasMap(
 		List< AlunoDemanda > alunosDemanda )
 	{
 		Map< String, AlunoDemanda > alunosDemandaMap
@@ -397,7 +413,11 @@ public class AlunoDemanda
 
 		for ( AlunoDemanda alunoDemanda : alunosDemanda )
 		{
-			String codigo = alunoDemanda.getAluno().getMatricula();
+			String codigo = "";
+			codigo += alunoDemanda.getAluno().getMatricula();
+			codigo += "-";
+			codigo += alunoDemanda.getDemanda().getId();
+
 			alunosDemandaMap.put( codigo, alunoDemanda );
 		}
 

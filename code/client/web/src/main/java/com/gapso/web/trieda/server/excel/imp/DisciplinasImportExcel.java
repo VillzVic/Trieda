@@ -323,7 +323,7 @@ public class DisciplinasImportExcel
 				newDisciplina.setMaxAlunosTeorico( disciplinaExcel.getMaxAlunosTeorico() );
 				newDisciplina.setDificuldade( disciplinaExcel.getNivelDificuldade() );
 				newDisciplina.setTipoDisciplina( disciplinaExcel.getTipo() );
-				
+
 				newDisciplina.persist();
 			}
 		}

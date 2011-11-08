@@ -75,10 +75,11 @@ public class Curriculo
 
 	public SemanaLetiva getSemanaLetiva()
 	{
-		return semanaLetiva;
+		return this.semanaLetiva;
 	}
 
-	public void setSemanaLetiva( SemanaLetiva semanaLetiva )
+	public void setSemanaLetiva(
+		SemanaLetiva semanaLetiva )
 	{
 		this.semanaLetiva = semanaLetiva;
 	}
@@ -128,7 +129,8 @@ public class Curriculo
         return this.disciplinas;
     }
 
-	public void setDisciplinas( Set< CurriculoDisciplina > disciplinas )
+	public void setDisciplinas(
+		Set< CurriculoDisciplina > disciplinas )
 	{
         this.disciplinas = disciplinas;
     }
@@ -138,7 +140,8 @@ public class Curriculo
         return this.ofertas;
     }
 
-	public void setOfertas( Set< Oferta > ofertas )
+	public void setOfertas(
+		Set< Oferta > ofertas )
 	{
         this.ofertas = ofertas;
     }
@@ -189,7 +192,7 @@ public class Curriculo
 	@Transactional
     public void persist()
 	{
-        if (this.entityManager == null)
+        if ( this.entityManager == null )
         {
         	this.entityManager = entityManager();
         }
@@ -270,14 +273,17 @@ public class Curriculo
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< Curriculo > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery(
-        	" SELECT o FROM Curriculo o " +
-        	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM Curriculo o " +
+    		" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
 	public static Map< String, Curriculo > buildCurriculoCodigoToCurriculoMap(
@@ -294,7 +300,7 @@ public class Curriculo
 		return curriculosMap;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Curriculo > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -330,26 +336,33 @@ public class Curriculo
         return null;
     }
 
-	public static List< Curriculo > find( InstituicaoEnsino instituicaoEnsino,
+	public static List< Curriculo > find(
+		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults )
 	{
-		return find( instituicaoEnsino, firstResult, maxResults, null );
+		return Curriculo.find( instituicaoEnsino,
+			firstResult, maxResults, null );
 	}
 
-	@SuppressWarnings("unchecked")
-    public static List< Curriculo > find( InstituicaoEnsino instituicaoEnsino,
+	@SuppressWarnings( "unchecked" )
+    public static List< Curriculo > find(
+    	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults, String orderBy )
     {
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-        return entityManager().createQuery(
-        	" SELECT o FROM Curriculo o " +
-        	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " + orderBy )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
-        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM Curriculo o " +
+	        " WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " + orderBy );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+        return q.getResultList();
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Curriculo > findByCampusAndTurno(
 		InstituicaoEnsino instituicaoEnsino, Campus campus, Turno turno )
 	{
@@ -366,7 +379,7 @@ public class Curriculo
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public List< CurriculoDisciplina > getCurriculoDisciplinasByPeriodo(
 		InstituicaoEnsino instituicaoEnsino, Integer periodo )
 	{
@@ -384,7 +397,8 @@ public class Curriculo
 		return q.getResultList();
 	}
 
-	public static int count( InstituicaoEnsino instituicaoEnsino,
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino,
 		Curso curso, String codigo, String descricao )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
@@ -417,8 +431,9 @@ public class Curriculo
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-    @SuppressWarnings("unchecked")
-	public static List< Curriculo > findBy( InstituicaoEnsino instituicaoEnsino,
+    @SuppressWarnings( "unchecked" )
+	public static List< Curriculo > findBy(
+		InstituicaoEnsino instituicaoEnsino,
 		Curso curso, String codigo, String descricao,
 		int firstResult, int maxResults, String orderBy )
 	{
@@ -456,11 +471,13 @@ public class Curriculo
         return q.getResultList();
     }
 
-    public int getPeriodo(
-    	InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
+    @SuppressWarnings( "unchecked" )
+	public int getPeriodo(
+    	InstituicaoEnsino instituicaoEnsino,
+    	Disciplina disciplina, Oferta oferta )
     {
     	Query q = entityManager().createQuery(
-    		" SELECT o.periodo FROM CurriculoDisciplina o " +
+    		" SELECT o FROM CurriculoDisciplina o " +
     		" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
     		" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
     		" AND o.curriculo = :curriculo " +
@@ -470,7 +487,33 @@ public class Curriculo
     	q.setParameter( "disciplina", disciplina );
     	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-    	return (Integer) q.getSingleResult();
+    	List< CurriculoDisciplina > curriculosDisciplina = q.getResultList();
+
+    	if ( curriculosDisciplina.size() == 1 )
+    	{
+    		return curriculosDisciplina.get( 0 ).getPeriodo();
+    	}
+
+    	Integer periodo = null;
+
+    	for ( CurriculoDisciplina cd : curriculosDisciplina )
+    	{
+    		for ( Oferta ofertaCurriculo : cd.getCurriculo().getOfertas() )
+    		{
+    			if( ofertaCurriculo.getId() == oferta.getId() )
+    			{
+    				periodo = cd.getPeriodo();
+    				break;
+    			}
+    		}
+
+    		if ( periodo != null )
+    		{
+    			break;
+    		}
+    	}
+
+    	return periodo;
     }
 
     @SuppressWarnings( "unchecked" )
@@ -547,5 +590,30 @@ public class Curriculo
 		}
 
 		return result;
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Curriculo ) )
+		{
+			return false;
+		}
+
+		Curriculo other = (Curriculo) obj;
+
+		if ( this.id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

@@ -29,10 +29,9 @@ public class EquivalenciasImportExcel
 
 	private List< String > headerColumnsNames;
 
-	public EquivalenciasImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public EquivalenciasImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
@@ -53,7 +52,7 @@ public class EquivalenciasImportExcel
 	@Override
 	protected List< String > getHeaderColumnsNames(
 		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
-		{
+	{
 		return this.headerColumnsNames;
 	}
 
@@ -164,7 +163,7 @@ public class EquivalenciasImportExcel
 	{
 		// Verifica se alguma disciplina apareceu
 		// mais de uma vez no arquivo de entrada
-		checkUniqueness( sheetContent );
+		// checkUniqueness( sheetContent );
 
 		// Verifica se há referência a alguma unidade não cadastrada
 		checkNonRegisteredDisciplina( sheetContent );
@@ -172,11 +171,16 @@ public class EquivalenciasImportExcel
 		return getErrors().isEmpty();
 	}
 
+	// FIXME
+	// A disciplina 'cursou' pode aparacer mais de
+	// uma vez na planilha de importação, pois ela
+	// pode ser equivalente a mais de uma disciplina
 	private void checkUniqueness(
 		List< EquivalenciasImportExcelBean > sheetContent )
 	{
 		// Map com os códigos dos cursou e as linhas
 		// em que a mesmo aparece no arquivo de entrada
+
 		// [ CódigoCursou -> Lista de Linhas do Arquivo de Entrada ]
 		Map< String, List< Integer > > codigoToRowsMap
 			= new HashMap< String, List< Integer > >();
@@ -195,7 +199,8 @@ public class EquivalenciasImportExcel
 			rows.add( bean.getRow() );
 		}
 
-		// Verifica se algum cursou apareceu mais de uma vez no arquivo de entrada
+		// Verifica se algum cursou apareceu
+		// mais de uma vez no arquivo de entrada
 		for ( Entry< String, List< Integer > > entry
 			: codigoToRowsMap.entrySet() )
 		{
@@ -215,26 +220,37 @@ public class EquivalenciasImportExcel
 			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
 				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
-		List< Integer > rowsWithErrorsCursou
-			= new ArrayList< Integer >();
+		List< Integer > rowsWithErrorsCursou = new ArrayList< Integer >();
+		List< Integer > rowsWithErrorsElimina = new ArrayList< Integer >();
 
 		for ( EquivalenciasImportExcelBean bean : sheetContent )
 		{
-			Disciplina disciplina
+			Disciplina disciplinaCursou
 				= disciplinaBDMap.get( bean.getCursouStr() );
 
-			if ( disciplina != null )
+			Disciplina disciplinaElimina
+				= disciplinaBDMap.get( bean.getEliminaStr() );
+
+			if ( disciplinaCursou != null )
 			{
-				bean.setDisciplinaCursou( disciplina );
+				bean.setDisciplinaCursou( disciplinaCursou );
 			}
 			else
 			{
 				rowsWithErrorsCursou.add( bean.getRow() );
 			}
+
+			if ( disciplinaElimina != null )
+			{
+				bean.getDisciplinasElimina().add( disciplinaElimina );
+			}
+			else
+			{
+				rowsWithErrorsElimina.add( bean.getRow() );
+			}
 		}
 
-		List< Integer > rowsWithErrorsElimina= new ArrayList< Integer >();
-
+		/*
 		for ( EquivalenciasImportExcelBean bean : sheetContent )
 		{
 			String [] eliminaList = bean.getEliminaStr().split( ";" );
@@ -253,7 +269,9 @@ public class EquivalenciasImportExcel
 				}
 			}
 		}
+		*/
 
+		/*
 		if ( !rowsWithErrorsCursou.isEmpty() )
 		{
 			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
@@ -265,6 +283,7 @@ public class EquivalenciasImportExcel
 			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
 				ELIMINA_COLUMN_NAME, rowsWithErrorsElimina.toString() ) );
 		}
+		*/
 	}
 
 	@Transactional
@@ -277,6 +296,13 @@ public class EquivalenciasImportExcel
 
 		for ( EquivalenciasImportExcelBean equivalenciaExcel : sheetContent )
 		{
+			if ( equivalenciaExcel.getDisciplinaCursou() == null
+				|| equivalenciaExcel.getDisciplinasElimina() == null
+				|| equivalenciaExcel.getDisciplinasElimina().size() == 0 )
+			{
+				continue;
+			}
+
 			Equivalencia equivalenciaBD = equivalenciasBDMap.get(
 				equivalenciaExcel.getCursouStr() );
 

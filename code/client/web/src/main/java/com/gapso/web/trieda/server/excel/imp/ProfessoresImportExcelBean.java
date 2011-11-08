@@ -41,29 +41,29 @@ public class ProfessoresImportExcelBean
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( cpfStr, ImportExcelError.PROFESSOR_CPF_VAZIO, erros );
-			checkMandatoryField( nomeStr, ImportExcelError.PROFESSOR_NOME_VAZIO, erros );
-			checkMandatoryField( tipoStr, ImportExcelError.PROFESSOR_TIPO_VAZIO, erros );
-			checkMandatoryField( cargaHorariaMaxStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_MAX_VAZIO, erros );
-			checkMandatoryField( cargaHorariaMinStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_MIN_VAZIO, erros );
-			checkMandatoryField( titulacaoStr, ImportExcelError.PROFESSOR_TITULACAO_VAZIO, erros );
-			checkMandatoryField( areaTitulacaoStr, ImportExcelError.PROFESSOR_AREA_TITULACAO_VAZIO, erros );
-			checkMandatoryField( cargaHorariaAnteriorStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_ANTERIOR_VAZIO, erros );
-			checkMandatoryField( valorCreditoStr, ImportExcelError.PROFESSOR_VALOR_CREDITO_VAZIO, erros );
+			checkMandatoryField( this.cpfStr, ImportExcelError.PROFESSOR_CPF_VAZIO, erros );
+			checkMandatoryField( this.nomeStr, ImportExcelError.PROFESSOR_NOME_VAZIO, erros );
+			checkMandatoryField( this.tipoStr, ImportExcelError.PROFESSOR_TIPO_VAZIO, erros );
+			checkMandatoryField( this.cargaHorariaMaxStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_MAX_VAZIO, erros );
+			checkMandatoryField( this.cargaHorariaMinStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_MIN_VAZIO, erros );
+			checkMandatoryField( this.titulacaoStr, ImportExcelError.PROFESSOR_TITULACAO_VAZIO, erros );
+			checkMandatoryField( this.areaTitulacaoStr, ImportExcelError.PROFESSOR_AREA_TITULACAO_VAZIO, erros );
+			checkMandatoryField( this.cargaHorariaAnteriorStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_ANTERIOR_VAZIO, erros );
+			checkMandatoryField( this.valorCreditoStr, ImportExcelError.PROFESSOR_VALOR_CREDITO_VAZIO, erros );
 
-			cargaHorariaMax = checkNonNegativeIntegerField( cargaHorariaMaxStr,
+			this.cargaHorariaMax = checkNonNegativeIntegerField( this.cargaHorariaMaxStr,
 				ImportExcelError.PROFESSOR_CARGA_HORARIA_MAX_FORMATO_INVALIDO,
 				ImportExcelError.PROFESSOR_CARGA_HORARIA_MAX_VALOR_NEGATIVO, erros );
 
-			cargaHorariaMin = checkNonNegativeIntegerField( cargaHorariaMinStr,
+			this.cargaHorariaMin = checkNonNegativeIntegerField( this.cargaHorariaMinStr,
 				ImportExcelError.PROFESSOR_CARGA_HORARIA_MIN_FORMATO_INVALIDO,
 				ImportExcelError.PROFESSOR_CARGA_HORARIA_MIN_VALOR_NEGATIVO, erros );
 
-			cargaHorariaAnterior = checkNonNegativeIntegerField( cargaHorariaAnteriorStr,
+			this.cargaHorariaAnterior = checkNonNegativeIntegerField( this.cargaHorariaAnteriorStr,
 				ImportExcelError.PROFESSOR_CARGA_HORARIA_ANTERIOR_FORMATO_INVALIDO,
 				ImportExcelError.PROFESSOR_CARGA_HORARIA_ANTERIOR_VALOR_NEGATIVO, erros );
 
-			valorCredito = checkNonNegativeDoubleField( valorCreditoStr,
+			this.valorCredito = checkNonNegativeDoubleField( this.valorCreditoStr,
 				ImportExcelError.PROFESSOR_VALOR_CREDITO_FORMATO_INVALIDO,
 				ImportExcelError.PROFESSOR_VALOR_CREDITO_VALOR_NEGATIVO, erros );
 		}
@@ -77,20 +77,16 @@ public class ProfessoresImportExcelBean
 
 	private boolean tudoVazio()
 	{
-		return ( isEmptyField( cpfStr )
-			&& isEmptyField( nomeStr )
-			&& isEmptyField( tipoStr )
-			&& isEmptyField( cargaHorariaMaxStr )
-			&& isEmptyField( cargaHorariaMinStr )
-			&& isEmptyField( titulacaoStr )
-			&& isEmptyField( areaTitulacaoStr )
-			&& isEmptyField( cargaHorariaAnteriorStr )
-			&& isEmptyField( valorCreditoStr ) );
+		return ( isEmptyField( this.cpfStr ) && isEmptyField( this.nomeStr )
+			&& isEmptyField( this.tipoStr ) && isEmptyField( this.cargaHorariaMaxStr )
+			&& isEmptyField( this.cargaHorariaMinStr ) && isEmptyField( this.titulacaoStr )
+			&& isEmptyField( this.areaTitulacaoStr ) && isEmptyField( this.cargaHorariaAnteriorStr )
+			&& isEmptyField( this.valorCreditoStr ) );
 	}
 
 	public String getCpfStr()
 	{
-		return cpfStr;
+		return this.cpfStr;
 	}
 
 	public void setCpfStr( String cpfStr )
@@ -100,7 +96,7 @@ public class ProfessoresImportExcelBean
 
 	public String getNomeStr()
 	{
-		return nomeStr;
+		return this.nomeStr;
 	}
 
 	public void setNomeStr( String nomeStr )
@@ -110,7 +106,7 @@ public class ProfessoresImportExcelBean
 
 	public String getTipoStr()
 	{
-		return tipoStr;
+		return this.tipoStr;
 	}
 
 	public void setTipoStr( String tipoStr )
@@ -120,7 +116,7 @@ public class ProfessoresImportExcelBean
 
 	public String getCargaHorariaMaxStr()
 	{
-		return cargaHorariaMaxStr;
+		return this.cargaHorariaMaxStr;
 	}
 
 	public void setCargaHorariaMaxStr( String cargaHorariaMaxStr )
@@ -130,7 +126,7 @@ public class ProfessoresImportExcelBean
 
 	public String getCargaHorariaMinStr()
 	{
-		return cargaHorariaMinStr;
+		return this.cargaHorariaMinStr;
 	}
 
 	public void setCargaHorariaMinStr( String cargaHorariaMinStr )
@@ -140,7 +136,7 @@ public class ProfessoresImportExcelBean
 
 	public String getTitulacaoStr()
 	{
-		return titulacaoStr;
+		return this.titulacaoStr;
 	}
 
 	public void setTitulacaoStr( String titulacaoStr )
@@ -150,7 +146,7 @@ public class ProfessoresImportExcelBean
 
 	public String getAreaTitulacaoStr()
 	{
-		return areaTitulacaoStr;
+		return this.areaTitulacaoStr;
 	}
 
 	public void setAreaTitulacaoStr( String areaTitulacaoStr )
@@ -160,7 +156,7 @@ public class ProfessoresImportExcelBean
 
 	public String getCargaHorariaAnteriorStr()
 	{
-		return cargaHorariaAnteriorStr;
+		return this.cargaHorariaAnteriorStr;
 	}
 
 	public void setCargaHorariaAnteriorStr( String cargaHorariaAnteriorStr )
@@ -170,7 +166,7 @@ public class ProfessoresImportExcelBean
 
 	public String getValorCreditoStr()
 	{
-		return valorCreditoStr;
+		return this.valorCreditoStr;
 	}
 
 	public void setValorCreditoStr( String valorCreditoStr )
@@ -180,37 +176,37 @@ public class ProfessoresImportExcelBean
 
 	public TipoContrato getTipo()
 	{
-		return tipo;
+		return this.tipo;
 	}
 
 	public Integer getCargaHorariaMax()
 	{
-		return cargaHorariaMax;
+		return this.cargaHorariaMax;
 	}
 
 	public Integer getCargaHorariaMin()
 	{
-		return cargaHorariaMin;
+		return this.cargaHorariaMin;
 	}
 
 	public Titulacao getTitulacao()
 	{
-		return titulacao;
+		return this.titulacao;
 	}
 
 	public AreaTitulacao getAreaTitulacao()
 	{
-		return areaTitulacao;
+		return this.areaTitulacao;
 	}
 
 	public Integer getCargaHorariaAnterior()
 	{
-		return cargaHorariaAnterior;
+		return this.cargaHorariaAnterior;
 	}
 
 	public Double getValorCredito()
 	{
-		return valorCredito;
+		return this.valorCredito;
 	}
 
 	public void setTipo( TipoContrato tipo )
@@ -231,6 +227,6 @@ public class ProfessoresImportExcelBean
 	@Override
 	public int compareTo( ProfessoresImportExcelBean o )
 	{
-		return getCpfStr().compareTo( o.getCpfStr() );
+		return this.getCpfStr().compareTo( o.getCpfStr() );
 	}
 }

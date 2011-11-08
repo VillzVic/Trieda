@@ -79,7 +79,7 @@ public class CurriculoDisciplina
         sb.append( "Version: " ).append( getVersion() ).append( ", " );
         sb.append( "Curriculo: " ).append( getCurriculo() ).append( ", " );
         sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
-        sb.append( "Periodo: " ).append( getPeriodo() );
+        sb.append( "Periodo: " ).append( getPeriodo() ).append( ", " );
         sb.append( "Salas: " ).append( getSalas() == null ? "null" :
         	getSalas().size() ).append( ", " );
         sb.append( "GruposSala: " ).append( getGruposSala() == null ? "null" :
@@ -123,7 +123,8 @@ public class CurriculoDisciplina
         return this.salas;
     }
 
-	public void setSalas( Set< Sala > salas )
+	public void setSalas(
+		Set< Sala > salas )
 	{
         this.salas = salas;
     }
@@ -133,7 +134,8 @@ public class CurriculoDisciplina
         return this.gruposSala;
     }
 
-	public void setGruposSala( Set< GrupoSala > gruposSala )
+	public void setGruposSala(
+		Set< GrupoSala > gruposSala )
 	{
         this.gruposSala = gruposSala;
     }
@@ -489,4 +491,45 @@ public class CurriculoDisciplina
 
         return q.getResultList();
     }
+
+	public static Map< String, CurriculoDisciplina > buildCurriculoDisciplinaPeriodoMap(
+		List< CurriculoDisciplina >  curriculosDisciplina )
+	{
+		Map< String, CurriculoDisciplina > result
+			= new HashMap< String, CurriculoDisciplina >();
+
+		for ( CurriculoDisciplina cd : curriculosDisciplina )
+		{
+			String key = CurriculoDisciplina.getCurriculoDisciplinaPeriodoKey( cd );
+			result.put( key, cd );
+		}
+
+		return result;
+	}
+
+	public static String getCurriculoDisciplinaPeriodoKey(
+		CurriculoDisciplina cd )
+	{
+		String key = "";
+		key += cd.getCurriculo().getId();
+		key += "-";
+		key += cd.getDisciplina().getId();
+		key += "-";
+		key += cd.getPeriodo();
+
+		return key;
+	}
+
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null
+			|| !( obj instanceof CurriculoDisciplina ) )
+		{
+			return false;
+		}
+
+		CurriculoDisciplina other = (CurriculoDisciplina) obj;
+		return this.getNaturalKeyString().equals( other.getNaturalKeyString() );
+	}
 }

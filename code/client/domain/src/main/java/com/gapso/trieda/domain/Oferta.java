@@ -530,6 +530,40 @@ public class Oferta
 	}
 
 	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null
+			|| !( obj instanceof Oferta ) )
+		{
+			return false;
+		}
+
+		Oferta other = (Oferta) obj;
+
+		if ( !this.getCampus().equals( other.getCampus() ) )
+		{
+			return false;
+		}
+
+		if ( !this.getCurriculo().equals( other.getCurriculo() ) )
+		{
+			return false;
+		}
+
+		if ( !this.getTurno().equals( other.getTurno() ) )
+		{
+			return false;
+		}
+
+		if ( !this.getCurso().equals( other.getCurso() ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
 	public int compareTo( Oferta o )
 	{
 		return this.getCampus().getNome().compareTo( o.getCampus().getNome() );

@@ -171,12 +171,14 @@ public class OtimizarServiceImpl
 
 			if ( parametroDTO.getCampusId() == null )
 			{
-				message += "o campus não foi informado, ";
+				message += HtmlUtils.htmlUnescape(
+					"o campus n&atilde;o foi informado, " );
 			}
 
 			if ( parametroDTO.getTurnoId() == null )
 			{
-				message += "o turno não foi informado, ";
+				message += HtmlUtils.htmlUnescape(
+					"o turno n&atilde;o foi informado, " );
 			}
 
 			message = message.substring( 0, message.length() - 2 );

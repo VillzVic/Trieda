@@ -311,7 +311,10 @@ public class AtendimentosServiceImpl
 
 			parDTOTempl.setSegundo( parDTO.getSegundo() );
 
-			for ( AtendimentoOperacionalDTO atdto : parDTO.getPrimeiro() )
+			List< AtendimentoOperacionalDTO > horariosOrdenados
+				= this.ordenaPorHorarioAula( parDTO.getPrimeiro() );
+
+			for ( AtendimentoOperacionalDTO atdto : horariosOrdenados )
 			{
 				parDTOTempl.getPrimeiro().add( atdto );
 			}

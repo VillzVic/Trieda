@@ -47,13 +47,12 @@ public class AlunoDemandaView
 	public AlunoDemandaView( DemandaDTO demandaDTO )
 	{
 		this.demandaDTO = demandaDTO;
-
-		initUI();
+		this.initUI();
 	}
 	
 	private void initUI()
 	{
-		panel = new ContentPanel( new BorderLayout() )
+		this.panel = new ContentPanel( new BorderLayout() )
 		{
 			@Override
 			protected void beforeRender()
@@ -70,28 +69,28 @@ public class AlunoDemandaView
 			}
 		};
 
-		panel.setHeading( "Master Data » Alunos na Demanda " +
+		this.panel.setHeading( "Master Data » Alunos relacionados à demanda " +
 			"(" + demandaDTO.getDisciplinaString() + ")" );
 
 		createToolBar();
 		createTabItem();
-		initComponent( tabItem );
+		initComponent( this.tabItem );
 	}
 
 	private void createTabItem()
 	{
-		tabItem = new GTabItem( "Alunos",
+		this.tabItem = new GTabItem( "Alunos",
 			Resources.DEFAULTS.disciplina16() );
 
-		tabItem.setContent( panel );
+		this.tabItem.setContent( this.panel );
 	}
 
 	private void createToolBar()
 	{
-		toolBar = new SimpleToolBar(
+		this.toolBar = new SimpleToolBar(
 			true, false, true, false, false, this );
 
-		panel.setTopComponent( toolBar );
+		this.panel.setTopComponent( this.toolBar );
 	}
 
 	private void createGrid()
@@ -101,14 +100,14 @@ public class AlunoDemandaView
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
 		BaseListLoader< ListLoadResult< ModelData > > loader
-			= new BaseListLoader< ListLoadResult< ModelData > >( proxy );
+			= new BaseListLoader< ListLoadResult< ModelData > >( this.proxy );
 		loader.setRemoteSort( true );
 
 		GroupingStore< AlunoDemandaDTO > store
 			= new GroupingStore< AlunoDemandaDTO >( loader );
 
 		final ColumnModel columnModel = new ColumnModel( getColumnList() );
-		grid = new Grid< AlunoDemandaDTO >( store, columnModel );
+		this.grid = new Grid< AlunoDemandaDTO >( store, columnModel );
 
 		GroupSummaryView view = new GroupSummaryView();  
 		view.setShowGroupedColumn( false );  
@@ -123,13 +122,13 @@ public class AlunoDemandaView
 			}
 		});
 
-		view.setEmptyText( "Não existe nenhum aluno associado nessa demanda" );
-		grid.setView( view );
-		grid.setStripeRows( true );
-		grid.setBorders( true );
-		grid.getSelectionModel().setSelectionMode( SelectionMode.MULTI );
+		view.setEmptyText( "Não há nenhum aluno associado nessa demanda" );
+		this.grid.setView( view );
+		this.grid.setStripeRows( true );
+		this.grid.setBorders( true );
+		this.grid.getSelectionModel().setSelectionMode( SelectionMode.MULTI );
 
-	    panel.add( grid, bld );
+	    this.panel.add( this.grid, bld );
 	}
 
 	public List< ColumnConfig > getColumnList()
@@ -144,14 +143,20 @@ public class AlunoDemandaView
 		{  
 			public String render( Number value, Map< String, Number > data )
 			{  
-				return ( value.intValue() > 1 ? "(" + value.intValue() + " Alunos)" : "(1 Aluno)" );  
+				return ( value.intValue() > 1 ? "(" + value.intValue()
+					+ " Alunos)" : "(" + value.intValue() + " Aluno)" );  
 			}  
 		});
 		list.add( cc1 );
 
+		// Período
+		cc1 = new SummaryColumnConfig< Integer >(
+			AlunoDemandaDTO.PROPERTY_PERIODO_STRING, "Período", 30 );
+		list.add( cc1 );
+
 		// Informa se o aluno foi ou não atendido na otimização
 		cc1 = new SummaryColumnConfig< Integer >(
-			AlunoDemandaDTO.PROPERTY_ALUNO_ATENDIDO_STRING, "Atendido", 50 );
+			AlunoDemandaDTO.PROPERTY_ALUNO_ATENDIDO_STRING, "Atendido", 30 );
 		list.add( cc1 );
 
 		return list;
@@ -160,19 +165,19 @@ public class AlunoDemandaView
 	@Override
 	public Button getNewButton()
 	{
-		return toolBar.getNewButton();
+		return this.toolBar.getNewButton();
 	}
 
 	@Override
 	public Button getRemoveButton()
 	{
-		return toolBar.getRemoveButton();
+		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
 	public Grid< AlunoDemandaDTO > getGrid()
 	{
-		return grid;
+		return this.grid;
 	}
 
 	@Override
@@ -185,6 +190,6 @@ public class AlunoDemandaView
 	@Override
 	public DemandaDTO getDemandaDTO()
 	{
-		return demandaDTO;
+		return this.demandaDTO;
 	}
 }

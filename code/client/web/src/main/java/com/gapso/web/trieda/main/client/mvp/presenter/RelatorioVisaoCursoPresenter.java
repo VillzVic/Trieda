@@ -65,7 +65,7 @@ public class RelatorioVisaoCursoPresenter
 
 	private void setListeners()
 	{
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -80,7 +80,7 @@ public class RelatorioVisaoCursoPresenter
 				}
 		});
 
-		display.getCurriculoComboBox().addSelectionChangedListener(
+		this.display.getCurriculoComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< CurriculoDTO >()
 		{
 			@Override
@@ -115,7 +115,7 @@ public class RelatorioVisaoCursoPresenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
+		this.display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -148,6 +148,6 @@ public class RelatorioVisaoCursoPresenter
 	public void go( Widget widget )
 	{
 		GTab tab = (GTab)widget;
-		tab.add( (GTabItem)display.getComponent() );
+		tab.add( (GTabItem) this.display.getComponent() );
 	}
 }

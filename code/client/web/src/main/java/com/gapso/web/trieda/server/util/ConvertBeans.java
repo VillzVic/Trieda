@@ -1960,11 +1960,11 @@ public class ConvertBeans
 		dto.setCurricularString( domain.getOferta().getCurriculo().getCodigo() );
 		dto.setCurricularId( domain.getOferta().getCurriculo().getId() );
 
-		dto.setPeriodo( domain.getOferta().getCurriculo().getPeriodo(
-			domain.getInstituicaoEnsino(), domain.getDisciplina() ) );
+		int periodo = domain.getOferta().getCurriculo().getPeriodo(
+			domain.getInstituicaoEnsino(), domain.getDisciplina(), domain.getOferta() );
 
-		dto.setPeriodoString( String.valueOf( domain.getOferta().getCurriculo().getPeriodo(
-			domain.getInstituicaoEnsino(), domain.getDisciplina() ) ) );
+		dto.setPeriodo( periodo );
+		dto.setPeriodoString( String.valueOf( periodo ) );
 
 		dto.setTotalCreditoDisciplina( domain.getDisciplina().getTotalCreditos() );
 		dto.setTurnoId( domain.getOferta().getTurno().getId() );
@@ -2143,11 +2143,11 @@ public class ConvertBeans
 		dto.setCurricularString( domain.getOferta().getCurriculo().getCodigo() );
 		dto.setCurricularId( domain.getOferta().getCurriculo().getId() );
 
-		dto.setPeriodo( domain.getOferta().getCurriculo().getPeriodo(
-			instituicaoEnsino, domain.getDisciplina() ) );
+		int periodo = domain.getOferta().getCurriculo().getPeriodo(
+			instituicaoEnsino, domain.getDisciplina(), domain.getOferta() );
 
-		dto.setPeriodoString( String.valueOf( domain.getOferta().getCurriculo().getPeriodo(
-			instituicaoEnsino, domain.getDisciplina() ) ) );
+		dto.setPeriodo( periodo );
+		dto.setPeriodoString( String.valueOf( periodo ) );
 
 		dto.setTotalCreditos( domain.getDisciplina().getTotalCreditos() );
 		dto.setDisplayText( dto.getNaturalKey() );
@@ -2894,6 +2894,7 @@ public class ConvertBeans
 
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
+		domain.setPeriodo( dto.getPeriodo() );
 		domain.setAtendido( ( dto.getAlunoAtendido() == null ) ?
 			false : dto.getAlunoAtendido() );
 
@@ -2918,6 +2919,7 @@ public class ConvertBeans
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
 		dto.setDisplayText( domain.getAluno().getNome() );
+		dto.setPeriodo( domain.getPeriodo() );
 		dto.setAlunoAtendido( ( domain.getAtendido() == null ) ?
 			false : domain.getAtendido() );
 

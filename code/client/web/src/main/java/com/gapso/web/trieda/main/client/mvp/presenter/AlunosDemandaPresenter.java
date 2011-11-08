@@ -68,12 +68,12 @@ public class AlunosDemandaPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -87,7 +87,7 @@ public class AlunosDemandaPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -105,7 +105,7 @@ public class AlunosDemandaPresenter
 					public void onSuccess( Void result )
 					{
 						display.getGrid().getStore().getLoader().load();
-						Info.display( "Removido", "Item removido com sucesso!" );
+						Info.display( "Removido", "Item(ns) removido com sucesso!" );
 					}
 				});
 			}
@@ -115,7 +115,7 @@ public class AlunosDemandaPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		gTab = (GTab) widget;
-		gTab.add( (GTabItem) display.getComponent() );
+		this.gTab = (GTab) widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
 	}
 }

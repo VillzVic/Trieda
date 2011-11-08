@@ -39,10 +39,9 @@ public class CurriculosImportExcel
 
 	private List< String > headerColumnsNames;
 
-	public CurriculosImportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public CurriculosImportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
@@ -230,7 +229,7 @@ public class CurriculosImportExcel
 		Map< String, Set< String > > curriculoToParesCurriculoCursoMap
 			= new HashMap< String, Set< String > >();
 
-		// Map com o par (CodCurriculo,CodCurso) e as
+		// Map com o par ( CodCurriculo, CodCurso ) e as
 		// linhas em que o mesmo aparece no arquivo de entrada
 
 		// [ CodCurriculo - CodCurso -> Lista de Linhas do Arquivo de Entrada ]
@@ -537,8 +536,8 @@ public class CurriculosImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase(
-		String sheetName, List< CurriculosImportExcelBean > sheetContent )
+	private void updateDataBase( String sheetName,
+		List< CurriculosImportExcelBean > sheetContent )
 	{
 		// ATUALIZA CURRICULOS
 
@@ -553,6 +552,7 @@ public class CurriculosImportExcel
 		for ( String codigoCurriculo : curriculosExcelMap.keySet() )
 		{
 			Curriculo curriculoBD = curriculosBDMap.get( codigoCurriculo );
+
 			CurriculosImportExcelBean curriculoExcel
 				= curriculosExcelMap.get( codigoCurriculo );
 
@@ -577,6 +577,7 @@ public class CurriculosImportExcel
 
 				newCurriculo.persist();
 
+				Curriculo.entityManager().refresh( newCurriculo );
 				curriculosBDMap.put( newCurriculo.getCodigo(), newCurriculo );
 			}
 		}
@@ -608,6 +609,9 @@ public class CurriculosImportExcel
 					&& newCurriculoDisciplina.getCurriculo() != null )
 				{
 					newCurriculoDisciplina.persist();
+
+					curriculosDisciplinasBDMap.put(
+						curriculoExcel.getNaturalKeyString(), newCurriculoDisciplina );
 				}
 			}
 		}

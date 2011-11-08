@@ -5,191 +5,246 @@ import java.util.Locale;
 import com.gapso.gipe.common.GLanguageManager;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class GTriedaI18nMessages implements TriedaI18nMessages {
+public class GTriedaI18nMessages
+	implements TriedaI18nMessages
+{
 	private GLanguageManager languageManager = null;
 
-	public GTriedaI18nMessages() {
-		this.languageManager = new GLanguageManager("TriedaI18nMessages",
-				new Locale("pt", "BR"));
+	public GTriedaI18nMessages()
+	{
+		this.languageManager = new GLanguageManager(
+			"TriedaI18nMessages", new Locale( "pt", "BR" ) );
 	}
 
 	@Override
-	public String confirmacaoButton() {
-		return languageManager.getText("confirmacaoButton");
+	public String confirmacaoButton()
+	{
+		return this.languageManager.getText( "confirmacaoButton" );
 	}
 
 	@Override
-	public String excelErroArquivoInvalido(String nomeArquivo, String motivo) {
-		String[] params = { nomeArquivo, motivo };
-		return languageManager.getFormattedText("excelErroArquivoInvalido",
-				params);
+	public String excelErroArquivoInvalido(
+		String nomeArquivo, String motivo )
+	{
+		String [] params = { nomeArquivo, motivo };
+
+		return this.languageManager.getFormattedText(
+			"excelErroArquivoInvalido", params );
 	}
 
 	@Override
-	public String excelErroBD(String nomeArquivo, String motivo) {
-		String[] params = { nomeArquivo, motivo };
-		return languageManager.getFormattedText("excelErroBD", params);
+	public String excelErroBD( String nomeArquivo, String motivo )
+	{
+		String [] params = { nomeArquivo, motivo };
+
+		return this.languageManager.getFormattedText( "excelErroBD", params );
 	}
 
 	@Override
-	public String excelErroImportadorNulo(String infoASerImportada) {
-		String[] params = { infoASerImportada };
-		return languageManager.getFormattedText("excelErroImportadorNulo",
-				params);
+	public String excelErroImportadorNulo( String infoASerImportada )
+	{
+		String [] params = { infoASerImportada };
+
+		return this.languageManager.getFormattedText(
+			"excelErroImportadorNulo", params );
 	}
 
 	@Override
-	public String excelErroLogicoEntidadesNaoCadastradas(String nomeColuna,
-			String linhasComErro) {
-		String[] params = { nomeColuna, linhasComErro };
-		return languageManager.getFormattedText(
-				"excelErroLogicoEntidadesNaoCadastradas", params);
+	public String excelErroLogicoEntidadesNaoCadastradas(
+		String nomeColuna, String linhasComErro )
+	{
+		String [] params = { nomeColuna, linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoEntidadesNaoCadastradas", params );
 	}
 
 	@Override
 	public String excelErroLogicoDisciplinaEmMatrizCurricular(
-			String nomeColuna, String linhasComErro) {
-		String[] params = { nomeColuna, linhasComErro };
-		return languageManager.getFormattedText(
-				"excelErroLogicoDisciplinaEmMatrizCurricular", params);
+		String nomeColuna, String linhasComErro )
+	{
+		String [] params = { nomeColuna, linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoDisciplinaEmMatrizCurricular", params );
 	}
 
 	@Override
-	public String excelErroLogicoUnicidadeViolada(String valorRepetido,
-			String linhasComErro) {
-		String[] params = { valorRepetido, linhasComErro };
-		return languageManager.getFormattedText(
-				"excelErroLogicoUnicidadeViolada", params);
+	public String excelErroLogicoUnicidadeViolada(
+		String valorRepetido, String linhasComErro )
+	{
+		String [] params = { valorRepetido, linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoUnicidadeViolada", params );
 	}
 
 	@Override
 	public String excelErroLogicoUnicidadeVioladaCurriculoPorCurso(
-			String valorRepetido, String linhasComErro) {
-		String[] params = { valorRepetido, linhasComErro };
-		return languageManager.getFormattedText(
-				"excelErroLogicoUnicidadeVioladaCurriculoPorCurso", params);
+		String valorRepetido, String linhasComErro )
+	{
+		String [] params = { valorRepetido, linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoUnicidadeVioladaCurriculoPorCurso", params );
 	}
 
 	@Override
 	public String excelErroLogicoUnicidadeVioladaCurriculoPorDescricao(
-			String valorRepetido, String linhasComErro) {
-		String[] params = { valorRepetido, linhasComErro };
-		return languageManager.getFormattedText(
-				"excelErroLogicoUnicidadeVioladaCurriculoPorDescricao", params);
+		String valorRepetido, String linhasComErro )
+	{
+		String [] params = { valorRepetido, linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoUnicidadeVioladaCurriculoPorDescricao", params );
 	}
 
 	@Override
 	public String excelErroLogicoUnicidadeVioladaDisciplinaCurriculo(
-			String disciplina, String periodo, String curriculo,
-			String linhasComErro) {
-		String[] params = { disciplina, periodo, curriculo, linhasComErro };
+		String disciplina, String periodo, String curriculo, String linhasComErro )
+	{
+		String [] params = { disciplina, periodo, curriculo, linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoUnicidadeVioladaDisciplinaCurriculo", params );
+	}
+
+	@Override
+	public String excelErroObterExcelTemplate(
+		String nomeTemplate, String nomeRelatorio, String motivo )
+	{
+		String [] params = { nomeTemplate, nomeRelatorio, motivo };
+
+		return this.languageManager.getFormattedText(
+			"excelErroObterExcelTemplate", params );
+	}
+
+	@Override
+	public String excelErroSintaticoCabecalhoAusente(
+		String cabecalho, String nomeArquivo )
+	{
+		String [] params = { cabecalho, nomeArquivo };
+
+		return this.languageManager.getFormattedText(
+			"excelErroSintaticoCabecalhoAusente", params );
+	}
+
+	@Override
+	public String excelErroSintaticoColunaVazia(
+		String linhasComErro, String nomeColuna )
+	{
+		String [] params = { linhasComErro, nomeColuna };
+
 		return languageManager.getFormattedText(
-				"excelErroLogicoUnicidadeVioladaDisciplinaCurriculo", params);
+			"excelErroSintaticoColunaVazia", params );
 	}
 
 	@Override
-	public String excelErroObterExcelTemplate(String nomeTemplate,
-			String nomeRelatorio, String motivo) {
-		String[] params = { nomeTemplate, nomeRelatorio, motivo };
-		return languageManager.getFormattedText("excelErroObterExcelTemplate",
-				params);
+	public String excelErroSintaticoFormatoInvalido(
+		String linhasComErro, String nomeColuna )
+	{
+		String [] params = { linhasComErro, nomeColuna };
+
+		return this.languageManager.getFormattedText(
+			"excelErroSintaticoFormatoInvalido", params );
 	}
 
 	@Override
-	public String excelErroSintaticoCabecalhoAusente(String cabecalho,
-			String nomeArquivo) {
-		String[] params = { cabecalho, nomeArquivo };
-		return languageManager.getFormattedText(
-				"excelErroSintaticoCabecalhoAusente", params);
+	public String excelErroSintaticoLinhasInvalidas(
+		String linhasComErro, String nomeArquivo )
+	{
+		String [] params = { linhasComErro, nomeArquivo };
+
+		return this.languageManager.getFormattedText(
+			"excelErroSintaticoLinhasInvalidas", params );
 	}
 
 	@Override
-	public String excelErroSintaticoColunaVazia(String linhasComErro,
-			String nomeColuna) {
-		String[] params = { linhasComErro, nomeColuna };
-		return languageManager.getFormattedText(
-				"excelErroSintaticoColunaVazia", params);
+	public String excelErroSintaticoLinhaVazia( String linhasComErro )
+	{
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroSintaticoLinhaVazia", params );
 	}
 
 	@Override
-	public String excelErroSintaticoFormatoInvalido(String linhasComErro,
-			String nomeColuna) {
-		String[] params = { linhasComErro, nomeColuna };
-		return languageManager.getFormattedText(
-				"excelErroSintaticoFormatoInvalido", params);
+	public String excelErroSintaticoValorInvalido(
+		String linhasComErro, String nomeColuna )
+	{
+		String [] params = { linhasComErro, nomeColuna };
+
+		return this.languageManager.getFormattedText(
+			"excelErroSintaticoValorInvalido", params );
 	}
 
 	@Override
-	public String excelErroSintaticoLinhasInvalidas(String linhasComErro,
-			String nomeArquivo) {
-		String[] params = { linhasComErro, nomeArquivo };
-		return languageManager.getFormattedText(
-				"excelErroSintaticoLinhasInvalidas", params);
+	public String excelErroSintaticoValorNegativo(
+		String linhasComErro, String nomeColuna )
+	{
+		String [] params = { linhasComErro, nomeColuna };
+
+		return this.languageManager.getFormattedText(
+			"excelErroSintaticoValorNegativo", params );
 	}
 
 	@Override
-	public String excelErroSintaticoLinhaVazia(String linhasComErro) {
-		String[] params = { linhasComErro };
-		return languageManager.getFormattedText("excelErroSintaticoLinhaVazia",
-				params);
+	public String falhaOperacao()
+	{
+		return this.languageManager.getText( "falhaOperacao" );
 	}
 
 	@Override
-	public String excelErroSintaticoValorInvalido(String linhasComErro,
-			String nomeColuna) {
-		String[] params = { linhasComErro, nomeColuna };
-		return languageManager.getFormattedText(
-				"excelErroSintaticoValorInvalido", params);
+	public String loading()
+	{
+		return this.languageManager.getText( "loading" );
 	}
 
 	@Override
-	public String excelErroSintaticoValorNegativo(String linhasComErro,
-			String nomeColuna) {
-		String[] params = { linhasComErro, nomeColuna };
-		return languageManager.getFormattedText(
-				"excelErroSintaticoValorNegativo", params);
+	public String sucessoImportacaoExcel()
+	{
+		return this.languageManager.getText(
+			"sucessoImportacaoExcel" );
 	}
 
 	@Override
-	public String falhaOperacao() {
-		return languageManager.getText("falhaOperacao");
+	public String sucessoRemoverDoBD( String codigoItem )
+	{
+		String [] params = { codigoItem };
+
+		return this.languageManager.getFormattedText(
+			"sucessoRemoverDoBD", params );
 	}
 
 	@Override
-	public String loading() {
-		return languageManager.getText("loading");
+	public String sucessoSalvarNoBD( String codigoItem )
+	{
+		String [] params = { codigoItem };
+
+		return this.languageManager.getFormattedText(
+			"sucessoSalvarNoBD", params );
 	}
 
 	@Override
-	public String sucessoImportacaoExcel() {
-		return languageManager.getText("sucessoImportacaoExcel");
+	public String erroExclusaoAreaTitulacao()
+	{
+		return this.languageManager.getText(
+			"erroExclusaoAreaTitulacao" );
 	}
 
 	@Override
-	public String sucessoRemoverDoBD(String codigoItem) {
-		String[] params = { codigoItem };
-		return languageManager.getFormattedText("sucessoRemoverDoBD", params);
+	public String erroExclusaoAreaTitulacaoTitle()
+	{
+		return this.languageManager.getText(
+			"erroExclusaoAreaTitulacaoTitle" );
 	}
 
 	@Override
-	public String sucessoSalvarNoBD(String codigoItem) {
-		String[] params = { codigoItem };
-		return languageManager.getFormattedText("sucessoSalvarNoBD", params);
-	}
+	public String ofertasNaoCadastradas( String campus )
+	{
+		String [] params = { campus };
 
-	@Override
-	public String erroExclusaoAreaTitulacao() {
-		return languageManager.getText("erroExclusaoAreaTitulacao");
-	}
-
-	@Override
-	public String erroExclusaoAreaTitulacaoTitle() {
-		return languageManager.getText("erroExclusaoAreaTitulacaoTitle");
-	}
-
-	@Override
-	public String ofertasNaoCadastradas(String campus) {
-		String[] params = { campus };
-		return languageManager.getFormattedText("ofertasNaoCadastradas", params);
+		return this.languageManager.getFormattedText(
+			"ofertasNaoCadastradas", params );
 	}
 }

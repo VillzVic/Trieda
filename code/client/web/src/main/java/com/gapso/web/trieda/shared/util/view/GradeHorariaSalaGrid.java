@@ -50,7 +50,7 @@ public class GradeHorariaSalaGrid extends ContentPanel
 	public GradeHorariaSalaGrid()
 	{
 		super( new FitLayout() );
-		setHeaderVisible( false );
+		this.setHeaderVisible( false );
 	}
 
 	@Override
@@ -58,27 +58,28 @@ public class GradeHorariaSalaGrid extends ContentPanel
 	{
 		super.beforeRender();
 
-		grid = new Grid< LinhaDeCredito >(
+		this.grid = new Grid< LinhaDeCredito >(
 			getListStore(), new ColumnModel( getColumnList() ) );
 
-		grid.setTrackMouseOver( false );
-		grid.setStyleName( "GradeHorariaGrid" );
-		grid.addListener( Events.BeforeSelect,
-				new Listener< GridEvent< LinhaDeCredito > >()
-				{
-					@Override
-					public void handleEvent( GridEvent< LinhaDeCredito > be )
-					{
-						be.setCancelled( true );
-					}
-				});
+		this.grid.setTrackMouseOver( false );
+		this.grid.setStyleName( "GradeHorariaGrid" );
+		this.grid.addListener( Events.BeforeSelect,
+			new Listener< GridEvent< LinhaDeCredito > >()
+		{
+			@Override
+			public void handleEvent(
+				GridEvent< LinhaDeCredito > be )
+			{
+				be.setCancelled( true );
+			}
+		});
 
-		grid.getView().setEmptyText( emptyTextBeforeSearch );
-		quickTip = new QuickTip( grid );
-		quickTip.getToolTipConfig().setDismissDelay( 0 );
-		add( grid );
+		this.grid.getView().setEmptyText( this.emptyTextBeforeSearch );
+		this.quickTip = new QuickTip( this.grid );
+		this.quickTip.getToolTipConfig().setDismissDelay( 0 );
+		add( this.grid );
 
-		GridDropTarget target = new GridDropTarget( grid )
+		GridDropTarget target = new GridDropTarget( this.grid )
 		{
 			@Override
 			protected void onDragDrop( DNDEvent event ) { }
@@ -90,10 +91,10 @@ public class GradeHorariaSalaGrid extends ContentPanel
 			public void dragMove( DNDEvent e )
 			{
 				int linha = grid.getView().findRowIndex(
-						e.getDragEvent().getTarget() );
+					e.getDragEvent().getTarget() );
 
 				int coluna = grid.getView().findCellIndex(
-						e.getDragEvent().getTarget(), null );
+					e.getDragEvent().getTarget(), null );
 
 				if ( linha < 0 || coluna < 1 )
 				{
@@ -102,13 +103,12 @@ public class GradeHorariaSalaGrid extends ContentPanel
 					return;
 				}
 
-				// int credito = linha + 1;
 				int semana = coluna + 1;
 				semana = ( ( semana == 8 ) ? 1 : semana );
 				e.setCancelled( false );
 				e.getStatus().setStatus( true );
+
 				return;
-				// super.dragMove(e);
 			}
 		});
 
@@ -122,14 +122,17 @@ public class GradeHorariaSalaGrid extends ContentPanel
 			return;
 		}
 
-		grid.mask( "Carregando os dados, aguarde alguns instantes", "loading" );
+		this.grid.mask( "Carregando os dados, " +
+			"aguarde alguns instantes", "loading" );
+
 		Services.atendimentos().getBusca( getSalaDTO(), getTurnoDTO(),
 				new AsyncCallback< List< AtendimentoRelatorioDTO > >()
 				{
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						MessageBox.alert( "ERRO!",
+							"Não foi possível carregar a grade de horários", null );
 					}
 
 					@Override
@@ -148,35 +151,35 @@ public class GradeHorariaSalaGrid extends ContentPanel
 
 	public ListStore< LinhaDeCredito > getListStore()
 	{
-		if ( store == null )
+		if ( this.store == null )
 		{
-			store = new ListStore< LinhaDeCredito >();
+			this.store = new ListStore< LinhaDeCredito >();
 		}
 		else
 		{
-			store.removeAll();
+			this.store.removeAll();
 		}
 
-		if ( turnoDTO != null )
+		if ( this.turnoDTO != null )
 		{
 			if ( isTatico() )
 			{
-				for ( Integer i = 1; i <= turnoDTO.getMaxCreditos(); i++ )
+				for ( Integer i = 1; i <= this.turnoDTO.getMaxCreditos(); i++ )
 				{
-					store.add( new LinhaDeCredito( i.toString() ) );
+					this.store.add( new LinhaDeCredito( i.toString() ) );
 				}
 			}
 			else
 			{
-				for ( Long horarioId : turnoDTO.getHorariosStringMap().keySet() )
+				for ( Long horarioId : this.turnoDTO.getHorariosStringMap().keySet() )
 				{
-					store.add( new LinhaDeCredito(
-						turnoDTO.getHorariosStringMap().get( horarioId ), horarioId ) );
+					this.store.add( new LinhaDeCredito(
+						this.turnoDTO.getHorariosStringMap().get( horarioId ), horarioId ) );
 				}
 			}
 		}
 
-		return store;
+		return this.store;
 	}
 
 	@Override
@@ -227,7 +230,8 @@ public class GradeHorariaSalaGrid extends ContentPanel
 
 			private Html content( LinhaDeCredito model, int rowIndex, int colIndex )
 			{
-				if ( atendimentos == null || atendimentos.size() == 0 )
+				if ( atendimentos == null
+					|| atendimentos.size() == 0 )
 				{
 					new Html( "" );
 				}
@@ -320,15 +324,17 @@ public class GradeHorariaSalaGrid extends ContentPanel
 		column.setResizable( false );
 		column.setMenuDisabled( true );
 		column.setSortable( false );
+
 		list.add( column );
 	}
 
 	private AtendimentoRelatorioDTO getAtendimento( Long horarioId, int semana )
 	{
 		int ocupado = 0;
-		if ( atendimentos != null )
+
+		if ( this.atendimentos != null )
 		{
-			for ( AtendimentoRelatorioDTO at : atendimentos )
+			for ( AtendimentoRelatorioDTO at : this.atendimentos )
 			{
 				if ( at.getSemana() == semana )
 				{
@@ -348,9 +354,10 @@ public class GradeHorariaSalaGrid extends ContentPanel
 	private AtendimentoRelatorioDTO getAtendimento( int credito, int semana )
 	{
 		int ocupado = 0;
-		if ( atendimentos != null )
+
+		if ( this.atendimentos != null )
 		{
-			for ( AtendimentoRelatorioDTO at : atendimentos )
+			for ( AtendimentoRelatorioDTO at : this.atendimentos )
 			{
 				if ( at.getSemana() == semana )
 				{
@@ -369,17 +376,19 @@ public class GradeHorariaSalaGrid extends ContentPanel
 
 	private boolean isTatico()
 	{
-		if ( atendimentos == null )
+		if ( this.atendimentos == null )
 		{
 			return false;
 		}
 
-		if ( atendimentos.isEmpty() )
+		if ( this.atendimentos.isEmpty() )
 		{
 			return true;
 		}
 
-		AtendimentoRelatorioDTO atm = atendimentos.get( 0 );
+		AtendimentoRelatorioDTO atm
+			= this.atendimentos.get( 0 );
+
 		if ( atm == null )
 		{
 			return false;
@@ -388,130 +397,165 @@ public class GradeHorariaSalaGrid extends ContentPanel
 		return ( atm instanceof AtendimentoTaticoDTO );
 	}
 
-	public SalaDTO getSalaDTO() {
-		return salaDTO;
+	public SalaDTO getSalaDTO()
+	{
+		return this.salaDTO;
 	}
 
-	public void setSalaDTO(SalaDTO salaDTO) {
+	public void setSalaDTO( SalaDTO salaDTO )
+	{
 		this.salaDTO = salaDTO;
 	}
 
-	public TurnoDTO getTurnoDTO() {
-		return turnoDTO;
+	public TurnoDTO getTurnoDTO()
+	{
+		return this.turnoDTO;
 	}
 
-	public void setTurnoDTO(TurnoDTO turnoDTO) {
+	public void setTurnoDTO( TurnoDTO turnoDTO )
+	{
 		this.turnoDTO = turnoDTO;
 	}
 
-	public String getCssDisciplina(long id) {
-		int index = disciplinasCores.indexOf(id);
-		if (index < 0 || index > 14) {
+	public String getCssDisciplina( long id )
+	{
+		int index = this.disciplinasCores.indexOf( id );
+
+		if ( index < 0 || index > 14 )
+		{
 			return "corDisciplina14";
 		}
+
 		return "corDisciplina" + index;
 	}
 
-	public void preencheCores() {
-		Set<Long> set = new HashSet<Long>();
-		for (AtendimentoRelatorioDTO a : atendimentos) {
-			set.add(a.getDisciplinaId());
+	public void preencheCores()
+	{
+		Set< Long > set = new HashSet< Long >();
+
+		for ( AtendimentoRelatorioDTO a : this.atendimentos )
+		{
+			set.add( a.getDisciplinaId() );
 		}
-		disciplinasCores.clear();
-		disciplinasCores.addAll(set);
+
+		this.disciplinasCores.clear();
+		this.disciplinasCores.addAll( set );
 	}
 
 	public class LinhaDeCredito extends BaseModel
 	{
 		private static final long serialVersionUID = 3996652461744817138L;
 
-		public LinhaDeCredito(String display) {
-			setDisplay(display);
+		public LinhaDeCredito( String display )
+		{
+			setDisplay( display );
 		}
 
-		public LinhaDeCredito(String display, Long horarioId) {
-			setDisplay(display);
-			setHorarioId(horarioId);
+		public LinhaDeCredito(
+			String display, Long horarioId )
+		{
+			setDisplay( display );
+			setHorarioId( horarioId );
 		}
 
-		public String getDisplay() {
-			return get("display");
+		public String getDisplay()
+		{
+			return get( "display" );
 		}
 
-		public void setDisplay(String value) {
-			set("display", value);
+		public void setDisplay( String value )
+		{
+			set( "display", value );
 		}
 
-		public Long getHorarioId() {
-			return get("horarioId");
+		public Long getHorarioId()
+		{
+			return get( "horarioId" );
 		}
 
-		public void setHorarioId(Long value) {
-			set("horarioId", value);
+		public void setHorarioId( Long value )
+		{
+			set( "horarioId", value );
 		}
 
-		public Integer getTotalCreditos() {
-			return get("totalCreditos");
+		public Integer getTotalCreditos()
+		{
+			return get( "totalCreditos" );
 		}
 
-		public void setTotalCreditos(Integer value) {
-			set("totalCreditos", value);
+		public void setTotalCreditos( Integer value )
+		{
+			set( "totalCreditos", value );
 		}
 
-		public String getSegunda() {
-			return get("segunda");
+		public String getSegunda()
+		{
+			return get( "segunda" );
 		}
 
-		public void setSegunda(String value) {
-			set("segunda", value);
+		public void setSegunda( String value )
+		{
+			set( "segunda", value );
 		}
 
-		public String getTerca() {
-			return get("terca");
+		public String getTerca()
+		{
+			return get( "terca" );
 		}
 
-		public void setTerca(String value) {
-			set("terca", value);
+		public void setTerca( String value )
+		{
+			set( "terca", value );
 		}
 
-		public String getQuarta() {
-			return get("quarta");
+		public String getQuarta()
+		{
+			return get( "quarta" );
 		}
 
-		public void setQuarta(String value) {
-			set("quarta", value);
+		public void setQuarta( String value )
+		{
+			set( "quarta", value );
 		}
 
-		public String getQuinta() {
-			return get("quinta");
+		public String getQuinta()
+		{
+			return get( "quinta" );
 		}
 
-		public void setQuinta(String value) {
-			set("quinta", value);
+		public void setQuinta( String value )
+		{
+			set( "quinta", value );
 		}
 
-		public String getSexta() {
-			return get("sexta");
+		public String getSexta()
+		{
+			return get( "sexta" );
 		}
 
-		public void setSexta(String value) {
-			set("sexta", value);
+		public void setSexta( String value )
+		{
+			set( "sexta", value );
 		}
 
-		public String getSabado() {
-			return get("sabado");
+		public String getSabado()
+		{
+			return get( "sabado" );
 		}
 
-		public void setSabado(String value) {
-			set("sabado", value);
+		public void setSabado( String value )
+		{
+			set( "sabado", value );
 		}
 
-		public String getDomingo() {
-			return get("domingo");
+		public String getDomingo()
+		{
+			return get( "domingo" );
 		}
 
-		public void setDomingo(String value) {
-			set("domingo", value);
+		public void setDomingo( String value )
+		{
+			set( "domingo", value );
 		}
 	}
 }

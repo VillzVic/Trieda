@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -46,6 +48,7 @@ public class CurriculosExportExcel
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
+	private Map< String, Boolean > mapCurriculosExportados = new HashMap< String, Boolean >();
 
 	public CurriculosExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
@@ -134,6 +137,26 @@ public class CurriculosExportExcel
 
 			for ( CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo )
 			{
+				// Chegando nesse ponto, temos que mais uma linha será escrita
+				// na planilha de exportação. Assim, registramos essa linha
+				String key = "";
+
+				key += curriculo.getCurso().getCodigo();
+				key += "-" + curriculo.getCodigo();
+				key += "-" + curriculo.getDescricao();
+				key += "-" + periodo;
+				key += "-" + disciplinaDeUmPeriodo.getDisciplina().getCodigo();
+				key += "-" + disciplinaDeUmPeriodo.getCurriculo().getSemanaLetiva().getCodigo();
+
+				if ( this.mapCurriculosExportados.containsKey( key ) )
+				{
+					continue;
+				}
+				else
+				{
+					this.mapCurriculosExportados.put( key, true );
+				}
+
 				// Curso
 				setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 					curriculo.getCurso().getCodigo() );

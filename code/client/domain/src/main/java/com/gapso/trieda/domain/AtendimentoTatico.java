@@ -33,26 +33,26 @@ import com.gapso.trieda.misc.Semanas;
 @Entity
 @RooJavaBean
 @RooToString
-@RooEntity(identifierColumn = "ATT_ID")
-@Table(name = "ATENDIMENTO_TATICO")
+@RooEntity( identifierColumn = "ATT_ID" )
+@Table( name = "ATENDIMENTO_TATICO" )
 public class AtendimentoTatico
 	implements Serializable
 {
 	private static final long serialVersionUID = 6191028820294903254L;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Cenario.class)
-	@JoinColumn(name = "CEN_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
 	private Cenario cenario;
 
 	@NotNull
 	private String turma;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Sala.class)
-	@JoinColumn(name = "SAL_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Sala.class )
+	@JoinColumn( name = "SAL_ID" )
 	private Sala sala;
 
 	@NotNull
@@ -60,47 +60,48 @@ public class AtendimentoTatico
 	private Semanas semana;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Oferta.class)
-	@JoinColumn(name = "OFE_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Oferta.class )
+	@JoinColumn( name = "OFE_ID" )
 	private Oferta oferta;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH }, targetEntity = Disciplina.class)
-	@JoinColumn(name = "DIS_ID")
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Disciplina.class )
+	@JoinColumn( name = "DIS_ID" )
 	private Disciplina disciplina;
 
 	@NotNull
-	@Column(name = "ATT_QUANTIDADE")
-	@Min(0L)
-	@Max(999L)
+	@Column( name = "ATT_QUANTIDADE" )
+	@Min( 0L )
+	@Max( 999L )
 	private Integer quantidadeAlunos;
 
 	@NotNull
-	@Column(name = "ATT_CRED_TEORICO")
-	@Min(0L)
-	@Max(99L)
+	@Column( name = "ATT_CRED_TEORICO" )
+	@Min( 0L )
+	@Max( 99L )
 	private Integer creditosTeorico;
 
 	@NotNull
-	@Column(name = "ATT_CRED_PRATICO")
-	@Min(0L)
-	@Max(99L)
+	@Column( name = "ATT_CRED_PRATICO" )
+	@Min( 0L )
+	@Max( 99L )
 	private Integer creditosPratico;
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
-		targetEntity = InstituicaoEnsino.class )
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH }, targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
-		return instituicaoEnsino;
+		return this.instituicaoEnsino;
 	}
 
-	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
@@ -109,18 +110,18 @@ public class AtendimentoTatico
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append( "Id: " ).append(getId()).append(", ");
-		sb.append( "Version: " ).append(getVersion()).append(", ");
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
 		sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-		sb.append( "Cenario: " ).append(getCenario()).append(", ");
-		sb.append( "Turma: " ).append(getTurma()).append(", ");
-		sb.append( "Sala: " ).append(getSala()).append(", ");
-		sb.append( "Semana: " ).append(getSemana()).append(", ");
-		sb.append( "Oferta: " ).append(getOferta()).append(", ");
-		sb.append( "Disciplina: " ).append(getDisciplina()).append(", ");
-		sb.append( "QuantidadeAlunos: " ).append(getQuantidadeAlunos()).append(", ");
-		sb.append( "CreditosTeorico: " ).append(getCreditosTeorico()).append(", ");
-		sb.append( "CreditosPratico: " ).append(getCreditosPratico());
+		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
+		sb.append( "Turma: " ).append( getTurma() ).append( ", " );
+		sb.append( "Sala: " ).append( getSala() ).append( ", " );
+		sb.append( "Semana: " ).append( getSemana() ).append( ", " );
+		sb.append( "Oferta: " ).append( getOferta() ).append( ", " );
+		sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+		sb.append( "QuantidadeAlunos: " ).append( getQuantidadeAlunos() ).append( ", " );
+		sb.append( "CreditosTeorico: " ).append( getCreditosTeorico() ).append( ", " );
+		sb.append( "CreditosPratico: " ).append( getCreditosPratico() );
 
 		return sb.toString();
 	}
@@ -129,27 +130,31 @@ public class AtendimentoTatico
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "ATT_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "ATT_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
 		this.version = version;
 	}
 
@@ -190,7 +195,7 @@ public class AtendimentoTatico
 		else
 		{
 			AtendimentoTatico attached = this.entityManager.find(
-					this.getClass(), this.id );
+				this.getClass(), this.id );
 
 			this.entityManager.remove( attached );
 		}
@@ -234,7 +239,7 @@ public class AtendimentoTatico
 		return em;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findBySalaAndTurno(
 		InstituicaoEnsino instituicaoEnsino, Sala sala, Turno turno )
 	{
@@ -251,9 +256,10 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List< AtendimentoTatico > findBy( InstituicaoEnsino instituicaoEnsino,
-		Campus campus, Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoTatico > findBy(
+		InstituicaoEnsino instituicaoEnsino, Campus campus,
+		Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
 	{
 		String cursoQuery = "";
 		if ( curso != null )
@@ -284,7 +290,7 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -299,7 +305,7 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		Campus campus , Unidade unidade, Sala sala, Turno turno )
@@ -323,7 +329,7 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -336,9 +342,10 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findAllBy(
-		InstituicaoEnsino instituicaoEnsino, Campus campus, Turno turno )
+		InstituicaoEnsino instituicaoEnsino,
+		Campus campus, Turno turno )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoTatico o " +
@@ -446,7 +453,7 @@ public class AtendimentoTatico
 		return q.getResultList().size();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static int countSalasDeAula(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
@@ -463,7 +470,7 @@ public class AtendimentoTatico
 		return list.size();
 	}
 
-	public static int countLaboratorios( 
+	public static int countLaboratorios(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
@@ -493,7 +500,7 @@ public class AtendimentoTatico
 		return q.getResultList().size();
 	}
 
-	public static int countDemandas( 
+	public static int countDemandas(
 		InstituicaoEnsino instituicaoEnsino , Cenario cenario)
 	{
 		Query q = entityManager().createQuery(
@@ -525,7 +532,7 @@ public class AtendimentoTatico
 		return ( sr == null ? 0 : ( (Number) q.getSingleResult() ).intValue() );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findAllByDemanda(
 		InstituicaoEnsino instituicaoEnsino, Demanda demanda )
 	{
@@ -542,7 +549,7 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findAllByCampus(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
@@ -557,7 +564,7 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findAllBy(
 		InstituicaoEnsino instituicaoEnsino, Curso curso )
 	{
@@ -572,7 +579,7 @@ public class AtendimentoTatico
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findAllBy(
 		InstituicaoEnsino instituicaoEnsino, Oferta oferta )
 	{
@@ -589,7 +596,7 @@ public class AtendimentoTatico
 
 	public Cenario getCenario()
 	{
-		return cenario;
+		return this.cenario;
 	}
 
 	public void setCenario( Cenario cenario )
@@ -599,7 +606,7 @@ public class AtendimentoTatico
 
 	public String getTurma()
 	{
-		return turma;
+		return this.turma;
 	}
 
 	public void setTurma( String turma )
@@ -609,7 +616,7 @@ public class AtendimentoTatico
 
 	public Sala getSala()
 	{
-		return sala;
+		return this.sala;
 	}
 
 	public void setSala( Sala sala )
@@ -619,7 +626,7 @@ public class AtendimentoTatico
 
 	public Semanas getSemana()
 	{
-		return semana;
+		return this.semana;
 	}
 
 	public void setSemana( Semanas semana )
@@ -629,7 +636,7 @@ public class AtendimentoTatico
 
 	public Oferta getOferta()
 	{
-		return oferta;
+		return this.oferta;
 	}
 
 	public void setOferta( Oferta oferta )
@@ -639,7 +646,7 @@ public class AtendimentoTatico
 
 	public Disciplina getDisciplina()
 	{
-		return disciplina;
+		return this.disciplina;
 	}
 
 	public void setDisciplina( Disciplina disciplina )
@@ -649,7 +656,7 @@ public class AtendimentoTatico
 
 	public Integer getQuantidadeAlunos()
 	{
-		return quantidadeAlunos;
+		return this.quantidadeAlunos;
 	}
 
 	public void setQuantidadeAlunos( Integer quantidadeAlunos )
@@ -659,7 +666,7 @@ public class AtendimentoTatico
 
 	public Integer getCreditosTeorico()
 	{
-		return creditosTeorico;
+		return this.creditosTeorico;
 	}
 
 	public void setCreditosTeorico( Integer creditosTeorico )
@@ -669,7 +676,7 @@ public class AtendimentoTatico
 
 	public Integer getCreditosPratico()
 	{
-		return creditosPratico;
+		return this.creditosPratico;
 	}
 
 	public void setCreditosPratico( Integer creditosPratico )
@@ -679,7 +686,7 @@ public class AtendimentoTatico
 
 	public Integer getTotalCreditos()
 	{
-		return ( getCreditosPratico() + getCreditosTeorico() );
+		return ( this.getCreditosPratico() + this.getCreditosTeorico() );
 	}
 
 	public String getNaturalKey()
@@ -687,10 +694,16 @@ public class AtendimentoTatico
 		Oferta oferta = getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
 
-		return oferta.getCampus().getId() + "-" + oferta.getTurno().getId()
-			+ "-" + curriculo.getCurso().getId() + "-" + curriculo.getId()
-			+ "-" + curriculo.getPeriodo( this.getInstituicaoEnsino(), getDisciplina() ) + "-"
-			+ getDisciplina().getId() + "-" + getTurma()
+		Integer periodo = curriculo.getPeriodo(
+			this.getInstituicaoEnsino(), this.getDisciplina(), this.getOferta() );
+
+		return oferta.getCampus().getId()
+			+ "-" + oferta.getTurno().getId()
+			+ "-" + curriculo.getCurso().getId()
+			+ "-" + curriculo.getId()
+			+ "-" + periodo
+			+ "-" + getDisciplina().getId()
+			+ "-" + getTurma()
 			+ "-" + ( getCreditosTeorico() > 0 );
 	}
 

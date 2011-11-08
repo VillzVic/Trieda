@@ -45,42 +45,42 @@ public class Unidade implements Serializable
     private static final long serialVersionUID = -5763084706316974453L;
 
     @NotNull
-    @ManyToOne(targetEntity = Campus.class)
-    @JoinColumn(name = "CAM_ID")
+    @ManyToOne( targetEntity = Campus.class )
+    @JoinColumn( name = "CAM_ID" )
     private Campus campus;
 
     @NotNull
-    @Column(name = "UNI_CODIGO")
-    @Size(min = 1, max = 20)
+    @Column( name = "UNI_CODIGO" )
+    @Size( min = 1, max = 20 )
     private String codigo;
 
     @NotNull
-    @Column(name = "UNI_NOME")
-    @Size(min = 1, max = 50)
+    @Column( name = "UNI_NOME" )
+    @Size( min = 1, max = 500 )
     private String nome;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "origem")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy = "origem" )
     private Set< DeslocamentoUnidade > deslocamentos = new HashSet< DeslocamentoUnidade >();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "unidades")
+    @ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "unidades" )
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="unidade")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy="unidade" )
     private Set< GrupoSala > gruposSalas = new HashSet< GrupoSala >();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="unidade")
+    @OneToMany( cascade = CascadeType.ALL, mappedBy="unidade" )
     private Set< Sala > salas = new HashSet< Sala >();
 
     @PersistenceContext
     transient EntityManager entityManager;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "UNI_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "UNI_ID" )
     private Long id;
 
     @Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
     public Long getId()

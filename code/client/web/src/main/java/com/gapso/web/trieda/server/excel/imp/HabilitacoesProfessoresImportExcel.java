@@ -209,7 +209,7 @@ public class HabilitacoesProfessoresImportExcel
 
 		for ( HabilitacoesProfessoresImportExcelBean bean : sheetContent )
 		{
-			List< Integer> rows = beansToRowsMap.get( bean.getNaturalKeyString() );
+			List< Integer > rows = beansToRowsMap.get( bean.getNaturalKeyString() );
 
 			if ( rows == null )
 			{
@@ -238,7 +238,7 @@ public class HabilitacoesProfessoresImportExcel
 		// [ CódigoDisciplina -> Disciplina ]
 		Map< String, Disciplina > disciplinasBDMap
 			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
-				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+				Disciplina.findAll( this.instituicaoEnsino ) );
 
 		List< Integer > rowsWithErrors
 			= new ArrayList< Integer >();

@@ -108,12 +108,12 @@ public class DemandasPresenter
 			}
 		};
 
-		display.setProxy( proxy );
+		this.display.setProxy( proxy );
 	}
 
 	private void setListeners()
 	{
-		display.getNewButton().addSelectionListener(
+		this.display.getNewButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -126,7 +126,7 @@ public class DemandasPresenter
 			}
 		});
 
-		display.getEditButton().addSelectionListener(
+		this.display.getEditButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -175,7 +175,7 @@ public class DemandasPresenter
 			}
 		});
 
-		display.getRemoveButton().addSelectionListener(
+		this.display.getRemoveButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -196,7 +196,7 @@ public class DemandasPresenter
 			}
 		});
 
-		display.getImportExcelButton().addSelectionListener(
+		this.display.getImportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -212,7 +212,7 @@ public class DemandasPresenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
+		this.display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -228,7 +228,7 @@ public class DemandasPresenter
 			}
 		});
 
-		display.getResetBuscaButton().addSelectionListener(
+		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -244,7 +244,7 @@ public class DemandasPresenter
 			}
 		});
 
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -254,7 +254,7 @@ public class DemandasPresenter
 			}
 		});
 
-		display.getAssociarAlunosDemanda().addSelectionListener(
+		this.display.getAssociarAlunosDemanda().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -273,7 +273,7 @@ public class DemandasPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		gTab = (GTab) widget;
-		gTab.add( (GTabItem) display.getComponent() );
+		this.gTab = (GTab) widget;
+		this.gTab.add( (GTabItem) this.display.getComponent() );
 	}
 }

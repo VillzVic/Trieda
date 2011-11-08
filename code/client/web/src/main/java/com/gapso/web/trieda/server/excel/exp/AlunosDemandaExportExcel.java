@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -69,7 +71,7 @@ public class AlunosDemandaExportExcel
 	@Override
 	public String getFileName()
 	{
-		return getI18nConstants().alunosDemanda();
+		return this.getI18nConstants().alunosDemanda();
 	}
 
 	@Override
@@ -81,14 +83,19 @@ public class AlunosDemandaExportExcel
 	@Override
 	protected String getReportName()
 	{
-		return getI18nConstants().alunosDemanda();
+		return this.getI18nConstants().alunosDemanda();
 	}
 
 	@Override
 	protected boolean fillInExcel( HSSFWorkbook workbook )
 	{
-		List< AlunoDemanda > alunosDemanda
+		boolean result = false;
+		
+		List< AlunoDemanda > listAlunosDemanda
 			= AlunoDemanda.findAll( this.instituicaoEnsino );
+
+		Set< AlunoDemanda > alunosDemanda
+			= new HashSet< AlunoDemanda >( listAlunosDemanda );
 
 		if ( !alunosDemanda.isEmpty() )
 		{
@@ -101,7 +108,7 @@ public class AlunosDemandaExportExcel
 				nextRow = writeData( alunoDemanda, nextRow, sheet );
 			}
 
-			return true;
+			result = true;
 		}
 
 		if ( this.removeUnusedSheets )
@@ -109,55 +116,62 @@ public class AlunosDemandaExportExcel
 			removeUnusedSheets( this.sheetName, workbook );
 		}
 
-		return false;
+		return result;
 	}
 
 	private int writeData( AlunoDemanda alunoDemanda, int row, HSSFSheet sheet )
 	{
 		// Codigo Campus
 		setCell( row, 2, sheet,
-			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				alunoDemanda.getDemanda().getOferta().getCampus().getCodigo() );
 
 		// Turno
 		setCell( row, 3, sheet,
-			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				alunoDemanda.getDemanda().getOferta().getTurno().getNome() );
 
 		// Código Curso
 		setCell( row, 4, sheet,
-			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-				alunoDemanda.getDemanda().getOferta().getCurriculo().getCodigo() );
+			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				alunoDemanda.getDemanda().getOferta().getCurso().getCodigo() );
 
 		// Matriz Curricular
 		setCell( row, 5, sheet,
-			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				alunoDemanda.getDemanda().getOferta().getCurriculo().getCodigo() );
+
+		// Se a demanda do aluno não indicar o período,
+		// procuramos o período a partir do currículo da demanda
+		Integer periodo = alunoDemanda.getPeriodo();
+		if ( periodo == null || periodo <= 0 )
+		{
+			periodo = alunoDemanda.getDemanda().getOferta().getCurriculo().getPeriodo( this.instituicaoEnsino,
+				alunoDemanda.getDemanda().getDisciplina(), alunoDemanda.getDemanda().getOferta() );
+		}
 
 		// Período
 		setCell( row, 6, sheet,
-			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-				alunoDemanda.getDemanda().getOferta().getCurriculo().getPeriodo(
-					this.instituicaoEnsino, alunoDemanda.getDemanda().getDisciplina() ) );
+			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], periodo );
 
 		// Código Disciplina
 		setCell( row, 7, sheet,
-			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 				alunoDemanda.getDemanda().getDisciplina().getCodigo() );
 
 		// Matrícula do Aluno
 		setCell( row, 8, sheet,
-			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 				alunoDemanda.getAluno().getMatricula() );
 
 		// Nome do Aluno
 		setCell( row, 9, sheet,
-			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 				alunoDemanda.getAluno().getNome() );
 
 		// Prioridade
 		setCell( row, 10, sheet,
-			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
+			this.cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 				alunoDemanda.getPrioridade() );
 
 		String alunoAtendido = HtmlUtils.htmlUnescape( "N&atilde;o" );
@@ -169,7 +183,7 @@ public class AlunosDemandaExportExcel
 
 		// Atendido
 		setCell( row, 11, sheet,
-			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ], alunoAtendido );
+			this.cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ], alunoAtendido );
 
 		row++;
 		return row;
@@ -177,9 +191,10 @@ public class AlunosDemandaExportExcel
 
 	private void fillInCellStyles( HSSFSheet sheet )
 	{
-		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
+		for ( ExcelCellStyleReference cellStyleReference
+			: ExcelCellStyleReference.values() )
 		{
-			cellStyles[ cellStyleReference.ordinal() ] = getCell(
+			this.cellStyles[ cellStyleReference.ordinal() ] = getCell(
 				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -544,14 +545,14 @@ public class Demanda
 		Demanda other = (Demanda) obj;
 
 		// Comparando os id's
-		if ( id == null )
+		if ( this.id == null )
 		{
 			if ( other.id != null )
 			{
 				return false;
 			}
 		}
-		else if ( !id.equals( other.id ) )
+		else if ( !this.id.equals( other.id ) )
 		{
 			return false;
 		}
@@ -584,5 +585,32 @@ public class Demanda
         }
 
 		return ( q.getResultList().size() > 0 );
+	}
+
+	public static boolean existeDemanda( InstituicaoEnsino instituicaoEnsino,
+		Curriculo curriculo, Disciplina disciplina, Integer periodo )
+	{
+		boolean existeDemanda = Demanda.existeDemanda(
+			instituicaoEnsino, curriculo, disciplina );
+
+		if ( !existeDemanda )
+		{
+			return false;
+		}
+
+		Set< CurriculoDisciplina > disciplinas
+			= curriculo.getDisciplinas();
+
+		for ( CurriculoDisciplina cd : disciplinas )
+		{
+			if ( cd.getPeriodo() == periodo
+				&& cd.getDisciplina() == disciplina )
+			{
+				existeDemanda = true;
+				break;
+			}
+		}
+
+		return existeDemanda;
 	}
 }

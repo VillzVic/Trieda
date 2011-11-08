@@ -21,70 +21,94 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class DisponibilidadesProfessorView extends MyComposite implements DisponibilidadesProfessorPresenter.Display {
-
+public class DisponibilidadesProfessorView
+	extends MyComposite
+	implements DisponibilidadesProfessorPresenter.Display
+{
 	private SimpleToolBar toolBar;
-	private SimpleGrid<SemanaLetivaDTO> gridPanel;
+	private SimpleGrid< SemanaLetivaDTO > gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button diasDeAulaButton;
-	@SuppressWarnings("unused")
+
+	@SuppressWarnings( "unused" )
 	private UsuarioDTO usuario;
-	
-	public DisponibilidadesProfessorView(UsuarioDTO usuario) {
+
+	public DisponibilidadesProfessorView( UsuarioDTO usuario )
+	{
 		this.usuario = usuario;
-		initUI();
+		this.initUI();
 	}
 	
-	private void initUI() {
-		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Professor » Disponibilidades do Professor");
+	private void initUI()
+	{
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Professor » Disponibilidades do Professor" );
+
 		createToolBar();
 		createGrid();
 		createTabItem();
-		initComponent(tabItem);
-	}
-	
-	private void createTabItem() {
-		tabItem = new GTabItem("Disponibilidades do Professor", Resources.DEFAULTS.semanaLetiva16());
-		tabItem.setContent(panel);
-	}
-	
-	private void createToolBar() {
-		toolBar = new SimpleToolBar(false, false, false, false, false, this);
-		diasDeAulaButton = toolBar.createButton("Dias e Horários de Aula", Resources.DEFAULTS.diaHorarioAula16());
-		toolBar.add(diasDeAulaButton);
-		panel.setTopComponent(toolBar);
-	}
-	
-	private void createGrid() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
-	    bld.setMargins(new Margins(5, 5, 5, 5));
-	    
-	    gridPanel = new SimpleGrid<SemanaLetivaDTO>(getColumnList(), this);
-	    panel.add(gridPanel, bld);
+		initComponent( this.tabItem );
 	}
 
-	public List<ColumnConfig> getColumnList() {
-		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(SemanaLetivaDTO.PROPERTY_CODIGO, "Codigo", 100));
-		list.add(new ColumnConfig(SemanaLetivaDTO.PROPERTY_DESCRICAO, "Descrição", 100));
+	private void createTabItem()
+	{
+		this.tabItem = new GTabItem(
+			"Disponibilidades do Professor",
+			Resources.DEFAULTS.semanaLetiva16() );
+
+		this.tabItem.setContent( this.panel );
+	}
+	
+	private void createToolBar()
+	{
+		this.toolBar = new SimpleToolBar(
+			false, false, false, false, false, this );
+
+		this.diasDeAulaButton = toolBar.createButton(
+			"Dias e Horários de Aula",
+			Resources.DEFAULTS.diaHorarioAula16() );
+
+		this.toolBar.add( this.diasDeAulaButton );
+		this.panel.setTopComponent( this.toolBar );
+	}
+	
+	private void createGrid()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+
+	    this.gridPanel = new SimpleGrid< SemanaLetivaDTO >( getColumnList(), this );
+	    this.panel.add( this.gridPanel, bld );
+	}
+
+	public List< ColumnConfig > getColumnList()
+	{
+		List< ColumnConfig > list
+			= new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_CODIGO, "Codigo", 150 ) );
+		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_DESCRICAO, "Descrição", 150 ) );
+
 		return list;
 	}
 	
 	@Override
-	public SimpleGrid<SemanaLetivaDTO> getGrid() {
-		return gridPanel;
+	public SimpleGrid< SemanaLetivaDTO > getGrid()
+	{
+		return this.gridPanel;
 	}
 
 	@Override
-	public Button getDiasDeAulaButton() {
-		return diasDeAulaButton;
+	public Button getDiasDeAulaButton()
+	{
+		return this.diasDeAulaButton;
 	}
 
 	@Override
-	public void setProxy(RpcProxy<PagingLoadResult<SemanaLetivaDTO>> proxy) {
-		gridPanel.setProxy(proxy);
+	public void setProxy(
+		RpcProxy< PagingLoadResult< SemanaLetivaDTO > > proxy )
+	{
+		this.gridPanel.setProxy( proxy );
 	}
-	
 }

@@ -49,7 +49,7 @@ public class AtendimentoOperacional
 	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 		CascadeType.REFRESH }, targetEntity = Sala.class )
-	@JoinColumn(name = "SAL_ID")
+	@JoinColumn( name = "SAL_ID" )
 	private Sala sala;
 
 	@NotNull
@@ -97,7 +97,7 @@ public class AtendimentoOperacional
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
-		return instituicaoEnsino;
+		return this.instituicaoEnsino;
 	}
 
 	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
@@ -125,7 +125,7 @@ public class AtendimentoOperacional
 		sb.append( "Oferta: " ).append( getOferta() ).append( ", " );
 		sb.append( "Disciplina: " ).append( ( getDisciplina() != null ) ?
 			getDisciplina().getCodigo()	: "null" ).append( ", " );
-		sb.append( "QuantidadeAlunos: " ).append( getQuantidadeAlunos() ).append( ", " );
+		sb.append( "QuantidadeAlunos: " ).append( getQuantidadeAlunos() );
 
 		return sb.toString();
 	}
@@ -256,7 +256,7 @@ public class AtendimentoOperacional
 		return em;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Turno > findAllTurnosByCursos(
 		InstituicaoEnsino instituicaoEnsino, List< Campus > campi )
 	{
@@ -274,7 +274,7 @@ public class AtendimentoOperacional
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findByCenario(
 		Cenario cenario, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -313,7 +313,7 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -327,7 +327,7 @@ public class AtendimentoOperacional
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllBy(
 		InstituicaoEnsino instituicaoEnsino, Professor professor, Turno turno )
 	{
@@ -344,7 +344,7 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
 		Professor professor, Turno turno, boolean isAdmin,
 		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
@@ -376,7 +376,7 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
 		ProfessorVirtual professorVirtual, Turno turno, boolean isAdmin,
 		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
@@ -407,7 +407,7 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllBy(
 		Curso curso, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -422,7 +422,7 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllBy(
 		Oferta oferta, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -452,7 +452,7 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllBy(
 		Campus campus, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -489,7 +489,7 @@ public class AtendimentoOperacional
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findBySalaAndTurno(
 		Sala sala, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -506,7 +506,7 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findBy(
 		InstituicaoEnsino instituicaoEnsino, Campus campus,
 		Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
@@ -542,7 +542,7 @@ public class AtendimentoOperacional
 
 	public Cenario getCenario()
 	{
-		return cenario;
+		return this.cenario;
 	}
 
 	public void setCenario( Cenario cenario )
@@ -552,7 +552,7 @@ public class AtendimentoOperacional
 
 	public String getTurma()
 	{
-		return turma;
+		return this.turma;
 	}
 
 	public void setTurma( String turma )
@@ -562,7 +562,7 @@ public class AtendimentoOperacional
 
 	public Sala getSala()
 	{
-		return sala;
+		return this.sala;
 	}
 
 	public void setSala( Sala sala )
@@ -572,23 +572,23 @@ public class AtendimentoOperacional
 
 	public HorarioDisponivelCenario getHorarioDisponivelCenario()
 	{
-		return HorarioDisponivelCenario;
+		return this.HorarioDisponivelCenario;
 	}
 
 	public void setHorarioDisponivelCenario(
 		HorarioDisponivelCenario horarioDisponivelCenario )
 	{
-		HorarioDisponivelCenario = horarioDisponivelCenario;
+		this.HorarioDisponivelCenario = horarioDisponivelCenario;
 	}
 
 	public Professor getProfessor()
 	{
-		if ( professor == null )
+		if ( this.professor == null )
 		{
 			return new Professor();
 		}
 
-		return professor;
+		return this.professor;
 	}
 
 	public void setProfessor( Professor professor )
@@ -608,7 +608,7 @@ public class AtendimentoOperacional
 
 	public Oferta getOferta()
 	{
-		return oferta;
+		return this.oferta;
 	}
 
 	public void setOferta( Oferta oferta )
@@ -618,7 +618,7 @@ public class AtendimentoOperacional
 
 	public Disciplina getDisciplina()
 	{
-		return disciplina;
+		return this.disciplina;
 	}
 
 	public void setDisciplina( Disciplina disciplina )
@@ -628,7 +628,7 @@ public class AtendimentoOperacional
 
 	public Integer getQuantidadeAlunos()
 	{
-		return quantidadeAlunos;
+		return this.quantidadeAlunos;
 	}
 
 	public void setQuantidadeAlunos( Integer quantidadeAlunos )
@@ -638,10 +638,11 @@ public class AtendimentoOperacional
 
 	public ProfessorVirtual getProfessorVirtual()
 	{
-		return professorVirtual;
+		return this.professorVirtual;
 	}
 
-	public void setProfessorVirtual( ProfessorVirtual professorVirtual )
+	public void setProfessorVirtual(
+		ProfessorVirtual professorVirtual )
 	{
 		this.professorVirtual = professorVirtual;
 	}
@@ -651,10 +652,17 @@ public class AtendimentoOperacional
 		Oferta oferta = getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
 
+		Integer periodo = curriculo.getPeriodo(
+			this.getInstituicaoEnsino(), this.getDisciplina(), this.getOferta() );
+
 		return oferta.getCampus().getId()
-			+ "-" + oferta.getTurno().getId() + "-" + curriculo.getCurso().getId()
-			+ "-" + curriculo.getId() + "-" + curriculo.getPeriodo( this.getInstituicaoEnsino(), getDisciplina() )
-			+ "-" + getDisciplina().getId() + "-" + getTurma() + "-" + getCreditoTeorico();
+			+ "-" + oferta.getTurno().getId()
+			+ "-" + curriculo.getCurso().getId()
+			+ "-" + curriculo.getId()
+			+ "-" + periodo
+			+ "-" + getDisciplina().getId()
+			+ "-" + getTurma()
+			+ "-" + getCreditoTeorico();
 	}
 
 	static public List< AtendimentoOperacional > getAtendimentosOperacional(
@@ -676,7 +684,7 @@ public class AtendimentoOperacional
 		return atendimentosOperacional;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllByDemanda(
 		InstituicaoEnsino instituicaoEnsino, Demanda demanda )
 	{
@@ -693,7 +701,8 @@ public class AtendimentoOperacional
 		return q.getResultList();
 	}
 
-	public static int countTurma( InstituicaoEnsino instituicaoEnsino, Campus campus )
+	public static int countTurma(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		List< AtendimentoOperacional > listAtendimentos
 			= AtendimentoOperacional.findAllByCampus( instituicaoEnsino, campus );
@@ -701,7 +710,7 @@ public class AtendimentoOperacional
 		return ( listAtendimentos == null ? 0 : listAtendimentos.size() );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllByCampus(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{

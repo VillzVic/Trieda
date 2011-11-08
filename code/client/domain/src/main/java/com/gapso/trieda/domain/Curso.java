@@ -47,89 +47,84 @@ public class Curso
 	private static final long serialVersionUID = 2645879541329424105L;
 
 	@NotNull
-	@ManyToOne(targetEntity = TipoCurso.class)
-	@JoinColumn(name = "TCU_ID")
+	@ManyToOne( targetEntity = TipoCurso.class )
+	@JoinColumn( name = "TCU_ID" )
 	private TipoCurso tipoCurso;
 
 	@NotNull
-	@ManyToOne(targetEntity = Cenario.class)
-	@JoinColumn(name = "CEN_ID")
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
 	private Cenario cenario;
 
 	@NotNull
-	@Column(name = "CUR_CODIGO")
-	@Size(min = 1, max = 50)
+	@Column( name = "CUR_CODIGO" )
+	@Size( min = 1, max = 50 )
 	private String codigo;
 
 	@NotNull
-	@Column(name = "CUR_NOME")
-	@Size(min = 1, max = 50)
+	@Column( name = "CUR_NOME" )
+	@Size( min = 1, max = 200 )
 	private String nome;
 
 	@NotNull
-	@Column(name = "CUR_MIN_DOUTORES")
-	@Min(0L)
-	@Max(100L)
+	@Column( name = "CUR_MIN_DOUTORES" )
+	@Min( 0L )
+	@Max( 100L )
 	private Integer numMinDoutores;
 
 	@NotNull
-	@Column(name = "CUR_MIN_MESTRES")
-	@Min(0L)
-	@Max(100L)
+	@Column( name = "CUR_MIN_MESTRES" )
+	@Min( 0L )
+	@Max( 100L )
 	private Integer numMinMestres;
 
 	@NotNull
-	@Column(name = "CUR_TEM_INTPARC")
-	@Min(0L)
-	@Max(100L)
+	@Column( name = "CUR_TEM_INTPARC" )
+	@Min( 0L )
+	@Max( 100L )
 	private Integer minTempoIntegralParcial;
 
 	@NotNull
-	@Column(name = "CUR_TEM_INT")
-	@Min(0L)
-	@Max(100L)
+	@Column( name = "CUR_TEM_INT" )
+	@Min( 0L )
+	@Max( 100L )
 	private Integer minTempoIntegral;
 
 	@NotNull
-	@Column(name = "CUR_MAX_DISC_PROF")
-	@Min(1L)
-	@Max(99L)
+	@Column( name = "CUR_MAX_DISC_PROF" )
+	@Min( 1L )
+	@Max( 99L )
 	private Integer maxDisciplinasPeloProfessor;
 
-	@Column(name = "CUR_ADM_MAIS_DE_UMA_DISC")
+	@Column( name = "CUR_ADM_MAIS_DE_UMA_DISC" )
 	private Boolean admMaisDeUmDisciplina;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "cursos")
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "cursos" )
 	private Set< AreaTitulacao > areasTitulacao = new HashSet< AreaTitulacao >();
 
-	@OneToMany(mappedBy = "curso")
+	@OneToMany( mappedBy = "curso" )
 	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
 
-    @OneToMany(mappedBy = "curso")
+    @OneToMany( mappedBy = "curso" )
     private Set< Oferta > ofertas = new HashSet< Oferta >();
 
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("Id: ").append(getId()).append(", ");
-		sb.append("Version: ").append(getVersion()).append(", ");
-		sb.append("TipoCurso: ").append(getTipoCurso()).append(", ");
-		sb.append("Cenario: ").append(getCenario()).append(", ");
-		sb.append("Codigo: ").append(getCodigo()).append(", ");
-		sb.append("Nome: ").append(getNome()).append(", ");
-		sb.append("NumMinDoutores: ").append(getNumMinDoutores()).append(", ");
-		sb.append("NumMinMestres: ").append(getNumMinMestres()).append(", ");
-		sb.append("MinTempoIntegralParcial: ").append(
-			getMinTempoIntegralParcial()).append(", ");
-		sb.append("MinTempoIntegral: ").append(
-			getMinTempoIntegral()).append(", ");
-		sb.append("MaxDisciplinasPeloProfessor: ").append(
-			getMaxDisciplinasPeloProfessor()).append(", ");
-		sb.append("AdmMaisDeUmDisciplina: ").append(
-			getAdmMaisDeUmDisciplina() ).append(", ");
-		sb.append("AreasTitulacao: ").append(
-			getAreasTitulacao() == null ? "null" : getAreasTitulacao().size());
+		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+		sb.append( "TipoCurso: " ).append( getTipoCurso() ).append( ", " );
+		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
+		sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+		sb.append( "Nome: " ).append( getNome() ).append( ", " );
+		sb.append( "NumMinDoutores: " ).append( getNumMinDoutores() ).append( ", " );
+		sb.append( "NumMinMestres: " ).append( getNumMinMestres() ).append( ", " );
+		sb.append( "MinTempoIntegralParcial: " ).append( getMinTempoIntegralParcial() ).append( ", " );
+		sb.append( "MinTempoIntegral: " ).append( getMinTempoIntegral() ).append( ", " );
+		sb.append( "MaxDisciplinasPeloProfessor: " ).append( getMaxDisciplinasPeloProfessor() ).append( ", " );
+		sb.append( "AdmMaisDeUmDisciplina: " ).append( getAdmMaisDeUmDisciplina() ).append( ", " );
+		sb.append( "AreasTitulacao: " ).append( getAreasTitulacao() == null ? "null" : getAreasTitulacao().size() );
 
 		return sb.toString();
 	}
@@ -219,8 +214,7 @@ public class Curso
 		return this.maxDisciplinasPeloProfessor;
 	}
 
-	public void setMaxDisciplinasPeloProfessor(
-		Integer maxDisciplinasPeloProfessor )
+	public void setMaxDisciplinasPeloProfessor( Integer maxDisciplinasPeloProfessor )
 	{
 		this.maxDisciplinasPeloProfessor = maxDisciplinasPeloProfessor;
 	}
@@ -247,7 +241,7 @@ public class Curso
 
 	public Set< Curriculo > getCurriculos()
 	{
-		return curriculos;
+		return this.curriculos;
 	}
 
 	public void setCurriculos( Set< Curriculo > curriculos )
@@ -257,7 +251,7 @@ public class Curso
 
 	public Set< Oferta > getOfertas()
 	{
-		return ofertas;
+		return this.ofertas;
 	}
 
 	public void setOfertas( Set< Oferta > ofertas )
@@ -269,12 +263,12 @@ public class Curso
 	transient EntityManager entityManager;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "CUR_ID")
+	@GeneratedValue( strategy = GenerationType.AUTO )
+	@Column( name = "CUR_ID" )
 	private Long id;
 
 	@Version
-	@Column(name = "version")
+	@Column( name = "version" )
 	private Integer version;
 
 	public Long getId()
@@ -287,7 +281,8 @@ public class Curso
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
 		return this.version;
 	}
 
@@ -330,14 +325,17 @@ public class Curso
 		{
 			this.removeAreasTitulacao();
 			this.removeMatrizesCurriculares();
+
 			this.entityManager.remove( this );
 		}
 		else
 		{
-			Curso attached = this.entityManager.find( this.getClass(), this.id );
+			Curso attached = this.entityManager.find(
+				this.getClass(), this.id );
 
 			attached.removeAreasTitulacao();
 			attached.removeMatrizesCurriculares();
+
 			this.entityManager.remove( attached );
 		}
 	}
@@ -420,7 +418,7 @@ public class Curso
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Curso > findAll(
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -434,7 +432,7 @@ public class Curso
 	}
 
 	public static Map< String, Curso > buildCursoCodigoToCursoMap(
-			List< Curso > cursos )
+		List< Curso > cursos )
 	{
 		Map< String, Curso > cursosMap
 			= new HashMap< String, Curso >();
@@ -457,7 +455,8 @@ public class Curso
 
 		Curso curso = entityManager().find( Curso.class, id );
 
-		if ( curso != null && curso.getTipoCurso() != null
+		if ( curso != null
+			&& curso.getTipoCurso() != null
 			&& curso.getTipoCurso().getInstituicaoEnsino() != null
 			&& curso.getTipoCurso().getInstituicaoEnsino() == instituicaoEnsino )
 		{
@@ -471,10 +470,10 @@ public class Curso
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults )
 	{
-		return find( instituicaoEnsino, firstResult, maxResults, null );
+		return Curso.find( instituicaoEnsino, firstResult, maxResults, null );
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Curso > find(
 		InstituicaoEnsino instituicaoEnsino,
 		int firstResult, int maxResults, String orderBy )
@@ -492,7 +491,7 @@ public class Curso
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Curso > findByCampus(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
@@ -507,7 +506,7 @@ public class Curso
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Curso > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -522,7 +521,7 @@ public class Curso
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
 	public static List< Curso > findBy(
 		InstituicaoEnsino instituicaoEnsino, String codigo, String nome,
 		TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy )
@@ -560,7 +559,8 @@ public class Curso
 		return q.getResultList();
 	}
 
-	public static int count( InstituicaoEnsino instituicaoEnsino,
+	public static int count(
+		InstituicaoEnsino instituicaoEnsino,
 		String codigo, String nome, TipoCurso tipoCurso )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
@@ -616,7 +616,7 @@ public class Curso
 		final int prime = 31;
 		int result = 1;
 
-		result = ( prime * result + ( ( id == null ) ? 0 : id.hashCode() ) );
+		result = ( prime * result + ( ( this.id == null ) ? 0 : this.id.hashCode() ) );
 		return result;
 	}
 
@@ -640,14 +640,14 @@ public class Curso
 
 		Curso other = (Curso) obj;
 
-		if ( id == null )
+		if ( this.id == null )
 		{
 			if ( other.id != null )
 			{
 				return false;
 			}
 		}
-		else if ( !id.equals( other.id ) )
+		else if ( !this.id.equals( other.id ) )
 		{
 			return false;
 		}

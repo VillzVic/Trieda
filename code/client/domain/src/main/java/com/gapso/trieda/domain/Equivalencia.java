@@ -39,14 +39,14 @@ public class Equivalencia
 	private static final long serialVersionUID = -8632323368932009356L;
 
     @NotNull
-    @ManyToOne(targetEntity = Disciplina.class)
-    @JoinColumn(name = "DIS_CURSOU_ID")
+    @ManyToOne( targetEntity = Disciplina.class )
+    @JoinColumn( name = "DIS_CURSOU_ID" )
     private Disciplina cursou;
 
     @NotNull
-    @ManyToMany(targetEntity = Disciplina.class)
-    @JoinColumn(name = "DIS_ELIMINA_ID")
-    private Set<Disciplina> elimina = new HashSet<Disciplina>();
+    @ManyToMany( targetEntity = Disciplina.class )
+    @JoinColumn( name = "DIS_ELIMINA_ID" )
+    private Set< Disciplina > elimina = new HashSet< Disciplina >();
 
 	public String toString()
 	{
@@ -60,19 +60,24 @@ public class Equivalencia
         return sb.toString();
     }
 
-	public Disciplina getCursou() {
+	public Disciplina getCursou()
+	{
         return this.cursou;
     }
 
-	public void setCursou(Disciplina cursou) {
+	public void setCursou( Disciplina cursou )
+	{
         this.cursou = cursou;
     }
 
-	public Set<Disciplina> getElimina() {
+	public Set< Disciplina > getElimina()
+	{
         return this.elimina;
     }
 
-	public void setElimina(Set<Disciplina> elimina) {
+	public void setElimina(
+		Set< Disciplina > elimina )
+	{
         this.elimina = elimina;
     }
 
@@ -80,63 +85,97 @@ public class Equivalencia
     transient EntityManager entityManager;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "EQV_ID")
+    @GeneratedValue( strategy = GenerationType.AUTO )
+    @Column( name = "EQV_ID" )
     private Long id;
 
 	@Version
-    @Column(name = "version")
+    @Column( name = "version" )
     private Integer version;
 
-	public Long getId() {
+	public Long getId()
+	{
         return this.id;
     }
 
-	public void setId(Long id) {
+	public void setId( Long id )
+	{
         this.id = id;
     }
 
-	public Integer getVersion() {
+	public Integer getVersion()
+	{
         return this.version;
     }
 
-	public void setVersion(Integer version) {
+	public void setVersion( Integer version )
+	{
         this.version = version;
     }
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
 	
 	@Transactional
-    public void persist() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+    public void persist()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
 	@Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Equivalencia attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+    public void remove()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            Equivalencia attached = this.entityManager.find(
+            	this.getClass(), this.id );
+
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
 	@Transactional
-    public Equivalencia merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Equivalencia merged = this.entityManager.merge(this);
+    public Equivalencia merge()
+	{
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        Equivalencia merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -155,14 +194,17 @@ public class Equivalencia
         return em;
     }
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< Equivalencia > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery(
-        	" SELECT o FROM Equivalencia o " +
-        	" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM Equivalencia o " +
+    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
 	public static Equivalencia find(
@@ -207,12 +249,13 @@ public class Equivalencia
 			q.setParameter( "disciplina", disciplina );
 		}
 
-		return ( (Number)q.getSingleResult() ).intValue();
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List< Equivalencia > findBy( InstituicaoEnsino instituicaoEnsino,
-		Disciplina disciplina, int firstResult, int maxResults, String orderBy )
+	@SuppressWarnings( "unchecked" )
+	public static List< Equivalencia > findBy(
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina,
+		int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
@@ -238,17 +281,20 @@ public class Equivalencia
 		return q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings( "unchecked" )
     public static List< Equivalencia > find(
     	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults )
     {
-        return entityManager().createQuery(
+		Query q = entityManager().createQuery(
         	" SELECT o FROM Equivalencia o " +
-        	" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
-        	.setFirstResult( firstResult )
-        	.setMaxResults( maxResults ).getResultList();
+    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+    	q.setFirstResult( firstResult );
+    	q.setMaxResults( maxResults );
+
+        return q.getResultList();
     }
 
 	public static Map< String, Equivalencia > buildEquivalenciaCursouCodigoToEquivalenciaMap(

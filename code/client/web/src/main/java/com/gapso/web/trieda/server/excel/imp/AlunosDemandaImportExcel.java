@@ -2,8 +2,11 @@ package com.gapso.web.trieda.server.excel.imp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -17,10 +20,12 @@ import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -257,7 +262,7 @@ public class AlunosDemandaImportExcel
 		Map< String, Turno > turnosBDMap = Turno.buildTurnoNomeToTurnoMap(
 			Turno.findAll( this.instituicaoEnsino ) );
 
-		List< Integer > rowsWithErrors = new ArrayList<Integer >();
+		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 
 		for ( AlunosDemandaImportExcelBean bean : sheetContent )
 		{
@@ -266,7 +271,7 @@ public class AlunosDemandaImportExcel
 			if ( turno != null )
 			{
 				bean.setTurno( turno );
-				}
+			}
 			else
 			{
 				rowsWithErrors.add( bean.getRow() );
@@ -386,14 +391,61 @@ public class AlunosDemandaImportExcel
 			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(
 				Demanda.findAll( this.instituicaoEnsino ) );
 
+		Map< String, Oferta > ofertasBDMap
+			= Oferta.buildCampusTurnoCurriculoToOfertaMap(
+				Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
+
+		Map< String, AlunoDemanda > alunosDemandaBD
+			= AlunoDemanda.buildCodAlunoCodDemandaToAlunosDemandasMap(
+				AlunoDemanda.findAll( this.instituicaoEnsino ) );
+
+		Map< String, CurriculoDisciplina > curriculosDisciplinaBD
+			= CurriculoDisciplina.buildCurriculoDisciplinaPeriodoMap(
+				CurriculoDisciplina.findAll( this.instituicaoEnsino ) );
+
 		for ( AlunosDemandaImportExcelBean alunosDemandaExcel : sheetContent )
 		{
 			String codeDemanda = getCodeDemanda( alunosDemandaExcel );
-			String codeAluno = alunosDemandaExcel.getMatriculaAlunoStr();
+			String codeOferta = getCodeOferta( alunosDemandaExcel );
+			String codeAluno = alunosDemandaExcel.getMatriculaAlunoStr().trim();
 
 			Demanda demandaBD = demandasBDMap.get( codeDemanda );
 			Aluno alunoBD = alunosBDMap.get( codeAluno );
+			Oferta ofertaBD = ofertasBDMap.get( codeOferta );
 
+			// Verifica se a oferta já estava cadastrada
+			if ( ofertaBD == null )
+			{
+				ofertaBD = new Oferta();
+
+				ofertaBD.setCampus( alunosDemandaExcel.getCampus() );
+				ofertaBD.setTurno( alunosDemandaExcel.getTurno() );
+				ofertaBD.setCurriculo( alunosDemandaExcel.getCurriculo() );
+				ofertaBD.setCurso( alunosDemandaExcel.getCurso() );
+				ofertaBD.setReceita( 0.0 );
+
+				ofertaBD.persist();
+
+				Oferta.entityManager().refresh( ofertaBD );
+				ofertasBDMap.put( codeOferta, ofertaBD );
+			}
+
+			// Verifica se a demanda já estava cadastrada
+			if ( demandaBD == null )
+			{
+				demandaBD = new Demanda();
+
+				demandaBD.setDisciplina( alunosDemandaExcel.getDisciplina() );
+				demandaBD.setOferta( ofertaBD );
+				demandaBD.setQuantidade( 1 );
+
+				demandaBD.persist();
+
+				Demanda.entityManager().refresh( demandaBD );
+				demandasBDMap.put( codeDemanda, demandaBD );
+			}
+
+			// Verifica se o aluno já estava cadastrado
 			if ( alunoBD == null )
 			{
 				alunoBD = new Aluno();
@@ -401,7 +453,6 @@ public class AlunosDemandaImportExcel
 				alunoBD.setInstituicaoEnsino( this.instituicaoEnsino );
 				alunoBD.setCenario( this.cenario );
 				alunoBD.setNome( alunosDemandaExcel.getNomeAlunoStr() );
-				// alunoBD.setCpf( alunosDemandaExcel.getCpfAlunoStr() );
 				alunoBD.setMatricula( alunosDemandaExcel.getMatriculaAlunoStr() );
 
 				alunoBD.persist();
@@ -409,16 +460,19 @@ public class AlunosDemandaImportExcel
 				alunosBDMap.put( codeAluno, alunoBD );
 			}
 
+			// Relaciona o aluno com a demanda
 			if ( demandaBD != null && alunoBD != null )
 			{
-				AlunoDemanda alunoDemandaBD = AlunoDemanda.findByDemandaAndAluno(
-					this.instituicaoEnsino, demandaBD, alunoBD );
+				String codeAlunoDemanda = getCodeAlunoDemanda( alunoBD, demandaBD );
+				AlunoDemanda alunoDemandaBD = alunosDemandaBD.get( codeAlunoDemanda );
 
 				if ( alunoDemandaBD != null )
 				{
 					// Update
 					alunoDemandaBD.setPrioridade( alunosDemandaExcel.getPrioridade() );
-					demandaBD.merge();
+					alunoDemandaBD.setPeriodo( alunosDemandaExcel.getPeriodo() );
+
+					alunoDemandaBD.merge();
 				}
 				else
 				{
@@ -429,9 +483,80 @@ public class AlunosDemandaImportExcel
 					newAlunoDemanda.setDemanda( demandaBD );
 					newAlunoDemanda.setAtendido( false );
 					newAlunoDemanda.setPrioridade( alunosDemandaExcel.getPrioridade() );
+					newAlunoDemanda.setPeriodo( alunosDemandaExcel.getPeriodo() );
 
 					newAlunoDemanda.persist();
+
+					AlunoDemanda.entityManager().refresh( newAlunoDemanda );
+					alunosDemandaBD.put( codeAlunoDemanda, newAlunoDemanda );
 				}
+
+				// Verifica se a disciplina dessa demanda já
+				// está relacionada com o currículo da oferta
+				String codCurriculoDisciplina
+					= getCodeCurriculoDisciplina( alunosDemandaExcel );
+
+				CurriculoDisciplina curriculoDisciplinaBD = null;
+
+				if ( curriculosDisciplinaBD.containsKey( codCurriculoDisciplina ) )
+				{
+					curriculoDisciplinaBD = curriculosDisciplinaBD.get( codCurriculoDisciplina );
+				}
+
+				if ( curriculoDisciplinaBD == null )
+				{
+					// Criamos um novo par Curriculo/Disciplina para o período atual
+					CurriculoDisciplina newCurriculoDisciplina = new CurriculoDisciplina();
+
+					newCurriculoDisciplina.setPeriodo( alunosDemandaExcel.getPeriodo() );
+					newCurriculoDisciplina.setDisciplina( alunosDemandaExcel.getDisciplina() );
+					newCurriculoDisciplina.setCurriculo( alunosDemandaExcel.getCurriculo() );
+
+					if ( newCurriculoDisciplina.getPeriodo() != null
+						&& newCurriculoDisciplina.getDisciplina() != null
+						&& newCurriculoDisciplina.getCurriculo() != null )
+					{
+						newCurriculoDisciplina.persist();
+						CurriculoDisciplina.entityManager().refresh( newCurriculoDisciplina );
+						curriculosDisciplinaBD.put( codCurriculoDisciplina, newCurriculoDisciplina );
+					}
+				}
+			}
+		}
+
+		atualizaQuantidadeDemanda();
+	}
+	
+	private void atualizaQuantidadeDemanda()
+	{
+		List< AlunoDemanda > list
+			= AlunoDemanda.findAll( this.instituicaoEnsino );
+
+		Map< Demanda, Set< Aluno > > map
+			= new HashMap< Demanda, Set< Aluno > >();
+
+		for ( AlunoDemanda ad : list )
+		{
+			Set< Aluno > alunos = map.get( ad.getDemanda() );
+
+			if ( alunos == null )
+			{
+				alunos = new HashSet< Aluno >();
+				map.put( ad.getDemanda(), alunos );
+			}
+
+			alunos.add( ad.getAluno() );
+		}
+
+		for ( Entry< Demanda, Set< Aluno > > entry : map.entrySet() )
+		{
+			Demanda demanda = entry.getKey();
+			Integer quantidade = entry.getValue().size();
+
+			if ( quantidade != 0 )
+			{
+				demanda.setQuantidade( quantidade );
+				demanda.merge();
 			}
 		}
 	}
@@ -439,10 +564,8 @@ public class AlunosDemandaImportExcel
 	// Campus + Turno + Matriz Curricular + Disciplina
 	private String getCodeDemanda( AlunosDemandaImportExcelBean bean )
 	{
-		return bean.getCodigoCampusStr()
-			+ "-" + bean.getCodigoTurnoStr()
-			+ "-" + bean.getCodigoCurriculoStr()
-			+ "-" + bean.getDisciplinaCodigoStr();
+		return bean.getCodigoCampusStr() + "-" + bean.getCodigoTurnoStr()
+			+ "-" + bean.getCodigoCurriculoStr() + "-" + bean.getDisciplinaCodigoStr();
 	}
 
 	private void resolveHeaderColumnNames()
@@ -459,5 +582,33 @@ public class AlunosDemandaImportExcel
 			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
 			PRIORIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().prioridadeAlunoDemanda() );
 		}
+	}
+
+	// Campus + Turno + Matriz Curricular
+	private String getCodeOferta( AlunosDemandaImportExcelBean bean )
+	{
+		return bean.getCodigoCampusStr()
+			+ "-" + bean.getCodigoTurnoStr()
+			+ "-" + bean.getCodigoCurriculoStr();
+	}
+
+	// MatriculaAluno + IdDemanda
+	private String getCodeAlunoDemanda( Aluno aluno, Demanda demanda )
+	{
+		return ( aluno.getMatricula() + "-" + demanda.getId() );
+	}
+
+	private String getCodeCurriculoDisciplina(
+		AlunosDemandaImportExcelBean bean )
+	{
+		String key = "";
+
+		key += bean.getCurriculo().getId();
+		key += "-";
+		key += bean.getDisciplina().getId();
+		key += "-";
+		key += bean.getPeriodo();
+
+		return key;
 	}
 }

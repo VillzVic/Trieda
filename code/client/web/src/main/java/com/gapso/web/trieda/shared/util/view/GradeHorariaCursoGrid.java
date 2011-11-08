@@ -130,7 +130,9 @@ public class GradeHorariaCursoGrid
 			return;
 		}
 
-		grid.mask( "Carregando os dados, aguarde alguns instantes", "loading" );
+		this.grid.mask( "Carregando os dados, " +
+			"aguarde alguns instantes", "loading" );
+
 		AtendimentosServiceAsync service = Services.atendimentos();
 
 		service.getBusca( getCurriculoDTO(), getPeriodo(), getTurnoDTO(), getCampusDTO(), getCursoDTO(),
@@ -139,11 +141,13 @@ public class GradeHorariaCursoGrid
 				@Override
 				public void onFailure( Throwable caught )
 				{
-					MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+					MessageBox.alert( "ERRO!",
+						"Não foi possível carregar a grade de horários", null );
 				}
 
 				@Override
-				public void onSuccess( ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > result )
+				public void onSuccess(
+					ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > result )
 				{
 					atendimentos = result.getPrimeiro();
 					diaSemanaTamanhoList = result.getSegundo();
@@ -160,35 +164,35 @@ public class GradeHorariaCursoGrid
 
 	public ListStore< LinhaDeCredito > getListStore()
 	{
-		if ( store == null )
+		if ( this.store == null )
 		{
-			store = new ListStore< LinhaDeCredito >();
+			this.store = new ListStore< LinhaDeCredito >();
 		}
 		else
 		{
-			store.removeAll();
+			this.store.removeAll();
 		}
 
-		if ( turnoDTO != null )
+		if ( this.turnoDTO != null )
 		{
 			if ( isTatico() )
 			{
-				for ( Integer i = 1; i <= turnoDTO.getMaxCreditos(); i++ )
+				for ( Integer i = 1; i <= this.turnoDTO.getMaxCreditos(); i++ )
 				{
-					store.add( new LinhaDeCredito( i.toString() ) );
+					this.store.add( new LinhaDeCredito( i.toString() ) );
 				}
 			}
 			else
 			{
-				for ( Long horarioId : turnoDTO.getHorariosStringMap().keySet() )
+				for ( Long horarioId : this.turnoDTO.getHorariosStringMap().keySet() )
 				{
-					store.add( new LinhaDeCredito(
-						turnoDTO.getHorariosStringMap().get( horarioId ), horarioId ) );
+					this.store.add( new LinhaDeCredito(
+						this.turnoDTO.getHorariosStringMap().get( horarioId ), horarioId ) );
 				}
 			}
 		}
 
-		return store;
+		return this.store;
 	}
 
 	@Override
@@ -229,12 +233,12 @@ public class GradeHorariaCursoGrid
 	private int getColumnsCount()
 	{
 		int count = 0;
-		if ( diaSemanaTamanhoList == null )
+		if ( this.diaSemanaTamanhoList == null )
 		{
 			return count;
 		}
 
-		for ( Integer c : diaSemanaTamanhoList )
+		for ( Integer c : this.diaSemanaTamanhoList )
 		{
 			count += c;
 		}
@@ -242,7 +246,8 @@ public class GradeHorariaCursoGrid
 		return count;
 	}
 
-	private void addColumn( List< ColumnConfig > list, String id, String name )
+	private void addColumn(
+		List< ColumnConfig > list, String id, String name )
 	{
 		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer< LinhaDeCredito >()
 		{
@@ -356,9 +361,9 @@ public class GradeHorariaCursoGrid
 	private AtendimentoRelatorioDTO getAtendimento( Long horarioId, int semana )
 	{
 		int ocupado = 0;
-		if ( atendimentos != null )
+		if ( this.atendimentos != null )
 		{
-			for ( AtendimentoRelatorioDTO at : atendimentos )
+			for ( AtendimentoRelatorioDTO at : this.atendimentos )
 			{
 				if ( at.getSemana() == semana )
 				{
@@ -378,9 +383,9 @@ public class GradeHorariaCursoGrid
 	private AtendimentoRelatorioDTO getAtendimento( int credito, int semana )
 	{
 		int ocupado = 0;
-		if ( atendimentos != null )
+		if ( this.atendimentos != null )
 		{
-			for ( AtendimentoRelatorioDTO at : atendimentos )
+			for ( AtendimentoRelatorioDTO at : this.atendimentos )
 			{
 				if ( at.getSemana() == semana )
 				{
@@ -399,7 +404,7 @@ public class GradeHorariaCursoGrid
 
 	private int getWidth( String semana )
 	{
-		if ( diaSemanaTamanhoList == null )
+		if ( this.diaSemanaTamanhoList == null )
 		{
 			return 100;
 		}
@@ -440,22 +445,22 @@ public class GradeHorariaCursoGrid
 			i = 1;
 		}
 
-		return ( diaSemanaTamanhoList.get( i ) * 100 );
+		return ( this.diaSemanaTamanhoList.get( i ) * 100 );
 	}
 
 	private boolean isTatico()
 	{
-		if ( atendimentos == null )
+		if ( this.atendimentos == null )
 		{
 			return false;
 		}
 
-		if ( atendimentos.isEmpty() )
+		if ( this.atendimentos.isEmpty() )
 		{
 			return true;
 		}
 
-		AtendimentoRelatorioDTO atm = atendimentos.get( 0 );
+		AtendimentoRelatorioDTO atm = this.atendimentos.get( 0 );
 		if ( atm == null )
 		{
 			return false;
@@ -464,49 +469,59 @@ public class GradeHorariaCursoGrid
 		return ( atm instanceof AtendimentoTaticoDTO );
 	}
 
-	public CurriculoDTO getCurriculoDTO() {
-		return curriculoDTO;
+	public CurriculoDTO getCurriculoDTO()
+	{
+		return this.curriculoDTO;
 	}
 
-	public void setCurriculoDTO(CurriculoDTO curriculoDTO) {
+	public void setCurriculoDTO( CurriculoDTO curriculoDTO )
+	{
 		this.curriculoDTO = curriculoDTO;
 	}
 
-	public int getPeriodo() {
-		return periodo;
+	public int getPeriodo()
+	{
+		return this.periodo;
 	}
 
-	public void setPeriodo(int periodo) {
+	public void setPeriodo( int periodo )
+	{
 		this.periodo = periodo;
 	}
 
-	public TurnoDTO getTurnoDTO() {
-		return turnoDTO;
+	public TurnoDTO getTurnoDTO()
+	{
+		return this.turnoDTO;
 	}
 
-	public void setTurnoDTO(TurnoDTO turnoDTO) {
+	public void setTurnoDTO( TurnoDTO turnoDTO )
+	{
 		this.turnoDTO = turnoDTO;
 	}
 
-	public CampusDTO getCampusDTO() {
-		return campusDTO;
+	public CampusDTO getCampusDTO()
+	{
+		return this.campusDTO;
 	}
 
-	public void setCampusDTO(CampusDTO campusDTO) {
+	public void setCampusDTO( CampusDTO campusDTO )
+	{
 		this.campusDTO = campusDTO;
 	}
 
-	public CursoDTO getCursoDTO() {
-		return cursoDTO;
+	public CursoDTO getCursoDTO()
+	{
+		return this.cursoDTO;
 	}
 
-	public void setCursoDTO(CursoDTO cursoDTO) {
+	public void setCursoDTO( CursoDTO cursoDTO )
+	{
 		this.cursoDTO = cursoDTO;
 	}
 
 	public String getCssDisciplina( long id )
 	{
-		int index = disciplinasCores.indexOf( id );
+		int index = this.disciplinasCores.indexOf( id );
 		if ( index < 0 || index > 14 )
 		{
 			return "corDisciplina14";
@@ -518,13 +533,13 @@ public class GradeHorariaCursoGrid
 	public void preencheCores()
 	{
 		Set< Long > set = new HashSet< Long >();
-		for ( AtendimentoRelatorioDTO a : atendimentos )
+		for ( AtendimentoRelatorioDTO a : this.atendimentos )
 		{
 			set.add( a.getDisciplinaId() );
 		}
 
-		disciplinasCores.clear();
-		disciplinasCores.addAll( set );
+		this.disciplinasCores.clear();
+		this.disciplinasCores.addAll( set );
 	}
 
 	public class LinhaDeCredito

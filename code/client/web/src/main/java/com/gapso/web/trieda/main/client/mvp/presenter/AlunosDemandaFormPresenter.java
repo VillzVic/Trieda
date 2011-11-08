@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
@@ -26,6 +27,7 @@ public class AlunosDemandaFormPresenter
 		AlunosComboBox getAlunoComboBox();
 		DemandaDTO getDemandaDTO();
 		AlunoDemandaDTO getAlunoDemandaDTO();
+		NumberField getPeriodoNumberField();
 		boolean isValid();
 		SimpleModal getSimpleModal();
 	}
@@ -77,7 +79,8 @@ public class AlunosDemandaFormPresenter
 				}
 				else
 				{
-					MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
+					MessageBox.alert( "ERRO!",
+						"Verifique os campos digitados", null );
 				}
 			}
 		});
@@ -96,6 +99,7 @@ public class AlunosDemandaFormPresenter
 		alunoDemandaDTO.setIdAluno( this.display.getAlunoComboBox().getValue().getId() );
 		alunoDemandaDTO.setAlunoString( this.display.getAlunoComboBox().getValue().getNome() );
 		alunoDemandaDTO.setDemandaId( this.display.getDemandaDTO().getId() );
+		alunoDemandaDTO.setPeriodo( this.display.getPeriodoNumberField().getValue().intValue() );
 
 		return alunoDemandaDTO;
 	}

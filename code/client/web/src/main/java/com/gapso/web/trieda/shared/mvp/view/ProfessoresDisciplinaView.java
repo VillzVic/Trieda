@@ -106,8 +106,8 @@ public class ProfessoresDisciplinaView extends MyComposite
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
 		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_CPF, "CPF", 100 ) );
-		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_STRING, "Nome", 100 ) );
-		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 100 ) );
+		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_PROFESSOR_STRING, "Nome", 300 ) );
+		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 150 ) );
 		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_PREFERENCIA, "Preferência", 100 ) );
 		list.add( new ColumnConfig( ProfessorDisciplinaDTO.PROPERTY_NOTA_DESEMPENHO, "Nota Desempenho", 100 ) );
 

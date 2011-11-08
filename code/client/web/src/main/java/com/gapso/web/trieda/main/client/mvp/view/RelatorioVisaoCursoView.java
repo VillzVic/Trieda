@@ -27,7 +27,8 @@ import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class RelatorioVisaoCursoView extends MyComposite
+public class RelatorioVisaoCursoView	
+	extends MyComposite
 	implements RelatorioVisaoCursoPresenter.Display
 {
 	private SimpleToolBar toolBar;
@@ -43,33 +44,37 @@ public class RelatorioVisaoCursoView extends MyComposite
 
 	public RelatorioVisaoCursoView()
 	{
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
 	{
-		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Grade Horária Visão Curso" );
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading(
+			"Master Data » Grade Horária Visão Curso" );
+
 		createToolBar();
 		createGrid();
 		createFilter();
 		createTabItem();
-		initComponent( tabItem );
+		initComponent( this.tabItem );
 	}
 
 	private void createToolBar()
 	{
 		// Exibe apenas o botão 'exportExcel'
-		toolBar = new SimpleToolBar( false, false, false, false, true, this );
-		panel.setTopComponent( toolBar );
+		this.toolBar = new SimpleToolBar(
+			false, false, false, false, true, this );
+
+		this.panel.setTopComponent( this.toolBar );
 	}
 
 	private void createTabItem()
 	{
-		tabItem = new GTabItem( "Grade Horária Visão Curso",
+		this.tabItem = new GTabItem( "Grade Horária Visão Curso",
 			Resources.DEFAULTS.saidaCurso16() );
 
-		tabItem.setContent( panel );
+		this.tabItem.setContent( this.panel );
 	}
 
 	private void createGrid()
@@ -84,6 +89,7 @@ public class RelatorioVisaoCursoView extends MyComposite
 	{
 		FormData formData = new FormData( "100%" );
 		FormPanel panel = new FormPanel();
+
 		panel.setHeaderVisible( true );
 		panel.setHeading( "Filtro" );
 		panel.setButtonAlign( HorizontalAlignment.RIGHT );
@@ -96,37 +102,36 @@ public class RelatorioVisaoCursoView extends MyComposite
 		FormLayout layout = new FormLayout();
 		left.setLayout( layout );
 
-		cursoCB = new CursoComboBox();
-		left.add( cursoCB, formData );
+		this.cursoCB = new CursoComboBox();
+		left.add( this.cursoCB, formData );
 
-		curriculoCB = new CurriculoComboBox( cursoCB );
-		curriculoCB.setUseQueryCache( false );
-		left.add( curriculoCB, formData );
+		this.curriculoCB = new CurriculoComboBox( this.cursoCB );
+		this.curriculoCB.setUseQueryCache( false );
+		left.add( this.curriculoCB, formData );
 
 		LayoutContainer right = new LayoutContainer();
 		right.setStyleAttribute( "paddingLeft", "10px" );
 		layout = new FormLayout();
 		right.setLayout( layout );
 
-		campusCB = new CampusComboBox( curriculoCB );
+		this.campusCB = new CampusComboBox( this.curriculoCB );
 		right.add( campusCB, formData );
 
-		periodoCB = new SimpleComboBox< Integer >();
-		periodoCB.setFieldLabel( "Período" );
-		periodoCB.setEditable( false );
-		periodoCB.setTriggerAction( TriggerAction.ALL );
+		this.periodoCB = new SimpleComboBox< Integer >();
+		this.periodoCB.setFieldLabel( "Período" );
+		this.periodoCB.setEditable( false );
+		this.periodoCB.setTriggerAction( TriggerAction.ALL );
+		right.add( this.periodoCB, formData );
 
-		right.add( periodoCB, formData );
-
-		turnoCB = new TurnoComboBox( campusCB );
-		right.add( turnoCB, formData );
+		this.turnoCB = new TurnoComboBox( this.campusCB );
+		right.add( this.turnoCB, formData );
 
 		main.add( left, new ColumnData( 0.5 ) );
 		main.add( right, new ColumnData( 0.5 ) );
 
-		submitBt = new Button( "Filtrar", AbstractImagePrototype.create(
+		this.submitBt = new Button( "Filtrar", AbstractImagePrototype.create(
 			Resources.DEFAULTS.filter16() ) );
-		panel.addButton( submitBt );
+		panel.addButton( this.submitBt );
 
 		panel.add( main, new FormData( "100%" ) );
 
@@ -141,48 +146,48 @@ public class RelatorioVisaoCursoView extends MyComposite
 	@Override
 	public GradeHorariaCursoGrid getGrid()
 	{
-		return grid;
+		return this.grid;
 	}
 
 	@Override
 	public Button getSubmitBuscaButton()
 	{
-		return submitBt;
+		return this.submitBt;
 	}
 
 	@Override
 	public TurnoComboBox getTurnoComboBox()
 	{
-		return turnoCB;
+		return this.turnoCB;
 	}
 
 	@Override
 	public CursoComboBox getCursoComboBox()
 	{
-		return cursoCB;
+		return this.cursoCB;
 	}
 
 	@Override
 	public CurriculoComboBox getCurriculoComboBox()
 	{
-		return curriculoCB;
+		return this.curriculoCB;
 	}
 
 	@Override
 	public SimpleComboBox< Integer > getPeriodoComboBox()
 	{
-		return periodoCB;
+		return this.periodoCB;
 	}
 
 	@Override
 	public CampusComboBox getCampusComboBox()
 	{
-		return campusCB;
+		return this.campusCB;
 	}
 
 	@Override
 	public Button getExportExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return this.toolBar.getExportExcelButton();
 	}
 }
