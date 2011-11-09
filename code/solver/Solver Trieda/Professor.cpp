@@ -1,39 +1,38 @@
 #include "Professor.h"
 
-//Professor::Professor()
 Professor::Professor( bool eVirtual )
 {
-	cpf = nome = "";
-	tipo_contrato_id = 0;
-	ch_min = 0;
-	ch_max = 0;
-	ch_anterior = 0;
-	titulacao_id = 0;
-	area_id = 0;
-	valor_credito = 0;
+   this->cpf = nome = "";
+	this->tipo_contrato_id = 0;
+	this->ch_min = 0;
+	this->ch_max = 0;
+	this->ch_anterior = 0;
+	this->titulacao_id = 0;
+	this->area_id = 0;
+	this->valor_credito = 0;
 
-    tipo_contrato = NULL;
-    titulacao = NULL;
-    area = NULL;
+   this->tipo_contrato = NULL;
+   this->titulacao = NULL;
+   this->area = NULL;
 
-	id_operacional = -1;
+	this->id_operacional = -1;
 
 	// Parametro utilizado na função de
 	// prioridade para o modelo operacional.
-	custoDispProf = 0;
+	this->custoDispProf = 0;
 
-	is_virtual = eVirtual;
-	if ( is_virtual )
+	this->is_virtual = eVirtual;
+	if ( this->is_virtual )
 	{
-       cpf = "000.000.000-00";
-       nome = "PROFESSOR VIRTUAL";
-       tipo_contrato_id = 1;
-       ch_min = 0;
-       valor_credito = 50000;
-       titulacao_id = 1;
+      this->cpf = "000.000.000-00";
+      this->nome = "PROFESSOR VIRTUAL";
+      this->tipo_contrato_id = 1;
+      this->ch_min = 0;
+      this->valor_credito = 50000;
+      this->titulacao_id = 1;
 
 	   // 7 dias na semana, 4 creditos por dia
-       ch_max = 28; 
+      this->ch_max = 28; 
 	}
 }
 
@@ -48,20 +47,21 @@ void Professor::le_arvore( ItemProfessor & elem )
 
 	if ( elem.areaTitulacaoId().present() )
 	{
-		area_id = elem.areaTitulacaoId().get();
+		this->area_id = elem.areaTitulacaoId().get();
 	}
 
-	tipo_contrato_id = elem.tipoContratoId();
-	titulacao_id = elem.titulacaoId();
+	this->tipo_contrato_id = elem.tipoContratoId();
+	this->titulacao_id = elem.titulacaoId();
 
-	cpf = elem.cpf();
-	nome = elem.nome();
-	ch_min = elem.chMin();
-	ch_max = elem.chMax();
-	ch_anterior = elem.credAnterior();
-	valor_credito = elem.valorCred();
+	this->cpf = elem.cpf();
+	this->nome = elem.nome();
+	this->ch_min = elem.chMin();
+	this->ch_max = elem.chMax();
+	this->ch_anterior = elem.credAnterior();
+	this->valor_credito = elem.valorCred();
 
 	int id_magisterio = 1;
+
 	ITERA_SEQ( it_mag, elem.disciplinas(), ProfessorDisciplina )
 	{
 		Magisterio * m = new Magisterio();
@@ -70,13 +70,13 @@ void Professor::le_arvore( ItemProfessor & elem )
 		id_magisterio++;
 
 		m->le_arvore( *it_mag );
-		magisterio.add( m );
+		this->magisterio.add( m );
 	}
 
 	ITERA_SEQ( it_h, elem.horariosDisponiveis(), Horario )
 	{
 		Horario * h = new Horario();
 		h->le_arvore( *it_h );
-		horarios.add( h );
+		this->horarios.add( h );
 	}
 }

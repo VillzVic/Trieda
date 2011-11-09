@@ -42,7 +42,8 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    this->calendarios.clear();
    LE_SEQ( this->calendarios, raiz.calendarios(), Calendario );
 
-   ITERA_GGROUP_LESSPTR( it_calendario, this->calendarios, Calendario )
+   ITERA_GGROUP_LESSPTR( it_calendario,
+      this->calendarios, Calendario )
    {
       Calendario * calendario = ( *it_calendario );
 
@@ -56,45 +57,46 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    {
       Campus * campus = new Campus;
       campus->le_arvore( *it_campi );
-      campi.add( campus );
+      this->campi.add( campus );
    }
 
    ITERA_SEQ( it_tsalas, raiz.tiposSala(), TipoSala )
    {
       TipoSala * tipo_sala = new TipoSala;
       tipo_sala->le_arvore( *it_tsalas );
-      tipos_sala.add( tipo_sala );
+      this->tipos_sala.add( tipo_sala );
    }
 
-   LE_SEQ( tipos_sala, raiz.tiposSala(), TipoSala );
-   LE_SEQ( tipos_contrato, raiz.tiposContrato(), TipoContrato );
-   LE_SEQ( tipos_titulacao, raiz.tiposTitulacao(), TipoTitulacao );
-   LE_SEQ( areas_titulacao, raiz.areasTitulacao(), AreaTitulacao );
-   LE_SEQ( tipos_disciplina, raiz.tiposDisciplina(), TipoDisciplina );
-   LE_SEQ( niveis_dificuldade, raiz.niveisDificuldade(), NivelDificuldade );
-   LE_SEQ( tipos_curso, raiz.tiposCurso(), TipoCurso );
-   LE_SEQ( regras_div, raiz.regrasDivisaoCredito(), DivisaoCreditos );
-   LE_SEQ( tempo_campi, raiz.temposDeslocamentosCampi(), Deslocamento );
-   LE_SEQ( tempo_unidades, raiz.temposDeslocamentosUnidades(), Deslocamento );
-   LE_SEQ( disciplinas, raiz.disciplinas(), Disciplina );
-   LE_SEQ( cursos, raiz.cursos(), Curso );
-   LE_SEQ( demandas, raiz.demandas(), Demanda );
-   LE_SEQ( alunosDemanda, raiz.alunosDemanda(), AlunoDemanda );
+   LE_SEQ( this->tipos_sala, raiz.tiposSala(), TipoSala );
+   LE_SEQ( this->tipos_contrato, raiz.tiposContrato(), TipoContrato );
+   LE_SEQ( this->tipos_titulacao, raiz.tiposTitulacao(), TipoTitulacao );
+   LE_SEQ( this->areas_titulacao, raiz.areasTitulacao(), AreaTitulacao );
+   LE_SEQ( this->tipos_disciplina, raiz.tiposDisciplina(), TipoDisciplina );
+   LE_SEQ( this->niveis_dificuldade, raiz.niveisDificuldade(), NivelDificuldade );
+   LE_SEQ( this->tipos_curso, raiz.tiposCurso(), TipoCurso );
+   LE_SEQ( this->regras_div, raiz.regrasDivisaoCredito(), DivisaoCreditos );
+   LE_SEQ( this->tempo_campi, raiz.temposDeslocamentosCampi(), Deslocamento );
+   LE_SEQ( this->tempo_unidades, raiz.temposDeslocamentosUnidades(), Deslocamento );
+   LE_SEQ( this->disciplinas, raiz.disciplinas(), Disciplina );
+   LE_SEQ( this->cursos, raiz.cursos(), Curso );
+   LE_SEQ( this->demandas, raiz.demandas(), Demanda );
+   LE_SEQ( this->alunosDemanda, raiz.alunosDemanda(), AlunoDemanda );
 
-   ITERA_SEQ( it_oferta, raiz.ofertaCursosCampi(), OfertaCurso )
+   ITERA_SEQ( it_oferta,
+      raiz.ofertaCursosCampi(), OfertaCurso )
    {
       Oferta * oferta = new Oferta;
       oferta->le_arvore( *it_oferta );
-      ofertas.add( oferta );
+      this->ofertas.add( oferta );
    }
 
-   parametros = new ParametrosPlanejamento;
-   parametros->le_arvore( raiz.parametrosPlanejamento() );
+   this->parametros = new ParametrosPlanejamento;
+   this->parametros->le_arvore( raiz.parametrosPlanejamento() );
 
-   // Se a tag existir (mesmo que esteja em branco) no xml de entrada
+   // Se a tag existir ( mesmo que esteja em branco ) no xml de entrada
    if ( raiz.atendimentosTatico().present() )
    {
-      atendimentosTatico = new GGroup< AtendimentoCampusSolucao * > ();
+      this->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * > ();
 
       for ( unsigned int i = 0;
 		    i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++ )
@@ -104,16 +106,17 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 
          AtendimentoCampusSolucao * item = new AtendimentoCampusSolucao();
          item->le_arvore( ( *it_atendimento ) );
-         atendimentosTatico->add( item );
+         this->atendimentosTatico->add( item );
       }
    }
 
    TriedaInput::fixacoes_type & list_fixacoes = raiz.fixacoes();
-   LE_SEQ( fixacoes, list_fixacoes, Fixacao );
+   LE_SEQ( this->fixacoes, list_fixacoes, Fixacao );
 
    // Monta um 'map' para recuperar cada 'ItemSala'
    // do campus a partir de seu respectivo id de sala
    std::map< int, ItemSala * > mapItemSala;
+
    ITERA_SEQ( it_campi, raiz.campi(), Campus )
    {
       ITERA_SEQ( it_unidade, it_campi->unidades(), Unidade )
@@ -125,19 +128,18 @@ void ProblemData::le_arvore( TriedaInput & raiz )
       }
    }
 
-   //-------------------------------------------------------------------------------
    // Primeiro caso : executar o
    // solver apenas com a entrada do tático
-   bool primeiroCaso = ( parametros->modo_otimizacao == "TATICO" );
+   bool primeiroCaso = ( this->parametros->modo_otimizacao == "TATICO" );
 
    // Segundo caso  : executar o solver com
    // a saída do tático e a entrada do operacional
-   bool segundoCaso  = ( parametros->modo_otimizacao == "OPERACIONAL"
+   bool segundoCaso  = ( this->parametros->modo_otimizacao == "OPERACIONAL"
 							&& raiz.atendimentosTatico().present() == true );
 
    // Terceiro caso : executar o solver apenas
    // com a entrada do operacional (sem saída do tático)
-   bool terceiroCaso = ( parametros->modo_otimizacao == "OPERACIONAL"
+   bool terceiroCaso = ( this->parametros->modo_otimizacao == "OPERACIONAL"
 							&& raiz.atendimentosTatico().present() == false );
 
    // Informa o modo de otimização que será execuado
@@ -160,11 +162,11 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 				    << "\n'horariosDisponiveis' e/ou 'creditosDisponiveis'"
 				    << "\n\nSando." << std::endl;
 
-		exit(1);
+		exit( 1 );
 	}
 
    // Prencher os horários e/ou créditos das salas
-   ITERA_GGROUP_LESSPTR( it_campi, campi, Campus )
+   ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )
    {
       ITERA_GGROUP_LESSPTR( it_unidade, it_campi->unidades, Unidade )
       {
@@ -179,13 +181,12 @@ void ProblemData::le_arvore( TriedaInput & raiz )
                ItemSala * elem = it->second;
 
                it_sala->construirCreditosHorarios(
-					( *elem ), parametros->modo_otimizacao,
+					( *elem ), this->parametros->modo_otimizacao,
 					raiz.atendimentosTatico().present() );
             }
          }
       }
    }
-   //-------------------------------------------------------------------------------
 }
 
 bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
@@ -211,7 +212,8 @@ bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 	return false;
 }
 
-// Dada uma disciplina, e seu par curso/curriculo, retorna-se a oferta dessa disciplina
+// Dada uma disciplina, e seu par curso/curriculo,
+// esse método retorna-se a oferta dessa disciplina
 Oferta * ProblemData::retornaOfertaDiscilpina(
 	Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
 {
@@ -301,9 +303,9 @@ Disciplina * ProblemData::retornaDisciplinaSubstituta(
 {
    std::map< std::pair< Curso *, Curriculo * >,
       std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
-      it_map = mapGroupDisciplinasSubstituidas.begin();
+      it_map = this->mapGroupDisciplinasSubstituidas.begin();
 
-   for (; it_map != mapGroupDisciplinasSubstituidas.end(); it_map++ )
+   for (; it_map != this->mapGroupDisciplinasSubstituidas.end(); it_map++ )
    {
       std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
          it_disciplinas = it_map->second.begin();
@@ -381,7 +383,8 @@ bool ProblemData::aulaAtendeCurso( Aula * aula, Curso * curso )
    return false;
 }
 
-int ProblemData::calculaTempoEntreCampusUnidades( Campus * campus_atual, Campus * campus_anterior,
+int ProblemData::calculaTempoEntreCampusUnidades(
+   Campus * campus_atual, Campus * campus_anterior,
    Unidade * unidade_atual, Unidade * unidade_anterior )
 {
    int distancia = 0;
@@ -582,7 +585,6 @@ GGroup< Professor *, LessPtr< Professor > > ProblemData::getProfessores() const
          professores.add( professor );
       }
    }
-   ////
 
    return professores;
 }
@@ -629,7 +631,7 @@ Oferta * ProblemData::findOferta( int id_oferta ) const
 
    try
    {
-      oferta = refOfertas.find( id_oferta )->second;
+      oferta = this->refOfertas.find( id_oferta )->second;
    }
    catch( std::exception ex )
    {

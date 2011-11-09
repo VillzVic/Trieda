@@ -7,8 +7,8 @@
 // mais legível e intuitivo, baseada nos padrões de projeto escolhidos
 
 #ifndef ITERA_SEQ
-#define ITERA_SEQ(it,addr,type) for (Grupo##type##::##type##_iterator it = \
-   (addr).##type##().begin(); it != (addr).##type##().end(); ++it) 
+#define ITERA_SEQ( it, addr, type ) for ( Grupo##type##::##type##_iterator it = \
+   ( addr ).##type##().begin(); it != ( addr ).##type##().end(); ++it ) 
 #endif
 
 #include "ProblemData.h"
@@ -19,6 +19,7 @@ class ProblemDataLoader
 public:
    // Constructor
    ProblemDataLoader( char *, ProblemData * );
+
    // Destructor
    virtual ~ProblemDataLoader();
 
@@ -31,6 +32,7 @@ public:
    void geraRefsOfertasDemandas();
    void referenciaDisciplinasEquivalentesIncompativeis();
    void referenciaDisciplinasCurriculos();
+   void preencheTempoAulaHorarios();
 
    // Para cada dia da semana, relaciona os
    // seus respectivos horários de aula disponíveis
@@ -113,13 +115,16 @@ public:
    void relacionaFixacoes();
 
    // Verifica se já existe uma fixação equivalente
-   bool contemFixacao( GGroup< Fixacao *, LessPtr< Fixacao > > ,Professor *, Disciplina *, Sala *, int, HorarioAula * );
+   bool contemFixacao( GGroup< Fixacao *, LessPtr< Fixacao > > ,
+      Professor *, Disciplina *, Sala *, int, HorarioAula * );
 
    // Informa se já não existe uma fixação contendo exatamente os mesmos dados
-   bool contemFixacaoExato( GGroup< Fixacao *, LessPtr< Fixacao > > ,Professor *, Disciplina *, Sala *, int, HorarioAula * );
+   bool contemFixacaoExato( GGroup< Fixacao *, LessPtr< Fixacao > > ,
+      Professor *, Disciplina *, Sala *, int, HorarioAula * );
 
    // Cria uma nova fixação com os dados informados
-   Fixacao * criaFixacao( int, Professor *, Disciplina *, Sala *, int, HorarioAula * );
+   Fixacao * criaFixacao( int, Professor *,
+      Disciplina *, Sala *, int, HorarioAula * );
 
    // Quando houver uma fixação de uma disciplina em um dia
    // da semana, esse método remove os demais dias da semana

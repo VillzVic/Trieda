@@ -502,10 +502,10 @@ int SolverMIP::solveTatico()
 
    //lp->setHeurFrequency( 1.0 );
    lp->setTimeLimit( 3600 );
+   lp->setMIPRelTol( 0.02 );
    //lp->setMIPStartAlg( METHOD_PRIMAL );
    lp->setMIPEmphasis( 0 );
    lp->setMIPScreenLog( 4 );
-   // lp->setMIPRelTol( 0.02 );
    // lp->setNoCuts();
    // lp->setNodeLimit( 1 );
    lp->setPreSolve( OPT_TRUE );
@@ -545,10 +545,10 @@ int SolverMIP::solveTatico()
 
    lp->setHeurFrequency( 1.0 );
    lp->setTimeLimit( 3600 );
+   lp->setMIPRelTol( 0.02 );
    // lp->setMIPStartAlg( METHOD_PRIMAL );
    lp->setMIPEmphasis( 1 );
    lp->setMIPScreenLog( 4 );
-   // lp->setMIPRelTol( 0.02 );
    // lp->setNoCuts();
    // lp->setNodeLimit( 1 );
    lp->setPreSolve( OPT_TRUE );
@@ -627,6 +627,7 @@ int SolverMIP::solveTaticoBasico()
 
    int status = 0;
    lp->setTimeLimit( 3600 );
+   lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
 
@@ -1819,6 +1820,7 @@ int SolverMIP::solveOperacionalMIP()
    int status = 0;
 
    lp->setTimeLimit( 3600 );
+   lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
 
    status = lp->optimize( METHOD_MIP );
@@ -3142,6 +3144,7 @@ int SolverMIP::localBranching(
       lp->updateLP();
       lp->setNodeLimit( 100000000 );
       lp->setTimeLimit( 3600 );
+      lp->setMIPRelTol( 0.02 );
       lp->setNodeLimit( 1 );
       lp->setMIPEmphasis( 1 );
       lp->setHeurFrequency( 1.0 );

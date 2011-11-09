@@ -31,6 +31,9 @@ void ProblemDataLoader::load()
    std::cout << "Some preprocessing..." << std::endl;
 
    // ---------
+   preencheTempoAulaHorarios();
+
+   // ---------
    relacionaDemandaAlunos();
 
    // ---------
@@ -161,6 +164,21 @@ void ProblemDataLoader::load()
 
    // ---------
    relacionaProfessorDisciplinasAssociadas();
+}
+
+void ProblemDataLoader::preencheTempoAulaHorarios()
+{
+   ITERA_GGROUP_LESSPTR( it_calendario, this->problemData->calendarios, Calendario )
+   {
+      ITERA_GGROUP_LESSPTR( it_turno, it_calendario->turnos, Turno )
+      {
+         ITERA_GGROUP_LESSPTR( it_horario_aula, it_turno->horarios_aula, HorarioAula )
+         {
+            HorarioAula * horario_aula = ( *it_horario_aula );
+            horario_aula->setTempoAula( it_calendario->getTempoAula() );
+         }
+      }
+   }
 }
 
 void ProblemDataLoader::relacionaDemandaAlunos()
@@ -320,7 +338,7 @@ void ProblemDataLoader::criaListaHorariosOrdenados()
       }
    }
 
-   // Insere os horarios de aula (distintos) no vector
+   // Insere os horarios de aula ( distintos ) no vector
    ITERA_GGROUP( it_h, horarios_aula, HorarioAula )
    {
       problemData->horarios_aula_ordenados.push_back( *it_h );
@@ -370,7 +388,8 @@ void ProblemDataLoader::relacionaCursosCampus()
    Curso * curso = NULL;
    Oferta * oferta = NULL;
 
-   ITERA_GGROUP_LESSPTR( it_oferta, problemData->ofertas, Oferta )
+   ITERA_GGROUP_LESSPTR( it_oferta,
+      problemData->ofertas, Oferta )
    {
       // Recupera o objeto 'oferta'
       oferta = ( *it_oferta );
@@ -2352,6 +2371,22 @@ void ProblemDataLoader::referenciaOfertas()
 
 void ProblemDataLoader::gera_refs()
 {
+   GGroup< HorarioAula *, LessPtr< HorarioAula > > todos_horarios_aula;
+
+   ITERA_GGROUP_LESSPTR( it_calendario,
+      this->problemData->calendarios, Calendario )
+   {
+      ITERA_GGROUP_LESSPTR( it_turno,
+         it_calendario->turnos, Turno )
+      {
+         ITERA_GGROUP_LESSPTR( it_horario_aula,
+            it_turno->horarios_aula, HorarioAula )
+         {
+            todos_horarios_aula.add( *it_horario_aula );
+         }
+      }
+   }
+
    ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
    {
       ITERA_GGROUP_LESSPTR( it_unidades, it_campi->unidades, Unidade )
@@ -2363,7 +2398,8 @@ void ProblemDataLoader::gera_refs()
                it_horario->turno, false );
 
             find_and_set_lessptr( it_horario->getHorarioAulaId(),
-               it_horario->turno->horarios_aula,
+               // it_horario->turno->horarios_aula,
+               todos_horarios_aula,
                it_horario->horario_aula, false );
          }
 
@@ -2381,7 +2417,8 @@ void ProblemDataLoader::gera_refs()
                   it_horario->turno, false );
 
                find_and_set_lessptr( it_horario->getHorarioAulaId(),
-                  it_horario->turno->horarios_aula,
+                  // it_horario->turno->horarios_aula,
+                  todos_horarios_aula,
                   it_horario->horario_aula, false );
             }
 
@@ -2420,7 +2457,8 @@ void ProblemDataLoader::gera_refs()
                it_horario->turno, false );
 
             find_and_set_lessptr( it_horario->getHorarioAulaId(),
-               it_horario->turno->horarios_aula,
+               // it_horario->turno->horarios_aula,
+               todos_horarios_aula,
                it_horario->horario_aula, false );
          }
 
@@ -2439,7 +2477,8 @@ void ProblemDataLoader::gera_refs()
             it_horario->turno, false );
 
          find_and_set_lessptr( it_horario->getHorarioAulaId(),
-            it_horario->turno->horarios_aula,
+            // it_horario->turno->horarios_aula,
+            todos_horarios_aula,
             it_horario->horario_aula, false );
       } 
    } // campus
@@ -2493,7 +2532,8 @@ void ProblemDataLoader::gera_refs()
             it_horario->turno, false );
 
          find_and_set_lessptr( it_horario->getHorarioAulaId(),
-            it_horario->turno->horarios_aula,
+            // it_horario->turno->horarios_aula,
+            todos_horarios_aula,
             it_horario->horario_aula, false );
       } 
    } // disciplinas
@@ -2543,7 +2583,9 @@ void ProblemDataLoader::gera_refs()
          if ( it_fix->turno != NULL )
          {
             find_and_set_lessptr( it_fix->getHorarioAulaId(),
-               it_fix->turno->horarios_aula, it_fix->horario_aula, false );
+               // it_fix->turno->horarios_aula,
+               todos_horarios_aula,
+               it_fix->horario_aula, false );
          }
          else
          {
@@ -3757,30 +3799,33 @@ void ProblemDataLoader::geraHorariosDia()
 
    problemData->maxHorariosDif = 0;
 
-   ITERA_GGROUP_LESSPTR( itTurno, problemData->todos_turnos, Turno )
+   ITERA_GGROUP_LESSPTR( it_calendario, problemData->calendarios, Calendario )
    {
-      Turno * turno = ( *itTurno );
-
-      ITERA_GGROUP_LESSPTR( itHA, turno->horarios_aula, HorarioAula )
+      ITERA_GGROUP_LESSPTR( itTurno, it_calendario->turnos, Turno )
       {
-         HorarioAula * horarioAula = ( *itHA );
+         Turno * turno = ( *itTurno );
 
-         if ( horarioAula->getId() > problemData->maxHorariosDif )
+         ITERA_GGROUP_LESSPTR( itHA, turno->horarios_aula, HorarioAula )
          {
-            problemData->maxHorariosDif = horarioAula->getId();
-         }
+            HorarioAula * horarioAula = ( *itHA );
 
-         ITERA_GGROUP_N_PT( itDia, horarioAula->dias_semana, int )
-         {
-            HorarioDia * horarioDia = new HorarioDia();
+            if ( horarioAula->getId() > problemData->maxHorariosDif )
+            {
+               problemData->maxHorariosDif = horarioAula->getId();
+            }
 
-            horarioDia->setId( contador );
-            horarioDia->setHorarioAulaId( horarioAula->getId() );
-            horarioDia->setHorarioAula( horarioAula );
-            horarioDia->setDia( *itDia );
-            contador++;
+            ITERA_GGROUP_N_PT( itDia, horarioAula->dias_semana, int )
+            {
+               HorarioDia * horarioDia = new HorarioDia();
 
-            problemData->horariosDia.add( horarioDia );
+               horarioDia->setId( contador );
+               horarioDia->setHorarioAulaId( horarioAula->getId() );
+               horarioDia->setHorarioAula( horarioAula );
+               horarioDia->setDia( *itDia );
+               contador++;
+
+               problemData->horariosDia.add( horarioDia );
+            }
          }
       }
    }
