@@ -175,6 +175,7 @@ public class EquivalenciasImportExcel
 	// A disciplina 'cursou' pode aparacer mais de
 	// uma vez na planilha de importação, pois ela
 	// pode ser equivalente a mais de uma disciplina
+	@SuppressWarnings( "unused" )
 	private void checkUniqueness(
 		List< EquivalenciasImportExcelBean > sheetContent )
 	{

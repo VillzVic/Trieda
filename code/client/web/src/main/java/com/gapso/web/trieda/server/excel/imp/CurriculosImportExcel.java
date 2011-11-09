@@ -418,6 +418,7 @@ public class CurriculosImportExcel
 			if ( entry.getValue().size() > 1 )
 			{
 				CurriculosImportExcelBean firstBean = entry.getValue().get( 0 );
+
 				List< Integer > rows = new ArrayList< Integer >();
 
 				for ( CurriculosImportExcelBean bean : entry.getValue() )

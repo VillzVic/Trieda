@@ -11,7 +11,6 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.TurnoFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -37,7 +36,6 @@ public class TurnosPresenter
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		TextField< String > getNomeBuscaTextField();
-		NumberField getTempoBuscaTextField();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< TurnoDTO > getGrid();
@@ -73,16 +71,13 @@ public class TurnosPresenter
 				AsyncCallback< PagingLoadResult< TurnoDTO > > callback )
 			{
 				String nome = display.getNomeBuscaTextField().getValue();
-				Number tempo = display.getTempoBuscaTextField().getValue();
-
-				service.getBuscaList( nome, ( tempo == null ) ? null :
-					tempo.intValue(), (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( nome, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
 		this.display.setProxy( proxy );
 	}
-	
+
 	private void setListeners()
 	{
 		this.display.getNewButton().addSelectionListener(
@@ -149,8 +144,6 @@ public class TurnosPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				display.getNomeBuscaTextField().setValue( null );
-				display.getTempoBuscaTextField().setValue( null );
-
 				display.getGrid().updateList();
 			}
 		});

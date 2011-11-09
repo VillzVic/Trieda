@@ -128,8 +128,6 @@ public class SolverInput
 	private InstituicaoEnsino instituicaoEnsino;
 	private List< String > errors;
 	private List< String > warnings;
-	private Set< Demanda > demandasInput = new HashSet< Demanda >();
-	private Set< Disciplina > disciplinasInput = new HashSet< Disciplina >();
 
 	private List< HorarioDisponivelCenario > todosHorarioDisponivelCenario;
 	private Map< Campus, Set< HorarioDisponivelCenario > > horariosCampus;
@@ -138,6 +136,9 @@ public class SolverInput
 	private Map< Disciplina, Set< HorarioDisponivelCenario > > horariosDisciplinas;
 	private Map< Professor, Set< HorarioDisponivelCenario > > horariosProfessores;
 	private Map< Fixacao, Set< HorarioDisponivelCenario > > horariosFixacoes;
+
+	private Set< Demanda > demandasCampusTurno = new HashSet< Demanda >();
+	private Set< Disciplina > disciplinasComDemandaCurriculo = new HashSet< Disciplina >();
 
 	public SolverInput(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
@@ -163,7 +164,52 @@ public class SolverInput
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
 
+		System.out.println( "preencheMapHorarios : " + ( new java.util.Date() ) );
 		this.preencheMapHorarios();
+
+		System.out.println( "carregaDemandasDisciplinas : " + ( new java.util.Date() ) );
+		this.carregaDemandasDisciplinas();
+	}
+
+	private void carregaDemandasDisciplinas()
+	{
+		// Inicialmente, consideramos que todas as
+		// disciplinas serão enviadas para o solver
+		this.disciplinasComDemandaCurriculo.addAll(
+			Disciplina.findAll( this.instituicaoEnsino ) );
+
+		// Removemos do input todas as disciplinas
+		// que não possuem nenhuma demanda cadastrada
+		this.demandasCampusTurno.addAll( Demanda.findByCampusTurno(
+				this.instituicaoEnsino, this.parametro.getCampus(), this.parametro.getTurno() ) );
+
+		Set< Disciplina > disciplinasComDemanda = new HashSet< Disciplina >();
+
+		for ( Demanda demanda : this.demandasCampusTurno )
+		{
+			disciplinasComDemanda.add( demanda.getDisciplina() );
+		}
+
+		this.disciplinasComDemandaCurriculo.retainAll( disciplinasComDemanda );
+
+		// Removemos do input todas as disciplinas
+		// que não estão associadas a nenhuma matriz curriular
+		Set< Disciplina > disciplinasComCurriculo = new HashSet< Disciplina >();
+
+		Set< Curso > cursos = this.cenario.getCursos();
+		
+		for ( Curso curso : cursos )
+		{
+			for ( Curriculo curriculo : curso.getCurriculos() )
+			{
+				for ( CurriculoDisciplina cd : curriculo.getDisciplinas() )
+				{
+					disciplinasComCurriculo.add( cd.getDisciplina() );
+				}
+			}
+		}
+
+		this.disciplinasComDemandaCurriculo.retainAll( disciplinasComCurriculo );
 	}
 
 	private void preencheMapHorarios()
@@ -488,6 +534,7 @@ public class SolverInput
 
 			itemCalendario.setId( calendario.getId().intValue() );
 			itemCalendario.setCodigo( calendario.getCodigo() );
+			itemCalendario.setTempoAula( calendario.getTempo() );
 
 			GrupoTurno grupoTurno = this.of.createGrupoTurno();
 
@@ -506,7 +553,6 @@ public class SolverInput
 
 				itemTurno.setId( turno.getId().intValue() );
 				itemTurno.setNome( turno.getNome() );
-				itemTurno.setTempoAula( turno.getTempo() );
 
 				// Lendo horários de aula
 				GrupoHorarioAula grupoHorarioAula
@@ -969,17 +1015,8 @@ public class SolverInput
 
 				for ( ProfessorDisciplina professorDisciplina : professorDisciplinas )
 				{
-					if ( !this.disciplinasInput.contains(
+					if ( !this.disciplinasComDemandaCurriculo.contains(
 						professorDisciplina.getDisciplina() ) )
-					{
-						continue;
-					}
-
-					boolean existeDemanda = Demanda.existeDemanda(
-						this.instituicaoEnsino, null,
-						professorDisciplina.getDisciplina() );
-
-					if ( !existeDemanda )
 					{
 						continue;
 					}
@@ -1133,26 +1170,24 @@ public class SolverInput
 	private void generateDisciplinas()
 	{
 		GrupoDisciplina grupoDisciplina = this.of.createGrupoDisciplina();
-		Set< Disciplina > disciplinas = this.cenario.getDisciplinas();
 
-		for ( Disciplina disciplina : disciplinas )
+		boolean disciplinaSemDemanda = ( this.disciplinasComDemandaCurriculo.size()
+			!= this.cenario.getDisciplinas().size() );
+
+		if ( !disciplinaSemDemanda )
 		{
-			boolean existeDemanda = Demanda.existeDemanda(
-				this.instituicaoEnsino, null, disciplina );
+			String warningMessage1 = "H&aacute; disciplinas cadastradas no sistema" +
+				"que n&atilde;o possuem demanda associada a ela.";
 
-			if ( !existeDemanda )
-			{
-				String warningMessage = "N&atilde;o existe demanda " +
-					"cadastrada para a disciplina " + disciplina.getCodigo();
+			String warningMessage2 = "H&aacute; disciplinas cadastradas no sistema" +
+				"que n&atilde;o est&atilde;o associadas a nenhuma matriz curricular.";
 
-				createWarningMessage( warningMessage );
+			createWarningMessage( warningMessage1 );
+			createWarningMessage( warningMessage2 );
+		}
 
-				continue;
-			}
-
-			// Informando que essa disciplina irá para o input
-			this.disciplinasInput.add( disciplina );
-
+		for ( Disciplina disciplina : this.disciplinasComDemandaCurriculo )
+		{
 			ItemDisciplina itemDisciplina = this.of.createItemDisciplina();
 
 			itemDisciplina.setId( disciplina.getId().intValue() );
@@ -1247,9 +1282,17 @@ public class SolverInput
 		this.triedaInput.setDisciplinas( grupoDisciplina );
 	}
 
+	// Informa se existe demanda para uma
+	// determinada disciplina, no curso informado
 	private boolean verificaDemandaCurriculoDisciplina(
 		Curso curso, CurriculoDisciplina curriculoPeriodo )
 	{
+		if ( !this.disciplinasComDemandaCurriculo.contains(
+			curriculoPeriodo.getDisciplina() ) )
+		{
+			return false;
+		}
+
 		Disciplina disciplina = curriculoPeriodo.getDisciplina();
 		Curriculo curriculo = curriculoPeriodo.getCurriculo();
 		Integer periodo = curriculoPeriodo.getPeriodo();
@@ -1268,29 +1311,35 @@ public class SolverInput
 			}
 		}
 
-		boolean encontrouDemanda = false;
+		boolean encontrouDemandaPeriodo = false;
 
 		for ( Oferta oferta : ofertasCandidatas )
 		{
 			Set< Demanda > demandas = oferta.getDemandas();
-			
+
 			for ( Demanda demanda : demandas )
 			{
 				if ( demanda.getDisciplina().equals( disciplina ) )
 				{
-					boolean existeDemandaPeriodo = Demanda.existeDemanda(
-						this.instituicaoEnsino, curriculo, disciplina, periodo );
+					List< Integer > periodosCurriculo
+						= curriculo.getPeriodos( this.instituicaoEnsino );
 
-					if ( existeDemandaPeriodo )
+					encontrouDemandaPeriodo = periodosCurriculo.contains( periodo );
+
+					if ( encontrouDemandaPeriodo )
 					{
-						encontrouDemanda = true;
 						break;
 					}
 				}
+
+				if ( encontrouDemandaPeriodo )
+				{
+					break;
+				}
 			}
 		}
-		
-		return encontrouDemanda;
+
+		return encontrouDemandaPeriodo;
 	}
 
 	private void generateCurso()
@@ -1309,9 +1358,6 @@ public class SolverInput
 
 		boolean existeCurriculoComOfertas = false;
 		boolean curriculoSemOfertas = false;
-
-		List< Disciplina > disciplinasRemover
-			= new ArrayList< Disciplina >( this.cenario.getDisciplinas() );
 
 		for ( Curso curso : cursos )
 		{
@@ -1410,7 +1456,9 @@ public class SolverInput
 				
 				for ( CurriculoDisciplina curriculoPeriodo : curriculoPeriodos )
 				{
-					if ( !verificaDemandaCurriculoDisciplina( curso, curriculoPeriodo ) )
+					Boolean existeDemanda = verificaDemandaCurriculoDisciplina( curso, curriculoPeriodo );
+
+					if ( existeDemanda == null || !existeDemanda )
 					{
 						warningMessage = "N&atilde;o existe demanda cadastrada para a disciplina "
 							+ curriculoPeriodo.getDisciplina().getCodigo()
@@ -1420,8 +1468,6 @@ public class SolverInput
 
 						continue;
 					}
-
-					disciplinasRemover.remove( curriculoPeriodo.getDisciplina() );
 
 					ItemDisciplinaPeriodo itemDisciplinaPeriodo	
 						= this.of.createItemDisciplinaPeriodo();
@@ -1451,35 +1497,6 @@ public class SolverInput
 			}
 		}
 
-		// Removemos do input as disciplinas
-		// que não possuem curriculo associado
-		while( !disciplinasRemover.isEmpty() )
-		{
-			Disciplina disciplinaRemover = disciplinasRemover.get( 0 );
-			this.disciplinasInput.remove( disciplinaRemover );
-
-			int indexRemover = -1;
-
-			// Removendo da lista de disciplinas
-			for ( int i = 0; i < this.triedaInput.getDisciplinas().getDisciplina().size(); i++ )
-			{
-				ItemDisciplina item = this.triedaInput.getDisciplinas().getDisciplina().get( 0 );
-
-				if ( item.getId() == disciplinaRemover.getId() )
-				{
-					indexRemover = i;
-					break;
-				}
-			}
-
-			if ( indexRemover >= 0 )
-			{
-				this.triedaInput.getDisciplinas().getDisciplina().remove( indexRemover );
-			}
-
-			disciplinasRemover.remove( 0 );
-		}
-		
 		// Input inválido
 		if ( !existeCurriculo )
 		{
@@ -1585,34 +1602,16 @@ public class SolverInput
 	{
 		GrupoDemanda grupoDemanda = this.of.createGrupoDemanda();
 
-		for ( Campus campus : this.campi )
+		for ( Demanda demanda : this.demandasCampusTurno )
 		{
-			Set< Oferta > ofertas = campus.getOfertas();
+			ItemDemanda itemDemanda = this.of.createItemDemanda();
 
-			for ( Oferta oferta : ofertas )
-			{
-				if ( !oferta.getTurno().equals( this.parametro.getTurno() )
-					|| !oferta.getCampus().equals( this.parametro.getCampus() ) )
-				{
-					continue;
-				}
+			itemDemanda.setId( demanda.getId().intValue() );
+			itemDemanda.setOfertaCursoCampiId( demanda.getOferta().getId().intValue() );
+			itemDemanda.setDisciplinaId( demanda.getDisciplina().getId().intValue() );
+			itemDemanda.setQuantidade( demanda.getQuantidade() == null ? 0 : demanda.getQuantidade() );
 
-				Set< Demanda > demandas = oferta.getDemandas();
-
-				for ( Demanda demanda : demandas )
-				{
-					this.demandasInput.add( demanda );
-
-					ItemDemanda itemDemanda = this.of.createItemDemanda();
-
-					itemDemanda.setId( demanda.getId().intValue() );
-					itemDemanda.setOfertaCursoCampiId( oferta.getId().intValue() );
-					itemDemanda.setDisciplinaId( demanda.getDisciplina().getId().intValue() );
-					itemDemanda.setQuantidade( demanda.getQuantidade() == null ? 0 : demanda.getQuantidade() );
-
-					grupoDemanda.getDemanda().add( itemDemanda );
-				}
-			}
+			grupoDemanda.getDemanda().add( itemDemanda );
 		}
 
 		this.triedaInput.setDemandas( grupoDemanda );
@@ -1627,7 +1626,7 @@ public class SolverInput
 
 		for ( AlunoDemanda alunoDemanda : alunos )
 		{
-			if ( !this.demandasInput.contains( alunoDemanda.getDemanda() ) )
+			if ( !this.demandasCampusTurno.contains( alunoDemanda.getDemanda() ) )
 			{
 				continue;
 			}

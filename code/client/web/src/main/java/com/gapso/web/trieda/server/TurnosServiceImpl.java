@@ -40,7 +40,7 @@ public class TurnosServiceImpl
 
 	@Override
 	public PagingLoadResult< TurnoDTO > getBuscaList(
-		String nome, Integer tempo, PagingLoadConfig config )
+		String nome, PagingLoadConfig config )
 	{
 		List< TurnoDTO > list = new ArrayList< TurnoDTO >();
 		String orderBy = config.getSortField();
@@ -59,7 +59,7 @@ public class TurnosServiceImpl
 		}
 
 		List< Turno > listTurnos = Turno.findBy( getInstituicaoEnsinoUser(),
-			nome, tempo, config.getOffset(), config.getLimit(), orderBy );
+			nome, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Turno turno : listTurnos )
 		{
@@ -71,7 +71,7 @@ public class TurnosServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Turno.count(
-			nome, tempo, getInstituicaoEnsinoUser() ) );
+			nome, getInstituicaoEnsinoUser() ) );
 
 		return result;
 	}
@@ -151,7 +151,7 @@ public class TurnosServiceImpl
 		if ( campusDTO == null )
 		{
 			list = getBuscaList( loadConfig.get(
-				"query" ).toString(), null, loadConfig );
+				"query" ).toString(), loadConfig );
 		}
 		else
 		{

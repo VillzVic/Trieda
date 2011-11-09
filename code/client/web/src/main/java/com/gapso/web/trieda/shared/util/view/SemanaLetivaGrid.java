@@ -216,6 +216,6 @@ public class SemanaLetivaGrid< M extends BaseModel >
 
 	public ListStore< M > getStore()
 	{
-		return store;
+		return this.store;
 	}
 }

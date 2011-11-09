@@ -9,7 +9,6 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -31,13 +30,12 @@ public class TurnosView
 	private SimpleGrid< TurnoDTO > gridPanel;
 	private SimpleFilter filter;
 	private TextField< String > nomeBuscaTextField;
-	private NumberField tempoBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 
 	public TurnosView()
 	{
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
@@ -79,8 +77,6 @@ public class TurnosView
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 		list.add( new ColumnConfig( TurnoDTO.PROPERTY_NOME, "Nome", 150 ) );
-		list.add( new ColumnConfig( TurnoDTO.PROPERTY_TEMPO, "Duração da Aula (min)", 150 ) );
-
 		return list;
 	}
 
@@ -94,12 +90,7 @@ public class TurnosView
 
 		this.nomeBuscaTextField = new TextField< String >();
 		this.nomeBuscaTextField.setFieldLabel( "Nome" );
-
-		this.tempoBuscaTextField = new NumberField();
-		this.tempoBuscaTextField.setFieldLabel( "Duração da Aula (min)" );
-
 		this.filter.addField( this.nomeBuscaTextField );
-		this.filter.addField( this.tempoBuscaTextField );
 
 		this.panel.add( this.filter, bld );
 	}
@@ -151,12 +142,6 @@ public class TurnosView
 	public TextField< String > getNomeBuscaTextField()
 	{
 		return this.nomeBuscaTextField;
-	}
-
-	@Override
-	public NumberField getTempoBuscaTextField()
-	{
-		return this.tempoBuscaTextField;
 	}
 
 	@Override

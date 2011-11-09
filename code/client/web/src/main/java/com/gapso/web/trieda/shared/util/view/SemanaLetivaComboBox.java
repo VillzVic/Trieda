@@ -32,7 +32,8 @@ public class SemanaLetivaComboBox
 
 		setFieldLabel( "Semana Letiva" );
 		setEmptyText( "Selecione a semana letiva" );
-		setDisplayField( SemanaLetivaDTO.PROPERTY_CODIGO );
+		setSimpleTemplate( "{" + SemanaLetivaDTO.PROPERTY_CODIGO +
+				"} ({" + SemanaLetivaDTO.PROPERTY_TEMPO + "}min)" );
 		setEditable( false );
 		setTriggerAction( TriggerAction.ALL );
 	}

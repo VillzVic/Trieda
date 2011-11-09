@@ -23,12 +23,14 @@ public class TurnoComboBox
 		this( null, false );
 	}
 
-	public TurnoComboBox( CampusComboBox campusCB )
+	public TurnoComboBox(
+		CampusComboBox campusCB )
 	{
 		this( campusCB, false );
 	}
 
-	public TurnoComboBox( CampusComboBox campusCB,
+	public TurnoComboBox(
+		CampusComboBox campusCB,
 		final boolean somenteOtimizadoOperacional )
 	{
 		this.campusComboBox = campusCB;
@@ -42,7 +44,8 @@ public class TurnoComboBox
 			{
 				if ( campusComboBox != null )
 				{
-					Services.turnos().getListByCampus( campusComboBox.getValue(), callback );
+					Services.turnos().getListByCampus(
+						campusComboBox.getValue(), callback );
 				}
 				else
 				{
@@ -70,8 +73,7 @@ public class TurnoComboBox
 		setDisplayField( TurnoDTO.PROPERTY_NOME );
 		setFieldLabel( "Turno" );
 		setEmptyText( "Selecione o turno" );
-		setSimpleTemplate( "{" + TurnoDTO.PROPERTY_NOME +
-			"} ({" + TurnoDTO.PROPERTY_TEMPO + "}min)" );
+		setSimpleTemplate( "{" + TurnoDTO.PROPERTY_NOME + "}" );
 		setEditable( false );
 		setTriggerAction( TriggerAction.ALL );
 	}
@@ -82,7 +84,8 @@ public class TurnoComboBox
 			new SelectionChangedListener< CampusDTO >()
 		{
 			@Override
-			public void selectionChanged( SelectionChangedEvent< CampusDTO > se )
+			public void selectionChanged(
+				SelectionChangedEvent< CampusDTO > se )
 			{
 				final CampusDTO campusDTO = se.getSelectedItem();
 

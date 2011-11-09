@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -24,6 +25,7 @@ public class SemanaLetivaFormPresenter
 		Button getSalvarButton();
 		TextField< String > getCodigoTextField();
 		TextField< String > getDescricaoTextField();
+		NumberField getTempoAulaNumberField();
 		SemanaLetivaDTO getSemanaLetivaDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
@@ -61,7 +63,8 @@ public class SemanaLetivaFormPresenter
 						@Override
 						public void onFailure( Throwable caught )
 						{
-							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+							MessageBox.alert( "ERRO!",
+								"Erro ao salvar a semana letiva", null );
 						}
 
 						@Override
@@ -95,6 +98,7 @@ public class SemanaLetivaFormPresenter
 		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		dto.setCodigo( this.display.getCodigoTextField().getValue() );
 		dto.setDescricao( this.display.getDescricaoTextField().getValue() );
+		dto.setTempo( this.display.getTempoAulaNumberField().getValue().intValue() );
 
 		return dto;
 	}

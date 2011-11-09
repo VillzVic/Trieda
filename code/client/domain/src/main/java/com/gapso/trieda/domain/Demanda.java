@@ -386,6 +386,45 @@ public class Demanda
 	}
 
     @SuppressWarnings( "unchecked" )
+	public static List< Demanda > findByCampusTurno(
+		InstituicaoEnsino instituicaoEnsino,
+		Campus campus, Turno turno )
+	{
+		String queryCampus = "";
+		if ( campus != null )
+		{
+			queryCampus	= " o.oferta.campus = :campus AND ";
+		}
+
+		String queryTurno = "";
+		if ( turno != null )
+		{
+			queryTurno = " o.oferta.turno = :turno AND ";
+		}
+
+        String queryString = queryCampus + queryTurno;
+
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Demanda o " +
+        	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND " + queryString + " 1=1 " );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        if ( campus != null )
+        {
+        	q.setParameter( "campus", campus );
+        }
+
+        if ( turno != null )
+        {
+        	q.setParameter( "turno", turno );
+        }
+
+        return q.getResultList();
+	}
+	
+    @SuppressWarnings( "unchecked" )
 	public static List< Demanda > findBy( InstituicaoEnsino instituicaoEnsino,
 		Campus campus, Curso curso, Curriculo curriculo,
 		Turno turno, Disciplina disciplina,
@@ -587,7 +626,8 @@ public class Demanda
 		return ( q.getResultList().size() > 0 );
 	}
 
-	public static boolean existeDemanda( InstituicaoEnsino instituicaoEnsino,
+	public static boolean existeDemanda(
+		InstituicaoEnsino instituicaoEnsino,
 		Curriculo curriculo, Disciplina disciplina, Integer periodo )
 	{
 		boolean existeDemanda = Demanda.existeDemanda(

@@ -23,6 +23,8 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -57,6 +59,12 @@ public class SemanaLetiva
 	@Size( max = 500 )
 	private String descricao;
 
+    @NotNull
+    @Column( name = "SLE_TEMPO" )
+    @Min( 1L )
+    @Max( 1000L )
+    private Integer tempo;
+
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
 	private Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 
@@ -67,7 +75,8 @@ public class SemanaLetiva
 	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
@@ -144,6 +153,16 @@ public class SemanaLetiva
 		Set< Parametro > parametros )
 	{
 		this.parametros = parametros;
+	}
+
+	public Integer getTempo()
+	{
+		return this.tempo;
+	}
+
+	public void setTempo( Integer tempo )
+	{
+		this.tempo = tempo;
 	}
 
 	@PersistenceContext
@@ -422,6 +441,7 @@ public class SemanaLetiva
 		sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
 		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
 		sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
+		sb.append( "Tempo: " ).append( getTempo() ).append( ", " );
 		sb.append( "HorariosAula: " ).append(
 			getHorariosAula() == null ? "null" : getHorariosAula().size() ).append( ", " );
 		sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );

@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TurnoDTO extends AbstractDTO< String >
+public class TurnoDTO
+	extends AbstractDTO< String >
 	implements Comparable< TurnoDTO >
 {
 	private static final long serialVersionUID = 5815525344760896272L;
@@ -14,7 +15,6 @@ public class TurnoDTO extends AbstractDTO< String >
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	public static final String PROPERTY_NOME = "nome";
-	public static final String PROPERTY_TEMPO = "tempo";
 	public static final String PROPERTY_MAX_CREDITOS = "maxCreditos";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
@@ -25,7 +25,7 @@ public class TurnoDTO extends AbstractDTO< String >
 
 	public TurnoDTO()
 	{
-		countHorariosAula = new HashMap< Integer, Integer >();
+		this.countHorariosAula = new HashMap< Integer, Integer >();
 	}
 
 	public void setId( Long value )
@@ -68,16 +68,6 @@ public class TurnoDTO extends AbstractDTO< String >
 		return get( PROPERTY_NOME );
 	}
 
-	public void setTempo( Integer value )
-	{
-		set( PROPERTY_TEMPO, value );
-	}
-
-	public Integer getTempo()
-	{
-		return get( PROPERTY_TEMPO );
-	}
-
 	public void setMaxCreditos( Integer value )
 	{
 		set( PROPERTY_MAX_CREDITOS, value );
@@ -93,12 +83,14 @@ public class TurnoDTO extends AbstractDTO< String >
 		return countHorariosAula;
 	}
 
-	public void setCountHorariosAula( Map< Integer, Integer > countHorariosAula )
+	public void setCountHorariosAula(
+		Map< Integer, Integer > countHorariosAula )
 	{
 		this.countHorariosAula = countHorariosAula;
 	}
 
-	public void setHorariosStringMap( Map< Long, String > horariosStringMap )
+	public void setHorariosStringMap(
+		Map< Long, String > horariosStringMap )
 	{
 		this.horariosStringMap = horariosStringMap;
 	}
@@ -108,31 +100,32 @@ public class TurnoDTO extends AbstractDTO< String >
 		return horariosStringMap;
 	}
 
-	public void setHorariosInicioMap( Map< Long, Date > horariosStringMap )
+	public void setHorariosInicioMap(
+		Map< Long, Date > horariosStringMap )
 	{
 		this.horariosInicioMap = horariosStringMap;
 	}
 
 	public Map< Long, Date > getHorariosInicioMap()
 	{
-		return horariosInicioMap;
+		return this.horariosInicioMap;
 	}
 
 	public int getMaxCreditos( int diaSemana )
 	{
-		Integer value = countHorariosAula.get( diaSemana );
+		Integer value = this.countHorariosAula.get( diaSemana );
 		return ( ( value != null ) ? value : 0 );
 	}
 
 	@Override
 	public String getNaturalKey()
 	{
-		return getNome();
+		return this.getNome();
 	}	
 
 	@Override
 	public int compareTo( TurnoDTO o )
 	{
-		return getNome().compareTo( o.getNome() );
+		return this.getNome().compareTo( o.getNome() );
 	}
 }

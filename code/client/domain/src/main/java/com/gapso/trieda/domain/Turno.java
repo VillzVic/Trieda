@@ -23,8 +23,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -56,12 +54,6 @@ public class Turno
     @Column( name = "TUR_NOME" )
     @Size( min = 1, max = 500 )
     private String nome;
-
-    @NotNull
-    @Column( name = "TUR_TEMPO" )
-    @Min( 1L )
-    @Max( 1000L )
-    private Integer tempo;
 
     @NotNull
     @OneToMany( cascade = CascadeType.ALL, mappedBy = "turno" )
@@ -146,37 +138,65 @@ public class Turno
     @Transactional
     public void persist()
     {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        this.entityManager.persist(this);
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        this.entityManager.persist( this );
     }
 
     @Transactional
-    public void remove() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        if (this.entityManager.contains(this)) {
-            this.entityManager.remove(this);
-        } else {
-            Turno attached = this.entityManager.find(this.getClass(), this.id);
-            this.entityManager.remove(attached);
+    public void remove()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        if ( this.entityManager.contains( this ) )
+        {
+            this.entityManager.remove( this );
+        }
+        else
+        {
+            Turno attached = this.entityManager.find(
+            	this.getClass(), this.id );
+            this.entityManager.remove( attached );
         }
     }
 
 	@Transactional
-	public void detach() {
-		if (this.entityManager == null) this.entityManager = entityManager();
-		this.entityManager.detach(this);
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
 	}
     
     @Transactional
-    public void flush() {
-        if (this.entityManager == null) this.entityManager = entityManager();
+    public void flush()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
         this.entityManager.flush();
     }
 
     @Transactional
-    public Turno merge() {
-        if (this.entityManager == null) this.entityManager = entityManager();
-        Turno merged = this.entityManager.merge(this);
+    public Turno merge()
+    {
+        if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+
+        Turno merged = this.entityManager.merge( this );
         this.entityManager.flush();
         return merged;
     }
@@ -211,7 +231,7 @@ public class Turno
     	return q.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static List< Turno > findByNome(
     	InstituicaoEnsino instituicaoEnsino, String nome )
     {
@@ -227,7 +247,7 @@ public class Turno
     	return list;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     public static List< Turno > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
@@ -241,32 +261,36 @@ public class Turno
         return list;
     }
 
-    public static Turno find( Long id, InstituicaoEnsino instituicaoEnsino )
+    public static Turno find(
+    	Long id, InstituicaoEnsino instituicaoEnsino )
     {
         if ( id == null || instituicaoEnsino == null )
         {
         	return null;
         }
 
-        Turno t = entityManager().find( Turno.class, id );
-        if ( t != null
-        	&& t.getInstituicaoEnsino() != null
-        	&& t.getInstituicaoEnsino() == instituicaoEnsino )
+        Turno turno = entityManager().find( Turno.class, id );
+
+        if ( turno != null
+        	&& turno.getInstituicaoEnsino() != null
+        	&& turno.getInstituicaoEnsino() == instituicaoEnsino )
         {
-        	return t;
+        	return turno;
         }
 
         return null;
     }
 
-    public static List< Turno > find( InstituicaoEnsino instituicaoEnsino,
+    public static List< Turno > find(
+    	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults )
     {
         return find( instituicaoEnsino, firstResult, maxResults, null );
     }
 
-    @SuppressWarnings("unchecked")
-    public static List< Turno > find( InstituicaoEnsino instituicaoEnsino,
+    @SuppressWarnings( "unchecked" )
+    public static List< Turno > find(
+    	InstituicaoEnsino instituicaoEnsino,
     	int firstResult, int maxResults, String orderBy )
     {
         orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
@@ -283,8 +307,8 @@ public class Turno
         return list;
     }
 
-    public static int count( String nome, Integer tempo,
-    	InstituicaoEnsino instituicaoEnsino )
+    public static int count(
+    	String nome, InstituicaoEnsino instituicaoEnsino )
     {
     	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
     	nome = nome.replace( '*', '%' );
@@ -299,27 +323,21 @@ public class Turno
     		nome = ( nome + "%" );
     	}
 
-    	String queryTempo = ( ( tempo != null ) ? " AND o.tempo = :tempo " : "" );
-
     	Query q = entityManager().createQuery(
     		" SELECT COUNT ( o ) FROM Turno o " +
     		" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-    		" AND LOWER ( o.nome ) LIKE LOWER( :nome ) " + queryTempo );
+    		" AND LOWER ( o.nome ) LIKE LOWER( :nome ) " );
 
     	q.setParameter( "nome", nome );
     	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-    	if ( tempo != null )
-    	{
-    		q.setParameter( "tempo", tempo );
-    	}
-
     	return ( (Number)q.getSingleResult() ).intValue();
     }
 
-    @SuppressWarnings("unchecked")
-    public static List< Turno > findBy( InstituicaoEnsino instituicaoEnsino,
-    	String nome, Integer tempo, int firstResult, int maxResults, String orderBy )
+    @SuppressWarnings( "unchecked" )
+    public static List< Turno > findBy(
+    	InstituicaoEnsino instituicaoEnsino, String nome,
+    	int firstResult, int maxResults, String orderBy )
     {
     	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
 
@@ -335,24 +353,17 @@ public class Turno
             nome = ( nome + "%" );
         }
 
-        String queryTempo = ( ( tempo != null ) ? " AND turno.tempo = :tempo " : "" );
-
         orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
         Query q = entityManager().createQuery(
         	" SELECT o FROM Turno o " +
         	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " + queryTempo + " " + orderBy );
+        	" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " + " " + orderBy );
 
         q.setParameter( "nome", nome );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );
-
-        if ( tempo != null )
-        {
-        	q.setParameter( "tempo", tempo );
-        }
 
         List< Turno > list = q.getResultList();
         return list;
@@ -403,38 +414,46 @@ public class Turno
         this.cenario = cenario;
     }
 
-    public String getNome() {
+    public String getNome()
+    {
         return this.nome;
     }
-    public void setNome(String nome) {
+
+    public void setNome( String nome )
+    {
         this.nome = nome;
     }
 
-    public Integer getTempo() {
-        return this.tempo;
-    }
-    public void setTempo(Integer tempo) {
-        this.tempo = tempo;
-    }
-
-    public Set<Oferta> getOfertas() {
+    public Set< Oferta > getOfertas()
+    {
         return this.ofertas;
     }
-    public void setOfertas(Set<Oferta> ofertas) {
+
+    public void setOfertas(
+    	Set< Oferta > ofertas )
+    {
         this.ofertas = ofertas;
     }
 
-    public Set<HorarioAula> getHorariosAula() {
-		return horariosAula;
+    public Set< HorarioAula > getHorariosAula()
+    {
+		return this.horariosAula;
 	}
-	public void setHorariosAula(Set<HorarioAula> horariosAula) {
+
+	public void setHorariosAula(
+		Set< HorarioAula > horariosAula )
+	{
 		this.horariosAula = horariosAula;
 	}
 
-	public Set<Parametro> getParametros() {
-		return parametros;
+	public Set< Parametro > getParametros()
+	{
+		return this.parametros;
 	}
-	public void setParametros(Set<Parametro> parametros) {
+
+	public void setParametros(
+		Set< Parametro > parametros )
+	{
 		this.parametros = parametros;
 	}
 
@@ -447,7 +466,6 @@ public class Turno
         sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
         sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
         sb.append( "Nome: " ).append( getNome() ).append( ", " );
-        sb.append( "Tempo: " ).append( getTempo() ).append( ", " );
         sb.append( "Oferta: " ).append( getOfertas() == null ? "null" : getOfertas().size() );
         sb.append( "HorariosAula: " ).append( getHorariosAula() == null ? "null" : getHorariosAula().size() );
         sb.append( "Parametros: " ).append( getParametros() == null ? "null" : getParametros().size()).append( ", " );

@@ -11,6 +11,7 @@ public class SemanaLetivaDTO
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
+	public static final String PROPERTY_TEMPO = "tempo";
 
 	public SemanaLetivaDTO()
 	{
@@ -55,6 +56,16 @@ public class SemanaLetivaDTO
 	public String getDescricao()
 	{
 		return get( PROPERTY_DESCRICAO );
+	}
+
+	public void setTempo( Integer value )
+	{
+		set( PROPERTY_TEMPO, value );
+	}
+
+	public Integer getTempo()
+	{
+		return get( PROPERTY_TEMPO );
 	}
 
 	@Override

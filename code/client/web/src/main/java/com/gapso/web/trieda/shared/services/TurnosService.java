@@ -11,7 +11,7 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("turnos")
+@RemoteServiceRelativePath( "turnos" )
 public interface TurnosService
 	extends RemoteService
 {
@@ -20,7 +20,7 @@ public interface TurnosService
 	ListLoadResult< TurnoDTO > getList( BasePagingLoadConfig loadConfig );
 	void save( TurnoDTO turnoDTO );
 	void remove( List< TurnoDTO > turnoDTOList );
-	PagingLoadResult< TurnoDTO > getBuscaList( String nome, Integer tempo, PagingLoadConfig config );
+	PagingLoadResult< TurnoDTO > getBuscaList( String nome, PagingLoadConfig config );
 	ListLoadResult< TurnoDTO > getListByCampus( CampusDTO campusDTO );
 	ListLoadResult< TurnoDTO > getListOtimizedOnly();
 }

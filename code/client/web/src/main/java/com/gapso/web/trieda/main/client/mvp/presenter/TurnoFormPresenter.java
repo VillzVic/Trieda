@@ -5,7 +5,6 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -25,7 +24,6 @@ public class TurnoFormPresenter
 	{
 		Button getSalvarButton();
 		TextField< String > getNomeTextField();
-		NumberField getTempoTextField();
 		TurnoDTO getTurnoDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
@@ -65,7 +63,7 @@ public class TurnoFormPresenter
 						public void onFailure( Throwable caught )
 						{
 							MessageBox.alert( "ERRO!",
-								"Deu falha na conexão", null );
+								"Erro ao salvar o turno", null );
 						}
 
 						@Override
@@ -92,14 +90,13 @@ public class TurnoFormPresenter
 	{
 		return this.display.isValid();
 	}
-	
+
 	private TurnoDTO getDTO()
 	{
 		TurnoDTO turnoDTO = this.display.getTurnoDTO();
 
 		turnoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		turnoDTO.setNome( this.display.getNomeTextField().getValue() );
-		turnoDTO.setTempo( this.display.getTempoTextField().getValue().intValue() );
 
 		return turnoDTO;
 	}

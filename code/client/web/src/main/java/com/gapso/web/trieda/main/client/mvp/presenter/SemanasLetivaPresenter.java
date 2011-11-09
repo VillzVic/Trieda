@@ -58,8 +58,8 @@ public class SemanasLetivaPresenter
 		this.display = display;
 		this.cenario = cenario;
 
-		configureProxy();
-		setListeners();
+		this.configureProxy();
+		this.setListeners();
 	}
 
 	private void configureProxy()
@@ -145,7 +145,7 @@ public class SemanasLetivaPresenter
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
-			public void componentSelected(ButtonEvent ce)
+			public void componentSelected( ButtonEvent ce )
 			{
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 

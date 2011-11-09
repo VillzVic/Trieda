@@ -587,7 +587,6 @@ public class ConvertBeans
 
 		domain.setCenario( cenario );
 		domain.setNome( dto.getNome() );
-		domain.setTempo( dto.getTempo() );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 
 		return domain;
@@ -604,7 +603,6 @@ public class ConvertBeans
 		dto.setVersion( domain.getVersion() );
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setNome( domain.getNome() );
-		dto.setTempo( domain.getTempo() );
 		dto.setMaxCreditos( domain.getHorariosAula().size() );
 
 		Set< HorarioAula > horarios = domain.getHorariosAula();
@@ -635,8 +633,8 @@ public class ConvertBeans
 
 		for ( HorarioAula ha : horarios )
 		{
-			horariosStringMap.put( ha.getId(),
-				dateToString( ha.getHorario(), ha.getTurno().getTempo() ) );
+			horariosStringMap.put( ha.getId(), ConvertBeans.dateToString(
+				ha.getHorario(), ha.getSemanaLetiva().getTempo() ) );
 
 			horariosInicioMap.put( ha.getId(), ha.getHorario() );
 		}
@@ -650,7 +648,7 @@ public class ConvertBeans
 			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 		}
 
-		dto.setDisplayText( domain.getNome() + " (" + domain.getTempo() + "min)" );
+		dto.setDisplayText( domain.getNome() );
 
 		return dto;
 	}
@@ -668,6 +666,7 @@ public class ConvertBeans
 		domain.setCodigo( dto.getCodigo() );
 		domain.setDescricao( dto.getDescricao() );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
+		domain.setTempo( dto.getTempo() );
 
 		return domain;
 	}
@@ -689,7 +688,9 @@ public class ConvertBeans
 		dto.setVersion( domain.getVersion() );
 		dto.setCodigo( domain.getCodigo() );
 		dto.setDescricao( domain.getDescricao() );
-		dto.setDisplayText( domain.getCodigo() + " (" + domain.getDescricao() + ")" );
+		dto.setTempo( domain.getTempo() );
+
+		dto.setDisplayText( domain.getCodigo() + " (" + domain.getTempo() + "min)" );
 
 		return dto;
 	}
@@ -731,13 +732,12 @@ public class ConvertBeans
 
 		Turno turno = domain.getTurno();
 		dto.setTurnoId( turno.getId() );
-		dto.setTurnoString(turno.getNome() );
-
+		dto.setTurnoString( turno.getNome() );
 		dto.setInicio( domain.getHorario() );
 
 		Calendar fimCal = Calendar.getInstance();
 		fimCal.setTime( domain.getHorario() );
-		fimCal.add( Calendar.MINUTE, turno.getTempo() );
+		fimCal.add( Calendar.MINUTE, domain.getSemanaLetiva().getTempo() );
 		dto.setFim( fimCal.getTime() );
 
 		if ( instituicaoEnsino != null )
@@ -978,7 +978,7 @@ public class ConvertBeans
 		}
 
 		dto.setHorarioString( ConvertBeans.dateToString(
-			domain.getHorario(), domain.getTurno().getTempo() ) );
+			domain.getHorario(), domain.getSemanaLetiva().getTempo() ) );
 
 		dto.setHorario( domain.getHorario() );
 
@@ -1103,7 +1103,8 @@ public class ConvertBeans
 
 			Calendar fimCal = Calendar.getInstance();
 			fimCal.setTime( horarioAula.getHorario() );
-			fimCal.add( Calendar.MINUTE, horarioAula.getTurno().getTempo() );
+
+			fimCal.add( Calendar.MINUTE, horarioAula.getSemanaLetiva().getTempo() );
 			String fim = df.format( fimCal.getTime() );
 
 			dto.setHorarioString( inicio + " / " + fim );

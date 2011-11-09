@@ -100,12 +100,14 @@ public class OtimizarServiceImpl
 
 			if ( parametroDTO.getCampusId() == null )
 			{
-				message += "o campus n&atilde;o foi informado, ";
+				message += message += HtmlUtils.htmlUnescape(
+					"o campus n&atilde;o foi informado, " );
 			}
 
 			if ( parametroDTO.getTurnoId() == null )
 			{
-				message += "o turno n&atilde;o foi informado, ";
+				message += message += HtmlUtils.htmlUnescape(
+					"o turno n&atilde;o foi informado, " );
 			}
 
 			message = message.substring( 0, message.length() - 2 );
@@ -329,7 +331,6 @@ public class OtimizarServiceImpl
 
 	private String getLinkSolver()
 	{
-		// TODO -- Ler o link do solver a partir do arquivo properties
 		String link = OtimizarServiceImpl.linkSolverDefault;
 		return link;
 	}

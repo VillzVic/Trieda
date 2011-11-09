@@ -38,7 +38,7 @@ public class SemanasLetivaView
 
 	public SemanasLetivaView()
 	{
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
@@ -86,6 +86,7 @@ public class SemanasLetivaView
 
 		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_CODIGO, "Codigo", 120 ) );
 		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_DESCRICAO, "Descrição", 150 ) );
+		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_TEMPO, "Tempo de Aula", 100 ) );
 
 		return list;
 	}

@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.SemanaLetivaFormPresenter;
@@ -22,6 +23,7 @@ public class SemanaLetivaFormView
 	private FormPanel formPanel;
 	private TextField< String > codigoTF;
 	private TextField< String > descricaoTF;
+	private NumberField tempoNF;
 	private SemanaLetivaDTO semanaLetivaDTO;
 	private CenarioDTO cenarioDTO;
 
@@ -36,18 +38,20 @@ public class SemanaLetivaFormView
 		this.semanaLetivaDTO = semanaLetivaDTO;
 		this.cenarioDTO = cenarioDTO;
 
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
 	{
-		String title = ( ( semanaLetivaDTO.getId() == null ) ?
+		String title = ( ( this.semanaLetivaDTO.getId() == null ) ?
 			"Inserção de Semana Letiva" : "Edição de Semana Letiva" );
 
-		simpleModal = new SimpleModal( title, Resources.DEFAULTS.semanaLetiva16() );
-		simpleModal.setHeight( 158 );
-		createForm();
-		simpleModal.setContent( formPanel );
+		this.simpleModal = new SimpleModal(
+			title, Resources.DEFAULTS.semanaLetiva16() );
+		this.simpleModal.setHeight( 200 );
+		this.createForm();
+
+		this.simpleModal.setContent( this.formPanel );
 	}
 
 	private void createForm()
@@ -75,6 +79,18 @@ public class SemanaLetivaFormView
 		this.descricaoTF.setMaxLength( 50 );
 		this.descricaoTF.setEmptyText( "Preencha uma descrição" );
 		this.formPanel.add( this.descricaoTF, formData );
+
+		this.tempoNF = new NumberField();
+		this.tempoNF.setName( SemanaLetivaDTO.PROPERTY_TEMPO );
+		this.tempoNF.setValue( this.semanaLetivaDTO.getTempo() );
+		this.tempoNF.setFieldLabel( "Duração das Aulas (min)" );
+		this.tempoNF.setAllowBlank( false );
+		this.tempoNF.setAllowDecimals( false );
+		this.tempoNF.setAllowNegative( false );
+		this.tempoNF.setMinValue(1);
+		this.tempoNF.setMaxValue( 1000 );
+		this.tempoNF.setEmptyText( "Preencha a duração de aula da semana letiva" );
+		this.formPanel.add( this.tempoNF, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
@@ -115,5 +131,11 @@ public class SemanaLetivaFormView
 	public SemanaLetivaDTO getSemanaLetivaDTO()
 	{
 		return this.semanaLetivaDTO;
+	}
+
+	@Override
+	public NumberField getTempoAulaNumberField()
+	{
+		return this.tempoNF;
 	}
 }

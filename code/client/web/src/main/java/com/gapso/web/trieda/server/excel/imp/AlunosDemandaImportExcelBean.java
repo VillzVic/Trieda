@@ -50,19 +50,19 @@ public class AlunosDemandaImportExcelBean
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( codigoCampusStr, ImportExcelError.ALUNO_DEMANDA_CAMPUS_VAZIO, erros );
-			checkMandatoryField( codigoTurnoStr, ImportExcelError.ALUNO_DEMANDA_TURNO_VAZIO, erros );
-			checkMandatoryField( codigoCursoStr, ImportExcelError.ALUNO_DEMANDA_CURSO_VAZIO, erros );
-			checkMandatoryField( codigoCurriculoStr, ImportExcelError.ALUNO_DEMANDA_CURRICULO_VAZIO, erros );
-			checkMandatoryField( disciplinaCodigoStr, ImportExcelError.ALUNO_DEMANDA_DISCIPLINA_VAZIO, erros );
-			checkMandatoryField( matriculaAlunoStr, ImportExcelError.ALUNO_DEMANDA_MATRICULA_ALUNO_VAZIO, erros );
-			checkMandatoryField( nomeAlunoStr, ImportExcelError.ALUNO_DEMANDA_NOME_ALUNO_VAZIO, erros );
+			checkMandatoryField( this.codigoCampusStr, ImportExcelError.ALUNO_DEMANDA_CAMPUS_VAZIO, erros );
+			checkMandatoryField( this.codigoTurnoStr, ImportExcelError.ALUNO_DEMANDA_TURNO_VAZIO, erros );
+			checkMandatoryField( this.codigoCursoStr, ImportExcelError.ALUNO_DEMANDA_CURSO_VAZIO, erros );
+			checkMandatoryField( this.codigoCurriculoStr, ImportExcelError.ALUNO_DEMANDA_CURRICULO_VAZIO, erros );
+			checkMandatoryField( this.disciplinaCodigoStr, ImportExcelError.ALUNO_DEMANDA_DISCIPLINA_VAZIO, erros );
+			checkMandatoryField( this.matriculaAlunoStr, ImportExcelError.ALUNO_DEMANDA_MATRICULA_ALUNO_VAZIO, erros );
+			checkMandatoryField( this.nomeAlunoStr, ImportExcelError.ALUNO_DEMANDA_NOME_ALUNO_VAZIO, erros );
 
-			periodo = checkNonNegativeIntegerField( periodoStr,
+			this.periodo = checkNonNegativeIntegerField( this.periodoStr,
 				ImportExcelError.ALUNO_DEMANDA_PERIODO_FORMATO_INVALIDO,
 				ImportExcelError.ALUNO_DEMANDA_PERIODO_NEGATIVO, erros );
 
-			prioridade = checkNonNegativeIntegerField( prioridadeAlunoStr,
+			this.prioridade = checkNonNegativeIntegerField( this.prioridadeAlunoStr,
 					ImportExcelError.ALUNO_DEMANDA_PRIORIDADE_FORMATO_INVALIDO,
 					ImportExcelError.ALUNO_DEMANDA_PRIORIDADE_NEGATIVO, erros );
 		}
@@ -76,15 +76,15 @@ public class AlunosDemandaImportExcelBean
 
 	public boolean tudoVazio()
 	{
-		return ( isEmptyField( codigoCampusStr )
-			&& isEmptyField( codigoTurnoStr )
-			&& isEmptyField( codigoCursoStr )
-			&& isEmptyField( codigoCurriculoStr )
-			&& isEmptyField( periodoStr )
-			&& isEmptyField( disciplinaCodigoStr )
-			&& isEmptyField( matriculaAlunoStr )
-			&& isEmptyField( nomeAlunoStr )
-			&& isEmptyField( prioridadeAlunoStr ) );
+		return ( isEmptyField( this.codigoCampusStr )
+			&& isEmptyField( this.codigoTurnoStr )
+			&& isEmptyField( this.codigoCursoStr )
+			&& isEmptyField( this.codigoCurriculoStr )
+			&& isEmptyField( this.periodoStr )
+			&& isEmptyField( this.disciplinaCodigoStr )
+			&& isEmptyField( this.matriculaAlunoStr )
+			&& isEmptyField( this.nomeAlunoStr )
+			&& isEmptyField( this.prioridadeAlunoStr ) );
 	}
 
 	public String getNaturalKeyString()
@@ -102,7 +102,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getCodigoCampusStr()
 	{
-		return codigoCampusStr;
+		return this.codigoCampusStr;
 	}
 
 	public void setCodigoCampusStr( String codigoCampusStr )
@@ -112,7 +112,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getCodigoTurnoStr()
 	{
-		return codigoTurnoStr;
+		return this.codigoTurnoStr;
 	}
 
 	public void setCodigoTurnoStr( String codigoTurnoStr )
@@ -122,7 +122,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getCodigoCursoStr()
 	{
-		return codigoCursoStr;
+		return this.codigoCursoStr;
 	}
 
 	public void setCodigoCursoStr( String codigoCursoStr )
@@ -132,7 +132,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getCodigoCurriculoStr()
 	{
-		return codigoCurriculoStr;
+		return this.codigoCurriculoStr;
 	}
 
 	public void setCodigoCurriculoStr( String codigoCurriculoStr )
@@ -142,7 +142,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getMatriculaAlunoStr()
 	{
-		return matriculaAlunoStr;
+		return this.matriculaAlunoStr;
 	}
 
 	public void setMatriculaAlunoStr( String matriculaAlunoStr )
@@ -152,7 +152,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getCpfAlunoStr()
 	{
-		return cpfAlunoStr;
+		return this.cpfAlunoStr;
 	}
 
 	public void setCpfAlunoStr( String cpfAlunoStr )
@@ -162,7 +162,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getNomeAlunoStr()
 	{
-		return nomeAlunoStr;
+		return this.nomeAlunoStr;
 	}
 
 	public void setNomeAlunoStr( String nomeAlunoStr )
@@ -172,7 +172,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getPrioridadeAlunoStr()
 	{
-		return prioridadeAlunoStr;
+		return this.prioridadeAlunoStr;
 	}
 
 	public void setPrioridadeAlunoStr( String prioridadeAlunoStr )
@@ -182,7 +182,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Campus getCampus()
 	{
-		return campus;
+		return this.campus;
 	}
 
 	public void setCampus( Campus campus )
@@ -192,7 +192,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Turno getTurno()
 	{
-		return turno;
+		return this.turno;
 	}
 
 	public void setTurno( Turno turno )
@@ -202,7 +202,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Curriculo getCurriculo()
 	{
-		return curriculo;
+		return this.curriculo;
 	}
 
 	public void setCurriculo( Curriculo curriculo )
@@ -212,7 +212,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Aluno getAluno()
 	{
-		return aluno;
+		return this.aluno;
 	}
 
 	public void setAluno( Aluno aluno )
@@ -222,7 +222,7 @@ public class AlunosDemandaImportExcelBean
 
 	public AlunoDemanda getAlunoDemanda()
 	{
-		return alunoDemanda;
+		return this.alunoDemanda;
 	}
 
 	public void setAlunoDemanda( AlunoDemanda alunoDemanda )
@@ -232,7 +232,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getPeriodoStr()
 	{
-		return periodoStr;
+		return this.periodoStr;
 	}
 
 	public void setPeriodoStr( String periodoStr )
@@ -242,7 +242,7 @@ public class AlunosDemandaImportExcelBean
 
 	public String getDisciplinaCodigoStr()
 	{
-		return disciplinaCodigoStr;
+		return this.disciplinaCodigoStr;
 	}
 
 	public void setDisciplinaCodigoStr( String disciplinaCodigoStr )
@@ -252,7 +252,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Curso getCurso()
 	{
-		return curso;
+		return this.curso;
 	}
 
 	public void setCurso( Curso curso )
@@ -262,7 +262,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Disciplina getDisciplina()
 	{
-		return disciplina;
+		return this.disciplina;
 	}
 
 	public void setDisciplina( Disciplina disciplina )
@@ -272,7 +272,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Integer getPeriodo()
 	{
-		return periodo;
+		return this.periodo;
 	}
 
 	public void setPeriodo( Integer periodo )
@@ -282,7 +282,7 @@ public class AlunosDemandaImportExcelBean
 
 	public Integer getPrioridade()
 	{
-		return prioridade;
+		return this.prioridade;
 	}
 
 	public void setPrioridade( Integer prioridade )
