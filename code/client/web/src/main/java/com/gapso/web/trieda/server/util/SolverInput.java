@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -139,6 +140,7 @@ public class SolverInput
 
 	private Set< Demanda > demandasCampusTurno = new HashSet< Demanda >();
 	private Set< Disciplina > disciplinasComDemandaCurriculo = new HashSet< Disciplina >();
+	private Map< Curriculo, List< Integer > > mapCurriculosPeriodos = new HashMap< Curriculo, List< Integer > >();
 
 	public SolverInput(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
@@ -164,13 +166,30 @@ public class SolverInput
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
 
-		System.out.println( "preencheMapHorarios : " + ( new java.util.Date() ) );
 		this.preencheMapHorarios();
-
-		System.out.println( "carregaDemandasDisciplinas : " + ( new java.util.Date() ) );
 		this.carregaDemandasDisciplinas();
+		this.relacionaCurriculosPeriodos();
 	}
 
+	private void relacionaCurriculosPeriodos()
+	{
+		Set< Curso > cursos = cenario.getCursos();
+		
+		for ( Curso curso : cursos )
+		{
+			for ( Curriculo curriculo : curso.getCurriculos() )
+			{
+				List< Integer > periodos
+					= curriculo.getPeriodos( this.instituicaoEnsino );
+
+				if ( !this.mapCurriculosPeriodos.containsKey( curriculo ) )
+				{
+					this.mapCurriculosPeriodos.put( curriculo, periodos );
+				}
+			}
+		}
+	}
+	
 	private void carregaDemandasDisciplinas()
 	{
 		// Inicialmente, consideramos que todas as
@@ -459,32 +478,116 @@ public class SolverInput
 
 	private Set< HorarioDisponivelCenario > getHorarios( Campus campus )
 	{
-		return this.horariosCampus.get( campus );
+		if ( campus == null )
+		{
+			return Collections.emptySet();
+		}		
+
+		Set< HorarioDisponivelCenario > result
+			= this.horariosCampus.get( campus );
+
+		if ( result == null )
+		{
+			result = new HashSet< HorarioDisponivelCenario >();
+			this.horariosCampus.put( campus, result );
+		}
+
+		return result;
 	}
 	
 	private Set< HorarioDisponivelCenario > getHorarios( Unidade unidade )
 	{
-		return this.horariosUnidades.get( unidade );
+		if ( unidade == null )
+		{
+			return Collections.emptySet();
+		}		
+
+		Set< HorarioDisponivelCenario > result
+			= this.horariosUnidades.get( unidade );
+
+		if ( result == null )
+		{
+			result = new HashSet< HorarioDisponivelCenario >();
+			this.horariosUnidades.put( unidade, result );
+		}
+
+		return result;
 	}
 	
 	private Set< HorarioDisponivelCenario > getHorarios( Sala sala )
 	{
-		return this.horariosSalas.get( sala );
+		if ( sala == null )
+		{
+			return Collections.emptySet();
+		}
+
+		Set< HorarioDisponivelCenario > result
+			= this.horariosSalas.get( sala );
+
+		if ( result == null )
+		{
+			result = new HashSet< HorarioDisponivelCenario >();
+			this.horariosSalas.put( sala, result );
+		}
+
+		return result;
 	}
 	
 	private Set< HorarioDisponivelCenario > getHorarios( Disciplina disciplina )
 	{
-		return this.horariosDisciplinas.get( disciplina );
+		if ( disciplina == null )
+		{
+			return Collections.emptySet();
+		}
+
+		Set< HorarioDisponivelCenario > result
+			= this.horariosDisciplinas.get( disciplina );
+
+		if ( result == null )
+		{
+			result = new HashSet< HorarioDisponivelCenario >();
+			this.horariosDisciplinas.put( disciplina, result );
+		}
+
+		return result;
 	}
 
 	private Set< HorarioDisponivelCenario > getHorarios( Professor professor )
 	{
-		return this.horariosProfessores.get( professor );
+		if ( professor == null )
+		{
+			return Collections.emptySet();
+		}
+
+		Set< HorarioDisponivelCenario > result
+			= this.horariosProfessores.get( professor );
+
+		if ( result == null )
+		{
+			result = new HashSet< HorarioDisponivelCenario >();
+			this.horariosProfessores.put( professor, result );
+		}
+
+		return result;
 	}
 
 	private Set< HorarioDisponivelCenario > getHorarios( Fixacao fixacao )
 	{
-		return this.horariosFixacoes.get( fixacao );
+		if ( fixacao == null )
+		{
+			return Collections.emptySet();
+		}
+
+		Set< HorarioDisponivelCenario > result
+			= this.horariosFixacoes.get( fixacao );
+
+		if ( result == null )
+		{
+			result = new HashSet< HorarioDisponivelCenario >();
+			this.horariosFixacoes.put( fixacao, result );
+		}
+
+		return result;
 	}
 
 	@Transactional
@@ -555,10 +658,10 @@ public class SolverInput
 				itemTurno.setNome( turno.getNome() );
 
 				// Lendo horários de aula
-				GrupoHorarioAula grupoHorarioAula
-					= this.of.createGrupoHorarioAula();
+				GrupoHorarioAula grupoHorarioAula = this.of.createGrupoHorarioAula();
 
-				Set< HorarioAula > horariosAula = turno.getHorariosAula();
+				Set< HorarioAula > horariosAula = new HashSet< HorarioAula >(
+					HorarioAula.findBySemanaLetiva( this.instituicaoEnsino, calendario ) );
 
 				for ( HorarioAula horarioAula : horariosAula )
 				{
@@ -578,7 +681,7 @@ public class SolverInput
 					for ( HorarioDisponivelCenario hdc : horariosDisponivelCenario )
 					{
 						grupoDiasSemana.getDiaSemana().add(
-									Semanas.toInt( hdc.getDiaSemana() ) );
+							Semanas.toInt( hdc.getDiaSemana() ) );
 					}
 
 					itemHorarioAula.setDiasSemana( grupoDiasSemana );
@@ -1322,9 +1425,14 @@ public class SolverInput
 				if ( demanda.getDisciplina().equals( disciplina ) )
 				{
 					List< Integer > periodosCurriculo
-						= curriculo.getPeriodos( this.instituicaoEnsino );
+						= this.mapCurriculosPeriodos.get( curriculo );
 
-					encontrouDemandaPeriodo = periodosCurriculo.contains( periodo );
+					// Verifica se o map possui o curriculo atual
+					encontrouDemandaPeriodo = ( periodosCurriculo != null );
+
+					// Verifica se o curriculo possui o período informado
+					encontrouDemandaPeriodo = ( encontrouDemandaPeriodo
+						&& periodosCurriculo.contains( periodo ) );
 
 					if ( encontrouDemandaPeriodo )
 					{

@@ -192,6 +192,21 @@ public class HorarioAula
     }
 
     @SuppressWarnings( "unchecked" )
+    public static List< HorarioAula > findBySemanaLetiva(
+    	InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT o FROM HorarioAula o " +
+       		" WHERE o.semanaLetiva = :semanaLetiva " +
+       		" AND o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+
+       	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+       	q.setParameter( "semanaLetiva", semanaLetiva );
+
+       	return q.getResultList();
+    }
+    
+    @SuppressWarnings( "unchecked" )
     public static List< HorarioAula > findByTurno(
     	InstituicaoEnsino instituicaoEnsino, Turno turno )
     {

@@ -231,7 +231,7 @@ public class ParametrosPresenter
 								catch( Exception e )
 								{
 									MessageBox.alert( "ERRO!",
-										"Não foi possível gerar a grade : " + e.getMessage(), null );
+										"Não foi possível gerar a grade.", null );
 
 									habilitarBotao();
 								}

@@ -690,7 +690,7 @@ public class ConvertBeans
 		dto.setDescricao( domain.getDescricao() );
 		dto.setTempo( domain.getTempo() );
 
-		dto.setDisplayText( domain.getCodigo() + " (" + domain.getTempo() + "min)" );
+		dto.setDisplayText( domain.getCodigo() + " (" + domain.getTempo() + " min)" );
 
 		return dto;
 	}
