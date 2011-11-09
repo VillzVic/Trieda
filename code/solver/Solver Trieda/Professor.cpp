@@ -37,7 +37,7 @@ Professor::Professor( bool eVirtual )
 	}
 }
 
-Professor::~Professor(void)
+Professor::~Professor( void )
 {
 
 }

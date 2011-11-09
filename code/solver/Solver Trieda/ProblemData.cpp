@@ -473,11 +473,13 @@ bool ProblemData::verificaDisponibilidadeDisciplinaHorario(
 
    if ( idCalendarioDisc < 0 )
    {
+      /*
       std::cerr << "A disciplina " << disciplina->getCodigo()
                 << " nao esta associada a nenhums matriz curricular. "
                 << std::endl;
 
       exit( 1 );
+      */
    }
 
    bool result = ( idCalendarioDisc >= 0 && horario_aula != NULL

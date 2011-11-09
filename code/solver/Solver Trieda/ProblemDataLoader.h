@@ -195,6 +195,8 @@ private:
    // que foi dividida está alocada com id positivo em um laboratório.
    // Se isso acontecer, tem que converter o id da disciplina.
    void validaInputSolucaoTatico();
+
+   void relacionaProfessorDisciplinasAssociadas( void );
 };
 
 #endif

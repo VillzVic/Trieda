@@ -626,7 +626,7 @@ int SolverMIP::solveTaticoBasico()
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 30 );
+   lp->setTimeLimit( 3600 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
 
@@ -1818,7 +1818,7 @@ int SolverMIP::solveOperacionalMIP()
 
    int status = 0;
 
-   lp->setTimeLimit( 30 );
+   lp->setTimeLimit( 3600 );
    lp->setMIPScreenLog( 4 );
 
    status = lp->optimize( METHOD_MIP );
@@ -2119,8 +2119,8 @@ int SolverMIP::solve()
    if ( problemData->parametros->modo_otimizacao == "TATICO"
          && problemData->atendimentosTatico == NULL )
    {
-      // status = solveTatico();
-      status = solveTaticoBasico();
+      status = solveTatico();
+      // status = solveTaticoBasico();
 
       carregaVariaveisSolucaoTatico();
       converteCjtSalaEmSala();
@@ -2203,8 +2203,8 @@ int SolverMIP::solve()
 
          // Gerando uma saída para o modelo tático.
 
-         // status = solveTatico();
-         status = solveTaticoBasico();
+         status = solveTatico();
+         // status = solveTaticoBasico();
 
          carregaVariaveisSolucaoTatico();
          converteCjtSalaEmSala();
@@ -7946,7 +7946,6 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
                            row.insert( it_v->second, 1.0 );
                         }
 
-                        /////////////////////////////////////////////////////////////////////////////////////////////////
                         // Percorre os dias letivos das
                         // disciplinas pertencentes ao conjunto sala
                         int cred_dia = 0;
@@ -7965,12 +7964,10 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
                               if ( ( *itDiasLetCampus ) == ( *itDiasLetCjtSala ) )
                               {
                                  cred_dia = itCjtSala->maxCredsDia( *itDiasLetCjtSala );
-                                 maxCredsSalaDia = ( maxCredsSalaDia < cred_dia ?
-cred_dia : maxCredsSalaDia );
+                                 maxCredsSalaDia = ( maxCredsSalaDia < cred_dia ? cred_dia : maxCredsSalaDia );
                               }
                            }
                         }
-                        /////////////////////////////////////////////////////////////////////////////////////////////////
                      }
                   }
                }
@@ -8845,7 +8842,8 @@ int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disciplina,
+      problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
 
@@ -11088,7 +11086,6 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
          {
             ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
             {
-               //////////////////////////////////////////////////////////////////////////////////
                std::map< Disciplina *, GGroup< int > >::iterator
                   it_disc_dias = itCjtSala->dias_letivos_disciplinas.begin();
 
@@ -11130,7 +11127,9 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
                               curso = curso_curriculo.first;
                               curriculo = curso_curriculo.second;
 
-                              disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
+                              disciplina_equivalente = problemData->retornaDisciplinaSubstituta(
+                                 curso, curriculo, disciplina );
+
                               if ( disciplina_equivalente != NULL )
                               {
                                  disciplina = disciplina_equivalente;
@@ -11178,7 +11177,6 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
                      }
                   }
                }
-               //////////////////////////////////////////////////////////////////////////////////
             }
          }
       }
@@ -11213,7 +11211,8 @@ int SolverMIP::cria_restricao_folga_abertura_bloco_mesmoTPS()
    Variable v;
    VariableHash::iterator it_v;
 
-   ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
+   ITERA_GGROUP_LESSPTR( itBloco,
+      problemData->blocos, BlocoCurricular )
    {
       c.reset();
       c.setType( Constraint::C_SLACK_EVITA_BLOCO_TPS_D );
@@ -11276,7 +11275,8 @@ int SolverMIP::cria_restricao_folga_abertura_bloco_mesmoTPS()
    return restricoes;
 }
 
-void SolverMIP::cria_solucao_inicial( int cnt, int * indices, double * valores )
+void SolverMIP::cria_solucao_inicial(
+   int cnt, int * indices, double * valores )
 {
    VariableHash::iterator itVHash = vHash.begin();
 
@@ -11313,6 +11313,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelProfessorDisciplina(); 
 
 #ifdef PRINT_cria_variaveis
@@ -11321,6 +11322,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelDisciplinaHorario(); 
 
 #ifdef PRINT_cria_variaveis
@@ -11329,6 +11331,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaDisciplinaHorario(); 
 
 #ifdef PRINT_cria_variaveis
@@ -11337,6 +11340,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaFixProfDiscSalaDiaHor(); 
 
 #ifdef PRINT_cria_variaveis
@@ -11345,6 +11349,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaFixProfDiscDiaHor(); 
 
 #ifdef PRINT_cria_variaveis
@@ -11353,6 +11358,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaFixProfDisc(); 
 
 #ifdef PRINT_cria_variaveis
@@ -11361,6 +11367,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaFixProfDiscSala(); 
 
 #ifdef PRINT_cria_variaveis
@@ -11369,6 +11376,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaFixProfSala();
 
 #ifdef PRINT_cria_variaveis
@@ -11377,6 +11385,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelProfessorCurso();
 
 #ifdef PRINT_cria_variaveis
@@ -11385,6 +11394,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelAvaliacaoCorpoDocente();
 
 #ifdef PRINT_cria_variaveis
@@ -11393,6 +11403,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelCustoCorpoDocente();
 
 #ifdef PRINT_cria_variaveis
@@ -11401,6 +11412,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelDiasProfessoresMinistramAulas();
 
 #ifdef PRINT_cria_variaveis
@@ -11409,6 +11421,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaMinimoMestresCurso();
 
 #ifdef PRINT_cria_variaveis
@@ -11417,6 +11430,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaMinimoDoutoresCurso();
 
 #ifdef PRINT_cria_variaveis
@@ -11425,6 +11439,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelMaxDiscProfCurso();
 
 #ifdef PRINT_cria_variaveis
@@ -11433,6 +11448,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaMaxDiscProfCurso();
 
 #ifdef PRINT_cria_variaveis
@@ -11441,6 +11457,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaCargaHorariaMinimaProfessor();
 
 #ifdef PRINT_cria_variaveis
@@ -11449,6 +11466,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaCargaHorariaMinimaProfessorSemana();
 
 #ifdef PRINT_cria_variaveis
@@ -11457,6 +11475,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaCargaHorariaMaximaProfessorSemana();
 
 #ifdef PRINT_cria_variaveis
@@ -11465,6 +11484,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelGapsProfessores();
 
 #ifdef PRINT_cria_variaveis
@@ -11473,10 +11493,11 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
+   lp->updateLP();
    numVars += criaVariavelFolgaUltimaPrimeiraAulas();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_PREF_DISCIPLINAS: "
+   std::cout << "numVars V_F_ULTIMA_PRIMEIRA_AULA_PROF: "
              << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
@@ -11610,7 +11631,10 @@ int SolverMIP::criaVariavelProfessorDisciplina()
    double pesoNota = 100;
    double pesoPreferencia = 100;
 
-   ITERA_GGROUP_LESSPTR( itProfessor, ( *problemData->campi.begin() )->professores, Professor )
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
+
+   ITERA_GGROUP_LESSPTR( itProfessor, professores, Professor )
    {
       ITERA_GGROUP_LESSPTR( itMagisterio, itProfessor->magisterio, Magisterio )
       {
@@ -11918,7 +11942,8 @@ int SolverMIP::criaVariavelFolgaFixProfDiscSalaDiaHor()
    int num_vars = 0;
    double coeff = 1000.0;
 
-   ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
+   ITERA_GGROUP_LESSPTR( itFix,
+      problemData->fixacoes_Prof_Disc_Sala_Dia_Horario, Fixacao )
    {
       Fixacao * fixacao = ( *itFix );
 
@@ -11966,7 +11991,8 @@ int SolverMIP::criaVariavelFolgaFixProfDiscDiaHor()
    int num_vars = 0;
    double coeff = 1000.0;
 
-   ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc_Dia_Horario, Fixacao )
+   ITERA_GGROUP_LESSPTR( itFix,
+      problemData->fixacoes_Prof_Disc_Dia_Horario, Fixacao )
    {
       Fixacao * fixacao = ( *itFix );
 
@@ -12013,7 +12039,8 @@ int SolverMIP::criaVariavelFolgaFixProfDisc()
    int num_vars = 0;
    double coeff = 1000.0;
 
-   ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc, Fixacao )
+   ITERA_GGROUP_LESSPTR( itFix,
+      problemData->fixacoes_Prof_Disc, Fixacao )
    {
       Fixacao * fixacao = ( *itFix );
 
@@ -12043,7 +12070,8 @@ int SolverMIP::criaVariavelFolgaFixProfDiscSala()
    int num_vars = 0;
    double coeff = 1000.0;
 
-   ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Disc_Sala, Fixacao )
+   ITERA_GGROUP_LESSPTR( itFix,
+      problemData->fixacoes_Prof_Disc_Sala, Fixacao )
    {
       Fixacao * fixacao = ( *itFix );
 
@@ -12053,12 +12081,12 @@ int SolverMIP::criaVariavelFolgaFixProfDiscSala()
       v.setDisciplina( fixacao->disciplina );
       v.setProfessor( fixacao->professor );
 
-      if ( vHashOp.find(v) == vHashOp.end() )
+      if ( vHashOp.find( v ) == vHashOp.end() )
       {
          vHashOp[v] = lp->getNumCols();
 
          OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-            ( char * )v.toString().c_str() );
+            ( char * ) v.toString().c_str() );
 
          lp->newCol( col );
          num_vars++;
@@ -12072,7 +12100,8 @@ int SolverMIP::criaVariavelFolgaFixProfSala()
 {
    int num_vars = 0;
 
-   ITERA_GGROUP_LESSPTR( itFix, problemData->fixacoes_Prof_Sala, Fixacao )
+   ITERA_GGROUP_LESSPTR( itFix,
+      problemData->fixacoes_Prof_Sala, Fixacao )
    {
       Fixacao * fixacao = ( *itFix );
 
@@ -12151,7 +12180,7 @@ int SolverMIP::criaVariavelProfessorCurso()
    int num_vars = 0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( itProfessor, professores, Professor )
    {
@@ -12174,7 +12203,8 @@ int SolverMIP::criaVariavelProfessorCurso()
                itProfessor->getId(), discMinistradaProf->getId() );
 
             // Se o professor e a disciplina da aula em questão se relacionarem:
-            if ( problemData->prof_Disc_Dias.find( professor_disciplina ) == problemData->prof_Disc_Dias.end() )
+            if ( problemData->prof_Disc_Dias.find( professor_disciplina )
+                  == problemData->prof_Disc_Dias.end() )
             {
                continue;
             }
@@ -12224,7 +12254,7 @@ int SolverMIP::criaVariavelCustoCorpoDocente()
    double alfa = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -12259,7 +12289,7 @@ int SolverMIP::criaVariavelDiasProfessoresMinistramAulas()
    double coeff = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    // Dias em que cada professor pode dar aula
    std::map< Professor *, GGroup< int > > mapProfessorDias;
@@ -12311,7 +12341,11 @@ int SolverMIP::criaVariavelFolgaMinimoMestresCurso()
 {
    int num_vars = 0;
    double coeff = 1000.0;
-   int ub = problemData->campi.begin()->professores.size();
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
+
+   int ub = professores.size();
 
    ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
    {
@@ -12342,7 +12376,11 @@ int SolverMIP::criaVariavelFolgaMinimoDoutoresCurso()
 {
    int num_vars = 0;
    double coeff = 1000.0;
-   int ub = problemData->campi.begin()->professores.size();
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
+
+   int ub = professores.size();
 
    ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
    {
@@ -12375,13 +12413,16 @@ int SolverMIP::criaVariavelMaxDiscProfCurso()
    double coeff = 0.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
       Professor * professor = ( *it_prof );
 
-      ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+      GGroup< Disciplina *, LessPtr< Disciplina > > disciplinasProf
+         = problemData->mapProfessorDisciplinasAssociadas[ professor ];
+
+      ITERA_GGROUP_LESSPTR( it_disc, disciplinasProf, Disciplina )
       {
          Disciplina * disciplina = ( *it_disc );
 
@@ -12422,13 +12463,16 @@ int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
    double coeff = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
       Professor * professor = ( *it_prof );
 
-      ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+      GGroup< Disciplina *, LessPtr< Disciplina > > disciplinasProf
+         = problemData->mapProfessorDisciplinasAssociadas[ professor ];
+
+      ITERA_GGROUP_LESSPTR( it_disc, disciplinasProf, Disciplina )
       {
          Disciplina * disciplina = ( *it_disc );
 
@@ -12470,7 +12514,7 @@ int SolverMIP::criaVariavelFolgaCargaHorariaMinimaProfessor()
    int ub = 168; // Total de horas da semana
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -12503,7 +12547,7 @@ int SolverMIP::criaVariavelFolgaCargaHorariaMinimaProfessorSemana()
    int ub = 168; // Total de horas da semana
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -12536,7 +12580,7 @@ int SolverMIP::criaVariavelFolgaCargaHorariaMaximaProfessorSemana()
    int ub = 168; // Total de horas da semana
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -12569,7 +12613,7 @@ int SolverMIP::criaVariavelAvaliacaoCorpoDocente()
    double alfa = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -12619,7 +12663,7 @@ int SolverMIP::criaVariavelGapsProfessores()
    double alfa = 10.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    GGroup< int > dias_letivos;
    for ( int i = 2; i <= 6; i++ )
@@ -12689,17 +12733,21 @@ int SolverMIP::criaVariavelFolgaUltimaPrimeiraAulas()
    double alfa = 1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
-
-   std::vector< Disciplina * > disciplinas;
-   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
-   {
-      disciplinas.push_back( *it_disc );
-   }
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
       Professor * professor = ( *it_prof );
+
+      std::vector< Disciplina * > disciplinas;
+
+      GGroup< Disciplina *, LessPtr< Disciplina > > disciplinasProf
+            = problemData->mapProfessorDisciplinasAssociadas[ professor ];
+
+      ITERA_GGROUP_LESSPTR( it_disc, disciplinasProf, Disciplina )
+      {
+         disciplinas.push_back( *it_disc );
+      }
 
       for ( int i = 0; i < (int)disciplinas.size(); i++ )
       {
@@ -12990,7 +13038,8 @@ int SolverMIP::criaRestricoesOperacional()
    return restricoes;
 }
 
-void SolverMIP::chgCoeffList( std::vector< std::pair< int, int > > cL,
+void SolverMIP::chgCoeffList(
+   std::vector< std::pair< int, int > > cL,
    std::vector< double > cLV )
 {
    lp->updateLP();
@@ -13171,11 +13220,13 @@ int SolverMIP::criaRestricaoBlocoHorario()
          continue;
       }
 
-      std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > >, LessPtr< Aula > >::iterator
+      std::map< Aula *, GGroup< BlocoCurricular *,
+         LessPtr< BlocoCurricular > >, LessPtr< Aula > >::iterator
          itAulaBlocosCurriculares = problemData->aulaBlocosCurriculares.find( v.getAula() );
 
       // Para cada Bloco Curricular ao qual a aula pertence
-      ITERA_GGROUP_LESSPTR( itBlocoCurric, itAulaBlocosCurriculares->second, BlocoCurricular )
+      ITERA_GGROUP_LESSPTR( itBlocoCurric,
+         itAulaBlocosCurriculares->second, BlocoCurricular )
       {
          BlocoCurricular * bloco = ( *itBlocoCurric );
          int nCred = v.getAula()->getTotalCreditos();
@@ -13953,7 +14004,7 @@ int SolverMIP::criaRestricaoCustoCorpoDocente()
    ConstraintOpHash::iterator cit;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    // Informa quantas variáveis 'y' foram criadas para cada professor.
    // Esse valor será o 'nnz' das restrições desse professor
@@ -14045,7 +14096,7 @@ int SolverMIP::criaRestricaoRelacionaVariavelXDiaProf()
    ConstraintOpHash::iterator cit;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    // Dias em que cada professor pode dar aula
    std::map< Professor *, GGroup< int > > mapProfessorDias;
@@ -14210,10 +14261,13 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
 
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
+
    // Agrupando os professores que ministram disciplinas de cada curso
    std::map< Curso *, GGroup< Professor *, LessPtr< Professor > > > mapCursoProfessores;
 
-   ITERA_GGROUP_LESSPTR( it_prof, problemData->campi.begin()->professores, Professor )
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
       Professor * professor = ( *it_prof );
 
@@ -14323,10 +14377,14 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
 
-   // Agrupando os professores que ministram disciplinas de cada curso
-   std::map< Curso *, GGroup< Professor *, LessPtr< Professor > > > mapCursoProfessores;
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
 
-   ITERA_GGROUP_LESSPTR( it_prof, problemData->campi.begin()->professores, Professor )
+   // Agrupando os professores que ministram disciplinas de cada curso
+   std::map< Curso *, GGroup< Professor *,
+      LessPtr< Professor > > > mapCursoProfessores;
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
       Professor * professor = ( *it_prof );
 
@@ -14438,7 +14496,8 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
    ConstraintOpHash::iterator cit;
 
    // Informando quais disciplinas estão associadas a cada curso
-   std::map< Curso *, GGroup< Disciplina *, LessPtr< Disciplina > > > mapCursoDisciplinas;
+   std::map< Curso *, GGroup< Disciplina *,
+      LessPtr< Disciplina > > > mapCursoDisciplinas;
 
    ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
    {
@@ -14452,10 +14511,13 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
       }
    }
 
-   int totalCursos = problemData->cursos.size();
-   int totalProfessores = problemData->campi.begin()->professores.size();
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
 
-   ITERA_GGROUP_LESSPTR( itProf, problemData->campi.begin()->professores, Professor )
+   int totalCursos = problemData->cursos.size();
+   int totalProfessores = professores.size();
+
+   ITERA_GGROUP_LESSPTR( itProf, professores, Professor )
    {
       Professor * professor = ( *itProf );
 
@@ -14539,7 +14601,7 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessor()
    ConstraintOpHash::iterator cit;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -14648,7 +14710,7 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
    ConstraintOpHash::iterator cit;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -14743,7 +14805,7 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
    ConstraintOpHash::iterator cit;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -14835,7 +14897,7 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
    ConstraintOpHash::iterator cit;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    // Informa quantas variáveis 'y' foram criadas para cada professor.
    // Esse valor será o 'nnz' das restrições desse professor
@@ -14936,7 +14998,7 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
    ConstraintOpHash::iterator cit;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
       = problemData->disciplinas;
@@ -15087,7 +15149,7 @@ int SolverMIP::criaRestricaoDeslocamentoProfessor()
    }
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -15184,10 +15246,9 @@ int SolverMIP::criaRestricaoDeslocamentoViavel()
          hashX[ vit1->first ] = vit1->second;
       }
    }
-   ///////
 
-   GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+    GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
 
    vit1 = hashX.begin();
 
@@ -15292,12 +15353,11 @@ int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
          hashX[ vit1->first ] = vit1->second;
       }
    }
-   ///////
 
    GGroup< std::pair< VariableOp, VariableOp > > variaveisExaminadas;
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
@@ -15411,7 +15471,7 @@ int SolverMIP::criaRestricaoGapsProfessores()
    }
 
    GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->campi.begin()->professores;
+      = problemData->getProfessores();
 
    GGroup< int > dias_letivos;
    for ( int i = 1; i <= 7; i++ )

@@ -757,12 +757,13 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoProfessor(
 bool ValidateSolutionOp::deslocamentoViavel( const ProblemData * pData,
    const AtendimentoBase * at1, const AtendimentoBase * at2 )
 {
-   Turno * turno = at1->turno;
    HorarioAula * horario_aula1 = at1->horario_aula;
    HorarioAula * horario_aula2 = at2->horario_aula;
 
+   Calendario * calendario = horario_aula1->getCalendario();
+
    DateTime dt1 = horario_aula1->getInicio();
-   dt1.addMinutes( turno->getTempoAula() );
+   dt1.addMinutes( calendario->getTempoAula() );
 
    DateTime dt2 = horario_aula2->getInicio();
    DateTime diff = dt2 - dt1;

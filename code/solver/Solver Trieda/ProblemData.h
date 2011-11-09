@@ -347,6 +347,8 @@ public:
    // Para uma dada aula, retorna-se o total de
    // horários do turno ao qual essa aula está alocada
    int totalHorariosTurnoAula( Aula * );
+
+   std::map< Professor *, GGroup< Disciplina *, LessPtr< Disciplina > > > mapProfessorDisciplinasAssociadas;
 };
 
 #endif

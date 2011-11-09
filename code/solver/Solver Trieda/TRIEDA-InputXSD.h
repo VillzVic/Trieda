@@ -344,6 +344,20 @@ class ItemCalendario: public ::xml_schema::type
   void
   codigo (::std::auto_ptr< codigo_type > p);
 
+  // tempoAula
+  // 
+  typedef ::xml_schema::int_ tempoAula_type;
+  typedef ::xsd::cxx::tree::traits< tempoAula_type, char > tempoAula_traits;
+
+  const tempoAula_type&
+  tempoAula () const;
+
+  tempoAula_type&
+  tempoAula ();
+
+  void
+  tempoAula (const tempoAula_type& x);
+
   // turnos
   // 
   typedef ::GrupoTurno turnos_type;
@@ -365,10 +379,12 @@ class ItemCalendario: public ::xml_schema::type
   //
   ItemCalendario (const id_type&,
                   const codigo_type&,
+                  const tempoAula_type&,
                   const turnos_type&);
 
   ItemCalendario (const id_type&,
                   const codigo_type&,
+                  const tempoAula_type&,
                   ::std::auto_ptr< turnos_type >&);
 
   ItemCalendario (const ::xercesc::DOMElement& e,
@@ -396,6 +412,7 @@ class ItemCalendario: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< codigo_type > codigo_;
+  ::xsd::cxx::tree::one< tempoAula_type > tempoAula_;
   ::xsd::cxx::tree::one< turnos_type > turnos_;
 };
 
@@ -531,20 +548,6 @@ class ItemTurno: public ::xml_schema::type
   void
   nome (::std::auto_ptr< nome_type > p);
 
-  // tempoAula
-  // 
-  typedef ::xml_schema::int_ tempoAula_type;
-  typedef ::xsd::cxx::tree::traits< tempoAula_type, char > tempoAula_traits;
-
-  const tempoAula_type&
-  tempoAula () const;
-
-  tempoAula_type&
-  tempoAula ();
-
-  void
-  tempoAula (const tempoAula_type& x);
-
   // HorariosAula
   // 
   typedef ::GrupoHorarioAula HorariosAula_type;
@@ -566,12 +569,10 @@ class ItemTurno: public ::xml_schema::type
   //
   ItemTurno (const id_type&,
              const nome_type&,
-             const tempoAula_type&,
              const HorariosAula_type&);
 
   ItemTurno (const id_type&,
              const nome_type&,
-             const tempoAula_type&,
              ::std::auto_ptr< HorariosAula_type >&);
 
   ItemTurno (const ::xercesc::DOMElement& e,
@@ -599,7 +600,6 @@ class ItemTurno: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< id_type > id_;
   ::xsd::cxx::tree::one< nome_type > nome_;
-  ::xsd::cxx::tree::one< tempoAula_type > tempoAula_;
   ::xsd::cxx::tree::one< HorariosAula_type > HorariosAula_;
 };
 

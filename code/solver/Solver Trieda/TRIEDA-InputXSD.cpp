@@ -85,6 +85,24 @@ codigo (::std::auto_ptr< codigo_type > x)
   this->codigo_.set (x);
 }
 
+const ItemCalendario::tempoAula_type& ItemCalendario::
+tempoAula () const
+{
+  return this->tempoAula_.get ();
+}
+
+ItemCalendario::tempoAula_type& ItemCalendario::
+tempoAula ()
+{
+  return this->tempoAula_.get ();
+}
+
+void ItemCalendario::
+tempoAula (const tempoAula_type& x)
+{
+  this->tempoAula_.set (x);
+}
+
 const ItemCalendario::turnos_type& ItemCalendario::
 turnos () const
 {
@@ -235,24 +253,6 @@ void ItemTurno::
 nome (::std::auto_ptr< nome_type > x)
 {
   this->nome_.set (x);
-}
-
-const ItemTurno::tempoAula_type& ItemTurno::
-tempoAula () const
-{
-  return this->tempoAula_.get ();
-}
-
-ItemTurno::tempoAula_type& ItemTurno::
-tempoAula ()
-{
-  return this->tempoAula_.get ();
-}
-
-void ItemTurno::
-tempoAula (const tempoAula_type& x)
-{
-  this->tempoAula_.set (x);
 }
 
 const ItemTurno::HorariosAula_type& ItemTurno::
@@ -5520,10 +5520,12 @@ indiferente (::std::auto_ptr< indiferente_type > x)
 ItemCalendario::
 ItemCalendario (const id_type& id,
                 const codigo_type& codigo,
+                const tempoAula_type& tempoAula,
                 const turnos_type& turnos)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
+  tempoAula_ (tempoAula, ::xml_schema::flags (), this),
   turnos_ (turnos, ::xml_schema::flags (), this)
 {
 }
@@ -5531,10 +5533,12 @@ ItemCalendario (const id_type& id,
 ItemCalendario::
 ItemCalendario (const id_type& id,
                 const codigo_type& codigo,
+                const tempoAula_type& tempoAula,
                 ::std::auto_ptr< turnos_type >& turnos)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
+  tempoAula_ (tempoAula, ::xml_schema::flags (), this),
   turnos_ (turnos, ::xml_schema::flags (), this)
 {
 }
@@ -5546,6 +5550,7 @@ ItemCalendario (const ItemCalendario& x,
 : ::xml_schema::type (x, f, c),
   id_ (x.id_, f, this),
   codigo_ (x.codigo_, f, this),
+  tempoAula_ (x.tempoAula_, f, this),
   turnos_ (x.turnos_, f, this)
 {
 }
@@ -5557,6 +5562,7 @@ ItemCalendario (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   id_ (f, this),
   codigo_ (f, this),
+  tempoAula_ (f, this),
   turnos_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -5601,6 +5607,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // tempoAula
+    //
+    if (n.name () == "tempoAula" && n.namespace_ ().empty ())
+    {
+      if (!tempoAula_.present ())
+      {
+        this->tempoAula_.set (tempoAula_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // turnos
     //
     if (n.name () == "turnos" && n.namespace_ ().empty ())
@@ -5629,6 +5646,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "codigo",
+      "");
+  }
+
+  if (!tempoAula_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "tempoAula",
       "");
   }
 
@@ -5804,12 +5828,10 @@ ItemAlunoDemanda::
 ItemTurno::
 ItemTurno (const id_type& id,
            const nome_type& nome,
-           const tempoAula_type& tempoAula,
            const HorariosAula_type& HorariosAula)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   nome_ (nome, ::xml_schema::flags (), this),
-  tempoAula_ (tempoAula, ::xml_schema::flags (), this),
   HorariosAula_ (HorariosAula, ::xml_schema::flags (), this)
 {
 }
@@ -5817,12 +5839,10 @@ ItemTurno (const id_type& id,
 ItemTurno::
 ItemTurno (const id_type& id,
            const nome_type& nome,
-           const tempoAula_type& tempoAula,
            ::std::auto_ptr< HorariosAula_type >& HorariosAula)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   nome_ (nome, ::xml_schema::flags (), this),
-  tempoAula_ (tempoAula, ::xml_schema::flags (), this),
   HorariosAula_ (HorariosAula, ::xml_schema::flags (), this)
 {
 }
@@ -5834,7 +5854,6 @@ ItemTurno (const ItemTurno& x,
 : ::xml_schema::type (x, f, c),
   id_ (x.id_, f, this),
   nome_ (x.nome_, f, this),
-  tempoAula_ (x.tempoAula_, f, this),
   HorariosAula_ (x.HorariosAula_, f, this)
 {
 }
@@ -5846,7 +5865,6 @@ ItemTurno (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   id_ (f, this),
   nome_ (f, this),
-  tempoAula_ (f, this),
   HorariosAula_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -5891,17 +5909,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // tempoAula
-    //
-    if (n.name () == "tempoAula" && n.namespace_ ().empty ())
-    {
-      if (!tempoAula_.present ())
-      {
-        this->tempoAula_.set (tempoAula_traits::create (i, f, this));
-        continue;
-      }
-    }
-
     // HorariosAula
     //
     if (n.name () == "HorariosAula" && n.namespace_ ().empty ())
@@ -5930,13 +5937,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "nome",
-      "");
-  }
-
-  if (!tempoAula_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "tempoAula",
       "");
   }
 

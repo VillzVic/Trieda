@@ -14,7 +14,6 @@ void Turno::le_arvore( ItemTurno & elem )
 {
 	this->setId( elem.id() );
 	this->setNome( elem.nome() );
-	this->setTempoAula( elem.tempoAula() );
 
 	ITERA_SEQ( it_horarios, elem.HorariosAula(), HorarioAula )
 	{
