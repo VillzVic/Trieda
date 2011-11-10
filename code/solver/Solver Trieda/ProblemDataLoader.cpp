@@ -3799,13 +3799,16 @@ void ProblemDataLoader::geraHorariosDia()
 
    problemData->maxHorariosDif = 0;
 
-   ITERA_GGROUP_LESSPTR( it_calendario, problemData->calendarios, Calendario )
+   ITERA_GGROUP_LESSPTR( it_calendario,
+      problemData->calendarios, Calendario )
    {
-      ITERA_GGROUP_LESSPTR( itTurno, it_calendario->turnos, Turno )
+      ITERA_GGROUP_LESSPTR( itTurno,
+         it_calendario->turnos, Turno )
       {
          Turno * turno = ( *itTurno );
 
-         ITERA_GGROUP_LESSPTR( itHA, turno->horarios_aula, HorarioAula )
+         ITERA_GGROUP_LESSPTR( itHA,
+            turno->horarios_aula, HorarioAula )
          {
             HorarioAula * horarioAula = ( *itHA );
 
@@ -3814,7 +3817,8 @@ void ProblemDataLoader::geraHorariosDia()
                problemData->maxHorariosDif = horarioAula->getId();
             }
 
-            ITERA_GGROUP_N_PT( itDia, horarioAula->dias_semana, int )
+            ITERA_GGROUP_N_PT( itDia,
+               horarioAula->dias_semana, int )
             {
                HorarioDia * horarioDia = new HorarioDia();
 

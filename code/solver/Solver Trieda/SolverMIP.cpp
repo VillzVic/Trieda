@@ -369,14 +369,16 @@ void SolverMIP::carregaVariaveisSolucaoTatico()
    }
 
    vit = vHash.begin();
+
    for (; vit != vHash.end(); ++vit )
    {
       Variable * v = new Variable( vit->first );
       int col = vit->second;
       v->setValue( xSol[ col ] );
+
       if ( v->getValue() > 0.00001 )
       {
-         sLoader.setFolgas(v);
+         sLoader.setFolgas( v );
       }
 
       delete v;
@@ -544,7 +546,7 @@ int SolverMIP::solveTatico()
    lp->updateLP();
 
    lp->setHeurFrequency( 1.0 );
-   lp->setTimeLimit( 3600 );
+   lp->setTimeLimit( 600 );
    lp->setMIPRelTol( 0.02 );
    // lp->setMIPStartAlg( METHOD_PRIMAL );
    lp->setMIPEmphasis( 1 );
@@ -626,7 +628,7 @@ int SolverMIP::solveTaticoBasico()
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 3600 );
+   lp->setTimeLimit( 600 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
@@ -1312,7 +1314,7 @@ void SolverMIP::getSolutionTatico()
                std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
 
                // NOVA UNIDADE
-               exit( 1 );
+               // exit( 1 );
             }
             else
             {
@@ -1329,7 +1331,7 @@ void SolverMIP::getSolutionTatico()
                         std::cout << "Achei que nao era pra cair aqui <dbg2>" << std::endl;
 
                         // NOVA SALA
-                        exit( 1 );
+                        // exit( 1 );
                      }
                      else
                      {
@@ -1346,7 +1348,7 @@ void SolverMIP::getSolutionTatico()
                                  std::cout << "Achei que nao era pra cair aqui <dbg3>" << std::endl;
 
                                  // NOVO DIA SEMANA
-                                 exit( 1 );
+                                 // exit( 1 );
                               }
                               else
                               {
@@ -1363,7 +1365,7 @@ void SolverMIP::getSolutionTatico()
                                           std::cout << "Achei que nao era pra cair aqui <dbg4>" << std::endl;
 
                                           // NOVO ATENDIMENTO
-                                          exit( 1 );                                             
+                                          // exit( 1 );
                                        }
                                        else
                                        {
@@ -1819,7 +1821,7 @@ int SolverMIP::solveOperacionalMIP()
 
    int status = 0;
 
-   lp->setTimeLimit( 3600 );
+   lp->setTimeLimit( 600 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
 
@@ -2121,8 +2123,8 @@ int SolverMIP::solve()
    if ( problemData->parametros->modo_otimizacao == "TATICO"
          && problemData->atendimentosTatico == NULL )
    {
-      status = solveTatico();
-      // status = solveTaticoBasico();
+      // status = solveTatico();
+      status = solveTaticoBasico();
 
       carregaVariaveisSolucaoTatico();
       converteCjtSalaEmSala();
@@ -2205,8 +2207,8 @@ int SolverMIP::solve()
 
          // Gerando uma saída para o modelo tático.
 
-         status = solveTatico();
-         // status = solveTaticoBasico();
+         // status = solveTatico();
+         status = solveTaticoBasico();
 
          carregaVariaveisSolucaoTatico();
          converteCjtSalaEmSala();
@@ -2358,7 +2360,6 @@ void SolverMIP::relacionaAlunosDemandas()
 
       quantidadeAlunosAtendidosDemanda[ demanda ] += at_oferta->getQuantidade();
    }
-   ////
 
    // De acordo com o total de alunos de cada demanda que foram atendidos,
    // adicionamos os alunos na lista de atendidos da solução
@@ -3131,7 +3132,7 @@ int SolverMIP::localBranching(
             }
             else
             {
-               nR.insert( vit->second,-1.0 );
+               nR.insert( vit->second, -1.0 );
             }
          }
 
@@ -10088,7 +10089,7 @@ int SolverMIP::cria_restricao_divisao_credito()
                   continue;
                }
 
-               nnz = ( problemData->totalSalas + ( disciplina->combinacao_divisao_creditos.size() * 2 ) );
+               nnz = ( problemData->totalSalas + ( (int)( disciplina->combinacao_divisao_creditos.size() ) * 2 ) );
                OPT_ROW row( nnz, OPT_ROW::EQUAL , 0.0 , name );
 
                ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
@@ -10195,8 +10196,8 @@ Somente uma combinação de regra de divisão de créditos pode ser escolhida
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_combinacao_divisao_credito(){
-
+int SolverMIP::cria_restricao_combinacao_divisao_credito()
+{
    int restricoes = 0;
    char name[ 100 ];
    int nnz;
@@ -10211,7 +10212,8 @@ int SolverMIP::cria_restricao_combinacao_divisao_credito(){
    Curso * curso = NULL;
    Curriculo * curriculo = NULL;
 
-   ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disciplina,
+      problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
 
@@ -10241,7 +10243,7 @@ int SolverMIP::cria_restricao_combinacao_divisao_credito(){
             continue;
          }
 
-         nnz = disciplina->combinacao_divisao_creditos.size();
+         nnz = (int)( disciplina->combinacao_divisao_creditos.size() );
          OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
 
          for ( int k = 0; k < (int)disciplina->combinacao_divisao_creditos.size(); k++ )
@@ -10254,6 +10256,7 @@ int SolverMIP::cria_restricao_combinacao_divisao_credito(){
             v.setK( k );
 
             it_v = vHash.find( v );
+
             if ( it_v != vHash.end() )
             {
                row.insert( it_v->second, 1.0 );
@@ -15460,11 +15463,11 @@ int SolverMIP::criaRestricaoGapsProfessores()
    VariableOpHash::iterator vit1;
    VariableOpHash::iterator vit2;
 
-   const int totalHorariosAula
-         = problemData->horarios_aula_ordenados .size();
+   const int totalHorariosAula = (int)(
+     problemData->horarios_aula_ordenados .size() );
 
    // Horários * Aulas * Dias Letivos
-   int nnz = ( totalHorariosAula * problemData->aulas.size() * 5 );
+   int nnz = ( totalHorariosAula * (int)( problemData->aulas.size() ) * 5 );
    double rhs = 1.0;
    char name[ 200 ];
 
@@ -15477,6 +15480,7 @@ int SolverMIP::criaRestricaoGapsProfessores()
       = problemData->getProfessores();
 
    GGroup< int > dias_letivos;
+
    for ( int i = 1; i <= 7; i++ )
    {
       dias_letivos.add( i );

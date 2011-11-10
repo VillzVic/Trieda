@@ -13,17 +13,17 @@
 #include "CPUTimerUnix.h"
 #endif
 
-class RVND: public Heuristic
+class RVND
+   : public Heuristic
 {
 public:
    using Heuristic::exec; // prevents name hiding
 
-   RVND(Avaliador & _ev, vector<Heuristic*> _neighbors) :
-   ev(_ev), neighbors(_neighbors)
-   {
-   }
+   RVND( Avaliador & _ev, vector< Heuristic * > _neighbors )
+      : ev( _ev ), neighbors( _neighbors ) { }
 
-   virtual void exec(SolucaoOperacional & s, double timelimit, double target_f)
+   virtual void exec( SolucaoOperacional & s,
+      double timelimit, double target_f )
    {
       CPUTimer * timer = new CPUTimer();
       timer->start();
@@ -32,45 +32,36 @@ public:
       double elapsedTime = timer->getCPUTotalSecs(); 
       timer->start();
 
-      std::random_shuffle(neighbors.begin(), neighbors.end()); // shuffle elements
-      int r = neighbors.size();
-
+      std::random_shuffle( neighbors.begin(), neighbors.end() ); // shuffle elements
+      int r = (int)( neighbors.size() );
       int k = 1;
 
       timer->stop();
       elapsedTime = timer->getCPUTotalSecs(); 
       timer->start();
 
-      double e = ev.avaliaSolucao(s);
+      double e = ev.avaliaSolucao( s );
 
-      while ((target_f < e) && (k <= r) && (elapsedTime < timelimit))
+      while ( ( target_f < e ) && ( k <= r ) && ( elapsedTime < timelimit ) )
       {
-         SolucaoOperacional * s0 = new SolucaoOperacional(s);
-         //Evaluation<M>* e0 = &e.clone();
+         SolucaoOperacional * s0 = new SolucaoOperacional( s );
+         neighbors[ k - 1 ]->exec( *s0, ( timelimit - elapsedTime ), target_f );
 
-         neighbors[k - 1]->exec(*s0, (timelimit-elapsedTime), target_f);
+         double e0 = ev.avaliaSolucao( *s0 );
 
-         double e0 = ev.avaliaSolucao(*s0);
-         
-         if (e0 < e)
+         if ( e0 < e )
          {
-            //s = *s0;
             delete &s;
-            s = *new SolucaoOperacional(*s0);
-            //e = *e0;
+            s = *new SolucaoOperacional( *s0 );
             e = e0;
             delete s0;
-            //delete e0;
             k = 1;
          }
          else
          {
             delete s0;
-            //delete e0;
             k = k + 1;
          }
-
-         //e = ev.avaliaSolucao(s);
 
          timer->stop();
          elapsedTime = timer->getCPUTotalSecs(); 
@@ -79,8 +70,8 @@ public:
    }
 
 private:
-   vector<Heuristic*> neighbors;
+   vector< Heuristic * > neighbors;
    Avaliador & ev;
 };
 
-#endif /*RVND_HPP_*/
+#endif // RVND_HPP_
