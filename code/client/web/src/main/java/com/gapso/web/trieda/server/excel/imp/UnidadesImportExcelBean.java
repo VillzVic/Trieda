@@ -26,9 +26,9 @@ public class UnidadesImportExcelBean
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( codigoStr, ImportExcelError.UNIDADE_CODIGO_VAZIO, erros );
-			checkMandatoryField( nomeStr, ImportExcelError.UNIDADE_NOME_VAZIO, erros );
-			checkMandatoryField( codigoCampusStr, ImportExcelError.UNIDADE_CAMPUS_VAZIO, erros );
+			checkMandatoryField( this.codigoStr, ImportExcelError.UNIDADE_CODIGO_VAZIO, erros );
+			checkMandatoryField( this.nomeStr, ImportExcelError.UNIDADE_NOME_VAZIO, erros );
+			checkMandatoryField( this.codigoCampusStr, ImportExcelError.UNIDADE_CAMPUS_VAZIO, erros );
 		}
 		else
 		{
@@ -40,14 +40,14 @@ public class UnidadesImportExcelBean
 
 	private boolean tudoVazio()
 	{
-		return (isEmptyField( codigoStr )
-			&& isEmptyField( nomeStr )
-			&& isEmptyField( codigoCampusStr ) );
+		return (isEmptyField( this.codigoStr )
+			&& isEmptyField( this.nomeStr )
+			&& isEmptyField( this.codigoCampusStr ) );
 	}
 
 	public String getCodigoStr()
 	{
-		return codigoStr;
+		return this.codigoStr;
 	}
 
 	public void setCodigoStr( String codigoStr )
@@ -57,7 +57,7 @@ public class UnidadesImportExcelBean
 
 	public String getNomeStr()
 	{
-		return nomeStr;
+		return this.nomeStr;
 	}
 
 	public void setNomeStr( String nomeStr )
@@ -67,7 +67,7 @@ public class UnidadesImportExcelBean
 
 	public String getCodigoCampusStr()
 	{
-		return codigoCampusStr;
+		return this.codigoCampusStr;
 	}
 
 	public void setCodigoCampusStr( String codigoCampusStr )
@@ -77,7 +77,7 @@ public class UnidadesImportExcelBean
 
 	public Campus getCampus()
 	{
-		return campus;
+		return this.campus;
 	}
 
 	public void setCampus( Campus campus )
@@ -88,6 +88,6 @@ public class UnidadesImportExcelBean
 	@Override
 	public int compareTo( UnidadesImportExcelBean o )
 	{
-		return getCodigoStr().compareTo(o.getCodigoStr());
+		return this.getCodigoStr().compareTo(o.getCodigoStr());
 	}
 }

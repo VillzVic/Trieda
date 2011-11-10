@@ -80,7 +80,7 @@ public class TurnoDTO
 
 	public Map< Integer, Integer > getCountHorariosAula()
 	{
-		return countHorariosAula;
+		return this.countHorariosAula;
 	}
 
 	public void setCountHorariosAula(
@@ -97,7 +97,7 @@ public class TurnoDTO
 
 	public Map< Long, String > getHorariosStringMap()
 	{
-		return horariosStringMap;
+		return this.horariosStringMap;
 	}
 
 	public void setHorariosInicioMap(

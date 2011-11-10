@@ -19,8 +19,9 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 	private Unidade unidade;
 	private Integer capacidade;
 	
-	public SalasImportExcelBean(int row) {
-		super(row);
+	public SalasImportExcelBean( int row )
+	{
+		super( row );
 	}
 	
 	public List< ImportExcelError > checkSyntacticErrors()
@@ -30,14 +31,14 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( codigoStr,ImportExcelError.SALA_CODIGO_VAZIO, erros );
-			checkMandatoryField( codigoUnidadeStr,ImportExcelError.SALA_UNIDADE_VAZIO, erros );
-			checkMandatoryField( tipoStr,ImportExcelError.SALA_TIPO_VAZIO, erros );
-			checkMandatoryField( numeroStr,ImportExcelError.SALA_NUMERO_VAZIO, erros );
-			checkMandatoryField( andarStr,ImportExcelError.SALA_ANDAR_VAZIO, erros );
-			checkMandatoryField( capacidadeStr,ImportExcelError.SALA_CAPACIDADE_VAZIO, erros );
+			checkMandatoryField( this.codigoStr, ImportExcelError.SALA_CODIGO_VAZIO, erros );
+			checkMandatoryField( this.codigoUnidadeStr, ImportExcelError.SALA_UNIDADE_VAZIO, erros );
+			checkMandatoryField( this.tipoStr, ImportExcelError.SALA_TIPO_VAZIO, erros );
+			checkMandatoryField( this.numeroStr, ImportExcelError.SALA_NUMERO_VAZIO, erros );
+			checkMandatoryField( this.andarStr, ImportExcelError.SALA_ANDAR_VAZIO, erros );
+			checkMandatoryField( this.capacidadeStr, ImportExcelError.SALA_CAPACIDADE_VAZIO, erros );
 
-			capacidade = checkNonNegativeIntegerField( capacidadeStr,
+			this.capacidade = checkNonNegativeIntegerField( this.capacidadeStr,
 				ImportExcelError.SALA_CAPACIDADE_FORMATO_INVALIDO,
 				ImportExcelError.SALA_CAPACIDADE_VALOR_NEGATIVO, erros );
 		}
@@ -51,17 +52,17 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 	
 	private boolean tudoVazio()
 	{
-		return ( isEmptyField( codigoStr )
-			&& isEmptyField( codigoUnidadeStr )
-			&& isEmptyField( tipoStr )
-			&& isEmptyField( numeroStr )
-			&& isEmptyField( andarStr )
-			&& isEmptyField( capacidadeStr ) );
+		return ( isEmptyField( this.codigoStr )
+			&& isEmptyField( this.codigoUnidadeStr )
+			&& isEmptyField( this.tipoStr )
+			&& isEmptyField( this.numeroStr )
+			&& isEmptyField( this.andarStr )
+			&& isEmptyField( this.capacidadeStr ) );
 	}
 
 	public String getCodigoStr()
 	{
-		return codigoStr;
+		return this.codigoStr;
 	}
 
 	public void setCodigoStr( String codigoStr )
@@ -71,7 +72,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public String getCodigoUnidadeStr()
 	{
-		return codigoUnidadeStr;
+		return this.codigoUnidadeStr;
 	}
 
 	public void setCodigoUnidadeStr( String codigoUnidadeStr )
@@ -81,7 +82,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public String getTipoStr()
 	{
-		return tipoStr;
+		return this.tipoStr;
 	}
 
 	public void setTipoStr( String tipoStr )
@@ -91,7 +92,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public String getNumeroStr()
 	{
-		return numeroStr;
+		return this.numeroStr;
 	}
 
 	public void setNumeroStr( String numeroStr )
@@ -101,7 +102,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public String getAndarStr()
 	{
-		return andarStr;
+		return this.andarStr;
 	}
 
 	public void setAndarStr( String andarStr )
@@ -111,7 +112,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public String getCapacidadeStr()
 	{
-		return capacidadeStr;
+		return this.capacidadeStr;
 	}
 
 	public void setCapacidadeStr( String capacidadeStr )
@@ -121,7 +122,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public Unidade getUnidade()
 	{
-		return unidade;
+		return this.unidade;
 	}
 
 	public void setUnidade( Unidade unidade )
@@ -131,7 +132,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public TipoSala getTipo()
 	{
-		return tipo;
+		return this.tipo;
 	}
 
 	public void setTipo( TipoSala tipo )
@@ -141,12 +142,12 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 
 	public Integer getCapacidade()
 	{
-		return capacidade;
+		return this.capacidade;
 	}
 
 	@Override
 	public int compareTo( SalasImportExcelBean o )
 	{
-		return getCodigoStr().compareTo( o.getCodigoStr() );
+		return this.getCodigoStr().compareTo( o.getCodigoStr() );
 	}
 }

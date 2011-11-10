@@ -38,7 +38,7 @@ public class CampiImportExcel
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario,i18nConstants, i18nMessages, instituicaoEnsino );
-		resolveHeaderColumnNames();
+		this.resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
 		this.headerColumnsNames.add( CODIGO_COLUMN_NAME );
@@ -74,7 +74,8 @@ public class CampiImportExcel
         for ( int cellIndex = row.getFirstCellNum();
         	  cellIndex <= row.getLastCellNum(); cellIndex++ )
         {
-            HSSFCell cell = row.getCell( cellIndex );        	
+            HSSFCell cell = row.getCell( cellIndex );
+
         	if ( cell != null )
         	{
         		HSSFCell headerCell = header.getCell( cell.getColumnIndex() );
@@ -100,7 +101,7 @@ public class CampiImportExcel
 					{
 						bean.setMunicipioStr( cellValue );
 					}
-					else if (BAIRRO_COLUMN_NAME.equals( columnName ) )
+					else if ( BAIRRO_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setBairroStr( cellValue );
 					}
@@ -143,6 +144,7 @@ public class CampiImportExcel
 	{
 		// Map utilizado para associar um erro 
 		// às linhas do arquivo onde o mesmo ocorre
+
 		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
 		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
 			= new HashMap< ImportExcelError, List< Integer > >();
@@ -150,6 +152,7 @@ public class CampiImportExcel
 		for ( CampiImportExcelBean bean : sheetContent )
 		{
 			List< ImportExcelError > errorsBean = bean.checkSyntacticErrors();
+
 			for ( ImportExcelError error : errorsBean )
 			{
 				List< Integer > rowsWithErrors = syntacticErrorsMap.get( error );
@@ -186,10 +189,12 @@ public class CampiImportExcel
 		return getErrors().isEmpty();
 	}
 
-	private void checkUniqueness( List< CampiImportExcelBean > sheetContent )
+	private void checkUniqueness(
+		List< CampiImportExcelBean > sheetContent )
 	{
 		// Map com os códigos dos campi e as linhas
 		// em que o mesmo aparece no arquivo de entrada
+
 		// [ CódigoCampus -> Lista de Linhas do Arquivo de Entrada ]
 		Map< String, List< Integer > > campusCodigoToRowsMap
 			= new HashMap< String, List< Integer > >();

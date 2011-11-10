@@ -15,7 +15,7 @@ public abstract class AbstractImportExcelBean
 
 	public int getRow()
 	{
-		return row;
+		return this.row;
 	}
 
 	protected boolean isEmptyField( String value )
@@ -114,7 +114,8 @@ public abstract class AbstractImportExcelBean
 		return booleanValue;
 	}
 
-	protected < EnumType > EnumType checkEnumField( String value, Class< EnumType > enumClass,
+	protected < EnumType > EnumType checkEnumField(
+		String value, Class< EnumType > enumClass,
 		ImportExcelError enumErrorTupe, List< ImportExcelError > errorsList )
 	{
 		EnumType enumValue = null;

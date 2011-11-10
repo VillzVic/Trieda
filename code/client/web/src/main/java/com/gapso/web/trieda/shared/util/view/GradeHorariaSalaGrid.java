@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +36,8 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class GradeHorariaSalaGrid extends ContentPanel
+public class GradeHorariaSalaGrid
+	extends ContentPanel
 {
 	private Grid< LinhaDeCredito > grid;
 	private ListStore< LinhaDeCredito > store;
@@ -160,23 +163,38 @@ public class GradeHorariaSalaGrid extends ContentPanel
 			this.store.removeAll();
 		}
 
+		Set< LinhaDeCredito > setLinhaDeCredito
+			= new HashSet< LinhaDeCredito >();
+
 		if ( this.turnoDTO != null )
 		{
 			if ( isTatico() )
 			{
 				for ( Integer i = 1; i <= this.turnoDTO.getMaxCreditos(); i++ )
 				{
-					this.store.add( new LinhaDeCredito( i.toString() ) );
+					setLinhaDeCredito.add( new LinhaDeCredito( i.toString() ) );
 				}
 			}
 			else
 			{
 				for ( Long horarioId : this.turnoDTO.getHorariosStringMap().keySet() )
 				{
-					this.store.add( new LinhaDeCredito(
-						this.turnoDTO.getHorariosStringMap().get( horarioId ), horarioId ) );
+					setLinhaDeCredito.add( new LinhaDeCredito(
+						this.turnoDTO.getHorariosStringMap().get( horarioId ),
+						horarioId, this.turnoDTO.getHorariosInicioMap().get( horarioId ) ) );
 				}
 			}
+		}
+
+		List< LinhaDeCredito > listLinhaDeCredito
+			= new ArrayList< LinhaDeCredito >();
+
+		listLinhaDeCredito.addAll( setLinhaDeCredito );
+		Collections.sort( listLinhaDeCredito );
+
+		for ( LinhaDeCredito lc : listLinhaDeCredito )
+		{
+			this.store.add( lc );
 		}
 
 		return this.store;
@@ -442,20 +460,35 @@ public class GradeHorariaSalaGrid extends ContentPanel
 		this.disciplinasCores.addAll( set );
 	}
 
-	public class LinhaDeCredito extends BaseModel
+	public class LinhaDeCredito
+		extends BaseModel
+		implements Comparable< LinhaDeCredito >
 	{
 		private static final long serialVersionUID = 3996652461744817138L;
 
+		private Date horarioInicio;
+
+		public Date getHorarioInicio()
+		{
+			return this.horarioInicio;
+		}
+
+		public void setHorarioInicio( Date horarioInicio )
+		{
+			this.horarioInicio = horarioInicio;
+		}
+
 		public LinhaDeCredito( String display )
 		{
-			setDisplay( display );
+			this( display, null, null );
 		}
 
 		public LinhaDeCredito(
-			String display, Long horarioId )
+			String display, Long horarioId, Date horarioInicio )
 		{
-			setDisplay( display );
-			setHorarioId( horarioId );
+			this.setDisplay( display );
+			this.setHorarioId( horarioId );
+			this.horarioInicio = horarioInicio;
 		}
 
 		public String getDisplay()
@@ -556,6 +589,35 @@ public class GradeHorariaSalaGrid extends ContentPanel
 		public void setDomingo( String value )
 		{
 			set( "domingo", value );
+		}
+
+		@Override
+		public int compareTo( LinhaDeCredito o )
+		{
+			if ( o == null )
+			{
+				return 1;
+			}
+
+			if ( this.getHorarioInicio() == null
+				&& o.getHorarioInicio() == null )
+			{
+				return -1;
+			}
+
+			if ( this.getHorarioInicio() != null
+				&& o.getHorarioInicio() == null )
+			{
+				return 1;
+			}
+
+			if ( this.getHorarioInicio() == null
+				&& o.getHorarioInicio() != null )
+			{
+				return -1;
+			}
+
+			return this.getHorarioInicio().compareTo( o.getHorarioInicio() );
 		}
 	}
 }

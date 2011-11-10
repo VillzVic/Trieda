@@ -73,7 +73,7 @@ public class TRIEDAImportExcel
 
 			for ( IImportExcel importer : importers )
 			{
-				flag = ( flag && importer.load( fileName, workbook ) );
+				flag = ( importer.load( fileName, workbook ) && flag );
 
 				for ( String error : importer.getErrors() )
 				{

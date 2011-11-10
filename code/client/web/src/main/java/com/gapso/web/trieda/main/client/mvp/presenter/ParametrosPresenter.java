@@ -436,7 +436,7 @@ public class ParametrosPresenter
 						else
 						{
 							Info.display( "OTIMIZADO",
-								"Otimização finalizada com sucesso!" );
+								"Otimização finalizada!" );
 
 							atualizaSaida( round );
 						}

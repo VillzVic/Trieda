@@ -99,11 +99,11 @@ public class CampiView
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_CODIGO, getI18nConstants().codigoCampus(), 100 ) );
-		list.add( new ColumnConfig( CampusDTO.PROPERTY_NOME, getI18nConstants().nome(), 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_NOME, getI18nConstants().nome(), 200 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_VALOR_CREDITO, getI18nConstants().custoMedioCredito(), 170 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_ESTADO, getI18nConstants().estado(), 100 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_MUNICIPIO, getI18nConstants().municipio(), 100 ) );
-		list.add( new ColumnConfig( CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 200 ) );
 		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_TATICO, getI18nConstants().otimizadoTatico() + "?", 100 ) );
 		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_OPERACIONAL, getI18nConstants().otimizadoOperacional() + "?", 100 ) );
 		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_PUBLICADO, getI18nConstants().publicado() + "?", 100 ) );

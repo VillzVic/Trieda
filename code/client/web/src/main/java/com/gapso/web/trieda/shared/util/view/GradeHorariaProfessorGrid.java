@@ -41,6 +41,7 @@ public class GradeHorariaProfessorGrid
 	private TurnoDTO turnoDTO;
 	private QuickTip quickTip;
 	private List< Long > disciplinasCores = new ArrayList< Long >();
+
 	private String emptyTextBeforeSearch = "Preencha o filtro acima";
 	private String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
 	private boolean isVisaoProfessor;
@@ -155,6 +156,7 @@ public class GradeHorariaProfessorGrid
 
 		List< LinhaDeCredito > listLinhaDeCredito
 			= new ArrayList< LinhaDeCredito >();
+
 		listLinhaDeCredito.addAll( setLinhaDeCredito );
 		Collections.sort( listLinhaDeCredito );
 

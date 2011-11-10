@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +55,7 @@ public class GradeHorariaCursoGrid
 	private CursoDTO cursoDTO;
 	private QuickTip quickTip;
 	private List< Long > disciplinasCores = new ArrayList< Long >();
+
 	private String emptyTextBeforeSearch = "Preencha o filtro acima";
 	private String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
 
@@ -67,13 +70,13 @@ public class GradeHorariaCursoGrid
 	{
 		super.beforeRender();
 
-		grid = new Grid< LinhaDeCredito >( getListStore(),
+		this.grid = new Grid< LinhaDeCredito >( getListStore(),
 			new ColumnModel( getColumnList() ) );
 
-		grid.setTrackMouseOver( false );
-		grid.setStyleName( "GradeHorariaGrid" );
-		grid.addListener( Events.BeforeSelect,
-			new Listener<GridEvent< LinhaDeCredito > >()
+		this.grid.setTrackMouseOver( false );
+		this.grid.setStyleName( "GradeHorariaGrid" );
+		this.grid.addListener( Events.BeforeSelect,
+			new Listener< GridEvent< LinhaDeCredito > >()
 			{
 				@Override
 				public void handleEvent( GridEvent< LinhaDeCredito > be )
@@ -82,12 +85,12 @@ public class GradeHorariaCursoGrid
 				}
 			});
 
-		grid.getView().setEmptyText( emptyTextBeforeSearch );
-		quickTip = new QuickTip( grid );
-		quickTip.getToolTipConfig().setDismissDelay( 0 );
-		add( grid );
+		this.grid.getView().setEmptyText( this.emptyTextBeforeSearch );
+		this.quickTip = new QuickTip( this.grid );
+		this.quickTip.getToolTipConfig().setDismissDelay( 0 );
+		add( this.grid );
 
-		GridDropTarget target = new GridDropTarget( grid )
+		GridDropTarget target = new GridDropTarget( this.grid )
 		{
 			@Override
 			protected void onDragDrop( DNDEvent event ) { }
@@ -173,23 +176,38 @@ public class GradeHorariaCursoGrid
 			this.store.removeAll();
 		}
 
+		Set< LinhaDeCredito > setLinhaDeCredito
+			= new HashSet< LinhaDeCredito >();
+
 		if ( this.turnoDTO != null )
 		{
 			if ( isTatico() )
 			{
 				for ( Integer i = 1; i <= this.turnoDTO.getMaxCreditos(); i++ )
 				{
-					this.store.add( new LinhaDeCredito( i.toString() ) );
+					setLinhaDeCredito.add( new LinhaDeCredito( i.toString() ) );
 				}
 			}
 			else
 			{
 				for ( Long horarioId : this.turnoDTO.getHorariosStringMap().keySet() )
 				{
-					this.store.add( new LinhaDeCredito(
-						this.turnoDTO.getHorariosStringMap().get( horarioId ), horarioId ) );
+					setLinhaDeCredito.add( new LinhaDeCredito(
+						this.turnoDTO.getHorariosStringMap().get( horarioId ),
+						horarioId, this.turnoDTO.getHorariosInicioMap().get( horarioId ) ) );
 				}
 			}
+		}
+
+		List< LinhaDeCredito > listLinhaDeCredito
+			= new ArrayList< LinhaDeCredito >();
+
+		listLinhaDeCredito.addAll( setLinhaDeCredito );
+		Collections.sort( listLinhaDeCredito );
+
+		for ( LinhaDeCredito lc : listLinhaDeCredito )
+		{
+			this.store.add( lc );
 		}
 
 		return this.store;
@@ -203,7 +221,9 @@ public class GradeHorariaCursoGrid
 
 	public List< ColumnConfig > getColumnList()
 	{
-		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+		List< ColumnConfig > list
+			= new ArrayList< ColumnConfig >();
+
 		if ( isTatico() )
 		{
 			addColumn( list, "display", "Créditos" );
@@ -222,7 +242,8 @@ public class GradeHorariaCursoGrid
 		addColumn( list, "domingo", "Domingo" );
 
 		int columnsCount = getColumnsCount();
-		for (int i = 8; i < columnsCount; i++ )
+
+		for ( int i = 8; i < columnsCount; i++ )
 		{
 			addColumn( list, "extra" + i, "" );
 		}
@@ -233,6 +254,7 @@ public class GradeHorariaCursoGrid
 	private int getColumnsCount()
 	{
 		int count = 0;
+
 		if ( this.diaSemanaTamanhoList == null )
 		{
 			return count;
@@ -249,7 +271,8 @@ public class GradeHorariaCursoGrid
 	private void addColumn(
 		List< ColumnConfig > list, String id, String name )
 	{
-		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer< LinhaDeCredito >()
+		GridCellRenderer< LinhaDeCredito > change
+			= new GridCellRenderer< LinhaDeCredito >()
 		{
 			public Html render( LinhaDeCredito model, String property,
 				ColumnData config, int rowIndex, int colIndex,
@@ -322,9 +345,9 @@ public class GradeHorariaCursoGrid
 				};
 
 				html.addStyleName( "horario" );
-				html.addStyleName( "c" + ( rowIndex + 1 ) ); // Posiciona na linha (credito)
+				html.addStyleName( "c" + ( rowIndex + 1 ) ); // Posiciona na linha ( credito )
 				html.addStyleName( "tc" + atDTO.getTotalCreditos() ); // Altura
-				html.addStyleName( "s" + atDTO.getSemana() ); // Posiciona na coluna (dia semana)
+				html.addStyleName( "s" + atDTO.getSemana() ); // Posiciona na coluna ( dia semana )
 				html.addStyleName( getCssDisciplina( atDTO.getDisciplinaId() ) );
 
 				new DragSource( html )
@@ -345,6 +368,7 @@ public class GradeHorariaCursoGrid
 		};
 
 		int width = getWidth( id );
+
 		if ( name.equals( "" ) )
 		{
 			width = 0;
@@ -361,6 +385,7 @@ public class GradeHorariaCursoGrid
 	private AtendimentoRelatorioDTO getAtendimento( Long horarioId, int semana )
 	{
 		int ocupado = 0;
+
 		if ( this.atendimentos != null )
 		{
 			for ( AtendimentoRelatorioDTO at : this.atendimentos )
@@ -383,6 +408,7 @@ public class GradeHorariaCursoGrid
 	private AtendimentoRelatorioDTO getAtendimento( int credito, int semana )
 	{
 		int ocupado = 0;
+
 		if ( this.atendimentos != null )
 		{
 			for ( AtendimentoRelatorioDTO at : this.atendimentos )
@@ -461,6 +487,7 @@ public class GradeHorariaCursoGrid
 		}
 
 		AtendimentoRelatorioDTO atm = this.atendimentos.get( 0 );
+
 		if ( atm == null )
 		{
 			return false;
@@ -522,6 +549,7 @@ public class GradeHorariaCursoGrid
 	public String getCssDisciplina( long id )
 	{
 		int index = this.disciplinasCores.indexOf( id );
+
 		if ( index < 0 || index > 14 )
 		{
 			return "corDisciplina14";
@@ -533,6 +561,7 @@ public class GradeHorariaCursoGrid
 	public void preencheCores()
 	{
 		Set< Long > set = new HashSet< Long >();
+
 		for ( AtendimentoRelatorioDTO a : this.atendimentos )
 		{
 			set.add( a.getDisciplinaId() );
@@ -544,18 +573,33 @@ public class GradeHorariaCursoGrid
 
 	public class LinhaDeCredito
 		extends BaseModel
+		implements Comparable< LinhaDeCredito >
 	{
 		private static final long serialVersionUID = 3996652461744817138L;
 
-		public LinhaDeCredito( String display )
+		private Date horarioInicio;
+
+		public Date getHorarioInicio()
 		{
-			setDisplay( display );
+			return this.horarioInicio;
 		}
 
-		public LinhaDeCredito( String display, Long horarioId )
+		public void setHorarioInicio( Date horarioInicio )
 		{
-			setDisplay( display );
-			setHorarioId( horarioId );
+			this.horarioInicio = horarioInicio;
+		}
+
+		public LinhaDeCredito( String display )
+		{
+			this( display, null, null );
+		}
+
+		public LinhaDeCredito( String display,
+			Long horarioId, Date horarioInicio )
+		{
+			this.setDisplay( display );
+			this.setHorarioId( horarioId );
+			this.setHorarioInicio( horarioInicio );
 		}
 
 		public Long getHorarioId()
@@ -656,6 +700,35 @@ public class GradeHorariaCursoGrid
 		public void setDomingo( String value )
 		{
 			set( "domingo", value );
+		}
+
+		@Override
+		public int compareTo( LinhaDeCredito o )
+		{
+			if ( o == null )
+			{
+				return 1;
+			}
+
+			if ( this.getHorarioInicio() == null
+				&& o.getHorarioInicio() == null )
+			{
+				return -1;
+			}
+
+			if ( this.getHorarioInicio() != null
+				&& o.getHorarioInicio() == null )
+			{
+				return 1;
+			}
+
+			if ( this.getHorarioInicio() == null
+				&& o.getHorarioInicio() != null )
+			{
+				return -1;
+			}
+
+			return this.getHorarioInicio().compareTo( o.getHorarioInicio() );
 		}
 	}
 }
