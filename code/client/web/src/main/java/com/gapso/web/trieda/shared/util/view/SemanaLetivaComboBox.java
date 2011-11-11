@@ -13,7 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class SemanaLetivaComboBox
 	extends ComboBox< SemanaLetivaDTO >
 {
-
 	public SemanaLetivaComboBox()
 	{
 		RpcProxy< ListLoadResult< SemanaLetivaDTO > > proxy
@@ -30,6 +29,7 @@ public class SemanaLetivaComboBox
 		setStore( new ListStore< SemanaLetivaDTO >(
 			new BaseListLoader< BaseListLoadResult< SemanaLetivaDTO > >( proxy ) ) );
 
+		setDisplayField( SemanaLetivaDTO.PROPERTY_CODIGO );
 		setFieldLabel( "Semana Letiva" );
 		setEmptyText( "Selecione a semana letiva" );
 		setSimpleTemplate( "{" + SemanaLetivaDTO.PROPERTY_CODIGO +

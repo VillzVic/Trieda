@@ -499,7 +499,12 @@ public class GradeHorariaProfessorGrid
 			if ( this.getHorarioInicio() == null
 				&& o.getHorarioInicio() == null )
 			{
-				return -1;
+				// TODO -- comparar strings de horários de
+				// início e fim, no formato : HH:mm / HH:mm
+				String str1 = ( this.getHorario() == null ? "" : this.getHorario() );
+				String str2 = ( o.getHorario() == null ? "" : o.getHorario() );
+
+				return str1.compareTo( str2 );
 			}
 
 			if ( this.getHorarioInicio() != null

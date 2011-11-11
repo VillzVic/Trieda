@@ -29,8 +29,8 @@ public class ExportExcelServlet extends HttpServlet
 
 	private Cenario cenario = null;
 	{
-		i18nConstants = new GTriedaI18nConstants();
-		i18nMessages = new GTriedaI18nMessages();
+		ExportExcelServlet.i18nConstants = new GTriedaI18nConstants();
+		ExportExcelServlet.i18nMessages = new GTriedaI18nMessages();
 	}
 
 	private InstituicaoEnsino getInstituicaoEnsino()
@@ -66,7 +66,7 @@ public class ExportExcelServlet extends HttpServlet
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( instituicaoEnsinoId );
 
-		cenario = Cenario.findMasterData( instituicaoEnsino );
+		this.cenario = Cenario.findMasterData( instituicaoEnsino );
 
 		if ( !informationToBeExported.isEmpty() )
 		{
@@ -99,8 +99,8 @@ public class ExportExcelServlet extends HttpServlet
 
 			// Get Excel Data
 			IExportExcel exporter = ExportExcelFactory.createExporter(
-				informationToBeExported, cenario, i18nConstants,
-				i18nMessages, filter, getInstituicaoEnsino() );
+				informationToBeExported, this.cenario, ExportExcelServlet.i18nConstants,
+				ExportExcelServlet.i18nMessages, filter, getInstituicaoEnsino() );
 
 			HSSFWorkbook workbook = exporter.export();
 
@@ -112,6 +112,7 @@ public class ExportExcelServlet extends HttpServlet
 			else
 			{
 				response.setContentType( "text/html" );
+
 				for ( String msg : exporter.getWarnings() )
 				{
 					response.getWriter().println(
@@ -211,6 +212,7 @@ public class ExportExcelServlet extends HttpServlet
 		Long unidadeId = null;
 		Long salaId = null;
 		Long turnoId = null;
+		Long semanaLetivaId = null;
 		Long instituicaoEnsinoId = null;
 
 		try
@@ -219,12 +221,13 @@ public class ExportExcelServlet extends HttpServlet
 			unidadeId = Long.parseLong( request.getParameter( "unidadeId" ) );
 			salaId = Long.parseLong( request.getParameter( "salaId" ) );
 			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
+			semanaLetivaId = Long.parseLong( request.getParameter( "semanaLetivaId" ) );
 			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
 		}
 		catch( Exception ex ) { return null; }
 
 		RelatorioVisaoSalaFiltroExcel filtro = new RelatorioVisaoSalaFiltroExcel(
-			campusId, unidadeId, salaId, turnoId, instituicaoEnsinoId );
+			campusId, unidadeId, salaId, turnoId, semanaLetivaId, instituicaoEnsinoId );
 
 		return filtro;
 	}

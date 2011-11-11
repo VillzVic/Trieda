@@ -62,44 +62,46 @@ public class RelatorioVisaoCursoExportExcel
 
 		public int getRow()
 		{
-			return row;
+			return this.row;
 		}
 
 		public int getCol()
 		{
-			return col;
+			return this.col;
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
+	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private String sheetName;
 	private int initialRow;
 	private RelatorioVisaoCursoFiltroExcel relatorioFiltro;
 
-	public RelatorioVisaoCursoExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoCursoExportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoCursoExportExcel( boolean removeUnusedSheets,
-		Cenario cenario, TriedaI18nConstants i18nConstants,
+	public RelatorioVisaoCursoExportExcel(
+		boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoCursoExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoCursoExportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoCursoExportExcel( boolean removeUnusedSheets,
-		Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+	public RelatorioVisaoCursoExportExcel(
+		boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
@@ -152,7 +154,7 @@ public class RelatorioVisaoCursoExportExcel
 			= AtendimentoTatico.findByCenario( this.instituicaoEnsino, cenario );
 
 		List< AtendimentoOperacional > atdOperacionalList
-			= AtendimentoOperacional.findByCenario( cenario, this.instituicaoEnsino );
+			= AtendimentoOperacional.findByCenario( this.instituicaoEnsino, cenario );
 
 		List< AtendimentoRelatorioDTO > atdRelatorioList
 			= new ArrayList< AtendimentoRelatorioDTO >(
@@ -390,18 +392,22 @@ public class RelatorioVisaoCursoExportExcel
 		return result;
 	}
 
-	private int writeCurso( Oferta oferta, Integer periodo,
+	private int writeCurso(
+		Oferta oferta, Integer periodo,
 		List< AtendimentoRelatorioDTO > atendimentos, List< Integer > tamanhoSemanaList,
 		int row, HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
+		// FIXME -- Considerar apenas os horários da semana letiva
+
 		row = writeHeader( oferta, periodo, tamanhoSemanaList, row, sheet );
 
 		int initialRow = row;
 		int col = 2;
 
 		// Preenche grade com créditos e células vazias
-		int maxCreditos = oferta.getTurno().calculaMaxCreditos();
+		int maxCreditos = oferta.getCurriculo().getSemanaLetiva().calculaMaxCreditos();
+
 		for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ )
 		{
 			// Créditos
@@ -447,9 +453,9 @@ public class RelatorioVisaoCursoExportExcel
 			// na qual o atendimento será impresso. Quando há mais de 4 créditos
 			// alocados no mesmo dia da semana, a planilha irá utilizar mais de uma
 			// coluna para esse dia da semana. Logo, teremos colunas com valor superior
-			// a 8 (o que não é consistente com o valor de dia da semana.
+			// a 8 ( o que não é consistente com o valor de dia da semana ).
 			col = diaSemanaInt + 1;
-			
+
 			List< AtendimentoRelatorioDTO > atendimentosDia
 				= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
@@ -480,7 +486,6 @@ public class RelatorioVisaoCursoExportExcel
 					atendimentosDia.add( atOp );
 				}
 			}
-			////
 
 			for ( AtendimentoRelatorioDTO atendimento : atendimentosDia )
 			{
@@ -536,7 +541,8 @@ public class RelatorioVisaoCursoExportExcel
 				+ periodo + atOp.getPeriodoString() + "\n"
 				+ "Quantidade: " + atOp.getQuantidadeAlunosString() + "\n"
 				+ "Sala: " + atOp.getSalaString() + "\n"
-				+ "Professor: " + (atOp.getProfessorId() != null ? atOp.getProfessorString() : atOp.getProfessorVirtualString());
+				+ "Professor: " + ( atOp.getProfessorId() != null ?
+					atOp.getProfessorString() : atOp.getProfessorVirtualString());
 		}
 		
 		return "";

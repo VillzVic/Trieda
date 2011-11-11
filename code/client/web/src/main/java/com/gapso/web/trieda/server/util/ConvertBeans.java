@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -671,6 +672,19 @@ public class ConvertBeans
 		return domain;
 	}
 
+	public static Set< SemanaLetivaDTO > toSemanaLetivaDTO(
+		Collection< SemanaLetiva > semanasLetivas )
+	{
+		Set< SemanaLetivaDTO > semanasLetivasDTO = new HashSet< SemanaLetivaDTO >();
+
+		for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		{
+			semanasLetivasDTO.add( ConvertBeans.toSemanaLetivaDTO( semanaLetiva ) );
+		}
+
+		return semanasLetivasDTO;
+	}	
+	
 	public static SemanaLetivaDTO toSemanaLetivaDTO( SemanaLetiva domain )
 	{
 		SemanaLetivaDTO dto = new SemanaLetivaDTO();
@@ -689,6 +703,24 @@ public class ConvertBeans
 		dto.setCodigo( domain.getCodigo() );
 		dto.setDescricao( domain.getDescricao() );
 		dto.setTempo( domain.getTempo() );
+		dto.setMaxCreditos( domain.getHorariosAula().size() );
+
+		Map< Long, String > horariosStringMap
+			= new HashMap< Long, String >();
+
+		Map< Long, Date > horariosInicioMap
+			= new HashMap< Long, Date >();
+
+		for ( HorarioAula ha : domain.getHorariosAula() )
+		{
+			horariosStringMap.put( ha.getId(), ConvertBeans.dateToString(
+				ha.getHorario(), ha.getSemanaLetiva().getTempo() ) );
+
+			horariosInicioMap.put( ha.getId(), ha.getHorario() );
+		}
+
+		dto.setHorariosStringMap( horariosStringMap );
+		dto.setHorariosInicioMap( horariosInicioMap );
 
 		dto.setDisplayText( domain.getCodigo() + " (" + domain.getTempo() + " min)" );
 
@@ -1974,6 +2006,7 @@ public class ConvertBeans
 		dto.setInstituicaoEnsinoId( domain.getInstituicaoEnsino().getId() );
 		dto.setInstituicaoEnsinoString( domain.getInstituicaoEnsino().getNomeInstituicao() );
 		dto.setCompartilhamentoCursosString( "" );
+		dto.setSemanaLetivaId( domain.getOferta().getCurriculo().getSemanaLetiva().getId() );
 
 		return dto;
 	}
@@ -2156,6 +2189,7 @@ public class ConvertBeans
 
 		dto.setInstituicaoEnsinoId( domain.getInstituicaoEnsino().getId() );
 		dto.setInstituicaoEnsinoString( domain.getInstituicaoEnsino().getNomeInstituicao() );
+		dto.setSemanaLetivaId( domain.getOferta().getCurriculo().getSemanaLetiva().getId() );
 
 		return dto;
 	}

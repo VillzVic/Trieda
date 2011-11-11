@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,8 @@ import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gapso.trieda.misc.Semanas;
 
 @Configurable
 @Entity
@@ -431,6 +434,26 @@ public class SemanaLetiva
 		Number size = ( (Number) ( q.setMaxResults( 1 ).getSingleResult() ) );
 		return ( size.intValue() > 0 );
 	}
+
+    public int calculaMaxCreditos ()
+    {
+    	Map< Integer, Integer > countHorariosAula
+    		= new HashMap< Integer, Integer >();
+
+		for ( HorarioAula ha : this.getHorariosAula() )
+		{
+			for ( HorarioDisponivelCenario hdc
+				: ha.getHorariosDisponiveisCenario() )
+			{
+				int semanaInt = Semanas.toInt( hdc.getDiaSemana() );
+				Integer value = countHorariosAula.get( semanaInt );
+				value = ( ( value == null ) ? 0 : value );
+				countHorariosAula.put( semanaInt, value + 1 );
+			}
+		}
+
+		return Collections.max( countHorariosAula.values() );
+    }
 
 	public String toString()
 	{

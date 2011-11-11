@@ -22,6 +22,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
@@ -70,27 +71,31 @@ public class RelatorioVisaoSalaExportExcel
 	private int initialRow;
 	private RelatorioVisaoSalaFiltroExcel relatorioFiltro;
 
-	public RelatorioVisaoSalaExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoSalaExportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoSalaExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoSalaExportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoSalaExportExcel( boolean removeUnusedSheets,
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoSalaExportExcel(
+		boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoSalaExportExcel( boolean removeUnusedSheets, Cenario cenario,
+	public RelatorioVisaoSalaExportExcel(
+		boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -150,7 +155,7 @@ public class RelatorioVisaoSalaExportExcel
 				this.instituicaoEnsino, cenario );
 
 			atdOperacionalList = AtendimentoOperacional.findByCenario(
-				cenario, this.instituicaoEnsino );
+				this.instituicaoEnsino, cenario );
 		}
 		else
 		{
@@ -166,11 +171,14 @@ public class RelatorioVisaoSalaExportExcel
 			Turno turno = Turno.find(
 				this.getFilter().getTurnoDTO().getId(), this.instituicaoEnsino );
 
+			SemanaLetiva semanaLetiva = SemanaLetiva.find(
+					this.getFilter().getSemanaLetivaDTO().getId(), this.instituicaoEnsino );
+
 			atdTaticoList = AtendimentoTatico.findByCenario(
-				this.instituicaoEnsino, cenario, campus, unidade, sala, turno );
+				this.instituicaoEnsino, cenario, campus, unidade, sala, turno, semanaLetiva );
 
 			atdOperacionalList = AtendimentoOperacional.findByCenario(
-				this.instituicaoEnsino, cenario, campus, unidade, sala, turno );
+				this.instituicaoEnsino, cenario, campus, unidade, sala, turno, semanaLetiva );
 		}
 
 		List< AtendimentoRelatorioDTO > atdRelatorioList
@@ -213,27 +221,38 @@ public class RelatorioVisaoSalaExportExcel
 			Map< String, HSSFCellStyle > codigoDisciplinaToColorMap
 				= new HashMap< String, HSSFCellStyle >();
 
-			Map< Sala, Map< Turno, List< AtendimentoRelatorioDTO > > > mapNivel1
-				= new TreeMap< Sala, Map< Turno, List< AtendimentoRelatorioDTO > > >();
+			// FIXME -- Diferenciar atendimentos pela semana letiva da disciplina atendida
+			Map< Sala, Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > > mapNivel1
+				= new TreeMap< Sala, Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > >();
 
 			for ( AtendimentoRelatorioDTO atendimento : atdRelatorioList )
 			{
 				Sala sala = Sala.find( atendimento.getSalaId(), this.instituicaoEnsino );
 				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
+				SemanaLetiva semanaLetiva = SemanaLetiva.find( atendimento.getSemanaLetivaId(), instituicaoEnsino );
 
-				Map< Turno, List< AtendimentoRelatorioDTO > > mapNivel2 = mapNivel1.get( sala );
+				Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > mapNivel2 = mapNivel1.get( sala );
 
 				if ( mapNivel2 == null )
 				{
-					mapNivel2 = new HashMap< Turno, List< AtendimentoRelatorioDTO > >();
+					mapNivel2 = new HashMap< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > >();
 					mapNivel1.put( sala, mapNivel2 );
 				}
 
-				List< AtendimentoRelatorioDTO > list = mapNivel2.get( turno );
+				Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > mapNivel3 = mapNivel2.get( turno );
+
+				if ( mapNivel3 == null )
+				{
+					mapNivel3 = new HashMap< SemanaLetiva, List< AtendimentoRelatorioDTO > >();
+					mapNivel2.put( turno, mapNivel3 );
+				}
+
+				List< AtendimentoRelatorioDTO > list = mapNivel3.get( semanaLetiva );
+				
 				if ( list == null )
 				{
 					list = new ArrayList< AtendimentoRelatorioDTO >();
-					mapNivel2.put( turno, list );
+					mapNivel3.put( semanaLetiva, list );
 				}
 
 				list.add( atendimento );
@@ -246,8 +265,7 @@ public class RelatorioVisaoSalaExportExcel
 					int index = ( codigoDisciplinaToColorMap.size() % excelColorsPool.size() );
 
 					codigoDisciplinaToColorMap.put(
-						atendimento.getDisciplinaString(),
-						excelColorsPool.get( index ) );
+						atendimento.getDisciplinaString(), excelColorsPool.get( index ) );
 				}
 			}
 
@@ -255,12 +273,19 @@ public class RelatorioVisaoSalaExportExcel
 
 			for ( Sala sala : mapNivel1.keySet() )
 			{
-				Map< Turno, List< AtendimentoRelatorioDTO > > mapNivel2 = mapNivel1.get( sala );
+				Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > mapNivel2 = mapNivel1.get( sala );
 
 				for ( Turno turno : mapNivel2.keySet() )
 				{
-					nextRow = writeSala( sala, turno, mapNivel2.get( turno ),
-						nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap );
+					Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > mapNivel3 = mapNivel2.get( turno );
+
+					for ( SemanaLetiva semanaLetiva : mapNivel3.keySet() )
+					{
+						List< AtendimentoRelatorioDTO > listAtendimentos = mapNivel3.get( semanaLetiva );
+
+						nextRow = writeSala( sala, turno, semanaLetiva, listAtendimentos,
+							nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap );
+					}
 				}				
 			}
 
@@ -275,18 +300,22 @@ public class RelatorioVisaoSalaExportExcel
 		return result;
 	}
 
-	private int writeSala( Sala sala, Turno turno,
+	private int writeSala(
+		Sala sala, Turno turno, SemanaLetiva semanaLetiva,
 		List< AtendimentoRelatorioDTO > atendimentos, int row, HSSFSheet sheet,
 		Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
+		// FIXME -- Considerar apenas os horários da semana letiva
+
 		row = writeHeader( sala, turno, row, sheet );
 
 		int initialRow = row;
 		int col = 2;
 
 		// Preenche grade com créditos e células vazias
-		int maxCreditos = turno.calculaMaxCreditos();
+		int maxCreditos = semanaLetiva.calculaMaxCreditos();
+
 		for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ )
 		{
 			// Créditos
@@ -378,7 +407,6 @@ public class RelatorioVisaoSalaExportExcel
 					atedimentosDiaSemana.add( atOp );
 				}
 			}
-			////
 
 			for ( AtendimentoRelatorioDTO atendimento : atedimentosDiaSemana )
 			{
@@ -435,7 +463,7 @@ public class RelatorioVisaoSalaExportExcel
 				+ periodo + atOp.getPeriodoString() + "\n"
 				+ "Quantidade: " + atOp.getQuantidadeAlunosString() + "\n"
 				+ "Sala: " + atOp.getSalaString() + "\n"
-				+ "Professor: " + (atOp.getProfessorId() != null ?
+				+ "Professor: " + ( atOp.getProfessorId() != null ?
 					atOp.getProfessorString() : atOp.getProfessorVirtualString() );
 		}
 
@@ -525,9 +553,11 @@ public class RelatorioVisaoSalaExportExcel
             for ( int rowIndex = sheet.getFirstRowNum(); rowIndex <= sheet.getLastRowNum(); rowIndex++ )
             {
             	HSSFRow row = sheet.getRow( rowIndex );
+
             	if ( row != null )
             	{
             		HSSFCell cell = row.getCell( (int)row.getFirstCellNum() );
+
             		if ( cell != null )
             		{
             			colorPalleteCellStylesList.add( cell.getCellStyle() );
@@ -589,17 +619,12 @@ public class RelatorioVisaoSalaExportExcel
 		{
 			opList.add( (AtendimentoOperacionalDTO) ar );
 		}
-			
+
 		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 		opList = service.ordenaPorHorarioAula( opList );
 
 		List< AtendimentoRelatorioDTO > result
-			= new ArrayList< AtendimentoRelatorioDTO >();
-
-		for ( AtendimentoOperacionalDTO atOp : opList )
-		{
-			result.add( (AtendimentoRelatorioDTO) atOp );
-		}
+			= new ArrayList< AtendimentoRelatorioDTO >( opList );
 
 		return result;
 	}

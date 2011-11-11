@@ -31,6 +31,7 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
@@ -43,6 +44,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.CampiService;
@@ -602,15 +604,18 @@ public class CampiServiceImpl extends RemoteService
 
 		Set< Sala > salas = new HashSet< Sala >();
 		Set< Turno > turnos = new HashSet< Turno >();
+		Set< SemanaLetiva > semanasLetivas = new HashSet< SemanaLetiva >();
 
 		for ( AtendimentoTatico atendimentoTatico : atendimentoTaticoList )
 		{
 			salas.add( atendimentoTatico.getSala() );
 			turnos.add( atendimentoTatico.getOferta().getTurno() );
+			semanasLetivas.add( atendimentoTatico.getOferta().getCurriculo().getSemanaLetiva() );
 		}
 
 		Collection< SalaDTO > salasDTO = ConvertBeans.toSalaDTO( salas );
 		Collection< TurnoDTO > turnosDTO = ConvertBeans.toTurnoDTO( turnos );
+		Collection< SemanaLetivaDTO > semanasLetivasDTO = ConvertBeans.toSemanaLetivaDTO( semanasLetivas );
 
 		double numeradorSala = 0.0;
 		double denominadorSala = 0.0;
@@ -624,23 +629,26 @@ public class CampiServiceImpl extends RemoteService
 		{
 			for ( SalaDTO salaDTO : salasDTO )
 			{
-				List< AtendimentoRelatorioDTO > atendimentosDTO
-					= atService.getBusca( salaDTO, turnoDTO );
-
-				for ( AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO )
+				for ( SemanaLetivaDTO semanaLetivaDTO : semanasLetivasDTO )
 				{
-					if ( !salaDTO.isLaboratorio() )
-					{
-						numeradorSala += atendimentoDTO.getQuantidadeAlunos();
-						denominadorSala += salaDTO.getCapacidade();
-					}
-					else
-					{
-						numeradorLab += atendimentoDTO.getQuantidadeAlunos();
-						denominadorLab += salaDTO.getCapacidade();
-					}
+					List< AtendimentoRelatorioDTO > atendimentosDTO
+						= atService.getBusca( salaDTO, turnoDTO, semanaLetivaDTO );
 
-					qtdCreditos += atendimentoDTO.getTotalCreditos();
+					for ( AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO )
+					{
+						if ( !salaDTO.isLaboratorio() )
+						{
+							numeradorSala += atendimentoDTO.getQuantidadeAlunos();
+							denominadorSala += salaDTO.getCapacidade();
+						}
+						else
+						{
+							numeradorLab += atendimentoDTO.getQuantidadeAlunos();
+							denominadorLab += salaDTO.getCapacidade();
+						}
+	
+						qtdCreditos += atendimentoDTO.getTotalCreditos();
+					}
 				}
 			}
 		}
@@ -804,15 +812,18 @@ public class CampiServiceImpl extends RemoteService
 
 		Set< Sala > salas = new HashSet< Sala >();
 		Set< Turno > turnos = new HashSet< Turno >();
+		Set< SemanaLetiva > semanasLetivas = new HashSet< SemanaLetiva >();
 
 		for ( AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList )
 		{
 			salas.add( atendimentoOperacional.getSala() );
 			turnos.add( atendimentoOperacional.getOferta().getTurno() );
+			semanasLetivas.add( atendimentoOperacional.getOferta().getCurriculo().getSemanaLetiva() );
 		}
 
 		Collection< SalaDTO > salasDTO = ConvertBeans.toSalaDTO( salas );
 		Collection< TurnoDTO > turnosDTO = ConvertBeans.toTurnoDTO( turnos );
+		Collection< SemanaLetivaDTO > semanasLetivasDTO = ConvertBeans.toSemanaLetivaDTO( semanasLetivas );
 
 		double numeradorSala = 0.0;
 		double denominadorSala = 0.0;
@@ -826,23 +837,26 @@ public class CampiServiceImpl extends RemoteService
 		{
 			for ( SalaDTO salaDTO : salasDTO )
 			{
-				List< AtendimentoRelatorioDTO > atendimentosDTO
-					= atService.getBusca( salaDTO, turnoDTO );
-
-				for ( AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO )
+				for ( SemanaLetivaDTO semanaLetivaDTO : semanasLetivasDTO )
 				{
-					if ( !salaDTO.isLaboratorio() )
-					{
-						numeradorSala += atendimentoDTO.getQuantidadeAlunos();
-						denominadorSala += salaDTO.getCapacidade();
-					}
-					else
-					{
-						numeradorLab += atendimentoDTO.getQuantidadeAlunos();
-						denominadorLab += salaDTO.getCapacidade();
-					}
+					List< AtendimentoRelatorioDTO > atendimentosDTO
+						= atService.getBusca( salaDTO, turnoDTO, semanaLetivaDTO );
 
-					qtdCreditos += atendimentoDTO.getTotalCreditos();
+					for ( AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO )
+					{
+						if ( !salaDTO.isLaboratorio() )
+						{
+							numeradorSala += atendimentoDTO.getQuantidadeAlunos();
+							denominadorSala += salaDTO.getCapacidade();
+						}
+						else
+						{
+							numeradorLab += atendimentoDTO.getQuantidadeAlunos();
+							denominadorLab += salaDTO.getCapacidade();
+						}
+	
+						qtdCreditos += atendimentoDTO.getTotalCreditos();
+					}
 				}
 			}
 		}

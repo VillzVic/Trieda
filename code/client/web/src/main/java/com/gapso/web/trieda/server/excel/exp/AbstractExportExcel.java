@@ -57,8 +57,8 @@ public abstract class AbstractExportExcel
 	@Override
 	public HSSFWorkbook export()
 	{
-		errors.clear();
-		warnings.clear();
+		this.errors.clear();
+		this.warnings.clear();
 
 		HSSFWorkbook workbook = null;
 		try
@@ -71,7 +71,7 @@ public abstract class AbstractExportExcel
 			String msg = ( e.getMessage() + ( e.getCause() != null ?
 				e.getCause().getMessage() : "" ) );
 
-			errors.add( getI18nMessages().excelErroObterExcelTemplate(
+			this.errors.add( getI18nMessages().excelErroObterExcelTemplate(
 				getPathExcelTemplate(), getReportName(), msg ) );
 		}
 
@@ -84,8 +84,8 @@ public abstract class AbstractExportExcel
 	{
 		if ( workbook != null )
 		{
-			errors.clear();
-			warnings.clear();
+			this.errors.clear();
+			this.warnings.clear();
 
 			return fillInExcel( workbook );
 		}
@@ -96,28 +96,28 @@ public abstract class AbstractExportExcel
 	@Override
 	public List< String > getErrors()
 	{
-		return errors;
+		return this.errors;
 	}
 
 	@Override
 	public List< String > getWarnings()
 	{
-		return warnings;
+		return this.warnings;
 	}
 
 	protected Cenario getCenario()
 	{
-		return cenario;
+		return this.cenario;
 	}
 
 	protected TriedaI18nConstants getI18nConstants()
 	{
-		return i18nConstants;
+		return this.i18nConstants;
 	}
 
 	protected TriedaI18nMessages getI18nMessages()
 	{
-		return i18nMessages;
+		return this.i18nMessages;
 	}
 
 	protected void autoSizeColumns( short firstColumn,

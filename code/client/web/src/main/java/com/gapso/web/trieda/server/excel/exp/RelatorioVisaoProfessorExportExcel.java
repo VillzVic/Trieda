@@ -24,6 +24,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
@@ -72,21 +73,24 @@ public class RelatorioVisaoProfessorExportExcel
 	private Campus campus;
 	private boolean isVisaoProfessor;
 
-	public RelatorioVisaoProfessorExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoProfessorExportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor,
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoProfessorExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
+	public RelatorioVisaoProfessorExportExcel(
+		Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
+		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, filter, isVisaoProfessor, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoProfessorExportExcel( boolean removeUnusedSheets, Cenario cenario,
+	public RelatorioVisaoProfessorExportExcel(
+		boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -94,9 +98,11 @@ public class RelatorioVisaoProfessorExportExcel
 			  i18nMessages, null, isVisaoProfessor, instituicaoEnsino );
 	}
 
-	public RelatorioVisaoProfessorExportExcel( boolean removeUnusedSheets, Cenario cenario,
+	public RelatorioVisaoProfessorExportExcel(
+		boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino )
+		ExportExcelFilter filter, boolean isVisaoProfessor,
+		InstituicaoEnsino instituicaoEnsino )
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
@@ -278,10 +284,10 @@ public class RelatorioVisaoProfessorExportExcel
 			Map< String, HSSFCellStyle > codigoDisciplinaToColorMap
 				= new HashMap< String, HSSFCellStyle >();
 
-			// Dado o id de um professor (ou professor virtual),
+			// Dado o id de um professor ( ou professor virtual ),
 			// temos os seus atendimentos, organizados por turno
-			Map< Long, Map< Turno, List< AtendimentoOperacionalDTO > > > mapNivel1
-				= new TreeMap< Long, Map< Turno, List< AtendimentoOperacionalDTO > > >();
+			Map< Long, Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > > mapNivel1
+				= new TreeMap< Long, Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > >();
 
 			for ( AtendimentoOperacionalDTO atendimento : atendimentos )
 			{
@@ -307,21 +313,30 @@ public class RelatorioVisaoProfessorExportExcel
 
 				Long professorId = ( professor == null ? professorVirtual.getId() : professor.getId() );
 				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
+				SemanaLetiva semanaLetiva = SemanaLetiva.find( atendimento.getSemanaLetivaId(), this.instituicaoEnsino );
 
-				Map< Turno, List< AtendimentoOperacionalDTO > > mapNivel2 = mapNivel1.get( professorId );
+				Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > mapNivel2 = mapNivel1.get( professorId );
 
 				if ( mapNivel2 == null )
 				{
-					mapNivel2 = new HashMap< Turno, List< AtendimentoOperacionalDTO > >();
+					mapNivel2 = new HashMap< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > >();
 					mapNivel1.put( professorId, mapNivel2 );
 				}
 
-				List< AtendimentoOperacionalDTO > list = mapNivel2.get( turno );
+				Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > mapNivel3 = mapNivel2.get( turno );
 
+				if ( mapNivel3 == null )
+				{
+					mapNivel3 = new HashMap< SemanaLetiva, List< AtendimentoOperacionalDTO > >();
+					mapNivel2.put( turno, mapNivel3 );
+				}
+
+				List< AtendimentoOperacionalDTO > list = mapNivel3.get( semanaLetiva );
+				
 				if ( list == null )
 				{
 					list = new ArrayList< AtendimentoOperacionalDTO >();
-					mapNivel2.put( turno, list );
+					mapNivel3.put( semanaLetiva, list );
 				}
 
 				list.add( atendimento );
@@ -341,31 +356,38 @@ public class RelatorioVisaoProfessorExportExcel
 
 			for ( Long profId : mapNivel1.keySet() )
 			{
-				Map< Turno, List< AtendimentoOperacionalDTO > > mapNivel2 = mapNivel1.get( profId );
+				Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > mapNivel2 = mapNivel1.get( profId );
 
 				for ( Turno turno : mapNivel2.keySet() )
 				{
-					Professor professor = null;
-					ProfessorVirtual professorVirtual = null;
+					Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > mapNivel3 = mapNivel2.get( turno );
 
-					professor = Professor.find( profId, this.instituicaoEnsino );
+					for ( SemanaLetiva semanaLetiva : mapNivel3.keySet() )
+					{
+						List< AtendimentoOperacionalDTO > listAtendimentos = mapNivel3.get( semanaLetiva ); 
 
-					if ( professor == null )
-					{
-						professorVirtual = ProfessorVirtual.find(
-							profId, this.instituicaoEnsino );
-					}
-
-					if ( professor != null )
-					{
-						nextRow = writeProfessor( this.campus, professor, turno, mapNivel2.get( turno ),
-							nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap );
-					}
-					else if ( professorVirtual != null )
-					{
-						nextRow = writeProfessorVirtual( this.campus, professorVirtual,
-							turno, mapNivel2.get( turno ), nextRow, sheet,
-							itExcelCommentsPool, codigoDisciplinaToColorMap );
+						Professor professor = null;
+						ProfessorVirtual professorVirtual = null;
+	
+						professor = Professor.find( profId, this.instituicaoEnsino );
+	
+						if ( professor == null )
+						{
+							professorVirtual = ProfessorVirtual.find(
+								profId, this.instituicaoEnsino );
+						}
+	
+						if ( professor != null )
+						{
+							nextRow = writeProfessor( this.campus, professor, turno, semanaLetiva, listAtendimentos,
+								nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap );
+						}
+						else if ( professorVirtual != null )
+						{
+							nextRow = writeProfessorVirtual(
+								this.campus, professorVirtual, turno, semanaLetiva, listAtendimentos,
+								nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap );
+						}
 					}
 				}
 			}
@@ -382,7 +404,8 @@ public class RelatorioVisaoProfessorExportExcel
 	}
 
 	private int writeProfessor(
-		Campus campus, Professor professor, Turno turno,
+		Campus campus, Professor professor,
+		Turno turno, SemanaLetiva semanaLetiva,
 		List< AtendimentoOperacionalDTO > atendimentos,
 		int row, HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
@@ -394,7 +417,7 @@ public class RelatorioVisaoProfessorExportExcel
 		int col = 2;
 
 		// Preenche grade com créditos e células vazias
-		int maxCreditos = turno.calculaMaxCreditos();
+		int maxCreditos = semanaLetiva.calculaMaxCreditos();
 
 		for ( int indexCredito = 1;
 			  indexCredito <= maxCreditos; indexCredito++ )
@@ -509,9 +532,11 @@ public class RelatorioVisaoProfessorExportExcel
 				atendimento.getProfessorString() : atendimento.getProfessorVirtualString() );
 	}
 
-	private int writeProfessorVirtual( Campus campus, ProfessorVirtual professorVirtual, Turno turno,
-		List< AtendimentoOperacionalDTO > atendimentos, int row, HSSFSheet sheet,
-		Iterator< HSSFComment > itExcelCommentsPool,
+	private int writeProfessorVirtual(
+		Campus campus, ProfessorVirtual professorVirtual,
+		Turno turno, SemanaLetiva semanaLetiva,
+		List< AtendimentoOperacionalDTO > atendimentos, int row,
+		HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
 		row = writeHeaderProfessorVirtual(
@@ -521,7 +546,8 @@ public class RelatorioVisaoProfessorExportExcel
 		int col = 2;
 
 		// Preenche grade com créditos e células vazias
-		int maxCreditos = turno.calculaMaxCreditos();
+		int maxCreditos = semanaLetiva.calculaMaxCreditos();
+
 		for ( int indexCredito = 1;
 			  indexCredito <= maxCreditos; indexCredito++ )
 		{
@@ -612,35 +638,37 @@ public class RelatorioVisaoProfessorExportExcel
 		return ( initialRow + maxCreditos + 1 );
 	}
 
-	private int writeHeaderProfessor( Campus campus, Professor professor,
+	private int writeHeaderProfessor(
+		Campus campus, Professor professor,
 		Turno turno, int row, HSSFSheet sheet )
 	{
 		int col = 3;
 
 		// Campus
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Campus" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().campus() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], campus.getCodigo() );
 
 		// Professor
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Professor" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professor() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professor.getNome() );
 
 		row++;
 		col = 3;
 
 		// Turno
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Turno" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().turno() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], turno.getNome() );
 
 		// Professor Virtual
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Professor Virtual" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+			this.getI18nConstants().professorVirtual() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], "" );
 
 		row++;
 		col = 2;
 
 		// Créditos
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], "Creditos" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], this.getI18nConstants().creditos() );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )
@@ -658,29 +686,29 @@ public class RelatorioVisaoProfessorExportExcel
 		int col = 3;
 
 		// Campus
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Campus" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().campus() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], campus.getCodigo() );
 
 		// Professor
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Professor" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professor() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], "" );
 
 		row++;
 		col = 3;
 
 		// Turno
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Turno" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().turno() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], turno.getNome() );
 
 		// Professor Virtual
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], "Professor Virtual" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professorVirtual() );
 		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professorVirtual.getNome() );
 
 		row++;
 		col = 2;
 
 		// Créditos
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], "Creditos" );
+		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], this.getI18nConstants().creditos() );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )

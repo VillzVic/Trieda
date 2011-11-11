@@ -36,7 +36,7 @@ public class TurnoComboBox
 		this.campusComboBox = campusCB;
 
 		RpcProxy< ListLoadResult< TurnoDTO > > proxy =
-			new RpcProxy<ListLoadResult< TurnoDTO > >()
+			new RpcProxy< ListLoadResult< TurnoDTO > >()
 		{
 			@Override
 			public void load( Object loadConfig,

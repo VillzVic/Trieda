@@ -31,6 +31,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.Element;
@@ -44,6 +45,7 @@ public class GradeHorariaSalaGrid
 	private List< AtendimentoRelatorioDTO > atendimentos;
 	private SalaDTO salaDTO;
 	private TurnoDTO turnoDTO;
+	private SemanaLetivaDTO semanaLetivaDTO;
 	private QuickTip quickTip;
 	private List< Long > disciplinasCores = new ArrayList< Long >();
 
@@ -120,7 +122,9 @@ public class GradeHorariaSalaGrid
 
 	public void requestAtendimentos()
 	{
-		if ( getSalaDTO() == null || getTurnoDTO() == null )
+		if ( getSalaDTO() == null
+			|| getTurnoDTO() == null
+			|| getSemanaLetivaDTO() == null )
 		{
 			return;
 		}
@@ -128,28 +132,29 @@ public class GradeHorariaSalaGrid
 		this.grid.mask( "Carregando os dados, " +
 			"aguarde alguns instantes", "loading" );
 
-		Services.atendimentos().getBusca( getSalaDTO(), getTurnoDTO(),
-				new AsyncCallback< List< AtendimentoRelatorioDTO > >()
+		Services.atendimentos().getBusca(
+			getSalaDTO(), getTurnoDTO(), getSemanaLetivaDTO(),
+			new AsyncCallback< List< AtendimentoRelatorioDTO > >()
+			{
+				@Override
+				public void onFailure( Throwable caught )
 				{
-					@Override
-					public void onFailure( Throwable caught )
-					{
-						MessageBox.alert( "ERRO!",
-							"Não foi possível carregar a grade de horários", null );
-					}
+					MessageBox.alert( "ERRO!",
+						"Não foi possível carregar a grade de horários", null );
+				}
 
-					@Override
-					public void onSuccess( List< AtendimentoRelatorioDTO > result )
-					{
-						atendimentos = result;
-						preencheCores();
-						grid.reconfigure( getListStore(),
-								new ColumnModel( getColumnList() ) );
+				@Override
+				public void onSuccess( List< AtendimentoRelatorioDTO > result )
+				{
+					atendimentos = result;
+					preencheCores();
+					grid.reconfigure( getListStore(),
+						new ColumnModel( getColumnList() ) );
 
-						grid.getView().setEmptyText( emptyTextAfterSearch );
-						grid.unmask();
-					}
-				});
+					grid.getView().setEmptyText( emptyTextAfterSearch );
+					grid.unmask();
+				}
+			});
 	}
 
 	public ListStore< LinhaDeCredito > getListStore()
@@ -166,22 +171,22 @@ public class GradeHorariaSalaGrid
 		Set< LinhaDeCredito > setLinhaDeCredito
 			= new HashSet< LinhaDeCredito >();
 
-		if ( this.turnoDTO != null )
+		if ( this.semanaLetivaDTO != null )
 		{
 			if ( isTatico() )
 			{
-				for ( Integer i = 1; i <= this.turnoDTO.getMaxCreditos(); i++ )
+				for ( Integer i = 1; i <= this.semanaLetivaDTO.getMaxCreditos(); i++ )
 				{
 					setLinhaDeCredito.add( new LinhaDeCredito( i.toString() ) );
 				}
 			}
 			else
 			{
-				for ( Long horarioId : this.turnoDTO.getHorariosStringMap().keySet() )
+				for ( Long horarioId : this.semanaLetivaDTO.getHorariosStringMap().keySet() )
 				{
 					setLinhaDeCredito.add( new LinhaDeCredito(
-						this.turnoDTO.getHorariosStringMap().get( horarioId ),
-						horarioId, this.turnoDTO.getHorariosInicioMap().get( horarioId ) ) );
+						this.semanaLetivaDTO.getHorariosStringMap().get( horarioId ),
+						horarioId, this.semanaLetivaDTO.getHorariosInicioMap().get( horarioId ) ) );
 				}
 			}
 		}
@@ -435,6 +440,17 @@ public class GradeHorariaSalaGrid
 		this.turnoDTO = turnoDTO;
 	}
 
+	public SemanaLetivaDTO getSemanaLetivaDTO()
+	{
+		return this.semanaLetivaDTO;
+	}
+
+	public void setSemanaLetivaDTO(
+		SemanaLetivaDTO semanaLetivaDTO )
+	{
+		this.semanaLetivaDTO = semanaLetivaDTO;
+	}
+
 	public String getCssDisciplina( long id )
 	{
 		int index = this.disciplinasCores.indexOf( id );
@@ -602,7 +618,16 @@ public class GradeHorariaSalaGrid
 			if ( this.getHorarioInicio() == null
 				&& o.getHorarioInicio() == null )
 			{
-				return -1;
+				// Se os horários de início são nulos, estamos no modelo tático,
+				// onde o valor de 'display' corresponde ao número de créditos do turno
+				// Ex.: 1, 2, 3, 4...
+				String str1 = ( this.getDisplay() == null ? "" : this.getDisplay() );
+				String str2 = ( o.getDisplay() == null ? "" : o.getDisplay() );
+
+				Integer i = Integer.parseInt( str1 );
+				Integer j = Integer.parseInt( str2 );
+
+				return i.compareTo( j );
 			}
 
 			if ( this.getHorarioInicio() != null

@@ -17,12 +17,17 @@ public interface SemanasLetivaService
 	extends RemoteService
 {
 	ListLoadResult< SemanaLetivaDTO > getList();
-	ListLoadResult< SemanaLetivaDTO > getList( BasePagingLoadConfig loadConfig );
-	PagingLoadResult<SemanaLetivaDTO> getBuscaList( String codigo, String descricao, PagingLoadConfig config );
+	ListLoadResult< SemanaLetivaDTO > getList(
+		BasePagingLoadConfig loadConfig );
+	PagingLoadResult<SemanaLetivaDTO> getBuscaList(
+		String codigo, String descricao, PagingLoadConfig config );
 	void save( SemanaLetivaDTO semanaLetivaDTO );
 	void remove( List< SemanaLetivaDTO > semanaLetivaDTOList );
-	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO );
+	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveisCenario(
+		SemanaLetivaDTO semanaLetivaDTO );
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getAllHorariosDisponiveisCenario();
-	void saveHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
+	void saveHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO );
 	SemanaLetivaDTO getSemanaLetiva( CenarioDTO cenario );
+	SemanaLetivaDTO findSemanaLetiva( Long id );
 }

@@ -276,10 +276,11 @@ public class AtendimentoOperacional
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findByCenario(
-		Cenario cenario, InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT ( o )" +
+			" FROM AtendimentoOperacional o " +
 			" WHERE cenario = :cenario " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino" );
 
@@ -292,8 +293,16 @@ public class AtendimentoOperacional
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Campus campus, Unidade unidade, Sala sala, Turno turno )
+		Campus campus, Unidade unidade, Sala sala,
+		Turno turno, SemanaLetiva semanaLetiva )
 	{
+		String semanaLetivaQuery = "";
+
+		if ( semanaLetiva != null )
+		{
+			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
+		}
+		
 		Query q = entityManager().createQuery(
 			"SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
 			+ " WHERE cenario = :cenario "
@@ -301,7 +310,8 @@ public class AtendimentoOperacional
 			+ " AND o.oferta.campus = :campus "
 			+ " AND o.sala = :sala "
 			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
-			+ " AND o.sala.unidade = :unidade " );
+			+ " AND o.sala.unidade = :unidade "
+			+ semanaLetivaQuery );
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "campus", campus );
@@ -309,6 +319,11 @@ public class AtendimentoOperacional
 		q.setParameter( "sala", sala );
 		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( semanaLetiva != null )
+		{
+			q.setParameter( "semanaLetiva", semanaLetiva );
+		}
 
 		return q.getResultList();
 	}
@@ -491,17 +506,31 @@ public class AtendimentoOperacional
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findBySalaAndTurno(
-		Sala sala, Turno turno, InstituicaoEnsino instituicaoEnsino )
+		Sala sala, Turno turno, SemanaLetiva semanaLetiva,
+		InstituicaoEnsino instituicaoEnsino )
 	{
+		String semanaLetivaQuery = "";
+
+		if ( semanaLetiva != null )
+		{
+			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
+		}
+
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
-			" WHERE o.sala = :sala " +
-			" AND o.instituicaoEnsino = :instituicaoEnsino" +
-			" AND o.oferta.turno = :turno" );
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
+			+ " WHERE o.sala = :sala "
+			+ " AND o.instituicaoEnsino = :instituicaoEnsino"
+			+ " AND o.oferta.turno = :turno"
+			+ semanaLetivaQuery );
 
 		q.setParameter( "sala", sala );
 		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( semanaLetiva != null )
+		{
+			q.setParameter( "semanaLetiva", semanaLetiva );
+		}
 
 		return q.getResultList();
 	}
@@ -512,6 +541,7 @@ public class AtendimentoOperacional
 		Curriculo curriculo, Integer periodo, Turno turno, Curso curso )
 	{
 		String cursoQuery = "";
+
 		if ( curso != null )
 		{
 			cursoQuery = " AND o.oferta.curso = :curso ";

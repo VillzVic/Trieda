@@ -6,8 +6,9 @@ import java.util.Set;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class AtendimentoTaticoDTO extends AbstractDTO< String >
-	implements Comparable< AtendimentoTaticoDTO >, AtendimentoRelatorioDTO
+public class AtendimentoTaticoDTO
+	extends AbstractDTO< String >
+	implements AtendimentoRelatorioDTO, Comparable< AtendimentoTaticoDTO >
 {
 	private static final long serialVersionUID = -2870302894382757778L;
 
@@ -42,6 +43,7 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 	public static final String PROPERTY_CREDITOS_TEORICOS = "creditosTeorico";
 	public static final String PROPERTY_CREDITOS_PRATICOS = "creditosPratico";
 	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
+	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 
 	public AtendimentoTaticoDTO()
 	{
@@ -87,216 +89,305 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 		this.setCompartilhamentoCursosString( other.getCompartilhamentoCursosString() );
 	}
 
-	public void setId(Long value) {
-		set(PROPERTY_ID, value);
-	}
-	public Long getId() {
-		return get(PROPERTY_ID);
-	}
-	
-	public void setVersion(Integer value) {
-		set(PROPERTY_VERSION, value);
-	}
-	public Integer getVersion() {
-		return get(PROPERTY_VERSION);
+	public void setId( Long value )
+	{
+		set( PROPERTY_ID, value );
 	}
 
-	public void setCenarioId(Long value) {
-		set(PROPERTY_CENARIO_ID, value);
-	}
-	public Long getCenarioId() {
-		return get(PROPERTY_CENARIO_ID);
-	}
-	
-	public void setCampusId(Long value) {
-		set(PROPERTY_CAMPUS_ID, value);
-	}
-	public Long getCampusId() {
-		return get(PROPERTY_CAMPUS_ID);
-	}
-	
-	public String getCampusString() {
-		return get(PROPERTY_CAMPUS_STRING);
-	}
-	public void setCampusString(String value) {
-		set(PROPERTY_CAMPUS_STRING, value);
-	}
-	
-	public void setUnidadeId(Long value) {
-		set(PROPERTY_UNIDADE_ID, value);
-	}
-	public Long getUnidadeId() {
-		return get(PROPERTY_UNIDADE_ID);
-	}
-	
-	public String getUnidadeString() {
-		return get(PROPERTY_UNIDADE_STRING);
-	}
-	public void setUnidadeString(String value) {
-		set(PROPERTY_UNIDADE_STRING, value);
-	}
-	
-	public void setSalaId(Long value) {
-		set(PROPERTY_SALA_ID, value);
-	}
-	public Long getSalaId() {
-		return get(PROPERTY_SALA_ID);
-	}
-	
-	public String getSalaString() {
-		return get(PROPERTY_SALA_STRING);
-	}
-	public void setSalaString(String value) {
-		set(PROPERTY_SALA_STRING, value);
+	public Long getId()
+	{
+		return get( PROPERTY_ID );
 	}
 
-	public void setSemana(Integer value) {
-		set(PROPERTY_DIA_SEMANA, value);
+	public void setVersion( Integer value )
+	{
+		set( PROPERTY_VERSION, value );
 	}
-	public Integer getSemana() {
-		return get(PROPERTY_DIA_SEMANA);
+
+	public Integer getVersion()
+	{
+		return get( PROPERTY_VERSION );
 	}
-	
-	public void setCursoString(String value) {
-		set(PROPERTY_CURSO_STRING, value);
+
+	public void setCenarioId( Long value )
+	{
+		set( PROPERTY_CENARIO_ID, value );
 	}
-	public String getCursoString() {
-		return get(PROPERTY_CURSO_STRING);
-	}
-	
-	public void setCursoNome(String value) {
-		set(PROPERTY_CURSO_NOME, value);
-	}
-	public String getCursoNome() {
-		return get(PROPERTY_CURSO_NOME);
-	}
-	
-	public void setCursoId(Long value) {
-		set(PROPERTY_CURSO_ID, value);
-	}
-	public Long getCursoId() {
-		return get(PROPERTY_CURSO_ID);
+
+	public Long getCenarioId()
+	{
+		return get( PROPERTY_CENARIO_ID );
 	}
 	
-	public void setCurricularId(Long value) {
-		set(PROPERTY_CURRICULO_ID, value);
+	public void setCampusId( Long value )
+	{
+		set( PROPERTY_CAMPUS_ID, value );
 	}
-	public Long getCurriculoId() {
-		return get(PROPERTY_CURRICULO_ID);
-	}
-	
-	public void setCurricularString(String value) {
-		set(PROPERTY_CURRICULO_STRING, value);
-	}
-	public String getCurriculoString() {
-		return get(PROPERTY_CURRICULO_STRING);
+
+	public Long getCampusId()
+	{
+		return get( PROPERTY_CAMPUS_ID );
 	}
 	
-	public void setPeriodo(Integer value) {
-		set(PROPERTY_PERIODO, value);
+	public String getCampusString()
+	{
+		return get( PROPERTY_CAMPUS_STRING );
 	}
-	public Integer getPeriodo() {
-		return get(PROPERTY_PERIODO);
-	}
-	
-	public void setPeriodoString(String value) {
-		set(PROPERTY_PERIODO_STRING, value);
-	}
-	public String getPeriodoString() {
-		return get(PROPERTY_PERIODO_STRING);
+
+	public void setCampusString( String value )
+	{
+		set( PROPERTY_CAMPUS_STRING, value );
 	}
 	
-	public void setDisciplinaId(Long value) {
-		set(PROPERTY_DISCIPLINA_ID, value);
+	public void setUnidadeId( Long value )
+	{
+		set( PROPERTY_UNIDADE_ID, value );
 	}
-	public Long getDisciplinaId() {
-		return get(PROPERTY_DISCIPLINA_ID);
-	}
-	
-	public String getDisciplinaString() {
-		return get(PROPERTY_DISCIPLINA_STRING);
-	}
-	public void setDisciplinaString(String value) {
-		set(PROPERTY_DISCIPLINA_STRING, value);
+
+	public Long getUnidadeId()
+	{
+		return get( PROPERTY_UNIDADE_ID );
 	}
 	
-	public void setTurnoId(Long value) {
-		set(PROPERTY_TURNO_ID, value);
+	public String getUnidadeString()
+	{
+		return get( PROPERTY_UNIDADE_STRING );
 	}
-	public Long getTurnoId() {
-		return get(PROPERTY_TURNO_ID);
-	}
-	
-	public String getTurnoString() {
-		return get(PROPERTY_TURNO_STRING);
-	}
-	public void setTurnoString(String value) {
-		set(PROPERTY_TURNO_STRING, value);
+
+	public void setUnidadeString( String value )
+	{
+		set( PROPERTY_UNIDADE_STRING, value );
 	}
 	
-	public String getDisciplinaNome() {
-		return get(PROPERTY_DISCIPLINA_NOME);
+	public void setSalaId( Long value )
+	{
+		set( PROPERTY_SALA_ID, value );
 	}
-	public void setDisciplinaNome(String value) {
-		set(PROPERTY_DISCIPLINA_NOME, value);
-	}
-	
-	public void setTotalCreditoDisciplina(Integer value) {
-		set(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA, value);
-	}
-	public Integer getTotalCreditoDisciplina() {
-		return get(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA);
+
+	public Long getSalaId()
+	{
+		return get( PROPERTY_SALA_ID );
 	}
 	
-	public void setOfertaId(Long value) {
-		set(PROPERTY_OFERTA_ID, value);
+	public String getSalaString()
+	{
+		return get( PROPERTY_SALA_STRING );
 	}
-	public Long getOfertaId() {
-		return get(PROPERTY_OFERTA_ID);
+
+	public void setSalaString( String value )
+	{
+		set( PROPERTY_SALA_STRING, value );
 	}
-	
-	public String getTurma() {
-		return get(PROPERTY_TURMA);
+
+	public void setSemana( Integer value )
+	{
+		set( PROPERTY_DIA_SEMANA, value );
 	}
-	public void setTurma(String value) {
-		set(PROPERTY_TURMA, value);
-	}
-	
-	public void setQuantidadeAlunos(Integer value) {
-		set(PROPERTY_QUANTIDADE_ALUNOS, value);
-	}
-	public Integer getQuantidadeAlunos() {
-		return get(PROPERTY_QUANTIDADE_ALUNOS);
-	}
-	
-	public void setQuantidadeAlunosString(String value) {
-		set(PROPERTY_QUANTIDADE_ALUNOS_STRING, value);
-	}
-	public String getQuantidadeAlunosString() {
-		return get(PROPERTY_QUANTIDADE_ALUNOS_STRING);
+
+	public Integer getSemana()
+	{
+		return get( PROPERTY_DIA_SEMANA );
 	}
 	
-	public void setCreditosTeorico(Integer value) {
-		set(PROPERTY_CREDITOS_TEORICOS, value);
+	public void setCursoString( String value )
+	{
+		set( PROPERTY_CURSO_STRING, value );
 	}
-	public Integer getCreditosTeorico() {
-		return get(PROPERTY_CREDITOS_TEORICOS);
+
+	public String getCursoString()
+	{
+		return get( PROPERTY_CURSO_STRING );
 	}
 	
-	public void setCreditosPratico(Integer value) {
-		set(PROPERTY_CREDITOS_PRATICOS, value);
+	public void setCursoNome( String value )
+	{
+		set( PROPERTY_CURSO_NOME, value );
 	}
-	public Integer getCreditosPratico() {
-		return get(PROPERTY_CREDITOS_PRATICOS);
+
+	public String getCursoNome()
+	{
+		return get( PROPERTY_CURSO_NOME );
+	}
+	
+	public void setCursoId( Long value )
+	{
+		set( PROPERTY_CURSO_ID, value );
+	}
+
+	public Long getCursoId()
+	{
+		return get( PROPERTY_CURSO_ID );
+	}
+	
+	public void setCurricularId( Long value )
+	{
+		set( PROPERTY_CURRICULO_ID, value );
+	}
+
+	public Long getCurriculoId()
+	{
+		return get( PROPERTY_CURRICULO_ID );
+	}
+
+	public void setCurricularString( String value )
+	{
+		set( PROPERTY_CURRICULO_STRING, value );
+	}
+
+	public String getCurriculoString()
+	{
+		return get( PROPERTY_CURRICULO_STRING );
+	}
+
+	public void setPeriodo( Integer value )
+	{
+		set( PROPERTY_PERIODO, value );
+	}
+
+	public Integer getPeriodo()
+	{
+		return get( PROPERTY_PERIODO );
+	}
+	
+	public void setPeriodoString( String value )
+	{
+		set( PROPERTY_PERIODO_STRING, value );
+	}
+
+	public String getPeriodoString()
+	{
+		return get( PROPERTY_PERIODO_STRING );
+	}
+	
+	public void setDisciplinaId( Long value )
+	{
+		set( PROPERTY_DISCIPLINA_ID, value );
+	}
+
+	public Long getDisciplinaId()
+	{
+		return get( PROPERTY_DISCIPLINA_ID );
+	}
+
+	public String getDisciplinaString()
+	{
+		return get( PROPERTY_DISCIPLINA_STRING );
+	}
+
+	public void setDisciplinaString( String value )
+	{
+		set( PROPERTY_DISCIPLINA_STRING, value );
+	}
+	
+	public void setTurnoId( Long value )
+	{
+		set( PROPERTY_TURNO_ID, value );
+	}
+
+	public Long getTurnoId()
+	{
+		return get( PROPERTY_TURNO_ID );
+	}
+
+	public String getTurnoString()
+	{
+		return get( PROPERTY_TURNO_STRING );
+	}
+	public void setTurnoString( String value )
+	{
+		set( PROPERTY_TURNO_STRING, value );
+	}
+
+	public String getDisciplinaNome()
+	{
+		return get( PROPERTY_DISCIPLINA_NOME );
+	}
+
+	public void setDisciplinaNome( String value )
+	{
+		set( PROPERTY_DISCIPLINA_NOME, value );
+	}
+
+	public void setTotalCreditoDisciplina( Integer value )
+	{
+		set( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA, value );
+	}
+
+	public Integer getTotalCreditoDisciplina()
+	{
+		return get( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA );
+	}
+
+	public void setOfertaId( Long value )
+	{
+		set( PROPERTY_OFERTA_ID, value );
+	}
+
+	public Long getOfertaId()
+	{
+		return get( PROPERTY_OFERTA_ID );
+	}
+
+	public String getTurma()
+	{
+		return get( PROPERTY_TURMA );
+	}
+
+	public void setTurma( String value )
+	{
+		set( PROPERTY_TURMA, value );
+	}
+
+	public void setQuantidadeAlunos( Integer value )
+	{
+		set( PROPERTY_QUANTIDADE_ALUNOS, value );
+	}
+
+	public Integer getQuantidadeAlunos()
+	{
+		return get( PROPERTY_QUANTIDADE_ALUNOS );
+	}
+
+	public void setQuantidadeAlunosString( String value )
+	{
+		set( PROPERTY_QUANTIDADE_ALUNOS_STRING, value );
+	}
+
+	public String getQuantidadeAlunosString()
+	{
+		return get( PROPERTY_QUANTIDADE_ALUNOS_STRING );
+	}
+	
+	public void setCreditosTeorico( Integer value )
+	{
+		set( PROPERTY_CREDITOS_TEORICOS, value );
+	}
+
+	public Integer getCreditosTeorico()
+	{
+		return get( PROPERTY_CREDITOS_TEORICOS );
+	}
+
+	public void setCreditosPratico( Integer value )
+	{
+		set( PROPERTY_CREDITOS_PRATICOS, value );
+	}
+
+	public Integer getCreditosPratico()
+	{
+		return get( PROPERTY_CREDITOS_PRATICOS );
 	}
 
 	@Override
-	public String getCompartilhamentoCursosString()	{
-		return get(PROPERTY_COMPARTILHAMENTO_CURSOS);
+	public String getCompartilhamentoCursosString()
+	{
+		return get(PROPERTY_COMPARTILHAMENTO_CURSOS );
 	}
+
 	@Override
-	public void setCompartilhamentoCursosString( String s )	{
-		set(PROPERTY_COMPARTILHAMENTO_CURSOS, s);
+	public void setCompartilhamentoCursosString( String s )
+	{
+		set( PROPERTY_COMPARTILHAMENTO_CURSOS, s );
 	}
 
 	public boolean isTeorico()
@@ -508,5 +599,16 @@ public class AtendimentoTaticoDTO extends AbstractDTO< String >
 	public String getProfessorString()
 	{
 		return "";
+	}
+
+	@Override
+	public Long getSemanaLetivaId()
+	{
+		return get( PROPERTY_SEMANA_LETIVA_ID );
+	}
+
+	public void setSemanaLetivaId( Long value )
+	{
+		set( PROPERTY_SEMANA_LETIVA_ID, value );
 	}
 }

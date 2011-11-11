@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import java.util.Date;
+import java.util.Map;
+
 public class SemanaLetivaDTO
 	extends AbstractDTO< String >
 	implements Comparable< SemanaLetivaDTO >
@@ -12,6 +15,10 @@ public class SemanaLetivaDTO
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
 	public static final String PROPERTY_TEMPO = "tempo";
+	public static final String PROPERTY_MAX_CREDITOS = "maxCreditos";
+
+	private Map< Long, String > horariosStringMap;
+	private Map< Long, Date > horariosInicioMap;
 
 	public SemanaLetivaDTO()
 	{
@@ -66,6 +73,38 @@ public class SemanaLetivaDTO
 	public Integer getTempo()
 	{
 		return get( PROPERTY_TEMPO );
+	}
+
+	public void setMaxCreditos( Integer value )
+	{
+		set( PROPERTY_MAX_CREDITOS, value );
+	}
+
+	public Integer getMaxCreditos()
+	{
+		return get( PROPERTY_MAX_CREDITOS );
+	}
+
+	public void setHorariosStringMap(
+			Map< Long, String > horariosStringMap )
+	{
+		this.horariosStringMap = horariosStringMap;
+	}
+
+	public Map< Long, String > getHorariosStringMap()
+	{
+		return this.horariosStringMap;
+	}
+
+	public void setHorariosInicioMap(
+		Map< Long, Date > horariosStringMap )
+	{
+		this.horariosInicioMap = horariosStringMap;
+	}
+
+	public Map< Long, Date > getHorariosInicioMap()
+	{
+		return this.horariosInicioMap;
 	}
 
 	@Override

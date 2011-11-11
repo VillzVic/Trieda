@@ -20,6 +20,7 @@ public interface AtendimentoRelatorioDTO
 	public Long getTurnoId();
 	public String getCurriculoString();
 	public Long getCurriculoId();
+	public Long getSemanaLetivaId();
 	public Integer getPeriodo();
 	public String getPeriodoString();
 	public String getQuantidadeAlunosString();

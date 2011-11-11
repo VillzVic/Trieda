@@ -81,8 +81,9 @@ public class RelatorioVisaoCursoView
 	{
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
-		grid = new GradeHorariaCursoGrid();
-		panel.add( grid, bld );
+
+		this.grid = new GradeHorariaCursoGrid();
+		this.panel.add( this.grid, bld );
 	}
 
 	private void createFilter()
@@ -129,8 +130,8 @@ public class RelatorioVisaoCursoView
 		main.add( left, new ColumnData( 0.5 ) );
 		main.add( right, new ColumnData( 0.5 ) );
 
-		this.submitBt = new Button( "Filtrar", AbstractImagePrototype.create(
-			Resources.DEFAULTS.filter16() ) );
+		this.submitBt = new Button( "Filtrar",
+			AbstractImagePrototype.create( Resources.DEFAULTS.filter16() ) );
 		panel.addButton( this.submitBt );
 
 		panel.add( main, new FormData( "100%" ) );

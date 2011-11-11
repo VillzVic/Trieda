@@ -340,4 +340,23 @@ public class SemanasLetivaServiceImpl
 
 		return result;
 	}
+
+	@Override
+	public SemanaLetivaDTO findSemanaLetiva( Long id )
+	{
+		if ( id == null )
+		{
+			return null;
+		}
+		
+		SemanaLetiva semanaLetiva
+			= SemanaLetiva.find( id, getInstituicaoEnsinoUser() );
+
+		if ( semanaLetiva == null )
+		{
+			return null;
+		}
+
+		return ConvertBeans.toSemanaLetivaDTO( semanaLetiva );
+	}
 }

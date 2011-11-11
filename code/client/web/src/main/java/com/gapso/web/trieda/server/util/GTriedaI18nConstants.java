@@ -18,684 +18,698 @@ public class GTriedaI18nConstants
 
 	@Override
 	public String adicionar() {
-		return languageManager.getText("adicionar");
+		return this.languageManager.getText("adicionar");
 	}
 
 	@Override
 	public String andar() {
-		return languageManager.getText("andar");
+		return this.languageManager.getText("andar");
 	}
 
 	@Override
 	public String areaTitulacao() {
-		return languageManager.getText("areaTitulacao");
+		return this.languageManager.getText("areaTitulacao");
 	}
 
 	@Override
 	public String areasTitulacao() {
-		return languageManager.getText("areasTitulacao");
+		return this.languageManager.getText("areasTitulacao");
 	}
 
 	@Override
 	public String bairro() {
-		return languageManager.getText("bairro");
+		return this.languageManager.getText("bairro");
 	}
 
 	@Override
 	public String campi() {
-		return languageManager.getText("campi");
+		return this.languageManager.getText("campi");
 	}
 
 	@Override
 	public String campiHeadingPanel() {
-		return languageManager.getText("campiHeadingPanel");
+		return this.languageManager.getText("campiHeadingPanel");
 	}
 
 	@Override
 	public String campiTrabalho() {
-		return languageManager.getText("campiTrabalho");
+		return this.languageManager.getText("campiTrabalho");
 	}
 
 	@Override
 	public String campus() {
-		return languageManager.getText("campus");
+		return this.languageManager.getText("campus");
 	}
 
 	@Override
 	public String capacidade() {
-		return languageManager.getText("capacidade");
+		return this.languageManager.getText("capacidade");
 	}
 
 	@Override
 	public String capacidadeMediaSalas() {
-		return languageManager.getText("capacidadeMediaSalas");
+		return this.languageManager.getText("capacidadeMediaSalas");
 	}
 
 	@Override
 	public String cargaHorariaAnterior() {
-		return languageManager.getText("cargaHorariaAnterior");
+		return this.languageManager.getText("cargaHorariaAnterior");
 	}
 
 	@Override
 	public String cargaHorariaMax() {
-		return languageManager.getText("cargaHorariaMax");
+		return this.languageManager.getText("cargaHorariaMax");
 	}
 
 	@Override
 	public String cargaHorariaMin() {
-		return languageManager.getText("cargaHorariaMin");
+		return this.languageManager.getText("cargaHorariaMin");
 	}
 
 	@Override
 	public String codigo() {
-		return languageManager.getText("codigo");
+		return this.languageManager.getText("codigo");
 	}
 
 	@Override
 	public String confirmacao() {
-		return languageManager.getText("confirmacao");
+		return this.languageManager.getText("confirmacao");
 	}
 
 	@Override
 	public String cpf() {
-		return languageManager.getText("cpf");
+		return this.languageManager.getText("cpf");
 	}
 
 	@Override
 	public String cpfProfessor() {
-		return languageManager.getText("cpfProfessor");
+		return this.languageManager.getText("cpfProfessor");
 	}
 
 	@Override
 	public String creditos() {
-		return languageManager.getText("creditos");
+		return this.languageManager.getText("creditos");
 	}
 
 	@Override
 	public String creditosPraticos() {
-		return languageManager.getText("creditosPraticos");
+		return this.languageManager.getText("creditosPraticos");
 	}
 
 	@Override
 	public String creditosTeoricos() {
-		return languageManager.getText("creditosTeoricos");
+		return this.languageManager.getText("creditosTeoricos");
 	}
 
 	@Override
 	public String curriculos() {
-		return languageManager.getText("curriculos");
+		return this.languageManager.getText("curriculos");
 	}
 
 	@Override
 	public String curso() {
-		return languageManager.getText("curso");
+		return this.languageManager.getText("curso");
 	}
 
 	@Override
 	public String cursos() {
-		return languageManager.getText("cursos");
+		return this.languageManager.getText("cursos");
 	}
 
 	@Override
 	public String cursosAreasTitulacao() {
-		return languageManager.getText("cursosAreasTitulacao");
+		return this.languageManager.getText("cursosAreasTitulacao");
 	}
 
 	@Override
 	public String cursou() {
-		return languageManager.getText("cursou");
+		return this.languageManager.getText("cursou");
 	}
 
 	@Override
 	public String custoDocente() {
-		return languageManager.getText("custoDocente");
+		return this.languageManager.getText("custoDocente");
 	}
 
 	@Override
 	public String custoMedioCredito() {
-		return languageManager.getText("custoMedioCredito");
+		return this.languageManager.getText("custoMedioCredito");
 	}
 
 	@Override
 	public String custoMedioCreditoExcel() {
-		return languageManager.getText("custoMedioCreditoExcel");
+		return this.languageManager.getText("custoMedioCreditoExcel");
 
 	}
 
 	@Override
 	public String demandaDeAlunos() {
-		return languageManager.getText("demandaDeAlunos");
+		return this.languageManager.getText("demandaDeAlunos");
 	}
 
 	@Override
 	public String descricao() {
-		return languageManager.getText("descricao");
+		return this.languageManager.getText("descricao");
 	}
 
 	@Override
 	public String deslocamentoUnidades() {
-		return languageManager.getText("deslocamentoUnidades");
+		return this.languageManager.getText("deslocamentoUnidades");
 	}
 
 	@Override
 	public String deslocamentoUnidadesCampus() {
-		return languageManager.getText("deslocamentoUnidadesCampus");
+		return this.languageManager.getText("deslocamentoUnidadesCampus");
 	}
 
 	@Override
 	public String disciplina() {
-		return languageManager.getText("disciplina");
+		return this.languageManager.getText("disciplina");
 	}
 
 	@Override
 	public String disciplinas() {
-		return languageManager.getText("disciplinas");
+		return this.languageManager.getText("disciplinas");
 	}
 
 	@Override
 	public String disciplinasAssociadas() {
-		return languageManager.getText("disciplinasAssociadas");
+		return this.languageManager.getText("disciplinasAssociadas");
 	}
 
 	@Override
 	public String disciplinasSalas() {
-		return languageManager.getText("disciplinasSalas");
+		return this.languageManager.getText("disciplinasSalas");
 	}
 
 	@Override
 	public String disponibilidadesSemanaLetiva() {
-		return languageManager.getText("disponibilidadesSemanaLetiva");
+		return this.languageManager.getText("disponibilidadesSemanaLetiva");
 	}
 
 	@Override
 	public String edicaoDe() {
-		return languageManager.getText("edicaoDe");
+		return this.languageManager.getText("edicaoDe");
 	}
 
 	@Override
 	public String editar() {
-		return languageManager.getText("editar");
+		return this.languageManager.getText("editar");
 	}
 
 	@Override
 	public String elimina() {
-		return languageManager.getText("elimina");
+		return this.languageManager.getText("elimina");
 	}
 
 	@Override
 	public String equivalencias() {
-		return languageManager.getText("equivalencias");
+		return this.languageManager.getText("equivalencias");
 	}
 
 	@Override
 	public String estado() {
-		return languageManager.getText("estado");
+		return this.languageManager.getText("estado");
 	}
 
 	@Override
 	public String exportarExcel() {
-		return languageManager.getText("exportarExcel");
+		return this.languageManager.getText("exportarExcel");
 	}
 
 	@Override
 	public String habilitacaoProfessores() {
-		return languageManager.getText("habilitacaoProfessores");
+		return this.languageManager.getText("habilitacaoProfessores");
 	}
 
 	@Override
 	public String gruposSalas() {
-		return languageManager.getText("gruposSalas");
+		return this.languageManager.getText("gruposSalas");
 	}
 
 	@Override
 	public String importarExcel() {
-		return languageManager.getText("importarExcel");
+		return this.languageManager.getText("importarExcel");
 	}
 
 	@Override
 	public String informacao() {
-		return languageManager.getText("informacao");
+		return this.languageManager.getText("informacao");
 	}
 
 	@Override
 	public String insercaoDe() {
-		return languageManager.getText("insercaoDe");
+		return this.languageManager.getText("insercaoDe");
 	}
 
 	@Override
 	public String maisDeUmaDisciplinaProfessor() {
-		return languageManager.getText("maisDeUmaDisciplinaProfessor");
+		return this.languageManager.getText("maisDeUmaDisciplinaProfessor");
 	}
 
 	@Override
 	public String margem() {
-		return languageManager.getText("margem");
+		return this.languageManager.getText("margem");
 	}
 
 	@Override
 	public String margemPercente() {
-		return languageManager.getText("margemPercente");
+		return this.languageManager.getText("margemPercente");
 	}
 
 	@Override
 	public String matrizCurricular() {
-		return languageManager.getText("matrizCurricular");
+		return this.languageManager.getText("matrizCurricular");
 	}
 
 	@Override
 	public String maxAlunosPratico() {
-		return languageManager.getText("maxAlunosPratico");
+		return this.languageManager.getText("maxAlunosPratico");
 	}
 
 	@Override
 	public String maxAlunosTeorico() {
-		return languageManager.getText("maxAlunosTeorico");
+		return this.languageManager.getText("maxAlunosTeorico");
 	}
 
 	@Override
 	public String maxDisciplinasProfessor() {
-		return languageManager.getText("maxDisciplinasProfessor");
+		return this.languageManager.getText("maxDisciplinasProfessor");
 	}
 
 	@Override
 	public String mensagemErro() {
-		return languageManager.getText("mensagemErro");
+		return this.languageManager.getText("mensagemErro");
 	}
 
 	@Override
 	public String minPercentualDoutor() {
-		return languageManager.getText("minPercentualDoutor");
+		return this.languageManager.getText("minPercentualDoutor");
 	}
 
 	@Override
 	public String minPercentualMestre() {
-		return languageManager.getText("minPercentualMestre");
+		return this.languageManager.getText("minPercentualMestre");
 	}
 
 	@Override
 	public String minTempoIntegralParcial() {
-		return languageManager.getText("minTempoIntegralParcial");
+		return this.languageManager.getText("minTempoIntegralParcial");
 	}
 
 	@Override
 	public String minTempoIntegral() {
-		return languageManager.getText("minTempoIntegral");
+		return this.languageManager.getText("minTempoIntegral");
 	}
 
 	@Override
 	public String municipio() {
-		return languageManager.getText("municipio");
+		return this.languageManager.getText("municipio");
 	}
 
 	@Override
 	public String nao() {
-		return languageManager.getText("nao");
+		return this.languageManager.getText("nao");
 	}
 
 	@Override
 	public String nivelDificuldade() {
-		return languageManager.getText("nivelDificuldade");
+		return this.languageManager.getText("nivelDificuldade");
 	}
 
 	@Override
 	public String nome() {
-		return languageManager.getText("nome");
+		return this.languageManager.getText("nome");
 	}
 
 	@Override
 	public String notaDesempenho() {
-		return languageManager.getText("notaDesempenho");
+		return this.languageManager.getText("notaDesempenho");
 	}
 
 	@Override
 	public String numero() {
-		return languageManager.getText("numero");
+		return this.languageManager.getText("numero");
 	}
 
 	@Override
 	public String ofertasEDemandas() {
-		return languageManager.getText("ofertasEDemandas");
+		return this.languageManager.getText("ofertasEDemandas");
 	}
 
 	@Override
 	public String otimizado() {
-		return languageManager.getText("otimizado");
+		return this.languageManager.getText("otimizado");
 	}
 
 	@Override
 	public String periodo() {
-		return languageManager.getText("periodo");
+		return this.languageManager.getText("periodo");
 	}
 
 	@Override
 	public String pratico() {
-		return languageManager.getText("pratico");
+		return this.languageManager.getText("pratico");
 	}
 
 	@Override
 	public String preenchaA() {
-		return languageManager.getText("preenchaA");
+		return this.languageManager.getText("preenchaA");
 	}
 
 	@Override
 	public String preenchaO() {
-		return languageManager.getText("preenchaO");
+		return this.languageManager.getText("preenchaO");
 	}
 
 	@Override
 	public String preferencia() {
-		return languageManager.getText("preferencia");
+		return this.languageManager.getText("preferencia");
 	}
 
 	@Override
 	public String professor() {
-		return languageManager.getText("professor");
+		return this.languageManager.getText("professor");
 	}
 
 	@Override
 	public String professores() {
-		return languageManager.getText("professores");
+		return this.languageManager.getText("professores");
 	}
 
 	@Override
 	public String publicado() {
-		return languageManager.getText("publicado");
+		return this.languageManager.getText("publicado");
 	}
 
 	@Override
 	public String quantidadeAlunos() {
-		return languageManager.getText("quantidadeAlunos");
+		return this.languageManager.getText("quantidadeAlunos");
 	}
 
 	@Override
 	public String rateio() {
-		return languageManager.getText("rateio");
+		return this.languageManager.getText("rateio");
 	}
 
 	@Override
 	public String receita() {
-		return languageManager.getText("receita");
+		return this.languageManager.getText("receita");
 	}
 
 	@Override
 	public String relatorioVisaoSala() {
-		return languageManager.getText("relatorioVisaoSala");
+		return this.languageManager.getText("relatorioVisaoSala");
 	}
 
 	@Override
 	public String remover() {
-		return languageManager.getText("remover");
+		return this.languageManager.getText("remover");
 	}
 
 	@Override
 	public String resumoDisciplina() {
-		return languageManager.getText("resumoDisciplina");
+		return this.languageManager.getText("resumoDisciplina");
 	}
 
 	@Override
 	public String resumoCurso() {
-		return languageManager.getText("resumoCurso");
+		return this.languageManager.getText("resumoCurso");
 	}
 
 	@Override
 	public String sala() {
-		return languageManager.getText("sala");
+		return this.languageManager.getText("sala");
 	}
 
 	@Override
 	public String salas() {
-		return languageManager.getText("salas");
+		return this.languageManager.getText("salas");
 	}
 
 	@Override
 	public String salasHeadingPanel() {
-		return languageManager.getText("salasHeadingPanel");
+		return this.languageManager.getText("salasHeadingPanel");
 	}
 
 	@Override
 	public String selecioneA() {
-		return languageManager.getText("selecioneA");
+		return this.languageManager.getText("selecioneA");
 	}
 
 	@Override
 	public String selecioneO() {
-		return languageManager.getText("selecioneO");
+		return this.languageManager.getText("selecioneO");
 	}
 
 	@Override
 	public String sim() {
-		return languageManager.getText("sim");
+		return this.languageManager.getText("sim");
 	}
 
 	@Override
 	public String teorico() {
-		return languageManager.getText("teorico");
+		return this.languageManager.getText("teorico");
 	}
 
 	@Override
 	public String tipo() {
-		return languageManager.getText("tipo");
+		return this.languageManager.getText("tipo");
 	}
 
 	@Override
 	public String tipoContrato() {
-		return languageManager.getText("tipoContrato");
+		return this.languageManager.getText("tipoContrato");
 	}
 
 	@Override
 	public String TipoCredito() {
-		return languageManager.getText("TipoCredito");
+		return this.languageManager.getText("TipoCredito");
 	}
 
 	@Override
 	public String titulacao() {
-		return languageManager.getText("titulacao");
+		return this.languageManager.getText("titulacao");
 	}
 
 	@Override
 	public String totalDecreditos() {
-		return languageManager.getText("totalDecreditos");
+		return this.languageManager.getText("totalDecreditos");
 	}
 
 	@Override
 	public String trieda() {
-		return languageManager.getText("trieda");
+		return this.languageManager.getText("trieda");
 
 	}
 
 	@Override
-	public String triedaDetailMessageHeadingText() {
-		return languageManager.getText("triedaDetailMessageHeadingText");
+	public String triedaDetailMessageHeadingText()
+	{
+		return this.languageManager.getText("triedaDetailMessageHeadingText");
 	}
 
 	@Override
-	public String turma() {
-		return languageManager.getText("turma");
+	public String turma()
+	{
+		return this.languageManager.getText("turma");
 	}
 
 	@Override
-	public String turno() {
-		return languageManager.getText("turno");
+	public String turno()
+	{
+		return this.languageManager.getText("turno");
 	}
 
 	@Override
-	public String unidade() {
-		return languageManager.getText("unidade");
+	public String unidade()
+	{
+		return this.languageManager.getText("unidade");
 	}
 
 	@Override
-	public String unidades() {
-		return languageManager.getText("unidades");
+	public String unidades()
+	{
+		return this.languageManager.getText("unidades");
 	}
 
 	@Override
-	public String unidadesHeadingPanel() {
-		return languageManager.getText("unidadesHeadingPanel");
+	public String unidadesHeadingPanel()
+	{
+		return this.languageManager.getText("unidadesHeadingPanel");
 	}
 
 	@Override
-	public String usaLaboratorio() {
-		return languageManager.getText("usaLaboratorio");
+	public String usaLaboratorio()
+	{
+		return this.languageManager.getText("usaLaboratorio");
 	}
 
 	@Override
-	public String valorCredito() {
-		return languageManager.getText("valorCredito");
+	public String valorCredito()
+	{
+		return this.languageManager.getText("valorCredito");
 	}
 
 	@Override
 	public String otimizadoTatico()
 	{
-		return languageManager.getText( "otimizadoTatico" );
+		return this.languageManager.getText( "otimizadoTatico" );
 	}
 
 	@Override
 	public String otimizadoOperacional()
 	{
-		return languageManager.getText( "otimizadoOperacional" );
+		return this.languageManager.getText( "otimizadoOperacional" );
 	}
 
 	@Override
 	public String relatorioVisaoCurso()
 	{
-		return languageManager.getText( "relatorioVisaoCurso" );
+		return this.languageManager.getText( "relatorioVisaoCurso" );
 	}
 
 	@Override
 	public String capacidadeAlunos()
 	{
-		return languageManager.getText( "capacidadeAlunos" );
+		return this.languageManager.getText( "capacidadeAlunos" );
 	}
 
 	@Override
 	public String codigoAreaTitulacao()
 	{
-		return languageManager.getText( "codigoAreaTitulacao" );
+		return this.languageManager.getText( "codigoAreaTitulacao" );
 	}
 
 	@Override
 	public String codigoCampus()
 	{
-		return languageManager.getText( "codigoCampus" );
+		return this.languageManager.getText( "codigoCampus" );
 	}
 
 	@Override
 	public String codigoCurriculo()
 	{
-		return languageManager.getText( "codigoCurriculo" );
+		return this.languageManager.getText( "codigoCurriculo" );
 	}
 
 	@Override
 	public String codigoCurso()
 	{
-		return languageManager.getText( "codigoCurso" );
+		return this.languageManager.getText( "codigoCurso" );
 	}
 
 	@Override
 	public String codigoDisciplina()
 	{
-		return languageManager.getText( "codigoDisciplina" );
+		return this.languageManager.getText( "codigoDisciplina" );
 	}
 
 	@Override
 	public String codigoMatrizCurricular()
 	{
-		return languageManager.getText( "codigoMatrizCurricular" );
+		return this.languageManager.getText( "codigoMatrizCurricular" );
 	}
 
 	@Override
 	public String codigoSala()
 	{
-		return languageManager.getText( "codigoSala" );
+		return this.languageManager.getText( "codigoSala" );
 	}
 
 	@Override
 	public String codigoUnidade()
 	{
-		return languageManager.getText( "codigoUnidade" );
+		return this.languageManager.getText( "codigoUnidade" );
 	}
 
 	@Override
 	public String descricaoCurriculo()
 	{
-		return languageManager.getText( "descricaoCurriculo" );
+		return this.languageManager.getText( "descricaoCurriculo" );
 	}
 
 	@Override
 	public String nomeCurso()
 	{
-		return languageManager.getText( "nomeCurso" );
+		return this.languageManager.getText( "nomeCurso" );
 	}
 
 	@Override
 	public String nomeDisciplina()
 	{
-		return languageManager.getText( "nomeDisciplina" );
+		return this.languageManager.getText( "nomeDisciplina" );
 	}
 
 	@Override
 	public String nomeProfessor()
 	{
-		return languageManager.getText( "nomeProfessor" );
+		return this.languageManager.getText( "nomeProfessor" );
 	}
 
 	@Override
 	public String tipoCurso()
 	{
-		return languageManager.getText( "tipoCurso" );
+		return this.languageManager.getText( "tipoCurso" );
 	}
 
 	@Override
 	public String tipoDisciplina()
 	{
-		return languageManager.getText( "tipoDisciplina" );
+		return this.languageManager.getText( "tipoDisciplina" );
 	}
 
 	@Override
 	public String relatorioVisaoProfessor()
 	{
-		return languageManager.getText( "relatorioVisaoProfessor" );
+		return this.languageManager.getText( "relatorioVisaoProfessor" );
 	}
 
 	@Override
 	public String mensagemAlerta()
 	{
-		return languageManager.getText( "mensagemAlerta" );
+		return this.languageManager.getText( "mensagemAlerta" );
 	}
 
 	@Override
 	public String periodos()
 	{
-		return languageManager.getText( "periodos" );
+		return this.languageManager.getText( "periodos" );
 	}
 
 	@Override
 	public String semanaLetiva()
 	{
-		return languageManager.getText( "semanaLetiva" );
+		return this.languageManager.getText( "semanaLetiva" );
 	}
 
 	@Override
 	public String matriculaAluno()
 	{
-		return languageManager.getText( "matriculaAluno" );
+		return this.languageManager.getText( "matriculaAluno" );
 	}
 
 	@Override
 	public String nomeAluno()
 	{
-		return languageManager.getText( "nomeAluno" );
+		return this.languageManager.getText( "nomeAluno" );
 	}
 
 	@Override
 	public String prioridadeAlunoDemanda()
 	{
-		return languageManager.getText( "prioridadeAlunoDemanda" );
+		return this.languageManager.getText( "prioridadeAlunoDemanda" );
 	}
 
 	@Override
 	public String alunosDemanda()
 	{
-		return languageManager.getText( "alunosDemanda" );
+		return this.languageManager.getText( "alunosDemanda" );
+	}
+
+	@Override
+	public String professorVirtual()
+	{
+		return this.languageManager.getText( "professorVirtual" );
 	}
 }

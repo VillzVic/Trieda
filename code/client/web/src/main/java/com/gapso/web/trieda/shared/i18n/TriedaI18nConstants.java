@@ -99,6 +99,7 @@ public interface TriedaI18nConstants
 	String preferencia();
 	String prioridadeAlunoDemanda();
 	String professor();
+	String professorVirtual();
 	String professores();
 	String publicado();
 	String quantidadeAlunos();

@@ -25,6 +25,7 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
@@ -37,6 +38,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -71,13 +73,13 @@ public class AtendimentosServiceImpl
 
 	@Override
 	public List< AtendimentoRelatorioDTO > getBusca(
-		SalaDTO salaDTO, TurnoDTO turnoDTO )
+		SalaDTO salaDTO, TurnoDTO turnoDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
 		List< AtendimentoRelatorioDTO > arDTOList
 			= new ArrayList< AtendimentoRelatorioDTO >();
 
 		List< AtendimentoTaticoDTO > taticoList
-			= getBuscaTatico( salaDTO, turnoDTO );
+			= getBuscaTatico( salaDTO, turnoDTO, semanaLetivaDTO );
 
 		if ( !taticoList.isEmpty() )
 		{
@@ -89,7 +91,7 @@ public class AtendimentosServiceImpl
 		else
 		{
 			List< AtendimentoOperacionalDTO > operacionalList
-				= getBuscaOperacional( salaDTO, turnoDTO );
+				= getBuscaOperacional( salaDTO, turnoDTO, semanaLetivaDTO );
 
 			for ( AtendimentoOperacionalDTO atdto : operacionalList )
 			{
@@ -101,16 +103,18 @@ public class AtendimentosServiceImpl
 	}
 
 	public List< AtendimentoOperacionalDTO > getBuscaOperacional(
-		SalaDTO salaDTO, TurnoDTO turnoDTO )
+		SalaDTO salaDTO, TurnoDTO turnoDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find( semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< AtendimentoOperacionalDTO > list
 			= new ArrayList< AtendimentoOperacionalDTO >();
 
 		List< AtendimentoOperacional > atendimentosOperacional
-			= AtendimentoOperacional.findBySalaAndTurno( sala, turno, getInstituicaoEnsinoUser() );
+			= AtendimentoOperacional.findBySalaAndTurno(
+				sala, turno, semanaLetiva, getInstituicaoEnsinoUser() );
 
 		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
 		{
@@ -121,14 +125,15 @@ public class AtendimentosServiceImpl
 	}
 
 	public List< AtendimentoTaticoDTO > getBuscaTatico(
-		SalaDTO salaDTO, TurnoDTO turnoDTO )
+		SalaDTO salaDTO, TurnoDTO turnoDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find( semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
 
 		List< AtendimentoTaticoDTO > list = new ArrayList< AtendimentoTaticoDTO >();
 		List< AtendimentoTatico > atendimentosTatico = AtendimentoTatico.findBySalaAndTurno(
-			getInstituicaoEnsinoUser(), sala, turno );
+			getInstituicaoEnsinoUser(), sala, turno, semanaLetiva );
 
 		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
 		{
@@ -323,14 +328,16 @@ public class AtendimentosServiceImpl
 		return parDTOTempl;
 	}
 
-	public List< AtendimentoTaticoDTO > getBuscaTatico( CurriculoDTO curriculoDTO,
-		Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
+	public List< AtendimentoTaticoDTO > getBuscaTatico(
+		CurriculoDTO curriculoDTO, Integer periodo,
+		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
 	{
 		Curriculo curriculo = Curriculo.find( curriculoDTO.getId(), getInstituicaoEnsinoUser() );
 		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
 		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		Curso curso = null;
+
 		if ( cursoDTO != null )
 		{
 			curso = Curso.find(
@@ -360,6 +367,7 @@ public class AtendimentosServiceImpl
 		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 		Curso curso = null;
+
 		if ( cursoDTO != null )
 		{
 			curso = Curso.find(

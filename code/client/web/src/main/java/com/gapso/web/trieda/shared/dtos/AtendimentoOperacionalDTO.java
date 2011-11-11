@@ -49,6 +49,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
 	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
+	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 
 	private Integer totalLinhas = 1;
 
@@ -98,6 +99,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		this.setQuantidadeAlunosString( other.getQuantidadeAlunosString() );
 		this.setCompartilhamentoCursosString( other.getCompartilhamentoCursosString() );
 		this.setTotalLinhas( other.getTotalLinhas() );
+		this.setSemanaLetivaId( other.getSemanaLetivaId() );
 	}
 
 	public void setId( Long value )
@@ -811,5 +813,16 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	public boolean isProfessorVirtual()
 	{
 		return !TriedaUtil.isBlank( getProfessorVirtualId() );
+	}
+
+	@Override
+	public Long getSemanaLetivaId()
+	{
+		return get( PROPERTY_SEMANA_LETIVA_ID );
+	}
+
+	public void setSemanaLetivaId( Long value )
+	{
+		set( PROPERTY_SEMANA_LETIVA_ID, value );
 	}
 }

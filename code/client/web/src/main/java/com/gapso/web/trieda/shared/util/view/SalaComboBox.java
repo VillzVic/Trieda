@@ -15,50 +15,66 @@ import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class SalaComboBox extends ComboBox<SalaDTO> {
-
+public class SalaComboBox
+	extends ComboBox< SalaDTO >
+{
 	private UnidadeComboBox unidadeComboBox;
-	
-	public SalaComboBox(UnidadeComboBox unidadeCB) {
+
+	public SalaComboBox( UnidadeComboBox unidadeCB )
+	{
 		this.unidadeComboBox = unidadeCB;
-		addListeners();
-		RpcProxy<ListLoadResult<SalaDTO>> proxy = new RpcProxy<ListLoadResult<SalaDTO>>() {
+		this.addListeners();
+
+		RpcProxy< ListLoadResult< SalaDTO > > proxy	
+			= new RpcProxy< ListLoadResult< SalaDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback) {
-				Services.salas().getBuscaList(unidadeComboBox.getValue(), callback);
+			public void load( Object loadConfig,
+				AsyncCallback< ListLoadResult< SalaDTO > > callback )
+			{
+				Services.salas().getBuscaList( unidadeComboBox.getValue(), callback );
 			}
 		};
-		setStore(new ListStore<SalaDTO>(new BaseListLoader<BaseListLoadResult<SalaDTO>>(proxy)));
-		
-		setDisplayField(SalaDTO.PROPERTY_DISPLAY_TEXT);
-		setFieldLabel("Sala");
-		setEmptyText("Selecione a sala");
-		setSimpleTemplate("{"+SalaDTO.PROPERTY_CODIGO+"}-{"+SalaDTO.PROPERTY_NUMERO+"}");
-		
-		setEditable(false);
-		setEnabled(unidadeComboBox.getValue() != null);
-		setTriggerAction(TriggerAction.ALL);
+
+		setStore( new ListStore< SalaDTO >(
+			new BaseListLoader< BaseListLoadResult< SalaDTO > >( proxy ) ) );
+
+		setDisplayField( SalaDTO.PROPERTY_DISPLAY_TEXT );
+		setFieldLabel( "Sala" );
+		setEmptyText( "Selecione a sala" );
+		setSimpleTemplate( "{" + SalaDTO.PROPERTY_CODIGO + "}-{"
+			+ SalaDTO.PROPERTY_NUMERO + "}" );
+		setEditable( false );
+		setEnabled( this.unidadeComboBox.getValue() != null );
+		setTriggerAction( TriggerAction.ALL );
 	}
-	
-	private void addListeners() {
-		unidadeComboBox.addSelectionChangedListener(new SelectionChangedListener<UnidadeDTO>(){
+
+	private void addListeners()
+	{
+		this.unidadeComboBox.addSelectionChangedListener(
+			new SelectionChangedListener< UnidadeDTO >()
+		{
 			@Override
-			public void selectionChanged(SelectionChangedEvent<UnidadeDTO> se) {
+			public void selectionChanged(
+				SelectionChangedEvent< UnidadeDTO > se )
+			{
 				final UnidadeDTO unidadeDTO = se.getSelectedItem();
 				getStore().removeAll();
-				setValue(null);
-				setEnabled(unidadeDTO != null);
-				if(unidadeDTO != null) {
+				setValue( null );
+				setEnabled( unidadeDTO != null );
+
+				if ( unidadeDTO != null )
+				{
 					getStore().getLoader().load();
 				}
 			}
 		});
 	}
-	
-	public void updateList(List<SalaDTO> list) {
+
+	public void updateList( List< SalaDTO > list )
+	{
 		getStore().removeAll();
 		getStore().add(list);
-		setEnabled(!list.isEmpty());
+		setEnabled( !list.isEmpty() );
 	}
-
 }

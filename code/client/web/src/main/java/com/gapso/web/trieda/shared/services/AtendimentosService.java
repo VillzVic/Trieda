@@ -14,20 +14,18 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-/**
- * The client side stub for the RPC service.
- */
-@RemoteServiceRelativePath("atendimentos")
+@RemoteServiceRelativePath( "atendimentos" )
 public interface AtendimentosService
 	extends RemoteService
 {
 	PagingLoadResult< AtendimentoTaticoDTO > getList();
 
-	List< AtendimentoRelatorioDTO> getBusca( SalaDTO sala, TurnoDTO turno );
+	List< AtendimentoRelatorioDTO > getBusca( SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO );
 
 	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO );

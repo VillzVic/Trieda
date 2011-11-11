@@ -60,7 +60,7 @@ public class RelatorioVisaoCursoPresenter
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 
-		setListeners();
+		this.setListeners();
 	}
 
 	private void setListeners()
@@ -147,7 +147,7 @@ public class RelatorioVisaoCursoPresenter
 	@Override
 	public void go( Widget widget )
 	{
-		GTab tab = (GTab)widget;
+		GTab tab = (GTab) widget;
 		tab.add( (GTabItem) this.display.getComponent() );
 	}
 }

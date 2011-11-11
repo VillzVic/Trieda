@@ -28,7 +28,7 @@ public class DisciplinaComboBox
 
 	public DisciplinaComboBox( boolean readOnly )
 	{
-		setReadOnly( readOnly );
+		this.setReadOnly( readOnly );
 
 		if ( !readOnly )
 		{
@@ -55,16 +55,16 @@ public class DisciplinaComboBox
 				}
 			});
 
-			store = new ListStore< DisciplinaDTO >( load );
+			this.store = new ListStore< DisciplinaDTO >( load );
 		}
 		else
 		{
-			store = new ListStore< DisciplinaDTO >();
+			this.store = new ListStore< DisciplinaDTO >();
 		}
 
 		setFieldLabel( "Disciplina" );
 		setDisplayField( DisciplinaDTO.PROPERTY_CODIGO );
-		setStore( store );
+		setStore( this.store );
 		setHideTrigger( true );  
 		setTriggerAction( TriggerAction.QUERY );
 		setTemplate( getTemplateCB() );

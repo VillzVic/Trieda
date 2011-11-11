@@ -1734,7 +1734,14 @@ public class SolverInput
 
 		for ( AlunoDemanda alunoDemanda : alunos )
 		{
-			if ( !this.demandasCampusTurno.contains( alunoDemanda.getDemanda() ) )
+			boolean contemDemanda = this.demandasCampusTurno.contains( alunoDemanda.getDemanda() );
+
+			// FIXME
+			boolean contemDisciplina = true;
+			// boolean contemDisciplina = this.disciplinasComDemandaCurriculo.contains(
+			//	alunoDemanda.getDemanda().getDisciplina() );
+
+			if ( !contemDemanda || !contemDisciplina )
 			{
 				continue;
 			}

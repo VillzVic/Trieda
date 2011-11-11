@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -21,7 +22,7 @@ public interface AtendimentosServiceAsync
 {
 	void getList( AsyncCallback< PagingLoadResult< AtendimentoTaticoDTO > > callback );
 
-	void getBusca( SalaDTO sala, TurnoDTO turno,
+	void getBusca( SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO,
 		AsyncCallback< List< AtendimentoRelatorioDTO > > callback );
 
 	void getAtendimentosOperacional( ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,

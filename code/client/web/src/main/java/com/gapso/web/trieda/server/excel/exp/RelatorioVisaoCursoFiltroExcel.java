@@ -36,49 +36,59 @@ public class RelatorioVisaoCursoFiltroExcel
 		this.turnoDTO = ConvertBeans.toTurnoDTO( Turno.find( turnoId, instituicaoEnsino ) );
 	}
 
-	public CursoDTO getCursoDTO() {
-		return cursoDTO;
+	public CursoDTO getCursoDTO()
+	{
+		return this.cursoDTO;
 	}
 
-	public void setCursoDTO(CursoDTO cursoDTO) {
+	public void setCursoDTO( CursoDTO cursoDTO )
+	{
 		this.cursoDTO = cursoDTO;
 	}
 
-	public CurriculoDTO getCurriculoDTO() {
-		return curriculoDTO;
+	public CurriculoDTO getCurriculoDTO()
+	{
+		return this.curriculoDTO;
 	}
 
-	public void setCurriculoDTO(CurriculoDTO curriculoDTO) {
+	public void setCurriculoDTO( CurriculoDTO curriculoDTO )
+	{
 		this.curriculoDTO = curriculoDTO;
 	}
 
-	public CampusDTO getCampusDTO() {
-		return campusDTO;
+	public CampusDTO getCampusDTO()
+	{
+		return this.campusDTO;
 	}
 
-	public void setCampusDTO(CampusDTO campusDTO) {
+	public void setCampusDTO( CampusDTO campusDTO )
+	{
 		this.campusDTO = campusDTO;
 	}
 
-	public Integer getPeriodo() {
-		return periodo;
+	public Integer getPeriodo()
+	{
+		return this.periodo;
 	}
 
-	public void setPeriodo(Integer periodo) {
+	public void setPeriodo( Integer periodo )
+	{
 		this.periodo = periodo;
 	}
 
-	public TurnoDTO getTurnoDTO() {
-		return turnoDTO;
+	public TurnoDTO getTurnoDTO()
+	{
+		return this.turnoDTO;
 	}
 
-	public void setTurnoDTO(TurnoDTO turnoDTO) {
+	public void setTurnoDTO( TurnoDTO turnoDTO )
+	{
 		this.turnoDTO = turnoDTO;
 	}
 
 	public InstituicaoEnsinoDTO getInstituicaoEnsinoDTO()
 	{
-		return instituicaoEnsinoDTO;
+		return this.instituicaoEnsinoDTO;
 	}
 
 	public void setInstituicaoEnsinoDTO(
@@ -87,7 +97,8 @@ public class RelatorioVisaoCursoFiltroExcel
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 	}
 
-	public ExportExcelFilter getFilter(){
+	public ExportExcelFilter getFilter()
+	{
 		return this;
 	}
 }
