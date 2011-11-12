@@ -45,7 +45,7 @@ public class OtimizarServiceImpl
 	implements OtimizarService
 {
 	private static final long serialVersionUID = 5716065588362358065L;
-	private static final String linkSolverDefault = "http://localhost:3402/SolverWS-0.5";
+	private static final String linkSolverDefault = "http://localhost:3402/SolverWS";
 
 	@Override
 	@Transactional
@@ -88,7 +88,6 @@ public class OtimizarServiceImpl
 		return parametro;
 	}
 
-	@SuppressWarnings( "unused" )
 	@Override
 	@Transactional
 	public ErrorsWarningsInputSolverDTO validaInput(
@@ -151,14 +150,13 @@ public class OtimizarServiceImpl
 		{
 			for ( String error : solverInput.getErrors() )
 			{
-				// FIXME
-				// response.getErrorsWarnings().get( "errors" ).add( error );
+				response.getErrorsWarnings().get( "errors" ).add( error );
 			}
 
 			for ( String warning : solverInput.getWarnings() )
 			{
 				// FIXME
-				// response.getErrorsWarnings().get( "warnings" ).add( warning );
+				response.getErrorsWarnings().get( "warnings" ).add( warning );
 			}
 		}
 

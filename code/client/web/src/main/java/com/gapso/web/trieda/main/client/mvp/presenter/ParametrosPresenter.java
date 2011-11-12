@@ -182,7 +182,7 @@ public class ParametrosPresenter
 											public void onFailure( Throwable caught )
 											{
 												MessageBox.alert( "ERRO!",
-													"Não foi possível gerar a grade : " + caught.getMessage(), null );
+													"Não foi possível gerar a grade : ", null );
 
 												habilitarBotao();
 											}
@@ -200,7 +200,7 @@ public class ParametrosPresenter
 															public void onFailure( Throwable caught )
 															{
 																MessageBox.alert( "ERRO!",
-																	"Não foi possível gerar a grade : " + caught.getMessage(), null );
+																	"Não foi possível gerar a grade : ", null );
 
 																habilitarBotao();
 															}

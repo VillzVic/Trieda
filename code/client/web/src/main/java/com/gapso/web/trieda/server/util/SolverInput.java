@@ -1736,10 +1736,8 @@ public class SolverInput
 		{
 			boolean contemDemanda = this.demandasCampusTurno.contains( alunoDemanda.getDemanda() );
 
-			// FIXME
-			boolean contemDisciplina = true;
-			// boolean contemDisciplina = this.disciplinasComDemandaCurriculo.contains(
-			//	alunoDemanda.getDemanda().getDisciplina() );
+			boolean contemDisciplina = this.disciplinasComDemandaCurriculo.contains(
+				alunoDemanda.getDemanda().getDisciplina() );
 
 			if ( !contemDemanda || !contemDisciplina )
 			{
