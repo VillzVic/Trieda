@@ -136,7 +136,7 @@ public class SolverOutput
 			}
 		}
 
-		return atendimentosTatico;
+		return this.atendimentosTatico;
 	}
 
 	@Transactional
@@ -198,6 +198,7 @@ public class SolverOutput
 								ProfessorVirtual professorVirtual = null;
 
 								Integer idProfessor = itemAtendimentoHorarioAula.getProfessorId();
+
 								if ( !itemAtendimentoHorarioAula.isVirtual() )
 								{
 									professor = Professor.find( Long.valueOf(
@@ -268,7 +269,7 @@ public class SolverOutput
 			}
 		}
 
-		return atendimentosOperacional;
+		return this.atendimentosOperacional;
 	}
 
 	private ProfessorVirtual getProfessorVirtual( Integer idAux )
@@ -294,8 +295,13 @@ public class SolverOutput
 
 				for ( Integer discId : pvAux.getDisciplinas().getId() )
 				{
-					pv.getDisciplinas().add( Disciplina.find(
-						discId.longValue(), this.instituicaoEnsino ) );
+					Disciplina disciplina = Disciplina.find(
+						Math.abs( discId.longValue() ), this.instituicaoEnsino );
+
+					if ( disciplina != null )
+					{
+						pv.getDisciplinas().add( disciplina );
+					}
 				}
 
 				pv.setTitulacao( Titulacao.find( Integer.valueOf(
@@ -361,8 +367,7 @@ public class SolverOutput
 		InstituicaoEnsino instituicaoEnsinoTurno = ( turno == null ?
 			null : turno.getInstituicaoEnsino() );
 
-		if ( instituicaoEnsinoCampus != null
-			&& instituicaoEnsinoTurno != null
+		if ( ( instituicaoEnsinoCampus != null || instituicaoEnsinoTurno != null )
 			&& instituicaoEnsinoCampus.getId() != instituicaoEnsinoTurno.getId() )
 		{
 			System.out.println(

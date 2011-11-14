@@ -262,7 +262,9 @@ public class OtimizarServiceImpl
 
 		try
 		{
-			SolverClient solverClient = new SolverClient( getLinkSolver(), "trieda" );
+			SolverClient solverClient = new SolverClient(
+				getLinkSolver(), "trieda" );
+
 			byte [] xmlBytes = solverClient.getContent( round );
 
 			if ( xmlBytes == null )
