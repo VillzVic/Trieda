@@ -54,4 +54,5 @@ public interface DisciplinasService
 	void salvarDivisaoCredito( DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO );
 	DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO );
 	List< ResumoDisciplinaDTO > getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO );
+	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO );
 }

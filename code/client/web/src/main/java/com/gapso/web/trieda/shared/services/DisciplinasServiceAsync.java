@@ -56,4 +56,5 @@ public interface DisciplinasServiceAsync
 	void salvarDivisaoCredito( DisciplinaDTO disciplinaDTO, DivisaoCreditoDTO divisaoCreditoDTO, AsyncCallback< Void > callback );
 	void getDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< DivisaoCreditoDTO > callback );
 	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoDisciplinaDTO > > callback );
+	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
 }

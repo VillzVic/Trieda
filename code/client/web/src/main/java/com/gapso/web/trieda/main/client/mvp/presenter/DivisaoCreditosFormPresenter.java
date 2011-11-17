@@ -50,65 +50,84 @@ public class DivisaoCreditosFormPresenter
 		this.gridPanel = gridPanel;
 		this.display = display;
 
-		setListeners();
+		this.setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				if( isValid() )
+				{
 					final DivisoesCreditosServiceAsync service = Services.divisaoCreditos();
-					service.save(getDTO(), new AsyncCallback<Void>() {
+
+					service.save( getDTO(), new AsyncCallback< Void >()
+					{
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!",
+								"Não foi possível salvar a divisão de créditos.", null );
 						}
+
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess( Void result )
+						{
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display("Salvo", "Item salvo com sucesso!");
+
+							Info.display( "Salvo",
+								"Item salvo com sucesso!" );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!", "Verifique os campos digitados<br />"
+						+ "A soma dos créditos deve ser maior ou igual a um crédito." , null );
 				}
 			}
 		});
 	}
-	
-	private boolean isValid() {
-		return display.isValid();
+
+	private boolean isValid()
+	{
+		return this.display.isValid();
 	}
 	
 	private DivisaoCreditoDTO getDTO()
 	{
-		DivisaoCreditoDTO divisaoCreditoDTO = display.getDivisaoCreditoDTO();
+		DivisaoCreditoDTO divisaoCreditoDTO
+			= this.display.getDivisaoCreditoDTO();
 
-		divisaoCreditoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		divisaoCreditoDTO.setCenarioId( cenario.getId() );
+		divisaoCreditoDTO.setInstituicaoEnsinoId(
+			this.instituicaoEnsinoDTO.getId() );
+		divisaoCreditoDTO.setCenarioId( this.cenario.getId() );
 
-		Number value1 = display.getDia1NumberField().getValue();
-		int dia1 = value1 == null ? 0 : value1.intValue();
+		Number value1 = this.display.getDia1NumberField().getValue();
+		int dia1 = ( value1 == null ? 0 : value1.intValue() );
 
-		Number value2 = display.getDia2NumberField().getValue();
-		int dia2 = value2 == null ? 0 : value2.intValue();
+		Number value2 = this.display.getDia2NumberField().getValue();
+		int dia2 = ( value2 == null ? 0 : value2.intValue() );
 
-		Number value3 = display.getDia3NumberField().getValue();
-		int dia3 = value3 == null ? 0 : value3.intValue();
+		Number value3 = this.display.getDia3NumberField().getValue();
+		int dia3 = ( value3 == null ? 0 : value3.intValue() );
 
-		Number value4 = display.getDia4NumberField().getValue();
-		int dia4 = value4 == null ? 0 : value4.intValue();
+		Number value4 = this.display.getDia4NumberField().getValue();
+		int dia4 = ( value4 == null ? 0 : value4.intValue() );
 
-		Number value5 = display.getDia5NumberField().getValue();
-		int dia5 = value5 == null ? 0 : value5.intValue();
+		Number value5 = this.display.getDia5NumberField().getValue();
+		int dia5 = ( value5 == null ? 0 : value5.intValue() );
 
-		Number value6 = display.getDia6NumberField().getValue();
-		int dia6 = value6 == null ? 0 : value6.intValue();
+		Number value6 = this.display.getDia6NumberField().getValue();
+		int dia6 = ( value6 == null ? 0 : value6.intValue() );
 
-		Number value7 = display.getDia7NumberField().getValue();
-		int dia7 = value7 == null ? 0 : value7.intValue();
+		Number value7 = this.display.getDia7NumberField().getValue();
+		int dia7 = ( value7 == null ? 0 : value7.intValue() );
 
 		divisaoCreditoDTO.setDia1( dia1 );
 		divisaoCreditoDTO.setDia2( dia2 );
@@ -120,10 +139,10 @@ public class DivisaoCreditosFormPresenter
 
 		return divisaoCreditoDTO;
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
+	}
 }

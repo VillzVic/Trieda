@@ -139,7 +139,7 @@ public class DivisaoCredito
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
-		return instituicaoEnsino;
+		return this.instituicaoEnsino;
 	}
 
 	public void setInstituicaoEnsino(
@@ -180,7 +180,8 @@ public class DivisaoCredito
 
         if ( this.entityManager.contains( this ) )
         {
-        	removeCenario( this );
+        	this.removeCenario( this );
+
             this.entityManager.remove( this );
         }
         else
@@ -188,7 +189,7 @@ public class DivisaoCredito
         	DivisaoCredito attached
         		= this.entityManager.find( this.getClass(), this.id );
 
-            removeCenario( attached );
+        	this.removeCenario( attached );
 
             this.entityManager.remove( attached );
         }
@@ -196,7 +197,7 @@ public class DivisaoCredito
 
 	private void removeCenario( DivisaoCredito cd )
 	{
-		if ( cd.getCenario() != null )
+		if ( cd.getCenario() == null )
 		{
 			return;
 		}
@@ -269,7 +270,8 @@ public class DivisaoCredito
         	return null;
         }
 
-        DivisaoCredito dc = entityManager().find( DivisaoCredito.class, id );
+        DivisaoCredito dc = entityManager().find(
+        	DivisaoCredito.class, id );
 
         if ( dc != null
         	&& dc.getInstituicaoEnsino() != null 
@@ -434,7 +436,7 @@ public class DivisaoCredito
 
 	public Disciplina getDisciplina()
 	{
-		return disciplina;
+		return this.disciplina;
 	}
 
 	public void setDisciplina( Disciplina disciplina )

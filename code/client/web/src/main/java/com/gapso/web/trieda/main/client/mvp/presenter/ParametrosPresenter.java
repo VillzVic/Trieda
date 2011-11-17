@@ -182,7 +182,7 @@ public class ParametrosPresenter
 											public void onFailure( Throwable caught )
 											{
 												MessageBox.alert( "ERRO!",
-													"Não foi possível gerar a grade : ", null );
+													"Não foi possível gerar a grade de horários.", null );
 
 												habilitarBotao();
 											}
@@ -200,7 +200,7 @@ public class ParametrosPresenter
 															public void onFailure( Throwable caught )
 															{
 																MessageBox.alert( "ERRO!",
-																	"Não foi possível gerar a grade : ", null );
+																	"Não foi possível gerar a grade de horários.", null );
 
 																habilitarBotao();
 															}
@@ -231,7 +231,7 @@ public class ParametrosPresenter
 								catch( Exception e )
 								{
 									MessageBox.alert( "ERRO!",
-										"Não foi possível gerar a grade.", null );
+										"Não foi possível gerar a grade de horários.", null );
 
 									habilitarBotao();
 								}

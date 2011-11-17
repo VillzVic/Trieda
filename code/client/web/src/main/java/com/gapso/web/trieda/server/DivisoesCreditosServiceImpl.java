@@ -28,45 +28,69 @@ public class DivisoesCreditosServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult<DivisaoCreditoDTO> getList(CenarioDTO cenarioDTO, PagingLoadConfig config) {
-		Cenario cenario = Cenario.find(cenarioDTO.getId(), this.getInstituicaoEnsinoUser());
-		List<DivisaoCreditoDTO> list = new ArrayList<DivisaoCreditoDTO>();
-		List<DivisaoCredito> divisoesCreditos = DivisaoCredito.findWithoutDisciplina(
+	public PagingLoadResult< DivisaoCreditoDTO > getList(
+		CenarioDTO cenarioDTO, PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find( cenarioDTO.getId(),
+			this.getInstituicaoEnsinoUser() );
+
+		List< DivisaoCreditoDTO > list = new ArrayList< DivisaoCreditoDTO >();
+		List< DivisaoCredito > divisoesCreditos = DivisaoCredito.findWithoutDisciplina(
 			cenario, config.getOffset(), config.getLimit(), getInstituicaoEnsinoUser() );
 
-		for(DivisaoCredito divisaoCredito : divisoesCreditos) {
-			list.add(ConvertBeans.toDivisaoCreditoDTO(divisaoCredito));
+		for ( DivisaoCredito divisaoCredito : divisoesCreditos )
+		{
+			list.add( ConvertBeans.toDivisaoCreditoDTO( divisaoCredito ) );
 		}
-		Collections.sort(list, new Comparator<DivisaoCreditoDTO>() {
+
+		Collections.sort( list, new Comparator< DivisaoCreditoDTO >()
+		{
 			@Override
-			public int compare(DivisaoCreditoDTO d1, DivisaoCreditoDTO d2) {
-				return d1.getTotalCreditos().compareTo(d2.getTotalCreditos());
+			public int compare( DivisaoCreditoDTO d1, DivisaoCreditoDTO d2 )
+			{
+				return d1.getTotalCreditos().compareTo( d2.getTotalCreditos() );
 			}
 		});
 
-		BasePagingLoadResult<DivisaoCreditoDTO> result
-			= new BasePagingLoadResult<DivisaoCreditoDTO>(list);
-		result.setOffset(config.getOffset());
-		result.setTotalLength(DivisaoCredito.count(
-			cenario, getInstituicaoEnsinoUser()));
+		BasePagingLoadResult< DivisaoCreditoDTO > result
+			= new BasePagingLoadResult< DivisaoCreditoDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( DivisaoCredito.count(
+			cenario, getInstituicaoEnsinoUser() ) );
 
 		return result;
 	}
 	
 	@Override
-	public void save(DivisaoCreditoDTO divisaoCreditoDTO) {
-		DivisaoCredito divisaoCredito = ConvertBeans.toDivisaoCredito(divisaoCreditoDTO);
-		if(divisaoCredito.getId() != null && divisaoCredito.getId() > 0) {
+	public void save( DivisaoCreditoDTO divisaoCreditoDTO )
+	{
+		DivisaoCredito divisaoCredito
+			= ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
+
+		if ( divisaoCredito.getId() != null
+			&& divisaoCredito.getId() > 0 )
+		{
 			divisaoCredito.merge();
-		} else {
+		}
+		else
+		{
 			divisaoCredito.persist();
 		}
 	}
-	
+
 	@Override
-	public void remove(List<DivisaoCreditoDTO> divisaoCreditoDTOList) {
-		for(DivisaoCreditoDTO divisaoCreditoDTO : divisaoCreditoDTOList) {
-			ConvertBeans.toDivisaoCredito(divisaoCreditoDTO).remove();
+	public void remove( List< DivisaoCreditoDTO > divisaoCreditoDTOList )
+	{
+		for ( DivisaoCreditoDTO divisaoCreditoDTO : divisaoCreditoDTOList )
+		{
+			DivisaoCredito divisaoCredito
+				= ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
+
+			if ( divisaoCredito != null )
+			{
+				divisaoCredito.remove();
+			}
 		}
 	}
 }

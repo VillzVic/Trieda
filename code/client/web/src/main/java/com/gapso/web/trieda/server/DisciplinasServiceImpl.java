@@ -60,7 +60,8 @@ import com.gapso.web.trieda.shared.util.TriedaCurrency;
 
 @Transactional
 public class DisciplinasServiceImpl
-	extends RemoteService implements DisciplinasService
+	extends RemoteService
+	implements DisciplinasService
 {
 	private static final long serialVersionUID = -4850774141421616870L;
 
@@ -87,9 +88,6 @@ public class DisciplinasServiceImpl
 	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
 		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
-//		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-//			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
 		Disciplina disciplina = Disciplina.find(
 			disciplinaDTO.getId(), getInstituicaoEnsinoUser() ); 
 
@@ -111,7 +109,8 @@ public class DisciplinasServiceImpl
 
 	@Override
 	public void saveHorariosDisponiveis(
-		DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO )
+		DisciplinaDTO disciplinaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
@@ -163,8 +162,8 @@ public class DisciplinasServiceImpl
 			cursos.add( ConvertBeans.toCurso( cursoDTO ) );
 		}
 
-		List< Disciplina > disciplinas
-			= Disciplina.findByCursos( getInstituicaoEnsinoUser(), cursos );
+		List< Disciplina > disciplinas = Disciplina.findByCursos(
+			getInstituicaoEnsinoUser(), cursos );
 
 		for ( Disciplina disciplina : disciplinas )
 		{
@@ -199,33 +198,45 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< DisciplinaDTO > getList( BasePagingLoadConfig loadConfig )
+	public ListLoadResult< DisciplinaDTO > getList(
+		BasePagingLoadConfig loadConfig )
 	{
-		return getBuscaList( null, loadConfig.get( "query" ).toString(), null, loadConfig );
+		return getBuscaList( null, loadConfig.get(
+			"query" ).toString(), null, loadConfig );
 	}
 
 	@Override
-	public PagingLoadResult<DisciplinaDTO> getBuscaList(String nome,
-			String codigo, TipoDisciplinaDTO tipoDisciplinaDTO,
-			PagingLoadConfig config) {
-		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
+	public PagingLoadResult< DisciplinaDTO > getBuscaList(
+		String nome, String codigo,
+		TipoDisciplinaDTO tipoDisciplinaDTO,
+		PagingLoadConfig config )
+	{
+		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
 		String orderBy = config.getSortField();
-		if (orderBy != null) {
-			if (config.getSortDir() != null
-					&& config.getSortDir().equals(SortDir.DESC)) {
-				orderBy = orderBy + " asc";
-			} else {
-				orderBy = orderBy + " desc";
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
 			}
 		}
 
 		TipoDisciplina tipoDisciplina = null;
-		if (tipoDisciplinaDTO != null) {
-			tipoDisciplina = ConvertBeans.toTipoDisciplina(tipoDisciplinaDTO);
+
+		if ( tipoDisciplinaDTO != null )
+		{
+			tipoDisciplina = ConvertBeans.toTipoDisciplina( tipoDisciplinaDTO );
 		}
 
-		List< Disciplina > disciplinas = Disciplina.findBy( getInstituicaoEnsinoUser(),
-			codigo, nome, tipoDisciplina, config.getOffset(), config.getLimit(), orderBy );
+		List< Disciplina > disciplinas = Disciplina.findBy(
+			getInstituicaoEnsinoUser(), codigo, nome, tipoDisciplina,
+			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Disciplina disciplina : disciplinas )
 		{
@@ -283,7 +294,8 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public void remove( List< DisciplinaDTO > disciplinaDTOList )
+	public void remove(
+		List< DisciplinaDTO > disciplinaDTOList )
 	{
 		for ( DisciplinaDTO disciplinaDTO : disciplinaDTOList )
 		{
@@ -298,7 +310,8 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO )
+	public DivisaoCreditoDTO getDivisaoCredito(
+		DisciplinaDTO disciplinaDTO )
 	{
 		Disciplina disciplina = Disciplina.find(
 			disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
@@ -314,7 +327,32 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public void salvarDivisaoCredito( DisciplinaDTO disciplinaDTO,
+	public void removeDivisaoCredito( DisciplinaDTO disciplinaDTO )
+	{
+		Disciplina disciplina = Disciplina.find(
+			disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+
+		if ( disciplina == null )
+		{
+			return;
+		}
+
+		DivisaoCredito divisaoCredito
+			= disciplina.getDivisaoCreditos();
+
+		if ( divisaoCredito == null )
+		{
+			return;
+		}
+
+		disciplina.setDivisaoCreditos( null );
+		disciplina.merge();
+		divisaoCredito.remove();
+	}
+
+	@Override
+	public void salvarDivisaoCredito(
+		DisciplinaDTO disciplinaDTO,
 		DivisaoCreditoDTO divisaoCreditoDTO )
 	{
 		Disciplina disciplina = Disciplina.find(
@@ -348,6 +386,10 @@ public class DisciplinasServiceImpl
 		{
 			divisaoCreditoDTO.setDisciplinaId( disciplinaDTO.getId() );
 			divisaoCredito = ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
+
+			divisaoCredito.persist();
+			DivisaoCredito.entityManager().refresh( divisaoCredito );
+
 			disciplina.setDivisaoCreditos( divisaoCredito );
 			disciplina.merge();
 		}
@@ -364,7 +406,7 @@ public class DisciplinasServiceImpl
 	public ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList()
 	{
 		InstituicaoEnsino instituicaoEnsino
-		= getUsuario().getInstituicaoEnsino(); 
+			= getUsuario().getInstituicaoEnsino(); 
 
 		List< TipoDisciplina > listTiposDisciplinas
 			= TipoDisciplina.findAll( instituicaoEnsino );
@@ -403,7 +445,8 @@ public class DisciplinasServiceImpl
 
 	@Override
 	@Transactional
-	public List< TreeNodeDTO > getFolderChildren( TreeNodeDTO currentNode )
+	public List< TreeNodeDTO > getFolderChildren(
+		TreeNodeDTO currentNode )
 	{
 		List< TreeNodeDTO > currentNodeChildren
 			= new ArrayList< TreeNodeDTO >();
@@ -470,8 +513,10 @@ public class DisciplinasServiceImpl
 		return currentNodeChildren;
 	}
 
-	public List<TreeNodeDTO> getOfertasByTreeSalas(TreeNodeDTO salaTreeNodeDTO) {
-		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
+	public List< TreeNodeDTO > getOfertasByTreeSalas(
+		TreeNodeDTO salaTreeNodeDTO )
+	{
+		List< TreeNodeDTO > nodeChildrenList = new ArrayList< TreeNodeDTO >();
 
 		SalaDTO salaDTO = (SalaDTO) salaTreeNodeDTO.getContent();
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
@@ -620,20 +665,27 @@ public class DisciplinasServiceImpl
 		}
 
 		Collections.sort( nodeChildrenList );
+
 		return nodeChildrenList;
 	}
 
 	@Override
-	public List<TreeNodeDTO> getDisciplinasByTreeGrupoSalas(
-			TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
-			TreeNodeDTO curriculoDisciplinaTreeNodeDTO) {
-		if (ofertaTreeNodeDTO == null)
-			return getOfertasByTreeGrupoSalas(grupoSalaTreeNodeDTO);
-		if (curriculoDisciplinaTreeNodeDTO == null)
-			return getPeriodosByTreeGrupoSalas(grupoSalaTreeNodeDTO,
-					ofertaTreeNodeDTO);
+	public List< TreeNodeDTO > getDisciplinasByTreeGrupoSalas(
+		TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
+		TreeNodeDTO curriculoDisciplinaTreeNodeDTO )
+	{
+		if ( ofertaTreeNodeDTO == null )
+		{
+			return getOfertasByTreeGrupoSalas( grupoSalaTreeNodeDTO );
+		}
 
-		List<TreeNodeDTO> nodeChildrenList = new ArrayList<TreeNodeDTO>();
+		if ( curriculoDisciplinaTreeNodeDTO == null )
+		{
+			return getPeriodosByTreeGrupoSalas(
+				grupoSalaTreeNodeDTO, ofertaTreeNodeDTO );
+		}
+
+		List< TreeNodeDTO > nodeChildrenList = new ArrayList< TreeNodeDTO >();
 
 		GrupoSalaDTO grupoSalaDTO = (GrupoSalaDTO) grupoSalaTreeNodeDTO.getContent();
 		GrupoSala grupoSala = GrupoSala.find(
@@ -671,7 +723,8 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo,
+	public void saveDisciplinaToSala(
+		OfertaDTO ofertaDTO, Integer periodo,
 		CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
@@ -714,7 +767,8 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo,
+	public void saveDisciplinaToSala(
+		OfertaDTO ofertaDTO, Integer periodo,
 		CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO )
 	{
 		GrupoSala grupoSala = GrupoSala.find(
@@ -756,7 +810,8 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO,
+	public void removeDisciplinaToSala(
+		GrupoSalaDTO grupoSalaDTO,
 		CurriculoDisciplinaDTO cdDTO )
 	{
 		GrupoSala grupoSala = GrupoSala.find(
@@ -771,8 +826,8 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public void removeDisciplinaToSala( SalaDTO salaDTO,
-		CurriculoDisciplinaDTO cdDTO )
+	public void removeDisciplinaToSala(
+		SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO )
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 		CurriculoDisciplina curriculoDisciplina
@@ -841,18 +896,18 @@ public class DisciplinasServiceImpl
 
 	@Override
 	public void saveDisciplinasIncompativeis(
-			List<DisciplinaIncompativelDTO> list )
+		List< DisciplinaIncompativelDTO > list )
 	{
 		for ( DisciplinaIncompativelDTO disciplinaIncompativelDTO : list )
 		{
 			Disciplina disciplina1 = Disciplina.find(
-					disciplinaIncompativelDTO.getDisciplina1Id(), getInstituicaoEnsinoUser() );
+				disciplinaIncompativelDTO.getDisciplina1Id(), getInstituicaoEnsinoUser() );
 
 			Disciplina disciplina2 = Disciplina.find(
-					disciplinaIncompativelDTO.getDisciplina2Id(), getInstituicaoEnsinoUser() );
+				disciplinaIncompativelDTO.getDisciplina2Id(), getInstituicaoEnsinoUser() );
 
-			Incompatibilidade incompatibilidade
-				= disciplina1.getIncompatibilidadeWith( getInstituicaoEnsinoUser(), disciplina2 );
+			Incompatibilidade incompatibilidade = disciplina1.getIncompatibilidadeWith(
+				getInstituicaoEnsinoUser(), disciplina2 );
 
 			if ( incompatibilidade == null )
 			{
@@ -1031,7 +1086,7 @@ public class DisciplinasServiceImpl
 		else if ( list.get( 0 ) instanceof AtendimentoOperacionalDTO )
 		{
 			atendimento = new AtendimentoOperacionalDTO( (AtendimentoOperacionalDTO) list.get( 0 ) );
-			( (AtendimentoOperacionalDTO)atendimento ).setQuantidadeAlunos( totalAlunos );
+			( (AtendimentoOperacionalDTO) atendimento ).setQuantidadeAlunos( totalAlunos );
 		}
 
 		return atendimento;
@@ -1078,12 +1133,14 @@ public class DisciplinasServiceImpl
 				Double margemValue = resumo2DTO.getMargem().getDoubleValue();
 				Double receitaValue = resumo2DTO.getReceita().getDoubleValue();
 				Double margemPercent = ( ( margemValue / receitaValue ) * 100 );
+
 				resumo2DTO.setMargemPercente( margemPercent );
 			}
 		}
 	}
 
-	private void calculaResumo1( Map< String, ResumoDisciplinaDTO > map1,
+	private void calculaResumo1(
+		Map< String, ResumoDisciplinaDTO > map1,
 		Map< String, Map< String, ResumoDisciplinaDTO > > map2 )
 	{
 		for ( String key1 : map2.keySet() )
@@ -1112,12 +1169,14 @@ public class DisciplinasServiceImpl
 				Double margemValue = rc1.getMargem().getDoubleValue();
 				Double receitaValue = rc1.getReceita().getDoubleValue();
 				Double margemPercent = ( ( margemValue / receitaValue ) * 100 );
+
 				rc1.setMargemPercente( margemPercent );
 			}
 		}
 	}
 
-	private void createResumoNivel1( Map< String, ResumoDisciplinaDTO > map1,
+	private void createResumoNivel1(
+		Map< String, ResumoDisciplinaDTO > map1,
 		Map< String, Map< String, ResumoDisciplinaDTO > > map2,
 		ResumoDisciplinaDTO resumoDTO )
 	{

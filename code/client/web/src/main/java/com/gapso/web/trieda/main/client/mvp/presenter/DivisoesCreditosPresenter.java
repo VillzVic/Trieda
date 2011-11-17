@@ -51,65 +51,96 @@ public class DivisoesCreditosPresenter
 		this.cenario = cenario;
 		this.display = display;
 
-		configureProxy();
-		setListeners();
+		this.configureProxy();
+		this.setListeners();
 	}
 
-	private void configureProxy() {
+	private void configureProxy()
+	{
 		final DivisoesCreditosServiceAsync service = Services.divisaoCreditos();
-		RpcProxy<PagingLoadResult<DivisaoCreditoDTO>> proxy = new RpcProxy<PagingLoadResult<DivisaoCreditoDTO>>() {
+
+		RpcProxy< PagingLoadResult< DivisaoCreditoDTO > > proxy
+			= new RpcProxy< PagingLoadResult< DivisaoCreditoDTO > >()
+		{
 			@Override
-			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<DivisaoCreditoDTO>> callback) {
-				service.getList(cenario, (PagingLoadConfig)loadConfig, callback);
+			public void load( Object loadConfig,
+				AsyncCallback< PagingLoadResult< DivisaoCreditoDTO > > callback )
+			{
+				service.getList( cenario, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-		display.setProxy(proxy);
+
+		this.display.setProxy( proxy );
 	}
-	
-	private void setListeners() {
-		display.getNewButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+	private void setListeners()
+	{
+		this.display.getNewButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new DivisaoCreditosFormPresenter(
-					instituicaoEnsinoDTO, cenario, new DivisaoCreditosFormView( new DivisaoCreditoDTO() ), display.getGrid() );
+				Presenter presenter = new DivisaoCreditosFormPresenter( instituicaoEnsinoDTO,
+					cenario, new DivisaoCreditosFormView( new DivisaoCreditoDTO() ), display.getGrid() );
 
 				presenter.go( null );
 			}
 		});
-		display.getEditButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+
+		this.display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				DivisaoCreditoDTO divisaoCreditoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+			public void componentSelected( ButtonEvent ce )
+			{
+				DivisaoCreditoDTO divisaoCreditoDTO
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
 				Presenter presenter = new DivisaoCreditosFormPresenter( instituicaoEnsinoDTO,
-					cenario, new DivisaoCreditosFormView(divisaoCreditoDTO), display.getGrid());
-				presenter.go(null);
+					cenario, new DivisaoCreditosFormView( divisaoCreditoDTO ), display.getGrid() );
+
+				presenter.go( null );
 			}
 		});
-		display.getRemoveButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+
+		this.display.getRemoveButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<DivisaoCreditoDTO> list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+			public void componentSelected( ButtonEvent ce )
+			{
 				final DivisoesCreditosServiceAsync service = Services.divisaoCreditos();
-				service.remove(list, new AsyncCallback<Void>() {
+
+				List< DivisaoCreditoDTO > list
+					= display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+
+				service.remove( list, new AsyncCallback< Void >()
+				{
 					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Não foi possível remover o(s) item(ns) selecionado(s).", null );
 					}
+
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess( Void result )
+					{
 						display.getGrid().updateList();
-						Info.display("Removido", "Item removido com sucesso!");
+
+						Info.display( "Removido",
+							"Item removido com sucesso!" );
 					}
 				});
 			}
 		});
 	}
-	
-	@Override
-	public void go(Widget widget) {
-		GTab tab = (GTab)widget;
-		tab.add((GTabItem)display.getComponent());
-	}
 
+	@Override
+	public void go( Widget widget )
+	{
+		GTab tab = (GTab) widget;
+		tab.add( (GTabItem) this.display.getComponent() );
+	}
 }

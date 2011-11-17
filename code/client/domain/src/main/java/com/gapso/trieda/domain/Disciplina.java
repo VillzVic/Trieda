@@ -53,13 +53,15 @@ public class Disciplina
 	private static final long serialVersionUID = 7980821696468062987L;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = Cenario.class, fetch = FetchType.LAZY )
-	@JoinColumn(name = "CEN_ID")
+	@JoinColumn( name = "CEN_ID" )
 	private Cenario cenario;
 
 	@NotNull
-	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
 		targetEntity = TipoDisciplina.class, fetch = FetchType.LAZY )
 	@JoinColumn( name = "TDI_ID" )
 	private TipoDisciplina tipoDisciplina;
@@ -110,8 +112,8 @@ public class Disciplina
 	@Max( 999L )
 	private Integer maxAlunosPratico;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST,
-		CascadeType.MERGE }, mappedBy = "disciplinas")
+	@ManyToMany( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE }, mappedBy = "disciplinas" )
 	private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
 	@NotNull
@@ -136,7 +138,7 @@ public class Disciplina
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
 	private Set< Demanda > demandas = new HashSet< Demanda >();
 
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "disciplina" )
+	@OneToMany( cascade = CascadeType.REMOVE, mappedBy = "disciplina" )
 	private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
@@ -301,17 +303,17 @@ public class Disciplina
 		}
 	}
 
-	private void removeDisciplinasAssociadasProfessor( Disciplina d )
+	private void removeDisciplinasAssociadasProfessor( Disciplina disciplina )
 	{
-		if ( d.professores != null
-			&& d.professores.size() > 0 )
+		if ( disciplina.professores != null
+			&& disciplina.professores.size() > 0 )
 		{
-			for( ProfessorDisciplina pd : d.professores )
+			for( ProfessorDisciplina pd : disciplina.professores )
 			{
 				pd.remove();
 			}
 
-			d.professores.clear();
+			disciplina.professores.clear();
 		}
 	}
 
@@ -439,7 +441,7 @@ public class Disciplina
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
 
-		return ( (Number)q.getSingleResult() ).intValue();
+		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings( "unchecked" )

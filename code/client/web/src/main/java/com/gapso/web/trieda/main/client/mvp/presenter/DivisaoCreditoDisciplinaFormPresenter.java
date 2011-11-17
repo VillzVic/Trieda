@@ -24,6 +24,7 @@ public class DivisaoCreditoDisciplinaFormPresenter
 		extends ITriedaI18nGateway
 	{
 		Button getSalvarButton();
+		Button getClearButton();
 		NumberField getDia1NumberField();
 		NumberField getDia2NumberField();
 		NumberField getDia3NumberField();
@@ -49,75 +50,115 @@ public class DivisaoCreditoDisciplinaFormPresenter
 		this.cenario = cenario;
 		this.display = display;
 
-		setListeners();
+		this.setListeners();
 	}
 
-	private void setListeners() {
-		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+	private void setListeners()
+	{
+		this.display.getSalvarButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				if(isValid()) {
-					Services.disciplinas().salvarDivisaoCredito(display.getDisciplinaDTO(), getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+			public void componentSelected( ButtonEvent ce )
+			{
+				if( isValid() )
+				{
+					Services.disciplinas().salvarDivisaoCredito( display.getDisciplinaDTO(),
+						getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+					{
 						@Override
-						public void onSuccess(Void result) {
+						public void onSuccess( Void result )
+						{
 							display.getSimpleModal().hide();
-							Info.display("Salvo", "Item salvo com sucesso!");
+							Info.display( "Salvo", "Item salvo com sucesso!" );
 						}
 					});
-				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados<br />" +
-							"A soma dos créditos devem ser igual a "+display.getDisciplinaDTO().getTotalCreditos(), null);
+				}
+				else
+				{
+					MessageBox.alert( "ERRO!", "Verifique os campos digitados<br />"
+						+ "A soma dos créditos deve ser igual a "
+						+ display.getDisciplinaDTO().getTotalCreditos(), null );
 				}
 			}
 		});
+
+		this.display.getClearButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Services.disciplinas().removeDivisaoCredito( display.getDisciplinaDTO(),
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
+					@Override
+					public void onSuccess( Void result )
+					{
+						display.getSimpleModal().hide();
+
+						Info.display( "Atualizado",
+							"A disciplina não mais possui regra de divisão de créditos." );
+					}
+
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						Info.display( "Erro",
+							"Nao foi possível remover a divisão de crédito." );
+					}
+				});
+			}
+		});
 	}
-	
-	private boolean isValid() {
-		return display.isValid();
+
+	private boolean isValid()
+	{
+		return this.display.isValid();
 	}
 	
 	private DivisaoCreditoDTO getDTO()
 	{
-		DivisaoCreditoDTO divisaoCreditoDTO = display.getDivisaoCreditoDTO();
+		DivisaoCreditoDTO divisaoCreditoDTO = this.display.getDivisaoCreditoDTO();
 
-		divisaoCreditoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		divisaoCreditoDTO.setCenarioId( cenario.getId() );
+		divisaoCreditoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		divisaoCreditoDTO.setCenarioId( this.cenario.getId() );
 
-		Number value1 = display.getDia1NumberField().getValue();
-		int dia1 = value1 == null ? 0 : value1.intValue();
-		
-		Number value2 = display.getDia2NumberField().getValue();
-		int dia2 = value2 == null ? 0 : value2.intValue();
-		
-		Number value3 = display.getDia3NumberField().getValue();
-		int dia3 = value3 == null ? 0 : value3.intValue();
-		
-		Number value4 = display.getDia4NumberField().getValue();
-		int dia4 = value4 == null ? 0 : value4.intValue();
-		
-		Number value5 = display.getDia5NumberField().getValue();
-		int dia5 = value5 == null ? 0 : value5.intValue();
-		
-		Number value6 = display.getDia6NumberField().getValue();
-		int dia6 = value6 == null ? 0 : value6.intValue();
-		
-		Number value7 = display.getDia7NumberField().getValue();
-		int dia7 = value7 == null ? 0 : value7.intValue();
-		
-		divisaoCreditoDTO.setDia1(dia1);
-		divisaoCreditoDTO.setDia2(dia2);
-		divisaoCreditoDTO.setDia3(dia3);
-		divisaoCreditoDTO.setDia4(dia4);
-		divisaoCreditoDTO.setDia5(dia5);
-		divisaoCreditoDTO.setDia6(dia6);
-		divisaoCreditoDTO.setDia7(dia7);
+		Number value1 = this.display.getDia1NumberField().getValue();
+		int dia1 = ( value1 == null ? 0 : value1.intValue() );
+
+		Number value2 = this.display.getDia2NumberField().getValue();
+		int dia2 = ( value2 == null ? 0 : value2.intValue() );
+
+		Number value3 = this.display.getDia3NumberField().getValue();
+		int dia3 = ( value3 == null ? 0 : value3.intValue() );
+
+		Number value4 = this.display.getDia4NumberField().getValue();
+		int dia4 = ( value4 == null ? 0 : value4.intValue() );
+
+		Number value5 = this.display.getDia5NumberField().getValue();
+		int dia5 = ( value5 == null ? 0 : value5.intValue() );
+
+		Number value6 = this.display.getDia6NumberField().getValue();
+		int dia6 = ( value6 == null ? 0 : value6.intValue() );
+
+		Number value7 = this.display.getDia7NumberField().getValue();
+		int dia7 = ( value7 == null ? 0 : value7.intValue() );
+
+		divisaoCreditoDTO.setDia1( dia1 );
+		divisaoCreditoDTO.setDia2( dia2 );
+		divisaoCreditoDTO.setDia3( dia3 );
+		divisaoCreditoDTO.setDia4( dia4 );
+		divisaoCreditoDTO.setDia5( dia5 );
+		divisaoCreditoDTO.setDia6( dia6 );
+		divisaoCreditoDTO.setDia7( dia7 );
 
 		return divisaoCreditoDTO;
 	}
 	
 	@Override
-	public void go(Widget widget) {
-		display.getSimpleModal().show();
+	public void go( Widget widget )
+	{
+		this.display.getSimpleModal().show();
 	}
-
 }
