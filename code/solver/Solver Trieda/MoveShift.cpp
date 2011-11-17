@@ -33,7 +33,7 @@ Move & MoveShift::apply( SolucaoOperacional & s )
    }
 
    profAula = itBlocoAula->second.first;
-   int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();      
+   int totalHorariosAula = (int)s.getProblemData()->horarios_aula_ordenados.size();      
    std::vector< HorarioAula * >::iterator itHorarioAula;
 
    // Desalocando os horários da aula em questão.

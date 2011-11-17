@@ -26,14 +26,16 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    Aula * aula = NULL;
    GGroup< Aula *, LessPtr< Aula > >::iterator itAula = problemData.aulas.begin();
 
-   int tam_matriz = solOp.getMatrizAulas()->size();
+   int tam_matriz = (int)solOp.getMatrizAulas()->size();
+
    int maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
 
    for( int i = 0; i < maxIter; ++i, ++itAula );
 
    aula = ( *itAula );
 
-   std::map< Aula *, std::pair< Professor *, std::vector< HorarioAula * > >, LessPtr< Aula > >::iterator
+   std::map< Aula *, std::pair< Professor *,
+      std::vector< HorarioAula * > >, LessPtr< Aula > >::iterator
       itBlocoAulas = solOp.blocoAulas.find( aula );
 
    if ( itBlocoAulas == solOp.blocoAulas.end() )
@@ -61,7 +63,7 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();
 
-      tam_matriz = solOp.getMatrizAulas()->size();
+      tam_matriz = (int)solOp.getMatrizAulas()->size();
       maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
 
       for ( int i = 0; i < maxIter; ++i, ++itAula );
@@ -112,7 +114,8 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    Aula * aula = NULL;
    GGroup< Aula *, LessPtr< Aula > >::iterator itAula = problemData.aulas.begin();
 
-   int tam_matriz = solOp.getMatrizAulas()->size();
+   int tam_matriz = (int)solOp.getMatrizAulas()->size();
+
    int maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
 
    for( int i = 0; i < maxIter && itAula != problemData.aulas.end(); ++i, ++itAula );
@@ -146,12 +149,13 @@ std::pair< Aula *, std::pair< Professor *, std::vector< HorarioAula * > > >
    std::vector< std::string > checksToDo;
    checksToDo.push_back( "virtualClass" );
 
-   while ( !moveValidator->canShiftSchedule( *aula, novoProf, novosHorariosAula, solOp, checksToDo ) && ++attempt < MAX_ATTEMPTS )
+   while ( !moveValidator->canShiftSchedule( *aula, novoProf,
+      novosHorariosAula, solOp, checksToDo ) && ++attempt < MAX_ATTEMPTS )
    {
       // Selecionando uma aula.
       itAula = problemData.aulas.begin();
 
-      tam_matriz = solOp.getMatrizAulas()->size();
+      tam_matriz = (int)solOp.getMatrizAulas()->size();
       maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
 
       for ( int i = 0; i < maxIter; ++i, ++itAula );

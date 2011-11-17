@@ -44,7 +44,7 @@ Move & MoveSwap::apply( SolucaoOperacional & s )
    // 2 - Nas aulas, trocar os vetores que indicam os blocos.
 
    int indice = 0, linha = 0, coluna = 0;
-   int totalHorariosAula = s.getProblemData()->horarios_aula_ordenados.size();
+   int totalHorariosAula = (int)s.getProblemData()->horarios_aula_ordenados.size();
 
    std::vector< HorarioAula * >::iterator itBlocoAula;
 

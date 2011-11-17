@@ -29,10 +29,13 @@ std::pair< Aula *, Aula * > NSSwapEqTeachersBlocks::pickTwoClasses( SolucaoOpera
    Aula * a1 = NULL;
    Aula * a2 = NULL;
 
-   GGroup< Aula *, LessPtr< Aula > >::iterator itAula = problemData.aulas.begin();
+   GGroup< Aula *, LessPtr< Aula > >::iterator
+      itAula = problemData.aulas.begin();
 
-   int tam_matriz = s.getMatrizAulas()->size();
-   int maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
+   int tam_matriz = (int)s.getMatrizAulas()->size();
+
+   int maxIter = ( rand() % ( tam_matriz > 1 ?
+      tam_matriz - 1 : tam_matriz ) );
 
    for ( int i = 0; i < maxIter; ++i, ++itAula );
 
@@ -45,7 +48,8 @@ std::pair< Aula *, Aula * > NSSwapEqTeachersBlocks::pickTwoClasses( SolucaoOpera
    {
       itAula = problemData.aulas.begin();
 
-      tam_matriz = s.getMatrizAulas()->size();
+      tam_matriz = (int)s.getMatrizAulas()->size();
+
       maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
 
       for ( int i = 0; i < maxIter; ++i, ++itAula );
@@ -53,7 +57,8 @@ std::pair< Aula *, Aula * > NSSwapEqTeachersBlocks::pickTwoClasses( SolucaoOpera
 
       itAula = problemData.aulas.begin();
 
-      tam_matriz = s.getMatrizAulas()->size();
+      tam_matriz = (int)s.getMatrizAulas()->size();
+
       maxIter = ( rand() % ( tam_matriz > 1 ? tam_matriz - 1 : tam_matriz ) );
 
       for ( int i = 0; i < maxIter; ++i, ++itAula );

@@ -954,7 +954,7 @@ void Avaliador::avaliaDiasProfessorMinistraAula( SolucaoOperacional & solucao )
    totalDiasProfessorMinistraAula = numDias;
 }
 
-void Avaliador::violacaoUltimaPrimeiraAula(SolucaoOperacional & solucao)
+void Avaliador::violacaoUltimaPrimeiraAula( SolucaoOperacional & solucao )
 {
    int numViolacoes = 0;
    int violacoesProfessor = 0;
@@ -981,6 +981,7 @@ void Avaliador::violacaoUltimaPrimeiraAula(SolucaoOperacional & solucao)
 
    std::map< int, Professor * >::iterator it_professor
       = solucao.mapProfessores.begin();
+
    for (; it_professor != solucao.mapProfessores.end(); it_professor++)
    {
       violacoesProfessor = 0;
@@ -988,14 +989,15 @@ void Avaliador::violacaoUltimaPrimeiraAula(SolucaoOperacional & solucao)
 
       // Verifica as aulas do professor, procurando popr violações
       // do tipo "última aula do dia D e primeira aula do dia D+1"
-      total_horarios = solucao.getMatrizAulas()->at(linha_professor)->size();
-      for (int i = bloco_aula-1; i < total_horarios-1; i += bloco_aula)
+      total_horarios = (int)( solucao.getMatrizAulas()->at( linha_professor )->size() );
+
+      for ( int i = bloco_aula - 1; i < total_horarios - 1; i += bloco_aula )
       {
-         aula1 = solucao.getMatrizAulas()->at(linha_professor)->at(i);
-         aula2 = solucao.getMatrizAulas()->at(linha_professor)->at(i+1);
+         aula1 = solucao.getMatrizAulas()->at( linha_professor )->at( i );
+         aula2 = solucao.getMatrizAulas()->at( linha_professor )->at( i + 1 );
 
          // Verifica se os dois horários foram alocados
-         if (aula1 != NULL && aula1->eVirtual() == false
+         if ( aula1 != NULL && aula1->eVirtual() == false
             && aula2 != NULL && aula2->eVirtual() == false )
          {
             violacoesProfessor++;
@@ -1011,7 +1013,7 @@ void Avaliador::violacaoUltimaPrimeiraAula(SolucaoOperacional & solucao)
    totalViolacoesUltimaPrimeiraAula = numViolacoes;
 }
 
-int Avaliador::calculaTamanhoBlocoAula(SolucaoOperacional & solucao)
+int Avaliador::calculaTamanhoBlocoAula( SolucaoOperacional & solucao )
 {
    int bloco_aula = 0;
 

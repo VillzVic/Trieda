@@ -642,7 +642,8 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             // conjunto de salas encontrado, e vice versa ).
             bool encontrou_Conjunto_Compat = false;
 
-            ITERA_GGROUP( it_Cjt_Salas_Disc, ( *gg_Cjt_Salas_Esc ), ConjuntoSala )
+            ITERA_GGROUP( it_Cjt_Salas_Disc,
+               ( *gg_Cjt_Salas_Esc ), ConjuntoSala )
             {
                // Se o conjunto de salas em questão representa a capacidade
                // da sala em questão. Estou testando tb se o conjunto de
@@ -651,13 +652,13 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                // APENAS com laboratórios. Como não sei qual GGroup está
                // sendo referenciado, testo os 2 casos pra lá.
                if (  it_Cjt_Salas_Disc->getCapacidadeRepr() == it_Sala->getCapacidade()
-                  && it_Cjt_Salas_Disc->getTipoSalasRepr() == it_Sala->tipo_sala->getId() )
+                     && it_Cjt_Salas_Disc->getTipoSalasRepr() == it_Sala->tipo_sala->getId() )
                {
                   // Checando se tem o mesmo tamanho.
                   bool mesmas_Disciplinas_Associadas = true;
 
                   if ( it_Cjt_Salas_Disc->disciplinas_associadas.size()
-                     == it_Sala->disciplinasAssociadas.size() )
+                           == it_Sala->disciplinasAssociadas.size() )
                   {
                      // Iterando sobre as disciplinas associadas da sala em questão.
                      ITERA_GGROUP( it_Disc_Assoc_Sala,
@@ -668,7 +669,7 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                         // questão, paro o teste de compatibilidade
                         // entre a sala e o cjt em questão.
                         if ( it_Cjt_Salas_Disc->disciplinas_associadas.find( *it_Disc_Assoc_Sala )
-                           == it_Cjt_Salas_Disc->disciplinas_associadas.end() )
+                              == it_Cjt_Salas_Disc->disciplinas_associadas.end() )
                         {
                            mesmas_Disciplinas_Associadas = false;
                            break;
@@ -777,13 +778,12 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             it_Unidade->conjutoSalas.add( *it_Cjt_Salas_Disc_GERAL );
          }
 
-         std::cout << "Cod. Und.: " << it_Unidade->getCodigo() << std::endl;
+         // std::cout << "Cod. Und.: " << it_Unidade->getCodigo() << std::endl;
 
          ITERA_GGROUP_LESSPTR( it_Cjt_Salas_Und,
             it_Unidade->conjutoSalas, ConjuntoSala )
          {
-            std::cout << "\tCod. Cjt. Sala: "
-               << it_Cjt_Salas_Und->getId() << std::endl;
+            // std::cout << "\tCod. Cjt. Sala: " << it_Cjt_Salas_Und->getId() << std::endl;
 
             std::map< int /*Id Sala*/, Sala * >::iterator 
                it_Salas_Cjt = it_Cjt_Salas_Und->salas.begin();
@@ -791,9 +791,9 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             for(; it_Salas_Cjt != it_Cjt_Salas_Und->salas.end();
                it_Salas_Cjt++ )
             {
-               std::cout << "\t\tCod. Sala: "
-                         << it_Salas_Cjt->second->getCodigo()
-                         << std::endl;
+               // std::cout << "\t\tCod. Sala: "
+               //           << it_Salas_Cjt->second->getCodigo()
+               //           << std::endl;
             }
          }
       }

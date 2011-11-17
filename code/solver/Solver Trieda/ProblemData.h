@@ -348,7 +348,12 @@ public:
    // horários do turno ao qual essa aula está alocada
    int totalHorariosTurnoAula( Aula * );
 
-   std::map< Professor *, GGroup< Disciplina *, LessPtr< Disciplina > > > mapProfessorDisciplinasAssociadas;
+   std::map< Professor *, GGroup< Disciplina *,
+      LessPtr< Disciplina > > > mapProfessorDisciplinasAssociadas;
+
+   // Retorna todas as salas (de todos os campi) do input
+   GGroup< Sala *, LessPtr< Sala > > getSalas() const;
+   Sala * findSala( int );
 };
 
 #endif

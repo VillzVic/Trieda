@@ -24,7 +24,8 @@ bool myVecIntSort( std::vector< int > & _Left, std::vector< int > & _Right )
       return ( diffLeft < diffRight );
    }
 
-   for ( unsigned predLeftAndRight = ( _Left.size() - 1 ); predLeftAndRight > 0; predLeftAndRight-- )
+   for ( unsigned predLeftAndRight = ( (int)( _Left.size() ) - 1 );
+      predLeftAndRight > 0; predLeftAndRight-- )
    {
       unsigned sucLeft = predLeftAndRight - 1;
       unsigned sucRight = predLeftAndRight - 1;
@@ -207,10 +208,11 @@ SolucaoInicialOperacional::~SolucaoInicialOperacional()
 SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 {
    // Alocando os CustoAlocacao por nivel de prioridade.
-   for ( unsigned nvPrd = custoAlocacaoNiveisPrioridade.size(); nvPrd > 0; nvPrd-- )
+   for ( unsigned nvPrd = (int)custoAlocacaoNiveisPrioridade.size();
+         nvPrd > 0; nvPrd-- )
    {
       std::map< unsigned /*Nivel de prioridade*/,
-                GGroup< CustoAlocacao *, GreaterPtr< CustoAlocacao > > >::iterator
+         GGroup< CustoAlocacao *, GreaterPtr< CustoAlocacao > > >::iterator
          itCstAlocNvPrd = custoAlocacaoNiveisPrioridade.find( nvPrd );
 
       if ( itCstAlocNvPrd == custoAlocacaoNiveisPrioridade.end() )
@@ -284,7 +286,7 @@ SolucaoOperacional & SolucaoInicialOperacional::geraSolucaoInicial()
 SolucaoOperacional& SolucaoInicialOperacional::geraSolucaoInicial2()
 {
    // Alocando os CustoAlocacao por nivel de prioridade.
-   for ( unsigned nvPrd = custoAlocacaoNiveisPrioridade.size(); nvPrd > 0; nvPrd-- )
+   for ( unsigned nvPrd = (int)custoAlocacaoNiveisPrioridade.size(); nvPrd > 0; nvPrd-- )
    {
       std::map< unsigned /*Nivel de prioridade*/,
                 GGroup< CustoAlocacao *, GreaterPtr< CustoAlocacao > > >::iterator

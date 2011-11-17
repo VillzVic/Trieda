@@ -640,3 +640,43 @@ Oferta * ProblemData::findOferta( int id_oferta ) const
 
    return oferta;
 }
+
+GGroup< Sala *, LessPtr< Sala > > ProblemData::getSalas() const
+{
+   GGroup< Sala *, LessPtr< Sala > > salas;
+
+   ITERA_GGROUP_LESSPTR( it_campus, this->campi, Campus )
+   {
+      Campus * campus = ( *it_campus );
+
+      ITERA_GGROUP_LESSPTR( it_unidade, campus->unidades, Unidade )
+      {
+         Unidade * unidade = ( *it_unidade );
+
+         ITERA_GGROUP_LESSPTR( it_sala, unidade->salas, Sala )
+         {
+            Sala * sala = ( *it_sala );
+            salas.add( sala );
+         }
+      }
+   }
+
+   return salas;
+}
+
+Sala * ProblemData::findSala( int id )
+{
+   GGroup< Sala *, LessPtr< Sala > > salas = this->getSalas();
+
+   ITERA_GGROUP_LESSPTR( it_sala, salas, Sala )
+   {
+      Sala * sala = ( *it_sala );
+
+      if ( sala->getId() == id )
+      {
+         return sala;
+      }
+   }
+
+   return NULL;
+}

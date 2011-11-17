@@ -22,7 +22,7 @@ SolucaoOperacional::SolucaoOperacional( ProblemData * prbDt )
       }
    }
 
-   this->total_professores = this->mapProfessores.size();
+   this->total_professores = (int)( this->mapProfessores.size() );
 
    // Inicializando a estrutura <matrizAulas>
    matriz_aulas = new MatrizSolucao ( total_professores );
@@ -176,7 +176,8 @@ bool SolucaoOperacional::horarioDisponivelProfessor(
    std::vector< HorarioAula * > horarios
       = this->getProblemData()->horarios_aula_ordenados;
 
-   int tam_vector = horarios.size();
+   int tam_vector = (int)horarios.size();
+
    if ( horario_aula_id < tam_vector )
    {
       horario_aula = horarios.at( horario_aula_id );
@@ -381,7 +382,7 @@ int SolucaoOperacional::addProfessor(
 {
    matriz_aulas->push_back( &(horariosProf) );
 
-   int id_operacional = ( matriz_aulas->size() - 1 );
+   int id_operacional = ( (int)matriz_aulas->size() - 1 );
 
    professor.setId( -id_operacional );
    professor.setIdOperacional( id_operacional );

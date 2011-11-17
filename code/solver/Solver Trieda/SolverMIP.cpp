@@ -13071,65 +13071,93 @@ void SolverMIP::chgCoeffList(
 int SolverMIP::criaRestricaoSalaHorario()
 {
    int restricoes = 0;
-   int nnz;
+
+   GGroup< Sala *, LessPtr< Sala > > salas = problemData->getSalas();
+
+   GGroup< int > dias_letivos;
+   GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios_aula;
+
+   ITERA_GGROUP_LESSPTR( it_calendario, problemData->calendarios, Calendario )
+   {
+      Calendario * calendario = ( *it_calendario );
+
+      ITERA_GGROUP_LESSPTR( it_turno, calendario->turnos, Turno )
+      {
+         Turno * turno = ( *it_turno );
+
+         ITERA_GGROUP_LESSPTR( it_horario_aula, turno->horarios_aula, HorarioAula )
+         {
+            HorarioAula * horario_aula = ( *it_horario_aula );
+            horarios_aula.add( horario_aula );
+
+            ITERA_GGROUP_N_PT( it_dia_semana, horario_aula->dias_semana, int )
+            {
+               int dia_semana = ( *it_dia_semana );
+               dias_letivos.add( dia_semana );
+            }
+         }
+      }
+   }
+
+   int totalHorariosAula = (int)horarios_aula.size();
+   int totalSalas = (int)salas.size();
+   int nnz = ( totalSalas * totalHorariosAula );
    char name[ 200 ];
 
    ConstraintOp c;
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
 
-   std::vector< std::pair< int, int > > coeffList;
-   std::vector< double > coeffListVal;
-   std::pair< int, int > auxCoef;
-
-   vit = vHashOp.begin();
-
-   for (; vit != vHashOp.end(); vit++ )
+   ITERA_GGROUP_LESSPTR( it_sala, salas, Sala )
    {
-      VariableOp v = vit->first;
+      Sala * sala = ( *it_sala );
 
-      if ( v.getType() != VariableOp::V_X_PROF_AULA_HOR )
+      ITERA_GGROUP_N_PT( it_dia, dias_letivos, int )
       {
-         continue;
-      }
+         int dia_semana = ( *it_dia );
 
-      int nCred = v.getAula()->getTotalCreditos();
-      int idxHor = problemData->getHorarioDiaIdx( v.getHorario() );
-
-      for ( int h = idxHor; h < ( idxHor + nCred ); h++ )
-      {
-         c.reset();
-         c.setType( ConstraintOp::C_SALA_HORARIO );
-         c.setSala( v.getAula()->getSala() );
-         c.setHorario( problemData->horariosDiaIdx[ h ] );
-
-         cit = cHashOp.find( c );
-
-         if ( cit != cHashOp.end() )
+         ITERA_GGROUP_LESSPTR( it_horario_aula, horarios_aula, HorarioAula )
          {
-            auxCoef.first = cit->second;
-            auxCoef.second = vit->second;
+            HorarioAula * horario_aula = ( *it_horario_aula );
+            
+            c.reset();
+            c.setType( ConstraintOp::C_SALA_HORARIO );
+            c.setSala( sala );
+            c.setDia( dia_semana );
+            c.setHorarioAula( horario_aula );
+            
+            cit = cHashOp.find( c );
 
-            coeffList.push_back( auxCoef );
-            coeffListVal.push_back( 1.0 );
+            if ( cit == cHashOp.end() )
+            {
+               sprintf( name, "%s", c.toString().c_str() );
+               OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
+
+               vit = vHashOp.begin();
+
+               for (; vit != vHashOp.end(); vit++ )
+               {
+                  VariableOp vOp = ( vit->first );
+
+                  if ( vOp.getSala() != sala
+                     || vOp.getHorario()->getDia() != dia_semana
+                     || vOp.getHorario()->getHorarioAula() != horario_aula )
+                  {
+                     continue;
+                  }
+
+                  row.insert( vit->second, 1.0 );
+               }
+
+               row.insert( vit->second, 1.0 );
+               cHashOp[ c ] = lp->getNumRows();
+
+               lp->addRow( row );
+               restricoes++;
+            }
          }
-         else
-         {
-            sprintf( name, "%s", c.toString().c_str() );
-            nnz = 100;
-
-            OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
-
-            row.insert( vit->second, 1.0 );
-            cHashOp[ c ] = lp->getNumRows();
-
-            lp->addRow( row );
-            restricoes++;
-         }   
       }
    }
-
-   chgCoeffList( coeffList, coeffListVal );
 
    return restricoes;
 }
@@ -13169,6 +13197,8 @@ int SolverMIP::criaRestricaoProfessorHorario()
          c.setType( ConstraintOp::C_PROFESSOR_HORARIO );
          c.setProfessor( v.getProfessor() );
          c.setHorario( problemData->horariosDiaIdx[ h ] );
+         c.setDia( problemData->horariosDiaIdx[ h ]->getDia() );
+         c.setHorarioAula( problemData->horariosDiaIdx[ h ]->getHorarioAula() );
 
          cit = cHashOp.find( c );
 
@@ -13244,6 +13274,8 @@ int SolverMIP::criaRestricaoBlocoHorario()
             c.setType( ConstraintOp::C_BLOCO_HORARIO );
             c.setBloco( bloco );
             c.setHorario( problemData->horariosDiaIdx[ h ] );
+            c.setDia( problemData->horariosDiaIdx[ h ]->getDia() );
+            c.setHorarioAula( problemData->horariosDiaIdx[ h ]->getHorarioAula() );
             c.setTurma( v.getTurma() );
 
             cit = cHashOp.find( c );
@@ -13281,7 +13313,10 @@ int SolverMIP::criaRestricaoBlocoHorario()
 int SolverMIP::criaRestricaoAlocAula()
 {
    int restricoes = 0;
-   int nnz;
+
+   int totalHorariosAula = ( (int)( this->problemData->horarios_aula_ordenados.size() ) );
+   int totalProfessores = ( this->problemData->getProfessores().size() + 1 );
+   int nnz = ( totalProfessores * totalHorariosAula );
    char name[ 200 ];
 
    ConstraintOp c;
@@ -13320,7 +13355,6 @@ int SolverMIP::criaRestricaoAlocAula()
       else
       {
          sprintf( name, "%s", c.toString().c_str() );
-         nnz = 100;
 
          OPT_ROW row( nnz, OPT_ROW::EQUAL , 1.0, name );
 
@@ -14271,7 +14305,8 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
       = problemData->getProfessores();
 
    // Agrupando os professores que ministram disciplinas de cada curso
-   std::map< Curso *, GGroup< Professor *, LessPtr< Professor > > > mapCursoProfessores;
+   std::map< Curso *, GGroup< Professor *,
+      LessPtr< Professor > > > mapCursoProfessores;
 
    ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
    {
