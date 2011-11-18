@@ -11,6 +11,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -23,6 +24,7 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
+import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -35,6 +37,7 @@ public class RelatorioVisaoProfessorPresenter
 		Button getSubmitBuscaButton();
 		CampusComboBox getCampusComboBox();
 		TurnoComboBox getTurnoComboBox();
+		SemanaLetivaComboBox getSemanaLetivaComboBox();
 		ProfessorComboBox getProfessorComboBox();
 		GradeHorariaProfessorGrid getGrid();
 		Component getComponent();
@@ -47,104 +50,111 @@ public class RelatorioVisaoProfessorPresenter
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor;
 
-	public RelatorioVisaoProfessorPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
+	public RelatorioVisaoProfessorPresenter(
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, UsuarioDTO usuario,
+		Display display, boolean isVisaoProfessor )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.usuario = usuario;
 		this.display = display;
 		this.isVisaoProfessor = isVisaoProfessor;
 
-		setListeners();
+		this.setListeners();
 	}
 
 	private void setListeners()
 	{
-		display.getSubmitBuscaButton().addSelectionListener(
+		this.display.getSubmitBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
 			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
+				if ( usuario.isAdministrador() )
 				{
-					if ( usuario.isAdministrador() )
-					{
-						display.getGrid().setProfessorDTO(
-							display.getProfessorComboBox().getValue() );
+					display.getGrid().setProfessorDTO(
+						display.getProfessorComboBox().getValue() );
 
-						display.getGrid().setProfessorVirtualDTO(
-							display.getProfessorVirtualComboBox().getValue() );
-					}
-					else
-					{
-						ProfessorDTO professor = new ProfessorDTO();
-						professor.setId( usuario.getProfessorId() );
-						display.getGrid().setProfessorDTO( professor );
-					}
-
-					display.getGrid().setTurnoDTO(
-						display.getTurnoComboBox().getValue() );
-
-					display.getGrid().requestAtendimentos();
+					display.getGrid().setProfessorVirtualDTO(
+						display.getProfessorVirtualComboBox().getValue() );
 				}
-			});
+				else
+				{
+					ProfessorDTO professor = new ProfessorDTO();
+					professor.setId( usuario.getProfessorId() );
+					display.getGrid().setProfessorDTO( professor );
+				}
 
-		display.getProfessorComboBox().addSelectionChangedListener(
+				display.getGrid().setSemanaLetivaDTO(
+					display.getSemanaLetivaComboBox().getValue() );
+
+				display.getGrid().setTurnoDTO(
+					display.getTurnoComboBox().getValue() );
+
+				display.getGrid().requestAtendimentos();
+			}
+		});
+
+		this.display.getProfessorComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< ProfessorDTO >()
+		{
+			@Override
+			public void selectionChanged( SelectionChangedEvent< ProfessorDTO > se )
 			{
-				@Override
-				public void selectionChanged( SelectionChangedEvent< ProfessorDTO > se )
-				{
-					display.getProfessorVirtualComboBox().setValue( null );
-					display.getProfessorComboBox().setValue( se.getSelectedItem() );
-				}
-			});
+				display.getProfessorVirtualComboBox().setValue( null );
+				display.getProfessorComboBox().setValue( se.getSelectedItem() );
+			}
+		});
 
-		display.getProfessorVirtualComboBox().addSelectionChangedListener(
+		this.display.getProfessorVirtualComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< ProfessorVirtualDTO >()
+		{
+			@Override
+			public void selectionChanged( SelectionChangedEvent< ProfessorVirtualDTO > se )
 			{
-				@Override
-				public void selectionChanged( SelectionChangedEvent< ProfessorVirtualDTO > se )
+				display.getProfessorComboBox().setValue( null );
+				display.getProfessorVirtualComboBox().setValue( se.getSelectedItem() );
+			}
+		});
+
+		this.display.getExportExcelButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.RELATORIO_VISAO_PROFESSOR, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+				CampusDTO campusDTO = display.getCampusComboBox().getValue();
+				TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
+				SemanaLetivaDTO semanaLetivaDTO = display.getSemanaLetivaComboBox().getValue();
+				ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();
+				ProfessorVirtualDTO professorVirtualDTO = display.getProfessorVirtualComboBox().getValue();
+
+				e.addParameter( "campusId", campusDTO.getId().toString() );
+				e.addParameter( "turnoId", turnoDTO.getId().toString() );
+				e.addParameter( "instituicaoEnsinoId", turnoDTO.getInstituicaoEnsinoId().toString() );
+				e.addParameter( "semanaLetivaId", semanaLetivaDTO.getId().toString() );
+
+				if ( professorDTO == null )
 				{
-					display.getProfessorComboBox().setValue( null );
-					display.getProfessorVirtualComboBox().setValue( se.getSelectedItem() );
+					e.addParameter( "professorId", "-1" );
+					e.addParameter( "professorVirtualId", professorVirtualDTO.getId().toString() );
 				}
-			});
-
-		display.getExportExcelButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+				else if ( professorVirtualDTO == null )
 				{
-					@Override
-					public void componentSelected( ButtonEvent ce )
-					{
-						ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.RELATORIO_VISAO_PROFESSOR, instituicaoEnsinoDTO );
+					e.addParameter( "professorId", professorDTO.getId().toString() );
+					e.addParameter( "professorVirtualId", "-1" );
+				}
 
-						ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-							parametros, display.getI18nConstants(), display.getI18nMessages() );
-
-						CampusDTO campusDTO = display.getCampusComboBox().getValue();
-						TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
-						ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();
-						ProfessorVirtualDTO professorVirtualDTO = display.getProfessorVirtualComboBox().getValue();
-
-						e.addParameter( "campusId", campusDTO.getId().toString() );
-						e.addParameter( "turnoId", turnoDTO.getId().toString() );
-						e.addParameter( "instituicaoEnsinoId", turnoDTO.getInstituicaoEnsinoId().toString() );
-
-						if ( professorDTO == null )
-						{
-							e.addParameter( "professorId", "-1" );
-							e.addParameter( "professorVirtualId", professorVirtualDTO.getId().toString() );
-						}
-						else if ( professorVirtualDTO == null )
-						{
-							e.addParameter( "professorId", professorDTO.getId().toString() );
-							e.addParameter( "professorVirtualId", "-1" );
-						}
-
-						e.submit();
-					}
-				});
+				e.submit();
+			}
+		});
 	}
 
 	public boolean isVisaoProfessor()

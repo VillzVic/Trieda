@@ -721,17 +721,17 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 
 	public String getExcelContentVisaoSala()
 	{
-		return getDisciplinaString() + " / " + getTurma();
+		return this.getDisciplinaString() + " / " + this.getTurma();
 	}
 
 	public String getExcelContentVisaoCurso()
 	{
-		return getDisciplinaString() + " / " + getTurma();
+		return this.getDisciplinaString() + " / " + this.getTurma();
 	}
 
 	public String getExcelContentVisaoProfessor()
 	{
-		return getDisciplinaString() + " / " + getTurma();
+		return this.getDisciplinaString() + " / " + this.getTurma();
 	}
 
 	@Override
@@ -789,6 +789,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		List< AtendimentoOperacionalDTO > listDTOs )
 	{
 		int count = 0;
+
 		for ( AtendimentoOperacionalDTO dto : listDTOs )
 		{
 			count += dto.getTotalCreditos();
@@ -800,7 +801,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 	@Override
 	public boolean isTeorico()
 	{
-		return getCreditoTeoricoBoolean();
+		return this.getCreditoTeoricoBoolean();
 	}
 
 	@Override

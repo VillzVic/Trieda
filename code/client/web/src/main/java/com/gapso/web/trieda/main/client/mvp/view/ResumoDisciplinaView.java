@@ -32,7 +32,8 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 
-public class ResumoDisciplinaView extends MyComposite
+public class ResumoDisciplinaView
+	extends MyComposite
 	implements ResumoDisciplinaPresenter.Display
 {
 	private SimpleToolBar toolBar;
@@ -44,26 +45,28 @@ public class ResumoDisciplinaView extends MyComposite
 
 	public ResumoDisciplinaView( CenarioDTO cenario )
 	{
-		initUI();
+		this.initUI();
 	}
 
 	private void initUI()
 	{
-		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Resultados por Disciplina" );
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Resultados por Disciplina" );
 
 		createToolBar();
 		createForm();
 		createGrid();
 		createTabItem();
-		initComponent( tabItem );
+		initComponent( this.tabItem );
 	}
 
 	private void createToolBar()
 	{
 		// Exibe apenas o botão 'exportExcel'
-		toolBar = new SimpleToolBar( false, false, false, false, true, this );
-		panel.setTopComponent( toolBar );
+		this.toolBar = new SimpleToolBar(
+			false, false, false, false, true, this );
+
+		this.panel.setTopComponent( this.toolBar );
 	}
 
 	@Override
@@ -74,24 +77,25 @@ public class ResumoDisciplinaView extends MyComposite
 
 	private void createTabItem()
 	{
-		tabItem = new GTabItem( "Resumo por Disciplina",
+		this.tabItem = new GTabItem( "Resumo por Disciplina",
 			Resources.DEFAULTS.resumoDisciplinas16() );
 
-		tabItem.setContent( panel );
+		this.tabItem.setContent( this.panel );
 	}
 
 	private void createForm()
 	{
 		FormData formData = new FormData( "100%" );
 		FormPanel formPanel = new FormPanel();
+
 		formPanel.setBodyBorder( false );
 		formPanel.setLabelWidth( 100 );
 		formPanel.setLabelAlign( LabelAlign.RIGHT );
 		formPanel.setHeaderVisible( false );
 		formPanel.setAutoHeight( true );
 
-		campusCB = new CampusComboBox();
-		formPanel.add( campusCB, formData );
+		this.campusCB = new CampusComboBox();
+		formPanel.add( this.campusCB, formData );
 
 	    BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );
 	    bld.setMargins( new Margins( 2 ) );
@@ -101,16 +105,17 @@ public class ResumoDisciplinaView extends MyComposite
 
 	private void createGrid()
 	{
-		tree = new TreeGrid< ResumoDisciplinaDTO >(
-			getStore(), new ColumnModel( getColumnList() ) );
+		this.tree = new TreeGrid< ResumoDisciplinaDTO >(
+			this.getStore(), new ColumnModel( this.getColumnList() ) );
 
 	    ContentPanel contentPanel = new ContentPanel( new FitLayout() );
 	    contentPanel.setHeaderVisible( false );
-	    contentPanel.add( tree );
+	    contentPanel.add( this.tree );
 
 	    BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5 ) );
-	    panel.add( contentPanel, bld );
+
+	    this.panel.add( contentPanel, bld );
 	}
 
 	public List< ColumnConfig > getColumnList()
@@ -154,41 +159,41 @@ public class ResumoDisciplinaView extends MyComposite
 
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 		ColumnConfig campusColumnConfig = new ColumnConfig(
-			ResumoDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, getI18nConstants().disciplina(), 80 );
+			ResumoDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, getI18nConstants().disciplina(), 250 );
 		campusColumnConfig.setRenderer( new TreeGridCellRenderer< ResumoDisciplinaDTO >() );
 
 		list.add( campusColumnConfig );
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_TURMA_STRING,
-			getI18nConstants().turma(), 80 ) );
+			this.getI18nConstants().turma(), 80 ) );
 
 		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(
 			ResumoDisciplinaDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN,
-			getI18nConstants().TipoCredito(), 80 );
+			this.getI18nConstants().TipoCredito(), 120 );
 
 		tipoDeCreditoColumnConfig.setRenderer( tipoDeCreditoRenderer );
 		list.add( tipoDeCreditoColumnConfig );
 
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT,
-			getI18nConstants().totalDecreditos(), 60 ) );
+			this.getI18nConstants().totalDecreditos(), 100 ) );
 
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT,
-			getI18nConstants().creditos(), 60 ) );
+			this.getI18nConstants().creditos(), 100 ) );
 
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_QUANTIDADE_ALUNOS_INT,
-			getI18nConstants().quantidadeAlunos(), 70 ) );
+			this.getI18nConstants().quantidadeAlunos(), 100 ) );
 
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE,
-			getI18nConstants().custoDocente(), 100 ) );
+			this.getI18nConstants().custoDocente(), 100 ) );
 
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_RECEITA_DOUBLE,
-			getI18nConstants().receita(), 100 ) );
+			this.getI18nConstants().receita(), 100 ) );
 
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_MARGEM_DOUBLE,
-			getI18nConstants().margem(), 100 ) );
+			this.getI18nConstants().margem(), 100 ) );
 
 		ColumnConfig margemPercenteColumnConfig = new ColumnConfig(
 			ResumoDisciplinaDTO.PROPERTY_MARGEM_PERCENTE_DOUBLE,
-			getI18nConstants().margemPercente(), 100 );
+			this.getI18nConstants().margemPercente(), 100 );
 
 		margemPercenteColumnConfig.setRenderer( percenteRenderer );
 		list.add( margemPercenteColumnConfig );
@@ -196,7 +201,8 @@ public class ResumoDisciplinaView extends MyComposite
 		return list;
 	}
 
-	public void setStore( TreeStore< ResumoDisciplinaDTO > store )
+	public void setStore(
+		TreeStore< ResumoDisciplinaDTO > store )
 	{
 		this.store = store;
 	}
@@ -204,24 +210,24 @@ public class ResumoDisciplinaView extends MyComposite
 	@Override
 	public TreeStore< ResumoDisciplinaDTO > getStore()
 	{
-		return store;
+		return this.store;
 	}
 
 	@Override
 	public TreeGrid< ResumoDisciplinaDTO > getTree()
 	{
-		return tree;
+		return this.tree;
 	}
 
 	@Override
 	public CampusComboBox getCampusComboBox()
 	{
-		return campusCB;
+		return this.campusCB;
 	}
 
 	@Override
 	public Button getExportExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return this.toolBar.getExportExcelButton();
 	}	
 }

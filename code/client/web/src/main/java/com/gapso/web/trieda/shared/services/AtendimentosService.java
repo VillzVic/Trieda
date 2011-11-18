@@ -34,7 +34,7 @@ public interface AtendimentosService
 
 	List< AtendimentoOperacionalDTO > getAtendimentosOperacional(
 		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
-		TurnoDTO turnoDTO, boolean isVisaoProfessor );
+		TurnoDTO turnoDTO, boolean isVisaoProfessor, SemanaLetivaDTO semanaLetivaDTO );
 
 	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,

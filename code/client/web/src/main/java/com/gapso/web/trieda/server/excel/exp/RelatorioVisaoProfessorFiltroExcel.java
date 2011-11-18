@@ -4,11 +4,13 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 
 public class RelatorioVisaoProfessorFiltroExcel
@@ -16,11 +18,12 @@ public class RelatorioVisaoProfessorFiltroExcel
 {
 	private CampusDTO campusDTO;
 	private TurnoDTO turnoDTO;
+	private SemanaLetivaDTO semanaLetivaDTO;
 	private ProfessorDTO professorDTO;
 	private ProfessorVirtualDTO professorVirtualDTO;
 
 	public RelatorioVisaoProfessorFiltroExcel( Long campusId, Long turnoId,
-		Long professorId, Long professorVirtualId, Long instituicaoEnsinoId )
+		Long professorId, Long professorVirtualId, Long instituicaoEnsinoId, Long semanaLetivaId )
 	{
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( instituicaoEnsinoId ); 
@@ -30,20 +33,23 @@ public class RelatorioVisaoProfessorFiltroExcel
 		this.campusDTO = ConvertBeans.toCampusDTO( campus );
 		this.turnoDTO = ConvertBeans.toTurnoDTO(
 			Turno.find( turnoId, instituicaoEnsino ) );
+		
+		this.semanaLetivaDTO = ConvertBeans.toSemanaLetivaDTO(
+			SemanaLetiva.find( semanaLetivaId, instituicaoEnsino ) );
 
 		if ( professorId == null || professorId < 0 )
 		{
-			professorDTO = null;
+			this.professorDTO = null;
 
-			professorVirtualDTO = ConvertBeans.toProfessorVirtualDTO(
+			this.professorVirtualDTO = ConvertBeans.toProfessorVirtualDTO(
 				ProfessorVirtual.find( professorVirtualId, instituicaoEnsino ) );
 		}
 		else if ( professorVirtualId == null || professorVirtualId < 0 )
 		{
-			professorDTO = ConvertBeans.toProfessorDTO(
+			this.professorDTO = ConvertBeans.toProfessorDTO(
 				Professor.find( professorId, instituicaoEnsino ) );
 
-			professorVirtualDTO = null;
+			this.professorVirtualDTO = null;
 		}
 	}
 
@@ -59,7 +65,7 @@ public class RelatorioVisaoProfessorFiltroExcel
 
 	public TurnoDTO getTurnoDTO()
 	{
-		return turnoDTO;
+		return this.turnoDTO;
 	}
 
 	public void setTurnoDTO( TurnoDTO turnoDTO )
@@ -67,9 +73,19 @@ public class RelatorioVisaoProfessorFiltroExcel
 		this.turnoDTO = turnoDTO;
 	}
 
+	public SemanaLetivaDTO getSemanaLetivaDTO()
+	{
+		return this.semanaLetivaDTO;
+	}
+
+	public void setSemanaLetivaDTO( SemanaLetivaDTO semanaLetivaDTO )
+	{
+		this.semanaLetivaDTO = semanaLetivaDTO;
+	}
+
 	public ProfessorDTO getProfessorDTO()
 	{
-		return professorDTO;
+		return this.professorDTO;
 	}
 
 	public void setProfessorDTO( ProfessorDTO professorDTO )
@@ -79,7 +95,7 @@ public class RelatorioVisaoProfessorFiltroExcel
 
 	public ProfessorVirtualDTO getProfessorVirtualDTO()
 	{
-		return professorVirtualDTO;
+		return this.professorVirtualDTO;
 	}
 
 	public void setProfessorVirtualDTO( ProfessorVirtualDTO professorVirtualDTO )

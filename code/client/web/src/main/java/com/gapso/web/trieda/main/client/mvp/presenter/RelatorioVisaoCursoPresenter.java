@@ -76,6 +76,7 @@ public class RelatorioVisaoCursoPresenter
 					display.getGrid().setTurnoDTO( display.getTurnoComboBox().getValue() );
 					display.getGrid().setCampusDTO( display.getCampusComboBox().getValue() );
 					display.getGrid().setCursoDTO( display.getCursoComboBox().getValue() );
+
 					display.getGrid().requestAtendimentos();
 				}
 		});

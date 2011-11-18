@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "HOR_ID" )
 @Table( name = "HORARIOS_AULA" )
 public class HorarioAula
-	implements Serializable
+	implements Serializable, Comparable< HorarioAula >
 {
 	private static final long serialVersionUID = 6415195416443296422L;
 
@@ -205,7 +205,7 @@ public class HorarioAula
 
        	return q.getResultList();
     }
-    
+
     @SuppressWarnings( "unchecked" )
     public static List< HorarioAula > findByTurno(
     	InstituicaoEnsino instituicaoEnsino, Turno turno )
@@ -225,10 +225,13 @@ public class HorarioAula
     public static List< HorarioAula > findAll(
     	InstituicaoEnsino instituicaoEnsino )
     {
-        return entityManager().createQuery(
-        	" SELECT o FROM HorarioAula o " +
-        	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+    	Query q = entityManager().createQuery(
+           	" SELECT o FROM HorarioAula o " +
+    		" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
     }
 
     public static HorarioAula find(
@@ -265,11 +268,15 @@ public class HorarioAula
     {
         orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
-        return entityManager().createQuery(
-        	" SELECT o FROM HorarioAula o " +
-        	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino" + orderBy )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
-        	.setFirstResult( firstResult ).setMaxResults( maxResults ).getResultList();
+        Query q = entityManager().createQuery(
+           	" SELECT o FROM HorarioAula o " +
+           	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino" + orderBy );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setFirstResult( firstResult );
+        q.setMaxResults( maxResults );
+
+        return q.getResultList();
     }
 
     public static int count( InstituicaoEnsino instituicaoEnsino,
@@ -381,7 +388,8 @@ public class HorarioAula
         return this.semanaLetiva;
     }
 
-    public void setSemanaLetiva( SemanaLetiva semanaLetiva )
+    public void setSemanaLetiva(
+    	SemanaLetiva semanaLetiva )
     {
         this.semanaLetiva = semanaLetiva;
     }
@@ -416,4 +424,22 @@ public class HorarioAula
 	{
         this.horariosDisponiveisCenario = horariosDisponiveisCenario;
     }
+
+	@Override
+	public int compareTo( HorarioAula o )
+	{
+		if ( this.getHorario() == null )
+		{
+			if ( o.getHorario() == null )
+			{
+				return 0;
+			}
+			else
+			{
+				return 1;
+			}
+		}
+
+		return this.getHorario().compareTo( o.getHorario() );
+	}
 }

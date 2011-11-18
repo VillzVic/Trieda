@@ -306,8 +306,6 @@ public class RelatorioVisaoSalaExportExcel
 		Iterator< HSSFComment > itExcelCommentsPool,
 		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
-		// FIXME -- Considerar apenas os horários da semana letiva
-
 		row = writeHeader( sala, turno, row, sheet );
 
 		int initialRow = row;
@@ -347,6 +345,12 @@ public class RelatorioVisaoSalaExportExcel
 
 		for ( AtendimentoRelatorioDTO atendimento : atendimentosParaVisaoSala )
 		{
+			// TODO -- Considerar apenas os horários da semana letiva
+			if ( atendimento.getSemanaLetivaId() != semanaLetiva.getId() )
+			{
+				continue;
+			}
+
 			List< AtendimentoRelatorioDTO > list
 				= diaSemanaToAtendimentosMap.get( atendimento.getSemana() );
 

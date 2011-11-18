@@ -44,7 +44,8 @@ import com.gapso.web.trieda.shared.services.AtendimentosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class AtendimentosServiceImpl
-	extends RemoteService implements AtendimentosService
+	extends RemoteService
+	implements AtendimentosService
 {
 	private static final long serialVersionUID = -1505176338607927637L;
 
@@ -385,13 +386,13 @@ public class AtendimentosServiceImpl
 			list.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
 		}
 
-		list = agrupaAtendimentosOperacionalMesmaAula( list );
+		list = agrupaAtendimentosOperacionalMesmaAula( list, curriculoDTO );
 
 		return list;
 	}
 
 	private List< AtendimentoOperacionalDTO > agrupaAtendimentosOperacionalMesmaAula(
-		List< AtendimentoOperacionalDTO > list )
+		List< AtendimentoOperacionalDTO > list, CurriculoDTO curriculoDTO  )
 	{
 		// Agrupa os DTOS pela chave [ Curso - Disciplina - Turma - DiaSemana - Sala ]
 		Map< String, List< AtendimentoOperacionalDTO > > atendimentoOperacionalDTOMap
@@ -399,9 +400,8 @@ public class AtendimentosServiceImpl
 
 		for ( AtendimentoOperacionalDTO dto : list )
 		{
-			String key = dto.getCursoString()
-				+ "-" + dto.getDisciplinaString() + "-" + dto.getTurma()
-				+ "-" + dto.getSemana() + "-" + dto.getSalaId();
+			String key = dto.getCursoString() + "-" + dto.getDisciplinaString()
+				+ "-" + dto.getTurma() + "-" + dto.getSemana() + "-" + dto.getSalaId();
 
 			List< AtendimentoOperacionalDTO > dtoList
 				= atendimentoOperacionalDTOMap.get( key );
@@ -414,7 +414,6 @@ public class AtendimentosServiceImpl
 
 			dtoList.add( dto );
 		}
-		////
 
 		// Quando há mais de um DTO por chave
 		// [ Curso - Disciplina - Turma - DiaSemana - Sala ],
@@ -444,27 +443,83 @@ public class AtendimentosServiceImpl
 			}
 			else
 			{
-				AtendimentoOperacionalDTO dtoMain = ordenadoPorHorario.get( 0 ) ;
+				List< List< AtendimentoOperacionalDTO > > listAtendimentos
+					= this.separaAtendimentosNaoConsecutivos( ordenadoPorHorario, curriculoDTO );
 
-				// Procura pelo horário correspondente ao início da aula
-				HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
-				    ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ), getInstituicaoEnsinoUser() );
-
-				for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
+				for ( List< AtendimentoOperacionalDTO > atendimentos : listAtendimentos )
 				{
-					AtendimentoOperacionalDTO dtoCurrent = ordenadoPorHorario.get( i );
-					dtoMain.concatenateVisaoCurso( dtoCurrent );
+					AtendimentoOperacionalDTO dtoMain = atendimentos.get( 0 ) ;
+	
+					// Procura pelo horário correspondente ao início da aula
+					HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
+					    ConvertBeans.toListAtendimentoOperacional( atendimentos ) );
+	
+					for ( int i = 1; i < atendimentos.size(); i++ )
+					{
+						AtendimentoOperacionalDTO dtoCurrent = atendimentos.get( i );
+						dtoMain.concatenateVisaoCurso( dtoCurrent );
+					}
+	
+					dtoMain.setHorarioId( menorHorario.getId() );
+					dtoMain.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
+					dtoMain.setTotalCreditos( atendimentos.size() );
+	
+					processedList.add( dtoMain );
 				}
-
-				dtoMain.setHorarioId( menorHorario.getId() );
-				dtoMain.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
-				dtoMain.setTotalCreditos( entry.getValue().size() );
-
-				processedList.add( dtoMain );
 			}
 		}
 
 		return processedList;
+	}
+
+	private List< List< AtendimentoOperacionalDTO > > separaAtendimentosNaoConsecutivos(
+		List< AtendimentoOperacionalDTO > atendimentos, CurriculoDTO curriculoDTO )
+	{
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			curriculoDTO.getSemanaLetivaId(), getInstituicaoEnsinoUser() );
+
+		List< HorarioAula > horariosAulas
+			= HorarioAula.findBySemanaLetiva( getInstituicaoEnsinoUser(), semanaLetiva );
+
+		Map< Long, HorarioAula > mapIdHorario
+			= HorarioAula.buildHorarioAulaIdToHorarioAulaMap( horariosAulas );
+
+		Collections.sort( horariosAulas );
+		this.ordenaPorHorarioAula( atendimentos );
+
+		Map< AtendimentoOperacionalDTO, Integer > mapPositionHorarioAula
+			= new HashMap< AtendimentoOperacionalDTO, Integer >();
+
+		for ( AtendimentoOperacionalDTO dto : atendimentos )
+		{
+			HorarioAula horario = mapIdHorario.get( dto.getHorarioId() );
+			Integer position = horariosAulas.indexOf( horario ); 
+			mapPositionHorarioAula.put( dto, position );
+		}
+
+		List< List< AtendimentoOperacionalDTO > > result
+			= new ArrayList< List< AtendimentoOperacionalDTO > >();
+
+		result.add( new ArrayList< AtendimentoOperacionalDTO >() );
+		result.get( 0 ).add( atendimentos.get( 0 ) );
+		int currentPosition = mapPositionHorarioAula.get( atendimentos.get( 0 ) );
+
+		for ( int i = 1; i < atendimentos.size(); i++ )
+		{
+			AtendimentoOperacionalDTO dto = atendimentos.get( i );
+			Integer position = mapPositionHorarioAula.get( dto );
+
+			if ( position != currentPosition + 1 )
+			{
+				result.add( new ArrayList< AtendimentoOperacionalDTO >() );
+			}
+
+			result.get( result.size() - 1 ).add( dto );
+
+			currentPosition = position;
+		}
+
+		return result;
 	}
 
 	private ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > montaListaParaVisaoCursoTatico(
@@ -980,7 +1035,7 @@ public class AtendimentosServiceImpl
 	@Override
 	public List< AtendimentoOperacionalDTO > getAtendimentosOperacional(
 		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
-		TurnoDTO turnoDTO, boolean isVisaoProfessor )
+		TurnoDTO turnoDTO, boolean isVisaoProfessor, SemanaLetivaDTO semanaLetivaDTO )
 	{
 		boolean isAdmin = isAdministrador();
 		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
@@ -991,10 +1046,13 @@ public class AtendimentosServiceImpl
 		ProfessorVirtual professorVirtual = ( professorVirtualDTO == null ? null :
 			ProfessorVirtual.find( professorVirtualDTO.getId(), getInstituicaoEnsinoUser() ) );
 
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
+
 		List< AtendimentoOperacional > atendimentosOperacional
 			= AtendimentoOperacional.getAtendimentosOperacional(
 				getInstituicaoEnsinoUser(), isAdmin, professor,
-				professorVirtual, turno, isVisaoProfessor );
+				professorVirtual, turno, isVisaoProfessor, semanaLetiva );
 
 		List< AtendimentoOperacional > atendimentosOperacionalDistinct
 			= new ArrayList< AtendimentoOperacional >();
@@ -1090,7 +1148,7 @@ public class AtendimentosServiceImpl
 
 				// Procura pelo horário correspondente ao início da aula
 				HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
-				    ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ), getInstituicaoEnsinoUser() );
+				    ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ) );
 
 				for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
 				{
@@ -1165,7 +1223,7 @@ public class AtendimentosServiceImpl
 
 				// Procura pelo horário correspondente ao início da aula
 				HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
-					ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ), getInstituicaoEnsinoUser() );
+					ConvertBeans.toListAtendimentoOperacional( ordenadoPorHorario ) );
 
 				for ( int i = 1; i < ordenadoPorHorario.size(); i++ )
 				{

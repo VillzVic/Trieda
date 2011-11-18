@@ -21,11 +21,13 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
+import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class RelatorioVisaoProfessorView extends MyComposite
+public class RelatorioVisaoProfessorView
+	extends MyComposite
 	implements RelatorioVisaoProfessorPresenter.Display
 {
 	private SimpleToolBar toolBar;
@@ -33,6 +35,7 @@ public class RelatorioVisaoProfessorView extends MyComposite
 	private Button submitBt;
 	private CampusComboBox campusCB;
 	private TurnoComboBox turnoCB;
+	private SemanaLetivaComboBox semanaLetivaCB;
 	private ProfessorComboBox professorCB;
 	private ProfessorVirtualComboBox professorVirtualCB;
 	private ContentPanel panel;
@@ -46,12 +49,12 @@ public class RelatorioVisaoProfessorView extends MyComposite
 		this.usuario = usuario;
 		this.isVisaoProfessor = isVisaoProfessor;
 
-		initUI();
+		this.initUI();
 	}
 
 	public boolean isVisaoProfessor()
 	{
-		return isVisaoProfessor;
+		return this.isVisaoProfessor;
 	}
 
 	public void setVisaoProfessor( boolean isVisaoProfessor )
@@ -62,26 +65,30 @@ public class RelatorioVisaoProfessorView extends MyComposite
 	private void createToolBar()
 	{
 		// Exibe apenas o botão 'exportExcel'
-		toolBar = new SimpleToolBar( false, false, false, false, true, this );
-		panel.setTopComponent( toolBar );
+		this.toolBar = new SimpleToolBar(
+			false, false, false, false, true, this );
+
+		this.panel.setTopComponent( this.toolBar );
 	}
 
 	private void initUI()
 	{
-		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Grade Horária Visão Professor" );
-		createToolBar();
-		createGrid();
-		createFilter();
-		createTabItem();
-		initComponent( tabItem );
+		this.panel = new ContentPanel( new BorderLayout() );
+		this.panel.setHeading( "Master Data » Grade Horária Visão Professor" );
+
+		this.createToolBar();
+		this.createGrid();
+		this.createFilter();
+		this.createTabItem();
+		this.initComponent( this.tabItem );
 	}
 
 	private void createTabItem()
 	{
-		tabItem = new GTabItem( "Grade Horária Visão Professor",
+		this.tabItem = new GTabItem( "Grade Horária Visão Professor",
 			Resources.DEFAULTS.saidaProfessor16() );
-		tabItem.setContent( panel );
+
+		this.tabItem.setContent( this.panel );
 	}
 
 	private void createGrid()
@@ -95,36 +102,40 @@ public class RelatorioVisaoProfessorView extends MyComposite
 
 	private void createFilter()
 	{
-		FormData formData = new FormData("100%");
+		FormData formData = new FormData( "100%" );
 		FormPanel panel = new FormPanel();
-		panel.setHeaderVisible(true);
-		panel.setHeading("Filtro");
+		panel.setHeaderVisible( true );
+		panel.setHeading( "Filtro" );
 
 		LayoutContainer main = new LayoutContainer( new ColumnLayout() );
 		LayoutContainer left = new LayoutContainer( new FormLayout( LabelAlign.RIGHT ) );
 		LayoutContainer right = new LayoutContainer( new FormLayout( LabelAlign.RIGHT ) );
 
-		if ( usuario.isAdministrador() )
+		if ( this.usuario.isAdministrador() )
 		{
-			campusCB = new CampusComboBox();
-			left.add( campusCB, formData );
+			this.campusCB = new CampusComboBox();
+			left.add( this.campusCB, formData );
 		}
 
-		turnoCB = new TurnoComboBox( campusCB, usuario.isProfessor() );
-		left.add( turnoCB, formData );
+		this.turnoCB = new TurnoComboBox(
+			this.campusCB, usuario.isProfessor() );
+		left.add( this.turnoCB, formData );
 
-		if ( usuario.isAdministrador() )
+		this.semanaLetivaCB = new SemanaLetivaComboBox();
+		left.add( this.semanaLetivaCB, formData );
+
+		if ( this.usuario.isAdministrador() )
 		{
-			professorCB = new ProfessorComboBox( campusCB );
-			right.add( professorCB, formData );
+			this.professorCB = new ProfessorComboBox( this.campusCB );
+			right.add( this.professorCB, formData );
 
-			professorVirtualCB = new ProfessorVirtualComboBox( campusCB );
-			right.add( professorVirtualCB, formData );
+			this.professorVirtualCB = new ProfessorVirtualComboBox( this.campusCB );
+			right.add( this.professorVirtualCB, formData );
 		}
 
-		submitBt = new Button( "Filtrar", AbstractImagePrototype.create(
-			Resources.DEFAULTS.filter16() ) );
-		panel.addButton( submitBt );
+		this.submitBt = new Button( "Filtrar",
+			AbstractImagePrototype.create( Resources.DEFAULTS.filter16() ) );
+		panel.addButton( this.submitBt );
 
 		main.add( left, new ColumnData( 0.5 ) );
 		main.add( right, new ColumnData( 0.5 ) );
@@ -136,13 +147,13 @@ public class RelatorioVisaoProfessorView extends MyComposite
 		bld.setMargins( new Margins( 5, 5, 0, 5 ) );
 		bld.setCollapsible( true );
 
-		if ( usuario.isAdministrador() )
+		if ( this.usuario.isAdministrador() )
 		{
-			bld.setSize( 130 );
+			bld.setSize( 150 );
 		}
 		else
 		{
-			bld.setSize( 103 );
+			bld.setSize( 123 );
 		}
 
 		this.panel.add( panel, bld );
@@ -151,42 +162,48 @@ public class RelatorioVisaoProfessorView extends MyComposite
 	@Override
 	public GradeHorariaProfessorGrid getGrid()
 	{
-		return grid;
+		return this.grid;
 	}
 
 	@Override
 	public Button getSubmitBuscaButton()
 	{
-		return submitBt;
+		return this.submitBt;
 	}
 
 	@Override
 	public CampusComboBox getCampusComboBox()
 	{
-		return campusCB;
+		return this.campusCB;
 	}
 
 	@Override
 	public TurnoComboBox getTurnoComboBox()
 	{
-		return turnoCB;
+		return this.turnoCB;
+	}
+
+	@Override
+	public SemanaLetivaComboBox getSemanaLetivaComboBox()
+	{
+		return this.semanaLetivaCB;
 	}
 
 	@Override
 	public ProfessorComboBox getProfessorComboBox()
 	{
-		return professorCB;
+		return this.professorCB;
 	}
 
 	@Override
 	public ProfessorVirtualComboBox getProfessorVirtualComboBox()
 	{
-		return professorVirtualCB;
+		return this.professorVirtualCB;
 	}
 
 	@Override
 	public Button getExportExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return this.toolBar.getExportExcelButton();
 	}
 }

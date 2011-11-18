@@ -25,6 +25,7 @@ import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.Element;
@@ -39,6 +40,7 @@ public class GradeHorariaProfessorGrid
 	private ProfessorDTO professorDTO;
 	private ProfessorVirtualDTO professorVirtualDTO;
 	private TurnoDTO turnoDTO;
+	private SemanaLetivaDTO semanaLetivaDTO;	
 	private QuickTip quickTip;
 	private List< Long > disciplinasCores = new ArrayList< Long >();
 
@@ -95,7 +97,7 @@ public class GradeHorariaProfessorGrid
 
 	public void requestAtendimentos()
 	{
-		if ( getTurnoDTO() == null
+		if ( getTurnoDTO() == null || getSemanaLetivaDTO() == null
 			|| ( getProfessorDTO() == null && getProfessorVirtualDTO() == null ) )
 		{
 			return;
@@ -105,7 +107,7 @@ public class GradeHorariaProfessorGrid
 			"aguarde alguns instantes", "loading" );
 
 		Services.atendimentos().getAtendimentosOperacional( getProfessorDTO(),
-			getProfessorVirtualDTO(), getTurnoDTO(), this.isVisaoProfessor(),
+			getProfessorVirtualDTO(), getTurnoDTO(), this.isVisaoProfessor(), getSemanaLetivaDTO(),
 			new AsyncCallback< List< AtendimentoOperacionalDTO > >()
 			{
 				@Override
@@ -338,6 +340,17 @@ public class GradeHorariaProfessorGrid
 	public void setTurnoDTO( TurnoDTO turnoDTO )
 	{
 		this.turnoDTO = turnoDTO;
+	}
+
+	public SemanaLetivaDTO getSemanaLetivaDTO()
+	{
+		return this.semanaLetivaDTO;
+	}
+
+	public void setSemanaLetivaDTO(
+		SemanaLetivaDTO semanaLetivaDTO )
+	{
+		this.semanaLetivaDTO = semanaLetivaDTO;
 	}
 
 	public String getCssDisciplina( long id )

@@ -140,8 +140,8 @@ public class GradeHorariaCursoGrid
 			+ "aguarde alguns instantes", "loading" );
 
 		SemanasLetivaServiceAsync semanasLetivaService = Services.semanasLetiva();
-		semanasLetivaService.findSemanaLetiva(
-			getCurriculoDTO().getSemanaLetivaId(),
+
+		semanasLetivaService.findSemanaLetiva( getCurriculoDTO().getSemanaLetivaId(),
 			new AsyncCallback< SemanaLetivaDTO >()
 		{
 			@Override
@@ -159,7 +159,8 @@ public class GradeHorariaCursoGrid
 
 		AtendimentosServiceAsync serviceAtendimentos = Services.atendimentos();
 
-		serviceAtendimentos.getBusca( getCurriculoDTO(), getPeriodo(), getTurnoDTO(), getCampusDTO(), getCursoDTO(),
+		serviceAtendimentos.getBusca(
+			getCurriculoDTO(), getPeriodo(), getTurnoDTO(), getCampusDTO(), getCursoDTO(),
 			new AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > >()
 		{
 			@Override
@@ -366,7 +367,7 @@ public class GradeHorariaCursoGrid
 				};
 
 				html.addStyleName( "horario" );
-				html.addStyleName( "c" + ( rowIndex + 1 ) ); // Posiciona na linha ( credito )
+				html.addStyleName( "c" + ( rowIndex + 1 ) ); // Posiciona na linha ( crédito )
 				html.addStyleName( "tc" + atDTO.getTotalCreditos() ); // Altura
 				html.addStyleName( "s" + atDTO.getSemana() ); // Posiciona na coluna ( dia semana )
 				html.addStyleName( getCssDisciplina( atDTO.getDisciplinaId() ) );

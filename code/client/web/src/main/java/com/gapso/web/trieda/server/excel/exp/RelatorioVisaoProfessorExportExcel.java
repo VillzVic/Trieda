@@ -173,15 +173,16 @@ public class RelatorioVisaoProfessorExportExcel
 		List< Professor > professores = null;
 		List< ProfessorVirtual > professoresVirtuais = null;
 		List< Turno > turnos = null;
+		List< SemanaLetiva > semanasLetivas = null;
 
 		// Recupera os dados preenchidos nos filtros
-		if ( relatorioFiltro != null )
+		if ( this.relatorioFiltro != null )
 		{
-			Professor professor = ( relatorioFiltro.getProfessorDTO() == null ? null :
-				Professor.find( relatorioFiltro.getProfessorDTO().getId(), this.instituicaoEnsino ) );
+			Professor professor = ( this.relatorioFiltro.getProfessorDTO() == null ? null :
+				Professor.find( this.relatorioFiltro.getProfessorDTO().getId(), this.instituicaoEnsino ) );
 
-			ProfessorVirtual professorVirtual = ( relatorioFiltro.getProfessorVirtualDTO() == null ? null :
-				ProfessorVirtual.find( relatorioFiltro.getProfessorVirtualDTO().getId(), this.instituicaoEnsino ) );
+			ProfessorVirtual professorVirtual = ( this.relatorioFiltro.getProfessorVirtualDTO() == null ? null :
+				ProfessorVirtual.find( this.relatorioFiltro.getProfessorVirtualDTO().getId(), this.instituicaoEnsino ) );
 
 			if ( professor != null )
 			{
@@ -194,8 +195,8 @@ public class RelatorioVisaoProfessorExportExcel
 				professoresVirtuais.add( professorVirtual );
 			}
 
-			Turno turno = ( relatorioFiltro.getTurnoDTO() == null ? null :
-				Turno.find( relatorioFiltro.getTurnoDTO().getId(), this.instituicaoEnsino ) );
+			Turno turno = ( this.relatorioFiltro.getTurnoDTO() == null ? null :
+				Turno.find( this.relatorioFiltro.getTurnoDTO().getId(), this.instituicaoEnsino ) );
 
 			if ( turno == null )
 			{
@@ -205,6 +206,19 @@ public class RelatorioVisaoProfessorExportExcel
 			{
 				turnos = new ArrayList< Turno >( 1 );
 				turnos.add( turno );
+			}
+
+			SemanaLetiva semanaLetiva = ( this.relatorioFiltro.getSemanaLetivaDTO() == null ? null :
+				SemanaLetiva.find( this.relatorioFiltro.getSemanaLetivaDTO().getId(), this.instituicaoEnsino ) ); 
+
+			if ( semanaLetiva != null )
+			{
+				semanasLetivas = new ArrayList< SemanaLetiva >(  );
+				semanasLetivas.add( semanaLetiva );
+			}
+			else
+			{
+				semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
 			}
 		}
 		else
@@ -225,11 +239,14 @@ public class RelatorioVisaoProfessorExportExcel
 			{
 				for ( Turno turno : turnos )
 				{
-					List< AtendimentoOperacional > atendimentos
-						= AtendimentoOperacional.getAtendimentosOperacional( instituicaoEnsino,
-							idAdmin, professor, null, turno, this.isVisaoProfessor() );
+					for ( SemanaLetiva s : semanasLetivas )
+					{
+						List< AtendimentoOperacional > atendimentos
+							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
+								idAdmin, professor, null, turno, this.isVisaoProfessor(), s );
 
-					atendimentosOperacional.addAll( atendimentos );
+						atendimentosOperacional.addAll( atendimentos );
+					}
 				}
 			}
 		}
@@ -241,11 +258,14 @@ public class RelatorioVisaoProfessorExportExcel
 			{
 				for ( Turno turno : turnos )
 				{
-					List< AtendimentoOperacional > atendimentos
-						= AtendimentoOperacional.getAtendimentosOperacional( instituicaoEnsino,
-							idAdmin, null, professorVirtual, turno, this.isVisaoProfessor() );
+					for ( SemanaLetiva s : semanasLetivas )
+					{
+						List< AtendimentoOperacional > atendimentos
+							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
+								idAdmin, null, professorVirtual, turno, this.isVisaoProfessor(), s );
 
-					atendimentosOperacional.addAll( atendimentos );
+						atendimentosOperacional.addAll( atendimentos );
+					}
 				}
 			}
 		}
@@ -645,35 +665,35 @@ public class RelatorioVisaoProfessorExportExcel
 		int col = 3;
 
 		// Campus
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().campus() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], campus.getCodigo() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().campus() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], campus.getCodigo() );
 
 		// Professor
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professor() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professor.getNome() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professor() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professor.getNome() );
 
 		row++;
 		col = 3;
 
 		// Turno
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().turno() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], turno.getNome() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().turno() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], turno.getNome() );
 
 		// Professor Virtual
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
 			this.getI18nConstants().professorVirtual() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], "" );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], "" );
 
 		row++;
 		col = 2;
 
 		// Créditos
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], this.getI18nConstants().creditos() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], this.getI18nConstants().creditos() );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )
 		{
-			setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], semanas.name() );
+			setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], semanas.name() );
 		}
 
 		row++;
@@ -686,34 +706,34 @@ public class RelatorioVisaoProfessorExportExcel
 		int col = 3;
 
 		// Campus
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().campus() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], campus.getCodigo() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().campus() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], campus.getCodigo() );
 
 		// Professor
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professor() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], "" );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professor() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], "" );
 
 		row++;
 		col = 3;
 
 		// Turno
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().turno() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], turno.getNome() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().turno() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], turno.getNome() );
 
 		// Professor Virtual
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professorVirtual() );
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professorVirtual.getNome() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ], this.getI18nConstants().professorVirtual() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ], professorVirtual.getNome() );
 
 		row++;
 		col = 2;
 
 		// Créditos
-		setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], this.getI18nConstants().creditos() );
+		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], this.getI18nConstants().creditos() );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )
 		{
-			setCell( row, col++, sheet, cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], semanas.name() );
+			setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ], semanas.name() );
 		}
 
 		row++;
@@ -750,7 +770,7 @@ public class RelatorioVisaoProfessorExportExcel
 	{
 		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
 		{
-			cellStyles[ cellStyleReference.ordinal() ]
+			this.cellStyles[ cellStyleReference.ordinal() ]
 				= getCell( cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
 		}
 	}

@@ -51,12 +51,12 @@ public class ResumoDisciplinaPresenter
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 
-		setListeners();
+		this.setListeners();
 	}
 
 	private void setListeners()
 	{
-		display.getCampusComboBox().addSelectionChangedListener(
+		this.display.getCampusComboBox().addSelectionChangedListener(
 			new SelectionChangedListener< CampusDTO >()
 			{
 				@Override
@@ -85,7 +85,7 @@ public class ResumoDisciplinaPresenter
 				}
 			});
 
-		display.getExportExcelButton().addSelectionListener(
+		this.display.getExportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -116,6 +116,6 @@ public class ResumoDisciplinaPresenter
 	public void go( Widget widget )
 	{
 		GTab tab = (GTab) widget;
-		tab.add( (GTabItem) display.getComponent() );
+		tab.add( (GTabItem) this.display.getComponent() );
 	}
 }

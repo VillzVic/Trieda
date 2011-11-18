@@ -86,7 +86,7 @@ public class SemanaLetivaDTO
 	}
 
 	public void setHorariosStringMap(
-			Map< Long, String > horariosStringMap )
+		Map< Long, String > horariosStringMap )
 	{
 		this.horariosStringMap = horariosStringMap;
 	}
@@ -110,7 +110,7 @@ public class SemanaLetivaDTO
 	@Override
 	public String getNaturalKey()
 	{
-		return getCodigo();
+		return this.getCodigo();
 	}
 
 	@Override
