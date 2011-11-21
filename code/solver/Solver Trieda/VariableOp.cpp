@@ -18,21 +18,21 @@ VariableOp::VariableOp( const VariableOp & var )
 
 void VariableOp::reset()
 {
-   type = VariableOp::V_ERROR;
-   value = 0;
-   curso = NULL;
-   h = NULL;
-   aula = NULL;
-   professor = NULL;
-   turma = -1;
-   disciplina = NULL;
-   disciplinaD = NULL;
-   disciplinaD1 = NULL;
-   sala = NULL;
-   horarioAula = NULL;
-   dia = -1;
-   h1 = NULL;
-   h2 = NULL;
+   this->type = VariableOp::V_ERROR;
+   this->value = 0;
+   this->curso = NULL;
+   this->h = NULL;
+   this->aula = NULL;
+   this->professor = NULL;
+   this->turma = -1;
+   this->disciplina = NULL;
+   this->horarioDiaD = NULL;
+   this->horarioDiaD1 = NULL;
+   this->sala = NULL;
+   this->horarioAula = NULL;
+   this->dia = -1;
+   this->h1 = NULL;
+   this->h2 = NULL;
 }
 
 VariableOp::~VariableOp()
@@ -51,15 +51,15 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    this->h = var.getHorario();
    this->turma = var.getTurma();
    this->disciplina = var.getDisciplina();
-   this->disciplinaD = var.getDisciplinaD();
-   this->disciplinaD1 = var.getDisciplinaD1();
+   this->horarioDiaD = var.getHorarioDiaD();
+   this->horarioDiaD1 = var.getHorarioDiaD1();
    this->sala = var.getSala();
    this->horarioAula = var.getHorarioAula();
    this->dia = var.getDia();
    this->h1 = var.getH1();
    this->h2 = var.getH2();
 
-   return *this;
+   return ( *this );
 }
 
 bool VariableOp::operator < ( const VariableOp & var ) const
@@ -163,20 +163,20 @@ bool VariableOp::operator < ( const VariableOp & var ) const
    else if ( (int)this->getTurma() > (int) var.getTurma() )
       return false;
 
-   if ( E_MENOR( this->getDisciplinaD(), var.getDisciplinaD() ) )
+   if ( E_MENOR( this->getHorarioDiaD(), var.getHorarioDiaD() ) )
    {
       return true;
    }
-   else if ( E_MENOR( var.getDisciplinaD(), this->getDisciplinaD() ) )
+   else if ( E_MENOR( var.getHorarioDiaD(), this->getHorarioDiaD() ) )
    {
       return false;
    }
 
-   if ( E_MENOR( this->getDisciplinaD1(), var.getDisciplinaD1() ) )
+   if ( E_MENOR( this->getHorarioDiaD1(), var.getHorarioDiaD1() ) )
    {
       return true;
    }
-   else if ( E_MENOR( var.getDisciplinaD1(), this->getDisciplinaD1() ) )
+   else if ( E_MENOR( var.getHorarioDiaD1(), this->getHorarioDiaD1() ) )
    {
       return false;
    }

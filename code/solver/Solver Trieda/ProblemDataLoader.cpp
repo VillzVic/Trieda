@@ -28,7 +28,8 @@ void ProblemDataLoader::load()
 
    problemData->le_arvore( *root );
 
-   std::cout << "Some preprocessing..." << std::endl;
+   std::cout << "Some preprocessing..."
+             << std::endl << std::endl;
 
    // ---------
    preencheTempoAulaHorarios();
@@ -154,7 +155,7 @@ void ProblemDataLoader::load()
    geraHorariosDia();
 
    // ---------
-   print_stats();
+   // print_stats();
 
    // ---------
    referenciaHorariosAula();
@@ -3057,12 +3058,14 @@ void ProblemDataLoader::estima_turmas()
 
 void ProblemDataLoader::print_stats()
 {
-   int ncampi(0), nunidades(0), nsalas(0), nconjuntoSalas(0),
-       ndiscs(0), ndiscsDiv(0), nturmas(0), nturmasDiscDiv(0),
-       nprofs(0), ncursos(0), nofertas(0), tdemanda(0), tdemandaDiv(0);
+   int ncampi( 0 ), nunidades( 0 ), nsalas( 0 ), nconjuntoSalas( 0 ),
+       ndiscs( 0 ), ndiscsDiv( 0 ), nturmas( 0 ), nturmasDiscDiv( 0 ),
+       nprofs( 0 ), ncursos( 0 ),   nofertas( 0 ), tdemanda( 0 ), tdemandaDiv( 0 );
 
    ncampi = problemData->campi.size();
-   ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
+
+   ITERA_GGROUP_LESSPTR( it_campi,
+      problemData->campi, Campus )
    {
       nunidades += ( it_campi->unidades.size() );
       ITERA_GGROUP_LESSPTR( it_und, it_campi->unidades, Unidade )
@@ -3076,15 +3079,16 @@ void ProblemDataLoader::print_stats()
    }
 
    nofertas = problemData->ofertas.size();
-   ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
+
+   ITERA_GGROUP_LESSPTR( itOferta,
+      problemData->ofertas, Oferta )
    {
       GGroup< std::pair< int, Disciplina * > >::iterator itPrdDisc =
          itOferta->curriculo->disciplinas_periodo.begin();
 
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end();
-         itPrdDisc++ )
+            itPrdDisc++ )
       {
-         // Disciplina * disc = problemData->refDisciplinas[ ( *itPrdDisc ).second ];
          Disciplina * disc = ( *itPrdDisc ).second;
 
          if ( disc->getId() > 0 )
@@ -3098,7 +3102,8 @@ void ProblemDataLoader::print_stats()
       }
    }
 
-   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( it_disc,
+      problemData->disciplinas, Disciplina )
    {
       if ( it_disc->getId() > 0 )
       {
@@ -3112,38 +3117,38 @@ void ProblemDataLoader::print_stats()
       }
    }
 
-   std::cout << std::endl;
-   std::cout << "Estatisticas de dados de entrada\n\n";
-   printf("<*> Campi:                 \t%4d\n",ncampi);
-   printf("<*> Unidades:              \t%4d\n",nunidades);
-   printf("<*> Salas:                 \t%4d\n",nsalas);
+   std::cout << "\nEstatisticas de dados de entrada:\n\n";
 
-   printf("<*> Conjuntos de Salas:    \t%4d\n",nconjuntoSalas);
+   printf( "<*> Campi:                 \t%4d\n", ncampi );
+   printf( "<*> Unidades:              \t%4d\n", nunidades );
+   printf( "<*> Salas:                 \t%4d\n", nsalas );
 
-   printf("<*> Disciplinas:\n");
-   printf("\t - Entrada:    \t%4d\n",ndiscs);
-   printf("\t - Divididas:  \t%4d\n",ndiscsDiv);   
-   printf("\t - Total:  \t%4d\n",ndiscs+ndiscsDiv);
+   printf( "<*> Conjuntos de Salas:    \t%4d\n", nconjuntoSalas );
 
-   printf("<*> Blocos Curriculares:  \t%4d\n",problemData->blocos.size());
+   printf( "<*> Disciplinas:\n");
+   printf( "\t - Entrada:    \t%4d\n", ndiscs );
+   printf( "\t - Divididas:  \t%4d\n", ndiscsDiv );   
+   printf( "\t - Total:  \t%4d\n", ndiscs + ndiscsDiv );
 
-   printf("<*> Turmas:\n");
-   printf("\t - Entrada:    \t%4d\n",nturmas);
-   printf("\t - Divididas:  \t%4d\n",nturmasDiscDiv);   
-   printf("\t - Total:  \t%4d\n",nturmas+nturmasDiscDiv);
+   printf( "<*> Blocos Curriculares:  \t%4d\n", problemData->blocos.size() );
 
-   printf("<*> Professores:  \t%4d\n",nprofs);
-   printf("<*> Cursos:       \t%4d\n",ncursos);
+   printf( "<*> Turmas:\n");
+   printf( "\t - Entrada:    \t%4d\n", nturmas );
+   printf( "\t - Divididas:  \t%4d\n", nturmasDiscDiv );
+   printf( "\t - Total:  \t%4d\n", nturmas + nturmasDiscDiv );
 
-   printf("<*> Ofertas:      \t%4d\n",nofertas);
+   printf( "<*> Professores:  \t%4d\n", nprofs );
+   printf( "<*> Cursos:       \t%4d\n", ncursos );
 
-   printf("<*> Demanda total\n");
-   printf("\t - Entrada:    \t%4d\n",tdemanda);
-   printf("\t - Divididas:  \t%4d\n",tdemandaDiv);   
-   printf("\t - Total:  \t%4d\n",tdemanda+tdemandaDiv);
+   printf( "<*> Ofertas:      \t%4d\n", nofertas );
 
-   std::cout << "================================" << std::endl
-      << std::endl;
+   printf( "<*> Demanda total\n");
+   printf( "\t - Entrada:    \t%4d\n", tdemanda );
+   printf( "\t - Divididas:  \t%4d\n", tdemandaDiv );   
+   printf( "\t - Total:  \t%4d\n", tdemanda + tdemandaDiv );
+
+   std::cout << "================================"
+             << std::endl << std::endl;
 }
 
 // Salva algumas informações que são usadas frequentemente
@@ -3698,9 +3703,6 @@ void ProblemDataLoader::criaAulas()
       // após a execução dos método de criação 
       // de blocos curriculares e de criação das aulas.
       relacionaBlocoCurricularAulas();
-
-      std::cout << "Total de aulas criadas: "
-                << problemData->aulas.size() << std::endl;
    }
 }
 

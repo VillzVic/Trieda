@@ -50,23 +50,23 @@ public:
    // GET METHODS 
    //==================================================
    // Return variable type
-   VariableOpType getType() const { return type; }
+   VariableOpType getType() const { return this->type; }
 
    // Return value
-   double getValue() const { return value; }
+   double getValue() const { return this->value; }
    Curso * getCurso() const { return this->curso; }
-   HorarioDia * getHorario() const { return h; }
-   HorarioAula * getHorarioAula() const { return horarioAula; }
-   Aula * getAula() const { return aula; }
-   Professor * getProfessor() const { return professor; }
-   Disciplina * getDisciplina() const { return disciplina; }
-   Disciplina * getDisciplinaD() const { return disciplinaD; }
-   Disciplina * getDisciplinaD1() const { return disciplinaD1; }
-   Sala * getSala() const { return sala; }
-   int getTurma() const { return turma; }
-   int getDia() const { return dia; }
-   HorarioAula * getH1() const { return h1; }
-   HorarioAula * getH2() const { return h2; }
+   HorarioDia * getHorario() const { return this->h; }
+   HorarioAula * getHorarioAula() const { return this->horarioAula; }
+   Aula * getAula() const { return this->aula; }
+   Professor * getProfessor() const { return this->professor; }
+   Disciplina * getDisciplina() const { return this->disciplina; }
+   HorarioDia * getHorarioDiaD() const { return this->horarioDiaD; }
+   HorarioDia * getHorarioDiaD1() const { return this->horarioDiaD1; }
+   Sala * getSala() const { return this->sala; }
+   int getTurma() const { return this->turma; }
+   int getDia() const { return this->dia; }
+   HorarioAula * getH1() const { return this->h1; }
+   HorarioAula * getH2() const { return this->h2; }
 
    //==================================================
    // SET METHODS 
@@ -75,21 +75,21 @@ public:
    void reset();
 
    // Set value
-   void setValue( double v ) { value = v; }
+   void setValue( double v ) { this->value = v; }
    void setCurso( Curso * c ) { this->curso = c; }
-   void setHorario( HorarioDia * hh ) {  h = hh; }
-   void setHorarioAula( HorarioAula * hh ) {  horarioAula = hh; }
-   void setAula( Aula * a ) {  aula = a; }
-   void setProfessor( Professor * p ) { professor = p; }
-   void setTurma (int aTurma) { turma = aTurma; }
-   void setDia ( int aDia ) { dia = aDia; }
-   void setDisciplina ( Disciplina * aD ) { disciplina = aD; }
-   void setDisciplinaD ( Disciplina * aD ) { disciplinaD = aD; }
-   void setDisciplinaD1 ( Disciplina * aD ) { disciplinaD1 = aD; }
-   void setSala ( Sala * aS ) { sala = aS; }
-   void setType( VariableOpType t ) { type = t; }
-   void setH1 ( HorarioAula * aH1 ) { h1 = aH1; }
-   void setH2 ( HorarioAula * aH2 ) { h2 = aH2; }
+   void setHorario( HorarioDia * hh ) {  this->h = hh; }
+   void setHorarioAula( HorarioAula * hh ) {  this->horarioAula = hh; }
+   void setAula( Aula * a ) {  this->aula = a; }
+   void setProfessor( Professor * p ) { this->professor = p; }
+   void setTurma ( int aTurma ) { this->turma = aTurma; }
+   void setDia ( int aDia ) { this->dia = aDia; }
+   void setDisciplina ( Disciplina * aD ) { this->disciplina = aD; }
+   void setHorarioDiaD ( HorarioDia * hD ) { this->horarioDiaD = hD; }
+   void setHorarioDiaD1 ( HorarioDia * hD ) { this->horarioDiaD1 = hD; }
+   void setSala ( Sala * aS ) { this->sala = aS; }
+   void setType( VariableOpType t ) { this->type = t; }
+   void setH1 ( HorarioAula * aH1 ) { this->h1 = aH1; }
+   void setH2 ( HorarioAula * aH2 ) { this->h2 = aH2; }
 
    //==================================================
    // OPERATORS 
@@ -117,10 +117,10 @@ private:
    int turma;
    int dia;
 
-   // Disciplinas utilizadas no modelo operacional,
+   // Horarios-Dia utilizados no modelo operacional,
    // no critério de última aula do dia D e primeira aula do dia D+1
-   Disciplina * disciplinaD;
-   Disciplina * disciplinaD1;
+   HorarioDia * horarioDiaD;
+   HorarioDia * horarioDiaD1;
 
    // Horários de aula utilizados no modelo operacional,
    // no critério de minimização de gaps nos horários dos professores

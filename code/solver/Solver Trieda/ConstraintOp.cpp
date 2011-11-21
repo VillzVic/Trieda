@@ -37,6 +37,8 @@ ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
    this->horarioAula = cons.getHorarioAula();
    this->h1 = cons.getH1();
    this->h2 = cons.getH2();
+   this->horarioDiaD = cons.horarioDiaD;
+   this->horarioDiaD1 = cons.horarioDiaD1;
 
    return *this;
 }
@@ -44,14 +46,22 @@ ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
 bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 {
    if( (int)this->getType() < (int) cons.getType() )
+   {
       return true;
+   }
    else if( (int)this->getType() > (int) cons.getType() )
+   {
       return false;
+   }
 
    if( this->getCurso() == NULL && cons.getCurso() != NULL )
+   {
 		return true;
+   }
 	else if( this->getCurso() != NULL && cons.getCurso() == NULL )
+   {
 		return false;
+   }
 	else if( this->getCurso() != NULL && cons.getCurso() != NULL )
 	{
 		if( *this->getCurso() < *cons.getCurso() )
@@ -61,9 +71,13 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( this->getAula() == NULL && cons.getAula() != NULL )
+   {
 		return true;
+   }
 	else if( this->getAula() != NULL && cons.getAula() == NULL )
+   {
 		return false;
+   }
 	else if( this->getAula() != NULL && cons.getAula() != NULL )
 	{
 		if( *this->getAula() < *cons.getAula() )
@@ -73,9 +87,13 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( this->getProfessor() == NULL && cons.getProfessor() != NULL )
+   {
 		return true;
+   }
 	else if( this->getProfessor() != NULL && cons.getProfessor() == NULL )
+   {
 		return false;
+   }
 	else if( this->getProfessor() != NULL && cons.getProfessor() != NULL )
 	{
 		if( *this->getProfessor() < *cons.getProfessor() )
@@ -85,9 +103,13 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( this->getSala() == NULL && cons.getSala() != NULL )
+   {
 		return true;
+   }
 	else if( this->getSala() != NULL && cons.getSala() == NULL )
+   {
 		return false;
+   }
 	else if( this->getSala() != NULL && cons.getSala() != NULL )
 	{
 		if( *this->getSala() < *cons.getSala() )
@@ -97,9 +119,13 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( this->getBloco() == NULL && cons.getBloco() != NULL )
+   {
 		return true;
+   }
 	else if( this->getBloco() != NULL && cons.getBloco() == NULL )
+   {
 		return false;
+   }
 	else if( this->getBloco() != NULL && cons.getBloco() != NULL )
 	{
 		if( *this->getBloco() < *cons.getBloco() )
@@ -109,9 +135,13 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( this->getHorario() == NULL && cons.getHorario() != NULL )
+   {
 		return true;
+   }
 	else if( this->getHorario() != NULL && cons.getHorario() == NULL )
+   {
 		return false;
+   }
 	else if( this->getHorario() != NULL && cons.getHorario() != NULL )
 	{
 		if( *this->getHorario() < *cons.getHorario() )
@@ -121,9 +151,13 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( this->getHorarioAula() == NULL && cons.getHorarioAula() != NULL )
+   {
 		return true;
+   }
 	else if( this->getHorarioAula() != NULL && cons.getHorarioAula() == NULL )
+   {
 		return false;
+   }
 	else if( this->getHorarioAula() != NULL && cons.getHorarioAula() != NULL )
 	{
 		if( *this->getHorarioAula() < *cons.getHorarioAula() )
@@ -133,9 +167,13 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( this->getDisciplina() == NULL && cons.getDisciplina() != NULL )
+   {
 		return true;
+   }
 	else if( this->getDisciplina() != NULL && cons.getDisciplina() == NULL )
+   {
 		return false;
+   }
 	else if( this->getDisciplina() != NULL && cons.getDisciplina() != NULL )
 	{
 		if( *this->getDisciplina() < *cons.getDisciplina() )
@@ -145,19 +183,49 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
 	}
 
    if( (int)this->getTurma() < (int) cons.getTurma() )
+   {
       return true;
+   }
    else if( (int)this->getTurma() > (int) cons.getTurma() )
+   {
       return false;
+   }
+
+   if ( E_MENOR( this->getHorarioDiaD(), cons.getHorarioDiaD() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( cons.getHorarioDiaD(), this->getHorarioDiaD() ) )
+   {
+      return false;
+   }
+
+   if ( E_MENOR( this->getHorarioDiaD1(), cons.getHorarioDiaD1() ) )
+   {
+      return true;
+   }
+   else if ( E_MENOR( cons.getHorarioDiaD1(), this->getHorarioDiaD1() ) )
+   {
+      return false;
+   }
 
    if( (int)this->getDia() < (int) cons.getDia() )
+   {
       return true;
+   }
    else if( (int)this->getDia() > (int) cons.getDia() )
+   {
       return false;
+   }
 
    if( (int)this->getSubBloco() < (int) cons.getSubBloco() )
+   {
       return true;
+   }
    else if( (int)this->getSubBloco() > (int) cons.getSubBloco() )
+   {
       return false;
+   }
 
    if ( E_MENOR( this->getH1(), cons.getH1() ) )
    {
@@ -187,20 +255,22 @@ bool ConstraintOp::operator == ( const ConstraintOp & cons ) const
 
 void ConstraintOp::reset()
 {
-   curso = NULL;
-   aula = NULL;
-   professor = NULL;
-   s = NULL;
-   b = NULL;
-   j = -1;
-   t = -1;
-   h = NULL;
-   disciplina = NULL;
-   turma = -1;
-   horarioAula = NULL;
-   type = C_PROFESSOR_HORARIO;
-   h1 = NULL;
-   h2 = NULL;
+   this->curso = NULL;
+   this->aula = NULL;
+   this->professor = NULL;
+   this->s = NULL;
+   this->b = NULL;
+   this->j = -1;
+   this->t = -1;
+   this->h = NULL;
+   this->disciplina = NULL;
+   this->turma = -1;
+   this->horarioAula = NULL;
+   this->type = C_PROFESSOR_HORARIO;
+   this->h1 = NULL;
+   this->h2 = NULL;
+   this->horarioDiaD = NULL;
+   this->horarioDiaD1 = NULL;
 }
 
 std::string ConstraintOp::toString()

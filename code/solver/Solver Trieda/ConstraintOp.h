@@ -90,6 +90,8 @@ public:
    int getTurma() const { return turma; }
    HorarioAula * getH1() const { return h1; }
    HorarioAula * getH2() const { return h2; }
+   HorarioDia * getHorarioDiaD() const { return this->horarioDiaD; }
+   HorarioDia * getHorarioDiaD1() const { return this->horarioDiaD1; }
 
    //==================================================
    // SET METHODS 
@@ -112,6 +114,8 @@ public:
    void setTurma( int aT ) { turma = aT; }
    void setH1 ( HorarioAula * aH1 ) { h1 = aH1; }
    void setH2 ( HorarioAula * aH2 ) { h2 = aH2; }
+   void setHorarioDiaD ( HorarioDia * hD ) { this->horarioDiaD = hD; }
+   void setHorarioDiaD1 ( HorarioDia * hD ) { this->horarioDiaD1 = hD; }
 
 private:
    /** Attribute which defines the constraint type of the instance. */
@@ -133,6 +137,11 @@ private:
    // no critério de minimização de gaps nos horários dos professores
    HorarioAula * h1;
    HorarioAula * h2;
+
+   // Horarios-Dia utilizados no modelo operacional,
+   // no critério de última aula do dia D e primeira aula do dia D + 1
+   HorarioDia * horarioDiaD;
+   HorarioDia * horarioDiaD1;
 };
 
 /**

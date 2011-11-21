@@ -14,7 +14,7 @@
 
 ProblemData::ProblemData()
 {
-   atendimentosTatico = NULL;
+   this->atendimentosTatico = NULL;
 }
 
 ProblemData::~ProblemData()
@@ -145,22 +145,24 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    // Informa o modo de otimização que será execuado
    if ( primeiroCaso )
    {
-	   std::cout << "TATICO" << std::endl;
+	   std::cout << "TATICO" << std::endl << std::endl;
    }
    else if ( segundoCaso )
    {
-	   std::cout << "OPERACIONAL COM OUTPUT TATICO" << std::endl;
+	   std::cout << "OPERACIONAL COM OUTPUT TATICO"
+                << std::endl << std::endl;
    }
    else if ( terceiroCaso )
    {
-	   std::cout << "OPERACIONAL SEM OUTPUT TATICO" << std::endl;
+	   std::cout << "OPERACIONAL SEM OUTPUT TATICO"
+                << std::endl << std::endl;
    }
 	else
 	{
 		// ERRO no XML de entrada
 		std::cout << "ERROR!!! input inválido para os campos:"
 				    << "\n'horariosDisponiveis' e/ou 'creditosDisponiveis'"
-				    << "\n\nSando." << std::endl;
+				    << "\n\nSaindo." << std::endl << std::endl;
 
 		exit( 1 );
 	}
@@ -492,22 +494,54 @@ bool ProblemData::verificaDisponibilidadeDisciplinaHorario(
    return result;
 }
 
-bool ProblemData::verificaUltimaPrimeiraAulas( HorarioDia * h1, HorarioDia * h2 )
+bool ProblemData::verificaUltimaPrimeiraAulas(
+   HorarioDia * h1, HorarioDia * h2 )
 {
+   if ( h1 == NULL || h2 == NULL )
+   {
+      return false;
+   }
+
+   if ( h1->getHorarioAula() == NULL
+      || h2->getHorarioAula() == NULL )
+   {
+      return false;
+   }
+
+   if ( h1->getHorarioAula()->getCalendario() == NULL
+      || h2->getHorarioAula()->getCalendario() == NULL )
+   {
+      return false;
+   }
+
+   if ( h1->getDia() <= 0
+      || h2->getDia() <= 0 )
+   {
+      return false;
+   }
+
    if ( abs( h1->getDia() - h2->getDia() ) == 1
       && h1->getHorarioAula()->getCalendario() == h2->getHorarioAula()->getCalendario() )
    {
       Calendario * calendario = h1->getHorarioAula()->getCalendario();
 
-      HorarioAula * primeiroHorario = this->mapCalendarioHorariosAulaOrdenados[ calendario ][ 0 ];
-
-      HorarioAula * ultimoHorario = this->mapCalendarioHorariosAulaOrdenados[ calendario ]
-         [ this->mapCalendarioHorariosAulaOrdenados[ calendario ].size() - 1 ];
-
-      if ( ( h1->getHorarioAula() == primeiroHorario && h2->getHorarioAula() == ultimoHorario )
-         || ( h2->getHorarioAula() == primeiroHorario && h1->getHorarioAula() == ultimoHorario ) )
+      if ( this->mapCalendarioHorariosAulaOrdenados.find( calendario )
+         != this->mapCalendarioHorariosAulaOrdenados.end()
+         && this->mapCalendarioHorariosAulaOrdenados[ calendario ].size() > 0 )
       {
-         return true;
+         HorarioAula * primeiroHorario = this->mapCalendarioHorariosAulaOrdenados[ calendario ][ 0 ];
+
+         HorarioAula * ultimoHorario = this->mapCalendarioHorariosAulaOrdenados
+            [ calendario ][ this->mapCalendarioHorariosAulaOrdenados[ calendario ].size() - 1 ];
+
+         if ( primeiroHorario != NULL && ultimoHorario != NULL )
+         {
+            if ( ( h1->getHorarioAula() == primeiroHorario && h2->getHorarioAula() == ultimoHorario )
+               || ( h2->getHorarioAula() == primeiroHorario && h1->getHorarioAula() == ultimoHorario ) )
+            {
+               return true;
+            }
+         }
       }
    }
 
