@@ -631,7 +631,7 @@ int SolverMIP::solveTaticoBasico()
    lp->setTimeLimit( 600 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
-   lp->writeProbLP( "Solver Trieda" );
+   //lp->writeProbLP( "Solver Trieda" );
 
 #ifndef READ_SOLUTION_TATICO_BIN
    status = lp->optimize( METHOD_PRIMAL );
@@ -1813,7 +1813,7 @@ int SolverMIP::solveOperacionalMIP()
    printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
-   lp->writeProbLP( "SolverOperacional" );
+  // lp->writeProbLP( "SolverOperacional" );
 
 #ifdef DEBUG
    lp->writeProbLP( "SolverOperacional" );
@@ -10997,6 +10997,11 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
          {
             //Disciplina * nova_disc = new Disciplina();
 			std::map< int, Disciplina* >::iterator it_Ref_Disc = problemData->refDisciplinas.find( *it_inc );
+			if ( it_Ref_Disc == problemData->refDisciplinas.end() )
+			{ 
+				continue;
+			}
+
 			Disciplina * nova_disc = it_Ref_Disc->second;
 
 			//nova_disc->setId( *it_inc );
