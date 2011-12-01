@@ -10995,8 +10995,11 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
       {
          ITERA_GGROUP_N_PT( it_inc, disciplina->ids_disciplinas_incompativeis, int )
          {
-            Disciplina * nova_disc = new Disciplina();
-            nova_disc->setId( *it_inc );
+            //Disciplina * nova_disc = new Disciplina();
+			std::map< int, Disciplina* >::iterator it_Ref_Disc = problemData->refDisciplinas.find( *it_inc );
+			Disciplina * nova_disc = it_Ref_Disc->second;
+
+			//nova_disc->setId( *it_inc );
 
             c.reset();
             c.setType( Constraint::C_DISC_INCOMPATIVEIS );
@@ -11028,10 +11031,9 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
 
             v.setDisciplina( nova_disc );
 
-            delete nova_disc;
-
             it_v = vHash.find( v );
-            if ( it_v != vHash.end() )
+
+			if ( it_v != vHash.end() )
             {
                row.insert(it_v->second, 1.0);
             }
@@ -11043,6 +11045,7 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
                lp->addRow( row );
                restricoes++;
             }
+
          }
       }
    }
