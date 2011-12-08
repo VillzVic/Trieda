@@ -79,16 +79,28 @@ public class TRIEDAExportExcel
 		exporters.add( new RelatorioVisaoProfessorExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.isVisaoProfessor(), this.instituicaoEnsino ) );
 		exporters.add( new RelatorioVisaoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
 
-		for ( IExportExcel exporter : exporters )
-		{
-			exporter.export( workbook );
+		Exception exception = null;
+		try {
+			for ( IExportExcel exporter : exporters )
+			{
+				exporter.export( workbook );
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			exception = e;
 		}
-
+		
+		if (exception != null) {
+			
+			this.errors.add(getI18nMessages().excelErroGenericoExportacao(exception.toString()));
+			return false;
+		} else {
 		// Código relacionado à issue
 		// ISSUE http://jira.gapso.com.br/browse/TRIEDA-1041
 		workbook.removeSheetAt( workbook.getSheetIndex(
 			ExcelInformationType.PALETA_CORES.getSheetName() ) );
 
-		return true;
+			return true;
+		}
 	}
 }

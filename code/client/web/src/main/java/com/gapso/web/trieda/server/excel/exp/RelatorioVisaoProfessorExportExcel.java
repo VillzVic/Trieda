@@ -233,7 +233,7 @@ public class RelatorioVisaoProfessorExportExcel
 			= new HashSet< AtendimentoOperacional >();
 
 		// Atendimentos operacionais dos professores
-		if ( professores != null && professores.size() > 0 )
+		if ( professores != null && professores.size() > 0 && semanasLetivas != null)
 		{
 			for ( Professor professor : professores )
 			{
@@ -252,7 +252,7 @@ public class RelatorioVisaoProfessorExportExcel
 		}
 
 		// Atendimentos operacionais dos professores virtuais
-		if ( professoresVirtuais != null && professoresVirtuais.size() > 0 )
+		if ( professoresVirtuais != null && professoresVirtuais.size() > 0 && semanasLetivas != null)
 		{
 			for ( ProfessorVirtual professorVirtual : professoresVirtuais )
 			{

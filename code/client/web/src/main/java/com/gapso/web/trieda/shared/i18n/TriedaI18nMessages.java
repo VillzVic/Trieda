@@ -10,6 +10,7 @@ public interface TriedaI18nMessages
 	String erroExclusaoAreaTitulacaoTitle();
 	String excelErroArquivoInvalido( String nomeArquivo, String motivo );
 	String excelErroBD( String nomeArquivo, String motivo );
+	String excelErroGenericoExportacao( String motivo );
 	String excelErroImportadorNulo( String infoASerImportada );
 	String excelErroLogicoEntidadesNaoCadastradas( String nomeColuna, String linhasComErro );
 	String excelErroLogicoDisciplinaEmMatrizCurricular( String nomeColuna, String linhasComErro );
