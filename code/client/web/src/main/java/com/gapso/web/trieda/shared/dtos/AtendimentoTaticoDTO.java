@@ -428,7 +428,7 @@ public class AtendimentoTaticoDTO
 			idsPeriodosAdicionadosVisaoSala.add( other.getPeriodo() );
 		}
 
-		// setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 	}
 
