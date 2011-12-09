@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
@@ -50,9 +51,11 @@ public class HorarioDisponivelCenarioFormView
 
 	private void initUI()
 	{
-		this.simpleModal = new SimpleModal(
-			"Dias e Horários de Aula",
-			Resources.DEFAULTS.semanaLetiva16() );
+		String title = getI18nConstants().diasHorariosAula();
+		if (this.semanaLetivaDTO != null) {
+			title += " (" + this.semanaLetivaDTO.getCodigo() + " - " + this.semanaLetivaDTO.getDescricao() + ")";
+		}
+		this.simpleModal = new SimpleModal(title,Resources.DEFAULTS.semanaLetiva16());
 
 		this.simpleModal.setHeight( 580 );
 		this.simpleModal.setWidth( 620 );
@@ -78,6 +81,7 @@ public class HorarioDisponivelCenarioFormView
 		this.horarioInicioTF = new TextFieldMask( "99:99" );
 		this.horarioInicioTF.setRegex( "([0-1][0-9]|2[0-4]):([0-5][0-9])$" );
 		this.horarioInicioTF.setName( "horarioInicio" );
+		this.horarioInicioTF.setAllowBlank( false );
 		this.horarioInicioTF.setEmptyText( "Horário de início de aula" );
 
 		formPanel.add( new Label( "Turno:" ),
@@ -103,6 +107,10 @@ public class HorarioDisponivelCenarioFormView
 
 		formPanel.add( this.removerHorarioBT,
 			new HBoxLayoutData( new Margins( 0, 0, 0, 10 ) ) );
+			
+		FormButtonBinding binding = new FormButtonBinding(formPanel);
+		binding.addButton( this.adicionarHorarioBT );
+		binding.addButton( this.removerHorarioBT );
 
 		this.contentPanel = new ContentPanel();
 		this.contentPanel.setBodyStyle( "background-color: #CED9E7;" );

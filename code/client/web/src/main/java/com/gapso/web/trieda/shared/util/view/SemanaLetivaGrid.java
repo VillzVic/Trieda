@@ -59,7 +59,7 @@ public class SemanaLetivaGrid< M extends BaseModel >
 		this.grid.setBorders( false );
 
 		this.grid.getView().setEmptyText(
-			"Não existe horários de aula cadastrados no sistema" );
+			"Não existem horários de aula cadastrados no sistema" );
 
 		this.grid.addListener( Events.BeforeSelect, new Listener< GridEvent< M > >()
 		{
@@ -95,22 +95,24 @@ public class SemanaLetivaGrid< M extends BaseModel >
 			public Object render( M model, String property, ColumnData config,
 				int rowIndex, int colIndex, ListStore< M > store, Grid< M > grid )
 			{
+				String turnoCelula = "";
+				boolean ehUltimaLinhaDaTabela = ( rowIndex + 1 ) == store.getModels().size();
+				boolean ehPrimeiraLinhaDeUmTurno = !model.get(property).equals(lastTurno);
+				
 				config.style += "border-right: 1px solid #EDEDED;";
 				config.style += "border-top: 1px solid #FFF;";
-
-				if ( ( rowIndex + 1 ) == store.getModels().size() )
-				{
+				
+				if (ehPrimeiraLinhaDeUmTurno) {
+					config.style += ( "border-top: 1px solid #EDEDED;" );
+					turnoCelula = model.get(property);
+					lastTurno = turnoCelula; 
+				}
+				if (ehUltimaLinhaDaTabela) {
 					config.style += ( "border-bottom: 1px solid #EDEDED;" );
+					lastTurno = "";
 				}
-
-				if ( model.get( property ).equals( lastTurno ) )
-				{
-					return "";
-				}
-
-				config.style += ( "border-top: 1px solid #EDEDED;" );
-				lastTurno = model.get ( property );
-				return this.lastTurno;
+				
+				return turnoCelula;
 			}  
 		};
 		
