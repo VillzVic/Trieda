@@ -3002,6 +3002,7 @@ public class ConvertBeans
 		domain.setPeriodo( dto.getPeriodo() );
 		domain.setAtendido( ( dto.getAlunoAtendido() == null ) ?
 			false : dto.getAlunoAtendido() );
+		domain.setPrioridade(1); // TODO: REVER COMO TRATAR ISSO
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );

@@ -10,18 +10,19 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AlunosDemandaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.AlunosComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AlunosDemandaFormPresenter
 	implements Presenter
 {
-	public interface Display
+	public interface Display extends ITriedaI18nGateway
 	{
 		Button getSalvarButton();
 		AlunosComboBox getAlunoComboBox();
@@ -60,14 +61,8 @@ public class AlunosDemandaFormPresenter
 					final AlunosDemandaServiceAsync service = Services.alunosDemanda();
 
 					service.saveAlunoDemanda( display.getDemandaDTO(),
-						getDTO(), new AsyncCallback< Void >()
+						getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().associacaoAlunoDemanda()),display)
 					{
-						@Override
-						public void onFailure( Throwable caught )
-						{
-							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
-						}
-
 						@Override
 						public void onSuccess( Void result )
 						{

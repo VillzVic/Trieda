@@ -25,6 +25,7 @@ public class DemandaDTO
 	public static final String PROPERTY_QUANTIDADE_DEMANDA_ENABLE = "quantidadeDemandaEnable";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
+	public static final String PROPERTY_PERIODO = "periodo";
 
 	public DemandaDTO()
 	{
@@ -178,6 +179,16 @@ public class DemandaDTO
 	public Integer getDemanda()
 	{
 		return get( PROPERTY_DEMANDA );
+	}
+	
+	public void setPeriodo( Integer value )
+	{
+		set( PROPERTY_PERIODO, value );
+	}
+
+	public Integer getPeriodo()
+	{
+		return get( PROPERTY_PERIODO );
 	}
 
 	public void setQuantidadeDemandaEnable( Boolean value )

@@ -12,6 +12,8 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -21,6 +23,7 @@ import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.DemandasService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public class DemandasServiceImpl
 	extends RemoteService implements DemandasService
@@ -140,5 +143,24 @@ public class DemandasServiceImpl
 				demanda.remove();
 			}
 		}
+	}
+	
+	@Override
+	public Integer findPeriodo(DemandaDTO demandaDTO) throws TriedaException {
+		Integer periodo = null;
+		
+		try {
+			InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(demandaDTO.getInstituicaoEnsinoId());
+			Curriculo curriculo = Curriculo.find(demandaDTO.getCurriculoId(),instituicaoEnsino);
+			Disciplina disciplina = Disciplina.find(demandaDTO.getDisciplinaId(),instituicaoEnsino);
+			Oferta oferta = Oferta.find(demandaDTO.getOfertaId(),instituicaoEnsino);
+			
+			periodo = curriculo.getPeriodo(instituicaoEnsino,disciplina,oferta);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+		
+		return periodo; 
 	}
 }

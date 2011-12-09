@@ -260,12 +260,17 @@ public class DemandasPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				DemandaDTO demandaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-
-				Presenter presenter = new AlunosDemandaPresenter(
-					instituicaoEnsinoDTO, new AlunoDemandaView( demandaDTO ) );
-
-				presenter.go( gTab );
+				final DemandaDTO demandaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				final DemandasServiceAsync service = Services.demandas();
+				service.findPeriodo(demandaDTO,new AbstractAsyncCallbackWithDefaultOnFailure<Integer>(display) {
+					@Override
+					public void onSuccess(Integer result) {
+						demandaDTO.setPeriodo(result);
+						Presenter presenter = new AlunosDemandaPresenter(instituicaoEnsinoDTO,new AlunoDemandaView(demandaDTO));
+						presenter.go( gTab );
+					}
+				});
 			}
 		});
 	}

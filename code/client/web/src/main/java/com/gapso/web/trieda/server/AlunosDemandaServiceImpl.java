@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.services.AlunosDemandaService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @Transactional
 public class AlunosDemandaServiceImpl
@@ -68,28 +68,24 @@ public class AlunosDemandaServiceImpl
 
 	@Override
 	public void saveAlunoDemanda(
-		DemandaDTO demandaDTO, AlunoDemandaDTO alunoDemandaDTO )
+		DemandaDTO demandaDTO, AlunoDemandaDTO alunoDemandaDTO ) throws TriedaException
 	{
-		AlunoDemanda alunoDemanda
-			= ConvertBeans.toAlunoDemanda( alunoDemandaDTO );
-
-		Demanda demanda = Demanda.find(
-			demandaDTO.getId(), getInstituicaoEnsinoUser() );
-
-		Aluno aluno = Aluno.find(
-			alunoDemandaDTO.getIdAluno(), getInstituicaoEnsinoUser() );
-
-		alunoDemanda.setDemanda( demanda );
-		alunoDemanda.setAluno( aluno );
-
-		if ( alunoDemanda.getId() != null
-			&& alunoDemanda.getId() > 0 )
-		{
-			alunoDemanda.merge();
-		}
-		else
-		{
-			alunoDemanda.persist();
+		try {
+			AlunoDemanda alunoDemanda
+				= ConvertBeans.toAlunoDemanda( alunoDemandaDTO );
+	
+			if ( alunoDemanda.getId() != null
+				&& alunoDemanda.getId() > 0 )
+			{
+				alunoDemanda.merge();
+			}
+			else
+			{
+				alunoDemanda.persist();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
 		}
 	}
 

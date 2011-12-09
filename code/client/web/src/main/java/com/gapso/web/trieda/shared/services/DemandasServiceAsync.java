@@ -19,4 +19,5 @@ public interface DemandasServiceAsync
 		AsyncCallback< PagingLoadResult< DemandaDTO > > callback );
 	void save( DemandaDTO demandaDTO, AsyncCallback< Void > callback );
 	void remove( List< DemandaDTO > demandaDTOList, AsyncCallback< Void > callback );
+	void findPeriodo(DemandaDTO demandaDTO, AsyncCallback< Integer > callback );
 }

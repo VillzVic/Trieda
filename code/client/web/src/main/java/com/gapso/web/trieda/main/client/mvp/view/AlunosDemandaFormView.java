@@ -80,8 +80,8 @@ public class AlunosDemandaFormView
 
 		// Período
 		this.periodoNF = new NumberField();
-		this.periodoNF.setName( AlunoDemandaDTO.PROPERTY_PERIODO_STRING );
-		this.periodoNF.setValue( this.alunoDemandaDTO.getPeriodo() );
+		this.periodoNF.setName( DemandaDTO.PROPERTY_PERIODO );
+		this.periodoNF.setValue( this.demandaDTO.getPeriodo() );
 		this.periodoNF.setFieldLabel( "Período" );
 		this.periodoNF.setAllowBlank( false );
 		this.periodoNF.setAllowDecimals( false );

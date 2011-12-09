@@ -49,10 +49,10 @@ public class AlunosComboBox
 
 		setFieldLabel( "Aluno" );
 		setDisplayField( AlunoDTO.PROPERTY_ALUNO_NOME );
+		setSimpleTemplate( "{" + AlunoDTO.PROPERTY_ALUNO_NOME + "} ({" + AlunoDTO.PROPERTY_ALUNO_MATRICULA + "})" ); //setTemplate( getTemplateCB() );
 		setStore( this.store );
 		setHideTrigger( true );  
 		setTriggerAction( TriggerAction.QUERY );
-		setTemplate( getTemplateCB() );
 		setMinChars( 1 );
 	}
 

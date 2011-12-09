@@ -35,6 +35,11 @@ public class GTriedaI18nConstants
 	public String areasTitulacao() {
 		return this.languageManager.getText("areasTitulacao");
 	}
+	
+	@Override
+	public String associacaoAlunoDemanda() {
+		return this.languageManager.getText("associacaoAlunoDemanda");
+	}
 
 	@Override
 	public String bairro() {

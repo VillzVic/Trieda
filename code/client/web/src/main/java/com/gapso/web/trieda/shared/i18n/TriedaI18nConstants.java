@@ -10,6 +10,7 @@ public interface TriedaI18nConstants
 	String andar();
 	String areaTitulacao();
 	String areasTitulacao();
+	String associacaoAlunoDemanda();
 	String bairro();
 	String campi();
 	String campiHeadingPanel();
