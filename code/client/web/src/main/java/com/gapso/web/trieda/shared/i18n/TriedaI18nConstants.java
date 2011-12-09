@@ -49,6 +49,7 @@ public interface TriedaI18nConstants
 	String descricaoCurriculo();
 	String deslocamentoUnidades();
 	String deslocamentoUnidadesCampus();
+	String diasHorariosAula();
 	String disciplina();
 	String disciplinas();
 	String disciplinasAssociadas();
@@ -126,6 +127,7 @@ public interface TriedaI18nConstants
 	String titulacao();
 	String totalDecreditos();
 	String trieda();
+	String triedaVersion();
 	String triedaDetailMessageHeadingText();
 	String turma();
 	String turno();

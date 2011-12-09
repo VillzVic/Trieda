@@ -6,6 +6,8 @@ public interface TriedaI18nMessages
 	extends Messages
 {
 	String confirmacaoButton();
+	String erroAoSalvar(String entidade);
+	String erroAoRemover(String entidade);
 	String erroExclusaoAreaTitulacao();
 	String erroExclusaoAreaTitulacaoTitle();
 	String excelErroArquivoInvalido( String nomeArquivo, String motivo );

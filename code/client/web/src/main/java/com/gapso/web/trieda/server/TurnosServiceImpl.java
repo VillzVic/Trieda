@@ -17,6 +17,7 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.TurnosService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public class TurnosServiceImpl
 	extends RemoteService
@@ -175,27 +176,37 @@ public class TurnosServiceImpl
 	}
 
 	@Override
-	public void save( TurnoDTO turnoDTO )
+	public void save( TurnoDTO turnoDTO ) throws TriedaException
 	{
-		Turno turno = ConvertBeans.toTurno( turnoDTO );
-
-		if ( turno.getId() != null
-			&& turno.getId() > 0 )
-		{
-			turno.merge();
-		}
-		else
-		{
-			turno.persist();
+		try {
+			Turno turno = ConvertBeans.toTurno( turnoDTO );
+	
+			if ( turno.getId() != null
+				&& turno.getId() > 0 )
+			{
+				turno.merge();
+			}
+			else
+			{
+				turno.persist();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
 		}
 	}
 
 	@Override
-	public void remove( List< TurnoDTO > turnoDTOList )
+	public void remove( List< TurnoDTO > turnoDTOList ) throws TriedaException
 	{
-		for ( TurnoDTO turnoDTO : turnoDTOList )
-		{
-			ConvertBeans.toTurno( turnoDTO ).remove();
+		try {
+			for ( TurnoDTO turnoDTO : turnoDTOList )
+			{
+				ConvertBeans.toTurno( turnoDTO ).remove();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
 		}
 	}
 }

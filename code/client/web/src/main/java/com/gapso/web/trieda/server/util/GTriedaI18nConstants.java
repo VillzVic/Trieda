@@ -181,6 +181,11 @@ public class GTriedaI18nConstants
 	public String deslocamentoUnidadesCampus() {
 		return this.languageManager.getText("deslocamentoUnidadesCampus");
 	}
+	
+	@Override
+	public String diasHorariosAula() {
+		return this.languageManager.getText("diasHorariosAula");
+	}
 
 	@Override
 	public String disciplina() {
@@ -500,6 +505,12 @@ public class GTriedaI18nConstants
 	@Override
 	public String trieda() {
 		return this.languageManager.getText("trieda");
+
+	}
+	
+	@Override
+	public String triedaVersion() {
+		return this.languageManager.getText("triedaVersion");
 
 	}
 

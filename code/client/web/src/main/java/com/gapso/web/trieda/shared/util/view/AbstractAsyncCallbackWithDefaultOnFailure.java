@@ -29,29 +29,12 @@ public abstract class AbstractAsyncCallbackWithDefaultOnFailure< T >
 		{
 			TriedaDetailMessageBox.alert(
 				this.gateway.getI18nConstants().mensagemErro(),
-				this.errorMessage, getDetailErrorMessage( caught ) );
+				this.errorMessage, caught );
 		}
 		else
 		{
 			MessageBox.alert( this.gateway.getI18nConstants().mensagemErro(),
 				this.errorMessage, null );
 		}
-	}
-
-	private String getDetailErrorMessage( Throwable caught )
-	{
-		String detailMsg = "";
-
-		if ( caught != null )
-		{
-			detailMsg = "Msg: " + caught.getMessage();
-
-			if ( caught.getCause() != null )
-			{
-				detailMsg += "\nCause: " + caught.getMessage();
-			}
-		}
-
-		return detailMsg;
 	}
 }

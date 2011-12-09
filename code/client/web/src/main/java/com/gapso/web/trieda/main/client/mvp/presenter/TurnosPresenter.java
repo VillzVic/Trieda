@@ -9,16 +9,17 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.TurnoFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -28,7 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class TurnosPresenter
 	implements Presenter
 {
-	public interface Display
+	public interface Display extends ITriedaI18nGateway
 	{
 		Button getNewButton();
 		Button getEditButton();
@@ -116,15 +117,8 @@ public class TurnosPresenter
 				List< TurnoDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
 				final TurnosServiceAsync service = Services.turnos();
 
-				service.remove(list, new AsyncCallback< Void >()
+				service.remove(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoRemover(display.getI18nConstants().turno()),display)
 				{
-					@Override
-					public void onFailure( Throwable caught )
-					{
-						MessageBox.alert( "ERRO!",
-							"Deu falha na conexão", null );
-					}
-
 					@Override
 					public void onSuccess( Void result )
 					{

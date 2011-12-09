@@ -21,6 +21,16 @@ public class GTriedaI18nMessages
 	{
 		return this.languageManager.getText( "confirmacaoButton" );
 	}
+	
+	@Override
+	public String erroAoSalvar(String entidade) {
+		return this.languageManager.getText( "erroAoSalvar" );
+	}
+	
+	@Override
+	public String erroAoRemover(String entidade) {
+		return this.languageManager.getText( "erroAoRemover" );
+	}
 
 	@Override
 	public String excelErroArquivoInvalido(

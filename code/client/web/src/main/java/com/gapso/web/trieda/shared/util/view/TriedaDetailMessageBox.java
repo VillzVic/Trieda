@@ -2,13 +2,14 @@ package com.gapso.web.trieda.shared.util.view;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.Orientation;
-import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
+import com.extjs.gxt.ui.client.widget.layout.ColumnData;
+import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -29,20 +30,35 @@ public class TriedaDetailMessageBox {
 	 *            o texto da barra de título
 	 * @param msg
 	 *            o texto da mensagem principal
+	 * @param caught
+	 *            a exceção que será mostrada como detalhamento da mensagem
+	 */
+	public static void alert(String title, String msg, Throwable caught) {
+		alert(title,msg,extractMessage(caught));
+	}
+	
+	/**
+	 * Mostra uma caixa de mensagem padrão com um botão OK.
+	 * 
+	 * @param title
+	 *            o texto da barra de título
+	 * @param msg
+	 *            o texto da mensagem principal
 	 * @param detailMsg
 	 *            o texto do detalhamento sobre a mensagem principal
 	 */
 	public static void alert(String title, String msg, String detailMsg) {
 		RowData rowLayoutData = new RowData();
+		ColumnData colLayoutData = new ColumnData();
 
 		// North Panel Layout:
 		// --------------------------------------
 		// | ICON_COMPONENT | MESSAGE_COMPONENT |
 		// --------------------------------------
 		ContentPanel northPanel = getNorthPanel();
-		northPanel.setLayout(new RowLayout(Orientation.HORIZONTAL));
-		northPanel.add(getIconComponent(MessageBox.WARNING),new RowData(31,32,new Margins(0,10,0,0)));
-		northPanel.add(getMessageComponent(msg),rowLayoutData);
+		northPanel.setLayout(new ColumnLayout());//northPanel.setLayout(new RowLayout(Orientation.HORIZONTAL));
+		northPanel.add(getIconComponent(MessageBox.WARNING),new ColumnData(32));
+		northPanel.add(getMessageComponent(msg),colLayoutData);
 
 		// Dialog Layout:
 		// ----------------------------
@@ -56,6 +72,23 @@ public class TriedaDetailMessageBox {
 		dialog.add(getDetailMessageComponent(detailMsg),rowLayoutData);
 		
 		dialog.show();
+	}
+	
+	private static String extractMessage(Throwable caught) {
+		String caughtMessage = "";
+		if (caught != null) {
+			if (caught instanceof TriedaException) {
+				caughtMessage = ((TriedaException)caught).getCompleteMessage();
+			} else {
+				caughtMessage = "Message: " + caught.getMessage();
+				Throwable throwable = caught.getCause();
+				while (throwable != null) {
+					caughtMessage += "\nCause: " + throwable.getMessage();
+					throwable = throwable.getCause();
+				}
+			}
+		}
+		return caughtMessage;
 	}
 	
 	private static Widget getIconComponent(String messageBoxIcon) {
@@ -99,7 +132,7 @@ public class TriedaDetailMessageBox {
 		dialog.setPlain(true);
 		dialog.setFooter(true);
 		dialog.setBodyBorder(false);
-		dialog.setMinWidth(100);
+		dialog.setMinWidth(300);
 		dialog.setMinHeight(100);
 		dialog.setButtons(Dialog.OK);
 		dialog.setButtonAlign(HorizontalAlignment.CENTER);

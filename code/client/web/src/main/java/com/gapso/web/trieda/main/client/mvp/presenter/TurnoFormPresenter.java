@@ -9,18 +9,19 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TurnoFormPresenter
 	implements Presenter
 {
-	public interface Display
+	public interface Display extends ITriedaI18nGateway
 	{
 		Button getSalvarButton();
 		TextField< String > getNomeTextField();
@@ -30,6 +31,7 @@ public class TurnoFormPresenter
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenario;
 	private SimpleGrid< TurnoDTO > gridPanel;
 	private Display display;
 
@@ -41,7 +43,7 @@ public class TurnoFormPresenter
 		this.gridPanel = gridPanel;
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-
+		this.cenario = cenario;
 		setListeners();
 	}
 
@@ -57,15 +59,8 @@ public class TurnoFormPresenter
 				{
 					final TurnosServiceAsync service = Services.turnos();
 
-					service.save( getDTO(), new AsyncCallback< Void >()
+					service.save( getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().turno()),display)
 					{
-						@Override
-						public void onFailure( Throwable caught )
-						{
-							MessageBox.alert( "ERRO!",
-								"Erro ao salvar o turno", null );
-						}
-
 						@Override
 						public void onSuccess( Void result )
 						{
@@ -96,6 +91,7 @@ public class TurnoFormPresenter
 		TurnoDTO turnoDTO = this.display.getTurnoDTO();
 
 		turnoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
+		turnoDTO.setCenarioId( this.cenario.getId() );
 		turnoDTO.setNome( this.display.getNomeTextField().getValue() );
 
 		return turnoDTO;
