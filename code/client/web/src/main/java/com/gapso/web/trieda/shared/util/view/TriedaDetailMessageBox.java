@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
@@ -8,9 +9,8 @@ import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
-import com.extjs.gxt.ui.client.widget.layout.ColumnData;
-import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
-import com.extjs.gxt.ui.client.widget.layout.RowData;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.google.gwt.core.client.GWT;
@@ -48,17 +48,14 @@ public class TriedaDetailMessageBox {
 	 *            o texto do detalhamento sobre a mensagem principal
 	 */
 	public static void alert(String title, String msg, String detailMsg) {
-		RowData rowLayoutData = new RowData();
-		ColumnData colLayoutData = new ColumnData();
-
 		// North Panel Layout:
 		// --------------------------------------
 		// | ICON_COMPONENT | MESSAGE_COMPONENT |
 		// --------------------------------------
 		ContentPanel northPanel = getNorthPanel();
-		northPanel.setLayout(new ColumnLayout());//northPanel.setLayout(new RowLayout(Orientation.HORIZONTAL));
-		northPanel.add(getIconComponent(MessageBox.WARNING),new ColumnData(32));
-		northPanel.add(getMessageComponent(msg),colLayoutData);
+		northPanel.setLayout(new BorderLayout());
+		northPanel.add(getIconComponent(MessageBox.WARNING),new BorderLayoutData(LayoutRegion.WEST,32));
+		northPanel.add(getMessageComponent(msg),new BorderLayoutData(LayoutRegion.CENTER));
 
 		// Dialog Layout:
 		// ----------------------------
@@ -68,8 +65,8 @@ public class TriedaDetailMessageBox {
 		// ----------------------------
 		Dialog dialog = getDialog(title);
 		dialog.setLayout(new RowLayout(Orientation.VERTICAL));
-		dialog.add(northPanel,rowLayoutData);
-		dialog.add(getDetailMessageComponent(detailMsg),rowLayoutData);
+		dialog.add(northPanel);
+		dialog.add(getDetailMessageComponent(detailMsg));
 		
 		dialog.show();
 	}
@@ -132,7 +129,7 @@ public class TriedaDetailMessageBox {
 		dialog.setPlain(true);
 		dialog.setFooter(true);
 		dialog.setBodyBorder(false);
-		dialog.setMinWidth(300);
+		dialog.setMinWidth(500);
 		dialog.setMinHeight(100);
 		dialog.setButtons(Dialog.OK);
 		dialog.setButtonAlign(HorizontalAlignment.CENTER);
