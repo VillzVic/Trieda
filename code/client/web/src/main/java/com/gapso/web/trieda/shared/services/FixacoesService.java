@@ -22,5 +22,5 @@ public interface FixacoesService
 	void save( FixacaoDTO fixacaoDTO, List< HorarioDisponivelCenarioDTO > hdcDTOList );
 	List< HorarioDisponivelCenarioDTO > getHorariosSelecionados( FixacaoDTO fixacaoDTO );
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( ProfessorDTO professorDTO,
-		Long semanaLetivaId, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO );
+		DisciplinaDTO disciplinaDTO, SalaDTO salaDTO );
 }

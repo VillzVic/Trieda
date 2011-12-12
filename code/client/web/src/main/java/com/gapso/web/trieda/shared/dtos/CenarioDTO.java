@@ -15,8 +15,6 @@ public class CenarioDTO extends AbstractDTO<String> implements
 	public static final String PROPERTY_OFICIAL = "oficial";
 	public static final String PROPERTY_ANO = "ano";
 	public static final String PROPERTY_SEMESTRE = "semestre";
-	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
-	public static final String PROPERTY_SEMANA_LETIVA_STRING = "semanaLetivaString";
 	public static final String PROPERTY_CRIADO_USUARIO_ID = "criadoUsuarioId";
 	public static final String PROPERTY_CRIADO_USUARIO_STRING = "criadoUsuarioString";
 	public static final String PROPERTY_CRIADO_USUARIO_DATE = "criadoUsuarioDate";
@@ -84,22 +82,6 @@ public class CenarioDTO extends AbstractDTO<String> implements
 
 	public Integer getSemestre() {
 		return get(PROPERTY_SEMESTRE);
-	}
-
-	public void setSemanaLetivaId(Long value) {
-		set(PROPERTY_SEMANA_LETIVA_ID, value);
-	}
-
-	public Long getSemanaLetivaId() {
-		return get(PROPERTY_SEMANA_LETIVA_ID);
-	}
-
-	public void setSemanaLetivaString(String value) {
-		set(PROPERTY_SEMANA_LETIVA_STRING, value);
-	}
-
-	public String getsemanaLetivaString() {
-		return get(PROPERTY_SEMANA_LETIVA_STRING);
 	}
 
 	public void setCriadoUsuarioId(Long value) {

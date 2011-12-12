@@ -98,7 +98,6 @@ public class CenariosView
 		list.add( new ColumnConfig( CenarioDTO.PROPERTY_NOME, "Nome", 100 ) );
 		list.add( new ColumnConfig( CenarioDTO.PROPERTY_ANO, "Ano", 100 ) );
 		list.add( new ColumnConfig( CenarioDTO.PROPERTY_SEMESTRE, "Semestre", 100 ) );
-		list.add( new ColumnConfig( CenarioDTO.PROPERTY_SEMANA_LETIVA_STRING, "Semana Letiva", 100 ) );
 
 		return list;
 	}

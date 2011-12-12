@@ -167,10 +167,7 @@ public class ConvertBeans
 		domain.setAno( dto.getAno() );
 		domain.setSemestre( dto.getSemestre() );
 		domain.setComentario( dto.getComentario() );
-
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			dto.getSemanaLetivaId(), instituicaoEnsino );
-		domain.setSemanaLetiva( semanaLetiva );
+		domain.setInstituicaoEnsino(instituicaoEnsino);
 
 		return domain;
 	}
@@ -180,7 +177,7 @@ public class ConvertBeans
 		CenarioDTO dto = new CenarioDTO();
 
 		InstituicaoEnsino instituicaoEnsino
-			= domain.getSemanaLetiva().getInstituicaoEnsino();
+			= domain.getInstituicaoEnsino();
 
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
@@ -190,16 +187,6 @@ public class ConvertBeans
 		dto.setAno( domain.getAno() );
 		dto.setSemestre( domain.getSemestre() );
 		dto.setComentario( domain.getComentario() );
-
-		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
-		if ( semanaLetiva == null )
-		{
-			List< SemanaLetiva > list = SemanaLetiva.findAll( instituicaoEnsino );
-			semanaLetiva = ( list == null ? null : list.get( 0 ) );
-		}
-
-		dto.setSemanaLetivaId( ( ( semanaLetiva == null ) ? null : semanaLetiva.getId() ) );
-		dto.setSemanaLetivaString( ( ( semanaLetiva == null ) ? "" : semanaLetiva.getCodigo() ) );
 
 		if ( instituicaoEnsino != null )
 		{
@@ -2708,6 +2695,7 @@ public class ConvertBeans
 
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
+		domain.setInstituicaoEnsino(instituicaoEnsino);
 
 		Cenario cenario = Cenario.find(
 			dto.getCenarioId(), instituicaoEnsino );
@@ -2715,12 +2703,7 @@ public class ConvertBeans
 		Cenario.entityManager().refresh( cenario );
 		domain.setCenario( cenario );
 		domain.setModoOtimizacao( dto.getModoOtimizacao() );
-
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			dto.getSemanaLetivaId(), instituicaoEnsino );
-		semanaLetiva.flush();
-		domain.setSemanaLetiva( semanaLetiva );
-
+		
 		Campus campus = Campus.find(
 			dto.getCampusId(), instituicaoEnsino );
 		campus.flush();
@@ -2811,17 +2794,12 @@ public class ConvertBeans
 		ParametroDTO dto = new ParametroDTO();
 
 		InstituicaoEnsino instituicaoEnsino
-			 = domain.getCenario().getSemanaLetiva().getInstituicaoEnsino();
+			 = domain.getCenario().getInstituicaoEnsino();
 
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setModoOtimizacao( domain.getModoOtimizacao() );
-
-		SemanaLetiva semanaLetiva = domain.getSemanaLetiva();
-
-		dto.setSemanaLetivaId( semanaLetiva.getId() );
-		dto.setSemanaLetivaDisplay( semanaLetiva.getCodigo() );
 
 		Campus campus = domain.getCampus();
 

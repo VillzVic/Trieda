@@ -15,8 +15,6 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CENARIOID = "cenarioid";
 	public static final String PROPERTY_MODOOTIMIZACAO = "modootimizacao";
-	public static final String PROPERTY_SEMANALETIVA_ID = "semanaLetivaId";
-	public static final String PROPERTY_SEMANALETIVA_DISPLAY = "semanaLetivaDisplay";
 	public static final String PROPERTY_CAMPUS_ID = "campusId";
 	public static final String PROPERTY_CAMPUS_DISPLAY = "campusDisplay";
 	public static final String PROPERTY_TURNO_ID = "turnoId";
@@ -98,20 +96,6 @@ public class ParametroDTO extends AbstractDTO<Long>
 	}
 	public void setModoOtimizacao(String value) {
 		set(PROPERTY_MODOOTIMIZACAO, value);
-	}
-	
-	public Long getSemanaLetivaId() {
-		return get(PROPERTY_SEMANALETIVA_ID);
-	}
-	public void setSemanaLetivaId(Long value) {
-		set(PROPERTY_SEMANALETIVA_ID, value);
-	}
-	
-	public String getSemanaLetivaDisplay() {
-		return get(PROPERTY_SEMANALETIVA_DISPLAY);
-	}
-	public void setSemanaLetivaDisplay(String value) {
-		set(PROPERTY_SEMANALETIVA_DISPLAY, value);
 	}
 	
 	public Long getCampusId() {

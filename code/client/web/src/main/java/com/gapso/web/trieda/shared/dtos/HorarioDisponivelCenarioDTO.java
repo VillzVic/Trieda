@@ -245,10 +245,12 @@ public class HorarioDisponivelCenarioDTO
 	public int compareTo( HorarioDisponivelCenarioDTO o )
 	{
 		int result = this.getSemanaLetivaId().compareTo( o.getSemanaLetivaId() );
-
 		if ( result == 0 )
 		{
-			result = getHorario().compareTo( o.getHorario() );
+			result = this.getTurnoString().compareTo(o.getTurnoString());
+			if ( result == 0 ) {
+				result = this.getHorario().compareTo( o.getHorario() );
+			}
 		}
 
 		return result;

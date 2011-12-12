@@ -29,7 +29,6 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.SalasService;
@@ -54,8 +53,7 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		SalaDTO salaDTO, SemanaLetivaDTO semanaLetivaDTO )
+	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(SalaDTO salaDTO)
 	{
 		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
 

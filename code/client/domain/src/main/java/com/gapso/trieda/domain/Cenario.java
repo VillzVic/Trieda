@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -95,9 +94,22 @@ public class Cenario
 	private Boolean oficial;
 
 	@NotNull
-	@OneToOne
-	@JoinColumn( name = "SLE_ID" )
-	private SemanaLetiva semanaLetiva;
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return this.instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
 
 	@ManyToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
 	private Set< DivisaoCredito > divisoesCredito = new HashSet< DivisaoCredito >();
@@ -142,7 +154,6 @@ public class Cenario
 		sb.append( "DataAtualizacao: " ).append( getDataAtualizacao() ).append( ", " );
 		sb.append( "Comentario: " ).append( getComentario() ).append( ", " );
 		sb.append( "Oficial: " ).append( getOficial() ).append( ", " );
-		sb.append( "SemanaLetiva: " ).append( getSemanaLetiva() ).append( ", " );
 		sb.append( "DivisoesCredito: " ).append( getDivisoesCredito() == null ?
 			"null" : getDivisoesCredito().size() ).append( ", " );
 		sb.append( "Turnos: " ).append( getTurnos() == null ? "null" : getTurnos().size() ).append( ", " );
@@ -347,9 +358,7 @@ public class Cenario
 
 		Cenario cenario = entityManager().find( Cenario.class, id );
 		
-		if ( cenario != null
-			&& cenario.getSemanaLetiva().getInstituicaoEnsino() != null
-			&& cenario.getSemanaLetiva().getInstituicaoEnsino() == instituicaoEnsino )
+		if (cenario != null && cenario.getInstituicaoEnsino().equals(instituicaoEnsino))
 		{
 			return cenario;
 		}
@@ -363,7 +372,7 @@ public class Cenario
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Cenario o " +
-			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.masterData = :masterData " );
 
 		q.setParameter( "masterData", true );
@@ -399,7 +408,7 @@ public class Cenario
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Cenario o " +
-			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.masterData = :masterData " + orderBy );
 
 		q.setParameter( "masterData", false );
@@ -434,7 +443,7 @@ public class Cenario
 			" SELECT o FROM Cenario o " +
 			" WHERE " + queryAno + querySemestre +
 			" o.masterData = :masterData " +
-			" AND o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " );
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "masterData", false );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
@@ -552,16 +561,6 @@ public class Cenario
 	public void setOficial( Boolean oficial )
 	{
 		this.oficial = oficial;
-	}
-
-	public SemanaLetiva getSemanaLetiva()
-	{
-		return this.semanaLetiva;
-	}
-
-	public void setSemanaLetiva( SemanaLetiva semanaLetiva )
-	{
-		this.semanaLetiva = semanaLetiva;
 	}
 
 	public Set< DivisaoCredito > getDivisoesCredito()
@@ -698,11 +697,12 @@ public class Cenario
 	@Override
 	public int compareTo( Cenario o )
 	{
-		int result = getSemanaLetiva().compareTo( o.getSemanaLetiva() );
-
-		if ( result == 0 )
-		{
-			result = getNome().compareTo( o.getNome() );
+		int result = getAno().compareTo(o.getAno());
+		if (result == 0) {
+			result = getSemestre().compareTo(o.getSemestre());
+			if (result == 0) {
+				result = getNome().compareTo(o.getNome());
+			}
 		}
 
 		return result;

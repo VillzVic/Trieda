@@ -21,7 +21,6 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -218,10 +217,7 @@ implements Presenter
 				final DisciplinaDTO disciplinaDTO
 					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-				SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-				semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
-
-				Services.disciplinas().getHorariosDisponiveis( disciplinaDTO, semanaLetivaDTO,
+				Services.disciplinas().getHorariosDisponiveis( disciplinaDTO,
 					new AsyncCallback< List< HorarioDisponivelCenarioDTO > >()
 				{
 					@Override
@@ -234,12 +230,8 @@ implements Presenter
 					@Override
 					public void onSuccess( List< HorarioDisponivelCenarioDTO > result )
 					{
-						SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
-						semanaLetiva.setId( cenario.getSemanaLetivaId() );
-
 						Presenter presenter = new HorarioDisponivelDisciplinaFormPresenter(
-							instituicaoEnsinoDTO, cenario, semanaLetiva,
-							new HorarioDisponivelDisciplinaFormView( disciplinaDTO, result ) );
+							instituicaoEnsinoDTO, cenario, new HorarioDisponivelDisciplinaFormView( disciplinaDTO, result ) );
 
 						presenter.go( null );
 					}

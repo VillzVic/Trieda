@@ -20,7 +20,6 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -270,9 +269,6 @@ public class UnidadesPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				final SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-				semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
-
 				final UnidadeDTO unidadeDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				final FutureResult< CampusDTO > futureCampusDTO = new FutureResult< CampusDTO >();
@@ -301,7 +297,7 @@ public class UnidadesPresenter
 							= futureHorarioDisponivelCenarioDTOList.result().getData();
 
 						Presenter presenter = new HorarioDisponivelUnidadeFormPresenter(
-							instituicaoEnsinoDTO, campusDTO, semanaLetivaDTO,
+							instituicaoEnsinoDTO, campusDTO, 
 							new HorarioDisponivelUnidadeFormView(
 								unidadeDTO, horarioDisponivelCenarioDTOList ) );
 

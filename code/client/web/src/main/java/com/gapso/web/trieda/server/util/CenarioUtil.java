@@ -110,8 +110,6 @@ public class CenarioUtil
 		@Transactional
 		private void popularListas()
 		{
-			cenario.setSemanaLetiva( semanaLetiva );
-
 			Set< HorarioAula > horariosAula
 				= semanaLetiva.getHorariosAula();
 
@@ -183,8 +181,6 @@ public class CenarioUtil
 		@Transactional
 		private void popularListas()
 		{
-			semanaLetiva = cenario.getSemanaLetiva();
-
 			Set< HorarioAula > horariosAula
 				= semanaLetiva.getHorariosAula();
 
@@ -381,7 +377,6 @@ public class CenarioUtil
 		this.semanaLetiva.persist();
 		this.cenario.persist();
 
-		this.semanaLetiva.setCenario( this.cenario );
 		this.semanaLetiva.merge();
 
 		for ( Turno o : this.turnoList )

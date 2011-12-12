@@ -12,7 +12,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
@@ -37,8 +36,7 @@ public class HorarioDisponivelUnidadeFormPresenter
 	private CampusDTO campus;
 
 	public HorarioDisponivelUnidadeFormPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CampusDTO campus, SemanaLetivaDTO semanaLetivaDTO, Display display )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CampusDTO campus, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.campus = campus;

@@ -16,7 +16,6 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
-import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -269,8 +268,7 @@ public class SalasImportExcel
 	private void checkNonRegisteredTipoSala(
 		List< SalasImportExcelBean > sheetContent )
 	{
-		SemanaLetiva sl = this.getCenario().getSemanaLetiva();
-		InstituicaoEnsino instituicaoEnsino = sl.getInstituicaoEnsino(); 
+		InstituicaoEnsino instituicaoEnsino = this.getCenario().getInstituicaoEnsino(); 
 
 		// [ NomeTipoSala -> TipoSala ]
 		Map< String, TipoSala > tiposSalaBDMap

@@ -119,10 +119,6 @@ public class CenarioCriarFormPresenter
 		cenarioDTO.setSemestre( this.display.getSemestreTextField().getValue().intValue() );
 		cenarioDTO.setComentario( this.display.getComentarioTextField().getValue() );
 
-		SemanaLetivaDTO semanaLetivaDTO = this.display.getSemanaLetivaComboBox().getValue();
-		cenarioDTO.setSemanaLetivaId( semanaLetivaDTO.getId() );
-		cenarioDTO.setSemanaLetivaString( semanaLetivaDTO.getCodigo() );
-
 		return cenarioDTO;
 	}
 

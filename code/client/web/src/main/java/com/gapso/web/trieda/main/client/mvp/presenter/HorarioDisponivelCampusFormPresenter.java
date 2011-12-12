@@ -13,7 +13,6 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
@@ -36,8 +35,7 @@ public class HorarioDisponivelCampusFormPresenter
 	private Display display;
 
 	public HorarioDisponivelCampusFormPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario,
-		SemanaLetivaDTO semanaLetivaDTO, Display display )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;

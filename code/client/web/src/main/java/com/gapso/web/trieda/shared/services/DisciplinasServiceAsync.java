@@ -19,7 +19,6 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -44,8 +43,7 @@ public interface DisciplinasServiceAsync
 	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback< Void > callback );
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
-	void getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
-		AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
+	void getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
 	void getDisciplinasByTreeSalas( TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
 		TreeNodeDTO curriculoDisciplinaTreeNodeDTO, AsyncCallback< List< TreeNodeDTO > > callback );
 	void getDisciplinasByTreeGrupoSalas( TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,

@@ -84,8 +84,7 @@ public class FixacaoFormPresenter
 				SalaDTO salaDTO = display.getSalaComboBox().getValue();
 				ProfessorDTO professorDTO = display.getProfessorComboBox().getValue();
 
-				Services.fixacoes().getHorariosDisponiveis( professorDTO,
-					cenario.getSemanaLetivaId(), disciplinaDTO, salaDTO, callback );
+				Services.fixacoes().getHorariosDisponiveis( professorDTO, disciplinaDTO, salaDTO, callback );
 			}
 		};
 

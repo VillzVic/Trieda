@@ -52,7 +52,6 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.DisciplinasService;
@@ -85,8 +84,7 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO )
+	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(DisciplinaDTO disciplinaDTO)
 	{
 		Disciplina disciplina = Disciplina.find(
 			disciplinaDTO.getId(), getInstituicaoEnsinoUser() ); 

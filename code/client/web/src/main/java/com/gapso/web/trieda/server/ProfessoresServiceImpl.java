@@ -26,7 +26,6 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresService;
@@ -50,8 +49,7 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		ProfessorDTO professorDTO, SemanaLetivaDTO semanaLetivaDTO )
+	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(ProfessorDTO professorDTO)
 	{
 		Professor professor = Professor.find(
 			professorDTO.getId(), getInstituicaoEnsinoUser() );

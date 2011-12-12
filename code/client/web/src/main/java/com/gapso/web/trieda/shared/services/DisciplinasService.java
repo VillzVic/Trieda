@@ -19,7 +19,6 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -44,7 +43,7 @@ public interface DisciplinasService
 	void removeDisciplinaToSala( SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO);
 	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO);
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
-	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO );
+	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( DisciplinaDTO disciplinaDTO);
 	List< TreeNodeDTO > getDisciplinasByTreeSalas( TreeNodeDTO salaTreeNodeDTO,
 		TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO );
 	List< TreeNodeDTO > getDisciplinasByTreeGrupoSalas( TreeNodeDTO grupoSalaTreeNodeDTO,

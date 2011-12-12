@@ -90,7 +90,7 @@ public class DisponibilidadesProfessorPresenter
 				final ProfessorDTO professorDTO = new ProfessorDTO();
 				professorDTO.setId( usuario.getProfessorId() );
 
-				Services.professores().getHorariosDisponiveis( professorDTO, semanaLetivaDTO,
+				Services.professores().getHorariosDisponiveis( professorDTO, 
 					new AbstractAsyncCallbackWithDefaultOnFailure< List< HorarioDisponivelCenarioDTO > >( display )
 				{
 					@Override

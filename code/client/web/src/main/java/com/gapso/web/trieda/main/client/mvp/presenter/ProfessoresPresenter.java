@@ -19,7 +19,6 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -188,10 +187,7 @@ public class ProfessoresPresenter implements Presenter
 				final ProfessorDTO professorDTO
 					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
-				SemanaLetivaDTO semanaLetivaDTO = new SemanaLetivaDTO();
-				semanaLetivaDTO.setId( cenario.getSemanaLetivaId() );
-
-				Services.professores().getHorariosDisponiveis( professorDTO, semanaLetivaDTO,
+				Services.professores().getHorariosDisponiveis( professorDTO,
 					new AsyncCallback< List< HorarioDisponivelCenarioDTO > >()
 				{
 					@Override
@@ -204,11 +200,8 @@ public class ProfessoresPresenter implements Presenter
 					public void onSuccess(
 						List< HorarioDisponivelCenarioDTO > result )
 					{
-						SemanaLetivaDTO semanaLetiva = new SemanaLetivaDTO();
-						semanaLetiva.setId( cenario.getSemanaLetivaId() );
-
 						Presenter presenter = new HorarioDisponivelProfessorFormPresenter(
-							instituicaoEnsinoDTO, cenario, semanaLetiva,
+							instituicaoEnsinoDTO, cenario, 
 							new HorarioDisponivelProfessorFormView( professorDTO, result ) );
 
 						presenter.go( null );

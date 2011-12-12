@@ -18,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -49,9 +48,6 @@ public class SemanaLetiva
 {
 	private static final long serialVersionUID = 6807360646327130208L;
 
-	@OneToOne( mappedBy = "semanaLetiva" )
-	private Cenario cenario;
-
 	@NotNull
 	@Column( name = "SLE_CODIGO" )
 	@Size( min = 1, max = 500 )
@@ -70,9 +66,6 @@ public class SemanaLetiva
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
 	private Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
-
-	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
-	private Set< Parametro > parametros = new HashSet< Parametro >();
 
 	@OneToMany( mappedBy = "semanaLetiva" )
 	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
@@ -106,16 +99,6 @@ public class SemanaLetiva
 		this.curriculos = curriculos;
 	}
 
-	public Cenario getCenario()
-	{
-		return this.cenario;
-	}
-
-	public void setCenario( Cenario cenario )
-	{
-		this.cenario = cenario;
-	}
-
 	public String getCodigo()
 	{
 		return this.codigo;
@@ -145,17 +128,6 @@ public class SemanaLetiva
 		Set< HorarioAula > horariosAula )
 	{
 		this.horariosAula = horariosAula;
-	}
-
-	public Set< Parametro > getParametros()
-	{
-		return this.parametros;
-	}
-
-	public void setParametros(
-		Set< Parametro > parametros )
-	{
-		this.parametros = parametros;
 	}
 
 	public Integer getTempo()
@@ -462,14 +434,11 @@ public class SemanaLetiva
 		sb.append( "Id: " ).append( getId() ).append( ", " );
 		sb.append( "Version: " ).append( getVersion() ).append( ", " );
 		sb.append( "Instituicoes de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-		sb.append( "Cenario: " ).append( getCenario() ).append( ", " );
 		sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
 		sb.append( "Tempo: " ).append( getTempo() ).append( ", " );
 		sb.append( "HorariosAula: " ).append(
 			getHorariosAula() == null ? "null" : getHorariosAula().size() ).append( ", " );
 		sb.append( "Descricao: " ).append( getDescricao() ).append( ", " );
-		sb.append( "Parametros: " ).append(
-			getParametros() == null ? "null" : getParametros().size() );
 
 		return sb.toString();
 	}

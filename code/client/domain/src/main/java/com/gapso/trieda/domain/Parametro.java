@@ -52,9 +52,22 @@ public class Parametro
 	private String modoOtimizacao;
 	
 	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "SEM_ID")
-	private SemanaLetiva semanaLetiva;
+	@ManyToOne( cascade = { CascadeType.PERSIST,
+		CascadeType.MERGE, CascadeType.REFRESH },
+		targetEntity = InstituicaoEnsino.class )
+	@JoinColumn( name = "INS_ID" )
+	private InstituicaoEnsino instituicaoEnsino;
+
+	public InstituicaoEnsino getInstituicaoEnsino()
+	{
+		return this.instituicaoEnsino;
+	}
+
+	public void setInstituicaoEnsino(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		this.instituicaoEnsino = instituicaoEnsino;
+	}
 	
 	@NotNull
 	@ManyToOne
@@ -313,9 +326,9 @@ public class Parametro
 
         Parametro parametro = entityManager().find( Parametro.class, id );
 
-        if ( parametro != null  && parametro.getSemanaLetiva() != null
-        	&& parametro.getSemanaLetiva().getInstituicaoEnsino() != null
-        	&& parametro.getSemanaLetiva().getInstituicaoEnsino() == instituicaoEnsino )
+        if ( parametro != null
+        	&& parametro.getInstituicaoEnsino() != null
+        	&& parametro.getInstituicaoEnsino() == instituicaoEnsino )
         {
         	return parametro;
         }
@@ -586,12 +599,13 @@ public class Parametro
 		this.cursosDescompartDiscCampi = cursosDescompartDiscCampi;
 	}
 	
-    public SemanaLetiva getSemanaLetiva() {
-		return semanaLetiva;
-	}
-	public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
-		this.semanaLetiva = semanaLetiva;
-	}
+	// APAGAR***
+//    public SemanaLetiva getSemanaLetiva() {
+//		return semanaLetiva;
+//	}
+//	public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
+//		this.semanaLetiva = semanaLetiva;
+//	}
 
 	public Campus getCampus() {
 		return campus;
@@ -622,7 +636,8 @@ public class Parametro
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("ModoOtimizacao: ").append(getModoOtimizacao()).append(", ");
-        sb.append("SemanaLetiva: ").append(getSemanaLetiva()).append(", ");
+        // APAGAR***
+        //sb.append("SemanaLetiva: ").append(getSemanaLetiva()).append(", ");
         sb.append("Campus: ").append(getCampus()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("CargaHorariaAluno: ").append(getCargaHorariaAluno()).append(", ");

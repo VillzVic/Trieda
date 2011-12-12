@@ -27,7 +27,6 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
-import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.services.SemanasLetivaService;
@@ -37,32 +36,6 @@ public class SemanasLetivaServiceImpl
 	implements SemanasLetivaService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
-
-	@Override
-	public SemanaLetivaDTO getSemanaLetiva( CenarioDTO cenario )
-	{
-		// Verifica se o cenário já tem uma semana letiva associada
-		if ( cenario.getSemanaLetivaId() != null )
-		{
-			SemanaLetiva semanaLetivaCenario = SemanaLetiva.find(
-				cenario.getSemanaLetivaId(), getInstituicaoEnsinoUser() );
-			
-			if ( semanaLetivaCenario != null )
-			{
-				return ConvertBeans.toSemanaLetivaDTO( semanaLetivaCenario );
-			}
-		}
-
-		List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
-
-		if ( semanasLetivas != null && semanasLetivas.size() > 0 )
-		{
-			ConvertBeans.toSemanaLetivaDTO( semanasLetivas.get( 0 ) );
-		}
-
-		return null;
-	}
 
 	@Override
 	public ListLoadResult< SemanaLetivaDTO > getList( BasePagingLoadConfig loadConfig )
@@ -318,8 +291,8 @@ public class SemanasLetivaServiceImpl
 				ConvertBeans.toSemanaLetivaDTO( semanaLetiva ) );
 		}
 		
-		Set< HorarioDisponivelCenarioDTO > horarios
-			= new HashSet< HorarioDisponivelCenarioDTO >();
+		List< HorarioDisponivelCenarioDTO > horarios
+			= new ArrayList< HorarioDisponivelCenarioDTO >();
 
 		for ( SemanaLetivaDTO semanaLetivaDTO : semanasLetivasDTO )
 		{
@@ -329,14 +302,14 @@ public class SemanasLetivaServiceImpl
 			horarios.addAll( list );
 		}
 
-		List< HorarioDisponivelCenarioDTO > list
-			= new ArrayList< HorarioDisponivelCenarioDTO >( horarios );
+//		List< HorarioDisponivelCenarioDTO > list
+//			= new ArrayList< HorarioDisponivelCenarioDTO >( horarios );
 
 		BasePagingLoadResult< HorarioDisponivelCenarioDTO > result
-			= new BasePagingLoadResult< HorarioDisponivelCenarioDTO >( list );
+			= new BasePagingLoadResult< HorarioDisponivelCenarioDTO >( horarios );
 
 		result.setOffset( 0 );
-		result.setTotalLength( list.size() );
+		result.setTotalLength( horarios.size() );
 
 		return result;
 	}

@@ -161,8 +161,7 @@ public class FixacoesServiceImpl
 
 	@Override
 	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		ProfessorDTO professorDTO, Long semanaLetivaId,
-		DisciplinaDTO disciplinaDTO, SalaDTO salaDTO )
+		ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, SalaDTO salaDTO )
 	{
 		if( disciplinaDTO == null && salaDTO == null && professorDTO == null )
 		{
