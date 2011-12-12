@@ -311,7 +311,7 @@ public class Parametro
     {
         return entityManager().createQuery(
         	" SELECT o FROM Parametro o " +
-        	" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.turno.instituicaoEnsino = :instituicaoEnsino " )
         	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
@@ -599,14 +599,6 @@ public class Parametro
 		this.cursosDescompartDiscCampi = cursosDescompartDiscCampi;
 	}
 	
-	// APAGAR***
-//    public SemanaLetiva getSemanaLetiva() {
-//		return semanaLetiva;
-//	}
-//	public void setSemanaLetiva(SemanaLetiva semanaLetiva) {
-//		this.semanaLetiva = semanaLetiva;
-//	}
-
 	public Campus getCampus() {
 		return campus;
 	}
@@ -636,8 +628,6 @@ public class Parametro
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("ModoOtimizacao: ").append(getModoOtimizacao()).append(", ");
-        // APAGAR***
-        //sb.append("SemanaLetiva: ").append(getSemanaLetiva()).append(", ");
         sb.append("Campus: ").append(getCampus()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("CargaHorariaAluno: ").append(getCargaHorariaAluno()).append(", ");

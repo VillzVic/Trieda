@@ -305,7 +305,7 @@ public class Cenario
 	{
 		return ( (Number) entityManager().createQuery(
 			" SELECT count( o ) FROM Cenario o " +
-			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " )
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " )
 			.setParameter( "instituicaoEnsino", instituicaoEnsino )
 			.getSingleResult() ).intValue();
 	}
@@ -315,7 +315,7 @@ public class Cenario
 	{
 		int parametrosCenario = ( (Number) entityManager().createQuery(
 			" SELECT count ( o ) FROM Parametro o " +
-			" WHERE o.cenario.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario " )
 			.setParameter( "instituicaoEnsino", instituicaoEnsino )
 			.setParameter( "cenario", this ).getSingleResult() ).intValue();
@@ -324,7 +324,7 @@ public class Cenario
 		{
 			return (Parametro) entityManager().createQuery(
 				" SELECT o FROM Parametro o " +
-				" WHERE o.cenario.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+				" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
 				" AND o.cenario = :cenario ORDER BY o.id DESC " )
 				.setParameter( "instituicaoEnsino", instituicaoEnsino )
 				.setParameter( "cenario", this ).setMaxResults( 1 ).getSingleResult();
@@ -339,7 +339,7 @@ public class Cenario
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Cenario o " +
-			" WHERE o.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.masterData = :masterData " );
 
 		q.setParameter( "masterData", false );
