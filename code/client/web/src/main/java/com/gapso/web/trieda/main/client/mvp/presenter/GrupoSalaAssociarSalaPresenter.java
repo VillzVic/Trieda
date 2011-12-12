@@ -62,7 +62,8 @@ public class GrupoSalaAssociarSalaPresenter
 		SalasServiceAsync salasService = Services.salas();
 		GruposSalasServiceAsync gruposSalasService = Services.gruposSalas();
 
-		salasService.getAndaresList( futureSalaDTOList );
+		GrupoSalaDTO grupoSalaDto = display.getGrupoSalaDTO();
+		salasService.getAndaresList( grupoSalaDto.getUnidadeId(), futureSalaDTOList );
 		gruposSalasService.getSalas( getDTO(), futureSalaPertencesDTOList );
 		
 		FutureSynchronizer synch = new FutureSynchronizer(
