@@ -472,7 +472,7 @@ public class Curriculo
     }
 
     @SuppressWarnings( "unchecked" )
-	public int getPeriodo(
+	public Integer getPeriodo(
     	InstituicaoEnsino instituicaoEnsino,
     	Disciplina disciplina, Oferta oferta )
     {
