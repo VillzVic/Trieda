@@ -1,7 +1,9 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -90,15 +92,15 @@ public class IncompatibilidadeGrid extends ContentPanel {
 	{
 		this.models = ( ( models != null )? models : new ArrayList< DisciplinaIncompativelDTO >() );
 		store.removeAll();
-
 		stringColumns.clear();
-		for ( DisciplinaIncompativelDTO di : models )
-		{
-			if ( !stringColumns.contains( di.getDisciplina1String() ) )
-			{
-				stringColumns.add( di.getDisciplina1String() );
-			}
+
+		Set<String> disciplinasStr = new HashSet<String>();
+		for ( DisciplinaIncompativelDTO di : models ) {
+			disciplinasStr.add(di.getDisciplina1String());
+			disciplinasStr.add(di.getDisciplina2String());
 		}
+		
+		stringColumns.addAll(disciplinasStr);
 
 		List< BaseModel > modelsFake = new ArrayList<BaseModel>();
 		modelsFake.add(new BaseModel());
@@ -140,7 +142,8 @@ public class IncompatibilidadeGrid extends ContentPanel {
 		String rowString = stringColumns.get(row);
 		String columnString = stringColumns.get(col - 1);
 		for(DisciplinaIncompativelDTO model : models) {
-			if(model.getDisciplina1String().equals(rowString) && model.getDisciplina2String().equals(columnString)) {
+			if((model.getDisciplina1String().equals(rowString) && model.getDisciplina2String().equals(columnString)) ||
+			   (model.getDisciplina2String().equals(rowString) && model.getDisciplina1String().equals(columnString))) {
 				return model;
 			}
 		}
