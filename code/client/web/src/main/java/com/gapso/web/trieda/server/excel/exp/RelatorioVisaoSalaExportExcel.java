@@ -31,6 +31,7 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -419,7 +420,7 @@ public class RelatorioVisaoSalaExportExcel
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getExcelContentVisaoSala(),
+					atendimento.getContentVisaoSala(ReportType.EXCEL),
 					this.getExcelCommentVisaoSala( atendimento ) );
 
 				// Une células de acordo com a quantidade de créditos
@@ -443,15 +444,7 @@ public class RelatorioVisaoSalaExportExcel
 
 		if ( atendimento instanceof AtendimentoTaticoDTO )
 		{
-			return atendimento.getDisciplinaNome() + "\n"
-				+ "Turma: " + atendimento.getTurma() + "\n"
-				+ creditos + ( ( atendimento.isTeorico() ) ? teorico : pratico )
-				+ ": " + atendimento.getTotalCreditos() + " de "
-				+ atendimento.getTotalCreditoDisciplina() + "\n"
-				+ "Curso: " + atendimento.getCursoNome() + "\n"
-				+ "Matriz Curricular: " + atendimento.getCurriculoString() + "\n"
-				+ periodo + atendimento.getPeriodoString() + "\n" 
-				+ "Quantidade: " + atendimento.getQuantidadeAlunosString();
+			return atendimento.getContentToolTipVisaoSala(ReportType.EXCEL);
 		}
 		else if ( atendimento instanceof AtendimentoOperacionalDTO )
 		{

@@ -7,7 +7,7 @@ import java.util.Set;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class AtendimentoTaticoDTO
-	extends AbstractDTO< String >
+	extends AbstractAtendimentoRelatorioDTO< String >
 	implements AtendimentoRelatorioDTO, Comparable< AtendimentoTaticoDTO >
 {
 	private static final long serialVersionUID = -2870302894382757778L;
@@ -406,27 +406,27 @@ public class AtendimentoTaticoDTO
 
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other )
 	{
-		idsCursosAdicionadosVisaoSala.add( this.getCursoId() );
-		idsCurriculosAdicionadosVisaoSala.add( this.getCurriculoId() );
-		idsPeriodosAdicionadosVisaoSala.add( this.getPeriodo() );
+//		idsCursosAdicionadosVisaoSala.add( this.getCursoId() );
+//		idsCurriculosAdicionadosVisaoSala.add( this.getCurriculoId() );
+//		idsPeriodosAdicionadosVisaoSala.add( this.getPeriodo() );
 
-		if ( !idsCursosAdicionadosVisaoSala.contains( other.getCursoId() ) )
-		{
+//		if ( !idsCursosAdicionadosVisaoSala.contains( other.getCursoId() ) )
+//		{
 			setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
-			idsCursosAdicionadosVisaoSala.add( other.getCursoId() );
-		}
+//			idsCursosAdicionadosVisaoSala.add( other.getCursoId() );
+//		}
 
-		if ( !idsCurriculosAdicionadosVisaoSala.contains( other.getCurriculoId() ) )
-		{
+//		if ( !idsCurriculosAdicionadosVisaoSala.contains( other.getCurriculoId() ) )
+//		{
 			setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
-			idsCurriculosAdicionadosVisaoSala.add( other.getCurriculoId() );
-		}
+//			idsCurriculosAdicionadosVisaoSala.add( other.getCurriculoId() );
+//		}
 		
-		if ( !idsPeriodosAdicionadosVisaoSala.contains( other.getPeriodo() ) )
-		{
+//		if ( !idsPeriodosAdicionadosVisaoSala.contains( other.getPeriodo() ) )
+//		{
 			setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
-			idsPeriodosAdicionadosVisaoSala.add( other.getPeriodo() );
-		}
+//			idsPeriodosAdicionadosVisaoSala.add( other.getPeriodo() );
+//		}
 
 		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
@@ -464,26 +464,23 @@ public class AtendimentoTaticoDTO
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 	}
 
-	public String getContentVisaoSala()
+	public String getContentToolTipVisaoSala(ReportType reportType)
 	{
-		return getDisciplinaString() + "<br />"
-		+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
-		+ "Turma " + getTurma() + "<br />"
-		+ getQuantidadeAlunosString() + " aluno(s)";
+		String BG = TriedaUtil.beginBold(reportType);
+		String ED = TriedaUtil.endBold(reportType);
+		String BR = TriedaUtil.newLine(reportType);
+		
+		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		     + BG + "Turma: " + ED + getTurma() + BR
+			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Curso(s): " + ED + getCursoNome() + BR
+			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
+			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Sala: " + ED + getSalaString() + BR
+			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
 	}
 
-	public String getContentToolTipVisaoSala()
-	{
-		return "<b>Turma:</b> " + getTurma() + "<br />"
-			+ "<b>Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" )
-			+ ":</b> " + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "<br />"
-			+ "<b>Curso:</b> " + getCursoNome() + "<br />"
-			+ "<b>Matriz Curricular:</b> " + getCurriculoString() + "<br />"
-			+ "<b>Período:</b> " + getPeriodoString() +"<br />" 
-			+ "<b>Quantidade:</b> " + getQuantidadeAlunosString() + "<br />";
-	}
-
-	public String getContentToolTipVisaoCurso()
+	public String getContentToolTipVisaoCurso(ReportType reportType)
 	{
 		// Monta a string de compartilhamento da
 		// sala com alunos de cursos distintos (caso haja)
@@ -493,28 +490,19 @@ public class AtendimentoTaticoDTO
 		{
 			compartilhamentoSalaCursos = getCompartilhamentoCursosString();
 		}
-		String professor = ( getProfessorString() == null ? "" : getProfessorString() );
+		
+		String BG = TriedaUtil.beginBold(reportType);
+		String ED = TriedaUtil.endBold(reportType);
+		String BR = TriedaUtil.newLine(reportType);
 
-		String contentToolTip = "<b>Nome:</b> " + getDisciplinaNome() + "<br />"
-			+ "<b>Sala:</b> " + getSalaString() + "<br />"
-			+ "<b>Turma:</b> " + getTurma() + "<br />"
-			+ "<b>Professor:</b> " + professor
-			+ "<br />" + "<b>" + getQuantidadeAlunos() + " aluno(s)</b><br />"
-			+ "<b>Tipo Crédito:</b> " + ( ( isTeorico() ) ? "Teórico" : "Prático" ) + "<br />"
-			+ "<b>Créditos:</b> " + getTotalCreditos() + " de "	+ getTotalCreditoDisciplina() + "<br />"
-			+ "<b>Curso(s) nessa aula : </b>" + compartilhamentoSalaCursos  + "<br />";
-
-		return contentToolTip;
-	}
-
-	public String getExcelContentVisaoSala()
-	{
-		return getDisciplinaString() + " / " + getTurma();
-	}
-
-	public String getExcelContentVisaoCurso()
-	{
-		return getDisciplinaString() + " / " + getTurma();
+		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+			 + BG + "Turma: " + ED + getTurma() + BR
+			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Curso: " + ED + getCursoNome() + BR
+			 + BG + "Matriz Curricular: " + ED + getCurriculoString() + BR
+			 + BG + "Período: " + ED + getPeriodoString() + BR
+			 + BG + "Sala: " + ED + getSalaString() + BR
+			 + BG + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
 	}
 
 	@Override

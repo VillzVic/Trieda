@@ -2,15 +2,18 @@ package com.gapso.web.trieda.shared.dtos;
 
 public interface AtendimentoRelatorioDTO
 {
+	static public enum ReportType {EXCEL, WEB};
+	
 	public Long getOfertaId();
 	public Long getCampusId();
 	public Integer getSemana();
 	public Integer getTotalCreditos();
 	public Long getDisciplinaId();
 	public String getDisciplinaNome();
-	public String getContentToolTipVisaoSala();
-	public String getContentToolTipVisaoCurso();
-	public String getContentVisaoSala();
+	public String getContentToolTipVisaoSala(ReportType reportType);
+	public String getContentToolTipVisaoCurso(ReportType reportType);
+	public String getContentVisaoSala(ReportType reportType);
+	public String getContentVisaoCurso(ReportType reportType);
 	public Integer getQuantidadeAlunos();
 	public String getDisciplinaString();
 	public String getTurma();
@@ -26,8 +29,6 @@ public interface AtendimentoRelatorioDTO
 	public String getQuantidadeAlunosString();
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other );
 	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other );
-	public String getExcelContentVisaoSala();
-	public String getExcelContentVisaoCurso();
 	public Long getSalaId();
 	public String getSalaString();
 	public boolean isTeorico();

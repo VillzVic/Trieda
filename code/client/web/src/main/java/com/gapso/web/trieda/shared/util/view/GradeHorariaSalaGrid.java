@@ -29,6 +29,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -304,10 +305,10 @@ public class GradeHorariaSalaGrid
 					return new Html( "" );
 				}
 
-				final String title = atDTO.getDisciplinaNome();
-				final String contentToolTip = atDTO.getContentToolTipVisaoSala();
+				final String title = atDTO.getDisciplinaString();
+				final String contentToolTip = atDTO.getContentToolTipVisaoSala(ReportType.WEB);
 
-				final Html html = new Html( atDTO.getContentVisaoSala() )
+				final Html html = new Html( atDTO.getContentVisaoSala(ReportType.WEB) )
 				{
 					@Override
 					protected void onRender( Element target, int index )

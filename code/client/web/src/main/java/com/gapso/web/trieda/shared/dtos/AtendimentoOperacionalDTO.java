@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class AtendimentoOperacionalDTO extends AbstractDTO< String >
+public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< String >
 	implements Comparable< AtendimentoOperacionalDTO >, AtendimentoRelatorioDTO
 {
 	private static final long serialVersionUID = -2870302894382757778L;
@@ -581,15 +581,8 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 		setTotalLinhas( getTotalLinhas() + other.getTotalLinhas() );
 	}
 
-	public String getContentVisaoSala()
-	{
-		return getDisciplinaString() + "<br />"
-			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
-			+ "Turma " + getTurma() + "<br />"
-			+ getQuantidadeAlunosString() + " aluno(s)";
-	}
 
-	public String getContentToolTipVisaoSala()
+	public String getContentToolTipVisaoSala(ReportType reportType)
 	{
 		// Monta a string de compartilhamento da
 		// sala com alunos de cursos distintos ( caso haja )
@@ -628,7 +621,7 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 			+ "<br />" + professor;
 	}
 
-	public String getContentToolTipVisaoCurso()
+	public String getContentToolTipVisaoCurso(ReportType reportType)
 	{
 		// Monta a string de compartilhamento da
 		// sala com alunos de cursos distintos ( caso haja )
@@ -717,16 +710,6 @@ public class AtendimentoOperacionalDTO extends AbstractDTO< String >
 			+ "<b>Campus: </b> " + getCampusString() + "<br />"
 			+ "<b>Unidade: </b> " + getUnidadeString() + "<br />"
 			+ "<b>Sala: </b> " + getSalaString() + "<br />" + professor;
-	}
-
-	public String getExcelContentVisaoSala()
-	{
-		return this.getDisciplinaString() + " / " + this.getTurma();
-	}
-
-	public String getExcelContentVisaoCurso()
-	{
-		return this.getDisciplinaString() + " / " + this.getTurma();
 	}
 
 	public String getExcelContentVisaoProfessor()

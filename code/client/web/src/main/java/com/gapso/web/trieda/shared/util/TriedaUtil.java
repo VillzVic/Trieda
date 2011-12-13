@@ -3,6 +3,7 @@ package com.gapso.web.trieda.shared.util;
 import java.util.Date;
 import java.util.List;
 
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.google.gwt.user.client.Window.Location;
 
 public class TriedaUtil
@@ -214,5 +215,17 @@ public class TriedaUtil
 
 		TriedaCurrency tc = new TriedaCurrency( d );
 		return tc;
+	}
+	
+	static public String beginBold(ReportType type) {
+		return type.equals(ReportType.WEB) ? "<b>" : "";
+	}
+	
+	static public String endBold(ReportType type) {
+		return type.equals(ReportType.WEB) ? "</b>" : "";
+	}
+	
+	static public String newLine(ReportType type) {
+		return type.equals(ReportType.WEB) ? "<br/>" : "\n";
 	}
 }

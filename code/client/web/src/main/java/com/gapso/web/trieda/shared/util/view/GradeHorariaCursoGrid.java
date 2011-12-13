@@ -29,6 +29,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -39,7 +40,6 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosServiceAsync;
 import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -337,23 +337,9 @@ public class GradeHorariaCursoGrid
 				}
 
 				final String title = atDTO.getDisciplinaString();
-				final String contentToolTip = atDTO.getContentToolTipVisaoCurso();				
+				final String contentToolTip = atDTO.getContentToolTipVisaoCurso(ReportType.WEB);				
 
-				String content = atDTO.getDisciplinaString() + "<br />";
-
-				content += TriedaUtil.truncate( atDTO.getDisciplinaNome(), 12 );
-				content += "<br />";
-
-				content += atDTO.getUnidadeString();
-				content += "<br />";
-
-				content += atDTO.getSalaString();
-				content += "<br />";
-
-				content += "Turma " + atDTO.getTurma();
-				content += "<br />";
-
-				final Html html = new Html( content )
+				final Html html = new Html( atDTO.getContentVisaoCurso(ReportType.WEB) )
 				{
 					@Override
 					protected void onRender( Element target, int index )
