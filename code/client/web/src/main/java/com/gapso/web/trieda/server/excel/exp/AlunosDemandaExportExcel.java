@@ -46,25 +46,23 @@ public class AlunosDemandaExportExcel
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 
-	public AlunosDemandaExportExcel( Cenario cenario,
+	public AlunosDemandaExportExcel(Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
-	public AlunosDemandaExportExcel( boolean removeUnusedSheets, Cenario cenario,
+	public AlunosDemandaExportExcel(boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.ALUNOS_DEMANDA.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.ALUNOS_DEMANDA.getSheetName();
 		this.initialRow = 6;
 	}
 
@@ -99,7 +97,7 @@ public class AlunosDemandaExportExcel
 
 		if ( !alunosDemanda.isEmpty() )
 		{
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
 
@@ -113,7 +111,7 @@ public class AlunosDemandaExportExcel
 
 		if ( this.removeUnusedSheets )
 		{
-			removeUnusedSheets( this.sheetName, workbook );
+			removeUnusedSheets( this.getSheetName(), workbook );
 		}
 
 		return result;

@@ -33,24 +33,22 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 	private HSSFCellStyle[] cellStyles;
 	
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 	
-	public AreasTitulacaoExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+	public AreasTitulacaoExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-			this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+			this(true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 	}
 
-	public AreasTitulacaoExportExcel( boolean removeUnusedSheets,
+	public AreasTitulacaoExportExcel(boolean removeUnusedSheets,
 		Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(true, ExcelInformationType.AREAS_TITULACAO.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.AREAS_TITULACAO.getSheetName();
 		this.initialRow = 6;
 	}
 
@@ -79,10 +77,10 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 		{
 			if ( this.removeUnusedSheets )
 			{
-				removeUnusedSheets( this.sheetName, workbook );
+				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
 

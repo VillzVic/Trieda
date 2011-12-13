@@ -54,7 +54,6 @@ public class ResumoCursoExportExcel
 	private ResumoCursoFiltroExcel filter;
 	private HSSFCellStyle[] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 
 	public ResumoCursoExportExcel( Cenario cenario,
@@ -79,11 +78,10 @@ public class ResumoCursoExportExcel
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.RESUMO_CURSO.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.RESUMO_CURSO.getSheetName();
 		this.initialRow = 6;
 		this.setFilter( filter );
 	}
@@ -142,7 +140,7 @@ public class ResumoCursoExportExcel
 
 		if ( !resumoCursoDTOList.isEmpty() )
 		{
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
 
@@ -162,7 +160,7 @@ public class ResumoCursoExportExcel
 
 		if ( this.removeUnusedSheets )
 		{
-			removeUnusedSheets( this.sheetName, workbook );
+			removeUnusedSheets( this.getSheetName(), workbook );
 		}
 		
 		return result;

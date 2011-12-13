@@ -31,20 +31,24 @@ public abstract class AbstractExportExcel
 {
 	protected List< String > errors;
 	protected List< String > warnings;
+	private boolean autoSizeColumns;
 	private Cenario cenario;
 	private TriedaI18nConstants i18nConstants;
 	private TriedaI18nMessages i18nMessages;
+	private String sheetName;
 	protected InstituicaoEnsino instituicaoEnsino;
 
-	protected AbstractExportExcel( Cenario cenario,
+	protected AbstractExportExcel(boolean autoSizeColumns, String sheetName, Cenario cenario,
 		TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino )
 	{
+		this.autoSizeColumns = autoSizeColumns;
 		this.instituicaoEnsino = instituicaoEnsino;
 		this.cenario = cenario;
 		this.i18nConstants = i18nConstants;
 		this.i18nMessages = i18nMessages;
+		this.sheetName = sheetName;
 
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
@@ -86,11 +90,23 @@ public abstract class AbstractExportExcel
 		{
 			this.errors.clear();
 			this.warnings.clear();
-
-			return fillInExcel( workbook );
+			
+			if (fillInExcel( workbook )) {
+				if (this.autoSizeColumns) {
+					autoSizeColumns(workbook);
+				}
+				return true;
+			}
 		}
 
 		return false;
+	}
+
+	private void autoSizeColumns(HSSFWorkbook workbook) {
+		HSSFSheet sheet = workbook.getSheet(getSheetName());
+		if (sheet != null) {
+			autoSizeColumns((short)0,(short)20,sheet);			
+		}
 	}
 
 	@Override
@@ -103,6 +119,10 @@ public abstract class AbstractExportExcel
 	public List< String > getWarnings()
 	{
 		return this.warnings;
+	}
+	
+	protected String getSheetName() {
+		return this.sheetName;
 	}
 
 	protected Cenario getCenario()

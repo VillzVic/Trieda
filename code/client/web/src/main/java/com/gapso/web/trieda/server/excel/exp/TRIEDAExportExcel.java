@@ -18,8 +18,7 @@ public class TRIEDAExportExcel
 		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor,
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
-
+		super(false, "", cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		this.isVisaoProfessor = isVisaoProfessor;
 	}
 

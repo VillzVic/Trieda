@@ -34,7 +34,6 @@ public class SalasExportExcel extends AbstractExportExcel {
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 
 	public SalasExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
@@ -47,11 +46,10 @@ public class SalasExportExcel extends AbstractExportExcel {
 		Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.SALAS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.SALAS.getSheetName();
 		this.initialRow = 6;
 	}
 	
@@ -79,10 +77,10 @@ public class SalasExportExcel extends AbstractExportExcel {
 		{
 			if ( this.removeUnusedSheets )
 			{
-				removeUnusedSheets( this.sheetName, workbook );
+				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
 

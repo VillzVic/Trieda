@@ -43,10 +43,9 @@ public class CampiExportExcel
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 
-	public CampiExportExcel( Cenario cenario,
+	public CampiExportExcel(Cenario cenario,
 		TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino )
@@ -59,11 +58,10 @@ public class CampiExportExcel
 			TriedaI18nMessages i18nMessages,
 			InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.CAMPI.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.CAMPI.getSheetName();
 		this.initialRow = 6;
 	}
 
@@ -95,10 +93,10 @@ public class CampiExportExcel
 		{
 			if ( this.removeUnusedSheets )
 			{
-				removeUnusedSheets( this.sheetName, workbook );
+				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 
 			int nextRow = this.initialRow;

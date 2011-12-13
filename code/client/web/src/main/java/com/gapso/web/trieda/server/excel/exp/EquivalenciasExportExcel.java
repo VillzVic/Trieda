@@ -45,7 +45,6 @@ public class EquivalenciasExportExcel
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 
 	public EquivalenciasExportExcel( Cenario cenario,
@@ -59,11 +58,10 @@ public class EquivalenciasExportExcel
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.EQUIVALENCIAS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.EQUIVALENCIAS.getSheetName();
 		this.initialRow = 6;
 	}
 
@@ -92,10 +90,10 @@ public class EquivalenciasExportExcel
 		{
 			if ( this.removeUnusedSheets )
 			{
-				removeUnusedSheets( this.sheetName, workbook );
+				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			HSSFSheet sheet = workbook.getSheet(this.sheetName);
+			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 			for (Equivalencia equivalencia : equivalencias) {

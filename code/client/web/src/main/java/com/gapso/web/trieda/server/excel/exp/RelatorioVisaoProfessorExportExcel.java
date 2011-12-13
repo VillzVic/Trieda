@@ -67,7 +67,6 @@ public class RelatorioVisaoProfessorExportExcel
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 	private RelatorioVisaoProfessorFiltroExcel relatorioFiltro;
 	private Campus campus;
@@ -104,11 +103,10 @@ public class RelatorioVisaoProfessorExportExcel
 		ExportExcelFilter filter, boolean isVisaoProfessor,
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( false, ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName();
 		this.initialRow = 5;
 		this.isVisaoProfessor = isVisaoProfessor;
 		this.setFilter( filter );
@@ -294,7 +292,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 		if ( !atendimentos.isEmpty() )
 		{
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 
 			List< HSSFComment > excelCommentsPool = buildExcelCommentsPool( workbook );
@@ -417,7 +415,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 		if ( this.removeUnusedSheets )
 		{
-			removeUnusedSheets( this.sheetName, workbook );
+			removeUnusedSheets( this.getSheetName(), workbook );
 		}
 
 		return result;

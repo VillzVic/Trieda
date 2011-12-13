@@ -47,7 +47,6 @@ public class DisciplinasSalasExportExcel
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 
 	public DisciplinasSalasExportExcel( Cenario cenario,
@@ -61,11 +60,10 @@ public class DisciplinasSalasExportExcel
 		Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.DISCIPLINAS_SALAS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.DISCIPLINAS_SALAS.getSheetName();
 		this.initialRow = 6;
 	}
 
@@ -97,10 +95,10 @@ public class DisciplinasSalasExportExcel
 		{
 			if ( this.removeUnusedSheets )
 			{
-				removeUnusedSheets( this.sheetName, workbook );
+				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 
 			int nextRow = this.initialRow;

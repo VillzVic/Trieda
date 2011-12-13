@@ -74,7 +74,6 @@ public class RelatorioVisaoCursoExportExcel
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private String sheetName;
 	private int initialRow;
 	private RelatorioVisaoCursoFiltroExcel relatorioFiltro;
 
@@ -82,14 +81,14 @@ public class RelatorioVisaoCursoExportExcel
 		Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
+		this(true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoCursoExportExcel(
 		boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
 	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
+		this(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoCursoExportExcel(
@@ -97,7 +96,7 @@ public class RelatorioVisaoCursoExportExcel
 		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
 		InstituicaoEnsino instituicaoEnsino )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
+		this(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
 	}
 
 	public RelatorioVisaoCursoExportExcel(
@@ -105,11 +104,10 @@ public class RelatorioVisaoCursoExportExcel
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
-		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(false, ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 
 		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.sheetName = ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName();
 		this.initialRow = 5;
 		this.setFilter( filter );
 	}
@@ -288,7 +286,7 @@ public class RelatorioVisaoCursoExportExcel
 
 		if ( !atdRelatoriosList.isEmpty() )
 		{
-			HSSFSheet sheet = workbook.getSheet( this.sheetName );
+			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 
 			List< HSSFComment > excelCommentsPool
@@ -352,7 +350,7 @@ public class RelatorioVisaoCursoExportExcel
 
 		if ( this.removeUnusedSheets )
 		{
-			removeUnusedSheets( this.sheetName, workbook );
+			removeUnusedSheets( this.getSheetName(), workbook );
 		}
 
 		return result;
