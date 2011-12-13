@@ -21,6 +21,9 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_TURMA_STRING = "turmaString";
+	public static final String PROPERTY_SALA_ID = "salaId";
+	public static final String PROPERTY_SALA_STRING = "salaString";
+	public static final String PROPERTY_DIA_SEMANA = "diaSemana";
 	public static final String PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN = "tipoCreditoString";
 	public static final String PROPERTY_CREDITOS_INT = "creditosInt";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_INT = "quantidadeAlunosInt";
@@ -138,6 +141,30 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 
 	public String getTurma() {
 		return get(PROPERTY_TURMA_STRING);
+	}
+	
+	public void setSalaId(Long value) {
+		set(PROPERTY_SALA_ID, value);
+	}
+
+	public Long getSalaId() {
+		return get(PROPERTY_SALA_ID);
+	}
+	
+	public void setSalaString(String value) {
+		set(PROPERTY_SALA_STRING, value);
+	}
+
+	public String getSalaString() {
+		return get(PROPERTY_SALA_STRING);
+	}
+	
+	public void setDiaSemana(Integer value) {
+		set(PROPERTY_DIA_SEMANA, value);
+	}
+
+	public Integer getDiaSemana() {
+		return get(PROPERTY_DIA_SEMANA);
 	}
 
 	public void setTipoCreditoTeorico(Boolean value) {

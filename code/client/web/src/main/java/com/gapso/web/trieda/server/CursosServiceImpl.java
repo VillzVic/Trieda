@@ -21,8 +21,10 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -32,6 +34,7 @@ import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.services.CursosService;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.google.gwt.dev.util.Pair;
 
 @Transactional
 public class CursosServiceImpl
@@ -159,83 +162,79 @@ public class CursosServiceImpl
 	public List<ResumoCursoDTO> getResumos(
 		CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
-		Campus campus = Campus.find(
-			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find(campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		
+		Map<Long,Professor> professoresMap = new HashMap<Long, Professor>();
 
-		List< Oferta > ofertas
-			= new ArrayList< Oferta >( campus.getOfertas() );
+		List< Oferta > ofertas = new ArrayList< Oferta >( campus.getOfertas() );
 		Collections.sort( ofertas );
 
-		List< ResumoCursoDTO > resumoCursoDTOList
-			= new ArrayList< ResumoCursoDTO >();
+		List< ResumoCursoDTO > resumoCursoDTOList = new ArrayList< ResumoCursoDTO >();
+		
+		// [Campus-Turno-Curso -> ResumoCursoDTO]
+		Map< String, ResumoCursoDTO > nivel1Map = new HashMap< String, ResumoCursoDTO >();
+		// [Campus-Turno-Curso -> [Campus-Turno-Curso-Curriculo-Periodo -> ResumoCursoDTO]]
+		Map< String, Map< String, ResumoCursoDTO > > nivel2Map = new HashMap< String, Map< String, ResumoCursoDTO > >();
+		// [Campus-Turno-Curso -> [Campus-Turno-Curso-Curriculo-Periodo -> [Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito -> ResumoCursoDTO]]]
+		Map< String, Map< String, Map< String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>> > > > nivel3Map = new HashMap< String, Map< String, Map< String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>> > > >();
 
-		Map< String, ResumoCursoDTO > nivel1Map
-			= new HashMap< String, ResumoCursoDTO >();
-
-		Map< String, Map< String, ResumoCursoDTO > > nivel2Map
-			= new HashMap< String, Map< String, ResumoCursoDTO > >();
-
-		Map< String, Map< String, Map< String, ResumoCursoDTO > > > nivel3Map
-			= new HashMap< String, Map< String, Map< String, ResumoCursoDTO > > >();
-
-		for ( Oferta oferta : ofertas )
-		{
-			List< AtendimentoRelatorioDTO > atendimentoRelatorioDTOList
-				= new ArrayList< AtendimentoRelatorioDTO >();
-
-			List< AtendimentoTatico > atendimentoTaticoList
-				= AtendimentoTatico.findAllBy( getInstituicaoEnsinoUser(), oferta );
-
+		for ( Oferta oferta : ofertas ) {
+			// monta a lista de atendimentos associados a uma oferta
+			List< AtendimentoRelatorioDTO > atendimentoRelatorioDTOList = new ArrayList< AtendimentoRelatorioDTO >();
+			List< AtendimentoTatico > atendimentoTaticoList = AtendimentoTatico.findAllBy( getInstituicaoEnsinoUser(), oferta );
+			boolean isTatico = true;
 			if (!atendimentoTaticoList.isEmpty()) {
 				for (AtendimentoTatico atendimentoTatico : atendimentoTaticoList) {
-					atendimentoRelatorioDTOList.add(ConvertBeans
-							.toAtendimentoTaticoDTO(atendimentoTatico));
+					atendimentoRelatorioDTOList.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
 				}
 			}
-			else
-			{
-				List< AtendimentoOperacional > atendimentoOperacionalList
-					= AtendimentoOperacional.findAllBy( oferta, getInstituicaoEnsinoUser() );
-
-				for ( AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList )
-				{
-					atendimentoRelatorioDTOList.add(
-						ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+			else {
+				List< AtendimentoOperacional > atendimentoOperacionalList = AtendimentoOperacional.findAllBy( oferta, getInstituicaoEnsinoUser() );
+				for ( AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList ) {
+					atendimentoRelatorioDTOList.add(ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+				}
+				isTatico = false;
+				List<Professor> professores = Professor.findAll(this.getInstituicaoEnsinoUser());
+				for (Professor p : professores) {
+					professoresMap.put(p.getId(),p);
 				}
 			}
 
-			for ( AtendimentoRelatorioDTO atendimentoRelatorioDTO : atendimentoRelatorioDTOList )
-			{
+			// A partir dos atendimentos, monta as estruturas nivel1Map, nivel2Map e nivel3Map, além de converter um atendimento
+			// em um objeto ResumoCursoDTO e armazená-los em uma lista
+			for ( AtendimentoRelatorioDTO atendimentoRelatorioDTO : atendimentoRelatorioDTOList ) {
 				ResumoCursoDTO resumoDTO = new ResumoCursoDTO();
 
 				resumoDTO.setOfertaId(oferta.getId());
 				resumoDTO.setCampusId(oferta.getCampus().getId());
 				resumoDTO.setCampusString(oferta.getCampus().getNome());
 				resumoDTO.setTurnoId(atendimentoRelatorioDTO.getTurnoId());
-				resumoDTO.setTurnoString(atendimentoRelatorioDTO
-						.getTurnoString());
+				resumoDTO.setTurnoString(atendimentoRelatorioDTO.getTurnoString());
 				resumoDTO.setCursoId(atendimentoRelatorioDTO.getCursoId());
-				resumoDTO
-						.setCursoString(atendimentoRelatorioDTO.getCursoNome());
-				resumoDTO.setMatrizCurricularId(atendimentoRelatorioDTO
-						.getCurriculoId());
-				resumoDTO.setMatrizCurricularString(atendimentoRelatorioDTO
-						.getCurriculoString());
-				resumoDTO.setPeriodo(Integer.valueOf(atendimentoRelatorioDTO
-						.getPeriodoString()));
-				resumoDTO.setQuantidadeAlunos(atendimentoRelatorioDTO
-						.getQuantidadeAlunos());
-				resumoDTO.setDisciplinaId(atendimentoRelatorioDTO
-						.getDisciplinaId());
-				resumoDTO.setDisciplinaString(atendimentoRelatorioDTO
-						.getDisciplinaString());
+				resumoDTO.setCursoString(atendimentoRelatorioDTO.getCursoNome());
+				resumoDTO.setMatrizCurricularId(atendimentoRelatorioDTO.getCurriculoId());
+				resumoDTO.setMatrizCurricularString(atendimentoRelatorioDTO.getCurriculoString());
+				resumoDTO.setPeriodo(Integer.valueOf(atendimentoRelatorioDTO.getPeriodoString()));
+				resumoDTO.setQuantidadeAlunos(atendimentoRelatorioDTO.getQuantidadeAlunos());
+				resumoDTO.setDisciplinaId(atendimentoRelatorioDTO.getDisciplinaId());
+				resumoDTO.setDisciplinaString(atendimentoRelatorioDTO.getDisciplinaString());
 				resumoDTO.setTurma(atendimentoRelatorioDTO.getTurma());
-				resumoDTO.setTipoCreditoTeorico(atendimentoRelatorioDTO
-						.isTeorico());
-				resumoDTO.setCreditos(atendimentoRelatorioDTO
-						.getTotalCreditos());
-				resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus()
-						.getValorCredito()));
+				resumoDTO.setTipoCreditoTeorico(atendimentoRelatorioDTO.isTeorico());
+				resumoDTO.setCreditos(atendimentoRelatorioDTO.getTotalCreditos());
+				resumoDTO.setSalaId(atendimentoRelatorioDTO.getSalaId());
+				resumoDTO.setSalaString(atendimentoRelatorioDTO.getSalaString());
+				resumoDTO.setDiaSemana(atendimentoRelatorioDTO.getSemana());
+				if (isTatico) {
+					resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
+				} else {
+					Long profId = ((AtendimentoOperacionalDTO)atendimentoRelatorioDTO).getProfessorId();
+					Professor prof = professoresMap.get(profId);
+					if (prof != null) {
+						resumoDTO.setCustoDocente(new TriedaCurrency(prof.getValorCredito()));
+					} else {
+						resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
+					}
+				}
 				resumoDTO.setReceita(new TriedaCurrency(oferta.getReceita()));
 
 				createResumoNivel1(nivel1Map, nivel2Map, nivel3Map, resumoDTO);
@@ -255,7 +254,7 @@ public class CursosServiceImpl
 	private List<ResumoCursoDTO> createResumoEstrutura(
 			Map<String, ResumoCursoDTO> map1,
 			Map<String, Map<String, ResumoCursoDTO>> map2,
-			Map<String, Map<String, Map<String, ResumoCursoDTO>>> map3) {
+			Map<String, Map<String, Map<String, Pair<ResumoCursoDTO, List<ResumoCursoDTO>>>>> map3) {
 		List<ResumoCursoDTO> list = new ArrayList<ResumoCursoDTO>();
 
 		for (String key1 : map1.keySet()) {
@@ -267,7 +266,8 @@ public class CursosServiceImpl
 				rc1DTO.add(rc2DTO);
 
 				for (String key3 : map3.get(key1).get(key2).keySet()) {
-					ResumoCursoDTO rc3DTO = map3.get(key1).get(key2).get(key3);
+					Pair<ResumoCursoDTO, List<ResumoCursoDTO>> pair = map3.get(key1).get(key2).get(key3);
+					ResumoCursoDTO rc3DTO = pair.getLeft();
 					rc2DTO.add(rc3DTO);
 				}
 			}
@@ -277,45 +277,42 @@ public class CursosServiceImpl
 	}
 
 	private void calculaResumo3(
-			Map<String, Map<String, Map<String, ResumoCursoDTO>>> map3,
+			Map<String, Map<String, Map<String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>> map3,
 			List<ResumoCursoDTO> atendimentoResumoList) {
 		Map<String, Double> rateioMap = createRateioMap(atendimentoResumoList);
 
 		for (String key1 : map3.keySet()) {
 			for (String key2 : map3.get(key1).keySet()) {
 				for (String key3 : map3.get(key1).get(key2).keySet()) {
-					ResumoCursoDTO resumo3DTO = map3.get(key1).get(key2)
-							.get(key3);
+					Pair<ResumoCursoDTO,List<ResumoCursoDTO>> pair = map3.get(key1).get(key2).get(key3);
+					Double rateio = TriedaUtil.roundTwoDecimals(rateioMap.get(key3));
+					
+					ResumoCursoDTO mainDTO = pair.getLeft();
+					mainDTO.setRateio(rateio);
+					
+					for (ResumoCursoDTO dto : pair.getRight()) {
+						// acumula a qtde de créditos
+						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
+						// calcula e acumula custo docente
+						Double docente = dto.getCustoDocente().getDoubleValue();
+						Double receita = dto.getReceita().getDoubleValue();
+						int qtdAlunos = dto.getQuantidadeAlunos();
+						int creditos = dto.getCreditos();
+						double custoDocenteLocal = creditos * docente * rateio * 4.5 * 6.0;
+						mainDTO.setCustoDocente(TriedaUtil.parseTriedaCurrency(custoDocenteLocal + mainDTO.getCustoDocente().getDoubleValue()));
+						// calcula e acumula receita
+						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
+						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
+					}
 
-					Double rateio = TriedaUtil.roundTwoDecimals(rateioMap
-							.get(key3));
-					Double docente = resumo3DTO.getCustoDocente()
-							.getDoubleValue();
-					Double receita = resumo3DTO.getReceita().getDoubleValue();
-					int qtdAlunos = resumo3DTO.getQuantidadeAlunos();
-					int creditos = resumo3DTO.getCreditos();
-					resumo3DTO.setRateio(rateio);
-
-					resumo3DTO.setCustoDocente(TriedaUtil
-							.parseTriedaCurrency(creditos * docente * rateio
-									* 4.5 * 6));
-
-					resumo3DTO.setReceita(TriedaUtil
-							.parseTriedaCurrency(receita * creditos * qtdAlunos
-									* 4.5 * 6));
-
-					resumo3DTO.setMargem(TriedaUtil
-							.parseTriedaCurrency(resumo3DTO.getReceita()
-									.getDoubleValue()
-									- resumo3DTO.getCustoDocente()
-											.getDoubleValue()));
-
-					resumo3DTO
-							.setMargemPercente(TriedaUtil
-									.roundTwoDecimals(resumo3DTO.getMargem()
-											.getDoubleValue()
-											/ resumo3DTO.getReceita()
-													.getDoubleValue()));
+					// calcula margem
+					double margem = mainDTO.getReceita().getDoubleValue() - mainDTO.getCustoDocente().getDoubleValue();
+					double margemPercent = 0.0;
+					if (Double.compare(mainDTO.getReceita().getDoubleValue(),0.0) != 0) {
+						margemPercent = margem / mainDTO.getReceita().getDoubleValue(); 
+					}
+					mainDTO.setMargem(TriedaUtil.parseTriedaCurrency(margem));
+					mainDTO.setMargemPercente(TriedaUtil.roundTwoDecimals(margemPercent));
 				}
 			}
 		}
@@ -323,7 +320,7 @@ public class CursosServiceImpl
 
 	private void calculaResumo1e2(Map<String, ResumoCursoDTO> map1,
 			Map<String, Map<String, ResumoCursoDTO>> map2,
-			Map<String, Map<String, Map<String, ResumoCursoDTO>>> map3) {
+			Map<String, Map<String, Map<String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>> map3) {
 		for (String key1 : map3.keySet()) {
 			ResumoCursoDTO rc1 = map1.get(key1);
 
@@ -341,7 +338,8 @@ public class CursosServiceImpl
 				rc2.setMargemPercente(0.0);
 
 				for (String key3 : map3.get(key1).get(key2).keySet()) {
-					ResumoCursoDTO rc3 = map3.get(key1).get(key2).get(key3);
+					Pair<ResumoCursoDTO, List<ResumoCursoDTO>> pair = map3.get(key1).get(key2).get(key3);
+					ResumoCursoDTO rc3 = pair.getLeft();
 
 					rc1.setCustoDocente(TriedaUtil.parseTriedaCurrency(rc1
 							.getCustoDocente().getDoubleValue()
@@ -380,37 +378,26 @@ public class CursosServiceImpl
 	}
 
 	private String getKeyNivel1(ResumoCursoDTO resumoCursoDTO) {
-		String key1 = resumoCursoDTO.getCampusId() + "-"
-				+ resumoCursoDTO.getTurnoId() + "-"
-				+ resumoCursoDTO.getCursoId();
-
-		return key1;
+		return resumoCursoDTO.getCampusId() + "-" + resumoCursoDTO.getTurnoId() + "-" + resumoCursoDTO.getCursoId();
 	}
 
 	private String getKeyNivel2(ResumoCursoDTO resumoCursoDTO) {
-		String key1 = getKeyNivel1(resumoCursoDTO);
-
-		String key2 = key1 + "-" + resumoCursoDTO.getMatrizCurricularId() + "-"
-				+ resumoCursoDTO.getPeriodo();
-
-		return key2;
+		return getKeyNivel1(resumoCursoDTO) + "-" + resumoCursoDTO.getMatrizCurricularId() + "-" + resumoCursoDTO.getPeriodo();
 	}
 
 	private String getKeyNivel3(ResumoCursoDTO resumoCursoDTO) {
-		String key2 = getKeyNivel2(resumoCursoDTO);
-
-		String key3 = key2 + "-" + resumoCursoDTO.getDisciplinaId() + "-"
-				+ resumoCursoDTO.getTurma() + "-"
-				+ resumoCursoDTO.getTipoCreditoTeorico();
-
-		return key3;
+		return getKeyNivel2(resumoCursoDTO) + "-" + resumoCursoDTO.getDisciplinaId() + "-" + resumoCursoDTO.getTurma() + "-" + resumoCursoDTO.getTipoCreditoTeorico();
+	}
+	
+	private String getKeyCompartilhamentoTurma(ResumoCursoDTO resumoCursoDTO) {
+		return resumoCursoDTO.getDisciplinaId() + "-" + resumoCursoDTO.getTurma() + "-" + resumoCursoDTO.getDiaSemana() + "-" + resumoCursoDTO.getSalaId();
 	}
 
 	private void createResumoNivel1(Map<String, ResumoCursoDTO> map1,
 			Map<String, Map<String, ResumoCursoDTO>> map2,
-			Map<String, Map<String, Map<String, ResumoCursoDTO>>> map3,
+			Map<String, Map<String, Map<String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>> map3,
 			ResumoCursoDTO resumoCursoDTO) {
-		String key1 = getKeyNivel1(resumoCursoDTO);
+		String key1 = getKeyNivel1(resumoCursoDTO); // Campus-Turno-Curso
 
 		if (!map1.containsKey(key1)) {
 			ResumoCursoDTO resumoCursoDTONew = new ResumoCursoDTO();
@@ -424,16 +411,16 @@ public class CursosServiceImpl
 
 			map1.put(key1, resumoCursoDTONew);
 			map2.put(key1, new HashMap<String, ResumoCursoDTO>());
-			map3.put(key1, new HashMap<String, Map<String, ResumoCursoDTO>>());
+			map3.put(key1, new HashMap<String, Map<String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>());
 		}
 	}
 
 	private void createResumoNivel2(
 			Map<String, Map<String, ResumoCursoDTO>> map2,
-			Map<String, Map<String, Map<String, ResumoCursoDTO>>> map3,
+			Map<String, Map<String, Map<String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>> map3,
 			ResumoCursoDTO resumoCursoDTO) {
-		String key1 = getKeyNivel1(resumoCursoDTO);
-		String key2 = getKeyNivel2(resumoCursoDTO);
+		String key1 = getKeyNivel1(resumoCursoDTO); // Campus-Turno-Curso
+		String key2 = getKeyNivel2(resumoCursoDTO); // Campus-Turno-Curso-Curriculo-Periodo
 
 		if (!map2.get(key1).containsKey(key2)) {
 			ResumoCursoDTO resumoCursoDTONew = new ResumoCursoDTO();
@@ -444,114 +431,94 @@ public class CursosServiceImpl
 			resumoCursoDTONew.setTurnoString(resumoCursoDTO.getTurnoString());
 			resumoCursoDTONew.setCursoId(resumoCursoDTO.getCursoId());
 			resumoCursoDTONew.setCursoString(resumoCursoDTO.getCursoString());
-			resumoCursoDTONew.setMatrizCurricularId(resumoCursoDTO
-					.getMatrizCurricularId());
-			resumoCursoDTONew.setMatrizCurricularString(resumoCursoDTO
-					.getMatrizCurricularString());
+			resumoCursoDTONew.setMatrizCurricularId(resumoCursoDTO.getMatrizCurricularId());
+			resumoCursoDTONew.setMatrizCurricularString(resumoCursoDTO.getMatrizCurricularString());
 			resumoCursoDTONew.setPeriodo(resumoCursoDTO.getPeriodo());
 
 			map2.get(key1).put(key2, resumoCursoDTONew);
-			map3.get(key1).put(key2, new HashMap<String, ResumoCursoDTO>());
+			map3.get(key1).put(key2, new HashMap<String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>());
 		}
 	}
 
 	private void createResumoNivel3(
-			Map<String, Map<String, Map<String, ResumoCursoDTO>>> map,
+			Map<String, Map<String, Map<String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>> map,
 			ResumoCursoDTO resumoCursoDTO) {
-		String key1 = getKeyNivel1(resumoCursoDTO);
-		String key2 = getKeyNivel2(resumoCursoDTO);
-		String key3 = getKeyNivel3(resumoCursoDTO);
+		String key1 = getKeyNivel1(resumoCursoDTO); // Campus-Turno-Curso
+		String key2 = getKeyNivel2(resumoCursoDTO); // Campus-Turno-Curso-Curriculo-Periodo
+		String key3 = getKeyNivel3(resumoCursoDTO); // Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito
 
-		if (!map.get(key1).get(key2).containsKey(key3)) {
-			ResumoCursoDTO resumoCursoDTONew = new ResumoCursoDTO();
-
-			resumoCursoDTONew.setCampusId(resumoCursoDTO.getCampusId());
-			resumoCursoDTONew.setCampusString(resumoCursoDTO.getCampusString());
-			resumoCursoDTONew.setTurnoId(resumoCursoDTO.getTurnoId());
-			resumoCursoDTONew.setTurnoString(resumoCursoDTO.getTurnoString());
-			resumoCursoDTONew.setCursoId(resumoCursoDTO.getCursoId());
-			resumoCursoDTONew.setCursoString(resumoCursoDTO.getCursoString());
-			resumoCursoDTONew.setMatrizCurricularId(resumoCursoDTO
-					.getMatrizCurricularId());
-			resumoCursoDTONew.setMatrizCurricularString(resumoCursoDTO
-					.getMatrizCurricularString());
-			resumoCursoDTONew.setPeriodo(resumoCursoDTO.getPeriodo());
-			resumoCursoDTONew.setDisciplinaId(resumoCursoDTO.getDisciplinaId());
-			resumoCursoDTONew.setDisciplinaString(resumoCursoDTO
-					.getDisciplinaString());
-			resumoCursoDTONew.setQuantidadeAlunos(resumoCursoDTO
-					.getQuantidadeAlunos());
-			resumoCursoDTONew.setTurma(resumoCursoDTO.getTurma());
-			resumoCursoDTONew.setTipoCreditoTeorico(resumoCursoDTO
-					.getTipoCreditoTeorico());
-			resumoCursoDTONew.setCreditos(resumoCursoDTO.getCreditos());
-			resumoCursoDTONew.setCustoDocente(resumoCursoDTO.getCustoDocente());
-			resumoCursoDTONew.setReceita(resumoCursoDTO.getReceita());
-
-			map.get(key1).get(key2).put(key3, resumoCursoDTONew);
+		Pair<ResumoCursoDTO,List<ResumoCursoDTO>> pair = map.get(key1).get(key2).get(key3);
+		if (pair == null) {
+			List<ResumoCursoDTO> list = new ArrayList<ResumoCursoDTO>();
+			ResumoCursoDTO dtoMain = new ResumoCursoDTO();
+			dtoMain.setCampusId(resumoCursoDTO.getCampusId());
+			dtoMain.setCampusString(resumoCursoDTO.getCampusString());
+			dtoMain.setTurnoId(resumoCursoDTO.getTurnoId());
+			dtoMain.setTurnoString(resumoCursoDTO.getTurnoString());
+			dtoMain.setCursoId(resumoCursoDTO.getCursoId());
+			dtoMain.setCursoString(resumoCursoDTO.getCursoString());
+			dtoMain.setMatrizCurricularId(resumoCursoDTO.getMatrizCurricularId());
+			dtoMain.setMatrizCurricularString(resumoCursoDTO.getMatrizCurricularString());
+			dtoMain.setPeriodo(resumoCursoDTO.getPeriodo());
+			dtoMain.setDisciplinaId(resumoCursoDTO.getDisciplinaId());
+			dtoMain.setDisciplinaString(resumoCursoDTO.getDisciplinaString());
+			dtoMain.setQuantidadeAlunos(resumoCursoDTO.getQuantidadeAlunos());
+			dtoMain.setTurma(resumoCursoDTO.getTurma());
+			dtoMain.setTipoCreditoTeorico(resumoCursoDTO.getTipoCreditoTeorico());
+			pair = Pair.create(dtoMain,list);
+			map.get(key1).get(key2).put(key3, pair);
 		}
+		
+		ResumoCursoDTO resumoCursoDTONew = new ResumoCursoDTO();
+
+		resumoCursoDTONew.setCampusId(resumoCursoDTO.getCampusId());
+		resumoCursoDTONew.setCampusString(resumoCursoDTO.getCampusString());
+		resumoCursoDTONew.setTurnoId(resumoCursoDTO.getTurnoId());
+		resumoCursoDTONew.setTurnoString(resumoCursoDTO.getTurnoString());
+		resumoCursoDTONew.setCursoId(resumoCursoDTO.getCursoId());
+		resumoCursoDTONew.setCursoString(resumoCursoDTO.getCursoString());
+		resumoCursoDTONew.setMatrizCurricularId(resumoCursoDTO.getMatrizCurricularId());
+		resumoCursoDTONew.setMatrizCurricularString(resumoCursoDTO.getMatrizCurricularString());
+		resumoCursoDTONew.setPeriodo(resumoCursoDTO.getPeriodo());
+		resumoCursoDTONew.setDisciplinaId(resumoCursoDTO.getDisciplinaId());
+		resumoCursoDTONew.setDisciplinaString(resumoCursoDTO.getDisciplinaString());
+		resumoCursoDTONew.setQuantidadeAlunos(resumoCursoDTO.getQuantidadeAlunos());
+		resumoCursoDTONew.setTurma(resumoCursoDTO.getTurma());
+		resumoCursoDTONew.setTipoCreditoTeorico(resumoCursoDTO.getTipoCreditoTeorico());
+		resumoCursoDTONew.setCreditos(resumoCursoDTO.getCreditos());
+		resumoCursoDTONew.setCustoDocente(resumoCursoDTO.getCustoDocente());
+		resumoCursoDTONew.setReceita(resumoCursoDTO.getReceita());
+	
+		pair.getRight().add(resumoCursoDTONew);
 	}
 
-	private Map<String, Double> createRateioMap(
-			List<ResumoCursoDTO> resumoCursoList) {
-		Map<String, List<ResumoCursoDTO>> rateioAuxMap = new HashMap<String, List<ResumoCursoDTO>>();
-
+	private Map<String, Double> createRateioMap(List<ResumoCursoDTO> resumoCursoList) {
+		// [Disciplina-Turma-DiaSemana-Sala -> List<ResumoCursoDTO>]
+		Map<String,List<ResumoCursoDTO>> compartilhamentosTurmasMap = new HashMap<String, List<ResumoCursoDTO>>();
 		for (ResumoCursoDTO rcDTO : resumoCursoList) {
-			String key3 = getKeyNivel3(rcDTO);
-
-			List<ResumoCursoDTO> listDto = rateioAuxMap.get(key3);
-
-			if (listDto == null) {
-				listDto = new ArrayList<ResumoCursoDTO>();
-				rateioAuxMap.put(key3, listDto);
+			String key = getKeyCompartilhamentoTurma(rcDTO);
+			List<ResumoCursoDTO> list = compartilhamentosTurmasMap.get(key);
+			if (list == null) {
+				list = new ArrayList<ResumoCursoDTO>();
+				compartilhamentosTurmasMap.put(key,list);
 			}
-
-			// Adiciona um resumo curso a uma linha do nível 3
-			listDto.add(rcDTO);
+			list.add(rcDTO);
 		}
-
-		Map<String, Double> rateioMap = new HashMap<String/* Chave do nível 3 */, Double/*
-																					 * Rateio
-																					 * do
-																					 * curso
-																					 */>();
-
-		for (Entry<String, List<ResumoCursoDTO>> key_ListResumos : rateioAuxMap
-				.entrySet()) {
-			Double total = 0.0;
-
-			List<ResumoCursoDTO> listResumos = key_ListResumos.getValue();
-
-			Map<Long, Double> rateioAux2Map = new HashMap<Long /* Id do Curso */, Double /*
-																						 * Alunos
-																						 * do
-																						 * Curso
-																						 */>();
-
-			for (ResumoCursoDTO rcDTO : listResumos) {
-				// Quantidade atual de alunos do curso
-				Double qtdAlunos = rateioAux2Map.get(rcDTO.getCursoId());
-
-				// Incrementa o número de alunos do curso no total de alunos
-				// desse curso
-				rateioAux2Map.put(rcDTO.getCursoId(),
-						rcDTO.getQuantidadeAlunos()
-								+ (qtdAlunos == null ? 0.0 : qtdAlunos));
-
-				total += rcDTO.getQuantidadeAlunos();
+		
+		// [Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito -> Rateio]
+		Map<String, Double> rateioMap = new HashMap<String, Double>();
+		
+		for (Entry<String, List<ResumoCursoDTO>> entry : compartilhamentosTurmasMap.entrySet()) {
+			double totalAlunosCompartilhados = 0.0;
+			for (ResumoCursoDTO dto : entry.getValue()) {
+				totalAlunosCompartilhados += dto.getQuantidadeAlunos();
 			}
-
-			for (ResumoCursoDTO rcDTO : listResumos) {
-				// Parta cada linha do nível 3, procura
-				// pelo número de alunos de cada curso
-				// relacionados à disciplina e turma em questão,
-				// em relação ao total de alunos da disciplina e turma
-				String key = getKeyNivel3(rcDTO);
-				Double numerador = rateioAux2Map.get(rcDTO.getCursoId());
-				rateioMap.put(key, numerador / total);
+			
+			for (ResumoCursoDTO dto : entry.getValue()) {
+				rateioMap.put(getKeyNivel3(dto),dto.getQuantidadeAlunos()/totalAlunosCompartilhados);
 			}
 		}
-
+		
 		return rateioMap;
 	}
 }
