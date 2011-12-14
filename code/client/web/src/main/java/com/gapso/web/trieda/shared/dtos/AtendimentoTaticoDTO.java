@@ -1,8 +1,6 @@
 package com.gapso.web.trieda.shared.dtos;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
@@ -400,42 +398,6 @@ public class AtendimentoTaticoDTO
 		return ( getCreditosTeorico() + getCreditosPratico() );
 	}
 
-	private Set< Long > idsCursosAdicionadosVisaoSala = new HashSet< Long >();
-	private Set< Long > idsCurriculosAdicionadosVisaoSala = new HashSet< Long >();
-	private Set< Integer > idsPeriodosAdicionadosVisaoSala = new HashSet< Integer >();
-
-	private Set< Long > idsCursosAdicionadosVisaoCurso = new HashSet< Long >();
-	private Set< Long > idsCurriculosAdicionadosVisaoCurso = new HashSet< Long >();
-	private Set< Integer > idsPeriodosAdicionadosVisaoCurso = new HashSet< Integer >();
-
-	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other )
-	{
-		idsCursosAdicionadosVisaoCurso.add( this.getCursoId() );
-		idsCurriculosAdicionadosVisaoCurso.add( this.getCurriculoId() );
-		idsPeriodosAdicionadosVisaoCurso.add( this.getPeriodo() );
-
-		if ( !idsCursosAdicionadosVisaoCurso.contains( other.getCursoId() ) )
-		{
-			setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
-			idsCursosAdicionadosVisaoCurso.add( other.getCursoId() );
-		}
-
-		if ( !idsCurriculosAdicionadosVisaoCurso.add( other.getCurriculoId() ) )
-		{
-			setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
-			idsCurriculosAdicionadosVisaoCurso.add( other.getCurriculoId() );
-		}
-
-		if ( !idsPeriodosAdicionadosVisaoCurso.contains( other.getPeriodo() ) )
-		{
-			setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
-			idsPeriodosAdicionadosVisaoCurso.add( other.getPeriodo() );
-		}
-
-		// setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
-		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
-	}
-
 	public String getContentToolTipVisaoSala(ReportType reportType)
 	{
 		String BG = TriedaUtil.beginBold(reportType);
@@ -454,15 +416,6 @@ public class AtendimentoTaticoDTO
 
 	public String getContentToolTipVisaoCurso(ReportType reportType)
 	{
-		// Monta a string de compartilhamento da
-		// sala com alunos de cursos distintos (caso haja)
-		String compartilhamentoSalaCursos = "";
-		if ( getCompartilhamentoCursosString() != null
-			&& !getCompartilhamentoCursosString().equals( "" ) )
-		{
-			compartilhamentoSalaCursos = getCompartilhamentoCursosString();
-		}
-		
 		String BG = TriedaUtil.beginBold(reportType);
 		String ED = TriedaUtil.endBold(reportType);
 		String BR = TriedaUtil.newLine(reportType);

@@ -454,12 +454,6 @@ public class AtendimentosServiceImpl
 					HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(
 					    ConvertBeans.toListAtendimentoOperacional( atendimentos ) );
 	
-					for ( int i = 1; i < atendimentos.size(); i++ )
-					{
-						AtendimentoOperacionalDTO dtoCurrent = atendimentos.get( i );
-						dtoMain.concatenateVisaoCurso( dtoCurrent );
-					}
-	
 					dtoMain.setHorarioId( menorHorario.getId() );
 					dtoMain.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
 					dtoMain.setTotalCreditos( atendimentos.size() );
@@ -707,7 +701,7 @@ public class AtendimentosServiceImpl
 			countSemanaSize += size;
 		}
 
-		adicionaDadosCompartilhamentoSalaCursoOperacional( finalProcessedList );
+		//adicionaDadosCompartilhamentoSalaCursoOperacional( finalProcessedList );
 
 		ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > entry
 			= new ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > >(
@@ -1040,55 +1034,59 @@ public class AtendimentosServiceImpl
 		boolean isAdmin = isAdministrador();
 		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
 
-		Professor professor = ( professorDTO == null ? null :
-			Professor.find( professorDTO.getId(), getInstituicaoEnsinoUser() ) );
-
-		ProfessorVirtual professorVirtual = ( professorVirtualDTO == null ? null :
-			ProfessorVirtual.find( professorVirtualDTO.getId(), getInstituicaoEnsinoUser() ) );
-
-		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
-
-		List< AtendimentoOperacional > atendimentosOperacional
-			= AtendimentoOperacional.getAtendimentosOperacional(
-				getInstituicaoEnsinoUser(), isAdmin, professor,
-				professorVirtual, turno, isVisaoProfessor, semanaLetiva );
-
-		List< AtendimentoOperacional > atendimentosOperacionalDistinct
-			= new ArrayList< AtendimentoOperacional >();
-
-		for ( AtendimentoOperacional at : atendimentosOperacional )
-		{
-			boolean encontrou = false;
-
-			for ( AtendimentoOperacional at2 : atendimentosOperacionalDistinct )
-			{
-				if ( at.getHorarioDisponivelCenario().getHorarioAula()
-						== at2.getHorarioDisponivelCenario().getHorarioAula()
-					&& at.getHorarioDisponivelCenario().getDiaSemana()
-						== at2.getHorarioDisponivelCenario().getDiaSemana() )
-				{
-					encontrou = true;
-					break;
-				}
-			}
-
-			if ( !encontrou )
-			{
-				atendimentosOperacionalDistinct.add( at );
-			}
+		Professor professor = ( professorDTO == null ? null : Professor.find( professorDTO.getId(), getInstituicaoEnsinoUser() ) );
+		ProfessorVirtual professorVirtual = ( professorVirtualDTO == null ? null : ProfessorVirtual.find( professorVirtualDTO.getId(), getInstituicaoEnsinoUser() ) );
+		SemanaLetiva semanaLetiva = SemanaLetiva.find( semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
+		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional.getAtendimentosOperacional( getInstituicaoEnsinoUser(), isAdmin, professor, professorVirtual, turno, isVisaoProfessor, semanaLetiva );
+		
+		List< AtendimentoRelatorioDTO > arDTOList = new ArrayList< AtendimentoRelatorioDTO >();
+		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional ) {
+			arDTOList.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
 		}
 		
-
-		List< AtendimentoOperacionalDTO > listDTO
-			= new ArrayList< AtendimentoOperacionalDTO >( atendimentosOperacionalDistinct.size() );
-
-		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacionalDistinct )
-		{
-			listDTO.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+		List< AtendimentoRelatorioDTO > tempDTOList = montaListaParaVisaoSala( arDTOList );
+		List<AtendimentoOperacionalDTO> resultDTOList = new ArrayList<AtendimentoOperacionalDTO>();
+		for (AtendimentoRelatorioDTO ar : tempDTOList) {
+			resultDTOList.add((AtendimentoOperacionalDTO)ar);
 		}
+		
+		return resultDTOList;
 
-		return montaListaParaVisaoProfessor( montaListaParaVisaoProfessor1( listDTO ) );
+//		List< AtendimentoOperacional > atendimentosOperacionalDistinct
+//			= new ArrayList< AtendimentoOperacional >();
+//
+//		for ( AtendimentoOperacional at : atendimentosOperacional )
+//		{
+//			boolean encontrou = false;
+//
+//			for ( AtendimentoOperacional at2 : atendimentosOperacionalDistinct )
+//			{
+//				if ( at.getHorarioDisponivelCenario().getHorarioAula()
+//						== at2.getHorarioDisponivelCenario().getHorarioAula()
+//					&& at.getHorarioDisponivelCenario().getDiaSemana()
+//						== at2.getHorarioDisponivelCenario().getDiaSemana() )
+//				{
+//					encontrou = true;
+//					break;
+//				}
+//			}
+//
+//			if ( !encontrou )
+//			{
+//				atendimentosOperacionalDistinct.add( at );
+//			}
+//		}
+//		
+//
+//		List< AtendimentoOperacionalDTO > listDTO
+//			= new ArrayList< AtendimentoOperacionalDTO >( atendimentosOperacionalDistinct.size() );
+//
+//		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacionalDistinct )
+//		{
+//			listDTO.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+//		}
+//
+//		return montaListaParaVisaoProfessor( montaListaParaVisaoProfessor1( listDTO ) );
 	}
 
 	private List< AtendimentoOperacionalDTO > montaListaParaVisaoProfessor1(

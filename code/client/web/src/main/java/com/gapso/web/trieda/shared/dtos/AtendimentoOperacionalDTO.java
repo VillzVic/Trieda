@@ -487,42 +487,6 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		this.totalLinhas = value;
 	}
 
-	private Set< Long > idsCursosAdicionadosVisaoSala = new HashSet< Long >();
-	private Set< Long > idsCurriculosAdicionadosVisaoSala = new HashSet< Long >();
-	private Set< Integer > idsPeriodosAdicionadosVisaoSala = new HashSet< Integer >();
-
-	private Set< Long > idsCursosAdicionadosVisaoCurso = new HashSet< Long >();
-	private Set< Long > idsCurriculosAdicionadosVisaoCurso = new HashSet< Long >();
-	private Set< Integer > idsPeriodosAdicionadosVisaoCurso = new HashSet< Integer >();
-
-	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other )
-	{
-		idsCursosAdicionadosVisaoCurso.add( this.getCursoId() );
-		idsCurriculosAdicionadosVisaoCurso.add( this.getCurriculoId() );
-		idsPeriodosAdicionadosVisaoCurso.add( this.getPeriodo() );
-
-		if ( !idsCursosAdicionadosVisaoCurso.contains( other.getCursoId() ) )
-		{
-			setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
-			idsCursosAdicionadosVisaoCurso.add( other.getCursoId() );
-		}
-
-		if ( !idsCurriculosAdicionadosVisaoCurso.contains( other.getCurriculoId() ) )
-		{
-			setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
-			idsCurriculosAdicionadosVisaoCurso.add( other.getCurriculoId() );
-		}
-
-		if ( !idsPeriodosAdicionadosVisaoCurso.contains( other.getPeriodo() ) )
-		{
-			setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
-			idsPeriodosAdicionadosVisaoCurso.add( other.getPeriodo() );
-		}
-
-		// setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
-		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
-	}
-
 	private Set< Long > idsCursosAdicionadosVisaoProfessor = new HashSet< Long >();
 	private Set< Long > idsCurriculosAdicionadosVisaoProfessor = new HashSet< Long >();
 	private Set< Integer > idsPeriodosAdicionadosVisaoProfessor = new HashSet< Integer >();
@@ -572,100 +536,50 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
 	}
 
-	public String getContentToolTipVisaoCurso(ReportType reportType)
-	{
-		// Monta a string de compartilhamento da
-		// sala com alunos de cursos distintos ( caso haja )
-		String compartilhamentoSalaCursos = "";
-
-		if ( getCompartilhamentoCursosString() != null
-			&& !getCompartilhamentoCursosString().equals( "" ) )
-		{
-			compartilhamentoSalaCursos = getCompartilhamentoCursosString();
-		}
-		else
-		{
-			compartilhamentoSalaCursos = getCursoNome();
-		}
-		////
-
-		String professor = "";
-
-		if ( isProfessorVirtual() )
-		{
-			professor = "<b>" + getProfessorVirtualString() + "</b>";
-		}
-		else
-		{
-			professor = "<b>Professor:</b> " + getProfessorString();
-		}
-
-		String contentToolTip = "<b>Turma:</b> " + getTurma() + "<br />"
-			+ "<b>Horário: </b> " + getHorarioString() + "<br />"
-			+ "<b>Sala: </b> " + getSalaString() + "<br />"
-			+ professor + "<br />"
-			+ "<b>" + getQuantidadeAlunos() + " aluno(s) </b><br />"
-			+ "<b>Tipo Crédito: </b> " + ( ( isTeorico() ) ? "Teórico" : "Prático" )
-			+ "<br />" + "<b>Créditos: </b> "
-			+ getTotalCreditos() + " de " + getTotalCreditoDisciplina() + "<br />"
-			+ "<b>Matriz Curricular: </b>" + getCurriculoString() + "<br />"
-			+ "<b>Período: </b>" + getPeriodoString() + "<br />"
-			+ "<b>Curso(s) nessa aula : </b>" + compartilhamentoSalaCursos  + "<br />";
-
-		return contentToolTip;
+	public String getContentToolTipVisaoCurso(ReportType reportType) {
+		String BG = TriedaUtil.beginBold(reportType);
+		String ED = TriedaUtil.endBold(reportType);
+		String BR = TriedaUtil.newLine(reportType);
+		String professor = isProfessorVirtual() ? getProfessorVirtualString() : getProfessorString();
+		
+		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		     + BG + "Turma: " + ED + getTurma() + BR
+		     + BG + "Professor: " + ED + professor + BR
+			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Curso(s): " + ED + getCursoNome() + BR
+			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
+			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Sala: " + ED + getSalaString() + BR
+			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
 	}
 
-	public String getContentVisaoProfessor()
-	{
-		return getDisciplinaString() + "<br />"
-			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + "<br />"
-			+ "Turma " + getTurma() + "<br />" + getSalaString();
+	public String getContentVisaoProfessor(ReportType reportType) {
+		if (reportType.equals(ReportType.WEB)) {
+			final String BR = TriedaUtil.newLine(reportType);
+			return getDisciplinaString() + BR
+			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + BR
+			+ "Turma " + getTurma() + BR
+			+ getSalaString();
+		} else {
+			return getDisciplinaString() + " / " + getTurma();
+		}
 	}
 
-	public String getContentToolTipVisaoProfessor()
-	{
-		// Monta a string de compartilhamento da
-		// sala com alunos de cursos distintos ( caso haja )
-		String compartilhamentoSalaCursos = "";
-
-		if ( getCompartilhamentoCursosString() != null
-			&& !getCompartilhamentoCursosString().equals( "" ) )
-		{
-			compartilhamentoSalaCursos = getCompartilhamentoCursosString();
-		}
-		else
-		{
-			compartilhamentoSalaCursos = getCursoNome();
-		}
-		////
-
-		String professor = "";
-
-		if ( getProfessorId() != null )
-		{
-			professor = "<b>Professor: </b>" + getProfessorString();
-		}
-		else
-		{
-			professor = "<b>" + getProfessorVirtualString() + "</b>";
-		}
-
-		return "<b>Turma: </b> "+ getTurma() + "<br />"
-			+ "<b>Horário: </b>" + getHorarioString() + "<br />"
-			+ "<b>Credito(s) " + ( ( getCreditoTeoricoBoolean() )? "Teorico(s)" : "Pratico(s)" )
-			+ ": </b> " + getTotalLinhas() + " de " + getTotalCreditoDisciplina() + "<br />"
-			+ "<b>Curso(s) nessa aula : </b>" + compartilhamentoSalaCursos  + "<br />"
-			+ "<b>Matriz Curricular: </b> " + getCurriculoString() + "<br />"
-			+ "<b>Periodo: </b> " + getPeriodoString() + "<br />" 
-			+ "<b>Quantidade: </b> " + getQuantidadeAlunosString() + "<br />"
-			+ "<b>Campus: </b> " + getCampusString() + "<br />"
-			+ "<b>Unidade: </b> " + getUnidadeString() + "<br />"
-			+ "<b>Sala: </b> " + getSalaString() + "<br />" + professor;
-	}
-
-	public String getExcelContentVisaoProfessor()
-	{
-		return this.getDisciplinaString() + " / " + this.getTurma();
+	public String getContentToolTipVisaoProfessor(ReportType reportType) {
+		String BG = TriedaUtil.beginBold(reportType);
+		String ED = TriedaUtil.endBold(reportType);
+		String BR = TriedaUtil.newLine(reportType);
+		String professor = isProfessorVirtual() ? getProfessorVirtualString() : getProfessorString();
+		
+		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		     + BG + "Turma: " + ED + getTurma() + BR
+		     + BG + "Professor: " + ED + professor + BR
+			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Curso(s): " + ED + getCursoNome() + BR
+			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
+			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Sala: " + ED + getSalaString() + BR
+			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
 	}
 
 	@Override

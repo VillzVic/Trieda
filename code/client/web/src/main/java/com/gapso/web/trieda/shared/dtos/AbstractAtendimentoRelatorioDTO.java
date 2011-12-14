@@ -7,9 +7,8 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 	private static final long serialVersionUID = 5260734304888470231L;
 	
 	public String getContentVisaoSala(ReportType reportType) {
-		final String BR = TriedaUtil.newLine(reportType);
-		
 		if (reportType.equals(ReportType.WEB)) {
+			final String BR = TriedaUtil.newLine(reportType);
 			return getDisciplinaString() + BR
 			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + BR
 			+ "Turma " + getTurma() + BR
@@ -20,9 +19,8 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 	}
 	
 	public String getContentVisaoCurso(ReportType reportType) {
-		final String BR = TriedaUtil.newLine(reportType);
-		
 		if (reportType.equals(ReportType.WEB)) {
+			final String BR = TriedaUtil.newLine(reportType);
 			return getDisciplinaString() + BR
 			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + BR
 			+ "Turma " + getTurma() + BR
@@ -40,4 +38,6 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 	}
+	
+	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other ) {}
 }

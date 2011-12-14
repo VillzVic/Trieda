@@ -27,6 +27,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -257,10 +258,9 @@ public class GradeHorariaProfessorGrid
 				}
 
 				final String title = atDTO.getDisciplinaNome();
-				final String contentToolTip
-					= atDTO.getContentToolTipVisaoProfessor();
+				final String contentToolTip = atDTO.getContentToolTipVisaoProfessor(ReportType.WEB);
 
-				final Html html = new Html( atDTO.getContentVisaoProfessor() )
+				final Html html = new Html( atDTO.getContentVisaoProfessor(ReportType.WEB) )
 				{
 					@Override
 					protected void onRender( Element target, int index )
@@ -275,7 +275,7 @@ public class GradeHorariaProfessorGrid
 
 				html.addStyleName( "horario" );
 				html.addStyleName( "c" + ( rowIndex + 1 ) );
-				html.addStyleName( "tc" + atDTO.getTotalLinhas() );
+				html.addStyleName( "tc" + atDTO.getTotalCreditos() );
 				html.addStyleName( "s" + atDTO.getSemana() );
 				html.addStyleName( getCssDisciplina( atDTO.getDisciplinaId() ) );
 
