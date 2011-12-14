@@ -39,4 +39,9 @@ public interface AtendimentoRelatorioDTO
 	public String getProfessorString();
 	public String getCompartilhamentoCursosString();
 	public void setCompartilhamentoCursosString( String s );
+	public void setCursoNome( String value );
+	public void setCurricularString( String value );
+	public void setPeriodoString( String value );
+	public void setQuantidadeAlunosString( String value );
+	public void setQuantidadeAlunos( Integer value );
 }

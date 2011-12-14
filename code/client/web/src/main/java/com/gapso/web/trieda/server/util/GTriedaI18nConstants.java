@@ -115,6 +115,11 @@ public class GTriedaI18nConstants
 	public String creditos() {
 		return this.languageManager.getText("creditos");
 	}
+	
+	@Override
+	public String credito_s() {
+		return this.languageManager.getText("credito_s");
+	}
 
 	@Override
 	public String creditosPraticos() {
@@ -256,6 +261,11 @@ public class GTriedaI18nConstants
 	public String gruposSalas() {
 		return this.languageManager.getText("gruposSalas");
 	}
+	
+	@Override
+	public String horarios() {
+		return this.languageManager.getText("horarios");
+	}
 
 	@Override
 	public String importarExcel() {
@@ -381,6 +391,11 @@ public class GTriedaI18nConstants
 	public String pratico() {
 		return this.languageManager.getText("pratico");
 	}
+	
+	@Override
+	public String pratico_s() {
+		return this.languageManager.getText("pratico_s");
+	}
 
 	@Override
 	public String preenchaA() {
@@ -480,6 +495,11 @@ public class GTriedaI18nConstants
 	@Override
 	public String teorico() {
 		return this.languageManager.getText("teorico");
+	}
+	
+	@Override
+	public String teorico_s() {
+		return this.languageManager.getText("teorico_s");
 	}
 
 	@Override

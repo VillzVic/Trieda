@@ -404,34 +404,6 @@ public class AtendimentoTaticoDTO
 	private Set< Long > idsCurriculosAdicionadosVisaoSala = new HashSet< Long >();
 	private Set< Integer > idsPeriodosAdicionadosVisaoSala = new HashSet< Integer >();
 
-	public void concatenateVisaoSala( AtendimentoRelatorioDTO other )
-	{
-//		idsCursosAdicionadosVisaoSala.add( this.getCursoId() );
-//		idsCurriculosAdicionadosVisaoSala.add( this.getCurriculoId() );
-//		idsPeriodosAdicionadosVisaoSala.add( this.getPeriodo() );
-
-//		if ( !idsCursosAdicionadosVisaoSala.contains( other.getCursoId() ) )
-//		{
-			setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
-//			idsCursosAdicionadosVisaoSala.add( other.getCursoId() );
-//		}
-
-//		if ( !idsCurriculosAdicionadosVisaoSala.contains( other.getCurriculoId() ) )
-//		{
-			setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
-//			idsCurriculosAdicionadosVisaoSala.add( other.getCurriculoId() );
-//		}
-		
-//		if ( !idsPeriodosAdicionadosVisaoSala.contains( other.getPeriodo() ) )
-//		{
-			setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
-//			idsPeriodosAdicionadosVisaoSala.add( other.getPeriodo() );
-//		}
-
-		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
-		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
-	}
-
 	private Set< Long > idsCursosAdicionadosVisaoCurso = new HashSet< Long >();
 	private Set< Long > idsCurriculosAdicionadosVisaoCurso = new HashSet< Long >();
 	private Set< Integer > idsPeriodosAdicionadosVisaoCurso = new HashSet< Integer >();
@@ -494,13 +466,13 @@ public class AtendimentoTaticoDTO
 		String BG = TriedaUtil.beginBold(reportType);
 		String ED = TriedaUtil.endBold(reportType);
 		String BR = TriedaUtil.newLine(reportType);
-
+		
 		return BG + "Nome: " + ED + getDisciplinaNome() + BR
 			 + BG + "Turma: " + ED + getTurma() + BR
-			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Crédito(s): " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
 			 + BG + "Curso: " + ED + getCursoNome() + BR
 			 + BG + "Matriz Curricular: " + ED + getCurriculoString() + BR
-			 + BG + "Período: " + ED + getPeriodoString() + BR
+			 + BG + "Período(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
 			 + BG + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
 	}

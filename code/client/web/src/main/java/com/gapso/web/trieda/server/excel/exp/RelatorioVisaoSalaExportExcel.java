@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
@@ -209,6 +210,8 @@ public class RelatorioVisaoSalaExportExcel
 
 		if ( !atdRelatorioList.isEmpty() )
 		{
+			boolean ehTatico = atdRelatorioList.get(0) instanceof AtendimentoTaticoDTO;
+			
 			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 
@@ -283,7 +286,7 @@ public class RelatorioVisaoSalaExportExcel
 						List< AtendimentoRelatorioDTO > listAtendimentos = mapNivel3.get( semanaLetiva );
 
 						nextRow = writeSala( sala, turno, semanaLetiva, listAtendimentos,
-							nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap );
+							nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap, ehTatico );
 					}
 				}				
 			}
@@ -303,9 +306,9 @@ public class RelatorioVisaoSalaExportExcel
 		Sala sala, Turno turno, SemanaLetiva semanaLetiva,
 		List< AtendimentoRelatorioDTO > atendimentos, int row, HSSFSheet sheet,
 		Iterator< HSSFComment > itExcelCommentsPool,
-		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
+		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap, boolean ehTatico )
 	{
-		row = writeHeader( sala, turno, row, sheet );
+		row = writeHeader( sala, turno, row, sheet, ehTatico );
 
 		int initialRow = row;
 		int col = 2;
@@ -313,21 +316,35 @@ public class RelatorioVisaoSalaExportExcel
 		// Preenche grade com créditos e células vazias
 		int maxCreditos = semanaLetiva.calculaMaxCreditos();
 
-		for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ )
-		{
-			// Créditos
-			setCell( row, col++, sheet,
-				this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
-
-			// Dias Semana
-			for ( int i = 0; i < Semanas.values().length; i++ )
-			{
-				setCell( row, col++, sheet,
-					this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+		if (ehTatico) {
+			for ( int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++ ) {
+				// Créditos
+				setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], indexCredito );
+	
+				// Dias Semana
+				for ( int i = 0; i < Semanas.values().length; i++ ) {
+					setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+				}
+	
+				row++;
+				col = 2;
 			}
-
-			row++;
-			col = 2;
+		} else {
+			List<HorarioAula> horariosAulaList = new ArrayList<HorarioAula>(semanaLetiva.getHorariosAula());
+			Collections.sort(horariosAulaList);
+			for (HorarioAula ha : horariosAulaList) {
+				// Horários
+				String value = ConvertBeans.dateToString(ha.getHorario(), ha.getSemanaLetiva().getTempo() );
+				setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], value );
+				
+				// Dias Semana
+				for ( int i = 0; i < Semanas.values().length; i++ ) {
+					setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+				}
+	
+				row++;
+				col = 2;
+			}
 		}
 
 		// Processa os atendimentos lidos do BD para
@@ -419,7 +436,7 @@ public class RelatorioVisaoSalaExportExcel
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
 					atendimento.getContentVisaoSala(ReportType.EXCEL),
-					this.getExcelCommentVisaoSala( atendimento ) );
+					atendimento.getContentToolTipVisaoSala(ReportType.EXCEL));
 
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
@@ -432,40 +449,7 @@ public class RelatorioVisaoSalaExportExcel
 		return ( initialRow + maxCreditos + 1 );
 	}
 
-	private String getExcelCommentVisaoSala( AtendimentoRelatorioDTO atendimento )
-	{
-		String creditos = HtmlUtils.htmlUnescape( "Cr&eacute;dito(s) " );
-		String teorico = HtmlUtils.htmlUnescape( "Te&oacute;rico(s)" );
-		String pratico = HtmlUtils.htmlUnescape( "Pr&aacute;tico(s)" );
-		String periodo = HtmlUtils.htmlUnescape( "Per&iacute;odo: " );
-		String horario = HtmlUtils.htmlUnescape( "Hor&aacute;rio: " );
-
-		if ( atendimento instanceof AtendimentoTaticoDTO )
-		{
-			return atendimento.getContentToolTipVisaoSala(ReportType.EXCEL);
-		}
-		else if ( atendimento instanceof AtendimentoOperacionalDTO )
-		{
-			AtendimentoOperacionalDTO atOp = (AtendimentoOperacionalDTO) atendimento;
-
-			return atOp.getDisciplinaNome() + "\n"
-				+ "Turma: " + atOp.getTurma() + "\n"
-				+ horario + atOp.getHorarioString() + "\n"
-				+ creditos + ( ( atOp.getCreditoTeoricoBoolean() ) ? teorico : pratico )
-				+ ": " + atOp.getTotalCreditos() + " de " + atOp.getTotalCreditoDisciplina() + "\n"
-				+ "Curso: " + atOp.getCursoNome() + "\n"
-				+ "Matriz Curricular: " + atOp.getCurriculoString() + "\n"
-				+ periodo + atOp.getPeriodoString() + "\n"
-				+ "Quantidade: " + atOp.getQuantidadeAlunosString() + "\n"
-				+ "Sala: " + atOp.getSalaString() + "\n"
-				+ "Professor: " + ( atOp.getProfessorId() != null ?
-					atOp.getProfessorString() : atOp.getProfessorVirtualString() );
-		}
-
-		return "";
-	}
-
-	private int writeHeader( Sala sala, Turno turno, int row, HSSFSheet sheet )
+	private int writeHeader( Sala sala, Turno turno, int row, HSSFSheet sheet, boolean ehTatico )
 	{
 		int col = 3;
 
@@ -511,9 +495,9 @@ public class RelatorioVisaoSalaExportExcel
 		row++;
 		col = 2;
 
-		// Créditos
+		// Créditos ou Horários
 		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( this.getI18nConstants().creditos() ) );
+			HtmlUtils.htmlUnescape( ehTatico ? this.getI18nConstants().creditos() : this.getI18nConstants().horarios() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )

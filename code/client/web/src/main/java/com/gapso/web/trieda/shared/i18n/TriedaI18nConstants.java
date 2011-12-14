@@ -35,6 +35,7 @@ public interface TriedaI18nConstants
 	String cpf();
 	String cpfProfessor();
 	String creditos();
+	String credito_s();
 	String creditosPraticos();
 	String creditosTeoricos();
 	String curriculos();
@@ -64,6 +65,7 @@ public interface TriedaI18nConstants
 	String exportarExcel();
 	String habilitacaoProfessores();
 	String gruposSalas();
+	String horarios();
 	String importarExcel();
 	String informacao();
 	String insercaoDe();
@@ -96,6 +98,7 @@ public interface TriedaI18nConstants
 	String periodo();
 	String periodos();
 	String pratico();
+	String pratico_s();
 	String preenchaA();
 	String preenchaO();
 	String preferencia();
@@ -121,6 +124,7 @@ public interface TriedaI18nConstants
 	String semanaLetiva();
 	String sim();
 	String teorico();
+	String teorico_s();
 	String tipo();
 	String tipoCurso();
 	String tipoContrato();

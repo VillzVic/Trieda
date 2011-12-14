@@ -32,4 +32,12 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 			return getDisciplinaString() + " / " + getTurma();
 		}
 	}
+	
+	public void concatenateVisaoSala( AtendimentoRelatorioDTO other ) {
+		setCursoNome( getCursoNome() + " / " + other.getCursoNome() );
+		setCurricularString( getCurriculoString() + " / " + other.getCurriculoString() );
+		setPeriodoString( getPeriodoString() + " / " + other.getPeriodoString() );
+		setQuantidadeAlunosString( getQuantidadeAlunosString() + " / " + other.getQuantidadeAlunosString() );
+		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+	}
 }
