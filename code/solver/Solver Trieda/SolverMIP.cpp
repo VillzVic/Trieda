@@ -11782,6 +11782,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
 
       int nCred = this->problemData->totalHorariosTurnoAula( aula );
       int diaS = aula->getDiaSemana();
+      int nCredAula = aula->getTotalCreditos();
 
       for ( int i = 0; i <= problemData->maxHorariosDif; i++ )
       {
@@ -11815,7 +11816,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
 
          int nCredAux = 1;
 
-         for ( int j = i + 1; j <= problemData->maxHorariosDif && nCredAux < nCred; j++ )
+         for ( int j = i + 1; j <= problemData->maxHorariosDif && nCredAux < nCred && nCredAux < nCredAula; j++ )
          {
             int idx2 = problemData->getHorarioDiaIdx( diaS, j );
 
@@ -11849,7 +11850,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
             nCredAux++;
          }
 
-         if ( nCredAux < nCred )
+         if ( nCredAux < nCredAula )
          {
             horarioOK = false;
          }
@@ -11875,6 +11876,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
 
       int nCred = this->problemData->totalHorariosTurnoAula( aula );
       int diaS = aula->getDiaSemana();
+      int nCredAula = aula->getTotalCreditos();
 
       for ( int i = 0; i <= problemData->maxHorariosDif; i++ )
       {
@@ -11903,7 +11905,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
 
          int nCredAux = 1;
 
-         for ( int j = i + 1; j <= problemData->maxHorariosDif && nCredAux < nCred; j++ )
+         for ( int j = i + 1; j <= problemData->maxHorariosDif && nCredAux < nCred && nCredAux < nCredAula; j++ )
          {
             int idx2 = problemData->getHorarioDiaIdx( diaS, j );
 
@@ -11931,7 +11933,7 @@ void SolverMIP::retornaHorariosPossiveis( Professor * prof,
             nCredAux++;
          }
 
-         if ( nCredAux < nCred )
+         if ( nCredAux < nCredAula )
          {
             horarioOK = false;
          }
