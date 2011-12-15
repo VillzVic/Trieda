@@ -20,6 +20,7 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	public static final String PROPERTY_RECEITA_DOUBLE = "receitaDouble";
 	public static final String PROPERTY_MARGEM_DOUBLE = "margemDouble";
 	public static final String PROPERTY_MARGEM_PERCENTE_DOUBLE = "margemPercenteDouble";
+	public static final String PROPERTY_CURSO_ID = "CursoId";
 
 	private boolean hasChildren = false;
 
@@ -31,6 +32,16 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	public void setDisciplinaId( Long value )
 	{
 		set(PROPERTY_DISCIPLINA_ID, value);
+	}
+
+	public Long getCursoId()
+	{
+		return get( PROPERTY_CURSO_ID );
+	}
+	
+	public void setCursoId( Long value )
+	{
+		set(PROPERTY_CURSO_ID, value);
 	}
 
 	public Long getDisciplinaId()

@@ -31,6 +31,7 @@ import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Incompatibilidade;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
@@ -56,6 +57,8 @@ import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.DisciplinasService;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.google.gwt.dev.util.Pair;
 
 @Transactional
 public class DisciplinasServiceImpl
@@ -953,69 +956,51 @@ public class DisciplinasServiceImpl
 	public List< ResumoDisciplinaDTO > getResumos(
 		CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
-		Campus campus = Campus.find(
-			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
      	// Juntando os atendimentos tático e operacional
-		List< AtendimentoTatico > listTatico
-			= AtendimentoTatico.findAllByCampus( getInstituicaoEnsinoUser(), campus );
-
-		List< AtendimentoTaticoDTO > listTaticoDTO
-			= new ArrayList< AtendimentoTaticoDTO >();
-
-		for ( AtendimentoTatico att : listTatico )
-		{
-			AtendimentoTaticoDTO dto = ConvertBeans.toAtendimentoTaticoDTO( att );
-			listTaticoDTO.add( dto );
-		}
-
+		List< AtendimentoTatico > listTatico = AtendimentoTatico.findAllByCampus( getInstituicaoEnsinoUser(), campus );
+		List< AtendimentoTaticoDTO > listTaticoDTO = ConvertBeans.toListAtendimentoTaticoDTO(listTatico);
+		
 		List< AtendimentoOperacional > listOperacional = AtendimentoOperacional.findAll( campus, getInstituicaoEnsinoUser() );
-		List< AtendimentoOperacionalDTO > listOperacionalDTO = new ArrayList< AtendimentoOperacionalDTO >();
+		List< AtendimentoOperacionalDTO > listOperacionalDTOPorHorario = ConvertBeans.toListAtendimentoOperacionalDTO(listOperacional);
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		List< AtendimentoRelatorioDTO > listOperacionalDTOPorAula = service.transformaAtendimentosPorHorarioEmAtendimentosPorAula(listOperacionalDTOPorHorario);
 
-		for ( AtendimentoOperacional atop : listOperacional )
-		{
-			AtendimentoOperacionalDTO dto = ConvertBeans.toAtendimentoOperacionalDTO( atop );
-			listOperacionalDTO.add( dto );
+		boolean ehTatico = !listTatico.isEmpty();
+		
+		List< AtendimentoRelatorioDTO > listRelatorioDTO = new ArrayList< AtendimentoRelatorioDTO >();
+		listRelatorioDTO.addAll( listTaticoDTO );
+		listRelatorioDTO.addAll( listOperacionalDTOPorAula );
+
+		Map<Long,Oferta> ofertasMap = Oferta.getOfertasMap(campus.getOfertas());
+		Map<Long,Professor> professoresMap = null;
+		if (!ehTatico) {
+			professoresMap = Professor.getProfessoresMap(Professor.findAll(this.getInstituicaoEnsinoUser())); 
 		}
 
-		List< AtendimentoRelatorioDTO > listRelatorioDTO
-			= new ArrayList< AtendimentoRelatorioDTO >();
-		listRelatorioDTO.addAll( listTaticoDTO );
-		listRelatorioDTO.addAll( listOperacionalDTO );
+		// [Disciplina-Turma-TipoCredito -> List< AtendimentoRelatorioDTO >]
+		Map< String, List< AtendimentoRelatorioDTO > > atendimentosMap = new HashMap< String, List< AtendimentoRelatorioDTO > >();
+		// [Disciplina -> ResumoDisciplinaDTO]
+		Map< String, ResumoDisciplinaDTO > nivel1Map = new HashMap< String, ResumoDisciplinaDTO >();
+		// [Disciplina -> [Disciplina-Turma-TipoCredito -> Pair]]
+		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > nivel2Map = new HashMap< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > >();
 
-		List< Oferta > ofertas = new ArrayList< Oferta >( campus.getOfertas() );
-		Collections.sort( ofertas );
-
-		Map< String, List< AtendimentoRelatorioDTO > > atendimentoTaticoMap
-			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
-
-		Map< String, ResumoDisciplinaDTO > nivel1Map
-			= new HashMap< String, ResumoDisciplinaDTO >();
-
-		Map< String, Map< String, ResumoDisciplinaDTO > > nivel2Map
-			= new HashMap< String, Map< String, ResumoDisciplinaDTO > >();
-
-		for ( AtendimentoRelatorioDTO atendimento : listRelatorioDTO )
-		{
-			String key = atendimento.getDisciplinaId()
-				+ "-" + atendimento.getTurma()
-				+ "-" + ( atendimento.isTeorico() );
-
-			List< AtendimentoRelatorioDTO > list = atendimentoTaticoMap.get( key ); 
-			
-			if ( list == null )
-			{
+		for ( AtendimentoRelatorioDTO atendimento : listRelatorioDTO ) {
+			String key = atendimento.getDisciplinaId() + "-" + atendimento.getTurma() + "-" + ( atendimento.isTeorico() );
+			List< AtendimentoRelatorioDTO > list = atendimentosMap.get( key ); 
+			if ( list == null ) {
 				list = new ArrayList< AtendimentoRelatorioDTO >();
-				atendimentoTaticoMap.put( key, list );
+				atendimentosMap.put( key, list );
 			}
-
 			list.add( atendimento );
 
-			Disciplina disciplina = Disciplina.find(
-				atendimento.getDisciplinaId(), getInstituicaoEnsinoUser() );
+			Disciplina disciplina = Disciplina.find( atendimento.getDisciplinaId(), getInstituicaoEnsinoUser() );
+			Oferta oferta = ofertasMap.get(atendimento.getOfertaId());
 
 			ResumoDisciplinaDTO resumoDTO = new ResumoDisciplinaDTO();
 
+			resumoDTO.setCursoId(atendimento.getCursoId());
 			resumoDTO.setDisciplinaId( disciplina.getId() );
 			resumoDTO.setDisciplinaString( disciplina.getNome() );
 			resumoDTO.setTurma( atendimento.getTurma() );
@@ -1023,12 +1008,24 @@ public class DisciplinasServiceImpl
 			resumoDTO.setCreditos( atendimento.getTotalCreditos() );
 			resumoDTO.setTotalCreditos( disciplina.getCreditosTotal() );
 			resumoDTO.setQuantidadeAlunos( atendimento.getQuantidadeAlunos() );
+			if (ehTatico) {
+				resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
+			} else {
+				Long profId = ((AtendimentoOperacionalDTO)atendimento).getProfessorId();
+				Professor prof = professoresMap.get(profId);
+				if (prof != null) {
+					resumoDTO.setCustoDocente(new TriedaCurrency(prof.getValorCredito()));
+				} else {
+					resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
+				}
+			}
+			resumoDTO.setReceita(new TriedaCurrency(oferta.getReceita()));
 
 			createResumoNivel1( nivel1Map, nivel2Map, resumoDTO );
 			createResumoNivel2( nivel2Map, resumoDTO );
 		}
 
-		calculaResumo2( nivel2Map, atendimentoTaticoMap );
+		calculaResumo2( nivel2Map, atendimentosMap );
 		calculaResumo1( nivel1Map, nivel2Map );
 
 		return createResumoEstrutura( nivel1Map, nivel2Map );
@@ -1036,7 +1033,7 @@ public class DisciplinasServiceImpl
 
 	private List< ResumoDisciplinaDTO > createResumoEstrutura(
 		Map< String, ResumoDisciplinaDTO > map1,
-		Map< String, Map< String, ResumoDisciplinaDTO > > map2 )
+		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2 )
 	{
 		List< ResumoDisciplinaDTO > list = new ArrayList< ResumoDisciplinaDTO >();
 
@@ -1047,8 +1044,8 @@ public class DisciplinasServiceImpl
 
 			for ( String key2 : map2.get( key1 ).keySet() )
 			{
-				ResumoDisciplinaDTO rd2DTO = map2.get( key1 ).get( key2 );
-				rd1DTO.add( rd2DTO );
+				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 ); 
+				rd1DTO.add( pair.getLeft() );
 			}
 		}
 
@@ -1091,55 +1088,84 @@ public class DisciplinasServiceImpl
 	}
 
 	private void calculaResumo2(
-		Map< String, Map< String, ResumoDisciplinaDTO > > map2,
+		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2,
 		Map< String, List< AtendimentoRelatorioDTO > > atendimentosMap )
 	{
-		for ( String key1 : map2.keySet() )
-		{
-			for ( String key2 : map2.get( key1 ).keySet() )
-			{
-				ResumoDisciplinaDTO resumo2DTO = map2.get( key1 ).get( key2 );
-
-				AtendimentoRelatorioDTO atendimento
-					= concatenaAtendimentosResumoDisciplina( atendimentosMap.get( key2 ) );
-
-				Oferta ofertaAtendimento = Oferta.find(
-					atendimento.getOfertaId(), getInstituicaoEnsinoUser() );
-
-				Campus campus = null;
-				double docente = 0.0;
-				double receita = 0.0;
-
-				if ( ofertaAtendimento != null )
-				{
-					campus = ofertaAtendimento.getCampus();
-					docente = ( campus.getValorCredito() == null ? 0 : campus.getValorCredito() );
-					receita = ( ofertaAtendimento.getReceita() == null ? 0 : ofertaAtendimento.getReceita() );
+		for ( String key1 : map2.keySet() ) {
+			for ( String key2 : map2.get( key1 ).keySet() ) {
+				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 );
+				ResumoDisciplinaDTO mainDTO = pair.getLeft();
+				
+				// separar por curso por conta do compartilhamento de aulas entre cursos
+				Map<Long,List<ResumoDisciplinaDTO>> dtoPorCursoMap = new HashMap<Long,List<ResumoDisciplinaDTO>>();
+				for (ResumoDisciplinaDTO dto : pair.getRight()) {
+					List<ResumoDisciplinaDTO> list = dtoPorCursoMap.get(dto.getCursoId());
+					if (list == null) {
+						list = new ArrayList<ResumoDisciplinaDTO>();
+						dtoPorCursoMap.put(dto.getCursoId(),list);
+					}
+					list.add(dto);
 				}
-
-				int qtdAlunos = atendimento.getQuantidadeAlunos();
-				int creditos = atendimento.getTotalCreditos();
-
-				resumo2DTO.setCustoDocente( new TriedaCurrency( creditos * docente * 4.5 * 6 ) );
-
-				resumo2DTO.setReceita( new TriedaCurrency( receita * creditos * qtdAlunos * 4.5 * 6 ) );
-
-				resumo2DTO.setMargem( new TriedaCurrency( resumo2DTO.getReceita().getDoubleValue() -
-					resumo2DTO.getCustoDocente().getDoubleValue() ) );
-
-				// Código relacionado com a issue TRIEDA-1050
-				Double margemValue = resumo2DTO.getMargem().getDoubleValue();
-				Double receitaValue = resumo2DTO.getReceita().getDoubleValue();
-				Double margemPercent = ( ( margemValue / receitaValue ) * 100 );
-
-				resumo2DTO.setMargemPercente( margemPercent );
+				
+				if (dtoPorCursoMap.keySet().size() > 1) {
+					Long primeiroCursoId = dtoPorCursoMap.keySet().iterator().next();
+					
+					for (ResumoDisciplinaDTO dto : dtoPorCursoMap.get(primeiroCursoId)) {
+						// acumula a qtde de créditos
+						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
+						// calcula e acumula custo docente
+						Double docente = dto.getCustoDocente().getDoubleValue();
+						int creditos = dto.getCreditos();
+						double custoDocenteLocal = creditos * docente * 4.5 * 6.0;
+						mainDTO.setCustoDocente(TriedaUtil.parseTriedaCurrency(custoDocenteLocal + mainDTO.getCustoDocente().getDoubleValue()));
+					}
+					
+					for (ResumoDisciplinaDTO dto : pair.getRight()) {
+						// calcula e acumula receita
+						Double receita = dto.getReceita().getDoubleValue();
+						int qtdAlunos = dto.getQuantidadeAlunos();
+						int creditos = dto.getCreditos();
+						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
+						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
+					}
+					
+					mainDTO.setQuantidadeAlunos(0);
+					for (Long cursoId : dtoPorCursoMap.keySet()) {
+						List<ResumoDisciplinaDTO> dtos = dtoPorCursoMap.get(cursoId);
+						mainDTO.setQuantidadeAlunos(dtos.get(0).getQuantidadeAlunos() + mainDTO.getQuantidadeAlunos());
+					}
+				} else {
+					for (ResumoDisciplinaDTO dto : pair.getRight()) {
+						// acumula a qtde de créditos
+						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
+						// calcula e acumula custo docente
+						Double docente = dto.getCustoDocente().getDoubleValue();
+						Double receita = dto.getReceita().getDoubleValue();
+						int qtdAlunos = dto.getQuantidadeAlunos();
+						int creditos = dto.getCreditos();
+						double custoDocenteLocal = creditos * docente * 4.5 * 6.0;
+						mainDTO.setCustoDocente(TriedaUtil.parseTriedaCurrency(custoDocenteLocal + mainDTO.getCustoDocente().getDoubleValue()));
+						// calcula e acumula receita
+						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
+						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
+					}
+				}
+				
+				// calcula margem
+				double margem = mainDTO.getReceita().getDoubleValue() - mainDTO.getCustoDocente().getDoubleValue();
+				double margemPercent = 0.0;
+				if (Double.compare(mainDTO.getReceita().getDoubleValue(),0.0) != 0) {
+					margemPercent = (margem / mainDTO.getReceita().getDoubleValue()) * 100.0; 
+				}
+				mainDTO.setMargem(TriedaUtil.parseTriedaCurrency(margem));
+				mainDTO.setMargemPercente(TriedaUtil.roundTwoDecimals(margemPercent));
 			}
 		}
 	}
 
 	private void calculaResumo1(
 		Map< String, ResumoDisciplinaDTO > map1,
-		Map< String, Map< String, ResumoDisciplinaDTO > > map2 )
+		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2 )
 	{
 		for ( String key1 : map2.keySet() )
 		{
@@ -1152,7 +1178,8 @@ public class DisciplinasServiceImpl
 
 			for ( String key2 : map2.get( key1 ).keySet() )
 			{
-				ResumoDisciplinaDTO rc2 = map2.get( key1 ).get( key2 );
+				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 ); 
+				ResumoDisciplinaDTO rc2 = pair.getLeft();
 
 				rc1.setCustoDocente( new TriedaCurrency(
 					rc1.getCustoDocente().getDoubleValue() + rc2.getCustoDocente().getDoubleValue()) );
@@ -1166,16 +1193,16 @@ public class DisciplinasServiceImpl
 				// Código relacionado com a issue TRIEDA-1050
 				Double margemValue = rc1.getMargem().getDoubleValue();
 				Double receitaValue = rc1.getReceita().getDoubleValue();
-				Double margemPercent = ( ( margemValue / receitaValue ) * 100 );
+				Double margemPercent = ( ( margemValue / receitaValue ) * 100.0 );
 
-				rc1.setMargemPercente( margemPercent );
+				rc1.setMargemPercente( TriedaUtil.roundTwoDecimals(margemPercent) );
 			}
 		}
 	}
 
 	private void createResumoNivel1(
 		Map< String, ResumoDisciplinaDTO > map1,
-		Map< String, Map< String, ResumoDisciplinaDTO > > map2,
+		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2,
 		ResumoDisciplinaDTO resumoDTO )
 	{
 		String key1 = resumoDTO.getDisciplinaId().toString();
@@ -1189,39 +1216,42 @@ public class DisciplinasServiceImpl
 			rdDTO.setDisciplinaString( resumoDTO.getDisciplinaString() );
 
 			map1.put( key1, rdDTO );
-			map2.put( key1, new HashMap< String, ResumoDisciplinaDTO >() );
+			map2.put( key1, new HashMap< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> >() );
 		}
 	}
 
-	private void createResumoNivel2(
-		Map< String, Map< String, ResumoDisciplinaDTO > > map2,
-		ResumoDisciplinaDTO resumoDTO )
+	private void createResumoNivel2( Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2, ResumoDisciplinaDTO resumoDTO )
 	{
 		String key1 = resumoDTO.getDisciplinaId().toString();
-		String key2 = key1 + "-" + resumoDTO.getTurma()
-			+ "-" + resumoDTO.getTipoCreditoTeorico();
+		String key2 = key1 + "-" + resumoDTO.getTurma() + "-" + resumoDTO.getTipoCreditoTeorico();
 
-		ResumoDisciplinaDTO rdDTO = map2.get( key1 ).get( key2 );
-
-		if ( rdDTO == null )
-		{
-			rdDTO = new ResumoDisciplinaDTO();
-
-			rdDTO.setDisciplinaId( resumoDTO.getDisciplinaId() );
-			rdDTO.setDisciplinaString( resumoDTO.getDisciplinaString() );
-			rdDTO.setTurma( resumoDTO.getTurma() );
-			rdDTO.setTipoCreditoTeorico( resumoDTO.getTipoCreditoTeorico() );
-			rdDTO.setCreditos( resumoDTO.getCreditos() );
-			rdDTO.setTotalCreditos( resumoDTO.getTotalCreditos() );
-			rdDTO.setQuantidadeAlunos( resumoDTO.getQuantidadeAlunos() );
-
-			map2.get( key1 ).put( key2, rdDTO );
+		Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get(key1).get(key2);
+		if ( pair == null ) {
+			List<ResumoDisciplinaDTO> list = new ArrayList<ResumoDisciplinaDTO>();
+			ResumoDisciplinaDTO dtoMain = new ResumoDisciplinaDTO();
+			dtoMain.setCursoId( resumoDTO.getCursoId() );
+			dtoMain.setDisciplinaId( resumoDTO.getDisciplinaId() );
+			dtoMain.setDisciplinaString( resumoDTO.getDisciplinaString() );
+			dtoMain.setTurma( resumoDTO.getTurma() );
+			dtoMain.setTipoCreditoTeorico( resumoDTO.getTipoCreditoTeorico() );
+			dtoMain.setTotalCreditos( resumoDTO.getTotalCreditos() );
+			dtoMain.setQuantidadeAlunos( resumoDTO.getQuantidadeAlunos() );
+			pair = Pair.create(dtoMain,list);
+			map2.get(key1).put(key2, pair);
 		}
-		else
-		{
-			// Adiciona os alunos do novo atendimento
-			rdDTO.setQuantidadeAlunos( rdDTO.getQuantidadeAlunos() +
-				resumoDTO.getQuantidadeAlunos() );
-		}
+		
+		ResumoDisciplinaDTO dtoNew = new ResumoDisciplinaDTO();
+		dtoNew.setCursoId( resumoDTO.getCursoId() );
+		dtoNew.setDisciplinaId( resumoDTO.getDisciplinaId() );
+		dtoNew.setDisciplinaString( resumoDTO.getDisciplinaString() );
+		dtoNew.setTurma( resumoDTO.getTurma() );
+		dtoNew.setTipoCreditoTeorico( resumoDTO.getTipoCreditoTeorico() );
+		dtoNew.setCreditos( resumoDTO.getCreditos() );
+		dtoNew.setTotalCreditos( resumoDTO.getTotalCreditos() );
+		dtoNew.setQuantidadeAlunos( resumoDTO.getQuantidadeAlunos() );
+		dtoNew.setCustoDocente( resumoDTO.getCustoDocente() );
+		dtoNew.setReceita( resumoDTO.getReceita() );
+		
+		pair.getRight().add(dtoNew);
 	}
 }

@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -702,5 +703,13 @@ public class Professor
 		}
 
 		return true;
+	}
+	
+	static public Map<Long,Professor> getProfessoresMap(Collection<Professor> professores) {
+		Map<Long,Professor> map = new HashMap<Long, Professor>();
+		for (Professor professor : professores) {
+			map.put(professor.getId(), professor);
+		}
+		return map;
 	}
 }

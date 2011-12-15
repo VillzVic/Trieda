@@ -164,7 +164,7 @@ public class CursosServiceImpl
 	{
 		Campus campus = Campus.find(campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 		
-		Map<Long,Professor> professoresMap = new HashMap<Long, Professor>();
+		Map<Long,Professor> professoresMap = null;
 
 		List< Oferta > ofertas = new ArrayList< Oferta >( campus.getOfertas() );
 		Collections.sort( ofertas );
@@ -182,7 +182,7 @@ public class CursosServiceImpl
 			// monta a lista de atendimentos associados a uma oferta
 			List< AtendimentoRelatorioDTO > atendimentoRelatorioDTOList = new ArrayList< AtendimentoRelatorioDTO >();
 			List< AtendimentoTatico > atendimentoTaticoList = AtendimentoTatico.findAllBy( getInstituicaoEnsinoUser(), oferta );
-			boolean isTatico = true;
+			boolean ehTatico = true;
 			if (!atendimentoTaticoList.isEmpty()) {
 				for (AtendimentoTatico atendimentoTatico : atendimentoTaticoList) {
 					atendimentoRelatorioDTOList.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
@@ -196,11 +196,9 @@ public class CursosServiceImpl
 				}
 				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 				atendimentoRelatorioDTOList.addAll(service.transformaAtendimentosPorHorarioEmAtendimentosPorAula(atendimentoOperacionalDTOList));
-				isTatico = false;
+				ehTatico = false;
 				List<Professor> professores = Professor.findAll(this.getInstituicaoEnsinoUser());
-				for (Professor p : professores) {
-					professoresMap.put(p.getId(),p);
-				}
+				professoresMap = Professor.getProfessoresMap(professores);
 			}
 
 			// A partir dos atendimentos, monta as estruturas nivel1Map, nivel2Map e nivel3Map, além de converter um atendimento
@@ -227,7 +225,7 @@ public class CursosServiceImpl
 				resumoDTO.setSalaId(atendimentoRelatorioDTO.getSalaId());
 				resumoDTO.setSalaString(atendimentoRelatorioDTO.getSalaString());
 				resumoDTO.setDiaSemana(atendimentoRelatorioDTO.getSemana());
-				if (isTatico) {
+				if (ehTatico) {
 					resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
 				} else {
 					Long profId = ((AtendimentoOperacionalDTO)atendimentoRelatorioDTO).getProfessorId();

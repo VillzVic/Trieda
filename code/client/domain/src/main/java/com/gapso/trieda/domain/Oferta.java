@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -567,5 +568,13 @@ public class Oferta
 	public int compareTo( Oferta o )
 	{
 		return this.getCampus().getNome().compareTo( o.getCampus().getNome() );
+	}
+	
+	static public Map<Long,Oferta> getOfertasMap(Collection<Oferta> ofertas) {
+		Map<Long,Oferta> map = new HashMap<Long, Oferta>();
+		for (Oferta oferta : ofertas) {
+			map.put(oferta.getId(), oferta);
+		}
+		return map;
 	}
 }
