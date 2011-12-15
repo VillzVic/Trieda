@@ -288,7 +288,7 @@ public class RelatorioVisaoCursoExportExcel
 
 		if ( !atdRelatoriosList.isEmpty() )
 		{
-			boolean ehTatico = atdRelatoriosList.get(0) instanceof AtendimentoTaticoDTO;
+			boolean ehTatico = atdRelatoriosList.get(0).get(0) instanceof AtendimentoTaticoDTO;
 			
 			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );

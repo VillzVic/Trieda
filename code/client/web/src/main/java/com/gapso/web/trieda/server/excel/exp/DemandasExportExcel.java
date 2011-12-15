@@ -26,7 +26,8 @@ public class DemandasExportExcel
 	enum ExcelCellStyleReference
 	{
 		TEXT( 6, 2 ),
-		NUMBER( 6, 6 );
+		NUMBER( 6, 6 ),
+		DOUBLE_NUMBER( 6, 9 );
 
 		private int row;
 		private int col;
@@ -227,6 +228,9 @@ public class DemandasExportExcel
 
 						// Demanda de Alunos
 						setCell( row, 8, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidade );
+						
+						// Receita
+						setCell( row, 9, sheet, this.cellStyles[ ExcelCellStyleReference.DOUBLE_NUMBER.ordinal() ], oferta.getReceita() );
 
 						row++;
 					}

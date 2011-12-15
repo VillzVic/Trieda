@@ -37,6 +37,7 @@ public class DemandasImportExcel
 	static public String PERIODO_COLUMN_NAME;
 	static public String DISCIPLINA_COLUMN_NAME;
 	static public String DEMANDA_COLUMN_NAME;
+	static public String RECEITA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -56,6 +57,7 @@ public class DemandasImportExcel
 		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
 		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
 		this.headerColumnsNames.add( DEMANDA_COLUMN_NAME );
+		this.headerColumnsNames.add( RECEITA_COLUMN_NAME );
 	}
 
 	@Override
@@ -122,6 +124,10 @@ public class DemandasImportExcel
 					else if ( DEMANDA_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setDemandaStr( cellValue );
+					}
+					else if ( RECEITA_COLUMN_NAME.equals( columnName ) )
+					{
+						bean.setReceitaStr( cellValue );
 					}
         		}
         	}
@@ -462,6 +468,11 @@ public class DemandasImportExcel
 				Oferta.entityManager().refresh( oferta );
 				ofertasBDMap.put( codeOferta, oferta );
 			}
+			else
+			{
+				oferta.setReceita( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
+				oferta.merge();
+			}
 
 			if ( demandaBD != null )
 			{
@@ -494,6 +505,7 @@ public class DemandasImportExcel
 			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
 			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
 			DEMANDA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().demandaDeAlunos() );
+			RECEITA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().receita() );
 		}
 	}
 
