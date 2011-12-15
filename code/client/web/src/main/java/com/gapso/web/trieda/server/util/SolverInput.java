@@ -1277,7 +1277,7 @@ public class SolverInput
 		boolean disciplinaSemDemanda = ( this.disciplinasComDemandaCurriculo.size()
 			!= this.cenario.getDisciplinas().size() );
 
-		if ( !disciplinaSemDemanda )
+		if ( disciplinaSemDemanda )
 		{
 			String warningMessage1 = "H&aacute; disciplinas cadastradas no sistema" +
 				"que n&atilde;o possuem demanda associada a ela.";
