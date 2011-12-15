@@ -350,8 +350,7 @@ public class RelatorioVisaoSalaExportExcel
 		// Processa os atendimentos lidos do BD para
 		// que os mesmos sejam visualizados na visão sala
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
-		List< AtendimentoRelatorioDTO > atendimentosParaVisaoSala
-			= atendimentosService.montaListaParaVisaoSala( atendimentos );
+		List< AtendimentoRelatorioDTO > atendimentosParaVisaoSala = atendimentosService.montaListaParaVisaoSala( atendimentos );
 
 		atendimentosParaVisaoSala = ordenaHorarioAula( atendimentosParaVisaoSala );
 
