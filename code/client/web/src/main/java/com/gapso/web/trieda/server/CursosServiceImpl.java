@@ -190,9 +190,12 @@ public class CursosServiceImpl
 			}
 			else {
 				List< AtendimentoOperacional > atendimentoOperacionalList = AtendimentoOperacional.findAllBy( oferta, getInstituicaoEnsinoUser() );
+				List< AtendimentoOperacionalDTO > atendimentoOperacionalDTOList = new ArrayList<AtendimentoOperacionalDTO>(); 
 				for ( AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList ) {
-					atendimentoRelatorioDTOList.add(ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+					atendimentoOperacionalDTOList.add(ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
 				}
+				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+				atendimentoRelatorioDTOList.addAll(service.transformaAtendimentosPorHorarioEmAtendimentosPorAula(atendimentoOperacionalDTOList));
 				isTatico = false;
 				List<Professor> professores = Professor.findAll(this.getInstituicaoEnsinoUser());
 				for (Professor p : professores) {

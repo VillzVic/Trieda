@@ -149,33 +149,32 @@ public class AtendimentosServiceImpl
 	 * correspondam a créditos de uma mesma aula, que
 	 * foram armazenadas como linhas distintas no banco de dados.
 	 * */
-	private List< AtendimentoRelatorioDTO > preMontaListaOperacional(
+	public List< AtendimentoRelatorioDTO > transformaAtendimentosPorHorarioEmAtendimentosPorAula(
 		List< AtendimentoOperacionalDTO > list )
 	{
 		List< AtendimentoRelatorioDTO > ret = new ArrayList< AtendimentoRelatorioDTO >();
 
 		// Agrupa os DTOS pela chave [ Curso - Disciplina - Turma - DiaSemana - Sala ]
-		Map< String, List<AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
-			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
+		Map< String, List<AtendimentoRelatorioDTO > > atendimentosDTOMap = new HashMap< String, List< AtendimentoRelatorioDTO > >();
 
 		for ( AtendimentoRelatorioDTO dto : list )
 		{
 			String key = dto.getCursoNome() + "-" + dto.getDisciplinaString()
 				+ "-" + dto.getTurma() + "-" + dto.getSemana() + "-" + dto.getSalaId();
 
-			List< AtendimentoRelatorioDTO > dtoList = atendimentoTaticoDTOMap.get( key );
+			List< AtendimentoRelatorioDTO > dtoList = atendimentosDTOMap.get( key );
 
 			if ( dtoList == null )
 			{
 				dtoList = new ArrayList< AtendimentoRelatorioDTO >();
-				atendimentoTaticoDTOMap.put( key, dtoList );
+				atendimentosDTOMap.put( key, dtoList );
 			}
 
 			dtoList.add( dto );
 		}
 
 		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry
-			: atendimentoTaticoDTOMap.entrySet() )
+			: atendimentosDTOMap.entrySet() )
 		{
 			List< AtendimentoOperacionalDTO > ordenadoPorHorario
 				= new ArrayList< AtendimentoOperacionalDTO >();
@@ -222,7 +221,7 @@ public class AtendimentosServiceImpl
 				operacionalList.add( ( AtendimentoOperacionalDTO ) arDTO );
 			}
 
-			list = preMontaListaOperacional( operacionalList );
+			list = transformaAtendimentosPorHorarioEmAtendimentosPorAula( operacionalList );
 		}
 
 		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana ]
