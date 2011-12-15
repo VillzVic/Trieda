@@ -764,10 +764,15 @@ public class AtendimentoOperacional
 	public static int countTurma(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
-		List< AtendimentoOperacional > listAtendimentos
-			= AtendimentoOperacional.findAllByCampus( instituicaoEnsino, campus );
+		Query q = entityManager().createQuery(
+				" SELECT count ( * ) FROM AtendimentoOperacional o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.oferta.campus = :campus GROUP BY o.disciplina, o.turma " );
 
-		return ( listAtendimentos == null ? 0 : listAtendimentos.size() );
+			q.setParameter( "campus", campus );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			return q.getResultList().size();
 	}
 
 	@SuppressWarnings( "unchecked" )
