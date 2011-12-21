@@ -44,7 +44,8 @@ public:
       C_DESLOC_PROF = 25,
       C_DESLOC_VIAVEL = 26,
       C_ULTIMA_PRIMEIRA_AULA_PROF = 27,
-      C_GAPS_PROFESSORES = 28
+      C_GAPS_PROFESSORES = 28,
+	  C_BLOCO_HORARIO_DISC = 29
    };
 
    /** Default constructor. */
@@ -92,6 +93,7 @@ public:
    HorarioAula * getH2() const { return h2; }
    HorarioDia * getHorarioDiaD() const { return this->horarioDiaD; }
    HorarioDia * getHorarioDiaD1() const { return this->horarioDiaD1; }
+   std::map<Disciplina*, int> getParDiscTurma() const { return this->par_disc_turma; }
 
    //==================================================
    // SET METHODS 
@@ -116,6 +118,7 @@ public:
    void setH2 ( HorarioAula * aH2 ) { h2 = aH2; }
    void setHorarioDiaD ( HorarioDia * hD ) { this->horarioDiaD = hD; }
    void setHorarioDiaD1 ( HorarioDia * hD ) { this->horarioDiaD1 = hD; }
+   void setParDiscTurma( Disciplina* d1, int turma1, Disciplina* d2, int turma2 );
 
 private:
    /** Attribute which defines the constraint type of the instance. */
@@ -129,6 +132,7 @@ private:
    Professor * professor;
    BlocoCurricular * b;
    Disciplina * disciplina;
+   std::map <Disciplina*, int> par_disc_turma;
    int turma;
    int j; // subbloco
    int t; // dia

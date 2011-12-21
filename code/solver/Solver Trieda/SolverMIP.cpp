@@ -2262,7 +2262,7 @@ int SolverMIP::solve()
       }
    }
 
-   buscaLocalTempoDeslocamentoSolucao();
+   //buscaLocalTempoDeslocamentoSolucao();
 
    return status;
 }
@@ -12835,6 +12835,15 @@ int SolverMIP::criaRestricoesOperacional()
 #endif
 
    lp->updateLP();
+   restricoes += criaRestricaoBlocoHorarioDisc();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_BLOCO_HORARIO_DISC: "
+             << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
    restricoes += criaRestricaoAlocAula();
 
 #ifdef PRINT_cria_restricoes
@@ -13297,6 +13306,143 @@ int SolverMIP::criaRestricaoBlocoHorario()
 
    return restricoes;
 }
+
+
+/*
+	Impede que duas disciplinas distintas de um mesmo bloco curricular sejam alocadas
+	no mesmo horario do mesmo dia. 
+*/
+int SolverMIP::criaRestricaoBlocoHorarioDisc()
+{
+   int restricoes = 0;
+   int nnz;
+   char name[ 200 ];
+
+   ConstraintOp c;
+   VariableOpHash::iterator vit1;
+   VariableOpHash::iterator vit2;
+   ConstraintOpHash::iterator cit;
+
+   std::vector< std::pair< int, int > > coeffList;
+   std::vector< double > coeffListVal;
+   std::pair< int, int > auxCoef;
+   
+   for (vit1 = vHashOp.begin(); vit1 != vHashOp.end(); vit1++ )
+   {
+	   VariableOp v1 = vit1->first;
+	   if ( v1.getType() != VariableOp::V_X_PROF_AULA_HOR )
+	   {
+		   continue;
+	   }
+	   Disciplina *d1 = v1.getDisciplina();
+	   int dia1 = v1.getDia();
+	   
+	   std::map< Aula *, GGroup< BlocoCurricular *, LessPtr< BlocoCurricular > >, LessPtr< Aula > >::iterator
+			itAulaBlocosCurriculares = problemData->aulaBlocosCurriculares.find( v1.getAula() );
+
+	   // Para cada Bloco Curricular ao qual a aula pertence
+	   ITERA_GGROUP_LESSPTR( itBlocoCurric,	itAulaBlocosCurriculares->second, BlocoCurricular )
+	   {
+		   vit2 = vit1;
+		   vit2++;
+		   for (; vit2 != vHashOp.end(); vit2++ )
+		   {
+			   VariableOp v2 = vit2->first;
+			   if ( v2.getType() != VariableOp::V_X_PROF_AULA_HOR )
+			   {
+				   continue;
+			   }
+
+			   Disciplina *d2 = v2.getAula()->getDisciplina();
+			   if( ( itBlocoCurric->disciplinas.find( d2 ) == itBlocoCurric->disciplinas.end() ) ||
+				   ( *d1 == *d2 ) ||
+				   ( dia1 != v2.getDia() ) )
+			   {	// Se a disciplina d2 nao estiver no mesmo bloco curricular que d1 OU
+				    // se as disciplinas d1 e d2 forem a mesma OU
+				    // se os dias das aulas de vit1 e vit2 foram diferentes
+				    // passa para a proxima variavel (itera vit2)
+					continue;
+			   }
+
+			   BlocoCurricular * bloco = ( *itBlocoCurric );
+
+			   int nCred1 = v1.getAula()->getTotalCreditos();
+			   int idxHor1 = problemData->getHorarioDiaIdx( v1.getHorario() );
+
+			   int nCred2 = v2.getAula()->getTotalCreditos();
+			   int idxHor2 = problemData->getHorarioDiaIdx( v2.getHorario() );
+
+			   int h_inicio;
+			   if ( ( idxHor1 <  idxHor2 ) &&
+					( idxHor1 + nCred1 >  idxHor2 ) )
+			   {	// intersecao de horarios, com d1 comecando antes de d2
+				    h_inicio = idxHor2;
+			   }
+			   else if ( ( idxHor2 <  idxHor1 ) &&
+					     ( idxHor2 + nCred2 >  idxHor1 ) )
+			   {	// intersecao de horarios, com d2 comecando antes de d1
+				    h_inicio = idxHor1;
+			   }
+			   else
+			   {   // sem intersecao de horarios	
+				   continue;
+			   }
+
+			   int h_fim;
+			   if ( idxHor1 + nCred1 < idxHor2 + nCred2 )
+					h_fim = idxHor1 + nCred1;
+			   else
+					h_fim = idxHor2 + nCred2;
+
+			   for ( int h = h_inicio; h < h_fim; h++ )
+			   {
+					c.reset();
+					c.setType( ConstraintOp::C_BLOCO_HORARIO_DISC );
+					c.setBloco( bloco );
+					c.setHorario( problemData->horariosDiaIdx[ h ] );
+					c.setDia( problemData->horariosDiaIdx[ h ]->getDia() ); // problemData->horariosDiaIdx[ h ]->getDia() = v1.getDia() !
+					c.setHorarioAula( problemData->horariosDiaIdx[ h ]->getHorarioAula() );
+					c.setParDiscTurma( d1, v1.getTurma(), d2, v2.getTurma() );
+
+					cit = cHashOp.find( c );
+
+					if ( cit != cHashOp.end() )
+					{
+						auxCoef.first = cit->second; // restricao C_BLOCO_HORARIO_DISC
+						auxCoef.second = vit1->second; // variavel V_X_PROF_AULA_HOR
+						coeffList.push_back( auxCoef );
+						coeffListVal.push_back( 1.0 );
+
+						auxCoef.first = cit->second; // restricao C_BLOCO_HORARIO_DISC
+						auxCoef.second = vit2->second; // variavel V_X_PROF_AULA_HOR
+						coeffList.push_back( auxCoef );
+						coeffListVal.push_back( 1.0 );
+					}
+					else
+					{
+						sprintf( name, "%s", c.toString().c_str() );
+						nnz = 100;
+
+						OPT_ROW row( nnz, OPT_ROW::LESS , 1.0, name );
+
+						row.insert( vit1->second, 1.0 );
+						row.insert( vit2->second, 1.0 );
+						cHashOp[ c ] = lp->getNumRows();
+
+						lp->addRow( row );
+						restricoes++;
+					}   
+				}
+			}
+		}
+   }
+   chgCoeffList( coeffList, coeffListVal );
+
+   return restricoes;
+}
+
+
+
 
 int SolverMIP::criaRestricaoAlocAula()
 {

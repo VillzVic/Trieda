@@ -162,6 +162,7 @@ public:
    int criaRestricaoSalaHorario( void );
    int criaRestricaoProfessorHorario( void );
    int criaRestricaoBlocoHorario( void );
+   int criaRestricaoBlocoHorarioDisc( void );
    int criaRestricaoAlocAula( void );
    int criaRestricaoProfessorDisciplina( void );
    int criaRestricaoProfessorDisciplinaUnico( void );

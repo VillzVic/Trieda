@@ -39,6 +39,7 @@ ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
    this->h2 = cons.getH2();
    this->horarioDiaD = cons.horarioDiaD;
    this->horarioDiaD1 = cons.horarioDiaD1;
+   this->par_disc_turma = cons.par_disc_turma;
 
    return *this;
 }
@@ -244,13 +245,27 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
    {
       return false;
    }
-
+   
+   if ( this->getParDiscTurma() < cons.getParDiscTurma() )
+   {
+      return true;
+   }
+   else if ( cons.getParDiscTurma() > this->getParDiscTurma() )
+   {
+      return false;
+   }
    return false;
 }
 
 bool ConstraintOp::operator == ( const ConstraintOp & cons ) const
 {
    return ( !( *this < cons ) && !( cons < *this ) );
+}
+
+void ConstraintOp::setParDiscTurma( Disciplina* d1, int turma1, Disciplina* d2, int turma2 )
+{
+	this->par_disc_turma[d1] = turma1;
+	this->par_disc_turma[d2] = turma2;
 }
 
 void ConstraintOp::reset()
@@ -271,6 +286,7 @@ void ConstraintOp::reset()
    this->h2 = NULL;
    this->horarioDiaD = NULL;
    this->horarioDiaD1 = NULL;
+   this->par_disc_turma.clear();
 }
 
 std::string ConstraintOp::toString()
@@ -285,6 +301,8 @@ std::string ConstraintOp::toString()
       ss << "C_PROFESSOR_HORARIO"; break;
    case C_BLOCO_HORARIO:
       ss << "C_BLOCO_HORARIO"; break;
+   case C_BLOCO_HORARIO_DISC:
+	   ss << "C_BLOCO_HORARIO_DISC(" << horarioAula->getInicio() << ")"; break;
    case C_ALOC_AULA:
       ss << "C_ALOC_AULA"; break;
    case C_PROF_DISC:
