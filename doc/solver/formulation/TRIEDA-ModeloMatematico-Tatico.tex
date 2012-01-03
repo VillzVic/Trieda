@@ -49,13 +49,13 @@ Os elementos desse conjunto são denotados por $d_{oft}$.
 \item $I_{bc}$ - Conjunto de turmas de um bloco curricular $bc$. 
 Os elementos desse conjunto são denotados por $i_{bc}$.
 
-\item $K_{d}$ - Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina $d$. 
+\item $K_{d}$ - Conjunto de combinações possíveis de divisão de créditos de uma disciplina $d$. 
 Os elementos desse conjunto são denotados por $k$.
 
 \item $O$ - Conjunto de ofertas de cursos. Os elementos desse conjunto são 
 denotados por $oft$.
 
-\item $O_{d}$ - Conjunto de ofertas de uma uma disciplina $d$. 
+\item $O_{d}$ - Conjunto de ofertas de uma disciplina $d$. 
 Os elementos desse conjunto são denotados por $oft_{d}$.
 
 \item $SCAP_{u}$ - Conjunto de salas da unidade $u$ classificadas de acordo com as suas 
@@ -86,6 +86,8 @@ são denotados por $t$.
 \item $HTPS_{t,tps}$ - máximo de créditos permitidos por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
 
 \item $H_{t}$ - máximo de créditos permitidos por dia $t$.
+
+\item $H_{bc,t}$ - máximo de créditos permitidos para a semana letiva do bloco $bc$ no dia $t$.
 
 \item $I_{d}$ - máximo de turmas que podem ser abertas da disciplina $d$.
 
@@ -138,7 +140,9 @@ são denotados por $t$.
 \item $a_{i,d,oft}$ - número de alunos de uma oferta $oft$ alocados para a $i$-ésima turma da disciplina $d$. 
 \item $b_{i,d,c,cp}$ - indica se algum aluno do curso $c$ foi alocado para a $i$-ésima turma da disciplina $d$ no campus $cp$. 
 \item $bs_{i,d,c,c',cp}$ - variável de folga para a restrição em que o compartilhamento de turmas 
-de alunos de cursos diferentes é proibido. 
+de alunos de cursos incompatíveis é proibido. 
+\item $fc_{i,d,c,c',cp}$ - variável de folga para a restrição em que o compartilhamento de turmas 
+de alunos de cursos diferentes (mesmo que compatíveis) é proibido. 
 \item $c_{i,d,t}$ - indica se houve abertura de turma $i$ da disciplina $d$ em dias consecutivos. 
 \item $fcm_{d,t}$ - variável de folga inferior para a restrição de fixação da distribuição de créditos por dia. 
 \item $fcp_{d,t}$ - variável de folga superior para a restrição de fixação da distribuição de créditos por dia. 
@@ -152,9 +156,9 @@ $k$ foi escolhida para a turma $i$ da disciplina $d$.
 \item $n_{bc,tps}$ - variável binária que indica se o bloco $bc$ foi alocado na sala $tps$. 
 \item $o_{i,d,u,tps,t}$ - indica se a turma $i$ da disciplina $d$ foi alocada na unidade $u$ 
 para alguma sala do tipo (capacidade) $tps$ no dia $t$. 
-\item $r_{bc,t,cp}$ - indica se algum sub-bloco foi aberto do bloco curricular $bc$ no dia $t$ no campus $cp$. 
+\item $r_{bc,t,cp}$ - indica se algum sub-bloco do bloco curricular $bc$ foi aberto no dia $t$ no campus $cp$. 
 \item $v_{bc,t}$ - contabiliza a abertura do mesmo bloco curricular $bc$, no mesmo dia $t$, em campus distintos. 
-\item $w_{bc,t,cp}$ - indica o número sub-blocos abertos do bloco curricular $bc$ no dia $t$ no campus $cp$. 
+\item $w_{bc,t,cp}$ - indica o número de sub-blocos abertos do bloco curricular $bc$ no dia $t$ no campus $cp$. 
 \item $x_{i,d,u,tps,t}$ - número de créditos da turma $i$ da disciplina $d$ na unidade $u$ 
 em salas do tipo (capacidade) $tps$ no dia $t$. 
 \item $xm_{d,t}$ - máximo de créditos alocados para qualquer turma da disciplina $d$ no dia $t$. 
@@ -331,7 +335,7 @@ em um determinado tipo de sala (*)}
 \begin{eqnarray}
 \sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{i \in I_{d}} x_{i,d,u,tps,t}  \leq H_{t} \cdot w_{bc,t,cp}  \nonumber \qquad 
 \forall bc \in B \quad
-\forall cp \in CP
+\forall cp \in CP \quad
 \forall t \in T \quad
 \end{eqnarray}
 
@@ -368,7 +372,7 @@ x_{i,d,u,tps,t}  \leq \overline{H_{d}}  \nonumber \qquad
 
 \begin{eqnarray}
 \sum\limits_{i \in I_{d}} a_{i,d,oft} + fd_{d,oft} =  P_{d,oft}  \nonumber \qquad 
-\forall oft \in O
+\forall oft \in O \quad
 \forall d \in D_{oft} \quad
 \end{eqnarray}
 
@@ -407,7 +411,7 @@ capacidade total das salas pertencentes ao conjunto}
 
 
 \begin{eqnarray}
-c_{i,d,t}  \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}}(o_{i,d,u,tps,t} - o_{i,d,u,tps,t-1}) - 1  \nonumber \qquad 
+c_{i,d,t}  \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}}(o_{i,d,u,tps,t} + o_{i,d,u,tps,t-1}) - 1  \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall (t \geq 2) \in T
@@ -444,14 +448,14 @@ c_{i,d,t}  \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}}(o_{i,d,u,tp
 
 \begin{eqnarray}
 \sum\limits_{o \in O_{d}} a_{i,d,oft} \leq M \cdot b_{i,d,c,cp} \nonumber \qquad 
-\forall cp \in CP
+\forall cp \in CP \quad
 \forall c \in C \quad
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \end{eqnarray}
 
 
-\subsubsection{Não permitir que alunos de cursos diferentes compartilhem turmas (*)}
+\subsubsection{Não permitir que alunos de cursos incompatíveis compartilhem turmas (*)}
 
 
 
@@ -470,7 +474,7 @@ b_{i,d,c,cp} + b_{i,d,c',cp} - bs_{i,d,c,c',cp} \leq 1 \nonumber \qquad
 
 \begin{eqnarray}
 \sum\limits_{u \in U} x_{i,d,u,tps,t} + fcp_{i,d,tps,t} - fcm_{i,d,tps,t} = FC_{d,tps,t} \cdot z_{i,d,cp}  \nonumber \qquad 
-\forall cp \in CP
+\forall cp \in CP \quad
 \forall tps \in SCAP_{u} \quad
 \forall d \in D \quad
 \forall i \in I_{d} \quad
@@ -509,7 +513,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \begin{eqnarray}
 \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{t \in T} o_{i,d,u,tps,t} \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{t \in T} o_{i',d,u,tps,t} \nonumber \qquad 
 \forall d \in D \quad
-\forall i,i' \in I_{d}
+\forall i,i' \in I_{d} \quad i<i'
 \end{eqnarray}
 
 
@@ -567,7 +571,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 
 
 \begin{eqnarray}
-\sum\limits_{d \in D_{bc}} xm_{d, t} \leq 4 \nonumber \qquad 
+\sum\limits_{d \in D_{bc}} xm_{d, t} \leq H_{bc,t} \nonumber \qquad 
 \forall bc \in B \quad
 \forall t \in T
 \end{eqnarray}
@@ -578,7 +582,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 
 
 \begin{eqnarray}
-\sum\limits_{i \in I} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} o_{i,d,u,tps,t} \leq zc_{d,t} \cdot N \nonumber \qquad 
+\sum\limits_{i \in I} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} o_{i,d,u,tps,t} \leq zc_{d,t} \cdot M \nonumber \qquad 
 \forall d \in D \quad
 \forall t \in T
 \end{eqnarray}
@@ -618,6 +622,18 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
  \forall bc \in B
 \end{eqnarray}
 
+
+\subsubsection{Não permitir que alunos de cursos diferentes compartilhem turmas (*)}
+
+
+
+\begin{eqnarray} 
+b_{i,d,c,cp} + b_{i,d,c',cp} - fc_{i,d,c,c',cp} \leq 1 \nonumber \qquad 
+\forall d \in D \quad
+\forall i \in I_{d} \quad
+\forall c,c' \in CC \quad
+\forall cp \in CP
+\end{eqnarray}
 
 
 \clearpage
