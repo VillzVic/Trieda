@@ -171,6 +171,11 @@ public class GTriedaI18nConstants
 		return this.languageManager.getText("custoMedioCreditoExcel");
 
 	}
+	
+	@Override
+	public String demanda() {
+		return this.languageManager.getText("demanda");
+	}
 
 	@Override
 	public String demandaDeAlunos() {

@@ -21,7 +21,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface DemandasService extends RemoteService {
 
 	PagingLoadResult<DemandaDTO> getBuscaList(CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config);
-	void save(DemandaDTO demandaDTO);
+	void save(DemandaDTO demandaDTO) throws TriedaException;
 	void remove(List<DemandaDTO> demandaDTOList);
 	Integer findPeriodo(DemandaDTO demandaDTO) throws TriedaException;
 }

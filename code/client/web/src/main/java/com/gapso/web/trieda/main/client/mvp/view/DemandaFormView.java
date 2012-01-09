@@ -110,6 +110,7 @@ public class DemandaFormView
 		this.demandaTF.setAllowNegative( false );
 		this.demandaTF.setAllowDecimals( false );
 		this.demandaTF.setEmptyText( "Selecione a quantidade" );
+		this.demandaTF.setMinValue(1);
 
 		if ( this.demandaDTO == null
 			|| this.demandaDTO.getQuantidadeDemandaEnable() == null

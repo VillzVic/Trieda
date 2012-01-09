@@ -101,33 +101,38 @@ public class DemandasServiceImpl
 	}
 
 	@Override
-	public void save( DemandaDTO demandaDTO )
+	public void save( DemandaDTO demandaDTO ) throws TriedaException
 	{
-		Demanda d = ConvertBeans.toDemanda( demandaDTO );
-
-		if ( d.getId() != null && d.getId() > 0 )
-		{
-			d.merge();
-		}
-		else
-		{
-			List< Demanda > demandas = Demanda.findBy( getInstituicaoEnsinoUser(),
-				d.getOferta().getCampus(), d.getOferta().getCurriculo().getCurso(),
-				d.getOferta().getCurriculo(), d.getOferta().getTurno(), d.getDisciplina(), 0, 1, null );
-
-			if ( !demandas.isEmpty() )
+		try {
+			Demanda d = ConvertBeans.toDemanda( demandaDTO );
+	
+			if ( d.getId() != null && d.getId() > 0 )
 			{
-				Integer qtd = d.getQuantidade();
-
-				d = demandas.get( 0 );
-				d.setQuantidade( qtd );
-
 				d.merge();
 			}
 			else
 			{
-				d.persist();
+				List< Demanda > demandas = Demanda.findBy( getInstituicaoEnsinoUser(),
+					d.getOferta().getCampus(), d.getOferta().getCurriculo().getCurso(),
+					d.getOferta().getCurriculo(), d.getOferta().getTurno(), d.getDisciplina(), 0, 1, null );
+	
+				if ( !demandas.isEmpty() )
+				{
+					Integer qtd = d.getQuantidade();
+	
+					d = demandas.get( 0 );
+					d.setQuantidade( qtd );
+	
+					d.merge();
+				}
+				else
+				{
+					d.persist();
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
 		}
 	}
 

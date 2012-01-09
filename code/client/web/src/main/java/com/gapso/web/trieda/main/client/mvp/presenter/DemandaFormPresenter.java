@@ -8,9 +8,11 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DemandasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
@@ -18,13 +20,12 @@ import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DemandaFormPresenter
 	implements Presenter
 {
-	public interface Display
+	public interface Display extends ITriedaI18nGateway
 	{
 		Button getSalvarButton();
 		CampusComboBox getCampusComboBox();
@@ -59,11 +60,7 @@ public class DemandaFormPresenter
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final DemandasServiceAsync service = Services.demandas();
-					service.save(getDTO(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-						}
+					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().demanda()),display) {
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
