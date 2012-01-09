@@ -68,11 +68,8 @@ public class CompatibilidadesView extends MyComposite
 		panel.setTopComponent( this.toolBar );
 	}
 
-	private void createTabItem()
-	{
-		tabItem = new GTabItem( "Compatibilidade entre disciplinas",
-				Resources.DEFAULTS.compatibilidade16() );
-
+	private void createTabItem() {
+		tabItem = new GTabItem(getI18nConstants().compatibilidadeEntreDisciplinas(),Resources.DEFAULTS.compatibilidade16());
 		tabItem.setContent( panel );
 	}
 

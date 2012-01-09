@@ -95,6 +95,11 @@ public class GTriedaI18nConstants
 	public String codigo() {
 		return this.languageManager.getText("codigo");
 	}
+	
+	@Override
+	public String compatibilidadeEntreDisciplinas() {
+		return this.languageManager.getText("compatibilidadeEntreDisciplinas");
+	}
 
 	@Override
 	public String confirmacao() {

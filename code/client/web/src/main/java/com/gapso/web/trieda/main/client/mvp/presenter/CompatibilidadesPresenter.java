@@ -101,7 +101,7 @@ public class CompatibilidadesPresenter
 				Services.disciplinas().saveDisciplinasIncompativeis(list, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
-						Info.display("Salvo", "Incompatibilidade salvas com sucesso!");
+						Info.display(display.getI18nConstants().informacao(),display.getI18nMessages().sucessoSalvarNoBD(display.getI18nConstants().compatibilidadeEntreDisciplinas()));
 						display.getGrid().unmask();
 					}
 				});

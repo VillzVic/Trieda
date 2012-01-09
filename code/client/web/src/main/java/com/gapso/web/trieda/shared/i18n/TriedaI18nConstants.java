@@ -31,6 +31,7 @@ public interface TriedaI18nConstants
 	String codigoMatrizCurricular();
 	String codigoSala();
 	String codigoUnidade();
+	String compatibilidadeEntreDisciplinas();
 	String confirmacao();
 	String cpf();
 	String cpfProfessor();
