@@ -12,6 +12,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -27,7 +28,7 @@ public interface ProfessoresService
 	ListLoadResult< TipoContratoDTO > getTiposContratoAll();
 	TitulacaoDTO getTitulacao( Long id );
 	ListLoadResult< TitulacaoDTO > getTitulacoesAll();
-	void save( ProfessorDTO professorDTO );
+	void save( ProfessorDTO professorDTO ) throws TriedaException;
 	void remove( List< ProfessorDTO > professorDTOList );
 	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( ProfessorDTO professorDTO );
 	void saveHorariosDisponiveis( ProfessorDTO professorDTO, List< HorarioDisponivelCenarioDTO > listDTO );

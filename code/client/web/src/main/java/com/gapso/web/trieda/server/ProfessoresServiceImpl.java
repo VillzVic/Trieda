@@ -29,6 +29,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public class ProfessoresServiceImpl
 	extends RemoteService
@@ -218,41 +219,46 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public void save( ProfessorDTO professorDTO )
+	public void save( ProfessorDTO professorDTO ) throws TriedaException
 	{
-		onlyAdministrador();
-
-		Professor professor = ConvertBeans.toProfessor( professorDTO );
-
-		if ( professor.getId() != null && professor.getId() > 0 )
-		{
-			professor.merge();
-		}
-		else
-		{
-			professor.persist();
-
-			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
-
-			List< SemanaLetiva > semanasLetivas
-				= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
-
-			for ( SemanaLetiva semanaLetiva : semanasLetivas )
+		try {
+			onlyAdministrador();
+	
+			Professor professor = ConvertBeans.toProfessor( professorDTO );
+	
+			if ( professor.getId() != null && professor.getId() > 0 )
 			{
-				horariosAula.addAll( semanaLetiva.getHorariosAula() );
+				professor.merge();
 			}
-
-			for ( HorarioAula horarioAula : horariosAula )
+			else
 			{
-				Set< HorarioDisponivelCenario > horariosDisponiveis
-					= horarioAula.getHorariosDisponiveisCenario();
-
-				for ( HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis )
+				professor.persist();
+	
+				Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
+	
+				List< SemanaLetiva > semanasLetivas
+					= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+	
+				for ( SemanaLetiva semanaLetiva : semanasLetivas )
 				{
-					horarioDisponivel.getProfessores().add( professor );
-					horarioDisponivel.merge();
+					horariosAula.addAll( semanaLetiva.getHorariosAula() );
+				}
+	
+				for ( HorarioAula horarioAula : horariosAula )
+				{
+					Set< HorarioDisponivelCenario > horariosDisponiveis
+						= horarioAula.getHorariosDisponiveisCenario();
+	
+					for ( HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis )
+					{
+						horarioDisponivel.getProfessores().add( professor );
+						horarioDisponivel.merge();
+					}
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
 		}
 	}
 

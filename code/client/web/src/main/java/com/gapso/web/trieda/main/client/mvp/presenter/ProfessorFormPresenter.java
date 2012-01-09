@@ -13,22 +13,23 @@ import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.AreaTitulacaoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ProfessorFormPresenter
 	implements Presenter
 {
-	public interface Display
+	public interface Display extends ITriedaI18nGateway
 	{
 		TextField< String > getCpfTextField();
 		TextField< String > getNomeTextField();
@@ -82,14 +83,8 @@ public class ProfessorFormPresenter
 				{
 					final ProfessoresServiceAsync service = Services.professores();
 
-					service.save( getDTO(), new AsyncCallback< Void >()
+					service.save( getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().professor()),display)
 					{
-						@Override
-						public void onFailure( Throwable caught )
-						{
-							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
-						}
-
 						@Override
 						public void onSuccess( Void result )
 						{
