@@ -14,11 +14,13 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.AppPresenter;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
 import com.gapso.web.trieda.shared.util.view.GTab;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -37,11 +39,14 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	}
 	
 	private void initUI() {
+		TriedaI18nConstants i18nConstants = GWT.create(TriedaI18nConstants.class);
+		
 		viewport = new Viewport();
 		viewport.setLayout(new FitLayout());
 		panel = new ContentPanel(new BorderLayout());
 		panel.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.logo()));
 		panel.getHeader().addTool(getLogoutButton());
+		panel.getHeader().setTitle(i18nConstants.triedaVersion());
 		viewport.add(panel);
 		
 		createWest();

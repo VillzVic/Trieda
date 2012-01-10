@@ -109,12 +109,12 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 		
 			for(M model : models) {
 				String idColumn = "destinoTempo"+model.get("origemId");
-				String stringColumn = "Tempo";
+				String stringColumn = "Tempo (min)";
 				list.add(createColumnConfig(idColumn, stringColumn, false, renderer));
 				
 				if(containsCusto) {
 					idColumn = "destinoCusto"+model.get("origemId");
-					stringColumn = "Custo";
+					stringColumn = "Custo (R$)";
 					list.add(createColumnConfig(idColumn, stringColumn, true, renderer));
 				}
 			}
