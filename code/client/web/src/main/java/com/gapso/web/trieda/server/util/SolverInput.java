@@ -3,6 +3,7 @@ package com.gapso.web.trieda.server.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -624,12 +625,11 @@ public class SolverInput
 	@Transactional
 	private void generateCalendario()
 	{
-		GrupoCalendario grupoCalendario
-			= this.of.createGrupoCalendario();
+		GrupoCalendario grupoCalendario = this.of.createGrupoCalendario();
 
-		List< SemanaLetiva > semanasLetivas	
-			= SemanaLetiva.findAll( this.instituicaoEnsino );
-
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
+		
+		Collections.sort(semanasLetivas); // para que as informações sejam impressas em ordem alfabética e, desse modo, facilitar a comparação entre dois XMLs de input 
 		for ( SemanaLetiva calendario : semanasLetivas )
 		{
 			ItemCalendario itemCalendario
@@ -644,6 +644,7 @@ public class SolverInput
 			List< Turno > turnos = Turno.findByCalendario(
 				this.instituicaoEnsino, calendario );
 
+			Collections.sort(turnos); // para que as informações sejam impressas em ordem alfabética e, desse modo, facilitar a comparação entre dois XMLs de input
 			// Lendo turnos
 			for ( Turno turno : turnos )
 			{
@@ -660,9 +661,11 @@ public class SolverInput
 				// Lendo horários de aula
 				GrupoHorarioAula grupoHorarioAula = this.of.createGrupoHorarioAula();
 
-				Set< HorarioAula > horariosAula = new HashSet< HorarioAula >(
-					HorarioAula.findBySemanaLetiva( this.instituicaoEnsino, calendario ) );
-
+				//Set< HorarioAula > horariosAula = new HashSet< HorarioAula >( HorarioAula.findBySemanaLetiva( this.instituicaoEnsino, calendario ) );
+				// TRIEDA-1165
+				List< HorarioAula > horariosAula = HorarioAula.findHorarioAulasBySemanaLetivaAndTurno(this.instituicaoEnsino, calendario, turno );
+				
+				Collections.sort(horariosAula); // para que as informações sejam impressas em ordem alfabética e, desse modo, facilitar a comparação entre dois XMLs de input
 				for ( HorarioAula horarioAula : horariosAula )
 				{
 					ItemHorarioAula itemHorarioAula
@@ -675,9 +678,14 @@ public class SolverInput
 					GrupoDiaSemana grupoDiasSemana
 						= this.of.createGrupoDiaSemana();
 
-					Set< HorarioDisponivelCenario > horariosDisponivelCenario
-						= horarioAula.getHorariosDisponiveisCenario();
-
+					List< HorarioDisponivelCenario > horariosDisponivelCenario = new ArrayList<HorarioDisponivelCenario>(horarioAula.getHorariosDisponiveisCenario());
+					// para que as informações sejam impressas em ordem alfabética e, desse modo, facilitar a comparação entre dois XMLs de input
+					Collections.sort(horariosDisponivelCenario,new Comparator<HorarioDisponivelCenario>() {
+						@Override
+						public int compare(HorarioDisponivelCenario o1, HorarioDisponivelCenario o2) {
+							return o1.getDiaSemana().compareTo(o2.getDiaSemana());
+						}
+					}); 
 					for ( HorarioDisponivelCenario hdc : horariosDisponivelCenario )
 					{
 						grupoDiasSemana.getDiaSemana().add(
@@ -1015,6 +1023,7 @@ public class SolverInput
 					List< HorarioDisponivelCenario > listHorariosSala
 						= new ArrayList< HorarioDisponivelCenario >( setHorariosSala );
 
+					// TRIEDA-1164: Enviar sempre HoráriosDisponíveis para o solver ao invés de CréditosDisponíveis (no caso do Tático)
 					if ( tatico )
 					{
 						// Tático
