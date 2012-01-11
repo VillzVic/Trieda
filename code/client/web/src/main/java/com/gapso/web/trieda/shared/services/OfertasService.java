@@ -19,7 +19,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("ofertas")
 public interface OfertasService extends RemoteService {
-	
+
+	ListLoadResult<OfertaDTO> getListAll();
 	OfertaDTO getOferta(Long id);
 	PagingLoadResult<OfertaDTO> getBuscaList(TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config);
 	void save(OfertaDTO ofertaDTO);

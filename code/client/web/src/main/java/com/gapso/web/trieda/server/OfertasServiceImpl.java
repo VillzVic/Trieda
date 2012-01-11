@@ -31,6 +31,18 @@ public class OfertasServiceImpl
 	extends RemoteService implements OfertasService
 {
 	private static final long serialVersionUID = -3010939181486905949L;
+	
+	@Override
+	public ListLoadResult<OfertaDTO> getListAll() {
+		List<OfertaDTO> ofertasDTOs = new ArrayList<OfertaDTO>();
+		List<Oferta> ofertas = Oferta.findAll(this.getInstituicaoEnsinoUser());
+
+		for (Oferta oferta : ofertas) {
+			ofertasDTOs.add(ConvertBeans.toOfertaDTO(oferta));
+		}
+
+		return new BaseListLoadResult<OfertaDTO>(ofertasDTOs);
+	}
 
 	@Override
 	public OfertaDTO getOferta( Long id )

@@ -37,6 +37,7 @@ public interface DisciplinasService
 	ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList();
 	TipoDisciplinaDTO getTipoDisciplina( Long id );
 	ListLoadResult< DisciplinaDTO > getListByCursos( List< CursoDTO > cursos );
+	ListLoadResult< DisciplinaDTO > getListByCurriculo(long curriculoId);
 	List< TreeNodeDTO > getFolderChildren( TreeNodeDTO loadConfig );
 	void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, SalaDTO salaDTO);
 	void saveDisciplinaToSala( OfertaDTO ofertaDTO, Integer periodo, CurriculoDisciplinaDTO cdDTO, GrupoSalaDTO grupoSalaDTO);

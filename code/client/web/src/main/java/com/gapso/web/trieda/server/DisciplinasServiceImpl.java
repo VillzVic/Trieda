@@ -173,6 +173,23 @@ public class DisciplinasServiceImpl
 
 		return new BaseListLoadResult< DisciplinaDTO >( list );
 	}
+	
+	@Override
+	public ListLoadResult< DisciplinaDTO > getListByCurriculo(long curriculoId) {
+		Curriculo curriculo = Curriculo.find(curriculoId,getInstituicaoEnsinoUser());
+		
+		Set<Disciplina> disciplinas = new HashSet<Disciplina>();
+		for (CurriculoDisciplina currDisciplina : curriculo.getDisciplinas()) {
+			disciplinas.add(currDisciplina.getDisciplina());
+		}
+
+		List<DisciplinaDTO> list = new ArrayList<DisciplinaDTO>();
+		for (Disciplina disciplina : disciplinas) {
+			list.add(ConvertBeans.toDisciplinaDTO(disciplina));
+		}
+
+		return new BaseListLoadResult<DisciplinaDTO>(list);
+	}
 
 	public ListLoadResult< DisciplinaDTO > getListBySalas(
 		List< SalaDTO > salasDTO )

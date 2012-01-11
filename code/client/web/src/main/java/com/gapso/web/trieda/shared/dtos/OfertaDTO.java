@@ -21,11 +21,17 @@ public class OfertaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_TURNO_STRING = "turnoString";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
+	public static final String PROPERTY_TEXT = "text";
 
 	public OfertaDTO() {
 		super();
 	}
 
+	public String getText() {
+		return getCampusString() + " / " + getCursoString() + " / "
+		+ getMatrizCurricularString() + " / " + getTurnoString();
+	}
+	
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);
 	}
@@ -56,6 +62,7 @@ public class OfertaDTO extends AbstractDTO<String>
 
 	public void setCampusString(String value) {
 		set(PROPERTY_CAMPUS_STRING, value);
+		set(PROPERTY_TEXT, getCampusString() + " / " + getCursoString() + " / " + getMatrizCurricularString() + " / " + getTurnoString());
 	}
 
 	public String getCursoString() {
@@ -64,6 +71,7 @@ public class OfertaDTO extends AbstractDTO<String>
 
 	public void setCursoString(String value) {
 		set(PROPERTY_CURSO_STRING, value);
+		set(PROPERTY_TEXT, getCampusString() + " / " + getCursoString() + " / " + getMatrizCurricularString() + " / " + getTurnoString());
 	}
 
 	public void setReceita( TriedaCurrency value )
@@ -90,6 +98,7 @@ public class OfertaDTO extends AbstractDTO<String>
 
 	public void setMatrizCurricularString(String value) {
 		set(PROPERTY_MATRIZ_CURRICULAR_STRING, value);
+		set(PROPERTY_TEXT, getCampusString() + " / " + getCursoString() + " / " + getMatrizCurricularString() + " / " + getTurnoString());
 	}
 
 	public Long getTurnoId() {
@@ -106,6 +115,7 @@ public class OfertaDTO extends AbstractDTO<String>
 
 	public void setTurnoString(String value) {
 		set(PROPERTY_TURNO_STRING, value);
+		set(PROPERTY_TEXT, getCampusString() + " / " + getCursoString() + " / " + getMatrizCurricularString() + " / " + getTurnoString());
 	}
 
 	@Override

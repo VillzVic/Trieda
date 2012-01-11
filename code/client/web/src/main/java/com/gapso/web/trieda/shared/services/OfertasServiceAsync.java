@@ -15,6 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface OfertasServiceAsync
 {
+	void getListAll( AsyncCallback<ListLoadResult< OfertaDTO > > callback );
 	void getOferta( Long id, AsyncCallback< OfertaDTO > callback );
 	void getBuscaList( TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< OfertaDTO > > callback );
