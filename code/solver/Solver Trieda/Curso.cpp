@@ -47,3 +47,14 @@ void Curso::le_arvore( ItemCurso & elem )
    this->minTempoIntegral = elem.minTempoIntegral();
    this->minTempoIntegralParcial = elem.minTempoIntegralParcial();
 }
+
+
+bool Curso::possuiDisciplina( int idDisciplina )
+{
+   ITERA_GGROUP_LESSPTR( it_curriculo, curriculos, Curriculo )
+   {
+		if ( it_curriculo->possuiDisciplina( idDisciplina ) )
+			return true;
+   }
+   return false;
+}

@@ -66,7 +66,7 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
 		     g->add( *it_id );
 		  }
 
-		  permite_compart_turma.add( g );
+		  nao_permite_compart_turma.add( g );
 	   }
    }
 

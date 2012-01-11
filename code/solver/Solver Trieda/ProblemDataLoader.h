@@ -84,7 +84,13 @@ public:
    void cria_blocos_curriculares();
 
    /* */
+   void calculaMenorCapacSalaPorDisc();
+
+   /* */
    void estima_turmas();
+   
+   /* */
+   void estima_turmas_sem_compart();
 
    /* */
    void print_stats();
@@ -110,6 +116,9 @@ public:
 
    /* */
    void disciplinasCursosCompativeis();
+
+   // Preenche o atributo 'cursosComp_disc' de problemData
+   void preencheDisciplinasDeCursosCompativeis();
 
    // Divide as fixações de acordo com seus tipos
    void relacionaFixacoes();

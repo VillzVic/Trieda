@@ -31,13 +31,19 @@ public:
 
    void setPeriodo( int value ) { this->periodo = value; }
    void setTotalTurmas( int value ) { this->total_turmas = value; }
+   void setMaxCredsNoDia( int dia, int value ){ this->max_creds_dia[dia] = value; }
 
    int getPeriodo() const { return this->periodo; }
    int getTotalTurmas() const { return this->total_turmas; }
+   int getMaxCredsNoDia( int dia );
+
+   void preencheMaxCredsPorDia();
 
 private:
    int periodo;
    int total_turmas;
+   std::map< int, int > max_creds_dia; /* map< dia, maximo de creditos no dia> */
+
 };
 
 #endif

@@ -54,6 +54,7 @@ public:
    void setNumTurmas( int value ) { num_turmas = value; }
    void setMinCreds( int value ) { min_creds = value; }
    void setMaxCreds( int value ) { max_creds = value; }
+   void setMenorCapacSala( int value ) { this->menorCapacSala = value; }
 
    int getDemandaTotal() const { return demanda_total; }
    int getMaxDemanda() const { return max_demanda; }
@@ -69,7 +70,8 @@ public:
    int getNumTurmas() const { return num_turmas; }
    int getMinCreds() const { return min_creds; }
    int getMaxCreds() const { return max_creds; }
-
+   int getMenorCapacSala() const { return this->menorCapacSala; }
+   
    // Informa se uma dada disciplina é equivalente à esta disciplina
    bool eh_equivalente( Disciplina * );
 
@@ -94,6 +96,8 @@ private:
    int num_turmas;
    int min_creds;
    int max_creds;
+   int menorCapacSala; // menor capacidade dentre as salas aonde a disciplina pode ser ministrada
+
 };
 
 #endif

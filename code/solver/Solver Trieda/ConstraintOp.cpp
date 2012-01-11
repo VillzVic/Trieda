@@ -295,66 +295,150 @@ std::string ConstraintOp::toString()
 
    switch( type )
    {
-   case C_SALA_HORARIO:
-      ss << "C_SALA_HORARIO"; break;
-   case C_PROFESSOR_HORARIO:
-      ss << "C_PROFESSOR_HORARIO"; break;
-   case C_BLOCO_HORARIO:
-      ss << "C_BLOCO_HORARIO"; break;
-   case C_BLOCO_HORARIO_DISC:
-	   ss << "C_BLOCO_HORARIO_DISC(" << horarioAula->getInicio() << ")"; break;
-   case C_ALOC_AULA:
-      ss << "C_ALOC_AULA"; break;
-   case C_PROF_DISC:
-      ss << "C_PROF_DISC"; break;
-   case C_PROF_DISC_UNI:
-      ss << "C_PROF_DISC_UNI"; break;
-   case C_FIX_PROF_DISC_SALA_DIA_HOR:
-      ss << "C_FIX_PROF_DISC_SALA_DIA_HOR"; break;
-   case C_FIX_PROF_DISC_DIA_HOR:
-      ss << "C_FIX_PROF_DISC_DIA_HOR"; break;
-   case C_FIX_PROF_DISC:
-      ss << "C_FIX_PROF_DISC"; break;
-   case C_FIX_PROF_DISC_SALA:
-      ss << "C_FIX_PROF_DISC_SALA"; break;
-   case C_FIX_PROF_SALA:
-      ss << "C_FIX_PROF_SALA"; break;
-   case C_DISC_HORARIO:
-      ss << "C_DISC_HORARIO"; break;
-   case C_DISC_HORARIO_UNICO:
-      ss << "C_DISC_HORARIO_UNICO"; break;
-   case C_MIN_MEST_CURSO:
-      ss << "C_MIN_MEST_CURSO"; break;
-   case C_MIN_DOUT_CURSO:
-      ss << "C_MIN_DOUT_CURSO"; break;
-   case C_ALOC_PROF_CURSO:
-      ss << "C_ALOC_PROF_CURSO"; break;
-   case C_CARGA_HOR_MIN_PROF:
-      ss << "C_CARGA_HOR_MIN_PROF"; break;
-   case C_CARGA_HOR_MIN_PROF_SEMANA:
-      ss << "C_CARGA_HOR_MIN_PROF_SEMANA"; break;
-   case C_CARGA_HOR_MAX_PROF_SEMANA:
-      ss << "C_CARGA_HOR_MAX_PROF_SEMANA"; break;
-   case C_DIAS_PROF_MINISTRA_AULA:
-      ss << "C_DIAS_PROF_MINISTRA_AULA"; break;
-   case C_CUSTO_CORPO_DOCENTE:
-      ss << "C_CUSTO_CORPO_DOCENTE"; break;
-   case C_MAX_DISC_PROF_CURSO:
-      ss << "C_MAX_DISC_PROF_CURSO"; break;
-   case C_AVALIACAO_CORPO_DOCENTE:
-      ss << "C_AVALIACAO_CORPO_DOCENTE"; break;
-   case C_DESLOC_PROF:
-      ss << "C_DESLOC_PROF"; break;
-   case C_DESLOC_VIAVEL:
-      ss << "C_DESLOC_VIAVEL"; break;
-   case C_ULTIMA_PRIMEIRA_AULA_PROF:
-      ss << "C_ULTIMA_PRIMEIRA_AULA_PROF"; break;
-   case C_GAPS_PROFESSORES:
-      ss << "C_GAPS_PROFESSORES"; break;
-   default:
-      ss << "!";
+	   case C_SALA_HORARIO:
+		   ss << "C_SALA_HORARIO"; break;
+	   case C_PROFESSOR_HORARIO:
+		  ss << "C_PROFESSOR_HORARIO"; break;
+	   case C_BLOCO_HORARIO:
+		   ss << "C_BLOCO_HORARIO"; break;
+	   case C_BLOCO_HORARIO_DISC:
+		   ss << "C_BLOCO_HORARIO_DISC"; break;
+	   case C_ALOC_AULA:
+		   ss << "C_ALOC_AULA"; break;
+	   case C_PROF_DISC:
+		  ss << "C_PROF_DISC"; break;
+	   case C_PROF_DISC_UNI:
+		  ss << "C_PROF_DISC_UNI"; break;
+	   case C_FIX_PROF_DISC_SALA_DIA_HOR:
+		  ss << "C_FIX_PROF_DISC_SALA_DIA_HOR"; break;
+	   case C_FIX_PROF_DISC_DIA_HOR:
+		  ss << "C_FIX_PROF_DISC_DIA_HOR"; break;
+	   case C_FIX_PROF_DISC:
+		  ss << "C_FIX_PROF_DISC"; break;
+	   case C_FIX_PROF_DISC_SALA:
+		  ss << "C_FIX_PROF_DISC_SALA"; break;
+	   case C_FIX_PROF_SALA:
+		  ss << "C_FIX_PROF_SALA"; break;
+	   case C_DISC_HORARIO:
+		  ss << "C_DISC_HORARIO"; break;
+	   case C_DISC_HORARIO_UNICO:
+		  ss << "C_DISC_HORARIO_UNICO"; break;
+	   case C_MIN_MEST_CURSO:
+		  ss << "C_MIN_MEST_CURSO"; break;
+	   case C_MIN_DOUT_CURSO:
+		  ss << "C_MIN_DOUT_CURSO"; break;
+	   case C_ALOC_PROF_CURSO:
+		  ss << "C_ALOC_PROF_CURSO"; break;
+	   case C_CARGA_HOR_MIN_PROF:
+		  ss << "C_CARGA_HOR_MIN_PROF"; break;
+	   case C_CARGA_HOR_MIN_PROF_SEMANA:
+		  ss << "C_CARGA_HOR_MIN_PROF_SEMANA"; break;
+	   case C_CARGA_HOR_MAX_PROF_SEMANA:
+		  ss << "C_CARGA_HOR_MAX_PROF_SEMANA"; break;
+	   case C_DIAS_PROF_MINISTRA_AULA:
+		  ss << "C_DIAS_PROF_MINISTRA_AULA"; break;
+	   case C_CUSTO_CORPO_DOCENTE:
+		  ss << "C_CUSTO_CORPO_DOCENTE"; break;
+	   case C_MAX_DISC_PROF_CURSO:
+		  ss << "C_MAX_DISC_PROF_CURSO"; break;
+	   case C_AVALIACAO_CORPO_DOCENTE:
+		  ss << "C_AVALIACAO_CORPO_DOCENTE"; break;
+	   case C_DESLOC_PROF:
+		  ss << "C_DESLOC_PROF"; break;
+	   case C_DESLOC_VIAVEL:
+		  ss << "C_DESLOC_VIAVEL"; break;
+	   case C_ULTIMA_PRIMEIRA_AULA_PROF:
+		  ss << "C_ULTIMA_PRIMEIRA_AULA_PROF"; break;
+	   case C_GAPS_PROFESSORES:
+		  ss << "C_GAPS_PROFESSORES"; break;
+	   default:
+		  ss << "!";
    }
 
+   ss << "__{";
+
+   if ( professor != NULL )
+   {
+      ss << "_Prof" << professor->getIdOperacional();
+   }
+
+   if ( curso != NULL )
+   {
+      ss << "_Curso" << curso->getId();
+   }
+
+   if ( aula != NULL )
+   {
+      ss << "_(Disc" << aula->getDisciplina()->getId()
+		  << ",Turma" << aula->getTurma()
+		  << ",Dia" << aula->getDiaSemana()
+          << ",Sala" << aula->getSala()->getId()
+          << ",NCred" << aula->getTotalCreditos() << ")";
+   }
+   
+   if ( b != NULL )
+   {
+	   ss << "_Bc" << b->getId();
+   }
+
+   if ( j >=0 )
+   {
+      ss << "_Sbc" << j;
+   }
+
+   if ( par_disc_turma.size() == 2 )
+   {
+	   std::map<Disciplina*, int>::iterator it = par_disc_turma.begin();
+
+	   ss << "_(Disc" << it->first->getId(); 	
+	   ss << ",Turma" << it->second;
+	   ++it;
+	   ss << ";Disc" << it->first->getId();
+	   ss << ",Turma" << it->second << ")";
+   }
+
+   if ( h != NULL )
+   {
+	   ss << "_H" << h->getHorarioAulaId();
+	   if ( aula == NULL) ss <<"," << "Dia" << h->getDia();
+   }
+
+   if ( horarioAula != NULL && h == NULL )
+   {
+      ss << "_H" << horarioAula->getId();
+   }
+
+   if ( t >= 0 && aula==NULL && h==NULL )
+   {
+      ss << "_Dia" << t;
+   }
+
+   if ( disciplina != NULL && aula == NULL )
+   {
+      ss << "_Disc" << disciplina->getId();
+   }
+
+   if ( turma >= 0 && aula==NULL )
+   {
+      ss << "_Turma" << turma;
+   }
+
+   if ( s != NULL && aula == NULL )
+   {
+      ss << "_Sala" << s->getId();
+   }
+
+   if ( h1 != NULL )
+   {
+      ss << "_H1:" << h1->getId();
+   }
+
+   if ( h2 != NULL )
+   {
+      ss << "_H2:" << h2->getId();
+   }
+
+   ss << "_}";
    std::string consName = "";
    ss >> consName;
 

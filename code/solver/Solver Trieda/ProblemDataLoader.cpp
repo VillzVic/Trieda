@@ -28,8 +28,7 @@ void ProblemDataLoader::load()
 
    problemData->le_arvore( *root );
 
-   std::cout << "Some preprocessing..."
-             << std::endl << std::endl;
+   std::cout << "Some preprocessing..." << std::endl << std::endl;
 
    // ---------
    preencheTempoAulaHorarios();
@@ -65,7 +64,10 @@ void ProblemDataLoader::load()
    disciplinasCursosCompativeis();
 
    // ---------
-   // relacionaDisciplinasEquivalentes();
+   relacionaDisciplinasEquivalentes();
+
+   // ---------
+   preencheDisciplinasDeCursosCompativeis();
 
    // ---------
    divideDisciplinas();
@@ -99,15 +101,18 @@ void ProblemDataLoader::load()
 
    // ---------
    relacionaDiscOfertas();
+   
+   // ---------
+   associaDisciplinasSalas();
 
+   // ---------
+   calculaMenorCapacSalaPorDisc();
+   
    // ---------
    estima_turmas();
 
    // ---------
    cria_blocos_curriculares();
-
-   // ---------
-   associaDisciplinasSalas();
 
    // ---------
    criaConjuntoSalasUnidade();
@@ -642,6 +647,10 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
             // associadas a sala em questão, tem de estar associadas ao
             // conjunto de salas encontrado, e vice versa ).
             bool encontrou_Conjunto_Compat = false;
+			
+			bool PERMITE_MAIS_DE_UMA_SALA_POR_CJT = false;	// TODO: tirar isso quando estiver estavel
+			
+			if ( PERMITE_MAIS_DE_UMA_SALA_POR_CJT ){
 
             ITERA_GGROUP( it_Cjt_Salas_Disc,
                ( *gg_Cjt_Salas_Esc ), ConjuntoSala )
@@ -716,8 +725,10 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                   }
                }
             }
-
-            if ( !encontrou_Conjunto_Compat )
+			
+			}
+            
+			if ( !encontrou_Conjunto_Compat )
             {
                ConjuntoSala * cjt_Sala = new ConjuntoSala();
 
@@ -1132,13 +1143,12 @@ void ProblemDataLoader::combinacaoDivCreditos()
    }
 }
 
+/*
+	Define um map de compatibilidade e incompatibilidade entre 2 cursos.
+	É setado mesmo que não seja permitido compartilhamento.
+*/
 void ProblemDataLoader::disciplinasCursosCompativeis()
 {
-   // Definindo um map de compatibilidade e incompatibilidade entre 2 turmas.
-   bool compativel = problemData->parametros->permite_compartilhamento_turma_sel;
-
-   if ( compativel )
-   {
       ITERA_GGROUP_LESSPTR( it_fix_curso, problemData->cursos, Curso )
       {
          ITERA_GGROUP_LESSPTR( it_alt_curso, problemData->cursos, Curso )
@@ -1149,46 +1159,42 @@ void ProblemDataLoader::disciplinasCursosCompativeis()
             problemData->compat_cursos[ idCursos ] = true;
          }
       }
-   }
 
-   ITERA_GGROUP_LESSPTR( it_fix_curso, problemData->cursos, Curso )
-   {
-      GGroup< GGroup< int > * >::iterator it_list_compat =
-         problemData->parametros->permite_compart_turma.begin();
+	   ITERA_GGROUP_LESSPTR( it_fix_curso, problemData->cursos, Curso )
+	   {
+		  int curso1Id = it_fix_curso->getId();
 
-      for (; it_list_compat != problemData->parametros->permite_compart_turma.end();
-         it_list_compat++ )
-      {
-         if ( it_list_compat->find( it_fix_curso->getId() ) != it_list_compat->end() )
-         {
-            ITERA_GGROUP_LESSPTR( it_alt_curso, problemData->cursos, Curso )
-            {
-               if ( it_list_compat->find( it_alt_curso->getId() ) != it_list_compat->end() )
-               {
-                  std::pair< Curso *, Curso * > idCursos =
-                     std::make_pair( ( *it_fix_curso ), ( *it_alt_curso ) );
+		  GGroup< GGroup< int > * >::iterator it_list_compat =
+			 problemData->parametros->nao_permite_compart_turma.begin();
+		  
+		  for (; it_list_compat != problemData->parametros->nao_permite_compart_turma.end(); it_list_compat++ )
+		  {
+			 if ( it_list_compat->find( curso1Id ) != it_list_compat->end() )
+			 {
+				ITERA_GGROUP_INIC_LESSPTR( it_alt_curso, it_fix_curso, problemData->cursos, Curso )
+				{
+				   int curso2Id = it_alt_curso->getId();
+				   if ( curso1Id == curso2Id ) continue;
 
-                  problemData->compat_cursos.erase( idCursos );
-               }
-            }
-         }
-      }
-   }
+				   if ( it_list_compat->find( curso2Id ) != it_list_compat->end() )
+				   {
+					  std::pair<Curso*, Curso*> parCursos = std::make_pair( *it_fix_curso, *it_alt_curso );
+					  
+					  problemData->compat_cursos.erase( parCursos );
+					  std::swap(parCursos.first, parCursos.second);
+					  problemData->compat_cursos.erase( parCursos );
+				   }
+				}
+			 }
+		  }
+	   }
 
-   std::map< std::pair< Curso *, Curso * >, bool >::iterator
-      itCC = problemData->compat_cursos.begin();
+}
 
-   for (; itCC != problemData->compat_cursos.end(); itCC++ )
-   {
-      std::pair< Curso *, Curso * > normal = 
-         std::make_pair< Curso *, Curso * > ( itCC->first.first, itCC->first.second );
 
-      std::pair< Curso *, Curso * > invertido =
-         std::make_pair< Curso *, Curso * > ( itCC->first.second, itCC->first.first );
-
-      problemData->compat_cursos[ invertido ] = 
-         problemData->compat_cursos.find( normal )->second;
-   }
+void ProblemDataLoader::preencheDisciplinasDeCursosCompativeis()
+{
+	problemData->preencheCursosCompDisc();
 }
 
 bool ProblemDataLoader::contemFixacao(
@@ -2850,6 +2856,14 @@ void ProblemDataLoader::cria_blocos_curriculares()
 
       it_bc->setTotalTurmas( totalTurmas );
    }
+   
+   /* Preenche, para cada bloco curricular, o numero maximo de creditos possiveis
+	  de serem alocados para cada dia letivo */
+   ITERA_GGROUP_LESSPTR( it_bc, problemData->blocos, BlocoCurricular )
+   {
+		it_bc->preencheMaxCredsPorDia();
+   }
+
 }
 
 void ProblemDataLoader::relacionaCampusDiscs()
@@ -2888,11 +2902,10 @@ void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
 
             it_und->setMaiorSala( std::max( ( (int)it_und->getMaiorSala() ),
                ( (int)it_sala->getCapacidade() ) ) );
-         }
+		 }
 
          total_Salas += it_und->getNumSalas();
-         it_cp->setMaiorSala( std::max( (int)it_cp->getMaiorSala(),
-            (int)it_und->getMaiorSala() ) );
+         it_cp->setMaiorSala( std::max( (int)it_cp->getMaiorSala(), (int)it_und->getMaiorSala() ) );
       }
 
       problemData->cp_medSalas[ it_cp->getId() ] =
@@ -2952,109 +2965,62 @@ void ProblemDataLoader::calculaDemandas()
    }
 }
 
-// TRIEDA-416
+
+void ProblemDataLoader::calculaMenorCapacSalaPorDisc()
+{
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+   {
+	   int menorCapacSala = 10000;
+
+	   std::vector< Sala * >::iterator it_sala = problemData->discSalas[*it_disc].begin();
+	   for ( ; it_sala != problemData->discSalas[*it_disc].end(); it_sala++ )
+	   {
+			menorCapacSala = std::min( menorCapacSala, ( *it_sala )->getCapacidade() );
+	   }
+	   it_disc->setMenorCapacSala(menorCapacSala);
+   }
+
+}
+
 void ProblemDataLoader::estima_turmas()
 {
-   // Estimando o número máximo de turmas de cada
-   // disciplina de acordo com o seguinte cálculo:
+	estima_turmas_sem_compart();
+}
 
-   // numTurmasDisc = demDisc / tamMedSalasCP
+/*
+ TRIEDA-416
+    Estimando o número máximo de turmas de cada
+    disciplina, quando não é permitido o compartilhamento
+    de turmas de cursos diferentes, de acordo com o seguinte cálculo:
+	
+	numTurmasDisc = sum{ demDiscOferta_{i} / tamMinSalasCP }
 
-   // Onde:
-   // demDisc -> representa a demanda total de uma dada disciplina.
-   // tamMedSalasCP -> representa o tamanho médio das salas de um campus.
+    Onde:
+    demDiscOferta -> representa a demanda total da oferta i de uma dada disciplina.
+    tamMinSalasCP -> representa o tamanho minimo das salas de um campus que têm a disciplina associada.
+*/
+void ProblemDataLoader::estima_turmas_sem_compart()
+{
 
-   int anterior = 0;
-   std::map< int /*Id Campus*/, GGroup< int >/*Id Discs*/ >::iterator itCPDiscs =
-      problemData->cp_discs.begin();
-
-   for (; itCPDiscs != problemData->cp_discs.end(); itCPDiscs++ )
+   GGroup< Demanda *, LessPtr< Demanda > >::iterator itDemanda = problemData->demandas.begin();
+   for (; itDemanda != problemData->demandas.end(); itDemanda++ )
    {
-      int tamMedSalasCP = problemData->cp_medSalas[ itCPDiscs->first ];
-      GGroup< int >::iterator itDisc = itCPDiscs->second.begin();
+	   Campus *cp = itDemanda->oferta->campus;
+	   int disc = itDemanda->getDisciplinaId();			   
+	   int demDisc = itDemanda->getQuantidade();	   
+	   int numTurmas;
+	   
+	   int minCapacSala = itDemanda->disciplina->getMenorCapacSala();
 
-      for (; itDisc != itCPDiscs->second.end(); itDisc++ )
-      {
-         int demDisc = problemData->refDisciplinas[ ( *itDisc ) ]->getDemandaTotal();
-         if ( problemData->refDisciplinas[ ( *itDisc ) ]->eLab() )
-         {
-            if ( problemData->refDisciplinas[ ( *itDisc ) ]->getMaxAlunosP() > 0 )
-            {
-               int numTurmas = ( demDisc / 25 );
-               problemData->refDisciplinas[ ( *itDisc ) ]->setNumTurmas( ( numTurmas > 0 ? numTurmas + 2 : 2 ) );
-
-               //if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-               //else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-            }
-            else
-            {
-               problemData->refDisciplinas[*itDisc]->setNumTurmas( (demDisc / 25) + 2 );
-
-               //if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-               //else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-            }
-         }
-         else
-         {
-            if(problemData->refDisciplinas[*itDisc]->getMaxAlunosP() > 0)
-            {
-               int numTurmas = (demDisc / 50);
-               problemData->refDisciplinas[*itDisc]->setNumTurmas((numTurmas > 0 ? numTurmas + 1 : 1) );
-
-               //if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-               //else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-            }
-            else
-            {
-               problemData->refDisciplinas[*itDisc]->setNumTurmas( (demDisc / 50) + 1 );
-
-               //if ( abs(problemData->refDisciplinas[*itDisc]->getId()) == 101 || 
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 178 ||
-               //   abs(problemData->refDisciplinas[*itDisc]->getId()) == 349 )
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-               //else if ( problemData->refDisciplinas[*itDisc]->getMaxCreds() >= 6)
-               //{
-               //   anterior = problemData->refDisciplinas[*itDisc]->getNumTurmas();
-               //   problemData->refDisciplinas[*itDisc]->setNumTurmas(anterior+1);
-               //}
-            }
-         }
-      }
+	   if ( problemData->refDisciplinas[disc]->getNumTurmas() < 0 )
+		   problemData->refDisciplinas[disc]->setNumTurmas( 0 );
+		
+	   numTurmas = problemData->refDisciplinas[disc]->getNumTurmas() + int( std::floor( double(demDisc+minCapacSala-1)/minCapacSala ) );
+       problemData->refDisciplinas[disc]->setNumTurmas( numTurmas );       
+       
    }
 }
+
 
 void ProblemDataLoader::print_stats()
 {
@@ -3590,6 +3556,7 @@ void ProblemDataLoader::relacionaDiscOfertas()
       }
    }
 }
+
 
 // Método de pré-processamento
 // relacionado com a issue TRIEDA-700

@@ -25,3 +25,17 @@ void Calendario::le_arvore( ItemCalendario & elem )
       turnos.add( turno );
    }
 }
+
+/*
+  Dado um dia especifico, retorna o numero de horarios de aula disponiveis no dia da semana letiva em questao
+  (ou numero de creditos).
+*/
+int Calendario::getNroDeHorariosAula(int dia)
+{
+	int nHorariosNoDia = 0;
+	ITERA_GGROUP_LESSPTR( it, turnos, Turno )
+	{
+		nHorariosNoDia += it->getNroDeHorariosAula(dia);
+	}
+	return nHorariosNoDia;
+}

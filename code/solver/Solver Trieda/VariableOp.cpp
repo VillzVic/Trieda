@@ -262,63 +262,69 @@ std::string VariableOp::toString()
         str << "!";
    }
 
+   str << "_{";
+
    if ( professor != NULL )
    {
-      str << "_" << professor->getIdOperacional();
+      str << "_Prof" << professor->getIdOperacional();
    }
 
    if ( curso != NULL )
    {
-      str << "_" << curso->getId();
+      str << "_Curso" << curso->getId();
    }
 
    if ( aula != NULL )
    {
-      str << "_(" << aula->getDisciplina()->getId()
-          << "," << aula->getDiaSemana()
-          << "," << aula->getSala()->getId()
-          << "," << aula->getTotalCreditos() << ")";
+      str << "_(Disc" << aula->getDisciplina()->getId()
+          << ",Dia" << aula->getDiaSemana()
+          << ",Sala" << aula->getSala()->getId()
+          << ",NCred" << aula->getTotalCreditos() << ")";
    }
 
    if ( h != NULL )
    {
-      str << "_(" << h->getDia() <<"," << h->getHorarioAulaId() << ")";
+	   str << "_H" << h->getHorarioAulaId();
+	   if ( aula == NULL) str << "," << "Dia" << h->getDia();
+	   
    }
 
-   if ( horarioAula != NULL )
+   if ( horarioAula != NULL && h == NULL )
    {
-      str << "_" << horarioAula->getId();
+      str << "_H" << horarioAula->getId();
    }
 
-   if ( dia >= 0 )
+   if ( dia >= 0 && aula == NULL )
    {
-      str << "_" << dia;
+      str << "_Dia" << dia;
    }
 
-   if ( disciplina != NULL )
+   if ( disciplina != NULL && aula == NULL )
    {
-      str << "_(" << disciplina->getId() << ")";
+      str << "_Disc" << disciplina->getId();
    }
 
    if ( turma >= 0 )
    {
-      str << "_(" << turma << ")";
+      str << "_Turma" << turma;
    }
 
-   if ( sala != NULL )
+   if ( sala != NULL && aula == NULL )
    {
-      str << "_(" << sala->getId() << ")";
+      str << "_Sala" << sala->getId();
    }
 
    if ( h1 != NULL )
    {
-      str << "_( h1-" << h1->getId() << ")";
+      str << "_H1:" << h1->getId();
    }
 
    if ( h2 != NULL )
    {
-      str << "_( h2-" << h2->getId() << ")";
+      str << "_H2:" << h2->getId();
    }
+
+   str << "}";
 
    str >> output;
    return output;

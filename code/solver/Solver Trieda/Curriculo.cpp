@@ -54,3 +54,38 @@ void Curriculo::refDisciplinaPeriodo(
 
 	ids_disciplinas_periodo.clear();
 }
+
+int Curriculo::getMaxCreds( int dia )
+{
+	return calendario->getNroDeHorariosAula(dia);
+}
+
+
+int Curriculo::getPeriodo( Disciplina *d )
+{
+	GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
+
+	for (; it != disciplinas_periodo.end(); it++ )
+	{
+		int id_periodo = ( *it ).first;
+		int id_disciplina = ( *it ).second->getId();
+
+		if ( id_disciplina == d->getId() )
+			return id_periodo;
+	}
+
+	return 0;
+}
+
+
+bool Curriculo::possuiDisciplina( int idDisciplina )
+{
+	GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
+
+	for (; it != disciplinas_periodo.end(); it++ )
+	{
+		if ( (*it).second->getId() == idDisciplina )
+			return true;
+   }
+   return false;
+}

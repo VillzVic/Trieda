@@ -191,6 +191,77 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    }
 }
 
+/*
+	Preenche o atributo ´cursosComp_disc´ com todos os pares de cursos
+	compativeis (c1,c2) e suas disciplinas em comum.
+*/
+void ProblemData::preencheCursosCompDisc()
+{
+	ITERA_GGROUP_LESSPTR( it_disc, this->disciplinas, Disciplina )
+    {
+		Disciplina *disciplina = *it_disc;
+
+		GGroup< Curso *, LessPtr< Curso > > cursosRelacionados;
+
+		ITERA_GGROUP_LESSPTR( it_oferta, this->ofertas, Oferta )
+		{		
+			if ( it_oferta->curriculo->getPeriodo( disciplina ) > 0 )
+			{
+				cursosRelacionados.add( it_oferta->curso );
+			}
+		}
+
+		if ( cursosRelacionados.size() > 1 )
+		{
+			// relaciona os cursos dois a dois (sem simetria)
+			ITERA_GGROUP_LESSPTR( it1_curso, cursosRelacionados, Curso )
+			{
+				GGroup< Curso *, LessPtr<Curso> >::iterator it2_curso = it1_curso;
+				it2_curso++;
+				for ( ; it2_curso != cursosRelacionados.end(); it2_curso++ )
+				{
+					if ( cursosCompativeis( *it1_curso, *it2_curso ) )
+						insereDisciplinaEmCursosComp( std::make_pair(*it1_curso, *it2_curso), disciplina->getId() );
+						
+				}
+			}
+		}
+
+		cursosRelacionados.clear();
+	}
+}
+
+/*
+	Dado um par de cursos compativeis pc (independente da ordem),
+	insere idDisc no vetor de ids de disciplinas em comum dos dois cursos.
+	Se nem o par pc nem o seu inverso existir, insere-o.
+*/
+void ProblemData::insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc )
+{
+	std::map< std::pair<Curso*, Curso*>, std::vector<int> >::iterator it_parCurso_disc = this->cursosComp_disc.find( pc );
+
+    if ( it_parCurso_disc != cursosComp_disc.end() )
+    {
+		it_parCurso_disc->second.push_back( idDisc );
+	}
+    else
+	{
+		std::pair<Curso*, Curso*> pc_equiv = std::make_pair(pc.second, pc.first);
+
+		it_parCurso_disc = this->cursosComp_disc.find( pc_equiv );
+		if ( it_parCurso_disc != cursosComp_disc.end() )
+		{
+			it_parCurso_disc->second.push_back( idDisc );
+		}
+		else
+		{
+			std::vector<int> novaDisc(1,idDisc);
+			cursosComp_disc[pc] = novaDisc;
+		}
+	}
+}
+
+
 bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 {
 	std::map< std::pair< Curso *, Curso * >, bool >::iterator
@@ -237,6 +308,24 @@ Oferta * ProblemData::retornaOfertaDiscilpina(
 
 	return oferta;
 }
+
+// Dado o id de uma disciplina, retorna a referencia para a disciplina.
+// Se nao existir a disciplina de id procurado, retorna null.
+Disciplina* ProblemData::retornaDisciplina( int id )
+{
+	Disciplina * d = NULL;
+
+	ITERA_GGROUP_LESSPTR( it_disc, this->disciplinas, Disciplina )
+	{
+		if ( it_disc->getId() == id)
+		{
+			d = ( *it_disc );
+			return d;
+		}
+	}
+	return d;
+}
+
 
 // Retorna todos os pares curso/curriculo
 // onde a disciplina informada está incluída

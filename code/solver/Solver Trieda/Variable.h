@@ -41,7 +41,14 @@ public:
       V_CREDITOS_MODF = 20, // xm_{d,t}
 	  V_ABERTURA_COMPATIVEL = 21, //zc_{d,t}
 	  V_ABERTURA_BLOCO_MESMO_TPS = 22, //n_{bc,tps}
-	  V_SLACK_ABERTURA_BLOCO_MESMO_TPS = 23 //fn_{bc,tps}
+	  V_SLACK_ABERTURA_BLOCO_MESMO_TPS = 23, //fn_{bc,tps}
+	  V_SLACK_COMPARTILHAMENTO = 24,	// fc_{i,d,c1,c2,cp}
+	  V_ALOC_ALUNOS_OFT = 25,	// e_{i,d,oft}
+	  V_CREDITOS_OFT = 26,		// q_{i,d,oft,u,s,t}
+	  V_CREDITOS_PAR_OFT = 27,	// p_{i,d,oft1,oft2,u,s,t}
+	  V_ALOC_ALUNOS_PAR_OFT = 28,  // of_{i,d,oft1,oft2}
+	  V_MIN_HOR_DISC_OFT_DIA = 29 //g_{d,oft,t}
+
    };
 
    //Constructors
@@ -85,6 +92,10 @@ public:
    Oferta * getOferta() const { return o; }
 
    int getK() const { return k; }
+   
+   std::pair<Curso*, Curso*> getParCursos() const{ return parCursos;}
+   
+   std::pair<Oferta*, Oferta*> getParOfertas() const{ return parOft;}
 
    //==================================================
    // SET METHODS 
@@ -123,6 +134,10 @@ public:
    void setOferta( Oferta * oferta ) { o = oferta; }
 
    void setK( int kk ) { k = kk; }
+   
+   void setParCursos( std::pair<Curso*, Curso*> par ){ parCursos = par;}
+     
+   void setParOfertas( Oferta* oft1, Oferta* oft2 ){ parOft.first = oft1; parOft.second = oft2;}
 
    //==================================================
    // OPERATORS 
@@ -147,6 +162,8 @@ private:
    int i; // Turma
    Curso * c;
    Curso * c_incompat;
+   std::pair<Curso*, Curso*> parCursos;
+   std::pair<Oferta*, Oferta*> parOft;
    BlocoCurricular * b;
    Disciplina * d;
    int j; // subbloco

@@ -23,6 +23,7 @@ public:
    std::string getCodigo() const { return this->codigo; }
    std::string getDescricao() const { return this->descricao; }
    int getTempoAula() const { return this->tempo_aula; }
+   int getNroDeHorariosAula(int dia);
 
 private:   
    std::string codigo;

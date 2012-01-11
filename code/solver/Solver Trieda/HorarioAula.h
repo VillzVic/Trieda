@@ -26,6 +26,8 @@ public:
    void setCalendario( Calendario * c ) { this->calendario = c; }
    void setTempoAula( int value ) { this->tempo_aula = value; }
 
+   bool horarioDisponivel( int dia );
+
    virtual bool operator < ( HorarioAula const & right ) const
    {
       bool result = false;

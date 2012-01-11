@@ -39,6 +39,8 @@ public:
    double getMinTempoIntegral() { return minTempoIntegral; }
    double getMinTempoIntegralParcial() { return minTempoIntegralParcial; }
 
+   bool possuiDisciplina( int idDisciplina );
+
 private:
    std::string codigo;
    int tipo_id;

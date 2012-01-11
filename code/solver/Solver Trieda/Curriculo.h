@@ -24,9 +24,14 @@ public:
 
    std::string getCodigo() const { return codigo; }
    int getSemanaLetivaId() const { return semanaLetivaId; }
+   int getMaxCreds( int dia );
+
+   int getPeriodo( Disciplina *d );
 
    void refDisciplinaPeriodo( GGroup< Disciplina *, LessPtr< Disciplina > > );
 
+   bool possuiDisciplina( int idDisciplina );
+   
 private:
    GGroup< std::pair< int, int > > ids_disciplinas_periodo;
    std::string codigo;

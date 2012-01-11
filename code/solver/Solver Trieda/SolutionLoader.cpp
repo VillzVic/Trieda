@@ -62,7 +62,7 @@ void SolutionLoader::setFolgas( Variable * v )
 		   problemSolution->getFolgas()->add(restricaoViolada);
 		   break;
 	   case Variable::V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT:
-         restricaoStr = "Não permitir que alunos de cursos diferentes compartilhem turmas (bs_{";
+         restricaoStr = "Não permitir que alunos de cursos incompativeis compartilhem turmas (bs_{";
          sprintf(buffer, "%d", v->getDia());
          restricaoStr += buffer;
          restricaoStr += ",";
@@ -72,6 +72,31 @@ void SolutionLoader::setFolgas( Variable * v )
          sprintf(buffer, "%d", v->getCurso()->getId());
          restricaoStr += buffer;
          restricaoStr += ",";
+		 sprintf(buffer, "%d", v->getCursoIncompat()->getId());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+		 sprintf(buffer, "%d", v->getCampus()->getId());
+         restricaoStr += buffer;
+         restricaoStr += "})";
+         restricaoViolada->setRestricao(restricaoStr);
+		   restricaoViolada->setUnidade("b");
+		   restricaoViolada->setValor(v->getValue());
+		   problemSolution->getFolgas()->add(restricaoViolada);
+		  break;
+	   case Variable::V_SLACK_COMPARTILHAMENTO:
+         restricaoStr = "Não permitir que alunos de cursos diferentes compartilhem turmas (fc_{";
+         sprintf(buffer, "%d", v->getDia());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getDisciplina()->getId());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+		 sprintf(buffer, "%d", v->getParCursos().first->getId());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+		 sprintf(buffer, "%d", v->getParCursos().second->getId());
+         restricaoStr += buffer;
+		 restricaoStr += ",";
          sprintf(buffer, "%d", v->getCampus()->getId());
          restricaoStr += buffer;
          restricaoStr += "})";

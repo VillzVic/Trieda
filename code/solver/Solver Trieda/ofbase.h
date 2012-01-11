@@ -31,6 +31,10 @@
 #define ITERA_GGROUP( it, ggroup, type ) for ( GGroup< type * >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
 #endif
 
+#ifndef ITERA_GGROUP_INIC_LESSPTR
+#define ITERA_GGROUP_INIC_LESSPTR( it, inicio, ggroup, type ) for ( GGroup< type *, LessPtr< type > >::iterator it = inicio; it != ( ggroup ).end(); ++it )
+#endif
+
 #ifndef ITERA_GGROUP_LESSPTR
 #define ITERA_GGROUP_LESSPTR( it, ggroup, type ) for ( GGroup< type *, LessPtr< type > >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
 #endif

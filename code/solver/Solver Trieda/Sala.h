@@ -30,7 +30,7 @@ public:
     GGroup< Disciplina * > disciplinas_Associadas_Usuario;
 
     // Conjunto de disciplinas que foram associadas a sala em questão
-    // por um pré processamento realizado. Aqui, as associãções são criadas
+    // por um pré processamento realizado. Aqui, as associações são criadas
     // independentemente da unidade em que uma sala se encontra.
     GGroup< Disciplina * > disciplinas_Associadas_AUTOMATICA;
 

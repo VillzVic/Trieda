@@ -16,7 +16,10 @@ public:
 
    GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios_aula;
 
-   void setNome( std::string s ) { nome = s; }   
+   void setNome( std::string s ) { nome = s; }
+
+   int getNroDeHorariosAula(int dia);
+
    std::string getNome() const { return nome; }
 
 private:

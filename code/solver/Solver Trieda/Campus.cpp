@@ -1,4 +1,5 @@
 #include "Campus.h"
+#include "Oferta.h"
 
 Campus::Campus( void )
 {
@@ -49,4 +50,30 @@ void Campus::le_arvore( ItemCampus & elem )
       horario->le_arvore( *it_horarios );
       horarios.add( horario );
    }
+}
+
+/*
+	Dado um id de curso e um id de disciplina, retorna as ofertas existentes
+	no campus para o curso especificado, cujos currículos contêm a disciplina
+	especificada.
+*/
+GGroup<Oferta*, LessPtr<Oferta>> Campus::retornaOfertasComCursoDisc( int idCurso, int idDisc )
+{
+	GGroup<Oferta*, LessPtr<Oferta>> ofts;
+   
+	//ITERA_GGROUP_LESSPTR( itOft, this->ofertas, Oferta )
+	GGroup< Oferta *, LessPtr< Oferta > >::iterator itOft = this->ofertas.begin();
+	for ( ; itOft != this->ofertas.end(); itOft++ )
+	{
+		Oferta *oft = *(itOft);
+		if ( oft->getCursoId() == idCurso )
+		{
+			if ( oft->possuiDisciplina( idDisc ) )
+			{
+				ofts.add( oft );
+			}
+		}
+
+	}
+	return ofts;
 }

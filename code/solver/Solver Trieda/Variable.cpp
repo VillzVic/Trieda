@@ -5,6 +5,13 @@
    ( a == NULL && b != NULL) || \
    ( b != NULL && a != NULL && ( *a < *b ) )
 
+#define E_MENOR_PAR( a, b ) \
+   ( ( a.first == NULL && b.first != NULL) || \
+     ( b.first != NULL && a.first != NULL && ( *a.first < *b.first ) )\
+	 || \
+     ( a.second == NULL && b.second != NULL) || \
+     ( b.second != NULL && a.second != NULL && ( *a.second < *b.second ) ) )
+
 Variable::Variable()
 {
    reset();
@@ -30,7 +37,11 @@ void Variable::reset()
    c_incompat = NULL;
    b = NULL;
    d = NULL;
-   o = NULL;
+   o = NULL;   
+   parCursos.first = NULL;
+   parCursos.second = NULL;
+   parOft.first = NULL;
+   parOft.second = NULL;
 }
 
 Variable::~Variable()
@@ -55,6 +66,8 @@ Variable & Variable::operator = ( const Variable & var )
    this->t = var.getDia();
    this->o = var.getOferta();
    this->k = var.getK();
+   this->parCursos = var.getParCursos();
+   this->parOft = var.getParOfertas();
 
    return *this;
 }
@@ -109,6 +122,12 @@ bool Variable::operator < ( const Variable & var ) const
    if ( this->getK() < var.getK() ) return true;
    if ( this->getK() > var.getK() ) return false;
 
+   if ( E_MENOR_PAR( this->getParCursos(), var.getParCursos() ) ) return true;
+   if ( E_MENOR_PAR( var.getParCursos(), this->getParCursos() ) ) return false;
+
+   if ( E_MENOR_PAR( this->getParOfertas(), var.getParOfertas() ) ) return true;
+   if ( E_MENOR_PAR( var.getParOfertas(), this->getParOfertas() ) ) return false;
+   
    return false;
 }
 
@@ -174,85 +193,106 @@ std::string Variable::toString()
 		str <<"n"; break;
 	case V_SLACK_ABERTURA_BLOCO_MESMO_TPS:
 		str <<"fn"; break;
+	case V_SLACK_COMPARTILHAMENTO:
+		str <<"fc"; break;
+	case V_ALOC_ALUNOS_OFT:
+		str <<"e"; break;
+	case V_CREDITOS_OFT:
+		str <<"q"; break;
+	case V_CREDITOS_PAR_OFT:
+		str <<"p"; break;	
+	case V_ALOC_ALUNOS_PAR_OFT:
+		str <<"of"; break;
+	case V_MIN_HOR_DISC_OFT_DIA:
+		str <<"g"; break;
+
     default:
         str << "!";
    }
 
-   bool hb = false;
-   str << "_";
+   str << "_{";
 
    if ( b != NULL )
    {
-      str << "{" << b->getId();
-      hb = true;
+      str << "_Bc" << b->getId();
    }
 
    if ( i >= 0 )
-      str << ( hb ? "," : "{" ) << i;
+      str << "_Turma" << i;
 
    if ( cond_disc )
    {
       if ( d != NULL )
       {
-         str << "{" << d->getId();
+         str << "_Disc" << d->getId();
       }
    }
    else
    {
       if ( d != NULL )
       {
-         str << "," << d->getId();
+         str << "_Disc" << d->getId();
       }
    }
 
    if ( u != NULL )
    {
-      str << "," << u->getId();
+      str << "_Unid" << u->getId();
    }
 
    if ( s != NULL )
    {
-      str << "," << s->getId();
+      str << "_Sala" << s->getId();
    }
 
    if ( tps )
    {
-      str << "," << tps->getId();
+      str << "_Tps" << tps->getId();
    }
 
    if ( t >= 0 )
    {
-      str << "," << t;
+      str << "_Dia" << t;
    }
 
    if ( j >= 0 )
    {
-      str << "," << j;
+      str << "_Sbc" << j;
    }
 
    if ( c )
    {
-      str << "," << c->getId();
+      str << "_Curso" << c->getId();
    }
 
    if ( c_incompat )
    {
-      str << "," << c_incompat->getId();
+      str << "_CursoIncomp" << c_incompat->getId();
+   }
+
+   if ( parCursos.first != NULL && parCursos.second != NULL )
+   {
+	   str << "_(c" << parCursos.first->getId() << ",c" << parCursos.second->getId()<<")";
    }
 
    if ( cp )
    {
-      str << "," << cp->getId();
+      str << "_Cp" << cp->getId();
    }
 
    if ( o )
    {
-      str << "," << o->getId();
+      str << "_Of" << o->getId();
+   }
+   
+   if ( parOft.first != NULL && parOft.second != NULL )
+   {
+	   str << "_(Of" << parOft.first->getId() << ",Of" << parOft.second->getId()<<")";
    }
 
    if ( k >= 0 )
    {
-      str << "," << k;
+      str << "_DivCred" << k;
    }
 
    str << "}";

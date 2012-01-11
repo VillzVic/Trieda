@@ -38,20 +38,34 @@ public:
       C_MIN_CREDS_TURM_BLOCO = 17,		// Restricao 1.2.18
       C_MAX_CREDS_TURM_BLOCO = 18,		// Restricao 1.2.19
       C_ALUNO_CURSO_DISC = 19,			// Restricao 1.2.20
-      C_ALUNOS_CURSOS_DIF = 20,			// Restricao 1.2.21
+      C_ALUNOS_CURSOS_INCOMP = 20,			// Restricao 1.2.21
       C_SLACK_DIST_CRED_DIA = 21,			// Restricao 1.2.22
       C_VAR_R = 22,			            // Restricao 1.2.23
       C_LIMITA_ABERTURA_TURMAS = 23,			            // Restricao 1.2.24
       C_ABRE_TURMAS_EM_SEQUENCIA = 24,			            // Restricao 1.2.25
       C_DIVISAO_CREDITO = 25,			//Restricao 1.2.26
       C_COMBINACAO_DIVISAO_CREDITO = 26,	//Restricao 1.2.27
-      C_VAR_Y = 27,	//Restricao 1.2.28
+      C_VAR_Y = 27,			//Restricao 1.2.28
       C_MAX_CREDS_DISC_DIA = 28, // Restricao 1.2.29
       C_MAX_CREDS_BLOCO_DIA = 29, // Restricao 1.2.30
 	  C_VAR_ZC = 30, // Restricao 1.2.31
 	  C_DISC_INCOMPATIVEIS = 31, // Restricao 1.2.32
 	  C_EVITA_BLOCO_TPS_D = 32, // Restricao 1.2.33
-	  C_SLACK_EVITA_BLOCO_TPS_D = 33 // Restricao 1.2.34
+	  C_SLACK_EVITA_BLOCO_TPS_D = 33, // Restricao 1.2.34
+	  C_PROIBE_COMPARTILHAMENTO = 34, // Restricao 1.2.35
+	  C_VAR_E = 35,  //Restricao 1.2.36
+	  C_EVITA_SOBREPOS_SALA_POR_COMPART = 36, // Restricao 1.2.37
+	  C_VAR_OF_1 = 37,		 // Restricao 1.2.38
+	  C_VAR_OF_2 = 38,		 // Restricao 1.2.39
+	  C_VAR_OF_3 = 39,		 // Restricao 1.2.40
+	  C_VAR_P_1 = 40,		 // Restricao 1.2.41
+	  C_VAR_P_2 = 41,		 // Restricao 1.2.42
+	  C_VAR_P_3 = 42,		 // Restricao 1.2.43
+	  C_VAR_G = 43,		 // Restricao 1.2.44
+	  C_EVITA_SOBREPOS_SALA_POR_TURMA = 44,	 // Restricao 1.2.45
+	  C_VAR_Q_1 = 45,	 // Restricao 1.2.46
+	  C_VAR_Q_2 = 46,	 // Restricao 1.2.47
+	  C_VAR_Q_3 = 47	 // Restricao 1.2.48
    };
 
    /** Default constructor. */
@@ -96,6 +110,10 @@ public:
    int getSubBloco() const { return j; }
    int getDia() const { return t; }
    Oferta * getOferta() const { return o; }
+   std::pair<Curso*, Curso*> getParCursos() const{ return parCursos;}
+   ConjuntoSala * getSubCjtSalaCompart() const { return cjtSalaCompart; }
+   std::pair<Oferta*, Oferta*> getParOfertas() const { return parOfts; }
+   
 
    //==================================================
    // SET METHODS 
@@ -118,6 +136,9 @@ public:
    void setSubBloco( int jj ) { j = jj; }   
    void setDia( int tt ) {  t = tt; }
    void setOferta( Oferta * oferta ) { o = oferta; }
+   void setParCursos( std::pair<Curso*, Curso*> par ){ parCursos = par;}
+   void setSubCjtSalaCompart( ConjuntoSala *s ){ cjtSalaCompart = s; }
+   void setParOfertas( std::pair<Oferta*, Oferta*> ofts ){ parOfts = ofts; }
 
 private:
 
@@ -140,6 +161,7 @@ private:
    Campus *cp;
    Unidade* u;
    Sala* s;
+   ConjuntoSala* cjtSalaCompart;
 
    ConjuntoSala* tps;
 
@@ -147,6 +169,8 @@ private:
    Curso* c;
 
    Curso* c_incompat;
+
+   std::pair<Curso*, Curso*> parCursos;
 
    BlocoCurricular* b;
    Disciplina* d;
@@ -156,6 +180,8 @@ private:
    int t; // dia
 
    Oferta * o; // oferta
+
+   std::pair<Oferta*, Oferta*> parOfts; // par de ofertas (restrição 1.2.36)
 
 };
 

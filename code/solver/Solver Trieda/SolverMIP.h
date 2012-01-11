@@ -89,7 +89,14 @@ public:
    int cria_variavel_abertura_compativel(void); // zc_{d,t}
    int cria_variavel_abertura_bloco_mesmoTPS(void); // n_{bc,tps}
    int cria_variavel_de_folga_abertura_bloco_mesmoTPS(void); //fn_{bc,tps}
+   int cria_variavel_de_folga_compartilhamento(void); //fc_{i,d,c1,c2,cp}
+   int cria_variavel_aloc_alunos_oft(void); // e_{i,d,oft}
+   int cria_variavel_creditos_oferta(void);  // q_{i,d,oft,u,tps,t}
+   int cria_variavel_aloc_alunos_parOft(void); // of_{i,d,oft1,oft2}
+   int cria_variavel_creditos_parOferta(void);  // p_{i,d,oft1,oft2,u,tps,t}
+   int cria_variavel_min_hor_disc_oft_dia(void); // g_{d,oft,t}
 
+   
    /********************************************************************
    **                    CONSTRAINT CREATION                          **
    *********************************************************************/
@@ -114,8 +121,8 @@ public:
    int cria_restricao_turma_disc_dias_consec(void);		    // Restricao 1.2.17
    int cria_restricao_min_creds_turm_bloco(void);			// Restricao 1.2.18
    int cria_restricao_max_creds_turm_bloco(void);			// Restricao 1.2.19
-   int cria_restricao_aluno_curso_disc(void);				// Restricao 1.2.20
-   int cria_restricao_alunos_cursos_dif(void);				// Restricao 1.2.21
+   int cria_restricao_aluno_curso_disc(void);				// Restricao 1.2.20   
+   int cria_restricao_alunos_cursos_incompat(void);			// Restricao 1.2.21
    int cria_restricao_de_folga_dist_cred_dia(void);		    // Restricao 1.2.22
    int cria_restricao_ativacao_var_r(void);					// Restricao 1.2.23
    int cria_restricao_limita_abertura_turmas(void);         // Restricao 1.2.24
@@ -129,6 +136,14 @@ public:
    int cria_restricao_disciplinas_incompativeis(void);		// Restricao 1.2.32
    int cria_restricao_abertura_bloco_mesmoTPS(void);		// Restricao 1.2.33
    int cria_restricao_folga_abertura_bloco_mesmoTPS(void);  // Restricao 1.2.34
+   int cria_restricao_proibe_compartilhamento(void);		// Restricao 1.2.35
+   int cria_restricao_ativacao_var_e(void);					//Restricao 1.2.36
+   int cria_restricao_evita_sobrepos_sala_por_compartilhamento(void);	// Restricao 1.2.37
+   int cria_restricao_ativacao_var_of(void);				//Restricao 1.2.38
+   int cria_restricao_ativacao_var_p(void);				//Restricao 1.2.39, 1.2.40, 1.2.41
+   int cria_restricao_ativacao_var_g(void);				//Restricao 1.2.42
+   int cria_restricao_evita_sobrepos_sala_por_div_turmas(void); //Restricao 1.2.43
+   int cria_restricao_ativacao_var_q(void);				// Restricao 1.2.44, 1.2.45, 1.2.46
 
    // Criacao de variaveis operacional
    int criaVariaveisOperacional( void );

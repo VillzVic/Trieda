@@ -115,7 +115,7 @@ public:
    // todas as 'Demandas' relacionadas a esse par
    std::map< std::pair< Campus *, Curso * >,
 			 GGroup< Demanda *, LessPtr< Demanda > > > map_campus_curso_demanda;
-
+   
    int totalSalas;
    int totalTurmas;
    int totalConjuntosSalas;
@@ -124,7 +124,7 @@ public:
    // disponíveis entre os professores
    int max_horarios_professor;
 
-   // map de compatibilidade e incompatibilidade entre 2 turmas.
+   // map de compatibilidade e incompatibilidade entre 2 cursos.
    std::map< std::pair< Curso *, Curso * >, bool > compat_cursos;
 
    // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
@@ -167,7 +167,7 @@ public:
    // estivesse funcionando normalmente. VER ISSO DEPOIS
    std::map< int, Disciplina * > refDisciplinas;
 
-   // Estrutura responsavel por referenciar as disciplinas.
+   // Estrutura responsavel por referenciar as ofertas.
    // Nao precisaria dessa estrutura se o FIND do GGroup
    // estivesse funcionando normalmente. VER ISSO DEPOIS
    std::map< int, Oferta * > refOfertas;
@@ -274,10 +274,12 @@ public:
    virtual void le_arvore( TriedaInput & );
 
    //-----------------------------------------------------------------------------------------------
-   // Equivalências entre discilpinas
+   // Equivalências entre disciplinas
 
-   // Armazena od 'ids' das disciplinas compatíveis entre os pares de cursos
+   // Armazena os 'ids' das disciplinas em comum entre os pares de cursos compatíveis
    std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;
+
+   void preencheCursosCompDisc();
 
    // Dado um curso e um curriculo, retorna-se um map
    // que referencia cada disciplina com sua correspondente
@@ -321,6 +323,9 @@ public:
 
 	// Dada uma disciplina, e seu par curso/curriculo, retorna-se a oferta dessa disciplina
 	Oferta * retornaOfertaDiscilpina( Curso *, Curriculo *, Disciplina * );
+
+	Disciplina* retornaDisciplina( int id );
+
    //-----------------------------------------------------------------------------------------------
 
    // Estrutura utilizada para referenciar as novas disciplinas
@@ -354,6 +359,12 @@ public:
    // Retorna todas as salas (de todos os campi) do input
    GGroup< Sala *, LessPtr< Sala > > getSalas() const;
    Sala * findSala( int );
+
+
+   private:
+   
+		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );
+
 };
 
 #endif
