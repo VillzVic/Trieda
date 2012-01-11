@@ -6,11 +6,15 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.services.AlunosService;
 
 @Transactional
@@ -37,6 +41,34 @@ public class AlunosServiceImpl
 		}
 
 		return ConvertBeans.toAlunoDTO( aluno );
+	}
+	
+	@Override
+	public PagingLoadResult<AlunoDTO> getBuscaList(CenarioDTO cenarioDTO, String nome, String matricula, PagingLoadConfig config) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
+
+		List<AlunoDTO> list = new ArrayList<AlunoDTO>();
+		String orderBy = config.getSortField();
+
+		if (orderBy != null) {
+			if (config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
+				orderBy = (orderBy + " asc");
+			}
+			else {
+				orderBy = (orderBy + " desc");
+			}
+		}
+
+		List<Aluno> alunos = Aluno.findBy(this.getInstituicaoEnsinoUser(),cenario,nome,matricula,config.getOffset(),config.getLimit(),orderBy);
+		for (Aluno aluno : alunos) {
+			list.add(ConvertBeans.toAlunoDTO(aluno));
+		}
+
+		BasePagingLoadResult<AlunoDTO> result = new BasePagingLoadResult<AlunoDTO> (list);
+		result.setOffset(config.getOffset());
+		result.setTotalLength(Aluno.count(this.getInstituicaoEnsinoUser(),cenario,nome,matricula));
+
+		return result;
 	}
 
 	@Override

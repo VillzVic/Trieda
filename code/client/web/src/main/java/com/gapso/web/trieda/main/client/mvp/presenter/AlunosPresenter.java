@@ -2,6 +2,7 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -71,7 +72,7 @@ public class AlunosPresenter
 				String nome = display.getNomeBuscaTextField().getValue();
 				String matricula = display.getMatriculaBuscaTextField().getValue();
 
-				service.getAlunosList( nome, matricula, callback );
+				service.getBuscaList(cenarioDTO,nome,matricula,(PagingLoadConfig) loadConfig,callback);
 			}
 		};
 

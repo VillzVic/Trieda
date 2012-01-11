@@ -300,6 +300,59 @@ public class Aluno
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula, int firstResult, int maxResults, String orderBy) {
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		matricula = ( ( matricula == null ) ? "" : matricula );
+		matricula = ( "%" + matricula.replace( '*', '%' ) + "%" );
+
+		EntityManager em = Campus.entityManager();
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		Query q = em.createQuery(
+			" SELECT o FROM Aluno o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.matricula ) LIKE LOWER ( :matricula ) " +
+			" AND o.cenario = :cenario " +
+			" AND 1=1 " + orderBy
+		);
+
+		q.setParameter("nome",nome);
+		q.setParameter("matricula",matricula);
+		q.setParameter("cenario",cenario);
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
+	}
+	
+	public static int count(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula) {
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		matricula = ( ( matricula == null ) ? "" : matricula );
+		matricula = ( "%" + matricula.replace( '*', '%' ) + "%" );
+
+		EntityManager em = Campus.entityManager();
+		Query q = em.createQuery(
+			" SELECT COUNT ( o ) FROM Aluno o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" AND LOWER ( o.matricula ) LIKE LOWER ( :matricula ) " +
+			" AND o.cenario = :cenario " +
+			" AND 1=1 "
+		);
+
+		q.setParameter( "nome", nome );
+		q.setParameter( "matricula", matricula );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return ( (Number) q.getSingleResult() ).intValue();
+	}
 
 	public static Aluno find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
