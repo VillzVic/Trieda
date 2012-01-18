@@ -250,6 +250,18 @@ public class EquivalenciasImportExcel
 				rowsWithErrorsElimina.add( bean.getRow() );
 			}
 		}
+		
+		if ( !rowsWithErrorsCursou.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				CURSOU_COLUMN_NAME, rowsWithErrorsCursou.toString() ) );
+		}
+
+		if ( !rowsWithErrorsElimina.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				ELIMINA_COLUMN_NAME, rowsWithErrorsElimina.toString() ) );
+		}
 
 		/*
 		for ( EquivalenciasImportExcelBean bean : sheetContent )
@@ -297,10 +309,12 @@ public class EquivalenciasImportExcel
 
 		for ( EquivalenciasImportExcelBean equivalenciaExcel : sheetContent )
 		{
+			System.out.print(equivalenciaExcel.getCursouStr() + ":" + equivalenciaExcel.getEliminaStr());
 			if ( equivalenciaExcel.getDisciplinaCursou() == null
 				|| equivalenciaExcel.getDisciplinasElimina() == null
 				|| equivalenciaExcel.getDisciplinasElimina().size() == 0 )
 			{
+				System.out.println(":continue");
 				continue;
 			}
 
@@ -314,6 +328,7 @@ public class EquivalenciasImportExcel
 					equivalenciaExcel.getDisciplinasElimina() );
 
 				equivalenciaBD.merge();
+				System.out.println(":merge");
 			}
 			else
 			{
@@ -324,6 +339,7 @@ public class EquivalenciasImportExcel
 				newEquivalencia.setElimina( equivalenciaExcel.getDisciplinasElimina() );
 
 				newEquivalencia.persist();
+				System.out.println(":persist");
 			}
 		}
 	}
