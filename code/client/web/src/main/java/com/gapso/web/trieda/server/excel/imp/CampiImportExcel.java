@@ -16,6 +16,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -232,6 +233,7 @@ public class CampiImportExcel
 		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(
 			Campus.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
+		List<Campus> persistedCampi = new ArrayList<Campus>();
 		for ( CampiImportExcelBean campusExcel : sheetContent )
 		{
 			Campus campusBD = campiBDMap.get( campusExcel.getCodigoStr() );
@@ -265,7 +267,13 @@ public class CampiImportExcel
 
 				newCampus.persist();
 				Campus.entityManager().refresh( newCampus );
+				persistedCampi.add(newCampus);
 			}
+		}
+		
+		if (!persistedCampi.isEmpty()) {
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			Campus.preencheHorariosDosCampi(persistedCampi,semanasLetivas);
 		}
 	}
 

@@ -113,8 +113,8 @@ public class Unidade implements Serializable
 
 		this.entityManager.detach( this );
 	}
-    
-    @Transactional
+	
+	@Transactional
     public void persist()
     {
         if ( this.entityManager == null )
@@ -123,8 +123,26 @@ public class Unidade implements Serializable
         }
 
         this.entityManager.persist( this );
+    }
+    
+    @Transactional
+    public void persistAndPreencheHorarios()
+    {
+    	persist();
         preencheHorarios();
     }
+    
+    @Transactional
+	static public void preencheHorariosDasUnidades(List<Unidade> unidades, List<SemanaLetiva> semanasLetivas) {
+		for (SemanaLetiva semanaLetiva : semanasLetivas) {
+			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getUnidades().addAll(unidades);
+					hdc.merge();
+				}
+			}
+		}
+	}
 
     @Transactional
     public void remove()

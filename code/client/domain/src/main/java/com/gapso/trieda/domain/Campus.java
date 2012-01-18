@@ -317,7 +317,7 @@ public class Campus
 
 		this.entityManager.detach( this );
 	}
-
+	
 	@Transactional
 	public void persist()
 	{
@@ -327,7 +327,25 @@ public class Campus
 		}
 
 		this.entityManager.persist( this );
+	}
+
+	@Transactional
+	public void persistAndPreencheHorarios()
+	{
+		persist();
 		preencheHorarios();
+	}
+	
+	@Transactional
+	static public void preencheHorariosDosCampi(List<Campus> campi, List<SemanaLetiva> semanasLetivas) {
+		for (SemanaLetiva semanaLetiva : semanasLetivas) {
+			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getCampi().addAll(campi);
+					hdc.merge();
+				}
+			}
+		}
 	}
 
 	@Transactional

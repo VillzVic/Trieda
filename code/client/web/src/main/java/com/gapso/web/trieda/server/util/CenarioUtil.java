@@ -396,7 +396,7 @@ public class CenarioUtil
 
 		for ( Campus o : this.campusList )
 		{
-			o.persist();
+			o.persistAndPreencheHorarios();
 		}
 
 		for ( DeslocamentoCampus o
@@ -407,7 +407,7 @@ public class CenarioUtil
 
 		for ( Unidade o : this.unidadeList )
 		{
-			o.persist();
+			o.persistAndPreencheHorarios();
 		}
 
 		for ( DeslocamentoUnidade o
@@ -418,7 +418,7 @@ public class CenarioUtil
 
 		for ( Sala o : this.salaList )
 		{
-			o.persist();
+			o.persistAndPreencheHorarios();
 		}
 
 		for ( GrupoSala o : this.grupoSalaList )
@@ -428,7 +428,7 @@ public class CenarioUtil
 
 		for ( Disciplina o : this.disciplinaList )
 		{
-			o.persist();
+			o.persistAndPreencheHorarios();
 		}
 
 		for ( Incompatibilidade o : this.compatibilidadeList )
@@ -448,7 +448,7 @@ public class CenarioUtil
 
 		for ( Professor o : this.professorList )
 		{
-			o.persist();
+			o.persistAndPreencheHorarios();
 		}
 
 		for ( ProfessorDisciplina o

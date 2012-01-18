@@ -17,6 +17,7 @@ import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -367,6 +368,7 @@ public class ProfessoresImportExcel
 			= Professor.buildProfessorCpfToProfessorMap(
 				Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
+		List<Professor> persistedProfessores = new ArrayList<Professor>();
 		for ( ProfessoresImportExcelBean professorExcel : sheetContent )
 		{
 			Professor professorBD = professoresBDMap.get( professorExcel.getCpfStr() );
@@ -402,7 +404,13 @@ public class ProfessoresImportExcel
 				newProfessor.setValorCredito( professorExcel.getValorCredito() );
 
 				newProfessor.persist();
+				persistedProfessores.add(newProfessor);
 			}
+		}
+		
+		if (!persistedProfessores.isEmpty()) {
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			Professor.preencheHorariosDosProfessores(persistedProfessores,semanasLetivas);
 		}
 	}
 

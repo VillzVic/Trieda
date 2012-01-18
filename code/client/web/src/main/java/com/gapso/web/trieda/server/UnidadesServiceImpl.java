@@ -282,7 +282,7 @@ public class UnidadesServiceImpl
 		}
 		else
 		{
-			unidade.persist();
+			unidade.persistAndPreencheHorarios();
 		}
 	}
 

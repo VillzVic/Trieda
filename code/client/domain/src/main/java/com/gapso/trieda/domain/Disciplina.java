@@ -236,6 +236,13 @@ public class Disciplina
 	}
 
 	@Transactional
+	public void persistAndPreencheHorarios()
+	{
+		persist();
+		preencheHorarios();
+	}
+	
+	@Transactional
 	public void persist()
 	{
 		if ( this.entityManager == null )
@@ -244,7 +251,18 @@ public class Disciplina
 		}
 
 		this.entityManager.persist( this );
-		preencheHorarios();
+	}
+	
+	@Transactional
+	static public void preencheHorariosDasDisciplinas(List<Disciplina> disciplinas, List<SemanaLetiva> semanasLetivas) {
+		for (SemanaLetiva semanaLetiva : semanasLetivas) {
+			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getDisciplinas().addAll(disciplinas);
+					hdc.merge();
+				}
+			}
+		}
 	}
 
 	public void preencheHorarios()

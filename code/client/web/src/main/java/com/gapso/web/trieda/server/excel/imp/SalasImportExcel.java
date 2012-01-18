@@ -16,6 +16,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -306,6 +307,7 @@ public class SalasImportExcel
 		Map< String, Sala > salasBDMap = Sala.buildSalaCodigoToSalaMap(
 			Sala.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
+		List<Sala> persistedSalas = new ArrayList<Sala>();
 		for ( SalasImportExcelBean salaExcel : sheetContent )
 		{
 			Sala salaBD = salasBDMap.get( salaExcel.getCodigoStr() );
@@ -334,7 +336,13 @@ public class SalasImportExcel
 				newSala.setUnidade( salaExcel.getUnidade() );
 
 				newSala.persist();
+				persistedSalas.add(newSala);
 			}
+		}
+		
+		if (!persistedSalas.isEmpty()) {
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			Sala.preencheHorariosDasSalas(persistedSalas,semanasLetivas);
 		}
 	}
 

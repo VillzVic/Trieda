@@ -329,7 +329,7 @@ public class Professor
 
 		this.entityManager.detach( this );
 	}
-
+	
 	@Transactional
 	public void persist()
 	{
@@ -339,7 +339,25 @@ public class Professor
 		}
 
 		this.entityManager.persist( this );
+	}
+
+	@Transactional
+	public void persistAndPreencheHorarios()
+	{
+		persist();
 		preencheHorarios();
+	}
+	
+	@Transactional
+	static public void preencheHorariosDosProfessores(List<Professor> professores, List<SemanaLetiva> semanasLetivas) {
+		for (SemanaLetiva semanaLetiva : semanasLetivas) {
+			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getProfessores().addAll(professores);
+					hdc.merge();
+				}
+			}
+		}
 	}
 
 	public void preencheHorarios()

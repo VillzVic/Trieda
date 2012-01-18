@@ -180,9 +180,27 @@ public class Sala
         if ( find == null )
         {
         	this.entityManager.persist( this );
-        	preencheHorarios();
         }
     }
+	
+	@Transactional
+    public void persistAndPreencheHorarios()
+	{
+        persist();
+        preencheHorarios();
+    }
+	
+	@Transactional
+	static public void preencheHorariosDasSalas(List<Sala> salas, List<SemanaLetiva> semanasLetivas) {
+		for (SemanaLetiva semanaLetiva : semanasLetivas) {
+			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					hdc.getSalas().addAll(salas);
+					hdc.merge();
+				}
+			}
+		}
+	}
 
 	public void preencheHorarios()
 	{

@@ -375,7 +375,7 @@ public class CampiServiceImpl extends RemoteService
 		}
 		else
 		{
-			campus.persist();
+			campus.persistAndPreencheHorarios();
 		}
 	}
 

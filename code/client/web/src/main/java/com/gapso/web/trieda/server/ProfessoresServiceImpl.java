@@ -2,7 +2,6 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,10 +13,8 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
-import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
-import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -232,29 +229,7 @@ public class ProfessoresServiceImpl
 			}
 			else
 			{
-				professor.persist();
-	
-				Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
-	
-				List< SemanaLetiva > semanasLetivas
-					= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
-	
-				for ( SemanaLetiva semanaLetiva : semanasLetivas )
-				{
-					horariosAula.addAll( semanaLetiva.getHorariosAula() );
-				}
-	
-				for ( HorarioAula horarioAula : horariosAula )
-				{
-					Set< HorarioDisponivelCenario > horariosDisponiveis
-						= horarioAula.getHorariosDisponiveisCenario();
-	
-					for ( HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis )
-					{
-						horarioDisponivel.getProfessores().add( professor );
-						horarioDisponivel.merge();
-					}
-				}
+				professor.persistAndPreencheHorarios();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

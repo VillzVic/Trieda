@@ -345,7 +345,7 @@ public class SalasServiceImpl
 		}
 		else
 		{
-			sala.persist();
+			sala.persistAndPreencheHorarios();
 		}
 	}
 

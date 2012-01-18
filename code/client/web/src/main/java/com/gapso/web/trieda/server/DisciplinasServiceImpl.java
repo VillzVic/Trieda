@@ -285,7 +285,7 @@ public class DisciplinasServiceImpl
 		}
 		else
 		{
-			disciplina.persist();
+			disciplina.persistAndPreencheHorarios();
 
 			List< SemanaLetiva > semanasLetivas
 				= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );

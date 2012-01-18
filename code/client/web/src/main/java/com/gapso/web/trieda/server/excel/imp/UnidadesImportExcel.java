@@ -16,6 +16,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -252,6 +253,7 @@ public class UnidadesImportExcel
 		Map< String, Unidade > unidadesBDMap = Unidade.buildUnidadeCodigoToUnidadeMap(
 			Unidade.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
+		List<Unidade> persistedUnidades = new ArrayList<Unidade>();
 		for ( UnidadesImportExcelBean unidadeExcel : sheetContent )
 		{
 			Unidade unidadeBD = unidadesBDMap.get( unidadeExcel.getCodigoStr() );
@@ -273,7 +275,13 @@ public class UnidadesImportExcel
 				newUnidade.setCampus( unidadeExcel.getCampus() );
 
 				newUnidade.persist();
+				persistedUnidades.add(newUnidade);
 			}
+		}
+		
+		if (!persistedUnidades.isEmpty()) {
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			Unidade.preencheHorariosDasUnidades(persistedUnidades,semanasLetivas);
 		}
 	}
 	

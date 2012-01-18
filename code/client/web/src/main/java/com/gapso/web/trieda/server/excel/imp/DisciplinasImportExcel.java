@@ -16,6 +16,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -289,6 +290,7 @@ public class DisciplinasImportExcel
 			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
 				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
+		List<Disciplina> persistedDisciplinas = new ArrayList<Disciplina>();
 		for ( DisciplinasImportExcelBean disciplinaExcel : sheetContent )
 		{
 			Disciplina disciplinaBD = disciplinasBDMap.get(
@@ -325,7 +327,13 @@ public class DisciplinasImportExcel
 				newDisciplina.setTipoDisciplina( disciplinaExcel.getTipo() );
 
 				newDisciplina.persist();
+				persistedDisciplinas.add(newDisciplina);
 			}
+		}
+		
+		if (!persistedDisciplinas.isEmpty()) {
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			Disciplina.preencheHorariosDasDisciplinas(persistedDisciplinas,semanasLetivas);
 		}
 	}
 
