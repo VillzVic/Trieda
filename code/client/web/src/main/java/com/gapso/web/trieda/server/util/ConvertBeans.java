@@ -1904,6 +1904,7 @@ public class ConvertBeans
 		dto.setVersion( domain.getVersion() );
 
 		Oferta oferta = domain.getOferta();
+		dto.setOfertaId(oferta.getId());
 
 		Campus campus = oferta.getCampus();
 		dto.setCampusString( campus.getCodigo() );
