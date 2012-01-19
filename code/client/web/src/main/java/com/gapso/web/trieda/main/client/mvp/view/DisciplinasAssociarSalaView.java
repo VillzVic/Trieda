@@ -166,6 +166,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements
 		andarCB = new SimpleComboBox< String >();
 		andarCB.setFieldLabel( "Andar" );
 		andarCB.disable();
+		andarCB.setEditable(false);
 		salaTabItem.add( andarCB, formData );
 
 		TabItem grupoSalaTabItem = new TabItem();
