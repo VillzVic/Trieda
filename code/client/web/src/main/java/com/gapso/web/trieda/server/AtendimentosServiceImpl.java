@@ -961,6 +961,7 @@ public class AtendimentosServiceImpl
 					{
 						listDTO.add( currentDTO );
 						wasDTOProcessed = true;
+						break;
 					}
 				}
 
