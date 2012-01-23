@@ -139,6 +139,16 @@ public class SemanaLetiva
 	{
 		this.tempo = tempo;
 	}
+	
+	public int calcTotalCreditosSemanais(Turno turno) {
+		int totalCreditos = 0;
+		for (HorarioAula horarioAula : this.getHorariosAula()) {
+			if (horarioAula.getTurno().equals(turno)) {
+				totalCreditos += horarioAula.getHorariosDisponiveisCenario().size();
+			}
+		}
+		return totalCreditos;
+	}
 
 	@PersistenceContext
 	transient EntityManager entityManager;

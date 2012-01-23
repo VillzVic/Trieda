@@ -371,6 +371,8 @@ public class SolverInput
 
 	private void checkErrorsWarnings()
 	{
+		checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo();
+		
 		// PRIMEIRA VERIFICAÇÃO
 
 		// Verificar se existem disciplinas que não
@@ -472,6 +474,57 @@ public class SolverInput
 						+ "que atenda ao total de cr&eacute;ditos da disciplina.";
 
 					createWarningMessage( warningMessage );
+				}
+			}
+		}
+	}
+
+	private void checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo() {
+		// obtém os currículos do campus selecionado para otimização
+		Set<Curriculo> curriculosDoCampusSelecionado = new HashSet<Curriculo>();
+		for (Oferta oferta : this.parametro.getCampus().getOfertas()) {
+			curriculosDoCampusSelecionado.add(oferta.getCurriculo());
+		}
+		
+		// [CurriculoId -> Máximo Créditos Semanais]
+		Map<Long,Integer> maxCreditosSemanaisPorSemanaLetivaMap = new HashMap<Long,Integer>();
+ 
+		for (Curriculo curriculo : this.cenario.getCurriculos()) {
+			// filtra os currículos do campus selecionado para otimização
+			if (curriculosDoCampusSelecionado.contains(curriculo)) {
+				// obtém o máximo de créditos semanais da semana letiva associada com o currículo
+				Integer maxCreditosSemanais = maxCreditosSemanaisPorSemanaLetivaMap.get(curriculo.getSemanaLetiva().getId());
+				if (maxCreditosSemanais == null) {
+					maxCreditosSemanais = curriculo.getSemanaLetiva().calcTotalCreditosSemanais(this.parametro.getTurno());
+					maxCreditosSemanaisPorSemanaLetivaMap.put(curriculo.getSemanaLetiva().getId(),maxCreditosSemanais);
+				}
+				
+				Set<Long> disciplinasDoCurriculo = new HashSet<Long>();
+				Set<String> disciplinasRepetidasNoCurriculo = new HashSet<String>();
+				List<String> periodosQueViolamMaxCreditosSemanais = new ArrayList<String>();
+				for (Integer periodo : curriculo.getPeriodos(instituicaoEnsino)) {
+					Integer totalCreditosDoPeriodo = 0;
+					for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinasByPeriodo(instituicaoEnsino,periodo)) {
+						if (!disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId())) {
+							disciplinasRepetidasNoCurriculo.add(curriculoDisciplina.getDisciplina().getCodigo());
+						}
+						totalCreditosDoPeriodo += curriculoDisciplina.getDisciplina().getCreditosTotal();
+					}
+					
+					if (totalCreditosDoPeriodo > maxCreditosSemanais) {
+						periodosQueViolamMaxCreditosSemanais.add(periodo + "("+totalCreditosDoPeriodo+")");
+					}
+					
+				}
+				
+				if (!disciplinasRepetidasNoCurriculo.isEmpty()) {
+					createErrorMessage("A matriz curricular [" + curriculo.getCodigo() + "] contém disciplinas repetidas, são elas: " + disciplinasRepetidasNoCurriculo.toString());
+					System.out.println("A matriz curricular [" + curriculo.getCodigo() + "] contém disciplinas repetidas, são elas: " + disciplinasRepetidasNoCurriculo.toString());
+				}
+				
+				if (!periodosQueViolamMaxCreditosSemanais.isEmpty()) {
+					createErrorMessage("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString());
+					System.out.println("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString());
 				}
 			}
 		}
