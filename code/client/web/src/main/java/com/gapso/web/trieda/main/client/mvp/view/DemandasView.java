@@ -41,6 +41,8 @@ public class DemandasView
 	private DisciplinaComboBox disciplinaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private Button importExcelAlunosDemandaBT;
+	private Button exportExcelAlunosDemandaBT;
 	private Button associarAlunosDemandaBT;
 
 	public DemandasView()
@@ -72,9 +74,15 @@ public class DemandasView
 	{
 		this.toolBar = new SimpleToolBar( this );
 		this.toolBar.add( new SeparatorToolItem() );
-
-		this.associarAlunosDemandaBT = this.toolBar.createButton(
-			"Associar Alunos à Demanda", Resources.DEFAULTS.disciplina16() );
+		
+		this.importExcelAlunosDemandaBT = this.toolBar.createButton(getI18nConstants().importarExcel()+" por Aluno",Resources.DEFAULTS.importar16());
+		this.toolBar.add(this.importExcelAlunosDemandaBT);
+		this.exportExcelAlunosDemandaBT = this.toolBar.createButton(getI18nConstants().exportarExcel()+" por Aluno",Resources.DEFAULTS.exportar16());
+		this.toolBar.add(this.exportExcelAlunosDemandaBT);
+		
+		this.toolBar.add( new SeparatorToolItem() );
+		
+		this.associarAlunosDemandaBT = this.toolBar.createButton("Associar Alunos à Demanda",Resources.DEFAULTS.disciplina16());
 		this.toolBar.add( this.associarAlunosDemandaBT );
 
 		this.panel.setTopComponent( this.toolBar );
@@ -222,5 +230,17 @@ public class DemandasView
 	public Button getAssociarAlunosDemanda()
 	{
 		return this.associarAlunosDemandaBT;
+	}
+	
+	@Override
+	public Button getImportExcelAlunosDemandaBT()
+	{
+		return this.importExcelAlunosDemandaBT;
+	}
+	
+	@Override
+	public Button getExportExcelAlunosDemandaBT()
+	{
+		return this.exportExcelAlunosDemandaBT;
 	}
 }

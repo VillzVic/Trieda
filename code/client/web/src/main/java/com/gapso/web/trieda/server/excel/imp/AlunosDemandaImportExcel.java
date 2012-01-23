@@ -71,7 +71,7 @@ public class AlunosDemandaImportExcel
 		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
 	{
 		String sheetName = workbook.getSheetName( sheetIndex );
-		return ExcelInformationType.ALUNOS_DEMANDA.getSheetName().equals( sheetName );
+		return ExcelInformationType.DEMANDAS_POR_ALUNO.getSheetName().equals( sheetName );
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class AlunosDemandaImportExcel
 	@Override
 	public String getSheetName()
 	{
-		return ExcelInformationType.ALUNOS_DEMANDA.getSheetName();
+		return ExcelInformationType.DEMANDAS_POR_ALUNO.getSheetName();
 	}
 
 	@Override
@@ -403,6 +403,7 @@ public class AlunosDemandaImportExcel
 			= CurriculoDisciplina.buildCurriculoDisciplinaPeriodoMap(
 				CurriculoDisciplina.findAll( this.instituicaoEnsino ) );
 
+		int count = 0;
 		for ( AlunosDemandaImportExcelBean alunosDemandaExcel : sheetContent )
 		{
 			String codeDemanda = getCodeDemanda( alunosDemandaExcel );
@@ -426,7 +427,7 @@ public class AlunosDemandaImportExcel
 
 				ofertaBD.persist();
 
-				Oferta.entityManager().refresh( ofertaBD );
+				//Oferta.entityManager().refresh( ofertaBD );
 				ofertasBDMap.put( codeOferta, ofertaBD );
 			}
 
@@ -441,7 +442,7 @@ public class AlunosDemandaImportExcel
 
 				demandaBD.persist();
 
-				Demanda.entityManager().refresh( demandaBD );
+				//Demanda.entityManager().refresh( demandaBD );
 				demandasBDMap.put( codeDemanda, demandaBD );
 			}
 
@@ -456,7 +457,7 @@ public class AlunosDemandaImportExcel
 				alunoBD.setMatricula( alunosDemandaExcel.getMatriculaAlunoStr() );
 
 				alunoBD.persist();
-				Aluno.entityManager().refresh( alunoBD );
+				//Aluno.entityManager().refresh( alunoBD );
 				alunosBDMap.put( codeAluno, alunoBD );
 			}
 
@@ -487,7 +488,7 @@ public class AlunosDemandaImportExcel
 
 					newAlunoDemanda.persist();
 
-					AlunoDemanda.entityManager().refresh( newAlunoDemanda );
+					//AlunoDemanda.entityManager().refresh( newAlunoDemanda );
 					alunosDemandaBD.put( codeAlunoDemanda, newAlunoDemanda );
 				}
 
@@ -517,11 +518,13 @@ public class AlunosDemandaImportExcel
 						&& newCurriculoDisciplina.getCurriculo() != null )
 					{
 						newCurriculoDisciplina.persist();
-						CurriculoDisciplina.entityManager().refresh( newCurriculoDisciplina );
+						//CurriculoDisciplina.entityManager().refresh( newCurriculoDisciplina );
 						curriculosDisciplinaBD.put( codCurriculoDisciplina, newCurriculoDisciplina );
 					}
 				}
 			}
+			
+			count++;if (count == 100) {System.out.println("   100 AlunosDemanda processados"); count = 0;}
 		}
 
 		atualizaQuantidadeDemanda();
@@ -548,6 +551,7 @@ public class AlunosDemandaImportExcel
 			alunos.add( ad.getAluno() );
 		}
 
+		int count = 0;
 		for ( Entry< Demanda, Set< Aluno > > entry : map.entrySet() )
 		{
 			Demanda demanda = entry.getKey();
@@ -558,6 +562,8 @@ public class AlunosDemandaImportExcel
 				demanda.setQuantidade( quantidade );
 				demanda.merge();
 			}
+			
+			count++;if (count == 100) {System.out.println("   100 Demandas processados"); count = 0;}
 		}
 	}
 

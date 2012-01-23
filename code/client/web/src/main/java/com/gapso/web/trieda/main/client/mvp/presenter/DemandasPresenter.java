@@ -59,6 +59,8 @@ public class DemandasPresenter
 		Button getImportExcelButton();
 		Button getExportExcelButton();
 		Button getAssociarAlunosDemanda();
+		Button getImportExcelAlunosDemandaBT();
+		Button getExportExcelAlunosDemandaBT();
 		CampusComboBox getCampusBuscaComboBox();
 		CursoComboBox getCursoBuscaComboBox();
 		CurriculoComboBox getCurriculoBuscaComboBox();
@@ -273,6 +275,38 @@ public class DemandasPresenter
 				});
 			}
 		});
+		
+		this.display.getImportExcelAlunosDemandaBT().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					ExcelParametros parametros = new ExcelParametros(
+							ExcelInformationType.DEMANDAS_POR_ALUNO, instituicaoEnsinoDTO );
+
+					ImportExcelFormView importExcelFormView
+						= new ImportExcelFormView( parametros,display.getGrid() );
+
+					importExcelFormView.show();
+				}
+			});
+		
+		this.display.getExportExcelAlunosDemandaBT().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.DEMANDAS_POR_ALUNO, instituicaoEnsinoDTO );
+
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+						parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+					e.submit();
+				}
+			});
 	}
 
 	@Override
