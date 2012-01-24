@@ -102,6 +102,16 @@ public class Unidade implements Serializable
     {
         this.version = version;
     }
+    
+    public Set<Sala> getLaboratorios() {
+		Set<Sala> laboratorios = new HashSet<Sala>();
+		for (Sala sala : this.salas) {
+			if (sala.getTipoSala().getNome().equals(TipoSala.TIPO_LABORATORIO)) {
+				laboratorios.add(sala);
+			}
+		}
+		return laboratorios;
+	}
 
 	@Transactional
 	public void detach()

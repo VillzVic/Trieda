@@ -68,6 +68,7 @@ public class DisciplinasAssociarSalaPresenter
 		Button getExportExcelButton();
 		void setTabEnabled( boolean flag );
 		Component getComponent();
+		Button getAssociarDisciplinasPraticasLaboratoriosBT();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -405,6 +406,19 @@ public class DisciplinasAssociarSalaPresenter
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
 
 				e.submit();
+			}
+		});
+		
+		this.display.getAssociarDisciplinasPraticasLaboratoriosBT().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				DisciplinasServiceAsync service = Services.disciplinas();
+				service.associarDisciplinasALaboratorios(new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+					@Override
+					public void onSuccess(Void result) {
+						Info.display(display.getI18nConstants().informacao(),"A associação de disciplinas que exigem laboratórios com salas de aulas do tipo laboratório foi efetuada com sucesso!");
+					}
+				});
 			}
 		});
 	}

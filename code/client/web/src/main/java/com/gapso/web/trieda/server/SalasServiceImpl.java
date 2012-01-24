@@ -368,19 +368,19 @@ public class SalasServiceImpl
 		if ( list.size() == 0 )
 		{
 			TipoSala tipo1 = new TipoSala();
-			tipo1.setNome( "Sala de Aula" );
-			tipo1.setDescricao( "Sala de Aula" );
+			tipo1.setNome( TipoSala.TIPO_SALA_DE_AULA );
+			tipo1.setDescricao( TipoSala.TIPO_SALA_DE_AULA );
 			tipo1.setInstituicaoEnsino( instituicaoEnsino );
 			tipo1.persist();
 
 			TipoSala tipo2 = new TipoSala();
-			tipo2.setNome( "Laboratório" );
-			tipo2.setDescricao( "Laboratório" );
+			tipo2.setNome( TipoSala.TIPO_LABORATORIO );
+			tipo2.setDescricao( TipoSala.TIPO_LABORATORIO );
 			tipo2.setInstituicaoEnsino( instituicaoEnsino );
 			tipo2.persist();
 
 			TipoSala tipo3 = new TipoSala();
-			tipo3.setNome( "Auditório" );
+			tipo3.setNome( "	" );
 			tipo3.setDescricao( "Auditório" );
 			tipo3.setInstituicaoEnsino( instituicaoEnsino );
 			tipo3.persist();

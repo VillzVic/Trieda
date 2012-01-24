@@ -36,6 +36,10 @@ public class TipoSala
 	implements java.io.Serializable
 {
 	private static final long serialVersionUID = -1633461518380764117L;
+	
+	public static final String TIPO_SALA_DE_AULA = "Sala de Aula";
+	public static final String TIPO_LABORATORIO = "Laboratório";
+	public static final String TIPO_AUDITORIO = "Auditório";
 
     @NotNull
     @Column(name = "TSA_NOME")

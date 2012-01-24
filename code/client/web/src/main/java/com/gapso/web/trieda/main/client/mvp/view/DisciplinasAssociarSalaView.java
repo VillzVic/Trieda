@@ -34,6 +34,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
 import com.gapso.web.trieda.main.client.mvp.presenter.DisciplinasAssociarSalaPresenter;
@@ -73,6 +74,7 @@ public class DisciplinasAssociarSalaView extends MyComposite implements
 	private ToolButton removeButton;
 	private TabPanel tabs;
 	private GTabItem tabItem;
+	private Button associarDisciplinasPraticasLaboratoriosBT;
 
 	public DisciplinasAssociarSalaView()
 	{
@@ -100,6 +102,12 @@ public class DisciplinasAssociarSalaView extends MyComposite implements
 	private void createToolBar()
 	{
 		toolBar = new SimpleToolBar( false, false, false, true, true, this );
+		
+		this.toolBar.add( new SeparatorToolItem() );
+		
+		this.associarDisciplinasPraticasLaboratoriosBT = this.toolBar.createButton("Associar Disciplinas a Laboratórios",Resources.DEFAULTS.associacaoDisciplinaSala16());
+		this.toolBar.add(this.associarDisciplinasPraticasLaboratoriosBT);
+		
 		panel.setTopComponent( toolBar );
 	}
 
@@ -623,5 +631,11 @@ public class DisciplinasAssociarSalaView extends MyComposite implements
 	public Button getExportExcelButton()
 	{
 		return toolBar.getExportExcelButton();
+	}
+	
+	@Override
+	public Button getAssociarDisciplinasPraticasLaboratoriosBT()
+	{
+		return this.associarDisciplinasPraticasLaboratoriosBT;
 	}
 }

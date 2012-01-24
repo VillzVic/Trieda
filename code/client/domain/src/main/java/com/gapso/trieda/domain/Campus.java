@@ -274,6 +274,14 @@ public class Campus
 	{
 		this.parametros = parametros;
 	}
+	
+	public Set<Sala> getLaboratorios() {
+		Set<Sala> laboratorios = new HashSet<Sala>();
+		for (Unidade unidade : this.unidades) {
+			laboratorios.addAll(unidade.getLaboratorios());
+		}
+		return laboratorios;
+	}
 
 	@PersistenceContext
 	transient EntityManager entityManager;

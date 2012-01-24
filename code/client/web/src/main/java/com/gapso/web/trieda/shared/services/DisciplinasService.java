@@ -21,6 +21,7 @@ import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -55,4 +56,5 @@ public interface DisciplinasService
 	DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO );
 	List< ResumoDisciplinaDTO > getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO );
+	void associarDisciplinasALaboratorios() throws TriedaException;
 }

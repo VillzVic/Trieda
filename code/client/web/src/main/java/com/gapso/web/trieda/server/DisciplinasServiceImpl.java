@@ -58,6 +58,7 @@ import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.DisciplinasService;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dev.util.Pair;
 
 @Transactional
@@ -1270,5 +1271,43 @@ public class DisciplinasServiceImpl
 		dtoNew.setReceita( resumoDTO.getReceita() );
 		
 		pair.getRight().add(dtoNew);
+	}
+	
+	@Override
+	@Transactional
+	public void associarDisciplinasALaboratorios() throws TriedaException {
+		try {
+			// [CampusId -> Lista de Laboratorios]
+			Map<Long,List<Sala>> ofertaIdToLaboratoriosMap = new HashMap<Long,List<Sala>>();
+			List<CurriculoDisciplina> curriculosDisciplinasAtualizados = new ArrayList<CurriculoDisciplina>();
+			
+			// 
+			List<Oferta> ofertas = Oferta.findAll(getInstituicaoEnsinoUser());
+			for (Oferta oferta : ofertas) {
+				// obtém os laboratórios do campus associado com a oferta
+				List<Sala> laboratorios = ofertaIdToLaboratoriosMap.get(oferta.getCampus().getId());
+				if (laboratorios == null) {
+					laboratorios = new ArrayList<Sala>();
+					laboratorios.addAll(oferta.getCampus().getLaboratorios());
+					ofertaIdToLaboratoriosMap.put(oferta.getCampus().getId(),laboratorios);
+				}
+				// atualiza, em memória, os curriculosDisplinas com os laboratórios
+				List<CurriculoDisciplina> curriculosDisciplinas = oferta.getCurriculo().getCurriculoDisciplinas();
+				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinas) {
+					if (curriculoDisciplina.getDisciplina().getLaboratorio()) {
+						curriculoDisciplina.getSalas().addAll(laboratorios);
+						curriculosDisciplinasAtualizados.add(curriculoDisciplina);
+					}
+				}
+			}
+			
+			// atualiza o BD com os curriculosDisplinas atualizados
+			for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasAtualizados) {
+				curriculoDisciplina.merge();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
 	}
 }

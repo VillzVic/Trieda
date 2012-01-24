@@ -396,6 +396,21 @@ public class Curriculo
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public List< CurriculoDisciplina > getCurriculoDisciplinas() {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o " +
+			" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.curriculo = :curriculo "
+		);
+
+		q.setParameter( "curriculo", this );
+		q.setParameter( "instituicaoEnsino", this.cenario.getInstituicaoEnsino() );
+
+		return q.getResultList();
+	}
 
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino,
