@@ -307,14 +307,13 @@ public class EquivalenciasImportExcel
 			= Equivalencia.buildEquivalenciaCursouCodigoToEquivalenciaMap(
 				Equivalencia.findAll( this.instituicaoEnsino ) );
 
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( EquivalenciasImportExcelBean equivalenciaExcel : sheetContent )
 		{
-			System.out.print(equivalenciaExcel.getCursouStr() + ":" + equivalenciaExcel.getEliminaStr());
 			if ( equivalenciaExcel.getDisciplinaCursou() == null
 				|| equivalenciaExcel.getDisciplinasElimina() == null
 				|| equivalenciaExcel.getDisciplinasElimina().size() == 0 )
 			{
-				System.out.println(":continue");
 				continue;
 			}
 
@@ -328,7 +327,6 @@ public class EquivalenciasImportExcel
 					equivalenciaExcel.getDisciplinasElimina() );
 
 				equivalenciaBD.merge();
-				System.out.println(":merge");
 			}
 			else
 			{
@@ -339,8 +337,9 @@ public class EquivalenciasImportExcel
 				newEquivalencia.setElimina( equivalenciaExcel.getDisciplinasElimina() );
 
 				newEquivalencia.persist();
-				System.out.println(":persist");
 			}
+			
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" equivalencias"); count = 0;}
 		}
 	}
 

@@ -403,7 +403,7 @@ public class AlunosDemandaImportExcel
 			= CurriculoDisciplina.buildCurriculoDisciplinaPeriodoMap(
 				CurriculoDisciplina.findAll( this.instituicaoEnsino ) );
 
-		int count = 0;
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( AlunosDemandaImportExcelBean alunosDemandaExcel : sheetContent )
 		{
 			String codeDemanda = getCodeDemanda( alunosDemandaExcel );
@@ -524,7 +524,7 @@ public class AlunosDemandaImportExcel
 				}
 			}
 			
-			count++;if (count == 100) {System.out.println("   100 AlunosDemanda processados"); count = 0;}
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" AlunosDemanda"); count = 0;}
 		}
 
 		atualizaQuantidadeDemanda();

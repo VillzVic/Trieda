@@ -272,6 +272,7 @@ public class CursosImportExcel
 		Map< String, Curso > cursosBDMap = Curso.buildCursoCodigoToCursoMap(
 			Curso.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( CursosImportExcelBean cursoExcel : sheetContent )
 		{
 			Curso cursoBD = cursosBDMap.get( cursoExcel.getCodigoStr() );
@@ -307,6 +308,8 @@ public class CursosImportExcel
 				
 				newCurso.persist();
 			}
+			
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" cursos"); count = 0;}
 		}
 	}
 	

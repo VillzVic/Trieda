@@ -60,7 +60,6 @@ public class TRIEDAImportExcel
 			importers.add( new SalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new DisciplinasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new AreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new ProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CursosImportExcel( this.cenario, i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CursoAreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) ); 
 			importers.add( new CurriculosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
@@ -68,12 +67,20 @@ public class TRIEDAImportExcel
 			importers.add( new EquivalenciasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new DemandasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) ); 
 			importers.add( new AlunosDemandaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
+			importers.add( new ProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CampiTrabalhoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new HabilitacoesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) ); 
 
+			long totaltime = 0;
 			for ( IImportExcel importer : importers )
 			{
+				System.out.print(importer.getSheetName());
+				long start = System.currentTimeMillis();
 				flag = ( importer.load( fileName, workbook ) && flag );
+				long time = (System.currentTimeMillis() - start)/1000;
+				System.out.println(" tempo = " + time + " segundos");
+				
+				totaltime += time;
 
 				for ( String error : importer.getErrors() )
 				{
@@ -85,6 +92,7 @@ public class TRIEDAImportExcel
 					getErrors().add( importer.getSheetName() + ": " + warning );
 				}
 			}
+			System.out.println("TOTAL = " + totaltime + " segundos");
 		}
 		catch ( Exception e )
 		{

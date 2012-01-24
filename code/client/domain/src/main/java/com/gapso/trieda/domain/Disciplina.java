@@ -255,11 +255,13 @@ public class Disciplina
 	
 	@Transactional
 	static public void preencheHorariosDasDisciplinas(List<Disciplina> disciplinas, List<SemanaLetiva> semanasLetivas) {
+		int count = 0;
 		for (SemanaLetiva semanaLetiva : semanasLetivas) {
 			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
 				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
 					hdc.getDisciplinas().addAll(disciplinas);
 					hdc.merge();
+					count++;if (count == 100) {System.out.println("   100 horários de disciplinas processadas"); count = 0;}
 				}
 			}
 		}

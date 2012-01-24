@@ -550,6 +550,7 @@ public class CurriculosImportExcel
 		Map< String, CurriculosImportExcelBean > curriculosExcelMap
 			= CurriculosImportExcelBean.buildCurriculoCodigoToImportExcelBeanMap( sheetContent ); 
 
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( String codigoCurriculo : curriculosExcelMap.keySet() )
 		{
 			Curriculo curriculoBD = curriculosBDMap.get( codigoCurriculo );
@@ -581,6 +582,8 @@ public class CurriculosImportExcel
 				Curriculo.entityManager().refresh( newCurriculo );
 				curriculosBDMap.put( newCurriculo.getCodigo(), newCurriculo );
 			}
+			
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" curriculos"); count = 0;}
 		}
 
 		// ATUALIZA CURRICULOS-DISCIPLINAS
@@ -591,6 +594,7 @@ public class CurriculosImportExcel
 			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
 				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
+		count = 0; total=sheetContent.size(); System.out.println("CurriculoDisciplina "+total);
 		for ( CurriculosImportExcelBean curriculoExcel : sheetContent )
 		{
 			CurriculoDisciplina curriculoDisciplinaBD
@@ -615,6 +619,8 @@ public class CurriculosImportExcel
 						curriculoExcel.getNaturalKeyString(), newCurriculoDisciplina );
 				}
 			}
+			
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" CurriculosDisciplina"); count = 0;}
 		}
 	}
 

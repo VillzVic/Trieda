@@ -678,7 +678,7 @@ public class ConvertBeans
 
 		InstituicaoEnsino instituicaoEnsino
 			= domain.getInstituicaoEnsino();
-
+		
 		if ( instituicaoEnsino != null )
 		{
 			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );

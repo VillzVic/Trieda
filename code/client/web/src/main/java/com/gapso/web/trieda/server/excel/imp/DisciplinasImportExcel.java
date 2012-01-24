@@ -291,6 +291,7 @@ public class DisciplinasImportExcel
 				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List<Disciplina> persistedDisciplinas = new ArrayList<Disciplina>();
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( DisciplinasImportExcelBean disciplinaExcel : sheetContent )
 		{
 			Disciplina disciplinaBD = disciplinasBDMap.get(
@@ -329,6 +330,8 @@ public class DisciplinasImportExcel
 				newDisciplina.persist();
 				persistedDisciplinas.add(newDisciplina);
 			}
+			
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" disciplinas"); count = 0;}
 		}
 		
 		if (!persistedDisciplinas.isEmpty()) {
