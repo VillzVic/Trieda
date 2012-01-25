@@ -69,6 +69,9 @@ são denotados por $t$.
 
 \item $U$ - Conjunto de unidades. Os elementos desse conjunto são denotados por $u$.
 
+\item $Kh_{s,t}$ - Conjunto de combinações possíveis de divisão de horários para uma sala $s$ em um dia $t$.
+Os elementos desse conjunto são denotados por $kh_{s,t}$.
+
 \end{itemize}
 
 \subsubsection{Dados do Modelo}
@@ -129,6 +132,9 @@ são denotados por $t$.
 
 \item $\xi$ - pesos associados a cada item da função objetivo.
 
+\item $Q_{sl,kh,s,t}$ - número de horários da semana letiva $sl$ determinados para a sala $s$ no dia $t$ na combinação de divisão de horários $kh$.
+
+
 \end{itemize}
 
 \subsubsection{Variáveis}
@@ -164,7 +170,15 @@ em salas do tipo (capacidade) $tps$ no dia $t$.
 \item $xm_{d,t}$ - máximo de créditos alocados para qualquer turma da disciplina $d$ no dia $t$. 
 \item $y_{i,d,tps,u}$ - indica que a turma $i$ da disciplina $d$ foi alocada em alguma sala do tipo $tps$ da unidade $u$. 
 \item $z_{i,d,cp}$ - indica se houve abertura da $i$-ésima turma da disciplina $d$ no campus $cp$. 
-\item $zc_{d,t}$ - indica se houve abertura da disciplina $d$ no dia $t$. 
+\item $zc_{d,t}$ - indica se houve abertura da disciplina $d$ no dia $t$.
+\item $e_{i,d,oft}$ - indica se houve alunos de uma oferta $oft$ alocados para a $i$-ésima turma da disciplina $d$. 
+\item $of_{i,d,oft1,oft2}$ - indica se houve tanto alunos da oferta $oft1$ quanto da oferta $oft2$ alocados para a $i$-ésima turma da disciplina $d$.
+\item $q_{i,d,oft,u,tps,t}$ - número de créditos alocados para a oferta $oft$, turma $i$ da disciplina $d$ na unidade $u$ 
+em salas do tipo (capacidade) $tps$ no dia $t$. 
+\item $p_{i,d,oft1,oft2,u,tps,t}$ - número de créditos alocados tanto para a oferta $oft1$ quanto para a $oft2$, turma $i$ da disciplina $d$ na unidade $u$ em salas do tipo (capacidade) $tps$ no dia $t$. 
+\item $g_{d,oft,t}$ - número mínimo de horários que a disciplina $d$ oferta $oft$ ocupa no dia t. É relevante quando a disciplina de uma oferta possui mais de 1 turma.
+\item $cs_{s,t,k}$ - variável binária que indica se a combinação de divisão de horários $k$ foi escolhida para a sala $s$ no dia $t$.
+
 \end{itemize}
 
 \subsection{Formulação}
@@ -618,7 +632,7 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 
 \begin{eqnarray}
  \sum\limits_{tps \in SCAP_{u}} n_{bc,tps} + fn_{bc,tps} 
- \leq 1 \nonumber \qquad 
+ \le 1 \nonumber \qquad 
  \forall bc \in B
 \end{eqnarray}
 
@@ -628,12 +642,172 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 
 
 \begin{eqnarray} 
-b_{i,d,c,cp} + b_{i,d,c',cp} - fc_{i,d,c,c',cp} \leq 1 \nonumber \qquad 
+b_{i,d,c,cp} + b_{i,d,c',cp} - fc_{i,d,c,c',cp} \le 1 \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall c,c' \in CC \quad
 \forall cp \in CP
 \end{eqnarray}
+
+
+\subsubsection{Ativação da variável e}
+
+
+
+\begin{eqnarray}
+a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad 
+\forall i \in I_{d} \quad
+\forall d \in D_{oft} \quad
+\forall oft \in O
+\end{eqnarray}
+
+
+
+\subsubsection{Evita sobreposição de horário em sala devido a compartilhamento de disciplinas entre dois cursos}
+
+
+\begin{eqnarray}
+\sum\limits_{u' \in U} \sum\limits_{d' \in oft1 U oft2} \sum\limits_{i' \in I_{d'}}( x_{i',d',u',s',t} ) +  x_{i,d,u,s,t}
+\le Q_{bc,t} + M ( 2 - e_{i,d,oft1} - e_{i,d,oft2} ) \qquad 
+
+\forall d \in D_{oft1} \cap D_{oft2}
+\forall i \in I_{d}
+\forall u \in U
+\forall s \in S_{u}
+\forall s' \in S_{u'} \quad s' \ne s
+\forall t \in T
+
+\end{eqnarray}
+
+
+
+\subsubsection{Ativação da variável of}
+
+
+
+\begin{eqnarray}
+	e_{i,d,oft1} \cdot e_{i,d,oft2} \eq of_{i,d,oft1,oft2} \qquad
+		 
+		 =  \qquad
+
+	e_{i,d,oft1} + e_{i,d,oft2} - 1 \le of_{i,d,oft1,oft2} \qquad
+	of_{i,d,oft1,oft2} \le e_{i,d,oft2}  \qquad
+	of_{i,d,oft1,oft2} \le e_{i,d,oft1}   \qquad
+
+\forall i \in I_{d} \quad
+\forall d \in D_{oft} \quad
+\forall oft1 \in O_{d} \quad
+\forall oft2 \in O_{d}
+\end{eqnarray}
+
+
+
+\subsubsection{Ativação da variável p}
+
+
+\begin{eqnarray}
+	
+	 p_{i,d,oft1,oft2,u,s,t} \eq x_{i,d,u,s,t} \cdot of_{i,d,oft1,oft2} \nonumber \qquad
+	  
+	  =  \qquad
+
+	 p_{i,d,oft1,oft2,u,s,t} \le M \cdot of_{i,d,oft1,oft2} \nonumber \qquad
+	 p_{i,d,oft1,oft2,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
+	 x_{i,d,u,s,t} \ge p_{i,d,oft1,oft2,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
+
+\forall i \in I_{d} \quad
+\forall d \in D_{oft} \quad
+\forall oft1 \in O_{d} \quad
+\forall oft2 \in O_{d}
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Ativação da variável g}
+
+
+\begin{eqnarray}
+	
+	 g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
+
+\forall d \in D_{oft} \quad
+\forall oft \in O_{d}
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Evita sobreposição de sala por turmas de uma mesma disciplina e mesmo bloco curricular}
+
+
+\begin{eqnarray}
+	
+	 \sum\limits_{d \in D_{bc}} ( g_{d,oft,t} ) \le MaxCred_{oft,t} \qquad
+
+\forall bc \in oft
+\forall oft \in O
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Ativação da variável q}
+
+
+\begin{eqnarray}
+	
+	 q_{i,d,oft,u,s,t} \eq x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber \qquad
+	  
+	  =  \qquad
+
+	 q_{i,d,oft,u,s,t} \le M \cdot e_{i,d,oft} \nonumber \qquad
+	 q_{i,d,oft,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
+	 x_{i,d,u,s,t} \ge q_{i,d,oft,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
+
+\forall i \in I_{d} \quad
+\forall d \in D_{oft} \quad
+\forall oft \in O \quad
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Ativação da variável cs}
+
+
+\begin{eqnarray}
+	
+	 \sum\limits_{kh \in Kh_{s,t}} cs_{s,t,kh} \le 1 \qquad
+
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Máximo de créditos por sala, dia e semana letiva}
+
+
+\begin{eqnarray}
+	
+	 \sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} ( x_{i,d,u,s,t} ) \le \sum\limits_{kh \in Kh_{s,t}} ( Q_{sl,kh,s,t} \cdot cs_{s,t,kh} ) \qquad
+
+\forall sl \in SL \quad
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\end{eqnarray}
+
 
 
 \clearpage
