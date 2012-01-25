@@ -372,6 +372,7 @@ public class SolverInput
 	private void checkErrorsWarnings()
 	{
 		checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo();
+		checkDemandasComDisciplinasSemCurriculo();
 		
 		// PRIMEIRA VERIFICAÇÃO
 
@@ -474,6 +475,32 @@ public class SolverInput
 						+ "que atenda ao total de cr&eacute;ditos da disciplina.";
 
 					createWarningMessage( warningMessage );
+				}
+			}
+		}
+	}
+
+	private void checkDemandasComDisciplinasSemCurriculo() {
+		// [CurriculoId -> Set<DisciplinaId>]
+		Map<Long,Set<Long>> curriculoIdToDisciplinasIdsMap = new HashMap<Long,Set<Long>>();
+		for (Oferta oferta : this.parametro.getCampus().getOfertas()) {
+			Curriculo curriculo = oferta.getCurriculo();
+			
+			// obtém as disciplinas associadas com o currículo em questão
+			Set<Long> disciplinasDoCurriculo = curriculoIdToDisciplinasIdsMap.get(curriculo.getId());
+			if (disciplinasDoCurriculo == null) {
+				disciplinasDoCurriculo = new HashSet<Long>();
+				for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinas()) {
+					disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId());
+				}
+			}
+			
+			// verifica se alguma demanda contém alguma disciplina que não esteja no currículo
+			// da oferta associada com a demanda
+			for (Demanda demanda : oferta.getDemandas()) {
+				if (!disciplinasDoCurriculo.contains(demanda.getDisciplina().getId())) {
+					createErrorMessage("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
+					System.out.println("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
 				}
 			}
 		}
@@ -1077,17 +1104,17 @@ public class SolverInput
 						= new ArrayList< HorarioDisponivelCenario >( setHorariosSala );
 
 					// TRIEDA-1164: Enviar sempre HoráriosDisponíveis para o solver ao invés de CréditosDisponíveis (no caso do Tático)
-					if ( tatico )
-					{
-						// Tático
-						itemSala.setCreditosDisponiveis(
-							createCreditosDisponiveis( createGrupoHorario( listHorariosSala ) ) );
-					}
-					else
-					{
+//					if ( tatico )
+//					{
+//						// Tático
+//						itemSala.setCreditosDisponiveis(
+//							createCreditosDisponiveis( createGrupoHorario( listHorariosSala ) ) );
+//					}
+//					else
+//					{
 						// Operacional
 						itemSala.setHorariosDisponiveis( createGrupoHorario( listHorariosSala ) );
-					}
+					//}
 
 					GrupoIdentificador grupoIdentificador = this.of.createGrupoIdentificador();
 

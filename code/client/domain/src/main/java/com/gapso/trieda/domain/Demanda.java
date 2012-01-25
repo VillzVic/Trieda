@@ -120,6 +120,11 @@ public class Demanda
 	{
         this.version = version;
     }
+	
+	public String getNaturalKeyString() {
+		return getOferta().getNaturalKeyString() + "-" + 
+		       getDisciplina().getCodigo();
+	}
 
 	@Transactional
 	public void detach()

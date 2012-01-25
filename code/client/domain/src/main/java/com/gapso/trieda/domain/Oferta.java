@@ -108,6 +108,13 @@ public class Oferta
 	{
 		this.version = version;
 	}
+	
+	public String getNaturalKeyString() {
+		return getCampus().getCodigo() + "-" + 
+		       getTurno().getNome() + "-" + 
+		       getCurso().getCodigo() + "-" + 
+		       getCurriculo().getCodigo();
+	}
 
 	@Transactional
 	public void detach()
