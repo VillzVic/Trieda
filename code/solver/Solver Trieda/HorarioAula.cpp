@@ -10,6 +10,13 @@ HorarioAula::~HorarioAula( void )
    this->calendario = NULL;
 }
 
+DateTime HorarioAula::getFinal()
+{
+	DateTime *t = new DateTime( this->inicio );
+	t->addMinutes( this->tempo_aula );
+	return *t;
+}
+
 void HorarioAula::le_arvore( ItemHorarioAula & elem )
 {
    this->setId( elem.id() );
@@ -32,4 +39,15 @@ bool HorarioAula::horarioDisponivel( int dia )
 		return true;
 	else
 		return false;
+}
+
+bool HorarioAula::sobrepoe( HorarioAula h )
+{
+	if ( ( this->inicio < h.getFinal() && this->inicio >= h.getInicio() ) ||
+		 ( this->getFinal() <= h.getFinal() && this->getFinal() > h.getInicio() ) )
+	{
+		return true;
+	}
+
+	return false;
 }

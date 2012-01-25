@@ -25,7 +25,7 @@ public:
    void setCreditosPraticos( int );
    void setAulaVirtual( bool );
    void setAulaFixada( bool );
-   void setQuantidade( int );
+   void setQuantidade( int, Oferta* );
 
    int getTurma() const;
    Disciplina * getDisciplina() const;
@@ -36,7 +36,9 @@ public:
    int getTotalCreditos() const;
    bool eVirtual() const;
    bool eFixada() const;
-   int getQuantidade() const;
+   std::map<Oferta*,int> getQuantidade() const;
+   int getQuantidadePorOft( Oferta *oft );
+   int getQuantidadeTotal();
 
    virtual bool operator < ( Aula const & right )
    { 
@@ -135,14 +137,14 @@ public:
       return ( !( *this == right ) );
    }
 
-   void toString() const;
+   void toString();
 
 private:
    int turma;
    Disciplina * disciplina;
    Sala * sala;
    int dia_semana;
-   int quantidade;
+   std::map<Oferta*, int> quantidade;
    int creditos_teoricos;
    int creditos_praticos;
 

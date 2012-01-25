@@ -1091,6 +1091,7 @@ bool ValidateSolutionOp::checkRestricaoAlocacaoAulas(
                      {
                         int turma = it_oferta->getTurma();
                         Disciplina * disciplina = it_oferta->disciplina;
+						Oferta *oft = it_oferta->oferta;
 
                         AtendimentoBase * atendimento = new AtendimentoBase();
 
@@ -1111,7 +1112,7 @@ bool ValidateSolutionOp::checkRestricaoAlocacaoAulas(
                         aula->setSala( sala );
                         aula->setDiaSemana( dia_semana );
                         aula->setTurma( turma );
-                        aula->setQuantidade( it_oferta->getQuantidade() );
+						aula->setQuantidade( it_oferta->getQuantidade(), oft );
 
                         mapAulaAtendimentos[ aula ].add( atendimento );
                      } // Oferta

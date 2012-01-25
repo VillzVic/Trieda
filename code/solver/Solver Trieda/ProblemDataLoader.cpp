@@ -33,143 +33,204 @@ void ProblemDataLoader::load()
    // ---------
    preencheTempoAulaHorarios();
 
+   std::cout << "Relacionando demanda a alunos..." << std::endl;
    // ---------
    relacionaDemandaAlunos();
 
+   std::cout << "Relacionando calendario horarios e aulas..." << std::endl;
    // ---------
    relacionaCalendarioHorariosAula();
 
+   std::cout << "Referenciando ofertas a demandas..." << std::endl;
    // ---------
    geraRefsOfertasDemandas();
 
+   std::cout << "Referenciando disciplinas equivalentes e incompatibilidades..." << std::endl;
    // ---------
    referenciaDisciplinasEquivalentesIncompativeis();
 
+   std::cout << "Referenciando disciplinas curriculos..." << std::endl;
    // ---------
    referenciaDisciplinasCurriculos();
 
+   std::cout << "Relacionado horarios aula dia semana..." << std::endl;
    // ---------
    relacionaHorariosAulaDiaSemana();
 
+   std::cout << "Relacionado creds regras..." << std::endl;
    // ---------
    relacionaCredsRegras();
 
+   std::cout << "Carregando dias letivos campus unidade sala..." << std::endl;
    // ---------
    carregaDiasLetivosCampusUnidadeSala();
 
+   std::cout << "Carregando dias letivos disciplinas..." << std::endl;
    // ---------
    carregaDiasLetivosDiscs();
 
+   std::cout << "Processando disciplinas de cursos compativeis..." << std::endl;
    // ---------
    disciplinasCursosCompativeis();
 
+   std::cout << "Relacionando disciplinas equivalentes..." << std::endl;
    // ---------
    relacionaDisciplinasEquivalentes();
 
+   std::cout << "Preenchendo disciplinas de cursos compativeis..." << std::endl;
    // ---------
    preencheDisciplinasDeCursosCompativeis();
 
+   std::cout << "Dividindo disciplinas..." << std::endl;
    // ---------
    divideDisciplinas();
 
+   std::cout << "Validando input tatico..." << std::endl;
    // ---------
    validaInputSolucaoTatico();
 
+   std::cout << "Referenciando campus unidades e salas..." << std::endl;
    // ---------
    referenciaCampusUnidadesSalas();
 
+   std::cout << "Referenciando disciplinas..." << std::endl;
    // ---------
    referenciaDisciplinas();
 
+   std::cout << "Referenciando ofertas..." << std::endl;
    // ---------
    referenciaOfertas();
 
+   std::cout << "Gerando referencias..." << std::endl;
    // ---------
    gera_refs();
 
+   std::cout << "Calculando demandas..." << std::endl;
    // ---------
    calculaDemandas();
 
+   std::cout << "Relacionando cursos a campus..." << std::endl;
    // ---------
    relacionaCursosCampus();
 
+   std::cout << "Calculando tamanho das salas..." << std::endl;
    // ---------
    calculaTamanhoMedioSalasCampus();
 
+   std::cout << "Relacionando campus a disciplinas..." << std::endl;
    // ---------
    relacionaCampusDiscs();
 
+   std::cout << "Relacionado disciplinas e ofertas..." << std::endl;
    // ---------
    relacionaDiscOfertas();
    
+   std::cout << "Associando disciplinas a salas..." << std::endl;
    // ---------
    associaDisciplinasSalas();
 
+   std::cout << "Calculando menor capacidade de sala por disc..." << std::endl;
    // ---------
    calculaMenorCapacSalaPorDisc();
    
+   std::cout << "Estimando turmas..." << std::endl;
    // ---------
    estima_turmas();
 
+   std::cout << "Criando blocos curriculares..." << std::endl;
    // ---------
    cria_blocos_curriculares();
 
+   std::cout << "Criando cjt salas..." << std::endl;
    // ---------
    criaConjuntoSalasUnidade();
 
+   std::cout << "Associando disciplinas a cjt de salas..." << std::endl;
    // ---------
    associaDisciplinasConjuntoSalas();
 
+   std::cout << "Cache..." << std::endl;
    // ---------
    cache();
 
+   std::cout << "Estabelecendo Dias Letivos Bloco Campus..." << std::endl;
    // ---------
    estabeleceDiasLetivosBlocoCampus();
 
+   std::cout << "Estabelecendo Dias Letivos Disciplinas Salas..." << std::endl;
    // ---------
    estabeleceDiasLetivosDisciplinasSalas();
 
+   std::cout << "Estabelecendo Dias Letivos Disciplinas Cjt Salas..." << std::endl;
    // ---------
    estabeleceDiasLetivosDiscCjtSala();
 
+   std::cout << "Calculando creditos livres de salas..." << std::endl;
    // ---------
    calculaCredsLivresSalas();
 
+   std::cout << "Calculando divisão de creditos..." << std::endl;
    // ---------
    combinacaoDivCreditos();
 
+   std::cout << "Estabelecendo DiasLetivos Professor Disciplina..." << std::endl;
    // --------- 
    estabeleceDiasLetivosProfessorDisciplina();
 
+   std::cout << "Criando aulas..." << std::endl;
    // --------- 
    criaAulas();
 
+   std::cout << "Calculando maximo de horarios professor..." << std::endl;
    // ---------
    calculaMaxHorariosProfessor();
 
+   std::cout << "Criando listas de horarios ordenados..." << std::endl;
    // ---------
    criaListaHorariosOrdenados();
 
+   std::cout << "Verificando fixacoes de dias letivos das disciplinas..." << std::endl;
    // ---------
    verificaFixacoesDiasLetivosDisciplinas();
 
+   std::cout << "Relacionado fixacoes..." << std::endl;
    // ---------
    relacionaFixacoes();
 
+   std::cout << "Gerando horariosDia..." << std::endl;
    // ---------
    geraHorariosDia();
 
    // ---------
    // print_stats();
 
+   std::cout << "Referenciando horarios aula..." << std::endl;
    // ---------
    referenciaHorariosAula();
 
+   std::cout << "Referenciando turnos..." << std::endl;
    // ---------
    referenciaTurnos();
 
+   std::cout << "Relacionando professor disciplinas associadas..." << std::endl;
    // ---------
    relacionaProfessorDisciplinasAssociadas();
+
+   std::cout << "Calculando maximo de tempo disponivel por sala..." << std::endl;
+   
+   calculaMaxTempoDisponivelPorSala();
+
+   std::cout << "Calculando maximo de tempo disponivel por sala e semana letiva..." << std::endl;
+   calculaMaxTempoDisponivelPorSalaPorSL();
+
+   std::cout << "Calculando compatibilidade de horarios..." << std::endl;
+
+   calculaCompatibilidadeDeHorarios();
+
+   std::cout << "Calculando combinacao de creditos..." << std::endl;
+
+   calculaCombinaCredSLPorSala();
+
 }
 
 void ProblemDataLoader::preencheTempoAulaHorarios()
@@ -546,7 +607,14 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
             // Adicionando os dias letivos de cada Sala
             ITERA_GGROUP( it_Horario, it_Unidade->horarios, Horario )
             {
-               if(problemData->parametros->modo_otimizacao == "TATICO")
+                ITERA_GGROUP ( itHorarioDisponivel, it_Sala->horarios_disponiveis, Horario )
+                {
+                    it_Sala->diasLetivos.add( itHorarioDisponivel->dias_semana );
+                }
+				// TODO: deletar o trecho comentado abaixo, porque
+				// depois que creditos_disponiveis for retirado, horarios_disponiveis sera para os 2 modos de otimizacao
+               /*
+			   if(problemData->parametros->modo_otimizacao == "TATICO")
                {
                   ITERA_GGROUP( it_Creds_Disp, it_Sala->creditos_disponiveis, CreditoDisponivel)
                   {
@@ -562,7 +630,7 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
                   {
                      it_Sala->diasLetivos.add( itHorarioDisponivel->dias_semana );
                   }
-               }
+               }*/
             }
          }
       }
@@ -2429,6 +2497,9 @@ void ProblemDataLoader::gera_refs()
                   it_horario->horario_aula, false );
             }
 
+			//TODO: deletar o trecho comentado abaixo assim que creditos_disponiveis tiver sido substituido
+			// permanentemente por horarios_disponiveis
+			/*
             ITERA_GGROUP( it_credito,it_salas->creditos_disponiveis,
                CreditoDisponivel )
             {
@@ -2436,6 +2507,7 @@ void ProblemDataLoader::gera_refs()
                   problemData->todos_turnos,
                   it_credito->turno, false );
             }
+			*/
 
             // Disciplinas associadas
             ITERA_GGROUP_N_PT( it_id_Disc, it_salas->disciplinas_associadas, int )
@@ -2532,6 +2604,8 @@ void ProblemDataLoader::gera_refs()
          problemData->niveis_dificuldade,
          it_disc->nivel_dificuldade, false );
 
+	  int tempoCred = 0;
+
       ITERA_GGROUP( it_horario, it_disc->horarios, Horario )
       {
          find_and_set_lessptr( it_horario->getTurnoId(),
@@ -2542,7 +2616,12 @@ void ProblemDataLoader::gera_refs()
             // it_horario->turno->horarios_aula,
             todos_horarios_aula,
             it_horario->horario_aula, false );
-      } 
+		 
+		 tempoCred = it_horario->horario_aula->getTempoAula();
+      }
+
+	  it_disc->setTempoCredSemanaLetiva( tempoCred ); // tempo equivalente a 1 credito da disciplina
+
    } // disciplinas
 
    ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
@@ -3242,7 +3321,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
                          << "\nId da disciplina   : " << disciplina->getId()
                          << "\nNome da disciplina : " << disciplina->getNome()
                          << std::endl << std::endl;
-
+			   system("pause");
                exit( 1 );
             }
             else if ( !salas_associadas )
@@ -3584,6 +3663,8 @@ void ProblemDataLoader::criaAulas()
                   {
                      atendOferta = ( it_atend_tatico->atendimento_oferta );
 
+					 Oferta* oferta = problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ];
+
                      // Informa a 'turma' da aula
                      int turma = atoi( atendOferta->getTurma().c_str() );
 
@@ -3650,14 +3731,14 @@ void ProblemDataLoader::criaAulas()
                         aula->setDiaSemana( diaSemana );
                         aula->setCreditosTeoricos( creditos_teoricos );
                         aula->setCreditosPraticos( creditos_praticos );
-                        aula->setQuantidade((aula->getQuantidade() + demandaAtendida));
+						aula->setQuantidade( demandaAtendida, oferta );
 
                         problemData->aulas.add( aula );
                      }
                      else
                      {
                         aulaAntiga->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );
-                        aulaAntiga->setQuantidade( ( aulaAntiga->getQuantidade() + demandaAtendida ) );
+                        aulaAntiga->setQuantidade( demandaAtendida, oferta );
                         problemData->aulas.add( aulaAntiga );
                      }
                   }
@@ -3952,3 +4033,368 @@ void ProblemDataLoader::relacionaProfessorDisciplinasAssociadas( void )
       }
    }
 }
+
+
+void ProblemDataLoader::calculaMaxTempoDisponivelPorSala()
+{
+   ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
+   {
+      ITERA_GGROUP_LESSPTR( it_unidade, it_campi->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
+         {
+			 it_sala->calculaTempoDispPorDia();
+         }
+      }
+   }
+}
+
+
+void ProblemDataLoader::calculaMaxTempoDisponivelPorSalaPorSL()
+{
+   ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
+   {
+      ITERA_GGROUP_LESSPTR( it_unidade, it_campi->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
+         {
+			 it_sala->calculaTempoDispPorDiaSL();
+         }
+      }
+   }
+}
+
+/*
+	Preenche o map compatibilidadesDeHorarios, que relaciona para
+	cada horarioAula H existente, os horarioAula h tal que a semana letiva
+	de h é diferente da semana letiva de H, e h e H não possuem interseção
+	(não se sobrepõem).
+*/
+void ProblemDataLoader::calculaCompatibilidadeDeHorarios()
+{
+	// calendario 1
+	ITERA_GGROUP_LESSPTR( it_calendarios1, problemData->calendarios, Calendario )
+    {
+		ITERA_GGROUP_LESSPTR( it_turno1, it_calendarios1->turnos, Turno )
+		{
+			ITERA_GGROUP_LESSPTR( it_hor1, it_turno1->horarios_aula, HorarioAula )
+			{
+				HorarioAula *h1 = *it_hor1;
+
+				// calendario 2
+				ITERA_GGROUP_LESSPTR( it_calendarios2, problemData->calendarios, Calendario )
+				{
+					if ( *it_calendarios2 == *it_calendarios1)
+						continue;
+
+					ITERA_GGROUP_LESSPTR( it_turno2, it_calendarios2->turnos, Turno )
+					{
+						ITERA_GGROUP_LESSPTR( it_hor2, it_turno2->horarios_aula, HorarioAula )
+						{
+							HorarioAula *h2 = *it_hor2;
+							
+							if ( h1->getCalendario() == h2->getCalendario() )
+								continue;
+					
+							if ( !h1->sobrepoe( *h2 ) )
+								problemData->compatibilidadesDeHorarios[ h1 ].insert( h2 );
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void ProblemDataLoader::calculaCombinaCredSLPorSala()
+{
+	// O caso de 1 unica semana letiva é simples, não requer essa função
+	if ( problemData->calendarios.size() == 1 )
+	{
+		return;
+	}
+
+	if ( problemData->calendarios.size() != 2 )
+	{
+		std::cerr << "Atencao em ProblemDataLoader::calculaCombinaCredSLPorSala: esta funcao esta preparada "
+				  << "para trabalhar somente o caso de 2 semanas letivas.";
+	}
+
+	GGroup< Calendario *, LessPtr< Calendario > >::iterator it_sl = problemData->calendarios.begin();
+
+	Calendario *sl1 = *it_sl;
+	Calendario *sl2 = *(++it_sl);
+
+   ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
+   {
+      ITERA_GGROUP_LESSPTR( it_unidade, it_campi->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
+         {
+            Sala * sala = ( *it_sala );
+
+            ITERA_GGROUP_N_PT( itDia, sala->diasLetivos, int )
+            {
+				int dia = *itDia;
+
+				GGroup<HorarioAula*> horDispDiaSL1 = sala->retornaHorariosDisponiveisNoDiaPorSL( dia, sl1 );
+				GGroup<HorarioAula*> horDispDiaSL2 = sala->retornaHorariosDisponiveisNoDiaPorSL( dia, sl2 );
+
+				#pragma region Cria o mapa de compatibilidade de horarios de sl1 e sl2
+
+				// Map para armazenar as compatibilidades
+				std::map< HorarioAula*, GGroup<HorarioAula*> > map_compatHorarioSL1PorSalaDia;
+
+				ITERA_GGROUP( it_H, horDispDiaSL1, HorarioAula )
+				{
+					ITERA_GGROUP( it_h, horDispDiaSL2, HorarioAula )
+					{
+						// Se it_H não se sobrepor com it_h
+						if ( problemData->compatibilidadesDeHorarios[ *it_H ].find( *it_h ) !=
+							 problemData->compatibilidadesDeHorarios[ *it_H ].end() )
+						{
+							map_compatHorarioSL1PorSalaDia[*it_H].add( *it_h );
+						}
+					}
+				}
+				#pragma endregion
+
+				#pragma region Calcula todas as combinações possíveis entre horarios compativeis de sl2
+
+				// Map para armazenar as combinações (sub-conjuntos)
+				std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ > todosSubConjuntos;
+
+				for ( std::map< HorarioAula*, GGroup<HorarioAula*> >::iterator it_H = map_compatHorarioSL1PorSalaDia.begin();
+					  it_H != map_compatHorarioSL1PorSalaDia.end(); it_H++  )
+				{
+					// Conjunto com todos os subconjuntos com h's compativeis com H
+					GGroup< std::set< HorarioAula* > > subCjt = calculaSubCjtHorarios( it_H->second ); // TODO: tentar reaproveitar os calculos anteriores
+					
+					for ( GGroup< std::set< HorarioAula* > >::iterator it_h = subCjt.begin();
+						  it_h != subCjt.end(); it_h++ )
+					{
+						if ( todosSubConjuntos.find( *it_h ) == todosSubConjuntos.end() )
+						{
+							todosSubConjuntos[ *it_h ] = 1; // Insere um novo subCjt
+						}
+						else
+						{
+							todosSubConjuntos[ *it_h ]++; // Incrementa o numero de ocorrencias do subCjt
+						}
+					}
+				}
+				
+				#pragma endregion
+
+				#pragma region Cria as combinações de maximos de creditos
+
+				bool REMOCAO = false;
+				int k=0;
+				sala->getCombinaCredSLSize()[dia] = k;
+
+				for ( int i = 0; i <= (int) horDispDiaSL1.size(); i++ )
+				{
+					int maxSL2 = 0;
+					
+					std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ >::iterator it = todosSubConjuntos.begin();
+					
+					for (; it != todosSubConjuntos.end(); it++ )
+					{
+						if ( i == it->first.size() && maxSL2 < it->second )
+							maxSL2 = it->second;
+					}
+					if (i==0)
+						maxSL2 = horDispDiaSL2.size();
+
+					if ( !sala->combinaCredSL_eh_dominado( i, sl1, maxSL2, sl2, dia ) &&
+						 !sala->combinaCredSL_eh_repetido( i, sl1, maxSL2, sl2, dia ) ) // atencao para a ordem: i refere-se a sl1 & maxSL2 refere-se a sl2
+					{
+						sala->setCombinaCredSL( dia, k, sl1, i );
+						sala->setCombinaCredSL( dia, k, sl2, maxSL2 );
+						
+						k++;
+						sala->setCombinaCredSLSize(dia, k);
+
+						if ( sala->combinaCredSL_domina( i, sl1, maxSL2, sl2, dia ) != NULL )
+						{
+							// sera necessario remover os itens dominados
+							REMOCAO = true;
+						}
+					}
+				}
+				
+				#pragma region Remoção de itens dominados
+
+				if (REMOCAO)
+				{
+					std::map< Trio<int, int, Calendario*>, int > dominados = sala->retornaCombinaCredSL_Dominados(dia);
+					
+					// Deleta itens dominados
+					std::map< Trio<int, int, Calendario*>, int >::iterator it_mapDominados = dominados.begin();
+					for ( ; it_mapDominados != dominados.end(); it_mapDominados++  )
+					{
+						sala->removeCombinaCredSL( it_mapDominados->first );						
+					}
+					/*
+					// Faz o backup dos itens do dia
+					std::map< Trio< int, int , Calendario* >, int > copia_combinaCredSL;
+					std::map< Trio<int, int, Calendario*>, int >::iterator it = sala->getCombinaCredSL().begin();
+					for ( ; it != sala->getCombinaCredSL().end(); it++  )
+					{
+						if ( it->first.first == dia )
+						{
+							copia_combinaCredSL[it->first] = it->second;
+						}
+					}
+
+					// Deleta itens do dia
+					it = sala->getCombinaCredSL().begin();
+					for ( ; it != sala->getCombinaCredSL().end(); it++  )
+					{
+						if ( it->first.first == dia )
+						{
+							sala->removeCombinaCredSL( it->first );						
+						}
+					}
+				
+					// Restore itens do dia e reenumera corretamente
+					it = copia_combinaCredSL.begin();
+					for ( ; it != copia_combinaCredSL.end(); it++  )
+					{
+
+						sala->setCombinaCredSL( dia, k, sl1, n );
+
+					}
+					*/
+					int size = k - dominados.size()/2;
+					sala->setCombinaCredSLSize(dia, size);
+					
+				}
+				#pragma endregion
+				
+				#pragma endregion
+			}
+
+         }
+      }
+   }
+}
+
+
+GGroup< std::set<HorarioAula*> > ProblemDataLoader::calculaSubCjtHorarios( GGroup< HorarioAula* > cjtTotal )
+{
+	int n = cjtTotal.size();
+	int *vetor = new int[ n+1 ];
+	
+	std::set< std::set<int> > subCjtsInt;
+
+	// chama a função de calcular todos os subconjuntos considerando a posição de cada elemento
+	backtrack( vetor, 0, n, &subCjtsInt );
+
+	GGroup< std::set<HorarioAula*> > subCjts;
+	 
+	for ( std::set< std::set<int> >::iterator it_subCjtInt = subCjtsInt.begin();
+		  it_subCjtInt != subCjtsInt.end(); it_subCjtInt++ )
+    {
+		if ( (*it_subCjtInt).size() == 0 )
+			continue;
+
+		std::set<HorarioAula*> sub_cjt;
+
+		for ( std::set<int>::iterator it_elemInt = (*it_subCjtInt).begin();
+			  it_elemInt != (*it_subCjtInt).end();
+			  it_elemInt++ )
+		{
+			// o valor de it_elemInt indica a posição do vetor cjtTotal que entra no subConjunto corrente.	
+			int pos = 1;
+			for ( GGroup< HorarioAula* >::iterator it_h = cjtTotal.begin();
+				  it_h != cjtTotal.end(); it_h++, pos++ )
+			{
+				if ( pos == *it_elemInt )
+				{
+					sub_cjt.insert( *it_h );
+					break;
+				}				
+			}
+		}
+		
+		subCjts.add( sub_cjt );
+
+	}
+	
+	return subCjts;
+}
+
+/*
+	-------------------------------------------------------------------------------
+	Início dos métodos genéricos para calcular todos os subconjuntos de um conjunto de inteiros
+	Chamar backtrack( a, k, n, subCjts ), aonde:
+	a -> é um vetor vazio de inteiros. A posicao 0 é desconsiderada, entao deve-se ter 1 posicao a mais!
+	k -> a partir de qual posicao deve-se considerar todas as combinações
+	n -> valor do limite superior de inteiro considerado para as combinações
+	subCjts -> aonde será armazenado o resultado
+	
+	Para obter-se todas as combinações de elementos de a, fazer k = 0 e n = size(a)-1.
+	Ex: para a[5] => k=0 e n=4, e o resultado terá as combinações de {1, 2, 3, 4}.
+*/
+
+bool ProblemDataLoader::eh_uma_solucao(int a[], int k, int n)
+{
+return (k == n);
+}
+ 
+void ProblemDataLoader::construir_candidatos(int a[], int k, int n, int c[], int *ncandidatos)
+{
+c[0] = 1;
+c[1] = 0;
+ 
+*ncandidatos = 2;
+}
+ 
+void ProblemDataLoader::processar_solucao( int a[], int k, std::set< std::set<int> > *subCjts )
+{
+	int i; /* Contador */
+
+	std::set<int> cjt;
+	
+//	printf("{");
+	for (i=1; i<=k; i++)
+	{
+		if (a[i])
+		{
+			cjt.insert(i);
+//			printf(" %d", i);
+		}
+	}
+//	printf(" }\n");
+
+	subCjts->insert( cjt );
+
+}
+
+void ProblemDataLoader::backtrack(int a[], int k, int n, std::set< std::set<int> > *subCjts)
+{
+        int c[2];  /* Candidatos para a próxima posição */
+        int ncandidatos;       /* Número de candidatos para a próxima posição */
+        int i;                 /* Contador */
+        
+        if (eh_uma_solucao(a, k, n))
+        {
+                processar_solucao(a, k, subCjts);
+        }
+        else
+        {
+                k = k + 1;
+                construir_candidatos(a, k, n, c, &ncandidatos);
+                for (i=0; i<ncandidatos; i++)
+                {
+                        a[k] = c[i];
+                        backtrack(a, k, n, subCjts);
+                }
+        }
+}
+
+/*
+	Fim dos métodos de cálculo de subconjuntos 
+	-----------------------------------------------------------------------------
+*/

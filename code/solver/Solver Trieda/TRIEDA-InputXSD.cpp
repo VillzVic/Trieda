@@ -40,6 +40,8 @@
 
 #include "TRIEDA-InputXSD.h"
 
+#include <iostream>
+
 // ItemCalendario
 // 
 
@@ -15317,7 +15319,7 @@ TriedaInput_ (const ::std::string& u,
     (f & ::xml_schema::flags::keep_dom) == 0);
 
   ::xsd::cxx::tree::error_handler< char > h;
-
+  	
   ::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d (
     ::xsd::cxx::xml::dom::parse< char > (
       u, h, p, f));

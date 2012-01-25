@@ -1,4 +1,5 @@
 #include "SolverMIP.h"
+#include <math.h>
 
 /*==================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
@@ -665,8 +666,8 @@ void SolverMIP::converteCjtSalaEmSala()
    // POS PROCESSAMENTO
    // Convertendo as variáveis x_{i,d,u,tps,t} para x_{i,d,u,s,t}.
 
-   // PASSO 1: Criando uma estrutura que irá gerenciar os créditos livres para cada sala.
-   std::map< Sala *, std::vector< std::pair< int /*dia*/, int/*creds. Livres*/ > > > creditos_Livres_Sala;
+   // PASSO 1: Criando uma estrutura que irá gerenciar o tempo livre para cada sala.
+   std::map< Sala *, std::vector< std::pair< int /*dia*/, int/*minutos Livres*/ > > > tempo_Livre_Sala;
 
    // Inicializando a estrutura criada acima
    ITERA_GGROUP_LESSPTR( it_Campus, problemData->campi, Campus )
@@ -675,6 +676,14 @@ void SolverMIP::converteCjtSalaEmSala()
       {
          ITERA_GGROUP_LESSPTR( it_Sala, it_Unidade->salas, Sala )
          {
+            ITERA_GGROUP_N_PT( it_Dia, it_Sala->diasLetivos, int )
+			{
+				int dia = *it_Dia;
+				int minutosLivres = it_Sala->getTempoDispPorDia(dia);
+                
+				tempo_Livre_Sala[ *it_Sala ].push_back( std::make_pair( dia, minutosLivres ) );
+
+			/* //RETIRAR TRECHO ABAIXO QUANDO HORARIOS_DISPONIVEIS ESTIVER CORRETO
             ITERA_GGROUP( it_Creds_Disp, it_Sala->creditos_disponiveis, CreditoDisponivel )
             { 
                bool encontrou = false;
@@ -702,6 +711,7 @@ void SolverMIP::converteCjtSalaEmSala()
                      std::make_pair( it_Creds_Disp->getDiaSemana(),
                      it_Creds_Disp->getMaxCreditos() ) );
                }
+			   */
             }
          }
       }
@@ -717,7 +727,7 @@ void SolverMIP::converteCjtSalaEmSala()
    // heurística irá alocar as disicplinas.
    std::vector< std::pair< int/*Disc id*/, int/*Qtd salas associadas*/ > > disc_Salas_Cont;
 
-   // Adicionando as disicplinas que possuem alguma associação.
+   // Adicionando as disciplinas que possuem alguma associação.
    std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > >::iterator 
       it_Disc_Salas_Pref = problemData->disc_Salas_Pref.begin();
 
@@ -887,12 +897,12 @@ void SolverMIP::converteCjtSalaEmSala()
                it_Vars_x_Disc_Und_TPS_Turma->second.front()->getSubCjtSala()->salas.end() )
             {
                std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > > >::iterator
-                  it_Creditos_Livres_Sala = creditos_Livres_Sala.find( *it_Salas_Ordenadas );
+                  it_Tempo_Livre_Sala = tempo_Livre_Sala.find( *it_Salas_Ordenadas );
 
-               if ( it_Creditos_Livres_Sala == creditos_Livres_Sala.end() )
+               if ( it_Tempo_Livre_Sala == tempo_Livre_Sala.end() )
                {
                   std::cout << "Opa. Sala nao encontrada na estrutura\n"
-                            << "<creditos_Livres_Sala> (SolverMIP::converteCjtSalaEmSala()) !!!"
+                            << "<tempo_Livre_Sala> (SolverMIP::converteCjtSalaEmSala()) !!!"
                             << "\n\nSaindo." << std::endl;
 
                   exit( 1 );
@@ -907,16 +917,18 @@ void SolverMIP::converteCjtSalaEmSala()
                {
                   // Iterando nos dias disponiveis da sala
                   std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
-                     it_Dia = it_Creditos_Livres_Sala->second.begin();
+                     it_Dia = it_Tempo_Livre_Sala->second.begin();
 
-                  for (; it_Dia != it_Creditos_Livres_Sala->second.end(); ++it_Dia )
+                  for (; it_Dia != it_Tempo_Livre_Sala->second.end(); ++it_Dia )
                   {
-                     // Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
-                     // nao possua a qtd de creditos livres necessaria, posso parar de tentar
-                     // alocar nessa sala.
+                     // Se encontrei o dia, testo se tem o tempo livre necessario. Caso
+                     // nao possua, posso parar de tentar alocar nessa sala.
                      if ( it_Dia->first == ( *it_Dias_Demandados_Vars_x )->getDia() )
                      {
-                        if ( it_Dia->second >= ( *it_Dias_Demandados_Vars_x )->getValue() )
+						int tempoCredSL = ( *it_Dias_Demandados_Vars_x )->getDisciplina()->getTempoCredSemanaLetiva();
+						int nCreds = ( *it_Dias_Demandados_Vars_x )->getValue();
+
+                        if ( it_Dia->second >= nCreds*tempoCredSL )
                         {
                            // Nao faço nada aqui. A busca pelos outros dias continua.
                            // Apenas dou um break por eficiência
@@ -965,15 +977,18 @@ void SolverMIP::converteCjtSalaEmSala()
 
                      // Iterando nos dias disponiveis da sala
                      std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
-                        it_Dia = it_Creditos_Livres_Sala->second.begin();
+                        it_Dia = it_Tempo_Livre_Sala->second.begin();
 
-                     for (; it_Dia != it_Creditos_Livres_Sala->second.end(); it_Dia++ )
+                     for (; it_Dia != it_Tempo_Livre_Sala->second.end(); it_Dia++ )
                      {
                         // Quando encontro o dia correto, atualizo
-                        // a estrutura que armazena  os créditos livres.
+                        // a estrutura que armazena os créditos livres.
                         if ( it_Dia->first == ( *it_Dias_Demandados_Vars_x )->getDia() )
                         {
-                           it_Dia->second -= (int) ( *it_Dias_Demandados_Vars_x )->getValue();
+							int tempoCredSL = ( *it_Dias_Demandados_Vars_x )->getDisciplina()->getTempoCredSemanaLetiva();
+							int nCreds = ( *it_Dias_Demandados_Vars_x )->getValue();
+
+                           it_Dia->second -= (tempoCredSL*nCreds);
 
                            // Apenas por eficiência
                            break;
@@ -1062,12 +1077,12 @@ void SolverMIP::converteCjtSalaEmSala()
                      ( *it_Salas_Ordenadas )->getId() ) != 
                      it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getSubCjtSala()->salas.end() )
                   {
-                     std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > > >::iterator
-                        it_Creditos_Livres_Sala = creditos_Livres_Sala.find( *it_Salas_Ordenadas );
+                     std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*minutos Livres*/ > > >::iterator
+                        it_Tempo_Livre_Sala = tempo_Livre_Sala.find( *it_Salas_Ordenadas );
 
-                     if ( it_Creditos_Livres_Sala == creditos_Livres_Sala.end() )
+                     if ( it_Tempo_Livre_Sala == tempo_Livre_Sala.end() )
                      {
-                        std::cout << "Opa. Sala nao encontrada na estrutura <creditos_Livres_Sala>\n"
+                        std::cout << "Opa. Sala nao encontrada na estrutura <tempo_Livre_Sala>\n"
                                   << "(SolverMIP::converteCjtSalaEmSala()) !!!\n"
                                   << "\n\nSaindo." << std::endl;
 
@@ -1078,26 +1093,28 @@ void SolverMIP::converteCjtSalaEmSala()
                      // questão é compatível com o dia disponível da sala.
 
                      // Iterando nos dias disponiveis da sala
-                     std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
-                        it_Dia = it_Creditos_Livres_Sala->second.begin();
+                     std::vector< std::pair< int /*dia*/, int /*minutos Livres*/ > >::iterator
+                        it_Dia = it_Tempo_Livre_Sala->second.begin();
 
-                     for (; it_Dia != it_Creditos_Livres_Sala->second.end(); it_Dia++ )
+                     for (; it_Dia != it_Tempo_Livre_Sala->second.end(); it_Dia++ )
                      {
-                        // Se encontrei o dia, testo se tem a qtd de creds livres necessaria. Caso
-                        // nao possua a qtd de creditos livres necessaria, posso parar de tentar
-                        // alocar nessa sala.
+                        // Se encontrei o dia, testo se tem o tempo livre necessario. Caso
+                        // nao possua, posso parar de tentar alocar nessa sala.
 
                         if ( it_Dia->first == it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getDia() )
                         {
-                           if ( it_Dia->second >= ( (int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue() ) )
+							int tempoCredSL = it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getDisciplina()->getTempoCredSemanaLetiva();
+							int nCreds = it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue();
+
+                           if ( it_Dia->second >= tempoCredSL*nCreds )
                            {
                               // Já posso alocar. Pois trata-se de apenas um dia.
 
                               // Setando a sala na variavel
                               it_Vars_x_Disc_Und_TPS_Turma_DIA->second->setSala( *it_Salas_Ordenadas );
 
-                              // Atualizo a estrutura que armazena os créditos livres.
-                              it_Dia->second -= (int) it_Vars_x_Disc_Und_TPS_Turma_DIA->second->getValue();
+                              // Atualizo a estrutura que armazena o tempo livre.
+                              it_Dia->second -= tempoCredSL*nCreds;
                               it_Salas_Ordenadas = salas_Ordenadas.begin();
 
                               alocou = true;
@@ -1156,13 +1173,13 @@ void SolverMIP::converteCjtSalaEmSala()
                         if ( pt_Var_x->getSubCjtSala()->salas.find( ( *it_Salas_Ordenadas )->getId() ) != 
                              pt_Var_x->getSubCjtSala()->salas.end() )
                         {
-                           std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > > >::iterator
-                              it_Creditos_Livres_Sala = creditos_Livres_Sala.find( *it_Salas_Ordenadas );
+                           std::map< Sala *, std::vector< std::pair< int /*dia*/, int /*minutos Livres*/ > > >::iterator
+                              it_Tempo_Livre_Sala = tempo_Livre_Sala.find( *it_Salas_Ordenadas );
 
-                           if ( it_Creditos_Livres_Sala == creditos_Livres_Sala.end() )
+                           if ( it_Tempo_Livre_Sala == tempo_Livre_Sala.end() )
                            {
                               std::cout << "Opa. Sala nao encontrada na estrutura\n"
-                                        << "<creditos_Livres_Sala>\n"
+                                        << "<tempo_Livre_Sala>\n"
                                         << "(SolverMIP::converteCjtSalaEmSala()) !!!"
                                         << "\n\nSaindo." << std::endl;
 
@@ -1170,54 +1187,59 @@ void SolverMIP::converteCjtSalaEmSala()
                            }
 
                            // Iterando nos dias disponiveis da sala
-                           std::vector< std::pair< int /*dia*/, int /*creds. Livres*/ > >::iterator
-                              it_Dia = ( it_Creditos_Livres_Sala->second.begin() );
+                           std::vector< std::pair< int /*dia*/, int /*minutos Livres*/ > >::iterator
+                              it_Dia = ( it_Tempo_Livre_Sala->second.begin() );
 
-                           for (; it_Dia != it_Creditos_Livres_Sala->second.end(); it_Dia++ )
+                           for (; it_Dia != it_Tempo_Livre_Sala->second.end(); it_Dia++ )
                            {
-                              // Se encontrei o dia, testo se tem a qtd de creds
-                              // livres necessaria. Caso nao possua a qtd de creditos
-                              // livres necessaria, posso parar de tentar alocar nessa sala.
+                              // Se encontrei o dia, testo se tem tempo
+                              // livre necessario. Caso nao possua, posso parar de tentar alocar nessa sala.
                               if ( it_Dia->first == pt_Var_x->getDia() )
                               {
                                  if ( it_Dia->second > 0 )
                                  {
                                     // Já posso alocar. Pois trata-se de apenas um dia.
+							
+									int tempoCredSL = pt_Var_x->getDisciplina()->getTempoCredSemanaLetiva();
+									int nCreds = pt_Var_x->getValue();
 
-                                    // Cálculo do total de créditos que serão alocados.
-                                    int creds_Alocar = (int)( pt_Var_x->getValue() - it_Dia->second );
+                                    // Cálculo do total de tempo a ser alocado.
+                                    int tempo_Alocar = (int)( tempoCredSL*nCreds - it_Dia->second );
 
                                     // Criando uma nova variável para uma divisão da variável em questão.
                                     Variable * var_x_NAO_ALOCADA = NULL;
 
                                     // Se o total de créditos a serem alocados for maior do que a 
-                                    // o total de crédtios livres da sala (creds_Alocar > 0), devo
+                                    // o total de crédtios livres da sala (tempo_Alocar > 0), devo
                                     // criar uma cópia da variável 'x' em questão e atualizar o seu
                                     // valor com a diferença entre o total de créditos da var subtraido
                                     // do total de cred. livre da sala. Já no caso em que o total de
                                     // créditos alocados é menor ou igual ao total de créditos livres
-                                    // da sala em questão (creds_Alocar <= 0), devo apenas alocar.
+                                    // da sala em questão (tempo_Alocar <= 0), devo apenas alocar.
 
-                                    if ( creds_Alocar > 0 )
+                                    if ( tempo_Alocar > 0 )
                                     {
+									   // Numero de creditos em excesso, que nao poderao ser alocados
+									   int excessoCreds = ceil( (double) tempo_Alocar/tempoCredSL );
+
                                        // Criando uma nova variável para a divisão da variável em questão.
                                        var_x_NAO_ALOCADA = new Variable( *pt_Var_x );
 
                                        // Atualizando a quantidade de créditos não alocada.
-                                       var_x_NAO_ALOCADA->setValue( pt_Var_x->getValue() - creds_Alocar );
+                                       var_x_NAO_ALOCADA->setValue( excessoCreds ); //TODO: conferir o valor, originalmente estava diferente
 
                                        // Adicionando a nova variável à estrutura <vars_x>
                                        vars_x.push_back( var_x_NAO_ALOCADA );
 
                                        // Atualizando o valor da variável a ser atendida.
-                                       pt_Var_x->setValue( creds_Alocar );
+                                       pt_Var_x->setValue( nCreds - excessoCreds ); //TODO: conferir o valor, originalmente estava diferente
                                     }
 
                                     // Setando a sala na variavel
                                     pt_Var_x->setSala( *it_Salas_Ordenadas );
 
-                                    // Atualizo a estrutura que armazena os créditos livres.
-                                    it_Dia->second -= (int) pt_Var_x->getValue();
+                                    // Atualizo a estrutura que armazena o tempo livre.
+                                    it_Dia->second -= (int) nCreds;
 
                                     // Checando se ainda existe algum crédito para alocar.
                                     if ( var_x_NAO_ALOCADA )
@@ -2128,7 +2150,7 @@ int SolverMIP::solve()
 
       carregaVariaveisSolucaoTatico();
       converteCjtSalaEmSala();
-	   separaDisciplinasEquivalentes();
+	  separaDisciplinasEquivalentes();
    }
    else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
    {
@@ -2137,8 +2159,7 @@ int SolverMIP::solve()
       if ( problemData->atendimentosTatico != NULL
             && problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP( itAtTat,
-            ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
+         ITERA_GGROUP( itAtTat, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
          { 
             Campus * campus = problemData->refCampus[ itAtTat->getCampusId() ];
 
@@ -2149,8 +2170,7 @@ int SolverMIP::solve()
             atCampus->setCampusId( campus->getCodigo() );
             atCampus->campus = campus;
 
-            ITERA_GGROUP( itAtUnd,
-               itAtTat->atendimentosUnidades, AtendimentoUnidadeSolucao )
+            ITERA_GGROUP( itAtUnd, itAtTat->atendimentosUnidades, AtendimentoUnidadeSolucao )
             {
                Unidade * unidade = problemData->refUnidade[ itAtUnd->getUnidadeId() ];
 
@@ -2505,8 +2525,8 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
                         atendimento_oferta->disciplina = aula->getDisciplina();
                         atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
                         atendimento_oferta->setTurma( aula->getTurma() );
-                        atendimento_oferta->setQuantidade( aula->getQuantidade() );
-
+                        atendimento_oferta->setQuantidade( aula->getQuantidadePorOft(oferta) );
+						
                         char id_oferta_char[ 200 ];
                         sprintf( id_oferta_char, "%d", oferta->getId() );
                         std::string id_oferta_str = std::string( id_oferta_char );
@@ -2738,7 +2758,7 @@ void SolverMIP::criaVariaveisAlunosDisciplinasSubstituidas()
             alunos_atendidos += (int)( v->getValue() );
          }
 
-         // Primeiramente, devo atender todos a demanda da disciplina
+         // Primeiramente, devo atender toda a demanda da disciplina
          // 'disciplina_substituta', e em seguida alocar a demanda de
          // alunos das suas disciplinas equivalentes, enquanto for possível
          Demanda * demanda_substituta
@@ -2931,7 +2951,7 @@ void SolverMIP::criaVariaveisCreditosDisciplinasSubstituidas()
                   // na verdade foi criada para representar a disciplina 'disciplina_equivalente'
                   Variable v_temp = ( *it_variable );
 
-                  // Criando uma nova  variável 'x' (créditos) para a disciplina equivalente
+                  // Criando uma nova variável 'x' (créditos) para a disciplina equivalente
                   Campus * campus_creditos = v_temp.getCampus();
                   Unidade * unidade_creditos = v_temp.getUnidade();
                   ConjuntoSala * cjtSala_creditos = v_temp.getSubCjtSala();
@@ -3434,6 +3454,13 @@ int SolverMIP::cria_variaveis()
    numVarsAnterior = num_vars;
 #endif
 
+   num_vars += cria_variavel_maxCreds_combin_sl(); // cs
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars \"cs\": " << (num_vars - numVarsAnterior) << std::endl;
+   numVarsAnterior = num_vars;
+#endif   
+
    return num_vars;
 }
 
@@ -3536,7 +3563,7 @@ int SolverMIP::cria_variavel_creditos( void )
                            if ( problemData->parametros->funcao_objetivo == 0 )
                            {
                               OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0,
-                                 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+								  itCjtSala->maxCredsDiaPorSL( *itDiscSala_Dias, v.getDisciplina()->getTempoCredSemanaLetiva() ),
                                  ( char * )v.toString().c_str() );
 
                               lp->newCol( col );
@@ -3545,7 +3572,7 @@ int SolverMIP::cria_variavel_creditos( void )
                               || problemData->parametros->funcao_objetivo == 2 )
                            {
                               OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
-                                 itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+                                 itCjtSala->maxCredsDiaPorSL( *itDiscSala_Dias, v.getDisciplina()->getTempoCredSemanaLetiva() ),
                                  ( char * )v.toString().c_str() );
 
                               lp->newCol( col );
@@ -3577,7 +3604,7 @@ int SolverMIP::cria_variavel_creditos( void )
                            vHash[ v ] = lp->getNumCols();
 
                            OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0,
-                                        itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+                                        itCjtSala->maxCredsDiaPorSL( *itDiscSala_Dias, v.getDisciplina()->getTempoCredSemanaLetiva() ),
                                         ( char * )v.toString().c_str() );
 
                            lp->newCol( col );
@@ -6669,7 +6696,7 @@ int SolverMIP::cria_variavel_creditos_oferta( void )
 							vHash[ v ] = lp->getNumCols();
 
 							OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
-										itCjtSala->maxCredsDia( *itDiscSala_Dias ),
+										itCjtSala->maxCredsDiaPorSL( *itDiscSala_Dias, v.getDisciplina()->getTempoCredSemanaLetiva() ),
 										( char * )v.toString().c_str() );
 
 							lp->newCol( col );
@@ -6846,7 +6873,7 @@ int SolverMIP::cria_variavel_creditos_parOferta()
 										  vHash[v] = lp->getNumCols();
 
 										  OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0,
-											   		   itCjtSalaCompart->maxCredsDia( *itDia ),
+											   		   itCjtSalaCompart->maxCredsDiaPorSL( *itDia, v.getDisciplina()->getTempoCredSemanaLetiva() ),
 													   (char*)v.toString().c_str() );
 
 										  lp->newCol( col );
@@ -6919,8 +6946,63 @@ int SolverMIP::cria_variavel_min_hor_disc_oft_dia()
    return num_vars;
 }
 
+// cs_{s,t,k}
+int SolverMIP::cria_variavel_maxCreds_combin_sl(void)
+{
+   int num_vars = 0;
 
+   // Metodo somente utilizado quando há 2 semanas letivas
+   if ( problemData->calendarios.size() != 2 )
+   {
+	   return num_vars;
+   }
 
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+   {
+      ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+         {
+			std::map< int, Sala * >::iterator itSala = itCjtSala->salas.begin();
+			for( ; itSala != itCjtSala->salas.end(); itSala++ )
+			{
+				Sala *s = itSala->second;
+
+				ITERA_GGROUP_N_PT( itDia, s->diasLetivos, int )
+				{
+					int dia = *itDia;
+
+					std::map< Trio<int, int, Calendario*>, int >::iterator it_map = s->combinaCredSL.begin();
+					for ( ; it_map != s->combinaCredSL.end(); it_map++ )
+					{
+						if ( it_map->first.first == dia )
+						{
+							Variable v;
+							v.reset();
+							v.setType( Variable::V_COMBINA_SL );
+							v.setSala( s );
+							v.setDia( dia );
+							v.setCombinaSL( it_map->first.second );
+
+							if ( vHash.find( v ) == vHash.end() )
+							{
+								vHash[v] = lp->getNumCols();
+						   
+								OPT_COL col( OPT_COL::VAR_BINARY, 0.0, 0.0, 1.0, (char*)v.toString().c_str() );
+
+								lp->newCol( col );
+								num_vars++;
+							}
+						}
+					}
+				}
+			}
+		 }
+	  }
+   }
+
+   return num_vars;
+}
 
 // ==============================================================
 //							CONSTRAINTS
@@ -6941,10 +7023,19 @@ int SolverMIP::cria_restricoes( void )
    numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_max_cred_sd();					// Restricao 1.2.3
+   restricoes += cria_restricao_max_tempo_sd();					// Restricao 1.2.3.a
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.3\": " << (restricoes - numRestAnterior) << std::endl;
+   std::cout << "numRest \"1.2.3.a\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+     
+   restricoes += cria_restricao_max_tempo_s_t_SL();
+
+//   restricoes += cria_restricao_max_tempo_s_d_SL();				// Restricao 1.2.3.b
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.3.b\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
 
@@ -7225,6 +7316,13 @@ int SolverMIP::cria_restricoes( void )
    std::cout << "numRest \"1.2.46, 1.2.47, 1.2.48\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif
+   
+   restricoes += cria_restricao_ativacao_var_cs(); // Restricao 1.2.49
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.2.49\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif
 
    return restricoes;
 }
@@ -7372,17 +7470,19 @@ int SolverMIP::cria_restricao_carga_horaria(void)
    return restricoes;
 }
 
+
+
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Constraint 
-Máximo de créditos por sala e dia
+Máximo de tempo por sala e dia
 %Desc 
 
 %MatExp
 
 \begin{eqnarray}
-\sum\limits_{d \in D}\sum\limits_{i \in I_{d}} x_{i,d,u,tps,t} \leq  HTPS_{t,tps} \nonumber \qquad 
+\sum\limits_{d \in D}\sum\limits_{i \in I_{d}} sl_{d}x_{i,d,u,tps,t} \leq  HTPS_{t,tps} \nonumber \qquad 
 \forall u \in U \quad
 \forall tps \in SCAP_{u} \quad
 \forall t \in T
@@ -7390,14 +7490,20 @@ Máximo de créditos por sala e dia
 
 %Data HTPS_{t,tps}
 %Desc
-máximo de créditos permitidos por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
+máximo de tempo permitido por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
 
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_max_cred_sd( void )
+int SolverMIP::cria_restricao_max_tempo_sd( void )
 {
    int restricoes = 0;
+
+   // Metodo somente utilizado quando há 1 semana letiva
+   if ( problemData->calendarios.size() != 1 )
+   {
+	   return restricoes;
+   }
 
    int nnz;
    char name[ 100 ];
@@ -7421,8 +7527,7 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
             std::map< Disciplina *, GGroup< int > >::iterator
                it_disc_dias = itCjtSala->dias_letivos_disciplinas.begin();
 
-            for (; it_disc_dias != itCjtSala->dias_letivos_disciplinas.end();
-               it_disc_dias++ )
+            for (; it_disc_dias != itCjtSala->dias_letivos_disciplinas.end(); it_disc_dias++ )
             {
                // Verifica se a disciplina foi substituída
                disciplina = it_disc_dias->first;
@@ -7442,11 +7547,10 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
                GGroup< int >::iterator itDiasLetCjtSala =
                   it_disc_dias->second.begin();
 
-               for (; itDiasLetCjtSala != it_disc_dias->second.end();
-                  itDiasLetCjtSala++ )
+               for (; itDiasLetCjtSala != it_disc_dias->second.end(); itDiasLetCjtSala++ )
                {
                   c.reset();
-                  c.setType( Constraint::C_MAX_CREDITOS_SD );
+                  c.setType( Constraint::C_MAX_TEMPO_SD );
 
                   c.setUnidade( *itUnidade );
                   c.setSubCjtSala( *itCjtSala );
@@ -7467,11 +7571,24 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
                      }
                   }
 
-                  int maxCreds = itCjtSala->maxCredsPermitidos( *itDiasLetCjtSala );
-                  OPT_ROW row( nnz, OPT_ROW::LESS , maxCreds, name );
+                  int HTPS = itCjtSala->maxTempoPermitidoPorDia( *itDiasLetCjtSala );
+                  OPT_ROW row( nnz, OPT_ROW::LESS , HTPS, name );
 
                   ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
                   {
+ 					 #pragma region Equivalência de disciplinas
+  					 std::pair< Curso *, Curriculo * > curso_curriculo
+ 				 		= problemData->map_Disc_CursoCurriculo[ *itDisc ];
+				 	 Curso* curso = curso_curriculo.first;
+					 Curriculo* curriculo = curso_curriculo.second;
+
+	 				 Disciplina* disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, *itDisc );
+					 if ( disciplina_equivalente != NULL )
+					 {
+					 	 continue;
+					 }
+					 #pragma endregion
+
                      for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
                      {
                         v.reset();
@@ -7486,7 +7603,7 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
                         it_v = vHash.find( v );
                         if( it_v != vHash.end() )
                         {
-                           row.insert( it_v->second, 1.0 );
+							row.insert( it_v->second, itDisc->getTempoCredSemanaLetiva() );
                         }
                      }
                   }
@@ -7507,6 +7624,331 @@ int SolverMIP::cria_restricao_max_cred_sd( void )
 
    return restricoes;
 }
+
+
+
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+Máximo de tempo por sala, dia e semana letiva
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+\sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} x_{i,d,u,tps,t} \leq  HTPS_{t,tps} \nonumber \qquad 
+\forall u \in U \quad
+\forall tps \in SCAP_{u} \quad
+\forall t \in T \quad
+\forall sl \in SL
+\end{eqnarray}
+
+%Data HTPS_{t,tps}
+%Desc
+máximo de tempo da semana letiva $sl$ permitidos por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
+
+%DocEnd
+/====================================================================*/
+/*
+int SolverMIP::cria_restricao_max_tempo_s_d_SL( void )
+{
+   int restricoes = 0;
+
+   int nnz;
+   char name[ 100 ];
+
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   Curso * curso = NULL;
+   Curriculo * curriculo = NULL;
+   Disciplina * disciplina = NULL;
+
+   GGroup<int> temposSL; // lista os tempos de duracao de 1 credito existentes (para o caso de haver mais de 1 semana letiva)
+   ITERA_GGROUP_LESSPTR( itCalendario, problemData->calendarios, Calendario )
+   {
+	   int tempoAula = itCalendario->getTempoAula();
+	   if ( temposSL.find(tempoAula) == temposSL.end() )
+		   temposSL.add(tempoAula);
+   }
+
+   //  Cria restricoes
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+   {
+      ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+         {
+			ITERA_GGROUP_N_PT( it_sl, temposSL, int )
+			{
+				int tempoAulaSL = *it_sl;
+
+				//////////////////////////////////////////////////////////////////////
+				// Percorre cada disciplina do conjunto de salas
+				 std::map< Disciplina *, GGroup< int > >::iterator
+				 it_disc_dias = itCjtSala->dias_letivos_disciplinas.begin();
+
+				for (; it_disc_dias != itCjtSala->dias_letivos_disciplinas.end(); it_disc_dias++ )
+				{					
+					disciplina = it_disc_dias->first;
+
+					if ( disciplina->getTempoCredSemanaLetiva() != tempoAulaSL )
+					{ 
+						continue;
+					}
+
+					std::pair< Curso *, Curriculo * > curso_curriculo
+						= problemData->map_Disc_CursoCurriculo[ disciplina ];
+					curso = curso_curriculo.first;
+					curriculo = curso_curriculo.second;
+
+					// Verifica se a disciplina foi substituída
+					if ( problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina ) != NULL )
+					{
+						// Como a disciplina foi substituída, não percorremos os dias letivos da mesma
+						continue;
+					}
+
+					GGroup< int >::iterator itDiasLetCjtSala = it_disc_dias->second.begin();
+
+					for (; itDiasLetCjtSala != it_disc_dias->second.end(); itDiasLetCjtSala++ )
+					{
+						c.reset();
+						c.setType( Constraint::C_MAX_TEMPO_S_D_SL );
+
+			            c.setUnidade( *itUnidade );
+						c.setSubCjtSala( *itCjtSala );
+						c.setDia( *itDiasLetCjtSala );
+						c.setSemanaLetiva( tempoAulaSL );
+
+						sprintf( name, "%s", c.toString().c_str() );
+						if ( cHash.find( c ) != cHash.end() )
+						{
+							continue;
+						}
+
+						nnz = 0;
+						ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
+						{
+							if ( itDisc->getNumTurmas() >= 0 )
+							{
+								nnz += ( itDisc->getNumTurmas() );
+							}
+						}
+
+						int HTPS = itCjtSala->maxTempoPermitidoPorDiaPorSL( *itDiasLetCjtSala, tempoAulaSL );
+						OPT_ROW row( nnz, OPT_ROW::LESS , HTPS, name );
+
+						ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
+						{
+							if ( itDisc->getTempoCredSemanaLetiva() != tempoAulaSL )
+							{	// Se a disciplina nao pertencer 'a semana letiva corrente, vai para a proxima.
+								continue;
+							}
+							for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
+							{
+								v.reset();
+								v.setType( Variable::V_CREDITOS );
+
+								v.setTurma( turma );
+								v.setUnidade( *itUnidade );
+								v.setDisciplina( *itDisc );
+								v.setSubCjtSala( *itCjtSala );
+								v.setDia( *itDiasLetCjtSala );
+
+								it_v = vHash.find( v );
+								if( it_v != vHash.end() )
+								{
+									row.insert( it_v->second, itDisc->getTempoCredSemanaLetiva() );
+								}
+							}
+						}
+
+						if ( row.getnnz() != 0 )
+						{
+							cHash[ c ] = lp->getNumRows();
+							lp->addRow( row );
+							restricoes++;
+						}
+					}
+				}
+				//////////////////////////////////////////////////////////////////////
+			}
+         }
+      }
+   }
+
+   return restricoes;
+}
+*/
+
+
+
+
+/*====================================================================/
+%DocBegin TRIEDA_LOAD_MODEL
+
+%Constraint 
+Máximo de tempo por sala, dia e semana letiva, de acordo com a divisao
+de horarios por semana letiva escolhida.
+%Desc 
+
+%MatExp
+
+\begin{eqnarray}
+
+\sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} x_{i,d,u,s,t} \leq  \sum\limits_{k \in CS_{k}}( Q_{sl,k,s,t} \cdot cs_{s,t,k} ) \nonumber \qquad
+
+\forall u \in U \quad
+\forall s \in S_{u} \quad
+\forall t \in T \quad
+\forall sl \in SL
+\end{eqnarray}
+
+%Data Q_{sl,t,s,k}
+%Desc
+máximo de tempo da semana letiva $sl$ permitidos por dia $t$
+para a sala $s$, na divisão de horarios k.
+
+%DocEnd
+/====================================================================*/
+
+int SolverMIP::cria_restricao_max_tempo_s_t_SL( void )
+{
+   int restricoes = 0;
+
+   // Metodo somente utilizado quando há 2 semanas letivas
+   if ( problemData->calendarios.size() != 2 )
+   {
+	   return restricoes;
+   }
+
+   char name[ 100 ];
+   Constraint c;
+   Variable v;
+   VariableHash::iterator it_v;
+
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+   {
+      ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+         {
+			std::map< int, Sala * >::iterator itSala = itCjtSala->salas.begin();
+			for( ; itSala != itCjtSala->salas.end(); itSala++ )
+			{
+				Sala *s = itSala->second;
+
+				ITERA_GGROUP_N_PT( itDia, s->diasLetivos, int )
+				{
+					int dia = *itDia;
+				
+					ITERA_GGROUP_LESSPTR( it_Sl, problemData->calendarios, Calendario )
+					{
+						//  Cria restrição
+						c.reset();
+						c.setType( Constraint::C_MAX_TEMPO_S_D_SL );
+						c.setUnidade( *itUnidade );
+						c.setSubCjtSala( *itCjtSala );
+						c.setDia( dia );
+						c.setSemanaLetiva( *it_Sl );
+
+						sprintf( name, "%s", c.toString().c_str() );
+						if ( cHash.find( c ) != cHash.end() )
+						{
+							continue;
+						}
+
+						int nnz = 100;
+					
+						OPT_ROW row( nnz, OPT_ROW::LESS , 0, name );
+
+						ITERA_GGROUP( itDisc, s->disciplinasAssociadas, Disciplina )
+						{
+							Disciplina *disciplina = *itDisc;
+
+							GGroup< std::pair<Curso*, Curriculo*> > cursos_curriculos = 
+								problemData->retornaCursosCurriculosDisciplina( disciplina );
+
+							if ( cursos_curriculos.size() == 0 )
+							{
+								continue;
+							}
+
+							Curso * curso = (*cursos_curriculos.begin()).first;
+							Curriculo * curriculo = (*cursos_curriculos.begin()).second;
+
+							// Verifica se é a semana letiva corrente
+							if ( curriculo->calendario != *it_Sl )
+							{
+								continue;
+							}
+
+							// Verifica se a disciplina foi substituída
+							if ( problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina ) != NULL )
+							{
+								continue;
+							}
+						
+							for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+							{
+								v.reset();
+								v.setType( Variable::V_CREDITOS );
+								v.setTurma( turma );
+								v.setUnidade( *itUnidade );
+								v.setDisciplina( disciplina );
+								v.setSubCjtSala( *itCjtSala );
+								v.setDia( dia );
+
+								it_v = vHash.find( v );
+								if( it_v != vHash.end() )
+								{
+									row.insert( it_v->second, 1 );
+								}
+							}
+						}
+						std::map< Trio<int, int, Calendario*>, int >::iterator it_map = s->combinaCredSL.begin();
+						for ( ; it_map != s->combinaCredSL.end(); it_map++  )
+						{
+							if ( it_map->first.first == dia && it_map->first.third == *it_Sl )
+							{
+								v.reset();
+								v.setType( Variable::V_COMBINA_SL );
+								v.setSala( s );
+								v.setDia( dia );
+								v.setCombinaSL( it_map->first.second );
+
+								it_v = vHash.find( v );
+								if( it_v != vHash.end() )
+								{
+									int coef = s->getNroCredCombinaSL( it_map->first.second, *it_Sl, dia );
+
+									row.insert( it_v->second, -coef );
+								}
+							}
+						}
+					
+						if ( row.getnnz() != 0 )
+						{
+							cHash[ c ] = lp->getNumRows();
+							lp->addRow( row );
+							restricoes++;
+						}
+					}
+				}
+			}
+         }
+      }
+   }
+
+   return restricoes;
+}
+
+
+
 
 /*====================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
@@ -7749,7 +8191,7 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
 
                         nnz = 2;
 
-                        OPT_ROW row( nnz, OPT_ROW::GREATER , 0.0, name );
+                        OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
 
                         v.reset();
                         v.setType(Variable::V_OFERECIMENTO);
@@ -7764,7 +8206,7 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
                         if( it_v != vHash.end() )
                         {
                            row.insert( it_v->second,
-                              ( disciplina->getCredPraticos() + 
+                              -( disciplina->getCredPraticos() + 
                               disciplina->getCredTeoricos() ) );
                         }
 
@@ -7780,7 +8222,7 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
                         it_v = vHash.find( v );
                         if ( it_v != vHash.end() )
                         {
-                           row.insert( it_v->second, -1.0 );
+                           row.insert( it_v->second, 1.0 );
                         }
 
                         if ( row.getnnz() != 0 )
@@ -8504,7 +8946,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
                            {
                               if ( ( *itDiasLetCampus ) == ( *itDiasLetCjtSala ) )
                               {
-                                 cred_dia = itCjtSala->maxCredsDia( *itDiasLetCjtSala );
+                                 cred_dia = itCjtSala->maxCredsDiaPorSL( *itDiasLetCjtSala, v.getDisciplina()->getTempoCredSemanaLetiva() );
                                  maxCredsSalaDia = ( maxCredsSalaDia < cred_dia ? cred_dia : maxCredsSalaDia );
                               }
                            }
@@ -8725,7 +9167,7 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
 
                      // 1.2.13
                      // Limite de créditos diários de disciplina (*)
-                     int maximo_creditos = itCjtSala->maxCredsDia( *itDiscSala_Dias );
+                     int maximo_creditos = itCjtSala->maxCredsDiaPorSL( *itDiscSala_Dias, disciplina->getTempoCredSemanaLetiva() );
                      int maximo_creditos_fixacao
                         = problemData->creditosFixadosDisciplinaDia( disciplina, *itDiscSala_Dias, *itCjtSala );
 
@@ -9907,11 +10349,6 @@ int SolverMIP::cria_restricao_alunos_cursos_incompat(void)
    Variable v;
    VariableHash::iterator it_v;
 
-   Disciplina * disciplina_equivalente = NULL;
-
-   Curso * curso = NULL;
-   Curriculo * curriculo = NULL;
-
 	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
 	{
 		ITERA_GGROUP_LESSPTR( it1Cursos, problemData->cursos, Curso )
@@ -9927,18 +10364,32 @@ int SolverMIP::cria_restricao_alunos_cursos_incompat(void)
 
 				ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
 				{
-					int discId = itDisc->getId();
+					Disciplina *disciplina = *itDisc;
+
+					std::pair< Curso *, Curriculo * > curso_curriculo
+					   = problemData->map_Disc_CursoCurriculo[ disciplina ];
+					Curso *curso = curso_curriculo.first;
+					Curriculo *curriculo = curso_curriculo.second;
+
+					Disciplina * disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
+					if ( disciplina_equivalente != NULL )
+					{
+					   disciplina = disciplina_equivalente;
+					}
+
+					int discId = disciplina->getId();
 					
 					if ( !c1->possuiDisciplina(discId) || !c2->possuiDisciplina(discId) )
 						continue;
+					
 
-					for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
+					for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
 					{
 						c.reset();
 						c.setType( Constraint::C_ALUNOS_CURSOS_INCOMP );
 						c.setCampus( *itCampus );
 						c.setParCursos( std::make_pair( c1, c2 ) );
-						c.setDisciplina( *itDisc );
+						c.setDisciplina( disciplina );
 						c.setTurma( turma );
 
 						sprintf( name, "%s", c.toString().c_str() ); 
@@ -9955,7 +10406,7 @@ int SolverMIP::cria_restricao_alunos_cursos_incompat(void)
 						v.reset();
 						v.setType( Variable::V_ALOC_ALUNO );
 						v.setTurma( turma );
-						v.setDisciplina( *itDisc );
+						v.setDisciplina( disciplina );
 						v.setCurso( c1 );
 						v.setCampus( *itCampus );
 
@@ -9968,7 +10419,7 @@ int SolverMIP::cria_restricao_alunos_cursos_incompat(void)
 						v.reset();
 						v.setType( Variable::V_ALOC_ALUNO );
 						v.setTurma( turma );
-						v.setDisciplina( *itDisc );
+						v.setDisciplina( disciplina );
 						v.setCurso( c2 );
 						v.setCampus( *itCampus );
 
@@ -9981,7 +10432,7 @@ int SolverMIP::cria_restricao_alunos_cursos_incompat(void)
 						v.reset();
 						v.setType( Variable::V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT );
 						v.setTurma( turma );
-						v.setDisciplina( *itDisc );
+						v.setDisciplina( disciplina );
 						v.setParCursos( std::make_pair( c1, c2 ) );
 						v.setCampus( *itCampus );
 
@@ -11091,7 +11542,7 @@ Máximo de créditos diários do bloco
 
 %MatExp
 \begin{eqnarray}
-\sum\limits_{d \in D_{bc}} xm_{bc,d, t} \leq MAX \nonumber \qquad 
+\sum\limits_{d \in D_{bc}} xm_{bc,d, t} \leq MAX_CRED \nonumber \qquad 
 \forall bc \in B \quad
 \forall t \in T
 \end{eqnarray}
@@ -11117,10 +11568,8 @@ int SolverMIP::cria_restricao_max_creds_bloco_dia()
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
-      GGroup< int >::iterator itDiasLetBloco =
-         it_bloco->diasLetivos.begin();
-      for (; itDiasLetBloco != it_bloco->diasLetivos.end();
-         itDiasLetBloco++ )
+      GGroup< int >::iterator itDiasLetBloco = it_bloco->diasLetivos.begin();
+      for (; itDiasLetBloco != it_bloco->diasLetivos.end(); itDiasLetBloco++ )
       {
          c.reset();
          c.setType( Constraint::C_MAX_CREDS_BLOCO_DIA );
@@ -11331,23 +11780,22 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
    Disciplina * disciplina = NULL;
    Disciplina * disciplina_equivalente = NULL;
 
-   Curso * curso = NULL;
-   Curriculo * curriculo = NULL;
-
    ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
-
+	  
+	  #pragma region Equivalência de disciplinas
       std::pair< Curso *, Curriculo * > curso_curriculo
          = problemData->map_Disc_CursoCurriculo[ disciplina ];
-      curso = curso_curriculo.first;
-      curriculo = curso_curriculo.second;
+      Curso *curso = curso_curriculo.first;
+      Curriculo *curriculo = curso_curriculo.second;
 
       disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
       if ( disciplina_equivalente != NULL )
       {
          disciplina = disciplina_equivalente;
       }
+	  #pragma endregion
 
       ITERA_GGROUP_N_PT( itDiasLetDisc, disciplina->diasLetivos, int )
       {
@@ -11359,8 +11807,22 @@ int SolverMIP::cria_restricao_disciplinas_incompativeis()
 			{ 
 				continue;
 			}
-
+			
 			Disciplina * nova_disc = it_Ref_Disc->second;
+
+			#pragma region Equivalência de disciplinas
+			std::pair< Curso *, Curriculo * > curso_curriculo
+				= problemData->map_Disc_CursoCurriculo[ nova_disc ];
+			curso = curso_curriculo.first;
+			curriculo = curso_curriculo.second;
+
+			disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, nova_disc );
+			if ( disciplina_equivalente != NULL )
+			{
+				nova_disc = disciplina_equivalente;
+			}
+			#pragma endregion
+
 
             c.reset();
             c.setType( Constraint::C_DISC_INCOMPATIVEIS );
@@ -11793,7 +12255,7 @@ uma sala tenha horario sobreposto.
 \sum\limits_{u' \in U} \sum\limits_{d' \in oft1 U oft2} \sum\limits_{i' \in I_{d'}}( x_{i',d',u',s',t} ) +  x_{i,d,u,s,t}
 \leq Q_{bc,t} + M ( 2 - e_{i,d,oft1} - e_{i,d,oft2} ) \qquad 
 
-\forall d \in Intersecao das disciplinas das disciplinas das ofertas oft1 e oft2
+\forall d \in D_{oft1} \cap D_{oft2}
 \forall i \in I_{d}
 \forall u \in U
 \forall s \in S_{u}
@@ -11844,6 +12306,19 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 				Disciplina * discComum = problemData->retornaDisciplina( *it_discComum );
 				  
 				if (discComum == NULL) continue;
+
+				#pragma region Equivalência de disciplinas
+				std::pair< Curso *, Curriculo * > curso_curriculo
+					= problemData->map_Disc_CursoCurriculo[ discComum ];
+				curso = curso_curriculo.first;
+				curriculo = curso_curriculo.second;
+
+				disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, discComum );
+				if ( disciplina_equivalente != NULL )
+				{
+					discComum = disciplina_equivalente;
+				}
+				#pragma endregion
 				
 				GGroup<Oferta*, LessPtr<Oferta>> ofts1 = cp->retornaOfertasComCursoDisc( c1->getId(), discComum->getId() );
 				GGroup<Oferta*, LessPtr<Oferta>> ofts2 = cp->retornaOfertasComCursoDisc( c2->getId(), discComum->getId() );
@@ -11936,17 +12411,32 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 												// blocos curric que contêm discComum das duas ofertas, que
 												// pode ser dada na sala itCjtSala
 												ITERA_GGROUP_LESSPTR( it_uniao_disc, problemData->disciplinas, Disciplina )
-												{											
+												{													
+													Disciplina *disc = ( *it_uniao_disc );
+
+													#pragma region Equivalência de disciplinas
+													std::pair< Curso *, Curriculo * > curso_curriculo
+														= problemData->map_Disc_CursoCurriculo[ disc ];
+													curso = curso_curriculo.first;
+													curriculo = curso_curriculo.second;
+
+													disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disc );
+													if ( disciplina_equivalente != NULL )
+													{
+														disc = disciplina_equivalente;
+													}
+													#pragma endregion
+
 													// confere se a sala é apta a receber a disciplina
-													if ( itCjtSala->disciplinas_associadas.find( *it_uniao_disc ) ==
+													if ( itCjtSala->disciplinas_associadas.find( disc ) ==
 														 itCjtSala->disciplinas_associadas.end() )
 														continue;
 
-													if ( it_uniao_disc->getId() == discComum->getId() )
+													if ( disc->getId() == discComum->getId() )
 														continue;
 
-													int p1 = itOft1->periodoDisciplina( it_uniao_disc->getId() );
-													int p2 = itOft2->periodoDisciplina( it_uniao_disc->getId() );
+													int p1 = itOft1->periodoDisciplina( disc->getId() );
+													int p2 = itOft2->periodoDisciplina( disc->getId() );
 
 													if ( p1 != periodo1 && p2 != periodo2 )
 														   continue;	
@@ -11958,7 +12448,6 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													else if ( p1 == periodo1 ) oft = *itOft1;
 													else if ( p2 == periodo2 ) oft = *itOft2;
 
-													Disciplina *disc = ( *it_uniao_disc );
 
 													if ( ambos )
 													{														
@@ -12102,7 +12591,7 @@ Ativação da variável e
 %MatExp
 
 \begin{eqnarray}
-a_{i,d,oft} \leq M \cdot e_{i,d,oft} \nonumber \qquad 
+a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad 
 \forall i \in I_{d} \quad
 \forall d \in D_{oft} \quad
 \forall oft \in O
@@ -12134,6 +12623,17 @@ int SolverMIP::cria_restricao_ativacao_var_e()
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
 		    Disciplina * d = (*it_disc).second;
+
+			#pragma region Equivalência de disciplinas
+			Curso* curso = oft->curso;
+			Curriculo* curriculo = oft->curriculo;
+
+			Disciplina* disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, d );
+			if ( disciplina_equivalente != NULL )
+			{
+				d = disciplina_equivalente;
+			}
+			#pragma endregion
 			 
 		    for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
 		    {
@@ -12205,11 +12705,11 @@ Ativação da variável of
 \begin{eqnarray}
 	e_{i,d,oft1} \cdot e_{i,d,oft2} \eq of_{i,d,oft1,oft2} \qquad
 		 
-		 \eq  \qquad
+		 =  \qquad
 
-	e_{i,d,oft1} + e_{i,d,oft2} - 1 \leq of_{i,d,oft1,oft2} \qquad
-	of_{i,d,oft1,oft2} \leq e_{i,d,oft2}  \qquad
-	of_{i,d,oft1,oft2} \leq e_{i,d,oft1}   \qquad
+	e_{i,d,oft1} + e_{i,d,oft2} - 1 \le of_{i,d,oft1,oft2} \qquad
+	of_{i,d,oft1,oft2} \le e_{i,d,oft2}  \qquad
+	of_{i,d,oft1,oft2} \le e_{i,d,oft1}   \qquad
 
 \forall i \in I_{d} \quad
 \forall d \in D_{oft} \quad
@@ -12467,9 +12967,9 @@ Ativação da variável p
 	  
 	  \eq  \qquad
 
-	 p_{i,d,oft1,oft2,u,s,t} \leq M \cdot of_{i,d,oft1,oft2} \nonumber \qquad
-	 p_{i,d,oft1,oft2,u,s,t} \geq x_{i,d,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
-	 x_{i,d,u,s,t} \geq p_{i,d,oft1,oft2,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
+	 p_{i,d,oft1,oft2,u,s,t} \le M \cdot of_{i,d,oft1,oft2} \nonumber \qquad
+	 p_{i,d,oft1,oft2,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
+	 x_{i,d,u,s,t} \ge p_{i,d,oft1,oft2,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
 
 \forall i \in I_{d} \quad
 \forall d \in D_{oft} \quad
@@ -12515,7 +13015,20 @@ int SolverMIP::cria_restricao_ativacao_var_p()
             for (; it_discComum != it_cursoComp_disc->second.end(); ++it_discComum )
             {
 				Disciplina * discComum = problemData->retornaDisciplina( *it_discComum );
-				  
+													
+				#pragma region Equivalência de disciplinas
+				std::pair< Curso *, Curriculo * > curso_curriculo
+					= problemData->map_Disc_CursoCurriculo[ discComum ];
+				Curso* curso = curso_curriculo.first;
+				Curriculo* curriculo = curso_curriculo.second;
+
+				Disciplina* disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, discComum );
+				if ( disciplina_equivalente != NULL )
+				{
+					discComum = disciplina_equivalente;
+				}
+				#pragma endregion
+
 				if (discComum == NULL) continue;
 				
 				GGroup<Oferta*, LessPtr<Oferta>> ofts1 = cp->retornaOfertasComCursoDisc( c1->getId(), discComum->getId() );
@@ -12775,7 +13288,7 @@ Ativação da variável g
 
 \begin{eqnarray}
 	
-	 g_{d,oft,t} \geq \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
+	 g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
 
 \forall d \in D_{oft} \quad
 \forall oft \in O_{d}
@@ -12803,6 +13316,19 @@ int SolverMIP::cria_restricao_ativacao_var_g()
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
 		    Disciplina * d = (*it_disc).second;
+
+			#pragma region Equivalência de disciplinas
+			std::pair< Curso *, Curriculo * > curso_curriculo
+				= problemData->map_Disc_CursoCurriculo[ d ];
+			Curso* curso = curso_curriculo.first;
+			Curriculo* curriculo = curso_curriculo.second;
+
+			Disciplina* disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, d );
+			if ( disciplina_equivalente != NULL )
+			{
+				d = disciplina_equivalente;
+			}
+			#pragma endregion
 
 			// para cada unidade do campus de oft
 			ITERA_GGROUP_LESSPTR( itUnid, cp->unidades, Unidade )
@@ -12894,14 +13420,15 @@ int SolverMIP::cria_restricao_ativacao_var_g()
 %DocBegin TRIEDA_LOAD_MODEL
 
 %Constraint 
-Ativação da variável g
+Evita sobreposição de sala por turmas de uma mesma disciplina e mesmo bloco
+curricular
 %Desc 
 
 %MatExp
 
 \begin{eqnarray}
 	
-	 \sum\limits_{d \in D_{bc}} ( g_{d,oft,t} ) \leq MaxCred_{oft,t} \qquad
+	 \sum\limits_{d \in D_{bc}} ( g_{d,oft,t} ) \le MaxCred_{oft,t} \qquad
 
 \forall bc \in oft
 \forall oft \in O
@@ -13012,11 +13539,11 @@ Ativação da variável q
 	
 	 q_{i,d,oft,u,s,t} \eq x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber \qquad
 	  
-	  \eq  \qquad
+	  =  \qquad
 
-	 q_{i,d,oft,u,s,t} \leq M \cdot e_{i,d,oft} \nonumber \qquad
-	 q_{i,d,oft,u,s,t} \geq x_{i,d,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
-	 x_{i,d,u,s,t} \geq q_{i,d,oft,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
+	 q_{i,d,oft,u,s,t} \le M \cdot e_{i,d,oft} \nonumber \qquad
+	 q_{i,d,oft,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
+	 x_{i,d,u,s,t} \ge q_{i,d,oft,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
 
 \forall i \in I_{d} \quad
 \forall d \in D_{oft} \quad
@@ -13285,8 +13812,88 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 
 
 
-void SolverMIP::cria_solucao_inicial(
-   int cnt, int * indices, double * valores )
+int SolverMIP::cria_restricao_ativacao_var_cs(void)
+{
+   int restricoes = 0;
+
+   // Metodo somente utilizado quando há 2 semanas letivas
+   if ( problemData->calendarios.size() != 2 )
+   {
+	   return restricoes;
+   }
+
+   char name[ 100 ];   
+   VariableHash::iterator it_v;
+   Variable v;
+   Constraint c;
+
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+   {
+      ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+         {
+			std::map< int, Sala * >::iterator itSala = itCjtSala->salas.begin();
+			for( ; itSala != itCjtSala->salas.end(); itSala++ )
+			{
+				Sala *s = itSala->second;
+
+				ITERA_GGROUP_N_PT( itDia, s->diasLetivos, int )
+				{
+					int dia = *itDia;
+
+					c.reset();
+					c.setType( Constraint::C_VAR_CS );
+					c.setUnidade( *itUnidade );
+					c.setSubCjtSala( *itCjtSala );
+					c.setDia( dia );
+
+					sprintf( name, "%s", c.toString().c_str() );
+					if ( cHash.find( c ) != cHash.end() )
+					{
+						continue;
+					}
+
+					int nnz = s->getCombinaCredSLSize()[dia];
+					
+					OPT_ROW row( nnz, OPT_ROW::LESS , 1, name );
+
+					std::map< Trio<int, int, Calendario*>, int >::iterator it_map = s->combinaCredSL.begin();
+					for ( ; it_map != s->combinaCredSL.end(); it_map++ )
+					{
+						if ( it_map->first.first == dia )
+						{
+							v.reset();
+							v.setType( Variable::V_COMBINA_SL );
+							v.setSala( s );
+							v.setDia( dia );
+							v.setCombinaSL( it_map->first.second );
+
+							it_v = vHash.find( v );
+							if( it_v != vHash.end() )
+							{
+								row.insert( it_v->second, 1 );
+							}
+						}
+					}
+					
+					if ( row.getnnz() != 0 )
+					{
+						cHash[ c ] = lp->getNumRows();
+						lp->addRow( row );
+						restricoes++;
+					}
+				}
+			}
+		 }
+	  }
+   }
+   return restricoes;
+}
+
+
+
+void SolverMIP::cria_solucao_inicial( int cnt, int * indices, double * valores )
 {
    VariableHash::iterator itVHash = vHash.begin();
 
@@ -15133,16 +15740,24 @@ int SolverMIP::criaRestricaoSalaHorario()
 
                if (  vOp.getType() != VariableOp::V_X_PROF_AULA_HOR
                   || vOp.getSala() != sala 
-                  || vOp.getDia() != dia_semana )
+                  || vOp.getDia() != dia_semana
+				  || sala->disciplinasAssociadas.find( vOp.getDisciplina() ) ==  sala->disciplinasAssociadas.end() )
                {
                   continue;
                }
 
-			   int idxHor2 = problemData->getHorarioDiaIdx( vOp.getHorario() );
 			   int nCred2 = vOp.getAula()->getTotalCreditos();
-				   
-			   if (  ( vOp.getHorarioAula() != horario_aula ) &&
-					!( (idxHor2 < idxHor1 ) && (idxHor2 + nCred2 > idxHor1 ) ) )
+			   int duracao = vOp.getDisciplina()->getTempoCredSemanaLetiva();
+
+			   DateTime inicio = horario_aula->getInicio();
+			   DateTime dt2Inicio = vOp.getHorarioAula()->getInicio();
+			   DateTime fim = horario_aula->getFinal();
+			   DateTime dt2Fim = vOp.getHorarioAula()->getInicio();
+			   dt2Fim.addMinutes( duracao*nCred2 );
+
+			   if (  ( vOp.getHorarioAula() != horario_aula ) &&				    
+				    !( ( dt2Inicio <= inicio ) && ( dt2Fim > inicio ) ) &&
+					!( ( dt2Inicio >= inicio ) && ( dt2Inicio < fim ) ) )
 			   {
 				   continue;
 			   }
@@ -17927,7 +18542,7 @@ void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
 int SolverMIP::alteraHorarioAulaAtendimento(
    const int id_novo_horario_aula, const int id_at_horario )
 {
-   return 1;
+   return 1; // ?? TODO
 
    ITERA_GGROUP( it_at_campi,
       ( *this->problemSolution->atendimento_campus ), AtendimentoCampus )

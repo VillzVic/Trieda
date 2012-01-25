@@ -11,6 +11,7 @@ class Horario :
 {
 public:
    Horario( void );
+   Horario( Horario *h );
    virtual ~Horario( void );
 
    virtual void le_arvore( ItemHorario & );

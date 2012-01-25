@@ -211,6 +211,30 @@ private:
    void validaInputSolucaoTatico();
 
    void relacionaProfessorDisciplinasAssociadas( void );
+
+   void calculaMaxTempoDisponivelPorSala();
+   void calculaMaxTempoDisponivelPorSalaPorSL();
+
+   // calcula combinaCredSL para cada sala
+   void calculaCombinaCredSLPorSala();
+
+   void calculaCompatibilidadeDeHorarios();
+   
+   GGroup< std::set<HorarioAula*> > calculaSubCjtHorarios( GGroup< HorarioAula* > cjtTotal );
+   
+   /* ----------------------------------------------------------------------
+      Métodos genericos para calcular todos os subconjuntos de um conjunto */
+
+   bool eh_uma_solucao(int a[], int k, int n);
+ 
+   void construir_candidatos(int a[], int k, int n, int c[], int *ncandidatos);
+ 
+   void processar_solucao( int a[], int k, std::set< std::set<int> > *subCjts );
+
+   void backtrack(int a[], int k, int n, std::set< std::set<int> > *subCjts);
+
+   /* -------------------------------------------------------------------- */
+
 };
 
 #endif

@@ -27,7 +27,7 @@ public:
 
    GGroup< HorarioDia * > horariosDia;
 
-   // Conjunto de combinações possíveis de divisão de créditos de uma uma disciplina 'd'
+   // Conjunto de combinações possíveis de divisão de créditos de uma disciplina 'd'
    std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos;
 
    virtual void le_arvore( ItemDisciplina & );
@@ -54,6 +54,7 @@ public:
    void setNumTurmas( int value ) { num_turmas = value; }
    void setMinCreds( int value ) { min_creds = value; }
    void setMaxCreds( int value ) { max_creds = value; }
+   void setTempoCredSemanaLetiva( int value ) { tempoCredSemanaLetiva = value; }
    void setMenorCapacSala( int value ) { this->menorCapacSala = value; }
 
    int getDemandaTotal() const { return demanda_total; }
@@ -70,8 +71,9 @@ public:
    int getNumTurmas() const { return num_turmas; }
    int getMinCreds() const { return min_creds; }
    int getMaxCreds() const { return max_creds; }
+   int getTempoCredSemanaLetiva() const { return tempoCredSemanaLetiva; }
    int getMenorCapacSala() const { return this->menorCapacSala; }
-   
+
    // Informa se uma dada disciplina é equivalente à esta disciplina
    bool eh_equivalente( Disciplina * );
 
@@ -96,8 +98,8 @@ private:
    int num_turmas;
    int min_creds;
    int max_creds;
+   int tempoCredSemanaLetiva; // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
    int menorCapacSala; // menor capacidade dentre as salas aonde a disciplina pode ser ministrada
-
 };
 
 #endif

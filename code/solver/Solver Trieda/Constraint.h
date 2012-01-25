@@ -20,8 +20,8 @@ public:
    {
       C_ERROR = 0,
       C_CARGA_HORARIA = 1,				// Restricao 1.2.2
-      C_MAX_CREDITOS_SD = 2,				// Restricao 1.2.3
-      C_MIN_CREDITOS_DD = 3,				// Restricao 1.2.4
+      C_MAX_TEMPO_SD = 2,				// Restricao 1.2.3.a
+	  C_MIN_CREDITOS_DD = 3,				// Restricao 1.2.4
       C_VAR_O = 4,						// Restricao 1.2.5
       C_EVITA_SOBREPOSICAO_TD = 5,		// Restricao 1.2.6
       C_TURMA_DISCIPLINA_SALA = 6,		// Restricao 1.2.7
@@ -65,7 +65,9 @@ public:
 	  C_EVITA_SOBREPOS_SALA_POR_TURMA = 44,	 // Restricao 1.2.45
 	  C_VAR_Q_1 = 45,	 // Restricao 1.2.46
 	  C_VAR_Q_2 = 46,	 // Restricao 1.2.47
-	  C_VAR_Q_3 = 47	 // Restricao 1.2.48
+	  C_VAR_Q_3 = 47,	 // Restricao 1.2.48
+	  C_MAX_TEMPO_S_D_SL = 48,				// Restricao 1.2.3.b
+	  C_VAR_CS = 49
    };
 
    /** Default constructor. */
@@ -110,6 +112,7 @@ public:
    int getSubBloco() const { return j; }
    int getDia() const { return t; }
    Oferta * getOferta() const { return o; }
+   Calendario* getSemanaLetiva() const { return sl; }
    std::pair<Curso*, Curso*> getParCursos() const{ return parCursos;}
    ConjuntoSala * getSubCjtSalaCompart() const { return cjtSalaCompart; }
    std::pair<Oferta*, Oferta*> getParOfertas() const { return parOfts; }
@@ -136,6 +139,8 @@ public:
    void setSubBloco( int jj ) { j = jj; }   
    void setDia( int tt ) {  t = tt; }
    void setOferta( Oferta * oferta ) { o = oferta; }
+   //void setSemanaLetiva( int tempoAulaSL ){ sl = tempoAulaSL; }
+   void setSemanaLetiva( Calendario* calend ){ sl = calend; }
    void setParCursos( std::pair<Curso*, Curso*> par ){ parCursos = par;}
    void setSubCjtSalaCompart( ConjuntoSala *s ){ cjtSalaCompart = s; }
    void setParOfertas( std::pair<Oferta*, Oferta*> ofts ){ parOfts = ofts; }
@@ -155,7 +160,10 @@ private:
    int i;
    Sala* s;
    int t;
-   BlocoCurricular* b; 
+   BlocoCurricular* b;
+   int j;
+   Oferta * o;
+   int sl;
    */
 
    Campus *cp;
@@ -180,6 +188,8 @@ private:
    int t; // dia
 
    Oferta * o; // oferta
+
+   Calendario* sl; // semana letiva (calendario)
 
    std::pair<Oferta*, Oferta*> parOfts; // par de ofertas (restrição 1.2.36)
 

@@ -47,7 +47,8 @@ public:
 	  V_CREDITOS_OFT = 26,		// q_{i,d,oft,u,s,t}
 	  V_CREDITOS_PAR_OFT = 27,	// p_{i,d,oft1,oft2,u,s,t}
 	  V_ALOC_ALUNOS_PAR_OFT = 28,  // of_{i,d,oft1,oft2}
-	  V_MIN_HOR_DISC_OFT_DIA = 29 //g_{d,oft,t}
+	  V_MIN_HOR_DISC_OFT_DIA = 29, // g_{d,oft,t}
+	  V_COMBINA_SL = 30	// cs_{s,t,k}
 
    };
 
@@ -96,6 +97,8 @@ public:
    std::pair<Curso*, Curso*> getParCursos() const{ return parCursos;}
    
    std::pair<Oferta*, Oferta*> getParOfertas() const{ return parOft;}
+   
+   int getCombinaSL() const { return combinaSL; }
 
    //==================================================
    // SET METHODS 
@@ -139,6 +142,8 @@ public:
      
    void setParOfertas( Oferta* oft1, Oferta* oft2 ){ parOft.first = oft1; parOft.second = oft2;}
 
+   void setCombinaSL( int combinacao ) { combinaSL = combinacao; }
+
    //==================================================
    // OPERATORS 
    //==================================================
@@ -170,6 +175,7 @@ private:
    int t; // dia
    Oferta * o; // oferta
    int k; // combinação de divisão de créditos
+   int combinaSL; // combinação de divisão de creditos entre as semanas letivas para uma sala e dia
 };
 
 

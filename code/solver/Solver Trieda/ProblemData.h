@@ -72,8 +72,7 @@ public:
 
    // Calcula o tempo NECESSÁRIO para
    // se deslocar entre uma aula e outra
-   int calculaTempoEntreCampusUnidades(
-      Campus *, Campus *, Unidade *, Unidade * );
+   int calculaTempoEntreCampusUnidades( Campus *, Campus *, Unidade *, Unidade * );
 
    // Informa quantos minutos há entre os dados DateTime's
    int minutosIntervalo( DateTime dt1, DateTime dt2 );
@@ -113,8 +112,7 @@ public:
 
    // Dado um par 'Campus' e 'Curso', obtemos
    // todas as 'Demandas' relacionadas a esse par
-   std::map< std::pair< Campus *, Curso * >,
-			 GGroup< Demanda *, LessPtr< Demanda > > > map_campus_curso_demanda;
+   std::map< std::pair< Campus *, Curso * >, GGroup< Demanda *, LessPtr< Demanda > > > map_campus_curso_demanda;
    
    int totalSalas;
    int totalTurmas;
@@ -359,7 +357,10 @@ public:
    // Retorna todas as salas (de todos os campi) do input
    GGroup< Sala *, LessPtr< Sala > > getSalas() const;
    Sala * findSala( int );
-
+   
+   // Associa a cada horario de aula o conjunto de horarios pertencentes
+   // a outras semanas letivas que não se sobrepõem
+   std::map< HorarioAula*, std::set<HorarioAula*> > compatibilidadesDeHorarios;
 
    private:
    

@@ -39,6 +39,9 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 	// Terceiro caso : executar o solver apenas com a entrada do operacional (sem saída do tático)
 	bool terceiroCaso = ( modo_operacao == "OPERACIONAL" && possuiOutputTatico == false );
 
+	// TODO: depois que creditos_disponiveis for retirado, e horarios_disponiveis usado para os dois modos de otimiz
+	// deletar essa divisao de casos comentada abaixo
+	/*
 	if( primeiroCaso )
 	{
 		// Lê creditos disponiveis
@@ -93,9 +96,24 @@ void Sala::construirCreditosHorarios(ItemSala& elem, std::string modo_operacao, 
 				creditos_disponiveis.add( credito_disp );
 			}
 		}
+	}*/
+	
+	// Lê horarios disponiveis
+	if ( elem.horariosDisponiveis().present() )
+	{
+		ITERA_SEQ(it_hora, elem.horariosDisponiveis().get(), Horario)
+		{
+			Horario * horario = new Horario();
+			horario->le_arvore( *it_hora );
+			horarios_disponiveis.add( horario );
+		}
 	}
+
 }
 
+
+// TODO: essa funcao comentada abaixo pode ser deletada depois que creditos_disponiveis for deletado em Sala.h
+/*
 GGroup< CreditoDisponivel * > Sala::converteHorariosParaCreditos()
 {
 	// Objeto de retorno, contendo os créditos criados
@@ -140,7 +158,7 @@ GGroup< CreditoDisponivel * > Sala::converteHorariosParaCreditos()
 	}
 
 	// Com a lista de objetos 'ConverteHorariosCreditos'
-	// preenchida, construimos agora os crétidos correspondentes
+	// preenchida, construimos agora os créditos correspondentes
 	ITERA_GGROUP(it_converte, groupHorariosCreditos, ConverteHorariosCreditos)
 	{
 		CreditoDisponivel * credito = new CreditoDisponivel();
@@ -153,11 +171,14 @@ GGroup< CreditoDisponivel * > Sala::converteHorariosParaCreditos()
 	}
 
 	return creditosDisponiveis;
-}
+}*/
+
 
 int Sala::max_creds(int dia)
 {
-   int creds = 0;
+	int tempoDisp = 0;
+	int creds = 0;
+   /* // TODO: RETIRAR QUANDO SEMANAS LETIVAS ESTIVER ESTAVEL
    ITERA_GGROUP(it_creds, creditos_disponiveis, CreditoDisponivel)
    {
       if ( it_creds->getDiaSemana() == dia )
@@ -165,6 +186,352 @@ int Sala::max_creds(int dia)
          creds += it_creds->getMaxCreditos();
       }
    }
+   */
+    ITERA_GGROUP_N_PT( itSl, this->temposSL, int )
+    {
+	   int duracaoSl = *itSl;
+	   int tempo = tempoDispPorDiaSL[ std::make_pair( dia, duracaoSl) ];
+       if ( tempoDisp < tempo ) 
+	   {
+          tempoDisp = tempo;
+		  creds = tempo / duracaoSl;
+       }
+    }
 
-   return creds;
+    return creds;
+}
+
+int Sala::max_credsPorSL(int dia, int tempoSl)
+{
+	int tempoDisp = 0;
+	int creds = 0;
+
+	GGroup< int >::iterator itSl = temposSL.find( tempoSl );
+	
+	if ( itSl == this->temposSL.end() )
+		return creds;
+
+    tempoDisp = tempoDispPorDiaSL[ std::make_pair( dia, tempoSl) ];
+	creds = tempoDisp / tempoSl;
+
+    return creds;
+}
+
+int Sala::getTempoDispPorDiaSL( int dia, int tempoDeAulaSL )
+{
+	std::map< std::pair<int,int>, int >::iterator it = tempoDispPorDiaSL.find( std::make_pair(dia,tempoDeAulaSL) );
+	if ( it != tempoDispPorDiaSL.end() )
+		return it->second;
+	else
+		return 0;
+}
+
+int Sala::getTempoDispPorDia( int dia )
+{
+	std::map<int, int>::iterator it = tempoDispPorDia.find(dia);
+	if ( it != tempoDispPorDia.end() )
+		return it->second;
+	else
+		return 0;
+}
+
+void Sala::calculaTemposSL()
+{
+	ITERA_GGROUP(it_horarios, this->horarios_disponiveis, Horario)
+	{
+		int novoTempoAula = it_horarios->horario_aula->getTempoAula();
+		if ( temposSL.find(novoTempoAula) == temposSL.end() )
+			temposSL.add( novoTempoAula );
+	}
+
+}
+
+/*
+	Calcula o tempo de aula de cada semana letiva disponivel para cada dia letivo da sala.
+*/
+void Sala::calculaTempoDispPorDiaSL()
+{
+	calculaTemposSL();
+
+	ITERA_GGROUP_N_PT(it_dia, diasLetivos, int) // Para cada dia
+	{
+		int dia = *(it_dia);
+		
+		ITERA_GGROUP_N_PT(it_sl, temposSL, int) // Para cada semana letiva
+		{		
+			int tempoDeAulaSL = *(it_sl);
+			
+			GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosAula;
+			ITERA_GGROUP(it_horarios, this->horarios_disponiveis, Horario)
+			{
+				if ( it_horarios->dias_semana.find(dia) != it_horarios->dias_semana.end() )
+				{
+					if ( it_horarios->horario_aula->getTempoAula() == tempoDeAulaSL )
+						horariosAula.add( it_horarios->horario_aula );
+				}
+			}
+
+			int T = somaTempo(horariosAula);
+			setTempoDispPorDiaSL( dia, tempoDeAulaSL, T );
+		}
+	}
+
+}
+
+
+/*
+	Calcula o tempo total disponivel para cada dia letivo da sala.
+	Considera a intersecao das semanas letivas, tratando o caso de sobreposicao de horarios.
+*/
+void Sala::calculaTempoDispPorDia()
+{
+	ITERA_GGROUP_N_PT(it_dia, diasLetivos, int)
+	{
+		int dia = *(it_dia);
+		
+		GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosAula;
+		
+		ITERA_GGROUP(it_horarios, this->horarios_disponiveis, Horario)
+		{
+			if ( it_horarios->dias_semana.find(dia) != it_horarios->dias_semana.end() )
+			{
+					horariosAula.add( it_horarios->horario_aula );
+			}
+		}
+		int T = somaTempo(horariosAula);
+		setTempoDispPorDia(dia, T);
+	}
+}
+
+/*
+	Calcula o tempo total disponivel dada uma lista de horarios de aula, tratando o caso de sobreposicao de horarios.
+	A lista de horarios de aula deve estar em ordem crescente de horario de inicio de aula.
+*/
+int Sala::somaTempo( GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosAula)
+{
+	int T = 0; // tempo total contido em horariosAula
+	if ( horariosAula.size() != 0 ){
+				
+		// variavel controle, que indica o instante de tempo ate o qual T se refere
+		DateTime *atual = new DateTime( horariosAula.begin()->getInicio() );
+		
+		// (i, f) = (inicio, fim) do proximo horarioAula a ser considerado
+		// * = datetime atual
+		ITERA_GGROUP_LESSPTR( it, horariosAula, HorarioAula )
+		{
+			int incremento;
+
+			if ( *atual <= it->getInicio() ){ //  *  i   f
+				incremento = it->getTempoAula();
+				*atual = it->getFinal();
+			}
+			else if ( ( *atual > it->getInicio() ) &&
+					  ( *atual < it->getFinal() )){  //  i  *  f
+
+					int diferenca = (*atual - it->getInicio()).getDateMinutes();
+					incremento = it->getTempoAula() - diferenca;
+					*atual = it->getFinal();
+			
+			}
+			else{  //  i  f  *	
+					incremento = 0;
+			}
+			
+			T += incremento;
+		}
+	}
+	return T;
+}
+
+/*
+	Retorna o numero maximo de creditos possivel, dado um dia da semana (dia), 	
+	um Calendario (sl) e tipo de combinação de creditos das semanas letivas (id).
+*/
+int Sala::getNroCredCombinaSL( int k, Calendario *c, int dia )
+{
+	if ( dia < 0 || dia > 6 )
+	{
+		std::cerr<<"Erro em Sala::getNroCredCombinaSL(): dia invalido.";
+		return 0;
+	}
+
+	Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
+	t.set( dia, k, c );
+
+	return combinaCredSL[ t ];
+}
+
+
+GGroup<HorarioAula*> Sala::retornaHorariosDisponiveisNoDiaPorSL( int dia, Calendario* sl )
+{
+	GGroup<HorarioAula*> horarios;
+
+	ITERA_GGROUP(it_horarios, this->horarios_disponiveis, Horario)
+	{
+		if ( ( it_horarios->dias_semana.find(dia) != it_horarios->dias_semana.end() ) &&
+			 ( it_horarios->horario_aula->getCalendario() == sl ) )
+		{
+				horarios.add( it_horarios->horario_aula );
+		}
+	}
+
+	return horarios;
+}
+
+void Sala::setCombinaCredSL( int dia, int k, Calendario* sl , int n )
+{
+	Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
+	t.first = dia;
+	t.second = k;
+	t.third = sl;
+	combinaCredSL[t] = n;
+}
+
+void Sala::removeCombinaCredSL( Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t )
+{
+	combinaCredSL.erase(t);
+}
+
+// atencao para a ordem: i refere-se a sl1 & j refere-se a sl2
+bool Sala::combinaCredSL_eh_dominado( int i, Calendario *sl1, int j, Calendario *sl2, int dia )
+{
+	std::map< Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ >, int/*nroCreds*/ >::iterator it_map = combinaCredSL.begin();
+
+	for ( ; it_map != combinaCredSL.end(); it_map++  )
+	{
+		if ( it_map->first.first == dia &&
+			 it_map->first.third == sl1 &&
+			 it_map->second > i )
+		{
+			int k = it_map->first.second;
+
+			Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
+			t.set(dia, k, sl2);
+
+			if ( combinaCredSL[t] >= j )
+			{
+					return true;
+			}
+		}
+		else if ( it_map->first.first == dia &&
+			 it_map->first.third == sl1 &&
+			 it_map->second == i )
+		{
+			int k = it_map->first.second;
+
+			Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
+			t.set(dia, k, sl2);
+
+			if ( combinaCredSL[t] > j )
+			{
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+// atencao para a ordem: i refere-se a sl1 & j refere-se a sl2
+bool Sala::combinaCredSL_domina( int i, Calendario *sl1, int j, Calendario *sl2, int dia )
+{
+	std::map< Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ >, int/*nroCreds*/ >::iterator it_map = combinaCredSL.begin();
+
+	for ( ; it_map != combinaCredSL.end(); it_map++  )
+	{
+		if ( it_map->first.first == dia &&
+			 it_map->first.third == sl1 &&
+			 it_map->second < i )
+		{
+			int k = it_map->first.second;
+			Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
+			t.set(dia, k, sl2);
+
+			if ( combinaCredSL[t] <= j )
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if ( it_map->first.first == dia &&
+				 it_map->first.third == sl1 &&
+				 it_map->second == i )
+			{
+				int k = it_map->first.second;
+				Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
+				t.set(dia, k, sl2);
+
+				if ( combinaCredSL[t] < j )
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+
+// atencao para a ordem: i refere-se a sl1 & j refere-se a sl2
+bool Sala::combinaCredSL_eh_repetido( int i, Calendario *sl1, int j, Calendario *sl2, int dia )
+{
+	std::map< Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ >, int/*nroCreds*/ >::iterator it_map = combinaCredSL.begin();
+
+	for ( ; it_map != combinaCredSL.end(); it_map++  )
+	{
+		if ( it_map->first.first == dia &&
+			 it_map->first.third == sl1 &&
+			 it_map->second == i )
+		{
+			int k = it_map->first.second;
+			Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
+			t.set(dia, k, sl2);
+
+			if ( combinaCredSL[t] == j )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+std::map< Trio<int, int, Calendario*>, int > Sala::retornaCombinaCredSL_Dominados( int dia )
+{
+	std::map< Trio<int, int, Calendario*>, int > dominados;
+
+	std::map< Trio< int, int, Calendario* >, int >::iterator it1_map = combinaCredSL.begin();
+	for ( ; it1_map != combinaCredSL.end(); it1_map++  )
+	{
+		if ( it1_map->first.first == dia )
+		{
+			Calendario *sl1 = it1_map->first.third;
+			int n1 = it1_map->second;
+			int k = it1_map->first.second;
+
+			std::map< Trio< int, int, Calendario* >, int >::iterator it2_map = combinaCredSL.begin();
+			for ( ; it2_map != combinaCredSL.end(); it2_map++  )
+			{
+				if ( it2_map != it1_map &&
+					 it2_map->first.first == dia &&
+					 it2_map->first.second == k )
+				{
+					Calendario *sl2 = it2_map->first.third;
+					int n2 = it2_map->second;
+					
+					if ( combinaCredSL_eh_dominado( n1, sl1, n2, sl2, dia ) )
+					{
+						dominados.insert( *it1_map );
+						dominados.insert( *it2_map );
+					}
+
+				}
+			}
+		}
+	}
+
+	return dominados;
 }

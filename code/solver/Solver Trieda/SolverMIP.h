@@ -95,7 +95,7 @@ public:
    int cria_variavel_aloc_alunos_parOft(void); // of_{i,d,oft1,oft2}
    int cria_variavel_creditos_parOferta(void);  // p_{i,d,oft1,oft2,u,tps,t}
    int cria_variavel_min_hor_disc_oft_dia(void); // g_{d,oft,t}
-
+   int cria_variavel_maxCreds_combin_sl(void); // cs_{s,t,k} -> Usado somente quando tem 2 semanas letivas
    
    /********************************************************************
    **                    CONSTRAINT CREATION                          **
@@ -104,7 +104,10 @@ public:
    int cria_restricoes( void  );
 
    int cria_restricao_carga_horaria(void);					// Restricao 1.2.2
-   int cria_restricao_max_cred_sd(void);					// Restricao 1.2.3
+   int cria_restricao_max_tempo_sd( void );					// Restricao 1.2.3.a -> Usada somente quando só tem 1 semana letiva
+// DELETAR QUANDO SL ESTIVER ESTAVEL   int cria_restricao_max_tempo_s_d_SL(void);				// Restricao 1.2.3.b
+   int cria_restricao_max_tempo_s_t_SL( void );				//  -> Usada somente quando tem 2 semanas letivas
+
    int cria_restricao_min_cred_dd(void);					// Restricao 1.2.4
    int cria_restricao_ativacao_var_o(void);					// Restricao 1.2.5
    int cria_restricao_evita_sobreposicao(void);			    // Restricao 1.2.6
@@ -144,6 +147,7 @@ public:
    int cria_restricao_ativacao_var_g(void);				//Restricao 1.2.42
    int cria_restricao_evita_sobrepos_sala_por_div_turmas(void); //Restricao 1.2.43
    int cria_restricao_ativacao_var_q(void);				// Restricao 1.2.44, 1.2.45, 1.2.46
+   int cria_restricao_ativacao_var_cs(void);			// Restricao 1.2.49-> Usado somente quando há 2 semanas letivas
 
    // Criacao de variaveis operacional
    int criaVariaveisOperacional( void );

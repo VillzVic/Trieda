@@ -8,6 +8,18 @@ Horario::Horario(void)
 	horario_aula = NULL;
 }
 
+/*
+	Cria novo Horario com ALGUNS dos atributos de h.
+*/
+Horario::Horario( Horario *h )
+{
+	this->horario_aula = new HorarioAula();
+	this->horario_aula->setInicio( h->horario_aula->getInicio() );
+	this->horario_aula->setTempoAula( h->horario_aula->getTempoAula() );
+	this->horario_aula->dias_semana = h->horario_aula->dias_semana;
+	this->dias_semana = h->dias_semana;
+}
+
 Horario::~Horario(void)
 {
 

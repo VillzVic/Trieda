@@ -21,13 +21,11 @@ void Curriculo::le_arvore( ItemCurriculo & elem )
 		int periodo = it_dp->periodo();
 		int disc_id = it_dp->disciplinaId();
 
-		this->ids_disciplinas_periodo.add(
-         std::make_pair( periodo, disc_id ) );
+		this->ids_disciplinas_periodo.add( std::make_pair( periodo, disc_id ) );
 	}
 }
 
-void Curriculo::refDisciplinaPeriodo(
-    GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas )
+void Curriculo::refDisciplinaPeriodo( GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas )
 {
 	GGroup< std::pair< int, int > >::iterator
 		it_ids = ids_disciplinas_periodo.begin();

@@ -43,6 +43,7 @@ Constraint& Constraint::operator = ( const Constraint & cons )
    this->j = cons.getSubBloco();
    this->t = cons.getDia();
    this->o = cons.getOferta();
+   this->sl = cons.getSemanaLetiva();
    this->parCursos = cons.getParCursos();
    this->cjtSalaCompart = cons.getSubCjtSalaCompart();
    this->parOfts = cons.getParOfertas();
@@ -94,6 +95,9 @@ bool Constraint::operator < ( const Constraint & cons ) const
    if (E_MENOR(this->getOferta(),cons.getOferta())) return true;
    if (E_MENOR(cons.getOferta(), this->getOferta())) return false;
 
+   if (this->getSemanaLetiva() < cons.getSemanaLetiva()) return true;
+   if (this->getSemanaLetiva() > cons.getSemanaLetiva()) return false;
+
    if (E_MENOR(this->getSubCjtSalaCompart(),cons.getSubCjtSalaCompart())) return true;
    if (E_MENOR(cons.getSubCjtSalaCompart(), this->getSubCjtSalaCompart())) return false;
 
@@ -127,6 +131,7 @@ void Constraint::reset()
    j = -1;
    t = -1;
    o = NULL;
+   sl = NULL;
    parCursos.first = NULL;
    parCursos.second = NULL;
    parOfts.first = NULL;
@@ -143,8 +148,10 @@ std::string Constraint::toString()
    {
    case C_CARGA_HORARIA:
       ss << "__(CARGA_HORARIA):"; break;
-   case C_MAX_CREDITOS_SD:
-      ss << "__(MAX_CREDITOS_CJTSALA_DIA):"; break;
+   case C_MAX_TEMPO_S_D_SL:
+      ss << "__(MAX_TEMPO_CJTSALA_DIA_SEMANALETIVA):"; break;
+   case C_MAX_TEMPO_SD:
+      ss << "__(MAX_TEMPO_CJTSALA_DIA):"; break;
    case C_MIN_CREDITOS_DD:
       ss << "__(MIN_CREDITOS_DISC_DIA):"; break;
    case C_VAR_O:
@@ -235,6 +242,8 @@ std::string Constraint::toString()
       ss << "__(C_VAR_Q_2):"; break;
   case C_VAR_Q_3:
       ss << "__(C_VAR_Q_3):"; break;
+  case C_VAR_CS:
+      ss << "__(C_VAR_CS):"; break;	  
 
    default:
       ss << "!";
@@ -314,6 +323,11 @@ std::string Constraint::toString()
    {
       ss << "_(Oft" << parOfts.first->getId();
       ss << ",Oft" << parOfts.second->getId() << ")";
+   }
+   
+   if ( sl != NULL )
+   {
+	   ss << "_SL" << sl->getId();
    }
 
    ss << "_}";

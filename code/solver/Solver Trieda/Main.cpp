@@ -35,9 +35,22 @@ void writeOutput( ProblemSolution *, char *, char * );
 
 int main( int argc, char** argv )
 {
+	ofstream outTestFile;
+	char outputTestFilename[] = "outTest.txt";
+	outTestFile.open(outputTestFilename, ios::out);
+	if (!outTestFile) {
+		cerr << "Can't open output file " << outputTestFilename << endl;
+		exit(1);
+	}
+	outTestFile << "Started..." <<endl;
+
+
+
    //unsigned seed = time(NULL);
    unsigned seed = 1305057265;
    srand( seed );
+
+   outTestFile << "Opening the seedFile..." <<endl;
 
    std::cout << "SEED: " << seed << std::endl;
 
@@ -68,6 +81,8 @@ int main( int argc, char** argv )
    outputFile[0] = '\0';
    error = false;
 
+   outTestFile << "Checking arguments..." <<endl;
+
    // Check command line
    if( argc <= 2 )
    {
@@ -86,25 +101,40 @@ int main( int argc, char** argv )
       }
    }
 
+   outTestFile << "Reading path..." <<endl;
+
    // Read path
    strcat( path, argv[2] );
    strcat( path, PATH_SEPARATOR );
+
+
+   outTestFile << "Reading inputFile..." <<endl;
 
    // Input file name
    strcat( inputFile, path );
    strcat( inputFile, "input" );
    strcat( inputFile, argv[ 1 ] );
 
+   outTestFile << "dataLoader constructor..." <<endl;
+
    dataLoader = new ProblemDataLoader( inputFile, data );
+	
+   outTestFile << "Loading data..." <<endl;
+
    dataLoader->load();
 
-   solution = new ProblemSolution(
-      data->parametros->modo_otimizacao == "TATICO" );
+   outTestFile << "Solution constructor..." <<endl;
+
+   solution = new ProblemSolution( data->parametros->modo_otimizacao == "TATICO" );
+
+   outTestFile << "Creating temporary output file name..." <<endl;
 
    // Temporary output file name
    strcat( tempOutput, path );
    strcat( tempOutput, "partialSolution.xml" );
    std::string tempOutputFile = tempOutput;
+
+   outTestFile << "Creating output file name..." <<endl;
 
    // Output file name
    strcat( outputFile, path );
@@ -127,16 +157,28 @@ int main( int argc, char** argv )
 #endif
       try
       {
-         // Solve the Problem
+		 outTestFile << "Creating SolverMIP..." <<endl;
+       
+		 // Solve the Problem
          solver = new SolverMIP( data, solution, dataLoader );
-         solver->solve();
+		 
+		 outTestFile << "Solving..." <<endl;
+		 
+		 solver->solve();
+
+		 outTestFile << "Getting solution..." <<endl;
+
          solver->getSolution( solution );
+
+		 outTestFile << "Deleting solver and dataLoader..." <<endl;
 
          delete solver;
          delete dataLoader;
       }
       catch( int & status )
       {
+		 outTestFile << "Catching first inner exception..." <<endl;
+
          char mensagem[ 200 ];
          sprintf( mensagem, "Não foi possível processar o modelo matemático ( erro %d )", status );
 
@@ -149,10 +191,14 @@ int main( int argc, char** argv )
 	   // Write output
       try
       {
+		 outTestFile << "Writing Output..." <<endl;
+
          writeOutput( solution, outputFile, tempOutput );
       }
       catch ( int & status )
       {
+		  outTestFile << "Catching second inner exception..." <<endl;
+
          char mensagem[ 200 ];
 
          sprintf( mensagem, "Não foi possível escrever a solução. Error code: %d.", status );
@@ -167,7 +213,9 @@ int main( int argc, char** argv )
    }
    catch( std::exception & e )
    {
-      if( ErrorHandler::getErrorMessages().size() == 0 )
+	  outTestFile << "Catching external exception..." <<endl;
+      
+	  if( ErrorHandler::getErrorMessages().size() == 0 )
 	   {
 		    std::string message = "Ocorreu um erro interno no resolvedor.";
 
@@ -184,6 +232,9 @@ int main( int argc, char** argv )
    {
       return 0;
    }
+
+   	outTestFile << "Finished!" <<endl;
+	outTestFile.close();
 
    std::cout << "\n\nTRIEDA executado com sucesso !!!\n";
 

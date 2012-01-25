@@ -6,7 +6,7 @@ Aula::Aula(bool _aulaVirtual)
    disciplina = NULL;
    sala = NULL;
    dia_semana = 0;
-   quantidade = 0;
+   quantidade.clear();
    creditos_teoricos = 0;
    creditos_praticos = 0;
    aula_fixada = false;
@@ -57,9 +57,9 @@ void Aula::setAulaFixada( bool value )
 	aula_fixada = value;
 }
 
-void Aula::setQuantidade( int value )
+void Aula::setQuantidade( int value, Oferta* oft )
 {
-   quantidade = value;
+   quantidade[oft] = value;
 }
 
 int Aula::getTurma() const
@@ -107,12 +107,26 @@ bool Aula::eFixada() const
    return aula_fixada;
 }
 
-int Aula::getQuantidade() const
+std::map<Oferta*,int> Aula::getQuantidade() const
 {
    return quantidade;
 }
 
-void Aula::toString() const
+int Aula::getQuantidadePorOft( Oferta *oft )
+{
+   return quantidade[oft];
+}
+
+int Aula::getQuantidadeTotal()
+{
+	int n=0;
+	std::map<Oferta*, int>::iterator it = quantidade.begin();
+	for ( ; it != quantidade.end(); it++ )
+		n += it->second;
+	return n;
+}
+
+void Aula::toString()
 {
    //-------------------------------------------------------------
    std::cout << "\n=================AULA================="
@@ -140,7 +154,11 @@ void Aula::toString() const
 			    << "\nDia da Semana: " << dia_semana
 			    << "\nCreditos Praticos: " << creditos_praticos
 			    << "\nCreditos Teoricos: " << creditos_teoricos
-             << "\nQuantidade: " << quantidade
-			    << std::endl;
+				<< "\nQuantidade: ";
+
+   	std::map<Oferta*, int>::iterator it = quantidade.begin();
+	for ( ; it != quantidade.end(); it++ )
+		std::cout << it->second << "/";	
+	std::cout << std::endl;
    //-------------------------------------------------------------
 }

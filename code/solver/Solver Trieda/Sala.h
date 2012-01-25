@@ -11,6 +11,8 @@
 
 #include "Disciplina.h"
 
+#include "Trio.h"
+
 class Sala :
 	public OFBase
 {
@@ -19,9 +21,8 @@ public:
 	virtual ~Sala( void );
 
 	GGroup< Horario * > horarios_disponiveis;
-	GGroup< CreditoDisponivel * > creditos_disponiveis;
 
-   GGroup< HorarioDia * > horariosDia;
+    GGroup< HorarioDia * > horariosDia;
 
 	// Alterar para ref, depois
 	GGroup< int > disciplinas_associadas;
@@ -43,6 +44,7 @@ public:
 
 	virtual void le_arvore( ItemSala & );
 	int max_creds( int );
+	int max_credsPorSL( int, int );
 
 	// Métodos get
 	int getTipoSalaId() const { return tipo_sala_id; }
@@ -51,6 +53,11 @@ public:
 	std::string getCodigo() const { return codigo; }
 	std::string getAndar() const { return andar; }
 	std::string getNumero() const { return numero; }
+	int getTempoDispPorDia( int dia );
+	int getTempoDispPorDiaSL( int dia, int tempoDeAulaSL );
+	int getNroCredCombinaSL( int k, Calendario *c, int dia );
+	std::map< Trio< int, int, Calendario* >, int > getCombinaCredSL() const { return combinaCredSL; }
+	std::map< int /*dia*/, int /*size*/ > getCombinaCredSLSize() const { return combinaCredSLSize; }
 
 	// Métodos set
 	void setTipoSalaId( int id ) { tipo_sala_id = id; }
@@ -59,8 +66,21 @@ public:
 	void setCodigo( std::string cod ) { codigo = cod; }
 	void setAndar( std::string a ) { andar = a; }
 	void setNumero( std::string n ) { numero  = n; }
+	void setCombinaCredSL( int dia, int k, Calendario* sl , int n );
+	void setCombinaCredSLSize(int dia, int size) { combinaCredSLSize[dia] = size; }
 
+	void removeCombinaCredSL( Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t );
 	void construirCreditosHorarios( ItemSala &, std::string, bool );
+
+	void calculaTempoDispPorDia();
+	void calculaTempoDispPorDiaSL();
+	int somaTempo( GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosAula);
+	GGroup<HorarioAula*> retornaHorariosDisponiveisNoDiaPorSL( int dia, Calendario* sl );
+
+	bool combinaCredSL_eh_dominado( int i, Calendario *sl1, int maxSL2, Calendario *sl2, int dia );
+	bool combinaCredSL_domina( int i, Calendario *sl1, int j, Calendario *sl2, int dia );
+	bool combinaCredSL_eh_repetido( int i, Calendario *sl1, int j, Calendario *sl2, int dia );
+	std::map< Trio<int, int, Calendario*>, int > retornaCombinaCredSL_Dominados( int dia );
 
     virtual bool operator < ( Sala & right ) const
     { 
@@ -71,6 +91,8 @@ public:
     { 
 		return ( getId() == right.getId() );
     }
+	
+	std::map< Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ >, int/*nroCreds*/ > combinaCredSL;
 
 private:
 	std::string codigo;
@@ -82,9 +104,22 @@ private:
 
 	int capacidade;
 	int id_unidade;
+	GGroup<int> temposSL; // lista os possiveis tempos de duracao de aula (1 credito) existentes, obtido a partir das semanas letivas associadas aos horarios disponiveis da sala
+	std::map<int, int> tempoDispPorDia; // mapeia para cada dia, o tempo total disponivel na sala, tratando intersecoes de semanas letivas
+	std::map< std::pair<int, int>, int> tempoDispPorDiaSL; // mapeia para cada par <dia, tempoDeAulaSemanaLetiva>, o tempo disponivel na sala.
 
 	// Dado um conjunto de horários, retorna o conjunto de créditos correspondentes
 	GGroup< CreditoDisponivel * > converteHorariosParaCreditos();
+	
+	void calculaTemposSL();
+	void setTempoDispPorDia( int dia, int t ){ tempoDispPorDia[dia] = t; }
+	void setTempoDispPorDiaSL( int dia, int tempoDeAulaSL, int t ){ tempoDispPorDiaSL[std::make_pair(dia,tempoDeAulaSL)] = t; }
+	
+	// Associa a cada Calendario (sl) e tipo de combinação de creditos das semanas letivas,
+	// o numero maximo de creditos possivel para cada dia da semana.
+
+	std::map< int /*dia*/, int /*size*/ > combinaCredSLSize;
+
 };
 
 #endif

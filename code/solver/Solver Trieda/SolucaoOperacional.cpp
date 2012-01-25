@@ -296,7 +296,12 @@ void SolucaoOperacional::toString2() const
    					    << ")_D(" << aula->getDisciplina()->getCodigo()
                       << ")_S(" << aula->getSala()->getCodigo()
                       << ")_Dia(" << aula->getDiaSemana()
-                      << ")_Qtd(" << aula->getQuantidade() << "),\t";
+                      << ")_Qtd(";
+   			std::map<Oferta*, int>::iterator it = aula->getQuantidade().begin();
+			for ( ; it != aula->getQuantidade().end(); it++ )
+				std::cout << it->second << "/";
+			std::cout << "),\t";
+
          }
          else if ( aula != NULL && aula->eVirtual() )
          {

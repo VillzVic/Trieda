@@ -31,7 +31,7 @@ public:
    void refDisciplinaPeriodo( GGroup< Disciplina *, LessPtr< Disciplina > > );
 
    bool possuiDisciplina( int idDisciplina );
-   
+
 private:
    GGroup< std::pair< int, int > > ids_disciplinas_periodo;
    std::string codigo;

@@ -100,11 +100,12 @@ public:
       return NULL;
    }
 
+   /*
    int maxCredsPermitidos( int dia )
    {
       int totMaxCreds = 0;
 
-      std::map< int /*Id Sala*/, Sala * >::iterator
+      std::map< int, Sala * >::iterator
 		  itSala = salas.begin();
       for (; itSala != salas.end(); itSala++ )
       {
@@ -113,19 +114,62 @@ public:
 
       return totMaxCreds;
    }
+   */
+
+   int maxTempoPermitidoPorDiaPorSL( int dia, int sl )
+   {
+      int totMaxTempo = 0;
+
+      std::map< int /*Id Sala*/, Sala * >::iterator itSala = salas.begin();
+      for (; itSala != salas.end(); itSala++ )
+      {
+		  totMaxTempo += ( itSala->second->getTempoDispPorDiaSL(dia, sl) );
+	  }
+
+      return totMaxTempo;
+   }
+
+   int maxTempoPermitidoPorDia( int dia )
+   {
+      int totMaxTempo = 0;
+
+      std::map< int /*Id Sala*/, Sala * >::iterator itSala = salas.begin();
+      for (; itSala != salas.end(); itSala++ )
+      {
+		  totMaxTempo += ( itSala->second->getTempoDispPorDia(dia) );
+	  }
+
+      return totMaxTempo;
+   }
 
    // Retorna o máximo de créditos para um dado dia.
    int maxCredsDia( int dia )
    {
       int max_Creds_Dia = 0;
 
-      std::map< int /*Id Sala*/, Sala * >::iterator
-		  it_Sala = salas.begin();
+      std::map< int /*Id Sala*/, Sala * >::iterator it_Sala = salas.begin();
       for (; it_Sala != salas.end(); it_Sala++ )
       {
          if ( max_Creds_Dia < it_Sala->second->max_creds( dia ) )
          {
 			 max_Creds_Dia = it_Sala->second->max_creds( dia );
+		 }
+      }
+
+      return max_Creds_Dia;
+   }
+
+   // Retorna o máximo de créditos para um dado dia.
+   int maxCredsDiaPorSL( int dia, int tempoSl )
+   {
+      int max_Creds_Dia = 0;
+
+      std::map< int /*Id Sala*/, Sala * >::iterator it_Sala = salas.begin();
+      for (; it_Sala != salas.end(); it_Sala++ )
+      {
+         if ( max_Creds_Dia < it_Sala->second->max_credsPorSL( dia, tempoSl ) )
+         {
+			 max_Creds_Dia = it_Sala->second->max_credsPorSL( dia, tempoSl );
 		 }
       }
 

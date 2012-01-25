@@ -19,6 +19,7 @@ public:
    GGroup< int > dias_semana;
 
    DateTime getInicio() const { return this->inicio; }
+   DateTime getFinal();
    Calendario * getCalendario() const { return this->calendario; }
    int getTempoAula() const { return this->tempo_aula; }
 
@@ -27,6 +28,7 @@ public:
    void setTempoAula( int value ) { this->tempo_aula = value; }
 
    bool horarioDisponivel( int dia );
+   bool sobrepoe( HorarioAula h );
 
    virtual bool operator < ( HorarioAula const & right ) const
    {
