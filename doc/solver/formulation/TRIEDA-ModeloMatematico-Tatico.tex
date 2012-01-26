@@ -231,7 +231,12 @@ $$
 + \gamma \cdot \sum\limits_{d \in D} \sum\limits_{cp \in CP}\sum\limits_{i \in I_{d}}
 \left(\frac{Pmax_{d} - \sum\limits_{c \in C}P_{d,c,cp}}{Pmax_{d}} \right) \cdot z_{i,d,cp}
       \\
-      
+      &
+       + 100 \cdot \sum\limits_{bc \in B}\sum\limits_{t \in T}\sum\limits_{c,c' \notin CC}\sum\limits_{cp \in CP} bs_{i,d,c,c',cp}
+      \\
+      &
+       + 100 \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{c,c' \in CC} \sum\limits_{cp \in CP} fc_{i,d,c,c',cp}
+      \\
 \end{array}
 $$
 \subsubsection{Carga horária de todas as turmas de cada disciplina}
@@ -307,7 +312,7 @@ em um determinado tipo de sala (*)}
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall u \in U \quad
-\forall s \in S_{u}
+\forall s \in S_{u} \quad
 \forall tps \in SCAP_{u}
 \end{eqnarray}
 
@@ -319,7 +324,7 @@ em um determinado tipo de sala (*)}
 \begin{eqnarray}
 \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} y_{i,d,tps,u}  \leq  1 \nonumber \qquad 
 \forall d \in D \quad
-\forall i \in I_{d} \quad
+\forall i \in I_{d}
 \end{eqnarray}
 
 
@@ -354,7 +359,7 @@ em um determinado tipo de sala (*)}
 \sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{i \in I_{d}} x_{i,d,u,tps,t}  \leq H_{t} \cdot w_{bc,t,cp}  \nonumber \qquad 
 \forall bc \in B \quad
 \forall cp \in CP \quad
-\forall t \in T \quad
+\forall t \in T
 \end{eqnarray}
 
 
@@ -391,7 +396,7 @@ x_{i,d,u,tps,t}  \leq \overline{H_{d}}  \nonumber \qquad
 \begin{eqnarray}
 \sum\limits_{i \in I_{d}} a_{i,d,oft} + fd_{d,oft} =  P_{d,oft}  \nonumber \qquad 
 \forall oft \in O \quad
-\forall d \in D_{oft} \quad
+\forall d \in D_{oft}
 \end{eqnarray}
 
 
@@ -469,7 +474,7 @@ c_{i,d,t}  \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}}(o_{i,d,u,tp
 \forall cp \in CP \quad
 \forall c \in C \quad
 \forall d \in D \quad
-\forall i \in I_{d} \quad
+\forall i \in I_{d}
 \end{eqnarray}
 
 
@@ -567,7 +572,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall u \in U \quad
-\forall s \in S_{u}
+\forall s \in S_{u} \quad
 \forall tps \in SCAP_{u}
 \end{eqnarray}
 
@@ -612,7 +617,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 
 \begin{eqnarray}
 zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad 
-(d_1, d_2),
+(d_1, d_2) \in D_{incompat} \quad
 \forall t \in T
 \end{eqnarray}
 
@@ -624,8 +629,8 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 \begin{eqnarray}
  \sum\limits_{u \in U} \sum\limits_{i \in I} \sum\limits_{d \in D_{bc}} 
  o_{i,d,u,tps,t} \leq n_{bc,tps} \nonumber \qquad 
- \forall tps \in SCAP_{u}
- \forall bc \in B
+ \forall tps \in SCAP_{u}\quad 
+ \forall bc \in B \quad 
  \forall t \in T
 \end{eqnarray}
 
@@ -671,14 +676,14 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \begin{eqnarray}
-\sum\limits_{u' \in U} \sum\limits_{d' \in oft1 U oft2} \sum\limits_{i' \in I_{d'}}( x_{i',d',u',s',t} ) +  x_{i,d,u,s,t}
-\le Q_{bc,t} + M ( 2 - e_{i,d,oft1} - e_{i,d,oft2} ) \qquad 
-
-\forall d \in D_{oft1} \cap D_{oft2}
-\forall i \in I_{d}
-\forall u \in U
-\forall s \in S_{u}
-\forall s' \in S_{u'} \quad s' \ne s
+x_{i,d,u,s,t} + \sum\limits_{u' \in U} \sum\limits_{d' \in oft1 U oft2} \sum\limits_{i' \in I_{d'}}( x_{i',d',u',s',t} )
+\le Q_{bc,t} + M ( 2 - e_{i,d,oft1} - e_{i,d,oft2} ) \nonumber \qquad
+\\ \nonumber 
+\forall d \in D_{oft1} \cap D_{oft2} \qquad 
+\forall i \in I_{d} \quad 
+\forall u \in U \quad 
+\forall s \in S_{u} \quad 
+\forall s' \in S_{u'} \quad s' \ne s \quad
 \forall t \in T
 
 \end{eqnarray}
@@ -690,18 +695,18 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \begin{eqnarray}
-	e_{i,d,oft1} \cdot e_{i,d,oft2} \eq of_{i,d,oft1,oft2} \qquad
-		 
-		 =  \qquad
-
-	e_{i,d,oft1} + e_{i,d,oft2} - 1 \le of_{i,d,oft1,oft2} \qquad
-	of_{i,d,oft1,oft2} \le e_{i,d,oft2}  \qquad
-	of_{i,d,oft1,oft2} \le e_{i,d,oft1}   \qquad
-
+\begin{center}
+e_{i,d,oft1} \cdot e_{i,d,oft2} = of_{i,d,oft1,oft2} \nonumber
+\\ \Leftrightarrow \nonumber 
+\\ e_{i,d,oft1} + e_{i,d,oft2} - 1 \le of_{i,d,oft1,oft2} \nonumber
+\\ of_{i,d,oft1,oft2} \le e_{i,d,oft2} \nonumber
+\\ of_{i,d,oft1,oft2} \le e_{i,d,oft1}  \nonumber
+\\ \nonumber 
 \forall i \in I_{d} \quad
 \forall d \in D_{oft} \quad
 \forall oft1 \in O_{d} \quad
-\forall oft2 \in O_{d}
+\forall oft2 \in O_{d} \quad
+\end{center}
 \end{eqnarray}
 
 
@@ -710,15 +715,13 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \begin{eqnarray}
-	
-	 p_{i,d,oft1,oft2,u,s,t} \eq x_{i,d,u,s,t} \cdot of_{i,d,oft1,oft2} \nonumber \qquad
-	  
-	  =  \qquad
-
-	 p_{i,d,oft1,oft2,u,s,t} \le M \cdot of_{i,d,oft1,oft2} \nonumber \qquad
-	 p_{i,d,oft1,oft2,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
-	 x_{i,d,u,s,t} \ge p_{i,d,oft1,oft2,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad
-
+\begin{center}
+p_{i,d,oft1,oft2,u,s,t} = x_{i,d,u,s,t} \cdot of_{i,d,oft1,oft2} \nonumber
+\\ \Leftrightarrow \nonumber 
+\\ p_{i,d,oft1,oft2,u,s,t} \le M \cdot of_{i,d,oft1,oft2} \nonumber
+\\ p_{i,d,oft1,oft2,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber
+\\ x_{i,d,u,s,t} \ge p_{i,d,oft1,oft2,u,s,t} - M \cdot ( 1 - of_{i,d,oft1,oft2} ) \nonumber
+\\ \nonumber 
 \forall i \in I_{d} \quad
 \forall d \in D_{oft} \quad
 \forall oft1 \in O_{d} \quad
@@ -726,6 +729,7 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 \forall u \in U \quad
 \forall s \in S_{u} \quad
 \forall t \in T \quad
+\end{center}
 \end{eqnarray}
 
 
@@ -734,14 +738,12 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \begin{eqnarray}
-	
-	 g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
-
+g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
 \forall d \in D_{oft} \quad
-\forall oft \in O_{d}
+\forall oft \in O_{d} \quad
 \forall u \in U \quad
 \forall s \in S_{u} \quad
-\forall t \in T \quad
+\forall t \in T 
 \end{eqnarray}
 
 
@@ -749,15 +751,13 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 \subsubsection{Evita sobreposição de sala por turmas de uma mesma disciplina e mesmo bloco curricular}
 
 
-\begin{eqnarray}
-	
-	 \sum\limits_{d \in D_{bc}} ( g_{d,oft,t} ) \le MaxCred_{oft,t} \qquad
-
-\forall bc \in oft
-\forall oft \in O
+\begin{eqnarray}	
+\sum\limits_{d \in D_{bc}} ( g_{d,oft,t} ) \le MaxCred_{oft,t} \nonumber \qquad
+\forall bc \in oft \quad
+\forall oft \in O \quad
 \forall u \in U \quad
 \forall s \in S_{u} \quad
-\forall t \in T \quad
+\forall t \in T 
 \end{eqnarray}
 
 
@@ -766,21 +766,20 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \begin{eqnarray}
-	
-	 q_{i,d,oft,u,s,t} \eq x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber \qquad
-	  
-	  =  \qquad
-
-	 q_{i,d,oft,u,s,t} \le M \cdot e_{i,d,oft} \nonumber \qquad
-	 q_{i,d,oft,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
-	 x_{i,d,u,s,t} \ge q_{i,d,oft,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber \qquad
-
+\begin{center}
+q_{i,d,oft,u,s,t} = x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber
+\\ \Leftrightarrow   \nonumber 
+\\ q_{i,d,oft,u,s,t} \le M \cdot e_{i,d,oft} \nonumber 
+\\ q_{i,d,oft,u,s,t} \ge x_{i,d,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber 
+\\ x_{i,d,u,s,t} \ge q_{i,d,oft,u,s,t} - M \cdot ( 1 - e_{i,d,oft} ) \nonumber
+\\  \nonumber 
 \forall i \in I_{d} \quad
 \forall d \in D_{oft} \quad
 \forall oft \in O \quad
 \forall u \in U \quad
 \forall s \in S_{u} \quad
 \forall t \in T \quad
+\end{center}
 \end{eqnarray}
 
 
@@ -789,12 +788,10 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \begin{eqnarray}
-	
-	 \sum\limits_{kh \in Kh_{s,t}} cs_{s,t,kh} \le 1 \qquad
-
+\sum\limits_{kh \in Kh_{s,t}} cs_{s,t,kh} \le 1 \nonumber \qquad
 \forall u \in U \quad
 \forall s \in S_{u} \quad
-\forall t \in T \quad
+\forall t \in T
 \end{eqnarray}
 
 
@@ -803,13 +800,11 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \begin{eqnarray}
-	
-	 \sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} ( x_{i,d,u,s,t} ) \le \sum\limits_{kh \in Kh_{s,t}} ( Nh_{sl,kh,s,t} \cdot cs_{s,t,kh} ) \qquad
-
+\sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} ( x_{i,d,u,s,t} ) \le \sum\limits_{kh \in Kh_{s,t}} ( Nh_{sl,kh,s,t} \cdot cs_{s,t,kh} ) \nonumber \qquad
 \forall sl \in SL \quad
 \forall u \in U \quad
 \forall s \in S_{u} \quad
-\forall t \in T \quad
+\forall t \in T
 \end{eqnarray}
 
 
