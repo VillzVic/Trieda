@@ -134,6 +134,10 @@ Os elementos desse conjunto são denotados por $kh_{s,t}$.
 
 \item $Q_{sl,kh,s,t}$ - número de horários da semana letiva $sl$ determinados para a sala $s$ no dia $t$ na combinação de divisão de horários $kh$.
 
+\item $MaxCred_{oft,t}$ - máximo de créditos para a oferta $oft$ no dia $t$.
+
+\item $Nh_{sl,kh,s,t}$ - número máximo de horários da semana letiva $sl$ determinados para a sala $s$ no dia $t$ na combinação de divisão de horários $kh$.
+
 
 \end{itemize}
 
@@ -240,7 +244,7 @@ $$
 \end{eqnarray}
 
 
-\subsubsection{Máximo de créditos por sala e dia}
+\subsubsection{Máximo de créditos por sala e dia (Somente para quando houver 1 única semana letiva)}
 
 
 
@@ -781,7 +785,7 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 
-\subsubsection{Ativação da variável cs}
+\subsubsection{Ativação da variável cs (Para quando houver 2 semanas letivas)}
 
 
 \begin{eqnarray}
@@ -795,12 +799,12 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 
-\subsubsection{Máximo de créditos por sala, dia e semana letiva}
+\subsubsection{Máximo de créditos por sala, dia e semana letiva (Para quando houver 2 semanas letivas)}
 
 
 \begin{eqnarray}
 	
-	 \sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} ( x_{i,d,u,s,t} ) \le \sum\limits_{kh \in Kh_{s,t}} ( Q_{sl,kh,s,t} \cdot cs_{s,t,kh} ) \qquad
+	 \sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} ( x_{i,d,u,s,t} ) \le \sum\limits_{kh \in Kh_{s,t}} ( Nh_{sl,kh,s,t} \cdot cs_{s,t,kh} ) \qquad
 
 \forall sl \in SL \quad
 \forall u \in U \quad
