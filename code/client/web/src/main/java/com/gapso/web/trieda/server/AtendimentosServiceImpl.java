@@ -1063,11 +1063,7 @@ public class AtendimentosServiceImpl
 				return (horarioInicial1.before(horarioInicial2) && horarioInicial2.before(horarioFinal1)) || // hi1 < hi2 < hf1
 				       (horarioInicial1.before(horarioFinal2)   && horarioFinal2.before(horarioFinal1)) || // hi1 < hf2 < hf1
 				       (horarioInicial2.before(horarioInicial1) && horarioInicial1.before(horarioFinal2)) || // hi2 < hi1 < hf2
-				       (horarioInicial2.before(horarioFinal1)   && horarioFinal1.before(horarioFinal2)) || // hi2 < hf1 < hf2
-				       horarioInicial1.equals(horarioInicial2) ||
-				       horarioInicial1.equals(horarioFinal2) ||
-				       horarioFinal1.equals(horarioInicial2) ||
-				       horarioFinal1.equals(horarioFinal2);
+				       (horarioInicial2.before(horarioFinal1)   && horarioFinal1.before(horarioFinal2)); // hi2 < hf1 < hf2
 			}
 		}
 		return false;
