@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1000,8 +1001,7 @@ public class AtendimentosServiceImpl
 
 					for ( AtendimentoOperacionalDTO dto : listDTO )
 					{
-						if ( !AtendimentoOperacionalDTO.compatibleSameTime(
-								currentDTO, dto ) )
+						if ( !temIntersecao(currentDTO, dto ) )
 						{
 							wasDTORejected = true;
 							break;
@@ -1024,6 +1024,53 @@ public class AtendimentosServiceImpl
 		}
 
 		return listListDTO;
+	}
+	
+	private boolean temIntersecao(AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2) {
+		if (dto1.getSemana().equals(dto2.getSemana())) {
+			if (dto1.getHorarioId().equals(dto2.getHorarioId())) {
+				return true;
+			} else {
+				Calendar horarioInicial1 = Calendar.getInstance();
+				Calendar horarioInicial2 = Calendar.getInstance();
+				
+				String[] horarioInicialArray1 = dto1.getHorarioString().split(":");
+				String[] horarioInicialArray2 = dto2.getHorarioString().split(":");
+				
+				int horarioInicial1Horas = Integer.parseInt(horarioInicialArray1[0]);
+				int horarioInicial1Minutos = Integer.parseInt(horarioInicialArray1[1]);
+				
+				int horarioInicial2Horas = Integer.parseInt(horarioInicialArray2[0]);
+				int horarioInicial2Minutos = Integer.parseInt(horarioInicialArray2[1]);
+				
+				horarioInicial1.clear();
+				horarioInicial1.set(2012,Calendar.FEBRUARY,1,horarioInicial1Horas,horarioInicial1Minutos,0);
+				horarioInicial1.set(Calendar.MILLISECOND,0);
+				
+				horarioInicial2.clear();
+				horarioInicial2.set(2012,Calendar.FEBRUARY,1,horarioInicial2Horas,horarioInicial2Minutos,0);
+				horarioInicial2.set(Calendar.MILLISECOND,0);
+				
+				Calendar horarioFinal1 = Calendar.getInstance();
+				Calendar horarioFinal2 = Calendar.getInstance();
+				
+				horarioFinal1.setTime(horarioInicial1.getTime());
+				horarioFinal1.add(Calendar.MINUTE,dto1.getTotalCreditos()*dto1.getSemanaLetivaTempoAula());
+				
+				horarioFinal2.setTime(horarioInicial2.getTime());
+				horarioFinal2.add(Calendar.MINUTE,dto2.getTotalCreditos()*dto2.getSemanaLetivaTempoAula());
+				
+				return (horarioInicial1.before(horarioInicial2) && horarioInicial2.before(horarioFinal1)) || // hi1 < hi2 < hf1
+				       (horarioInicial1.before(horarioFinal2)   && horarioFinal2.before(horarioFinal1)) || // hi1 < hf2 < hf1
+				       (horarioInicial2.before(horarioInicial1) && horarioInicial1.before(horarioFinal2)) || // hi2 < hi1 < hf2
+				       (horarioInicial2.before(horarioFinal1)   && horarioFinal1.before(horarioFinal2)) || // hi2 < hf1 < hf2
+				       horarioInicial1.equals(horarioInicial2) ||
+				       horarioInicial1.equals(horarioFinal2) ||
+				       horarioFinal1.equals(horarioInicial2) ||
+				       horarioFinal1.equals(horarioFinal2);
+			}
+		}
+		return false;
 	}
 
 	@Override

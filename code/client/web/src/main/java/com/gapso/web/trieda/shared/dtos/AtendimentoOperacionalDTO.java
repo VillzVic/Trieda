@@ -50,6 +50,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
 	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
+	public static final String PROPERTY_SEMANA_LETIVA_TEMPO_AULA = "semanaLetivaTempoAula";
 
 	private Integer totalLinhas = 1;
 
@@ -626,13 +627,6 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
 
-	static public boolean compatibleSameTime(
-		AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2 )
-	{
-		return dto1.getHorarioId().equals( dto2.getHorarioId() )
-			&& dto1.getSemana().equals( dto2.getSemana() );
-	}
-
 	static public int countListDTOsCreditos(
 		List< AtendimentoOperacionalDTO > listDTOs )
 	{
@@ -673,5 +667,14 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public void setSemanaLetivaId( Long value )
 	{
 		set( PROPERTY_SEMANA_LETIVA_ID, value );
+	}
+	
+	@Override
+	public Integer getSemanaLetivaTempoAula() {
+		return get( PROPERTY_SEMANA_LETIVA_TEMPO_AULA );
+	}
+
+	public void setSemanaLetivaTempoAula( Integer value ) {
+		set( PROPERTY_SEMANA_LETIVA_TEMPO_AULA, value );
 	}
 }

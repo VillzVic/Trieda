@@ -2037,6 +2037,7 @@ public class ConvertBeans
 		dto.setDisplayText( dto.getNaturalKey() );
 		dto.setCompartilhamentoCursosString( "" );
 		dto.setSemanaLetivaId( domain.getOferta().getCurriculo().getSemanaLetiva().getId() );
+		dto.setSemanaLetivaTempoAula(domain.getOferta().getCurriculo().getSemanaLetiva().getTempo());
 
 		if ( instituicaoEnsino != null )
 		{
@@ -2224,6 +2225,7 @@ public class ConvertBeans
 		dto.setDisplayText( dto.getNaturalKey() );
 		dto.setCompartilhamentoCursosString( "" );
 		dto.setSemanaLetivaId( domain.getOferta().getCurriculo().getSemanaLetiva().getId() );
+		dto.setSemanaLetivaTempoAula(domain.getOferta().getCurriculo().getSemanaLetiva().getTempo());
 
 		if ( instituicaoEnsino != null )
 		{

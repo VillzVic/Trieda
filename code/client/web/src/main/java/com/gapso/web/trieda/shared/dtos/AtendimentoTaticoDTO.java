@@ -42,6 +42,7 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_CREDITOS_PRATICOS = "creditosPratico";
 	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
+	public static final String PROPERTY_SEMANA_LETIVA_TEMPO_AULA = "semanaLetivaTempoAula";
 
 	public AtendimentoTaticoDTO()
 	{
@@ -523,5 +524,14 @@ public class AtendimentoTaticoDTO
 	public void setSemanaLetivaId( Long value )
 	{
 		set( PROPERTY_SEMANA_LETIVA_ID, value );
+	}
+	
+	@Override
+	public Integer getSemanaLetivaTempoAula() {
+		return get( PROPERTY_SEMANA_LETIVA_TEMPO_AULA );
+	}
+
+	public void setSemanaLetivaTempoAula( Integer value ) {
+		set( PROPERTY_SEMANA_LETIVA_TEMPO_AULA, value );
 	}
 }
