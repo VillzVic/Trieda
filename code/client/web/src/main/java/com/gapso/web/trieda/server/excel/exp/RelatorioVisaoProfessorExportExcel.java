@@ -433,6 +433,8 @@ public class RelatorioVisaoProfessorExportExcel
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
 		row = writeHeaderProfessor( campus, professor, turno, row, sheet );
+		
+		List<Long> horariosAulaIdsList = new ArrayList<Long>();
 
 		int initialRow = row;
 		int col = 2;
@@ -442,6 +444,7 @@ public class RelatorioVisaoProfessorExportExcel
 		List<HorarioAula> horariosAulaList = new ArrayList<HorarioAula>(semanaLetiva.getHorariosAula());
 		Collections.sort(horariosAulaList);
 		for (HorarioAula ha : horariosAulaList) {
+			horariosAulaIdsList.add(ha.getId());
 			// Horários
 			String value = ConvertBeans.dateToString(ha.getHorario(), ha.getSemanaLetiva().getTempo() );
 			setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], value );
@@ -499,11 +502,13 @@ public class RelatorioVisaoProfessorExportExcel
 
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana = diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
-			row += atendimentosService.deslocarLinhasExportExcel( this.instituicaoEnsino, atedimentosDiaSemana );
-
-			for ( AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana )
-			{
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get( atendimento.getDisciplinaString() );
+			for (AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana) {
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
+				
+				int index = horariosAulaIdsList.indexOf(atendimento.getHorarioId());
+				if (index != -1) {
+					row = initialRow + index;
+				}
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
@@ -513,8 +518,6 @@ public class RelatorioVisaoProfessorExportExcel
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
 					col, col, sheet, style );
-
-				row += atendimento.getTotalCreditos();
 			}
 		}
 
@@ -529,6 +532,8 @@ public class RelatorioVisaoProfessorExportExcel
 		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
 	{
 		row = writeHeaderProfessorVirtual( campus, professorVirtual, turno, row, sheet );
+		
+		List<Long> horariosAulaIdsList = new ArrayList<Long>();
 
 		int initialRow = row;
 		int col = 2;
@@ -538,6 +543,7 @@ public class RelatorioVisaoProfessorExportExcel
 		List<HorarioAula> horariosAulaList = new ArrayList<HorarioAula>(semanaLetiva.getHorariosAula());
 		Collections.sort(horariosAulaList);
 		for (HorarioAula ha : horariosAulaList) {
+			horariosAulaIdsList.add(ha.getId());
 			// Horários
 			String value = ConvertBeans.dateToString(ha.getHorario(), ha.getSemanaLetiva().getTempo() );
 			setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], value );
@@ -603,13 +609,13 @@ public class RelatorioVisaoProfessorExportExcel
 			List< AtendimentoOperacionalDTO > atedimentosDiaSemana
 					= diaSemanaToAtendimentosMap.get( diaSemanaInt );
 
-			row += atendimentosService.deslocarLinhasExportExcel(
-				this.instituicaoEnsino, atedimentosDiaSemana );
-
-			for ( AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana )
-			{
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
-					atendimento.getDisciplinaString() );
+			for (AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana) {
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
+				
+				int index = horariosAulaIdsList.indexOf(atendimento.getHorarioId());
+				if (index != -1) {
+					row = initialRow + index;
+				}
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
@@ -619,8 +625,6 @@ public class RelatorioVisaoProfessorExportExcel
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
 					col, col, sheet, style );
-
-				row += atendimento.getTotalCreditos();
 			}
 		}
 
