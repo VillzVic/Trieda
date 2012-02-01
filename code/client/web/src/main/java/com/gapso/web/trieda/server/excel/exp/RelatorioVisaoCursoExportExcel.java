@@ -404,6 +404,8 @@ public class RelatorioVisaoCursoExportExcel
 		// FIXME -- Considerar apenas os horários da semana letiva
 
 		row = writeHeader( oferta, periodo, tamanhoSemanaList, row, sheet, ehTatico );
+		
+		List<Long> horariosAulaIdsList = new ArrayList<Long>();
 
 		int initialRow = row;
 		int col = 2;
@@ -429,6 +431,7 @@ public class RelatorioVisaoCursoExportExcel
 			List<HorarioAula> horariosAulaList = new ArrayList<HorarioAula>(semanaLetiva.getHorariosAula());
 			Collections.sort(horariosAulaList);
 			for (HorarioAula ha : horariosAulaList) {
+				horariosAulaIdsList.add(ha.getId());
 				// Horários
 				String value = ConvertBeans.dateToString(ha.getHorario(), ha.getSemanaLetiva().getTempo() );
 				setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], value );
@@ -482,33 +485,16 @@ public class RelatorioVisaoCursoExportExcel
 				continue;
 			}
 
-			// Calcular quantas colunas deverão ser
-			// 'saltadas' para escrever o primeiro atendimento do dia
-			if ( atendimentosDia.get( 0 ) instanceof AtendimentoOperacionalDTO )
-			{
-				List< AtendimentoOperacionalDTO > listOp
-					= new ArrayList< AtendimentoOperacionalDTO >();
-
-				for ( AtendimentoRelatorioDTO ar : atendimentosDia )
-				{
-					listOp.add( (AtendimentoOperacionalDTO) ar );
+			for (AtendimentoRelatorioDTO atendimento : atendimentosDia) {
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
+				
+				if (!ehTatico) {
+					AtendimentoOperacionalDTO atendimentoOp = (AtendimentoOperacionalDTO)atendimento;
+					int index = horariosAulaIdsList.indexOf(atendimentoOp.getHorarioId());
+					if (index != -1) {
+						row = initialRow + index;
+					}
 				}
-
-				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-				row += service.deslocarLinhasExportExcel( this.instituicaoEnsino, listOp );
-
-				atendimentosDia.clear();
-
-				for ( AtendimentoOperacionalDTO atOp : listOp )
-				{
-					atendimentosDia.add( atOp );
-				}
-			}
-
-			for ( AtendimentoRelatorioDTO atendimento : atendimentosDia )
-			{
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
-					atendimento.getDisciplinaString() );
 
 				// Escreve célula principal
 				setCell( row, col, sheet, style, itExcelCommentsPool,
@@ -519,7 +505,9 @@ public class RelatorioVisaoCursoExportExcel
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
 					col, col, sheet, style );
 
-				row += atendimento.getTotalCreditos();
+				if (ehTatico) {
+					row += atendimento.getTotalCreditos();
+				}
 			}
 		}
 
