@@ -10,18 +10,19 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CurriculoDisciplinaFormPresenter
 	implements Presenter
 {
-	public interface Display
+	public interface Display extends ITriedaI18nGateway
 	{
 		Button getSalvarButton();
 		DisciplinaComboBox getDisciplinaComboBox();
@@ -59,14 +60,8 @@ public class CurriculoDisciplinaFormPresenter
 				{
 					final CurriculosServiceAsync service = Services.curriculos();
 
-					service.saveDisciplina( display.getCurriculoDTO(), getDTO(), new AsyncCallback< Void >()
+					service.saveDisciplina( display.getCurriculoDTO(), getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display)
 					{
-						@Override
-						public void onFailure( Throwable caught )
-						{
-							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
-						}
-
 						@Override
 						public void onSuccess( Void result )
 						{

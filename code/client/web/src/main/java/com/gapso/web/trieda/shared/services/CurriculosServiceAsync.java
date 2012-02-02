@@ -11,8 +11,13 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface CurriculosServiceAsync
-{
+public interface CurriculosServiceAsync {
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.CurriculosService#saveDisciplina(com.gapso.web.trieda.shared.dtos.CurriculoDTO, com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO)
+	 */
+	void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<Void> callback);
+	
 	void getCurriculo( Long id, AsyncCallback< CurriculoDTO > callback );
 	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CurriculoDTO > > callback );
 	void getBuscaList( CursoDTO cursoDTO, String codigo, String descricao,
@@ -20,7 +25,6 @@ public interface CurriculosServiceAsync
 	void save( CurriculoDTO curriculoDTO, AsyncCallback< Void > callback );
 	void remove( List< CurriculoDTO> curriculoDTOList, AsyncCallback< Void > callback );
 	void getDisciplinasList( CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CurriculoDisciplinaDTO > > callback );
-	void saveDisciplina( CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback< Void > callback );
 	void removeDisciplina( List< CurriculoDisciplinaDTO > curriculoDisciplinaDTOList, AsyncCallback< Void > callback );
 	void getPeriodos( CurriculoDTO curriculoDTO, AsyncCallback< List< Integer > > callback );
 	void getListByCurso( CursoDTO cursoDTO, AsyncCallback< ListLoadResult< CurriculoDTO > > callback );

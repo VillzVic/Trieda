@@ -16,11 +16,13 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.services.CurriculosService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @Transactional
 public class CurriculosServiceImpl
@@ -28,6 +30,32 @@ public class CurriculosServiceImpl
 	implements CurriculosService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.CurriculosService#saveDisciplina(com.gapso.web.trieda.shared.dtos.CurriculoDTO, com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO)
+	 */
+	@Override
+	public void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO) throws TriedaException {
+		CurriculoDisciplina curriculoDisciplina = ConvertBeans.toCurriculoDisciplina(curriculoDisciplinaDTO);
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId(),getInstituicaoEnsinoUser());
+		
+		// obtém as semanas letivas já associadas com a disciplina
+		Set<SemanaLetiva> semanasLetivas = curriculoDisciplina.getDisciplina().getSemanasLetivas();
+		
+		// verifica se a disciplina é compatível com a matriz curricular em termos de semanas letivas
+		if (semanasLetivas.isEmpty() || semanasLetivas.contains(curriculo.getSemanaLetiva())) {
+			curriculoDisciplina.setCurriculo(curriculo);
+			curriculoDisciplina.persist();
+		} else {
+			String msg = "A disciplina [" + curriculoDisciplina.getDisciplina().getCodigo() + "] já tem relação com a(s) semana(s) letiva(s) [";
+			for (SemanaLetiva semanaLetiva : semanasLetivas) {
+				msg += semanaLetiva.getCodigo() + ", ";
+			}
+			msg += "], por isso, não será possível associá-la com o currículo [" + curriculo.getCodigo() + "] que está associado com a semana letiva [" + curriculo.getSemanaLetiva().getCodigo() + "].";
+			
+			throw new TriedaException(msg);
+		}
+	}
 
 	@Override
 	public CurriculoDTO getCurriculo( Long id )
@@ -179,20 +207,6 @@ public class CurriculosServiceImpl
 		}
 
 		return curriculo.getPeriodos( getInstituicaoEnsinoUser() );
-	}
-
-	@Override
-	public void saveDisciplina( CurriculoDTO curriculoDTO,
-		CurriculoDisciplinaDTO curriculoDisciplinaDTO )
-	{
-		CurriculoDisciplina curriculoDisciplina
-			= ConvertBeans.toCurriculoDisciplina( curriculoDisciplinaDTO );
-
-		Curriculo curriculo = Curriculo.find(
-			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
-
-		curriculoDisciplina.setCurriculo( curriculo );
-		curriculoDisciplina.persist();
 	}
 
 	@Override

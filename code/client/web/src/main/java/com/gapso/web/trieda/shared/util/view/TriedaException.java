@@ -7,12 +7,17 @@ public class TriedaException
 	implements Serializable
 {
 	private static final long serialVersionUID = 7252239658737885318L;
-	private String completeMessage;
+	private String completeMessage; 
 
 	public TriedaException( )
 	{
 		super();
 		this.completeMessage = "";
+	}
+	
+	public TriedaException(String message) {
+		super(message);
+		this.completeMessage = message;
 	}
 
 	public TriedaException( Exception e )
