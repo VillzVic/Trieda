@@ -244,9 +244,10 @@ public class SolverInput
 		this.todosHorarioDisponivelCenario
 			= HorarioDisponivelCenario.findAll( this.instituicaoEnsino );
 
-		for ( HorarioDisponivelCenario hdc
-			: this.todosHorarioDisponivelCenario )
-		{
+		for (HorarioDisponivelCenario hdc : this.todosHorarioDisponivelCenario) {
+			// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
+			SemanaLetiva semanaLetivaDeHDC = hdc.getHorarioAula().getSemanaLetiva();
+			
 			for ( Campus campus : hdc.getCampi() )
 			{
 				Set< HorarioDisponivelCenario > horarios
@@ -299,8 +300,11 @@ public class SolverInput
 					horarios = new HashSet< HorarioDisponivelCenario >();
 					this.horariosDisciplinas.put( disciplina, horarios ); 
 				}
-
-				horarios.add( hdc );
+				 
+				// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
+				if (disciplina.getSemanasLetivas().isEmpty() || disciplina.getSemanasLetivas().contains(semanaLetivaDeHDC)) {
+					horarios.add( hdc );
+				}
 			}
 
 			for ( Professor professor : hdc.getProfessores() )

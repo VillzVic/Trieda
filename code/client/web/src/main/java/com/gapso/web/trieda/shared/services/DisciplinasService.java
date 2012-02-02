@@ -19,6 +19,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -29,6 +30,30 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface DisciplinasService
 	extends RemoteService
 {
+	/**
+	 * Retorna os horários disponíveis associados com a disciplina em questão. Quando uma disciplina estiver associada com matrizes
+	 * curriculares, os horários retornados compreenderão aqueles que pertencem às semanas letivas associadas com as matrizes curriculares
+	 * em questão. Caso a disciplina não esteja associada a nenhuma matriz curricular, retorna todos os horários disponíveis de todas as
+	 * semanas letivas cadastradas.
+	 * 
+	 * TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
+	 * 
+	 * @param disciplinaDTO disciplina
+	 * @return lista de horários disponíveis associados com a disciplina em questão.
+	 */
+	List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO);
+	
+	/**
+	 * Retorna as semanas letivas associadas com a disciplina em questão. Uma semana letiva estará associada a uma disciplina caso a
+	 * disciplina pertença a uma matriz curricular associada com a semana letiva em questão.
+	 * 
+	 * TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente.
+	 * 
+	 * @param disciplinaDTO disciplina
+	 * @return lista de semanas letivas associadas com a disciplina em questão.
+	 */
+	List<SemanaLetivaDTO> getSemanasLetivas(DisciplinaDTO disciplinaDTO);
+	
 	DisciplinaDTO getDisciplina( Long id );
 	ListLoadResult< DisciplinaDTO > getList( BasePagingLoadConfig loadConfig );
 	PagingLoadResult<DisciplinaDTO> getBuscaList( String nome, String codigo,
@@ -45,7 +70,6 @@ public interface DisciplinasService
 	void removeDisciplinaToSala( SalaDTO salaDTO, CurriculoDisciplinaDTO cdDTO);
 	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO);
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
-	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( DisciplinaDTO disciplinaDTO);
 	List< TreeNodeDTO > getDisciplinasByTreeSalas( TreeNodeDTO salaTreeNodeDTO,
 		TreeNodeDTO ofertaTreeNodeDTO, TreeNodeDTO curriculoDisciplinaTreeNodeDTO );
 	List< TreeNodeDTO > getDisciplinasByTreeGrupoSalas( TreeNodeDTO grupoSalaTreeNodeDTO,

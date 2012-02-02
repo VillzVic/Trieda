@@ -1010,4 +1010,18 @@ public class Disciplina
 
 		return true;
 	}
+	
+	/**
+	 * Este método foi implementado por conta da issue TRIEDA-1154 (Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente
+	 * 'a semana letiva da matriz curricular correspondente).
+	 * @return as semanas letivas associadas com a disciplina em questão, isto é, as semanas letivas associadas com as matrizes
+	 * curriculares que contém a disciplina em questão. 
+	 */
+	public Set<SemanaLetiva> getSemanasLetivas() {
+		Set<SemanaLetiva> semanasLetivas = new HashSet<SemanaLetiva>();
+		for (CurriculoDisciplina curriculoDisciplina : getCurriculos()) {
+			semanasLetivas.add(curriculoDisciplina.getCurriculo().getSemanaLetiva());
+		}
+		return semanasLetivas;
+	}
 }

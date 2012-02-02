@@ -53,6 +53,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.DisciplinasService;
@@ -67,6 +68,58 @@ public class DisciplinasServiceImpl
 	implements DisciplinasService
 {
 	private static final long serialVersionUID = -4850774141421616870L;
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.DisciplinasService#getHorariosDisponiveis(com.gapso.web.trieda.shared.dtos.DisciplinaDTO)
+	 */
+	@Override
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(DisciplinaDTO disciplinaDTO) {
+		List<HorarioDisponivelCenarioDTO> horariosDisponiveisDTO = new ArrayList<HorarioDisponivelCenarioDTO>();
+		
+		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId(),getInstituicaoEnsinoUser());
+		if (disciplina != null) {
+			// obtém todos os horários disponíveis da disciplina
+			List<HorarioDisponivelCenario> horariosDisponiveisBD = disciplina.getHorarios(getInstituicaoEnsinoUser());
+
+			// obtém as semanas letivas associadas com a disciplina em questão
+			Set<SemanaLetiva> semanasLetivas = disciplina.getSemanasLetivas();
+			// se necessário, filtra os horários discponíveis
+			if (!semanasLetivas.isEmpty()) {
+				// filtra os horários disponíveis da disciplina de acordo com as semanas letivas associadas com a disciplina
+				List<HorarioDisponivelCenario> horariosDisponiveisBDFiltrados = new ArrayList<HorarioDisponivelCenario>();
+				for (HorarioDisponivelCenario horario : horariosDisponiveisBD) {
+					if (semanasLetivas.contains(horario.getHorarioAula().getSemanaLetiva())) {
+						horariosDisponiveisBDFiltrados.add(horario);
+					}
+				}
+				
+				horariosDisponiveisBD.clear();
+				horariosDisponiveisBD.addAll(horariosDisponiveisBDFiltrados);
+			}
+			
+			// transforma os horários disponíveis em DTOs
+			horariosDisponiveisDTO.addAll(ConvertBeans.toHorarioDisponivelCenarioDTO(horariosDisponiveisBD));	
+		}
+
+		return horariosDisponiveisDTO;
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.DisciplinasService#getSemanasLetivas(com.gapso.web.trieda.shared.dtos.DisciplinaDTO)
+	 */
+	@Override
+	public List<SemanaLetivaDTO> getSemanasLetivas(DisciplinaDTO disciplinaDTO) {
+		List<SemanaLetivaDTO> semanasLetivasDTO = new ArrayList<SemanaLetivaDTO>();
+		
+		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId(),getInstituicaoEnsinoUser());
+		if (disciplina != null) {
+			for (SemanaLetiva semanaLetiva : disciplina.getSemanasLetivas()) {
+				semanasLetivasDTO.add(ConvertBeans.toSemanaLetivaDTO(semanaLetiva));
+			}
+		}
+		
+		return semanasLetivasDTO;
+	}
 
 	@Override
 	public DisciplinaDTO getDisciplina( Long id )
@@ -85,28 +138,6 @@ public class DisciplinasServiceImpl
 		}
 
 		return ConvertBeans.toDisciplinaDTO( disciplina );
-	}
-
-	@Override
-	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(DisciplinaDTO disciplinaDTO)
-	{
-		Disciplina disciplina = Disciplina.find(
-			disciplinaDTO.getId(), getInstituicaoEnsinoUser() ); 
-
-		List< HorarioDisponivelCenarioDTO > listDTO
-			= new ArrayList< HorarioDisponivelCenarioDTO >();
-
-		if ( disciplina == null )
-		{
-			return listDTO;
-		}
-
-		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-			disciplina.getHorarios( getInstituicaoEnsinoUser() ) );
-
-		listDTO.addAll( ConvertBeans.toHorarioDisponivelCenarioDTO( list ) );
-
-		return listDTO;
 	}
 
 	@Override

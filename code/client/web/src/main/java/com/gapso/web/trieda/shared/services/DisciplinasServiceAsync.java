@@ -19,12 +19,22 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface DisciplinasServiceAsync
-{
+public interface DisciplinasServiceAsync {
+	/**
+	 * @see com.gapso.web.trieda.shared.services.DisciplinasService#getHorariosDisponiveis(com.gapso.web.trieda.shared.dtos.DisciplinaDTO)
+	 */
+	void getHorariosDisponiveis(DisciplinaDTO disciplinaDTO, AsyncCallback<List<HorarioDisponivelCenarioDTO>> callback);
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.DisciplinasService#getSemanasLetivas(com.gapso.web.trieda.shared.dtos.DisciplinaDTO)
+	 */
+	void getSemanasLetivas(DisciplinaDTO disciplinaDTO, AsyncCallback<List<SemanaLetivaDTO>> callback);
+	
 	void getDisciplina( Long id, AsyncCallback< DisciplinaDTO > callback );
 	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO,
@@ -44,7 +54,6 @@ public interface DisciplinasServiceAsync
 	void removeDisciplinaToSala( GrupoSalaDTO grupoSalaDTO, CurriculoDisciplinaDTO cdDTO, AsyncCallback< Void > callback );
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
-	void getHorariosDisponiveis( DisciplinaDTO disciplinaDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
 	void getDisciplinasByTreeSalas( TreeNodeDTO salaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
 		TreeNodeDTO curriculoDisciplinaTreeNodeDTO, AsyncCallback< List< TreeNodeDTO > > callback );
 	void getDisciplinasByTreeGrupoSalas( TreeNodeDTO grupoSalaTreeNodeDTO, TreeNodeDTO ofertaTreeNodeDTO,
