@@ -327,6 +327,78 @@ Disciplina* ProblemData::retornaDisciplina( int id )
 }
 
 
+/*
+	Preenche o atributo ´oftsComp_disc´ com todos os pares de ofertas
+	compativeis (oft1,oft2) e suas disciplinas em comum.
+*/
+void ProblemData::preencheOftsCompDisc()
+{
+	ITERA_GGROUP_LESSPTR( it_disc, this->disciplinas, Disciplina )
+    {
+		Disciplina *disciplina = *it_disc;
+
+		GGroup< Oferta *, LessPtr< Oferta > > oftsRelacionadas;
+
+		ITERA_GGROUP_LESSPTR( it_oferta, this->ofertas, Oferta )
+		{		
+			if ( it_oferta->curriculo->getPeriodo( disciplina ) > 0 )
+			{
+				oftsRelacionadas.add( *it_oferta);
+			}
+		}
+
+		if ( oftsRelacionadas.size() > 1 )
+		{
+			// relaciona as ofertas 2 a 2 (sem simetria)
+			ITERA_GGROUP_LESSPTR( it1_Oft, oftsRelacionadas, Oferta )
+			{
+				ITERA_GGROUP_INIC_LESSPTR( it2_Oft, it1_Oft, oftsRelacionadas, Oferta )
+				{
+					if ( it2_Oft->getId() == it1_Oft->getId() ) continue;
+
+					if ( it2_Oft->campus->getId() != it1_Oft->campus->getId() ) continue;
+
+					if ( cursosCompativeis( it1_Oft->curso, it2_Oft->curso ) )
+						insereDisciplinaEmOftsComp( std::make_pair(*it1_Oft, *it2_Oft), disciplina->getId() );
+						
+				}
+			}
+		}
+		oftsRelacionadas.clear();
+	}
+}
+   
+/*
+	Dado um par de ofertas compativeis po (independente da ordem),
+	insere idDisc no vetor de ids de disciplinas em comum das duas ofertas.
+	Se nem o par po nem o seu inverso existir, insere-o.
+*/
+void ProblemData::insereDisciplinaEmOftsComp( std::pair<Oferta*, Oferta*> po, int idDisc )
+{
+	std::map< std::pair< Oferta*, Oferta* >, std::vector<int> >::iterator it_parOft_disc = this->oftsComp_disc.find( po );
+
+    if ( it_parOft_disc != oftsComp_disc.end() )
+    {
+		it_parOft_disc->second.push_back( idDisc );
+	}
+    else
+	{
+		std::pair<Oferta*, Oferta*> po_equiv = std::make_pair(po.second, po.first);
+
+		it_parOft_disc = this->oftsComp_disc.find( po_equiv );
+		if ( it_parOft_disc != oftsComp_disc.end() )
+		{
+			it_parOft_disc->second.push_back( idDisc );
+		}
+		else
+		{
+			std::vector<int> novaDisc(1,idDisc);
+			oftsComp_disc[po] = novaDisc;
+		}
+	}
+}
+
+
 // Retorna todos os pares curso/curriculo
 // onde a disciplina informada está incluída
 GGroup< std::pair< Curso *, Curriculo * > >
@@ -387,6 +459,23 @@ Demanda * ProblemData::buscaDemanda(
    }
 
 	return demanda;
+}
+
+GGroup< Demanda*, LessPtr< Demanda > > ProblemData::buscaTodasDemandas( Curso *c , Disciplina *d, Campus *cp )
+{
+   GGroup< Demanda*, LessPtr< Demanda > > demandas;
+
+   ITERA_GGROUP_LESSPTR( it_demanda, this->demandas, Demanda )
+   {
+      if ( it_demanda->disciplina->getId() == d->getId() &&
+		   it_demanda->oferta->getCursoId() == c->getId() &&
+		   it_demanda->oferta->getCampusId() == cp->getId() )
+      {
+		  demandas.add( *it_demanda );
+      }
+   }
+
+	return demandas;
 }
 
 Disciplina * ProblemData::retornaDisciplinaSubstituta(

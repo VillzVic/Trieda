@@ -43,6 +43,7 @@ void Variable::reset()
    parOft.first = NULL;
    parOft.second = NULL;
    combinaSL = -1;
+   combinaSLBloco = -1;
 }
 
 Variable::~Variable()
@@ -70,6 +71,7 @@ Variable & Variable::operator = ( const Variable & var )
    this->parCursos = var.getParCursos();
    this->parOft = var.getParOfertas();
    this->combinaSL = var.getCombinaSL();
+   this->combinaSLBloco = var.getCombinaSLBloco();
 
    return *this;
 }
@@ -132,7 +134,10 @@ bool Variable::operator < ( const Variable & var ) const
    
    if ( this->getCombinaSL() < var.getCombinaSL() ) return true;
    if ( this->getCombinaSL() > var.getCombinaSL() ) return false;
-   
+
+   if ( this->getCombinaSLBloco() < var.getCombinaSLBloco() ) return true;
+   if ( this->getCombinaSLBloco() > var.getCombinaSLBloco() ) return false;
+
    return false;
 }
 
@@ -210,9 +215,11 @@ std::string Variable::toString()
 		str <<"of"; break;
 	case V_MIN_HOR_DISC_OFT_DIA:
 		str <<"g"; break;
-	case V_COMBINA_SL:
+	case V_COMBINA_SL_SALA:
 		str <<"cs"; break;		
-
+	case V_COMBINA_SL_BLOCO:
+		str <<"cbc"; break;
+		
     default:
         str << "!";
    }
@@ -305,6 +312,11 @@ std::string Variable::toString()
    if ( combinaSL >= 0 )
    {
       str << "_CombinaSL" << combinaSL;
+   }
+
+   if ( combinaSLBloco >= 0 )
+   {
+      str << "_CombinaSLBloco" << combinaSLBloco;
    }
 
    str << "}";

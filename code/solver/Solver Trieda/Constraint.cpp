@@ -243,7 +243,12 @@ std::string Constraint::toString()
   case C_VAR_Q_3:
       ss << "__(C_VAR_Q_3):"; break;
   case C_VAR_CS:
-      ss << "__(C_VAR_CS):"; break;	  
+      ss << "__(C_VAR_CS):"; break;	
+  case C_FIXA_NAO_COMPARTILHAMENTO:
+      ss << "__(C_FIXA_NAO_COMPARTILHAMENTO):"; break;
+  case C_VAR_CBC:
+      ss << "__(C_VAR_CBC):"; break;
+	  
 
    default:
       ss << "!";

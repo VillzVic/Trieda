@@ -312,6 +312,9 @@ public:
    // em cursos compatíveis com o curso também informado
    Demanda * buscaDemanda( Curso * , Disciplina * );
 
+   // Busca a demandas da disciplina e curso informados
+   GGroup< Demanda *, LessPtr< Demanda > > buscaTodasDemandas( Curso * , Disciplina *, Campus *cp );
+
    // Retorna o conjunto de demandas da disciplina
    // informada, que foi substituída por alguma outra
    GGroup< Demanda *, LessPtr< Demanda > > retornaDemandaDisciplinasSubstituidas( Disciplina * );
@@ -323,6 +326,13 @@ public:
 	Oferta * retornaOfertaDiscilpina( Curso *, Curriculo *, Disciplina * );
 
 	Disciplina* retornaDisciplina( int id );
+
+   // Armazena os 'ids' das disciplinas em comum entre os pares de ofertas compatíveis
+   std::map< std::pair< Oferta *, Oferta * >, std::vector< int /*idDisc*/ > > oftsComp_disc;
+
+   void preencheOftsCompDisc();
+
+   void insereDisciplinaEmOftsComp( std::pair<Oferta*, Oferta*> po, int idDisc );
 
    //-----------------------------------------------------------------------------------------------
 

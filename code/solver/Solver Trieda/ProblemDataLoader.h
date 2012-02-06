@@ -87,6 +87,9 @@ public:
    void calculaMenorCapacSalaPorDisc();
 
    /* */
+   void calculaCapacMediaSalaPorDisc();
+
+   /* */
    void estima_turmas();
    
    /* */
@@ -119,6 +122,9 @@ public:
 
    // Preenche o atributo 'cursosComp_disc' de problemData
    void preencheDisciplinasDeCursosCompativeis();
+
+   // Preenche o atributo 'oftsComp_disc' de problemData
+   void preencheDisciplinasDeOfertasCompativeis();
 
    // Divide as fixações de acordo com seus tipos
    void relacionaFixacoes();
@@ -217,6 +223,9 @@ private:
 
    // calcula combinaCredSL para cada sala
    void calculaCombinaCredSLPorSala();
+
+   // calcula combinaCredSL para cada bloco curricular
+   void calculaCombinaCredSLPorBlocoCurric();
 
    void calculaCompatibilidadeDeHorarios();
    

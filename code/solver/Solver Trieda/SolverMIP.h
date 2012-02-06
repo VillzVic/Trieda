@@ -14,7 +14,6 @@
 #include "VariableOp.h"
 #include "ConstraintOp.h"
 #include "opt_lp.h"
-#include "opt_gurobi.h"
 #include "ProblemData.h"
 #include "ProblemSolution.h"
 #include "SolutionLoader.h"
@@ -51,6 +50,7 @@ public:
 
    int solve();
    void getSolution( ProblemSolution * );
+
 
    /********************************************************************
    **                      VARIABLE CREATION                          **
@@ -95,7 +95,8 @@ public:
    int cria_variavel_aloc_alunos_parOft(void); // of_{i,d,oft1,oft2}
    int cria_variavel_creditos_parOferta(void);  // p_{i,d,oft1,oft2,u,tps,t}
    int cria_variavel_min_hor_disc_oft_dia(void); // g_{d,oft,t}
-   int cria_variavel_maxCreds_combin_sl(void); // cs_{s,t,k} -> Usado somente quando tem 2 semanas letivas
+   int cria_variavel_maxCreds_combina_sl_sala(void); // cs_{s,t,k} -> Usado somente quando tem 2 semanas letivas
+   int cria_variavel_maxCreds_combina_Sl_bloco(void); // cbc_{bc,t,k} -> Usado somente quando tem 2 semanas letivas
    
    /********************************************************************
    **                    CONSTRAINT CREATION                          **
@@ -148,6 +149,8 @@ public:
    int cria_restricao_evita_sobrepos_sala_por_div_turmas(void); //Restricao 1.2.43
    int cria_restricao_ativacao_var_q(void);				// Restricao 1.2.44, 1.2.45, 1.2.46
    int cria_restricao_ativacao_var_cs(void);			// Restricao 1.2.49-> Usado somente quando há 2 semanas letivas
+   int cria_restricao_fixa_nao_compartilhamento(void);	// Restricao 1.2.50-> Usado somente quando há 2 semanas letivas
+   int cria_restricao_ativacao_var_cbc(void);			// Restricao 1.2.51
 
    // Criacao de variaveis operacional
    int criaVariaveisOperacional( void );

@@ -2,6 +2,7 @@
 #define RVND_HPP_
 
 #include <algorithm>
+#include <iostream>
 
 #include "Heuristic.hpp"
 
@@ -12,6 +13,8 @@
 #else
 #include "CPUTimerUnix.h"
 #endif
+
+using namespace std;
 
 class RVND
    : public Heuristic

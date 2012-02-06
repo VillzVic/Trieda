@@ -31,6 +31,8 @@ public:
    void refDisciplinaPeriodo( GGroup< Disciplina *, LessPtr< Disciplina > > );
 
    bool possuiDisciplina( int idDisciplina );
+   
+   GGroup< Calendario*, LessPtr<Calendario> > retornaSemanasLetivasNoPeriodo( int periodo );
 
 private:
    GGroup< std::pair< int, int > > ids_disciplinas_periodo;

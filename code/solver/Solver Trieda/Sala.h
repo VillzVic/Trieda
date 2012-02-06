@@ -91,8 +91,10 @@ public:
     { 
 		return ( getId() == right.getId() );
     }
-	
-	std::map< Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ >, int/*nroCreds*/ > combinaCredSL;
+
+	// Associa a cada Calendario (sl) e tipo de combinação de creditos das semanas letivas,
+	// o numero maximo de creditos possivel para cada dia da semana.
+	std::map< Trio< int/*dia*/, int /*k_id*/, Calendario* /*sl*/ >, int/*nroCreds*/ > combinaCredSL;
 
 private:
 	std::string codigo;
@@ -114,9 +116,6 @@ private:
 	void calculaTemposSL();
 	void setTempoDispPorDia( int dia, int t ){ tempoDispPorDia[dia] = t; }
 	void setTempoDispPorDiaSL( int dia, int tempoDeAulaSL, int t ){ tempoDispPorDiaSL[std::make_pair(dia,tempoDeAulaSL)] = t; }
-	
-	// Associa a cada Calendario (sl) e tipo de combinação de creditos das semanas letivas,
-	// o numero maximo de creditos possivel para cada dia da semana.
 
 	std::map< int /*dia*/, int /*size*/ > combinaCredSLSize;
 

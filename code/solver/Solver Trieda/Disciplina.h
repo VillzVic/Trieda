@@ -3,12 +3,12 @@
 
 #include "ofbase.h"
 #include "GGroup.h"
-
 #include "TipoDisciplina.h"
 #include "DivisaoCreditos.h"
 #include "NivelDificuldade.h"
 #include "Horario.h"
 #include "HorarioDia.h"
+#include "Calendario.h"
 
 class Disciplina :
    public OFBase
@@ -54,8 +54,9 @@ public:
    void setNumTurmas( int value ) { num_turmas = value; }
    void setMinCreds( int value ) { min_creds = value; }
    void setMaxCreds( int value ) { max_creds = value; }
-   void setTempoCredSemanaLetiva( int value ) { tempoCredSemanaLetiva = value; }
    void setMenorCapacSala( int value ) { this->menorCapacSala = value; }
+   void setCapacMediaSala( int value ) { this->capacMediaSala = value; }
+   void setCalendario( Calendario* sl ) { this->calendario = sl; }
 
    int getDemandaTotal() const { return demanda_total; }
    int getMaxDemanda() const { return max_demanda; }
@@ -71,15 +72,22 @@ public:
    int getNumTurmas() const { return num_turmas; }
    int getMinCreds() const { return min_creds; }
    int getMaxCreds() const { return max_creds; }
-   int getTempoCredSemanaLetiva() const { return tempoCredSemanaLetiva; }
    int getMenorCapacSala() const { return this->menorCapacSala; }
+   int getCapacMediaSala() const { return this->capacMediaSala; }
+   Calendario* getCalendario() const { return calendario; }
 
+   // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
+   int getTempoCredSemanaLetiva() const { return this->calendario->getTempoAula(); } 
+   
    // Informa se uma dada disciplina é equivalente à esta disciplina
    bool eh_equivalente( Disciplina * );
 
    int getTotalCreditos() const { return this->getCredTeoricos() + this->getCredPraticos(); }
 
 private:
+	
+   Calendario* calendario;
+
    // Soma das demandas de uma disciplina.
    int demanda_total;
 
@@ -98,8 +106,8 @@ private:
    int num_turmas;
    int min_creds;
    int max_creds;
-   int tempoCredSemanaLetiva; // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
    int menorCapacSala; // menor capacidade dentre as salas aonde a disciplina pode ser ministrada
+   int capacMediaSala; // capacidade media dentre as salas aonde a disciplina pode ser ministrada
 };
 
 #endif

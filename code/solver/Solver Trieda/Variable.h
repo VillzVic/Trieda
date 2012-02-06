@@ -48,7 +48,8 @@ public:
 	  V_CREDITOS_PAR_OFT = 27,	// p_{i,d,oft1,oft2,u,s,t}
 	  V_ALOC_ALUNOS_PAR_OFT = 28,  // of_{i,d,oft1,oft2}
 	  V_MIN_HOR_DISC_OFT_DIA = 29, // g_{d,oft,t}
-	  V_COMBINA_SL = 30	// cs_{s,t,k}
+	  V_COMBINA_SL_SALA = 30, // cs_{s,t,k}
+	  V_COMBINA_SL_BLOCO = 31 // cbc_{cb,t,k}
 
    };
 
@@ -100,6 +101,8 @@ public:
    
    int getCombinaSL() const { return combinaSL; }
 
+   int getCombinaSLBloco() const { return combinaSLBloco; }
+
    //==================================================
    // SET METHODS 
    //==================================================
@@ -144,6 +147,8 @@ public:
 
    void setCombinaSL( int combinacao ) { combinaSL = combinacao; }
 
+   void setCombinaSLBloco( int combinacao ) { combinaSLBloco = combinacao; }
+
    //==================================================
    // OPERATORS 
    //==================================================
@@ -176,6 +181,7 @@ private:
    Oferta * o; // oferta
    int k; // combinação de divisão de créditos
    int combinaSL; // combinação de divisão de creditos entre as semanas letivas para uma sala e dia
+   int combinaSLBloco; // combinação de divisão de creditos entre as semanas letivas para um bloco curricular e dia
 };
 
 

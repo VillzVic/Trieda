@@ -11,12 +11,14 @@ Disciplina::Disciplina(void)
    divisao_creditos = NULL;
    tipo_disciplina = NULL;
    nivel_dificuldade = NULL;
+   calendario = NULL;
 
    max_demanda = -1;
    num_turmas = -1;
    min_creds = -1;
    max_creds = -1;
    menorCapacSala = 10000;
+   capacMediaSala = 0;
 }
 
 Disciplina::~Disciplina(void)

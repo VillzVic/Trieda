@@ -67,7 +67,9 @@ public:
 	  C_VAR_Q_2 = 46,	 // Restricao 1.2.47
 	  C_VAR_Q_3 = 47,	 // Restricao 1.2.48
 	  C_MAX_TEMPO_S_D_SL = 48,				// Restricao 1.2.3.b
-	  C_VAR_CS = 49
+	  C_VAR_CS = 49,
+	  C_FIXA_NAO_COMPARTILHAMENTO = 50,	// Restricao 1.2.50
+	  C_VAR_CBC = 51	// Restricao 1.2.51
    };
 
    /** Default constructor. */

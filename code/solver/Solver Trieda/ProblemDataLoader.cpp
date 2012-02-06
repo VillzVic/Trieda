@@ -81,6 +81,10 @@ void ProblemDataLoader::load()
    // ---------
    preencheDisciplinasDeCursosCompativeis();
 
+   std::cout << "Preenchendo disciplinas de ofertas compativeis..." << std::endl;
+   // ---------
+   preencheDisciplinasDeOfertasCompativeis();
+
    std::cout << "Dividindo disciplinas..." << std::endl;
    // ---------
    divideDisciplinas();
@@ -130,9 +134,13 @@ void ProblemDataLoader::load()
    associaDisciplinasSalas();
 
    std::cout << "Calculando menor capacidade de sala por disc..." << std::endl;
-   // ---------
+   // --------- TODO: Tirar, caso resolva-se usar a media (abaixo)
    calculaMenorCapacSalaPorDisc();
-   
+
+   std::cout << "Calculando media capacidade de sala por disc..." << std::endl;
+   // ---------   
+   calculaCapacMediaSalaPorDisc();
+
    std::cout << "Estimando turmas..." << std::endl;
    // ---------
    estima_turmas();
@@ -227,9 +235,13 @@ void ProblemDataLoader::load()
 
    calculaCompatibilidadeDeHorarios();
 
-   std::cout << "Calculando combinacao de creditos..." << std::endl;
+   std::cout << "Calculando combinacao de creditos por sala..." << std::endl;
 
    calculaCombinaCredSLPorSala();
+
+   std::cout << "Calculando combinacao de creditos por bloco curricular..." << std::endl;
+
+   calculaCombinaCredSLPorBlocoCurric();
 
 }
 
@@ -611,26 +623,6 @@ void ProblemDataLoader::carregaDiasLetivosCampusUnidadeSala()
                 {
                     it_Sala->diasLetivos.add( itHorarioDisponivel->dias_semana );
                 }
-				// TODO: deletar o trecho comentado abaixo, porque
-				// depois que creditos_disponiveis for retirado, horarios_disponiveis sera para os 2 modos de otimizacao
-               /*
-			   if(problemData->parametros->modo_otimizacao == "TATICO")
-               {
-                  ITERA_GGROUP( it_Creds_Disp, it_Sala->creditos_disponiveis, CreditoDisponivel)
-                  {
-                     if ( it_Creds_Disp->getMaxCreditos() > 0 )
-                     {
-                        it_Sala->diasLetivos.add( it_Creds_Disp->getDiaSemana() );
-                     }
-                  }
-               }
-               else if ( problemData->parametros->modo_otimizacao == "OPERACIONAL" )
-               {
-                  ITERA_GGROUP ( itHorarioDisponivel, it_Sala->horarios_disponiveis, Horario )
-                  {
-                     it_Sala->diasLetivos.add( itHorarioDisponivel->dias_semana );
-                  }
-               }*/
             }
          }
       }
@@ -642,8 +634,8 @@ void ProblemDataLoader::carregaDiasLetivosDiscs()
    ITERA_GGROUP_LESSPTR( it_Disc, problemData->disciplinas, Disciplina )
    {
       ITERA_GGROUP( it_Horario, it_Disc->horarios, Horario )
-      {
-         ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Horario->dias_semana, int )
+      {       
+		 ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Horario->dias_semana, int )
          { 
             it_Disc->diasLetivos.add( *it_Dias_Letivos );
          }
@@ -1263,6 +1255,11 @@ void ProblemDataLoader::disciplinasCursosCompativeis()
 void ProblemDataLoader::preencheDisciplinasDeCursosCompativeis()
 {
 	problemData->preencheCursosCompDisc();
+}
+
+void ProblemDataLoader::preencheDisciplinasDeOfertasCompativeis()
+{
+	problemData->preencheOftsCompDisc();
 }
 
 bool ProblemDataLoader::contemFixacao(
@@ -2603,9 +2600,7 @@ void ProblemDataLoader::gera_refs()
       find_and_set( it_disc->getNivelDificuldadeId(),
          problemData->niveis_dificuldade,
          it_disc->nivel_dificuldade, false );
-
-	  int tempoCred = 0;
-
+	  
       ITERA_GGROUP( it_horario, it_disc->horarios, Horario )
       {
          find_and_set_lessptr( it_horario->getTurnoId(),
@@ -2615,12 +2610,8 @@ void ProblemDataLoader::gera_refs()
          find_and_set_lessptr( it_horario->getHorarioAulaId(),
             // it_horario->turno->horarios_aula,
             todos_horarios_aula,
-            it_horario->horario_aula, false );
-		 
-		 tempoCred = it_horario->horario_aula->getTempoAula();
+            it_horario->horario_aula, false );		 
       }
-
-	  it_disc->setTempoCredSemanaLetiva( tempoCred ); // tempo equivalente a 1 credito da disciplina
 
    } // disciplinas
 
@@ -2635,6 +2626,16 @@ void ProblemDataLoader::gera_refs()
          find_and_set_lessptr( it_curriculo->getSemanaLetivaId(),
             problemData->calendarios,
             it_curriculo->calendario, false );
+		 
+		 Calendario *sl = it_curriculo->calendario;
+		 
+		 for( GGroup< std::pair< int, Disciplina * > > ::iterator it_periodo_disc = it_curriculo->disciplinas_periodo.begin();
+			  it_periodo_disc != it_curriculo->disciplinas_periodo.end(); it_periodo_disc++ )
+		 {
+			 Disciplina *d = (*it_periodo_disc).second;
+			 d->setCalendario( sl );			 
+		 }
+
       }
    }
 
@@ -2874,7 +2875,8 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   if ( it_bloco_curricular->campus->getId() == campus->getId()
                      && it_bloco_curricular->curso->getId() == curso->getId()
                      && it_bloco_curricular->curriculo->getId() == curriculo->getId()
-                     && it_bloco_curricular->getPeriodo() == periodo )
+                     && it_bloco_curricular->getPeriodo() == periodo
+					 && it_bloco_curricular->oferta->getId() == oferta->getId() )
                   {
                      it_bloco_curricular->disciplinas.add( disciplina );
                      it_bloco_curricular->disciplina_Demanda[ disciplina ] = demanda;
@@ -2893,9 +2895,10 @@ void ProblemDataLoader::cria_blocos_curriculares()
                   bloco_curricular->campus = campus;
                   bloco_curricular->curso = curso;
                   bloco_curricular->curriculo = curriculo;
+				  bloco_curricular->oferta = oferta;
                   bloco_curricular->disciplinas.add( disciplina );
                   bloco_curricular->disciplina_Demanda[ disciplina ] = demanda;
-
+				  
                   problemData->blocos.add( bloco_curricular );
                   id_Bloco++;
                }
@@ -2966,32 +2969,6 @@ void ProblemDataLoader::relacionaCampusDiscs()
    }
 }
 
-void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
-{
-   ITERA_GGROUP_LESSPTR( it_cp, problemData->campi, Campus )
-   {
-      unsigned somaCapSalas = 0;
-      unsigned total_Salas = 0;
-
-      ITERA_GGROUP_LESSPTR( it_und, it_cp->unidades, Unidade )
-      {
-         ITERA_GGROUP_LESSPTR( it_sala, it_und->salas, Sala )
-         {
-            somaCapSalas += ( it_sala->getCapacidade() );
-
-            it_und->setMaiorSala( std::max( ( (int)it_und->getMaiorSala() ),
-               ( (int)it_sala->getCapacidade() ) ) );
-		 }
-
-         total_Salas += it_und->getNumSalas();
-         it_cp->setMaiorSala( std::max( (int)it_cp->getMaiorSala(), (int)it_und->getMaiorSala() ) );
-      }
-
-      problemData->cp_medSalas[ it_cp->getId() ] =
-         ( ( total_Salas > 0 ) ? ( somaCapSalas / total_Salas ) : 0 );
-   }
-}
-
 void ProblemDataLoader::calculaDemandas()
 {
    Demanda * demanda = NULL;
@@ -3044,6 +3021,31 @@ void ProblemDataLoader::calculaDemandas()
    }
 }
 
+void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
+{
+   ITERA_GGROUP_LESSPTR( it_cp, problemData->campi, Campus )
+   {
+      unsigned somaCapSalas = 0;
+      unsigned total_Salas = 0;
+
+      ITERA_GGROUP_LESSPTR( it_und, it_cp->unidades, Unidade )
+      {
+         ITERA_GGROUP_LESSPTR( it_sala, it_und->salas, Sala )
+         {
+            somaCapSalas += ( it_sala->getCapacidade() );
+
+            it_und->setMaiorSala( std::max( ( (int)it_und->getMaiorSala() ),
+											( (int)it_sala->getCapacidade() ) ) );
+		 }
+
+         total_Salas += it_und->getNumSalas();
+         it_cp->setMaiorSala( std::max( (int)it_cp->getMaiorSala(), (int)it_und->getMaiorSala() ) );
+      }
+
+      problemData->cp_medSalas[ it_cp->getId() ] =
+         ( ( total_Salas > 0 ) ? ( somaCapSalas / total_Salas ) : 0 );
+   }
+}
 
 void ProblemDataLoader::calculaMenorCapacSalaPorDisc()
 {
@@ -3061,6 +3063,25 @@ void ProblemDataLoader::calculaMenorCapacSalaPorDisc()
 
 }
 
+void ProblemDataLoader::calculaCapacMediaSalaPorDisc()
+{
+   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+   {
+	   int soma = 0;
+
+	   std::vector< Sala * >::iterator it_sala = problemData->discSalas[*it_disc].begin();
+	   for ( ; it_sala != problemData->discSalas[*it_disc].end(); it_sala++ )
+	   {
+			soma += ( *it_sala )->getCapacidade();
+	   }
+
+	   int capacMediaSala = soma / ( problemData->discSalas[*it_disc].size() );
+
+	   it_disc->setCapacMediaSala(capacMediaSala);
+   }
+
+}
+
 void ProblemDataLoader::estima_turmas()
 {
 	estima_turmas_sem_compart();
@@ -3072,32 +3093,60 @@ void ProblemDataLoader::estima_turmas()
     disciplina, quando não é permitido o compartilhamento
     de turmas de cursos diferentes, de acordo com o seguinte cálculo:
 	
-	numTurmasDisc = sum{ demDiscOferta_{i} / tamMinSalasCP }
+	numTurmasDisc = sum{ demDiscCurso_{i} / tamMedioSalasCP }
 
     Onde:
-    demDiscOferta -> representa a demanda total da oferta i de uma dada disciplina.
-    tamMinSalasCP -> representa o tamanho minimo das salas de um campus que têm a disciplina associada.
+    demDiscOferta -> representa a demanda total do curso i de uma dada disciplina.
+    tamMedioSalasCP -> representa o tamanho medio das salas de um campus que têm a disciplina associada.
 */
 void ProblemDataLoader::estima_turmas_sem_compart()
 {
-
-   GGroup< Demanda *, LessPtr< Demanda > >::iterator itDemanda = problemData->demandas.begin();
-   for (; itDemanda != problemData->demandas.end(); itDemanda++ )
+   std::map< int /*Id Campus*/, GGroup< int > /*Id Discs*/ >::iterator itCpDisc = problemData->cp_discs.begin();
+   for ( ; itCpDisc != problemData->cp_discs.end(); itCpDisc++ )
    {
-	   Campus *cp = itDemanda->oferta->campus;
-	   int disc = itDemanda->getDisciplinaId();			   
-	   int demDisc = itDemanda->getQuantidade();	   
-	   int numTurmas;
-	   
-	   int minCapacSala = itDemanda->disciplina->getMenorCapacSala();
+	   int campusId = itCpDisc->first;
+	   Campus * cp = problemData->refCampus[campusId];
 
-	   if ( problemData->refDisciplinas[disc]->getNumTurmas() < 0 )
-		   problemData->refDisciplinas[disc]->setNumTurmas( 0 );
-		
-	   numTurmas = problemData->refDisciplinas[disc]->getNumTurmas() + int( std::floor( double(demDisc+minCapacSala-1)/minCapacSala ) );
-       problemData->refDisciplinas[disc]->setNumTurmas( numTurmas );       
-       
+	   // Para cada disciplina do campus
+	   GGroup< int >::iterator itDisc = itCpDisc->second.begin();
+	   for ( ; itDisc != itCpDisc->second.end(); itDisc++ )
+	   {
+		   int discId = *itDisc;
+		   Disciplina *d = problemData->refDisciplinas[discId];
+
+		   int capacMediaSala = d->getCapacMediaSala();
+		   
+		   if ( d->getNumTurmas() < 0 ) d->setNumTurmas( 0 );
+		   
+		   int numTurmas = 0;
+		   
+		   // Para cada curso que contem a disciplina
+		   ITERA_GGROUP_LESSPTR( itCurso, cp->cursos, Curso )
+		   {
+			   Curso *c = *itCurso;
+
+			   if ( !c->possuiDisciplina( discId ) )
+			   {
+					continue;
+			   }
+			   
+			   int quantidade = 0;
+
+			   GGroup< Demanda*, LessPtr< Demanda > > demandas = problemData->buscaTodasDemandas( c , d, cp );
+
+			   ITERA_GGROUP_LESSPTR( itDemanda, demandas, Demanda )
+			   {
+				   quantidade += itDemanda->getQuantidade();  
+			   }
+
+			   // Numero de turmas necessarias para atender a demanda da disciplina d do curso c
+			   numTurmas = numTurmas + int( std::floor( double(quantidade+capacMediaSala-1)/capacMediaSala ) );
+		   }
+
+		   d->setNumTurmas( numTurmas + 1 );
+	   }
    }
+
 }
 
 
@@ -4235,37 +4284,6 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
 					{
 						sala->removeCombinaCredSL( it_mapDominados->first );						
 					}
-					/*
-					// Faz o backup dos itens do dia
-					std::map< Trio< int, int , Calendario* >, int > copia_combinaCredSL;
-					std::map< Trio<int, int, Calendario*>, int >::iterator it = sala->getCombinaCredSL().begin();
-					for ( ; it != sala->getCombinaCredSL().end(); it++  )
-					{
-						if ( it->first.first == dia )
-						{
-							copia_combinaCredSL[it->first] = it->second;
-						}
-					}
-
-					// Deleta itens do dia
-					it = sala->getCombinaCredSL().begin();
-					for ( ; it != sala->getCombinaCredSL().end(); it++  )
-					{
-						if ( it->first.first == dia )
-						{
-							sala->removeCombinaCredSL( it->first );						
-						}
-					}
-				
-					// Restore itens do dia e reenumera corretamente
-					it = copia_combinaCredSL.begin();
-					for ( ; it != copia_combinaCredSL.end(); it++  )
-					{
-
-						sala->setCombinaCredSL( dia, k, sl1, n );
-
-					}
-					*/
 					int size = k - dominados.size()/2;
 					sala->setCombinaCredSLSize(dia, size);
 					
@@ -4278,6 +4296,156 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
          }
       }
    }
+}
+
+
+void ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric()
+{
+	if ( problemData->calendarios.size() > 2 )
+	{
+		std::cerr << "Atencao em ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric: esta funcao esta preparada "
+				  << "para trabalhar somente o caso de 1 ou 2 semanas letivas.";
+	}
+		
+	ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
+    {
+	    BlocoCurricular *bc = *itBloco;
+
+	 	GGroup< Calendario*, LessPtr<Calendario> > calendarios = bc->curriculo->retornaSemanasLetivasNoPeriodo( bc->getPeriodo() );
+
+		if ( calendarios.size() == 1 )
+		{
+			Calendario *sl1 = *calendarios.begin();
+			
+			ITERA_GGROUP_N_PT( itDia, bc->diasLetivos, int )
+			{
+				int dia = *itDia;
+
+				bc->setCombinaCredSL( dia, 0, sl1, sl1->getNroDeHorariosAula(dia) );				
+				
+				bc->setCombinaCredSLSize(dia, 1);
+			}
+		}
+		else if ( calendarios.size() >= 2 )
+		{
+			// só trata 2 semanas letivas por bloco
+			Calendario *sl1 = *calendarios.begin();
+			Calendario *sl2 = *(++calendarios.begin());
+
+			ITERA_GGROUP_N_PT( itDia, bc->diasLetivos, int )
+			{
+				int dia = *itDia;
+
+				GGroup<HorarioAula*> horDispDiaSL1 = bc->retornaHorariosDisponiveisNoDiaPorSL( dia, sl1 );
+				GGroup<HorarioAula*> horDispDiaSL2 = bc->retornaHorariosDisponiveisNoDiaPorSL( dia, sl2 );
+
+				#pragma region Cria o mapa de compatibilidade de horarios de sl1 e sl2
+
+				// Map para armazenar as compatibilidades
+				// Para cada HorarioAula H, lista todos os HorarioAula h que não sobrepõem H
+				std::map< HorarioAula*, GGroup<HorarioAula*> > map_compatHorarioSL1PorSalaDia;
+
+				ITERA_GGROUP( it_H, horDispDiaSL1, HorarioAula )
+				{
+					ITERA_GGROUP( it_h, horDispDiaSL2, HorarioAula )
+					{
+						// Se it_H não se sobrepor com it_h
+						if ( problemData->compatibilidadesDeHorarios[ *it_H ].find( *it_h ) !=
+								problemData->compatibilidadesDeHorarios[ *it_H ].end() )
+						{
+							map_compatHorarioSL1PorSalaDia[*it_H].add( *it_h );
+						}
+					}
+				}
+
+				#pragma endregion
+
+				#pragma region Calcula todas as combinações possíveis entre horarios compativeis de sl2
+
+				// Map para armazenar as combinações (sub-conjuntos)
+				std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ > todosSubConjuntos;
+
+				for ( std::map< HorarioAula*, GGroup<HorarioAula*> >::iterator it_H = map_compatHorarioSL1PorSalaDia.begin();
+						it_H != map_compatHorarioSL1PorSalaDia.end(); it_H++  )
+				{
+					// Conjunto com todos os subconjuntos com h's compativeis com H
+					GGroup< std::set< HorarioAula* > > subCjt = calculaSubCjtHorarios( it_H->second ); // TODO: tentar reaproveitar os calculos anteriores
+					
+					for ( GGroup< std::set< HorarioAula* > >::iterator it_h = subCjt.begin();
+							it_h != subCjt.end(); it_h++ )
+					{
+						if ( todosSubConjuntos.find( *it_h ) == todosSubConjuntos.end() )
+						{
+							todosSubConjuntos[ *it_h ] = 1; // Insere um novo subCjt
+						}
+						else
+						{
+							todosSubConjuntos[ *it_h ]++; // Incrementa o numero de ocorrencias do subCjt
+						}
+					}
+				}
+				
+				#pragma endregion
+
+				#pragma region Cria as combinações de maximos de creditos
+
+				bool REMOCAO = false;
+				int k=0;
+				bc->getCombinaCredSLSize()[dia] = k;
+
+				for ( int i = 0; i <= (int) horDispDiaSL1.size(); i++ )
+				{
+					int maxSL2 = 0;
+					
+					std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ >::iterator it = todosSubConjuntos.begin();
+					
+					for (; it != todosSubConjuntos.end(); it++ )
+					{
+						if ( i == it->first.size() && maxSL2 < it->second )
+							maxSL2 = it->second;
+					}
+					if (i==0)
+						maxSL2 = horDispDiaSL2.size();
+
+					if ( !bc->combinaCredSL_eh_dominado( i, sl1, maxSL2, sl2, dia ) &&
+						 !bc->combinaCredSL_eh_repetido( i, sl1, maxSL2, sl2, dia ) ) // atencao para a ordem: i refere-se a sl1 & maxSL2 refere-se a sl2
+					{
+						bc->setCombinaCredSL( dia, k, sl1, i );
+						bc->setCombinaCredSL( dia, k, sl2, maxSL2 );
+						
+						k++;
+						bc->setCombinaCredSLSize(dia, k);
+
+						if ( bc->combinaCredSL_domina( i, sl1, maxSL2, sl2, dia ) != NULL )
+						{
+							// sera necessario remover itens dominados
+							REMOCAO = true;
+						}
+					}
+				}
+				
+				#pragma region Remoção de itens dominados
+
+				if (REMOCAO)
+				{
+					std::map< Trio<int, int, Calendario*>, int > dominados = bc->retornaCombinaCredSL_Dominados(dia);
+					
+					// Deleta itens dominados
+					std::map< Trio<int, int, Calendario*>, int >::iterator it_mapDominados = dominados.begin();
+					for ( ; it_mapDominados != dominados.end(); it_mapDominados++  )
+					{
+						bc->removeCombinaCredSL( it_mapDominados->first );						
+					}
+					int size = k - dominados.size()/2;
+					bc->setCombinaCredSLSize(dia, size);
+					
+				}
+				#pragma endregion
+				
+				#pragma endregion
+			}
+		}
+	}
 }
 
 

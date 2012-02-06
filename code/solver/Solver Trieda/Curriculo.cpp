@@ -13,7 +13,7 @@ Curriculo::~Curriculo( void )
 void Curriculo::le_arvore( ItemCurriculo & elem )
 {
 	this->setId( elem.id() );
-   this->setSemanaLetivaId( elem.semanaLetivaId() );
+    this->setSemanaLetivaId( elem.semanaLetivaId() );
 	this->setCodigo( elem.codigo() );
 
 	ITERA_SEQ( it_dp, elem.disciplinasPeriodo(), DisciplinaPeriodo )
@@ -86,4 +86,24 @@ bool Curriculo::possuiDisciplina( int idDisciplina )
 			return true;
    }
    return false;
+}
+
+GGroup< Calendario*, LessPtr<Calendario> > Curriculo::retornaSemanasLetivasNoPeriodo( int periodo )
+{
+	GGroup< Calendario*, LessPtr<Calendario> > calendarios;
+
+	GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
+
+	for (; it != disciplinas_periodo.end(); it++ )
+	{
+		Disciplina *d = (*it).second; 
+		if ( (*it).first == periodo &&
+			 calendarios.find( d->getCalendario() ) == calendarios.end() )
+		{
+			calendarios.add( d->getCalendario() );
+		}
+    }
+
+   return calendarios;
+
 }
