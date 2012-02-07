@@ -31,6 +31,28 @@ public abstract class AbstractImportExcelBean
 			errorsList.add( errorType );
 		}
 	}
+	
+	protected void checkMandatoryFields(String[] values, ImportExcelError[] errorsTypes, List<ImportExcelError> errorsList) {
+		boolean[] empty = new boolean[values.length];
+		
+		for (int i = 0; i < empty.length; i++) {
+			empty[i] = false;
+		}
+		
+		boolean allEmpty = true;
+		for (int i = 0; i < empty.length; i++) {
+			empty[i] = isEmptyField(values[i]);
+			allEmpty &= empty[i];
+		}
+		
+		if (!allEmpty) {
+			for (int i = 0; i < empty.length; i++) {
+				if (empty[i]) {
+					errorsList.add(errorsTypes[i]);
+				}
+			}	
+		}
+	}
 
 	protected Double checkNonNegativeDoubleField(
 		String value, ImportExcelError doubleErrorType,

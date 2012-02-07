@@ -54,6 +54,20 @@ public interface DisciplinasService
 	 */
 	List<SemanaLetivaDTO> getSemanasLetivas(DisciplinaDTO disciplinaDTO);
 	
+	/**
+	 * Para toda disciplina que:
+	 *    - possue oferta
+	 *    - exige o uso de laboratório
+	 *    - e não está associada a nenhum laboratório
+	 * associa a disciplina com todos os laboratórios do campus que tem relação com a oferta em questão.
+	 *
+	 * TRIEDA-1181: Funcionalidade para associar disciplinas que exigem laboratórios a todos os laboratórios automaticamente
+	 * TRIEDA-1193: Na importação de Associação de Salas com Disciplinas, permitir que as colunas "Cod Curso", "Cod Curriculo" e "Período" estejam em branco
+	 * 
+	 * @throws TriedaException
+	 */
+	void associarDisciplinasSemLaboratorioATodosLaboratorios() throws TriedaException;
+	
 	DisciplinaDTO getDisciplina( Long id );
 	ListLoadResult< DisciplinaDTO > getList( BasePagingLoadConfig loadConfig );
 	PagingLoadResult<DisciplinaDTO> getBuscaList( String nome, String codigo,
@@ -80,5 +94,4 @@ public interface DisciplinasService
 	DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO );
 	List< ResumoDisciplinaDTO > getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO );
-	void associarDisciplinasALaboratorios() throws TriedaException;
 }

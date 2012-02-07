@@ -413,7 +413,7 @@ public class DisciplinasAssociarSalaPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				DisciplinasServiceAsync service = Services.disciplinas();
-				service.associarDisciplinasALaboratorios(new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+				service.associarDisciplinasSemLaboratorioATodosLaboratorios(new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						Info.display(display.getI18nConstants().informacao(),"A associação de disciplinas que exigem laboratórios com salas de aulas do tipo laboratório foi efetuada com sucesso!");

@@ -1,6 +1,8 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -295,6 +297,21 @@ public class CurriculoDisciplina
 		}
 
 		return curriculosDisciplinaMap;
+	}
+	
+	public static Map<String,List<CurriculoDisciplina>> buildDisciplinaToCurriculoDisciplinaMap(Collection<CurriculoDisciplina> curriculosDisciplina) {
+		Map<String,List<CurriculoDisciplina>> map = new HashMap<String,List<CurriculoDisciplina>>();
+
+		for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplina) {
+			List<CurriculoDisciplina> list = map.get(curriculoDisciplina.getDisciplina().getCodigo());
+			if (list == null) {
+				list = new ArrayList<CurriculoDisciplina>();
+				map.put(curriculoDisciplina.getDisciplina().getCodigo(),list);
+			}
+			list.add(curriculoDisciplina);
+		}
+
+		return map;
 	}
 
 	@SuppressWarnings( "unchecked" )

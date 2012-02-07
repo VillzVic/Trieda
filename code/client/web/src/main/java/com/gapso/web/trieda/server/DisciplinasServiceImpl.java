@@ -120,6 +120,57 @@ public class DisciplinasServiceImpl
 		
 		return semanasLetivasDTO;
 	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.DisciplinasService#associarDisciplinasSemLaboratorioATodosLaboratorios()
+	 */
+	@Override
+	@Transactional
+	public void associarDisciplinasSemLaboratorioATodosLaboratorios() throws TriedaException {
+		try {
+			// [CampusId -> Lista de Laboratorios]
+			Map<Long,List<Sala>> campusIdToLaboratoriosMap = new HashMap<Long,List<Sala>>();
+			List<CurriculoDisciplina> curriculosDisciplinasAtualizados = new ArrayList<CurriculoDisciplina>();
+			
+			// 
+			List<Oferta> ofertas = Oferta.findAll(getInstituicaoEnsinoUser());
+			for (Oferta oferta : ofertas) {
+				// obtém os laboratórios do campus associado com a oferta
+				List<Sala> laboratorios = campusIdToLaboratoriosMap.get(oferta.getCampus().getId());
+				if (laboratorios == null) {
+					laboratorios = new ArrayList<Sala>();
+					laboratorios.addAll(oferta.getCampus().getLaboratorios());
+					campusIdToLaboratoriosMap.put(oferta.getCampus().getId(),laboratorios);
+				}
+				
+				// obtém os CurriculoDisciplina que serão atualizados, isto é, aqueles cuja disciplina exige laboratório, porém,
+				// ainda não estão associadas a nenhum laboratório
+				List<CurriculoDisciplina> curriculosDisciplinas = oferta.getCurriculo().getCurriculoDisciplinas();
+				List<CurriculoDisciplina> curriculosDisciplinasASeremProcessados = new ArrayList<CurriculoDisciplina>();
+				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinas) {
+					if (curriculoDisciplina.getDisciplina().getLaboratorio() && curriculoDisciplina.getSalas().isEmpty()) {
+						curriculosDisciplinasASeremProcessados.add(curriculoDisciplina);
+					}
+				}
+				
+				// atualiza, em memória, os curriculosDisplinas com os laboratórios
+				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasASeremProcessados) {
+					curriculoDisciplina.getSalas().addAll(laboratorios);
+					curriculosDisciplinasAtualizados.add(curriculoDisciplina);
+				}
+			}
+			
+			// atualiza o BD com os curriculosDisplinas atualizados
+			System.out.println("Começou...");
+			for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasAtualizados) {
+				curriculoDisciplina.merge();
+			}
+			System.out.println("Terminou...");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+	}
 
 	@Override
 	public DisciplinaDTO getDisciplina( Long id )
@@ -1302,43 +1353,5 @@ public class DisciplinasServiceImpl
 		dtoNew.setReceita( resumoDTO.getReceita() );
 		
 		pair.getRight().add(dtoNew);
-	}
-	
-	@Override
-	@Transactional
-	public void associarDisciplinasALaboratorios() throws TriedaException {
-		try {
-			// [CampusId -> Lista de Laboratorios]
-			Map<Long,List<Sala>> ofertaIdToLaboratoriosMap = new HashMap<Long,List<Sala>>();
-			List<CurriculoDisciplina> curriculosDisciplinasAtualizados = new ArrayList<CurriculoDisciplina>();
-			
-			// 
-			List<Oferta> ofertas = Oferta.findAll(getInstituicaoEnsinoUser());
-			for (Oferta oferta : ofertas) {
-				// obtém os laboratórios do campus associado com a oferta
-				List<Sala> laboratorios = ofertaIdToLaboratoriosMap.get(oferta.getCampus().getId());
-				if (laboratorios == null) {
-					laboratorios = new ArrayList<Sala>();
-					laboratorios.addAll(oferta.getCampus().getLaboratorios());
-					ofertaIdToLaboratoriosMap.put(oferta.getCampus().getId(),laboratorios);
-				}
-				// atualiza, em memória, os curriculosDisplinas com os laboratórios
-				List<CurriculoDisciplina> curriculosDisciplinas = oferta.getCurriculo().getCurriculoDisciplinas();
-				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinas) {
-					if (curriculoDisciplina.getDisciplina().getLaboratorio()) {
-						curriculoDisciplina.getSalas().addAll(laboratorios);
-						curriculosDisciplinasAtualizados.add(curriculoDisciplina);
-					}
-				}
-			}
-			
-			// atualiza o BD com os curriculosDisplinas atualizados
-			for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasAtualizados) {
-				curriculoDisciplina.merge();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new TriedaException(e);
-		}
 	}
 }

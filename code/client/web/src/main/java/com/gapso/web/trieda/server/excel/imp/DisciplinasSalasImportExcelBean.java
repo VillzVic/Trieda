@@ -30,10 +30,13 @@ public class DisciplinasSalasImportExcelBean extends AbstractImportExcelBean imp
 		List<ImportExcelError> erros = new ArrayList<ImportExcelError>();
 		if (!tudoVazio()) {
 			checkMandatoryField(salaStr,ImportExcelError.DISCIPLINASALA_SALA_VAZIO,erros);
-			checkMandatoryField(cursoStr,ImportExcelError.DISCIPLINASALA_CURSO_VAZIO,erros);
-			checkMandatoryField(matrizCurricularStr,ImportExcelError.DISCIPLINASALA_MATRIZ_CURRIULAR_VAZIO,erros);
-			checkMandatoryField(periodoStr,ImportExcelError.DISCIPLINASALA_PERIODO_VAZIO,erros);
 			checkMandatoryField(disciplinaStr,ImportExcelError.DISCIPLINASALA_DISCIPLINA_VAZIO,erros);
+//			checkMandatoryField(cursoStr,ImportExcelError.DISCIPLINASALA_CURSO_VAZIO,erros);
+//			checkMandatoryField(matrizCurricularStr,ImportExcelError.DISCIPLINASALA_MATRIZ_CURRIULAR_VAZIO,erros);
+//			checkMandatoryField(periodoStr,ImportExcelError.DISCIPLINASALA_PERIODO_VAZIO,erros);
+			String[] values = {cursoStr,matrizCurricularStr,periodoStr};
+			ImportExcelError[] errorsTypes = {ImportExcelError.DISCIPLINASALA_CURSO_VAZIO,ImportExcelError.DISCIPLINASALA_MATRIZ_CURRIULAR_VAZIO,ImportExcelError.DISCIPLINASALA_PERIODO_VAZIO};
+			checkMandatoryFields(values,errorsTypes,erros);
 			
 			periodo = checkNonNegativeIntegerField(periodoStr,ImportExcelError.DISCIPLINASALA_PERIODO_FORMATO_INVALIDO,ImportExcelError.DISCIPLINASALA_PERIODO_VALOR_NEGATIVO,erros);
 		} else {
@@ -50,6 +53,9 @@ public class DisciplinasSalasImportExcelBean extends AbstractImportExcelBean imp
 			isEmptyField(disciplinaStr);
 	}
 	
+	public boolean isAssociacaoSemCurriculo() {
+		return isEmptyField(cursoStr) && isEmptyField(matrizCurricularStr) && isEmptyField(periodoStr);
+	}
 	
 	public String getSalaStr() {
 		return salaStr;

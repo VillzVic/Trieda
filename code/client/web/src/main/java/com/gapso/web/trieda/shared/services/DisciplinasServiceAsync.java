@@ -35,6 +35,11 @@ public interface DisciplinasServiceAsync {
 	 */
 	void getSemanasLetivas(DisciplinaDTO disciplinaDTO, AsyncCallback<List<SemanaLetivaDTO>> callback);
 	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.DisciplinasService#associarDisciplinasSemLaboratorioATodosLaboratorios()
+	 */
+	void associarDisciplinasSemLaboratorioATodosLaboratorios(AsyncCallback<Void> callback);
+	
 	void getDisciplina( Long id, AsyncCallback< DisciplinaDTO > callback );
 	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO,
@@ -65,5 +70,4 @@ public interface DisciplinasServiceAsync {
 	void getDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< DivisaoCreditoDTO > callback );
 	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoDisciplinaDTO > > callback );
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
-	void associarDisciplinasALaboratorios(AsyncCallback<Void> callback);
 }

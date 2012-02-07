@@ -86,6 +86,12 @@ public class GTriedaI18nMessages
 		return this.languageManager.getFormattedText(
 			"excelErroLogicoDisciplinaEmMatrizCurricular", params );
 	}
+	
+	@Override
+	public String excelErroLogicoDisciplinaSemCurriculo( String linhasComErro ) {
+		String [] params = { linhasComErro };
+		return this.languageManager.getFormattedText("excelErroLogicoDisciplinaSemCurriculo",params);
+	}
 
 	@Override
 	public String excelErroLogicoUnicidadeViolada(

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -22,6 +23,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.google.gwt.dev.util.collect.HashSet;
 
 public class DisciplinasSalasImportExcel
 	extends AbstractImportExcel< DisciplinasSalasImportExcelBean >
@@ -128,13 +130,13 @@ public class DisciplinasSalasImportExcel
 	}
 
 	@Override
-	protected void processSheetContent(
-		String sheetName, List< DisciplinasSalasImportExcelBean > sheetContent )
-	{
-		if ( doSyntacticValidation( sheetName, sheetContent )
-			&& doLogicValidation( sheetName, sheetContent ) )
-		{
-			updateDataBase( sheetName, sheetContent );
+	protected void processSheetContent(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent) {
+		if (doSyntacticValidation(sheetName,sheetContent)) {
+			Map<String,CurriculoDisciplina> curriculoDisciplinaBDMap = CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(CurriculoDisciplina.findByCenario(this.instituicaoEnsino,getCenario()));
+			Map<String,List<CurriculoDisciplina>> disciplinaToCurriculosDisciplinasMap = CurriculoDisciplina.buildDisciplinaToCurriculoDisciplinaMap(curriculoDisciplinaBDMap.values());
+			if (doLogicValidation(sheetName,sheetContent,curriculoDisciplinaBDMap,disciplinaToCurriculosDisciplinasMap)) {
+				updateDataBase(sheetName,sheetContent,curriculoDisciplinaBDMap,disciplinaToCurriculosDisciplinasMap);
+			}
 		}
 	}
 
@@ -178,16 +180,32 @@ public class DisciplinasSalasImportExcel
 		return syntacticErrorsMap.isEmpty();
 	}
 
-	private boolean doLogicValidation(
-		String sheetName, List< DisciplinasSalasImportExcelBean > sheetContent )
-	{
-		checkNonRegisteredSala( sheetContent );
-		checkNonRegisteredCurso( sheetContent );
-		checkNonRegisteredDisciplina( sheetContent );
-		checkNonRegisteredCurriculo( sheetContent );
-		checkNonRegisteredDisciplinaEmCurricular( sheetContent );
+	private boolean doLogicValidation(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent, Map<String,CurriculoDisciplina> curriculoDisciplinaBDMap, Map<String,List<CurriculoDisciplina>> disciplinaToCurriculosDisciplinasMap) {
+		checkNonRegisteredSala(sheetContent);
+		checkNonRegisteredCurso(sheetContent);
+		checkNonRegisteredDisciplina(sheetContent);
+		checkNonRegisteredCurriculo(sheetContent);
+		checkNonRegisteredDisciplinaEmCurricular(sheetContent,curriculoDisciplinaBDMap);
+		checkDisciplinasSemCurriculos(sheetContent,disciplinaToCurriculosDisciplinasMap);
 
 		return getErrors().isEmpty();
+	}
+
+	private void checkDisciplinasSemCurriculos(List<DisciplinasSalasImportExcelBean> sheetContent, Map<String, List<CurriculoDisciplina>> disciplinaToCurriculosDisciplinasMap) {
+		List<Integer> rowsWithErrors = new ArrayList<Integer>();
+		
+		for (DisciplinasSalasImportExcelBean bean : sheetContent) {
+			if (bean.isAssociacaoSemCurriculo()) {
+				List<CurriculoDisciplina> list = disciplinaToCurriculosDisciplinasMap.get(bean.getDisciplinaStr());
+				if (list == null || list.isEmpty()) {
+					rowsWithErrors.add(bean.getRow());
+				}
+			}
+		}
+		
+		if (!rowsWithErrors.isEmpty()) {
+			getErrors().add(getI18nMessages().excelErroLogicoDisciplinaSemCurriculo(rowsWithErrors.toString()));
+		}
 	}
 
 	private void checkNonRegisteredSala(
@@ -234,15 +252,17 @@ public class DisciplinasSalasImportExcel
 
 		for ( DisciplinasSalasImportExcelBean bean : sheetContent )
 		{
-			Curso curso = cursosBDMap.get( bean.getCursoStr() );
-
-			if ( curso != null )
-			{
-				bean.setCurso( curso );
-			}
-			else
-			{
-				rowsWithErrors.add( bean.getRow() );
+			if (!bean.isAssociacaoSemCurriculo()) {
+				Curso curso = cursosBDMap.get( bean.getCursoStr() );
+	
+				if ( curso != null )
+				{
+					bean.setCurso( curso );
+				}
+				else
+				{
+					rowsWithErrors.add( bean.getRow() );
+				}
 			}
 		}
 
@@ -297,16 +317,18 @@ public class DisciplinasSalasImportExcel
 
 		for ( DisciplinasSalasImportExcelBean bean : sheetContent )
 		{
-			Curriculo curriculo = curriculosBDMap.get(
-				bean.getMatrizCurricularStr() );
-
-			if ( curriculo != null )
-			{
-				bean.setMatrizCurricular( curriculo );
-			}
-			else
-			{
-				rowsWithErrors.add( bean.getRow() );
+			if (!bean.isAssociacaoSemCurriculo()) {
+				Curriculo curriculo = curriculosBDMap.get(
+					bean.getMatrizCurricularStr() );
+	
+				if ( curriculo != null )
+				{
+					bean.setMatrizCurricular( curriculo );
+				}
+				else
+				{
+					rowsWithErrors.add( bean.getRow() );
+				}
 			}
 		}
 
@@ -317,23 +339,18 @@ public class DisciplinasSalasImportExcel
 		}
 	}
 
-	private void checkNonRegisteredDisciplinaEmCurricular(
-		List< DisciplinasSalasImportExcelBean > sheetContent )
-	{
-		// [ ChaveNaturalCurriculo -> Curriculo ]
-		Map<String, CurriculoDisciplina> curriculosDisciplinasBDMap
-			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
-				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
-
+	private void checkNonRegisteredDisciplinaEmCurricular(List<DisciplinasSalasImportExcelBean> sheetContent, Map<String,CurriculoDisciplina> curriculoDisciplinaBDMap) {
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( DisciplinasSalasImportExcelBean bean : sheetContent )
 		{
-			CurriculoDisciplina curriculoDisciplina = curriculosDisciplinasBDMap.get(
-				getNaturalKeyStringDeCurriculoDisciplina( bean ) );
-
-			if ( curriculoDisciplina == null )
-			{
-				rowsWithErrors.add( bean.getRow() );
+			if (!bean.isAssociacaoSemCurriculo()) {
+				CurriculoDisciplina curriculoDisciplina = curriculoDisciplinaBDMap.get(
+					getNaturalKeyStringDeCurriculoDisciplina( bean ) );
+	
+				if ( curriculoDisciplina == null )
+				{
+					rowsWithErrors.add( bean.getRow() );
+				}
 			}
 		}
 
@@ -345,31 +362,32 @@ public class DisciplinasSalasImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase( String sheetName,
-		List< DisciplinasSalasImportExcelBean > sheetContent )
-	{
-		Map< String,Sala > salasBDMap = Sala.buildSalaCodigoToSalaMap(
-			Sala.findByCenario( this.instituicaoEnsino, getCenario() ) );
+	private void updateDataBase(String sheetName, List<DisciplinasSalasImportExcelBean> sheetContent, Map<String,CurriculoDisciplina> curriculoDisciplinaBDMap, Map<String,List<CurriculoDisciplina>> disciplinaToCurriculosDisciplinasMap) {
+		Map<String,Sala> salasBDMap = Sala.buildSalaCodigoToSalaMap(Sala.findByCenario(this.instituicaoEnsino,getCenario()));
 
-		Map< String, CurriculoDisciplina > curriculoDisciplinaBDMap
-			= CurriculoDisciplina.buildNaturalKeyToCurriculoDisciplinaMap(
-				CurriculoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
-
-		for ( DisciplinasSalasImportExcelBean disciplinasSalasExcel : sheetContent )
-		{
-			Sala salaBD = salasBDMap.get(
-				disciplinasSalasExcel.getSalaStr() );
-
-			CurriculoDisciplina curriculoDisciplinaBD = curriculoDisciplinaBDMap.get(
-				getNaturalKeyStringDeCurriculoDisciplina( disciplinasSalasExcel ) );
-
-			curriculoDisciplinaBD.getSalas().add( salaBD );
+		Set<CurriculoDisciplina> curriculoDisciplinaAlterados = new HashSet<CurriculoDisciplina>();
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
+		for (DisciplinasSalasImportExcelBean bean : sheetContent) {
+			Sala salaBD = salasBDMap.get(bean.getSalaStr());
+			if (bean.isAssociacaoSemCurriculo()) {
+				List<CurriculoDisciplina> curriculosDisciplinasBD = disciplinaToCurriculosDisciplinasMap.get(bean.getDisciplina().getCodigo());
+				for (CurriculoDisciplina curriculoDisciplinaBD : curriculosDisciplinasBD) {
+					curriculoDisciplinaBD.getSalas().add(salaBD);
+					curriculoDisciplinaAlterados.add(curriculoDisciplinaBD);
+				}
+			} else {
+				CurriculoDisciplina curriculoDisciplinaBD = curriculoDisciplinaBDMap.get(getNaturalKeyStringDeCurriculoDisciplina(bean));
+				curriculoDisciplinaBD.getSalas().add(salaBD);
+				curriculoDisciplinaAlterados.add(curriculoDisciplinaBD);
+			}
+			
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" DisciplinasSalasBeans"); count = 0;}
 		}
 
-		for ( CurriculoDisciplina curriculoDisciplina
-			: curriculoDisciplinaBDMap.values() )
-		{
+		count = 0; total=curriculoDisciplinaAlterados.size(); System.out.println(" "+total);
+		for (CurriculoDisciplina curriculoDisciplina : curriculoDisciplinaAlterados) {
 			curriculoDisciplina.merge();
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" CurriculoDisciplina"); count = 0;}
 		}
 	}
 
