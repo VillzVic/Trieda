@@ -95,6 +95,10 @@ public class Sala
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sala")
     private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
+    
+    public boolean isLaboratorio() {
+    	return getTipoSala().getNome().equals(TipoSala.TIPO_LABORATORIO);
+    }
 
 	public String toString()
 	{

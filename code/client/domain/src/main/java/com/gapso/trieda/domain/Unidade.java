@@ -106,7 +106,7 @@ public class Unidade implements Serializable
     public Set<Sala> getLaboratorios() {
 		Set<Sala> laboratorios = new HashSet<Sala>();
 		for (Sala sala : this.salas) {
-			if (sala.getTipoSala().getNome().equals(TipoSala.TIPO_LABORATORIO)) {
+			if (sala.isLaboratorio()) {
 				laboratorios.add(sala);
 			}
 		}

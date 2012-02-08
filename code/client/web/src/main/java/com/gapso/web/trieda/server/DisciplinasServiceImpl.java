@@ -148,8 +148,20 @@ public class DisciplinasServiceImpl
 				List<CurriculoDisciplina> curriculosDisciplinas = oferta.getCurriculo().getCurriculoDisciplinas();
 				List<CurriculoDisciplina> curriculosDisciplinasASeremProcessados = new ArrayList<CurriculoDisciplina>();
 				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinas) {
-					if (curriculoDisciplina.getDisciplina().getLaboratorio() && curriculoDisciplina.getSalas().isEmpty()) {
-						curriculosDisciplinasASeremProcessados.add(curriculoDisciplina);
+					// verifica se a disciplina do curriculo exige laboratorio
+					if (curriculoDisciplina.getDisciplina().getLaboratorio()) {
+						// verifica se há associação com algum laboratorio
+						boolean estaAssociadoComAlgumLaboratorio = false;
+						for (Sala sala : curriculoDisciplina.getSalas()) {
+							if (sala.isLaboratorio()) {
+								estaAssociadoComAlgumLaboratorio = true;
+								break;
+							}
+						}
+						 
+						if (!estaAssociadoComAlgumLaboratorio) {
+							curriculosDisciplinasASeremProcessados.add(curriculoDisciplina);
+						}
 					}
 				}
 				
