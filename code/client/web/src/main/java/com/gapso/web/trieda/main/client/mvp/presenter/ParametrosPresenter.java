@@ -253,7 +253,6 @@ public class ParametrosPresenter
 				{
 					display.getParametroDTO().getMaximizarNotaAvaliacaoCorpoDocenteList().clear();
 					display.getParametroDTO().getMinimizarCustoDocenteCursosList().clear();
-					display.getParametroDTO().getDescompartilharDisciplinasList().clear();
 				}
 			});
 
@@ -287,21 +286,18 @@ public class ParametrosPresenter
 				}
 			});
 
-		this.display.getCompartilharDisciplinasCampiButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					List< CursoDescompartilhaDTO > cursos
-						= display.getParametroDTO().getDescompartilharDisciplinasList();
-
-					Presenter presenter = new CompartilharCursosPresenter(
-						new CompartilharCursosView( display.getParametroDTO(), cursos ) );
-
-					presenter.go( null );
-				}
-			});
+		this.display.getCompartilharDisciplinasCampiButton().addSelectionListener(new SelectionListener< ButtonEvent >() {
+			@Override
+			public void componentSelected( ButtonEvent ce ) {
+				Services.cursos().getParesCursosQueNaoPermitemCompartilhamentoDeTurmas(display.getParametroDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<List<CursoDescompartilhaDTO>>(display) {
+					@Override
+					public void onSuccess(List<CursoDescompartilhaDTO> result) {
+						Presenter presenter = new CompartilharCursosPresenter(new CompartilharCursosView(display.getParametroDTO(),result));
+						presenter.go( null );
+					}
+				});
+			}
+		});
 	}
 
 	private ParametroDTO getDTO()

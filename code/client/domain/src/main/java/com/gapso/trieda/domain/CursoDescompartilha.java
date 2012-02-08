@@ -128,19 +128,19 @@ public class CursoDescompartilha
     }
 
 	public static int count(
-		InstituicaoEnsino instituicaoEnsino )
+			Parametro parametro )
 	{
-        return CursoDescompartilha.findAll( instituicaoEnsino ).size();
+        return CursoDescompartilha.findAll( parametro ).size();
     }
 
 	@SuppressWarnings("unchecked")
     public static List< CursoDescompartilha > findAll(
-    	InstituicaoEnsino instituicaoEnsino )
+    	Parametro parametro )
     {
         return entityManager().createQuery(
         	" SELECT o FROM CursoDescompartilha o " +
-        	" WHERE o.parametro.turno.instituicaoEnsino = :instituicaoEnsino " )
-        	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+        	" WHERE o.parametro = :parametro " )
+        	.setParameter( "parametro", parametro ).getResultList();
     }
 
 	public static CursoDescompartilha find(

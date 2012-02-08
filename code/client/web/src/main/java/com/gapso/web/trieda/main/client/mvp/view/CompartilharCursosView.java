@@ -55,7 +55,7 @@ public class CompartilharCursosView extends MyComposite implements
 
 	private void initUI() {
 		simpleModal = new SimpleModal("Fechar", null,
-				"Cursos não compartilham", Resources.DEFAULTS.curso16());
+				"Cursos que não permitem compartilhamento", Resources.DEFAULTS.curso16());
 		simpleModal.setWidth(600);
 		simpleModal.setHeight(400);
 		createForm();
@@ -68,7 +68,7 @@ public class CompartilharCursosView extends MyComposite implements
 
 		ContentPanel formPanel = new ContentPanel(new ColumnLayout());
 		// formPanel.setHeaderVisible(false);
-		formPanel.setHeading("Cadastre os cursos que não compartilham");
+		formPanel.setHeading("Cadastre os cursos que não permitem compartilhamento");
 		// formPanel.setBodyBorder(false);
 		formPanel.setBodyStyle("background-color: transparent; padding: 10px;");
 

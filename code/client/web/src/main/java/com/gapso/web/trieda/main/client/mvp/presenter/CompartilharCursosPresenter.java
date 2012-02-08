@@ -12,6 +12,8 @@ import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,9 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class CompartilharCursosPresenter
 	implements Presenter
 {
-	public interface Display
-		extends ITriedaI18nGateway
-	{
+	public interface Display extends ITriedaI18nGateway {
 		CursoComboBox getCurso1ComboBox();
 		CursoComboBox getCurso2ComboBox();
 		Grid<CursoDescompartilhaDTO> getGrid();
@@ -48,27 +48,43 @@ public class CompartilharCursosPresenter
 		this.display.getAdicionarBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				CursoDescompartilhaDTO cd = new CursoDescompartilhaDTO();
-				cd.setParametroId(display.getParametro().getId());
+				CursoDescompartilhaDTO dto = new CursoDescompartilhaDTO();
+				dto.setInstituicaoEnsinoId(display.getParametro().getInstituicaoEnsinoId());
+				dto.setParametroId(display.getParametro().getId());
 				CursoDTO curso1 = display.getCurso1ComboBox().getValue();
-				cd.setCurso1Id(curso1.getId());
-				cd.setCurso1Display(curso1.getDisplayText());
+				dto.setCurso1Id(curso1.getId());
+				dto.setCurso1Display(curso1.getDisplayText());
 				CursoDTO curso2 = display.getCurso2ComboBox().getValue();
-				cd.setCurso2Id(curso2.getId());
-				cd.setCurso2Display(curso2.getDisplayText());
-				display.getGrid().getStore().add(cd);
-				display.getCursos().add(cd);
+				dto.setCurso2Id(curso2.getId());
+				dto.setCurso2Display(curso2.getDisplayText());
+				
+				final CursoDescompartilhaDTO finalDTO = dto; 
+				String errorMsg = display.getI18nMessages().erroAoSalvar("Proibição de Compartilhamento entre Cursos");
+				Services.cursos().insereBDProibicaoCompartilhamentoCursos(dto,new AbstractAsyncCallbackWithDefaultOnFailure<Void>(errorMsg,display) {
+					@Override
+					public void onSuccess(Void result) {
+						display.getGrid().getStore().add(finalDTO);
+						display.getCursos().add(finalDTO);
+					}
+				});
 			}
 		});
 
 		this.display.getRemoverBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<CursoDescompartilhaDTO> cds = display.getGrid().getSelectionModel().getSelectedItems();
-				for(CursoDescompartilhaDTO cd : cds) {
-					display.getGrid().getStore().remove(cd);
-					display.getCursos().remove(cd);
-				}
+				final List<CursoDescompartilhaDTO> dtos = display.getGrid().getSelectionModel().getSelectedItems();
+				
+				String errorMsg = display.getI18nMessages().erroAoRemover("Proibição de Compartilhamento entre Cursos");
+				Services.cursos().removeBDProibicaoCompartilhamentoCursos(dtos,new AbstractAsyncCallbackWithDefaultOnFailure<Void>(errorMsg,display) {
+					@Override
+					public void onSuccess(Void result) {
+						for(CursoDescompartilhaDTO cd : dtos) {
+							display.getGrid().getStore().remove(cd);
+							display.getCursos().remove(cd);
+						}
+					}
+				});
 			}
 		});
 

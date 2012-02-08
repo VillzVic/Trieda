@@ -2774,21 +2774,6 @@ public class ConvertBeans
 			domain.getCursosMinCust().add( curso );
 		}
 
-		for ( CursoDescompartilhaDTO cursoDescompartilhaDTO
-			: dto.getDescompartilharDisciplinasList() )
-		{
-			CursoDescompartilha cursoDescompartilha = new CursoDescompartilha();
-
-			Curso curso1 = Curso.find( cursoDescompartilhaDTO.getCurso1Id(), instituicaoEnsino );
-			Curso curso2 = Curso.find( cursoDescompartilhaDTO.getCurso2Id(), instituicaoEnsino );
-
-			cursoDescompartilha.setCurso1( curso1 );
-			cursoDescompartilha.setCurso2( curso2 );
-			cursoDescompartilha.setParametro( domain );
-
-			domain.getCursosDescompartDiscCampi().add( cursoDescompartilha );
-		}
-
 		return domain;
 	}
 
@@ -2872,19 +2857,6 @@ public class ConvertBeans
 		}
 		dto.setMinimizarCustoDocenteCursosList( cursosMinCustDTOList );
 
-		Set< CursoDescompartilha > cursosCompartDiscCampiList
-			= domain.getCursosDescompartDiscCampi();
-
-		List< CursoDescompartilhaDTO > cursosCompartDiscCampiDTOList
-			= new ArrayList< CursoDescompartilhaDTO >( cursosCompartDiscCampiList.size() );
-
-		for ( CursoDescompartilha cursoDescompartilha : cursosCompartDiscCampiList )
-		{
-			cursosCompartDiscCampiDTOList.add(
-				ConvertBeans.toCursoDescompartilhaDTO( cursoDescompartilha ) );
-		}
-		dto.setDescompartilharDisciplinasCampiList( cursosCompartDiscCampiDTOList );
-
 		if ( instituicaoEnsino != null )
 		{
 			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
@@ -2919,19 +2891,16 @@ public class ConvertBeans
 		return dto;
 	}
 
-	public static CursoDescompartilha toCursoDescompartilha(
-		Parametro parametro, CursoDescompartilhaDTO dto )
-	{
+	public static CursoDescompartilha toCursoDescompartilha(CursoDescompartilhaDTO dto) {
 		CursoDescompartilha domain = new CursoDescompartilha();
 
-		InstituicaoEnsino instituicaoEnsino
-			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
 
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 		domain.setCurso1( Curso.find( dto.getCurso1Id(), instituicaoEnsino ) );
 		domain.setCurso2( Curso.find( dto.getCurso2Id(), instituicaoEnsino ) );
-		domain.setParametro( parametro );
+		domain.setParametro(Parametro.find(dto.getParametroId(), instituicaoEnsino));
 
 		return domain;
 	}

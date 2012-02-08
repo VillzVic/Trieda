@@ -20,7 +20,9 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.CursoDescompartilha;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -29,18 +31,74 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.services.CursosService;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dev.util.Pair;
 
 @Transactional
 public class CursosServiceImpl
-	extends RemoteService implements CursosService
-{
+	extends RemoteService implements CursosService {
 	private static final long serialVersionUID = 5250776996542788849L;
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.CursosService#insereBDProibicaoCompartilhamentoCursos(com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO)
+	 */
+	@Override
+	public void insereBDProibicaoCompartilhamentoCursos(CursoDescompartilhaDTO dto) throws TriedaException {
+		try {
+			CursoDescompartilha objBD = ConvertBeans.toCursoDescompartilha(dto);
+			if (objBD.getId() != null) {
+				objBD.merge();
+			} else {
+				objBD.persist();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.CursosService#removeBDProibicaoCompartilhamentoCursos(java.util.List)
+	 */
+	@Override
+	public void removeBDProibicaoCompartilhamentoCursos(List<CursoDescompartilhaDTO> dtos) throws TriedaException {
+		try {
+			for (CursoDescompartilhaDTO dto : dtos) {
+				ConvertBeans.toCursoDescompartilha(dto).remove();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.CursosService#getParesCursosQueNaoPermitemCompartilhamentoDeTurmas()
+	 */
+	@Override
+	public List<CursoDescompartilhaDTO> getParesCursosQueNaoPermitemCompartilhamentoDeTurmas(ParametroDTO dto) throws TriedaException {
+		try {
+			Parametro parametro = ConvertBeans.toParametro(dto);
+			List<CursoDescompartilha> paresDeCursosBD = CursoDescompartilha.findAll(parametro);
+			
+			List<CursoDescompartilhaDTO> paresDeCursosDTO = new ArrayList<CursoDescompartilhaDTO>(paresDeCursosBD.size());
+			for (CursoDescompartilha parDeCursosBD : paresDeCursosBD) {
+				paresDeCursosDTO.add(ConvertBeans.toCursoDescompartilhaDTO(parDeCursosBD));
+			}
+			
+			return paresDeCursosDTO;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+	}
 
 	@Override
 	public CursoDTO getCurso( Long id )

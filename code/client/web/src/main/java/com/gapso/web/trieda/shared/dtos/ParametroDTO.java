@@ -360,14 +360,6 @@ public class ParametroDTO extends AbstractDTO<Long>
 		minimizarcursodocentecursos_list = value;
 	}
 	
-	public List<CursoDescompartilhaDTO> descompartilhardisciplina_list;
-	public List<CursoDescompartilhaDTO> getDescompartilharDisciplinasList() {
-		return descompartilhardisciplina_list;
-	}
-	public void setDescompartilharDisciplinasCampiList(List<CursoDescompartilhaDTO> value) {
-		descompartilhardisciplina_list = value;
-	}
-	
 	@Override
 	public Long getNaturalKey() {
 		return getId();
