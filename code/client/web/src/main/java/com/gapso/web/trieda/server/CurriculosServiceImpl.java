@@ -56,6 +56,31 @@ public class CurriculosServiceImpl
 			throw new TriedaException(msg);
 		}
 	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.CurriculosService#save(com.gapso.web.trieda.shared.dtos.CurriculoDTO)
+	 */
+	@Override
+	public void save(CurriculoDTO curriculoDTO) throws TriedaException {
+		try {
+			Curriculo curriculo = ConvertBeans.toCurriculo(curriculoDTO);
+			
+			// verifica a validade dos dados da semana letiva
+			if (!curriculo.getSemanaLetiva().getHorariosAula().isEmpty()) {
+				if (curriculo.getId() != null && curriculo.getId() > 0) {
+					curriculo.merge();
+				}
+				else {
+					curriculo.persist();
+				}
+			} else {
+				throw new TriedaException("Não será possível salvar a matriz curricular em questão, pois, a semana letiva [" + curriculo.getSemanaLetiva().getCodigo() + "] ainda não tem turnos nem horários de aula.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+	}
 
 	@Override
 	public CurriculoDTO getCurriculo( Long id )
@@ -149,21 +174,6 @@ public class CurriculosServiceImpl
 			getInstituicaoEnsinoUser(), curso, codigo, descricao ) );
 
 		return result;
-	}
-
-	@Override
-	public void save( CurriculoDTO curriculoDTO )
-	{
-		Curriculo curriculo = ConvertBeans.toCurriculo( curriculoDTO );
-
-		if ( curriculo.getId() != null && curriculo.getId() > 0 )
-		{
-			curriculo.merge();
-		}
-		else
-		{
-			curriculo.persist();
-		}
 	}
 
 	@Override

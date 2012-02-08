@@ -9,21 +9,21 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CurriculoFormPresenter
 	implements Presenter
 {
-	public interface Display
-	{
+	public interface Display extends ITriedaI18nGateway {
 		Button getSalvarButton();
 		TextField< String > getCodigoTextField();
 		TextField< String > getDescricaoTextField();
@@ -52,37 +52,24 @@ public class CurriculoFormPresenter
 		setListeners();
 	}
 
-	private void setListeners()
-	{
-		display.getSalvarButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
+	private void setListeners() {
+		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				if ( isValid() )
-				{
+			public void componentSelected(ButtonEvent ce) {
+				if (isValid()) {
 					final CurriculosServiceAsync service = Services.curriculos();
-					service.save( getDTO(), new AsyncCallback< Void >()
-					{
+					String errorMsg = display.getI18nMessages().erroAoSalvar(display.getI18nConstants().matrizCurricular());
+					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(errorMsg,display) {
 						@Override
-						public void onFailure( Throwable caught )
-						{
-							MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
-						}
-
-						@Override
-						public void onSuccess( Void result )
-						{
+						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
 							gridPanel.updateList();
-							Info.display( "Salvo", "Item salvo com sucesso!" );
+							Info.display("Salvo","Item salvo com sucesso!");
 						}
 					});
 				}
-				else
-				{
-					MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
+				else {
+					MessageBox.alert("ERRO!","Verifique os campos digitados",null);
 				}
 			}
 		});

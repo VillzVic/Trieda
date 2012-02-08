@@ -26,11 +26,22 @@ public interface CurriculosService
 	 */
 	void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO) throws TriedaException;
 	
+	/**
+	 * Salva no BD a matriz curricular.
+	 * 
+	 *    TRIEDA-1171: Não permitir a otimização se houver uma semana letiva sem turno e horário de aula associado, e houver matriz curricular associada a esta semana letiva.
+	 *    
+	 * @param curriculoDTO currículo (ou matriz curricular)
+	 * @throws TriedaException lança uma exceção caso: 
+	 *    - ocorra uma falha na operação de salvar a entidade no BD
+	 *    - a semana letiva a ser associada com o currículo esteja vazia, isto é, sem turnos e horários de aula    
+	 */
+	void save(CurriculoDTO curriculoDTO) throws TriedaException;
+	
 	CurriculoDTO getCurriculo( Long id );
 	ListLoadResult< CurriculoDTO > getList( BasePagingLoadConfig loadConfig );
 	PagingLoadResult< CurriculoDTO > getBuscaList( CursoDTO cursoDTO,
 		String codigo, String descricao, PagingLoadConfig config );
-	void save( CurriculoDTO curriculoDTO );
 	void remove( List< CurriculoDTO > curriculoDTOList );
 	ListLoadResult< CurriculoDisciplinaDTO > getDisciplinasList( CurriculoDTO curriculoDTO );
 	void removeDisciplina( List< CurriculoDisciplinaDTO > curriculoDisciplinaDTOList );
