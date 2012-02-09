@@ -1,3 +1,5 @@
-#Fri Jul 30 10:08:46 BRT 2010
+#Wed Mar 23 13:37:41 BRT 2011
 eclipse.preferences.version=1
+encoding//src/main/java/com/gapso/web/trieda/shared/i18n/TriedaI18nConstants.properties=UTF-8
+encoding//src/main/java/com/gapso/web/trieda/shared/i18n/TriedaI18nMessages.properties=UTF-8
 encoding/<project>=UTF-8

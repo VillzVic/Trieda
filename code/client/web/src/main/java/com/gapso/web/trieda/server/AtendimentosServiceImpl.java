@@ -279,53 +279,49 @@ public class AtendimentosServiceImpl
 	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO )
 	{
-		return this.getBusca( curriculoDTO, periodo, turnoDTO, campusDTO, null );
+		return this.getAtendimentosParaGradeHorariaVisaoCurso( curriculoDTO, periodo, turnoDTO, campusDTO, null );
 	}
-
+	
+	/**
+	 * 
+	 */
 	@Override
-	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
-		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
-		CampusDTO campusDTO, CursoDTO cursoDTO )
-	{
-		ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parDTOTempl
-			= new ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > >();
-
+	public ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+		// TODO: comentar
+		ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> parDTOTempl = new ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>>();
 		parDTOTempl.setPrimeiro( new ArrayList< AtendimentoRelatorioDTO >() );
-
-		List< AtendimentoTaticoDTO > taticoList = getBuscaTatico(
-			curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
-
-		if ( !taticoList.isEmpty() )
-		{
-			ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > parDTO
-				= montaListaParaVisaoCursoTatico( turnoDTO, taticoList );
-
+		
+		// verificar se o campus foi otimizado no modo tático ou no operacional
+		if (campusDTO.getOtimizadoTatico()) {
+			// Otimização no modo Tático
+			
+			// TODO: comentar
+			List<AtendimentoTaticoDTO> taticoList = getBuscaTatico(curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO);
+			// TODO: comentar
+			ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > parDTO = montaListaParaVisaoCursoTatico( turnoDTO, taticoList );
+			// TODO: comentar
 			parDTOTempl.setSegundo( parDTO.getSegundo() );
-
-			for ( AtendimentoTaticoDTO atdto : parDTO.getPrimeiro() )
-			{
+			for ( AtendimentoTaticoDTO atdto : parDTO.getPrimeiro() ) {
 				parDTOTempl.getPrimeiro().add( atdto );
 			}
-		}
-		else
-		{
-			List< AtendimentoOperacionalDTO > operacionalList
-				= getBuscaOperacional( curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
-
-			ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > parDTO
-				= montaListaParaVisaoCursoOperacional( turnoDTO, operacionalList );
-
+		} else {
+			// Otimização no modo Operacional
+			
+			// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
+			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = buscaNoBancoDadosDTOsDeAtendimentoOperacional(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
+			// TODO: comentar
+			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTOConsolidadosPorAula = agrupaAtendimentosOperacionalMesmaAula( atendimentosOperacionalDTO, curriculoDTO );
+			// TODO: comentar
+			ParDTO< List< AtendimentoOperacionalDTO >, List< Integer > > parDTO= montaListaParaVisaoCursoOperacional( turnoDTO, atendimentosOperacionalDTOConsolidadosPorAula );
+			// TODO: comentar
 			parDTOTempl.setSegundo( parDTO.getSegundo() );
-
-			List< AtendimentoOperacionalDTO > horariosOrdenados
-				= this.ordenaPorHorarioAula( parDTO.getPrimeiro() );
-
+			List< AtendimentoOperacionalDTO > horariosOrdenados = this.ordenaPorHorarioAula( parDTO.getPrimeiro() );
 			for ( AtendimentoOperacionalDTO atdto : horariosOrdenados )
 			{
 				parDTOTempl.getPrimeiro().add( atdto );
 			}
 		}
-
+		
 		return parDTOTempl;
 	}
 
@@ -359,36 +355,35 @@ public class AtendimentosServiceImpl
 		return list;
 	}
 
-	public List< AtendimentoOperacionalDTO > getBuscaOperacional(
-		CurriculoDTO curriculoDTO, Integer periodo,
-		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
-	{
-		Curriculo curriculo = Curriculo.find( curriculoDTO.getId(), getInstituicaoEnsinoUser() );
-		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
-		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
-
+	/**
+	 * Busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs.
+	 * @param curriculoDTO matriz curricular
+	 * @param periodo período da matriz curricular
+	 * @param turnoDTO turno
+	 * @param campusDTO campus
+	 * @param cursoDTO curso
+	 * @return uma lista com DTOs que representam atendimentos do modo operacional
+	 */
+	private List<AtendimentoOperacionalDTO> buscaNoBancoDadosDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+		// obtém os beans de Banco de Dados
+		Curriculo curriculo = Curriculo.find(curriculoDTO.getId(),getInstituicaoEnsinoUser());
+		Turno turno = Turno.find(turnoDTO.getId(),getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(),getInstituicaoEnsinoUser());
 		Curso curso = null;
-
-		if ( cursoDTO != null )
-		{
-			curso = Curso.find(
-				cursoDTO.getId(), getInstituicaoEnsinoUser() );
+		if (cursoDTO != null) {
+			curso = Curso.find(cursoDTO.getId(),getInstituicaoEnsinoUser());
 		}
 
-		List< AtendimentoOperacionalDTO > list
-			= new ArrayList< AtendimentoOperacionalDTO >();
-
-		List< AtendimentoOperacional > atendimentosOperacional = AtendimentoOperacional.findBy(
-			getInstituicaoEnsinoUser(), campus, curriculo, periodo, turno, curso );
-
-		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacional )
-		{
-			list.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+		// busca no BD os atendimentos do modo operacional 
+		List<AtendimentoOperacional> atendimentosOperacionalBD = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(),campus,curriculo,periodo,turno,curso);
+		
+		// transforma os atendimentos obtidos do BD em DTOs
+		List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = new ArrayList<AtendimentoOperacionalDTO>();
+		for (AtendimentoOperacional atendimentoOperacional : atendimentosOperacionalBD) {
+			atendimentosOperacionalDTO.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimentoOperacional));
 		}
 
-		list = agrupaAtendimentosOperacionalMesmaAula( list, curriculoDTO );
-
-		return list;
+		return atendimentosOperacionalDTO;
 	}
 
 	private List< AtendimentoOperacionalDTO > agrupaAtendimentosOperacionalMesmaAula(

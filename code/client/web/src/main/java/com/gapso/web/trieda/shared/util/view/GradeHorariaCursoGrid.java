@@ -159,7 +159,7 @@ public class GradeHorariaCursoGrid
 
 		AtendimentosServiceAsync serviceAtendimentos = Services.atendimentos();
 
-		serviceAtendimentos.getBusca(
+		serviceAtendimentos.getAtendimentosParaGradeHorariaVisaoCurso(
 			getCurriculoDTO(), getPeriodo(), getTurnoDTO(), getCampusDTO(), getCursoDTO(),
 			new AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > >()
 		{

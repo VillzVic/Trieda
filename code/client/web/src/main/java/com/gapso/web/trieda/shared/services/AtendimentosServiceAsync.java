@@ -18,8 +18,7 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface AtendimentosServiceAsync
-{
+public interface AtendimentosServiceAsync {
 	void getList( AsyncCallback< PagingLoadResult< AtendimentoTaticoDTO > > callback );
 
 	void getBusca( SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO,
@@ -35,7 +34,14 @@ public interface AtendimentosServiceAsync
 	void getProfessoresVirtuais( CampusDTO campusDTO,
 		AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
 
-	void getBusca( CurriculoDTO curriculoDTO, Integer periodo,
-		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO,
-		AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
+	/**
+	 * 
+	 * @param curriculoDTO
+	 * @param periodo
+	 * @param turnoDTO
+	 * @param campusDTO
+	 * @param cursoDTO
+	 * @param callback
+	 */
+	void getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, AsyncCallback<ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>>> callback);
 }

@@ -118,6 +118,7 @@ import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
+import com.google.gwt.dev.util.Pair;
 
 @Transactional
 public class SolverInput
@@ -377,6 +378,48 @@ public class SolverInput
 		checkDisciplinasSemLaboratorios();
 		checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo();
 		checkDemandasComDisciplinasSemCurriculo();
+		
+//		Set<Pair<Long,Long>> pairs = new HashSet<Pair<Long,Long>>();
+//		for (Disciplina disciplina : cenario.getDisciplinas()) {
+//			for (Equivalencia equivalencia : disciplina.getEquivalencias()) {
+//				Disciplina cursou = equivalencia.getCursou();
+//				for (Disciplina elimina : equivalencia.getElimina()) {
+//					pairs.add(Pair.create(cursou.getId(),elimina.getId()));
+//				}
+//			}
+//		}
+//		
+//		List<List<Pair<Long,Long>>> ciclos = new ArrayList<List<Pair<Long,Long>>>();
+//		List<List<Pair<Long,Long>>> listaBase = new ArrayList<List<Pair<Long,Long>>>();
+//		for (Pair<Long,Long> parAtual : pairs) {
+//			if (listaBase.isEmpty()) {
+//				List<Pair<Long,Long>> lista = new ArrayList<Pair<Long,Long>>();
+//				lista.add(parAtual);
+//				listaBase.add(lista);
+//			} else {
+//				List<List<Pair<Long,Long>>> listasASeremAdicionadasNaListaBase = new ArrayList<List<Pair<Long,Long>>>();
+//				for (List<Pair<Long,Long>> listAtual : listaBase) {
+//					// testa se o par atual encaixa no final de alguma lista de pares
+//					if (listAtual.get(listAtual.size()-1).getRight().equals(parAtual.getLeft())) {
+//						List<Pair<Long,Long>> novaLista = new ArrayList<Pair<Long,Long>>(listAtual);
+//						novaLista.add(parAtual);
+//						
+//						// testa se a nova lista de pares é um ciclo
+//						if (novaLista.get(0).getLeft().equals(novaLista.get(novaLista.size()-1).getRight())) {
+//							ciclos.add(novaLista);
+//						} else {
+//							listasASeremAdicionadasNaListaBase.add(novaLista);
+//						}
+//					}
+//				}
+//				
+//				listaBase.addAll(listasASeremAdicionadasNaListaBase);
+//				
+//				List<Pair<Long,Long>> listaComParAtual = new ArrayList<Pair<Long,Long>>();
+//				listaComParAtual.add(parAtual);
+//				listaBase.add(listaComParAtual);
+//			}
+//		}
 		
 		// PRIMEIRA VERIFICAÇÃO
 

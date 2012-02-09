@@ -254,7 +254,7 @@ public class RelatorioVisaoCursoExportExcel
 			CursoDTO cursoDTO = ConvertBeans.toCursoDTO( curso );
 
 			ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > parAtendimentos
-				= atService.getBusca( curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
+				= atService.getAtendimentosParaGradeHorariaVisaoCurso( curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO );
 
 			List< AtendimentoRelatorioDTO > atdRelatorioList
 				= new ArrayList< AtendimentoRelatorioDTO >( parAtendimentos.getPrimeiro() );

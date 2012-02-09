@@ -2,5 +2,5 @@
 eclipse.preferences.version=1
 jarsExcludedFromWebInfLib=
 lastWarOutDir=D\:/GWT/Trieda/src/main/webapp
-warSrcDir=target/Trieda-0.0.1
+warSrcDir=target/Trieda-0.0-beta-3
 warSrcDirIsOutput=true
