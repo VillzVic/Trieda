@@ -44,7 +44,7 @@ public:
 
 	virtual void le_arvore( ItemSala & );
 	int max_creds( int );
-	int max_credsPorSL( int, int );
+	int max_credsPorSL( int, Calendario* );
 
 	// Métodos get
 	int getTipoSalaId() const { return tipo_sala_id; }
@@ -54,7 +54,7 @@ public:
 	std::string getAndar() const { return andar; }
 	std::string getNumero() const { return numero; }
 	int getTempoDispPorDia( int dia );
-	int getTempoDispPorDiaSL( int dia, int tempoDeAulaSL );
+	int getTempoDispPorDiaSL( int dia, Calendario* sl );
 	int getNroCredCombinaSL( int k, Calendario *c, int dia );
 	std::map< Trio< int, int, Calendario* >, int > getCombinaCredSL() const { return combinaCredSL; }
 	std::map< int /*dia*/, int /*size*/ > getCombinaCredSLSize() const { return combinaCredSLSize; }
@@ -106,16 +106,16 @@ private:
 
 	int capacidade;
 	int id_unidade;
-	GGroup<int> temposSL; // lista os possiveis tempos de duracao de aula (1 credito) existentes, obtido a partir das semanas letivas associadas aos horarios disponiveis da sala
+	GGroup<Calendario*> temposSL; // lista os possiveis Calendarios existentes, obtido a partir dos horarios disponiveis da sala
 	std::map<int, int> tempoDispPorDia; // mapeia para cada dia, o tempo total disponivel na sala, tratando intersecoes de semanas letivas
-	std::map< std::pair<int, int>, int> tempoDispPorDiaSL; // mapeia para cada par <dia, tempoDeAulaSemanaLetiva>, o tempo disponivel na sala.
+	std::map< std::pair<int, Calendario*>, int> tempoDispPorDiaSL; // mapeia para cada par <dia, Calendario>, o tempo disponivel na sala.
 
 	// Dado um conjunto de horários, retorna o conjunto de créditos correspondentes
 	GGroup< CreditoDisponivel * > converteHorariosParaCreditos();
 	
 	void calculaTemposSL();
 	void setTempoDispPorDia( int dia, int t ){ tempoDispPorDia[dia] = t; }
-	void setTempoDispPorDiaSL( int dia, int tempoDeAulaSL, int t ){ tempoDispPorDiaSL[std::make_pair(dia,tempoDeAulaSL)] = t; }
+	void setTempoDispPorDiaSL( int dia, Calendario* sl, int t ){ tempoDispPorDiaSL[std::make_pair(dia,sl)] = t; }
 
 	std::map< int /*dia*/, int /*size*/ > combinaCredSLSize;
 

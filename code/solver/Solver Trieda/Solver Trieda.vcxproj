@@ -186,7 +186,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI461)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_32)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -200,8 +200,8 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gurobi46.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GUROBI461)\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GUROBI_32)\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -581,6 +581,7 @@
     <ClCompile Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\source\opt_gurobi.cpp" />
     <ClCompile Include="AlunoDemanda.cpp" />
     <ClCompile Include="AtendimentoBase.cpp" />
+    <ClCompile Include="ConstraintPre.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="AreaTitulacao.cpp" />
     <ClCompile Include="AtendimentoCampusSolucao.cpp" />
@@ -671,6 +672,7 @@
     <ClCompile Include="SolutionLoader.cpp" />
     <ClCompile Include="Tatico.cpp" />
     <ClCompile Include="TRIEDA-OutputXSD.cpp" />
+    <ClCompile Include="VariablePre.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\..\..\Bibliotecas\OPT_LP\include\opt_gurobi.h" />
@@ -687,6 +689,7 @@
     <ClInclude Include="Calendario.h" />
     <ClInclude Include="Campus.h" />
     <ClInclude Include="ConjuntoSala.h" />
+    <ClInclude Include="ConstraintPre.h" />
     <ClInclude Include="ConverteHorariosCreditos.h" />
     <ClInclude Include="CreditoDisponivel.h" />
     <ClInclude Include="Curriculo.h" />
@@ -776,6 +779,7 @@
     <ClInclude Include="IteratedLocalSearchLevels.h" />
     <ClInclude Include="RandomDescentMethod.h" />
     <ClInclude Include="RVND.hpp" />
+    <ClInclude Include="VariablePre.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -19,6 +19,8 @@ Disciplina::Disciplina(void)
    max_creds = -1;
    menorCapacSala = 10000;
    capacMediaSala = 0;
+   nSalasAptas = 0;
+
 }
 
 Disciplina::~Disciplina(void)

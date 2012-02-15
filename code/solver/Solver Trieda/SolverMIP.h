@@ -9,6 +9,8 @@
 
 #include "ValidateSolution.h"
 #include "Solver.h"
+#include "VariablePre.h"
+#include "ConstraintPre.h"
 #include "Variable.h"
 #include "Constraint.h"
 #include "VariableOp.h"
@@ -41,6 +43,11 @@
 #endif
 // -----------------------------------
 
+#ifndef PRE_TATICO
+#define PRE_TATICO
+#endif
+
+
 class SolverMIP : public Solver
 {
 public:
@@ -51,6 +58,47 @@ public:
    int solve();
    void getSolution( ProblemSolution * );
 
+   
+      
+   /********************************************************************
+   **                      Variaveis do pre-tatico                    **
+   *********************************************************************/
+
+   int cria_preVariaveis( void );
+
+   int cria_preVariavel_creditos(void);							// x_{i,d,s}
+   int cria_preVariavel_oferecimentos(void);					// o_{i,d,s}
+   int cria_preVariavel_abertura(void);							// z_{i,d,cp}
+   int cria_preVariavel_alunos(void);							// a_{i,d,oft,s}
+   int cria_preVariavel_aloc_alunos(void);						// b_{i,d,c}
+   int cria_preVariavel_folga_demanda_disciplina(void);			// fd_{d,oft}
+   int cria_preVariavel_folga_compartilhamento_incomp(void);	// bs_{i,d,c1,c2}
+   int cria_preVariavel_folga_proibe_compartilhamento(void);	// fc_{i,d,c1,c2}
+   int cria_preVariavel_folga_turma_mesma_disc_sala_dif(void);	// fs_{d,s,oft}
+   int cria_preVariavel_limite_sup_creds_sala(void);			// Hs_{cp}
+   int cria_preVariavel_aloca_alunos_oferta(void);				// c_{i,d,oft,s}
+
+   /********************************************************************
+   **                    Restrições do pre-Tatico                     **
+   *********************************************************************/
+
+   int cria_preRestricoes( void  );
+
+   int cria_preRestricao_carga_horaria(void);				// Restrição 1.1
+   int cria_preRestricao_max_cred_sala_sl(void);			// Restrição 1.2
+   int cria_preRestricao_ativacao_var_o(void);				// Restrição 1.3
+   int cria_preRestricao_evita_mudanca_de_sala(void);		// Restrição 1.4
+   int cria_preRestricao_cap_aloc_dem_disc(void);			// Restrição 1.5
+   int cria_preRestricao_aluno_curso_disc(void);			// Restrição 1.6
+   int cria_preRestricao_cap_sala(void);					// Restrição 1.7
+   int cria_preRestricao_compartilhamento_incompat(void);	// Restrição 1.8
+   int cria_preRestricao_proibe_compartilhamento(void);		// Restrição 1.9
+   int cria_preRestricao_ativacao_var_z(void);				// Restricao 1.10
+   int cria_preRestricao_evita_turma_disc_camp_d(void);		// Restricao 1.11
+   int cria_preRestricao_limita_abertura_turmas(void);      // Restricao 1.12
+   int cria_preRestricao_abre_turmas_em_sequencia(void);    // Restricao 1.13
+   int cria_preRestricao_turma_mesma_disc_sala_dif(void);   // Restricao 1.14
+   int cria_preRestricao_limite_sup_creds_sala(void);		// Restricao 1.15
 
    /********************************************************************
    **                      VARIABLE CREATION                          **
@@ -98,6 +146,8 @@ public:
    int cria_variavel_maxCreds_combina_sl_sala(void); // cs_{s,t,k} -> Usado somente quando tem 2 semanas letivas
    int cria_variavel_maxCreds_combina_Sl_bloco(void); // cbc_{bc,t,k} -> Usado somente quando tem 2 semanas letivas
    
+   bool criaVariavelTatico( Variable *v );
+
    /********************************************************************
    **                    CONSTRAINT CREATION                          **
    *********************************************************************/
@@ -177,6 +227,8 @@ public:
    int criaVariavelFolgaCargaHorariaMinimaProfessorSemana( void );
    int criaVariavelFolgaCargaHorariaMaximaProfessorSemana( void );
    int criaVariavelGapsProfessores( void );
+   int criaVariavelFolgaDemanda( void );
+   int criaVariavelFolgaDisciplinaTurmaHorario( void );
 
    // Criacao de restrições operacional
    int criaRestricoesOperacional( void );
@@ -214,8 +266,10 @@ public:
    int localBranching( double *, double );
    void carregaVariaveisSolucaoTatico();
    void relacionaProfessoresDisciplinas();
+   void carregaVariaveisSolucaoPreTatico();
 
    int solveTatico();
+   int solvePreTatico();
    int solveTaticoBasico();
    void converteCjtSalaEmSala();
    void separaDisciplinasEquivalentes();
@@ -278,6 +332,12 @@ private:
    OPT_LP * lp;
 
    // Hash which associates the column number with the Variable object.
+   VariablePreHash vHashPre;
+
+   // Hash which associates the row number with the Constraint object.
+   ConstraintPreHash cHashPre;
+
+   // Hash which associates the column number with the Variable object.
    VariableHash vHash;
 
    // Hash which associates the row number with the Constraint object.
@@ -290,10 +350,14 @@ private:
    ConstraintOpHash cHashOp;
 
    // Stores the solution variables ( non - zero ).
+   std::vector< VariablePre * > solVarsPre;
+	
    std::vector< Variable * > solVars;
 
    std::vector< VariableOp * > solVarsOp;
 
+   bool SolVarsPreFound( VariablePre v );
+   
    double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau, eta;
 
    struct Ordena

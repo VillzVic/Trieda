@@ -257,7 +257,12 @@ std::string VariableOp::toString()
       case V_F_ULTIMA_PRIMEIRA_AULA_PROF:
         str << "V_F_ULTIMA_PRIMEIRA_AULA_PROF"; break;
       case V_GAPS_PROFESSORES:
-        str << "V_GAPS_PROFESSORES"; break;
+        str << "V_GAPS_PROFESSORES"; break;		
+	  case V_FOLGA_DEMANDA:
+        str << "V_FOLGA_DEMANDA"; break;
+	  case V_FOLGA_DISCIPLINA_HOR:
+        str << "V_FOLGA_DISCIPLINA_HOR"; break;
+		
       default:
         str << "!";
    }
@@ -276,7 +281,8 @@ std::string VariableOp::toString()
 
    if ( aula != NULL )
    {
-      str << "_(Disc" << aula->getDisciplina()->getId()
+      str << "_(Turma" << aula->getTurma()
+		  << ",Disc" << aula->getDisciplina()->getId()
           << ",Dia" << aula->getDiaSemana()
           << ",Sala" << aula->getSala()->getId()
           << ",NCred" << aula->getTotalCreditos() << ")";

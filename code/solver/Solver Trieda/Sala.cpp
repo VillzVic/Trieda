@@ -178,19 +178,11 @@ int Sala::max_creds(int dia)
 {
 	int tempoDisp = 0;
 	int creds = 0;
-   /* // TODO: RETIRAR QUANDO SEMANAS LETIVAS ESTIVER ESTAVEL
-   ITERA_GGROUP(it_creds, creditos_disponiveis, CreditoDisponivel)
-   {
-      if ( it_creds->getDiaSemana() == dia )
-	  {
-         creds += it_creds->getMaxCreditos();
-      }
-   }
-   */
-    ITERA_GGROUP_N_PT( itSl, this->temposSL, int )
+
+    ITERA_GGROUP( itSl, this->temposSL, Calendario )
     {
-	   int duracaoSl = *itSl;
-	   int tempo = tempoDispPorDiaSL[ std::make_pair( dia, duracaoSl) ];
+	   int duracaoSl = itSl->getTempoAula();
+	   int tempo = tempoDispPorDiaSL[ std::make_pair( dia, *itSl) ];
        if ( tempoDisp < tempo ) 
 	   {
           tempoDisp = tempo;
@@ -201,25 +193,25 @@ int Sala::max_creds(int dia)
     return creds;
 }
 
-int Sala::max_credsPorSL(int dia, int tempoSl)
+int Sala::max_credsPorSL(int dia, Calendario* sl)
 {
 	int tempoDisp = 0;
 	int creds = 0;
 
-	GGroup< int >::iterator itSl = temposSL.find( tempoSl );
+	GGroup< Calendario* >::iterator itSl = temposSL.find( sl );
 	
 	if ( itSl == this->temposSL.end() )
 		return creds;
 
-    tempoDisp = tempoDispPorDiaSL[ std::make_pair( dia, tempoSl) ];
-	creds = tempoDisp / tempoSl;
+    tempoDisp = tempoDispPorDiaSL[ std::make_pair( dia, sl) ];
+	creds = tempoDisp / sl->getTempoAula();
 
     return creds;
 }
 
-int Sala::getTempoDispPorDiaSL( int dia, int tempoDeAulaSL )
+int Sala::getTempoDispPorDiaSL( int dia, Calendario *sl )
 {
-	std::map< std::pair<int,int>, int >::iterator it = tempoDispPorDiaSL.find( std::make_pair(dia,tempoDeAulaSL) );
+	std::map< std::pair<int,Calendario*>, int >::iterator it = tempoDispPorDiaSL.find( std::make_pair(dia,sl) );
 	if ( it != tempoDispPorDiaSL.end() )
 		return it->second;
 	else
@@ -239,9 +231,10 @@ void Sala::calculaTemposSL()
 {
 	ITERA_GGROUP(it_horarios, this->horarios_disponiveis, Horario)
 	{
-		int novoTempoAula = it_horarios->horario_aula->getTempoAula();
-		if ( temposSL.find(novoTempoAula) == temposSL.end() )
-			temposSL.add( novoTempoAula );
+		Calendario* novoCalendario = it_horarios->horario_aula->getCalendario();
+
+		if ( temposSL.find (novoCalendario ) == temposSL.end() )
+			temposSL.add( novoCalendario );
 	}
 
 }
@@ -257,22 +250,22 @@ void Sala::calculaTempoDispPorDiaSL()
 	{
 		int dia = *(it_dia);
 		
-		ITERA_GGROUP_N_PT(it_sl, temposSL, int) // Para cada semana letiva
-		{		
-			int tempoDeAulaSL = *(it_sl);
+		ITERA_GGROUP(it_sl, temposSL, Calendario) // Para cada semana letiva
+		{
+			Calendario * sl = *it_sl;
 			
 			GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosAula;
 			ITERA_GGROUP(it_horarios, this->horarios_disponiveis, Horario)
 			{
 				if ( it_horarios->dias_semana.find(dia) != it_horarios->dias_semana.end() )
 				{
-					if ( it_horarios->horario_aula->getTempoAula() == tempoDeAulaSL )
+					if ( it_horarios->horario_aula->getCalendario() == sl )
 						horariosAula.add( it_horarios->horario_aula );
 				}
 			}
 
 			int T = somaTempo(horariosAula);
-			setTempoDispPorDiaSL( dia, tempoDeAulaSL, T );
+			setTempoDispPorDiaSL( dia, sl, T );
 		}
 	}
 

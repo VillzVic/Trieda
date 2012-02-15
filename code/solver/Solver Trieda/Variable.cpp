@@ -6,11 +6,15 @@
    ( b != NULL && a != NULL && ( *a < *b ) )
 
 #define E_MENOR_PAR( a, b ) \
-   ( ( a.first == NULL && b.first != NULL) || \
-     ( b.first != NULL && a.first != NULL && ( *a.first < *b.first ) )\
+   ( ( ( a.first == NULL && b.first != NULL) || \
+       ( b.first != NULL && a.first != NULL && ( *a.first < *b.first ) ) ) \
 	 || \
-     ( a.second == NULL && b.second != NULL) || \
-     ( b.second != NULL && a.second != NULL && ( *a.second < *b.second ) ) )
+	 ( ( a.first == b.first) && \
+	   ( ( a.second == NULL && b.second != NULL) || \
+		 ( b.second != NULL && a.second != NULL && ( *a.second < *b.second ) ) \
+	   ) \
+	 ) \
+   )
 
 Variable::Variable()
 {

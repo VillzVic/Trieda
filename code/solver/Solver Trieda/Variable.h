@@ -22,10 +22,10 @@ public:
       V_ABERTURA = 3,							// z_{i,d,cp}
       V_ALUNOS = 4,							   // a_{i,d,o}
       V_ALOC_ALUNO = 5,				         // b_{i,d,c,cp}
-      V_N_SUBBLOCOS = 6,				        // w_{bjtu} -> w_{b,t,cp}
+      V_N_SUBBLOCOS = 6,				        // w_{bc,t,cp}
       V_DIAS_CONSECUTIVOS = 7,				// c_{idt}
-      V_MIN_CRED_SEMANA = 8,					// h_{bi}
-      V_MAX_CRED_SEMANA = 9,					// H_{bi}
+      V_MIN_CRED_SEMANA = 8,					// h_{bc,i}
+      V_MAX_CRED_SEMANA = 9,					// H_{bc,i}
       V_ALOC_DISCIPLINA = 10,					// y_{i,d,tps,u}
       V_N_ABERT_TURMA_BLOCO = 11,				// v_{bt}
       V_SLACK_DIST_CRED_DIA_SUPERIOR = 12,	// fcp_{i,d,tps,t}

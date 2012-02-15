@@ -57,6 +57,7 @@ public:
    void setMenorCapacSala( int value ) { this->menorCapacSala = value; }
    void setCapacMediaSala( int value ) { this->capacMediaSala = value; }
    void setCalendario( Calendario* sl ) { this->calendario = sl; }
+   void setNSalasAptas( int value ){ this->nSalasAptas = value; }
 
    int getDemandaTotal() const { return demanda_total; }
    int getMaxDemanda() const { return max_demanda; }
@@ -75,6 +76,7 @@ public:
    int getMenorCapacSala() const { return this->menorCapacSala; }
    int getCapacMediaSala() const { return this->capacMediaSala; }
    Calendario* getCalendario() const { return calendario; }
+   int getNSalasAptas() const { return this->nSalasAptas; }
 
    // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
    int getTempoCredSemanaLetiva() const { return this->calendario->getTempoAula(); } 
@@ -108,6 +110,8 @@ private:
    int max_creds;
    int menorCapacSala; // menor capacidade dentre as salas aonde a disciplina pode ser ministrada
    int capacMediaSala; // capacidade media dentre as salas aonde a disciplina pode ser ministrada
+
+   int nSalasAptas;
 };
 
 #endif

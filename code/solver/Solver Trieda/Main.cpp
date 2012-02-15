@@ -127,7 +127,7 @@ int main( int argc, char** argv )
 
    solution = new ProblemSolution( data->parametros->modo_otimizacao == "TATICO" );
 
-   outTestFile << "Creating temporary output file name..." <<endl;
+   outTestFile << "Creating temporary output file name..." << endl;
 
    // Temporary output file name
    strcat( tempOutput, path );

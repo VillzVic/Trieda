@@ -654,7 +654,7 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
       ITERA_GGROUP_LESSPTR( it_Unidade, it_Campus->unidades, Unidade )
       {
          // Conjunto de salas (LABORATORIOS) que tiveram de
-         // ser criadas, dado que a possuiam pelo menos 
+         // ser criadas, dado que possuiam pelo menos 
          // uma disciplina com a FLAG <eLab> marcada (TRUE)
          GGroup< ConjuntoSala * > conjunto_Salas_Disc_eLab;
 
@@ -3278,35 +3278,37 @@ void ProblemDataLoader::cache()
 
    ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
-      if ( it_disc->divisao_creditos != NULL )
-      {
-         it_disc->setMinCreds(24);
+	   int nCredsP = it_disc->getCredPraticos();
+	   int nCredsT = it_disc->getCredTeoricos();
+
+	   // Se o total de creditos é par
+	   if ( (nCredsP + nCredsT)%2 == 0 )
+		   it_disc->setMinCreds( 2 );
+
+	   // Se o total de creditos é ímpar
+	   else
+			it_disc->setMinCreds( 1 );
+
+
+       if ( it_disc->divisao_creditos != NULL )
+       {
          it_disc->setMaxCreds(0);
 
          for ( int t = 0; t < 8; t++ )
          {
             if ( it_disc->divisao_creditos->dia[t] > 0 )
             {
-               it_disc->setMinCreds( 
-                  std::min(it_disc->getMinCreds(),
-                  it_disc->divisao_creditos->dia[t]) );
-
                it_disc->setMaxCreds( 
                   std::max(it_disc->getMaxCreds(),
                   it_disc->divisao_creditos->dia[t]) );
             }
          }
-      }
-      else
-      {
-         it_disc->setMinCreds(1);
-         it_disc->setMaxCreds( it_disc->getCredPraticos() + it_disc->getCredTeoricos() );
-      }
+       }
+       else
+       {
+         it_disc->setMaxCreds( nCredsP + nCredsT );
+       }
 
-      if ( it_disc->getMinCreds() > 2 )
-      {
-         it_disc->setMinCreds(1);
-      }
    }
 }
 
@@ -3472,6 +3474,7 @@ void ProblemDataLoader::associaDisciplinasSalas()
       }
    }
    // --------------------------------------------------------------------------
+
 }
 
 void ProblemDataLoader::associaDisciplinasConjuntoSalas()
@@ -3620,6 +3623,26 @@ void ProblemDataLoader::associaDisciplinasConjuntoSalas()
       }
    }
    //-------------------------------------------------------------------------------
+
+   
+   // --------------------------------------------------------------------------
+   // Conta para cada disciplina a quantas salas ela está associada.
+
+   ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
+   {
+		ITERA_GGROUP_LESSPTR( itUnidade, itCp->unidades, Unidade )
+		{
+			ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+			{							
+				ITERA_GGROUP_LESSPTR( itDisc, itCjtSala->disciplinas_associadas, Disciplina )
+				{
+					itDisc->setNSalasAptas( itDisc->getNSalasAptas() + 1 );
+				}
+			}
+		}
+
+    }
+
 }
 
 bool ProblemDataLoader::existe_conjunto_sala__fixacao(

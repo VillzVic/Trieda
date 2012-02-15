@@ -116,7 +116,7 @@ public:
    }
    */
 
-   int maxTempoPermitidoPorDiaPorSL( int dia, int sl )
+   int maxTempoPermitidoPorDiaPorSL( int dia, Calendario* sl )
    {
       int totMaxTempo = 0;
 
@@ -142,6 +142,53 @@ public:
       return totMaxTempo;
    }
 
+   /*
+	   Retorna o maior dentre todos os totais de tempo disponível na semana
+	   para os calendários existentes no conjunto sala.
+	   Função usada na restrição de máximo de crédito por sala na semana,
+	   no modelo pre-tático.
+   */
+   int maxTempoPermitidoNaSemana()
+   {
+	   int maxTempo = 0;
+
+	   GGroup< Calendario*, LessPtr<Calendario> > calendarios;
+	   ITERA_GGROUP_LESSPTR (itDisc, this->disciplinas_associadas, Disciplina )
+       {
+		   if (  calendarios.find( itDisc->getCalendario() ) == calendarios.end() )
+		   {
+			   calendarios.add( itDisc->getCalendario() );		   
+		   }
+       }
+
+	   GGroup<int> dias;
+       std::map< int /*Id Sala*/, Sala * >::iterator itSala = salas.begin();
+       for (; itSala != salas.end(); itSala++ )
+       {
+		   ITERA_GGROUP_N_PT( itDia, itSala->second->diasLetivos, int )
+		   {
+				if (  dias.find( *itDia ) == dias.end() )
+				{
+					dias.add( itSala->second->diasLetivos );		   
+				}
+		   }
+       }
+
+	   ITERA_GGROUP_N_PT (itDia, dias, int )
+	   {
+		    int max = 0;
+			ITERA_GGROUP_LESSPTR (itCalend, calendarios, Calendario )
+			{
+				int tempoSL = maxTempoPermitidoPorDiaPorSL( *itDia, *itCalend );				
+				if ( max < tempoSL )
+					max = tempoSL;
+		    }
+			maxTempo += max;
+	   }
+	   
+	   return maxTempo;
+   }
+
    // Retorna o máximo de créditos para um dado dia.
    int maxCredsDia( int dia )
    {
@@ -160,16 +207,16 @@ public:
    }
 
    // Retorna o máximo de créditos para um dado dia.
-   int maxCredsDiaPorSL( int dia, int tempoSl )
+   int maxCredsDiaPorSL( int dia, Calendario* sl )
    {
       int max_Creds_Dia = 0;
 
       std::map< int /*Id Sala*/, Sala * >::iterator it_Sala = salas.begin();
       for (; it_Sala != salas.end(); it_Sala++ )
       {
-         if ( max_Creds_Dia < it_Sala->second->max_credsPorSL( dia, tempoSl ) )
+         if ( max_Creds_Dia < it_Sala->second->max_credsPorSL( dia, sl ) )
          {
-			 max_Creds_Dia = it_Sala->second->max_credsPorSL( dia, tempoSl );
+			 max_Creds_Dia = it_Sala->second->max_credsPorSL( dia, sl );
 		 }
       }
 
