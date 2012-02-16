@@ -1125,40 +1125,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico()
    {
       delete [] xSol;
    }
-   /*
-   // ---------------------------------------
-   // Imprimindo as variáveis x_{i,d,u,tps} coletadas.
 
-   std::cout << "x\t\ti\td\t\tu\ttps\tt\n";
-
-   ITERA_VECTOR( it_Vars_x, vars_x, VariablePre )
-   {
-      std::cout << ( *it_Vars_x )->getValue() << "\t\t"
-                << ( *it_Vars_x )->getTurma() << "\t"
-                << ( *it_Vars_x )->getDisciplina()->getCodigo() << "\t\t"
-                << ( *it_Vars_x )->getUnidade()->getCodigo() << "\t"
-                << ( *it_Vars_x )->getSubCjtSala()->getId();
-   }
-
-   std::cout << "\n\n\n";
-
-   // Imprimindo as variáveis a_{i,d,o} coletadas.
-   std::cout << "a\t\ti\td\to\tCod.Curso\n";
-
-   vars__A___i_d_o::iterator it_Vars_a = vars_a.begin();
-
-   for (; it_Vars_a != vars_a.end(); ++it_Vars_a )
-   {
-      ITERA_VECTOR( it_Vars_a_TEMP, it_Vars_a->second, VariablePre )
-      {
-         std::cout << ( *it_Vars_a_TEMP )->getValue() << "\t\t"
-                   << ( *it_Vars_a_TEMP )->getTurma() << "\t"
-                   << ( *it_Vars_a_TEMP )->getDisciplina()->getCodigo() << "\t"
-                   << ( *it_Vars_a_TEMP )->getOferta()->getId() << "\t"
-                   << ( *it_Vars_a_TEMP )->getOferta()->curso->getCodigo() << "\n";
-      }
-   }
-   */
 }
 
 
@@ -1205,7 +1172,7 @@ int SolverMIP::solvePreTatico()
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 600 );
+   lp->setTimeLimit( 1800 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "SolverTriedaPreTatico" );
@@ -1289,7 +1256,7 @@ int SolverMIP::solveTaticoBasico()
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 600 );
+   lp->setTimeLimit( 3600 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
@@ -2474,7 +2441,7 @@ int SolverMIP::solveOperacionalMIP()
 
    int status = 0;
 
-   lp->setTimeLimit( 600 );
+   lp->setTimeLimit( 3600 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
 
@@ -4383,7 +4350,7 @@ int SolverMIP::cria_preVariavel_aloc_alunos(void)
 				
 				if ( vHashPre.find(v) == vHashPre.end() )
 				{
-					double coeff = 0.0;
+					double coeff = 1.0;
 					/*
 					if ( variavel_equivalente )
 					{
@@ -4811,10 +4778,11 @@ int SolverMIP::cria_preVariavel_aloca_alunos_oferta(void)
 								v.setUnidade( *itUnidade );		   // u
 								v.setSubCjtSala( *itCjtSala );	   // s
 
-								double coeff = 0.0;
-
+								
 								if ( vHashPre.find(v) == vHashPre.end() )
 								{
+									double coeff = 1.0;
+
 									/*
 									if ( variavel_equivalente )
 									{
@@ -4826,7 +4794,7 @@ int SolverMIP::cria_preVariavel_aloca_alunos_oferta(void)
 									if ( problemData->parametros->funcao_objetivo == 0 ||
 										problemData->parametros->funcao_objetivo == 2 )
 									{
-										OPT_COL col( OPT_COL::VAR_BINARY, 0.0, 0.0, 1.0,
+										OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
 											( char * )v.toString().c_str() );
 
 										lp->newCol( col );
@@ -4968,6 +4936,13 @@ int SolverMIP::cria_preRestricoes( void  )
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.15\": " << (restricoes - numRestAnterior) << std::endl;
+   numRestAnterior = restricoes;
+#endif   
+
+   restricoes += cria_preRestricao_ativa_var_aloc_aluno_oft();		// Restrição 1.16
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest \"1.16\": " << (restricoes - numRestAnterior) << std::endl;
    numRestAnterior = restricoes;
 #endif   
 
@@ -6677,7 +6652,131 @@ int SolverMIP::cria_preRestricao_limite_sup_creds_sala(void)
 	return restricoes;
 }
 
+// Restricao 1.16
+int SolverMIP::cria_preRestricao_ativa_var_aloc_aluno_oft(void)
+{
+    int restricoes = 0;
+    char name[ 100 ];
+    int nnz;
 
+    VariablePre v;
+    ConstraintPre c;
+    VariablePreHash::iterator it_v;
+
+    Disciplina * disciplina = NULL;
+    Disciplina * disciplina_equivalente = NULL;
+
+    Curso * curso = NULL;
+    Curriculo * curriculo = NULL;
+
+	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+	{
+		Campus* cp = *itCampus;
+		
+		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+		{
+			ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+			{
+				ITERA_GGROUP_LESSPTR( it_disc, itCjtSala->disciplinas_associadas, Disciplina )
+				{
+					Disciplina* disciplina = *it_disc;
+
+					// Listando todas as ofertas que contem uma disciplina especificada.
+					GGroup< Oferta *, LessPtr< Oferta > > ofertas = problemData->ofertasDisc[ it_disc->getId() ];
+
+					ITERA_GGROUP_LESSPTR( itOferta, ofertas, Oferta )
+					{
+							 Oferta* oft = *itOferta;
+
+							 if ( oft->campus != cp )
+								 continue;
+
+							 // Calculando P_{d,o}
+							 int qtdDem = 0;
+							 ITERA_GGROUP_LESSPTR( itDem, problemData->demandas, Demanda )
+							 {
+								if ( itDem->disciplina->getId() == disciplina->getId() &&
+								   itDem->getOfertaId() == itOferta->getId() )
+								{
+								   qtdDem += itDem->getQuantidade();
+								}
+							 }
+
+							 if ( qtdDem <= 0 )
+							 {
+								continue;
+							 }
+
+							 for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+							 {
+								// --------------------------------------------------------
+								c.reset();
+								c.setType( ConstraintPre::C_PRE_ATIVA_C );
+								c.setCampus( *itCampus );
+								c.setTurma( turma );
+								c.setDisciplina( disciplina );
+								c.setUnidade( *itUnidade );
+								c.setSubCjtSala( *itCjtSala );
+								c.setOferta( oft );
+
+								sprintf( name, "%s", c.toString().c_str() ); 
+								if ( cHashPre.find( c ) != cHashPre.end() )
+								{
+									continue;
+								}
+
+								nnz = 2;
+
+								OPT_ROW row( nnz, OPT_ROW::LESS , 0.0, name );
+
+								// variavel a_{i,d,oft,s}
+								v.reset();
+								v.setType( VariablePre::V_PRE_ALUNOS );
+								v.setTurma( turma );               // i
+								v.setDisciplina( disciplina );     // d
+								v.setOferta( *itOferta );          // oft
+								v.setUnidade( *itUnidade );		   // u
+								v.setSubCjtSala( *itCjtSala );	   // s
+								
+								it_v = vHashPre.find( v );
+								if ( it_v != vHashPre.end() )
+								{
+									row.insert( it_v->second, 1.0 );
+								}
+
+								// variavel c_{i,d,oft,s}
+								v.reset();
+								v.setType( VariablePre::V_PRE_ALOC_ALUNO_OFT );
+								v.setTurma( turma );               // i
+								v.setDisciplina( disciplina );     // d
+								v.setOferta( *itOferta );          // oft
+								v.setUnidade( *itUnidade );		   // u
+								v.setSubCjtSala( *itCjtSala );	   // s
+								
+								it_v = vHashPre.find( v );
+								if ( it_v != vHashPre.end() )
+								{
+									row.insert( it_v->second, -qtdDem );
+								}
+
+								// insere constraint
+								if ( row.getnnz() != 0 )
+								{
+									cHashPre[ c ] = lp->getNumRows();
+
+  									lp->addRow( row );
+									restricoes++;
+								}
+								// --------------------------------------------------------
+							}
+				     }
+				}
+			}
+		}
+   }
+
+	return restricoes;
+}
 
 // ==============================================================
 //							VARIABLES
@@ -6863,12 +6962,16 @@ int SolverMIP::cria_variaveis()
    numVarsAnterior = num_vars;
 #endif
 
+/* // "n" não está sendo usado.
+   //  A restrição que a usaria tem uma msg de erro de modelagem. Pode ser que tenha sido consertado. 
    num_vars += cria_variavel_abertura_bloco_mesmoTPS(); // n
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars \"n\": " << (num_vars - numVarsAnterior) << std::endl;
    numVarsAnterior = num_vars;
 #endif
+
+*/
 
    num_vars += cria_variavel_de_folga_abertura_bloco_mesmoTPS(); // fn
 
@@ -7852,7 +7955,7 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
 
                vHash[v] = lp->getNumCols();
 
-               OPT_COL col( OPT_COL::VAR_BINARY, 0, 0.0, 1.0,
+               OPT_COL col( OPT_COL::VAR_BINARY, 1.0, 0.0, 1.0,
                   ( char * )v.toString().c_str() );
 
                lp->newCol( col );
@@ -8040,7 +8143,7 @@ int SolverMIP::cria_variavel_consecutivos( void )
                         else if ( problemData->parametros->funcao_objetivo == 1
                            || problemData->parametros->funcao_objetivo == 2 )
                         {
-                           OPT_COL col( OPT_COL::VAR_BINARY, 0.0, 0.0, 1.0,
+                           OPT_COL col( OPT_COL::VAR_BINARY, 1.0, 0.0, 1.0,
                               ( char * )v.toString().c_str() );
 
                            lp->newCol( col );
@@ -8153,7 +8256,7 @@ int SolverMIP::cria_variavel_min_creds(void)
                else if ( problemData->parametros->funcao_objetivo == 1
                   || problemData->parametros->funcao_objetivo == 2 )
                {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0, 1000.0,
+                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 1.0, 0.0, 1000.0,
                      ( char * )v.toString().c_str() );
 
                   lp->newCol( col );
@@ -8256,7 +8359,7 @@ int SolverMIP::cria_variavel_max_creds(void)
                else if ( problemData->parametros->funcao_objetivo == 1 ||
                   problemData->parametros->funcao_objetivo == 2 )
                {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0, 1000.0,
+                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 1.0, 0.0, 1000.0,
                      ( char * )v.toString().c_str() );
 
                   lp->newCol( col );
@@ -15591,7 +15694,7 @@ Ativação da variável n
 %MatExp
 \begin{eqnarray}
 \sum\limits_{u \in U} \sum\limits_{i \in I} \sum\limits_{d \in D_{bc}} 
-o_{i,d,u,tps,t} \leq n_{bc,tps} \nonumber \qquad 
+o_{i,d,u,tps,t} \leq M \cdot n_{bc,tps} \nonumber \qquad 
 \forall tps \in SCAP_{u}
 \forall bc \in B
 \forall t \in T
@@ -15698,7 +15801,8 @@ int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
                                  it_v = vHash.find( v );
                                  if ( it_v != vHash.end() )
                                  {
-                                    row.insert( it_v->second, -1.0 );
+									int bigM = 100;
+                                    row.insert( it_v->second, -bigM );
                                  }
                               }
                            }

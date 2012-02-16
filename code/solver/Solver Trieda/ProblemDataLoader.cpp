@@ -4204,8 +4204,8 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
          ITERA_GGROUP_LESSPTR( it_sala, it_unidade->salas, Sala )
          {
             Sala * sala = ( *it_sala );
-
-            ITERA_GGROUP_N_PT( itDia, sala->diasLetivos, int )
+            
+			ITERA_GGROUP_N_PT( itDia, sala->diasLetivos, int )
             {
 				int dia = *itDia;
 
@@ -4234,7 +4234,7 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
 				#pragma region Calcula todas as combinações possíveis entre horarios compativeis de sl2
 
 				// Map para armazenar as combinações (sub-conjuntos)
-				std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ > todosSubConjuntos;
+				std::map< std::set< HorarioAula* /*sl2*/ >, int /*nro de ocorrencias*/ > todosSubConjuntos;
 
 				for ( std::map< HorarioAula*, GGroup<HorarioAula*> >::iterator it_H = map_compatHorarioSL1PorSalaDia.begin();
 					  it_H != map_compatHorarioSL1PorSalaDia.end(); it_H++  )
@@ -4251,7 +4251,8 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
 						}
 						else
 						{
-							todosSubConjuntos[ *it_h ]++; // Incrementa o numero de ocorrencias do subCjt
+							// Incrementa o nro de ocorrencias do subCjt, que corresponde ao nro de horarios de sl1 de contêm o subconj it_h
+							todosSubConjuntos[ *it_h ]++;
 						}
 					}
 				}
@@ -4268,12 +4269,17 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
 				{
 					int maxSL2 = 0;
 					
-					std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ >::iterator it = todosSubConjuntos.begin();
+					std::map< std::set< HorarioAula* /*sl2*/ >, int /*nro de ocorrencias*/ >::iterator it = todosSubConjuntos.begin();
 					
 					for (; it != todosSubConjuntos.end(); it++ )
 					{
-						if ( i == it->first.size() && maxSL2 < it->second )
-							maxSL2 = it->second;
+						int nHorariosSl1 = it->second;
+						int nHorariosSl2 = it->first.size();
+
+						if ( i == nHorariosSl1 && maxSL2 < nHorariosSl2 )
+						{
+							maxSL2 = it->first.size();
+						}
 					}
 					if (i==0)
 						maxSL2 = horDispDiaSL2.size();
@@ -4283,7 +4289,7 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
 					{
 						sala->setCombinaCredSL( dia, k, sl1, i );
 						sala->setCombinaCredSL( dia, k, sl2, maxSL2 );
-						
+												
 						k++;
 						sala->setCombinaCredSLSize(dia, k);
 

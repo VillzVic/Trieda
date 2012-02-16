@@ -175,6 +175,8 @@ std::string ConstraintPre::toString()
       ss << "__(C_PRE_TURMA_MESMA_DISC_SALA_DIF):"; break;
    case C_PRE_LIM_SUP_CREDS_SALA:
       ss << "__(C_PRE_LIM_SUP_CREDS_SALA):"; break;	  
+   case C_PRE_ATIVA_C:
+      ss << "__(C_PRE_ATIVA_C):"; break;	  
 
    default:
       ss << "!";

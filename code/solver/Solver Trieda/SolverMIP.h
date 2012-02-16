@@ -99,6 +99,7 @@ public:
    int cria_preRestricao_abre_turmas_em_sequencia(void);    // Restricao 1.13
    int cria_preRestricao_turma_mesma_disc_sala_dif(void);   // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala(void);		// Restricao 1.15
+   int cria_preRestricao_ativa_var_aloc_aluno_oft(void);	// Restricao 1.16
 
    /********************************************************************
    **                      VARIABLE CREATION                          **
