@@ -544,16 +544,31 @@ public class SolverInput
 			// coleta os CurriculoDisciplina não associados a laboratórios
 			Set<CurriculoDisciplina> curriculosDisciplinasNaoAssociadosALaboratorios = new HashSet<CurriculoDisciplina>();
 			for (CurriculoDisciplina curriculoDisciplina : disciplina.getCurriculos()) {
-				boolean estaAssociadoComAlgumLaboratorio = false;
-				for (Sala sala : curriculoDisciplina.getSalas()) {
-					if (sala.isLaboratorio()) {
-						estaAssociadoComAlgumLaboratorio = true;
-						break;
+				// apenas faz a validação para curriculos com alguma oferta
+				if (!curriculoDisciplina.getCurriculo().getOfertas().isEmpty()) {
+					// verifica se tem oferta no campus a ser otimizado
+					boolean curriculoTemOfertaNoCampusASerOtimizado = false;
+					for (Oferta oferta : curriculoDisciplina.getCurriculo().getOfertas()) {
+						if (oferta.getCampus().equals(this.parametro.getCampus())) {
+							curriculoTemOfertaNoCampusASerOtimizado = true;
+							break;
+						}
 					}
-				}
-				 
-				if (!estaAssociadoComAlgumLaboratorio) {
-					curriculosDisciplinasNaoAssociadosALaboratorios.add(curriculoDisciplina);
+					
+					// apenas faz validação se currículo tem oferta no campus a ser otimizado
+					if (curriculoTemOfertaNoCampusASerOtimizado) {
+						boolean estaAssociadoComAlgumLaboratorio = false;
+						for (Sala sala : curriculoDisciplina.getSalas()) {
+							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(this.parametro.getCampus())) {
+								estaAssociadoComAlgumLaboratorio = true;
+								break;
+							}
+						}
+						 
+						if (!estaAssociadoComAlgumLaboratorio) {
+							curriculosDisciplinasNaoAssociadosALaboratorios.add(curriculoDisciplina);
+						}
+					}
 				}
 			}
 			 
@@ -562,8 +577,8 @@ public class SolverInput
 				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasNaoAssociadosALaboratorios) {
 					pares += "(" + curriculoDisciplina.getCurriculo().getCodigo() + "," + curriculoDisciplina.getPeriodo() + "); ";
 				}
-				createErrorMessage("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório, são eles: " + pares);
-				System.out.println("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório, são eles: " + pares);
+				createErrorMessage("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + this.parametro.getCampus().getCodigo() + ", são eles: " + pares);
+				System.out.println("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + this.parametro.getCampus().getCodigo() + ", são eles: " + pares);
 			}
 		}
 	}

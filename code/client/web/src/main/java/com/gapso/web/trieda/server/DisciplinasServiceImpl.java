@@ -153,7 +153,7 @@ public class DisciplinasServiceImpl
 						// verifica se há associação com algum laboratorio
 						boolean estaAssociadoComAlgumLaboratorio = false;
 						for (Sala sala : curriculoDisciplina.getSalas()) {
-							if (sala.isLaboratorio()) {
+							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(oferta.getCampus())) {
 								estaAssociadoComAlgumLaboratorio = true;
 								break;
 							}
