@@ -1172,13 +1172,15 @@ int SolverMIP::solvePreTatico()
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 1800 );
+   lp->setTimeLimit( 3600 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "SolverTriedaPreTatico" );
 
+   lp->setPreSolve(OPT_TRUE);
+
 #ifndef READ_SOLUTION_TATICO_BIN
-   status = lp->optimize( METHOD_PRIMAL );
+   status = lp->optimize( METHOD_MIP );
 #endif
 
 #ifdef WRITE_SOLUTION_TATICO_BIN
@@ -1260,6 +1262,8 @@ int SolverMIP::solveTaticoBasico()
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
    lp->writeProbLP( "Solver Trieda" );
+   
+   lp->setPreSolve(OPT_TRUE);
 
 #ifndef READ_SOLUTION_TATICO_BIN
    status = lp->optimize( METHOD_PRIMAL );
@@ -2444,6 +2448,8 @@ int SolverMIP::solveOperacionalMIP()
    lp->setTimeLimit( 3600 );
    lp->setMIPRelTol( 0.02 );
    lp->setMIPScreenLog( 4 );
+   
+   lp->setPreSolve(OPT_TRUE);
 
    status = lp->optimize( METHOD_MIP );
 
@@ -13773,6 +13779,8 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
 
    ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
+	  Oferta *oft = itBloco->oferta;
+
       for ( int turma = 0; turma < itBloco->getTotalTurmas(); turma++ )
       {
          GGroup< int >::iterator itDiasLetivosBlocoCurric = 
@@ -13819,12 +13827,13 @@ int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
                   ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
                   {
                      v.reset();
-                     v.setType( Variable::V_CREDITOS );
+                     v.setType( Variable::V_CREDITOS_OFT );
 
                      v.setTurma( turma );
                      v.setDisciplina( disciplina );
                      v.setUnidade( *itUnidade );
                      v.setSubCjtSala( *itCjtSala );
+					 v.setOferta( oft );
                      v.setDia( *itDiasLetivosBlocoCurric );
 
                      it_v = vHash.find( v );
@@ -13874,7 +13883,7 @@ Máximo de créditos alocados para turmas de um bloco (*)
 %MatExp
 
 \begin{eqnarray}
-\overline{h}_{bc,i} \geq \sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} tempo_{d} \cdot x_{i,d,u,tps,t} \nonumber \qquad 
+\overline{h}_{bc,i} \geq \sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} tempo_{d} \cdot q_{i,d,oft,u,tps,t} \nonumber \qquad 
 \forall bc \in B \quad
 \forall i \in I_{oft} \quad
 \forall t \in T
@@ -13903,6 +13912,8 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
 
    ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
+	  Oferta *oft = itBloco->oferta;
+
       for ( int turma = 0; turma < itBloco->getTotalTurmas(); turma++ )
       {
          GGroup< int >::iterator itDiasLetivosBlocoCurric = 
@@ -13946,12 +13957,13 @@ int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
                   ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
                   {
                      v.reset();
-                     v.setType( Variable::V_CREDITOS );
+                     v.setType( Variable::V_CREDITOS_OFT );
 
                      v.setTurma( turma );
                      v.setDisciplina( disciplina );
                      v.setUnidade( *itUnidade );
                      v.setSubCjtSala( *itCjtSala );
+					 v.setOferta( oft );
                      v.setDia( *itDiasLetivosBlocoCurric );
 
                      it_v = vHash.find( v );
@@ -16238,7 +16250,22 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 										if ( oft2->curriculo->getMaxCreds(*itDia) != maxCredDia )
 										{
 											cerr << endl << "Erro em SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento():";
-											cerr << endl << "Semanas letivas devem ser iguais!";
+											cerr << endl << "Semanas letivas devem ser iguais!" << endl;
+											cerr << "curr1: " << oft1->curriculo->getId();
+											cerr << "curr2: " << oft2->curriculo->getId() << endl;
+
+											cerr << "sl1: " << oft1->curriculo->calendario->getId();
+											cerr << "sl2: " << oft2->curriculo->calendario->getId() << endl;
+											
+											cerr << "oft1: " << oft1->getId();
+											cerr << "oft2: " << oft2->getId() << endl;
+
+											cerr << "max1: " << maxCredDia;
+											cerr << "max2: " << oft2->curriculo->getMaxCreds(*itDia) << endl << endl;
+
+											if ( disciplina_equivalente != NULL )
+												cerr << "Houve equivalencia" << endl;
+
 											if (oft2->curriculo->getMaxCreds(*itDia) < maxCredDia)
 												maxCredDia = oft2->curriculo->getMaxCreds(*itDia);
 										}
@@ -16642,6 +16669,9 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				
 			for ( int turma = 0; turma < discComum->getNumTurmas(); turma++ )
 			{
+				bool vNotfound = false;
+				// Se pelo menos 1 das variaveis não existir,
+				// não tem sentido o trio de restrições, logo nenhuma será criada.
 
 				// ----------------------------------------------------------
 				// 1
@@ -16674,6 +16704,11 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				{
 					row1.insert( it_v->second, -1.0 );
 				}
+				else
+				{
+					vNotfound = true;
+					continue;
+				}
 
 				v.reset();
 				v.setType( Variable::V_ALOC_ALUNOS_OFT );
@@ -16686,7 +16721,12 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				{
 					row1.insert( it_v->second, 1.0 );
 				}				
-							
+				else
+				{
+					vNotfound = true;
+					continue;
+				}
+
 				v.reset();
 				v.setType( Variable::V_ALOC_ALUNOS_OFT );
 				v.setTurma( turma );
@@ -16697,15 +16737,14 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				if ( it_v != vHash.end() )
 				{
 					row1.insert( it_v->second, 1.0 );
-				}		
-
-				if ( row1.getnnz() != 0 )
-				{
-					cHash[ c ] = lp->getNumRows();
-					lp->addRow( row1 );
-					restricoes++;
 				}
-				#pragma endregion Restricao tipo 1
+				else
+				{
+					vNotfound = true;
+					continue;
+				}
+
+				#pragma endregion
 
 				// ----------------------------------------------------------
 				// 2
@@ -16738,6 +16777,11 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				{
 					row2.insert( it_v->second, 1.0 );
 				}
+				else
+				{
+					vNotfound = true;
+					continue;
+				}
 
 				v.reset();
 				v.setType( Variable::V_ALOC_ALUNOS_OFT );
@@ -16749,15 +16793,13 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				if ( it_v != vHash.end() )
 				{
 					row2.insert( it_v->second, -1.0 );
-				}				
-
-				if ( row2.getnnz() != 0 )
-				{
-					cHash[ c ] = lp->getNumRows();
-					lp->addRow( row2 );
-					restricoes++;
 				}
-				#pragma endregion Restricao tipo 2
+				else
+				{
+					vNotfound = true;
+					continue;
+				}
+				#pragma endregion
 
 				// ----------------------------------------------------------
 				// 3
@@ -16790,6 +16832,11 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				{
 					row3.insert( it_v->second, 1.0 );
 				}
+				else
+				{
+					vNotfound = true;
+					continue;
+				}
 
 				v.reset();
 				v.setType( Variable::V_ALOC_ALUNOS_OFT );
@@ -16801,15 +16848,36 @@ int SolverMIP::cria_restricao_ativacao_var_of()
 				if ( it_v != vHash.end() )
 				{
 					row3.insert( it_v->second, -1.0 );
-				}				
+				}
+				else
+				{
+					vNotfound = true;
+					continue;
+				}
 
+				#pragma endregion
+
+				// Cria a restrição tipo 1
+				if ( row1.getnnz() != 0 )
+				{
+					cHash[ c ] = lp->getNumRows();
+					lp->addRow( row1 );
+					restricoes++;
+				}
+				// Cria a restrição tipo 2																
+				if ( row2.getnnz() != 0 )
+				{
+					cHash[ c ] = lp->getNumRows();
+					lp->addRow( row2 );
+					restricoes++;
+				}
+				// Cria a restrição tipo 3
 				if ( row3.getnnz() != 0 )
 				{
 					cHash[ c ] = lp->getNumRows();
 					lp->addRow( row3 );
 					restricoes++;
 				}
-				#pragma endregion Restricao tipo 3
 			}
 		}
 	}
@@ -16926,6 +16994,11 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 						{
 							for ( int turma = 0; turma < discComum->getNumTurmas(); turma++ )
 							{
+								bool vNotfound = false;
+								// Se pelo menos 1 das variaveis não existir,
+								// não tem sentido o trio de restrições, logo nenhuma será criada.
+
+
 								// ----------------------------------------------------------
 								// 1
 								#pragma region Restricao tipo 1
@@ -16965,6 +17038,11 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row1.insert( it_v->second, 1 );
 								}
+								else
+								{
+									vNotfound = true;
+									continue;
+								}
 
 								v.reset();
 								v.setType( Variable::V_ALOC_ALUNOS_PAR_OFT );
@@ -16977,14 +17055,13 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row1.insert( it_v->second, -M );
 								}
-
-								if ( row1.getnnz() != 0 )
+								else
 								{
-									cHash[ c ] = lp->getNumRows();
-									lp->addRow( row1 );
-									restricoes++;
+									vNotfound = true;
+									continue;
 								}
-								#pragma endregion Restricao tipo 1
+
+								#pragma endregion
 										
 								// ----------------------------------------------------------
 								// 2
@@ -17023,6 +17100,11 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row2.insert( it_v->second, -1 );
 								}
+								else
+								{
+									vNotfound = true;
+									continue;
+								}
 
 								v.reset();
 								v.setType( Variable::V_CREDITOS );
@@ -17037,6 +17119,11 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row2.insert( it_v->second, 1 );
 								}
+								else
+								{
+									vNotfound = true;
+									continue;
+								}
 
 								v.reset();
 								v.setType( Variable::V_ALOC_ALUNOS_PAR_OFT );
@@ -17049,14 +17136,13 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row2.insert( it_v->second, M );
 								}
-
-								if ( row2.getnnz() != 0 )
+								else
 								{
-									cHash[ c ] = lp->getNumRows();
-									lp->addRow( row2 );
-									restricoes++;
+									vNotfound = true;
+									continue;
 								}
-								#pragma endregion Restricao tipo 2
+
+								#pragma endregion
 
 								// ----------------------------------------------------------
 								// 3
@@ -17095,6 +17181,11 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row3.insert( it_v->second, 1 );
 								}
+								else
+								{
+									vNotfound = true;
+									continue;
+								}
 
 								v.reset();
 								v.setType( Variable::V_CREDITOS );
@@ -17109,6 +17200,11 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row3.insert( it_v->second, -1 );
 								}
+								else
+								{
+									vNotfound = true;
+									continue;
+								}
 
 								v.reset();
 								v.setType( Variable::V_ALOC_ALUNOS_PAR_OFT );
@@ -17121,14 +17217,36 @@ int SolverMIP::cria_restricao_ativacao_var_p()
 								{
 									row3.insert( it_v->second, M );
 								}
+								else
+								{
+									vNotfound = true;
+									continue;
+								}
 
+								#pragma endregion
+								
+								// Cria a restrição tipo 1
+								if ( row1.getnnz() != 0 )
+								{
+									cHash[ c ] = lp->getNumRows();
+									lp->addRow( row1 );
+									restricoes++;
+								}
+								// Cria a restrição tipo 2																
+								if ( row2.getnnz() != 0 )
+								{
+									cHash[ c ] = lp->getNumRows();
+									lp->addRow( row2 );
+									restricoes++;
+								}
+								// Cria a restrição tipo 3
 								if ( row3.getnnz() != 0 )
 								{
 									cHash[ c ] = lp->getNumRows();
 									lp->addRow( row3 );
 									restricoes++;
 								}
-								#pragma endregion Restricao tipo 3
+
 							}
 						}
 					}
@@ -17240,6 +17358,12 @@ int SolverMIP::cria_restricao_ativacao_var_g()
 						{
 							row.insert( it_v->second, -1 );
 						}
+						else
+						{
+							continue;
+						}
+						
+						bool found = false;
 
 						#pragma region Numero de creditos da disciplina d alocados para oft, no dia t, para a sala s
 						for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
@@ -17258,9 +17382,15 @@ int SolverMIP::cria_restricao_ativacao_var_g()
 							if ( it_v != vHash.end() )
 							{
 								row.insert( it_v->second, 1 );
+								found = true;
 							}
 						}
 						#pragma endregion 
+
+						if ( !found )
+						{
+							continue; // Só cria a restrição se existir pelo menos 1 variavel q
+						}
 
 						if ( row.getnnz() != 0 )
 						{
@@ -17500,6 +17630,10 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 					{
 						for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
 						{
+							bool vNotfound = false;
+							// Se pelo menos 1 das variaveis não existir,
+							// não tem sentido o trio de restrições, logo nenhuma será criada.
+
 							// ----------------------------------------------------------
 							// 1
 							#pragma region Restricao tipo 1
@@ -17537,6 +17671,11 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row1.insert( it_v->second, 1 );
 							}
+							else
+							{
+								vNotfound = true;
+								continue;
+							}
 
 							v.reset();
 							v.setType( Variable::V_ALOC_ALUNOS_OFT );
@@ -17549,14 +17688,13 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row1.insert( it_v->second, -M );
 							}
-
-							if ( row1.getnnz() != 0 )
+							else
 							{
-								cHash[ c ] = lp->getNumRows();
-								lp->addRow( row1 );
-								restricoes++;
+								vNotfound = true;
+								continue;
 							}
-							#pragma endregion Restricao tipo 1
+
+							#pragma endregion
 										
 							// ----------------------------------------------------------
 							// 2
@@ -17595,6 +17733,11 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row2.insert( it_v->second, -1 );
 							}
+							else
+							{
+								vNotfound = true;
+								continue;
+							}
 
 							v.reset();
 							v.setType( Variable::V_CREDITOS );
@@ -17609,6 +17752,11 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row2.insert( it_v->second, 1 );
 							}
+							else
+							{
+								vNotfound = true;
+								continue;
+							}
 
 							v.reset();
 							v.setType( Variable::V_ALOC_ALUNOS_OFT );
@@ -17621,14 +17769,13 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row2.insert( it_v->second, M );
 							}
-
-							if ( row2.getnnz() != 0 )
+							else
 							{
-								cHash[ c ] = lp->getNumRows();
-								lp->addRow( row2 );
-								restricoes++;
+								vNotfound = true;
+								continue;
 							}
-							#pragma endregion Restricao tipo 2
+
+							#pragma endregion
 
 							// ----------------------------------------------------------
 							// 3
@@ -17667,6 +17814,11 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row3.insert( it_v->second, 1 );
 							}
+							else
+							{
+								vNotfound = true;
+								continue;
+							}
 
 							v.reset();
 							v.setType( Variable::V_CREDITOS );
@@ -17681,6 +17833,11 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row3.insert( it_v->second, -1 );
 							}
+							else
+							{
+								vNotfound = true;
+								continue;
+							}
 
 							v.reset();
 							v.setType( Variable::V_ALOC_ALUNOS_OFT );
@@ -17693,14 +17850,35 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 							{
 								row3.insert( it_v->second, M );
 							}
+							else
+							{
+								vNotfound = true;
+								continue;
+							}
 
+							#pragma endregion
+
+							// Cria a restrição tipo 1
+							if ( row1.getnnz() != 0 )
+							{
+								cHash[ c ] = lp->getNumRows();
+								lp->addRow( row1 );
+								restricoes++;
+							}
+							// Cria a restrição tipo 2																
+							if ( row2.getnnz() != 0 )
+							{
+								cHash[ c ] = lp->getNumRows();
+								lp->addRow( row2 );
+								restricoes++;
+							}
+							// Cria a restrição tipo 3
 							if ( row3.getnnz() != 0 )
 							{
 								cHash[ c ] = lp->getNumRows();
 								lp->addRow( row3 );
 								restricoes++;
 							}
-							#pragma endregion Restricao tipo 3
 						}
 					}
 				}
