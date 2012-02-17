@@ -38,3 +38,119 @@
 	background-position: 5px 4px;
 	background-repeat: no-repeat;
 }
+
+.x-viewport {
+	background: url('images/fundo.png');
+}
+
+.x-panel-bc, .x-panel-bl, .x-panel-br, .x-panel-mc, .x-panel-ml, .x-panel-mr, div.x-panel-body,
+.x-btn-tl, .x-btn-tr, .x-btn-tc, .x-btn-ml, .x-btn-mr, .x-btn-mc, .x-btn-bl, .x-btn-br, .x-btn-bc{
+	background: none;
+	border: 0;
+}
+
+.x-panel .x-panel.x-component.x-abs-layout-item {
+	padding: 20px;
+	padding-top: 110px;
+	background: url(images/logo.png) no-repeat center top;
+}
+
+.x-panel-bwrap .x-panel-bwrap, .x-panel-bwrap .x-panel-tl{
+	background-color: #fff;
+	border: 1px solid #a8cde4;
+	width: 260px;
+	padding: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0;
+	text-align: left;
+	color: #686767;
+	font: 700 15px Arial, Helvetica, sans-serif;
+}
+
+.x-panel-bwrap .x-panel-tl{
+	border-radius: 10px 10px 0px 0px;
+	border-bottom: 0;
+	background-image: none;
+}
+
+.x-panel-bwrap .x-panel-bwrap{
+	border-radius: 0px 0px 10px 10px;
+	border-top: 0;
+	padding: 0px 20px;
+	-webkit-box-shadow: 0 10px 8px -6px #888;
+	-moz-box-shadow: 0 8px 6px -6px #888;
+	box-shadow: 0 10px 8px -6px #888;
+}
+
+.x-panel-mc, .x-panel-mr, .x-panel-ml{
+	padding: 0;
+}
+
+.x-panel .x-panel-tc, .x-panel .x-panel-tr{
+	background: #84bde2;
+	color: #fff;
+	margin: 0;
+}
+
+.x-panel .x-panel-tr{
+	background: #84bde2;
+	color: #fff;
+	border-radius: 8px;
+	font: 700 15px Arial, Helvetica, sans-serif;
+	text-transform: uppercase;
+	padding: 5px;
+	text-align: center;
+}
+
+.x-panel input[type="text"], .x-panel input[type="password"] {
+	color: #000;
+	background: #fff;
+	border: 1px solid #c7c7c7;
+	width: 230px;
+	border-radius: 8px;
+	font: 15px Arial, Helvetica, sans-serif;
+	padding: 13px 5px;
+	margin-top: 8px;
+}
+
+.x-panel input[placeholder]::-webkit-input-placeholder {
+   	color: #c7c7c7;
+   	font-style: italic;
+}
+.x-panel input[placeholder]:-moz-placeholder {
+	color: #c7c7c7;
+	font-style: italic;
+}
+
+.x-panel button.x-btn-text {
+	background: #84bde2;
+	border: 0;
+	color: #fff;
+	border-radius: 8px;
+	font: 700 15px Arial, Helvetica, sans-serif;
+	text-transform: uppercase;
+	padding: 5px;
+	text-align: center;
+	margin-left: -50px;
+}
+
+.x-btn-noicon .x-btn-small .x-btn-text{
+	height: auto;
+}
+
+.x-panel-header{
+	border: 0;
+	background: none;
+}
+
+.x-panel-tl .x-panel-header{
+	color: #FFFFFF;
+	font: 700 15px Arial, Helvetica, sans-serif;
+	padding: 0;
+}
+
+.x-form-label{
+	color: #686767;
+	font: 700 15px Arial, Helvetica, sans-serif;
+}

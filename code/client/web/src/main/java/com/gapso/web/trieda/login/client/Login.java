@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.CenterLayout;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
@@ -102,14 +103,19 @@ public class Login
 		form.setAction( "../resources/j_spring_security_check" );
 		form.setMethod( Method.POST );
 		form.setFrame( true );
-		form.setHeading( "Acesso restrito" );  
-		form.setWidth( 350 );
+		form.setHeading( "Área de Acesso" );  
+		form.setWidth( 320 );
 
 		FormLayout layout = new FormLayout();  
-		layout.setLabelWidth( 75 );  
+		layout.setLabelWidth( 0 );  
 		form.setLayout( layout );  
 
-		FormData formData = new FormData( "-20" );  
+		FormData formData = new FormData( "-20" );
+		
+		LabelField labelLogin = new LabelField();
+		labelLogin.setText("Login");
+		
+		form.add(labelLogin, formData);
 
 		TextField< String > usernameTF = new TextField< String >()
 		{
@@ -117,21 +123,32 @@ public class Login
 			protected void onRender( Element target, int index )
 			{
 				super.onRender( target, index );
+				getInputEl().setElementAttribute( "placeholder", "Nome de usuário" );
 				getInputEl().setElementAttribute( "autocomplete", "off" );
 			}
 		};
 
 		usernameTF.setName( "j_username" );
-		usernameTF.setFieldLabel( "Usuário" );  
+		usernameTF.setLabelSeparator("");
+		usernameTF.setWidth(230);
 		form.add( usernameTF, formData );
 
-		TextField< String > passwordTF = new TextField< String >();  
+		TextField< String > passwordTF = new TextField< String >(){
+			@Override
+			protected void onRender( Element target, int index )
+			{
+				super.onRender( target, index );
+				getInputEl().setElementAttribute( "placeholder", "Senha" );
+			}
+		};  
 		passwordTF.setName( "j_password" );
-		passwordTF.setFieldLabel( "Senha" );
+		passwordTF.setLabelSeparator("");
+		passwordTF.setWidth(230);
 		passwordTF.setPassword( true );
 		form.add( passwordTF, formData );
 
-		Button enviarBt = new Button( "Acessar" );
+		Button enviarBt = new Button( "OK" );
+		enviarBt.setWidth(80);
 		enviarBt.addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
