@@ -16222,15 +16222,6 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 										c.setDia(*itDia);
 										c.setSubCjtSala(*itCjtSala);
 
-										outTestFile << "R" << restricoes
-										  		<< "  i=" << c.getTurma()
-												<< " d=" << c.getDisciplina()->getId()
-												<< " ofts=" << c.getParOfertas().first->getId() << " " << c.getParOfertas().second->getId()
-												<< " u=" << c.getUnidade()
-												<< " sC" << c.getSubCjtSalaCompart()												
-												<< " s" << c.getSubCjtSala()
-												<< " t=" << c.getDia() << endl;
-
 										if ( cHash.find( c ) != cHash.end() )
 										{
 											continue;
@@ -16256,6 +16247,54 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 
 										OPT_ROW row( nnz, OPT_ROW::LESS , rhs , name );
 
+										#pragma region Variavel x_{i,d,u,s,t}
+										v.reset();
+										v.setType( Variable::V_CREDITOS ); // x_{i,d,u,s,t}
+										v.setTurma( turma );
+										v.setDisciplina( discComum );
+										v.setUnidade( *itUnid );
+										v.setSubCjtSala( *itCjtSalaCompart );
+										v.setDia(*itDia);											
+
+										it_v = vHash.find( v );
+										if( it_v != vHash.end() )
+										{
+											row.insert(it_v->second, 1);
+										}
+										else
+										{
+											continue; // Não cria a restrição se não existe a variável x_{i,d,u,s,t}
+										}
+										#pragma endregion
+
+										#pragma region Variavel of_{i,d,oft1,oft2}
+										v.reset();
+										v.setType( Variable::V_ALOC_ALUNOS_PAR_OFT ); // of_{i,d,oft1,oft2}
+										v.setTurma( turma );
+										v.setDisciplina( discComum );
+										v.setParOfertas( oft1, oft2 );
+
+										it_v = vHash.find( v );
+										if( it_v != vHash.end() )
+										{
+											row.insert(it_v->second, M);
+										}
+										else
+										{
+											continue; // Não cria a restrição se não existe a variável of_{i,d,oft1,oft2}
+										}
+										#pragma endregion
+										
+										outTestFile << "R" << restricoes
+										  		<< "  i=" << c.getTurma()
+												<< " d=" << c.getDisciplina()->getId()
+												<< " ofts=" << c.getParOfertas().first->getId() << " " << c.getParOfertas().second->getId()
+												<< " u=" << c.getUnidade()
+												<< " sC" << c.getSubCjtSalaCompart()												
+												<< " s" << c.getSubCjtSala()
+												<< " t=" << c.getDia() << endl;
+
+										bool inseriu = false;
 
 										// para cada disciplina (diferente de discComum) pertencente à uniao dos
 										// blocos curric que contêm discComum das duas ofertas, que
@@ -16319,6 +16358,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													if( it_v != vHash.end() )
 													{
 														row.insert( it_v->second, 1 );
+														inseriu = true;
 													}
 													#pragma endregion
 
@@ -16337,6 +16377,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													if( it_v != vHash.end() )
 													{
 														row.insert( it_v->second, 1 );
+														inseriu = true;
 													}
 													#pragma endregion
 
@@ -16357,6 +16398,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													if( it_v != vHash.end() )
 													{
 														row.insert( it_v->second, -1 );
+														inseriu = true;
 													}									
 													#pragma endregion
 												}
@@ -16380,45 +16422,21 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													if( it_v != vHash.end() )
 													{
 														row.insert( it_v->second, 1 );
+														inseriu = true;
 													}
 													#pragma endregion
 												}
 											}
 										}
 
-										#pragma region Variavel x_{i,d,u,s,t}
-										v.reset();
-										v.setType( Variable::V_CREDITOS ); // x_{i,d,u,s,t}
-										v.setTurma( turma );
-										v.setDisciplina( discComum );
-										v.setUnidade( *itUnid );
-										v.setSubCjtSala( *itCjtSalaCompart );
-										v.setDia(*itDia);											
-
-										it_v = vHash.find( v );
-										if( it_v != vHash.end() )
+										if ( !inseriu )
 										{
-											row.insert(it_v->second, 1);
+											continue; // Se não tiver inserido nenhum q ou p, não cria a restrição.
 										}
-										#pragma endregion
-
-										#pragma region Variavel of_{i,d,oft1,oft2}
-										v.reset();
-										v.setType( Variable::V_ALOC_ALUNOS_PAR_OFT ); // of_{i,d,oft1,oft2}
-										v.setTurma( turma );
-										v.setDisciplina( discComum );
-										v.setParOfertas( oft1, oft2 );
-
-										it_v = vHash.find( v );
-										if( it_v != vHash.end() )
-										{
-											row.insert(it_v->second, M);
-										}
-										#pragma endregion
 
 										// FIM DA RESTRICAO
 										//-------------------------------------------------------------------------
-												
+										
 										if ( row.getnnz() != 0 )
 										{
 											cHash[ c ] = lp->getNumRows();

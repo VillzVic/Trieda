@@ -4430,8 +4430,13 @@ void ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric()
 					
 					for (; it != todosSubConjuntos.end(); it++ )
 					{
-						if ( i == it->first.size() && maxSL2 < it->second )
-							maxSL2 = it->second;
+						int nHorariosSl1 = it->second;
+						int nHorariosSl2 = it->first.size();
+
+						if ( i == nHorariosSl1 && maxSL2 < nHorariosSl2 )
+						{
+							maxSL2 = it->first.size();
+						}
 					}
 					if (i==0)
 						maxSL2 = horDispDiaSL2.size();
