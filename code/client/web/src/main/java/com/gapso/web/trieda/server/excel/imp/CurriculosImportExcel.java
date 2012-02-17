@@ -26,6 +26,7 @@ import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.google.gwt.dev.util.Pair;
 
 public class CurriculosImportExcel
 	extends AbstractImportExcel< CurriculosImportExcelBean >
@@ -208,8 +209,73 @@ public class CurriculosImportExcel
 
 		// Verifica se há referência a alguma semana letiva não cadastrada
 		checkNonRegisteredSemanaLetiva( sheetContent );
+		
+		checkDisciplinasAssociadasAMaisDeUmaSemanaLetiva(sheetContent);
 
 		return getErrors().isEmpty();
+	}
+
+	private void checkDisciplinasAssociadasAMaisDeUmaSemanaLetiva(List<CurriculosImportExcelBean> sheetContent) {
+		// [CodDisciplina -> Pair<List<CodSemanaLetiva>,Map<CodSemanaLetiva,List<CurriculosImportExcelBean>>>]
+		Map<String,Pair<Set<String>,Map<String,List<CurriculosImportExcelBean>>>> map = new HashMap<String,Pair<Set<String>,Map<String,List<CurriculosImportExcelBean>>>>();
+		
+		// preenche um Map que será utilizado para detectar se há disciplinas associadas a mais de uma semana letiva
+		for (CurriculosImportExcelBean bean : sheetContent) {
+			Pair<Set<String>,Map<String,List<CurriculosImportExcelBean>>> pair = map.get(bean.getDisciplinaCodigoStr());
+			if (pair == null) {
+				// primeira vez que a disciplina aparece
+				
+				// cria conjunto com a semana letiva da disciplina
+				Set<String> semanasLetivasAssociadasComADisciplina = new HashSet<String>();
+				semanasLetivasAssociadasComADisciplina.add(bean.getSemanaLetivaCodigoStr());
+				
+				// cria um map que associa os beans com as semanas letivas
+				Map<String,List<CurriculosImportExcelBean>> semanaLetivaToBeansMap = new HashMap<String,List<CurriculosImportExcelBean>>();
+				List<CurriculosImportExcelBean> beans = new ArrayList<CurriculosImportExcelBean>();
+				beans.add(bean);
+				semanaLetivaToBeansMap.put(bean.getSemanaLetivaCodigoStr(),beans);
+				
+				// cria o par e atualiza o map
+				pair = Pair.create(semanasLetivasAssociadasComADisciplina,semanaLetivaToBeansMap);
+				map.put(bean.getDisciplinaCodigoStr(),pair);
+			} else {
+				// atualiza conjunto de semanas letivas associadas com a disciplina
+				Set<String> semanasLetivasAssociadasComADisciplina = pair.getLeft();
+				semanasLetivasAssociadasComADisciplina.add(bean.getSemanaLetivaCodigoStr());
+				
+				// atualiza map que associa os beans com as semanas letivas
+				Map<String,List<CurriculosImportExcelBean>> semanaLetivaToBeansMap = pair.getRight();
+				List<CurriculosImportExcelBean> beans = semanaLetivaToBeansMap.get(bean.getSemanaLetivaCodigoStr());
+				if (beans == null) {
+					beans = new ArrayList<CurriculosImportExcelBean>();
+					semanaLetivaToBeansMap.put(bean.getSemanaLetivaCodigoStr(),beans);
+				}
+				beans.add(bean);
+			}
+		}
+		
+		// Percorre um Map para detectar se há disciplinas associadas a mais de uma semana letiva
+		for (Entry<String,Pair<Set<String>,Map<String,List<CurriculosImportExcelBean>>>> entryMap : map.entrySet()) {
+			String disciplina = entryMap.getKey();
+			Pair<Set<String>,Map<String,List<CurriculosImportExcelBean>>> pair = entryMap.getValue();
+			Set<String> semanasLetivasAssociadasComADisciplina = pair.getLeft();
+			Map<String,List<CurriculosImportExcelBean>> semanaLetivaToBeansMap = pair.getRight();
+			
+			// verifica se a disciplina tem relação com mais de uma semana letiva
+			if (semanasLetivasAssociadasComADisciplina.size() > 1) {
+				String errorMsg = "A disciplina [" + disciplina + "] está associada com " + semanasLetivasAssociadasComADisciplina.size() + " semanas letivas quando deveria estar associada com apenas uma. ";
+				for (Entry<String,List<CurriculosImportExcelBean>> entrySemanaLetivaToBeansMap : semanaLetivaToBeansMap.entrySet()) {
+					String semanaLetiva = entrySemanaLetivaToBeansMap.getKey();
+					List<CurriculosImportExcelBean> beans = entrySemanaLetivaToBeansMap.getValue();
+					errorMsg += " Casos da semana letiva [" + semanaLetiva + "]: ";
+					for (CurriculosImportExcelBean bean : beans) {
+						errorMsg += "(" + bean.getCursoCodigoStr() + "," + bean.getCodigoStr() + "," + bean.getPeriodo() + "); ";
+					}
+				}
+				
+				getErrors().add(errorMsg);
+			}
+		}
 	}
 
 	private void checkUniquenessCurriculo(
