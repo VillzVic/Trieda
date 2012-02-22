@@ -20,9 +20,19 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath( "atendimentos" )
-public interface AtendimentosService
-	extends RemoteService
-{
+public interface AtendimentosService extends RemoteService {
+
+	/**
+	 * 
+	 * @param curriculoDTO
+	 * @param periodo
+	 * @param turnoDTO
+	 * @param campusDTO
+	 * @param cursoDTO
+	 * @return
+	 */
+	ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO);
+	
 	PagingLoadResult< AtendimentoTaticoDTO > getList();
 
 	List< AtendimentoRelatorioDTO > getBusca( SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO );
@@ -35,8 +45,4 @@ public interface AtendimentosService
 	List< AtendimentoOperacionalDTO > getAtendimentosOperacional(
 		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
 		TurnoDTO turnoDTO, boolean isVisaoProfessor, SemanaLetivaDTO semanaLetivaDTO );
-
-	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getAtendimentosParaGradeHorariaVisaoCurso(
-		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO,
-		CampusDTO campusDTO, CursoDTO cursoDTO );
 }
