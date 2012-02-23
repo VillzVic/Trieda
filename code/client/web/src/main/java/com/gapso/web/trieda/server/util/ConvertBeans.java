@@ -595,19 +595,23 @@ public class ConvertBeans
 
 		Set< HorarioAula > horarios = domain.getHorariosAula();
 
-		Map< Integer, Integer > countHorariosAula
-			= new HashMap< Integer, Integer >();
+		Map< Long, Map< Integer, Integer > > countHorariosAula
+			= new HashMap< Long, Map< Integer, Integer > >();
 
 		for ( HorarioAula ha : horarios )
 		{
+			
+			if(countHorariosAula.get(ha.getSemanaLetiva().getId()) == null){
+				countHorariosAula.put(ha.getSemanaLetiva().getId(), new HashMap <Integer, Integer>());
+			}
 			for ( HorarioDisponivelCenario hdc
 				: ha.getHorariosDisponiveisCenario() )
 			{
 				int semanaInt = Semanas.toInt( hdc.getDiaSemana() );
-				Integer value = countHorariosAula.get( semanaInt );
+				Integer value = countHorariosAula.get(ha.getSemanaLetiva().getId()).get( semanaInt );
 				value = ( ( value == null ) ? 0 : value );
 
-				countHorariosAula.put( semanaInt, value + 1 );
+				countHorariosAula.get(ha.getSemanaLetiva().getId()).put( semanaInt, value + 1 );
 			}
 		}
 

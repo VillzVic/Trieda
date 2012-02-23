@@ -19,13 +19,13 @@ public class TurnoDTO
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 
-	private Map< Integer, Integer > countHorariosAula;
+	private Map< Long, Map< Integer, Integer > > countHorariosAula;
 	private Map< Long, String > horariosStringMap;
 	private Map< Long, Date > horariosInicioMap;
 
 	public TurnoDTO()
 	{
-		this.countHorariosAula = new HashMap< Integer, Integer >();
+		this.countHorariosAula = new HashMap< Long, Map< Integer, Integer > >();
 	}
 
 	public void setId( Long value )
@@ -78,13 +78,15 @@ public class TurnoDTO
 		return get( PROPERTY_MAX_CREDITOS );
 	}
 
-	public Map< Integer, Integer > getCountHorariosAula()
+	public Map< Long, Map< Integer, Integer > > getCountHorariosAula()
+//	public Map< Integer, Integer > getCountHorariosAula()
 	{
 		return this.countHorariosAula;
 	}
 
 	public void setCountHorariosAula(
-		Map< Integer, Integer > countHorariosAula )
+		Map< Long, Map< Integer, Integer > > countHorariosAula )
+//	Map< Integer, Integer > countHorariosAula )
 	{
 		this.countHorariosAula = countHorariosAula;
 	}
@@ -111,9 +113,9 @@ public class TurnoDTO
 		return this.horariosInicioMap;
 	}
 
-	public int getMaxCreditos( int diaSemana )
+	public int getMaxCreditos(Long semanaLetivaId, int diaSemana )
 	{
-		Integer value = this.countHorariosAula.get( diaSemana );
+		Integer value = this.countHorariosAula.get(semanaLetivaId).get( diaSemana );
 		return ( ( value != null ) ? value : 0 );
 	}
 

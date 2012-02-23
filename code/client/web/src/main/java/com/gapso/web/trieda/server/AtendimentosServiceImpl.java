@@ -721,10 +721,16 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			List< List< AtendimentoTaticoDTO > > listListDTO
 				= new ArrayList< List< AtendimentoTaticoDTO > >();
 
+			// Obtem o numero maximo de creditos de um dia da semana, de acordo com o tipo de 
+			// semana letiva associado a ele.
+			int maxCredito = 0;
+			if(!entry.getValue().isEmpty())
+				maxCredito = turnoDTO.getMaxCreditos(entry.getValue().get(0).getSemanaLetivaId(), entry.getKey());
+			
 			// Verifica se o dia da semana
 			// extrapola a quantidade máxima de créditos
 			if ( AtendimentoTaticoDTO.countListDTOsCreditos( entry.getValue() )
-					> turnoDTO.getMaxCreditos( entry.getKey() ) )
+					> maxCredito )
 			{
 				// Executa abordagem 1
 				listListDTO = agrupaAtendimentosAbordagem1( entry );
@@ -732,7 +738,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				// Verifica se o dia da semana continua extrapolando a
 				// quantidade máxima de créditos após a execução da abordagem 1
 				if ( AtendimentoTaticoDTO.countListListDTOsCreditos( listListDTO )
-					> turnoDTO.getMaxCreditos( entry.getKey() ) )
+					> maxCredito )
 				{
 					// Executa abordagem 2
 					listListDTO.clear();
