@@ -2013,7 +2013,7 @@ public class ConvertBeans
 		dto.setUnidadeId( domain.getSala().getUnidade().getId() );
 		dto.setUnidadeString( domain.getSala().getUnidade().getCodigo() );
 		dto.setSalaId( domain.getSala().getId() );
-		dto.setSalaString( domain.getSala().getNumero() );
+		dto.setSalaString( domain.getSala().getCodigo() );
 		dto.setSemana( Semanas.toInt( domain.getSemana() ) );
 		dto.setOfertaId( domain.getOferta().getId() );
 		dto.setDisciplinaId( domain.getDisciplina().getId() );
@@ -2179,7 +2179,7 @@ public class ConvertBeans
 		dto.setUnidadeId( domain.getSala().getUnidade().getId() );
 		dto.setUnidadeString( domain.getSala().getUnidade().getCodigo() );
 		dto.setSalaId( domain.getSala().getId() );
-		dto.setSalaString( domain.getSala().getNumero() );
+		dto.setSalaString( domain.getSala().getCodigo() );
 
 		HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
 		dto.setHorarioDisponivelCenarioId( hdc.getId() );
