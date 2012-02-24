@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
 import com.gapso.web.trieda.server.xml.output.ItemProfessorVirtual;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
+import com.google.gwt.dev.util.collect.HashSet;
 
 @Transactional
 public class SolverOutput
@@ -43,7 +45,6 @@ public class SolverOutput
 	private TriedaOutput triedaOutput;
 	private List< AtendimentoTatico > atendimentosTatico;
 	private List< AtendimentoOperacional > atendimentosOperacional;
-	private List< AlunoDemanda > alunosDemanda;
 	protected Map< Integer, ProfessorVirtual > professoresVirtuais
 		= new HashMap< Integer, ProfessorVirtual >();
 
@@ -56,7 +57,6 @@ public class SolverOutput
 
 		this.atendimentosTatico = new ArrayList< AtendimentoTatico >();
 		this.atendimentosOperacional = new ArrayList< AtendimentoOperacional >();
-		this.alunosDemanda = new ArrayList< AlunoDemanda >();
 	}
 
 	@Transactional
@@ -387,51 +387,32 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public void generateAlunosDemanda()
-	{
-		List< ItemAlunoDemanda > itensAlunosDemanda
-			= this.triedaOutput.getAlunosDemanda().getAlunoDemanda();
-
-		for (  ItemAlunoDemanda item : itensAlunosDemanda )
-		{
-			long id = item.getId();
-			AlunoDemanda alunoDemanda
-				= AlunoDemanda.find( id, this.instituicaoEnsino );
-
-			this.alunosDemanda.add( alunoDemanda );
-			
+	public void salvarAlunosDemanda(Campus campus, Turno turno) {
+		// 
+		Map<Long,Long> alunosDemandasAtendidasIdsMap = new HashMap<Long,Long>();
+		for (ItemAlunoDemanda itemAlunoDemanda : triedaOutput.getAlunosDemanda().getAlunoDemanda()) {
+			long id = itemAlunoDemanda.getId();
+			alunosDemandasAtendidasIdsMap.put(id,id);
 		}
-	}
-
-	@Transactional
-	public void salvarAlunosDemanda( Campus campus, Turno turno  )
-	{
-		List< AlunoDemanda > listAll = AlunoDemanda.findByCampusAndTurno(
-			instituicaoEnsino, campus, turno );
-
-		for (  AlunoDemanda alunoDemanda : listAll )
-		{
-			boolean encontrou = false;
-
-			for ( AlunoDemanda find : this.alunosDemanda )
-			{
-				if ( alunoDemanda.getId() == find.getId() )
-				{
-					encontrou = true;
-					break;
+		
+		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,campus,turno);
+		Set<AlunoDemanda> alunosDemandasAlteradosBD = new HashSet<AlunoDemanda>(); 
+		for (AlunoDemanda alunoDemandaBD : alunosDemandasBD) {
+			if(alunosDemandasAtendidasIdsMap.get(alunoDemandaBD.getId()) != null) {
+				if (!alunoDemandaBD.getAtendido()) {
+					alunoDemandaBD.setAtendido(true);
+					alunosDemandasAlteradosBD.add(alunoDemandaBD);
+				}
+			} else {
+				if (alunoDemandaBD.getAtendido()) {
+					alunoDemandaBD.setAtendido(false);
+					alunosDemandasAlteradosBD.add(alunoDemandaBD);
 				}
 			}
-
-			if ( encontrou )
-			{
-				alunoDemanda.setAtendido( true );
-			}
-			else
-			{
-				alunoDemanda.setAtendido( false );
-			}
-
-			alunoDemanda.merge();
+		}
+		
+		for (AlunoDemanda alunoDemandaAlteradoBD : alunosDemandasAlteradosBD) {
+			alunoDemandaAlteradoBD.merge();
 		}
 	}
 }

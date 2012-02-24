@@ -302,7 +302,6 @@ public class OtimizarServiceImpl
 			SolverOutput solverOutput = new SolverOutput(
 				getInstituicaoEnsinoUser(), cenario, triedaOutput );
 
-			solverOutput.generateAlunosDemanda();
 			solverOutput.salvarAlunosDemanda(
 				parametro.getCampus(), parametro.getTurno() );
 
