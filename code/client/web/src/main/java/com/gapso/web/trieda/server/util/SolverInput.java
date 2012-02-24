@@ -378,48 +378,7 @@ public class SolverInput
 		checkDisciplinasSemLaboratorios();
 		checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo();
 		checkDemandasComDisciplinasSemCurriculo();
-		
-//		Set<Pair<Long,Long>> pairs = new HashSet<Pair<Long,Long>>();
-//		for (Disciplina disciplina : cenario.getDisciplinas()) {
-//			for (Equivalencia equivalencia : disciplina.getEquivalencias()) {
-//				Disciplina cursou = equivalencia.getCursou();
-//				for (Disciplina elimina : equivalencia.getElimina()) {
-//					pairs.add(Pair.create(cursou.getId(),elimina.getId()));
-//				}
-//			}
-//		}
-//		
-//		List<List<Pair<Long,Long>>> ciclos = new ArrayList<List<Pair<Long,Long>>>();
-//		List<List<Pair<Long,Long>>> listaBase = new ArrayList<List<Pair<Long,Long>>>();
-//		for (Pair<Long,Long> parAtual : pairs) {
-//			if (listaBase.isEmpty()) {
-//				List<Pair<Long,Long>> lista = new ArrayList<Pair<Long,Long>>();
-//				lista.add(parAtual);
-//				listaBase.add(lista);
-//			} else {
-//				List<List<Pair<Long,Long>>> listasASeremAdicionadasNaListaBase = new ArrayList<List<Pair<Long,Long>>>();
-//				for (List<Pair<Long,Long>> listAtual : listaBase) {
-//					// testa se o par atual encaixa no final de alguma lista de pares
-//					if (listAtual.get(listAtual.size()-1).getRight().equals(parAtual.getLeft())) {
-//						List<Pair<Long,Long>> novaLista = new ArrayList<Pair<Long,Long>>(listAtual);
-//						novaLista.add(parAtual);
-//						
-//						// testa se a nova lista de pares é um ciclo
-//						if (novaLista.get(0).getLeft().equals(novaLista.get(novaLista.size()-1).getRight())) {
-//							ciclos.add(novaLista);
-//						} else {
-//							listasASeremAdicionadasNaListaBase.add(novaLista);
-//						}
-//					}
-//				}
-//				
-//				listaBase.addAll(listasASeremAdicionadasNaListaBase);
-//				
-//				List<Pair<Long,Long>> listaComParAtual = new ArrayList<Pair<Long,Long>>();
-//				listaComParAtual.add(parAtual);
-//				listaBase.add(listaComParAtual);
-//			}
-//		}
+		checkCicloDisciplinasEquivalentes();
 		
 		// PRIMEIRA VERIFICAÇÃO
 
@@ -581,6 +540,67 @@ public class SolverInput
 				System.out.println("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + this.parametro.getCampus().getCodigo() + ", são eles: " + pares);
 			}
 		}
+	}
+	
+	private void checkCicloDisciplinasEquivalentes(){
+		int id = 0;
+		Integer cIndex, eIndex;
+		List<Long> nodeMap = new ArrayList<Long>();
+		List<Disciplina> disMap = new ArrayList<Disciplina>();
+		Set<Pair<Integer, Integer>> pairs = new HashSet<Pair<Integer, Integer>>();
+
+		// Para cada disciplina, obtem-se as suas equivalencias para montar tres estruturas:
+		// -> disMap mapeia o index associado a cada disciplina identificada
+		// -> nodeMap faz o controle de qual disciplina estah mapeada ou nao
+		// -> pairs obtem a relação de equivalencia de uma disciplina com outra. 
+		for(Disciplina disciplina : cenario.getDisciplinas()){
+			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
+				Disciplina cursou = equivalencia.getCursou();
+				if((cIndex = (Integer) nodeMap.indexOf(cursou.getId())) == -1){
+					cIndex = id++;
+					nodeMap.add(cursou.getId());
+					disMap.add(cursou);
+				}
+				for(Disciplina elimina : equivalencia.getElimina()){
+					if((eIndex = (Integer) nodeMap.indexOf(elimina.getId())) == -1){
+						eIndex = id++;
+						nodeMap.add(elimina.getId());
+						disMap.add(elimina);
+					}
+					pairs.add(Pair.create(cIndex, eIndex));
+				}
+			}
+		}
+		
+		// Constroi um grafo a partir dos pares obtidos e realiza a busca para verificar
+		// a existencia de ciclos. Nesse grafo, os indices associados aos nos sao os
+		// mesmos identificados em disMap. 
+		
+		Grafo g = new Grafo(pairs.size());
+		for(Pair<Integer, Integer> par: pairs)
+			g.insereArco(par.getLeft(), par.getRight());
+		
+		Profundidade p = new Profundidade();
+		if(!p.testeCiclos(g)){
+			
+			// Obtem-se os ciclos identificados e os imprime num formato adequado para
+			// informar ao usuario quais sao eles.
+			List<List<Integer>> ciclos = p.getCiclos();
+			int i = 1;
+			String ciclosStr = "Foram detectados os seguintes ciclos entre disciplinas equivalentes:<br /><br />";
+			for(List<Integer> ciclo: ciclos){
+				ciclosStr += i++ + ") ";
+				for(Integer idc: ciclo){
+					Disciplina dis = disMap.get(idc);
+					ciclosStr += dis.getNome() + " (" + dis.getCodigo() + ") -> ";
+				}
+				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 3) + "<br /><br />";
+			}
+			ciclosStr += " \n";
+			System.out.println(ciclosStr.replaceAll("<br />", "\n"));
+			createErrorMessage(ciclosStr);
+		}
+		
 	}
 
 	private void checkDemandasComDisciplinasSemCurriculo() {
