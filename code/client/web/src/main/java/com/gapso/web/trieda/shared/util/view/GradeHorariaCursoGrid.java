@@ -3,8 +3,10 @@ package com.gapso.web.trieda.shared.util.view;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.extjs.gxt.ui.client.core.El;
@@ -153,6 +155,22 @@ public class GradeHorariaCursoGrid
 			@Override
 			public void onSuccess( SemanaLetivaDTO result )
 			{
+				Map<Long, Date> horariosPermitidos = getTurnoDTO().getHorariosInicioMap();
+				Map<Long, Date> novoInicioMap = new HashMap<Long, Date>();
+				Map<Long, String> novoStringMap = new HashMap<Long, String>();
+				
+				// Remove os horarios que nao sao compativeis com o turno escolhido.
+				// Devido as injecoes do Spring, nao pode-se remover os horarios do
+				// objeto result. Por isso a necessidade de criar-se Maps auxiliares
+				// para depois seta-lo como propriedade do result.
+				for(Long key: result.getHorariosInicioMap().keySet()){
+					if(horariosPermitidos.containsKey(key)){
+						novoInicioMap.put(key, result.getHorariosInicioMap().get(key));
+						novoStringMap.put(key, result.getHorariosStringMap().get(key));
+					}
+				}
+				result.setHorariosInicioMap(novoInicioMap);
+				result.setHorariosStringMap(novoStringMap);
 				semanaLetivaDTO = result;
 			}
 		});
