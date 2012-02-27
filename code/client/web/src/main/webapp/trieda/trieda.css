@@ -279,4 +279,8 @@ table.cw-FlexTable td.cw-FlexTable-content {
 .corDisciplina12 { background-color: #C9FF8F; }
 .corDisciplina13 { background-color: #ECFF9F; }
 .corDisciplina14 { background-color: #EFEAD1; }
-	
+
+.alertasEErros > .x-component .x-component{
+	 overflow: auto;
+	 max-height: 220px;
+}

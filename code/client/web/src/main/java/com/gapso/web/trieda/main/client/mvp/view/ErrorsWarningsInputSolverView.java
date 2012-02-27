@@ -8,6 +8,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.ErrorsWarningsInputSolverP
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ErrorsWarningsInputSolverView
@@ -43,7 +44,13 @@ public class ErrorsWarningsInputSolverView
 		this.messagesWarningPanel.addStyleName( "errorList" );
 		this.panel.add( this.messagesWarningPanel );
 
-		this.messagesErrorPanel = new ContentPanel();
+		this.messagesErrorPanel = new ContentPanel(){
+			@Override
+			protected void onRender(Element target, int index){
+				super.onRender( target, index );
+				target.addClassName("alertasEErros");
+			}
+		};
 		this.messagesErrorPanel.setHeading( "Erros" );
 		this.messagesErrorPanel.setIcon( AbstractImagePrototype.create(
 			Resources.DEFAULTS.error16() ) );
