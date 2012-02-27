@@ -14,38 +14,57 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
-import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
+	ComboBox comboDep;
+	
 	public DisciplinaComboBox() {
 		this(false);
 	}
 
 	public DisciplinaComboBox(boolean readOnly) {
-		configureContentOfComboBox(readOnly,0,10,null);
+		comboDep = null;
+		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
 	}
 	
-	public DisciplinaComboBox(OfertaComboBox ofertaCB) {
-		configureContentOfComboBox(false,0,10,ofertaCB);
+	/* Declaracao que indica que a instancia tem seu filtro
+	 * com criterios baseados nos valores de um outro ComboBox
+	 */
+	public DisciplinaComboBox(ComboBox combo) {
+		comboDep = combo;
+		configureContentOfComboBox(false, 0, 10);
 		configureView(false);
 	}
 	
-	private void configureContentOfComboBox(boolean readOnly, final int offset, final int limit, OfertaComboBox ofertaCB) {
-		if (!readOnly || (ofertaCB != null)) {
+	/*
+	 * Esse metodo deve ser sobreescrito sempre que houver necessidade de criar uma DisciplinaComboBox
+	 * que possua dependencia de outro comboBox. Vale ressaltar que essa dependencia esta definida
+	 * atraves do campo comboDep. 
+	 */
+	public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){}
+	
+	@SuppressWarnings("unchecked")
+	private void configureContentOfComboBox(boolean readOnly, final int offset, final int limit) {
+		if(!readOnly){
 			// Configura a store
-			final OfertaComboBox finalOfertaCB = ofertaCB;
+			
 			RpcProxy<ListLoadResult<DisciplinaDTO>> proxy = new RpcProxy<ListLoadResult<DisciplinaDTO>>() {
+				// realiza o filtro dos valores do comboBox
 				@Override
-				public void load(Object loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback) {
-					if ((finalOfertaCB != null) && (!finalOfertaCB.getSelection().isEmpty())) {
-						OfertaDTO ofertaDTO = finalOfertaCB.getSelection().get(0);
-						Services.disciplinas().getListByCurriculo(ofertaDTO.getMatrizCurricularId(),callback);
-					} else {
-						Services.disciplinas().getList((BasePagingLoadConfig)loadConfig,callback);
+				public void load(Object loadConfig, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
+					// se houver um comboDep, chama a funcao que ira filtrar de acordo com os valores
+					// dessa dependencia. Caso contrario, filtra de acordo com os valores digitados para
+					// o filtro.
+					if((comboDep != null) && (!comboDep.getSelection().isEmpty())){
+						loadByCriteria((AbstractDTO) comboDep.getSelection().get(0), callback);
+					}
+					else{
+						Services.disciplinas().getList((BasePagingLoadConfig)loadConfig, callback);
 					}
 				}
 			};
@@ -60,21 +79,21 @@ public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 			
 			setStore(new ListStore<DisciplinaDTO>(listLoader));
 			
-			// Configura o listener para o componente externo
-			if (ofertaCB != null) {
-				ofertaCB.addSelectionChangedListener(new SelectionChangedListener<OfertaDTO>() {
+			if(comboDep != null){
+				comboDep.addSelectionChangedListener(new SelectionChangedListener<AbstractDTO>() {
 					@Override
-					public void selectionChanged(SelectionChangedEvent<OfertaDTO> se) {
-						final OfertaDTO ofertaDTO = se.getSelectedItem();
-						if (ofertaDTO != null) {
+					public void selectionChanged(SelectionChangedEvent<AbstractDTO> se) {
+						final AbstractDTO abDTO = se.getSelectedItem();
+						if(abDTO != null){
 							getStore().removeAll();
 							setValue(null);
-							getStore().getLoader().load();
+//							getStore().getLoader().load();
 						}
 					}
 				});
 			}
-		} else {
+		}
+		else{
 			setStore(new ListStore<DisciplinaDTO>());
 		}
 	}

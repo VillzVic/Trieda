@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -7,17 +8,21 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandaFormPresenter;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.OfertaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DemandaFormView
 	extends MyComposite
@@ -105,7 +110,13 @@ public class DemandaFormView
 		this.turnoTF.setReadOnly(true);
 		this.formPanel.add( this.turnoTF, formData );
 
-		this.disciplinaCB = new DisciplinaComboBox(ofertaCB);
+		this.disciplinaCB = new DisciplinaComboBox(ofertaCB){
+			@Override
+			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
+				OfertaDTO ofertaDTO = (OfertaDTO) abdto;
+				Services.disciplinas().getListByCurriculo(ofertaDTO.getMatrizCurricularId(), callback);
+			}
+		};
 		this.disciplinaCB.setAllowBlank( false );
 		this.disciplinaCB.setValue( this.disciplinaDTO );
 		this.disciplinaCB.setEmptyText( "Selecione a disciplina" );

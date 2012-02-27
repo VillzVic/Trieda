@@ -1,7 +1,11 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
@@ -19,14 +23,17 @@ import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.EquivalenciaFormPresenter;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class EquivalenciaFormView extends MyComposite implements
@@ -67,7 +74,15 @@ public class EquivalenciaFormView extends MyComposite implements
 		cursoComboBox = new CursoComboBox();
 		formPanel.add(cursoComboBox, formData);
 
-		disciplinaComboBox = new DisciplinaComboBox();
+		disciplinaComboBox = new DisciplinaComboBox(cursoComboBox){
+			@Override
+			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
+				CursoDTO cursoDTO = (CursoDTO) abdto;
+				List<CursoDTO> lcDTO = new ArrayList<CursoDTO>();
+				lcDTO.add(cursoDTO);
+				Services.disciplinas().getListByCursoAndName(lcDTO, this.input.getValue(), callback);
+			}
+		};
 		disciplinaComboBox.setAllowBlank(false);
 		formPanel.add(disciplinaComboBox, formData);
 

@@ -692,6 +692,29 @@ public class Disciplina
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Disciplina > findByCursoAndName(
+		InstituicaoEnsino instituicaoEnsino, String codigo, List< Curso > cursos)
+	{
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.disciplina ) " +
+			" FROM CurriculoDisciplina o " +
+			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
+			" AND o.curriculo IN " +
+			" ( SELECT c FROM Curriculo c WHERE c.curso IN ( :cursos ) ) " +
+			" ORDER BY o.disciplina.nome ASC" );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "cursos", cursos);
+
+		return q.getResultList();
+	}
 
 	public Boolean isIncompativelCom(
 		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
