@@ -116,22 +116,12 @@ public class DemandaFormPresenter
 		return display.isValid();
 	}
 	
-	private DemandaDTO getDTO()
-	{
+	private DemandaDTO getDTO(){
 		DemandaDTO demandaDTO = display.getDemandaDTO();
-
-		demandaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		demandaDTO.setCampusId(display.getCampusTextField().getValue().getId());
-		demandaDTO.setCampusString(display.getCampusTextField().getValue().getCodigo());
-		demandaDTO.setCursoId(display.getCursoTextField().getValue().getId());
-		demandaDTO.setCursoString(display.getCursoTextField().getValue().getCodigo());
-		demandaDTO.setCurriculoId(display.getCurriculoTextField().getValue().getId());
-		demandaDTO.setCurriculoString(display.getCurriculoTextField().getValue().getCodigo());
-		demandaDTO.setTurnoId(display.getTurnoTextField().getValue().getId());
-		demandaDTO.setTurnoString(display.getTurnoTextField().getValue().getNome());
-		demandaDTO.setDisciplinaId(display.getDisciplinaComboBox().getSelection().get(0).getId());
-		demandaDTO.setDisciplinaString(display.getDisciplinaComboBox().getSelection().get(0).getCodigo());
+		demandaDTO.setInstituicaoEnsinoId(instituicaoEnsinoDTO.getId());
+		demandaDTO.setOfertaId(display.getOfertaComboBox().getValue().getId());
 		demandaDTO.setDemanda(display.getDemandaTextField().getValue().intValue());
+		demandaDTO.setDisciplinaId(display.getDisciplinaComboBox().getValue().getId());
 		
 		return demandaDTO;
 	}
