@@ -378,7 +378,9 @@ public class SolverInput
 		checkDisciplinasSemLaboratorios();
 		checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo();
 		checkDemandasComDisciplinasSemCurriculo();
-		checkCicloDisciplinasEquivalentes();
+		if (parametro.getConsiderarEquivalencia()) {
+			checkCicloDisciplinasEquivalentes();
+		}
 		
 		// PRIMEIRA VERIFICAÇÃO
 
@@ -797,32 +799,32 @@ public class SolverInput
 	@Transactional
 	private void generate( boolean tatico )
 	{
-		generateCalendario();
-		generateTiposSala();
-		generateTiposContrato();
-		generateTiposTitulacao();
-		generateAreasTitulacao();
-		generateTiposDisciplina();
-		generateNiveisDificuldade();
-		generateTiposCurso();
-		generateDivisoesDeCredito();
-		generateDeslocamentoCampi();
-		generateDeslocamentoUnidades();
-		generateDisciplinas();
-		generateCurso();
-		generateCampi( tatico );
-		generateOfertaCursoCampi();
-		generateDemandas();
-		generateAlunosDemanda();
-		generateParametrosPlanejamento( tatico );
-		generateFixacoes();
+		generateCalendario();System.out.println("generateCalendario();");//TODO: retirar LOG
+		generateTiposSala();System.out.println("generateTiposSala();");//TODO: retirar LOG
+		generateTiposContrato();System.out.println("generateTiposContrato();");//TODO: retirar LOG
+		generateTiposTitulacao();System.out.println("generateTiposTitulacao();");//TODO: retirar LOG
+		generateAreasTitulacao();System.out.println("generateAreasTitulacao();");//TODO: retirar LOG
+		generateTiposDisciplina();System.out.println("generateTiposDisciplina();");//TODO: retirar LOG
+		generateNiveisDificuldade();System.out.println("generateNiveisDificuldade();");//TODO: retirar LOG
+		generateTiposCurso();System.out.println("generateTiposCurso();");//TODO: retirar LOG
+		generateDivisoesDeCredito();System.out.println("generateDivisoesDeCredito();");//TODO: retirar LOG
+		generateDeslocamentoCampi();System.out.println("generateDeslocamentoCampi();");//TODO: retirar LOG
+		generateDeslocamentoUnidades();System.out.println("generateDeslocamentoUnidades();");//TODO: retirar LOG
+		generateDisciplinas();System.out.println("generateDisciplinas();");//TODO: retirar LOG
+		generateCurso();System.out.println("generateCurso();");//TODO: retirar LOG
+		generateCampi( tatico );System.out.println("generateCampi();");//TODO: retirar LOG
+		generateOfertaCursoCampi();System.out.println("generateOfertaCursoCampi();");//TODO: retirar LOG
+		generateDemandas();System.out.println("generateDemandas();");//TODO: retirar LOG
+		generateAlunosDemanda();System.out.println("generateAlunosDemanda();");//TODO: retirar LOG
+		generateParametrosPlanejamento( tatico );System.out.println("generateParametrosPlanejamento();");//TODO: retirar LOG
+		generateFixacoes();System.out.println("generateFixacoes();");//TODO: retirar LOG
 
 		if ( !tatico )
 		{
-			generateTaticoInput();
+			generateTaticoInput();System.out.println("generateTaticoInput();");//TODO: retirar LOG
 		}
 
-		checkErrorsWarnings();
+		checkErrorsWarnings();System.out.println("checkErrorsWarnings();");//TODO: retirar LOG
 	}
 
 	@Transactional
