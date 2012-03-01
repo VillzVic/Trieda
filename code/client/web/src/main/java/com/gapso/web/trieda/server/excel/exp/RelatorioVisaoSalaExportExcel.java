@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -215,8 +213,8 @@ public class RelatorioVisaoSalaExportExcel
 			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 
-			List< HSSFComment> excelCommentsPool = buildExcelCommentsPool( workbook );
-			Iterator< HSSFComment> itExcelCommentsPool = excelCommentsPool.iterator();
+			//List< HSSFComment> excelCommentsPool = buildExcelCommentsPool( workbook );
+			//Iterator< HSSFComment> itExcelCommentsPool = excelCommentsPool.iterator();
 
 			List< HSSFCellStyle > excelColorsPool = buildColorPaletteCellStyles( workbook );
 
@@ -314,7 +312,7 @@ public class RelatorioVisaoSalaExportExcel
 							listAtendimentos.addAll(mapNivel3.get(semanaLetiva.getId()));
 						}
 						
-						nextRow = writeSala(sala,turno,semanaLetiva,listAtendimentos,nextRow,sheet,itExcelCommentsPool,codigoDisciplinaToColorMap,ehTatico);
+						nextRow = writeSala(sala,turno,semanaLetiva,listAtendimentos,nextRow,sheet,/*itExcelCommentsPool,*/codigoDisciplinaToColorMap,ehTatico);
 					} else {
 						for ( Long semanaLetivaId : mapNivel3.keySet() )
 						{
@@ -322,7 +320,7 @@ public class RelatorioVisaoSalaExportExcel
 							List< AtendimentoRelatorioDTO > listAtendimentos = mapNivel3.get( semanaLetivaId );
 	
 							nextRow = writeSala( sala, turno, semanaLetiva, listAtendimentos,
-								nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap, ehTatico );
+								nextRow, sheet, /*itExcelCommentsPool,*/ codigoDisciplinaToColorMap, ehTatico );
 						}
 					}
 				}				
@@ -342,7 +340,7 @@ public class RelatorioVisaoSalaExportExcel
 	private int writeSala(
 		Sala sala, Turno turno, SemanaLetiva semanaLetiva,
 		List< AtendimentoRelatorioDTO > atendimentos, int row, HSSFSheet sheet,
-		Iterator< HSSFComment > itExcelCommentsPool,
+		/*Iterator< HSSFComment > itExcelCommentsPool,*/
 		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap, boolean ehTatico )
 	{
 		row = writeHeader( sala, turno, row, sheet, ehTatico );
@@ -456,9 +454,8 @@ public class RelatorioVisaoSalaExportExcel
 				}
 
 				// Escreve célula principal
-				setCell( row, col, sheet, style, itExcelCommentsPool,
-					atendimento.getContentVisaoSala(ReportType.EXCEL),
-					atendimento.getContentToolTipVisaoSala(ReportType.EXCEL));
+				//setCell(row,col,sheet,style,itExcelCommentsPool,atendimento.getContentVisaoSala(ReportType.EXCEL),atendimento.getContentToolTipVisaoSala(ReportType.EXCEL));
+				setCell(row,col,sheet,style,atendimento.getContentVisaoSala(ReportType.EXCEL),atendimento.getContentToolTipVisaoSala(ReportType.EXCEL));
 
 				// Une células de acordo com a quantidade de créditos
 				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
@@ -572,35 +569,35 @@ public class RelatorioVisaoSalaExportExcel
 		return colorPalleteCellStylesList;
 	}
 
-	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
-	{
-		List< HSSFComment > excelCommentsPool
-			= new ArrayList< HSSFComment >();
-
-		HSSFSheet sheet = workbook.getSheet(
-			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName() );
-
-		if ( sheet != null )
-		{
-            for ( int rowIndex = sheet.getFirstRowNum();
-            	rowIndex <= sheet.getLastRowNum(); rowIndex++ )
-            {
-            	HSSFRow row = sheet.getRow( rowIndex );
-
-            	if ( row != null )
-            	{
-            		HSSFCell cell = row.getCell( 25 );
-
-            		if ( cell != null && cell.getCellComment() != null )
-            		{
-            			excelCommentsPool.add( cell.getCellComment() );
-            		}
-            	}
-            }
-		}
-
-		return excelCommentsPool;
-	}
+//	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
+//	{
+//		List< HSSFComment > excelCommentsPool
+//			= new ArrayList< HSSFComment >();
+//
+//		HSSFSheet sheet = workbook.getSheet(
+//			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName() );
+//
+//		if ( sheet != null )
+//		{
+//            for ( int rowIndex = sheet.getFirstRowNum();
+//            	rowIndex <= sheet.getLastRowNum(); rowIndex++ )
+//            {
+//            	HSSFRow row = sheet.getRow( rowIndex );
+//
+//            	if ( row != null )
+//            	{
+//            		HSSFCell cell = row.getCell( 25 );
+//
+//            		if ( cell != null && cell.getCellComment() != null )
+//            		{
+//            			excelCommentsPool.add( cell.getCellComment() );
+//            		}
+//            	}
+//            }
+//		}
+//
+//		return excelCommentsPool;
+//	}
 
 	private List< AtendimentoRelatorioDTO > ordenaHorarioAula(
 		List< AtendimentoRelatorioDTO > list )

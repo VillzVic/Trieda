@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFComment;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -293,11 +291,8 @@ public class RelatorioVisaoCursoExportExcel
 			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 
-			List< HSSFComment > excelCommentsPool
-				= buildExcelCommentsPool( workbook );
-
-			Iterator< HSSFComment > itExcelCommentsPool
-				= excelCommentsPool.iterator();
+			//List< HSSFComment > excelCommentsPool = buildExcelCommentsPool( workbook );
+			//Iterator< HSSFComment > itExcelCommentsPool = excelCommentsPool.iterator();
 
 			List< HSSFCellStyle > excelColorsPool
 				= buildColorPaletteCellStyles( workbook );
@@ -345,7 +340,7 @@ public class RelatorioVisaoCursoExportExcel
 					atdRelatorioList.get( 0 ).getPeriodoString() );
 
 				nextRow = this.writeCurso( oferta, periodo, atdRelatorioList,
-					tamanhoSemanaList, nextRow, sheet, itExcelCommentsPool,
+					tamanhoSemanaList, nextRow, sheet, /*itExcelCommentsPool,*/
 					codigoDisciplinaToColorMap, ehTatico );
 			}
 
@@ -398,7 +393,7 @@ public class RelatorioVisaoCursoExportExcel
 	private int writeCurso(
 		Oferta oferta, Integer periodo,
 		List< AtendimentoRelatorioDTO > atendimentos, List< Integer > tamanhoSemanaList,
-		int row, HSSFSheet sheet, Iterator< HSSFComment > itExcelCommentsPool,
+		int row, HSSFSheet sheet, /*Iterator< HSSFComment > itExcelCommentsPool,*/
 		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap, boolean ehTatico )
 	{
 		// FIXME -- Considerar apenas os horários da semana letiva
@@ -497,7 +492,7 @@ public class RelatorioVisaoCursoExportExcel
 				}
 
 				// Escreve célula principal
-				setCell( row, col, sheet, style, itExcelCommentsPool,
+				setCell( row, col, sheet, style, /*itExcelCommentsPool,*/
 					atendimento.getContentVisaoCurso(ReportType.EXCEL),
 					atendimento.getContentToolTipVisaoCurso(ReportType.EXCEL) );
 
@@ -625,31 +620,31 @@ public class RelatorioVisaoCursoExportExcel
 		return colorPalleteCellStylesList;
 	}
 
-	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
-	{
-		List< HSSFComment > excelCommentsPool = new ArrayList< HSSFComment >();
-
-		HSSFSheet sheet = workbook.getSheet(
-			ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName() );
-
-		if ( sheet != null )
-		{
-			for ( int rowIndex = sheet.getFirstRowNum();
-				rowIndex <= sheet.getLastRowNum(); rowIndex++ )
-			{
-				HSSFRow row = sheet.getRow( rowIndex );
-				if ( row != null )
-				{
-					HSSFCell cell = row.getCell( 25 );
-
-					if ( cell != null && cell.getCellComment() != null )
-					{
-						excelCommentsPool.add( cell.getCellComment() );
-					}
-				}
-			}
-		}
-
-		return excelCommentsPool;
-	}
+//	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
+//	{
+//		List< HSSFComment > excelCommentsPool = new ArrayList< HSSFComment >();
+//
+//		HSSFSheet sheet = workbook.getSheet(
+//			ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName() );
+//
+//		if ( sheet != null )
+//		{
+//			for ( int rowIndex = sheet.getFirstRowNum();
+//				rowIndex <= sheet.getLastRowNum(); rowIndex++ )
+//			{
+//				HSSFRow row = sheet.getRow( rowIndex );
+//				if ( row != null )
+//				{
+//					HSSFCell cell = row.getCell( 25 );
+//
+//					if ( cell != null && cell.getCellComment() != null )
+//					{
+//						excelCommentsPool.add( cell.getCellComment() );
+//					}
+//				}
+//			}
+//		}
+//
+//		return excelCommentsPool;
+//	}
 }

@@ -11,13 +11,15 @@ import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFComment;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.gapso.trieda.domain.Cenario;
@@ -37,6 +39,8 @@ public abstract class AbstractExportExcel
 	private TriedaI18nMessages i18nMessages;
 	private String sheetName;
 	protected InstituicaoEnsino instituicaoEnsino;
+	private CreationHelper factory;
+	private Drawing drawing;
 
 	protected AbstractExportExcel(boolean autoSizeColumns, String sheetName, Cenario cenario,
 		TriedaI18nConstants i18nConstants,
@@ -88,6 +92,8 @@ public abstract class AbstractExportExcel
 	{
 		if ( workbook != null )
 		{
+			this.factory = workbook.getCreationHelper();
+			this.drawing = null;
 			this.errors.clear();
 			this.warnings.clear();
 			
@@ -260,20 +266,26 @@ public abstract class AbstractExportExcel
 	}
 
 	protected void setCell( int row, int col, HSSFSheet sheet,
-		HSSFCellStyle style, HSSFPatriarch patriarch, String value, String comment )
+		HSSFCellStyle style, String value, String comment )
 	{
 		HSSFCell cell = getCell( row, col, sheet );
 		cell.setCellValue( new HSSFRichTextString( value ) );
 
-		HSSFComment cellComment = cell.getCellComment();
-		if ( cellComment == null )
-		{
-			cellComment = patriarch.createComment(
-				new HSSFClientAnchor( 0, 0, 0, 0, (short)col, row, (short)( col + 3 ), ( row + 9 ) ) );
-			cell.setCellComment( cellComment );
+		Comment cellComment = cell.getCellComment();
+		if (cellComment == null) {
+			ClientAnchor anchor = factory.createClientAnchor();
+		    anchor.setCol1(cell.getColumnIndex());
+		    anchor.setCol2(cell.getColumnIndex()+4);
+		    anchor.setRow1(row);
+		    anchor.setRow2(row+12);
+		    if (drawing == null) {
+		    	drawing = sheet.createDrawingPatriarch();
+		    }
+			cellComment = drawing.createCellComment(anchor);
+			cell.setCellComment(cellComment);
 		}
 
-		cellComment.setString( new HSSFRichTextString( comment ) );
+		cellComment.setString(factory.createRichTextString(comment));
 		cell.setCellStyle(style);
 	}
 
