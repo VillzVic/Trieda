@@ -59,22 +59,27 @@ public class IncompatibilidadeGrid extends ContentPanel {
 					config.style = "background-color: #EEEFFF; height: 28px;";
 					return "";
 				}
-
-				ToggleImageButton tb = new ToggleImageButton( getModel( row, col ).getIncompativel(),
-					Resources.DEFAULTS.incompativel(), Resources.DEFAULTS.compativel() );
-
-				tb.setWidth( 69 );
-				tb.addSelectionListener( new SelectionListener< ButtonEvent >()
-				{
-					@Override
-					public void componentSelected( ButtonEvent ce )
+				
+				DisciplinaIncompativelDTO dto = getModel(row,col);
+				if (dto != null) {
+					ToggleImageButton tb = new ToggleImageButton( getModel( row, col ).getIncompativel(),
+						Resources.DEFAULTS.incompativel(), Resources.DEFAULTS.compativel() );
+	
+					tb.setWidth( 69 );
+					tb.addSelectionListener( new SelectionListener< ButtonEvent >()
 					{
-						ToggleImageButton tib = (ToggleImageButton) ce.getComponent();
-						getModel( row, col ).setIncompativel( tib.isPressed() );
-					}
-				});
-
-				return tb;
+						@Override
+						public void componentSelected( ButtonEvent ce )
+						{
+							ToggleImageButton tib = (ToggleImageButton) ce.getComponent();
+							getModel( row, col ).setIncompativel( tib.isPressed() );
+						}
+					});
+	
+					return tb;
+				} else {
+					return "";
+				}
 			}
 		};
 
@@ -139,12 +144,14 @@ public class IncompatibilidadeGrid extends ContentPanel {
 	}
 	
 	private DisciplinaIncompativelDTO getModel(int row, int col) {
-		String rowString = stringColumns.get(row);
-		String columnString = stringColumns.get(col - 1);
-		for(DisciplinaIncompativelDTO model : models) {
-			if((model.getDisciplina1String().equals(rowString) && model.getDisciplina2String().equals(columnString)) ||
-			   (model.getDisciplina2String().equals(rowString) && model.getDisciplina1String().equals(columnString))) {
-				return model;
+		if (row < stringColumns.size() && (col-1) < stringColumns.size()) {
+			String rowString = stringColumns.get(row);
+			String columnString = stringColumns.get(col - 1);
+			for(DisciplinaIncompativelDTO model : models) {
+				if((model.getDisciplina1String().equals(rowString) && model.getDisciplina2String().equals(columnString)) ||
+				   (model.getDisciplina2String().equals(rowString) && model.getDisciplina1String().equals(columnString))) {
+					return model;
+				}
 			}
 		}
 		return null;

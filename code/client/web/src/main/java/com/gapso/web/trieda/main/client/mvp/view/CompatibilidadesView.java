@@ -18,6 +18,7 @@ import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.IncompatibilidadeGrid;
+import com.gapso.web.trieda.shared.util.view.PeriodoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class CompatibilidadesView extends MyComposite
@@ -28,7 +29,7 @@ public class CompatibilidadesView extends MyComposite
 	private ToolBar toolBar;
 	private CursoComboBox cursoCB;
 	private CurriculoComboBox curriculoCB;
-	private SimpleComboBox< Integer > periodoCB;
+	private PeriodoComboBox periodoCB;
 	private Button salvarBt;
 	private Button cancelarBt;
 	private GTabItem tabItem;
@@ -89,9 +90,7 @@ public class CompatibilidadesView extends MyComposite
 		curriculoCB = new CurriculoComboBox( cursoCB );
 		formPanel.add( curriculoCB, formData );
 
-		periodoCB = new SimpleComboBox< Integer >();
-		periodoCB.setFieldLabel( "Periodo" );
-		periodoCB.setEnabled( false );
+		periodoCB = new PeriodoComboBox(curriculoCB,this);
 		formPanel.add( periodoCB, formData );
 
 		panel.add( formPanel, new RowData( 1, -1, new Margins( 4 ) ) );

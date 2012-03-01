@@ -58,23 +58,6 @@ public class CompatibilidadesPresenter
 
 	private void setListeners()
 	{
-		display.getCurriculoComboBox().addSelectionChangedListener(new SelectionChangedListener<CurriculoDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<CurriculoDTO> se) {
-				final CurriculoDTO curriculoDTO = se.getSelectedItem();
-				display.getPeriodoComboBox().getStore().removeAll();
-				display.getPeriodoComboBox().setEnabled(curriculoDTO != null);
-				if(curriculoDTO != null) {
-					Services.curriculos().getPeriodos(curriculoDTO, new AbstractAsyncCallbackWithDefaultOnFailure<List<Integer>>(display) {
-						@Override
-						public void onSuccess(List<Integer> result) {
-							display.getPeriodoComboBox().add(result);
-						}
-					});
-				}
-			}
-		});
-
 		display.getPeriodoComboBox().addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<Integer>>(){
 			@Override
 			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<Integer>> se) {
