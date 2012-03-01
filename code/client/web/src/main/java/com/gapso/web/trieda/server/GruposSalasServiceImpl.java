@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -161,12 +162,11 @@ public class GruposSalasServiceImpl
 		for ( GrupoSala grupoSala : listGruposSalas )
 		{
 			String salasString = "";
-			Set< Sala > salas = grupoSala.getSalas();
-
-			for ( Sala sala : salas )
-			{
-				salasString += sala.getCodigo() + " (Num. " + sala.getNumero()
-					+ " | Cap." + sala.getCapacidade() + "), ";
+			List<Sala> salas = new ArrayList<Sala>(grupoSala.getSalas());
+			Collections.sort(salas);
+			for (Sala sala : salas) {
+				salasString += "<b>" +sala.getCodigo() + "</b> (" + sala.getNumero()
+					+ "," + sala.getCapacidade() + ") | ";
 			}
 
 			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO( grupoSala );
