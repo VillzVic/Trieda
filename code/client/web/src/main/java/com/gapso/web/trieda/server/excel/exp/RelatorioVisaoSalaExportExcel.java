@@ -2,11 +2,11 @@ package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -31,8 +31,8 @@ import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -223,70 +223,107 @@ public class RelatorioVisaoSalaExportExcel
 			Map< String, HSSFCellStyle > codigoDisciplinaToColorMap
 				= new HashMap< String, HSSFCellStyle >();
 
-			// FIXME -- Diferenciar atendimentos pela semana letiva da disciplina atendida
-			Map< Sala, Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > > mapNivel1
-				= new TreeMap< Sala, Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > >();
-
-			for ( AtendimentoRelatorioDTO atendimento : atdRelatorioList )
-			{
-				Sala sala = Sala.find( atendimento.getSalaId(), this.instituicaoEnsino );
-				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
-				SemanaLetiva semanaLetiva = SemanaLetiva.find( atendimento.getSemanaLetivaId(), instituicaoEnsino );
-
-				Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > mapNivel2 = mapNivel1.get( sala );
-
-				if ( mapNivel2 == null )
-				{
-					mapNivel2 = new HashMap< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > >();
-					mapNivel1.put( sala, mapNivel2 );
+			// [SalaId -> Sala]
+			Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>();
+			// [TurnoId -> Turno]
+			Map<Long,Turno> turnoIdToTurnoMap = new HashMap<Long,Turno>();
+			// [SemanaLetivaId -> SemanaLetiva]
+			Map<Long,SemanaLetiva> semanaLetivaIdTosemanaLetivaMap = new HashMap<Long,SemanaLetiva>();
+			// [SalaId -> [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]]
+			Map<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>> atendimentosPorSalaTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>>();
+			
+			// preenche o map atendimentosPorSalaTurnoSemanaLetivaMap
+			for ( AtendimentoRelatorioDTO atendimento : atdRelatorioList ) {
+				// preenche os maps salaIdToSalaMap, turnoIdToTurnoMap e semanaLetivaIdTosemanaLetivaMap
+				if (!salaIdToSalaMap.containsKey(atendimento.getSalaId())) {
+					salaIdToSalaMap.put(atendimento.getSalaId(),Sala.find(atendimento.getSalaId(),this.instituicaoEnsino));
+				}
+				if (!turnoIdToTurnoMap.containsKey(atendimento.getTurnoId())) {
+					turnoIdToTurnoMap.put(atendimento.getTurnoId(),Turno.find(atendimento.getTurnoId(),this.instituicaoEnsino));
+				}
+				if (!semanaLetivaIdTosemanaLetivaMap.containsKey(atendimento.getSemanaLetivaId())) {
+					semanaLetivaIdTosemanaLetivaMap.put(atendimento.getSemanaLetivaId(),SemanaLetiva.find(atendimento.getSemanaLetivaId(),instituicaoEnsino));
 				}
 
-				Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > mapNivel3 = mapNivel2.get( turno );
-
-				if ( mapNivel3 == null )
-				{
-					mapNivel3 = new HashMap< SemanaLetiva, List< AtendimentoRelatorioDTO > >();
-					mapNivel2.put( turno, mapNivel3 );
+				// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
+				Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(atendimento.getSalaId());
+				if (salaAtendimentosPorTurnoSemanaLetivaMap == null) {
+					salaAtendimentosPorTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,List<AtendimentoRelatorioDTO>>>();
+					atendimentosPorSalaTurnoSemanaLetivaMap.put(atendimento.getSalaId(),salaAtendimentosPorTurnoSemanaLetivaMap);
 				}
 
-				List< AtendimentoRelatorioDTO > list = mapNivel3.get( semanaLetiva );
-				
-				if ( list == null )
-				{
-					list = new ArrayList< AtendimentoRelatorioDTO >();
-					mapNivel3.put( semanaLetiva, list );
+				// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
+				Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(atendimento.getTurnoId());
+				if (turnoAtendimentosPorSemanaLetivaMap == null) {
+					turnoAtendimentosPorSemanaLetivaMap = new HashMap<Long,List<AtendimentoRelatorioDTO>>();
+					salaAtendimentosPorTurnoSemanaLetivaMap.put(atendimento.getTurnoId(),turnoAtendimentosPorSemanaLetivaMap);
 				}
 
-				list.add( atendimento );
+				// armazena os atendimentos associados a uma dada sala, um dado turno e uma dada semana letiva
+				List<AtendimentoRelatorioDTO> atendimentos = turnoAtendimentosPorSemanaLetivaMap.get(atendimento.getSemanaLetivaId());
+				if (atendimentos == null) {
+					atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
+					turnoAtendimentosPorSemanaLetivaMap.put(atendimento.getSemanaLetivaId(),atendimentos);
+				}
+				atendimentos.add(atendimento);
 
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get(
-					atendimento.getDisciplinaString() );
-
-				if ( style == null )
-				{
-					int index = ( codigoDisciplinaToColorMap.size() % excelColorsPool.size() );
-
-					codigoDisciplinaToColorMap.put(
-						atendimento.getDisciplinaString(), excelColorsPool.get( index ) );
+				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
+				if (style == null) {
+					int index = (codigoDisciplinaToColorMap.size()%excelColorsPool.size());
+					codigoDisciplinaToColorMap.put(atendimento.getDisciplinaString(),excelColorsPool.get(index));
 				}
 			}
 
 			int nextRow = this.initialRow;
 
-			for ( Sala sala : mapNivel1.keySet() )
+			List<Sala> salasOrdenadasPelaCapacidade = new ArrayList<Sala>(salaIdToSalaMap.values());
+			Collections.<Sala>sort(salasOrdenadasPelaCapacidade,new Comparator<Sala>() {
+				@Override
+				public int compare(Sala o1, Sala o2) {
+					return -(o1.getCapacidade().compareTo(o2.getCapacidade()));
+				}
+			});
+			
+			for ( Sala sala : salasOrdenadasPelaCapacidade )
 			{
-				Map< Turno, Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > > mapNivel2 = mapNivel1.get( sala );
+				Map< Long, Map< Long, List< AtendimentoRelatorioDTO > > > mapNivel2 = atendimentosPorSalaTurnoSemanaLetivaMap.get( sala.getId() );
 
-				for ( Turno turno : mapNivel2.keySet() )
+				for ( Long turnoId : mapNivel2.keySet() )
 				{
-					Map< SemanaLetiva, List< AtendimentoRelatorioDTO > > mapNivel3 = mapNivel2.get( turno );
-
-					for ( SemanaLetiva semanaLetiva : mapNivel3.keySet() )
-					{
-						List< AtendimentoRelatorioDTO > listAtendimentos = mapNivel3.get( semanaLetiva );
-
-						nextRow = writeSala( sala, turno, semanaLetiva, listAtendimentos,
-							nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap, ehTatico );
+					Turno turno = turnoIdToTurnoMap.get(turnoId);
+					Map< Long, List< AtendimentoRelatorioDTO > > mapNivel3 = mapNivel2.get( turnoId );
+					
+					if (ehTatico) {
+						SemanaLetiva semanaLetiva = null;
+						List<AtendimentoRelatorioDTO> listAtendimentos = new ArrayList<AtendimentoRelatorioDTO>();
+						if (mapNivel3.keySet().size() > 1) {
+							int maxCreditos = 0;
+							for (Long semLetId : mapNivel3.keySet()) {
+								// obtém a semana letiva com maior qtd de créditos
+								SemanaLetiva semLet = semanaLetivaIdTosemanaLetivaMap.get(semLetId);
+								int calcMaxCreditos = semLet.calculaMaxCreditos();
+								if (calcMaxCreditos > maxCreditos) {
+									maxCreditos = calcMaxCreditos;
+									semanaLetiva = semLet;
+								}
+								// acumula os atendimentos das semanas letivas
+								listAtendimentos.addAll(mapNivel3.get(semLetId));
+							}
+						} else {
+							semanaLetiva = semanaLetivaIdTosemanaLetivaMap.get(mapNivel3.keySet().iterator().next());
+							listAtendimentos.addAll(mapNivel3.get(semanaLetiva.getId()));
+						}
+						
+						nextRow = writeSala(sala,turno,semanaLetiva,listAtendimentos,nextRow,sheet,itExcelCommentsPool,codigoDisciplinaToColorMap,ehTatico);
+					} else {
+						for ( Long semanaLetivaId : mapNivel3.keySet() )
+						{
+							SemanaLetiva semanaLetiva = semanaLetivaIdTosemanaLetivaMap.get(semanaLetivaId);
+							List< AtendimentoRelatorioDTO > listAtendimentos = mapNivel3.get( semanaLetivaId );
+	
+							nextRow = writeSala( sala, turno, semanaLetiva, listAtendimentos,
+								nextRow, sheet, itExcelCommentsPool, codigoDisciplinaToColorMap, ehTatico );
+						}
 					}
 				}				
 			}
@@ -364,7 +401,7 @@ public class RelatorioVisaoSalaExportExcel
 		for ( AtendimentoRelatorioDTO atendimento : atendimentosParaVisaoSala )
 		{
 			// TODO -- Considerar apenas os horários da semana letiva
-			if ( atendimento.getSemanaLetivaId() != semanaLetiva.getId() )
+			if (!ehTatico && (atendimento.getSemanaLetivaId() != semanaLetiva.getId()))
 			{
 				continue;
 			}
