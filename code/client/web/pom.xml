@@ -236,7 +236,7 @@
 				<version>${gwt.version}</version>
 				<configuration>
 					<logLevel>INFO</logLevel>
-					<style>PRETTY</style>
+					<style>OBF</style>
 					<runTarget>/trieda/index.html</runTarget>
 					<hostedWebapp>${project.build.directory}/${project.build.finalName}
 					</hostedWebapp>
