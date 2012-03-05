@@ -58,8 +58,28 @@ int BlocoCurricular::getNroMaxCredCombinaSL( int k, Calendario *c, int dia )
 
 GGroup<HorarioAula*> BlocoCurricular::retornaHorariosDisponiveisNoDiaPorSL( int dia, Calendario* sl )
 {
-	GGroup<HorarioAula*> horariosNoDiaSL;	
+	GGroup<HorarioAula*> horariosNoDiaSL;
+
+	GGroup< std::pair< int, Disciplina * > >::iterator itPeriodoDisc = this->curriculo->disciplinas_periodo.begin();
+
+	for (; itPeriodoDisc != this->curriculo->disciplinas_periodo.end(); itPeriodoDisc++ )
+	{
+		Disciplina *d = (*itPeriodoDisc).second;
+
+		if ( d->getCalendario() == sl )
+		{
+			for ( GGroup< Horario * >::iterator it_horarios = d->horarios.begin();
+				  it_horarios != d->horarios.end(); it_horarios++ )
+			{
+				if ( it_horarios->horario_aula->horarioDisponivel( dia ) )
+				{
+					horariosNoDiaSL.add( it_horarios->horario_aula );
+				}
+			}		
+		}
+    }
 	
+	/*
 	GGroup<Turno*, LessPtr<Turno>> turnos = curriculo->calendario->turnos;
 	ITERA_GGROUP_LESSPTR(it_turno, turnos, Turno)
 	{
@@ -73,7 +93,7 @@ GGroup<HorarioAula*> BlocoCurricular::retornaHorariosDisponiveisNoDiaPorSL( int 
 					horariosNoDiaSL.add( *it_horarios );
 			}
 		}
-	}
+	}*/
 	return horariosNoDiaSL;
 }
 

@@ -58,9 +58,13 @@ public:
 
    // Establece os dias letivos comuns entre os professores e suas disciplinas.
    void estabeleceDiasLetivosProfessorDisciplina();
+   
+   void referenciaCursos_DiscCalendarios();
 
    // Trata das equivalências entre disciplinas
-   void relacionaDisciplinasEquivalentes();
+   void referenciaDisciplinasEquivalentes();
+
+ //  void relacionaDisciplinasEquivalentes();
    void substituiDisciplinasEquivalentes();
    void atualizaOfertasDemandas();
 

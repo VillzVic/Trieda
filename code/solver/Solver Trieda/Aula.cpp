@@ -11,6 +11,7 @@ Aula::Aula(bool _aulaVirtual)
    creditos_praticos = 0;
    aula_fixada = false;
    aula_virtual = _aulaVirtual;
+   disciplinaSubstituida = NULL;
 }
 
 Aula::~Aula(void)
@@ -61,6 +62,12 @@ void Aula::setQuantidade( int value, Oferta* oft )
 {
    quantidade[oft] = value;
 }
+
+void Aula::setDisciplinaSubstituida(Disciplina * d)
+{
+   this->disciplinaSubstituida = d;
+}
+
 
 int Aula::getTurma() const
 {
@@ -126,12 +133,19 @@ int Aula::getQuantidadeTotal()
 	return n;
 }
 
+Disciplina* Aula::getDisciplinaSubstituida() const
+{
+   return this->disciplinaSubstituida;
+}
+
 void Aula::toString()
 {
    //-------------------------------------------------------------
    std::cout << "\n=================AULA================="
 			    << "\nTurma: " << turma
-			    << "\nDisciplina: " << disciplina->getCodigo()
+			    << "\nDisciplina: " << disciplina->getCodigo();
+				if ( disciplinaSubstituida != NULL )
+					std::cout << "\tDisciplina Substituida: " << disciplinaSubstituida->getCodigo()
 			    << std::endl;
    //-------------------------------------------------------------
 

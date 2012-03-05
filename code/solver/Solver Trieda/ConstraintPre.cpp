@@ -177,7 +177,9 @@ std::string ConstraintPre::toString()
       ss << "__(C_PRE_LIM_SUP_CREDS_SALA):"; break;	  
    case C_PRE_ATIVA_C:
       ss << "__(C_PRE_ATIVA_C):"; break;	  
-
+   case C_PRE_FIXA_NAO_COMPARTILHAMENTO:
+      ss << "__(C_PRE_FIXA_NAO_COMPARTILHAMENTO):"; break;	  
+	  
    default:
       ss << "!";
    }

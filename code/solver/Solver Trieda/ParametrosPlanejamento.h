@@ -23,6 +23,7 @@ public:
 
    int maxDeslocProf;
    int funcao_objetivo;
+   int min_alunos_abertura_turmas_value;
 
    bool equilibrar_diversidade_disc_dia;
    bool minimizar_desloc_prof;

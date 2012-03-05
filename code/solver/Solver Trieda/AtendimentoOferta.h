@@ -18,19 +18,22 @@ public:
    void setDisciplinaId( int value ) { this->disciplina_id = value; }
    void setQuantidade( int value ) { this->quantidade = value; }
    void setTurma( int value ) { this->turma = value; }
+   void setDisciplinaSubstitutaId( int value ) { this->disciplina_substituta_id = value; }
 
    std::string getOfertaCursoCampiId() const { return this->oferta_curso_campi_id; }
    int getDisciplinaId() const { return this->disciplina_id; }
    int getQuantidade() const { return this->quantidade; }
    int getTurma() const { return this->turma; }
+   int getDisciplinaSubstitutaId() const { return this->disciplina_substituta_id;}
 
-   Disciplina * disciplina;
+   Disciplina * disciplina; // Disciplina atendida. Se tiver havido substituição, é a substituta. Caso contrario, é a original
 
 private:
    std::string oferta_curso_campi_id;
-   int disciplina_id;
+   int disciplina_id; // id da disciplina original, caso tenha havido substituição
    int quantidade;
    int turma;
+   int disciplina_substituta_id;
 };
 
 std::ostream & operator << ( std::ostream &, AtendimentoOferta & );

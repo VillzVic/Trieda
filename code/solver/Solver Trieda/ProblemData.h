@@ -274,26 +274,28 @@ public:
    //-----------------------------------------------------------------------------------------------
    // Equivalências entre disciplinas
 
+   // Referencia, para cada disciplina substituida, qual a disciplina que a substituiu,
+   // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
+   std::map< Disciplina*, Disciplina* > mapDiscSubstituidaPor;
+
    // Armazena os 'ids' das disciplinas em comum entre os pares de cursos compatíveis
    std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;
 
    void preencheCursosCompDisc();
 
    // Dado um curso e um curriculo, retorna-se um map
-   // que referencia cada disciplina com sua correspondente
-   // disciplina substituta, caso tenha ocorrido uma
-   // substituição por equivalência entre essas disciplinas
-   std::map< std::pair< Curso *, Curriculo * >,
-			    std::map< Disciplina *, Disciplina * > > map_CursoCurriculo_DiscSubst;
-
-   // Dado um curso e um curriculo, retorna-se um map
    // que referencia, para cada disciplina, as disciplinas que ela substituiu,
    // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
    std::map< std::pair< Curso *, Curriculo * >,
-			    std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidas;
+	         std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidas;
 
    // Dada uma disciplina, informamos o seu curso e curriculo
    std::map< Disciplina *, std::pair< Curso *, Curriculo * > > map_Disc_CursoCurriculo;
+
+   // Retorna para uma dada disciplina substituta e um par <curso, curriculo>,
+   // a disciplina original que ela substituiu. Caso não tiver havido substituição,
+   // returna NULL.
+   Disciplina * ehSubstitutaDe( Disciplina*, std::pair< Curso *, Curriculo * > );
 
    // Dada uma disciplina, esse método retorna qual
    // disciplina a substituiu, ou retorna NULL caso

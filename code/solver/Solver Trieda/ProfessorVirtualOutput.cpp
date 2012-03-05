@@ -37,15 +37,14 @@ std::ostream & operator << ( std::ostream & out, ProfessorVirtualOutput & profes
    }
 
    out << "<disciplinas>" << std::endl;
-   GGroup< int >::iterator it_disciplina
-	   = professor_virtual.disciplinas.begin();
+   GGroup< int >::iterator it_disciplina = professor_virtual.disciplinas.begin();
 
    for (; it_disciplina != professor_virtual.disciplinas.end();
 		    it_disciplina++ )
    {
 		out << "<id>";
 		out << ( *it_disciplina );
-		out << "</id>" << std::endl;
+		out << "</id>" << std::endl;	   
    }
    out << "</disciplinas>" << std::endl;
 

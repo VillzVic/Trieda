@@ -100,6 +100,7 @@ public:
    int cria_preRestricao_turma_mesma_disc_sala_dif(void);   // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala(void);		// Restricao 1.15
    int cria_preRestricao_ativa_var_aloc_aluno_oft(void);	// Restricao 1.16
+   int cria_preRestricao_fixa_nao_compartilhamento(void);	// Restricao 1.17
 
    /********************************************************************
    **                      VARIABLE CREATION                          **
@@ -157,9 +158,7 @@ public:
 
    int cria_restricao_carga_horaria(void);					// Restricao 1.2.2
    int cria_restricao_max_tempo_sd( void );					// Restricao 1.2.3.a -> Usada somente quando só tem 1 semana letiva
-// DELETAR QUANDO SL ESTIVER ESTAVEL   int cria_restricao_max_tempo_s_d_SL(void);				// Restricao 1.2.3.b
-   int cria_restricao_max_tempo_s_t_SL( void );				//  -> Usada somente quando tem 2 semanas letivas
-
+   int cria_restricao_max_tempo_s_t_SL( void );				// Restricao 1.2.3.b -> Usada somente quando tem 2 semanas letivas
    int cria_restricao_min_cred_dd(void);					// Restricao 1.2.4
    int cria_restricao_ativacao_var_o(void);					// Restricao 1.2.5
    int cria_restricao_evita_sobreposicao(void);			    // Restricao 1.2.6

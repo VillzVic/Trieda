@@ -86,6 +86,8 @@ public:
 
    int getTotalCreditos() const { return this->getCredTeoricos() + this->getCredPraticos(); }
 
+   Disciplina* substituidaPor() const { return substituta; }
+
 private:
 	
    Calendario* calendario;
@@ -110,8 +112,9 @@ private:
    int max_creds;
    int menorCapacSala; // menor capacidade dentre as salas aonde a disciplina pode ser ministrada
    int capacMediaSala; // capacidade media dentre as salas aonde a disciplina pode ser ministrada
-
    int nSalasAptas;
+   Disciplina* substituta;
+
 };
 
 #endif

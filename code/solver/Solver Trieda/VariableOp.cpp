@@ -285,7 +285,10 @@ std::string VariableOp::toString()
 		  << ",Disc" << aula->getDisciplina()->getId()
           << ",Dia" << aula->getDiaSemana()
           << ",Sala" << aula->getSala()->getId()
-          << ",NCred" << aula->getTotalCreditos() << ")";
+          << ",NCred" << aula->getTotalCreditos();
+	  if ( aula->getDisciplinaSubstituida() != NULL )
+		  str  << ",DiscAntiga" << aula->getDisciplinaSubstituida()->getId();
+	  str << ")";
    }
 
    if ( h != NULL )

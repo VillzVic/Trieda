@@ -647,7 +647,7 @@ bool ProblemData::verificaDisponibilidadeDisciplinaHorario(
 
             if ( d == disciplina )
             {
-               idCalendarioDisc = curriculo->getSemanaLetivaId();
+				idCalendarioDisc = d->getCalendario()->getId();
                break;
             }
          }
@@ -891,4 +891,29 @@ Sala * ProblemData::findSala( int id )
    }
 
    return NULL;
+}
+
+Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Curso *, Curriculo * > parCursoCurr)
+{	
+	std::map< std::pair< Curso *, Curriculo * >,
+			  std::map< Disciplina *,
+			  GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
+			  it_CursoCurr_Discs;
+
+	it_CursoCurr_Discs = this->mapGroupDisciplinasSubstituidas.find( parCursoCurr );
+
+	if ( it_CursoCurr_Discs == mapGroupDisciplinasSubstituidas.end() )
+		return NULL;
+
+	std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > mapDiscs = it_CursoCurr_Discs->second;
+
+	std::map< Disciplina *, GGroup< Disciplina *, LessPtr<Disciplina> > >::iterator 
+		it_Discs = mapDiscs.find( disciplina );
+
+	if ( it_Discs == mapDiscs.end() )
+		return NULL;
+
+	Disciplina *discOriginal = *it_Discs->second.begin(); // TODO: vai ter sempre 1 unica disciplina no group, não é? então pode tirar o group!!!
+
+	return discOriginal;
 }

@@ -34,7 +34,8 @@ public:
 	  C_PRE_ABRE_TURMAS_EM_SEQUENCIA	= 13,		// Restricao 1.13
 	  C_PRE_TURMA_MESMA_DISC_SALA_DIF = 14,			// Restricao 1.14
 	  C_PRE_LIM_SUP_CREDS_SALA		= 15,			// Restricao 1.15
-	  C_PRE_ATIVA_C					= 16			// Restricao 1.16
+	  C_PRE_ATIVA_C					= 16,			// Restricao 1.16
+	  C_PRE_FIXA_NAO_COMPARTILHAMENTO = 17			// Restricao 1.17
    };
 
    /** Default constructor. */

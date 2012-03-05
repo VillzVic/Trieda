@@ -34,17 +34,20 @@ public:
    void setDisciplinaId( int v ) { this->disciplinaId = v; }
    void setQuantidade( int v ) { this->quantidade = v; }
    void setTurma( std::string s ) { this->turma = s; }
+   void setDisciplinaSubstituidaId( int v ) { this->disciplinaSubstituidaId = v; }
 
    int getOfertaCursoCampiId() const { return this->ofertaCursoCampiId; }
    int getDisciplinaId() const { return this->disciplinaId; }
    int getQuantidade() const { return this->quantidade; }
    std::string getTurma() const { return this->turma; }
+   int getDisciplinaSubstituidaId() const { return this->disciplinaSubstituidaId; }
 
 private:
    int ofertaCursoCampiId;
-   int disciplinaId;
+   int disciplinaId;  // Informa a disciplina atendida (caso tenha havido substituição, é a substituta)
    int quantidade;
    std::string turma;
+   int disciplinaSubstituidaId;  // Informa a disciplina substituida (caso não tenha havido substituição, é NULL)
 };
 
 #endif

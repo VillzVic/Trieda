@@ -4619,6 +4619,24 @@ disciplinaId (const disciplinaId_type& x)
   this->disciplinaId_.set (x);
 }
 
+const ItemAtendimentoOfertaSolucao::disciplinaId_type& ItemAtendimentoOfertaSolucao::
+disciplinaSubstitutaId () const
+{
+  return this->disciplinaSubstitutaId_.get ();
+}
+
+ItemAtendimentoOfertaSolucao::disciplinaId_type& ItemAtendimentoOfertaSolucao::
+disciplinaSubstitutaId ()
+{
+  return this->disciplinaSubstitutaId_.get ();
+}
+
+void ItemAtendimentoOfertaSolucao::
+disciplinaSubstitutaId (const disciplinaId_type& x)
+{
+  this->disciplinaSubstitutaId_.set (x);
+}
+
 const ItemAtendimentoOfertaSolucao::quantidade_type& ItemAtendimentoOfertaSolucao::
 quantidade () const
 {
@@ -13875,11 +13893,13 @@ ItemAtendimentoDiaSemanaSolucao::
 ItemAtendimentoOfertaSolucao::
 ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type& ofertaCursoCampiId,
                               const disciplinaId_type& disciplinaId,
+							  const disciplinaSubstitutaId_type& disciplinaSubstitutaId,
                               const quantidade_type& quantidade,
                               const turma_type& turma)
 : ::xml_schema::type (),
   ofertaCursoCampiId_ (ofertaCursoCampiId, ::xml_schema::flags (), this),
   disciplinaId_ (disciplinaId, ::xml_schema::flags (), this),
+  disciplinaSubstitutaId_ (disciplinaSubstitutaId, ::xml_schema::flags (), this),
   quantidade_ (quantidade, ::xml_schema::flags (), this),
   turma_ (turma, ::xml_schema::flags (), this)
 {
@@ -13892,6 +13912,7 @@ ItemAtendimentoOfertaSolucao (const ItemAtendimentoOfertaSolucao& x,
 : ::xml_schema::type (x, f, c),
   ofertaCursoCampiId_ (x.ofertaCursoCampiId_, f, this),
   disciplinaId_ (x.disciplinaId_, f, this),
+  disciplinaSubstitutaId_ (x.disciplinaSubstitutaId_, f, this),
   quantidade_ (x.quantidade_, f, this),
   turma_ (x.turma_, f, this)
 {
@@ -13904,6 +13925,7 @@ ItemAtendimentoOfertaSolucao (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   ofertaCursoCampiId_ (f, this),
   disciplinaId_ (f, this),
+  disciplinaSubstitutaId_ (f, this),
   quantidade_ (f, this),
   turma_ (f, this)
 {
@@ -13942,6 +13964,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!disciplinaId_.present ())
       {
         this->disciplinaId_.set (disciplinaId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // disciplinaSubstitutaId
+    //
+    if (n.name () == "disciplinaSubstitutaId" && n.namespace_ ().empty ())
+    {
+      if (!disciplinaSubstitutaId_.present ())
+      {
+        this->disciplinaSubstitutaId_.set (disciplinaSubstitutaId_traits::create (i, f, this));
         continue;
       }
     }
@@ -13985,6 +14018,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "disciplinaId",
+      "");
+  }
+  
+  if (!disciplinaSubstitutaId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "disciplinaSubstitutaId",
       "");
   }
 

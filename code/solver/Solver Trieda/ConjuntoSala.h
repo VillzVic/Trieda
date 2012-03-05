@@ -5,6 +5,8 @@
 #include "Sala.h"
 #include "CreditoDisponivel.h"
 
+
+
 class ConjuntoSala
 	: public OFBase
 {
@@ -155,9 +157,12 @@ public:
 	   GGroup< Calendario*, LessPtr<Calendario> > calendarios;
 	   ITERA_GGROUP_LESSPTR (itDisc, this->disciplinas_associadas, Disciplina )
        {
+		   if (itDisc->getCalendario() == NULL)
+			   continue;
+
 		   if (  calendarios.find( itDisc->getCalendario() ) == calendarios.end() )
 		   {
-			   calendarios.add( itDisc->getCalendario() );		   
+			   calendarios.add( itDisc->getCalendario() );
 		   }
        }
 

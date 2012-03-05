@@ -16,7 +16,7 @@ public:
 	ProfessorVirtualOutput();
 	virtual ~ProfessorVirtualOutput();
 
-	GGroup< int > disciplinas;
+	GGroup< int > disciplinas; // Se a disciplina tiver sido substituida, é o id da substituta que aparece aqui
 
 	void setId( int value ) { id = value; }
 	void setChMin( int value ) { ch_min = value; }
