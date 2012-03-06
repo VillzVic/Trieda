@@ -485,6 +485,15 @@ public class Curriculo
 
         return q.getResultList();
     }
+    
+    public Integer getPeriodo(Disciplina disciplina) {
+    	for (CurriculoDisciplina cd : getCurriculoDisciplinas()) {
+    		if (cd.getDisciplina().getId().equals(disciplina.getId())) {
+    			return cd.getPeriodo();
+    		}
+    	}
+    	return null;
+    }
 
     @SuppressWarnings( "unchecked" )
 	public Integer getPeriodo(
