@@ -42,8 +42,9 @@ void Curriculo::refDisciplinaPeriodo( GGroup< Disciplina *, LessPtr< Disciplina 
 		{
 			if ( it_disc->getId() == id_disciplina )
 			{
-				disciplinas_periodo.add(
-               std::make_pair( id_periodo, ( *it_disc ) ) );
+				/*disciplinas_periodo.add(
+				std::make_pair( id_periodo, ( *it_disc ) ) );*/
+				disciplinas_periodo[*it_disc] = id_periodo;
 
 				break;
 			}
@@ -55,13 +56,21 @@ void Curriculo::refDisciplinaPeriodo( GGroup< Disciplina *, LessPtr< Disciplina 
 
 int Curriculo::getMaxCreds( int dia )
 {
-	return calendario->getNroDeHorariosAula(dia);
+	map<int, int>::iterator it = mapMaxCreds.find(dia);
+	if(it == mapMaxCreds.end())
+	{
+		int cred = calendario->getNroDeHorariosAula(dia);
+		mapMaxCreds[dia] = cred;
+		return cred;
+	}
+	else
+		return it->second;
 }
 
 
 int Curriculo::getPeriodo( Disciplina *d )
 {
-	GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
+	/*GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
 
 	for (; it != disciplinas_periodo.end(); it++ )
 	{
@@ -70,40 +79,43 @@ int Curriculo::getPeriodo( Disciplina *d )
 
 		if ( id_disciplina == d->getId() )
 			return id_periodo;
-	}
+	}*/
+
+	map < Disciplina*, int, LessPtr< Disciplina > >::iterator it = disciplinas_periodo.find(d);
+
+	if(it != disciplinas_periodo.end())
+		return it->second;
 
 	return 0;
 }
 
 
-bool Curriculo::possuiDisciplina( int idDisciplina )
+bool Curriculo::possuiDisciplina( Disciplina *d )
 {
-	GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
+	/*GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
 
 	for (; it != disciplinas_periodo.end(); it++ )
 	{
 		if ( (*it).second->getId() == idDisciplina )
 			return true;
-   }
-   return false;
+   }*/
+
+	map < Disciplina*, int, LessPtr< Disciplina > >::iterator it = disciplinas_periodo.find(d);
+
+	if(it != disciplinas_periodo.end())
+		return true;
+
+	return false;
 }
 
 GGroup< Calendario*, LessPtr<Calendario> > Curriculo::retornaSemanasLetivasNoPeriodo( int periodo )
 {
 	GGroup< Calendario*, LessPtr<Calendario> > calendarios;
 
-	GGroup< std::pair< int, Disciplina * > >::iterator it = disciplinas_periodo.begin();
+	map< int, GGroup< Calendario*, LessPtr<Calendario> > >::iterator it = semanasLetivas.find(periodo);
 
-	for (; it != disciplinas_periodo.end(); it++ )
-	{
-		Disciplina *d = (*it).second; 
-		if ( (*it).first == periodo &&
-			 calendarios.find( d->getCalendario() ) == calendarios.end() )
-		{
-			calendarios.add( d->getCalendario() );
-		}
-    }
+	if(it != semanasLetivas.end())
+		return it->second;
 
-   return calendarios;
-
+	return calendarios;
 }

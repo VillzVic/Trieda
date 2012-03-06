@@ -282,13 +282,11 @@ SolverMIP::~SolverMIP()
 
 bool SolverMIP::SolVarsPreFound( VariablePre v )
 {
-	std::vector< VariablePre * >::iterator it = solVarsPre.begin();
-	for ( ; it < solVarsPre.end(); it++ )
-	{
-		if ( **it == v )
-			return true;
-	}
-	return false;
+	std::set< VariablePre  >::iterator it = solVarsPre.find(v);
+	if(it != solVarsPre.end() )
+		return true;
+	else
+		return false;
 }
 
 void SolverMIP::carregaVariaveisSolucaoTatico()
@@ -1046,7 +1044,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico()
 #endif
 
 #ifdef READ_SOLUTION_TATICO_BIN
-   FILE* fin = fopen("solBin.bin","rb");
+   FILE* fin = fopen("solBinPre.bin","rb");
 
    int nCols = 0;
 
@@ -1077,7 +1075,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico()
 
       if ( v->getValue() > 0.00001 )
       {
-		 solVarsPre.push_back( v );
+		 solVarsPre.insert( *v );
          
 		 char auxName[100];
          lp->getColName( auxName, col, 100 );
@@ -4016,87 +4014,121 @@ void SolverMIP::getSolution( ProblemSolution * problem_solution )
 int SolverMIP::cria_preVariaveis( void )
 {
 	int num_vars = 0;
-
+	CPUTimer timer;
+	double dif = 0.0;
 
 #ifdef PRINT_cria_variaveis
-   int numVarsAnterior = 0;
-#endif
-
-   num_vars += cria_preVariavel_creditos();   // x_{i,d,s}
-   
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"x\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	int numVarsAnterior = 0;
 #endif
 
-   num_vars += cria_preVariavel_oferecimentos(); // o_{i,d,s}
-   
+	timer.start();
+	num_vars += cria_preVariavel_creditos();   // x_{i,d,s}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"o\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"x\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_preVariavel_abertura();   // z_{i,d}
-   
+	timer.start();
+	num_vars += cria_preVariavel_oferecimentos(); // o_{i,d,s}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"z\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"o\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_preVariavel_alunos();  // a_{i,d,oft,s}
-   
+	timer.start();
+	num_vars += cria_preVariavel_abertura();   // z_{i,d}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
-#endif
-   
-   num_vars += cria_preVariavel_aloc_alunos();   // b_{i,d,c}
-   
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
-#endif
-      
-   num_vars += cria_preVariavel_folga_demanda_disciplina(); // fd_{d,oft}
-   
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fd\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
-#endif
-    
-   num_vars += cria_preVariavel_folga_compartilhamento_incomp(); // bs_{d,oft}
-   
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"bs\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
-#endif
-        
-   num_vars += cria_preVariavel_folga_proibe_compartilhamento(); // fc_{d,oft}
-   
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fc\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"z\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_preVariavel_folga_turma_mesma_disc_sala_dif(); // fs_{d,s}
-   
+	timer.start();
+	num_vars += cria_preVariavel_alunos();  // a_{i,d,oft,s}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fs\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
-#endif
-   
-   num_vars += cria_preVariavel_limite_sup_creds_sala(); // Hs
-   
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"Hs\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_preVariavel_aloca_alunos_oferta(); // c
-   
+	timer.start();
+	num_vars += cria_preVariavel_aloc_alunos();   // b_{i,d,c}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"c\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	timer.start();
+	num_vars += cria_preVariavel_folga_demanda_disciplina(); // fd_{d,oft}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"fd\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	timer.start();
+	num_vars += cria_preVariavel_folga_compartilhamento_incomp(); // bs_{d,oft}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"bs\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	timer.start();
+	num_vars += cria_preVariavel_folga_proibe_compartilhamento(); // fc_{d,oft}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"fc\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	timer.start();
+	num_vars += cria_preVariavel_folga_turma_mesma_disc_sala_dif(); // fs_{d,s}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"fs\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	timer.start();
+	num_vars += cria_preVariavel_limite_sup_creds_sala(); // Hs
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"Hs\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+
+	timer.start();
+	num_vars += cria_preVariavel_aloca_alunos_oferta(); // c
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"c\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif	
 
 	return num_vars;
@@ -4440,7 +4472,7 @@ int SolverMIP::cria_preVariavel_aloc_alunos(void)
 		{
 			Curso *curso = *itCurso;
 
-			if ( !curso->possuiDisciplina( disciplina->getId() ) )
+			if ( !curso->possuiDisciplina( disciplina ) )
 				continue;
 
 			// Calculando P_{d,o}
@@ -4512,7 +4544,7 @@ int SolverMIP::cria_preVariavel_folga_demanda_disciplina(void)
 
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
-      GGroup< std::pair< int, Disciplina * > >::iterator itPrdDisc = 
+      map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
 
       for (; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++ )
@@ -4520,7 +4552,7 @@ int SolverMIP::cria_preVariavel_folga_demanda_disciplina(void)
          // Calculando P_{d,o}
          int qtdDem = 0;
 
-         disciplina = ( *itPrdDisc ).second;
+		 disciplina = itPrdDisc->first;
 
          ITERA_GGROUP_LESSPTR( itDem, problemData->demandas, Demanda )
          {
@@ -4599,10 +4631,7 @@ int SolverMIP::cria_preVariavel_folga_compartilhamento_incomp(void)
 						continue;
 					}
 					#pragma endregion
-
-					int discId = itDisc->getId();
-					
-					if ( !c1->possuiDisciplina(discId) || !c2->possuiDisciplina(discId) )
+					if ( !c1->possuiDisciplina(*itDisc) || !c2->possuiDisciplina(*itDisc) )
 						continue;
 
 					for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
@@ -4668,10 +4697,7 @@ int SolverMIP::cria_preVariavel_folga_proibe_compartilhamento(void)
 						continue;
 					}
 					#pragma endregion
-
-					int discId = itDisc->getId();
-					
-					if ( !c1->possuiDisciplina(discId) || !c2->possuiDisciplina(discId) )
+					if ( !c1->possuiDisciplina(*itDisc) || !c2->possuiDisciplina(*itDisc) )
 						continue;
 
 					for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
@@ -4945,122 +4971,172 @@ int SolverMIP::cria_preVariavel_aloca_alunos_oferta(void)
 
 int SolverMIP::cria_preRestricoes( void  )
 {
-   int restricoes = 0;
+	int restricoes = 0;
+	CPUTimer timer;
+	double dif = 0.0;
 
 #ifdef PRINT_cria_restricoes
-   int numRestAnterior = 0;
+	int numRestAnterior = 0;
 #endif
 
-   restricoes += cria_preRestricao_carga_horaria();					// Restrição 1.1
+	timer.start();
+	restricoes += cria_preRestricao_carga_horaria();					// Restrição 1.1
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.1\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.1\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_preRestricao_max_cred_sala_sl();				// Restrição 1.2
+	timer.start();
+	restricoes += cria_preRestricao_max_cred_sala_sl();				// Restrição 1.2
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-    
-   restricoes += cria_preRestricao_ativacao_var_o();				// Restrição 1.3
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.3\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-   
-   restricoes += cria_preRestricao_evita_mudanca_de_sala();			// Restrição 1.4
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.4\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_preRestricao_cap_aloc_dem_disc();				// Restrição 1.5
+	timer.start();
+	restricoes += cria_preRestricao_ativacao_var_o();				// Restrição 1.3
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.5\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.3\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_preRestricao_aluno_curso_disc();				// Restrição 1.6
+	timer.start();
+	restricoes += cria_preRestricao_evita_mudanca_de_sala();			// Restrição 1.4
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.6\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.4\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_preRestricao_cap_sala();						// Restrição 1.7
+	timer.start();
+	restricoes += cria_preRestricao_cap_aloc_dem_disc();				// Restrição 1.5
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.7\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.5\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+	timer.start();
+	restricoes += cria_preRestricao_aluno_curso_disc();				// Restrição 1.6
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.6\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+	timer.start();
+	restricoes += cria_preRestricao_cap_sala();						// Restrição 1.7
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.7\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
-   
-   restricoes += cria_preRestricao_compartilhamento_incompat();		// Restrição 1.8
+
+	timer.start();
+	restricoes += cria_preRestricao_compartilhamento_incompat();		// Restrição 1.8
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.8\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.8\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif    
 
-   restricoes += cria_preRestricao_proibe_compartilhamento();		// Restrição 1.9
+	timer.start();
+	restricoes += cria_preRestricao_proibe_compartilhamento();		// Restrição 1.9
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.9\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.9\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
 
-   restricoes += cria_preRestricao_ativacao_var_z();				// Restrição 1.10
+	timer.start();
+	restricoes += cria_preRestricao_ativacao_var_z();				// Restrição 1.10
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.10\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.10\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
 
-   restricoes += cria_preRestricao_evita_turma_disc_camp_d();		// Restrição 1.11
+	timer.start();
+	restricoes += cria_preRestricao_evita_turma_disc_camp_d();		// Restrição 1.11
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.11\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.11\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
 
-   restricoes += cria_preRestricao_limita_abertura_turmas();		// Restrição 1.12
+	timer.start();
+	restricoes += cria_preRestricao_limita_abertura_turmas();		// Restrição 1.12
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.12\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.12\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
 
-   restricoes += cria_preRestricao_abre_turmas_em_sequencia();		// Restrição 1.13
+	timer.start();
+	restricoes += cria_preRestricao_abre_turmas_em_sequencia();		// Restrição 1.13
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.13\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.13\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
-   
-   restricoes += cria_preRestricao_turma_mesma_disc_sala_dif();		// Restrição 1.14
+
+	timer.start();
+	restricoes += cria_preRestricao_turma_mesma_disc_sala_dif();		// Restrição 1.14
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.14\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.14\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_preRestricao_limite_sup_creds_sala();		// Restrição 1.15
+	timer.start();
+	restricoes += cria_preRestricao_limite_sup_creds_sala();		// Restrição 1.15
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.15\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.15\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
 
-   restricoes += cria_preRestricao_ativa_var_aloc_aluno_oft();		// Restrição 1.16
+	timer.start();
+	restricoes += cria_preRestricao_ativa_var_aloc_aluno_oft();		// Restrição 1.16
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.16\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.16\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif   
 
    restricoes += cria_preRestricao_fixa_nao_compartilhamento();		// Restrição 1.17
@@ -5461,12 +5537,12 @@ int SolverMIP::cria_preRestricao_cap_aloc_dem_disc(void)
 
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
-      GGroup< std::pair< int, Disciplina * > >::iterator itPrdDisc = 
+      map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
 
       for (; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++ )
       {
-         disciplina = ( *itPrdDisc ).second;
+		  disciplina = itPrdDisc->first;
 
          c.reset();
          c.setType( ConstraintPre::C_PRE_CAP_ALOC_DEM_DISC );
@@ -5589,7 +5665,7 @@ int SolverMIP::cria_preRestricao_aluno_curso_disc(void)
 		{
 			Curso *curso = *itCurso;
 
-			if ( !curso->possuiDisciplina( disciplina->getId() ) )
+			if ( !curso->possuiDisciplina( disciplina ) )
 				continue;
 
 			// Calculando P_{d,o}
@@ -5840,8 +5916,8 @@ int SolverMIP::cria_preRestricao_compartilhamento_incompat(void)
 					}
 					#pragma endregion
 										
-					if ( !c1->possuiDisciplina( disciplina->getId() ) ||
-						 !c2->possuiDisciplina( disciplina->getId() ) )
+					if ( !c1->possuiDisciplina( disciplina ) ||
+						 !c2->possuiDisciplina( disciplina ) )
 						continue;
 
 					for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
@@ -5954,8 +6030,8 @@ int SolverMIP::cria_preRestricao_proibe_compartilhamento(void)
 					}
 					#pragma endregion
 										
-					if ( !c1->possuiDisciplina( disciplina->getId() ) ||
-						 !c2->possuiDisciplina( disciplina->getId() ) )
+					if ( !c1->possuiDisciplina( disciplina ) ||
+						 !c2->possuiDisciplina( disciplina ) )
 						continue;
 							
 					for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
@@ -6822,20 +6898,20 @@ int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento(void)
 				}
 				#pragma endregion
 				
-				GGroup<Oferta*, LessPtr<Oferta>> ofts1 = cp->retornaOfertasComCursoDisc( c1->getId(), discComum->getId() );
-				GGroup<Oferta*, LessPtr<Oferta>> ofts2 = cp->retornaOfertasComCursoDisc( c2->getId(), discComum->getId() );
+				GGroup<Oferta*, LessPtr<Oferta>> ofts1 = cp->retornaOfertasComCursoDisc( c1->getId(), discComum );
+				GGroup<Oferta*, LessPtr<Oferta>> ofts2 = cp->retornaOfertasComCursoDisc( c2->getId(), discComum );
 
 				// para cada oferta contendo discComum do curso c1
 				ITERA_GGROUP_LESSPTR( itOft1, ofts1, Oferta )
 				{
 					Oferta *oft1 = *itOft1;
-					int periodo1 = oft1->periodoDisciplina( discComum->getId() );
+					int periodo1 = oft1->periodoDisciplina( discComum );
 
 					// para cada oferta contendo discComum do curso c2
 					ITERA_GGROUP_LESSPTR( itOft2, ofts2, Oferta )
 					{
 						Oferta *oft2 = *itOft2;
-						int periodo2 = oft2->periodoDisciplina( discComum->getId() );
+						int periodo2 = oft2->periodoDisciplina( discComum );
 
 						if ( oft1->getId() == oft2->getId() )
 							continue;
@@ -6931,259 +7007,348 @@ int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento(void)
 
 int SolverMIP::cria_variaveis()
 {
-   int num_vars = 0;
+	int num_vars = 0;
+	CPUTimer timer;
+	double dif = 0.0;
 
 #ifdef PRINT_cria_variaveis
-   int numVarsAnterior = 0;
+	int numVarsAnterior = 0;
 #endif
 
-   //if(!problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_oferecimentos(); // variável 'o'
-   //else
-   //   num_vars += cria_variavel_oferecimentos_permitir_alunos_varios_campi(); // variavel o
+	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
+	timer.start();
+	num_vars += cria_variavel_oferecimentos(); // variável 'o'
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//else
+	//   num_vars += cria_variavel_oferecimentos_permitir_alunos_varios_campi(); // variavel o
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"o\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"o\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   //if (!problemData->parametros->permitir_alunos_em_varios_campi)
-   //{
-   num_vars += cria_variavel_creditos(); // x
-   //}
-   //else
-   //{
-   //   num_vars += cria_variavel_creditos_permitir_alunos_varios_campi(); // x
-   //}
+	//if (!problemData->parametros->permitir_alunos_em_varios_campi)
+	//{
+	timer.start();
+	num_vars += cria_variavel_creditos(); // x
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//}
+	//else
+	//{
+	//   num_vars += cria_variavel_creditos_permitir_alunos_varios_campi(); // x
+	//}
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"x\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"x\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   //if(!problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_abertura(); // z
-   //else
-   //   num_vars += cria_variavel_abertura_permitir_alunos_varios_campi(); // z
+	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
+	timer.start();
+	num_vars += cria_variavel_abertura(); // z
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//else
+	//   num_vars += cria_variavel_abertura_permitir_alunos_varios_campi(); // z
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"z\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"z\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_alunos(); // a
+	timer.start();
+	num_vars += cria_variavel_alunos(); // a
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"a\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_consecutivos(); // c
+	timer.start();
+	num_vars += cria_variavel_consecutivos(); // c
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"c\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"c\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_max_creds(); // H
+	timer.start();
+	num_vars += cria_variavel_max_creds(); // H
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"H\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"H\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_min_creds(); // h
+	timer.start();
+	num_vars += cria_variavel_min_creds(); // h
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"h\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"h\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   //if(!problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_aloc_disciplina(); // y
-   //else
-   //   num_vars += cria_variavel_aloc_disciplina_permitir_alunos_varios_campi(); // y
+	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
+	timer.start();
+	num_vars += cria_variavel_aloc_disciplina(); // y
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//else
+	//   num_vars += cria_variavel_aloc_disciplina_permitir_alunos_varios_campi(); // y
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"y\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"y\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_num_subblocos(); // w
+	timer.start();
+	num_vars += cria_variavel_num_subblocos(); // w
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"w\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"w\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_num_abertura_turma_bloco(); // v
+	timer.start();
+	num_vars += cria_variavel_num_abertura_turma_bloco(); // v
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"v\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"v\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   //if (!problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_aloc_alunos(); // b
-   //else
-   //   num_vars += cria_variavel_aloc_alunos_permitir_alunos_varios_campi(); // b
+	//if (!problemData->parametros->permitir_alunos_em_varios_campi)
+	timer.start();
+	num_vars += cria_variavel_aloc_alunos(); // b
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//else
+	//   num_vars += cria_variavel_aloc_alunos_permitir_alunos_varios_campi(); // b
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"b\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"b\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   //if(!problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_de_folga_dist_cred_dia_superior(); // fcp
-   //else
-   //   num_vars += cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_varios_campi(); // fcp
+	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
+	timer.start();
+	num_vars += cria_variavel_de_folga_dist_cred_dia_superior(); // fcp
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//else
+	//   num_vars += cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_varios_campi(); // fcp
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fcp\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"fcp\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   //if(!problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_de_folga_dist_cred_dia_inferior(); // fcm
-   //else
-   //   num_vars += cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_varios_campi(); // fcm
+	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
+	timer.start();
+	num_vars += cria_variavel_de_folga_dist_cred_dia_inferior(); // fcm
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//else
+	//   num_vars += cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_varios_campi(); // fcm
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fcm\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"fcm\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_abertura_subbloco_de_blc_dia_campus(); // r
+	timer.start();
+	num_vars += cria_variavel_abertura_subbloco_de_blc_dia_campus(); // r
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"r\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"r\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   //if(!problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat(); // bs
-   //else
-   //   num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat_permitir_alunos_varios_campi(); // bs
+	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
+	timer.start();
+	num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat(); // bs
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	//else
+	//   num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat_permitir_alunos_varios_campi(); // bs
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"bs\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"bs\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_de_folga_demanda_disciplina(); // fd
+	timer.start();
+	num_vars += cria_variavel_de_folga_demanda_disciplina(); // fd
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fd\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"fd\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_combinacao_divisao_credito(); // m
+	timer.start();
+	num_vars += cria_variavel_combinacao_divisao_credito(); // m
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"m\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"m\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_de_folga_combinacao_divisao_credito(); // fk
+	timer.start();
+	num_vars += cria_variavel_de_folga_combinacao_divisao_credito(); // fk
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fk\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"fk\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
-/*
-   //if(problemData->parametros->permitir_alunos_em_varios_campi)
-   num_vars += cria_variavel_creditos_modificada(); // xm
-   //else
-   //   num_vars += cria_variavel_creditos_modificada_permitir_alunos_varios_campi(); // xm
+	/*
+	//if(problemData->parametros->permitir_alunos_em_varios_campi)
+	num_vars += cria_variavel_creditos_modificada(); // xm
+	//else
+	//   num_vars += cria_variavel_creditos_modificada_permitir_alunos_varios_campi(); // xm
 
 
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"xm\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
-#endif
-*/
-   num_vars += cria_variavel_abertura_compativel(); // zc
-
-#ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"zc\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
-#endif
-
-/* // "n" não está sendo usado.
-   //  A restrição que a usaria tem uma msg de erro de modelagem. Pode ser que tenha sido consertado. 
-   num_vars += cria_variavel_abertura_bloco_mesmoTPS(); // n
+	#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"xm\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+	#endif
+	*/
+	timer.start();
+	num_vars += cria_variavel_abertura_compativel(); // zc
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"n\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"zc\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-*/
+	/* // "n" não está sendo usado.
+	//  A restrição que a usaria tem uma msg de erro de modelagem. Pode ser que tenha sido consertado. 
+	timer.start();
+	num_vars += cria_variavel_abertura_bloco_mesmoTPS(); // n
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
-   num_vars += cria_variavel_de_folga_abertura_bloco_mesmoTPS(); // fn
+	#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"n\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+	#endif
+
+	*/
+
+	timer.start();
+	num_vars += cria_variavel_de_folga_abertura_bloco_mesmoTPS(); // fn
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fn\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"fn\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_de_folga_compartilhamento(); // fc
+	timer.start();
+	num_vars += cria_variavel_de_folga_compartilhamento(); // fc
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"fn\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"fn\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_aloc_alunos_oft(); // e
+	timer.start();
+	num_vars += cria_variavel_aloc_alunos_oft(); // e
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"e\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"e\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_creditos_oferta(); // q
+	timer.start();
+	num_vars += cria_variavel_creditos_oferta(); // q
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"q\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"q\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_aloc_alunos_parOft(); // of
+	timer.start();
+	num_vars += cria_variavel_aloc_alunos_parOft(); // of
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"of\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"of\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_creditos_parOferta(); // p
+	timer.start();
+	num_vars += cria_variavel_creditos_parOferta(); // p
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"p\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"p\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_min_hor_disc_oft_dia(); // g
+	timer.start();
+	num_vars += cria_variavel_min_hor_disc_oft_dia(); // g
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"g\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"g\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif
 
-   num_vars += cria_variavel_maxCreds_combina_sl_sala(); // cs
+	timer.start();
+	num_vars += cria_variavel_maxCreds_combina_sl_sala(); // cs
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"cs\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"cs\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif   
-	   
-   num_vars += cria_variavel_maxCreds_combina_Sl_bloco(); // cbc
+
+	timer.start();
+	num_vars += cria_variavel_maxCreds_combina_Sl_bloco(); // cbc
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars \"cbc\": " << (num_vars - numVarsAnterior) << std::endl;
-   numVarsAnterior = num_vars;
+	std::cout << "numVars \"cbc\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
 #endif   
 
-   return num_vars;
+	return num_vars;
 }
 
 /*====================================================================/
@@ -7878,12 +8043,12 @@ int SolverMIP::cria_variavel_alunos(void)
    
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
-      GGroup< std::pair< int, Disciplina * > >::iterator itPrdDisc = 
+      map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end();
          itPrdDisc++ )
       {
-         Disciplina * ptDisc = ( *itPrdDisc ).second;
+		  Disciplina * ptDisc = itPrdDisc->first;
 
 		  #pragma region Equivalencias
 		  if ( problemData->mapDiscSubstituidaPor.find( ptDisc ) !=
@@ -7977,12 +8142,12 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
       Campus * pt_Campus = it_Oferta->campus;
       Curso * pt_Curso = it_Oferta->curso;
 
-      GGroup< std::pair< int, Disciplina * > >::iterator it_Prd_Disc = 
+      map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_Prd_Disc = 
          it_Oferta->curriculo->disciplinas_periodo.begin();
       for(; it_Prd_Disc != it_Oferta->curriculo->disciplinas_periodo.end();
          it_Prd_Disc++ )
       {
-         disciplina = ( *it_Prd_Disc ).second;
+		  disciplina = it_Prd_Disc->first;
 
 		  #pragma region Equivalencias
 		  if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -9185,9 +9350,7 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
 					 }
 					 #pragma endregion
 
-					int discId = itDisc->getId();
-					
-					if ( !c1->possuiDisciplina(discId) || !c2->possuiDisciplina(discId) )
+					if ( !c1->possuiDisciplina(*itDisc) || !c2->possuiDisciplina(*itDisc) )
 						continue;
 
 					for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
@@ -9406,7 +9569,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
    
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
-      GGroup< std::pair< int, Disciplina * > >::iterator itPrdDisc = 
+      map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
 
       for (; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++ )
@@ -9414,7 +9577,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
          // Calculando P_{d,o}
          int qtdDem = 0;
 
-         disciplina = ( *itPrdDisc ).second;
+		 disciplina = itPrdDisc->first;
 
          ITERA_GGROUP_LESSPTR( itDem, problemData->demandas, Demanda )
          {
@@ -10045,10 +10208,10 @@ int SolverMIP::cria_variavel_aloc_alunos_oft()
    {
 	    Oferta *oft = *itOft;
 
-	    GGroup< std::pair< int, Disciplina * > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
+	    map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
-		    Disciplina * d = (*it_disc).second;
+			Disciplina * d = it_disc->first;
 			 
 		    for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
 		    {
@@ -10121,7 +10284,7 @@ int SolverMIP::cria_variavel_creditos_oferta( void )
 				}
 				#pragma endregion
 
-			   if ( ! oft->curriculo->possuiDisciplina( disciplina->getId() ) )
+			   if ( ! oft->curriculo->possuiDisciplina( disciplina ) )
 				   continue;
 
 
@@ -10406,10 +10569,10 @@ int SolverMIP::cria_variavel_min_hor_disc_oft_dia()
    {
 	    Oferta *oft = *itOft;
 
-	    GGroup< std::pair< int, Disciplina * > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
+	    map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
-		    Disciplina * d = (*it_disc).second;
+			Disciplina * d = it_disc->first;
 	
 			GGroup< int >::iterator itDia = d->diasLetivos.begin();
 			for (; itDia != d->diasLetivos.end(); itDia++ )
@@ -10561,339 +10724,499 @@ int SolverMIP::cria_variavel_maxCreds_combina_Sl_bloco(void)
 
 int SolverMIP::cria_restricoes( void )
 {
-   int restricoes = 0;
+	int restricoes = 0;
+
+	CPUTimer timer;
+	double dif = 0.0;
 
 #ifdef PRINT_cria_restricoes
-   int numRestAnterior = 0;
+	int numRestAnterior = 0;
 #endif
 
-   restricoes += cria_restricao_carga_horaria();				// Restricao 1.2.2
+	timer.start();
+	restricoes += cria_restricao_carga_horaria();				// Restricao 1.2.2
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.2\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.2\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_max_tempo_sd();					// Restricao 1.2.3.a
+	timer.start();
+	restricoes += cria_restricao_max_tempo_sd();					// Restricao 1.2.3.a
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.3.a\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.3.a\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
-     
-   restricoes += cria_restricao_max_tempo_s_t_SL();				// Restricao 1.2.3.b
+
+	timer.start();
+	restricoes += cria_restricao_max_tempo_s_t_SL();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+	timer.start();
+	//   restricoes += cria_restricao_max_tempo_s_d_SL();				// Restricao 1.2.3.b
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.3.b\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.3.b\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_min_cred_dd();					// Restricao 1.2.4
+	timer.start();
+	restricoes += cria_restricao_min_cred_dd();					// Restricao 1.2.4
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.4\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.4\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_ativacao_var_o();					// Restricao 1.2.5
+	timer.start();
+	restricoes += cria_restricao_ativacao_var_o();					// Restricao 1.2.5
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.5\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.5\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_evita_sobreposicao();			// Restricao 1.2.6
+	timer.start();
+	restricoes += cria_restricao_evita_sobreposicao();			// Restricao 1.2.6
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.6\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.6\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_disciplina_sala();				// Restricao 1.2.7
+	timer.start();
+	restricoes += cria_restricao_disciplina_sala();				// Restricao 1.2.7
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.7\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.7\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_turma_sala();					// Restricao 1.2.8
+	timer.start();
+	restricoes += cria_restricao_turma_sala();					// Restricao 1.2.8
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.8\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.8\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_evita_turma_disc_camp_d();		// Restricao 1.2.9
+	timer.start();
+	restricoes += cria_restricao_evita_turma_disc_camp_d();		// Restricao 1.2.9
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.9\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.9\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_turmas_bloco();				// Restricao 1.2.10
+	timer.start();
+	restricoes += cria_restricao_turmas_bloco();				// Restricao 1.2.10
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.10\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.10\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-/* //TODO: acho que essa função não vai ser mais usada!! A restrição 1.2.41 a substitui
+	/* //TODO: acho que essa função não vai ser mais usada!! A restrição 1.2.41 a substitui
 
-   restricoes += cria_restricao_max_cred_disc_bloco();			// Restricao 1.2.11
+	timer.start();
+	restricoes += cria_restricao_max_cred_disc_bloco();			// Restricao 1.2.11
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+	#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.11\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+	#endif
+
+	*/
+	timer.start();
+	restricoes += cria_restricao_num_tur_bloc_dia_difunid();	// Restricao 1.2.12
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.11\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.12\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
- 
-*/
-   restricoes += cria_restricao_num_tur_bloc_dia_difunid();	// Restricao 1.2.12
+
+	timer.start();
+	restricoes += cria_restricao_lim_cred_diar_disc();			// Restricao 1.2.13
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.12\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.13\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_lim_cred_diar_disc();			// Restricao 1.2.13
+	timer.start();
+	restricoes += cria_restricao_cap_aloc_dem_disc();			// Restricao 1.2.14
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.13\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.14\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_cap_aloc_dem_disc();			// Restricao 1.2.14
+	timer.start();
+	restricoes += cria_restricao_cap_sala_compativel_turma();	// Restricao 1.2.15
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.14\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.15\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_cap_sala_compativel_turma();	// Restricao 1.2.15
+	timer.start();
+	restricoes += cria_restricao_cap_sala_unidade();			// Restricao 1.2.16
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.15\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.16\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_cap_sala_unidade();			// Restricao 1.2.16
+	timer.start();
+	//restricoes += cria_restricao_turma_disc_dias_consec();		// Restricao 1.2.17
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.16\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	//std::cout << "numRest \"1.2.17\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	std::cout << "numRest \"1.2.17\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO - VER ToDo 12 (MARIO)"  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   //restricoes += cria_restricao_turma_disc_dias_consec();		// Restricao 1.2.17
+	timer.start();
+	restricoes += cria_restricao_min_creds_turm_bloco();		// Restricao 1.2.18
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   //std::cout << "numRest \"1.2.17\": " << (restricoes - numRestAnterior) << std::endl;
-   std::cout << "numRest \"1.2.17\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO - VER ToDo 12 (MARIO)" << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.18\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_min_creds_turm_bloco();		// Restricao 1.2.18
+	timer.start();
+	restricoes += cria_restricao_max_creds_turm_bloco();		// Restricao 1.2.19
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.18\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.19\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_max_creds_turm_bloco();		// Restricao 1.2.19
+	timer.start();
+	restricoes += cria_restricao_aluno_curso_disc();			// Restricao 1.2.20
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.19\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.20\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_aluno_curso_disc();			// Restricao 1.2.20
+	timer.start();
+	restricoes += cria_restricao_alunos_cursos_incompat();		// Restricao 1.2.21
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.20\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.21\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	//std::cout << "numVars \"1.2.21\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa restricao implementada)."  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_alunos_cursos_incompat();		// Restricao 1.2.21
+
+	timer.start();
+	restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.22
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.21\": " << (restricoes - numRestAnterior) << std::endl;
-   //std::cout << "numVars \"1.2.21\": NAO ESTA SENDO CRIADA DEVIDO A ERROS DE IMPLEMENTACAO (A Inst. UNI-BH nao precisa dessa restricao implementada)." << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.22\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	//std::cout << "numRest \"1.2.22\": NAO ESTA SENDO CRIADA DEVIDO A NOVA MODELAGEM QUE O MARCELO FEZ."  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.22
+
+	timer.start();
+	restricoes += cria_restricao_ativacao_var_r();						// Restricao 1.2.23
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.22\": " << (restricoes - numRestAnterior) << std::endl;
-   //std::cout << "numRest \"1.2.22\": NAO ESTA SENDO CRIADA DEVIDO A NOVA MODELAGEM QUE O MARCELO FEZ." << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.23\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_ativacao_var_r();						// Restricao 1.2.23
+
+	timer.start();
+	restricoes += cria_restricao_limita_abertura_turmas();						// Restricao 1.2.24
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.23\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.24\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_limita_abertura_turmas();						// Restricao 1.2.24
+
+	timer.start();
+	restricoes += cria_restricao_abre_turmas_em_sequencia();						// Restricao 1.2.25
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.24\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.25\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_abre_turmas_em_sequencia();						// Restricao 1.2.25
+
+	timer.start();
+	restricoes += cria_restricao_divisao_credito();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.25\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.26\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_divisao_credito();
+
+	timer.start();
+	restricoes += cria_restricao_combinacao_divisao_credito();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.26\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.27\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_combinacao_divisao_credito();
+
+	timer.start();
+	restricoes += cria_restricao_ativacao_var_y();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.27\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.28\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_ativacao_var_y();
+	/*
+	timer.start();
+	restricoes += cria_restricao_max_creds_disc_dia();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	
+
+	#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.29\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+	#endif
+
+	timer.start();
+	restricoes += cria_restricao_max_creds_bloco_dia();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	
+
+	#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.30\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+	#endif
+
+	*/
+
+
+	timer.start();
+	restricoes += cria_restricao_ativacao_var_zc();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.28\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.31\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-/*
-   restricoes += cria_restricao_max_creds_disc_dia();
+	timer.start();
+	restricoes +=  cria_restricao_disciplinas_incompativeis();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.29\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.32\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes += cria_restricao_max_creds_bloco_dia();
+	timer.start();
+	//restricoes +=  cria_restricao_abertura_bloco_mesmoTPS();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.30\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	//std::cout << "numRest \"1.2.33\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	std::cout << "numRest \"1.2.33\": NAO ESTA SENDO CRIADA DEVIDO A ERRO DE MODELAGEM - (MARIO)"  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-*/
-
-   restricoes += cria_restricao_ativacao_var_zc();
+	timer.start();
+	//restricoes +=  cria_restricao_folga_abertura_bloco_mesmoTPS();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.31\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	//std::cout << "numRest \"1.2.34\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	std::cout << "numRest \"1.2.34\": NAO ESTA SENDO CRIADA DEVIDO A ERRO DE MODELAGEM DA RESTRICAO 1.2.33 - (MARIO)"  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_disciplinas_incompativeis();
+	timer.start();
+	restricoes +=  cria_restricao_proibe_compartilhamento();			// Restricao 1.2.35
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.32\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.35\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   //restricoes +=  cria_restricao_abertura_bloco_mesmoTPS();
+
+	timer.start();
+	restricoes +=  cria_restricao_ativacao_var_e();				// Restricao 1.2.36
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   //std::cout << "numRest \"1.2.33\": " << (restricoes - numRestAnterior) << std::endl;
-   std::cout << "numRest \"1.2.33\": NAO ESTA SENDO CRIADA DEVIDO A ERRO DE MODELAGEM - (MARIO)" << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.36\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   //restricoes +=  cria_restricao_folga_abertura_bloco_mesmoTPS();
+
+	timer.start();
+	restricoes +=  cria_restricao_evita_sobrepos_sala_por_compartilhamento();	// Restricao 1.2.37
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   //std::cout << "numRest \"1.2.34\": " << (restricoes - numRestAnterior) << std::endl;
-   std::cout << "numRest \"1.2.34\": NAO ESTA SENDO CRIADA DEVIDO A ERRO DE MODELAGEM DA RESTRICAO 1.2.33 - (MARIO)" << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.37\": " << (restricoes - numRestAnterior) <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_proibe_compartilhamento();			// Restricao 1.2.35
+	timer.start();
+	restricoes +=  cria_restricao_ativacao_var_of();	// Restricao 1.2.38, 1.2.39, 1.2.40
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.35\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.38, 1.2.39, 1.2.40\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_ativacao_var_e();				// Restricao 1.2.36
+	timer.start();
+	restricoes +=  cria_restricao_ativacao_var_p();	// Restrições 1.2.41, 1.2.42, 1.2.43
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.36\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.41, 1.2.42, 1.2.43\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_evita_sobrepos_sala_por_compartilhamento();	// Restricao 1.2.37
+	timer.start();
+	restricoes +=  cria_restricao_ativacao_var_g();	// Restricao 1.2.44
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.37\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.44\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_ativacao_var_of();	// Restricao 1.2.38, 1.2.39, 1.2.40
+	timer.start();
+	restricoes +=  cria_restricao_evita_sobrepos_sala_por_div_turmas();	// Restricao 1.2.45
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.38, 1.2.39, 1.2.40\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.45\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_ativacao_var_p();	// Restrições 1.2.41, 1.2.42, 1.2.43
+	timer.start();
+	restricoes +=  cria_restricao_ativacao_var_q();	// Restricoes 1.2.46, 1.2.47, 1.2.48
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.41, 1.2.42, 1.2.43\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.46, 1.2.47, 1.2.48\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_ativacao_var_g();	// Restricao 1.2.44
+	timer.start();
+	restricoes += cria_restricao_ativacao_var_cs(); // Restricao 1.2.49
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.44\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.49\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   restricoes +=  cria_restricao_evita_sobrepos_sala_por_div_turmas();	// Restricao 1.2.45
+	timer.start();
+	restricoes += cria_restricao_fixa_nao_compartilhamento(); // Restricao 1.2.50
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.45\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.50\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
-   
-   restricoes +=  cria_restricao_ativacao_var_q();	// Restricoes 1.2.46, 1.2.47, 1.2.48
+
+	timer.start();
+	restricoes += cria_restricao_ativacao_var_cbc(); // Restricao 1.2.51
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
 #ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.46, 1.2.47, 1.2.48\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-   
-   restricoes += cria_restricao_ativacao_var_cs(); // Restricao 1.2.49
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.49\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-   
-   restricoes += cria_restricao_fixa_nao_compartilhamento(); // Restricao 1.2.50
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.50\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
-#endif
-   
-   restricoes += cria_restricao_ativacao_var_cbc(); // Restricao 1.2.51
-
-#ifdef PRINT_cria_restricoes
-   std::cout << "numRest \"1.2.51\": " << (restricoes - numRestAnterior) << std::endl;
-   numRestAnterior = restricoes;
+	std::cout << "numRest \"1.2.51\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
 #endif
 
-   return restricoes;
+	return restricoes;
 }
 
 /*====================================================================/
@@ -12718,12 +13041,12 @@ int SolverMIP::cria_restricao_cap_aloc_dem_disc( void )
 
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
-      GGroup< std::pair< int, Disciplina * > >::iterator itPrdDisc = 
+      map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
 
       for (; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end(); itPrdDisc++ )
       {
-         disciplina = ( *itPrdDisc ).second;
+		  disciplina = itPrdDisc->first;
 
          std::pair< Curso *, Curriculo * > curso_curriculo
             = problemData->map_Disc_CursoCurriculo[ disciplina ];
@@ -13849,10 +14172,8 @@ int SolverMIP::cria_restricao_alunos_cursos_incompat(void)
 					{
 					   disciplina = disciplina_equivalente;
 					}
-
-					int discId = disciplina->getId();
 					
-					if ( !c1->possuiDisciplina(discId) || !c2->possuiDisciplina(discId) )
+					if ( !c1->possuiDisciplina(disciplina) || !c2->possuiDisciplina(disciplina) )
 						continue;
 					
 
@@ -15775,33 +16096,34 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 		exit(1);
 	}
 
-   int restricoes = 0;
+	int restricoes = 0;
 
-   char name[ 200 ];
-   int nnz;
-   double M = 9999.0;
+	int nnz;
+	double M = 9999.0;
 
-   Constraint c;
-   Variable v;
-   VariableHash::iterator it_v;
-   Disciplina * disciplina_equivalente = NULL;
-   Curso * curso = NULL;
-   Curriculo * curriculo = NULL;
+	Constraint c;
+	Variable v;
+	VariableHash::iterator it_v;
+	Disciplina * disciplina_equivalente = NULL;
+	Curso * curso = NULL;
+	Curriculo * curriculo = NULL;
 
-   // para cada campus
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-	   Campus *cp = *itCampus;
+	//map< int, map< pair< Oferta*, Oferta* >, vector<int> > > vars;
 
-	   // para cada par de ofertas compativeis
-	   std::map< std::pair< Oferta *, Oferta * >, std::vector< int > >::iterator
-               it_oftsComp_disc = problemData->oftsComp_disc.begin();
+	// para cada campus
+	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+	{
+		Campus *cp = *itCampus;
 
-        for (; it_oftsComp_disc != problemData->oftsComp_disc.end(); it_oftsComp_disc++ )
-        {
+		// para cada par de ofertas compativeis
+		std::map< std::pair< Oferta *, Oferta * >, std::vector< int > >::iterator
+			it_oftsComp_disc = problemData->oftsComp_disc.begin();
+
+		for (; it_oftsComp_disc != problemData->oftsComp_disc.end(); it_oftsComp_disc++ )
+		{
 			Oferta *oft1 = it_oftsComp_disc->first.first;
 			Oferta *oft2 = it_oftsComp_disc->first.second;
-			
+
 			if ( oft1->campus != cp || oft1->campus != cp )
 				continue;
 
@@ -15809,21 +16131,21 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 			Curso *c2 = oft2->curso;
 
 			if ( c1->getId() != c2->getId() &&
-				 !problemData->parametros->permite_compartilhamento_turma_sel )
+				!problemData->parametros->permite_compartilhamento_turma_sel )
 			{
 				continue;
 			}
 
 			// para cada disciplina em comum (possivel de ser compartilhada) ao par de ofertas
-            std::vector< int >::iterator it_discComum = it_oftsComp_disc->second.begin();
-            for (; it_discComum != it_oftsComp_disc->second.end(); ++it_discComum )
-            {
+			std::vector< int >::iterator it_discComum = it_oftsComp_disc->second.begin();
+			for (; it_discComum != it_oftsComp_disc->second.end(); ++it_discComum )
+			{
 				Disciplina * discComum = problemData->retornaDisciplina( *it_discComum );
-				  
+
 				if (discComum == NULL)
 					continue;
 
-				#pragma region Equivalência de disciplinas
+#pragma region Equivalência de disciplinas
 				std::pair< Curso *, Curriculo * > curso_curriculo
 					= problemData->map_Disc_CursoCurriculo[ discComum ];
 				curso = curso_curriculo.first;
@@ -15834,17 +16156,17 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 				{
 					discComum = disciplina_equivalente;
 				}
-				#pragma endregion
-				
-				int periodo1 = oft1->periodoDisciplina( discComum->getId() );
-				int periodo2 = oft2->periodoDisciplina( discComum->getId() );
+#pragma endregion
+
+				int periodo1 = oft1->periodoDisciplina( discComum );
+				int periodo2 = oft2->periodoDisciplina( discComum );
 
 				// Cria a restrição somente para períodos que possuem uma mesma semana letiva
 				GGroup< Calendario*, LessPtr<Calendario> > sls1 = oft1->curriculo->retornaSemanasLetivasNoPeriodo( periodo1 );
 				GGroup< Calendario*, LessPtr<Calendario> > sls2 = oft2->curriculo->retornaSemanasLetivasNoPeriodo( periodo2 );
 				if ( sls1.size() != 1 ||
-					 sls2.size() != 1 ||
-					 sls1.begin()->getId() != sls2.begin()->getId() )
+					sls2.size() != 1 ||
+					sls1.begin()->getId() != sls2.begin()->getId() )
 				{
 					continue;
 				}
@@ -15852,6 +16174,27 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 				// para cada turma da disciplina em comum
 				for ( int turma = 0; turma < discComum->getNumTurmas(); turma++ )
 				{
+					vector< pair< int, double > > cols;
+
+#pragma region Variavel of_{i,d,oft1,oft2}
+					v.reset();
+					v.setType( Variable::V_ALOC_ALUNOS_PAR_OFT ); // of_{i,d,oft1,oft2}
+					v.setTurma( turma );
+					v.setDisciplina( discComum );
+					v.setParOfertas( oft1, oft2 );
+
+					it_v = vHash.find( v );
+					if( it_v != vHash.end() )
+					{
+						//row.insert(it_v->second, M);
+						cols.push_back(make_pair(it_v->second, M));
+					}
+					else
+					{
+						continue; // Não cria a restrição se não existe a variável of_{i,d,oft1,oft2}
+					}
+#pragma endregion
+
 					// para cada unidade do campus da disc compartilhada
 					ITERA_GGROUP_LESSPTR( itUnid, cp->unidades, Unidade )
 					{
@@ -15862,16 +16205,66 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 							if ( itCjtSalaCompart->salas.size() != 1 )
 								continue;
 							if ( itCjtSalaCompart->disciplinas_associadas.find( discComum ) ==
-									itCjtSalaCompart->disciplinas_associadas.end() )
+								itCjtSalaCompart->disciplinas_associadas.end() )
 								continue;
 
 							Sala* salaCompart = itCjtSalaCompart->salas.begin()->second;
-							
+
 							// Para cada dia em que discComum pode ser ministrada na salaCompart
 							GGroup< int > diasLetivos = itCjtSalaCompart->dias_letivos_disciplinas[ discComum ];
 							GGroup< int >::iterator itDia = diasLetivos.begin();
 							for (; itDia != diasLetivos.end(); itDia++ )
 							{
+								//// para cada unidade
+								//ITERA_GGROUP_LESSPTR( itUnid2, cp->unidades, Unidade )
+								//{
+								//	// para cada sala
+								//	ITERA_GGROUP_LESSPTR( itCjtSala, itUnid2->conjutoSalas, ConjuntoSala )
+								//	{  
+								//		// cada conjunto de salas só pode ter 1 sala!
+								//		if ( itCjtSala->salas.size() != 1 )
+								//			continue;
+								//		// sala diferente da sala da discComum
+								//		if ( itCjtSala->salas.begin()->first == salaCompart->getId() )
+								//			continue;
+
+								
+
+#pragma region Variavel x_{i,d,u,s,t}
+								v.reset();
+								v.setType( Variable::V_CREDITOS ); // x_{i,d,u,s,t}
+								v.setTurma( turma );
+								v.setDisciplina( discComum );
+								v.setUnidade( *itUnid );
+								v.setSubCjtSala( *itCjtSalaCompart );
+								v.setDia(*itDia);											
+
+								it_v = vHash.find( v );
+								if( it_v != vHash.end() )
+								{
+									//row.insert(it_v->second, 1);
+									cols.push_back(make_pair(it_v->second, 1));
+								}
+								else
+								{
+									continue; // Não cria a restrição se não existe a variável x_{i,d,u,s,t}
+								}
+#pragma endregion
+
+								/*outTestFile << "R" << restricoes
+								<< "  i=" << c.getTurma()
+								<< " d=" << c.getDisciplina()->getId()
+								<< " ofts=" << c.getParOfertas().first->getId() << " " << c.getParOfertas().second->getId()
+								<< " u=" << c.getUnidade()
+								<< " sC" << c.getSubCjtSalaCompart()												
+								<< " s" << c.getSubCjtSala()
+								<< " t=" << c.getDia() << endl;*/
+
+								/*if(!verificou)
+								{
+								verificou = true;
+								bool inseriu = false;*/
+
 								// para cada unidade
 								ITERA_GGROUP_LESSPTR( itUnid2, cp->unidades, Unidade )
 								{
@@ -15885,105 +16278,6 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 										if ( itCjtSala->salas.begin()->first == salaCompart->getId() )
 											continue;
 
-										//-------------------------------------------------------------------------
-										// NOVA RESTRICAO
-												
-										c.reset();
-										c.setType( Constraint::C_EVITA_SOBREPOS_SALA_POR_COMPART );
-										c.setParOfertas( std::make_pair( oft1, oft2 ) );
-										c.setDisciplina( discComum );
-										c.setTurma( turma );
-										c.setSubCjtSalaCompart(*itCjtSalaCompart);
-										c.setDia(*itDia);
-										c.setSubCjtSala(*itCjtSala);
-
-										if ( cHash.find( c ) != cHash.end() )
-										{
-											continue;
-										}
-
-										sprintf( name, "%s", c.toString().c_str() ); 
-										nnz = 30;
-
-										// Maximo de creditos no dia para os curriculos aonde estão
-										// a disciplina compartilhada. Tanto faz pegar de Oft1 ou Oft2,
-										// o valor tem que ser igual para as duas, já que se podem compartilhar
-										// é porque têm mesma semana letiva.
-										int maxCredDia = oft1->curriculo->getMaxCreds(*itDia);
-										if ( oft2->curriculo->getMaxCreds(*itDia) != maxCredDia )
-										{
-											cerr << endl << "Erro em SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento():";
-											cerr << endl << "Semanas letivas devem ser iguais!" << endl;
-											cerr << "curr1: " << oft1->curriculo->getId();
-											cerr << "curr2: " << oft2->curriculo->getId() << endl;
-
-											cerr << "sl1: " << oft1->curriculo->calendario->getId();
-											cerr << "sl2: " << oft2->curriculo->calendario->getId() << endl;
-											
-											cerr << "oft1: " << oft1->getId();
-											cerr << "oft2: " << oft2->getId() << endl;
-
-											cerr << "max1: " << maxCredDia;
-											cerr << "max2: " << oft2->curriculo->getMaxCreds(*itDia) << endl << endl;
-
-											if ( disciplina_equivalente != NULL )
-												cerr << "Houve equivalencia" << endl;
-
-											if (oft2->curriculo->getMaxCreds(*itDia) < maxCredDia)
-												maxCredDia = oft2->curriculo->getMaxCreds(*itDia);
-										}
-
-										double rhs = M + maxCredDia;
-
-										OPT_ROW row( nnz, OPT_ROW::LESS , rhs , name );
-
-										#pragma region Variavel x_{i,d,u,s,t}
-										v.reset();
-										v.setType( Variable::V_CREDITOS ); // x_{i,d,u,s,t}
-										v.setTurma( turma );
-										v.setDisciplina( discComum );
-										v.setUnidade( *itUnid );
-										v.setSubCjtSala( *itCjtSalaCompart );
-										v.setDia(*itDia);											
-
-										it_v = vHash.find( v );
-										if( it_v != vHash.end() )
-										{
-											row.insert(it_v->second, 1);
-										}
-										else
-										{
-											continue; // Não cria a restrição se não existe a variável x_{i,d,u,s,t}
-										}
-										#pragma endregion
-
-										#pragma region Variavel of_{i,d,oft1,oft2}
-										v.reset();
-										v.setType( Variable::V_ALOC_ALUNOS_PAR_OFT ); // of_{i,d,oft1,oft2}
-										v.setTurma( turma );
-										v.setDisciplina( discComum );
-										v.setParOfertas( oft1, oft2 );
-
-										it_v = vHash.find( v );
-										if( it_v != vHash.end() )
-										{
-											row.insert(it_v->second, M);
-										}
-										else
-										{
-											continue; // Não cria a restrição se não existe a variável of_{i,d,oft1,oft2}
-										}
-										#pragma endregion
-										
-										outTestFile << "R" << restricoes
-										  		<< "  i=" << c.getTurma()
-												<< " d=" << c.getDisciplina()->getId()
-												<< " ofts=" << c.getParOfertas().first->getId() << " " << c.getParOfertas().second->getId()
-												<< " u=" << c.getUnidade()
-												<< " sC" << c.getSubCjtSalaCompart()												
-												<< " s" << c.getSubCjtSala()
-												<< " t=" << c.getDia() << endl;
-
 										bool inseriu = false;
 
 										// para cada disciplina (diferente de discComum) pertencente à uniao dos
@@ -15993,7 +16287,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 										{													
 											Disciplina *disc = ( *it_uniao_disc );
 
-											#pragma region Equivalência de disciplinas
+#pragma region Equivalência de disciplinas
 											std::pair< Curso *, Curriculo * > curso_curriculo
 												= problemData->map_Disc_CursoCurriculo[ disc ];
 											curso = curso_curriculo.first;
@@ -16004,22 +16298,22 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 											{
 												disc = disciplina_equivalente;
 											}
-											#pragma endregion
-
-											// confere se a sala é apta a receber a disciplina
-											if ( itCjtSala->disciplinas_associadas.find( disc ) ==
-													itCjtSala->disciplinas_associadas.end() )
-												continue;
+#pragma endregion
 
 											if ( disc->getId() == discComum->getId() )
 												continue;
 
-											int p1 = oft1->periodoDisciplina( disc->getId() );
-											int p2 = oft2->periodoDisciplina( disc->getId() );
+											// confere se a sala é apta a receber a disciplina
+											if ( itCjtSala->disciplinas_associadas.find( disc ) ==
+												itCjtSala->disciplinas_associadas.end() )
+												continue;
+
+											int p1 = oft1->periodoDisciplina( disc );
+											int p2 = oft2->periodoDisciplina( disc );
 
 											if ( p1 != periodo1 && p2 != periodo2 )
-													continue;	
-													
+												continue;	
+
 											Oferta *oft;
 											bool ambos = false;
 
@@ -16033,7 +16327,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 												// para cada turma da disciplina em comum
 												for ( int j = 0; j < disc->getNumTurmas(); j++ )
 												{
-													#pragma region Primeira Variavel q_{j,d,oft1,u,s,t}
+#pragma region Primeira Variavel q_{j,d,oft1,u,s,t}
 													// Primeira oferta: q_{j,d,oft1,u,s,t}
 													v.reset();
 													v.setType( Variable::V_CREDITOS_OFT );
@@ -16043,16 +16337,18 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													v.setSubCjtSala( *itCjtSala );
 													v.setDia( *itDia );
 													v.setOferta( oft1 );
-												
+
 													it_v = vHash.find( v );
 													if( it_v != vHash.end() )
 													{
-														row.insert( it_v->second, 1 );
+														//row.insert( it_v->second, 1 );
+														cols.push_back(make_pair(it_v->second, 1));
+														//vars.push_back(make_pair(it_v->second, 1));
 														inseriu = true;
 													}
-													#pragma endregion
+#pragma endregion
 
-													#pragma region Segunda Variavel q_{j,d,oft2,u,s,t}
+#pragma region Segunda Variavel q_{j,d,oft2,u,s,t}
 													// Segunda oferta: q_{j,d,oft2,u,s,t}
 													v.reset();
 													v.setType( Variable::V_CREDITOS_OFT );
@@ -16062,16 +16358,18 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													v.setSubCjtSala( *itCjtSala );
 													v.setDia( *itDia );
 													v.setOferta( oft2 );
-												
+
 													it_v = vHash.find( v );
 													if( it_v != vHash.end() )
 													{
-														row.insert( it_v->second, 1 );
+														//row.insert( it_v->second, 1 );
+														cols.push_back(make_pair(it_v->second, 1));
+														//vars.push_back(make_pair(it_v->second, 1));
 														inseriu = true;
 													}
-													#pragma endregion
+#pragma endregion
 
-													#pragma region Variavel p_{i,d,oft1,oft2,u,tps,t}
+#pragma region Variavel p_{i,d,oft1,oft2,u,tps,t}
 													// Variavel p: desconto do possivel excesso
 													// que foi acrescentado acima, caso a disciplina
 													// disc tenha sido compartilhada entre as ofertas
@@ -16083,14 +16381,16 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													v.setSubCjtSala( *itCjtSala );
 													v.setDia( *itDia );
 													v.setParOfertas( oft1, oft2 );
-												
+
 													it_v = vHash.find( v );
 													if( it_v != vHash.end() )
 													{
-														row.insert( it_v->second, -1 );
+														//row.insert( it_v->second, -1 );
+														cols.push_back(make_pair(it_v->second, -1));
+														//vars.push_back(make_pair(it_v->second, -1));
 														inseriu = true;
 													}									
-													#pragma endregion
+#pragma endregion
 												}
 											}
 											else
@@ -16098,7 +16398,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 												// para cada turma da disciplina em comum
 												for ( int j = 0; j < disc->getNumTurmas(); j++ )
 												{
-													#pragma region Variavel q_{j,d,oft,u,s,t}
+#pragma region Variavel q_{j,d,oft,u,s,t}
 													v.reset();
 													v.setType( Variable::V_CREDITOS_OFT ); // q_{j,d,oft,u,s,t}
 													v.setTurma( j );
@@ -16107,14 +16407,16 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 													v.setSubCjtSala( *itCjtSala );
 													v.setDia( *itDia );
 													v.setOferta( oft );
-												
+
 													it_v = vHash.find( v );
 													if( it_v != vHash.end() )
 													{
-														row.insert( it_v->second, 1 );
+														//row.insert( it_v->second, 1 );
+														cols.push_back(make_pair(it_v->second, 1));
+														//vars.push_back(make_pair(it_v->second, 1));
 														inseriu = true;
 													}
-													#pragma endregion
+#pragma endregion
 												}
 											}
 										}
@@ -16122,19 +16424,92 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 										if ( !inseriu )
 										{
 											continue; // Se não tiver inserido nenhum q ou p, não cria a restrição.
+											//break;
 										}
-
+										/*}
+										else
+										{
+										for(vector< pair <int,int > >::iterator itC = vars.begin();
+										itC != vars.end();
+										itC++)
+										cols.push_back(*itC);
+										}*/
 										// FIM DA RESTRICAO
 										//-------------------------------------------------------------------------
-										
-										if ( row.getnnz() != 0 )
+
+										if ( /*row.getnnz() != 0*/ cols.size() > 0 )
 										{
+											//-------------------------------------------------------------------------
+											// NOVA RESTRICAO
+
+											c.reset();
+											c.setType( Constraint::C_EVITA_SOBREPOS_SALA_POR_COMPART );
+											c.setParOfertas( std::make_pair( oft1, oft2 ) );
+											c.setDisciplina( discComum );
+											c.setTurma( turma );
+											c.setSubCjtSalaCompart(*itCjtSalaCompart);
+											c.setDia(*itDia);
+											c.setSubCjtSala(*itCjtSala);
+
+											if ( cHash.find( c ) != cHash.end() )
+											{
+												continue;
+											}
+
+											//sprintf( name, "%s", c.toString().c_str() ); 
+											nnz = 30;
+
+											// Maximo de creditos no dia para os curriculos aonde estão
+											// a disciplina compartilhada. Tanto faz pegar de Oft1 ou Oft2,
+											// o valor tem que ser igual para as duas, já que se podem compartilhar
+											// é porque têm mesma semana letiva.
+											int maxCredDia = oft1->curriculo->getMaxCreds(*itDia);
+											if ( oft2->curriculo->getMaxCreds(*itDia) != maxCredDia )
+											{
+												cerr << endl << "Erro em SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento():";
+												cerr << endl << "Semanas letivas devem ser iguais!" << endl;
+												cerr << "curr1: " << oft1->curriculo->getId();
+												cerr << "curr2: " << oft2->curriculo->getId() << endl;
+
+												cerr << "sl1: " << oft1->curriculo->calendario->getId();
+												cerr << "sl2: " << oft2->curriculo->calendario->getId() << endl;
+
+												cerr << "oft1: " << oft1->getId();
+												cerr << "oft2: " << oft2->getId() << endl;
+
+												cerr << "max1: " << maxCredDia;
+												cerr << "max2: " << oft2->curriculo->getMaxCreds(*itDia) << endl << endl;
+
+												if ( disciplina_equivalente != NULL )
+													cerr << "Houve equivalencia" << endl;
+
+												if (oft2->curriculo->getMaxCreds(*itDia) < maxCredDia)
+													maxCredDia = oft2->curriculo->getMaxCreds(*itDia);
+											}
+
+											double rhs = M + maxCredDia;
+											OPT_ROW row( nnz, OPT_ROW::LESS , rhs , (char*)c.toString().c_str());
+
+											for(vector< pair< int, double > >::iterator itC = cols.begin();
+												itC != cols.end();
+												itC++)
+												row.insert(itC->first, itC->second);
+
+											pair< int, double > p1 = cols[0];
+											pair< int, double > p2 = cols[1];
+
+											cols.clear();
+											cols.push_back(p1);
+											cols.push_back(p2);
+
 											cHash[ c ] = lp->getNumRows();
 											lp->addRow( row );
 											restricoes++;
 										}													
 									}
 								}
+
+								cols.pop_back();
 							}
 						}
 					}
@@ -16142,10 +16517,10 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
 			}
 		}
 	}
-	
-   outTestFile.close();
 
-   return restricoes;
+	outTestFile.close();
+
+	return restricoes;
 
 }
 
@@ -16188,10 +16563,10 @@ int SolverMIP::cria_restricao_ativacao_var_e()
    {
 	    Oferta *oft = *itOft;
 
-	    GGroup< std::pair< int, Disciplina * > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
+	    map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
-		    Disciplina * d = (*it_disc).second;
+			Disciplina * d = it_disc->first;
 
 			#pragma region Equivalência de disciplinas
 			Curso* curso = oft->curso;
@@ -16957,10 +17332,10 @@ int SolverMIP::cria_restricao_ativacao_var_g()
 	    Oferta *oft = *itOft;
 		Campus *cp = oft->campus;
 
-	    GGroup< std::pair< int, Disciplina * > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
+	    map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
-		    Disciplina * d = (*it_disc).second;
+			Disciplina * d = it_disc->first;
 
 			#pragma region Equivalência de disciplinas
 			std::pair< Curso *, Curriculo * > curso_curriculo
@@ -17152,10 +17527,10 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_div_turmas(void)
 					OPT_ROW row( nnz, OPT_ROW::LESS , 0, name );
 
 					// Para cada disciplina de bc
-					GGroup< std::pair< int, Disciplina * > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
+					map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 					for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 					{
-						Disciplina * d = (*it_disc).second;
+						Disciplina * d = it_disc->first;
 
 						// Disciplina deve pertencer à mesma semana letiva corrente
 						if ( d->getCalendario() != sl )
@@ -17164,7 +17539,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_div_turmas(void)
 						}
 						
 						// Disciplinas devem pertencer ao período do bloco curricular bc
-						if ( (*it_disc).first != bc->getPeriodo() )
+						if ( it_disc->second != bc->getPeriodo() )
 						{
 							continue;
 						}
@@ -17274,10 +17649,10 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 	    Oferta *oft = *itOft;
 		Campus *cp = oft->campus;
 
-	    GGroup< std::pair< int, Disciplina * > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
+	    map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
-		    Disciplina * d = (*it_disc).second;
+			Disciplina * d = it_disc->first;
 
 			// para cada unidade do campus de oft
 			ITERA_GGROUP_LESSPTR( itUnid, cp->unidades, Unidade )
@@ -17709,26 +18084,27 @@ int SolverMIP::cria_restricao_fixa_nao_compartilhamento(void)
 				}
 				#pragma endregion
 				
-				GGroup<Oferta*, LessPtr<Oferta>> ofts1 = cp->retornaOfertasComCursoDisc( c1->getId(), discComum->getId() );
-				GGroup<Oferta*, LessPtr<Oferta>> ofts2 = cp->retornaOfertasComCursoDisc( c2->getId(), discComum->getId() );
+				GGroup<Oferta*, LessPtr<Oferta>> ofts1 = cp->retornaOfertasComCursoDisc( c1->getId(), discComum );
+				GGroup<Oferta*, LessPtr<Oferta>> ofts2 = cp->retornaOfertasComCursoDisc( c2->getId(), discComum );
 
 				// para cada oferta contendo discComum do curso c1
 				ITERA_GGROUP_LESSPTR( itOft1, ofts1, Oferta )
 				{
 					Oferta *oft1 = *itOft1;
-					int periodo1 = oft1->periodoDisciplina( discComum->getId() );
+					int periodo1 = oft1->periodoDisciplina( discComum );
 
 					// para cada oferta contendo discComum do curso c2
 					ITERA_GGROUP_LESSPTR( itOft2, ofts2, Oferta )
 					{		
 						Oferta *oft2 = *itOft2;
-						int periodo2 = oft2->periodoDisciplina( discComum->getId() );
+						int periodo2 = oft2->periodoDisciplina( discComum );
 						
+						GGroup< Calendario*, LessPtr<Calendario> > semanasLetivas1 = oft1->curriculo->retornaSemanasLetivasNoPeriodo( periodo1 );
+						GGroup< Calendario*, LessPtr<Calendario> > semanasLetivas2 =  oft2->curriculo->retornaSemanasLetivasNoPeriodo( periodo2 );
 						// Cria a restrição somente para períodos que possuem mais de uma semana letiva, ou sl's diferentes
-						if ( oft1->curriculo->retornaSemanasLetivasNoPeriodo( periodo1 ).size() == 1 &&
-							 oft2->curriculo->retornaSemanasLetivasNoPeriodo( periodo2 ).size() == 1 &&
-							 oft1->curriculo->retornaSemanasLetivasNoPeriodo( periodo1 ).begin()->getId() ==
-							 oft2->curriculo->retornaSemanasLetivasNoPeriodo( periodo2 ).begin()->getId() )
+						if ( semanasLetivas1.size() == 1 &&
+							 semanasLetivas2.size() == 1 &&
+							 semanasLetivas1.begin()->getId() == semanasLetivas2.begin()->getId() )
 						{
 							continue;
 						}

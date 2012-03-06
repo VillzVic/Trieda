@@ -57,7 +57,7 @@ void Campus::le_arvore( ItemCampus & elem )
 	no campus para o curso especificado, cujos currículos contêm a disciplina
 	especificada.
 */
-GGroup<Oferta*, LessPtr<Oferta>> Campus::retornaOfertasComCursoDisc( int idCurso, int idDisc )
+GGroup<Oferta*, LessPtr<Oferta>> Campus::retornaOfertasComCursoDisc( int idCurso, Disciplina *d )
 {
 	GGroup<Oferta*, LessPtr<Oferta>> ofts;
    
@@ -68,7 +68,7 @@ GGroup<Oferta*, LessPtr<Oferta>> Campus::retornaOfertasComCursoDisc( int idCurso
 		Oferta *oft = *(itOft);
 		if ( oft->getCursoId() == idCurso )
 		{
-			if ( oft->possuiDisciplina( idDisc ) )
+			if ( oft->possuiDisciplina( d ) )
 			{
 				ofts.add( oft );
 			}

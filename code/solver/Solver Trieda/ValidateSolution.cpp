@@ -297,18 +297,13 @@ bool ValidateSolutionOp::checkRestricaoBlocoHorario(
                            // é ministrada para esse bloco curricular
                            int periodoDisciplina = -1;
 
-                           GGroup< std::pair< int, Disciplina * > >::iterator
-                              it_disc_periodo = bloco_curricular->curriculo->disciplinas_periodo.begin();
+                           map < Disciplina*, int, LessPtr< Disciplina > >::iterator
+							   it_disc_periodo = bloco_curricular->curriculo->disciplinas_periodo.find(disciplina);
 
-                           for (; it_disc_periodo != bloco_curricular->curriculo->disciplinas_periodo.end();
-                                  it_disc_periodo++ )
-                           {
-                              if ( disciplina->getId() == ( *it_disc_periodo ).second->getId() )
-                              {
-                                 periodoDisciplina = ( *it_disc_periodo ).first;
-                                 break;
-                              }
-                           }
+						   if(it_disc_periodo != bloco_curricular->curriculo->disciplinas_periodo.end() )
+						   {
+							   periodoDisciplina = it_disc_periodo->second;
+						   }
                            ////
 
                            if ( bloco_curricular->campus->getId() != oferta->campus->getId()
@@ -855,17 +850,12 @@ bool ValidateSolutionOp::checkRestricaoDeslocamentoViavel(
                            // é ministrada para esse bloco curricular
                            int periodoDisciplina = -1;
 
-                           GGroup< std::pair< int, Disciplina * > >::iterator
-                              it_disc_periodo = bloco_curricular->curriculo->disciplinas_periodo.begin();
+                           map < Disciplina*, int, LessPtr< Disciplina > >::iterator
+                              it_disc_periodo = bloco_curricular->curriculo->disciplinas_periodo.find(disciplina);
 
-                           for (; it_disc_periodo != bloco_curricular->curriculo->disciplinas_periodo.end();
-                                  it_disc_periodo++ )
+						   if(it_disc_periodo != bloco_curricular->curriculo->disciplinas_periodo.end())
                            {
-                              if ( disciplina->getId() == ( *it_disc_periodo ).second->getId() )
-                              {
-                                 periodoDisciplina = ( *it_disc_periodo ).first;
-                                 break;
-                              }
+							   periodoDisciplina = it_disc_periodo->second;
                            }
                            ////
 

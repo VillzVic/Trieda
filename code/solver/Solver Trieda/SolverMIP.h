@@ -350,7 +350,7 @@ private:
    ConstraintOpHash cHashOp;
 
    // Stores the solution variables ( non - zero ).
-   std::vector< VariablePre * > solVarsPre;
+   std::set< VariablePre > solVarsPre;
 	
    std::vector< Variable * > solVars;
 

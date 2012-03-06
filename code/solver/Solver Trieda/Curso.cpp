@@ -49,11 +49,11 @@ void Curso::le_arvore( ItemCurso & elem )
 }
 
 
-bool Curso::possuiDisciplina( int idDisciplina )
+bool Curso::possuiDisciplina( Disciplina *d )
 {
    ITERA_GGROUP_LESSPTR( it_curriculo, curriculos, Curriculo )
    {
-		if ( it_curriculo->possuiDisciplina( idDisciplina ) )
+		if ( it_curriculo->possuiDisciplina( d ) )
 			return true;
    }
    return false;

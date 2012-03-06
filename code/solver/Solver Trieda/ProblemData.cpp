@@ -265,9 +265,19 @@ void ProblemData::insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, in
 bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 {
 	std::map< std::pair< Curso *, Curso * >, bool >::iterator
-		it_map = this->compat_cursos.begin();
+		it_map = this->compat_cursos.find(make_pair(curso1, curso2));
 
-	for (; it_map != this->compat_cursos.end(); it_map++ )
+	if(it_map != this->compat_cursos.end() && it_map->second) 
+		return true;
+
+	it_map = this->compat_cursos.find(make_pair(curso2, curso1));
+
+	if(it_map != this->compat_cursos.end() && it_map->second) 
+		return true;
+
+	return false;
+
+	/*for (; it_map != this->compat_cursos.end(); it_map++ )
 	{
 		int id1 = it_map->first.first->getId();
 		int id2 = it_map->first.second->getId();
@@ -282,7 +292,7 @@ bool ProblemData::cursosCompativeis( Curso * curso1, Curso * curso2 )
 		}
 	}
 
-	return false;
+	return false;*/
 }
 
 // Dada uma disciplina, e seu par curso/curriculo,
@@ -313,9 +323,18 @@ Oferta * ProblemData::retornaOfertaDiscilpina(
 // Se nao existir a disciplina de id procurado, retorna null.
 Disciplina* ProblemData::retornaDisciplina( int id )
 {
-	Disciplina * d = NULL;
+	Disciplina * d = new Disciplina();
+	d->setId(id);
 
-	ITERA_GGROUP_LESSPTR( it_disc, this->disciplinas, Disciplina )
+	GGroup< Disciplina *, LessPtr< Disciplina > >::iterator it = this->disciplinas.find(d);
+	delete d;
+
+	if(it != this->disciplinas.end())
+		return *it;
+	else
+		return NULL;
+
+	/*ITERA_GGROUP_LESSPTR( it_disc, this->disciplinas, Disciplina )
 	{
 		if ( it_disc->getId() == id)
 		{
@@ -323,7 +342,7 @@ Disciplina* ProblemData::retornaDisciplina( int id )
 			return d;
 		}
 	}
-	return d;
+	return d;*/
 }
 
 
@@ -402,27 +421,20 @@ void ProblemData::insereDisciplinaEmOftsComp( std::pair<Oferta*, Oferta*> po, in
 // Retorna todos os pares curso/curriculo
 // onde a disciplina informada está incluída
 GGroup< std::pair< Curso *, Curriculo * > >
-   ProblemData::retornaCursosCurriculosDisciplina( Disciplina * disciplina_equivalente )
+	ProblemData::retornaCursosCurriculosDisciplina( Disciplina * disciplina_equivalente )
 {
-   GGroup< std::pair< Curso *, Curriculo * > > cursos_curriculos;
+	GGroup< std::pair< Curso *, Curriculo * > > cursos_curriculos;
 
-   ITERA_GGROUP_LESSPTR( it_curso, this->cursos, Curso )
-   {
-      ITERA_GGROUP_LESSPTR( it_curriculo, it_curso->curriculos, Curriculo )
-      {
-         GGroup< std::pair< int, Disciplina * > >::iterator
-            it_disciplina = it_curriculo->disciplinas_periodo.begin();
-
-         for (; it_disciplina != it_curriculo->disciplinas_periodo.end();
-                it_disciplina++ )
-         {
-            if ( ( *it_disciplina ).second->getId() == disciplina_equivalente->getId() )
-            {
-               cursos_curriculos.add( std::make_pair( ( *it_curso ), ( *it_curriculo ) ) );
-            }
-         }
-      }
-   }
+	ITERA_GGROUP_LESSPTR( it_curso, this->cursos, Curso )
+	{
+		ITERA_GGROUP_LESSPTR( it_curriculo, it_curso->curriculos, Curriculo )
+		{
+			if((*it_curriculo)->possuiDisciplina(disciplina_equivalente))
+			{
+				cursos_curriculos.add( std::make_pair( ( *it_curso ), ( *it_curriculo ) ) );
+			}
+		}
+	}
 
    return cursos_curriculos;
 }
@@ -483,9 +495,9 @@ Disciplina * ProblemData::retornaDisciplinaSubstituta(
 {
    std::map< std::pair< Curso *, Curriculo * >,
       std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
-      it_map = this->mapGroupDisciplinasSubstituidas.begin();
+      it_map = this->mapGroupDisciplinasSubstituidas.find(make_pair(curso, curriculo));
 
-   for (; it_map != this->mapGroupDisciplinasSubstituidas.end(); it_map++ )
+   if( it_map != this->mapGroupDisciplinasSubstituidas.end())
    {
       std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
          it_disciplinas = it_map->second.begin();
@@ -493,8 +505,10 @@ Disciplina * ProblemData::retornaDisciplinaSubstituta(
       for (; it_disciplinas != it_map->second.end(); it_disciplinas++ )
       {
          Disciplina * disciplina_substituta = it_disciplinas->first;
-
-         ITERA_GGROUP_LESSPTR( it_disc_equi, it_disciplinas->second, Disciplina )
+		 GGroup< Disciplina *, LessPtr< Disciplina > >::iterator itD = it_disciplinas->second.find(disciplina);
+		 if(itD != it_disciplinas->second.end())
+			 return disciplina_substituta;
+         /*ITERA_GGROUP_LESSPTR( it_disc_equi, it_disciplinas->second, Disciplina )
          {
             Disciplina * disciplina_equivalente = ( *it_disc_equi );
 
@@ -502,11 +516,24 @@ Disciplina * ProblemData::retornaDisciplinaSubstituta(
             {
                return disciplina_substituta;
             }
-         }
+         }*/
       }      
    }
 
-   return NULL;
+	/*std::map< std::pair< Curso *, Curriculo * >,
+		std::map< Disciplina *, Disciplina * > >::iterator
+		it_map = this->map_CursoCurriculo_DiscSubst.find(make_pair(curso, curriculo));
+
+	if( it_map != this->map_CursoCurriculo_DiscSubst.end())
+	{
+		std::map< Disciplina *, Disciplina * >::iterator it_map2 = it_map->second.find(disciplina);
+		if(it_map2 != it_map->second.end())
+			return it_map2->second;
+		else
+			return NULL;
+	}*/
+
+	return NULL;
 }
 
 int ProblemData::creditosFixadosDisciplinaDia(
@@ -636,20 +663,12 @@ bool ProblemData::verificaDisponibilidadeDisciplinaHorario(
             break;
          }
 
-         GGroup< std::pair< int, Disciplina * > >::iterator it_disc_periodo
-            = curriculo->disciplinas_periodo.begin();
+         map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc_periodo
+			 = curriculo->disciplinas_periodo.find(disciplina);
 
-         for (; it_disc_periodo != curriculo->disciplinas_periodo.end();
-                it_disc_periodo++ )
+         if (it_disc_periodo != curriculo->disciplinas_periodo.end())
          {
-            int periodo = ( *it_disc_periodo ).first;
-            Disciplina * d = ( *it_disc_periodo ).second;
-
-            if ( d == disciplina )
-            {
-				idCalendarioDisc = d->getCalendario()->getId();
-               break;
-            }
+				idCalendarioDisc = disciplina->getCalendario()->getId();
          }
       }
    }

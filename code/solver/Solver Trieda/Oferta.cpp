@@ -25,28 +25,25 @@ void Oferta::le_arvore( ItemOfertaCurso & elem )
    receita = elem.receita();
 }
 
-bool Oferta::possuiDisciplina( int idDisc )
+bool Oferta::possuiDisciplina( Disciplina *d )
 {
-	GGroup< std::pair< int, Disciplina * > >::iterator it = curriculo->disciplinas_periodo.begin();
+	/*GGroup< std::pair< int, Disciplina * > >::iterator it = curriculo->disciplinas_periodo.begin();
 	for ( ; it != curriculo->disciplinas_periodo.end(); it++ )
 	{
 		if ( (*it).second->getId() == idDisc )
 			return true;
 	}
-	return false;
+	return false;*/
+
+	return curriculo->possuiDisciplina(d);
 }
 
 /*
 	Retorna o periodo de uma disciplina no curriculo da oferta.
 	Se o curriculo nao contiver a disciplina, retorna -1.
 */
-int Oferta::periodoDisciplina( int idDisc )
+int Oferta::periodoDisciplina( Disciplina *d )
 {
-	GGroup< std::pair< int, Disciplina * > >::iterator it = curriculo->disciplinas_periodo.begin();
-	for ( ; it != curriculo->disciplinas_periodo.end(); it++ )
-	{
-		if ( (*it).second->getId() == idDisc )
-			return (*it).first;
-	}
-	return -1;
+	return curriculo->getPeriodo(d);
 }
+

@@ -289,6 +289,9 @@ public:
    std::map< std::pair< Curso *, Curriculo * >,
 	         std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidas;
 
+   std::map< std::pair< Curso *, Curriculo * >,
+			    std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidasAux;
+
    // Dada uma disciplina, informamos o seu curso e curriculo
    std::map< Disciplina *, std::pair< Curso *, Curriculo * > > map_Disc_CursoCurriculo;
 

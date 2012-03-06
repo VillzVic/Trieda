@@ -257,7 +257,7 @@ std::string Constraint::toString()
    default:
       ss << "!";
    }
-
+   //return "";
    ss << "__{";
 
    if ( i >= 0 )

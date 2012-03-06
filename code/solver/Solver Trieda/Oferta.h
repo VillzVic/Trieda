@@ -28,8 +28,8 @@ public:
    int getCampusId() const { return campus_id; }
    double getReceita() const { return receita; }
 
-   bool possuiDisciplina( int idDisc );
-   int periodoDisciplina( int idDisc );
+   bool possuiDisciplina( Disciplina *d );
+   int periodoDisciplina( Disciplina *d );
    
    Curriculo * curriculo;
    Curso * curso;

@@ -45,7 +45,7 @@ public:
    int getMaiorSala() const { return this->maiorSala; }
    double getCusto() const { return this->custo; }
 
-   GGroup<Oferta*, LessPtr<Oferta>> retornaOfertasComCursoDisc( int idCurso, int idDisc );
+   GGroup<Oferta*, LessPtr<Oferta>> retornaOfertasComCursoDisc( int idCurso, Disciplina *d );
 
 private:
    std::string codigo;

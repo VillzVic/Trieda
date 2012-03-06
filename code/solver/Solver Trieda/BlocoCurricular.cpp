@@ -60,11 +60,11 @@ GGroup<HorarioAula*> BlocoCurricular::retornaHorariosDisponiveisNoDiaPorSL( int 
 {
 	GGroup<HorarioAula*> horariosNoDiaSL;
 
-	GGroup< std::pair< int, Disciplina * > >::iterator itPeriodoDisc = this->curriculo->disciplinas_periodo.begin();
+	map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPeriodoDisc = this->curriculo->disciplinas_periodo.begin();
 
 	for (; itPeriodoDisc != this->curriculo->disciplinas_periodo.end(); itPeriodoDisc++ )
 	{
-		Disciplina *d = (*itPeriodoDisc).second;
+		Disciplina *d = itPeriodoDisc->first;
 
 		if ( d->getCalendario() == sl )
 		{
