@@ -360,6 +360,10 @@ public class ParametroDTO extends AbstractDTO<Long>
 		minimizarcursodocentecursos_list = value;
 	}
 	
+	public boolean isValid() {
+		return (getCampusId() != null) && (getTurnoId() != null); 
+	}
+	
 	@Override
 	public Long getNaturalKey() {
 		return getId();

@@ -4,8 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -20,10 +22,20 @@ import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.CurriculoDisciplina;
+import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.Grafo;
+import com.gapso.web.trieda.server.util.Profundidade;
 import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;
 import com.gapso.web.trieda.server.util.solverclient.SolverClient;
@@ -35,7 +47,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.services.OtimizarService;
-import com.gapso.web.trieda.shared.util.view.TriedaException;
+import com.google.gwt.dev.util.Pair;
 
 @Transactional
 @Service
@@ -46,6 +58,329 @@ public class OtimizarServiceImpl
 {
 	private static final long serialVersionUID = 5716065588362358065L;
 	private static final String linkSolverDefault = "http://localhost:8080/SolverWS";
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#checkInputDataBeforeRequestOptimization(com.gapso.web.trieda.shared.dtos.ParametroDTO)
+	 */
+	@Override
+	public ErrorsWarningsInputSolverDTO checkInputDataBeforeRequestOptimization(ParametroDTO parametroDTO) throws Exception {
+		ErrorsWarningsInputSolverDTO response = new ErrorsWarningsInputSolverDTO();
+		if (parametroDTO.isValid()) {
+			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+			List<String> warnings = new ArrayList<String>();
+			List<String> errors = new ArrayList<String>();
+			
+			// realiza verificações
+			checkDisciplinasSemCurriculo(parametro,warnings);
+			checkDisciplinasSemLaboratorios(parametro,errors);
+			checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors);
+			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
+			if (parametro.getConsiderarEquivalencia()) {
+				checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);
+			}
+			checksCleiton();//TODO: revisar
+			
+			response.setErrors(errors);
+			response.setWarnings(warnings);
+		} else {
+			String message = "";
+			if (parametroDTO.getCampusId() == null) {
+				message += HtmlUtils.htmlUnescape("O campus n&atilde;o foi informado.");
+			}
+			if (parametroDTO.getTurnoId() == null) {
+				if (!message.isEmpty()) {
+					message += " ";
+				}
+				message += HtmlUtils.htmlUnescape("O turno n&atilde;o foi informado.");
+			}
+			
+			List<String> errors = new ArrayList<String>();
+			errors.add(message);
+			
+			response.setErrors(errors);
+		}
+	
+		return response;
+	}
+	
+	private void checksCleiton() {
+//		// SEGUNDA VERIFICAÇÃO
+//
+//		// Fixação de disciplina com qtde de horários
+//		// menores do que a qtde de créditos da disciplinas
+//		List< Fixacao > fixacoes
+//			= Fixacao.findAll( this.instituicaoEnsino );
+//
+//		for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
+//		{
+//			for ( Fixacao fixacao : fixacoes )
+//			{
+//				Integer totalCreditos = this.getHorarios( fixacao  ).size();
+//
+//				Disciplina disciplinaFixacao = fixacao.getDisciplina();
+//
+//				if ( totalCreditos != null && totalCreditos > 0
+//					&& disciplinaFixacao != null
+//					&& disciplinaFixacao.getId() == disciplinaCenario.getId()
+//					&& totalCreditos < disciplinaCenario.getTotalCreditos() )
+//				{
+//					String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
+//						+ ", que possui " + disciplinaCenario.getTotalCreditos() + " cr&eacute;ditos,"
+//						+ " tem uma fixa&ccedil;&atilde;o de apenas " + totalCreditos.toString() + ".";
+//
+//					createWarningMessage( warningMessage );
+//
+//					break;
+//				}
+//			}
+//		}
+//
+//		// TERCEIRA VERIFICAÇÃO
+//
+//		// Impossibilidade de associar uma regra
+//		// genérica de divisão de créditos a uma disciplina
+//		Set< DivisaoCredito > regras
+//			= this.cenario.getDivisoesCredito();
+//
+//		if ( regras.size() > 0 )
+//		{
+//			for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
+//			{
+//				int creditosDisciplina = disciplinaCenario.getTotalCreditos();
+//
+//				boolean encontrou = false;
+//
+//				for ( DivisaoCredito divisaoCredito : regras )
+//				{
+//					if ( divisaoCredito.getCreditos() >= creditosDisciplina )
+//					{
+//						encontrou = true;
+//						break;
+//					}
+//				}
+//
+//				if ( !encontrou )
+//				{
+//					String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
+//						+ " n&atilde;o possui nenhuma regra de cr&eacute;ditos gen&eacute;rica "
+//						+ "que atenda ao total de cr&eacute;ditos da disciplina.";
+//
+//					createWarningMessage( warningMessage );
+//				}
+//			}
+//		}
+	}
+
+	private void checkDisciplinasSemCurriculo(Parametro parametro, List<String> warnings) {
+		Map<Long,Long> disciplinasComCurriculoMap = new HashMap<Long,Long>();
+		for (Curso curso : parametro.getCenario().getCursos()) {
+			for (Curriculo curriculo : curso.getCurriculos()) {
+				for (CurriculoDisciplina curriculoDisciplina : curriculo.getDisciplinas()) {
+					disciplinasComCurriculoMap.put(curriculoDisciplina.getDisciplina().getId(),curriculoDisciplina.getDisciplina().getId());
+				}
+			}
+		}
+
+		for (Disciplina disciplina : parametro.getCenario().getDisciplinas()) {
+			if (disciplinasComCurriculoMap.get(disciplina.getId()) == null) {
+				warnings.add(HtmlUtils.htmlUnescape("A disciplina " + disciplina.getCodigo() + " n&atilde;o foi associada a nenhuma matriz curricular."));
+				System.out.println("A disciplina " + disciplina.getCodigo() + " n&atilde;o foi associada a nenhuma matriz curricular.");
+			}
+		}
+	}
+
+	private void checkDisciplinasSemLaboratorios(Parametro parametro, List<String> errors) {
+		// coleta as disciplinas que serão enviadas para o solver e que exigem laboratório
+		Set<Disciplina> disciplinasQueExigemLaboratio = new HashSet<Disciplina>();
+		for (Oferta oferta : parametro.getCampus().getOfertas()) {
+			for (Demanda demanda : oferta.getDemandas()) {
+				Disciplina disciplina = demanda.getDisciplina();
+				if (disciplina.getLaboratorio()) {
+					disciplinasQueExigemLaboratio.add(disciplina);
+				}
+			}
+		}
+		
+		// verifica se há disciplinas que exigem laboratório, porém, não estão associadas a laboratórios
+		for (Disciplina disciplina : disciplinasQueExigemLaboratio) {
+			// coleta os CurriculoDisciplina não associados a laboratórios
+			Set<CurriculoDisciplina> curriculosDisciplinasNaoAssociadosALaboratorios = new HashSet<CurriculoDisciplina>();
+			for (CurriculoDisciplina curriculoDisciplina : disciplina.getCurriculos()) {
+				// apenas faz a validação para curriculos com alguma oferta
+				if (!curriculoDisciplina.getCurriculo().getOfertas().isEmpty()) {
+					// verifica se tem oferta no campus a ser otimizado
+					boolean curriculoTemOfertaNoCampusASerOtimizado = false;
+					for (Oferta oferta : curriculoDisciplina.getCurriculo().getOfertas()) {
+						if (oferta.getCampus().equals(parametro.getCampus())) {
+							curriculoTemOfertaNoCampusASerOtimizado = true;
+							break;
+						}
+					}
+					
+					// apenas faz validação se currículo tem oferta no campus a ser otimizado
+					if (curriculoTemOfertaNoCampusASerOtimizado) {
+						boolean estaAssociadoComAlgumLaboratorio = false;
+						for (Sala sala : curriculoDisciplina.getSalas()) {
+							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(parametro.getCampus())) {
+								estaAssociadoComAlgumLaboratorio = true;
+								break;
+							}
+						}
+						 
+						if (!estaAssociadoComAlgumLaboratorio) {
+							curriculosDisciplinasNaoAssociadosALaboratorios.add(curriculoDisciplina);
+						}
+					}
+				}
+			}
+			 
+			if (!curriculosDisciplinasNaoAssociadosALaboratorios.isEmpty()) {
+				String pares = "";
+				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasNaoAssociadosALaboratorios) {
+					pares += "(" + curriculoDisciplina.getCurriculo().getCodigo() + "," + curriculoDisciplina.getPeriodo() + "); ";
+				}
+				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + parametro.getCampus().getCodigo() + ", são eles: " + pares));
+				System.out.println("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + parametro.getCampus().getCodigo() + ", são eles: " + pares);
+			}
+		}
+	}
+	
+	private void checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
+		// obtém os currículos do campus selecionado para otimização
+		Set<Curriculo> curriculosDoCampusSelecionado = new HashSet<Curriculo>();
+		for (Oferta oferta : parametro.getCampus().getOfertas()) {
+			curriculosDoCampusSelecionado.add(oferta.getCurriculo());
+		}
+		
+		// [CurriculoId -> Máximo Créditos Semanais]
+		Map<Long,Integer> maxCreditosSemanaisPorSemanaLetivaMap = new HashMap<Long,Integer>();
+ 
+		for (Curriculo curriculo : parametro.getCenario().getCurriculos()) {
+			// filtra os currículos do campus selecionado para otimização
+			if (curriculosDoCampusSelecionado.contains(curriculo)) {
+				// obtém o máximo de créditos semanais da semana letiva associada com o currículo
+				Integer maxCreditosSemanais = maxCreditosSemanaisPorSemanaLetivaMap.get(curriculo.getSemanaLetiva().getId());
+				if (maxCreditosSemanais == null) {
+					maxCreditosSemanais = curriculo.getSemanaLetiva().calcTotalCreditosSemanais(parametro.getTurno());
+					maxCreditosSemanaisPorSemanaLetivaMap.put(curriculo.getSemanaLetiva().getId(),maxCreditosSemanais);
+				}
+				
+				Set<Long> disciplinasDoCurriculo = new HashSet<Long>();
+				Set<String> disciplinasRepetidasNoCurriculo = new HashSet<String>();
+				List<String> periodosQueViolamMaxCreditosSemanais = new ArrayList<String>();
+				for (Integer periodo : curriculo.getPeriodos(instituicaoEnsino)) {
+					Integer totalCreditosDoPeriodo = 0;
+					for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinasByPeriodo(instituicaoEnsino,periodo)) {
+						if (!disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId())) {
+							disciplinasRepetidasNoCurriculo.add(curriculoDisciplina.getDisciplina().getCodigo());
+						}
+						totalCreditosDoPeriodo += curriculoDisciplina.getDisciplina().getCreditosTotal();
+					}
+					
+					if (totalCreditosDoPeriodo > maxCreditosSemanais) {
+						periodosQueViolamMaxCreditosSemanais.add(periodo + "("+totalCreditosDoPeriodo+")");
+					}
+					
+				}
+				
+				if (!disciplinasRepetidasNoCurriculo.isEmpty()) {
+					errors.add(HtmlUtils.htmlUnescape("A matriz curricular [" + curriculo.getCodigo() + "] contém disciplinas repetidas, são elas: " + disciplinasRepetidasNoCurriculo.toString()));
+					System.out.println("A matriz curricular [" + curriculo.getCodigo() + "] contém disciplinas repetidas, são elas: " + disciplinasRepetidasNoCurriculo.toString());
+				}
+				
+				if (!periodosQueViolamMaxCreditosSemanais.isEmpty()) {
+					errors.add(HtmlUtils.htmlUnescape("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString()));
+					System.out.println("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString());
+				}
+			}
+		}
+	}
+	
+	private void checkDemandasComDisciplinasSemCurriculo(Parametro parametro, List<String> errors) {
+		// [CurriculoId -> Set<DisciplinaId>]
+		Map<Long,Set<Long>> curriculoIdToDisciplinasIdsMap = new HashMap<Long,Set<Long>>();
+		for (Oferta oferta : parametro.getCampus().getOfertas()) {
+			Curriculo curriculo = oferta.getCurriculo();
+			
+			// obtém as disciplinas associadas com o currículo em questão
+			Set<Long> disciplinasDoCurriculo = curriculoIdToDisciplinasIdsMap.get(curriculo.getId());
+			if (disciplinasDoCurriculo == null) {
+				disciplinasDoCurriculo = new HashSet<Long>();
+				for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinas()) {
+					disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId());
+				}
+			}
+			
+			// verifica se alguma demanda contém alguma disciplina que não esteja no currículo
+			// da oferta associada com a demanda
+			for (Demanda demanda : oferta.getDemandas()) {
+				if (!disciplinasDoCurriculo.contains(demanda.getDisciplina().getId())) {
+					errors.add(HtmlUtils.htmlUnescape("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "]."));
+					System.out.println("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
+				}
+			}
+		}
+	}
+	
+	private void checkCicloDisciplinasEquivalentes(Cenario cenario, List<String> errors){
+		int id = 0;
+		Integer cIndex, eIndex;
+		List<Long> nodeMap = new ArrayList<Long>();
+		List<Disciplina> disMap = new ArrayList<Disciplina>();
+		Set<Pair<Integer, Integer>> pairs = new HashSet<Pair<Integer, Integer>>();
+
+		// Para cada disciplina, obtem-se as suas equivalencias para montar tres estruturas:
+		// -> disMap mapeia o index associado a cada disciplina identificada
+		// -> nodeMap faz o controle de qual disciplina estah mapeada ou nao
+		// -> pairs obtem a relação de equivalencia de uma disciplina com outra. 
+		for(Disciplina disciplina : cenario.getDisciplinas()){
+			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
+				Disciplina cursou = equivalencia.getCursou();
+				if((cIndex = (Integer) nodeMap.indexOf(cursou.getId())) == -1){
+					cIndex = id++;
+					nodeMap.add(cursou.getId());
+					disMap.add(cursou);
+				}
+				for(Disciplina elimina : equivalencia.getElimina()){
+					if((eIndex = (Integer) nodeMap.indexOf(elimina.getId())) == -1){
+						eIndex = id++;
+						nodeMap.add(elimina.getId());
+						disMap.add(elimina);
+					}
+					pairs.add(Pair.create(cIndex, eIndex));
+				}
+			}
+		}
+		
+		// Constroi um grafo a partir dos pares obtidos e realiza a busca para verificar
+		// a existencia de ciclos. Nesse grafo, os indices associados aos nos sao os
+		// mesmos identificados em disMap. 
+		
+		Grafo g = new Grafo(pairs.size());
+		for(Pair<Integer, Integer> par: pairs)
+			g.insereArco(par.getLeft(), par.getRight());
+		
+		Profundidade p = new Profundidade();
+		if(!p.testeCiclos(g)){
+			
+			// Obtem-se os ciclos identificados e os imprime num formato adequado para
+			// informar ao usuario quais sao eles.
+			List<List<Integer>> ciclos = p.getCiclos();
+			int i = 1;
+			String ciclosStr = "Foram detectados os seguintes ciclos entre disciplinas equivalentes:<br /><br />";
+			for(List<Integer> ciclo: ciclos){
+				ciclosStr += i++ + ") ";
+				for(Integer idc: ciclo){
+					Disciplina dis = disMap.get(idc);
+					ciclosStr += dis.getNome() + " (" + dis.getCodigo() + ") -> ";
+				}
+				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 3) + "<br /><br />";
+			}
+			ciclosStr += " \n";
+			System.out.println(ciclosStr.replaceAll("<br />", "\n"));
+			errors.add(HtmlUtils.htmlUnescape(ciclosStr));
+		}
+	}
 
 	@Override
 	@Transactional
@@ -85,81 +420,6 @@ public class OtimizarServiceImpl
 		parametro.setTurno( ( listTurnos == null || listTurnos.size() == 0 ? null : listTurnos.get( 0 ) ) );
 		
 		return parametro;
-	}
-
-	@Override
-	@Transactional
-	public ErrorsWarningsInputSolverDTO validaInput(
-		ParametroDTO parametroDTO ) throws Exception
-	{
-		if ( parametroDTO.getCampusId() == null
-			|| parametroDTO.getTurnoId() == null )
-		{
-			String message = "";
-
-			if ( parametroDTO.getCampusId() == null )
-			{
-				message += message += HtmlUtils.htmlUnescape(
-					"o campus n&atilde;o foi informado, " );
-			}
-
-			if ( parametroDTO.getTurnoId() == null )
-			{
-				message += message += HtmlUtils.htmlUnescape(
-					"o turno n&atilde;o foi informado, " );
-			}
-
-			message = message.substring( 0, message.length() - 2 );
-
-			throw new TriedaException( new Exception(
-				HtmlUtils.htmlUnescape( message ) ) );
-		}
-
-		Parametro parametro = ConvertBeans.toParametro( parametroDTO );
-
-		parametro.setId( null );
-		parametro.flush();
-		parametro.save();
-
-		Cenario cenario = parametro.getCenario();
-		cenario.getParametros().add( parametro );
-		List< Campus > campi = new ArrayList< Campus >( 1 );
-		campi.add( parametro.getCampus() );
-
-		TriedaInput triedaInput = null;
-		SolverInput solverInput = new SolverInput(
-			getInstituicaoEnsinoUser(), cenario, parametro, campi );
-
-		if ( parametro.isTatico() )
-		{
-			triedaInput = solverInput.generateTaticoTriedaInput();
-		}
-		else
-		{
-			triedaInput = solverInput.generateOperacionalTriedaInput();
-		}
-
-		ErrorsWarningsInputSolverDTO response
-			= new ErrorsWarningsInputSolverDTO();
-
-		response.setValidInput( triedaInput != null );
-
-		if ( solverInput.getErrors().size() > 0
-			|| solverInput.getWarnings().size() > 0 )
-		{
-			for ( String error : solverInput.getErrors() )
-			{
-				response.getErrorsWarnings().get( "errors" ).add( error );
-			}
-
-			for ( String warning : solverInput.getWarnings() )
-			{
-				// FIXME
-				response.getErrorsWarnings().get( "warnings" ).add( warning );
-			}
-		}
-
-		return response;
 	}
 
 	@Override
@@ -264,7 +524,9 @@ public class OtimizarServiceImpl
 			SolverClient solverClient = new SolverClient(
 				getLinkSolver(), "trieda" );
 
+			System.out.println("solverClient.getContent( round ) ...");// TODO: LOG
 			byte [] xmlBytes = solverClient.getContent( round );
+			System.out.println("solverClient.getContent( round ) FINALIZADO");// TODO: LOG
 
 			if ( xmlBytes == null )
 			{
@@ -276,10 +538,13 @@ public class OtimizarServiceImpl
 				"com.gapso.web.trieda.server.xml.output" );
 
 			Unmarshaller u = jc.createUnmarshaller();
+			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); ...");// TODO: LOG
 			StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) );
-
-			TriedaOutput triedaOutput = ( TriedaOutput ) u.unmarshal(
-				new StreamSource( new StringReader( xmlStr.toString() ) ) );
+			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); FINALIZADO");// TODO: LOG
+			
+			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); ...");// TODO: LOG
+			TriedaOutput triedaOutput = ( TriedaOutput ) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
+			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); FINALIZADO");// TODO: LOG
 
 			for ( ItemError erro : triedaOutput.getErrors().getError() )
 			{
@@ -302,15 +567,19 @@ public class OtimizarServiceImpl
 			SolverOutput solverOutput = new SolverOutput(
 				getInstituicaoEnsinoUser(), cenario, triedaOutput );
 
-			solverOutput.salvarAlunosDemanda(
-				parametro.getCampus(), parametro.getTurno() );
+			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
+			solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno());
+			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
 
 			if ( parametro.isTatico() )
 			{
+				System.out.println("solverOutput.generateAtendimentosTatico(); ...");// TODO: LOG
 				solverOutput.generateAtendimentosTatico();
+				System.out.println("solverOutput.generateAtendimentosTatico(); FINALIZADO");// TODO: LOG
 
-				solverOutput.salvarAtendimentosTatico(
-					parametro.getCampus(), parametro.getTurno() );
+				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
+				solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno());
+				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
 			}
 			else
 			{

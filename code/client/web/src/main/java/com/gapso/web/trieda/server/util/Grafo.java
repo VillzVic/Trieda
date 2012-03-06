@@ -21,7 +21,7 @@ public class Grafo {
 	 * um peso igual a -1. Esse valor indica que tal arco nao existe no grafo.
 	 */
 
-	Grafo(int numVertices){
+	public Grafo(int numVertices){
 		this.numVertices = numVertices;
 		int i,j;
 		matriz = new int[numVertices][numVertices];
@@ -46,7 +46,7 @@ public class Grafo {
 	 * Insere uma arco de peso p, ligando os vertices v1 e v2 no grafo
 	 */
 	
-	void insereArco(int v1, int v2){
+	public void insereArco(int v1, int v2){
 		matriz[v1][v2] = 1;
 	}
 

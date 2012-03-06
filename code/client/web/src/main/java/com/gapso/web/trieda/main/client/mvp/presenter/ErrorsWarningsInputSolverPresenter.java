@@ -44,15 +44,12 @@ public class ErrorsWarningsInputSolverPresenter
 	private List< String > warnings;
 	private List< String > errors;
 	private Display display;
-	private Boolean validInput;
 	private Button submitButtonParametros;
 
-	public ErrorsWarningsInputSolverPresenter( Boolean validInput,
-		CenarioDTO cenarioDTO, ParametroDTO parametroDTO,
+	public ErrorsWarningsInputSolverPresenter(CenarioDTO cenarioDTO, ParametroDTO parametroDTO,
 		List< String > errors, List< String > warnings,
 		Display display, Button submitButtonParametros )
 	{
-		this.validInput = validInput;
 		this.cenarioDTO = cenarioDTO;
 		this.parametroDTO = parametroDTO;
 		this.display = display;
@@ -79,8 +76,7 @@ public class ErrorsWarningsInputSolverPresenter
 		this.display.getMessagesWarningPanel().setVisible( !this.warnings.isEmpty() );
 		this.display.getMessagesErrorPanel().setVisible( !this.errors.isEmpty() );
 
-		this.display.getSubmitButton().setEnabled(
-			this.validInput == null ? false : this.validInput );
+		this.display.getSubmitButton().setEnabled(this.errors.isEmpty());
 	}
 
 	private void setListeners()
@@ -146,6 +142,7 @@ public class ErrorsWarningsInputSolverPresenter
 
 	private void checkSolver( final Long round )
 	{
+		System.out.println("checkSolver round="+round + " ErrorsWarningsInputSolverPresenter");//TODO: LOG
 		final Timer t = new Timer()
 		{
 			@Override
@@ -178,6 +175,7 @@ public class ErrorsWarningsInputSolverPresenter
 							Info.display( "OTIMIZADO",
 								"Otimização finalizada!" );
 
+							System.out.println("round="+round+" OTIMIZACAO FINALIZADA!!!!!! ErrorsWarningsInputSolverPresenter");//TODO: LOG
 							atualizaSaida( round );
 							habilitarBotaoParametros();
 						}

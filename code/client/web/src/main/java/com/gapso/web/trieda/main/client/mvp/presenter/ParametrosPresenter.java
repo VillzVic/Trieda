@@ -175,7 +175,7 @@ public class ParametrosPresenter
 							{
 								try
 								{
-									service.validaInput( getDTO(),
+									service.checkInputDataBeforeRequestOptimization( getDTO(),
 										new AbstractAsyncCallbackWithDefaultOnFailure< ErrorsWarningsInputSolverDTO >( display )
 										{
 											@Override
@@ -190,8 +190,7 @@ public class ParametrosPresenter
 											@Override
 											public void onSuccess( final ErrorsWarningsInputSolverDTO dto )
 											{
-												if ( dto.getValidInput() == true
-													&& dto.getTotalErrorsWarnings() == 0 )
+												if (dto.getTotalErrorsWarnings() == 0)
 												{
 													service.sendInput( getDTO(),
 														new AbstractAsyncCallbackWithDefaultOnFailure< Long >( display )
@@ -214,16 +213,9 @@ public class ParametrosPresenter
 															}
 														});
 												}
-												else
-												{
-													List< String > errors = dto.getErrorsWarnings().get( "errors" );
-													List< String > warnings = dto.getErrorsWarnings().get( "warnings" );
-
-													Presenter presenter = new ErrorsWarningsInputSolverPresenter(
-													 	dto.getValidInput(), cenarioDTO, getDTO(), errors,
-													 	warnings, new ErrorsWarningsInputSolverView(), display.getSubmitButton() );
-
-													presenter.go( null );
+												else {
+													Presenter presenter = new ErrorsWarningsInputSolverPresenter(cenarioDTO,getDTO(),dto.getErrors(),dto.getWarnings(),new ErrorsWarningsInputSolverView(),display.getSubmitButton());
+													presenter.go(null);
 												}
 											}
 										});
@@ -402,6 +394,7 @@ public class ParametrosPresenter
 
 	private void checkSolver( final Long round )
 	{
+		System.out.println("checkSolver round="+round + " ParametrosPresenter");//TODO: LOG
 		final Timer t = new Timer()
 		{
 			@Override
@@ -433,7 +426,8 @@ public class ParametrosPresenter
 						{
 							Info.display( "OTIMIZADO",
 								"Otimização finalizada!" );
-
+							
+							System.out.println("round="+round+" OTIMIZACAO FINALIZADA!!!!!! ParametrosPresenter");//TODO: LOG
 							atualizaSaida( round );
 						}
 					}

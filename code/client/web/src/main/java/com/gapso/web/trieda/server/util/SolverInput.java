@@ -118,7 +118,6 @@ import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
-import com.google.gwt.dev.util.Pair;
 
 @Transactional
 public class SolverInput
@@ -374,314 +373,6 @@ public class SolverInput
 		return this.triedaInput;
 	}
 
-	private void checkErrorsWarnings() {
-		checkDisciplinasSemLaboratorios();
-		checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo();
-		checkDemandasComDisciplinasSemCurriculo();
-		if (parametro.getConsiderarEquivalencia()) {
-			checkCicloDisciplinasEquivalentes();
-		}
-		
-		// PRIMEIRA VERIFICAÇÃO
-
-		// Verificar se existem disciplinas que não
-		// foram associadas a nenhuma matriz curricular
-		Set< Disciplina > disciplinas = new HashSet< Disciplina >();
-
-		for ( Curso curso : this.cenario.getCursos() )
-		{
-			for ( Curriculo curriculo : curso.getCurriculos() )
-			{
-				for ( CurriculoDisciplina curriculoDisciplina : curriculo.getDisciplinas() )
-				{
-					disciplinas.add( curriculoDisciplina.getDisciplina() );
-				}
-			}
-		}
-
-		for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
-		{
-			boolean encontrou = false;
-
-			for ( Disciplina disciplinaCurriculos : disciplinas )
-			{
-				if ( disciplinaCurriculos.getId() == disciplinaCenario.getId() )
-				{
-					encontrou = true;
-					break;
-				}
-			}
-
-			if ( !encontrou )
-			{
-				String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
-					+ " n&atilde;o foi associada a nenhuma matriz curricular.";
-
-				createWarningMessage( warningMessage );
-			}
-		}
-
-		// SEGUNDA VERIFICAÇÃO
-
-		// Fixação de disciplina com qtde de horários
-		// menores do que a qtde de créditos da disciplinas
-		List< Fixacao > fixacoes
-			= Fixacao.findAll( this.instituicaoEnsino );
-
-		for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
-		{
-			for ( Fixacao fixacao : fixacoes )
-			{
-				Integer totalCreditos = this.getHorarios( fixacao  ).size();
-
-				Disciplina disciplinaFixacao = fixacao.getDisciplina();
-
-				if ( totalCreditos != null && totalCreditos > 0
-					&& disciplinaFixacao != null
-					&& disciplinaFixacao.getId() == disciplinaCenario.getId()
-					&& totalCreditos < disciplinaCenario.getTotalCreditos() )
-				{
-					String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
-						+ ", que possui " + disciplinaCenario.getTotalCreditos() + " cr&eacute;ditos,"
-						+ " tem uma fixa&ccedil;&atilde;o de apenas " + totalCreditos.toString() + ".";
-
-					createWarningMessage( warningMessage );
-
-					break;
-				}
-			}
-		}
-
-		// TERCEIRA VERIFICAÇÃO
-
-		// Impossibilidade de associar uma regra
-		// genérica de divisão de créditos a uma disciplina
-		Set< DivisaoCredito > regras
-			= this.cenario.getDivisoesCredito();
-
-		if ( regras.size() > 0 )
-		{
-			for ( Disciplina disciplinaCenario : this.cenario.getDisciplinas() )
-			{
-				int creditosDisciplina = disciplinaCenario.getTotalCreditos();
-
-				boolean encontrou = false;
-
-				for ( DivisaoCredito divisaoCredito : regras )
-				{
-					if ( divisaoCredito.getCreditos() >= creditosDisciplina )
-					{
-						encontrou = true;
-						break;
-					}
-				}
-
-				if ( !encontrou )
-				{
-					String warningMessage = "A disciplina " + disciplinaCenario.getCodigo()
-						+ " n&atilde;o possui nenhuma regra de cr&eacute;ditos gen&eacute;rica "
-						+ "que atenda ao total de cr&eacute;ditos da disciplina.";
-
-					createWarningMessage( warningMessage );
-				}
-			}
-		}
-	}
-
-	private void checkDisciplinasSemLaboratorios() {
-		// coleta as disciplinas que serão enviadas para o solver e que exigem laboratório
-		Set<Disciplina> disciplinasQueExigemLaboratio = new HashSet<Disciplina>();
-		for (Oferta oferta : this.parametro.getCampus().getOfertas()) {
-			for (Demanda demanda : oferta.getDemandas()) {
-				Disciplina disciplina = demanda.getDisciplina();
-				if (disciplina.getLaboratorio()) {
-					disciplinasQueExigemLaboratio.add(disciplina);
-				}
-			}
-		}
-		
-		// verifica se há disciplinas que exigem laboratório, porém, não estão associadas a laboratórios
-		for (Disciplina disciplina : disciplinasQueExigemLaboratio) {
-			// coleta os CurriculoDisciplina não associados a laboratórios
-			Set<CurriculoDisciplina> curriculosDisciplinasNaoAssociadosALaboratorios = new HashSet<CurriculoDisciplina>();
-			for (CurriculoDisciplina curriculoDisciplina : disciplina.getCurriculos()) {
-				// apenas faz a validação para curriculos com alguma oferta
-				if (!curriculoDisciplina.getCurriculo().getOfertas().isEmpty()) {
-					// verifica se tem oferta no campus a ser otimizado
-					boolean curriculoTemOfertaNoCampusASerOtimizado = false;
-					for (Oferta oferta : curriculoDisciplina.getCurriculo().getOfertas()) {
-						if (oferta.getCampus().equals(this.parametro.getCampus())) {
-							curriculoTemOfertaNoCampusASerOtimizado = true;
-							break;
-						}
-					}
-					
-					// apenas faz validação se currículo tem oferta no campus a ser otimizado
-					if (curriculoTemOfertaNoCampusASerOtimizado) {
-						boolean estaAssociadoComAlgumLaboratorio = false;
-						for (Sala sala : curriculoDisciplina.getSalas()) {
-							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(this.parametro.getCampus())) {
-								estaAssociadoComAlgumLaboratorio = true;
-								break;
-							}
-						}
-						 
-						if (!estaAssociadoComAlgumLaboratorio) {
-							curriculosDisciplinasNaoAssociadosALaboratorios.add(curriculoDisciplina);
-						}
-					}
-				}
-			}
-			 
-			if (!curriculosDisciplinasNaoAssociadosALaboratorios.isEmpty()) {
-				String pares = "";
-				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasNaoAssociadosALaboratorios) {
-					pares += "(" + curriculoDisciplina.getCurriculo().getCodigo() + "," + curriculoDisciplina.getPeriodo() + "); ";
-				}
-				createErrorMessage("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + this.parametro.getCampus().getCodigo() + ", são eles: " + pares);
-				System.out.println("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + this.parametro.getCampus().getCodigo() + ", são eles: " + pares);
-			}
-		}
-	}
-	
-	private void checkCicloDisciplinasEquivalentes(){
-		int id = 0;
-		Integer cIndex, eIndex;
-		List<Long> nodeMap = new ArrayList<Long>();
-		List<Disciplina> disMap = new ArrayList<Disciplina>();
-		Set<Pair<Integer, Integer>> pairs = new HashSet<Pair<Integer, Integer>>();
-
-		// Para cada disciplina, obtem-se as suas equivalencias para montar tres estruturas:
-		// -> disMap mapeia o index associado a cada disciplina identificada
-		// -> nodeMap faz o controle de qual disciplina estah mapeada ou nao
-		// -> pairs obtem a relação de equivalencia de uma disciplina com outra. 
-		for(Disciplina disciplina : cenario.getDisciplinas()){
-			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
-				Disciplina cursou = equivalencia.getCursou();
-				if((cIndex = (Integer) nodeMap.indexOf(cursou.getId())) == -1){
-					cIndex = id++;
-					nodeMap.add(cursou.getId());
-					disMap.add(cursou);
-				}
-				for(Disciplina elimina : equivalencia.getElimina()){
-					if((eIndex = (Integer) nodeMap.indexOf(elimina.getId())) == -1){
-						eIndex = id++;
-						nodeMap.add(elimina.getId());
-						disMap.add(elimina);
-					}
-					pairs.add(Pair.create(cIndex, eIndex));
-				}
-			}
-		}
-		
-		// Constroi um grafo a partir dos pares obtidos e realiza a busca para verificar
-		// a existencia de ciclos. Nesse grafo, os indices associados aos nos sao os
-		// mesmos identificados em disMap. 
-		
-		Grafo g = new Grafo(pairs.size());
-		for(Pair<Integer, Integer> par: pairs)
-			g.insereArco(par.getLeft(), par.getRight());
-		
-		Profundidade p = new Profundidade();
-		if(!p.testeCiclos(g)){
-			
-			// Obtem-se os ciclos identificados e os imprime num formato adequado para
-			// informar ao usuario quais sao eles.
-			List<List<Integer>> ciclos = p.getCiclos();
-			int i = 1;
-			String ciclosStr = "Foram detectados os seguintes ciclos entre disciplinas equivalentes:<br /><br />";
-			for(List<Integer> ciclo: ciclos){
-				ciclosStr += i++ + ") ";
-				for(Integer idc: ciclo){
-					Disciplina dis = disMap.get(idc);
-					ciclosStr += dis.getNome() + " (" + dis.getCodigo() + ") -> ";
-				}
-				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 3) + "<br /><br />";
-			}
-			ciclosStr += " \n";
-			System.out.println(ciclosStr.replaceAll("<br />", "\n"));
-			createErrorMessage(ciclosStr);
-		}
-		
-	}
-
-	private void checkDemandasComDisciplinasSemCurriculo() {
-		// [CurriculoId -> Set<DisciplinaId>]
-		Map<Long,Set<Long>> curriculoIdToDisciplinasIdsMap = new HashMap<Long,Set<Long>>();
-		for (Oferta oferta : this.parametro.getCampus().getOfertas()) {
-			Curriculo curriculo = oferta.getCurriculo();
-			
-			// obtém as disciplinas associadas com o currículo em questão
-			Set<Long> disciplinasDoCurriculo = curriculoIdToDisciplinasIdsMap.get(curriculo.getId());
-			if (disciplinasDoCurriculo == null) {
-				disciplinasDoCurriculo = new HashSet<Long>();
-				for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinas()) {
-					disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId());
-				}
-			}
-			
-			// verifica se alguma demanda contém alguma disciplina que não esteja no currículo
-			// da oferta associada com a demanda
-			for (Demanda demanda : oferta.getDemandas()) {
-				if (!disciplinasDoCurriculo.contains(demanda.getDisciplina().getId())) {
-					createErrorMessage("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
-					System.out.println("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
-				}
-			}
-		}
-	}
-
-	private void checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo() {
-		// obtém os currículos do campus selecionado para otimização
-		Set<Curriculo> curriculosDoCampusSelecionado = new HashSet<Curriculo>();
-		for (Oferta oferta : this.parametro.getCampus().getOfertas()) {
-			curriculosDoCampusSelecionado.add(oferta.getCurriculo());
-		}
-		
-		// [CurriculoId -> Máximo Créditos Semanais]
-		Map<Long,Integer> maxCreditosSemanaisPorSemanaLetivaMap = new HashMap<Long,Integer>();
- 
-		for (Curriculo curriculo : this.cenario.getCurriculos()) {
-			// filtra os currículos do campus selecionado para otimização
-			if (curriculosDoCampusSelecionado.contains(curriculo)) {
-				// obtém o máximo de créditos semanais da semana letiva associada com o currículo
-				Integer maxCreditosSemanais = maxCreditosSemanaisPorSemanaLetivaMap.get(curriculo.getSemanaLetiva().getId());
-				if (maxCreditosSemanais == null) {
-					maxCreditosSemanais = curriculo.getSemanaLetiva().calcTotalCreditosSemanais(this.parametro.getTurno());
-					maxCreditosSemanaisPorSemanaLetivaMap.put(curriculo.getSemanaLetiva().getId(),maxCreditosSemanais);
-				}
-				
-				Set<Long> disciplinasDoCurriculo = new HashSet<Long>();
-				Set<String> disciplinasRepetidasNoCurriculo = new HashSet<String>();
-				List<String> periodosQueViolamMaxCreditosSemanais = new ArrayList<String>();
-				for (Integer periodo : curriculo.getPeriodos(instituicaoEnsino)) {
-					Integer totalCreditosDoPeriodo = 0;
-					for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinasByPeriodo(instituicaoEnsino,periodo)) {
-						if (!disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId())) {
-							disciplinasRepetidasNoCurriculo.add(curriculoDisciplina.getDisciplina().getCodigo());
-						}
-						totalCreditosDoPeriodo += curriculoDisciplina.getDisciplina().getCreditosTotal();
-					}
-					
-					if (totalCreditosDoPeriodo > maxCreditosSemanais) {
-						periodosQueViolamMaxCreditosSemanais.add(periodo + "("+totalCreditosDoPeriodo+")");
-					}
-					
-				}
-				
-				if (!disciplinasRepetidasNoCurriculo.isEmpty()) {
-					createErrorMessage("A matriz curricular [" + curriculo.getCodigo() + "] contém disciplinas repetidas, são elas: " + disciplinasRepetidasNoCurriculo.toString());
-					System.out.println("A matriz curricular [" + curriculo.getCodigo() + "] contém disciplinas repetidas, são elas: " + disciplinasRepetidasNoCurriculo.toString());
-				}
-				
-				if (!periodosQueViolamMaxCreditosSemanais.isEmpty()) {
-					createErrorMessage("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString());
-					System.out.println("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString());
-				}
-			}
-		}
-	}
-
 	private Set< HorarioDisponivelCenario > getHorarios( Campus campus )
 	{
 		if ( campus == null )
@@ -823,8 +514,6 @@ public class SolverInput
 		{
 			generateTaticoInput();System.out.println("generateTaticoInput();");//TODO: retirar LOG
 		}
-
-		checkErrorsWarnings();System.out.println("checkErrorsWarnings();");//TODO: retirar LOG
 	}
 
 	@Transactional
@@ -1503,8 +1192,10 @@ public class SolverInput
 			createWarningMessage( warningMessage2 );
 		}
 
-		for ( Disciplina disciplina : this.disciplinasComDemandaCurriculo )
-		{
+		for ( Disciplina disciplina : this.disciplinasComDemandaCurriculo ) {
+			//TODO: MEDIÇÃO PERFORMANCE
+			long start = System.currentTimeMillis();System.out.print("Cadastro Basico");
+			
 			ItemDisciplina itemDisciplina = this.of.createItemDisciplina();
 
 			itemDisciplina.setId( disciplina.getId().intValue() );
@@ -1517,7 +1208,13 @@ public class SolverInput
 			itemDisciplina.setMaxAlunosPratico( disciplina.getMaxAlunosPratico() );
 			itemDisciplina.setTipoDisciplinaId( disciplina.getTipoDisciplina().getId().intValue() );
 			itemDisciplina.setNivelDificuldadeId( Dificuldades.toInt( disciplina.getDificuldade() ) );
+			
+			//TODO: MEDIÇÃO PERFORMANCE
+			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
 
+			//TODO: MEDIÇÃO PERFORMANCE
+			start = System.currentTimeMillis();System.out.print("DivisaoCredito");
+			
 			DivisaoCredito divisaoCredito = null;
 
 			if ( this.parametro.getRegrasEspecificasDivisaoCredito() )
@@ -1548,7 +1245,13 @@ public class SolverInput
 
 				itemDisciplina.setDivisaoDeCreditos( itemDivisaoCreditos );
 			}
+			
+			//TODO: MEDIÇÃO PERFORMANCE
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
 
+			//TODO: MEDIÇÃO PERFORMANCE
+			start = System.currentTimeMillis();System.out.print("Equivalencias");
+			
 			GrupoIdentificador grupoIdentificadorEquivalencias = this.of.createGrupoIdentificador();
 
 			if ( this.parametro.getConsiderarEquivalencia() )
@@ -1571,6 +1274,12 @@ public class SolverInput
 			}
 
 			itemDisciplina.setDisciplinasEquivalentes( grupoIdentificadorEquivalencias );
+			
+			//TODO: MEDIÇÃO PERFORMANCE
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
+			
+			//TODO: MEDIÇÃO PERFORMANCE
+			start = System.currentTimeMillis();System.out.print("DisciplinasIncompativeis");
 
 			GrupoIdentificador grupoIdentificadorIncompativeis = this.of.createGrupoIdentificador();
 			Set< Incompatibilidade > incompatibilidades = disciplina.getIncompatibilidades();
@@ -1582,6 +1291,12 @@ public class SolverInput
 			}
 
 			itemDisciplina.setDisciplinasIncompativeis( grupoIdentificadorIncompativeis );
+			
+			//TODO: MEDIÇÃO PERFORMANCE
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
+			
+			//TODO: MEDIÇÃO PERFORMANCE
+			start = System.currentTimeMillis();System.out.print("HorariosDisponiveis");
 
 			Set< HorarioDisponivelCenario > setHorarios
 				= new HashSet< HorarioDisponivelCenario >();
@@ -1592,6 +1307,9 @@ public class SolverInput
 				= new ArrayList< HorarioDisponivelCenario >( setHorarios );
 			
 			itemDisciplina.setHorariosDisponiveis( createGrupoHorario( listHorarios ) );
+			
+			//TODO: MEDIÇÃO PERFORMANCE
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
 
 			grupoDisciplina.getDisciplina().add( itemDisciplina );
 		}
