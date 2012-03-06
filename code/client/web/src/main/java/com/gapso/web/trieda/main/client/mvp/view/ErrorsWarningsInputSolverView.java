@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
@@ -8,7 +9,6 @@ import com.gapso.web.trieda.main.client.mvp.presenter.ErrorsWarningsInputSolverP
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ErrorsWarningsInputSolverView
@@ -42,22 +42,20 @@ public class ErrorsWarningsInputSolverView
 			Resources.DEFAULTS.warning16() ) );
 		this.messagesWarningPanel.setBodyBorder( false );
 		this.messagesWarningPanel.addStyleName( "errorList" );
+		this.messagesWarningPanel.setScrollMode(Style.Scroll.AUTO);
+		this.messagesWarningPanel.setHeight(220);
 		this.panel.add( this.messagesWarningPanel );
 
-		this.messagesErrorPanel = new ContentPanel(){
-			@Override
-			protected void onRender(Element target, int index){
-				super.onRender( target, index );
-				target.addClassName("alertasEErros");
-			}
-		};
+		this.messagesErrorPanel = new ContentPanel();
 		this.messagesErrorPanel.setHeading( "Erros" );
 		this.messagesErrorPanel.setIcon( AbstractImagePrototype.create(
 			Resources.DEFAULTS.error16() ) );
 		this.messagesErrorPanel.setBodyBorder( false );
 		this.messagesErrorPanel.addStyleName( "errorList" );
-
+		this.messagesErrorPanel.setScrollMode(Style.Scroll.AUTO);
+		this.messagesErrorPanel.setHeight(220);
 		this.panel.add( this.messagesErrorPanel );
+
 		this.panel.setAutoHeight( true );
 
 		this.simpleModal.setContent( this.panel );
