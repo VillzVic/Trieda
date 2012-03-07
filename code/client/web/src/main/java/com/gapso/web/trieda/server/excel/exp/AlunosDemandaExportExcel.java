@@ -144,8 +144,7 @@ public class AlunosDemandaExportExcel
 		Integer periodo = alunoDemanda.getPeriodo();
 		if ( periodo == null || periodo <= 0 )
 		{
-			periodo = alunoDemanda.getDemanda().getOferta().getCurriculo().getPeriodo( this.instituicaoEnsino,
-				alunoDemanda.getDemanda().getDisciplina(), alunoDemanda.getDemanda().getOferta() );
+			periodo = alunoDemanda.getDemanda().getOferta().getCurriculo().getPeriodo(alunoDemanda.getDemanda().getDisciplina());
 		}
 
 		// Período

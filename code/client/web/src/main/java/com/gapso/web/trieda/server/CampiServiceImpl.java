@@ -500,20 +500,19 @@ public class CampiServiceImpl extends RemoteService
 			campus.getValorCredito() : 0.0 );
 
 		Integer qtdTurma = AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(), campus );
-		
+
 		List< AtendimentoTatico > atendimentoTaticoList = new ArrayList<AtendimentoTatico>();
-		
-		Map<String,List<AtendimentoTatico>> salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap = new HashMap<String,List<AtendimentoTatico>>();
+		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
 		for (Oferta oferta : campus.getOfertas()) {
 			atendimentoTaticoList.addAll(oferta.getAtendimentosTaticos());
 			for (AtendimentoTatico atendimento : oferta.getAtendimentosTaticos()) {
 				String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId() + "-" + oferta.getCurriculo().getSemanaLetiva().getId();
-				List<AtendimentoTatico> atendimentos = salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap.get(key);
+				List<AtendimentoRelatorioDTO> atendimentos = salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap.get(key);
 				if (atendimentos == null) {
-					atendimentos = new ArrayList<AtendimentoTatico>();
+					atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
 					salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap.put(key,atendimentos);
 				}
-				atendimentos.add(atendimento);
+				atendimentos.add(ConvertBeans.toAtendimentoTaticoDTO(atendimento));
 			}
 		}
 		
@@ -526,18 +525,12 @@ public class CampiServiceImpl extends RemoteService
 		Set< Sala > salas = new HashSet< Sala >();
 		Set< Turno > turnos = new HashSet< Turno >();
 		Set< SemanaLetiva > semanasLetivas = new HashSet< SemanaLetiva >();
-
-		for ( AtendimentoTatico atendimentoTatico : atendimentoTaticoList )
-		{
+		for ( AtendimentoTatico atendimentoTatico : atendimentoTaticoList ) {
 			salas.add( atendimentoTatico.getSala() );
 			turnos.add( atendimentoTatico.getOferta().getTurno() );
 			semanasLetivas.add( atendimentoTatico.getOferta().getCurriculo().getSemanaLetiva() );
 		}
-
-//		Collection< SalaDTO > salasDTO = ConvertBeans.toSalaDTO( salas );
-//		Collection< TurnoDTO > turnosDTO = ConvertBeans.toTurnoDTO( turnos );
-//		Collection< SemanaLetivaDTO > semanasLetivasDTO = ConvertBeans.toSemanaLetivaDTO( semanasLetivas );
-
+		
 		double numeradorSala = 0.0;
 		double denominadorSala = 0.0;
 		double numeradorLab = 0.0;
@@ -552,16 +545,11 @@ public class CampiServiceImpl extends RemoteService
 			{
 				for ( SemanaLetiva semanaLetiva : semanasLetivas )
 				{
-					//List< AtendimentoRelatorioDTO > atendimentosDTO = atService.getBusca( salaDTO, turnoDTO, semanaLetivaDTO );
 					String key = sala.getId() + "-" + turno.getId() + "-" + semanaLetiva.getId();
-					List<AtendimentoTatico> atendimentosTatico = salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap.get(key);
+					List<AtendimentoRelatorioDTO> atendimentosTatico = salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap.get(key);
 					if (atendimentosTatico != null) {
-						List<AtendimentoRelatorioDTO> atendimentosTaticoDTO = new ArrayList<AtendimentoRelatorioDTO>();
-						for (AtendimentoTatico atendimentoTatico : atendimentosTatico) {
-							atendimentosTaticoDTO.add( ConvertBeans.toAtendimentoTaticoDTO( atendimentoTatico ) );
-						}
-						List< AtendimentoRelatorioDTO > atendimentosDTO = atService.montaListaParaVisaoSala(atendimentosTaticoDTO);
-	
+						List< AtendimentoRelatorioDTO > atendimentosDTO = atService.montaListaParaVisaoSala(atendimentosTatico);
+						
 						for ( AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO )
 						{
 							if ( !sala.isLaboratorio() )
@@ -590,7 +578,7 @@ public class CampiServiceImpl extends RemoteService
 
 		Double mediaCreditoTurma = ( ( qtdTurma == 0 ) ? 0.0 : ( qtdCreditos / qtdTurma ) );
 		Double custoDocenteSemestral = ( qtdCreditos * custoCredito * 4.5 * 6.0 );
-
+		
 		Double receitaSemestral = 0.0;
 		for ( Demanda demanda : demandaToQtdAlunosNaoAtendidosMap.keySet() )
 		{

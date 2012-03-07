@@ -487,7 +487,7 @@ public class Curriculo
     }
     
     public Integer getPeriodo(Disciplina disciplina) {
-    	for (CurriculoDisciplina cd : getCurriculoDisciplinas()) {
+    	for (CurriculoDisciplina cd : disciplinas) {
     		if (cd.getDisciplina().getId().equals(disciplina.getId())) {
     			return cd.getPeriodo();
     		}

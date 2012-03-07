@@ -710,8 +710,7 @@ public class AtendimentoOperacional
 		Oferta oferta = getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
 
-		Integer periodo = curriculo.getPeriodo(
-			this.getInstituicaoEnsino(), this.getDisciplina(), this.getOferta() );
+		Integer periodo = curriculo.getPeriodo(this.getDisciplina());
 
 		return oferta.getCampus().getId()
 			+ "-" + oferta.getTurno().getId()

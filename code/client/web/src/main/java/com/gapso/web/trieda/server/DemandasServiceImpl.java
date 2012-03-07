@@ -244,9 +244,8 @@ public class DemandasServiceImpl
 			InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(demandaDTO.getInstituicaoEnsinoId());
 			Curriculo curriculo = Curriculo.find(demandaDTO.getCurriculoId(),instituicaoEnsino);
 			Disciplina disciplina = Disciplina.find(demandaDTO.getDisciplinaId(),instituicaoEnsino);
-			Oferta oferta = Oferta.find(demandaDTO.getOfertaId(),instituicaoEnsino);
 			
-			periodo = curriculo.getPeriodo(instituicaoEnsino,disciplina,oferta);
+			periodo = curriculo.getPeriodo(disciplina);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new TriedaException(e);
