@@ -84,7 +84,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	@Override
 	public ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
 		// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
-		ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> parResultante = ParDTO.create(Collections.<AtendimentoRelatorioDTO>emptyList(),Collections.<Integer>emptyList());
+		ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> parResultante = ParDTO.<List<AtendimentoRelatorioDTO>,List<Integer>>create(new ArrayList<AtendimentoRelatorioDTO>(),null);
 		
 		// verifica se o campus foi otimizado no modo tático ou no operacional
 		if (campusDTO.getOtimizadoTatico()) {
