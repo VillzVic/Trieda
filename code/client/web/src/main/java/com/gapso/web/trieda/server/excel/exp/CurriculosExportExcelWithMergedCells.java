@@ -129,7 +129,7 @@ public class CurriculosExportExcelWithMergedCells
 		setCell( row, 7, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], curriculo.getSemanaLetiva().getCodigo() );
 
 		List< Integer > listPeriodos
-			= curriculo.getPeriodos( this.instituicaoEnsino );
+			= curriculo.getPeriodos();
 
 		for ( Integer periodo : listPeriodos )
 		{
@@ -139,8 +139,7 @@ public class CurriculosExportExcelWithMergedCells
 			setCell( row, 5, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], periodo );
 
 			List< CurriculoDisciplina > disciplinasDeUmPeriodo
-				= curriculo.getCurriculoDisciplinasByPeriodo(
-					this.instituicaoEnsino, periodo );
+				= curriculo.getCurriculoDisciplinasByPeriodo(periodo);
 
 			for ( CurriculoDisciplina disciplinaDeUmPeriodo : disciplinasDeUmPeriodo )
 			{

@@ -990,8 +990,7 @@ public class DisciplinasServiceImpl
 		}
 
 		List< CurriculoDisciplina > curriculoDisciplinas
-			= curriculo.getCurriculoDisciplinasByPeriodo(
-				getInstituicaoEnsinoUser(), periodo );
+			= curriculo.getCurriculoDisciplinasByPeriodo(periodo);
 
 		for ( CurriculoDisciplina cd1 : curriculoDisciplinas )
 		{

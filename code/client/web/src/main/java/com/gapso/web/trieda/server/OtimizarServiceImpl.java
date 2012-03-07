@@ -71,12 +71,26 @@ public class OtimizarServiceImpl
 			List<String> errors = new ArrayList<String>();
 			
 			// realiza verificações
+			System.out.print("checkDisciplinasSemCurriculo(parametro,warnings);");long start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasSemCurriculo(parametro,warnings);
+			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
+			System.out.print("checkDisciplinasSemLaboratorios(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasSemLaboratorios(parametro,errors);
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
+			System.out.print("checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo");start = System.currentTimeMillis(); // TODO: retirar
 			checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors);
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+
+			System.out.print("checkDemandasComDisciplinasSemCurriculo(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
 			if (parametro.getConsiderarEquivalencia()) {
+				System.out.print("checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);");start = System.currentTimeMillis(); // TODO: retirar
 				checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);
+				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			}
 			checksCleiton();//TODO: revisar
 			
@@ -268,9 +282,9 @@ public class OtimizarServiceImpl
 				Set<Long> disciplinasDoCurriculo = new HashSet<Long>();
 				Set<String> disciplinasRepetidasNoCurriculo = new HashSet<String>();
 				List<String> periodosQueViolamMaxCreditosSemanais = new ArrayList<String>();
-				for (Integer periodo : curriculo.getPeriodos(instituicaoEnsino)) {
+				for (Integer periodo : curriculo.getPeriodos()) {
 					Integer totalCreditosDoPeriodo = 0;
-					for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinasByPeriodo(instituicaoEnsino,periodo)) {
+					for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinasByPeriodo(periodo)) {
 						if (!disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId())) {
 							disciplinasRepetidasNoCurriculo.add(curriculoDisciplina.getDisciplina().getCodigo());
 						}

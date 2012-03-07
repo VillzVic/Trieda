@@ -181,7 +181,7 @@ public class SolverInput
 			for ( Curriculo curriculo : curso.getCurriculos() )
 			{
 				List< Integer > periodos
-					= curriculo.getPeriodos( this.instituicaoEnsino );
+					= curriculo.getPeriodos();
 
 				if ( !this.mapCurriculosPeriodos.containsKey( curriculo ) )
 				{

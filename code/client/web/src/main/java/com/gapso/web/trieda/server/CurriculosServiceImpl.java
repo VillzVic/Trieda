@@ -216,7 +216,7 @@ public class CurriculosServiceImpl
 			return new ArrayList< Integer >();
 		}
 
-		return curriculo.getPeriodos( getInstituicaoEnsinoUser() );
+		return curriculo.getPeriodos();
 	}
 
 	@Override

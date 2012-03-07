@@ -160,16 +160,14 @@ public class DemandasExportExcel
 
 			if ( curriculo != null )
 			{
-				listPeriodos = curriculo.getPeriodos( this.instituicaoEnsino );
+				listPeriodos = curriculo.getPeriodos();
 			}
 
 			if ( listPeriodos != null && listPeriodos.size() > 0 )
 			{
 				for ( Integer periodo : listPeriodos )
 				{
-					List< CurriculoDisciplina > disciplinasDeUmPeriodo
-						= curriculo.getCurriculoDisciplinasByPeriodo(
-							this.instituicaoEnsino, periodo );
+					List< CurriculoDisciplina > disciplinasDeUmPeriodo = curriculo.getCurriculoDisciplinasByPeriodo(periodo);
 
 					if ( disciplinasDeUmPeriodo == null
 						|| disciplinasDeUmPeriodo.size() == 0 )

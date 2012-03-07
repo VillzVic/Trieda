@@ -116,7 +116,7 @@ public class CurriculosExportExcel
 	private int writeData( Curriculo curriculo, int row, HSSFSheet sheet )
 	{
 		List< Integer > listPeriodos
-			= curriculo.getPeriodos( this.instituicaoEnsino );
+			= curriculo.getPeriodos();
 
 		if ( listPeriodos == null || listPeriodos.size() == 0 )
 		{
@@ -125,8 +125,7 @@ public class CurriculosExportExcel
 
 		for ( Integer periodo : listPeriodos )
 		{
-			List< CurriculoDisciplina > disciplinasDeUmPeriodo
-				= curriculo.getCurriculoDisciplinasByPeriodo( this.instituicaoEnsino, periodo );
+			List< CurriculoDisciplina > disciplinasDeUmPeriodo = curriculo.getCurriculoDisciplinasByPeriodo(periodo);
 
 			if ( disciplinasDeUmPeriodo == null || disciplinasDeUmPeriodo.size() == 0 )
 			{

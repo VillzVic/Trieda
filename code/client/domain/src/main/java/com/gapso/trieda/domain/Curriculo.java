@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -378,6 +379,16 @@ public class Curriculo
 
 		return q.getResultList();
 	}
+	
+	public List<CurriculoDisciplina> getCurriculoDisciplinasByPeriodo(Integer periodo) {
+		List<CurriculoDisciplina> curriculoDisciplinaList = new ArrayList<CurriculoDisciplina>();
+		for (CurriculoDisciplina cd : disciplinas) {
+			if (cd.getPeriodo().equals(periodo)) {
+				curriculoDisciplinaList.add(cd);
+			}
+		}
+		return curriculoDisciplinaList;
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public List< CurriculoDisciplina > getCurriculoDisciplinasByPeriodo(
@@ -538,6 +549,14 @@ public class Curriculo
     	}
 
     	return periodo;
+    }
+    
+    public List<Integer> getPeriodos() {
+    	Set<Integer> periodos = new HashSet<Integer>();
+    	for (CurriculoDisciplina cd : disciplinas) {
+    		periodos.add(cd.getPeriodo());
+    	}
+    	return new ArrayList<Integer>(periodos);
     }
 
     @SuppressWarnings( "unchecked" )
