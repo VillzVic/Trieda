@@ -263,13 +263,7 @@ public class RelatorioVisaoCursoExportExcel
 			tamanhosSemanaList.add( tamanhoSemanaList );
 		}
 
-		ParDTO< List< List< AtendimentoRelatorioDTO > >, List< List< Integer > > > par
-			= new ParDTO< List< List< AtendimentoRelatorioDTO > >, List< List< Integer > > >();
-
-		par.setPrimeiro( atdRelatoriosList );
-		par.setSegundo( tamanhosSemanaList );
-
-		return par;
+		return ParDTO.create(atdRelatoriosList,tamanhosSemanaList);
 	}
 
 	@Override

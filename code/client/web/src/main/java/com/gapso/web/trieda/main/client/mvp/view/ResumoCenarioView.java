@@ -96,7 +96,7 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 		TreeLoader<TreeNodeDTO> loader = new BaseTreeLoader<TreeNodeDTO>(proxy) {
 			@Override
 			public boolean hasChildren(TreeNodeDTO parent) {
-				return parent.getLeaf();
+				return !parent.getLeaf();
 			}
 		};
 		

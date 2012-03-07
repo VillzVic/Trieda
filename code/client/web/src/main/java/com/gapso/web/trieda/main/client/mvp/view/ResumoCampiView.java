@@ -111,7 +111,7 @@ public class ResumoCampiView extends MyComposite
 			@Override
 			public boolean hasChildren( TreeNodeDTO parent )
 			{
-				return parent.getLeaf();
+				return !parent.getLeaf();
 			}
 		};
 		

@@ -8,12 +8,16 @@ public class ParDTO<P, S> extends BaseModel
 
 	private P primeiro;
 	private S segundo;
+	
+	static public <P,S> ParDTO<P,S> create(P primeiro, S segundo) {
+		return new ParDTO<P,S>(primeiro,segundo);
+	}
 
-	public ParDTO() {
+	private ParDTO() {
 		super();
 	}
 
-	public ParDTO(P primeiro, S segundo) {
+	private ParDTO(P primeiro, S segundo) {
 		super();
 		this.primeiro = primeiro;
 		this.segundo = segundo;

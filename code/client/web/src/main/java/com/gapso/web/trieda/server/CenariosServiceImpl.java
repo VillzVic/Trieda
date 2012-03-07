@@ -231,16 +231,16 @@ public class CenariosServiceImpl
 
 		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
 
-		list.add( new TreeNodeDTO( "Total de Campi: <b>" + Campus.count( getInstituicaoEnsinoUser(), cenario ) + "</b>" ) );
-		list.add( new TreeNodeDTO( "Total de Cursos: <b>" + Curso.count( getInstituicaoEnsinoUser(), cenario ) + "</b>" ) );
-		list.add( new TreeNodeDTO( "Total de Matrizes Curriculares: <b>" + Curriculo.count( getInstituicaoEnsinoUser(), cenario ) + "</b>" ) );
-		list.add( new TreeNodeDTO( "Total de Disciplinas: <b>" + Disciplina.count( getInstituicaoEnsinoUser(), cenario ) + "</b>" ) );
-		list.add( new TreeNodeDTO( "Demanda Total: <b>" + Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ) + " Alunos</b>" ) );
+		list.add( new TreeNodeDTO( "Total de Campi: <b>" + Campus.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Total de Cursos: <b>" + Curso.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Total de Matrizes Curriculares: <b>" + Curriculo.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Total de Disciplinas: <b>" + Disciplina.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Demanda Total: <b>" + Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ) + " Alunos</b>", null ) );
 		list.add( new TreeNodeDTO( "Total de Salas de Aula: <b>" +
-			Sala.countSalaDeAula( getInstituicaoEnsinoUser(), cenario ) + "</b>" ) );
+			Sala.countSalaDeAula( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "Total de Salas de Laborat&oacute;rio: <b>" +
-			Sala.countLaboratorio( getInstituicaoEnsinoUser(), cenario ) + "</b>" ) );
-
+			Sala.countLaboratorio( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
+		
 		return list;
 	}
 }

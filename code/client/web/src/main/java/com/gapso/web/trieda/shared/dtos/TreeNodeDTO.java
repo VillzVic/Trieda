@@ -40,8 +40,13 @@ public class TreeNodeDTO extends BaseModel implements Comparable<TreeNodeDTO> {
 		}
 	}
 	
-	public TreeNodeDTO(String text) {
-		this(null,text,"",false,true,null);
+	public TreeNodeDTO(String text, TreeNodeDTO parent) {
+		this(null,text,(text+"/"),true,true,parent);
+		if (parent != null) {
+			setPath(parent.getPath()+text+"/");
+			parent.setEmpty(false);
+			parent.setLeaf(false);
+		}
 	}
 	
 	public AbstractDTO<?> getContent() {

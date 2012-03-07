@@ -16,6 +16,8 @@ import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.web.trieda.server.DemandasServiceImpl;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -106,11 +108,15 @@ public class DemandasExportExcel
 		{
 			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
+			
+			DemandasServiceImpl demandasService = new DemandasServiceImpl();
+			ParDTO<Map<Demanda,Integer>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(ofertas);
+			Map<Demanda,Integer> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
 
 			int nextRow = this.initialRow;
 			for ( Oferta oferta : ofertas )
 			{
-				nextRow = writeData( oferta, nextRow, sheet );
+				nextRow = writeData( oferta, nextRow, sheet, demandaToQtdAlunosNaoAtendidosMap);
 			}
 
 			result = true;
@@ -124,7 +130,7 @@ public class DemandasExportExcel
 		return result;
 	}
 	
-	private int writeData( Oferta oferta, int row, HSSFSheet sheet )
+	private int writeData( Oferta oferta, int row, HSSFSheet sheet , Map<Demanda,Integer> demandaToQtdAlunosNaoAtendidosMap)
 	{
 		if ( oferta.getDemandas().isEmpty() )
 		{
@@ -202,6 +208,8 @@ public class DemandasExportExcel
 						{
 							this.mapDemandasExportadas.put( key, true );
 						}
+						
+						Integer qtdNaoAtendida = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
 
 						// Campus
 						setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
@@ -231,7 +239,13 @@ public class DemandasExportExcel
 						
 						// Receita
 						setCell( row, 9, sheet, this.cellStyles[ ExcelCellStyleReference.DOUBLE_NUMBER.ordinal() ], oferta.getReceita() );
-
+						
+						// Demanda Atendida
+						setCell( row, 10, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], (quantidade - qtdNaoAtendida) );
+						
+						// Demanda Não Atendida
+						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
+						
 						row++;
 					}
 				}

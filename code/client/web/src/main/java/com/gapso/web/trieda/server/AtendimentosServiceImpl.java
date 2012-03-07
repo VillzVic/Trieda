@@ -84,17 +84,16 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	@Override
 	public ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
 		// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
-		ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> parResultante = new ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>>();
-		parResultante.setPrimeiro(new ArrayList< AtendimentoRelatorioDTO >());
+		ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> parResultante = ParDTO.create(Collections.<AtendimentoRelatorioDTO>emptyList(),Collections.<Integer>emptyList());
 		
 		// verifica se o campus foi otimizado no modo tático ou no operacional
 		if (campusDTO.getOtimizadoTatico()) {
 			// Otimização no modo Tático
 			
+			// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
+			List<AtendimentoTaticoDTO> atendimentosTaticoDTO = buscaNoBancoDadosDTOsDeAtendimentoTatico(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
 			// TODO: comentar
-			List<AtendimentoTaticoDTO> taticoList = getBuscaTatico(curriculoDTO, periodo, turnoDTO, campusDTO, cursoDTO);
-			// TODO: comentar
-			ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > parDTO = montaListaParaVisaoCursoTatico( turnoDTO, taticoList );
+			ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > parDTO = montaListaParaVisaoCursoTatico( turnoDTO, atendimentosTaticoDTO );
 			// TODO: comentar
 			parResultante.setSegundo( parDTO.getSegundo() );
 			for ( AtendimentoTaticoDTO atdto : parDTO.getPrimeiro() ) {
@@ -108,7 +107,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// processa os atendimentos do operacional e os transforma em aulas
 			List<AtendimentoOperacionalDTO> aulas = extraiAulas(atendimentosOperacionalDTO,curriculoDTO);
 			// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
-			ParDTO<List<AtendimentoOperacionalDTO>,List<Integer>> parDTO= montaEstruturaParaGradeHorariaVisaoCursoOperacional(aulas);
+			ParDTO<List<AtendimentoOperacionalDTO>,List<Integer>> parDTO = montaEstruturaParaGradeHorariaVisaoCursoOperacional(aulas);
 			// ordena as aulas pelo horário de início
 			// TODO: CREIO QUE ESTA ORDENAÇÃO É DESNECESSÁRIA
 			List<AtendimentoOperacionalDTO> aulasOrdenadasPeloHorarioInicial = ordenaPorHorarioAula(parDTO.getPrimeiro());
@@ -118,6 +117,37 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		return parResultante;
+	}
+	
+	/**
+	 * Busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs.
+	 * @param curriculoDTO matriz curricular
+	 * @param periodo período da matriz curricular
+	 * @param turnoDTO turno
+	 * @param campusDTO campus
+	 * @param cursoDTO curso
+	 * @return uma lista com DTOs que representam atendimentos do modo tático
+	 */
+	public List<AtendimentoTaticoDTO> buscaNoBancoDadosDTOsDeAtendimentoTatico(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+		// obtém os beans de Banco de Dados
+		Curriculo curriculo = Curriculo.find( curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
+		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		Curso curso = null;
+		if (cursoDTO != null) {
+			curso = Curso.find(cursoDTO.getId(),getInstituicaoEnsinoUser());
+		}
+
+		// busca no BD os atendimentos do modo tático
+		List<AtendimentoTatico> atendimentosTaticoBD = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(),campus,curriculo,periodo,turno,curso);
+
+		// transforma os atendimentos obtidos do BD em DTOs
+		List<AtendimentoTaticoDTO> atendimentosTaticoDTO = new ArrayList<AtendimentoTaticoDTO>();
+		for (AtendimentoTatico atendimentoTatico : atendimentosTaticoBD) {
+			atendimentosTaticoDTO.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
+		}
+
+		return atendimentosTaticoDTO;
 	}
 	
 	/**
@@ -363,8 +393,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 
 		//adicionaDadosCompartilhamentoSalaCursoOperacional( finalProcessedList );
 
-		ParDTO<List<AtendimentoOperacionalDTO>,List<Integer>> par = new ParDTO<List<AtendimentoOperacionalDTO>,List<Integer>>(listaResultanteComAulas,qtdColunasGradeHorariaPorDiaSemana);
-		return par;
+		return ParDTO.create(listaResultanteComAulas,qtdColunasGradeHorariaPorDiaSemana);
 	}
 	
 	/**
@@ -644,36 +673,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return this.getAtendimentosParaGradeHorariaVisaoCurso( curriculoDTO, periodo, turnoDTO, campusDTO, null );
 	}
 
-	public List< AtendimentoTaticoDTO > getBuscaTatico(
-		CurriculoDTO curriculoDTO, Integer periodo,
-		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO )
-	{
-		Curriculo curriculo = Curriculo.find( curriculoDTO.getId(), getInstituicaoEnsinoUser() );
-		Turno turno = Turno.find( turnoDTO.getId(), getInstituicaoEnsinoUser() );
-		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
-
-		Curso curso = null;
-
-		if ( cursoDTO != null )
-		{
-			curso = Curso.find(
-				cursoDTO.getId(), getInstituicaoEnsinoUser() );
-		}
-
-		List< AtendimentoTaticoDTO > list
-			= new ArrayList< AtendimentoTaticoDTO >();
-
-		List< AtendimentoTatico > atendimentosTatico = AtendimentoTatico.findBy(
-			getInstituicaoEnsinoUser(), campus, curriculo, periodo, turno, curso );
-
-		for ( AtendimentoTatico atendimentoTatico : atendimentosTatico )
-		{
-			list.add( ConvertBeans.toAtendimentoTaticoDTO( atendimentoTatico ) );
-		}
-
-		return list;
-	}
-
 	private ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > montaListaParaVisaoCursoTatico(
 		TurnoDTO turnoDTO, List< AtendimentoTaticoDTO > list )
 	{
@@ -781,11 +780,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 
 		adicionaDadosCompartilhamentoSalaCursoTatico( finalProcessedList );
 
-		ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > entry
-			= new ParDTO< List< AtendimentoTaticoDTO >, List< Integer > >(
-				finalProcessedList, diaSemanaTamanhoList );
-
-		return entry;
+		return ParDTO.create(finalProcessedList,diaSemanaTamanhoList);
 	}
 
 	// Implementaçao da verifição relacionada com a issue
@@ -802,9 +797,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			Integer dia = atendimento.getSemana();
 			Long horario = atendimento.getHorarioId();
 
-			ParDTO< Sala, ParDTO< Integer, Long > > key
-				= new ParDTO< Sala, ParDTO< Integer, Long > >(
-					sala, new ParDTO< Integer, Long >( dia, horario ) );
+			ParDTO< Sala, ParDTO< Integer, Long > > key = ParDTO.create(sala,ParDTO.create(dia,horario));
 
 			List< AtendimentoOperacionalDTO > list = mapSalaAtendimentos.get( key );
 
@@ -886,7 +879,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// de acordo com os cursos que compartilham essa sala
 			// Long horario = atendimento.getHorario();
 
-			ParDTO< Sala, Integer > key = new ParDTO< Sala, Integer >( sala, dia );
+			ParDTO< Sala, Integer > key = ParDTO.create(sala,dia);
 			List< AtendimentoTaticoDTO > list = mapSalaAtendimentos.get( key );
 
 			if ( list == null )
