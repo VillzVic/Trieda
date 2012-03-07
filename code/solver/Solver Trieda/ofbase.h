@@ -39,6 +39,10 @@
 #define ITERA_GGROUP_LESSPTR( it, ggroup, type ) for ( GGroup< type *, LessPtr< type > >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
 #endif
 
+#ifndef ITERA_GGROUP_LESSPTRPTR
+#define ITERA_GGROUP_LESSPTRPTR( it, ggroup, type ) for ( GGroup< type *, std::less< type* > >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
+#endif
+
 #ifndef ITERA_GGROUP_GREATERPTR
 #define ITERA_GGROUP_GREATERPTR( it, ggroup, type ) for ( GGroup< type *, GreaterPtr< type > >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
 #endif

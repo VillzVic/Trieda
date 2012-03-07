@@ -377,6 +377,9 @@ public:
    // a outras semanas letivas que não se sobrepõem
    std::map< HorarioAula*, std::set<HorarioAula*> > compatibilidadesDeHorarios;
 
+   // Dado o id de uma unidade, retorna referencia para o campus correspondente
+   Campus* retornaCampus( int /*unidId*/ );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

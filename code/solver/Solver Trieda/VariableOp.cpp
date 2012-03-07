@@ -33,6 +33,7 @@ void VariableOp::reset()
    this->dia = -1;
    this->h1 = NULL;
    this->h2 = NULL;
+   this->unidade = NULL;
 }
 
 VariableOp::~VariableOp()
@@ -58,6 +59,7 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    this->dia = var.getDia();
    this->h1 = var.getH1();
    this->h2 = var.getH2();
+   this->unidade = var.getUnidade();
 
    return ( *this );
 }
@@ -199,6 +201,18 @@ bool VariableOp::operator < ( const VariableOp & var ) const
       return false;
    }
 
+   if( this->getUnidade() == NULL && var.getUnidade() != NULL )
+		return true;
+	else if( this->getUnidade() != NULL && var.getUnidade() == NULL )
+		return false;
+	else if( this->getUnidade() != NULL && var.getUnidade() != NULL )
+	{
+		if( *this->getUnidade() < *var.getUnidade() )
+			return true;
+		else if( *var.getUnidade() < *this->getUnidade() )
+			return false;
+	}
+
    return false;
 }
 
@@ -317,6 +331,11 @@ std::string VariableOp::toString()
    {
       str << "_Turma" << turma;
    }
+   
+   if ( unidade != NULL )
+   {
+      str << "_Unid:" << unidade->getId();
+   }
 
    if ( sala != NULL && aula == NULL )
    {
@@ -332,7 +351,7 @@ std::string VariableOp::toString()
    {
       str << "_H2:" << h2->getId();
    }
-
+   
    str << "}";
 
    str >> output;

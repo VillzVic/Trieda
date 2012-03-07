@@ -38,10 +38,9 @@ void AtendimentoOfertaSolucao::le_arvore(ItemAtendimentoOfertaSolucao& elem)
 	s << elem.disciplinaSubstitutaId();
 	std::string str( s.str() );
 	
-	// se tiver o campo disciplinaSubstitutaId preenchido
-	if ( elem.disciplinaSubstitutaId() > 0 ) // TODO: o correto é comparar algo do tipo "if (elem.disciplinaSubstitutaId() != NULL)". Mas não está funcionando com NULL.
+	if ( elem.disciplinaSubstitutaId().present() ) // se tiver o campo disciplinaSubstitutaId
     {
-	   disciplinaId = elem.disciplinaSubstitutaId();
+	   disciplinaId = elem.disciplinaSubstitutaId().get();
 	   disciplinaSubstituidaId = elem.disciplinaId();
     }
     else

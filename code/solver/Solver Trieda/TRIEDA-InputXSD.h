@@ -6168,7 +6168,7 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
   // 
   typedef ::xml_schema::int_ ofertaCursoCampiId_type;
   typedef ::xsd::cxx::tree::traits< ofertaCursoCampiId_type, char > ofertaCursoCampiId_traits;
-
+    
   const ofertaCursoCampiId_type&
   ofertaCursoCampiId () const;
 
@@ -6191,20 +6191,26 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
 
   void
   disciplinaId (const disciplinaId_type& x);
-
+      
   // disciplinaSubstitutaId
   //
   typedef ::xml_schema::int_ disciplinaSubstitutaId_type;
+  typedef ::xsd::cxx::tree::optional< disciplinaSubstitutaId_type > disciplinaSubstitutaId_optional;
   typedef ::xsd::cxx::tree::traits< disciplinaSubstitutaId_type, char > disciplinaSubstitutaId_traits;
 
-  const disciplinaSubstitutaId_type&
+  const disciplinaSubstitutaId_optional&
   disciplinaSubstitutaId () const;
 
-  disciplinaSubstitutaId_type&
+  disciplinaSubstitutaId_optional&
   disciplinaSubstitutaId ();
 
   void
   disciplinaSubstitutaId (const disciplinaSubstitutaId_type& x);
+  
+  void
+  disciplinaSubstitutaId (const disciplinaSubstitutaId_optional& x);
+
+  //void disciplinaSubstitutaId (::std::auto_ptr< disciplinaSubstitutaId_type > x);
 
   // quantidade
   // 
@@ -6241,7 +6247,6 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
   //
   ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type&,
                                 const disciplinaId_type&,
-								const disciplinaId_type&,
                                 const quantidade_type&,
                                 const turma_type&);
 
@@ -6270,7 +6275,7 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< ofertaCursoCampiId_type > ofertaCursoCampiId_;
   ::xsd::cxx::tree::one< disciplinaId_type > disciplinaId_;
-  ::xsd::cxx::tree::one< disciplinaId_type > disciplinaSubstitutaId_;
+  disciplinaSubstitutaId_optional disciplinaSubstitutaId_;
   ::xsd::cxx::tree::one< quantidade_type > quantidade_;
   ::xsd::cxx::tree::one< turma_type > turma_;
 };

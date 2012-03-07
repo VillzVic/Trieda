@@ -69,6 +69,7 @@ public:
    int getDia() const { return this->dia; }
    HorarioAula * getH1() const { return this->h1; }
    HorarioAula * getH2() const { return this->h2; }
+   Unidade * getUnidade () const { return this->unidade; }
 
    //==================================================
    // SET METHODS 
@@ -92,6 +93,7 @@ public:
    void setType( VariableOpType t ) { this->type = t; }
    void setH1 ( HorarioAula * aH1 ) { this->h1 = aH1; }
    void setH2 ( HorarioAula * aH2 ) { this->h2 = aH2; }
+   void setUnidade ( Unidade *u ) { this->unidade = u; }
 
    //==================================================
    // OPERATORS 
@@ -118,6 +120,7 @@ private:
    HorarioAula * horarioAula;
    int turma;
    int dia;
+   Unidade *unidade;
 
    // Horarios-Dia utilizados no modelo operacional,
    // no critério de última aula do dia D e primeira aula do dia D+1

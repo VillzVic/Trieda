@@ -936,3 +936,23 @@ Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Cur
 
 	return discOriginal;
 }
+
+
+// Dado o id de uma unidade, retorna referencia para o campus correspondente
+Campus* ProblemData::retornaCampus( int unidId /*unidId*/ )
+{
+   ITERA_GGROUP_LESSPTR( it_campus, this->campi, Campus )
+   {
+      Campus * campus = ( *it_campus );
+	  
+	  ITERA_GGROUP_LESSPTR( it_unid, campus->unidades, Unidade )
+	  {
+		  if ( ( *it_unid )->getId() == unidId )
+		  {
+			  return campus;
+		  }
+	  }
+   }
+
+   return NULL;
+}

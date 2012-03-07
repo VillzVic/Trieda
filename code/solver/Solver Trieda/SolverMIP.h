@@ -261,6 +261,7 @@ public:
    int criaRestricaoCargaHorariaMinimaProfessorSemana( void ); // x14
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void ); // x15
    int criaRestricaoGapsProfessores( void );
+   int criaRestricaoProfHorarioMultiUnid( void );
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );

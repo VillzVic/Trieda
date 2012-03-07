@@ -4619,23 +4619,35 @@ disciplinaId (const disciplinaId_type& x)
   this->disciplinaId_.set (x);
 }
 
-const ItemAtendimentoOfertaSolucao::disciplinaId_type& ItemAtendimentoOfertaSolucao::
+const ItemAtendimentoOfertaSolucao::disciplinaSubstitutaId_optional& ItemAtendimentoOfertaSolucao::
 disciplinaSubstitutaId () const
 {
-  return this->disciplinaSubstitutaId_.get ();
+  return this->disciplinaSubstitutaId_;
 }
 
-ItemAtendimentoOfertaSolucao::disciplinaId_type& ItemAtendimentoOfertaSolucao::
+ItemAtendimentoOfertaSolucao::disciplinaSubstitutaId_optional& ItemAtendimentoOfertaSolucao::
 disciplinaSubstitutaId ()
 {
-  return this->disciplinaSubstitutaId_.get ();
+  return this->disciplinaSubstitutaId_;
 }
 
 void ItemAtendimentoOfertaSolucao::
-disciplinaSubstitutaId (const disciplinaId_type& x)
+disciplinaSubstitutaId (const disciplinaSubstitutaId_type& x)
 {
   this->disciplinaSubstitutaId_.set (x);
 }
+
+void ItemAtendimentoOfertaSolucao::
+disciplinaSubstitutaId (const disciplinaSubstitutaId_optional& x)
+{
+  this->disciplinaSubstitutaId_ = x;
+}
+/*
+void ItemAtendimentoOfertaSolucao::
+disciplinaSubstitutaId (::std::auto_ptr< disciplinaSubstitutaId_type > x)
+{
+  this->disciplinaSubstitutaId_.set (x); // esta comitado pq nao compilou
+}*/
 
 const ItemAtendimentoOfertaSolucao::quantidade_type& ItemAtendimentoOfertaSolucao::
 quantidade () const
@@ -13893,13 +13905,12 @@ ItemAtendimentoDiaSemanaSolucao::
 ItemAtendimentoOfertaSolucao::
 ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type& ofertaCursoCampiId,
                               const disciplinaId_type& disciplinaId,
-							  const disciplinaSubstitutaId_type& disciplinaSubstitutaId,
                               const quantidade_type& quantidade,
                               const turma_type& turma)
 : ::xml_schema::type (),
   ofertaCursoCampiId_ (ofertaCursoCampiId, ::xml_schema::flags (), this),
   disciplinaId_ (disciplinaId, ::xml_schema::flags (), this),
-  disciplinaSubstitutaId_ (disciplinaSubstitutaId, ::xml_schema::flags (), this),
+  disciplinaSubstitutaId_ ( ::xml_schema::flags (), this),
   quantidade_ (quantidade, ::xml_schema::flags (), this),
   turma_ (turma, ::xml_schema::flags (), this)
 {
@@ -14021,13 +14032,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
   
-  if (!disciplinaSubstitutaId_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "disciplinaSubstitutaId",
-      "");
-  }
-
   if (!quantidade_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (

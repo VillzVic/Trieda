@@ -27,8 +27,6 @@ std::ostream & operator << ( std::ostream & out, AtendimentoOferta & oferta )
    out << "<ofertaCursoCampiId>" << oferta.getOfertaCursoCampiId() << "</ofertaCursoCampiId>" << std::endl;
    if ( oferta.getDisciplinaSubstitutaId() != -1 )
 		out << "<disciplinaSubstitutaId>" << abs( oferta.getDisciplinaSubstitutaId() ) << "</disciplinaSubstitutaId>" << std::endl;
-   else
-	   out << "<disciplinaSubstitutaId/>" << std::endl;
    out << "<disciplinaId>" << abs( oferta.getDisciplinaId() ) << "</disciplinaId>" << std::endl;
    out << "<quantidade>" << oferta.getQuantidade() << "</quantidade>" << std::endl;
    out << "<turma>" << oferta.getTurma() << "</turma>" << std::endl;

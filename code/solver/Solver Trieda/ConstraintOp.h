@@ -45,7 +45,8 @@ public:
       C_DESLOC_VIAVEL = 26,
       C_ULTIMA_PRIMEIRA_AULA_PROF = 27,
       C_GAPS_PROFESSORES = 28,
-	  C_BLOCO_HORARIO_DISC = 29
+	  C_BLOCO_HORARIO_DISC = 29,
+	  C_PROF_HORARIO_MULTIUNID = 30
    };
 
    /** Default constructor. */
@@ -94,6 +95,9 @@ public:
    HorarioDia * getHorarioDiaD() const { return this->horarioDiaD; }
    HorarioDia * getHorarioDiaD1() const { return this->horarioDiaD1; }
    std::map<Disciplina*, int> getParDiscTurma() const { return this->par_disc_turma; }
+   Campus* getCampus() const { return this->campus;}
+   Unidade* getUnidade() const { return this->unidade;}
+   int getDuracaoAula() const { return this->duracaoAula; }
 
    //==================================================
    // SET METHODS 
@@ -119,6 +123,9 @@ public:
    void setHorarioDiaD ( HorarioDia * hD ) { this->horarioDiaD = hD; }
    void setHorarioDiaD1 ( HorarioDia * hD ) { this->horarioDiaD1 = hD; }
    void setParDiscTurma( Disciplina* d1, int turma1, Disciplina* d2, int turma2 );
+   void setCampus( Campus* cp ) { this->campus = cp;}
+   void setUnidade( Unidade* unid ) { this->unidade = unid;}
+   void setDuracaoAula( int duracao ) { this->duracaoAula = duracao; }
 
 private:
    /** Attribute which defines the constraint type of the instance. */
@@ -136,6 +143,8 @@ private:
    int turma;
    int j; // subbloco
    int t; // dia
+   Campus* campus;
+   Unidade* unidade;
 
    // Horários de aula utilizados no modelo operacional,
    // no critério de minimização de gaps nos horários dos professores
@@ -146,6 +155,8 @@ private:
    // no critério de última aula do dia D e primeira aula do dia D + 1
    HorarioDia * horarioDiaD;
    HorarioDia * horarioDiaD1;
+
+   int duracaoAula; // Usada na restrição "criaRestricaoProfHorarioMultiCampi"
 };
 
 /**

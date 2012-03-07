@@ -18531,6 +18531,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
                v.setDisciplina( aula->getDisciplina() );
                v.setTurma( aula->getTurma() );
                v.setSala( aula->getSala() );
+			   v.setUnidade( problemData->refUnidade[ aula->getSala()->getIdUnidade() ] );
 
                if ( vHashOp.find( v ) == vHashOp.end() )
                {
@@ -18575,6 +18576,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
          v.setDisciplina( aula->getDisciplina() );
          v.setTurma( aula->getTurma() );
          v.setSala( aula->getSala() );
+		 v.setUnidade( problemData->refUnidade[ aula->getSala()->getIdUnidade() ] );
 
          double coeff = 1000.0;
 
@@ -20089,6 +20091,18 @@ int SolverMIP::criaRestricoesOperacional()
 #endif
 
    lp->updateLP();
+   restricoes += criaRestricaoProfHorarioMultiUnid();
+
+#ifdef PRINT_cria_restricoes
+   std::cout << "numRest C_PROF_HORARIO_MULTIUNID: "
+             << ( restricoes - numRestAnterior ) << std::endl;
+   numRestAnterior = restricoes;
+#endif
+
+   lp->updateLP();
+   
+   
+   
    return restricoes;
 }
 
@@ -22984,6 +22998,212 @@ void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
       }
    }
 }
+
+/*
+	Garante um intervalo de tempo mínimo entre aulas de um mesmo professor
+	em um mesmo dia e em unidades distintas.
+
+*/
+int SolverMIP::criaRestricaoProfHorarioMultiUnid( void )
+{
+   int restricoes = 0;
+   int nnz;
+   char name[ 200 ];
+
+   ConstraintOp c;
+   VariableOpHash::iterator vit;
+   ConstraintOpHash::iterator cit;
+
+   GGroup< int > duracoesTodasAulas;
+
+   ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+   {
+		int tempoCred = (*it_aula)->getDisciplina()->getTempoCredSemanaLetiva();
+		int nCred = (*it_aula)->getTotalCreditos();
+		int aulaDuracao = tempoCred * nCred;
+
+		duracoesTodasAulas.add( aulaDuracao );
+   }
+
+   GGroup< Professor *, LessPtr< Professor > > professores = problemData->getProfessores();
+
+   ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
+   {
+	    Campus *cp = *it_campus;
+		
+		ITERA_GGROUP_LESSPTR( it_unid, cp->unidades, Unidade )
+		{
+			Unidade *unid = *it_unid;
+
+			ITERA_GGROUP_LESSPTR( it_horControle, problemData->horariosDia, HorarioDia )
+			{
+				HorarioDia *horControle = ( *it_horControle );
+
+				DateTime inicioControle = horControle->getHorarioAula()->getInicio();
+				
+				int dia = horControle->getDia();
+
+				ITERA_GGROUP_LESSPTR( it_hor2, problemData->horariosDia, HorarioDia )
+				{
+					HorarioDia *hor2 = ( *it_hor2 );
+					
+					if ( hor2->getDia() != dia )
+						continue;
+
+					DateTime inicio2 = hor2->getHorarioAula()->getInicio();
+
+					ITERA_GGROUP_N_PT( it_duracao, duracoesTodasAulas, int )
+					{
+						int duracaoAulaControle = *it_duracao;
+				
+						ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+						{
+							Professor * professor = ( *it_prof );
+
+							c.reset();
+							c.setType( ConstraintOp::C_PROF_HORARIO_MULTIUNID );
+							c.setCampus( cp );
+							c.setUnidade( unid );
+							c.setProfessor( professor );
+							c.setDia( dia );
+							c.setHorarioAula( horControle->getHorarioAula() ); // Controle
+							c.setDuracaoAula( duracaoAulaControle ); // Controle
+							c.setH2( hor2->getHorarioAula() );
+
+							cit = cHashOp.find( c );
+					
+							sprintf( name, "%s", c.toString().c_str() );
+							if ( cHashOp.find( c ) != cHashOp.end() )
+							{
+								continue;
+							}
+
+							nnz = 100;
+
+							OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
+
+							bool inseriuUnidControle = false;
+							bool inseriuUnidDiferente = false;
+
+							GGroup< std::pair< Aula *, Disciplina * > >::iterator
+								it_aula_disc = problemData->mapProfessorDisciplinas[ professor ].begin();
+
+							for ( ; it_aula_disc != problemData->mapProfessorDisciplinas[ professor ].end(); it_aula_disc++ )
+							{
+								Aula * aula = ( *it_aula_disc ).first;
+
+								Unidade *unidAula = problemData->refUnidade[ aula->getSala()->getIdUnidade() ];
+								Campus *cpAula = problemData->retornaCampus( unidAula->getId() );
+
+								#pragma region Aulas na mesma unidade da restrição (unidade controle)
+								if ( cpAula->getId() == cp->getId() &&
+									 unidAula->getId() == unid->getId() )
+								{
+									if ( aula->getDiaSemana() != dia ||
+										 aula->getDisciplina()->horariosDia.find( horControle ) ==
+										 aula->getDisciplina()->horariosDia.end() )
+									{
+										continue;
+									}
+
+									int nCred = aula->getTotalCreditos();
+									int tempoCred = aula->getDisciplina()->getTempoCredSemanaLetiva();							
+									int aulaDuracao = tempoCred * nCred;
+						
+									if ( aulaDuracao != duracaoAulaControle )
+									{
+										continue;
+									}
+								
+									VariableOp v;
+									v.reset();
+									v.setType( VariableOp::V_X_PROF_AULA_HOR );
+									v.setAula( aula ); 
+									v.setProfessor( professor );
+									v.setHorario( horControle );
+									v.setHorarioAula( horControle->getHorarioAula() );
+									v.setDia( dia );
+							 		v.setDisciplina( aula->getDisciplina() );
+									v.setTurma( aula->getTurma() );
+									v.setUnidade( unidAula );
+									v.setSala( aula->getSala() );				   
+							
+									vit = vHashOp.find( v );
+									if ( vit != vHashOp.end() )
+									{
+										row.insert( vit->second, 1.0 );
+										inseriuUnidControle = true;
+									}
+								}
+								#pragma endregion
+								#pragma region Aulas em unidades diferentes da unidade da restrição
+								else
+								{
+									if ( aula->getDisciplina()->horariosDia.find( hor2 ) ==
+										 aula->getDisciplina()->horariosDia.end() )
+									{
+										 continue;
+								    }
+
+									int tempoCred = aula->getDisciplina()->getTempoCredSemanaLetiva();
+									int nCred = aula->getTotalCreditos();
+									int duracaoAula = tempoCred * nCred;
+
+									int tempoMinDesloc = problemData->calculaTempoEntreCampusUnidades( cp, cpAula, unid, unidAula );
+
+									DateTime fimControle = inicioControle;
+									fimControle.addMinutes( duracaoAulaControle + tempoMinDesloc );
+									
+									DateTime fim2 = inicio2;
+									fim2.addMinutes( duracaoAula + tempoMinDesloc );
+
+									if ( ( fim2 > inicioControle ) ||
+										 ( fimControle > inicio2 )  )
+									{
+										VariableOp v;
+										v.reset();
+										v.setType( VariableOp::V_X_PROF_AULA_HOR );
+										v.setAula( aula ); 
+										v.setProfessor( professor );
+										v.setHorario( hor2 );
+										v.setHorarioAula( hor2->getHorarioAula() );
+										v.setDia( dia );
+							 			v.setDisciplina( aula->getDisciplina() );
+										v.setTurma( aula->getTurma() );
+										v.setUnidade( unidAula );
+										v.setSala( aula->getSala() );				   
+							
+										vit = vHashOp.find( v );
+										if ( vit != vHashOp.end() )
+										{
+											row.insert( vit->second, 1.0 );
+											inseriuUnidDiferente = true;
+										}
+									}			
+								}
+								#pragma endregion
+							}
+
+							if ( inseriuUnidControle && inseriuUnidDiferente )
+							{
+								if ( row.getnnz() != 0 )
+								{
+									cHashOp[ c ] = lp->getNumRows();
+									lp->addRow( row );
+									restricoes++;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+   }
+
+   return restricoes;
+
+}
+
 
 int SolverMIP::alteraHorarioAulaAtendimento(
    const int id_novo_horario_aula, const int id_at_horario )

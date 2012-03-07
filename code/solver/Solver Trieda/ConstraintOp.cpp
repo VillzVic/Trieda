@@ -40,7 +40,10 @@ ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
    this->horarioDiaD = cons.horarioDiaD;
    this->horarioDiaD1 = cons.horarioDiaD1;
    this->par_disc_turma = cons.par_disc_turma;
-
+   this->campus = cons.getCampus();
+   this->unidade = cons.getUnidade();
+   this->duracaoAula = cons.getDuracaoAula();
+   
    return *this;
 }
 
@@ -254,6 +257,48 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
    {
       return false;
    }
+
+   if( this->getCampus() == NULL && cons.getCampus() != NULL )
+   {
+		return true;
+   }
+   else if( this->getCampus() != NULL && cons.getCampus() == NULL )
+   {
+		return false;
+   }
+	else if( this->getCampus() != NULL && cons.getCampus() != NULL )
+	{
+		if( *this->getCampus() < *cons.getCampus() )
+			return true;
+		else if( *cons.getCampus() < *this->getCampus() )
+			return false;
+	}
+
+   if( this->getUnidade() == NULL && cons.getUnidade() != NULL )
+   {
+		return true;
+   }
+   else if( this->getUnidade() != NULL && cons.getUnidade() == NULL )
+   {
+		return false;
+   }
+	else if( this->getUnidade() != NULL && cons.getUnidade() != NULL )
+	{
+		if( *this->getUnidade() < *cons.getUnidade() )
+			return true;
+		else if( *cons.getUnidade() < *this->getUnidade() )
+			return false;
+	}
+
+   if( this->getDuracaoAula() < cons.getDuracaoAula() )
+   {
+      return true;
+   }
+   else if( this->getDuracaoAula() > cons.getDuracaoAula() )
+   {
+      return false;
+   }
+
    return false;
 }
 
@@ -287,6 +332,9 @@ void ConstraintOp::reset()
    this->horarioDiaD = NULL;
    this->horarioDiaD1 = NULL;
    this->par_disc_turma.clear();
+   this->campus = NULL;
+   this->duracaoAula = 0;
+   this->unidade = NULL;
 }
 
 std::string ConstraintOp::toString()
@@ -351,6 +399,9 @@ std::string ConstraintOp::toString()
 		  ss << "C_ULTIMA_PRIMEIRA_AULA_PROF"; break;
 	   case C_GAPS_PROFESSORES:
 		  ss << "C_GAPS_PROFESSORES"; break;
+	   case C_PROF_HORARIO_MULTIUNID:
+		  ss << "C_PROF_HORARIO_MULTIUNID"; break;
+
 	   default:
 		  ss << "!";
    }
@@ -408,6 +459,11 @@ std::string ConstraintOp::toString()
       ss << "_H" << horarioAula->getId();
    }
 
+   if ( duracaoAula != 0 )
+   {
+      ss << "_duracaoAula" << duracaoAula;
+   }
+
    if ( t >= 0 && aula==NULL && h==NULL )
    {
       ss << "_Dia" << t;
@@ -430,13 +486,24 @@ std::string ConstraintOp::toString()
 
    if ( h1 != NULL )
    {
-      ss << "_H1:" << h1->getId();
+      ss << "_H1." << h1->getId();
    }
 
    if ( h2 != NULL )
    {
-      ss << "_H2:" << h2->getId();
+      ss << "_H2." << h2->getId();
    }
+   
+   if ( unidade != NULL )
+   {
+      ss << "_Unid" << unidade->getId();
+   }
+
+   if ( campus != NULL )
+   {
+      ss << "_Cp" << campus->getId();
+   }
+
 
    ss << "_}";
    std::string consName = "";
