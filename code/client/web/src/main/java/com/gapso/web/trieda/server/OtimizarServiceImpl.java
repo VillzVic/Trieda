@@ -32,6 +32,7 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Grafo;
@@ -338,16 +339,22 @@ public class OtimizarServiceImpl
 	
 	private void checkCicloDisciplinasEquivalentes(Cenario cenario, List<String> errors){
 		int id = 0;
-		Integer cIndex, eIndex;
+		Integer cIndex = 0, eIndex = 0;
 		List<Long> nodeMap = new ArrayList<Long>();
 		List<Disciplina> disMap = new ArrayList<Disciplina>();
 		Set<Pair<Integer, Integer>> pairs = new HashSet<Pair<Integer, Integer>>();
+//		Map<Long,Integer> disciplinaIdToQtdDemandadaMap = new HashMap<Long,Integer>();
 
 		// Para cada disciplina, obtem-se as suas equivalencias para montar tres estruturas:
 		// -> disMap mapeia o index associado a cada disciplina identificada
 		// -> nodeMap faz o controle de qual disciplina estah mapeada ou nao
 		// -> pairs obtem a relação de equivalencia de uma disciplina com outra. 
 		for(Disciplina disciplina : cenario.getDisciplinas()){
+//			Integer qtdDemandada = 0;
+//			for (Demanda demanda : disciplina.getDemandas()) {
+//				qtdDemandada += demanda.getQuantidade();
+//			}
+//			disciplinaIdToQtdDemandadaMap.put(disciplina.getId(),qtdDemandada);
 			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
 				Disciplina cursou = equivalencia.getCursou();
 				if((cIndex = (Integer) nodeMap.indexOf(cursou.getId())) == -1){
@@ -370,7 +377,7 @@ public class OtimizarServiceImpl
 		// a existencia de ciclos. Nesse grafo, os indices associados aos nos sao os
 		// mesmos identificados em disMap. 
 		
-		Grafo g = new Grafo(pairs.size());
+		Grafo g = new Grafo(Math.max(cIndex,eIndex)+1);
 		for(Pair<Integer, Integer> par: pairs)
 			g.insereArco(par.getLeft(), par.getRight());
 		
@@ -386,14 +393,60 @@ public class OtimizarServiceImpl
 				ciclosStr += i++ + ") ";
 				for(Integer idc: ciclo){
 					Disciplina dis = disMap.get(idc);
-					ciclosStr += dis.getNome() + " (" + dis.getCodigo() + ") -> ";
+					ciclosStr += dis.getNome() + " [" + dis.getCodigo() + "] -> ";
 				}
-				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 3) + "<br /><br />";
+				String sugestaoParaEliminarCiclo = "";
+//				sugestaoParaEliminarCiclo = avaliaSugestoesParaEliminacaoDeCiclos(disMap,disciplinaIdToQtdDemandadaMap,ciclo);
+				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 3) + sugestaoParaEliminarCiclo + "<br /><br />";
 			}
 			ciclosStr += " \n";
 			System.out.println(ciclosStr.replaceAll("<br />", "\n"));
 			errors.add(HtmlUtils.htmlUnescape(ciclosStr));
 		}
+	}
+
+	private String avaliaSugestoesParaEliminacaoDeCiclos(List<Disciplina> disMap, Map<Long, Integer> disciplinaIdToQtdDemandadaMap, List<Integer> ciclo) {
+		String sugestao;
+		// avalia sugestões para eliminação de ciclos de tamanho 2
+		if (ciclo.size() == 3) {
+			Disciplina dis1 = disMap.get(ciclo.get(0));
+			Disciplina dis2 = disMap.get(ciclo.get(1));
+			if (!dis1.getCurriculos().isEmpty() && !dis2.getCurriculos().isEmpty()) {
+				CurriculoDisciplina c1 = dis1.getCurriculos().iterator().next();
+				CurriculoDisciplina c2 = dis2.getCurriculos().iterator().next();
+				SemanaLetiva s1 = c1.getCurriculo().getSemanaLetiva();
+				SemanaLetiva s2 = c2.getCurriculo().getSemanaLetiva();
+				if (!s1.equals(s2)) {
+					if (s1.getCodigo().equals("NOVO")) {
+						sugestao = "[Sugestão: eliminar " + dis2.getCodigo() + " -> " + dis1.getCodigo() + "]";
+					} else {
+						sugestao = "[Sugestão: eliminar " + dis1.getCodigo() + " -> " + dis2.getCodigo() + "]";
+					}
+				} else {
+					Integer qtdeDemandada1 = disciplinaIdToQtdDemandadaMap.get(dis1.getId());
+					Integer qtdeDemandada2 = disciplinaIdToQtdDemandadaMap.get(dis2.getId());
+					if (qtdeDemandada1 > qtdeDemandada2) {
+						sugestao = "[Sugestão: eliminar " + dis2.getCodigo() + " -> " + dis1.getCodigo() + "]";
+					} else {
+						sugestao = "[Sugestão: eliminar " + dis1.getCodigo() + " -> " + dis2.getCodigo() + "]";
+					}
+				}
+			} else  {
+				Integer qtdeDemandada1 = disciplinaIdToQtdDemandadaMap.get(dis1.getId());
+				Integer qtdeDemandada2 = disciplinaIdToQtdDemandadaMap.get(dis2.getId());
+				if (qtdeDemandada1 > qtdeDemandada2) {
+					sugestao = "[Sugestão: eliminar " + dis2.getCodigo() + " -> " + dis1.getCodigo() + "]";
+				} else {
+					sugestao = "[Sugestão: eliminar " + dis1.getCodigo() + " -> " + dis2.getCodigo() + "]";
+				}
+			}
+		} else {
+			int index = ciclo.size() / 2 - 1;
+			Disciplina dis1 = disMap.get(ciclo.get(index));
+			Disciplina dis2 = disMap.get(ciclo.get(index+1));
+			sugestao = "[Sugestão: eliminar " + dis1.getCodigo() + " -> " + dis2.getCodigo() + "]";
+		}
+		return sugestao;
 	}
 
 	@Override
