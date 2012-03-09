@@ -490,29 +490,67 @@ public class SolverInput
 	@Transactional
 	private void generate( boolean tatico )
 	{
-		generateCalendario();System.out.println("generateCalendario();");//TODO: retirar LOG
-		generateTiposSala();System.out.println("generateTiposSala();");//TODO: retirar LOG
-		generateTiposContrato();System.out.println("generateTiposContrato();");//TODO: retirar LOG
-		generateTiposTitulacao();System.out.println("generateTiposTitulacao();");//TODO: retirar LOG
-		generateAreasTitulacao();System.out.println("generateAreasTitulacao();");//TODO: retirar LOG
-		generateTiposDisciplina();System.out.println("generateTiposDisciplina();");//TODO: retirar LOG
-		generateNiveisDificuldade();System.out.println("generateNiveisDificuldade();");//TODO: retirar LOG
-		generateTiposCurso();System.out.println("generateTiposCurso();");//TODO: retirar LOG
-		generateDivisoesDeCredito();System.out.println("generateDivisoesDeCredito();");//TODO: retirar LOG
-		generateDeslocamentoCampi();System.out.println("generateDeslocamentoCampi();");//TODO: retirar LOG
-		generateDeslocamentoUnidades();System.out.println("generateDeslocamentoUnidades();");//TODO: retirar LOG
-		generateDisciplinas();System.out.println("generateDisciplinas();");//TODO: retirar LOG
-		generateCurso();System.out.println("generateCurso();");//TODO: retirar LOG
-		generateCampi( tatico );System.out.println("generateCampi();");//TODO: retirar LOG
-		generateOfertaCursoCampi();System.out.println("generateOfertaCursoCampi();");//TODO: retirar LOG
-		generateDemandas();System.out.println("generateDemandas();");//TODO: retirar LOG
-		generateAlunosDemanda();System.out.println("generateAlunosDemanda();");//TODO: retirar LOG
-		generateParametrosPlanejamento( tatico );System.out.println("generateParametrosPlanejamento();");//TODO: retirar LOG
-		generateFixacoes();System.out.println("generateFixacoes();");//TODO: retirar LOG
+		System.out.print("generateCalendario();");long start = System.currentTimeMillis(); // TODO: retirar
+		generateCalendario();
+		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateTiposSala();");start = System.currentTimeMillis(); // TODO: retirar
+		generateTiposSala();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateTiposContrato();");start = System.currentTimeMillis(); // TODO: retirar
+		generateTiposContrato();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateTiposTitulacao();");start = System.currentTimeMillis(); // TODO: retirar
+		generateTiposTitulacao();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateAreasTitulacao();");start = System.currentTimeMillis(); // TODO: retirar
+		generateAreasTitulacao();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateTiposDisciplina();");start = System.currentTimeMillis(); // TODO: retirar
+		generateTiposDisciplina();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateNiveisDificuldade();");start = System.currentTimeMillis(); // TODO: retirar
+		generateNiveisDificuldade();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateTiposCurso();");start = System.currentTimeMillis(); // TODO: retirar
+		generateTiposCurso();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateDivisoesDeCredito();");start = System.currentTimeMillis(); // TODO: retirar
+		generateDivisoesDeCredito();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateDeslocamentoCampi();");start = System.currentTimeMillis(); // TODO: retirar
+		generateDeslocamentoCampi();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateDeslocamentoUnidades();");start = System.currentTimeMillis(); // TODO: retirar
+		generateDeslocamentoUnidades();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateDisciplinas();");start = System.currentTimeMillis(); // TODO: retirar
+		generateDisciplinas();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateCurso();");start = System.currentTimeMillis(); // TODO: retirar
+		generateCurso();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateCampi();");start = System.currentTimeMillis(); // TODO: retirar
+		generateCampi(tatico);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateOfertaCursoCampi();");start = System.currentTimeMillis(); // TODO: retirar
+		generateOfertaCursoCampi();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateDemandas();");start = System.currentTimeMillis(); // TODO: retirar
+		generateDemandas();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateAlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
+		generateAlunosDemanda();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateParametrosPlanejamento();");start = System.currentTimeMillis(); // TODO: retirar
+		generateParametrosPlanejamento( tatico );
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("generateFixacoes();");start = System.currentTimeMillis(); // TODO: retirar
+		generateFixacoes();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 
 		if ( !tatico )
 		{
-			generateTaticoInput();System.out.println("generateTaticoInput();");//TODO: retirar LOG
+			generateTaticoInput();
 		}
 	}
 
@@ -751,7 +789,14 @@ public class SolverInput
 		GrupoDivisaoCreditos grupoDivisaoCreditos
 			= this.of.createGrupoDivisaoCreditos();
 
-		Set< DivisaoCredito > regras = this.cenario.getDivisoesCredito();
+		List< DivisaoCredito > regras = new ArrayList<DivisaoCredito>(this.cenario.getDivisoesCredito());
+		// ordena para manter inputs iguais
+		Collections.sort(regras, new Comparator<DivisaoCredito>() {
+			@Override
+			public int compare(DivisaoCredito o1, DivisaoCredito o2) {
+				return o1.getId().compareTo(o2.getId());
+			}
+		});
 
 		if ( this.parametro.getRegrasGenericasDivisaoCredito()
 			&& regras.size() == 0 )
@@ -932,7 +977,14 @@ public class SolverInput
 
 					GrupoIdentificador grupoIdentificador = this.of.createGrupoIdentificador();
 
-					Set< CurriculoDisciplina > curriculoDisciplinas = sala.getCurriculoDisciplinas();
+					List< CurriculoDisciplina > curriculoDisciplinas = new ArrayList<CurriculoDisciplina>(sala.getCurriculoDisciplinas());
+					// ordena para manter inputs iguais
+					Collections.sort(curriculoDisciplinas,new Comparator<CurriculoDisciplina>() {
+						@Override
+						public int compare(CurriculoDisciplina o1, CurriculoDisciplina o2) {
+							return o1.getId().compareTo(o2.getId());
+						}
+					});
 
 					for ( CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas )
 					{
@@ -1173,8 +1225,16 @@ public class SolverInput
 		this.triedaInput.setTemposDeslocamentosUnidades( grupoDeslocamento );
 	}
 
-	private void generateDisciplinas()
-	{
+	private void generateDisciplinas() {
+		// Estruturas auxiliares
+		Map<Integer,DivisaoCredito> qtdCreditoToRegraDivisaoCreditoMap = new HashMap<Integer,DivisaoCredito>();
+		if (parametro.getRegrasGenericasDivisaoCredito() ) {
+			List<DivisaoCredito> regrasDivisaoCredito = DivisaoCredito.findByInstituicaoEnsino(instituicaoEnsino);
+			for (DivisaoCredito regra : regrasDivisaoCredito) {
+				qtdCreditoToRegraDivisaoCreditoMap.put(regra.getCreditos(),regra);
+			}
+		}
+		
 		GrupoDisciplina grupoDisciplina = this.of.createGrupoDisciplina();
 
 		boolean disciplinaSemDemanda = ( this.disciplinasComDemandaCurriculo.size()
@@ -1191,11 +1251,17 @@ public class SolverInput
 			createWarningMessage( warningMessage1 );
 			createWarningMessage( warningMessage2 );
 		}
+		
+		List<Disciplina> disciplinasOrdenadas = new ArrayList<Disciplina>(this.disciplinasComDemandaCurriculo);
+		// ordena para manter os inputs iguais
+		Collections.sort(disciplinasOrdenadas,new Comparator<Disciplina>() {
+			@Override
+			public int compare(Disciplina o1, Disciplina o2) {
+				return o1.getId().compareTo(o2.getId());
+			}
+		});
 
-		for ( Disciplina disciplina : this.disciplinasComDemandaCurriculo ) {
-			//TODO: MEDIÇÃO PERFORMANCE
-			long start = System.currentTimeMillis();System.out.print("Cadastro Basico");
-			
+		for ( Disciplina disciplina : disciplinasOrdenadas ) {
 			ItemDisciplina itemDisciplina = this.of.createItemDisciplina();
 
 			itemDisciplina.setId( disciplina.getId().intValue() );
@@ -1209,54 +1275,44 @@ public class SolverInput
 			itemDisciplina.setTipoDisciplinaId( disciplina.getTipoDisciplina().getId().intValue() );
 			itemDisciplina.setNivelDificuldadeId( Dificuldades.toInt( disciplina.getDificuldade() ) );
 			
-			//TODO: MEDIÇÃO PERFORMANCE
-			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
-
-			//TODO: MEDIÇÃO PERFORMANCE
-			start = System.currentTimeMillis();System.out.print("DivisaoCredito");
-			
 			DivisaoCredito divisaoCredito = null;
 
-			if ( this.parametro.getRegrasEspecificasDivisaoCredito() )
-			{
+			if (this.parametro.getRegrasEspecificasDivisaoCredito()) {
 				divisaoCredito = disciplina.getDivisaoCreditos();
 			}
 
-			if ( divisaoCredito == null
-				&& this.parametro.getRegrasGenericasDivisaoCredito() )
-			{
-				divisaoCredito = DivisaoCredito.findByCredito(
-					disciplina.getTotalCreditos(), this.instituicaoEnsino );
+			if (divisaoCredito == null&& this.parametro.getRegrasGenericasDivisaoCredito()) {
+				divisaoCredito = qtdCreditoToRegraDivisaoCreditoMap.get(disciplina.getTotalCreditos());
 			}
 
-			if ( divisaoCredito != null )
-			{
+			if (divisaoCredito != null) {
 				ItemDivisaoCreditos itemDivisaoCreditos = this.of.createItemDivisaoCreditos();
 
-				itemDivisaoCreditos.setId( divisaoCredito.getId().intValue() );
-				itemDivisaoCreditos.setCreditos( divisaoCredito.getCreditos() );
-				itemDivisaoCreditos.setDia1( divisaoCredito.getDia1() );
-				itemDivisaoCreditos.setDia2( divisaoCredito.getDia2() );
-				itemDivisaoCreditos.setDia3( divisaoCredito.getDia3() );
-				itemDivisaoCreditos.setDia4( divisaoCredito.getDia4() );
-				itemDivisaoCreditos.setDia5( divisaoCredito.getDia5() );
-				itemDivisaoCreditos.setDia6( divisaoCredito.getDia6() );
-				itemDivisaoCreditos.setDia7( divisaoCredito.getDia7() );
+				itemDivisaoCreditos.setId(divisaoCredito.getId().intValue());
+				itemDivisaoCreditos.setCreditos(divisaoCredito.getCreditos());
+				itemDivisaoCreditos.setDia1(divisaoCredito.getDia1());
+				itemDivisaoCreditos.setDia2(divisaoCredito.getDia2());
+				itemDivisaoCreditos.setDia3(divisaoCredito.getDia3());
+				itemDivisaoCreditos.setDia4(divisaoCredito.getDia4());
+				itemDivisaoCreditos.setDia5(divisaoCredito.getDia5());
+				itemDivisaoCreditos.setDia6(divisaoCredito.getDia6());
+				itemDivisaoCreditos.setDia7(divisaoCredito.getDia7());
 
-				itemDisciplina.setDivisaoDeCreditos( itemDivisaoCreditos );
+				itemDisciplina.setDivisaoDeCreditos(itemDivisaoCreditos);
 			}
-			
-			//TODO: MEDIÇÃO PERFORMANCE
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
-
-			//TODO: MEDIÇÃO PERFORMANCE
-			start = System.currentTimeMillis();System.out.print("Equivalencias");
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = this.of.createGrupoIdentificador();
 
 			if ( this.parametro.getConsiderarEquivalencia() )
 			{
-				Set< Equivalencia > equivalencias = disciplina.getEquivalencias();
+				List< Equivalencia > equivalencias = new ArrayList<Equivalencia>(disciplina.getEquivalencias());
+				// ordena para manter inputs iguais
+				Collections.sort(equivalencias, new Comparator<Equivalencia>() {
+					@Override
+					public int compare(Equivalencia o1, Equivalencia o2) {
+						return o1.getId().compareTo(o2.getId());
+					}
+				});
 
 				for ( Equivalencia equivalencia : equivalencias )
 				{
@@ -1275,12 +1331,6 @@ public class SolverInput
 
 			itemDisciplina.setDisciplinasEquivalentes( grupoIdentificadorEquivalencias );
 			
-			//TODO: MEDIÇÃO PERFORMANCE
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
-			
-			//TODO: MEDIÇÃO PERFORMANCE
-			start = System.currentTimeMillis();System.out.print("DisciplinasIncompativeis");
-
 			GrupoIdentificador grupoIdentificadorIncompativeis = this.of.createGrupoIdentificador();
 			Set< Incompatibilidade > incompatibilidades = disciplina.getIncompatibilidades();
 
@@ -1292,12 +1342,6 @@ public class SolverInput
 
 			itemDisciplina.setDisciplinasIncompativeis( grupoIdentificadorIncompativeis );
 			
-			//TODO: MEDIÇÃO PERFORMANCE
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
-			
-			//TODO: MEDIÇÃO PERFORMANCE
-			start = System.currentTimeMillis();System.out.print("HorariosDisponiveis");
-
 			Set< HorarioDisponivelCenario > setHorarios
 				= new HashSet< HorarioDisponivelCenario >();
 
@@ -1308,9 +1352,6 @@ public class SolverInput
 			
 			itemDisciplina.setHorariosDisponiveis( createGrupoHorario( listHorarios ) );
 			
-			//TODO: MEDIÇÃO PERFORMANCE
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
-
 			grupoDisciplina.getDisciplina().add( itemDisciplina );
 		}
 
@@ -1450,7 +1491,12 @@ public class SolverInput
 
 			// CURRÍCULOS
 			GrupoCurriculo grupoCurriculo = this.of.createGrupoCurriculo();
-			Set< Curriculo > curriculos = curso.getCurriculos();
+			List< Curriculo > curriculos = new ArrayList<Curriculo>(curso.getCurriculos());
+			Collections.sort(curriculos, new Comparator<Curriculo>() {
+				public int compare(Curriculo o1, Curriculo o2) {
+					return o1.getId().compareTo(o2.getId());
+				}
+			});
 
 			if ( curriculos.size() > 0 )
 			{
@@ -1482,8 +1528,14 @@ public class SolverInput
 				GrupoDisciplinaPeriodo grupoDisciplinaPeriodo
 					= this.of.createGrupoDisciplinaPeriodo();
 
-				Set< CurriculoDisciplina > curriculoPeriodos
-					= curriculo.getDisciplinas();
+				List< CurriculoDisciplina > curriculoPeriodos = new ArrayList<CurriculoDisciplina>(curriculo.getDisciplinas());
+				// ordena para manter inputs iguais
+				Collections.sort(curriculoPeriodos,new Comparator<CurriculoDisciplina>() {
+					@Override
+					public int compare(CurriculoDisciplina o1, CurriculoDisciplina o2) {
+						return o1.getId().compareTo(o2.getId());
+					}
+				});
 
 				if ( curriculoPeriodos.size() != 0 )
 				{
@@ -1591,7 +1643,14 @@ public class SolverInput
 
 		for ( Campus campus : this.campi )
 		{
-			Set< Oferta > ofertas = campus.getOfertas();
+			List< Oferta > ofertas = new ArrayList<Oferta>(campus.getOfertas());
+			// ordena para manter inputs iguais
+			Collections.sort(ofertas, new Comparator<Oferta>() {
+				@Override
+				public int compare(Oferta o1, Oferta o2) {
+					return o1.getId().compareTo(o2.getId());
+				}
+			});
 
 			if ( ofertas.size() != 0 )
 			{
@@ -1641,8 +1700,16 @@ public class SolverInput
 	private void generateDemandas()
 	{
 		GrupoDemanda grupoDemanda = this.of.createGrupoDemanda();
-
-		for ( Demanda demanda : this.demandasCampusTurno )
+		List<Demanda> demandas = new ArrayList<Demanda>(this.demandasCampusTurno);
+		// ordena para manter inputs iguais
+		Collections.sort(demandas,new Comparator<Demanda>() {
+			@Override
+			public int compare(Demanda o1, Demanda o2) {
+				return o1.getId().compareTo(o2.getId());
+			}
+		});
+		
+		for ( Demanda demanda : demandas )
 		{
 			ItemDemanda itemDemanda = this.of.createItemDemanda();
 

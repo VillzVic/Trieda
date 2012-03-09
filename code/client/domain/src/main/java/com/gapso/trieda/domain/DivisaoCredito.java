@@ -283,6 +283,22 @@ public class DivisaoCredito
         return null;
     }
 	
+	@SuppressWarnings( "unchecked" )
+	public static List<DivisaoCredito> findByInstituicaoEnsino(InstituicaoEnsino instituicaoEnsino) { 
+		Query q = entityManager().createQuery(
+			" SELECT o FROM DivisaoCredito o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino"
+		);
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		try {
+			return q.getResultList();
+		}
+		catch ( EmptyResultDataAccessException e ) { }
+
+		return null;
+	}
+	
 	public static DivisaoCredito findByCredito(
 		Integer credito, InstituicaoEnsino instituicaoEnsino )
 	{ 
