@@ -324,6 +324,7 @@ public class OtimizarServiceImpl
 				for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinas()) {
 					disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId());
 				}
+				curriculoIdToDisciplinasIdsMap.put(curriculo.getId(),disciplinasDoCurriculo);
 			}
 			
 			// verifica se alguma demanda contém alguma disciplina que não esteja no currículo
