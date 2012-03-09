@@ -321,7 +321,7 @@ public class OtimizarServiceImpl
 			Set<Long> disciplinasDoCurriculo = curriculoIdToDisciplinasIdsMap.get(curriculo.getId());
 			if (disciplinasDoCurriculo == null) {
 				disciplinasDoCurriculo = new HashSet<Long>();
-				for (CurriculoDisciplina curriculoDisciplina : curriculo.getCurriculoDisciplinas()) {
+				for (CurriculoDisciplina curriculoDisciplina : curriculo.getDisciplinas()) {
 					disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId());
 				}
 				curriculoIdToDisciplinasIdsMap.put(curriculo.getId(),disciplinasDoCurriculo);
