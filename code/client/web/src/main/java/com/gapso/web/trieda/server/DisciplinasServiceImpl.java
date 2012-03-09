@@ -145,7 +145,7 @@ public class DisciplinasServiceImpl
 				
 				// obtém os CurriculoDisciplina que serão atualizados, isto é, aqueles cuja disciplina exige laboratório, porém,
 				// ainda não estão associadas a nenhum laboratório
-				List<CurriculoDisciplina> curriculosDisciplinas = oferta.getCurriculo().getCurriculoDisciplinas();
+				Set<CurriculoDisciplina> curriculosDisciplinas = oferta.getCurriculo().getDisciplinas();
 				List<CurriculoDisciplina> curriculosDisciplinasASeremProcessados = new ArrayList<CurriculoDisciplina>();
 				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinas) {
 					// verifica se a disciplina do curriculo exige laboratorio
@@ -175,7 +175,7 @@ public class DisciplinasServiceImpl
 			// atualiza o BD com os curriculosDisplinas atualizados
 			System.out.println("Começou...");
 			for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasAtualizados) {
-				curriculoDisciplina.merge();
+				curriculoDisciplina.mergeWithoutFlush();
 			}
 			System.out.println("Terminou...");
 		} catch (Exception e) {

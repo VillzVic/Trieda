@@ -263,6 +263,16 @@ public class CurriculoDisciplina
         this.entityManager.flush();
         return merged;
     }
+	
+	@Transactional
+    public CurriculoDisciplina mergeWithoutFlush() {
+        if (this.entityManager == null) {
+        	this.entityManager = entityManager();
+        }
+
+        CurriculoDisciplina merged = this.entityManager.merge(this);
+        return merged;
+    }
 
 	public static final EntityManager entityManager()
 	{

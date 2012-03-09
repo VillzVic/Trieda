@@ -386,7 +386,7 @@ public class DisciplinasSalasImportExcel
 
 		count = 0; total=curriculoDisciplinaAlterados.size(); System.out.println(" "+total);
 		for (CurriculoDisciplina curriculoDisciplina : curriculoDisciplinaAlterados) {
-			curriculoDisciplina.merge();
+			curriculoDisciplina.mergeWithoutFlush();
 			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" CurriculoDisciplina"); count = 0;}
 		}
 	}
