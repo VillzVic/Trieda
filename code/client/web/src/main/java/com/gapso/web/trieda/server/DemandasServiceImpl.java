@@ -96,21 +96,33 @@ public class DemandasServiceImpl
 						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosTotal / demanda.getDisciplina().getTotalCreditos();
 					}
 				} else {
-					// verifica se a demanda possui créditos teóricos não atendidos
-					if (demandaAlunosCreditosT > 0) {
-						qtdAlunosNaoAtendidosTotal += demandaAlunosCreditosT / demanda.getDisciplina().getCreditosTeorico();
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT / demanda.getDisciplina().getCreditosTeorico();
-					}
-					
-					// verifica se a demanda possui créditos práticos não atendidos
-					if (demandaAlunosCreditosP > 0) {
-						qtdAlunosNaoAtendidosTotal += demandaAlunosCreditosP / demanda.getDisciplina().getCreditosPratico();
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP / demanda.getDisciplina().getCreditosPratico();
+					// verifica se a demanda possui créditos teóricos e práticos não atendidos
+					if ((demandaAlunosCreditosT > 0) && (demandaAlunosCreditosP > 0)) {
+						if (demandaAlunosCreditosT > demandaAlunosCreditosP) {
+							qtdAlunosNaoAtendidosTotal += demandaAlunosCreditosT / demanda.getDisciplina().getCreditosTeorico();
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT / demanda.getDisciplina().getCreditosTeorico();
+						} else {
+							qtdAlunosNaoAtendidosTotal += demandaAlunosCreditosP / demanda.getDisciplina().getCreditosPratico();
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP / demanda.getDisciplina().getCreditosPratico();
+						}
+					} else {
+						// verifica se a demanda possui créditos teóricos não atendidos
+						if (demandaAlunosCreditosT > 0) {
+							qtdAlunosNaoAtendidosTotal += demandaAlunosCreditosT / demanda.getDisciplina().getCreditosTeorico();
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT / demanda.getDisciplina().getCreditosTeorico();
+						}
+						
+						// verifica se a demanda possui créditos práticos não atendidos
+						if (demandaAlunosCreditosP > 0) {
+							qtdAlunosNaoAtendidosTotal += demandaAlunosCreditosP / demanda.getDisciplina().getCreditosPratico();
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP / demanda.getDisciplina().getCreditosPratico();
+						}
 					}
 				}
 			}
 
 			demandaToQtdAlunosNaoAtendidosMap.put(demanda,qtdAlunosNaoAtendidosDemanda);
+			//System.out.println(demanda.getOferta().getCampus().getCodigo()+"@"+demanda.getOferta().getTurno().getNome()+"@"+demanda.getOferta().getCurso().getCodigo()+"@"+demanda.getOferta().getCurriculo().getCodigo()+"@"+demanda.getOferta().getCurriculo().getPeriodo(demanda.getDisciplina())+"@"+demanda.getDisciplina().getCodigo()+"@"+demanda.getQuantidade()+"@"+qtdAlunosNaoAtendidosDemanda+"@"+qtdAlunosNaoAtendidosTotal);
 		}
 		
 		return ParDTO.create(demandaToQtdAlunosNaoAtendidosMap,qtdAlunosNaoAtendidosTotal);
