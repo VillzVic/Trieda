@@ -1200,7 +1200,7 @@ int SolverMIP::solvePreTatico( int campusId )
    int constNum = 0;
 
    char lpName[1024], id[100];
-   strcat( lpName, "SolverTriedaPreTatico" );
+   strcpy( lpName, "SolverTriedaPreTatico" );
    _itoa_s( campusId, id, 100, 10 );
    strcat( lpName, id );
 
@@ -1294,7 +1294,7 @@ int SolverMIP::solveTaticoBasico( int campusId )
    }
    
    char lpName[1024], id[100];
-   strcat( lpName, "SolverTrieda" );
+   strcpy( lpName, "SolverTrieda" );
    _itoa_s( campusId, id, 100, 10 ); // converte o valor em campusId para string, armazenando-o em id
    strcat( lpName, id );
 
