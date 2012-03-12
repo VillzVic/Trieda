@@ -1764,8 +1764,7 @@ public class SolverInput
 		itemParametrosPlanejamento.setModoOtimizacao(
 			tatico ? "TATICO" : "OPERACIONAL" );
 
-		itemParametrosPlanejamento.setFuncaoObjetivo(
-			itemParametrosPlanejamento.getFuncaoObjetivo() );
+		itemParametrosPlanejamento.setFuncaoObjetivo(this.parametro.getFuncaoObjetivo());
 
 		CargaHorariaSemanalAluno cargaHorariaSemanalAluno
 			= this.of.createItemParametrosPlanejamentoCargaHorariaSemanalAluno();
