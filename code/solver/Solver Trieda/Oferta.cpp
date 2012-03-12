@@ -27,14 +27,6 @@ void Oferta::le_arvore( ItemOfertaCurso & elem )
 
 bool Oferta::possuiDisciplina( Disciplina *d )
 {
-	/*GGroup< std::pair< int, Disciplina * > >::iterator it = curriculo->disciplinas_periodo.begin();
-	for ( ; it != curriculo->disciplinas_periodo.end(); it++ )
-	{
-		if ( (*it).second->getId() == idDisc )
-			return true;
-	}
-	return false;*/
-
 	return curriculo->possuiDisciplina(d);
 }
 

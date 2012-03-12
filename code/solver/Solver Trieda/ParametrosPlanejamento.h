@@ -22,7 +22,12 @@ public:
    CHSA carga_horaria_semanal_aluno;
 
    int maxDeslocProf;
+   
+   // funcao objetivo:
+   // 0 = maximizar margem
+   // 1 = minimizar custo docente
    int funcao_objetivo;
+
    int min_alunos_abertura_turmas_value;
 
    bool equilibrar_diversidade_disc_dia;

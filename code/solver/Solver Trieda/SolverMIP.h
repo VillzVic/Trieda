@@ -64,19 +64,19 @@ public:
    **                      Variaveis do pre-tatico                    **
    *********************************************************************/
 
-   int cria_preVariaveis( void );
+   int cria_preVariaveis( int campusId );
 
-   int cria_preVariavel_creditos(void);							// x_{i,d,s}
-   int cria_preVariavel_oferecimentos(void);					// o_{i,d,s}
-   int cria_preVariavel_abertura(void);							// z_{i,d,cp}
-   int cria_preVariavel_alunos(void);							// a_{i,d,oft,s}
-   int cria_preVariavel_aloc_alunos(void);						// b_{i,d,c}
-   int cria_preVariavel_folga_demanda_disciplina(void);			// fd_{d,oft}
-   int cria_preVariavel_folga_compartilhamento_incomp(void);	// bs_{i,d,c1,c2}
-   int cria_preVariavel_folga_proibe_compartilhamento(void);	// fc_{i,d,c1,c2}
-   int cria_preVariavel_folga_turma_mesma_disc_sala_dif(void);	// fs_{d,s,oft}
-   int cria_preVariavel_limite_sup_creds_sala(void);			// Hs_{cp}
-   int cria_preVariavel_aloca_alunos_oferta(void);				// c_{i,d,oft,s}
+   int cria_preVariavel_creditos( int campusId );						// x_{i,d,s}
+   int cria_preVariavel_oferecimentos( int campusId );					// o_{i,d,s}
+   int cria_preVariavel_abertura( int campusId );						// z_{i,d,cp}
+   int cria_preVariavel_alunos( int campusId );							// a_{i,d,oft,s}
+   int cria_preVariavel_aloc_alunos( int campusId );					// b_{i,d,c}
+   int cria_preVariavel_folga_demanda_disciplina( int campusId );		// fd_{d,oft}
+   int cria_preVariavel_folga_compartilhamento_incomp( int campusId );	// bs_{i,d,c1,c2}
+   int cria_preVariavel_folga_proibe_compartilhamento( int campusId );	// fc_{i,d,c1,c2}
+   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId );// fs_{d,s,oft}
+   int cria_preVariavel_limite_sup_creds_sala( int campusId );			// Hs_{cp}
+   int cria_preVariavel_aloca_alunos_oferta( int campusId );			// c_{i,d,oft,s}
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
@@ -265,13 +265,14 @@ public:
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
-   void carregaVariaveisSolucaoTatico();
+   void carregaVariaveisSolucaoTatico( int campusId );
    void relacionaProfessoresDisciplinas();
-   void carregaVariaveisSolucaoPreTatico();
+   void carregaVariaveisSolucaoPreTatico( int campusId );
 
+   int solveTaticoPorCampus();
    int solveTatico();
-   int solvePreTatico();
-   int solveTaticoBasico();
+   int solvePreTatico( int campusId );
+   int solveTaticoBasico( int campusId );
    void converteCjtSalaEmSala();
    void separaDisciplinasEquivalentes();
    void getSolutionTatico();

@@ -52,7 +52,7 @@ private:
    std::string nome;
    int totalSalas;
    int maiorSala;
-   double custo;
+   double custo; // custo semanal de 1 credito no campus
 };
 
 #endif

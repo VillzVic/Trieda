@@ -1888,7 +1888,6 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
    */
 	#pragma endregion
 
-
     bool atualizar_demandas = false;
 
     ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
@@ -1901,11 +1900,12 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 
 			map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_periodo_disc
 				= curriculo->disciplinas_periodo.begin();
-
+			
+			bool reiniciar = false;
+			
 			// Para cada disciplina do 'curriculo', procuro se devo
 			// substituir por alguma disciplina equivalente
-			for (; it_periodo_disc != curriculo->disciplinas_periodo.end();
-				it_periodo_disc++ )
+			while ( it_periodo_disc != curriculo->disciplinas_periodo.end() )
 			{
 				Disciplina *discAntiga = it_periodo_disc->first;
 				int periodo = it_periodo_disc->second;
@@ -1915,35 +1915,40 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 
 				if ( itMapEquiv != problemData->mapDiscSubstituidaPor.end() )
 				{
+
 				//-----------------------------------------------------------------------------
 				// Substituir disciplinas equivalentes
 					Disciplina * discNova = problemData->mapDiscSubstituidaPor[ discAntiga ];
 
 					atualizar_demandas = true;
 
-					//// Antigo par período/disciplina
-					//std::pair< int, Disciplina * > pairPeriodoDisciplina
-					//	= std::make_pair( periodo, discAntiga );
-
-					//// O período é o mesmo, mas mudamos a disciplina
-					//std::pair< int, Disciplina * > novoPeriodoDisciplina
-					//	= std::make_pair( periodo, discNova );
-
 					// Troca a disciplina e mantém o período
 					curriculo->disciplinas_periodo.erase( discAntiga );
 					curriculo->disciplinas_periodo[discNova] = periodo;
+
+					reiniciar = true;
 					
                     // Adiciona a 'discAntiga' no conjunto de disciplinas que foram substituídas por 'discNova'
 					std::pair< Curso*, Curriculo* > parCursoCurr = std::make_pair( curso, curriculo );
                     problemData->mapGroupDisciplinasSubstituidas[ parCursoCurr ][ discNova ].add( discAntiga );
-					
+
 					it_periodo_disc = curriculo->disciplinas_periodo.begin();
 				 //-----------------------------------------------------------------------------
 				 }
+
+				 if ( reiniciar )
+				 {
+					 it_periodo_disc = curriculo->disciplinas_periodo.begin();
+					 reiniciar = false;
+				 }
+				 else
+				 {
+					 it_periodo_disc++;
+				 }
+
 			}
         }
     }
-
 
 	// Caso alguma disciplina tenha sido
 	// substituída, devo substituir também as demandas
@@ -2058,33 +2063,17 @@ void ProblemDataLoader::atualizaOfertasDemandas()
 			 {
 				 continue; // Disciplina que não foi substituída
 			 }
-
+			
 			 Disciplina *discAntiga = (*itDemanda)->disciplina;
 			 Disciplina *discNova = problemData->mapDiscSubstituidaPor[ discAntiga ];
+			  
+			 itDemanda->setDisciplinaId( discNova->getId() );
+			 itDemanda->disciplina = discNova;
 
-             // Demanda da disciplina que foi substituída
-             Demanda *demandaAntiga = (*itDemanda);
-             Demanda *novaDemanda = new Demanda();
-			 
-             novaDemanda->setId( id_demanda );
-             id_demanda++;
-
-             novaDemanda->setDisciplinaId( discNova->getId() );
-             novaDemanda->setOfertaId( demandaAntiga->oferta->getId() );
-             novaDemanda->setQuantidade( demandaAntiga->getQuantidade() );
-             novaDemanda->oferta = demandaAntiga->oferta;
-             novaDemanda->disciplina = discNova;
-
-             // A demanda da disciplina substituída
-             // deixa de existir e inserimos a nova demanda
-             problemData->demandas.remove( demandaAntiga );
-             problemData->demandas.add( novaDemanda );
- 
              // Informa que a demanda criada vale para 'discAntiga',
              // mas foi criada como demanda de 'discNova'
-             problemData->demandasDisciplinasSubstituidas[ discAntiga ] = novaDemanda;
+             problemData->demandasDisciplinasSubstituidas[ discAntiga ] = (*itDemanda);
 
-			 itDemanda = problemData->demandas.begin();
 		}
 }
 
@@ -2148,46 +2137,62 @@ void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 		ITERA_GGROUP_LESSPTR( itDiscAntiga, discNova->discEquivalentes, Disciplina )
 		{
 			Disciplina *discAntiga = *itDiscAntiga;
-
-			std::map< Disciplina*, Disciplina* >::iterator
-				itMap = problemData->mapDiscSubstituidaPor.find( discAntiga );
-			
+					
 			// Se a disciplina antiga já possuir uma substituição no map (for uma chave do map)
-			if ( itMap != problemData->mapDiscSubstituidaPor.end() )
+			if ( problemData->mapDiscSubstituidaPor.find( discAntiga ) !=
+				 problemData->mapDiscSubstituidaPor.end() )
 			{
-				Disciplina *discNovaAtual = itMap->second;
-
-				if ( discNovaAtual->getTotalCreditos() > discNova->getTotalCreditos() )
-				{
-					problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
-				}
-				else if ( discNovaAtual->getTotalCreditos() == discNova->getTotalCreditos() )
-				{
-					if ( discNovaAtual->getId() > discNova->getId() )
-					{
-						problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
-					}
-				}
+				// Não faz nada. A disciplina que foi inserida primeiro no map prevalece.
 			}
-			else
+			else // discAntiga não é chave
 			{
 				bool jaSubstituiu = false;
 
-				// Se a disciplina antiga já tiver substituído alguma disciplina no map
+				std::map< Disciplina*, Disciplina* >::iterator itMap;
 				for ( itMap = problemData->mapDiscSubstituidaPor.begin();
 					  itMap != problemData->mapDiscSubstituidaPor.end();
 					  itMap++ )
 				{
 					if ( itMap->second == discAntiga )
 					{
-						itMap->second = discNova;
-						jaSubstituiu = true;
+						jaSubstituiu = true; // Se a disciplina antiga já tiver substituído alguma disciplina no map (for substituta)
 					}
 				}
 
-				if ( jaSubstituiu )
+				if ( jaSubstituiu ) // discAntiga já é substituta
 				{
-					problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
+					if ( problemData->mapDiscSubstituidaPor.find( discNova ) != 
+						 problemData->mapDiscSubstituidaPor.end() ) // discNova já é chave do map
+					{
+						Disciplina* equiv = ( problemData->mapDiscSubstituidaPor.find( discNova ) )->second;
+
+						for ( itMap = problemData->mapDiscSubstituidaPor.begin();
+							  itMap != problemData->mapDiscSubstituidaPor.end();
+							  itMap++ )
+						{
+							if ( itMap->second == discAntiga )
+							{
+								problemData->mapDiscSubstituidaPor[ itMap->first ] = equiv;
+							}
+						}
+
+						problemData->mapDiscSubstituidaPor[discAntiga] = equiv;
+					}
+					else  // discNova NÃO é chave do map
+					{
+						for ( itMap = problemData->mapDiscSubstituidaPor.begin();
+							  itMap != problemData->mapDiscSubstituidaPor.end();
+							  itMap++ )
+						{
+							if ( itMap->second == discAntiga )
+							{
+								problemData->mapDiscSubstituidaPor[ itMap->first ] = discNova;
+							}
+						}
+
+						problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
+					}
+
 				}
 				else // Se a disciplina antiga não estiver no map
 				{
@@ -2197,18 +2202,32 @@ void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 					if ( itMap != problemData->mapDiscSubstituidaPor.end() )
 					{
 						problemData->mapDiscSubstituidaPor[discAntiga] = itMap->second;
+						
+						if ( problemData->mapDiscSubstituidaPor.find( itMap->second ) != 
+							 problemData->mapDiscSubstituidaPor.end() )
+						{
+							std::cout<<"\nNão deveria entrar aqui\n";
+						}
+
 					}
 					else
 					{
 						// Se a disciplina nova já tiver substituído alguma disciplina no map
 						// ou se também não estiver no map
 						problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
+
+						if ( problemData->mapDiscSubstituidaPor.find( discNova ) != 
+							 problemData->mapDiscSubstituidaPor.end() )
+						{
+							std::cout<<"\nNão deveria entrar aqui\n";
+						}
+
 					}
 				}			
 			}
 		}
 	}
-
+	
 	substituiDisciplinasEquivalentes();
 }
 
@@ -3011,21 +3030,21 @@ void ProblemDataLoader::cria_blocos_curriculares()
             {
                int periodo = it_disc_periodo->second;
                disciplina = it_disc_periodo->first;
+               
+			   int id_disciplina = abs( disciplina->getId() );
+               int id_oferta = oferta->getId();
+			   
+			   Disciplina *d = problemData->ehSubstitutaDe( disciplina, std::make_pair(curso, curriculo) );
 
                std::pair< Campus *, Curso * > campus_curso
                   = std::make_pair( campus, curso );
 
-               // Recupera o conjunto de demandas
-               // relacionadas ao par 'Campus' e 'Curso' atual
-               GGroup< Demanda *, LessPtr< Demanda > > * demandas
-                  = &( problemData->map_campus_curso_demanda[ campus_curso ] );
+               // Recupera o conjunto de demandas relacionadas ao par 'Campus' e 'Curso' atual
+          //     GGroup< Demanda *, LessPtr< Demanda > > * demandas
+           //       = &( problemData->map_campus_curso_demanda[ campus_curso ] );
 
-               // Encontrando e armazenando a demanda
-               // específica da disciplina em questão
+               // Encontrando e armazenando a demanda específica da disciplina em questão
                demanda = NULL;
-
-               int id_disciplina = abs( disciplina->getId() );
-               int id_oferta = oferta->getId();
 
                // ITERA_GGROUP_LESSPTR( it_demanda, ( *demandas ), Demanda )
                ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
