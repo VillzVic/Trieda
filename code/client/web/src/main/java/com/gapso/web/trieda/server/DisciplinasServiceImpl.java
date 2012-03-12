@@ -1136,7 +1136,7 @@ public class DisciplinasServiceImpl
 
 			resumoDTO.setCursoId(atendimento.getCursoId());
 			resumoDTO.setDisciplinaId( disciplina.getId() );
-			resumoDTO.setDisciplinaString( disciplina.getNome() );
+			resumoDTO.setDisciplinaString( disciplina.getCodigo() );
 			resumoDTO.setTurma( atendimento.getTurma() );
 			resumoDTO.setTipoCreditoTeorico( atendimento.isTeorico() );
 			resumoDTO.setCreditos( atendimento.getTotalCreditos() );
