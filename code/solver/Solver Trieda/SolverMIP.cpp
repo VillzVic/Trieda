@@ -325,7 +325,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico( int campusId )
    vit = vHash.begin();
    
    char solFilename[1024], id[100];
-   strcat( solFilename, "solucaoTatico" );
+   strcpy( solFilename, "solucaoTatico" );
    _itoa_s( campusId, id, 100, 10 );
    strcat( solFilename, id );
    strcat( solFilename, ".txt" );
@@ -1114,7 +1114,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId )
    vit = vHashPre.begin();
 
    char solFilename[1024], id[100];
-   strcat( solFilename, "solucaoPreTatico" );
+   strcpy( solFilename, "solucaoPreTatico" );
    _itoa_s( campusId, id, 100, 10 );
    strcat( solFilename, id );
    strcat( solFilename, ".txt" );
@@ -4263,17 +4263,30 @@ int SolverMIP::cria_preVariavel_creditos( int campusId )
 
                      if ( vHashPre.find( v ) == vHashPre.end() )
                      {
-						int upperBound = disciplina->getCredTeoricos() + disciplina->getCredPraticos();
+						 double coef = 0.0;
 
-                        double custo = 0.0;
+						 if ( problemData->parametros->funcao_objetivo == 0 )
+                         {
+							 double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
+							 
+							 coef = 4.5 * 6 * custo;
+						 }
+						 else if ( problemData->parametros->funcao_objetivo == 1 )
+                         {
+							 double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
 
-                        vHashPre[ v ] = lp->getNumCols();
+							 coef = 4.5 * 6 * custo;
+						 }
+						 
+						 int upperBound = disciplina->getCredTeoricos() + disciplina->getCredPraticos();
+						 
+                         vHashPre[ v ] = lp->getNumCols();
 						   						 
-                        OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0, upperBound, ( char * )v.toString().c_str() );
+                         OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, upperBound, ( char * )v.toString().c_str() );
                           
-						lp->newCol( col );						 
+						 lp->newCol( col );						 
 
-						num_vars++;						  
+						 num_vars++;						  
                      }
                 }
             }
@@ -4522,35 +4535,34 @@ int SolverMIP::cria_preVariavel_alunos( int campusId )
 								v.setOferta( *itOferta );          // oft
 								v.setUnidade( *itUnidade );		   // u
 								v.setSubCjtSala( *itCjtSala );	   // s
-
-								int numCreditos = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
-								double valorCredito = 300.0;
-								double coeff = ( numCreditos * valorCredito );
-
+								
 								if ( vHashPre.find(v) == vHashPre.end() )
 								{
 									vHashPre[v] = lp->getNumCols();
+									
+									double coef = 0.0;
 
-									if ( problemData->parametros->funcao_objetivo == 0 ||
-										problemData->parametros->funcao_objetivo == 2 )
+									if ( problemData->parametros->funcao_objetivo == 0 )
 									{
-										OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0, qtdDem,
-											( char * )v.toString().c_str() );
-
-										lp->newCol( col );
+										double valorCredito = itOferta->getReceita();
+										int numCreditos = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
+				
+										coef = - 4.5 * 6 * numCreditos * valorCredito;
 									}
 									else if ( problemData->parametros->funcao_objetivo == 1 )
 									{
-										OPT_COL col( OPT_COL::VAR_INTEGRAL, coeff, 0.0, qtdDem,
-											( char * )v.toString().c_str() );
-
-										lp->newCol( col );
+										coef = 0.0;
 									}
+
+									OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, qtdDem,
+										( char * )v.toString().c_str() );
+
+									lp->newCol( col );
 
 									num_vars += 1;
 								}
 							}
-				   }
+				      }
 				}
 			}
 		}
@@ -7643,8 +7655,22 @@ int SolverMIP::cria_variavel_creditos( void )
 
                            vHash[ v ] = lp->getNumCols();
 						   
-						 
-                           OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0,
+						   double coef = 0.0;
+
+						   if ( problemData->parametros->funcao_objetivo == 0 )
+						   {
+								double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
+							 
+								coef = 4.5 * 6 * custo;
+						   }
+						   else if ( problemData->parametros->funcao_objetivo == 1 )
+						   {
+								double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
+
+								coef = 4.5 * 6 * custo;
+						   }
+
+                           OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0,
                                         itCjtSala->maxCredsDiaPorSL( *itDiscSala_Dias, v.getDisciplina()->getCalendario() ),
                                         ( char * )v.toString().c_str() );
                           
@@ -8257,34 +8283,33 @@ int SolverMIP::cria_variavel_alunos(void)
             v.setDisciplina( ptDisc );         // d
             v.setOferta( *itOferta );          // oft
 
-            int numCreditos = ( ptDisc->getCredTeoricos() + ptDisc->getCredPraticos() );
-            double valorCredito = 300.0;
-            double coeff = ( numCreditos * valorCredito );
-
             if ( vHash.find(v) == vHash.end() )
             {
-			   if ( !criaVariavelTatico( &v ) )
+			    if ( !criaVariavelTatico( &v ) )
 					continue;
 
-               vHash[v] = lp->getNumCols();
+                vHash[v] = lp->getNumCols();
 
-               if ( problemData->parametros->funcao_objetivo == 0 ||
-                  problemData->parametros->funcao_objetivo == 2 )
-               {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0, qtdDem,
+				double coef = 0.0;
+
+				if ( problemData->parametros->funcao_objetivo == 0 )
+				{
+					double valorCredito = itOferta->getReceita();
+					int numCreditos = ( ptDisc->getCredTeoricos() + ptDisc->getCredPraticos() );
+				
+					coef = - 4.5 * 6 * numCreditos * valorCredito;
+				}
+				else if ( problemData->parametros->funcao_objetivo == 1 )
+				{
+					coef = 0.0;
+				}
+
+                OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, qtdDem,
                      ( char * )v.toString().c_str() );
 
-                  lp->newCol( col );
-               }
-               else if ( problemData->parametros->funcao_objetivo == 1 )
-               {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, coeff, 0.0, qtdDem,
-                     ( char * )v.toString().c_str() );
+                lp->newCol( col );
 
-                  lp->newCol( col );
-               }
-
-               num_vars += 1;
+                num_vars += 1;
             }
          }
       }
