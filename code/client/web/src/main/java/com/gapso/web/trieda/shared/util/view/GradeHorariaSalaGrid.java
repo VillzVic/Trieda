@@ -31,10 +31,11 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.Services;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -43,10 +44,13 @@ public class GradeHorariaSalaGrid
 {
 	private Grid< LinhaDeCredito > grid;
 	private ListStore< LinhaDeCredito > store;
-	private List< AtendimentoRelatorioDTO > atendimentos;
+	private Integer mdcTemposAula;
+	private Integer maximoCreditos;
+	private Integer qtdLinhasGradeHorariaPorCredito;
+	private Integer tamanhoLinhaGradeHorariaEmPixels;
+	private List<AtendimentoRelatorioDTO> aulasNaSalaDTO;
 	private SalaDTO salaDTO;
 	private TurnoDTO turnoDTO;
-	private SemanaLetivaDTO semanaLetivaDTO;
 	private QuickTip quickTip;
 	private List< Long > disciplinasCores = new ArrayList< Long >();
 
@@ -64,11 +68,11 @@ public class GradeHorariaSalaGrid
 	{
 		super.beforeRender();
 
-		this.grid = new Grid< LinhaDeCredito >(
-			getListStore(), new ColumnModel( getColumnList() ) );
+		this.grid = new Grid<LinhaDeCredito>(getListStore(),new ColumnModel(getColumnList()));
 
 		this.grid.setTrackMouseOver( false );
-		this.grid.setStyleName( "GradeHorariaGrid" );
+		this.grid.setStyleName( "GradeHorariaGrid VisaoSala" );
+		
 		this.grid.addListener( Events.BeforeSelect,
 			new Listener< GridEvent< LinhaDeCredito > >()
 		{
@@ -121,86 +125,89 @@ public class GradeHorariaSalaGrid
 		requestAtendimentos();
 	}
 
-	public void requestAtendimentos()
-	{
-		if ( getSalaDTO() == null
-			|| getTurnoDTO() == null
-			|| getSemanaLetivaDTO() == null )
-		{
+	public void requestAtendimentos() {
+		if (getSalaDTO() == null || getTurnoDTO() == null) {
 			return;
 		}
 
-		this.grid.mask( "Carregando os dados, " +
-			"aguarde alguns instantes", "loading" );
+		this.grid.mask("Carregando os dados, " + "aguarde alguns instantes", "loading");
 
-		Services.atendimentos().getBusca(
-			getSalaDTO(), getTurnoDTO(), getSemanaLetivaDTO(),
-			new AsyncCallback< List< AtendimentoRelatorioDTO > >()
-			{
-				@Override
-				public void onFailure( Throwable caught )
-				{
-					MessageBox.alert( "ERRO!",
-						"Não foi possível carregar a grade de horários", null );
+		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(getSalaDTO(),getTurnoDTO(),/*getSemanaLetivaDTO(),*/new AsyncCallback<QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				MessageBox.alert("ERRO!","Não foi possível carregar a grade de horários",null);
+			}
+
+			@Override
+			public void onSuccess(QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>> result) {
+				mdcTemposAula = result.getPrimeiro();
+				maximoCreditos = result.getSegundo();
+				Integer tempoAulaDaSemanaLetivaComMaximoDeCreditos = result.getTerceiro();
+				aulasNaSalaDTO = result.getQuarto();
+				qtdLinhasGradeHorariaPorCredito = tempoAulaDaSemanaLetivaComMaximoDeCreditos/mdcTemposAula;
+				tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO*mdcTemposAula);
+				
+				preencheCores();
+				grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
+				grid.getView().setEmptyText(emptyTextAfterSearch);
+				for (int row = 0; row < maximoCreditos*qtdLinhasGradeHorariaPorCredito; row++) {
+					grid.getView().getRow(row).getStyle().setHeight(tamanhoLinhaGradeHorariaEmPixels-2,Unit.PX);
 				}
-
-				@Override
-				public void onSuccess( List< AtendimentoRelatorioDTO > result )
-				{
-					atendimentos = result;
-					preencheCores();
-					grid.reconfigure( getListStore(),
-						new ColumnModel( getColumnList() ) );
-
-					grid.getView().setEmptyText( emptyTextAfterSearch );
-					grid.unmask();
-				}
-			});
+				grid.unmask();
+			}
+		});
 	}
 
-	public ListStore< LinhaDeCredito > getListStore()
-	{
-		if ( this.store == null )
-		{
-			this.store = new ListStore< LinhaDeCredito >();
+	public ListStore<LinhaDeCredito> getListStore() {
+		if (this.store == null) {
+			this.store = new ListStore<LinhaDeCredito>();
 		}
-		else
-		{
+		else {
 			this.store.removeAll();
 		}
 
-		Set< LinhaDeCredito > setLinhaDeCredito
-			= new HashSet< LinhaDeCredito >();
-
-		if ( this.semanaLetivaDTO != null )
-		{
-			if ( isTatico() )
-			{
-				for ( Integer i = 1; i <= this.semanaLetivaDTO.getMaxCreditos(); i++ )
-				{
-					setLinhaDeCredito.add( new LinhaDeCredito( i.toString() ) );
-				}
-			}
-			else
-			{
-				for ( Long horarioId : this.semanaLetivaDTO.getHorariosStringMap().keySet() )
-				{
-					setLinhaDeCredito.add( new LinhaDeCredito(
-						this.semanaLetivaDTO.getHorariosStringMap().get( horarioId ),
-						horarioId, this.semanaLetivaDTO.getHorariosInicioMap().get( horarioId ) ) );
+		Set<LinhaDeCredito> setLinhaDeCredito = new HashSet<LinhaDeCredito>();
+		
+		if (isTatico()) {
+			Integer cargaHorariaAcumuladaEmMinutos = mdcTemposAula;
+			for (int indexCredito = 1; indexCredito <= maximoCreditos; indexCredito++) {
+				for (int i = 0; i < qtdLinhasGradeHorariaPorCredito; i++) {
+					setLinhaDeCredito.add(new LinhaDeCredito(cargaHorariaAcumuladaEmMinutos.toString()));
+					cargaHorariaAcumuladaEmMinutos += mdcTemposAula;
 				}
 			}
 		}
-
-		List< LinhaDeCredito > listLinhaDeCredito
-			= new ArrayList< LinhaDeCredito >();
-
-		listLinhaDeCredito.addAll( setLinhaDeCredito );
-		Collections.sort( listLinhaDeCredito );
-
-		for ( LinhaDeCredito lc : listLinhaDeCredito )
+		else
 		{
-			this.store.add( lc );
+			// FIXME implementar caso para o operacional
+		}
+
+//		if (this.semanaLetivaDTO != null) {
+//			if ( isTatico() )
+//			{
+//				for ( Integer i = 1; i <= this.semanaLetivaDTO.getMaxCreditos(); i++ )
+//				{
+//					setLinhaDeCredito.add( new LinhaDeCredito( i.toString() ) );
+//				}
+//			}
+//			else
+//			{
+//				for ( Long horarioId : this.semanaLetivaDTO.getHorariosStringMap().keySet() )
+//				{
+//					setLinhaDeCredito.add( new LinhaDeCredito(
+//						this.semanaLetivaDTO.getHorariosStringMap().get( horarioId ),
+//						horarioId, this.semanaLetivaDTO.getHorariosInicioMap().get( horarioId ) ) );
+//				}
+//			}
+//		}
+
+		List<LinhaDeCredito> listLinhaDeCredito = new ArrayList<LinhaDeCredito>();
+
+		listLinhaDeCredito.addAll(setLinhaDeCredito);
+		Collections.sort(listLinhaDeCredito);
+
+		for (LinhaDeCredito lc : listLinhaDeCredito) {
+			this.store.add(lc);
 		}
 
 		return this.store;
@@ -218,7 +225,7 @@ public class GradeHorariaSalaGrid
 
 		if ( isTatico() )
 		{
-			addColumn( list, "display", "Créditos" );
+			addColumn( list, "display", "Carga Horária (Min)" );
 		}
 		else
 		{
@@ -238,93 +245,79 @@ public class GradeHorariaSalaGrid
 
 	private void addColumn( List< ColumnConfig > list, String id, String name )
 	{
-		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer< LinhaDeCredito >()
-		{
-			public Html render( LinhaDeCredito model, String property,
-					ColumnData config, int rowIndex, int colIndex,
-					ListStore< LinhaDeCredito > store, Grid< LinhaDeCredito > grid )
-			{
-				if ( colIndex == 0 )
-				{
-					return new Html( model.getDisplay() );
+		GridCellRenderer< LinhaDeCredito > change = new GridCellRenderer<LinhaDeCredito>() {
+			public Html render(LinhaDeCredito model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<LinhaDeCredito> store, Grid<LinhaDeCredito> grid) {
+				if (colIndex == 0) {
+					Html html = new Html(model.getDisplay());
+					html.setStyleAttribute("line-height",tamanhoLinhaGradeHorariaEmPixels-2+"px");
+					return html;
 				}
 
-				return content( model, rowIndex, colIndex );
+				return content(model,rowIndex,colIndex);
 			}
 
-			private Html content( LinhaDeCredito model, int rowIndex, int colIndex )
-			{
-				if ( atendimentos == null
-					|| atendimentos.size() == 0 )
-				{
-					new Html( "" );
+			private Html content(LinhaDeCredito model, int rowIndex, int colIndex) {
+				if (aulasNaSalaDTO == null || aulasNaSalaDTO.isEmpty()) {
+					return new Html("");
 				}
 
 				int semana = -1;
-				if ( colIndex == 1 )
-				{
+				if (colIndex == 1) {
 					semana = 2;
 				}
-				else if ( colIndex == 2 )
-				{
+				else if (colIndex == 2) {
 					semana = 3;
 				}
-				else if ( colIndex == 3 )
-				{
+				else if (colIndex == 3) {
 					semana = 4;
 				}
-				else if ( colIndex == 4 )
-				{
+				else if (colIndex == 4) {
 					semana = 5;
 				}
-				else if ( colIndex == 5 )
-				{
+				else if (colIndex == 5) {
 					semana = 6;
 				}
-				else if ( colIndex == 6 )
-				{
+				else if (colIndex == 6) {
 					semana = 7;
 				}
-				else if ( colIndex == 7 )
-				{
+				else if (colIndex == 7) {
 					semana = 1;
 				}
 
-				AtendimentoRelatorioDTO atDTO = null;
-				if ( isTatico() )
-				{
-					atDTO = getAtendimento( rowIndex + 1, semana );
-				}
-				else
-				{
-					atDTO = getAtendimento( model.getHorarioId(), semana );
+				AtendimentoRelatorioDTO aulaDTO = null;
+				if (isTatico()) {
+					aulaDTO = getAula(rowIndex+1,semana);
+				} else {
+					aulaDTO = getAtendimento(model.getHorarioId(),semana);
 				}
 
-				if ( atDTO == null )
-				{
-					return new Html( "" );
+				if (aulaDTO == null) {
+					return new Html("");
 				}
 
-				final String title = atDTO.getDisciplinaString();
-				final String contentToolTip = atDTO.getContentToolTipVisaoSala(ReportType.WEB);
-
-				final Html html = new Html( atDTO.getContentVisaoSala(ReportType.WEB) )
-				{
+				final String title = aulaDTO.getDisciplinaString();
+				final String contentToolTip = aulaDTO.getContentToolTipVisaoSala(ReportType.WEB);
+				final Html html = new Html(aulaDTO.getContentVisaoSala(ReportType.WEB)) {
 					@Override
-					protected void onRender( Element target, int index )
-					{
-						super.onRender( target, index );
-						target.setAttribute( "qtip", contentToolTip );
-						target.setAttribute( "qtitle", title );
-						target.setAttribute( "qwidth", "400px" );
+					protected void onRender(Element target, int index) {
+						super.onRender(target,index);
+						target.setAttribute("qtip",contentToolTip);
+						target.setAttribute("qtitle",title);
+						target.setAttribute("qwidth","400px");
 					}
 				};
-
-				html.addStyleName( "horario" );
-				html.addStyleName( "c" + ( rowIndex + 1 ) );
-				html.addStyleName( "tc" + atDTO.getTotalCreditos() );
-				html.addStyleName( "s" + atDTO.getSemana() );
-				html.addStyleName( getCssDisciplina( atDTO.getDisciplinaId() ) );
+				html.addStyleName("horario");
+				if (isTatico()) {
+					html.setStyleAttribute("top",(rowIndex*tamanhoLinhaGradeHorariaEmPixels + 1)+"px");//html.addStyleName("cargaHoraria" + (rowIndex+1));
+					// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
+					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getSemanaLetivaTempoAula()/mdcTemposAula;
+					html.setStyleAttribute("height",(aulaDTO.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula*tamanhoLinhaGradeHorariaEmPixels - 3)+"px");//html.addStyleName("totalCargaHoraria" + aulaDTO.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula);
+				} else {
+					html.addStyleName("c" + (rowIndex+1));
+					html.addStyleName("tc" + aulaDTO.getTotalCreditos());
+				}
+				html.addStyleName("s" + aulaDTO.getSemana());
+				html.addStyleName(getCssDisciplina(aulaDTO.getDisciplinaId()));
 
 				new DragSource( html )
 				{
@@ -356,9 +349,9 @@ public class GradeHorariaSalaGrid
 	{
 		int ocupado = 0;
 
-		if ( this.atendimentos != null )
+		if ( this.aulasNaSalaDTO != null )
 		{
-			for ( AtendimentoRelatorioDTO at : this.atendimentos )
+			for ( AtendimentoRelatorioDTO at : this.aulasNaSalaDTO )
 			{
 				if ( at.getSemana() == semana )
 				{
@@ -375,22 +368,24 @@ public class GradeHorariaSalaGrid
 		return null;
 	}
 
-	private AtendimentoRelatorioDTO getAtendimento( int credito, int semana )
-	{
-		int ocupado = 0;
-
-		if ( this.atendimentos != null )
-		{
-			for ( AtendimentoRelatorioDTO at : this.atendimentos )
-			{
-				if ( at.getSemana() == semana )
-				{
-					if ( credito - 1 == ocupado )
-					{
-						return at;
+	private AtendimentoRelatorioDTO getAula(int linhaGradeHoraria, int colunaGradeHoraria) {
+		int diaDaSemanaQueEstahSendoDesenhado = colunaGradeHoraria;
+		int linhaDaGradeEmQueAulaDeveSerDesenhada = 1; // a primeira aula do dia deve ser desenhada na linha 1
+		if (this.aulasNaSalaDTO != null) {
+			for (AtendimentoRelatorioDTO aula : this.aulasNaSalaDTO) {
+				// verifica se a aula em questão corresponde ao dia da semana que será desenhado
+				if (aula.getSemana() == diaDaSemanaQueEstahSendoDesenhado) {
+					// verifica se a linha da grade que está sendo desenhada corresponde à linha da grade em que a aula em questão
+					// deve ser desenhada
+					if (linhaGradeHoraria == linhaDaGradeEmQueAulaDeveSerDesenhada) {
+						return aula;
 					}
+					
+					// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
+					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aula.getSemanaLetivaTempoAula()/mdcTemposAula;
 
-					ocupado += at.getTotalCreditos();
+					// calcula a linha em que a próxima aula do dia da semana deve ser desenhada
+					linhaDaGradeEmQueAulaDeveSerDesenhada += aula.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula;
 				}
 			}
 		}
@@ -400,18 +395,18 @@ public class GradeHorariaSalaGrid
 
 	private boolean isTatico()
 	{
-		if ( this.atendimentos == null )
+		if ( this.aulasNaSalaDTO == null )
 		{
 			return false;
 		}
 
-		if ( this.atendimentos.isEmpty() )
+		if ( this.aulasNaSalaDTO.isEmpty() )
 		{
 			return true;
 		}
 
 		AtendimentoRelatorioDTO atm
-			= this.atendimentos.get( 0 );
+			= this.aulasNaSalaDTO.get( 0 );
 
 		if ( atm == null )
 		{
@@ -441,17 +436,6 @@ public class GradeHorariaSalaGrid
 		this.turnoDTO = turnoDTO;
 	}
 
-	public SemanaLetivaDTO getSemanaLetivaDTO()
-	{
-		return this.semanaLetivaDTO;
-	}
-
-	public void setSemanaLetivaDTO(
-		SemanaLetivaDTO semanaLetivaDTO )
-	{
-		this.semanaLetivaDTO = semanaLetivaDTO;
-	}
-
 	public String getCssDisciplina( long id )
 	{
 		int index = this.disciplinasCores.indexOf( id );
@@ -468,7 +452,7 @@ public class GradeHorariaSalaGrid
 	{
 		Set< Long > set = new HashSet< Long >();
 
-		for ( AtendimentoRelatorioDTO a : this.atendimentos )
+		for ( AtendimentoRelatorioDTO a : this.aulasNaSalaDTO )
 		{
 			set.add( a.getDisciplinaId() );
 		}

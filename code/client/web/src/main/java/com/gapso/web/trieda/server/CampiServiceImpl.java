@@ -548,7 +548,7 @@ public class CampiServiceImpl extends RemoteService
 					String key = sala.getId() + "-" + turno.getId() + "-" + semanaLetiva.getId();
 					List<AtendimentoRelatorioDTO> atendimentosTatico = salaIdTurnoIdSemanaLetivaIdToAtendimentosTaticoMap.get(key);
 					if (atendimentosTatico != null) {
-						List< AtendimentoRelatorioDTO > atendimentosDTO = atService.montaListaParaVisaoSala(atendimentosTatico);
+						List< AtendimentoRelatorioDTO > atendimentosDTO = atService.uneAulasQuePodemSerCompartilhadas(atendimentosTatico);
 						
 						for ( AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO )
 						{
@@ -757,7 +757,7 @@ public class CampiServiceImpl extends RemoteService
 				for ( SemanaLetivaDTO semanaLetivaDTO : semanasLetivasDTO )
 				{
 					List< AtendimentoRelatorioDTO > atendimentosDTO
-						= atService.getBusca( salaDTO, turnoDTO, semanaLetivaDTO );
+						= atService.getAtendimentosParaGradeHorariaVisaoSala( salaDTO, turnoDTO, semanaLetivaDTO );
 
 					for ( AtendimentoRelatorioDTO atendimentoDTO : atendimentosDTO )
 					{

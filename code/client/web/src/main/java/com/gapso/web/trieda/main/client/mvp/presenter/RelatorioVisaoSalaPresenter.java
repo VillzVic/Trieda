@@ -11,7 +11,6 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -24,7 +23,6 @@ import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.shared.util.view.SalaComboBox;
-import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,7 +38,6 @@ public class RelatorioVisaoSalaPresenter
 		UnidadeComboBox getUnidadeComboBox();
 		SalaComboBox getSalaComboBox();
 		TurnoComboBox getTurnoComboBox();
-		SemanaLetivaComboBox getSemanaLetivaComboBox();
 		TextField< String > getCapacidadeTextField();
 		TextField< String > getTipoTextField();
 		GradeHorariaSalaGrid getGrid();
@@ -71,7 +68,6 @@ public class RelatorioVisaoSalaPresenter
 				{
 					display.getGrid().setSalaDTO( display.getSalaComboBox().getValue() );
 					display.getGrid().setTurnoDTO( display.getTurnoComboBox().getValue() );
-					display.getGrid().setSemanaLetivaDTO( display.getSemanaLetivaComboBox().getValue() );
 					display.getGrid().requestAtendimentos();
 			}
 		});
@@ -113,13 +109,11 @@ public class RelatorioVisaoSalaPresenter
 				UnidadeDTO unidadeDTO = display.getUnidadeComboBox().getValue();
 				SalaDTO salaDTO = display.getSalaComboBox().getValue();
 				TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
-				SemanaLetivaDTO semanaLetivaDTO = display.getSemanaLetivaComboBox().getValue();
 
 				e.addParameter( "campusId", campusDTO.getId().toString() );
 				e.addParameter( "unidadeId", unidadeDTO.getId().toString() );
 				e.addParameter( "salaId", salaDTO.getId().toString() );
 				e.addParameter( "turnoId", turnoDTO.getId().toString() );
-				e.addParameter( "semanaLetivaId", semanaLetivaDTO.getId().toString() );
 
 				e.submit();
 			}

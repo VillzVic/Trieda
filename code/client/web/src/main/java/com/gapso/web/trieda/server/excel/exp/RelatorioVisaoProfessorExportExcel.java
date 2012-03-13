@@ -458,9 +458,9 @@ public class RelatorioVisaoProfessorExportExcel
 
 		// Processa os atendimentos lidos do BD para que
 		// os mesmos sejam visualizados na visão professor
-		List< AtendimentoRelatorioDTO > arDTOList = new ArrayList< AtendimentoRelatorioDTO >(atendimentos);
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
-		List< AtendimentoRelatorioDTO > arDTOListProcessada = atendimentosService.montaListaParaVisaoSala( arDTOList );
+		List< AtendimentoRelatorioDTO > aulas = new ArrayList< AtendimentoRelatorioDTO >(atendimentosService.extraiAulas(atendimentos));
+		List< AtendimentoRelatorioDTO > arDTOListProcessada = atendimentosService.uneAulasQuePodemSerCompartilhadas( aulas );
 		List< AtendimentoOperacionalDTO > atendimentosParaVisaoProfessor = new ArrayList<AtendimentoOperacionalDTO>(arDTOListProcessada.size());
 		for (AtendimentoRelatorioDTO dto : arDTOListProcessada) {
 			atendimentosParaVisaoProfessor.add((AtendimentoOperacionalDTO)dto);
@@ -557,9 +557,9 @@ public class RelatorioVisaoProfessorExportExcel
 
 		// Processa os atendimentos lidos do BD para
 		// que os mesmos sejam visualizados na visão professor
-		List< AtendimentoRelatorioDTO > arDTOList = new ArrayList< AtendimentoRelatorioDTO >(atendimentos);
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
-		List< AtendimentoRelatorioDTO > arDTOListProcessada = atendimentosService.montaListaParaVisaoSala( arDTOList );
+		List< AtendimentoRelatorioDTO > aulas = new ArrayList< AtendimentoRelatorioDTO >(atendimentosService.extraiAulas(atendimentos));
+		List< AtendimentoRelatorioDTO > arDTOListProcessada = atendimentosService.uneAulasQuePodemSerCompartilhadas( aulas );
 		List< AtendimentoOperacionalDTO > atendimentosParaVisaoProfessor = new ArrayList<AtendimentoOperacionalDTO>(arDTOListProcessada.size());
 		for (AtendimentoRelatorioDTO dto : arDTOListProcessada) {
 			atendimentosParaVisaoProfessor.add((AtendimentoOperacionalDTO)dto);

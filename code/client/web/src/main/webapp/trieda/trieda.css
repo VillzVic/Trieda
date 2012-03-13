@@ -172,6 +172,9 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	width: 80px;
 	overflow: visible;
 }
+.GradeHorariaGrid.VisaoSala .x-grid3-cell-inner {
+	height: 1px;
+}
 .GradeHorariaGrid .x-grid3-row-table .horario {
 	position: absolute;
 	/* background-color: #D2E1F0; */
@@ -209,6 +212,58 @@ table.cw-FlexTable td.cw-FlexTable-content {
 .GradeHorariaGrid .x-grid3-row-table .horario.c13 { top:  967px; _top:  895px; }
 .GradeHorariaGrid .x-grid3-row-table .horario.c14 { top: 1047px; _top:  969px; }
 .GradeHorariaGrid .x-grid3-row-table .horario.c15 { top: 1127px; _top: 1043px; }
+
+/*
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria1  { top: 1px; _top: 1px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria2  { top: 23px; _top: 23px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria3  { top: 45px; _top: 45px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria4  { top: 67px; _top: 67px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria5  { top: 89px; _top: 89px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria6  { top: 111px; _top: 111px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria7  { top: 133px; _top: 133px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria8  { top: 155px; _top: 155px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria9  { top: 177px; _top: 177px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria10  { top: 199px; _top: 199px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria11  { top: 221px; _top: 221px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria12  { top: 243px; _top: 243px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria13  { top: 265px; _top: 265px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria14  { top: 287px; _top: 287px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria15  { top: 309px; _top: 309px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria16  { top: 331px; _top: 331px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria17  { top: 353px; _top: 353px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria18  { top: 375px; _top: 375px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria19  { top: 397px; _top: 397px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria20  { top: 419px; _top: 419px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria21  { top: 441px; _top: 441px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria22  { top: 463px; _top: 463px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria23  { top: 485px; _top: 485px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.cargaHoraria24  { top: 507px; _top: 507px; }
+
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria1 { height: 19px; _height: 19px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria2 { height: 41px; _height: 41px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria3 { height: 63px; _height: 63px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria4 { height: 85px; _height: 85px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria5 { height: 107px; _height: 107px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria6 { height: 129px; _height: 129px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria7 { height: 151px; _height: 151px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria8 { height: 173px; _height: 173px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria9 { height: 195px; _height: 195px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria10 { height: 217px; _height: 217px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria11 { height: 239px; _height: 239px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria12 { height: 261px; _height: 261px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria13 { height: 283px; _height: 283px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria14 { height: 305px; _height: 305px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria15 { height: 327px; _height: 327px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria16 { height: 349px; _height: 349px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria17 { height: 371px; _height: 371px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria18 { height: 393px; _height: 393px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria19 { height: 415px; _height: 415px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria20 { height: 437px; _height: 437px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria21 { height: 459px; _height: 459px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria22 { height: 481px; _height: 481px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria23 { height: 503px; _height: 503px; }
+.GradeHorariaGrid .x-grid3-row-table .horario.totalCargaHoraria24 { height: 525px; _height: 525px; }*/
+
 
 .GradeHorariaGrid .x-grid3-row-table .horario.tc1  { height:  66px; _height:  60px; }
 .GradeHorariaGrid .x-grid3-row-table .horario.tc2  { height: 146px; _height: 134px; }

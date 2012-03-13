@@ -13,6 +13,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -25,10 +26,17 @@ public interface AtendimentosServiceAsync {
 	 */
 	void getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, AsyncCallback<ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>>> callback);
 	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoSala(com.gapso.web.trieda.shared.dtos.SalaDTO, com.gapso.web.trieda.shared.dtos.TurnoDTO, com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO)
+	 */
+	void getAtendimentosParaGradeHorariaVisaoSala(SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO, AsyncCallback<List<AtendimentoRelatorioDTO>> callback);
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoSala(com.gapso.web.trieda.shared.dtos.SalaDTO, com.gapso.web.trieda.shared.dtos.TurnoDTO)
+	 */
+	void getAtendimentosParaGradeHorariaVisaoSala(SalaDTO sala, TurnoDTO turno, AsyncCallback<QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>>> callback);
+	
 	void getList( AsyncCallback< PagingLoadResult< AtendimentoTaticoDTO > > callback );
-
-	void getBusca( SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO,
-		AsyncCallback< List< AtendimentoRelatorioDTO > > callback );
 
 	void getAtendimentosOperacional( ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
 		TurnoDTO turnoDTO, boolean isVisaoProfessor, SemanaLetivaDTO semanaLetivaDTO,

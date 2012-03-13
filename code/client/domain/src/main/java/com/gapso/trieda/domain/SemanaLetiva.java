@@ -1,9 +1,12 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -265,6 +268,42 @@ public class SemanaLetiva
 
 		return em;
 	}
+	
+	public static SemanaLetiva getSemanaLetivaComMaiorCargaHoraria(Collection<SemanaLetiva> semanasLetivas) {
+		SemanaLetiva semanaLetivaComMaiorCargaHoraria = null;
+		int maxCargaHoraria = 0;
+		for (SemanaLetiva semLet : semanasLetivas) {
+			int calcMaxCreditos = semLet.calculaMaxCreditos();
+			int calcMaxCargaHoraria = calcMaxCreditos * semLet.getTempo();
+			if (calcMaxCargaHoraria > maxCargaHoraria) {
+				maxCargaHoraria = calcMaxCargaHoraria;
+				semanaLetivaComMaiorCargaHoraria = semLet;
+			}
+		}
+		return semanaLetivaComMaiorCargaHoraria;
+	}
+	
+	public static int caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(Collection<SemanaLetiva> semanasLetivas) {
+		int mdc = 1;
+		Iterator<SemanaLetiva> it = semanasLetivas.iterator();
+		if (semanasLetivas.size() == 1) {
+			mdc = it.next().getTempo();
+		} else if (semanasLetivas.size() == 2) {
+			BigInteger tempo1 = BigInteger.valueOf(it.next().getTempo().longValue());
+			BigInteger tempo2 = BigInteger.valueOf(it.next().getTempo().longValue());
+			mdc = tempo1.gcd(tempo2).intValue();
+		} else {
+			BigInteger tempo1 = BigInteger.valueOf(it.next().getTempo().longValue());
+			BigInteger tempo2 = BigInteger.valueOf(it.next().getTempo().longValue());
+			mdc = tempo1.gcd(tempo2).intValue();
+			while (it.hasNext()) {
+				tempo1 = BigInteger.valueOf(it.next().getTempo().longValue());
+				tempo2 = BigInteger.valueOf(mdc);
+				mdc = tempo1.gcd(tempo2).intValue();
+			}
+		}
+		return mdc;
+	}
 
 	public static Map< String, SemanaLetiva > buildSemanaLetivaCodigoToSemanaLetivaMap(
 		List< SemanaLetiva > semanasLetivas )
@@ -275,6 +314,16 @@ public class SemanaLetiva
 		for ( SemanaLetiva semanaLetiva : semanasLetivas )
 		{
 			semanasLetivasMap.put( semanaLetiva.getCodigo(), semanaLetiva );
+		}
+
+		return semanasLetivasMap;
+	}
+	
+	public static Map<Long, SemanaLetiva> buildSemanaLetivaIDToSemanaLetivaMap(List<SemanaLetiva> semanasLetivas) {
+		Map<Long,SemanaLetiva> semanasLetivasMap = new HashMap<Long,SemanaLetiva>();
+
+		for (SemanaLetiva semanaLetiva : semanasLetivas) {
+			semanasLetivasMap.put(semanaLetiva.getId(),semanaLetiva);
 		}
 
 		return semanasLetivasMap;

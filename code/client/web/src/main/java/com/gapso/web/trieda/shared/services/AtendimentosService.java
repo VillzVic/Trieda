@@ -13,6 +13,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -33,9 +34,24 @@ public interface AtendimentosService extends RemoteService {
 	 */
 	ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO);
 	
+	/**
+	 * 
+	 * @param sala
+	 * @param turno
+	 * @param semanaLetivaDTO
+	 * @return
+	 */
+	List<AtendimentoRelatorioDTO> getAtendimentosParaGradeHorariaVisaoSala(SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO);
+	
+	/**
+	 * 
+	 * @param sala
+	 * @param turno
+	 * @return
+	 */
+	QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>> getAtendimentosParaGradeHorariaVisaoSala(SalaDTO sala, TurnoDTO turno);
+	
 	PagingLoadResult< AtendimentoTaticoDTO > getList();
-
-	List< AtendimentoRelatorioDTO > getBusca( SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO );
 
 	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO );

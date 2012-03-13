@@ -22,7 +22,6 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.shared.util.view.SalaComboBox;
-import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
@@ -39,7 +38,6 @@ public class RelatorioVisaoSalaView
 	private UnidadeComboBox unidadeCB;
 	private SalaComboBox salaCB;
 	private TurnoComboBox turnoCB;
-	private SemanaLetivaComboBox semanaLetivaCB;
 	private TextField< String > capacidadeTF;
 	private TextField< String > tipoSalaTF;
 	private ContentPanel panel;
@@ -116,9 +114,6 @@ public class RelatorioVisaoSalaView
 		this.turnoCB = new TurnoComboBox();
 		center.add( this.turnoCB, formData );
 
-		this.semanaLetivaCB = new SemanaLetivaComboBox();
-		center.add( this.semanaLetivaCB, formData );
-
 		this.capacidadeTF = new TextField< String >();
 		this.capacidadeTF.setFieldLabel( "Capacidade" );
 		this.capacidadeTF.setReadOnly( true );
@@ -145,7 +140,7 @@ public class RelatorioVisaoSalaView
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );
 		bld.setMargins( new Margins( 5, 5, 0, 5 ) );
 		bld.setCollapsible( true );
-		bld.setSize( 120 );
+		bld.setSize( 90 );
 
 		this.panel.add( panel, bld );
 	}
@@ -202,11 +197,5 @@ public class RelatorioVisaoSalaView
 	public Button getExportExcelButton()
 	{
 		return this.toolBar.getExportExcelButton();
-	}
-
-	@Override
-	public SemanaLetivaComboBox getSemanaLetivaComboBox()
-	{
-		return this.semanaLetivaCB;
 	}
 }
