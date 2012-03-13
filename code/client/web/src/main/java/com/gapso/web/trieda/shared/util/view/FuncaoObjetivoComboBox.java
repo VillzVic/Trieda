@@ -46,8 +46,8 @@ public class FuncaoObjetivoComboBox extends SimpleComboBox<CargaHoraria> {
 
 	public enum CargaHoraria {
 		
-	    MAXIMIZARMARGEM("Maximizar Margem"),
-	    MINIMIZARCUSTODOCENTE("Minimizar Custo Docente");
+		MINIMIZARCUSTODOCENTE("Minimizar Custo Docente"),
+	    MAXIMIZARMARGEM("Maximizar Margem");
 	    
 	    private String text;
 	    
