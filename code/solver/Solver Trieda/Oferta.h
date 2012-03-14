@@ -43,7 +43,7 @@ private:
    int campus_id;
 
    // TRIEDA-958 ( Apenas a leitura, falta associar à func. obj. )
-   double receita; // preco de 1 credito semanal por aluno
+   double receita; // receita de 1 credito semanal por aluno
 };
 
 #endif

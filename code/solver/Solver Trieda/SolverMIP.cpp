@@ -457,11 +457,11 @@ int SolverMIP::solveTatico()
    if ( problemData->parametros->funcao_objetivo == 0
       || problemData->parametros->funcao_objetivo == 2 )
    {
-      lp->createLP( "Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP );
+      lp->createLP( "Solver Trieda", OPTSENSE_MAXIMIZE, PROB_MIP );
    }
    else if( problemData->parametros->funcao_objetivo == 1 )
    {
-      lp->createLP( "Solver Trieda", OPTSENSE_MAXIMIZE, PROB_MIP );
+      lp->createLP( "Solver Trieda", OPTSENSE_MINIMIZE, PROB_MIP );
    }
 
 #ifdef DEBUG
@@ -1207,11 +1207,11 @@ int SolverMIP::solvePreTatico( int campusId )
    if ( problemData->parametros->funcao_objetivo == 0
       || problemData->parametros->funcao_objetivo == 2 )
    {
-      lp->createLP( lpName, OPTSENSE_MINIMIZE, PROB_MIP );
+      lp->createLP( lpName, OPTSENSE_MAXIMIZE, PROB_MIP );
    }
    else if( problemData->parametros->funcao_objetivo == 1 )
    {
-      lp->createLP( lpName, OPTSENSE_MAXIMIZE, PROB_MIP );
+      lp->createLP( lpName, OPTSENSE_MINIMIZE, PROB_MIP );
    }
 
 #ifdef DEBUG
@@ -1301,11 +1301,11 @@ int SolverMIP::solveTaticoBasico( int campusId )
    if ( problemData->parametros->funcao_objetivo == 0
       || problemData->parametros->funcao_objetivo == 2 )
    {
-      lp->createLP( lpName, OPTSENSE_MINIMIZE, PROB_MIP );
+      lp->createLP( lpName, OPTSENSE_MAXIMIZE, PROB_MIP );
    }
    else if( problemData->parametros->funcao_objetivo == 1 )
    {
-      lp->createLP( lpName, OPTSENSE_MAXIMIZE, PROB_MIP );
+      lp->createLP( lpName, OPTSENSE_MINIMIZE, PROB_MIP );
    }
 
 #ifdef DEBUG
@@ -4266,16 +4266,12 @@ int SolverMIP::cria_preVariavel_creditos( int campusId )
 						 double coef = 0.0;
 
 						 if ( problemData->parametros->funcao_objetivo == 0 )
-                         {
-							 double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
-							 
-							 coef = 4.5 * 6 * custo;
+                         {							 
+							 coef = -1.0;
 						 }
 						 else if ( problemData->parametros->funcao_objetivo == 1 )
                          {
-							 double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
-
-							 coef = 4.5 * 6 * custo;
+							 coef = 1.0;
 						 }
 						 
 						 int upperBound = disciplina->getCredTeoricos() + disciplina->getCredPraticos();
@@ -4419,6 +4415,7 @@ int SolverMIP::cria_preVariavel_abertura( int campusId )
                problemData->demandas_campus[ dc ] = 0;
             }
 
+			/*
             double ratioDem = ( disciplina->getDemandaTotal() - 
                problemData->demandas_campus[ dc ] ) 
                / (1.0 * disciplina->getDemandaTotal() );
@@ -4428,12 +4425,13 @@ int SolverMIP::cria_preVariavel_abertura( int campusId )
             int numCreditos = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
             double valorCredito = 1600.0;
             double coef_FO_1_2 = ( numCreditos * valorCredito );
-
+			*/
             if ( vHashPre.find(v) == vHashPre.end() )
             {
                lp->getNumCols();
                vHashPre[v] = lp->getNumCols();
 
+			   /*
                if ( problemData->parametros->funcao_objetivo == 0 )
                {
                   OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
@@ -4454,9 +4452,29 @@ int SolverMIP::cria_preVariavel_abertura( int campusId )
                      ( char * )v.toString().c_str() );
 
                   lp->newCol( col );
-               }
+               }*/
 
-               num_vars++;
+			    double coef = 0.0;
+
+				if ( problemData->parametros->funcao_objetivo == 0 )
+				{
+					double custo = cp->getCusto();
+							 
+					coef = -10 * custo * disciplina->getTotalCreditos();
+				}
+				else if ( problemData->parametros->funcao_objetivo == 1 )
+				{
+					double custo = cp->getCusto();
+
+					coef = 10 * custo * disciplina->getTotalCreditos();
+				}
+						                
+				OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0,
+                     ( char * )v.toString().c_str() );
+
+                lp->newCol( col ); 
+                
+				num_vars++;
             }
          }
       }
@@ -4547,7 +4565,7 @@ int SolverMIP::cria_preVariavel_alunos( int campusId )
 										double valorCredito = itOferta->getReceita();
 										int numCreditos = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
 				
-										coef = - 4.5 * 6 * numCreditos * valorCredito;
+										coef = 10 * numCreditos * valorCredito;
 									}
 									else if ( problemData->parametros->funcao_objetivo == 1 )
 									{
@@ -4630,26 +4648,23 @@ int SolverMIP::cria_preVariavel_aloc_alunos( int campusId )
 				
 				if ( vHashPre.find(v) == vHashPre.end() )
 				{
-					double coeff = 1.0;
+					double coef = 0.0;
 					
 					vHashPre[v] = lp->getNumCols();
 
-					if ( problemData->parametros->funcao_objetivo == 0 ||
-						problemData->parametros->funcao_objetivo == 2 )
+					if ( problemData->parametros->funcao_objetivo == 0 )
 					{
-						OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-							( char * )v.toString().c_str() );
-
-						lp->newCol( col );
+						coef = -1.0;
 					}
 					else if ( problemData->parametros->funcao_objetivo == 1 )
 					{						
-						OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-							( char * )v.toString().c_str() );
-
-						lp->newCol( col );
+						coef = 1.0;
 					}
-
+					
+					OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
+												
+					lp->newCol( col );
+					
 					num_vars += 1;
 				}
 			}
@@ -4713,22 +4728,22 @@ int SolverMIP::cria_preVariavel_folga_demanda_disciplina( int campusId )
          {
             vHashPre[ v ] = lp->getNumCols();
 
-            double ub = qtdDem;
+			double coef = 0.0;
+
             if ( problemData->parametros->funcao_objetivo == 0 )
             {
-               OPT_COL col( OPT_COL::VAR_INTEGRAL, 2000.0, 0.0, ub,
-                            ( char * )v.toString().c_str() );
-
-               lp->newCol( col );
+				coef = 0.0;
             }
-            else if( problemData->parametros->funcao_objetivo == 1 ||
-               problemData->parametros->funcao_objetivo == 2 )
+            else if( problemData->parametros->funcao_objetivo == 1 )
             {
-               OPT_COL col( OPT_COL::VAR_INTEGRAL, 2000.0, 0.0, ub,
-                            ( char * )v.toString().c_str() );
-
-               lp->newCol(col);
+				coef = 10.0 * oft->campus->getCusto() * disciplina->getTotalCreditos();
 			}
+			
+            double ub = qtdDem;               
+			
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, ub, ( char * )v.toString().c_str() );
+			                  
+			lp->newCol(col);
 
             num_vars++;
          }
@@ -4798,8 +4813,19 @@ int SolverMIP::cria_preVariavel_folga_compartilhamento_incomp( int campusId )
 					   if ( vHashPre.find( v ) == vHashPre.end() )
 					   {
 						  vHashPre[v] = lp->getNumCols();
+						  
+						  double coef = 0.0;
 
-						  OPT_COL col( OPT_COL::VAR_BINARY, 50.0, 0.0, 1.0, ( char * )v.toString().c_str() );
+						  if ( problemData->parametros->funcao_objetivo == 0 )
+						  {
+							  coef = -cp->getCusto();
+						  }
+						  else if( problemData->parametros->funcao_objetivo == 1 )
+						  {
+							  coef = cp->getCusto();
+						  }
+
+						  OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
 
 						  lp->newCol( col );
 						  num_vars++;
@@ -4882,10 +4908,19 @@ int SolverMIP::cria_preVariavel_folga_proibe_compartilhamento( int campusId )
 					   if ( vHashPre.find( v ) == vHashPre.end() )
 					   {
 						  vHashPre[v] = lp->getNumCols();
+						  
+						  double coef = 0.0;
 
-						  double custo = 500.0;
+						  if ( problemData->parametros->funcao_objetivo == 0 )
+						  {
+							  coef = -cp->getCusto()/4;
+						  }
+						  else if( problemData->parametros->funcao_objetivo == 1 )
+						  {
+							  coef = cp->getCusto()/4;
+						  }
 
-						  OPT_COL col( OPT_COL::VAR_BINARY, custo, 0.0, 1.0, ( char * )v.toString().c_str() );
+						  OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
 
 						  lp->newCol( col );
 						  num_vars++;
@@ -4975,9 +5010,20 @@ int SolverMIP::cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId )
 							{
 								vHashPre[v] = lp->getNumCols();
 
+								double coef = 0.0;
+
+								if ( problemData->parametros->funcao_objetivo == 0 )
+								{
+									coef = -cp->getCusto()/2;
+								}
+								else if( problemData->parametros->funcao_objetivo == 1 )
+								{
+									coef = cp->getCusto()/2;
+								}
+						  
 								double upperbound = itDisc->getNumTurmas();
 
-								OPT_COL col( OPT_COL::VAR_INTEGRAL, 100.0, 0.0, upperbound, ( char * )v.toString().c_str() );
+								OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, upperbound, ( char * )v.toString().c_str() );
 
 								lp->newCol( col );
 								num_vars++;
@@ -5034,9 +5080,18 @@ int SolverMIP::cria_preVariavel_limite_sup_creds_sala( int campusId )
 				upperbound += nCreds * disciplina->getNumTurmas();				
 			}
 
-			double custo = 100.0;
+			double coef = 0.0;
 
-			OPT_COL col( OPT_COL::VAR_INTEGRAL, custo, 0.0, upperbound, ( char * )v.toString().c_str() );
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{
+				coef = -cp->getCusto()/2;
+			}
+			else if( problemData->parametros->funcao_objetivo == 1 )
+			{
+				coef = cp->getCusto()/2;
+			}
+						  
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, upperbound, ( char * )v.toString().c_str() );
 
 			lp->newCol( col );
 			num_vars++;
@@ -5117,25 +5172,22 @@ int SolverMIP::cria_preVariavel_aloca_alunos_oferta( int campusId )
 								
 								if ( vHashPre.find(v) == vHashPre.end() )
 								{
-									double coeff = 1.0;
-
 									vHashPre[v] = lp->getNumCols();
-
-									if ( problemData->parametros->funcao_objetivo == 0 ||
-										problemData->parametros->funcao_objetivo == 2 )
+									
+									double coef = 0.0;
+									if ( problemData->parametros->funcao_objetivo == 0 )
 									{
-										OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-											( char * )v.toString().c_str() );
-
-										lp->newCol( col );
+										coef = -1.0;
 									}
 									else if ( problemData->parametros->funcao_objetivo == 1 )
 									{
-										OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-											( char * )v.toString().c_str() );
-
-										lp->newCol( col );
+										coef = 1.0;
 									}
+									
+									OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0,
+										( char * )v.toString().c_str() );
+
+									lp->newCol( col );
 
 									num_vars += 1;
 								}
@@ -7442,7 +7494,7 @@ int SolverMIP::cria_variaveis()
 	#endif
 
 	*/
-
+	/*
 	timer.start();
 	num_vars += cria_variavel_de_folga_abertura_bloco_mesmoTPS(); // fn
 	timer.stop();
@@ -7452,7 +7504,7 @@ int SolverMIP::cria_variaveis()
 	std::cout << "numVars \"fn\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
 	numVarsAnterior = num_vars;
 #endif
-
+	*/
 	timer.start();
 	num_vars += cria_variavel_de_folga_compartilhamento(); // fc
 	timer.stop();
@@ -7658,16 +7710,12 @@ int SolverMIP::cria_variavel_creditos( void )
 						   double coef = 0.0;
 
 						   if ( problemData->parametros->funcao_objetivo == 0 )
-						   {
-								double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
-							 
-								coef = 4.5 * 6 * custo;
+						   {							
+								coef = -1.0;
 						   }
 						   else if ( problemData->parametros->funcao_objetivo == 1 )
 						   {
-								double custo = problemData->refCampus[ itUnidade->getIdCampus() ]->getCusto();
-
-								coef = 4.5 * 6 * custo;
+								coef = 1.0;
 						   }
 
                            OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0,
@@ -7837,6 +7885,7 @@ para alguma sala do tipo (capacidade) $tps$ no dia $t$.
 
 %DocEnd
 /====================================================================*/
+
 
 int SolverMIP::cria_variavel_oferecimentos(void)
 {
@@ -8069,7 +8118,7 @@ int SolverMIP::cria_variavel_abertura(void)
             {
                problemData->demandas_campus[ dc ] = 0;
             }
-
+			/*
             double ratioDem = ( disciplina->getDemandaTotal() - 
                problemData->demandas_campus[ dc ] ) 
                / (1.0 * disciplina->getDemandaTotal() );
@@ -8079,7 +8128,7 @@ int SolverMIP::cria_variavel_abertura(void)
             int numCreditos = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
             double valorCredito = 1600.0;
             double coef_FO_1_2 = ( numCreditos * valorCredito );
-
+			*/
             if ( vHash.find(v) == vHash.end() )
             {
 			   if ( !criaVariavelTatico( &v ) )
@@ -8087,7 +8136,7 @@ int SolverMIP::cria_variavel_abertura(void)
 
                lp->getNumCols();
                vHash[v] = lp->getNumCols();
-
+			   /*
                if ( problemData->parametros->funcao_objetivo == 0 )
                {
                   OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
@@ -8108,7 +8157,22 @@ int SolverMIP::cria_variavel_abertura(void)
                      ( char * )v.toString().c_str() );
 
                   lp->newCol( col );
+               }*/
+
+			   double coef = 0.0;
+
+               if ( problemData->parametros->funcao_objetivo == 0 )
+               {
+				   coef = -10 * it_campus->getCusto() * disciplina->getTotalCreditos();
                }
+               else if ( problemData->parametros->funcao_objetivo == 1 )
+               {
+				   coef = 10 * it_campus->getCusto() * disciplina->getTotalCreditos();
+               }
+                  
+			   OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
+
+               lp->newCol( col );
 
                num_vars++;
             }
@@ -8295,9 +8359,9 @@ int SolverMIP::cria_variavel_alunos(void)
 				if ( problemData->parametros->funcao_objetivo == 0 )
 				{
 					double valorCredito = itOferta->getReceita();
-					int numCreditos = ( ptDisc->getCredTeoricos() + ptDisc->getCredPraticos() );
+					int numCreditos = ptDisc->getTotalCreditos();
 				
-					coef = - 4.5 * 6 * numCreditos * valorCredito;
+					coef = 10.0 * numCreditos * valorCredito;
 				}
 				else if ( problemData->parametros->funcao_objetivo == 1 )
 				{
@@ -8372,8 +8436,19 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
 					continue;
 
                vHash[v] = lp->getNumCols();
+				
+			   double coef = 0.0;
 
-               OPT_COL col( OPT_COL::VAR_BINARY, 1.0, 0.0, 1.0,
+				if ( problemData->parametros->funcao_objetivo == 0 )
+				{
+					coef = -1.0;
+				}
+				else if ( problemData->parametros->funcao_objetivo == 1 )
+				{
+					coef = 1.0;
+				}
+
+               OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0,
                   ( char * )v.toString().c_str() );
 
                lp->newCol( col );
@@ -8533,22 +8608,21 @@ int SolverMIP::cria_variavel_consecutivos( void )
 							continue;
 
                         vHash[v] = lp->getNumCols();
+					    
+						double coef = 0.0;
 
-                        if ( problemData->parametros->funcao_objetivo == 0 )
-                        {
-                           OPT_COL col( OPT_COL::VAR_BINARY, delta, 0.0, 1.0,
-                              ( char * )v.toString().c_str() );
-
-                           lp->newCol( col );
-                        }
-                        else if ( problemData->parametros->funcao_objetivo == 1
-                           || problemData->parametros->funcao_objetivo == 2 )
-                        {
-                           OPT_COL col( OPT_COL::VAR_BINARY, 1.0, 0.0, 1.0,
-                              ( char * )v.toString().c_str() );
-
-                           lp->newCol( col );
-                        }
+						if ( problemData->parametros->funcao_objetivo == 0 )
+						{
+							coef = -1.0;
+						}
+						else if ( problemData->parametros->funcao_objetivo == 1 )
+						{
+							coef = 1.0;
+						}
+                           
+						OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
+						                           
+						lp->newCol( col );
 
                         num_vars++;
                      }
@@ -8619,32 +8693,35 @@ int SolverMIP::cria_variavel_min_creds(void)
 					continue;
 
                vHash[ v ] = lp->getNumCols();
+                  
+			   double obj = 0.0;
 
                if ( problemData->parametros->funcao_objetivo == 0 )
                {
-                  double obj = 0.0;
                   if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::EQUILIBRAR)
                   {
-                     obj = -lambda;
+					  obj = it_bloco->campus->getCusto()/4;
                   }
                   else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
                   {
-                     obj = lambda;
+                     obj = it_bloco->campus->getCusto()/4;
                   }
-
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0,
-                     ( char * )v.toString().c_str() );
-
-                  lp->newCol( col );
                }
-               else if ( problemData->parametros->funcao_objetivo == 1
-                  || problemData->parametros->funcao_objetivo == 2 )
+               else if ( problemData->parametros->funcao_objetivo == 1 )
                {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 1.0, 0.0, 1000.0,
-                     ( char * )v.toString().c_str() );
-
-                  lp->newCol( col );
+                  if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::EQUILIBRAR)
+                  {
+                     obj = it_bloco->campus->getCusto()/4;
+                  }
+                  else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
+                  {
+                     obj = it_bloco->campus->getCusto()/4;
+                  }
                }
+               
+			   OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0, ( char * )v.toString().c_str() );
+
+               lp->newCol( col );
 
                num_vars++;
             }
@@ -8706,31 +8783,34 @@ int SolverMIP::cria_variavel_max_creds(void)
 
                vHash[v] = lp->getNumCols();
 
+			   double obj = 0.0;
+
                if ( problemData->parametros->funcao_objetivo == 0 )
                {
-                  double obj = 0.0;
                   if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::EQUILIBRAR)
                   {
-                     obj = lambda;
+					  obj = -it_bloco->campus->getCusto()/4;
                   }
                   else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
                   {
-                     obj = 0.0;
+                      obj = 0.0;
                   }
-                  
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0,
-                     ( char * )v.toString().c_str() );
-
-                  lp->newCol( col );
                }
-               else if ( problemData->parametros->funcao_objetivo == 1 ||
-                  problemData->parametros->funcao_objetivo == 2 )
+               else if ( problemData->parametros->funcao_objetivo == 1 )
                {
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 1.0, 0.0, 1000.0,
-                     ( char * )v.toString().c_str() );
-
-                  lp->newCol( col );
+                  if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::EQUILIBRAR)
+                  {
+                      obj = -it_bloco->campus->getCusto()/4;
+                  }
+                  else if ( problemData->parametros->carga_horaria_semanal_aluno == ParametrosPlanejamento::MINIMIZAR_DIAS)
+                  {
+                      obj = 0.0;
+                  }
                }
+               
+			   OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0, ( char * )v.toString().c_str() );
+
+               lp->newCol( col );
 
                num_vars++;
             }
@@ -8935,22 +9015,22 @@ int SolverMIP::cria_variavel_num_subblocos(void)
 				continue;
 
             vHash[ v ] = lp->getNumCols();
+			
+			double coef = 0.0;
 
             if ( problemData->parametros->funcao_objetivo == 0 )
             {
-               OPT_COL col( OPT_COL::VAR_INTEGRAL, rho, 0.0, 10,
-                  ( char * )v.toString().c_str() );
-
-               lp->newCol( col );
+				coef = -1.0;
             }
-            else if ( problemData->parametros->funcao_objetivo == 1 ||
-               problemData->parametros->funcao_objetivo == 2 )
+            else if ( problemData->parametros->funcao_objetivo == 1 )
             {
-               OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0, 10,
-                  ( char * )v.toString().c_str() );
-
-               lp->newCol( col );
+				coef = 1.0;
             }
+            
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, 10,
+               ( char * )v.toString().c_str() );
+			               
+			lp->newCol( col );
 
             num_vars++;
          }
@@ -9002,23 +9082,23 @@ int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
 				continue;
 
             vHash[v] = lp->getNumCols();
+			
+			double coef = 0.0;
 
             if ( problemData->parametros->funcao_objetivo == 0 )
             {
-               OPT_COL col( OPT_COL::VAR_BINARY, beta, 0.0, 1.0,
-                  ( char * )v.toString().c_str() );
-
-               lp->newCol( col );
+				coef = -1.0;
             }
-            else if ( problemData->parametros->funcao_objetivo == 1 ||
-               problemData->parametros->funcao_objetivo == 2 )
+            else if ( problemData->parametros->funcao_objetivo == 1 )
             {
-               OPT_COL col( OPT_COL::VAR_BINARY, 0.0, 0.0, 1.0,
-                  (char*)v.toString().c_str() );
-
-               lp->newCol( col );
+				coef = 1.0;
             }
-
+               
+			OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0,
+                 ( char * )v.toString().c_str() );
+			                 
+			lp->newCol( col );
+			
             num_vars++;
          }
       }
@@ -9094,33 +9174,29 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 
                            if ( vHash.find( v ) == vHash.end() )
                            {
-							  if ( !criaVariavelTatico( &v ) )
+							    if ( !criaVariavelTatico( &v ) )
 									continue;
 
-                              vHash[v] = lp->getNumCols();
-                              int cred_disc_dia = it_fix->disciplina->getMaxCreds();
+                                vHash[v] = lp->getNumCols();
+                                int cred_disc_dia = it_fix->disciplina->getMaxCreds();
 
-                              OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                                 epsilon, 0.0, cred_disc_dia,
-                                 ( char * )v.toString().c_str() );
+								double coef = 0.0;
 
-                              if ( problemData->parametros->funcao_objetivo == 0 )
-                              {
-                                 OPT_COL col( OPT_COL::VAR_INTEGRAL, epsilon, 0.0, cred_disc_dia,
-                                    ( char * )v.toString().c_str() );
+								if ( problemData->parametros->funcao_objetivo == 0 )
+								{
+									coef = -itCampus->getCusto()/2;
+								}
+								else if ( problemData->parametros->funcao_objetivo == 1 )
+								{
+									coef = itCampus->getCusto()/2;
+								}
+               
+								OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, cred_disc_dia,
+										( char * )v.toString().c_str() );
+			                 
+								lp->newCol( col );
 
-                                 lp->newCol( col );
-                              }
-                              else if ( problemData->parametros->funcao_objetivo == 1 ||
-                                 problemData->parametros->funcao_objetivo == 2 )
-                              {
-                                 OPT_COL col( OPT_COL::VAR_INTEGRAL, 100.0, 0.0, cred_disc_dia,
-                                    ( char * )v.toString().c_str() );
-
-                                 lp->newCol( col );
-                              }
-
-                              num_vars++;
+                                num_vars++;
                            }
                         }
                      }
@@ -9309,35 +9385,29 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 
                            if ( vHash.find( v ) == vHash.end() )
                            {
-							  if ( !criaVariavelTatico( &v ) )
+							    if ( !criaVariavelTatico( &v ) )
 									continue;
 
-                              vHash[v] = lp->getNumCols();
-                              int cred_disc_dia = it_fix->disciplina->getMinCreds();
+                                vHash[v] = lp->getNumCols();
+                                int cred_disc_dia = it_fix->disciplina->getMinCreds();
 
-                              OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                                 epsilon, 0.0, cred_disc_dia,
-                                 ( char* )v.toString().c_str() );
+							    double coef = 0.0;
 
-                              if ( problemData->parametros->funcao_objetivo == 0 )
-                              {
-                                 OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                                    epsilon, 0.0, cred_disc_dia,
-                                    ( char* )v.toString().c_str() );
+								if ( problemData->parametros->funcao_objetivo == 0 )
+								{
+									coef = -itCampus->getCusto()/2;
+								}
+								else if ( problemData->parametros->funcao_objetivo == 1 )
+								{
+									coef = itCampus->getCusto()/2;
+								}               
 
-                                 lp->newCol( col );
-                              }
-                              else if( problemData->parametros->funcao_objetivo == 1
-                                 || problemData->parametros->funcao_objetivo == 2 )
-                              {
-                                 OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                                    100.0, 0.0, cred_disc_dia,
-                                    ( char* )v.toString().c_str() );
+								OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, cred_disc_dia,
+											( char* )v.toString().c_str() );
 
-                                 lp->newCol( col );
-                              }
+								lp->newCol( col );
 
-                              num_vars += 1;
+                                num_vars += 1;
                            }
                         }
                      }
@@ -9494,8 +9564,18 @@ int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
 
             vHash[ v ] = lp->getNumCols();
 
-            OPT_COL col( OPT_COL::VAR_BINARY,
-               0.0, 0.0, 1.0,
+			double coef = 0.0;
+
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{
+				coef = -1.0;
+			}
+			else if ( problemData->parametros->funcao_objetivo == 1 )
+			{
+				coef = 1.0;
+			}  
+
+            OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0,
                ( char * )v.toString().c_str( ));
 
             lp->newCol( col );
@@ -9569,7 +9649,18 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
 
 						  vHash[v] = lp->getNumCols();
 
-						  OPT_COL col( OPT_COL::VAR_BINARY, 100.0, 0.0, 1.0, ( char * )v.toString().c_str() );
+						  double coef = 0.0;
+
+							if ( problemData->parametros->funcao_objetivo == 0 )
+							{
+								coef = -itCampus->getCusto();
+							}
+							else if ( problemData->parametros->funcao_objetivo == 1 )
+							{
+								coef = itCampus->getCusto();
+							}  
+
+						  OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
 
 						  lp->newCol( col );
 						  num_vars++;
@@ -9650,7 +9741,18 @@ int SolverMIP::cria_variavel_de_folga_compartilhamento()
 
 					  vHash[v] = lp->getNumCols();
 
-					  OPT_COL col( OPT_COL::VAR_BINARY, 100.0, 0.0, 1.0, ( char * )v.toString().c_str() );
+						double coef = 0.0;
+
+						if ( problemData->parametros->funcao_objetivo == 0 )
+						{
+							coef = -itCampus->getCusto()/4;
+						}
+						else if ( problemData->parametros->funcao_objetivo == 1 )
+						{
+							coef = itCampus->getCusto()/4;
+						}  
+
+					  OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
 
 					  lp->newCol( col );
 					  num_vars++;
@@ -9807,22 +9909,21 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
 
             double ub = qtdDem;
 
-            if ( problemData->parametros->funcao_objetivo == 0 )
-            {
-               OPT_COL col( OPT_COL::VAR_INTEGRAL,
-                            1000.0, 0.0, ub,
-                            ( char * )v.toString().c_str() );
+			double coef = 0.0;
 
-               lp->newCol( col );
-            }
-            else if( problemData->parametros->funcao_objetivo == 1 ||
-               problemData->parametros->funcao_objetivo == 2 )
-            {
-               OPT_COL col( OPT_COL::VAR_INTEGRAL, 1000.0, 0.0, ub,
-                            ( char * )v.toString().c_str() );
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{
+				coef = 0.0;
+			}
+			else if ( problemData->parametros->funcao_objetivo == 1 )
+			{
+				coef = 10 * itOferta->campus->getCusto() * disciplina->getTotalCreditos();
+			}
+            
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, ub, ( char * )v.toString().c_str() );
 
-               lp->newCol(col);
-            }
+            lp->newCol( col );
+
             num_vars++;
          }
       }
@@ -9975,6 +10076,23 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
 
                         vHash[v] = lp->getNumCols();
 
+						double coef = 0.0;
+
+						if ( problemData->parametros->funcao_objetivo == 0 )
+						{
+							coef = -it_campus->getCusto()/4;
+						}
+						else if ( problemData->parametros->funcao_objetivo == 1 )
+						{
+							coef = it_campus->getCusto()/4;
+						}
+                           
+						OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, 10000.0,
+                              ( char * )v.toString().c_str() );
+
+                        lp->newCol( col );
+
+						/*
                         if ( problemData->parametros->funcao_objetivo == 0 )
                         {
                            OPT_COL col( OPT_COL::VAR_INTEGRAL,
@@ -9991,7 +10109,7 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
                                         ( char * )v.toString().c_str() );
 
                            lp->newCol( col );
-                        }
+                        }*/
 
                         num_vars++;
                      }
@@ -10010,6 +10128,23 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
 
                         vHash[v] = lp->getNumCols();
 
+						double coef = 0.0;
+
+						if ( problemData->parametros->funcao_objetivo == 0 )
+						{
+							coef = -it_campus->getCusto()/4;
+						}
+						else if ( problemData->parametros->funcao_objetivo == 1 )
+						{
+							coef = it_campus->getCusto()/4;
+						}
+                           
+						OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, 10000.0,
+                              ( char * )v.toString().c_str() );
+						                           
+						lp->newCol( col );
+
+						/*
                         if ( problemData->parametros->funcao_objetivo == 0 )
                         {
                            OPT_COL col( OPT_COL::VAR_INTEGRAL,
@@ -10026,7 +10161,7 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
                                         ( char * )v.toString().c_str() );
 
                            lp->newCol( col );
-                        }
+                        }*/
 
                         num_vars++;
                      }
@@ -10244,9 +10379,18 @@ int SolverMIP::cria_variavel_abertura_compativel( void )
 
                      vHash[ v ] = lp->getNumCols();
 
-					 double coeff = 1.0;
+					 double coef = 0.0;
 
-                     OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
+					 if ( problemData->parametros->funcao_objetivo == 0 )
+					 {
+					 	coef = -1.0;
+					 }
+					 else if ( problemData->parametros->funcao_objetivo == 1 )
+					 {
+				 		coef = 1.0;
+			 		 }
+
+                     OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0,
                         ( char * )v.toString().c_str() );
 
                      lp->newCol( col );
@@ -10427,7 +10571,18 @@ int SolverMIP::cria_variavel_aloc_alunos_oft()
 
                   vHash[v] = lp->getNumCols();
 
-                  OPT_COL col( OPT_COL::VAR_BINARY, 1.0, 0.0, 1.0, (char*)v.toString().c_str() );
+				  double coef = 0.0;
+
+				  if ( problemData->parametros->funcao_objetivo == 0 )
+			      {
+					  coef = -1.0;
+				  }
+				  else if ( problemData->parametros->funcao_objetivo == 1 )
+				  {
+					  coef = 1.0;
+				  }
+
+                  OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, (char*)v.toString().c_str() );
 
                   lp->newCol( col );
                   num_vars++;
@@ -10598,7 +10753,18 @@ int SolverMIP::cria_variavel_aloc_alunos_parOft()
 
 					vHash[v] = lp->getNumCols();
 
-					OPT_COL col( OPT_COL::VAR_BINARY, 1.0, 0.0, 1.0, (char*)v.toString().c_str() );
+					double coef = 0.0;
+
+					if ( problemData->parametros->funcao_objetivo == 0 )
+					{
+					 	coef = -1.0;
+					}
+					else if ( problemData->parametros->funcao_objetivo == 1 )
+					{
+				 		coef = 1.0;
+			 		}
+
+					OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, (char*)v.toString().c_str() );
 
 					lp->newCol( col );
 					num_vars++;
@@ -10791,7 +10957,18 @@ int SolverMIP::cria_variavel_min_hor_disc_oft_dia()
 				  
 				  int maxCredDia = oft->curriculo->getMaxCreds(*itDia);
 
-                  OPT_COL col( OPT_COL::VAR_INTEGRAL, 1.0, 0.0, maxCredDia, (char*)v.toString().c_str() );
+				  double coef = 0.0;
+
+				  if ( problemData->parametros->funcao_objetivo == 0 )
+				  {
+						coef = -1.0;
+				  }
+				  else if ( problemData->parametros->funcao_objetivo == 1 )
+				  {
+						coef = 1.0;
+			 	  }
+
+                  OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, maxCredDia, (char*)v.toString().c_str() );
 
                   lp->newCol( col );
                   num_vars++;
