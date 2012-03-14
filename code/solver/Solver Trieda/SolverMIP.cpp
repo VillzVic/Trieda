@@ -1,7 +1,15 @@
 #include "SolverMIP.h"
 #include <math.h>
 
+#ifdef SOLVER_CPLEX
+#include "opt_cplex.h"
+#include "opt_cplex.cpp"
+#endif
+
+#ifdef SOLVER_GUROBI
 #include "opt_gurobi.h"
+#include "opt_gurobi.cpp"
+#endif
 
 /*==================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
@@ -252,7 +260,12 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
 
    try
    {
+#ifdef SOLVER_CPLEX
+	   lp = new OPT_CPLEX; 
+#endif
+#ifdef SOLVER_GUROBI
 	   lp = new OPT_GUROBI; 
+#endif
    }
    catch(...)
    {
@@ -560,10 +573,12 @@ int SolverMIP::solveTatico()
          rowUB.insert( vit->second, 1.0 );
       }
 
+#ifdef SOLVER_GUROBI
       if ( vit->first.getType() == Variable::V_N_SUBBLOCOS )
       {
          xSolInic[ vit->second ] = GRB_UNDEFINED;
       }
+#endif
    }
 
    lp->addRow( rowLB );
@@ -1193,7 +1208,12 @@ int SolverMIP::solvePreTatico( int campusId )
    {
       lp->freeProb();
       delete lp;
-      lp = new OPT_GUROBI();
+#ifdef SOLVER_CPLEX
+	   lp = new OPT_CPLEX; 
+#endif
+#ifdef SOLVER_GUROBI
+	   lp = new OPT_GUROBI; 
+#endif
    }
 
    int varNum = 0;
@@ -1242,16 +1262,14 @@ int SolverMIP::solvePreTatico( int campusId )
 #endif
 
    int status = 0;
-
-#ifdef DEBUG   
-   lp->setTimeLimit( 3600 );
-#else
-   lp->setTimeLimit( 600 );
-#endif
-
-   lp->setMIPRelTol( 0.02 );
+   lp->setTimeLimit( 7200 );
+   lp->setMIPRelTol( 0.0001 );
+   lp->setPreSolve(OPT_TRUE);
+   lp->setHeurFrequency(1.0);
+   lp->setMIPEmphasis(0);
+   lp->setSymetry(0);
+   //lp->setNoCuts();
    lp->setMIPScreenLog( 4 );
-   lp->writeProbLP( lpName );
 
    lp->setPreSolve(OPT_TRUE);
 
@@ -1263,7 +1281,7 @@ int SolverMIP::solvePreTatico( int campusId )
    double * xSol = NULL;
    xSol = new double[ lp->getNumCols() ];
    lp->getX( xSol );
-   FILE * fout = fopen( "solBin.bin", "wb" );
+   FILE * fout = fopen( "solBinPre.bin", "wb" );
    int nCols = lp->getNumCols();
 
    fwrite( &nCols, sizeof( int ), 1, fout );
@@ -1290,7 +1308,12 @@ int SolverMIP::solveTaticoBasico( int campusId )
    {
       lp->freeProb();
       delete lp;
-      lp = new OPT_GUROBI();
+#ifdef SOLVER_CPLEX
+	   lp = new OPT_CPLEX; 
+#endif
+#ifdef SOLVER_GUROBI
+	   lp = new OPT_GUROBI; 
+#endif
    }
    
    char lpName[1024], id[100];
@@ -1330,27 +1353,30 @@ int SolverMIP::solveTaticoBasico( int campusId )
    printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
-   lp->writeProbLP( lpName );
+   lp->writeProbLP( lpName ); 
 #ifdef DEBUG
   // lp->writeProbLP( lpName );
 #endif
 
    int status = 0;
-
-#ifdef DEBUG   
-   lp->setTimeLimit( 3600 );
-#else
-   lp->setTimeLimit( 600 );
-#endif
-
+   lp->setTimeLimit( 21800 );
    lp->setMIPRelTol( 0.02 );
+   lp->setPreSolve(OPT_TRUE);
+   lp->setHeurFrequency(1.0);
    lp->setMIPScreenLog( 4 );
-   lp->writeProbLP( lpName );
+   lp->setMIPEmphasis(0);
+   lp->setPolishAfterNode(1);
+   lp->setSymetry(0);
+   //lp->setNoCuts();
+   lp->setCuts(3);
+   lp->writeProbLP( "Solver Trieda" );
    
    lp->setPreSolve(OPT_TRUE);
 
+   lp->updateLP();
+
 #ifndef READ_SOLUTION_TATICO_BIN
-   status = lp->optimize( METHOD_PRIMAL );
+   status = lp->optimize( METHOD_MIP );
 #endif
 
 #ifdef WRITE_SOLUTION_TATICO_BIN
@@ -1372,6 +1398,44 @@ int SolverMIP::solveTaticoBasico( int campusId )
 #endif
 
    return status;
+}
+
+void SolverMIP::mudaCjtSalaParaSala()
+{
+   ITERA_VECTOR( it_Vars_x, vars_x, Variable )
+   {
+      if ( ( *it_Vars_x )->getSubCjtSala()->salas.size() > 0 )
+      {
+         Sala *auxSala = (( *it_Vars_x )->getSubCjtSala()->salas.begin())->second;
+         ( *it_Vars_x )->setSala(auxSala);
+      }
+   }
+   // Imprimindo as variáveis x_{i,d,u,s,t} convertidas.
+
+   std::cout << "\n\n\n";
+   std::cout << "x\t\ti\td\tu\ts\tt\n";
+
+   ITERA_VECTOR( it_Vars_x, vars_x, Variable )
+   {
+      if ( ( *it_Vars_x )->getSala() == NULL )
+      {
+         printf( "\nOPA. Variavel x (x_i(%d)_d(%d)_u(%d)_tps(%d)_t(%d))nao convertida.\n\n",
+                 ( *it_Vars_x )->getTurma(),
+                 ( *it_Vars_x )->getDisciplina()->getId(),
+                 ( *it_Vars_x )->getUnidade()->getId(),
+                 ( *it_Vars_x )->getSubCjtSala()->getId(),
+                 ( *it_Vars_x )->getDia() );
+
+         exit( 1 );
+      }
+
+      std::cout << (*it_Vars_x)->getValue() << "\t\t"
+                << ( *it_Vars_x )->getTurma() << "\t"
+                << ( *it_Vars_x )->getDisciplina()->getCodigo() << "\t"
+                << ( *it_Vars_x )->getUnidade()->getCodigo() << "\t"
+                << ( *it_Vars_x )->getSala()->getCodigo() << "\t"
+                << ( *it_Vars_x )->getDia() << "\n";
+   }
 }
 
 void SolverMIP::converteCjtSalaEmSala()
@@ -2639,7 +2703,12 @@ int SolverMIP::solveOperacionalMIP()
    {
       lp->freeProb();
       delete lp;
-      lp = new OPT_GUROBI();
+#ifdef SOLVER_CPLEX
+	   lp = new OPT_CPLEX; 
+#endif
+#ifdef SOLVER_GUROBI
+	   lp = new OPT_GUROBI; 
+#endif
    }
 
    lp->createLP( "SolverOperacional",
@@ -3001,7 +3070,8 @@ int SolverMIP::solveTaticoPorCampus()
 
 		status = solveTaticoBasico( campusId );
 		carregaVariaveisSolucaoTatico( campusId );
-		converteCjtSalaEmSala();
+		//converteCjtSalaEmSala();
+      mudaCjtSalaParaSala();
 		//separaDisciplinasEquivalentes();
 
 		status = (status && statusPre);
@@ -20012,7 +20082,7 @@ int SolverMIP::criaVariavelGapsProfessores()
       = problemData->getProfessores();
 
    GGroup< int > dias_letivos;
-   for ( int i = 2; i <= 6; i++ )
+   for ( int i = 2; i <= 7; i++ )
    {
       dias_letivos.add( i );
    }

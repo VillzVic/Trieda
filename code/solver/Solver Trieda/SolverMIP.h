@@ -274,6 +274,7 @@ public:
    int solvePreTatico( int campusId );
    int solveTaticoBasico( int campusId );
    void converteCjtSalaEmSala();
+   void mudaCjtSalaParaSala();
    void separaDisciplinasEquivalentes();
    void getSolutionTatico();
 

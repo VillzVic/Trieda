@@ -342,7 +342,7 @@ int Sala::somaTempo( GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosAul
 */
 int Sala::getNroCredCombinaSL( int k, Calendario *c, int dia )
 {
-	if ( dia < 0 || dia > 6 )
+	if ( dia < 0 || dia > 7 )
 	{
 		std::cerr<<"Erro em Sala::getNroCredCombinaSL(): dia invalido.";
 		return 0;

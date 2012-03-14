@@ -43,7 +43,7 @@ void BlocoCurricular::preencheMaxCredsPorDia()
 */
 int BlocoCurricular::getNroMaxCredCombinaSL( int k, Calendario *c, int dia )
 {
-	if ( dia < 0 || dia > 6 )
+	if ( dia < 0 || dia > 7 )
 	{
 		std::cerr<<"Erro em BlocoCurricular::getNroCredCombinaSL(): dia invalido.";
 		return 0;
