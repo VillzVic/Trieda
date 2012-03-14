@@ -150,7 +150,7 @@ public class EquivalenciaFormPresenter
 				}
 				display.getDisciplinasNaoPertencesList().refresh();
 				
-				Info.display("Atualizado", "Salas adicionadas a lista!");
+				Info.display("Atualizado", "Disciplina adicionada à lista!");
 			}
 		});
 		
@@ -168,7 +168,7 @@ public class EquivalenciaFormPresenter
 				}
 				display.getDisciplinasPertencesList().refresh();
 				
-				Info.display("Atualizado", "Salas removidas a lista!");
+				Info.display("Atualizado", "Disciplina removida da lista!");
 			}
 		});
 	}
