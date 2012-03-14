@@ -146,6 +146,10 @@
 		<servlet-name>alunosServlet</servlet-name>
 		<servlet-class>com.gapso.web.trieda.server.AlunosServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>progressReportServlet</servlet-name>
+		<servlet-class>com.gapso.web.trieda.server.ProgressReportServiceImpl</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>otimizarServlet</servlet-name>
@@ -304,6 +308,10 @@
 	<servlet-mapping>
   		<servlet-name>alunosServlet</servlet-name>
   		<url-pattern>/trieda/alunos</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>progressReportServlet</servlet-name>
+  		<url-pattern>/trieda/progressReport</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

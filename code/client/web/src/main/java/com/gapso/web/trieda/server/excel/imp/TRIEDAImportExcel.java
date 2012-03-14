@@ -9,11 +9,13 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationImpl;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class TRIEDAImportExcel
+public class TRIEDAImportExcel 
+	extends ProgressDeclarationImpl
 	implements IImportExcel
 {
 	protected List< String > errors;
@@ -61,26 +63,21 @@ public class TRIEDAImportExcel
 			importers.add( new DisciplinasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new AreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CursosImportExcel( this.cenario, i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new CursoAreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) ); 
+			importers.add( new CursoAreasTitulacaoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CurriculosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DisciplinasSalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) ); 
+			importers.add( new DisciplinasSalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new EquivalenciasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new DemandasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) ); 
+			importers.add( new DemandasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new AlunosDemandaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new ProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CampiTrabalhoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
-			importers.add( new HabilitacoesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) ); 
+			importers.add( new HabilitacoesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 
-			long totaltime = 0;
 			for ( IImportExcel importer : importers )
 			{
-				System.out.print(importer.getSheetName());
-				long start = System.currentTimeMillis();
+				getProgressReport().setInitNewPartial("Importando " + importer.getSheetName());
 				flag = ( importer.load( fileName, workbook ) && flag );
-				long time = (System.currentTimeMillis() - start)/1000;
-				System.out.println(" tempo = " + time + " segundos");
-				
-				totaltime += time;
+				getProgressReport().setPartial("Etapa concluída");
 
 				for ( String error : importer.getErrors() )
 				{
@@ -92,7 +89,6 @@ public class TRIEDAImportExcel
 					getErrors().add( importer.getSheetName() + ": " + warning );
 				}
 			}
-			System.out.println("TOTAL = " + totaltime + " segundos");
 		}
 		catch ( Exception e )
 		{
@@ -134,4 +130,5 @@ public class TRIEDAImportExcel
 	{
 		return ExcelInformationType.TUDO.getSheetName();
 	}
+
 }

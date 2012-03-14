@@ -1,0 +1,23 @@
+import java.io.File;
+import java.io.IOException;
+
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration;
+
+public aspect ProgressDeclarationAspect{
+	
+	private ProgressReportWriter ProgressDeclaration.progressReport;
+	
+	public void ProgressDeclaration.setProgressReport(File f) throws IOException{
+		progressReport = new ProgressReportFileWriter(f);
+	}
+	
+	public ProgressReportWriter ProgressDeclaration.getProgressReport(){
+		return progressReport;
+	}
+	
+	declare parents: @ProgressDeclarationAnnotation * implements ProgressDeclaration;
+	
+}

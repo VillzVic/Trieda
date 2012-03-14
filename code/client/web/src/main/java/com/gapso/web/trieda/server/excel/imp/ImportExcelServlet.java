@@ -20,6 +20,8 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.UsuariosServiceImpl;
 import com.gapso.web.trieda.server.util.GTriedaI18nConstants;
 import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileCreate;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -67,6 +69,7 @@ public class ImportExcelServlet
 
         	String fileName = null;
         	String informationToBeImported = null;
+        	String chaveRegistro = null;
 
 			for ( FileItem iten : itens )
 			{
@@ -81,6 +84,9 @@ public class ImportExcelServlet
 					fileName = iten.getName();
 					inputStream = iten.getInputStream();
 				}
+				else if(iten.getFieldName().equals("chaveRegistro")){
+					chaveRegistro = iten.getString();
+				}
 			}
 
 			if ( inputStream != null && informationToBeImported != null )
@@ -90,6 +96,9 @@ public class ImportExcelServlet
 
 				if ( importer != null )
 				{
+					if(importer instanceof ProgressDeclaration){
+						((ProgressDeclaration) importer).setProgressReport(ProgressReportFileCreate.getFile(chaveRegistro));
+					}
 					if ( !importer.load( fileName, inputStream ) )
 					{
 						response.setContentType( "text/html" );

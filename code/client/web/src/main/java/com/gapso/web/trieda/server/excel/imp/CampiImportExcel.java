@@ -17,10 +17,13 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class CampiImportExcel
 	extends AbstractImportExcel< CampiImportExcelBean >
 {
@@ -130,7 +133,8 @@ public class CampiImportExcel
 	}
 	
 	@Override
-	protected void processSheetContent( String sheetName,
+	@ProgressReportMethodScan(texto = "Sheet Content of Campi")
+	public void processSheetContent( String sheetName,
 		List< CampiImportExcelBean > sheetContent )
 	{
 		if ( doSyntacticValidation( sheetName, sheetContent )
@@ -227,7 +231,8 @@ public class CampiImportExcel
 	}
 
 	@Transactional
-	private void updateDataBase( String sheetName,
+	@ProgressReportMethodScan(texto = "Update do Banco de Dados")
+	public void updateDataBase( String sheetName,
 		List< CampiImportExcelBean > sheetContent )
 	{
 		Map< String, Campus > campiBDMap = Campus.buildCampusCodigoToCampusMap(

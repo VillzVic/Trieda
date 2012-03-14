@@ -32,6 +32,7 @@ public class Services
 	private static final String INSTITUICAO_ENSINO = "instituicaoEnsino";
 	private static final String ALUNOS_DEMANDA = "alunosDemanda";
 	private static final String ALUNOS = "alunos";
+	private static final String PROGRESSREPORT = "progressReport";
 
 	public static OtimizarServiceAsync otimizar()
 	{
@@ -356,6 +357,17 @@ public class Services
 		{
 			service = GWT.create( AlunosService.class );
 			Registry.register( ALUNOS, service );
+		}
+
+		return service;
+	}
+	
+	public static ProgressReportServiceAsync progressReport(){
+		ProgressReportServiceAsync service = (ProgressReportServiceAsync) Registry.get( PROGRESSREPORT );
+		if ( service == null )
+		{
+			service = GWT.create( ProgressReportService.class );
+			Registry.register( PROGRESSREPORT, service );
 		}
 
 		return service;

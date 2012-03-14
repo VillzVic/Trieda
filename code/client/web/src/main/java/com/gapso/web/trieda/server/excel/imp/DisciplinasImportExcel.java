@@ -18,10 +18,13 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class DisciplinasImportExcel
 	extends AbstractImportExcel< DisciplinasImportExcelBean >
 {
@@ -150,6 +153,7 @@ public class DisciplinasImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(
 		String sheetName, List< DisciplinasImportExcelBean > sheetContent )
 	{
@@ -283,6 +287,7 @@ public class DisciplinasImportExcel
 	}
 
 	@Transactional
+	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
 	private void updateDataBase(
 		String sheetName, List< DisciplinasImportExcelBean > sheetContent )
 	{
@@ -331,7 +336,10 @@ public class DisciplinasImportExcel
 				persistedDisciplinas.add(newDisciplina);
 			}
 			
-			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" disciplinas"); count = 0;}
+			count++;total--;if (count == 100) {
+				System.out.println("\t   Faltam "+total+" disciplinas"); 
+				count = 0;
+				}
 		}
 		
 		if (!persistedDisciplinas.isEmpty()) {
@@ -355,4 +363,5 @@ public class DisciplinasImportExcel
 			MAX_ALUNOS_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maxAlunosPratico() );
 		}
 	}
+	
 }

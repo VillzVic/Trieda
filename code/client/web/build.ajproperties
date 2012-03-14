@@ -1,2 +1,4 @@
 src.includes =	src/main/java/com/gapso/web/trieda/server/**/*.java,\
-				src/main/java/com/gapso/web/trieda/shared/**/*.java
+				src/main/java/com/gapso/web/trieda/shared/**/*.java,\
+				src/main/java/com/gapso/web/trieda/shared/**/*.aj,\
+				src/main/java/com/gapso/web/trieda/server/**/*.aj

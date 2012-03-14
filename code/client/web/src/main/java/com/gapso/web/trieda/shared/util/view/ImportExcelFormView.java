@@ -14,8 +14,10 @@ import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ImportExcelFormView
 	extends MyComposite
@@ -23,6 +25,7 @@ public class ImportExcelFormView
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
 	private HiddenField< String > hiddenField;
+	private HiddenField< String > chaveField;
 	private FileUploadField fileUploadField;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 
@@ -66,6 +69,18 @@ public class ImportExcelFormView
 		this.hiddenField.setName(
 			ExcelInformationType.getInformationParameterName() );
 		this.hiddenField.setValue( infoToBeImported.toString() );
+		chaveField = new HiddenField<String>();
+		chaveField.setName("chaveRegistro");
+		chaveField.setValue(null);
+		Services.progressReport().getNewKey(new AsyncCallback<String>(){
+			@Override
+			public void onSuccess(String progressKey){
+				chaveField.setValue(progressKey);
+			}
+			
+			@Override
+			public void onFailure(Throwable t){}
+		});
 
 		this.fileUploadField = new FileUploadField();  
 		this.fileUploadField.setAllowBlank( false );
@@ -84,6 +99,7 @@ public class ImportExcelFormView
         this.formPanel.setButtonAlign( HorizontalAlignment.CENTER );
 
         this.formPanel.add( this.hiddenField );
+        this.formPanel.add( this.chaveField );
         this.formPanel.add( this.fileUploadField );
 
         this.formPanel.addListener( Events.Submit, new ExcelFormListener(
@@ -109,6 +125,8 @@ public class ImportExcelFormView
 		    	  }
 
 		    	  formPanel.submit();
+		    	  
+		    	  new AcompanhamentoPanelPresenter(chaveField.getValue(), new AcompanhamentoPanelView());
 		      }  
 		});
 	}
