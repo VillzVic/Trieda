@@ -114,7 +114,7 @@ public class DemandaFormView
 			@Override
 			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
 				OfertaDTO ofertaDTO = (OfertaDTO) abdto;
-				Services.disciplinas().getListByCurriculo(ofertaDTO.getMatrizCurricularId(), callback);
+				Services.disciplinas().getListByCurriculoIdAndName(ofertaDTO.getMatrizCurricularId(), this.input.getValue(), callback);
 			}
 		};
 		this.disciplinaCB.setAllowBlank( false );

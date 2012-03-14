@@ -49,6 +49,7 @@ public interface DisciplinasServiceAsync {
 	void getTipoDisciplinaList( AsyncCallback< ListLoadResult< TipoDisciplinaDTO > > callback );
 	void getTipoDisciplina( Long id, AsyncCallback< TipoDisciplinaDTO > callback );
 	void getListByCursoAndName( List< CursoDTO > cursos, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
+	void getListByCurriculoIdAndName( Long curriculoId, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCursos( List< CursoDTO > cursos, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCurriculo( long curriculoId, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getFolderChildren( TreeNodeDTO loadConfig, AsyncCallback< List< TreeNodeDTO > > callback );

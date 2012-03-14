@@ -77,6 +77,7 @@ public interface DisciplinasService
 	ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList();
 	TipoDisciplinaDTO getTipoDisciplina( Long id );
 	ListLoadResult< DisciplinaDTO > getListByCursoAndName( List< CursoDTO > cursos, String name);
+	ListLoadResult< DisciplinaDTO > getListByCurriculoIdAndName( Long curriculoId, String name);
 	ListLoadResult< DisciplinaDTO > getListByCursos( List< CursoDTO > cursos );
 	ListLoadResult< DisciplinaDTO > getListByCurriculo(long curriculoId);
 	List< TreeNodeDTO > getFolderChildren( TreeNodeDTO loadConfig );

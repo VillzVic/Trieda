@@ -268,6 +268,23 @@ public class DisciplinasServiceImpl
 
 		return new BaseListLoadResult< DisciplinaDTO >( list );
 	}
+
+	@Override
+	public ListLoadResult< DisciplinaDTO > getListByCurriculoIdAndName(
+		Long curriculoId, String nome)
+	{
+		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
+
+		List< Disciplina > disciplinas = Disciplina.findByCurriculoIdAndName(
+			getInstituicaoEnsinoUser(), nome, curriculoId);
+
+		for ( Disciplina disciplina : disciplinas )
+		{
+			list.add( ConvertBeans.toDisciplinaDTO( disciplina ) );
+		}
+
+		return new BaseListLoadResult< DisciplinaDTO >( list );
+	}
 	
 	@Override
 	public ListLoadResult< DisciplinaDTO > getListByCursoAndName(

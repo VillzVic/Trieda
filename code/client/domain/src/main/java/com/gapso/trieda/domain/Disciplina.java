@@ -693,9 +693,8 @@ public class Disciplina
 		return q.getResultList();
 	}
 	
-	@SuppressWarnings( "unchecked" )
-	public static List< Disciplina > findByCursoAndName(
-		InstituicaoEnsino instituicaoEnsino, String codigo, List< Curso > cursos)
+	private static Query findByEntityAndName(
+			InstituicaoEnsino instituicaoEnsino,String codigo, String specificQuery)
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -705,13 +704,36 @@ public class Disciplina
 			" FROM CurriculoDisciplina o " +
 			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND LOWER ( o.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
-			" AND o.curriculo IN " +
-			" ( SELECT c FROM Curriculo c WHERE c.curso IN ( :cursos ) ) " +
+			specificQuery +
 			" ORDER BY o.disciplina.nome ASC" );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "codigo", codigo );
+
+		return q;
+	}
+	
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Disciplina > findByCursoAndName(
+		InstituicaoEnsino instituicaoEnsino, String codigo, List< Curso > cursos)
+	{
+		String specificQuery = " AND o.curriculo IN " +
+		" ( SELECT c FROM Curriculo c WHERE c.curso IN ( :cursos ) ) ";
+
+		Query q = findByEntityAndName(instituicaoEnsino, codigo, specificQuery);
 		q.setParameter( "cursos", cursos);
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Disciplina > findByCurriculoIdAndName(
+		InstituicaoEnsino instituicaoEnsino, String codigo, Long curriculoId)
+	{
+		String specificQuery = " AND o.curriculo =  " + curriculoId;
+
+		Query q = findByEntityAndName(instituicaoEnsino, codigo, specificQuery);
 
 		return q.getResultList();
 	}
