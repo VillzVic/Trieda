@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
@@ -61,7 +62,7 @@ public class EquivalenciaFormView extends MyComposite implements
 		simpleModal = new SimpleModal(title,
 				Resources.DEFAULTS.equivalencia16());
 		simpleModal.setHeight(470);
-		simpleModal.setWidth(600);
+		simpleModal.setWidth(820);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -104,27 +105,31 @@ public class EquivalenciaFormView extends MyComposite implements
 		cursoListPanel.add(cursosList);
 
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
-		naoAssociadasListPanel.setWidth(190);
+		naoAssociadasListPanel.setWidth(300);
 		naoAssociadasListPanel.setHeight(320);
 		naoAssociadasListPanel
 				.setHeading("Disciplina(s) não associadas a Equivalência");
 		ListStore<DisciplinaDTO> store2 = new ListStore<DisciplinaDTO>();
 		store2.setDefaultSort(DisciplinaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		disciplinasNaoPertencesList = new ListView<DisciplinaDTO>(store2);
-		disciplinasNaoPertencesList
-				.setDisplayProperty(DisciplinaDTO.PROPERTY_CODIGO);
+		
+		String aria = GXT.isAriaEnabled() ? " role='option' aria-selected='false' " : "";
+		disciplinasNaoPertencesList.setTemplate("<tpl for=\".\"><div class='x-view-item' " + aria + ">{" + DisciplinaDTO.PROPERTY_NOME 
+				+ "}({" + DisciplinaDTO.PROPERTY_CODIGO + "})" + "</div></tpl>");
+//		disciplinasNaoPertencesList.setDisplayProperty(DisciplinaDTO.PROPERTY_CODIGO);
 		naoAssociadasListPanel.add(disciplinasNaoPertencesList);
 
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
-		associadasListPanel.setWidth(190);
+		associadasListPanel.setWidth(300);
 		associadasListPanel.setHeight(320);
 		associadasListPanel
 				.setHeading("Disciplina(s) associadas a Equivalência");
 		ListStore<DisciplinaDTO> store3 = new ListStore<DisciplinaDTO>();
 		store3.setDefaultSort(DisciplinaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		disciplinasPertencesList = new ListView<DisciplinaDTO>(store3);
-		disciplinasPertencesList
-				.setDisplayProperty(DisciplinaDTO.PROPERTY_CODIGO);
+		disciplinasPertencesList.setTemplate("<tpl for=\".\"><div class='x-view-item' " + aria + ">{" + DisciplinaDTO.PROPERTY_NOME 
+				+ "}({" + DisciplinaDTO.PROPERTY_CODIGO + "})" + "</div></tpl>");
+//		disciplinasPertencesList.setDisplayProperty(DisciplinaDTO.PROPERTY_CODIGO);
 		associadasListPanel.add(disciplinasPertencesList);
 
 		panelLists.add(cursoListPanel, new HBoxLayoutData(new Margins(0, 0, 0,

@@ -67,8 +67,8 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_CURSOU_STRING, "Cursou", 100));
-		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_ELIMINA_STRING, "Elimina", 500));
+		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_CURSOU_STRING, "Cursou", 350));
+		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_ELIMINA_STRING, "Elimina", 700));
 		return list;
 	}
 

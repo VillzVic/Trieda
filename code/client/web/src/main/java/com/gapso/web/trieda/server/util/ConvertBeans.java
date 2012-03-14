@@ -2556,7 +2556,7 @@ public class ConvertBeans
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
 		dto.setCursouId( domain.getCursou().getId() );
-		dto.setCursouString( domain.getCursou().getCodigo() );
+		dto.setCursouString( domain.getCursou().getNome() + "(" + domain.getCursou().getCodigo() + ")" );
 
 		Set< Disciplina > eliminaList
 			= new TreeSet< Disciplina >( domain.getElimina() );
@@ -2564,7 +2564,7 @@ public class ConvertBeans
 		String eliminaString = "";
 		for ( Disciplina d : eliminaList )
 		{
-			eliminaString += ( d.getCodigo() + "; " );
+			eliminaString += ( d.getNome() + "(" + d.getCodigo() + "); " );
 		}
 
 		if ( eliminaString.length() > 0 )
