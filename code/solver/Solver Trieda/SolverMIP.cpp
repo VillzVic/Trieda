@@ -2217,8 +2217,8 @@ void SolverMIP::getSolutionTatico()
 
                                  if ( novo_Dia )
                                  {
-									Disciplina *d = ( *it_Vars_x )->getDisciplina();
-									int turma = ( *it_Vars_x )->getTurma();
+									//Disciplina *d = ( *it_Vars_x )->getDisciplina();
+									//int turma = ( *it_Vars_x )->getTurma();
 
                                     // Cadastrando o dia da semana
                                     AtendimentoDiaSemana * at_Dia_Semana = new AtendimentoDiaSemana(

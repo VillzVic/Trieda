@@ -30,7 +30,7 @@ public:
 
 private:
    std::string oferta_curso_campi_id;
-   int disciplina_id; // id da disciplina original, caso tenha havido substituição
+   int disciplina_id; // id da disciplina original, sempre
    int quantidade;
    int turma;
    int disciplina_substituta_id;

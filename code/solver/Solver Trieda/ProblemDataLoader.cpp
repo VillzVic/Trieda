@@ -1932,6 +1932,13 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 					std::pair< Curso*, Curriculo* > parCursoCurr = std::make_pair( curso, curriculo );
                     problemData->mapGroupDisciplinasSubstituidas[ parCursoCurr ][ discNova ].add( discAntiga );
 
+					if ( problemData->mapGroupDisciplinasSubstituidas[ parCursoCurr ][ discNova ].size() > 1 )
+					{
+						std::cout<<"ATENCAO em void ProblemDataLoader::substituiDisciplinasEquivalentes():"
+							<<" a disciplina "<<discNova->getId()<<" esta substituindo "
+							<<"mais de uma disciplina no curriculo "<<curriculo->getId();
+					}
+
 					it_periodo_disc = curriculo->disciplinas_periodo.begin();
 				 //-----------------------------------------------------------------------------
 				 }
@@ -2229,6 +2236,7 @@ void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 	}
 	
 	substituiDisciplinasEquivalentes();
+
 }
 
 /*
@@ -2310,14 +2318,6 @@ void ProblemDataLoader::divideDisciplinas()
    ITERA_GGROUP_LESSPTR( it_disc,
       problemData->disciplinas, Disciplina )
    {
-	  #pragma region Equivalencias
-	  if ( problemData->mapDiscSubstituidaPor.find( *it_disc ) !=
-		   problemData->mapDiscSubstituidaPor.end() )
-	  {
-		   continue;
-	  }
-	  #pragma endregion
-
       if ( it_disc->getCredTeoricos() > 0
          && it_disc->getCredPraticos() > 0
          && it_disc->eLab() == true )
@@ -2589,38 +2589,43 @@ void ProblemDataLoader::divideDisciplinas()
             }
          }
 
-         // Adicionando os dados da nova disciplina em <Demanda>
-         Demanda * nova_demanda = NULL;
+		 // Só cria nova demanda para disciplinas que não foram substituidas
+		 if ( problemData->mapDiscSubstituidaPor.find( *it_disc ) ==
+			  problemData->mapDiscSubstituidaPor.end() )
+		 {
+			 // Adicionando os dados da nova disciplina em <Demanda>
+			 Demanda * nova_demanda = NULL;
 
-         ITERA_GGROUP_LESSPTR( it_dem,
-            problemData->demandas, Demanda )
-         {
-            int num_vezes_ecncontrado = 0;
-            if( it_dem->getDisciplinaId() == it_disc->getId())
-            {
-               nova_demanda = new Demanda();
+			 ITERA_GGROUP_LESSPTR( it_dem,
+				problemData->demandas, Demanda )
+			 {
+				int num_vezes_encontrado = 0;
+				if( it_dem->getDisciplinaId() == it_disc->getId())
+				{
+				   nova_demanda = new Demanda();
 
-               nova_demanda->setId( id++ );
-               nova_demanda->setOfertaId( it_dem->getOfertaId() );
-               nova_demanda->setDisciplinaId( nova_disc->getId() );
-               nova_demanda->setQuantidade( it_dem->getQuantidade() );
-               nova_demanda->oferta = it_dem->oferta;
-               nova_demanda->disciplina = nova_disc;
+				   nova_demanda->setId( id++ );
+				   nova_demanda->setOfertaId( it_dem->getOfertaId() );
+				   nova_demanda->setDisciplinaId( nova_disc->getId() );
+				   nova_demanda->setQuantidade( it_dem->getQuantidade() );
+				   nova_demanda->oferta = it_dem->oferta;
+				   nova_demanda->disciplina = nova_disc;
 
-               problemData->demandas.add( nova_demanda );
+				   problemData->demandas.add( nova_demanda );
 
-               if ( num_vezes_ecncontrado > 0 )
-               {
-                  std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> "
-                            << "Encontrei mais de uma demanda para uma dada disciplina de um "
-                            << "dado curso em um determinado campus." << std::endl;
+				   if ( num_vezes_encontrado > 0 )
+				   {
+					  std::cout << "POSSIVEL ERRO EM <divideDisciplinas()> -> "
+								<< "Encontrei mais de uma demanda para uma dada disciplina de um "
+								<< "dado curso em um determinado campus." << std::endl;
 
-                  // std::cin.get();
-               }
+					  // std::cin.get();
+				   }
 
-               num_vezes_ecncontrado++;
-            }
-         }
+				   num_vezes_encontrado++;
+				}
+			 }
+		 }
 
          GGroup< int >::iterator itDiasLetivosDiscs = it_disc->diasLetivos.begin();
 
@@ -2631,6 +2636,7 @@ void ProblemDataLoader::divideDisciplinas()
          }
 
          problemData->novasDisciplinas.add( nova_disc );
+
       }
    }
 
@@ -2640,8 +2646,130 @@ void ProblemDataLoader::divideDisciplinas()
       problemData->disciplinas.add( *itDisciplina );
    }
 
+   // Equivalências para disciplinas praticas
+   relacionaEquivalenciasDisciplinasPraticas();
+
+
    // ---------
    criaFixacoesDisciplinasDivididas();
+}
+
+void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
+{
+	// Para cada nova disciplina Pratica criada, verifica se a sua Teorica
+	// correspondente substituiu alguma disciplina. Se sim, acrescenta essa
+	// Pratica nos maps necessários, substituindo a original prática
+	// correspondente ou, se essa não existir, a teórica corresponte.
+   ITERA_GGROUP_LESSPTR( itDisciplina, problemData->novasDisciplinas, Disciplina )
+   {
+	    Disciplina *dp = *itDisciplina;
+		Disciplina *dt = NULL;
+
+		int idT = - dp->getId(); // Id da disciplina teorica correspondente
+   
+		ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+		{
+			if ( it_disc->getId() == idT )
+				dt = *it_disc;
+		}
+
+		if ( dt != NULL )
+		{
+			GGroup< std::pair< Curso *, Curriculo * > > cursoCurriculos =
+				problemData->retornaCursosCurriculosDisciplina( dt );
+
+			GGroup< std::pair< Curso *, Curriculo * > >::iterator it_curso_curr = 
+				cursoCurriculos.begin();
+
+			for ( ; it_curso_curr != cursoCurriculos.end(); it_curso_curr++ )
+			{
+				Disciplina *discOriginalT = problemData->ehSubstitutaDe( dt, *it_curso_curr );
+
+				if ( discOriginalT != NULL )
+				{
+					int idOrigP = - discOriginalT->getId();
+
+					Disciplina * discOriginalP = NULL;
+					ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+					{
+						if ( it_disc->getId() == idOrigP )
+							discOriginalP = *it_disc;
+					}
+
+					if ( discOriginalP != NULL )
+					{
+						problemData->mapDiscSubstituidaPor[ discOriginalP ] = dp;
+						problemData->mapGroupDisciplinasSubstituidas[*it_curso_curr][dp].add( discOriginalP );
+
+						if ( problemData->mapGroupDisciplinasSubstituidas[ *it_curso_curr ][ dp ].size() > 1 )
+						{
+							std::cout<<"ATENCAO em void ProblemDataLoader::():relacionaEquivalenciasDisciplinasPraticas"
+								<<" a disciplina "<<dp->getId()<<" esta substituindo "
+								<<"mais de uma disciplina no curriculo "<< (*it_curso_curr).second->getId();
+						}
+					}
+					else
+					{
+						problemData->mapDiscSubstituidaPor[ discOriginalT ] = dp;
+						problemData->mapGroupDisciplinasSubstituidas[*it_curso_curr][dp].add( discOriginalT );
+
+						if ( problemData->mapGroupDisciplinasSubstituidas[ *it_curso_curr ][ dp ].size() > 1 )
+						{
+							std::cout<<"ATENCAO em void ProblemDataLoader::():relacionaEquivalenciasDisciplinasPraticas"
+								<<" a disciplina "<<dp->getId()<<" esta substituindo "
+								<<"mais de uma disciplina no curriculo "<< (*it_curso_curr).second->getId();
+						}
+					}
+				}
+			}
+		}
+    }
+
+   // Imprime o mapDiscSubstituidaPor
+
+	ofstream outTestFile;
+	char equivFilename[] = "mapDiscSubstituidaPor.txt";
+	outTestFile.open(equivFilename, ios::out);
+	if (!outTestFile) {
+		cerr << "Can't open output file " << equivFilename << endl;
+		exit(1);
+	}
+
+   for ( std::map< Disciplina*, Disciplina* >::iterator it = problemData->mapDiscSubstituidaPor.begin();
+	     it != problemData->mapDiscSubstituidaPor.end(); it++ )
+   {
+	   outTestFile <<"\nAntiga "<< it->first->getId() <<" Substituta "<< it->second->getId();
+   }
+   outTestFile.close();
+   
+   // ------------------------------------
+   // Imprime o mapGroupDisciplinasSubstituidas
+
+	ofstream outTestFile2;
+	char equivFilename2[] = "mapGroupDisciplinasSubstituidas.txt";
+	outTestFile2.open(equivFilename2, ios::out);
+	if (!outTestFile) {
+		cerr << "Can't open output file " << equivFilename2 << endl;
+		exit(1);
+	}
+
+   for ( std::map< std::pair< Curso *, Curriculo * >, 
+				   std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator it
+				   = problemData->mapGroupDisciplinasSubstituidas.begin();
+	     it != problemData->mapGroupDisciplinasSubstituidas.end(); it++ )
+   {
+	   outTestFile2 <<"\nCurso "<< it->first.first->getId() <<" Curric "<< it->first.second->getId();
+	   for ( std::map< Disciplina *, 
+					   GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator it2 = it->second.begin();
+			 it2 != it->second.end(); it2++ )
+	   {
+			outTestFile2 <<"\tSubstituta "<< it2->first->getId();
+			ITERA_GGROUP_LESSPTR( itDisciplina, it2->second, Disciplina )
+				outTestFile2 <<" Antiga "<< itDisciplina->getId();
+	   }
+   }
+   outTestFile2.close();
+
 }
 
 void ProblemDataLoader::referenciaCampusUnidadesSalas()

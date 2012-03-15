@@ -164,6 +164,8 @@ private:
    char * inputFile;
    std::auto_ptr< TriedaInput > root;
 
+   void relacionaEquivalenciasDisciplinasPraticas();
+
    void referenciaCampusUnidadesSalas();
    void referenciaDisciplinas();
    void referenciaOfertas();
