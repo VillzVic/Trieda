@@ -5,8 +5,6 @@
 #include "Sala.h"
 #include "CreditoDisponivel.h"
 
-
-
 class ConjuntoSala
 	: public OFBase
 {
@@ -150,7 +148,7 @@ public:
 	   Função usada na restrição de máximo de crédito por sala na semana,
 	   no modelo pre-tático.
    */
-   int maxTempoPermitidoNaSemana()
+   int maxTempoPermitidoNaSemana( std::map< Disciplina*, Disciplina* > mapDiscSubstituidaPor )
    {
 	   int maxTempo = 0;
 
@@ -159,6 +157,14 @@ public:
        {
 		   if (itDisc->getCalendario() == NULL)
 			   continue;
+			   
+			#pragma region Equivalencias
+			if ( mapDiscSubstituidaPor.find( *itDisc ) !=
+				 mapDiscSubstituidaPor.end() )
+			{
+				continue;
+			}
+			#pragma endregion
 
 		   if (  calendarios.find( itDisc->getCalendario() ) == calendarios.end() )
 		   {
@@ -184,7 +190,7 @@ public:
 		    int max = 0;
 			ITERA_GGROUP_LESSPTR (itCalend, calendarios, Calendario )
 			{
-				int tempoSL = maxTempoPermitidoPorDiaPorSL( *itDia, *itCalend );				
+				int tempoSL = maxTempoPermitidoPorDiaPorSL( *itDia, *itCalend );	
 				if ( max < tempoSL )
 					max = tempoSL;
 		    }

@@ -462,7 +462,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico( int campusId )
    }
 }
 
-int SolverMIP::solveTatico()
+int SolverMIP::solveTatico( int campusId )
 {
    int varNum = 0;
    int constNum = 0;
@@ -482,7 +482,7 @@ int SolverMIP::solveTatico()
 #endif
 
    // Variable creation
-   varNum = cria_variaveis();
+   varNum = cria_variaveis( campusId );
 
    lp->updateLP();
 
@@ -491,7 +491,7 @@ int SolverMIP::solveTatico()
 #endif
 
    // Constraint creation
-   constNum = cria_restricoes();
+   constNum = cria_restricoes( campusId );
 
    lp->updateLP();
 
@@ -1248,7 +1248,7 @@ int SolverMIP::solvePreTatico( int campusId )
 #endif
 
    // Constraint creation
-   constNum = cria_preRestricoes();
+   constNum = cria_preRestricoes( campusId );
 
    lp->updateLP();
 
@@ -1336,7 +1336,7 @@ int SolverMIP::solveTaticoBasico( int campusId )
 #endif
 
    // Variable creation
-   varNum = cria_variaveis();
+   varNum = cria_variaveis( campusId );
 
    lp->updateLP();
 
@@ -1345,7 +1345,7 @@ int SolverMIP::solveTaticoBasico( int campusId )
 #endif
 
    // Constraint creation
-   constNum = cria_restricoes();
+   constNum = cria_restricoes( campusId );
 
    lp->updateLP();
 
@@ -5276,7 +5276,7 @@ int SolverMIP::cria_preVariavel_aloca_alunos_oferta( int campusId )
 **                    Restrições do pre-Tatico                     **
 *********************************************************************/
 
-int SolverMIP::cria_preRestricoes( void  )
+int SolverMIP::cria_preRestricoes( int campusId )
 {
 	int restricoes = 0;
 	CPUTimer timer;
@@ -5287,7 +5287,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_carga_horaria();					// Restrição 1.1
+	restricoes += cria_preRestricao_carga_horaria( campusId );					// Restrição 1.1
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5297,7 +5297,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_max_cred_sala_sl();				// Restrição 1.2
+	restricoes += cria_preRestricao_max_cred_sala_sl( campusId );				// Restrição 1.2
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5307,7 +5307,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_ativacao_var_o();				// Restrição 1.3
+	restricoes += cria_preRestricao_ativacao_var_o( campusId );				// Restrição 1.3
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5317,7 +5317,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_evita_mudanca_de_sala();			// Restrição 1.4
+	restricoes += cria_preRestricao_evita_mudanca_de_sala( campusId );			// Restrição 1.4
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5327,7 +5327,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_cap_aloc_dem_disc();				// Restrição 1.5
+	restricoes += cria_preRestricao_cap_aloc_dem_disc( campusId );				// Restrição 1.5
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5337,7 +5337,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_aluno_curso_disc();				// Restrição 1.6
+	restricoes += cria_preRestricao_aluno_curso_disc( campusId );				// Restrição 1.6
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5347,7 +5347,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_cap_sala();						// Restrição 1.7
+	restricoes += cria_preRestricao_cap_sala( campusId );						// Restrição 1.7
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5357,7 +5357,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_compartilhamento_incompat();		// Restrição 1.8
+	restricoes += cria_preRestricao_compartilhamento_incompat( campusId );		// Restrição 1.8
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5367,7 +5367,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif    
 
 	timer.start();
-	restricoes += cria_preRestricao_proibe_compartilhamento();		// Restrição 1.9
+	restricoes += cria_preRestricao_proibe_compartilhamento( campusId );		// Restrição 1.9
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5377,7 +5377,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_ativacao_var_z();				// Restrição 1.10
+	restricoes += cria_preRestricao_ativacao_var_z( campusId );				// Restrição 1.10
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5387,7 +5387,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_evita_turma_disc_camp_d();		// Restrição 1.11
+	restricoes += cria_preRestricao_evita_turma_disc_camp_d( campusId );		// Restrição 1.11
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5397,7 +5397,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_limita_abertura_turmas();		// Restrição 1.12
+	restricoes += cria_preRestricao_limita_abertura_turmas( campusId );		// Restrição 1.12
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5407,7 +5407,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_abre_turmas_em_sequencia();		// Restrição 1.13
+	restricoes += cria_preRestricao_abre_turmas_em_sequencia( campusId );		// Restrição 1.13
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5417,7 +5417,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_turma_mesma_disc_sala_dif();		// Restrição 1.14
+	restricoes += cria_preRestricao_turma_mesma_disc_sala_dif( campusId );		// Restrição 1.14
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5427,7 +5427,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_limite_sup_creds_sala();		// Restrição 1.15
+	restricoes += cria_preRestricao_limite_sup_creds_sala( campusId );		// Restrição 1.15
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5437,7 +5437,7 @@ int SolverMIP::cria_preRestricoes( void  )
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_ativa_var_aloc_aluno_oft();		// Restrição 1.16
+	restricoes += cria_preRestricao_ativa_var_aloc_aluno_oft( campusId );		// Restrição 1.16
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -5446,7 +5446,7 @@ int SolverMIP::cria_preRestricoes( void  )
 	numRestAnterior = restricoes;
 #endif   
 
-   restricoes += cria_preRestricao_fixa_nao_compartilhamento();		// Restrição 1.17
+   restricoes += cria_preRestricao_fixa_nao_compartilhamento( campusId );		// Restrição 1.17
 
 #ifdef PRINT_cria_restricoes
    std::cout << "numRest \"1.17\": " << (restricoes - numRestAnterior) << std::endl;
@@ -5457,7 +5457,7 @@ int SolverMIP::cria_preRestricoes( void  )
 }
 
 // Restrição 1.1
-int SolverMIP::cria_preRestricao_carga_horaria(void)
+int SolverMIP::cria_preRestricao_carga_horaria( int campusId )
 {
    int restricoes = 0;
    int nnz;
@@ -5471,6 +5471,11 @@ int SolverMIP::cria_preRestricao_carga_horaria(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
@@ -5564,7 +5569,7 @@ int SolverMIP::cria_preRestricao_carga_horaria(void)
 }
 
 // Restrição 1.2
-int SolverMIP::cria_preRestricao_max_cred_sala_sl(void)
+int SolverMIP::cria_preRestricao_max_cred_sala_sl( int campusId )
 {
    int restricoes = 0;
    int nnz;
@@ -5578,6 +5583,11 @@ int SolverMIP::cria_preRestricao_max_cred_sala_sl(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -5595,7 +5605,7 @@ int SolverMIP::cria_preRestricao_max_cred_sala_sl(void)
 				continue;
 			}
 
-			double htps = itCjtSala->maxTempoPermitidoNaSemana(); 
+			double htps = itCjtSala->maxTempoPermitidoNaSemana( problemData->mapDiscSubstituidaPor ); 
 
 			nnz = itCjtSala->disciplinas_associadas.size() * 5; // estimando em media 5 turmas por disciplina
 
@@ -5647,7 +5657,7 @@ int SolverMIP::cria_preRestricao_max_cred_sala_sl(void)
 }
 
 // Restrição 1.3
-int SolverMIP::cria_preRestricao_ativacao_var_o(void)
+int SolverMIP::cria_preRestricao_ativacao_var_o( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -5661,6 +5671,11 @@ int SolverMIP::cria_preRestricao_ativacao_var_o(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -5743,7 +5758,7 @@ int SolverMIP::cria_preRestricao_ativacao_var_o(void)
 }
 
 // Restrição 1.4
-int SolverMIP::cria_preRestricao_evita_mudanca_de_sala(void)
+int SolverMIP::cria_preRestricao_evita_mudanca_de_sala( int campusId )
 {
    int restricoes = 0;
    int nnz;
@@ -5757,6 +5772,11 @@ int SolverMIP::cria_preRestricao_evita_mudanca_de_sala(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
@@ -5830,7 +5850,7 @@ int SolverMIP::cria_preRestricao_evita_mudanca_de_sala(void)
 }
 
 // Restrição 1.5
-int SolverMIP::cria_preRestricao_cap_aloc_dem_disc(void)
+int SolverMIP::cria_preRestricao_cap_aloc_dem_disc( int campusId )
 {
     int restricoes = 0;
     char name[ 100 ];
@@ -5844,6 +5864,11 @@ int SolverMIP::cria_preRestricao_cap_aloc_dem_disc(void)
 
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
+	   if ( itOferta->getCampusId() != campusId )
+	   {
+			continue;
+	   }
+
       map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
 
@@ -5885,6 +5910,11 @@ int SolverMIP::cria_preRestricao_cap_aloc_dem_disc(void)
 
 		 ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
 		 {
+			if ( itCampus->getId() != campusId )
+			{
+				continue;
+			}
+
 			Campus* cp = *itCampus;
 		
 			ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
@@ -5943,7 +5973,7 @@ int SolverMIP::cria_preRestricao_cap_aloc_dem_disc(void)
 }
 
 // Restrição 1.6
-int SolverMIP::cria_preRestricao_aluno_curso_disc(void)
+int SolverMIP::cria_preRestricao_aluno_curso_disc( int campusId )
 {
 	int restricoes = 0;
 
@@ -5959,6 +5989,12 @@ int SolverMIP::cria_preRestricao_aluno_curso_disc(void)
 	ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
 	{		
 		Disciplina* disciplina = *itDisc;
+
+		if ( problemData->cp_discs[ campusId ].find( disciplina->getId() ) ==
+			 problemData->cp_discs[ campusId ].end() )
+		{
+			continue;
+		}
 
 		#pragma region Equivalencias
 		if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -5980,7 +6016,8 @@ int SolverMIP::cria_preRestricao_aluno_curso_disc(void)
 			ITERA_GGROUP_LESSPTR( itDem, problemData->demandas, Demanda )
 			{
 				if ( itDem->disciplina->getId() == disciplina->getId() &&
-					itDem->oferta->getCursoId() == curso->getId() )
+					 itDem->oferta->getCursoId() == curso->getId() &&
+					 itDem->oferta->getCampusId() == campusId )
 				{
 					qtdDem += itDem->getQuantidade();
 				}
@@ -6030,6 +6067,9 @@ int SolverMIP::cria_preRestricao_aluno_curso_disc(void)
 					if ( itOferta->getCursoId() != curso->getId() )
 						continue;
 
+					if ( itOferta->campus->getId() != campusId )
+						continue;
+
 					ITERA_GGROUP_LESSPTR( itUnidade, itOferta->campus->unidades, Unidade )
 					{
 						ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -6073,7 +6113,7 @@ int SolverMIP::cria_preRestricao_aluno_curso_disc(void)
 }
 
 // Restrição 1.7
-int SolverMIP::cria_preRestricao_cap_sala(void)
+int SolverMIP::cria_preRestricao_cap_sala( int campusId )
 {
 	int restricoes = 0;
 
@@ -6089,6 +6129,11 @@ int SolverMIP::cria_preRestricao_cap_sala(void)
 	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
 	{
 		Campus* cp = *itCampus;
+			
+		if ( cp->getId() != campusId )
+		{
+			continue;
+		}
 
 		GGroup< int > disciplinas = problemData->cp_discs[ cp->getId() ];
 		
@@ -6190,7 +6235,7 @@ int SolverMIP::cria_preRestricao_cap_sala(void)
 }
 
 // Restrição 1.8
-int SolverMIP::cria_preRestricao_compartilhamento_incompat(void)
+int SolverMIP::cria_preRestricao_compartilhamento_incompat( int campusId )
 {
        int restricoes = 0;
        char name[ 100 ];
@@ -6198,22 +6243,38 @@ int SolverMIP::cria_preRestricao_compartilhamento_incompat(void)
 
 	   ConstraintPre c;
 	   VariablePre v;
-	   VariablePreHash::iterator it_v;
-	
-	   ITERA_GGROUP_LESSPTR( itCurso1, problemData->cursos, Curso )
+	   VariablePreHash::iterator it_v;	
+	   Campus *cp = NULL;
+
+	   cp = problemData->refCampus[ campusId ];
+
+	   if ( cp==NULL )
+	   {
+		   std::cout<<"\nATENCAO: SolverMIP::cria_preRestricao_compartilhamento_incompat( int campusId ): ";
+		   std::cout<<"\nCampus" << campusId << "nao encontrado.\n";
+		   return restricoes;
+	   }
+
+	   ITERA_GGROUP_LESSPTR( itCurso1, cp->cursos, Curso )
 	   {
 		   Curso* c1 = *itCurso1;
-		   
-		   ITERA_GGROUP_INIC_LESSPTR( itCurso2, itCurso1, problemData->cursos, Curso )
+
+		   ITERA_GGROUP_INIC_LESSPTR( itCurso2, itCurso1, cp->cursos, Curso )
 		   {
 				Curso* c2 = *itCurso2;
-			    
+				
 			    if ( problemData->cursosCompativeis(c1, c2) || c1 == c2 )
 				    continue;
 
 				ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
 				{
 					Disciplina *disciplina = *itDisc;
+
+					if ( problemData->cp_discs[ campusId ].find( disciplina->getId() ) ==
+						 problemData->cp_discs[ campusId ].end() )
+					{
+						continue;
+					}
 
 					#pragma region Equivalencias
 					if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -6298,7 +6359,7 @@ int SolverMIP::cria_preRestricao_compartilhamento_incompat(void)
 }
 
 // Restrição 1.9
-int SolverMIP::cria_preRestricao_proibe_compartilhamento(void)
+int SolverMIP::cria_preRestricao_proibe_compartilhamento( int campusId )
 {
 	int restricoes = 0;
 
@@ -6313,12 +6374,23 @@ int SolverMIP::cria_preRestricao_proibe_compartilhamento(void)
     ConstraintPre c;
     VariablePre v;
     VariablePreHash::iterator it_v;
+	   
+	Campus *cp = NULL;
+
+	cp = problemData->refCampus[ campusId ];
+
+	if ( cp==NULL )
+	{
+		 std::cout<<"\nATENCAO: SolverMIP::cria_preRestricao_compartilhamento_incompat( int campusId ): ";
+		 std::cout<<"\nCampus" << campusId << "nao encontrado.\n";
+		 return restricoes;
+	}
 	
-	   ITERA_GGROUP_LESSPTR( itCurso1, problemData->cursos, Curso )
+	   ITERA_GGROUP_LESSPTR( itCurso1, cp->cursos, Curso )
 	   {
 		   Curso* c1 = *itCurso1;
 		   
-		   ITERA_GGROUP_INIC_LESSPTR( itCurso2, itCurso1, problemData->cursos, Curso )
+		   ITERA_GGROUP_INIC_LESSPTR( itCurso2, itCurso1, cp->cursos, Curso )
 		   {
 				Curso* c2 = *itCurso2;
 			    
@@ -6328,6 +6400,12 @@ int SolverMIP::cria_preRestricao_proibe_compartilhamento(void)
 				ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
 				{
 					Disciplina *disciplina = *itDisc;
+
+					if ( problemData->cp_discs[ campusId ].find( disciplina->getId() ) ==
+						 problemData->cp_discs[ campusId ].end() )
+					{
+						continue;
+					}
 
 					#pragma region Equivalencias
 					if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -6412,7 +6490,7 @@ int SolverMIP::cria_preRestricao_proibe_compartilhamento(void)
 }
 
 // Restricao 1.10
-int SolverMIP::cria_preRestricao_ativacao_var_z(void)
+int SolverMIP::cria_preRestricao_ativacao_var_z( int campusId )
 {
 	int restricoes = 0;
     char name[ 100 ];
@@ -6429,6 +6507,11 @@ int SolverMIP::cria_preRestricao_ativacao_var_z(void)
    for ( ; it_CpDisc != problemData->cp_discs.end(); it_CpDisc++ )
    {
 	  Campus *cp = problemData->refCampus[ it_CpDisc->first ];
+
+	  if ( cp->getId() != campusId )
+	  {
+		  continue;
+	  }
 
       ITERA_GGROUP_N_PT( it_disciplina, it_CpDisc->second, int )
       {
@@ -6519,7 +6602,7 @@ int SolverMIP::cria_preRestricao_ativacao_var_z(void)
    
 
 // Restricao 1.11
-int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d(void)
+int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -6534,6 +6617,12 @@ int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d(void)
    ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
+
+	  if ( problemData->cp_discs[ campusId ].find( disciplina->getId() ) ==
+		   problemData->cp_discs[ campusId ].end() )
+	  {
+		  continue;
+ 	  }
 
 	  #pragma region Equivalencias
 	  if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -6562,6 +6651,11 @@ int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d(void)
 
          ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
          {
+			if ( it_campus->getId() != campusId )
+			{
+				continue;
+			}
+
             v.reset();
             v.setType( VariablePre::V_PRE_ABERTURA );
 
@@ -6590,7 +6684,7 @@ int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d(void)
 }   
    
 // Restricao 1.12
-int SolverMIP::cria_preRestricao_limita_abertura_turmas(void)
+int SolverMIP::cria_preRestricao_limita_abertura_turmas( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -6615,17 +6709,28 @@ int SolverMIP::cria_preRestricao_limita_abertura_turmas(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	  if ( itCampus->getId() != campusId )
+	  {
+		  continue;
+	  }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
+	  
+		 if ( problemData->cp_discs[ campusId ].find( disciplina->getId() ) ==
+			  problemData->cp_discs[ campusId ].end() )
+		 {
+			 continue;
+ 		 }
 
-		  #pragma region Equivalencias
-		  if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-			   problemData->mapDiscSubstituidaPor.end() )
-		  {
+		 #pragma region Equivalencias
+		 if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+		      problemData->mapDiscSubstituidaPor.end() )
+		 {
 			  continue;
-		  }
-		  #pragma endregion
+		 }
+		 #pragma endregion
 
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
@@ -6711,7 +6816,7 @@ int SolverMIP::cria_preRestricao_limita_abertura_turmas(void)
 }
    
 // Restricao 1.13
-int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia(void)
+int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -6726,6 +6831,12 @@ int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia(void)
    ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
+
+	  if ( problemData->cp_discs[ campusId ].find( disciplina->getId() ) ==
+		   problemData->cp_discs[ campusId ].end() )
+	  {
+		  continue;
+ 	  }
 
 	  #pragma region Equivalencias
 	  if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -6756,6 +6867,11 @@ int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia(void)
 
             ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
             {
+				if ( itCampus->getId() != campusId )
+				{
+					continue;
+				}
+
                ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
                {
                   ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -6808,7 +6924,7 @@ int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia(void)
 
 
 // Restrição 1.14
-int SolverMIP::cria_preRestricao_turma_mesma_disc_sala_dif()
+int SolverMIP::cria_preRestricao_turma_mesma_disc_sala_dif( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -6823,7 +6939,12 @@ int SolverMIP::cria_preRestricao_turma_mesma_disc_sala_dif()
 	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
 	{
 		Campus* cp = *itCampus;
-		
+				
+		if ( cp->getId() != campusId )
+		{
+			continue;
+		}
+
 		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
 		{
 			ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -6934,7 +7055,7 @@ int SolverMIP::cria_preRestricao_turma_mesma_disc_sala_dif()
 }
 
 // Restrição 1.15
-int SolverMIP::cria_preRestricao_limite_sup_creds_sala(void)
+int SolverMIP::cria_preRestricao_limite_sup_creds_sala( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -6948,6 +7069,11 @@ int SolverMIP::cria_preRestricao_limite_sup_creds_sala(void)
 
 	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
 	{
+		if ( itCampus->getId() != campusId )
+		{
+			continue;
+		}
+
 		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
 		{
 			ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -7024,7 +7150,7 @@ int SolverMIP::cria_preRestricao_limite_sup_creds_sala(void)
 }
 
 // Restricao 1.16
-int SolverMIP::cria_preRestricao_ativa_var_aloc_aluno_oft(void)
+int SolverMIP::cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId )
 {
     int restricoes = 0;
     char name[ 100 ];
@@ -7039,6 +7165,11 @@ int SolverMIP::cria_preRestricao_ativa_var_aloc_aluno_oft(void)
 	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
 	{
 		Campus* cp = *itCampus;
+
+		if ( cp->getId() != campusId )
+		{
+			continue;
+		}
 		
 		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
 		{
@@ -7155,7 +7286,7 @@ int SolverMIP::cria_preRestricao_ativa_var_aloc_aluno_oft(void)
 
 
 // Restricao 1.17
-int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento(void)
+int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento( int campusId )
 {
    int restricoes = 0;
    
@@ -7180,6 +7311,11 @@ int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento(void)
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
 	   Campus *cp = *itCampus;
+
+	   if ( itCampus->getId() != campusId )
+	   {
+			continue;
+	   }
 
 	   // para cada par de cursos compativeis
 	   std::map< std::pair< Curso *, Curso * >, std::vector< int > >::iterator
@@ -7214,14 +7350,25 @@ int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento(void)
 					Oferta *oft1 = *itOft1;
 					int periodo1 = oft1->periodoDisciplina( discComum );
 
+					if ( oft1->getCampusId() != campusId )
+					{
+						continue;
+					}
+
 					// para cada oferta contendo discComum do curso c2
 					ITERA_GGROUP_LESSPTR( itOft2, ofts2, Oferta )
 					{
 						Oferta *oft2 = *itOft2;
 						int periodo2 = oft2->periodoDisciplina( discComum );
 
-						if ( oft1->getId() == oft2->getId() )
+						if ( oft2->getId() == oft1->getId() )
+						{
 							continue;
+						}
+						if ( oft2->getCampusId() != campusId )
+						{
+							continue;
+						}
 
 						// Cria a restrição somente para períodos que possuem mais de uma semana letiva, ou sl's diferentes
 						if ( oft1->curriculo->retornaSemanasLetivasNoPeriodo( periodo1 ).size() == 1 &&
@@ -7312,7 +7459,7 @@ int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento(void)
 //							VARIABLES
 // ==============================================================
 
-int SolverMIP::cria_variaveis()
+int SolverMIP::cria_variaveis( int campusId )
 {
 	int num_vars = 0;
 	CPUTimer timer;
@@ -7324,7 +7471,7 @@ int SolverMIP::cria_variaveis()
 
 	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
 	timer.start();
-	num_vars += cria_variavel_oferecimentos(); // variável 'o'
+	num_vars += cria_variavel_oferecimentos( campusId ); // variável 'o'
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//else
@@ -7338,7 +7485,7 @@ int SolverMIP::cria_variaveis()
 	//if (!problemData->parametros->permitir_alunos_em_varios_campi)
 	//{
 	timer.start();
-	num_vars += cria_variavel_creditos(); // x
+	num_vars += cria_variavel_creditos( campusId ); // x
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//}
@@ -7354,7 +7501,7 @@ int SolverMIP::cria_variaveis()
 
 	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
 	timer.start();
-	num_vars += cria_variavel_abertura(); // z
+	num_vars += cria_variavel_abertura( campusId ); // z
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//else
@@ -7366,7 +7513,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_alunos(); // a
+	num_vars += cria_variavel_alunos( campusId ); // a
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7376,7 +7523,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_consecutivos(); // c
+	num_vars += cria_variavel_consecutivos( campusId ); // c
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7386,7 +7533,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_max_creds(); // H
+	num_vars += cria_variavel_max_creds( campusId ); // H
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7396,7 +7543,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_min_creds(); // h
+	num_vars += cria_variavel_min_creds( campusId ); // h
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7407,7 +7554,7 @@ int SolverMIP::cria_variaveis()
 
 	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
 	timer.start();
-	num_vars += cria_variavel_aloc_disciplina(); // y
+	num_vars += cria_variavel_aloc_disciplina( campusId ); // y
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//else
@@ -7419,7 +7566,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_num_subblocos(); // w
+	num_vars += cria_variavel_num_subblocos( campusId ); // w
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7429,7 +7576,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_num_abertura_turma_bloco(); // v
+	num_vars += cria_variavel_num_abertura_turma_bloco( campusId ); // v
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7440,7 +7587,7 @@ int SolverMIP::cria_variaveis()
 
 	//if (!problemData->parametros->permitir_alunos_em_varios_campi)
 	timer.start();
-	num_vars += cria_variavel_aloc_alunos(); // b
+	num_vars += cria_variavel_aloc_alunos( campusId ); // b
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//else
@@ -7453,7 +7600,7 @@ int SolverMIP::cria_variaveis()
 
 	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
 	timer.start();
-	num_vars += cria_variavel_de_folga_dist_cred_dia_superior(); // fcp
+	num_vars += cria_variavel_de_folga_dist_cred_dia_superior( campusId ); // fcp
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//else
@@ -7466,7 +7613,7 @@ int SolverMIP::cria_variaveis()
 
 	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
 	timer.start();
-	num_vars += cria_variavel_de_folga_dist_cred_dia_inferior(); // fcm
+	num_vars += cria_variavel_de_folga_dist_cred_dia_inferior( campusId ); // fcm
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//else
@@ -7478,7 +7625,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_abertura_subbloco_de_blc_dia_campus(); // r
+	num_vars += cria_variavel_abertura_subbloco_de_blc_dia_campus( campusId ); // r
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7489,7 +7636,7 @@ int SolverMIP::cria_variaveis()
 
 	//if(!problemData->parametros->permitir_alunos_em_varios_campi)
 	timer.start();
-	num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat(); // bs
+	num_vars += cria_variavel_de_folga_aloc_alunos_curso_incompat( campusId ); // bs
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	//else
@@ -7501,7 +7648,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_de_folga_demanda_disciplina(); // fd
+	num_vars += cria_variavel_de_folga_demanda_disciplina( campusId ); // fd
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7511,7 +7658,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_combinacao_divisao_credito(); // m
+	num_vars += cria_variavel_combinacao_divisao_credito( campusId ); // m
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7521,7 +7668,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_de_folga_combinacao_divisao_credito(); // fk
+	num_vars += cria_variavel_de_folga_combinacao_divisao_credito( campusId ); // fk
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7542,7 +7689,7 @@ int SolverMIP::cria_variaveis()
 	#endif
 	*/
 	timer.start();
-	num_vars += cria_variavel_abertura_compativel(); // zc
+	num_vars += cria_variavel_abertura_compativel( campusId ); // zc
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7576,7 +7723,7 @@ int SolverMIP::cria_variaveis()
 #endif
 	*/
 	timer.start();
-	num_vars += cria_variavel_de_folga_compartilhamento(); // fc
+	num_vars += cria_variavel_de_folga_compartilhamento( campusId ); // fc
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7586,7 +7733,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_aloc_alunos_oft(); // e
+	num_vars += cria_variavel_aloc_alunos_oft( campusId ); // e
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7596,7 +7743,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_creditos_oferta(); // q
+	num_vars += cria_variavel_creditos_oferta( campusId ); // q
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7606,7 +7753,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_aloc_alunos_parOft(); // of
+	num_vars += cria_variavel_aloc_alunos_parOft( campusId ); // of
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7616,7 +7763,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_creditos_parOferta(); // p
+	num_vars += cria_variavel_creditos_parOferta( campusId ); // p
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7626,7 +7773,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_min_hor_disc_oft_dia(); // g
+	num_vars += cria_variavel_min_hor_disc_oft_dia( campusId ); // g
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7636,7 +7783,7 @@ int SolverMIP::cria_variaveis()
 #endif
 
 	timer.start();
-	num_vars += cria_variavel_maxCreds_combina_sl_sala(); // cs
+	num_vars += cria_variavel_maxCreds_combina_sl_sala( campusId ); // cs
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7646,7 +7793,7 @@ int SolverMIP::cria_variaveis()
 #endif   
 
 	timer.start();
-	num_vars += cria_variavel_maxCreds_combina_Sl_bloco(); // cbc
+	num_vars += cria_variavel_maxCreds_combina_Sl_bloco( campusId ); // cbc
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -7675,7 +7822,7 @@ em salas do tipo (capacidade) $tps$ no dia $t$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_creditos( void )
+int SolverMIP::cria_variavel_creditos( int campusId )
 {
    int num_vars = 0;
 
@@ -7683,6 +7830,11 @@ int SolverMIP::cria_variavel_creditos( void )
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -7957,7 +8109,7 @@ para alguma sala do tipo (capacidade) $tps$ no dia $t$.
 /====================================================================*/
 
 
-int SolverMIP::cria_variavel_oferecimentos(void)
+int SolverMIP::cria_variavel_oferecimentos( int campusId )
 {
    int num_vars = 0;
 
@@ -7965,6 +8117,11 @@ int SolverMIP::cria_variavel_oferecimentos(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -8143,7 +8300,7 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_abertura(void)
+int SolverMIP::cria_variavel_abertura( int campusId )
 {
    int num_vars = 0;
 
@@ -8158,17 +8315,29 @@ int SolverMIP::cria_variavel_abertura(void)
    
    ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
    {
+	   if ( it_campus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
 
-		#pragma region Equivalencias
-		if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-			problemData->mapDiscSubstituidaPor.end() )
-		{
+		 // A disciplina deve ser ofertada no campus especificado
+		 if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+			  problemData->cp_discs[campusId].end() )
+		 {
 			continue;
-		}
-		#pragma endregion
+		 }
+
+		 #pragma region Equivalencias
+		 if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+			  problemData->mapDiscSubstituidaPor.end() )
+		 {
+			continue;
+		 }
+		 #pragma endregion
 
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
@@ -8369,13 +8538,18 @@ número de alunos de uma oferta $oft$ alocados para a $i$-ésima turma da discipli
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_alunos(void)
+int SolverMIP::cria_variavel_alunos( int campusId )
 {
    int total_Vars = 0;
    int num_vars = 0;
    
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
+	   if ( itOferta->getCampusId() != campusId )
+	   {
+		   continue;
+	   }
+
       map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
       for(; itPrdDisc != itOferta->curriculo->disciplinas_periodo.end();
@@ -8463,7 +8637,7 @@ indica se algum aluno do curso $c$ foi alocado para a $i$-ésima turma da discipl
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_aloc_alunos(void)
+int SolverMIP::cria_variavel_aloc_alunos( int campusId )
 {
    int num_vars = 0;
 
@@ -8473,6 +8647,11 @@ int SolverMIP::cria_variavel_aloc_alunos(void)
    {
       Campus * pt_Campus = it_Oferta->campus;
       Curso * pt_Curso = it_Oferta->curso;
+
+	   if ( pt_Campus->getId() != campusId )
+	   {
+		   continue;
+	   }
 
       map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_Prd_Disc = 
          it_Oferta->curriculo->disciplinas_periodo.begin();
@@ -8630,7 +8809,7 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_consecutivos( void )
+int SolverMIP::cria_variavel_consecutivos( int campusId )
 {
    int num_vars = 0;
 
@@ -8638,6 +8817,11 @@ int SolverMIP::cria_variavel_consecutivos( void )
 
    ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
    {
+	  if ( it_campus->getId() != campusId )
+	  {
+		  continue;
+	  }
+
       ITERA_GGROUP_LESSPTR( it_unidade, it_campus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( it_conjunto_sala, it_unidade->conjutoSalas, ConjuntoSala )
@@ -8728,7 +8912,7 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_min_creds(void)
+int SolverMIP::cria_variavel_min_creds( int campusId )
 {
    int num_vars = 0;
 
@@ -8736,6 +8920,11 @@ int SolverMIP::cria_variavel_min_creds(void)
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
+	  if ( it_bloco->campus->getId() != campusId )
+	  {
+		  continue;
+	  }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, it_bloco->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
@@ -8817,7 +9006,7 @@ máximo de créditos diários da disciplina $d$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_max_creds(void)
+int SolverMIP::cria_variavel_max_creds( int campusId )
 {
    int num_vars = 0;
 
@@ -8825,6 +9014,11 @@ int SolverMIP::cria_variavel_max_creds(void)
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
+	  if ( it_bloco->campus->getId() != campusId )
+	  {
+		  continue;
+	  }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, it_bloco->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
@@ -8901,7 +9095,7 @@ indica que a turma $i$ da disciplina $d$ foi alocada em alguma sala do tipo $tps
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_aloc_disciplina(void)
+int SolverMIP::cria_variavel_aloc_disciplina( int campusId )
 {
    // Poderia criar as variaveis apenas qdo a
    // disciplina for compativel com a sala. Por
@@ -8914,6 +9108,11 @@ int SolverMIP::cria_variavel_aloc_disciplina(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	  if ( itCampus->getId() != campusId )
+	  {
+		  continue;
+	  }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -9060,13 +9259,18 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_num_subblocos(void)
+int SolverMIP::cria_variavel_num_subblocos( int campusId )
 {
    int num_vars = 0;
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
       Campus * campus = it_bloco->campus;
+	  
+	  if ( campus->getId() != campusId )
+	  {
+		  continue;
+	  }
 
       ITERA_GGROUP_N_PT( it_Dias_Letivos, problemData->bloco_Campus_Dias
          [ std::make_pair( it_bloco->getId(), campus->getId() ) ], int )
@@ -9127,12 +9331,17 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_num_abertura_turma_bloco(void)
+int SolverMIP::cria_variavel_num_abertura_turma_bloco( int campusId )
 {
    int num_vars = 0;
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
+	  if ( it_bloco->campus->getId() != campusId )
+	  {
+		  continue;
+	  }
+
       GGroup< int >::iterator itDiasLetBloco =
          it_bloco->diasLetivos.begin();
 
@@ -9194,7 +9403,7 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
+int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior( int campusId )
 {
    int num_vars = 0;
 
@@ -9202,13 +9411,25 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	  if ( itCampus->getId() != campusId )
+	  {
+		  continue;
+	  }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
          {
             ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
             {
-               disciplina = ( *it_disciplina );
+                disciplina = ( *it_disciplina );
+
+				// A disciplina deve ser ofertada no campus especificado
+				if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+					 problemData->cp_discs[campusId].end() )
+				{
+					continue;
+				}
 
 			   #pragma region Equivalencias
 			   if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -9405,7 +9626,7 @@ variável de folga inferior para a restrição de fixação da distribuição de crédit
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
+int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior( int campusId )
 {
    int num_vars = 0;
 
@@ -9413,6 +9634,11 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -9421,13 +9647,20 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior(void)
             {
                disciplina = ( *it_disciplina );
 
-			  #pragma region Equivalencias
-			  if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-				   problemData->mapDiscSubstituidaPor.end() )
-			  {
+				// A disciplina deve ser ofertada no campus especificado
+				if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+					 problemData->cp_discs[campusId].end() )
+				{
+					continue;
+				}
+
+			   #pragma region Equivalencias
+			   if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+				    problemData->mapDiscSubstituidaPor.end() )
+			   {
 				  continue;
-			  }
-			  #pragma endregion
+			   }
+			   #pragma endregion
 
                for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
                {
@@ -9611,12 +9844,17 @@ indica se algum sub-bloco foi aberto do bloco curricular $bc$ no dia $t$ no camp
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus()
+int SolverMIP::cria_variavel_abertura_subbloco_de_blc_dia_campus( int campusId )
 {
    int num_vars = 0;
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
+	   if ( it_bloco->campus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_N_PT( itDia, it_bloco->campus->diasLetivos, int )
       {
          Variable v;
@@ -9671,17 +9909,24 @@ de alunos de cursos incompativeis é proibido.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
+int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat( int campusId )
 {
    int num_vars = 0;
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
-	   ITERA_GGROUP_LESSPTR( it1Cursos, problemData->cursos, Curso )
+	   Campus *cp = *itCampus;
+
+	   if ( cp->getId() != campusId )
+	   {
+		   continue;
+	   }
+
+	   ITERA_GGROUP_LESSPTR( it1Cursos, cp->cursos, Curso )
 	   {
 		   Curso* c1 = *it1Cursos;
 			
-		   ITERA_GGROUP_LESSPTR( it2Cursos, problemData->cursos, Curso )
+		   ITERA_GGROUP_LESSPTR( it2Cursos, cp->cursos, Curso )
 		   {
 			    Curso* c2 = *it2Cursos;
 			    
@@ -9690,6 +9935,13 @@ int SolverMIP::cria_variavel_de_folga_aloc_alunos_curso_incompat()
 
 				ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
 				{
+					 // A disciplina deve ser ofertada no campus especificado
+					 if ( problemData->cp_discs[campusId].find( itDisc->getId() ) ==
+						  problemData->cp_discs[campusId].end() )
+					 {
+						continue;
+					 }
+
 					 #pragma region Equivalencias
 					 if ( problemData->mapDiscSubstituidaPor.find( *itDisc ) !=
 						  problemData->mapDiscSubstituidaPor.end() )
@@ -9758,7 +10010,7 @@ de alunos de cursos compativeis é proibido.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_de_folga_compartilhamento()
+int SolverMIP::cria_variavel_de_folga_compartilhamento( int campusId )
 {
    int num_vars = 0;
 
@@ -9769,6 +10021,11 @@ int SolverMIP::cria_variavel_de_folga_compartilhamento()
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
 	   std::map< std::pair< Curso *, Curso * >, std::vector< int > >::iterator
                it_cursoComp_disc = problemData->cursosComp_disc.begin();
 
@@ -9776,6 +10033,12 @@ int SolverMIP::cria_variavel_de_folga_compartilhamento()
         {
 			Curso* c1 = it_cursoComp_disc->first.first;
 			Curso* c2 = it_cursoComp_disc->first.second;
+
+			if ( itCampus->cursos.find( c1 ) == itCampus->cursos.end() ||
+				 itCampus->cursos.find( c2 ) == itCampus->cursos.end() )
+			{
+				continue;
+			}
          
 			std::vector< int >::iterator it_disc = it_cursoComp_disc->second.begin();
 
@@ -9931,7 +10194,7 @@ permitir atender demanda da disciplina".
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
+int SolverMIP::cria_variavel_de_folga_demanda_disciplina( int campusId )
 {
    int num_vars = 0;
 
@@ -9939,6 +10202,11 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina()
    
    ITERA_GGROUP_LESSPTR( itOferta, problemData->ofertas, Oferta )
    {
+	   if ( itOferta->getCampusId() != campusId )
+	   {
+		   continue;
+	   }
+
       map < Disciplina*, int, LessPtr< Disciplina > >::iterator itPrdDisc = 
          itOferta->curriculo->disciplinas_periodo.begin();
 
@@ -10014,7 +10282,7 @@ $k$ foi escolhida para a turma $i$ da disciplina $d$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_combinacao_divisao_credito()
+int SolverMIP::cria_variavel_combinacao_divisao_credito( int campusId )
 {
    int num_vars = 0;
 
@@ -10023,6 +10291,13 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito()
    ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
+
+	  // A disciplina deve ser ofertada no campus especificado
+	  if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+		   problemData->cp_discs[campusId].end() )
+	  {
+		  continue;
+	  }
 
 	  #pragma region Equivalencias
 	  if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
@@ -10097,7 +10372,7 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
+int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito( int campusId )
 {
    int num_vars = 0;
 
@@ -10105,6 +10380,11 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito()
    
    ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
    {
+	   if ( it_campus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( it_unidade, it_campus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( it_conjunto_sala, it_unidade->conjutoSalas, ConjuntoSala )
@@ -10256,7 +10536,7 @@ máximo de créditos alocados para qualquer turma da disciplina $d$ no bloco $bc$ 
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_creditos_modificada(void)
+int SolverMIP::cria_variavel_creditos_modificada( int campusId )
 {
    int num_vars = 0;
 
@@ -10264,6 +10544,11 @@ int SolverMIP::cria_variavel_creditos_modificada(void)
 
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
+	   if ( it_bloco->campus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, it_bloco->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
@@ -10405,7 +10690,7 @@ indica se houve abertura da disciplina $d$ no dia $t$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_abertura_compativel( void )
+int SolverMIP::cria_variavel_abertura_compativel( int campusId )
 {
    int num_vars = 0;
 
@@ -10413,6 +10698,11 @@ int SolverMIP::cria_variavel_abertura_compativel( void )
 
    ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
    {
+	   if ( it_campus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( it_unidade, it_campus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( it_conjunto_sala, it_unidade->conjutoSalas, ConjuntoSala )
@@ -10486,15 +10776,18 @@ variável binária que indica se o bloco $bc$ foi alocado na sala $tps$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_abertura_bloco_mesmoTPS(void)
+int SolverMIP::cria_variavel_abertura_bloco_mesmoTPS( int campusId )
 {
    int num_vars = 0;
 
    ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
-      ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-      {
-         ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+	     if ( itBloco->campus->getId() != campusId )
+	     {
+			  continue;
+	     }
+
+         ITERA_GGROUP_LESSPTR( itUnidade, itBloco->campus->unidades, Unidade )
          {
             ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
             {
@@ -10520,8 +10813,7 @@ int SolverMIP::cria_variavel_abertura_bloco_mesmoTPS(void)
                   num_vars += 1;
                }
             }
-         }
-      }
+        }
    }
 
    return num_vars;
@@ -10546,15 +10838,18 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS()
+int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS( int campusId )
 {
    int num_vars = 0;
 
    ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
-      ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-      {
-         ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+	     if ( itBloco->campus->getId() != campusId )
+	     {
+			 continue;
+	     }
+
+         ITERA_GGROUP_LESSPTR( itUnidade, itBloco->campus->unidades, Unidade )
          {
             ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
             {
@@ -10593,8 +10888,7 @@ int SolverMIP::cria_variavel_de_folga_abertura_bloco_mesmoTPS()
                   num_vars++;
                }
             }
-         }
-      }
+        }
    }
 
    return num_vars;
@@ -10612,19 +10906,24 @@ para a turma i da disciplina d.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_variavel_aloc_alunos_oft()
+int SolverMIP::cria_variavel_aloc_alunos_oft( int campusId )
 {
    int num_vars = 0;
    
    ITERA_GGROUP_LESSPTR( itOft, problemData->ofertas, Oferta )
    {
 	    Oferta *oft = *itOft;
+	    
+		if ( oft->getCampusId() != campusId )
+	    {
+			continue;
+	    }
 
 	    map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
 	    {
 			Disciplina * d = it_disc->first;
-			 
+			
 		    for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
 		    {
                Variable v;
@@ -10679,7 +10978,7 @@ na unidade $u$ em salas do tipo (capacidade) $tps$ no dia $t$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_variavel_creditos_oferta( void )
+int SolverMIP::cria_variavel_creditos_oferta( int campusId )
 {
    int num_vars = 0;
 
@@ -10690,6 +10989,11 @@ int SolverMIP::cria_variavel_creditos_oferta( void )
 	   Oferta *oft = *itOft;
 
 	   Campus * cp = itOft->campus;
+
+	   if ( cp->getId() != campusId )
+	   {
+			continue;
+	   }
 
       ITERA_GGROUP_LESSPTR( itUnidade, cp->unidades, Unidade )
       {
@@ -10771,7 +11075,7 @@ para a turma i da disciplina d.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_variavel_aloc_alunos_parOft()
+int SolverMIP::cria_variavel_aloc_alunos_parOft( int campusId )
 {
     int num_vars = 0;
 
@@ -10787,6 +11091,12 @@ int SolverMIP::cria_variavel_aloc_alunos_parOft()
 		Curso *c1 = oft1->curso;
 		Curso *c2 = oft2->curso;
 		
+		if ( oft1->getCampusId() != campusId || 
+			 oft2->getCampusId() != campusId )
+	    {
+			continue;
+	    }
+
 		if ( c1->getId() != c2->getId() && !problemData->parametros->permite_compartilhamento_turma_sel )
 			continue;
 
@@ -10858,7 +11168,7 @@ da disciplina d atendendo as ofertas oft1 e oft2.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_variavel_creditos_parOferta()
+int SolverMIP::cria_variavel_creditos_parOferta( int campusId )
 {
 	ofstream outTestFile;
 	char outputTestFilename[] = "outTestVariableP.txt";
@@ -10874,6 +11184,11 @@ int SolverMIP::cria_variavel_creditos_parOferta()
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
 	   Campus *cp = *itCampus;
+
+	   if ( cp->getId() != campusId )
+	   {
+			continue;
+	   }
 
 	   // para cada par de ofertas compativeis
 	   std::map< std::pair< Oferta *, Oferta * >, std::vector< int > >::iterator
@@ -10995,13 +11310,18 @@ para turmas da disciplina
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_variavel_min_hor_disc_oft_dia()
+int SolverMIP::cria_variavel_min_hor_disc_oft_dia( int campusId )
 {
    int num_vars = 0;
    
    ITERA_GGROUP_LESSPTR( itOft, problemData->ofertas, Oferta )
    {
 	    Oferta *oft = *itOft;
+
+		if ( oft->getCampusId() != campusId )
+	    {
+			continue;
+	    }
 
 	    map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_disc = oft->curriculo->disciplinas_periodo.begin();
 	    for (; it_disc != oft->curriculo->disciplinas_periodo.end(); it_disc++ )
@@ -11051,7 +11371,7 @@ int SolverMIP::cria_variavel_min_hor_disc_oft_dia()
 }
 
 // cs_{s,t,k}
-int SolverMIP::cria_variavel_maxCreds_combina_sl_sala(void)
+int SolverMIP::cria_variavel_maxCreds_combina_sl_sala( int campusId )
 {
    int num_vars = 0;
 
@@ -11063,6 +11383,11 @@ int SolverMIP::cria_variavel_maxCreds_combina_sl_sala(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -11112,12 +11437,17 @@ int SolverMIP::cria_variavel_maxCreds_combina_sl_sala(void)
 }
 
 // cbc_{bc,t,k}
-int SolverMIP::cria_variavel_maxCreds_combina_Sl_bloco(void)
+int SolverMIP::cria_variavel_maxCreds_combina_Sl_bloco( int campusId )
 {
    int num_vars = 0;
 
    ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
    {
+	   if ( itBloco->campus->getId() != campusId )
+	   {
+			continue;
+	   }
+
 	   BlocoCurricular *bc = *itBloco;
 		
 	   ITERA_GGROUP_N_PT( itDia, bc->diasLetivos, int )
@@ -11161,13 +11491,11 @@ int SolverMIP::cria_variavel_maxCreds_combina_Sl_bloco(void)
 
 
 
-
-
 // ==============================================================
 //							CONSTRAINTS
 // ==============================================================
 
-int SolverMIP::cria_restricoes( void )
+int SolverMIP::cria_restricoes( int campusId )
 {
 	int restricoes = 0;
 
@@ -11179,7 +11507,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_carga_horaria();				// Restricao 1.2.2
+	restricoes += cria_restricao_carga_horaria( campusId );				// Restricao 1.2.2
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11189,7 +11517,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_max_tempo_sd();					// Restricao 1.2.3.a
+	restricoes += cria_restricao_max_tempo_sd( campusId );					// Restricao 1.2.3.a
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11199,7 +11527,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_max_tempo_s_t_SL();
+	restricoes += cria_restricao_max_tempo_s_t_SL( campusId );
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11214,7 +11542,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_min_cred_dd();					// Restricao 1.2.4
+	restricoes += cria_restricao_min_cred_dd( campusId );					// Restricao 1.2.4
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11224,7 +11552,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_ativacao_var_o();					// Restricao 1.2.5
+	restricoes += cria_restricao_ativacao_var_o( campusId );					// Restricao 1.2.5
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11234,7 +11562,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_evita_sobreposicao();			// Restricao 1.2.6
+	restricoes += cria_restricao_evita_sobreposicao( campusId );			// Restricao 1.2.6
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11244,7 +11572,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_disciplina_sala();				// Restricao 1.2.7
+	restricoes += cria_restricao_disciplina_sala( campusId );				// Restricao 1.2.7
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11254,7 +11582,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_turma_sala();					// Restricao 1.2.8
+	restricoes += cria_restricao_turma_sala( campusId );					// Restricao 1.2.8
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11264,7 +11592,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_evita_turma_disc_camp_d();		// Restricao 1.2.9
+	restricoes += cria_restricao_evita_turma_disc_camp_d( campusId );		// Restricao 1.2.9
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11274,7 +11602,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_turmas_bloco();				// Restricao 1.2.10
+	restricoes += cria_restricao_turmas_bloco( campusId );				// Restricao 1.2.10
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11297,7 +11625,7 @@ int SolverMIP::cria_restricoes( void )
 
 	*/
 	timer.start();
-	restricoes += cria_restricao_num_tur_bloc_dia_difunid();	// Restricao 1.2.12
+	restricoes += cria_restricao_num_tur_bloc_dia_difunid( campusId );	// Restricao 1.2.12
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11307,7 +11635,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_lim_cred_diar_disc();			// Restricao 1.2.13
+	restricoes += cria_restricao_lim_cred_diar_disc( campusId );			// Restricao 1.2.13
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11317,7 +11645,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_cap_aloc_dem_disc();			// Restricao 1.2.14
+	restricoes += cria_restricao_cap_aloc_dem_disc( campusId );			// Restricao 1.2.14
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11327,7 +11655,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_cap_sala_compativel_turma();	// Restricao 1.2.15
+	restricoes += cria_restricao_cap_sala_compativel_turma( campusId );	// Restricao 1.2.15
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11337,7 +11665,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_cap_sala_unidade();			// Restricao 1.2.16
+	restricoes += cria_restricao_cap_sala_unidade( campusId );			// Restricao 1.2.16
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11358,7 +11686,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_min_creds_turm_bloco();		// Restricao 1.2.18
+	restricoes += cria_restricao_min_creds_turm_bloco( campusId );		// Restricao 1.2.18
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11368,7 +11696,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_max_creds_turm_bloco();		// Restricao 1.2.19
+	restricoes += cria_restricao_max_creds_turm_bloco( campusId );		// Restricao 1.2.19
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11378,7 +11706,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_aluno_curso_disc();			// Restricao 1.2.20
+	restricoes += cria_restricao_aluno_curso_disc( campusId );			// Restricao 1.2.20
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11388,7 +11716,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_alunos_cursos_incompat();		// Restricao 1.2.21
+	restricoes += cria_restricao_alunos_cursos_incompat( campusId );		// Restricao 1.2.21
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	
@@ -11401,7 +11729,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_de_folga_dist_cred_dia();		// Restricao 1.2.22
+	restricoes += cria_restricao_de_folga_dist_cred_dia( campusId );		// Restricao 1.2.22
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11413,7 +11741,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_ativacao_var_r();						// Restricao 1.2.23
+	restricoes += cria_restricao_ativacao_var_r( campusId );						// Restricao 1.2.23
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11424,7 +11752,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_limita_abertura_turmas();						// Restricao 1.2.24
+	restricoes += cria_restricao_limita_abertura_turmas( campusId );						// Restricao 1.2.24
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11435,7 +11763,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_abre_turmas_em_sequencia();						// Restricao 1.2.25
+	restricoes += cria_restricao_abre_turmas_em_sequencia( campusId );						// Restricao 1.2.25
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11446,7 +11774,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_divisao_credito();
+	restricoes += cria_restricao_divisao_credito( campusId );
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11457,7 +11785,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_combinacao_divisao_credito();
+	restricoes += cria_restricao_combinacao_divisao_credito( campusId );
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	
@@ -11469,7 +11797,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_ativacao_var_y();
+	restricoes += cria_restricao_ativacao_var_y( campusId );
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11505,7 +11833,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes += cria_restricao_ativacao_var_zc();
+	restricoes += cria_restricao_ativacao_var_zc( campusId );
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11515,7 +11843,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes +=  cria_restricao_disciplinas_incompativeis();
+	restricoes +=  cria_restricao_disciplinas_incompativeis( campusId );
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	
@@ -11548,7 +11876,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes +=  cria_restricao_proibe_compartilhamento();			// Restricao 1.2.35
+	restricoes +=  cria_restricao_proibe_compartilhamento( campusId );			// Restricao 1.2.35
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11559,7 +11887,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes +=  cria_restricao_ativacao_var_e();				// Restricao 1.2.36
+	restricoes +=  cria_restricao_ativacao_var_e( campusId );				// Restricao 1.2.36
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11570,7 +11898,7 @@ int SolverMIP::cria_restricoes( void )
 
 
 	timer.start();
-	restricoes +=  cria_restricao_evita_sobrepos_sala_por_compartilhamento();	// Restricao 1.2.37
+	restricoes +=  cria_restricao_evita_sobrepos_sala_por_compartilhamento( campusId );	// Restricao 1.2.37
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11580,7 +11908,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes +=  cria_restricao_ativacao_var_of();	// Restricao 1.2.38, 1.2.39, 1.2.40
+	restricoes +=  cria_restricao_ativacao_var_of( campusId );	// Restricao 1.2.38, 1.2.39, 1.2.40
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11590,7 +11918,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes +=  cria_restricao_ativacao_var_p();	// Restrições 1.2.41, 1.2.42, 1.2.43
+	restricoes +=  cria_restricao_ativacao_var_p( campusId );	// Restrições 1.2.41, 1.2.42, 1.2.43
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11600,7 +11928,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes +=  cria_restricao_ativacao_var_g();	// Restricao 1.2.44
+	restricoes +=  cria_restricao_ativacao_var_g( campusId );	// Restricao 1.2.44
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11610,7 +11938,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes +=  cria_restricao_evita_sobrepos_sala_por_div_turmas();	// Restricao 1.2.45
+	restricoes +=  cria_restricao_evita_sobrepos_sala_por_div_turmas( campusId );	// Restricao 1.2.45
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	
@@ -11621,7 +11949,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes +=  cria_restricao_ativacao_var_q();	// Restricoes 1.2.46, 1.2.47, 1.2.48
+	restricoes +=  cria_restricao_ativacao_var_q( campusId );	// Restricoes 1.2.46, 1.2.47, 1.2.48
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11631,7 +11959,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_ativacao_var_cs(); // Restricao 1.2.49
+	restricoes += cria_restricao_ativacao_var_cs( campusId ); // Restricao 1.2.49
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11641,7 +11969,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_fixa_nao_compartilhamento(); // Restricao 1.2.50
+	restricoes += cria_restricao_fixa_nao_compartilhamento( campusId ); // Restricao 1.2.50
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	
@@ -11652,7 +11980,7 @@ int SolverMIP::cria_restricoes( void )
 #endif
 
 	timer.start();
-	restricoes += cria_restricao_ativacao_var_cbc(); // Restricao 1.2.51
+	restricoes += cria_restricao_ativacao_var_cbc( campusId ); // Restricao 1.2.51
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -11690,7 +12018,7 @@ Máximo de turmas que podem ser abertas da disciplina $d$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_carga_horaria(void)
+int SolverMIP::cria_restricao_carga_horaria( int campusId )
 {
    int restricoes = 0;
 
@@ -11709,9 +12037,21 @@ int SolverMIP::cria_restricao_carga_horaria(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+			continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
       {
          disciplina = ( *it_disciplina );
+
+		 // A disciplina deve ser ofertada no campus especificado
+		 if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+			  problemData->cp_discs[campusId].end() )
+		 {
+			 continue;
+		 }
 
          std::pair< Curso *, Curriculo * > curso_curriculo
             = problemData->map_Disc_CursoCurriculo[ disciplina ];
@@ -11832,7 +12172,7 @@ máximo de tempo permitido por dia $t$ para o conjunto de salas do tipo (capacida
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_max_tempo_sd( void )
+int SolverMIP::cria_restricao_max_tempo_sd( int campusId )
 {
    int restricoes = 0;
 
@@ -11855,6 +12195,11 @@ int SolverMIP::cria_restricao_max_tempo_sd( void )
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -11869,17 +12214,13 @@ int SolverMIP::cria_restricao_max_tempo_sd( void )
                // Verifica se a disciplina foi substituída
                disciplina = it_disc_dias->first;
 
-               std::pair< Curso *, Curriculo * > curso_curriculo
-                  = problemData->map_Disc_CursoCurriculo[ disciplina ];
-               curso = curso_curriculo.first;
-               curriculo = curso_curriculo.second;
-
-               if ( problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina ) != NULL )
-               {
-                  // Como a disciplina foi substituída,
-                  // não percorremos os dias letivos da mesma
-                  continue;
-               }
+				#pragma region Equivalencias
+				if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+					 problemData->mapDiscSubstituidaPor.end() )
+				{
+					continue;
+				}
+				#pragma endregion
 
                GGroup< int >::iterator itDiasLetCjtSala =
                   it_disc_dias->second.begin();
@@ -11902,6 +12243,12 @@ int SolverMIP::cria_restricao_max_tempo_sd( void )
                   nnz = 0;
                   ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
                   {
+					 // A disciplina deve ser ofertada no campus especificado
+					 if ( problemData->cp_discs[campusId].find( itDisc->getId() ) ==
+						  problemData->cp_discs[campusId].end() )
+					 {
+						 continue;
+					 }
                      if ( itDisc->getNumTurmas() >= 0 )
                      {
                         nnz += ( itDisc->getNumTurmas() );
@@ -11913,18 +12260,20 @@ int SolverMIP::cria_restricao_max_tempo_sd( void )
 
                   ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
                   {
- 					 #pragma region Equivalência de disciplinas
-  					 std::pair< Curso *, Curriculo * > curso_curriculo
- 				 		= problemData->map_Disc_CursoCurriculo[ *itDisc ];
-				 	 Curso* curso = curso_curriculo.first;
-					 Curriculo* curriculo = curso_curriculo.second;
-
-	 				 Disciplina* disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, *itDisc );
-					 if ( disciplina_equivalente != NULL )
+					 #pragma region Equivalencias
+					 if ( problemData->mapDiscSubstituidaPor.find( *itDisc ) !=
+						  problemData->mapDiscSubstituidaPor.end() )
 					 {
-					 	 continue;
+						continue;
 					 }
 					 #pragma endregion
+
+					 // A disciplina deve ser ofertada no campus especificado
+					 if ( problemData->cp_discs[campusId].find( itDisc->getId() ) ==
+						  problemData->cp_discs[campusId].end() )
+					 {
+						 continue;
+					 }
 
                      for ( int turma = 0; turma < itDisc->getNumTurmas(); turma++ )
                      {
@@ -11991,7 +12340,7 @@ para a sala $s$, na divisão de horarios k.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_max_tempo_s_t_SL( void )
+int SolverMIP::cria_restricao_max_tempo_s_t_SL( int campusId )
 {
    int restricoes = 0;
 
@@ -12008,6 +12357,11 @@ int SolverMIP::cria_restricao_max_tempo_s_t_SL( void )
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
@@ -12045,29 +12399,20 @@ int SolverMIP::cria_restricao_max_tempo_s_t_SL( void )
 						{
 							Disciplina *disciplina = *itDisc;
 
-							GGroup< std::pair<Curso*, Curriculo*> > cursos_curriculos = 
-								problemData->retornaCursosCurriculosDisciplina( disciplina );
-
-							if ( cursos_curriculos.size() == 0 )
-							{
-								continue;
-							}
-
-							Curso * curso = (*cursos_curriculos.begin()).first;
-							Curriculo * curriculo = (*cursos_curriculos.begin()).second;
-
 							// Verifica se é a semana letiva corrente
-							if ( curriculo->calendario != *it_Sl )
+							if ( disciplina->getCalendario() != *it_Sl )
 							{
 								continue;
 							}
 
-							// Verifica se a disciplina foi substituída
-							if ( problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina ) != NULL )
+							#pragma region Equivalencias
+							if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+								problemData->mapDiscSubstituidaPor.end() )
 							{
 								continue;
 							}
-						
+							#pragma endregion		
+
 							for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
 							{
 								v.reset();
@@ -12151,7 +12496,7 @@ mínimo de créditos diários da disciplina $d$.
 /====================================================================*/
 
 // TRIEDA-405 Cont-Mínimo de créditos diários da disciplina(*)
-int SolverMIP::cria_restricao_min_cred_dd(void)
+int SolverMIP::cria_restricao_min_cred_dd( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -12169,25 +12514,27 @@ int SolverMIP::cria_restricao_min_cred_dd(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
          {
-            ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+            ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
             {
-               disciplina = ( *it_disciplina );
+                disciplina = ( *it_disciplina );
 
-               std::pair< Curso *, Curriculo * > curso_curriculo
-                  = problemData->map_Disc_CursoCurriculo[ disciplina ];
-               curso = curso_curriculo.first;
-               curriculo = curso_curriculo.second;
-
-               disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
-               if ( disciplina_equivalente != NULL )
-               {
-                  disciplina = disciplina_equivalente;
-               }
-
+				#pragma region Equivalencias
+				if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+					 problemData->mapDiscSubstituidaPor.end() )
+				{
+					continue;
+				}
+				#pragma endregion		
+				
                GGroup< int /*Dias*/ > disc_sala_dias =
                   problemData->disc_Conjutno_Salas__Dias[ std::make_pair< int, int >
                   ( disciplina->getId(), itCjtSala->getId() ) ];
@@ -12303,7 +12650,7 @@ Total de créditos da disciplina $d$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_ativacao_var_o(void)
+int SolverMIP::cria_restricao_ativacao_var_o( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -12321,24 +12668,26 @@ int SolverMIP::cria_restricao_ativacao_var_o(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
          {
-            ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+			ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
             {
                disciplina = ( *it_disciplina );
-
-               std::pair< Curso *, Curriculo * > curso_curriculo
-                  = problemData->map_Disc_CursoCurriculo[ disciplina ];
-               curso = curso_curriculo.first;
-               curriculo = curso_curriculo.second;
-
-               disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
-               if ( disciplina_equivalente != NULL )
-               {
-                  disciplina = disciplina_equivalente;
-               }
+			   
+				#pragma region Equivalencias
+				if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+					 problemData->mapDiscSubstituidaPor.end() )
+				{
+					continue;
+				}
+				#pragma endregion
 
                GGroup< int /*Dias*/ >::iterator itDiscSala_Dias = problemData->disc_Conjutno_Salas__Dias
                   [ std::make_pair< int, int > ( disciplina->getId(), itCjtSala->getId() ) ].begin();
@@ -12437,7 +12786,7 @@ Evitar sobreposição de turmas da mesma disciplina
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_evita_sobreposicao(void)
+int SolverMIP::cria_restricao_evita_sobreposicao( int campusId )
 {
    int restricoes = 0;
 
@@ -12456,6 +12805,11 @@ int SolverMIP::cria_restricao_evita_sobreposicao(void)
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
+	   if ( itCampus->getId() != campusId )
+	   {
+		   continue;
+	   }
+
       ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
       {
          GGroup< int >::iterator itDiasLetUnid =
@@ -12465,18 +12819,22 @@ int SolverMIP::cria_restricao_evita_sobreposicao(void)
          {
             ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
             {
-               disciplina = ( *it_disciplina );
+                disciplina = ( *it_disciplina );
+			   
+				#pragma region Equivalencias
+				if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+					 problemData->mapDiscSubstituidaPor.end() )
+				{
+					continue;
+				}
+				#pragma endregion	
 
-               std::pair< Curso *, Curriculo * > curso_curriculo
-                  = problemData->map_Disc_CursoCurriculo[ disciplina ];
-               curso = curso_curriculo.first;
-               curriculo = curso_curriculo.second;
-
-               disciplina_equivalente = problemData->retornaDisciplinaSubstituta( curso, curriculo, disciplina );
-               if ( disciplina_equivalente != NULL )
-               {
-                  disciplina = disciplina_equivalente;
-               }
+				// A disciplina deve ser ofertada no campus especificado
+				if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+					 problemData->cp_discs[campusId].end() )
+				{
+					continue;
+				}
 
                for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
                {
@@ -12554,7 +12912,7 @@ em um determinado tipo de sala (*)
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_disciplina_sala(void)
+int SolverMIP::cria_restricao_disciplina_sala( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -12682,7 +13040,7 @@ Uma turma só pode ser alocada a um tipo de sala
 /====================================================================*/
 
 // TRIEDA-413 - Garante que a mesma turma tenha que ser alocada no mesmo tipo de sala em dias diferentes
-int SolverMIP::cria_restricao_turma_sala(void)
+int SolverMIP::cria_restricao_turma_sala( int campusId )
 {
    int restricoes = 0;
    char name[100];
@@ -12786,7 +13144,7 @@ Evitar alocação de turmas da mesma disciplina em campus diferentes
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_evita_turma_disc_camp_d(void)
+int SolverMIP::cria_restricao_evita_turma_disc_camp_d( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -12887,7 +13245,7 @@ big $M$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_turmas_bloco(void)
+int SolverMIP::cria_restricao_turmas_bloco( int campusId )
 {	
    int restricoes = 0;
    char name[ 100 ];
@@ -13023,7 +13381,7 @@ máximo de créditos permitidos por dia $t$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_max_cred_disc_bloco(void)
+int SolverMIP::cria_restricao_max_cred_disc_bloco( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -13237,7 +13595,7 @@ dia em unidades distintas
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid(void)
+int SolverMIP::cria_restricao_num_tur_bloc_dia_difunid( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -13333,7 +13691,7 @@ máximo de créditos diários da disciplina $d$.
 /====================================================================*/
 
 // TRIEDA-406 Cont-Limite de créditos diários de disciplina
-int SolverMIP::cria_restricao_lim_cred_diar_disc(void)
+int SolverMIP::cria_restricao_lim_cred_diar_disc( int campusId )
 {
    int restricoes = 0;
 
@@ -13468,7 +13826,7 @@ demanda da disciplina $d$ da oferta $oft$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_cap_aloc_dem_disc( void )
+int SolverMIP::cria_restricao_cap_aloc_dem_disc( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -13602,7 +13960,7 @@ capacidade da sala $s$ da unidade $u$.
 /====================================================================*/
 
 // TRIEDA-390
-int SolverMIP::cria_restricao_cap_sala_compativel_turma(void)
+int SolverMIP::cria_restricao_cap_sala_compativel_turma( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -13896,7 +14254,7 @@ big $M$.
 /====================================================================*/
 
 // TRIEDA-391 - Capacidade da sala na unidade
-int SolverMIP::cria_restricao_cap_sala_unidade(void)
+int SolverMIP::cria_restricao_cap_sala_unidade( int campusId )
 {
    int restricoes = 0;
 
@@ -14046,7 +14404,7 @@ c_{i,d,t}  \geq \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}}(o_{i,d,u,tp
 /====================================================================*/
 
 // TRIEDA-392
-int SolverMIP::cria_restricao_turma_disc_dias_consec(void)
+int SolverMIP::cria_restricao_turma_disc_dias_consec( int campusId )
 {
    int restricoes = 0;
 
@@ -14181,7 +14539,7 @@ Mínimo de créditos alocados para turmas de um bloco (*)
 /====================================================================*/
 
 // TRIEDA-393
-int SolverMIP::cria_restricao_min_creds_turm_bloco(void)
+int SolverMIP::cria_restricao_min_creds_turm_bloco( int campusId )
 {
    int restricoes = 0;
 
@@ -14314,7 +14672,7 @@ Máximo de créditos alocados para turmas de um bloco (*)
 /====================================================================*/
 
 // TRIEDA-394
-int SolverMIP::cria_restricao_max_creds_turm_bloco(void)
+int SolverMIP::cria_restricao_max_creds_turm_bloco( int campusId )
 {
    int restricoes = 0;
 
@@ -14449,7 +14807,7 @@ big $M$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_aluno_curso_disc(void)
+int SolverMIP::cria_restricao_aluno_curso_disc( int campusId )
 {
    int restricoes = 0;
 
@@ -14580,7 +14938,7 @@ b_{i,d,c,cp} + b_{i,d,c',cp} - bs_{i,d,c,c',cp} \leq 1 \nonumber \qquad
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_alunos_cursos_incompat(void)
+int SolverMIP::cria_restricao_alunos_cursos_incompat( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -14720,7 +15078,7 @@ Fixação da distribuição de créditos por dia (*)
 /====================================================================*/
 
 // TRIEDA-395
-int SolverMIP::cria_restricao_de_folga_dist_cred_dia(void)
+int SolverMIP::cria_restricao_de_folga_dist_cred_dia( int campusId )
 {
    int restricoes = 0;
 
@@ -14905,7 +15263,7 @@ big $M$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_ativacao_var_r()
+int SolverMIP::cria_restricao_ativacao_var_r( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -14998,7 +15356,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_limita_abertura_turmas()
+int SolverMIP::cria_restricao_limita_abertura_turmas( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -15129,7 +15487,7 @@ Abertura sequencial de turmas
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_abre_turmas_em_sequencia(void)
+int SolverMIP::cria_restricao_abre_turmas_em_sequencia( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -15264,7 +15622,7 @@ número de créditos determinados para a disciplina $d$ no dia $t$ na combinação d
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_divisao_credito()
+int SolverMIP::cria_restricao_divisao_credito( int campusId )
 {
    int restricoes = 0;
 
@@ -15423,7 +15781,7 @@ Somente uma combinação de regra de divisão de créditos pode ser escolhida
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_combinacao_divisao_credito()
+int SolverMIP::cria_restricao_combinacao_divisao_credito( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -15524,7 +15882,7 @@ Ativação da variável y
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_ativacao_var_y()
+int SolverMIP::cria_restricao_ativacao_var_y( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -15654,7 +16012,7 @@ Máximo de créditos diários da disciplina
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_max_creds_disc_dia()
+int SolverMIP::cria_restricao_max_creds_disc_dia( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -15799,7 +16157,7 @@ Máximo de créditos diários do bloco
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_max_creds_bloco_dia()
+int SolverMIP::cria_restricao_max_creds_bloco_dia( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -15896,7 +16254,7 @@ Ativação da variável zc
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_ativacao_var_zc()
+int SolverMIP::cria_restricao_ativacao_var_zc( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -16016,7 +16374,7 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_disciplinas_incompativeis()
+int SolverMIP::cria_restricao_disciplinas_incompativeis( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -16143,7 +16501,7 @@ o_{i,d,u,tps,t} \leq M \cdot n_{bc,tps} \nonumber \qquad
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS()
+int SolverMIP::cria_restricao_abertura_bloco_mesmoTPS( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -16283,7 +16641,7 @@ Evitar alocação do mesmo bloco curricular em tipos de salas diferentes
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_restricao_folga_abertura_bloco_mesmoTPS()
+int SolverMIP::cria_restricao_folga_abertura_bloco_mesmoTPS( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -16378,7 +16736,7 @@ b_{i,d,c,cp} + b_{i,d,c',cp} - bs_{i,d,c,c',cp} \leq 1 \nonumber \qquad
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_proibe_compartilhamento(void)
+int SolverMIP::cria_restricao_proibe_compartilhamento( int campusId )
 {
    int restricoes = 0;
 
@@ -16530,7 +16888,7 @@ uma sala tenha horario sobreposto.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento()
+int SolverMIP::cria_restricao_evita_sobrepos_sala_por_compartilhamento( int campusId )
 {
 
 	ofstream outTestFile;
@@ -16993,7 +17351,7 @@ big $M$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_ativacao_var_e()
+int SolverMIP::cria_restricao_ativacao_var_e( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -17113,7 +17471,7 @@ big $M$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::cria_restricao_ativacao_var_of()
+int SolverMIP::cria_restricao_ativacao_var_of( int campusId )
 {
     int restricoes = 0;
     char name[ 100 ];
@@ -17403,7 +17761,7 @@ big $M$.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_restricao_ativacao_var_p()
+int SolverMIP::cria_restricao_ativacao_var_p( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -17764,7 +18122,7 @@ Ativação da variável g
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_restricao_ativacao_var_g()
+int SolverMIP::cria_restricao_ativacao_var_g( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -17916,7 +18274,7 @@ curricular
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_restricao_evita_sobrepos_sala_por_div_turmas(void)
+int SolverMIP::cria_restricao_evita_sobrepos_sala_por_div_turmas( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -18078,7 +18436,7 @@ big $M$.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::cria_restricao_ativacao_var_q(void)
+int SolverMIP::cria_restricao_ativacao_var_q( int campusId )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -18378,7 +18736,7 @@ int SolverMIP::cria_restricao_ativacao_var_q(void)
 }
 
 
-int SolverMIP::cria_restricao_ativacao_var_cs(void)
+int SolverMIP::cria_restricao_ativacao_var_cs( int campusId )
 {
    int restricoes = 0;
 
@@ -18465,7 +18823,7 @@ int SolverMIP::cria_restricao_ativacao_var_cs(void)
 	de sala por compartilhamento de turma
 	(int cria_restricao_evita_sobrepos_sala_por_div_turmas(void)) não falhe.
 */
-int SolverMIP::cria_restricao_fixa_nao_compartilhamento(void)
+int SolverMIP::cria_restricao_fixa_nao_compartilhamento( int campusId )
 {
    int restricoes = 0;
    
@@ -18602,7 +18960,7 @@ int SolverMIP::cria_restricao_fixa_nao_compartilhamento(void)
 }
 
 
-int SolverMIP::cria_restricao_ativacao_var_cbc(void)
+int SolverMIP::cria_restricao_ativacao_var_cbc( int campusId )
 {
    int restricoes = 0;
 

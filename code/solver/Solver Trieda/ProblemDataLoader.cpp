@@ -1934,9 +1934,9 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 
 					if ( problemData->mapGroupDisciplinasSubstituidas[ parCursoCurr ][ discNova ].size() > 1 )
 					{
-						std::cout<<"ATENCAO em void ProblemDataLoader::substituiDisciplinasEquivalentes():"
-							<<" a disciplina "<<discNova->getId()<<" esta substituindo "
-							<<"mais de uma disciplina no curriculo "<<curriculo->getId();
+						std::cout << "\nATENCAO em void ProblemDataLoader::substituiDisciplinasEquivalentes():"
+								  << " a disciplina " << discNova->getId() << " esta substituindo "
+								  << "mais de uma disciplina no curriculo " << curriculo->getId() << "\n";
 					}
 
 					it_periodo_disc = curriculo->disciplinas_periodo.begin();
@@ -2746,7 +2746,7 @@ void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
    // Imprime o mapGroupDisciplinasSubstituidas
 
 	ofstream outTestFile2;
-	char equivFilename2[] = "mapGroupDisciplinasSubstituidas.txt";
+	char equivFilename2[] = "mapGroupDisciplinasSubstituidasProblematicas.txt";
 	outTestFile2.open(equivFilename2, ios::out);
 	if (!outTestFile) {
 		cerr << "Can't open output file " << equivFilename2 << endl;
@@ -2757,15 +2757,19 @@ void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
 				   std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator it
 				   = problemData->mapGroupDisciplinasSubstituidas.begin();
 	     it != problemData->mapGroupDisciplinasSubstituidas.end(); it++ )
-   {
-	   outTestFile2 <<"\nCurso "<< it->first.first->getId() <<" Curric "<< it->first.second->getId();
-	   for ( std::map< Disciplina *, 
-					   GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator it2 = it->second.begin();
+   {	   
+	   for ( std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator it2 = it->second.begin();
 			 it2 != it->second.end(); it2++ )
 	   {
-			outTestFile2 <<"\tSubstituta "<< it2->first->getId();
-			ITERA_GGROUP_LESSPTR( itDisciplina, it2->second, Disciplina )
-				outTestFile2 <<" Antiga "<< itDisciplina->getId();
+		   if ( it2->second.size() > 1 )
+		   {
+				outTestFile2 <<"\nCurso "<< it->first.first->getId() <<" Curric "<< it->first.second->getId();
+				outTestFile2 <<"  Substituta "<< it2->first->getId();
+			    ITERA_GGROUP_LESSPTR( itDisciplina, it2->second, Disciplina )
+				{
+					outTestFile2 <<" Antiga "<< itDisciplina->getId();
+				}
+		   }
 	   }
    }
    outTestFile2.close();
