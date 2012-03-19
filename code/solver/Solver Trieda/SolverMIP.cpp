@@ -1262,12 +1262,14 @@ int SolverMIP::solvePreTatico( int campusId )
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 7200 );
+   lp->setTimeLimit( 9000 );
    lp->setMIPRelTol( 0.0001 );
    lp->setPreSolve(OPT_TRUE);
    lp->setHeurFrequency(1.0);
    lp->setMIPEmphasis(0);
    lp->setSymetry(0);
+   lp->setPolishAfterTime(7200);
+   //lp->setMIPRelTol(0.02);
    //lp->setNoCuts();
    lp->setMIPScreenLog( 4 );
 
@@ -1359,14 +1361,16 @@ int SolverMIP::solveTaticoBasico( int campusId )
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 21800 );
-   lp->setMIPRelTol( 0.02 );
+   lp->setTimeLimit( 14400 );
+   //lp->setTimeLimit( 3600 );
+   lp->setMIPRelTol( 0.0001 );
    lp->setPreSolve(OPT_TRUE);
    lp->setHeurFrequency(1.0);
    lp->setMIPScreenLog( 4 );
    lp->setMIPEmphasis(0);
    lp->setPolishAfterNode(1);
-   lp->setSymetry(0);
+   lp->setSymetry(0); 
+   //lp->setMIPRelTol(0.02);
    //lp->setNoCuts();
    lp->setCuts(3);
    lp->writeProbLP( "Solver Trieda" );
@@ -13445,7 +13449,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco( int campusId )
 				{
 				   disciplina = ( *it_disciplina );
 
-				   #pragma region Equivalências
+				   /*#pragma region Equivalências
 				   std::pair< Curso *, Curriculo * > curso_curriculo
 					  = problemData->map_Disc_CursoCurriculo[ disciplina ];
 				   curso = curso_curriculo.first;
@@ -13456,7 +13460,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco( int campusId )
 				   {
 					  disciplina = disciplina_equivalente;
 				   }
-				   #pragma endregion
+				   #pragma endregion*/
 
 				   // Só considera disciplinas da semana letiva corrente
 				   if ( disciplina->getCalendario() != *itSL )

@@ -4710,7 +4710,8 @@ void ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric()
     {
 	    BlocoCurricular *bc = *itBloco;
 
-	 	GGroup< Calendario*, LessPtr<Calendario> > calendarios = bc->curriculo->retornaSemanasLetivasNoPeriodo( bc->getPeriodo() );
+	 	//GGroup< Calendario*, LessPtr<Calendario> > calendarios = bc->curriculo->retornaSemanasLetivasNoPeriodo( bc->getPeriodo() );
+       GGroup< Calendario*, LessPtr<Calendario> > calendarios = problemData->calendarios;
 
 		if ( calendarios.size() == 1 )
 		{
