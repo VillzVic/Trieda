@@ -56,6 +56,8 @@ denotados por $s$.
 
 \item $U$ - Conjunto de unidades. Os elementos desse conjunto são denotados por $u$.
 
+\item $SL_{bc}$ - Conjunto de semanas letivas (calendarios) presentes em um bloco curricular $bc$.
+
 \end{itemize}
 
 \subsubsection{Dados do Modelo}
@@ -90,7 +92,7 @@ créditos disponíveis de todas as semanas letivas na sala $s$ na semana.
 \item $b_{i,d,c}$ - indica se algum aluno do curso $c$ foi alocado para a $i$-ésima turma da disciplina $d$. 
 \item $c_{i,d,u,s,oft}$ - indica se a turma $i$ da disciplina $d$ atendendo a oferta $oft$ foi alocada na unidade $u$ na sala $s$.
 \item $fd_{d,oft}$ - variável de folga que indica a demanda não atendida da disciplina $d$ oferta $oft$.
-\item $bs_{i,d,c,c',cp}$ - variável de folga para a restrição em que o compartilhamento de turmas
+\item $fc_{i,d,c,c',cp}$ - variável de folga para a restrição em que o compartilhamento de turmas
 com alunos de cursos diferentes é proibido. 
 \item $H$ - maior número de créditos alocados para uma sala na semana.
 \item $fs_{d,s,oft}$ - variável de folga que indica o número (excedente a 1) de turmas de uma disciplina $d$
@@ -120,12 +122,18 @@ $$
       \\
       &
       + 100 \cdot \sum\limits_{i \in I_{d}}\sum\limits_{d \in D_{c} \cap D_{c'}}
-      \sum\limits_{c \in C} \sum\limits_{c' \ne c \in C} bs_{i,d,c,c'}
+      \sum\limits_{c \in C} \sum\limits_{c' \ne c \in C} fc_{i,d,c,c'}
       \\
-      &      
+      &     
+      + 100 \cdot \sum\limits_{oft \in O} \sum\limits_{d \in D_{oft}}\sum\limits_{s \in S} fs_{d,s,oft}
+      \\
+      & 
        + H
 \end{array}
 $$
+
+
+
 \subsubsection{Carga horária de todas as turmas de cada disciplina}
 
 \begin{eqnarray}
@@ -134,6 +142,8 @@ $$
 \forall i \in I_{d} \quad 
 \forall cp \in CP 
 \end{eqnarray}
+
+
 
 \subsubsection{Ativação da variável $o$}
 
@@ -154,6 +164,8 @@ C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad
 \forall i \in I_{d} \quad
 \end{eqnarray}
 
+
+
 \subsubsection{Número de créditos por sala na semana}
 
 \begin{eqnarray}
@@ -171,6 +183,8 @@ C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad
 \forall i \in I_{d}
 \end{eqnarray}
 
+
+
 \subsubsection{Capacidade alocada tem que permitir atender demanda da disciplina}
 
 \begin{eqnarray}
@@ -178,6 +192,8 @@ C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad
 \forall oft \in O \quad
 \forall d \in D_{oft}
 \end{eqnarray}
+
+
 
 \subsubsection{Se alocar uma sala para uma turma, tem que respeitar capacidade da sala}
 
@@ -204,11 +220,13 @@ C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad
 \subsubsection{Não permitir que alunos de cursos diferentes compartilhem turmas (*)}
 
 \begin{eqnarray} 
-b_{i,d,c} + b_{i,d,c'} - bs_{i,d,c,c'} \leq 1 \nonumber \qquad 
+b_{i,d,c} + b_{i,d,c'} - fc_{i,d,c,c'} \leq 1 \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall c,c' \in C\quad
 \end{eqnarray}
+
+
 
 \subsubsection{Não permitir que alunos de cursos incompatíveis compartilhem turmas (*)}
 
@@ -218,6 +236,8 @@ b_{i,d,c} + b_{i,d,c'}\leq 1 \nonumber \qquad
 \forall i \in I_{d} \quad
 \forall c,c' \notin CC \quad
 \end{eqnarray}
+
+
 
 \subsubsection{Associa variáveis o e z}
 
@@ -238,6 +258,9 @@ MinAlunos \cdot z_{i,d,cp} \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} 
 \forall i \in I_{d}
 \end{eqnarray}
 
+
+
+
 \subsubsection{Abertura sequencial de turmas}
 
 \begin{eqnarray}
@@ -245,6 +268,8 @@ MinAlunos \cdot z_{i,d,cp} \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} 
 \forall d \in D \quad
 \forall i,i' \in I_{d} \quad i<i'
 \end{eqnarray}
+
+
 
 \subsubsection{Favorece turmas de mesma disciplina a serem abertas em salas diferentes}
 
@@ -256,6 +281,8 @@ MinAlunos \cdot z_{i,d,cp} \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} 
 \forall oft \in Oft_{d} \quad
 \end{eqnarray}
 
+
+
 \subsubsection{Favorece a distribuição equilibrada das turmas entre as salas}
 
 \begin{eqnarray}
@@ -264,7 +291,10 @@ H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} x_{i,d,u,s} \nonumber \qqu
 \forall s \in S_{u} \quad
 \end{eqnarray}
 
+
+
 \subsubsection{Ativação da variável c}
+
 \begin{eqnarray}
 a_{i,d,s,oft} \le M \cdot c_{i,d,u,s,oft} \nonumber \qquad 
 \forall u \in U \quad
@@ -274,6 +304,22 @@ a_{i,d,s,oft} \le M \cdot c_{i,d,u,s,oft} \nonumber \qquad
 \forall oft \in Oft_{d} \quad
 \end{eqnarray}
 
+
+
+\subsubsection{Fixa o Não-Compartilhamento}
+
+\begin{eqnarray}
+\sum\limits_{u \in U}\sum\limits_{s \in S_{u}} c_{i,d,u,s,oft1} +
+\sum\limits_{u \in U}\sum\limits_{s \in S_{u}} c_{i,d,u,s,oft2} \le 1 \nonumber \qquad 
+\forall i \in I_{d} \quad
+\forall d \in D_{bc1} \cap D_{bc2} \quad
+\forall bc1 \in BC_{oft1} \quad
+\forall bc2 \in BC_{oft2} \quad
+\text{sendo: } |SL_{bc1}| + |SL_{bc2}| > 2 \quad
+\forall oft1 \in Oft \quad
+\forall oft2 \in Oft \quad
+
+\end{eqnarray}
 
 
 \section{Módulo Tático}
@@ -286,6 +332,8 @@ a_{i,d,s,oft} \le M \cdot c_{i,d,u,s,oft} \nonumber \qquad
 
 \item $B$ - Conjunto de blocos curriculares. Os elementos desse conjunto são 
 denotados por $bc$.
+
+\item $B_{oft}$ - Conjunto de blocos curriculares de uma oferta $oft$.
 
 \item $C$ - Conjunto de cursos. Os elementos desse conjunto são denotados por $c$.
 
@@ -329,7 +377,11 @@ são denotados por $t$.
 \item $Kh_{s,t}$ - Conjunto de combinações possíveis de divisão de horários para uma sala $s$ em um dia $t$.
 Os elementos desse conjunto são denotados por $kh_{s,t}$.
 
+\item $Kh_{bc,t}$ - Conjunto de combinações possíveis de divisão de horários para um bloco curricular $bc$ em um dia $t$.
+Os elementos desse conjunto são denotados por $kh_{bc,t}$.
+
 \item $SL$ - Conjunto de semanas letivas. Os elementos desse conjunto são denotados por $sl$.
+
 
 \end{itemize}
 
@@ -395,8 +447,11 @@ Os elementos desse conjunto são denotados por $kh_{s,t}$.
 
 \item $MaxCred_{oft,t}$ - máximo de créditos para a oferta $oft$ no dia $t$.
 
-\item $Nh_{sl,kh,s,t}$ - número máximo de horários da semana letiva $sl$ determinados para a sala $s$ no dia $t$ na combinação de divisão de horários $kh$.
+\item $Nh_{sl,kh,s,t}$ - número máximo de horários da semana letiva $sl$ determinados para a sala $s$ no dia $t$ na combinação de divisão de horários $kh \in Kh_{s,t}$.
 
+\item $Nh_{sl,kh,bc,t}$ - número máximo de horários da semana letiva $sl$ determinados para o bloco curricular $bc$ no dia $t$ na combinação de divisão de horários $kh \in Kh_{bc,t}$.
+
+\item $minAlunos$ - numero minimo de alunos necessários para abertura de uma turma. É um valor de parâmetro cadastrado pelo cliente.
 
 \end{itemize}
 
@@ -417,7 +472,8 @@ de alunos de cursos diferentes (mesmo que compatíveis) é proibido.
 \item $fcp_{d,t}$ - variável de folga superior para a restrição de fixação da distribuição de créditos por dia. 
 \item $fd_{d,oft}$ - variável de folga para a restrição "Capacidade alocada tem que 
 permitir atender demanda da disciplina". 
-\item $fk_{d,i,t}$ - variável de folga para a restrição de combinação de divisão de créditos. 
+\item $fkm_{d,i,t}$ - variável de folga inferior para a restrição de combinação de divisão de créditos. 
+\item $fkp_{d,i,t}$ - variável de folga superior para a restrição de combinação de divisão de créditos.
 \item $fn_{bc,tps}$ - variável de folga para a restrição "Evitar alocação do mesmo 
 bloco curricular em tipos de salas diferentes". 
 \item $m_{d,i,k}$ - variável binária que indica se a combinação de divisão de créditos 
@@ -441,6 +497,7 @@ em salas do tipo (capacidade) $tps$ no dia $t$.
 \item $p_{i,d,oft1,oft2,u,tps,t}$ - número de créditos alocados tanto para a oferta $oft1$ quanto para a $oft2$, turma $i$ da disciplina $d$ na unidade $u$ em salas do tipo (capacidade) $tps$ no dia $t$. 
 \item $g_{d,oft,t}$ - número mínimo de horários que a disciplina $d$ oferta $oft$ ocupa no dia t. É relevante quando a disciplina de uma oferta possui mais de 1 turma.
 \item $cs_{s,t,k}$ - variável binária que indica se a combinação de divisão de horários $k$ foi escolhida para a sala $s$ no dia $t$.
+\item $cbc_{bc,t,k}$ - variável binária que indica se a combinação de divisão de horários $k$ foi escolhida para o bloco curricular $bc$ no dia $t$.
 
 \end{itemize}
 
@@ -497,6 +554,8 @@ $$
        + 100 \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{c,c' \in CC} \sum\limits_{cp \in CP} fc_{i,d,c,c',cp}
 \end{array}
 $$
+
+
 \subsubsection{Carga horária de todas as turmas de cada disciplina}
 
 \begin{eqnarray}
@@ -507,9 +566,9 @@ $$
 \end{eqnarray}
 
 
+
+
 \subsubsection{Máximo de créditos por sala e dia (Somente para quando houver 1 única semana letiva)}
-
-
 
 \begin{eqnarray}
 \sum\limits_{d \in D}\sum\limits_{i \in I_{d}} x_{i,d,u,tps,t} \leq  HTPS_{t,tps} \nonumber \qquad 
@@ -519,9 +578,9 @@ $$
 \end{eqnarray}
 
 
+
+
 \subsubsection{Mínimo de créditos diários da disciplina (*)}
-
-
 
 \begin{eqnarray}
 \underline{H_{d}} \cdot o_{i,d,u,tps,t}  \leq  x_{i,d,u,tps,t}  \nonumber \qquad 
@@ -533,9 +592,9 @@ $$
 \end{eqnarray}
 
 
+
+
 \subsubsection{Ativação da variável $o$}
-
-
 
 \begin{eqnarray}
 C_{d} \cdot o_{i,d,u,tps,t}  \geq  x_{i,d,u,tps,t}  \nonumber \qquad 
@@ -547,9 +606,9 @@ C_{d} \cdot o_{i,d,u,tps,t}  \geq  x_{i,d,u,tps,t}  \nonumber \qquad
 \end{eqnarray}
 
 
+
+
 \subsubsection{Evitar sobreposição de turmas da mesma disciplina}
-
-
 
 \begin{eqnarray}
 \sum\limits_{tps \in SCAP_{u}} o_{i,d,u,tps,t}  \leq  1  \nonumber \qquad 
@@ -560,10 +619,10 @@ C_{d} \cdot o_{i,d,u,tps,t}  \geq  x_{i,d,u,tps,t}  \nonumber \qquad
 \end{eqnarray}
 
 
+
+
 \subsubsection{Indicação de que uma turma de uma disciplina foi alocada 
 em um determinado tipo de sala (*)}
-
-
 
 \begin{eqnarray}
 \sum\limits_{t \in T} o_{i,d,u,tps,t}  \leq  7 \cdot y_{i,d,tps,u}  \nonumber \qquad 
@@ -575,9 +634,9 @@ em um determinado tipo de sala (*)}
 \end{eqnarray}
 
 
+
+
 \subsubsection{Uma turma só pode ser alocada a um tipo de sala}
-
-
 
 \begin{eqnarray}
 \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} y_{i,d,tps,u}  \leq  1 \nonumber \qquad 
@@ -586,9 +645,9 @@ em um determinado tipo de sala (*)}
 \end{eqnarray}
 
 
+
+
 \subsubsection{Evitar alocação de turmas da mesma disciplina em campus diferentes}
-
-
 
 \begin{eqnarray}
 \sum\limits_{cp \in CP} z_{i,d,cp}  \leq  1  \nonumber \qquad 
@@ -597,9 +656,8 @@ em um determinado tipo de sala (*)}
 \end{eqnarray}
 
 
+
 \subsubsection{Abertura de turmas de um mesmo bloco curricular}
-
-
 
 \begin{eqnarray}
 \sum\limits_{d \in D_{b}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{i \in I_{d}} o_{i,d,u,tps,t}  \leq M \cdot w_{bc,t,cp} \nonumber \qquad 
@@ -611,20 +669,21 @@ em um determinado tipo de sala (*)}
 
 \subsubsection{Disciplinas de mesmo bloco não devem exceder máximo de créditos por dia}
 
-
-
 \begin{eqnarray}
-\sum\limits_{d \in D_{bc}} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} \sum\limits_{i \in I_{d}} x_{i,d,u,tps,t}  \leq H_{t} \cdot w_{bc,t,cp}  \nonumber \qquad 
-\forall bc \in B \quad
-\forall cp \in CP \quad
+
+\sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{bc,sl}} \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} q_{i,d,oft,u,s,t}
+\le \sum\limits_{kh \in Kh_{bc,t}} ( Nh_{sl,kh,bc,t} \cdot cbc_{bc,t,kh} ) \nonumber \qquad
+\forall bc \in B_{oft} \quad
+\forall oft \in O \quad
+\forall sl \in SL
 \forall t \in T
 \end{eqnarray}
 
 
+
+
 \subsubsection{Contabiliza se há turmas do mesmo bloco curricular abertas no mesmo 
 dia em unidades distintas}
-
-
 
 \begin{eqnarray}
 \sum\limits_{cp \in CP} r_{bc,t,cp} - 1  \leq v_{bc,t} \nonumber \qquad 
@@ -633,9 +692,8 @@ dia em unidades distintas}
 \end{eqnarray}
 
 
+
 \subsubsection{Limite de créditos diários de disciplina (*)}
-
-
 
 \begin{eqnarray}
 x_{i,d,u,tps,t}  \leq \overline{H_{d}}  \nonumber \qquad 
@@ -647,9 +705,8 @@ x_{i,d,u,tps,t}  \leq \overline{H_{d}}  \nonumber \qquad
 \end{eqnarray}
 
 
+
 \subsubsection{Capacidade alocada tem que permitir atender demanda da disciplina}
-
-
 
 \begin{eqnarray}
 \sum\limits_{i \in I_{d}} a_{i,d,oft} + fd_{d,oft} =  P_{d,oft}  \nonumber \qquad 
@@ -780,7 +837,7 @@ w_{bc,t,cp} \leq M \cdot r_{bc,t,cp} \nonumber \qquad
 
 
 \begin{eqnarray}
-z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad 
+minAlunos \cdot z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad 
 \forall cp \in CP \quad
 \forall d \in D \quad
 \forall i \in I_{d}
@@ -803,7 +860,7 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 
 
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fk_{d,i,t} \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} x_{i,d,u,tps,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fkp_{d,i,t} - fkm_{d,i,t} \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall t \in T
@@ -824,7 +881,6 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \subsubsection{Ativação da variável y}
 
 
-
 \begin{eqnarray}
 \sum\limits_{t \in T} o_{i,d,u,tps,t}  \geq  y_{i,d,tps,u}  \nonumber \qquad 
 \forall d \in D \quad
@@ -835,8 +891,8 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \end{eqnarray}
 
 
-\subsubsection{Máximo de créditos diários da disciplina}
 
+\subsubsection{Máximo de créditos diários da disciplina}
 
 
 \begin{eqnarray}
@@ -849,8 +905,6 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 
 \subsubsection{Máximo de créditos diários do bloco}
 
-
-
 \begin{eqnarray}
 \sum\limits_{d \in D_{bc}} xm_{d, t} \leq H_{bc,t} \nonumber \qquad 
 \forall bc \in B \quad
@@ -858,9 +912,8 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \end{eqnarray}
 
 
+
 \subsubsection{Ativação da variável zc}
-
-
 
 \begin{eqnarray}
 \sum\limits_{i \in I} \sum\limits_{u \in U} \sum\limits_{tps \in SCAP_{u}} o_{i,d,u,tps,t} \leq zc_{d,t} \cdot M \nonumber \qquad 
@@ -869,9 +922,8 @@ z_{i,d,cp} \leq \sum\limits_{oft \in O_{cp}} a_{i,d,oft}  \nonumber \qquad
 \end{eqnarray}
 
 
+
 \subsubsection{Disciplinas incompatíveis}
-
-
 
 \begin{eqnarray}
 zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad 
@@ -880,9 +932,8 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 \end{eqnarray}
 
 
+
 \subsubsection{Ativação da variável n}
-
-
 
 \begin{eqnarray}
  \sum\limits_{u \in U} \sum\limits_{i \in I} \sum\limits_{d \in D_{bc}} 
@@ -893,9 +944,8 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 \end{eqnarray}
 
 
+
 \subsubsection{Evitar alocação do mesmo bloco curricular em tipos de salas diferentes}
-
-
 
 \begin{eqnarray}
  \sum\limits_{tps \in SCAP_{u}} n_{bc,tps} + fn_{bc,tps} 
@@ -904,9 +954,9 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 \end{eqnarray}
 
 
+
+
 \subsubsection{Não permitir que alunos de cursos diferentes compartilhem turmas (*)}
-
-
 
 \begin{eqnarray} 
 b_{i,d,c,cp} + b_{i,d,c',cp} - fc_{i,d,c,c',cp} \le 1 \nonumber \qquad 
@@ -917,9 +967,8 @@ b_{i,d,c,cp} + b_{i,d,c',cp} - fc_{i,d,c,c',cp} \le 1 \nonumber \qquad
 \end{eqnarray}
 
 
+
 \subsubsection{Ativação da variável e}
-
-
 
 \begin{eqnarray}
 a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad 
@@ -930,8 +979,7 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 
-\subsubsection{Evita sobreposição de horário em sala devido a compartilhamento de disciplinas entre dois cursos}
-
+\subsubsection{Evita sobreposição de horário em sala devido a compartilhamento de disciplinas entre duas ofertas}
 
 \begin{eqnarray}
  x_{i,d,u,s,t} + \sum\limits_{d' \in (D_{oft1} U D_{oft2})} \sum\limits_{i' \in I_{d'}}( q_{i',d',oft,s',t} - p_{i',d',oft1,oft2,s',t}) \leq Q_{bc,t} + M ( 1 - of_{i,d,oft1,oft2} ) \nonumber \qquad 
@@ -948,7 +996,6 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 
 
 \subsubsection{Ativação da variável of}
-
 
 \begin{eqnarray}
 \begin{center}
@@ -1006,14 +1053,12 @@ g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
 
 \subsubsection{Evita sobreposição de sala por turmas de uma mesma disciplina e mesmo bloco curricular}
 
-
 \begin{eqnarray}	
-\sum\limits_{d \in D_{bc}} ( g_{d,oft,t} ) \le MaxCred_{oft,t} \nonumber \qquad
+\sum\limits_{d \in D_{bc}} ( g_{d,oft,t} ) \le \sum\limits_{kh \in Kh_{bc,t}} ( Nh_{sl,kh,bc,t} \cdot cbc_{bc,t,kh} ) \nonumber \qquad
 \forall bc \in oft \quad
 \forall oft \in O \quad
-\forall u \in U \quad
-\forall s \in S_{u} \quad
-\forall t \in T 
+\forall sl \in SL
+\forall t \in T
 \end{eqnarray}
 
 
@@ -1052,6 +1097,16 @@ q_{i,d,oft,u,s,t} = x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber
 
 
 
+\subsubsection{Ativação da variável cbc (Para quando houver 2 semanas letivas)}
+
+
+\begin{eqnarray}
+\sum\limits_{kh \in Kh_{bc,t}} cbc_{bc,t,kh} \le 1 \nonumber \qquad
+\forall bc \in B \quad
+\forall t \in T
+\end{eqnarray}
+
+
 \subsubsection{Máximo de créditos por sala, dia e semana letiva (Para quando houver 2 semanas letivas)}
 
 
@@ -1062,6 +1117,21 @@ q_{i,d,oft,u,s,t} = x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber
 \forall s \in S_{u} \quad
 \forall t \in T
 \end{eqnarray}
+
+
+
+\subsubsection{Fixa o Não-Compartilhamento}
+
+
+\begin{eqnarray}
+of_{i,d,oft1,oft2} \eq 0 \nonumber \qquad 
+\forall i \in I_{d} \quad
+\forall d \in D_{bc1} \cap D_{bc2} \quad
+\forall bc1 \in BC_{oft1} \quad
+\forall bc2 \in BC_{oft2} \quad
+\text{sendo: } |SL_{bc1}| + |SL_{bc2}| > 2 \quad
+\forall oft1 \in Oft \quad
+\forall oft2 \in Oft \quad
 
 
 
