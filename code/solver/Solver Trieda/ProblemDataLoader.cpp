@@ -61,6 +61,10 @@ void ProblemDataLoader::load()
    // ---------
    referenciaDisciplinasEquivalentes();
 
+   std::cout << "Referencia calendarios dos curriculos..." << std::endl;
+   // ---------
+   referenciaCalendariosCurriculos();
+
    std::cout << "Relacionando horarios aula dia semana..." << std::endl;
    // ---------
    relacionaHorariosAulaDiaSemana();
@@ -2127,13 +2131,32 @@ void ProblemDataLoader::referenciaCursos_DiscCalendarios()
 		  for ( ; itPeriodoDisc != it_curriculo->disciplinas_periodo.end(); itPeriodoDisc++ )
 		  {
 			  itPeriodoDisc->first->setCalendario( it_curriculo->calendario );
-			  it_curriculo->semanasLetivas[itPeriodoDisc->second].add(it_curriculo->calendario);
 		  }
       }
    }
 
 }
 
+void ProblemDataLoader::referenciaCalendariosCurriculos()
+{    
+   // Referencia as semanas letivas (calendarios) de cada curriculo
+   // Tem que ser chamada depois das substituições de equivalência!
+
+   ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
+   {
+      ITERA_GGROUP_LESSPTR( it_curriculo, it_curso->curriculos, Curriculo )
+      {
+		  map < Disciplina*, int, LessPtr< Disciplina > >::iterator
+			  itPeriodoDisc = it_curriculo->disciplinas_periodo.begin();
+
+		  for ( ; itPeriodoDisc != it_curriculo->disciplinas_periodo.end(); itPeriodoDisc++ )
+		  {
+			  it_curriculo->semanasLetivas[itPeriodoDisc->second].add(it_curriculo->calendario);
+		  }
+      }
+   }
+
+}
 
 void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 {

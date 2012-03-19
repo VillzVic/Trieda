@@ -164,7 +164,7 @@ public:
    int cria_restricao_evita_sobreposicao( int campusId );			    // Restricao 1.2.6
    int cria_restricao_disciplina_sala( int campusId );					// Restricao 1.2.7
    int cria_restricao_turma_sala( int campusId );					    // Restricao 1.2.8
-   int cria_restricao_evita_turma_disc_camp_d( int campusId );			// Restricao 1.2.9
+   int cria_restricao_evita_turma_disc_camp_d( );						// Restricao 1.2.9
    int cria_restricao_turmas_bloco( int campusId );						// Restricao 1.2.10
    int cria_restricao_max_cred_disc_bloco( int campusId );				// Restricao 1.2.11
    int cria_restricao_num_tur_bloc_dia_difunid( int campusId );			// Restricao 1.2.12

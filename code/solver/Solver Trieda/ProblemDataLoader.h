@@ -61,6 +61,8 @@ public:
    
    void referenciaCursos_DiscCalendarios();
 
+   void referenciaCalendariosCurriculos();
+
    // Trata das equivalências entre disciplinas
    void referenciaDisciplinasEquivalentes();
 
