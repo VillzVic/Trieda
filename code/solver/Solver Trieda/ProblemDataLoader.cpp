@@ -2151,7 +2151,7 @@ void ProblemDataLoader::referenciaCalendariosCurriculos()
 
 		  for ( ; itPeriodoDisc != it_curriculo->disciplinas_periodo.end(); itPeriodoDisc++ )
 		  {
-			  it_curriculo->semanasLetivas[itPeriodoDisc->second].add(it_curriculo->calendario);
+			  it_curriculo->semanasLetivas[itPeriodoDisc->second].add( itPeriodoDisc->first->getCalendario() );
 		  }
       }
    }
