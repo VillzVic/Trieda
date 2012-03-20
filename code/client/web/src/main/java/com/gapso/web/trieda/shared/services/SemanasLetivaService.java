@@ -27,5 +27,7 @@ public interface SemanasLetivaService
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getAllHorariosDisponiveisCenario();
 	void saveHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO );
+	void removeHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO,
+			List<HorarioDisponivelCenarioDTO> listDTO);
 	SemanaLetivaDTO findSemanaLetiva( Long id );
 }

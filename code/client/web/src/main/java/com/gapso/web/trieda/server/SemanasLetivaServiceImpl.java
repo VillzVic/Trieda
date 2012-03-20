@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
@@ -217,6 +218,42 @@ public class SemanasLetivaServiceImpl
 		result.setTotalLength( list.size() );
 
 		return result;
+	}
+	
+	public void removeHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO,
+		List< HorarioDisponivelCenarioDTO > listDTO){
+		List< HorarioDisponivelCenario > listSelecionados
+		= ConvertBeans.toHorarioDisponivelCenario( listDTO );
+
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(
+			semanaLetivaDTO.getId(), getInstituicaoEnsinoUser() );
+	
+		List< HorarioDisponivelCenario > todosQueJaTinhamList
+			= new ArrayList< HorarioDisponivelCenario >();
+	
+		for ( HorarioAula horarioAula : semanaLetiva.getHorariosAula() )
+		{
+			todosQueJaTinhamList.addAll(
+				horarioAula.getHorariosDisponiveisCenario() );
+		}
+	
+		List< HorarioDisponivelCenario > removerList
+			= new ArrayList< HorarioDisponivelCenario >( todosQueJaTinhamList );
+	
+		removerList.removeAll( listSelecionados );
+		
+		for(HorarioDisponivelCenario hdc: removerList){
+			List<AtendimentoOperacional> atendimentoOperacionalList = AtendimentoOperacional.findAllByDiasHorariosAula(getInstituicaoEnsinoUser(), hdc);
+			for(AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList){
+				atendimentoOperacional.remove();
+			}
+		}
+		
+		for(HorarioAula horariosAula : semanaLetiva.getHorariosAula()){
+			horariosAula.getHorariosDisponiveisCenario().removeAll(removerList);
+			horariosAula.merge();
+		}
+	
 	}
 
 	@Override

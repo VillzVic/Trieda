@@ -495,6 +495,21 @@ public class AtendimentoOperacional
 	}
 	
 	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllByDiasHorariosAula(
+			InstituicaoEnsino instituicaoEnsino, HorarioDisponivelCenario horarioDisponivelCenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.HorarioDisponivelCenario = :horarioDisponivelCenario " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" );
+
+		q.setParameter( "horarioDisponivelCenario", horarioDisponivelCenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllBy(
 		Campus campus, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{

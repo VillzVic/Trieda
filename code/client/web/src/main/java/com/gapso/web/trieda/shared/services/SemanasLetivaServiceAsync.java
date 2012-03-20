@@ -29,6 +29,9 @@ public interface SemanasLetivaServiceAsync
 
 	void getAllHorariosDisponiveisCenario( AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
 
+	void removeHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO,
+			List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
+	
 	void saveHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 

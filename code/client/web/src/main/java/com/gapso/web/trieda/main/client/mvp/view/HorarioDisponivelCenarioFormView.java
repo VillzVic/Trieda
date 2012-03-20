@@ -185,4 +185,9 @@ public class HorarioDisponivelCenarioFormView
 	{
 		return this.removerHorarioBT;
 	}
+	
+	@Override
+	public SemanaLetivaGrid<HorarioDisponivelCenarioDTO> getGrid(){
+		return this.gridPanel;
+	}	
 }
