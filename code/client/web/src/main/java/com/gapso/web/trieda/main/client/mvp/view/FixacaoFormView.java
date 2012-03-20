@@ -3,6 +3,9 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
@@ -137,7 +140,12 @@ public class FixacaoFormView extends MyComposite implements
 		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
 				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID);
 		grid.setSelectDefault(selectDefault);
-
+		
+		grid.addListener(Events.Render, new Listener<ComponentEvent>(){
+			public void handleEvent(ComponentEvent be){
+				grid.unCheckAllHeaders();
+			}
+		});
 		container.add(formPanel, new VBoxLayoutData(new Margins(0, 0, 5, 0)));
 		VBoxLayoutData flex = new VBoxLayoutData(new Margins(0));
 		flex.setFlex(1);

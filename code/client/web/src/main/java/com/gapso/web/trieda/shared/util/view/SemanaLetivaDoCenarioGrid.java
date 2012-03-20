@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -377,5 +378,13 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	public void setSelectDefault( boolean selectDefault )
 	{
 		this.selectDefault = selectDefault;
+	}
+	
+	public void unCheckAllHeaders(){
+		ToggleImageButton[] tibs = {segCB, terCB, quaCB, quiCB, sexCB, sabCB, domCB};
+		for(ToggleImageButton tib: Arrays.asList(tibs)){
+			tib.toggle(false);
+			tib.fireEvent(Events.Select);
+		}
 	}
 }
