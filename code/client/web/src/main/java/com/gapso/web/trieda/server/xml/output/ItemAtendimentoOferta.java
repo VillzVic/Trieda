@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="ofertaCursoCampiId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="disciplinaSubstitutaId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="disciplinaId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="quantidade" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="turma" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ItemAtendimentoOferta", propOrder = {
     "ofertaCursoCampiId",
+    "disciplinaSubstitutaId",
     "disciplinaId",
     "quantidade",
     "turma"
@@ -46,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ItemAtendimentoOferta {
 
     protected int ofertaCursoCampiId;
+    protected Integer disciplinaSubstitutaId;
     protected int disciplinaId;
     protected int quantidade;
     @XmlElement(required = true)
@@ -65,6 +68,30 @@ public class ItemAtendimentoOferta {
      */
     public void setOfertaCursoCampiId(int value) {
         this.ofertaCursoCampiId = value;
+    }
+    
+    /**
+     * Gets the value of the disciplinaSubstitutaId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getDisciplinaSubstitutaId() {
+        return disciplinaSubstitutaId;
+    }
+
+    /**
+     * Sets the value of the disciplinaSubstitutaId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setdisciplinaSubstitutaId(Integer value) {
+        this.disciplinaSubstitutaId = value;
     }
 
     /**

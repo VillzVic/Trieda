@@ -165,12 +165,12 @@
           <xs:documentation>identificador da oferta atendida</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="disciplinaId" type="xs:int">
+      <xs:element minOccurs="0" maxOccurs="1" name="disciplinaSubstitutaId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da disciplina atendida</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" maxOccurs="1" name="disciplinaSubstitutaId" type="xs:int">
+      <xs:element name="disciplinaId" type="xs:int">
         <xs:annotation>
           <xs:documentation>identificador da disciplina atendida</xs:documentation>
         </xs:annotation>

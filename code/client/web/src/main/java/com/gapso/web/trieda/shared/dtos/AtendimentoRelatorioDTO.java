@@ -10,12 +10,17 @@ public interface AtendimentoRelatorioDTO
 	public Integer getTotalCreditos();
 	public Long getDisciplinaId();
 	public String getDisciplinaNome();
+	public String getDisciplinaString();
+	public Long getDisciplinaSubstitutaId();
+	public String getDisciplinaSubstitutaNome();
+	public String getDisciplinaSubstitutaString();
+	public Long getDisciplinaSubstitutaSemanaLetivaId();
+	public Integer getDisciplinaSubstitutaSemanaLetivaTempoAula();
 	public String getContentToolTipVisaoSala(ReportType reportType);
 	public String getContentToolTipVisaoCurso(ReportType reportType);
 	public String getContentVisaoSala(ReportType reportType);
 	public String getContentVisaoCurso(ReportType reportType);
 	public Integer getQuantidadeAlunos();
-	public String getDisciplinaString();
 	public String getTurma();
 	public String getCursoNome();
 	public Long getCursoId();
@@ -25,6 +30,7 @@ public interface AtendimentoRelatorioDTO
 	public Long getCurriculoId();
 	public Long getSemanaLetivaId();
 	public Integer getSemanaLetivaTempoAula();
+	public Integer getDuracaoDeUmaAulaEmMinutos();
 	public Integer getPeriodo();
 	public String getPeriodoString();
 	public String getQuantidadeAlunosString();
@@ -34,6 +40,7 @@ public interface AtendimentoRelatorioDTO
 	public String getSalaString();
 	public boolean isTeorico();
 	public Integer getTotalCreditoDisciplina();
+	public Integer getTotalCreditoDisciplinaSubstituta();
 	public String getUnidadeString();
 	public boolean isTatico();
 	public boolean isProfessorVirtual();

@@ -69,6 +69,11 @@ public class AtendimentoOperacional
 		CascadeType.REFRESH }, targetEntity = Disciplina.class )
 	@JoinColumn( name = "DIS_ID" )
 	private Disciplina disciplina;
+	
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+		CascadeType.REFRESH }, targetEntity = Disciplina.class )
+	@JoinColumn( name = "DIS_SUBSTITUTA_ID" )
+	private Disciplina disciplinaSubstituta;
 
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 		CascadeType.REFRESH }, targetEntity = Professor.class )
@@ -125,6 +130,8 @@ public class AtendimentoOperacional
 		sb.append( "Oferta: " ).append( getOferta() ).append( ", " );
 		sb.append( "Disciplina: " ).append( ( getDisciplina() != null ) ?
 			getDisciplina().getCodigo()	: "null" ).append( ", " );
+		sb.append( "DisciplinaSubstituta: " ).append( ( getDisciplinaSubstituta() != null ) ?
+				getDisciplinaSubstituta().getCodigo()	: "null" ).append( ", " );
 		sb.append( "QuantidadeAlunos: " ).append( getQuantidadeAlunos() );
 
 		return sb.toString();
@@ -697,6 +704,16 @@ public class AtendimentoOperacional
 	public void setDisciplina( Disciplina disciplina )
 	{
 		this.disciplina = disciplina;
+	}
+	
+	public Disciplina getDisciplinaSubstituta()
+	{
+		return this.disciplinaSubstituta;
+	}
+
+	public void setDisciplinaSubstituta( Disciplina disciplinaSubstituta )
+	{
+		this.disciplinaSubstituta = disciplinaSubstituta;
 	}
 
 	public Integer getQuantidadeAlunos()

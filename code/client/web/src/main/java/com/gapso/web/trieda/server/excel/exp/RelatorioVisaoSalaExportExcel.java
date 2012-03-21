@@ -236,8 +236,9 @@ public class RelatorioVisaoSalaExportExcel
 				if (!turnoIdToTurnoMap.containsKey(atendimento.getTurnoId())) {
 					turnoIdToTurnoMap.put(atendimento.getTurnoId(),Turno.find(atendimento.getTurnoId(),this.instituicaoEnsino));
 				}
-				if (!semanaLetivaIdTosemanaLetivaMap.containsKey(atendimento.getSemanaLetivaId())) {
-					semanaLetivaIdTosemanaLetivaMap.put(atendimento.getSemanaLetivaId(),SemanaLetiva.find(atendimento.getSemanaLetivaId(),instituicaoEnsino));
+				Long semanaLetivaASerConsideradaId = (atendimento.getDisciplinaSubstitutaSemanaLetivaId() != null) ? atendimento.getDisciplinaSubstitutaSemanaLetivaId() : atendimento.getSemanaLetivaId(); 
+				if (!semanaLetivaIdTosemanaLetivaMap.containsKey(semanaLetivaASerConsideradaId)) {
+					semanaLetivaIdTosemanaLetivaMap.put(semanaLetivaASerConsideradaId,SemanaLetiva.find(semanaLetivaASerConsideradaId,instituicaoEnsino));
 				}
 
 				// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
@@ -255,10 +256,10 @@ public class RelatorioVisaoSalaExportExcel
 				}
 
 				// armazena os atendimentos associados a uma dada sala, um dado turno e uma dada semana letiva
-				List<AtendimentoRelatorioDTO> atendimentos = turnoAtendimentosPorSemanaLetivaMap.get(atendimento.getSemanaLetivaId());
+				List<AtendimentoRelatorioDTO> atendimentos = turnoAtendimentosPorSemanaLetivaMap.get(semanaLetivaASerConsideradaId);
 				if (atendimentos == null) {
 					atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
-					turnoAtendimentosPorSemanaLetivaMap.put(atendimento.getSemanaLetivaId(),atendimentos);
+					turnoAtendimentosPorSemanaLetivaMap.put(semanaLetivaASerConsideradaId,atendimentos);
 				}
 				atendimentos.add(atendimento);
 
@@ -356,10 +357,12 @@ public class RelatorioVisaoSalaExportExcel
 
 		// preenche grade vazia
 		if (ehTatico) {
+			int cargaHoraria = mdcTemposAula;
 			for (int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++) {
 				// coluna de carga horária
 				for (int i = 0; i < linhasDeExcelPorCredito; i++) {
-					setCell((row+i),col,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],mdcTemposAula);
+					setCell((row+i),col,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],cargaHoraria);
+					cargaHoraria += mdcTemposAula;
 				}
 				col++;
 	
@@ -452,7 +455,7 @@ public class RelatorioVisaoSalaExportExcel
 				// obtém o estilo que será aplicado nas células que serão desenhadas
 				HSSFCellStyle style = codigoDisciplinaToColorMap.get(aula.getDisciplinaString());
 				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
-				int linhasDeExcelPorCreditoDaAula = aula.getSemanaLetivaTempoAula()/mdcTemposAula;
+				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
 				
 				if (!ehTatico) {
 					AtendimentoOperacionalDTO aulaOp = (AtendimentoOperacionalDTO)aula;
@@ -463,7 +466,7 @@ public class RelatorioVisaoSalaExportExcel
 				}
 
 				// escreve célula principal
-				setCell(row,col,sheet,style,aula.getContentVisaoSala(ReportType.EXCEL),aula.getContentToolTipVisaoSala(ReportType.EXCEL));
+				setCell(row,col,sheet,style,HtmlUtils.htmlUnescape(aula.getContentVisaoSala(ReportType.EXCEL)),HtmlUtils.htmlUnescape(aula.getContentToolTipVisaoSala(ReportType.EXCEL)));
 				// une células de acordo com a quantidade de créditos da aula
 				int rowF = row + (ehTatico ? (aula.getTotalCreditos()*linhasDeExcelPorCreditoDaAula-1) : (aula.getTotalCreditos()-1));
 				mergeCells(row,rowF,col,col,sheet,style);
@@ -525,7 +528,7 @@ public class RelatorioVisaoSalaExportExcel
 
 		// Créditos ou Horários
 		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( ehTatico ? "Carga Horária (min)" : this.getI18nConstants().horarios() ) );
+			HtmlUtils.htmlUnescape( ehTatico ? this.getI18nConstants().cargaHorariaMinutos() : this.getI18nConstants().horarios() ) );
 
 		// Dias Semana
 		for ( Semanas semanas : Semanas.values() )

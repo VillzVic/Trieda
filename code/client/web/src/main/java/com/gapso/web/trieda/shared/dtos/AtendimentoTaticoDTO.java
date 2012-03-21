@@ -31,7 +31,13 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_DISCIPLINA_NOME = "disciplinaNome";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_ID = "disciplinaSubstitutaId";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_STRING = "disciplinaSubstitutaString";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_NOME = "disciplinaSubstitutaNome";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID = "disciplinaSubstitutaSemanaLetivaId";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA = "disciplinaSubstitutaSemanaLetivaTempoAula";
 	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA = "totalCreditoDisciplina";
+	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA_SUBSTITUTA = "totalCreditoDisciplinaSubstituta";
 	public static final String PROPERTY_OFERTA_ID = "ofertaId";
 	public static final String PROPERTY_TURMA = "turma";
 	public static final String PROPERTY_TURNO_ID = "turmaId";
@@ -44,18 +50,15 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 	public static final String PROPERTY_SEMANA_LETIVA_TEMPO_AULA = "semanaLetivaTempoAula";
 
-	public AtendimentoTaticoDTO()
-	{
+	public AtendimentoTaticoDTO() {
 		super();
 	}
 
-	public AtendimentoTaticoDTO( AtendimentoTaticoDTO other )
-	{
-		this.copy( other );
+	public AtendimentoTaticoDTO(AtendimentoTaticoDTO other) {
+		this.copy(other);
 	}
 
-	private void copy( AtendimentoTaticoDTO other )
-	{
+	private void copy( AtendimentoTaticoDTO other ) {
 		this.setId( other.getId() );
 		this.setVersion( other.getVersion() );
 		this.setCenarioId( other.getCenarioId() );
@@ -75,10 +78,16 @@ public class AtendimentoTaticoDTO
 		this.setPeriodoString( other.getPeriodoString() );
 		this.setDisciplinaId( other.getDisciplinaId() );
 		this.setDisciplinaString( other.getDisciplinaString() );
+		this.setDisciplinaNome( other.getDisciplinaNome() );
+		this.setDisciplinaSubstitutaId( other.getDisciplinaSubstitutaId() );
+		this.setDisciplinaSubstitutaString( other.getDisciplinaSubstitutaString() );
+		this.setDisciplinaSubstitutaNome( other.getDisciplinaSubstitutaNome() );
+		this.setDisciplinaSubstitutaSemanaLetivaId( other.getDisciplinaSubstitutaSemanaLetivaId() );
+		this.setDisciplinaSubstitutaSemanaLetivaTempoAula( other.getDisciplinaSubstitutaSemanaLetivaTempoAula() );
 		this.setTurnoId( other.getTurnoId() );
 		this.setTurnoString( other.getTurnoString() );
-		this.setDisciplinaNome( other.getDisciplinaNome() );
 		this.setTotalCreditoDisciplina( other.getTotalCreditoDisciplina() );
+		this.setTotalCreditoDisciplinaSubstituta( other.getTotalCreditoDisciplinaSubstituta() );
 		this.setOfertaId( other.getOfertaId() );
 		this.setTurma( other.getTurma() );
 		this.setQuantidadeAlunos( other.getQuantidadeAlunos() );
@@ -278,6 +287,66 @@ public class AtendimentoTaticoDTO
 		set( PROPERTY_DISCIPLINA_STRING, value );
 	}
 	
+	public String getDisciplinaNome()
+	{
+		return get( PROPERTY_DISCIPLINA_NOME );
+	}
+	
+	public void setDisciplinaNome( String value )
+	{
+		set( PROPERTY_DISCIPLINA_NOME, value );
+	}
+	
+	public void setDisciplinaSubstitutaId( Long value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_ID, value );
+	}
+
+	public Long getDisciplinaSubstitutaId()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_ID );
+	}
+
+	public String getDisciplinaSubstitutaString()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_STRING );
+	}
+
+	public void setDisciplinaSubstitutaString( String value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_STRING, value );
+	}
+	
+	public String getDisciplinaSubstitutaNome()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_NOME );
+	}
+	
+	public void setDisciplinaSubstitutaNome( String value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_NOME, value );
+	}
+	
+	public void setDisciplinaSubstitutaSemanaLetivaId( Long value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID, value );
+	}
+
+	public Long getDisciplinaSubstitutaSemanaLetivaId()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID );
+	}
+	
+	public void setDisciplinaSubstitutaSemanaLetivaTempoAula( Integer value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA, value );
+	}
+
+	public Integer getDisciplinaSubstitutaSemanaLetivaTempoAula()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA );
+	}
+	
 	public void setTurnoId( Long value )
 	{
 		set( PROPERTY_TURNO_ID, value );
@@ -297,16 +366,6 @@ public class AtendimentoTaticoDTO
 		set( PROPERTY_TURNO_STRING, value );
 	}
 
-	public String getDisciplinaNome()
-	{
-		return get( PROPERTY_DISCIPLINA_NOME );
-	}
-
-	public void setDisciplinaNome( String value )
-	{
-		set( PROPERTY_DISCIPLINA_NOME, value );
-	}
-
 	public void setTotalCreditoDisciplina( Integer value )
 	{
 		set( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA, value );
@@ -316,7 +375,17 @@ public class AtendimentoTaticoDTO
 	{
 		return get( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA );
 	}
+	
+	public void setTotalCreditoDisciplinaSubstituta( Integer value )
+	{
+		set( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA_SUBSTITUTA, value );
+	}
 
+	public Integer getTotalCreditoDisciplinaSubstituta()
+	{
+		return get( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA_SUBSTITUTA );
+	}
+	
 	public void setOfertaId( Long value )
 	{
 		set( PROPERTY_OFERTA_ID, value );
@@ -399,20 +468,27 @@ public class AtendimentoTaticoDTO
 		return ( getCreditosTeorico() + getCreditosPratico() );
 	}
 
-	public String getContentToolTipVisaoSala(ReportType reportType)
-	{
+	public String getContentToolTipVisaoSala(ReportType reportType){
 		String BG = TriedaUtil.beginBold(reportType);
 		String ED = TriedaUtil.endBold(reportType);
 		String BR = TriedaUtil.newLine(reportType);
 		
-		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		String creditosDisciplinaInfo = "";
+		if (getDisciplinaSubstitutaId() != null) {
+			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
+		} else {
+			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
+		}
+		
+		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
+			 + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
 		     + BG + "Turma: " + ED + getTurma() + BR
-			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Cr&eacute;dito(s) " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
 			 + BG + "Curso(s): " + ED + getCursoNome() + BR
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
-			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
+			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
 	}
 
 	public String getContentToolTipVisaoCurso(ReportType reportType)
@@ -421,14 +497,22 @@ public class AtendimentoTaticoDTO
 		String ED = TriedaUtil.endBold(reportType);
 		String BR = TriedaUtil.newLine(reportType);
 		
-		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		String creditosDisciplinaInfo = "";
+		if (getDisciplinaSubstitutaId() != null) {
+			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
+		} else {
+			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
+		}
+		
+		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
+		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
 			 + BG + "Turma: " + ED + getTurma() + BR
-			 + BG + "Crédito(s): " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Cr&eacute;dito(s): " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
 			 + BG + "Curso: " + ED + getCursoNome() + BR
 			 + BG + "Matriz Curricular: " + ED + getCurriculoString() + BR
-			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
+			 + BG + getQuantidadeAlunos() + " = " + getQuantidadeAlunos() +  " aluno(s)" + ED + BR;
 	}
 
 	@Override
@@ -453,9 +537,7 @@ public class AtendimentoTaticoDTO
 			+ "@" + getSalaString() + "@" + getSemana() );
 	}
 
-	static public boolean compatibleByApproach1(
-		AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
-	{
+	static public boolean podemOcorrerEmParaleloAbordagem1(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
 		return dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
 			&& !dto1.getSalaId().equals( dto2.getSalaId() )
 			&& !dto1.getTurma().equals( dto2.getTurma() )
@@ -463,9 +545,7 @@ public class AtendimentoTaticoDTO
 			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
 
-	static public boolean compatibleByApproach2(
-		AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2 )
-	{
+	static public boolean podemOcorrerEmParaleloAbordagem2(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
 		return !dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
 			&& !dto1.getSalaId().equals( dto2.getSalaId() )
 			&& !dto1.getTurma().equals( dto2.getTurma() )
@@ -473,19 +553,16 @@ public class AtendimentoTaticoDTO
 			&& dto1.getSemana().equals( dto2.getSemana() );
 	}
 	
-	static public int countListDTOsCreditos(
-		List< AtendimentoTaticoDTO > listDTOs )
-	{
+	static public int calculaTotalDeCreditos(List<AtendimentoTaticoDTO> aulas) {
 		int count = 0;
-		for ( AtendimentoTaticoDTO dto : listDTOs )
-		{
-			count += dto.getTotalCreditos();
+		for (AtendimentoTaticoDTO aula : aulas) {
+			count += aula.getTotalCreditos();
 		}
 
 		return count;
 	}
 	
-	static public int countListListDTOsCreditos(
+	static public int calculaTotalDeCreditosDasAulas(
 		List< List< AtendimentoTaticoDTO > > listListDTOs )
 	{
 		int count = 0;

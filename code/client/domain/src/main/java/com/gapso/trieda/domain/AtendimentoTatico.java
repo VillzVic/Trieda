@@ -70,6 +70,11 @@ public class AtendimentoTatico
 			CascadeType.REFRESH }, targetEntity = Disciplina.class )
 	@JoinColumn( name = "DIS_ID" )
 	private Disciplina disciplina;
+	
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = Disciplina.class )
+	@JoinColumn( name = "DIS_SUBSTITUTA_ID" )
+	private Disciplina disciplinaSubstituta;
 
 	@NotNull
 	@Column( name = "ATT_QUANTIDADE" )
@@ -119,6 +124,7 @@ public class AtendimentoTatico
 		sb.append( "Semana: " ).append( getSemana() ).append( ", " );
 		sb.append( "Oferta: " ).append( getOferta() ).append( ", " );
 		sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
+		sb.append( "DisciplinaSubstituta: " ).append( getDisciplinaSubstituta() ).append( ", " );
 		sb.append( "QuantidadeAlunos: " ).append( getQuantidadeAlunos() ).append( ", " );
 		sb.append( "CreditosTeorico: " ).append( getCreditosTeorico() ).append( ", " );
 		sb.append( "CreditosPratico: " ).append( getCreditosPratico() );
@@ -681,6 +687,16 @@ public class AtendimentoTatico
 	public void setDisciplina( Disciplina disciplina )
 	{
 		this.disciplina = disciplina;
+	}
+	
+	public Disciplina getDisciplinaSubstituta()
+	{
+		return this.disciplinaSubstituta;
+	}
+
+	public void setDisciplinaSubstituta( Disciplina disciplinaSubstituta )
+	{
+		this.disciplinaSubstituta = disciplinaSubstituta;
 	}
 
 	public Integer getQuantidadeAlunos()

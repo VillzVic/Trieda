@@ -21,6 +21,7 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
@@ -39,6 +40,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
+import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -131,10 +133,15 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
 		// créditos em um dia das semanas letivas relacionadas com as aulas em questão
-		Set<Long> semanasLetivasIDsDasAulasNaSala = new HashSet<Long>();
-		for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
-			semanasLetivasIDsDasAulasNaSala.add(aula.getSemanaLetivaId());
-		}
+		Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
+		ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
+		int mdcTemposAula = par.getPrimeiro();
+		SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo(); 
+		
+		return QuartetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos);
+	}
+	
+	private ParDTO<Integer,SemanaLetiva> calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(Set<Long> semanasLetivasIDsDasAulasNaSala) {
 		List<SemanaLetiva> todasSemanasLetivas = SemanaLetiva.findAll(getInstituicaoEnsinoUser());
 		Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = SemanaLetiva.buildSemanaLetivaIDToSemanaLetivaMap(todasSemanasLetivas);
 		List<SemanaLetiva> semanasLetivasDasAulasNaSala = new ArrayList<SemanaLetiva>();
@@ -144,14 +151,14 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		SemanaLetiva semanaLetivaComMaiorCargaHoraria = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasDasAulasNaSala); 
 		int mdcTemposAula = SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivasDasAulasNaSala);
 		
-		return QuartetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos);
+		return ParDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria);
 	}
 
 	/**
 	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoCurso(com.gapso.web.trieda.shared.dtos.CurriculoDTO, java.lang.Integer, com.gapso.web.trieda.shared.dtos.TurnoDTO, com.gapso.web.trieda.shared.dtos.CampusDTO, com.gapso.web.trieda.shared.dtos.CursoDTO)
 	 */
 	@Override
-	public ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+	public QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
 		// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
 		ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> parResultante = ParDTO.<List<AtendimentoRelatorioDTO>,List<Integer>>create(new ArrayList<AtendimentoRelatorioDTO>(),null);
 		
@@ -160,14 +167,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// Otimização no modo Tático
 			
 			// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
-			List<AtendimentoTaticoDTO> atendimentosTaticoDTO = buscaNoBancoDadosDTOsDeAtendimentoTatico(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
-			// TODO: comentar
-			ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > parDTO = montaListaParaVisaoCursoTatico( turnoDTO, atendimentosTaticoDTO );
-			// TODO: comentar
-			parResultante.setSegundo( parDTO.getSegundo() );
-			for ( AtendimentoTaticoDTO atdto : parDTO.getPrimeiro() ) {
-				parResultante.getPrimeiro().add( atdto );
-			}
+			List<AtendimentoTaticoDTO> aulas = buscaNoBancoDadosDTOsDeAtendimentoTatico(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
+			// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
+			ParDTO<List<AtendimentoTaticoDTO>,List<Integer>> parDTO = montaEstruturaParaGradeHorariaVisaoCursoTatico(turnoDTO,aulas);
+			// preenche o par resultante
+			parResultante.getPrimeiro().addAll(parDTO.getPrimeiro());
+			parResultante.setSegundo(parDTO.getSegundo());
 		} else {
 			// Otimização no modo Operacional
 			
@@ -185,7 +190,14 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			parResultante.setSegundo(parDTO.getSegundo());
 		}
 		
-		return parResultante;
+		// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+		// créditos em um dia das semanas letivas relacionadas com as aulas em questão
+		Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(parResultante.getPrimeiro());
+		ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
+		int mdcTemposAula = par.getPrimeiro();
+		SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo();
+		
+		return QuintetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),parResultante.getPrimeiro(),parResultante.getSegundo());
 	}
 	
 	/**
@@ -463,7 +475,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 */
 	private List<List<AtendimentoOperacionalDTO>> separaAtendimentosNaoConsecutivos(List<AtendimentoOperacionalDTO> atendimentosOrdenadosPorHorario) {
 		List<List<AtendimentoOperacionalDTO>> result = new ArrayList<List<AtendimentoOperacionalDTO>>();
-		
+		// FIXME TRATAR ATENDIMENTOS COM MAIS DE UMA SEMANA LETIVA ASSOCIADA
 		if (!atendimentosOrdenadosPorHorario.isEmpty()) {
 			Long semanaLetivaId = atendimentosOrdenadosPorHorario.get(0).getSemanaLetivaId();
 			
@@ -526,16 +538,13 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		Map< String, List< AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
 			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
 
-		for ( AtendimentoRelatorioDTO dto : aulas )
-		{
-			String key = dto.getDisciplinaString()
-				+ "-" + dto.getTurma() + "-" + dto.getSemana();
+		for ( AtendimentoRelatorioDTO dto : aulas ) {
+			String disciplinaInfo = (dto.getDisciplinaSubstitutaId() != null) ? dto.getDisciplinaSubstitutaString() : dto.getDisciplinaString();
+			String key = disciplinaInfo + "-" + dto.getTurma() + "-" + dto.getSemana();
 
-			List< AtendimentoRelatorioDTO > dtoList
-				= atendimentoTaticoDTOMap.get( key );
+			List< AtendimentoRelatorioDTO > dtoList = atendimentoTaticoDTOMap.get( key );
 
-			if ( dtoList == null )
-			{
+			if ( dtoList == null ) {
 				dtoList = new ArrayList< AtendimentoRelatorioDTO >();
 				atendimentoTaticoDTOMap.put( key, dtoList );
 			}
@@ -570,6 +579,82 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 
 		return processedList;
+	}
+	
+	private ParDTO<List<AtendimentoTaticoDTO>,List<Integer>> montaEstruturaParaGradeHorariaVisaoCursoTatico(TurnoDTO turnoDTO, List<AtendimentoTaticoDTO> aulas) {
+		// [DiaSemana -> Aulas]
+		Map<Integer,List<AtendimentoTaticoDTO>> diaSemanaToAulasMap = new TreeMap<Integer,List<AtendimentoTaticoDTO>>();
+		// mapeia as aulas com o dia da semana em questão
+		for (AtendimentoTaticoDTO aula : aulas) {
+			List<AtendimentoTaticoDTO> aulasNoMesmoDiaSemana = diaSemanaToAulasMap.get(aula.getSemana());
+			if (aulasNoMesmoDiaSemana == null) {
+				aulasNoMesmoDiaSemana = new ArrayList<AtendimentoTaticoDTO>();
+				diaSemanaToAulasMap.put(aula.getSemana(),aulasNoMesmoDiaSemana);
+			}
+
+			aulasNoMesmoDiaSemana.add(aula);
+		}
+		
+		// preenche as entradas nulas do mapa diaSemanaToAulasMap com uma lista vazia.
+		// 1=DOM, 2=SEG, 3=TER, 4=QUA, 5=QUI, 6=SEX, 7=SAB
+		for (int i = 2; i <= 7; i++) {
+			if (diaSemanaToAulasMap.get(i) == null) {
+				diaSemanaToAulasMap.put(i,Collections.<AtendimentoTaticoDTO>emptyList());
+			}
+		}
+
+		// Lista com a qtde de colunas de cada dia da semana. Cada posição da lista representa um dia
+		// da semana (com exceção da posição 0 que não serve para nada), então:
+		//    - posicão1 = DOM, posição 2 = SEG, ... , posição 7 = SAB
+		// As vezes, num mesmo dia da semana, haverá aulas em paralelo (isto é, aulas que possuem interseção em seus horários)
+		// logo, ao desenhá-las, será necessário mais de uma coluna para um mesmo dia da semana. O objetivo desta lista é armazenar
+		// a qtde de colunas necessárias por dia da semana para que não haja sobreposição de aulas no desenho da grade horária.
+		List<Integer> qtdColunasGradeHorariaPorDiaSemana = new ArrayList<Integer>(8);
+		
+		// inicializa a lista como se todo dia da semana tivesse apenas uma coluna
+		Collections.addAll(qtdColunasGradeHorariaPorDiaSemana,1,1,1,1,1,1,1,1,1);
+		
+		List<AtendimentoTaticoDTO> listaResultanteComAulas = new ArrayList<AtendimentoTaticoDTO>();
+		// para cada dia da semana, agrupa as aulas que ocorrerão em paralelo, atualiza a coluna em que cada aula
+		// será desenhada na grade horária e atualiza a quantidade de colunas que serão necessárias em cada dia
+		// da semana
+		int colunaNaGradeHoraria = 2;
+		for (Entry<Integer,List<AtendimentoTaticoDTO>> entry : diaSemanaToAulasMap.entrySet()) {
+			Integer diaSemana = entry.getKey();
+			List<AtendimentoTaticoDTO> aulasMesmoDiaSemana = entry.getValue();
+			
+			List<List<AtendimentoTaticoDTO>> gruposAulasParalelas = agrupaAulasQueOcorreraoEmParalelo(turnoDTO,diaSemana,aulasMesmoDiaSemana);
+
+			int maiorQuantidadeAulasEmParalelo = 1;
+			for (List<AtendimentoTaticoDTO> aulasParalelas : gruposAulasParalelas) {
+				if (aulasParalelas.size() > maiorQuantidadeAulasEmParalelo) {
+					maiorQuantidadeAulasEmParalelo = aulasParalelas.size();
+				}
+
+				AtendimentoTaticoDTO primeiraAulaParalela = aulasParalelas.get(0);
+				primeiraAulaParalela.setSemana(colunaNaGradeHoraria);
+				for (int i = 1; i < aulasParalelas.size(); i++) {
+					AtendimentoTaticoDTO proximaAulaParalela = aulasParalelas.get(i);
+					proximaAulaParalela.setSemana(primeiraAulaParalela.getSemana()+i);
+				}
+
+				listaResultanteComAulas.addAll(aulasParalelas);
+			}
+			
+			if (gruposAulasParalelas.isEmpty()) {
+				for (AtendimentoTaticoDTO aula : aulasMesmoDiaSemana) {
+					aula.setSemana(colunaNaGradeHoraria);
+				}
+				listaResultanteComAulas.addAll(aulasMesmoDiaSemana);
+			}
+
+			qtdColunasGradeHorariaPorDiaSemana.add(diaSemana,maiorQuantidadeAulasEmParalelo);
+			colunaNaGradeHoraria += maiorQuantidadeAulasEmParalelo;
+		}
+
+		adicionaDadosCompartilhamentoSalaCursoTatico(listaResultanteComAulas);
+
+		return ParDTO.create(listaResultanteComAulas,qtdColunasGradeHorariaPorDiaSemana);
 	}
 	
 	/**
@@ -655,6 +740,144 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return ParDTO.create(listaResultanteComAulas,qtdColunasGradeHorariaPorDiaSemana);
 	}
 	
+	private List<List<AtendimentoTaticoDTO>> agrupaAulasQueOcorreraoEmParalelo(TurnoDTO turnoDTO, Integer diaSemana, List<AtendimentoTaticoDTO> aulasMesmoDiaSemana) {
+		List<List<AtendimentoTaticoDTO>> gruposAulasParalelas = new ArrayList<List<AtendimentoTaticoDTO>>();
+		
+		// obtém os id's de todas as semanas letivas associadas com as aulas
+		Set<Long> semanasLetivasIDsDasAulas = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasMesmoDiaSemana);
+		
+		// obtem o numero maximo de creditos de um dia da semana, de acordo com o tipo de semana letiva associado a ele.
+		int maxCreditosDiaSemana = 0;
+		for (Long semanaLetivaId : semanasLetivasIDsDasAulas) {
+			int maxLocal = turnoDTO.getMaxCreditos(semanaLetivaId,diaSemana);
+			if (maxLocal > maxCreditosDiaSemana) {
+				maxCreditosDiaSemana = maxLocal;
+			}
+		}
+
+		// verifica se as aulas no dia da semana em questão extrapolam a quantidade máxima de créditos para o dia
+		if (AtendimentoTaticoDTO.calculaTotalDeCreditos(aulasMesmoDiaSemana) > maxCreditosDiaSemana) {
+			// identifica aulas paralelas pela abordagem 1
+			gruposAulasParalelas = agrupaAulasQueOcorreraoEmParaleloAbordagem1(aulasMesmoDiaSemana);
+
+			// verifica se o dia da semana continua extrapolando a quantidade máxima de créditos após a execução da abordagem 1
+			if (AtendimentoTaticoDTO.calculaTotalDeCreditosDasAulas(gruposAulasParalelas) > maxCreditosDiaSemana) {
+				// identifica aulas paralelas pela abordagem 2
+				gruposAulasParalelas.clear();
+				gruposAulasParalelas = agrupaAulasQueOcorreraoEmParaleloAbordagem2(aulasMesmoDiaSemana);
+			}
+		}
+		
+		return gruposAulasParalelas;
+	}
+
+	private <T extends AtendimentoRelatorioDTO> Set<Long> obtemIDsDasSemanasLetivasAssociadasComAsAulas(List<T> aulas) {
+		Set<Long> semanasLetivasIDsDasAulas = new HashSet<Long>();
+		for (T aula : aulas) {
+			if (aula.getDisciplinaSubstitutaSemanaLetivaId() != null) {
+				semanasLetivasIDsDasAulas.add(aula.getDisciplinaSubstitutaSemanaLetivaId());
+			} else {
+				semanasLetivasIDsDasAulas.add(aula.getSemanaLetivaId());
+			}
+		}
+		return semanasLetivasIDsDasAulas;
+	}
+	
+	/**
+	 * A partir de uma lista com as aulas que ocorrerão no mesmo dia da semana, identifica as aulas que deverão ocorrer em paralelo e agrupa
+	 * as mesmas em listas. 
+	 * @param aulasMesmoDiaSemana aulas no mesmo dia da semana
+	 * @return listas de aulas de forma que cada lista representa aulas que ocorrerão em paralelo umas com as outras
+	 */
+	private List<List<AtendimentoTaticoDTO>> agrupaAulasQueOcorreraoEmParaleloAbordagem1(List<AtendimentoTaticoDTO> aulasMesmoDiaSemana) {
+		List<List<AtendimentoTaticoDTO>> gruposAulasParalelas = new ArrayList<List<AtendimentoTaticoDTO>>();
+
+		for (AtendimentoTaticoDTO aulaAtual : aulasMesmoDiaSemana) {
+			if (gruposAulasParalelas.isEmpty()) {
+				gruposAulasParalelas.add(new ArrayList<AtendimentoTaticoDTO>());
+				gruposAulasParalelas.get(0).add(aulaAtual);
+			} else {
+				boolean paralelismoIdentificadoComAulaAtual = false;
+
+				// verifica se há paralelismo entre a aula atual e alguma aula processada anteriormente
+				for (List<AtendimentoTaticoDTO> aulasParalelas : gruposAulasParalelas) {
+					boolean naoSaoCandidatasAOcorreremEmParelelo = false;
+					for (AtendimentoTaticoDTO aulaProcessadaAnteriormente : aulasParalelas) {
+						if (!AtendimentoTaticoDTO.podemOcorrerEmParaleloAbordagem1(aulaAtual,aulaProcessadaAnteriormente)) {
+							naoSaoCandidatasAOcorreremEmParelelo = true;
+							break;
+						}
+					}
+
+					if (!naoSaoCandidatasAOcorreremEmParelelo) {
+						aulasParalelas.add(aulaAtual);
+						paralelismoIdentificadoComAulaAtual = true;
+						break;
+					}
+				}
+
+				if (!paralelismoIdentificadoComAulaAtual) {
+					gruposAulasParalelas.add(new ArrayList<AtendimentoTaticoDTO>());
+					gruposAulasParalelas.get(gruposAulasParalelas.size() - 1).add(aulaAtual);
+				}
+			}
+		}
+
+		return gruposAulasParalelas;
+	}
+	
+	/**
+	 * A partir de uma lista com as aulas que ocorrerão no mesmo dia da semana, identifica as aulas que deverão ocorrer em paralelo e agrupa
+	 * as mesmas em listas. 
+	 * @param aulasMesmoDiaSemana aulas no mesmo dia da semana
+	 * @return listas de aulas de forma que cada lista representa aulas que ocorrerão em paralelo umas com as outras
+	 */
+	private List<List<AtendimentoTaticoDTO>> agrupaAulasQueOcorreraoEmParaleloAbordagem2(List<AtendimentoTaticoDTO> aulasMesmoDiaSemana) {
+		List<List<AtendimentoTaticoDTO>> gruposAulasParalelas = new ArrayList<List<AtendimentoTaticoDTO>>();
+
+		// ordena as aulas pelo número da turma
+		List<AtendimentoTaticoDTO> aulasOrdenadasPelaTurma = new ArrayList<AtendimentoTaticoDTO>(aulasMesmoDiaSemana);
+		Collections.sort(aulasOrdenadasPelaTurma, new Comparator<AtendimentoTaticoDTO>() {
+			@Override
+			public int compare(AtendimentoTaticoDTO o1, AtendimentoTaticoDTO o2) {
+				return o1.getTurma().compareTo(o2.getTurma());
+			}
+		});
+
+		for (AtendimentoTaticoDTO aulaAtual : aulasOrdenadasPelaTurma) {
+			if (gruposAulasParalelas.isEmpty()) {
+				gruposAulasParalelas.add(new ArrayList<AtendimentoTaticoDTO>());
+				gruposAulasParalelas.get(0).add(aulaAtual);
+			} else {
+				boolean paralelismoIdentificadoComAulaAtual = false;
+				
+				// verifica se há paralelismo entre a aula atual e alguma aula processada anteriormente
+				for (List<AtendimentoTaticoDTO> aulasParalelas : gruposAulasParalelas) {
+					boolean naoSaoCandidatasAOcorreremEmParelelo = false;
+					for (AtendimentoTaticoDTO aulaProcessadaAnteriormente : aulasParalelas) {
+						if (!AtendimentoTaticoDTO.podemOcorrerEmParaleloAbordagem2(aulaAtual,aulaProcessadaAnteriormente)) {
+							naoSaoCandidatasAOcorreremEmParelelo = true;
+							break;
+						}
+					}
+
+					if (!naoSaoCandidatasAOcorreremEmParelelo) {
+						aulasParalelas.add(aulaAtual);
+						paralelismoIdentificadoComAulaAtual = true;
+						break;
+					}
+				}
+
+				if (!paralelismoIdentificadoComAulaAtual) {
+					gruposAulasParalelas.add(new ArrayList<AtendimentoTaticoDTO>());
+					gruposAulasParalelas.get(gruposAulasParalelas.size() - 1).add(aulaAtual);
+				}
+			}
+		}
+
+		return gruposAulasParalelas;
+	}
+	
 	/**
 	 * A partir de uma lista com as aulas que ocorrerão no mesmo dia da semana, identifica as aulas que deverão ocorrer em paralelo e agrupa
 	 * as mesmas em listas. 
@@ -723,122 +946,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return result;
 	}
 
-	@Override
-	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
-		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO )
-	{
-		return this.getAtendimentosParaGradeHorariaVisaoCurso( curriculoDTO, periodo, turnoDTO, campusDTO, null );
-	}
-
-	private ParDTO< List< AtendimentoTaticoDTO >, List< Integer > > montaListaParaVisaoCursoTatico(
-		TurnoDTO turnoDTO, List< AtendimentoTaticoDTO > list )
-	{
-		// Agrupa os DTOS pelo dia da semana
-		Map< Integer, List< AtendimentoTaticoDTO > > diaSemanaToAtendimentoTaticoDTOMap
-			= new TreeMap< Integer, List< AtendimentoTaticoDTO > >();
-
-		for ( AtendimentoTaticoDTO dto : list )
-		{
-			List< AtendimentoTaticoDTO > dtoList
-				= diaSemanaToAtendimentoTaticoDTOMap.get( dto.getSemana() );
-
-			if ( dtoList == null )
-			{
-				dtoList = new ArrayList< AtendimentoTaticoDTO >();
-				diaSemanaToAtendimentoTaticoDTOMap.put(
-					dto.getSemana(), dtoList );
-			}
-
-			dtoList.add( dto );
-		}
-
-		// Preenche entradas nulas do mapa
-		// diaSemanaToAtendimentoTaticoDTOMap com uma lista vazia.
-		for ( int i = 2; i <= 7; i++ )
-		{
-			if ( diaSemanaToAtendimentoTaticoDTOMap.get( i ) == null )
-			{
-				diaSemanaToAtendimentoTaticoDTOMap.put( i,
-					Collections.< AtendimentoTaticoDTO > emptyList() );
-			}
-		}
-
-		List< Integer > diaSemanaTamanhoList = new ArrayList< Integer >( 8 );
-		Collections.addAll( diaSemanaTamanhoList, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
-
-		List< AtendimentoTaticoDTO > finalProcessedList
-			= new ArrayList< AtendimentoTaticoDTO >();
-
-		// Para cada dia da semana
-		int countSemanaSize = 2;
-		for ( Entry< Integer, List< AtendimentoTaticoDTO > > entry
-			: diaSemanaToAtendimentoTaticoDTOMap.entrySet() )
-		{
-			List< List< AtendimentoTaticoDTO > > listListDTO
-				= new ArrayList< List< AtendimentoTaticoDTO > >();
-
-			// Obtem o numero maximo de creditos de um dia da semana, de acordo com o tipo de 
-			// semana letiva associado a ele.
-			int maxCredito = 0;
-			if(!entry.getValue().isEmpty())
-				maxCredito = turnoDTO.getMaxCreditos(entry.getValue().get(0).getSemanaLetivaId(), entry.getKey());
-			
-			// Verifica se o dia da semana
-			// extrapola a quantidade máxima de créditos
-			if ( AtendimentoTaticoDTO.countListDTOsCreditos( entry.getValue() )
-					> maxCredito )
-			{
-				// Executa abordagem 1
-				listListDTO = agrupaAtendimentosAbordagem1( entry );
-
-				// Verifica se o dia da semana continua extrapolando a
-				// quantidade máxima de créditos após a execução da abordagem 1
-				if ( AtendimentoTaticoDTO.countListListDTOsCreditos( listListDTO )
-					> maxCredito )
-				{
-					// Executa abordagem 2
-					listListDTO.clear();
-					listListDTO = agrupaAtendimentosAbordagem2( entry );
-				}
-			}
-			else
-			{
-				for ( AtendimentoTaticoDTO dto : entry.getValue() )
-				{
-					dto.setSemana( countSemanaSize );
-				}
-
-				finalProcessedList.addAll( entry.getValue() );
-			}
-
-			int size = 1;
-			for ( List< AtendimentoTaticoDTO > listDTOs : listListDTO )
-			{
-				if ( listDTOs.size() > size )
-				{
-					size = listDTOs.size();
-				}
-
-				AtendimentoTaticoDTO dtoMain = listDTOs.get( 0 );
-				dtoMain.setSemana( countSemanaSize );
-
-				for ( int i = 1; i < listDTOs.size(); i++ )
-				{
-					AtendimentoTaticoDTO dtoCurrent = listDTOs.get( i );
-					dtoCurrent.setSemana( dtoMain.getSemana() + i );
-				}
-
-				finalProcessedList.addAll( listDTOs );
-			}
-
-			diaSemanaTamanhoList.add( entry.getKey(), size );
-			countSemanaSize += size;
-		}
-
-		adicionaDadosCompartilhamentoSalaCursoTatico( finalProcessedList );
-
-		return ParDTO.create(finalProcessedList,diaSemanaTamanhoList);
-	}
+//	@Override
+//	public ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
+//		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO )
+//	{
+//		return this.getAtendimentosParaGradeHorariaVisaoCurso( curriculoDTO, periodo, turnoDTO, campusDTO, null );
+//	}
 
 	// Implementaçao da verifição relacionada com a issue
 	// http://jira.gapso.com.br/browse/TRIEDA-979
@@ -998,113 +1111,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 	}
 
-	private List< List< AtendimentoTaticoDTO > > agrupaAtendimentosAbordagem2(
-		Entry< Integer, List< AtendimentoTaticoDTO > > entry )
-	{
-		List< List<AtendimentoTaticoDTO > > listListDTO
-			= new ArrayList< List< AtendimentoTaticoDTO > >();
-
-		List< AtendimentoTaticoDTO > sortedDTOs
-			= new ArrayList< AtendimentoTaticoDTO >( entry.getValue() );
-
-		Collections.sort( sortedDTOs, new Comparator< AtendimentoTaticoDTO >()
-		{
-			@Override
-			public int compare( AtendimentoTaticoDTO o1, AtendimentoTaticoDTO o2 )
-			{
-				return o1.getTurma().compareTo( o2.getTurma() );
-			}
-		});
-
-		for ( AtendimentoTaticoDTO currentDTO : sortedDTOs )
-		{
-			if ( listListDTO.isEmpty() )
-			{
-				listListDTO.add( new ArrayList< AtendimentoTaticoDTO >() );
-				listListDTO.get( 0 ).add( currentDTO );
-			}
-			else
-			{
-				boolean wasDTOProcessed = false;
-				for ( List< AtendimentoTaticoDTO > listDTO : listListDTO )
-				{
-					boolean wasDTORejected = false;
-					for ( AtendimentoTaticoDTO dto : listDTO )
-					{
-						if ( !AtendimentoTaticoDTO.compatibleByApproach2( currentDTO, dto ) )
-						{
-							wasDTORejected = true;
-							break;
-						}
-					}
-
-					if ( !wasDTORejected )
-					{
-						listDTO.add( currentDTO );
-						wasDTOProcessed = true;
-						break;
-					}
-				}
-
-				if ( !wasDTOProcessed )
-				{
-					listListDTO.add( new ArrayList< AtendimentoTaticoDTO >() );
-					listListDTO.get( listListDTO.size() - 1 ).add( currentDTO );
-				}
-			}
-		}
-
-		return listListDTO;
-	}
-
-	private List< List< AtendimentoTaticoDTO > > agrupaAtendimentosAbordagem1(
-		Entry< Integer, List< AtendimentoTaticoDTO > > entry )
-	{
-		List< List< AtendimentoTaticoDTO > > listListDTO
-			= new ArrayList< List< AtendimentoTaticoDTO > >();
-
-		for ( AtendimentoTaticoDTO currentDTO : entry.getValue() )
-		{
-			if ( listListDTO.isEmpty() )
-			{
-				listListDTO.add( new ArrayList< AtendimentoTaticoDTO >() );
-				listListDTO.get( 0 ).add( currentDTO );
-			}
-			else
-			{
-				boolean wasDTOProcessed = false;
-
-				for ( List< AtendimentoTaticoDTO > listDTO : listListDTO )
-				{
-					boolean wasDTORejected = false;
-					for ( AtendimentoTaticoDTO dto : listDTO )
-					{
-						if ( !AtendimentoTaticoDTO.compatibleByApproach1( currentDTO, dto ) )
-						{
-							wasDTORejected = true;
-							break;
-						}
-					}
-
-					if ( !wasDTORejected )
-					{
-						listDTO.add( currentDTO );
-						wasDTOProcessed = true;
-						break;
-					}
-				}
-
-				if ( !wasDTOProcessed )
-				{
-					listListDTO.add( new ArrayList< AtendimentoTaticoDTO >() );
-					listListDTO.get( listListDTO.size() - 1 ).add( currentDTO );
-				}
-			}
-		}
-
-		return listListDTO;
-	}
-	
 	private boolean temIntersecao(AtendimentoOperacionalDTO dto1, AtendimentoOperacionalDTO dto2) {
 		if (dto1.getSemana().equals(dto2.getSemana())) {
 			if (dto1.getHorarioId().equals(dto2.getHorarioId())) {
@@ -1134,10 +1140,10 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				Calendar horarioFinal2 = Calendar.getInstance();
 				
 				horarioFinal1.setTime(horarioInicial1.getTime());
-				horarioFinal1.add(Calendar.MINUTE,dto1.getTotalCreditos()*dto1.getSemanaLetivaTempoAula());
+				horarioFinal1.add(Calendar.MINUTE,dto1.getTotalCreditos()*dto1.getDuracaoDeUmaAulaEmMinutos());
 				
 				horarioFinal2.setTime(horarioInicial2.getTime());
-				horarioFinal2.add(Calendar.MINUTE,dto2.getTotalCreditos()*dto2.getSemanaLetivaTempoAula());
+				horarioFinal2.add(Calendar.MINUTE,dto2.getTotalCreditos()*dto2.getDuracaoDeUmaAulaEmMinutos());
 				
 				return (horarioInicial1.before(horarioInicial2) && horarioInicial2.before(horarioFinal1)) || // hi1 < hi2 < hf1
 				       (horarioInicial1.before(horarioFinal2)   && horarioFinal2.before(horarioFinal1)) || // hi1 < hf2 < hf1

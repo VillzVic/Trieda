@@ -14,6 +14,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.web.trieda.server.DemandasServiceImpl;
@@ -110,8 +111,8 @@ public class DemandasExportExcel
 			fillInCellStyles( sheet );
 			
 			DemandasServiceImpl demandasService = new DemandasServiceImpl();
-			ParDTO<Map<Demanda,Integer>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(ofertas);
-			Map<Demanda,Integer> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
+			ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(ofertas);
+			Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
 
 			int nextRow = this.initialRow;
 			for ( Oferta oferta : ofertas )
@@ -130,7 +131,7 @@ public class DemandasExportExcel
 		return result;
 	}
 	
-	private int writeData( Oferta oferta, int row, HSSFSheet sheet , Map<Demanda,Integer> demandaToQtdAlunosNaoAtendidosMap)
+	private int writeData( Oferta oferta, int row, HSSFSheet sheet , Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap)
 	{
 		if ( oferta.getDemandas().isEmpty() )
 		{
@@ -207,7 +208,9 @@ public class DemandasExportExcel
 							this.mapDemandasExportadas.put( key, true );
 						}
 						
-						Integer qtdNaoAtendida = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
+						ParDTO<Integer,Disciplina> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
+						Integer qtdNaoAtendida = par.getPrimeiro();
+						Disciplina disciplinaSubstituta = par.getSegundo();
 
 						// Campus
 						setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
@@ -243,6 +246,9 @@ public class DemandasExportExcel
 						
 						// Demanda Não Atendida
 						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
+						
+						// Disciplina Substituta
+						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], (disciplinaSubstituta != null ? disciplinaSubstituta.getCodigo() : "") );
 						
 						row++;
 					}

@@ -29,6 +29,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
@@ -486,10 +487,9 @@ public class CampiServiceImpl extends RemoteService
 		return list;
 	}
 
-	private List< TreeNodeDTO > getResumosTatico(
-		CenarioDTO cenarioDTO, TreeNodeDTO currentNode )
+	private List< TreeNodeDTO > getResumosTatico(CenarioDTO cenarioDTO, TreeNodeDTO currentNode)
 	{
-		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
+		List<TreeNodeDTO> list = new ArrayList<TreeNodeDTO>();
 
 		AbstractDTO< ? > contentCurrentNode = currentNode.getContent();
 
@@ -517,10 +517,10 @@ public class CampiServiceImpl extends RemoteService
 		}
 		
 		DemandasServiceImpl demandasService = new DemandasServiceImpl();
-		ParDTO<Map<Demanda,Integer>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
+		ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
 		Integer qtdAlunosNaoAtendidos = pair.getSegundo();
 		Integer qtdAlunosAtendidos = ( Demanda.sumDemanda( getInstituicaoEnsinoUser(), campus ) - qtdAlunosNaoAtendidos );
-		Map<Demanda,Integer> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
+		Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
 
 		Set< Sala > salas = new HashSet< Sala >();
 		Set< Turno > turnos = new HashSet< Turno >();
@@ -576,24 +576,28 @@ public class CampiServiceImpl extends RemoteService
 		double mediaLaboratorio = TriedaUtil.round(
 			numeradorLab / denominadorLab * 100.0, 2 );
 
-		Double mediaCreditoTurma = ( ( qtdTurma == 0 ) ? 0.0 : ( qtdCreditos / qtdTurma ) );
-		Double custoDocenteSemestral = ( qtdCreditos * custoCredito * 4.5 * 6.0 );
+		Double mediaCreditoTurma = TriedaUtil.round(( (qtdTurma == 0) ? 0.0 : (qtdCreditos / qtdTurma) ),2);
+		Double mediaAlunosTurma = TriedaUtil.round(( (qtdTurma == 0) ? 0.0 : (qtdAlunosAtendidos / qtdTurma) ),2);
+		Double custoDocenteSemestral = TriedaUtil.round(( qtdCreditos * custoCredito * 4.5 * 6.0 ),2);
 		
 		Double receitaSemestral = 0.0;
-		for ( Demanda demanda : demandaToQtdAlunosNaoAtendidosMap.keySet() )
-		{
-			int qtdAlunosAtendidosDemanda
-				= ( demanda.getQuantidade() - demandaToQtdAlunosNaoAtendidosMap.get( demanda ) );
-
-			receitaSemestral += ( demanda.getDisciplina().getCreditosTotal()
-				* qtdAlunosAtendidosDemanda	* demanda.getOferta().getReceita() );
+		for ( Demanda demanda : demandaToQtdAlunosNaoAtendidosMap.keySet() ) {
+			ParDTO<Integer,Disciplina> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
+			int qtdAlunosNaoAtendidosDemanda = par.getPrimeiro();
+			Disciplina disciplinaSubstituta = par.getSegundo();
+			Disciplina disciplinaASerConsiderada = (disciplinaSubstituta != null) ? disciplinaSubstituta : demanda.getDisciplina();
+			
+			int qtdAlunosAtendidosDemanda = (demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda);
+			receitaSemestral += (disciplinaASerConsiderada.getCreditosTotal()*qtdAlunosAtendidosDemanda*demanda.getOferta().getReceita());
 		}
 
 		receitaSemestral *= ( 4.5 * 6.0 );
+		receitaSemestral = TriedaUtil.round(receitaSemestral,2);
 
 		list.add( new TreeNodeDTO( "Turmas abertas: <b>" + qtdTurma + "</b>", currentNode ) );
 		list.add( new TreeNodeDTO( "Total de Cr&eacute;ditos semanais: <b>"	+ qtdCreditos + "</b>", currentNode ) );
 		list.add( new TreeNodeDTO( "M&eacute;dia de cr&eacute;ditos por turma: <b>"	+ mediaCreditoTurma + "</b>", currentNode ) );
+		list.add( new TreeNodeDTO( "M&eacute;dia de alunos por turma: <b>"	+ mediaAlunosTurma + "</b>", currentNode ) );
 		list.add( new TreeNodeDTO( "Custo m&eacute;dio do cr&eacute;dito: <b>R$ " + custoCredito + "</b>", currentNode ) );
 		list.add( new TreeNodeDTO( "Custo docente semestral estimado: <b>R$ "	+ custoDocenteSemestral + "</b>", currentNode ) );
 		list.add( new TreeNodeDTO( "Receita: <b>R$ " + receitaSemestral + "</b>", currentNode ) );

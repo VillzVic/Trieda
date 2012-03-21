@@ -161,8 +161,7 @@ public class GradeHorariaSalaGrid
 	public ListStore<LinhaDeCredito> getListStore() {
 		if (this.store == null) {
 			this.store = new ListStore<LinhaDeCredito>();
-		}
-		else {
+		} else {
 			this.store.removeAll();
 		}
 
@@ -177,8 +176,7 @@ public class GradeHorariaSalaGrid
 				}
 			}
 		}
-		else
-		{
+		else {
 			// FIXME implementar caso para o operacional
 		}
 
@@ -310,7 +308,7 @@ public class GradeHorariaSalaGrid
 				if (isTatico()) {
 					html.setStyleAttribute("top",(rowIndex*tamanhoLinhaGradeHorariaEmPixels + 1)+"px");//html.addStyleName("cargaHoraria" + (rowIndex+1));
 					// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
-					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getSemanaLetivaTempoAula()/mdcTemposAula;
+					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
 					html.setStyleAttribute("height",(aulaDTO.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula*tamanhoLinhaGradeHorariaEmPixels - 3)+"px");//html.addStyleName("totalCargaHoraria" + aulaDTO.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula);
 				} else {
 					html.addStyleName("c" + (rowIndex+1));
@@ -382,7 +380,7 @@ public class GradeHorariaSalaGrid
 					}
 					
 					// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
-					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aula.getSemanaLetivaTempoAula()/mdcTemposAula;
+					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
 
 					// calcula a linha em que a próxima aula do dia da semana deve ser desenhada
 					linhaDaGradeEmQueAulaDeveSerDesenhada += aula.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula;

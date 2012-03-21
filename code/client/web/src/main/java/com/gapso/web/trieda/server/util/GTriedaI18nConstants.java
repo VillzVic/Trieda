@@ -90,6 +90,11 @@ public class GTriedaI18nConstants
 	public String cargaHorariaMin() {
 		return this.languageManager.getText("cargaHorariaMin");
 	}
+	
+	@Override
+	public String cargaHorariaMinutos() {
+		return this.languageManager.getText("cargaHorariaMinutos");
+	}
 
 	@Override
 	public String codigo() {

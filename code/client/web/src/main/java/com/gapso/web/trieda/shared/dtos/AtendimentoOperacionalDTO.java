@@ -42,8 +42,14 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_DISCIPLINA_NOME = "disciplinaNome";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_ID = "disciplinaSubstitutaId";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_STRING = "disciplinaSubstitutaString";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_NOME = "disciplinaSubstitutaNome";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID = "disciplinaSubstitutaSemanaLetivaId";
+	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA = "disciplinaSubstitutaSemanaLetivaTempoAula";
 	public static final String PROPERTY_TOTAL_CRETIDOS= "totalCreditos";
 	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA = "totalCreditoDisciplina";
+	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA_SUBSTITUTA = "totalCreditoDisciplinaSubstituta";
 	public static final String PROPERTY_OFERTA_ID = "ofertaId";
 	public static final String PROPERTY_TURMA = "turma";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
@@ -58,8 +64,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		super();
 	}
 
-	public AtendimentoOperacionalDTO( AtendimentoOperacionalDTO other )
-	{
+	public AtendimentoOperacionalDTO( AtendimentoOperacionalDTO other ) {
 		this.copy( other );
 	}
 
@@ -94,8 +99,14 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		this.setDisciplinaId( other.getDisciplinaId() );
 		this.setDisciplinaString( other.getDisciplinaString() );
 		this.setDisciplinaNome( other.getDisciplinaNome() );
+		this.setDisciplinaSubstitutaId( other.getDisciplinaSubstitutaId() );
+		this.setDisciplinaSubstitutaString( other.getDisciplinaSubstitutaString() );
+		this.setDisciplinaSubstitutaNome( other.getDisciplinaSubstitutaNome() );
+		this.setDisciplinaSubstitutaSemanaLetivaId( other.getDisciplinaSubstitutaSemanaLetivaId() );
+		this.setDisciplinaSubstitutaSemanaLetivaTempoAula( other.getDisciplinaSubstitutaSemanaLetivaTempoAula() );
 		this.setTotalCreditos( other.getTotalCreditos() );
 		this.setTotalCreditoDisciplina( other.getTotalCreditoDisciplina() );
+		this.setTotalCreditoDisciplinaSubstituta( other.getTotalCreditoDisciplinaSubstituta() );
 		this.setOfertaId( other.getOfertaId() );
 		this.setTurma( other.getTurma() );
 		this.setQuantidadeAlunos( other.getQuantidadeAlunos() );
@@ -404,6 +415,56 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	{
 		set( PROPERTY_DISCIPLINA_NOME, value );
 	}
+	
+	public void setDisciplinaSubstitutaId( Long value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_ID, value );
+	}
+
+	public Long getDisciplinaSubstitutaId()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_ID );
+	}
+
+	public String getDisciplinaSubstitutaString()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_STRING );
+	}
+
+	public void setDisciplinaSubstitutaString( String value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_STRING, value );
+	}
+
+	public String getDisciplinaSubstitutaNome()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_NOME );
+	}
+
+	public void setDisciplinaSubstitutaNome( String value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_NOME, value );
+	}
+	
+	public void setDisciplinaSubstitutaSemanaLetivaId( Long value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID, value );
+	}
+
+	public Long getDisciplinaSubstitutaSemanaLetivaId()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID );
+	}
+	
+	public void setDisciplinaSubstitutaSemanaLetivaTempoAula( Integer value )
+	{
+		set( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA, value );
+	}
+
+	public Integer getDisciplinaSubstitutaSemanaLetivaTempoAula()
+	{
+		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA );
+	}
 
 	public void setTotalCreditos( Integer value )
 	{
@@ -424,7 +485,18 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public Integer getTotalCreditoDisciplina()
 	{
 		return get(PROPERTY_TOTAL_CRETIDOS_DISCIPLINA);
-	}	
+	}
+	
+	public void setTotalCreditoDisciplinaSubstituta( Integer value )
+	{
+		set( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA_SUBSTITUTA, value );
+	}
+
+	@Override
+	public Integer getTotalCreditoDisciplinaSubstituta()
+	{
+		return get( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA_SUBSTITUTA );
+	}
 
 	public void setOfertaId( Long value )
 	{
@@ -526,15 +598,23 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		String BR = TriedaUtil.newLine(reportType);
 		String professor = isProfessorVirtual() ? getProfessorVirtualString() : getProfessorString();
 		
-		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		String creditosDisciplinaInfo = "";
+		if (getDisciplinaSubstitutaId() != null) {
+			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
+		} else {
+			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
+		}
+		
+		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
+		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
 		     + BG + "Turma: " + ED + getTurma() + BR
 		     + BG + "Professor: " + ED + professor + BR
-			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Cr&eacute;dito(s) " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
 			 + BG + "Curso(s): " + ED + getCursoNome() + BR
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
-			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
+			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
 	}
 
 	public String getContentToolTipVisaoCurso(ReportType reportType) {
@@ -543,15 +623,23 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		String BR = TriedaUtil.newLine(reportType);
 		String professor = isProfessorVirtual() ? getProfessorVirtualString() : getProfessorString();
 		
-		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		String creditosDisciplinaInfo = "";
+		if (getDisciplinaSubstitutaId() != null) {
+			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
+		} else {
+			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
+		}
+		
+		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
+		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
 		     + BG + "Turma: " + ED + getTurma() + BR
 		     + BG + "Professor: " + ED + professor + BR
-			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Cr&eacute;dito(s) " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
 			 + BG + "Curso(s): " + ED + getCursoNome() + BR
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
-			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
+			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
 	}
 
 	public String getContentVisaoProfessor(ReportType reportType) {
@@ -572,15 +660,23 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		String BR = TriedaUtil.newLine(reportType);
 		String professor = isProfessorVirtual() ? getProfessorVirtualString() : getProfessorString();
 		
-		return BG + "Nome: " + ED + getDisciplinaNome() + BR
+		String creditosDisciplinaInfo = "";
+		if (getDisciplinaSubstitutaId() != null) {
+			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
+		} else {
+			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
+		}
+		
+		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
+		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
 		     + BG + "Turma: " + ED + getTurma() + BR
 		     + BG + "Professor: " + ED + professor + BR
-			 + BG + "Crédito(s) " + ( ( isTeorico() ) ? "Teórico(s)" : "Prático(s)" ) + ": " + ED + getTotalCreditos() + " de " + getTotalCreditoDisciplina() + BR
+			 + BG + "Cr&eacute;dito(s) " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
 			 + BG + "Curso(s): " + ED + getCursoNome() + BR
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
-			 + BG + "Período(s): " + ED + getPeriodoString() + BR
+			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunosString() + " aluno(s)" + ED + BR;
+			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
 	}
 
 	@Override

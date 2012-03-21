@@ -97,8 +97,8 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
-public class ConvertBeans
-{
+public class ConvertBeans {
+	
 	// USUÁRIO
 	public static Usuario toUsuario( UsuarioDTO dto )
 	{
@@ -1989,6 +1989,11 @@ public class ConvertBeans
 			dto.getOfertaId(), instituicaoEnsino ) );
 
 		domain.setDisciplina( Disciplina.find( dto.getDisciplinaId(), instituicaoEnsino ) );
+		
+		if (dto.getDisciplinaSubstitutaId() != null) {
+			domain.setDisciplinaSubstituta(Disciplina.find(dto.getDisciplinaSubstitutaId(),instituicaoEnsino));
+		}
+		
 		domain.setQuantidadeAlunos( dto.getQuantidadeAlunos() );
 		domain.setCreditosTeorico( dto.getCreditosTeorico() );
 		domain.setCreditosPratico( dto.getCreditosPratico() );
@@ -1997,7 +2002,7 @@ public class ConvertBeans
 		return domain;
 	}
 
-	public static AtendimentoTaticoDTO toAtendimentoTaticoDTO( AtendimentoTatico domain ) {
+	public static AtendimentoTaticoDTO toAtendimentoTaticoDTO(AtendimentoTatico domain) {
 		AtendimentoTaticoDTO dto = new AtendimentoTaticoDTO();
 
 		Sala sala = domain.getSala();
@@ -2009,6 +2014,13 @@ public class ConvertBeans
 		SemanaLetiva semanaLetiva = curriculo.getSemanaLetiva();
 		Curso curso = curriculo.getCurso();
 		Disciplina disciplina = domain.getDisciplina();
+		Disciplina disciplinaSubstituta = domain.getDisciplinaSubstituta();
+		SemanaLetiva semanaLetivaDisciplinaSubstituta = null;
+		if (disciplinaSubstituta != null) {
+			if (!disciplinaSubstituta.getCurriculos().isEmpty()) {
+				semanaLetivaDisciplinaSubstituta = disciplinaSubstituta.getCurriculos().iterator().next().getCurriculo().getSemanaLetiva(); 
+			}
+		}
 
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
@@ -2025,6 +2037,16 @@ public class ConvertBeans
 		dto.setDisciplinaId(disciplina.getId());
 		dto.setDisciplinaString(disciplina.getCodigo());
 		dto.setDisciplinaNome(disciplina.getNome());
+		if (disciplinaSubstituta != null) {
+			dto.setDisciplinaSubstitutaId(disciplinaSubstituta.getId());
+			dto.setDisciplinaSubstitutaString(disciplinaSubstituta.getCodigo());
+			dto.setDisciplinaSubstitutaNome(disciplinaSubstituta.getNome());
+			dto.setTotalCreditoDisciplinaSubstituta(disciplinaSubstituta.getCreditosTotal());
+			if (semanaLetivaDisciplinaSubstituta != null) {
+				dto.setDisciplinaSubstitutaSemanaLetivaId(semanaLetivaDisciplinaSubstituta.getId());
+				dto.setDisciplinaSubstitutaSemanaLetivaTempoAula(semanaLetivaDisciplinaSubstituta.getTempo());
+			}
+		}
 		dto.setQuantidadeAlunos(domain.getQuantidadeAlunos());
 		dto.setQuantidadeAlunosString(domain.getQuantidadeAlunos().toString());
 		dto.setCreditosTeorico(domain.getCreditosTeorico());
@@ -2160,8 +2182,10 @@ public class ConvertBeans
 		domain.setOferta( Oferta.find(
 			dto.getOfertaId(), instituicaoEnsino ) );
 
-		domain.setDisciplina( Disciplina.find(
-			dto.getDisciplinaId(), instituicaoEnsino ) );
+		domain.setDisciplina( Disciplina.find(dto.getDisciplinaId(), instituicaoEnsino ) );
+		if (dto.getDisciplinaSubstitutaId() != null) {
+			domain.setDisciplinaSubstituta(Disciplina.find(dto.getDisciplinaSubstitutaId(),instituicaoEnsino));
+		}
 		domain.setQuantidadeAlunos( dto.getQuantidadeAlunos() );
 		domain.setTurma( dto.getTurma() );
 
@@ -2213,6 +2237,17 @@ public class ConvertBeans
 		dto.setDisciplinaId( domain.getDisciplina().getId() );
 		dto.setDisciplinaString( domain.getDisciplina().getCodigo() );
 		dto.setDisciplinaNome( domain.getDisciplina().getNome() );
+		if (domain.getDisciplinaSubstituta() != null) {
+			dto.setDisciplinaSubstitutaId( domain.getDisciplinaSubstituta().getId() );
+			dto.setDisciplinaSubstitutaString( domain.getDisciplinaSubstituta().getCodigo() );
+			dto.setDisciplinaSubstitutaNome( domain.getDisciplinaSubstituta().getNome() );
+			dto.setTotalCreditoDisciplinaSubstituta(domain.getDisciplinaSubstituta().getCreditosTotal());
+			if (!domain.getDisciplinaSubstituta().getCurriculos().isEmpty()) {
+				SemanaLetiva semanaLetivaDisciplinaSubstituta = domain.getDisciplinaSubstituta().getCurriculos().iterator().next().getCurriculo().getSemanaLetiva();
+				dto.setDisciplinaSubstitutaSemanaLetivaId(semanaLetivaDisciplinaSubstituta.getId());
+				dto.setDisciplinaSubstitutaSemanaLetivaTempoAula(semanaLetivaDisciplinaSubstituta.getTempo());
+			}
+		}
 		dto.setTotalCreditoDisciplina( domain.getDisciplina().getTotalCreditos() );
 		dto.setQuantidadeAlunos( domain.getQuantidadeAlunos() );
 		dto.setQuantidadeAlunosString( domain.getQuantidadeAlunos().toString() );

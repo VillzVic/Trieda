@@ -22,6 +22,7 @@ public interface TriedaI18nConstants
 	String cargaHorariaAnterior();
 	String cargaHorariaMax();
 	String cargaHorariaMin();
+	String cargaHorariaMinutos();
 	String codigo();
 	String codigoAreaTitulacao();
 	String codigoCampus();

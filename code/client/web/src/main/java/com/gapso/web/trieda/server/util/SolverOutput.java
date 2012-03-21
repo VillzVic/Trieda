@@ -112,6 +112,10 @@ public class SolverOutput
 
 							Disciplina disciplina = Disciplina.find( Long.valueOf(
 								itemAtendimentoOferta.getDisciplinaId() ), this.instituicaoEnsino );
+							Disciplina disciplinaSubstituta = null;
+							if (itemAtendimentoOferta.getDisciplinaSubstitutaId() != null) {
+								disciplinaSubstituta = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()),this.instituicaoEnsino);
+							}
 
 							int quantidade = itemAtendimentoOferta.getQuantidade();
 							String turma = itemAtendimentoOferta.getTurma();
@@ -127,6 +131,7 @@ public class SolverOutput
 							atendimentoTatico.setCreditosPratico( qtdeCreditosPraticos );
 							atendimentoTatico.setOferta( oferta );
 							atendimentoTatico.setDisciplina( disciplina );
+							atendimentoTatico.setDisciplinaSubstituta(disciplinaSubstituta);
 							atendimentoTatico.setQuantidadeAlunos( quantidade );
 
 							this.atendimentosTatico.add( atendimentoTatico );
@@ -230,6 +235,10 @@ public class SolverOutput
 
 									Disciplina disciplina = Disciplina.find( Long.valueOf(
 										itemAtendimentoOferta.getDisciplinaId() ), this.instituicaoEnsino );
+									Disciplina disciplinaSubstituta = null;
+									if (itemAtendimentoOferta.getDisciplinaSubstitutaId() != null) {
+										disciplinaSubstituta = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()),this.instituicaoEnsino);
+									}
 
 									int quantidade = itemAtendimentoOferta.getQuantidade();
 									String turma = itemAtendimentoOferta.getTurma();
@@ -242,6 +251,7 @@ public class SolverOutput
 									atendimentoOperacional.setSala( sala );
 									atendimentoOperacional.setOferta( oferta );
 									atendimentoOperacional.setDisciplina( disciplina );
+									atendimentoOperacional.setDisciplinaSubstituta(disciplinaSubstituta);
 									atendimentoOperacional.setQuantidadeAlunos( quantidade );
 
 									if ( !itemAtendimentoHorarioAula.isVirtual() )

@@ -77,12 +77,17 @@ public class TRIEDAExportExcel
 		exporters.add( new RelatorioVisaoSalaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
 		exporters.add( new RelatorioVisaoProfessorExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.isVisaoProfessor(), this.instituicaoEnsino ) );
 		exporters.add( new RelatorioVisaoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
+		exporters.add( new AtendimentosPorAlunoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
 
 		Exception exception = null;
 		try {
 			for ( IExportExcel exporter : exporters )
 			{
+				//TODO: MEDIÇÃO PERFORMANCE
+				long start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
 				exporter.export( workbook );
+				//TODO: MEDIÇÃO PERFORMANCE
+				long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
