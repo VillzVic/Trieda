@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -90,8 +91,14 @@ public class OtimizarServiceImpl
 			
 			if (parametro.getConsiderarEquivalencia()) {
 				System.out.print("checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);");start = System.currentTimeMillis(); // TODO: retirar
-				checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);
+				boolean detectouCiclo = checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);
 				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+				
+				if (!detectouCiclo) {
+					System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
+					checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);
+					time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+				}
 			}
 			checksCleiton();//TODO: revisar
 			
@@ -117,7 +124,7 @@ public class OtimizarServiceImpl
 	
 		return response;
 	}
-	
+
 	private void checksCleiton() {
 //		// SEGUNDA VERIFICAÇÃO
 //
@@ -338,9 +345,11 @@ public class OtimizarServiceImpl
 		}
 	}
 	
-	private void checkCicloDisciplinasEquivalentes(Cenario cenario, List<String> errors){
+	private boolean checkCicloDisciplinasEquivalentes(Cenario cenario, List<String> errors){
+		boolean detectouCiclo = false;
+		
 		int id = 0;
-		Integer cIndex = 0, eIndex = 0;
+		Integer cIndex = 0, eIndex = 0, maxIndex = 0;
 		List<Long> nodeMap = new ArrayList<Long>();
 		List<Disciplina> disMap = new ArrayList<Disciplina>();
 		Set<Pair<Integer, Integer>> pairs = new HashSet<Pair<Integer, Integer>>();
@@ -370,6 +379,12 @@ public class OtimizarServiceImpl
 						disMap.add(elimina);
 					}
 					pairs.add(Pair.create(cIndex, eIndex));
+					if (cIndex > maxIndex) {
+						maxIndex = cIndex;
+					}
+					if (eIndex > maxIndex) {
+						maxIndex = eIndex;
+					}
 				}
 			}
 		}
@@ -378,9 +393,10 @@ public class OtimizarServiceImpl
 		// a existencia de ciclos. Nesse grafo, os indices associados aos nos sao os
 		// mesmos identificados em disMap. 
 		
-		Grafo g = new Grafo(Math.max(cIndex,eIndex)+1);
-		for(Pair<Integer, Integer> par: pairs)
+		Grafo g = new Grafo(maxIndex+1);
+		for(Pair<Integer, Integer> par: pairs) {
 			g.insereArco(par.getLeft(), par.getRight());
+		}
 		
 		Profundidade p = new Profundidade();
 		if(!p.testeCiclos(g)){
@@ -403,7 +419,11 @@ public class OtimizarServiceImpl
 			ciclosStr += " \n";
 			System.out.println(ciclosStr.replaceAll("<br />", "\n"));
 			errors.add(HtmlUtils.htmlUnescape(ciclosStr));
+			
+			detectouCiclo = true;
 		}
+		
+		return detectouCiclo;
 	}
 
 	private String avaliaSugestoesParaEliminacaoDeCiclos(List<Disciplina> disMap, Map<Long, Integer> disciplinaIdToQtdDemandadaMap, List<Integer> ciclo) {
@@ -448,6 +468,188 @@ public class OtimizarServiceImpl
 			sugestao = "[Sugestão: eliminar " + dis1.getCodigo() + " -> " + dis2.getCodigo() + "]";
 		}
 		return sugestao;
+	}
+	
+	private void checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(Parametro parametro, List<String> errors) {
+		// monta estruturas para armazenar as equivalências
+		Set<Pair<Long,Long>> equivalenciasOriginais = new HashSet<Pair<Long,Long>>();
+		// [DisciplinaId -> Disciplina]
+		Map<Long,Disciplina> disciplinasMap = new HashMap<Long,Disciplina>();
+		// [DisciplinaEliminaId -> Par<DisciplinaCursouId,DisciplinaEliminaId>]
+		Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasOriginaisMap = new HashMap<Long,Set<Pair<Long,Long>>>();
+		for(Disciplina disciplina : parametro.getCenario().getDisciplinas()){
+			disciplinasMap.put(disciplina.getId(),disciplina);
+			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
+				Disciplina cursou = equivalencia.getCursou();
+				for(Disciplina elimina : equivalencia.getElimina()){
+					Pair<Long,Long> equivalenciaOriginal = Pair.create(cursou.getId(),elimina.getId());
+					
+					equivalenciasOriginais.add(equivalenciaOriginal);
+
+					Set<Pair<Long,Long>> eliminaEquivalencias = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(elimina.getId());
+					if (eliminaEquivalencias == null) {
+						eliminaEquivalencias = new HashSet<Pair<Long,Long>>();
+						disciplinaEliminaIdToEquivalenciasOriginaisMap.put(elimina.getId(),eliminaEquivalencias);
+					}
+					eliminaEquivalencias.add(equivalenciaOriginal);
+				}
+			}
+		}
+		
+		// aplica equivalências umas nas outras
+		Map<Pair<Long,Long>,Set<Pair<Long,Long>>> equivalenciaCalculadaToEquivalenciasOriginaisMap = new HashMap<Pair<Long,Long>,Set<Pair<Long,Long>>>();
+		Set<Pair<Long,Long>> equivalenciasAnalisadas = new HashSet<Pair<Long,Long>>(equivalenciasOriginais);
+		Set<Pair<Long,Long>> equivalenciasAposAplicacoes = new HashSet<Pair<Long,Long>>();
+		boolean ocorreuAlgumaSubstituicao = false;
+		do {
+			ocorreuAlgumaSubstituicao = false;
+			for (Pair<Long,Long> equivalenciaAnalisada : equivalenciasAnalisadas) {
+				Long disCursouIdAnalisada = equivalenciaAnalisada.getLeft();
+				Long disEliminaIdAnalisada = equivalenciaAnalisada.getRight();
+				
+				Set<Pair<Long,Long>> equivalenciasOriginaisAplicaveis = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(disCursouIdAnalisada);
+				if (equivalenciasOriginaisAplicaveis != null) {
+					for (Pair<Long,Long> equivalenciaOriginalAplicavel : equivalenciasOriginaisAplicaveis) {
+						Long disCursouIdOriginalAplicavel = equivalenciaOriginalAplicavel.getLeft();
+						Pair<Long,Long> equivalenciaCalculada = Pair.<Long,Long>create(disCursouIdOriginalAplicavel,disEliminaIdAnalisada); 
+						
+						equivalenciasAposAplicacoes.add(equivalenciaCalculada);
+						
+						Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(equivalenciaCalculada);
+						if (equivalenciasOriginaisQueGeraramACalculada == null) {
+							equivalenciasOriginaisQueGeraramACalculada = new HashSet<Pair<Long,Long>>();
+							equivalenciaCalculadaToEquivalenciasOriginaisMap.put(equivalenciaCalculada,equivalenciasOriginaisQueGeraramACalculada);
+						}
+						equivalenciasOriginaisQueGeraramACalculada.add(equivalenciaOriginalAplicavel);
+					}
+					ocorreuAlgumaSubstituicao = true;
+				} else {
+					equivalenciasAposAplicacoes.add(equivalenciaAnalisada);
+				}
+			}
+			
+			if (ocorreuAlgumaSubstituicao) {
+				equivalenciasAnalisadas.clear();
+				equivalenciasAnalisadas.addAll(equivalenciasAposAplicacoes);
+				equivalenciasAposAplicacoes.clear();
+			}
+		} while (ocorreuAlgumaSubstituicao);
+		
+		// recalcula algumas estruturas com base nas equivalencias calculadas 
+		// [DisciplinaEliminaId -> Par<DisciplinaCursouId,DisciplinaEliminaId>]
+		Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasCalculadasMap = new HashMap<Long,Set<Pair<Long,Long>>>();
+		for (Pair<Long,Long> equivalenciaCalculada : equivalenciasAposAplicacoes) {
+			Long disEliminaIdCalculada = equivalenciaCalculada.getRight();
+			
+			Set<Pair<Long,Long>> equivalenciasCalculadas = disciplinaEliminaIdToEquivalenciasCalculadasMap.get(disEliminaIdCalculada);
+			if (equivalenciasCalculadas == null) {
+				equivalenciasCalculadas = new HashSet<Pair<Long,Long>>();
+				disciplinaEliminaIdToEquivalenciasCalculadasMap.put(disEliminaIdCalculada,equivalenciasCalculadas);
+			}
+			equivalenciasCalculadas.add(equivalenciaCalculada);
+		}
+		
+		// obtém curriculos
+		Set<Curriculo> curriculos = new HashSet<Curriculo>();
+		for (Oferta oferta : parametro.getCampus().getOfertas()) {
+			curriculos.add(oferta.getCurriculo());
+		}
+		
+		for (Curriculo curriculo : curriculos) {
+			// obtém as disciplinas associadas com o currículo em questão
+			Map<Long,CurriculoDisciplina> disciplinasDoCurriculo = new HashMap<Long,CurriculoDisciplina>();
+			for (CurriculoDisciplina curriculoDisciplina : curriculo.getDisciplinas()) {
+				disciplinasDoCurriculo.put(curriculoDisciplina.getDisciplina().getId(),curriculoDisciplina);
+			}
+			
+			Set<Pair<Long,Long>> equivalenciasAplicaveisNoCurriculo = new HashSet<Pair<Long,Long>>();
+			
+			// verifica se alguma equivalência invalida o currículo em questão
+			boolean detectouEquivalenciaInconsistentePrimeiroTeste = false;
+			
+			// primeiro, verifica se a aplicação de cada equivalência ao currículo gera repetição de disciplina
+			for (Long disciplinaDoCurriculoId : disciplinasDoCurriculo.keySet()) {
+				// obtém as equivalências que podem ser aplicadas na disciplina em questão
+				Set<Pair<Long,Long>> equivalenciasAplicaveisNaDisciplina = disciplinaEliminaIdToEquivalenciasCalculadasMap.get(disciplinaDoCurriculoId);
+				if (equivalenciasAplicaveisNaDisciplina != null) {
+					// acumula todas as equivalências aplicáveis no currículo em questão
+					equivalenciasAplicaveisNoCurriculo.addAll(equivalenciasAplicaveisNaDisciplina);
+					 
+					for (Pair<Long,Long> equivalenciaAplicavelNaDisciplina : equivalenciasAplicaveisNaDisciplina) {
+						Long disciplinaCursouId = equivalenciaAplicavelNaDisciplina.getLeft();
+						Long disciplinaEliminaId = equivalenciaAplicavelNaDisciplina.getRight();
+						// verifica se a equivalência aplicável na disciplina em questão irá transformá-la em outra disciplina
+						// já existente no currículo
+						CurriculoDisciplina curriculoDisciplina = disciplinasDoCurriculo.get(disciplinaCursouId);
+						if (curriculoDisciplina != null) {
+							String equivalenciasInfo = "";
+							Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(equivalenciaAplicavelNaDisciplina);
+							if (equivalenciasOriginaisQueGeraramACalculada != null) {
+								// a equivalência aplicável na disciplina é uma equivalência calculada
+								equivalenciasInfo = imprimeEquivalenciasEmUmaString(equivalenciasOriginaisQueGeraramACalculada,disciplinasMap);
+							} else {
+								// a equivalência aplicável na disciplina é uma equivalência original
+								Disciplina cursou = disciplinasMap.get(disciplinaCursouId);
+								Disciplina elimina = disciplinasMap.get(disciplinaEliminaId);
+								equivalenciasInfo = cursou.getCodigo() + "->" + elimina.getCodigo();
+							}
+							
+							errors.add(HtmlUtils.htmlUnescape("A(s) equivalência(s) [" + equivalenciasInfo + "] invalida(m) a matriz curricular [" + curriculo.getCodigo() + "] por conta da disciplina [" + curriculoDisciplina.getDisciplina().getCodigo() + "] no período [" + curriculoDisciplina.getPeriodo() + "]."));
+							detectouEquivalenciaInconsistentePrimeiroTeste = true;
+						}
+					}
+				}
+			}
+			
+			if (!detectouEquivalenciaInconsistentePrimeiroTeste) {
+				// organiza equivalências aplicáveis no currículo pela extremidade Cursou da relação (Cursou,Elimina) 
+				// [DisciplinaCursouId -> Set<Par<DisciplinaCursouId,DisciplinaEliminaId>>]
+				Map<Long,Set<Pair<Long,Long>>> cursouToEquivalenciasAplicaveisMap = new HashMap<Long,Set<Pair<Long,Long>>>();
+				for (Pair<Long,Long> parCursouElimina : equivalenciasAplicaveisNoCurriculo) {
+					Long disciplinaCursouId = parCursouElimina.getLeft();
+					Set<Pair<Long,Long>> equivalencias = cursouToEquivalenciasAplicaveisMap.get(disciplinaCursouId);
+					if (equivalencias == null) {
+						equivalencias = new HashSet<Pair<Long,Long>>();
+						cursouToEquivalenciasAplicaveisMap.put(disciplinaCursouId,equivalencias);
+					}
+					equivalencias.add(parCursouElimina);
+				}
+				
+				// segundo, verifica se há mais de uma equivalência, aplicável ao currículo, que leva para uma mesma disciplina
+				for (Entry<Long,Set<Pair<Long,Long>>> entry : cursouToEquivalenciasAplicaveisMap.entrySet()) {
+					Set<Pair<Long,Long>> equivalenciasComMesmaExtremidadeCursou = entry.getValue();
+					// verifica se há mais de uma equivalência, aplicável ao currículo, que leva para uma mesma disciplina
+					if (equivalenciasComMesmaExtremidadeCursou.size() > 1) {
+						Set<Pair<Long,Long>> equivalenciasParaImprimir = new HashSet<Pair<Long,Long>>();
+						for (Pair<Long,Long> e : equivalenciasComMesmaExtremidadeCursou) {
+							Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(e);
+							if (equivalenciasOriginaisQueGeraramACalculada != null) {
+								// a equivalência 'e' é uma equivalência calculada
+								equivalenciasParaImprimir.addAll(equivalenciasOriginaisQueGeraramACalculada);
+							} else {
+								// a equivalência 'e' é uma equivalência original
+								equivalenciasParaImprimir.add(e);
+							}
+						}
+						String equivalenciasStr = imprimeEquivalenciasEmUmaString(equivalenciasParaImprimir,disciplinasMap);
+						// gera mensagem de erro
+						errors.add(HtmlUtils.htmlUnescape("As equivalências [" + equivalenciasStr + "] invalidam a matriz curricular [" + curriculo.getCodigo() + "] pois levam para uma mesma disciplina."));
+					}
+				}
+			}
+		}
+	}
+
+	private String imprimeEquivalenciasEmUmaString(Set<Pair<Long,Long>> equivalencias, Map<Long,Disciplina> disciplinasMap) {
+		// organiza as equivalências em uma string
+		String equivalenciasStr = "";
+		for (Pair<Long,Long> par : equivalencias) {
+			Disciplina cursou = disciplinasMap.get(par.getLeft());
+			Disciplina elimina = disciplinasMap.get(par.getRight());
+			equivalenciasStr += cursou.getCodigo() + "->" + elimina.getCodigo() + "; ";
+		}
+		equivalenciasStr = equivalenciasStr.substring(0,equivalenciasStr.length()-2);
+		return equivalenciasStr;
 	}
 
 	@Override
