@@ -110,8 +110,9 @@
 	width: 230px;
 	border-radius: 8px;
 	font: 15px Arial, Helvetica, sans-serif;
-	padding: 13px 5px;
+	padding: 5px;
 	margin-top: 8px;
+	height: auto;
 }
 
 .x-panel input[placeholder]::-webkit-input-placeholder {
