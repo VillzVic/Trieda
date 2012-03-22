@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.shared.mvp.view;
 
+import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.shared.mvp.presenter.OtimizarMessagesPresenter;
@@ -38,6 +39,8 @@ public class OtimizarMessagesView
 			Resources.DEFAULTS.warning16() ) );
 		this.messagesWarningPanel.setBodyBorder( false );
 		this.messagesWarningPanel.addStyleName( "errorList" );
+		this.messagesWarningPanel.setScrollMode(Style.Scroll.AUTO);
+		this.messagesWarningPanel.setHeight(220);
 		this.panel.add( this.messagesWarningPanel );
 
 		this.messagesErrorPanel = new ContentPanel();
@@ -46,6 +49,8 @@ public class OtimizarMessagesView
 			Resources.DEFAULTS.error16() ) );
 		this.messagesErrorPanel.setBodyBorder( false );
 		this.messagesErrorPanel.addStyleName( "errorList" );
+		this.messagesErrorPanel.setScrollMode(Style.Scroll.AUTO);
+		this.messagesErrorPanel.setHeight(220);
 		this.panel.add( this.messagesErrorPanel );
 
 		this.panel.setAutoHeight( true );
