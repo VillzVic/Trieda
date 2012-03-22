@@ -312,7 +312,7 @@ public class EquivalenciasImportExcel
 			= Equivalencia.buildEquivalenciaCursouCodigoToEquivalenciaMap(
 				Equivalencia.findAll( this.instituicaoEnsino ) );
 
-		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
+		//int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( EquivalenciasImportExcelBean equivalenciaExcel : sheetContent )
 		{
 			if ( equivalenciaExcel.getDisciplinaCursou() == null
@@ -344,7 +344,7 @@ public class EquivalenciasImportExcel
 				newEquivalencia.persist();
 			}
 			
-			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" equivalencias"); count = 0;}
+			//count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" equivalencias"); count = 0;}
 		}
 	}
 

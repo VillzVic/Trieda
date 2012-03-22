@@ -333,6 +333,7 @@ public class RelatorioVisaoProfessorExportExcel
 
 				Long professorId = ( professor == null ? professorVirtual.getId() : professor.getId() );
 				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
+				// FIXME TRATAR CASOS DE ATENDIMENTOS COM MAIS DE UMA SEMANA LETIVA ASSOCIADA
 				SemanaLetiva semanaLetiva = SemanaLetiva.find( atendimento.getSemanaLetivaId(), this.instituicaoEnsino );
 
 				Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > mapNivel2 = mapNivel1.get( professorId );

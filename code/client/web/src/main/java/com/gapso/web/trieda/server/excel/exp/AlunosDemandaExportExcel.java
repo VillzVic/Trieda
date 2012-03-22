@@ -1,8 +1,6 @@
 package com.gapso.web.trieda.server.excel.exp;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -89,11 +87,11 @@ public class AlunosDemandaExportExcel
 	{
 		boolean result = false;
 		
-		List< AlunoDemanda > listAlunosDemanda
+		List< AlunoDemanda > alunosDemanda
 			= AlunoDemanda.findAll( this.instituicaoEnsino );
 
-		Set< AlunoDemanda > alunosDemanda
-			= new HashSet< AlunoDemanda >( listAlunosDemanda );
+//		Set< AlunoDemanda > alunosDemanda
+//			= new HashSet< AlunoDemanda >( listAlunosDemanda );
 
 		if ( !alunosDemanda.isEmpty() )
 		{
