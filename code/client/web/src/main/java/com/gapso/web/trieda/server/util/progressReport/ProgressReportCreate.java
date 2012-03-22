@@ -1,9 +1,10 @@
 package com.gapso.web.trieda.server.util.progressReport;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Random;
 
-public class ProgressReportFileCreate {
+public class ProgressReportCreate {
 	
 	public static String geraIndice(){
 		String letras = "abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVXYZ0123456789";
@@ -19,22 +20,17 @@ public class ProgressReportFileCreate {
 		return armazenaChaves;
 	}
 	
-	public static String getNewKey(){
+	public static String getNewKey(HashMap<String, ProgressReportReader> progressReportMap){
 		String newKey;
-		File f;
 		
-		do{
-			newKey = geraIndice();
-			f = new File("trieda/" + newKey + ".txt");
-			System.out.println(f.exists());
-		}
-		while(f.exists());
+		do newKey = geraIndice();
+		while(progressReportMap.get(newKey) != null);
 	
 		return newKey;
 	}
 	
 	public static File getFile(String fileName){
-		return new File("trieda/" + fileName + ".txt");
+		return new File("" + fileName + ".txt");
 	}
 	
 }

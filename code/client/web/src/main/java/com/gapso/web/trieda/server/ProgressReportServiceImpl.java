@@ -1,12 +1,13 @@
 package com.gapso.web.trieda.server;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileCreate;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportCreate;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileReader;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
 import com.gapso.web.trieda.shared.services.ProgressReportService;
@@ -17,37 +18,29 @@ public class ProgressReportServiceImpl extends RemoteServiceServlet
 {
 	
 	private static final long serialVersionUID = -4580690361232014543L;
-	private static Map<String, ProgressReportReader> readers;
 	
-	static{
-		readers = new HashMap<String, ProgressReportReader>();
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, ProgressReportReader> getProgressReportSession(HttpServletRequest request){
+		HttpSession session = request.getSession();
+		HashMap<String, ProgressReportReader> progressReportSession = (HashMap<String, ProgressReportReader>) session.getAttribute("progressReport");
+		if(progressReportSession == null){
+			progressReportSession = new HashMap<String, ProgressReportReader>();
+			session.setAttribute("progressReport", progressReportSession);
+		}
+		
+		return progressReportSession;
 	}
 	
 	private ProgressReportReader getProgressReport(String reportKey) throws Exception{
-		ProgressReportReader progressSource = readers.get(reportKey);
+		HashMap<String, ProgressReportReader> progressReport = getProgressReportSession(this.getThreadLocalRequest());
 		
-		if(progressSource == null){
-			File f = ProgressReportFileCreate.getFile(reportKey);
-			if(f.canRead()){
-				try{
-					progressSource = new ProgressReportFileReader(f);
-					progressSource.start();
-					readers.put(reportKey, progressSource);
-				}
-				catch(IOException e){
-					throw new Exception("Ocorreu um erro inesperado e não " +
-							"será possível acompanhar o progresso da importação desses dados. " +
-							"No entanto, eles foram enviados ao servidor e em breve será " +
-							"exibida uma mensagem confirmando o seu processamento.");
-				}
-			}
-		}
+		ProgressReportReader progressSource = progressReport.get(reportKey);
 		
 		return progressSource;
 	}
 	
 	public String getNewKey(){
-		return ProgressReportFileCreate.getNewKey();
+		return ProgressReportCreate.getNewKey(getProgressReportSession(this.getThreadLocalRequest()));
 	}
 	
 	public Boolean isReadyToRead(String reportKey) throws Exception{
@@ -62,16 +55,21 @@ public class ProgressReportServiceImpl extends RemoteServiceServlet
 		return (progressSource == null) ? null : progressSource.isFinished();
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unchecked" })
 	public Boolean isClosed(String reportKey) throws Exception{
-		File f = ProgressReportFileCreate.getFile(reportKey);
-		ProgressReportReader progressSource = readers.get(reportKey);
-		progressSource = null;
+		HttpSession session = this.getThreadLocalRequest().getSession();
+		ProgressReportReader progressSource = ((HashMap<String, ProgressReportReader>) session.getAttribute("progressReport")).remove(reportKey);
 		
-		if(f.exists()){
-			if(!f.delete()) return false;
+		if(progressSource instanceof ProgressReportFileReader){
+			progressSource = null;
+			File f = ProgressReportCreate.getFile(reportKey);
+			if(f.exists()){
+				if(!f.delete()) return false;
+			}
+			f = null;
 		}
-		f = null;
+		else progressSource = null;
+		
 		return true;
 	}
 

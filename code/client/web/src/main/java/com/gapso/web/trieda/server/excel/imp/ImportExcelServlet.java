@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server.excel.imp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -17,11 +18,13 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.ProgressReportServiceImpl;
 import com.gapso.web.trieda.server.UsuariosServiceImpl;
 import com.gapso.web.trieda.server.util.GTriedaI18nConstants;
 import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration;
-import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileCreate;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportListReader;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -39,6 +42,7 @@ public class ImportExcelServlet
 		i18nMessages = new GTriedaI18nMessages();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doPost(
 		HttpServletRequest request, HttpServletResponse response )
@@ -64,7 +68,6 @@ public class ImportExcelServlet
 
         try
         {
-        	@SuppressWarnings( "unchecked" )
 			List< FileItem > itens = upload.parseRequest( request );
 
         	String fileName = null;
@@ -97,7 +100,19 @@ public class ImportExcelServlet
 				if ( importer != null )
 				{
 					if(importer instanceof ProgressDeclaration){
-						((ProgressDeclaration) importer).setProgressReport(ProgressReportFileCreate.getFile(chaveRegistro));
+						try{
+							List<String> feedbackList = new ArrayList<String>();
+//							File f = ProgressReportCreate.getFile(chaveRegistro);
+							((ProgressDeclaration) importer).setProgressReport(feedbackList);
+							
+//							ProgressReportReader progressSource = new ProgressReportFileReader(f);
+							ProgressReportReader progressSource = new ProgressReportListReader(feedbackList);
+							progressSource.start();
+							ProgressReportServiceImpl.getProgressReportSession(request).put(chaveRegistro, progressSource);
+						}
+						catch(Exception e){
+							System.out.println("Nao foi possivel realizar o acompanhamento da progressao.");
+						}
 					}
 					if ( !importer.load( fileName, inputStream ) )
 					{

@@ -61,9 +61,9 @@ public abstract class ProgressReportWriter extends ProgressReport{
 	
 	public void finish(String msg){
 		super.finish();
-		if(msg == null) msg = "Processo concluído";
+		if(msg == null) msg = "<b>Processo concluído</b>";
 		writeMsg(msg);
-		writeMsg("Tempo total: " + descricaoTempo(totalTime));
+		writeMsg("<b>Tempo total: </b>" + descricaoTempo(totalTime));
 		writeMsg("$EOT$");
 		if(antigo != null){
 			System.setOut(antigo);
