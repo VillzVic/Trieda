@@ -2030,7 +2030,7 @@ public class SolverInput
 			}
 
 			createItemAtendimentoTaticoSolucao( at.getSala(), at.getSemana(),
-				at.getOferta(), at.getDisciplina(),
+				at.getOferta(), at.getDisciplina(), at.getDisciplinaSubstituta(),
 				at.getQuantidadeAlunos(), at.getTurma(),
 				at.getCreditosTeorico(), at.getCreditosPratico() );
 		}
@@ -2235,7 +2235,7 @@ public class SolverInput
 	}
 
 	private ItemAtendimentoTaticoSolucao createItemAtendimentoTaticoSolucao(
-		Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina,
+		Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina, Disciplina disciplinaSubstituta,
 		int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos )
 	{
 		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao
@@ -2245,6 +2245,9 @@ public class SolverInput
 			= this.of.createItemAtendimentoOfertaSolucao();
 
 		atOfertaSolucao.setOfertaCursoCampiId( oferta.getId().intValue() );
+		if (disciplinaSubstituta != null) {
+			atOfertaSolucao.setdisciplinaSubstitutaId(disciplinaSubstituta.getId().intValue());
+		}
 		atOfertaSolucao.setDisciplinaId( disciplina.getId().intValue() );
 		atOfertaSolucao.setQuantidade( quantidade );
 		atOfertaSolucao.setTurma( turma );
