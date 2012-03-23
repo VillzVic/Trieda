@@ -21,7 +21,6 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
-import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
@@ -127,31 +126,38 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// insere as aulas do modo operacional na lista de atendimentos
 			aulas.addAll(aulasOperacional);
 		}
- 
-		// trata compartilhamento de turmas entre cursos
-		List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
 		
-		// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
-		// créditos em um dia das semanas letivas relacionadas com as aulas em questão
-		Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
-		ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
-		int mdcTemposAula = par.getPrimeiro();
-		SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo(); 
-		
-		return QuartetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos);
+		if (!aulas.isEmpty()) {
+	 		// trata compartilhamento de turmas entre cursos
+			List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
+			
+			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
+			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
+			ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
+			int mdcTemposAula = par.getPrimeiro();
+			SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo(); 
+			
+			return QuartetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos);
+		} else {
+			return QuartetoDTO.create(0,0,0,aulas);
+		}
 	}
 	
 	private ParDTO<Integer,SemanaLetiva> calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(Set<Long> semanasLetivasIDsDasAulasNaSala) {
-		List<SemanaLetiva> todasSemanasLetivas = SemanaLetiva.findAll(getInstituicaoEnsinoUser());
-		Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = SemanaLetiva.buildSemanaLetivaIDToSemanaLetivaMap(todasSemanasLetivas);
-		List<SemanaLetiva> semanasLetivasDasAulasNaSala = new ArrayList<SemanaLetiva>();
-		for (Long semanaLetivaId : semanasLetivasIDsDasAulasNaSala) {
-			semanasLetivasDasAulasNaSala.add(semanaLetivaIdToSemanaLetivaMap.get(semanaLetivaId));
+		if (!semanasLetivasIDsDasAulasNaSala.isEmpty()) {
+			List<SemanaLetiva> todasSemanasLetivas = SemanaLetiva.findAll(getInstituicaoEnsinoUser());
+			Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = SemanaLetiva.buildSemanaLetivaIDToSemanaLetivaMap(todasSemanasLetivas);
+			List<SemanaLetiva> semanasLetivasDasAulasNaSala = new ArrayList<SemanaLetiva>();
+			for (Long semanaLetivaId : semanasLetivasIDsDasAulasNaSala) {
+				semanasLetivasDasAulasNaSala.add(semanaLetivaIdToSemanaLetivaMap.get(semanaLetivaId));
+			}
+			SemanaLetiva semanaLetivaComMaiorCargaHoraria = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasDasAulasNaSala); 
+			int mdcTemposAula = SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivasDasAulasNaSala);
+			
+			return ParDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria);
 		}
-		SemanaLetiva semanaLetivaComMaiorCargaHoraria = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasDasAulasNaSala); 
-		int mdcTemposAula = SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivasDasAulasNaSala);
-		
-		return ParDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria);
+		return ParDTO.create(0,null);
 	}
 
 	/**
@@ -190,14 +196,19 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			parResultante.setSegundo(parDTO.getSegundo());
 		}
 		
-		// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
-		// créditos em um dia das semanas letivas relacionadas com as aulas em questão
-		Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(parResultante.getPrimeiro());
-		ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
-		int mdcTemposAula = par.getPrimeiro();
-		SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo();
-		
-		return QuintetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),parResultante.getPrimeiro(),parResultante.getSegundo());
+		List<AtendimentoRelatorioDTO> aulas = parResultante.getPrimeiro();
+		if (!aulas.isEmpty()) {
+			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
+			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(parResultante.getPrimeiro());
+			ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
+			int mdcTemposAula = par.getPrimeiro();
+			SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo();
+			
+			return QuintetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),parResultante.getPrimeiro(),parResultante.getSegundo());
+		} else {
+			return QuintetoDTO.create(0,0,0,parResultante.getPrimeiro(),parResultante.getSegundo());
+		}
 	}
 	
 	/**

@@ -66,9 +66,12 @@ public class GradeHorariaCursoGrid
 	private String emptyTextBeforeSearch = "Preencha o filtro acima";
 	private String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
 
-	public GradeHorariaCursoGrid()
-	{
+	public GradeHorariaCursoGrid() {
 		super( new FitLayout() );
+		this.mdcTemposAula = 1;
+		this.maximoCreditos = 0;
+		this.qtdLinhasGradeHorariaPorCredito = 0;
+		this.tamanhoLinhaGradeHorariaEmPixels = 0;
 		setHeaderVisible( false );
 	}
 
@@ -185,19 +188,26 @@ public class GradeHorariaCursoGrid
 
 			@Override
 			public void onSuccess(QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>> result) {
-				mdcTemposAula = result.getPrimeiro();
-				maximoCreditos = result.getSegundo();
-				Integer tempoAulaDaSemanaLetivaComMaximoDeCreditos = result.getTerceiro();
-				qtdLinhasGradeHorariaPorCredito = tempoAulaDaSemanaLetivaComMaximoDeCreditos/mdcTemposAula;
-				tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO*mdcTemposAula);
 				aulasDoBlocoCurricularDTO = result.getQuarto();
-				qtdColunasPorDiaSemana = result.getQuinto();
-
-				preencheCores();
-				grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
-				grid.getView().setEmptyText(emptyTextAfterSearch);
-				for (int row = 0; row < maximoCreditos*qtdLinhasGradeHorariaPorCredito; row++) {
-					grid.getView().getRow(row).getStyle().setHeight(tamanhoLinhaGradeHorariaEmPixels-2,Unit.PX);
+				if (!aulasDoBlocoCurricularDTO.isEmpty()) {
+					mdcTemposAula = result.getPrimeiro();
+					maximoCreditos = result.getSegundo();
+					Integer tempoAulaDaSemanaLetivaComMaximoDeCreditos = result.getTerceiro();
+					qtdLinhasGradeHorariaPorCredito = tempoAulaDaSemanaLetivaComMaximoDeCreditos/mdcTemposAula;
+					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO*mdcTemposAula);
+					qtdColunasPorDiaSemana = result.getQuinto();
+					preencheCores();
+					grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
+					grid.getView().setEmptyText(emptyTextAfterSearch);
+					for (int row = 0; row < maximoCreditos*qtdLinhasGradeHorariaPorCredito; row++) {
+						grid.getView().getRow(row).getStyle().setHeight(tamanhoLinhaGradeHorariaEmPixels-2,Unit.PX);
+					}
+				} else {
+					mdcTemposAula = 1;
+					maximoCreditos = 0;
+					qtdLinhasGradeHorariaPorCredito = 0;
+					tamanhoLinhaGradeHorariaEmPixels = 0;
+					grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
 				}
 				grid.unmask();
 			}

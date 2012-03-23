@@ -57,9 +57,12 @@ public class GradeHorariaSalaGrid
 	private String emptyTextBeforeSearch = "Preencha o filtro acima";
 	private String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
 
-	public GradeHorariaSalaGrid()
-	{
+	public GradeHorariaSalaGrid() {
 		super( new FitLayout() );
+		this.mdcTemposAula = 1;
+		this.maximoCreditos = 0;
+		this.qtdLinhasGradeHorariaPorCredito = 0;
+		this.tamanhoLinhaGradeHorariaEmPixels = 0;
 		this.setHeaderVisible( false );
 	}
 
@@ -132,7 +135,7 @@ public class GradeHorariaSalaGrid
 
 		this.grid.mask("Carregando os dados, " + "aguarde alguns instantes", "loading");
 
-		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(getSalaDTO(),getTurnoDTO(),/*getSemanaLetivaDTO(),*/new AsyncCallback<QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>>>() {
+		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(getSalaDTO(),getTurnoDTO(),new AsyncCallback<QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!","Não foi possível carregar a grade de horários",null);
@@ -140,18 +143,25 @@ public class GradeHorariaSalaGrid
 
 			@Override
 			public void onSuccess(QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>> result) {
-				mdcTemposAula = result.getPrimeiro();
-				maximoCreditos = result.getSegundo();
-				Integer tempoAulaDaSemanaLetivaComMaximoDeCreditos = result.getTerceiro();
 				aulasNaSalaDTO = result.getQuarto();
-				qtdLinhasGradeHorariaPorCredito = tempoAulaDaSemanaLetivaComMaximoDeCreditos/mdcTemposAula;
-				tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO*mdcTemposAula);
-				
-				preencheCores();
-				grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
-				grid.getView().setEmptyText(emptyTextAfterSearch);
-				for (int row = 0; row < maximoCreditos*qtdLinhasGradeHorariaPorCredito; row++) {
-					grid.getView().getRow(row).getStyle().setHeight(tamanhoLinhaGradeHorariaEmPixels-2,Unit.PX);
+				if (!aulasNaSalaDTO.isEmpty()) {
+					mdcTemposAula = result.getPrimeiro();
+					maximoCreditos = result.getSegundo();
+					Integer tempoAulaDaSemanaLetivaComMaximoDeCreditos = result.getTerceiro();
+					qtdLinhasGradeHorariaPorCredito = tempoAulaDaSemanaLetivaComMaximoDeCreditos/mdcTemposAula;
+					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO*mdcTemposAula);
+					preencheCores();
+					grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
+					grid.getView().setEmptyText(emptyTextAfterSearch);
+					for (int row = 0; row < maximoCreditos*qtdLinhasGradeHorariaPorCredito; row++) {
+						grid.getView().getRow(row).getStyle().setHeight(tamanhoLinhaGradeHorariaEmPixels-2,Unit.PX);
+					}
+				} else {
+					mdcTemposAula = 1;
+					maximoCreditos = 0;
+					qtdLinhasGradeHorariaPorCredito = 0;
+					tamanhoLinhaGradeHorariaEmPixels = 0;
+					grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
 				}
 				grid.unmask();
 			}
