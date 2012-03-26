@@ -36,7 +36,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
-import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
+import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -214,8 +214,8 @@ public class RelatorioVisaoCursoExportExcel
 		return result;
 	}
 
-	private List<QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>>> getAtendimentoRelatorioDTOList(Cenario cenario) {
-		List<QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>>> atendimentosInfo = new ArrayList<QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>>>();
+	private List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>> getAtendimentoRelatorioDTOList(Cenario cenario) {
+		List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>> atendimentosInfo = new ArrayList<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>>();
 
 		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 		Set<Map<String,Object>> opcoes = opcoesBuscaOperacional(cenario);
@@ -244,8 +244,8 @@ public class RelatorioVisaoCursoExportExcel
 			Curso curso = Curso.find(cursoId, this.instituicaoEnsino);
 			CursoDTO cursoDTO = ConvertBeans.toCursoDTO(curso);
 
-			QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>> quinteto = service.getAtendimentosParaGradeHorariaVisaoCurso(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
-			atendimentosInfo.add(quinteto);
+			SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>> sexteto = service.getAtendimentosParaGradeHorariaVisaoCurso(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
+			atendimentosInfo.add(sexteto);
 		}
 
 		return atendimentosInfo;
@@ -258,7 +258,7 @@ public class RelatorioVisaoCursoExportExcel
 		Cenario cenario = getCenario();
 		
 		// busca os atendimentos que deverão ser escritos no excel
-		List<QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>>> atendimentosInfo = getAtendimentoRelatorioDTOList(cenario);
+		List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>> atendimentosInfo = getAtendimentoRelatorioDTOList(cenario);
 		
 		if (!atendimentosInfo.isEmpty()) {
 			// identifica se os atendimentos se referem ao modo tático ou ao modo operacional
@@ -270,8 +270,8 @@ public class RelatorioVisaoCursoExportExcel
 			fillInCellStyles(sheet);
 			List<HSSFCellStyle> excelColorsPool = buildColorPaletteCellStyles(workbook);
 			Map<String,HSSFCellStyle> codigoDisciplinaToColorMap = new HashMap<String,HSSFCellStyle>();
-			for (QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>> quinteto : atendimentosInfo) {
-				List<AtendimentoRelatorioDTO> aulas = quinteto.getQuarto();
+			for (SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>> sexteto : atendimentosInfo) {
+				List<AtendimentoRelatorioDTO> aulas = sexteto.getQuarto();
 				for (AtendimentoRelatorioDTO aula : aulas) {
 					HSSFCellStyle style = codigoDisciplinaToColorMap.get(aula.getDisciplinaString());
 					if (style == null) {
@@ -285,12 +285,12 @@ public class RelatorioVisaoCursoExportExcel
 			int nextRow = this.initialRow;
 
 			// para cada bloco curricular
-			for (QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>> quinteto : atendimentosInfo) {
-				Integer mdcTemposAula = quinteto.getPrimeiro();
-				Integer maximoDeCreditos = quinteto.getSegundo();
-				Integer tempoDeAulaDaSemanaLetivaComMaiorCargaHoraria = quinteto.getTerceiro();
-				List<AtendimentoRelatorioDTO> aulas = quinteto.getQuarto();
-				List<Integer> qtdColunasPorDiaSemana = quinteto.getQuinto();
+			for (SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>> sexteto : atendimentosInfo) {
+				Integer mdcTemposAula = sexteto.getPrimeiro();
+				Integer maximoDeCreditos = sexteto.getSegundo();
+				Integer tempoDeAulaDaSemanaLetivaComMaiorCargaHoraria = sexteto.getTerceiro();
+				List<AtendimentoRelatorioDTO> aulas = sexteto.getQuarto();
+				List<Integer> qtdColunasPorDiaSemana = sexteto.getQuinto();
 				
 				if (aulas.isEmpty()) {
 					continue;

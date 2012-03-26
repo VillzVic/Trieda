@@ -1,8 +1,6 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +29,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
-import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
+import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.Services;
@@ -45,10 +43,9 @@ public class GradeHorariaSalaGrid
 	private Grid< LinhaDeCredito > grid;
 	private ListStore< LinhaDeCredito > store;
 	private Integer mdcTemposAula;
-	private Integer maximoCreditos;
-	private Integer qtdLinhasGradeHorariaPorCredito;
 	private Integer tamanhoLinhaGradeHorariaEmPixels;
 	private List<AtendimentoRelatorioDTO> aulasNaSalaDTO;
+	private List<String> labelsDasLinhasDaGradeHoraria;
 	private SalaDTO salaDTO;
 	private TurnoDTO turnoDTO;
 	private QuickTip quickTip;
@@ -60,9 +57,8 @@ public class GradeHorariaSalaGrid
 	public GradeHorariaSalaGrid() {
 		super( new FitLayout() );
 		this.mdcTemposAula = 1;
-		this.maximoCreditos = 0;
-		this.qtdLinhasGradeHorariaPorCredito = 0;
 		this.tamanhoLinhaGradeHorariaEmPixels = 0;
+		this.labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
 		this.setHeaderVisible( false );
 	}
 
@@ -135,31 +131,29 @@ public class GradeHorariaSalaGrid
 
 		this.grid.mask("Carregando os dados, " + "aguarde alguns instantes", "loading");
 
-		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(getSalaDTO(),getTurnoDTO(),new AsyncCallback<QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>>>() {
+		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(getSalaDTO(),getTurnoDTO(),new AsyncCallback<QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<String>>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!","Não foi possível carregar a grade de horários",null);
 			}
 
 			@Override
-			public void onSuccess(QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>> result) {
+			public void onSuccess(QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<String>> result) {
+				labelsDasLinhasDaGradeHoraria.clear();
 				aulasNaSalaDTO = result.getQuarto();
 				if (!aulasNaSalaDTO.isEmpty()) {
 					mdcTemposAula = result.getPrimeiro();
-					maximoCreditos = result.getSegundo();
-					Integer tempoAulaDaSemanaLetivaComMaximoDeCreditos = result.getTerceiro();
-					qtdLinhasGradeHorariaPorCredito = tempoAulaDaSemanaLetivaComMaximoDeCreditos/mdcTemposAula;
+					labelsDasLinhasDaGradeHoraria.addAll(result.getQuinto());
 					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO*mdcTemposAula);
 					preencheCores();
 					grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
 					grid.getView().setEmptyText(emptyTextAfterSearch);
-					for (int row = 0; row < maximoCreditos*qtdLinhasGradeHorariaPorCredito; row++) {
+					int totalLinhas = isTatico() ? labelsDasLinhasDaGradeHoraria.size() : labelsDasLinhasDaGradeHoraria.size()-1;
+					for (int row = 0; row < totalLinhas; row++) {
 						grid.getView().getRow(row).getStyle().setHeight(tamanhoLinhaGradeHorariaEmPixels-2,Unit.PX);
 					}
 				} else {
 					mdcTemposAula = 1;
-					maximoCreditos = 0;
-					qtdLinhasGradeHorariaPorCredito = 0;
 					tamanhoLinhaGradeHorariaEmPixels = 0;
 					grid.reconfigure(getListStore(),new ColumnModel(getColumnList()));
 				}
@@ -175,49 +169,17 @@ public class GradeHorariaSalaGrid
 			this.store.removeAll();
 		}
 
-		Set<LinhaDeCredito> setLinhaDeCredito = new HashSet<LinhaDeCredito>();
-		
 		if (isTatico()) {
-			Integer cargaHorariaAcumuladaEmMinutos = mdcTemposAula;
-			for (int indexCredito = 1; indexCredito <= maximoCreditos; indexCredito++) {
-				for (int i = 0; i < qtdLinhasGradeHorariaPorCredito; i++) {
-					setLinhaDeCredito.add(new LinhaDeCredito(cargaHorariaAcumuladaEmMinutos.toString()));
-					cargaHorariaAcumuladaEmMinutos += mdcTemposAula;
-				}
+			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
+				this.store.add(new LinhaDeCredito(labelsDasLinhasDaGradeHoraria.get(i),i));
+			}
+		} else {
+			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size()-1; i++) {
+				String label = labelsDasLinhasDaGradeHoraria.get(i) + " / " + labelsDasLinhasDaGradeHoraria.get(i+1); 
+				this.store.add(new LinhaDeCredito(label,i));
 			}
 		}
-		else {
-			// FIXME implementar caso para o operacional
-		}
-
-//		if (this.semanaLetivaDTO != null) {
-//			if ( isTatico() )
-//			{
-//				for ( Integer i = 1; i <= this.semanaLetivaDTO.getMaxCreditos(); i++ )
-//				{
-//					setLinhaDeCredito.add( new LinhaDeCredito( i.toString() ) );
-//				}
-//			}
-//			else
-//			{
-//				for ( Long horarioId : this.semanaLetivaDTO.getHorariosStringMap().keySet() )
-//				{
-//					setLinhaDeCredito.add( new LinhaDeCredito(
-//						this.semanaLetivaDTO.getHorariosStringMap().get( horarioId ),
-//						horarioId, this.semanaLetivaDTO.getHorariosInicioMap().get( horarioId ) ) );
-//				}
-//			}
-//		}
-
-		List<LinhaDeCredito> listLinhaDeCredito = new ArrayList<LinhaDeCredito>();
-
-		listLinhaDeCredito.addAll(setLinhaDeCredito);
-		Collections.sort(listLinhaDeCredito);
-
-		for (LinhaDeCredito lc : listLinhaDeCredito) {
-			this.store.add(lc);
-		}
-
+		
 		return this.store;
 	}
 
@@ -294,9 +256,9 @@ public class GradeHorariaSalaGrid
 
 				AtendimentoRelatorioDTO aulaDTO = null;
 				if (isTatico()) {
-					aulaDTO = getAula(rowIndex+1,semana);
+					aulaDTO = getAulaTatico(rowIndex+1,semana);
 				} else {
-					aulaDTO = getAtendimento(model.getHorarioId(),semana);
+					aulaDTO = getAulaOperacional(model.getLinhaNaGradeHoraria(),semana);
 				}
 
 				if (aulaDTO == null) {
@@ -315,15 +277,10 @@ public class GradeHorariaSalaGrid
 					}
 				};
 				html.addStyleName("horario");
-				if (isTatico()) {
-					html.setStyleAttribute("top",(rowIndex*tamanhoLinhaGradeHorariaEmPixels + 1)+"px");//html.addStyleName("cargaHoraria" + (rowIndex+1));
-					// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
-					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
-					html.setStyleAttribute("height",(aulaDTO.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula*tamanhoLinhaGradeHorariaEmPixels - 3)+"px");//html.addStyleName("totalCargaHoraria" + aulaDTO.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula);
-				} else {
-					html.addStyleName("c" + (rowIndex+1));
-					html.addStyleName("tc" + aulaDTO.getTotalCreditos());
-				}
+				html.setStyleAttribute("top",(rowIndex*tamanhoLinhaGradeHorariaEmPixels + 1)+"px");
+				// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
+				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
+				html.setStyleAttribute("height",(aulaDTO.getTotalCreditos()*qtdLinhasNaGradeHorariaPorCreditoDaAula*tamanhoLinhaGradeHorariaEmPixels - 3)+"px");
 				html.addStyleName("s" + aulaDTO.getSemana());
 				html.addStyleName(getCssDisciplina(aulaDTO.getDisciplinaId()));
 
@@ -353,30 +310,23 @@ public class GradeHorariaSalaGrid
 		list.add( column );
 	}
 
-	private AtendimentoRelatorioDTO getAtendimento( Long horarioId, int semana )
-	{
-		int ocupado = 0;
-
-		if ( this.aulasNaSalaDTO != null )
-		{
-			for ( AtendimentoRelatorioDTO at : this.aulasNaSalaDTO )
-			{
-				if ( at.getSemana() == semana )
-				{
-					if ( ( (AtendimentoOperacionalDTO) at).getHorarioId().equals( horarioId ) )
-					{
-						return at;
+	private AtendimentoRelatorioDTO getAulaOperacional(int linhaGradeHoraria, int colunaGradeHoraria) {
+		if (this.aulasNaSalaDTO != null) {
+			String labelHorario = labelsDasLinhasDaGradeHoraria.get(linhaGradeHoraria);
+			for (AtendimentoRelatorioDTO aula : this.aulasNaSalaDTO) {
+				if (aula.getSemana() == colunaGradeHoraria) {
+					AtendimentoOperacionalDTO aulaOperacional = (AtendimentoOperacionalDTO)aula;
+					if (aulaOperacional.getHorarioString().equals(labelHorario)) {
+						return aula;
 					}
-
-					ocupado += at.getTotalCreditos();
 				}
 			}
 		}
-
+		
 		return null;
 	}
 
-	private AtendimentoRelatorioDTO getAula(int linhaGradeHoraria, int colunaGradeHoraria) {
+	private AtendimentoRelatorioDTO getAulaTatico(int linhaGradeHoraria, int colunaGradeHoraria) {
 		int diaDaSemanaQueEstahSendoDesenhado = colunaGradeHoraria;
 		int linhaDaGradeEmQueAulaDeveSerDesenhada = 1; // a primeira aula do dia deve ser desenhada na linha 1
 		if (this.aulasNaSalaDTO != null) {
@@ -469,74 +419,33 @@ public class GradeHorariaSalaGrid
 		this.disciplinasCores.addAll( set );
 	}
 
-	public class LinhaDeCredito
-		extends BaseModel
-		implements Comparable< LinhaDeCredito >
-	{
+	public class LinhaDeCredito extends BaseModel {
 		private static final long serialVersionUID = 3996652461744817138L;
 
-		private Date horarioInicio;
+		private int linhaNaGradeHoraria;
 
-		public Date getHorarioInicio()
-		{
-			return this.horarioInicio;
+		public LinhaDeCredito(String display, int linhaNaGradeHoraria) {
+			this.setDisplay(display);
+			this.linhaNaGradeHoraria = linhaNaGradeHoraria;
 		}
 
-		public void setHorarioInicio( Date horarioInicio )
-		{
-			this.horarioInicio = horarioInicio;
-		}
-
-		public LinhaDeCredito( String display )
-		{
-			this( display, null, null );
-		}
-
-		public LinhaDeCredito(
-			String display, Long horarioId, Date horarioInicio )
-		{
-			this.setDisplay( display );
-			this.setHorarioId( horarioId );
-			this.horarioInicio = horarioInicio;
-		}
-
-		public String getDisplay()
-		{
+		public String getDisplay() {
 			return get( "display" );
 		}
+		
+		public int getLinhaNaGradeHoraria() {
+			return linhaNaGradeHoraria;
+		}
 
-		public void setDisplay( String value )
-		{
+		public void setDisplay( String value ) {
 			set( "display", value );
 		}
 
-		public Long getHorarioId()
-		{
-			return get( "horarioId" );
-		}
-
-		public void setHorarioId( Long value )
-		{
-			set( "horarioId", value );
-		}
-
-		public Integer getTotalCreditos()
-		{
-			return get( "totalCreditos" );
-		}
-
-		public void setTotalCreditos( Integer value )
-		{
-			set( "totalCreditos", value );
-		}
-
-		public String getSegunda()
-		{
+		public String getSegunda() {
 			return get( "segunda" );
 		}
 
-		public void setSegunda( String value )
-		{
+		public void setSegunda( String value ) {
 			set( "segunda", value );
 		}
 
@@ -598,44 +507,6 @@ public class GradeHorariaSalaGrid
 		public void setDomingo( String value )
 		{
 			set( "domingo", value );
-		}
-
-		@Override
-		public int compareTo( LinhaDeCredito o )
-		{
-			if ( o == null )
-			{
-				return 1;
-			}
-
-			if ( this.getHorarioInicio() == null
-				&& o.getHorarioInicio() == null )
-			{
-				// Se os horários de início são nulos, estamos no modelo tático,
-				// onde o valor de 'display' corresponde ao número de créditos do turno
-				// Ex.: 1, 2, 3, 4...
-				String str1 = ( this.getDisplay() == null ? "" : this.getDisplay() );
-				String str2 = ( o.getDisplay() == null ? "" : o.getDisplay() );
-
-				Integer i = Integer.parseInt( str1 );
-				Integer j = Integer.parseInt( str2 );
-
-				return i.compareTo( j );
-			}
-
-			if ( this.getHorarioInicio() != null
-				&& o.getHorarioInicio() == null )
-			{
-				return 1;
-			}
-
-			if ( this.getHorarioInicio() == null
-				&& o.getHorarioInicio() != null )
-			{
-				return -1;
-			}
-
-			return this.getHorarioInicio().compareTo( o.getHorarioInicio() );
 		}
 	}
 }

@@ -2264,7 +2264,7 @@ public class ConvertBeans {
 		dto.setPeriodo( periodo );
 		dto.setPeriodoString( String.valueOf( periodo ) );
 
-		dto.setTotalCreditos( domain.getDisciplina().getTotalCreditos() );
+		dto.setTotalCreditos(1); // todo atendimento operacional representa apenas 1 crédito atendido
 		dto.setDisplayText( dto.getNaturalKey() );
 		dto.setCompartilhamentoCursosString( "" );
 		dto.setSemanaLetivaId( domain.getOferta().getCurriculo().getSemanaLetiva().getId() );

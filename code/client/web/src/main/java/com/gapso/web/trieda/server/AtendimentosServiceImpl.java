@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,13 +39,15 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
-import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
+import com.gapso.web.trieda.shared.dtos.SextetoDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.google.gwt.dev.util.Pair;
 
 public class AtendimentosServiceImpl extends RemoteService implements AtendimentosService {
 	private static final long serialVersionUID = -1505176338607927637L;
@@ -109,16 +112,19 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoSala(com.gapso.web.trieda.shared.dtos.SalaDTO, com.gapso.web.trieda.shared.dtos.TurnoDTO)
 	 */
 	@Override
-	public QuartetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>> getAtendimentosParaGradeHorariaVisaoSala(SalaDTO salaDTO, TurnoDTO turnoDTO) {
+	public QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<String>> getAtendimentosParaGradeHorariaVisaoSala(SalaDTO salaDTO, TurnoDTO turnoDTO) {
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+		boolean ehTatico = true;
 
 		// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
 		List<AtendimentoTaticoDTO> atendimentosTaticoDTO = buscaNoBancoDadosDTOsDeAtendimentoTatico(salaDTO,turnoDTO);
 		if (!atendimentosTaticoDTO.isEmpty()) {
+			ehTatico = true;
 			// insere os atendimentos do modo tático na lista de atendimentos
 			aulas.addAll(atendimentosTaticoDTO);
 		}
 		else {
+			ehTatico = false;
 			// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
 			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = buscaNoBancoDadosDTOsDeAtendimentoOperacional(salaDTO,turnoDTO);
 			// processa os atendimentos do operacional e os transforma em aulas
@@ -134,17 +140,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
 			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
 			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
-			ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
-			int mdcTemposAula = par.getPrimeiro();
-			SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo(); 
+			TrioDTO<Integer,SemanaLetiva,List<String>> trio = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala,ehTatico,turnoDTO.getId());
+			int mdcTemposAula = trio.getPrimeiro();
+			SemanaLetiva semanaLetivaComMaiorCargaHoraria = trio.getSegundo();
+			List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
 			
-			return QuartetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos);
+			return QuintetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos,labelsDasLinhasDaGradeHoraria);
 		} else {
-			return QuartetoDTO.create(0,0,0,aulas);
+			return QuintetoDTO.create(0,0,0,aulas,Collections.<String>emptyList());
 		}
 	}
 	
-	private ParDTO<Integer,SemanaLetiva> calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(Set<Long> semanasLetivasIDsDasAulasNaSala) {
+	private TrioDTO<Integer,SemanaLetiva,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulasNaSala, boolean ehTatico, Long turnoId) {
+		List<String> labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
+		
 		if (!semanasLetivasIDsDasAulasNaSala.isEmpty()) {
 			List<SemanaLetiva> todasSemanasLetivas = SemanaLetiva.findAll(getInstituicaoEnsinoUser());
 			Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = SemanaLetiva.buildSemanaLetivaIDToSemanaLetivaMap(todasSemanasLetivas);
@@ -152,19 +161,103 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			for (Long semanaLetivaId : semanasLetivasIDsDasAulasNaSala) {
 				semanasLetivasDasAulasNaSala.add(semanaLetivaIdToSemanaLetivaMap.get(semanaLetivaId));
 			}
+			
 			SemanaLetiva semanaLetivaComMaiorCargaHoraria = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasDasAulasNaSala); 
 			int mdcTemposAula = SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivasDasAulasNaSala);
 			
-			return ParDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria);
+			if (ehTatico) {
+				Integer cargaHorariaMaximaEmMinutos = semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos()*semanaLetivaComMaiorCargaHoraria.getTempo();
+				int qtdLinhasDaGradeHoraria = cargaHorariaMaximaEmMinutos/mdcTemposAula;
+				Integer cargaHorariaAcumuladaEmMinutos = mdcTemposAula;
+				for (int linha = 0; linha < qtdLinhasDaGradeHoraria; linha++) {
+					labelsDasLinhasDaGradeHoraria.add(cargaHorariaAcumuladaEmMinutos.toString());
+					cargaHorariaAcumuladaEmMinutos += mdcTemposAula;
+				}
+			} else {
+				// coleta todos os pares (HoraInicio,HoraFim) dos horários de aula das semanas letivas
+				Set<Pair<Calendar,Calendar>> horarios = new HashSet<Pair<Calendar,Calendar>>();
+				for (SemanaLetiva semanaLetiva : semanasLetivasDasAulasNaSala) {
+					for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+						if (horarioAula.getTurno().getId().equals(turnoId)) {
+							Calendar hi = dateToCalendar(horarioAula.getHorario());
+							
+							Calendar hf = Calendar.getInstance();
+							hf.clear();
+							hf.setTime(hi.getTime());
+							hf.add(Calendar.MINUTE,semanaLetiva.getTempo());
+							
+							horarios.add(Pair.create(hi,hf));
+						}
+					}
+				}
+				
+				// ordena os pares (HoraInicio,HoraFim)
+				List<Pair<Calendar,Calendar>> horariosOrdenados = new ArrayList<Pair<Calendar,Calendar>>(horarios);
+				Collections.sort(horariosOrdenados,new Comparator<Pair<Calendar,Calendar>>() {
+					@Override
+					public int compare(Pair<Calendar,Calendar> o1, Pair<Calendar,Calendar> o2) {
+						Calendar horarioInicial1 = o1.getLeft();
+						Calendar horarioInicial2 = o2.getLeft();
+						int ret = horarioInicial1.compareTo(horarioInicial2);
+						if (ret == 0) {
+							Calendar horarioFinal1 = o1.getRight();
+							Calendar horarioFinal2 = o2.getRight();
+							return horarioFinal1.compareTo(horarioFinal2);
+						}
+						return ret;
+					}
+				});
+				
+				// processa lista de pares de horários e une aqueles que possuem interseção em um único par (HorarioInicio,HorarioFim)
+				List<Pair<Calendar,Calendar>> horariosProcessados = new ArrayList<Pair<Calendar,Calendar>>();
+				for (Pair<Calendar,Calendar> parAtual : horariosOrdenados) {
+					if (horariosProcessados.isEmpty()) {
+						horariosProcessados.add(parAtual);
+					} else {
+						Pair<Calendar,Calendar> parProcessado = horariosProcessados.get(horariosProcessados.size()-1);
+						if (temIntersecao(parProcessado,parAtual) || saoConsecutivos(parProcessado,parAtual)) {
+							if (parAtual.getRight().after(parProcessado.getRight())) {
+								parProcessado.getRight().setTime(parAtual.getRight().getTime());
+							}
+						} else {
+							horariosProcessados.add(parAtual);
+						}
+					}
+				}
+				
+				// escreve os labels de cada linha da grade de horários
+				for (Pair<Calendar,Calendar> par : horariosProcessados) {
+					Calendar h = par.getLeft();
+					Calendar hf = par.getRight();
+					while (!h.equals(hf)) {
+						labelsDasLinhasDaGradeHoraria.add(TriedaUtil.shortTimeString(h.getTime()));
+						h.add(Calendar.MINUTE,mdcTemposAula);
+					}
+					labelsDasLinhasDaGradeHoraria.add(TriedaUtil.shortTimeString(hf.getTime()));
+				}
+			} 
+			
+			return TrioDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria,labelsDasLinhasDaGradeHoraria);
 		}
-		return ParDTO.create(0,null);
+		return TrioDTO.create(0,null,labelsDasLinhasDaGradeHoraria);
 	}
 
+	@SuppressWarnings("deprecation")
+	private Calendar dateToCalendar(Date date) {
+		Calendar horario = Calendar.getInstance();
+		
+		horario.clear();
+		horario.set(2012,Calendar.FEBRUARY,1,date.getHours(),date.getMinutes(),0);
+		horario.set(Calendar.MILLISECOND,0);
+		
+		return horario;
+	}
+	
 	/**
 	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoCurso(com.gapso.web.trieda.shared.dtos.CurriculoDTO, java.lang.Integer, com.gapso.web.trieda.shared.dtos.TurnoDTO, com.gapso.web.trieda.shared.dtos.CampusDTO, com.gapso.web.trieda.shared.dtos.CursoDTO)
 	 */
 	@Override
-	public QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+	public SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>> getAtendimentosParaGradeHorariaVisaoCurso(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
 		// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
 		ParDTO<List<AtendimentoRelatorioDTO>,List<Integer>> parResultante = ParDTO.<List<AtendimentoRelatorioDTO>,List<Integer>>create(new ArrayList<AtendimentoRelatorioDTO>(),null);
 		
@@ -188,11 +281,8 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			List<AtendimentoOperacionalDTO> aulas = extraiAulas(atendimentosOperacionalDTO);
 			// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
 			ParDTO<List<AtendimentoOperacionalDTO>,List<Integer>> parDTO = montaEstruturaParaGradeHorariaVisaoCursoOperacional(aulas);
-			// ordena as aulas pelo horário de início
-			// TODO: CREIO QUE ESTA ORDENAÇÃO É DESNECESSÁRIA
-			List<AtendimentoOperacionalDTO> aulasOrdenadasPeloHorarioInicial = ordenaPorHorarioAula(parDTO.getPrimeiro());
 			// preenche o par resultante
-			parResultante.getPrimeiro().addAll(aulasOrdenadasPeloHorarioInicial);
+			parResultante.getPrimeiro().addAll(parDTO.getPrimeiro());
 			parResultante.setSegundo(parDTO.getSegundo());
 		}
 		
@@ -201,13 +291,14 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
 			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
 			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(parResultante.getPrimeiro());
-			ParDTO<Integer,SemanaLetiva> par = calcula_MDCTemposDeAula_e_SemanaLetivaComMaiorCargaHoraria(semanasLetivasIDsDasAulasNaSala);
-			int mdcTemposAula = par.getPrimeiro();
-			SemanaLetiva semanaLetivaComMaiorCargaHoraria = par.getSegundo();
+			TrioDTO<Integer,SemanaLetiva,List<String>> trio = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala,campusDTO.getOtimizadoTatico(),turnoDTO.getId());
+			int mdcTemposAula = trio.getPrimeiro();
+			SemanaLetiva semanaLetivaComMaiorCargaHoraria = trio.getSegundo();
+			List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
 			
-			return QuintetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),parResultante.getPrimeiro(),parResultante.getSegundo());
+			return SextetoDTO.create(mdcTemposAula,semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(),semanaLetivaComMaiorCargaHoraria.getTempo(),parResultante.getPrimeiro(),parResultante.getSegundo(),labelsDasLinhasDaGradeHoraria);
 		} else {
-			return QuintetoDTO.create(0,0,0,parResultante.getPrimeiro(),parResultante.getSegundo());
+			return SextetoDTO.create(0,0,0,parResultante.getPrimeiro(),parResultante.getSegundo(),Collections.<String>emptyList());
 		}
 	}
 	
@@ -436,7 +527,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		//    - INF110, Segunda-Feira, Sala 103, Turmar 1, Computação, 07:00h às 07:50h, 1 Crédito
 		//    - INF110, Segunda-Feira, Sala 103, Turmar 1, Computação, 07:50h às 08:40h, 1 Crédito
 		// Logo, o objetivo deste trecho de código é transformar os dois atendimentos acima em somente um atendimento, no caso:
-        //	  - INF110, Seguda-Feira, Sala 103, Turmar 1, Computação, 07:00h às 08:40h, 2 Créditos
+        //	  - INF110, Segunda-Feira, Sala 103, Turmar 1, Computação, 07:00h às 08:40h, 2 Créditos
 		List<AtendimentoOperacionalDTO> aulas = new ArrayList<AtendimentoOperacionalDTO>();
 		for (Entry<String,List<AtendimentoOperacionalDTO>> entryAgrupamento : atendimentosAgrupadosMap.entrySet()) {
 			// ordena os atendimentos de um mesmo grupo pelo horário de início
@@ -485,55 +576,27 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 *    - Lista2: - 09:00 -> 09:50
 	 */
 	private List<List<AtendimentoOperacionalDTO>> separaAtendimentosNaoConsecutivos(List<AtendimentoOperacionalDTO> atendimentosOrdenadosPorHorario) {
-		List<List<AtendimentoOperacionalDTO>> result = new ArrayList<List<AtendimentoOperacionalDTO>>();
-		// FIXME TRATAR ATENDIMENTOS COM MAIS DE UMA SEMANA LETIVA ASSOCIADA
+		List<List<AtendimentoOperacionalDTO>> subgruposDeAtendimentosConsecutivos = new ArrayList<List<AtendimentoOperacionalDTO>>();
 		if (!atendimentosOrdenadosPorHorario.isEmpty()) {
-			Long semanaLetivaId = atendimentosOrdenadosPorHorario.get(0).getSemanaLetivaId();
+			subgruposDeAtendimentosConsecutivos.add(new ArrayList<AtendimentoOperacionalDTO>());
+			subgruposDeAtendimentosConsecutivos.get(0).add(atendimentosOrdenadosPorHorario.get(0));
 			
-			SemanaLetiva semanaLetiva = SemanaLetiva.find(
-					semanaLetivaId, getInstituicaoEnsinoUser() );
+			for (int i = 1; i < atendimentosOrdenadosPorHorario.size(); i++) {
+				AtendimentoOperacionalDTO aulaAnterior = atendimentosOrdenadosPorHorario.get(i-1);
+				AtendimentoOperacionalDTO aulaAtual = atendimentosOrdenadosPorHorario.get(i);
+				
+				Pair<Calendar,Calendar> horariosAulaAnterior = extraiHorariosInicial_e_Final(aulaAnterior);
+				Pair<Calendar,Calendar> horariosAulaAtual = extraiHorariosInicial_e_Final(aulaAtual);
 	
-			List< HorarioAula > horariosAulas
-				= HorarioAula.findBySemanaLetiva( getInstituicaoEnsinoUser(), semanaLetiva );
-	
-			Map< Long, HorarioAula > mapIdHorario
-				= HorarioAula.buildHorarioAulaIdToHorarioAulaMap( horariosAulas );
-	
-			Collections.sort( horariosAulas );
-			this.ordenaPorHorarioAula( atendimentosOrdenadosPorHorario );
-	
-			Map< AtendimentoOperacionalDTO, Integer > mapPositionHorarioAula
-				= new HashMap< AtendimentoOperacionalDTO, Integer >();
-	
-			for ( AtendimentoOperacionalDTO dto : atendimentosOrdenadosPorHorario )
-			{
-				HorarioAula horario = mapIdHorario.get( dto.getHorarioId() );
-				Integer position = horariosAulas.indexOf( horario ); 
-				mapPositionHorarioAula.put( dto, position );
-			}
-	
-	
-			result.add( new ArrayList< AtendimentoOperacionalDTO >() );
-			result.get( 0 ).add( atendimentosOrdenadosPorHorario.get( 0 ) );
-			int currentPosition = mapPositionHorarioAula.get( atendimentosOrdenadosPorHorario.get( 0 ) );
-	
-			for ( int i = 1; i < atendimentosOrdenadosPorHorario.size(); i++ )
-			{
-				AtendimentoOperacionalDTO dto = atendimentosOrdenadosPorHorario.get( i );
-				Integer position = mapPositionHorarioAula.get( dto );
-	
-				if ( position != currentPosition + 1 )
-				{
-					result.add( new ArrayList< AtendimentoOperacionalDTO >() );
+				if (!saoConsecutivos(horariosAulaAnterior,horariosAulaAtual)) {
+					subgruposDeAtendimentosConsecutivos.add(new ArrayList<AtendimentoOperacionalDTO>());
 				}
 	
-				result.get( result.size() - 1 ).add( dto );
-	
-				currentPosition = position;
+				subgruposDeAtendimentosConsecutivos.get(subgruposDeAtendimentosConsecutivos.size()-1).add(aulaAtual);
 			}
 		}
 
-		return result;
+		return subgruposDeAtendimentosConsecutivos;
 	}
 	
 	/**
@@ -897,6 +960,14 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 */
 	private List<List<AtendimentoOperacionalDTO>> agrupaAulasQueOcorreraoEmParalelo(List<AtendimentoOperacionalDTO> aulasMesmoDiaSemana) {
 		List<List<AtendimentoOperacionalDTO>> gruposAulasParalelas = new ArrayList<List<AtendimentoOperacionalDTO>>();
+		
+		// ordena as aulas pela turma para garantir que o paralelismo viável seja construído corretamente
+		Collections.sort(aulasMesmoDiaSemana,new Comparator<AtendimentoOperacionalDTO>() {
+			@Override
+			public int compare(AtendimentoOperacionalDTO o1, AtendimentoOperacionalDTO o2) {
+				return o1.getTurma().compareTo(o2.getTurma());
+			}
+		});
 
 		for (AtendimentoOperacionalDTO aulaAtual : aulasMesmoDiaSemana) {
 			if (gruposAulasParalelas.isEmpty()) {
@@ -1127,42 +1198,45 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			if (dto1.getHorarioId().equals(dto2.getHorarioId())) {
 				return true;
 			} else {
-				Calendar horarioInicial1 = Calendar.getInstance();
-				Calendar horarioInicial2 = Calendar.getInstance();
-				
-				String[] horarioInicialArray1 = dto1.getHorarioString().split(":");
-				String[] horarioInicialArray2 = dto2.getHorarioString().split(":");
-				
-				int horarioInicial1Horas = Integer.parseInt(horarioInicialArray1[0]);
-				int horarioInicial1Minutos = Integer.parseInt(horarioInicialArray1[1]);
-				
-				int horarioInicial2Horas = Integer.parseInt(horarioInicialArray2[0]);
-				int horarioInicial2Minutos = Integer.parseInt(horarioInicialArray2[1]);
-				
-				horarioInicial1.clear();
-				horarioInicial1.set(2012,Calendar.FEBRUARY,1,horarioInicial1Horas,horarioInicial1Minutos,0);
-				horarioInicial1.set(Calendar.MILLISECOND,0);
-				
-				horarioInicial2.clear();
-				horarioInicial2.set(2012,Calendar.FEBRUARY,1,horarioInicial2Horas,horarioInicial2Minutos,0);
-				horarioInicial2.set(Calendar.MILLISECOND,0);
-				
-				Calendar horarioFinal1 = Calendar.getInstance();
-				Calendar horarioFinal2 = Calendar.getInstance();
-				
-				horarioFinal1.setTime(horarioInicial1.getTime());
-				horarioFinal1.add(Calendar.MINUTE,dto1.getTotalCreditos()*dto1.getDuracaoDeUmaAulaEmMinutos());
-				
-				horarioFinal2.setTime(horarioInicial2.getTime());
-				horarioFinal2.add(Calendar.MINUTE,dto2.getTotalCreditos()*dto2.getDuracaoDeUmaAulaEmMinutos());
-				
-				return (horarioInicial1.before(horarioInicial2) && horarioInicial2.before(horarioFinal1)) || // hi1 < hi2 < hf1
-				       (horarioInicial1.before(horarioFinal2)   && horarioFinal2.before(horarioFinal1)) || // hi1 < hf2 < hf1
-				       (horarioInicial2.before(horarioInicial1) && horarioInicial1.before(horarioFinal2)) || // hi2 < hi1 < hf2
-				       (horarioInicial2.before(horarioFinal1)   && horarioFinal1.before(horarioFinal2)); // hi2 < hf1 < hf2
+				Pair<Calendar,Calendar> horarios1 = extraiHorariosInicial_e_Final(dto1);
+				Pair<Calendar,Calendar> horarios2 = extraiHorariosInicial_e_Final(dto2);
+				return temIntersecao(horarios1,horarios2);
 			}
 		}
 		return false;
+	}
+	
+	private Pair<Calendar,Calendar> extraiHorariosInicial_e_Final(AtendimentoOperacionalDTO dto) {
+		Calendar horarioInicial = Calendar.getInstance();
+		String[] horarioInicialArray = dto.getHorarioString().split(":");
+		int horarioInicialHoras = Integer.parseInt(horarioInicialArray[0]);
+		int horarioInicialMinutos = Integer.parseInt(horarioInicialArray[1]);
+		horarioInicial.clear();
+		horarioInicial.set(2012,Calendar.FEBRUARY,1,horarioInicialHoras,horarioInicialMinutos,0);
+		horarioInicial.set(Calendar.MILLISECOND,0);
+		
+		Calendar horarioFinal = Calendar.getInstance();
+		horarioFinal.setTime(horarioInicial.getTime());
+		horarioFinal.add(Calendar.MINUTE,dto.getTotalCreditos()*dto.getDuracaoDeUmaAulaEmMinutos());
+		
+		return Pair.create(horarioInicial,horarioFinal);
+	}
+
+	private boolean temIntersecao(Calendar horarioInicial1, Calendar horarioFinal1, Calendar horarioInicial2, Calendar horarioFinal2) {
+		return (horarioInicial1.before(horarioInicial2) && horarioInicial2.before(horarioFinal1)) || // hi1 < hi2 < hf1
+		       (horarioInicial1.before(horarioFinal2)   && horarioFinal2.before(horarioFinal1)) || // hi1 < hf2 < hf1
+		       (horarioInicial2.before(horarioInicial1) && horarioInicial1.before(horarioFinal2)) || // hi2 < hi1 < hf2
+		       (horarioInicial2.before(horarioFinal1)   && horarioFinal1.before(horarioFinal2)); // hi2 < hf1 < hf2
+	}
+	
+	private boolean temIntersecao(Pair<Calendar,Calendar> par1, Pair<Calendar,Calendar> par2) {
+		return temIntersecao(par1.getLeft(),par1.getRight(),par2.getLeft(),par2.getRight());
+	}
+	
+	private boolean saoConsecutivos(Pair<Calendar,Calendar> par1, Pair<Calendar,Calendar> par2) {
+		System.out.println("Pair1 = ("+TriedaUtil.shortTimeString(par1.getLeft().getTime())+","+TriedaUtil.shortTimeString(par1.getRight().getTime())+")");
+		System.out.println("Pair2 = ("+TriedaUtil.shortTimeString(par2.getLeft().getTime())+","+TriedaUtil.shortTimeString(par2.getRight().getTime())+")");
+		return par1.getRight().equals(par2.getLeft()) || par2.getRight().equals(par1.getLeft());
 	}
 
 	@Override
@@ -1187,42 +1261,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		return resultDTOList;
-
-//		List< AtendimentoOperacional > atendimentosOperacionalDistinct
-//			= new ArrayList< AtendimentoOperacional >();
-//
-//		for ( AtendimentoOperacional at : atendimentosOperacional )
-//		{
-//			boolean encontrou = false;
-//
-//			for ( AtendimentoOperacional at2 : atendimentosOperacionalDistinct )
-//			{
-//				if ( at.getHorarioDisponivelCenario().getHorarioAula()
-//						== at2.getHorarioDisponivelCenario().getHorarioAula()
-//					&& at.getHorarioDisponivelCenario().getDiaSemana()
-//						== at2.getHorarioDisponivelCenario().getDiaSemana() )
-//				{
-//					encontrou = true;
-//					break;
-//				}
-//			}
-//
-//			if ( !encontrou )
-//			{
-//				atendimentosOperacionalDistinct.add( at );
-//			}
-//		}
-//		
-//
-//		List< AtendimentoOperacionalDTO > listDTO
-//			= new ArrayList< AtendimentoOperacionalDTO >( atendimentosOperacionalDistinct.size() );
-//
-//		for ( AtendimentoOperacional atendimentoOperacional : atendimentosOperacionalDistinct )
-//		{
-//			listDTO.add( ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
-//		}
-//
-//		return montaListaParaVisaoProfessor( montaListaParaVisaoProfessor1( listDTO ) );
 	}
 
 	private List< AtendimentoOperacionalDTO > montaListaParaVisaoProfessor1(
