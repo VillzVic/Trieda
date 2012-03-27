@@ -608,51 +608,38 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * de turmas entre cursos distintos
 	 */
 	public List<AtendimentoRelatorioDTO> uneAulasQuePodemSerCompartilhadas(List<AtendimentoRelatorioDTO> aulas) {
-		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana ]
-		Map< String, List< AtendimentoRelatorioDTO > > atendimentoTaticoDTOMap
-			= new HashMap< String, List< AtendimentoRelatorioDTO > >();
+		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana - HorárioInício (caso seja o operacional) ]
+		Map<String,List<AtendimentoRelatorioDTO>> atendimentoTaticoDTOMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
 
-		for ( AtendimentoRelatorioDTO dto : aulas ) {
-			String disciplinaInfo = (dto.getDisciplinaSubstitutaId() != null) ? dto.getDisciplinaSubstitutaString() : dto.getDisciplinaString();
-			String key = disciplinaInfo + "-" + dto.getTurma() + "-" + dto.getSemana();
-
-			List< AtendimentoRelatorioDTO > dtoList = atendimentoTaticoDTOMap.get( key );
-
-			if ( dtoList == null ) {
-				dtoList = new ArrayList< AtendimentoRelatorioDTO >();
-				atendimentoTaticoDTOMap.put( key, dtoList );
+		for (AtendimentoRelatorioDTO aula : aulas) {
+			String disciplinaInfo = (aula.getDisciplinaSubstitutaId() != null) ? aula.getDisciplinaSubstitutaString() : aula.getDisciplinaString();
+			String key = disciplinaInfo + "-" + aula.getTurma() + "-" + aula.getSemana() + (aula.getHorarioId() != null ? ("-" + aula.getHorarioId()) : "");
+			List<AtendimentoRelatorioDTO> aulasASeremCompartilhadas = atendimentoTaticoDTOMap.get(key);
+			if (aulasASeremCompartilhadas == null) {
+				aulasASeremCompartilhadas = new ArrayList<AtendimentoRelatorioDTO>();
+				atendimentoTaticoDTOMap.put(key,aulasASeremCompartilhadas);
 			}
-
-			dtoList.add( dto );
+			aulasASeremCompartilhadas.add(aula);
 		}
 
 		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana],
 		// concatena as informações de todos em um único DTO.
-		List< AtendimentoRelatorioDTO > processedList
-			= new ArrayList< AtendimentoRelatorioDTO >();
+		List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = new ArrayList<AtendimentoRelatorioDTO>();
+		for (Entry<String,List<AtendimentoRelatorioDTO>> entry : atendimentoTaticoDTOMap.entrySet()) {
+			if (entry.getValue().size() == 1) {
+				aulasComCompartilhamentos.addAll(entry.getValue());
+			} else {
+				AtendimentoRelatorioDTO aulaComCompartilhamento = entry.getValue().get(0);
 
-		for ( Entry< String, List< AtendimentoRelatorioDTO > > entry
-			: atendimentoTaticoDTOMap.entrySet() )
-		{
-			if ( entry.getValue().size() == 1 )
-			{
-				processedList.addAll( entry.getValue() );
-			}
-			else
-			{
-				AtendimentoRelatorioDTO dtoMain = entry.getValue().get( 0 );
-
-				for ( int i = 1; i < entry.getValue().size(); i++ )
-				{
-					AtendimentoRelatorioDTO dtoCurrent = entry.getValue().get( i );
-					dtoMain.concatenateVisaoSala( dtoCurrent );
+				for (int i = 1; i < entry.getValue().size(); i++) {
+					AtendimentoRelatorioDTO aula = entry.getValue().get(i);
+					aulaComCompartilhamento.concatenateVisaoSala(aula);
 				}
-
-				processedList.add( dtoMain );
+				aulasComCompartilhamentos.add(aulaComCompartilhamento);
 			}
 		}
 
-		return processedList;
+		return aulasComCompartilhamentos;
 	}
 	
 	private ParDTO<List<AtendimentoTaticoDTO>,List<Integer>> montaEstruturaParaGradeHorariaVisaoCursoTatico(TurnoDTO turnoDTO, List<AtendimentoTaticoDTO> aulas) {
@@ -1234,8 +1221,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	private boolean saoConsecutivos(Pair<Calendar,Calendar> par1, Pair<Calendar,Calendar> par2) {
-		System.out.println("Pair1 = ("+TriedaUtil.shortTimeString(par1.getLeft().getTime())+","+TriedaUtil.shortTimeString(par1.getRight().getTime())+")");
-		System.out.println("Pair2 = ("+TriedaUtil.shortTimeString(par2.getLeft().getTime())+","+TriedaUtil.shortTimeString(par2.getRight().getTime())+")");
 		return par1.getRight().equals(par2.getLeft()) || par2.getRight().equals(par1.getLeft());
 	}
 

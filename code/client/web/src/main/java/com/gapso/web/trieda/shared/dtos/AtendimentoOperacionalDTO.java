@@ -31,6 +31,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
 	public static final String PROPERTY_PROFESSOR_VIRTUAL_ID = "professorVirtualId";
 	public static final String PROPERTY_PROFESSOR_VIRTUAL_STRING = "professorVirtualString";
+	public static final String PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL = "professorCustoCreditoSemanal";
 	public static final String PROPERTY_CREDITO_TEORICO_BOOLEAN = "creditoTeoricoBoolean";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_CURSO_NOME = "cursoNome";
@@ -114,6 +115,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		this.setCompartilhamentoCursosString( other.getCompartilhamentoCursosString() );
 		this.setTotalLinhas( other.getTotalLinhas() );
 		this.setSemanaLetivaId( other.getSemanaLetivaId() );
+		this.setProfessorCustoCreditoSemanal( other.getProfessorCustoCreditoSemanal() );
 	}
 
 	public void setId( Long value )
@@ -231,6 +233,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		set( PROPERTY_HORARIO_ID, value );
 	}
 
+	@Override
 	public Long getHorarioId()
 	{
 		return get( PROPERTY_HORARIO_ID );
@@ -772,5 +775,14 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 
 	public void setSemanaLetivaTempoAula( Integer value ) {
 		set( PROPERTY_SEMANA_LETIVA_TEMPO_AULA, value );
+	}
+	
+	@Override
+	public Double getProfessorCustoCreditoSemanal() {
+		return get( PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL );
+	}
+	
+	public void setProfessorCustoCreditoSemanal( Double value ) {
+		set( PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL, value );
 	}
 }

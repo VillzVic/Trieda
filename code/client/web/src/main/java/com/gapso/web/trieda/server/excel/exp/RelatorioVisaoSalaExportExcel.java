@@ -473,10 +473,10 @@ public class RelatorioVisaoSalaExportExcel
 
 				if (ehTatico) {
 					row += aula.getTotalCreditos()*linhasDeExcelPorCreditoDaAula;
-				}		
+				}
 			}
 		}
-				
+		
 		return (initialRow + (ehTatico ? (maxCreditos*linhasDeExcelPorCredito) : maxCreditos) + 1);
 	}
 

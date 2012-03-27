@@ -45,7 +45,9 @@ public interface AtendimentoRelatorioDTO
 	public boolean isTatico();
 	public boolean isProfessorVirtual();
 	public String getProfessorString();
+	public Double getProfessorCustoCreditoSemanal();
 	public String getCompartilhamentoCursosString();
+	public Long getHorarioId();
 	public void setCompartilhamentoCursosString( String s );
 	public void setCursoNome( String value );
 	public void setCurricularString( String value );

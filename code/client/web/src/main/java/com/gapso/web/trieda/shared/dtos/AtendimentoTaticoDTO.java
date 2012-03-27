@@ -49,6 +49,7 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 	public static final String PROPERTY_SEMANA_LETIVA_TEMPO_AULA = "semanaLetivaTempoAula";
+	public static final String PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL = "professorCustoCreditoSemanal";
 
 	public AtendimentoTaticoDTO() {
 		super();
@@ -95,6 +96,7 @@ public class AtendimentoTaticoDTO
 		this.setCreditosTeorico( other.getCreditosTeorico() );
 		this.setCreditosPratico( other.getCreditosPratico() );
 		this.setCompartilhamentoCursosString( other.getCompartilhamentoCursosString() );
+		this.setProfessorCustoCreditoSemanal( other.getProfessorCustoCreditoSemanal() );
 	}
 
 	public void setId( Long value )
@@ -610,5 +612,14 @@ public class AtendimentoTaticoDTO
 
 	public void setSemanaLetivaTempoAula( Integer value ) {
 		set( PROPERTY_SEMANA_LETIVA_TEMPO_AULA, value );
+	}
+	
+	@Override
+	public Double getProfessorCustoCreditoSemanal() {
+		return get( PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL );
+	}
+	
+	public void setProfessorCustoCreditoSemanal( Double value ) {
+		set( PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL, value );
 	}
 }

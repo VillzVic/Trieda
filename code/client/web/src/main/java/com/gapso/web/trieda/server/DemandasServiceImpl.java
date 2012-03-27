@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
@@ -50,9 +51,12 @@ public class DemandasServiceImpl
 		// Preenche estruturas auxiliares
 		List<Demanda> demandas = new ArrayList<Demanda>();
 		List<AtendimentoTatico> atendimentosTaticos = new ArrayList<AtendimentoTatico>();
+		List<AtendimentoOperacional> atendimentosOperacionais = new ArrayList<AtendimentoOperacional>();
 		Map<String,List<AtendimentoTatico>> ofertaIdDisciplinaIdToAtendimentosTaticoMap = new HashMap<String,List<AtendimentoTatico>>();
+		Map<String,List<AtendimentoOperacional>> ofertaIdDisciplinaIdToAtendimentosOperacionalMap = new HashMap<String,List<AtendimentoOperacional>>();
 		for (Oferta oferta : ofertas) {
 			demandas.addAll(oferta.getDemandas());
+			// atendimentos táticos
 			atendimentosTaticos.addAll(oferta.getAtendimentosTaticos());
 			for (AtendimentoTatico atendimento : oferta.getAtendimentosTaticos()) {
 				String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
@@ -63,33 +67,70 @@ public class DemandasServiceImpl
 				}
 				atendimentos.add(atendimento);
 			}
+			// atendimentos operacionais
+			atendimentosOperacionais.addAll(oferta.getAtendimentosOperacionais());
+			for (AtendimentoOperacional atendimento : oferta.getAtendimentosOperacionais()) {
+				String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
+				List<AtendimentoOperacional> atendimentos = ofertaIdDisciplinaIdToAtendimentosOperacionalMap.get(key);
+				if (atendimentos == null) {
+					atendimentos = new ArrayList<AtendimentoOperacional>();
+					ofertaIdDisciplinaIdToAtendimentosOperacionalMap.put(key,atendimentos);
+				}
+				atendimentos.add(atendimento);
+			}
 		}
+		
+		boolean ehTatico = !atendimentosTaticos.isEmpty();
 
 		// Calcula map de demandas por quantidade de não atendimentos
 		Integer qtdAlunosNaoAtendidosTotal = 0;
 		Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap = new HashMap<Demanda,ParDTO<Integer,Disciplina>>();
 		for (Demanda demanda : demandas) {
-			// obtém a lista de atendimentos relacionados com a demanda em questão
-			String key = demanda.getOferta().getId() + "-" + demanda.getDisciplina().getId();
-			List<AtendimentoTatico> atendimentosDaDemanda = ofertaIdDisciplinaIdToAtendimentosTaticoMap.get(key);
-			if (atendimentosDaDemanda == null) {
-				atendimentosDaDemanda = Collections.<AtendimentoTatico> emptyList();
-			}
-			
-			// para cada atendimento, calcula o total a ser descontado da demanda calculada em termos de créditos
 			int totalASerDescontadoDaDemandaAlunosCreditosT = 0;
 			int totalASerDescontadoDaDemandaAlunosCreditosP = 0;
 			int totalASerDescontadoDaDemandaAlunosCreditosTotal = 0;
 			Set<Disciplina> disciplinasSubstitutas = new HashSet<Disciplina>();
 			Disciplina disciplinaSubstituta = null;
-			for (AtendimentoTatico atendimento : atendimentosDaDemanda) {
-				totalASerDescontadoDaDemandaAlunosCreditosT += (atendimento.getCreditosTeorico() * atendimento.getQuantidadeAlunos());
-				totalASerDescontadoDaDemandaAlunosCreditosP += (atendimento.getCreditosPratico() * atendimento.getQuantidadeAlunos());
-				totalASerDescontadoDaDemandaAlunosCreditosTotal += (atendimento.getTotalCreditos() * atendimento.getQuantidadeAlunos());
-				// NESTA LISTA DEVE HAVER, NO MÁXIMO, APENAS UMA DISCIPLINA, ISTO É, ESPERA-SE QUE A LISTA TENHA TAMANHOS ZERO OU UM
-				if (atendimento.getDisciplinaSubstituta() != null) {
-					disciplinasSubstitutas.add(atendimento.getDisciplinaSubstituta());
+			
+			// obtém a lista de atendimentos relacionados com a demanda em questão e, para cada atendimento, calcula o total a ser descontado da demanda calculada em termos de créditos
+			boolean existemAtendimentos = false;
+			String key = demanda.getOferta().getId() + "-" + demanda.getDisciplina().getId();
+			if (ehTatico) {
+				List<AtendimentoTatico> atendimentosDaDemanda = ofertaIdDisciplinaIdToAtendimentosTaticoMap.get(key);
+				if (atendimentosDaDemanda == null) {
+					atendimentosDaDemanda = Collections.<AtendimentoTatico> emptyList();
 				}
+				for (AtendimentoTatico atendimento : atendimentosDaDemanda) {
+					totalASerDescontadoDaDemandaAlunosCreditosT += (atendimento.getCreditosTeorico() * atendimento.getQuantidadeAlunos());
+					totalASerDescontadoDaDemandaAlunosCreditosP += (atendimento.getCreditosPratico() * atendimento.getQuantidadeAlunos());
+					totalASerDescontadoDaDemandaAlunosCreditosTotal += (atendimento.getTotalCreditos() * atendimento.getQuantidadeAlunos());
+					// NESTA LISTA DEVE HAVER, NO MÁXIMO, APENAS UMA DISCIPLINA, ISTO É, ESPERA-SE QUE A LISTA TENHA TAMANHOS ZERO OU UM
+					if (atendimento.getDisciplinaSubstituta() != null) {
+						disciplinasSubstitutas.add(atendimento.getDisciplinaSubstituta());
+					}
+				}
+				
+				existemAtendimentos = !atendimentosDaDemanda.isEmpty();
+			} else {
+				List<AtendimentoOperacional> atendimentosDaDemanda = ofertaIdDisciplinaIdToAtendimentosOperacionalMap.get(key);
+				if (atendimentosDaDemanda == null) {
+					atendimentosDaDemanda = Collections.<AtendimentoOperacional> emptyList();
+				}
+				for (AtendimentoOperacional atendimento : atendimentosDaDemanda) {
+					// no caso do operacional, cada atendimento representa apenas 1 crédito
+					if (atendimento.getCreditoTeorico()) {
+						totalASerDescontadoDaDemandaAlunosCreditosT += (1 * atendimento.getQuantidadeAlunos());
+					} else {
+						totalASerDescontadoDaDemandaAlunosCreditosP += (1 * atendimento.getQuantidadeAlunos());
+					}
+					totalASerDescontadoDaDemandaAlunosCreditosTotal += (1 * atendimento.getQuantidadeAlunos());
+					// NESTA LISTA DEVE HAVER, NO MÁXIMO, APENAS UMA DISCIPLINA, ISTO É, ESPERA-SE QUE A LISTA TENHA TAMANHOS ZERO OU UM
+					if (atendimento.getDisciplinaSubstituta() != null) {
+						disciplinasSubstitutas.add(atendimento.getDisciplinaSubstituta());
+					}
+				}
+				
+				existemAtendimentos = !atendimentosDaDemanda.isEmpty();
 			}
 			
 			if (!disciplinasSubstitutas.isEmpty()) {
@@ -117,7 +158,7 @@ public class DemandasServiceImpl
 
 			// calcula a quantidade de alunos não atendidos
 			int qtdAlunosNaoAtendidosDemanda = 0;
-			if (atendimentosDaDemanda.isEmpty()) {
+			if (!existemAtendimentos) {
 				qtdAlunosNaoAtendidosTotal += demanda.getQuantidade();
 				qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
 			} else {
@@ -156,183 +197,185 @@ public class DemandasServiceImpl
 			}
 
 			demandaToQtdAlunosNaoAtendidosMap.put(demanda,ParDTO.create(qtdAlunosNaoAtendidosDemanda,disciplinaSubstituta));
-			//System.out.println(demanda.getOferta().getCampus().getCodigo()+"@"+demanda.getOferta().getTurno().getNome()+"@"+demanda.getOferta().getCurso().getCodigo()+"@"+demanda.getOferta().getCurriculo().getCodigo()+"@"+demanda.getOferta().getCurriculo().getPeriodo(demanda.getDisciplina())+"@"+demanda.getDisciplina().getCodigo()+"@"+demanda.getQuantidade()+"@"+qtdAlunosNaoAtendidosDemanda+"@"+qtdAlunosNaoAtendidosTotal);
 		}
 		
 		return ParDTO.create(demandaToQtdAlunosNaoAtendidosMap,qtdAlunosNaoAtendidosTotal);
 	}
 	
 	public Map<Demanda,Map<AtendimentoTatico,List<Aluno>>> alocaAlunosNosAtendimentos(Collection<Oferta> ofertas) {
-		// Preenche estruturas auxiliares
-		List<Demanda> demandas = new ArrayList<Demanda>();
-		List<AtendimentoTatico> atendimentosTaticos = new ArrayList<AtendimentoTatico>();
-		Map<String,List<AtendimentoTatico>> ofertaIdDisciplinaIdToAtendimentosTaticoMap = new HashMap<String,List<AtendimentoTatico>>();
-		for (Oferta oferta : ofertas) {
-			demandas.addAll(oferta.getDemandas());
-			atendimentosTaticos.addAll(oferta.getAtendimentosTaticos());
-			for (AtendimentoTatico atendimento : oferta.getAtendimentosTaticos()) {
-				String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
-				List<AtendimentoTatico> atendimentos = ofertaIdDisciplinaIdToAtendimentosTaticoMap.get(key);
-				if (atendimentos == null) {
-					atendimentos = new ArrayList<AtendimentoTatico>();
-					ofertaIdDisciplinaIdToAtendimentosTaticoMap.put(key,atendimentos);
-				}
-				atendimentos.add(atendimento);
-			}
-		}
+		Map<Demanda,Map<AtendimentoTatico,List<Aluno>>> demandaToAlunosPorAtendimentosMap = new HashMap<Demanda,Map<AtendimentoTatico,List<Aluno>>>();
 		
 		//
 		Map<Long,List<AlunoDemanda>> demandaIdToAlunosDemandasMap = new HashMap<Long,List<AlunoDemanda>>();
 		List<AlunoDemanda> alunosDemandas = AlunoDemanda.findAll(getInstituicaoEnsinoUser());
-		for (AlunoDemanda alunoDemanda : alunosDemandas) {
-			List<AlunoDemanda> listaAlunosDemandas = demandaIdToAlunosDemandasMap.get(alunoDemanda.getDemanda().getId());
-			if (listaAlunosDemandas == null) {
-				listaAlunosDemandas = new ArrayList<AlunoDemanda>();
-				demandaIdToAlunosDemandasMap.put(alunoDemanda.getDemanda().getId(),listaAlunosDemandas);
-			}
-			listaAlunosDemandas.add(alunoDemanda);
-		}
-
-		// Calcula map de demandas por quantidade de não atendimentos
-		Map<Demanda,Map<AtendimentoTatico,List<Aluno>>> demandaToAlunosPorAtendimentosMap = new HashMap<Demanda,Map<AtendimentoTatico,List<Aluno>>>();
-		for (Demanda demanda : demandas) {
-			// obtém a lista de atendimentos relacionados com a demanda em questão
-			String key = demanda.getOferta().getId() + "-" + demanda.getDisciplina().getId();
-			List<AtendimentoTatico> atendimentosDaDemanda = ofertaIdDisciplinaIdToAtendimentosTaticoMap.get(key);
-			if (atendimentosDaDemanda == null) {
-				atendimentosDaDemanda = Collections.<AtendimentoTatico> emptyList();
+		if (alunosDemandas != null && !alunosDemandas.isEmpty()) {
+			for (AlunoDemanda alunoDemanda : alunosDemandas) {
+				List<AlunoDemanda> listaAlunosDemandas = demandaIdToAlunosDemandasMap.get(alunoDemanda.getDemanda().getId());
+				if (listaAlunosDemandas == null) {
+					listaAlunosDemandas = new ArrayList<AlunoDemanda>();
+					demandaIdToAlunosDemandasMap.put(alunoDemanda.getDemanda().getId(),listaAlunosDemandas);
+				}
+				listaAlunosDemandas.add(alunoDemanda);
 			}
 			
-			// para cada atendimento, calcula o total a ser descontado da demanda calculada em termos de créditos
-			int totalASerDescontadoDaDemandaAlunosCreditosT = 0;
-			int totalASerDescontadoDaDemandaAlunosCreditosP = 0;
-			int totalASerDescontadoDaDemandaAlunosCreditosTotal = 0;
-			Set<Disciplina> disciplinasSubstitutas = new HashSet<Disciplina>();
-			Disciplina disciplinaSubstituta = null;
-			for (AtendimentoTatico atendimento : atendimentosDaDemanda) {
-				totalASerDescontadoDaDemandaAlunosCreditosT += (atendimento.getCreditosTeorico() * atendimento.getQuantidadeAlunos());
-				totalASerDescontadoDaDemandaAlunosCreditosP += (atendimento.getCreditosPratico() * atendimento.getQuantidadeAlunos());
-				totalASerDescontadoDaDemandaAlunosCreditosTotal += (atendimento.getTotalCreditos() * atendimento.getQuantidadeAlunos());
-				// NESTA LISTA DEVE HAVER, NO MÁXIMO, APENAS UMA DISCIPLINA, ISTO É, ESPERA-SE QUE A LISTA TENHA TAMANHOS ZERO OU UM
-				if (atendimento.getDisciplinaSubstituta() != null) {
-					disciplinasSubstitutas.add(atendimento.getDisciplinaSubstituta());
-				}
-			}
-			
-			if (!disciplinasSubstitutas.isEmpty()) {
-				disciplinaSubstituta = disciplinasSubstitutas.iterator().next();
-				if (disciplinasSubstitutas.size() > 1) {
-					String disciplinasStr = "";
-					for (Disciplina disciplina : disciplinasSubstitutas) {
-						disciplinasStr += disciplina.getCodigo() + ", ";
-					}
-					disciplinasStr = disciplinasStr.substring(0,disciplinasStr.length()-2);
-					System.out.println("*** ERRO NO SOLVER: na demanda [" + demanda.getNaturalKeyString() + "] a disciplina [" + demanda.getDisciplina().getCodigo() + "] foi substituida por mais de uma disciplina, no caso [" + disciplinasStr + "]");
-				}
-			}
-			Disciplina disciplinaASerConsiderada = (disciplinaSubstituta != null) ? disciplinaSubstituta : demanda.getDisciplina();
-
-			// calcula a demanda em termos de créditos teóricos, práticos e total
-			int demandaAlunosCreditosT = (disciplinaASerConsiderada.getCreditosTeorico() * demanda.getQuantidade());
-			int demandaAlunosCreditosP = (disciplinaASerConsiderada.getCreditosPratico() * demanda.getQuantidade());
-			int demandaAlunosCreditosTotal = (demandaAlunosCreditosT + demandaAlunosCreditosP);
-
-			// para cada atendimento, desconta o total atendimento da demanda calculada em termos de créditos 
-			demandaAlunosCreditosT -= totalASerDescontadoDaDemandaAlunosCreditosT;
-			demandaAlunosCreditosP -= totalASerDescontadoDaDemandaAlunosCreditosP;
-			demandaAlunosCreditosTotal -= totalASerDescontadoDaDemandaAlunosCreditosTotal;
-
-			// calcula a quantidade de alunos não atendidos
-			int qtdAlunosNaoAtendidosDemanda = 0;
-			if (atendimentosDaDemanda.isEmpty()) {
-				qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
-			} else {
-				// calcula a quantidade de alunos não atendidos de acordo com as situações específicas
-				
-				// verifica se a demanda possui créditos práticos não atendidos, créditos estes que não são exigidos em laboratório
-				if ((demandaAlunosCreditosP > 0) && !disciplinaASerConsiderada.getLaboratorio()) {
-					if (demandaAlunosCreditosTotal > 0) {
-						qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosTotal / disciplinaASerConsiderada.getTotalCreditos();
-					}
-				} else {
-					// verifica se a demanda possui créditos teóricos e práticos não atendidos
-					if ((demandaAlunosCreditosT > 0) && (demandaAlunosCreditosP > 0)) {
-						if (demandaAlunosCreditosT > demandaAlunosCreditosP) {
-							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT / disciplinaASerConsiderada.getCreditosTeorico();
-						} else {
-							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP / disciplinaASerConsiderada.getCreditosPratico();
-						}
-					} else {
-						// verifica se a demanda possui créditos teóricos não atendidos
-						if (demandaAlunosCreditosT > 0) {
-							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT / disciplinaASerConsiderada.getCreditosTeorico();
-						}
-						
-						// verifica se a demanda possui créditos práticos não atendidos
-						if (demandaAlunosCreditosP > 0) {
-							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP / disciplinaASerConsiderada.getCreditosPratico();
-						}
-					}
-				}
-			}
-			
-			int qtdeAlunosAtendidosDemanda = demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda;
-			if (qtdeAlunosAtendidosDemanda > 0) {
-				List<AlunoDemanda> alunosDaDemanda = demandaIdToAlunosDemandasMap.get(demanda.getId());
-				// ordena os alunos pela matricula para garantir que a alocação seja determinística
-				Collections.<AlunoDemanda>sort(alunosDaDemanda,new Comparator<AlunoDemanda>() {
-					@Override
-					public int compare(AlunoDemanda o1, AlunoDemanda o2) {
-						return o1.getAluno().getMatricula().compareTo(o2.getAluno().getMatricula());
-					}
-				});
-				
-				// seleciona o N primeiros alunos da demanda onde N igual a quantidade de alunos atendidos
-				List<AlunoDemanda> alunosAtendidosDaDemanda = new ArrayList<AlunoDemanda>();
-				for (int i = 0; i < qtdeAlunosAtendidosDemanda; i++) {
-					alunosAtendidosDaDemanda.add(alunosDaDemanda.get(i));
-				}
-				
-				// organiza os atendimentos por dia da semana e por turma e tipo de crédito
-				// [DiaSemana -> [Turma-TipoCredito -> List<Atendimentos>]]
-				Map<Semanas,Map<String,List<AtendimentoTatico>>> diaDaSemanaToAtendimentosMap = new HashMap<Semanas,Map<String,List<AtendimentoTatico>>>();
-				for (AtendimentoTatico atendimento : atendimentosDaDemanda) {
-					// [Turma-TipoCredito -> List<Atendimentos>]
-					Map<String,List<AtendimentoTatico>> turmaTipoCreditoToAtendimentosMap = diaDaSemanaToAtendimentosMap.get(atendimento.getSemana());
-					if (turmaTipoCreditoToAtendimentosMap == null) {
-						turmaTipoCreditoToAtendimentosMap = new HashMap<String,List<AtendimentoTatico>>();
-						diaDaSemanaToAtendimentosMap.put(atendimento.getSemana(),turmaTipoCreditoToAtendimentosMap);
-					}
-					
-					// os atendimentos da mesma turma e mesmo tipo de crédito no mesmo dia são os que tem os alunos diferentes
-					String turmaTipoCreditoStr = atendimento.getTurma() + "-" + ((atendimento.getCreditosPratico() > 0) ? "P" : "T");
-					List<AtendimentoTatico> atendimentos = turmaTipoCreditoToAtendimentosMap.get(turmaTipoCreditoStr);
+			// Preenche estruturas auxiliares
+			List<Demanda> demandas = new ArrayList<Demanda>();
+			List<AtendimentoTatico> atendimentosTaticos = new ArrayList<AtendimentoTatico>();
+			Map<String,List<AtendimentoTatico>> ofertaIdDisciplinaIdToAtendimentosTaticoMap = new HashMap<String,List<AtendimentoTatico>>();
+			for (Oferta oferta : ofertas) {
+				demandas.addAll(oferta.getDemandas());
+				atendimentosTaticos.addAll(oferta.getAtendimentosTaticos());
+				for (AtendimentoTatico atendimento : oferta.getAtendimentosTaticos()) {
+					String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
+					List<AtendimentoTatico> atendimentos = ofertaIdDisciplinaIdToAtendimentosTaticoMap.get(key);
 					if (atendimentos == null) {
 						atendimentos = new ArrayList<AtendimentoTatico>();
-						turmaTipoCreditoToAtendimentosMap.put(turmaTipoCreditoStr,atendimentos);
+						ofertaIdDisciplinaIdToAtendimentosTaticoMap.put(key,atendimentos);
 					}
 					atendimentos.add(atendimento);
 				}
+			}
+	
+			// Calcula map de demandas por quantidade de não atendimentos
+			for (Demanda demanda : demandas) {
+				// obtém a lista de atendimentos relacionados com a demanda em questão
+				String key = demanda.getOferta().getId() + "-" + demanda.getDisciplina().getId();
+				List<AtendimentoTatico> atendimentosDaDemanda = ofertaIdDisciplinaIdToAtendimentosTaticoMap.get(key);
+				if (atendimentosDaDemanda == null) {
+					atendimentosDaDemanda = Collections.<AtendimentoTatico> emptyList();
+				}
 				
-				// associa os alunos aos atendimentos
-				Map<AtendimentoTatico,List<Aluno>> atendimentoToAlunosMap = new HashMap<AtendimentoTatico,List<Aluno>>();
-				demandaToAlunosPorAtendimentosMap.put(demanda,atendimentoToAlunosMap);
-				for (Entry<Semanas,Map<String,List<AtendimentoTatico>>> entryDiaSemana : diaDaSemanaToAtendimentosMap.entrySet()) {
-					for (Entry<String,List<AtendimentoTatico>> entryTurmaTipoCredito : entryDiaSemana.getValue().entrySet()) {
-						int indiceInicial = 0;
-						for (AtendimentoTatico atendimento : entryTurmaTipoCredito.getValue()) {
-							List<Aluno> alunos = atendimentoToAlunosMap.get(atendimento);
-							if (alunos == null) {
-								alunos = new ArrayList<Aluno>();
-								atendimentoToAlunosMap.put(atendimento,alunos);
+				// para cada atendimento, calcula o total a ser descontado da demanda calculada em termos de créditos
+				int totalASerDescontadoDaDemandaAlunosCreditosT = 0;
+				int totalASerDescontadoDaDemandaAlunosCreditosP = 0;
+				int totalASerDescontadoDaDemandaAlunosCreditosTotal = 0;
+				Set<Disciplina> disciplinasSubstitutas = new HashSet<Disciplina>();
+				Disciplina disciplinaSubstituta = null;
+				for (AtendimentoTatico atendimento : atendimentosDaDemanda) {
+					totalASerDescontadoDaDemandaAlunosCreditosT += (atendimento.getCreditosTeorico() * atendimento.getQuantidadeAlunos());
+					totalASerDescontadoDaDemandaAlunosCreditosP += (atendimento.getCreditosPratico() * atendimento.getQuantidadeAlunos());
+					totalASerDescontadoDaDemandaAlunosCreditosTotal += (atendimento.getTotalCreditos() * atendimento.getQuantidadeAlunos());
+					// NESTA LISTA DEVE HAVER, NO MÁXIMO, APENAS UMA DISCIPLINA, ISTO É, ESPERA-SE QUE A LISTA TENHA TAMANHOS ZERO OU UM
+					if (atendimento.getDisciplinaSubstituta() != null) {
+						disciplinasSubstitutas.add(atendimento.getDisciplinaSubstituta());
+					}
+				}
+				
+				if (!disciplinasSubstitutas.isEmpty()) {
+					disciplinaSubstituta = disciplinasSubstitutas.iterator().next();
+					if (disciplinasSubstitutas.size() > 1) {
+						String disciplinasStr = "";
+						for (Disciplina disciplina : disciplinasSubstitutas) {
+							disciplinasStr += disciplina.getCodigo() + ", ";
+						}
+						disciplinasStr = disciplinasStr.substring(0,disciplinasStr.length()-2);
+						System.out.println("*** ERRO NO SOLVER: na demanda [" + demanda.getNaturalKeyString() + "] a disciplina [" + demanda.getDisciplina().getCodigo() + "] foi substituida por mais de uma disciplina, no caso [" + disciplinasStr + "]");
+					}
+				}
+				Disciplina disciplinaASerConsiderada = (disciplinaSubstituta != null) ? disciplinaSubstituta : demanda.getDisciplina();
+	
+				// calcula a demanda em termos de créditos teóricos, práticos e total
+				int demandaAlunosCreditosT = (disciplinaASerConsiderada.getCreditosTeorico() * demanda.getQuantidade());
+				int demandaAlunosCreditosP = (disciplinaASerConsiderada.getCreditosPratico() * demanda.getQuantidade());
+				int demandaAlunosCreditosTotal = (demandaAlunosCreditosT + demandaAlunosCreditosP);
+	
+				// para cada atendimento, desconta o total atendimento da demanda calculada em termos de créditos 
+				demandaAlunosCreditosT -= totalASerDescontadoDaDemandaAlunosCreditosT;
+				demandaAlunosCreditosP -= totalASerDescontadoDaDemandaAlunosCreditosP;
+				demandaAlunosCreditosTotal -= totalASerDescontadoDaDemandaAlunosCreditosTotal;
+	
+				// calcula a quantidade de alunos não atendidos
+				int qtdAlunosNaoAtendidosDemanda = 0;
+				if (atendimentosDaDemanda.isEmpty()) {
+					qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade();
+				} else {
+					// calcula a quantidade de alunos não atendidos de acordo com as situações específicas
+					
+					// verifica se a demanda possui créditos práticos não atendidos, créditos estes que não são exigidos em laboratório
+					if ((demandaAlunosCreditosP > 0) && !disciplinaASerConsiderada.getLaboratorio()) {
+						if (demandaAlunosCreditosTotal > 0) {
+							qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosTotal / disciplinaASerConsiderada.getTotalCreditos();
+						}
+					} else {
+						// verifica se a demanda possui créditos teóricos e práticos não atendidos
+						if ((demandaAlunosCreditosT > 0) && (demandaAlunosCreditosP > 0)) {
+							if (demandaAlunosCreditosT > demandaAlunosCreditosP) {
+								qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT / disciplinaASerConsiderada.getCreditosTeorico();
+							} else {
+								qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP / disciplinaASerConsiderada.getCreditosPratico();
 							}
-							// associa os alunos
-							for (int i = 0; i < atendimento.getQuantidadeAlunos(); i++) {
-								//AlunoDemanda alunoDemanda = alunosAtendidosDaDemanda.get(indiceInicial+i);
-								AlunoDemanda alunoDemanda = alunosDaDemanda.get(indiceInicial+i);
-								alunos.add(alunoDemanda.getAluno());
+						} else {
+							// verifica se a demanda possui créditos teóricos não atendidos
+							if (demandaAlunosCreditosT > 0) {
+								qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosT / disciplinaASerConsiderada.getCreditosTeorico();
 							}
-							indiceInicial += atendimento.getQuantidadeAlunos();
+							
+							// verifica se a demanda possui créditos práticos não atendidos
+							if (demandaAlunosCreditosP > 0) {
+								qtdAlunosNaoAtendidosDemanda = demandaAlunosCreditosP / disciplinaASerConsiderada.getCreditosPratico();
+							}
+						}
+					}
+				}
+				
+				int qtdeAlunosAtendidosDemanda = demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda;
+				if (qtdeAlunosAtendidosDemanda > 0) {
+					List<AlunoDemanda> alunosDaDemanda = demandaIdToAlunosDemandasMap.get(demanda.getId());
+					// ordena os alunos pela matricula para garantir que a alocação seja determinística
+					Collections.<AlunoDemanda>sort(alunosDaDemanda,new Comparator<AlunoDemanda>() {
+						@Override
+						public int compare(AlunoDemanda o1, AlunoDemanda o2) {
+							return o1.getAluno().getMatricula().compareTo(o2.getAluno().getMatricula());
+						}
+					});
+					
+					// seleciona o N primeiros alunos da demanda onde N igual a quantidade de alunos atendidos
+					List<AlunoDemanda> alunosAtendidosDaDemanda = new ArrayList<AlunoDemanda>();
+					for (int i = 0; i < qtdeAlunosAtendidosDemanda; i++) {
+						alunosAtendidosDaDemanda.add(alunosDaDemanda.get(i));
+					}
+					
+					// organiza os atendimentos por dia da semana e por turma e tipo de crédito
+					// [DiaSemana -> [Turma-TipoCredito -> List<Atendimentos>]]
+					Map<Semanas,Map<String,List<AtendimentoTatico>>> diaDaSemanaToAtendimentosMap = new HashMap<Semanas,Map<String,List<AtendimentoTatico>>>();
+					for (AtendimentoTatico atendimento : atendimentosDaDemanda) {
+						// [Turma-TipoCredito -> List<Atendimentos>]
+						Map<String,List<AtendimentoTatico>> turmaTipoCreditoToAtendimentosMap = diaDaSemanaToAtendimentosMap.get(atendimento.getSemana());
+						if (turmaTipoCreditoToAtendimentosMap == null) {
+							turmaTipoCreditoToAtendimentosMap = new HashMap<String,List<AtendimentoTatico>>();
+							diaDaSemanaToAtendimentosMap.put(atendimento.getSemana(),turmaTipoCreditoToAtendimentosMap);
+						}
+						
+						// os atendimentos da mesma turma e mesmo tipo de crédito no mesmo dia são os que tem os alunos diferentes
+						String turmaTipoCreditoStr = atendimento.getTurma() + "-" + ((atendimento.getCreditosPratico() > 0) ? "P" : "T");
+						List<AtendimentoTatico> atendimentos = turmaTipoCreditoToAtendimentosMap.get(turmaTipoCreditoStr);
+						if (atendimentos == null) {
+							atendimentos = new ArrayList<AtendimentoTatico>();
+							turmaTipoCreditoToAtendimentosMap.put(turmaTipoCreditoStr,atendimentos);
+						}
+						atendimentos.add(atendimento);
+					}
+					
+					// associa os alunos aos atendimentos
+					Map<AtendimentoTatico,List<Aluno>> atendimentoToAlunosMap = new HashMap<AtendimentoTatico,List<Aluno>>();
+					demandaToAlunosPorAtendimentosMap.put(demanda,atendimentoToAlunosMap);
+					for (Entry<Semanas,Map<String,List<AtendimentoTatico>>> entryDiaSemana : diaDaSemanaToAtendimentosMap.entrySet()) {
+						for (Entry<String,List<AtendimentoTatico>> entryTurmaTipoCredito : entryDiaSemana.getValue().entrySet()) {
+							int indiceInicial = 0;
+							for (AtendimentoTatico atendimento : entryTurmaTipoCredito.getValue()) {
+								List<Aluno> alunos = atendimentoToAlunosMap.get(atendimento);
+								if (alunos == null) {
+									alunos = new ArrayList<Aluno>();
+									atendimentoToAlunosMap.put(atendimento,alunos);
+								}
+								// associa os alunos
+								for (int i = 0; i < atendimento.getQuantidadeAlunos(); i++) {
+									//AlunoDemanda alunoDemanda = alunosAtendidosDaDemanda.get(indiceInicial+i);
+									AlunoDemanda alunoDemanda = alunosDaDemanda.get(indiceInicial+i);
+									alunos.add(alunoDemanda.getAluno());
+								}
+								indiceInicial += atendimento.getQuantidadeAlunos();
+							}
 						}
 					}
 				}

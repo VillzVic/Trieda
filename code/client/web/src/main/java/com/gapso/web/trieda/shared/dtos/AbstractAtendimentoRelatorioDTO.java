@@ -85,4 +85,9 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 		}
 		return getSemanaLetivaTempoAula();
 	}
+	
+	@Override
+	public Long getHorarioId() {
+		return null;
+	}
 }

@@ -2075,6 +2075,8 @@ public class ConvertBeans {
 			dto.setInstituicaoEnsinoId(instituicaoEnsino.getId());
 			dto.setInstituicaoEnsinoString(instituicaoEnsino.getNomeInstituicao());
 		}
+		
+		dto.setProfessorCustoCreditoSemanal(campus.getValorCredito());
 
 		return dto;
 	}
@@ -2224,12 +2226,13 @@ public class ConvertBeans {
 		{
 			dto.setProfessorId( domain.getProfessor().getId() );
 			dto.setProfessorString( domain.getProfessor().getNome() );
+			dto.setProfessorCustoCreditoSemanal(domain.getProfessor().getValorCredito());
 		}
 		else
 		{
 			dto.setProfessorVirtualId( domain.getProfessorVirtual().getId() );
-			dto.setProfessorVirtualString(
-				"Professor Virtual " + domain.getProfessorVirtual().getId() );
+			dto.setProfessorVirtualString("Professor Virtual " + domain.getProfessorVirtual().getId() );
+			dto.setProfessorCustoCreditoSemanal(domain.getOferta().getCampus().getValorCredito());
 		}
 
 		dto.setCreditoTeoricoBoolean( domain.getCreditoTeorico() );
