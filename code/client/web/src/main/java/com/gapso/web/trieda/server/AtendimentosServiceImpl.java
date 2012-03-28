@@ -151,7 +151,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 	}
 	
-	private TrioDTO<Integer,SemanaLetiva,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulasNaSala, boolean ehTatico, Long turnoId) {
+	public TrioDTO<Integer,SemanaLetiva,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulasNaSala, boolean ehTatico, Long turnoId) {
 		List<String> labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
 		
 		if (!semanasLetivasIDsDasAulasNaSala.isEmpty()) {

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -18,7 +20,6 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
@@ -31,6 +32,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -142,8 +144,7 @@ public class RelatorioVisaoSalaExportExcel
 		}
 	}
 
-	private List< AtendimentoRelatorioDTO > getAtendimentoRelatorioDTOList( Cenario cenario )
-	{
+	private List<AtendimentoRelatorioDTO> getAtendimentoRelatorioDTOList(Cenario cenario) {
 		List< AtendimentoTatico > atdTaticoList = null;
 		List< AtendimentoOperacional > atdOperacionalList =  null;
 
@@ -299,37 +300,21 @@ public class RelatorioVisaoSalaExportExcel
 					// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
 					Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(turnoId);
 					Turno turno = turnoIdToTurnoMap.get(turnoId);
-					// verifica qual é o modo de otimização (tático ou operacional)
-					if (ehTatico) {
-						int mdcTemposAula = 1;
-						SemanaLetiva semanaLetivaComMaiorCargaHoraria = null;
-						List<AtendimentoRelatorioDTO> atendimentosDeTodasSemanasLetivas = new ArrayList<AtendimentoRelatorioDTO>();
-						if (turnoAtendimentosPorSemanaLetivaMap.keySet().size() > 1) {
-							List<SemanaLetiva> semanasLetivas = new ArrayList<SemanaLetiva>();
-							for (Long semLetId : turnoAtendimentosPorSemanaLetivaMap.keySet()) {
-								semanasLetivas.add(semanaLetivaIdTosemanaLetivaMap.get(semLetId));
-								// acumula os atendimentos das semanas letivas
-								atendimentosDeTodasSemanasLetivas.addAll(turnoAtendimentosPorSemanaLetivaMap.get(semLetId));
-							}
-							semanaLetivaComMaiorCargaHoraria = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivas); 
-							mdcTemposAula = SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivas);
-						} else {
-							semanaLetivaComMaiorCargaHoraria = semanaLetivaIdTosemanaLetivaMap.get(turnoAtendimentosPorSemanaLetivaMap.keySet().iterator().next());
-							atendimentosDeTodasSemanasLetivas.addAll(turnoAtendimentosPorSemanaLetivaMap.get(semanaLetivaComMaiorCargaHoraria.getId()));
-							mdcTemposAula = semanaLetivaComMaiorCargaHoraria.getTempo();
-						}
-						// escreve grade horária no excel
-						nextRow = writeSala(sala,turno,semanaLetivaComMaiorCargaHoraria,atendimentosDeTodasSemanasLetivas,nextRow,sheet,codigoDisciplinaToColorMap,mdcTemposAula,ehTatico);
-					} else {
-						for ( Long semanaLetivaId : turnoAtendimentosPorSemanaLetivaMap.keySet() )
-						{
-							SemanaLetiva semanaLetiva = semanaLetivaIdTosemanaLetivaMap.get(semanaLetivaId);
-							List< AtendimentoRelatorioDTO > listAtendimentos = turnoAtendimentosPorSemanaLetivaMap.get( semanaLetivaId );
-	
-							nextRow = writeSala( sala, turno, semanaLetiva, listAtendimentos,
-								nextRow, sheet, /*itExcelCommentsPool,*/ codigoDisciplinaToColorMap, 1, ehTatico );
-						}
+					
+					Set<Long> semanasLetivasIDs = new HashSet<Long>();
+					List<AtendimentoRelatorioDTO> atendimentosDeTodasSemanasLetivas = new ArrayList<AtendimentoRelatorioDTO>();
+					for (Long semLetId : turnoAtendimentosPorSemanaLetivaMap.keySet()) {
+						semanasLetivasIDs.add(semLetId);
+						// acumula os atendimentos das semanas letivas
+						atendimentosDeTodasSemanasLetivas.addAll(turnoAtendimentosPorSemanaLetivaMap.get(semLetId));
 					}
+					
+					AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+					TrioDTO<Integer,SemanaLetiva,List<String>> trio = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,ehTatico,turnoId);
+					int mdcTemposAula = trio.getPrimeiro();
+					List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
+					
+					nextRow = writeSala(sala,turno,atendimentosDeTodasSemanasLetivas,nextRow,sheet,codigoDisciplinaToColorMap,mdcTemposAula,ehTatico,labelsDasLinhasDaGradeHoraria);
 				}				
 			}
 
@@ -344,54 +329,35 @@ public class RelatorioVisaoSalaExportExcel
 		return result;
 	}
 
-	private int writeSala(Sala sala, Turno turno, SemanaLetiva semanaLetiva, List<AtendimentoRelatorioDTO> atendimentos, int row, HSSFSheet sheet, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap, int mdcTemposAula, boolean ehTatico) {
+	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, HSSFSheet sheet, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap, int mdcTemposAula, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria) {
 		// escreve cabeçalho da grade horária da sala
 		row = writeHeader(sala,turno,row,sheet,ehTatico);
 		
-		List<Long> horariosAulaIdsList = new ArrayList<Long>();
 		int initialRow = row;
 		int col = 2;
 
-		int maxCreditos = semanaLetiva.calculaMaxCreditos();
-		int linhasDeExcelPorCredito = semanaLetiva.getTempo()/mdcTemposAula;
-
 		// preenche grade vazia
 		if (ehTatico) {
-			int cargaHoraria = mdcTemposAula;
-			for (int indexCredito = 1; indexCredito <= maxCreditos; indexCredito++) {
+			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
 				// coluna de carga horária
-				for (int i = 0; i < linhasDeExcelPorCredito; i++) {
-					setCell((row+i),col,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],cargaHoraria);
-					cargaHoraria += mdcTemposAula;
-				}
-				col++;
-	
+				setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],labelsDasLinhasDaGradeHoraria.get(i));
 				// colunas dos dias da semana
 				for (int j = 0; j < Semanas.values().length; j++) {
-					for (int i = 0; i < linhasDeExcelPorCredito; i++) {
-						setCell((row+i),col,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
-					}
-					col++;
+					setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
 				}
-	
-				row += linhasDeExcelPorCredito;
+				
 				col = 2;
 			}
 		} else {
-			List<HorarioAula> horariosAulaList = new ArrayList<HorarioAula>(semanaLetiva.getHorariosAula());
-			Collections.sort(horariosAulaList);
-			for (HorarioAula ha : horariosAulaList) {
-				horariosAulaIdsList.add(ha.getId());
-				// Horários
-				String value = ConvertBeans.dateToString(ha.getHorario(), ha.getSemanaLetiva().getTempo() );
-				setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], value );
-				
-				// Dias Semana
-				for ( int i = 0; i < Semanas.values().length; i++ ) {
-					setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size()-1; i++) {
+				// coluna de carga horária
+				String label = labelsDasLinhasDaGradeHoraria.get(i) + " / " + labelsDasLinhasDaGradeHoraria.get(i+1);
+				setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],label);
+				// colunas dos dias da semana
+				for (int j = 0; j < Semanas.values().length; j++) {
+					setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
 				}
-	
-				row++;
+				
 				col = 2;
 			}
 		}
@@ -409,16 +375,10 @@ public class RelatorioVisaoSalaExportExcel
 			aulas.addAll(atendimentos);
 		}
 		List<AtendimentoRelatorioDTO> aulasParaVisaoSala = atendimentosService.uneAulasQuePodemSerCompartilhadas(aulas);
-		aulasParaVisaoSala = ordenaHorarioAula(aulasParaVisaoSala);
 
 		// agrupa as aulas por dia da semana
 		Map<Integer,List<AtendimentoRelatorioDTO>> diaSemanaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
 		for (AtendimentoRelatorioDTO aula : aulasParaVisaoSala) {
-			// TODO -- Considerar apenas os horários da semana letiva
-			if (!ehTatico && (aula.getSemanaLetivaId() != semanaLetiva.getId())) {
-				continue;
-			}
-
 			Integer diaDaSemana = aula.getSemana();
 			List<AtendimentoRelatorioDTO> aulasDoDia = diaSemanaToAulasMap.get(diaDaSemana);
 			if (aulasDoDia == null) {
@@ -428,7 +388,7 @@ public class RelatorioVisaoSalaExportExcel
 			aulasDoDia.add(aula);
 		}
 
-		// para cada dia da semana, escreve os atendimentos no excel
+		// para cada dia da semana, escreve as aulas no excel
 		for (Integer diaSemanaInt : diaSemanaToAulasMap.keySet()) {
 			Semanas diaSemana = Semanas.get(diaSemanaInt);
 
@@ -459,7 +419,7 @@ public class RelatorioVisaoSalaExportExcel
 				
 				if (!ehTatico) {
 					AtendimentoOperacionalDTO aulaOp = (AtendimentoOperacionalDTO)aula;
-					int index = horariosAulaIdsList.indexOf(aulaOp.getHorarioId());
+					int index = labelsDasLinhasDaGradeHoraria.indexOf(aulaOp.getHorarioString());
 					if (index != -1) {
 						row = initialRow + index;
 					}
@@ -468,7 +428,7 @@ public class RelatorioVisaoSalaExportExcel
 				// escreve célula principal
 				setCell(row,col,sheet,style,HtmlUtils.htmlUnescape(aula.getContentVisaoSala(ReportType.EXCEL)),HtmlUtils.htmlUnescape(aula.getContentToolTipVisaoSala(ReportType.EXCEL)));
 				// une células de acordo com a quantidade de créditos da aula
-				int rowF = row + (ehTatico ? (aula.getTotalCreditos()*linhasDeExcelPorCreditoDaAula-1) : (aula.getTotalCreditos()-1));
+				int rowF = row + aula.getTotalCreditos()*linhasDeExcelPorCreditoDaAula - 1;
 				mergeCells(row,rowF,col,col,sheet,style);
 
 				if (ehTatico) {
@@ -477,7 +437,7 @@ public class RelatorioVisaoSalaExportExcel
 			}
 		}
 		
-		return (initialRow + (ehTatico ? (maxCreditos*linhasDeExcelPorCredito) : maxCreditos) + 1);
+		return (initialRow + (ehTatico ? labelsDasLinhasDaGradeHoraria.size() : (labelsDasLinhasDaGradeHoraria.size()-1)) + 1);
 	}
 
 	private int writeHeader( Sala sala, Turno turno, int row, HSSFSheet sheet, boolean ehTatico )
@@ -577,65 +537,5 @@ public class RelatorioVisaoSalaExportExcel
 		}
 
 		return colorPalleteCellStylesList;
-	}
-
-//	private List< HSSFComment > buildExcelCommentsPool( HSSFWorkbook workbook )
-//	{
-//		List< HSSFComment > excelCommentsPool
-//			= new ArrayList< HSSFComment >();
-//
-//		HSSFSheet sheet = workbook.getSheet(
-//			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName() );
-//
-//		if ( sheet != null )
-//		{
-//            for ( int rowIndex = sheet.getFirstRowNum();
-//            	rowIndex <= sheet.getLastRowNum(); rowIndex++ )
-//            {
-//            	HSSFRow row = sheet.getRow( rowIndex );
-//
-//            	if ( row != null )
-//            	{
-//            		HSSFCell cell = row.getCell( 25 );
-//
-//            		if ( cell != null && cell.getCellComment() != null )
-//            		{
-//            			excelCommentsPool.add( cell.getCellComment() );
-//            		}
-//            	}
-//            }
-//		}
-//
-//		return excelCommentsPool;
-//	}
-
-	private List< AtendimentoRelatorioDTO > ordenaHorarioAula(
-		List< AtendimentoRelatorioDTO > list )
-	{
-		if ( list == null || list.size() == 0 )
-		{
-			return Collections.< AtendimentoRelatorioDTO > emptyList();
-		}
-			
-		if ( list.get( 0 ) instanceof AtendimentoTaticoDTO )
-		{
-			return list;
-		}
-
-		List< AtendimentoOperacionalDTO > opList
-			= new ArrayList< AtendimentoOperacionalDTO >();
-
-		for ( AtendimentoRelatorioDTO ar : list )
-		{
-			opList.add( (AtendimentoOperacionalDTO) ar );
-		}
-
-		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-		opList = service.ordenaPorHorarioAula( opList );
-
-		List< AtendimentoRelatorioDTO > result
-			= new ArrayList< AtendimentoRelatorioDTO >( opList );
-
-		return result;
 	}
 }
