@@ -993,12 +993,10 @@ a_{i,d,oft} \le M \cdot e_{i,d,oft} \nonumber \qquad
 \forall t \in T
 \end{eqnarray}
 
-
-
 \subsubsection{Ativação da variável of}
 
 \begin{eqnarray}
-\begin{center}
+%\begin{center}
 e_{i,d,oft1} \cdot e_{i,d,oft2} = of_{i,d,oft1,oft2} \nonumber
 \\ \Leftrightarrow \nonumber 
 \\ e_{i,d,oft1} + e_{i,d,oft2} - 1 \le of_{i,d,oft1,oft2} \nonumber
@@ -1009,16 +1007,13 @@ e_{i,d,oft1} \cdot e_{i,d,oft2} = of_{i,d,oft1,oft2} \nonumber
 \forall d \in D_{oft} \quad
 \forall oft1 \in O_{d} \quad
 \forall oft2 \in O_{d} \quad
-\end{center}
+%\end{center}
 \end{eqnarray}
-
-
 
 \subsubsection{Ativação da variável p}
 
-
 \begin{eqnarray}
-\begin{center}
+%\begin{center}
 p_{i,d,oft1,oft2,u,s,t} = x_{i,d,u,s,t} \cdot of_{i,d,oft1,oft2} \nonumber
 \\ \Leftrightarrow \nonumber 
 \\ p_{i,d,oft1,oft2,u,s,t} \le M \cdot of_{i,d,oft1,oft2} \nonumber
@@ -1032,13 +1027,10 @@ p_{i,d,oft1,oft2,u,s,t} = x_{i,d,u,s,t} \cdot of_{i,d,oft1,oft2} \nonumber
 \forall u \in U \quad
 \forall s \in S_{u} \quad
 \forall t \in T \quad
-\end{center}
+%\end{center}
 \end{eqnarray}
 
-
-
 \subsubsection{Ativação da variável g}
-
 
 \begin{eqnarray}
 g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
@@ -1048,8 +1040,6 @@ g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
 \forall s \in S_{u} \quad
 \forall t \in T 
 \end{eqnarray}
-
-
 
 \subsubsection{Evita sobreposição de sala por turmas de uma mesma disciplina e mesmo bloco curricular}
 
@@ -1065,9 +1055,8 @@ g_{d,oft,t} \ge \sum\limits_{i \in I_{d}} ( q_{i,d,u,s,t,oft} ) \nonumber \qquad
 
 \subsubsection{Ativação da variável q}
 
-
 \begin{eqnarray}
-\begin{center}
+%\begin{center}
 q_{i,d,oft,u,s,t} = x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber
 \\ \Leftrightarrow   \nonumber 
 \\ q_{i,d,oft,u,s,t} \le M \cdot e_{i,d,oft} \nonumber 
@@ -1080,13 +1069,12 @@ q_{i,d,oft,u,s,t} = x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber
 \forall u \in U \quad
 \forall s \in S_{u} \quad
 \forall t \in T \quad
-\end{center}
+%\end{center}
 \end{eqnarray}
 
 
 
 \subsubsection{Ativação da variável cs (Para quando houver 2 semanas letivas)}
-
 
 \begin{eqnarray}
 \sum\limits_{kh \in Kh_{s,t}} cs_{s,t,kh} \le 1 \nonumber \qquad
@@ -1108,7 +1096,6 @@ q_{i,d,oft,u,s,t} = x_{i,d,u,s,t} \cdot e_{i,d,oft} \nonumber
 
 
 \subsubsection{Máximo de créditos por sala, dia e semana letiva (Para quando houver 2 semanas letivas)}
-
 
 \begin{eqnarray}
 \sum\limits_{d \in D_{sl}}\sum\limits_{i \in I_{d}} ( x_{i,d,u,s,t} ) \le \sum\limits_{kh \in Kh_{s,t}} ( Nh_{sl,kh,s,t} \cdot cs_{s,t,kh} ) \nonumber \qquad
