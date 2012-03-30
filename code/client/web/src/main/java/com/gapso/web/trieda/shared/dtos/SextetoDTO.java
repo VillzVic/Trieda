@@ -16,7 +16,7 @@ public class SextetoDTO<P, S, T, Q, Qui, Sex> extends BaseModel {
 		return new SextetoDTO<P,S,T,Q,Qui,Sex>(primeiro,segundo,terceiro,quarto,quinto,sexto);
 	}
 
-	private SextetoDTO() {
+	public SextetoDTO() {
 		super();
 	}
 

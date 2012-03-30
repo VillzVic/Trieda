@@ -15,7 +15,7 @@ public class QuintetoDTO<P, S, T, Q, Qui> extends BaseModel {
 		return new QuintetoDTO<P,S,T,Q,Qui>(primeiro,segundo,terceiro,quarto,quinto);
 	}
 
-	private QuintetoDTO() {
+	public QuintetoDTO() {
 		super();
 	}
 
