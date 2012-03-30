@@ -17,6 +17,7 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_PERIODO_STRING = "periodoString";
+	public static final String PROPERTY_ALUNO_PRIORIDADE = "alunoPrioridade";
 
 	public AlunoDemandaDTO()
 	{
@@ -83,6 +84,14 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 		return get( PROPERTY_ALUNO_ATENDIDO_STRING );
 	}
 
+	public void setAlunoPrioridade(Integer value){
+		set(PROPERTY_ALUNO_PRIORIDADE, value);
+	}
+
+	public Integer getAlunoPrioridade(){
+		return get(PROPERTY_ALUNO_PRIORIDADE);
+	}
+	
 	public Long getDisciplinaId()
 	{
 		return get( PROPERTY_DISCIPLINA_ID );

@@ -40,6 +40,8 @@ public class ParametrosView
 
 	private Radio taticoRadio;
 	private Radio operacionalRadio;
+	private Radio otimizarPorBlocoCurricular;
+	private Radio otimizarPorAluno;
 	private TurnoComboBox turnoComboBox;
 	private CampusComboBox campusComboBox;
 
@@ -136,6 +138,23 @@ public class ParametrosView
 		group.add( this.operacionalRadio );
 
 		this.form.add( group );
+		
+		RadioGroup grupoOtimizarPor = new RadioGroup();  
+		grupoOtimizarPor.setFieldLabel( "Otimizar Por" );
+		
+		boolean otimizarPor = (this.parametroDTO.getOtimizarPor() == null) ? true : (this.parametroDTO.getOtimizarPor() == ParametroDTO.OTIMIZAR_POR_ALUNO);
+
+		this.otimizarPorAluno = new Radio();
+		this.otimizarPorAluno.setBoxLabel("Aluno");
+		this.otimizarPorAluno.setValue(otimizarPor);
+		grupoOtimizarPor.add(this.otimizarPorAluno);
+		
+		this.otimizarPorBlocoCurricular = new Radio();
+		this.otimizarPorBlocoCurricular.setBoxLabel("Bloco Curricular");
+		this.otimizarPorBlocoCurricular.setValue(!otimizarPor);
+		grupoOtimizarPor.add(this.otimizarPorBlocoCurricular);
+
+		this.form.add( grupoOtimizarPor );
 
 		this.funcaoObjetivoCheckBox = new FuncaoObjetivoComboBox();
 		this.funcaoObjetivoCheckBox.setValue( this.parametroDTO.getFuncaoObjetivo() );
@@ -652,6 +671,16 @@ public class ParametrosView
 	public Radio getOperacionalRadio()
 	{
 		return this.operacionalRadio;
+	}
+	
+	@Override
+	public Radio getOtimizarPorAlunoRadio(){
+		return this.otimizarPorAluno;
+	}
+	
+	@Override
+	public Radio getOtimizarPorBlocoRadio(){
+		return this.otimizarPorBlocoCurricular;
 	}
 
 	@Override

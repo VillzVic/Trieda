@@ -2796,6 +2796,7 @@ public class ConvertBeans {
 		domain.setCargaHorariaAlunoSel( dto.getCargaHorariaAlunoSel() );
 		domain.setCargaHorariaProfessorSel( dto.getCargaHorariaProfessorSel() );
 		domain.setFuncaoObjetivo( dto.getFuncaoObjetivo() );
+		domain.setOtimizarPor(dto.getOtimizarPor());
 
 		for ( CursoDTO cursoDTO
 			: dto.getMaximizarNotaAvaliacaoCorpoDocenteList() )
@@ -2882,6 +2883,7 @@ public class ConvertBeans {
 		dto.setMinimizarDeslocamentoProfessorValue( domain.getMinimizarDeslocamentoProfessorValue() );
 		dto.setEvitarReducaoCargaHorariaProfessorValue( domain.getEvitarReducaoCargaHorariaProfessorValue() );
 		dto.setFuncaoObjetivo( domain.getFuncaoObjetivo() );
+		dto.setOtimizarPor(domain.getOtimizarPor());
 
 		Set< Curso > cursosMaxNotaAvalList = domain.getCursosMaxNotaAval();
 		List< CursoDTO > cursosMaxNotaAvalDTOList
@@ -2998,7 +3000,7 @@ public class ConvertBeans {
 		domain.setPeriodo( dto.getPeriodo() );
 		domain.setAtendido( ( dto.getAlunoAtendido() == null ) ?
 			false : dto.getAlunoAtendido() );
-		domain.setPrioridade(1); // TODO: REVER COMO TRATAR ISSO
+		domain.setPrioridade(dto.getAlunoPrioridade());
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
@@ -3024,6 +3026,7 @@ public class ConvertBeans {
 		dto.setPeriodo( domain.getPeriodo() );
 		dto.setAlunoAtendido( ( domain.getAtendido() == null ) ?
 			false : domain.getAtendido() );
+		dto.setAlunoPrioridade(domain.getPrioridade());
 
 		if ( dto.getAlunoAtendido() )
 		{

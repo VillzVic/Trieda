@@ -23,6 +23,7 @@ public class AlunosDemandaFormView
 	private FormPanel formPanel;
 	private AlunoDemandaDTO alunoDemandaDTO;
 	private DemandaDTO demandaDTO;
+	private NumberField prioridade;
 	private NumberField periodoNF;
 
 	public AlunosDemandaFormView(
@@ -88,7 +89,7 @@ public class AlunosDemandaFormView
 		this.periodoNF.setMaxValue( 999999 );
 		this.periodoNF.setEmptyText( "Período" );
 		this.formPanel.add( this.periodoNF, formData );
-
+		
 		// Aluno
 		this.alunosComboBox = new AlunosComboBox();
 		this.alunosComboBox.setName( "aluno" );
@@ -96,6 +97,17 @@ public class AlunosDemandaFormView
 		this.alunosComboBox.setAllowBlank( false );
 		this.alunosComboBox.setEmptyText( "Escolha o Aluno" );
 		this.formPanel.add( this.alunosComboBox, formData );
+		
+		// prioridade
+		prioridade = new NumberField();
+		prioridade.setFieldLabel("Prioridade");
+		prioridade.setName(AlunoDemandaDTO.PROPERTY_ALUNO_PRIORIDADE);
+		prioridade.setValue(alunoDemandaDTO.getAlunoPrioridade());
+		prioridade.setAllowBlank(false);
+		prioridade.setAllowDecimals(false);
+		prioridade.setMaxValue(10);
+		prioridade.setEmptyText("Prioridade");
+		this.formPanel.add(prioridade, formData);
 
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
@@ -142,5 +154,10 @@ public class AlunosDemandaFormView
 	public NumberField getPeriodoNumberField()
 	{
 		return this.periodoNF;
+	}
+	
+	@Override
+	public NumberField getPrioridadeField(){
+		return this.prioridade;
 	}
 }

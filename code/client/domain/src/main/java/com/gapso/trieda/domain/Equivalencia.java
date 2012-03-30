@@ -27,6 +27,12 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gapso.trieda.util.CRUD;
+import com.gapso.trieda.util.CRUDAnnotation;
+import com.gapso.trieda.util.FindAnnotation;
+import com.gapso.trieda.util.FindParameterAnnotation;
+
+//@CRUDAnnotation
 @Configurable
 @Entity
 @RooJavaBean
@@ -34,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "EQV_ID" )
 @Table( name = "EQUIVALENCIAS" )
 public class Equivalencia
-	implements java.io.Serializable
+	implements java.io.Serializable, CRUD
 {
 	private static final long serialVersionUID = -8632323368932009356L;
 
@@ -179,6 +185,14 @@ public class Equivalencia
         this.entityManager.flush();
         return merged;
     }
+	
+	public EntityManager myEntityManager(){
+		if ( this.entityManager == null )
+        {
+        	this.entityManager = entityManager();
+        }
+		return this.entityManager;
+	}
 
 	public static final EntityManager entityManager()
 	{
@@ -193,7 +207,8 @@ public class Equivalencia
 
         return em;
     }
-
+	
+//	@FindAnnotation(instituicaoEnsino = "cursou.tipoDisciplina")
 	@SuppressWarnings( "unchecked" )
     public static List< Equivalencia > findAll(
     	InstituicaoEnsino instituicaoEnsino )
@@ -207,6 +222,7 @@ public class Equivalencia
         return q.getResultList();
     }
 
+	
 	public static Equivalencia find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -229,6 +245,7 @@ public class Equivalencia
         return null;
     }
 	
+//	@FindAnnotation(instituicaoEnsino = "cursou.tipoDisciplina")
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
 	{
@@ -252,9 +269,14 @@ public class Equivalencia
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
+//	@FindAnnotation(instituicaoEnsino = "cursou.tipoDisciplina")
 	@SuppressWarnings( "unchecked" )
 	public static List< Equivalencia > findBy(
-		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina,
+		InstituicaoEnsino instituicaoEnsino, 
+		@FindParameterAnnotation(
+			query = " AND o.cursou = :disciplina ", 
+			parameter = "disciplina"
+		) Disciplina disciplina,
 		int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
@@ -281,6 +303,7 @@ public class Equivalencia
 		return q.getResultList();
 	}
 
+//	@FindAnnotation(instituicaoEnsino = "cursou.tipoDisciplina")
 	@SuppressWarnings( "unchecked" )
     public static List< Equivalencia > find(
     	InstituicaoEnsino instituicaoEnsino,

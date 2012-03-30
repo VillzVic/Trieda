@@ -9,12 +9,16 @@ public class ParametroDTO extends AbstractDTO<Long>
 
 	public static final String TATICO = "TATICO";
 	public static final String OPERACIONAL = "OPERACIONAL";
+	
+	public static final String OTIMIZAR_POR_ALUNO = "ALUNO";
+	public static final String OTIMIZAR_POR_BLOCO = "BLOCOCURRICULAR";
 
 	// Propriedades
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CENARIOID = "cenarioid";
 	public static final String PROPERTY_MODOOTIMIZACAO = "modootimizacao";
+	public static final String PROPERTY_OTIMIZARPOR = "otimizarPor";
 	public static final String PROPERTY_CAMPUS_ID = "campusId";
 	public static final String PROPERTY_CAMPUS_DISPLAY = "campusDisplay";
 	public static final String PROPERTY_TURNO_ID = "turnoId";
@@ -96,6 +100,13 @@ public class ParametroDTO extends AbstractDTO<Long>
 	}
 	public void setModoOtimizacao(String value) {
 		set(PROPERTY_MODOOTIMIZACAO, value);
+	}
+	
+	public String getOtimizarPor() {
+		return get(PROPERTY_OTIMIZARPOR);
+	}
+	public void setOtimizarPor(String value) {
+		set(PROPERTY_OTIMIZARPOR, value);
 	}
 	
 	public Long getCampusId() {

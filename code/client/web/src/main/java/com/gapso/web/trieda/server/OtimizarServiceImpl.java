@@ -760,7 +760,6 @@ public class OtimizarServiceImpl
 		{
 			e.printStackTrace();
 		}
-
 		SolverClient solverClient
 			= new SolverClient( getLinkSolver(), "trieda" );
 

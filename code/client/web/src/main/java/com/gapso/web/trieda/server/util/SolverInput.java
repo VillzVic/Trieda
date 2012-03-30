@@ -117,6 +117,7 @@ import com.gapso.web.trieda.server.xml.input.ItemTurno;
 import com.gapso.web.trieda.server.xml.input.ItemUnidade;
 import com.gapso.web.trieda.server.xml.input.ObjectFactory;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
+import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox.CargaHoraria;
 
 @Transactional
@@ -538,9 +539,11 @@ public class SolverInput
 		System.out.print("generateDemandas();");start = System.currentTimeMillis(); // TODO: retirar
 		generateDemandas();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("generateAlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
-		generateAlunosDemanda();
-		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		if(this.parametro.getOtimizarPor() == ParametroDTO.OTIMIZAR_POR_ALUNO){
+			System.out.print("generateAlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
+			generateAlunosDemanda();
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		}
 		System.out.print("generateParametrosPlanejamento();");start = System.currentTimeMillis(); // TODO: retirar
 		generateParametrosPlanejamento( tatico );
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
@@ -1749,6 +1752,7 @@ public class SolverInput
 			itemAlunoDemanda.setAlunoId( alunoDemanda.getAluno().getId().intValue() );
 			itemAlunoDemanda.setNomeAluno( alunoDemanda.getAluno().getNome() );
 			itemAlunoDemanda.setDemandaId( alunoDemanda.getDemanda().getId().intValue() );
+			itemAlunoDemanda.setPrioridade(alunoDemanda.getPrioridade());
 
 			grupoAlunosDemanda.getAlunoDemanda().add( itemAlunoDemanda );
 		}
@@ -1763,6 +1767,7 @@ public class SolverInput
 
 		itemParametrosPlanejamento.setModoOtimizacao(
 			tatico ? "TATICO" : "OPERACIONAL" );
+		itemParametrosPlanejamento.setOtimizarPor(this.parametro.getOtimizarPor());
 
 		itemParametrosPlanejamento.setFuncaoObjetivo(this.parametro.getFuncaoObjetivo());
 

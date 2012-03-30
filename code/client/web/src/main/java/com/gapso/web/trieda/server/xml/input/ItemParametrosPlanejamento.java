@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="modoOtimizacao" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="otimizarPor" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="cargaHorariaSemanalAluno">
  *           &lt;complexType>
  *             &lt;complexContent>
@@ -94,6 +95,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ItemParametrosPlanejamento", propOrder = {
     "modoOtimizacao",
+    "otimizarPor",
     "cargaHorariaSemanalAluno",
     "alunosMesmoPeriodoNaMesmaSala",
     "permitirAlunosEmVariosCampi",
@@ -132,6 +134,8 @@ public class ItemParametrosPlanejamento {
 
     @XmlElement(required = true)
     protected String modoOtimizacao;
+    @XmlElement(required = true)
+    protected String otimizarPor;
     @XmlElement(required = true)
     protected ItemParametrosPlanejamento.CargaHorariaSemanalAluno cargaHorariaSemanalAluno;
     protected boolean alunosMesmoPeriodoNaMesmaSala;
@@ -191,6 +195,30 @@ public class ItemParametrosPlanejamento {
      */
     public void setModoOtimizacao(String value) {
         this.modoOtimizacao = value;
+    }
+    
+    /**
+     * Gets the value of the otimizarPor property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOtimizarPor() {
+        return otimizarPor;
+    }
+
+    /**
+     * Sets the value of the modoOtimizacao property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOtimizarPor(String value) {
+        this.otimizarPor = value;
     }
 
     /**

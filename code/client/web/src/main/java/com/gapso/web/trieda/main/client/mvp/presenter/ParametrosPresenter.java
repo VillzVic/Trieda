@@ -58,6 +58,8 @@ public class ParametrosPresenter
 		ParametroDTO getParametroDTO();
 		Radio getTaticoRadio();
 		Radio getOperacionalRadio();
+		Radio getOtimizarPorAlunoRadio();
+		Radio getOtimizarPorBlocoRadio();
 		TurnoComboBox getTurnoComboBox();
 		CampusComboBox getCampusComboBox();
 		CheckBox getCargaHorariaAlunoCheckBox();
@@ -298,6 +300,8 @@ public class ParametrosPresenter
 
 		dto.setModoOtimizacao( this.display.getTaticoRadio().getValue() ?
 			ParametroDTO.TATICO : ParametroDTO.OPERACIONAL );
+		dto.setOtimizarPor(this.display.getOtimizarPorAlunoRadio().getValue() ?
+			ParametroDTO.OTIMIZAR_POR_ALUNO : ParametroDTO.OTIMIZAR_POR_BLOCO);
 		dto.setFuncaoObjetivo( this.display.getFuncaoObjetivoComboBox().getValue().getValue().ordinal() );
 
 		CampusDTO campusDTO = this.display.getCampusComboBox().getValue();

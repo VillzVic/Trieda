@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="alunoId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="nomeAluno" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="demandaId" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="prioridade" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,7 +42,8 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "alunoId",
     "nomeAluno",
-    "demandaId"
+    "demandaId",
+    "prioridade"
 })
 public class ItemAlunoDemanda {
 
@@ -50,6 +52,7 @@ public class ItemAlunoDemanda {
     @XmlElement(required = true)
     protected String nomeAluno;
     protected int demandaId;
+    protected int prioridade;
 
     /**
      * Gets the value of the id property.
@@ -121,6 +124,22 @@ public class ItemAlunoDemanda {
      */
     public void setDemandaId(int value) {
         this.demandaId = value;
+    }
+    
+    /**
+     * Gets the value of the prioridade property.
+     * 
+     */
+    public int getPrioridade() {
+        return prioridade;
+    }
+
+    /**
+     * Sets the value of the prioridade property.
+     * 
+     */
+    public void setPrioridade(int value) {
+        this.prioridade = value;
     }
 
 }

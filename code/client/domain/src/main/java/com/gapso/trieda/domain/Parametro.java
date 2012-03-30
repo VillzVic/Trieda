@@ -213,6 +213,9 @@ public class Parametro
     @Column(name = "PAR_LIMMAXDISCPRO")
     private Boolean limitarMaximoDisciplinaProfessor = false;
 
+    @Column(name = "PAR_OTIMIZARPOR")
+	private String otimizarPor;
+    
     @PersistenceContext
     transient EntityManager entityManager;
 
@@ -618,6 +621,13 @@ public class Parametro
 	}
 	public void setModoOtimizacao(String modoOtimizacao) {
 		this.modoOtimizacao = modoOtimizacao;
+	}
+	
+	public String getOtimizarPor() {
+		return otimizarPor;
+	}
+	public void setOtimizarPor(String otimizarPor) {
+		this.otimizarPor = otimizarPor;
 	}
 
 	public String toString()

@@ -31,6 +31,7 @@ public class AlunosDemandaFormPresenter
 		NumberField getPeriodoNumberField();
 		boolean isValid();
 		SimpleModal getSimpleModal();
+		NumberField getPrioridadeField();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -95,6 +96,7 @@ public class AlunosDemandaFormPresenter
 		alunoDemandaDTO.setAlunoString( this.display.getAlunoComboBox().getValue().getNome() );
 		alunoDemandaDTO.setDemandaId( this.display.getDemandaDTO().getId() );
 		alunoDemandaDTO.setPeriodo( this.display.getPeriodoNumberField().getValue().intValue() );
+		alunoDemandaDTO.setAlunoPrioridade(display.getPrioridadeField().getValue().intValue());
 
 		return alunoDemandaDTO;
 	}
