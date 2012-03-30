@@ -241,11 +241,11 @@ public class RelatorioVisaoProfessorExportExcel
 				{
 					for ( SemanaLetiva s : semanasLetivas )
 					{
-						List< AtendimentoOperacional > atendimentos
-							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
-								idAdmin, professor, null, turno, this.isVisaoProfessor(), s );
-
-						atendimentosOperacional.addAll( atendimentos );
+//						List< AtendimentoOperacional > atendimentos
+//							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
+//								idAdmin, professor, null, turno, this.isVisaoProfessor(), s );
+//
+//						atendimentosOperacional.addAll( atendimentos );
 					}
 				}
 			}
@@ -260,11 +260,11 @@ public class RelatorioVisaoProfessorExportExcel
 				{
 					for ( SemanaLetiva s : semanasLetivas )
 					{
-						List< AtendimentoOperacional > atendimentos
-							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
-								idAdmin, null, professorVirtual, turno, this.isVisaoProfessor(), s );
-
-						atendimentosOperacional.addAll( atendimentos );
+//						List< AtendimentoOperacional > atendimentos
+//							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
+//								idAdmin, null, professorVirtual, turno, this.isVisaoProfessor(), s );
+//
+//						atendimentosOperacional.addAll( atendimentos );
 					}
 				}
 			}

@@ -645,16 +645,18 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
 	}
 
-	public String getContentVisaoProfessor(ReportType reportType) {
-		if (reportType.equals(ReportType.WEB)) {
+	public String getContentVisaoProfessor(ReportType reportType){
+		if(reportType.equals(ReportType.WEB)){
 			final String BR = TriedaUtil.newLine(reportType);
-			return getDisciplinaString() + BR
-			+ TriedaUtil.truncate( getDisciplinaNome(), 12 ) + BR
-			+ "Turma " + getTurma() + BR
-			+ getSalaString();
-		} else {
-			return getDisciplinaString() + " / " + getTurma();
+			
+			String disciplinaInfo = "";
+			if(getDisciplinaSubstitutaId() != null)
+				disciplinaInfo = "*" + getDisciplinaSubstitutaString() + "*" + BR + TriedaUtil.truncate(getDisciplinaSubstitutaNome(), 12);
+			else disciplinaInfo = getDisciplinaString() + BR + TriedaUtil.truncate(getDisciplinaNome(), 12);
+			
+			return disciplinaInfo + BR + TriedaUtil.truncate(getDisciplinaNome(), 12) + BR + "Turma " + getTurma() + BR + getSalaString();
 		}
+		return getDisciplinaString() + " / " + getTurma();
 	}
 
 	public String getContentToolTipVisaoProfessor(ReportType reportType) {

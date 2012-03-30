@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -14,7 +13,6 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
-import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -38,18 +36,12 @@ public interface AtendimentosService extends RemoteService {
 	 * 
 	 * @param sala
 	 * @param turno
-	 * @param semanaLetivaDTO
-	 * @return
-	 */
-	List<AtendimentoRelatorioDTO> getAtendimentosParaGradeHorariaVisaoSala(SalaDTO sala, TurnoDTO turno, SemanaLetivaDTO semanaLetivaDTO);
-	
-	/**
-	 * 
-	 * @param sala
-	 * @param turno
 	 * @return
 	 */
 	QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<String>> getAtendimentosParaGradeHorariaVisaoSala(SalaDTO sala, TurnoDTO turno);
+	
+	QuintetoDTO<Integer, Integer, Integer, List<AtendimentoRelatorioDTO>, List<String>> getAtendimentosParaGradeHorariaVisaoProfessor(ProfessorDTO professorDTO, 
+		ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO, boolean isVisaoProfessor);
 	
 	PagingLoadResult< AtendimentoTaticoDTO > getList();
 
@@ -58,7 +50,4 @@ public interface AtendimentosService extends RemoteService {
 
 	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CampusDTO campusDTO );
 
-	List< AtendimentoOperacionalDTO > getAtendimentosOperacional(
-		ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO,
-		TurnoDTO turnoDTO, boolean isVisaoProfessor, SemanaLetivaDTO semanaLetivaDTO );
 }

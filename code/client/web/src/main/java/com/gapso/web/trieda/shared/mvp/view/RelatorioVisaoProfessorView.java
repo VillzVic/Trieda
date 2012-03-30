@@ -21,7 +21,6 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
-import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -35,7 +34,6 @@ public class RelatorioVisaoProfessorView
 	private Button submitBt;
 	private CampusComboBox campusCB;
 	private TurnoComboBox turnoCB;
-	private SemanaLetivaComboBox semanaLetivaCB;
 	private ProfessorComboBox professorCB;
 	private ProfessorVirtualComboBox professorVirtualCB;
 	private ContentPanel panel;
@@ -121,9 +119,6 @@ public class RelatorioVisaoProfessorView
 			this.campusCB, usuario.isProfessor() );
 		left.add( this.turnoCB, formData );
 
-		this.semanaLetivaCB = new SemanaLetivaComboBox();
-		left.add( this.semanaLetivaCB, formData );
-
 		if ( this.usuario.isAdministrador() )
 		{
 			this.professorCB = new ProfessorComboBox( this.campusCB );
@@ -181,12 +176,6 @@ public class RelatorioVisaoProfessorView
 	public TurnoComboBox getTurnoComboBox()
 	{
 		return this.turnoCB;
-	}
-
-	@Override
-	public SemanaLetivaComboBox getSemanaLetivaComboBox()
-	{
-		return this.semanaLetivaCB;
 	}
 
 	@Override
