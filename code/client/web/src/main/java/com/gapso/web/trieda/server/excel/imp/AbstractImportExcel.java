@@ -18,6 +18,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public abstract class AbstractImportExcel< ExcelBeanType >
 	implements IImportExcel
@@ -79,12 +80,9 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 					processSheetContent( entry.getKey(), entry.getValue() );
 				}
 			}
-			catch ( Exception e )
-			{
+			catch (Exception e) {
 				e.printStackTrace();
-
-				this.errors.add( getI18nMessages().excelErroBD(
-					fileName, extractMessage( e ) ) );
+				this.errors.add(getI18nMessages().excelErroBD(fileName,TriedaUtil.extractMessage(e)));
 			}
 		}
 
@@ -112,12 +110,9 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 						entry.getKey(), entry.getValue() );
 				}
 			}
-			catch ( Exception e )
-			{
+			catch (Exception e) {
 				e.printStackTrace();
-
-				this.errors.add( getI18nMessages().excelErroBD(
-					fileName, extractMessage( e ) ) );
+				this.errors.add(getI18nMessages().excelErroBD(fileName,TriedaUtil.extractMessage(e)));
 			}
 		}
 
@@ -214,12 +209,9 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 				}
 			}
 		}
-		catch ( Exception e )
-		{
+		catch (Exception e) {
 			e.printStackTrace();
-
-			this.errors.add( getI18nMessages().excelErroArquivoInvalido(
-				fileName, extractMessage( e ) ) );
+			this.errors.add( getI18nMessages().excelErroArquivoInvalido(fileName,TriedaUtil.extractMessage(e)));
 		}
 
 		return excelBeansMap;
@@ -272,20 +264,6 @@ public abstract class AbstractImportExcel< ExcelBeanType >
     	}
 
     	return false;
-	}
-	
-	private String extractMessage( Exception e )
-	{
-		StringBuffer msg = new StringBuffer();
-
-		msg.append( e.getMessage() );
-
-		if ( e.getCause() != null )
-		{
-			msg.append( " " + e.getCause().getMessage() );
-		}
-
-		return msg.toString();
 	}
 
 	protected String getCellValue( HSSFCell cell )

@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,7 +35,7 @@ public class TriedaDetailMessageBox {
 	 *            a exceção que será mostrada como detalhamento da mensagem
 	 */
 	public static void alert(String title, String msg, Throwable caught) {
-		alert(title,msg,extractMessage(caught));
+		alert(title,msg,TriedaUtil.extractMessage(caught));
 	}
 	
 	/**
@@ -69,23 +70,6 @@ public class TriedaDetailMessageBox {
 		dialog.add(getDetailMessageComponent(detailMsg));
 		
 		dialog.show();
-	}
-	
-	private static String extractMessage(Throwable caught) {
-		String caughtMessage = "";
-		if (caught != null) {
-			if (caught instanceof TriedaException) {
-				caughtMessage = ((TriedaException)caught).getCompleteMessage();
-			} else {
-				caughtMessage = "Message: " + caught.getMessage();
-				Throwable throwable = caught.getCause();
-				while (throwable != null) {
-					caughtMessage += "\nCause: " + throwable.getMessage();
-					throwable = throwable.getCause();
-				}
-			}
-		}
-		return caughtMessage;
 	}
 	
 	private static Widget getIconComponent(String messageBoxIcon) {

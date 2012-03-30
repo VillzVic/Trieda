@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.Window.Location;
 
 public class TriedaUtil
@@ -227,5 +228,22 @@ public class TriedaUtil
 	
 	static public String newLine(ReportType type) {
 		return type.equals(ReportType.WEB) ? "<br/>" : "\n";
+	}
+	
+	static public String extractMessage(Throwable caught) {
+		String caughtMessage = "";
+		if (caught != null) {
+			if (caught instanceof TriedaException) {
+				caughtMessage = ((TriedaException)caught).getCompleteMessage();
+			} else {
+				caughtMessage = "Message: " + caught.getMessage();
+				Throwable throwable = caught.getCause();
+				while (throwable != null) {
+					caughtMessage += " Cause: " + throwable.getMessage();
+					throwable = throwable.getCause();
+				}
+			}
+		}
+		return caughtMessage;
 	}
 }

@@ -13,6 +13,7 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationImpl;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class TRIEDAImportExcel 
 	extends ProgressDeclarationImpl
@@ -90,9 +91,11 @@ public class TRIEDAImportExcel
 				}
 			}
 		}
-		catch ( Exception e )
-		{
+		catch ( Exception e ) {
 			e.printStackTrace();
+			flag = false;
+			String errorMessage = TriedaUtil.extractMessage(e);
+			getErrors().add(getI18nMessages().excelErroGenericoImportacao(errorMessage));
 		}
 
 		return flag;

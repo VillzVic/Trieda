@@ -57,6 +57,12 @@ public class GTriedaI18nMessages
 
 		return this.languageManager.getFormattedText( "excelErroGenericoExportacao", params );
 	}
+	
+	@Override
+	public String excelErroGenericoImportacao(String motivo) {
+		String [] params = {motivo};
+		return this.languageManager.getFormattedText("excelErroGenericoImportacao",params);
+	}
 
 	@Override
 	public String excelErroImportadorNulo( String infoASerImportada )
