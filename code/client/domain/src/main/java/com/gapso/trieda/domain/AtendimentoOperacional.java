@@ -369,7 +369,7 @@ public class AtendimentoOperacional
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
 		Professor professor, Turno turno, boolean isAdmin, boolean isVisaoProfessor,
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino)
 	{
 		final boolean apenasCampusPublicado = ( !isAdmin && isVisaoProfessor ); 
 
@@ -380,17 +380,10 @@ public class AtendimentoOperacional
 			publicado = ( " AND o.oferta.campus.publicado = :publicado " );
 		}
 
-		String semanaLetivaQuery = "";
-
-		if ( semanaLetiva != null )
-		{
-			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
-		}
-		
 		String queryString = "SELECT DISTINCT ( o ) FROM AtendimentoOperacional o"
 			+ " WHERE o.oferta.turno = :turno "
 			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
-			+ " AND o.professor = :professor " + publicado + semanaLetivaQuery;
+			+ " AND o.professor = :professor " + publicado;
 
 		Query q = entityManager().createQuery( queryString );
 
@@ -402,12 +395,7 @@ public class AtendimentoOperacional
 		{
 			q.setParameter( "publicado", true );
 		}
-
-		if ( semanaLetiva != null )
-		{
-			q.setParameter( "semanaLetiva", semanaLetiva );
-		}
-
+		
 		return q.getResultList();
 	}
 
@@ -415,7 +403,7 @@ public class AtendimentoOperacional
 	public static List< AtendimentoOperacional > findAllPublicadoBy(
 		ProfessorVirtual professorVirtual, Turno turno,
 		boolean isAdmin, boolean isVisaoProfessor,
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva semanaLetiva )
+		InstituicaoEnsino instituicaoEnsino)
 	{
 		final boolean apenasCampusPublicado = ( !isAdmin && isVisaoProfessor );
 
@@ -426,18 +414,11 @@ public class AtendimentoOperacional
 			publicado = " AND o.oferta.campus.publicado = :publicado ";
 		}
 
-		String semanaLetivaQuery = "";
-
-		if ( semanaLetiva != null )
-		{
-			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
-		}
-
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.turno = :turno " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.professorVirtual = :professorVirtual " + publicado + semanaLetivaQuery );
+			" AND o.professorVirtual = :professorVirtual " + publicado);
 
 		q.setParameter( "turno", turno );
 		q.setParameter( "professorVirtual", professorVirtual );
@@ -446,11 +427,6 @@ public class AtendimentoOperacional
 		if ( apenasCampusPublicado )
 		{
 			q.setParameter( "publicado", true );
-		}
-
-		if ( semanaLetiva != null )
-		{
-			q.setParameter( "semanaLetiva", semanaLetiva );
 		}
 
 		return q.getResultList();
@@ -757,19 +733,19 @@ public class AtendimentoOperacional
 	static public List< AtendimentoOperacional > getAtendimentosOperacional(
 		InstituicaoEnsino instituicaoEnsino, boolean isAdmin,
 		Professor professor, ProfessorVirtual professorVirtual,
-		Turno turno, boolean isVisaoProfessor, SemanaLetiva semanaLetiva )
+		Turno turno, boolean isVisaoProfessor)
 	{
 		List< AtendimentoOperacional > atendimentosOperacional = null;
 
 		if ( professor != null )
 		{
 			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(
-				professor, turno, isAdmin, isVisaoProfessor, instituicaoEnsino, semanaLetiva );
+				professor, turno, isAdmin, isVisaoProfessor, instituicaoEnsino);
 		}
 		else if ( professorVirtual != null )
 		{
 			atendimentosOperacional = AtendimentoOperacional.findAllPublicadoBy(
-				professorVirtual, turno, isAdmin, isVisaoProfessor, instituicaoEnsino, semanaLetiva );
+				professorVirtual, turno, isAdmin, isVisaoProfessor, instituicaoEnsino);
 		}
 
 		return atendimentosOperacional;
