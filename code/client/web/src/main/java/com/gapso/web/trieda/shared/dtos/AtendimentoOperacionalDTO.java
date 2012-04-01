@@ -654,7 +654,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 				disciplinaInfo = "*" + getDisciplinaSubstitutaString() + "*" + BR + TriedaUtil.truncate(getDisciplinaSubstitutaNome(), 12);
 			else disciplinaInfo = getDisciplinaString() + BR + TriedaUtil.truncate(getDisciplinaNome(), 12);
 			
-			return disciplinaInfo + BR + TriedaUtil.truncate(getDisciplinaNome(), 12) + BR + "Turma " + getTurma() + BR + getSalaString();
+			return disciplinaInfo + BR + "Turma " + getTurma() + BR + getSalaString();
 		}
 		return getDisciplinaString() + " / " + getTurma();
 	}

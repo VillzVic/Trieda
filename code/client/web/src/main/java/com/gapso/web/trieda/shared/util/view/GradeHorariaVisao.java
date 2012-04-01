@@ -178,14 +178,19 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	
 	protected void addColumn(List< ColumnConfig > list, String id, String name){
 		GridCellRenderer< LinhaDeCredito > change = getGridCellRenderer();
+		int width = (name.equals("")) ? 0 : getWidth(id);
 
-		ColumnConfig column = new ColumnConfig(id, name, 100);
+		ColumnConfig column = new ColumnConfig(id, name, width);
 		column.setRenderer(change);
 		column.setResizable(false);
 		column.setMenuDisabled(true);
 		column.setSortable(false);
 
 		list.add(column);
+	}
+	
+	protected int getWidth(String semana){
+		return 100;
 	}
 	
 	protected  GridCellRenderer<LinhaDeCredito> getGridCellRenderer(){

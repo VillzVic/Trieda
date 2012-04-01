@@ -35,8 +35,8 @@ public class GradeHorariaCursoGrid extends GradeHorariaVisao{
 	}
 
 	public List<ColumnConfig> getColumnList(List<Integer> l){
-		List<ColumnConfig> list = super.getColumnList(null);
 		qtdColunasPorDiaSemana = l;
+		List<ColumnConfig> list = super.getColumnList(null);
 		int columnsCount = getColumnsCount();
 
 		for(int i = 8; i < columnsCount; i++) addColumn(list, "extra" + i, "");
@@ -79,8 +79,9 @@ public class GradeHorariaCursoGrid extends GradeHorariaVisao{
 		);
 	}
 		
-	private int getWidth(String semana){
-		if(this.qtdColunasPorDiaSemana == null) return 100;
+	protected int getWidth(String semana){
+		int width = super.getWidth(semana);
+		if(this.qtdColunasPorDiaSemana == null) return width;
 
 		int i = 0;
 		if(semana.equals("segunda")) i = 2;
@@ -91,7 +92,7 @@ public class GradeHorariaCursoGrid extends GradeHorariaVisao{
 		if(semana.equals("sabado")) i = 7;
 		if(semana.equals("domingo")) i = 1;
 
-		return (this.qtdColunasPorDiaSemana.get(i) * 100);
+		return (this.qtdColunasPorDiaSemana.get(i) * width);
 	}
 
 	public CurriculoDTO getCurriculoDTO(){
