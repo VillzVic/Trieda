@@ -12,7 +12,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -60,7 +59,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	protected abstract void processSheetContent(
 		String sheetName, List< ExcelBeanType > sheetContent );
 
-	@Transactional
+	//@Transactional
 	@Override
 	public boolean load( String fileName, HSSFWorkbook workbook )
 	{
@@ -89,7 +88,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		return this.errors.isEmpty();
 	}
 
-	@Transactional
+	//@Transactional
 	@Override
 	public boolean load( String fileName, InputStream inputStream )
 	{

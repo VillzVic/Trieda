@@ -47,8 +47,7 @@ public class TRIEDAImportExcel
 	}
 
 	@Override
-	public boolean load(
-		String fileName, InputStream inputStream )
+	public boolean load(String fileName, InputStream inputStream )
 	{
 		boolean flag = true;
 		try

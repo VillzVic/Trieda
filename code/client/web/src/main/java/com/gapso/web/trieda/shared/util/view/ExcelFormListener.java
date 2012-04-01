@@ -43,6 +43,7 @@ public class ExcelFormListener
 		if (modalToBeHidden != null) {
 			modalToBeHidden.hide();
 		}
+		
 		String[] resSplit = be.getResultHtml().split("[<>\n]");
 		List<String> warnings = new ArrayList<String>();
 		List<String> errors = new ArrayList<String>();

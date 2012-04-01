@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -28,6 +28,7 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 public class ImportExcelServlet
 	extends HttpServlet
@@ -44,6 +45,7 @@ public class ImportExcelServlet
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	protected void doPost(
 		HttpServletRequest request, HttpServletResponse response )
 		throws ServletException, IOException
@@ -114,6 +116,7 @@ public class ImportExcelServlet
 							System.out.println("Nao foi possivel realizar o acompanhamento da progressao.");
 						}
 					}
+
 					if ( !importer.load( fileName, inputStream ) )
 					{
 						response.setContentType( "text/html" );
@@ -123,12 +126,13 @@ public class ImportExcelServlet
 							response.getWriter().println(
 								ExcelInformationType.prefixWarning() + msg );
 						}
+
 						for ( String msg : importer.getErrors() )
 						{
 							response.getWriter().println(
 								ExcelInformationType.prefixError() + msg );
 						}
-
+						
 						response.getWriter().flush();
 					}
 				}
@@ -141,10 +145,11 @@ public class ImportExcelServlet
 						i18nMessages.excelErroImportadorNulo( informationToBeImported ) );
 				}
 			}
-		}
-        catch ( FileUploadException e )
-        {
+		} catch ( Exception e ) {
 			e.printStackTrace();
+			String errorMsg = TriedaUtil.extractMessage(e);
+			response.setContentType( "text/html" );
+			response.getWriter().println(ExcelInformationType.prefixError()+i18nMessages.excelErroGenericoImportacao(errorMsg));
 		}
         finally
         {
