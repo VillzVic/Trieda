@@ -3,7 +3,6 @@ package com.gapso.web.trieda.shared.util.view;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
-import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -54,19 +53,6 @@ public class GradeHorariaCursoGrid extends GradeHorariaVisao{
 		return count;
 	}
 
-	protected void addColumn(List<ColumnConfig> list, String id, String name){
-		GridCellRenderer<LinhaDeCredito> change = getGridCellRenderer();
-		int width = (name.equals("")) ? 0 : getWidth(id);
-		
-		ColumnConfig column = new ColumnConfig(id, name, width);
-		column.setRenderer(change);
-		column.setResizable(false);
-		column.setMenuDisabled(true);
-		column.setSortable(false);
-		
-		list.add(column);
-	}
-	
 	protected int getSemana(int colIndex){
 		return colIndex;
 	}
