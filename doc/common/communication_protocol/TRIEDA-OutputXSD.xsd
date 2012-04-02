@@ -27,7 +27,6 @@
           </xs:complexType>
         </xs:element>
         <xs:element name="professoresVirtuais" type="GrupoProfessoresVirtuais" />
-        <xs:element name="alunosDemanda" type="GrupoAlunoDemanda" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -181,6 +180,11 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="turma" type="xs:string" />
+      <xs:element name="alunosDemandasAtendidas" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>Caso a otimização tenha informação de alunos (isto é, caso o modo de otimização tenha sido por ALUNO ao invés de por BLOCOCURRICULAR) esta tag conterá os identificadores das entidades &lt;AlunoDemanda&gt; (</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemAtendimentoTatico">
