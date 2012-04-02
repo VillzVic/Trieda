@@ -539,7 +539,7 @@ public class SolverInput
 		System.out.print("generateDemandas();");start = System.currentTimeMillis(); // TODO: retirar
 		generateDemandas();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		if(this.parametro.getOtimizarPor() == ParametroDTO.OTIMIZAR_POR_ALUNO){
+		if(this.parametro.getOtimizarPor().equals(ParametroDTO.OTIMIZAR_POR_ALUNO)){
 			System.out.print("generateAlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
 			generateAlunosDemanda();
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
