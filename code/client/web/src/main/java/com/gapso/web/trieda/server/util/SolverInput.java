@@ -539,11 +539,9 @@ public class SolverInput
 		System.out.print("generateDemandas();");start = System.currentTimeMillis(); // TODO: retirar
 		generateDemandas();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		if(this.parametro.getOtimizarPor().equals(ParametroDTO.OTIMIZAR_POR_ALUNO)){
-			System.out.print("generateAlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
-			generateAlunosDemanda();
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		}
+		System.out.print("generateAlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
+		generateAlunosDemanda();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("generateParametrosPlanejamento();");start = System.currentTimeMillis(); // TODO: retirar
 		generateParametrosPlanejamento( tatico );
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
@@ -1727,34 +1725,28 @@ public class SolverInput
 		this.triedaInput.setDemandas( grupoDemanda );
 	}
 
-	private void generateAlunosDemanda()
-	{
-		GrupoAlunoDemanda grupoAlunosDemanda
-			= this.of.createGrupoAlunoDemanda();
+	private void generateAlunosDemanda() {
+		GrupoAlunoDemanda grupoAlunosDemanda = this.of.createGrupoAlunoDemanda();
 
-		List< AlunoDemanda > alunos = AlunoDemanda.findAll( this.instituicaoEnsino );
-
-		for ( AlunoDemanda alunoDemanda : alunos )
-		{
-			boolean contemDemanda = this.demandasCampusTurno.contains( alunoDemanda.getDemanda() );
-
-			boolean contemDisciplina = this.disciplinasComDemandaCurriculo.contains(
-				alunoDemanda.getDemanda().getDisciplina() );
-
-			if ( !contemDemanda || !contemDisciplina )
-			{
-				continue;
+		if(this.parametro.getOtimizarPor().equals(ParametroDTO.OTIMIZAR_POR_ALUNO)) {
+			List<AlunoDemanda> alunos = AlunoDemanda.findAll(this.instituicaoEnsino);
+			for (AlunoDemanda alunoDemanda : alunos) {
+				boolean contemDemanda = this.demandasCampusTurno.contains(alunoDemanda.getDemanda());
+				boolean contemDisciplina = this.disciplinasComDemandaCurriculo.contains(alunoDemanda.getDemanda().getDisciplina());
+				if (!contemDemanda || !contemDisciplina) {
+					continue;
+				}
+	
+				ItemAlunoDemanda itemAlunoDemanda = this.of.createItemAlunoDemanda();
+	
+				itemAlunoDemanda.setId(alunoDemanda.getId().intValue());
+				itemAlunoDemanda.setAlunoId(alunoDemanda.getAluno().getId().intValue());
+				itemAlunoDemanda.setNomeAluno(alunoDemanda.getAluno().getNome());
+				itemAlunoDemanda.setDemandaId(alunoDemanda.getDemanda().getId().intValue());
+				itemAlunoDemanda.setPrioridade(alunoDemanda.getPrioridade());
+	
+				grupoAlunosDemanda.getAlunoDemanda().add(itemAlunoDemanda);
 			}
-
-			ItemAlunoDemanda itemAlunoDemanda = this.of.createItemAlunoDemanda();
-
-			itemAlunoDemanda.setId( alunoDemanda.getId().intValue() );
-			itemAlunoDemanda.setAlunoId( alunoDemanda.getAluno().getId().intValue() );
-			itemAlunoDemanda.setNomeAluno( alunoDemanda.getAluno().getNome() );
-			itemAlunoDemanda.setDemandaId( alunoDemanda.getDemanda().getId().intValue() );
-			itemAlunoDemanda.setPrioridade(alunoDemanda.getPrioridade());
-
-			grupoAlunosDemanda.getAlunoDemanda().add( itemAlunoDemanda );
 		}
 
 		this.triedaInput.setAlunosDemanda( grupoAlunosDemanda );
