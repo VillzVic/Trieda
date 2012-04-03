@@ -19,7 +19,6 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
@@ -31,6 +30,7 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -172,7 +172,6 @@ public class RelatorioVisaoProfessorExportExcel
 		List< Professor > professores = null;
 		List< ProfessorVirtual > professoresVirtuais = null;
 		List< Turno > turnos = null;
-		List< SemanaLetiva > semanasLetivas = null;
 
 		// Recupera os dados preenchidos nos filtros
 		if ( this.relatorioFiltro != null )
@@ -207,18 +206,6 @@ public class RelatorioVisaoProfessorExportExcel
 				turnos.add( turno );
 			}
 
-			SemanaLetiva semanaLetiva = ( this.relatorioFiltro.getSemanaLetivaDTO() == null ? null :
-				SemanaLetiva.find( this.relatorioFiltro.getSemanaLetivaDTO().getId(), this.instituicaoEnsino ) ); 
-
-			if ( semanaLetiva != null )
-			{
-				semanasLetivas = new ArrayList< SemanaLetiva >(  );
-				semanasLetivas.add( semanaLetiva );
-			}
-			else
-			{
-				semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
-			}
 		}
 		else
 		{
@@ -226,46 +213,39 @@ public class RelatorioVisaoProfessorExportExcel
 			professores = Professor.findAll( this.instituicaoEnsino );
 			professoresVirtuais = ProfessorVirtual.findAll( this.instituicaoEnsino );
 			turnos = Turno.findAll( this.instituicaoEnsino );
-			semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
 		}
 
 		Set< AtendimentoOperacional > atendimentosOperacional
 			= new HashSet< AtendimentoOperacional >();
 
 		// Atendimentos operacionais dos professores
-		if ( professores != null && professores.size() > 0 && semanasLetivas != null)
+		if ( professores != null && professores.size() > 0)
 		{
 			for ( Professor professor : professores )
 			{
 				for ( Turno turno : turnos )
 				{
-					for ( SemanaLetiva s : semanasLetivas )
-					{
-//						List< AtendimentoOperacional > atendimentos
-//							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
-//								idAdmin, professor, null, turno, this.isVisaoProfessor(), s );
-//
-//						atendimentosOperacional.addAll( atendimentos );
-					}
+						List< AtendimentoOperacional > atendimentos
+							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
+								idAdmin, professor, null, turno, this.isVisaoProfessor());
+
+						atendimentosOperacional.addAll( atendimentos );
 				}
 			}
 		}
 
 		// Atendimentos operacionais dos professores virtuais
-		if ( professoresVirtuais != null && professoresVirtuais.size() > 0 && semanasLetivas != null)
+		if ( professoresVirtuais != null && professoresVirtuais.size() > 0)
 		{
 			for ( ProfessorVirtual professorVirtual : professoresVirtuais )
 			{
 				for ( Turno turno : turnos )
 				{
-					for ( SemanaLetiva s : semanasLetivas )
-					{
-//						List< AtendimentoOperacional > atendimentos
-//							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
-//								idAdmin, null, professorVirtual, turno, this.isVisaoProfessor(), s );
-//
-//						atendimentosOperacional.addAll( atendimentos );
-					}
+						List< AtendimentoOperacional > atendimentos
+							= AtendimentoOperacional.getAtendimentosOperacional( this.instituicaoEnsino,
+								idAdmin, null, professorVirtual, turno, this.isVisaoProfessor());
+
+						atendimentosOperacional.addAll( atendimentos );
 				}
 			}
 		}
@@ -306,13 +286,18 @@ public class RelatorioVisaoProfessorExportExcel
 
 			// Dado o id de um professor ( ou professor virtual ),
 			// temos os seus atendimentos, organizados por turno
-			Map< Long, Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > > mapNivel1
-				= new TreeMap< Long, Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > >();
+			Map<Boolean, Map< Long, Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > > >mapNivel0
+				= new TreeMap<Boolean, Map< Long, Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > > >();
 
+			mapNivel0.put(true, new HashMap< Long, Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > >());
+			mapNivel0.put(false, new HashMap< Long, Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > >());
+			
 			for ( AtendimentoOperacionalDTO atendimento : atendimentos )
 			{
 				Professor professor = null;
 				ProfessorVirtual professorVirtual = null;
+				Long professorId = null;
+				Map< Long, Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > > mapNivel1;
 
 				if ( this.campus == null )
 				{
@@ -324,40 +309,42 @@ public class RelatorioVisaoProfessorExportExcel
 				{
 					professor = Professor.find(
 						atendimento.getProfessorId(), this.instituicaoEnsino );
+					mapNivel1 = mapNivel0.get(true);
+					professorId = professor.getId();
 				}
 				else
 				{
 					professorVirtual = ProfessorVirtual.find(
 						atendimento.getProfessorVirtualId(), this.instituicaoEnsino );
+					mapNivel1 = mapNivel0.get(false);
+					professorId = professorVirtual.getId();
 				}
 
-				Long professorId = ( professor == null ? professorVirtual.getId() : professor.getId() );
 				Turno turno = Turno.find( atendimento.getTurnoId(), this.instituicaoEnsino );
-				// FIXME TRATAR CASOS DE ATENDIMENTOS COM MAIS DE UMA SEMANA LETIVA ASSOCIADA
 				SemanaLetiva semanaLetiva = SemanaLetiva.find( atendimento.getSemanaLetivaId(), this.instituicaoEnsino );
 
-				Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > mapNivel2 = mapNivel1.get( professorId );
+				Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > mapNivel2 = mapNivel1.get( professorId );
 
 				if ( mapNivel2 == null )
 				{
-					mapNivel2 = new HashMap< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > >();
+					mapNivel2 = new HashMap< Turno, Map< Long, List< AtendimentoOperacionalDTO > > >();
 					mapNivel1.put( professorId, mapNivel2 );
 				}
 
-				Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > mapNivel3 = mapNivel2.get( turno );
+				Map< Long, List< AtendimentoOperacionalDTO > > mapNivel3 = mapNivel2.get( turno );
 
 				if ( mapNivel3 == null )
 				{
-					mapNivel3 = new HashMap< SemanaLetiva, List< AtendimentoOperacionalDTO > >();
+					mapNivel3 = new HashMap< Long, List< AtendimentoOperacionalDTO > >();
 					mapNivel2.put( turno, mapNivel3 );
 				}
 
-				List< AtendimentoOperacionalDTO > list = mapNivel3.get( semanaLetiva );
+				List< AtendimentoOperacionalDTO > list = mapNivel3.get( semanaLetiva.getId() );
 				
 				if ( list == null )
 				{
 					list = new ArrayList< AtendimentoOperacionalDTO >();
-					mapNivel3.put( semanaLetiva, list );
+					mapNivel3.put( semanaLetiva.getId(), list );
 				}
 
 				list.add( atendimento );
@@ -375,39 +362,44 @@ public class RelatorioVisaoProfessorExportExcel
 
 			int nextRow = this.initialRow;
 
-			for ( Long profId : mapNivel1.keySet() )
-			{
-				Map< Turno, Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > > mapNivel2 = mapNivel1.get( profId );
-
-				for ( Turno turno : mapNivel2.keySet() )
+			for(Boolean b : mapNivel0.keySet()){
+				Map< Long, Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > > mapNivel1 = mapNivel0.get(b);
+				for ( Long profId : mapNivel1.keySet() )
 				{
-					Map< SemanaLetiva, List< AtendimentoOperacionalDTO > > mapNivel3 = mapNivel2.get( turno );
-
-					for ( SemanaLetiva semanaLetiva : mapNivel3.keySet() )
+					Map< Turno, Map< Long, List< AtendimentoOperacionalDTO > > > mapNivel2 = mapNivel1.get( profId );
+	
+					for ( Turno turno : mapNivel2.keySet() )
 					{
-						List< AtendimentoOperacionalDTO > listAtendimentos = mapNivel3.get( semanaLetiva ); 
-
-						Professor professor = null;
-						ProfessorVirtual professorVirtual = null;
+						Map< Long, List< AtendimentoOperacionalDTO > > mapNivel3 = mapNivel2.get( turno );
 	
-						professor = Professor.find( profId, this.instituicaoEnsino );
+						Set<Long> semanasLetivasIDs = new HashSet<Long>();
+						List<AtendimentoOperacionalDTO> listAtendimentos = new ArrayList<AtendimentoOperacionalDTO>();
+						for (Long semLetId : mapNivel3.keySet()) {
+							semanasLetivasIDs.add(semLetId);
+							// acumula os atendimentos das semanas letivas
+							listAtendimentos.addAll(mapNivel3.get(semLetId));
+						}
+						
+						AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+						TrioDTO<Integer,SemanaLetiva,List<String>> trio = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs, false, turno.getId());
+						int mdcTemposAula = trio.getPrimeiro();
+						List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
 	
-						if ( professor == null )
-						{
-							professorVirtual = ProfessorVirtual.find(
+						Professor professor = Professor.find( profId, this.instituicaoEnsino );
+	
+						if(!b){
+							ProfessorVirtual professorVirtual = ProfessorVirtual.find(
 								profId, this.instituicaoEnsino );
+							if ( professorVirtual != null )
+							{
+								nextRow = writeProfessorVirtual(
+									this.campus, professorVirtual, turno, listAtendimentos,
+									nextRow, sheet, /*itExcelCommentsPool,*/ codigoDisciplinaToColorMap, mdcTemposAula, labelsDasLinhasDaGradeHoraria);
+							}
 						}
-	
-						if ( professor != null )
-						{
-							nextRow = writeProfessor( this.campus, professor, turno, semanaLetiva, listAtendimentos,
-								nextRow, sheet, /*itExcelCommentsPool,*/ codigoDisciplinaToColorMap );
-						}
-						else if ( professorVirtual != null )
-						{
-							nextRow = writeProfessorVirtual(
-								this.campus, professorVirtual, turno, semanaLetiva, listAtendimentos,
-								nextRow, sheet, /*itExcelCommentsPool,*/ codigoDisciplinaToColorMap );
+						else{
+							nextRow = writeProfessor( this.campus, professor, turno, listAtendimentos,
+								nextRow, sheet, /*itExcelCommentsPool,*/ codigoDisciplinaToColorMap, mdcTemposAula, labelsDasLinhasDaGradeHoraria);
 						}
 					}
 				}
@@ -426,34 +418,25 @@ public class RelatorioVisaoProfessorExportExcel
 
 	private int writeProfessor(
 		Campus campus, Professor professor,
-		Turno turno, SemanaLetiva semanaLetiva,
-		List< AtendimentoOperacionalDTO > atendimentos,
+		Turno turno, List< AtendimentoOperacionalDTO > atendimentos,
 		int row, HSSFSheet sheet, /*Iterator< HSSFComment > itExcelCommentsPool,*/
-		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap )
+		Map< String, HSSFCellStyle > codigoDisciplinaToColorMap, int mdcTemposAula, List<String> labelsDasLinhasDaGradeHoraria )
 	{
 		row = writeHeaderProfessor( campus, professor, turno, row, sheet );
 		
-		List<Long> horariosAulaIdsList = new ArrayList<Long>();
-
 		int initialRow = row;
 		int col = 2;
 
 		// Preenche grade com horários e células vazias
-		int maxCreditos = semanaLetiva.calculaMaxCreditos();
-		List<HorarioAula> horariosAulaList = new ArrayList<HorarioAula>(semanaLetiva.getHorariosAula());
-		Collections.sort(horariosAulaList);
-		for (HorarioAula ha : horariosAulaList) {
-			horariosAulaIdsList.add(ha.getId());
-			// Horários
-			String value = ConvertBeans.dateToString(ha.getHorario(), ha.getSemanaLetiva().getTempo() );
-			setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], value );
-			
-			// Dias Semana
-			for ( int i = 0; i < Semanas.values().length; i++ ) {
-				setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+		for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size()-1; i++) {
+			// coluna de carga horária
+			String label = labelsDasLinhasDaGradeHoraria.get(i) + " / " + labelsDasLinhasDaGradeHoraria.get(i+1);
+			setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],label);
+			// colunas dos dias da semana
+			for (int j = 0; j < Semanas.values().length; j++) {
+				setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
 			}
-
-			row++;
+			
 			col = 2;
 		}
 
@@ -466,7 +449,7 @@ public class RelatorioVisaoProfessorExportExcel
 		for (AtendimentoRelatorioDTO dto : arDTOListProcessada) {
 			atendimentosParaVisaoProfessor.add((AtendimentoOperacionalDTO)dto);
 		}
-
+		
 		atendimentosParaVisaoProfessor = this.ordenaHorarioAula( atendimentosParaVisaoProfessor );
 
 		// Agrupa os atendimentos por dia da semana
@@ -503,56 +486,46 @@ public class RelatorioVisaoProfessorExportExcel
 
 			for (AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana) {
 				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
+				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
+				int linhasDeExcelPorCreditoDaAula = atendimento.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
 				
-				int index = horariosAulaIdsList.indexOf(atendimento.getHorarioId());
-				if (index != -1) {
+				int index = labelsDasLinhasDaGradeHoraria.indexOf(atendimento.getHorarioString());
+				if(index != -1){
 					row = initialRow + index;
 				}
 
-				// Escreve célula principal
-				setCell( row, col, sheet, style, /*itExcelCommentsPool,*/
-					atendimento.getContentVisaoProfessor(ReportType.EXCEL),
-					atendimento.getContentToolTipVisaoProfessor(ReportType.EXCEL) );
-
-				// Une células de acordo com a quantidade de créditos
-				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
-					col, col, sheet, style );
+				// escreve célula principal
+				setCell(row,col,sheet,style,HtmlUtils.htmlUnescape(atendimento.getContentVisaoSala(ReportType.EXCEL)),HtmlUtils.htmlUnescape(atendimento.getContentToolTipVisaoSala(ReportType.EXCEL)));
+				// une células de acordo com a quantidade de créditos da aula
+				int rowF = row + atendimento.getTotalCreditos()*linhasDeExcelPorCreditoDaAula - 1;
+				mergeCells(row,rowF,col,col,sheet,style);
 			}
 		}
 
-		return ( initialRow + maxCreditos + 1 );
+		return ( initialRow + labelsDasLinhasDaGradeHoraria.size());
 	}
 
 	private int writeProfessorVirtual(
 		Campus campus, ProfessorVirtual professorVirtual,
-		Turno turno, SemanaLetiva semanaLetiva,
-		List< AtendimentoOperacionalDTO > atendimentos, int row,
+		Turno turno, List< AtendimentoOperacionalDTO > atendimentos, int row,
 		HSSFSheet sheet, /*Iterator< HSSFComment > itExcelCommentsPool,*/
-		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap )
+		Map< String,HSSFCellStyle > codigoDisciplinaToColorMap , int mdcTemposAula, List<String> labelsDasLinhasDaGradeHoraria)
 	{
 		row = writeHeaderProfessorVirtual( campus, professorVirtual, turno, row, sheet );
 		
-		List<Long> horariosAulaIdsList = new ArrayList<Long>();
-
 		int initialRow = row;
 		int col = 2;
 
 		// Preenche grade com horários e células vazias
-		int maxCreditos = semanaLetiva.calculaMaxCreditos();
-		List<HorarioAula> horariosAulaList = new ArrayList<HorarioAula>(semanaLetiva.getHorariosAula());
-		Collections.sort(horariosAulaList);
-		for (HorarioAula ha : horariosAulaList) {
-			horariosAulaIdsList.add(ha.getId());
-			// Horários
-			String value = ConvertBeans.dateToString(ha.getHorario(), ha.getSemanaLetiva().getTempo() );
-			setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], value );
-			
-			// Dias Semana
-			for ( int i = 0; i < Semanas.values().length; i++ ) {
-				setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], "" );
+		for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size()-1; i++) {
+			// coluna de carga horária
+			String label = labelsDasLinhasDaGradeHoraria.get(i) + " / " + labelsDasLinhasDaGradeHoraria.get(i+1);
+			setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],label);
+			// colunas dos dias da semana
+			for (int j = 0; j < Semanas.values().length; j++) {
+				setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
 			}
-
-			row++;
+			
 			col = 2;
 		}
 
@@ -610,24 +583,23 @@ public class RelatorioVisaoProfessorExportExcel
 
 			for (AtendimentoOperacionalDTO atendimento : atedimentosDiaSemana) {
 				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
+				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
+				int linhasDeExcelPorCreditoDaAula = atendimento.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
 				
-				int index = horariosAulaIdsList.indexOf(atendimento.getHorarioId());
+				int index = labelsDasLinhasDaGradeHoraria.indexOf(atendimento.getHorarioString());
 				if (index != -1) {
 					row = initialRow + index;
 				}
 
-				// Escreve célula principal
-				setCell( row, col, sheet, style, /*itExcelCommentsPool,*/
-					atendimento.getContentVisaoProfessor(ReportType.EXCEL),
-					atendimento.getContentToolTipVisaoProfessor(ReportType.EXCEL) );
-
-				// Une células de acordo com a quantidade de créditos
-				mergeCells( row, ( row + atendimento.getTotalCreditos() - 1 ),
-					col, col, sheet, style );
+				// escreve célula principal
+				setCell(row,col,sheet,style,HtmlUtils.htmlUnescape(atendimento.getContentVisaoSala(ReportType.EXCEL)),HtmlUtils.htmlUnescape(atendimento.getContentToolTipVisaoSala(ReportType.EXCEL)));
+				// une células de acordo com a quantidade de créditos da aula
+				int rowF = row + atendimento.getTotalCreditos()*linhasDeExcelPorCreditoDaAula - 1;
+				mergeCells(row,rowF,col,col,sheet,style);
 			}
 		}
 
-		return ( initialRow + maxCreditos + 1 );
+		return ( initialRow + labelsDasLinhasDaGradeHoraria.size());
 	}
 
 	private int writeHeaderProfessor(

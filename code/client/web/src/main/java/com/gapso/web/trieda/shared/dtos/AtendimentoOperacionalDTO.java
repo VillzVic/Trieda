@@ -656,7 +656,15 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 			
 			return disciplinaInfo + BR + "Turma " + getTurma() + BR + getSalaString();
 		}
-		return getDisciplinaString() + " / " + getTurma();
+		else {
+			String disciplinaInfo = "";
+			if (getDisciplinaSubstitutaId() != null) {
+				disciplinaInfo = "*" + getDisciplinaSubstitutaString() + "*";
+			} else {
+				disciplinaInfo = getDisciplinaString();
+			}
+			return disciplinaInfo + " / " + getTurma();
+		}
 	}
 
 	public String getContentToolTipVisaoProfessor(ReportType reportType) {

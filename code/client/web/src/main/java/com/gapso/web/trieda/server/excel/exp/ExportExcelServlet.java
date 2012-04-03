@@ -163,7 +163,6 @@ public class ExportExcelServlet extends HttpServlet
 		Long professorId = null;
 		Long professorVirtualId = null;
 		Long instituicaoEnsinoId = null;
-		Long semanaLetivaId = null;
 
 		try
 		{
@@ -172,13 +171,11 @@ public class ExportExcelServlet extends HttpServlet
 			professorId = Long.parseLong( request.getParameter( "professorId" ) );
 			professorVirtualId = Long.parseLong( request.getParameter( "professorVirtualId" ) );
 			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
-			semanaLetivaId = Long.parseLong( request.getParameter( "semanaLetivaId" ) );
-
 		}
 		catch( Exception ex ) { return null; }
 
 		RelatorioVisaoProfessorFiltroExcel filtro = new RelatorioVisaoProfessorFiltroExcel(
-			campusId, turnoId, professorId, professorVirtualId, instituicaoEnsinoId, semanaLetivaId );
+			campusId, turnoId, professorId, professorVirtualId, instituicaoEnsinoId);
 
 		return filtro;
 	}
