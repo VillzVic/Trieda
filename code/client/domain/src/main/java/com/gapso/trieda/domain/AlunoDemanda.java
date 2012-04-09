@@ -2,8 +2,10 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -65,6 +68,12 @@ public class AlunoDemanda
     	CascadeType.REFRESH }, targetEntity = Demanda.class , fetch = FetchType.LAZY )
     @JoinColumn( name = "DEM_ID" )
     private Demanda demanda;
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
+    private Set<AtendimentoTatico> atendimentosTatico = new HashSet<AtendimentoTatico>();
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
+    private Set<AtendimentoOperacional> atendimentosOperacional = new HashSet<AtendimentoOperacional>();
 
 	@Column( name = "ALD_ATENDIDO" )
 	private Boolean atendido;
@@ -150,7 +159,23 @@ public class AlunoDemanda
 	{
 		this.periodo = periodo;
 	}
+	
+	public void setAtendimentosTatico(Set<AtendimentoTatico> atendimentosTatico){
+		this.atendimentosTatico = atendimentosTatico;
+	}
+	
+	public Set<AtendimentoTatico> getAtendimentosTatico(){
+		return this.atendimentosTatico;
+	}
 
+	public void setAtendimentosOperacional(Set<AtendimentoOperacional> atendimentosOperacional){
+		this.atendimentosOperacional = atendimentosOperacional;
+	}
+	
+	public Set<AtendimentoOperacional> getAtendimentosOperacional(){
+		return this.atendimentosOperacional;
+	}
+	
 	@Transactional
 	public void detach()
 	{

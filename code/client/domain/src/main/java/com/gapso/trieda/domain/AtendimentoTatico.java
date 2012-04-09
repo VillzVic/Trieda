@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -75,6 +78,10 @@ public class AtendimentoTatico
 			CascadeType.REFRESH }, targetEntity = Disciplina.class )
 	@JoinColumn( name = "DIS_SUBSTITUTA_ID" )
 	private Disciplina disciplinaSubstituta;
+	
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE},
+		mappedBy="atendimentosTatico")
+	private Set<AlunoDemanda> alunosDemanda = new HashSet<AlunoDemanda>();
 
 	@NotNull
 	@Column( name = "ATT_QUANTIDADE" )
@@ -732,6 +739,14 @@ public class AtendimentoTatico
 	public Integer getTotalCreditos()
 	{
 		return ( this.getCreditosPratico() + this.getCreditosTeorico() );
+	}
+	
+	public void setAlunosDemanda(Set<AlunoDemanda> alunosDemanda){
+		this.alunosDemanda = alunosDemanda;
+	}
+	
+	public Set<AlunoDemanda> getAlunosDemanda(){
+		return this.alunosDemanda;
 	}
 
 	public String getNaturalKey()

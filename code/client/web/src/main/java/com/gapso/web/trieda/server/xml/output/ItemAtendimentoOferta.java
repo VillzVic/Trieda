@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="disciplinaId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="quantidade" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="turma" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="alunosDemandasAtendidas" type="{}GrupoIdentificador"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -43,7 +44,8 @@ import javax.xml.bind.annotation.XmlType;
     "disciplinaSubstitutaId",
     "disciplinaId",
     "quantidade",
-    "turma"
+    "turma",
+    "alunosDemandasAtendidas"
 })
 public class ItemAtendimentoOferta {
 
@@ -53,6 +55,7 @@ public class ItemAtendimentoOferta {
     protected int quantidade;
     @XmlElement(required = true)
     protected String turma;
+    protected GrupoIdentificador alunosDemandasAtendidas;
 
     /**
      * Gets the value of the ofertaCursoCampiId property.
@@ -148,6 +151,30 @@ public class ItemAtendimentoOferta {
      */
     public void setTurma(String value) {
         this.turma = value;
+    }
+    
+    /**
+     * Gets the value of the alunosDemandasAtendidas property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public GrupoIdentificador getAlunosDemandasAtendidas() {
+        return alunosDemandasAtendidas;
+    }
+
+    /**
+     * Sets the value of the alunosDemandasAtendidas property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public void setAlunosDemandasAtendidas(GrupoIdentificador alunosDemandasAtendidas) {
+        this.alunosDemandasAtendidas = alunosDemandasAtendidas;
     }
 
 }

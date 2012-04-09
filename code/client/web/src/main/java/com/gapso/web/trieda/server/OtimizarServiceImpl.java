@@ -837,7 +837,7 @@ public class OtimizarServiceImpl
 				getInstituicaoEnsinoUser(), cenario, triedaOutput );
 
 			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
-			solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno());
+			solverOutput.atualizarAlunosDemanda(parametro.getCampus(),parametro.getTurno());
 			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
 
 			if ( parametro.isTatico() )
@@ -862,6 +862,11 @@ public class OtimizarServiceImpl
 		{
 			e.printStackTrace();
 			ret.get( "error" ).add( "Erro ao salvar o resultado na base de dados" );
+			return ret;
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			ret.get("error").add(e.getMessage());
 			return ret;
 		}
 

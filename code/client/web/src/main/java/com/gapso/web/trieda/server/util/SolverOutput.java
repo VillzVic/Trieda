@@ -24,7 +24,6 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
-import com.gapso.web.trieda.server.xml.output.ItemAlunoDemanda;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoHorarioAula;
@@ -45,6 +44,8 @@ public class SolverOutput
 	private TriedaOutput triedaOutput;
 	private List< AtendimentoTatico > atendimentosTatico;
 	private List< AtendimentoOperacional > atendimentosOperacional;
+	private Map<AlunoDemanda, List<AtendimentoTatico>> alunosDemandaTatico;
+	private Map<AlunoDemanda, List<AtendimentoOperacional>> alunosDemandaOperacional;
 	protected Map< Integer, ProfessorVirtual > professoresVirtuais
 		= new HashMap< Integer, ProfessorVirtual >();
 
@@ -57,10 +58,13 @@ public class SolverOutput
 
 		this.atendimentosTatico = new ArrayList< AtendimentoTatico >();
 		this.atendimentosOperacional = new ArrayList< AtendimentoOperacional >();
+		
+		this.alunosDemandaTatico = new HashMap<AlunoDemanda, List<AtendimentoTatico>>();
+		this.alunosDemandaOperacional = new HashMap<AlunoDemanda, List<AtendimentoOperacional>>();
 	}
 
 	@Transactional
-	public List< AtendimentoTatico > generateAtendimentosTatico()
+	public List< AtendimentoTatico > generateAtendimentosTatico() throws Exception
 	{
 		List< ItemAtendimentoCampus > itemAtendimentoCampusList
 			= this.triedaOutput.getAtendimentos().getAtendimentoCampus();
@@ -133,6 +137,9 @@ public class SolverOutput
 							atendimentoTatico.setDisciplina( disciplina );
 							atendimentoTatico.setDisciplinaSubstituta(disciplinaSubstituta);
 							atendimentoTatico.setQuantidadeAlunos( quantidade );
+							
+							Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta, alunosDemandaTatico, atendimentoTatico);
+							atendimentoTatico.getAlunosDemanda().addAll(listAlunoDemanda);
 
 							this.atendimentosTatico.add( atendimentoTatico );
 						}
@@ -145,7 +152,7 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public List< AtendimentoOperacional > generateAtendimentosOperacional()
+	public List< AtendimentoOperacional > generateAtendimentosOperacional() throws Exception
 	{
 		Map< Integer, ProfessorVirtual > virtuais
 			= new HashMap< Integer, ProfessorVirtual >();
@@ -270,6 +277,9 @@ public class SolverOutput
 
 									atendimentoOperacional.setHorarioDisponivelCenario( horarioDisponivelCenario );
 
+									Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta, alunosDemandaOperacional, atendimentoOperacional);
+									atendimentoOperacional.getAlunosDemanda().addAll(listAlunoDemanda);
+									
 									this.atendimentosOperacional.add( atendimentoOperacional );
 								}
 							}
@@ -280,6 +290,29 @@ public class SolverOutput
 		}
 
 		return this.atendimentosOperacional;
+	}
+	
+	private <T> Set<AlunoDemanda> atendimentoAlunoDemandaAssoc(ItemAtendimentoOferta itemAtendimentoOferta, 
+		Map<AlunoDemanda, List<T>> alunosDemandaAtendimento, T atendimento) throws Exception
+	{
+		Set<AlunoDemanda> listAlunoDemanda = new HashSet<AlunoDemanda>();
+		for(Integer i : itemAtendimentoOferta.getAlunosDemandasAtendidas().getId()){
+			AlunoDemanda alunoDemanda = AlunoDemanda.find((long) i, this.instituicaoEnsino);
+			if(alunoDemanda != null){
+				listAlunoDemanda.add(alunoDemanda);
+				List<T> atendimentoAluno = alunosDemandaAtendimento.get(alunoDemanda);
+				if(atendimentoAluno == null){
+					atendimentoAluno = new ArrayList<T>();
+					alunosDemandaAtendimento.put(alunoDemanda, atendimentoAluno);
+				}
+				atendimentoAluno.add(atendimento);
+			}
+			else{
+				throw new Exception("Erro ao tentar associar atendimentos a demandas de alunos inexistentes");
+			}
+		}
+		
+		return listAlunoDemanda;
 	}
 
 	private ProfessorVirtual getProfessorVirtual( Integer idAux )
@@ -330,13 +363,22 @@ public class SolverOutput
 	@Transactional
 	public void salvarAtendimentosTatico( Campus campus, Turno turno )
 	{
-		removerTodosAtendimentosTaticoJaSalvos( campus, turno );
-		removerTodosAtendimentosOperacionalJaSalvos( campus, turno );
+		removerTodosAtendimentosTaticoJaSalvos(campus,turno);
+		removerTodosAtendimentosOperacionalJaSalvos(campus,turno);
 
 		for ( AtendimentoTatico at : this.atendimentosTatico )
 		{
 			at.detach();
 			at.persist();
+		}
+		for(AlunoDemanda alunoDemanda : alunosDemandaTatico.keySet()){
+			int creditosAtendidos = 0;
+			for(AtendimentoTatico tatico : alunosDemandaTatico.get(alunoDemanda)){
+				alunoDemanda.getAtendimentosTatico().add(tatico);
+				creditosAtendidos += tatico.getCreditosPratico() + tatico.getCreditosTeorico();
+			}
+			alunoDemanda.setAtendido(alunoDemanda.getDemanda().getDisciplina().getCreditosTotal() == creditosAtendidos);
+			alunoDemanda.merge();
 		}
 	}
 
@@ -351,10 +393,21 @@ public class SolverOutput
 			at.detach();
 			at.persist();
 		}
+		
+		for(AlunoDemanda alunoDemanda : alunosDemandaOperacional.keySet()){
+			int creditosAtendidos = 0;
+			for(AtendimentoOperacional operacional : alunosDemandaOperacional.get(alunoDemanda)){
+				alunoDemanda.getAtendimentosOperacional().add(operacional);
+				creditosAtendidos += 1;
+			}
+			alunoDemanda.setAtendido(alunoDemanda.getDemanda().getDisciplina().getCreditosTotal() == creditosAtendidos);
+			alunoDemanda.merge();
+		}
+		
 	}
 
 	@Transactional
-	private void removerTodosAtendimentosTaticoJaSalvos(
+	public void removerTodosAtendimentosTaticoJaSalvos(
 		Campus campus, Turno turno )
 	{
 		List< AtendimentoTatico > atendimentosTatico	
@@ -368,7 +421,7 @@ public class SolverOutput
 	}
 
 	@Transactional
-	private void removerTodosAtendimentosOperacionalJaSalvos(
+	public void removerTodosAtendimentosOperacionalJaSalvos(
 		Campus campus, Turno turno )
 	{
 		InstituicaoEnsino instituicaoEnsinoCampus = ( campus == null ?
@@ -397,32 +450,14 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public void salvarAlunosDemanda(Campus campus, Turno turno) {
-		// 
-		Map<Long,Long> alunosDemandasAtendidasIdsMap = new HashMap<Long,Long>();
-		for (ItemAlunoDemanda itemAlunoDemanda : triedaOutput.getAlunosDemanda().getAlunoDemanda()) {
-			long id = itemAlunoDemanda.getId();
-			alunosDemandasAtendidasIdsMap.put(id,id);
-		}
-		
-		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,campus,turno);
-		Set<AlunoDemanda> alunosDemandasAlteradosBD = new HashSet<AlunoDemanda>(); 
-		for (AlunoDemanda alunoDemandaBD : alunosDemandasBD) {
-			if(alunosDemandasAtendidasIdsMap.get(alunoDemandaBD.getId()) != null) {
-				if (!alunoDemandaBD.getAtendido()) {
-					alunoDemandaBD.setAtendido(true);
-					alunosDemandasAlteradosBD.add(alunoDemandaBD);
-				}
-			} else {
-				if (alunoDemandaBD.getAtendido()) {
-					alunoDemandaBD.setAtendido(false);
-					alunosDemandasAlteradosBD.add(alunoDemandaBD);
-				}
+	public void atualizarAlunosDemanda(Campus campus, Turno turno){
+		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino, campus, turno);
+		for(AlunoDemanda alunoDemandaBD : alunosDemandasBD){
+			if(alunoDemandaBD.getAtendido()){
+				alunoDemandaBD.setAtendido(false);
+				alunoDemandaBD.merge();
 			}
 		}
-		
-		for (AlunoDemanda alunoDemandaAlteradoBD : alunosDemandasAlteradosBD) {
-			alunoDemandaAlteradoBD.merge();
-		}
 	}
+	
 }

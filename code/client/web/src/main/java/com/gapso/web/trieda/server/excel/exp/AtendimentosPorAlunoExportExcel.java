@@ -1,21 +1,23 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
-import com.gapso.web.trieda.server.DemandasServiceImpl;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -76,8 +78,7 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
 		List<Oferta> ofertas = Oferta.findByCenario(instituicaoEnsino,getCenario());
-		DemandasServiceImpl service = new DemandasServiceImpl();
-		Map<Demanda,Map<AtendimentoTatico,List<Aluno>>> demandaToAlunosPorAtendimentosMap = service.alocaAlunosNosAtendimentos(ofertas);
+		Map<Demanda,Map<AtendimentoTatico,List<Aluno>>> demandaToAlunosPorAtendimentosMap = getMapDemandaToAlunosPorAtendimento(ofertas);
 
 		if (!demandaToAlunosPorAtendimentosMap.isEmpty()) {
 			if (this.removeUnusedSheets) {
@@ -86,13 +87,12 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 
 			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
 			fillInCellStyles(sheet);
-
+			
 			int nextRow = this.initialRow;
-			for (Entry<Demanda,Map<AtendimentoTatico,List<Aluno>>> entryDemanda : demandaToAlunosPorAtendimentosMap.entrySet()) {
-				Demanda demanda = entryDemanda.getKey();
-				for (Entry<AtendimentoTatico,List<Aluno>> entryAtendimento : entryDemanda.getValue().entrySet()) {
-					AtendimentoTatico atendimento = entryAtendimento.getKey();
-					for (Aluno aluno : entryAtendimento.getValue()) {
+			for(Demanda demanda: demandaToAlunosPorAtendimentosMap.keySet()){
+				Map<AtendimentoTatico,List<Aluno>> atendimentosMap = demandaToAlunosPorAtendimentosMap.get(demanda);
+				for(AtendimentoTatico atendimento : atendimentosMap.keySet()){
+					for(Aluno aluno : atendimentosMap.get(atendimento)){
 						nextRow = writeData(demanda,atendimento,aluno,nextRow,sheet);
 					}
 				}
@@ -102,6 +102,40 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 		}
 
 		return false;
+	}
+	
+	private Map<Demanda, Map<AtendimentoTatico, List<Aluno>>> getMapDemandaToAlunosPorAtendimento(List<Oferta> ofertas){
+		Map<Demanda, Map<AtendimentoTatico, List<Aluno>>> demandaToAlunosPorAtendimentosMap = new HashMap<Demanda, Map<AtendimentoTatico, List<Aluno>>>();
+		
+		for(Oferta oferta: ofertas){
+			Set<Demanda> demandas = oferta.getDemandas();
+			for(Demanda demanda : demandas){
+				Map<AtendimentoTatico, List<Aluno>> atendimentosMap = demandaToAlunosPorAtendimentosMap.get(demanda);
+				if(atendimentosMap == null){
+					atendimentosMap = new HashMap<AtendimentoTatico,List<Aluno>>();
+					demandaToAlunosPorAtendimentosMap.put(demanda, atendimentosMap);
+				}
+				
+				List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByDemanda(instituicaoEnsino, demanda);
+				
+				for(AlunoDemanda alunoDemanda : alunosDemanda){
+					Set<AtendimentoTatico> atts = alunoDemanda.getAtendimentosTatico();
+					List<Aluno> alunosAtendimento;
+					for(AtendimentoTatico att : atts){
+						alunosAtendimento = atendimentosMap.get(att);
+						if(alunosAtendimento == null){
+							alunosAtendimento = new ArrayList<Aluno>();
+							atendimentosMap.put(att, alunosAtendimento);
+						}
+						alunosAtendimento.add(alunoDemanda.getAluno());
+						
+					}
+				}
+				
+			}
+		}
+		
+		return demandaToAlunosPorAtendimentosMap;
 	}
 
 	private int writeData(Demanda demanda, AtendimentoTatico atendimento, Aluno aluno, int row, HSSFSheet sheet) {

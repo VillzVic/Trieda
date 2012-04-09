@@ -54,7 +54,6 @@ import javax.xml.bind.annotation.XmlType;
  *           &lt;/complexType>
  *         &lt;/element>
  *         &lt;element name="professoresVirtuais" type="{}GrupoProfessoresVirtuais"/>
- *         &lt;element name="alunosDemanda" type="{}GrupoAlunoDemanda"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -69,8 +68,7 @@ import javax.xml.bind.annotation.XmlType;
     "warnings",
     "errors",
     "restricoesVioladas",
-    "professoresVirtuais",
-    "alunosDemanda"
+    "professoresVirtuais"
 })
 @XmlRootElement(name = "TriedaOutput")
 public class TriedaOutput {
@@ -85,8 +83,6 @@ public class TriedaOutput {
     protected TriedaOutput.RestricoesVioladas restricoesVioladas;
     @XmlElement(required = true)
     protected GrupoProfessoresVirtuais professoresVirtuais;
-    @XmlElement(required = true)
-    protected GrupoAlunoDemanda alunosDemanda;
 
     /**
      * Gets the value of the atendimentos property.
@@ -207,31 +203,6 @@ public class TriedaOutput {
     public void setProfessoresVirtuais(GrupoProfessoresVirtuais value) {
         this.professoresVirtuais = value;
     }
-
-    /**
-     * Gets the value of the alunosDemanda property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GrupoAlunoDemanda }
-     *     
-     */
-    public GrupoAlunoDemanda getAlunosDemanda() {
-        return alunosDemanda;
-    }
-
-    /**
-     * Sets the value of the alunosDemanda property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GrupoAlunoDemanda }
-     *     
-     */
-    public void setAlunosDemanda(GrupoAlunoDemanda value) {
-        this.alunosDemanda = value;
-    }
-
 
     /**
      * <p>Java class for anonymous complex type.
