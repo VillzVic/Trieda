@@ -133,6 +133,7 @@
       <xs:element name="alunoId" type="xs:int" />
       <xs:element name="nomeAluno" type="xs:string" />
       <xs:element name="demandaId" type="xs:int" />
+	  <xs:element name="prioridade" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemTurno">
@@ -811,6 +812,11 @@
       <xs:element name="modoOtimizacao" type="xs:string">
         <xs:annotation>
           <xs:documentation>Indica o modo de otimização que foi selecionado. Atualmente, os possíveis valores para esta campo são: "TATICO", "OPERACIONAL".</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+	  <xs:element name="otimizarPor" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Indica o modo como o otimizador deve tratar as associações de alunos às demandas. Atualmente, os possíveis valores para esta campo são: "ALUNO", "BLOCOCURRICULAR".</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="cargaHorariaSemanalAluno">
