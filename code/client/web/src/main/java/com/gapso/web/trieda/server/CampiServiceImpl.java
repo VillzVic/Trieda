@@ -32,12 +32,15 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Estados;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
@@ -493,6 +496,8 @@ public class CampiServiceImpl extends RemoteService
 		// cálculo dos indicadores de utilização das salas de aula e laboratórios
 		Set<Turno> turnosConsiderados = new HashSet<Turno>();
 		Set<Sala> salasUtilizadas = new HashSet<Sala>();
+		Map<Long, Integer> mapaHorarioSalaUtilizado = new HashMap<Long, Integer>();
+		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
 		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
 		for (Oferta oferta : campus.getOfertas()) {
 			turnosConsiderados.add(oferta.getTurno());
@@ -507,7 +512,12 @@ public class CampiServiceImpl extends RemoteService
 					}
 					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
 					
+					Integer countHorarioSala = mapaHorarioSalaUtilizado.get(aula.getSala().getId());
+					if(countHorarioSala == null) countHorarioSala = 0;
+					mapaHorarioSalaUtilizado.put(aula.getSala().getId(), countHorarioSala + aula.getTotalCreditos());
+					
 					salasUtilizadas.add(aula.getSala());
+					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
 				}
 			} else {
 				// atendimentos operacionais
@@ -520,7 +530,12 @@ public class CampiServiceImpl extends RemoteService
 					}
 					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
 					
+					Integer countHorarioSala = mapaHorarioSalaUtilizado.get(atendimento.getSala().getId());
+					if(countHorarioSala == null) countHorarioSala = 0;
+					mapaHorarioSalaUtilizado.put(atendimento.getSala().getId(), ++countHorarioSala);
+					
 					salasUtilizadas.add(atendimento.getSala());
+					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
 				}
 			}
 		}
@@ -571,6 +586,32 @@ public class CampiServiceImpl extends RemoteService
 		double utilizacaoMediaDasSalasDeAula = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAula/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula*100.0,2);
 		double utilizacaoMediaDosLaboratorios = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratorios/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios*100.0,2);
 		
+		//calculo do indicador de taxa de uso dos horarios das salas de aula
+		SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
+		Map<Integer, Integer> countHorariosAula = new HashMap<Integer, Integer>();
+		for(HorarioAula ha : maiorSemanaLetiva.getHorariosAula()){
+			for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
+				int semanaInt = Semanas.toInt(hdc.getDiaSemana());
+				Integer value = countHorariosAula.get(semanaInt);
+				value = ((value == null) ? 0 : value);
+				countHorariosAula.put(semanaInt, value + 1);
+			}
+		}
+		
+		int calcCargaHoraria = 0;
+		for(Integer i : countHorariosAula.keySet()){
+			calcCargaHoraria += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
+		}
+		
+		Double mediaUtilizacaoHorarioSalas = 0.0;
+		for(Long l : mapaHorarioSalaUtilizado.keySet()){
+			Integer tempo = mapaHorarioSalaUtilizado.get(l);
+			mediaUtilizacaoHorarioSalas += ((double)tempo * maiorSemanaLetiva.getTempo() / calcCargaHoraria);
+		}
+		mediaUtilizacaoHorarioSalas = TriedaUtil.round(mediaUtilizacaoHorarioSalas / mapaHorarioSalaUtilizado.size() * 100, 2);		
+		
+		
+		
 		// cálculo das quantidades de alunos atendidos e não atendidos
 		DemandasServiceImpl demandasService = new DemandasServiceImpl();
 		ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
@@ -615,6 +656,7 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Percentual do custo docente sobre a receita: <b> " + ((razaoCustoDocentePorReceitaSemestral == null) ? "n.d.a." : razaoCustoDocentePorReceitaSemestral) + "%</b>", currentNode));
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utiliza&ccedil;&atilde;o m&eacute;dia das salas de aula: <b>" + utilizacaoMediaDasSalasDeAula + "%</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utiliza&ccedil;&atilde;o m&eacute;dia dos laborat&oacute;rios: <b>"	+ utilizacaoMediaDosLaboratorios + "%</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utiliza&ccedil;&atilde;o m&eacute;dia dos hor&aacute;rios das salas de aula: <b>" + mediaUtilizacaoHorarioSalas + "%</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Total de alunos atendidos: <b>"	+ numberFormatter.print(qtdAlunosAtendidos,pt_BR) + "</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Total de alunos n&atilde;o atendidos: <b>" + numberFormatter.print(qtdAlunosNaoAtendidos,pt_BR) + "</b>", currentNode ) );
 		
