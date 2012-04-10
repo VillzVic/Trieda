@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -288,17 +289,17 @@ public class AlunoDemanda
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByCampusAndTurno(
-		InstituicaoEnsino instituicaoEnsino, Campus campus, Turno turno )
+		InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Turno turno )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.demanda.oferta.campus = :campus " +
+			" AND o.demanda.oferta.campus IN ( :campi ) " +
 			" AND o.demanda.oferta.turno = :turno " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "campus", campus );
+		q.setParameter( "campi", campi );
 		q.setParameter( "turno", turno );
 
 		return q.getResultList();

@@ -96,6 +96,7 @@ public class ToolBarView
 	private Button usuariosListBt;
 	private Button importarBt;
 	private Button exportarBt;
+	private Button carregarSolucaoBt;
 
 	// Calendário
 	private Button semanasLetivaListCampiBt;
@@ -413,19 +414,18 @@ public class ToolBarView
 		relatoriosToolBar.add( relatorioVisaoProfessorBt );
 	}
 
-	private void createAdministracao()
-	{
-		usuariosListBt = createButton( "Usuários",
-			"Usuários", Resources.DEFAULTS.turno24() );
-		administracaoToolBar.add( usuariosListBt );
+	private void createAdministracao() {
+		usuariosListBt = createButton("Usuários","Usuários",Resources.DEFAULTS.turno24());
+		administracaoToolBar.add(usuariosListBt);
 
-		importarBt = createButton( "Importar<br />Tudo",
-			"Importar Tudo", Resources.DEFAULTS.importar24() );
-		administracaoToolBar.add( importarBt );
+		importarBt = createButton("Importar<br />Tudo","Importar Tudo",Resources.DEFAULTS.importar24());
+		administracaoToolBar.add(importarBt);
 
-		exportarBt = createButton( "Exportar<br />Tudo",
-			"Exportar Tudo", Resources.DEFAULTS.exportar24() );
-		administracaoToolBar.add( exportarBt );
+		exportarBt = createButton("Exportar<br />Tudo","Exportar Tudo",Resources.DEFAULTS.exportar24());
+		administracaoToolBar.add(exportarBt);
+		
+		carregarSolucaoBt = createButton("Carregar<br />Solução","Carregar Solução",Resources.DEFAULTS.trieda24());
+		administracaoToolBar.add(carregarSolucaoBt);
 	}
 
 	private void createCalendario()
@@ -575,6 +575,11 @@ public class ToolBarView
 	public Button getExportarButton()
 	{
 		return exportarBt;
+	}
+	
+	@Override
+	public Button getCarregarSolucaoButton() {
+		return carregarSolucaoBt;
 	}
 
 	@Override

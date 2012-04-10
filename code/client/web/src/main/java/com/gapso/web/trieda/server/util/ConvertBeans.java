@@ -43,6 +43,7 @@ import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.ProfessorVirtual;
+import com.gapso.trieda.domain.RequisicaoOtimizacao;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
@@ -84,6 +85,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
@@ -96,6 +98,7 @@ import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 
 public class ConvertBeans {
 	
@@ -2753,10 +2756,12 @@ public class ConvertBeans {
 		domain.setCenario( cenario );
 		domain.setModoOtimizacao( dto.getModoOtimizacao() );
 		
-		Campus campus = Campus.find(
-			dto.getCampusId(), instituicaoEnsino );
-		campus.flush();
-		domain.setCampus( campus );
+		List<Long> campiIDs = new ArrayList<Long>(dto.getCampi().size());
+		for (CampusDTO campusDTO : dto.getCampi()) {
+			campiIDs.add(campusDTO.getId());
+		}
+		List<Campus> campi = Campus.find(campiIDs,instituicaoEnsino);
+		domain.setCampi(new HashSet<Campus>(campi));
 
 		Turno turno = Turno.find(
 			dto.getTurnoId(), instituicaoEnsino );
@@ -2836,13 +2841,11 @@ public class ConvertBeans {
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setModoOtimizacao( domain.getModoOtimizacao() );
 
-		Campus campus = domain.getCampus();
-
-		if ( campus != null )
-		{
-			dto.setCampusId( campus.getId() );
-			dto.setCampusDisplay( campus.getCodigo() );
+		List<CampusDTO> campiDTOs = new ArrayList<CampusDTO>(domain.getCampi().size());
+		for (Campus campus : domain.getCampi()) {
+			campiDTOs.add(toCampusDTO(campus));
 		}
+		dto.setCampi(campiDTOs);
 
 		Turno turno = domain.getTurno();
 
@@ -3185,5 +3188,33 @@ public class ConvertBeans {
 		}
 
 		return listDTOs;
+	}
+	
+	public static RequisicaoOtimizacaoDTO toRequisicaoOtimizacaoDTO(RequisicaoOtimizacao domain) {
+		RequisicaoOtimizacaoDTO dto = new RequisicaoOtimizacaoDTO();
+		
+		dto.setId(domain.getId());
+		dto.setCenarioId(domain.getCenario().getId());
+		dto.setParametroId(domain.getParametro().getId());
+		dto.setRound(domain.getRound());
+		dto.setUserName(domain.getUsuario().getUsername());
+		
+		Parametro parametro = domain.getParametro();
+		dto.setModoOtimizacao(parametro.getModoOtimizacao());
+		dto.setOtimizarPor(parametro.getOtimizarPor());
+		dto.setFuncaoObjetivo(FuncaoObjetivoComboBox.CargaHoraria.values()[parametro.getFuncaoObjetivo()].getText());
+		String campiSelecionados = "";
+		for (Campus campus : parametro.getCampi()) {
+			campiSelecionados += campus.getCodigo() + ", ";
+		}
+		campiSelecionados = campiSelecionados.substring(0,campiSelecionados.length()-2);
+		dto.setCampiSelecionados(campiSelecionados);
+		dto.setTurno(parametro.getTurno().getNome());
+		
+		InstituicaoEnsino instituicaoEnsino = domain.getCenario().getInstituicaoEnsino();
+		dto.setInstituicaoEnsinoId(instituicaoEnsino.getId());
+		dto.setInstituicaoEnsinoString(instituicaoEnsino.getNomeInstituicao());
+		
+		return dto;
 	}
 }

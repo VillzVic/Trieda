@@ -7,8 +7,6 @@ import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Component;
@@ -20,7 +18,6 @@ import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CursosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,7 +28,7 @@ public class SelecionarCursosPresenter
 	public interface Display
 		extends ITriedaI18nGateway
 	{
-		CampusComboBox getCampusComboBox();
+		List<CampusDTO> getCampi();
 		ListView< CursoDTO > getNaoSelecionadoList();
 		ListView< CursoDTO > getSelecionadoList();
 		Button getAdicionaBT();
@@ -62,8 +59,7 @@ public class SelecionarCursosPresenter
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CursoDTO>> callback) {
 				List<CursoDTO> cursosSelecionados = display.getSelecionadoList().getStore().getModels();
-				CampusDTO campusDTO = display.getCampusComboBox().getValue();
-				service.getListByCampus(campusDTO, cursosSelecionados, callback);
+				service.getListByCampi(display.getCampi(),cursosSelecionados,callback);
 			}
 		};
 		display.getNaoSelecionadoList().setStore(new ListStore<CursoDTO>(new BaseListLoader<ListLoadResult<CursoDTO>>(proxyNaoSelecionado)));
@@ -75,16 +71,6 @@ public class SelecionarCursosPresenter
 	}
 	
 	private void setListeners() {
-
-		display.getCampusComboBox().addSelectionChangedListener(new SelectionChangedListener<CampusDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<CampusDTO> se) {
-				display.getNaoSelecionadoList().getStore().getLoader().load();
-				display.getNaoSelecionadoList().setEnabled(true);
-				display.getAdicionaBT().setEnabled(true);
-				display.getRemoveBT().setEnabled(true);
-			}
-		});
 
 		display.getAdicionaBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override

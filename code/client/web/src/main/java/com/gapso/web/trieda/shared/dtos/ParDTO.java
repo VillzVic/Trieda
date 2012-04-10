@@ -38,4 +38,9 @@ public class ParDTO<P, S> extends BaseModel
 	public void setSegundo(S segundo) {
 		this.segundo = segundo;
 	}
+
+	@Override
+	public String toString() {
+		return "("+primeiro.toString()+","+segundo.toString()+")";
+	}
 }

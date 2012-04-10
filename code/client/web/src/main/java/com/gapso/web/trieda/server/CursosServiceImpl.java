@@ -175,15 +175,16 @@ public class CursosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult<CursoDTO> getListByCampus(CampusDTO campusDTO,
+	public ListLoadResult<CursoDTO> getListByCampi(List<CampusDTO> campiDTOs,
 			List<CursoDTO> retirarCursosDTO) {
 		List<CursoDTO> list = new ArrayList<CursoDTO>();
 
-		Campus campus = (campusDTO == null) ? null :
-			ConvertBeans.toCampus( campusDTO );
+		List<Campus> campi = new ArrayList<Campus>(campiDTOs.size());
+		for (CampusDTO dto : campiDTOs) {
+			campi.add(ConvertBeans.toCampus(dto));
+		}
 
-		List< Curso > listDomains = Curso.findByCampus(
-			getInstituicaoEnsinoUser(), campus );
+		List< Curso > listDomains = Curso.findByCampi(getInstituicaoEnsinoUser(),campi);
 
 		for ( Curso curso : listDomains )
 		{

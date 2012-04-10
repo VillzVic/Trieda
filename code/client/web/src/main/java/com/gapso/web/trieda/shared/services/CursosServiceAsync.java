@@ -39,7 +39,7 @@ public interface CursosServiceAsync {
 	void save( CursoDTO cursoDTO, AsyncCallback< Void > callback );
 	void remove( List< CursoDTO > cursoDTOList, AsyncCallback< Void > callback );
 	void getListAll( AsyncCallback< ListLoadResult< CursoDTO > > callback );
-	void getListByCampus( CampusDTO campusDTO, List< CursoDTO > retirarCursosDTO,
+	void getListByCampi( List<CampusDTO> campiDTOs, List< CursoDTO > retirarCursosDTO,
 		AsyncCallback< ListLoadResult< CursoDTO > > callback );
 	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoCursoDTO > > callback );
 }

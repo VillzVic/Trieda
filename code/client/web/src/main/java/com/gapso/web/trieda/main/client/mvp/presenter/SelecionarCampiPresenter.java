@@ -13,26 +13,18 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.gapso.web.trieda.main.client.mvp.view.ParametrosView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SelecionarCampiPresenter
-	implements Presenter
-{
-	public interface Display
-		extends ITriedaI18nGateway
-	{
+public class SelecionarCampiPresenter implements Presenter {
+	public interface Display extends ITriedaI18nGateway {
 		ListView< CampusDTO > getNaoSelecionadoList();
 		ListView< CampusDTO > getSelecionadoList();
 		Button getAdicionaBT();
@@ -43,14 +35,11 @@ public class SelecionarCampiPresenter
 	}
 	
 	private Display display;
-	private CenarioDTO cenario;
-	private GTab gTab;
+	private ParametroDTO parametroDTO;
 	
-	public SelecionarCampiPresenter(
-		CenarioDTO cenario, Display display )
-	{
+	public SelecionarCampiPresenter(ParametroDTO parametroDTO, Display display) {
 		this.display = display;
-		this.cenario = cenario;
+		this.parametroDTO = parametroDTO;
 
 		configureProxy();
 		setListeners();
@@ -61,14 +50,14 @@ public class SelecionarCampiPresenter
 		RpcProxy<ListLoadResult<CampusDTO>> proxyNaoSelecionado = new RpcProxy<ListLoadResult<CampusDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CampusDTO>> callback) {
-				service.getListAll(callback);
+				service.getCampiNaoSelecionadosParaOtimizacao(parametroDTO.getCampi(),callback);
 			}
 		};
 		display.getNaoSelecionadoList().setStore(new ListStore<CampusDTO>(new BaseListLoader<ListLoadResult<CampusDTO>>(proxyNaoSelecionado)));
 		display.getNaoSelecionadoList().getStore().getLoader().load();
 		
 		ListStore<CampusDTO> listStore = new ListStore<CampusDTO>();
-		listStore.add(new ArrayList<CampusDTO>());
+		listStore.add(new ArrayList<CampusDTO>(parametroDTO.getCampi()));
 		display.getSelecionadoList().setStore(listStore);
 		display.getFecharBT().setEnabled(false);
 	}
@@ -96,19 +85,13 @@ public class SelecionarCampiPresenter
 		display.getFecharBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Services.otimizar().getParametro(cenario, new AbstractAsyncCallbackWithDefaultOnFailure<ParametroDTO>(display) {
-					@SuppressWarnings("unused")
-					@Override
-					public void onSuccess(ParametroDTO parametroDTO) {
-						display.getSimpleModal().hide();
-						List<CampusDTO> campi = display.getSelecionadoList().getStore().getModels();
-						Presenter presenter = new ParametrosPresenter(cenario, /*campi, */new ParametrosView(parametroDTO));
-						presenter.go(gTab);
-					}
-				});
+				parametroDTO.getCampi().clear();
+				parametroDTO.getCampi().addAll(display.getSelecionadoList().getStore().getModels());
+				parametroDTO.getMaximizarNotaAvaliacaoCorpoDocenteList().clear();
+				parametroDTO.getMinimizarCustoDocenteCursosList().clear();
+				display.getSimpleModal().hide();
 			}
 		});
-		
 	}
 
 	private void transfere(ListView<CampusDTO> origem, ListView<CampusDTO> destino, List<CampusDTO> campusDTOList) {
@@ -127,8 +110,6 @@ public class SelecionarCampiPresenter
 	
 	@Override
 	public void go(Widget widget) {
-		this.gTab = (GTab) widget;
 		display.getSimpleModal().show();
 	}
-
 }

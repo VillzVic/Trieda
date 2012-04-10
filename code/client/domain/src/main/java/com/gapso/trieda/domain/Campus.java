@@ -2,6 +2,7 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -102,7 +103,7 @@ public class Campus
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
 	private Set< Oferta > ofertas = new HashSet< Oferta >();
 
-	@OneToMany( cascade = CascadeType.ALL, mappedBy = "campus" )
+	@ManyToMany( cascade = CascadeType.ALL, mappedBy = "campi" )
 	private Set< Parametro > parametros = new HashSet< Parametro >();
 
 	@NotNull
@@ -679,6 +680,20 @@ public class Campus
 		}
 
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Campus> find(Collection<Long> ids, InstituicaoEnsino instituicaoEnsino) {
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM Campus o "
+		  + " WHERE o.id IN ( :ids ) "
+		  + " AND o.instituicaoEnsino = :instituicaoEnsino"
+		);
+
+		q.setParameter("ids",ids);
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+
+		return q.getResultList();
 	}
 
 	public static List< Campus > find(

@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -512,6 +513,22 @@ public class AtendimentoOperacional
 		q.setParameter( "campus", campus );
 		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> findAllBy(Collection<Campus> campi, Turno turno, InstituicaoEnsino instituicaoEnsino) {
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
+			+ " WHERE o.oferta.campus IN ( :campi ) "
+			+ " AND o.instituicaoEnsino = :instituicaoEnsino"
+			+ " AND o.oferta.turno = :turno"
+		);
+
+		q.setParameter("campi",campi);
+		q.setParameter("turno",turno);
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
 
 		return q.getResultList();
 	}

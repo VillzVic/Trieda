@@ -19,6 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface CampiService
 	extends RemoteService
 {
+	ListLoadResult<CampusDTO> getCampiNaoSelecionadosParaOtimizacao(List<CampusDTO> campiSelecionados);
 	PagingLoadResult< CampusDTO > getList( PagingLoadConfig config );
 	ListLoadResult< CampusDTO > getListAll();
 	ListLoadResult< CampusDTO > getList();

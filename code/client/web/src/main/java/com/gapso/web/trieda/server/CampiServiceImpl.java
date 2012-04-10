@@ -238,6 +238,25 @@ public class CampiServiceImpl extends RemoteService
 
 		return new BaseListLoadResult< CampusDTO >( campiDTO );
 	}
+	
+	@Override
+	public ListLoadResult<CampusDTO> getCampiNaoSelecionadosParaOtimizacao(List<CampusDTO> campiSelecionados) {
+		List<CampusDTO> campiDTOsNaoSelecionados = new ArrayList<CampusDTO>();
+		
+		Set<Long> campiIDsSelecionados = new HashSet<Long>();
+		for (CampusDTO campusDTO : campiSelecionados) {
+			campiIDsSelecionados.add(campusDTO.getId());
+		}
+		
+		List<Campus> todosCampi = Campus.findAll(this.getInstituicaoEnsinoUser());
+		for (Campus campus : todosCampi) {
+			if (!campiIDsSelecionados.contains(campus.getId())) {
+				campiDTOsNaoSelecionados.add(ConvertBeans.toCampusDTO(campus));
+			}
+		}
+
+		return new BaseListLoadResult<CampusDTO>(campiDTOsNaoSelecionados);
+	}
 
 	@Override
 	public PagingLoadResult< CampusDTO > getList(

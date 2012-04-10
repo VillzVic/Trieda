@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -427,6 +428,38 @@ public class Demanda
         }
 
         return q.getResultList();
+	}
+    
+    @SuppressWarnings("unchecked")
+	public static List<Demanda> findBy(InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Turno turno) {
+		String queryCampi = "";
+		if (campi != null && !campi.isEmpty()) {
+			queryCampi = " o.oferta.campus IN ( :campi ) AND ";
+		}
+
+		String queryTurno = "";
+		if (turno != null) {
+			queryTurno = " o.oferta.turno = :turno AND ";
+		}
+
+		String queryString = queryCampi + queryTurno;
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Demanda o "
+			+ " WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino "
+			+ " AND " + queryString + " 1=1 ");
+
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+
+		if (!queryCampi.isEmpty()) {
+			q.setParameter("campi",campi);
+		}
+
+		if (turno != null) {
+			q.setParameter("turno", turno);
+		}
+
+		return q.getResultList();
 	}
 	
     @SuppressWarnings( "unchecked" )

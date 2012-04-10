@@ -14,8 +14,10 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface CampiServiceAsync
-{
+public interface CampiServiceAsync {
+	
+	void getCampiNaoSelecionadosParaOtimizacao(List<CampusDTO> campiSelecionados, AsyncCallback<ListLoadResult<CampusDTO>> callback);
+	
 	void getListAll( AsyncCallback<ListLoadResult< CampusDTO > > callback );
 	void getList( PagingLoadConfig config, AsyncCallback< PagingLoadResult< CampusDTO > > callback );
 	void getList( AsyncCallback< ListLoadResult< CampusDTO > > callback );

@@ -505,6 +505,19 @@ public class Curso
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Curso> findByCampi(InstituicaoEnsino instituicaoEnsino, List<Campus> campi) {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Curso o "
+			+ " WHERE o.tipoCurso.instituicaoEnsino = :instituicaoEnsino "
+			+ " AND o IN ( SELECT cc.curriculo.curso FROM Oferta cc WHERE cc.campus IN ( :campi ) )");
+
+		q.setParameter("campi",campi);
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Curso > findByCenario(

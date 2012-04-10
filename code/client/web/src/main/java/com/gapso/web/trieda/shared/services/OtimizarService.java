@@ -6,10 +6,12 @@ import java.util.Map;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath( "otimizar" )
+@RemoteServiceRelativePath("otimizar")
 public interface OtimizarService extends RemoteService {
 	
 	/**
@@ -22,8 +24,53 @@ public interface OtimizarService extends RemoteService {
 	 */
 	ErrorsWarningsInputSolverDTO checkInputDataBeforeRequestOptimization(ParametroDTO parametroDTO) throws Exception;
 	
-	Long sendInput( ParametroDTO parametroDTO );
+	/**
+	 * Registra no banco de dados a requisição de otimização. Este método é utilizado logo após o envio dos dados de entrada
+	 * para o solver.
+	 * @param parametroDTO parâmetros da requisição de otimização
+	 * @param round identificador da requisição de otimização
+	 * @throws TriedaException
+	 */
+	void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException;
+	
+	/**
+	 * Remove do banco de dados o registro da requisição de otimização. Este método é utilizado em duas ocasiões:
+	 *    - quando é detectada, automaticamente pelo Trieda, o final de uma requisição de otimização.
+	 *    - quando é detectada, por consulta do usuário, o final de uma requisição de otimização.
+	 * @param parametroDTO parâmetros da requisição de otimização
+	 * @param round identificador da requisição de otimização
+	 * @throws TriedaException
+	 */
+	void removeRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException;
+	
+	/**
+	 * 
+	 * @param requisicoesASeremRemovidas
+	 * @throws TriedaException
+	 */
+	void removeRequisicoesDeOtimizacao(List<RequisicaoOtimizacaoDTO> requisicoesASeremRemovidas) throws TriedaException;
+	
+	/**
+	 * 
+	 * @param cenarioDTO
+	 * @return
+	 */
+	ParametroDTO getParametrosDaRequisicaoDeOtimizacao(CenarioDTO cenarioDTO);
+	
+	/**
+	 * 
+	 * @param parametroDTO
+	 * @return
+	 */
+	Long enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException;
+	
+	/**
+	 * 
+	 * @return
+	 * @throws TriedaException
+	 */
+	List<RequisicaoOtimizacaoDTO> consultaRequisicoesDeOtimizacao() throws TriedaException;
+	
 	Boolean isOptimizing( Long round );
 	Map< String, List< String > > saveContent( CenarioDTO cenarioDTO, Long round );
-	ParametroDTO getParametro( CenarioDTO cenarioDTO );
 }

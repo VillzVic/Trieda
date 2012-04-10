@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -76,6 +79,9 @@ public class Usuario
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
+	
+	@OneToMany(mappedBy = "cenario")
+	private Set<RequisicaoOtimizacao> requisicoesDeOtimizacao = new HashSet<RequisicaoOtimizacao>();
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
@@ -157,6 +163,14 @@ public class Usuario
 	{
 		this.authority = authority;
 	}
+	
+	public Set<RequisicaoOtimizacao> getRequisicoesDeOtimizacao() {
+		return this.requisicoesDeOtimizacao;
+	}
+
+	public void setRequisicoesDeOtimizacao(Set<RequisicaoOtimizacao> requisicoesDeOtimizacao) {
+		this.requisicoesDeOtimizacao = requisicoesDeOtimizacao;
+	}
 
 	public String toString()
 	{
@@ -171,6 +185,7 @@ public class Usuario
         sb.append( "Enabled: " ).append( getEnabled() ).append( ", " );
         sb.append( "Professor: " ).append( getProfessor() ).append(", " );
         sb.append( "Authority: " ).append( getAuthority() );
+        sb.append("Requisições de Otimização: ").append(getRequisicoesDeOtimizacao() == null ? "null" : getRequisicoesDeOtimizacao().size() ).append( ", " );
 
         return sb.toString();
     }

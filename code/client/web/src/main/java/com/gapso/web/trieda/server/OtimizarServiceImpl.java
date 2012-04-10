@@ -27,14 +27,18 @@ import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
+import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.RequisicaoOtimizacao;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Grafo;
 import com.gapso.web.trieda.server.util.Profundidade;
@@ -47,17 +51,18 @@ import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
+import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO.StatusRequisicaoOtimizacao;
 import com.gapso.web.trieda.shared.services.OtimizarService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dev.util.Pair;
 
 @Transactional
 @Service
 @Repository
-public class OtimizarServiceImpl
-	extends RemoteService
-	implements OtimizarService
-{
+public class OtimizarServiceImpl extends RemoteService implements OtimizarService {
 	private static final long serialVersionUID = 5716065588362358065L;
 	private static final String linkSolverDefault = "http://localhost:8080/SolverWS";
 	
@@ -100,13 +105,18 @@ public class OtimizarServiceImpl
 					time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 				}
 			}
+			
+			if (parametro.getProfessorEmMuitosCampi()) {
+				checkCampiSemDeslocamentos(parametro,errors);
+			}
+			
 			checksCleiton();//TODO: revisar
 			
 			response.setErrors(errors);
 			response.setWarnings(warnings);
 		} else {
 			String message = "";
-			if (parametroDTO.getCampusId() == null) {
+			if (parametroDTO.getCampi() == null || parametroDTO.getCampi().isEmpty()) {
 				message += HtmlUtils.htmlUnescape("O campus n&atilde;o foi informado.");
 			}
 			if (parametroDTO.getTurnoId() == null) {
@@ -123,6 +133,164 @@ public class OtimizarServiceImpl
 		}
 	
 		return response;
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#registraRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
+	 */
+	@Override
+	public void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException {
+		try {
+			Usuario usuarioAtual = getUsuario();
+			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+			Cenario cenario = parametro.getCenario();
+			
+			RequisicaoOtimizacao reqOtm = new RequisicaoOtimizacao();
+			reqOtm.setCenario(cenario);
+			reqOtm.setRound(round);
+			reqOtm.setUsuario(usuarioAtual);
+			reqOtm.setParametro(parametro);
+			
+			reqOtm.persist();
+		} catch (Exception e) {
+			throw new TriedaException(e);
+		}
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
+	 */
+	@Override
+	public void removeRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException {
+		try {
+			Usuario usuarioAtual = getUsuario();
+			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+			Cenario cenario = parametro.getCenario();
+			
+			RequisicaoOtimizacao reqOtm = RequisicaoOtimizacao.findBy(usuarioAtual,cenario,parametro,round);
+			reqOtm.remove();
+		} catch (Exception e) {
+			throw new TriedaException(e);
+		}
+	}
+	
+	@Override
+	public void removeRequisicoesDeOtimizacao(List<RequisicaoOtimizacaoDTO> requisicoesASeremRemovidas) throws TriedaException {
+		try {
+			List<Long> ids = new ArrayList<Long>(requisicoesASeremRemovidas.size());
+			for (RequisicaoOtimizacaoDTO req : requisicoesASeremRemovidas) {
+				ids.add(req.getId());
+			}
+			
+			List<RequisicaoOtimizacao> requisicoes = RequisicaoOtimizacao.findBy(ids);
+			for (RequisicaoOtimizacao req : requisicoes) {
+				req.remove();
+			}
+		} catch (Exception e) {
+			throw new TriedaException(e);
+		}
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#getParametrosDaRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.CenarioDTO)
+	 */
+	@Override
+	@Transactional
+	public ParametroDTO getParametrosDaRequisicaoDeOtimizacao(CenarioDTO cenarioDTO) {
+		InstituicaoEnsino instituicaoEnsino = this.getInstituicaoEnsinoUser();
+		Cenario cenario = Cenario.find(cenarioDTO.getId(),instituicaoEnsino);
+		Parametro parametro = cenario.getUltimoParametro(instituicaoEnsino);
+
+		if (parametro == null) {
+			parametro = this.getParametroDefault(instituicaoEnsino,cenario);
+		}
+
+		return ConvertBeans.toParametroDTO(parametro);
+	}
+	
+	@Override
+	@Transactional
+	public Long enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException {
+		if (!parametroDTO.isValid()) {
+			String errorMessage = "";
+			if (parametroDTO.getCampi() == null || parametroDTO.getCampi().isEmpty()) {
+				errorMessage += HtmlUtils.htmlUnescape("Nenhum campus foi selecionado.");
+			}
+			if (parametroDTO.getTurnoId() == null) {
+				errorMessage += HtmlUtils.htmlUnescape(" Nenhum turno foi selecionado.");
+			}
+			throw new TriedaException(errorMessage);
+		}
+
+		try {
+			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+	
+			parametro.setId(null);
+			parametro.flush();
+			parametro.save();
+	
+			Cenario cenario = parametro.getCenario();
+			cenario.getParametros().add(parametro);
+			List<Campus> campi = new ArrayList<Campus>(parametro.getCampi().size());
+			campi.addAll(parametro.getCampi());
+	
+			SolverInput solverInput = new SolverInput(getInstituicaoEnsinoUser(),cenario,parametro,campi);
+			TriedaInput triedaInput = null;
+			if (parametro.isTatico()) {
+				triedaInput = solverInput.generateTaticoTriedaInput();
+			} else {
+				triedaInput = solverInput.generateOperacionalTriedaInput();
+			}
+	
+			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
+			Marshaller m = jc.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+			m.setProperty(Marshaller.JAXB_ENCODING,"ISO-8859-1");
+			m.marshal(triedaInput,temp);
+			byte [] fileBytes = temp.toByteArray();
+			SolverClient solverClient = new SolverClient(getLinkSolver(),"trieda");
+	
+			return solverClient.requestOptimization(fileBytes);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+	}
+	
+	/** 
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#consultaRequisicoesDeOtimizacao()
+	 */
+	public List<RequisicaoOtimizacaoDTO> consultaRequisicoesDeOtimizacao() throws TriedaException {
+		try {
+			// obtém o usuário logado em questão
+			Usuario usuarioAtual = getUsuario();
+			// obtém as requisições de otimização relacionadas com o usuário atual
+			List<RequisicaoOtimizacao> requisicoesOtimizacao = RequisicaoOtimizacao.findBy(usuarioAtual);
+			// ...
+			List<RequisicaoOtimizacaoDTO> requisicoesOtimizacaoDTOs = new ArrayList<RequisicaoOtimizacaoDTO>();
+			SolverClient solverClient = new SolverClient(getLinkSolver(),"trieda");
+			for (RequisicaoOtimizacao requisicaoOtimizacao : requisicoesOtimizacao) {
+				RequisicaoOtimizacaoDTO dto = ConvertBeans.toRequisicaoOtimizacaoDTO(requisicaoOtimizacao);
+				
+				if (solverClient.isFinished(requisicaoOtimizacao.getRound())) {
+					if (solverClient.containsResult(requisicaoOtimizacao.getRound())) {
+						dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_COM_OUTPUT.ordinal());
+					} else {
+						dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT.ordinal());
+					}
+				} else {
+					dto.setStatusIndex(StatusRequisicaoOtimizacao.EM_ANDAMENTO.ordinal());
+				}
+				
+				requisicoesOtimizacaoDTOs.add(dto);
+			}
+			
+			return requisicoesOtimizacaoDTOs;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
 	}
 
 	private void checksCleiton() {
@@ -212,9 +380,15 @@ public class OtimizarServiceImpl
 	}
 
 	private void checkDisciplinasSemLaboratorios(Parametro parametro, List<String> errors) {
+		for (Campus campus : parametro.getCampi()) {
+			checkDisciplinasSemLaboratorios(campus,errors);
+		}
+	}
+	
+	private void checkDisciplinasSemLaboratorios(Campus campus, List<String> errors) {
 		// coleta as disciplinas que serão enviadas para o solver e que exigem laboratório
 		Set<Disciplina> disciplinasQueExigemLaboratio = new HashSet<Disciplina>();
-		for (Oferta oferta : parametro.getCampus().getOfertas()) {
+		for (Oferta oferta : campus.getOfertas()) {
 			for (Demanda demanda : oferta.getDemandas()) {
 				Disciplina disciplina = demanda.getDisciplina();
 				if (disciplina.getLaboratorio()) {
@@ -233,7 +407,7 @@ public class OtimizarServiceImpl
 					// verifica se tem oferta no campus a ser otimizado
 					boolean curriculoTemOfertaNoCampusASerOtimizado = false;
 					for (Oferta oferta : curriculoDisciplina.getCurriculo().getOfertas()) {
-						if (oferta.getCampus().equals(parametro.getCampus())) {
+						if (oferta.getCampus().equals(campus)) {
 							curriculoTemOfertaNoCampusASerOtimizado = true;
 							break;
 						}
@@ -243,7 +417,7 @@ public class OtimizarServiceImpl
 					if (curriculoTemOfertaNoCampusASerOtimizado) {
 						boolean estaAssociadoComAlgumLaboratorio = false;
 						for (Sala sala : curriculoDisciplina.getSalas()) {
-							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(parametro.getCampus())) {
+							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(campus)) {
 								estaAssociadoComAlgumLaboratorio = true;
 								break;
 							}
@@ -261,8 +435,7 @@ public class OtimizarServiceImpl
 				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasNaoAssociadosALaboratorios) {
 					pares += "(" + curriculoDisciplina.getCurriculo().getCodigo() + "," + curriculoDisciplina.getPeriodo() + "); ";
 				}
-				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + parametro.getCampus().getCodigo() + ", são eles: " + pares));
-				System.out.println("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + parametro.getCampus().getCodigo() + ", são eles: " + pares);
+				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + campus.getCodigo() + ", são eles: " + pares));
 			}
 		}
 	}
@@ -270,8 +443,10 @@ public class OtimizarServiceImpl
 	private void checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
 		// obtém os currículos do campus selecionado para otimização
 		Set<Curriculo> curriculosDoCampusSelecionado = new HashSet<Curriculo>();
-		for (Oferta oferta : parametro.getCampus().getOfertas()) {
-			curriculosDoCampusSelecionado.add(oferta.getCurriculo());
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				curriculosDoCampusSelecionado.add(oferta.getCurriculo());
+			}
 		}
 		
 		// [CurriculoId -> Máximo Créditos Semanais]
@@ -321,25 +496,27 @@ public class OtimizarServiceImpl
 	private void checkDemandasComDisciplinasSemCurriculo(Parametro parametro, List<String> errors) {
 		// [CurriculoId -> Set<DisciplinaId>]
 		Map<Long,Set<Long>> curriculoIdToDisciplinasIdsMap = new HashMap<Long,Set<Long>>();
-		for (Oferta oferta : parametro.getCampus().getOfertas()) {
-			Curriculo curriculo = oferta.getCurriculo();
-			
-			// obtém as disciplinas associadas com o currículo em questão
-			Set<Long> disciplinasDoCurriculo = curriculoIdToDisciplinasIdsMap.get(curriculo.getId());
-			if (disciplinasDoCurriculo == null) {
-				disciplinasDoCurriculo = new HashSet<Long>();
-				for (CurriculoDisciplina curriculoDisciplina : curriculo.getDisciplinas()) {
-					disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId());
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				Curriculo curriculo = oferta.getCurriculo();
+				
+				// obtém as disciplinas associadas com o currículo em questão
+				Set<Long> disciplinasDoCurriculo = curriculoIdToDisciplinasIdsMap.get(curriculo.getId());
+				if (disciplinasDoCurriculo == null) {
+					disciplinasDoCurriculo = new HashSet<Long>();
+					for (CurriculoDisciplina curriculoDisciplina : curriculo.getDisciplinas()) {
+						disciplinasDoCurriculo.add(curriculoDisciplina.getDisciplina().getId());
+					}
+					curriculoIdToDisciplinasIdsMap.put(curriculo.getId(),disciplinasDoCurriculo);
 				}
-				curriculoIdToDisciplinasIdsMap.put(curriculo.getId(),disciplinasDoCurriculo);
-			}
-			
-			// verifica se alguma demanda contém alguma disciplina que não esteja no currículo
-			// da oferta associada com a demanda
-			for (Demanda demanda : oferta.getDemandas()) {
-				if (!disciplinasDoCurriculo.contains(demanda.getDisciplina().getId())) {
-					errors.add(HtmlUtils.htmlUnescape("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "]."));
-					System.out.println("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
+				
+				// verifica se alguma demanda contém alguma disciplina que não esteja no currículo
+				// da oferta associada com a demanda
+				for (Demanda demanda : oferta.getDemandas()) {
+					if (!disciplinasDoCurriculo.contains(demanda.getDisciplina().getId())) {
+						errors.add(HtmlUtils.htmlUnescape("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "]."));
+						System.out.println("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
+					}
 				}
 			}
 		}
@@ -497,43 +674,48 @@ public class OtimizarServiceImpl
 		}
 		
 		// aplica equivalências umas nas outras
-		Map<Pair<Long,Long>,Set<Pair<Long,Long>>> equivalenciaCalculadaToEquivalenciasOriginaisMap = new HashMap<Pair<Long,Long>,Set<Pair<Long,Long>>>();
-		Set<Pair<Long,Long>> equivalenciasAnalisadas = new HashSet<Pair<Long,Long>>(equivalenciasOriginais);
+		boolean consideraTransitividadeNasRegrasDeEquivalencia = false;
 		Set<Pair<Long,Long>> equivalenciasAposAplicacoes = new HashSet<Pair<Long,Long>>();
-		boolean ocorreuAlgumaSubstituicao = false;
-		do {
-			ocorreuAlgumaSubstituicao = false;
-			for (Pair<Long,Long> equivalenciaAnalisada : equivalenciasAnalisadas) {
-				Long disCursouIdAnalisada = equivalenciaAnalisada.getLeft();
-				Long disEliminaIdAnalisada = equivalenciaAnalisada.getRight();
-				
-				Set<Pair<Long,Long>> equivalenciasOriginaisAplicaveis = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(disCursouIdAnalisada);
-				if (equivalenciasOriginaisAplicaveis != null) {
-					for (Pair<Long,Long> equivalenciaOriginalAplicavel : equivalenciasOriginaisAplicaveis) {
-						Long disCursouIdOriginalAplicavel = equivalenciaOriginalAplicavel.getLeft();
-						Pair<Long,Long> equivalenciaCalculada = Pair.<Long,Long>create(disCursouIdOriginalAplicavel,disEliminaIdAnalisada); 
-						
-						equivalenciasAposAplicacoes.add(equivalenciaCalculada);
-						
-						Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(equivalenciaCalculada);
-						if (equivalenciasOriginaisQueGeraramACalculada == null) {
-							equivalenciasOriginaisQueGeraramACalculada = new HashSet<Pair<Long,Long>>();
-							equivalenciaCalculadaToEquivalenciasOriginaisMap.put(equivalenciaCalculada,equivalenciasOriginaisQueGeraramACalculada);
+		Map<Pair<Long,Long>,Set<Pair<Long,Long>>> equivalenciaCalculadaToEquivalenciasOriginaisMap = new HashMap<Pair<Long,Long>,Set<Pair<Long,Long>>>();
+		if (consideraTransitividadeNasRegrasDeEquivalencia) {
+			Set<Pair<Long,Long>> equivalenciasAnalisadas = new HashSet<Pair<Long,Long>>(equivalenciasOriginais);
+			boolean ocorreuAlgumaSubstituicao = false;
+			do {
+				ocorreuAlgumaSubstituicao = false;
+				for (Pair<Long,Long> equivalenciaAnalisada : equivalenciasAnalisadas) {
+					Long disCursouIdAnalisada = equivalenciaAnalisada.getLeft();
+					Long disEliminaIdAnalisada = equivalenciaAnalisada.getRight();
+					
+					Set<Pair<Long,Long>> equivalenciasOriginaisAplicaveis = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(disCursouIdAnalisada);
+					if (equivalenciasOriginaisAplicaveis != null) {
+						for (Pair<Long,Long> equivalenciaOriginalAplicavel : equivalenciasOriginaisAplicaveis) {
+							Long disCursouIdOriginalAplicavel = equivalenciaOriginalAplicavel.getLeft();
+							Pair<Long,Long> equivalenciaCalculada = Pair.<Long,Long>create(disCursouIdOriginalAplicavel,disEliminaIdAnalisada); 
+							
+							equivalenciasAposAplicacoes.add(equivalenciaCalculada);
+							
+							Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(equivalenciaCalculada);
+							if (equivalenciasOriginaisQueGeraramACalculada == null) {
+								equivalenciasOriginaisQueGeraramACalculada = new HashSet<Pair<Long,Long>>();
+								equivalenciaCalculadaToEquivalenciasOriginaisMap.put(equivalenciaCalculada,equivalenciasOriginaisQueGeraramACalculada);
+							}
+							equivalenciasOriginaisQueGeraramACalculada.add(equivalenciaOriginalAplicavel);
 						}
-						equivalenciasOriginaisQueGeraramACalculada.add(equivalenciaOriginalAplicavel);
+						ocorreuAlgumaSubstituicao = true;
+					} else {
+						equivalenciasAposAplicacoes.add(equivalenciaAnalisada);
 					}
-					ocorreuAlgumaSubstituicao = true;
-				} else {
-					equivalenciasAposAplicacoes.add(equivalenciaAnalisada);
 				}
-			}
-			
-			if (ocorreuAlgumaSubstituicao) {
-				equivalenciasAnalisadas.clear();
-				equivalenciasAnalisadas.addAll(equivalenciasAposAplicacoes);
-				equivalenciasAposAplicacoes.clear();
-			}
-		} while (ocorreuAlgumaSubstituicao);
+				
+				if (ocorreuAlgumaSubstituicao) {
+					equivalenciasAnalisadas.clear();
+					equivalenciasAnalisadas.addAll(equivalenciasAposAplicacoes);
+					equivalenciasAposAplicacoes.clear();
+				}
+			} while (ocorreuAlgumaSubstituicao);
+		} else {
+			equivalenciasAposAplicacoes.addAll(equivalenciasOriginais);
+		}
 		
 		// recalcula algumas estruturas com base nas equivalencias calculadas 
 		// [DisciplinaEliminaId -> Par<DisciplinaCursouId,DisciplinaEliminaId>]
@@ -551,8 +733,10 @@ public class OtimizarServiceImpl
 		
 		// obtém curriculos
 		Set<Curriculo> curriculos = new HashSet<Curriculo>();
-		for (Oferta oferta : parametro.getCampus().getOfertas()) {
-			curriculos.add(oferta.getCurriculo());
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				curriculos.add(oferta.getCurriculo());
+			}
 		}
 		
 		for (Curriculo curriculo : curriculos) {
@@ -651,23 +835,62 @@ public class OtimizarServiceImpl
 		equivalenciasStr = equivalenciasStr.substring(0,equivalenciasStr.length()-2);
 		return equivalenciasStr;
 	}
-
-	@Override
-	@Transactional
-	public ParametroDTO getParametro( CenarioDTO cenarioDTO )
-	{
-		InstituicaoEnsino instituicaoEnsino = this.getInstituicaoEnsinoUser();
-
-		Cenario cenario = Cenario.find( cenarioDTO.getId(), instituicaoEnsino );
-		Parametro parametro = cenario.getUltimoParametro( instituicaoEnsino );
-
-		if ( parametro == null )
-		{
-			parametro = this.getParametroDefault( instituicaoEnsino, cenario );
+	
+	private void checkCampiSemDeslocamentos(Parametro parametro, List<String> errors) {
+		if (parametro.getCampi().size() > 1) {
+			// [ProfessorId -> List<Campus>]
+			Map<Long,List<Campus>> professorIdToCampiMap = new HashMap<Long,List<Campus>>();
+			// [CampusId -> Set<CampusId>]
+			Map<Long,Set<Long>> campusIdToDeslocamentosDestinoCampusIdMap = new HashMap<Long,Set<Long>>();
+			// preenche estruturas auxiliares
+			for (Campus campus : parametro.getCampi()) {
+				for (Professor professor : campus.getProfessores()) {
+					List<Campus> campi = professorIdToCampiMap.get(professor.getId());
+					if (campi == null) {
+						campi = new ArrayList<Campus>();
+						professorIdToCampiMap.put(professor.getId(),campi);
+					}
+					campi.add(campus);
+				}
+				
+				for (DeslocamentoCampus deslocamentoDestino : campus.getDeslocamentos()) {
+					Set<Long> campiIdsDestino = campusIdToDeslocamentosDestinoCampusIdMap.get(campus.getId());
+					if (campiIdsDestino == null) {
+						campiIdsDestino = new HashSet<Long>();
+						campusIdToDeslocamentosDestinoCampusIdMap.put(campus.getId(),campiIdsDestino);
+					}
+					campiIdsDestino.add(deslocamentoDestino.getDestino().getId());
+				}
+			}
+			
+			// Identifica quais são os campi que irão exigir informação de deslocamento por conta de professores
+			Set<Campus> campiQueExigemInformacaoDeDeslocamento = new HashSet<Campus>();
+			for (Entry<Long,List<Campus>> entry : professorIdToCampiMap.entrySet()) {
+				if (entry.getValue().size() > 1) {
+					campiQueExigemInformacaoDeDeslocamento.addAll(entry.getValue());
+				}
+			}
+			
+			// Verifica se há informação de deslocamento entre os campi que exigem tal informação
+			List<ParDTO<String,String>> deslocamentosNaoCadastrados = new ArrayList<ParDTO<String,String>>();
+			for (Campus campus : campiQueExigemInformacaoDeDeslocamento) {
+				// obtém que são os outros campi que exigem deslocamento
+				Set<Campus> outrosCampi = new HashSet<Campus>(campiQueExigemInformacaoDeDeslocamento);
+				outrosCampi.remove(campus);
+				// obtém os destinos cadastrados para o campus em questão
+				Set<Long> campiDestinosIds = campusIdToDeslocamentosDestinoCampusIdMap.get(campus.getId());
+				// verifica se há algum campus que não aparece como destino cadastrado do campus em questão
+				for (Campus outroCampus : outrosCampi) {
+					if (campiDestinosIds == null || !campiDestinosIds.contains(outroCampus.getId())) {
+						deslocamentosNaoCadastrados.add(ParDTO.create(campus.getCodigo(),outroCampus.getCodigo()));
+					}
+				}
+			}
+			
+			if (!deslocamentosNaoCadastrados.isEmpty()) {
+				errors.add(HtmlUtils.htmlUnescape("A requisição de otimização é multi-campi, porém, a informação de deslocamento entre campi não foi cadastrada para os pares (origem,destino) informados a seguir: " + deslocamentosNaoCadastrados.toString()));
+			}
 		}
-
-		ParametroDTO parametroDTO = ConvertBeans.toParametroDTO( parametro );
-		return parametroDTO;
 	}
 
 	private Parametro getParametroDefault(
@@ -686,84 +909,10 @@ public class OtimizarServiceImpl
 		}
 
 		parametro.setCenario( cenario );
-		parametro.setCampus( ( listCampus == null || listCampus.size() == 0 ? null : listCampus.get( 0 ) ) );
+		parametro.setCampi(new HashSet<Campus>(listCampus));
 		parametro.setTurno( ( listTurnos == null || listTurnos.size() == 0 ? null : listTurnos.get( 0 ) ) );
 		
 		return parametro;
-	}
-
-	@Override
-	@Transactional
-	public Long sendInput( ParametroDTO parametroDTO )
-	{
-		if ( parametroDTO.getCampusId() == null
-			|| parametroDTO.getTurnoId() == null )
-		{
-			String message = "";
-
-			if ( parametroDTO.getCampusId() == null )
-			{
-				message += HtmlUtils.htmlUnescape(
-					"o campus n&atilde;o foi informado, " );
-			}
-
-			if ( parametroDTO.getTurnoId() == null )
-			{
-				message += HtmlUtils.htmlUnescape(
-					"o turno n&atilde;o foi informado, " );
-			}
-
-			message = message.substring( 0, message.length() - 2 );
-			throw new RuntimeException( message );
-		}
-
-		Parametro parametro = ConvertBeans.toParametro( parametroDTO );
-
-		parametro.setId( null );
-		parametro.flush();
-		parametro.save();
-
-		Cenario cenario = parametro.getCenario();
-		cenario.getParametros().add( parametro );
-		List< Campus > campi = new ArrayList< Campus >( 1 );
-		campi.add( parametro.getCampus() );
-
-		TriedaInput triedaInput = null;
-		SolverInput solverInput = new SolverInput(
-			getInstituicaoEnsinoUser(), cenario, parametro, campi );
-
-		if ( parametro.isTatico() )
-		{
-			triedaInput = solverInput.generateTaticoTriedaInput();
-		}
-		else
-		{
-			triedaInput = solverInput.generateOperacionalTriedaInput();
-		}
-
-		byte [] fileBytes = null;
-
-		try
-		{
-			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
-
-			JAXBContext jc = JAXBContext.newInstance(
-				"com.gapso.web.trieda.server.xml.input" );
-
-			Marshaller m = jc.createMarshaller();
-			m.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true );
-			m.setProperty( Marshaller.JAXB_ENCODING, "ISO-8859-1" );
-			m.marshal( triedaInput, temp );
-			fileBytes = temp.toByteArray();
-		}
-		catch ( Exception e )
-		{
-			e.printStackTrace();
-		}
-		SolverClient solverClient
-			= new SolverClient( getLinkSolver(), "trieda" );
-
-		return solverClient.requestOptimization( fileBytes );
 	}
 
 	@Override
@@ -837,25 +986,20 @@ public class OtimizarServiceImpl
 				getInstituicaoEnsinoUser(), cenario, triedaOutput );
 
 			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
-			solverOutput.atualizarAlunosDemanda(parametro.getCampus(),parametro.getTurno());
+			solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno());
 			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
 
-			if ( parametro.isTatico() )
-			{
+			if (parametro.isTatico()) {
 				System.out.println("solverOutput.generateAtendimentosTatico(); ...");// TODO: LOG
 				solverOutput.generateAtendimentosTatico();
 				System.out.println("solverOutput.generateAtendimentosTatico(); FINALIZADO");// TODO: LOG
 
 				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
-				solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno());
+				solverOutput.salvarAtendimentosTatico(parametro.getCampi(),parametro.getTurno());
 				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
-			}
-			else
-			{
+			} else {
 				solverOutput.generateAtendimentosOperacional();
-
-				solverOutput.salvarAtendimentosOperacional(
-					parametro.getCampus(), parametro.getTurno() );
+				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno());
 			}
 		}
 		catch ( JAXBException e )

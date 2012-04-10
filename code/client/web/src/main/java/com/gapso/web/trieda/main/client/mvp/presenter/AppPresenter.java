@@ -73,42 +73,35 @@ public class AppPresenter
 	}
 
 	@Override
-	public void go( final Widget widget )
-	{
+	public void go(final Widget widget) {
 		CenariosServiceAsync cenarioService = Services.cenarios();
 		UsuariosServiceAsync usuarioService = Services.usuarios();
 
-		final FutureResult< CenarioDTO > futureCenarioDTO = new FutureResult< CenarioDTO >();
-		final FutureResult< UsuarioDTO > futureUsuarioDTO = new FutureResult< UsuarioDTO >();
-		final FutureResult< InstituicaoEnsinoDTO > futureInstituicaoEnsinoDTO = new FutureResult< InstituicaoEnsinoDTO >();
+		final FutureResult<CenarioDTO> futureCenarioDTO = new FutureResult<CenarioDTO>();
+		final FutureResult<UsuarioDTO> futureUsuarioDTO = new FutureResult<UsuarioDTO>();
+		final FutureResult<InstituicaoEnsinoDTO> futureInstituicaoEnsinoDTO = new FutureResult<InstituicaoEnsinoDTO>();
 
-		cenarioService.getMasterData( futureCenarioDTO );
-		usuarioService.getCurrentUser( futureUsuarioDTO );
-		cenarioService.getInstituicaoEnsinoDTO( futureInstituicaoEnsinoDTO );
+		cenarioService.getMasterData(futureCenarioDTO);
+		usuarioService.getCurrentUser(futureUsuarioDTO);
+		cenarioService.getInstituicaoEnsinoDTO(futureInstituicaoEnsinoDTO);
 
-		FutureSynchronizer synch = new FutureSynchronizer(
-			futureCenarioDTO, futureUsuarioDTO, futureInstituicaoEnsinoDTO );
+		FutureSynchronizer synch = new FutureSynchronizer(futureCenarioDTO,futureUsuarioDTO,futureInstituicaoEnsinoDTO);
+		synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(viewport) {
+			@Override
+			public void onSuccess(Boolean result) {
+				CenarioDTO cenario = futureCenarioDTO.result();
+				UsuarioDTO usuario = futureUsuarioDTO.result();
+				InstituicaoEnsinoDTO instituicaoEnsino =  futureInstituicaoEnsinoDTO.result();
 
-		synch.addCallback( new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( viewport )
-		{
-				@Override
-				public void onSuccess( Boolean result )
-				{
-					CenarioDTO cenario = futureCenarioDTO.result();
-					UsuarioDTO usuario = futureUsuarioDTO.result();
-					InstituicaoEnsinoDTO instituicaoEnsino =  futureInstituicaoEnsinoDTO.result();
+				RootPanel rp = (RootPanel) widget;
+				Presenter presenter = new ToolBarPresenter(instituicaoEnsino,cenario,usuario,viewport.getCenarioPanel(),new ToolBarView());
+				presenter.go(viewport.asWidget());
+				rp.add(viewport.asWidget());
+				RootPanel.get("loading").setVisible(false);
 
-					RootPanel rp = (RootPanel) widget;
-					Presenter presenter = new ToolBarPresenter( instituicaoEnsino,
-						cenario, usuario, viewport.getCenarioPanel(), new ToolBarView() );
-
-					presenter.go( viewport.asWidget() );
-					rp.add( viewport.asWidget() );
-					RootPanel.get( "loading" ).setVisible( false );
-
-					// Enquanto o browser estiver aberto, a sessão não irá expirar
-					createThreadAvoidSessionExpire();
-				}
+				// Enquanto o browser estiver aberto, a sessão não irá expirar
+				createThreadAvoidSessionExpire();
+			}
 		});
 	}
 }

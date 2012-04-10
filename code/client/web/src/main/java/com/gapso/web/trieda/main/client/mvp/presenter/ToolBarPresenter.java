@@ -13,6 +13,7 @@ import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
+import com.gapso.web.trieda.main.client.mvp.view.CarregarSolucaoView;
 import com.gapso.web.trieda.main.client.mvp.view.CompatibilidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
@@ -31,6 +32,7 @@ import com.gapso.web.trieda.main.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoSalaView;
+import com.gapso.web.trieda.main.client.mvp.view.RequisicoesOtimizacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCampiView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCenarioView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCursosView;
@@ -131,6 +133,7 @@ public class ToolBarPresenter
 		Button getUsuariosListButton();
 		Button getImportarButton();
 		Button getExportarButton();
+		Button getCarregarSolucaoButton();
 
 		Button getSemanasLetivaListCampiButton();
 		Button getTurnosListCampiButton();
@@ -627,6 +630,14 @@ public class ToolBarPresenter
 				e.submit();
 			}
 		});
+		
+		this.toolBar.getCarregarSolucaoButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				CarregarSolucaoView view = new CarregarSolucaoView(cenarioDTO);
+				view.show();
+			}
+		});
 
 		this.toolBar.getOfertasListCursosButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
@@ -699,7 +710,7 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Services.otimizar().getParametro(
+				Services.otimizar().getParametrosDaRequisicaoDeOtimizacao(
 					cenarioDTO, new AsyncCallback< ParametroDTO >()
 				{
 					@Override
@@ -802,10 +813,12 @@ public class ToolBarPresenter
 	}
 
 	@Override
-	public void go( Widget widget )
-	{
-		AppPresenter.Display container = (AppPresenter.Display) widget;
+	public void go(Widget widget) {
+		AppPresenter.Display container = (AppPresenter.Display)widget;
 		this.gTab = container.getGTab();
-		container.getPanel().setTopComponent( this.toolBar.getComponent() );
+		container.getPanel().setTopComponent(this.toolBar.getComponent());
+		
+		RequisicoesOtimizacaoView view = new RequisicoesOtimizacaoView(new RequisicoesOtimizacaoPresenter());
+		view.show();
 	}
 }

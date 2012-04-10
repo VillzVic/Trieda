@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +35,6 @@ import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
 import com.gapso.web.trieda.server.xml.output.ItemProfessorVirtual;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
-import com.google.gwt.dev.util.collect.HashSet;
 
 @Transactional
 public class SolverOutput
@@ -361,16 +361,15 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public void salvarAtendimentosTatico( Campus campus, Turno turno )
-	{
-		removerTodosAtendimentosTaticoJaSalvos(campus,turno);
-		removerTodosAtendimentosOperacionalJaSalvos(campus,turno);
+	public void salvarAtendimentosTatico(Set<Campus> campi, Turno turno) {
+		removerTodosAtendimentosTaticoJaSalvos(campi,turno);
+		removerTodosAtendimentosOperacionalJaSalvos(campi,turno);
 
-		for ( AtendimentoTatico at : this.atendimentosTatico )
-		{
+		for (AtendimentoTatico at : this.atendimentosTatico) {
 			at.detach();
 			at.persist();
 		}
+		
 		for(AlunoDemanda alunoDemanda : alunosDemandaTatico.keySet()){
 			int creditosAtendidos = 0;
 			for(AtendimentoTatico tatico : alunosDemandaTatico.get(alunoDemanda)){
@@ -383,13 +382,11 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public void salvarAtendimentosOperacional( Campus campus, Turno turno )
-	{
-		removerTodosAtendimentosTaticoJaSalvos( campus, turno );
-		removerTodosAtendimentosOperacionalJaSalvos( campus, turno );
+	public void salvarAtendimentosOperacional(Set<Campus> campi, Turno turno) {
+		removerTodosAtendimentosTaticoJaSalvos(campi,turno);
+		removerTodosAtendimentosOperacionalJaSalvos(campi,turno);
 
-		for ( AtendimentoOperacional at : this.atendimentosOperacional )
-		{
+		for (AtendimentoOperacional at : this.atendimentosOperacional) {
 			at.detach();
 			at.persist();
 		}
@@ -407,51 +404,24 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public void removerTodosAtendimentosTaticoJaSalvos(
-		Campus campus, Turno turno )
-	{
-		List< AtendimentoTatico > atendimentosTatico	
-			= AtendimentoTatico.findAllBy(
-				this.instituicaoEnsino, campus, turno );
-
-		for ( AtendimentoTatico at : atendimentosTatico )
-		{
+	private void removerTodosAtendimentosTaticoJaSalvos(Set<Campus> campi, Turno turno) {
+		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findAllBy(instituicaoEnsino,campi,turno);
+		for (AtendimentoTatico at : atendimentosTatico) {
 			at.remove();
 		}
 	}
 
 	@Transactional
-	public void removerTodosAtendimentosOperacionalJaSalvos(
-		Campus campus, Turno turno )
-	{
-		InstituicaoEnsino instituicaoEnsinoCampus = ( campus == null ?
-			null : campus.getInstituicaoEnsino() );
-
-		InstituicaoEnsino instituicaoEnsinoTurno = ( turno == null ?
-			null : turno.getInstituicaoEnsino() );
-
-		if ( ( instituicaoEnsinoCampus != null || instituicaoEnsinoTurno != null )
-			&& instituicaoEnsinoCampus.getId() != instituicaoEnsinoTurno.getId() )
-		{
-			System.out.println(
-				"Operação inválida: remover atendimentos operacionais " +
-				"que correspondem a instituições de ensino diferentes." );
-
-			return;
-		}
-
-		List< AtendimentoOperacional > atendimentosOperacional
-			= AtendimentoOperacional.findAllBy( campus, turno, instituicaoEnsinoCampus );
-
-		for ( AtendimentoOperacional at : atendimentosOperacional )
-		{
+	private void removerTodosAtendimentosOperacionalJaSalvos(Set<Campus> campi, Turno turno) {
+		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllBy(campi,turno,instituicaoEnsino);
+		for (AtendimentoOperacional at : atendimentosOperacional) {
 			at.remove();
 		}
 	}
 
 	@Transactional
-	public void atualizarAlunosDemanda(Campus campus, Turno turno){
-		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino, campus, turno);
+	public void atualizarAlunosDemanda(Set<Campus> campi, Turno turno){
+		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,campi,turno);
 		for(AlunoDemanda alunoDemandaBD : alunosDemandasBD){
 			if(alunoDemandaBD.getAtendido()){
 				alunoDemandaBD.setAtendido(false);

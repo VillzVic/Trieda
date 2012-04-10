@@ -19,8 +19,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_CENARIOID = "cenarioid";
 	public static final String PROPERTY_MODOOTIMIZACAO = "modootimizacao";
 	public static final String PROPERTY_OTIMIZARPOR = "otimizarPor";
-	public static final String PROPERTY_CAMPUS_ID = "campusId";
-	public static final String PROPERTY_CAMPUS_DISPLAY = "campusDisplay";
+	public static final String PROPERTY_CAMPI = "campi";
 	public static final String PROPERTY_TURNO_ID = "turnoId";
 	public static final String PROPERTY_TURNO_DISPLAY = "turnoDisplay";
 	public static final String PROPERTY_CARGAHORARIAALUNO = "cargahorariaaluno";
@@ -109,18 +108,12 @@ public class ParametroDTO extends AbstractDTO<Long>
 		set(PROPERTY_OTIMIZARPOR, value);
 	}
 	
-	public Long getCampusId() {
-		return get(PROPERTY_CAMPUS_ID);
+	public List<CampusDTO> campi;
+	public List<CampusDTO> getCampi() {
+		return campi;
 	}
-	public void setCampusId(Long value) {
-		set(PROPERTY_CAMPUS_ID, value);
-	}
-	
-	public String getCampusDisplay() {
-		return get(PROPERTY_CAMPUS_DISPLAY);
-	}
-	public void setCampusDisplay(String value) {
-		set(PROPERTY_CAMPUS_DISPLAY, value);
+	public void setCampi(List<CampusDTO> value) {
+		campi = value;
 	}
 	
 	public Long getTurnoId() {
@@ -372,7 +365,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	}
 	
 	public boolean isValid() {
-		return (getCampusId() != null) && (getTurnoId() != null); 
+		return ((getCampi() != null) && !getCampi().isEmpty()) && (getTurnoId() != null); 
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
@@ -11,8 +12,11 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCampiPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -25,8 +29,7 @@ public class SelecionarCampiView extends MyComposite implements SelecionarCampiP
 	private SimpleModal simpleModal;
 	
 	private ContentPanel panel;
-	private ContentPanel panelLists;
-	
+	private LayoutContainer panelLists;
 	
 	private ListView<CampusDTO> naoSelecionadoList;
 	private ListView<CampusDTO> selecionadoList;
@@ -34,54 +37,52 @@ public class SelecionarCampiView extends MyComposite implements SelecionarCampiP
 	private Button adicionaBT;
 	private Button removeBT;
 	
-	
-	public SelecionarCampiView()
-	{
+	public SelecionarCampiView() {
 		initUI();
 	}
 
-	private void initUI()
-	{
-		simpleModal = new SimpleModal( "Parâmetros de Planejamento",
-			"Cancelar", "Selecionar campus para planejamento", Resources.DEFAULTS.campus16() );
-
-		simpleModal.setWidth( 600 );
-		simpleModal.setHeight( 400 );
+	private void initUI() {
+		simpleModal = new SimpleModal("Salvar","Cancelar","Selecionar Campi",Resources.DEFAULTS.campus16());
+		simpleModal.setHeight(455);
+		simpleModal.setWidth(620);
 		createForm();
-		simpleModal.setContent( panel );
+		simpleModal.setContent(panel);
 	}
 	
-	private void createForm()
-	{
+	private void createForm() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeaderVisible(false);
 
-		panelLists = new ContentPanel(new RowLayout(Orientation.HORIZONTAL));
-		panelLists.setHeaderVisible(false);
-		panelLists.setBodyBorder(false);
+		HBoxLayout layout2 = new HBoxLayout();  
+		layout2.setHBoxLayoutAlign(HBoxLayoutAlign.MIDDLE);  
+		layout2.setPadding(new Padding(5));  
+		panelLists = new LayoutContainer(layout2);
 
 		ContentPanel naoSelecionadoListPanel = new ContentPanel(new FitLayout());
-		naoSelecionadoListPanel.setHeading("Campus não selecionado");
+		naoSelecionadoListPanel.setHeading("Campi não selecionados");
+		naoSelecionadoListPanel.setWidth(267);
+		naoSelecionadoListPanel.setHeight(320);
 		naoSelecionadoList = new ListView<CampusDTO>();
 		naoSelecionadoList.setDisplayProperty(CampusDTO.PROPERTY_DISPLAY_TEXT);
 		naoSelecionadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		naoSelecionadoListPanel.add(naoSelecionadoList);
 
 		ContentPanel selecionadoListPanel = new ContentPanel(new FitLayout());
-		selecionadoListPanel.setHeading("Campus selecionados");
+		selecionadoListPanel.setHeading("Campi selecionados");
+		selecionadoListPanel.setWidth(267);
+		selecionadoListPanel.setHeight(320);
 		selecionadoList = new ListView<CampusDTO>();
 		selecionadoList.setDisplayProperty(CampusDTO.PROPERTY_DISPLAY_TEXT);
 		selecionadoList.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
 		selecionadoListPanel.add(selecionadoList);
 
-		panelLists.add(naoSelecionadoListPanel, new RowData(.5, 1, new Margins(10, 0, 10, 10)));
-		panelLists.add(getAtualizaSalasButtonsPanel(), new RowData(30, 1, new Margins(10, 0, 0, 0)));
-		panelLists.add(selecionadoListPanel, new RowData(.5, 1, new Margins(10, 10, 10, 0)));
+		panelLists.add(naoSelecionadoListPanel,new HBoxLayoutData(new Margins(5)));
+		panelLists.add(getAtualizaSalasButtonsPanel(),new HBoxLayoutData(new Margins(5)));
+		panelLists.add(selecionadoListPanel,new HBoxLayoutData(new Margins(5)));
 
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 		bld.setMargins(new Margins(0, 0, 0, 0));
 		panel.setBodyBorder(false);
-		panelLists.setBodyStyle("background-color: #DFE8F6;");
 		panel.add(panelLists, bld);
 	}
 

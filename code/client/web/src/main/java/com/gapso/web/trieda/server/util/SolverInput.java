@@ -192,45 +192,29 @@ public class SolverInput
 		}
 	}
 	
-	private void carregaDemandasDisciplinas()
-	{
-		// Inicialmente, consideramos que todas as
-		// disciplinas serão enviadas para o solver
-		this.disciplinasComDemandaCurriculo.addAll(
-			Disciplina.findAll( this.instituicaoEnsino ) );
+	private void carregaDemandasDisciplinas() {
+		// Inicialmente, consideramos que todas as disciplinas serão enviadas para o solver
+		this.disciplinasComDemandaCurriculo.addAll(Disciplina.findAll(this.instituicaoEnsino));
 
-		// Removemos do input todas as disciplinas
-		// que não possuem nenhuma demanda cadastrada
-		this.demandasCampusTurno.addAll( Demanda.findByCampusTurno(
-				this.instituicaoEnsino, this.parametro.getCampus(), this.parametro.getTurno() ) );
-
-		Set< Disciplina > disciplinasComDemanda = new HashSet< Disciplina >();
-
-		for ( Demanda demanda : this.demandasCampusTurno )
-		{
-			disciplinasComDemanda.add( demanda.getDisciplina() );
+		// Removemos do input todas as disciplinas que não possuem nenhuma demanda cadastrada
+		this.demandasCampusTurno.addAll(Demanda.findBy(this.instituicaoEnsino,this.parametro.getCampi(),this.parametro.getTurno()));
+		Set<Disciplina> disciplinasComDemanda = new HashSet<Disciplina>();
+		for (Demanda demanda : this.demandasCampusTurno) {
+			disciplinasComDemanda.add(demanda.getDisciplina());
 		}
+		this.disciplinasComDemandaCurriculo.retainAll(disciplinasComDemanda);
 
-		this.disciplinasComDemandaCurriculo.retainAll( disciplinasComDemanda );
-
-		// Removemos do input todas as disciplinas
-		// que não estão associadas a nenhuma matriz curriular
-		Set< Disciplina > disciplinasComCurriculo = new HashSet< Disciplina >();
-
-		Set< Curso > cursos = this.cenario.getCursos();
-		
-		for ( Curso curso : cursos )
-		{
-			for ( Curriculo curriculo : curso.getCurriculos() )
-			{
-				for ( CurriculoDisciplina cd : curriculo.getDisciplinas() )
-				{
-					disciplinasComCurriculo.add( cd.getDisciplina() );
+		// Removemos do input todas as disciplinas que não estão associadas a nenhuma matriz curriular
+		Set<Disciplina> disciplinasComCurriculo = new HashSet<Disciplina>();
+		Set<Curso> cursos = this.cenario.getCursos();
+		for (Curso curso : cursos) {
+			for (Curriculo curriculo : curso.getCurriculos()) {
+				for (CurriculoDisciplina cd : curriculo.getDisciplinas()) {
+					disciplinasComCurriculo.add(cd.getDisciplina());
 				}
 			}
 		}
-
-		this.disciplinasComDemandaCurriculo.retainAll( disciplinasComCurriculo );
+		this.disciplinasComDemandaCurriculo.retainAll(disciplinasComCurriculo);
 	}
 
 	private void preencheMapHorarios()
@@ -1359,63 +1343,45 @@ public class SolverInput
 		this.triedaInput.setDisciplinas( grupoDisciplina );
 	}
 
-	// Informa se existe demanda para uma
-	// determinada disciplina, no curso informado
-	private boolean verificaDemandaCurriculoDisciplina(
-		Curso curso, CurriculoDisciplina curriculoPeriodo )
-	{
-		if ( !this.disciplinasComDemandaCurriculo.contains(
-			curriculoPeriodo.getDisciplina() ) )
-		{
+	// Informa se existe demanda para uma determinada disciplina, no curso informado
+	private boolean verificaDemandaCurriculoDisciplina(Curso curso, CurriculoDisciplina curriculoPeriodo) {
+		if (!this.disciplinasComDemandaCurriculo.contains(curriculoPeriodo.getDisciplina())) {
 			return false;
 		}
 
-		Disciplina disciplina = curriculoPeriodo.getDisciplina();
+		Set<Oferta> ofertasCampi = new HashSet<Oferta>();
+		for (Campus campus : parametro.getCampi()) {
+			ofertasCampi.addAll(campus.getOfertas());
+		}
+
 		Curriculo curriculo = curriculoPeriodo.getCurriculo();
-		Integer periodo = curriculoPeriodo.getPeriodo();
-
-		Set< Oferta > ofertasCandidatas = new HashSet< Oferta >(); 
-		Set< Oferta > ofertasCampi = this.parametro.getCampus().getOfertas();
-
-		for ( Oferta oferta : ofertasCampi )
-		{
-			if ( oferta.getCurriculo().equals( curriculo )
-				&& oferta.getCurso().equals( curso )
-				&& oferta.getTurno().equals( this.parametro.getTurno() )
-				&& oferta.getCampus().equals( this.parametro.getCampus() ) )
-			{
-				ofertasCandidatas.add( oferta );
+		Set<Oferta> ofertasCandidatas = new HashSet<Oferta>(); 
+		for (Oferta oferta : ofertasCampi) {
+			if (oferta.getCurriculo().equals(curriculo) && oferta.getCurso().equals(curso) && oferta.getTurno().equals(this.parametro.getTurno())) {
+				ofertasCandidatas.add(oferta);
 			}
 		}
 
+		Disciplina disciplina = curriculoPeriodo.getDisciplina();
+		Integer periodo = curriculoPeriodo.getPeriodo();
 		boolean encontrouDemandaPeriodo = false;
-
-		for ( Oferta oferta : ofertasCandidatas )
-		{
-			Set< Demanda > demandas = oferta.getDemandas();
-
-			for ( Demanda demanda : demandas )
-			{
-				if ( demanda.getDisciplina().equals( disciplina ) )
-				{
-					List< Integer > periodosCurriculo
-						= this.mapCurriculosPeriodos.get( curriculo );
+		for (Oferta oferta : ofertasCandidatas) {
+			for (Demanda demanda : oferta.getDemandas()) {
+				if (demanda.getDisciplina().equals(disciplina)) {
+					List<Integer> periodosCurriculo = this.mapCurriculosPeriodos.get(curriculo);
 
 					// Verifica se o map possui o curriculo atual
 					encontrouDemandaPeriodo = ( periodosCurriculo != null );
 
 					// Verifica se o curriculo possui o período informado
-					encontrouDemandaPeriodo = ( encontrouDemandaPeriodo
-						&& periodosCurriculo.contains( periodo ) );
+					encontrouDemandaPeriodo = (encontrouDemandaPeriodo && periodosCurriculo.contains(periodo));
 
-					if ( encontrouDemandaPeriodo )
-					{
+					if (encontrouDemandaPeriodo) {
 						break;
 					}
 				}
 
-				if ( encontrouDemandaPeriodo )
-				{
+				if (encontrouDemandaPeriodo) {
 					break;
 				}
 			}
@@ -1632,55 +1598,45 @@ public class SolverInput
 		this.triedaInput.setCursos( grupoCurso );
 	}
 
-	private void generateOfertaCursoCampi()
-	{
+	private void generateOfertaCursoCampi() {
 		GrupoOfertaCurso grupoOfertaCurso = this.of.createGrupoOfertaCurso();
 
 		String warningMessage = "";
 		String errorMessage = "";
-
 		boolean existeOferta = false;
 		boolean campusSemOferta = false;
-
-		for ( Campus campus : this.campi )
-		{
-			List< Oferta > ofertas = new ArrayList<Oferta>(campus.getOfertas());
+		for (Campus campus : this.campi) {
+			List<Oferta> ofertas = new ArrayList<Oferta>(campus.getOfertas());
 			// ordena para manter inputs iguais
-			Collections.sort(ofertas, new Comparator<Oferta>() {
+			Collections.sort(ofertas,new Comparator<Oferta>() {
 				@Override
 				public int compare(Oferta o1, Oferta o2) {
 					return o1.getId().compareTo(o2.getId());
 				}
 			});
 
-			if ( ofertas.size() != 0 )
-			{
+			if (ofertas.size() != 0) {
 				existeOferta = true;
-			}
-			else
-			{
+			} else {
 				campusSemOferta = true;
 			}
 
-			for ( Oferta oferta : ofertas )
-			{
-				if ( !oferta.getTurno().equals( this.parametro.getTurno() )
-					|| !oferta.getCampus().equals( this.parametro.getCampus() ) )
-				{
+			for (Oferta oferta : ofertas) {
+				if (!oferta.getTurno().equals(this.parametro.getTurno()) || !this.parametro.getCampi().contains(oferta.getCampus())) {
 					continue;
 				}
 
 				ItemOfertaCurso itemOfertaCurso = this.of.createItemOfertaCurso();
-				itemOfertaCurso.setId( oferta.getId().intValue() );
+				itemOfertaCurso.setId(oferta.getId().intValue());
 
 				Curriculo curriculo = oferta.getCurriculo();
-				itemOfertaCurso.setCurriculoId( curriculo.getId().intValue());
-				itemOfertaCurso.setCursoId( curriculo.getCurso().getId().intValue() );
-				itemOfertaCurso.setTurnoId( oferta.getTurno().getId().intValue() );
-				itemOfertaCurso.setCampusId( campus.getId().intValue() );
-				itemOfertaCurso.setReceita( oferta.getReceita() == null ? 0.0 : oferta.getReceita() );
+				itemOfertaCurso.setCurriculoId(curriculo.getId().intValue());
+				itemOfertaCurso.setCursoId(curriculo.getCurso().getId().intValue());
+				itemOfertaCurso.setTurnoId(oferta.getTurno().getId().intValue());
+				itemOfertaCurso.setCampusId(campus.getId().intValue());
+				itemOfertaCurso.setReceita(oferta.getReceita() == null ? 0.0 : oferta.getReceita());
 
-				grupoOfertaCurso.getOfertaCurso().add( itemOfertaCurso );
+				grupoOfertaCurso.getOfertaCurso().add(itemOfertaCurso);
 			}
 		}
 
@@ -2014,22 +1970,12 @@ public class SolverInput
 		this.triedaInput.setFixacoes( grupoFixacao );
 	}
 
-	private void generateTaticoInput()
-	{
-		Set< AtendimentoTatico > ats = this.cenario.getAtendimentosTaticos();
-
-		for ( AtendimentoTatico at : ats )
-		{
-			if ( !at.getOferta().getTurno().equals( this.parametro.getTurno() )
-				|| !at.getOferta().getCampus().equals( this.parametro.getCampus() ) )
-			{
+	private void generateTaticoInput() {
+		for (AtendimentoTatico at : this.cenario.getAtendimentosTaticos()) {
+			if (!at.getOferta().getTurno().equals(this.parametro.getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
 				continue;
 			}
-
-			createItemAtendimentoTaticoSolucao( at.getSala(), at.getSemana(),
-				at.getOferta(), at.getDisciplina(), at.getDisciplinaSubstituta(),
-				at.getQuantidadeAlunos(), at.getTurma(),
-				at.getCreditosTeorico(), at.getCreditosPratico() );
+			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico());
 		}
 	}
 

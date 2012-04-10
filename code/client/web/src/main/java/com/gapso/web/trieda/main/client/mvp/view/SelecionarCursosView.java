@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
@@ -9,12 +11,9 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.FormPanel;
-import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
@@ -25,7 +24,6 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -36,25 +34,20 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 	private ContentPanel panel;
 	private LayoutContainer panelLists;
 	
-	private CampusComboBox campusCB;
-	
 	private ListView<CursoDTO> naoSelecionadoList;
 	private ListView<CursoDTO> selecionadoList;
 	
 	private Button adicionaBT;
 	private Button removeBT;
 	
-	private CampusDTO campus;
+	private List<CampusDTO> campi;
 	
-	
-	public SelecionarCursosView( CampusDTO campus )
-	{
-		this.campus = campus;
+	public SelecionarCursosView(List<CampusDTO> campi) {
+		this.campi = campi;
 		initUI();
 	}
 
-	private void initUI()
-	{
+	private void initUI() {
 		simpleModal = new SimpleModal( "Fechar", null, "Selecionar cursos", Resources.DEFAULTS.curso16() );
 		simpleModal.setHeight( 455 );
 		simpleModal.setWidth( 595 );
@@ -62,29 +55,9 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		simpleModal.setContent( panel );
 	}
 
-	private void createForm()
-	{
+	private void createForm() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeaderVisible(false);
-
-		FormData formData = new FormData("100%");
-		FormPanel formPanel = new FormPanel();
-		formPanel.setBodyBorder(false);
-		formPanel.setLabelWidth(100);
-		formPanel.setLabelAlign(LabelAlign.RIGHT);
-		formPanel.setHeaderVisible(false);
-		formPanel.setAutoHeight(true);
-
-		campusCB = new CampusComboBox();
-		campusCB.setValue(campus);
-
-		if ( campus != null )
-		{
-			campusCB.disable();
-		}
-
-		formPanel.add(campusCB, formData);
-		panel.setTopComponent(formPanel);
 
 		panelLists = new LayoutContainer();
         HBoxLayout layout2 = new HBoxLayout();  
@@ -93,12 +66,12 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
         panelLists.setLayout(layout2);
 
 		ContentPanel naoSelecionadoListPanel = new ContentPanel(new FitLayout());
-		naoSelecionadoListPanel.setHeading("Cursos não selecionado");
+		naoSelecionadoListPanel.setHeading("Cursos não selecionados");
 		naoSelecionadoListPanel.setWidth(267);
 		naoSelecionadoListPanel.setHeight(320);
 		naoSelecionadoList = new ListView<CursoDTO>();
 
-		if ( campus == null )
+		if ( campi == null )
 		{
 			naoSelecionadoList.disable();
 		}
@@ -135,7 +108,7 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		panel.setLayout(new RowLayout(Orientation.VERTICAL));
 
 		adicionaBT = new Button();
-		if ( campus == null )
+		if ( campi == null )
 		{
 			adicionaBT.setEnabled( false );
 		}
@@ -145,7 +118,7 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		
 		removeBT = new Button();
 
-		if ( campus == null )
+		if ( campi == null )
 		{
 			removeBT.setEnabled( false );
 		}
@@ -159,12 +132,6 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		panel.add(removeBT, rowData);
 
 		return panel;
-	}
-
-	@Override
-	public CampusComboBox getCampusComboBox()
-	{
-		return campusCB;
 	}
 
 	@Override
@@ -201,5 +168,10 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 	public Button getFecharBT()
 	{
 		return simpleModal.getSalvarBt();
+	}
+
+	@Override
+	public List<CampusDTO> getCampi() {
+		return campi;
 	}
 }

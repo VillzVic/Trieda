@@ -13,9 +13,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -69,10 +71,24 @@ public class Parametro
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
 	
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "CAM_ID")
-	private Campus campus;
+	@OneToOne(targetEntity = RequisicaoOtimizacao.class)
+	@JoinColumn(name = "ROP_ID")
+	private RequisicaoOtimizacao requisicaoOtimizacao;
+	
+	public RequisicaoOtimizacao getRequisicaoOtimizacao() {
+		return this.requisicaoOtimizacao;
+	}
+
+	public void setRequisicaoOtimizacao(RequisicaoOtimizacao requisicaoOtimizacao) {
+		this.requisicaoOtimizacao = requisicaoOtimizacao;
+	}
+	
+	@ManyToMany
+	@JoinTable(name="PARAMETROS_CAMPI",
+		joinColumns=@JoinColumn(name="PAR_ID"),
+		inverseJoinColumns=@JoinColumn(name="CAM_ID")
+	)
+	private Set<Campus> campi = new HashSet<Campus>();
 	
 	@NotNull
 	@ManyToOne
@@ -602,11 +618,11 @@ public class Parametro
 		this.cursosDescompartDiscCampi = cursosDescompartDiscCampi;
 	}
 	
-	public Campus getCampus() {
-		return campus;
+	public Set<Campus> getCampi() {
+		return campi;
 	}
-	public void setCampus(Campus campus) {
-		this.campus = campus;
+	public void setCampi(Set<Campus> campi) {
+		this.campi = campi;
 	}
 
 	public Turno getTurno() {
@@ -638,7 +654,7 @@ public class Parametro
         sb.append("Version: ").append(getVersion()).append(", ");
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("ModoOtimizacao: ").append(getModoOtimizacao()).append(", ");
-        sb.append("Campus: ").append(getCampus()).append(", ");
+        sb.append("Campi: ").append(getCampi().size()).append(", ");
         sb.append("Turno: ").append(getTurno()).append(", ");
         sb.append("CargaHorariaAluno: ").append(getCargaHorariaAluno()).append(", ");
         sb.append("CargaHorariaAlunoSel: ").append(getCargaHorariaAlunoSel()).append(", ");

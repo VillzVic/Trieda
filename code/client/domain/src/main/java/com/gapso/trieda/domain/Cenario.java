@@ -137,6 +137,9 @@ public class Cenario
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
 	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
+	
+	@OneToMany(mappedBy = "cenario")
+	private Set<RequisicaoOtimizacao> requisicoesDeOtimizacao = new HashSet<RequisicaoOtimizacao>();
 
 	public String toString()
 	{
@@ -168,6 +171,7 @@ public class Cenario
 			"null" : getAtendimentosTaticos().size() ).append( ", " );
 		sb.append( "Parametros: " ).append( getParametros() == null ?
 			"null" : getParametros().size() );
+		sb.append("Requisições de Otimização: ").append(getRequisicoesDeOtimizacao() == null ? "null" : getRequisicoesDeOtimizacao().size() ).append( ", " );
 
 		return sb.toString();
 	}
@@ -310,27 +314,18 @@ public class Cenario
 			.getSingleResult() ).intValue();
 	}
 
-	public Parametro getUltimoParametro(
-		InstituicaoEnsino instituicaoEnsino )
-	{
-		int parametrosCenario = ( (Number) entityManager().createQuery(
-			" SELECT count ( o ) FROM Parametro o " +
-			" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.cenario = :cenario " )
-			.setParameter( "instituicaoEnsino", instituicaoEnsino )
-			.setParameter( "cenario", this ).getSingleResult() ).intValue();
-
-		if ( parametrosCenario > 0 )
-		{
-			return (Parametro) entityManager().createQuery(
-				" SELECT o FROM Parametro o " +
-				" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.cenario = :cenario ORDER BY o.id DESC " )
-				.setParameter( "instituicaoEnsino", instituicaoEnsino )
-				.setParameter( "cenario", this ).setMaxResults( 1 ).getSingleResult();
+	public Parametro getUltimoParametro(InstituicaoEnsino instituicaoEnsino) {
+		long maiorId = -1;
+		Parametro parametro = null;
+		
+		for (Parametro param : parametros) {
+			if (param.getId() > maiorId) {
+				maiorId = param.getId();
+				parametro = param;
+			}
 		}
-
-		return null;
+		
+		return parametro;
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -602,6 +597,14 @@ public class Cenario
 	public void setCampi( Set< Campus > campi )
 	{
 		this.campi = campi;
+	}
+	
+	public Set<RequisicaoOtimizacao> getRequisicoesDeOtimizacao() {
+		return this.requisicoesDeOtimizacao;
+	}
+
+	public void setRequisicoesDeOtimizacao(Set<RequisicaoOtimizacao> requisicoesDeOtimizacao) {
+		this.requisicoesDeOtimizacao = requisicoesDeOtimizacao;
 	}
 
 	public Set< Disciplina > getDisciplinas()
