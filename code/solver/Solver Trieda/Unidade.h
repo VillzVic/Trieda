@@ -34,6 +34,8 @@ public:
 	unsigned getMaiorSala() const { return maior_sala; }
 	int getIdCampus() const { return id_campus; }
 
+	bool possuiSala( int idSala );
+
 private:
 	std::string codigo;
 	std::string nome;

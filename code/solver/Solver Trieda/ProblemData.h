@@ -9,6 +9,7 @@
 
 #include "combinatoria.h"
 #include "Calendario.h"
+#include "Aluno.h"
 #include "AlunoDemanda.h"
 #include "TipoSala.h"
 #include "TipoContrato.h"
@@ -60,6 +61,7 @@ public:
    ParametrosPlanejamento * parametros;
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
+   GGroup< Aluno *, LessPtr< Aluno > > alunos;
 
    GGroup< HorarioDia *, LessPtr< HorarioDia > > horariosDia;
    std::vector< HorarioDia * > horariosDiaIdx;
@@ -67,6 +69,8 @@ public:
 
    int getHorarioDiaIdx( HorarioDia * );
    int getHorarioDiaIdx( int, int );
+   
+   HorarioDia* getHorarioDiaCorrespondente( HorarioAula *ha, int dia );
 
    bool aulaAtendeCurso( Aula *, Curso * );
 
@@ -175,6 +179,9 @@ public:
 
    std::map< int, HorarioAula * > refHorarioAula;
    std::map< int, Turno * > refTurnos;
+
+   // Dado o id de um aluno, retorna referencia para o aluno correspondente
+   Aluno* retornaAluno( int /*alunoId*/ );
 
    // =============================================================================================
    // Estruturas conflitantes !!!
@@ -306,10 +313,7 @@ public:
    Disciplina * retornaDisciplinaSubstituta( Curso *, Curriculo *, Disciplina * );
 
    bool cursosCompativeis( Curso *, Curso * );
-
-   // Armazena as demandas criadas para as disciplinas substituídas
-   std::map< Disciplina *, Demanda * > demandasDisciplinasSubstituidas;
-
+   
    // Informa se uma disciplina substituída foi atendida
    std::map< Disciplina *, bool > disciplinasSubstituidasAtendidas;
 
@@ -377,8 +381,21 @@ public:
    // a outras semanas letivas que não se sobrepõem
    std::map< HorarioAula*, std::set<HorarioAula*> > compatibilidadesDeHorarios;
 
+   GGroup< HorarioAula *, LessPtr< HorarioAula > > retornaHorariosEmComum( int sala, int disc, int dia );
+
    // Dado o id de uma unidade, retorna referencia para o campus correspondente
    Campus* retornaCampus( int /*unidId*/ );
+
+   // Resultado da alocação de alunos no pre-modelo:
+   std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > mapAluno_CampusTurmaDisc;
+
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > > mapCampusTurmaDisc_AlunosDemanda;
+
+   int retornaTurmaDiscAluno( Aluno* aluno, Disciplina* disc );
+
+   AlunoDemanda* procuraAlunoDemanda( int discId, int alunoId );
+
+
 
    private:
    

@@ -13,6 +13,13 @@ public:
 	{
 	}
 
+	Trio( T1 t1, T2 t2, T3 t3 )
+	{
+		first = t1;
+		second = t2;
+		third = t3;
+	}
+
 	~Trio(void)
 	{
 	}

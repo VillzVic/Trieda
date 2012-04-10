@@ -189,6 +189,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
          }
       }
    }
+
 }
 
 /*
@@ -938,6 +939,35 @@ Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Cur
 }
 
 
+GGroup< HorarioAula *, LessPtr< HorarioAula > > ProblemData::retornaHorariosEmComum( int sala, int disc, int dia )
+{
+	GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios;
+
+	std::pair< int, int > parDiscSala = std::make_pair( disc, sala );
+
+	std::map< std::pair< int /*idDisc*/, int /*idSala*/ >, 
+			  std::map< int /*Dia*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > > >::iterator
+
+	it_Disc_Sala_Dias_HorariosAula = this->disc_Salas_Dias_HorariosAula.find( parDiscSala );
+
+	if ( it_Disc_Sala_Dias_HorariosAula == 
+		this->disc_Salas_Dias_HorariosAula.end() )
+	{
+		return horarios; // NULL
+	}
+
+	std::map< int /*Dia*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator
+		it_Dia_HorarioAula = it_Disc_Sala_Dias_HorariosAula->second.find( dia );
+					
+	if ( it_Dia_HorarioAula == it_Disc_Sala_Dias_HorariosAula->second.end() )
+	{
+		return horarios; // NULL
+	}
+
+	return it_Dia_HorarioAula->second;
+}
+
+
 // Dado o id de uma unidade, retorna referencia para o campus correspondente
 Campus* ProblemData::retornaCampus( int unidId /*unidId*/ )
 {
@@ -955,4 +985,65 @@ Campus* ProblemData::retornaCampus( int unidId /*unidId*/ )
    }
 
    return NULL;
+}
+
+
+int ProblemData::retornaTurmaDiscAluno( Aluno* aluno, Disciplina* disc )
+{
+	int turma = -1;
+		
+	GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > atendimentos = mapAluno_CampusTurmaDisc[ aluno ];
+	
+	GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator itAtend = atendimentos.begin();
+	for ( ; itAtend != atendimentos.end(); itAtend++ )
+	{
+		if ( (*itAtend).third == disc )	
+		{
+			turma = (*itAtend).second;
+			return turma;
+		}
+	}
+
+    return turma;
+}
+
+// Dado o id de um aluno, retorna referencia para o aluno correspondente
+Aluno* ProblemData::retornaAluno( int id )
+{
+	ITERA_GGROUP_LESSPTR( it_aluno, alunos, Aluno )
+	{
+		if ( it_aluno->getAlunoId() == id )
+			return *it_aluno;
+	}
+	return NULL;
+}
+
+
+HorarioDia* ProblemData::getHorarioDiaCorrespondente( HorarioAula *ha, int dia )
+{
+	
+	ITERA_GGROUP_LESSPTR( itHd, horariosDia, HorarioDia )
+	{
+		if ( itHd->getDia() == dia &&
+			 itHd->getHorarioAula() == ha )
+		{
+			return *itHd;
+		}
+	}
+
+	return NULL;
+}
+
+AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId )
+{
+	ITERA_GGROUP_LESSPTR( itAlDemanda, alunosDemanda, AlunoDemanda )
+	{
+		if ( itAlDemanda->demanda->getDisciplinaId() == discId &&
+			 itAlDemanda->getAlunoId() == alunoId )
+		{
+			return *itAlDemanda;
+		}
+	}
+
+	return NULL;
 }

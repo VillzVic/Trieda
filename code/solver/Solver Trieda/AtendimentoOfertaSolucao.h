@@ -41,6 +41,8 @@ public:
    int getQuantidade() const { return this->quantidade; }
    std::string getTurma() const { return this->turma; }
    int getDisciplinaSubstituidaId() const { return this->disciplinaSubstituidaId; }
+   
+   GGroup< int > alunosDemandasAtendidas;
 
 private:
    int ofertaCursoCampiId;

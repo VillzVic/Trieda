@@ -7,6 +7,7 @@
 #include "ProblemData.h"
 #include "ProblemSolution.h"
 #include "Variable.h"
+#include "VariableTatico.h"
 #include "Constraint.h"
 #include "ErrorHandler.h"
 
@@ -120,6 +121,82 @@ void SolutionLoader::setFolgas( Variable * v )
 		  break;
 	   case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M: 
       case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P: 
+		   restricaoStr = "Regra de divisão de créditos (fk_{";
+         sprintf(buffer, "%d", v->getTurma());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getDisciplina()->getId());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getK());
+         restricaoStr += buffer;
+		   restricaoStr += "})";
+		   restricaoViolada->setRestricao(restricaoStr);
+		   restricaoViolada->setUnidade("x");
+		   restricaoViolada->setValor(v->getValue());
+		   problemSolution->getFolgas()->add(restricaoViolada);
+		   break;
+	   default:
+		  delete restricaoViolada;
+		  return;
+   }
+}
+
+void SolutionLoader::setFolgas( VariableTatico * v )
+{
+   std::string restricaoStr;
+   std::string auxUnidade;
+
+   char buffer[100];
+   if ( v == NULL )
+   {
+      return;
+   }
+
+   RestricaoViolada * restricaoViolada = new RestricaoViolada();
+   switch ( v->getType() )
+   {
+	   case VariableTatico::V_SLACK_DIST_CRED_DIA_SUPERIOR:
+		   restricaoStr = "Fixação da distribuição de créditos por dia (fcp_{";
+         sprintf(buffer, "%d", v->getDisciplina()->getId() );
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getDia());
+         restricaoStr += buffer;
+         restricaoStr += "})";
+         restricaoViolada->setRestricao(restricaoStr);
+         restricaoViolada->setUnidade("x");
+         restricaoViolada->setValor(v->getValue());
+         problemSolution->getFolgas()->add(restricaoViolada);
+		   break;
+	   case VariableTatico::V_SLACK_DIST_CRED_DIA_INFERIOR:
+         restricaoStr = "Fixação da distribuição de créditos por dia (fcm_{";
+         sprintf(buffer, "%d", v->getDisciplina()->getId());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getDia());
+         restricaoStr += buffer;
+         restricaoStr += "})";
+         restricaoViolada->setRestricao(restricaoStr);
+		   restricaoViolada->setUnidade("x");
+		   restricaoViolada->setValor(v->getValue());
+		   problemSolution->getFolgas()->add(restricaoViolada);
+		   break;
+	   case VariableTatico::V_SLACK_DEMANDA:
+		  restricaoStr = "Capacidade alocada tem que permitir atender demanda da disciplina/aluno (fd_{";
+        sprintf(buffer, "%d", v->getDisciplina()->getId());
+        restricaoStr += buffer;
+        restricaoStr += ",";
+		sprintf(buffer, "%d", v->getAluno()->getAlunoId());
+        restricaoStr += buffer;
+        restricaoStr += "})";
+        restricaoViolada->setRestricao(restricaoStr);
+        restricaoViolada->setUnidade("fd");
+        restricaoViolada->setValor(v->getValue());
+		  problemSolution->getFolgas()->add(restricaoViolada);
+		  break;
+	   case VariableTatico::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M: 
+      case VariableTatico::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P: 
 		   restricaoStr = "Regra de divisão de créditos (fk_{";
          sprintf(buffer, "%d", v->getTurma());
          restricaoStr += buffer;

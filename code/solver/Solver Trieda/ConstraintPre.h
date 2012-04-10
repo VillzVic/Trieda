@@ -35,7 +35,16 @@ public:
 	  C_PRE_TURMA_MESMA_DISC_SALA_DIF = 14,			// Restricao 1.14
 	  C_PRE_LIM_SUP_CREDS_SALA		= 15,			// Restricao 1.15
 	  C_PRE_ATIVA_C					= 16,			// Restricao 1.16
-	  C_PRE_FIXA_NAO_COMPARTILHAMENTO = 17			// Restricao 1.17
+
+	  // Restrição só usada para o modelo Tatico (sem aluno):
+
+	  C_PRE_FIXA_NAO_COMPARTILHAMENTO = 17,			// Restricao 1.17
+
+	  // Restrição só usada para o modelo Tatico-Aluno:
+
+	  C_ATENDIMENTO_ALUNO = 18,						// Restricao 1.18
+	  C_ALUNO_UNICA_TURMA_DISC = 19					// Restricao 1.19
+
    };
 
    /** Default constructor. */
@@ -83,7 +92,7 @@ public:
    std::pair<Curso*, Curso*> getParCursos() const{ return parCursos;}
    ConjuntoSala * getSubCjtSalaCompart() const { return cjtSalaCompart; }
    std::pair<Oferta*, Oferta*> getParOfertas() const { return parOfts; }
-   
+   Aluno* getAluno() const { return aluno; } 
 
    //==================================================
    // SET METHODS 
@@ -109,6 +118,7 @@ public:
    void setParCursos( std::pair<Curso*, Curso*> par ){ parCursos = par;}
    void setSubCjtSalaCompart( ConjuntoSala *s ){ cjtSalaCompart = s; }
    void setParOfertas( std::pair<Oferta*, Oferta*> ofts ){ parOfts = ofts; }
+   void setAluno( Aluno* a ){ aluno = a; }
 
 private:
 
@@ -139,6 +149,8 @@ private:
    Calendario* sl; // semana letiva (calendario)
 
    std::pair<Oferta*, Oferta*> parOfts; // par de ofertas (restrição 1.2.36)
+
+   Aluno* aluno;
 
 };
 

@@ -8,6 +8,7 @@
 class ProblemData;
 class ProblemSolution;
 class Variable;
+class VariableTatico;
 class Constraint;
 
 class FolgasSolution;
@@ -19,6 +20,7 @@ public:
    ~SolutionLoader();
 
    void setFolgas(Variable* v);
+   void setFolgas(VariableTatico* v);
 
 private:
    ProblemData* problemData;

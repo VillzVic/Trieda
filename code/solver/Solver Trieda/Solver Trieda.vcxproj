@@ -216,8 +216,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;C:\ILOG\CPLEX123_64\cplex\include\ilcplex;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;SOLVER_CPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;$(GUROBI_32)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;SOLVER_GUROBI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -230,8 +230,8 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>cplex123.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\ILOG\CPLEX123\cplex\lib\x86_windows_vs2010\stat_mda;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gurobi40.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GUROBI_32)\lib;$(XSD)\lib\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -677,9 +677,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Aluno.cpp" />
     <ClCompile Include="AlunoDemanda.cpp" />
     <ClCompile Include="AtendimentoBase.cpp" />
     <ClCompile Include="ConstraintPre.cpp" />
+    <ClCompile Include="ConstraintTatico.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="AreaTitulacao.cpp" />
     <ClCompile Include="AtendimentoCampusSolucao.cpp" />
@@ -771,8 +773,10 @@
     <ClCompile Include="Tatico.cpp" />
     <ClCompile Include="TRIEDA-OutputXSD.cpp" />
     <ClCompile Include="VariablePre.cpp" />
+    <ClCompile Include="VariableTatico.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Aluno.h" />
     <ClInclude Include="AlunoDemanda.h" />
     <ClInclude Include="AreaTitulacao.h" />
     <ClInclude Include="AtendimentoBase.h" />
@@ -787,6 +791,7 @@
     <ClInclude Include="Campus.h" />
     <ClInclude Include="ConjuntoSala.h" />
     <ClInclude Include="ConstraintPre.h" />
+    <ClInclude Include="ConstraintTatico.h" />
     <ClInclude Include="ConverteHorariosCreditos.h" />
     <ClInclude Include="CreditoDisponivel.h" />
     <ClInclude Include="Curriculo.h" />
@@ -877,6 +882,7 @@
     <ClInclude Include="RandomDescentMethod.h" />
     <ClInclude Include="RVND.hpp" />
     <ClInclude Include="VariablePre.h" />
+    <ClInclude Include="VariableTatico.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

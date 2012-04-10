@@ -30,6 +30,7 @@ public:
    void referenciaHorariosAula();
    void relacionaCalendarioHorariosAula();
    void geraRefsOfertasDemandas();
+   void criaAlunos();
    void referenciaDisciplinasEquivalentesIncompativeis();
    void referenciaDisciplinasCurriculos();
    void preencheTempoAulaHorarios();
@@ -146,6 +147,13 @@ public:
    // Cria uma nova fixação com os dados informados
    Fixacao * criaFixacao( int, Professor *,
       Disciplina *, Sala *, int, HorarioAula * );
+
+   // Deleta fixações que relacionam disciplinas que foram substituídas
+   void removeFixacoesComDisciplinasSubstituidas();   
+
+   // Associa corretamente fixações que relacionam salas a disciplinas
+   // que possuem creditos praticos
+   void corrigeFixacoesComDisciplinasSalas();
 
    // Quando houver uma fixação de uma disciplina em um dia
    // da semana, esse método remove os demais dias da semana

@@ -248,6 +248,28 @@ public:
       return capSalas;
    }
 
+
+   GGroup< HorarioAula* > retornaHorariosDisponiveisNoDiaSL( int dia, Calendario *sl )
+   {
+	   GGroup<HorarioAula*> horariosPorSala;
+	   GGroup<HorarioAula*> horarios;
+
+      std::map< int /*Id Sala*/, Sala * >::iterator itSala = salas.begin();
+      for (; itSala != salas.end(); itSala++ )
+      {
+		  horariosPorSala = itSala->second->retornaHorariosDisponiveisNoDiaPorSL( dia, sl );
+
+		  GGroup<HorarioAula*>::iterator it = horariosPorSala.begin();
+		  ITERA_GGROUP( it, horariosPorSala, HorarioAula )
+		  {
+			  horarios.add( *it );
+		  }
+	  }
+
+      return horarios;
+   }
+
+
    std::map< int /*Id Sala*/, Sala * > salas;
 
 private:

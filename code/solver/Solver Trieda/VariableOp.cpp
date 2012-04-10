@@ -34,6 +34,7 @@ void VariableOp::reset()
    this->h1 = NULL;
    this->h2 = NULL;
    this->unidade = NULL;
+   this->campus = NULL;
 }
 
 VariableOp::~VariableOp()
@@ -60,6 +61,7 @@ VariableOp& VariableOp::operator = ( const VariableOp & var )
    this->h1 = var.getH1();
    this->h2 = var.getH2();
    this->unidade = var.getUnidade();
+   this->campus = var.getCampus();
 
    return ( *this );
 }
@@ -213,6 +215,18 @@ bool VariableOp::operator < ( const VariableOp & var ) const
 			return false;
 	}
 
+   if( this->getCampus() == NULL && var.getCampus() != NULL )
+		return true;
+	else if( this->getCampus() != NULL && var.getCampus() == NULL )
+		return false;
+	else if( this->getCampus() != NULL && var.getCampus() != NULL )
+	{
+		if( *this->getCampus() < *var.getCampus() )
+			return true;
+		else if( *var.getCampus() < *this->getCampus() )
+			return false;
+	}
+
    return false;
 }
 
@@ -332,6 +346,11 @@ std::string VariableOp::toString()
       str << "_Turma" << turma;
    }
    
+   if ( campus != NULL )
+   {
+      str << "_Cp:" << campus->getId();
+   }
+
    if ( unidade != NULL )
    {
       str << "_Unid:" << unidade->getId();

@@ -211,6 +211,24 @@ demandaId (const demandaId_type& x)
   this->demandaId_.set (x);
 }
 
+const ItemAlunoDemanda::prioridade_type& ItemAlunoDemanda::
+prioridade () const
+{
+  return this->prioridade_.get ();
+}
+
+ItemAlunoDemanda::prioridade_type& ItemAlunoDemanda::
+prioridade ()
+{
+  return this->prioridade_.get ();
+}
+
+void ItemAlunoDemanda::
+prioridade (const prioridade_type& x)
+{
+  this->prioridade_.set (x);
+}
+
 
 // ItemTurno
 // 
@@ -2928,6 +2946,32 @@ modoOtimizacao (::std::auto_ptr< modoOtimizacao_type > x)
 {
   this->modoOtimizacao_.set (x);
 }
+
+
+const ItemParametrosPlanejamento::otimizarPor_type& ItemParametrosPlanejamento::
+otimizarPor () const
+{
+  return this->otimizarPor_.get ();
+}
+
+ItemParametrosPlanejamento::otimizarPor_type& ItemParametrosPlanejamento::
+otimizarPor ()
+{
+  return this->otimizarPor_.get ();
+}
+
+void ItemParametrosPlanejamento::
+otimizarPor (const otimizarPor_type& x)
+{
+  this->otimizarPor_.set (x);
+}
+
+void ItemParametrosPlanejamento::
+otimizarPor (::std::auto_ptr< otimizarPor_type > x)
+{
+  this->otimizarPor_.set (x);
+}
+
 
 const ItemParametrosPlanejamento::cargaHorariaSemanalAluno_type& ItemParametrosPlanejamento::
 cargaHorariaSemanalAluno () const
@@ -5715,12 +5759,14 @@ ItemAlunoDemanda::
 ItemAlunoDemanda (const id_type& id,
                   const alunoId_type& alunoId,
                   const nomeAluno_type& nomeAluno,
-                  const demandaId_type& demandaId)
+                  const demandaId_type& demandaId,
+				  const prioridade_type& prioridade)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   alunoId_ (alunoId, ::xml_schema::flags (), this),
   nomeAluno_ (nomeAluno, ::xml_schema::flags (), this),
-  demandaId_ (demandaId, ::xml_schema::flags (), this)
+  demandaId_ (demandaId, ::xml_schema::flags (), this),
+  prioridade_ (prioridade, ::xml_schema::flags (), this)
 {
 }
 
@@ -5732,7 +5778,8 @@ ItemAlunoDemanda (const ItemAlunoDemanda& x,
   id_ (x.id_, f, this),
   alunoId_ (x.alunoId_, f, this),
   nomeAluno_ (x.nomeAluno_, f, this),
-  demandaId_ (x.demandaId_, f, this)
+  demandaId_ (x.demandaId_, f, this),
+  prioridade_ (x.prioridade_, f, this)
 {
 }
 
@@ -5744,7 +5791,8 @@ ItemAlunoDemanda (const ::xercesc::DOMElement& e,
   id_ (f, this),
   alunoId_ (f, this),
   nomeAluno_ (f, this),
-  demandaId_ (f, this)
+  demandaId_ (f, this),
+  prioridade_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -5810,6 +5858,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // prioridade
+    //
+    if (n.name () == "prioridade" && n.namespace_ ().empty ())
+    {
+      if (!prioridade_.present ())
+      {
+        this->prioridade_.set (prioridade_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -5838,6 +5897,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "demandaId",
+      "");
+  }
+
+  if (!prioridade_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "prioridade",
       "");
   }
 }
@@ -10261,6 +10327,7 @@ ItemFixacao::
 
 ItemParametrosPlanejamento::
 ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
+							const otimizarPor_type& otimizarPor,
                             const cargaHorariaSemanalAluno_type& cargaHorariaSemanalAluno,
                             const alunosMesmoPeriodoNaMesmaSala_type& alunosMesmoPeriodoNaMesmaSala,
                             const permitirAlunosEmVariosCampi_type& permitirAlunosEmVariosCampi,
@@ -10290,6 +10357,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const custoProfDisponibilidade_type& custoProfDisponibilidade)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
+  otimizarPor_ (otimizarPor, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
   alunosMesmoPeriodoNaMesmaSala_ (alunosMesmoPeriodoNaMesmaSala, ::xml_schema::flags (), this),
   permitirAlunosEmVariosCampi_ (permitirAlunosEmVariosCampi, ::xml_schema::flags (), this),
@@ -10328,6 +10396,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
 
 ItemParametrosPlanejamento::
 ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
+							const otimizarPor_type& otimizarPor,
                             ::std::auto_ptr< cargaHorariaSemanalAluno_type >& cargaHorariaSemanalAluno,
                             const alunosMesmoPeriodoNaMesmaSala_type& alunosMesmoPeriodoNaMesmaSala,
                             const permitirAlunosEmVariosCampi_type& permitirAlunosEmVariosCampi,
@@ -10357,6 +10426,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const custoProfDisponibilidade_type& custoProfDisponibilidade)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
+  otimizarPor_ (otimizarPor, ::xml_schema::flags (), this),
   cargaHorariaSemanalAluno_ (cargaHorariaSemanalAluno, ::xml_schema::flags (), this),
   alunosMesmoPeriodoNaMesmaSala_ (alunosMesmoPeriodoNaMesmaSala, ::xml_schema::flags (), this),
   permitirAlunosEmVariosCampi_ (permitirAlunosEmVariosCampi, ::xml_schema::flags (), this),
@@ -10399,6 +10469,7 @@ ItemParametrosPlanejamento (const ItemParametrosPlanejamento& x,
                             ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
   modoOtimizacao_ (x.modoOtimizacao_, f, this),
+  otimizarPor_ (x.otimizarPor_, f, this),
   cargaHorariaSemanalAluno_ (x.cargaHorariaSemanalAluno_, f, this),
   alunosMesmoPeriodoNaMesmaSala_ (x.alunosMesmoPeriodoNaMesmaSala_, f, this),
   permitirAlunosEmVariosCampi_ (x.permitirAlunosEmVariosCampi_, f, this),
@@ -10441,6 +10512,7 @@ ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
                             ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   modoOtimizacao_ (f, this),
+  otimizarPor_ (f, this),
   cargaHorariaSemanalAluno_ (f, this),
   alunosMesmoPeriodoNaMesmaSala_ (f, this),
   permitirAlunosEmVariosCampi_ (f, this),
@@ -10502,6 +10574,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!modoOtimizacao_.present ())
       {
         this->modoOtimizacao_.set (r);
+        continue;
+      }
+    }
+
+    // otimizarPor
+    //
+    if (n.name () == "otimizarPor" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< otimizarPor_type > r (
+        otimizarPor_traits::create (i, f, this));
+
+      if (!otimizarPor_.present ())
+      {
+        this->otimizarPor_.set (r);
         continue;
       }
     }
@@ -10894,6 +10980,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "modoOtimizacao",
+      "");
+  }
+  
+  if (!otimizarPor_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "otimizarPor",
       "");
   }
 

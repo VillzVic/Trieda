@@ -50,6 +50,7 @@ ConstraintPre& ConstraintPre::operator = ( const ConstraintPre & cons )
    this->parCursos = cons.getParCursos();
    this->cjtSalaCompart = cons.getSubCjtSalaCompart();
    this->parOfts = cons.getParOfertas();
+   this->aluno = cons.getAluno();
 
    return *this;
 }
@@ -107,6 +108,9 @@ bool ConstraintPre::operator < ( const ConstraintPre & cons ) const
    if ( E_MENOR_PAR( this->getParOfertas(), cons.getParOfertas() ) ) return true;
    if ( E_MENOR_PAR( cons.getParOfertas(), this->getParOfertas() ) ) return false;
 
+   if ( E_MENOR( this->getAluno(), cons.getAluno() ) ) return true;
+   if ( E_MENOR( cons.getAluno(), this->getAluno() ) ) return false;
+
    return false;
 
 }
@@ -135,7 +139,7 @@ void ConstraintPre::reset()
    parCursos.second = NULL;
    parOfts.first = NULL;
    parOfts.second = NULL;
-
+   aluno = NULL;
 }
 
 std::string ConstraintPre::toString()
@@ -178,7 +182,12 @@ std::string ConstraintPre::toString()
    case C_PRE_ATIVA_C:
       ss << "__(C_PRE_ATIVA_C):"; break;	  
    case C_PRE_FIXA_NAO_COMPARTILHAMENTO:
-      ss << "__(C_PRE_FIXA_NAO_COMPARTILHAMENTO):"; break;	  
+      ss << "__(C_PRE_FIXA_NAO_COMPARTILHAMENTO):"; break;	 
+   case C_ATENDIMENTO_ALUNO:
+      ss << "__(C_ATENDIMENTO_ALUNO):"; break;	 
+   case C_ALUNO_UNICA_TURMA_DISC:
+      ss << "__(C_ALUNO_UNICA_TURMA_DISC):"; break;	 
+   	  
 	  
    default:
       ss << "!";
@@ -258,6 +267,11 @@ std::string ConstraintPre::toString()
    if ( sl != NULL )
    {
 	   ss << "_SL" << sl->getId();
+   }
+
+   if ( aluno )
+   {
+	   ss << "_Aluno" << aluno->getAlunoId();
    }
 
    ss << "_}";

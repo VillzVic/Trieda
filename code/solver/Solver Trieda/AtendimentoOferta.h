@@ -28,6 +28,8 @@ public:
 
    Disciplina * disciplina; // Disciplina atendida. Se tiver havido substituição, é a substituta. Caso contrario, é a original
 
+   GGroup< int > alunosDemandasAtendidas;
+
 private:
    std::string oferta_curso_campi_id;
    int disciplina_id; // id da disciplina original, sempre

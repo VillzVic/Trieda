@@ -85,6 +85,7 @@ std::ostream & operator << (
       out << "<professoresVirtuais/>" << std::endl;
 
       //-----------------------------------------------------------------------
+	  /*
       if ( solution.alunosDemanda != NULL )
       {
          out << "<alunosDemanda>" << std::endl;
@@ -104,6 +105,7 @@ std::ostream & operator << (
       {
          out << "<alunosDemanda/>" << std::endl;
       }
+	  */
       //-----------------------------------------------------------------------
 
       out << "</TriedaOutput>" << std::endl;

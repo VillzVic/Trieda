@@ -30,3 +30,16 @@ void Unidade::le_arvore( ItemUnidade & elem )
       horarios.add( horario );
    }
 }
+
+bool Unidade::possuiSala( int idSala )
+{
+	ITERA_GGROUP_LESSPTR( itSala, this->salas, Sala )
+    {
+		if ( itSala->getId() == idSala )
+        {
+			return true;
+        }
+	}
+	return false;
+	
+}

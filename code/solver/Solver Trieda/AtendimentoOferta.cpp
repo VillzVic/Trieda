@@ -4,32 +4,34 @@ AtendimentoOferta::AtendimentoOferta( int id )
 {
    this->setId( id );
    this->oferta_curso_campi_id = "";
-   this->disciplina_id = -1;
+   this->disciplina_id = NULL;
    this->quantidade = 0;
    this->turma = 99999999;
    this->oferta = NULL;
-   this->disciplina_substituta_id = -1;
+   this->disciplina_substituta_id = NULL;
 }
 
 AtendimentoOferta::~AtendimentoOferta( void )
 {
-   this->setId( -1 );
-   this->oferta_curso_campi_id = "";
-   this->disciplina_id = -1;
-   this->quantidade = 0;
-   this->turma = 99999999;
-   this->oferta = NULL;
-   this->disciplina_substituta_id = -1;
 }
 
-std::ostream & operator << ( std::ostream & out, AtendimentoOferta & oferta )
+std::ostream & operator << ( std::ostream & out, AtendimentoOferta & atOferta )
 {
-   out << "<ofertaCursoCampiId>" << oferta.getOfertaCursoCampiId() << "</ofertaCursoCampiId>" << std::endl;
-   if ( oferta.getDisciplinaSubstitutaId() != -1 )
-		out << "<disciplinaSubstitutaId>" << abs( oferta.getDisciplinaSubstitutaId() ) << "</disciplinaSubstitutaId>" << std::endl;
-   out << "<disciplinaId>" << abs( oferta.getDisciplinaId() ) << "</disciplinaId>" << std::endl;
-   out << "<quantidade>" << oferta.getQuantidade() << "</quantidade>" << std::endl;
-   out << "<turma>" << oferta.getTurma() << "</turma>" << std::endl;
+   out << "<ofertaCursoCampiId>" << atOferta.getOfertaCursoCampiId() << "</ofertaCursoCampiId>" << std::endl;
+   if ( atOferta.getDisciplinaSubstitutaId() != NULL )
+		out << "<disciplinaSubstitutaId>" << abs( atOferta.getDisciplinaSubstitutaId() ) << "</disciplinaSubstitutaId>" << std::endl;
+   out << "<disciplinaId>" << abs( atOferta.getDisciplinaId() ) << "</disciplinaId>" << std::endl;
+   out << "<quantidade>" << atOferta.getQuantidade() << "</quantidade>" << std::endl;
+   out << "<turma>" << atOferta.getTurma() << "</turma>" << std::endl;
+	
+   out << "<alunosDemandasAtendidas>" << std::endl;
+  
+   ITERA_GGROUP_N_PT( it, atOferta.alunosDemandasAtendidas, int )
+   {
+	   out << "<id>" << *it << "</id>" << std::endl;
+   }
+   out << "</alunosDemandasAtendidas>" << std::endl;
+   
 
    return out;
 }

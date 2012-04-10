@@ -30,6 +30,9 @@ public:
 
    int min_alunos_abertura_turmas_value;
 
+   // ALUNO ou BLOCOCURRICULAR
+   std::string otimizarPor;
+
    bool equilibrar_diversidade_disc_dia;
    bool minimizar_desloc_prof;
    bool minimizar_desloc_aluno;

@@ -12,6 +12,8 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
 {
    modo_otimizacao = elem.modoOtimizacao();
 
+   otimizarPor = elem.otimizarPor();
+
    ITERA_SEQ( it_niveis_dificuldade_horario,
 			  elem.niveisDificuldadeHorario(),
 			  NivelDificuldadeHorario )

@@ -29,7 +29,12 @@ public:
 	  V_PRE_SLACK_COMPARTILHAMENTO = 10,			// fc_{i,d,c1,c2}
 	  V_PRE_SLACK_SALA = 11,						// fs_{d,s}
 	  V_PRE_LIM_SUP_CREDS_SALA = 12,				// Hs_{cp}
-	  V_PRE_ALOC_ALUNO_OFT = 13						// c_{i,d,s,oft}
+	  V_PRE_ALOC_ALUNO_OFT = 13,					// c_{i,d,s,oft}
+
+	  // Variaveis usadas somente para o modelo Tatico-Aluno:
+
+	  V_PRE_ALOCA_ALUNO_TURMA_DISC = 14,			// s_{a,i,d,cp}
+
    };
 
    //Constructors
@@ -74,6 +79,8 @@ public:
    
    std::pair<Oferta*, Oferta*> getParOfertas() const{ return parOft;}
    
+   Aluno* getAluno() const { return aluno; }
+
    //==================================================
    // SET METHODS 
    //==================================================
@@ -112,6 +119,8 @@ public:
      
    void setParOfertas( Oferta* oft1, Oferta* oft2 ){ parOft.first = oft1; parOft.second = oft2;}
 
+   void setAluno( Aluno * a ) { aluno = a; }
+
    //==================================================
    // OPERATORS 
    //==================================================
@@ -141,6 +150,8 @@ private:
    Disciplina * d;
    int j; // subbloco
    Oferta * o; // oferta
+   Aluno *aluno;
+
 };
 
 

@@ -11,6 +11,8 @@
 #include "Solver.h"
 #include "VariablePre.h"
 #include "ConstraintPre.h"
+#include "VariableTatico.h"
+#include "ConstraintTatico.h"
 #include "Variable.h"
 #include "Constraint.h"
 #include "VariableOp.h"
@@ -47,7 +49,6 @@
 #define PRE_TATICO
 #endif
 
-
 class SolverMIP : public Solver
 {
 public:
@@ -77,6 +78,9 @@ public:
    int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId );// fs_{d,s,oft}
    int cria_preVariavel_limite_sup_creds_sala( int campusId );			// Hs_{cp}
    int cria_preVariavel_aloca_alunos_oferta( int campusId );			// c_{i,d,oft,s}
+	
+   // Usadas somente para o modelo Tatico-Aluno:
+   int cria_preVariavel_aloca_aluno_turma_disc( int campusId );			// s_{i,d,a,cp}
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
@@ -100,10 +104,74 @@ public:
    int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId ); // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala( int campusId );		// Restricao 1.15
    int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId );	// Restricao 1.16
+
    int cria_preRestricao_fixa_nao_compartilhamento( int campusId );	// Restricao 1.17
 
+   int cria_preRestricao_atendimento_aluno( int campusId );			// Restricao 1.18
+   int cria_preRestricao_aluno_unica_turma_disc( int campusId );	// Restricao 1.19
+
+   
+
+
    /********************************************************************
-   **                      VARIABLE CREATION                          **
+   **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
+   *********************************************************************/
+
+   
+   int criaVariaveisTatico( int campusId );
+
+   int criaVariavelTaticoCreditos( int campusId );									// x_{i,d,u,s,hi,hf,t}      
+   int criaVariavelTaticoAbertura( int campusId );									// z_{i,d,cp}
+   int criaVariavelTaticoConsecutivos( int campusId );								// c_{i,d,t}
+   int criaVariavelTaticoMinCreds( int campusId );									// h_{a}
+   int criaVariavelTaticoMaxCreds( int campusId );									// H_{a}
+   int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId );					// m_{i,d,k}   
+   int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId );				// fkp_{i,d,k} e fkm_{i,d,k}
+   int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId );					// fcp_{d,t}   
+   int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId );					// fcm_{d,t}
+   int criaVariavelTaticoAberturaCompativel( int campusId );						// zc_{d,t}
+   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );						// fd_{d,a}   
+   int criaVariavelTaticoAlunoUnidDia( int campusId );								// y_{a,u,t} 
+   int criaVariavelTaticoAlunoUnidadesDifDia( int campusId );						// w_{a,t}
+   
+  
+
+   /********************************************************************
+   **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
+   *********************************************************************/
+
+   int criaRestricoesTatico( int campusId );
+
+   int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
+   int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
+   int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId ); // Restricao 1.2.4
+   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
+   int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
+   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId );			// Restricao 1.2.7
+   int criaRestricaoTaticoDivisaoCredito( int campusId );				// Restricao 1.2.8      
+   int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
+   int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
+   int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
+   int criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId );	// Restricao 1.2.12
+   int criaRestricaoTaticoAtivaY( int campusId );						// Restricao 1.2.13
+   int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
+   int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
+   int criaRestricaoTaticoMaxCreds( int campusId );						// Restricao 1.2.16
+
+  // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
+
+// Restrições já garantidas pelo pre-modelo:
+//   int criaRestricaoTaticoAbreTurmasEmSequencia( int campusId );	
+//   int criaRestricaoTaticoAlunoCursoTurmaDisc( int campusId );	
+//   int criaRestricaoTaticoCursosIncompat( int campusId );				
+//   int criaRestricaoTaticoProibeCompartilhamento( int campusId );	
+//   int criaRestricaoTaticoEvitaTurmaDiscCampiDif();					
+//   int criaRestricaoTaticoUnicaSalaParaTurmaDisc( int campusId );	
+   
+   
+
+   /********************************************************************
+   **                    CRIAÇÃO DE VARIAVEIS DO TATICO               **
    *********************************************************************/
 
    int cria_variaveis( int campusId );
@@ -147,18 +215,16 @@ public:
    int cria_variavel_min_hor_disc_oft_dia( int campusId );						// g_{d,oft,t}
    int cria_variavel_maxCreds_combina_sl_sala( int campusId );					// cs_{s,t,k} -> Usado somente quando tem 2 semanas letivas
    int cria_variavel_maxCreds_combina_Sl_bloco( int campusId );					// cbc_{bc,t,k} -> Usado somente quando tem 2 semanas letivas
-   
-   bool criaVariavelTatico( Variable *v );
+
 
    /********************************************************************
-   **                    CONSTRAINT CREATION                          **
+   **              CRIAÇÃO DE RESTRIÇÕES DO TATICO                    **
    *********************************************************************/
 
    int cria_restricoes( int campusId );
 
    int cria_restricao_carga_horaria( int campusId );					// Restricao 1.2.2
-   int cria_restricao_max_tempo_sd( int campusId );						// Restricao 1.2.3.a -> Usada somente quando só tem 1 semana letiva
-   int cria_restricao_max_tempo_s_t_SL( int campusId );					// Restricao 1.2.3.b -> Usada somente quando tem 2 semanas letivas
+   int cria_restricao_max_tempo_sd( int campusId );						// Restricao 1.2.3 -> Usada somente quando só tem 1 semana letiva
    int cria_restricao_min_cred_dd( int campusId );						// Restricao 1.2.4
    int cria_restricao_ativacao_var_o( int campusId );					// Restricao 1.2.5
    int cria_restricao_evita_sobreposicao( int campusId );			    // Restricao 1.2.6
@@ -201,8 +267,13 @@ public:
    int cria_restricao_ativacao_var_cs( int campusId );					// Restricao 1.2.49-> Usado somente quando há 2 semanas letivas
    int cria_restricao_fixa_nao_compartilhamento( int campusId );		// Restricao 1.2.50-> Usado somente quando há 2 semanas letivas
    int cria_restricao_ativacao_var_cbc( int campusId );					// Restricao 1.2.51
+   int cria_restricao_max_tempo_s_t_SL( int campusId );					// Restricao 1.2.3.b -> Usada somente quando tem 2 semanas letivas
 
-   // Criacao de variaveis operacional
+
+   /********************************************************************
+   **              CRIAÇÃO DE VARIAVEIS DO OPERACIONAL                **
+   *********************************************************************/
+
    int criaVariaveisOperacional( void );
 
    int criaVariavelProfessorAulaHorario( void );
@@ -230,7 +301,11 @@ public:
    int criaVariavelFolgaDemanda( void );
    int criaVariavelFolgaDisciplinaTurmaHorario( void );
 
-   // Criacao de restrições operacional
+
+   /********************************************************************
+   **              CRIAÇÃO DE RESTRIÇÕES DO OPERACIONAL               **
+   *********************************************************************/
+
    int criaRestricoesOperacional( void );
 
    int criaRestricaoSalaHorario( void );
@@ -266,8 +341,10 @@ public:
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
    void carregaVariaveisSolucaoTatico( int campusId );
+   void carregaVariaveisSolucaoTaticoPorAluno( int campusId );
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId );
+   void preencheMapAtendimentoAluno();
 
    int solveTaticoPorCampus();
    int solveTatico( int campusId );
@@ -277,6 +354,7 @@ public:
    void mudaCjtSalaParaSala();
    void separaDisciplinasEquivalentes();
    void getSolutionTatico();
+   void getSolutionTaticoPorAluno();
 
    int solveOperacional();
    int solveOperacionalMIP();
@@ -304,6 +382,13 @@ public:
       int, Oferta *, Curso *, Disciplina *, int, BlocoCurricular * );
 
 private:
+
+	// Filtro para a criação das variaveis do modelo tatico, caso haja solução do pre-modelo
+   bool criaVariavelTatico( Variable *v );
+
+   	// Filtro para a criação das variaveis do modelo tatico que considera horarios e alunos, caso haja solução do pre-modelo
+   bool criaVariavelTatico( VariableTatico *v );
+
    // Dada uma disciplina 'A' que foi substituída por uma de suas disciplinas equivalentes 'B',
    // esse map informa o conjunto de variáveis que foram criadas para 'B' referentes à disciplina 'A'
    std::map< Disciplina *, std::vector< Variable > > mapVariaveisDisciplinasEquivalentes;
@@ -313,6 +398,10 @@ private:
 
    void retornaHorariosPossiveis(
      Professor *, Aula *, std::list< HorarioDia * > &);
+
+   // Vetor responsável por armazenar ponteiros para todas as
+   // variáveis do tipo V_CREDITOS com credito(s) alocado(s).
+   typedef vector< VariableTatico * > vars__X__i_d_u_s_hi_hf_t;
 
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do  tipo V_CREDITOS com credito(s) alocado(s).
@@ -325,6 +414,8 @@ private:
 
    void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 
+   vars__X__i_d_u_s_hi_hf_t vars_xh;
+
    vars__X___i_d_u_tps_t vars_x;
    vars__A___i_d_o vars_a;
 
@@ -334,11 +425,17 @@ private:
    // The linear problem.
    OPT_LP * lp;
 
-   // Hash which associates the column number with the Variable object.
+   // Hash which associates the column number with the VariablePre object.
    VariablePreHash vHashPre;
 
-   // Hash which associates the row number with the Constraint object.
+   // Hash which associates the row number with the ConstraintPre object.
    ConstraintPreHash cHashPre;
+
+   // Hash which associates the column number with the VariableTatico object.
+   VariableTaticoHash vHashTatico;
+
+   // Hash which associates the row number with the ConstraintTatico object.
+   ConstraintTaticoHash cHashTatico;
 
    // Hash which associates the column number with the Variable object.
    VariableHash vHash;

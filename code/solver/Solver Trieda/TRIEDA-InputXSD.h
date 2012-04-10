@@ -478,12 +478,29 @@ class ItemAlunoDemanda: public ::xml_schema::type
   void
   demandaId (const demandaId_type& x);
 
+
+  // prioridade
+  // 
+  typedef ::xml_schema::int_ prioridade_type;
+  typedef ::xsd::cxx::tree::traits< prioridade_type, char > prioridade_traits;
+
+  const prioridade_type&
+  prioridade () const;
+
+  prioridade_type&
+  prioridade ();
+
+  void
+  prioridade (const prioridade_type& x);
+
+
   // Constructors.
   //
   ItemAlunoDemanda (const id_type&,
                     const alunoId_type&,
                     const nomeAluno_type&,
-                    const demandaId_type&);
+                    const demandaId_type&,
+					const prioridade_type&);
 
   ItemAlunoDemanda (const ::xercesc::DOMElement& e,
                     ::xml_schema::flags f = 0,
@@ -512,6 +529,7 @@ class ItemAlunoDemanda: public ::xml_schema::type
   ::xsd::cxx::tree::one< alunoId_type > alunoId_;
   ::xsd::cxx::tree::one< nomeAluno_type > nomeAluno_;
   ::xsd::cxx::tree::one< demandaId_type > demandaId_;
+  ::xsd::cxx::tree::one< prioridade_type > prioridade_;
 };
 
 class ItemTurno: public ::xml_schema::type
@@ -3583,6 +3601,23 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   void
   modoOtimizacao (::std::auto_ptr< modoOtimizacao_type > p);
 
+  // otimizarPor
+  // 
+  typedef ::xml_schema::string otimizarPor_type;
+  typedef ::xsd::cxx::tree::traits< otimizarPor_type, char > otimizarPor_traits;
+
+  const otimizarPor_type&
+  otimizarPor () const;
+
+  otimizarPor_type&
+  otimizarPor ();
+
+  void
+  otimizarPor (const otimizarPor_type& x);
+
+  void
+  otimizarPor (::std::auto_ptr< otimizarPor_type > p);
+
   // cargaHorariaSemanalAluno
   // 
   typedef ::cargaHorariaSemanalAluno cargaHorariaSemanalAluno_type;
@@ -4090,6 +4125,7 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
   // Constructors.
   //
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
+							  const otimizarPor_type&,
                               const cargaHorariaSemanalAluno_type&,
                               const alunosMesmoPeriodoNaMesmaSala_type&,
                               const permitirAlunosEmVariosCampi_type&,
@@ -4119,6 +4155,7 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
                               const custoProfDisponibilidade_type&);
 
   ItemParametrosPlanejamento (const modoOtimizacao_type&,
+							  const otimizarPor_type&,
                               ::std::auto_ptr< cargaHorariaSemanalAluno_type >&,
                               const alunosMesmoPeriodoNaMesmaSala_type&,
                               const permitirAlunosEmVariosCampi_type&,
@@ -4171,6 +4208,7 @@ class ItemParametrosPlanejamento: public ::xml_schema::type
 
   protected:
   ::xsd::cxx::tree::one< modoOtimizacao_type > modoOtimizacao_;
+  ::xsd::cxx::tree::one< otimizarPor_type > otimizarPor_;
   ::xsd::cxx::tree::one< cargaHorariaSemanalAluno_type > cargaHorariaSemanalAluno_;
   ::xsd::cxx::tree::one< alunosMesmoPeriodoNaMesmaSala_type > alunosMesmoPeriodoNaMesmaSala_;
   ::xsd::cxx::tree::one< permitirAlunosEmVariosCampi_type > permitirAlunosEmVariosCampi_;

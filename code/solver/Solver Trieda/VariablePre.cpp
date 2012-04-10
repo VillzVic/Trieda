@@ -44,6 +44,7 @@ void VariablePre::reset()
    parCursos.second = NULL;
    parOft.first = NULL;
    parOft.second = NULL;
+   aluno = NULL;
 }
 
 VariablePre::~VariablePre()
@@ -68,6 +69,7 @@ VariablePre & VariablePre::operator = ( const VariablePre & var )
    this->o = var.getOferta();
    this->parCursos = var.getParCursos();
    this->parOft = var.getParOfertas();
+   this->aluno = var.getAluno();
 
    return *this;
 }
@@ -122,6 +124,9 @@ bool VariablePre::operator < ( const VariablePre & var ) const
    if ( E_MENOR_PAR( this->getParOfertas(), var.getParOfertas() ) ) return true;
    if ( E_MENOR_PAR( var.getParOfertas(), this->getParOfertas() ) ) return false;
 
+   if ( E_MENOR( this->getAluno(), var.getAluno() ) ) return true;
+   if ( E_MENOR( var.getAluno(), this->getAluno() ) ) return false;
+
    return false;
 }
 
@@ -167,6 +172,8 @@ std::string VariablePre::toString()
 		str <<"Hs"; break;
 	 case V_PRE_ALOC_ALUNO_OFT:
 		str <<"c"; break;
+	 case V_PRE_ALOCA_ALUNO_TURMA_DISC:
+		str <<"s"; break;
 		
     default:
         str << "!";
@@ -245,6 +252,11 @@ std::string VariablePre::toString()
    if ( parOft.first != NULL && parOft.second != NULL )
    {
 	   str << "_(Of" << parOft.first->getId() << ",Of" << parOft.second->getId()<<")";
+   }
+
+   if ( aluno )
+   {
+	   str << "_Aluno" << aluno->getAlunoId();
    }
 
    str << "}";
