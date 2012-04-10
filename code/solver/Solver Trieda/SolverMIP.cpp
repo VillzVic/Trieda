@@ -26464,6 +26464,9 @@ int SolverMIP::criaVariavelMaxDiscProfCurso()
          {
             Curso * curso = ( *it_curso );
 
+			if ( !curso->possuiDisciplina( disciplina ) )
+				continue;
+
             VariableOp v;
             v.reset();
             v.setType( VariableOp::V_MAX_DISC_PROF_CURSO );
@@ -26513,6 +26516,9 @@ int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
          ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
          {
             Curso * curso = ( *it_curso );
+
+			if ( !curso->possuiDisciplina( disciplina ) )
+				continue;
 
             VariableOp v;
             v.reset();
@@ -29549,6 +29555,9 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
             ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
             {
                Disciplina * disciplina = ( *it_disc );
+
+			   if ( !curso->possuiDisciplina( disciplina ) )
+					continue;
 
                // Procura pela variável 'Lpcd'
                v_find.reset();
