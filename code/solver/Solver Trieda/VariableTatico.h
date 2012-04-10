@@ -1,0 +1,182 @@
+#ifndef VARIABLE_TATICO_H
+#define VARIABLE_TATICO_H
+
+#ifndef WIN32
+#include <map>
+#else
+#include <hash_map>
+#endif
+
+#include "ProblemData.h"
+
+// Variables
+class VariableTatico 
+{
+public:
+   // All variable types
+   enum VariableType
+   {
+      V_ERROR = 0,
+      V_CREDITOS = 1,							// x_{i,d,u,s,hi,hf,t}
+      V_ABERTURA = 2,							// z_{i,d,cp}
+      V_DIAS_CONSECUTIVOS = 5,					// c_{i,d,t}
+      V_SLACK_DEMANDA = 6,						// fd_{d,a}
+	  V_MIN_CRED_SEMANA = 8,					// h_{a}
+      V_MAX_CRED_SEMANA = 9,					// H_{a}
+      V_SLACK_DIST_CRED_DIA_SUPERIOR = 11,		// fcp_{i,d,s,t}
+      V_SLACK_DIST_CRED_DIA_INFERIOR = 12,		// fcm_{i,d,s,t}
+      
+      V_COMBINACAO_DIVISAO_CREDITO = 13,		// m{i,d,k}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_M = 14,// fkm{i,d,k}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 15,// fkp{i,d,k}
+	  V_ABERTURA_COMPATIVEL = 16,				// zc_{d,t}
+	  V_ALUNO_UNID_DIA = 17,					// y_{a,u,t}
+	  V_ALUNO_VARIAS_UNID_DIA = 18				// w_{a,t}
+   };
+
+   //Constructors
+   VariableTatico();
+   VariableTatico( const VariableTatico & );
+
+   //Destructor
+   virtual ~VariableTatico();
+
+   //==================================================
+   // GET METHODS 
+   //==================================================
+   //Return variable type
+   VariableType getType() const { return type; }
+
+   // Return value
+   double getValue() const { return value; }
+
+   Campus * getCampus() const { return cp; }
+
+   Unidade * getUnidade() const { return u; }
+
+   Sala * getSala() const { return s; }
+
+   ConjuntoSala * getSubCjtSala() const { return tps; }
+
+   int getTurma() const { return i; }
+
+   Curso * getCurso() const { return c; }
+
+   Curso * getCursoIncompat() const { return c_incompat; }
+
+   BlocoCurricular * getBloco() const { return b; }
+
+   Disciplina * getDisciplina() const { return d; }
+
+   int getSubBloco() const { return j; }
+
+   int getDia() const { return t; }
+
+   Oferta * getOferta() const { return o; }
+
+   int getK() const { return k; }
+   
+   std::pair<Curso*, Curso*> getParCursos() const{ return parCursos;}
+   
+   std::pair<Oferta*, Oferta*> getParOfertas() const{ return parOft;}
+   
+   HorarioAula* getHorarioAulaInicial() const { return horarioAulaI; }
+
+   HorarioAula* getHorarioAulaFinal() const { return horarioAulaF; }
+
+   Aluno* getAluno() const { return aluno; }
+
+
+   //==================================================
+   // SET METHODS 
+   //==================================================
+   // Reset variables values
+   void reset();
+
+   // Set variable type
+   void setType( VariableType t ) { type = t; }
+
+   // Set value
+   void setValue( double v ) { value = v; }
+
+   void setCampus( Campus * cpp ) { cp = cpp; }
+
+   void setUnidade( Unidade * uu ) {  u = uu; }
+
+   void setSala( Sala * ss ) {  s = ss; }
+
+   void setSubCjtSala( ConjuntoSala * tpss )  { tps = tpss; }
+
+   void setTurma( int ii ) { i = ii; }
+
+   void setCurso( Curso * cc ) { c = cc; }
+
+   void setCursoIncompat( Curso * cc ) { c_incompat = cc; }
+
+   void setBloco( BlocoCurricular * bb ) {  b = bb; } 
+
+   void setDisciplina( Disciplina * dd ) {  d = dd; }
+
+   void setSubBloco( int jj ) { j = jj; }   
+
+   void setDia( int tt ) {  t = tt; }
+
+   void setOferta( Oferta * oferta ) { o = oferta; }
+
+   void setK( int kk ) { k = kk; }
+   
+   void setParCursos( std::pair<Curso*, Curso*> par ){ parCursos = par;}
+     
+   void setParOfertas( Oferta* oft1, Oferta* oft2 ){ parOft.first = oft1; parOft.second = oft2;}
+   
+   void setHorarioAulaInicial( HorarioAula* h ) { horarioAulaI = h; }
+
+   void setHorarioAulaFinal( HorarioAula* h ) { horarioAulaF = h; }
+
+   void setAluno( Aluno *a ) { aluno = a; }
+
+   //==================================================
+   // OPERATORS 
+   //==================================================
+   // Assignment 
+   VariableTatico & operator = ( const VariableTatico & );
+   // Less 
+   bool operator < ( const VariableTatico & ) const;
+   // Equals 
+   bool operator == ( const VariableTatico & ) const;
+
+   // Variable name
+   std::string toString();
+
+private:
+   VariableType type;
+   double value;
+   Campus * cp;
+   Unidade * u;
+   Sala * s;
+   ConjuntoSala * tps;
+   int i; // Turma
+   Curso * c;
+   Curso * c_incompat;
+   std::pair<Curso*, Curso*> parCursos;
+   std::pair<Oferta*, Oferta*> parOft;
+   BlocoCurricular * b;
+   Disciplina * d;
+   int j; // subbloco
+   int t; // dia
+   Oferta * o; // oferta
+   int k; // combinação de divisão de créditos
+   HorarioAula* horarioAulaI;
+   HorarioAula* horarioAulaF;
+   Aluno *aluno;
+
+};
+
+
+/**
+//* Type definition for the hash object.
+*/
+typedef std::map< VariableTatico, int > VariableTaticoHash;
+
+
+#endif 
