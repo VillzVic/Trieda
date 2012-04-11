@@ -87,6 +87,7 @@ public class ToolBarView
 	private Button relatorioVisaoSalaBt;
 	private Button relatorioVisaoCursoBt;
 	private Button relatorioVisaoProfessorBt;
+	private Button relatorioVisaoAlunoBt;
 	private Button resumoCenarioBt;
 	private Button resumoCampiBt;
 	private Button resumoCursosBt;
@@ -412,6 +413,10 @@ public class ToolBarView
 		relatorioVisaoProfessorBt = createButton( "Grade Horária<br />Visão Professor",
 			"Grade Horária Visão Professor", Resources.DEFAULTS.saidaProfessor24() );
 		relatoriosToolBar.add( relatorioVisaoProfessorBt );
+		
+		relatorioVisaoAlunoBt = createButton("Grade Horária<br />Visão Aluno",
+			"Grade Horária Visão Aluno", Resources.DEFAULTS.saidaProfessor24());
+		relatoriosToolBar.add(relatorioVisaoAlunoBt);
 	}
 
 	private void createAdministracao() {
@@ -660,6 +665,11 @@ public class ToolBarView
 		return relatorioVisaoProfessorBt;
 	}
 
+	@Override
+	public Button getRelatorioVisaoAlunoButton(){
+		return relatorioVisaoAlunoBt;
+	}
+	
 	@Override
 	public Button getResumoCenarioButton()
 	{

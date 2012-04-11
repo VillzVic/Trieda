@@ -27,7 +27,10 @@ public class ErrorsWarningsInputSolverDTO extends AbstractDTO<String> {
 	}
 
 	public Integer getTotalErrorsWarnings() {
-		return this.getErrors().size() + this.getWarnings().size(); 
+		int totalErrors = (this.getErrors() == null) ? 0 : this.getErrors().size();
+		int totalWarnings = (this.getWarnings() == null) ? 0 : this.getWarnings().size();
+		
+		return totalErrors + totalWarnings; 
 	}
 
 	@Override

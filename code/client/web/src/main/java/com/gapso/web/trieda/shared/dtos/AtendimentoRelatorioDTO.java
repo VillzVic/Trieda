@@ -18,8 +18,10 @@ public interface AtendimentoRelatorioDTO
 	public Integer getDisciplinaSubstitutaSemanaLetivaTempoAula();
 	public String getContentToolTipVisaoSala(ReportType reportType);
 	public String getContentToolTipVisaoCurso(ReportType reportType);
+	public String getContentToolTipVisaoAluno(ReportType reportType);
 	public String getContentVisaoSala(ReportType reportType);
 	public String getContentVisaoCurso(ReportType reportType);
+	public String getContentVisaoAluno(ReportType reportType);
 	public Integer getQuantidadeAlunos();
 	public String getTurma();
 	public String getCursoNome();

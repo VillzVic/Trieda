@@ -584,6 +584,28 @@ public class AtendimentoOperacional
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List<AtendimentoOperacional> findBy(
+		Aluno aluno, Turno turno, Campus campus, InstituicaoEnsino instituicaoEnsino)
+	{
+
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o, "
+			+ " IN (o.alunosDemanda) ald"
+			+ " WHERE o.instituicaoEnsino = :instituicaoEnsino"
+			+ " AND o.oferta.turno = :turno"
+			+ " AND o.oferta.campus = :campus "
+			+ " AND ald.aluno = :aluno "
+		);
+
+		q.setParameter("aluno", aluno);
+		q.setParameter("turno", turno);
+		q.setParameter("campus", campus);
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findBy(

@@ -30,6 +30,7 @@ import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresView;
+import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoAlunoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoSalaView;
 import com.gapso.web.trieda.main.client.mvp.view.RequisicoesOtimizacaoView;
@@ -122,6 +123,7 @@ public class ToolBarPresenter
 		Button getRelatorioVisaoSalaButton();
 		Button getRelatorioVisaoCursoButton();
 		Button getRelatorioVisaoProfessorButton();
+		Button getRelatorioVisaoAlunoButton();
 		Button getResumoCenarioButton();
 		Button getResumoCampiButton();
 		Button getResumoCursosButton();
@@ -758,6 +760,19 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getRelatorioVisaoAlunoButton().addSelectionListener(
+			new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce){
+					Presenter presenter = new RelatorioVisaoAlunoPresenter(
+						instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoAlunoView()
+					);
+
+					presenter.go(gTab);
+				}
+			}
+		);
 
 		this.toolBar.getResumoCenarioButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()

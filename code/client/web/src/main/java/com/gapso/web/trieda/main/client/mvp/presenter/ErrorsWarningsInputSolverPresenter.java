@@ -48,17 +48,19 @@ public class ErrorsWarningsInputSolverPresenter extends AbstractRequisicaoOtimiz
 	}
 
 	private void initUI() {
-		for (String msg : this.warnings) {
-			this.display.getMessagesWarningPanel().addText("• " + msg);
-		}
+		if(this.warnings != null)
+			for (String msg : this.warnings) {
+				this.display.getMessagesWarningPanel().addText("• " + msg);
+			}
 
-		for (String msg : this.errors) {
-			this.display.getMessagesErrorPanel().addText("• " + msg);
-		}
+		if(this.errors != null)
+			for (String msg : this.errors) {
+				this.display.getMessagesErrorPanel().addText("• " + msg);
+			}
 
-		this.display.getMessagesWarningPanel().setVisible(!this.warnings.isEmpty());
-		this.display.getMessagesErrorPanel().setVisible(!this.errors.isEmpty());
-		this.display.getSubmitButton().setEnabled(this.errors.isEmpty());
+		this.display.getMessagesWarningPanel().setVisible(this.warnings != null && !this.warnings.isEmpty());
+		this.display.getMessagesErrorPanel().setVisible(this.errors != null && !this.errors.isEmpty());
+		this.display.getSubmitButton().setEnabled(this.errors != null && this.errors.isEmpty());
 	}
 
 	private void setListeners() {

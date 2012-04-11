@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -42,6 +43,8 @@ public interface AtendimentosService extends RemoteService {
 	
 	QuintetoDTO<Integer, Integer, Integer, List<AtendimentoRelatorioDTO>, List<String>> getAtendimentosParaGradeHorariaVisaoProfessor(ProfessorDTO professorDTO, 
 		ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO, boolean isVisaoProfessor);
+	
+	QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<String>> getAtendimentosParaGradeHorariaVisaoAluno(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO);
 	
 	PagingLoadResult< AtendimentoTaticoDTO > getList();
 

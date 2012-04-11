@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
@@ -30,6 +31,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
@@ -314,6 +316,44 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 	}
 	
+	public QuintetoDTO<Integer, Integer, Integer, List<AtendimentoRelatorioDTO>, List<String>> getAtendimentosParaGradeHorariaVisaoAluno(
+		AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO)
+	{
+		List<AtendimentoRelatorioDTO> atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
+		boolean ehTatico = true;
+
+		// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
+		List<AtendimentoTaticoDTO> atendimentosTaticoDTO = buscaNoBancoDadosDTOsDeAtendimentoTatico(alunoDTO, turnoDTO, campusDTO);
+		if(!atendimentosTaticoDTO.isEmpty()){
+			ehTatico = true;
+			// insere os atendimentos do modo tático na lista de atendimentos
+			atendimentos.addAll(atendimentosTaticoDTO);
+		}
+		else{
+			ehTatico = false;
+			// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
+			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = buscaNoBancoDadosDTOsDeAtendimentoOperacional(alunoDTO,turnoDTO, campusDTO);
+			// processa os atendimentos do operacional e os transforma em aulas
+			List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
+			// insere as aulas do modo operacional na lista de atendimentos
+			atendimentos.addAll(aulasOperacional);
+		}
+		
+		if(!atendimentos.isEmpty()){
+			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
+			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(atendimentos);
+			TrioDTO<Integer,SemanaLetiva,List<String>> trio = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, ehTatico, turnoDTO.getId());
+			int mdcTemposAula = trio.getPrimeiro();
+			SemanaLetiva semanaLetivaComMaiorCargaHoraria = trio.getSegundo();
+			List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
+			
+			return QuintetoDTO.create(mdcTemposAula, semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(), semanaLetivaComMaiorCargaHoraria.getTempo(), atendimentos, labelsDasLinhasDaGradeHoraria);
+		}
+		else return QuintetoDTO.create(0, 0, 0, atendimentos, Collections.<String>emptyList());
+	}
+	
+	
 	/**
 	 * Busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs.
 	 * @param salaDTO sala
@@ -379,6 +419,25 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	/**
+	 * Busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs.
+	 * @param alunoDTO aluno
+	 * @param turnoDTO turno
+	 * @return uma lista com DTOs que representam atendimentos do modo tático
+	 */
+	public List<AtendimentoTaticoDTO> buscaNoBancoDadosDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO,  CampusDTO campusDTO) {
+		// obtém os beans de Banco de Dados
+		Aluno aluno = Aluno.find(alunoDTO.getId(), getInstituicaoEnsinoUser());
+		Turno turno = Turno.find(turnoDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+
+		// busca no BD os atendimentos do modo tático
+		List<AtendimentoTatico> atendimentosTaticoBD = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), aluno, turno, campus);
+		
+		// transforma os atendimentos obtidos do BD em DTOs
+		return ConvertBeans.toListAtendimentoTaticoDTO(atendimentosTaticoBD);
+	}
+	
+	/**
 	 * Busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs.
 	 * @param salaDTO sala
 	 * @param turnoDTO turno
@@ -412,6 +471,25 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		// busca no BD os atendimentos do modo operacional
 		List<AtendimentoOperacional> atendimentosOperacionalBD = AtendimentoOperacional.findBySalaAndTurno(sala,turno,null,getInstituicaoEnsinoUser());
 
+		// transforma os atendimentos obtidos do BD em DTOs
+		return ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosOperacionalBD);		
+	}
+	
+	/**
+	 * Busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs.
+	 * @param alunoDTO sala
+	 * @param turnoDTO turno
+	 * @return uma lista com DTOs que representam atendimentos do modo operacional
+	 */
+	public List<AtendimentoOperacionalDTO> buscaNoBancoDadosDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO){
+		// obtém os beans de Banco de Dados
+		Aluno aluno = Aluno.find(alunoDTO.getId(),getInstituicaoEnsinoUser());
+		Turno turno = Turno.find(turnoDTO.getId(),getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+
+		// busca no BD os atendimentos do modo operacional
+		List<AtendimentoOperacional> atendimentosOperacionalBD = AtendimentoOperacional.findBy(aluno, turno, campus, getInstituicaoEnsinoUser());
+		
 		// transforma os atendimentos obtidos do BD em DTOs
 		return ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosOperacionalBD);		
 	}

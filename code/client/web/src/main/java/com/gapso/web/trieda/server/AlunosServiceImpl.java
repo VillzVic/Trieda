@@ -11,9 +11,12 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.services.AlunosService;
 
@@ -107,6 +110,22 @@ public class AlunosServiceImpl
 		return result;
 	}
 
+	@Override
+	public PagingLoadResult<AlunoDTO> getAlunosListByCampus(CampusDTO campusDTO){
+		Campus campus = Campus.find(campusDTO.getId(), this.getInstituicaoEnsinoUser());
+		boolean tatico = AtendimentoTatico.findAllByCampus(this.getInstituicaoEnsinoUser(), campus).size() != 0;
+
+		List<Aluno> listDomains = Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, tatico);
+
+		List<AlunoDTO> list = new ArrayList<AlunoDTO>();
+		list.addAll( ConvertBeans.toListAlunoDTO(listDomains));
+
+		BasePagingLoadResult<AlunoDTO> result = new BasePagingLoadResult<AlunoDTO>(list);
+		result.setTotalLength(list.size());
+
+		return result;
+	}
+	
 	@Override
 	public void saveAluno( AlunoDTO alunoDTO )
 	{

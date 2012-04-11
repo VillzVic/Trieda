@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -31,6 +32,8 @@ public interface AtendimentosServiceAsync {
 	
 	void getAtendimentosParaGradeHorariaVisaoProfessor(ProfessorDTO professorDTO, ProfessorVirtualDTO professorVirtualDTO, TurnoDTO turnoDTO, boolean isVisaoProfessor, 
 		AsyncCallback<QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<String>>> callback);
+	
+	void getAtendimentosParaGradeHorariaVisaoAluno(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, AsyncCallback<QuintetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<String>>> callback);
 	
 	void getList( AsyncCallback< PagingLoadResult< AtendimentoTaticoDTO > > callback );
 

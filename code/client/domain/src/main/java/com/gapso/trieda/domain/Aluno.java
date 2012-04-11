@@ -302,6 +302,26 @@ public class Aluno
 	}
 	
 	@SuppressWarnings( "unchecked" )
+	public static List<Aluno> findByCampus(InstituicaoEnsino instituicaoEnsino, Campus campus, boolean tatico) {
+		
+		String atendimentoEntity = (tatico) ? "AtendimentoTatico" : "AtendimentoOperacional";
+
+		Query q = entityManager().createQuery(
+				" SELECT DISTINCT ( ald.aluno ) FROM " + atendimentoEntity + " o, "
+				+ " IN (o.alunosDemanda) ald"
+				+ " WHERE o.instituicaoEnsino = :instituicaoEnsino"
+				+ " AND o.oferta.campus = :campus "
+				+ " ORDER BY ald.aluno.nome "
+			);
+
+		q.setParameter("campus", campus);
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+
+		return q.getResultList();
+	}
+	
+	
+	@SuppressWarnings( "unchecked" )
 	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula, int firstResult, int maxResults, String orderBy) {
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );

@@ -516,6 +516,30 @@ public class AtendimentoTaticoDTO
 			 + BG + "Sala: " + ED + getSalaString() + BR
 			 + BG + getQuantidadeAlunos() + " = " + getQuantidadeAlunos() +  " aluno(s)" + ED + BR;
 	}
+	
+	public String getContentToolTipVisaoAluno(ReportType reportType){
+		String BG = TriedaUtil.beginBold(reportType);
+		String ED = TriedaUtil.endBold(reportType);
+		String BR = TriedaUtil.newLine(reportType);
+		
+		String creditosDisciplinaInfo = "";
+		if(getDisciplinaSubstitutaId() != null){
+			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
+		}
+		else{
+			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
+		}
+		
+		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
+		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
+			 + BG + "Turma: " + ED + getTurma() + BR
+			 + BG + "Cr&eacute;dito(s): " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
+			 + BG + "Curso: " + ED + getCursoNome() + BR
+			 + BG + "Matriz Curricular: " + ED + getCurriculoString() + BR
+			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
+			 + BG + "Sala: " + ED + getSalaString() + BR;
+	}
+
 
 	@Override
 	public String getNaturalKey()

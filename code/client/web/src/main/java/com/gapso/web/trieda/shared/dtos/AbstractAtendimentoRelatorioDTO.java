@@ -66,6 +66,31 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 		}
 	}
 	
+	public String getContentVisaoAluno(ReportType reportType) {
+		if(reportType.equals(ReportType.WEB)){
+			final String BR = TriedaUtil.newLine(reportType);
+			String disciplinaInfo = "";
+			if(getDisciplinaSubstitutaId() != null){
+				disciplinaInfo = "*" + getDisciplinaSubstitutaString() + "*" + BR + TriedaUtil.truncate(getDisciplinaSubstitutaNome(),12);
+			}
+			else{
+				disciplinaInfo = getDisciplinaString() + BR + TriedaUtil.truncate(getDisciplinaNome(),12);
+			}
+			return disciplinaInfo + BR
+			+ "Turma " + getTurma() + BR
+			+ getSalaString() + BR;
+		}
+		else{
+			String disciplinaInfo = "";
+			if (getDisciplinaSubstitutaId() != null) {
+				disciplinaInfo = "*" + getDisciplinaSubstitutaString() + "*";
+			} else {
+				disciplinaInfo = getDisciplinaString();
+			}
+			return disciplinaInfo + " / " + getTurma();
+		}
+	}
+	
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other ) {
 		String T = (this.getDisciplinaSubstitutaId() != null && !getCursoNome().contains(" / ")) ? "*" : "";
 		String O = (other.getDisciplinaSubstitutaId() != null) ? "*" : ""; 
