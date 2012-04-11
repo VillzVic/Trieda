@@ -15,7 +15,6 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.CursosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -108,7 +107,6 @@ public class ResumoCursoExportExcel
 	protected boolean fillInExcel( HSSFWorkbook workbook )
 	{
 		boolean result = false;
-		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO( getCenario() );
 
 		List< CampusDTO > campusDTOList = null;
 		if ( getFilter() == null
@@ -134,8 +132,7 @@ public class ResumoCursoExportExcel
 
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
-			resumoCursoDTOList.addAll(
-				cursosServiceImpl.getResumos( cenarioDTO, campusDTO ) );
+			resumoCursoDTOList.addAll(cursosServiceImpl.getResumos(campusDTO));
 		}
 
 		if ( !resumoCursoDTOList.isEmpty() )

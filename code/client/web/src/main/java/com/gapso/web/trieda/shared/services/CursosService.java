@@ -7,7 +7,6 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -52,6 +51,6 @@ public interface CursosService extends RemoteService {
 	void remove(List<CursoDTO> cursoDTOList);
 	ListLoadResult<CursoDTO> getListAll();
 	ListLoadResult<CursoDTO> getListByCampi(List<CampusDTO> campiDTOs, List<CursoDTO> retirarCursosDTO);
-	List<ResumoCursoDTO> getResumos(CenarioDTO cenarioDTO, CampusDTO campusDTO);
+	List<ResumoCursoDTO> getResumos(CampusDTO campusDTO);
 	
 }

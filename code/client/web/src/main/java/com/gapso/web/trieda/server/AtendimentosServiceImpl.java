@@ -64,21 +64,28 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		List<AtendimentoOperacionalDTO> atendimentosOrdenados = new ArrayList<AtendimentoOperacionalDTO>(atendimentos);
-
 		if (atendimentos.size() == 1) {
 			return atendimentosOrdenados;
 		}
 
 		// [HorarioAulaId -> HorarioAula]
-		final Map<Long,HorarioAula> idToHorarioAulaMap = HorarioAula.buildHorarioAulaIdToHorarioAulaMap(HorarioAula.findAll(getInstituicaoEnsinoUser()));
+		//final Map<Long,HorarioAula> idToHorarioAulaMap = HorarioAula.buildHorarioAulaIdToHorarioAulaMap(HorarioAula.findAll(getInstituicaoEnsinoUser()));
 
 		Collections.sort(atendimentosOrdenados, new Comparator<AtendimentoOperacionalDTO>() {
 			@Override
 			public int compare(AtendimentoOperacionalDTO arg1, AtendimentoOperacionalDTO arg2) {
-				HorarioAula h1 = idToHorarioAulaMap.get(arg1.getHorarioId());
-				HorarioAula h2 = idToHorarioAulaMap.get(arg2.getHorarioId());
-
-				return h1.getHorario().compareTo( h2.getHorario() );
+				Pair<Calendar,Calendar> par1 = extraiHorariosInicial_e_Final(arg1);
+				Pair<Calendar,Calendar> par2 = extraiHorariosInicial_e_Final(arg2);
+				
+				Calendar hi_1 = par1.getLeft();
+				Calendar hi_2 = par2.getLeft();
+				
+				return hi_1.compareTo(hi_2);
+				
+//				HorarioAula h1 = idToHorarioAulaMap.get(arg1.getHorarioId());
+//				HorarioAula h2 = idToHorarioAulaMap.get(arg2.getHorarioId());
+//
+//				return h1.getHorario().compareTo( h2.getHorario() );
 			}
 		});
 
@@ -298,9 +305,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		aulas.addAll(aulasOperacional);
 		
 		if(!aulas.isEmpty()){
+			// trata compartilhamento de turmas entre cursos
+			List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
 			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
 			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
-			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulas);
+			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
 			
 			TrioDTO<Integer,SemanaLetiva,List<String>> trio = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala,ehTatico,turnoDTO.getId());
 			int mdcTemposAula = trio.getPrimeiro();
@@ -308,7 +317,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
 			
 			return QuintetoDTO.create(mdcTemposAula, semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(), 
-				semanaLetivaComMaiorCargaHoraria.getTempo(),aulas,labelsDasLinhasDaGradeHoraria);
+				semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos,labelsDasLinhasDaGradeHoraria);
 		}
 		else{
 			return QuintetoDTO.create(0,0,0,aulas,Collections.<String>emptyList());
@@ -596,11 +605,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @return lista com as aulas
 	 */
 	public List<AtendimentoOperacionalDTO> extraiAulas(List<AtendimentoOperacionalDTO> atendimentosDTO) {
-		// [Curso-Disciplina-Turma-DiaSemana-Sala -> List<AtendimentoOperacionalDTO>]
+		// [Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala -> List<AtendimentoOperacionalDTO>]
 		Map<String,List<AtendimentoOperacionalDTO>> atendimentosAgrupadosMap = new HashMap<String,List<AtendimentoOperacionalDTO>>();
-		// Agrupa os DTOS pela chave Curso-Disciplina-Turma-DiaSemana-Sala
+		// Agrupa os DTOS pela chave Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala
 		for (AtendimentoOperacionalDTO atendimento : atendimentosDTO) {
-			String key = atendimento.getCursoString() + "-" + atendimento.getDisciplinaString() + "-" + atendimento.getTurma() + "-" + atendimento.getSemana() + "-" + atendimento.getSalaId();
+			String key = atendimento.getCursoString() + "-" + atendimento.getCurriculoString() + "-" + atendimento.getDisciplinaString() + "-" + atendimento.getTurma() + "-" + atendimento.getSemana() + "-" + atendimento.getSalaId();
 
 			List<AtendimentoOperacionalDTO> grupoAtendimentos = atendimentosAgrupadosMap.get(key);
 			if (grupoAtendimentos == null) {
@@ -610,7 +619,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			grupoAtendimentos.add(atendimento);
 		}
 		
-		// Quando há mais de um DTO por chave [Curso-Disciplina-Turma-DiaSemana-Sala], concatena as informações de todos em um único DTO.
+		// Quando há mais de um DTO por chave [Curso-Curriculo-Disciplina-Turma-DiaSemana-Sala], concatena as informações de todos em um único DTO.
 		// Na prática, um grupo de atendimentos concentra os atendimentos relacionados a uma mesma aula. Por exemplo, para uma aula da
 		// disciplina INF110, na segunda-feira, na sala 103, para a turma 1, do curso de Computação, de 07:00h às  08:40h, supondo que
 		// 1 crédito seja equivalente a 50min de hora-aula teremos 2 atendimentos para representar esta aula, são eles:
@@ -636,13 +645,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				// transforma um subgrupo de atendimentos consecutivos em apenas um atendimento (na prática, uma aula)
 				for (List<AtendimentoOperacionalDTO> subgrupoDeAtendimentosConsecutivos : subgruposDeAtendimentosConsecutivos) {
 					AtendimentoOperacionalDTO aula = subgrupoDeAtendimentosConsecutivos.get(0) ;
-	
-					// procura pelo horário correspondente ao início da aula
-					// TODO: CREIO QUE AS 3 LINHAS ABAIXO SEJAM DESNECESSÁRIAS UMA VEZ QUE OS ATENDIMENTOS JÁ FORAM ORDENADOS PREVIAMENTE
-					HorarioAula menorHorario = AtendimentoOperacional.retornaAtendimentoMenorHorarioAula(ConvertBeans.toListAtendimentoOperacional(subgrupoDeAtendimentosConsecutivos));
-					aula.setHorarioId( menorHorario.getId() );
-					aula.setHorarioString( TriedaUtil.shortTimeString( menorHorario.getHorario() ) );
-					
 					aula.setTotalCreditos(subgrupoDeAtendimentosConsecutivos.size());
 					aulas.add(aula);
 				}

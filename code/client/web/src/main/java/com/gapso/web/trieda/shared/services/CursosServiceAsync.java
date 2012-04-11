@@ -7,7 +7,6 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -41,5 +40,5 @@ public interface CursosServiceAsync {
 	void getListAll( AsyncCallback< ListLoadResult< CursoDTO > > callback );
 	void getListByCampi( List<CampusDTO> campiDTOs, List< CursoDTO > retirarCursosDTO,
 		AsyncCallback< ListLoadResult< CursoDTO > > callback );
-	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoCursoDTO > > callback );
+	void getResumos( CampusDTO campusDTO, AsyncCallback< List< ResumoCursoDTO > > callback );
 }

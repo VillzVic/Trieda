@@ -29,7 +29,6 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -218,22 +217,19 @@ public class CursosServiceImpl
 	}
 
 	@Override
-	public List<ResumoCursoDTO> getResumos(
-		CenarioDTO cenarioDTO, CampusDTO campusDTO )
-	{
-		Campus campus = Campus.find(campusDTO.getId(), this.getInstituicaoEnsinoUser() );
-		
+	public List<ResumoCursoDTO> getResumos(CampusDTO campusDTO) {
+		Campus campus = Campus.find(campusDTO.getId(),this.getInstituicaoEnsinoUser());
 		List<Professor> professores = Professor.findAll(this.getInstituicaoEnsinoUser());
-		Map<Long,Professor> professoresMap = Professor.getProfessoresMap(professores);
-
-		List< Oferta > ofertas = new ArrayList< Oferta >( campus.getOfertas() );
-		Collections.sort( ofertas );
-
-		List< ResumoCursoDTO > resumoCursoDTOList = new ArrayList< ResumoCursoDTO >();
+		List<AtendimentoTatico> atendimentosTaticos = AtendimentoTatico.findAll(getInstituicaoEnsinoUser());
+		List<AtendimentoOperacional> atendimentosOperacionais = AtendimentoOperacional.findAll(getInstituicaoEnsinoUser());
 		
+		Map<Long,Professor> professoresMap = Professor.getProfessoresMap(professores);
+		
+		List<Oferta> ofertas = new ArrayList<Oferta>(campus.getOfertas());
+		Collections.sort(ofertas);
+
 		// organiza os atendimentos por oferta
 		// táticos
-		List<AtendimentoTatico> atendimentosTaticos = AtendimentoTatico.findAll(getInstituicaoEnsinoUser());
 		Map<Long,List<AtendimentoTatico>> ofertaIdToAtendimentosTaticosMap = new HashMap<Long,List<AtendimentoTatico>>();
 		for (AtendimentoTatico at : atendimentosTaticos) {
 			List<AtendimentoTatico> atendimentosDaOferta = ofertaIdToAtendimentosTaticosMap.get(at.getOferta().getId());
@@ -244,7 +240,6 @@ public class CursosServiceImpl
 			atendimentosDaOferta.add(at);
 		}
 		// operacionais
-		List<AtendimentoOperacional> atendimentosOperacionais = AtendimentoOperacional.findAll(getInstituicaoEnsinoUser());
 		Map<Long,List<AtendimentoOperacional>> ofertaIdToAtendimentosOperacionaisMap = new HashMap<Long,List<AtendimentoOperacional>>();
 		for (AtendimentoOperacional ao : atendimentosOperacionais) {
 			List<AtendimentoOperacional> atendimentosDaOferta = ofertaIdToAtendimentosOperacionaisMap.get(ao.getOferta().getId());
@@ -256,63 +251,64 @@ public class CursosServiceImpl
 		}
 		
 		// [Campus-Turno-Curso -> ResumoCursoDTO]
-		Map< String, ResumoCursoDTO > nivel1Map = new HashMap< String, ResumoCursoDTO >();
+		Map<String,ResumoCursoDTO> nivel1Map = new HashMap<String,ResumoCursoDTO>();
 		// [Campus-Turno-Curso -> [Campus-Turno-Curso-Curriculo-Periodo -> ResumoCursoDTO]]
-		Map< String, Map< String, ResumoCursoDTO > > nivel2Map = new HashMap< String, Map< String, ResumoCursoDTO > >();
+		Map<String,Map<String,ResumoCursoDTO>> nivel2Map = new HashMap<String,Map<String,ResumoCursoDTO>>();
 		// [Campus-Turno-Curso -> [Campus-Turno-Curso-Curriculo-Periodo -> [Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito -> ResumoCursoDTO]]]
-		Map< String, Map< String, Map< String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>> > > > nivel3Map = new HashMap< String, Map< String, Map< String, Pair<ResumoCursoDTO,List<ResumoCursoDTO>> > > >();
+		Map<String,Map<String,Map<String,Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>> nivel3Map = new HashMap<String,Map<String,Map<String,Pair<ResumoCursoDTO,List<ResumoCursoDTO>>>>>();
 
-		for ( Oferta oferta : ofertas ) {
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		List<ResumoCursoDTO> resumoCursoDTOList = new ArrayList<ResumoCursoDTO>();
+		for (Oferta oferta : ofertas) {
 			// monta a lista de atendimentos associados a uma oferta
-			List< AtendimentoRelatorioDTO > atendimentoRelatorioDTOList = new ArrayList< AtendimentoRelatorioDTO >();
-			List< AtendimentoTatico > atendimentoTaticoList = ofertaIdToAtendimentosTaticosMap.get(oferta.getId());//AtendimentoTatico.findAllBy( getInstituicaoEnsinoUser(), oferta );
+			List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+			List<AtendimentoTatico> atendimentoTaticoList = ofertaIdToAtendimentosTaticosMap.get(oferta.getId());
 			boolean ehTatico = true;
 			if (atendimentoTaticoList != null && !atendimentoTaticoList.isEmpty()) {
 				for (AtendimentoTatico atendimentoTatico : atendimentoTaticoList) {
-					atendimentoRelatorioDTOList.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
+					aulas.add(ConvertBeans.toAtendimentoTaticoDTO(atendimentoTatico));
 				}
 			}
 			else {
-				List< AtendimentoOperacional > atendimentoOperacionalList = ofertaIdToAtendimentosOperacionaisMap.get(oferta.getId());//AtendimentoOperacional.findAllBy( oferta, getInstituicaoEnsinoUser() );
+				List<AtendimentoOperacional> atendimentoOperacionalList = ofertaIdToAtendimentosOperacionaisMap.get(oferta.getId());
 				if (atendimentoOperacionalList != null) {
-					List< AtendimentoOperacionalDTO > atendimentoOperacionalDTOList = new ArrayList<AtendimentoOperacionalDTO>(); 
-					for ( AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList ) {
-						atendimentoOperacionalDTOList.add(ConvertBeans.toAtendimentoOperacionalDTO( atendimentoOperacional ) );
+					List<AtendimentoOperacionalDTO> atendimentoOperacionalDTOList = new ArrayList<AtendimentoOperacionalDTO>();
+					for (AtendimentoOperacional atendimentoOperacional : atendimentoOperacionalList) {
+						atendimentoOperacionalDTOList.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimentoOperacional));
 					}
-					AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-					atendimentoRelatorioDTOList.addAll(service.transformaAtendimentosPorHorarioEmAtendimentosPorAula(atendimentoOperacionalDTOList));
+					aulas.addAll(service.extraiAulas(atendimentoOperacionalDTOList));
 					ehTatico = false;
 				}
 			}
 			
 			// A partir dos atendimentos, monta as estruturas nivel1Map, nivel2Map e nivel3Map, além de converter um atendimento
 			// em um objeto ResumoCursoDTO e armazená-los em uma lista
-			for ( AtendimentoRelatorioDTO atendimentoRelatorioDTO : atendimentoRelatorioDTOList ) {
+			for (AtendimentoRelatorioDTO aula : aulas) {
 				ResumoCursoDTO resumoDTO = new ResumoCursoDTO();
 
 				resumoDTO.setOfertaId(oferta.getId());
 				resumoDTO.setCampusId(oferta.getCampus().getId());
 				resumoDTO.setCampusString(oferta.getCampus().getNome());
-				resumoDTO.setTurnoId(atendimentoRelatorioDTO.getTurnoId());
-				resumoDTO.setTurnoString(atendimentoRelatorioDTO.getTurnoString());
-				resumoDTO.setCursoId(atendimentoRelatorioDTO.getCursoId());
-				resumoDTO.setCursoString(atendimentoRelatorioDTO.getCursoNome());
-				resumoDTO.setMatrizCurricularId(atendimentoRelatorioDTO.getCurriculoId());
-				resumoDTO.setMatrizCurricularString(atendimentoRelatorioDTO.getCurriculoString());
-				resumoDTO.setPeriodo(Integer.valueOf(atendimentoRelatorioDTO.getPeriodoString()));
-				resumoDTO.setQuantidadeAlunos(atendimentoRelatorioDTO.getQuantidadeAlunos());
-				resumoDTO.setDisciplinaId(atendimentoRelatorioDTO.getDisciplinaId());
-				resumoDTO.setDisciplinaString(atendimentoRelatorioDTO.getDisciplinaString());
-				resumoDTO.setTurma(atendimentoRelatorioDTO.getTurma());
-				resumoDTO.setTipoCreditoTeorico(atendimentoRelatorioDTO.isTeorico());
-				resumoDTO.setCreditos(atendimentoRelatorioDTO.getTotalCreditos());
-				resumoDTO.setSalaId(atendimentoRelatorioDTO.getSalaId());
-				resumoDTO.setSalaString(atendimentoRelatorioDTO.getSalaString());
-				resumoDTO.setDiaSemana(atendimentoRelatorioDTO.getSemana());
+				resumoDTO.setTurnoId(aula.getTurnoId());
+				resumoDTO.setTurnoString(aula.getTurnoString());
+				resumoDTO.setCursoId(aula.getCursoId());
+				resumoDTO.setCursoString(aula.getCursoNome());
+				resumoDTO.setMatrizCurricularId(aula.getCurriculoId());
+				resumoDTO.setMatrizCurricularString(aula.getCurriculoString());
+				resumoDTO.setPeriodo(Integer.valueOf(aula.getPeriodoString()));
+				resumoDTO.setQuantidadeAlunos(aula.getQuantidadeAlunos());
+				resumoDTO.setDisciplinaId(aula.getDisciplinaId());
+				resumoDTO.setDisciplinaString(aula.getDisciplinaString());
+				resumoDTO.setTurma(aula.getTurma());
+				resumoDTO.setTipoCreditoTeorico(aula.isTeorico());
+				resumoDTO.setCreditos(aula.getTotalCreditos());
+				resumoDTO.setSalaId(aula.getSalaId());
+				resumoDTO.setSalaString(aula.getSalaString());
+				resumoDTO.setDiaSemana(aula.getSemana());
 				if (ehTatico) {
 					resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
 				} else {
-					Long profId = ((AtendimentoOperacionalDTO)atendimentoRelatorioDTO).getProfessorId();
+					Long profId = ((AtendimentoOperacionalDTO)aula).getProfessorId();
 					Professor prof = professoresMap.get(profId);
 					if (prof != null) {
 						resumoDTO.setCustoDocente(new TriedaCurrency(prof.getValorCredito()));
@@ -322,18 +318,18 @@ public class CursosServiceImpl
 				}
 				resumoDTO.setReceita(new TriedaCurrency(oferta.getReceita()));
 
-				createResumoNivel1(nivel1Map, nivel2Map, nivel3Map, resumoDTO);
-				createResumoNivel2(nivel2Map, nivel3Map, resumoDTO);
-				createResumoNivel3(nivel3Map, resumoDTO);
+				createResumoNivel1(nivel1Map,nivel2Map,nivel3Map,resumoDTO);
+				createResumoNivel2(nivel2Map,nivel3Map,resumoDTO);
+				createResumoNivel3(nivel3Map,resumoDTO);
 
 				resumoCursoDTOList.add(resumoDTO);
 			}
 		}
 
-		calculaResumo3(nivel3Map, resumoCursoDTOList);
-		calculaResumo1e2(nivel1Map, nivel2Map, nivel3Map);
+		calculaResumo3(nivel3Map,resumoCursoDTOList);
+		calculaResumo1e2(nivel1Map,nivel2Map,nivel3Map);
 
-		return createResumoEstrutura(nivel1Map, nivel2Map, nivel3Map);
+		return createResumoEstrutura(nivel1Map,nivel2Map,nivel3Map);
 	}
 
 	private List<ResumoCursoDTO> createResumoEstrutura(

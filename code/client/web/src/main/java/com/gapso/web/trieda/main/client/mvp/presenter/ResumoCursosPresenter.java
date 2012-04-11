@@ -69,7 +69,7 @@ public class ResumoCursosPresenter
 					}
 
 					display.getTree().mask( display.getI18nMessages().loading() );
-					Services.cursos().getResumos( cenario, se.getSelectedItem(),
+					Services.cursos().getResumos(se.getSelectedItem(),
 						new AbstractAsyncCallbackWithDefaultOnFailure< List< ResumoCursoDTO > >( display )
 						{
 							@Override
