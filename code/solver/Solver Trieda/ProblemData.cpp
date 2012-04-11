@@ -746,6 +746,96 @@ bool ProblemData::verificaUltimaPrimeiraAulas(
    return false;
 }
 
+bool ProblemData::verificaPrimeiraAulas(
+	HorarioDia * h )
+{
+	if ( h == NULL )
+	{
+		return false;
+	}
+
+	if ( h->getHorarioAula() == NULL )
+	{
+		return false;
+	}
+
+	if ( h->getHorarioAula()->getCalendario() == NULL )
+	{
+		return false;
+	}
+
+	if ( h->getDia() <= 0 )
+	{
+		return false;
+	}
+
+	Calendario * calendario = h->getHorarioAula()->getCalendario();
+
+	if ( this->mapCalendarioHorariosAulaOrdenados.find( calendario )
+		!= this->mapCalendarioHorariosAulaOrdenados.end()
+		&& this->mapCalendarioHorariosAulaOrdenados[ calendario ].size() > 0 )
+	{
+		HorarioAula * primeiroHorario = this->mapCalendarioHorariosAulaOrdenados[ calendario ][ 0 ];
+
+		if ( primeiroHorario != NULL )
+		{
+			if ( h->getHorarioAula() == primeiroHorario )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool ProblemData::verificaUltimaAulas(
+	HorarioDia * h )
+{
+	if ( h == NULL )
+	{
+		return false;
+	}
+
+	if ( h->getHorarioAula() == NULL )
+	{
+		return false;
+	}
+
+	if ( h->getHorarioAula()->getCalendario() == NULL )
+	{
+		return false;
+	}
+
+	if ( h->getDia() <= 0 )
+	{
+		return false;
+	}
+
+	Calendario * calendario = h->getHorarioAula()->getCalendario();
+
+	if ( this->mapCalendarioHorariosAulaOrdenados.find( calendario )
+		!= this->mapCalendarioHorariosAulaOrdenados.end()
+		&& this->mapCalendarioHorariosAulaOrdenados[ calendario ].size() > 0 )
+	{
+
+		HorarioAula * ultimoHorario = this->mapCalendarioHorariosAulaOrdenados
+			[ calendario ][ this->mapCalendarioHorariosAulaOrdenados[ calendario ].size() - 1 ];
+
+		if ( ultimoHorario != NULL )
+		{
+			if ( h->getHorarioAula() == ultimoHorario ) 
+			{
+				return true;
+			}
+		}
+
+	}
+
+	return false;
+}
+
+
 Demanda * ProblemData::buscaDemanda( int id_oferta, int id_disciplina )
 {
    Demanda * demanda = NULL;

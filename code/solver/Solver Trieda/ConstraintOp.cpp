@@ -400,7 +400,9 @@ std::string ConstraintOp::toString()
 	   case C_GAPS_PROFESSORES:
 		  ss << "C_GAPS_PROFESSORES"; break;
 	   case C_PROF_HORARIO_MULTIUNID:
-		  ss << "C_PROF_HORARIO_MULTIUNID"; break;
+		   ss << "C_PROF_HORARIO_MULTIUNID"; break;
+	   case C_MAX_DISC_PROF_CURSO2:
+		   ss <<"C_MAX_DISC_PROF_CURSO2"; break;
 
 	   default:
 		  ss << "!";
@@ -502,6 +504,16 @@ std::string ConstraintOp::toString()
    if ( campus != NULL )
    {
       ss << "_Cp" << campus->getId();
+   }
+
+   if ( horarioDiaD != NULL )
+   {
+	   ss << "_HDD." << horarioDiaD->getId();
+   }
+
+   if ( horarioDiaD1 != NULL )
+   {
+	   ss << "_HDD1." << horarioDiaD1->getId();
    }
 
 

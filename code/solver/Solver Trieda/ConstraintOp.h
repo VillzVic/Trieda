@@ -46,7 +46,8 @@ public:
       C_ULTIMA_PRIMEIRA_AULA_PROF = 27,
       C_GAPS_PROFESSORES = 28,
 	  C_BLOCO_HORARIO_DISC = 29,
-	  C_PROF_HORARIO_MULTIUNID = 30
+	  C_PROF_HORARIO_MULTIUNID = 30,
+	  C_MAX_DISC_PROF_CURSO2 = 31,
    };
 
    /** Default constructor. */

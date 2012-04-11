@@ -370,6 +370,16 @@ std::string VariableOp::toString()
    {
       str << "_H2:" << h2->getId();
    }
+
+   if ( horarioDiaD != NULL )
+   {
+	   str << "_HDD." << horarioDiaD->getId();
+   }
+
+   if ( horarioDiaD1 != NULL )
+   {
+	   str << "_HDD1." << horarioDiaD1->getId();
+   }
    
    str << "}";
 

@@ -26523,9 +26523,7 @@ int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
             VariableOp v;
             v.reset();
             v.setType( VariableOp::V_F_MAX_DISC_PROF_CURSO );
-
             v.setProfessor( professor );
-            v.setDisciplina( disciplina );
             v.setCurso( curso );
 
             if ( vHashOp.find( v ) == vHashOp.end() )
@@ -26534,11 +26532,12 @@ int SolverMIP::criaVariavelFolgaMaxDiscProfCurso()
 
                vHashOp[ v ] = lp->getNumCols();
 
-               OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
+			   OPT_COL col( OPT_COL::VAR_INTEGRAL, coeff, 0.0, OPT_INF,
                   ( char * )v.toString().c_str() );
 
                lp->newCol( col );
                num_vars++;
+			   break;
             }
          }
       }
@@ -27268,7 +27267,6 @@ int SolverMIP::criaRestricoesOperacional()
 #endif
 
 	lp->updateLP();
-
 
 
 	return restricoes;
@@ -29483,105 +29481,208 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
 
 int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 {
-   int restricoes = 0;
-   int nnz = 0;
-   double rhs = 0.0;
-   char name[ 200 ];
-   int bigM = 1000;
+	int restricoes = 0;
+	int nnz = 0;
+	double rhs = 0.0;
+	char name[ 200 ];
+	int bigM = 1000;
 
-   ConstraintOp c;
-   VariableOpHash::iterator vit;
-   VariableOpHash::iterator vit_f;
-   ConstraintOpHash::iterator cit;
+	ConstraintOp c;
+	VariableOpHash::iterator vit;
+	VariableOpHash::iterator vit_f;
+	ConstraintOpHash::iterator cit;
 
-   // Informando quais disciplinas estão associadas a cada curso
-   std::map< Curso *, GGroup< Disciplina *,
-      LessPtr< Disciplina > > > mapCursoDisciplinas;
+	// Informando quais disciplinas estão associadas a cada curso
+	std::map< Disciplina *, GGroup< Curso *,
+		LessPtr< Curso > > > mapCursoDisciplinas;
 
-   ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
-   {
-      Aula * aula = ( *it_aula );
+	ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+	{
+		Aula * aula = ( *it_aula );
 
-      ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
-      {
-         Oferta * oferta = ( *it_oferta );
+		ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
+		{
+			Oferta * oferta = ( *it_oferta );
 
-         mapCursoDisciplinas[ oferta->curso ].add( aula->getDisciplina() );
-      }
-   }
+			mapCursoDisciplinas[ aula->getDisciplina() ].add( oferta->curso );
+		}
+	}
 
-   GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->getProfessores();
+	vit = vHashOp.begin();
 
-   int totalCursos = problemData->cursos.size();
-   int totalProfessores = professores.size();
+	while(vit != vHashOp.end())
+	{
+		VariableOp v = ( vit->first );
 
-   ITERA_GGROUP_LESSPTR( itProf, professores, Professor )
-   {
-      Professor * professor = ( *itProf );
+		if (v.getType() != VariableOp::V_PROF_CURSO)
+		{
+			vit++;
+			continue;
+		}
 
-      ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
-      {
-         Curso * curso = ( *itCurso );
+		c.reset();
+		c.setType( ConstraintOp::C_ALOC_PROF_CURSO );
+		c.setProfessor( v.getProfessor() );
+		c.setCurso( v.getCurso() );
 
-         VariableOp v;
-         v.reset();
+		cit = cHashOp.find(c);
+		if ( cit == cHashOp.end() )
+		{
+			cHashOp[ c ] = lp->getNumRows();
 
-         v.setType( VariableOp::V_PROF_CURSO );
-         v.setProfessor( professor );
-         v.setCurso( curso );
-         vit = vHashOp.find( v );
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::GREATER, rhs, name );
 
-         if ( vit != vHashOp.end() )
-         {
-            // Cria a restriçao de m ( p, c ) * M >= E ( E ( y( p, d, i ) ) )
-            c.reset();
-            c.setType( ConstraintOp::C_ALOC_PROF_CURSO );
+			row.insert( vit->second, bigM );
 
-            c.setProfessor( v.getProfessor() );
-            c.setCurso( v.getCurso() );
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			lp->chgCoef(cit->second, vit->second, 1.0);
+		}
 
-            cit = cHashOp.find( c );
+		vit++;
+	}
 
-            if ( cit == cHashOp.end() )
-            {
-               sprintf( name, "%s", c.toString().c_str() );
-               nnz = ( totalProfessores + totalCursos );
+	vit = vHashOp.begin();
 
-               OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
-               row.insert( vit->second, bigM );
+	while(vit != vHashOp.end())
+	{
+		VariableOp v = ( vit->first );
 
-               VariableOpHash::iterator vit_find = vHashOp.begin();
+		if (v.getType() != VariableOp::V_Y_PROF_DISCIPLINA)
+		{
+			vit++;
+			continue;
+		}
 
-               for (; vit_find != vHashOp.end(); vit_find++ )
-               {
-                  VariableOp v_find = vit_find->first;
+		GGroup< Curso *, LessPtr< Curso > > cursos = mapCursoDisciplinas[v.getDisciplina()];
+		for(GGroup< Curso *, LessPtr< Curso > >::iterator itC = cursos.begin();
+			itC != cursos.end();
+			itC++)
+		{
+			c.reset();
+			c.setType( ConstraintOp::C_ALOC_PROF_CURSO );
+			c.setProfessor( v.getProfessor() );
+			c.setCurso( *itC );
 
-                  if ( v_find.getType() == VariableOp::V_Y_PROF_DISCIPLINA 
-                        && v_find.getProfessor() == professor )
-                  {
-                     // Verifica se a disciplina da variável está associada ao curso
-                     GGroup< Disciplina *, LessPtr< Disciplina > >::iterator
-                        it_find = mapCursoDisciplinas[ curso ].find( v_find.getDisciplina() );
+			cit = cHashOp.find(c);
+			if ( cit != cHashOp.end() )
+			{
+				lp->chgCoef(cit->second, vit->second, -1.0);
+			}
+		}
 
-                     if ( it_find != mapCursoDisciplinas[ curso ].end() )
-                     {
-                        row.insert( vit_find->second, -1.0 );
-                     }
-                  }
-               }
+		vit++;
+	}
 
-               cHashOp[ c ] = lp->getNumRows();
-               lp->addRow( row );
-
-               restricoes++;
-            }
-         }
-      }
-   }
-
-   return restricoes;
+	return restricoes;
 }
+
+//int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
+//{
+//   int restricoes = 0;
+//   int nnz = 0;
+//   double rhs = 0.0;
+//   char name[ 200 ];
+//   int bigM = 1000;
+//
+//   ConstraintOp c;
+//   VariableOpHash::iterator vit;
+//   VariableOpHash::iterator vit_f;
+//   ConstraintOpHash::iterator cit;
+//
+//   // Informando quais disciplinas estão associadas a cada curso
+//   std::map< Curso *, GGroup< Disciplina *,
+//      LessPtr< Disciplina > > > mapCursoDisciplinas;
+//
+//   ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+//   {
+//      Aula * aula = ( *it_aula );
+//
+//      ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
+//      {
+//         Oferta * oferta = ( *it_oferta );
+//
+//         mapCursoDisciplinas[ oferta->curso ].add( aula->getDisciplina() );
+//      }
+//   }
+//
+//   GGroup< Professor *, LessPtr< Professor > > professores
+//      = problemData->getProfessores();
+//
+//   int totalCursos = problemData->cursos.size();
+//   int totalProfessores = professores.size();
+//
+//   ITERA_GGROUP_LESSPTR( itProf, professores, Professor )
+//   {
+//      Professor * professor = ( *itProf );
+//
+//      ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
+//      {
+//         Curso * curso = ( *itCurso );
+//
+//         VariableOp v;
+//         v.reset();
+//
+//         v.setType( VariableOp::V_PROF_CURSO );
+//         v.setProfessor( professor );
+//         v.setCurso( curso );
+//         vit = vHashOp.find( v );
+//
+//         if ( vit != vHashOp.end() )
+//         {
+//            // Cria a restriçao de m ( p, c ) * M >= E ( E ( y( p, d, i ) ) )
+//            c.reset();
+//            c.setType( ConstraintOp::C_ALOC_PROF_CURSO );
+//
+//            c.setProfessor( v.getProfessor() );
+//            c.setCurso( v.getCurso() );
+//
+//            cit = cHashOp.find( c );
+//
+//            if ( cit == cHashOp.end() )
+//            {
+//               sprintf( name, "%s", c.toString().c_str() );
+//               nnz = ( totalProfessores + totalCursos );
+//
+//               OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+//               row.insert( vit->second, bigM );
+//
+//               VariableOpHash::iterator vit_find = vHashOp.begin();
+//
+//               for (; vit_find != vHashOp.end(); vit_find++ )
+//               {
+//                  VariableOp v_find = vit_find->first;
+//
+//                  if ( v_find.getType() == VariableOp::V_Y_PROF_DISCIPLINA 
+//                        && v_find.getProfessor() == professor )
+//                  {
+//                     // Verifica se a disciplina da variável está associada ao curso
+//                     GGroup< Disciplina *, LessPtr< Disciplina > >::iterator
+//                        it_find = mapCursoDisciplinas[ curso ].find( v_find.getDisciplina() );
+//
+//                     if ( it_find != mapCursoDisciplinas[ curso ].end() )
+//                     {
+//                        row.insert( vit_find->second, -1.0 );
+//                     }
+//                  }
+//               }
+//
+//               cHashOp[ c ] = lp->getNumRows();
+//               lp->addRow( row );
+//
+//               restricoes++;
+//            }
+//         }
+//      }
+//   }
+//
+//   return restricoes;
+//}
+
 
 int SolverMIP::criaRestricaoCargaHorariaMinimaProfessor()
 {
@@ -29994,130 +30095,281 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
    VariableOpHash::iterator vit;
    ConstraintOpHash::iterator cit;
 
-   GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->getProfessores();
+	vit = vHashOp.begin();
 
-   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
-      = problemData->disciplinas;
+	while(vit != vHashOp.end())
+	{
+		VariableOp v = ( vit->first );
 
-   GGroup< Curso *, LessPtr< Curso > > cursos
-      = problemData->cursos;
+		if (v.getType() != VariableOp::V_MAX_DISC_PROF_CURSO && v.getType() != VariableOp::V_Y_PROF_DISCIPLINA
+			&& v.getType() != VariableOp::V_F_MAX_DISC_PROF_CURSO)
+		{
+			vit++;
+			continue;
+		}
 
-   GGroup< Aula *, LessPtr< Aula > > aulas
-      = problemData->aulas;
+		if(v.getType() == VariableOp::V_MAX_DISC_PROF_CURSO)
+		{
+			c.reset();
+			c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+			c.setProfessor( v.getProfessor() );
+			c.setCurso( v.getCurso() );
+			c.setDisciplina( v.getDisciplina() );
 
-   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
-   {
-      Professor * professor = ( *it_prof );
-      
-      ITERA_GGROUP_LESSPTR( it_curso, cursos, Curso )
-      {
-         Curso * curso = ( *it_curso );
+			cit = cHashOp.find(c);
+			if ( cit == cHashOp.end() )
+			{
+				cHashOp[ c ] = lp->getNumRows();
 
-         c.reset();
-         c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+				sprintf( name, "%s", c.toString().c_str() );
+				OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
 
-         c.setProfessor( professor );
-         c.setCurso( curso );
+				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
+				row.insert( vit->second, -M );
 
-         if ( cHashOp.find( c ) == cHashOp.end() )
-         {
-            sprintf( name, "%s", c.toString().c_str() );
+				lp->addRow( row );
+				restricoes++;
+			}
+			else
+			{
+				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
+				lp->chgCoef(cit->second, vit->second, -M);
+			}
 
-            ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
-            {
-               Disciplina * disciplina = ( *it_disc );
+			c.reset();
+			c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO2 );
+			c.setProfessor( v.getProfessor() );
+			c.setCurso( v.getCurso() );
 
-			   if ( !curso->possuiDisciplina( disciplina ) )
+			cit = cHashOp.find(c);
+			if ( cit == cHashOp.end() )
+			{
+				cHashOp[ c ] = lp->getNumRows();
+
+				sprintf( name, "%s", c.toString().c_str() );
+				rhs = v.getCurso()->getQtdMaxProfDisc();
+				OPT_ROW row( 100, OPT_ROW::LESS, rhs, name );
+
+				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
+				row.insert( vit->second, 1.0 );
+
+				lp->addRow( row );
+				restricoes++;
+			}
+			else
+			{
+				lp->chgCoef(cit->second, vit->second, 1.0);
+			}
+		}
+		else if(v.getType() == VariableOp::V_Y_PROF_DISCIPLINA)
+		{
+			ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
+			{
+				Curso * curso = *it_curso;
+
+				if(!problemData->aulaAtendeCurso( v.getAula(), curso))
 					continue;
 
-               // Procura pela variável 'Lpcd'
-               v_find.reset();
-               v_find.setType( VariableOp::V_MAX_DISC_PROF_CURSO );
+				if ( !curso->possuiDisciplina( v.getDisciplina() ) )
+					continue;
 
-               v_find.setProfessor( professor );
-               v_find.setCurso( curso );
-               v_find.setDisciplina( disciplina );
+				c.reset();
+				c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+				c.setProfessor( v.getProfessor() );
+				c.setCurso( curso );
+				c.setDisciplina( v.getDisciplina() );
 
-               vit = vHashOp.find( v_find );
+				cit = cHashOp.find(c);
+				if ( cit == cHashOp.end() )
+				{
+					cHashOp[ c ] = lp->getNumRows();
 
-               if ( vit == vHashOp.end() )
-               {
-                  continue;
-               }
+					sprintf( name, "%s", c.toString().c_str() );
+					OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
 
-               // Hash da variável 'Lpcd'
-               int idHashVLpcd = vit->second;
-               ///////
+					row.insert( vit->second, 1.0 );
 
-               // Sum[ Xpah ] - ( M * Lpcd ) <= 0
-               rhs = 0.0;
-               nnz = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() + 1 );
+					lp->addRow( row );
+					restricoes++;
+				}
+				else
+				{
+					lp->chgCoef(cit->second, vit->second, 1.0);
+				}
+			}
+		}
+		else if(v.getType() == VariableOp::V_F_MAX_DISC_PROF_CURSO)
+		{
+			c.reset();
+			c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO2 );
+			c.setProfessor( v.getProfessor() );
+			c.setCurso( v.getCurso() );
 
-               OPT_ROW row1( nnz, OPT_ROW::LESS, rhs, name );
+			cit = cHashOp.find(c);
+			if ( cit == cHashOp.end() )
+			{
+				cHashOp[ c ] = lp->getNumRows();
 
-               // Máximo de horários que a disciplina pode ocupar
-               M = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
+				sprintf( name, "%s", c.toString().c_str() );
+				rhs = v.getCurso()->getQtdMaxProfDisc();
+				OPT_ROW row( 100, OPT_ROW::LESS, rhs, name );
 
-               // ( - M * Lpcd )
-               row1.insert( idHashVLpcd, -M );
+				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
+				row.insert( vit->second, -1.0 );
 
-               vit = vHashOp.begin();
-               for (; vit != vHashOp.end(); vit++ )
-               {
-                  if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
-                     && vit->first.getProfessor() == professor
-                     && vit->first.getDisciplina() == disciplina )
-                  {
-                     if ( problemData->aulaAtendeCurso( vit->first.getAula(), curso ) )
-                     {
-                        // Sum[ Xpah ]
-                        row1.insert( vit->second, 1.0 );
-                     }
-                  }
-               }
+				lp->addRow( row );
+				restricoes++;
+			}
+			else
+			{
+				lp->chgCoef(cit->second, vit->second, -1.0);
+			}
+		}
 
-               lp->addRow( row1 );
-               ///////
-            }
+		vit++;
+	}
 
-            // SUM[ Lpcd ] - SUM[ LpcdSlack ] <= MaxDiscCurso
-            rhs = curso->getQtdMaxProfDisc();
-            nnz = ( 2 * disciplinas.size() );
 
-            OPT_ROW row2( nnz, OPT_ROW::LESS, rhs, name );
-
-            vit = vHashOp.begin();
-            for (; vit != vHashOp.end(); vit++ )
-            {
-               if ( vit->first.getType() == VariableOp::V_MAX_DISC_PROF_CURSO
-                  && vit->first.getProfessor() == professor
-                  && vit->first.getCurso() == curso )
-               {
-                  // Sum[ Lpcd ]
-                  row2.insert( vit->second, 1.0 );
-               }
-
-               if ( vit->first.getType() == VariableOp::V_F_MAX_DISC_PROF_CURSO
-                  && vit->first.getProfessor() == professor
-                  && vit->first.getCurso() == curso )
-               {
-                  // - SUM[ LpcdSlack ]
-                  row2.insert( vit->second, -1.0 );
-               }
-            }
-
-            lp->addRow( row2 );
-            ///////
-
-            cHashOp[ c ] = lp->getNumRows();
-            restricoes++;
-         }
-      }
-   }
-
-   return restricoes;
+	return restricoes;
 }
+
+//int SolverMIP::criaRestricaoMaxDiscProfCurso()
+//{
+//   int restricoes = 0;
+//   int nnz = 0;
+//   double rhs = 0.0;
+//   char name[ 200 ];
+//   double M = 1000000.0;
+//
+//   ConstraintOp c;
+//   VariableOp v_find;
+//   VariableOpHash::iterator vit;
+//   ConstraintOpHash::iterator cit;
+//
+//   GGroup< Professor *, LessPtr< Professor > > professores
+//      = problemData->getProfessores();
+//
+//   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
+//      = problemData->disciplinas;
+//
+//   GGroup< Curso *, LessPtr< Curso > > cursos
+//      = problemData->cursos;
+//
+//   GGroup< Aula *, LessPtr< Aula > > aulas
+//      = problemData->aulas;
+//
+//   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+//   {
+//      Professor * professor = ( *it_prof );
+//      
+//      ITERA_GGROUP_LESSPTR( it_curso, cursos, Curso )
+//      {
+//         Curso * curso = ( *it_curso );
+//
+//         c.reset();
+//         c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+//
+//         c.setProfessor( professor );
+//         c.setCurso( curso );
+//
+//         if ( cHashOp.find( c ) == cHashOp.end() )
+//         {
+//            sprintf( name, "%s", c.toString().c_str() );
+//
+//            ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
+//            {
+//               Disciplina * disciplina = ( *it_disc );
+//
+//			   if ( !curso->possuiDisciplina( disciplina ) )
+//					continue;
+//
+//               // Procura pela variável 'Lpcd'
+//               v_find.reset();
+//               v_find.setType( VariableOp::V_MAX_DISC_PROF_CURSO );
+//
+//               v_find.setProfessor( professor );
+//               v_find.setCurso( curso );
+//               v_find.setDisciplina( disciplina );
+//
+//               vit = vHashOp.find( v_find );
+//
+//               if ( vit == vHashOp.end() )
+//               {
+//                  continue;
+//               }
+//
+//               // Hash da variável 'Lpcd'
+//               int idHashVLpcd = vit->second;
+//               ///////
+//
+//               // Sum[ Xpah ] - ( M * Lpcd ) <= 0
+//               rhs = 0.0;
+//               nnz = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() + 1 );
+//
+//               OPT_ROW row1( nnz, OPT_ROW::LESS, rhs, name );
+//
+//               // Máximo de horários que a disciplina pode ocupar
+//               M = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
+//
+//               // ( - M * Lpcd )
+//               row1.insert( idHashVLpcd, -M );
+//
+//               vit = vHashOp.begin();
+//               for (; vit != vHashOp.end(); vit++ )
+//               {
+//                  if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
+//                     && vit->first.getProfessor() == professor
+//                     && vit->first.getDisciplina() == disciplina )
+//                  {
+//                     if ( problemData->aulaAtendeCurso( vit->first.getAula(), curso ) )
+//                     {
+//                        // Sum[ Xpah ]
+//                        row1.insert( vit->second, 1.0 );
+//                     }
+//                  }
+//               }
+//
+//               lp->addRow( row1 );
+//               ///////
+//            }
+//
+//            // SUM[ Lpcd ] - SUM[ LpcdSlack ] <= MaxDiscCurso
+//            rhs = curso->getQtdMaxProfDisc();
+//            nnz = ( 2 * disciplinas.size() );
+//
+//            OPT_ROW row2( nnz, OPT_ROW::LESS, rhs, name );
+//
+//            vit = vHashOp.begin();
+//            for (; vit != vHashOp.end(); vit++ )
+//            {
+//               if ( vit->first.getType() == VariableOp::V_MAX_DISC_PROF_CURSO
+//                  && vit->first.getProfessor() == professor
+//                  && vit->first.getCurso() == curso )
+//               {
+//                  // Sum[ Lpcd ]
+//                  row2.insert( vit->second, 1.0 );
+//               }
+//
+//               if ( vit->first.getType() == VariableOp::V_F_MAX_DISC_PROF_CURSO
+//                  && vit->first.getProfessor() == professor
+//                  && vit->first.getCurso() == curso )
+//               {
+//                  // - SUM[ LpcdSlack ]
+//                  row2.insert( vit->second, -1.0 );
+//               }
+//            }
+//
+//            lp->addRow( row2 );
+//            ///////
+//
+//            cHashOp[ c ] = lp->getNumRows();
+//            restricoes++;
+//         }
+//      }
+//   }
+//
+//   return restricoes;
+//}
 
 int SolverMIP::criaRestricaoDeslocamentoProfessor()
 {
@@ -30333,7 +30585,7 @@ int SolverMIP::criaRestricaoDeslocamentoViavel()
 int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
 {
    int restricoes = 0;
-   int nnz = 3;
+   int nnz = 100;
    double rhs = 1.0;
    char name[ 200 ];
 
@@ -30342,96 +30594,207 @@ int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
    VariableOpHash::iterator vit2;
    VariableOpHash::iterator vitSlack;
 
-   // Hash que armazena apenas as variáveis 'Xpah'
-   VariableOpHash hashX;
+   map< Professor*, map< HorarioDia*, vector< VariableOpHash::iterator > , LessPtr < HorarioDia > >, LessPtr< Professor > > mapPrimeirasAulas;
+   map< Professor*, map< HorarioDia*, vector< VariableOpHash::iterator > , LessPtr < HorarioDia > >, LessPtr< Professor > > mapUltimassAulas;
+   
    vit1 = vHashOp.begin();
 
    for (; vit1 != vHashOp.end(); vit1++ )
    {
-      if ( vit1->first.getType() == VariableOp::V_X_PROF_AULA_HOR )
+      if ( vit1->first.getType() == VariableOp::V_X_PROF_AULA_HOR && vit1->first.getProfessor() != NULL)
       {
-         hashX[ vit1->first ] = vit1->second;
+		  VariableOp v = vit1->first;
+
+		  if(problemData->verificaPrimeiraAulas(v.getHorario()))
+			  mapPrimeirasAulas[v.getProfessor()][v.getHorario()].push_back(vit1);
+		  else if(problemData->verificaUltimaAulas(v.getHorario()))
+			  mapUltimassAulas[v.getProfessor()][v.getHorario()].push_back(vit1);
       }
    }
-   
-   vit1 = hashX.begin();
 
-   for (; vit1 != hashX.end(); vit1++ )
+   map< Professor*, map< HorarioDia*, vector< VariableOpHash::iterator > , LessPtr < HorarioDia > >, LessPtr< Professor > >::iterator itP1 = mapPrimeirasAulas.begin();
+   for(; itP1 != mapPrimeirasAulas.end(); itP1++)
    {
-      VariableOp v1 = vit1->first;
+	   Professor *professor = itP1->first;
 
-      vit2 = vit1;
-      vit2++;
+	   map< HorarioDia*, vector< VariableOpHash::iterator > , LessPtr < HorarioDia > >::iterator itP2 = itP1->second.begin();
+	   for(; itP2 != itP1->second.end(); itP2++)
+	   {
+		   HorarioDia *horario1 = itP2->first;
 
-      for (; vit2 != hashX.end(); vit2++ )
-      {
-         VariableOp v2 = vit2->first;
+		   map< HorarioDia*, vector< VariableOpHash::iterator > , LessPtr < HorarioDia > > mapTemp = mapUltimassAulas[professor];
+		   map< HorarioDia*, vector< VariableOpHash::iterator > , LessPtr < HorarioDia > >::iterator itU1 = mapTemp.begin();
+		   for(; itU1 != mapTemp.end(); itU1++)
+		   {
+			   HorarioDia *horario2 = itU1->first;
 
-         if ( v1.getProfessor() != v2.getProfessor() )
-         {
-            continue;
-         }
+			   if(!problemData->verificaUltimaPrimeiraAulas(horario1, horario2))
+				   continue;
 
-         Professor * professor = ( v1.getProfessor() );
+			   c.reset();
+			   c.setType( ConstraintOp::C_ULTIMA_PRIMEIRA_AULA_PROF );
+			   c.setProfessor( professor );
+			   c.setHorarioDiaD( horario1 );
+			   c.setHorarioDiaD1( horario2 );
 
-         // Verifica se essas aulas ocorrem no último
-         // horário do dia D e no primeiro horário do dia ( D + 1 )
-         bool verificaAulas = problemData->verificaUltimaPrimeiraAulas(
-            v1.getHorario(), v2.getHorario() );
+			   if ( cHashOp.find( c ) != cHashOp.end() )
+				   continue;
 
-         if ( !verificaAulas )
-         {
-            continue;
-         }
+			   sprintf( name, "%s", c.toString().c_str() );
 
-         // Insere a nova restrição professor + dias + horários
-         c.reset();
-         c.setType( ConstraintOp::C_ULTIMA_PRIMEIRA_AULA_PROF );
-         c.setProfessor( professor );
-         c.setHorarioDiaD( v1.getHorario() );
-         c.setHorarioDiaD( v2.getHorario() );
+			   cHashOp[ c ] = lp->getNumRows();
+			   restricoes++;
 
-         if ( cHashOp.find( c ) != cHashOp.end() )
-         {
-            continue;
-         }
+			   OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 
-         sprintf( name, "%s", c.toString().c_str() );
+			   vector< VariableOpHash::iterator > vars = itP2->second;
 
-         cHashOp[ c ] = lp->getNumRows();
-         restricoes++;
+			   for(vector< VariableOpHash::iterator >::iterator itV = vars.begin();
+				   itV != vars.end();
+				   itV++)
+			   {
+				   VariableOpHash::iterator vit = *itV;
+				   row.insert(vit->second, 1.0);
+			   }
 
-         // Cria a restrição 'Xpah1 + Xpah2 <= 1'
-         // --> Aloca no máximo uma das aulas ao professor
-         OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+			   vars = itU1->second;
 
-         row.insert( vit1->second, 1.0 );
-         row.insert( vit2->second, 1.0 );
+			   for(vector< VariableOpHash::iterator >::iterator itV = vars.begin();
+				   itV != vars.end();
+				   itV++)
+			   {
+				   VariableOpHash::iterator vit = *itV;
+				   row.insert(vit->second, 1.0);
+			   }
 
-         // Adiciona a variável de folga
-         VariableOp vSlack;
-         vSlack.reset();
-         vSlack.setType( VariableOp::V_F_ULTIMA_PRIMEIRA_AULA_PROF );
 
-         vSlack.setProfessor( professor );
-         vSlack.setHorarioDiaD( v1.getHorario() );
-         vSlack.setHorarioDiaD1( v2.getHorario() );
+			   // Adiciona a variável de folga
+			   VariableOp vSlack;
+			   vSlack.reset();
+			   vSlack.setType( VariableOp::V_F_ULTIMA_PRIMEIRA_AULA_PROF );
 
-         vitSlack = vHashOp.find( vSlack );
+			   vSlack.setProfessor( professor );
+			   vSlack.setHorarioDiaD( horario1 );
+			   vSlack.setHorarioDiaD1( horario2 );
 
-         if ( vitSlack != vHashOp.end() )
-         {
-            row.insert( vitSlack->second, 1.0 );
-         }
+			   vitSlack = vHashOp.find( vSlack );
 
-         // Apenar adicionamos a restrição no modelo se existir
-         // a variável de folga, para que não aconteça inviabilidades
-         lp->addRow( row );
-      }
+			   if ( vitSlack != vHashOp.end() )
+			   {
+				   row.insert( vitSlack->second, -1.0 );
+			   }
+
+			   lp->addRow( row );
+		   }
+
+	   }
    }
 
    return restricoes;
 }
+
+//int SolverMIP::criaRestricaoUltimaPrimeiraAulas()
+//{
+//   int restricoes = 0;
+//   int nnz = 3;
+//   double rhs = 1.0;
+//   char name[ 200 ];
+//
+//   ConstraintOp c;
+//   VariableOpHash::iterator vit1;
+//   VariableOpHash::iterator vit2;
+//   VariableOpHash::iterator vitSlack;
+//
+//   // Hash que armazena apenas as variáveis 'Xpah'
+//   VariableOpHash hashX;
+//   vit1 = vHashOp.begin();
+//
+//   for (; vit1 != vHashOp.end(); vit1++ )
+//   {
+//      if ( vit1->first.getType() == VariableOp::V_X_PROF_AULA_HOR )
+//      {
+//         hashX[ vit1->first ] = vit1->second;
+//      }
+//   }
+//   
+//   vit1 = hashX.begin();
+//
+//   for (; vit1 != hashX.end(); vit1++ )
+//   {
+//      VariableOp v1 = vit1->first;
+//
+//      vit2 = vit1;
+//      vit2++;
+//
+//      for (; vit2 != hashX.end(); vit2++ )
+//      {
+//         VariableOp v2 = vit2->first;
+//
+//         if ( v1.getProfessor() != v2.getProfessor() )
+//         {
+//            continue;
+//         }
+//
+//         Professor * professor = ( v1.getProfessor() );
+//
+//         // Verifica se essas aulas ocorrem no último
+//         // horário do dia D e no primeiro horário do dia ( D + 1 )
+//         bool verificaAulas = problemData->verificaUltimaPrimeiraAulas(
+//            v1.getHorario(), v2.getHorario() );
+//
+//         if ( !verificaAulas )
+//         {
+//            continue;
+//         }
+//
+//         // Insere a nova restrição professor + dias + horários
+//         c.reset();
+//         c.setType( ConstraintOp::C_ULTIMA_PRIMEIRA_AULA_PROF );
+//         c.setProfessor( professor );
+//         c.setHorarioDiaD( v1.getHorario() );
+//         c.setHorarioDiaD1( v2.getHorario() );
+//
+//         if ( cHashOp.find( c ) != cHashOp.end() )
+//         {
+//            continue;
+//         }
+//
+//         sprintf( name, "%s", c.toString().c_str() );
+//
+//         cHashOp[ c ] = lp->getNumRows();
+//         restricoes++;
+//
+//         // Cria a restrição 'Xpah1 + Xpah2 <= 1'
+//         // --> Aloca no máximo uma das aulas ao professor
+//         OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+//
+//         row.insert( vit1->second, 1.0 );
+//         row.insert( vit2->second, 1.0 );
+//
+//         // Adiciona a variável de folga
+//         VariableOp vSlack;
+//         vSlack.reset();
+//         vSlack.setType( VariableOp::V_F_ULTIMA_PRIMEIRA_AULA_PROF );
+//
+//         vSlack.setProfessor( professor );
+//         vSlack.setHorarioDiaD( v1.getHorario() );
+//         vSlack.setHorarioDiaD1( v2.getHorario() );
+//
+//         vitSlack = vHashOp.find( vSlack );
+//
+//         if ( vitSlack != vHashOp.end() )
+//         {
+//            row.insert( vitSlack->second, 1.0 );
+//         }
+//
+//         // Apenar adicionamos a restrição no modelo se existir
+//         // a variável de folga, para que não aconteça inviabilidades
+//         lp->addRow( row );
+//      }
+//   }
+//
+//   return restricoes;
+//}
 
 int SolverMIP::criaRestricaoGapsProfessores()
 {
@@ -30454,8 +30817,8 @@ int SolverMIP::criaRestricaoGapsProfessores()
       return 0;
    }
 
-   VariableOpHash variaveisHashGapsProfessores;
-   VariableOpHash variaveisHashX;
+   map< Professor*, map< int, vector< VariableOpHash::iterator > >, LessPtr< Professor > > variaveisHashGapsProfessores;
+   map< Professor*, map< int, vector< VariableOpHash::iterator > >, LessPtr< Professor > > variaveisHashX;
 
    vit1 = vHashOp.begin();
 
@@ -30463,107 +30826,227 @@ int SolverMIP::criaRestricaoGapsProfessores()
    {
       VariableOp v = ( vit1->first );
 
-      if ( v.getType() == VariableOp::V_GAPS_PROFESSORES )
+	  if ( v.getType() == VariableOp::V_GAPS_PROFESSORES && v.getProfessor() != NULL )
       {
-         variaveisHashGapsProfessores[ v ] = ( vit1->second );
+		  variaveisHashGapsProfessores[v.getProfessor()][v.getDia()].push_back(vit1);
       }
-      else if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR )
+      else if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR && v.getProfessor() != NULL )
       {
-         variaveisHashX[ v ] = ( vit1->second );
+         variaveisHashX[v.getProfessor()][v.getDia()].push_back(vit1);
       }
    }
 
-   GGroup< Professor *, LessPtr< Professor > > professores
-      = problemData->getProfessores();
-
-   GGroup< int > dias_letivos;
-
-   for ( int i = 1; i <= 7; i++ )
+   map< Professor*, map< int, vector< VariableOpHash::iterator > >, LessPtr< Professor > >::iterator it1 = variaveisHashGapsProfessores.begin();
+   for(; it1 != variaveisHashGapsProfessores.end(); it1++)
    {
-      dias_letivos.add( i );
-   }
+	   Professor *professor = it1->first;
 
-   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
-   {
-      Professor * professor = ( *it_prof );
+	   map< int, vector< VariableOpHash::iterator > >::iterator it2 = it1->second.begin();
+	   for(; it2 != it1->second.end(); it2++)
+	   {
+		   int dia = it2->first;
 
-      ITERA_GGROUP_N_PT( it_dia, dias_letivos, int )
-      {
-         int dia = ( *it_dia );
+		   vector< VariableOpHash::iterator >::iterator it3 = it2->second.begin();
+		   for(; it3 != it2->second.end(); it3++)
+		   {
+			   vit1 = *it3;
+			   VariableOp v_temp = vit1->first;
 
-         vit1 = variaveisHashGapsProfessores.begin();
+			   // Horários nos extremos do intervalo de horários
+			   HorarioAula * h1 = v_temp.getH1();
+			   HorarioAula * h2 = v_temp.getH2();
 
-         for (; vit1 != variaveisHashGapsProfessores.end(); vit1++ )
-         {
-            VariableOp v_temp = vit1->first;
+			   c.reset();
+			   c.setType( ConstraintOp::C_GAPS_PROFESSORES );
+			   c.setProfessor( professor );
+			   c.setDia( dia );
+			   c.setH1( h1 );
+			   c.setH2( h2 );
 
-            if ( v_temp.getProfessor() == professor
-               && v_temp.getDia() == dia )
-            {
-               // Horários nos extremos do intervalo de horários
-               HorarioAula * h1 = v_temp.getH1();
-               HorarioAula * h2 = v_temp.getH2();
+			   if ( cHashOp.find( c ) == cHashOp.end() )
+			   {
+				   sprintf( name, "%s", c.toString().c_str() );
 
-               c.reset();
-               c.setType( ConstraintOp::C_GAPS_PROFESSORES );
+				   OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 
-               c.setProfessor( professor );
-               c.setDia( dia );
-               c.setH1( h1 );
-               c.setH2( h2 );
+				   // Variável do gap
+				   row.insert( vit1->second, -1.0 );
 
-               if ( cHashOp.find( c ) == cHashOp.end() )
-               {
-                  sprintf( name, "%s", c.toString().c_str() );
+				   bool inseriuVariavel = false;
 
-                  OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+				   vector< VariableOpHash::iterator > vars = variaveisHashX[professor][dia];
+				   vector< VariableOpHash::iterator >::iterator it4 = vars.begin();
 
-                  // Variável do gap
-                  row.insert( vit1->second, -1.0 );
+				   for(; it4 != vars.end(); it4++)
+				   {
+					   vit2 = *it4;
+					   VariableOp v_x = vit2->first;
 
-                  bool inseriuVariavel = false;
-                  vit2 = variaveisHashX.begin();
+					   if ( v_x.getHorario()->getHorarioAula()->getInicio() >= h1->getInicio()
+						   && v_x.getHorario()->getHorarioAula()->getInicio() <= h2->getInicio() )
+					   {
+						   inseriuVariavel = true;
 
-                  for (; vit2 != variaveisHashX.end(); vit2++ )
-                  {
-                     VariableOp v_x = vit2->first;
+						   // Variáveis dos horários nos extremos do intervalo
+						   if ( v_x.getHorario()->getHorarioAula()->getInicio() == h1->getInicio()
+							   || v_x.getHorario()->getHorarioAula()->getInicio() == h2->getInicio() )
+						   {
+							   row.insert( vit2->second, 1.0 );
+						   }
+						   // Variáveis dos horários no meio do intervalo
+						   else
+						   {
+							   row.insert( vit2->second, -1.0 );
+						   }
+					   }
+				   }
 
-                     if ( v_x.getProfessor() == professor
-                        && v_x.getHorario()->getDia() == dia 
-                        && v_x.getHorario()->getHorarioAula()->getInicio() >= h1->getInicio()
-                        && v_x.getHorario()->getHorarioAula()->getInicio() <= h2->getInicio() )
-                     {
-                        inseriuVariavel = true;
-
-                        // Variáveis dos horários nos extremos do intervalo
-                        if ( v_x.getHorario()->getHorarioAula()->getInicio() == h1->getInicio()
-                           || v_x.getHorario()->getHorarioAula()->getInicio() == h2->getInicio() )
-                        {
-                           row.insert( vit2->second, 1.0 );
-                        }
-                        // Variáveis dos horários no meio do intervalo
-                        else
-                        {
-                           row.insert( vit2->second, -1.0 );
-                        }
-                     }
-                  }
-
-                  cHashOp[ c ] = lp->getNumRows();
-
-                  if ( inseriuVariavel )
-                  {
-                     lp->addRow( row );
-                     restricoes++;
-                  }
-               }
-            }
-         }
-      }
+				   if ( inseriuVariavel )
+				   {
+					   cHashOp[ c ] = lp->getNumRows();
+					   lp->addRow( row );
+					   restricoes++;
+				   }
+			   }
+		   }
+	   }
    }
 
    return restricoes;
 }
+
+//int SolverMIP::criaRestricaoGapsProfessores()
+//{
+//   int restricoes = 0;
+//
+//   ConstraintOp c;
+//   VariableOpHash::iterator vit1;
+//   VariableOpHash::iterator vit2;
+//
+//   const int totalHorariosAula = (int)(
+//     problemData->horarios_aula_ordenados .size() );
+//
+//   // Horários * Aulas * Dias Letivos
+//   int nnz = ( totalHorariosAula * (int)( problemData->aulas.size() ) * 5 );
+//   double rhs = 1.0;
+//   char name[ 200 ];
+//
+//   if ( nnz == 0 )
+//   {
+//      return 0;
+//   }
+//
+//   VariableOpHash variaveisHashGapsProfessores;
+//   VariableOpHash variaveisHashX;
+//
+//   vit1 = vHashOp.begin();
+//
+//   for (; vit1 != vHashOp.end(); vit1++ )
+//   {
+//      VariableOp v = ( vit1->first );
+//
+//      if ( v.getType() == VariableOp::V_GAPS_PROFESSORES )
+//      {
+//         variaveisHashGapsProfessores[ v ] = ( vit1->second );
+//      }
+//      else if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR )
+//      {
+//         variaveisHashX[ v ] = ( vit1->second );
+//      }
+//   }
+//
+//   GGroup< Professor *, LessPtr< Professor > > professores
+//      = problemData->getProfessores();
+//
+//   GGroup< int > dias_letivos;
+//
+//   for ( int i = 1; i <= 7; i++ )
+//   {
+//      dias_letivos.add( i );
+//   }
+//
+//   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+//   {
+//      Professor * professor = ( *it_prof );
+//
+//      ITERA_GGROUP_N_PT( it_dia, dias_letivos, int )
+//      {
+//         int dia = ( *it_dia );
+//
+//         vit1 = variaveisHashGapsProfessores.begin();
+//
+//         for (; vit1 != variaveisHashGapsProfessores.end(); vit1++ )
+//         {
+//            VariableOp v_temp = vit1->first;
+//
+//            if ( v_temp.getProfessor() == professor
+//               && v_temp.getDia() == dia )
+//            {
+//               // Horários nos extremos do intervalo de horários
+//               HorarioAula * h1 = v_temp.getH1();
+//               HorarioAula * h2 = v_temp.getH2();
+//
+//               c.reset();
+//               c.setType( ConstraintOp::C_GAPS_PROFESSORES );
+//
+//               c.setProfessor( professor );
+//               c.setDia( dia );
+//               c.setH1( h1 );
+//               c.setH2( h2 );
+//
+//               if ( cHashOp.find( c ) == cHashOp.end() )
+//               {
+//                  sprintf( name, "%s", c.toString().c_str() );
+//
+//                  OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+//
+//                  // Variável do gap
+//                  row.insert( vit1->second, -1.0 );
+//
+//                  bool inseriuVariavel = false;
+//                  vit2 = variaveisHashX.begin();
+//
+//                  for (; vit2 != variaveisHashX.end(); vit2++ )
+//                  {
+//                     VariableOp v_x = vit2->first;
+//
+//                     if ( v_x.getProfessor() == professor
+//                        && v_x.getHorario()->getDia() == dia 
+//                        && v_x.getHorario()->getHorarioAula()->getInicio() >= h1->getInicio()
+//                        && v_x.getHorario()->getHorarioAula()->getInicio() <= h2->getInicio() )
+//                     {
+//                        inseriuVariavel = true;
+//
+//                        // Variáveis dos horários nos extremos do intervalo
+//                        if ( v_x.getHorario()->getHorarioAula()->getInicio() == h1->getInicio()
+//                           || v_x.getHorario()->getHorarioAula()->getInicio() == h2->getInicio() )
+//                        {
+//                           row.insert( vit2->second, 1.0 );
+//                        }
+//                        // Variáveis dos horários no meio do intervalo
+//                        else
+//                        {
+//                           row.insert( vit2->second, -1.0 );
+//                        }
+//                     }
+//                  }
+//
+//                  cHashOp[ c ] = lp->getNumRows();
+//
+//                  if ( inseriuVariavel )
+//                  {
+//                     lp->addRow( row );
+//                     restricoes++;
+//                  }
+//               }
+//            }
+//         }
+//      }
+//   }
+//
+//   return restricoes;
+//}
+
 
 void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
 {
@@ -30757,6 +31240,230 @@ void SolverMIP::buscaLocalTempoDeslocamentoSolucao()
 	em um mesmo dia e em unidades distintas.
 
 */
+//int SolverMIP::criaRestricaoProfHorarioMultiUnid( void )
+//{
+//   int restricoes = 0;
+//   int nnz;
+//   char name[ 200 ];
+//
+//   ConstraintOp c;
+//   VariableOpHash::iterator vit;
+//   ConstraintOpHash::iterator cit;
+//
+//   map< Professor*, map< int, map< int, map< Aula*, map< HorarioDia*, vector< VariableOpHash::iterator >, 
+//	   LessPtr< HorarioDia > >, LessPtr< Aula > > > >, LessPtr< Professor > > mapVariaveis;
+//
+//   vit = vHashOp.begin();
+//   while(vit != vHashOp.end())
+//   {
+//	   if(vit->first.getType() == VariableOp::V_X_PROF_AULA_HOR && vit->first.getProfessor() != NULL)
+//	   {
+//		   VariableOp v = vit->first;
+//
+//		   int tempoCred = v.getAula()->getDisciplina()->getTempoCredSemanaLetiva();
+//		   int nCred = v.getAula()->getTotalCreditos();
+//		   int aulaDuracao = tempoCred * nCred;
+//
+//		   mapVariaveis[v.getProfessor()][v.getDia()][aulaDuracao][v.getAula()][v.getHorario()].push_back(vit);
+//	   }
+//
+//	   vit++;
+//   }
+//
+//   GGroup< int > duracoesTodasAulas;
+//
+//   ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+//   {
+//		int tempoCred = (*it_aula)->getDisciplina()->getTempoCredSemanaLetiva();
+//		int nCred = (*it_aula)->getTotalCreditos();
+//		int aulaDuracao = tempoCred * nCred;
+//
+//		duracoesTodasAulas.add( aulaDuracao );
+//   }
+//
+//   GGroup< Professor *, LessPtr< Professor > > professores = problemData->getProfessores();
+//
+//   ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
+//   {
+//	    Campus *cp = *it_campus;
+//		
+//		ITERA_GGROUP_LESSPTR( it_unid, cp->unidades, Unidade )
+//		{
+//			Unidade *unid = *it_unid;
+//
+//			ITERA_GGROUP_LESSPTR( it_horControle, problemData->horariosDia, HorarioDia )
+//			{
+//				HorarioDia *horControle = ( *it_horControle );
+//
+//				DateTime inicioControle = horControle->getHorarioAula()->getInicio();
+//				
+//				int dia = horControle->getDia();
+//
+//				ITERA_GGROUP_LESSPTR( it_hor2, problemData->horariosDia, HorarioDia )
+//				{
+//					HorarioDia *hor2 = ( *it_hor2 );
+//					
+//					if ( hor2->getDia() != dia )
+//						continue;
+//
+//					DateTime inicio2 = hor2->getHorarioAula()->getInicio();
+//
+//					ITERA_GGROUP_N_PT( it_duracao, duracoesTodasAulas, int )
+//					{
+//						int duracaoAulaControle = *it_duracao;
+//				
+//						ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+//						{
+//							Professor * professor = ( *it_prof );
+//
+//							c.reset();
+//							c.setType( ConstraintOp::C_PROF_HORARIO_MULTIUNID );
+//							c.setCampus( cp );
+//							c.setUnidade( unid );
+//							c.setProfessor( professor );
+//							c.setDia( dia );
+//							c.setHorarioAula( horControle->getHorarioAula() ); // Controle
+//							c.setDuracaoAula( duracaoAulaControle ); // Controle
+//							c.setH2( hor2->getHorarioAula() );
+//
+//							cit = cHashOp.find( c );
+//					
+//							sprintf( name, "%s", c.toString().c_str() );
+//							if ( cHashOp.find( c ) != cHashOp.end() )
+//							{
+//								continue;
+//							}
+//
+//							nnz = 100;
+//
+//							OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
+//
+//							bool inseriuUnidControle = false;
+//							bool inseriuUnidDiferente = false;
+//
+//							GGroup< std::pair< Aula *, Disciplina * > >::iterator
+//								it_aula_disc = problemData->mapProfessorDisciplinas[ professor ].begin();
+//
+//							for ( ; it_aula_disc != problemData->mapProfessorDisciplinas[ professor ].end(); it_aula_disc++ )
+//							{
+//								Aula * aula = ( *it_aula_disc ).first;
+//
+//								Unidade *unidAula = problemData->refUnidade[ aula->getSala()->getIdUnidade() ];
+//								Campus *cpAula = problemData->retornaCampus( unidAula->getId() );
+//
+//								#pragma region Aulas na mesma unidade da restrição (unidade controle)
+//								if ( cpAula->getId() == cp->getId() &&
+//									 unidAula->getId() == unid->getId() )
+//								{
+//									if ( aula->getDiaSemana() != dia ||
+//										 aula->getDisciplina()->horariosDia.find( horControle ) ==
+//										 aula->getDisciplina()->horariosDia.end() )
+//									{
+//										continue;
+//									}
+//
+//									int nCred = aula->getTotalCreditos();
+//									int tempoCred = aula->getDisciplina()->getTempoCredSemanaLetiva();							
+//									int aulaDuracao = tempoCred * nCred;
+//						
+//									if ( aulaDuracao != duracaoAulaControle )
+//									{
+//										continue;
+//									}
+//								
+//									VariableOp v;
+//									v.reset();
+//									v.setType( VariableOp::V_X_PROF_AULA_HOR );
+//									v.setAula( aula ); 
+//									v.setProfessor( professor );
+//									v.setHorario( horControle );
+//									v.setHorarioAula( horControle->getHorarioAula() );
+//									v.setDia( dia );
+//							 		v.setDisciplina( aula->getDisciplina() );
+//									v.setTurma( aula->getTurma() );
+//									v.setUnidade( unidAula );
+//									v.setSala( aula->getSala() );				   
+//							
+//									vit = vHashOp.find( v );
+//									if ( vit != vHashOp.end() )
+//									{
+//										row.insert( vit->second, 1.0 );
+//										inseriuUnidControle = true;
+//									}
+//								}
+//								#pragma endregion
+//
+//								#pragma region Aulas em unidades diferentes da unidade controle da restrição
+//								else
+//								{
+//									if ( aula->getDisciplina()->horariosDia.find( hor2 ) ==
+//										 aula->getDisciplina()->horariosDia.end() )
+//									{
+//										 continue;
+//								    }
+//
+//									int tempoCred = aula->getDisciplina()->getTempoCredSemanaLetiva();
+//									int nCred = aula->getTotalCreditos();
+//									int duracaoAula = tempoCred * nCred;
+//
+//									int tempoMinDesloc = problemData->calculaTempoEntreCampusUnidades( cp, cpAula, unid, unidAula );
+//
+//									DateTime fimControle = inicioControle;
+//									fimControle.addMinutes( duracaoAulaControle + tempoMinDesloc );
+//									
+//									DateTime fim2 = inicio2;
+//									fim2.addMinutes( duracaoAula + tempoMinDesloc );
+//									
+//									if ( ( ( fim2 > inicioControle ) &&
+//										   ( inicio2 < fimControle ) )										
+//										||
+//										 ( ( fimControle > inicio2 ) &&
+//										   ( fimControle < fim2 ) ) )
+//									{
+//										VariableOp v;
+//										v.reset();
+//										v.setType( VariableOp::V_X_PROF_AULA_HOR );
+//										v.setAula( aula ); 
+//										v.setProfessor( professor );
+//										v.setHorario( hor2 );
+//										v.setHorarioAula( hor2->getHorarioAula() );
+//										v.setDia( dia );
+//							 			v.setDisciplina( aula->getDisciplina() );
+//										v.setTurma( aula->getTurma() );
+//										v.setUnidade( unidAula );
+//										v.setSala( aula->getSala() );				   
+//							
+//										vit = vHashOp.find( v );
+//										if ( vit != vHashOp.end() )
+//										{
+//											row.insert( vit->second, 1.0 );
+//											inseriuUnidDiferente = true;
+//										}
+//									}			
+//								}
+//								#pragma endregion
+//							}
+//
+//							if ( inseriuUnidControle && inseriuUnidDiferente )
+//							{
+//								if ( row.getnnz() != 0 )
+//								{
+//									cHashOp[ c ] = lp->getNumRows();
+//									lp->addRow( row );
+//									restricoes++;
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//   }
+//
+//   return restricoes;
+//
+//}
+
 int SolverMIP::criaRestricaoProfHorarioMultiUnid( void )
 {
    int restricoes = 0;

@@ -84,6 +84,10 @@ public:
    // Verifica a ocorrência de última aula do dia ( D ) e primeira aula do dia ( D + 1 )
    bool verificaUltimaPrimeiraAulas( HorarioDia *, HorarioDia * );
 
+   bool verificaPrimeiraAulas( HorarioDia * h );
+
+   bool verificaUltimaAulas( HorarioDia * h );
+
    std::map< Calendario *, std::vector< HorarioAula * > > mapCalendarioHorariosAulaOrdenados;
    std::vector< HorarioAula * > horarios_aula_ordenados;
 
