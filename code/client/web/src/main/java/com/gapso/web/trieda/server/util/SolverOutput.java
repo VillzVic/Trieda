@@ -24,6 +24,7 @@ import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
@@ -64,8 +65,10 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public List< AtendimentoTatico > generateAtendimentosTatico() throws Exception
-	{
+	public List<AtendimentoTatico> generateAtendimentosTatico(Turno turnoSelecionado) throws Exception {
+		// [AlunoDemandaId -> AlunoDemanda]
+		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnoSelecionado);
+		
 		List< ItemAtendimentoCampus > itemAtendimentoCampusList
 			= this.triedaOutput.getAtendimentos().getAtendimentoCampus();
 
@@ -138,7 +141,7 @@ public class SolverOutput
 							atendimentoTatico.setDisciplinaSubstituta(disciplinaSubstituta);
 							atendimentoTatico.setQuantidadeAlunos( quantidade );
 							
-							Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta, alunosDemandaTatico, atendimentoTatico);
+							Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta,alunosDemandaTatico,atendimentoTatico,alunoDemandaIdToAlunoDemandaMap);
 							atendimentoTatico.getAlunosDemanda().addAll(listAlunoDemanda);
 
 							this.atendimentosTatico.add( atendimentoTatico );
@@ -152,99 +155,135 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public List< AtendimentoOperacional > generateAtendimentosOperacional() throws Exception
-	{
-		Map< Integer, ProfessorVirtual > virtuais
-			= new HashMap< Integer, ProfessorVirtual >();
-
-		List< ItemAtendimentoCampus > itemAtendimentoCampusList
-			= this.triedaOutput.getAtendimentos().getAtendimentoCampus();
-
-		for ( ItemAtendimentoCampus itemAtendimentoCampus
-			: itemAtendimentoCampusList )
-		{
-			List< ItemAtendimentoUnidade > itemAtendimentoUnidadeList
-				= itemAtendimentoCampus.getAtendimentosUnidades().getAtendimentoUnidade();
-
-			for ( ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList )
-			{
-				List< ItemAtendimentoSala > itemAtendimentoSalaList
-					= itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
-
-				for ( ItemAtendimentoSala itemAtendimentoSala : itemAtendimentoSalaList )
-				{
-					Sala sala = Sala.find( Long.valueOf(
-						itemAtendimentoSala.getSalaId() ), this.instituicaoEnsino );
-
-					List< ItemAtendimentoDiaSemana > itemAtendimentoDiaSemanaList
-						= itemAtendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana();
-
-					for ( ItemAtendimentoDiaSemana itemAtendimentoDiaSemana
-						: itemAtendimentoDiaSemanaList )
-					{
-						Semanas semana = Semanas.get(
-							itemAtendimentoDiaSemana.getDiaSemana() );
-
-						if ( itemAtendimentoDiaSemana.getAtendimentosTurnos() == null )
-						{
+	public List<AtendimentoOperacional> generateAtendimentosOperacional(Turno turnoSelecionado) throws Exception {
+		// [SalaId -> Sala]
+		Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>();
+		// [OfertaId -> Oferta]
+		Map<Long,Oferta> ofertaIdToOfertaMap = new HashMap<Long,Oferta>();
+		for (Campus campus : this.cenario.getCampi()) {
+			for (Unidade unidade : campus.getUnidades()) {
+				for (Sala sala : unidade.getSalas()) {
+					salaIdToSalaMap.put(sala.getId(),sala);
+				}
+			}
+			for (Oferta oferta : campus.getOfertas()) {
+				ofertaIdToOfertaMap.put(oferta.getId(),oferta);
+			}
+		}
+		
+		// [HorarioAulaId -> Sala]
+		Map<Long,HorarioAula> horarioAulaIdToHorarioAulaMap = new HashMap<Long,HorarioAula>();
+		// [InstituicaoEnsinoId-HorarioAulaId-DiaSemanaId -> HorarioDisponivelCenario]
+		Map<String,HorarioDisponivelCenario> horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap = new HashMap<String,HorarioDisponivelCenario>();
+		for (Turno turno : this.cenario.getTurnos()) {
+			for (HorarioAula horarioAula : turno.getHorariosAula()) {
+				horarioAulaIdToHorarioAulaMap.put(horarioAula.getId(),horarioAula);
+				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					String key = this.instituicaoEnsino.getId() + "-" + horarioAula.getId() + "-" + hdc.getDiaSemana().ordinal();
+					horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap.put(key,hdc);
+				}
+			}
+		}
+		
+		// [ProfessorId -> Professor]
+		Map<Long,Professor> professorIdToProfessorMap = new HashMap<Long,Professor>();
+		for (Professor professor : this.cenario.getProfessores()) {
+			professorIdToProfessorMap.put(professor.getId(),professor);
+		}
+		
+		// [DisciplinaId -> Disciplina]
+		Map<Long,Disciplina> disciplinaIdToDisciplinaMap = new HashMap<Long,Disciplina>();
+		for (Disciplina disciplina : this.cenario.getDisciplinas()) {
+			disciplinaIdToDisciplinaMap.put(disciplina.getId(),disciplina);
+		}
+		
+		// [TitulacaoId -> Titulacao]
+		Map<Long,Titulacao> titulacaoIdToTitulacaoMap = new HashMap<Long,Titulacao>();
+		List<Titulacao> titulacoes = Titulacao.findAll(instituicaoEnsino);
+		for (Titulacao titulacao : titulacoes) {
+			titulacaoIdToTitulacaoMap.put(titulacao.getId(),titulacao);
+		}
+		
+		// [ProfessorVirtualId -> ProfessorVirtual]
+		Map<Long,ProfessorVirtual> professorVirtualIdToProfessorVirtualMap = new HashMap<Long,ProfessorVirtual>();
+		for (ItemProfessorVirtual itemProfessorVirtual : this.triedaOutput.getProfessoresVirtuais().getProfessorVirtual()) {
+			Long id = Long.valueOf(-itemProfessorVirtual.getId());
+			if (!professorVirtualIdToProfessorVirtualMap.containsKey(id)) {
+				ProfessorVirtual pv = new ProfessorVirtual();
+				
+				pv.setCargaHorariaMax(itemProfessorVirtual.getChMax());
+				pv.setCargaHorariaMin(itemProfessorVirtual.getChMin());
+				pv.setInstituicaoEnsino(this.instituicaoEnsino);
+				pv.setTitulacao(titulacaoIdToTitulacaoMap.get(Long.valueOf(itemProfessorVirtual.getTitulacaoId())));// Titulacao.find(Integer.valueOf(itemProfessorVirtual.getTitulacaoId()).longValue(),this.instituicaoEnsino));
+				for (Integer disciplinaId : itemProfessorVirtual.getDisciplinas().getId()) {
+					Disciplina disciplina = disciplinaIdToDisciplinaMap.get(Long.valueOf(Math.abs(disciplinaId)));//Disciplina.find(Math.abs(disciplinaId.longValue()),this.instituicaoEnsino);
+					if (disciplina != null) {
+						pv.getDisciplinas().add(disciplina);
+					}
+				}
+	
+				pv.persist();
+				
+				professorVirtualIdToProfessorVirtualMap.put(id,pv);
+			}
+		}
+		
+		// [AlunoDemandaId -> AlunoDemanda]
+		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnoSelecionado);
+		
+		List<ItemAtendimentoCampus> itemAtendimentoCampusList = this.triedaOutput.getAtendimentos().getAtendimentoCampus();
+		// para cada campi
+		for (ItemAtendimentoCampus itemAtendimentoCampus : itemAtendimentoCampusList) {
+			List<ItemAtendimentoUnidade> itemAtendimentoUnidadeList = itemAtendimentoCampus.getAtendimentosUnidades().getAtendimentoUnidade();
+			// para cada unidade
+			for (ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList) {
+				List<ItemAtendimentoSala> itemAtendimentoSalaList = itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
+				// para cada sala
+				for (ItemAtendimentoSala itemAtendimentoSala : itemAtendimentoSalaList) {
+					// obtém sala
+					Sala sala = salaIdToSalaMap.get(Long.valueOf(itemAtendimentoSala.getSalaId()));//Sala.find(Long.valueOf(itemAtendimentoSala.getSalaId()),this.instituicaoEnsino);
+					List<ItemAtendimentoDiaSemana> itemAtendimentoDiaSemanaList = itemAtendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana();
+					// para cada dia da semana
+					for (ItemAtendimentoDiaSemana itemAtendimentoDiaSemana : itemAtendimentoDiaSemanaList) {
+						if (itemAtendimentoDiaSemana.getAtendimentosTurnos() == null) {
 							continue;
 						}
+						// obtém dia da semana
+						Semanas diaSemana = Semanas.get(itemAtendimentoDiaSemana.getDiaSemana());
+						List<ItemAtendimentoTurno>  itemAtendimentoTurnoList = itemAtendimentoDiaSemana.getAtendimentosTurnos().getAtendimentoTurno();
+						// para cada turno
+						for (ItemAtendimentoTurno itemAtendimentoTurno : itemAtendimentoTurnoList) {
+							List<ItemAtendimentoHorarioAula> itemAtendimentoHorarioAulaList = itemAtendimentoTurno.getAtendimentosHorariosAula().getAtendimentoHorarioAula();
+							// para cada horário de aual
+							for (ItemAtendimentoHorarioAula itemAtendimentoHorarioAula : itemAtendimentoHorarioAulaList) {
+								// obtém horário aula
+								HorarioAula horarioAula = horarioAulaIdToHorarioAulaMap.get(Long.valueOf(itemAtendimentoHorarioAula.getHorarioAulaId()));//HorarioAula.find(Long.valueOf(itemAtendimentoHorarioAula.getHorarioAulaId()),this.instituicaoEnsino);
+								// obtém o horário disponível cenário
+								String hdcKey = this.instituicaoEnsino.getId() + "-" + horarioAula.getId() + "-" + diaSemana.ordinal();
+								HorarioDisponivelCenario horarioDisponivelCenario = horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap.get(hdcKey);
 
-						// COLETANDO INFORMAÇÕES DO OPERACIONAL
-						List< ItemAtendimentoTurno>  itemAtendimentoTurnoList
-							= itemAtendimentoDiaSemana.getAtendimentosTurnos().getAtendimentoTurno();
-
-						for ( ItemAtendimentoTurno itemAtendimentoTurno
-							: itemAtendimentoTurnoList )
-						{
-							List< ItemAtendimentoHorarioAula > itemAtendimentoHorarioAulaList
-								= itemAtendimentoTurno.getAtendimentosHorariosAula().getAtendimentoHorarioAula();
-
-							for ( ItemAtendimentoHorarioAula itemAtendimentoHorarioAula
-								: itemAtendimentoHorarioAulaList )
-							{
-								HorarioAula horarioAula = HorarioAula.find( Long.valueOf(
-									itemAtendimentoHorarioAula.getHorarioAulaId() ), this.instituicaoEnsino );
-
+								// obtém professor
 								Professor professor = null;
 								ProfessorVirtual professorVirtual = null;
-
-								Integer idProfessor = itemAtendimentoHorarioAula.getProfessorId();
-
-								if ( !itemAtendimentoHorarioAula.isVirtual() )
-								{
-									professor = Professor.find( Long.valueOf(
-										idProfessor ), this.instituicaoEnsino );
-								}
-								else
-								{
-									Integer professorVirtualIdAux = ( idProfessor * -1 );
-
-									if ( virtuais.containsKey( professorVirtualIdAux ) )
-									{
-										professorVirtual = virtuais.get( professorVirtualIdAux );
-									}
-									else
-									{
-										professorVirtual = getProfessorVirtual( professorVirtualIdAux );
-									}
+								if (!itemAtendimentoHorarioAula.isVirtual()) {
+									professor = professorIdToProfessorMap.get(Long.valueOf(itemAtendimentoHorarioAula.getProfessorId())); //Professor.find(Long.valueOf(itemAtendimentoHorarioAula.getProfessorId()),this.instituicaoEnsino);
+								} else {
+									professorVirtual = professorVirtualIdToProfessorVirtualMap.get(Long.valueOf(-itemAtendimentoHorarioAula.getProfessorId()));
 								}
 
 								boolean creditoTeorico = itemAtendimentoHorarioAula.isCreditoTeorico();
 
-								List< ItemAtendimentoOferta > itemAtendimentoOfertaList
-									= itemAtendimentoHorarioAula.getAtendimentosOfertas().getAtendimentoOferta();
-
-								for ( ItemAtendimentoOferta itemAtendimentoOferta : itemAtendimentoOfertaList )
-								{
-									Oferta oferta = Oferta.find( Long.valueOf(
-										itemAtendimentoOferta.getOfertaCursoCampiId() ), this.instituicaoEnsino );
-
-									Disciplina disciplina = Disciplina.find( Long.valueOf(
-										itemAtendimentoOferta.getDisciplinaId() ), this.instituicaoEnsino );
+								List<ItemAtendimentoOferta> itemAtendimentoOfertaList = itemAtendimentoHorarioAula.getAtendimentosOfertas().getAtendimentoOferta();
+								// para cada atendimento oferta
+								for (ItemAtendimentoOferta itemAtendimentoOferta : itemAtendimentoOfertaList) {
+									// obtém oferta
+									Oferta oferta = ofertaIdToOfertaMap.get(Long.valueOf(itemAtendimentoOferta.getOfertaCursoCampiId()));//Oferta.find(Long.valueOf(itemAtendimentoOferta.getOfertaCursoCampiId()),this.instituicaoEnsino);
+									// obtém disciplina
+									Disciplina disciplina = disciplinaIdToDisciplinaMap.get(Long.valueOf(itemAtendimentoOferta.getDisciplinaId()));//Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaId()),this.instituicaoEnsino);
+									// obtém disciplina substituta
 									Disciplina disciplinaSubstituta = null;
 									if (itemAtendimentoOferta.getDisciplinaSubstitutaId() != null) {
-										disciplinaSubstituta = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()),this.instituicaoEnsino);
+										disciplinaSubstituta = disciplinaIdToDisciplinaMap.get(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()));//Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()),this.instituicaoEnsino);
 									}
 
 									int quantidade = itemAtendimentoOferta.getQuantidade();
@@ -252,35 +291,26 @@ public class SolverOutput
 
 									AtendimentoOperacional atendimentoOperacional = new AtendimentoOperacional();
 
-									atendimentoOperacional.setInstituicaoEnsino( this.instituicaoEnsino );
-									atendimentoOperacional.setCenario( this.cenario );
-									atendimentoOperacional.setTurma( turma );
-									atendimentoOperacional.setSala( sala );
-									atendimentoOperacional.setOferta( oferta );
-									atendimentoOperacional.setDisciplina( disciplina );
+									atendimentoOperacional.setInstituicaoEnsino(this.instituicaoEnsino);
+									atendimentoOperacional.setCenario(this.cenario);
+									atendimentoOperacional.setTurma(turma);
+									atendimentoOperacional.setSala(sala);
+									atendimentoOperacional.setOferta(oferta);
+									atendimentoOperacional.setDisciplina(disciplina);
 									atendimentoOperacional.setDisciplinaSubstituta(disciplinaSubstituta);
-									atendimentoOperacional.setQuantidadeAlunos( quantidade );
-
-									if ( !itemAtendimentoHorarioAula.isVirtual() )
-									{
-										atendimentoOperacional.setProfessor( professor );
+									atendimentoOperacional.setQuantidadeAlunos(quantidade);
+									if (!itemAtendimentoHorarioAula.isVirtual()) {
+										atendimentoOperacional.setProfessor(professor);
+									} else {
+										atendimentoOperacional.setProfessorVirtual(professorVirtual);
 									}
-									else
-									{
-										atendimentoOperacional.setProfessorVirtual( professorVirtual );
-									}
+									atendimentoOperacional.setCreditoTeorico(creditoTeorico);
+									atendimentoOperacional.setHorarioDisponivelCenario(horarioDisponivelCenario);//HorarioDisponivelCenario horarioDisponivelCenario= HorarioDisponivelCenario.findBy(this.instituicaoEnsino,horarioAula,diaSemana);
 
-									atendimentoOperacional.setCreditoTeorico( creditoTeorico );
-									HorarioDisponivelCenario horarioDisponivelCenario
-										= HorarioDisponivelCenario.findBy(
-											this.instituicaoEnsino, horarioAula, semana );
-
-									atendimentoOperacional.setHorarioDisponivelCenario( horarioDisponivelCenario );
-
-									Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta, alunosDemandaOperacional, atendimentoOperacional);
+									Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta,alunosDemandaOperacional,atendimentoOperacional,alunoDemandaIdToAlunoDemandaMap);
 									atendimentoOperacional.getAlunosDemanda().addAll(listAlunoDemanda);
 									
-									this.atendimentosOperacional.add( atendimentoOperacional );
+									this.atendimentosOperacional.add(atendimentoOperacional);
 								}
 							}
 						}
@@ -291,13 +321,21 @@ public class SolverOutput
 
 		return this.atendimentosOperacional;
 	}
+
+	private Map<Long, AlunoDemanda> createAlunoDemandasMap(Turno turnoSelecionado) {
+		// [AlunoDemandaId -> AlunoDemanda]
+		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = new HashMap<Long,AlunoDemanda>();
+		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurno(this.instituicaoEnsino,this.cenario.getCampi(),turnoSelecionado);
+		for (AlunoDemanda alunoDemanda : alunosDemanda) {
+			alunoDemandaIdToAlunoDemandaMap.put(alunoDemanda.getId(),alunoDemanda);
+		}
+		return alunoDemandaIdToAlunoDemandaMap;
+	}
 	
-	private <T> Set<AlunoDemanda> atendimentoAlunoDemandaAssoc(ItemAtendimentoOferta itemAtendimentoOferta, 
-		Map<AlunoDemanda, List<T>> alunosDemandaAtendimento, T atendimento) throws Exception
-	{
+	private <T> Set<AlunoDemanda> atendimentoAlunoDemandaAssoc(ItemAtendimentoOferta itemAtendimentoOferta, Map<AlunoDemanda,List<T>> alunosDemandaAtendimento, T atendimento, Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap) throws Exception {
 		Set<AlunoDemanda> listAlunoDemanda = new HashSet<AlunoDemanda>();
 		for(Integer i : itemAtendimentoOferta.getAlunosDemandasAtendidas().getId()){
-			AlunoDemanda alunoDemanda = AlunoDemanda.find((long) i, this.instituicaoEnsino);
+			AlunoDemanda alunoDemanda = alunoDemandaIdToAlunoDemandaMap.get((long)i);//AlunoDemanda.find((long) i, this.instituicaoEnsino);
 			if(alunoDemanda != null){
 				listAlunoDemanda.add(alunoDemanda);
 				List<T> atendimentoAluno = alunosDemandaAtendimento.get(alunoDemanda);
@@ -313,51 +351,6 @@ public class SolverOutput
 		}
 		
 		return listAlunoDemanda;
-	}
-
-	private ProfessorVirtual getProfessorVirtual( Integer idAux )
-	{
-		ProfessorVirtual professorVirtualAux
-			= this.professoresVirtuais.get( idAux );
-
-		if ( professorVirtualAux != null )
-		{
-			return professorVirtualAux;
-		}
-
-		for ( ItemProfessorVirtual pvAux :
-			this.triedaOutput.getProfessoresVirtuais().getProfessorVirtual() )
-		{
-			if ( idAux.equals( pvAux.getId() * -1 ) )
-			{
-				ProfessorVirtual pv = new ProfessorVirtual();
-
-				pv.setCargaHorariaMax( pvAux.getChMax() );
-				pv.setCargaHorariaMin( pvAux.getChMin() );
-				pv.setInstituicaoEnsino( this.instituicaoEnsino );
-
-				for ( Integer discId : pvAux.getDisciplinas().getId() )
-				{
-					Disciplina disciplina = Disciplina.find(
-						Math.abs( discId.longValue() ), this.instituicaoEnsino );
-
-					if ( disciplina != null )
-					{
-						pv.getDisciplinas().add( disciplina );
-					}
-				}
-
-				pv.setTitulacao( Titulacao.find( Integer.valueOf(
-					pvAux.getTitulacaoId() ).longValue(), this.instituicaoEnsino ) );
-
-				pv.persist();
-				this.professoresVirtuais.put( idAux, pv );
-
-				return pv;
-			}
-		}
-
-		return null;
 	}
 
 	@Transactional
@@ -400,7 +393,6 @@ public class SolverOutput
 			alunoDemanda.setAtendido(alunoDemanda.getDemanda().getDisciplina().getCreditosTotal() == creditosAtendidos);
 			alunoDemanda.merge();
 		}
-		
 	}
 
 	@Transactional

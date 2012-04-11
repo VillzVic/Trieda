@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -333,6 +334,29 @@ public class Parametro
         	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.turno.instituicaoEnsino = :instituicaoEnsino " )
         	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public static List<Parametro> findAll(String modoOtimizacao, String otimizarPor, Integer funcaoObjetivo, Turno turno, Cenario cenario, InstituicaoEnsino instituicaoEnsino) {
+    	Query query = entityManager().createQuery(
+        	"SELECT o FROM Parametro o" +
+        	" WHERE o.modoOtimizacao = :modoOtimizacao" +
+        	" AND o.otimizarPor = :otimizarPor" +
+        	" AND o.funcaoObjetivo = :funcaoObjetivo" +
+        	" AND o.turno = :turno" +
+        	" AND o.cenario = :cenario" +
+        	" AND o.instituicaoEnsino = :instituicaoEnsino" +
+        	" AND o.turno.instituicaoEnsino = :instituicaoEnsino"
+        );
+    	
+    	query.setParameter("modoOtimizacao",modoOtimizacao);
+    	query.setParameter("otimizarPor",otimizarPor);
+    	query.setParameter("funcaoObjetivo",funcaoObjetivo);
+    	query.setParameter("turno",turno);
+    	query.setParameter("cenario",cenario);
+    	query.setParameter("instituicaoEnsino",instituicaoEnsino);
+    	
+    	return query.getResultList();
     }
 
     public static Parametro find(

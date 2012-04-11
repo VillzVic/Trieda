@@ -16,16 +16,19 @@ public interface OtimizarServiceAsync {
 	 */
 	void checkInputDataBeforeRequestOptimization(ParametroDTO parametroDTO, AsyncCallback<ErrorsWarningsInputSolverDTO> callback) throws Exception;
 	
-	/**
+	/** 
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#registraRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
 	 */
-	void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round, AsyncCallback<Void> callback);
+	void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round, AsyncCallback<RequisicaoOtimizacaoDTO> callback);
 	
 	/**
-	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO)
 	 */
-	void removeRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round, AsyncCallback<Void> callback);
+	void removeRequisicaoDeOtimizacao(RequisicaoOtimizacaoDTO requisicaoDTO, AsyncCallback<Void> callback);
 	
+	/** 
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicoesDeOtimizacao(java.util.List)
+	 */
 	void removeRequisicoesDeOtimizacao(List<RequisicaoOtimizacaoDTO> requisicoesASeremRemovidas, AsyncCallback<Void> callback);
 	
 	/**

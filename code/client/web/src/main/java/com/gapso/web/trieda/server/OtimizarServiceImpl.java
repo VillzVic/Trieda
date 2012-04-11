@@ -135,14 +135,28 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		return response;
 	}
 	
-	/**
+	/** 
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#registraRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
 	 */
 	@Override
-	public void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException {
+	public RequisicaoOtimizacaoDTO registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException {
 		try {
 			Usuario usuarioAtual = getUsuario();
+			
 			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
+			if (parametro.getId() == null) {
+				// se entrou aqui é porque foi realizada uma requisição de otimização numa situação em que não havia nenhum parâmetro cadastrado no BD
+				List<Parametro> parametros = Parametro.findAll(parametro.getModoOtimizacao(),parametro.getOtimizarPor(),parametro.getFuncaoObjetivo(),parametro.getTurno(),parametro.getCenario(),parametro.getInstituicaoEnsino());
+				Long maxId = -1L;
+				Set<Campus> campi = parametro.getCampi();
+				for (Parametro p : parametros) {
+					if (p.getId() > maxId && campi.containsAll(p.getCampi())) {
+						maxId = p.getId();
+						parametro = p;
+					}
+				}
+			}
+			
 			Cenario cenario = parametro.getCenario();
 			
 			RequisicaoOtimizacao reqOtm = new RequisicaoOtimizacao();
@@ -152,28 +166,29 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			reqOtm.setParametro(parametro);
 			
 			reqOtm.persist();
+			
+			return ConvertBeans.toRequisicaoOtimizacaoDTO(reqOtm);
 		} catch (Exception e) {
 			throw new TriedaException(e);
 		}
 	}
 	
 	/**
-	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.ParametroDTO, java.lang.Long)
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicaoDeOtimizacao(com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO)
 	 */
 	@Override
-	public void removeRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException {
+	public void removeRequisicaoDeOtimizacao(RequisicaoOtimizacaoDTO requisicaoDTO) throws TriedaException {
 		try {
-			Usuario usuarioAtual = getUsuario();
-			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
-			Cenario cenario = parametro.getCenario();
-			
-			RequisicaoOtimizacao reqOtm = RequisicaoOtimizacao.findBy(usuarioAtual,cenario,parametro,round);
+			RequisicaoOtimizacao reqOtm = RequisicaoOtimizacao.entityManager().find(RequisicaoOtimizacao.class,requisicaoDTO.getId());
 			reqOtm.remove();
 		} catch (Exception e) {
 			throw new TriedaException(e);
 		}
 	}
 	
+	/** 
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#removeRequisicoesDeOtimizacao(java.util.List)
+	 */
 	@Override
 	public void removeRequisicoesDeOtimizacao(List<RequisicaoOtimizacaoDTO> requisicoesASeremRemovidas) throws TriedaException {
 		try {
@@ -985,21 +1000,26 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			SolverOutput solverOutput = new SolverOutput(
 				getInstituicaoEnsinoUser(), cenario, triedaOutput );
 
-			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
+			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); ...");// TODO: LOG
 			solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno());
-			System.out.println("solverOutput.salvarAlunosDemanda(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
+			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO: LOG
 
 			if (parametro.isTatico()) {
 				System.out.println("solverOutput.generateAtendimentosTatico(); ...");// TODO: LOG
-				solverOutput.generateAtendimentosTatico();
+				solverOutput.generateAtendimentosTatico(parametro.getTurno());
 				System.out.println("solverOutput.generateAtendimentosTatico(); FINALIZADO");// TODO: LOG
 
 				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
 				solverOutput.salvarAtendimentosTatico(parametro.getCampi(),parametro.getTurno());
 				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
 			} else {
-				solverOutput.generateAtendimentosOperacional();
+				System.out.println("solverOutput.generateAtendimentosOperacional(); ...");// TODO: LOG
+				solverOutput.generateAtendimentosOperacional(parametro.getTurno());
+				System.out.println("solverOutput.generateAtendimentosOperacional(); FINALIZADO");// TODO: LOG
+				
+				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); ...");// TODO: LOG
 				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno());
+				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO: LOG
 			}
 		}
 		catch ( JAXBException e )

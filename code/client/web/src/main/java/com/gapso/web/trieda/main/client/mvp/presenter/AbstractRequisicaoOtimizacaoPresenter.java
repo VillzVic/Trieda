@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.gapso.web.trieda.main.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.OtimizarServiceAsync;
@@ -21,6 +22,7 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 	
 	private final OtimizarServiceAsync service;
 	private ITriedaI18nGateway i18nGateway;
+	private RequisicaoOtimizacaoDTO requisicaoOtimizacaoRegistrada;
 	
 	protected AbstractRequisicaoOtimizacaoPresenter(ITriedaI18nGateway i18nGateway) {
 		this.i18nGateway = i18nGateway;
@@ -44,9 +46,10 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 			public void onSuccess(final Long round) {
 				Info.display("Otimização","A requisição de otimização foi enviada com sucesso!");
 				
-				service.registraRequisicaoDeOtimizacao(parametroDTO,round,new AbstractAsyncCallbackWithDefaultOnFailure<Void>("Erro ao tentar registrar no BD a requisição de otimização.",i18nGateway) {
+				service.registraRequisicaoDeOtimizacao(parametroDTO,round,new AbstractAsyncCallbackWithDefaultOnFailure<RequisicaoOtimizacaoDTO>("Erro ao tentar registrar no BD a requisição de otimização.",i18nGateway) {
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(RequisicaoOtimizacaoDTO result) {
+						requisicaoOtimizacaoRegistrada = result;
 						Info.display("Otimização","A requisição de otimização foi registrada na base de dados com sucesso!");
 					}
 				});
@@ -73,7 +76,7 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 							checkSolver(round,parametroDTO,cenarioDTO);
 						} else {
 							Info.display("Otimização","Otimização finalizada!");
-							atualizaSaida(round,cenarioDTO,parametroDTO);
+							atualizaSaida(round,cenarioDTO);
 							otimizacaoFinalizada();
 						}
 					}
@@ -84,10 +87,11 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 		t.schedule( 5 * 1000 );
 	}
 	
-	private void atualizaSaida(final Long round, final CenarioDTO cenarioDTO, final ParametroDTO parametroDTO) {
-		service.removeRequisicaoDeOtimizacao(parametroDTO,round,new AbstractAsyncCallbackWithDefaultOnFailure<Void>("Erro ao remover registro de requisição de otimização.",i18nGateway) {
+	private void atualizaSaida(final Long round, final CenarioDTO cenarioDTO) {
+		service.removeRequisicaoDeOtimizacao(requisicaoOtimizacaoRegistrada,new AbstractAsyncCallbackWithDefaultOnFailure<Void>("Erro ao remover registro de requisição de otimização.",i18nGateway) {
 			@Override
 			public void onSuccess(Void result) {
+				requisicaoOtimizacaoRegistrada = null;
 				Info.display("Otimização","O registro da requisição de otimização foi removido com sucesso da base de dados!");
 			}
 		});

@@ -29,19 +29,19 @@ public interface OtimizarService extends RemoteService {
 	 * para o solver.
 	 * @param parametroDTO parâmetros da requisição de otimização
 	 * @param round identificador da requisição de otimização
+	 * @return requisição registrada
 	 * @throws TriedaException
 	 */
-	void registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException;
+	RequisicaoOtimizacaoDTO registraRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException;
 	
 	/**
 	 * Remove do banco de dados o registro da requisição de otimização. Este método é utilizado em duas ocasiões:
 	 *    - quando é detectada, automaticamente pelo Trieda, o final de uma requisição de otimização.
 	 *    - quando é detectada, por consulta do usuário, o final de uma requisição de otimização.
-	 * @param parametroDTO parâmetros da requisição de otimização
-	 * @param round identificador da requisição de otimização
+	 * @param requisicaoDTO requisição de otimização a ser removida
 	 * @throws TriedaException
 	 */
-	void removeRequisicaoDeOtimizacao(ParametroDTO parametroDTO, Long round) throws TriedaException;
+	void removeRequisicaoDeOtimizacao(RequisicaoOtimizacaoDTO requisicaoDTO) throws TriedaException;
 	
 	/**
 	 * 
