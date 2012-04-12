@@ -453,8 +453,12 @@ void Avaliador::calculaDescolamentoBlocoCurricular( SolucaoOperacional & solucao
             curso = oferta->curso;
 
             // Bloco curricular que corresponde a esse par curso/disciplina
+            Trio<Curso*,Curriculo*,Disciplina*> auxTrio;
+            auxTrio.first = curso;
+            auxTrio.second = oferta->curriculo;
+            auxTrio.third = disciplina;
             bloco = solucao.getProblemData()->
-               mapCursoDisciplina_BlocoCurricular[ std::make_pair(curso, disciplina) ];
+               mapCursoDisciplina_BlocoCurricular[ auxTrio ];
 
             // Adicona o par 'aula/horário' no conjunto de aulas que
             // estão relacionadas ao bloco curricular atual

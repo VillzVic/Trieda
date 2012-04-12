@@ -609,9 +609,11 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                      // Atualizando a estrutura < blocosProfs >.
                      ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
                      {
+                        Trio<Curso*,Curriculo*,Disciplina*> auxTrio(itOferta->curso,itOferta->curriculo,aula.getDisciplina());
+
                         // Descobrindo o bloco da oferta em questão.
                         BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
-                           [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
+                           [ auxTrio ];
 
                         blocosProfs[ blocoCurricular ].add( &professor );
                      }
@@ -749,8 +751,10 @@ void SolucaoInicialOperacional::alocaAulasRec( bool primeiraTentativaAlocacao, b
                   ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
                   {
                      // Descobrindo o bloco da oferta em questão.
+                     Trio<Curso*,Curriculo*,Disciplina*> auxTrio(itOferta->curso,itOferta->curriculo,aula.getDisciplina());
+
                      BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
-                        [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
+                        [ auxTrio ];
 
                      blocosProfs[ blocoCurricular ].add( &professor );
                   }
@@ -1070,8 +1074,10 @@ void SolucaoInicialOperacional::alocaAulas( bool primeiraTentativaAlocacao, bool
                      ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
                      {
                         // Descobrindo o bloco da oferta em questão.
+                        Trio<Curso*,Curriculo*,Disciplina*> auxTrio(itOferta->curso,itOferta->curriculo,aula.getDisciplina());
+
                         BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
-                           [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
+                           [ auxTrio ];
 
                         blocosProfs[ blocoCurricular ].add( &professor );
                      }
@@ -1209,8 +1215,9 @@ void SolucaoInicialOperacional::alocaAulas( bool primeiraTentativaAlocacao, bool
                   ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
                   {
                      // Descobrindo o bloco da oferta em questão.
+                     Trio<Curso*,Curriculo*,Disciplina*> auxTrio(itOferta->curso,itOferta->curriculo,aula.getDisciplina());
                      BlocoCurricular * blocoCurricular = problemData.mapCursoDisciplina_BlocoCurricular
-                        [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
+                        [ auxTrio ];
 
                      blocosProfs[ blocoCurricular ].add( &professor );
                   }
@@ -1391,8 +1398,10 @@ bool SolucaoInicialOperacional::professorRepetido( Professor & professor, Aula &
    ITERA_GGROUP_LESSPTR( itOferta, aula.ofertas, Oferta )
    {
       // Descobrindo o bloco da oferta em questão.
+      Trio<Curso*,Curriculo*,Disciplina*> auxTrio(itOferta->curso,itOferta->curriculo,aula.getDisciplina());
+
       BlocoCurricular * bloco_curricular = problemData.mapCursoDisciplina_BlocoCurricular
-         [ std::make_pair( itOferta->curso, aula.getDisciplina() ) ];
+         [ auxTrio ];
 
       std::map< BlocoCurricular *, GGroup< Professor *, LessPtr< Professor > > >::iterator
          itBlocosProfs = blocosProfs.find( bloco_curricular );

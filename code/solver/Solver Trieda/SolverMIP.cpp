@@ -3,7 +3,7 @@
 
 #ifdef SOLVER_CPLEX
 #include "opt_cplex.h"
-//#include "opt_cplex.cpp"
+#include "opt_cplex.cpp"
 #endif
 
 #ifdef SOLVER_GUROBI
@@ -3880,8 +3880,12 @@ int SolverMIP::solveOperacionalMIP()
    lp->setTimeLimit( 600 );
 #endif
 
-   lp->setMIPRelTol( 0.01 );
+   //lp->setMIPRelTol( 0.01 );
+   lp->setMIPEmphasis(0);
+   //lp->setCuts(5);
    lp->setMIPScreenLog( 4 );
+   lp->setTimeLimit(7200);
+   lp->setPolishAfterNode(1);
    
    lp->setPreSolve(OPT_TRUE);
 

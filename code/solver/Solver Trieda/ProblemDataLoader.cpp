@@ -3211,6 +3211,7 @@ void ProblemDataLoader::cria_blocos_curriculares()
    {
       bloco = ( *it_bc );
       curso = it_bc->curso;
+      Curriculo* curriculo = it_bc->curriculo;
 
       int totalTurmas = 0;
 
@@ -3221,8 +3222,13 @@ void ProblemDataLoader::cria_blocos_curriculares()
 
          // Associa o curso correspondente ao bloco atual
          // e a disciplina 'it_disc' ao bloco curricular corrente
+         Trio<Curso*,Curriculo*,Disciplina*> auxTrio;
+         auxTrio.first = curso;
+         auxTrio.second = curriculo;
+         auxTrio.third = disciplina;
+
          problemData->mapCursoDisciplina_BlocoCurricular
-            [ std::make_pair( curso, disciplina ) ] = bloco;
+            [ auxTrio ] = bloco;
 
          ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Disc->diasLetivos, int )
          { 
@@ -4169,10 +4175,16 @@ void ProblemDataLoader::relacionaBlocoCurricularAulas()
       ITERA_GGROUP_LESSPTR( itOferta, itAula->ofertas, Oferta )
       {
          Curso * curso = itOferta->curso;
+         Curriculo *curriculo = itOferta->curriculo;
 
-         std::map< std::pair< Curso *, Disciplina * > , BlocoCurricular * >::iterator
+         Trio<Curso*, Curriculo*, Disciplina*> auxTrio;
+         auxTrio.first = curso;
+         auxTrio.second = curriculo;
+         auxTrio.third = disciplina;
+
+         std::map< Trio<Curso*, Curriculo*, Disciplina*> , BlocoCurricular * >::iterator
             itMapCursoDisciplina_BlocoCurricular =
-            problemData->mapCursoDisciplina_BlocoCurricular.find( std::make_pair( curso, disciplina ) );
+            problemData->mapCursoDisciplina_BlocoCurricular.find( auxTrio );
 
          if ( itMapCursoDisciplina_BlocoCurricular
             != problemData->mapCursoDisciplina_BlocoCurricular.end() )

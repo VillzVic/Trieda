@@ -134,7 +134,7 @@ public:
    std::map< std::pair< Curso *, Curso * >, bool > compat_cursos;
 
    // Dado um curso e uma disciplina, retorna o bloco curricular correspondente
-   std::map< std::pair< Curso *, Disciplina * > , BlocoCurricular * > mapCursoDisciplina_BlocoCurricular;
+   std::map< Trio< Curso *, Curriculo*, Disciplina * > , BlocoCurricular * > mapCursoDisciplina_BlocoCurricular;
 
    std::map< int /*Id Campus*/, unsigned /*Tamanho médio das salas*/ > cp_medSalas;
 
