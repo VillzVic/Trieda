@@ -93,8 +93,8 @@ BEGIN
         PRIMARY KEY (`alunos_demanda`,`atendimentos_operacional`),
         KEY `FK5A2D64C7F2EF1866` (`alunos_demanda`),
         KEY `FK5A2D64C77ACBBB36` (`atendimentos_operacional`),
-        CONSTRAINT `FK5A2D64C77ACBBB36` FOREIGN KEY (`atendimentos_operacional`) REFERENCES `atendimento_operacional` (`atp_id`),
-        CONSTRAINT `FK5A2D64C7F2EF1866` FOREIGN KEY (`alunos_demanda`) REFERENCES `alunos_demanda` (`ald_id`)
+        CONSTRAINT `FK5A2D64C77ACBBB36` FOREIGN KEY (`atendimentos_operacional`) REFERENCES `atendimento_operacional` (`atp_id`)  ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `FK5A2D64C7F2EF1866` FOREIGN KEY (`alunos_demanda`) REFERENCES `alunos_demanda` (`ald_id`) ON DELETE CASCADE ON UPDATE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
       DROP TABLE IF EXISTS `alunos_demanda_atendimentos_tatico`;
       CREATE TABLE `alunos_demanda_atendimentos_tatico` (
@@ -103,8 +103,8 @@ BEGIN
         PRIMARY KEY (`alunos_demanda`,`atendimentos_tatico`),
         KEY `FKDDCB9B8AF2EF1866` (`alunos_demanda`),
         KEY `FKDDCB9B8A51EFDC6C` (`atendimentos_tatico`),
-        CONSTRAINT `FKDDCB9B8A51EFDC6C` FOREIGN KEY (`atendimentos_tatico`) REFERENCES `atendimento_tatico` (`att_id`),
-        CONSTRAINT `FKDDCB9B8AF2EF1866` FOREIGN KEY (`alunos_demanda`) REFERENCES `alunos_demanda` (`ald_id`)
+        CONSTRAINT `FKDDCB9B8A51EFDC6C` FOREIGN KEY (`atendimentos_tatico`) REFERENCES `atendimento_tatico` (`att_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `FKDDCB9B8AF2EF1866` FOREIGN KEY (`alunos_demanda`) REFERENCES `alunos_demanda` (`ald_id`) ON DELETE CASCADE ON UPDATE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
       INSERT INTO `trieda`.`db_version` (`db_version`) VALUES (1);
