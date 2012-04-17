@@ -9993,7 +9993,7 @@ int SolverMIP::cria_preRestricao_prioridadesDemanda( int campusId, int prior )
 			}
 		}
 
-		OPT_ROW row( nnz, OPT_ROW::EQUAL , -cargaHorariaNaoAtendida, name );
+		OPT_ROW row( nnz, OPT_ROW::EQUAL , cargaHorariaNaoAtendida, name );
 		
 		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
 		{
