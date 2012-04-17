@@ -195,6 +195,8 @@ std::string ConstraintTatico::toString()
       ss << "__(C_MIN_CREDS_ALUNO):"; break;	  
    case C_MAX_CREDS_ALUNO:
       ss << "__(C_MAX_CREDS_ALUNO):"; break;
+   case C_ALUNO_DISC_PRATICA_TEORICA:
+      ss << "__(C_ALUNO_DISC_PRATICA_TEORICA):"; break;	  
 	  
    default:
       ss << "!";

@@ -65,14 +65,15 @@ public:
    **                      Variaveis do pre-tatico                    **
    *********************************************************************/
 
-   int cria_preVariaveis( int campusId );
+   int cria_preVariaveis( int campusId, int prioridade );
 
    int cria_preVariavel_creditos( int campusId );						// x_{i,d,s}
    int cria_preVariavel_oferecimentos( int campusId );					// o_{i,d,s}
    int cria_preVariavel_abertura( int campusId );						// z_{i,d,cp}
    int cria_preVariavel_alunos( int campusId );							// a_{i,d,oft,s}
    int cria_preVariavel_aloc_alunos( int campusId );					// b_{i,d,c}
-   int cria_preVariavel_folga_demanda_disciplina( int campusId );		// fd_{d,oft}
+   int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId );	// fd_{d,a}
+   int cria_preVariavel_folga_demanda_disciplina_oft( int campusId );	// fd_{d,oft}
    int cria_preVariavel_folga_compartilhamento_incomp( int campusId );	// bs_{i,d,c1,c2}
    int cria_preVariavel_folga_proibe_compartilhamento( int campusId );	// fc_{i,d,c1,c2}
    int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId );// fs_{d,s,oft}
@@ -81,18 +82,21 @@ public:
 	
    // Usadas somente para o modelo Tatico-Aluno:
    int cria_preVariavel_aloca_aluno_turma_disc( int campusId );			// s_{i,d,a,cp}
+   int cria_preVariavel_folga_prioridade_inf( int campusId, int prior );// fpi_{a}
+   int cria_preVariavel_folga_prioridade_sup( int campusId, int prior );// fps_{a}
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
    *********************************************************************/
 
-   int cria_preRestricoes( int campusId );
+   int cria_preRestricoes( int campusId, int prioridade );
 
    int cria_preRestricao_carga_horaria( int campusId );				// Restrição 1.1
    int cria_preRestricao_max_cred_sala_sl( int campusId );			// Restrição 1.2
    int cria_preRestricao_ativacao_var_o( int campusId );			// Restrição 1.3
    int cria_preRestricao_evita_mudanca_de_sala( int campusId );		// Restrição 1.4
-   int cria_preRestricao_cap_aloc_dem_disc( int campusId );			// Restrição 1.5
+   int cria_preRestricao_cap_aloc_dem_disc_oft( int campusId );		// Restrição 1.5
+   int cria_preRestricao_cap_aloc_dem_disc_aluno( int campusId );	// Restrição 1.5
    int cria_preRestricao_aluno_curso_disc( int campusId );			// Restrição 1.6
    int cria_preRestricao_cap_sala( int campusId );					// Restrição 1.7
    int cria_preRestricao_compartilhamento_incompat( int campusId );	// Restrição 1.8
@@ -105,14 +109,16 @@ public:
    int cria_preRestricao_limite_sup_creds_sala( int campusId );		// Restricao 1.15
    int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId );	// Restricao 1.16
 
+   // Usadas somente para o modelo Tatico-BlocoCurricular:
    int cria_preRestricao_fixa_nao_compartilhamento( int campusId );	// Restricao 1.17
-
-   int cria_preRestricao_atendimento_aluno( int campusId );			// Restricao 1.18
-   int cria_preRestricao_aluno_unica_turma_disc( int campusId );	// Restricao 1.19
-
    
-
-
+   // Usadas somente para o modelo Tatico-Aluno:
+   int cria_preRestricao_atendimento_aluno( int campusId );			 // Restricao 1.18
+   int cria_preRestricao_aluno_unica_turma_disc( int campusId );	 // Restricao 1.19
+   int cria_preRestricao_aluno_discPraticaTeorica( int campusId );	 // Restricao 1.20
+   int cria_preRestricao_prioridadesDemanda( int campus, int prior );// Restricao 1.21
+   
+   
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
    *********************************************************************/
@@ -133,7 +139,7 @@ public:
    int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );						// fd_{d,a}   
    int criaVariavelTaticoAlunoUnidDia( int campusId );								// y_{a,u,t} 
    int criaVariavelTaticoAlunoUnidadesDifDia( int campusId );						// w_{a,t}
-   
+
   
 
    /********************************************************************
@@ -157,6 +163,7 @@ public:
    int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
    int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
    int criaRestricaoTaticoMaxCreds( int campusId );						// Restricao 1.2.16
+   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );		// Restricao 1.2.17
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
 
@@ -343,12 +350,12 @@ public:
    void carregaVariaveisSolucaoTatico( int campusId );
    void carregaVariaveisSolucaoTaticoPorAluno( int campusId );
    void relacionaProfessoresDisciplinas();
-   void carregaVariaveisSolucaoPreTatico( int campusId );
+   void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );
    void preencheMapAtendimentoAluno();
 
    int solveTaticoPorCampus();
    int solveTatico( int campusId );
-   int solvePreTatico( int campusId );
+   int solvePreTatico( int campusId, int prioridade );
    int solveTaticoBasico( int campusId );
    void converteCjtSalaEmSala();
    void mudaCjtSalaParaSala();
@@ -383,6 +390,10 @@ public:
 
 private:
 
+	// Filtro para a criação das variaveis do pre-modelo,
+	// caso haja solução do tatico para iteração de prioridade de demanda anterior
+   int fixaLimiteInferiorVariavelPre( VariablePre *v );
+
 	// Filtro para a criação das variaveis do modelo tatico, caso haja solução do pre-modelo
    bool criaVariavelTatico( Variable *v );
 
@@ -396,12 +407,11 @@ private:
    std::vector< Variable > filtraVariaveisAlunos( std::vector< Variable > );
    std::vector< Variable > filtraVariaveisCreditos( std::vector< Variable > );
 
-   void retornaHorariosPossiveis(
-     Professor *, Aula *, std::list< HorarioDia * > &);
+   void retornaHorariosPossiveis( Professor *, Aula *, std::list< HorarioDia * > & );
 
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do tipo V_CREDITOS com credito(s) alocado(s).
-   typedef vector< VariableTatico * > vars__X__i_d_u_s_hi_hf_t;
+   typedef GGroup< VariableTatico * > vars__X__i_d_u_s_hi_hf_t;
 
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do  tipo V_CREDITOS com credito(s) alocado(s).
@@ -455,7 +465,7 @@ private:
    std::vector< Variable * > solVars;
 
    std::vector< VariableOp * > solVarsOp;
-
+   
    bool SolVarsPreFound( VariablePre v );
    
    double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau, eta;

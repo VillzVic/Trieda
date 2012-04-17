@@ -17,23 +17,23 @@ public:
    enum VariableType
    {
       V_ERROR = 0,
-      V_PRE_CREDITOS = 1,							// x_{i,d,s}
+      V_PRE_CREDITOS = 1,							// x_{i,d,u,s}
       V_PRE_OFERECIMENTO = 2,						// o_{i,d,s}
       V_PRE_ABERTURA = 3,							// z_{i,d,cp}
       V_PRE_ALUNOS = 4,							    // a_{i,d,s,oft}
       V_PRE_ALOC_ALUNO = 5,				            // b_{i,d,c}
-      V_PRE_MIN_CRED_SEMANA = 6,					// h_{bi}
-      V_PRE_MAX_CRED_SEMANA = 7,					// H_{bi}
-      V_PRE_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 8,   // bs_{i,d,c1,c2}
-      V_PRE_SLACK_DEMANDA = 9,						// fd_{d,o}
-	  V_PRE_SLACK_COMPARTILHAMENTO = 10,			// fc_{i,d,c1,c2}
-	  V_PRE_SLACK_SALA = 11,						// fs_{d,s}
-	  V_PRE_LIM_SUP_CREDS_SALA = 12,				// Hs_{cp}
-	  V_PRE_ALOC_ALUNO_OFT = 13,					// c_{i,d,s,oft}
+      V_PRE_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 6,   // bs_{i,d,c1,c2}
+      V_PRE_SLACK_DEMANDA = 7,						// fd_{d,oft} ou fd_{d,a}, depende se a otimização é por bloco ou por aluno
+	  V_PRE_SLACK_COMPARTILHAMENTO = 8,				// fc_{i,d,c1,c2}
+	  V_PRE_SLACK_SALA = 9,							// fs_{d,s,oft}
+	  V_PRE_LIM_SUP_CREDS_SALA = 10,				// Hs_{cp}
+	  V_PRE_ALOC_ALUNO_OFT = 11,					// c_{i,d,s,oft}
 
 	  // Variaveis usadas somente para o modelo Tatico-Aluno:
 
-	  V_PRE_ALOCA_ALUNO_TURMA_DISC = 14,			// s_{a,i,d,cp}
+	  V_PRE_ALOCA_ALUNO_TURMA_DISC = 12,			// s_{a,i,d,cp}
+	  V_PRE_SLACK_PRIOR_INF = 13,					// fpi_{a}
+	  V_PRE_SLACK_PRIOR_SUP = 14					// fps_{a}
 
    };
 

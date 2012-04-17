@@ -41,9 +41,13 @@ void ProblemDataLoader::load()
    // ---------
    relacionaCalendarioHorariosAula();
 
-   std::cout << "Referenciando ofertas a demandas..." << std::endl;
+   std::cout << "Referenciando ofertas..." << std::endl;
    // ---------
-   geraRefsOfertasDemandas();
+   geraRefsOfertas();
+
+   std::cout << "Referenciando demandas..." << std::endl;
+   // ---------
+   geraRefsDemandas();
 
    std::cout << "Referenciando disciplinas equivalentes e incompatibilidades..." << std::endl;
    // ---------
@@ -281,6 +285,7 @@ void ProblemDataLoader::preencheTempoAulaHorarios()
    }
 }
 
+// Preenche o map problemData->mapDemandaAlunos
 void ProblemDataLoader::relacionaDemandaAlunos()
 {	
    ITERA_GGROUP_LESSPTR( it_demanda,
@@ -328,7 +333,7 @@ void ProblemDataLoader::relacionaCalendarioHorariosAula()
    }
 }
 
-void ProblemDataLoader::geraRefsOfertasDemandas()
+void ProblemDataLoader::geraRefsOfertas()
 {
    ITERA_GGROUP_LESSPTR( it_oferta, problemData->ofertas, Oferta )
    {
@@ -348,8 +353,11 @@ void ProblemDataLoader::geraRefsOfertasDemandas()
          problemData->campi,
          it_oferta->campus, false );
    }
+}
 
-   ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda ) 
+void ProblemDataLoader::geraRefsDemandas()
+{
+   ITERA_GGROUP_LESSPTR( it_dem, problemData->demandasTotal, Demanda ) 
    {
       find_and_set_lessptr( it_dem->getOfertaId(),
          problemData->ofertas,
@@ -951,6 +959,11 @@ GGroup< int > ProblemDataLoader::retorna_foxacoes_dias_letivos( Disciplina * dis
 
 void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
 {
+	if ( problemData->parametros->otimizarPor == "ALUNO" )
+	{
+		return;
+	}
+
    // Analisar esse metodo e o de criacao de blocos curriculares.
    // Um bloco pode pertencer a mais de um campus !?
    ITERA_GGROUP_LESSPTR( it_Bloco_Curric, problemData->blocos, BlocoCurricular )
@@ -1976,7 +1989,7 @@ void ProblemDataLoader::atualizaOfertasDemandas()
 
     // A partir de cada demanda existente de disciplinas que
     // forem substituídas, troca-se a disciplina pela substituta
-    ITERA_GGROUP_LESSPTR( itDemanda, problemData->demandas, Demanda )
+    ITERA_GGROUP_LESSPTR( itDemanda, problemData->demandasTotal, Demanda )
     {
 		if ( problemData->mapDiscSubstituidaPor.find( itDemanda->disciplina ) ==
 			problemData->mapDiscSubstituidaPor.end() )
@@ -1997,7 +2010,7 @@ int ProblemDataLoader::retornaMaiorIdDemandas()
 {
    int id_demanda = -1;
 
-   ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
+   ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandasTotal, Demanda )
    {
       if ( it_demanda->getId() > id_demanda )
       {
@@ -2007,6 +2020,23 @@ int ProblemDataLoader::retornaMaiorIdDemandas()
 
    return id_demanda;
 }
+
+// Retorna o maior id das demandas já cadastradas
+int ProblemDataLoader::retornaMaiorIdAlunoDemandas()
+{
+   int alDemId = -1;
+
+   ITERA_GGROUP_LESSPTR( it_alunoDemanda, problemData->alunosDemandaTotal, AlunoDemanda )
+   {
+      if ( it_alunoDemanda->getId() > alDemId )
+      {
+         alDemId = it_alunoDemanda->getId();
+      }
+   }
+
+   return alDemId;
+}
+
 
 void ProblemDataLoader::referenciaCursos_DiscCalendarios()
 { 
@@ -2515,26 +2545,13 @@ void ProblemDataLoader::divideDisciplinas()
 			  problemData->mapDiscSubstituidaPor.end() )
 		 {
 			 // Procura pelo maior id de demanda já cadastrado
-			 int id = 0;
-			 ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda )
-			 {
-				if ( id < it_dem->getId() )
-				{
-				   id = it_dem->getId();
-				}
-			 }
+			 int id = retornaMaiorIdDemandas();
+
 			 // Procura pelo maior id de alunoDemanda já cadastrado
-			 int idAlDemanda = 0;
-			 ITERA_GGROUP_LESSPTR( it_dem, problemData->alunosDemanda, AlunoDemanda )
-			 {
-				if ( idAlDemanda < it_dem->getId() )
-				{
-				   idAlDemanda = it_dem->getId();
-				}
-			 }
+			 int idAlDemanda = retornaMaiorIdAlunoDemandas();
 
 			 // Adicionando os dados da nova disciplina em <Demanda>			  
-			 ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda )
+			 ITERA_GGROUP_LESSPTR( it_dem, problemData->demandasTotal, Demanda )
 			 {
 				if( it_dem->getDisciplinaId() == it_disc->getId())
 				{
@@ -2548,13 +2565,19 @@ void ProblemDataLoader::divideDisciplinas()
 					nova_demanda->oferta = it_dem->oferta;
 					nova_demanda->disciplina = nova_disc;
 
-					problemData->demandas.add( nova_demanda );
+					problemData->demandasTotal.add( nova_demanda );
+
+					if ( problemData->demandas.find( *it_dem ) !=
+						 problemData->demandas.end() )
+					{
+						problemData->demandas.add( nova_demanda );
+					}
 
 					// Adicionando novo AlunoDemanda com a nova_demanda (disciplina pratica)
 					// para cada aluno que já possuia demanda para a disciplina teorica correspondente
-					ITERA_GGROUP_LESSPTR( it_aluno_dem, problemData->alunosDemanda, AlunoDemanda )
+					ITERA_GGROUP_LESSPTR( it_aluno_dem, problemData->alunosDemandaTotal, AlunoDemanda )
 					{
-						if( it_aluno_dem->getDemandaId() == it_dem->getId() )
+						if ( it_aluno_dem->getDemandaId() == it_dem->getId() )
 						{
 							int alunoId = it_aluno_dem->getAlunoId();
 							std::string alunoNome = it_aluno_dem->getNomeAluno();
@@ -2563,9 +2586,14 @@ void ProblemDataLoader::divideDisciplinas()
 
 							AlunoDemanda *aluno_demanda = new AlunoDemanda( idAlDemanda, alunoId, alunoNome, prior, nova_demanda );
 							
-							problemData->alunosDemanda.add( aluno_demanda );
+							problemData->alunosDemandaTotal.add( aluno_demanda );
 
-							this->problemData->mapDemandaAlunos[ nova_demanda ].add( aluno_demanda );
+							if ( problemData->alunosDemanda.find( *it_aluno_dem ) !=
+								 problemData->alunosDemanda.end() )
+							{
+								problemData->alunosDemanda.add( aluno_demanda );
+								this->problemData->mapDemandaAlunos[ nova_demanda ].add( aluno_demanda );
+							}
 						}
 					}
 				}
@@ -3044,21 +3072,48 @@ void ProblemDataLoader::gera_refs()
 
       if ( !encontrouDemanda )
       {
-         /*
-         std::cout << "Demanda nao encontrada : "
-                   << it_aluno_demanda->getDemandaId() << std::endl;
-         */
-
+         std::cout << "Demanda nao encontrada em gera_refs(): "
+                   << it_aluno_demanda->getDemandaId() << std::endl;       
          continue;
       }
 
       find_and_set_lessptr( it_aluno_demanda->getDemandaId(),
          problemData->demandas, it_aluno_demanda->demanda, false );
    }
+  
+   ITERA_GGROUP_LESSPTR( it_aluno_demanda,
+      problemData->alunosDemandaTotal, AlunoDemanda )
+   {
+      bool encontrouDemanda = false;
+
+      ITERA_GGROUP_LESSPTR( it_dem, problemData->demandasTotal, Demanda )
+      {
+         if ( it_dem->getId() == it_aluno_demanda->getDemandaId() )
+         {
+            encontrouDemanda = true;
+            break;
+         }
+      }
+
+      if ( !encontrouDemanda )
+      {
+         std::cout << "Demanda nao encontrada em gera_refs(): "
+                   << it_aluno_demanda->getDemandaId() << std::endl;       
+         continue;
+      }
+
+      find_and_set_lessptr( it_aluno_demanda->getDemandaId(),
+         problemData->demandasTotal, it_aluno_demanda->demanda, false );
+   }
 }
 
 void ProblemDataLoader::cria_blocos_curriculares()
 {
+	if ( problemData->parametros->otimizarPor == "ALUNO" )
+	{
+		return;
+	}
+
    // Contador de blocos
    int id_Bloco = 1;
 
@@ -3121,14 +3176,9 @@ void ProblemDataLoader::cria_blocos_curriculares()
                std::pair< Campus *, Curso * > campus_curso
                   = std::make_pair( campus, curso );
 
-               // Recupera o conjunto de demandas relacionadas ao par 'Campus' e 'Curso' atual
-          //     GGroup< Demanda *, LessPtr< Demanda > > * demandas
-           //       = &( problemData->map_campus_curso_demanda[ campus_curso ] );
-
                // Encontrando e armazenando a demanda específica da disciplina em questão
                demanda = NULL;
 
-               // ITERA_GGROUP_LESSPTR( it_demanda, ( *demandas ), Demanda )
                ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandas, Demanda )
                {
                   if ( it_demanda->disciplina->getId() == id_disciplina
@@ -3273,54 +3323,7 @@ void ProblemDataLoader::relacionaCampusDiscs()
 
 void ProblemDataLoader::calculaDemandas()
 {
-   Demanda * demanda = NULL;
-   Campus * campus = NULL;
-   Curso * curso = NULL;
-
-   ITERA_GGROUP_LESSPTR( it_demanda,
-      problemData->demandas, Demanda )
-   {
-      demanda = ( *it_demanda );
-
-      campus = demanda->oferta->campus;
-      curso = demanda->oferta->curso;
-
-      //-------------------------------------------------------------------
-      // Relaciona a 'Demanda' atual a seus respectivos 'Campus' e 'Curso'
-      std::pair< Campus *, Curso * > campus_curso
-         = std::make_pair( campus, curso );
-
-      GGroup< Demanda *, LessPtr< Demanda > > * demandas
-         = &( problemData->map_campus_curso_demanda[ campus_curso ] );
-
-      demandas->add( demanda );
-      //-------------------------------------------------------------------
-
-      //-------------------------------------------------------------------
-      int dem = it_demanda->getQuantidade();
-
-      (*it_demanda)->disciplina->setMaxDemanda(
-         std::max( it_demanda->disciplina->getMaxDemanda(), dem ) );
-
-      (*it_demanda)->disciplina->adicionaDemandaTotal( dem );
-      //-------------------------------------------------------------------
-
-      //-------------------------------------------------------------------
-      // Armazenando a demanda total de cada Campus
-      std::pair< int, int > demanda_campus
-         = std::make_pair( it_demanda->disciplina->getId(),
-           it_demanda->oferta->campus->getId() );
-
-      // Inicializa com zero caso ainda não exista;
-      if ( problemData->demandas_campus.find( demanda_campus ) !=
-         problemData->demandas_campus.end() )
-      {
-         problemData->demandas_campus[ demanda_campus ] = 0;
-      }
-
-      problemData->demandas_campus[ demanda_campus ] += ( dem );
-      //-------------------------------------------------------------------
-   }
+	problemData->calculaDemandas();
 }
 
 void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
@@ -4676,6 +4679,11 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
 
 void ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric()
 {
+	if ( problemData->parametros->otimizarPor == "ALUNO" )
+	{
+		return;
+	}
+
 	if ( problemData->calendarios.size() > 2 )
 	{
 		std::cerr << "Atencao em ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric: esta funcao esta preparada "

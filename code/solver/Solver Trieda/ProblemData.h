@@ -63,6 +63,10 @@ public:
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
    GGroup< Aluno *, LessPtr< Aluno > > alunos;
 
+   GGroup< Demanda *, LessPtr< Demanda > > demandasTotal;
+   GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemandaTotal;
+   std::map< int/*campusId*/, int > nPrioridadesDemanda;
+
    GGroup< HorarioDia *, LessPtr< HorarioDia > > horariosDia;
    std::vector< HorarioDia * > horariosDiaIdx;
    int maxHorariosDif;
@@ -356,7 +360,7 @@ public:
    std::map< Professor *, GGroup< std::pair< Aula *, Disciplina * > >,
       LessPtr< Professor > > mapProfessorDisciplinas;
 
-   // PAra cada demanda, relacionamos os alunos que estão associados a ela
+   // Para cada demanda, relacionamos os alunos que estão associados a ela
    std::map< Demanda *, GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > > mapDemandaAlunos;
 
    // Dados os ids de uma oferta e uma disciplina,
@@ -395,11 +399,21 @@ public:
 
    std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > > mapCampusTurmaDisc_AlunosDemanda;
 
+   GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > listSlackDemandaAluno;
+
+   // Retorna a turma da disciplina disc na qual o aluno foi alocado.
+   // Caso contrario, retorna -1
    int retornaTurmaDiscAluno( Aluno* aluno, Disciplina* disc );
 
    AlunoDemanda* procuraAlunoDemanda( int discId, int alunoId );
 
+   void atualizaDemandas( int novaPrioridade, int campusId );
+   
+   int retornaCampusId( int demandaId );
 
+   void calculaDemandas();
+
+   int atendeTurmaDiscOferta( int turma, int discId, int ofertaId );
 
    private:
    

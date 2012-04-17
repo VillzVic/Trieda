@@ -29,7 +29,8 @@ public:
    void referenciaTurnos();
    void referenciaHorariosAula();
    void relacionaCalendarioHorariosAula();
-   void geraRefsOfertasDemandas();
+   void geraRefsDemandas();
+   void geraRefsOfertas();
    void criaAlunos();
    void referenciaDisciplinasEquivalentesIncompativeis();
    void referenciaDisciplinasCurriculos();
@@ -224,6 +225,8 @@ private:
    void relacionaCursosCampus();
 
    int retornaMaiorIdDemandas();
+
+   int retornaMaiorIdAlunoDemandas();
 
    // Para o caso em que há uma solução do módulo tático
    // e deseja-se executar o módulo operacional. Deve-se

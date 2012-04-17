@@ -152,10 +152,6 @@ std::string VariablePre::toString()
         str << "x"; break;
      case V_ERROR:
         str << "?"; break;
-     case V_PRE_MAX_CRED_SEMANA:
-        str << "H"; break;
-     case V_PRE_MIN_CRED_SEMANA:
-        str << "h"; break;
      case V_PRE_OFERECIMENTO:
         str << "o"; break;
      case V_PRE_ALOC_ALUNO:
@@ -174,6 +170,10 @@ std::string VariablePre::toString()
 		str <<"c"; break;
 	 case V_PRE_ALOCA_ALUNO_TURMA_DISC:
 		str <<"s"; break;
+	 case V_PRE_SLACK_PRIOR_INF:
+		str <<"fpi"; break;
+	 case V_PRE_SLACK_PRIOR_SUP:
+		str <<"fps"; break;
 		
     default:
         str << "!";

@@ -187,7 +187,10 @@ std::string ConstraintPre::toString()
       ss << "__(C_ATENDIMENTO_ALUNO):"; break;	 
    case C_ALUNO_UNICA_TURMA_DISC:
       ss << "__(C_ALUNO_UNICA_TURMA_DISC):"; break;	 
-   	  
+   case C_ALUNO_DISC_PRATICA_TEORICA:
+      ss << "__(C_ALUNO_DISC_PRATICA_TEORICA):"; break;	    
+   case C_ALUNO_PRIORIDADES_DEMANDA:
+      ss << "__(C_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
 	  
    default:
       ss << "!";

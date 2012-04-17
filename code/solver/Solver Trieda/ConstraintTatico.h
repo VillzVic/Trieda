@@ -34,7 +34,8 @@ public:
 	  C_ATIVA_Y = 12,								// Restricao 1.2.13
 	  C_ALUNO_VARIAS_UNIDADES_DIA = 13,				// Restricao 1.2.14
 	  C_MIN_CREDS_ALUNO = 14,						// Restricao 1.2.15
-	  C_MAX_CREDS_ALUNO = 15						// Restricao 1.2.16
+	  C_MAX_CREDS_ALUNO = 15,						// Restricao 1.2.16
+	  C_ALUNO_DISC_PRATICA_TEORICA = 16				// Restricao 1.2.17
    };
 
    /** Default constructor. */

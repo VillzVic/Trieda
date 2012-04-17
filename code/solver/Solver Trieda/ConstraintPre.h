@@ -43,7 +43,9 @@ public:
 	  // Restrição só usada para o modelo Tatico-Aluno:
 
 	  C_ATENDIMENTO_ALUNO = 18,						// Restricao 1.18
-	  C_ALUNO_UNICA_TURMA_DISC = 19					// Restricao 1.19
+	  C_ALUNO_UNICA_TURMA_DISC = 19,				// Restricao 1.19
+	  C_ALUNO_DISC_PRATICA_TEORICA = 20,			// Restricao 1.20
+	  C_ALUNO_PRIORIDADES_DEMANDA = 21				// Restricao 1.21
 
    };
 
