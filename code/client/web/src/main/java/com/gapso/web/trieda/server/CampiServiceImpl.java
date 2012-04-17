@@ -540,98 +540,102 @@ public class CampiServiceImpl extends RemoteService
 			}
 		}
 		
-		double somatorioDeAlunosDeTodasAsAulasEmSalasDeAula = 0.0;
-		double somatorioDeAlunosDeTodasAsAulasEmLaboratorios = 0.0;
-		double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula = 0.0;
-		double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios = 0.0;
 		Integer totalCreditosSemanais = 0;
 		Double custoDocenteSemanal = 0.0;
-		AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
-		for (Turno turno : turnosConsiderados) {
-			for (Sala sala : salasUtilizadas) {
-				String key = sala.getId() + "-" + turno.getId();
-				List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
-				if (atendimentosPorSalaTurno != null) {
-					List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
-					if (ehTatico) {
-						aulas.addAll(atendimentosPorSalaTurno);
-					} else {
-						List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
-						for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
-							atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
-						}
-						// processa os atendimentos do operacional e os transforma em aulas
-						List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
-						// insere as aulas do modo operacional na lista de atendimentos
-						aulas.addAll(aulasOperacional);
-					}
-					
-					// trata compartilhamento de turmas entre cursos
-					List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
-					
-					for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
-						if (!sala.isLaboratorio()) {
-							somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos();
-							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidade();
+		Integer qtdAlunosAtendidos = 0;
+		Integer qtdAlunosNaoAtendidos = 0;
+		double utilizacaoMediaDasSalasDeAula = 0.0;
+		double utilizacaoMediaDosLaboratorios = 0.0;
+		Double mediaUtilizacaoHorarioSalas = 0.0;
+		Double receitaSemestral = 0.0;
+		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+			double somatorioDeAlunosDeTodasAsAulasEmSalasDeAula = 0.0;
+			double somatorioDeAlunosDeTodasAsAulasEmLaboratorios = 0.0;
+			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula = 0.0;
+			double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios = 0.0;
+			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+			for (Turno turno : turnosConsiderados) {
+				for (Sala sala : salasUtilizadas) {
+					String key = sala.getId() + "-" + turno.getId();
+					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimentosPorSalaTurno != null) {
+						List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+						if (ehTatico) {
+							aulas.addAll(atendimentosPorSalaTurno);
 						} else {
-							somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos();
-							somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidade();
+							List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
+							for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
+								atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
+							}
+							// processa os atendimentos do operacional e os transforma em aulas
+							List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
+							// insere as aulas do modo operacional na lista de atendimentos
+							aulas.addAll(aulasOperacional);
 						}
-						totalCreditosSemanais += aula.getTotalCreditos();
-						custoDocenteSemanal += aula.getTotalCreditos() * aula.getProfessorCustoCreditoSemanal();
+						
+						// trata compartilhamento de turmas entre cursos
+						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
+						
+						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+							if (!sala.isLaboratorio()) {
+								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos();
+								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidade();
+							} else {
+								somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos();
+								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidade();
+							}
+							totalCreditosSemanais += aula.getTotalCreditos();
+							custoDocenteSemanal += aula.getTotalCreditos() * aula.getProfessorCustoCreditoSemanal();
+						}
 					}
 				}
 			}
-		}
-		double utilizacaoMediaDasSalasDeAula = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAula/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula*100.0,2);
-		double utilizacaoMediaDosLaboratorios = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratorios/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios*100.0,2);
-		
-		//calculo do indicador de taxa de uso dos horarios das salas de aula
-		SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
-		Map<Integer, Integer> countHorariosAula = new HashMap<Integer, Integer>();
-		for(HorarioAula ha : maiorSemanaLetiva.getHorariosAula()){
-			for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
-				int semanaInt = Semanas.toInt(hdc.getDiaSemana());
-				Integer value = countHorariosAula.get(semanaInt);
-				value = ((value == null) ? 0 : value);
-				countHorariosAula.put(semanaInt, value + 1);
-			}
-		}
-		
-		int calcCargaHoraria = 0;
-		for(Integer i : countHorariosAula.keySet()){
-			calcCargaHoraria += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
-		}
-		
-		Double mediaUtilizacaoHorarioSalas = 0.0;
-		for(Long l : mapaHorarioSalaUtilizado.keySet()){
-			Integer tempo = mapaHorarioSalaUtilizado.get(l);
-			mediaUtilizacaoHorarioSalas += ((double)tempo * maiorSemanaLetiva.getTempo() / calcCargaHoraria);
-		}
-		mediaUtilizacaoHorarioSalas = TriedaUtil.round(mediaUtilizacaoHorarioSalas / mapaHorarioSalaUtilizado.size() * 100, 2);		
-		
-		
-		
-		// cálculo das quantidades de alunos atendidos e não atendidos
-		DemandasServiceImpl demandasService = new DemandasServiceImpl();
-		ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
-		Integer qtdAlunosNaoAtendidos = pair.getSegundo();
-		Integer qtdAlunosAtendidos = (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
-		Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
-
-		// cálculo do indicador de receita semestral
-		Double receitaSemestral = 0.0;
-		for (Demanda demanda : demandaToQtdAlunosNaoAtendidosMap.keySet()) {
-			ParDTO<Integer,Disciplina> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
-			int qtdAlunosNaoAtendidosDemanda = par.getPrimeiro();
-			Disciplina disciplinaSubstituta = par.getSegundo();
-			Disciplina disciplinaASerConsiderada = (disciplinaSubstituta != null) ? disciplinaSubstituta : demanda.getDisciplina();
+			utilizacaoMediaDasSalasDeAula = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAula/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula*100.0,2);
+			utilizacaoMediaDosLaboratorios = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratorios/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios*100.0,2);
 			
-			int qtdAlunosAtendidosDemanda = (demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda);
-			receitaSemestral += (disciplinaASerConsiderada.getCreditosTotal()*qtdAlunosAtendidosDemanda*demanda.getOferta().getReceita());
+			//calculo do indicador de taxa de uso dos horarios das salas de aula
+			SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
+			Map<Integer, Integer> countHorariosAula = new HashMap<Integer, Integer>();
+			for(HorarioAula ha : maiorSemanaLetiva.getHorariosAula()){
+				for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
+					int semanaInt = Semanas.toInt(hdc.getDiaSemana());
+					Integer value = countHorariosAula.get(semanaInt);
+					value = ((value == null) ? 0 : value);
+					countHorariosAula.put(semanaInt, value + 1);
+				}
+			}
+			
+			int calcCargaHoraria = 0;
+			for(Integer i : countHorariosAula.keySet()){
+				calcCargaHoraria += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
+			}
+			
+			for(Long l : mapaHorarioSalaUtilizado.keySet()){
+				Integer tempo = mapaHorarioSalaUtilizado.get(l);
+				mediaUtilizacaoHorarioSalas += ((double)tempo * maiorSemanaLetiva.getTempo() / calcCargaHoraria);
+			}
+			mediaUtilizacaoHorarioSalas = TriedaUtil.round(mediaUtilizacaoHorarioSalas / mapaHorarioSalaUtilizado.size() * 100, 2);		
+			
+			// cálculo das quantidades de alunos atendidos e não atendidos
+			DemandasServiceImpl demandasService = new DemandasServiceImpl();
+			ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
+			qtdAlunosNaoAtendidos = pair.getSegundo();
+			qtdAlunosAtendidos = (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
+			Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
+	
+			// cálculo do indicador de receita semestral
+			for (Demanda demanda : demandaToQtdAlunosNaoAtendidosMap.keySet()) {
+				ParDTO<Integer,Disciplina> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
+				int qtdAlunosNaoAtendidosDemanda = par.getPrimeiro();
+				Disciplina disciplinaSubstituta = par.getSegundo();
+				Disciplina disciplinaASerConsiderada = (disciplinaSubstituta != null) ? disciplinaSubstituta : demanda.getDisciplina();
+				
+				int qtdAlunosAtendidosDemanda = (demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda);
+				receitaSemestral += (disciplinaASerConsiderada.getCreditosTotal()*qtdAlunosAtendidosDemanda*demanda.getOferta().getReceita());
+			}
+			receitaSemestral *= ( 4.5 * 6.0 );
+			receitaSemestral = TriedaUtil.round(receitaSemestral,2);
 		}
-		receitaSemestral *= ( 4.5 * 6.0 );
-		receitaSemestral = TriedaUtil.round(receitaSemestral,2);
 		
 		// cálculo de outros indicadores
 		Integer qtdTurmasAbertas = ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
