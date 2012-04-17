@@ -363,6 +363,8 @@ public class SolverOutput
 			at.persist();
 		}
 		
+		AlunoDemanda.entityManager().flush();
+		
 		for(AlunoDemanda alunoDemanda : alunosDemandaTatico.keySet()){
 			int creditosAtendidos = 0;
 			for(AtendimentoTatico tatico : alunosDemandaTatico.get(alunoDemanda)){
@@ -383,6 +385,8 @@ public class SolverOutput
 			at.detach();
 			at.persist();
 		}
+		
+		AlunoDemanda.entityManager().flush();
 		
 		for(AlunoDemanda alunoDemanda : alunosDemandaOperacional.keySet()){
 			int creditosAtendidos = 0;
@@ -420,6 +424,8 @@ public class SolverOutput
 				alunoDemandaBD.merge();
 			}
 		}
+		
+		AlunoDemanda.entityManager().flush();
 	}
 	
 }
