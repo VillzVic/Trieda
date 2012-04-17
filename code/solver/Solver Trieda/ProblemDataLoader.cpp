@@ -973,23 +973,9 @@ void ProblemDataLoader::estabeleceDiasLetivosBlocoCampus()
          if ( it_Bloco_Curric->campus->diasLetivos.find
             (*it_Dia_Letivo) != it_Bloco_Curric->campus->diasLetivos.end() )
          {
-            problemData->bloco_Campus_Dias
-               [ std::make_pair( it_Bloco_Curric->getId(),
-                                 it_Bloco_Curric->campus->getId() ) ].add( *it_Dia_Letivo );
-         }
-         else
-         {
-            // PS: Quando tiver mais de um campus, pode acontecer que
-            // uma associação entre um bloco curricular  que não pertence
-            // a um determinado campus seja criada. Arrumar isso depois.
-            // Ou seja, essa checagem só serve para quando se tem 1 campus.
-            // Se tiver mais de um, quando cair aqui, nada pode-se afirmar
-            // sobre a corretude da instância.
-            std::cerr << "ERRO: Bloco Curricular e Campus Incompativeis. "
-                      << "(ProblemDataLoader::estabeleceDiasLetivosBlocoCampus())"
-                      << std::endl;
-
-            exit( 1 );
+            problemData->bloco_Campus_Dias[ 
+				std::make_pair( it_Bloco_Curric->getId(),
+								it_Bloco_Curric->campus->getId() ) ].add( *it_Dia_Letivo );
          }
       }
    }

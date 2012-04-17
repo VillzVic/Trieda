@@ -3160,7 +3160,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 											at_Oferta->disciplina = d;
 										}
 
-										at_Oferta->setQuantidade( itMap->second.size() );
+										at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
 										at_Oferta->setTurma( turma );
 										at_Oferta->oferta = oferta;
 
@@ -3289,7 +3289,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 									at_Oferta->disciplina = d;
 								}
 
-								at_Oferta->setQuantidade( itMap->second.size() );
+								at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
 								at_Oferta->setTurma( turma );
 								at_Oferta->oferta = oferta;
 
@@ -3426,7 +3426,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 							at_Oferta->disciplina = d;
 						}
 
-						at_Oferta->setQuantidade( itMap->second.size() );
+						at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
 						at_Oferta->setTurma( turma );
 						at_Oferta->oferta = oferta;
 
@@ -3568,7 +3568,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 					at_Oferta->disciplina = d;
 				}
 
-				at_Oferta->setQuantidade( itMap->second.size() );
+				at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
 				at_Oferta->setTurma( turma );
 				at_Oferta->oferta = oferta;
 
@@ -7196,11 +7196,11 @@ int SolverMIP::cria_preVariavel_folga_prioridade_inf( int campusId, int prior )
 			double coef = 0.0;
 			if ( problemData->parametros->funcao_objetivo == 0 )
 			{
-				coef = -1000.0;
+				coef = -600.0;
 			}
 			else if ( problemData->parametros->funcao_objetivo == 1 )
 			{
-				coef = 1000.0;
+				coef = 600.0;
 			}									
 
 			double lowerBound = 0.0;
