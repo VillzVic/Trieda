@@ -11716,445 +11716,733 @@ int SolverMIP::criaRestricoesTatico( int campusId )
 
 }
 
-
 int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
 {
-   int restricoes = 0;
+	int restricoes = 0;
 
-   int nnz;
-   char name[ 100 ];
+	int nnz;
+	char name[ 100 ];
 
-   VariableTatico v;
-   ConstraintTatico c;
-   VariableTaticoHash::iterator it_v;
+	VariableTatico v;
+	ConstraintTatico c;
 
-   Disciplina * disciplina = NULL;
+	VariableTaticoHash::iterator vit;
+	ConstraintTaticoHash::iterator cit;
 
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-	   if ( itCampus->getId() != campusId )
-	   {
+	Campus *campus = NULL;
+
+	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+	{
+		if ( itCampus->getId() != campusId )
 			continue;
-	   }
 
-      ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
-      {
-         disciplina = ( *it_disciplina );
+		campus = *itCampus;
+		break;
+	}
 
-		 // A disciplina deve ser ofertada no campus especificado
-		 if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
-			  problemData->cp_discs[campusId].end() )
-		 {
-			 continue;
-		 }
+	if(!campus)
+		return 0;
 
-		 #pragma region Equivalencias
-		 if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-				problemData->mapDiscSubstituidaPor.end() )
-		 {
+	vit = vHashTatico.begin();
+	while(vit != vHashTatico.end())
+	{
+		if(vit->first.getType() != VariableTatico::V_CREDITOS && vit->first.getType() != VariableTatico::V_ABERTURA)
+		{
+			vit++;
 			continue;
-		 }
-		 #pragma endregion
+		}
 
-         for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
-         {
-            c.reset();
-            c.setType( ConstraintTatico::C_CARGA_HORARIA );
+		VariableTatico v = vit->first;
 
-            c.setCampus( *itCampus );
-            c.setTurma( turma );
-            c.setDisciplina( disciplina );
+		if(v.getType() == VariableTatico::V_CREDITOS)
+		{
+			if ( problemData->cp_discs[campusId].find( v.getDisciplina()->getId() ) ==
+				problemData->cp_discs[campusId].end() )
+			{
+				vit++;
+				continue;
+			}
 
-            sprintf( name, "%s", c.toString().c_str() );
+			c.reset();
+			c.setType( ConstraintTatico::C_CARGA_HORARIA );
+			c.setCampus( campus );
+			c.setTurma( v.getTurma() );
+			c.setDisciplina( v.getDisciplina() );
 
-            if ( cHashTatico.find( c ) != cHashTatico.end() )
-            {
-               continue;
-            }
+			cit = cHashTatico.find(c);
 
-            nnz = ( itCampus->getTotalSalas() * 7 );
+			cit = cHashTatico.find(c);
+			if(cit == cHashTatico.end())
+			{
+				sprintf( name, "%s", c.toString().c_str() );
+				OPT_ROW row( 100, OPT_ROW::EQUAL , 0 , name );
 
-            OPT_ROW row( nnz + 1, OPT_ROW::EQUAL , 0 , name );
+				int NCH = v.getDisciplina()->getCalendario()->retornaNroCreditosEntreHorarios( v.getHorarioAulaInicial(), v.getHorarioAulaFinal());
+				row.insert( vit->second, NCH);
 
-            v.reset();
-            v.setType( VariableTatico::V_CREDITOS );
+				cHashTatico[ c ] = lp->getNumRows();
+				lp->addRow( row );
+				restricoes++;
+			}
+			else
+			{
+				int NCH = v.getDisciplina()->getCalendario()->retornaNroCreditosEntreHorarios( v.getHorarioAulaInicial(), v.getHorarioAulaFinal());
+				lp->chgCoef(cit->second, vit->second,  NCH);
+			}
+		}
+		else
+		{
+			if(campus->getId() != v.getCampus()->getId())
+			{
+				vit++;
+				continue;
+			}
 
-            // Insere variaveis Credito (x) ---
+			c.reset();
+			c.setType( ConstraintTatico::C_CARGA_HORARIA );
+			c.setCampus( campus );
+			c.setTurma( v.getTurma() );
+			c.setDisciplina( v.getDisciplina() );
 
-            ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
-            {
-               ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
-               {
-				   if ( itCjtSala->disciplinas_associadas.find( disciplina) ==
-					    itCjtSala->disciplinas_associadas.end() )
-				   {
-					   continue;
-				   }
-				   
-				   int salaId = itCjtSala->salas.begin()->first;
-					
-				   GGroup<int> dias = itCjtSala->dias_letivos_disciplinas[disciplina];
+			cit = cHashTatico.find(c);
+			if(cit == cHashTatico.end())
+			{
+				sprintf( name, "%s", c.toString().c_str() );
+				OPT_ROW row( 100, OPT_ROW::EQUAL , 0 , name );
 
-				   ITERA_GGROUP_N_PT ( it_Dia, dias, int )
-				   {
-						int dia = *it_Dia;
+				row.insert( vit->second, -( v.getDisciplina()->getCredPraticos() + v.getDisciplina()->getCredTeoricos() ) );
 
-						GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
-							problemData->retornaHorariosEmComum( salaId, disciplina->getId(), dia );
-					  
-						ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-						{
-							HorarioAula *hi = *itHorario;
+				cHashTatico[ c ] = lp->getNumRows();
+				lp->addRow( row );
+				restricoes++;
+			}
+			else
+			{
+				lp->chgCoef(cit->second, vit->second,  -( v.getDisciplina()->getCredPraticos() + v.getDisciplina()->getCredTeoricos() ));
+			}
+		}
 
-							ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-							{
-									HorarioAula *hf = *itHorario;
 
-									if ( hf < hi )
-									{
-							 			continue;
-									}
-
-									int NCH = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
-									
-									v.setTurma( turma );
-									v.setDisciplina( disciplina );
-									v.setUnidade( *itUnidade );
-									v.setSubCjtSala( *itCjtSala );
-									v.setDia( dia );                   
-									v.setHorarioAulaInicial( hi );	 // hi
-									v.setHorarioAulaFinal( hf );	 // hf
-
-									it_v = vHashTatico.find( v );
-									if( it_v != vHashTatico.end() )
-									{
-										row.insert( it_v->second, NCH );
-									}
-							}
-						}
-					}                  
-                }
-            }
-
-            // Insere variaveis Abertura (z) ---
-
-            v.reset();
-            v.setType( VariableTatico::V_ABERTURA );
-
-            v.setCampus( *itCampus );
-            v.setDisciplina( disciplina );
-            v.setTurma( turma );
-
-            it_v = vHashTatico.find( v );
-            if( it_v != vHashTatico.end() )
-            {
-               row.insert( it_v->second,
-                  -( disciplina->getCredPraticos() + 
-                  disciplina->getCredTeoricos() ) );
-            }
-
-            // Insere restrição no Hash ---
-
-            if ( row.getnnz() != 0 )
-            {
-               cHashTatico[ c ] = lp->getNumRows();
-
-               lp->addRow( row );
-               restricoes++;
-            }
-         }
-      }
-   }
+		vit++;
+	}
 
 	return restricoes;
 }
+
+//int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
+//{
+//   int restricoes = 0;
+//
+//   int nnz;
+//   char name[ 100 ];
+//
+//   VariableTatico v;
+//   ConstraintTatico c;
+//   VariableTaticoHash::iterator it_v;
+//
+//   Disciplina * disciplina = NULL;
+//
+//   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+//   {
+//	   if ( itCampus->getId() != campusId )
+//	   {
+//			continue;
+//	   }
+//
+//      ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+//      {
+//         disciplina = ( *it_disciplina );
+//
+//		 // A disciplina deve ser ofertada no campus especificado
+//		 if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+//			  problemData->cp_discs[campusId].end() )
+//		 {
+//			 continue;
+//		 }
+//
+//		 #pragma region Equivalencias
+//		 if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+//				problemData->mapDiscSubstituidaPor.end() )
+//		 {
+//			continue;
+//		 }
+//		 #pragma endregion
+//
+//         for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+//         {
+//            c.reset();
+//            c.setType( ConstraintTatico::C_CARGA_HORARIA );
+//
+//            c.setCampus( *itCampus );
+//            c.setTurma( turma );
+//            c.setDisciplina( disciplina );
+//
+//            sprintf( name, "%s", c.toString().c_str() );
+//
+//            if ( cHashTatico.find( c ) != cHashTatico.end() )
+//            {
+//               continue;
+//            }
+//
+//            nnz = ( itCampus->getTotalSalas() * 7 );
+//
+//            OPT_ROW row( nnz + 1, OPT_ROW::EQUAL , 0 , name );
+//
+//            v.reset();
+//            v.setType( VariableTatico::V_CREDITOS );
+//
+//            // Insere variaveis Credito (x) ---
+//
+//            ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+//            {
+//               ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+//               {
+//				   if ( itCjtSala->disciplinas_associadas.find( disciplina) ==
+//					    itCjtSala->disciplinas_associadas.end() )
+//				   {
+//					   continue;
+//				   }
+//				   
+//				   int salaId = itCjtSala->salas.begin()->first;
+//					
+//				   GGroup<int> dias = itCjtSala->dias_letivos_disciplinas[disciplina];
+//
+//				   ITERA_GGROUP_N_PT ( it_Dia, dias, int )
+//				   {
+//						int dia = *it_Dia;
+//
+//						GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
+//							problemData->retornaHorariosEmComum( salaId, disciplina->getId(), dia );
+//					  
+//						ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//						{
+//							HorarioAula *hi = *itHorario;
+//
+//							ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//							{
+//									HorarioAula *hf = *itHorario;
+//
+//									if ( hf < hi )
+//									{
+//							 			continue;
+//									}
+//
+//									int NCH = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
+//									
+//									v.setTurma( turma );
+//									v.setDisciplina( disciplina );
+//									v.setUnidade( *itUnidade );
+//									v.setSubCjtSala( *itCjtSala );
+//									v.setDia( dia );                   
+//									v.setHorarioAulaInicial( hi );	 // hi
+//									v.setHorarioAulaFinal( hf );	 // hf
+//
+//									it_v = vHashTatico.find( v );
+//									if( it_v != vHashTatico.end() )
+//									{
+//										row.insert( it_v->second, NCH );
+//									}
+//							}
+//						}
+//					}                  
+//                }
+//            }
+//
+//            // Insere variaveis Abertura (z) ---
+//
+//            v.reset();
+//            v.setType( VariableTatico::V_ABERTURA );
+//
+//            v.setCampus( *itCampus );
+//            v.setDisciplina( disciplina );
+//            v.setTurma( turma );
+//
+//            it_v = vHashTatico.find( v );
+//            if( it_v != vHashTatico.end() )
+//            {
+//               row.insert( it_v->second,
+//                  -( disciplina->getCredPraticos() + 
+//                  disciplina->getCredTeoricos() ) );
+//            }
+//
+//            // Insere restrição no Hash ---
+//
+//            if ( row.getnnz() != 0 )
+//            {
+//               cHashTatico[ c ] = lp->getNumRows();
+//
+//               lp->addRow( row );
+//               restricoes++;
+//            }
+//         }
+//      }
+//   }
+//
+//	return restricoes;
+//}
    
 
 // Restricao 1.2.3
 int SolverMIP::criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId )
 {
-   int restricoes = 0;
+	int restricoes = 0;
 
-   int nnz;
-   char name[ 100 ];
+	int nnz;
+	char name[ 100 ];
 
-   VariableTatico v;
-   ConstraintTatico c;
-   VariableTaticoHash::iterator it_v;
+	VariableTatico v;
+	ConstraintTatico c;
 
-   Disciplina * disciplina = NULL;
+	VariableTaticoHash::iterator vit;
+	ConstraintTaticoHash::iterator cit;
 
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-	    if ( itCampus->getId() != campusId )
-	    {
+	Campus *campus = NULL;
+
+	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+	{
+		if ( itCampus->getId() != campusId )
 			continue;
-	    }
 
-		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+		campus = *itCampus;
+		break;
+	}
+
+	if(!campus)
+		return 0;
+
+	vit = vHashTatico.begin();
+	while(vit != vHashTatico.end())
+	{
+		if(vit->first.getType() != VariableTatico::V_CREDITOS)
 		{
-			ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+			vit++;
+			continue;
+		}
+
+		VariableTatico v = vit->first;
+
+		if ( campus->unidades.find(v.getUnidade()) == campus->unidades.end())
+		{
+			vit++;
+			continue;
+		}
+
+		Sala *sala = v.getSubCjtSala()->salas.begin()->second;
+		ITERA_GGROUP( itHor, sala->horariosDia, HorarioDia )
+		{
+			HorarioAula* h = itHor->getHorarioAula();
+
+			if ( itHor->getDia() != v.getDia() )					
+				continue;
+
+			DateTime fimF = v.getHorarioAulaFinal()->getInicio();
+			fimF.addMinutes( v.getHorarioAulaFinal()->getTempoAula() );
+
+			DateTime fimH = h->getInicio(); // controle
+			fimH.addMinutes( h->getTempoAula() );
+
+
+			if ( ( ( v.getHorarioAulaInicial()->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) ) ||
+				( ( h->getInicio() <= v.getHorarioAulaInicial()->getInicio() ) && ( fimH >  v.getHorarioAulaInicial()->getInicio() ) ) )
 			{
-				Sala *sala = itCjtSala->salas.begin()->second;
 
-				ITERA_GGROUP_N_PT( itDia, sala->diasLetivos, int )
+				c.reset();
+				c.setType( ConstraintTatico::C_SALA_HORARIO );
+				c.setCampus( campus );
+				c.setUnidade( v.getUnidade() );
+				c.setSubCjtSala( v.getSubCjtSala() );
+				c.setDia( v.getDia() );
+				c.setHorarioAula( h );
+
+				cit = cHashTatico.find(c);
+
+				cit = cHashTatico.find(c);
+				if(cit == cHashTatico.end())
 				{
-					int dia = *itDia;
+					sprintf( name, "%s", c.toString().c_str() );
+					OPT_ROW row( 100, OPT_ROW::LESS , 1 , name );
 
-					ITERA_GGROUP( itHor, sala->horariosDia, HorarioDia )
-					{
-						HorarioAula* h = itHor->getHorarioAula();
+					row.insert( vit->second, 1.0);
 
-						if ( itHor->getDia() != dia )					
-						{
-							continue;
-						}
-
-						// CONSTRAINT --------------------------------------
-
-						c.reset();
-						c.setType( ConstraintTatico::C_SALA_HORARIO );
-
-						c.setCampus( *itCampus );
-						c.setUnidade( *itUnidade );
-						c.setSubCjtSala( *itCjtSala );
-						c.setDia( dia );
-						c.setHorarioAula( h );
-
-						sprintf( name, "%s", c.toString().c_str() );
-
-						if ( cHashTatico.find( c ) != cHashTatico.end() )
-						{
-							continue;
-						}
-
-						nnz = ( itCampus->getTotalSalas() * 7 );
-
-						OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1 , name );
-
-						// Insere variaveis Credito (x) ---
-						
-						ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
-						{
-							disciplina = ( *it_disciplina );
-							
-							#pragma region Equivalencias
-							if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-								 problemData->mapDiscSubstituidaPor.end() )
-							{
-								continue;
-							}
-							#pragma endregion
-
-							for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
-							{			
-								GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
-									problemData->retornaHorariosEmComum( sala->getId(), disciplina->getId(), dia );
-					
-								ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-								{
-									HorarioAula *hi = *itHorario;
-
-									ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-									{
-											HorarioAula *hf = *itHorario;
-
-											if ( hf < hi )
-											{
-							 					continue;
-											}
-														   
-											DateTime fimF = hf->getInicio();
-											fimF.addMinutes( hf->getTempoAula() );
-
-											DateTime fimH = h->getInicio(); // controle
-											fimH.addMinutes( h->getTempoAula() );
-
-											// ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
-
-											if ( ( ( hi->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) ) ||
-												 ( ( h->getInicio() <= hi->getInicio() ) && ( fimH >  hi->getInicio() ) ) )
-											{	
-												// intersecao de horarios, com hi antes de h
-												// intersecao de horarios, com h antes de hi
-
-												int NCH = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
-											
-												v.reset();
-												v.setType( VariableTatico::V_CREDITOS );									
-												v.setTurma( turma );
-												v.setDisciplina( disciplina );
-												v.setUnidade( *itUnidade );
-												v.setSubCjtSala( *itCjtSala );
-												v.setDia( dia );                   
-												v.setHorarioAulaInicial( hi );	 // hi
-												v.setHorarioAulaFinal( hf );	 // hf
-
-												it_v = vHashTatico.find( v );
-												if( it_v != vHashTatico.end() )
-												{
-													row.insert( it_v->second, 1.0 );
-												}												
-											
-											}
-									}
-								}
-							}
-						}
-
-						// Insere restrição no Hash ---
-
-						if ( row.getnnz() != 0 )
-						{
-						   cHashTatico[ c ] = lp->getNumRows();
-
-						   lp->addRow( row );
-						   restricoes++;
-						}						
-					}
-				}  
+					cHashTatico[ c ] = lp->getNumRows();
+					lp->addRow( row );
+					restricoes++;
+				}
+				else
+				{
+					lp->chgCoef(cit->second, vit->second,  1.0);
+				}
 			}
 		}
-   }
+
+		vit++;
+	}
 
 	return restricoes;
 
 }
+
+//int SolverMIP::criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId )
+//{
+//   int restricoes = 0;
+//
+//   int nnz;
+//   char name[ 100 ];
+//
+//   VariableTatico v;
+//   ConstraintTatico c;
+//   VariableTaticoHash::iterator it_v;
+//
+//   Disciplina * disciplina = NULL;
+//
+//   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+//   {
+//	    if ( itCampus->getId() != campusId )
+//	    {
+//			continue;
+//	    }
+//
+//		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+//		{
+//			ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+//			{
+//				Sala *sala = itCjtSala->salas.begin()->second;
+//
+//				ITERA_GGROUP_N_PT( itDia, sala->diasLetivos, int )
+//				{
+//					int dia = *itDia;
+//
+//					ITERA_GGROUP( itHor, sala->horariosDia, HorarioDia )
+//					{
+//						HorarioAula* h = itHor->getHorarioAula();
+//
+//						if ( itHor->getDia() != dia )					
+//						{
+//							continue;
+//						}
+//
+//						 CONSTRAINT --------------------------------------
+//
+//						c.reset();
+//						c.setType( ConstraintTatico::C_SALA_HORARIO );
+//
+//						c.setCampus( *itCampus );
+//						c.setUnidade( *itUnidade );
+//						c.setSubCjtSala( *itCjtSala );
+//						c.setDia( dia );
+//						c.setHorarioAula( h );
+//
+//						sprintf( name, "%s", c.toString().c_str() );
+//
+//						if ( cHashTatico.find( c ) != cHashTatico.end() )
+//						{
+//							continue;
+//						}
+//
+//						nnz = ( itCampus->getTotalSalas() * 7 );
+//
+//						OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1 , name );
+//
+//						 Insere variaveis Credito (x) ---
+//						
+//						ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
+//						{
+//							disciplina = ( *it_disciplina );
+//							
+//							#pragma region Equivalencias
+//							if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+//								 problemData->mapDiscSubstituidaPor.end() )
+//							{
+//								continue;
+//							}
+//							#pragma endregion
+//
+//							for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+//							{			
+//								GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
+//									problemData->retornaHorariosEmComum( sala->getId(), disciplina->getId(), dia );
+//					
+//								ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//								{
+//									HorarioAula *hi = *itHorario;
+//
+//									ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//									{
+//											HorarioAula *hf = *itHorario;
+//
+//											if ( hf < hi )
+//											{
+//							 					continue;
+//											}
+//														   
+//											DateTime fimF = hf->getInicio();
+//											fimF.addMinutes( hf->getTempoAula() );
+//
+//											DateTime fimH = h->getInicio(); // controle
+//											fimH.addMinutes( h->getTempoAula() );
+//
+//											 ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
+//
+//											if ( ( ( hi->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) ) ||
+//												 ( ( h->getInicio() <= hi->getInicio() ) && ( fimH >  hi->getInicio() ) ) )
+//											{	
+//												 intersecao de horarios, com hi antes de h
+//												 intersecao de horarios, com h antes de hi
+//
+//												int NCH = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
+//											
+//												v.reset();
+//												v.setType( VariableTatico::V_CREDITOS );									
+//												v.setTurma( turma );
+//												v.setDisciplina( disciplina );
+//												v.setUnidade( *itUnidade );
+//												v.setSubCjtSala( *itCjtSala );
+//												v.setDia( dia );                   
+//												v.setHorarioAulaInicial( hi );	 // hi
+//												v.setHorarioAulaFinal( hf );	 // hf
+//
+//												it_v = vHashTatico.find( v );
+//												if( it_v != vHashTatico.end() )
+//												{
+//													row.insert( it_v->second, 1.0 );
+//												}												
+//											
+//											}
+//									}
+//								}
+//							}
+//						}
+//
+//						 Insere restrição no Hash ---
+//
+//						if ( row.getnnz() != 0 )
+//						{
+//						   cHashTatico[ c ] = lp->getNumRows();
+//
+//						   lp->addRow( row );
+//						   restricoes++;
+//						}						
+//					}
+//				}  
+//			}
+//		}
+//   }
+//
+//	return restricoes;
+//
+//}
 
 // Restricao 1.2.4
 int SolverMIP::criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId )
 {
-   int restricoes = 0;
+	int restricoes = 0;
 
-   int nnz;
-   char name[ 100 ];
+	int nnz;
+	char name[ 100 ];
 
-   VariableTatico v;
-   ConstraintTatico c;
-   VariableTaticoHash::iterator it_v;
+	VariableTatico v;
+	ConstraintTatico c;
 
-   Disciplina * disciplina = NULL;
+	VariableTaticoHash::iterator vit;
+	ConstraintTaticoHash::iterator cit;
 
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-	   if ( itCampus->getId() != campusId )
-	   {
+	Campus *campus = NULL;
+
+	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+	{
+		if ( itCampus->getId() != campusId )
 			continue;
-	   }
 
-      ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
-      {
-         disciplina = ( *it_disciplina );
+		campus = *itCampus;
+		break;
+	}
 
-		 // A disciplina deve ser ofertada no campus especificado
-		 if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
-			  problemData->cp_discs[campusId].end() )
-		 {
-			 continue;
-		 }
+	if(!campus)
+		return 0;
 
-		 #pragma region Equivalencias
-		 if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-				problemData->mapDiscSubstituidaPor.end() )
-		 {
+	vit = vHashTatico.begin();
+	while(vit != vHashTatico.end())
+	{
+		if(vit->first.getType() != VariableTatico::V_CREDITOS)
+		{
+			vit++;
 			continue;
-		 }
-		 #pragma endregion
+		}
 
-		 ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
-		 {
-			    int dia = *itDia;
+		VariableTatico v = vit->first;
 
-				for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
-				{
-					c.reset();
-					c.setType( ConstraintTatico::C_UNICO_ATEND_TURMA_DISC_DIA );
+		if ( problemData->cp_discs[campusId].find( v.getDisciplina()->getId() ) ==
+			problemData->cp_discs[campusId].end() )
+		{
+			vit++;
+			continue;
+		}
 
-					c.setCampus( *itCampus );
-					c.setTurma( turma );
-					c.setDisciplina( disciplina );
-					c.setDia( dia );
+		c.reset();
+		c.setType( ConstraintTatico::C_UNICO_ATEND_TURMA_DISC_DIA );
+		c.setCampus( campus );
+		c.setTurma( v.getTurma() );
+		c.setDisciplina( v.getDisciplina() );
+		c.setDia( v.getDia() );
 
-					sprintf( name, "%s", c.toString().c_str() );
+		cit = cHashTatico.find(c);
 
-					if ( cHashTatico.find( c ) != cHashTatico.end() )
-					{
-						continue;
-					}
+		cit = cHashTatico.find(c);
+		if(cit == cHashTatico.end())
+		{
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::LESS , 1.0 , name );
 
-					nnz = ( itCampus->getTotalSalas() * 7 );
+			row.insert( vit->second, 1.0);
 
-					OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1.0 , name );
-					
-					// Insere variaveis de Credito (x) ---
+			cHashTatico[ c ] = lp->getNumRows();
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			lp->chgCoef(cit->second, vit->second,  1.0);
+		}
 
-					ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
-					{
-						ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
-						{
-							if ( itCjtSala->disciplinas_associadas.find( disciplina) ==
-								itCjtSala->disciplinas_associadas.end() )
-							{
-								continue;
-							}
-				   
-							int salaId = itCjtSala->salas.begin()->first;
-
-							GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
-								problemData->retornaHorariosEmComum( salaId, disciplina->getId(), dia );
-							
-							ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-							{
-								HorarioAula *hi = *itHorario;
-
-								ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-								{
-										HorarioAula *hf = *itHorario;
-
-										if ( hf < hi )
-										{
-							 				continue;
-										}
-
-										int NCH = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
-
-										v.reset();
-										v.setType( VariableTatico::V_CREDITOS );									
-										v.setTurma( turma );
-										v.setDisciplina( disciplina );
-										v.setUnidade( *itUnidade );
-										v.setSubCjtSala( *itCjtSala );
-										v.setDia( dia );                   
-										v.setHorarioAulaInicial( hi );	 // hi
-										v.setHorarioAulaFinal( hf );	 // hf
-
-										it_v = vHashTatico.find( v );
-										if( it_v != vHashTatico.end() )
-										{
-											row.insert( it_v->second, 1.0 );
-										}
-								}
-							}                  
-						}
-					}
-
-					// Insere restrição no Hash ---
-
-					if ( row.getnnz() != 0 )
-					{
-						cHashTatico[ c ] = lp->getNumRows();
-
-						lp->addRow( row );
-						restricoes++;
-					}
-				}
-          }
-      }
-   }
+		vit++;
+	}
 
 	return restricoes;
-
 }
+
+//int SolverMIP::criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId )
+//{
+//   int restricoes = 0;
+//
+//   int nnz;
+//   char name[ 100 ];
+//
+//   VariableTatico v;
+//   ConstraintTatico c;
+//   VariableTaticoHash::iterator it_v;
+//
+//   Disciplina * disciplina = NULL;
+//
+//   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+//   {
+//	   if ( itCampus->getId() != campusId )
+//	   {
+//			continue;
+//	   }
+//
+//      ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
+//      {
+//         disciplina = ( *it_disciplina );
+//
+//		 // A disciplina deve ser ofertada no campus especificado
+//		 if ( problemData->cp_discs[campusId].find( disciplina->getId() ) ==
+//			  problemData->cp_discs[campusId].end() )
+//		 {
+//			 continue;
+//		 }
+//
+//		 #pragma region Equivalencias
+//		 if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+//				problemData->mapDiscSubstituidaPor.end() )
+//		 {
+//			continue;
+//		 }
+//		 #pragma endregion
+//
+//		 ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
+//		 {
+//			    int dia = *itDia;
+//
+//				for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+//				{
+//					c.reset();
+//					c.setType( ConstraintTatico::C_UNICO_ATEND_TURMA_DISC_DIA );
+//
+//					c.setCampus( *itCampus );
+//					c.setTurma( turma );
+//					c.setDisciplina( disciplina );
+//					c.setDia( dia );
+//
+//					sprintf( name, "%s", c.toString().c_str() );
+//
+//					if ( cHashTatico.find( c ) != cHashTatico.end() )
+//					{
+//						continue;
+//					}
+//
+//					nnz = ( itCampus->getTotalSalas() * 7 );
+//
+//					OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1.0 , name );
+//					
+//					// Insere variaveis de Credito (x) ---
+//
+//					ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+//					{
+//						ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+//						{
+//							if ( itCjtSala->disciplinas_associadas.find( disciplina) ==
+//								itCjtSala->disciplinas_associadas.end() )
+//							{
+//								continue;
+//							}
+//				   
+//							int salaId = itCjtSala->salas.begin()->first;
+//
+//							GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
+//								problemData->retornaHorariosEmComum( salaId, disciplina->getId(), dia );
+//							
+//							ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//							{
+//								HorarioAula *hi = *itHorario;
+//
+//								ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//								{
+//										HorarioAula *hf = *itHorario;
+//
+//										if ( hf < hi )
+//										{
+//							 				continue;
+//										}
+//
+//										int NCH = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
+//
+//										v.reset();
+//										v.setType( VariableTatico::V_CREDITOS );									
+//										v.setTurma( turma );
+//										v.setDisciplina( disciplina );
+//										v.setUnidade( *itUnidade );
+//										v.setSubCjtSala( *itCjtSala );
+//										v.setDia( dia );                   
+//										v.setHorarioAulaInicial( hi );	 // hi
+//										v.setHorarioAulaFinal( hf );	 // hf
+//
+//										it_v = vHashTatico.find( v );
+//										if( it_v != vHashTatico.end() )
+//										{
+//											row.insert( it_v->second, 1.0 );
+//										}
+//								}
+//							}                  
+//						}
+//					}
+//
+//					// Insere restrição no Hash ---
+//
+//					if ( row.getnnz() != 0 )
+//					{
+//						cHashTatico[ c ] = lp->getNumRows();
+//
+//						lp->addRow( row );
+//						restricoes++;
+//					}
+//				}
+//          }
+//      }
+//   }
+//
+//	return restricoes;
+//
+//}
 
 int SolverMIP::criaRestricaoTaticoAtendeDemandaAluno( int campusId )
 {
@@ -13856,309 +14144,566 @@ int SolverMIP::criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId )
    int nnz;
    char name[ 100 ];
 
-   VariableTatico v;
+   //VariableTatico v;
    ConstraintTatico c;
-   VariableTaticoHash::iterator it_v;
+   //VariableTaticoHash::iterator it_v;
+   ConstraintTaticoHash::iterator cit;
 
-   Disciplina * disciplina = NULL;
+   //Disciplina * disciplina = NULL;
+
+   Campus *campus = NULL;
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
 	    if ( itCampus->getId() != campusId )
-	    {
 			continue;
-	    }
 
-		ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
-		{
-			Aluno *aluno = *itAluno;
-			
-			ITERA_GGROUP_N_PT( itDia, itCampus->diasLetivos, int )
-			{
-				int dia = *itDia;
+		campus = *itCampus;
+		break;
+   }
 
-				ITERA_GGROUP( itHor, itCampus->horarios, Horario )
-				{
-					HorarioAula* h = itHor->horario_aula;
+   if(!campus)
+	   return 0;
 
-					if ( itHor->dias_semana.find( dia ) ==
-						 itHor->dias_semana.end() )			
-					{
-						continue;
-					}
+   map< int, map< Disciplina*, set< Aluno *, LessPtr< Aluno > >, LessPtr< Disciplina > > > mapAlunos;
 
-					// CONSTRAINT --------------------------------------
+   ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+   {
+	   Aluno *aluno = *itAluno;
+	   GGroup< Trio< int, int, Disciplina* > >::iterator itT = problemData->mapAluno_CampusTurmaDisc[ aluno ].begin();
+	   for(; itT != problemData->mapAluno_CampusTurmaDisc[ aluno ].end(); itT++)
+	   {
+		   Trio< int, int, Disciplina* > trio = *itT;
+		   if(trio.first != campusId)
+			   continue;
 
-					c.reset();
-					c.setType( ConstraintTatico::C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO );
+		   mapAlunos[trio.second][trio.third].insert(aluno);
+	   }
+   }
 
-					c.setCampus( *itCampus );
-					c.setAluno( aluno );
-					c.setDia( dia );
-					c.setHorarioAula( h );
 
-					sprintf( name, "%s", c.toString().c_str() );
+   VariableTaticoHash::iterator vit;
 
-					if ( cHashTatico.find( c ) != cHashTatico.end() )
-					{
-						continue;
-					}
+   vit = vHashTatico.begin();
+   while(vit != vHashTatico.end())
+   {
+	   if(vit->first.getType() == VariableTatico::V_CREDITOS)
+	   {
+		   VariableTatico v = vit->first;
 
-					nnz = ( aluno->demandas.size() * itCampus->horarios.size() * 2 );
+		   HorarioAula *hi = v.getHorarioAulaInicial();
+		   HorarioAula *hf = v.getHorarioAulaFinal();
 
-					OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1 , name );
+		   set< Aluno *, LessPtr< Aluno > >::iterator itA = mapAlunos[v.getTurma()][v.getDisciplina()].begin();
+		   for(; itA != mapAlunos[v.getTurma()][v.getDisciplina()].end(); itA++)
+		   {
+			   Aluno *aluno = *itA;
 
-					// Insere variaveis Credito (x) ------------------------------------------------------
+			   ITERA_GGROUP( itHor, campus->horarios, Horario )
+			   {
+				   if ( itHor->dias_semana.find( v.getDia() ) ==
+					   itHor->dias_semana.end() )			
+				   {
+					   continue;
+				   }
 
-					ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
-					{
-						ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
-						{				   
-							Sala *sala = itCjtSala->salas.begin()->second;
-						
-							ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
-							{
-								disciplina = ( *it_disciplina );
-							
-								#pragma region Equivalencias
-								if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-									 problemData->mapDiscSubstituidaPor.end() )
-								{
-									continue;
-								}
-								#pragma endregion
+				   HorarioAula* h = itHor->horario_aula;
 
-								for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
-								{
-									// Para cada trio <campus, turma, disciplina> no qual o aluno está alocado
-									Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-									trio.set( campusId, turma, disciplina );
+				   DateTime fimF = hf->getInicio();
+				   fimF.addMinutes( hf->getTempoAula() );
 
-									if ( problemData->mapAluno_CampusTurmaDisc[ aluno ].find( trio ) ==
-										 problemData->mapAluno_CampusTurmaDisc[ aluno ].end() )
-									{
-										continue;
-									}
+				   DateTime fimH = h->getInicio(); // controle
+				   fimH.addMinutes( h->getTempoAula() );
 
-									GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
-										problemData->retornaHorariosEmComum( sala->getId(), disciplina->getId(), dia );
-					
-									ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-									{
-										HorarioAula *hi = *itHorario;
+				   // ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
 
-										ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-										{
-												HorarioAula *hf = *itHorario;
+				   if ( ( ( hi->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) ) ||
+					   ( ( h->getInicio() <= hi->getInicio() ) && ( fimH >  hi->getInicio() ) ) )
+				   {
 
-												if ( hf < hi )
-												{
-							 						continue;
-												}
-														   
-												DateTime fimF = hf->getInicio();
-												fimF.addMinutes( hf->getTempoAula() );
+					   c.reset();
+					   c.setType( ConstraintTatico::C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO );
+					   c.setCampus( campus );
+					   c.setAluno( aluno );
+					   c.setDia( v.getDia() );
+					   c.setHorarioAula( h );
 
-												DateTime fimH = h->getInicio(); // controle
-												fimH.addMinutes( h->getTempoAula() );
+					   cit = cHashTatico.find(c);
+					   if(cit == cHashTatico.end())
+					   {
+						   sprintf( name, "%s", c.toString().c_str() );
+						   OPT_ROW row( 100, OPT_ROW::LESS , 1 , name );
 
-												// ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
+						   row.insert( vit->second, 1.0 );
 
-												if ( ( ( hi->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) ) ||
-													 ( ( h->getInicio() <= hi->getInicio() ) && ( fimH >  hi->getInicio() ) ) )
-												{	
-													// intersecao de horarios, com hi antes de h
-													// intersecao de horarios, com h antes de hi
-																										
-													v.reset();
-													v.setType( VariableTatico::V_CREDITOS );									
-													v.setTurma( turma );
-													v.setDisciplina( disciplina );
-													v.setUnidade( *itUnidade );
-													v.setSubCjtSala( *itCjtSala );
-													v.setDia( dia );                   
-													v.setHorarioAulaInicial( hi );	 // hi
-													v.setHorarioAulaFinal( hf );	 // hf
+						   cHashTatico[ c ] = lp->getNumRows();
 
-													it_v = vHashTatico.find( v );
-													if( it_v != vHashTatico.end() )
-													{
-														row.insert( it_v->second, 1.0 );
-													}												
-											
-												}
-										}
-									}
-								}
-							}
-						}
-					}
+						   lp->addRow( row );
+						   restricoes++;
+					   }
+					   else
+					   {
+						   lp->chgCoef(cit->second, vit->second, 1.0);
+					   }
+				   }
 
-					// Insere restrição no Hash ---
+			   }
+		   }
+	   }
 
-					if ( row.getnnz() != 0 )
-					{
-						cHashTatico[ c ] = lp->getNumRows();
-
-						lp->addRow( row );
-						restricoes++;
-					}
-				}  
-			}
-		}
+	   vit++;
    }
 
    return restricoes;
 
 }
 
+//int SolverMIP::criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId )
+//{
+//   int restricoes = 0;
+//   int nnz;
+//   char name[ 100 ];
+//
+//   VariableTatico v;
+//   ConstraintTatico c;
+//   VariableTaticoHash::iterator it_v;
+//
+//   Disciplina * disciplina = NULL;
+//
+//   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+//   {
+//	    if ( itCampus->getId() != campusId )
+//	    {
+//			continue;
+//	    }
+//
+//		ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+//		{
+//			Aluno *aluno = *itAluno;
+//			
+//			ITERA_GGROUP_N_PT( itDia, itCampus->diasLetivos, int )
+//			{
+//				int dia = *itDia;
+//
+//				ITERA_GGROUP( itHor, itCampus->horarios, Horario )
+//				{
+//					HorarioAula* h = itHor->horario_aula;
+//
+//					if ( itHor->dias_semana.find( dia ) ==
+//						 itHor->dias_semana.end() )			
+//					{
+//						continue;
+//					}
+//
+//					// CONSTRAINT --------------------------------------
+//
+//					c.reset();
+//					c.setType( ConstraintTatico::C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO );
+//
+//					c.setCampus( *itCampus );
+//					c.setAluno( aluno );
+//					c.setDia( dia );
+//					c.setHorarioAula( h );
+//
+//					sprintf( name, "%s", c.toString().c_str() );
+//
+//					if ( cHashTatico.find( c ) != cHashTatico.end() )
+//					{
+//						continue;
+//					}
+//
+//					nnz = ( aluno->demandas.size() * itCampus->horarios.size() * 2 );
+//
+//					OPT_ROW row( nnz + 1, OPT_ROW::LESS , 1 , name );
+//
+//					// Insere variaveis Credito (x) ------------------------------------------------------
+//
+//					ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+//					{
+//						ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+//						{				   
+//							Sala *sala = itCjtSala->salas.begin()->second;
+//						
+//							ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
+//							{
+//								disciplina = ( *it_disciplina );
+//							
+//								#pragma region Equivalencias
+//								if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+//									 problemData->mapDiscSubstituidaPor.end() )
+//								{
+//									continue;
+//								}
+//								#pragma endregion
+//
+//								for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+//								{
+//									// Para cada trio <campus, turma, disciplina> no qual o aluno está alocado
+//									Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+//									trio.set( campusId, turma, disciplina );
+//
+//									if ( problemData->mapAluno_CampusTurmaDisc[ aluno ].find( trio ) ==
+//										 problemData->mapAluno_CampusTurmaDisc[ aluno ].end() )
+//									{
+//										continue;
+//									}
+//
+//									GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
+//										problemData->retornaHorariosEmComum( sala->getId(), disciplina->getId(), dia );
+//					
+//									ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//									{
+//										HorarioAula *hi = *itHorario;
+//
+//										ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//										{
+//												HorarioAula *hf = *itHorario;
+//
+//												if ( hf < hi )
+//												{
+//							 						continue;
+//												}
+//														   
+//												DateTime fimF = hf->getInicio();
+//												fimF.addMinutes( hf->getTempoAula() );
+//
+//												DateTime fimH = h->getInicio(); // controle
+//												fimH.addMinutes( h->getTempoAula() );
+//
+//												// ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
+//
+//												if ( ( ( hi->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) ) ||
+//													 ( ( h->getInicio() <= hi->getInicio() ) && ( fimH >  hi->getInicio() ) ) )
+//												{	
+//													// intersecao de horarios, com hi antes de h
+//													// intersecao de horarios, com h antes de hi
+//																										
+//													v.reset();
+//													v.setType( VariableTatico::V_CREDITOS );									
+//													v.setTurma( turma );
+//													v.setDisciplina( disciplina );
+//													v.setUnidade( *itUnidade );
+//													v.setSubCjtSala( *itCjtSala );
+//													v.setDia( dia );                   
+//													v.setHorarioAulaInicial( hi );	 // hi
+//													v.setHorarioAulaFinal( hf );	 // hf
+//
+//													it_v = vHashTatico.find( v );
+//													if( it_v != vHashTatico.end() )
+//													{
+//														row.insert( it_v->second, 1.0 );
+//													}												
+//											
+//												}
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//
+//					// Insere restrição no Hash ---
+//
+//					if ( row.getnnz() != 0 )
+//					{
+//						cHashTatico[ c ] = lp->getNumRows();
+//
+//						lp->addRow( row );
+//						restricoes++;
+//					}
+//				}  
+//			}
+//		}
+//   }
+//
+//   return restricoes;
+//
+//}
 
 int SolverMIP::criaRestricaoTaticoAtivaY( int campusId )
 {
-   int restricoes = 0;
-   int nnz;
-   char name[ 100 ];
+	int restricoes = 0;
+	int nnz;
+	char name[ 100 ];
 
-   VariableTatico v;
-   ConstraintTatico c;
-   VariableTaticoHash::iterator it_v;
+	//VariableTatico v;
+	ConstraintTatico c;
+	//VariableTaticoHash::iterator it_v;
+	ConstraintTaticoHash::iterator cit;
 
-   Disciplina * disciplina = NULL;
+	//Disciplina * disciplina = NULL;
 
-   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-   {
-	    if ( itCampus->getId() != campusId )
-	    {
+	Campus *campus = NULL;
+
+	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+	{
+		if ( itCampus->getId() != campusId )
 			continue;
-	    }
 
-		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+		campus = *itCampus;
+		break;
+	}
+
+	if(!campus)
+		return 0;
+
+	map< int, map< Disciplina*, set< Aluno *, LessPtr< Aluno > >, LessPtr< Disciplina > > > mapAlunos;
+
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+		GGroup< Trio< int, int, Disciplina* > >::iterator itT = problemData->mapAluno_CampusTurmaDisc[ aluno ].begin();
+		for(; itT != problemData->mapAluno_CampusTurmaDisc[ aluno ].end(); itT++)
 		{
-			ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+			Trio< int, int, Disciplina* > trio = *itT;
+			if(trio.first != campusId)
+				continue;
+
+			mapAlunos[trio.second][trio.third].insert(aluno);
+		}
+	}
+
+
+	VariableTaticoHash::iterator vit;
+
+	vit = vHashTatico.begin();
+	while(vit != vHashTatico.end())
+	{
+		if(vit->first.getType() != VariableTatico::V_CREDITOS && vit->first.getType() != VariableTatico::V_ALUNO_UNID_DIA)
+		{
+			vit++;
+			continue;
+		}
+
+		VariableTatico v = vit->first;
+
+		if(vit->first.getType() == VariableTatico::V_CREDITOS)
+		{
+			if(campus->unidades.find(v.getUnidade()) == campus->unidades.end())
 			{
-				Aluno *aluno = *itAluno;
-			
-				ITERA_GGROUP_N_PT( itDia, itCampus->diasLetivos, int )
+				vit++;
+				continue;
+			}
+
+			set< Aluno *, LessPtr< Aluno > >::iterator itA = mapAlunos[v.getTurma()][v.getDisciplina()].begin();
+			for(; itA != mapAlunos[v.getTurma()][v.getDisciplina()].end(); itA++)
+			{
+				Aluno *aluno = *itA;
+
+				c.reset();
+				c.setType( ConstraintTatico::C_ATIVA_Y );
+				c.setCampus( campus );
+				c.setAluno( aluno );
+				c.setDia( v.getDia() );
+				c.setUnidade( v.getUnidade() );
+
+				cit = cHashTatico.find(c);
+				if(cit == cHashTatico.end())
 				{
-					int dia = *itDia;
-
-					// CONSTRAINT --------------------------------------
-
-					c.reset();
-					c.setType( ConstraintTatico::C_ATIVA_Y );
-
-					c.setCampus( *itCampus );
-					c.setAluno( aluno );
-					c.setDia( dia );
-					c.setUnidade( *itUnidade );
-
 					sprintf( name, "%s", c.toString().c_str() );
+					OPT_ROW row( 100, OPT_ROW::GREATER , 0 , name );
 
-					if ( cHashTatico.find( c ) != cHashTatico.end() )
-					{
-						continue;
-					}
+					row.insert( vit->second, -1.0 );
 
-					nnz = ( aluno->demandas.size() * itCampus->horarios.size() * 2 );
+					cHashTatico[ c ] = lp->getNumRows();
 
-					OPT_ROW row( nnz + 1, OPT_ROW::GREATER , 0 , name );
+					lp->addRow( row );
+					restricoes++;
+				}
+				else
+				{
+					lp->chgCoef(cit->second, vit->second, -1.0);
+				}
 
-					// Insere variaveis Credito (x) ------------------------------------------------------
-
-					ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
-					{				   
-						Sala *sala = itCjtSala->salas.begin()->second;
-						
-						ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
-						{
-							disciplina = ( *it_disciplina );
-							
-							#pragma region Equivalencias
-							if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-									problemData->mapDiscSubstituidaPor.end() )
-							{
-								continue;
-							}
-							#pragma endregion
-
-							for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
-							{
-								// Para cada trio <campus, turma, disciplina> no qual o aluno está alocado
-								Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-								trio.set( campusId, turma, disciplina );
-
-								if ( problemData->mapAluno_CampusTurmaDisc[ aluno ].find( trio ) ==
-										problemData->mapAluno_CampusTurmaDisc[ aluno ].end() )
-								{
-									continue;
-								}
-
-								GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
-									problemData->retornaHorariosEmComum( sala->getId(), disciplina->getId(), dia );
-					
-								ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-								{
-									HorarioAula *hi = *itHorario;
-
-									ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
-									{
-											HorarioAula *hf = *itHorario;
-
-											if ( hf < hi )
-											{
-							 					continue;
-											}														  
-																										
-											v.reset();
-											v.setType( VariableTatico::V_CREDITOS );									
-											v.setTurma( turma );
-											v.setDisciplina( disciplina );
-											v.setUnidade( *itUnidade );
-											v.setSubCjtSala( *itCjtSala );
-											v.setDia( dia );                   
-											v.setHorarioAulaInicial( hi );	 // hi
-											v.setHorarioAulaFinal( hf );	 // hf
-
-											it_v = vHashTatico.find( v );
-											if( it_v != vHashTatico.end() )
-											{
-												row.insert( it_v->second, -1.0 );
-											}
-									}
-								}
-							}
-						}
-					}
-
-					// Insere variavel y_{a,u,t} -------------------------------------------------------								
-					v.reset();
-					v.setType( VariableTatico::V_ALUNO_UNID_DIA );
-
-					v.setUnidade( *itUnidade ); // u
-					v.setAluno( aluno );  // a
-					v.setDia( dia );	  // t
-
-					it_v = vHashTatico.find( v );
-					if( it_v != vHashTatico.end() )
-					{
-						row.insert( it_v->second, aluno->demandas.size() );
-					}
-
-					// Insere restrição no Hash --------------------------------------------------------
-					if ( row.getnnz() != 0 )
-					{
-						cHashTatico[ c ] = lp->getNumRows();
-
-						lp->addRow( row );
-						restricoes++;
-					}
-				}  
 			}
 		}
-   }
+		else
+		{
+			if(campus->unidades.find(v.getUnidade()) == campus->unidades.end())
+			{
+				vit++;
+				continue;
+			}
 
-   return restricoes;
+			c.reset();
+			c.setType( ConstraintTatico::C_ATIVA_Y );
+			c.setCampus( campus );
+			c.setAluno( v.getAluno() );
+			c.setDia( v.getDia() );
+			c.setUnidade( v.getUnidade() );
+
+			cit = cHashTatico.find(c);
+			if(cit == cHashTatico.end())
+			{
+				sprintf( name, "%s", c.toString().c_str() );
+				OPT_ROW row( 100, OPT_ROW::GREATER , 0 , name );
+
+				row.insert( vit->second, v.getAluno()->demandas.size() );
+
+				cHashTatico[ c ] = lp->getNumRows();
+
+				lp->addRow( row );
+				restricoes++;
+			}
+			else
+			{
+				lp->chgCoef(cit->second, vit->second, v.getAluno()->demandas.size());
+			}
+
+		}
+
+		vit++;
+	}
+
+	return restricoes;
 }
+
+//int SolverMIP::criaRestricaoTaticoAtivaY( int campusId )
+//{
+//   int restricoes = 0;
+//   int nnz;
+//   char name[ 100 ];
+//
+//   VariableTatico v;
+//   ConstraintTatico c;
+//   VariableTaticoHash::iterator it_v;
+//
+//   Disciplina * disciplina = NULL;
+//
+//   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
+//   {
+//	    if ( itCampus->getId() != campusId )
+//	    {
+//			continue;
+//	    }
+//
+//		ITERA_GGROUP_LESSPTR( itUnidade, itCampus->unidades, Unidade )
+//		{
+//			ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+//			{
+//				Aluno *aluno = *itAluno;
+//			
+//				ITERA_GGROUP_N_PT( itDia, itCampus->diasLetivos, int )
+//				{
+//					int dia = *itDia;
+//
+//					// CONSTRAINT --------------------------------------
+//
+//					c.reset();
+//					c.setType( ConstraintTatico::C_ATIVA_Y );
+//
+//					c.setCampus( *itCampus );
+//					c.setAluno( aluno );
+//					c.setDia( dia );
+//					c.setUnidade( *itUnidade );
+//
+//					sprintf( name, "%s", c.toString().c_str() );
+//
+//					if ( cHashTatico.find( c ) != cHashTatico.end() )
+//					{
+//						continue;
+//					}
+//
+//					nnz = ( aluno->demandas.size() * itCampus->horarios.size() * 2 );
+//
+//					OPT_ROW row( nnz + 1, OPT_ROW::GREATER , 0 , name );
+//
+//					// Insere variaveis Credito (x) ------------------------------------------------------
+//
+//					ITERA_GGROUP_LESSPTR( itCjtSala, itUnidade->conjutoSalas, ConjuntoSala )
+//					{				   
+//						Sala *sala = itCjtSala->salas.begin()->second;
+//						
+//						ITERA_GGROUP_LESSPTR( it_disciplina, itCjtSala->disciplinas_associadas, Disciplina )
+//						{
+//							disciplina = ( *it_disciplina );
+//							
+//							#pragma region Equivalencias
+//							if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+//									problemData->mapDiscSubstituidaPor.end() )
+//							{
+//								continue;
+//							}
+//							#pragma endregion
+//
+//							for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+//							{
+//								// Para cada trio <campus, turma, disciplina> no qual o aluno está alocado
+//								Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+//								trio.set( campusId, turma, disciplina );
+//
+//								if ( problemData->mapAluno_CampusTurmaDisc[ aluno ].find( trio ) ==
+//										problemData->mapAluno_CampusTurmaDisc[ aluno ].end() )
+//								{
+//									continue;
+//								}
+//
+//								GGroup< HorarioAula *, LessPtr< HorarioAula > > horariosEmComum = 
+//									problemData->retornaHorariosEmComum( sala->getId(), disciplina->getId(), dia );
+//					
+//								ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//								{
+//									HorarioAula *hi = *itHorario;
+//
+//									ITERA_GGROUP_LESSPTR( itHorario, horariosEmComum, HorarioAula )
+//									{
+//											HorarioAula *hf = *itHorario;
+//
+//											if ( hf < hi )
+//											{
+//							 					continue;
+//											}														  
+//																										
+//											v.reset();
+//											v.setType( VariableTatico::V_CREDITOS );									
+//											v.setTurma( turma );
+//											v.setDisciplina( disciplina );
+//											v.setUnidade( *itUnidade );
+//											v.setSubCjtSala( *itCjtSala );
+//											v.setDia( dia );                   
+//											v.setHorarioAulaInicial( hi );	 // hi
+//											v.setHorarioAulaFinal( hf );	 // hf
+//
+//											it_v = vHashTatico.find( v );
+//											if( it_v != vHashTatico.end() )
+//											{
+//												row.insert( it_v->second, -1.0 );
+//											}
+//									}
+//								}
+//							}
+//						}
+//					}
+//
+//					// Insere variavel y_{a,u,t} -------------------------------------------------------								
+//					v.reset();
+//					v.setType( VariableTatico::V_ALUNO_UNID_DIA );
+//
+//					v.setUnidade( *itUnidade ); // u
+//					v.setAluno( aluno );  // a
+//					v.setDia( dia );	  // t
+//
+//					it_v = vHashTatico.find( v );
+//					if( it_v != vHashTatico.end() )
+//					{
+//						row.insert( it_v->second, aluno->demandas.size() );
+//					}
+//
+//					// Insere restrição no Hash --------------------------------------------------------
+//					if ( row.getnnz() != 0 )
+//					{
+//						cHashTatico[ c ] = lp->getNumRows();
+//
+//						lp->addRow( row );
+//						restricoes++;
+//					}
+//				}  
+//			}
+//		}
+//   }
+//
+//   return restricoes;
+//}
    
 int SolverMIP::criaRestricaoTaticoAlunoUnidadesDifDia( int campusId )
 {
