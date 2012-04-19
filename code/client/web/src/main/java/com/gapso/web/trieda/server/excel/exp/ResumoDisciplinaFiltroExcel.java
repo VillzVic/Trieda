@@ -4,6 +4,7 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
 
 public class ResumoDisciplinaFiltroExcel
 	implements ExportExcelFilter

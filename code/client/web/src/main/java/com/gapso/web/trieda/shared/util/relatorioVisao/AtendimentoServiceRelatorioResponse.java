@@ -1,37 +1,41 @@
-package com.gapso.web.trieda.shared.util.view;
+package com.gapso.web.trieda.shared.util.relatorioVisao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 
-public class AtendimentoServiceGridResponse {
+public class AtendimentoServiceRelatorioResponse implements Serializable{
+	private static final long serialVersionUID = -3735259680645261872L;
 	private List<AtendimentoRelatorioDTO> atendimentosDTO;
 	private Integer mdcTemposAula;
 	private List<String> labelsDasLinhasDaGradeHoraria;
 	private List<Integer> qtdColunasPorDiaSemana;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public AtendimentoServiceGridResponse(QuintetoDTO result){
+	public AtendimentoServiceRelatorioResponse(){}
+	
+	@SuppressWarnings("unchecked")
+	public <A, B, C, D, E> AtendimentoServiceRelatorioResponse(QuintetoDTO<A, B, C, D, E> result){
 		this.atendimentosDTO = (List<AtendimentoRelatorioDTO>) result.getQuarto();
 		this.mdcTemposAula = (Integer) result.getPrimeiro();
 		this.labelsDasLinhasDaGradeHoraria = (List<String>) result.getQuinto();
 		this.qtdColunasPorDiaSemana = null;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public AtendimentoServiceGridResponse(SextetoDTO result){
+	@SuppressWarnings("unchecked")
+	public <A, B, C, D, E , F> AtendimentoServiceRelatorioResponse(SextetoDTO<A, B, C, D, E , F> result){
 		this.atendimentosDTO = (List<AtendimentoRelatorioDTO>) result.getQuarto();
 		this.mdcTemposAula = (Integer) result.getPrimeiro();
 		this.labelsDasLinhasDaGradeHoraria = (List<String>) result.getSexto();
 		this.qtdColunasPorDiaSemana = (List<Integer>) result.getQuinto();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	public static AtendimentoServiceGridResponse create(Object t){
-		if(t instanceof QuintetoDTO) return new AtendimentoServiceGridResponse((QuintetoDTO) t);
-		return new AtendimentoServiceGridResponse((SextetoDTO) t);
+	@SuppressWarnings("unchecked")
+	public static <A, B, C, D, E , F> AtendimentoServiceRelatorioResponse create(Object t){
+		if(t instanceof QuintetoDTO) return new AtendimentoServiceRelatorioResponse((QuintetoDTO<A, B, C, D, E>) t);
+		return new AtendimentoServiceRelatorioResponse((SextetoDTO<A, B, C, D, E , F>) t);
 	}
 
 	public List<AtendimentoRelatorioDTO> getAtendimentosDTO() {

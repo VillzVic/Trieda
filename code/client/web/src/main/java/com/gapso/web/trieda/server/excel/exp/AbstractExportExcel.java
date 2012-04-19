@@ -130,6 +130,10 @@ public abstract class AbstractExportExcel
 	protected String getSheetName() {
 		return this.sheetName;
 	}
+	
+	protected void setSheetName(String sheetName){
+		this.sheetName = sheetName;
+	}
 
 	protected Cenario getCenario()
 	{

@@ -113,6 +113,7 @@ public interface TriedaI18nConstants
 	String quantidadeAlunos();
 	String rateio();
 	String receita();
+	String relatorioVisaoAluno();
 	String relatorioVisaoCurso();
 	String relatorioVisaoProfessor();
 	String relatorioVisaoSala();

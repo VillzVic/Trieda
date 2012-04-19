@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.shared.util.view;
+package com.gapso.web.trieda.shared.util.relatorioVisao;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -98,18 +98,19 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		requestAtendimentos();
 	}
 	
+	public abstract RelatorioVisaoFiltro getFiltro();
+	public abstract void setFiltro(RelatorioVisaoFiltro filtro);
 	public abstract void requestAtendimentos();
 	
-	protected <T> AsyncCallback<T> getCallback(Class<T> param){
-		return (AsyncCallback<T>) new AsyncCallback<T>(){
+	protected AsyncCallback<AtendimentoServiceRelatorioResponse> getCallback(){
+		return (AsyncCallback<AtendimentoServiceRelatorioResponse>) new AsyncCallback<AtendimentoServiceRelatorioResponse>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				MessageBox.alert("ERRO!","Não foi possível carregar a grade de horários", null);
 			}
 
 			@Override
-			public void onSuccess(T t){
-				AtendimentoServiceGridResponse result = AtendimentoServiceGridResponse.create(t); 
+			public void onSuccess(AtendimentoServiceRelatorioResponse result){
 				labelsDasLinhasDaGradeHoraria.clear();
 				atendimentoDTO = result.getAtendimentosDTO();
 				if(!atendimentoDTO.isEmpty()){

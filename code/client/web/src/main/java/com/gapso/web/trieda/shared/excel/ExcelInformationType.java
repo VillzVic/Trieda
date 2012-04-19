@@ -19,6 +19,7 @@ public enum ExcelInformationType
 	RELATORIO_VISAO_SALA( "Relatorio Visao Sala" ),
 	RELATORIO_VISAO_CURSO( "Relatorio Visao Curso" ),
 	RELATORIO_VISAO_PROFESSOR( "Relatorio Visao Professor" ),
+	RELATORIO_VISAO_ALUNO("Relatorio Visao Aluno"),
 	SALAS( "Salas" ),
 	UNIDADES( "Unidades" ),
 	RESUMO_CURSO( "Resumo por curso" ),

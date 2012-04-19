@@ -1,36 +1,23 @@
-package com.gapso.web.trieda.shared.util.view;
+package com.gapso.web.trieda.shared.util.relatorioVisao;
 
 import java.util.List;
 
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
-import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
-import com.gapso.web.trieda.shared.dtos.CursoDTO;
-import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.services.Services;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class GradeHorariaCursoGrid extends GradeHorariaVisao{
+	private RelatorioVisaoCursoFiltro filtro;
 	private List<Integer> qtdColunasPorDiaSemana;
-	private CurriculoDTO curriculoDTO;
-	private int periodo;
-	private CampusDTO campusDTO;
-	private CursoDTO cursoDTO;
 
-	@SuppressWarnings("unchecked")
 	public void requestAtendimentos(){
-		if(getCurriculoDTO() == null || getTurnoDTO() == null || getCampusDTO() == null || getPeriodo() <= 0) return;
+		if(getFiltro().getCurriculoDTO() == null || getFiltro().getTurnoDTO() == null || getFiltro().getCampusDTO() == null || getFiltro().getPeriodo() <= 0) return;
 
 		this.grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 
-		AsyncCallback<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>> c = 
-			(AsyncCallback<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>>) 
-			getCallback((new SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>()).getClass());
-		
-		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoCurso(getCurriculoDTO(), getPeriodo(), getTurnoDTO(), getCampusDTO(), getCursoDTO(), c);
+		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoCurso(getFiltro(), this.getCallback());
 	}
 
 	public List<ColumnConfig> getColumnList(List<Integer> l){
@@ -81,36 +68,14 @@ public class GradeHorariaCursoGrid extends GradeHorariaVisao{
 		return (this.qtdColunasPorDiaSemana.get(i) * width);
 	}
 
-	public CurriculoDTO getCurriculoDTO(){
-		return this.curriculoDTO;
+	@Override
+	public RelatorioVisaoCursoFiltro getFiltro(){
+		return this.filtro;
 	}
-
-	public void setCurriculoDTO(CurriculoDTO curriculoDTO){
-		this.curriculoDTO = curriculoDTO;
+	
+	@Override
+	public void setFiltro(RelatorioVisaoFiltro filtro){
+		this.filtro = (RelatorioVisaoCursoFiltro) filtro;
 	}
-
-	public int getPeriodo(){
-		return this.periodo;
-	}
-
-	public void setPeriodo(int periodo){
-		this.periodo = periodo;
-	}
-
-	public CampusDTO getCampusDTO(){
-		return this.campusDTO;
-	}
-
-	public void setCampusDTO(CampusDTO campusDTO){
-		this.campusDTO = campusDTO;
-	}
-
-	public CursoDTO getCursoDTO(){
-		return this.cursoDTO;
-	}
-
-	public void setCursoDTO(CursoDTO cursoDTO){
-		this.cursoDTO = cursoDTO;
-	}
-
+	
 }

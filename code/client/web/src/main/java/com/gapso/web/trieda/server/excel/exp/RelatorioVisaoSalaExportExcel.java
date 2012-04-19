@@ -9,13 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.springframework.web.util.HtmlUtils;
-
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
@@ -25,517 +18,237 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
-import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
+import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
 
-public class RelatorioVisaoSalaExportExcel
-	extends AbstractExportExcel
-{
-	enum ExcelCellStyleReference
+public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
+	RelatorioVisaoSalaFiltro relatorioFiltro;
+	
+	public RelatorioVisaoSalaExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino)
 	{
-		HEADER_LEFT_TEXT( 5,3 ),
-		HEADER_CENTER_VALUE( 5,4 ),
-		HEADER_CENTER_TEXT( 7,2 ),
-		TEXT( 8,2 );
-
-		private int row;
-		private int col;
-
-		private ExcelCellStyleReference( int row, int col )
-		{
-			this.row = row;
-			this.col = col;
-		}
-
-		public int getRow()
-		{
-			return row;
-		}
-
-		public int getCol()
-		{
-			return col;
-		}
+		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+	}
+	
+	public RelatorioVisaoSalaExportExcel(boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
+	{
+		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino);
 	}
 
-	private HSSFCellStyle [] cellStyles;
-	private boolean removeUnusedSheets;
-	private int initialRow;
-	private RelatorioVisaoSalaFiltroExcel relatorioFiltro;
-
-	public RelatorioVisaoSalaExportExcel(
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
-	{
-		this(true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
+	protected String getReportSheetName(){
+		return ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName();
 	}
-
-	public RelatorioVisaoSalaExportExcel(
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
-		InstituicaoEnsino instituicaoEnsino )
-	{
-		this(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
-	}
-
-	public RelatorioVisaoSalaExportExcel(
-		boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
-	{
-		this(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
-	}
-
-	public RelatorioVisaoSalaExportExcel(
-		boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
-	{
-		super(false, ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
-
-		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
-		this.removeUnusedSheets = removeUnusedSheets;
-		this.initialRow = 5;
-
-		this.setFilter( filter );
+	
+	protected String getReportEntity(){
+		return "Sala";
 	}
 
 	@Override
-	public String getFileName()
-	{
-		return this.getI18nConstants().relatorioVisaoSala();
-	}
-
-	@Override
-	protected String getPathExcelTemplate()
-	{
-		return "/templateExport.xls";
-	}
-
-	@Override
-	protected String getReportName()
-	{
-		return this.getI18nConstants().relatorioVisaoSala();
-	}
-
-	public RelatorioVisaoSalaFiltroExcel getFilter()
-	{
+	protected RelatorioVisaoSalaFiltro getFilter(){
 		return this.relatorioFiltro;
-	}
-
-	public void setFilter( ExportExcelFilter filter )
-	{
-		if ( filter instanceof RelatorioVisaoSalaFiltroExcel )
-		{
-			this.relatorioFiltro = (RelatorioVisaoSalaFiltroExcel)filter;
-		}
-		else
-		{
-			this.relatorioFiltro = null;
-		}
-	}
-
-	private List<AtendimentoRelatorioDTO> getAtendimentoRelatorioDTOList(Cenario cenario) {
-		List< AtendimentoTatico > atdTaticoList = null;
-		List< AtendimentoOperacional > atdOperacionalList =  null;
-
-		if ( this.getFilter() == null )
-		{
-			atdTaticoList = AtendimentoTatico.findByCenario(
-				this.instituicaoEnsino, cenario );
-
-			atdOperacionalList = AtendimentoOperacional.findByCenario(
-				this.instituicaoEnsino, cenario );
-		}
-		else
-		{
-			Campus campus = Campus.find(
-				this.getFilter().getCampusDTO().getId(), this.instituicaoEnsino );
-
-			Unidade unidade = Unidade.find(
-				this.getFilter().getUnidadeDTO().getId(), this.instituicaoEnsino );
-
-			Sala sala = Sala.find(
-				this.getFilter().getSalaDTO().getId(), this.instituicaoEnsino );
-
-			Turno turno = Turno.find(
-				this.getFilter().getTurnoDTO().getId(), this.instituicaoEnsino );
-
-			SemanaLetiva semanaLetiva = SemanaLetiva.find(
-					this.getFilter().getSemanaLetivaDTO().getId(), this.instituicaoEnsino );
-
-			atdTaticoList = AtendimentoTatico.findByCenario(
-				this.instituicaoEnsino, cenario, campus, unidade, sala, turno, semanaLetiva );
-
-			atdOperacionalList = AtendimentoOperacional.findByCenario(
-				this.instituicaoEnsino, cenario, campus, unidade, sala, turno, semanaLetiva );
-		}
-
-		List< AtendimentoRelatorioDTO > atdRelatorioList
-			= new ArrayList< AtendimentoRelatorioDTO >(
-				atdTaticoList.size() + atdOperacionalList.size() );
-
-		List< AtendimentoTaticoDTO > listAtendTaticoDTO
-			= ConvertBeans.toListAtendimentoTaticoDTO( atdTaticoList );
-
-		List< AtendimentoOperacionalDTO > listAtendOpDTO
-			= ConvertBeans.toListAtendimentoOperacionalDTO( atdOperacionalList );
-
-		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-		listAtendOpDTO = service.ordenaPorHorarioAula( listAtendOpDTO );
-
-		atdRelatorioList.addAll( listAtendTaticoDTO );
-		atdRelatorioList.addAll( listAtendOpDTO );
-
-		return atdRelatorioList;
 	}
 	
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		boolean result = false;
-		
-		// busca os atendimentos que deverão ser escritos no excel 
-		List<AtendimentoRelatorioDTO> atendimentosDTO = getAtendimentoRelatorioDTOList(getCenario());
-		
-		if (!atendimentosDTO.isEmpty()) {
-			// identifica se os atendimentos se referem ao modo tático ou ao modo operacional
-			boolean ehTatico = atendimentosDTO.get(0) instanceof AtendimentoTaticoDTO;
-			
-			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
-			
-			// monta estruturas de estilos
-			fillInCellStyles(sheet);
-			List<HSSFCellStyle> excelColorsPool = buildColorPaletteCellStyles(workbook);
-
-			// Estruturas auxiliares
-			// [DisciplinaCodigo -> Estilo para Cor]
-			Map<String,HSSFCellStyle> codigoDisciplinaToColorMap = new HashMap<String,HSSFCellStyle>();
-			// [SalaId -> Sala]
-			Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>();
-			// [TurnoId -> Turno]
-			Map<Long,Turno> turnoIdToTurnoMap = new HashMap<Long,Turno>();
-			// [SemanaLetivaId -> SemanaLetiva]
-			Map<Long,SemanaLetiva> semanaLetivaIdTosemanaLetivaMap = new HashMap<Long,SemanaLetiva>();
-			// [SalaId -> [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]]
-			Map<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>> atendimentosPorSalaTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>>();
-			
-			// preenche estruturas auxiliares
-			for (AtendimentoRelatorioDTO atendimento : atendimentosDTO) {
-				// preenche os maps salaIdToSalaMap, turnoIdToTurnoMap e semanaLetivaIdTosemanaLetivaMap
-				if (!salaIdToSalaMap.containsKey(atendimento.getSalaId())) {
-					salaIdToSalaMap.put(atendimento.getSalaId(),Sala.find(atendimento.getSalaId(),this.instituicaoEnsino));
-				}
-				if (!turnoIdToTurnoMap.containsKey(atendimento.getTurnoId())) {
-					turnoIdToTurnoMap.put(atendimento.getTurnoId(),Turno.find(atendimento.getTurnoId(),this.instituicaoEnsino));
-				}
-				Long semanaLetivaASerConsideradaId = (atendimento.getDisciplinaSubstitutaSemanaLetivaId() != null) ? atendimento.getDisciplinaSubstitutaSemanaLetivaId() : atendimento.getSemanaLetivaId(); 
-				if (!semanaLetivaIdTosemanaLetivaMap.containsKey(semanaLetivaASerConsideradaId)) {
-					semanaLetivaIdTosemanaLetivaMap.put(semanaLetivaASerConsideradaId,SemanaLetiva.find(semanaLetivaASerConsideradaId,instituicaoEnsino));
-				}
-
-				// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
-				Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(atendimento.getSalaId());
-				if (salaAtendimentosPorTurnoSemanaLetivaMap == null) {
-					salaAtendimentosPorTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,List<AtendimentoRelatorioDTO>>>();
-					atendimentosPorSalaTurnoSemanaLetivaMap.put(atendimento.getSalaId(),salaAtendimentosPorTurnoSemanaLetivaMap);
-				}
-
-				// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
-				Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(atendimento.getTurnoId());
-				if (turnoAtendimentosPorSemanaLetivaMap == null) {
-					turnoAtendimentosPorSemanaLetivaMap = new HashMap<Long,List<AtendimentoRelatorioDTO>>();
-					salaAtendimentosPorTurnoSemanaLetivaMap.put(atendimento.getTurnoId(),turnoAtendimentosPorSemanaLetivaMap);
-				}
-
-				// armazena os atendimentos associados a uma dada sala, um dado turno e uma dada semana letiva
-				List<AtendimentoRelatorioDTO> atendimentos = turnoAtendimentosPorSemanaLetivaMap.get(semanaLetivaASerConsideradaId);
-				if (atendimentos == null) {
-					atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
-					turnoAtendimentosPorSemanaLetivaMap.put(semanaLetivaASerConsideradaId,atendimentos);
-				}
-				atendimentos.add(atendimento);
-
-				// preenche o mapa de estilos de cor por disciplina
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
-				if (style == null) {
-					int index = (codigoDisciplinaToColorMap.size()%excelColorsPool.size());
-					codigoDisciplinaToColorMap.put(atendimento.getDisciplinaString(),excelColorsPool.get(index));
-				}
-			}
-
-			// linha a partir da qual a escrita será iniciada no excel
-			int nextRow = this.initialRow;
-
-			// ordena as salas por campus e depois pela capacidade
-			List<Sala> salasOrdenadasPorCampusEPelaCapacidade = new ArrayList<Sala>(salaIdToSalaMap.values());
-			Collections.<Sala>sort(salasOrdenadasPorCampusEPelaCapacidade,new Comparator<Sala>() {
-				@Override
-				public int compare(Sala o1, Sala o2) {
-					Unidade u1 = o1.getUnidade();
-					Unidade u2 = o2.getUnidade();
-					Campus c1 = u1.getCampus();
-					Campus c2 = u2.getCampus();
-					int result = c1.getCodigo().compareTo(c2.getCodigo());
-					if (result == 0) {
-						result = -(o1.getCapacidade().compareTo(o2.getCapacidade())); 
-					}
-					return result;
-				}
-			});
-			
-			// imprime uma grade de horários para cada sala
-			for (Sala sala : salasOrdenadasPorCampusEPelaCapacidade) {
-				// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
-				Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(sala.getId());
-				for (Long turnoId : salaAtendimentosPorTurnoSemanaLetivaMap.keySet()) {
-					// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
-					Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(turnoId);
-					Turno turno = turnoIdToTurnoMap.get(turnoId);
-					
-					Set<Long> semanasLetivasIDs = new HashSet<Long>();
-					List<AtendimentoRelatorioDTO> atendimentosDeTodasSemanasLetivas = new ArrayList<AtendimentoRelatorioDTO>();
-					for (Long semLetId : turnoAtendimentosPorSemanaLetivaMap.keySet()) {
-						semanasLetivasIDs.add(semLetId);
-						// acumula os atendimentos das semanas letivas
-						atendimentosDeTodasSemanasLetivas.addAll(turnoAtendimentosPorSemanaLetivaMap.get(semLetId));
-					}
-					
-					AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-					TrioDTO<Integer,SemanaLetiva,List<String>> trio = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,ehTatico,turnoId);
-					int mdcTemposAula = trio.getPrimeiro();
-					List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
-					
-					nextRow = writeSala(sala,turno,atendimentosDeTodasSemanasLetivas,nextRow,sheet,codigoDisciplinaToColorMap,mdcTemposAula,ehTatico,labelsDasLinhasDaGradeHoraria);
-				}				
-			}
-
-			result = true;
-		}
-
-		if ( this.removeUnusedSheets )
-		{
-			removeUnusedSheets( this.getSheetName(), workbook );
-		}
-
-		return result;
+	protected void setFilter(ExportExcelFilter filter){
+		this.relatorioFiltro = (RelatorioVisaoSalaFiltro) filter;
 	}
 
-	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, HSSFSheet sheet, Map<String,HSSFCellStyle> codigoDisciplinaToColorMap, int mdcTemposAula, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria) {
-		// escreve cabeçalho da grade horária da sala
-		row = writeHeader(sala,turno,row,sheet,ehTatico);
-		
-		int initialRow = row;
-		int col = 2;
+	@SuppressWarnings("unchecked")
+	protected <T> boolean getAtendimentosRelatorioDTOList(T mapControlT){
+		List<AtendimentoRelatorioDTO> atdRelatorioList = (List< AtendimentoRelatorioDTO >) mapControlT;
 
-		// preenche grade vazia
-		if (ehTatico) {
-			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-				// coluna de carga horária
-				setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],labelsDasLinhasDaGradeHoraria.get(i));
-				// colunas dos dias da semana
-				for (int j = 0; j < Semanas.values().length; j++) {
-					setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
-				}
-				
-				col = 2;
-			}
-		} else {
-			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size()-1; i++) {
-				// coluna de carga horária
-				String label = labelsDasLinhasDaGradeHoraria.get(i) + " / " + labelsDasLinhasDaGradeHoraria.get(i+1);
-				setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],label);
-				// colunas dos dias da semana
-				for (int j = 0; j < Semanas.values().length; j++) {
-					setCell((row+i),col++,sheet,this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()],"");
-				}
-				
-				col = 2;
-			}
+		List< AtendimentoTatico > atdTaticoList = null;
+		List< AtendimentoOperacional > atdOperacionalList = null;
+		Cenario cenario = getCenario();
+		
+		if(this.getFilter() == null){
+			atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario);
+			atdOperacionalList = AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario);
+		}
+		else{
+			RelatorioVisaoSalaFiltro filter = (RelatorioVisaoSalaFiltro) this.getFilter();
+			
+			Campus campus = Campus.find(filter.getCampusDTO().getId(), this.instituicaoEnsino );
+			Unidade unidade = Unidade.find(filter.getUnidadeDTO().getId(), this.instituicaoEnsino);
+			Sala sala = Sala.find(filter.getSalaDTO().getId(), this.instituicaoEnsino);
+			Turno turno = Turno.find(filter.getTurnoDTO().getId(), this.instituicaoEnsino);
+
+			atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario, campus, unidade, sala, 
+				turno, null);
+
+			atdOperacionalList = AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario, campus, unidade, 
+				sala, turno, null);
 		}
 
+		List<AtendimentoTaticoDTO> listAtendTaticoDTO = ConvertBeans.toListAtendimentoTaticoDTO(atdTaticoList);
+		List<AtendimentoOperacionalDTO> listAtendOpDTO = ConvertBeans.toListAtendimentoOperacionalDTO(atdOperacionalList);
+
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+		listAtendOpDTO = service.ordenaPorHorarioAula(listAtendOpDTO);
+
+		atdRelatorioList.addAll(listAtendTaticoDTO);
+		atdRelatorioList.addAll(listAtendOpDTO);
+
+		return !atdRelatorioList.isEmpty();
+	}
+
+	@SuppressWarnings("unchecked")
+	protected List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>> getStructureReportControl(){
+		return new ArrayList<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>>();
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected <T> void processStructureReportControl(T mapControlT){
+		List<AtendimentoRelatorioDTO> atendimentosDTO = 
+			(List<AtendimentoRelatorioDTO>) mapControlT;
+		// linha a partir da qual a escrita será iniciada no excel
+		int nextRow = this.initialRow;
+		
+		boolean ehTatico = atendimentosDTO.get(0) instanceof AtendimentoTaticoDTO;
+
+		// Estruturas auxiliares
+		// [SalaId -> Sala]
+		Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>();
+		// [TurnoId -> Turno]
+		Map<Long,Turno> turnoIdToTurnoMap = new HashMap<Long,Turno>();
+		// [SemanaLetivaId -> SemanaLetiva]
+		Map<Long,SemanaLetiva> semanaLetivaIdTosemanaLetivaMap = new HashMap<Long,SemanaLetiva>();
+		// [SalaId -> [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]]
+		Map<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>> atendimentosPorSalaTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>>();
+		
+		// preenche estruturas auxiliares
+		for (AtendimentoRelatorioDTO atendimento : atendimentosDTO) {
+			// preenche os maps salaIdToSalaMap, turnoIdToTurnoMap e semanaLetivaIdTosemanaLetivaMap
+			if (!salaIdToSalaMap.containsKey(atendimento.getSalaId())) {
+				salaIdToSalaMap.put(atendimento.getSalaId(),Sala.find(atendimento.getSalaId(),this.instituicaoEnsino));
+			}
+			if (!turnoIdToTurnoMap.containsKey(atendimento.getTurnoId())) {
+				turnoIdToTurnoMap.put(atendimento.getTurnoId(),Turno.find(atendimento.getTurnoId(),this.instituicaoEnsino));
+			}
+			Long semanaLetivaASerConsideradaId = (atendimento.getDisciplinaSubstitutaSemanaLetivaId() != null) ? atendimento.getDisciplinaSubstitutaSemanaLetivaId() : atendimento.getSemanaLetivaId(); 
+			if (!semanaLetivaIdTosemanaLetivaMap.containsKey(semanaLetivaASerConsideradaId)) {
+				semanaLetivaIdTosemanaLetivaMap.put(semanaLetivaASerConsideradaId,SemanaLetiva.find(semanaLetivaASerConsideradaId,instituicaoEnsino));
+			}
+
+			// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
+			Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(atendimento.getSalaId());
+			if (salaAtendimentosPorTurnoSemanaLetivaMap == null) {
+				salaAtendimentosPorTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,List<AtendimentoRelatorioDTO>>>();
+				atendimentosPorSalaTurnoSemanaLetivaMap.put(atendimento.getSalaId(),salaAtendimentosPorTurnoSemanaLetivaMap);
+			}
+
+			// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
+			Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(atendimento.getTurnoId());
+			if (turnoAtendimentosPorSemanaLetivaMap == null) {
+				turnoAtendimentosPorSemanaLetivaMap = new HashMap<Long,List<AtendimentoRelatorioDTO>>();
+				salaAtendimentosPorTurnoSemanaLetivaMap.put(atendimento.getTurnoId(),turnoAtendimentosPorSemanaLetivaMap);
+			}
+
+			// armazena os atendimentos associados a uma dada sala, um dado turno e uma dada semana letiva
+			List<AtendimentoRelatorioDTO> atendimentos = turnoAtendimentosPorSemanaLetivaMap.get(semanaLetivaASerConsideradaId);
+			if (atendimentos == null) {
+				atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
+				turnoAtendimentosPorSemanaLetivaMap.put(semanaLetivaASerConsideradaId,atendimentos);
+			}
+			atendimentos.add(atendimento);
+		}
+
+		// ordena as salas por campus e depois pela capacidade
+		List<Sala> salasOrdenadasPorCampusEPelaCapacidade = new ArrayList<Sala>(salaIdToSalaMap.values());
+		Collections.<Sala>sort(salasOrdenadasPorCampusEPelaCapacidade,new Comparator<Sala>() {
+			@Override
+			public int compare(Sala o1, Sala o2) {
+				Unidade u1 = o1.getUnidade();
+				Unidade u2 = o2.getUnidade();
+				Campus c1 = u1.getCampus();
+				Campus c2 = u2.getCampus();
+				int result = c1.getCodigo().compareTo(c2.getCodigo());
+				if (result == 0) {
+					result = -(o1.getCapacidade().compareTo(o2.getCapacidade())); 
+				}
+				return result;
+			}
+		});
+		
+		// imprime uma grade de horários para cada sala
+		for (Sala sala : salasOrdenadasPorCampusEPelaCapacidade) {
+			// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
+			Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(sala.getId());
+			for (Long turnoId : salaAtendimentosPorTurnoSemanaLetivaMap.keySet()) {
+				// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
+				Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(turnoId);
+				Turno turno = turnoIdToTurnoMap.get(turnoId);
+				
+				Set<Long> semanasLetivasIDs = new HashSet<Long>();
+				List<AtendimentoRelatorioDTO> atendimentosDeTodasSemanasLetivas = new ArrayList<AtendimentoRelatorioDTO>();
+				for (Long semLetId : turnoAtendimentosPorSemanaLetivaMap.keySet()) {
+					semanasLetivasIDs.add(semLetId);
+					// acumula os atendimentos das semanas letivas
+					atendimentosDeTodasSemanasLetivas.addAll(turnoAtendimentosPorSemanaLetivaMap.get(semLetId));
+				}
+				
+				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+				TrioDTO<Integer,SemanaLetiva,List<String>> trio = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,ehTatico,turnoId);
+				int mdcTemposAula = trio.getPrimeiro();
+				List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
+				
+				nextRow = writeSala(sala, turno, atendimentosDeTodasSemanasLetivas, nextRow, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+			}				
+		}
+	}
+
+	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
+		boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
+	{
+		// escreve cabeçalho da grade horária da sala
+		row = writeHeader(getRowsHeadersPairs(sala, turno), row, ehTatico);
+		
 		// processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
-		if (!ehTatico) {
+		if(!ehTatico){
 			List<AtendimentoOperacionalDTO> atendimentosOperacionaisDTO = new ArrayList<AtendimentoOperacionalDTO>();
-			for (AtendimentoRelatorioDTO atendimentoDTO : atendimentos) {
-				atendimentosOperacionaisDTO.add((AtendimentoOperacionalDTO)atendimentoDTO);
+			for(AtendimentoRelatorioDTO atendimentoDTO : atendimentos){
+				atendimentosOperacionaisDTO.add((AtendimentoOperacionalDTO) atendimentoDTO);
 			}
 			aulas.addAll(atendimentosService.extraiAulas(atendimentosOperacionaisDTO));
-		} else {
-			aulas.addAll(atendimentos);
 		}
+		else aulas.addAll(atendimentos);
 		List<AtendimentoRelatorioDTO> aulasParaVisaoSala = atendimentosService.uneAulasQuePodemSerCompartilhadas(aulas);
-
-		// agrupa as aulas por dia da semana
-		Map<Integer,List<AtendimentoRelatorioDTO>> diaSemanaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
-		for (AtendimentoRelatorioDTO aula : aulasParaVisaoSala) {
-			Integer diaDaSemana = aula.getSemana();
-			List<AtendimentoRelatorioDTO> aulasDoDia = diaSemanaToAulasMap.get(diaDaSemana);
-			if (aulasDoDia == null) {
-				aulasDoDia = new ArrayList<AtendimentoRelatorioDTO>();
-				diaSemanaToAulasMap.put(diaDaSemana,aulasDoDia);
-			}
-			aulasDoDia.add(aula);
-		}
-
-		// para cada dia da semana, escreve as aulas no excel
-		for (Integer diaSemanaInt : diaSemanaToAulasMap.keySet()) {
-			Semanas diaSemana = Semanas.get(diaSemanaInt);
-
-			// linha em que a escrita será iniciada
-			row = initialRow;
-			// coluna em que a escrita será iniciada
-			switch (diaSemana) {
-				case SEG: { col = 3; break; }
-				case TER: { col = 4; break; }
-				case QUA: { col = 5; break; }
-				case QUI: { col = 6; break; }
-				case SEX: { col = 7; break; }
-				case SAB: { col = 8; break; }
-				case DOM: { col = 9; break; }
-			}
-
-			List<AtendimentoRelatorioDTO> aulasDoDia = diaSemanaToAulasMap.get(diaSemanaInt);
-			if (aulasDoDia == null || aulasDoDia.isEmpty()) {
-				continue;
-			}
-
-			// para cada aula
-			for (AtendimentoRelatorioDTO aula : aulasDoDia) {
-				// obtém o estilo que será aplicado nas células que serão desenhadas
-				HSSFCellStyle style = codigoDisciplinaToColorMap.get(aula.getDisciplinaString());
-				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
-				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos()/mdcTemposAula;
-				
-				if (!ehTatico) {
-					AtendimentoOperacionalDTO aulaOp = (AtendimentoOperacionalDTO)aula;
-					int index = labelsDasLinhasDaGradeHoraria.indexOf(aulaOp.getHorarioString());
-					if (index != -1) {
-						row = initialRow + index;
-					}
-				}
-
-				// escreve célula principal
-				setCell(row,col,sheet,style,HtmlUtils.htmlUnescape(aula.getContentVisaoSala(ReportType.EXCEL)),HtmlUtils.htmlUnescape(aula.getContentToolTipVisaoSala(ReportType.EXCEL)));
-				// une células de acordo com a quantidade de créditos da aula
-				int rowF = row + aula.getTotalCreditos()*linhasDeExcelPorCreditoDaAula - 1;
-				mergeCells(row,rowF,col,col,sheet,style);
-
-				if (ehTatico) {
-					row += aula.getTotalCreditos()*linhasDeExcelPorCreditoDaAula;
-				}
-			}
-		}
 		
-		return (initialRow + (ehTatico ? labelsDasLinhasDaGradeHoraria.size() : (labelsDasLinhasDaGradeHoraria.size()-1)) + 1);
+		return writeAtendimento(aulasParaVisaoSala, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+	}
+	
+	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Sala sala, Turno turno){
+		List<List<ParDTO<String, ?>>> list = new ArrayList<List<ParDTO<String, ?>>>(); 
+		
+		List<ParDTO<String, ?>> row = new ArrayList<ParDTO<String, ?>>();
+		row.add(ParDTO.create(this.getI18nConstants().campus(), sala.getUnidade().getCampus().getCodigo()));
+		row.add(ParDTO.create(this.getI18nConstants().sala(), sala.getCodigo()));
+		row.add(ParDTO.create(this.getI18nConstants().capacidade(), sala.getCapacidade()));
+		
+		list.add(row);
+		
+		row = new ArrayList<ParDTO<String, ?>>();
+		row.add(ParDTO.create(this.getI18nConstants().unidade(), sala.getUnidade().getCodigo()));
+		row.add(ParDTO.create(this.getI18nConstants().turno(), turno.getNome()));
+		row.add(ParDTO.create(this.getI18nConstants().tipo(), sala.getTipoSala().getNome()));
+		
+		list.add(row);
+		
+		return list;
 	}
 
-	private int writeHeader( Sala sala, Turno turno, int row, HSSFSheet sheet, boolean ehTatico )
-	{
-		int col = 3;
-
-		// Campus
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( this.getI18nConstants().campus() ) );
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
-			sala.getUnidade().getCampus().getCodigo() );
-
-		// Sala
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( this.getI18nConstants().sala() ) );
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
-			sala.getCodigo() );
-
-		// Capacidade
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( this.getI18nConstants().capacidade() ) );
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
-			sala.getCapacidade() );
-
-		row++;
-		col = 3;
-
-		// Unidade
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( this.getI18nConstants().unidade() ) );
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
-			sala.getUnidade().getCodigo() );
-
-		// Turno
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( this.getI18nConstants().turno() ) );
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
-			turno.getNome() );
-
-		// Tipo
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( this.getI18nConstants().tipo() ) );
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_VALUE.ordinal() ],
-			sala.getTipoSala().getNome() );
-
-		row++;
-		col = 2;
-
-		// Créditos ou Horários
-		setCell( row, col++, sheet, this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-			HtmlUtils.htmlUnescape( ehTatico ? this.getI18nConstants().cargaHorariaMinutos() : this.getI18nConstants().horarios() ) );
-
-		// Dias Semana
-		for ( Semanas semanas : Semanas.values() )
-		{
-			setCell( row, col++, sheet,
-				this.cellStyles[ ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal() ],
-				semanas.name() );
-		}
-
-		row++;
-		return row;
-	}
-
-	private void fillInCellStyles( HSSFSheet sheet )
-	{
-		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
-		{
-			this.cellStyles[ cellStyleReference.ordinal() ] = getCell(
-				cellStyleReference.getRow(), cellStyleReference.getCol(), sheet ).getCellStyle();
-		}
-	}
-
-	private List< HSSFCellStyle > buildColorPaletteCellStyles( HSSFWorkbook workbook )
-	{
-		List< HSSFCellStyle > colorPalleteCellStylesList = new ArrayList< HSSFCellStyle >();
-
-		HSSFSheet sheet = workbook.getSheet(
-			ExcelInformationType.PALETA_CORES.getSheetName() );
-
-		if ( sheet != null )
-		{
-            for ( int rowIndex = sheet.getFirstRowNum(); rowIndex <= sheet.getLastRowNum(); rowIndex++ )
-            {
-            	HSSFRow row = sheet.getRow( rowIndex );
-
-            	if ( row != null )
-            	{
-            		HSSFCell cell = row.getCell( (int)row.getFirstCellNum() );
-
-            		if ( cell != null )
-            		{
-            			colorPalleteCellStylesList.add( cell.getCellStyle() );
-            		}
-            	}
-            }
-		}
-
-		return colorPalleteCellStylesList;
-	}
 }

@@ -20,6 +20,7 @@ import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
 
 public class ExportExcelServlet extends HttpServlet
 {	
@@ -33,96 +34,54 @@ public class ExportExcelServlet extends HttpServlet
 		ExportExcelServlet.i18nMessages = new GTriedaI18nMessages();
 	}
 
-	private InstituicaoEnsino getInstituicaoEnsino()
-	{
+	private InstituicaoEnsino getInstituicaoEnsino(){
 		SecurityContext context = SecurityContextHolder.getContext();
 		String username = context.getAuthentication().getName();
 		Usuario usuario = Usuario.find( username );
-		return ( usuario == null ? null : usuario.getInstituicaoEnsino() );
+		return (usuario == null) ? null : usuario.getInstituicaoEnsino();
 	}
 
 	@Override
-	protected void doGet(
-		HttpServletRequest request, HttpServletResponse response )
-		throws ServletException, IOException
-	{
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		// Obtém os parâmetros
 		String informationToBeExported = request.getParameter(
-				ExcelInformationType.getInformationParameterName() );
+			ExcelInformationType.getInformationParameterName() );
 
-		Long instituicaoEnsinoId = null;
-		
-		try
-		{
-			instituicaoEnsinoId = Long.parseLong(
-				request.getParameter( "instituicaoEnsinoId" ) );
+		InstituicaoEnsino instituicaoEnsino = null;
+		try{
+			Long instituicaoEnsinoId = Long.parseLong(request.getParameter("instituicaoEnsinoId"));
+			instituicaoEnsino = InstituicaoEnsino.find(instituicaoEnsinoId);
 		}
-		catch( Exception e )
-		{
-			System.out.println(
-				"Não foi informado a instituição de ensino: " + informationToBeExported );
+		catch(Exception e){
+			System.out.println("Não foi informado a instituição de ensino: " + informationToBeExported);
 		}
 
-		InstituicaoEnsino instituicaoEnsino
-			= InstituicaoEnsino.find( instituicaoEnsinoId );
+		this.cenario = Cenario.findMasterData(instituicaoEnsino);
 
-		this.cenario = Cenario.findMasterData( instituicaoEnsino );
-
-		if ( !informationToBeExported.isEmpty() )
-		{
-			ExportExcelFilter filter = null;
-			if ( informationToBeExported.equals(
-				ExcelInformationType.RELATORIO_VISAO_CURSO.toString() ) )
-			{
-				filter = verificaParametrosVisaoCurso( request );
-			}
-			else if ( informationToBeExported.equals(
-				ExcelInformationType.RELATORIO_VISAO_SALA.toString() ) )
-			{
-				filter = verificaParametrosVisaoSala( request );
-			}
-			else if ( informationToBeExported.equals(
-				ExcelInformationType.RELATORIO_VISAO_PROFESSOR.toString() ) )
-			{
-				filter = verificaParametrosVisaoProfessor( request );
-			}
-			else if ( informationToBeExported.equals(
-				ExcelInformationType.RESUMO_DISCIPLINA.toString() ) )
-			{
-				filter = verificaParametrosResumoDisciplina( request );
-			}
-			else if ( informationToBeExported.equals(
-				ExcelInformationType.RESUMO_CURSO.toString() ) )
-			{
-				filter = verificaParametrosResumoCurso( request );
-			}
+		if(!informationToBeExported.isEmpty()){
+			ExportExcelFilter filter = ExportExcelFilterFactory.createExporter(informationToBeExported, request, instituicaoEnsino);
 
 			// Get Excel Data
 			IExportExcel exporter = ExportExcelFactory.createExporter(
 				informationToBeExported, this.cenario, ExportExcelServlet.i18nConstants,
-				ExportExcelServlet.i18nMessages, filter, getInstituicaoEnsino() );
+				ExportExcelServlet.i18nMessages, filter, getInstituicaoEnsino()
+			);
 
 			HSSFWorkbook workbook = exporter.export();
 
-			if ( exporter.getErrors().isEmpty() )
-			{
+			if(exporter.getErrors().isEmpty()){
 				// Write data on response output stream
-				writeExcelToHttpResponse( exporter.getFileName(), workbook, response );
+				writeExcelToHttpResponse(exporter.getFileName(), workbook, response);
 			}
-			else
-			{
-				response.setContentType( "text/html" );
+			else{
+				response.setContentType("text/html");
 
-				for ( String msg : exporter.getWarnings() )
-				{
-					response.getWriter().println(
-						ExcelInformationType.prefixWarning() + msg );
+				for(String msg : exporter.getWarnings()){
+					response.getWriter().println(ExcelInformationType.prefixWarning() + msg);
 				}
 
-				for ( String msg : exporter.getErrors() )
-				{
-					response.getWriter().println(
-						ExcelInformationType.prefixError() + msg );
+				for(String msg : exporter.getErrors()){
+					response.getWriter().println(ExcelInformationType.prefixError() + msg);
 				}
 
 				response.getWriter().flush();
@@ -156,120 +115,4 @@ public class ExportExcelServlet extends HttpServlet
 		}
 	}
 
-	private RelatorioVisaoProfessorFiltroExcel verificaParametrosVisaoProfessor( HttpServletRequest request )
-	{
-		Long campusId = null;
-		Long turnoId = null;
-		Long professorId = null;
-		Long professorVirtualId = null;
-		Long instituicaoEnsinoId = null;
-
-		try
-		{
-			campusId = Long.parseLong( request.getParameter( "campusId" ) );
-			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
-			professorId = Long.parseLong( request.getParameter( "professorId" ) );
-			professorVirtualId = Long.parseLong( request.getParameter( "professorVirtualId" ) );
-			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
-		}
-		catch( Exception ex ) { return null; }
-
-		RelatorioVisaoProfessorFiltroExcel filtro = new RelatorioVisaoProfessorFiltroExcel(
-			campusId, turnoId, professorId, professorVirtualId, instituicaoEnsinoId);
-
-		return filtro;
-	}
-
-	private RelatorioVisaoCursoFiltroExcel verificaParametrosVisaoCurso( HttpServletRequest request )
-	{
-		Long cursoId = null;
-		Long curriculoId = null;
-		Long campusId = null;
-		Integer periodoId = null;
-		Long turnoId = null;
-		Long instituicaoEnsinoId = null;
-
-		try
-		{
-			cursoId = Long.parseLong( request.getParameter( "cursoId" ) );
-			curriculoId = Long.parseLong( request.getParameter( "curriculoId" ) );
-			campusId = Long.parseLong( request.getParameter( "campusId" ) );
-			periodoId = Integer.parseInt( request.getParameter( "periodoId" ) );
-			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
-			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
-		}
-		catch( Exception ex ) { return null; }
-
-		RelatorioVisaoCursoFiltroExcel filtro = new RelatorioVisaoCursoFiltroExcel(
-			cursoId, curriculoId, campusId, periodoId, turnoId, instituicaoEnsinoId );
-		return filtro;
-	}
-	
-	private RelatorioVisaoSalaFiltroExcel verificaParametrosVisaoSala( HttpServletRequest request )
-	{
-		Long campusId = null;
-		Long unidadeId = null;
-		Long salaId = null;
-		Long turnoId = null;
-		Long semanaLetivaId = null;
-		Long instituicaoEnsinoId = null;
-
-		try
-		{
-			campusId = Long.parseLong( request.getParameter( "campusId" ) );
-			unidadeId = Long.parseLong( request.getParameter( "unidadeId" ) );
-			salaId = Long.parseLong( request.getParameter( "salaId" ) );
-			turnoId = Long.parseLong( request.getParameter( "turnoId" ) );
-			semanaLetivaId = Long.parseLong( request.getParameter( "semanaLetivaId" ) );
-			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
-		}
-		catch( Exception ex ) { return null; }
-
-		RelatorioVisaoSalaFiltroExcel filtro = new RelatorioVisaoSalaFiltroExcel(
-			campusId, unidadeId, salaId, turnoId, semanaLetivaId, instituicaoEnsinoId );
-
-		return filtro;
-	}
-
-	private ResumoDisciplinaFiltroExcel verificaParametrosResumoDisciplina( HttpServletRequest request )
-	{
-		Long campusId = null;
-		Long instituicaoEnsinoId = null;
-
-		try
-		{
-			campusId = Long.parseLong( request.getParameter( "campusId" ) );
-			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
-		}
-		catch( Exception ex )
-		{
-			return null;
-		}
-
-		ResumoDisciplinaFiltroExcel filtro
-			= new ResumoDisciplinaFiltroExcel( instituicaoEnsinoId, campusId );
-
-		return filtro;
-	}
-
-	private ResumoCursoFiltroExcel verificaParametrosResumoCurso( HttpServletRequest request )
-	{
-		Long campusId = null;
-		Long instituicaoEnsinoId = null;
-
-		try
-		{
-			campusId = Long.parseLong( request.getParameter( "campusId" ) );
-			instituicaoEnsinoId = Long.parseLong( request.getParameter( "instituicaoEnsinoId" ) );
-		}
-		catch( Exception ex )
-		{
-			return null;
-		}
-
-		ResumoCursoFiltroExcel filtro
-			= new ResumoCursoFiltroExcel( instituicaoEnsinoId, campusId );
-
-		return filtro;
-	}
 }

@@ -19,6 +19,7 @@ import com.gapso.web.trieda.shared.dtos.ResumoCursoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
 
 public class ResumoCursoExportExcel
 	extends AbstractExportExcel

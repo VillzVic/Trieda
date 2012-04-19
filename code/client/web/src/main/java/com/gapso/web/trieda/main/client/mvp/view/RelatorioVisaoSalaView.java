@@ -1,201 +1,139 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
-import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
-import com.extjs.gxt.ui.client.Style.LayoutRegion;
-import com.extjs.gxt.ui.client.util.Margins;
-import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
-import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
-import com.extjs.gxt.ui.client.widget.layout.ColumnData;
-import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
-import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoSalaPresenter;
-import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaSalaGrid;
+import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoFiltro;
+import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
+import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoView;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.shared.util.view.SalaComboBox;
-import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class RelatorioVisaoSalaView
-	extends MyComposite
-	implements RelatorioVisaoSalaPresenter.Display
-{
-	private SimpleToolBar toolBar;
-	private GradeHorariaSalaGrid grid;
-	private Button submitBt;
+public class RelatorioVisaoSalaView	extends RelatorioVisaoView	implements RelatorioVisaoSalaPresenter.Display{
 	private CampusComboBox campusCB;
 	private UnidadeComboBox unidadeCB;
 	private SalaComboBox salaCB;
 	private TurnoComboBox turnoCB;
-	private TextField< String > capacidadeTF;
-	private TextField< String > tipoSalaTF;
-	private ContentPanel panel;
-	private GTabItem tabItem;
+	private TextField<String> capacidadeTF;
+	private TextField<String> tipoSalaTF;
+	private RelatorioVisaoSalaFiltro filtro;
 
-	public RelatorioVisaoSalaView()
-	{
-		this.initUI();
+	public RelatorioVisaoSalaView(){
+		super(new RelatorioVisaoSalaFiltro());
 	}
 
-	private void initUI()
-	{
-		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Grade Horária Visão Sala" );
-
-		createToolBar();
-		createGrid();
-		createFilter();
-		createTabItem();
-		initComponent( this.tabItem );
-	}
-
-	private void createToolBar()
-	{
-		// Exibe apenas o botão 'exportExcel'
-		this.toolBar = new SimpleToolBar(
-			false, false, false, false, true, this );
-
-		this.panel.setTopComponent( this.toolBar );
-	}
-
-	private void createTabItem()
-	{
-		this.tabItem = new GTabItem(
-			"Grade Horária Visão Sala",
-			Resources.DEFAULTS.saidaSala16() );
-
-		this.tabItem.setContent( this.panel );
+	@Override
+	protected String getHeadingPanel(){
+		return "Master Data » Grade Horária Visão Sala";
 	}
 	
-	private void createGrid()
-	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
-	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
-
-	    this.grid = new GradeHorariaSalaGrid();
-	    this.panel.add( this.grid, bld );
+	@Override
+	protected GTabItem createGTabItem(){
+		return new GTabItem("Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala16());
 	}
-
-	private void createFilter()
-	{
-		FormData formData = new FormData( "100%" );
-		FormPanel panel = new FormPanel();
-		panel.setHeaderVisible( true );
-		panel.setHeading( "Filtro" );
-		panel.setButtonAlign( HorizontalAlignment.RIGHT );
-
-		LayoutContainer main = new LayoutContainer( new ColumnLayout() );
-
-		LayoutContainer left = new LayoutContainer( new FormLayout( LabelAlign.RIGHT ) );
-		LayoutContainer right = new LayoutContainer( new FormLayout( LabelAlign.RIGHT ) );
-		LayoutContainer center = new LayoutContainer( new FormLayout( LabelAlign.RIGHT ) );
-		LayoutContainer button = new LayoutContainer( new FormLayout() );
-
+	
+	@Override
+	protected GradeHorariaSalaGrid createGradeHorariaVisao(){
+		return new GradeHorariaSalaGrid();
+	}
+	
+	@Override
+	protected void createFilter(){
+		Map<LabelAlign, List<Field<?>>> mapLayout = new HashMap<LabelAlign, List<Field<?>>>();
+		
+		List<Field<?>> leftList = new ArrayList<Field<?>>();
+		
 		this.campusCB = new CampusComboBox();
-		left.add( this.campusCB, formData );
-
-		this.unidadeCB = new UnidadeComboBox( this.campusCB );
-		left.add( this.unidadeCB, formData );
-
-		this.salaCB = new SalaComboBox( this.unidadeCB );
-		center.add( this.salaCB, formData );
-
+		filtro.addCampusValueListener(this.campusCB);
+		leftList.add(this.campusCB);
+		
+		this.unidadeCB = new UnidadeComboBox(this.campusCB);
+		filtro.addUnidadeValueListener(this.unidadeCB);
+		leftList.add(this.unidadeCB);
+		
+		List<Field<?>> centerList = new ArrayList<Field<?>>();
+		
+		this.salaCB = new SalaComboBox(this.unidadeCB);
+		filtro.addSalaValueListener(this.salaCB);
+		centerList.add(this.salaCB);
+		
 		this.turnoCB = new TurnoComboBox();
-		center.add( this.turnoCB, formData );
-
-		this.capacidadeTF = new TextField< String >();
-		this.capacidadeTF.setFieldLabel( "Capacidade" );
-		this.capacidadeTF.setReadOnly( true );
-		right.add( this.capacidadeTF, formData );
+		filtro.addTurnoValueListener(this.turnoCB);
+		centerList.add(this.turnoCB);
+		
+		List<Field<?>> rightList = new ArrayList<Field<?>>();
+		
+		this.capacidadeTF = new TextField<String>();
+		this.capacidadeTF.setFieldLabel("Capacidade");
+		this.capacidadeTF.setReadOnly(true);
+		rightList.add(this.capacidadeTF);
 
 		this.tipoSalaTF = new TextField< String >();
 		this.tipoSalaTF.setFieldLabel( "Tipo" );
 		this.tipoSalaTF.setReadOnly( true );
-		right.add( this.tipoSalaTF, formData );
-
-		this.submitBt = new Button( "Filtrar",
-			AbstractImagePrototype.create( Resources.DEFAULTS.filter16() ) );
-		button.setStyleAttribute( "paddingLeft", "10px" );
-		button.setStyleAttribute( "paddingTop", "27px" );
-		button.add( this.submitBt, formData );
-
-		main.add( left, new ColumnData( 0.3 ) );
-		main.add( center, new ColumnData( 0.3 ) );
-		main.add( right, new ColumnData( 0.3 ) );
-		main.add( button, new ColumnData( 0.1 ) );
-
-		panel.add( main, new FormData( "100%" ) );
-
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );
-		bld.setMargins( new Margins( 5, 5, 0, 5 ) );
-		bld.setCollapsible( true );
-		bld.setSize( 90 );
-
-		this.panel.add( panel, bld );
+		rightList.add(this.tipoSalaTF);
+		
+		mapLayout.put(LabelAlign.LEFT, leftList);
+		mapLayout.put(LabelAlign.RIGHT, rightList);
+		mapLayout.put(LabelAlign.TOP, centerList);
+		
+		super.createFilter(mapLayout);
 	}
 
 	@Override
-	public GradeHorariaSalaGrid getGrid()
-	{
-		return this.grid;
+	public GradeHorariaSalaGrid getGrid(){
+		return (GradeHorariaSalaGrid) this.grid;
+	}
+	
+	@Override
+	public RelatorioVisaoSalaFiltro getFiltro(){
+		return this.filtro;
+	}
+	
+	@Override
+	public void setFiltro(RelatorioVisaoFiltro filtro){
+		this.filtro = (RelatorioVisaoSalaFiltro) filtro;
 	}
 
 	@Override
-	public Button getSubmitBuscaButton()
-	{
-		return this.submitBt;
-	}
-
-	@Override
-	public CampusComboBox getCampusComboBox()
-	{
+	public CampusComboBox getCampusComboBox(){
 		return this.campusCB;
 	}
 
 	@Override
-	public UnidadeComboBox getUnidadeComboBox()
-	{
+	public UnidadeComboBox getUnidadeComboBox(){
 		return this.unidadeCB;
 	}
 
 	@Override
-	public SalaComboBox getSalaComboBox()
-	{
+	public SalaComboBox getSalaComboBox(){
 		return this.salaCB;
 	}
 
 	@Override
-	public TurnoComboBox getTurnoComboBox()
-	{
+	public TurnoComboBox getTurnoComboBox(){
 		return this.turnoCB;
 	}
 
 	@Override
-	public TextField< String > getCapacidadeTextField()
-	{
+	public TextField<String> getCapacidadeTextField(){
 		return this.capacidadeTF;
 	}
 
 	@Override
-	public TextField< String > getTipoTextField()
-	{
+	public TextField<String> getTipoTextField(){
 		return this.tipoSalaTF;
 	}
 
-	@Override
-	public Button getExportExcelButton()
-	{
-		return this.toolBar.getExportExcelButton();
-	}
 }

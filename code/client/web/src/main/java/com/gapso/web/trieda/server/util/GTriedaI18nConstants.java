@@ -763,4 +763,9 @@ public class GTriedaI18nConstants
 	{
 		return this.languageManager.getText( "professorVirtual" );
 	}
+	
+	@Override
+	public String relatorioVisaoAluno(){
+		return this.languageManager.getText("relatorioVisaoAluno");
+	}
 }

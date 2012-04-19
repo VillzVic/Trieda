@@ -2,153 +2,70 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
-import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
-import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
-import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.TurnoDTO;
-import com.gapso.web.trieda.shared.excel.ExcelInformationType;
-import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
-import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaCursoGrid;
+import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoPresenter;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
-import com.gapso.web.trieda.shared.util.view.ExcelParametros;
-import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
-import com.gapso.web.trieda.shared.util.view.GTab;
-import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.GradeHorariaCursoGrid;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 
-public class RelatorioVisaoCursoPresenter
-	implements Presenter
-{
-	public interface Display
-		extends ITriedaI18nGateway
-	{
-		Button getSubmitBuscaButton();
+public class RelatorioVisaoCursoPresenter extends RelatorioVisaoPresenter{
+	public interface Display extends RelatorioVisaoPresenter.Display{
 		CampusComboBox getCampusComboBox();
 		CursoComboBox getCursoComboBox();
 		CurriculoComboBox getCurriculoComboBox();
 		TurnoComboBox getTurnoComboBox();
-		SimpleComboBox< Integer > getPeriodoComboBox();
+		SimpleComboBox<Integer> getPeriodoComboBox();
 		GradeHorariaCursoGrid getGrid();
-		Component getComponent();
-		Button getExportExcelButton();
 	}
 
-	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
-	private Display display; 
-
-	public RelatorioVisaoCursoPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display )
+	public RelatorioVisaoCursoPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenario, Display display)
 	{
-		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-		this.display = display;
-
-		this.setListeners();
+		super(instituicaoEnsinoDTO, display);
 	}
 
-	private void setListeners()
-	{
-		this.display.getSubmitBuscaButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					display.getGrid().setCurriculoDTO( display.getCurriculoComboBox().getValue() );
-					display.getGrid().setPeriodo( display.getPeriodoComboBox().getValue().getValue() );
-					display.getGrid().setTurnoDTO( display.getTurnoComboBox().getValue() );
-					display.getGrid().setCampusDTO( display.getCampusComboBox().getValue() );
-					display.getGrid().setCursoDTO( display.getCursoComboBox().getValue() );
-
-					display.getGrid().requestAtendimentos();
-				}
-		});
-
-		this.display.getCurriculoComboBox().addSelectionChangedListener(
-			new SelectionChangedListener< CurriculoDTO >()
-		{
+	protected void setListeners(){
+		super.setListeners();
+		
+		final Display display = (Display) this.getDisplay();
+		
+		display.getCurriculoComboBox().addSelectionChangedListener(new SelectionChangedListener<CurriculoDTO>(){
 			@Override
-			public void selectionChanged( SelectionChangedEvent< CurriculoDTO > se )
-			{
+			public void selectionChanged(SelectionChangedEvent<CurriculoDTO> se){
 				final CurriculoDTO curriculoDTO = se.getSelectedItem();
 
 				display.getPeriodoComboBox().getStore().removeAll();
-				display.getPeriodoComboBox().setValue( null );
-				display.getPeriodoComboBox().setEnabled( curriculoDTO != null );
+				display.getPeriodoComboBox().setValue(null);
+				display.getPeriodoComboBox().setEnabled(curriculoDTO != null);
 
-				if ( curriculoDTO != null )
-				{
+				if(curriculoDTO != null){
 					CurriculosServiceAsync service = Services.curriculos();
 
-					service.getPeriodos( curriculoDTO, new AsyncCallback< List< Integer > >()
-					{
+					service.getPeriodos(curriculoDTO, new AsyncCallback<List<Integer>>(){
 						@Override
-						public void onFailure( Throwable caught )
-						{
-							MessageBox.alert( "Erro",
-								"Erro no servidor ao pegar os períodos da Matriz Curricular", null );
+						public void onFailure(Throwable caught){
+							MessageBox.alert( "Erro", "Erro no servidor ao pegar os períodos da Matriz Curricular", null);
 						}
 
 						@Override
-						public void onSuccess( List< Integer > result )
-						{
-							display.getPeriodoComboBox().add( result );
+						public void onSuccess(List<Integer> result){
+							display.getPeriodoComboBox().add(result);
 						}
 					});
 				}
 			}
 		});
-
-		this.display.getExportExcelButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.RELATORIO_VISAO_CURSO , instituicaoEnsinoDTO );
-
-					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
-						parametros, display.getI18nConstants(), display.getI18nMessages() );
-
-					CursoDTO cursoDTO = display.getCursoComboBox().getValue();
-					CurriculoDTO curriculoDTO = display.getCurriculoComboBox().getValue();
-					CampusDTO campusDTO = display.getCampusComboBox().getValue();
-					Integer periodo = display.getPeriodoComboBox().getValue().getValue();
-					TurnoDTO turnoDTO = display.getTurnoComboBox().getValue();
-
-					e.addParameter( "cursoId", cursoDTO.getId().toString() );
-					e.addParameter( "curriculoId", curriculoDTO.getId().toString() );
-					e.addParameter( "campusId", campusDTO.getId().toString() );
-					e.addParameter( "periodoId", periodo.toString() );
-					e.addParameter( "turnoId", turnoDTO.getId().toString() );
-
-					e.submit();
-				}
-			});
 	}
 
-	@Override
-	public void go( Widget widget )
-	{
-		GTab tab = (GTab) widget;
-		tab.add( (GTabItem) this.display.getComponent() );
-	}
 }
