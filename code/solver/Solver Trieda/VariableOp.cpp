@@ -299,7 +299,7 @@ std::string VariableOp::toString()
 
    if ( professor != NULL )
    {
-      str << "_Prof" << professor->getIdOperacional();
+      str << "_Prof" << professor->getId();
    }
 
    if ( curso != NULL )

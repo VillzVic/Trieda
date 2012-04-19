@@ -2228,9 +2228,9 @@ int SolverMIP::solveTaticoBasico( int campusId )
 #endif
 
    int status = 0;
-   lp->setTimeLimit( 14400 );
+   lp->setTimeLimit( 14000 );
    //lp->setTimeLimit( 3600 );
-   lp->setMIPRelTol( 0.01 );
+   //lp->setMIPRelTol( 0.01 );
    lp->setPreSolve(OPT_TRUE);
    lp->setHeurFrequency(1.0);
    lp->setMIPScreenLog( 4 );
@@ -4277,10 +4277,11 @@ int SolverMIP::solveOperacionalMIP()
 
    //lp->setMIPRelTol( 0.01 );
    lp->setMIPEmphasis(0);
-   //lp->setCuts(5);
+   lp->setVarSel(4);
+   lp->setCuts(5);
    lp->setMIPScreenLog( 4 );
    lp->setTimeLimit(7200);
-   lp->setPolishAfterNode(1);
+   //lp->setPolishAfterNode(1);
    
    lp->setPreSolve(OPT_TRUE);
 
@@ -27066,7 +27067,7 @@ int SolverMIP::criaVariaveisOperacional()
 #endif
 
    lp->updateLP();
-   numVars += criaVariavelDisciplinaHorario(); 
+   //numVars += criaVariavelDisciplinaHorario(); 
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_Z_DISCIPLINA_HOR: "
@@ -27075,7 +27076,7 @@ int SolverMIP::criaVariaveisOperacional()
 #endif
 
    lp->updateLP();
-   numVars += criaVariavelFolgaDisciplinaHorario(); 
+   //numVars += criaVariavelFolgaDisciplinaHorario(); 
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_F_DISC_HOR: "
@@ -27255,7 +27256,7 @@ int SolverMIP::criaVariaveisOperacional()
 #endif   
 
    lp->updateLP();
-   numVars += criaVariavelFolgaDisciplinaTurmaHorario();
+   //numVars += criaVariavelFolgaDisciplinaTurmaHorario();
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_FOLGA_DISC_TURMA_HOR: "
@@ -27304,7 +27305,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
             std::list< HorarioDia * > listaHorarios;
 			
             retornaHorariosPossiveis( *itProfessor, *itAula, listaHorarios );
-			
+
             for ( std::list< HorarioDia * >::iterator itHor = listaHorarios.begin();
                   itHor != listaHorarios.end(); itHor++ )
             {
@@ -27329,7 +27330,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
                if ( vHashOp.find( v ) == vHashOp.end() )
                {
                   vHashOp[ v ] = lp->getNumCols();
-				  				  
+
                   OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
                      ( char * )v.toString().c_str() );
 
@@ -27436,7 +27437,6 @@ int SolverMIP::criaVariavelProfessorDisciplina()
             v.setDisciplina( discAula ); 
             v.setProfessor( ( *itProfessor ) );
             v.setTurma( itAula->getTurma() );
-            v.setAula( ( *itAula ) );
 
             //------------------------------------------------------
             // Preferência:
@@ -28089,8 +28089,6 @@ int SolverMIP::criaVariavelDiasProfessoresMinistramAulas()
 
          if ( vHashOp.find( v ) == vHashOp.end() )
          {
-            v.setValue( 1.0 );
-
             vHashOp[ v ] = lp->getNumCols();
 
             OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
@@ -28574,7 +28572,7 @@ int SolverMIP::criaVariavelFolgaDemanda( void )
 		
 		if ( vHashOp.find( v ) == vHashOp.end() )
 		{
-			double coeff = 50000.0;
+			double coeff = 500000.0;
 
 			vHashOp[ v ] = lp->getNumCols();
 
@@ -28738,7 +28736,7 @@ int SolverMIP::criaRestricoesOperacional()
 
 	lp->updateLP();
 	timer.start();
-	restricoes += criaRestricaoDisciplinaMesmoHorario();
+	//restricoes += criaRestricaoDisciplinaMesmoHorario();
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -28750,7 +28748,7 @@ int SolverMIP::criaRestricoesOperacional()
 
 	lp->updateLP();
 	timer.start();
-	restricoes += criaRestricaoDisciplinaHorarioUnico();
+	//restricoes += criaRestricaoDisciplinaHorarioUnico();
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -28978,7 +28976,7 @@ int SolverMIP::criaRestricoesOperacional()
 
 	lp->updateLP();
 	timer.start();
-	restricoes += criaRestricaoGapsProfessores();
+	//restricoes += criaRestricaoGapsProfessores();
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -28990,7 +28988,7 @@ int SolverMIP::criaRestricoesOperacional()
 
 	lp->updateLP();
 	timer.start();
-	restricoes += criaRestricaoProfHorarioMultiUnid();
+	//restricoes += criaRestricaoProfHorarioMultiUnid();
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -29072,12 +29070,15 @@ int SolverMIP::criaRestricaoSalaHorario()
 		   DateTime inicio = horario_aula->getInicio();
 		   DateTime dt2Inicio = vOp.getHorarioAula()->getInicio();
 		   DateTime fim = horario_aula->getFinal();
-		   DateTime dt2Fim = vOp.getHorarioAula()->getInicio();
-		   dt2Fim.addMinutes( duracao*nCred2 );
+         HorarioAula *horarioAulaFim = vOp.getHorarioAula();
+         for (int k = 1; k < nCred2; k++)
+         {
+            horarioAulaFim = horarioAulaFim->getCalendario()->getProximoHorario(horarioAulaFim);
+         }
+		   DateTime dt2Fim = horarioAulaFim->getFinal();
 
 		   if (  ( vOp.getHorarioAula() != horario_aula ) &&				    
-			   !( ( dt2Inicio <= inicio ) && ( dt2Fim > inicio ) ) &&
-			   !( ( dt2Inicio >= inicio ) && ( dt2Inicio < fim ) ) )
+			   !( ( dt2Inicio <= inicio ) && ( dt2Fim > inicio ) ) )
 		   {
 			   continue;
 		   }
@@ -29577,21 +29578,23 @@ int SolverMIP::criaRestricaoBlocoHorarioDisc()
 			   {
 				   BlocoCurricular * bloco = *itBlocoCurric;
 
-				   GGroup< Disciplina *, LessPtr< Disciplina > >::iterator itD = bloco->disciplinas.find(d1);
-				   if(itD != bloco->disciplinas.end())
-					   itD++;
+               for (GGroup<Aula*,LessPtr<Aula> >::iterator itAB = problemData->blocoCurricularDiaAulas[bloco][v1.getDia()].begin();
+               itAB != problemData->blocoCurricularDiaAulas[bloco][dia1].end(); itAB++)
+               {
+                  Aula *aula2 = *itAB;
 
-					for(;itD != bloco->disciplinas.end();itD++)
-				   {
-					   Disciplina *d2 = *itD;
+                  Disciplina *d2 = aula2->getDisciplina();
 
-					   vector<VariableOpHash::iterator> vars2 = varsDisciplina[d2][dia1];
+                  vector<VariableOpHash::iterator> vars2 = varsDisciplina[d2][dia1];
 					   for(vector<VariableOpHash::iterator>::iterator it3 = vars2.begin();
 						   it3 != vars2.end();
 						   it3++)
 					   {
 						   vit2 = *it3;
 						   VariableOp v2 = vit2->first;
+
+                     if ( v2.getAula() != aula2 )
+                        continue;
 
 						   int nCred1 = v1.getAula()->getTotalCreditos();
 						   HorarioAula* h1 = v1.getHorario()->getHorarioAula();
@@ -29988,7 +29991,6 @@ int SolverMIP::criaRestricaoProfessorDisciplinaUnico()
 
       c.reset();
       c.setType( ConstraintOp::C_PROF_DISC_UNI );
-      c.setProfessor( v.getProfessor() );
       c.setDisciplina( v.getDisciplina() );
       c.setTurma( v.getTurma() );
 
@@ -30628,7 +30630,7 @@ int SolverMIP::criaRestricaoCustoCorpoDocente()
 {
    int restricoes = 0;
    int nnz = 0;
-   double rhs = 1.0;
+   double rhs = 0.0;
    char name[ 200 ];
    double M = 1000000;
 
@@ -30677,7 +30679,7 @@ int SolverMIP::criaRestricaoCustoCorpoDocente()
          // corresponde ao lado direito da desigualdade no modelo )
          nnz = mapProfessorVariaveis[ professor ];
 
-         OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+         OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 
          // Procura pela variável 'cd' do professor
          v_find.reset();
@@ -30694,7 +30696,7 @@ int SolverMIP::criaRestricaoCustoCorpoDocente()
          VariableOp v = vit->first;
 
          // Insere a variável 'cd' nas restrições
-         row.insert( vit->second, 1.0 );
+         row.insert( vit->second, -1000.0 );
 
          // Cada varíável 'y' do professor
          // insere um índice nas restrições
@@ -30740,6 +30742,12 @@ int SolverMIP::criaRestricaoRelacionaVariavelXDiaProf()
 			vit++;
 			continue;
 		}
+
+      if ( vOp.getProfessor() == NULL )
+      {
+         vit++;
+         continue;
+      }
 
 		Professor *professor = vOp.getProfessor();
 		int dia = vOp.getHorario()->getDia();
@@ -31718,7 +31726,7 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
 {
    int restricoes = 0;
    int nnz = 0;
-   double rhs = 1.0;
+   double rhs = 0.0;
    char name[ 200 ];
    double M = 1000000;
 
@@ -31772,7 +31780,7 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
             continue;
          }
 
-         OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+         OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
 
          // Procura pela variável 'l' do professor
          v_find.reset();
@@ -31789,7 +31797,7 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
          VariableOp v = vit->first;
 
          // Insere a variável 'l' nas restrições
-         row.insert( vit->second, 1.0 );
+         row.insert( vit->second, -1000.0 );
          ///////
 
          // Cada varíável 'y' do professor

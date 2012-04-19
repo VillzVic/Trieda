@@ -412,7 +412,7 @@ std::string ConstraintOp::toString()
 
    if ( professor != NULL )
    {
-      ss << "_Prof" << professor->getIdOperacional();
+      ss << "_Prof" << professor->getId();
    }
 
    if ( curso != NULL )
