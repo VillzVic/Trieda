@@ -45,6 +45,8 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	private ToggleImageButton sexCB;
 	private ToggleImageButton sabCB;
 	private ToggleImageButton domCB;
+	
+	private Map<Integer, Boolean> checkHeader;
 
 	private boolean selectDefault = false;
 	private String horarioAulaIdPropertyName;
@@ -58,6 +60,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 
 		this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
 		this.horarioAulaIdPropertyName = horarioAulaIdPropertyName;
+		this.checkHeader = new HashMap<Integer, Boolean>();
 
 		setHeaderVisible( false );
 		setBodyBorder( false );
@@ -186,6 +189,9 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 				Boolean flag = ( ( model == null ) ? false : (Boolean) model.get( property ) );
 				modelCenario.set( property, ( model == null ) ? false : model.get( property ) );
 
+				checkColumnUpdate(colIndex, rowIndex, flag);
+				if((rowIndex + 1) == store.getModels().size()) checkColumn(colIndex);
+				
 				if ( isSelectDefault() )
 				{
 					modelCenario.set( property, true );
@@ -221,6 +227,14 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 		list.add( createColumnConfig( "sexta",   "Sex", 55, buttonRenderer, this.sexCB ) );
 		list.add( createColumnConfig( "sabado",  "Sab", 55, buttonRenderer, this.sabCB ) );
 		list.add( createColumnConfig( "domingo", "Dom", 55, buttonRenderer, this.domCB ) );
+		
+		this.checkHeader.put(2, false);
+		this.checkHeader.put(3, false);
+		this.checkHeader.put(4, false);
+		this.checkHeader.put(4, false);
+		this.checkHeader.put(5, false);
+		this.checkHeader.put(6, false);
+		this.checkHeader.put(7, false);
 
 		return list;
 	}
@@ -378,6 +392,20 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	public void setSelectDefault( boolean selectDefault )
 	{
 		this.selectDefault = selectDefault;
+	}
+	
+	private void checkColumnUpdate(int col, int row, boolean value){
+		if(row == 0) this.checkHeader.put(col, value);
+		else  this.checkHeader.put(col, this.checkHeader.get(col) && value);
+	}
+	
+	private void checkColumn(int col){
+		ToggleImageButton[] tibs = {null, null, segCB, terCB, quaCB, quiCB, sexCB, sabCB, domCB};
+		ToggleImageButton tib = tibs[col];
+		if(this.checkHeader.get(col)){
+			tib.toggle(true);
+			tib.fireEvent(Events.Select);
+		}
 	}
 	
 	public void unCheckAllHeaders(){
