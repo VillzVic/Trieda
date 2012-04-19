@@ -462,7 +462,7 @@ void SolverMIP::carregaVariaveisSolucaoTatico( int campusId )
    }
 }
 
-void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno( int campusId )
+void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno( int campusId, int prioridade )
 {
    double * xSol = NULL;
    VariableTaticoHash::iterator vit;
@@ -505,6 +505,9 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno( int campusId )
    char solFilename[1024], id[100];
    strcpy( solFilename, "solucaoTatico" );
    _itoa_s( campusId, id, 100, 10 );
+   strcat( solFilename, id );
+   _itoa_s( prioridade, id, 100, 10 );
+   strcat( solFilename, "_P" );
    strcat( solFilename, id );
    strcat( solFilename, ".txt" );
 
@@ -2113,7 +2116,7 @@ int SolverMIP::solvePreTatico( int campusId, int prioridade )
 }
 
 
-int SolverMIP::solveTaticoBasico( int campusId )
+int SolverMIP::solveTaticoBasico( int campusId, int prioridade  )
 {
    int varNum = 0;
    int constNum = 0;
@@ -2150,6 +2153,9 @@ int SolverMIP::solveTaticoBasico( int campusId )
    char lpName[1024], id[100];
    strcpy( lpName, "SolverTrieda" );
    _itoa_s( campusId, id, 100, 10 ); // converte o valor em campusId para string, armazenando-o em id
+   strcat( lpName, id );
+   _itoa_s( prioridade, id, 100, 10 );
+   strcat( lpName, "_P" );
    strcat( lpName, id );
 
    if ( problemData->parametros->funcao_objetivo == 0
@@ -4656,28 +4662,38 @@ int SolverMIP::solveTaticoPorCampus()
 
 			std::cout<<"\n------------------------------Tatico------------------------------\n";
 
-			statusTatico = solveTaticoBasico( campusId );
+			statusTatico = solveTaticoBasico( campusId, P );
 
 			if ( problemData->parametros->otimizarPor == "BLOCOCURRICULAR" )
 				carregaVariaveisSolucaoTatico( campusId );
 			if ( problemData->parametros->otimizarPor == "ALUNO" )		
-				carregaVariaveisSolucaoTaticoPorAluno( campusId );
+				carregaVariaveisSolucaoTaticoPorAluno( campusId, P );
 
 			mudaCjtSalaParaSala();
 			
-			if ( P + 1 <= n_prioridades )
+			statusTatico = ( statusTatico && statusPre );
+
+			if ( problemData->listSlackDemandaAluno.size() == 0 )
+			{
+				break;
+			}
+			else if ( P + 1 <= n_prioridades )
 			{
 				std::cout << "\nAtualizacao de demandas de prioridade " << P + 1 << "...\n";
 
 				problemData->atualizaDemandas( P+1, campusId );
-				
-
 			}
-
-			statusTatico = ( statusTatico && statusPre );
 		}
 
 		problemData->listSlackDemandaAluno.clear(); // Caso seja util ter isso depois, entao tem que fazer um map com campus
+
+        
+		// Preenchendo a estrutura "atendimento_campus" com a saída.
+		if ( problemData->parametros->otimizarPor == "BLOCOCURRICULAR" )
+			 getSolutionTatico();
+		else if ( problemData->parametros->otimizarPor == "ALUNO" )
+			 getSolutionTaticoPorAluno();
+
 
 		status = ( status && statusTatico );
 	}
@@ -4822,7 +4838,12 @@ int SolverMIP::solve()
          // Preenche as classes do output operacional
          preencheOutputOperacionalMIP( problemSolution );
       }
+	   
+	  getSolutionOperacionalMIP();
+
    }
+   
+   relacionaAlunosDemandas();
 
    //buscaLocalTempoDeslocamentoSolucao();
 
@@ -6376,7 +6397,7 @@ int SolverMIP::cria_preVariavel_alunos( int campusId )
 										double valorCredito = itOferta->getReceita();
 										int numCreditos = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
 				
-										coef = 10 * numCreditos * valorCredito;
+										coef = 100 * numCreditos * valorCredito;
 									}
 									else if ( problemData->parametros->funcao_objetivo == 1 )
 									{
@@ -7192,21 +7213,12 @@ int SolverMIP::cria_preVariavel_folga_prioridade_inf( int campusId, int prior )
 
 		if ( vHashPre.find( v ) == vHashPre.end() )
 		{
-			vHashPre[v] = lp->getNumCols();
-
-			double coef = 0.0;
-			if ( problemData->parametros->funcao_objetivo == 0 )
-			{
-				coef = -600.0;
-			}
-			else if ( problemData->parametros->funcao_objetivo == 1 )
-			{
-				coef = 600.0;
-			}									
+			vHashPre[v] = lp->getNumCols();					
 
 			double lowerBound = 0.0;
 			double upperBound = 0.0;
-			
+			int totalCreditos = 0;
+
 			ITERA_GGROUP_LESSPTR( itAlunoDem, aluno->demandas, AlunoDemanda )
 			{
 				if ( itAlunoDem->getPrioridade() != prior )
@@ -7214,9 +7226,24 @@ int SolverMIP::cria_preVariavel_folga_prioridade_inf( int campusId, int prior )
 
 				int nCreds = itAlunoDem->demanda->disciplina->getTotalCreditos();
 				int tempo = itAlunoDem->demanda->disciplina->getTempoCredSemanaLetiva();
+				totalCreditos += nCreds;
 
 				upperBound += nCreds*tempo;
 			}
+			
+			double coef = 0.0;
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{
+				double custo = cp->getCusto();
+							 
+				coef = -50 * custo * totalCreditos;
+			}
+			else if ( problemData->parametros->funcao_objetivo == 1 )
+			{
+				double custo = cp->getCusto();
+
+				coef = 5 * custo * totalCreditos;
+			}	
 
 			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
 
@@ -7256,20 +7283,11 @@ int SolverMIP::cria_preVariavel_folga_prioridade_sup( int campusId, int prior )
 		if ( vHashPre.find( v ) == vHashPre.end() )
 		{
 			vHashPre[v] = lp->getNumCols();
-						
-			double coef = 0.0;
-			if ( problemData->parametros->funcao_objetivo == 0 )
-			{
-				coef = -1000.0;
-			}
-			else if ( problemData->parametros->funcao_objetivo == 1 )
-			{
-				coef = 1000.0;
-			}			
-
+				
 			double lowerBound = 0.0;
 			double upperBound = 0.0;
-			
+			int totalCreditos = 0;
+
 			double cargaHorariaNaoAtendida = 0.0;
 			ITERA_GGROUP_LESSPTR( itAlDemanda, problemData->listSlackDemandaAluno, AlunoDemanda )
 			{
@@ -7278,10 +7296,25 @@ int SolverMIP::cria_preVariavel_folga_prioridade_sup( int campusId, int prior )
 				{
 					int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
 					int duracaoCred = itAlDemanda->demanda->disciplina->getTempoCredSemanaLetiva();
+					totalCreditos += nCreds;
 
 					cargaHorariaNaoAtendida += nCreds*duracaoCred;
 				}
 			}
+						
+			double coef = 0.0;
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{
+				double custo = cp->getCusto();
+							 
+				coef = -100 * custo * totalCreditos;
+			}
+			else if ( problemData->parametros->funcao_objetivo == 1 )
+			{
+				double custo = cp->getCusto();
+
+				coef = 10 * custo * totalCreditos;
+			}	
 
 			upperBound = cargaHorariaNaoAtendida;
 
@@ -10058,6 +10091,12 @@ int SolverMIP::cria_preRestricao_prioridadesDemanda( int campusId, int prior )
 }
 
 
+/* ----------------------------------------------------------------------------------
+	
+							VARIAVEIS TATICO POR ALUNO
+ ---------------------------------------------------------------------------------- */
+
+
 int SolverMIP::criaVariaveisTatico( int campusId )
 {
 	int num_vars = 0;
@@ -11394,7 +11433,7 @@ int SolverMIP::criaVariavelTaticoFolgaDemandaDiscAluno( int campusId )
 
 				if ( problemData->parametros->funcao_objetivo == 0 )
 				{
-					coef = 0.0;
+					coef = - 50 * disciplina->getTotalCreditos() * aluno->getOferta()->getReceita();
 				}
 				else if ( problemData->parametros->funcao_objetivo == 1 )
 				{
@@ -11524,6 +11563,12 @@ int SolverMIP::criaVariavelTaticoAlunoUnidadesDifDia( int campusId )
 
    return numVars;
 }
+
+
+/* ----------------------------------------------------------------------------------
+	
+							RESTRICOES TATICO POR ALUNO
+ ---------------------------------------------------------------------------------- */
 
 
 int SolverMIP::criaRestricoesTatico( int campusId )
@@ -12041,12 +12086,9 @@ int SolverMIP::criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId )
 
 			DateTime fimH = h->getInicio(); // controle
 			fimH.addMinutes( h->getTempoAula() );
-
-
-			if ( ( ( v.getHorarioAulaInicial()->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) ) ||
-				( ( h->getInicio() <= v.getHorarioAulaInicial()->getInicio() ) && ( fimH >  v.getHorarioAulaInicial()->getInicio() ) ) )
+			
+			if ( ( v.getHorarioAulaInicial()->getInicio() <= h->getInicio() ) && ( fimF >  h->getInicio() ) )
 			{
-
 				c.reset();
 				c.setType( ConstraintTatico::C_SALA_HORARIO );
 				c.setCampus( campus );
@@ -13550,10 +13592,12 @@ int SolverMIP::criaRestricaoTaticoDivisaoCredito( int campusId )
 									v.setHorarioAulaFinal( hf );
 									v.setDia( *itDiasLetDisc );
 
+									int nCreds = disciplina->getCalendario()->retornaNroCreditosEntreHorarios(hi,hf);
+
 									it_v = vHashTatico.find( v );
 									if ( it_v != vHashTatico.end() )
 									{
-									   row.insert( it_v->second, 1.0 );
+									   row.insert( it_v->second, nCreds );
 									}
 								}
 							}
@@ -27269,7 +27313,7 @@ int SolverMIP::criaVariaveisOperacional()
    return numVars;
 }
 
-int SolverMIP::criaVariavelProfessorAulaHorario()
+int SolverMIP::criaVariavelProfessorAulaHorario( void )
 {
    int num_vars = 0;
    double coeff = 0.0;
@@ -27290,8 +27334,8 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
             if ( discMinistradaProf != discAula )
             {
                continue;
-            }
-			
+            } 
+
             std::pair< int, int > prof_disc( itProfessor->getId(), discMinistradaProf->getId() );
 						
             // Se o professor e a disciplina da aula em questão se relacionarem:
@@ -27300,7 +27344,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
             {
                continue;
             }
-			
+
             // Retorna lista de horarios possiveis para o professor, aula e sala
             std::list< HorarioDia * > listaHorarios;
 			
@@ -27329,14 +27373,13 @@ int SolverMIP::criaVariavelProfessorAulaHorario()
 
                if ( vHashOp.find( v ) == vHashOp.end() )
                {
-                  vHashOp[ v ] = lp->getNumCols();
+                    vHashOp[ v ] = lp->getNumCols();
 
-                  OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
-                     ( char * )v.toString().c_str() );
+					OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
+						( char * )v.toString().c_str() );
 
-                  lp->newCol( col );
-                  num_vars++;				  
-				  
+					lp->newCol( col );
+					num_vars++;				  
                }
             }
          }
@@ -29065,16 +29108,17 @@ int SolverMIP::criaRestricaoSalaHorario()
 
 		   HorarioAula * horario_aula = horario_dia->getHorarioAula();
 
-		   int nCred2 = vOp.getAula()->getTotalCreditos();
-		   int duracao = vOp.getDisciplina()->getTempoCredSemanaLetiva();
 		   DateTime inicio = horario_aula->getInicio();
-		   DateTime dt2Inicio = vOp.getHorarioAula()->getInicio();
 		   DateTime fim = horario_aula->getFinal();
-         HorarioAula *horarioAulaFim = vOp.getHorarioAula();
-         for (int k = 1; k < nCred2; k++)
-         {
-            horarioAulaFim = horarioAulaFim->getCalendario()->getProximoHorario(horarioAulaFim);
-         }
+
+		   int nCred2 = vOp.getAula()->getTotalCreditos();
+		   int duracao = vOp.getDisciplina()->getTempoCredSemanaLetiva();			
+		   DateTime dt2Inicio = vOp.getHorarioAula()->getInicio();
+		   HorarioAula *horarioAulaFim = vOp.getHorarioAula();
+		   for (int k = 1; k < nCred2; k++)
+           {
+			   horarioAulaFim = horarioAulaFim->getCalendario()->getProximoHorario(horarioAulaFim);
+		   }
 		   DateTime dt2Fim = horarioAulaFim->getFinal();
 
 		   if (  ( vOp.getHorarioAula() != horario_aula ) &&				    

@@ -166,9 +166,9 @@ int main( int argc, char** argv )
 		 
 		 solver->solve();
 
-		 outTestFile << "Getting solution..." <<endl;
+		 //outTestFile << "Getting solution..." <<endl;
 
-         solver->getSolution( solution );
+         //solver->getSolution( solution );
 
 		 outTestFile << "Deleting solver and dataLoader..." <<endl;
 

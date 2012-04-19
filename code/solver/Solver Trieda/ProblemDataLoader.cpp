@@ -4188,8 +4188,8 @@ void ProblemDataLoader::relacionaBlocoCurricularAulas()
          }
          else
          {
-            std::cout << "Na funcao <ProblemDataLoader::relacionaBlocoCurricularAulas()> "
-                      << "algum par <curso,disciplina> nao foi encontrado na estrutura "
+            std::cout << "\nNa funcao <ProblemDataLoader::relacionaBlocoCurricularAulas()> "
+                      << "algum trio <curso,curriculo,disciplina> nao foi encontrado na estrutura "
                       << "<mapCursoDisciplina_BlocoCurricular>." << std::endl;
 
             exit( 1 );

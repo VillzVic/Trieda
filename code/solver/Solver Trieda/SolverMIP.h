@@ -348,7 +348,7 @@ public:
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
    void carregaVariaveisSolucaoTatico( int campusId );
-   void carregaVariaveisSolucaoTaticoPorAluno( int campusId );
+   void carregaVariaveisSolucaoTaticoPorAluno( int campusId, int prioridade  );
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );
    void preencheMapAtendimentoAluno();
@@ -356,7 +356,7 @@ public:
    int solveTaticoPorCampus();
    int solveTatico( int campusId );
    int solvePreTatico( int campusId, int prioridade );
-   int solveTaticoBasico( int campusId );
+   int solveTaticoBasico( int campusId, int prioridade );
    void converteCjtSalaEmSala();
    void mudaCjtSalaParaSala();
    void separaDisciplinasEquivalentes();
