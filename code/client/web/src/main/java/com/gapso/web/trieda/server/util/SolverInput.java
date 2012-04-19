@@ -1975,7 +1975,7 @@ public class SolverInput
 			if (!at.getOferta().getTurno().equals(this.parametro.getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
 				continue;
 			}
-			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico());
+			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda());
 		}
 	}
 
@@ -2179,7 +2179,7 @@ public class SolverInput
 
 	private ItemAtendimentoTaticoSolucao createItemAtendimentoTaticoSolucao(
 		Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina, Disciplina disciplinaSubstituta,
-		int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos )
+		int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos, Set<AlunoDemanda> alunosDemanda)
 	{
 		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao
 			= getItemAtendimentoDiaSemanaSolucao( sala, semana );
@@ -2194,6 +2194,20 @@ public class SolverInput
 		atOfertaSolucao.setDisciplinaId( disciplina.getId().intValue() );
 		atOfertaSolucao.setQuantidade( quantidade );
 		atOfertaSolucao.setTurma( turma );
+		
+		List<AlunoDemanda> listAlunoDemanda = new ArrayList<AlunoDemanda>(alunosDemanda);
+		Collections.sort(listAlunoDemanda, new Comparator<AlunoDemanda>(){
+			@Override
+			public int compare(AlunoDemanda o1, AlunoDemanda o2){
+				return o1.getId().compareTo(o2.getId());
+			}
+		});
+		
+		GrupoIdentificador alunosDemandasAtendidas = this.of.createGrupoIdentificador();
+		for(AlunoDemanda alunoDemanda : listAlunoDemanda){
+			alunosDemandasAtendidas.getId().add(alunoDemanda.getId().intValue());
+		}
+		atOfertaSolucao.setAlunosDemandasAtendidas(alunosDemandasAtendidas);
 
 		ItemAtendimentoTaticoSolucao atTaticoSolucao
 			= this.of.createItemAtendimentoTaticoSolucao();

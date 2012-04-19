@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.gapso.web.trieda.server.xml.input.GrupoIdentificador;
+
 
 /**
  * <p>Java class for ItemAtendimentoOfertaSolucao complex type.
@@ -43,7 +45,8 @@ import javax.xml.bind.annotation.XmlType;
     "disciplinaSubstitutaId",
     "disciplinaId",
     "quantidade",
-    "turma"
+    "turma",
+    "alunosDemandasAtendidas"
 })
 public class ItemAtendimentoOfertaSolucao {
 
@@ -53,6 +56,7 @@ public class ItemAtendimentoOfertaSolucao {
     protected int quantidade;
     @XmlElement(required = true)
     protected String turma;
+    protected GrupoIdentificador alunosDemandasAtendidas;
 
     /**
      * Gets the value of the ofertaCursoCampiId property.
@@ -148,6 +152,30 @@ public class ItemAtendimentoOfertaSolucao {
      */
     public void setTurma(String value) {
         this.turma = value;
+    }
+    
+    /**
+     * Gets the value of the alunosDemandasAtendidas property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public GrupoIdentificador getAlunosDemandasAtendidas() {
+        return alunosDemandasAtendidas;
+    }
+
+    /**
+     * Sets the value of the alunosDemandasAtendidas property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public void setAlunosDemandasAtendidas(GrupoIdentificador alunosDemandasAtendidas) {
+        this.alunosDemandasAtendidas = alunosDemandasAtendidas;
     }
 
 }
