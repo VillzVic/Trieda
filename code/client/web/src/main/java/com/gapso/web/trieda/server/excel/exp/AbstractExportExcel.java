@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -16,10 +18,15 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.gapso.trieda.domain.Cenario;
@@ -28,11 +35,9 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.google.gwt.dev.util.collect.HashSet;
 
-public abstract class AbstractExportExcel
-	implements IExportExcel
-{
-	protected List< String > errors;
-	protected List< String > warnings;
+public abstract class AbstractExportExcel implements IExportExcel {
+	protected List<String> errors;
+	protected List<String> warnings;
 	private boolean autoSizeColumns;
 	private Cenario cenario;
 	private TriedaI18nConstants i18nConstants;
@@ -41,6 +46,8 @@ public abstract class AbstractExportExcel
 	protected InstituicaoEnsino instituicaoEnsino;
 	private CreationHelper factory;
 	private Drawing drawing;
+	private Map<String,Map<String,Map<String,String>>> hyperlinksMap;
+	private CellStyle hlinkStyle;
 
 	protected AbstractExportExcel(boolean autoSizeColumns, String sheetName, Cenario cenario,
 		TriedaI18nConstants i18nConstants,
@@ -56,6 +63,7 @@ public abstract class AbstractExportExcel
 
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
+		this.hyperlinksMap = new HashMap<String,Map<String,Map<String,String>>>();
 	}
 
 	protected abstract String getPathExcelTemplate();
@@ -125,6 +133,30 @@ public abstract class AbstractExportExcel
 	public List< String > getWarnings()
 	{
 		return this.warnings;
+	}
+	
+	@Override
+	public Map<String,Map<String,Map<String,String>>> getHyperlinksMap() {
+		return this.hyperlinksMap;
+	}
+	
+	@Override
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {}
+	
+	protected void registerHyperlink(String sheetTarget, String sheetOrigin, String key, String hyperlink) {
+		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(sheetTarget);
+		if (mapLevel2 == null) {
+			mapLevel2 = new HashMap<String,Map<String,String>>();
+			hyperlinksMap.put(sheetTarget,mapLevel2);
+		}
+		
+		Map<String,String> mapLevel3 = mapLevel2.get(sheetOrigin);
+		if (mapLevel3 == null) {
+			mapLevel3 = new HashMap<String,String>();
+			mapLevel2.put(sheetOrigin,mapLevel3);
+		}
+		
+		mapLevel3.put(key,hyperlink);
 	}
 	
 	protected String getSheetName() {
@@ -269,9 +301,7 @@ public abstract class AbstractExportExcel
 		cell.setCellStyle( style );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet,
-		HSSFCellStyle style, String value, String comment )
-	{
+	protected void setCell(int row, int col, HSSFSheet sheet, HSSFCellStyle style, String value, String comment) {
 		HSSFCell cell = getCell( row, col, sheet );
 		cell.setCellValue( new HSSFRichTextString( value ) );
 
@@ -291,6 +321,33 @@ public abstract class AbstractExportExcel
 
 		cellComment.setString(factory.createRichTextString(comment));
 		cell.setCellStyle(style);
+	}
+	
+	protected void setCellWithHyperlink(int row, int col, HSSFSheet sheet, String value, String hyperlink, boolean withHyperlinkStyle) {
+		HSSFCell cell = getCell(row,col,sheet);
+		if (value != null) {
+			cell.setCellValue(new HSSFRichTextString(value));
+		}
+		
+		if (withHyperlinkStyle) {
+			if (hlinkStyle == null) {
+				Workbook wb = sheet.getWorkbook();
+				hlinkStyle = wb.createCellStyle();
+				Font hlinkFont = wb.createFont();
+				hlinkFont.setUnderline(Font.U_SINGLE);
+				hlinkFont.setColor(IndexedColors.BLUE.getIndex());
+				hlinkStyle.setFont(hlinkFont);
+			}
+			cell.setCellStyle(hlinkStyle);
+		}
+		
+		Hyperlink link = factory.createHyperlink(Hyperlink.LINK_DOCUMENT);
+		link.setAddress(hyperlink);
+		cell.setHyperlink(link);
+	}
+	
+	protected void setCellWithHyperlink(int row, int col, HSSFSheet sheet, String hyperlink, boolean withHyperlinkStyle) {
+		setCellWithHyperlink(row,col,sheet,null,hyperlink,withHyperlinkStyle);
 	}
 
 	protected void setCell( int row, int col, HSSFSheet sheet, HSSFCellStyle style,

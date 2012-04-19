@@ -7,7 +7,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -34,17 +38,20 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
 
 public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 	RelatorioVisaoSalaFiltro relatorioFiltro;
+	private List<TrioDTO<Integer,Integer,String>> hyperlinkInfo;
 	
 	public RelatorioVisaoSalaExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino)
 	{
 		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 	
 	public RelatorioVisaoSalaExportExcel(boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
 	{
 		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino);
+		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 
 	protected String getReportSheetName(){
@@ -102,6 +109,11 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		atdRelatorioList.addAll(listAtendOpDTO);
 
 		return !atdRelatorioList.isEmpty();
+	}
+	
+	@Override
+	protected boolean fillInExcel(HSSFWorkbook workbook){
+		return this.<List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>>>fillInExcelImpl(workbook);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -208,10 +220,43 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 			}				
 		}
 	}
+	
+	@Override
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {
+		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName());
+		if (mapLevel2 != null && !mapLevel2.isEmpty()) {
+			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			for (Entry<String,Map<String,String>> entry : mapLevel2.entrySet()) {
+				String cellValue = entry.getKey();
+				if (cellValue.equals(ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName())) { 
+					for (TrioDTO<Integer,Integer,String> trio : hyperlinkInfo) {
+						String cellHyperlink = entry.getValue().get(trio.getTerceiro());
+						if (cellHyperlink != null) {
+							setCellWithHyperlink(trio.getPrimeiro(),trio.getSegundo(),sheet,cellHyperlink,false);
+						}
+					}
+				}
+			}
+		}
+		hyperlinkInfo.clear();
+	}
 
 	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
 		boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
 	{
+		registerHyperlink(
+			ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName(),
+			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName(),
+			sala.getCodigo(), 
+			"'"+ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName()+"'!B"+row
+		);
+		registerHyperlink(
+			ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName(),
+			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName(),
+			sala.getCodigo(), 
+			"'"+ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName()+"'!B"+row
+		);
+			
 		// escreve cabeçalho da grade horária da sala
 		row = writeHeader(getRowsHeadersPairs(sala, turno), row, ehTatico);
 		
@@ -228,7 +273,12 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		else aulas.addAll(atendimentos);
 		List<AtendimentoRelatorioDTO> aulasParaVisaoSala = atendimentosService.uneAulasQuePodemSerCompartilhadas(aulas);
 		
-		return writeAtendimento(aulasParaVisaoSala, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+		return writeAulas(aulasParaVisaoSala, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+	}
+	
+	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {
+		// informação para hyperlink
+		hyperlinkInfo.add(TrioDTO.create(row,col,(aula.isProfessorVirtual() ? aula.getProfessorVirtualId().toString()+"#" : aula.getProfessorId().toString())));
 	}
 	
 	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Sala sala, Turno turno){

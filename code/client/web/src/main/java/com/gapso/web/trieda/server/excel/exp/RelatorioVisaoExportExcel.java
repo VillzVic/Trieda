@@ -109,15 +109,14 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	protected abstract <T> boolean getAtendimentosRelatorioDTOList(T structureControl);
 	protected abstract <T> void processStructureReportControl(T structureControl);
 	
-	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook){
-		return this.fillInExcelImpl(workbook);
+	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {
+		
 	}
 	
 	protected <T> boolean fillInExcelImpl(HSSFWorkbook workbook){
 		boolean result = false;
 		
-		T structureControl = getStructureReportControl();
+		T structureControl = this.<T>getStructureReportControl();
 		
 		if(getAtendimentosRelatorioDTOList(structureControl)){
 			sheet = workbook.getSheet(this.getSheetName());
@@ -136,7 +135,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		return result;
 	}
 	
-	protected int writeAtendimento(List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, boolean ehTatico, 
+	protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean ehTatico, 
 		List<String> labelsDasLinhasDaGradeHoraria)
 	{
 		int initialRow = row;
@@ -169,37 +168,37 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		}
 
 		// agrupa as aulas por dia da semana
-		Map<Integer,List<AtendimentoRelatorioDTO>> diaSemanaToAtendimentosMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
-		for(AtendimentoRelatorioDTO atendimento : atendimentos){
-			List<AtendimentoRelatorioDTO> atendimentosDoDia = diaSemanaToAtendimentosMap.get(atendimento.getSemana());
-			if(atendimentosDoDia == null){
-				atendimentosDoDia = new ArrayList<AtendimentoRelatorioDTO>();
-				diaSemanaToAtendimentosMap.put(atendimento.getSemana(), atendimentosDoDia);
+		Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
+		for(AtendimentoRelatorioDTO aula : aulas){
+			List<AtendimentoRelatorioDTO> aulasDoDia = colunaGradeHorariaToAulasMap.get(aula.getSemana());
+			if(aulasDoDia == null){
+				aulasDoDia = new ArrayList<AtendimentoRelatorioDTO>();
+				colunaGradeHorariaToAulasMap.put(aula.getSemana(), aulasDoDia);
 			}
-			atendimentosDoDia.add(atendimento);
+			aulasDoDia.add(aula);
 		}
 
 		// para cada dia da semana, escreve as aulas no excel
-		for (Integer diaSemanaInt : diaSemanaToAtendimentosMap.keySet()) {
-			Semanas diaSemana = Semanas.get(diaSemanaInt);
+		for (Integer colunaGradeHoraria : colunaGradeHorariaToAulasMap.keySet()) {
+			Semanas diaSemana = Semanas.get(colunaGradeHoraria);
 
 			// linha em que a escrita será iniciada
 			row = initialRow;
 			// coluna em que a escrita será iniciada
-			col = (diaSemana == Semanas.DOM) ? 9 : diaSemanaInt + 1;
+			col = (diaSemana == Semanas.DOM) ? 9 : colunaGradeHoraria + 1;
 			
-			List<AtendimentoRelatorioDTO> atendimentosDoDia = diaSemanaToAtendimentosMap.get(diaSemanaInt);
-			if(atendimentosDoDia == null || atendimentosDoDia.isEmpty()) continue;
+			List<AtendimentoRelatorioDTO> aulasDoDia = colunaGradeHorariaToAulasMap.get(colunaGradeHoraria);
+			if(aulasDoDia == null || aulasDoDia.isEmpty()) continue;
 
 			// para cada aula
-			for (AtendimentoRelatorioDTO atendimento : atendimentosDoDia) {
+			for (AtendimentoRelatorioDTO aula : aulasDoDia) {
 				// obtém o estilo que será aplicado nas células que serão desenhadas
-				HSSFCellStyle style = getCellStyle(atendimento);
+				HSSFCellStyle style = getCellStyle(aula);
 				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
-				int linhasDeExcelPorCreditoDaAula = atendimento.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
+				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 				
 				if(!ehTatico){
-					AtendimentoOperacionalDTO aulaOp = (AtendimentoOperacionalDTO) atendimento;
+					AtendimentoOperacionalDTO aulaOp = (AtendimentoOperacionalDTO) aula;
 					int index = labelsDasLinhasDaGradeHoraria.indexOf(aulaOp.getHorarioString());
 					if (index != -1) {
 						row = initialRow + index;
@@ -208,11 +207,11 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 
 				String contentString = "", contentToolTipString = "";
 				try{
-					Method m = atendimento.getClass().getMethod("getContentVisao" + getReportEntity(), ReportType.class);
-					contentString = (String) m.invoke(atendimento, ReportType.EXCEL);
+					Method m = aula.getClass().getMethod("getContentVisao" + getReportEntity(), ReportType.class);
+					contentString = (String) m.invoke(aula, ReportType.EXCEL);
 					
-					m = atendimento.getClass().getMethod("getContentToolTipVisao" + getReportEntity(), ReportType.class);
-					contentToolTipString = (String) m.invoke(atendimento, ReportType.EXCEL);
+					m = aula.getClass().getMethod("getContentToolTipVisao" + getReportEntity(), ReportType.class);
+					contentToolTipString = (String) m.invoke(aula, ReportType.EXCEL);
 				}
 				catch(Exception e){
 					e.printStackTrace();
@@ -221,18 +220,21 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				// escreve célula principal
 				setCell(row, col, sheet, style, HtmlUtils.htmlUnescape(contentString), HtmlUtils.htmlUnescape(contentToolTipString));
 				// une células de acordo com a quantidade de créditos da aula
-				int rowF = row + atendimento.getTotalCreditos() * linhasDeExcelPorCreditoDaAula - 1;
+				int rowF = row + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula - 1;
 				mergeCells(row, rowF, col, col, sheet, style);
+				
+				// fornece a oportunidade das classes concretas executarem algum processamento relacionado com aula durante a escrita da aula
+				onWriteAula(row,col,aula);
 
 				if(ehTatico){
-					row += atendimento.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
+					row += aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
 				}
 			}
 		}
 		
 		return (initialRow + (ehTatico ? labelsDasLinhasDaGradeHoraria.size() : (labelsDasLinhasDaGradeHoraria.size() - 1)) + 1);
 	}
-	
+
 	protected HSSFCellStyle getCellStyle(AtendimentoRelatorioDTO atendimento){
 		HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
 		if(style == null){

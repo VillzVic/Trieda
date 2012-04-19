@@ -46,7 +46,10 @@ public interface AtendimentoRelatorioDTO
 	public String getUnidadeString();
 	public boolean isTatico();
 	public boolean isProfessorVirtual();
+	public Long getProfessorId();
+	public Long getProfessorVirtualId();
 	public String getProfessorString();
+	public String getProfessorVirtualString();
 	public Double getProfessorCustoCreditoSemanal();
 	public String getCompartilhamentoCursosString();
 	public Long getHorarioId();

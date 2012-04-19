@@ -1,7 +1,10 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -81,13 +84,40 @@ public class TRIEDAExportExcel
 
 		Exception exception = null;
 		try {
-			for ( IExportExcel exporter : exporters )
-			{
+			// [sheetTarget -> [sheetOrigin -> [key -> link]]]
+			Map<String,Map<String,Map<String,String>>> hyperlinksMap = new HashMap<String,Map<String,Map<String,String>>>();
+			for (IExportExcel exporter : exporters) {
 				//TODO: MEDIÇÃO PERFORMANCE
-				long start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
-				exporter.export( workbook );
+				double start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
+				exporter.export(workbook);
+				// se necessário, colhe as informações de hyperlinks
+				Map<String,Map<String,Map<String,String>>> localHyperlinksMap = exporter.getHyperlinksMap();
+				if (localHyperlinksMap != null && !localHyperlinksMap.isEmpty()) {
+					for (Entry<String,Map<String,Map<String,String>>> entry : localHyperlinksMap.entrySet()) {
+						String sheetTarget = entry.getKey();
+						
+						Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(sheetTarget);
+						if (mapLevel2 == null) {
+							mapLevel2 = new HashMap<String,Map<String,String>>();
+							hyperlinksMap.put(sheetTarget,mapLevel2);
+						}
+						
+						for (Entry<String,Map<String,String>> entry2 : entry.getValue().entrySet()) {
+							mapLevel2.put(entry2.getKey(),entry2.getValue());
+						}
+					}
+				}
 				//TODO: MEDIÇÃO PERFORMANCE
-				long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos");
+				double time = (System.currentTimeMillis() - start)/1000.0;System.out.println(" tempo = " + time + " segundos");
+			}
+			
+			// escreve hyperlinks
+			for (IExportExcel exporter : exporters) {
+				//TODO: MEDIÇÃO PERFORMANCE
+				double start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
+				exporter.resolveHyperlinks(hyperlinksMap,workbook);
+				//TODO: MEDIÇÃO PERFORMANCE
+				double time = (System.currentTimeMillis() - start)/1000.0;System.out.println(" tempo = " + time + " segundos");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

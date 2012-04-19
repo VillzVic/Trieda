@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
@@ -58,6 +60,11 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	@Override
 	protected void setFilter(ExportExcelFilter filter){
 		this.relatorioFiltro = (RelatorioVisaoAlunoFiltro) filter;
+	}
+	
+	@Override
+	protected boolean fillInExcel(HSSFWorkbook workbook){
+		return this.<Map<Campus, Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>>>>fillInExcelImpl(workbook);
 	}
 	
 	private boolean getAtendimentosRelatorioDTOListByAluno(Campus campus, Turno turno, Set<AlunoDemanda> alunosDemanda,
@@ -196,7 +203,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 			else aulas.addAll(atendimentos);
 			List<AtendimentoRelatorioDTO> aulasParaVisaoSala = atendimentosService.uneAulasQuePodemSerCompartilhadas(aulas);
 			
-			return writeAtendimento(aulasParaVisaoSala, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+			return writeAulas(aulasParaVisaoSala, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
 		}
 		
 		protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Campus campus, Turno turno, Aluno aluno){

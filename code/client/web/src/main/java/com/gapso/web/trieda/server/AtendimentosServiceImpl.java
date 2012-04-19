@@ -58,6 +58,11 @@ import com.google.gwt.dev.util.Pair;
 public class AtendimentosServiceImpl extends RemoteService implements AtendimentosService {
 	private static final long serialVersionUID = -1505176338607927637L;
 	
+	static public interface IAtendimentosServiceDAO {
+		List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO);
+		List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO);
+	}
+	
 	/**
 	 * @param atendimentos lista de atendimentos a serem ordenados pelo horário de início do atendimento
 	 * @return lista de atendimentos ordenados pelo horário de início
@@ -243,11 +248,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return horario;
 	}
 	
-	/**
-	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoCurso(com.gapso.web.trieda.shared.dtos.CurriculoDTO, java.lang.Integer, com.gapso.web.trieda.shared.dtos.TurnoDTO, com.gapso.web.trieda.shared.dtos.CampusDTO, com.gapso.web.trieda.shared.dtos.CursoDTO)
-	 */
-	@Override
-	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro){
+	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro, IAtendimentosServiceDAO dao){
 		// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
 		SextetoDTO<Integer, Integer, Integer, List<AtendimentoRelatorioDTO>, List<Integer>, List<String>> s;
 		ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> parResultante = ParDTO.<List<AtendimentoRelatorioDTO>, List<Integer>>create(new ArrayList<AtendimentoRelatorioDTO>(), null);
@@ -257,7 +258,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// Otimização no modo Tático
 			
 			// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
-			List<AtendimentoTaticoDTO> aulas = buscaNoBancoDadosDTOsDeAtendimentoTatico(filtro.getCurriculoDTO(), filtro.getPeriodo(), filtro.getTurnoDTO(), filtro.getCampusDTO(), filtro.getCursoDTO());
+			List<AtendimentoTaticoDTO> aulas = dao.buscaDTOsDeAtendimentoTatico(filtro.getCurriculoDTO(), filtro.getPeriodo(), filtro.getTurnoDTO(), filtro.getCampusDTO(), filtro.getCursoDTO());
 			// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
 			ParDTO<List<AtendimentoTaticoDTO>,List<Integer>> parDTO = montaEstruturaParaGradeHorariaVisaoCursoTatico(filtro.getTurnoDTO(), aulas);
 			// preenche o par resultante
@@ -267,7 +268,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// Otimização no modo Operacional
 			
 			// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
-			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = buscaNoBancoDadosDTOsDeAtendimentoOperacional(filtro.getCurriculoDTO(), filtro.getPeriodo(), filtro.getTurnoDTO(), filtro.getCampusDTO(), filtro.getCursoDTO());
+			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = dao.buscaDTOsDeAtendimentoOperacional(filtro.getCurriculoDTO(), filtro.getPeriodo(), filtro.getTurnoDTO(), filtro.getCampusDTO(), filtro.getCursoDTO());
 			// processa os atendimentos do operacional e os transforma em aulas
 			List<AtendimentoOperacionalDTO> aulas = extraiAulas(atendimentosOperacionalDTO);
 			// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
@@ -293,6 +294,26 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		return AtendimentoServiceRelatorioResponse.create(s);
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoCurso(com.gapso.web.trieda.shared.dtos.CurriculoDTO, java.lang.Integer, com.gapso.web.trieda.shared.dtos.TurnoDTO, com.gapso.web.trieda.shared.dtos.CampusDTO, com.gapso.web.trieda.shared.dtos.CursoDTO)
+	 */
+	@Override
+	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro){
+		IAtendimentosServiceDAO dao = new IAtendimentosServiceDAO() {
+			@Override
+			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+				return buscaNoBancoDadosDTOsDeAtendimentoTatico(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
+			}
+			
+			@Override
+			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+				return buscaNoBancoDadosDTOsDeAtendimentoOperacional(curriculoDTO,periodo,turnoDTO,campusDTO,cursoDTO);
+			}
+		};
+		
+		return getAtendimentosParaGradeHorariaVisaoCurso(filtro,dao);
 	}
 	
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor){

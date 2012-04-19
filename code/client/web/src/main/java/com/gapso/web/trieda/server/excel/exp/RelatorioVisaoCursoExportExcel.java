@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -20,10 +23,17 @@ import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
+import com.gapso.web.trieda.server.AtendimentosServiceImpl.IAtendimentosServiceDAO;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -34,17 +44,20 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoCursoFiltro
 public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 	private List<Integer> qtdColunasPorDiaSemana;
 	protected RelatorioVisaoCursoFiltro relatorioFiltro;
+	private List<TrioDTO<Integer,Integer,String>> hyperlinkInfo;
 
 	public RelatorioVisaoCursoExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
 			TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
 	{
 		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 	
 	public RelatorioVisaoCursoExportExcel(boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,	InstituicaoEnsino instituicaoEnsino)
 	{
 		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino);
+		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 
 	protected String getReportSheetName(){
@@ -64,44 +77,44 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 	protected void setFilter(ExportExcelFilter filter){
 		this.relatorioFiltro = (RelatorioVisaoCursoFiltro) filter;
 	}
+	
+	@Override
+	protected boolean fillInExcel(HSSFWorkbook workbook){
+		return this.<List<AtendimentoServiceRelatorioResponse>>fillInExcelImpl(workbook);
+	}
 
-	public Set< Map< String, Object > > opcoesBuscaOperacional( Cenario cenario )
-	{
-		List< AtendimentoTatico > atdTaticoList
-			= AtendimentoTatico.findByCenario( this.instituicaoEnsino, cenario );
-
-		List< AtendimentoOperacional > atdOperacionalList
-			= AtendimentoOperacional.findByCenario( this.instituicaoEnsino, cenario );
-
-		List< AtendimentoRelatorioDTO > atdRelatorioList
-			= new ArrayList< AtendimentoRelatorioDTO >(
-				atdTaticoList.size() + atdOperacionalList.size() );
-
-		for ( AtendimentoTatico atdTatico : atdTaticoList )
-		{
-			atdRelatorioList.add(
-				ConvertBeans.toAtendimentoTaticoDTO( atdTatico ) );
+	public Set<Map<String,Object>> opcoesBuscaOperacional(Cenario cenario, Map<String,List<AtendimentoRelatorioDTO>> atendimentosMap) {
+		Set<AtendimentoTatico> atendimentosTatico = cenario.getAtendimentosTaticos();//;AtendimentoTatico.findByCenario( this.instituicaoEnsino, cenario );
+		Set<AtendimentoOperacional> atendimentosOperacional = cenario.getAtendimentosOperacionais();//;AtendimentoOperacional.findByCenario( this.instituicaoEnsino, cenario );
+		
+		List<AtendimentoRelatorioDTO> atendimentos = new ArrayList<AtendimentoRelatorioDTO>(atendimentosTatico.size()+atendimentosOperacional.size());
+		for (AtendimentoTatico atdTatico : atendimentosTatico) {
+			atendimentos.add(ConvertBeans.toAtendimentoTaticoDTO(atdTatico));
+		}
+		for (AtendimentoOperacional atdOperacional : atendimentosOperacional) {
+			atendimentos.add(ConvertBeans.toAtendimentoOperacionalDTO(atdOperacional));
 		}
 
-		for ( AtendimentoOperacional atdOperacional : atdOperacionalList )
-		{
-			atdRelatorioList.add(
-				ConvertBeans.toAtendimentoOperacionalDTO( atdOperacional ) );
-		}
+		Set<Map<String,Object>> opcoes = new HashSet<Map<String,Object>>();
+		for (AtendimentoRelatorioDTO atendimentoRelatorio : atendimentos) {
+			Map<String,Object> opcao = new HashMap<String,Object>();
 
-		Set< Map< String, Object > > opcoes = new HashSet< Map< String, Object > >();
+			opcao.put("CurriculoDTO",atendimentoRelatorio.getCurriculoId());
+			Integer periodo = Integer.valueOf(atendimentoRelatorio.getPeriodoString());
+			opcao.put("Periodo",periodo);
+			opcao.put("TurnoDTO",atendimentoRelatorio.getTurnoId());
+			opcao.put("CampusDTO",atendimentoRelatorio.getCampusId());
+			opcao.put("CursoDTO",atendimentoRelatorio.getCursoId());
 
-		for ( AtendimentoRelatorioDTO atendimentoRelatorio : atdRelatorioList )
-		{
-			Map< String, Object > opcao = new HashMap< String, Object >();
-
-			opcao.put( "CurriculoDTO", atendimentoRelatorio.getCurriculoId() );
-			opcao.put( "Periodo", Integer.valueOf( atendimentoRelatorio.getPeriodoString() ) );
-			opcao.put( "TurnoDTO", atendimentoRelatorio.getTurnoId() );
-			opcao.put( "CampusDTO", atendimentoRelatorio.getCampusId() );
-			opcao.put( "CursoDTO", atendimentoRelatorio.getCursoId() );
-
-			opcoes.add( opcao );
+			opcoes.add(opcao);
+			
+			String key = atendimentoRelatorio.getCurriculoId() + "-" + periodo + "-" + atendimentoRelatorio.getTurnoId() + "-" + atendimentoRelatorio.getCampusId() + "-" + atendimentoRelatorio.getCursoId();
+			List<AtendimentoRelatorioDTO> atendimentosDaKey = atendimentosMap.get(key);
+			if (atendimentosDaKey == null) {
+				atendimentosDaKey = new ArrayList<AtendimentoRelatorioDTO>();
+				atendimentosMap.put(key,atendimentosDaKey);
+			}
+			atendimentosDaKey.add(atendimentoRelatorio);
 		}
 
 		return opcoes;
@@ -136,43 +149,93 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 
 	@SuppressWarnings("unchecked")
 	protected <T> boolean getAtendimentosRelatorioDTOList(T mapControlT){
-		List<AtendimentoServiceRelatorioResponse> atendimentosInfo = 
-			(List<AtendimentoServiceRelatorioResponse>) mapControlT;
-	
 		Cenario cenario = getCenario();
-		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-		Set<Map<String,Object>> opcoes = opcoesBuscaOperacional(cenario);
-
+		
+		// cria estruturas auxiliares
+		// [CurriculoId -> Curriculo]
+		Map<Long,Curriculo> curriculoIdToCurriculoMap = new HashMap<Long,Curriculo>();
+		for (Curriculo curriculo : cenario.getCurriculos()) {
+			curriculoIdToCurriculoMap.put(curriculo.getId(),curriculo);
+		}
+		// [TurnoId -> Turno]
+		Map<Long,Turno> turnoIdToTurnoMap = new HashMap<Long,Turno>();
+		for (Turno turno : cenario.getTurnos()) {
+			turnoIdToTurnoMap.put(turno.getId(),turno);
+		}
+		// [CampusId -> Campus]
+		Map<Long,Campus> campusIdToCampusMap = new HashMap<Long,Campus>();
+		for (Campus campus : cenario.getCampi()) {
+			campusIdToCampusMap.put(campus.getId(),campus);
+		}
+		// [CursoId -> Curso]
+		Map<Long,Curso> cursoIdToCursoMap = new HashMap<Long,Curso>();
+		for (Curso curso : cenario.getCursos()) {
+			cursoIdToCursoMap.put(curso.getId(),curso);
+		}
+		Map<String,List<AtendimentoRelatorioDTO>> atendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+		
+		Set<Map<String,Object>> opcoes = opcoesBuscaOperacional(cenario,atendimentosMap);
 		if (this.relatorioFiltro != null) {
 			opcoes = this.filtraAtendimentos(opcoes);
 		}
+	
+		final Map<String,List<AtendimentoRelatorioDTO>> finalAtendimentosMap = atendimentosMap;
+		IAtendimentosServiceDAO dao = new IAtendimentosServiceDAO() {
+			@Override
+			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+				List<AtendimentoTaticoDTO> atendimentosTaticoDTO = new ArrayList<AtendimentoTaticoDTO>();
+				String key = curriculoDTO.getId() + "-" + periodo + "-" + turnoDTO.getId() + "-" + campusDTO.getId() + "-" + cursoDTO.getId();
+				List<AtendimentoRelatorioDTO> atendimentosDaKey = finalAtendimentosMap.get(key);
+				if (atendimentosDaKey != null) {
+					for (AtendimentoRelatorioDTO at : atendimentosDaKey) {
+						atendimentosTaticoDTO.add((AtendimentoTaticoDTO)at);
+					}
+				}				
+				return atendimentosTaticoDTO;
+			}
+			
+			@Override
+			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {
+				List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = new ArrayList<AtendimentoOperacionalDTO>();
+				String key = curriculoDTO.getId() + "-" + periodo + "-" + turnoDTO.getId() + "-" + campusDTO.getId() + "-" + cursoDTO.getId();
+				List<AtendimentoRelatorioDTO> atendimentosDaKey = finalAtendimentosMap.get(key);
+				if (atendimentosDaKey != null) {
+					for (AtendimentoRelatorioDTO at : atendimentosDaKey) {
+						atendimentosOperacionalDTO.add((AtendimentoOperacionalDTO)at);
+					}
+				}				
+				return atendimentosOperacionalDTO;
+			}
+		};
 
+		List<AtendimentoServiceRelatorioResponse> aulasInfo = (List<AtendimentoServiceRelatorioResponse>) mapControlT;
+		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 		for (Map<String, Object> opcao : opcoes) {
 			RelatorioVisaoCursoFiltro filtro = new RelatorioVisaoCursoFiltro();
 			
-			Long curriculoId = (Long) opcao.get("CurriculoDTO");
-			Curriculo curriculo = Curriculo.find(curriculoId, this.instituicaoEnsino);
+			Long curriculoId = (Long)opcao.get("CurriculoDTO");
+			Curriculo curriculo = curriculoIdToCurriculoMap.get(curriculoId);//Curriculo.find(curriculoId,this.instituicaoEnsino);
 			filtro.setCurriculoDTO(ConvertBeans.toCurriculoDTO(curriculo));
 
 			filtro.setPeriodo((Integer) opcao.get("Periodo"));
 
-			Long turnoId = (Long) opcao.get("TurnoDTO");
-			Turno turno = Turno.find(turnoId, this.instituicaoEnsino);
+			Long turnoId = (Long)opcao.get("TurnoDTO");
+			Turno turno = turnoIdToTurnoMap.get(turnoId);//Turno.find(turnoId, this.instituicaoEnsino);
 			filtro.setTurnoDTO(ConvertBeans.toTurnoDTO(turno));
 
-			Long campusId = (Long) opcao.get("CampusDTO");
-			Campus campus = Campus.find(campusId, this.instituicaoEnsino);
+			Long campusId = (Long)opcao.get("CampusDTO");
+			Campus campus = campusIdToCampusMap.get(campusId);//Campus.find(campusId, this.instituicaoEnsino);
 			filtro.setCampusDTO(ConvertBeans.toCampusDTO(campus));
 
-			Long cursoId = (Long) opcao.get("CursoDTO");
-			Curso curso = Curso.find(cursoId, this.instituicaoEnsino);
+			Long cursoId = (Long)opcao.get("CursoDTO");
+			Curso curso = cursoIdToCursoMap.get(cursoId);//Curso.find(cursoId, this.instituicaoEnsino);
 			filtro.setCursoDTO(ConvertBeans.toCursoDTO(curso));
 
-			AtendimentoServiceRelatorioResponse sexteto = service.getAtendimentosParaGradeHorariaVisaoCurso(filtro);
-			atendimentosInfo.add(sexteto);
+			AtendimentoServiceRelatorioResponse sexteto = service.getAtendimentosParaGradeHorariaVisaoCurso(filtro,dao);
+			aulasInfo.add(sexteto);
 		}
 		
-		return !atendimentosInfo.isEmpty();
+		return !aulasInfo.isEmpty();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -182,13 +245,21 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 	
 	@SuppressWarnings("unchecked")
 	protected <T> void processStructureReportControl(T mapControlT){
-		List<AtendimentoServiceRelatorioResponse> atendimentosInfo = 
-			(List<AtendimentoServiceRelatorioResponse>) mapControlT;
+		List<AtendimentoServiceRelatorioResponse> aulasInfo = (List<AtendimentoServiceRelatorioResponse>) mapControlT;
 		// linha a partir da qual a escrita será iniciada no excel
 		int nextRow = this.initialRow;
+		
+		// cria estrutura auxiliares
+		// [OfertaId -> Oferta]
+		Map<Long,Oferta> ofertaIdToOfertaMap = new HashMap<Long,Oferta>();
+		for (Campus campus : getCenario().getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				ofertaIdToOfertaMap.put(oferta.getId(),oferta);
+			}
+		}
 
 		// para cada bloco curricular
-		for(AtendimentoServiceRelatorioResponse sexteto : atendimentosInfo) {
+		for(AtendimentoServiceRelatorioResponse sexteto : aulasInfo) {
 			Integer mdcTemposAula = sexteto.getMdcTemposAula();
 			List<AtendimentoRelatorioDTO> aulas = sexteto.getAtendimentosDTO();
 			List<Integer> qtdColunasPorDiaSemana = sexteto.getQtdColunasPorDiaSemana();
@@ -196,7 +267,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			
 			if(aulas.isEmpty()) continue;
 
-			Oferta oferta = Oferta.find(aulas.get(0).getOfertaId(),this.instituicaoEnsino);
+			Oferta oferta = ofertaIdToOfertaMap.get(aulas.get(0).getOfertaId());//Oferta.find(aulas.get(0).getOfertaId(),this.instituicaoEnsino);
 			Integer periodo = Integer.valueOf(aulas.get(0).getPeriodoString());
 			boolean ehTatico = aulas.get(0) instanceof AtendimentoTaticoDTO;
 
@@ -204,14 +275,46 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 		}
 	}
 	
+	@Override
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {
+		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName());
+		if (mapLevel2 != null && !mapLevel2.isEmpty()) {
+			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			for (Entry<String,Map<String,String>> entry : mapLevel2.entrySet()) {
+				String cellValue = entry.getKey();
+				if (cellValue.equals(ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName())) { 
+					for (TrioDTO<Integer,Integer,String> trio : hyperlinkInfo) {
+						String cellHyperlink = entry.getValue().get(trio.getTerceiro());
+						if (cellHyperlink != null) {
+							setCellWithHyperlink(trio.getPrimeiro(),trio.getSegundo(),sheet,cellHyperlink,false);
+						}
+					}
+				}
+			}
+		}
+		hyperlinkInfo.clear();
+	}
+	
 	private int writeCurso(Oferta oferta, Integer periodo, Integer mdcTemposAula, List<AtendimentoRelatorioDTO> aulas, 
 		List<Integer> qtdColunasPorDiaSemana, int row, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
 	{
+		registerHyperlink(
+			ExcelInformationType.DEMANDAS.getSheetName(),
+			ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName(),
+			oferta.getNaturalKeyString()+"-"+periodo, 
+			"'"+ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName()+"'!B"+row
+		);
+		
 		// escreve cabeçalho da grade horária do bloco curricular
 		this.qtdColunasPorDiaSemana = qtdColunasPorDiaSemana;
 		row = writeHeader(getRowsHeadersPairs(oferta, periodo), row, ehTatico);
 
-		return writeAtendimento(aulas, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+		return writeAulas(aulas, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+	}
+	
+	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {
+		// informação para hyperlink
+		hyperlinkInfo.add(TrioDTO.create(row,col,aula.getSalaString()));
 	}
 	
 	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Oferta oferta, Integer periodo){

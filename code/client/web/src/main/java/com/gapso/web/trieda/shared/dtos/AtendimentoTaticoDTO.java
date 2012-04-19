@@ -613,9 +613,23 @@ public class AtendimentoTaticoDTO
 	}
 
 	@Override
-	public String getProfessorString()
-	{
+	public String getProfessorString() {
 		return "";
+	}
+	
+	@Override
+	public String getProfessorVirtualString() {
+		return "";
+	}
+	
+	@Override
+	public Long getProfessorId() {
+		return null;
+	}
+	
+	@Override
+	public Long getProfessorVirtualId() {
+		return null;
 	}
 
 	@Override
