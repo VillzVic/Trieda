@@ -9,13 +9,11 @@ import com.extjs.gxt.ui.client.widget.form.Field;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
-import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
 public class RelatorioVisaoProfessorFiltro extends RelatorioVisaoFiltro{
 	private static final long serialVersionUID = 1L;
 	private CampusDTO campusDTO;
-	private TurnoDTO turnoDTO;
 	private ProfessorDTO professorDTO;
 	private ProfessorVirtualDTO professorVirtualDTO;
 	
@@ -66,14 +64,6 @@ public class RelatorioVisaoProfessorFiltro extends RelatorioVisaoFiltro{
 
 	public void setCampusDTO(CampusDTO campusDTO){
 		this.campusDTO = campusDTO;
-	}
-
-	public TurnoDTO getTurnoDTO(){
-		return this.turnoDTO;
-	}
-
-	public void setTurnoDTO(TurnoDTO turnoDTO){
-		this.turnoDTO = turnoDTO;
 	}
 
 	public ProfessorDTO getProfessorDTO(){

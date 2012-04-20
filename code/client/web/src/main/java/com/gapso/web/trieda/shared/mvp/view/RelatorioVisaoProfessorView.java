@@ -77,18 +77,18 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		
 		List<Field<?>> rightList = new ArrayList<Field<?>>();
 		
-		
-		
 		if(this.usuario.isAdministrador()){
 			this.professorCB = new ProfessorComboBox(this.campusCB);
 			
 			this.professorVirtualCB = new ProfessorVirtualComboBox(this.campusCB);
+			filtro.addProfessorVirtualValueListener(this.professorVirtualCB);
 			rightList.add(this.professorVirtualCB);
 		}
 		else{
 			this.professorCB = new ProfessorComboBox(usuario.getProfessorId());
 			this.professorCB.setReadOnly(true);
 		}
+		filtro.addProfessorValueListener(this.professorCB);
 		rightList.add(this.professorCB);
 		
 		mapLayout.put(LabelAlign.LEFT, leftList);

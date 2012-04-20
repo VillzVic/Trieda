@@ -43,7 +43,6 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 			@Override
 			public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se){
 				display.getProfessorVirtualComboBox().setValue(null);
-				display.getProfessorComboBox().setValue(se.getSelectedItem());
 			}
 		});
 
@@ -51,7 +50,6 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 			@Override
 			public void selectionChanged(SelectionChangedEvent<ProfessorVirtualDTO> se){
 				display.getProfessorComboBox().setValue(null);
-				display.getProfessorVirtualComboBox().setValue(se.getSelectedItem());
 			}
 		});
 	}

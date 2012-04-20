@@ -113,7 +113,6 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoExportExce
 		// Recupera os dados preenchidos nos filtros
 		if ( this.relatorioFiltro != null )
 		{
-			RelatorioVisaoProfessorFiltro relatorioFiltro = (RelatorioVisaoProfessorFiltro) this.getFilter();
 			Professor professor = (relatorioFiltro.getProfessorDTO() == null ? null :
 				Professor.find(relatorioFiltro.getProfessorDTO().getId(), this.instituicaoEnsino ) );
 
@@ -309,11 +308,8 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoExportExce
 					Professor professor = null;
 					ProfessorVirtual professorVirtual = null;
 
-					if(!b) {
-						professorVirtual = ProfessorVirtual.find(profId, this.instituicaoEnsino);
-					} else {
-						professor = Professor.find(profId, this.instituicaoEnsino);
-					}
+					if(!b) professorVirtual = ProfessorVirtual.find(profId, this.instituicaoEnsino);
+					else professor = Professor.find(profId, this.instituicaoEnsino);
 					
 					nextRow = writeProfessor( this.campus, professor, professorVirtual, turno, listAtendimentos,
 						nextRow, mdcTemposAula, labelsDasLinhasDaGradeHoraria);
