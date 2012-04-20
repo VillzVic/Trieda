@@ -78,22 +78,6 @@ GGroup<HorarioAula*> BlocoCurricular::retornaHorariosDisponiveisNoDiaPorSL( int 
 			}		
 		}
     }
-	
-	/*
-	GGroup<Turno*, LessPtr<Turno>> turnos = curriculo->calendario->turnos;
-	ITERA_GGROUP_LESSPTR(it_turno, turnos, Turno)
-	{
-		GGroup< HorarioAula*, LessPtr<HorarioAula> > horarios = it_turno->horarios_aula;
-
-		ITERA_GGROUP_LESSPTR(it_horarios, horarios, HorarioAula)
-		{
-			if ( ( it_horarios->dias_semana.find(dia) != it_horarios->dias_semana.end() ) &&
-				 ( it_horarios->getCalendario() == sl ) )
-			{
-					horariosNoDiaSL.add( *it_horarios );
-			}
-		}
-	}*/
 	return horariosNoDiaSL;
 }
 

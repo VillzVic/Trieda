@@ -43,6 +43,7 @@ ConstraintOp & ConstraintOp::operator = ( const ConstraintOp & cons )
    this->campus = cons.getCampus();
    this->unidade = cons.getUnidade();
    this->duracaoAula = cons.getDuracaoAula();
+   this->aluno = cons.getAluno();
    
    return *this;
 }
@@ -299,6 +300,22 @@ bool ConstraintOp::operator < ( const ConstraintOp & cons ) const
       return false;
    }
 
+   if( this->getAluno() == NULL && cons.getAluno() != NULL )
+   {
+		return true;
+   }
+   else if( this->getAluno() != NULL && cons.getAluno() == NULL )
+   {
+		return false;
+   }
+	else if( this->getAluno() != NULL && cons.getAluno() != NULL )
+	{
+		if( *this->getAluno() < *cons.getAluno() )
+			return true;
+		else if( *cons.getAluno() < *this->getAluno() )
+			return false;
+	}
+
    return false;
 }
 
@@ -335,6 +352,7 @@ void ConstraintOp::reset()
    this->campus = NULL;
    this->duracaoAula = 0;
    this->unidade = NULL;
+   this->aluno = NULL;
 }
 
 std::string ConstraintOp::toString()
@@ -403,6 +421,8 @@ std::string ConstraintOp::toString()
 		   ss << "C_PROF_HORARIO_MULTIUNID"; break;
 	   case C_MAX_DISC_PROF_CURSO2:
 		   ss <<"C_MAX_DISC_PROF_CURSO2"; break;
+	   case C_ALUNO_HORARIO:
+		   ss <<"C_ALUNO_HORARIO"; break;		   
 
 	   default:
 		  ss << "!";
@@ -514,6 +534,11 @@ std::string ConstraintOp::toString()
    if ( horarioDiaD1 != NULL )
    {
 	   ss << "_HDD1." << horarioDiaD1->getId();
+   }
+
+   if ( aluno != NULL )
+   {
+	   ss << "_Aluno" << aluno->getAlunoId();
    }
 
 

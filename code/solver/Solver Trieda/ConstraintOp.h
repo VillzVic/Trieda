@@ -48,6 +48,7 @@ public:
 	  C_BLOCO_HORARIO_DISC = 29,
 	  C_PROF_HORARIO_MULTIUNID = 30,
 	  C_MAX_DISC_PROF_CURSO2 = 31,
+	  C_ALUNO_HORARIO = 32
    };
 
    /** Default constructor. */
@@ -99,6 +100,7 @@ public:
    Campus* getCampus() const { return this->campus;}
    Unidade* getUnidade() const { return this->unidade;}
    int getDuracaoAula() const { return this->duracaoAula; }
+   Aluno * getAluno() const { return aluno; } 
 
    //==================================================
    // SET METHODS 
@@ -127,6 +129,7 @@ public:
    void setCampus( Campus* cp ) { this->campus = cp;}
    void setUnidade( Unidade* unid ) { this->unidade = unid;}
    void setDuracaoAula( int duracao ) { this->duracaoAula = duracao; }
+   void setAluno ( Aluno *a ) { aluno = a; }
 
 private:
    /** Attribute which defines the constraint type of the instance. */
@@ -146,6 +149,7 @@ private:
    int t; // dia
    Campus* campus;
    Unidade* unidade;
+   Aluno* aluno;
 
    // Horários de aula utilizados no modelo operacional,
    // no critério de minimização de gaps nos horários dos professores

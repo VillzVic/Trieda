@@ -317,6 +317,7 @@ public:
 
    int criaRestricaoSalaHorario( void );
    int criaRestricaoProfessorHorario( void );
+   int criaRestricaoAlunoHorario( void );
    int criaRestricaoBlocoHorario( void );
    int criaRestricaoBlocoHorarioDisc( void );
    int criaRestricaoAlocAula( void );
@@ -344,6 +345,8 @@ public:
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void ); // x15
    int criaRestricaoGapsProfessores( void );
    int criaRestricaoProfHorarioMultiUnid( void );
+
+
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
