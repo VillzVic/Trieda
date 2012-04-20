@@ -101,7 +101,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		   this->nPrioridadesDemanda[ it_campi->getId() ] = 0;   
 	   }
 
-	   // Filtrando alunosDemanda: referencia somente para os alunosDemanda que tiverem prioridade 1
+	   // Filtrando alunosDemanda: referência somente para os alunosDemanda que tiverem prioridade 1
 	   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemandaTotal, AlunoDemanda )
 	   {
 		   int demId = itAlDem->getDemandaId();
@@ -1170,6 +1170,17 @@ Aluno* ProblemData::retornaAluno( int id )
 	{
 		if ( it_aluno->getAlunoId() == id )
 			return *it_aluno;
+	}
+	return NULL;
+}
+
+// Dado o id de um aluno, retorna referencia para o aluno correspondente
+AlunoDemanda* ProblemData::retornaAlunoDemanda( int idAlunoDem )
+{
+	ITERA_GGROUP_LESSPTR( it_aluno_dem, alunosDemandaTotal, AlunoDemanda )
+	{
+		if ( it_aluno_dem->getId() == idAlunoDem )
+			return *it_aluno_dem;
 	}
 	return NULL;
 }

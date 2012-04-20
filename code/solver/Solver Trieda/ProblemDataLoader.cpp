@@ -4029,6 +4029,8 @@ void ProblemDataLoader::criaAulas()
       ITERA_GGROUP( it_atend_campus,
          ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
       {
+		  int campusId = it_atend_campus->getCampusId();
+
          ITERA_GGROUP( it_atend_unidade,
             it_atend_campus->atendimentosUnidades, AtendimentoUnidadeSolucao )
          {
@@ -4081,6 +4083,28 @@ void ProblemDataLoader::criaAulas()
                         std::cout << "Aula com creditos teoricos e praticos maiores que 0.\n";
                         exit( 1 );
                      }
+					 
+					 // Preenche os maps de atendimentos de alunos
+					 Trio< int, int, Disciplina* > trio;
+					 trio.set( campusId, turma, disciplina );
+
+					 ITERA_GGROUP_N_PT( itAlunoDem, atendOferta->alunosDemandasAtendidas, int )
+					 {						 
+						 int alunoDemId = *itAlunoDem;
+
+						 AlunoDemanda *alunoDemanda = problemData->retornaAlunoDemanda( alunoDemId );
+
+						 if ( alunoDemanda == NULL )
+						 {
+							 std::cout<<"\nErro em criaAulas(). AlunoDemanda nao encontrado.\n";
+							 continue;
+						 }
+
+						 Aluno *aluno = problemData->retornaAluno( alunoDemanda->getAlunoId() );
+
+						 problemData->mapAluno_CampusTurmaDisc[aluno].add( trio );					 						
+						 problemData->mapCampusTurmaDisc_AlunosDemanda[trio].add( alunoDemanda );
+					 }
 
                      // Procurando nas aulas cadastradas, se existe
                      // alguma aula que possui os mesmos índices de 
@@ -4148,10 +4172,13 @@ void ProblemDataLoader::criaAulas()
          }
       }
 
-      // O método abaixo só pode ser executado
-      // após a execução dos método de criação 
-      // de blocos curriculares e de criação das aulas.
-      relacionaBlocoCurricularAulas();
+	  if ( problemData->parametros->otimizarPor == "BLOCOCURRICULAR" )
+	  {
+		  // O método abaixo só pode ser executado
+		  // após a execução dos método de criação 
+		  // de blocos curriculares e de criação das aulas.
+		  relacionaBlocoCurricularAulas();
+	  }
    }
 }
 

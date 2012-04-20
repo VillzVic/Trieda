@@ -6281,12 +6281,36 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
   void
   turma (::std::auto_ptr< turma_type > p);
 
+  // alunosDemanda atendidos
+  // 
+  typedef ::GrupoIdentificador alunosDemanda_type;
+  typedef ::xsd::cxx::tree::traits< alunosDemanda_type, char > alunosDemanda_traits;
+
+  const alunosDemanda_type&
+  alunosDemanda () const;
+
+  alunosDemanda_type&
+  alunosDemanda ();
+
+  void
+  alunosDemanda (const alunosDemanda_type& x);
+
+  void
+  alunosDemanda (::std::auto_ptr< alunosDemanda_type > p);
+
   // Constructors.
   //
   ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type&,
                                 const disciplinaId_type&,
                                 const quantidade_type&,
-                                const turma_type&);
+                                const turma_type&,
+								const alunosDemanda_type&);
+
+  ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type& ofertaCursoCampiId,
+                                const disciplinaId_type& disciplinaId,
+                                const quantidade_type& quantidade,
+                                const turma_type& turma,
+							    ::std::auto_ptr< alunosDemanda_type >& alunosDemanda);
 
   ItemAtendimentoOfertaSolucao (const ::xercesc::DOMElement& e,
                                 ::xml_schema::flags f = 0,
@@ -6316,6 +6340,7 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
   disciplinaSubstitutaId_optional disciplinaSubstitutaId_;
   ::xsd::cxx::tree::one< quantidade_type > quantidade_;
   ::xsd::cxx::tree::one< turma_type > turma_;
+  ::xsd::cxx::tree::one< alunosDemanda_type > alunosDemanda_;
 };
 
 class ItemAtendimentoTaticoSolucao: public ::xml_schema::type

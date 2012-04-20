@@ -191,6 +191,9 @@ public:
    // Dado o id de um aluno, retorna referencia para o aluno correspondente
    Aluno* retornaAluno( int /*alunoId*/ );
 
+   // Dado o id de um AlunoDemanda, retorna referencia para o AlunoDemanda correspondente
+   AlunoDemanda* retornaAlunoDemanda( int /*alunoDemId*/ );
+
    // =============================================================================================
    // Estruturas conflitantes !!!
 

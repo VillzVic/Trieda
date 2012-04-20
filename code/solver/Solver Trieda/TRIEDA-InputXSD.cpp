@@ -4735,6 +4735,30 @@ turma (::std::auto_ptr< turma_type > x)
   this->turma_.set (x);
 }
 
+const ItemAtendimentoOfertaSolucao::alunosDemanda_type& ItemAtendimentoOfertaSolucao::
+alunosDemanda () const
+{
+  return this->alunosDemanda_.get ();
+}
+
+ItemAtendimentoOfertaSolucao::alunosDemanda_type& ItemAtendimentoOfertaSolucao::
+alunosDemanda ()
+{
+  return this->alunosDemanda_.get ();
+}
+
+void ItemAtendimentoOfertaSolucao::
+alunosDemanda (const alunosDemanda_type& x)
+{
+  this->alunosDemanda_.set (x);
+}
+
+void ItemAtendimentoOfertaSolucao::
+alunosDemanda (::std::auto_ptr< alunosDemanda_type > x)
+{
+  this->alunosDemanda_.set (x);
+}
+
 
 // ItemAtendimentoTaticoSolucao
 // 
@@ -13999,13 +14023,31 @@ ItemAtendimentoOfertaSolucao::
 ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type& ofertaCursoCampiId,
                               const disciplinaId_type& disciplinaId,
                               const quantidade_type& quantidade,
-                              const turma_type& turma)
+                              const turma_type& turma,
+							  const alunosDemanda_type& alunosDemanda)
 : ::xml_schema::type (),
   ofertaCursoCampiId_ (ofertaCursoCampiId, ::xml_schema::flags (), this),
   disciplinaId_ (disciplinaId, ::xml_schema::flags (), this),
   disciplinaSubstitutaId_ ( ::xml_schema::flags (), this),
   quantidade_ (quantidade, ::xml_schema::flags (), this),
-  turma_ (turma, ::xml_schema::flags (), this)
+  turma_ (turma, ::xml_schema::flags (), this),
+  alunosDemanda_ (alunosDemanda, ::xml_schema::flags (), this)
+{
+}
+
+ItemAtendimentoOfertaSolucao::
+ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type& ofertaCursoCampiId,
+                              const disciplinaId_type& disciplinaId,
+                              const quantidade_type& quantidade,
+                              const turma_type& turma,
+							  ::std::auto_ptr< alunosDemanda_type >& alunosDemanda)
+: ::xml_schema::type (),
+  ofertaCursoCampiId_ (ofertaCursoCampiId, ::xml_schema::flags (), this),
+  disciplinaId_ (disciplinaId, ::xml_schema::flags (), this),
+  disciplinaSubstitutaId_ ( ::xml_schema::flags (), this),
+  quantidade_ (quantidade, ::xml_schema::flags (), this),
+  turma_ (turma, ::xml_schema::flags (), this),
+  alunosDemanda_ (alunosDemanda, ::xml_schema::flags (), this)
 {
 }
 
@@ -14018,7 +14060,8 @@ ItemAtendimentoOfertaSolucao (const ItemAtendimentoOfertaSolucao& x,
   disciplinaId_ (x.disciplinaId_, f, this),
   disciplinaSubstitutaId_ (x.disciplinaSubstitutaId_, f, this),
   quantidade_ (x.quantidade_, f, this),
-  turma_ (x.turma_, f, this)
+  turma_ (x.turma_, f, this),
+  alunosDemanda_ (x.alunosDemanda_, f, this)
 {
 }
 
@@ -14031,7 +14074,8 @@ ItemAtendimentoOfertaSolucao (const ::xercesc::DOMElement& e,
   disciplinaId_ (f, this),
   disciplinaSubstitutaId_ (f, this),
   quantidade_ (f, this),
-  turma_ (f, this)
+  turma_ (f, this),
+  alunosDemanda_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -14108,6 +14152,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // alunosDemanda
+    //
+    if (n.name () == "alunosDemandasAtendidas" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< alunosDemanda_type > r (
+        alunosDemanda_traits::create (i, f, this));
+
+      if (!alunosDemanda_.present ())
+      {
+        this->alunosDemanda_.set (r);
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -14138,6 +14196,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "turma",
       "");
   }
+
+  if (!alunosDemanda_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "alunosDemandasAtendidas",
+      "");
+  }
+
 }
 
 ItemAtendimentoOfertaSolucao* ItemAtendimentoOfertaSolucao::

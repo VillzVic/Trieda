@@ -5140,6 +5140,9 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 
 						ITERA_GGROUP( itAlunoDemanda, alunosDemanda, AlunoDemanda )
 						{
+							if ( itAlunoDemanda->demanda->oferta != oferta )
+								continue;
+
 							if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
 							{
 								int alunoId = itAlunoDemanda->getAlunoId();
@@ -5151,13 +5154,11 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 								if ( alunoDemanda != NULL )
 								{
 									atendimento_oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
-									oferta = alunoDemanda->demanda->oferta; // TODO !!!!!!!!!!!!!!
 								}
 							}
 							else
 							{
 								atendimento_oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
-								oferta = itAlunoDemanda->demanda->oferta; // TODO !!!!!!!!!!!!!!
 							}
 						}
 						// -----

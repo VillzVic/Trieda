@@ -49,6 +49,11 @@ void AtendimentoOfertaSolucao::le_arvore(ItemAtendimentoOfertaSolucao& elem)
 	   disciplinaSubstituidaId = NULL;
     }
 
+	ITERA_NSEQ( itAlunoDemId,elem.alunosDemanda(), id, Identificador )
+    {
+		alunosDemandasAtendidas.add( *itAlunoDemId );
+    }
+
 	ofertaCursoCampiId = elem.ofertaCursoCampiId();
 	quantidade = elem.quantidade();
 	turma = elem.turma();
