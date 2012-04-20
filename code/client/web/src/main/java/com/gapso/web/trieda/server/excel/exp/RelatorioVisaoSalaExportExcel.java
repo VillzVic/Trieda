@@ -278,7 +278,8 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 	
 	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {
 		// informação para hyperlink
-		hyperlinkInfo.add(TrioDTO.create(row,col,(aula.isProfessorVirtual() ? aula.getProfessorVirtualId().toString()+"#" : aula.getProfessorId().toString())));
+		if(!aula.isTatico())
+			hyperlinkInfo.add(TrioDTO.create(row,col,(aula.isProfessorVirtual() ? aula.getProfessorVirtualId().toString()+"#" : aula.getProfessorId().toString())));
 	}
 	
 	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Sala sala, Turno turno){
