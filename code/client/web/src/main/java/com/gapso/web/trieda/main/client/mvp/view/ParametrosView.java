@@ -24,6 +24,7 @@ import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.ParametrosPresenter;
+import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCampiPresenter.ParametrosViewGateway;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -33,7 +34,7 @@ import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class ParametrosView extends MyComposite implements ParametrosPresenter.Display {
+public class ParametrosView extends MyComposite implements ParametrosPresenter.Display, ParametrosViewGateway {
 	private Button submitBt;
 	private ContentPanel form;
 	private GTabItem tabItem;
@@ -638,5 +639,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	@Override
 	public Button getSelecionarCampiButton() {
 		return this.selecionarCampiButton;
+	}
+
+	@Override
+	public void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados) {
+		this.campiLabel.setText(qtdCampiSelecionados == 0 ? "Nenhum campus selecionado" : (qtdCampiSelecionados + " campi selecionado(s)"));
 	}
 }

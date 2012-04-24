@@ -34,12 +34,18 @@ public class SelecionarCampiPresenter implements Presenter {
 		SimpleModal getSimpleModal();
 	}
 	
+	public interface ParametrosViewGateway {
+		void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados);
+	}
+	
 	private Display display;
 	private ParametroDTO parametroDTO;
+	private ParametrosViewGateway parametrosViewGateway;
 	
-	public SelecionarCampiPresenter(ParametroDTO parametroDTO, Display display) {
+	public SelecionarCampiPresenter(ParametroDTO parametroDTO, Display display, ParametrosViewGateway parametrosViewGateway) {
 		this.display = display;
 		this.parametroDTO = parametroDTO;
+		this.parametrosViewGateway = parametrosViewGateway;
 
 		configureProxy();
 		setListeners();
@@ -90,6 +96,7 @@ public class SelecionarCampiPresenter implements Presenter {
 				parametroDTO.getMaximizarNotaAvaliacaoCorpoDocenteList().clear();
 				parametroDTO.getMinimizarCustoDocenteCursosList().clear();
 				display.getSimpleModal().hide();
+				parametrosViewGateway.updateQuantidadeCampiSelecionados(parametroDTO.getCampi().size());
 			}
 		});
 	}

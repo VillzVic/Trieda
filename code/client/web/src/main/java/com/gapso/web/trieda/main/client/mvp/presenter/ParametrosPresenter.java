@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.Radio;
+import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCampiPresenter.ParametrosViewGateway;
 import com.gapso.web.trieda.main.client.mvp.view.CompartilharCursosView;
 import com.gapso.web.trieda.main.client.mvp.view.ErrorsWarningsInputSolverView;
 import com.gapso.web.trieda.main.client.mvp.view.SelecionarCampiView;
@@ -90,11 +91,13 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 
 	private Display display; 
 	private CenarioDTO cenarioDTO;
+	private ParametrosViewGateway parametrosViewGateway;
 
-	public ParametrosPresenter(CenarioDTO cenarioDTO, Display display) {
+	public ParametrosPresenter(CenarioDTO cenarioDTO, Display display, ParametrosViewGateway parametrosViewGateway) {
 		super(display);
 		this.cenarioDTO = cenarioDTO;
 		this.display = display;
+		this.parametrosViewGateway = parametrosViewGateway;
 
 		preencheInfoDeCampi_e_Turno();
 		setListeners();
@@ -184,7 +187,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		this.display.getSelecionarCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SelecionarCampiPresenter(display.getParametroDTO(),new SelecionarCampiView());
+				Presenter presenter = new SelecionarCampiPresenter(display.getParametroDTO(),new SelecionarCampiView(),parametrosViewGateway);
 				presenter.go(null);
 			}
 		});

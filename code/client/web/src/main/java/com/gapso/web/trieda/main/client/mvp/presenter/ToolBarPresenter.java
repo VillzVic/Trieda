@@ -723,12 +723,10 @@ public class ToolBarPresenter
 					}
 
 					@Override
-					public void onSuccess( ParametroDTO parametroDTO )
-					{
-						Presenter presenter = new ParametrosPresenter(
-							cenarioDTO, new ParametrosView( parametroDTO ) );
-
-						presenter.go( gTab );
+					public void onSuccess(ParametroDTO parametroDTO) {
+						ParametrosView view = new ParametrosView(parametroDTO);
+						Presenter presenter = new ParametrosPresenter(cenarioDTO,view,view);
+						presenter.go(gTab);
 					}
 				});
 			}
