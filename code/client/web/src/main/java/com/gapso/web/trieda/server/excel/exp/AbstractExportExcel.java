@@ -337,6 +337,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 				hlinkFont.setUnderline(Font.U_SINGLE);
 				hlinkFont.setColor(IndexedColors.BLUE.getIndex());
 				hlinkStyle.setFont(hlinkFont);
+				hlinkStyle.setBorderBottom(CellStyle.BORDER_THIN);
+				hlinkStyle.setBorderLeft(CellStyle.BORDER_THIN);
+				hlinkStyle.setBorderRight(CellStyle.BORDER_THIN);
+				hlinkStyle.setBorderTop(CellStyle.BORDER_THIN);
 			}
 			cell.setCellStyle(hlinkStyle);
 		}

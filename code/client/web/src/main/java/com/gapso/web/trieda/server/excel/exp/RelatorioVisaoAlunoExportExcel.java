@@ -194,6 +194,13 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	private int writeAluno(Campus campus, Turno turno, Aluno aluno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
 		boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
 		{
+			registerHyperlink(
+				ExcelInformationType.DEMANDAS_POR_ALUNO.getSheetName(),
+				ExcelInformationType.RELATORIO_VISAO_ALUNO.getSheetName(),
+				aluno.getMatricula(), 
+				"'"+ExcelInformationType.RELATORIO_VISAO_ALUNO.getSheetName()+"'!B"+row
+			);
+		
 			// escreve cabeçalho da grade horária da sala
 			row = writeHeader(getRowsHeadersPairs(campus, turno, aluno), row, ehTatico);
 			

@@ -146,7 +146,8 @@ public class DemandasExportExcel
 			HSSFCell curriculoCell = getCell(nextRow,5,sheet);
 			HSSFCell periodoCell = getCell(nextRow,6,sheet);
 			
-			while (campusCell != null && nextRow < sheet.getLastRowNum()) {
+			int lastRowNumber = sheet.getLastRowNum()+1;
+			while (campusCell != null && nextRow <= lastRowNumber) {
 				String key = campusCell.getStringCellValue()+"-"+turnoCell.getStringCellValue()+"-"+cursoCell.getStringCellValue()+"-"+curriculoCell.getStringCellValue()+"-"+((int)periodoCell.getNumericCellValue());
 				
 				int col = 13;
@@ -165,7 +166,9 @@ public class DemandasExportExcel
 				curriculoCell = getCell(nextRow,5,sheet);
 				periodoCell = getCell(nextRow,6,sheet);
 			}
-		}
+			
+			autoSizeColumns((short)12,(short)12,sheet);
+		}		
 	}
 	
 	private int writeData( Oferta oferta, int row, HSSFSheet sheet , Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap)

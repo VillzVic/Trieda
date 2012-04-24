@@ -304,6 +304,12 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			oferta.getNaturalKeyString()+"-"+periodo, 
 			"'"+ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName()+"'!B"+row
 		);
+		registerHyperlink(
+			ExcelInformationType.DEMANDAS_POR_ALUNO.getSheetName(),
+			ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName(),
+			oferta.getNaturalKeyString()+"-"+periodo, 
+			"'"+ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName()+"'!B"+row
+		);
 		
 		// escreve cabeçalho da grade horária do bloco curricular
 		this.qtdColunasPorDiaSemana = qtdColunasPorDiaSemana;

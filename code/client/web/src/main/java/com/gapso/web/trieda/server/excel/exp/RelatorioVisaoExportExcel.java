@@ -128,6 +128,8 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 			processStructureReportControl(structureControl);
 			
 			result = true;
+			
+			autoSizeColumns((short)1,(short)1,sheet);
 		}
 
 		if(this.removeUnusedSheets) removeUnusedSheets(this.getSheetName(), workbook);

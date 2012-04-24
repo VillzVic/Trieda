@@ -1,7 +1,10 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -113,6 +116,52 @@ public class AlunosDemandaExportExcel
 		}
 
 		return result;
+	}
+	
+	@Override
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {
+		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(ExcelInformationType.DEMANDAS_POR_ALUNO.getSheetName());
+		if (mapLevel2 != null && !mapLevel2.isEmpty()) {
+			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			int nextRow = this.initialRow;
+			
+			HSSFCell campusCell = getCell(nextRow,2,sheet);
+			HSSFCell turnoCell = getCell(nextRow,3,sheet);
+			HSSFCell cursoCell = getCell(nextRow,4,sheet);
+			HSSFCell curriculoCell = getCell(nextRow,5,sheet);
+			HSSFCell periodoCell = getCell(nextRow,6,sheet);
+			HSSFCell matriculaCell = getCell(nextRow,8,sheet);
+			
+			int lastRowNumber = sheet.getLastRowNum()+1;
+			while (campusCell != null && nextRow <= lastRowNumber) {
+				for (Entry<String,Map<String,String>> entry : mapLevel2.entrySet()) {
+					String cellValue = entry.getKey();
+					if (cellValue.equals(ExcelInformationType.RELATORIO_VISAO_ALUNO.getSheetName())) {
+						String alunoKey = matriculaCell.getStringCellValue();
+						String cellHyperlink = entry.getValue().get(alunoKey);
+						if (cellHyperlink != null) {
+							setCellWithHyperlink(nextRow,12,sheet,cellValue,cellHyperlink,true);
+						}
+					} else if (cellValue.equals(ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName())) {
+						String visaoCursoKey = campusCell.getStringCellValue()+"-"+turnoCell.getStringCellValue()+"-"+cursoCell.getStringCellValue()+"-"+curriculoCell.getStringCellValue()+"-"+((int)periodoCell.getNumericCellValue());
+						String cellHyperlink = entry.getValue().get(visaoCursoKey);
+						if (cellHyperlink != null) {
+							setCellWithHyperlink(nextRow,13,sheet,cellValue,cellHyperlink,true);
+						}
+					}
+				}
+				
+				nextRow++;
+				campusCell = getCell(nextRow,2,sheet);
+				turnoCell = getCell(nextRow,3,sheet);
+				cursoCell = getCell(nextRow,4,sheet);
+				curriculoCell = getCell(nextRow,5,sheet);
+				periodoCell = getCell(nextRow,6,sheet);
+				matriculaCell = getCell(nextRow,8,sheet);
+			}
+			
+			autoSizeColumns((short)11,(short)12,sheet);
+		}		
 	}
 
 	private int writeData( AlunoDemanda alunoDemanda, int row, HSSFSheet sheet )
