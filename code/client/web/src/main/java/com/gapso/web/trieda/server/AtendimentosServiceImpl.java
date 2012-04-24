@@ -340,13 +340,23 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
 			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
 			
+			List<AtendimentoOperacionalDTO> atendimentosOperacionais = new ArrayList<AtendimentoOperacionalDTO>();
+			for(AtendimentoRelatorioDTO dto : aulasComCompartilhamentos){
+				atendimentosOperacionais.add((AtendimentoOperacionalDTO) dto);
+			}
+			
+			List<AtendimentoRelatorioDTO> atendimentosParaEscrita = new ArrayList<AtendimentoRelatorioDTO>();
+			for(AtendimentoOperacionalDTO dto : this.ordenaPorHorarioAula(atendimentosOperacionais)){
+				atendimentosParaEscrita.add((AtendimentoRelatorioDTO) dto);
+			}
+			
 			TrioDTO<Integer,SemanaLetiva,List<String>> trio = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala,ehTatico, filtro.getTurnoDTO().getId());
 			int mdcTemposAula = trio.getPrimeiro();
 			SemanaLetiva semanaLetivaComMaiorCargaHoraria = trio.getSegundo();
 			List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
 			
 			q = QuintetoDTO.create(mdcTemposAula, semanaLetivaComMaiorCargaHoraria.calculaMaxCreditos(), 
-				semanaLetivaComMaiorCargaHoraria.getTempo(),aulasComCompartilhamentos,labelsDasLinhasDaGradeHoraria);
+				semanaLetivaComMaiorCargaHoraria.getTempo(), atendimentosParaEscrita, labelsDasLinhasDaGradeHoraria);
 		}
 		else q = QuintetoDTO.create(0,0,0,aulas,Collections.<String>emptyList());
 		

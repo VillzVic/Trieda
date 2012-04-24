@@ -1,0 +1,122 @@
+package com.gapso.web.trieda.server.excel.exp;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import com.gapso.trieda.domain.AtendimentoOperacional;
+import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.server.util.Atendimento;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
+import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
+import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoMap;
+
+public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportExcel{
+	
+	public RelatorioVisaoByCampusTurno(boolean removeUnusedSheets, Cenario cenario, 
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+			ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino)
+	{
+		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+	}
+	
+	protected abstract <V> boolean addAtendimentosInMap(Atendimento atendimento, Map<V, AtendimentoServiceRelatorioResponse> mapEntity);
+	protected abstract <V> void getAtendimentosByFilter(RelatorioVisaoMap<Campus, Turno, V> mapEntity);
+	
+	protected <V> boolean getAtendimentosByEntity(Atendimento atendimento, RelatorioVisaoMap<Campus, Turno, V> mapControl){
+		Map<Turno, Map<V, AtendimentoServiceRelatorioResponse>> mapTurnoControl = mapControl.get(atendimento.getCampus());
+		if(mapTurnoControl == null){
+			mapTurnoControl = new HashMap<Turno, Map<V, AtendimentoServiceRelatorioResponse>>();
+			mapControl.put(atendimento.getCampus(), mapTurnoControl);
+		}
+		Map<V, AtendimentoServiceRelatorioResponse> mapEntity = mapTurnoControl.get(atendimento.getTurno());
+		if(mapEntity == null){
+			mapEntity = new HashMap<V, AtendimentoServiceRelatorioResponse>();
+			mapTurnoControl.put(atendimento.getTurno(), mapEntity);
+		}
+		
+		return this.addAtendimentosInMap(atendimento, mapEntity);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")	
+	protected <V> boolean getAtendimentosRelatorioDTOList(V mapControlT){
+		RelatorioVisaoMap<Campus, Turno, ?> mapControl = (RelatorioVisaoMap<Campus, Turno, ?>) mapControlT;
+		boolean result = false;
+		
+		if(this.getFilter() == null){
+			// se nao ha filtro, entao lista todos os alunos associados ao cenario
+			Cenario cenario = getCenario();
+			List<AtendimentoTatico> atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario);
+			if(atdTaticoList.size() != 0){
+				for(AtendimentoTatico atendimento : atdTaticoList){
+					if(getAtendimentosByEntity(new Atendimento(atendimento), mapControl)) result = true;
+				}
+			}
+			else{
+				List<AtendimentoOperacional> atdOperacionalList = AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario);
+				for(AtendimentoOperacional atendimento : atdOperacionalList){
+					if(getAtendimentosByEntity(new Atendimento(atendimento), mapControl)) result = true;
+				}
+			}
+		}
+		else{
+			this.getAtendimentosByFilter(mapControl);
+			result = true;
+		}
+
+		return result;
+	}
+	
+	@Override
+	protected boolean fillInExcel(HSSFWorkbook workbook){
+		return this.<RelatorioVisaoMap<Campus, Turno, ?>>fillInExcelImpl(workbook);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	protected <T> void processStructureReportControl(T mapControlT){
+		this.processStructureReportControlImpl((RelatorioVisaoMap<Campus, Turno, ?>) mapControlT);
+	}
+	
+	private <V> void processStructureReportControlImpl(RelatorioVisaoMap<Campus, Turno, V> mapControl){
+		// linha a partir da qual a escrita será iniciada no excel
+		int nextRow = this.initialRow;
+
+		for(Campus campus : mapControl.keySet()){
+			Map<Turno, Map<V, AtendimentoServiceRelatorioResponse>> turnoMap = mapControl.get(campus);
+			for(Turno turno : turnoMap.keySet()){
+				Map<V, AtendimentoServiceRelatorioResponse> entityMap = sortEntityMap(turnoMap.get(turno));
+				for(V entity : entityMap.keySet()){
+					AtendimentoServiceRelatorioResponse quinteto = entityMap.get(entity);
+					
+					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
+					if(atendimentos.isEmpty()) continue;
+					
+					Integer mdcTemposAula = quinteto.getMdcTemposAula();
+					List<String> labelsDasLinhasDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
+					boolean ehTatico = atendimentos.get(0) instanceof AtendimentoTaticoDTO;
+
+					nextRow = writeEntity(campus, turno, entity, atendimentos, nextRow, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+				}
+			}
+		}
+	}
+	
+	protected abstract <V> Map<V, AtendimentoServiceRelatorioResponse> sortEntityMap(Map<V, AtendimentoServiceRelatorioResponse> unsortMap);
+	
+	protected abstract <T> int writeEntity(Campus campus, Turno turno, T entity, List<AtendimentoRelatorioDTO> atendimentos,
+		int row, int mdcTemposAula, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria
+	);
+	
+}

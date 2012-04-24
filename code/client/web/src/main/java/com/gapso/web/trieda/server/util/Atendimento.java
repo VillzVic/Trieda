@@ -2,7 +2,11 @@ package com.gapso.web.trieda.server.util;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorVirtual;
+import com.gapso.trieda.domain.Turno;
 
 public class Atendimento {
 	
@@ -28,6 +32,10 @@ public class Atendimento {
 	public boolean isOperacional() {
 		return operacional != null;
 	}
+	
+	public Campus getCampus() {
+		return (isTatico()) ? tatico.getOferta().getCampus() : operacional.getOferta().getCampus();
+	}
 
 	public Disciplina getDisciplina() {
 		return (isTatico()) ? tatico.getDisciplina() : operacional.getDisciplina();
@@ -36,17 +44,17 @@ public class Atendimento {
 	public Disciplina getDisciplinaSubstituta() {
 		return (isTatico()) ? tatico.getDisciplinaSubstituta() : operacional.getDisciplinaSubstituta();
 	}
+
+	public Professor getProfessor() {
+		return (isTatico()) ? null : operacional.getProfessor();
+	}
 	
-	public String getTurma() {
-		return (isTatico()) ? tatico.getTurma() : operacional.getTurma();
+	public ProfessorVirtual getProfessorVirtual() {
+		return (isTatico()) ? null : operacional.getProfessorVirtual();
 	}
 	
 	public int getQuantidadeAlunos() {
 		return (isTatico()) ? tatico.getQuantidadeAlunos() : operacional.getQuantidadeAlunos();
-	}
-	
-	public int getTotalCreditos() {
-		return (isTatico()) ? tatico.getTotalCreditos() : 1;
 	}
 	
 	public TipoCredito getTipoCredito() {
@@ -58,4 +66,17 @@ public class Atendimento {
 		}
 		return tipo;
 	}
+	
+	public int getTotalCreditos() {
+		return (isTatico()) ? tatico.getTotalCreditos() : 1;
+	}
+
+	public String getTurma() {
+		return (isTatico()) ? tatico.getTurma() : operacional.getTurma();
+	}
+	
+	public Turno getTurno() {
+		return (isTatico()) ? tatico.getOferta().getTurno() : operacional.getOferta().getTurno();
+	}
+	
 }
