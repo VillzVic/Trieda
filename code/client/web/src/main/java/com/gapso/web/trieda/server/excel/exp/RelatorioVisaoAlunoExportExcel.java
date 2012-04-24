@@ -184,6 +184,13 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 		}
 	}
 
+	@Override
+	protected int writeHeader(List<List<ParDTO<String,?>>> rowsHeadersPairs, int row, boolean ehTatico) {
+		// mescla células relativas ao nome do aluno
+		mergeCells(row+1,row+1,4,6,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()]);
+		return super.writeHeader(rowsHeadersPairs,row,ehTatico);
+	}
+
 	private int writeAluno(Campus campus, Turno turno, Aluno aluno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
 		boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
 		{
