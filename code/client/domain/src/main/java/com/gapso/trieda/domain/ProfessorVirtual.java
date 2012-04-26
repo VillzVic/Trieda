@@ -83,15 +83,16 @@ public class ProfessorVirtual
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append( "Id: " ).append( getId() ).append( ", " );
-		sb.append( "Version: " ).append( getVersion() ).append( ", " );
-		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
-		sb.append( "Titulacao: " ).append( getTitulacao() ).append( ", " );
-		sb.append( "AreaTitulacao: " ).append( getAreaTitulacao() ).append( ", " );
-		sb.append( "CargaHorariaMin: " ).append( getCargaHorariaMin() ).append( ", " );
-		sb.append( "CargaHorariaMax: " ).append( getCargaHorariaMax() ).append( ", " );
-		sb.append( "Disciplinas: " ).append( getDisciplinas() == null ? "null" : getDisciplinas().size() );
-		sb.append( "Atendimentos: " ).append( getAtendimentos() == null ? "null" : getAtendimentos().size() );
+//		sb.append( "Id: " ).append( getId() ).append( ", " );
+		sb.append( "Nome: " ).append( getNome() ).append( ", " );
+//		sb.append( "Version: " ).append( getVersion() ).append( ", " );
+//		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
+//		sb.append( "Titulacao: " ).append( getTitulacao() ).append( ", " );
+//		sb.append( "AreaTitulacao: " ).append( getAreaTitulacao() ).append( ", " );
+//		sb.append( "CargaHorariaMin: " ).append( getCargaHorariaMin() ).append( ", " );
+//		sb.append( "CargaHorariaMax: " ).append( getCargaHorariaMax() ).append( ", " );
+//		sb.append( "Disciplinas: " ).append( getDisciplinas() == null ? "null" : getDisciplinas().size() );
+//		sb.append( "Atendimentos: " ).append( getAtendimentos() == null ? "null" : getAtendimentos().size() );
 
 		return sb.toString();
 	}

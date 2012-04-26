@@ -316,7 +316,7 @@ public class HabilitacoesProfessoresImportExcel
 				// Update
 				pdBD.setNota( pdExcel.getNota() );
 				pdBD.setPreferencia( pdExcel.getPreferencia() );
-				pdBD.merge();
+				pdBD.mergeWithoutFlush();
 			}
 			else
 			{

@@ -132,6 +132,14 @@ public class ProfessorDisciplina
 		this.entityManager.flush();
 		return merged;
 	}
+	
+	@Transactional
+	public ProfessorDisciplina mergeWithoutFlush() {
+		if (this.entityManager == null)
+			this.entityManager = entityManager();
+		ProfessorDisciplina merged = this.entityManager.merge(this);
+		return merged;
+	}
 
 	public static final EntityManager entityManager()
 	{
