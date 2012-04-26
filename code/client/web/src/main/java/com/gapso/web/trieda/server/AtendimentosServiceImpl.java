@@ -740,12 +740,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * de turmas entre cursos distintos
 	 */
 	public List<AtendimentoRelatorioDTO> uneAulasQuePodemSerCompartilhadas(List<AtendimentoRelatorioDTO> aulas) {
-		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana - HorárioInício (caso seja o operacional) ]
+		// Agrupa os DTOS pela chave [ Disciplina - Turma - DiaSemana - Sala - HorárioInício (caso seja o operacional) ]
 		Map<String,List<AtendimentoRelatorioDTO>> atendimentoTaticoDTOMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
 
 		for (AtendimentoRelatorioDTO aula : aulas) {
 			String disciplinaInfo = (aula.getDisciplinaSubstitutaId() != null) ? aula.getDisciplinaSubstitutaString() : aula.getDisciplinaString();
-			String key = disciplinaInfo + "-" + aula.getTurma() + "-" + aula.getSemana() + (aula.getHorarioId() != null ? ("-" + aula.getHorarioId()) : "");
+			String key = disciplinaInfo + "-" + aula.getTurma() + "-" + aula.getSemana() + "-" + aula.getSalaString() + (aula.getHorarioId() != null ? ("-" + aula.getHorarioId()) : "");
 			List<AtendimentoRelatorioDTO> aulasASeremCompartilhadas = atendimentoTaticoDTOMap.get(key);
 			if (aulasASeremCompartilhadas == null) {
 				aulasASeremCompartilhadas = new ArrayList<AtendimentoRelatorioDTO>();
@@ -754,7 +754,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			aulasASeremCompartilhadas.add(aula);
 		}
 
-		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana],
+		// Quando há mais de um DTO por chave [Disciplina-Turma-DiaSemana-Sala-HorárioInício(caso seja o operacional)],
 		// concatena as informações de todos em um único DTO.
 		List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = new ArrayList<AtendimentoRelatorioDTO>();
 		for (Entry<String,List<AtendimentoRelatorioDTO>> entry : atendimentoTaticoDTOMap.entrySet()) {
