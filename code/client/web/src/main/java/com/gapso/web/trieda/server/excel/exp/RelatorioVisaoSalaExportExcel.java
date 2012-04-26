@@ -139,9 +139,14 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		Map<Long,SemanaLetiva> semanaLetivaIdTosemanaLetivaMap = new HashMap<Long,SemanaLetiva>();
 		// [SalaId -> [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]]
 		Map<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>> atendimentosPorSalaTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>>();
+		// disciplinas
+		Set<Long> disciplinas = new HashSet<Long>();
 		
 		// preenche estruturas auxiliares
 		for (AtendimentoRelatorioDTO atendimento : atendimentosDTO) {
+			Long disciplinaId = atendimento.getDisciplinaSubstitutaId() != null ? atendimento.getDisciplinaSubstitutaId() : atendimento.getDisciplinaId();
+			disciplinas.add(disciplinaId);
+			
 			// preenche os maps salaIdToSalaMap, turnoIdToTurnoMap e semanaLetivaIdTosemanaLetivaMap
 			if (!salaIdToSalaMap.containsKey(atendimento.getSalaId())) {
 				salaIdToSalaMap.put(atendimento.getSalaId(),Sala.find(atendimento.getSalaId(),this.instituicaoEnsino));
@@ -176,6 +181,8 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 			}
 			atendimentos.add(atendimento);
 		}
+		
+		buildCodigoDisciplinaToColorMap(disciplinas);
 
 		// ordena as salas por campus e depois pela capacidade
 		List<Sala> salasOrdenadasPorCampusEPelaCapacidade = new ArrayList<Sala>(salaIdToSalaMap.values());
@@ -244,14 +251,13 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
 		boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
 	{
-		registerHyperlink(
+		String[] sheetsTargets = {
 			ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName(),
-			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName(),
-			sala.getCodigo(), 
-			"'"+ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName()+"'!B"+row
-		);
-		registerHyperlink(
 			ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName(),
+			ExcelInformationType.RELATORIO_VISAO_ALUNO.getSheetName()
+		};
+		registerHyperlink(
+			sheetsTargets,
 			ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName(),
 			sala.getCodigo(), 
 			"'"+ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName()+"'!B"+row

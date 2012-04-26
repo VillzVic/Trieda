@@ -64,7 +64,7 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter, 
 		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino)
 	{
-		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+		super(removeUnusedSheets, false, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
 
 		this.isVisaoProfessor = isVisaoProfessor;
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();

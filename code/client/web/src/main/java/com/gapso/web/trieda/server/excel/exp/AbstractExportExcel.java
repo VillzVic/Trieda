@@ -159,6 +159,12 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		mapLevel3.put(key,hyperlink);
 	}
 	
+	protected void registerHyperlink(String[] sheetsTargets, String sheetOrigin, String key, String hyperlink) {
+		for (String sheetTarget : sheetsTargets) {
+			registerHyperlink(sheetTarget,sheetOrigin,key,hyperlink);
+		}
+	}
+	
 	protected String getSheetName() {
 		return this.sheetName;
 	}

@@ -257,6 +257,17 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 				ofertaIdToOfertaMap.put(oferta.getId(),oferta);
 			}
 		}
+		
+		// varre estrutura para coletar disciplinas envolvidas
+		Set<Long> disciplinas = new HashSet<Long>();
+		for(AtendimentoServiceRelatorioResponse sexteto : aulasInfo) {
+			List<AtendimentoRelatorioDTO> aulas = sexteto.getAtendimentosDTO();
+			for (AtendimentoRelatorioDTO aula : aulas) {
+				Long disciplinaId = aula.getDisciplinaSubstitutaId() != null ? aula.getDisciplinaSubstitutaId() : aula.getDisciplinaId();
+				disciplinas.add(disciplinaId);
+			}
+		}
+		buildCodigoDisciplinaToColorMap(disciplinas);
 
 		// para cada bloco curricular
 		for(AtendimentoServiceRelatorioResponse sexteto : aulasInfo) {

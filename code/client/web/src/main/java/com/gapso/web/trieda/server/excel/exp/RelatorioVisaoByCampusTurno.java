@@ -1,8 +1,10 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -23,11 +25,14 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoMap;
 
 public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportExcel{
 	
-	public RelatorioVisaoByCampusTurno(boolean removeUnusedSheets, Cenario cenario, 
+	private boolean deveProcessarAtendimentosTaticos;
+	
+	public RelatorioVisaoByCampusTurno(boolean removeUnusedSheets, boolean deveProcessarAtendimentosTaticos, Cenario cenario, 
 			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 			ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino)
 	{
 		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+		this.deveProcessarAtendimentosTaticos = deveProcessarAtendimentosTaticos;
 	}
 	
 	protected abstract <V> boolean addAtendimentosInMap(Atendimento atendimento, Map<V, AtendimentoServiceRelatorioResponse> mapEntity);
@@ -59,8 +64,10 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 			Cenario cenario = getCenario();
 			List<AtendimentoTatico> atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario);
 			if(atdTaticoList.size() != 0){
-				for(AtendimentoTatico atendimento : atdTaticoList){
-					if(getAtendimentosByEntity(new Atendimento(atendimento), mapControl)) result = true;
+				if (deveProcessarAtendimentosTaticos) {
+					for(AtendimentoTatico atendimento : atdTaticoList){
+						if(getAtendimentosByEntity(new Atendimento(atendimento), mapControl)) result = true;
+					}
 				}
 			}
 			else{
@@ -92,6 +99,24 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 	private <V> void processStructureReportControlImpl(RelatorioVisaoMap<Campus, Turno, V> mapControl){
 		// linha a partir da qual a escrita será iniciada no excel
 		int nextRow = this.initialRow;
+		
+		// varre estrutura para coletar disciplinas envolvidas
+		Set<Long> disciplinas = new HashSet<Long>();
+		for(Campus campus : mapControl.keySet()){
+			Map<Turno, Map<V, AtendimentoServiceRelatorioResponse>> turnoMap = mapControl.get(campus);
+			for(Turno turno : turnoMap.keySet()){
+				Map<V, AtendimentoServiceRelatorioResponse> entityMap = sortEntityMap(turnoMap.get(turno));
+				for(V entity : entityMap.keySet()){
+					AtendimentoServiceRelatorioResponse quinteto = entityMap.get(entity);
+					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
+					for (AtendimentoRelatorioDTO atendimento : atendimentos) {
+						Long disciplinaId = atendimento.getDisciplinaSubstitutaId() != null ? atendimento.getDisciplinaSubstitutaId() : atendimento.getDisciplinaId();
+						disciplinas.add(disciplinaId);
+					}
+				}
+			}
+		}
+		buildCodigoDisciplinaToColorMap(disciplinas);
 
 		for(Campus campus : mapControl.keySet()){
 			Map<Turno, Map<V, AtendimentoServiceRelatorioResponse>> turnoMap = mapControl.get(campus);

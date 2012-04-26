@@ -2,15 +2,18 @@ package com.gapso.web.trieda.server.excel.exp;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
@@ -20,7 +23,6 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
-import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
@@ -52,7 +54,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	
 	protected HSSFCellStyle [] cellStyles;
 	protected HSSFSheet sheet;
-	protected Map<String,HSSFCellStyle> codigoDisciplinaToColorMap;
+	protected Map<Long,HSSFCellStyle> codigoDisciplinaToColorMap;
 	protected List<HSSFCellStyle> excelColorsPool;
 	protected boolean removeUnusedSheets;
 	protected int initialRow;
@@ -66,7 +68,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.codigoDisciplinaToColorMap = new HashMap<String, HSSFCellStyle>();
+		this.codigoDisciplinaToColorMap = new HashMap<Long,HSSFCellStyle>();
 		this.initialRow = 5;
 
 		this.setFilter(filter);
@@ -169,7 +171,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 			}
 		}
 
-		// agrupa as aulas por dia da semana
+		// agrupa as aulas por dia da semana e coleta disciplinas
 		Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
 		for(AtendimentoRelatorioDTO aula : aulas){
 			List<AtendimentoRelatorioDTO> aulasDoDia = colunaGradeHorariaToAulasMap.get(aula.getSemana());
@@ -236,14 +238,24 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		
 		return (initialRow + (ehTatico ? labelsDasLinhasDaGradeHoraria.size() : (labelsDasLinhasDaGradeHoraria.size() - 1)) + 1);
 	}
-
-	protected HSSFCellStyle getCellStyle(AtendimentoRelatorioDTO atendimento){
-		HSSFCellStyle style = codigoDisciplinaToColorMap.get(atendimento.getDisciplinaString());
-		if(style == null){
-			style = excelColorsPool.get(codigoDisciplinaToColorMap.size() % excelColorsPool.size());
-			codigoDisciplinaToColorMap.put(atendimento.getDisciplinaString(), style);
+	
+	protected void buildCodigoDisciplinaToColorMap(Set<Long> disciplinasIDs) {
+		// ordena disciplinas e monta mapa de cores por disciplina
+		List<Long> disciplinasOrdenadas = new ArrayList<Long>(disciplinasIDs);
+		Collections.sort(disciplinasOrdenadas);
+		for (Long disciplinaId : disciplinasOrdenadas) {
+			HSSFCellStyle style = excelColorsPool.get(codigoDisciplinaToColorMap.size() % excelColorsPool.size());
+			codigoDisciplinaToColorMap.put(disciplinaId,style);
 		}
-		
+	}
+
+	protected HSSFCellStyle getCellStyle(AtendimentoRelatorioDTO aula){
+		Long disciplinaId = aula.getDisciplinaSubstitutaId() != null ? aula.getDisciplinaSubstitutaId() : aula.getDisciplinaId(); 
+		HSSFCellStyle style = codigoDisciplinaToColorMap.get(disciplinaId);
+//		if(style == null){
+//			style = excelColorsPool.get(codigoDisciplinaToColorMap.size() % excelColorsPool.size());
+//			codigoDisciplinaToColorMap.put(aula.getDisciplinaString(), style);
+//		}
 		return style;
 	}
 	
@@ -300,16 +312,44 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	protected void buildColorPaletteCellStyles(HSSFWorkbook workbook){
 		excelColorsPool = new ArrayList<HSSFCellStyle>();
 		
-		HSSFSheet sheet = workbook.getSheet(ExcelInformationType.PALETA_CORES.getSheetName());
-		if(sheet != null){
-            for(int rowIndex = sheet.getFirstRowNum(); rowIndex <= sheet.getLastRowNum(); rowIndex++){
-            	HSSFRow row = sheet.getRow(rowIndex);
-            	if(row != null){
-            		HSSFCell cell = row.getCell((int) row.getFirstCellNum());
-            		if(cell != null) excelColorsPool.add(cell.getCellStyle());
-            	}
-            }
+		Font whiteFont = workbook.createFont();
+		whiteFont.setColor(HSSFColor.WHITE.index);
+		Font blackFont = workbook.createFont();
+		blackFont.setColor(HSSFColor.BLACK.index);
+		for (HSSFColor color : HSSFColor.getIndexHash().values()) {
+			HSSFCellStyle cellStyle = workbook.createCellStyle();
+			cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+			cellStyle.setFillForegroundColor(color.getIndex());
+			cellStyle.setFont(calculateForegroundColorIndex(color.getTriplet()) == HSSFColor.WHITE.index ? whiteFont : blackFont);
+			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+			cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+			cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
+			cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
+			cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+			cellStyle.setBorderTop(CellStyle.BORDER_THIN);
+			excelColorsPool.add(cellStyle);
 		}
+//		HSSFSheet sheet = workbook.getSheet(ExcelInformationType.PALETA_CORES.getSheetName());
+//		if(sheet != null){
+//            for(int rowIndex = sheet.getFirstRowNum(); rowIndex <= sheet.getLastRowNum(); rowIndex++){
+//            	HSSFRow row = sheet.getRow(rowIndex);
+//            	if(row != null){
+//            		HSSFCell cell = row.getCell((int) row.getFirstCellNum());
+//            		if(cell != null) excelColorsPool.add(cell.getCellStyle());
+//            	}
+//            }
+//		}
 	}
 	
+	private short calculateForegroundColorIndex(short[] colorRGB) {
+		float r = colorRGB[0];
+		float g = colorRGB[1];
+		float b = colorRGB[2];
+		
+		if ((0.3 * r + 0.59 * g + 0.11 * b) <= 127) {
+			return HSSFColor.WHITE.index;
+		}
+		
+		return HSSFColor.BLACK.index;
+	}
 }
