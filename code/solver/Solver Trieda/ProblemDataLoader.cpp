@@ -1115,41 +1115,34 @@ void ProblemDataLoader::estabeleceDiasLetivosProfessorDisciplina()
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
-      ITERA_GGROUP_LESSPTR( itBloco, problemData->blocos, BlocoCurricular )
-      {
-         ITERA_GGROUP_LESSPTR( itDisc, itBloco->disciplinas, Disciplina )
-         {
-            ITERA_GGROUP_LESSPTR( it_prof, itCampus->professores, Professor )
-            {							  
-               ITERA_GGROUP_LESSPTR( it_mag, it_prof->magisterio, Magisterio )
-               {
-                  ITERA_GGROUP( it_hor, it_prof->horarios, Horario )
-                  {
-                     GGroup< int >::iterator itDiasLetDisc =
-                        itDisc->diasLetivos.begin();
+		ITERA_GGROUP_LESSPTR( it_prof, itCampus->professores, Professor )
+		{							  
+			ITERA_GGROUP_LESSPTR( it_mag, it_prof->magisterio, Magisterio )
+			{
+				int discId = it_mag->getDisciplinaId();
+				Disciplina *disc = problemData->refDisciplinas[ discId ];
 
-                     for(; itDiasLetDisc != itDisc->diasLetivos.end();
-                        itDiasLetDisc++ )
-                     {			
-                        if ( it_mag->getDisciplinaId() == itDisc->getId() )
-                        {
-                           if ( it_hor->dias_semana.find( *itDiasLetDisc )
-                              != it_hor->dias_semana.end() )
-                           {
-                              std::pair< int, int > ids_Prof_Disc 
-                                 (it_prof->getId(), itDisc->getId());
+				ITERA_GGROUP( it_hor, it_prof->horarios, Horario )
+				{
+					GGroup< int >::iterator itDiasLetDisc =
+					disc->diasLetivos.begin();
 
-                              problemData->prof_Disc_Dias[ ids_Prof_Disc ].add( *itDiasLetDisc );
-                              problemData->disc_Dias_Prof_Tatico[itDisc->getId()].add( *itDiasLetDisc );
-                              problemData->usarProfDispDiscTatico = true;
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
+					for(; itDiasLetDisc != disc->diasLetivos.end(); itDiasLetDisc++ )
+					{
+						if ( it_hor->dias_semana.find( *itDiasLetDisc )
+							!= it_hor->dias_semana.end() )
+						{
+							std::pair< int, int > ids_Prof_Disc 
+								( it_prof->getId(), discId );
+
+							problemData->prof_Disc_Dias[ ids_Prof_Disc ].add( *itDiasLetDisc );
+							problemData->disc_Dias_Prof_Tatico[ discId ].add( *itDiasLetDisc );
+							problemData->usarProfDispDiscTatico = true;
+						}					
+					}
+				}
+			}
+		}
    }
 }
 
@@ -3340,54 +3333,84 @@ void ProblemDataLoader::calculaTamanhoMedioSalasCampus()
 
 void ProblemDataLoader::calculaMenorCapacSalaPorDisc()
 {
-   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
-		#pragma region Equivalência de disciplinas
-		if ( problemData->mapDiscSubstituidaPor.find(*it_disc) !=
-			 problemData->mapDiscSubstituidaPor.end() )
-		{
-			continue;
-		}
-		#pragma endregion
+	   int campusId = itCampus->getId();
+	   GGroup< int > disciplinas = problemData->cp_discs[campusId];
 
-	    int menorCapacSala = 10000;
+	   ITERA_GGROUP_N_PT( it_disc, disciplinas, int )
+	   {	   
+		    Disciplina* disciplina = problemData->refDisciplinas[ *it_disc ];
 
-	    std::vector< Sala * >::iterator it_sala = problemData->discSalas[*it_disc].begin();
-	    for ( ; it_sala != problemData->discSalas[*it_disc].end(); it_sala++ )
-	    {
-		 	 menorCapacSala = std::min( menorCapacSala, ( *it_sala )->getCapacidade() );
-	    }
-	    (*it_disc)->setMenorCapacSala(menorCapacSala);
+			#pragma region Equivalência de disciplinas
+			if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+				 problemData->mapDiscSubstituidaPor.end() )
+			{
+				continue;
+			}
+			#pragma endregion
+
+			int menorCapacSala = 10000;
+
+			std::vector< Sala * >::iterator it_sala = problemData->discSalas[ disciplina ].begin();
+			for ( ; it_sala != problemData->discSalas[disciplina].end(); it_sala++ )
+			{
+				if ( problemData->retornaCampus( ( *it_sala )->getIdUnidade() )->getId() != campusId )
+			   {
+				   continue;
+			   }
+
+		 	   menorCapacSala = std::min( menorCapacSala, ( *it_sala )->getCapacidade() );
+			}
+
+			disciplina->setMenorCapacSala(menorCapacSala, campusId);
+	   }
    }
 
 }
 
 void ProblemDataLoader::calculaCapacMediaSalaPorDisc()
 {
-   ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+   ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
    {
-		#pragma region Equivalência de disciplinas
-		if ( problemData->mapDiscSubstituidaPor.find(*it_disc) !=
-			 problemData->mapDiscSubstituidaPor.end() )
-		{
-			continue;
-		}
-		#pragma endregion
+	   int campusId = itCampus->getId();
+	   GGroup< int > disciplinas = problemData->cp_discs[campusId];
 
-	   int soma = 0;
+	   ITERA_GGROUP_N_PT( it_disc, disciplinas, int )
+	   {	   
+		   Disciplina* disciplina = problemData->refDisciplinas[ *it_disc ];
 
-	   std::vector< Sala * >::iterator it_sala = problemData->discSalas[*it_disc].begin();
-	   for ( ; it_sala != problemData->discSalas[*it_disc].end(); it_sala++ )
-	   {
-			soma += ( *it_sala )->getCapacidade();
-	   }
-	   if ( soma == 0 )
-		   std::cout<<"ERRO: disciplina " << it_disc->getId() << ", lab " << it_disc->eLab() << " nao possui sala associada";
+			#pragma region Equivalência de disciplinas
+			if ( problemData->mapDiscSubstituidaPor.find(disciplina) !=
+				 problemData->mapDiscSubstituidaPor.end() )
+			{
+				continue;
+			}
+			#pragma endregion
+
+		   int soma = 0;
+		   int size = 0;
+
+		   std::vector< Sala * >::iterator it_sala = problemData->discSalas[ disciplina ].begin();
+		   for ( ; it_sala != problemData->discSalas[ disciplina ].end(); it_sala++ )
+		   {
+			   if ( problemData->retornaCampus( ( *it_sala )->getIdUnidade() )->getId() != campusId )
+			   {
+				   continue;
+			   }
+
+			   soma += ( *it_sala )->getCapacidade();
+			   size++;
+		   }
+
+		   if ( soma == 0 )
+				std::cout<<"ATENCAO: disciplina " << disciplina->getId() << ", lab " << disciplina->eLab() << " nao possui sala associada";
 	   
-	   int capacMediaSala = ( ( problemData->discSalas[*it_disc].size() > 0 ) ? 
-							  ( soma / problemData->discSalas[*it_disc].size() ) : 0 );
-
-	   (*it_disc)->setCapacMediaSala(capacMediaSala);
+		   int capacMediaSala = ( ( size > 0 ) ? ( soma / size ) : 0 );
+	   
+		   disciplina->setCapacMediaSala( capacMediaSala, campusId );
+		   
+	   }
    }
 
 }
@@ -3424,11 +3447,11 @@ void ProblemDataLoader::estima_turmas_sem_compart()
 		   int discId = *itDisc;
 		   Disciplina *d = problemData->refDisciplinas[discId];
 
-		   int capacMediaSala = d->getCapacMediaSala();
+		   int capacMediaSala = d->getCapacMediaSala( cp->getId() );
 		   
 		   if ( d->getNumTurmas() < 0 ) d->setNumTurmas( 0 );
 		   
-		   int numTurmas = 0;
+		   int numTurmas = d->getNumTurmas();
 		   
 		   // Para cada curso que contem a disciplina
 		   ITERA_GGROUP_LESSPTR( itCurso, cp->cursos, Curso )

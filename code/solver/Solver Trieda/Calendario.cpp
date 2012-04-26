@@ -91,7 +91,7 @@ int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *h
 		return 0;
 	}
 	
-	if ( hi > hf )
+	if ( *hi > *hf )
 	{
 		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios(): ";
 		std::cout<<"hi > hf\n";
@@ -103,7 +103,7 @@ int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *h
 
 	HorarioAula *h = hi;
 	
-	while ( h != NULL && h != hf )
+	while ( h != NULL && *h != *hf )
 	{
 		h = getProximoHorario( h );
 		n++;	
@@ -129,6 +129,30 @@ bool Calendario::possuiHorario( HorarioAula *h )
 		{
 			return true;
 		}
+	}
+
+	return false;
+}
+
+
+bool Calendario::intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf )
+{
+	int n = retornaNroCreditosEntreHorarios(hi, hf);
+
+	HorarioAula *h1 = hi;
+	HorarioAula *h2;
+
+	for ( int i = 1; i < n; i++ )
+	{
+		h2 = getProximoHorario( h1 );
+
+		DateTime dtf = h1->getFinal();	
+		DateTime dti = h2->getInicio();
+		
+		if ( dtf < dti )
+			return true;
+
+		h1 = h2;
 	}
 
 	return false;

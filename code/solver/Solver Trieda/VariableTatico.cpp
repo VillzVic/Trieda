@@ -49,6 +49,10 @@ void VariableTatico::reset()
    horarioAulaI = NULL;
    horarioAulaF = NULL;
    aluno = NULL;
+   turma1 = -1;
+   turma2 = -1;
+   disc1 = NULL;
+   disc2 = NULL;
 }
 
 VariableTatico::~VariableTatico()
@@ -78,6 +82,10 @@ VariableTatico & VariableTatico::operator = ( const VariableTatico & var )
    this->horarioAulaI = var.getHorarioAulaInicial();
    this->horarioAulaF = var.getHorarioAulaFinal();
    this->aluno = var.getAluno();
+   this->turma1 = var.getTurma1();
+   this->turma2 = var.getTurma2();
+   this->disc1 = var.getDisciplina1();
+   this->disc2 = var.getDisciplina2();
 
    return *this;
 }
@@ -147,6 +155,18 @@ bool VariableTatico::operator < ( const VariableTatico & var ) const
    if ( this->getAluno() < var.getAluno() ) return true;
    if ( this->getAluno() > var.getAluno() ) return false;
    
+   if ( this->getTurma1() < var.getTurma1() ) return true;
+   if ( this->getTurma1() > var.getTurma1() ) return false;
+   
+   if ( this->getTurma2() < var.getTurma2() ) return true;
+   if ( this->getTurma2() > var.getTurma2() ) return false;
+
+   if ( E_MENOR( this->getDisciplina1(),var.getDisciplina1() ) ) return true;
+   if ( E_MENOR( var.getDisciplina1(), this->getDisciplina1() ) ) return false;
+
+   if ( E_MENOR( this->getDisciplina2(),var.getDisciplina2() ) ) return true;
+   if ( E_MENOR( var.getDisciplina2(), this->getDisciplina2() ) ) return false;
+
    return false;
 }
 
@@ -192,7 +212,10 @@ std::string VariableTatico::toString()
 		str <<"y"; break;	
      case V_ALUNO_VARIAS_UNID_DIA:
 		str <<"w"; break;		
-			 	
+  	 case V_SLACK_ALUNO_VARIAS_UNID_DIA:
+		str <<"fu"; break;			
+		
+
     default:
         str << "!";
    }
@@ -287,6 +310,26 @@ std::string VariableTatico::toString()
    if ( aluno )
    {
 	   str << "_Aluno" << aluno->getAlunoId();
+   }
+   
+   if ( turma1 >= 0 )
+   {
+      str << "_Turma1:" << turma1;
+   }
+
+   if ( disc1 != NULL )
+   {
+      str << "_Disc1:" << disc1->getId();
+   }
+   
+   if ( turma2 >= 0 )
+   {
+      str << "_Turma2:" << turma2;
+   }
+
+   if ( disc2 != NULL )
+   {
+      str << "_Disc2:" << disc2->getId();
    }
 
    str << "}";

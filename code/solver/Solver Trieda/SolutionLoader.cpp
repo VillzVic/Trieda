@@ -119,16 +119,31 @@ void SolutionLoader::setFolgas( Variable * v )
         restricaoViolada->setValor(v->getValue());
 		  problemSolution->getFolgas()->add(restricaoViolada);
 		  break;
-	   case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M: 
       case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P: 
-		   restricaoStr = "Regra de divisão de créditos (fk_{";
+		   restricaoStr = "Regra de divisao de creditos (fkp_{";
          sprintf(buffer, "%d", v->getTurma());
          restricaoStr += buffer;
          restricaoStr += ",";
          sprintf(buffer, "%d", v->getDisciplina()->getId());
          restricaoStr += buffer;
          restricaoStr += ",";
-         sprintf(buffer, "%d", v->getK());
+		 sprintf(buffer, "%d", v->getDia());
+         restricaoStr += buffer;
+		   restricaoStr += "})";
+		   restricaoViolada->setRestricao(restricaoStr);
+		   restricaoViolada->setUnidade("x");
+		   restricaoViolada->setValor(v->getValue());
+		   problemSolution->getFolgas()->add(restricaoViolada);
+		   break;
+	   case Variable::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M: 
+		   restricaoStr = "Regra de divisao de creditos (fkm_{";
+         sprintf(buffer, "%d", v->getTurma());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getDisciplina()->getId());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+		 sprintf(buffer, "%d", v->getDia());
          restricaoStr += buffer;
 		   restricaoStr += "})";
 		   restricaoViolada->setRestricao(restricaoStr);
@@ -152,6 +167,10 @@ void SolutionLoader::setFolgas( VariableTatico * v )
    {
       return;
    }
+
+   int discId;
+   int alunoId;
+   AlunoDemanda *ad = NULL;
 
    RestricaoViolada * restricaoViolada = new RestricaoViolada();
    switch ( v->getType() )
@@ -183,28 +202,48 @@ void SolutionLoader::setFolgas( VariableTatico * v )
 		   problemSolution->getFolgas()->add(restricaoViolada);
 		   break;
 	   case VariableTatico::V_SLACK_DEMANDA:
+		  discId = v->getDisciplina()->getId();
+		  alunoId = v->getAluno()->getAlunoId();
 		  restricaoStr = "Capacidade alocada tem que permitir atender demanda da disciplina/aluno (fd_{";
-        sprintf(buffer, "%d", v->getDisciplina()->getId());
+        sprintf(buffer, "%d", discId );
         restricaoStr += buffer;
         restricaoStr += ",";
-		sprintf(buffer, "%d", v->getAluno()->getAlunoId());
+		sprintf(buffer, "%d", alunoId);
         restricaoStr += buffer;
         restricaoStr += "})";
-        restricaoViolada->setRestricao(restricaoStr);
+		restricaoStr += " de prioridade ";
+		ad = problemData->procuraAlunoDemanda( discId, alunoId );
+		sprintf(buffer, "%d", ad->getPrioridade());
+		restricaoViolada->setRestricao(restricaoStr);
         restricaoViolada->setUnidade("fd");
         restricaoViolada->setValor(v->getValue());
 		  problemSolution->getFolgas()->add(restricaoViolada);
 		  break;
 	   case VariableTatico::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M: 
-      case VariableTatico::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P: 
-		   restricaoStr = "Regra de divisão de créditos (fk_{";
+		   restricaoStr = "Regra de divisao de creditos (fkm_{";
          sprintf(buffer, "%d", v->getTurma());
          restricaoStr += buffer;
          restricaoStr += ",";
          sprintf(buffer, "%d", v->getDisciplina()->getId());
          restricaoStr += buffer;
          restricaoStr += ",";
-         sprintf(buffer, "%d", v->getK());
+         sprintf(buffer, "%d", v->getDia());
+         restricaoStr += buffer;
+		   restricaoStr += "})";
+		   restricaoViolada->setRestricao(restricaoStr);
+		   restricaoViolada->setUnidade("x");
+		   restricaoViolada->setValor(v->getValue());
+		   problemSolution->getFolgas()->add(restricaoViolada);
+		   break;
+	   case VariableTatico::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P: 
+		   restricaoStr = "Regra de divisao de creditos (fkp_{";
+         sprintf(buffer, "%d", v->getTurma());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getDisciplina()->getId());
+         restricaoStr += buffer;
+         restricaoStr += ",";
+         sprintf(buffer, "%d", v->getDia());
          restricaoStr += buffer;
 		   restricaoStr += "})";
 		   restricaoViolada->setRestricao(restricaoStr);

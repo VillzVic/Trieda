@@ -1344,9 +1344,8 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 			this->demandas.add( *itDem );
 		}
 	}
-
-
-
+	
+	calculaDemandas();
 }
 
 // Dado o id de uma demanda, retorna o campus correspondente.
@@ -1462,4 +1461,105 @@ int ProblemData::atendeTurmaDiscOferta( int turma, int discId, int ofertaId )
 	}
 
 	return n;
+}
+
+
+bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId )
+{
+	std::pair<int,int> par = std::make_pair( disciplina, campusId );
+
+	std::map< std::pair< int, int >, int >::iterator itMap = this->demandas_campus.find( par );
+
+	if ( itMap != this->demandas_campus.end() )
+	{
+		if ( itMap->second > 0 )
+			return true;
+	}
+
+	return false;
+}
+
+int ProblemData::existeTurmaDiscCampus( int turma, int discId, int campusId )
+{
+	Disciplina *disciplina = this->refDisciplinas[ discId ];
+
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+	trio.set( campusId, turma, disciplina );
+
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator
+		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
+
+	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
+	{
+		return itMap->second.size();
+	}
+
+	return 0;
+}
+
+GGroup<Aluno*> ProblemData::alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus )
+{
+	GGroup<Aluno*> alunosEmComum;
+
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio1;
+	trio1.set( campus->getId(), turma1, disc1 );
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio2;
+	trio2.set( campus->getId(), turma2, disc2 );
+
+	// Acha os alunoDemanda da primeira turma
+	GGroup< AlunoDemanda* > alunos1;
+
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+		itMap1 = mapCampusTurmaDisc_AlunosDemanda.find( trio1 );
+	if ( itMap1 != mapCampusTurmaDisc_AlunosDemanda.end() )
+		alunos1 = itMap1->second;
+
+	// Acha os alunoDemanda da segunda turma
+	GGroup< AlunoDemanda* > alunos2;
+
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+		itMap2 = mapCampusTurmaDisc_AlunosDemanda.find( trio2 );
+	if ( itMap2 != mapCampusTurmaDisc_AlunosDemanda.end() )
+		alunos2 = itMap2->second;
+
+	// Acha os alunos em comum
+	ITERA_GGROUP( itAlDem1, alunos1, AlunoDemanda )
+	{
+		int aluno1Id = (*itAlDem1)->getAlunoId();
+
+		ITERA_GGROUP( itAlDem2, alunos2, AlunoDemanda )
+		{
+			int aluno2Id = (*itAlDem2)->getAlunoId();
+
+			if ( aluno1Id == aluno2Id )
+			{
+				Aluno* aluno = this->retornaAluno( aluno1Id );
+				alunosEmComum.add( aluno );
+			}
+		}			
+	}
+
+	return alunosEmComum;
+}
+
+
+// Dadas duas disciplinas, retorna os dias disponiveis em comum entre elas
+GGroup<int> ProblemData::diasComunsEntreDisciplinas( Disciplina *disciplina1, Disciplina *disciplina2 )
+{
+	GGroup<int> dias;
+
+	GGroup< int >::iterator itDia1 = disciplina1->diasLetivos.begin();
+	for ( ; itDia1 != disciplina1->diasLetivos.end(); itDia1++ )
+	{
+		int dia = *itDia1;
+
+		GGroup<int>::iterator itDia2 = disciplina2->diasLetivos.begin();
+		for ( ; itDia2 != disciplina2->diasLetivos.end(); itDia2++ )
+		{
+			if ( dia == *itDia2 )
+				dias.add( dia );
+		}
+	}
+		
+	return dias;
 }

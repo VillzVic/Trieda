@@ -29,6 +29,8 @@ public:
    
    int retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf );
 
+   bool intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf );
+
    bool possuiHorario( HorarioAula *h );
 
 private:   

@@ -31,7 +31,8 @@ public:
       V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 15,// fkp{i,d,k}
 	  V_ABERTURA_COMPATIVEL = 16,				// zc_{d,t}
 	  V_ALUNO_UNID_DIA = 17,					// y_{a,u,t}
-	  V_ALUNO_VARIAS_UNID_DIA = 18				// w_{a,t}
+	  V_ALUNO_VARIAS_UNID_DIA = 18,				// w_{a,t}
+	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 19		// fu_{i1,d1,i2,d2,t,cp}
    };
 
    //Constructors
@@ -86,6 +87,13 @@ public:
 
    Aluno* getAluno() const { return aluno; }
 
+   int getTurma1() const { return turma1; }
+   
+   int getTurma2() const { return turma2; }
+
+   Disciplina* getDisciplina1() const { return disc1; }
+   
+   Disciplina* getDisciplina2() const { return disc2; }
 
    //==================================================
    // SET METHODS 
@@ -134,6 +142,14 @@ public:
    void setHorarioAulaFinal( HorarioAula* h ) { horarioAulaF = h; }
 
    void setAluno( Aluno *a ) { aluno = a; }
+   
+   void setTurma1( int i1 ) { turma1 = i1; }
+   
+   void setTurma2( int i2 ) { turma2 = i2; }
+
+   void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
+
+   void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
 
    //==================================================
    // OPERATORS 
@@ -169,6 +185,11 @@ private:
    HorarioAula* horarioAulaI;
    HorarioAula* horarioAulaF;
    Aluno *aluno;
+
+   int turma1;          // i1
+   Disciplina *disc1;   // d1
+   int turma2;          // i2
+   Disciplina *disc2;   // d2
 
 };
 

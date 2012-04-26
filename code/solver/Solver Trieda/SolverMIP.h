@@ -136,10 +136,12 @@ public:
    int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId );					// fcp_{d,t}   
    int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId );					// fcm_{d,t}
    int criaVariavelTaticoAberturaCompativel( int campusId );						// zc_{d,t}
-   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );						// fd_{d,a}   
+//   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );					// fd_{d,a}   
+   int criaVariavelTaticoFolgaDemandaDisc( int campusId );							// fd_{i,d,cp}
    int criaVariavelTaticoAlunoUnidDia( int campusId );								// y_{a,u,t} 
    int criaVariavelTaticoAlunoUnidadesDifDia( int campusId );						// w_{a,t}
 
+   int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId );						// fu_{i1,d1,i2,d2,t,cp}
   
 
    /********************************************************************
@@ -151,7 +153,8 @@ public:
    int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
    int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
    int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId ); // Restricao 1.2.4
-   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
+//   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
+   int criaRestricaoTaticoAtendeDemanda( int campusID );				// Restricao 1.2.5   
    int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
    int criaRestricaoTaticoLimitaAberturaTurmas( int campusId );			// Restricao 1.2.7
    int criaRestricaoTaticoDivisaoCredito( int campusId );				// Restricao 1.2.8      
@@ -163,7 +166,8 @@ public:
    int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
    int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
    int criaRestricaoTaticoMaxCreds( int campusId );						// Restricao 1.2.16
-   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );		// Restricao 1.2.17
+//   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );	// Restricao 1.2.17
+   int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
 
@@ -354,7 +358,7 @@ public:
    void carregaVariaveisSolucaoTaticoPorAluno( int campusId, int prioridade  );
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );
-   void preencheMapAtendimentoAluno();
+   void preencheMapAtendimentoAluno( int campusId );
 
    int solveTaticoPorCampus();
    int solveTatico( int campusId );
@@ -382,6 +386,7 @@ public:
    void criaVariaveisCreditosDisciplinasSubstituidas();
 
    void relacionaAlunosDemandas();
+   Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
 
    Variable * criaVariavelAlunos(
       Campus *, Unidade *, ConjuntoSala *, Sala *,

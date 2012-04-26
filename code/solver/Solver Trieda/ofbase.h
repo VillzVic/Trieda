@@ -32,7 +32,7 @@
 #endif
 
 #ifndef ITERA_GGROUP_INIC_LESSPTR
-#define ITERA_GGROUP_INIC_LESSPTR( it, inicio, ggroup, type ) for ( GGroup< type *, LessPtr< type > >::iterator it = inicio; it != ( ggroup ).end(); ++it )
+#define ITERA_GGROUP_INIC_LESSPTR( it, it_inicio, ggroup, type ) for ( GGroup< type *, LessPtr< type > >::iterator it = it_inicio; it != ( ggroup ).end(); ++it )
 #endif
 
 #ifndef ITERA_GGROUP_LESSPTR
@@ -49,6 +49,10 @@
 
 #ifndef ITERA_GGROUP_N_PT
 #define ITERA_GGROUP_N_PT( it, ggroup, type ) for ( GGroup< type >::iterator it = ( ggroup ).begin(); it != ( ggroup ).end(); ++it )
+#endif
+
+#ifndef ITERA_GGROUP_INIC_N_PT
+#define ITERA_GGROUP_INIC_N_PT( it, it_inicio, ggroup, type ) for ( GGroup< type >::iterator it = it_inicio; it != ( ggroup ).end(); ++it )
 #endif
 
 // A macro abaixo serve para iterar em vectors da STL

@@ -418,6 +418,14 @@ public:
 
    int atendeTurmaDiscOferta( int turma, int discId, int ofertaId );
 
+   bool haDemandaDiscNoCampus( int disciplina, int campusId );
+   
+   int existeTurmaDiscCampus( int turma, int discId, int campusId );
+
+   GGroup<Aluno*> alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
+      
+   GGroup<int> diasComunsEntreDisciplinas( Disciplina *disciplina1, Disciplina *disciplina2 );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

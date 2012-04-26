@@ -54,6 +54,10 @@ ConstraintTatico& ConstraintTatico::operator = ( const ConstraintTatico & cons )
    this->h = cons.getHorarioAula();
    this->parDiscs = cons.getParDisciplinas();
    this->aluno = cons.getAluno();
+   this->turma1 = cons.getTurma1();
+   this->turma2 = cons.getTurma2();
+   this->disc1 = cons.getDisciplina1();
+   this->disc2 = cons.getDisciplina2();
 
    return *this;
 }
@@ -122,6 +126,21 @@ bool ConstraintTatico::operator < ( const ConstraintTatico & cons ) const
 
    if (E_MENOR(this->getAluno(),cons.getAluno())) return true;
    if (E_MENOR(cons.getAluno(), this->getAluno())) return false;
+      
+   if ( this->getAluno() < cons.getAluno() ) return true;
+   if ( this->getAluno() > cons.getAluno() ) return false;
+   
+   if ( this->getTurma1() < cons.getTurma1() ) return true;
+   if ( this->getTurma1() > cons.getTurma1() ) return false;
+   
+   if ( this->getTurma2() < cons.getTurma2() ) return true;
+   if ( this->getTurma2() > cons.getTurma2() ) return false;
+
+   if ( E_MENOR( this->getDisciplina1(),cons.getDisciplina1() ) ) return true;
+   if ( E_MENOR( cons.getDisciplina1(), this->getDisciplina1() ) ) return false;
+
+   if ( E_MENOR( this->getDisciplina2(),cons.getDisciplina2() ) ) return true;
+   if ( E_MENOR( cons.getDisciplina2(), this->getDisciplina2() ) ) return false;
 
    return false;
 
@@ -156,6 +175,11 @@ void ConstraintTatico::reset()
    parDiscs.first = NULL;
    parDiscs.second = NULL;
    aluno = NULL;
+   turma1 = -1;
+   turma2 = -1;
+   disc1 = NULL;
+   disc2 = NULL;
+
 }
 
 std::string ConstraintTatico::toString()
@@ -171,8 +195,10 @@ std::string ConstraintTatico::toString()
       ss << "__(C_SALA_HORARIO):"; break;	  
    case C_UNICO_ATEND_TURMA_DISC_DIA:
       ss << "__(C_UNICO_ATEND_TURMA_DISC_DIA):"; break;
-   case C_DEMANDA_DISC_ALUNO:
-      ss << "__(C_DEMANDA_DISC_ALUNO):"; break;
+   case C_DEMANDA_DISC:
+      ss << "__(C_DEMANDA_DISC):"; break;
+//   case C_DEMANDA_DISC_ALUNO:
+//      ss << "__(C_DEMANDA_DISC_ALUNO):"; break;
    case C_TURMA_DISC_DIAS_CONSEC:
       ss << "__(TURMAS_DISC_DIAS_CONSEC):"; break;	  
    case C_LIMITA_ABERTURA_TURMAS:
@@ -297,6 +323,26 @@ std::string ConstraintTatico::toString()
    if ( aluno != NULL )
    {
 	   ss << "_Aluno" << aluno->getAlunoId();
+   }
+      
+   if ( turma1 >= 0 )
+   {
+      ss << "_Turma1:" << turma1;
+   }
+
+   if ( disc1 != NULL )
+   {
+      ss << "_Disc1:" << disc1->getId();
+   }
+   
+   if ( turma2 >= 0 )
+   {
+      ss << "_Turma2:" << turma2;
+   }
+
+   if ( disc2 != NULL )
+   {
+      ss << "_Disc2:" << disc2->getId();
    }
 
    ss << "_}";

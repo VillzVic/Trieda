@@ -22,7 +22,8 @@ public:
       C_CARGA_HORARIA = 1,							// Restricao 1.2.2
 	  C_SALA_HORARIO = 2,							// Restricao 1.2.3
 	  C_UNICO_ATEND_TURMA_DISC_DIA = 3,				// Restricao 1.2.4
-	  C_DEMANDA_DISC_ALUNO = 4,						// Restricao 1.2.5	  
+	  C_DEMANDA_DISC = 4,							// Restricao 1.2.5	
+//	  C_DEMANDA_DISC_ALUNO = 4,						// Restricao 1.2.5	  
 	  C_TURMA_DISC_DIAS_CONSEC = 5,					// Restricao 1.2.6
 
       C_LIMITA_ABERTURA_TURMAS = 6,					// Restricao 1.2.7
@@ -87,6 +88,10 @@ public:
    HorarioAula* getHorarioAula () const { return h; } 
    std::pair<Disciplina*, Disciplina*> getParDisciplinas () const { return parDiscs; }
    Aluno* getAluno () const { return aluno; }
+   int getTurma1() const { return turma1; }   
+   int getTurma2() const { return turma2; }
+   Disciplina* getDisciplina1() const { return disc1; }   
+   Disciplina* getDisciplina2() const { return disc2; }
 
    //==================================================
    // SET METHODS 
@@ -116,6 +121,10 @@ public:
    void setHorarioAula ( HorarioAula * ha ) { h = ha; }
    void setParDisciplinas ( std::pair<Disciplina*, Disciplina*> par ) { parDiscs = par; }
    void setAluno ( Aluno *a ) { aluno = a; }
+   void setTurma1( int i1 ) { turma1 = i1; }   
+   void setTurma2( int i2 ) { turma2 = i2; }
+   void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
+   void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
 
 private:
 
@@ -154,6 +163,11 @@ private:
    HorarioAula* h;
    
    Aluno* aluno;
+
+   int turma1;          // i1
+   Disciplina *disc1;   // d1
+   int turma2;          // i2
+   Disciplina *disc2;   // d2
 
 };
 

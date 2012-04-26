@@ -54,8 +54,8 @@ public:
    void setNumTurmas( int value ) { num_turmas = value; }
    void setMinCreds( int value ) { min_creds = value; }
    void setMaxCreds( int value ) { max_creds = value; }
-   void setMenorCapacSala( int value ) { this->menorCapacSala = value; }
-   void setCapacMediaSala( int value ) { this->capacMediaSala = value; }
+   void setMenorCapacSala( int value, int campusId ) { this->menorCapacSala[campusId] = value; }
+   void setCapacMediaSala( int value, int campusId ) { this->capacMediaSala[campusId] = value; }
    void setCalendario( Calendario* sl ) { this->calendario = sl; }
    void setNSalasAptas( int value ){ this->nSalasAptas = value; }
 
@@ -73,8 +73,8 @@ public:
    int getNumTurmas() const { return num_turmas; }
    int getMinCreds() const { return min_creds; }
    int getMaxCreds() const { return max_creds; }
-   int getMenorCapacSala() const { return this->menorCapacSala; }
-   int getCapacMediaSala() const { return this->capacMediaSala; }
+   int getMenorCapacSala( int campusId );
+   int getCapacMediaSala( int campusId );
    Calendario* getCalendario() const { return calendario; }
    int getNSalasAptas() const { return this->nSalasAptas; }
 
@@ -110,8 +110,8 @@ private:
    int num_turmas;
    int min_creds;
    int max_creds;
-   int menorCapacSala; // menor capacidade dentre as salas aonde a disciplina pode ser ministrada
-   int capacMediaSala; // capacidade media dentre as salas aonde a disciplina pode ser ministrada
+   std::map<int, int> menorCapacSala; // menor capacidade dentre as salas de cada campus aonde a disciplina pode ser ministrada
+   std::map<int, int> capacMediaSala; // capacidade media dentre as salas de cada campus aonde a disciplina pode ser ministrada
    int nSalasAptas;
    Disciplina* substituta;
 

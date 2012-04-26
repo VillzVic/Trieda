@@ -15,8 +15,6 @@ Disciplina::Disciplina(void)
    num_turmas = -1;
    min_creds = -1;
    max_creds = -1;
-   menorCapacSala = 10000;
-   capacMediaSala = 0;
    nSalasAptas = 0;
 
 }
@@ -81,4 +79,21 @@ bool Disciplina::eh_equivalente( Disciplina * other )
 			&& ( this->getCredPraticos() == other->getCredPraticos() )
 			&& ( this->eLab() == other->eLab() )
 			&& ( this->getTipoDisciplinaId() == other->getTipoDisciplinaId() ) );
+}
+
+int Disciplina::getMenorCapacSala( int campusId ) 
+{
+	if ( this->menorCapacSala.find( campusId ) != this->menorCapacSala.end()  )
+		return this->menorCapacSala[campusId];
+	else
+		return -1;
+}
+
+
+int Disciplina::getCapacMediaSala( int campusId )
+{
+	if ( this->capacMediaSala.find( campusId ) != this->capacMediaSala.end()  )
+		return this->capacMediaSala[campusId];
+	else
+		return 0;
 }
