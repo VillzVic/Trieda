@@ -377,11 +377,11 @@ public class CursosServiceImpl
 			for (String key2 : map3.get(key1).keySet()) {
 				for (String key3 : map3.get(key1).get(key2).keySet()) {
 					Pair<ResumoCursoDTO,List<ResumoCursoDTO>> pair = map3.get(key1).get(key2).get(key3);
-					Double rateio = TriedaUtil.roundTwoDecimals(rateioMap.get(key3));
+					Double rateio = rateioMap.get(key3);
 					
 					ResumoCursoDTO mainDTO = pair.getLeft();
 					mainDTO.setRateio(rateio);
-					mainDTO.setRateioString((rateio*100.0)+"%");
+					mainDTO.setRateioString(TriedaUtil.round(rateio*100.0,2)+"%");
 					
 					for (ResumoCursoDTO dto : pair.getRight()) {
 						// acumula a qtde de créditos
@@ -404,12 +404,12 @@ public class CursosServiceImpl
 					double margem = mainDTO.getReceita().getDoubleValue() - mainDTO.getCustoDocente().getDoubleValue();
 					double margemPercent = 0.0;
 					if (Double.compare(mainDTO.getReceita().getDoubleValue(),0.0) != 0) {
-						margemPercent = TriedaUtil.round((margem / mainDTO.getReceita().getDoubleValue()),2); 
+						margemPercent = (margem / mainDTO.getReceita().getDoubleValue()); 
 					}
 					mainDTO.setMargem(TriedaUtil.parseTriedaCurrency(margem));
 					mainDTO.setMargemString(currencyFormatter.print(mainDTO.getMargem().getDoubleValue(),pt_BR));
-					mainDTO.setMargemPercente(TriedaUtil.roundTwoDecimals(margemPercent));
-					mainDTO.setMargemPercenteString(margemPercent+"%");
+					mainDTO.setMargemPercente(margemPercent);
+					mainDTO.setMargemPercenteString(TriedaUtil.round(margemPercent*100.0,2)+"%");
 				}
 			}
 		}
@@ -459,16 +459,16 @@ public class CursosServiceImpl
 					if (Double.compare(rc1.getReceita().getDoubleValue(),0.0) != 0) {
 						doubleValue = rc1.getMargem().getDoubleValue() / rc1.getReceita().getDoubleValue();
 					}
-					rc1.setMargemPercente(TriedaUtil.roundTwoDecimals(doubleValue));
+					rc1.setMargemPercente(doubleValue);
 					
 					doubleValue = 0.0;
 					if (Double.compare(rc2.getReceita().getDoubleValue(),0.0) != 0) {
 						doubleValue = rc2.getMargem().getDoubleValue() / rc2.getReceita().getDoubleValue();
 					}
-					rc2.setMargemPercente(TriedaUtil.roundTwoDecimals(doubleValue));
+					rc2.setMargemPercente(doubleValue);
 					
-					rc1.setMargemPercenteString(rc1.getMargemPercente()+"%");
-					rc2.setMargemPercenteString(rc2.getMargemPercente()+"%");
+					rc1.setMargemPercenteString(TriedaUtil.round(rc1.getMargemPercente()*100.0,2)+"%");
+					rc2.setMargemPercenteString(TriedaUtil.round(rc2.getMargemPercente()*100.0,2)+"%");
 				}
 			}
 		}
@@ -483,7 +483,7 @@ public class CursosServiceImpl
 	}
 
 	private String getKeyNivel3(ResumoCursoDTO resumoCursoDTO) {
-		return getKeyNivel2(resumoCursoDTO) + "-" + resumoCursoDTO.getDisciplinaId() + "-" + resumoCursoDTO.getTurma() + "-" + resumoCursoDTO.getTipoCreditoTeorico();
+		return getKeyNivel2(resumoCursoDTO) + "-" + resumoCursoDTO.getDisciplinaId() + "-" + resumoCursoDTO.getTurma() + "-" + resumoCursoDTO.getTipoCreditoTeorico() + "-" + resumoCursoDTO.getProfessorCPF();
 	}
 	
 	private String getKeyCompartilhamentoTurma(ResumoCursoDTO resumoCursoDTO) {
@@ -542,7 +542,7 @@ public class CursosServiceImpl
 			ResumoCursoDTO resumoCursoDTO) {
 		String key1 = getKeyNivel1(resumoCursoDTO); // Campus-Turno-Curso
 		String key2 = getKeyNivel2(resumoCursoDTO); // Campus-Turno-Curso-Curriculo-Periodo
-		String key3 = getKeyNivel3(resumoCursoDTO); // Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito
+		String key3 = getKeyNivel3(resumoCursoDTO); // Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito-ProfessorCPF
 
 		Pair<ResumoCursoDTO,List<ResumoCursoDTO>> pair = map.get(key1).get(key2).get(key3);
 		if (pair == null) {
@@ -562,6 +562,8 @@ public class CursosServiceImpl
 			dtoMain.setQuantidadeAlunos(resumoCursoDTO.getQuantidadeAlunos());
 			dtoMain.setTurma(resumoCursoDTO.getTurma());
 			dtoMain.setTipoCreditoTeorico(resumoCursoDTO.getTipoCreditoTeorico());
+			dtoMain.setProfessorCPF(resumoCursoDTO.getProfessorCPF());
+			dtoMain.setProfessorNome(resumoCursoDTO.getProfessorNome());
 			pair = Pair.create(dtoMain,list);
 			map.get(key1).get(key2).put(key3, pair);
 		}
@@ -583,8 +585,6 @@ public class CursosServiceImpl
 		resumoCursoDTONew.setTurma(resumoCursoDTO.getTurma());
 		resumoCursoDTONew.setTipoCreditoTeorico(resumoCursoDTO.getTipoCreditoTeorico());
 		resumoCursoDTONew.setCreditos(resumoCursoDTO.getCreditos());
-		resumoCursoDTONew.setProfessorCPF(resumoCursoDTO.getProfessorCPF());
-		resumoCursoDTONew.setProfessorNome(resumoCursoDTO.getProfessorNome());
 		resumoCursoDTONew.setCustoDocente(resumoCursoDTO.getCustoDocente());
 		resumoCursoDTONew.setReceita(resumoCursoDTO.getReceita());
 	
@@ -604,17 +604,28 @@ public class CursosServiceImpl
 			list.add(rcDTO);
 		}
 		
-		// [Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito -> Rateio]
+		// [Campus-Turno-Curso-Curriculo-Periodo-Disciplina-Turma-TipoCredito-ProfessorCPF -> Rateio]
 		Map<String, Double> rateioMap = new HashMap<String, Double>();
 		
 		for (Entry<String, List<ResumoCursoDTO>> entry : compartilhamentosTurmasMap.entrySet()) {
 			double totalAlunosCompartilhados = 0.0;
+			Map<String,Integer> keyNivel3ToQtdAlunosMap = new HashMap<String,Integer>();
 			for (ResumoCursoDTO dto : entry.getValue()) {
+				// aculuma o total de alunos por key nivel 3
+				String keyNivel3 = getKeyNivel3(dto);
+				Integer qtdAlunos = keyNivel3ToQtdAlunosMap.get(keyNivel3);
+				if (qtdAlunos == null) {
+					qtdAlunos = 0;
+				}
+				keyNivel3ToQtdAlunosMap.put(keyNivel3,qtdAlunos+dto.getQuantidadeAlunos());
+				
+				// acumula o total de alunos
 				totalAlunosCompartilhados += dto.getQuantidadeAlunos();
 			}
 			
-			for (ResumoCursoDTO dto : entry.getValue()) {
-				rateioMap.put(getKeyNivel3(dto),dto.getQuantidadeAlunos()/totalAlunosCompartilhados);
+			for (String keyNivel3 : keyNivel3ToQtdAlunosMap.keySet()) {
+				double qtdAlunos = keyNivel3ToQtdAlunosMap.get(keyNivel3);
+				rateioMap.put(keyNivel3,qtdAlunos/totalAlunosCompartilhados);
 			}
 		}
 		

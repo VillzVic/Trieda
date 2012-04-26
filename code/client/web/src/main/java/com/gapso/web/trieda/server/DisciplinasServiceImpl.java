@@ -1315,12 +1315,12 @@ public class DisciplinasServiceImpl
 				double margem = mainDTO.getReceita().getDoubleValue() - mainDTO.getCustoDocente().getDoubleValue();
 				double margemPercent = 0.0;
 				if (Double.compare(mainDTO.getReceita().getDoubleValue(),0.0) != 0) {
-					margemPercent = (margem / mainDTO.getReceita().getDoubleValue()) * 100.0; 
+					margemPercent = (margem / mainDTO.getReceita().getDoubleValue()); 
 				}
 				mainDTO.setMargem(TriedaUtil.parseTriedaCurrency(margem));
 				mainDTO.setMargemString(currencyFormatter.print(mainDTO.getMargem().getDoubleValue(),pt_BR));
-				mainDTO.setMargemPercente(TriedaUtil.roundTwoDecimals(margemPercent));
-				mainDTO.setMargemPercenteString(mainDTO.getMargemPercente()+"%");
+				mainDTO.setMargemPercente(margemPercent);
+				mainDTO.setMargemPercenteString(TriedaUtil.round(mainDTO.getMargemPercente()*100.0,2)+"%");
 			}
 		}
 	}
@@ -1360,11 +1360,11 @@ public class DisciplinasServiceImpl
 				Double receitaValue = rc1.getReceita().getDoubleValue();
 				Double margemPercent = 0.0;
 				if (Double.compare(receitaValue,0.0) != 0) {
-					margemPercent = ( ( margemValue / receitaValue ) * 100.0 );
+					margemPercent = ( ( margemValue / receitaValue ) );
 				}
 
-				rc1.setMargemPercente( TriedaUtil.roundTwoDecimals(margemPercent) );
-				rc1.setMargemPercenteString(rc1.getMargemPercente()+"%");
+				rc1.setMargemPercente(margemPercent);
+				rc1.setMargemPercenteString(TriedaUtil.round(rc1.getMargemPercente()*100.0,2)+"%");
 			}
 		}
 	}
