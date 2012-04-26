@@ -351,7 +351,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		// INICIALIZA PARAMETROS
 		this.taticoRadio.setValue(this.parametroDTO.isTatico() || !parametroDTO.isOperacional());
 		this.operacionalRadio.setValue(this.parametroDTO.isOperacional());
-		boolean otimizarPor = (this.parametroDTO.getOtimizarPor() == null) ? true : (this.parametroDTO.getOtimizarPor() == ParametroDTO.OTIMIZAR_POR_ALUNO);
+		boolean otimizarPor = (this.parametroDTO.getOtimizarPor() == null) ? true : (this.parametroDTO.getOtimizarPor().equals(ParametroDTO.OTIMIZAR_POR_ALUNO));
 		this.otimizarPorAluno.setValue(otimizarPor);
 		this.otimizarPorBlocoCurricular.setValue(!otimizarPor);
 		this.funcaoObjetivoCheckBox.setValue(this.parametroDTO.getFuncaoObjetivo());
