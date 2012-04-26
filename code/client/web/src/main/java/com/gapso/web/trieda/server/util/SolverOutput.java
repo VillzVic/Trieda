@@ -325,6 +325,7 @@ public class SolverOutput
 	private Map<Long, AlunoDemanda> createAlunoDemandasMap(Turno turnoSelecionado) {
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = new HashMap<Long,AlunoDemanda>();
+		AlunoDemanda.entityManager().flush();
 		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurno(this.instituicaoEnsino,this.cenario.getCampi(),turnoSelecionado);
 		for (AlunoDemanda alunoDemanda : alunosDemanda) {
 			alunoDemandaIdToAlunoDemandaMap.put(alunoDemanda.getId(),alunoDemanda);
@@ -386,7 +387,7 @@ public class SolverOutput
 			at.persist();
 		}
 		
-		AlunoDemanda.entityManager().flush();
+		AtendimentoOperacional.entityManager().flush();
 		
 		for(AlunoDemanda alunoDemanda : alunosDemandaOperacional.keySet()){
 			int creditosAtendidos = 0;
@@ -424,8 +425,5 @@ public class SolverOutput
 				alunoDemandaBD.merge();
 			}
 		}
-		
-		AlunoDemanda.entityManager().flush();
 	}
-	
 }
