@@ -27,7 +27,7 @@ public class ResumoCursoExportExcel
 	enum ExcelCellStyleReference
 	{
 		TEXT( 6,2 ),
-		PERCENTE( 6,16 ),
+		PERCENTE( 6,18 ),
 		INTEGER( 6,6 ),
 		DOUBLE( 6,15 );
 
@@ -204,6 +204,12 @@ public class ResumoCursoExportExcel
 
 		// Rateio
 		setCell( row, i++, sheet, cellStyles[ ExcelCellStyleReference.PERCENTE.ordinal() ], resumoCursoDTO.getRateio() );
+		
+		// Professor CPF
+		setCell( row, i++, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], resumoCursoDTO.getProfessorCPF() );
+		
+		// Professor Nome
+		setCell( row, i++, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], resumoCursoDTO.getProfessorNome() );
 
 		// Custo Docente
 		setCell( row, i++, sheet, cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ], resumoCursoDTO.getCustoDocente().getDoubleValue() );

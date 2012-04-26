@@ -26,7 +26,6 @@ import com.gapso.web.trieda.main.client.mvp.presenter.ResumoDisciplinaPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
-import com.gapso.web.trieda.shared.util.TriedaCurrency;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -120,25 +119,6 @@ public class ResumoDisciplinaView
 
 	public List< ColumnConfig > getColumnList()
 	{
-		GridCellRenderer< ResumoDisciplinaDTO > percenteRenderer =
-			new GridCellRenderer< ResumoDisciplinaDTO >()
-			{
-				@Override
-				public String render( ResumoDisciplinaDTO model, String property,
-					ColumnData config, int rowIndex, int colIndex,
-					ListStore< ResumoDisciplinaDTO > store, Grid< ResumoDisciplinaDTO > grid )
-				{
-					if ( model.get( property ) == null )
-					{
-						return "";
-					}
-
-					TriedaCurrency tc = new TriedaCurrency( (Double) model.get( property ) );
-					String percent = ( tc.toString() + "%" ); 
-					return ( percent );
-				}
-			};
-
 		GridCellRenderer< ResumoDisciplinaDTO > tipoDeCreditoRenderer =
 			new GridCellRenderer< ResumoDisciplinaDTO >()
 			{
@@ -182,21 +162,10 @@ public class ResumoDisciplinaView
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_QUANTIDADE_ALUNOS_INT,
 			this.getI18nConstants().quantidadeAlunos(), 100 ) );
 
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE,
-			this.getI18nConstants().custoDocente(), 100 ) );
-
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_RECEITA_DOUBLE,
-			this.getI18nConstants().receita(), 100 ) );
-
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_MARGEM_DOUBLE,
-			this.getI18nConstants().margem(), 100 ) );
-
-		ColumnConfig margemPercenteColumnConfig = new ColumnConfig(
-			ResumoDisciplinaDTO.PROPERTY_MARGEM_PERCENTE_DOUBLE,
-			this.getI18nConstants().margemPercente(), 100 );
-
-		margemPercenteColumnConfig.setRenderer( percenteRenderer );
-		list.add( margemPercenteColumnConfig );
+		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_CUSTO_DOCENTE_STRING,getI18nConstants().custoDocente(),100));
+		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_RECEITA_STRING,getI18nConstants().receita(),100));
+		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_MARGEM_STRING,getI18nConstants().margem(),100));
+		list.add(new ColumnConfig(ResumoDisciplinaDTO.PROPERTY_MARGEM_PERCENTE_STRING,getI18nConstants().margemPercente(),100));
 
 		return list;
 	}

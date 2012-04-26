@@ -5,9 +5,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.format.number.CurrencyFormatter;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -1242,6 +1244,9 @@ public class DisciplinasServiceImpl
 		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2,
 		Map< String, List< AtendimentoRelatorioDTO > > atendimentosMap )
 	{
+		Locale pt_BR = new Locale("pt","BR");
+		CurrencyFormatter currencyFormatter = new CurrencyFormatter();
+		
 		for ( String key1 : map2.keySet() ) {
 			for ( String key2 : map2.get( key1 ).keySet() ) {
 				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 );
@@ -1269,6 +1274,7 @@ public class DisciplinasServiceImpl
 						int creditos = dto.getCreditos();
 						double custoDocenteLocal = creditos * docente * 4.5 * 6.0;
 						mainDTO.setCustoDocente(TriedaUtil.parseTriedaCurrency(custoDocenteLocal + mainDTO.getCustoDocente().getDoubleValue()));
+						mainDTO.setCustoDocenteString(currencyFormatter.print(mainDTO.getCustoDocente().getDoubleValue(),pt_BR));
 					}
 					
 					for (ResumoDisciplinaDTO dto : pair.getRight()) {
@@ -1278,6 +1284,7 @@ public class DisciplinasServiceImpl
 						int creditos = dto.getCreditos();
 						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
 						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
+						mainDTO.setReceitaString(currencyFormatter.print(mainDTO.getReceita().getDoubleValue(),pt_BR));
 					}
 					
 					mainDTO.setQuantidadeAlunos(0);
@@ -1296,9 +1303,11 @@ public class DisciplinasServiceImpl
 						int creditos = dto.getCreditos();
 						double custoDocenteLocal = creditos * docente * 4.5 * 6.0;
 						mainDTO.setCustoDocente(TriedaUtil.parseTriedaCurrency(custoDocenteLocal + mainDTO.getCustoDocente().getDoubleValue()));
+						mainDTO.setCustoDocenteString(currencyFormatter.print(mainDTO.getCustoDocente().getDoubleValue(),pt_BR));
 						// calcula e acumula receita
 						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
 						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
+						mainDTO.setReceitaString(currencyFormatter.print(mainDTO.getReceita().getDoubleValue(),pt_BR));
 					}
 				}
 				
@@ -1309,7 +1318,9 @@ public class DisciplinasServiceImpl
 					margemPercent = (margem / mainDTO.getReceita().getDoubleValue()) * 100.0; 
 				}
 				mainDTO.setMargem(TriedaUtil.parseTriedaCurrency(margem));
+				mainDTO.setMargemString(currencyFormatter.print(mainDTO.getMargem().getDoubleValue(),pt_BR));
 				mainDTO.setMargemPercente(TriedaUtil.roundTwoDecimals(margemPercent));
+				mainDTO.setMargemPercenteString(mainDTO.getMargemPercente()+"%");
 			}
 		}
 	}
@@ -1318,6 +1329,9 @@ public class DisciplinasServiceImpl
 		Map< String, ResumoDisciplinaDTO > map1,
 		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2 )
 	{
+		Locale pt_BR = new Locale("pt","BR");
+		CurrencyFormatter currencyFormatter = new CurrencyFormatter();
+		
 		for ( String key1 : map2.keySet() )
 		{
 			ResumoDisciplinaDTO rc1 = map1.get( key1 );
@@ -1332,21 +1346,25 @@ public class DisciplinasServiceImpl
 				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 ); 
 				ResumoDisciplinaDTO rc2 = pair.getLeft();
 
-				rc1.setCustoDocente( new TriedaCurrency(
-					rc1.getCustoDocente().getDoubleValue() + rc2.getCustoDocente().getDoubleValue()) );
+				rc1.setCustoDocente( new TriedaCurrency(rc1.getCustoDocente().getDoubleValue() + rc2.getCustoDocente().getDoubleValue()) );
+				rc1.setCustoDocenteString(currencyFormatter.print(rc1.getCustoDocente().getDoubleValue(),pt_BR));
 
-				rc1.setReceita( new TriedaCurrency(
-					rc1.getReceita().getDoubleValue() + rc2.getReceita().getDoubleValue()) );
+				rc1.setReceita( new TriedaCurrency(rc1.getReceita().getDoubleValue() + rc2.getReceita().getDoubleValue()) );
+				rc1.setReceitaString(currencyFormatter.print(rc1.getReceita().getDoubleValue(),pt_BR));
 
-				rc1.setMargem( new TriedaCurrency(
-					rc1.getMargem().getDoubleValue() + rc2.getMargem().getDoubleValue()) );
+				rc1.setMargem( new TriedaCurrency(rc1.getMargem().getDoubleValue() + rc2.getMargem().getDoubleValue()) );
+				rc1.setMargemString(currencyFormatter.print(rc1.getMargem().getDoubleValue(),pt_BR));
 
 				// Código relacionado com a issue TRIEDA-1050
 				Double margemValue = rc1.getMargem().getDoubleValue();
 				Double receitaValue = rc1.getReceita().getDoubleValue();
-				Double margemPercent = ( ( margemValue / receitaValue ) * 100.0 );
+				Double margemPercent = 0.0;
+				if (Double.compare(receitaValue,0.0) != 0) {
+					margemPercent = ( ( margemValue / receitaValue ) * 100.0 );
+				}
 
 				rc1.setMargemPercente( TriedaUtil.roundTwoDecimals(margemPercent) );
+				rc1.setMargemPercenteString(rc1.getMargemPercente()+"%");
 			}
 		}
 	}

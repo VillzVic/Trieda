@@ -28,10 +28,17 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 	public static final String PROPERTY_CREDITOS_INT = "creditosInt";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_INT = "quantidadeAlunosInt";
 	public static final String PROPERTY_RATEIO_DOUBLE = "rateioDouble";
+	public static final String PROPERTY_RATEIO_STRING = "rateioString";
+	public static final String PROPERTY_PROFESSOR_CPF = "professorCPF";
+	public static final String PROPERTY_PROFESSOR_NOME = "professorNome";
 	public static final String PROPERTY_CUSTO_DOCENTE_DOUBLE = "custoDocenteDouble";
+	public static final String PROPERTY_CUSTO_DOCENTE_STRING = "custoDocenteString";
 	public static final String PROPERTY_RECEITA_DOUBLE = "receitaDouble";
+	public static final String PROPERTY_RECEITA_STRING = "receitaString";
 	public static final String PROPERTY_MARGEM_DOUBLE = "margemDouble";
+	public static final String PROPERTY_MARGEM_STRING = "margemString";
 	public static final String PROPERTY_MARGEM_PERCENTE_DOUBLE = "margemPercenteDouble";
+	public static final String PROPERTY_MARGEM_PERCENTE_STRING = "margemPercenteString";
 
 	private boolean hasChildren = false;
 
@@ -198,14 +205,45 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 	public Double getRateio() {
 		return get(PROPERTY_RATEIO_DOUBLE);
 	}
+	
+	public void setRateioString(String value) {
+		set(PROPERTY_RATEIO_STRING, value);
+	}
+
+	public String getRateioString() {
+		return get(PROPERTY_RATEIO_STRING);
+	}
 
 	public void setCustoDocente(TriedaCurrency value) {
 		set(PROPERTY_CUSTO_DOCENTE_DOUBLE, value.toString());
 	}
 
 	public TriedaCurrency getCustoDocente() {
-		return TriedaUtil
-				.parseTriedaCurrency(get(PROPERTY_CUSTO_DOCENTE_DOUBLE));
+		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_CUSTO_DOCENTE_DOUBLE));
+	}
+	
+	public void setCustoDocenteString(String value) {
+		set(PROPERTY_CUSTO_DOCENTE_STRING, value);
+	}
+
+	public String getCustoDocenteString() {
+		return get(PROPERTY_CUSTO_DOCENTE_STRING);
+	}
+	
+	public void setProfessorCPF(String value) {
+		set(PROPERTY_PROFESSOR_CPF,value);
+	}
+
+	public String getProfessorCPF() {
+		return get(PROPERTY_PROFESSOR_CPF);
+	}
+	
+	public void setProfessorNome(String value) {
+		set(PROPERTY_PROFESSOR_NOME,value);
+	}
+
+	public String getProfessorNome() {
+		return get(PROPERTY_PROFESSOR_NOME);
 	}
 
 	public void setReceita(TriedaCurrency value) {
@@ -215,6 +253,14 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 	public TriedaCurrency getReceita() {
 		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_RECEITA_DOUBLE));
 	}
+	
+	public void setReceitaString(String value) {
+		set(PROPERTY_RECEITA_STRING, value);
+	}
+
+	public String getReceitaString() {
+		return get(PROPERTY_RECEITA_STRING);
+	}
 
 	public void setMargem(TriedaCurrency value) {
 		set(PROPERTY_MARGEM_DOUBLE, value.toString());
@@ -223,6 +269,14 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 	public TriedaCurrency getMargem() {
 		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_MARGEM_DOUBLE));
 	}
+	
+	public void setMargemString(String value) {
+		set(PROPERTY_MARGEM_STRING, value);
+	}
+
+	public String getMargemString() {
+		return get(PROPERTY_MARGEM_STRING);
+	}
 
 	public void setMargemPercente(Double value) {
 		set(PROPERTY_MARGEM_PERCENTE_DOUBLE, value);
@@ -230,6 +284,14 @@ public class ResumoCursoDTO extends AbstractTreeDTO<String> implements
 
 	public Double getMargemPercente() {
 		return get(PROPERTY_MARGEM_PERCENTE_DOUBLE);
+	}
+	
+	public void setMargemPercenteString(String value) {
+		set(PROPERTY_MARGEM_PERCENTE_STRING, value);
+	}
+
+	public String getMargemPercenteString() {
+		return get(PROPERTY_MARGEM_PERCENTE_STRING);
 	}
 
 	public boolean hasChildren() {

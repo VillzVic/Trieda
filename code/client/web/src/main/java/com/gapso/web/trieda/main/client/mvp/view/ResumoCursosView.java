@@ -113,89 +113,46 @@ public class ResumoCursosView extends MyComposite
 
 	public List< ColumnConfig > getColumnList()
 	{
-		GridCellRenderer< ResumoCursoDTO > percenteRenderer =
-			new GridCellRenderer< ResumoCursoDTO >()
-			{
-				@Override
-				public String render( ResumoCursoDTO model, String property,
-					ColumnData config, int rowIndex, int colIndex,
-					ListStore< ResumoCursoDTO > store, Grid< ResumoCursoDTO > grid )
-				{
-					if ( model.get( property ) == null )
-					{
-						return "";
-					}
-
-					return ( ( ( (Double) model.get( property ) ) * 100 ) + "%" );
-				}
-		};
 		GridCellRenderer< ResumoCursoDTO > tipoDeCreditoRenderer =
-			new GridCellRenderer<ResumoCursoDTO>()
+		new GridCellRenderer<ResumoCursoDTO>()
+		{
+			@Override
+			public String render( ResumoCursoDTO model, String property,
+				ColumnData config, int rowIndex, int colIndex,
+				ListStore< ResumoCursoDTO > store, Grid< ResumoCursoDTO > grid )
 			{
-				@Override
-				public String render( ResumoCursoDTO model, String property,
-					ColumnData config, int rowIndex, int colIndex,
-					ListStore< ResumoCursoDTO > store, Grid< ResumoCursoDTO > grid )
+				if ( model.get( property ) == null )
 				{
-					if ( model.get( property ) == null )
-					{
-						return "";
-					}
-
-					return ( (Boolean) model.get( property) ) ?
-						getI18nConstants().teorico() : getI18nConstants().pratico();
+					return "";
 				}
+
+				return ( (Boolean) model.get( property) ) ?
+					getI18nConstants().teorico() : getI18nConstants().pratico();
+			}
 		};
 
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
-		ColumnConfig campusColumnConfig = new ColumnConfig(
-			ResumoCursoDTO.PROPERTY_CAMPUS_STRING, getI18nConstants().campus(), 80 );
-
-		campusColumnConfig.setRenderer( new TreeGridCellRenderer< ResumoCursoDTO >() );
-		list.add( campusColumnConfig );
-		list.add( new ColumnConfig( ResumoCursoDTO.PROPERTY_TURNO_STRING,
-			getI18nConstants().turno(), 80 ) );
-		list.add( new ColumnConfig(ResumoCursoDTO.PROPERTY_CURSO_STRING,
-			getI18nConstants().curso(), 80 ) );
-		list.add( new ColumnConfig( ResumoCursoDTO.PROPERTY_MATRIZCURRICULAR_STRING,
-			getI18nConstants().matrizCurricular(), 80 ) );
-		list.add( new ColumnConfig(ResumoCursoDTO.PROPERTY_PERIODO_INT,
-			getI18nConstants().periodo(), 55 ) );
-		list.add(new ColumnConfig( ResumoCursoDTO.PROPERTY_DISCIPLINA_STRING,
-			getI18nConstants().disciplina(), 80 ) );
-		list.add( new ColumnConfig( ResumoCursoDTO.PROPERTY_TURMA_STRING,
-			getI18nConstants().turma(), 80 ) );
-
-		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(
-			ResumoCursoDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN,
-			getI18nConstants().TipoCredito(), 80);
-
-		tipoDeCreditoColumnConfig.setRenderer( tipoDeCreditoRenderer );
-		list.add( tipoDeCreditoColumnConfig );
-		list.add( new ColumnConfig( ResumoCursoDTO.PROPERTY_CREDITOS_INT,
-			getI18nConstants().creditos(), 60 ) );
-		list.add( new ColumnConfig( ResumoCursoDTO.PROPERTY_QUANTIDADE_ALUNOS_INT,
-			getI18nConstants().quantidadeAlunos(), 70 ) );
-
-		ColumnConfig rateioColumnConfig = new ColumnConfig(
-			ResumoCursoDTO.PROPERTY_RATEIO_DOUBLE,
-			getI18nConstants().rateio(), 80 );
-
-		rateioColumnConfig.setRenderer( percenteRenderer );
-		list.add( rateioColumnConfig );
-		list.add( new ColumnConfig( ResumoCursoDTO.PROPERTY_CUSTO_DOCENTE_DOUBLE,
-			getI18nConstants().custoDocente(), 100 ) );
-		list.add( new ColumnConfig(ResumoCursoDTO.PROPERTY_RECEITA_DOUBLE,
-			getI18nConstants().receita(), 100 ) );
-		list.add(new ColumnConfig( ResumoCursoDTO.PROPERTY_MARGEM_DOUBLE,
-			getI18nConstants().margem(), 100 ) );
-
-		ColumnConfig margemPercenteColumnConfig = new ColumnConfig(
-			ResumoCursoDTO.PROPERTY_MARGEM_PERCENTE_DOUBLE,
-			getI18nConstants().margemPercente(), 100 );
-
-		margemPercenteColumnConfig.setRenderer( percenteRenderer );
-		list.add( margemPercenteColumnConfig );
+		ColumnConfig campusColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_CAMPUS_STRING,getI18nConstants().campus(),80);
+		campusColumnConfig.setRenderer(new TreeGridCellRenderer< ResumoCursoDTO >());
+		list.add(campusColumnConfig);
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURNO_STRING,getI18nConstants().turno(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CURSO_STRING,getI18nConstants().curso(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_MATRIZCURRICULAR_STRING,getI18nConstants().matrizCurricular(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_PERIODO_INT,getI18nConstants().periodo(),55));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_DISCIPLINA_STRING,getI18nConstants().disciplina(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURMA_STRING,getI18nConstants().turma(),80));
+		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN,getI18nConstants().TipoCredito(),80);
+		tipoDeCreditoColumnConfig.setRenderer(tipoDeCreditoRenderer);
+		list.add(tipoDeCreditoColumnConfig);
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CREDITOS_INT,getI18nConstants().creditos(),60));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_QUANTIDADE_ALUNOS_INT,getI18nConstants().quantidadeAlunos(),70));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_RATEIO_STRING,getI18nConstants().rateio(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_PROFESSOR_CPF,getI18nConstants().cpfProfessor(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_PROFESSOR_NOME,getI18nConstants().nomeProfessor(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CUSTO_DOCENTE_STRING,getI18nConstants().custoDocente(),100));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_RECEITA_STRING,getI18nConstants().receita(),100));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_MARGEM_STRING,getI18nConstants().margem(),100));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_MARGEM_PERCENTE_STRING,getI18nConstants().margemPercente(),100));
 
 		return list;
 	}
