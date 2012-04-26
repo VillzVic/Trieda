@@ -44,6 +44,7 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_TURNO_STRING = "turmaString";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
+	public static final String PROPERTY_NOMES_ALUNOS = "nomesAlunos";
 	public static final String PROPERTY_CREDITOS_TEORICOS = "creditosTeorico";
 	public static final String PROPERTY_CREDITOS_PRATICOS = "creditosPratico";
 	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
@@ -428,6 +429,16 @@ public class AtendimentoTaticoDTO
 		return get( PROPERTY_QUANTIDADE_ALUNOS_STRING );
 	}
 	
+	public void setNomesAlunos( String value )
+	{
+		set( PROPERTY_NOMES_ALUNOS, value );
+	}
+
+	public String getNomesAlunos()
+	{
+		return get( PROPERTY_NOMES_ALUNOS );
+	}
+	
 	public void setCreditosTeorico( Integer value )
 	{
 		set( PROPERTY_CREDITOS_TEORICOS, value );
@@ -469,8 +480,8 @@ public class AtendimentoTaticoDTO
 	{
 		return ( getCreditosTeorico() + getCreditosPratico() );
 	}
-
-	public String getContentToolTipVisaoSala(ReportType reportType){
+	
+	private String getContentToolTipVisao(ReportType reportType){
 		String BG = TriedaUtil.beginBold(reportType);
 		String ED = TriedaUtil.endBold(reportType);
 		String BR = TriedaUtil.newLine(reportType);
@@ -481,6 +492,8 @@ public class AtendimentoTaticoDTO
 		} else {
 			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
 		}
+		
+		String nomesAlunos = getNomesAlunos().replaceAll(", ",BR);
 		
 		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
 			 + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
@@ -490,56 +503,21 @@ public class AtendimentoTaticoDTO
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
 			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR;
+			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR
+			 + nomesAlunos;
 	}
 
-	public String getContentToolTipVisaoCurso(ReportType reportType)
-	{
-		String BG = TriedaUtil.beginBold(reportType);
-		String ED = TriedaUtil.endBold(reportType);
-		String BR = TriedaUtil.newLine(reportType);
-		
-		String creditosDisciplinaInfo = "";
-		if (getDisciplinaSubstitutaId() != null) {
-			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
-		} else {
-			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
-		}
-		
-		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
-		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
-			 + BG + "Turma: " + ED + getTurma() + BR
-			 + BG + "Cr&eacute;dito(s): " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
-			 + BG + "Curso: " + ED + getCursoNome() + BR
-			 + BG + "Matriz Curricular: " + ED + getCurriculoString() + BR
-			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
-			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunos() + " = " + getQuantidadeAlunos() +  " aluno(s)" + ED + BR;
+	public String getContentToolTipVisaoSala(ReportType reportType){
+		return getContentToolTipVisao(reportType);
+	}
+
+	public String getContentToolTipVisaoCurso(ReportType reportType) {
+		return getContentToolTipVisao(reportType);
 	}
 	
 	public String getContentToolTipVisaoAluno(ReportType reportType){
-		String BG = TriedaUtil.beginBold(reportType);
-		String ED = TriedaUtil.endBold(reportType);
-		String BR = TriedaUtil.newLine(reportType);
-		
-		String creditosDisciplinaInfo = "";
-		if(getDisciplinaSubstitutaId() != null){
-			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
-		}
-		else{
-			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
-		}
-		
-		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
-		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
-			 + BG + "Turma: " + ED + getTurma() + BR
-			 + BG + "Cr&eacute;dito(s): " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
-			 + BG + "Curso: " + ED + getCursoNome() + BR
-			 + BG + "Matriz Curricular: " + ED + getCurriculoString() + BR
-			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
-			 + BG + "Sala: " + ED + getSalaString() + BR;
+		return getContentToolTipVisao(reportType);
 	}
-
 
 	@Override
 	public String getNaturalKey()

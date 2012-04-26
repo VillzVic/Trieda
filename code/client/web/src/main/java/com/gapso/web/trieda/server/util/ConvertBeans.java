@@ -2080,6 +2080,17 @@ public class ConvertBeans {
 		}
 		
 		dto.setProfessorCustoCreditoSemanal(campus.getValorCredito());
+		
+		StringBuffer str = new StringBuffer(""); 
+		for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
+			Aluno aluno = alunoDemanda.getAluno();
+			str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
+		}
+		if (str.length() > 1) {
+			dto.setNomesAlunos(str.toString().substring(0,str.length()-2));
+		} else {
+			dto.setNomesAlunos("");
+		}
 
 		return dto;
 	}
@@ -2280,6 +2291,17 @@ public class ConvertBeans {
 		{
 			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
 			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+		}
+		
+		StringBuffer str = new StringBuffer(""); 
+		for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
+			Aluno aluno = alunoDemanda.getAluno();
+			str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
+		}
+		if (str.length() > 1) {
+			dto.setNomesAlunos(str.toString().substring(0,str.length()-2));
+		} else {
+			dto.setNomesAlunos("");
 		}
 
 		return dto;

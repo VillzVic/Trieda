@@ -55,6 +55,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public static final String PROPERTY_TURMA = "turma";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS = "quantidadeAlunos";
 	public static final String PROPERTY_QUANTIDADE_ALUNOS_STRING = "quantidadeAlunosString";
+	public static final String PROPERTY_NOMES_ALUNOS = "nomesAlunos";
 	public static final String PROPERTY_COMPARTILHAMENTO_CURSOS = "compartilhamentoCursos";
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 	public static final String PROPERTY_SEMANA_LETIVA_TEMPO_AULA = "semanaLetivaTempoAula";
@@ -540,6 +541,16 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	{
 		return get( PROPERTY_QUANTIDADE_ALUNOS_STRING );
 	}
+	
+	public void setNomesAlunos( String value )
+	{
+		set( PROPERTY_NOMES_ALUNOS, value );
+	}
+
+	public String getNomesAlunos()
+	{
+		return get( PROPERTY_NOMES_ALUNOS );
+	}
 
 	@Override
 	public String getCompartilhamentoCursosString()
@@ -608,6 +619,8 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
 		}
 		
+		String nomesAlunos = getNomesAlunos().replaceAll(", ",BR);
+		
 		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
 		     + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
 		     + BG + "Turma: " + ED + getTurma() + BR
@@ -617,7 +630,8 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
 			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + ((flagQuantidadeAlunos) ? (BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR ) : "");
+			 + ((flagQuantidadeAlunos) ? (BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR ) : "")
+			 + nomesAlunos;
 	}
 
 	public String getContentToolTipVisaoSala(ReportType reportType) {

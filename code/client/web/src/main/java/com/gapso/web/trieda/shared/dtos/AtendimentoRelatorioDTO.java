@@ -22,7 +22,9 @@ public interface AtendimentoRelatorioDTO
 	public String getContentVisaoSala(ReportType reportType);
 	public String getContentVisaoCurso(ReportType reportType);
 	public String getContentVisaoAluno(ReportType reportType);
+	public String getQuantidadeAlunosString();
 	public Integer getQuantidadeAlunos();
+	public String getNomesAlunos();
 	public String getTurma();
 	public String getCursoNome();
 	public Long getCursoId();
@@ -35,7 +37,6 @@ public interface AtendimentoRelatorioDTO
 	public Integer getDuracaoDeUmaAulaEmMinutos();
 	public Integer getPeriodo();
 	public String getPeriodoString();
-	public String getQuantidadeAlunosString();
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other );
 	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other );
 	public Long getSalaId();
@@ -59,4 +60,5 @@ public interface AtendimentoRelatorioDTO
 	public void setPeriodoString( String value );
 	public void setQuantidadeAlunosString( String value );
 	public void setQuantidadeAlunos( Integer value );
+	public void setNomesAlunos(String nomesAlunos);
 }

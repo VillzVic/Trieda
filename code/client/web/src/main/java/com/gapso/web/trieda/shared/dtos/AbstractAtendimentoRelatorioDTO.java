@@ -93,13 +93,14 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 	
 	public void concatenateVisaoSala( AtendimentoRelatorioDTO other ) {
 		String T = (this.getDisciplinaSubstitutaId() != null && !getCursoNome().contains(" / ")) ? "*" : "";
-		String O = (other.getDisciplinaSubstitutaId() != null) ? "*" : ""; 
+		String O = (other.getDisciplinaSubstitutaId() != null) ? "*" : "";
 		
 		setCursoNome( T + getCursoNome() + T + " / " + O + other.getCursoNome() + O );
 		setCurricularString( T + getCurriculoString() + T + " / " + O + other.getCurriculoString() + O );
 		setPeriodoString( T + getPeriodoString() + T + " / " + O + other.getPeriodoString() + O );
 		setQuantidadeAlunosString( T + getQuantidadeAlunosString() + T + " / " + O + other.getQuantidadeAlunosString() + O );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
+		setNomesAlunos(getNomesAlunos() + ", " + other.getNomesAlunos());
 	}
 	
 	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other ) {}
