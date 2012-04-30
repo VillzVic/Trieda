@@ -53,6 +53,9 @@ public:
    int getCustoDispProf() const { return custoDispProf; }
    bool eVirtual() const { return is_virtual; }
 
+   HorarioAula* getPrimeiroHorarioDisponivelDia( int dia );
+   HorarioAula* getUltimoHorarioDisponivelDia( int dia );
+
 private:
    std::string cpf;
    std::string nome;

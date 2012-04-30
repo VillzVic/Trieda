@@ -80,3 +80,78 @@ void Professor::le_arvore( ItemProfessor & elem )
 		this->horarios.add( h );
 	}
 }
+
+
+HorarioAula* Professor::getPrimeiroHorarioDisponivelDia( int dia )
+{
+	HorarioAula *hi;
+	bool ACHEI = false;
+
+	// Acha um horario inicial qualquer no dia
+	ITERA_GGROUP_LESSPTR( it_h, horariosDia, HorarioDia )
+	{
+		HorarioDia * h = *it_h;
+		if ( h->getDia() == dia )
+		{
+			hi = h->getHorarioAula();
+			ACHEI = true;
+			break;
+		}
+	}
+
+	if ( !ACHEI )
+	{
+		std::cout<<"\nATENCAO em getPrimeiroHorarioDisponivelDia: nenhum horario disponivel no dia foi encontrado.\n";
+		return NULL;
+	}
+
+	// Seleciona o menor horario existente no dia
+	ITERA_GGROUP_LESSPTR( it_h, horariosDia, HorarioDia )
+	{
+		HorarioDia * h = *it_h;
+		if ( h->getDia() == dia )
+		{
+			if ( h->getHorarioAula()->getInicio() < hi->getInicio() )
+				hi = h->getHorarioAula();
+		}
+	}
+
+	return hi;
+}
+
+HorarioAula* Professor::getUltimoHorarioDisponivelDia( int dia )
+{
+	HorarioAula *hf;
+	bool ACHEI = false;
+
+	// Acha um horario inicial qualquer no dia
+	ITERA_GGROUP_LESSPTR( it_h, horariosDia, HorarioDia )
+	{
+		HorarioDia * h = *it_h;
+		if ( h->getDia() == dia )
+		{
+			hf = h->getHorarioAula();
+			ACHEI = true;
+			break;
+		}
+	}
+
+	if ( !ACHEI )
+	{
+		std::cout<<"\nATENCAO em getUltimoHorarioDisponivelDia: nenhum horario disponivel no dia foi encontrado.\n";
+		return NULL;
+	}
+
+	// Seleciona o maior horario existente no dia
+	ITERA_GGROUP_LESSPTR( it_h, horariosDia, HorarioDia )
+	{
+		HorarioDia * h = *it_h;
+		if ( h->getDia() == dia )
+		{
+			if ( h->getHorarioAula()->getInicio() > hf->getInicio() )
+				hf = h->getHorarioAula();
+		}
+	}
+
+	return hf;
+}

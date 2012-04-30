@@ -423,6 +423,12 @@ std::string ConstraintOp::toString()
 		   ss <<"C_MAX_DISC_PROF_CURSO2"; break;
 	   case C_ALUNO_HORARIO:
 		   ss <<"C_ALUNO_HORARIO"; break;		   
+	   case C_GAPS_PROFESSORES_I:
+		   ss <<"C_GAPS_PROFESSORES_I"; break;		   
+	   case C_GAPS_PROFESSORES_F:
+		   ss <<"C_GAPS_PROFESSORES_F"; break;		   	   
+	   case C_GAPS_PROFESSORES_I_F:
+		   ss <<"C_GAPS_PROFESSORES_I_F"; break;	   
 
 	   default:
 		  ss << "!";

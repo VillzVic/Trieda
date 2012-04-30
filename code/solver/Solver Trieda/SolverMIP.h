@@ -142,7 +142,7 @@ public:
    int criaVariavelTaticoAlunoUnidadesDifDia( int campusId );						// w_{a,t}
 
    int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId );						// fu_{i1,d1,i2,d2,t,cp}
-  
+   int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId );						// ffd_{i1,-d,i2,d,cp}
 
    /********************************************************************
    **              CRIA플O DE RESTRI합ES DO TATICO-ALUNO              **
@@ -167,6 +167,7 @@ public:
    int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
    int criaRestricaoTaticoMaxCreds( int campusId );						// Restricao 1.2.16
 //   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );	// Restricao 1.2.17
+   int criaRestricaoTaticoDiscPraticaTeorica( int campusId );			// Restricao 1.2.17
    int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
@@ -311,7 +312,7 @@ public:
    int criaVariavelGapsProfessores( void );
    int criaVariavelFolgaDemanda( void );
    int criaVariavelFolgaDisciplinaTurmaHorario( void );
-
+   int criaVariavelProfessorDiaHorarioIF();
 
    /********************************************************************
    **              CRIA플O DE RESTRI합ES DO OPERACIONAL               **
@@ -349,7 +350,7 @@ public:
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void ); // x15
    int criaRestricaoGapsProfessores( void );
    int criaRestricaoProfHorarioMultiUnid( void );
-
+   int criaRestricaoGapsHorariosProfessores();
 
 
    void cria_solucao_inicial( int , int * , double * );
@@ -359,6 +360,7 @@ public:
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );
    void preencheMapAtendimentoAluno( int campusId );
+   void limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId );
 
    int solveTaticoPorCampus();
    int solveTatico( int campusId );

@@ -1148,18 +1148,23 @@ int ProblemData::retornaTurmaDiscAluno( Aluno* aluno, Disciplina* disc )
 {
 	int turma = -1;
 		
-	GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > atendimentos = mapAluno_CampusTurmaDisc[ aluno ];
+	std::map< Aluno*, GGroup< Trio< int, int, Disciplina* > > >::iterator
+		itMap = mapAluno_CampusTurmaDisc.find( aluno );
 	
-	GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator itAtend = atendimentos.begin();
-	for ( ; itAtend != atendimentos.end(); itAtend++ )
+	if ( itMap != mapAluno_CampusTurmaDisc.end() )
 	{
-		if ( (*itAtend).third == disc )	
+		GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > atendimentos = itMap->second;
+	
+		GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator itAtend = atendimentos.begin();
+		for ( ; itAtend != atendimentos.end(); itAtend++ )
 		{
-			turma = (*itAtend).second;
-			return turma;
+			if ( (*itAtend).third == disc )	
+			{
+				turma = (*itAtend).second;
+				return turma;
+			}
 		}
 	}
-
     return turma;
 }
 

@@ -32,7 +32,8 @@ public:
 	  V_ABERTURA_COMPATIVEL = 16,				// zc_{d,t}
 	  V_ALUNO_UNID_DIA = 17,					// y_{a,u,t}
 	  V_ALUNO_VARIAS_UNID_DIA = 18,				// w_{a,t}
-	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 19		// fu_{i1,d1,i2,d2,t,cp}
+	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 19,		// fu_{i1,d1,i2,d2,t,cp}
+	  V_SLACK_SLACKDEMANDA_PT = 20				// ffd_{i1,-d,i2,d,cp}
    };
 
    //Constructors

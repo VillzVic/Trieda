@@ -290,7 +290,11 @@ std::string VariableOp::toString()
         str << "V_FOLGA_DEMANDA"; break;
 	  case V_FOLGA_DISCIPLINA_HOR:
         str << "V_FOLGA_DISCIPLINA_HOR"; break;
-		
+	  case V_HI_PROFESSORES:
+        str << "V_HI_PROFESSORES"; break;
+	  case V_HF_PROFESSORES:
+        str << "V_HF_PROFESSORES"; break;		
+
       default:
         str << "!";
    }

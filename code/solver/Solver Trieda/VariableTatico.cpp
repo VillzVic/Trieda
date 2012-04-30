@@ -214,7 +214,8 @@ std::string VariableTatico::toString()
 		str <<"w"; break;		
   	 case V_SLACK_ALUNO_VARIAS_UNID_DIA:
 		str <<"fu"; break;			
-		
+  	 case V_SLACK_SLACKDEMANDA_PT:
+		str <<"ffd"; break;				
 
     default:
         str << "!";

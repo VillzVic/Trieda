@@ -169,7 +169,8 @@ void SolutionLoader::setFolgas( VariableTatico * v )
    }
 
    int discId;
-   int alunoId;
+   int campusId;
+   int turma;
    AlunoDemanda *ad = NULL;
 
    RestricaoViolada * restricaoViolada = new RestricaoViolada();
@@ -203,17 +204,18 @@ void SolutionLoader::setFolgas( VariableTatico * v )
 		   break;
 	   case VariableTatico::V_SLACK_DEMANDA:
 		  discId = v->getDisciplina()->getId();
-		  alunoId = v->getAluno()->getAlunoId();
-		  restricaoStr = "Capacidade alocada tem que permitir atender demanda da disciplina/aluno (fd_{";
-        sprintf(buffer, "%d", discId );
+		  turma = v->getTurma();
+		  campusId = v->getCampus()->getId();
+		  restricaoStr = "Capacidade alocada tem que permitir atender demanda da turma/disciplina/campus (fd_{";
+        sprintf(buffer, "%d", turma );
         restricaoStr += buffer;
         restricaoStr += ",";
-		sprintf(buffer, "%d", alunoId);
+		sprintf(buffer, "%d", discId);
         restricaoStr += buffer;
-        restricaoStr += "})";
-		restricaoStr += " de prioridade ";
-		ad = problemData->procuraAlunoDemanda( discId, alunoId );
-		sprintf(buffer, "%d", ad->getPrioridade());
+        restricaoStr += ",";
+		sprintf(buffer, "%d", campusId);
+        restricaoStr += buffer;
+		restricaoStr += "})";
 		restricaoViolada->setRestricao(restricaoStr);
         restricaoViolada->setUnidade("fd");
         restricaoViolada->setValor(v->getValue());
