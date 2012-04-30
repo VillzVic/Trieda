@@ -7,6 +7,8 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.main.client.command.util.CommandFactory;
+import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
@@ -33,7 +35,6 @@ import com.gapso.web.trieda.main.client.mvp.view.ProfessoresView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoAlunoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoSalaView;
-import com.gapso.web.trieda.main.client.mvp.view.RequisicoesOtimizacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCampiView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCenarioView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCursosView;
@@ -131,6 +132,7 @@ public class ToolBarPresenter
 
 		Button getFixacoesListButton();
 		Button getParametrosButton();
+		Button getConsultaRequisicoesOtimizacaoBt();
 
 		Button getUsuariosListButton();
 		Button getImportarButton();
@@ -731,6 +733,10 @@ public class ToolBarPresenter
 				});
 			}
 		});
+		
+		this.toolBar.getConsultaRequisicoesOtimizacaoBt().addSelectionListener(CommandSelectionListener.<ButtonEvent>create(
+			CommandFactory.createConsultarRequisicoesOtimizacaoCommand(true)
+		));
 
 		this.toolBar.getRelatorioVisaoCursoButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
@@ -831,7 +837,6 @@ public class ToolBarPresenter
 		this.gTab = container.getGTab();
 		container.getPanel().setTopComponent(this.toolBar.getComponent());
 		
-		RequisicoesOtimizacaoView view = new RequisicoesOtimizacaoView(new RequisicoesOtimizacaoPresenter());
-		view.show();
+		CommandFactory.createConsultarRequisicoesOtimizacaoCommand(false).execute(); 
 	}
 }

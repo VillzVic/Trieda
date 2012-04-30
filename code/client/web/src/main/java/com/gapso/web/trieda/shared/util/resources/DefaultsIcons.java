@@ -45,6 +45,14 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("to_left_24.png") ImageResource toLeft24();
 	@Source("to_right_24.png") ImageResource toRight24();
 	
+	@Source("gerar_grade_16.png") ImageResource gerarGrade16();
+	@Source("gerar_grade_consulta_requisicao_16.png") ImageResource gerarGradeConsultaRequisicao16();
+	@Source("gerar_grade_consulta_requisicao_24.png") ImageResource gerarGradeConsultaRequisicao24();
+	@Source("gerar_grade_envia_requisicao_16.png") ImageResource gerarGradeEnviaRequisicao16();
+	@Source("gerar_grade_envia_requisicao_24.png") ImageResource gerarGradeEnviaRequisicao24();
+	@Source("gerar_grade_mata_requisicao_16.png") ImageResource gerarGradeMataRequisicao16();
+	@Source("gerar_grade_mata_requisicao_24.png") ImageResource gerarGradeMataRequisicao24();
+	
 	@Source("folder_empty_16.gif") ImageResource folderEmpty16();
 	
 	@Source("unidade_novo_24.png") ImageResource unidadeNovo24();
@@ -103,7 +111,6 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("disponibilidade_16.png") ImageResource disponibilidade16();
 	@Source("deslocamento_campi_16.png") ImageResource deslocamentoCampi16();
 	@Source("deslocamento_unidade_16.png") ImageResource deslocamentoUnidade16();
-	@Source("gerar_grade_16.png") ImageResource gerarGrade16();
 	@Source("cenario_16.png") ImageResource cenario16();
 	@Source("cenario_listar_16.png") ImageResource cenarioClonar16();
 	@Source("cenario_abrir_16.png") ImageResource cenarioAbrir16();

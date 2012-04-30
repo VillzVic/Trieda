@@ -13,6 +13,8 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.WindowEvent;
+import com.extjs.gxt.ui.client.event.WindowListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.store.StoreListener;
@@ -38,12 +40,15 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class RequisicoesOtimizacaoView extends MyComposite {
 
+	private boolean showEmpty;
 	private RequisicoesOtimizacaoPresenter presenter;
 	private Window window;
 	private Grid<RequisicaoOtimizacaoDTO> requisicoesGrid;
 	
-	public RequisicoesOtimizacaoView(RequisicoesOtimizacaoPresenter presenter) {
+	public RequisicoesOtimizacaoView(boolean showEmpty, RequisicoesOtimizacaoPresenter presenter) {
+		this.showEmpty = showEmpty;
 		this.presenter = presenter;
+		this.presenter.setI18NGateway(this);
 		criaComponentes();
 	}
 	
@@ -53,7 +58,20 @@ public class RequisicoesOtimizacaoView extends MyComposite {
 		window.setModal(true);
 		window.setAutoWidth(true);
 		window.setAutoHeight(true);
-		window.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.parametroPlanejamento16()));
+		window.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeConsultaRequisicao16()));
+		window.addWindowListener(new WindowListener() {
+			@Override
+			public void windowDeactivate(WindowEvent we) {
+				super.windowDeactivate(we);
+				presenter.removeRequisicoesDeOtimizacaoPorStatus(StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT);
+			}
+
+			@Override
+			public void windowHide(WindowEvent we) {
+				super.windowHide(we);
+				presenter.removeRequisicoesDeOtimizacaoPorStatus(StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT);
+			}
+		});
 		
 		RpcProxy<List<RequisicaoOtimizacaoDTO>> requisicoesProxy = new RpcProxy<List<RequisicaoOtimizacaoDTO>>() {
 			@Override
@@ -98,7 +116,7 @@ public class RequisicoesOtimizacaoView extends MyComposite {
 			}
 		});
 		statusColumn.setAlignment(HorizontalAlignment.CENTER);
-		ColumnConfig acoesColumn = new ColumnConfig("","Ações",100);
+		ColumnConfig acoesColumn = new ColumnConfig("","Ações",150);
 		acoesColumn.setRenderer(new GridCellRenderer<RequisicaoOtimizacaoDTO>() {
 			@Override
 			public Object render(RequisicaoOtimizacaoDTO model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<RequisicaoOtimizacaoDTO> store, Grid<RequisicaoOtimizacaoDTO> grid) {
@@ -130,12 +148,17 @@ public class RequisicoesOtimizacaoView extends MyComposite {
 		requisicoesGrid.setBorders(true);
 		requisicoesGrid.setWidth(500);
 		requisicoesGrid.setHeight(400);
+		requisicoesGrid.getView().setEmptyText("Não há requisições de otimização em andamento ou ainda não carregadas.");
 		
 		requisicoesListStore.addStoreListener(new StoreListener<RequisicaoOtimizacaoDTO>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void storeDataChanged(StoreEvent<RequisicaoOtimizacaoDTO> se) {
-				if (!se.getModels().isEmpty()) {
-					window.show();
+				if (se != null && se.getStore() != null && se.getStore().getModels() != null) {
+					if (showEmpty || !se.getStore().getModels().isEmpty()) {
+						presenter.setRequisicoesDeOtimizacao((List<RequisicaoOtimizacaoDTO>)se.getStore().getModels());
+						window.show();
+					}
 				}
 			}
 		});

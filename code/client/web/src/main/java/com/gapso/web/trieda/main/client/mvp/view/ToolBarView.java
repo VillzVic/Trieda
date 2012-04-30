@@ -106,6 +106,7 @@ public class ToolBarView
 	// Cenário
 	private Button fixacoesListBt;
 	private Button parametrosBt;
+	private Button consultaRequisicoesOtimizacaoBt;
 
 	public ToolBarView()
 	{
@@ -118,7 +119,7 @@ public class ToolBarView
 
 		ContentPanel planejamentoPanel = new ContentPanel();
 		planejamentoPanel.setHeading( "Planejamento" );
-		planejamentoPanel.setWidth( 150 );
+		planejamentoPanel.setWidth( 270 );
 
 		ContentPanel masterDataPanel = new ContentPanel();
 		masterDataPanel.setHeaderVisible( false );
@@ -443,15 +444,15 @@ public class ToolBarView
 		calendarioToolBar.add( semanasLetivaListCampiBt );
 	}
 
-	private void createPlanejamento()
-	{
-		fixacoesListBt = createButton( "Fixações",
-			"Fixações", Resources.DEFAULTS.fixacao24() );
-		planejamentoToolBar.add( fixacoesListBt );
+	private void createPlanejamento() {
+		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
+		planejamentoToolBar.add(fixacoesListBt);
 
-		parametrosBt = createButton( "Parâmetros de<br />Planejamento",
-			"Parâmetros de Planejamento", Resources.DEFAULTS.parametroPlanejamento24() );
-		planejamentoToolBar.add( parametrosBt );
+		parametrosBt = createButton("Parâmetros de<br />Planejamento","Parâmetros de Planejamento",Resources.DEFAULTS.parametroPlanejamento24());
+		planejamentoToolBar.add(parametrosBt);
+		
+		consultaRequisicoesOtimizacaoBt = createButton("Consulta Requisições<br />de Otimização","Consulta Requisições de Otimização",Resources.DEFAULTS.gerarGradeConsultaRequisicao24());
+		planejamentoToolBar.add(consultaRequisicoesOtimizacaoBt);
 	}
 
 	private Button createButton( String text, String toolTip, ImageResource icon )
@@ -466,6 +467,11 @@ public class ToolBarView
 		bt.setHeight( 60 );
 
 		return bt;
+	}
+	
+	@Override
+	public Button getConsultaRequisicoesOtimizacaoBt() {
+		return consultaRequisicoesOtimizacaoBt;
 	}
 
 	@Override

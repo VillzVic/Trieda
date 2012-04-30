@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -175,14 +176,18 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 	
 	@SuppressWarnings("unchecked")
 	public static List<RequisicaoOtimizacao> findBy(List<Long> ids) {
-		Query q = entityManager().createQuery(
-			" SELECT o FROM RequisicaoOtimizacao o " +
-			" WHERE o.id IN (:ids) "
-		);
-
-		q.setParameter("ids",ids);
-
-		return q.getResultList();
+		if (!ids.isEmpty()) {
+			Query q = entityManager().createQuery(
+				" SELECT o FROM RequisicaoOtimizacao o " +
+				" WHERE o.id IN (:ids) "
+			);
+	
+			q.setParameter("ids",ids);
+	
+			return q.getResultList();
+		} else {
+			return Collections.<RequisicaoOtimizacao>emptyList();
+		}
 	}
 	
 	public static final EntityManager entityManager() {
