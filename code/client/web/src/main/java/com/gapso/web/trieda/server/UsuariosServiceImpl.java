@@ -116,6 +116,7 @@ public class UsuariosServiceImpl
 			Authority authority = new Authority();
 			authority.setAuthority( "ROLE_USER" );
 			authority.setUsername( usuario.getUsername() );
+			authority.setInstituicaoEnsino(usuario.getInstituicaoEnsino());
 			authority.persist();
 		}
 	}
