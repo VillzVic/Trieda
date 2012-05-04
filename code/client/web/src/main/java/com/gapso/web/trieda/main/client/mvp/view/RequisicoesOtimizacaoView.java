@@ -27,10 +27,12 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.RowExpander;
+import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.main.client.command.ICommand;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
 import com.gapso.web.trieda.main.client.mvp.presenter.RequisicoesOtimizacaoPresenter;
+import com.gapso.web.trieda.main.client.mvp.view.gateways.IRequisicoesOtimizacaoViewGateway;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO.StatusRequisicaoOtimizacao;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -38,7 +40,7 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class RequisicoesOtimizacaoView extends MyComposite {
+public class RequisicoesOtimizacaoView extends MyComposite implements IRequisicoesOtimizacaoViewGateway {
 
 	private boolean showEmpty;
 	private RequisicoesOtimizacaoPresenter presenter;
@@ -84,7 +86,7 @@ public class RequisicoesOtimizacaoView extends MyComposite {
 		
 		RowExpander requisicoesRowExpander = new RowExpander();
 		requisicoesRowExpander.setTemplate(XTemplate.create(
-			"<table>" +
+			"<table class=\"\">" +
 				"<tr> <td><b>Modo Otimização</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_MODO_OTIMIZACAO+"}</td> </tr>" +
 				"<tr> <td><b>Otimizar por</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_OTIMIZAR_POR+"}</td> </tr>" +
 				"<tr> <td><b>Função Objetivo</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_FUNCAO_OBJETIVO+"}</td> </tr>" +
@@ -116,23 +118,48 @@ public class RequisicoesOtimizacaoView extends MyComposite {
 			}
 		});
 		statusColumn.setAlignment(HorizontalAlignment.CENTER);
-		ColumnConfig acoesColumn = new ColumnConfig("","Ações",150);
+		ColumnConfig acoesColumn = new ColumnConfig("","Ações",100);
 		acoesColumn.setRenderer(new GridCellRenderer<RequisicaoOtimizacaoDTO>() {
 			@Override
 			public Object render(RequisicaoOtimizacaoDTO model, String property, ColumnData config, int rowIndex, int colIndex, ListStore<RequisicaoOtimizacaoDTO> store, Grid<RequisicaoOtimizacaoDTO> grid) {
-				Button carregarSolucaoBtn = new Button("Carregar Solução");
+				Button carregarSolucaoBtn = new Button("",AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeCarregaSolucao16()));
+				carregarSolucaoBtn.setToolTip("Carregar Solução");
+				Button cancelarRequisicaoBtn = new Button("",AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeMataRequisicao16()));
+				cancelarRequisicaoBtn.setToolTip("Cancelar Requisição de Otimização");
+				Button descartarSolucaoBtn = new Button("",AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeDescartaSolucao16()));
+				descartarSolucaoBtn.setToolTip("Descartar Solução");
 				
 				Integer statusIndex = model.getStatusIndex();
 				StatusRequisicaoOtimizacao status = StatusRequisicaoOtimizacao.values()[statusIndex];
 				if (StatusRequisicaoOtimizacao.FINALIZADA_COM_OUTPUT.equals(status)) {
+					ICommand cmd1 = CommandFactory.createCarregarSolucaoCommand(model,RequisicoesOtimizacaoView.this);
+					carregarSolucaoBtn.addSelectionListener(CommandSelectionListener.<ButtonEvent>create(cmd1));
+					ICommand cmd2 = CommandFactory.createRemoverRequisicaoOtimizacaoCommand(model,RequisicoesOtimizacaoView.this,RequisicoesOtimizacaoView.this);
+					descartarSolucaoBtn.addSelectionListener(CommandSelectionListener.<ButtonEvent>create(cmd2));
+					
+					cancelarRequisicaoBtn.setEnabled(false);
 					carregarSolucaoBtn.setEnabled(true);
-					ICommand cmd = CommandFactory.createCarregarSolucaoCommand(model,RequisicoesOtimizacaoView.this);
-					carregarSolucaoBtn.addSelectionListener(CommandSelectionListener.<ButtonEvent>create(cmd));
-				} else {
+					descartarSolucaoBtn.setEnabled(true);
+				} else if (StatusRequisicaoOtimizacao.EM_ANDAMENTO.equals(status)) {
+					ICommand cmd = CommandFactory.createCancelarRequisicaoOtimizacaoCommand(model,RequisicoesOtimizacaoView.this,RequisicoesOtimizacaoView.this);
+					cancelarRequisicaoBtn.addSelectionListener(CommandSelectionListener.<ButtonEvent>create(cmd));
+					
+					cancelarRequisicaoBtn.setEnabled(true);
 					carregarSolucaoBtn.setEnabled(false);
+					descartarSolucaoBtn.setEnabled(false);
+				} else {
+					cancelarRequisicaoBtn.setEnabled(false);
+					carregarSolucaoBtn.setEnabled(false);
+					descartarSolucaoBtn.setEnabled(false);
 				}
 				
-				return carregarSolucaoBtn;
+				ToolBar acoesToolBar = new ToolBar();
+				acoesToolBar.setAutoWidth(true);
+				acoesToolBar.add(cancelarRequisicaoBtn);
+				acoesToolBar.add(carregarSolucaoBtn);
+				acoesToolBar.add(descartarSolucaoBtn);
+				
+				return acoesToolBar;
 			}
 		});
 		List<ColumnConfig> requisicoesColumns = new ArrayList<ColumnConfig>();
@@ -146,7 +173,7 @@ public class RequisicoesOtimizacaoView extends MyComposite {
 		requisicoesGrid = new Grid<RequisicaoOtimizacaoDTO>(requisicoesListStore,requisicoesColumnModel);
 		requisicoesGrid.addPlugin(requisicoesRowExpander);
 		requisicoesGrid.setBorders(true);
-		requisicoesGrid.setWidth(500);
+		requisicoesGrid.setWidth(600);
 		requisicoesGrid.setHeight(400);
 		requisicoesGrid.getView().setEmptyText("Não há requisições de otimização em andamento ou ainda não carregadas.");
 		
@@ -173,5 +200,10 @@ public class RequisicoesOtimizacaoView extends MyComposite {
 	
 	public void show() {
 		requisicoesGrid.getStore().getLoader().load();
+	}
+
+	@Override
+	public void removeRequisicaoOtimizacaoFromGrid(RequisicaoOtimizacaoDTO requisicaoOtimizacaoDTO) {
+		requisicoesGrid.getStore().remove(requisicaoOtimizacaoDTO);
 	}
 }

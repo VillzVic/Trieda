@@ -64,6 +64,7 @@ import com.google.gwt.dev.util.Pair;
 @Repository
 public class OtimizarServiceImpl extends RemoteService implements OtimizarService {
 	private static final long serialVersionUID = 5716065588362358065L;
+	private static final String solverName = "trieda";
 	private static final String linkSolverDefault = "http://localhost:8080/SolverWS";
 	
 	/**
@@ -225,7 +226,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	
 	@Override
 	@Transactional
-	public Long enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException {
+	public ParDTO<Long,ParametroDTO> enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException {
 		if (!parametroDTO.isValid()) {
 			String errorMessage = "";
 			if (parametroDTO.getCampi() == null || parametroDTO.getCampi().isEmpty()) {
@@ -264,9 +265,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			m.setProperty(Marshaller.JAXB_ENCODING,"ISO-8859-1");
 			m.marshal(triedaInput,temp);
 			byte [] fileBytes = temp.toByteArray();
-			SolverClient solverClient = new SolverClient(getLinkSolver(),"trieda");
+			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
 	
-			return solverClient.requestOptimization(fileBytes);
+			Long round = solverClient.requestOptimization(fileBytes);
+			
+			return ParDTO.<Long,ParametroDTO>create(round,ConvertBeans.toParametroDTO(parametro));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new TriedaException(e);
@@ -276,6 +279,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	/** 
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#consultaRequisicoesDeOtimizacao()
 	 */
+	@Override
 	public List<RequisicaoOtimizacaoDTO> consultaRequisicoesDeOtimizacao() throws TriedaException {
 		try {
 			// obtém o usuário logado em questão
@@ -284,7 +288,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			List<RequisicaoOtimizacao> requisicoesOtimizacao = RequisicaoOtimizacao.findBy(usuarioAtual);
 			// ...
 			List<RequisicaoOtimizacaoDTO> requisicoesOtimizacaoDTOs = new ArrayList<RequisicaoOtimizacaoDTO>();
-			SolverClient solverClient = new SolverClient(getLinkSolver(),"trieda");
+			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
 			for (RequisicaoOtimizacao requisicaoOtimizacao : requisicoesOtimizacao) {
 				RequisicaoOtimizacaoDTO dto = ConvertBeans.toRequisicaoOtimizacaoDTO(requisicaoOtimizacao);
 				
@@ -303,6 +307,20 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			return requisicoesOtimizacaoDTOs;
 		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TriedaException(e);
+		}
+	}
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#cancelaRequisicaoDeOtimizacao(java.lang.Long)
+	 */
+	@Override
+	public boolean cancelaRequisicaoDeOtimizacao(Long round) throws TriedaException {
+		try {
+			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+			return solverClient.cancelOptimization(round);
+		} catch(Exception e) {
 			e.printStackTrace();
 			throw new TriedaException(e);
 		}
@@ -933,9 +951,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	@Override
 	public Boolean isOptimizing( Long round )
 	{
-		SolverClient solverClient
-			= new SolverClient( getLinkSolver(), "trieda" );
-
+		SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
 		return ( !solverClient.isFinished( round ) );
 	}
 
@@ -954,8 +970,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 
 		try
 		{
-			SolverClient solverClient = new SolverClient(
-				getLinkSolver(), "trieda" );
+			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
 
 			System.out.println("solverClient.getContent( round ) ...");// TODO: LOG
 			byte [] xmlBytes = solverClient.getContent( round );
@@ -1035,11 +1050,5 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 
 		return ret;
-	}
-
-	private String getLinkSolver()
-	{
-		String link = OtimizarServiceImpl.linkSolverDefault;
-		return link;
 	}
 }

@@ -93,4 +93,18 @@ public class SolverWS{
 
 		return sr;
 	}
+	
+	@POST
+	@Path("/cancelOptimization/{problemName}")
+	public SolverResponse cancelOptimization(@PathParam("problemName") String problemName, @QueryParam("round") String roundString) {
+		Long round = new Long(roundString);
+		return new SolverResponse(true,solverQueue.cancelOptimization(round));
+	}
+	
+	@GET
+	@Path("/cancelAllOptimizations")
+	public SolverResponse cancelAllOptimizations() {
+		solverQueue.cancelAll();
+		return new SolverResponse(true,"");
+	}
 }

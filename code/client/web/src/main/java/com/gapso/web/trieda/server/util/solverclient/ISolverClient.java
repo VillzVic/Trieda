@@ -15,4 +15,7 @@ public interface ISolverClient {
 
 	public byte[] getContent(Long round);
 	
+	public boolean cancelOptimization(Long round);
+	
+	public void cancelAllOptimizations();
 }

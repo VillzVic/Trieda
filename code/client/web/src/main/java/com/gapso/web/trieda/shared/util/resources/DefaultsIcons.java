@@ -46,8 +46,12 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("to_right_24.png") ImageResource toRight24();
 	
 	@Source("gerar_grade_16.png") ImageResource gerarGrade16();
+	@Source("gerar_grade_carrega_solucao_16.png") ImageResource gerarGradeCarregaSolucao16();
+	@Source("gerar_grade_carrega_solucao_24.png") ImageResource gerarGradeCarregaSolucao24();
 	@Source("gerar_grade_consulta_requisicao_16.png") ImageResource gerarGradeConsultaRequisicao16();
 	@Source("gerar_grade_consulta_requisicao_24.png") ImageResource gerarGradeConsultaRequisicao24();
+	@Source("gerar_grade_descarta_solucao_16.png") ImageResource gerarGradeDescartaSolucao16();
+	@Source("gerar_grade_descarta_solucao_24.png") ImageResource gerarGradeDescartaSolucao24();
 	@Source("gerar_grade_envia_requisicao_16.png") ImageResource gerarGradeEnviaRequisicao16();
 	@Source("gerar_grade_envia_requisicao_24.png") ImageResource gerarGradeEnviaRequisicao24();
 	@Source("gerar_grade_mata_requisicao_16.png") ImageResource gerarGradeMataRequisicao16();

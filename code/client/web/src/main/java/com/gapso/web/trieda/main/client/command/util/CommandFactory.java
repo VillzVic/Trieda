@@ -1,11 +1,14 @@
 package com.gapso.web.trieda.main.client.command.util;
 
+import com.gapso.web.trieda.main.client.command.CancelarRequisicaoOtimizacaoCommand;
 import com.gapso.web.trieda.main.client.command.CarregarSolucaoCommand;
 import com.gapso.web.trieda.main.client.command.ConsultarRequisicoesOtimizacaoCommand;
 import com.gapso.web.trieda.main.client.command.ICommand;
+import com.gapso.web.trieda.main.client.command.RemoverRequisicaoOtimizacaoCommand;
 import com.gapso.web.trieda.main.client.mvp.view.gateways.GenericViewGatewayImp;
 import com.gapso.web.trieda.main.client.mvp.view.gateways.ICarregarSolucaoViewGateway;
 import com.gapso.web.trieda.main.client.mvp.view.gateways.IGenericViewGateway;
+import com.gapso.web.trieda.main.client.mvp.view.gateways.IRequisicoesOtimizacaoViewGateway;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -31,4 +34,12 @@ public class CommandFactory {
 	static public ICommand createConsultarRequisicoesOtimizacaoCommand(boolean showEmpty) {
 		return new ConsultarRequisicoesOtimizacaoCommand(showEmpty,getGenericViewGateway());
 	}
+	
+	static public ICommand createCancelarRequisicaoOtimizacaoCommand(RequisicaoOtimizacaoDTO requisicaoDTO, IRequisicoesOtimizacaoViewGateway reqOtmViewGateway, ITriedaI18nGateway i18nGateway) {
+		return new CancelarRequisicaoOtimizacaoCommand(requisicaoDTO,reqOtmViewGateway,i18nGateway,getGenericViewGateway());
+	}
+	
+	static public ICommand createRemoverRequisicaoOtimizacaoCommand(RequisicaoOtimizacaoDTO requisicaoDTO, IRequisicoesOtimizacaoViewGateway reqOtmViewGateway, ITriedaI18nGateway i18nGateway) {
+		return new RemoverRequisicaoOtimizacaoCommand(requisicaoDTO,reqOtmViewGateway,i18nGateway,getGenericViewGateway());
+	} 
 }

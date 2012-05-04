@@ -101,4 +101,17 @@ public class SolverClient
 
 		return ( ( sr.getStatus() ) ? (byte[]) sr.getObject() : null );
 	}
+
+	@Override
+	public boolean cancelOptimization(Long round) {
+		MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
+		queryParams.add("round",round);
+		SolverResponse sr = this.webResource.path("/cancelOptimization/" + getProblemName() + "/").queryParams(queryParams).post(SolverResponse.class);
+		return (sr.getStatus() ? (Boolean)sr.getObject() : false);
+	}
+
+	@Override
+	public void cancelAllOptimizations() {
+		this.webResource.path("/cancelAllOptimizations").get(String.class);
+	}
 }

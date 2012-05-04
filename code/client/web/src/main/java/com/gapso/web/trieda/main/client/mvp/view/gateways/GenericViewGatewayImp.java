@@ -17,6 +17,11 @@ public class GenericViewGatewayImp implements IGenericViewGateway {
 	public void showMessageBoxAlert(String title, String msg, Listener<MessageBoxEvent> callback) {
 		MessageBox.alert(title,msg,callback);
 	}
+	
+	@Override
+	public void showMessageBoxInfo(String title, String msg, Listener<MessageBoxEvent> callback) {
+		MessageBox.info(title,msg,callback);
+	}
 
 	@Override
 	public void showOtimizarMessagesView(List<String> warnings, List<String> errors) {

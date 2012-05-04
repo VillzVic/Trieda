@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -62,7 +63,7 @@ public interface OtimizarService extends RemoteService {
 	 * @param parametroDTO
 	 * @return
 	 */
-	Long enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException;
+	ParDTO<Long,ParametroDTO> enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException;
 	
 	/**
 	 * 
@@ -70,6 +71,14 @@ public interface OtimizarService extends RemoteService {
 	 * @throws TriedaException
 	 */
 	List<RequisicaoOtimizacaoDTO> consultaRequisicoesDeOtimizacao() throws TriedaException;
+	
+	/**
+	 * 
+	 * @param round
+	 * @return
+	 * @throws TriedaException
+	 */
+	boolean cancelaRequisicaoDeOtimizacao(Long round) throws TriedaException;
 	
 	Boolean isOptimizing( Long round );
 	Map< String, List< String > > saveContent( CenarioDTO cenarioDTO, Long round );

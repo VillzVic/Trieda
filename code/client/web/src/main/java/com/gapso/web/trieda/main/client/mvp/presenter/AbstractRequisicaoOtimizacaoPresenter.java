@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.gapso.web.trieda.main.client.mvp.view.OtimizarMessagesView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -35,7 +36,7 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 	
 
 	protected void enviaRequisicaoDeOtimizacao(final ParametroDTO parametroDTO, final CenarioDTO cenarioDTO) {
-		service.enviaRequisicaoDeOtimizacao(parametroDTO,new AbstractAsyncCallbackWithDefaultOnFailure<Long>("Não foi possível gerar a grade de horários.",i18nGateway) {
+		service.enviaRequisicaoDeOtimizacao(parametroDTO,new AbstractAsyncCallbackWithDefaultOnFailure<ParDTO<Long,ParametroDTO>>("Não foi possível gerar a grade de horários.",i18nGateway) {
 			@Override
 			public void onFailure(Throwable caught) {
 				super.onFailure(caught);
@@ -43,10 +44,13 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 			}
 
 			@Override
-			public void onSuccess(final Long round) {
+			public void onSuccess(final ParDTO<Long,ParametroDTO> dto) {
 				Info.display("Otimização","A requisição de otimização foi enviada com sucesso!");
 				
-				service.registraRequisicaoDeOtimizacao(parametroDTO,round,new AbstractAsyncCallbackWithDefaultOnFailure<RequisicaoOtimizacaoDTO>("Erro ao tentar registrar no BD a requisição de otimização.",i18nGateway) {
+				Long round = dto.getPrimeiro();
+				ParametroDTO novoParametroDTO = dto.getSegundo();
+				
+				service.registraRequisicaoDeOtimizacao(novoParametroDTO,round,new AbstractAsyncCallbackWithDefaultOnFailure<RequisicaoOtimizacaoDTO>("Erro ao tentar registrar no BD a requisição de otimização.",i18nGateway) {
 					@Override
 					public void onSuccess(RequisicaoOtimizacaoDTO result) {
 						requisicaoOtimizacaoRegistrada = result;
@@ -54,14 +58,14 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 					}
 				});
 				
-				checkSolver(round,parametroDTO,cenarioDTO);
+				checkSolver(round,cenarioDTO);
 				
 				enviaRequisicaoOtimizacaoOnSuccess();
 			}
 		});
 	}
 	
-	private void checkSolver(final Long round, final ParametroDTO parametroDTO, final CenarioDTO cenarioDTO) {
+	private void checkSolver(final Long round, final CenarioDTO cenarioDTO) {
 		final Timer t = new Timer() {
 			@Override
 			public void run() {
@@ -73,7 +77,7 @@ public abstract class AbstractRequisicaoOtimizacaoPresenter implements Presenter
 					@Override
 					public void onSuccess(Boolean result) {
 						if (futureBoolean.result()) {
-							checkSolver(round,parametroDTO,cenarioDTO);
+							checkSolver(round,cenarioDTO);
 						} else {
 							Info.display("Otimização","Otimização finalizada!");
 							atualizaSaida(round,cenarioDTO);

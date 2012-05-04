@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -36,12 +37,17 @@ public interface OtimizarServiceAsync {
 	 */
 	void getParametrosDaRequisicaoDeOtimizacao(CenarioDTO cenarioDTO, AsyncCallback<ParametroDTO> callback);
 	
-	void enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO, AsyncCallback<Long> callback);
+	void enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO, AsyncCallback<ParDTO<Long,ParametroDTO>> callback);
 	
 	/** 
 	 * @see com.gapso.web.trieda.shared.services.OtimizarService#consultaRequisicoesDeOtimizacao()
 	 */
 	void consultaRequisicoesDeOtimizacao(AsyncCallback<List<RequisicaoOtimizacaoDTO>> callback);
+	
+	/**
+	 * @see com.gapso.web.trieda.shared.services.OtimizarService#cancelaRequisicaoDeOtimizacao(java.lang.Long)
+	 */
+	void cancelaRequisicaoDeOtimizacao(Long round, AsyncCallback<Boolean> callback);
 	
 	void isOptimizing( Long round, AsyncCallback< Boolean > callback );
 	void saveContent( CenarioDTO cenarioDTO, Long round,
