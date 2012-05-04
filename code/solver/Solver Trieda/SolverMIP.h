@@ -45,6 +45,14 @@
 #endif
 // -----------------------------------
 
+// -----------------------------------
+//#define READ_SOLUTION_PRE_TATICO_BIN
+
+#ifndef READ_SOLUTION_PRE_TATICO_BIN
+#define WRITE_SOLUTION_PRE_TATICO_BIN
+#endif
+// -----------------------------------
+
 #ifndef PRE_TATICO
 #define PRE_TATICO
 #endif

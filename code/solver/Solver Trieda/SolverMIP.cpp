@@ -1940,11 +1940,11 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade )
 
    xSol = new double[ lp->getNumCols() ];
 
-#ifndef READ_SOLUTION_TATICO_BIN
+#ifndef READ_SOLUTION_PRE_TATICO_BIN
    lp->getX( xSol );
 #endif
 
-#ifdef READ_SOLUTION_TATICO_BIN
+#ifdef READ_SOLUTION_PRE_TATICO_BIN
    FILE* fin = fopen("solBinPre.bin","rb");
 
    int nCols = 0;
@@ -2181,11 +2181,11 @@ int SolverMIP::solvePreTatico( int campusId, int prioridade )
 
    lp->setPreSolve(OPT_TRUE);
 
-#ifndef READ_SOLUTION_TATICO_BIN
+#ifndef READ_SOLUTION_PRE_TATICO_BIN
    status = lp->optimize( METHOD_MIP );
 #endif
 
-#ifdef WRITE_SOLUTION_TATICO_BIN
+#ifdef WRITE_SOLUTION_PRE_TATICO_BIN
    double * xSol = NULL;
    xSol = new double[ lp->getNumCols() ];
    lp->getX( xSol );
@@ -10423,9 +10423,6 @@ int SolverMIP::criaVariavelTaticoCreditos( int campusId )
 
 			   for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
                {
-				   if ( turma == 0 && disciplina->getId() == 5932 )
-					   std::cout<<"Aquiiii";
-
 				    std::map< int /*Dia*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > >::iterator
 						it_Dia_HorarioAula = it_Disc_Sala_Dias_HorariosAula->second.begin();
 					
