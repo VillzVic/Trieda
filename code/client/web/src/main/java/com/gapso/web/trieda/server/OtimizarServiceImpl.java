@@ -3,6 +3,9 @@ package com.gapso.web.trieda.server;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +33,7 @@ import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Equivalencia;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
@@ -44,6 +48,7 @@ import com.gapso.web.trieda.server.util.Grafo;
 import com.gapso.web.trieda.server.util.Profundidade;
 import com.gapso.web.trieda.server.util.SolverInput;
 import com.gapso.web.trieda.server.util.SolverOutput;
+import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.server.util.solverclient.SolverClient;
 import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.output.ItemError;
@@ -94,6 +99,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			System.out.print("checkDemandasComDisciplinasSemCurriculo(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
+//			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
+//			checkSemanasLetivasIncompativeis(parametro, errors);
+//			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			if (parametro.getConsiderarEquivalencia()) {
 				System.out.print("checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);");start = System.currentTimeMillis(); // TODO: retirar
@@ -550,6 +559,98 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						errors.add(HtmlUtils.htmlUnescape("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "]."));
 						System.out.println("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
 					}
+				}
+			}
+		}
+	}
+	
+	private void checkSemanasLetivasIncompativeis(Parametro parametro, List<String> errors) {
+		// obtém os currículos do campus selecionado para otimização
+		Set<Curriculo> curriculosDoCampusSelecionado = new HashSet<Curriculo>();
+		for(Campus campus : parametro.getCampi()){
+			for(Oferta oferta : campus.getOfertas()) curriculosDoCampusSelecionado.add(oferta.getCurriculo());
+		}
+		
+		final Map<SemanaLetiva, List<Pair<Calendar, Calendar>>> horariosDasSemanas = new HashMap<SemanaLetiva, List<Pair<Calendar, Calendar>>>();
+
+		// filtra os currículos do campus selecionado para otimização e armazena para cada semana letiva
+		// desses curriculos, seus respectivos horarios aulas em ordem crescente
+		for(Curriculo curriculo : parametro.getCenario().getCurriculos()){
+			if(curriculosDoCampusSelecionado.contains(curriculo)){
+				SemanaLetiva semanaLetiva = curriculo.getSemanaLetiva();
+				List<Pair<Calendar, Calendar>> pairs = new ArrayList<Pair<Calendar, Calendar>>();
+				if(horariosDasSemanas.get(semanaLetiva) == null){
+					for(HorarioAula horarioAula : HorarioAula.findBySemanaLetiva(parametro.getInstituicaoEnsino(), semanaLetiva)){
+						Calendar hi = TriedaServerUtil.dateToCalendar(horarioAula.getHorario());
+					
+						Calendar hf = Calendar.getInstance();
+						hf.clear();
+						hf.setTime(hi.getTime());
+						hf.add(Calendar.MINUTE, semanaLetiva.getTempo());
+						
+						pairs.add(Pair.create(hi,hf));
+					}
+					TriedaServerUtil.ordenaParesDeHorarios(pairs);
+					horariosDasSemanas.put(semanaLetiva, pairs);
+				}
+			}
+		}
+		
+		// obtem uma lista contendo as semanas letivas ordenadas de acordo com seus horarios em que comecam 
+		List<SemanaLetiva> semanasLetivas = new ArrayList<SemanaLetiva>(horariosDasSemanas.keySet());
+		Collections.min(semanasLetivas, new Comparator<SemanaLetiva>(){
+			@Override
+			public int compare(SemanaLetiva o1, SemanaLetiva o2){
+				Pair<Calendar,Calendar> par1 = horariosDasSemanas.get(o1).get(0);
+				Pair<Calendar,Calendar> par2 = horariosDasSemanas.get(o2).get(0);
+				
+				Calendar horarioInicial1 = par1.getLeft();
+				Calendar horarioInicial2 = par2.getLeft();
+				int ret = horarioInicial1.compareTo(horarioInicial2);
+				if(ret == 0){
+					Calendar horarioFinal1 = par1.getRight();
+					Calendar horarioFinal2 = par2.getRight();
+					return horarioFinal1.compareTo(horarioFinal2);
+				}
+				return ret;
+			}
+		});
+		
+		while(semanasLetivas.size() > 1){
+			SemanaLetiva s1 = semanasLetivas.remove(0);
+			List<Pair<Calendar, Calendar>> hs1 = horariosDasSemanas.get(s1);
+			for(SemanaLetiva s2 : semanasLetivas){
+				List<Pair<Calendar, Calendar>> hs2 = horariosDasSemanas.get(s2);
+				int index = 0;
+				boolean intersect = false;
+				Pair<Calendar, Calendar> previous = null;
+				try{
+					for(Pair<Calendar, Calendar> h1 : hs1){
+						Pair<Calendar, Calendar> h2 = hs2.get(index);
+						// se ainda nao houve intersecao, continua percorrendo os horarios ateh que haja uma
+						if(!intersect){
+							if(h2.getRight().compareTo(h1.getLeft()) >= 0) intersect = true;
+							else continue;
+						}
+						// o right do h2 tem sempre que ser maior ou igual ao left do h1. Senao, significa
+						// que ha um intervalo maior do que o h2, e portanto, uma incompatibilidade.
+						// Ex.: s1: 19:00/19:50 - 20:10/21:30 ; s2: 19:20/20:00 
+						
+						if(h2.getRight().compareTo(h1.getLeft()) >= 0){
+							if(h2.getRight().compareTo(h1.getRight()) > 0){
+								if(previous != null && previous.getRight().compareTo(h2.getLeft()) != 0) throw new Exception();
+								previous = h1;
+								continue;
+							}
+							if(previous != null && previous.getRight().compareTo(h1.getLeft()) != 0) throw new Exception();
+							previous = h2;
+							index++;
+						}
+						else throw new Exception();
+					}
+				}
+				catch(Exception e){
+					errors.add("As semanas letivas " + s1.getCodigo() + " e " + s2.getCodigo() + "são incompatíveis.");
 				}
 			}
 		}

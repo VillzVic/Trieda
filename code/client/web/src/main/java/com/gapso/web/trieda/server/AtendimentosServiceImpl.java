@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +30,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
@@ -174,7 +174,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				for (SemanaLetiva semanaLetiva : semanasLetivasDasAulasNaSala) {
 					for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
 						if (horarioAula.getTurno().getId().equals(turnoId)) {
-							Calendar hi = dateToCalendar(horarioAula.getHorario());
+							Calendar hi = TriedaServerUtil.dateToCalendar(horarioAula.getHorario());
 							
 							Calendar hf = Calendar.getInstance();
 							hf.clear();
@@ -186,22 +186,9 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					}
 				}
 				
-				// ordena os pares (HoraInicio,HoraFim)
 				List<Pair<Calendar,Calendar>> horariosOrdenados = new ArrayList<Pair<Calendar,Calendar>>(horarios);
-				Collections.sort(horariosOrdenados,new Comparator<Pair<Calendar,Calendar>>() {
-					@Override
-					public int compare(Pair<Calendar,Calendar> o1, Pair<Calendar,Calendar> o2) {
-						Calendar horarioInicial1 = o1.getLeft();
-						Calendar horarioInicial2 = o2.getLeft();
-						int ret = horarioInicial1.compareTo(horarioInicial2);
-						if (ret == 0) {
-							Calendar horarioFinal1 = o1.getRight();
-							Calendar horarioFinal2 = o2.getRight();
-							return horarioFinal1.compareTo(horarioFinal2);
-						}
-						return ret;
-					}
-				});
+				// ordena os pares (HoraInicio,HoraFim)
+				TriedaServerUtil.ordenaParesDeHorarios(horariosOrdenados);
 				
 				// processa lista de pares de horários e une aqueles que possuem interseção em um único par (HorarioInicio,HorarioFim)
 				List<Pair<Calendar,Calendar>> horariosProcessados = new ArrayList<Pair<Calendar,Calendar>>();
@@ -237,17 +224,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return TrioDTO.create(0,null,labelsDasLinhasDaGradeHoraria);
 	}
 
-	@SuppressWarnings("deprecation")
-	private Calendar dateToCalendar(Date date) {
-		Calendar horario = Calendar.getInstance();
-		
-		horario.clear();
-		horario.set(2012,Calendar.FEBRUARY,1,date.getHours(),date.getMinutes(),0);
-		horario.set(Calendar.MILLISECOND,0);
-		
-		return horario;
-	}
-	
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro, IAtendimentosServiceDAO dao){
 		// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
 		SextetoDTO<Integer, Integer, Integer, List<AtendimentoRelatorioDTO>, List<Integer>, List<String>> s;
