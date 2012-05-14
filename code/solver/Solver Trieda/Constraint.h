@@ -69,7 +69,16 @@ public:
 	  C_MAX_TEMPO_S_D_SL = 48,				// Restricao 1.2.3.b
 	  C_VAR_CS = 49,
 	  C_FIXA_NAO_COMPARTILHAMENTO = 50,	// Restricao 1.2.50
-	  C_VAR_CBC = 51	// Restricao 1.2.51
+	  C_VAR_CBC = 51,	// Restricao 1.2.51
+
+	  C_MAX_CRED_DISC_ALUNO = 52,
+	  C_MAX_CREDS_SEMANA_ALUNO = 53,
+	  C_MIN_CREDS_SEMANA_ALUNO = 54,
+	  C_EVITA_SOBREPOS_TURMAS_ALUNOS = 55,
+	  C_ALOC_DEM = 56,
+	  C_DISC_PRATICA_TEORICA = 57,
+	  C_ATIVA_CA = 58,
+	  C_ALUNO_VARIAS_UNIDADES_DIA = 59
    };
 
    /** Default constructor. */
@@ -118,7 +127,12 @@ public:
    std::pair<Curso*, Curso*> getParCursos() const{ return parCursos;}
    ConjuntoSala * getSubCjtSalaCompart() const { return cjtSalaCompart; }
    std::pair<Oferta*, Oferta*> getParOfertas() const { return parOfts; }
-   
+
+   Aluno* getAluno() const { return aluno; }
+   int getTurma1() const { return turma1; }   
+   int getTurma2() const { return turma2; }
+   Disciplina* getDisciplina1() const { return disc1; }   
+   Disciplina* getDisciplina2() const { return disc2; }
 
    //==================================================
    // SET METHODS 
@@ -146,6 +160,12 @@ public:
    void setParCursos( std::pair<Curso*, Curso*> par ){ parCursos = par;}
    void setSubCjtSalaCompart( ConjuntoSala *s ){ cjtSalaCompart = s; }
    void setParOfertas( std::pair<Oferta*, Oferta*> ofts ){ parOfts = ofts; }
+
+   void setAluno( Aluno* a ) { aluno = a; }
+   void setTurma1( int i1 ) { turma1 = i1; }   
+   void setTurma2( int i2 ) { turma2 = i2; }
+   void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
+   void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
 
 private:
 
@@ -194,6 +214,12 @@ private:
    Calendario* sl; // semana letiva (calendario)
 
    std::pair<Oferta*, Oferta*> parOfts; // par de ofertas (restrição 1.2.36)
+
+   Aluno* aluno;
+   int turma1;          // i1
+   Disciplina *disc1;   // d1
+   int turma2;          // i2
+   Disciplina *disc2;   // d2
 
 };
 

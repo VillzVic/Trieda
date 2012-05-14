@@ -21,7 +21,7 @@ public:
    GGroup< Unidade *, LessPtr< Unidade > > unidades;
    GGroup< Professor *, LessPtr< Professor > > professores;
    GGroup< Horario * > horarios;
-
+   
    GGroup< Curso  *, LessPtr< Curso  > > cursos;
    GGroup< Oferta *, LessPtr< Oferta > > ofertas;
 
@@ -44,6 +44,8 @@ public:
    int getTotalSalas() const { return this->totalSalas; }
    int getMaiorSala() const { return this->maiorSala; }
    double getCusto() const { return this->custo; }
+
+   GGroup<Calendario*> getCalendarios();
 
    GGroup<Oferta*, LessPtr<Oferta>> retornaOfertasComCursoDisc( int idCurso, Disciplina *d );
 

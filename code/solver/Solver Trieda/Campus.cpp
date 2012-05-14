@@ -77,3 +77,15 @@ GGroup<Oferta*, LessPtr<Oferta>> Campus::retornaOfertasComCursoDisc( int idCurso
 	}
 	return ofts;
 }
+
+GGroup<Calendario*> Campus::getCalendarios()
+{
+   GGroup< Calendario * > calendarios;
+
+   ITERA_GGROUP( itHor, this->horarios, Horario )
+   {
+	   calendarios.add( itHor->horario_aula->getCalendario() );	
+   }
+
+   return calendarios;
+}

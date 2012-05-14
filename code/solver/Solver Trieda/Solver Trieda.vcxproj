@@ -505,8 +505,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_64)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(GUROBI_64)\include;$(XSD)\include;$(OPT_LP)\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_CPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -578,7 +578,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;C:\ILOG\CPLEX123_64\cplex\include\ilcplex;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_CPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;SOLVER_CPLEX;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -613,8 +613,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;$(GUROBI_64)\include;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_GUROBI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(CODELIB);$(OPT_LP)\include;$(OPT_LP)\source;$(CPLEX122)\include\ilcplex;$(XSD)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_RELEASE;RELEASE;SOLVER_CPLEX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -629,8 +629,8 @@
       </DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gurobi46.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(GUROBI_64)\lib;$(XSD)\lib64\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cplex122.lib;xerces-c_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(CPLEX122)\lib\x64_.net2005_8.0\stat_mda;$(XSD)\lib64\vc-8.0;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>

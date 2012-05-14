@@ -157,3 +157,27 @@ bool Calendario::intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf )
 
 	return false;
 }
+
+ 
+int Calendario::getTempoTotal( int dia )
+{
+	return ( tempo_aula * this->getNroDeHorariosAula(dia) ); 
+}
+
+GGroup<HorarioAula*> Calendario::retornaHorariosDisponiveisNoDia( int dia )
+{
+	GGroup<HorarioAula*> horarios;
+
+	ITERA_GGROUP_LESSPTR( itTurno, turnos, Turno )
+	{
+		ITERA_GGROUP_LESSPTR( itHor, itTurno->horarios_aula, HorarioAula )
+		{		
+			if ( itHor->dias_semana.find( dia ) !=  itHor->dias_semana.end() )
+			{
+				horarios.add( *itHor );
+			}
+		}
+	}
+
+	return horarios;
+}

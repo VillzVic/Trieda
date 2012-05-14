@@ -14,6 +14,8 @@
 
 ProblemData::ProblemData()
 {
+   EQUIV_TRANSITIVIDADE = false;
+
    this->atendimentosTatico = NULL;
 }
 
@@ -1095,6 +1097,23 @@ Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Cur
 }
 
 
+// Informa se uma dada disciplina é substituta de alguma outra.
+bool ProblemData::ehSubstituta( Disciplina* d )
+{
+	std::map< Disciplina*, Disciplina* >::iterator
+		itMap = this->mapDiscSubstituidaPor.begin();
+
+	for ( ; itMap != this->mapDiscSubstituidaPor.end(); itMap++ )
+	{
+		if ( itMap->second == d )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 GGroup< HorarioAula *, LessPtr< HorarioAula > > ProblemData::retornaHorariosEmComum( int sala, int disc, int dia )
 {
 	GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios;
@@ -1567,4 +1586,374 @@ GGroup<int> ProblemData::diasComunsEntreDisciplinas( Disciplina *disciplina1, Di
 	}
 		
 	return dias;
+}
+
+
+/*
+	Preenche os maps cjtAlunos, cjtDemandas, cjtAlunoDemanda e cjtDisciplinas
+*/
+void ProblemData::criaCjtAlunos( int campusId )
+{	
+	this->cjtAlunos.clear();		
+	this->cjtDemandas.clear();
+	this->cjtAlunoDemanda.clear();
+	this->cjtDisciplinas.clear();
+
+	int biggestId = 0;
+	
+	map< int, GGroup< Aluno * > > auxCjtAlunos;
+	map< int /*idCjtAlunos*/ , int /*qtd de AlunoDemanda*/> map_CjtAlunosId_SizeDemanda;
+
+
+	// ---------------------------------------------------------------------
+	// Preenche auxCtAlunos
+
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno * aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != campusId )
+		{
+			continue;
+		}
+
+		bool EXISTE_CJT = false;
+		
+		// armazena os ids dos grupos com os quais o aluno tem interseção de demanda
+		// se houver mais de 1 grupo, todos eles têm que ser fundidos
+		GGroup< int > gruposId;
+
+		map< int, GGroup< Aluno * > >::iterator itCjtAlunos;
+
+		// Procura se já existe grupo com demanda de alguma disciplina do aluno
+		ITERA_GGROUP_LESSPTR( itAlDem, itAluno->demandas, AlunoDemanda )
+		{
+			AlunoDemanda *ad = *itAlDem;
+			Disciplina *d = ad->demanda->disciplina;
+		
+			itCjtAlunos = auxCjtAlunos.begin();
+
+			for ( ; itCjtAlunos != auxCjtAlunos.end(); itCjtAlunos++ )
+			{
+				bool EXISTE_NO_CJT_ATUAL = false;
+
+				GGroup< Aluno * > grupoAlunos = (*itCjtAlunos).second;
+				ITERA_GGROUP( itAlunoInt, grupoAlunos, Aluno )
+				{
+					ITERA_GGROUP_LESSPTR( itAlDemInt, itAlunoInt->demandas, AlunoDemanda )
+					{
+						if ( itAlDemInt->demanda->disciplina == d )
+						{
+							EXISTE_CJT = true;
+							EXISTE_NO_CJT_ATUAL = true;
+							gruposId.add( (*itCjtAlunos).first );
+							break;
+						}
+					}
+					if (EXISTE_NO_CJT_ATUAL)
+						break;
+				}
+			}
+		}
+
+		if ( EXISTE_CJT )
+		{
+			if ( gruposId.size() == 1 )
+			{
+				int id = *gruposId.begin();
+				auxCjtAlunos[id].add( aluno );
+				map_CjtAlunosId_SizeDemanda[ id ] += aluno->demandas.size();
+			}
+			else
+			{
+				int nroAlDem = 0;
+
+				GGroup< Aluno* > uniao;
+				ITERA_GGROUP_N_PT( itId, gruposId, int )
+				{
+					int id = *itId;
+					GGroup< Aluno* > listaAlunos = auxCjtAlunos[id];
+					ITERA_GGROUP ( itAl, listaAlunos, Aluno)
+					{						
+						uniao.add( *itAl );
+						nroAlDem += itAl->demandas.size();
+					}					
+				}
+				uniao.add( aluno );
+
+				// Deleta cada grupo
+				ITERA_GGROUP_N_PT( itId, gruposId, int )
+				{
+					auxCjtAlunos.erase( *itId );
+					map_CjtAlunosId_SizeDemanda.erase( *itId );
+				}
+
+				// Insere a uniao de todos os grupos deletados
+				biggestId++;
+				auxCjtAlunos[biggestId] = uniao;
+				map_CjtAlunosId_SizeDemanda[ biggestId ] = nroAlDem;
+			}
+		}
+		else
+		{
+			biggestId++;
+			GGroup< Aluno * > novoGrupo;
+			novoGrupo.add( aluno );
+			auxCjtAlunos[biggestId] = novoGrupo;
+			map_CjtAlunosId_SizeDemanda[ biggestId ] = aluno->demandas.size();
+		}
+	}
+
+	// ---------------------------------------------------------------------
+	// Preenche cjtAlunos em ordem decrescente de quantidade de AlunoDemanda
+	bool AGRUPAR_CJS_PEQUENOS = true;
+	int ID = 0;
+	while ( map_CjtAlunosId_SizeDemanda.size() != 0 )
+	{
+		int cjtAlunoId = 0;
+		int maiorQtdAlDem = 0;
+
+		// Seleciona o id (cjtAlunoId) do proximo cjt de alunos a ser inserido em cjtAlunos		
+		map< int, int >::iterator itMap = map_CjtAlunosId_SizeDemanda.begin();
+		for ( ; itMap != map_CjtAlunosId_SizeDemanda.end(); itMap++ )
+		{
+			int id = itMap->first;
+			int qtdAlDem = itMap->second;
+
+			if ( maiorQtdAlDem < qtdAlDem )
+			{
+				maiorQtdAlDem = qtdAlDem;
+				cjtAlunoId = id;
+			}
+		}
+		
+		ID++;
+		this->cjtAlunos[ ID ] = auxCjtAlunos[cjtAlunoId];
+		
+		map_CjtAlunosId_SizeDemanda.erase( cjtAlunoId );
+		auxCjtAlunos.erase( cjtAlunoId );
+
+		if ( AGRUPAR_CJS_PEQUENOS )
+		{
+			// Agrupa os conjuntos com menos que 40% da qtd de AlunosDemanda
+			if ( maiorQtdAlDem < 0.4 * this->getQtdAlunoDemandaAtualPorCampus(campusId) )
+			{
+				map< int, GGroup< Aluno * > >::iterator itMap = auxCjtAlunos.begin();
+				for ( ; itMap != auxCjtAlunos.end(); itMap++ )
+				{
+					ITERA_GGROUP( itAluno, itMap->second, Aluno )
+					{
+						Aluno *a = *itAluno;
+						this->cjtAlunos[ ID ].add( a );
+					}
+				}
+				map_CjtAlunosId_SizeDemanda.clear();
+				auxCjtAlunos.clear();
+			}
+		}
+
+	}
+
+	// ---------------------------------------------------------------------
+	// Preenche cjtDemandas, cjtAlunoDemanda e cjtDisciplinas
+
+	map< int, GGroup< Aluno * > >::iterator 
+			itCjtAlunos = this->cjtAlunos.begin();
+
+	for ( ; itCjtAlunos != this->cjtAlunos.end(); itCjtAlunos++ )
+	{
+		int id = itCjtAlunos->first;
+	
+		GGroup< Aluno * > grupoAlunos = itCjtAlunos->second;
+		ITERA_GGROUP( itAl, grupoAlunos, Aluno )
+		{
+			Aluno *a = *itAl;
+			
+			ITERA_GGROUP_LESSPTR( itAlDem, a->demandas, AlunoDemanda )
+			{			
+				AlunoDemanda *alDem = *itAlDem;
+				Demanda *dem = alDem->demanda;
+				Disciplina *disciplina = dem->disciplina;
+
+				this->cjtDemandas[id].add( dem );
+				this->cjtAlunoDemanda[id].add( alDem );
+		
+				if ( this->cjtDisciplinas.find( disciplina ) != this->cjtDisciplinas.end() )
+				{
+					int idFound = this->cjtDisciplinas[ disciplina ];
+					if ( idFound != id )
+					{
+						std::cout << "\nErro em ProblemData::criaCjtAlunos( int campusId )."
+						<< "\nDisciplina " << disciplina->getId() << "ja associada ao cjt de alunos " << idFound
+						<< "\nNao eh possivel associa-la ao cjt de alunos " << id;
+					}
+				}
+				else
+				{
+					this->cjtDisciplinas[ disciplina ] = id;
+				}
+			}
+		}
+	}
+
+}
+
+int ProblemData::retornaCjtAlunosId( int discId )
+{	
+	int cjtAlunosId;
+	
+	Disciplina *disciplina = this->refDisciplinas[ discId ];
+
+	map< Disciplina *, int /* cjtAlunosId */ >::iterator itMap = this->cjtDisciplinas.find( disciplina );
+	
+	if ( itMap == this->cjtDisciplinas.end() )
+	{
+		//std::cout << "\nAtencao em ProblemData::retornaCjtAlunosId( int discId ):";
+		//std::cout << "\nDisciplina " << discId << " nao encontrada.\n";
+		return 0;
+	}
+	else
+	{
+		cjtAlunosId = itMap->second;
+		return cjtAlunosId;
+	}
+
+	return 0;
+}
+
+int ProblemData::haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId )
+{	
+	GGroup< Demanda* > demandasCjtAlunos;
+
+	map< int, GGroup< Demanda * > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
+	
+	if ( itMap == this->cjtDemandas.end() )
+	{
+		std::cout << "\nConjunto de alunos " << cjtAlunosId << " nao encontrado.\n";
+		return false;
+	}
+	else
+	{
+		demandasCjtAlunos = itMap->second;
+	}
+
+	// Calculando P_{d,o}
+	int qtdDem = 0;
+
+	ITERA_GGROUP( itDem, demandasCjtAlunos, Demanda )
+	{
+		if ( itDem->getDisciplinaId() == discId && 
+			 itDem->getOfertaId() == oftId )
+		{
+			qtdDem += itDem->getQuantidade();
+		}
+	}
+
+	return qtdDem;
+}
+
+int ProblemData::haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId )
+{	
+	GGroup< Demanda* > demandasCjtAlunos;
+
+	map< int, GGroup< Demanda * > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
+	
+	if ( itMap == this->cjtDemandas.end() )
+	{
+		std::cout << "\nConjunto de alunos " << cjtAlunosId << " nao encontrado.\n";
+		return false;
+	}
+	else
+	{
+		demandasCjtAlunos = itMap->second;
+	}
+
+	// Calculando P_{d,o}
+	int qtdDem = 0;
+
+	ITERA_GGROUP( itDem, demandasCjtAlunos, Demanda )
+	{
+		if ( itDem->getDisciplinaId() == discId && 
+			itDem->oferta->getCursoId() == cursoId )
+		{
+			qtdDem += itDem->getQuantidade();
+		}
+	}
+
+	return qtdDem;
+}
+
+
+int ProblemData::getQtdAlunoDemandaAtualPorCampus( int campusId )
+{
+	int n = 0;
+	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+	{
+		if ( itAlDem->demanda->oferta->getCampusId() == campusId )
+		{
+			n++;
+		}
+	}
+	return n;
+}
+
+void ProblemData::imprimeCjtAlunos( int campusId )
+{
+	bool CONSIDERAR_PRATICAS = false;
+
+	int totalAlunos = 0, totalDemandas = 0, totalAlunoDemanda = 0;
+
+	std::cout << "\nNumero de conjuntos: " << this->cjtAlunos.size();
+
+	map< int, GGroup< Aluno * > >::iterator
+		itMapCjtAlunos = this->cjtAlunos.begin();
+			
+	for ( ; itMapCjtAlunos != this->cjtAlunos.end(); itMapCjtAlunos++ )
+	{
+		int id = itMapCjtAlunos->first;
+		int nroAlunos = itMapCjtAlunos->second.size();
+
+		if ( CONSIDERAR_PRATICAS )
+		{
+			std::cout << "\nConjunto " << id
+					  << ": nro de alunos = " << nroAlunos
+					  << ", nro de alunosDemanda = " << this->cjtAlunoDemanda[id].size()
+					  << ", nro de demandas = " << this->cjtDemandas[id].size();
+			
+			totalDemandas += this->cjtDemandas[id].size();
+			totalAlunoDemanda += this->cjtAlunoDemanda[id].size();
+		}
+		else
+		{
+			int nAlDem = 0, nDem = 0;
+
+			GGroup< AlunoDemanda * > gad = this->cjtAlunoDemanda[id];
+			ITERA_GGROUP( itAlDem, gad, AlunoDemanda )
+			{
+				if ( itAlDem->demanda->getDisciplinaId() >= 0 )
+					nAlDem++;
+			}
+			GGroup< Demanda * > gd = this->cjtDemandas[id];
+			ITERA_GGROUP( itDem, gd, Demanda )
+			{
+				if ( itDem->getDisciplinaId() >= 0 )
+					nDem++;
+			}
+
+			std::cout << "\nConjunto " << id
+					  << ": nro de alunos = " << nroAlunos
+					  << ", nro de alunosDemanda = " << nAlDem
+					  << ", nro de demandas = " << nDem;
+
+			totalDemandas += nDem;
+			totalAlunoDemanda += nAlDem;
+		}
+
+		totalAlunos++;
+	}
+	
+	std::cout << "\nTotal de alunos: " << totalAlunos;
+	std::cout << "\nTotal de demandas: " << totalDemandas;
+	std::cout << "\nTotal de alunosDemanda: " << totalAlunoDemanda;
+
 }

@@ -268,6 +268,10 @@ void ProblemDataLoader::load()
 
    calculaCombinaCredSLPorBlocoCurric();
 
+   std::cout << "Calculando combinacao de creditos por aluno..." << std::endl;
+
+   calculaCombinaCredSLPorAluno();
+
 }
 
 void ProblemDataLoader::preencheTempoAulaHorarios()
@@ -2073,104 +2077,138 @@ void ProblemDataLoader::referenciaCalendariosCurriculos()
 
 void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 {
-	ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
+	// Não considera transitividade entre equivalências
+	if ( ! problemData->EQUIV_TRANSITIVIDADE )
 	{
-		Disciplina *discNova = *itDisc;
-
-		ITERA_GGROUP_LESSPTR( itDiscAntiga, discNova->discEquivalentes, Disciplina )
+		// Preenche mapDiscSubstituidaPor
+		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
 		{
-			Disciplina *discAntiga = *itDiscAntiga;
+			Disciplina *discNova = *itDisc;
+
+			ITERA_GGROUP_LESSPTR( itDiscAntiga, discNova->discEquivalentes, Disciplina )
+			{
+				Disciplina *discAntiga = *itDiscAntiga;
 					
-			// Se a disciplina antiga já possuir uma substituição no map (for uma chave do map)
-			if ( problemData->mapDiscSubstituidaPor.find( discAntiga ) !=
-				 problemData->mapDiscSubstituidaPor.end() )
-			{
-				// Não faz nada. A disciplina que foi inserida primeiro no map prevalece.
-			}
-			else // discAntiga não é chave
-			{
-				bool jaSubstituiu = false;
-
-				std::map< Disciplina*, Disciplina* >::iterator itMap;
-				for ( itMap = problemData->mapDiscSubstituidaPor.begin();
-					  itMap != problemData->mapDiscSubstituidaPor.end();
-					  itMap++ )
+				// Se a disciplina antiga não possuir uma substituição no map (não for uma chave do map)
+				if ( problemData->mapDiscSubstituidaPor.find( discAntiga ) ==
+					 problemData->mapDiscSubstituidaPor.end() )
 				{
-					if ( itMap->second == discAntiga )
-					{
-						jaSubstituiu = true; // Se a disciplina antiga já tiver substituído alguma disciplina no map (for substituta)
-					}
+					problemData->mapDiscSubstituidaPor[ discAntiga ] = discNova;
 				}
-
-				if ( jaSubstituiu ) // discAntiga já é substituta
+				else
 				{
-					if ( problemData->mapDiscSubstituidaPor.find( discNova ) != 
-						 problemData->mapDiscSubstituidaPor.end() ) // discNova já é chave do map
-					{
-						Disciplina* equiv = ( problemData->mapDiscSubstituidaPor.find( discNova ) )->second;
-
-						for ( itMap = problemData->mapDiscSubstituidaPor.begin();
-							  itMap != problemData->mapDiscSubstituidaPor.end();
-							  itMap++ )
-						{
-							if ( itMap->second == discAntiga )
-							{
-								problemData->mapDiscSubstituidaPor[ itMap->first ] = equiv;
-							}
-						}
-
-						problemData->mapDiscSubstituidaPor[discAntiga] = equiv;
-					}
-					else  // discNova NÃO é chave do map
-					{
-						for ( itMap = problemData->mapDiscSubstituidaPor.begin();
-							  itMap != problemData->mapDiscSubstituidaPor.end();
-							  itMap++ )
-						{
-							if ( itMap->second == discAntiga )
-							{
-								problemData->mapDiscSubstituidaPor[ itMap->first ] = discNova;
-							}
-						}
-
-						problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
-					}
-
+					std::cout << "\nAtencao em ProblemDataLoader::referenciaDisciplinasEquivalentes():";
+					std::cout << "\nJa existe uma substituicao da disciplina " << discAntiga->getId()
+							  << " pela disciplina " <<  problemData->mapDiscSubstituidaPor[ discAntiga ]->getId()
+							  << ". Nao eh possivel substitui-la pela disciplina " << discNova->getId();
 				}
-				else // Se a disciplina antiga não estiver no map
-				{
-					itMap = problemData->mapDiscSubstituidaPor.find( discNova );
-			
-					// Se a disciplina nova já possuir uma substituição no map (for uma chave do map)
-					if ( itMap != problemData->mapDiscSubstituidaPor.end() )
-					{
-						problemData->mapDiscSubstituidaPor[discAntiga] = itMap->second;
-						
-						if ( problemData->mapDiscSubstituidaPor.find( itMap->second ) != 
-							 problemData->mapDiscSubstituidaPor.end() )
-						{
-							std::cout<<"\nNão deveria entrar aqui\n";
-						}
-
-					}
-					else
-					{
-						// Se a disciplina nova já tiver substituído alguma disciplina no map
-						// ou se também não estiver no map
-						problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
-
-						if ( problemData->mapDiscSubstituidaPor.find( discNova ) != 
-							 problemData->mapDiscSubstituidaPor.end() )
-						{
-							std::cout<<"\nNão deveria entrar aqui\n";
-						}
-
-					}
-				}			
 			}
 		}
 	}
-	
+
+	// Considera transitividade entre equivalências
+	else
+	{
+		// Preenche mapDiscSubstituidaPor
+		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
+		{
+			Disciplina *discNova = *itDisc;
+
+			ITERA_GGROUP_LESSPTR( itDiscAntiga, discNova->discEquivalentes, Disciplina )
+			{
+				Disciplina *discAntiga = *itDiscAntiga;
+					
+				// Se a disciplina antiga já possuir uma substituição no map (for uma chave do map)
+				if ( problemData->mapDiscSubstituidaPor.find( discAntiga ) !=
+					 problemData->mapDiscSubstituidaPor.end() )
+				{
+					// Não faz nada. A disciplina que foi inserida primeiro no map prevalece.
+				}
+				else // discAntiga não é chave
+				{
+					bool jaSubstituiu = false;
+
+					std::map< Disciplina*, Disciplina* >::iterator itMap;
+					for ( itMap = problemData->mapDiscSubstituidaPor.begin();
+						  itMap != problemData->mapDiscSubstituidaPor.end();
+						  itMap++ )
+					{
+						if ( itMap->second == discAntiga )
+						{
+							jaSubstituiu = true; // Se a disciplina antiga já tiver substituído alguma disciplina no map (for substituta)
+						}
+					}
+
+					if ( jaSubstituiu ) // discAntiga já é substituta
+					{
+						if ( problemData->mapDiscSubstituidaPor.find( discNova ) != 
+							 problemData->mapDiscSubstituidaPor.end() ) // discNova já é chave do map
+						{
+							Disciplina* equiv = ( problemData->mapDiscSubstituidaPor.find( discNova ) )->second;
+
+							for ( itMap = problemData->mapDiscSubstituidaPor.begin();
+								  itMap != problemData->mapDiscSubstituidaPor.end();
+								  itMap++ )
+							{
+								if ( itMap->second == discAntiga )
+								{
+									problemData->mapDiscSubstituidaPor[ itMap->first ] = equiv;
+								}
+							}
+
+							problemData->mapDiscSubstituidaPor[discAntiga] = equiv;
+						}
+						else  // discNova NÃO é chave do map
+						{
+							for ( itMap = problemData->mapDiscSubstituidaPor.begin();
+								  itMap != problemData->mapDiscSubstituidaPor.end();
+								  itMap++ )
+							{
+								if ( itMap->second == discAntiga )
+								{
+									problemData->mapDiscSubstituidaPor[ itMap->first ] = discNova;
+								}
+							}
+
+							problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
+						}
+
+					}
+					else // Se a disciplina antiga não estiver no map
+					{
+						itMap = problemData->mapDiscSubstituidaPor.find( discNova );
+			
+						// Se a disciplina nova já possuir uma substituição no map (for uma chave do map)
+						if ( itMap != problemData->mapDiscSubstituidaPor.end() )
+						{
+							problemData->mapDiscSubstituidaPor[discAntiga] = itMap->second;
+						
+							if ( problemData->mapDiscSubstituidaPor.find( itMap->second ) != 
+								 problemData->mapDiscSubstituidaPor.end() )
+							{
+								std::cout<<"\nNão deveria entrar aqui\n";
+							}
+
+						}
+						else
+						{
+							// Se a disciplina nova já tiver substituído alguma disciplina no map
+							// ou se também não estiver no map
+							problemData->mapDiscSubstituidaPor[discAntiga] = discNova;
+
+							if ( problemData->mapDiscSubstituidaPor.find( discNova ) != 
+								 problemData->mapDiscSubstituidaPor.end() )
+							{
+								std::cout<<"\nNão deveria entrar aqui\n";
+							}
+
+						}
+					}			
+				}
+			}
+		}
+	}
+
 	substituiDisciplinasEquivalentes();
 
 }
@@ -4715,7 +4753,7 @@ void ProblemDataLoader::calculaCombinaCredSLPorSala()
 
 void ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric()
 {
-	if ( problemData->parametros->otimizarPor == "ALUNO" )
+	if ( problemData->parametros->otimizarPor != "BLOCOCURRICULAR" )
 	{
 		return;
 	}
@@ -4871,6 +4909,170 @@ void ProblemDataLoader::calculaCombinaCredSLPorBlocoCurric()
 		}
 	}
 }
+
+
+void ProblemDataLoader::calculaCombinaCredSLPorAluno()
+{
+	if ( problemData->parametros->otimizarPor != "ALUNO" )
+	{
+		return;
+	}
+
+	if ( problemData->calendarios.size() > 2 )
+	{
+		std::cerr << "Atencao em ProblemDataLoader::calculaCombinaCredSLPorAluno: esta funcao esta preparada "
+				  << "para trabalhar somente o caso de 1 ou 2 semanas letivas.";
+	}
+		
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+    {
+	    Aluno *aluno = *itAluno;
+
+		Campus * campus = aluno->getOferta()->campus;
+
+	 	GGroup< Calendario*, LessPtr<Calendario> > calendarios = aluno->retornaSemanasLetivas();
+       
+		if ( calendarios.size() == 1 )
+		{
+			Calendario *sl1 = *calendarios.begin();
+			
+			ITERA_GGROUP_N_PT( itDia, campus->diasLetivos, int )
+			{
+				int dia = *itDia;
+
+				aluno->setCombinaCredSL( dia, 0, sl1, sl1->getNroDeHorariosAula(dia) );				
+				
+				aluno->setCombinaCredSLSize(dia, 1);
+			}
+		}
+		else if ( calendarios.size() == 2 )
+		{
+			// só trata 2 semanas letivas por bloco
+			Calendario *sl1 = *calendarios.begin();
+			Calendario *sl2 = *(++calendarios.begin());
+
+			ITERA_GGROUP_N_PT( itDia, campus->diasLetivos, int )
+			{
+				int dia = *itDia;
+
+				GGroup<HorarioAula*> horDispDiaSL1 = sl1->retornaHorariosDisponiveisNoDia( dia );
+				GGroup<HorarioAula*> horDispDiaSL2 = sl2->retornaHorariosDisponiveisNoDia( dia );
+
+				#pragma region Cria o mapa de compatibilidade de horarios de sl1 e sl2
+
+				// Map para armazenar as compatibilidades
+				// Para cada HorarioAula H, lista todos os HorarioAula h que não sobrepõem H
+				std::map< HorarioAula*, GGroup<HorarioAula*> > map_compatHorarioSL1PorSalaDia;
+
+				ITERA_GGROUP( it_H, horDispDiaSL1, HorarioAula )
+				{
+					ITERA_GGROUP( it_h, horDispDiaSL2, HorarioAula )
+					{
+						// Se it_H não se sobrepor com it_h
+						if ( problemData->compatibilidadesDeHorarios[ *it_H ].find( *it_h ) !=
+								problemData->compatibilidadesDeHorarios[ *it_H ].end() )
+						{
+							map_compatHorarioSL1PorSalaDia[*it_H].add( *it_h );
+						}
+					}
+				}
+
+				#pragma endregion
+
+				#pragma region Calcula todas as combinações possíveis entre horarios compativeis de sl2
+
+				// Map para armazenar as combinações (sub-conjuntos)
+				std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ > todosSubConjuntos;
+
+				for ( std::map< HorarioAula*, GGroup<HorarioAula*> >::iterator it_H = map_compatHorarioSL1PorSalaDia.begin();
+						it_H != map_compatHorarioSL1PorSalaDia.end(); it_H++  )
+				{
+					// Conjunto com todos os subconjuntos com h's compativeis com H
+					GGroup< std::set< HorarioAula* > > subCjt = calculaSubCjtHorarios( it_H->second ); // TODO: tentar reaproveitar os calculos anteriores
+					
+					for ( GGroup< std::set< HorarioAula* > >::iterator it_h = subCjt.begin();
+							it_h != subCjt.end(); it_h++ )
+					{
+						if ( todosSubConjuntos.find( *it_h ) == todosSubConjuntos.end() )
+						{
+							todosSubConjuntos[ *it_h ] = 1; // Insere um novo subCjt
+						}
+						else
+						{
+							todosSubConjuntos[ *it_h ]++; // Incrementa o numero de ocorrencias do subCjt
+						}
+					}
+				}
+				
+				#pragma endregion
+
+				#pragma region Cria as combinações de maximos de creditos
+
+				bool REMOCAO = false;
+				int k=0;
+				aluno->getCombinaCredSLSize()[dia] = k;
+
+				for ( int i = 0; i <= (int) horDispDiaSL1.size(); i++ )
+				{
+					int maxSL2 = 0;
+					
+					std::map< std::set< HorarioAula* >, int /*nro de ocorrencias*/ >::iterator it = todosSubConjuntos.begin();
+					
+					for (; it != todosSubConjuntos.end(); it++ )
+					{
+						int nHorariosSl1 = it->second;
+						int nHorariosSl2 = it->first.size();
+
+						if ( i == nHorariosSl1 && maxSL2 < nHorariosSl2 )
+						{
+							maxSL2 = it->first.size();
+						}
+					}
+					if (i==0)
+						maxSL2 = horDispDiaSL2.size();
+
+					if ( !aluno->combinaCredSL_eh_dominado( i, sl1, maxSL2, sl2, dia ) &&
+						 !aluno->combinaCredSL_eh_repetido( i, sl1, maxSL2, sl2, dia ) ) // atencao para a ordem: i refere-se a sl1 & maxSL2 refere-se a sl2
+					{
+						aluno->setCombinaCredSL( dia, k, sl1, i );
+						aluno->setCombinaCredSL( dia, k, sl2, maxSL2 );
+						
+						k++;
+						aluno->setCombinaCredSLSize(dia, k);
+
+						if ( aluno->combinaCredSL_domina( i, sl1, maxSL2, sl2, dia ) != NULL )
+						{
+							// sera necessario remover itens dominados
+							REMOCAO = true;
+						}
+					}
+				}
+				
+				#pragma region Remoção de itens dominados
+
+				if (REMOCAO)
+				{
+					std::map< Trio<int, int, Calendario*>, int > dominados = aluno->retornaCombinaCredSL_Dominados(dia);
+					
+					// Deleta itens dominados
+					std::map< Trio<int, int, Calendario*>, int >::iterator it_mapDominados = dominados.begin();
+					for ( ; it_mapDominados != dominados.end(); it_mapDominados++  )
+					{
+						aluno->removeCombinaCredSL( it_mapDominados->first );						
+					}
+					int size = k - dominados.size()/2;
+					aluno->setCombinaCredSLSize(dia, size);
+					
+				}
+				#pragma endregion
+				
+				#pragma endregion
+			}
+		}
+	}
+}
+
+
 
 
 GGroup< std::set<HorarioAula*> > ProblemDataLoader::calculaSubCjtHorarios( GGroup< HorarioAula* > cjtTotal )

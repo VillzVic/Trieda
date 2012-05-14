@@ -43,6 +43,8 @@ void BlocoCurricular::preencheMaxCredsPorDia()
 */
 int BlocoCurricular::getNroMaxCredCombinaSL( int k, Calendario *c, int dia )
 {
+	int n = 0;
+
 	if ( dia < 0 || dia > 7 )
 	{
 		std::cerr<<"Erro em BlocoCurricular::getNroCredCombinaSL(): dia invalido.";
@@ -52,7 +54,15 @@ int BlocoCurricular::getNroMaxCredCombinaSL( int k, Calendario *c, int dia )
 	Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t;
 	t.set( dia, k, c );
 
-	return combinaCredSL[ t ];
+	std::map< Trio< int/*dia*/, int /*k_id*/, Calendario* /*sl*/ >, int/*nroCreds*/ >::iterator 
+		it = combinaCredSL.find( t );
+
+	if ( it != combinaCredSL.end() )
+	{
+		n = it->second;
+	}
+	
+	return n;
 }
 
 

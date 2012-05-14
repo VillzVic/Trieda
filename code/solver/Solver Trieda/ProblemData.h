@@ -33,6 +33,7 @@
 #include "Aula.h"
 #include "HorarioDia.h"
 
+
 class Variable;
 
 class ProblemData
@@ -62,6 +63,11 @@ public:
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
    GGroup< Aluno *, LessPtr< Aluno > > alunos;
+
+   map< int /* cjtAlunosId */, GGroup< Aluno * > > cjtAlunos;
+   map< int /* cjtAlunosId */, GGroup< Demanda * > > cjtDemandas;
+   map< int /* cjtAlunosId */, GGroup< AlunoDemanda * > > cjtAlunoDemanda;
+   map< Disciplina *, int /* cjtAlunosId */ > cjtDisciplinas;
 
    GGroup< Demanda *, LessPtr< Demanda > > demandasTotal;
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemandaTotal;
@@ -289,6 +295,11 @@ public:
 
    virtual void le_arvore( TriedaInput & );
 
+   // Armazena os 'ids' das disciplinas em comum entre os pares de cursos compatíveis
+   std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;
+
+   void preencheCursosCompDisc();
+
    //-----------------------------------------------------------------------------------------------
    // Equivalências entre disciplinas
 
@@ -296,19 +307,14 @@ public:
    // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
    std::map< Disciplina*, Disciplina* > mapDiscSubstituidaPor;
 
-   // Armazena os 'ids' das disciplinas em comum entre os pares de cursos compatíveis
-   std::map< std::pair< Curso *, Curso * >, std::vector< int /*idDisc*/ > > cursosComp_disc;
-
-   void preencheCursosCompDisc();
-
    // Dado um curso e um curriculo, retorna-se um map
    // que referencia, para cada disciplina, as disciplinas que ela substituiu,
    // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
    std::map< std::pair< Curso *, Curriculo * >,
 	         std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidas;
 
-   std::map< std::pair< Curso *, Curriculo * >,
-			    std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidasAux;
+   //std::map< std::pair< Curso *, Curriculo * >,
+   //		    std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidasAux;
 
    // Dada uma disciplina, informamos o seu curso e curriculo
    std::map< Disciplina *, std::pair< Curso *, Curriculo * > > map_Disc_CursoCurriculo;
@@ -317,6 +323,9 @@ public:
    // a disciplina original que ela substituiu. Caso não tiver havido substituição,
    // returna NULL.
    Disciplina * ehSubstitutaDe( Disciplina*, std::pair< Curso *, Curriculo * > );
+
+   // Informa se uma dada disciplina é substituta de alguma outra.
+   bool ehSubstituta( Disciplina* d );
 
    // Dada uma disciplina, esse método retorna qual
    // disciplina a substituiu, ou retorna NULL caso
@@ -330,7 +339,7 @@ public:
 
    // Busca a demanda da disciplina informada,
    // em cursos compatíveis com o curso também informado
-   Demanda * buscaDemanda( Curso * , Disciplina * );
+   Demanda * buscaDemanda( Curso * , Disciplina * ); // ??
 
    // Busca a demandas da disciplina e curso informados
    GGroup< Demanda *, LessPtr< Demanda > > buscaTodasDemandas( Curso * , Disciplina *, Campus *cp );
@@ -425,6 +434,18 @@ public:
    GGroup<Aluno*> alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
       
    GGroup<int> diasComunsEntreDisciplinas( Disciplina *disciplina1, Disciplina *disciplina2 );
+
+   void criaCjtAlunos( int campusId );
+
+   int retornaCjtAlunosId( int discId );
+   int haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId );
+   int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
+
+   int getQtdAlunoDemandaAtualPorCampus( int campusId );
+
+   void imprimeCjtAlunos( int campusId );
+
+   bool EQUIV_TRANSITIVIDADE;
 
    private:
    

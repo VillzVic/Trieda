@@ -51,6 +51,11 @@ Constraint& Constraint::operator = ( const Constraint & cons )
    this->parCursos = cons.getParCursos();
    this->cjtSalaCompart = cons.getSubCjtSalaCompart();
    this->parOfts = cons.getParOfertas();
+   this->aluno = cons.getAluno();
+   this->turma1 = cons.getTurma1();
+   this->turma2 = cons.getTurma2();
+   this->disc1 = cons.getDisciplina1();
+   this->disc2 = cons.getDisciplina2();
 
    return *this;
 }
@@ -110,6 +115,21 @@ bool Constraint::operator < ( const Constraint & cons ) const
 
    if ( E_MENOR_PAR( this->getParOfertas(), cons.getParOfertas() ) ) return true;
    if ( E_MENOR_PAR( cons.getParOfertas(), this->getParOfertas() ) ) return false;
+   
+   if ( this->getAluno() < cons.getAluno() ) return true;
+   if ( this->getAluno() > cons.getAluno() ) return false;
+
+   if ( this->getTurma1() < cons.getTurma1() ) return true;
+   if ( this->getTurma1() > cons.getTurma1() ) return false;
+   
+   if ( this->getTurma2() < cons.getTurma2() ) return true;
+   if ( this->getTurma2() > cons.getTurma2() ) return false;
+
+   if ( E_MENOR( this->getDisciplina1(),cons.getDisciplina1() ) ) return true;
+   if ( E_MENOR( cons.getDisciplina1(), this->getDisciplina1() ) ) return false;
+
+   if ( E_MENOR( this->getDisciplina2(),cons.getDisciplina2() ) ) return true;
+   if ( E_MENOR( cons.getDisciplina2(), this->getDisciplina2() ) ) return false;
 
    return false;
 
@@ -140,6 +160,11 @@ void Constraint::reset()
    parCursos.second = NULL;
    parOfts.first = NULL;
    parOfts.second = NULL;
+   aluno = NULL;
+   turma1 = -1;
+   turma2 = -1;
+   disc1 = NULL;
+   disc2 = NULL;
 
 }
 
@@ -252,7 +277,23 @@ std::string Constraint::toString()
       ss << "__(C_FIXA_NAO_COMPARTILHAMENTO):"; break;
   case C_VAR_CBC:
       ss << "__(C_VAR_CBC):"; break;
-	  
+  case C_MAX_CRED_DISC_ALUNO:
+      ss << "__(C_MAX_CRED_DISC_ALUNO):"; break;
+  case C_MAX_CREDS_SEMANA_ALUNO:
+      ss << "__(C_MAX_CREDS_SEMANA_ALUNO):"; break;
+  case C_MIN_CREDS_SEMANA_ALUNO:
+      ss << "__(C_MIN_CREDS_SEMANA_ALUNO):"; break;	    	
+  case C_EVITA_SOBREPOS_TURMAS_ALUNOS:
+      ss << "__(C_EVITA_SOBREPOS_TURMAS_ALUNOS):"; break;	    		  
+  case C_ALOC_DEM:
+      ss << "__(C_ALOC_DEM):"; break;	    		  
+  case C_DISC_PRATICA_TEORICA:
+      ss << "__(C_DISC_PRATICA_TEORICA):"; break;	  	    
+  case C_ATIVA_CA:
+      ss << "__(C_ATIVA_CA):"; break;	  	    
+  case C_ALUNO_VARIAS_UNIDADES_DIA:
+      ss << "__(C_ALUNO_VARIAS_UNIDADES_DIA):"; break;	  	    
+	  	  	  
 
    default:
       ss << "!";
@@ -339,6 +380,31 @@ std::string Constraint::toString()
 	   ss << "_SL" << sl->getId();
    }
 
+   if ( aluno != NULL )
+   {
+	   ss << "_Aluno" << aluno->getAlunoId();
+   }
+
+   if ( turma1 >= 0 )
+   {
+      ss << "_Turma1." << turma1;
+   }
+
+   if ( disc1 != NULL )
+   {
+      ss << "_Disc1." << disc1->getId();
+   }
+   
+   if ( turma2 >= 0 )
+   {
+      ss << "_Turma2." << turma2;
+   }
+
+   if ( disc2 != NULL )
+   {
+      ss << "_Disc2." << disc2->getId();
+   }
+   
    ss << "_}";
    std::string consName = "";
    ss >> consName;

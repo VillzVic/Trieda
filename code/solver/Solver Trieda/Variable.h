@@ -49,7 +49,15 @@ public:
 	  V_ALOC_ALUNOS_PAR_OFT = 28,  // of_{i,d,oft1,oft2}
 	  V_MIN_HOR_DISC_OFT_DIA = 29, // g_{d,oft,t}
 	  V_COMBINA_SL_SALA = 30, // cs_{s,t,k}
-	  V_COMBINA_SL_BLOCO = 31 // cbc_{cb,t,k}
+	  V_COMBINA_SL_BLOCO = 31, // cbc_{cb,t,k}
+
+
+	  V_COMBINA_SL_ALUNO = 32, // ca_{a,t,k}
+	  V_MIN_CRED_SEMANA_ALUNO = 33, // h_{a}
+	  V_MAX_CRED_SEMANA_ALUNO = 34,  // H_{a}
+	  V_SLACK_DEMANDA_ALUNO = 35,	// fd_{i,d,cp}
+	  V_SLACK_SLACKDEMANDA_PT = 36,	// ffd_{i1,d,i2,-d,cp}
+	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 37 // fu_{i1,d1,i2,d2,t}
 
    };
 
@@ -102,6 +110,18 @@ public:
    int getCombinaSL() const { return combinaSL; }
 
    int getCombinaSLBloco() const { return combinaSLBloco; }
+   
+   int getCombinaSLAluno() const { return combinaSLAluno; }
+
+   Aluno* getAluno() const { return aluno; }
+
+   int getTurma1() const { return turma1; }
+   
+   int getTurma2() const { return turma2; }
+
+   Disciplina* getDisciplina1() const { return disc1; }
+   
+   Disciplina* getDisciplina2() const { return disc2; }
 
    //==================================================
    // SET METHODS 
@@ -148,6 +168,18 @@ public:
    void setCombinaSL( int combinacao ) { combinaSL = combinacao; }
 
    void setCombinaSLBloco( int combinacao ) { combinaSLBloco = combinacao; }
+   
+   void setCombinaSLAluno( int combinacao ) { combinaSLAluno = combinacao; }
+   
+   void setAluno( Aluno* a ) { aluno = a; }
+
+   void setTurma1( int i1 ) { turma1 = i1; }
+   
+   void setTurma2( int i2 ) { turma2 = i2; }
+
+   void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
+
+   void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
 
    //==================================================
    // OPERATORS 
@@ -182,6 +214,13 @@ private:
    int k; // combinação de divisão de créditos
    int combinaSL; // combinação de divisão de creditos entre as semanas letivas para uma sala e dia
    int combinaSLBloco; // combinação de divisão de creditos entre as semanas letivas para um bloco curricular e dia
+   int combinaSLAluno; // combinação de divisão de creditos entre as semanas letivas para um aluno e dia
+   Aluno* aluno;
+   
+   int turma1;          // i1
+   Disciplina *disc1;   // d1
+   int turma2;          // i2
+   Disciplina *disc2;   // d2
 };
 
 

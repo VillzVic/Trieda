@@ -190,7 +190,7 @@ std::string ConstraintTatico::toString()
    switch( type )
    {
    case C_CARGA_HORARIA:
-      ss << "__(CARGA_HORARIA):"; break;
+      ss << "__(C_CARGA_HORARIA):"; break;
    case C_SALA_HORARIO:
       ss << "__(C_SALA_HORARIO):"; break;	  
    case C_UNICO_ATEND_TURMA_DISC_DIA:
@@ -200,9 +200,9 @@ std::string ConstraintTatico::toString()
 //   case C_DEMANDA_DISC_ALUNO:
 //      ss << "__(C_DEMANDA_DISC_ALUNO):"; break;
    case C_TURMA_DISC_DIAS_CONSEC:
-      ss << "__(TURMAS_DISC_DIAS_CONSEC):"; break;	  
+      ss << "__(C_TURMAS_DISC_DIAS_CONSEC):"; break;	  
    case C_LIMITA_ABERTURA_TURMAS:
-      ss << "__(LIMITA_ABERTURA_TURMAS):"; break;
+      ss << "__(C_LIMITA_ABERTURA_TURMAS):"; break;
    case C_DIVISAO_CREDITO:
       ss << "__(C_DIVISAO_CREDITO):"; break;	  
    case C_COMBINACAO_DIVISAO_CREDITO:
@@ -329,22 +329,22 @@ std::string ConstraintTatico::toString()
       
    if ( turma1 >= 0 )
    {
-      ss << "_Turma1:" << turma1;
+      ss << "_Turma1." << turma1;
    }
 
    if ( disc1 != NULL )
    {
-      ss << "_Disc1:" << disc1->getId();
+      ss << "_Disc1." << disc1->getId();
    }
    
    if ( turma2 >= 0 )
    {
-      ss << "_Turma2:" << turma2;
+      ss << "_Turma2." << turma2;
    }
 
    if ( disc2 != NULL )
    {
-      ss << "_Disc2:" << disc2->getId();
+      ss << "_Disc2." << disc2->getId();
    }
 
    ss << "_}";

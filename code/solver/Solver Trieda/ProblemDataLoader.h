@@ -246,6 +246,9 @@ private:
    // calcula combinaCredSL para cada bloco curricular
    void calculaCombinaCredSLPorBlocoCurric();
 
+   // calcula combinaCredSL para cada aluno
+   void calculaCombinaCredSLPorAluno();
+
    void calculaCompatibilidadeDeHorarios();
    
    GGroup< std::set<HorarioAula*> > calculaSubCjtHorarios( GGroup< HorarioAula* > cjtTotal );

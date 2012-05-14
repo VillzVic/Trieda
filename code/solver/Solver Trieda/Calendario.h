@@ -25,6 +25,8 @@ public:
    int getTempoAula() const { return this->tempo_aula; }
    int getNroDeHorariosAula(int dia);
 
+   int getTempoTotal( int dia );
+
    HorarioAula * getProximoHorario( HorarioAula *h );
    
    int retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf );
@@ -32,6 +34,8 @@ public:
    bool intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf );
 
    bool possuiHorario( HorarioAula *h );
+
+   GGroup<HorarioAula*> retornaHorariosDisponiveisNoDia( int dia );
 
 private:   
    std::string codigo;
