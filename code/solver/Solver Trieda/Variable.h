@@ -31,13 +31,11 @@ public:
       V_SLACK_DIST_CRED_DIA_SUPERIOR = 12,	// fcp_{i,d,tps,t}
       V_SLACK_DIST_CRED_DIA_INFERIOR = 13,		// fcm_{i,d,tps,t}
       V_ABERTURA_SUBBLOCO_DE_BLC_DIA_CAMPUS = 14,		   // r_{b,t,cp}
-
       V_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 15,   // bs_{i,d,c,c',cp}
-      V_SLACK_DEMANDA = 16, // fd_{d,o}
+      V_SLACK_DEMANDA = 16, // fd_{d,o}	  
       V_COMBINACAO_DIVISAO_CREDITO = 17, // m{i,d,k}
       V_SLACK_COMBINACAO_DIVISAO_CREDITO_M = 18, // fkm{i,d,k}
       V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 19, // fkp{i,d,k}
-
       V_CREDITOS_MODF = 20, // xm_{d,t}
 	  V_ABERTURA_COMPATIVEL = 21, //zc_{d,t}
 	  V_ABERTURA_BLOCO_MESMO_TPS = 22, //n_{bc,tps}
@@ -57,7 +55,7 @@ public:
 	  V_MAX_CRED_SEMANA_ALUNO = 34,  // H_{a}
 	  V_SLACK_DEMANDA_ALUNO = 35,	// fd_{i,d,cp}
 	  V_SLACK_SLACKDEMANDA_PT = 36,	// ffd_{i1,d,i2,-d,cp}
-	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 37 // fu_{i1,d1,i2,d2,t}
+	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 37 // fu_{i1,d1,i2,d2,t}	  
 
    };
 

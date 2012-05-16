@@ -829,20 +829,30 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                      // Adicionando os dias letivos ao conjunto de salas
                      ITERA_GGROUP( it_disc, it_Sala->disciplinasAssociadas, Disciplina )
                      {
+						 Disciplina *disciplina = *it_disc;
+
                         GGroup< int > dias_fixados = retorna_foxacoes_dias_letivos( *it_disc );
 
                         if ( dias_fixados.size() == 0 )
                         {
                            ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
                            {
-                              (*it_Cjt_Salas_Disc)->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+							   if ( disciplina->diasLetivos.find( *it_Dias_Letivos ) !=
+								    disciplina->diasLetivos.end() )
+							   {
+									(*it_Cjt_Salas_Disc)->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+							   }
                            }
                         }
                         else
                         {
                            ITERA_GGROUP_N_PT( it_Dias_Letivos, dias_fixados, int )
                            {
-                              (*it_Cjt_Salas_Disc)->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+							   if ( disciplina->diasLetivos.find( *it_Dias_Letivos ) !=
+								    disciplina->diasLetivos.end() )
+							   {
+									(*it_Cjt_Salas_Disc)->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+							   }
                            }
                         }
                      }
@@ -875,20 +885,30 @@ void ProblemDataLoader::criaConjuntoSalasUnidade()
                // Adicionando os dias letivos ao conjunto de salas
                ITERA_GGROUP( it_disc, it_Sala->disciplinasAssociadas, Disciplina )
                {
+				   Disciplina *disciplina = *it_disc;
+
                   GGroup< int > dias_fixados = retorna_foxacoes_dias_letivos( *it_disc );
 
                   if ( dias_fixados.size() == 0 )
                   {
                      ITERA_GGROUP_N_PT( it_Dias_Letivos, it_Sala->diasLetivos, int )
                      {
-                        cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+						if ( disciplina->diasLetivos.find( *it_Dias_Letivos ) !=
+						     disciplina->diasLetivos.end() )
+						{
+							cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+						}
                      }
                   }
                   else
                   {
                      ITERA_GGROUP_N_PT( it_Dias_Letivos, dias_fixados, int )
                      {
-                        cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+						if ( disciplina->diasLetivos.find( *it_Dias_Letivos ) !=
+						     disciplina->diasLetivos.end() )
+						{
+							cjt_Sala->dias_letivos_disciplinas[ ( *it_disc ) ].add( *it_Dias_Letivos );
+						}
                      }
                   }
                }

@@ -58,6 +58,8 @@
 #endif
 
 
+//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+
 // ----------------------------------
 // NOVA ABORDAGEM
 
@@ -110,36 +112,46 @@ public:
    **                    Restrições do pre-Tatico                     **
    *********************************************************************/
 
-   int cria_preRestricoes( int campusId, int prioridade );
+   int cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId );
 
-   int cria_preRestricao_carga_horaria( int campusId );				// Restrição 1.1
-   int cria_preRestricao_max_cred_sala_sl( int campusId );			// Restrição 1.2
-   int cria_preRestricao_ativacao_var_o( int campusId );			// Restrição 1.3
-   int cria_preRestricao_evita_mudanca_de_sala( int campusId );		// Restrição 1.4
-   int cria_preRestricao_cap_aloc_dem_disc_oft( int campusId );		// Restrição 1.5
-   int cria_preRestricao_cap_aloc_dem_disc_aluno( int campusId );	// Restrição 1.5
-   int cria_preRestricao_aluno_curso_disc( int campusId );			// Restrição 1.6
-   int cria_preRestricao_cap_sala( int campusId );					// Restrição 1.7
-   int cria_preRestricao_compartilhamento_incompat( int campusId );	// Restrição 1.8
-   int cria_preRestricao_proibe_compartilhamento( int campusId );	// Restrição 1.9
-   int cria_preRestricao_ativacao_var_z( int campusId );			// Restricao 1.10
-   int cria_preRestricao_evita_turma_disc_camp_d( int campusId );	// Restricao 1.11
-   int cria_preRestricao_limita_abertura_turmas( int campusId );    // Restricao 1.12
-   int cria_preRestricao_abre_turmas_em_sequencia( int campusId );  // Restricao 1.13
-   int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId ); // Restricao 1.14
-   int cria_preRestricao_limite_sup_creds_sala( int campusId );		// Restricao 1.15
-   int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId );	// Restricao 1.16
+   int cria_preRestricao_carga_horaria( int campusId, int cjtAlunosId  );				// Restrição 1.1
+   int cria_preRestricao_max_cred_sala_sl( int campusId, int cjtAlunosId  );			// Restrição 1.2
+   int cria_preRestricao_ativacao_var_o( int campusId, int cjtAlunosId  );			// Restrição 1.3
+   int cria_preRestricao_evita_mudanca_de_sala( int campusId, int cjtAlunosId  );		// Restrição 1.4
+   int cria_preRestricao_cap_aloc_dem_disc_aluno( int campusId, int cjtAlunosId  );	// Restrição 1.5
+   int cria_preRestricao_aluno_curso_disc( int campusId, int cjtAlunosId  );			// Restrição 1.6
+   int cria_preRestricao_cap_sala( int campusId, int cjtAlunosId  );					// Restrição 1.7
+   int cria_preRestricao_compartilhamento_incompat( int campusId, int cjtAlunosId  );	// Restrição 1.8
+   int cria_preRestricao_proibe_compartilhamento( int campusId, int cjtAlunosId  );	// Restrição 1.9
+   int cria_preRestricao_ativacao_var_z( int campusId, int cjtAlunosId  );			// Restricao 1.10
+   int cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtAlunosId  );	// Restricao 1.11
+   int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId  );    // Restricao 1.12
+   int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );  // Restricao 1.13
+   int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
+   int cria_preRestricao_limite_sup_creds_sala( int campusId, int cjtAlunosId  );		// Restricao 1.15
+   int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId, int cjtAlunosId  );	// Restricao 1.16
 
    // Usadas somente para o modelo Tatico-BlocoCurricular:
+   int cria_preRestricao_cap_aloc_dem_disc_oft( int campusId );		// Restrição 1.5
    int cria_preRestricao_fixa_nao_compartilhamento( int campusId );	// Restricao 1.17
    
    // Usadas somente para o modelo Tatico-Aluno:
-   int cria_preRestricao_atendimento_aluno( int campusId );			 // Restricao 1.18
-   int cria_preRestricao_aluno_unica_turma_disc( int campusId );	 // Restricao 1.19
-   int cria_preRestricao_aluno_discPraticaTeorica( int campusId );	 // Restricao 1.20
-   int cria_preRestricao_prioridadesDemanda( int campus, int prior );// Restricao 1.21
+   int cria_preRestricao_atendimento_aluno( int campusId, int cjtAlunosId  );			 // Restricao 1.18
+   int cria_preRestricao_aluno_unica_turma_disc( int campusId, int cjtAlunosId  );	 // Restricao 1.19
+   int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20
+   int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
+
+   
+
+   int cria_restricoes_aluno_sh( int campusId, int cjtAlunosId );
+   int cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );	// Restricao 1.2.25
+
+
 
 #endif TATICO_CJT_ALUNOS
+
+
+
 
 #ifndef TATICO_CJT_ALUNOS
       
@@ -354,7 +366,7 @@ public:
    int cria_restricao_de_folga_dist_cred_dia( int campusId );		    // Restricao 1.2.22
    int cria_restricao_ativacao_var_r( int campusId );					// Restricao 1.2.23
    int cria_restricao_limita_abertura_turmas( int campusId );			// Restricao 1.2.24
-   int cria_restricao_abre_turmas_em_sequencia( int campusId );			// Restricao 1.2.25
+   int cria_restricao_abre_turmas_em_sequencia( int campusId );	// Restricao 1.2.25
    int cria_restricao_divisao_credito( int campusId );					// Restricao 1.2.26
    int cria_restricao_combinacao_divisao_credito( int campusId );		// Restricao 1.2.27
    int cria_restricao_ativacao_var_y( int campusId );		            // Restricao 1.2.28
@@ -474,7 +486,7 @@ public:
    void preencheMapAtendimentoAluno( int campusId );
    void limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId );
    
-   void imprimeAlocacaoAlunos( int campusId, int prioridade );
+   void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId );
    int solveTatico( int campusId );
 
 #ifdef TATICO_CJT_ALUNOS
@@ -484,8 +496,9 @@ public:
    int solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId );
    int solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId );
    int fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v );
-
-   bool CARREGA_PRE_CP20_CJ2_P1;
+   int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
+   
+   bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
 
 #endif
 
@@ -528,14 +541,22 @@ public:
       int, Oferta *, Curso *, Disciplina *, int, BlocoCurricular * );
 
 private:
-		
-	char* getPreLpFileName( int campusId, int prioridade, int cjtAlunosId );
 
-	char* getTaticoLpFileName( int campusId, int prioridade, int cjtAlunosId );
+	bool CARREGA_SOLUCAO;
 
-	char* getSolBinFileName( int campusId, int prioridade, int cjtAlunosId );
+	int TEMPO_PRETATICO, TEMPO_TATICO;
 
-	char* getSolPreBinFileName( int campusId, int prioridade, int cjtAlunosId );
+	std::string getPreLpFileName( int campusId, int prioridade, int cjtAlunosId );
+
+	std::string getTaticoLpFileName( int campusId, int prioridade, int cjtAlunosId );
+
+	std::string getSolBinFileName( int campusId, int prioridade, int cjtAlunosId );
+
+	std::string getSolPreBinFileName( int campusId, int prioridade, int cjtAlunosId );
+
+	std::string getSolucaoPreTaticoFileName( int campusId, int prioridade, int cjtAlunosId );	
+	
+	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId );	
 
 	// Filtro para a criação das variaveis do pre-modelo,
 	// caso haja solução do tatico para iteração de prioridade de demanda anterior
