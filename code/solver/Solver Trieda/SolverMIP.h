@@ -141,12 +141,44 @@ public:
    int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20
    int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
 
-   
-
+ 
+   /********************************************************************
+   **              CRIAÇÃO DE RESTRIÇÕES DO TATICO                    **
+   *********************************************************************/
+      
    int cria_restricoes_aluno_sh( int campusId, int cjtAlunosId );
-   int cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );	// Restricao 1.2.25
+
+   int cria_restricao_carga_horaria( int campusId, int cjtAlunosId );				// Restricao 1.2.2  ok
+   int cria_restricao_max_tempo_sd( int campusId, int cjtAlunosId );				// Restricao 1.2.3 -> Usada somente quando só tem 1 semana letiva ok
+   int cria_restricao_ativacao_var_o( int campusId, int cjtAlunosId );				// Restricao 1.2.5  ok
+   int cria_restricao_evita_sobreposicao( int campusId, int cjtAlunosId );			// Restricao 1.2.6  ok
+   int cria_restricao_lim_cred_diar_disc( int campusId, int cjtAlunosId );			// Restricao 1.2.13  ok
+   int cria_restricao_cap_aloc_dem_disc( int campusId, int cjtAlunosId );			// Restricao 1.2.14  ok
+   int cria_restricao_turma_disc_dias_consec( int campusId, int cjtAlunosId );		// Restricao 1.2.17  ok
+   int cria_restricao_de_folga_dist_cred_dia( int campusId, int cjtAlunosId );		// Restricao 1.2.22  // ok
+   int cria_restricao_limita_abertura_turmas( int campusId, int cjtAlunosId );		// Restricao 1.2.24  // ok
+   int cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );	// Restricao 1.2.25     // ok
+   int cria_restricao_divisao_credito( int campusId, int cjtAlunosId );				// Restricao 1.2.26  // ok
+   int cria_restricao_combinacao_divisao_credito( int campusId, int cjtAlunosId );	// Restricao 1.2.27  // ok
+   int cria_restricao_max_creds_disc_dia( int campusId, int cjtAlunosId );			// Restricao 1.2.29  ok
+   int cria_restricao_ativacao_var_zc( int campusId, int cjtAlunosId );				// Restricao 1.2.31  // ok
+   int cria_restricao_disciplinas_incompativeis( int campusId, int cjtAlunosId );	// Restricao 1.2.32  // ok
+   int cria_restricao_ativacao_var_cs( int campusId, int cjtAlunosId );				// Restricao 1.2.49-> Usado somente quando há 2 semanas letivas  // ok
+   int cria_restricao_max_tempo_s_t_SL( int campusId, int cjtAlunosId );			// Restricao 1.2.3.b -> Usada somente quando tem 2 semanas letivas ok
 
 
+   // Só para modelo tatico - aluno - sem horarios
+   int cria_restricao_max_cred_disc_aluno( int campusId, int cjtAlunosId ); // ok
+   int cria_restricao_max_creds_semana_aluno( int campusId, int cjtAlunosId );  // ok
+   int cria_restricao_min_creds_semana_aluno( int campusId, int cjtAlunosId );  // ok
+   int cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId );  // ok
+   int cria_restricao_aloc_dem_disc( int campusId, int cjtAlunosId ); // ok
+   int cria_restricao_limita_abertura_turmas_aluno( int campusId, int cjtAlunosId );
+   int cria_restricao_disc_pratica_teorica( int campusId, int cjtAlunosId );  // ok
+   int cria_restricao_ativacao_var_ca( int campusId, int cjtAlunosId );  // ok
+   int cria_restricao_aluno_unid_dif_dia( int campusId, int cjtAlunosId );  // ok
+
+   
 
 #endif TATICO_CJT_ALUNOS
 
@@ -289,29 +321,20 @@ public:
    int cria_variaveis_aluno_sh( int campusId );
 
    int cria_variavel_creditos( int campusId );									// x_{i,d,u,tps,t}
-   //int cria_variavel_creditos_permitir_alunos_varios_campi(void);				// x_{i,d,u,tps,t}
    int cria_variavel_oferecimentos( int campusId );								// o_{i,d,u,tps,t}
-   //int cria_variavel_oferecimentos_permitir_alunos_varios_campi(void);		// o_{i,d,u,tps,t}
    int cria_variavel_abertura( int campusId );									// z_{i,d,cp}
-   //int cria_variavel_abertura_permitir_alunos_varios_campi(void);				// z_{i,d,cp}
    int cria_variavel_alunos( int campusId );									// a_{i,d,oft}
    int cria_variavel_aloc_alunos( int campusId );								// b_{i,d,c,cp}
-   //int cria_variavel_aloc_alunos_permitir_alunos_varios_campi(void);			// b_{i,d,c,cp}
    int cria_variavel_consecutivos( int campusId );								// c_{i,d,t}   
-   int cria_variavel_aloc_disciplina( int campusId );							// y_{i,d,tps,u}
-   //int cria_variavel_aloc_disciplina_permitir_alunos_varios_campi(void);		// y_{i,d,tps,u}   
+   int cria_variavel_aloc_disciplina( int campusId );							// y_{i,d,tps,u}   
    int cria_variavel_de_folga_dist_cred_dia_superior( int campusId );			// fcp_{d,t}
-   //int cria_variavel_de_folga_dist_cred_dia_superior_permitir_alunos_varios_campi(void); // fcp_{d,t}
    int cria_variavel_de_folga_dist_cred_dia_inferior( int campusId );			// fcm_{d,t}
-   //int cria_variavel_de_folga_dist_cred_dia_inferior_permitir_alunos_varios_campi(void); // fcm_{d,t}
    int cria_variavel_abertura_subbloco_de_blc_dia_campus( int campusId );		// r_{bc,t,cp}
    int cria_variavel_de_folga_aloc_alunos_curso_incompat( int campusId );		// bs_{i,d,c,cp}
-   //int cria_variavel_de_folga_aloc_alunos_curso_incompat_permitir_alunos_varios_campi(void); // bs_{i,d,c,cp}
    int cria_variavel_de_folga_demanda_disciplina( int campusId );				// f_{d,o}
    int cria_variavel_combinacao_divisao_credito( int campusId );				// m_{i,d,k}
    int cria_variavel_de_folga_combinacao_divisao_credito( int campusId );		// fk_{i,d,k}
    int cria_variavel_creditos_modificada( int campusId );						// xm_{d,t}
-   //int cria_variavel_creditos_modificada_permitir_alunos_varios_campi(void);  // xm_{d,t}
    int cria_variavel_abertura_compativel( int campusId );						// zc_{d,t}
    int cria_variavel_abertura_bloco_mesmoTPS( int campusId );					// n_{bc,tps}
    int cria_variavel_de_folga_abertura_bloco_mesmoTPS( int campusId );			// fn_{bc,tps}

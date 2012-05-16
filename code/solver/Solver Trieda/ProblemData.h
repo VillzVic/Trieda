@@ -428,6 +428,7 @@ public:
    int atendeTurmaDiscOferta( int turma, int discId, int ofertaId );
 
    bool haDemandaDiscNoCampus( int disciplina, int campusId );
+   bool haDemandaDiscNoCampus( int disciplina, int campusId, int prioridade );
    
    int existeTurmaDiscCampus( int turma, int discId, int campusId );
 

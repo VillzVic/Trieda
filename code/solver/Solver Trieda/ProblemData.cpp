@@ -1487,21 +1487,39 @@ int ProblemData::atendeTurmaDiscOferta( int turma, int discId, int ofertaId )
 	return n;
 }
 
-
+/*
+	Pesquisa em demanda, ou seja, considerando a prioridade atual.
+*/
 bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId )
-{
-	std::pair<int,int> par = std::make_pair( disciplina, campusId );
-
-	std::map< std::pair< int, int >, int >::iterator itMap = this->demandas_campus.find( par );
-
-	if ( itMap != this->demandas_campus.end() )
+{	
+	ITERA_GGROUP_LESSPTR ( itDem, this->demandas, Demanda )
 	{
-		if ( itMap->second > 0 )
+		if ( (*itDem)->getDisciplinaId() == disciplina &&
+			 (*itDem)->oferta->getCampusId() == campusId )
+		{
 			return true;
+		}
 	}
 
 	return false;
 }
+
+
+bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId, int prioridade )
+{	
+	ITERA_GGROUP_LESSPTR ( itAlDem, this->alunosDemanda, AlunoDemanda )
+	{
+		if ( (*itAlDem)->demanda->getDisciplinaId() == disciplina &&
+			 (*itAlDem)->demanda->oferta->getCampusId() == campusId &&
+			 (*itAlDem)->getPrioridade() == prioridade )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 int ProblemData::existeTurmaDiscCampus( int turma, int discId, int campusId )
 {
@@ -1796,6 +1814,45 @@ void ProblemData::criaCjtAlunos( int campusId )
 		}
 	}
 
+
+
+   ITERA_GGROUP_LESSPTR( it_disciplina, this->disciplinas, Disciplina )
+   {
+      Disciplina* disciplina = ( *it_disciplina );
+
+	  if ( this->cp_discs[ campusId ].find( disciplina->getId() ) ==
+		   this->cp_discs[ campusId ].end() )
+	  {
+		  continue;
+ 	  }
+
+	  #pragma region Equivalencias
+	  if ( ( this->mapDiscSubstituidaPor.find( disciplina ) !=
+			 this->mapDiscSubstituidaPor.end() ) &&
+			!this->ehSubstituta( disciplina ) )
+	  {
+		  continue;
+	  }
+	  #pragma endregion
+	  
+	  if ( ! this->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
+	  {
+		  continue;
+	  }
+
+	  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		  itMapDiscCjt = this->cjtDisciplinas.find( disciplina );
+
+	  if ( itMapDiscCjt == this->cjtDisciplinas.end() )
+	  {
+		  std::cout<<"\nAtencao em cria_preRestricao_abre_turmas_em_sequencia: disciplina "
+						<<disciplina->getId() <<" nao pertence a nenhum conjunto\n";
+	  }
+
+   }
+
+
+
 }
 
 int ProblemData::retornaCjtAlunosId( int discId )
@@ -1949,7 +2006,7 @@ void ProblemData::imprimeCjtAlunos( int campusId )
 			totalAlunoDemanda += nAlDem;
 		}
 
-		totalAlunos++;
+		totalAlunos += nroAlunos;
 	}
 	
 	std::cout << "\nTotal de alunos: " << totalAlunos;
