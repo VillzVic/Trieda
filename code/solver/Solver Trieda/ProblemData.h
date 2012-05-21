@@ -439,6 +439,7 @@ public:
    void criaCjtAlunos( int campusId );
 
    int retornaCjtAlunosId( int discId );
+   int retornaCjtAlunosId( Aluno* aluno );
    int haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId );
    int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
 

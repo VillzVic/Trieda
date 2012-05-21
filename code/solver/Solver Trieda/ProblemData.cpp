@@ -1878,6 +1878,33 @@ int ProblemData::retornaCjtAlunosId( int discId )
 	return 0;
 }
 
+int ProblemData::retornaCjtAlunosId( Aluno* aluno )
+{	
+	int cjtAlunosId;
+	
+	map< int /* cjtAlunosId */, GGroup< Aluno* > >::iterator 
+		itMapAluno = this->cjtAlunos.begin();
+	
+	for ( ; itMapAluno != this->cjtAlunos.end(); itMapAluno++ )
+	{
+		cjtAlunosId = itMapAluno->first;
+
+		ITERA_GGROUP( itAluno, itMapAluno->second, Aluno )
+		{
+			Aluno *a = *itAluno;
+			if ( a->getAlunoId() == aluno->getAlunoId() )
+			{
+				return cjtAlunosId;
+			}
+		}
+	}
+
+	std::cout << "\nErro em int ProblemData::retornaCjtAlunosId( Aluno* aluno )."
+			  << "\nAluno " << aluno->getAlunoId() << "nao encontrado.\n";
+	return 0;
+}
+
+
 int ProblemData::haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId )
 {	
 	GGroup< Demanda* > demandasCjtAlunos;

@@ -34,6 +34,10 @@
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
 
+
+#pragma warning(disable:4503)
+
+
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
 
@@ -65,6 +69,9 @@
 
 #define TATICO_CJT_ALUNOS
 
+#ifndef TATICO_CJT_ALUNOS
+#define SEM_CJT_ALUNOS
+#endif
 // ----------------------------------
 
 
@@ -99,8 +106,6 @@ public:
    int cria_preVariavel_limite_sup_creds_sala( int campusId );								// Hs_{cp}
    int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId );				// c_{i,d,oft,s}
    
-   // Usadas somente para o modelo Tatico - Bloco Curricular:
-   int cria_preVariavel_folga_demanda_disciplina_oft( int campusId );						// fd_{d,oft}
 
    // Usadas somente para o modelo Tatico-Aluno:
    int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, int grupoAlunosAtualId );	// fd_{d,a}
@@ -141,6 +146,34 @@ public:
    int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20
    int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
 
+
+
+   /********************************************************************
+   **                    CRIAÇÃO DE VARIAVEIS DO TATICO               **
+   *********************************************************************/
+      
+   int cria_variaveis_aluno_sh( int campusId, int cjtAlunosId );
+
+   int cria_variavel_creditos( int campusId, int cjtAlunosId );									// x_{i,d,u,tps,t}
+   int cria_variavel_oferecimentos( int campusId, int cjtAlunosId );							// o_{i,d,u,tps,t}
+   int cria_variavel_abertura( int campusId, int cjtAlunosId );									// z_{i,d,cp}
+   int cria_variavel_consecutivos( int campusId, int cjtAlunosId );								// c_{i,d,t}   
+   int cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int cjtAlunosId );			// fcp_{d,t}
+   int cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int cjtAlunosId );			// fcm_{d,t}
+   int cria_variavel_combinacao_divisao_credito( int campusId, int cjtAlunosId );				// m_{i,d,k}
+   int cria_variavel_de_folga_combinacao_divisao_credito( int campusId, int cjtAlunosId );		// fkm{i,d,k} e fkp_{i,d,k}
+   int cria_variavel_abertura_compativel( int campusId, int cjtAlunosId );						// zc_{d,t}
+   int cria_variavel_maxCreds_combina_sl_sala( int campusId, int cjtAlunosId );					// cs_{s,t,k} -> Usado somente quando tem 2 semanas letivas
+   
+   // Só para modelo com alunos
+   int cria_variavel_maxCreds_combina_Sl_aluno( int campusId, int cjtAlunosId );				// ca_{a,t,k}
+   int cria_variavel_min_creds_aluno( int campusId, int cjtAlunosId );							// h_{a}
+   int cria_variavel_max_creds_aluno( int campusId, int cjtAlunosId );							// H_{a}
+   int cria_variavel_de_folga_demanda_disciplina_aluno( int campusId, int cjtAlunosId );		// fd_{i,d,cp}
+   int cria_variavel_folgafolga_demanda_p_t( int campusId, int cjtAlunosId );					// ffd_{i1,-d,i2,d,cp}
+   int cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int cjtAlunosId );			// fu_{i1,d1,i2,d2,t}
+
+ 
  
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO                    **
@@ -148,35 +181,32 @@ public:
       
    int cria_restricoes_aluno_sh( int campusId, int cjtAlunosId );
 
-   int cria_restricao_carga_horaria( int campusId, int cjtAlunosId );				// Restricao 1.2.2  ok
-   int cria_restricao_max_tempo_sd( int campusId, int cjtAlunosId );				// Restricao 1.2.3 -> Usada somente quando só tem 1 semana letiva ok
-   int cria_restricao_ativacao_var_o( int campusId, int cjtAlunosId );				// Restricao 1.2.5  ok
-   int cria_restricao_evita_sobreposicao( int campusId, int cjtAlunosId );			// Restricao 1.2.6  ok
-   int cria_restricao_lim_cred_diar_disc( int campusId, int cjtAlunosId );			// Restricao 1.2.13  ok
-   int cria_restricao_cap_aloc_dem_disc( int campusId, int cjtAlunosId );			// Restricao 1.2.14  ok
-   int cria_restricao_turma_disc_dias_consec( int campusId, int cjtAlunosId );		// Restricao 1.2.17  ok
-   int cria_restricao_de_folga_dist_cred_dia( int campusId, int cjtAlunosId );		// Restricao 1.2.22  // ok
-   int cria_restricao_limita_abertura_turmas( int campusId, int cjtAlunosId );		// Restricao 1.2.24  // ok
-   int cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );	// Restricao 1.2.25     // ok
-   int cria_restricao_divisao_credito( int campusId, int cjtAlunosId );				// Restricao 1.2.26  // ok
-   int cria_restricao_combinacao_divisao_credito( int campusId, int cjtAlunosId );	// Restricao 1.2.27  // ok
-   int cria_restricao_max_creds_disc_dia( int campusId, int cjtAlunosId );			// Restricao 1.2.29  ok
-   int cria_restricao_ativacao_var_zc( int campusId, int cjtAlunosId );				// Restricao 1.2.31  // ok
-   int cria_restricao_disciplinas_incompativeis( int campusId, int cjtAlunosId );	// Restricao 1.2.32  // ok
-   int cria_restricao_ativacao_var_cs( int campusId, int cjtAlunosId );				// Restricao 1.2.49-> Usado somente quando há 2 semanas letivas  // ok
-   int cria_restricao_max_tempo_s_t_SL( int campusId, int cjtAlunosId );			// Restricao 1.2.3.b -> Usada somente quando tem 2 semanas letivas ok
+   int cria_restricao_carga_horaria( int campusId, int cjtAlunosId );				// Restricao 1.2.2 
+   int cria_restricao_max_tempo_sd( int campusId, int cjtAlunosId );				// Restricao 1.2.3  -> Usada somente quando só tem 1 semana letiva
+   int cria_restricao_ativacao_var_o( int campusId, int cjtAlunosId );				// Restricao 1.2.5 
+   int cria_restricao_evita_sobreposicao( int campusId, int cjtAlunosId );			// Restricao 1.2.6 
+   int cria_restricao_lim_cred_diar_disc( int campusId, int cjtAlunosId );			// Restricao 1.2.13   
+   int cria_restricao_turma_disc_dias_consec( int campusId, int cjtAlunosId );		// Restricao 1.2.17
+   int cria_restricao_de_folga_dist_cred_dia( int campusId, int cjtAlunosId );		// Restricao 1.2.22   
+   int cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );	// Restricao 1.2.25
+   int cria_restricao_divisao_credito( int campusId, int cjtAlunosId );				// Restricao 1.2.26
+   int cria_restricao_combinacao_divisao_credito( int campusId, int cjtAlunosId );	// Restricao 1.2.27   
+   int cria_restricao_ativacao_var_zc( int campusId, int cjtAlunosId );				// Restricao 1.2.31
+   int cria_restricao_disciplinas_incompativeis( int campusId, int cjtAlunosId );	// Restricao 1.2.32
+   int cria_restricao_ativacao_var_cs( int campusId, int cjtAlunosId );				// Restricao 1.2.49 -> Usado somente quando há 2 semanas letivas 
+   int cria_restricao_max_tempo_s_t_SL( int campusId, int cjtAlunosId );			// Restricao 1.2.3.b -> Usada somente quando tem 2 semanas letivas
 
 
    // Só para modelo tatico - aluno - sem horarios
-   int cria_restricao_max_cred_disc_aluno( int campusId, int cjtAlunosId ); // ok
-   int cria_restricao_max_creds_semana_aluno( int campusId, int cjtAlunosId );  // ok
-   int cria_restricao_min_creds_semana_aluno( int campusId, int cjtAlunosId );  // ok
-   int cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId );  // ok
-   int cria_restricao_aloc_dem_disc( int campusId, int cjtAlunosId ); // ok
+   int cria_restricao_max_cred_disc_aluno( int campusId, int cjtAlunosId );
+   int cria_restricao_max_creds_semana_aluno( int campusId, int cjtAlunosId ); 
+   int cria_restricao_min_creds_semana_aluno( int campusId, int cjtAlunosId ); 
+   int cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId );
+   int cria_restricao_aloc_dem_disc( int campusId, int cjtAlunosId ); 
    int cria_restricao_limita_abertura_turmas_aluno( int campusId, int cjtAlunosId );
-   int cria_restricao_disc_pratica_teorica( int campusId, int cjtAlunosId );  // ok
-   int cria_restricao_ativacao_var_ca( int campusId, int cjtAlunosId );  // ok
-   int cria_restricao_aluno_unid_dif_dia( int campusId, int cjtAlunosId );  // ok
+   int cria_restricao_disc_pratica_teorica( int campusId, int cjtAlunosId );
+   int cria_restricao_ativacao_var_ca( int campusId, int cjtAlunosId );
+   int cria_restricao_aluno_unid_dif_dia( int campusId, int cjtAlunosId );
 
    
 
@@ -185,7 +215,7 @@ public:
 
 
 
-#ifndef TATICO_CJT_ALUNOS
+#ifdef SEM_CJT_ALUNOS
       
    void carregaVariaveisSolucaoTaticoPorAluno( int campusId, int prioridade  );
 
@@ -246,71 +276,6 @@ public:
    int cria_preRestricao_aluno_discPraticaTeorica( int campusId );	 // Restricao 1.20
    int cria_preRestricao_prioridadesDemanda( int campus, int prior );// Restricao 1.21
    
-   
-#endif TATICO_CJT_ALUNOS
-
-   /********************************************************************
-   **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
-   *********************************************************************/
-
-   
-   int criaVariaveisTatico( int campusId );
-
-   int criaVariavelTaticoCreditos( int campusId );									// x_{i,d,u,s,hi,hf,t}      
-   int criaVariavelTaticoAbertura( int campusId );									// z_{i,d,cp}
-   int criaVariavelTaticoConsecutivos( int campusId );								// c_{i,d,t}
-   int criaVariavelTaticoMinCreds( int campusId );									// h_{a}
-   int criaVariavelTaticoMaxCreds( int campusId );									// H_{a}
-   int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId );					// m_{i,d,k}   
-   int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId );				// fkp_{i,d,k} e fkm_{i,d,k}
-   int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId );					// fcp_{d,t}   
-   int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId );					// fcm_{d,t}
-   int criaVariavelTaticoAberturaCompativel( int campusId );						// zc_{d,t}
-//   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );					// fd_{d,a}   
-   int criaVariavelTaticoFolgaDemandaDisc( int campusId );							// fd_{i,d,cp}
-   int criaVariavelTaticoAlunoUnidDia( int campusId );								// y_{a,u,t} 
-   int criaVariavelTaticoAlunoUnidadesDifDia( int campusId );						// w_{a,t}
-
-   int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId );						// fu_{i1,d1,i2,d2,t,cp}
-   int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId );						// ffd_{i1,-d,i2,d,cp}
-
-   /********************************************************************
-   **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
-   *********************************************************************/
-
-   int criaRestricoesTatico( int campusId );
-
-   int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
-   int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
-   int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId ); // Restricao 1.2.4
-//   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
-   int criaRestricaoTaticoAtendeDemanda( int campusID );				// Restricao 1.2.5   
-   int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
-   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId );			// Restricao 1.2.7
-   int criaRestricaoTaticoDivisaoCredito( int campusId );				// Restricao 1.2.8      
-   int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
-   int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
-   int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
-   int criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId );	// Restricao 1.2.12
-   int criaRestricaoTaticoAtivaY( int campusId );						// Restricao 1.2.13
-   int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
-   int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
-   int criaRestricaoTaticoMaxCreds( int campusId );						// Restricao 1.2.16
-//   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );	// Restricao 1.2.17
-   int criaRestricaoTaticoDiscPraticaTeorica( int campusId );			// Restricao 1.2.17
-   int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
-
-  // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
-
-// Restrições já garantidas pelo pre-modelo:
-//   int criaRestricaoTaticoAbreTurmasEmSequencia( int campusId );	
-//   int criaRestricaoTaticoAlunoCursoTurmaDisc( int campusId );	
-//   int criaRestricaoTaticoCursosIncompat( int campusId );				
-//   int criaRestricaoTaticoProibeCompartilhamento( int campusId );	
-//   int criaRestricaoTaticoEvitaTurmaDiscCampiDif();					
-//   int criaRestricaoTaticoUnicaSalaParaTurmaDisc( int campusId );	
-   
-   
 
    /********************************************************************
    **                    CRIAÇÃO DE VARIAVEIS DO TATICO               **
@@ -360,6 +325,8 @@ public:
    int cria_variavel_creditos_parOferta( int campusId );						// p_{i,d,oft1,oft2,u,tps,t}
    int cria_variavel_min_hor_disc_oft_dia( int campusId );						// g_{d,oft,t}
    int cria_variavel_maxCreds_combina_Sl_bloco( int campusId );					// cbc_{bc,t,k} -> Usado somente quando tem 2 semanas letivas
+
+
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO                    **
@@ -428,6 +395,77 @@ public:
    int cria_restricao_evita_sobrepos_sala_por_div_turmas( int campusId ); //Restricao 1.2.43
    int cria_restricao_ativacao_var_q( int campusId );					// Restricao 1.2.44, 1.2.45, 1.2.46
    int cria_restricao_ativacao_var_cbc( int campusId );					// Restricao 1.2.51
+   
+#endif SEM_CJT_ALUNOS
+
+
+#pragma region TATICO ALUNO COM HORARIOS
+
+   /********************************************************************
+   **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
+   *********************************************************************/
+
+   
+   int criaVariaveisTatico( int campusId );
+
+   int criaVariavelTaticoCreditos( int campusId );									// x_{i,d,u,s,hi,hf,t}      
+   int criaVariavelTaticoAbertura( int campusId );									// z_{i,d,cp}
+   int criaVariavelTaticoConsecutivos( int campusId );								// c_{i,d,t}
+   int criaVariavelTaticoMinCreds( int campusId );									// h_{a}
+   int criaVariavelTaticoMaxCreds( int campusId );									// H_{a}
+   int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId );					// m_{i,d,k}   
+   int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId );				// fkp_{i,d,k} e fkm_{i,d,k}
+   int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId );					// fcp_{d,t}   
+   int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId );					// fcm_{d,t}
+   int criaVariavelTaticoAberturaCompativel( int campusId );						// zc_{d,t}
+//   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );					// fd_{d,a}   
+   int criaVariavelTaticoFolgaDemandaDisc( int campusId );							// fd_{i,d,cp}
+   int criaVariavelTaticoAlunoUnidDia( int campusId );								// y_{a,u,t} 
+   int criaVariavelTaticoAlunoUnidadesDifDia( int campusId );						// w_{a,t}
+
+   int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId );						// fu_{i1,d1,i2,d2,t,cp}
+   int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId );						// ffd_{i1,-d,i2,d,cp}
+
+   /********************************************************************
+   **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
+   *********************************************************************/
+
+   int criaRestricoesTatico( int campusId );
+
+   int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
+   int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
+   int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId ); // Restricao 1.2.4
+//   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
+   int criaRestricaoTaticoAtendeDemanda( int campusID );				// Restricao 1.2.5   
+   int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
+   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId );			// Restricao 1.2.7
+   int criaRestricaoTaticoDivisaoCredito( int campusId );				// Restricao 1.2.8      
+   int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
+   int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
+   int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
+   int criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId );	// Restricao 1.2.12
+   int criaRestricaoTaticoAtivaY( int campusId );						// Restricao 1.2.13
+   int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
+   int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
+   int criaRestricaoTaticoMaxCreds( int campusId );						// Restricao 1.2.16
+//   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );	// Restricao 1.2.17
+   int criaRestricaoTaticoDiscPraticaTeorica( int campusId );			// Restricao 1.2.17
+   int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
+
+  // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
+
+// Restrições já garantidas pelo pre-modelo:
+//   int criaRestricaoTaticoAbreTurmasEmSequencia( int campusId );	
+//   int criaRestricaoTaticoAlunoCursoTurmaDisc( int campusId );	
+//   int criaRestricaoTaticoCursosIncompat( int campusId );				
+//   int criaRestricaoTaticoProibeCompartilhamento( int campusId );	
+//   int criaRestricaoTaticoEvitaTurmaDiscCampiDif();					
+//   int criaRestricaoTaticoUnicaSalaParaTurmaDisc( int campusId );	
+   
+   
+#pragma endregion TATICO ALUNO COM HORARIOS
+
+
 
 
    /********************************************************************
@@ -507,10 +545,11 @@ public:
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );
    void preencheMapAtendimentoAluno( int campusId );
+
    void limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId );
    
    void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId );
-   int solveTatico( int campusId );
+
 
 #ifdef TATICO_CJT_ALUNOS
    void carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int prioridade, int cjtAlunosId );
@@ -520,14 +559,19 @@ public:
    int solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId );
    int fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v );
    int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
-   
+
+   int fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
+
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
 
 #endif
 
+#ifdef SEM_CJT_ALUNOS
    int solveTaticoPorCampus();
    int solvePreTatico( int campusId, int prioridade );
    int solveTaticoBasico( int campusId, int prioridade );
+   int solveTatico( int campusId );
+#endif
 
    void converteCjtSalaEmSala();
    void mudaCjtSalaParaSala();
@@ -653,7 +697,7 @@ private:
    // Stores the solution variables ( non - zero ).
    std::set< VariablePre > solVarsPre;
 	
-   std::vector< Variable * > solVars;
+   std::vector< Variable * > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 
    std::vector< VariableOp * > solVarsOp;
    
