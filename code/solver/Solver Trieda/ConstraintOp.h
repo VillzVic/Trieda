@@ -51,7 +51,8 @@ public:
 	  C_ALUNO_HORARIO = 32,
 	  C_GAPS_PROFESSORES_I = 33,
 	  C_GAPS_PROFESSORES_F = 34,
-	  C_GAPS_PROFESSORES_I_F = 35
+	  C_GAPS_PROFESSORES_I_F = 35,
+	  C_CALCULA_NRO_PROFS_CURSO = 36
    };
 
    /** Default constructor. */

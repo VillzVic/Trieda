@@ -499,6 +499,8 @@ public:
    int criaVariavelFolgaDemanda( void );
    int criaVariavelFolgaDisciplinaTurmaHorario( void );
    int criaVariavelProfessorDiaHorarioIF();
+   int criaVariavelNroProfsAlocadosCurso();
+
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO OPERACIONAL               **
@@ -537,7 +539,7 @@ public:
    int criaRestricaoGapsProfessores( void );
    int criaRestricaoProfHorarioMultiUnid( void );
    int criaRestricaoGapsHorariosProfessores();
-
+   int criaRestricaoCalculaNroProfsAlocadosCurso();
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
@@ -548,6 +550,8 @@ public:
 
    void limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId );
    
+   void removeAtendimentosParciais( double *xSol, char solFilename[1024] );
+
    void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId );
 
 
@@ -697,7 +701,7 @@ private:
    // Stores the solution variables ( non - zero ).
    std::set< VariablePre > solVarsPre;
 	
-   std::vector< Variable * > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
+   GGroup< Variable * > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 
    std::vector< VariableOp * > solVarsOp;
    

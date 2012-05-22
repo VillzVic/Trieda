@@ -428,7 +428,9 @@ std::string ConstraintOp::toString()
 	   case C_GAPS_PROFESSORES_F:
 		   ss <<"C_GAPS_PROFESSORES_F"; break;		   	   
 	   case C_GAPS_PROFESSORES_I_F:
-		   ss <<"C_GAPS_PROFESSORES_I_F"; break;	   
+		   ss <<"C_GAPS_PROFESSORES_I_F"; break;  
+	   case C_CALCULA_NRO_PROFS_CURSO:
+		   ss <<"C_CALCULA_NRO_PROFS_CURSO"; break;
 
 	   default:
 		  ss << "!";

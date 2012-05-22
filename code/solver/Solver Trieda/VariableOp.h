@@ -40,7 +40,8 @@ public:
 	  V_FOLGA_DEMANDA = 23,
 	  V_FOLGA_DISCIPLINA_HOR = 24,
 	  V_HI_PROFESSORES = 25,
-	  V_HF_PROFESSORES = 26
+	  V_HF_PROFESSORES = 26,
+	  V_NRO_PROFS_CURSO = 27
    };
 
    // Constructors

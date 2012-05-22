@@ -262,8 +262,8 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    psi = 5.0;
    tau = 1.0;
 
-   TEMPO_PRETATICO = 9600;
-   TEMPO_TATICO = 2*21600;
+   TEMPO_PRETATICO = 9000;
+   TEMPO_TATICO = 1800;
 
 #ifdef TATICO_CJT_ALUNOS
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
@@ -293,12 +293,9 @@ SolverMIP::~SolverMIP()
       delete lp;
    }
 
-   for ( i = 0; i < (int)solVars.size(); i++ )
+   ITERA_GGROUP ( it, solVars, Variable )
    {
-      if ( solVars[ i ] != NULL )
-      {
-         delete solVars[ i ];
-      }
+		delete *it;    
    }
 
    solVars.clear();
@@ -2346,6 +2343,244 @@ void SolverMIP::limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId )
 }
 
 
+void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024] )
+{	
+
+	GGroup< Trio< int, int, Disciplina* > > remocao; // campusId, turma, disc
+
+	// -----------------------------------------------------------------------------
+	// Retira dos maps mapAluno_CampusTurmaDisc e mapCampusTurmaDisc_AlunosDemanda
+	// os atendimentos incompletos ( atendeu só disc pratica ou só teorica ), e os
+	// acrescenta em listSlackDemandaAluno.
+	// Deleta os atendimentos em vars_x que não tiverem nenhum aluno alocado.
+	#pragma region Retira Atendimentos Incompletos
+    ITERA_GGROUP_LESSPTR( itSlack, problemData->listSlackDemandaAluno, AlunoDemanda )
+	{		
+		Aluno *aluno = problemData->retornaAluno( itSlack->getAlunoId() );
+		int campusId = itSlack->demanda->oferta->getCampusId();
+		int discId = itSlack->demanda->getDisciplinaId();
+
+		// Se existir a disciplina teorica/pratica correspondente
+		if ( problemData->refDisciplinas.find( discId ) != 
+			 problemData->refDisciplinas.end() )
+		{
+			Disciplina *disciplina = problemData->refDisciplinas[ discId ];
+
+			// Se o aluno estiver alocado em alguma turma da disciplina
+			// retira-o, eliminando atendimento parcial
+			int turma = problemData->retornaTurmaDiscAluno( aluno, disciplina );
+			if ( turma != -1 )
+			{
+				AlunoDemanda *ad = problemData->procuraAlunoDemanda( discId, aluno->getAlunoId() );
+
+				if ( ad == NULL )
+				{
+					std::cout<<"\nErro em carregaVariaveisSolucaoTaticoPorAluno: AlunoDemanda nao encontrado.\n";
+					std::cout<<"Aluno"<<aluno->getAlunoId()<<" Disc"<<discId<<"\n";
+				}
+
+				Trio< int, int, Disciplina* > trio;
+				trio.set( campusId, turma, disciplina );
+				
+				problemData->mapAluno_CampusTurmaDisc[aluno].remove( trio );
+				
+				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].remove( ad );
+				 
+				problemData->listSlackDemandaAluno.add( ad );
+
+				int nroAlunos = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].size();
+
+				if ( nroAlunos == 0 )
+				{					
+					remocao.add( trio );
+					problemData->mapCampusTurmaDisc_AlunosDemanda.erase( trio );
+				}
+			}
+		}
+
+		discId = - itSlack->demanda->getDisciplinaId();
+
+		// Se existir a disciplina teorica/pratica correspondente
+		if ( problemData->refDisciplinas.find( discId ) != 
+			 problemData->refDisciplinas.end() )
+		{
+			Disciplina *disciplina = problemData->refDisciplinas[ discId ];
+
+			// Se o aluno estiver alocado em alguma turma da disciplina
+			// retira-o, eliminando atendimento parcial
+			int turma = problemData->retornaTurmaDiscAluno( aluno, disciplina );
+			if ( turma != -1 )
+			{
+				AlunoDemanda *ad = problemData->procuraAlunoDemanda( discId, aluno->getAlunoId() );
+
+				if ( ad == NULL )
+				{
+					std::cout<<"\nErro em carregaVariaveisSolucaoTaticoPorAluno: AlunoDemanda nao encontrado.\n";
+					std::cout<<"Aluno"<<aluno->getAlunoId()<<" Disc"<<discId<<"\n";
+				}
+
+				Trio< int, int, Disciplina* > trio;
+				trio.set( campusId, turma, disciplina );
+				
+				problemData->mapAluno_CampusTurmaDisc[aluno].remove( trio );
+				
+				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].remove( ad );
+				 
+				problemData->listSlackDemandaAluno.add( ad );
+
+				int nroAlunos = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].size();
+
+				if ( nroAlunos == 0 )
+				{
+					remocao.add( trio );
+					problemData->mapCampusTurmaDisc_AlunosDemanda.erase( trio );
+				}
+			}
+		}
+	}
+	
+	#pragma endregion
+	// -----------------------------------------------------------------------------
+
+   VariableHash::iterator vit;
+      
+   vit = vHash.begin();
+   while ( vit != vHash.end() )
+   {
+      Variable* v = new Variable( vit->first );
+      int col = vit->second;
+	  double value = xSol[ col ];
+      v->setValue( value );
+
+      if ( v->getValue() > 0.00001 )
+      {
+
+         switch( v->getType() )
+         {
+			 case Variable::V_ERROR:
+			 {
+				break;
+			 }
+			 case Variable::V_CREDITOS:
+			 {
+				  Trio< int, int, Disciplina* > trio;
+				  trio.set( v->getUnidade()->getIdCampus(), v->getTurma(), v->getDisciplina() );
+
+				  if ( remocao.find( trio ) == remocao.end() )
+				  {
+					  solVars.add( v );
+					  vars_x.push_back( v );					  
+				  }	
+				  break;
+			 }
+			 case Variable::V_OFERECIMENTO:
+			 {			  
+				  Trio< int, int, Disciplina* > trio;
+				  trio.set( v->getUnidade()->getIdCampus(), v->getTurma(), v->getDisciplina() );
+
+				  if ( remocao.find( trio ) == remocao.end() )
+				  {
+					  solVars.add( v );
+				  }
+				  break;
+			  }
+			 case Variable::V_ABERTURA:
+			 {
+				  Trio< int, int, Disciplina* > trio;
+				  trio.set( v->getCampus()->getId(), v->getTurma(), v->getDisciplina() );
+
+				  if ( remocao.find( trio ) == remocao.end() )
+				  {
+					  solVars.add( v );
+				  }
+				  break;
+			 }
+			 case Variable::V_ABERTURA_COMPATIVEL:
+			 {
+				 std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > >::iterator
+					 itMapAtend = problemData->mapCampusTurmaDisc_AlunosDemanda.begin();
+				 for ( ; itMapAtend != problemData->mapCampusTurmaDisc_AlunosDemanda.end(); itMapAtend++ )
+				 {
+					 int discId = itMapAtend->first.third->getId();
+
+					 if ( discId == v->getDisciplina()->getId() )
+					 {
+						 solVars.add( v );
+						 break;
+					 }
+				 }
+				 break;
+			 }
+			 case Variable::V_DIAS_CONSECUTIVOS:
+			 {
+				 std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > >::iterator
+					 itMapAtend = problemData->mapCampusTurmaDisc_AlunosDemanda.begin();
+				 for ( ; itMapAtend != problemData->mapCampusTurmaDisc_AlunosDemanda.end(); itMapAtend++ )
+				 {
+					 int discId = itMapAtend->first.third->getId();
+					 int turma = itMapAtend->first.second;
+
+					 if ( discId == v->getDisciplina()->getId() &&
+						  turma == v->getTurma() )
+					 {
+						 solVars.add( v );
+						 break;
+					 }
+				 }
+				 break;
+			 }
+			 default:
+			 {
+				  // Acho que não tem problema adicionar todo o resto, considerando que as restrições
+				  // associadas somente às variaveis de cjtAluno anteriores NÃO serão criadas
+				  // para o lp de otimização de um cjtAluno atual.
+
+				  solVars.add( v );
+			 }		  
+
+		  }
+	  }
+	  else
+	  {
+		  delete v;
+	  }
+
+	  vit++;
+   }
+
+   // TODO: CRIAR FOLGAS e inserir em solVars
+   GGroup< Trio< int, int, Disciplina* > >::iterator itRemove = remocao.begin();
+   for ( ; itRemove != remocao.end(); itRemove++ )
+   {
+	    Campus *campus = problemData->refCampus[ (*itRemove).first ];
+		int turma = (*itRemove).second;
+		Disciplina *d = (*itRemove).third;
+
+		Variable *slackVar = new Variable;
+		slackVar->setType( Variable::V_SLACK_DEMANDA_ALUNO );
+		slackVar->setTurma( turma );
+		slackVar->setDisciplina( d );
+		slackVar->setCampus( campus );
+
+		solVars.add( slackVar );
+   }
+	    
+
+   char solPosFilename[1024];
+   strcpy( solPosFilename, "pos_" );
+   strcat( solPosFilename, solFilename );
+   FILE * fout = fopen( solPosFilename, "wt" );
+   ITERA_GGROUP( itSol, solVars, Variable )
+   {      
+	   Variable *v = *itSol;
+	   
+	   fprintf( fout, "%s = %f\n", v->toString().c_str(), v->getValue() );
+		   
+   }
+   fclose( fout );
+
+}
+
 #ifdef TATICO_CJT_ALUNOS
 
 /*
@@ -2865,13 +3100,10 @@ int SolverMIP::fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v )
 int SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 {
 
-	ITERA_VECTOR ( itVar, solVars, Variable )
+	ITERA_GGROUP ( itVar, solVars, Variable )
 	{
 		Variable vSol = **itVar;
-
-		if ( vSol == *v )
-			return vSol.getValue();
-
+		
 		// Gambirra pq a variavel x adquire o campo "sala" em solVars, mas v ainda não o tem
 		if ( v->getType() == Variable::V_CREDITOS )
 		{
@@ -2884,6 +3116,8 @@ int SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 				return vSol.getValue();
 			}
 		}
+		else if ( vSol == *v )
+			return vSol.getValue();
 
 	}
 
@@ -3236,7 +3470,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 
 }
 
-void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, int prioridade, int cjtAlunos )
+void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualId, int prioridade, int cjtAlunos )
 {
    double * xSol = NULL;
    VariableHash::iterator vit;
@@ -3250,13 +3484,13 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, i
    {
 	   char solName[1024];
 
-	   strcpy( solName, getSolBinFileName( campusId, prioridade, cjtAlunos ).c_str() );
+	   strcpy( solName, getSolBinFileName( campusAtualId, prioridade, cjtAlunos ).c_str() );
 
 	   FILE* fin = fopen( solName,"rb");
       
 	   if ( fin == NULL )
 	   {
-		   std::cout << "\nErro em carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos(int campusId, int prioridade, int cjtAlunos): arquivo "
+		   std::cout << "\nErro em carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos(int campusAtualId, int prioridade, int cjtAlunos): arquivo "
 					 << solName << " nao encontrado.\n";
 		   exit(0);
 	   }
@@ -3290,39 +3524,30 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, i
    solVars.clear();
 
    char solFilename[1024];
-   strcpy( solFilename, getSolucaoTaticoFileName( campusId, prioridade, cjtAlunos ).c_str() );
+   strcpy( solFilename, getSolucaoTaticoFileName( campusAtualId, prioridade, cjtAlunos ).c_str() );
 
    FILE * fout = fopen( solFilename, "wt" );
+      
+   Disciplina *vDisc;
+   int vTurma;
+   int vCampusId;
    
    vit = vHash.begin();
-   
-   cout<<"\nEntrando na iteracao do vHash...";
-   int tipo = -1;
-
    while ( vit != vHash.end() )
    {
-      Variable* v = new Variable( vit->first );
+	  Variable* v = new Variable( vit->first );
       int col = vit->second;
       v->setValue( xSol[ col ] );
 
       if ( v->getValue() > 0.00001 )
       {
-
-		 solVars.push_back( v );
-
          //#ifdef DEBUG
          char auxName[100];
          lp->getColName( auxName, col, 100 );
          fprintf( fout, "%s = %f\n", auxName, v->getValue() );
          //#endif
-
-		 if ( v->getType() != tipo ){
-		 
-			 cout<<"\nVariavel " << v->getType();
-			 tipo = v->getType();
-		 }
-
-		 Trio< int, int, Disciplina* > trio;
+		 		 
+		 Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
 
          switch( v->getType() )
          {
@@ -3330,9 +3555,11 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, i
 				std::cout << "Variável inválida " << std::endl;
 				break;
 			 case Variable::V_CREDITOS:				 					 
-				 
-				 trio.set( v->getUnidade()->getIdCampus(), v->getTurma(), v->getDisciplina() );
+				 vDisc = v->getDisciplina();
+				 vTurma = v->getTurma();
+				 vCampusId = v->getUnidade()->getIdCampus();
 
+				 trio.set(vCampusId, vTurma, vDisc);
 				 std::cout << problemData->mapCampusTurmaDisc_AlunosDemanda[trio].size() << " vagas para a oferta"
 					 << " de " << v->getValue()
 						  << " creditos da disciplina " << v->getDisciplina()->getCodigo() << " id" << v->getDisciplina()->getId()
@@ -3340,40 +3567,43 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, i
 						  << " no dia " << v->getDia()
 						  << " para a sala " << v->getSubCjtSala()->salas.begin()->first
 						  << std::endl << std::endl;
-				 vars_x.push_back(v);
 				break;
 			 case Variable::V_SLACK_DEMANDA_ALUNO:
 
 				 // ------------ Preenche mapSlackDemanda ---------------------
 
-				 Disciplina *d = v->getDisciplina();
-				 int turma = v->getTurma();
-				 int campusId = v->getCampus()->getId();
+				 vDisc = v->getDisciplina();
+				 vTurma = v->getTurma();
+				 vCampusId = v->getCampus()->getId();
 
-				 Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-				 trio.set(campusId, turma, d);
+				 trio.set(vCampusId, vTurma, vDisc);
 
-				 GGroup< AlunoDemanda* > alunosDemanda = problemData->mapCampusTurmaDisc_AlunosDemanda[trio];
-				 ITERA_GGROUP( itAlDem, alunosDemanda, AlunoDemanda )
+				 std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+					 itMap = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
+				 
+				 if ( itMap != problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
 				 {
-					 problemData->listSlackDemandaAluno.add( *itAlDem );				 
+					 GGroup< AlunoDemanda* > alunosDemanda = itMap->second;					
+				 
+					 ITERA_GGROUP( itAlDem, alunosDemanda, AlunoDemanda )
+					 {
+						 problemData->listSlackDemandaAluno.add( *itAlDem );				 
 
-					 itMapSlackDemanda = mapSlackDemanda.find( std::make_pair( d, itAlDem->demanda->oferta ) );
-					 if ( itMapSlackDemanda != mapSlackDemanda.end() )
-						 itMapSlackDemanda->second = itMapSlackDemanda->second + 1;
-					 else
-						mapSlackDemanda[ std::make_pair( d, itAlDem->demanda->oferta ) ] = 1;			 
+						 itMapSlackDemanda = mapSlackDemanda.find( std::make_pair( vDisc, itAlDem->demanda->oferta ) );
+						 if ( itMapSlackDemanda != mapSlackDemanda.end() )
+							 itMapSlackDemanda->second = itMapSlackDemanda->second + 1;
+						 else
+							mapSlackDemanda[ std::make_pair( vDisc, itAlDem->demanda->oferta ) ] = 1;			 
+					 }
 				 }
 				 // ------------------------------------------------------------
 
 				 break;
          }
       }
-	  else
-	  {
-		 delete v;
-	  }
 
+	  delete v;
+	 
       vit++;
    }
 	std::cout << std::endl;
@@ -3398,161 +3628,7 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, i
     }	
     //#endif
 
-	
-	// -----------------------------------------------------------------------------
-	// Retira dos maps mapAluno_CampusTurmaDisc e mapCampusTurmaDisc_AlunosDemanda
-	// os atendimentos incompletos ( atendeu só disc pratica ou só teorica ), e os
-	// acrescenta em listSlackDemandaAluno.
-	// Deleta os atendimentos em vars_xh que não tiverem nenhum aluno alocado.
-	#pragma region Retira Atendimentos Incompletos
-    ITERA_GGROUP_LESSPTR( itSlack, problemData->listSlackDemandaAluno, AlunoDemanda )
-	{		
-		Aluno *aluno = problemData->retornaAluno( itSlack->getAlunoId() );
-		int campusId = itSlack->demanda->oferta->getCampusId();
-		int discId = itSlack->demanda->getDisciplinaId();
-
-		// Se existir a disciplina teorica/pratica correspondente
-		if ( problemData->refDisciplinas.find( discId ) != 
-			 problemData->refDisciplinas.end() )
-		{
-			Disciplina *disciplina = problemData->refDisciplinas[ discId ];
-
-			// Se o aluno estiver alocado em alguma turma da disciplina
-			// retira-o, eliminando atendimento parcial
-			int turma = problemData->retornaTurmaDiscAluno( aluno, disciplina );
-			if ( turma != -1 )
-			{
-				AlunoDemanda *ad = problemData->procuraAlunoDemanda( discId, aluno->getAlunoId() );
-
-				if ( ad == NULL )
-				{
-					std::cout<<"\nErro em carregaVariaveisSolucaoTaticoPorAluno: AlunoDemanda nao encontrado.\n";
-					std::cout<<"Aluno"<<aluno->getAlunoId()<<" Disc"<<discId<<"\n";
-				}
-
-				Trio< int, int, Disciplina* > trio;
-				trio.set( campusId, turma, disciplina );
-				
-				problemData->mapAluno_CampusTurmaDisc[aluno].remove( trio );
-				
-				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].remove( ad );
-				 
-				problemData->listSlackDemandaAluno.add( ad );
-
-				int nroAlunos = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].size();
-
-				if ( nroAlunos == 0 )
-				{
-					GGroup< Variable *> remover;
-					GGroup< Variable *> todos;
-
-					
-					ITERA_VECTOR( itVarX, vars_x, Variable )
-					{
-						Variable *v = *itVarX;
-						
-						todos.add( v );
-
-						if ( v->getTurma() == turma &&
-							 v->getDisciplina() == disciplina &&
-							 problemData->retornaCampus( v->getUnidade()->getId() )->getId() == campusId )
-						{
-							remover.add( v );
-						}
-					}
-					vars_x.clear();
-					
-					ITERA_GGROUP( itVarX, todos, Variable )
-					{
-						bool inserir = true;
-						ITERA_GGROUP( itRemover, remover, Variable )
-						{
-							if ( *itRemover == *itVarX )
-								inserir = false;
-						}
-						if ( inserir )
-							vars_x.push_back( *itVarX );
-					}
-					
-					problemData->mapCampusTurmaDisc_AlunosDemanda.erase( trio );
-				}
-			}
-		}
-
-		discId = - itSlack->demanda->getDisciplinaId();
-
-		// Se existir a disciplina teorica/pratica correspondente
-		if ( problemData->refDisciplinas.find( discId ) != 
-			 problemData->refDisciplinas.end() )
-		{
-			Disciplina *disciplina = problemData->refDisciplinas[ discId ];
-
-			// Se o aluno estiver alocado em alguma turma da disciplina
-			// retira-o, eliminando atendimento parcial
-			int turma = problemData->retornaTurmaDiscAluno( aluno, disciplina );
-			if ( turma != -1 )
-			{
-				AlunoDemanda *ad = problemData->procuraAlunoDemanda( discId, aluno->getAlunoId() );
-
-				if ( ad == NULL )
-				{
-					std::cout<<"\nErro em carregaVariaveisSolucaoTaticoPorAluno: AlunoDemanda nao encontrado.\n";
-					std::cout<<"Aluno"<<aluno->getAlunoId()<<" Disc"<<discId<<"\n";
-				}
-
-				Trio< int, int, Disciplina* > trio;
-				trio.set( campusId, turma, disciplina );
-				
-				problemData->mapAluno_CampusTurmaDisc[aluno].remove( trio );
-				
-				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].remove( ad );
-				 
-				problemData->listSlackDemandaAluno.add( ad );
-
-				int nroAlunos = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].size();
-
-				if ( nroAlunos == 0 )
-				{
-					GGroup< Variable *> remover;
-					GGroup< Variable *> todos;
-										
-					ITERA_VECTOR( itVarX, vars_x, Variable )
-					{
-						Variable *v = *itVarX;
-						
-						todos.add( v );
-
-						if ( v->getTurma() == turma &&
-							 v->getDisciplina() == disciplina &&
-							 problemData->retornaCampus( v->getUnidade()->getId() )->getId() == campusId )
-						{
-							remover.add( v );
-						}
-					}
-					vars_x.clear();
-					
-					ITERA_GGROUP( itVarX, todos, Variable )
-					{
-						bool inserir = true;
-						ITERA_GGROUP( itRemover, remover, Variable )
-						{
-							if ( *itRemover == *itVarX )
-								inserir = false;
-						}
-						if ( inserir )
-							vars_x.push_back( *itVarX );
-					}
-					
-					problemData->mapCampusTurmaDisc_AlunosDemanda.erase( trio );
-				}
-			}
-		}
-	}
-	
-	#pragma endregion
-	// -----------------------------------------------------------------------------
-
-	
+	removeAtendimentosParciais( xSol, solFilename );
 
    vit = vHash.begin();
    for (; vit != vHash.end(); ++vit )
@@ -45665,6 +45741,58 @@ int SolverMIP::criaVariavelProfessorDiaHorarioIF()
 }
 
 
+int SolverMIP::criaVariavelNroProfsAlocadosCurso()
+{
+   int num_vars = 0;
+
+   /*
+   if ( ! problemData->parametros->considerar_min_doutor )
+   {
+		continue;
+   }*/
+
+   ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
+   {
+        Curso *curso = ( *itCurso );
+		
+		// Se o curso tem aula associada
+		bool DEMANDA = false;
+		ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+		{
+			Aula * aula = ( *it_aula );			
+			ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
+			{
+				if ( it_oferta->getCursoId() == curso->getId() )
+				{
+					DEMANDA = true;
+					break;
+				}
+			}
+		}
+		if ( DEMANDA )
+		{
+			VariableOp v;
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_CURSO );		
+			v.setCurso( curso );
+
+			if ( vHashOp.find( v ) == vHashOp.end() )
+			{
+				vHashOp[ v ] = lp->getNumCols();
+			   
+				int ub = 100;
+
+				OPT_COL col( OPT_COL::VAR_INTEGRAL, 0.0, 0.0, ub,
+					( char * ) v.toString().c_str() );
+
+				lp->newCol( col );
+				num_vars++;
+			}
+		} 
+   }
+   return num_vars;
+}
+
 int SolverMIP::criaRestricoesOperacional()
 {
 
@@ -48305,6 +48433,13 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
 int SolverMIP::criaRestricaoMinimoDoutoresCurso()
 {
    int restricoes = 0;
+
+   /*
+   if ( ! problemData->parametros->considerar_min_doutor )
+   {
+		continue;
+   }*/
+
    int nnz;
    double rhs;
    char name[ 200 ];
@@ -48354,63 +48489,79 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
    for (; it_map != mapCursoProfessores.end();
           it_map++ )
    {
-      Curso * curso = it_map->first;
-      GGroup< Professor *, LessPtr< Professor > > professores_curso
-         = it_map->second;
+        Curso * curso = it_map->first;
 
-      ITERA_GGROUP_LESSPTR( it_prof, professores_curso, Professor )
-      {
-         Professor * professor = ( *it_prof );
+		c.reset();
+		c.setType( ConstraintOp::C_MIN_DOUT_CURSO );
+		c.setCurso( curso );
 
-         c.reset();
-         c.setType( ConstraintOp::C_MIN_DOUT_CURSO );
+		cit = cHashOp.find( c );
 
-         c.setCurso( curso );
+		if ( cit == cHashOp.end() )
+		{
+			sprintf( name, "%s", c.toString().c_str() );
+			nnz = it_map->second.size();
+			rhs = 0;
 
-         cit = cHashOp.find( c );
+			OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+			
+			GGroup< Professor *, LessPtr< Professor > > professores_curso
+				= it_map->second;
 
-         if ( cit == cHashOp.end() )
-         {
-            sprintf( name, "%s", c.toString().c_str() );
-            nnz = professores_curso.size();
-            rhs = ( ( curso->regra_min_doutores.second * professores_curso.size() ) / 100.0 );
+			ITERA_GGROUP_LESSPTR( it_prof, professores_curso, Professor )
+			{
+				Professor * professor = ( *it_prof );
 
-            OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
+				// Recupera os professores que estão associados ao curso, e que são mestres
+				VariableOpHash::iterator vit_find = vHashOp.begin();
 
-            // Recupera os professores que estão associados ao curso, e que são mestres
-            VariableOpHash::iterator vit_find = vHashOp.begin();
+				for (; vit_find != vHashOp.end(); vit_find++ )
+				{
+				   VariableOp v_find = vit_find->first;
 
-            for (; vit_find != vHashOp.end(); vit_find++ )
-            {
-               VariableOp v_find = vit_find->first;
+				   if ( v_find.getType() == VariableOp::V_PROF_CURSO
+					  && v_find.getCurso() == curso
+					  && v_find.getProfessor() == professor
+					  && professor->getTitulacaoId() == 5 )
+				   {
+					  row.insert( vit_find->second, 1.0 );
+				   }
+				}
+			}
+        
+			// Variavel de folga
+			VariableOp v;
+			v.reset();
+			v.setType( VariableOp::V_F_MIN_DOUT_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
 
-               if ( v_find.getType() == VariableOp::V_PROF_CURSO
-                  && v_find.getCurso() == curso
-                  && v_find.getProfessor() == professor
-                  && professor->getTitulacaoId() == 5 )
-               {
-                  row.insert( vit_find->second, 1.0 );
-               }
-            }
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, 1.0 );
+			}
 
-            // Variavel de folga
-            VariableOp v;
-            v.reset();
-            v.setType( VariableOp::V_F_MIN_DOUT_CURSO );
-            v.setCurso( curso );
-            vit = vHashOp.find( v );
 
-            if ( vit != vHashOp.end() )
-            {
-               row.insert( vit->second, 1.0 );
-            }
+			double minPercDoutor = ( curso->regra_min_doutores.second / 100.0 );
+        
+			// Variavel np_{c}
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
 
-            cHashOp[ c ] = lp->getNumRows();
-            lp->addRow( row );
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, -minPercDoutor );
+			}
 
-            restricoes++;
-         }
-      }
+			if ( row.getnnz() != 0 )
+			{
+				cHashOp[ c ] = lp->getNumRows();
+				lp->addRow( row );
+				restricoes++;
+			}
+		}
    }
 
    return restricoes;
@@ -50603,6 +50754,133 @@ int SolverMIP::criaRestricaoGapsHorariosProfessores()
 
    return restricoes;
 }
+
+int SolverMIP::criaRestricaoCalculaNroProfsAlocadosCurso()
+{
+   int restricoes = 0;
+
+   /*
+   if ( ! problemData->parametros->considerar_min_doutor )
+   {
+		continue;
+   }*/
+
+   int nnz;
+   double rhs;
+   char name[ 200 ];
+
+   ConstraintOp c;
+   VariableOpHash::iterator vit;
+   ConstraintOpHash::iterator cit;
+   VariableOp v;
+
+   GGroup< Professor *, LessPtr< Professor > > professores
+      = problemData->getProfessores();
+
+   // Agrupando os professores que ministram disciplinas de cada curso
+   std::map< Curso *, GGroup< Professor *,
+      LessPtr< Professor > > > mapCursoProfessores;
+
+   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
+   {
+      Professor * professor = ( *it_prof );
+
+      ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+      {
+         Aula * aula = ( *it_aula );
+         Disciplina * disciplina = aula->getDisciplina();
+
+         std::pair< int, int > professor_disciplina (
+            professor->getId(), disciplina->getId() );
+
+         // Se o professor e a disciplina da aula em questão se relacionarem
+         if ( problemData->prof_Disc_Dias.find( professor_disciplina )
+            == problemData->prof_Disc_Dias.end() )
+         {
+            continue;
+         }
+
+         ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
+         {
+            Oferta * oferta = ( *it_oferta );
+
+            mapCursoProfessores[ oferta->curso ].add( professor );
+         }
+      }
+   }
+
+
+   ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
+   {
+	   Curso *curso = *itCurso;
+	   	   
+	   c.reset();
+	   c.setType( ConstraintOp::C_CALCULA_NRO_PROFS_CURSO );
+	   c.setCurso( curso );
+
+	   cit = cHashOp.find( c );
+
+		if ( cit == cHashOp.end() )
+		{		
+			GGroup< Professor *, LessPtr< Professor > > profs;
+
+			std::map< Curso *, GGroup< Professor *, LessPtr< Professor > > >::iterator
+				itCursoProfs = mapCursoProfessores.find(curso);		
+			if ( itCursoProfs != mapCursoProfessores.end() )
+			{
+				profs = itCursoProfs->second;
+			}
+
+			sprintf( name, "%s", c.toString().c_str() );
+			nnz = profs.size() + 1;
+			rhs = 0;
+
+			OPT_ROW row( nnz, OPT_ROW::EQUAL, rhs, name );
+
+			// Itera todos os professores hábeis para o curso
+			ITERA_GGROUP_LESSPTR( it_prof, profs, Professor )
+			{
+				Professor * professor = ( *it_prof );
+
+				// Recupera os professores que estão associados ao curso
+				v.reset();
+				v.setType( VariableOp::V_PROF_CURSO );
+				v.setProfessor( professor );
+				v.setCurso( curso );
+						
+				vit = vHashOp.find( v );
+
+				if ( vit != vHashOp.end() )
+				{
+					row.insert( vit->second, -1.0 );
+				}
+			}      
+					
+			// Variavel np_{c}
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
+
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, 1.0 );
+			}
+
+			// Insere restrição
+			if ( row.getnnz() != 0 )
+			{
+				cHashOp[ c ] = lp->getNumRows();
+				lp->addRow( row );
+				restricoes++;
+			}
+		}
+   }
+
+
+   return restricoes;
+}
+
 
 //int SolverMIP::criaRestricaoProfHorarioMultiUnid( void )
 //{
