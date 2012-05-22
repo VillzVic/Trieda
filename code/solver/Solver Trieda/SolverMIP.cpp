@@ -3102,27 +3102,35 @@ int SolverMIP::fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v )
 int SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 {
 
-	ITERA_GGROUP ( itVar, solVars, Variable )
+	if ( v->getType() == Variable::V_CREDITOS )
 	{
-		Variable vSol = **itVar;
-		
-		// Gambirra pq a variavel x adquire o campo "sala" em solVars, mas v ainda não o tem
-		if ( v->getType() == Variable::V_CREDITOS )
+		// A variavel x adquire o campo "sala" em solVars, mas v ainda não o tem,
+		// por isso x tem que ser comparada separada, por atributo
+		ITERA_GGROUP ( itVar, solVars, Variable )
 		{
+			Variable vSol = **itVar;		
+
 			if ( vSol.getTurma() == v->getTurma() &&
-				vSol.getDisciplina() == v->getDisciplina() &&
-				vSol.getUnidade() == v->getUnidade() &&
-				vSol.getSubCjtSala() == v->getSubCjtSala() &&
-				vSol.getDia() == v->getDia() )
-			{				
+				 vSol.getDisciplina() == v->getDisciplina() &&
+				 vSol.getUnidade() == v->getUnidade() &&
+				 vSol.getSubCjtSala() == v->getSubCjtSala() &&
+				 vSol.getDia() == v->getDia() &&
+				 vSol.getType() == Variable::V_CREDITOS )
+			{
 				return vSol.getValue();
 			}
 		}
-		else if ( vSol == *v )
-			return vSol.getValue();
-
 	}
-
+	else
+	{
+		ITERA_GGROUP ( itVar, solVars, Variable )
+		{
+			Variable vSol = **itVar;
+		
+			if ( vSol == *v )
+				return vSol.getValue();
+		}
+	}
 	return 0;
 
 	// O trecho abaixo só é necessário se não tivermos o vetor com a solução da iteração-tatica anterior (solVars)
