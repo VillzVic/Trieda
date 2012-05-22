@@ -266,7 +266,7 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    TEMPO_TATICO = 1800;
 
 #ifdef TATICO_CJT_ALUNOS
-   NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
+   NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = false;
 #endif
 
    try
@@ -2346,6 +2346,7 @@ void SolverMIP::limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId )
 void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024] )
 {	
 
+
 	GGroup< Trio< int, int, Disciplina* > > remocao; // campusId, turma, disc
 
 	// -----------------------------------------------------------------------------
@@ -2358,7 +2359,7 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 	{		
 		Aluno *aluno = problemData->retornaAluno( itSlack->getAlunoId() );
 		int campusId = itSlack->demanda->oferta->getCampusId();
-		int discId = itSlack->demanda->getDisciplinaId();
+		int discId = -itSlack->demanda->getDisciplinaId();
 
 		// Se existir a disciplina teorica/pratica correspondente
 		if ( problemData->refDisciplinas.find( discId ) != 
@@ -2398,7 +2399,7 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 			}
 		}
 
-		discId = - itSlack->demanda->getDisciplinaId();
+		discId = itSlack->demanda->getDisciplinaId();
 
 		// Se existir a disciplina teorica/pratica correspondente
 		if ( problemData->refDisciplinas.find( discId ) != 
@@ -2561,11 +2562,12 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 		slackVar->setTurma( turma );
 		slackVar->setDisciplina( d );
 		slackVar->setCampus( campus );
+		slackVar->setValue( 1 );
 
 		solVars.add( slackVar );
    }
 	    
-
+   
    char solPosFilename[1024];
    strcpy( solPosFilename, "pos_" );
    strcat( solPosFilename, solFilename );
@@ -3472,6 +3474,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 
 void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualId, int prioridade, int cjtAlunos )
 {
+
    double * xSol = NULL;
    VariableHash::iterator vit;
 
@@ -3676,16 +3679,18 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 		int n_prioridades = problemData->nPrioridadesDemanda[campusId];
 
 		for( int P = 1; P <= n_prioridades; P++ )
-		{
+		{			
 			std::cout<<"\n-------------------------- Prioridade " << P << "---------------------------\n";
-			
+
+			// limpa o atendimento anterior, correspondente à prioridade anterior
+			limpaMapAtendimentoAlunoPrioridadeAnterior( campusId );
+						
 			// Cria conjunto de alunos			
 			// Ordena conjuntos
 
 			problemData->criaCjtAlunos( campusId );
 			
 			problemData->imprimeCjtAlunos( campusId );
-
 
 			// Resolve pre-modelo e tatico para cada conjunto
 			map< int, GGroup< Aluno * > >::iterator
@@ -3701,12 +3706,14 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 
 				statusPre = solvePreTaticoCjtAlunos( campusId, P, grupoId );    
 				carregaVariaveisSolucaoPreTatico_CjtAlunos( campusId, P, grupoId );
+								
 				preencheMapAtendimentoAluno( campusId );
 
 				std::cout<<"\n------- Campus "<< campusId << " , Conjunto-Aluno "<< grupoId << ", Prior " << P << "----------\n";
 				std::cout<<"\n------------------------------Tatico------------------------------\n";
 
 				statusTatico = solveTaticoBasicoCjtAlunos( campusId, P, grupoId );
+
 				carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( campusId, P, grupoId );
 
 				std::cout<<"\nCarregou solucao tatica\n";						
@@ -3746,6 +3753,7 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 
 int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId )
 {
+
    if ( this->CARREGA_SOLUCAO )
    {
 	   char solName[1024];
@@ -3802,13 +3810,6 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
    // Variable creation
    varNum = cria_preVariaveis( campusId, prioridade, cjtAlunosId );
 
-   // Se for a otimização do primeiro conjunto de alunos,
-   // limpa o atendimento anterior, correspondente à prioridade anterior
-   if ( cjtAlunosId == problemData->cjtAlunos.begin()->first )
-   {
-		limpaMapAtendimentoAlunoPrioridadeAnterior( campusId );
-   }
-
    lp->updateLP();
 
 #ifdef PRINT_cria_variaveis
@@ -3861,7 +3862,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	lp->setHeurFrequency(1.0);
 	lp->setMIPEmphasis(0);
 	lp->setSymetry(0);
-	lp->setPolishAfterTime( TEMPO_PRETATICO - TEMPO_PRETATICO/4 ); //todo ?
+	lp->setPolishAfterTime( TEMPO_PRETATICO/4 ); //todo ?
 	//lp->setNoCuts();
 	lp->setMIPScreenLog( 4 );
 
@@ -15430,9 +15431,7 @@ int SolverMIP::cria_variavel_maxCreds_combina_Sl_aluno( int campusId, int cjtAlu
 					{
 						if ( !criaVariavelTatico( &v ) )
 							continue;
-
-						vHash[v] = lp->getNumCols();
-						   
+												   
 						double lowerBound;
 						double upperBound;
 
@@ -15448,6 +15447,8 @@ int SolverMIP::cria_variavel_maxCreds_combina_Sl_aluno( int campusId, int cjtAlu
 							lowerBound = 0.0;
 							upperBound = 1.0;
 						}
+						
+						vHash[v] = lp->getNumCols();
 
 						OPT_COL col( OPT_COL::VAR_BINARY, 0.0, lowerBound, upperBound, (char*)v.toString().c_str() );
 
@@ -18526,10 +18527,6 @@ int SolverMIP::cria_restricao_max_cred_disc_aluno( int campusId, int cjtAlunosAt
 				if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
 					continue;
 			}
-			else
-			{
-				continue;
-			}
 			
 			GGroup< Calendario*, LessPtr<Calendario> > calendarios = itAluno->retornaSemanasLetivas();
 
@@ -18696,10 +18693,6 @@ int SolverMIP::cria_restricao_min_creds_semana_aluno( int campusId, int cjtAluno
 			if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
 				continue;
 		}
-		else
-		{
-			continue;
-		}
 
          GGroup< int >::iterator itDiasLetivos = 
             campus->diasLetivos.begin();
@@ -18849,10 +18842,6 @@ int SolverMIP::cria_restricao_max_creds_semana_aluno( int campusId, int cjtAluno
 			if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
 				continue;
 		}
-		else
-		{
-			continue;
-		}
 
          GGroup< int >::iterator itDiasLetivos = 
             campus->diasLetivos.begin();
@@ -18985,7 +18974,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId,
 		}
 		else
 		{
-			continue;
+			continue; // disciplina não pertence a nenhum cjtDisciplina, erro!
 		}
 
 	   for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
@@ -19557,10 +19546,6 @@ int SolverMIP::cria_restricao_ativacao_var_ca( int campusId, int cjtAlunosAtualI
 		{
 			if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
 				continue;
-		}
-		else
-		{
-			continue;
 		}
 
 	   ITERA_GGROUP_N_PT( itDia, aluno->getOferta()->campus->diasLetivos, int )
