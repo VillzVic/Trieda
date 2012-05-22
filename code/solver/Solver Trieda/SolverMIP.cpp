@@ -263,10 +263,10 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    tau = 1.0;
 
    TEMPO_PRETATICO = 9000;
-   TEMPO_TATICO = 1800;
+   TEMPO_TATICO = 3600 * 2;
 
 #ifdef TATICO_CJT_ALUNOS
-   NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = false;
+   NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
 #endif
 
    try
@@ -2302,7 +2302,29 @@ void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 
 			Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
 			trio.set( cp->getId(), turma, disciplina );
-					
+				
+
+			// Verificando consistência -------------------
+			GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > atendimentos = 
+				problemData->mapAluno_CampusTurmaDisc[ aluno ];
+			
+			GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator
+				itAtend = atendimentos.begin();
+
+			for ( ; itAtend != atendimentos.end(); itAtend++ )
+			{
+				Disciplina *d = (*itAtend).third;
+				int i = (*itAtend).second;
+				if ( d == disciplina && i != turma )
+				{
+					std::cout<<"\nErro em SolverMIP::preencheMapAtendimentoAluno(): "
+							 <<"Aluno " << aluno->getAlunoId() << " ja esta alocado em i"
+							 << i << " d"<< d->getId() << ". Alocacao repetida: i"
+							 << turma << " d" << disciplina->getId() << "\n";
+				}
+			}
+			// --------------------------------------------
+
 			problemData->mapAluno_CampusTurmaDisc[ aluno ].add( trio );
 
 			AlunoDemanda *alunoDemanda = problemData->procuraAlunoDemanda( disciplina->getId(), aluno->getAlunoId() );
@@ -3395,6 +3417,10 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 	   lp->getX( xSol );
    }
 
+
+   solVarsPre.clear();
+
+
    vit = vHashPre.begin();
 
    char solFilename[1024];
@@ -3676,8 +3702,7 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 #endif
 
     ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
-    {
-		solVarsPre.clear();
+    {		
 
 		int campusId = ( *itCampus )->getId();
 
@@ -11066,7 +11091,9 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 	   numRestAnterior = restricoes;
 		#endif   
 
-	   /*
+	   /* // Não precisa dessa restrição, caso a restrição de folga de demanda já
+		  // garanta a soma dos "s" menor ou igual a 1
+
 	   restricoes += cria_preRestricao_aluno_unica_turma_disc( campusId, cjtAlunosId );		// Restrição 1.19
 
 		#ifdef PRINT_cria_restricoes
