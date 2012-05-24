@@ -1610,7 +1610,7 @@ GGroup<int> ProblemData::diasComunsEntreDisciplinas( Disciplina *disciplina1, Di
 /*
 	Preenche os maps cjtAlunos, cjtDemandas, cjtAlunoDemanda e cjtDisciplinas
 */
-void ProblemData::criaCjtAlunos( int campusId )
+void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 {	
 	this->cjtAlunos.clear();		
 	this->cjtDemandas.clear();
@@ -1724,7 +1724,15 @@ void ProblemData::criaCjtAlunos( int campusId )
 
 	// ---------------------------------------------------------------------
 	// Preenche cjtAlunos em ordem decrescente de quantidade de AlunoDemanda
-	bool AGRUPAR_CJS_PEQUENOS = true;
+	bool AGRUPAR_CJS_PEQUENOS = true;	
+	double PERC_MIN = 0.4;
+
+	if ( prioridade > 1 && FIXAR_P1 )
+	{
+		PERC_MIN = 1.0;
+		AGRUPAR_CJS_PEQUENOS = true;
+	}
+
 	int ID = 0;
 	while ( map_CjtAlunosId_SizeDemanda.size() != 0 )
 	{
@@ -1753,8 +1761,8 @@ void ProblemData::criaCjtAlunos( int campusId )
 
 		if ( AGRUPAR_CJS_PEQUENOS )
 		{
-			// Agrupa os conjuntos com menos que 40% da qtd de AlunosDemanda
-			if ( maiorQtdAlDem < 0.4 * this->getQtdAlunoDemandaAtualPorCampus(campusId) )
+			// Agrupa os conjuntos com menos que PERC_MIN da qtd de AlunosDemanda
+			if ( maiorQtdAlDem < PERC_MIN * this->getQtdAlunoDemandaAtualPorCampus(campusId) )
 			{
 				map< int, GGroup< Aluno * > >::iterator itMap = auxCjtAlunos.begin();
 				for ( ; itMap != auxCjtAlunos.end(); itMap++ )

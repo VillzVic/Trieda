@@ -95,23 +95,23 @@ public:
 
    int cria_preVariaveis( int campusId, int prioridade, int grupoAlunosId );
 
-   int cria_preVariavel_creditos( int campusId, int grupoAlunosId );						// x_{i,d,s}
-   int cria_preVariavel_oferecimentos( int campusId, int grupoAlunosId );					// o_{i,d,s}
-   int cria_preVariavel_abertura( int campusId, int grupoAlunosId );						// z_{i,d,cp}
-   int cria_preVariavel_alunos( int campusId, int grupoAlunosId );							// a_{i,d,oft,s}
-   int cria_preVariavel_aloc_alunos( int campusId, int grupoAlunosId );						// b_{i,d,c}   
-   int cria_preVariavel_folga_compartilhamento_incomp( int campusId, int grupoAlunosId );	// bs_{i,d,c1,c2}
-   int cria_preVariavel_folga_proibe_compartilhamento( int campusId, int grupoAlunosId );	// fc_{i,d,c1,c2}
-   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId ); // fs_{d,s,oft}
+   int cria_preVariavel_creditos( int campusId, int grupoAlunosId, int P_ATUAL  );						// x_{i,d,s}
+   int cria_preVariavel_oferecimentos( int campusId, int grupoAlunosId, int P_ATUAL  );					// o_{i,d,s}
+   int cria_preVariavel_abertura( int campusId, int grupoAlunosId, int P_ATUAL  );						// z_{i,d,cp}
+   int cria_preVariavel_alunos( int campusId, int grupoAlunosId, int P_ATUAL  );							// a_{i,d,oft,s}
+   int cria_preVariavel_aloc_alunos( int campusId, int grupoAlunosId, int P_ATUAL  );						// b_{i,d,c}   
+   int cria_preVariavel_folga_compartilhamento_incomp( int campusId, int grupoAlunosId, int P_ATUAL  );	// bs_{i,d,c1,c2}
+   int cria_preVariavel_folga_proibe_compartilhamento( int campusId, int grupoAlunosId, int P_ATUAL  );	// fc_{i,d,c1,c2}
+   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL  ); // fs_{d,s,oft}
    int cria_preVariavel_limite_sup_creds_sala( int campusId );								// Hs_{cp}
-   int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId );				// c_{i,d,oft,s}
+   int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId, int P_ATUAL  );				// c_{i,d,oft,s}
    
 
    // Usadas somente para o modelo Tatico-Aluno:
-   int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, int grupoAlunosAtualId );	// fd_{d,a}
-   int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId );			// s_{i,d,a,cp}
+   int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, int grupoAlunosAtualId, int P_ATUAL );	// fd_{d,a}
+   int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL );			// s_{i,d,a,cp}
    int cria_preVariavel_folga_prioridade_inf( int campusId, int prior, int grupoAlunosAtualId );// fpi_{a}
-   int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId);	// fps_{a}
+   int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );	// fps_{a}
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
@@ -131,7 +131,7 @@ public:
    int cria_preRestricao_ativacao_var_z( int campusId, int cjtAlunosId  );			// Restricao 1.10
    int cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtAlunosId  );	// Restricao 1.11
    int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId  );    // Restricao 1.12
-   int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );  // Restricao 1.13
+   int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId, int prioridade );  // Restricao 1.13
    int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala( int campusId, int cjtAlunosId  );		// Restricao 1.15
    int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId, int cjtAlunosId  );	// Restricao 1.16
@@ -152,26 +152,26 @@ public:
    **                    CRIAÇÃO DE VARIAVEIS DO TATICO               **
    *********************************************************************/
       
-   int cria_variaveis_aluno_sh( int campusId, int cjtAlunosId );
+   int cria_variaveis_aluno_sh( int campusId, int cjtAlunosId, int prioridade );
 
-   int cria_variavel_creditos( int campusId, int cjtAlunosId );									// x_{i,d,u,tps,t}
-   int cria_variavel_oferecimentos( int campusId, int cjtAlunosId );							// o_{i,d,u,tps,t}
-   int cria_variavel_abertura( int campusId, int cjtAlunosId );									// z_{i,d,cp}
-   int cria_variavel_consecutivos( int campusId, int cjtAlunosId );								// c_{i,d,t}   
-   int cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int cjtAlunosId );			// fcp_{d,t}
-   int cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int cjtAlunosId );			// fcm_{d,t}
-   int cria_variavel_combinacao_divisao_credito( int campusId, int cjtAlunosId );				// m_{i,d,k}
-   int cria_variavel_de_folga_combinacao_divisao_credito( int campusId, int cjtAlunosId );		// fkm{i,d,k} e fkp_{i,d,k}
-   int cria_variavel_abertura_compativel( int campusId, int cjtAlunosId );						// zc_{d,t}
+   int cria_variavel_creditos( int campusId, int cjtAlunosId, int P );									// x_{i,d,u,tps,t}
+   int cria_variavel_oferecimentos( int campusId, int cjtAlunosId, int P );							// o_{i,d,u,tps,t}
+   int cria_variavel_abertura( int campusId, int cjtAlunosId, int P );									// z_{i,d,cp}
+   int cria_variavel_consecutivos( int campusId, int cjtAlunosId, int P );								// c_{i,d,t}   
+   int cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int cjtAlunosId, int P );			// fcp_{d,t}
+   int cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int cjtAlunosId, int P );			// fcm_{d,t}
+   int cria_variavel_combinacao_divisao_credito( int campusId, int cjtAlunosId, int P );				// m_{i,d,k}
+   int cria_variavel_de_folga_combinacao_divisao_credito( int campusId, int cjtAlunosId, int P );		// fkm{i,d,k} e fkp_{i,d,k}
+   int cria_variavel_abertura_compativel( int campusId, int cjtAlunosId, int P );						// zc_{d,t}
    int cria_variavel_maxCreds_combina_sl_sala( int campusId, int cjtAlunosId );					// cs_{s,t,k} -> Usado somente quando tem 2 semanas letivas
    
    // Só para modelo com alunos
-   int cria_variavel_maxCreds_combina_Sl_aluno( int campusId, int cjtAlunosId );				// ca_{a,t,k}
-   int cria_variavel_min_creds_aluno( int campusId, int cjtAlunosId );							// h_{a}
-   int cria_variavel_max_creds_aluno( int campusId, int cjtAlunosId );							// H_{a}
-   int cria_variavel_de_folga_demanda_disciplina_aluno( int campusId, int cjtAlunosId );		// fd_{i,d,cp}
-   int cria_variavel_folgafolga_demanda_p_t( int campusId, int cjtAlunosId );					// ffd_{i1,-d,i2,d,cp}
-   int cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int cjtAlunosId );			// fu_{i1,d1,i2,d2,t}
+   int cria_variavel_maxCreds_combina_Sl_aluno( int campusId, int cjtAlunosId, int P );				// ca_{a,t,k}
+   int cria_variavel_min_creds_aluno( int campusId, int cjtAlunosId, int P );							// h_{a}
+   int cria_variavel_max_creds_aluno( int campusId, int cjtAlunosId, int P );							// H_{a}
+   int cria_variavel_de_folga_demanda_disciplina_aluno( int campusId, int cjtAlunosId, int P );		// fd_{i,d,cp}
+   int cria_variavel_folgafolga_demanda_p_t( int campusId, int cjtAlunosId, int P );					// ffd_{i1,-d,i2,d,cp}
+   int cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int cjtAlunosId, int P );			// fu_{i1,d1,i2,d2,t}
 
  
  
@@ -188,7 +188,7 @@ public:
    int cria_restricao_lim_cred_diar_disc( int campusId, int cjtAlunosId );			// Restricao 1.2.13   
    int cria_restricao_turma_disc_dias_consec( int campusId, int cjtAlunosId );		// Restricao 1.2.17
    int cria_restricao_de_folga_dist_cred_dia( int campusId, int cjtAlunosId );		// Restricao 1.2.22   
-   int cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId );	// Restricao 1.2.25
+   int cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId, int prioridade );	// Restricao 1.2.25
    int cria_restricao_divisao_credito( int campusId, int cjtAlunosId );				// Restricao 1.2.26
    int cria_restricao_combinacao_divisao_credito( int campusId, int cjtAlunosId );	// Restricao 1.2.27   
    int cria_restricao_ativacao_var_zc( int campusId, int cjtAlunosId );				// Restricao 1.2.31
@@ -564,9 +564,11 @@ public:
    int fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v );
    int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
 
+   int fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
    int fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
 
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
+   bool FIXAR_P1;
 
 #endif
 

@@ -436,7 +436,7 @@ public:
       
    GGroup<int> diasComunsEntreDisciplinas( Disciplina *disciplina1, Disciplina *disciplina2 );
 
-   void criaCjtAlunos( int campusId );
+   void criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 );
 
    int retornaCjtAlunosId( int discId );
    int retornaCjtAlunosId( Aluno* aluno );
