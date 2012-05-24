@@ -174,7 +174,9 @@ std::string VariablePre::toString()
 		str <<"fpi"; break;
 	 case V_PRE_SLACK_PRIOR_SUP:
 		str <<"fps"; break;
-		
+	 case V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL:
+		str <<"ft"; break;
+				
     default:
         str << "!";
    }

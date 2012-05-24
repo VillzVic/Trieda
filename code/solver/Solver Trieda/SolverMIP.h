@@ -103,15 +103,17 @@ public:
    int cria_preVariavel_folga_compartilhamento_incomp( int campusId, int grupoAlunosId, int P_ATUAL  );	// bs_{i,d,c1,c2}
    int cria_preVariavel_folga_proibe_compartilhamento( int campusId, int grupoAlunosId, int P_ATUAL  );	// fc_{i,d,c1,c2}
    int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL  ); // fs_{d,s,oft}
-   int cria_preVariavel_limite_sup_creds_sala( int campusId );								// Hs_{cp}
+   int cria_preVariavel_limite_sup_creds_sala( int campusId );												// Hs_{cp}
    int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId, int P_ATUAL  );				// c_{i,d,oft,s}
    
 
    // Usadas somente para o modelo Tatico-Aluno:
    int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, int grupoAlunosAtualId, int P_ATUAL );	// fd_{d,a}
    int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL );			// s_{i,d,a,cp}
-   int cria_preVariavel_folga_prioridade_inf( int campusId, int prior, int grupoAlunosAtualId );// fpi_{a}
-   int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );	// fps_{a}
+   int cria_preVariavel_folga_prioridade_inf( int campusId, int prior, int grupoAlunosAtualId );			// fpi_{a}
+   int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
+   int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL );			// ft_{i,d}
+
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
@@ -172,6 +174,7 @@ public:
    int cria_variavel_de_folga_demanda_disciplina_aluno( int campusId, int cjtAlunosId, int P );		// fd_{i,d,cp}
    int cria_variavel_folgafolga_demanda_p_t( int campusId, int cjtAlunosId, int P );					// ffd_{i1,-d,i2,d,cp}
    int cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int cjtAlunosId, int P );			// fu_{i1,d1,i2,d2,t}
+   int cria_variavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P );				// ft_{i,d}
 
  
  
@@ -179,7 +182,7 @@ public:
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO                    **
    *********************************************************************/
       
-   int cria_restricoes_aluno_sh( int campusId, int cjtAlunosId );
+   int cria_restricoes_aluno_sh( int campusId, int cjtAlunosId, int prioridade );
 
    int cria_restricao_carga_horaria( int campusId, int cjtAlunosId );				// Restricao 1.2.2 
    int cria_restricao_max_tempo_sd( int campusId, int cjtAlunosId );				// Restricao 1.2.3  -> Usada somente quando só tem 1 semana letiva

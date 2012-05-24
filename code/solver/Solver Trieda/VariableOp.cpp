@@ -294,6 +294,9 @@ std::string VariableOp::toString()
         str << "V_HI_PROFESSORES"; break;
 	  case V_HF_PROFESSORES:
         str << "V_HF_PROFESSORES"; break;		
+  	  case V_NRO_PROFS_CURSO:
+        str << "V_NRO_PROFS_CURSO"; break;		
+				
 
       default:
         str << "!";

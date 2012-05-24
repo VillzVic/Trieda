@@ -55,7 +55,8 @@ public:
 	  V_MAX_CRED_SEMANA_ALUNO = 34,  // H_{a}
 	  V_SLACK_DEMANDA_ALUNO = 35,	// fd_{i,d,cp}
 	  V_SLACK_SLACKDEMANDA_PT = 36,	// ffd_{i1,d,i2,-d,cp}
-	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 37 // fu_{i1,d1,i2,d2,t}	  
+	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 37, // fu_{i1,d1,i2,d2,t}	  
+	  V_FOLGA_ABRE_TURMA_SEQUENCIAL = 38  // ft_{i,d}
 
    };
 

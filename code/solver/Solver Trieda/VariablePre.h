@@ -33,7 +33,8 @@ public:
 
 	  V_PRE_ALOCA_ALUNO_TURMA_DISC = 12,			// s_{a,i,d,cp}
 	  V_PRE_SLACK_PRIOR_INF = 13,					// fpi_{a}
-	  V_PRE_SLACK_PRIOR_SUP = 14					// fps_{a}
+	  V_PRE_SLACK_PRIOR_SUP = 14,					// fps_{a}
+	  V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL = 15		// ft_{i,d}
 
    };
 

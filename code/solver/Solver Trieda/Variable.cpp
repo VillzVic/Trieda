@@ -265,8 +265,9 @@ std::string Variable::toString()
 		str <<"ffd"; break;
 	case V_SLACK_ALUNO_VARIAS_UNID_DIA:
 		str <<"fu"; break;
-		
-		
+	case V_FOLGA_ABRE_TURMA_SEQUENCIAL:
+		str <<"ft"; break;		
+				
     default:
         str << "!";
    }

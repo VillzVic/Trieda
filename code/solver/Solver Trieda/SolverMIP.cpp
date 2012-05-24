@@ -263,7 +263,7 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    tau = 1.0;
 
    TEMPO_PRETATICO = 9000;
-   TEMPO_TATICO = 3600 * 1;
+   TEMPO_TATICO = 3600 * 3;
 
 #ifdef TATICO_CJT_ALUNOS
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
@@ -2142,8 +2142,13 @@ bool SolverMIP::criaVariavelTatico( Variable *v )
 		// A criação dessa variavel já contem os filtros necessários para a sua criação.
 		return true;	
 	 }
+	 case Variable::V_FOLGA_ABRE_TURMA_SEQUENCIAL: //  ft_{i,d}
+	 {
+		// só para prioridade 2 em diante
+		return true;	
+	 }	 
 	 
-	 
+
      default:
 	 {
 		return true;
@@ -2780,6 +2785,8 @@ int SolverMIP::fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v )
 			 int discId = v->getDisciplina()->getId();
 			 int n = 0;
 
+			 GGroup<int> turmas;
+
 			 // x_{i,d,u,s,t}
 			 ITERA_VECTOR( it_Vars_x, vars_x, Variable )
 			 {
@@ -2789,9 +2796,13 @@ int SolverMIP::fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v )
 					  vSol->getSubCjtSala() == v->getSubCjtSala() )
 				 {			
 					 int turma = vSol->getTurma();
-					 if ( problemData->atendeTurmaDiscOferta( turma, discId, ofertaId ) )
+					 if ( turmas.find( turma ) == turmas.end() ) // evita somar alocações que diferenciam-se só pelo dia
 					 {
-						n++;
+						 if ( problemData->atendeTurmaDiscOferta( turma, discId, ofertaId ) )
+						 {
+							n++;
+							turmas.add( turma );
+						 }
 					 }
 				 }
 			 }
@@ -3027,6 +3038,8 @@ int SolverMIP::fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v )
 			 int ofertaId = v->getOferta()->getId();
 			 int discId = v->getDisciplina()->getId();
 			 int n = 0;
+			 
+			 GGroup<int> turmas;
 
 			 // x_{i,d,u,s,t}
 			 ITERA_VECTOR( it_Vars_x, vars_x, Variable )
@@ -3037,9 +3050,13 @@ int SolverMIP::fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v )
 					  vSol->getSubCjtSala() == v->getSubCjtSala() )
 				 {			
 					 int turma = vSol->getTurma();
-					 if ( problemData->atendeTurmaDiscOferta( turma, discId, ofertaId ) )
+					 if ( turmas.find( turma ) == turmas.end() ) // evita somar alocações que diferenciam-se só pelo dia
 					 {
-						n++;
+						 if ( problemData->atendeTurmaDiscOferta( turma, discId, ofertaId ) )
+						 {
+							n++;
+							turmas.add( turma );
+						 }
 					 }
 				 }
 			 }
@@ -4076,7 +4093,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		{
 
 		   // Constraint creation
-		   constNum = cria_restricoes_aluno_sh( campusId, cjtAlunosId );
+		   constNum = cria_restricoes_aluno_sh( campusId, cjtAlunosId, prioridade );
 
 		   lp->updateLP();
 
@@ -9573,6 +9590,18 @@ int SolverMIP::cria_preVariaveis(  int campusId, int prioridade, int grupoAlunos
 #endif
 		
 
+	timer.start();
+	num_vars += cria_preVariavel_folga_abre_turma_sequencial( campusId, grupoAlunosId, prioridade ); // ft
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"ft\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+		
+
+
 	return num_vars;
 }
 
@@ -11049,6 +11078,95 @@ int SolverMIP::cria_preVariavel_folga_prioridade_sup( int campusId, int prior, i
 	return num_vars;
 }
 
+
+// ft_{i,d,cp}
+// Só para P2 em diante
+int SolverMIP::cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL )
+{
+	int num_vars = 0;
+	
+	if ( P_ATUAL < 2 )
+	{
+	   return num_vars;
+	}
+
+   std::map< int /*Id Campus*/, GGroup< int > /*Id Discs*/ >::iterator it_CpDisc = problemData->cp_discs.begin();
+
+   for ( ; it_CpDisc != problemData->cp_discs.end(); it_CpDisc++ )
+   {
+	  Campus *cp = problemData->refCampus[ it_CpDisc->first ];
+
+	  if ( cp->getId() != campusId )
+	  {
+		  continue;
+	  }
+
+      ITERA_GGROUP_N_PT( it_disciplina, it_CpDisc->second, int )
+      {
+		 Disciplina *disciplina = problemData->refDisciplinas[ *it_disciplina ];
+		 
+		 #pragma region Equivalencias
+		 if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+				problemData->mapDiscSubstituidaPor.end() ) &&
+				!problemData->ehSubstituta( disciplina ) )
+		 {
+		 	continue;
+		 }
+		 #pragma endregion
+	 
+		 int discGrupoAlunosId = problemData->retornaCjtAlunosId( disciplina->getId() );
+
+ 		 if ( discGrupoAlunosId > cjtAlunosId || 
+			  discGrupoAlunosId == 0 )
+		 {
+			 continue;
+		 }
+		 
+         for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+         {
+            VariablePre v;
+            v.reset();
+            v.setType( VariablePre::V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL );
+
+            v.setTurma( turma );            // i
+            v.setDisciplina( disciplina );  // d
+            v.setCampus( cp );				// cp
+
+            if ( vHashPre.find(v) == vHashPre.end() )
+            {
+                lp->getNumCols();
+                vHashPre[v] = lp->getNumCols();
+
+			    double coef = 0.0;
+
+				if ( problemData->parametros->funcao_objetivo == 0 )
+				{							 
+					coef = -10 * (turma+1);
+				}
+				else if ( problemData->parametros->funcao_objetivo == 1 )
+				{					
+					coef = 10 * (turma+1);
+				}						                
+						 
+				double lowerBound = 0.0;
+				double upperBound = 1.0;
+
+				OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
+                     ( char * )v.toString().c_str() );
+
+                lp->newCol( col ); 
+                
+				num_vars++;
+            }
+         }
+      }
+   }
+
+	return num_vars;
+
+}
+
+
 /********************************************************************
 **                    Restrições do pre-Tatico                     **
 *********************************************************************/
@@ -11174,7 +11292,7 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_abre_turmas_em_sequencia( campusId, cjtAlunosId );		// Restrição 1.13
+	restricoes += cria_preRestricao_abre_turmas_em_sequencia( campusId, cjtAlunosId, prioridade );		// Restrição 1.13
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -12942,6 +13060,8 @@ int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjt
 
    Disciplina * disciplina = NULL;
 
+   Campus *campus = problemData->refCampus[ campusId ];
+   
    ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
       disciplina = ( *it_disciplina );
@@ -13045,6 +13165,22 @@ int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjt
                   }
                }
             }
+
+			if ( prioridade > 1 && FIXAR_P1 )
+			{
+                v.reset();
+                v.setType( VariablePre::V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL );
+
+                v.setTurma( turma );
+                v.setDisciplina( disciplina );
+				v.setCampus( campus );
+
+                it_v = vHashPre.find( v );
+                if ( it_v != vHashPre.end() )
+                {
+                    row.insert( it_v->second, 1.0 );
+                }				
+			}
 
             if ( row.getnnz() != 0 )
             {
@@ -14321,6 +14457,17 @@ int SolverMIP::cria_variaveis_aluno_sh( int campusId, int cjtAlunosAtualId, int 
 	numVarsAnterior = num_vars;
 #endif
 
+
+	timer.start();
+	num_vars += cria_variavel_folga_abre_turma_sequencial( campusId, cjtAlunosAtualId, prioridade ); // ft_{i,d}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"ft\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numVarsAnterior = num_vars;
+#endif
+	
 
 	return num_vars;
 }
@@ -16540,6 +16687,92 @@ int SolverMIP::cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int 
 }
    
  
+// ft_{i,d,cp}
+// Só para P2 em diante
+int SolverMIP::cria_variavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P )
+{
+	int num_vars = 0;
+	
+	if ( P < 2 )
+	{
+	   return num_vars;
+	}
+
+   std::map< int /*Id Campus*/, GGroup< int > /*Id Discs*/ >::iterator it_CpDisc = problemData->cp_discs.begin();
+
+   for ( ; it_CpDisc != problemData->cp_discs.end(); it_CpDisc++ )
+   {
+	  Campus *cp = problemData->refCampus[ it_CpDisc->first ];
+
+	  if ( cp->getId() != campusId )
+	  {
+		  continue;
+	  }
+
+      ITERA_GGROUP_N_PT( it_disciplina, it_CpDisc->second, int )
+      {
+		 Disciplina *disciplina = problemData->refDisciplinas[ *it_disciplina ];
+		 
+		 #pragma region Equivalencias
+		 if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+				problemData->mapDiscSubstituidaPor.end() ) &&
+				!problemData->ehSubstituta( disciplina ) )
+		 {
+		 	continue;
+		 }
+		 #pragma endregion
+	 
+		 int discGrupoAlunosId = problemData->retornaCjtAlunosId( disciplina->getId() );
+
+ 		 if ( discGrupoAlunosId > cjtAlunosId || 
+			  discGrupoAlunosId == 0 )
+		 {
+			 continue;
+		 }
+		 
+         for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+         {
+            Variable v;
+            v.reset();
+            v.setType( Variable::V_FOLGA_ABRE_TURMA_SEQUENCIAL );
+
+            v.setTurma( turma );            // i
+            v.setDisciplina( disciplina );  // d
+            v.setCampus( cp );				// cp
+
+            if ( vHash.find(v) == vHash.end() )
+            {
+                lp->getNumCols();
+                vHash[v] = lp->getNumCols();
+
+			    double coef = 0.0;
+
+				if ( problemData->parametros->funcao_objetivo == 0 )
+				{							 
+					coef = -10 * (turma+1);
+				}
+				else if ( problemData->parametros->funcao_objetivo == 1 )
+				{					
+					coef = 10 * (turma+1);
+				}						                
+						 
+				double lowerBound = 0.0;
+				double upperBound = disciplina->diasLetivos.size();
+
+				OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound,
+                     ( char * )v.toString().c_str() );
+
+                lp->newCol( col ); 
+                
+				num_vars++;
+            }
+         }
+      }
+   }
+
+	return num_vars;
+
+}
 
  
    /********************************************************************
@@ -16555,7 +16788,7 @@ int SolverMIP::cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int 
 //							CONSTRAINTS
 // ==============================================================
 
-int SolverMIP::cria_restricoes_aluno_sh( int campusId, int cjtAlunosId  )
+int SolverMIP::cria_restricoes_aluno_sh( int campusId, int cjtAlunosId, int prioridade )
 {
 	int restricoes = 0;
 
@@ -16705,7 +16938,7 @@ int SolverMIP::cria_restricoes_aluno_sh( int campusId, int cjtAlunosId  )
 
 
 	timer.start();
-	restricoes += cria_restricao_abre_turmas_em_sequencia( campusId, cjtAlunosId );						// Restricao 1.2.25
+	restricoes += cria_restricao_abre_turmas_em_sequencia( campusId, cjtAlunosId, prioridade );						// Restricao 1.2.25
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -18136,7 +18369,7 @@ Abertura sequencial de turmas
 /====================================================================*/
 
 
-int SolverMIP::cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosAtualId )
+int SolverMIP::cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosAtualId, int prioridade )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -18147,6 +18380,8 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlu
    VariableHash::iterator it_v;
 
    Disciplina * disciplina = NULL;
+
+   Campus *campus = problemData->refCampus[ campusId ];
 
    ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
@@ -18262,6 +18497,22 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlu
                   }
                }
             }
+
+			if ( prioridade > 1 && FIXAR_P1 )
+			{
+                v.reset();
+                v.setType( Variable::V_FOLGA_ABRE_TURMA_SEQUENCIAL );
+
+                v.setTurma( turma );
+                v.setDisciplina( disciplina );
+				v.setCampus( campus );
+
+                it_v = vHash.find( v );
+                if ( it_v != vHash.end() )
+                {
+                    row.insert( it_v->second, 1.0 );
+                }				
+			}
 
             if ( row.getnnz() != 0 )
             {
@@ -44729,8 +44980,19 @@ int SolverMIP::criaVariaveisOperacional()
              << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
+   
+   lp->updateLP();
+   numVars += criaVariavelNroProfsAlocadosCurso();
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars V_NRO_PROFS_CURSO: "
+             << ( numVars - numVarsAnterior ) << std::endl;
+   numVarsAnterior = numVars;
+#endif   
 
    lp->updateLP();
+
+   
 
    return numVars;
 }
@@ -45577,7 +45839,7 @@ int SolverMIP::criaVariavelDiasProfessoresMinistramAulas()
 int SolverMIP::criaVariavelFolgaMinimoMestresCurso()
 {
    int num_vars = 0;
-   double coeff = 1000.0;
+   double coeff = 60000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -45612,7 +45874,7 @@ int SolverMIP::criaVariavelFolgaMinimoMestresCurso()
 int SolverMIP::criaVariavelFolgaMinimoDoutoresCurso()
 {
    int num_vars = 0;
-   double coeff = 1000.0;
+   double coeff = 50000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -46635,8 +46897,21 @@ int SolverMIP::criaRestricoesOperacional()
 	numRestAnterior = restricoes;
 #endif
 
+	
 	lp->updateLP();
+	timer.start();
+	restricoes += criaRestricaoCalculaNroProfsAlocadosCurso();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
 
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest C_CALCULA_NRO_PROFS_CURSO: "
+		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+	lp->updateLP();
+	
 
 	return restricoes;
 }
@@ -48846,7 +49121,7 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
 
 			sprintf( name, "%s", c.toString().c_str() );
 			nnz = professores_curso.size();
-			rhs = ( ( curso->regra_min_mestres.second * professores_curso.size() ) / 100.0 ); // TODO: ERRADO
+			rhs = 0.0;
 
 			OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
 				  
@@ -48854,7 +49129,7 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
 			{
 				Professor * professor = ( *it_prof );
 				
-				// Recupera os professores que estão associados ao curso, e que são mestres
+				// Recupera os professores que estão associados ao curso, e que são no minimo mestres
 				VariableOpHash::iterator vit_find = vHashOp.begin();
 
 				for (; vit_find != vHashOp.end(); vit_find++ )
@@ -48883,6 +49158,19 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
                row.insert( vit->second, 1.0 );
             }
 
+			double minPercMestre = ( curso->regra_min_mestres.second / 100.0 );
+        
+			// Variavel np_{c}
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
+
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, -minPercMestre );
+			}
+			
 			if ( row.getnnz() != 0 )
 			{
 				cHashOp[ c ] = lp->getNumRows();
@@ -48963,21 +49251,21 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
 		cit = cHashOp.find( c );
 
 		if ( cit == cHashOp.end() )
-		{
+		{			
+			GGroup< Professor *, LessPtr< Professor > > professores_curso
+				= it_map->second;
+
 			sprintf( name, "%s", c.toString().c_str() );
-			nnz = it_map->second.size();
+			nnz = professores_curso.size();
 			rhs = 0;
 
 			OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
-			
-			GGroup< Professor *, LessPtr< Professor > > professores_curso
-				= it_map->second;
 
 			ITERA_GGROUP_LESSPTR( it_prof, professores_curso, Professor )
 			{
 				Professor * professor = ( *it_prof );
 
-				// Recupera os professores que estão associados ao curso, e que são mestres
+				// Recupera os professores que estão associados ao curso, e que são doutores
 				VariableOpHash::iterator vit_find = vHashOp.begin();
 
 				for (; vit_find != vHashOp.end(); vit_find++ )
@@ -51225,7 +51513,8 @@ int SolverMIP::criaRestricaoCalculaNroProfsAlocadosCurso()
    int restricoes = 0;
 
    /*
-   if ( ! problemData->parametros->considerar_min_doutor )
+   if ( ! problemData->parametros->considerar_min_doutor &&
+        ! problemData->parametros->considerar_min_mestre )
    {
 		continue;
    }*/
