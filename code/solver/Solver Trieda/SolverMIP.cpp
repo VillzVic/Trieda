@@ -263,7 +263,7 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    tau = 1.0;
 
    TEMPO_PRETATICO = 9000;
-   TEMPO_TATICO = 3600 + 1800;
+   TEMPO_TATICO = 3600;
 
 #ifdef TATICO_CJT_ALUNOS
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
@@ -537,7 +537,6 @@ std::string SolverMIP::getSolVarsPreFileName( int campusId, int prioridade, int 
       
    return solName;
 }
-
 
 bool SolverMIP::SolVarsPreFound( VariablePre v )
 {	
@@ -3576,6 +3575,18 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 
    FILE * fout = fopen( solFilename, "wt" );
 
+   if ( fout == NULL )
+   {
+	   std::cout << "\nErro em SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusAtualId, int prioridade, int cjtAlunos )"
+				 << "\nArquivo " << solFilename << " nao pode ser aberto\n";
+	   fout = fopen( "solPreSubstituto.txt", "wt" );
+	   if ( fout == NULL )
+	   {
+			std::cout <<"\nErro de novo. Finalizando execucao...\n";
+			exit(0);
+	   }
+   }
+
    while ( vit != vHashPre.end() )
    {
       VariablePre * v = new VariablePre( vit->first );
@@ -3720,7 +3731,18 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
    strcpy( solFilename, getSolucaoTaticoFileName( campusAtualId, prioridade, cjtAlunos ).c_str() );
 
    FILE * fout = fopen( solFilename, "wt" );
-      
+   if ( fout == NULL )
+   {
+	   std::cout << "\nErro em SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualId, int prioridade, int cjtAlunos )"
+				 << "\nArquivo nao pode ser aberto\n";
+	   fout = fopen( "solSubstituto.txt", "wt" );
+	   if ( fout == NULL )
+	   {
+			std::cout <<"\nErro de novo. Finalizando execucao...\n";
+			exit(0);
+	   }
+   }
+
    Disciplina *vDisc;
    int vTurma;
    int vCampusId;
@@ -3954,6 +3976,10 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		   std::cout << "\nA partir de " << solName << " , nao foram lidas mais solucoes.\n";
 		   CARREGA_SOLUCAO = false;
 	   }
+	   else
+	   {
+		   fclose(fin);
+	   }
    }
 
    if ( lp != NULL )
@@ -4018,10 +4044,43 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		#endif   
    }
 
-   lp->writeProbLP( lpName );
-#ifdef DEBUG
-  // lp->writeProbLP( lpName );
-#endif
+
+   char lpNameAntes[1024];
+   strcpy( lpNameAntes, "Antes" );
+   strcat( lpNameAntes, lpName );
+   lp->writeProbLP( lpNameAntes );
+   
+
+   // -------------------------------------------------------------------
+   // Fixa variaveis z_{i,d,cp} que estão livres como zero
+      
+   std::set< int > vHashLivresOriginais;
+
+   VariablePreHash::iterator vit = vHashPre.begin();
+   for ( ; vit != vHashPre.end(); vit++ )
+   {
+	   VariablePre v = vit->first;
+	   
+	   if ( v.getType() == VariablePre::V_PRE_ABERTURA )
+	   {
+		   int lb = (int)(lp->getLB(vit->second) + 0.5);
+		   int ub = (int)(lp->getUB(vit->second) + 0.5);
+
+		   if ( lb != ub ) // se for variavel livre
+		   {
+			   vHashLivresOriginais.insert( vit->second );
+
+			   lp->chgUB(vit->second, 0.0);
+		   }
+	   }
+   }
+
+   char lpNameDepois[1024];
+   strcpy( lpNameDepois, "Depois" );
+   strcat( lpNameDepois, lpName );
+   lp->writeProbLP( lpNameDepois );
+
+   // -------------------------------------------------------------------
 
 	int status = 0;
 
@@ -4044,6 +4103,32 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
     {   
 		status = lp->optimize( METHOD_MIP );
     }
+
+
+   // -------------------------------------------------------------------
+   // Volta as variaveis z_{i,d,cp} que estavam livres
+         
+   vit = vHashPre.begin();
+   for ( ; vit != vHashPre.end(); vit++ )
+   {
+	   if ( vit->first.getType() == VariablePre::V_PRE_ABERTURA )
+	   {
+		   if ( vHashLivresOriginais.find( vit->second ) ==
+			    vHashLivresOriginais.end() )
+		   {
+			   // deixa a variavel livre
+			   lp->chgUB(vit->second, 1.0);			   
+		   }
+	   }
+   }
+
+
+
+   lp->writeProbLP( lpName );
+
+   // -------------------------------------------------------------------
+
+
 
 	lp->setNumIntSols(0);
 	lp->setTimeLimit( TEMPO_PRETATICO );
@@ -4077,15 +4162,24 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	   strcpy( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId ).c_str() );
 
 	   FILE * fout = fopen( solName, "wb" );
-	   int nCols = lp->getNumCols();
 
-	   fwrite( &nCols, sizeof( int ), 1, fout );
-	   for ( int i = 0; i < lp->getNumCols(); i++ )
+	   if ( fout == NULL )
 	   {
-		  fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
+		  std::cout << "\nErro em SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+					<< "\nArquivo nao pode ser aberto.\n";
 	   }
+	   else
+	   {
+		   int nCols = lp->getNumCols();
 
-	   fclose( fout );
+		   fwrite( &nCols, sizeof( int ), 1, fout );
+		   for ( int i = 0; i < lp->getNumCols(); i++ )
+		   {
+			  fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
+		   }
+	   
+		   fclose( fout );
+	   }
 
 	   delete [] xSol;
    }
@@ -4104,6 +4198,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 	   {
 		   std::cout << "\nA partir de " << solName << " , nao foram lidas mais solucoes.\n";
 		   CARREGA_SOLUCAO = false;
+	   }
+	   else
+	   {
+		  fclose(fin);
 	   }
    }
 
@@ -4217,12 +4315,46 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		std::cerr<<"\nErro: Parametro otimizarPor deve ser ALUNO!\n";
 		exit(0);
    }  
+
+
+   char lpNameAntes[1024];
+   strcpy( lpNameAntes, "Antes" );
+   strcat( lpNameAntes, lpName );
+   lp->writeProbLP( lpNameAntes );
    
 
-	lp->writeProbLP( lpName );
-	#ifdef DEBUG
-	// lp->writeProbLP( lpName );
-	#endif
+   // -------------------------------------------------------------------
+   // Fixa variaveis z_{i,d,cp} que estão livres como zero
+      
+   std::set< int > vHashLivresOriginais;
+
+   VariableHash::iterator vit = vHash.begin();
+   for ( ; vit != vHash.end(); vit++ )
+   {
+	   Variable v = vit->first;
+	   
+	   if ( v.getType() == Variable::V_ABERTURA )
+	   {
+		   int lb = (int)(lp->getLB(vit->second) + 0.5);
+		   int ub = (int)(lp->getUB(vit->second) + 0.5);
+
+		   if ( lb != ub ) // se for variavel livre
+		   {
+			   vHashLivresOriginais.insert( vit->second );
+
+			   lp->chgUB(vit->second, 0.0);
+		   }
+	   }
+   }
+
+   char lpNameDepois[1024];
+   strcpy( lpNameDepois, "Depois" );
+   strcat( lpNameDepois, lpName );
+   lp->writeProbLP( lpNameDepois );
+
+   // -------------------------------------------------------------------
+   
+
 
 	int status = 0;
 	lp->setTimeLimit( 1e10 );
@@ -4246,6 +4378,32 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 	{ 
 		status = lp->optimize( METHOD_MIP );	
 	}
+	
+
+
+
+   // -------------------------------------------------------------------
+   // Volta as variaveis z_{i,d,cp} que estavam livres
+         
+   vit = vHash.begin();
+   for ( ; vit != vHash.end(); vit++ )
+   {
+	   if ( vit->first.getType() == Variable::V_ABERTURA )
+	   {
+		   if ( vHashLivresOriginais.find( vit->second ) ==
+			    vHashLivresOriginais.end() )
+		   {
+			   // deixa a variavel livre
+			   lp->chgUB(vit->second, 1.0);			   
+		   }
+	   }
+   }
+   
+   lp->writeProbLP( lpName );
+
+   // -------------------------------------------------------------------
+
+   
 
 	lp->setNumIntSols(0);
 	if ( cjtAlunosId == 1 )
@@ -4285,15 +4443,23 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		strcpy( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId ).c_str() );
 
 		FILE * fout = fopen( solName, "wb" );
-		int nCols = lp->getNumCols();
-
-		fwrite( &nCols, sizeof( int ), 1, fout );
-		for ( int i = 0; i < lp->getNumCols(); i++ )
+		if ( fout == NULL )
 		{
-			fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
+			std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+					<< "\nArquivo " << solName << " nao pode ser aberto.\n";
 		}
+		else
+		{
+			int nCols = lp->getNumCols();
 
-		fclose( fout );
+			fwrite( &nCols, sizeof( int ), 1, fout );
+			for ( int i = 0; i < lp->getNumCols(); i++ )
+			{
+				fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
+			}
+
+			fclose( fout );
+		}
 
 		delete [] xSol;
    }
