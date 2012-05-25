@@ -262,8 +262,8 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    psi = 5.0;
    tau = 1.0;
 
-   TEMPO_PRETATICO = 9000;
-   TEMPO_TATICO = 3600;
+   TEMPO_PRETATICO = 900;//9000;
+   TEMPO_TATICO = 900;//3600;
 
 #ifdef TATICO_CJT_ALUNOS
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
@@ -4108,22 +4108,12 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
    // -------------------------------------------------------------------
    // Volta as variaveis z_{i,d,cp} que estavam livres
          
-   vit = vHashPre.begin();
-   for ( ; vit != vHashPre.end(); vit++ )
-   {
-	   if ( vit->first.getType() == VariablePre::V_PRE_ABERTURA )
-	   {
-		   if ( vHashLivresOriginais.find( vit->second ) ==
-			    vHashLivresOriginais.end() )
-		   {
-			   // deixa a variavel livre
-			   lp->chgUB(vit->second, 1.0);			   
-		   }
-	   }
-   }
-
-
-
+	for ( std::set< int >::iterator it = vHashLivresOriginais.begin();
+		  it != vHashLivresOriginais.end(); it++)
+	{
+		lp->chgUB(*it, 1.0);
+	}
+	   
    lp->writeProbLP( lpName );
 
    // -------------------------------------------------------------------
@@ -4385,20 +4375,12 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
    // -------------------------------------------------------------------
    // Volta as variaveis z_{i,d,cp} que estavam livres
          
-   vit = vHash.begin();
-   for ( ; vit != vHash.end(); vit++ )
-   {
-	   if ( vit->first.getType() == Variable::V_ABERTURA )
-	   {
-		   if ( vHashLivresOriginais.find( vit->second ) ==
-			    vHashLivresOriginais.end() )
-		   {
-			   // deixa a variavel livre
-			   lp->chgUB(vit->second, 1.0);			   
-		   }
-	   }
-   }
-   
+	for ( std::set< int >::iterator it = vHashLivresOriginais.begin();
+		  it != vHashLivresOriginais.end(); it++)
+	{
+		lp->chgUB(*it, 1.0);
+	}
+
    lp->writeProbLP( lpName );
 
    // -------------------------------------------------------------------
