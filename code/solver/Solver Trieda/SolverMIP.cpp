@@ -263,7 +263,7 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    tau = 1.0;
 
    TEMPO_PRETATICO = 9000;
-   TEMPO_TATICO = 3600 * 3;
+   TEMPO_TATICO = 3600 + 1800;
 
 #ifdef TATICO_CJT_ALUNOS
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
@@ -300,6 +300,14 @@ SolverMIP::~SolverMIP()
    }
 
    solVars.clear();
+
+   std::set< VariablePre* >::iterator it = solVarsPre.begin();
+   for ( ; it != solVarsPre.end(); it++ )
+   {
+		delete *it;    
+   }
+
+   solVarsPre.clear();
 }
 
 std::string SolverMIP::getPreLpFileName( int campusId, int prioridade, int cjtAlunosId )
@@ -496,13 +504,61 @@ std::string SolverMIP::getSolucaoPreTaticoFileName( int campusId, int prioridade
    return solName;
 }
 
-bool SolverMIP::SolVarsPreFound( VariablePre v )
+
+std::string SolverMIP::getSolVarsPreFileName( int campusId, int prioridade, int cjtAlunosId )
 {
-	std::set< VariablePre  >::iterator it = solVarsPre.find(v);
+   std::string solName( "solVarsPre" );
+   
+   if ( campusId != 0 )
+   {	   
+		 stringstream ss;
+		 ss << campusId;
+		 solName += "_Cp"; 
+		 solName += ss.str();
+   }
+
+   if ( prioridade != 0 )
+   {
+		stringstream ss;
+		ss << prioridade;
+		solName += "_P"; 
+		solName += ss.str();   		
+   }
+
+   if ( cjtAlunosId != 0 )
+   {
+	    stringstream ss;
+		ss << cjtAlunosId;		
+		solName += "_Cjt"; 
+		solName += ss.str();   		
+   }
+
+   solName += ".txt";
+      
+   return solName;
+}
+
+
+bool SolverMIP::SolVarsPreFound( VariablePre v )
+{	
+	std::set< VariablePre* >::iterator itPreSol = solVarsPre.begin();
+	for ( ; itPreSol != solVarsPre.end(); itPreSol++ )
+	{
+		VariablePre var = **itPreSol;
+		if ( var == v )
+		{
+			return true;
+		}
+	}
+	return false;
+	/*
+	std::set< VariablePre >::iterator it = solVarsPre.find( v );
+	
 	if(it != solVarsPre.end() )
 		return true;
 	else
 		return false;
+		*/
 }
 
 void SolverMIP::carregaVariaveisSolucaoTatico( int campusId )
@@ -1539,17 +1595,18 @@ GGroup< std::pair< int,Disciplina* > > SolverMIP::retornaAtendEmCjtSala( Conjunt
 {
 	GGroup< std::pair<int,Disciplina*>  > turmaDiscsAtendidas;
 
-	std::set< VariablePre >::iterator it = solVarsPre.begin();
+	std::set< VariablePre* >::iterator it = solVarsPre.begin();
 	for ( ; it != solVarsPre.end() ; it++ )
 	{
-		if ( it->getType() == VariablePre::V_PRE_CREDITOS )
+		VariablePre *var = *it;
+		if ( var->getType() == VariablePre::V_PRE_CREDITOS )
 		{
-			ConjuntoSala *subCjtSala = it->getSubCjtSala();
+			ConjuntoSala *subCjtSala = var->getSubCjtSala();
 
 			if ( subCjtSala == cjtSala )
 			{
-				int turma = it->getTurma();
-				Disciplina * disc = it->getDisciplina();
+				int turma = var->getTurma();
+				Disciplina * disc = var->getDisciplina();
 
 				std::pair< int, Disciplina* > par = std::make_pair( turma, disc );
 
@@ -2206,8 +2263,14 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade )
 	   lp->getX( xSol );
    }
 
-
+   // Deleta as variaveis em solVarsPre ----------
+   std::set< VariablePre* >::iterator it = solVarsPre.begin();
+   for ( ; it != solVarsPre.end(); it++ )
+   {
+		delete *it;    
+   }
    solVarsPre.clear();
+   // --------------------------------------------
 
    vit = vHashPre.begin();
 
@@ -2224,7 +2287,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade )
 
       if ( v->getValue() > 0.00001 )
       {
-		 solVarsPre.insert( *v );
+		 solVarsPre.insert( v );
          
 		 char auxName[100];
          lp->getColName( auxName, col, 100 );
@@ -2298,16 +2361,17 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade )
 void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 {
 	// Resultado da alocação de alunos no pre-modelo:
-	std::set< VariablePre >::iterator itSol = solVarsPre.begin();
+	std::set< VariablePre* >::iterator itSol = solVarsPre.begin();
 
 	for ( ; itSol != solVarsPre.end(); itSol++ )
 	{
-		if ( itSol->getType() == VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC )
+		VariablePre *var = *itSol;
+		if ( var->getType() == VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC )
 		{
-			Aluno *aluno = itSol->getAluno();
-			int turma = itSol->getTurma();
-			Disciplina *disciplina = itSol->getDisciplina();
-			Campus *cp = itSol->getCampus();
+			Aluno *aluno = var->getAluno();
+			int turma = var->getTurma();
+			Disciplina *disciplina = var->getDisciplina();
+			Campus *cp = var->getCampus();
 
 			Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
 			trio.set( cp->getId(), turma, disciplina );
@@ -3149,7 +3213,7 @@ int SolverMIP::fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v )
 	anterior, e retorna esse valor, que será o valor dos limites
 	inferior e superior fixados para v.
 */
-int SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
+double SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 {
 
 	if ( v->getType() == Variable::V_CREDITOS )
@@ -3496,8 +3560,14 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    }
 
 
+   // Deleta as variaveis em solVarsPre ----------
+   std::set< VariablePre* >::iterator it = solVarsPre.begin();
+   for ( ; it != solVarsPre.end(); it++ )
+   {
+		delete *it;    
+   }
    solVarsPre.clear();
-
+   // --------------------------------------------
 
    vit = vHashPre.begin();
 
@@ -3514,7 +3584,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 
       if ( v->getValue() > 0.00001 )
       {
-		 solVarsPre.insert( *v );
+		 solVarsPre.insert( v );
          
 		 char auxName[100];
          lp->getColName( auxName, col, 100 );
@@ -3635,9 +3705,17 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
    std::map< std::pair<Disciplina*, Oferta*>, int > mapSlackDemanda;
    std::map< std::pair<Disciplina*, Oferta*>, int >::iterator itMapSlackDemanda;
 
+   // -----------------------------------------------------
+   // Detela todas as variaveis referenciadas em solVars (e em vars_x)
+   ITERA_GGROUP ( it, solVars, Variable )
+   {
+		delete *it;    
+   }
+
    vars_x.clear();
    solVars.clear();
-
+   // -----------------------------------------------------
+   
    char solFilename[1024];
    strcpy( solFilename, getSolucaoTaticoFileName( campusAtualId, prioridade, cjtAlunos ).c_str() );
 
@@ -3817,6 +3895,8 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 				statusPre = solvePreTaticoCjtAlunos( campusId, P, grupoId );    
 				carregaVariaveisSolucaoPreTatico_CjtAlunos( campusId, P, grupoId );
 								
+				imprimeSolVarsPre( campusId, P, grupoId );
+
 				preencheMapAtendimentoAluno( campusId );
 
 				std::cout<<"\n------- Campus "<< campusId << " , Conjunto-Aluno "<< grupoId << ", Prior " << P << "----------\n";
@@ -4274,8 +4354,14 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno( int campusId, int priorid
    std::map< std::pair<Disciplina*, Oferta*>, int > mapSlackDemanda;
    std::map< std::pair<Disciplina*, Oferta*>, int >::iterator itMapSlackDemanda;
    
+   // Deleta variaveis --------
+   ITERA_VECTOR ( it, vars_x, Variable )
+   {
+		delete *it;    
+   }
    vars_x.clear();
-   
+   // -------------------------
+
    char solFilename[1024];
    strcpy( solFilename, getSolucaoTaticoFileName( campusId, prioridade, 0 ).c_str() );
 
@@ -4428,6 +4514,7 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno( int campusId, int priorid
 							remover.add( v );
 						}
 					}
+
 					vars_x.clear();
 					
 					ITERA_GGROUP( itVarX, todos, Variable )
@@ -8242,6 +8329,25 @@ void SolverMIP::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlun
 	turmasFile.close();
 }
 
+void SolverMIP::imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId )
+{
+
+   // teste
+   char solPosFilename[1024];
+   strcpy( solPosFilename, getSolVarsPreFileName( campusId, prioridade, cjtAlunosId ).c_str() );
+   FILE * fout = fopen( solPosFilename, "wt" );
+   
+   std::set< VariablePre* >::iterator itSol = this->solVarsPre.begin();
+   for ( ; itSol != solVarsPre.end(); itSol++ )
+   {      
+	   VariablePre *v = *itSol;
+	   
+	   fprintf( fout, "%s = %f\n", v->toString().c_str(), v->getValue() );
+		   
+   }
+   fclose( fout );
+
+}
 
 int SolverMIP::solve()
 {
@@ -14554,11 +14660,11 @@ int SolverMIP::cria_variavel_creditos( int campusId, int cjtAlunosAtualId, int P
 						 if ( P > 1 && FIXAR_P1 )
 						 {
 							 bool found = false;
-							 int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+							 double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 							 if ( found ) // fixa!
 							 {
-								lowerBound = value;
-								upperBound = lowerBound;
+								lowerBound = value - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							 }
 							 else // livre!
 							 {
@@ -14571,8 +14677,8 @@ int SolverMIP::cria_variavel_creditos( int campusId, int cjtAlunosAtualId, int P
 							 // Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 							 if ( cjtAluno != cjtAlunosAtualId )
 							 {
-								 lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-								 upperBound = lowerBound;
+								 lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v )  - 1e-8;
+								 upperBound = lowerBound + 1e-8 + 1e-8;
 							 }
 							 // Se for variavel do cjt atual, deixa seus limites livres
 							 else
@@ -14770,7 +14876,7 @@ int SolverMIP::cria_variavel_oferecimentos( int campusId, int cjtAlunosAtualId, 
 								if ( found ) // fixa!
 								{
 									lowerBound = value - 1e-8;
-									upperBound = lowerBound + 1e-8;
+									upperBound = lowerBound + 1e-8 + 1e-8;
 								}
 								else // livre!
 								{
@@ -14783,8 +14889,8 @@ int SolverMIP::cria_variavel_oferecimentos( int campusId, int cjtAlunosAtualId, 
 								// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 								if ( cjtAluno != cjtAlunosAtualId )
 								{
-									lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-									upperBound = lowerBound;
+									lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+									upperBound = lowerBound + 1e-8 + 1e-8;
 								}
 								// Se for variavel do cjt atual, deixa seus limites livres
 								else
@@ -14894,11 +15000,11 @@ int SolverMIP::cria_variavel_abertura( int campusId, int cjtAlunosAtualId, int P
 				if ( P > 1 && FIXAR_P1 )
 				{
 					bool found = false;
-					int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+					double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 					if ( found ) // fixa!
 					{
-						lowerBound = value;
-						upperBound = lowerBound;
+						lowerBound = value - 1e-8;
+						upperBound = lowerBound + 1e-8 + 1e-8;
 					}
 					else // livre!
 					{
@@ -14911,8 +15017,8 @@ int SolverMIP::cria_variavel_abertura( int campusId, int cjtAlunosAtualId, int P
 					// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 					if ( cjtAluno != cjtAlunosAtualId )
 					{
-						lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-						upperBound = lowerBound;
+						lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+						upperBound = lowerBound + 1e-8 + 1e-8;
 					}
 					// Se for variavel do cjt atual, deixa seus limites livres
 					else
@@ -15036,11 +15142,11 @@ int SolverMIP::cria_variavel_consecutivos( int campusId, int cjtAlunosAtualId, i
 						if ( P > 1 && FIXAR_P1 )
 						{
 							bool found = false;
-							int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+							double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 							if ( found ) // fixa!
 							{
-								lowerBound = value;
-								upperBound = lowerBound;
+								lowerBound = value - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							}
 							else // livre!
 							{
@@ -15053,8 +15159,8 @@ int SolverMIP::cria_variavel_consecutivos( int campusId, int cjtAlunosAtualId, i
 							// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 							if ( cjtAluno != cjtAlunosAtualId )
 							{
-								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-								upperBound = lowerBound;
+								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							}
 							// Se for variavel do cjt atual, deixa seus limites livres
 							else
@@ -15190,11 +15296,11 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int 
 								if ( P > 1 && FIXAR_P1 )
 								{
 									bool found = false;
-									int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+									double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 									if ( found ) // fixa!
 									{
-										lowerBound = value;
-										upperBound = lowerBound;
+										lowerBound = value - 1e-8;
+										upperBound = lowerBound + 1e-8 + 1e-8;
 									}
 									else // livre!
 									{
@@ -15207,8 +15313,8 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int 
 									// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 									if ( cjtAluno != cjtAlunosAtualId )
 									{
-										lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-										upperBound = lowerBound;
+										lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+										upperBound = lowerBound + 1e-8 + 1e-8;
 									}
 									// Se for variavel do cjt atual, deixa seus limites livres
 									else
@@ -15345,11 +15451,11 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int 
 								if ( P > 1 && FIXAR_P1 )
 								{
 									bool found = false;
-									int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+									double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 									if ( found ) // fixa!
 									{
-										lowerBound = value;
-										upperBound = lowerBound;
+										lowerBound = value - 1e-8;
+										upperBound = lowerBound + 1e-8 + 1e-8;
 									}
 									else // livre!
 									{
@@ -15362,8 +15468,8 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int 
 									// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 									if ( cjtAluno != cjtAlunosAtualId )
 									{
-										lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-										upperBound = lowerBound;
+										lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+										upperBound = lowerBound + 1e-8 + 1e-8;
 									}
 									// Se for variavel do cjt atual, deixa seus limites livres
 									else
@@ -15462,11 +15568,11 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito( int campusId, int cjtAl
 				if ( P > 1 && FIXAR_P1 )
 				{
 					bool found = false;
-					int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+					double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 					if ( found ) // fixa!
 					{
-						lowerBound = value;
-						upperBound = lowerBound;
+						lowerBound = value - 1e-8;
+						upperBound = lowerBound + 1e-8 + 1e-8;
 					}
 					else // livre!
 					{
@@ -15479,8 +15585,8 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito( int campusId, int cjtAl
 					// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 					if ( cjtAluno != cjtAlunosAtualId )
 					{
-						lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-						upperBound = lowerBound;
+						lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+						upperBound = lowerBound + 1e-8 + 1e-8;
 					}
 					// Se for variavel do cjt atual, deixa seus limites livres
 					else
@@ -15615,11 +15721,11 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito( int campusId, 
 						if ( P > 1 && FIXAR_P1 )
 						{
 							bool found = false;
-							int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+							double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 							if ( found ) // fixa!
 							{
-								lowerBound = value;
-								upperBound = lowerBound;
+								lowerBound = value - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							}
 							else // livre!
 							{
@@ -15632,8 +15738,8 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito( int campusId, 
 							// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 							if ( cjtAluno != cjtAlunosAtualId )
 							{
-								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-								upperBound = lowerBound;
+								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							}
 							// Se for variavel do cjt atual, deixa seus limites livres
 							else
@@ -15682,11 +15788,11 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito( int campusId, 
 						if ( P > 1 && FIXAR_P1 )
 						{
 							bool found = false;
-							int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+							double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 							if ( found ) // fixa!
 							{
-								lowerBound = value;
-								upperBound = lowerBound;
+								lowerBound = value - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							}
 							else // livre!
 							{
@@ -15699,8 +15805,8 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito( int campusId, 
 							// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 							if ( cjtAluno != cjtAlunosAtualId )
 							{
-								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-								upperBound = lowerBound;
+								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							}
 							// Se for variavel do cjt atual, deixa seus limites livres
 							else
@@ -15814,11 +15920,11 @@ int SolverMIP::cria_variavel_abertura_compativel( int campusId, int cjtAlunosAtu
 					 if ( P > 1 && FIXAR_P1 )
 					 {
 						bool found = false;
-						int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+						double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 						if ( found ) // fixa!
 						{
-							lowerBound = value;
-							upperBound = lowerBound;
+							lowerBound = value - 1e-8;
+							upperBound = lowerBound + 1e-8 + 1e-8;
 						}
 						else // livre!
 						{
@@ -15831,8 +15937,8 @@ int SolverMIP::cria_variavel_abertura_compativel( int campusId, int cjtAlunosAtu
 						 // Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 						 if ( cjtAluno != cjtAlunosAtualId )
 						 {
-							lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-							upperBound = lowerBound;
+							lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+							upperBound = lowerBound + 1e-8 + 1e-8;
 						 }
 						 // Se for variavel do cjt atual, deixa seus limites livres
 						 else
@@ -15985,8 +16091,8 @@ int SolverMIP::cria_variavel_maxCreds_combina_Sl_aluno( int campusId, int cjtAlu
 							// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 							if ( cjtAluno != cjtAlunosAtualId )
 							{
-								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-								upperBound = lowerBound;
+								lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+								upperBound = lowerBound + 1e-8 + 1e-8;
 							}
 							// Se for variavel do cjt atual, deixa seus limites livres
 							else
@@ -16092,10 +16198,10 @@ int SolverMIP::cria_variavel_min_creds_aluno( int campusId, int cjtAlunosAtualId
 			if ( P > 1 && FIXAR_P1 )
 			{
 				bool found = false;
-				int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+				double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 				if ( found ) // fixa só o minimo!
 				{
-					lowerBound = value;
+					lowerBound = value - 1e-8;
 					upperBound = 1000.0;
 				}
 				else // livre!
@@ -16109,8 +16215,8 @@ int SolverMIP::cria_variavel_min_creds_aluno( int campusId, int cjtAlunosAtualId
 				// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 				if ( cjtAluno != cjtAlunosAtualId )
 				{
-					lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-					upperBound = lowerBound;
+					lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+					upperBound = lowerBound + 1e-8 + 1e-8;
 				}
 				// Se for variavel do cjt atual, deixa seus limites livres
 				else
@@ -16211,10 +16317,10 @@ int SolverMIP::cria_variavel_max_creds_aluno( int campusId, int cjtAlunosAtualId
 			if ( P > 1 && FIXAR_P1 )
 			{
 				bool found = false;
-				int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+				double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 				if ( found ) // fixa só o minimo!
 				{
-					lowerBound = value;
+					lowerBound = value - 1e-8;
 					upperBound = 1000.0;
 				}
 				else // livre!
@@ -16228,8 +16334,8 @@ int SolverMIP::cria_variavel_max_creds_aluno( int campusId, int cjtAlunosAtualId
 				// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 				if ( cjtAluno != cjtAlunosAtualId )
 				{
-					lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-					upperBound = lowerBound;
+					lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+					upperBound = lowerBound + 1e-8 + 1e-8;
 				}
 				// Se for variavel do cjt atual, deixa seus limites livres
 				else
@@ -16337,11 +16443,11 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina_aluno( int campusId, in
 				if ( P > 1 && FIXAR_P1 )
 				{
 					bool found = false;
-					int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+					double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 					if ( found ) // fixa!
 					{
-						lowerBound = value;
-						upperBound = lowerBound;
+						lowerBound = value - 1e-8;
+						upperBound = lowerBound + 1e-8 + 1e-8;
 					}
 					else // livre!
 					{
@@ -16354,8 +16460,8 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina_aluno( int campusId, in
 					// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 					if ( cjtAluno != cjtAlunosAtualId )
 					{
-						lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-						upperBound = lowerBound;
+						lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+						upperBound = lowerBound + 1e-8 + 1e-8;
 					}
 					// Se for variavel do cjt atual, deixa seus limites livres
 					else
@@ -16483,11 +16589,11 @@ int SolverMIP::cria_variavel_folgafolga_demanda_p_t( int campusId, int cjtAlunos
 					if ( P > 1 && FIXAR_P1 )
 					{
 						bool found = false;
-						int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+						double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 						if ( found ) // fixa!
 						{
-							lowerBound = value;
-							upperBound = lowerBound;
+							lowerBound = value - 1e-8;
+							upperBound = lowerBound + 1e-8 + 1e-8;
 						}
 						else // livre!
 						{
@@ -16500,8 +16606,8 @@ int SolverMIP::cria_variavel_folgafolga_demanda_p_t( int campusId, int cjtAlunos
 						// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 						if ( cjtAlunoP != cjtAlunosAtualId )
 						{
-							lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-							upperBound = lowerBound;
+							lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+							upperBound = lowerBound + 1e-8 + 1e-8;
 						}
 						// Se for variavel do cjt atual, deixa seus limites livres
 						else
@@ -16653,11 +16759,11 @@ int SolverMIP::cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int 
 								if ( P > 1 && FIXAR_P1 )
 								{
 									bool found = false;
-									int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+									double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
 									if ( found ) // fixa!
 									{
-										lowerBound = value;
-										upperBound = lowerBound;
+										lowerBound = value - 1e-8;
+										upperBound = lowerBound + 1e-8 + 1e-8;
 									}
 									else // livre!
 									{
@@ -16670,8 +16776,8 @@ int SolverMIP::cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int 
 									// Se for variavel de cjt anterior, fixa o seu valor igual ao da solução anterior
 									if ( cjtAluno != cjtAlunosAtualId )
 									{
-										lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v );
-										upperBound = lowerBound;
+										lowerBound = fixaLimitesVariavelTaticoCjtAlunosAnterior( &v ) - 1e-8;
+										upperBound = lowerBound + 1e-8 + 1e-8;
 									}
 									// Se for variavel do cjt atual, deixa seus limites livres
 									else

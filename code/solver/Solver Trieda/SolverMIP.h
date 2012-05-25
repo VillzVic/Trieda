@@ -556,6 +556,7 @@ public:
    void removeAtendimentosParciais( double *xSol, char solFilename[1024] );
 
    void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId );
+   void imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId );
 
 
 #ifdef TATICO_CJT_ALUNOS
@@ -568,7 +569,7 @@ public:
    int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
 
    double fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
-   int fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
+   double fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
 
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
    bool FIXAR_P1;
@@ -633,6 +634,8 @@ private:
 	std::string getSolucaoPreTaticoFileName( int campusId, int prioridade, int cjtAlunosId );	
 	
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId );	
+
+    std::string getSolVarsPreFileName( int campusId, int prioridade, int cjtAlunosId );
 
 	// Filtro para a criação das variaveis do pre-modelo,
 	// caso haja solução do tatico para iteração de prioridade de demanda anterior
@@ -704,7 +707,7 @@ private:
    ConstraintOpHash cHashOp;
 
    // Stores the solution variables ( non - zero ).
-   std::set< VariablePre > solVarsPre;
+   std::set< VariablePre* > solVarsPre;
 	
    GGroup< Variable * > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 
