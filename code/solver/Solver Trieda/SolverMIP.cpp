@@ -3406,7 +3406,7 @@ int SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 	Procura v no conjunto solução de P1. Se encontrar retorna o seu valor.
 	Se não, retorn 0 e marca FOUND = false.
 */
-int SolverMIP::fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND )
+double SolverMIP::fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND )
 {
 
 	if ( v->getType() == Variable::V_CREDITOS )
@@ -3443,8 +3443,10 @@ int SolverMIP::fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND 
 		}
 	}
 
+	std::cout<<"\nVariavel = " << v->toString().c_str() << "\n";
+
 	FOUND = false;
-	return 0;
+	return 0.0;
 }
 
 
@@ -14755,11 +14757,20 @@ int SolverMIP::cria_variavel_oferecimentos( int campusId, int cjtAlunosAtualId, 
 							if ( P > 1 && FIXAR_P1 )
 							{
 								bool found = false;
-								int value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+								double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
+
+								if ( value < 0.0001 && value > -0.0001 ) // value = 0
+								{
+									if ( found )
+									{
+										std::cout << "\nERROR: Variavel " << v.toString().c_str() << " esta zero em solVars\n";
+									}
+								}
+
 								if ( found ) // fixa!
 								{
-									lowerBound = value;
-									upperBound = lowerBound;
+									lowerBound = value - 1e-8;
+									upperBound = lowerBound + 1e-8;
 								}
 								else // livre!
 								{

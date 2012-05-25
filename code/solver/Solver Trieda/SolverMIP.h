@@ -567,7 +567,7 @@ public:
    int fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v );
    int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
 
-   int fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
+   double fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
    int fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
 
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
