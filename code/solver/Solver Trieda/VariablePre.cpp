@@ -45,6 +45,10 @@ void VariablePre::reset()
    parOft.first = NULL;
    parOft.second = NULL;
    aluno = NULL;
+   turma1 = -1;
+   turma2 = -1;
+   disc1 = NULL;
+   disc2 = NULL;
 }
 
 VariablePre::~VariablePre()
@@ -70,6 +74,10 @@ VariablePre & VariablePre::operator = ( const VariablePre & var )
    this->parCursos = var.getParCursos();
    this->parOft = var.getParOfertas();
    this->aluno = var.getAluno();
+   this->turma1 = var.getTurma1();
+   this->turma2 = var.getTurma2();
+   this->disc1 = var.getDisciplina1();
+   this->disc2 = var.getDisciplina2();
 
    return *this;
 }
@@ -126,6 +134,18 @@ bool VariablePre::operator < ( const VariablePre & var ) const
 
    if ( E_MENOR( this->getAluno(), var.getAluno() ) ) return true;
    if ( E_MENOR( var.getAluno(), this->getAluno() ) ) return false;
+     
+   if ( this->getTurma1() < var.getTurma1() ) return true;
+   if ( this->getTurma1() > var.getTurma1() ) return false;
+   
+   if ( this->getTurma2() < var.getTurma2() ) return true;
+   if ( this->getTurma2() > var.getTurma2() ) return false;
+
+   if ( E_MENOR( this->getDisciplina1(),var.getDisciplina1() ) ) return true;
+   if ( E_MENOR( var.getDisciplina1(), this->getDisciplina1() ) ) return false;
+
+   if ( E_MENOR( this->getDisciplina2(),var.getDisciplina2() ) ) return true;
+   if ( E_MENOR( var.getDisciplina2(), this->getDisciplina2() ) ) return false;
 
    return false;
 }
@@ -176,7 +196,10 @@ std::string VariablePre::toString()
 		str <<"fps"; break;
 	 case V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL:
 		str <<"ft"; break;
-				
+	 case V_PRE_TURMAS_COMPART:
+		str <<"w"; break;
+
+						
     default:
         str << "!";
    }
@@ -259,6 +282,26 @@ std::string VariablePre::toString()
    if ( aluno )
    {
 	   str << "_Aluno" << aluno->getAlunoId();
+   }
+
+   if ( turma1 >= 0 )
+   {
+      str << "_Turma1:" << turma1;
+   }
+
+   if ( disc1 != NULL )
+   {
+      str << "_Disc1:" << disc1->getId();
+   }
+   
+   if ( turma2 >= 0 )
+   {
+      str << "_Turma2:" << turma2;
+   }
+
+   if ( disc2 != NULL )
+   {
+      str << "_Disc2:" << disc2->getId();
    }
 
    str << "}";

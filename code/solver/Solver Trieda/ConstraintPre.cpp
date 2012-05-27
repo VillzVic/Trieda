@@ -51,6 +51,11 @@ ConstraintPre& ConstraintPre::operator = ( const ConstraintPre & cons )
    this->cjtSalaCompart = cons.getSubCjtSalaCompart();
    this->parOfts = cons.getParOfertas();
    this->aluno = cons.getAluno();
+   this->dia = cons.getDia();
+   this->turma1 = cons.getTurma1();
+   this->turma2 = cons.getTurma2();
+   this->disc1 = cons.getDisciplina1();
+   this->disc2 = cons.getDisciplina2();
 
    return *this;
 }
@@ -111,6 +116,21 @@ bool ConstraintPre::operator < ( const ConstraintPre & cons ) const
    if ( E_MENOR( this->getAluno(), cons.getAluno() ) ) return true;
    if ( E_MENOR( cons.getAluno(), this->getAluno() ) ) return false;
 
+   if (this->getDia() < cons.getDia()) return true;
+   if (this->getDia() > cons.getDia()) return false;
+   
+   if ( this->getTurma1() < cons.getTurma1() ) return true;
+   if ( this->getTurma1() > cons.getTurma1() ) return false;
+   
+   if ( this->getTurma2() < cons.getTurma2() ) return true;
+   if ( this->getTurma2() > cons.getTurma2() ) return false;
+
+   if ( E_MENOR( this->getDisciplina1(),cons.getDisciplina1() ) ) return true;
+   if ( E_MENOR( cons.getDisciplina1(), this->getDisciplina1() ) ) return false;
+
+   if ( E_MENOR( this->getDisciplina2(),cons.getDisciplina2() ) ) return true;
+   if ( E_MENOR( cons.getDisciplina2(), this->getDisciplina2() ) ) return false;
+
    return false;
 
 }
@@ -140,6 +160,11 @@ void ConstraintPre::reset()
    parOfts.first = NULL;
    parOfts.second = NULL;
    aluno = NULL;
+   dia = -1;
+   turma1 = -1;
+   turma2 = -1;
+   disc1 = NULL;
+   disc2 = NULL;
 }
 
 std::string ConstraintPre::toString()
@@ -191,6 +216,12 @@ std::string ConstraintPre::toString()
       ss << "__(C_ALUNO_DISC_PRATICA_TEORICA):"; break;	    
    case C_ALUNO_PRIORIDADES_DEMANDA:
       ss << "__(C_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
+   case C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO:
+      ss << "__(C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO):"; break;	  
+   case C_PRE_ATIVA_VAR_COMPART_TURMA:
+      ss << "__(C_PRE_ATIVA_VAR_COMPART_TURMA):"; break;	  
+	  	    	  
+	  
 	  
    default:
       ss << "!";
@@ -275,6 +306,31 @@ std::string ConstraintPre::toString()
    if ( aluno )
    {
 	   ss << "_Aluno" << aluno->getAlunoId();
+   }
+   
+   if ( dia != -1 )
+   {
+	   ss << "_Dia" << dia;
+   }
+
+   if ( turma1 >= 0 )
+   {
+      ss << "_Turma1." << turma1;
+   }
+
+   if ( disc1 != NULL )
+   {
+      ss << "_Disc1." << disc1->getId();
+   }
+   
+   if ( turma2 >= 0 )
+   {
+      ss << "_Turma2." << turma2;
+   }
+
+   if ( disc2 != NULL )
+   {
+      ss << "_Disc2." << disc2->getId();
    }
 
    ss << "_}";

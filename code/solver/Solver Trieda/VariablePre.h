@@ -34,7 +34,9 @@ public:
 	  V_PRE_ALOCA_ALUNO_TURMA_DISC = 12,			// s_{a,i,d,cp}
 	  V_PRE_SLACK_PRIOR_INF = 13,					// fpi_{a}
 	  V_PRE_SLACK_PRIOR_SUP = 14,					// fps_{a}
-	  V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL = 15		// ft_{i,d}
+	  V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL = 15,		// ft_{i,d}
+
+	  V_PRE_TURMAS_COMPART = 16
 
    };
 
@@ -82,6 +84,15 @@ public:
    
    Aluno* getAluno() const { return aluno; }
 
+   int getTurma1() const { return turma1; }
+   
+   int getTurma2() const { return turma2; }
+
+   Disciplina* getDisciplina1() const { return disc1; }
+   
+   Disciplina* getDisciplina2() const { return disc2; }
+
+
    //==================================================
    // SET METHODS 
    //==================================================
@@ -122,6 +133,14 @@ public:
 
    void setAluno( Aluno * a ) { aluno = a; }
 
+   void setTurma1( int i1 ) { turma1 = i1; }
+   
+   void setTurma2( int i2 ) { turma2 = i2; }
+
+   void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
+
+   void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
+
    //==================================================
    // OPERATORS 
    //==================================================
@@ -152,6 +171,11 @@ private:
    int j; // subbloco
    Oferta * o; // oferta
    Aluno *aluno;
+
+   int turma1;          // i1
+   Disciplina *disc1;   // d1
+   int turma2;          // i2
+   Disciplina *disc2;   // d2
 
 };
 

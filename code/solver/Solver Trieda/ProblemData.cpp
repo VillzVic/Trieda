@@ -1976,6 +1976,20 @@ int ProblemData::haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int 
 }
 
 
+bool ProblemData::haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina )
+{
+	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+	{
+		if ( itAlDem->demanda->getDisciplinaId() == disciplina->getId() && 
+		 	 itAlDem->getPrioridade() == P_ATUAL && 
+			 itAlDem->demanda->oferta->getCampusId() == campusId )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 int ProblemData::getQtdAlunoDemandaAtualPorCampus( int campusId )
 {
 	int n = 0;

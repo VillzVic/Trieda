@@ -114,6 +114,9 @@ public:
    int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
    int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL );			// ft_{i,d}
 
+   int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );			// w_{i,d,i',d'}
+
+
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
@@ -148,7 +151,11 @@ public:
    int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20
    int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
 
+   // Só para p2 em diante
+   int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade );
+   int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );
 
+   
 
    /********************************************************************
    **                    CRIAÇÃO DE VARIAVEIS DO TATICO               **
@@ -573,6 +580,7 @@ public:
 
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
    bool FIXAR_P1;
+   bool FIXAR_TATICO_P1;
 
 #endif
 
@@ -608,6 +616,12 @@ public:
    Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
    ConjuntoSala* retornaSalaDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
    GGroup< std::pair< int,Disciplina* > > retornaAtendEmCjtSala( ConjuntoSala * cjtSala );
+
+   GGroup< Trio< int, Disciplina*, int > > retornaAtendEmCjtSalaDia( ConjuntoSala * cjtSala, int dia );
+
+   Unidade* retornaUnidadeDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
+   ConjuntoSala* retornaSalaDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
+   GGroup< std::pair< int,Disciplina* > > retornaAtendTaticoEmCjtSala( ConjuntoSala * cjtSala );
 
    Variable * criaVariavelAlunos(
       Campus *, Unidade *, ConjuntoSala *, Sala *,
@@ -709,7 +723,7 @@ private:
    // Stores the solution variables ( non - zero ).
    std::set< VariablePre* > solVarsPre;
 	
-   GGroup< Variable * > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
+   GGroup< Variable *, LessPtr<Variable> > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 
    std::vector< VariableOp * > solVarsOp;
    

@@ -442,7 +442,8 @@ public:
    int retornaCjtAlunosId( Aluno* aluno );
    int haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId );
    int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
-
+   bool haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina );
+   
    int getQtdAlunoDemandaAtualPorCampus( int campusId );
 
    void imprimeCjtAlunos( int campusId );

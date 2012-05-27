@@ -45,7 +45,10 @@ public:
 	  C_ATENDIMENTO_ALUNO = 18,						// Restricao 1.18
 	  C_ALUNO_UNICA_TURMA_DISC = 19,				// Restricao 1.19
 	  C_ALUNO_DISC_PRATICA_TEORICA = 20,			// Restricao 1.20
-	  C_ALUNO_PRIORIDADES_DEMANDA = 21				// Restricao 1.21
+	  C_ALUNO_PRIORIDADES_DEMANDA = 21,				// Restricao 1.21
+
+	  C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO = 22,
+	  C_PRE_ATIVA_VAR_COMPART_TURMA = 23
 
    };
 
@@ -95,6 +98,12 @@ public:
    ConjuntoSala * getSubCjtSalaCompart() const { return cjtSalaCompart; }
    std::pair<Oferta*, Oferta*> getParOfertas() const { return parOfts; }
    Aluno* getAluno() const { return aluno; } 
+   int getDia() const { return dia; } 
+
+   int getTurma1() const { return turma1; }   
+   int getTurma2() const { return turma2; }
+   Disciplina* getDisciplina1() const { return disc1; }   
+   Disciplina* getDisciplina2() const { return disc2; }
 
    //==================================================
    // SET METHODS 
@@ -121,6 +130,12 @@ public:
    void setSubCjtSalaCompart( ConjuntoSala *s ){ cjtSalaCompart = s; }
    void setParOfertas( std::pair<Oferta*, Oferta*> ofts ){ parOfts = ofts; }
    void setAluno( Aluno* a ){ aluno = a; }
+   void setDia( int t ){ dia = t; }
+
+   void setTurma1( int i1 ) { turma1 = i1; }   
+   void setTurma2( int i2 ) { turma2 = i2; }
+   void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
+   void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
 
 private:
 
@@ -153,6 +168,13 @@ private:
    std::pair<Oferta*, Oferta*> parOfts; // par de ofertas (restrição 1.2.36)
 
    Aluno* aluno;
+
+   int dia;
+
+   int turma1;          // i1
+   Disciplina *disc1;   // d1
+   int turma2;          // i2
+   Disciplina *disc2;   // d2
 
 };
 

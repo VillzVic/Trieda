@@ -262,12 +262,13 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    psi = 5.0;
    tau = 1.0;
 
-   TEMPO_PRETATICO = 900;//9000;
-   TEMPO_TATICO = 900;//3600;
+   TEMPO_PRETATICO = 9000;//9000;
+   TEMPO_TATICO = 1800;//3600;//450;//3600;
 
 #ifdef TATICO_CJT_ALUNOS
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
    FIXAR_P1 = true;
+   FIXAR_TATICO_P1 = true;
 #endif
 
    try
@@ -294,7 +295,7 @@ SolverMIP::~SolverMIP()
       delete lp;
    }
 
-   ITERA_GGROUP ( it, solVars, Variable )
+   ITERA_GGROUP_LESSPTR ( it, solVars, Variable )
    {
 		delete *it;    
    }
@@ -1560,7 +1561,7 @@ Unidade* SolverMIP::retornaUnidadeDeAtendimento( int turma, Disciplina* discipli
 		}
 	}
 	
-	return unid;
+	return NULL;
 }
 
 ConjuntoSala* SolverMIP::retornaSalaDeAtendimento( int turma, Disciplina* disciplina, Campus* campus )
@@ -1587,7 +1588,73 @@ ConjuntoSala* SolverMIP::retornaSalaDeAtendimento( int turma, Disciplina* discip
 		}
 	}
 	
-	return s;
+	return NULL;
+}
+
+Unidade* SolverMIP::retornaUnidadeDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus )
+{
+	Unidade *unid = NULL;
+
+	Variable v;		   
+	v.reset();
+	v.setType( Variable::V_CREDITOS ); // x_{i,d,u,s,t}
+	v.setTurma( turma );
+	v.setDisciplina( disciplina );
+
+	ITERA_GGROUP_LESSPTR( itUnid, campus->unidades, Unidade )
+	{
+		unid = *itUnid;
+		v.setUnidade( unid );
+
+		ITERA_GGROUP_LESSPTR( itCjtSala, itUnid->conjutoSalas, ConjuntoSala )
+		{
+			v.setSubCjtSala( *itCjtSala );
+			v.setSala( (*itCjtSala)->salas.begin()->second );
+
+			ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
+			{
+				v.setDia( *itDia );
+
+				if ( solVars.find( &v ) != solVars.end() )
+					return unid;
+			}
+		}
+	}
+	
+	return NULL;
+}
+
+ConjuntoSala* SolverMIP::retornaSalaDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus )
+{
+	ConjuntoSala *s = NULL;
+
+	Variable v;		   
+	v.reset();
+	v.setType( Variable::V_CREDITOS ); // x_{i,d,u,s}
+	v.setTurma( turma );
+	v.setDisciplina( disciplina );
+
+	ITERA_GGROUP_LESSPTR( itUnid, campus->unidades, Unidade )
+	{
+		v.setUnidade( *itUnid );
+
+		ITERA_GGROUP_LESSPTR( itCjtSala, itUnid->conjutoSalas, ConjuntoSala )
+		{
+			s = *itCjtSala;
+			v.setSubCjtSala( s );
+			v.setSala( s->salas.begin()->second );
+
+			ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
+			{
+				v.setDia( *itDia );
+
+				if ( solVars.find( &v ) != solVars.end() )
+					return s;
+			}
+		}
+	}
+	
+	return NULL;
 }
 
 GGroup< std::pair< int,Disciplina* > > SolverMIP::retornaAtendEmCjtSala( ConjuntoSala * cjtSala )
@@ -1616,6 +1683,67 @@ GGroup< std::pair< int,Disciplina* > > SolverMIP::retornaAtendEmCjtSala( Conjunt
 
 	return turmaDiscsAtendidas;
 }
+
+GGroup< std::pair< int,Disciplina* > > SolverMIP::retornaAtendTaticoEmCjtSala( ConjuntoSala * cjtSala )
+{
+	GGroup< std::pair<int,Disciplina*>  > turmaDiscsAtendidas;
+
+	 GGroup< Variable *, LessPtr<Variable> >::iterator it = solVars.begin();
+	for ( ; it != solVars.end() ; it++ )
+	{
+		Variable *var = *it;
+		if ( var->getType() == Variable::V_CREDITOS )
+		{
+			ConjuntoSala *subCjtSala = var->getSubCjtSala();
+
+			if ( subCjtSala == cjtSala )
+			{
+				int turma = var->getTurma();
+				Disciplina * disc = var->getDisciplina();
+
+				std::pair< int, Disciplina* > par = std::make_pair( turma, disc );
+
+				turmaDiscsAtendidas.add( par );
+			}
+		}
+	}
+
+	return turmaDiscsAtendidas;
+}
+
+
+GGroup< Trio< int, Disciplina*, int > > SolverMIP::retornaAtendEmCjtSalaDia( ConjuntoSala * cjtSala, int dia )
+{
+	// turma, disciplina, numero de creditos
+	GGroup< Trio< int, Disciplina*, int >  > turmaDiscsAtendidas;
+
+	GGroup< Variable *, LessPtr<Variable> >::iterator it = solVars.begin();
+	for ( ; it != solVars.end() ; it++ )
+	{
+		Variable *var = *it;
+		if ( var->getType() == Variable::V_CREDITOS )
+		{
+			ConjuntoSala *var_cjtSala = var->getSubCjtSala();
+			int var_dia = var->getDia();
+
+			if ( var_cjtSala == cjtSala &&
+				 var_dia == dia )
+			{
+				int turma = var->getTurma();
+				Disciplina * disc = var->getDisciplina();
+				int nCreds = var->getValue();
+
+				Trio< int, Disciplina*, int > trio;
+				trio.set( turma, disc, nCreds );
+
+				turmaDiscsAtendidas.add( trio );
+			}
+		}
+	}
+
+	return turmaDiscsAtendidas;
+}
+
 
 bool SolverMIP::criaVariavelTatico( Variable *v )
 {
@@ -2673,7 +2801,7 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
    strcpy( solPosFilename, "pos_" );
    strcat( solPosFilename, solFilename );
    FILE * fout = fopen( solPosFilename, "wt" );
-   ITERA_GGROUP( itSol, solVars, Variable )
+   ITERA_GGROUP_LESSPTR( itSol, solVars, Variable )
    {      
 	   Variable *v = *itSol;
 	   
@@ -3219,7 +3347,7 @@ double SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 	{
 		// A variavel x adquire o campo "sala" em solVars, mas v ainda não o tem,
 		// por isso x tem que ser comparada separada, por atributo
-		ITERA_GGROUP ( itVar, solVars, Variable )
+		ITERA_GGROUP_LESSPTR ( itVar, solVars, Variable )
 		{
 			Variable vSol = **itVar;		
 
@@ -3236,13 +3364,19 @@ double SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 	}
 	else
 	{
+		GGroup< Variable *, LessPtr<Variable> >::iterator itVar = solVars.find( v );
+		if ( itVar != solVars.end() )
+		{
+			return (*itVar)->getValue();
+		}
+		/*
 		ITERA_GGROUP ( itVar, solVars, Variable )
 		{
 			Variable vSol = **itVar;
 		
 			if ( vSol == *v )
 				return vSol.getValue();
-		}
+		}*/
 	}
 
 	return 0;
@@ -3476,7 +3610,7 @@ double SolverMIP::fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOU
 	{
 		// A variavel x adquire o campo "sala" em solVars, mas v ainda não o tem,
 		// por isso x tem que ser comparada separada, por atributo
-		ITERA_GGROUP ( itVar, solVars, Variable )
+		ITERA_GGROUP_LESSPTR ( itVar, solVars, Variable )
 		{
 			Variable vSol = **itVar;		
 
@@ -3494,7 +3628,14 @@ double SolverMIP::fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOU
 	}
 	else
 	{
-		ITERA_GGROUP ( itVar, solVars, Variable )
+		GGroup< Variable *, LessPtr<Variable> >::iterator itVar = solVars.find( v );
+		if ( itVar != solVars.end() )
+		{
+			FOUND = true;
+			return (*itVar)->getValue();
+		}
+		/*
+		ITERA_GGROUP_LESSPTR ( itVar, solVars, Variable )
 		{
 			Variable vSol = **itVar;
 		
@@ -3503,11 +3644,9 @@ double SolverMIP::fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOU
 				FOUND = true;
 				return vSol.getValue();
 			}
-		}
+		}*/
 	}
-
-	std::cout<<"\nVariavel = " << v->toString().c_str() << "\n";
-
+	
 	FOUND = false;
 	return 0.0;
 }
@@ -3718,7 +3857,7 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
 
    // -----------------------------------------------------
    // Detela todas as variaveis referenciadas em solVars (e em vars_x)
-   ITERA_GGROUP ( it, solVars, Variable )
+   ITERA_GGROUP_LESSPTR ( it, solVars, Variable )
    {
 		delete *it;    
    }
@@ -4388,7 +4527,9 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
    
 
 	lp->setNumIntSols(0);
-	if ( cjtAlunosId == 1 )
+	if ( cjtAlunosId == 1 && prioridade > 1 && !FIXAR_TATICO_P1 )
+		lp->setTimeLimit( TEMPO_TATICO * 3 );
+	else if ( cjtAlunosId == 1 )
 		lp->setTimeLimit( TEMPO_TATICO * 2 );
 	else if ( cjtAlunosId == 2 )
 		lp->setTimeLimit( TEMPO_TATICO * 1.5 );
@@ -9857,6 +9998,19 @@ int SolverMIP::cria_preVariaveis(  int campusId, int prioridade, int grupoAlunos
 #endif
 		
 
+	if ( FIXAR_TATICO_P1 && prioridade > 1 )
+	{
+		timer.start();
+		num_vars += cria_preVariavel_turmas_compartilhadas( campusId, grupoAlunosId, prioridade ); // w_{i,d,i',d'}
+		timer.stop();
+		dif = timer.getCronoCurrSecs();
+
+	#ifdef PRINT_cria_variaveis
+		std::cout << "numVars \"w\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl;
+		numVarsAnterior = num_vars;
+	#endif
+	
+	}
 
 	return num_vars;
 }
@@ -11423,6 +11577,154 @@ int SolverMIP::cria_preVariavel_folga_abre_turma_sequencial( int campusId, int c
 }
 
 
+// w_{i,d,i',d'}
+int SolverMIP::cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL )
+{
+	int num_vars = 0;
+	
+	if ( P_ATUAL < 2 )
+	{
+	   return num_vars;
+	}
+
+   std::map< int /*Id Campus*/, GGroup< int > /*Id Discs*/ >::iterator it_CpDisc = problemData->cp_discs.begin();
+
+   for ( ; it_CpDisc != problemData->cp_discs.end(); it_CpDisc++ )
+   {
+	  Campus *cp = problemData->refCampus[ it_CpDisc->first ];
+
+	  if ( cp->getId() != campusId )
+	  {
+		  continue;
+	  }
+
+      ITERA_GGROUP_N_PT( itDisc1, it_CpDisc->second, int )
+      {
+		 Disciplina *disciplina1 = problemData->refDisciplinas[ *itDisc1 ];
+		 
+		 #pragma region Equivalencias
+		 if ( ( problemData->mapDiscSubstituidaPor.find( disciplina1 ) !=
+				problemData->mapDiscSubstituidaPor.end() ) &&
+				!problemData->ehSubstituta( disciplina1 ) )
+		 {
+		 	continue;
+		 }
+		 #pragma endregion
+	 
+		 int discGrupoAlunosId = problemData->retornaCjtAlunosId( disciplina1->getId() );
+
+ 		 if ( discGrupoAlunosId > cjtAlunosId || 
+			  discGrupoAlunosId == 0 )
+		 {
+			 continue;
+		 }
+		 
+		 bool haDemandaDisc1P2 = problemData->haDemandaP2DiscNoCampus( campusId, P_ATUAL, disciplina1 );
+
+         for ( int turma1 = 0; turma1 < disciplina1->getNumTurmas(); turma1++ )
+         {					
+			ConjuntoSala* cjtSala1 = retornaSalaDeAtendimentoTaticoAnterior( turma1, disciplina1, cp );
+			
+			ITERA_GGROUP_INIC_N_PT( itDisc2, itDisc1, it_CpDisc->second, int )
+			{
+				Disciplina *disciplina2 = problemData->refDisciplinas[ *itDisc2 ];
+		 
+				if ( disciplina2 == disciplina1 )
+					continue;
+
+				#pragma region Equivalencias
+				if ( ( problemData->mapDiscSubstituidaPor.find( disciplina2 ) !=
+					   problemData->mapDiscSubstituidaPor.end() ) &&
+					!problemData->ehSubstituta( disciplina2 ) )
+				{
+		 			continue;
+				}
+				#pragma endregion
+	 
+				bool haDemandaDisc2P2 = problemData->haDemandaP2DiscNoCampus( campusId, P_ATUAL, disciplina2 );
+
+				// Só cria a variavel se pelo menos 1 das disciplinas tiver demanda de prioridade 2
+				if ( !haDemandaDisc1P2 && !haDemandaDisc2P2 )
+				{
+					continue;
+				}
+
+				int discGrupoAlunosId = problemData->retornaCjtAlunosId( disciplina2->getId() );
+
+ 				if ( discGrupoAlunosId > cjtAlunosId || 
+					discGrupoAlunosId == 0 )
+				{
+					continue;
+				}
+		 
+				for ( int turma2 = 0; turma2 < disciplina2->getNumTurmas(); turma2++ )
+				{
+					ConjuntoSala* cjtSala2 = retornaSalaDeAtendimentoTaticoAnterior( turma2, disciplina2, cp );
+
+					// Esta variavel por enquanto só é usada para atendimentos em salas diferentes
+					if ( cjtSala1 != NULL && cjtSala2 != NULL )
+						if ( cjtSala1 == cjtSala2 )
+							continue;
+
+					// Esta variavel por enquanto só sera usada se pelo menos uma das turmas já existir de p1
+					if ( cjtSala1 == NULL && cjtSala2 == NULL )
+						continue;
+
+
+					VariablePre v;
+					v.reset();
+					v.setType( VariablePre::V_PRE_TURMAS_COMPART );
+					v.setTurma1( turma1 );            // i1
+					v.setDisciplina1( disciplina1 );  // d1
+					v.setTurma2( turma2 );            // i2
+					v.setDisciplina2( disciplina2 );  // d2					
+
+
+					if ( vHashPre.find(v) == vHashPre.end() )
+					{
+						lp->getNumCols();
+						vHashPre[v] = lp->getNumCols();
+
+						double coef = 0.0;
+
+						if ( problemData->parametros->funcao_objetivo == 0 )
+						{							 
+							coef = -1;
+						}
+						else if ( problemData->parametros->funcao_objetivo == 1 )
+						{					
+							coef = 1;
+						}						                
+						 
+						double lowerBound = 0.0;
+						double upperBound = 1.0;
+
+						// Se as turmas já estão alocadas com alunos em comum, já fixa a variavel
+						GGroup<Aluno*> alunosComuns = problemData->alunosEmComum( turma1, disciplina1, turma2, disciplina2, cp );
+						if ( alunosComuns.size() != 0 )
+						{
+							lowerBound = 1.0 - 1e-8;
+							upperBound = 1.0 + 1e-8;						
+						}
+
+						OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
+
+						lp->newCol( col ); 
+                
+						num_vars++;
+					}
+				}
+			}
+         }
+      }
+   }
+
+	return num_vars;
+
+
+}
+
+
 /********************************************************************
 **                    Restrições do pre-Tatico                     **
 *********************************************************************/
@@ -11664,7 +11966,30 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 	   std::cout << "numRest \"1.21\": " << (restricoes - numRestAnterior) << std::endl;
 	   numRestAnterior = restricoes;
 		#endif
-	   
+
+	   if ( FIXAR_TATICO_P1 && prioridade > 1 )
+	   {
+			timer.start();
+			restricoes += cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( campusId, cjtAlunosId, prioridade );		// Restrição 1.22
+			timer.stop();
+			dif = timer.getCronoCurrSecs();
+
+			#ifdef PRINT_cria_restricoes
+		   std::cout << "numRest \"1.22\": " << (restricoes - numRestAnterior) << std::endl;
+		   numRestAnterior = restricoes;
+			#endif
+
+
+			timer.start();
+			restricoes += cria_preRestricao_ativa_var_compart_turma( campusId, cjtAlunosId, prioridade );		// Restrição 1.22
+			timer.stop();
+			dif = timer.getCronoCurrSecs();
+
+			#ifdef PRINT_cria_restricoes
+		   std::cout << "numRest \"1.23\": " << (restricoes - numRestAnterior) << std::endl;
+		   numRestAnterior = restricoes;
+			#endif
+	   }
 
    }
 
@@ -14512,6 +14837,520 @@ int SolverMIP::cria_preRestricao_prioridadesDemanda( int campusId, int prior, in
 
 }
 
+
+int SolverMIP::cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosAtualId, int prioridade )
+{
+   int restricoes = 0;
+   
+   if ( prioridade < 2 )
+   {
+	   return restricoes;
+   }
+   
+   char name[ 200 ];						   
+   int nnz = 50;
+
+   GGroup< Sala *, LessPtr< Sala > > salas = this->problemData->getSalas();
+
+   ConstraintPre c;
+   VariablePreHash::iterator vit;
+   ConstraintPreHash::iterator cit;
+
+   Campus * campus = problemData->refCampus[campusId];
+   	
+   GGroup< int > disciplinas = problemData->cp_discs[campusId];
+
+   ITERA_GGROUP_N_PT( itDisc, disciplinas, int )
+   {
+	   Disciplina * disciplina = problemData->refDisciplinas[*itDisc];
+
+	   if ( ! problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
+	   {
+		   continue;
+	   }
+
+		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
+
+		if ( itMapDiscCjt == problemData->cjtDisciplinas.end() )
+		{
+			continue; // disciplina não pertence a nenhum cjtDisciplina, erro!
+		}
+
+	   for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+	   {
+		   // só para turmas criadas em p1
+		   if ( ! problemData->existeTurmaDiscCampus( turma, disciplina->getId(), campusId ) )
+		   {
+				continue;
+		   }
+
+		   Unidade* u = retornaUnidadeDeAtendimento( turma, disciplina, campus );
+		   ConjuntoSala* s = retornaSalaDeAtendimento( turma, disciplina, campus );
+
+		   // Para cada dia
+		   ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
+		   {
+			    int dia = *itDia;
+
+
+				// -----------------------------------------------------
+				// Procura se há atendimento tatico fixado em p1
+				Variable varTatico;
+				varTatico.reset();
+				varTatico.setType( Variable::V_CREDITOS );
+				varTatico.setDisciplina( disciplina );
+				varTatico.setTurma( turma );
+				varTatico.setDia( dia );
+				varTatico.setUnidade( u );
+				varTatico.setSubCjtSala( s );	
+
+				bool found = false;
+				double nCredsDisciplinaNoDia = fixaLimitesVariavelTaticoPriorAnterior( &varTatico, found );
+				if ( nCredsDisciplinaNoDia <= 0.0 || !found )
+				{
+					continue;
+				}
+				// -----------------------------------------------------
+						
+				
+			   // Lado direito caso so haja 1 semana letiva na restrição
+			   double rhs = disciplina->getCalendario()->getTempoTotal( dia );
+
+			   // Calcula o lado direito geral das restrições
+			   double rhs_geral = 99999999;	   
+			   GGroup<Calendario*> calendarios = campus->getCalendarios();
+			   ITERA_GGROUP( itSl, calendarios, Calendario )
+			   {
+					double tempo = itSl->getTempoTotal( dia );
+					if ( tempo < rhs_geral )
+						rhs_geral = tempo;
+			   }
+
+			   ITERA_GGROUP_LESSPTR( itUnid, campus->unidades, Unidade )
+			   {
+				   // Para cada sala diferente da sala s
+				   ITERA_GGROUP_LESSPTR( itCjtSala, itUnid->conjutoSalas, ConjuntoSala )
+					{
+						ConjuntoSala *cjtSala = *itCjtSala;
+		   
+						if ( cjtSala == s )
+						{
+							continue;
+						}
+
+						c.reset();
+						c.setType( ConstraintPre::C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO );
+						c.setSubCjtSala( cjtSala );
+						c.setDia( dia );
+						c.setDisciplina( disciplina );
+						c.setTurma( turma );
+
+						cit = cHashPre.find(c);
+						if ( cit != cHashPre.end() )
+						{
+							continue;
+						}
+
+						cHashPre[ c ] = lp->getNumRows();
+				   
+						sprintf( name, "%s", c.toString().c_str() );
+						OPT_ROW row( nnz, OPT_ROW::LESS , rhs, name );
+											    
+						VariablePre v;
+						v.reset();
+						v.setType( VariablePre::V_PRE_ABERTURA );
+						v.setTurma( turma );            // i
+						v.setDisciplina( disciplina );  // d
+						v.setCampus( campus );			// cp
+												
+						double tempoDiscV = disciplina->getTempoCredSemanaLetiva() * nCredsDisciplinaNoDia;
+
+						vit = vHashPre.find( v );
+					    if ( vit != vHashPre.end())
+					    {
+							row.insert( vit->second, tempoDiscV );
+					    }
+						
+						// ---------------------------------------------------------
+						// Procura os atendimentos feitos na sala cjtSala
+						GGroup< Trio< int,Disciplina*,int > > atends = retornaAtendEmCjtSalaDia( cjtSala, dia );
+
+						GGroup< Trio< int,Disciplina*,int > >::iterator itAtends = atends.begin();
+						for ( ; itAtends != atends.end(); itAtends++ )
+						{
+							int turmaSum = (*itAtends).first;
+							Disciplina *discSum = (*itAtends).second;
+							double nCredsDiscSumNoDia = (*itAtends).third;
+
+							double tempo1Cred = discSum->getTempoCredSemanaLetiva();
+
+							v.reset();
+							v.setType( VariablePre::V_PRE_TURMAS_COMPART );
+							v.setTurma1( turma );				// i
+							v.setDisciplina1( disciplina );     // d
+							v.setTurma2( turmaSum );			// i
+							v.setDisciplina2( discSum );		// d
+							
+							vit = vHashPre.find( v );
+							if ( vit != vHashPre.end() )
+							{
+								row.insert( vit->second, tempo1Cred*nCredsDiscSumNoDia );
+
+								if ( discSum->getCalendario()->getTempoTotal( dia ) != rhs )
+								{
+									row.setRhs( rhs_geral );
+									rhs = rhs_geral;
+								}
+							}
+							else // Se não achar a variavel, procurar pela análoga, com os pares turma/disc trocados
+							{
+								v.reset();
+								v.setType( VariablePre::V_PRE_TURMAS_COMPART );
+								v.setTurma2( turma );				// i
+								v.setDisciplina2( disciplina );     // d
+								v.setTurma1( turmaSum );			// i
+								v.setDisciplina1( discSum );		// d
+
+								vit = vHashPre.find( v );
+								if ( vit != vHashPre.end() )
+								{
+									row.insert( vit->second, tempo1Cred*nCredsDiscSumNoDia );
+
+									if ( discSum->getCalendario()->getTempoTotal( dia ) != rhs )
+									{
+										row.setRhs( rhs_geral );
+										rhs = rhs_geral;
+									}
+								}
+							}
+
+						}
+
+						if ( row.getnnz() > 1 )
+						{
+							lp->addRow( row );
+							restricoes++;
+						}
+					}
+			   }
+		   }
+	   }   
+   }
+
+   return restricoes;
+
+}
+
+
+int SolverMIP::cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  )
+{
+    int restricoes = 0;
+
+    if ( prior < 2 )
+	   return restricoes;
+
+    char name[ 200 ];
+    int nnz;
+
+    ConstraintPre c;
+    VariablePre v;
+    VariablePreHash::iterator it_v;   
+
+    Campus *campus = problemData->refCampus[campusId];
+
+    GGroup< Aluno * > alunos;
+	map< int /* cjtAlunosId */, GGroup< Aluno * > >::iterator 
+		itMapAlunoCjt = problemData->cjtAlunos.find( cjtAlunosId );	
+	if ( itMapAlunoCjt != problemData->cjtAlunos.end() )
+	{
+		alunos = itMapAlunoCjt->second;
+	}
+
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != campusId )
+		{
+			continue;
+		}
+		
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			Disciplina *disciplina1 = it1AlDemanda->demanda->disciplina;
+
+			for ( int turma1 = 0; turma1 < disciplina1->getNumTurmas(); turma1++ )
+			{
+
+				ITERA_GGROUP_INIC_LESSPTR( it2AlDemanda, it1AlDemanda, aluno->demandas, AlunoDemanda )
+				{
+					Disciplina *disciplina2 = it2AlDemanda->demanda->disciplina;
+
+					if ( disciplina1 == disciplina2 )
+						continue;
+
+					// FILTRAR
+					if ( it2AlDemanda->getPrioridade() != prior && 
+						 it1AlDemanda->getPrioridade() != prior )
+						continue;
+
+					for ( int turma2 = 0; turma2 < disciplina2->getNumTurmas(); turma2++ )
+					{
+
+						c.reset();
+						c.setType( ConstraintPre::C_PRE_ATIVA_VAR_COMPART_TURMA );
+						c.setAluno( aluno );
+						c.setTurma1( turma1 );
+						c.setTurma2( turma2 );
+						c.setDisciplina1( disciplina1 );
+						c.setDisciplina2( disciplina2 );
+						c.setCampus( campus );
+
+						sprintf( name, "%s", c.toString().c_str() ); 
+
+						if ( cHashPre.find( c ) != cHashPre.end() )
+						{
+							continue;
+						}
+
+						nnz = 3;
+		
+						OPT_ROW row( nnz, OPT_ROW::LESS, 1.0, name );
+
+
+						VariablePre v;
+						v.reset();
+						v.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC );
+						v.setAluno( aluno );
+						v.setDisciplina( disciplina1 );
+						v.setTurma( turma1 );
+						v.setCampus( campus );
+
+						it_v = vHashPre.find( v );
+						if( it_v != vHashPre.end() )
+						{
+							row.insert( it_v->second, 1.0 );
+						}
+
+						v.reset();
+						v.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC );
+						v.setAluno( aluno );
+						v.setDisciplina( disciplina2 );
+						v.setTurma( turma2 );
+						v.setCampus( campus );
+
+						it_v = vHashPre.find( v );
+						if( it_v != vHashPre.end() )
+						{
+							row.insert( it_v->second, 1.0 );
+						}
+				
+						v.reset();
+						v.setType( VariablePre::V_PRE_TURMAS_COMPART );				
+						v.setDisciplina1( disciplina1 );
+						v.setTurma1( turma1 );
+						v.setDisciplina2( disciplina2 );
+						v.setTurma2( turma2 );
+
+						it_v = vHashPre.find( v );
+						if( it_v != vHashPre.end() )
+						{
+							row.insert( it_v->second, -1.0 );
+						}
+						else
+						{	// Analoga
+							v.reset();
+							v.setType( VariablePre::V_PRE_TURMAS_COMPART );				
+							v.setDisciplina2( disciplina1 );
+							v.setTurma2( turma1 );
+							v.setDisciplina1( disciplina2 );
+							v.setTurma1( turma2 );
+
+							it_v = vHashPre.find( v );
+							if( it_v != vHashPre.end() )
+							{
+								row.insert( it_v->second, -1.0 );
+							}						
+						}
+
+
+						if ( row.getnnz() == 3 )
+						{
+							cHashPre[ c ] = lp->getNumRows();
+							lp->addRow( row );
+							restricoes++;
+						}
+
+					}
+				}
+			}
+		}
+	}
+
+	return restricoes;
+
+}
+
+
+/*
+// seria usada em p2, mas pode ser inutil
+// Restricao 1.22
+int SolverMIP::cria_preRestricao_evita_sobrepos_sala( int campusId, int prior, int cjtAlunosId  )
+{
+    int restricoes = 0;
+
+    if ( prior < 2 )
+	   return restricoes;
+
+    char name[ 200 ];
+    int nnz;
+
+    ConstraintPre c;
+    VariablePre v;
+    VariablePreHash::iterator it_v;   
+
+    Campus *campus = problemData->refCampus[campusId];
+
+    GGroup< Aluno * > alunos;
+	map< int , GGroup< Aluno * > >::iterator 
+		itMapAlunoCjt = problemData->cjtAlunos.find( cjtAlunosId );	
+	if ( itMapAlunoCjt != problemData->cjtAlunos.end() )
+	{
+		alunos = itMapAlunoCjt->second;
+	}
+
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != campusId )
+		{
+			continue;
+		}
+
+		// ----------------------------------------
+		// Verifica se o aluno tem demanda de prioridade prior
+		bool demandaNova = false;
+		ITERA_GGROUP_LESSPTR( itAlDem, aluno->demandas, AlunoDemanda )
+		{
+			if ( (*itAlDem)->getPrioridade() == prior )
+			{
+				demandaNova = true;
+			}
+		}
+
+		if ( !demandaNova )
+		{
+			continue;
+		}
+		// ----------------------------------------
+
+
+		ITERA_GGROUP_LESSPTR( itUnid, campus->unidades, Unidade )
+		{
+			Unidade *unidade = *itUnid;
+
+			ITERA_GGROUP_LESSPTR( itCjtSala, unidade->conjutoSalas, ConjuntoSala )
+			{
+				ConjuntoSala *cjtSala = *itCjtSala;
+				Sala *sala = cjtSala->salas.begin()->second;
+
+				ITERA_GGROUP_N_PT( itDia, sala->diasLetivos, int )
+				{
+					int dia = *itDia;
+
+					c.reset();
+					c.setType( ConstraintPre::C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO );
+					c.setAluno( aluno );
+					c.setUnidade( unidade );
+					c.setSubCjtSala( cjtSala );
+					c.setDia( dia );
+					c.setCampus( campus );
+
+					sprintf( name, "%s", c.toString().c_str() ); 
+
+					if ( cHashPre.find( c ) != cHashPre.end() )
+					{
+						continue;
+					}
+
+					nnz = aluno->demandas.size();
+		
+					
+				    // Calcula o lado direito geral das restrições
+				    double rhs_geral = 99999999;	   
+				    GGroup<Calendario*> calendarios = campus->getCalendarios();
+				    ITERA_GGROUP( itSl, calendarios, Calendario )
+				    {
+						double tempo = itSl->getTempoTotal( dia );
+						if ( tempo < rhs_geral )
+							rhs_geral = tempo;
+				    }
+
+					OPT_ROW row( nnz, OPT_ROW::LESS, rhs_geral, name );
+		
+
+					ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+					{
+						Disciplina *disciplina = itAlDemanda->demanda->disciplina;
+
+						for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+						{
+							
+							Variable varTatico;
+							varTatico.reset();
+							varTatico.setType( Variable::V_CREDITOS );
+							varTatico.setDisciplina( disciplina );
+							varTatico.setTurma( turma );
+							varTatico.setDia( dia );
+							varTatico.setUnidade( unidade );
+							varTatico.setSubCjtSala( cjtSala );
+							
+							bool found = false;
+							double nCredsNoDia = fixaLimitesVariavelTaticoPriorAnterior( &varTatico, found );
+
+							if ( nCredsNoDia <= 0.0 || !found )
+							{
+								continue;
+							}
+
+							VariablePre v;
+							v.reset();
+							v.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC );
+							v.setAluno( aluno );
+							v.setDisciplina( disciplina );
+							v.setTurma( turma );
+							v.setCampus( campus );
+
+							it_v = vHashPre.find( v );
+							if( it_v != vHashPre.end() )
+							{
+								double tempo = nCredsNoDia * disciplina->getTempoCredSemanaLetiva();
+
+								row.insert( it_v->second, tempo );
+							}
+						}
+					}
+
+
+					if ( row.getnnz() > 0 )
+					{
+						cHashPre[ c ] = lp->getNumRows();
+						lp->addRow( row );
+						restricoes++;
+					}
+				}
+			}
+		}
+	}
+
+	return restricoes;
+
+}
+*/
+
+
 #pragma endregion PRE-TATICO
 
 
@@ -14805,7 +15644,7 @@ int SolverMIP::cria_variavel_creditos( int campusId, int cjtAlunosAtualId, int P
 						 double lowerBound;
 						 double upperBound;
 
-						 if ( P > 1 && FIXAR_P1 )
+						 if ( P > 1 && FIXAR_TATICO_P1 )
 						 {
 							 bool found = false;
 							 double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -15008,18 +15847,10 @@ int SolverMIP::cria_variavel_oferecimentos( int campusId, int cjtAlunosAtualId, 
 							double lowerBound;
 							double upperBound;
 
-							if ( P > 1 && FIXAR_P1 )
+							if ( P > 1 && FIXAR_TATICO_P1 )
 							{
 								bool found = false;
 								double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
-
-								if ( value < 0.0001 && value > -0.0001 ) // value = 0
-								{
-									if ( found )
-									{
-										std::cout << "\nERROR: Variavel " << v.toString().c_str() << " esta zero em solVars\n";
-									}
-								}
 
 								if ( found ) // fixa!
 								{
@@ -15145,7 +15976,7 @@ int SolverMIP::cria_variavel_abertura( int campusId, int cjtAlunosAtualId, int P
 				double lowerBound;
 				double upperBound;
 
-				if ( P > 1 && FIXAR_P1 )
+				if ( P > 1 && FIXAR_TATICO_P1 )
 				{
 					bool found = false;
 					double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -15287,7 +16118,7 @@ int SolverMIP::cria_variavel_consecutivos( int campusId, int cjtAlunosAtualId, i
 						double lowerBound;
 						double upperBound;
 						
-						if ( P > 1 && FIXAR_P1 )
+						if ( P > 1 && FIXAR_TATICO_P1 )
 						{
 							bool found = false;
 							double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -15441,7 +16272,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int 
 								double lowerBound;
 								double upperBound;
 
-								if ( P > 1 && FIXAR_P1 )
+								if ( P > 1 && FIXAR_TATICO_P1 )
 								{
 									bool found = false;
 									double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -15596,7 +16427,7 @@ int SolverMIP::cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int 
 								double lowerBound;
 								double upperBound;
 
-								if ( P > 1 && FIXAR_P1 )
+								if ( P > 1 && FIXAR_TATICO_P1 )
 								{
 									bool found = false;
 									double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -15713,7 +16544,7 @@ int SolverMIP::cria_variavel_combinacao_divisao_credito( int campusId, int cjtAl
 				double lowerBound;
 				double upperBound;
 				
-				if ( P > 1 && FIXAR_P1 )
+				if ( P > 1 && FIXAR_TATICO_P1 )
 				{
 					bool found = false;
 					double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -15866,7 +16697,7 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito( int campusId, 
 						double lowerBound;
 						double upperBound;
 
-						if ( P > 1 && FIXAR_P1 )
+						if ( P > 1 && FIXAR_TATICO_P1 )
 						{
 							bool found = false;
 							double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -15933,7 +16764,7 @@ int SolverMIP::cria_variavel_de_folga_combinacao_divisao_credito( int campusId, 
 						double lowerBound;
 						double upperBound;
 
-						if ( P > 1 && FIXAR_P1 )
+						if ( P > 1 && FIXAR_TATICO_P1 )
 						{
 							bool found = false;
 							double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -16065,7 +16896,7 @@ int SolverMIP::cria_variavel_abertura_compativel( int campusId, int cjtAlunosAtu
 					 double lowerBound;
 					 double upperBound;
 					 
-					 if ( P > 1 && FIXAR_P1 )
+					 if ( P > 1 && FIXAR_TATICO_P1 )
 					 {
 						bool found = false;
 						double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -16229,7 +17060,7 @@ int SolverMIP::cria_variavel_maxCreds_combina_Sl_aluno( int campusId, int cjtAlu
 						double lowerBound;
 						double upperBound;
 						
-						if ( P > 1 && FIXAR_P1 )
+						if ( P > 1 && FIXAR_TATICO_P1 )
 						{   // livre sempre!
 							lowerBound = 0.0;
 							upperBound = 1.0;		 
@@ -16343,7 +17174,7 @@ int SolverMIP::cria_variavel_min_creds_aluno( int campusId, int cjtAlunosAtualId
 			double lowerBound;
 			double upperBound;
 			
-			if ( P > 1 && FIXAR_P1 )
+			if ( P > 1 && FIXAR_TATICO_P1 )
 			{
 				bool found = false;
 				double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -16462,7 +17293,7 @@ int SolverMIP::cria_variavel_max_creds_aluno( int campusId, int cjtAlunosAtualId
 			double lowerBound;
 			double upperBound;
 			
-			if ( P > 1 && FIXAR_P1 )
+			if ( P > 1 && FIXAR_TATICO_P1 )
 			{
 				bool found = false;
 				double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -16588,7 +17419,7 @@ int SolverMIP::cria_variavel_de_folga_demanda_disciplina_aluno( int campusId, in
 				double lowerBound;
 				double upperBound;
 
-				if ( P > 1 && FIXAR_P1 )
+				if ( P > 1 && FIXAR_TATICO_P1 )
 				{
 					bool found = false;
 					double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -16734,7 +17565,7 @@ int SolverMIP::cria_variavel_folgafolga_demanda_p_t( int campusId, int cjtAlunos
 					double lowerBound;
 					double upperBound;
 
-					if ( P > 1 && FIXAR_P1 )
+					if ( P > 1 && FIXAR_TATICO_P1 )
 					{
 						bool found = false;
 						double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -16904,7 +17735,7 @@ int SolverMIP::cria_variavel_folga_aluno_unids_distintas_dia( int campusId, int 
 								double lowerBound;
 								double upperBound;
 								
-								if ( P > 1 && FIXAR_P1 )
+								if ( P > 1 && FIXAR_TATICO_P1 )
 								{
 									bool found = false;
 									double value = fixaLimitesVariavelTaticoPriorAnterior( &v, found );
@@ -18763,7 +19594,7 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlu
                }
             }
 
-			if ( prioridade > 1 && FIXAR_P1 )
+			if ( prioridade > 1 && FIXAR_P1 ) // se for p2 e o PRE-modelo tiver sido fixado
 			{
                 v.reset();
                 v.setType( Variable::V_FOLGA_ABRE_TURMA_SEQUENCIAL );
