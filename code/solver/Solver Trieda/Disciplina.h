@@ -79,7 +79,7 @@ public:
    int getNSalasAptas() const { return this->nSalasAptas; }
 
    // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
-   int getTempoCredSemanaLetiva() const { return this->calendario->getTempoAula(); } 
+   double getTempoCredSemanaLetiva() const { return this->calendario->getTempoAula(); } 
    
    // Informa se uma dada disciplina é equivalente à esta disciplina
    bool eh_equivalente( Disciplina * );

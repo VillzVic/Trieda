@@ -621,6 +621,7 @@ public:
 
    Unidade* retornaUnidadeDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
    ConjuntoSala* retornaSalaDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
+   std::pair<ConjuntoSala*,int> retornaSalaEDiaDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
    GGroup< std::pair< int,Disciplina* > > retornaAtendTaticoEmCjtSala( ConjuntoSala * cjtSala );
 
    Variable * criaVariavelAlunos(

@@ -50,7 +50,7 @@ int Sala::max_creds(int dia)
 
     ITERA_GGROUP( itSl, this->temposSL, Calendario )
     {
-	   int duracaoSl = itSl->getTempoAula();
+	   double duracaoSl = itSl->getTempoAula();
 	   int tempo = tempoDispPorDiaSL[ std::make_pair( dia, *itSl) ];
        if ( tempoDisp < tempo ) 
 	   {

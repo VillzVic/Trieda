@@ -263,7 +263,7 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    tau = 1.0;
 
    TEMPO_PRETATICO = 9000;//9000;
-   TEMPO_TATICO = 1800;//3600;//450;//3600;
+   TEMPO_TATICO = 1200;//3600;//450;//3600;
 
 #ifdef TATICO_CJT_ALUNOS
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
@@ -1657,6 +1657,47 @@ ConjuntoSala* SolverMIP::retornaSalaDeAtendimentoTaticoAnterior( int turma, Disc
 	return NULL;
 }
 
+
+std::pair<ConjuntoSala*,int> SolverMIP::retornaSalaEDiaDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus )
+{
+	std::pair<ConjuntoSala*,int> par;
+
+	ConjuntoSala *s = NULL;
+
+	Variable v;		   
+	v.reset();
+	v.setType( Variable::V_CREDITOS ); // x_{i,d,u,s}
+	v.setTurma( turma );
+	v.setDisciplina( disciplina );
+
+	ITERA_GGROUP_LESSPTR( itUnid, campus->unidades, Unidade )
+	{
+		v.setUnidade( *itUnid );
+
+		ITERA_GGROUP_LESSPTR( itCjtSala, itUnid->conjutoSalas, ConjuntoSala )
+		{
+			s = *itCjtSala;
+			v.setSubCjtSala( s );
+			v.setSala( s->salas.begin()->second );
+
+			ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
+			{
+				v.setDia( *itDia );
+
+				if ( solVars.find( &v ) != solVars.end() )
+				{
+					par.first = s;
+					par.second = *itDia;
+					return par;
+				}
+			}
+		}
+	}
+	
+	return par;
+}
+
+
 GGroup< std::pair< int,Disciplina* > > SolverMIP::retornaAtendEmCjtSala( ConjuntoSala * cjtSala )
 {
 	GGroup< std::pair<int,Disciplina*>  > turmaDiscsAtendidas;
@@ -2511,6 +2552,8 @@ void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 			GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator
 				itAtend = atendimentos.begin();
 
+			bool repetido = false;
+
 			for ( ; itAtend != atendimentos.end(); itAtend++ )
 			{
 				Disciplina *d = (*itAtend).third;
@@ -2521,14 +2564,18 @@ void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 							 <<"Aluno " << aluno->getAlunoId() << " ja esta alocado em i"
 							 << i << " d"<< d->getId() << ". Alocacao repetida: i"
 							 << turma << " d" << disciplina->getId() << "\n";
+					
+					repetido = true;
 				}
 			}
 			// --------------------------------------------
+			if ( !repetido )
+			{
+				problemData->mapAluno_CampusTurmaDisc[ aluno ].add( trio );
 
-			problemData->mapAluno_CampusTurmaDisc[ aluno ].add( trio );
-
-			AlunoDemanda *alunoDemanda = problemData->procuraAlunoDemanda( disciplina->getId(), aluno->getAlunoId() );
-			problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].add( alunoDemanda );
+				AlunoDemanda *alunoDemanda = problemData->procuraAlunoDemanda( disciplina->getId(), aluno->getAlunoId() );
+				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].add( alunoDemanda );
+			}
 		}
 	}
 	
@@ -11623,8 +11670,11 @@ int SolverMIP::cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlun
 
          for ( int turma1 = 0; turma1 < disciplina1->getNumTurmas(); turma1++ )
          {					
-			ConjuntoSala* cjtSala1 = retornaSalaDeAtendimentoTaticoAnterior( turma1, disciplina1, cp );
-			
+			std::pair<ConjuntoSala*,int> salaDia1 = retornaSalaEDiaDeAtendimentoTaticoAnterior( turma1, disciplina1, cp );
+
+			ConjuntoSala* cjtSala1 = salaDia1.first;
+			int dia1 = salaDia1.second;
+
 			ITERA_GGROUP_INIC_N_PT( itDisc2, itDisc1, it_CpDisc->second, int )
 			{
 				Disciplina *disciplina2 = problemData->refDisciplinas[ *itDisc2 ];
@@ -11659,11 +11709,15 @@ int SolverMIP::cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlun
 		 
 				for ( int turma2 = 0; turma2 < disciplina2->getNumTurmas(); turma2++ )
 				{
-					ConjuntoSala* cjtSala2 = retornaSalaDeAtendimentoTaticoAnterior( turma2, disciplina2, cp );
+					std::pair<ConjuntoSala*,int> salaDia2 = retornaSalaEDiaDeAtendimentoTaticoAnterior( turma2, disciplina2, cp );
 
-					// Esta variavel por enquanto só é usada para atendimentos em salas diferentes
+					ConjuntoSala* cjtSala2 = salaDia2.first;
+					int dia2 = salaDia2.second;
+
+					// Se os dois atendimentos já existirem: 
+					// Esta variavel por enquanto só é usada para atendimentos em salas diferentes e no mesmo dia
 					if ( cjtSala1 != NULL && cjtSala2 != NULL )
-						if ( cjtSala1 == cjtSala2 )
+						if ( cjtSala1 == cjtSala2 || dia1 != dia2 )
 							continue;
 
 					// Esta variavel por enquanto só sera usada se pelo menos uma das turmas já existir de p1
@@ -14893,7 +14947,6 @@ int SolverMIP::cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campus
 		   {
 			    int dia = *itDia;
 
-
 				// -----------------------------------------------------
 				// Procura se há atendimento tatico fixado em p1
 				Variable varTatico;
@@ -14912,18 +14965,15 @@ int SolverMIP::cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campus
 					continue;
 				}
 				// -----------------------------------------------------
-						
+					
 				
-			   // Lado direito caso so haja 1 semana letiva na restrição
-			   double rhs = disciplina->getCalendario()->getTempoTotal( dia );
-
 			   // Calcula o lado direito geral das restrições
 			   double rhs_geral = 99999999;	   
 			   GGroup<Calendario*> calendarios = campus->getCalendarios();
 			   ITERA_GGROUP( itSl, calendarios, Calendario )
 			   {
 					double tempo = itSl->getTempoTotal( dia );
-					if ( tempo < rhs_geral )
+					if ( rhs_geral - tempo > 1e-5 ) // tempo < rhs_geral
 						rhs_geral = tempo;
 			   }
 
@@ -14952,11 +15002,15 @@ int SolverMIP::cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campus
 							continue;
 						}
 
+						// Lado direito caso so haja 1 semana letiva na restrição
+						double rhs = disciplina->getCalendario()->getTempoTotal( dia );
+						
 						cHashPre[ c ] = lp->getNumRows();
 				   
 						sprintf( name, "%s", c.toString().c_str() );
 						OPT_ROW row( nnz, OPT_ROW::LESS , rhs, name );
-											    
+						
+												
 						VariablePre v;
 						v.reset();
 						v.setType( VariablePre::V_PRE_ABERTURA );
@@ -14997,7 +15051,7 @@ int SolverMIP::cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campus
 							{
 								row.insert( vit->second, tempo1Cred*nCredsDiscSumNoDia );
 
-								if ( discSum->getCalendario()->getTempoTotal( dia ) != rhs )
+								if ( rhs - discSum->getCalendario()->getTempoTotal( dia ) > 1e-5 )
 								{
 									row.setRhs( rhs_geral );
 									rhs = rhs_geral;
@@ -15017,7 +15071,7 @@ int SolverMIP::cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campus
 								{
 									row.insert( vit->second, tempo1Cred*nCredsDiscSumNoDia );
 
-									if ( discSum->getCalendario()->getTempoTotal( dia ) != rhs )
+									if ( rhs - discSum->getCalendario()->getTempoTotal( dia ) > 1e-5 )
 									{
 										row.setRhs( rhs_geral );
 										rhs = rhs_geral;
@@ -20816,9 +20870,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId,
 		   ITERA_GGROUP_N_PT( itDia, disciplina->diasLetivos, int )
 		   {
 			   int dia = *itDia;
-			   
-			   // Lado direito caso so haja 1 semana letiva na restrição
-			   double rhs = disciplina->getCalendario()->getTempoTotal( dia );
+
 
 			   // Calcula o lado direito geral das restrições
 			   double rhs_geral = 99999999;	   
@@ -20826,7 +20878,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId,
 			   ITERA_GGROUP( itSl, calendarios, Calendario )
 			   {
 					double tempo = itSl->getTempoTotal( dia );
-					if ( tempo < rhs_geral )
+					if ( rhs_geral - tempo > 1e-5 ) // Se rhs_geral > tempo
 						rhs_geral = tempo;
 			   }
 
@@ -20855,8 +20907,11 @@ int SolverMIP::cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId,
 							continue;
 						}
 
-						cHash[ c ] = lp->getNumRows();
-				   
+						cHash[ c ] = lp->getNumRows();				   
+			   
+						// Lado direito caso so haja 1 semana letiva na restrição
+						double rhs = disciplina->getCalendario()->getTempoTotal( dia );
+
 						sprintf( name, "%s", c.toString().c_str() );
 						OPT_ROW row( nnz, OPT_ROW::LESS , rhs, name );
 											    
@@ -20907,8 +20962,9 @@ int SolverMIP::cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId,
 							if ( vit != vHash.end() )
 							{
 								row.insert( vit->second, tempoDiscV );
-
-								if ( discSum->getCalendario()->getTempoTotal( dia ) != rhs )
+								
+								// Se rhs for maior do que discSum->getCalendario()->getTempoTotal( dia )
+								if ( rhs - discSum->getCalendario()->getTempoTotal( dia ) > 1e-5 )
 								{
 									row.setRhs( rhs_geral );
 									rhs = rhs_geral;

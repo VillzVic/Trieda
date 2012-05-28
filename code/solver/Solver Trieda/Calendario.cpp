@@ -159,7 +159,7 @@ bool Calendario::intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf )
 }
 
  
-int Calendario::getTempoTotal( int dia )
+double Calendario::getTempoTotal( int dia )
 {
 	return ( tempo_aula * this->getNroDeHorariosAula(dia) ); 
 }

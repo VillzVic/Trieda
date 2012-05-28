@@ -18,14 +18,14 @@ public:
 
    void setCodigo( std::string s ) { this->codigo = s; }
    void setDescricao( std::string s ) { this->descricao = s; }
-   void setTempoAula( int value ) { this->tempo_aula = value; }
+   void setTempoAula( double value ) { this->tempo_aula = value; }
 
    std::string getCodigo() const { return this->codigo; }
    std::string getDescricao() const { return this->descricao; }
-   int getTempoAula() const { return this->tempo_aula; }
+   double getTempoAula() const { return this->tempo_aula; }
    int getNroDeHorariosAula(int dia);
 
-   int getTempoTotal( int dia );
+   double getTempoTotal( int dia );
 
    HorarioAula * getProximoHorario( HorarioAula *h );
    
@@ -40,7 +40,7 @@ public:
 private:   
    std::string codigo;
    std::string descricao;
-   int tempo_aula;
+   double tempo_aula;
 };
 
 #endif
