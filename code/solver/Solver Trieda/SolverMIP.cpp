@@ -3713,7 +3713,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 	   char solName[1024];
 
 	   strcpy( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunos ).c_str() );
-
+	   cout<<"====================> carregando pre " <<solName <<endl;
 	   FILE* fin = fopen( solName,"rb");
 
 	   if ( fin == NULL )
@@ -3867,7 +3867,7 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
 	   char solName[1024];
 
 	   strcpy( solName, getSolBinFileName( campusAtualId, prioridade, cjtAlunos ).c_str() );
-
+	   cout<<"====================> carregando " <<solName <<endl;
 	   FILE* fin = fopen( solName,"rb");
       
 	   if ( fin == NULL )
@@ -4089,13 +4089,13 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 			problemData->imprimeCjtAlunos( campusId );
 
 			// Resolve pre-modelo e tatico para cada conjunto
-			map< int, GGroup< Aluno * > >::iterator
+			map< int, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
 				itMapCjtAlunos = problemData->cjtAlunos.begin();
 			
 			for ( ; itMapCjtAlunos != problemData->cjtAlunos.end(); itMapCjtAlunos++ )
 			{
 				int grupoId = itMapCjtAlunos->first;
-				GGroup< Aluno * > gruposAlunos = itMapCjtAlunos->second;
+				GGroup< Aluno *, LessPtr< Aluno > > gruposAlunos = itMapCjtAlunos->second;
 
 				std::cout<<"\n------- Campus "<< campusId << " , Conjunto-Aluno "<< grupoId << ", Prior " << P << "----------\n";
 				std::cout<<"\n------------------------------Pre-modelo------------------------------\n";
@@ -8711,7 +8711,7 @@ int SolverMIP::solve()
       if ( problemData->atendimentosTatico != NULL
             && problemData->atendimentosTatico->size() > 0 )
       {
-         ITERA_GGROUP( itAtTat, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
+		  ITERA_GGROUP_LESSPTR( itAtTat, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
          { 
             Campus * campus = problemData->refCampus[ itAtTat->getCampusId() ];
 
@@ -8786,7 +8786,7 @@ int SolverMIP::solve()
 
          // Preenchendo a estrutura "atendimentosTatico".
          problemData->atendimentosTatico
-               = new GGroup< AtendimentoCampusSolucao * >();
+               = new GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > >();
 
          ITERA_GGROUP( it_At_Campus,
             ( *problemSolution->atendimento_campus ), AtendimentoCampus )
@@ -10594,7 +10594,7 @@ int SolverMIP::cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, in
 
 	Campus *cp = problemData->refCampus[campusId];
 
-	map< int /* cjtAlunosId */, GGroup< Aluno * > >::iterator
+	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
 		itMapCjtAlunos = problemData->cjtAlunos.begin();
 	
 	// Para cada conjunto de alunos cp com id menor ou igual ao atual
@@ -10607,9 +10607,9 @@ int SolverMIP::cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, in
 			break;
 		}
 
-		GGroup< Aluno * > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];
+		GGroup< Aluno *, LessPtr< Aluno > > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];
 	
-		ITERA_GGROUP( itAluno, cjtAlunos, Aluno )
+		ITERA_GGROUP_LESSPTR( itAluno, cjtAlunos, Aluno )
 		{
 			Aluno *aluno = *itAluno;
 
@@ -11271,7 +11271,7 @@ int SolverMIP::cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoA
 
 	Campus *cp = problemData->refCampus[campusId];
 
-	map< int /* cjtAlunosId */, GGroup< Aluno * > >::iterator
+	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
 		itMapCjtAlunos = problemData->cjtAlunos.begin();
 	
 	// Para cada conjunto de alunos cp com id menor ou igual ao atual
@@ -11285,8 +11285,8 @@ int SolverMIP::cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoA
 		}
 
 		// Para cada aluno do conjunto
-		GGroup< Aluno * > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];	
-		ITERA_GGROUP( itAluno, cjtAlunos, Aluno )
+		GGroup< Aluno *, LessPtr< Aluno > > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];	
+		ITERA_GGROUP_LESSPTR( itAluno, cjtAlunos, Aluno )
 		{
 			Aluno *aluno = *itAluno;
 
@@ -11356,7 +11356,7 @@ int SolverMIP::cria_preVariavel_folga_prioridade_inf( int campusId, int prior, i
 
 	Campus *cp = problemData->refCampus[campusId];
 
-	map< int /* cjtAlunosId */, GGroup< Aluno * > >::iterator
+	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
 		itMapCjtAlunos = problemData->cjtAlunos.begin();
 	
 	// Para cada conjunto de alunos cp com id menor ou igual ao atual
@@ -11370,8 +11370,8 @@ int SolverMIP::cria_preVariavel_folga_prioridade_inf( int campusId, int prior, i
 		}
 
 		// Para cada aluno do conjunto
-		GGroup< Aluno * > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];	
-		ITERA_GGROUP( itAluno, cjtAlunos, Aluno )
+		GGroup< Aluno *, LessPtr< Aluno > > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];	
+		ITERA_GGROUP_LESSPTR( itAluno, cjtAlunos, Aluno )
 		{
 			Aluno *aluno = *itAluno;
 
@@ -11450,7 +11450,7 @@ int SolverMIP::cria_preVariavel_folga_prioridade_sup( int campusId, int prior, i
 
 	Campus *cp = problemData->refCampus[campusId];
 
-	map< int /* cjtAlunosId */, GGroup< Aluno * > >::iterator
+	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
 		itMapCjtAlunos = problemData->cjtAlunos.begin();
 	
 	// Para cada conjunto de alunos cp com id menor ou igual ao atual
@@ -11464,8 +11464,8 @@ int SolverMIP::cria_preVariavel_folga_prioridade_sup( int campusId, int prior, i
 		}
 
 		// Para cada aluno do conjunto
-		GGroup< Aluno * > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];	
-		ITERA_GGROUP( itAluno, cjtAlunos, Aluno )
+		GGroup< Aluno *, LessPtr< Aluno > > cjtAlunos = problemData->cjtAlunos[ grupoAlunosId ];	
+		ITERA_GGROUP_LESSPTR( itAluno, cjtAlunos, Aluno )
 		{
 			Aluno *aluno = *itAluno;
 
@@ -12083,7 +12083,7 @@ int SolverMIP::cria_preRestricao_carga_horaria( int campusId, int cjtAlunosId  )
 		 }
 		 #pragma endregion
 
-		  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		    itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		  if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -12304,7 +12304,7 @@ int SolverMIP::cria_preRestricao_ativacao_var_o( int campusId, int cjtAlunosId  
 				}
 				#pragma endregion
 
-				map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+				map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 				itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 				if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -12416,7 +12416,7 @@ int SolverMIP::cria_preRestricao_evita_mudanca_de_sala( int campusId, int cjtAlu
 		 }
 		 #pragma endregion
 
-		  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		    itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		  if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -12647,7 +12647,7 @@ int SolverMIP::cria_preRestricao_cap_aloc_dem_disc_aluno( int campusId, int cjtA
 
 			// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-			map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+			map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 			itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 			if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -12754,7 +12754,7 @@ int SolverMIP::cria_preRestricao_aluno_curso_disc( int campusId, int cjtAlunosId
 		
 		// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -12917,7 +12917,7 @@ int SolverMIP::cria_preRestricao_cap_sala( int campusId, int cjtAlunosId  )
 
 			 // Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-			 map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+			 map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 			 itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 			 if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -13068,7 +13068,7 @@ int SolverMIP::cria_preRestricao_compartilhamento_incompat( int campusId, int cj
 								
 					// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-					map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+					map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 					itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 					if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -13221,7 +13221,7 @@ int SolverMIP::cria_preRestricao_proibe_compartilhamento( int campusId, int cjtA
 							
 					// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-					map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+					map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 					itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 					if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -13344,7 +13344,7 @@ int SolverMIP::cria_preRestricao_ativacao_var_z( int campusId, int cjtAlunosId  
 		
 		 // Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
- 		 map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+ 		 map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		 itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		 if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -13468,7 +13468,7 @@ int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtA
 
 		// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -13585,7 +13585,7 @@ int SolverMIP::cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAl
 
 		 // Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-		 map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		 map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		 itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 	 	 if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -13721,7 +13721,7 @@ int SolverMIP::cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjt
 		  continue;
 	  }
 
-	  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+	  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		  itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 	  if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -13873,7 +13873,7 @@ int SolverMIP::cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cj
 					  
 						// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-						map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+						map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 						itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 	 					if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -14118,7 +14118,7 @@ int SolverMIP::cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId, int cjt
 					  
 					// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
 
-					map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+					map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 					itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 	 				if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -14434,7 +14434,7 @@ int SolverMIP::cria_preRestricao_atendimento_aluno( int campusId, int cjtAlunosI
 		  					  
 		  // Pula a restrição caso a disciplina seja de conjuntoAluno anterior
  
-		  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		  itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 	      if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -14578,7 +14578,7 @@ int SolverMIP::cria_preRestricao_aluno_unica_turma_disc( int campusId, int cjtAl
 
 			// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
  
-			map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+			map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 			itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 			if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -14669,7 +14669,7 @@ int SolverMIP::cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjt
 			
 			// Pula a restrição caso a disciplina seja de conjuntoAluno anterior
  
-			map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+			map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 			itMapDiscCjt = problemData->cjtDisciplinas.find( discPratica );
 
 			if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -14776,8 +14776,8 @@ int SolverMIP::cria_preRestricao_prioridadesDemanda( int campusId, int prior, in
 
     Campus *campus = problemData->refCampus[campusId];
 
-    GGroup< Aluno * > alunos;
-	map< int /* cjtAlunosId */, GGroup< Aluno * > >::iterator 
+    GGroup< Aluno *, LessPtr< Aluno > > alunos;
+	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator 
 		itMapAlunoCjt = problemData->cjtAlunos.find( cjtAlunosId );	
 	if ( itMapAlunoCjt != problemData->cjtAlunos.end() )
 	{
@@ -14923,7 +14923,7 @@ int SolverMIP::cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campus
 		   continue;
 	   }
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt == problemData->cjtDisciplinas.end() )
@@ -15113,8 +15113,8 @@ int SolverMIP::cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtA
 
     Campus *campus = problemData->refCampus[campusId];
 
-    GGroup< Aluno * > alunos;
-	map< int /* cjtAlunosId */, GGroup< Aluno * > >::iterator 
+    GGroup< Aluno *, LessPtr< Aluno > > alunos;
+	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator 
 		itMapAlunoCjt = problemData->cjtAlunos.find( cjtAlunosId );	
 	if ( itMapAlunoCjt != problemData->cjtAlunos.end() )
 	{
@@ -18270,7 +18270,7 @@ int SolverMIP::cria_restricao_carga_horaria( int campusId, int cjtAlunosAtualId 
 		}
 		#pragma endregion
 
-		  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		    itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		  if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -18759,7 +18759,7 @@ int SolverMIP::cria_restricao_ativacao_var_o( int campusId, int cjtAlunosAtualId
 				}
 				#pragma endregion
 
-				map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+				map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 				itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 				if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -18921,7 +18921,7 @@ int SolverMIP::cria_restricao_evita_sobreposicao( int campusId, int cjtAlunosAtu
 					continue;
 				}
 
-				map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+				map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 				itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 				if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -19057,7 +19057,7 @@ int SolverMIP::cria_restricao_lim_cred_diar_disc( int campusId, int cjtAlunosAtu
 				}
 				#pragma endregion	
 
-				map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+				map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 				itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 				if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -19206,7 +19206,7 @@ int SolverMIP::cria_restricao_turma_disc_dias_consec( int campusId, int cjtAluno
 		  continue;
 	  }
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -19368,7 +19368,7 @@ int SolverMIP::cria_restricao_de_folga_dist_cred_dia( int campusId, int cjtAluno
 				#pragma endregion
 
 
-				map< Disciplina *, int >::iterator 
+				map< Disciplina *, int, LessPtr< Disciplina > >::iterator 
 					itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 				if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -19558,7 +19558,7 @@ int SolverMIP::cria_restricao_abre_turmas_em_sequencia( int campusId, int cjtAlu
 		  continue;
 	  }
 
-	  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+	  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		  itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 	  if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -19736,7 +19736,7 @@ int SolverMIP::cria_restricao_divisao_credito( int campusId, int cjtAlunosAtualI
 	  #pragma endregion	
 
 
-		map< Disciplina *, int >::iterator 
+		map< Disciplina *, int, LessPtr< Disciplina > >::iterator 
 			itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -19915,7 +19915,7 @@ int SolverMIP::cria_restricao_combinacao_divisao_credito( int campusId, int cjtA
 	  #pragma endregion	
 
 
-		map< Disciplina *, int >::iterator 
+		map< Disciplina *, int, LessPtr< Disciplina > >::iterator 
 			itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -20031,7 +20031,7 @@ int SolverMIP::cria_restricao_ativacao_var_zc( int campusId, int cjtAlunosAtualI
 	  }
 	  #pragma endregion
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -20402,7 +20402,7 @@ int SolverMIP::cria_restricao_max_cred_disc_aluno( int campusId, int cjtAlunosAt
 				continue;
 			}
 
-			GGroup< Aluno * > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
+			GGroup< Aluno *, LessPtr< Aluno > > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
 			if ( alunosCjtAtual.find( aluno ) == alunosCjtAtual.end() )
 			{
 				if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
@@ -20568,7 +20568,7 @@ int SolverMIP::cria_restricao_min_creds_semana_aluno( int campusId, int cjtAluno
 		    continue;
 	    }	
 
-		GGroup< Aluno * > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
+		GGroup< Aluno *, LessPtr< Aluno > > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
 		if ( alunosCjtAtual.find( aluno ) == alunosCjtAtual.end() )
 		{
 			if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
@@ -20717,7 +20717,7 @@ int SolverMIP::cria_restricao_max_creds_semana_aluno( int campusId, int cjtAluno
 		    continue;
 	    }
 
-		GGroup< Aluno * > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
+		GGroup< Aluno *, LessPtr< Aluno > > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
 		if ( alunosCjtAtual.find( aluno ) == alunosCjtAtual.end() )
 		{
 			if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
@@ -20844,7 +20844,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_turmas_mesmos_alunos( int campusId,
 		   continue;
 	   }
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -21025,7 +21025,7 @@ int SolverMIP::cria_restricao_aloc_dem_disc( int campusId, int cjtAlunosAtualId 
 		if ( ! problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 			 continue;
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -21152,7 +21152,7 @@ int SolverMIP::cria_restricao_limita_abertura_turmas_aluno( int campusId, int cj
 		 }
 		 #pragma endregion
 
-		  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		    itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
 		  if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -21287,7 +21287,7 @@ int SolverMIP::cria_restricao_disc_pratica_teorica( int campusId, int cjtAlunosA
 		}
 		#pragma endregion
 
-		map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( discPratica );
 
 		if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )
@@ -21424,7 +21424,7 @@ int SolverMIP::cria_restricao_ativacao_var_ca( int campusId, int cjtAlunosAtualI
 			continue;
 	   }
 
-		GGroup< Aluno * > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
+		GGroup< Aluno *, LessPtr< Aluno > > alunosCjtAtual = problemData->cjtAlunos[ cjtAlunosAtualId ];
 		if ( alunosCjtAtual.find( aluno ) == alunosCjtAtual.end() )
 		{
 			if ( NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
@@ -21530,7 +21530,7 @@ int SolverMIP::cria_restricao_aluno_unid_dif_dia( int campusId, int cjtAlunosAtu
 			  continue;
 		
 
-		  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+		  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		    itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina1 );
 
 		  if ( itMapDiscCjt != problemData->cjtDisciplinas.end() )

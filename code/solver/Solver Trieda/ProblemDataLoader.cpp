@@ -500,7 +500,7 @@ void ProblemDataLoader::criaListaHorariosOrdenados()
    std::sort( problemData->horarios_aula_ordenados.begin(),
               problemData->horarios_aula_ordenados.end(), ordena_horarios_aula );
 
-   std::map< Calendario *, std::vector< HorarioAula * > >::iterator
+   std::map< Calendario *, std::vector< HorarioAula * >, LessPtr< Calendario > >::iterator
       it_map = problemData->mapCalendarioHorariosAulaOrdenados.begin();
 
    for (; it_map != problemData->mapCalendarioHorariosAulaOrdenados.end();
@@ -2343,7 +2343,7 @@ void ProblemDataLoader::divideDisciplinas()
          if( it_disc->divisao_creditos != NULL )
          {
             std::map< int /*Num. Creds*/ ,
-               GGroup< DivisaoCreditos * > >::iterator it_Creds_Regras;
+               GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > >::iterator it_Creds_Regras;
 
             // Alterações relacionadas à disciplina antiga
             delete it_disc->divisao_creditos;
@@ -2361,7 +2361,7 @@ void ProblemDataLoader::divideDisciplinas()
                }
                else // Greather
                {
-                  GGroup< DivisaoCreditos * >::iterator 
+                  GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > >::iterator 
                      it_Regra = it_Creds_Regras->second.begin();
 
                   int continuar = ( rand() % 2 );
@@ -2392,7 +2392,7 @@ void ProblemDataLoader::divideDisciplinas()
                }
                else // Greather
                {
-                  GGroup< DivisaoCreditos * >::iterator 
+                  GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > >::iterator 
                      it_Regra = it_Creds_Regras->second.begin();
 
                   int continuar = ( rand() % 2 );
@@ -4107,7 +4107,7 @@ void ProblemDataLoader::criaAulas()
    {
       AtendimentoOfertaSolucao * atendOferta = NULL;
 
-      ITERA_GGROUP( it_atend_campus,
+	  ITERA_GGROUP_LESSPTR( it_atend_campus,
          ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
       {
 		  int campusId = it_atend_campus->getCampusId();
@@ -4327,7 +4327,7 @@ void ProblemDataLoader::validaInputSolucaoTatico()
          }
       }
 
-      ITERA_GGROUP( itAtCampus, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
+	  ITERA_GGROUP_LESSPTR( itAtCampus, ( *problemData->atendimentosTatico ), AtendimentoCampusSolucao )
       {
          ITERA_GGROUP( itAtUnd, itAtCampus->atendimentosUnidades, AtendimentoUnidadeSolucao )
          {

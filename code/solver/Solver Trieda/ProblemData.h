@@ -64,10 +64,10 @@ public:
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
    GGroup< Aluno *, LessPtr< Aluno > > alunos;
 
-   map< int /* cjtAlunosId */, GGroup< Aluno * > > cjtAlunos;
-   map< int /* cjtAlunosId */, GGroup< Demanda * > > cjtDemandas;
-   map< int /* cjtAlunosId */, GGroup< AlunoDemanda * > > cjtAlunoDemanda;
-   map< Disciplina *, int /* cjtAlunosId */ > cjtDisciplinas;
+   map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > > cjtAlunos;
+   map< int /* cjtAlunosId */, GGroup< Demanda *, LessPtr< Demanda > > > cjtDemandas;
+   map< int /* cjtAlunosId */, GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > > cjtAlunoDemanda;
+   map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > > cjtDisciplinas;
 
    GGroup< Demanda *, LessPtr< Demanda > > demandasTotal;
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemandaTotal;
@@ -98,7 +98,7 @@ public:
 
    bool verificaUltimaAulas( HorarioDia * h );
 
-   std::map< Calendario *, std::vector< HorarioAula * > > mapCalendarioHorariosAulaOrdenados;
+   std::map< Calendario *, std::vector< HorarioAula * >, LessPtr< Calendario > > mapCalendarioHorariosAulaOrdenados;
    std::vector< HorarioAula * > horarios_aula_ordenados;
 
    // Método que verifica se uma dada disciplina
@@ -112,7 +112,7 @@ public:
    // 50 minutos em outra matriz curricular.
    bool verificaDisponibilidadeDisciplinaHorario( Disciplina *, HorarioAula * );
 
-   GGroup< AtendimentoCampusSolucao * > * atendimentosTatico;
+   GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > > * atendimentosTatico;
 
    // Para cada dia da semana, informa o
    // conjunto de horários aula disponíveis nesse dia
@@ -225,7 +225,7 @@ public:
    std::map< std::pair< int /*idBloco*/, int /*idCampus*/ >, GGroup< int > /*Dias*/ > bloco_Campus_Dias;
 
    // Listando as regras de créditos para cada possível valor de crédito.
-   std::map< int /*Num. Creds*/, GGroup< DivisaoCreditos * > > creds_Regras;
+   std::map< int /*Num. Creds*/, GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > > creds_Regras;
 
    // Dias letivos comuns de um professor e uma disciplina.
    std::map< std::pair< int /*idProf*/, int /*idDisc*/>, GGroup< int > /*Dias*/ > prof_Disc_Dias;
@@ -433,6 +433,8 @@ public:
    int existeTurmaDiscCampus( int turma, int discId, int campusId );
 
    GGroup<Aluno*> alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
+
+   bool posuiaAlunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
       
    GGroup<int> diasComunsEntreDisciplinas( Disciplina *disciplina1, Disciplina *disciplina2 );
 

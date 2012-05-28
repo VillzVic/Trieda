@@ -164,7 +164,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    // Se a tag existir ( mesmo que esteja em branco ) no xml de entrada
    if ( raiz.atendimentosTatico().present() )
    {
-      this->atendimentosTatico = new GGroup< AtendimentoCampusSolucao * > ();
+      this->atendimentosTatico = new GGroup< AtendimentoCampusSolucao *, LessPtr< AtendimentoCampusSolucao > > ();
 
       for ( unsigned int i = 0;
 		    i < raiz.atendimentosTatico().get().AtendimentoCampus().size(); i++ )
@@ -1584,6 +1584,49 @@ GGroup<Aluno*> ProblemData::alunosEmComum( int turma1, Disciplina* disc1, int tu
 	return alunosEmComum;
 }
 
+bool ProblemData::posuiaAlunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus )
+{
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio1;
+	trio1.set( campus->getId(), turma1, disc1 );
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio2;
+	trio2.set( campus->getId(), turma2, disc2 );
+
+	// Acha os alunoDemanda da primeira turma
+	GGroup< AlunoDemanda* > alunos1;
+
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+		itMap1 = mapCampusTurmaDisc_AlunosDemanda.find( trio1 );
+	if ( itMap1 != mapCampusTurmaDisc_AlunosDemanda.end() )
+		alunos1 = itMap1->second;
+
+	// Acha os alunoDemanda da segunda turma
+	GGroup< AlunoDemanda* > alunos2;
+
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+		itMap2 = mapCampusTurmaDisc_AlunosDemanda.find( trio2 );
+	if ( itMap2 != mapCampusTurmaDisc_AlunosDemanda.end() )
+		alunos2 = itMap2->second;
+
+	// Acha os alunos em comum
+	ITERA_GGROUP( itAlDem1, alunos1, AlunoDemanda )
+	{
+		int aluno1Id = (*itAlDem1)->getAlunoId();
+
+		ITERA_GGROUP( itAlDem2, alunos2, AlunoDemanda )
+		{
+			int aluno2Id = (*itAlDem2)->getAlunoId();
+
+			if ( aluno1Id == aluno2Id )
+			{
+				Aluno* aluno = this->retornaAluno( aluno1Id );
+				return true;
+			}
+		}			
+	}
+
+	return false;
+}
+
 
 // Dadas duas disciplinas, retorna os dias disponiveis em comum entre elas
 GGroup<int> ProblemData::diasComunsEntreDisciplinas( Disciplina *disciplina1, Disciplina *disciplina2 )
@@ -1619,7 +1662,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 
 	int biggestId = 0;
 	
-	map< int, GGroup< Aluno * > > auxCjtAlunos;
+	map< int, GGroup< Aluno *, LessPtr< Aluno > > > auxCjtAlunos;
 	map< int /*idCjtAlunos*/ , int /*qtd de AlunoDemanda*/> map_CjtAlunosId_SizeDemanda;
 
 
@@ -1641,7 +1684,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 		// se houver mais de 1 grupo, todos eles têm que ser fundidos
 		GGroup< int > gruposId;
 
-		map< int, GGroup< Aluno * > >::iterator itCjtAlunos;
+		map< int, GGroup< Aluno *, LessPtr< Aluno > > >::iterator itCjtAlunos;
 
 		// Procura se já existe grupo com demanda de alguma disciplina do aluno
 		ITERA_GGROUP_LESSPTR( itAlDem, itAluno->demandas, AlunoDemanda )
@@ -1655,8 +1698,8 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 			{
 				bool EXISTE_NO_CJT_ATUAL = false;
 
-				GGroup< Aluno * > grupoAlunos = (*itCjtAlunos).second;
-				ITERA_GGROUP( itAlunoInt, grupoAlunos, Aluno )
+				GGroup< Aluno *, LessPtr< Aluno > > grupoAlunos = (*itCjtAlunos).second;
+				ITERA_GGROUP_LESSPTR( itAlunoInt, grupoAlunos, Aluno )
 				{
 					ITERA_GGROUP_LESSPTR( itAlDemInt, itAlunoInt->demandas, AlunoDemanda )
 					{
@@ -1686,12 +1729,12 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 			{
 				int nroAlDem = 0;
 
-				GGroup< Aluno* > uniao;
+				GGroup< Aluno*, LessPtr< Aluno > > uniao;
 				ITERA_GGROUP_N_PT( itId, gruposId, int )
 				{
 					int id = *itId;
-					GGroup< Aluno* > listaAlunos = auxCjtAlunos[id];
-					ITERA_GGROUP ( itAl, listaAlunos, Aluno)
+					GGroup< Aluno*, LessPtr< Aluno > > listaAlunos = auxCjtAlunos[id];
+					ITERA_GGROUP_LESSPTR ( itAl, listaAlunos, Aluno)
 					{						
 						uniao.add( *itAl );
 						nroAlDem += itAl->demandas.size();
@@ -1715,7 +1758,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 		else
 		{
 			biggestId++;
-			GGroup< Aluno * > novoGrupo;
+			GGroup< Aluno *, LessPtr< Aluno > > novoGrupo;
 			novoGrupo.add( aluno );
 			auxCjtAlunos[biggestId] = novoGrupo;
 			map_CjtAlunosId_SizeDemanda[ biggestId ] = aluno->demandas.size();
@@ -1764,10 +1807,10 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 			// Agrupa os conjuntos com menos que PERC_MIN da qtd de AlunosDemanda
 			if ( maiorQtdAlDem < PERC_MIN * this->getQtdAlunoDemandaAtualPorCampus(campusId) )
 			{
-				map< int, GGroup< Aluno * > >::iterator itMap = auxCjtAlunos.begin();
+				map< int, GGroup< Aluno *, LessPtr< Aluno > > >::iterator itMap = auxCjtAlunos.begin();
 				for ( ; itMap != auxCjtAlunos.end(); itMap++ )
 				{
-					ITERA_GGROUP( itAluno, itMap->second, Aluno )
+					ITERA_GGROUP_LESSPTR( itAluno, itMap->second, Aluno )
 					{
 						Aluno *a = *itAluno;
 						this->cjtAlunos[ ID ].add( a );
@@ -1783,15 +1826,15 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 	// ---------------------------------------------------------------------
 	// Preenche cjtDemandas, cjtAlunoDemanda e cjtDisciplinas
 
-	map< int, GGroup< Aluno * > >::iterator 
+	map< int, GGroup< Aluno *, LessPtr< Aluno > > >::iterator 
 			itCjtAlunos = this->cjtAlunos.begin();
 
 	for ( ; itCjtAlunos != this->cjtAlunos.end(); itCjtAlunos++ )
 	{
 		int id = itCjtAlunos->first;
 	
-		GGroup< Aluno * > grupoAlunos = itCjtAlunos->second;
-		ITERA_GGROUP( itAl, grupoAlunos, Aluno )
+		GGroup< Aluno *, LessPtr< Aluno > > grupoAlunos = itCjtAlunos->second;
+		ITERA_GGROUP_LESSPTR( itAl, grupoAlunos, Aluno )
 		{
 			Aluno *a = *itAl;
 			
@@ -1848,7 +1891,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 		  continue;
 	  }
 
-	  map< Disciplina *, int /* cjtAlunosId */ >::iterator 
+	  map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		  itMapDiscCjt = this->cjtDisciplinas.find( disciplina );
 
 	  if ( itMapDiscCjt == this->cjtDisciplinas.end() )
@@ -1869,7 +1912,7 @@ int ProblemData::retornaCjtAlunosId( int discId )
 	
 	Disciplina *disciplina = this->refDisciplinas[ discId ];
 
-	map< Disciplina *, int /* cjtAlunosId */ >::iterator itMap = this->cjtDisciplinas.find( disciplina );
+	map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator itMap = this->cjtDisciplinas.find( disciplina );
 	
 	if ( itMap == this->cjtDisciplinas.end() )
 	{
@@ -1890,14 +1933,14 @@ int ProblemData::retornaCjtAlunosId( Aluno* aluno )
 {	
 	int cjtAlunosId;
 	
-	map< int /* cjtAlunosId */, GGroup< Aluno* > >::iterator 
+	map< int /* cjtAlunosId */, GGroup< Aluno* , LessPtr< Aluno > > >::iterator 
 		itMapAluno = this->cjtAlunos.begin();
 	
 	for ( ; itMapAluno != this->cjtAlunos.end(); itMapAluno++ )
 	{
 		cjtAlunosId = itMapAluno->first;
 
-		ITERA_GGROUP( itAluno, itMapAluno->second, Aluno )
+		ITERA_GGROUP_LESSPTR( itAluno, itMapAluno->second, Aluno )
 		{
 			Aluno *a = *itAluno;
 			if ( a->getAlunoId() == aluno->getAlunoId() )
@@ -1915,9 +1958,9 @@ int ProblemData::retornaCjtAlunosId( Aluno* aluno )
 
 int ProblemData::haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId )
 {	
-	GGroup< Demanda* > demandasCjtAlunos;
+	GGroup< Demanda*, LessPtr< Demanda > > demandasCjtAlunos;
 
-	map< int, GGroup< Demanda * > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
+	map< int, GGroup< Demanda *, LessPtr< Demanda > > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
 	
 	if ( itMap == this->cjtDemandas.end() )
 	{
@@ -1932,7 +1975,7 @@ int ProblemData::haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int c
 	// Calculando P_{d,o}
 	int qtdDem = 0;
 
-	ITERA_GGROUP( itDem, demandasCjtAlunos, Demanda )
+	ITERA_GGROUP_LESSPTR( itDem, demandasCjtAlunos, Demanda )
 	{
 		if ( itDem->getDisciplinaId() == discId && 
 			 itDem->getOfertaId() == oftId )
@@ -1946,9 +1989,9 @@ int ProblemData::haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int c
 
 int ProblemData::haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId )
 {	
-	GGroup< Demanda* > demandasCjtAlunos;
+	GGroup< Demanda*, LessPtr< Demanda > > demandasCjtAlunos;
 
-	map< int, GGroup< Demanda * > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
+	map< int, GGroup< Demanda *, LessPtr< Demanda > > >::iterator itMap = this->cjtDemandas.find( cjtAlunosId );
 	
 	if ( itMap == this->cjtDemandas.end() )
 	{
@@ -1963,7 +2006,7 @@ int ProblemData::haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int 
 	// Calculando P_{d,o}
 	int qtdDem = 0;
 
-	ITERA_GGROUP( itDem, demandasCjtAlunos, Demanda )
+	ITERA_GGROUP_LESSPTR( itDem, demandasCjtAlunos, Demanda )
 	{
 		if ( itDem->getDisciplinaId() == discId && 
 			itDem->oferta->getCursoId() == cursoId )
@@ -2011,7 +2054,7 @@ void ProblemData::imprimeCjtAlunos( int campusId )
 
 	std::cout << "\nNumero de conjuntos: " << this->cjtAlunos.size();
 
-	map< int, GGroup< Aluno * > >::iterator
+	map< int, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
 		itMapCjtAlunos = this->cjtAlunos.begin();
 			
 	for ( ; itMapCjtAlunos != this->cjtAlunos.end(); itMapCjtAlunos++ )
@@ -2033,14 +2076,14 @@ void ProblemData::imprimeCjtAlunos( int campusId )
 		{
 			int nAlDem = 0, nDem = 0;
 
-			GGroup< AlunoDemanda * > gad = this->cjtAlunoDemanda[id];
-			ITERA_GGROUP( itAlDem, gad, AlunoDemanda )
+			GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > gad = this->cjtAlunoDemanda[id];
+			ITERA_GGROUP_LESSPTR( itAlDem, gad, AlunoDemanda )
 			{
 				if ( itAlDem->demanda->getDisciplinaId() >= 0 )
 					nAlDem++;
 			}
-			GGroup< Demanda * > gd = this->cjtDemandas[id];
-			ITERA_GGROUP( itDem, gd, Demanda )
+			GGroup< Demanda *, LessPtr< Demanda > > gd = this->cjtDemandas[id];
+			ITERA_GGROUP_LESSPTR( itDem, gd, Demanda )
 			{
 				if ( itDem->getDisciplinaId() >= 0 )
 					nDem++;
