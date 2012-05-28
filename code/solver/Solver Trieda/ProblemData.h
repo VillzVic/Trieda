@@ -289,7 +289,7 @@ public:
 
    // Dada uma disciplina, informa a sala à qual essa disciplina
    // está fixada, caso haja a fixação disciplina/sala
-   std::map< Disciplina *, Sala * > map_Discicplina_Sala_Fixados;
+   std::map< Disciplina *, Sala *, LessPtr< Disciplina > > map_Discicplina_Sala_Fixados;
 
    int creditosFixadosDisciplinaDia( Disciplina *, int, ConjuntoSala * );
 
@@ -305,19 +305,19 @@ public:
 
    // Referencia, para cada disciplina substituida, qual a disciplina que a substituiu,
    // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
-   std::map< Disciplina*, Disciplina* > mapDiscSubstituidaPor;
+   std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > > mapDiscSubstituidaPor;
 
    // Dado um curso e um curriculo, retorna-se um map
    // que referencia, para cada disciplina, as disciplinas que ela substituiu,
    // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
    std::map< std::pair< Curso *, Curriculo * >,
-	         std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidas;
+	         std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > > mapGroupDisciplinasSubstituidas;
 
    //std::map< std::pair< Curso *, Curriculo * >,
    //		    std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidasAux;
 
    // Dada uma disciplina, informamos o seu curso e curriculo
-   std::map< Disciplina *, std::pair< Curso *, Curriculo * > > map_Disc_CursoCurriculo;
+   std::map< Disciplina *, std::pair< Curso *, Curriculo * >, LessPtr< Disciplina > > map_Disc_CursoCurriculo;
 
    // Retorna para uma dada disciplina substituta e um par <curso, curriculo>,
    // a disciplina original que ela substituiu. Caso não tiver havido substituição,
@@ -335,7 +335,7 @@ public:
    bool cursosCompativeis( Curso *, Curso * );
    
    // Informa se uma disciplina substituída foi atendida
-   std::map< Disciplina *, bool > disciplinasSubstituidasAtendidas;
+   std::map< Disciplina *, bool, LessPtr< Disciplina > > disciplinasSubstituidasAtendidas;
 
    // Busca a demanda da disciplina informada,
    // em cursos compatíveis com o curso também informado
@@ -391,7 +391,7 @@ public:
    int totalHorariosTurnoAula( Aula * );
 
    std::map< Professor *, GGroup< Disciplina *,
-      LessPtr< Disciplina > > > mapProfessorDisciplinasAssociadas;
+      LessPtr< Disciplina > >, LessPtr< Professor > > mapProfessorDisciplinasAssociadas;
 
    // Retorna todas as salas (de todos os campi) do input
    GGroup< Sala *, LessPtr< Sala > > getSalas() const;
@@ -407,9 +407,9 @@ public:
    Campus* retornaCampus( int /*unidId*/ );
 
    // Resultado da alocação de alunos no pre-modelo:
-   std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > mapAluno_CampusTurmaDisc;
+   std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > > mapAluno_CampusTurmaDisc;
 
-   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > > mapCampusTurmaDisc_AlunosDemanda;
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > > mapCampusTurmaDisc_AlunosDemanda;
 
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > listSlackDemandaAluno;
 

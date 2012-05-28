@@ -148,7 +148,7 @@ public:
 	   Função usada na restrição de máximo de crédito por sala na semana,
 	   no modelo pre-tático.
    */
-   int maxTempoPermitidoNaSemana( std::map< Disciplina*, Disciplina* > mapDiscSubstituidaPor )
+   int maxTempoPermitidoNaSemana( std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > > mapDiscSubstituidaPor )
    {
 	   int maxTempo = 0;
 

@@ -563,12 +563,12 @@ Disciplina * ProblemData::retornaDisciplinaSubstituta(
   Curso * curso, Curriculo * curriculo, Disciplina * disciplina )
 {
    std::map< std::pair< Curso *, Curriculo * >,
-      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
+      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > >::iterator
       it_map = this->mapGroupDisciplinasSubstituidas.find(make_pair(curso, curriculo));
 
    if( it_map != this->mapGroupDisciplinasSubstituidas.end())
    {
-      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
+      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > >::iterator
          it_disciplinas = it_map->second.begin();
 
       for (; it_disciplinas != it_map->second.end(); it_disciplinas++ )
@@ -1075,7 +1075,7 @@ Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Cur
 {	
 	std::map< std::pair< Curso *, Curriculo * >,
 			  std::map< Disciplina *,
-			  GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
+			  GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > >::iterator
 			  it_CursoCurr_Discs;
 
 	it_CursoCurr_Discs = this->mapGroupDisciplinasSubstituidas.find( parCursoCurr );
@@ -1083,9 +1083,9 @@ Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Cur
 	if ( it_CursoCurr_Discs == mapGroupDisciplinasSubstituidas.end() )
 		return NULL;
 
-	std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > mapDiscs = it_CursoCurr_Discs->second;
+	std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > mapDiscs = it_CursoCurr_Discs->second;
 
-	std::map< Disciplina *, GGroup< Disciplina *, LessPtr<Disciplina> > >::iterator 
+	std::map< Disciplina *, GGroup< Disciplina *, LessPtr<Disciplina> >, LessPtr< Disciplina > >::iterator 
 		it_Discs = mapDiscs.find( disciplina );
 
 	if ( it_Discs == mapDiscs.end() )
@@ -1100,7 +1100,7 @@ Disciplina * ProblemData::ehSubstitutaDe( Disciplina* disciplina, std::pair< Cur
 // Informa se uma dada disciplina é substituta de alguma outra.
 bool ProblemData::ehSubstituta( Disciplina* d )
 {
-	std::map< Disciplina*, Disciplina* >::iterator
+	std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > >::iterator
 		itMap = this->mapDiscSubstituidaPor.begin();
 
 	for ( ; itMap != this->mapDiscSubstituidaPor.end(); itMap++ )
@@ -1167,7 +1167,7 @@ int ProblemData::retornaTurmaDiscAluno( Aluno* aluno, Disciplina* disc )
 {
 	int turma = -1;
 		
-	std::map< Aluno*, GGroup< Trio< int, int, Disciplina* > > >::iterator
+	std::map< Aluno*, GGroup< Trio< int, int, Disciplina* > >, LessPtr< Aluno > >::iterator
 		itMap = mapAluno_CampusTurmaDisc.find( aluno );
 	
 	if ( itMap != mapAluno_CampusTurmaDisc.end() )
@@ -1464,7 +1464,7 @@ int ProblemData::atendeTurmaDiscOferta( int turma, int discId, int ofertaId )
 	Trio< int, int, Disciplina* > trio;
 	trio.set( campusId, turma, disciplina);
 
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator itMap = 
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator itMap = 
 		this->mapCampusTurmaDisc_AlunosDemanda.find( trio );
 	
 	if ( itMap == this->mapCampusTurmaDisc_AlunosDemanda.end() )
@@ -1474,9 +1474,9 @@ int ProblemData::atendeTurmaDiscOferta( int turma, int discId, int ofertaId )
 
 	int n = 0;
 
-	GGroup< AlunoDemanda* > at_alunosDemanda = itMap->second;
+	GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > at_alunosDemanda = itMap->second;
 
-	ITERA_GGROUP( itAlDem, at_alunosDemanda, AlunoDemanda )
+	ITERA_GGROUP_LESSPTR( itAlDem, at_alunosDemanda, AlunoDemanda )
 	{
 		if ( itAlDem->demanda->getOfertaId() == ofertaId )
 		{
@@ -1528,7 +1528,7 @@ int ProblemData::existeTurmaDiscCampus( int turma, int discId, int campusId )
 	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
 	trio.set( campusId, turma, disciplina );
 
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
 
 	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
@@ -1549,27 +1549,27 @@ GGroup<Aluno*> ProblemData::alunosEmComum( int turma1, Disciplina* disc1, int tu
 	trio2.set( campus->getId(), turma2, disc2 );
 
 	// Acha os alunoDemanda da primeira turma
-	GGroup< AlunoDemanda* > alunos1;
+	GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunos1;
 
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
 		itMap1 = mapCampusTurmaDisc_AlunosDemanda.find( trio1 );
 	if ( itMap1 != mapCampusTurmaDisc_AlunosDemanda.end() )
 		alunos1 = itMap1->second;
 
 	// Acha os alunoDemanda da segunda turma
-	GGroup< AlunoDemanda* > alunos2;
+	GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunos2;
 
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
 		itMap2 = mapCampusTurmaDisc_AlunosDemanda.find( trio2 );
 	if ( itMap2 != mapCampusTurmaDisc_AlunosDemanda.end() )
 		alunos2 = itMap2->second;
 
 	// Acha os alunos em comum
-	ITERA_GGROUP( itAlDem1, alunos1, AlunoDemanda )
+	ITERA_GGROUP_LESSPTR( itAlDem1, alunos1, AlunoDemanda )
 	{
 		int aluno1Id = (*itAlDem1)->getAlunoId();
 
-		ITERA_GGROUP( itAlDem2, alunos2, AlunoDemanda )
+		ITERA_GGROUP_LESSPTR( itAlDem2, alunos2, AlunoDemanda )
 		{
 			int aluno2Id = (*itAlDem2)->getAlunoId();
 
@@ -1592,27 +1592,27 @@ bool ProblemData::posuiaAlunosEmComum( int turma1, Disciplina* disc1, int turma2
 	trio2.set( campus->getId(), turma2, disc2 );
 
 	// Acha os alunoDemanda da primeira turma
-	GGroup< AlunoDemanda* > alunos1;
+	GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunos1;
 
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* , LessPtr< AlunoDemanda >> >::iterator 
 		itMap1 = mapCampusTurmaDisc_AlunosDemanda.find( trio1 );
 	if ( itMap1 != mapCampusTurmaDisc_AlunosDemanda.end() )
 		alunos1 = itMap1->second;
 
 	// Acha os alunoDemanda da segunda turma
-	GGroup< AlunoDemanda* > alunos2;
+	GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunos2;
 
-	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
 		itMap2 = mapCampusTurmaDisc_AlunosDemanda.find( trio2 );
 	if ( itMap2 != mapCampusTurmaDisc_AlunosDemanda.end() )
 		alunos2 = itMap2->second;
 
 	// Acha os alunos em comum
-	ITERA_GGROUP( itAlDem1, alunos1, AlunoDemanda )
+	ITERA_GGROUP_LESSPTR( itAlDem1, alunos1, AlunoDemanda )
 	{
 		int aluno1Id = (*itAlDem1)->getAlunoId();
 
-		ITERA_GGROUP( itAlDem2, alunos2, AlunoDemanda )
+		ITERA_GGROUP_LESSPTR( itAlDem2, alunos2, AlunoDemanda )
 		{
 			int aluno2Id = (*itAlDem2)->getAlunoId();
 

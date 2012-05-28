@@ -1930,7 +1930,7 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 				Disciplina *discAntiga = it_periodo_disc->first;
 				int periodo = it_periodo_disc->second;
 
-				std::map< Disciplina*, Disciplina* >::iterator
+				std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > >::iterator
 					itMapEquiv = problemData->mapDiscSubstituidaPor.find( discAntiga );
 
 				if ( itMapEquiv != problemData->mapDiscSubstituidaPor.end() )
@@ -2148,7 +2148,7 @@ void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 				{
 					bool jaSubstituiu = false;
 
-					std::map< Disciplina*, Disciplina* >::iterator itMap;
+					std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > >::iterator itMap;
 					for ( itMap = problemData->mapDiscSubstituidaPor.begin();
 						  itMap != problemData->mapDiscSubstituidaPor.end();
 						  itMap++ )
@@ -2745,7 +2745,7 @@ void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
 		exit(1);
 	}
 
-   for ( std::map< Disciplina*, Disciplina* >::iterator it = problemData->mapDiscSubstituidaPor.begin();
+   for ( std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > >::iterator it = problemData->mapDiscSubstituidaPor.begin();
 	     it != problemData->mapDiscSubstituidaPor.end(); it++ )
    {
 	   outTestFile <<"\nAntiga "<< it->first->getId() <<" Substituta "<< it->second->getId();
@@ -2764,11 +2764,11 @@ void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
 	}
 
    for ( std::map< std::pair< Curso *, Curriculo * >, 
-				   std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator it
+				   std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > >::iterator it
 				   = problemData->mapGroupDisciplinasSubstituidas.begin();
 	     it != problemData->mapGroupDisciplinasSubstituidas.end(); it++ )
    {	   
-	   for ( std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator it2 = it->second.begin();
+	   for ( std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > >::iterator it2 = it->second.begin();
 			 it2 != it->second.end(); it2++ )
 	   {
 		   if ( it2->second.size() > 1 )

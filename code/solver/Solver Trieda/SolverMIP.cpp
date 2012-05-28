@@ -1222,7 +1222,7 @@ int SolverMIP::fixaLimiteInferiorVariavelPre( VariablePre *v )
 			 Disciplina *disciplina = v->getDisciplina();
 			 int turma = v->getTurma();
 
-		 	 std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > >::iterator itMap =
+		 	 std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator itMap =
 				problemData->mapAluno_CampusTurmaDisc.find( aluno );
 			 
 			 if ( itMap == problemData->mapAluno_CampusTurmaDisc.end() )
@@ -2586,7 +2586,7 @@ void SolverMIP::limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId )
 {
 	// Limpa a solução obtida na iteração de PRIORIDADE de demanda anterior, caso exista, do campusId
 
-	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > >::iterator
+	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
 		itMapAtendeAluno =	problemData->mapAluno_CampusTurmaDisc.begin();
 
 	while ( itMapAtendeAluno != problemData->mapAluno_CampusTurmaDisc.end() )
@@ -2770,7 +2770,7 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 			 }
 			 case Variable::V_ABERTURA_COMPATIVEL:
 			 {
-				 std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > >::iterator
+				 std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 					 itMapAtend = problemData->mapCampusTurmaDisc_AlunosDemanda.begin();
 				 for ( ; itMapAtend != problemData->mapCampusTurmaDisc_AlunosDemanda.end(); itMapAtend++ )
 				 {
@@ -2786,7 +2786,7 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 			 }
 			 case Variable::V_DIAS_CONSECUTIVOS:
 			 {
-				 std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > >::iterator
+				 std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 					 itMapAtend = problemData->mapCampusTurmaDisc_AlunosDemanda.begin();
 				 for ( ; itMapAtend != problemData->mapCampusTurmaDisc_AlunosDemanda.end(); itMapAtend++ )
 				 {
@@ -3086,7 +3086,7 @@ int SolverMIP::fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v )
 			 Disciplina *disciplina = v->getDisciplina();
 			 int turma = v->getTurma();
 
-		 	 std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > >::iterator itMap =
+		 	 std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator itMap =
 				problemData->mapAluno_CampusTurmaDisc.find( aluno );
 			 
 			 if ( itMap == problemData->mapAluno_CampusTurmaDisc.end() )
@@ -3340,7 +3340,7 @@ int SolverMIP::fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v )
 			 Disciplina *disciplina = v->getDisciplina();
 			 int turma = v->getTurma();
 
-		 	 std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > >::iterator itMap =
+		 	 std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator itMap =
 				problemData->mapAluno_CampusTurmaDisc.find( aluno );
 			 
 			 if ( itMap == problemData->mapAluno_CampusTurmaDisc.end() )
@@ -3979,14 +3979,14 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
 
 				 trio.set(vCampusId, vTurma, vDisc);
 
-				 std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda* > >::iterator 
+				 std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
 					 itMap = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
 				 
 				 if ( itMap != problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
 				 {
-					 GGroup< AlunoDemanda* > alunosDemanda = itMap->second;					
+					 GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMap->second;					
 				 
-					 ITERA_GGROUP( itAlDem, alunosDemanda, AlunoDemanda )
+					 ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
 					 {
 						 problemData->listSlackDemandaAluno.add( *itAlDem );				 
 
@@ -7014,7 +7014,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 									Trio<int,int,Disciplina*> trio;
 									trio.set(campus->getId(), turma, d );
 
-									std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda* > >::iterator
+									std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 										itMap = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
 							
 									if ( itMap == problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
@@ -7028,7 +7028,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 									// Todas as ofertas atendidas
 									GGroup< Oferta* > ofertas;
-									ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+									ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 									{
 										ofertas.add( itAlunoDemanda->demanda->oferta );									
 									}
@@ -7053,7 +7053,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 										AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
 										
-										ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+										ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 										{
 											if ( itAlunoDemanda->demanda->oferta != oferta )
 												continue;
@@ -7143,7 +7143,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 							Trio<int,int,Disciplina*> trio;
 							trio.set(campus->getId(), turma, d );
 
-							std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda* > >::iterator
+							std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 								itMap = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
 							
 							if ( itMap == problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
@@ -7157,7 +7157,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 							// Todas as ofertas atendidas
 							GGroup< Oferta* > ofertas;
-							ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+							ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 							{
 								ofertas.add( itAlunoDemanda->demanda->oferta );									
 							}
@@ -7182,7 +7182,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 								AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
 											
-								ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+								ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 								{
 									if ( itAlunoDemanda->demanda->oferta != oferta )
 										continue;
@@ -7280,7 +7280,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 					Trio<int,int,Disciplina*> trio;
 					trio.set(campus->getId(), turma, d );
 
-					std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda* > >::iterator
+					std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 						itMap = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
 							
 					if ( itMap == problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
@@ -7294,7 +7294,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 					// Todas as ofertas atendidas
 					GGroup< Oferta* > ofertas;
-					ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+					ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 					{
 						ofertas.add( itAlunoDemanda->demanda->oferta );									
 					}
@@ -7319,7 +7319,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 						AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
 									
-						ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+						ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 						{
 							if ( itAlunoDemanda->demanda->oferta != oferta )
 								continue;
@@ -7422,7 +7422,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 			Trio<int,int,Disciplina*> trio;
 			trio.set(campus->getId(), turma, d );
 
-			std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda* > >::iterator
+			std::map< Trio<int,int,Disciplina*>, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 				itMap = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
 							
 			if ( itMap == problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
@@ -7436,7 +7436,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 			// Todas as ofertas atendidas
 			GGroup< Oferta* > ofertas;
-			ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+			ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 			{
 				ofertas.add( itAlunoDemanda->demanda->oferta );									
 			}
@@ -7461,7 +7461,7 @@ void SolverMIP::getSolutionTaticoPorAluno()
 
 				AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
 								
-				ITERA_GGROUP( itAlunoDemanda, itMap->second, AlunoDemanda )
+				ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
 				{
 					if ( itAlunoDemanda->demanda->oferta != oferta )
 						continue;
@@ -8597,7 +8597,7 @@ void SolverMIP::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlun
 		exit(1);
 	}
 
-	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > >::iterator
+	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
 		itMapAlunos = problemData->mapAluno_CampusTurmaDisc.begin();
 	
 	for ( ; itMapAlunos != problemData->mapAluno_CampusTurmaDisc.end() ; itMapAlunos++ )
@@ -8639,7 +8639,7 @@ void SolverMIP::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlun
 		exit(1);
 	}
 
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > >::iterator
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 		itMapTurmas = problemData->mapCampusTurmaDisc_AlunosDemanda.begin();
 
 	for ( ; itMapTurmas != problemData->mapCampusTurmaDisc_AlunosDemanda.end() ; itMapTurmas++ )
@@ -8653,7 +8653,7 @@ void SolverMIP::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlun
 
 		turmasFile << "\n\ni" << turma << "_Disc" << disc << ": ";
 
-		GGroup< AlunoDemanda* >::iterator itGGroup = itMapTurmas->second.begin();
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > >::iterator itGGroup = itMapTurmas->second.begin();
 		for ( ; itGGroup != itMapTurmas->second.end() ; itGGroup++ )
 		{
 			int alunoId = itGGroup->getAlunoId();
@@ -9128,10 +9128,10 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 						Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
 						trio.set( campus->getId(), aula->getTurma(), aula->getDisciplina() );
 
-						GGroup<AlunoDemanda*> alunosDemanda =
+						GGroup<AlunoDemanda*, LessPtr< AlunoDemanda >> alunosDemanda =
 							problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ];
 
-						ITERA_GGROUP( itAlunoDemanda, alunosDemanda, AlunoDemanda )
+						ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemanda, AlunoDemanda )
 						{
 							if ( itAlunoDemanda->demanda->oferta != oferta )
 								continue;
@@ -9355,7 +9355,7 @@ void SolverMIP::criaVariaveisAlunosDisciplinasSubstituidas()
    Disciplina * disciplina_equivalente = NULL;
 
    std::map< std::pair< Curso *, Curriculo * >,
-             std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
+             std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > >::iterator
              it_disc_substituidas = problemData->mapGroupDisciplinasSubstituidas.begin();
 
    // Procura criar variáveis 'a' para as disciplinas que foram substituídas
@@ -9366,7 +9366,7 @@ void SolverMIP::criaVariaveisAlunosDisciplinasSubstituidas()
       curriculo = it_disc_substituidas->first.second;
 
 		// Cria variáveis para cada uma das disciplinas substituídas
-      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
+      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > >::iterator
          it_conjunto_disc = it_disc_substituidas->second.begin();
 
       for (; it_conjunto_disc != it_disc_substituidas->second.end();
@@ -9519,7 +9519,7 @@ void SolverMIP::criaVariaveisCreditosDisciplinasSubstituidas()
    Disciplina * disciplina_equivalente = NULL;
 
    std::map< std::pair< Curso *, Curriculo * >,
-             std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > >::iterator
+             std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > >::iterator
              it_disc_substituidas = problemData->mapGroupDisciplinasSubstituidas.begin();
 
 	// Procura criar variáveis 'x' para as disciplinas que foram substituídas
@@ -9530,7 +9530,7 @@ void SolverMIP::criaVariaveisCreditosDisciplinasSubstituidas()
       curriculo = it_disc_substituidas->first.second;
 
 		// Cria variáveis para cada uma das disciplinas substituídas
-      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > >::iterator
+      std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > >::iterator
          it_conjunto_disc = it_disc_substituidas->second.begin();
 
       for (; it_conjunto_disc != it_disc_substituidas->second.end();
@@ -9559,7 +9559,7 @@ void SolverMIP::criaVariaveisCreditosDisciplinasSubstituidas()
 				// teve pelo menos um aluno atendido na solução
             bool disciplina_atendida = false;
 
-			std::map< Disciplina *, bool >::iterator it_find_disciplina
+			std::map< Disciplina *, bool, LessPtr< Disciplina > >::iterator it_find_disciplina
             = problemData->disciplinasSubstituidasAtendidas.find( disciplina_equivalente );
 
 			if ( it_find_disciplina != problemData->disciplinasSubstituidasAtendidas.end() )
@@ -48532,7 +48532,7 @@ int SolverMIP::criaRestricaoAlunoHorario( void )
 	  int turma = v.getAula()->getTurma();
 	  Disciplina* disc = v.getAula()->getDisciplina();
       
-	  std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda* > >::iterator itMapAtend;
+	  std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator itMapAtend;
 
 	  Trio< int, int, Disciplina* > trio;
 	  trio.set( campusId, turma, disc );
@@ -48540,10 +48540,10 @@ int SolverMIP::criaRestricaoAlunoHorario( void )
 	  itMapAtend = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
 	  if ( itMapAtend != problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
 	  {
-		  GGroup< AlunoDemanda* > alunosDemanda = (*itMapAtend).second;
+		  GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = (*itMapAtend).second;
 
 		  // Para cada aluno alocado na aula
-		  ITERA_GGROUP( itAlunoDem, alunosDemanda, AlunoDemanda )
+		  ITERA_GGROUP_LESSPTR( itAlunoDem, alunosDemanda, AlunoDemanda )
 		  {
 			  int alunoId = ( *itAlunoDem )->getAlunoId();
 			  Aluno *aluno = problemData->retornaAluno( alunoId );

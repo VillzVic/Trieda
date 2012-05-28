@@ -466,7 +466,7 @@ bool SolucaoOperacional::fixacaoDiscSala( Aula * aula )
 	int disciplina_id = aula->getDisciplina()->getId();
 	int sala_id = aula->getSala()->getId();
 
-	std::map< Disciplina *, Sala * >::iterator it_disc_sala
+	std::map< Disciplina *, Sala *, LessPtr< Disciplina > >::iterator it_disc_sala
 		= problem_data->map_Discicplina_Sala_Fixados.begin();
 
 	for (; it_disc_sala != problem_data->map_Discicplina_Sala_Fixados.end();
