@@ -765,7 +765,7 @@ bool ValidateSolutionOp::deslocamentoViavel( const ProblemData * pData,
 
    int minutosDisponiveis = diff.getDateMinutes();
 
-   GGroup< Deslocamento * >::iterator it_desloc
+   GGroup< Deslocamento *, LessPtr< Deslocamento > >::iterator it_desloc
       = pData->tempo_unidades.begin();
 
    int minutosNecessarios = -1;

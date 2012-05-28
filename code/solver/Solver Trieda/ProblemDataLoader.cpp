@@ -647,7 +647,7 @@ void ProblemDataLoader::relacionaHorariosAulaDiaSemana()
 
 void ProblemDataLoader::relacionaCredsRegras()
 {
-   ITERA_GGROUP( it_Regra, problemData->regras_div, DivisaoCreditos )
+	ITERA_GGROUP_LESSPTR( it_Regra, problemData->regras_div, DivisaoCreditos )
    { 
       problemData->creds_Regras[ it_Regra->getCreditos() ].add( *it_Regra );
    }
@@ -1822,48 +1822,48 @@ void ProblemDataLoader::verificaFixacoesDiasLetivosDisciplinas()
    }
 }
 
-template< class T > 
-void ProblemDataLoader::find_and_set(
-   int id, GGroup< T * > & haystack,
-   T * & needle, bool print = false )
-{
-   T * finder = new T;
-   finder->setId( id );
-
-   // Versão lenta... Entender o porquê depois
-
-#ifndef WIN32
-   typename GGroup< T * >::iterator it_g = haystack.begin();
-#else
-   GGroup< T * >::iterator it_g = haystack.begin();
-#endif
-
-   while ( it_g != haystack.end()
-      && it_g->getId() != finder->getId() )
-   {
-      ++it_g;
-   }
-   // FIM
-
-   if ( it_g != haystack.end() )
-   {
-      needle = ( *it_g );
-
-      if ( print )
-      {
-         std::cout << "Found " << id << std::endl;
-      }
-   }
-   else
-   {
-      std::cout << "Warnning: Problema na funcao"
-                << "FindAndSet do ProblemDataLoader." << std::endl;
-
-      exit( 1 );
-   }
-
-   delete finder;
-}
+//template< class T > 
+//void ProblemDataLoader::find_and_set(
+//   int id, GGroup< T *, LessPtr > & haystack,
+//   T * & needle, bool print = false )
+//{
+//   T * finder = new T;
+//   finder->setId( id );
+//
+//   // Versão lenta... Entender o porquê depois
+//
+//#ifndef WIN32
+//   typename GGroup< T * >::iterator it_g = haystack.begin();
+//#else
+//   GGroup< T * >::iterator it_g = haystack.begin();
+//#endif
+//
+//   while ( it_g != haystack.end()
+//      && it_g->getId() != finder->getId() )
+//   {
+//      ++it_g;
+//   }
+//   // FIM
+//
+//   if ( it_g != haystack.end() )
+//   {
+//      needle = ( *it_g );
+//
+//      if ( print )
+//      {
+//         std::cout << "Found " << id << std::endl;
+//      }
+//   }
+//   else
+//   {
+//      std::cout << "Warnning: Problema na funcao"
+//                << "FindAndSet do ProblemDataLoader." << std::endl;
+//
+//      exit( 1 );
+//   }
+//
+//   delete finder;
+//}
 
 template< class T > 
 void ProblemDataLoader::find_and_set_lessptr(
@@ -2873,7 +2873,7 @@ void ProblemDataLoader::gera_refs()
 
          ITERA_GGROUP_LESSPTR( it_salas, it_unidades->salas, Sala )
          {
-            find_and_set( it_salas->getTipoSalaId(),
+            find_and_set_lessptr( it_salas->getTipoSalaId(),
                problemData->tipos_sala,
                it_salas->tipo_sala, false );
 
@@ -2906,7 +2906,7 @@ void ProblemDataLoader::gera_refs()
 
       ITERA_GGROUP_LESSPTR( it_prof, it_campi->professores, Professor )
       {
-         find_and_set( it_prof->getTipoContratoId(),
+         find_and_set_lessptr( it_prof->getTipoContratoId(),
             problemData->tipos_contrato, 
             it_prof->tipo_contrato, false );
 
@@ -2943,7 +2943,7 @@ void ProblemDataLoader::gera_refs()
       } 
    } // campus
 
-   ITERA_GGROUP( it_desl, problemData->tempo_campi, Deslocamento )
+   ITERA_GGROUP_LESSPTR( it_desl, problemData->tempo_campi, Deslocamento )
    {
       if ( problemData->refCampus[ it_desl->getOrigemId() ] != NULL )
       {
@@ -2958,7 +2958,7 @@ void ProblemDataLoader::gera_refs()
       }
    } // deslocamento campi
 
-   ITERA_GGROUP( it_desl, problemData->tempo_unidades, Deslocamento )
+   ITERA_GGROUP_LESSPTR( it_desl, problemData->tempo_unidades, Deslocamento )
    {
       // É preciso procurar a unidade nos campi
       ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
@@ -2977,11 +2977,11 @@ void ProblemDataLoader::gera_refs()
 
    ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
    {
-      find_and_set( it_disc->getTipoDisciplinaId(),
+      find_and_set_lessptr( it_disc->getTipoDisciplinaId(),
          problemData->tipos_disciplina,
          it_disc->tipo_disciplina, false );
 
-      find_and_set( it_disc->getNivelDificuldadeId(),
+      find_and_set_lessptr( it_disc->getNivelDificuldadeId(),
          problemData->niveis_dificuldade,
          it_disc->nivel_dificuldade, false );
 	  
@@ -3002,7 +3002,7 @@ void ProblemDataLoader::gera_refs()
    ITERA_GGROUP( it_ndh, problemData->parametros->niveis_dificuldade_horario,
       NivelDificuldadeHorario )
    {
-      find_and_set( it_ndh->nivel_dificuldade_id,
+      find_and_set_lessptr( it_ndh->nivel_dificuldade_id,
          problemData->niveis_dificuldade,
          it_ndh->nivel_dificuldade, false );
    }
@@ -3039,7 +3039,7 @@ void ProblemDataLoader::gera_refs()
             // Como o turno não foi fixado, mas o horário de
             // aula foi, então procuramos o horário aula fixado
             // dentre todos os horários aula (entre todos os turnos)
-            GGroup< HorarioAula * > todos_horarios_aula;
+			 GGroup< HorarioAula *, LessPtr< HorarioAula > > todos_horarios_aula;
 
             ITERA_GGROUP_LESSPTR( it_turno, problemData->todos_turnos, Turno )
             {
@@ -3049,7 +3049,7 @@ void ProblemDataLoader::gera_refs()
                }
             }
 
-            find_and_set( it_fix->getHorarioAulaId(),
+            find_and_set_lessptr( it_fix->getHorarioAulaId(),
                todos_horarios_aula, it_fix->horario_aula, false );
          }
       }

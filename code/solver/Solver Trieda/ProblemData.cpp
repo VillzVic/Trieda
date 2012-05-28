@@ -668,7 +668,7 @@ int ProblemData::calculaTempoEntreCampusUnidades(
    // As aulas são realizadas em campus diferentes
    if ( campus_atual->getId() != campus_anterior->getId() )
    {
-      GGroup< Deslocamento * >::iterator it_tempo_campi
+      GGroup< Deslocamento *, LessPtr< Deslocamento > >::iterator it_tempo_campi
          = this->tempo_campi.begin();
 
       for (; it_tempo_campi != this->tempo_campi.end();
@@ -684,7 +684,7 @@ int ProblemData::calculaTempoEntreCampusUnidades(
    // As aulas são realizadas em unidades diferentes
    else if ( unidade_atual->getId() != unidade_anterior->getId() )
    {
-      GGroup< Deslocamento * >::iterator it_tempo_unidade
+      GGroup< Deslocamento *, LessPtr< Deslocamento > >::iterator it_tempo_unidade
          = this->tempo_unidades.begin();
 
       for (; it_tempo_unidade != this->tempo_unidades.end();

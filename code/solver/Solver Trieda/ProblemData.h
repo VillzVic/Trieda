@@ -44,17 +44,17 @@ public:
    virtual ~ProblemData( void );
 
    GGroup< Calendario *, LessPtr< Calendario > > calendarios;
-   GGroup< TipoSala * > tipos_sala;
-   GGroup< TipoContrato * > tipos_contrato;
-   GGroup< TipoTitulacao * > tipos_titulacao;
-   GGroup< AreaTitulacao * > areas_titulacao;
-   GGroup< TipoDisciplina * > tipos_disciplina;
-   GGroup< NivelDificuldade * > niveis_dificuldade;
+   GGroup< TipoSala *, LessPtr< TipoSala > > tipos_sala;
+   GGroup< TipoContrato *, LessPtr< TipoContrato > > tipos_contrato;
+   GGroup< TipoTitulacao *, LessPtr< TipoTitulacao > > tipos_titulacao;
+   GGroup< AreaTitulacao *, LessPtr< AreaTitulacao > > areas_titulacao;
+   GGroup< TipoDisciplina *, LessPtr< TipoDisciplina > > tipos_disciplina;
+   GGroup< NivelDificuldade *, LessPtr< NivelDificuldade > > niveis_dificuldade;
    GGroup< TipoCurso *, LessPtr< TipoCurso > > tipos_curso;
-   GGroup< DivisaoCreditos * > regras_div;
+   GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > regras_div;
    GGroup< Campus *, LessPtr< Campus > > campi;
-   GGroup< Deslocamento * > tempo_campi;
-   GGroup< Deslocamento * > tempo_unidades;
+   GGroup< Deslocamento *, LessPtr< Deslocamento > > tempo_campi;
+   GGroup< Deslocamento *, LessPtr< Deslocamento > > tempo_unidades;
    GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas;
    GGroup< Curso *, LessPtr< Curso > > cursos;
    GGroup< Demanda *, LessPtr< Demanda > > demandas;
