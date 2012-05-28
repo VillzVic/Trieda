@@ -722,7 +722,7 @@ private:
    ConstraintOpHash cHashOp;
 
    // Stores the solution variables ( non - zero ).
-   std::set< VariablePre* > solVarsPre;
+   std::set< VariablePre*, LessPtr<VariablePre> > solVarsPre;
 	
    GGroup< Variable *, LessPtr<Variable> > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 

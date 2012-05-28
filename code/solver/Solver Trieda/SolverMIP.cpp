@@ -302,7 +302,7 @@ SolverMIP::~SolverMIP()
 
    solVars.clear();
 
-   std::set< VariablePre* >::iterator it = solVarsPre.begin();
+   std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
    for ( ; it != solVarsPre.end(); it++ )
    {
 		delete *it;    
@@ -541,7 +541,7 @@ std::string SolverMIP::getSolVarsPreFileName( int campusId, int prioridade, int 
 
 bool SolverMIP::SolVarsPreFound( VariablePre v )
 {	
-	std::set< VariablePre* >::iterator itPreSol = solVarsPre.begin();
+	std::set< VariablePre*, LessPtr<VariablePre> >::iterator itPreSol = solVarsPre.begin();
 	for ( ; itPreSol != solVarsPre.end(); itPreSol++ )
 	{
 		VariablePre var = **itPreSol;
@@ -552,7 +552,7 @@ bool SolverMIP::SolVarsPreFound( VariablePre v )
 	}
 	return false;
 	/*
-	std::set< VariablePre >::iterator it = solVarsPre.find( v );
+	std::set< VariablePre, std::less<VariablePre> >::iterator it = solVarsPre.find( v );
 	
 	if(it != solVarsPre.end() )
 		return true;
@@ -1702,7 +1702,7 @@ GGroup< std::pair< int,Disciplina* > > SolverMIP::retornaAtendEmCjtSala( Conjunt
 {
 	GGroup< std::pair<int,Disciplina*>  > turmaDiscsAtendidas;
 
-	std::set< VariablePre* >::iterator it = solVarsPre.begin();
+	std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
 	for ( ; it != solVarsPre.end() ; it++ )
 	{
 		VariablePre *var = *it;
@@ -2432,7 +2432,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade )
    }
 
    // Deleta as variaveis em solVarsPre ----------
-   std::set< VariablePre* >::iterator it = solVarsPre.begin();
+   std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
    for ( ; it != solVarsPre.end(); it++ )
    {
 		delete *it;    
@@ -2529,7 +2529,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade )
 void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 {
 	// Resultado da alocação de alunos no pre-modelo:
-	std::set< VariablePre* >::iterator itSol = solVarsPre.begin();
+	std::set< VariablePre*, LessPtr<VariablePre> >::iterator itSol = solVarsPre.begin();
 
 	for ( ; itSol != solVarsPre.end(); itSol++ )
 	{
@@ -3746,7 +3746,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 
 
    // Deleta as variaveis em solVarsPre ----------
-   std::set< VariablePre* >::iterator it = solVarsPre.begin();
+   std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
    for ( ; it != solVarsPre.end(); it++ )
    {
 		delete *it;    
@@ -8673,7 +8673,7 @@ void SolverMIP::imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId
    strcpy( solPosFilename, getSolVarsPreFileName( campusId, prioridade, cjtAlunosId ).c_str() );
    FILE * fout = fopen( solPosFilename, "wt" );
    
-   std::set< VariablePre* >::iterator itSol = this->solVarsPre.begin();
+   std::set< VariablePre*, LessPtr<VariablePre> >::iterator itSol = this->solVarsPre.begin();
    for ( ; itSol != solVarsPre.end(); itSol++ )
    {      
 	   VariablePre *v = *itSol;
