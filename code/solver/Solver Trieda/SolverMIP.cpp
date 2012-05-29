@@ -541,7 +541,7 @@ std::string SolverMIP::getSolVarsPreFileName( int campusId, int prioridade, int 
 
 bool SolverMIP::SolVarsPreFound( VariablePre v )
 {	
-	std::set< VariablePre*, LessPtr<VariablePre> >::iterator itPreSol = solVarsPre.begin();
+	/*std::set< VariablePre*, LessPtr<VariablePre> >::iterator itPreSol = solVarsPre.begin();
 	for ( ; itPreSol != solVarsPre.end(); itPreSol++ )
 	{
 		VariablePre var = **itPreSol;
@@ -550,15 +550,14 @@ bool SolverMIP::SolVarsPreFound( VariablePre v )
 			return true;
 		}
 	}
-	return false;
-	/*
-	std::set< VariablePre, std::less<VariablePre> >::iterator it = solVarsPre.find( v );
+	return false;*/
 	
-	if(it != solVarsPre.end() )
+	std::set< VariablePre*, LessPtr<VariablePre> >::iterator itPreSol = solVarsPre.find(&v);
+
+	if(itPreSol != solVarsPre.end())
 		return true;
 	else
 		return false;
-		*/
 }
 
 void SolverMIP::carregaVariaveisSolucaoTatico( int campusId )
@@ -3396,16 +3395,19 @@ double SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 		// por isso x tem que ser comparada separada, por atributo
 		ITERA_GGROUP_LESSPTR ( itVar, solVars, Variable )
 		{
-			Variable vSol = **itVar;		
-
-			if ( vSol.getTurma() == v->getTurma() &&
-				 vSol.getDisciplina() == v->getDisciplina() &&
-				 vSol.getUnidade() == v->getUnidade() &&
-				 vSol.getSubCjtSala() == v->getSubCjtSala() &&
-				 vSol.getDia() == v->getDia() &&
-				 vSol.getType() == Variable::V_CREDITOS )
+			if((*itVar)->getType() == Variable::V_CREDITOS)
 			{
-				return vSol.getValue();
+				Variable vSol = **itVar;		
+
+				if ( vSol.getTurma() == v->getTurma() &&
+					vSol.getDisciplina() == v->getDisciplina() &&
+					vSol.getUnidade() == v->getUnidade() &&
+					vSol.getSubCjtSala() == v->getSubCjtSala() &&
+					vSol.getDia() == v->getDia() /*&&
+					vSol.getType() == Variable::V_CREDITOS*/ )
+				{
+					return vSol.getValue();
+				}
 			}
 		}
 	}
