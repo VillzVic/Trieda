@@ -434,7 +434,7 @@ public:
 
    GGroup<Aluno*> alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
 
-   bool posuiaAlunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
+   bool possuiAlunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
       
    GGroup<int> diasComunsEntreDisciplinas( Disciplina *disciplina1, Disciplina *disciplina2 );
 

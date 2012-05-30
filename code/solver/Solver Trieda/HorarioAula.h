@@ -21,11 +21,11 @@ public:
    DateTime getInicio() const { return this->inicio; }
    DateTime getFinal();
    Calendario * getCalendario() const { return this->calendario; }
-   int getTempoAula() const { return this->tempo_aula; }
+   double getTempoAula() const { return this->tempo_aula; }
 
    void setInicio( DateTime dt ) { this->inicio = dt; }
    void setCalendario( Calendario * c ) { this->calendario = c; }
-   void setTempoAula( int value ) { this->tempo_aula = value; }
+   void setTempoAula( double value ) { this->tempo_aula = value; }
 
    bool horarioDisponivel( int dia );
    bool sobrepoe( HorarioAula h );
@@ -72,7 +72,7 @@ public:
 private:
    DateTime inicio;
    Calendario * calendario;
-   int tempo_aula;
+   double tempo_aula;
 };
 
 #endif

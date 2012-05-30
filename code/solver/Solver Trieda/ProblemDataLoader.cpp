@@ -3462,7 +3462,8 @@ void ProblemDataLoader::calculaCapacMediaSalaPorDisc()
 		   }
 
 		   if ( soma == 0 )
-				std::cout<<"ATENCAO: disciplina " << disciplina->getId() << ", lab " << disciplina->eLab() << " nao possui sala associada";
+			   std::cout<<"ATENCAO: disciplina " << disciplina->getId() << ", lab " << disciplina->eLab()
+			   << " nao possui sala associada no campus " << campusId << std::endl;
 	   
 		   int capacMediaSala = ( ( size > 0 ) ? ( soma / size ) : 0 );
 	   
@@ -3744,17 +3745,27 @@ void ProblemDataLoader::associaDisciplinasSalas()
          // Para cada disciplina associada ao campus em questao
          ITERA_GGROUP_N_PT( it_disciplina, it_Cp_Discs->second, int )
          {
-			 if ( *it_disciplina == 5937 )
-				 std::cout<<" AQUI ";
 
             Disciplina * disciplina
                = ( problemData->refDisciplinas.find( *it_disciplina )->second );
 
-            // Se a disciplina foi associada pelo usuário.
+            // Se a disciplina foi associada pelo usuário para o campus corrente.
             std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > >::iterator
                it_salas_associadas = problemData->disc_Salas_Pref.find( disciplina );
+			
+            bool salas_associadas = false;
 
-            bool salas_associadas = ( it_salas_associadas != problemData->disc_Salas_Pref.end() );
+			if ( it_salas_associadas != problemData->disc_Salas_Pref.end() )
+			{
+				GGroup< Sala *, LessPtr< Sala > > salas = it_salas_associadas->second;
+				ITERA_GGROUP_LESSPTR( itSala, salas, Sala )
+				{
+					if ( problemData->retornaCampus( itSala->getIdUnidade() ) == campus )
+					{
+						salas_associadas = true;
+					}
+				}
+			}
 
             if ( disciplina->eLab() && !salas_associadas )
             {

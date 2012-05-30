@@ -1584,7 +1584,7 @@ GGroup<Aluno*> ProblemData::alunosEmComum( int turma1, Disciplina* disc1, int tu
 	return alunosEmComum;
 }
 
-bool ProblemData::posuiaAlunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus )
+bool ProblemData::possuiAlunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus )
 {
 	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio1;
 	trio1.set( campus->getId(), turma1, disc1 );
@@ -1618,7 +1618,6 @@ bool ProblemData::posuiaAlunosEmComum( int turma1, Disciplina* disc1, int turma2
 
 			if ( aluno1Id == aluno2Id )
 			{
-				Aluno* aluno = this->retornaAluno( aluno1Id );
 				return true;
 			}
 		}			

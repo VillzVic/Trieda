@@ -220,9 +220,9 @@ std::string ConstraintPre::toString()
       ss << "__(C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO):"; break;	  
    case C_PRE_ATIVA_VAR_COMPART_TURMA:
       ss << "__(C_PRE_ATIVA_VAR_COMPART_TURMA):"; break;	  
-	  	    	  
-	  
-	  
+   case C_PRE_MAX_CREDS_ALUNO_DIA:
+      ss << "__(C_PRE_MAX_CREDS_ALUNO_DIA):"; break; 	    	  
+
    default:
       ss << "!";
    }

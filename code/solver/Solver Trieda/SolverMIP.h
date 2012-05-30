@@ -34,10 +34,6 @@
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
 
-
-#pragma warning(disable:4503)
-
-
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
 
@@ -154,7 +150,7 @@ public:
    // Só para p2 em diante
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade );
    int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );
-
+   int cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosId, int prioridade );
    
 
    /********************************************************************
@@ -603,7 +599,7 @@ public:
    void getSolutionOperacionalMIP();
    void geraProfessoresVirtuaisMIP();
    Professor * criaProfessorVirtual( HorarioDia *, int,
-      std::set< std::pair< Professor *, HorarioDia * > > & );
+   std::set< std::pair< Professor *, HorarioDia * > > & );
    void preencheOutputOperacional( ProblemSolution * );
    void preencheOutputOperacionalMIP( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );
@@ -621,9 +617,12 @@ public:
 
    Unidade* retornaUnidadeDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
    ConjuntoSala* retornaSalaDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
-   std::pair<ConjuntoSala*,int> retornaSalaEDiaDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
+   std::pair<ConjuntoSala*, GGroup<int> > retornaSalaEDiasDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
    GGroup< std::pair< int,Disciplina* > > retornaAtendTaticoEmCjtSala( ConjuntoSala * cjtSala );
 
+   double retornaNCredsAlocados( int turma, Disciplina* disciplina, int dia );
+   int retornaCombinacaoSLAlunoTaticoAnterior( Aluno* aluno, int dia );
+   
    Variable * criaVariavelAlunos(
       Campus *, Unidade *, ConjuntoSala *, Sala *,
       int, Oferta *, Curso *, Disciplina *, int );
