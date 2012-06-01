@@ -163,8 +163,8 @@ public:
    int cria_variavel_oferecimentos( int campusId, int cjtAlunosId, int P );							// o_{i,d,u,tps,t}
    int cria_variavel_abertura( int campusId, int cjtAlunosId, int P );									// z_{i,d,cp}
    int cria_variavel_consecutivos( int campusId, int cjtAlunosId, int P );								// c_{i,d,t}   
-   int cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int cjtAlunosId, int P );			// fcp_{d,t}
-   int cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int cjtAlunosId, int P );			// fcm_{d,t}
+   int cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int cjtAlunosId, int P );			// fcp_{i,d,t}
+   int cria_variavel_de_folga_dist_cred_dia_inferior( int campusId, int cjtAlunosId, int P );			// fcm_{i,d,t}
    int cria_variavel_combinacao_divisao_credito( int campusId, int cjtAlunosId, int P );				// m_{i,d,k}
    int cria_variavel_de_folga_combinacao_divisao_credito( int campusId, int cjtAlunosId, int P );		// fkm{i,d,k} e fkp_{i,d,k}
    int cria_variavel_abertura_compativel( int campusId, int cjtAlunosId, int P );						// zc_{d,t}
@@ -636,6 +636,9 @@ private:
 	bool CARREGA_SOLUCAO;
 
 	int TEMPO_PRETATICO, TEMPO_TATICO;
+
+	int retornaTempoDeExecucaoPreModelo( int campusId, int cjtAlunosId, int prioridade );
+	int retornaTempoDeExecucaoTatico( int campusId, int cjtAlunosId, int prioridade );
 
 	std::string getPreLpFileName( int campusId, int prioridade, int cjtAlunosId );
 
