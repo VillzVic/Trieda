@@ -1919,8 +1919,8 @@ int SolverMIP::retornaCombinacaoSLAlunoTaticoAnterior( Aluno* aluno, int dia )
 		}
 	}
 
-	std::cout<<"\nAtencao em SolverMIP::retornaCombinacaoSLAlunoTaticoAnterior."
-	<<"\nVariavel nao encontrada para o aluno "<<aluno->getAlunoId()<<" dia "<<dia;
+	//std::cout<<"\nAtencao em SolverMIP::retornaCombinacaoSLAlunoTaticoAnterior."
+	//<<"\nVariavel nao encontrada para o aluno "<<aluno->getAlunoId()<<" dia "<<dia;
 	
 	return -1;
 }
@@ -15495,11 +15495,17 @@ int SolverMIP::cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtA
 }
 
 /*
-	sum[i] sum[d] nCreds_{i,d,t} *s_{i,d,a} <= NCredsFixados_{a,t,sl}
-
+	sum[i] sum[d] nCreds_{i,d,t} *s_{i,d,a} <= NroMaxCredsFixados_{a,t,sl}
 	for all a
 	for all t
 	for all sl
+
+	ou, caso o aluno não tenha nenhuma aula já alocado no dia t:
+
+	sum[i] sum[d] nCreds_{i,d,t} *s_{i,d,a} <= Min{ MaxCreds{t,sl1}, MaxCreds{t,sl2} }
+	for all a
+	for all t
+
 */
 int SolverMIP::cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosAtualId, int prioridade )
 {
@@ -15547,97 +15553,174 @@ int SolverMIP::cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosAt
 				continue;
 			}
 			
-			GGroup< Calendario*, LessPtr<Calendario> > calendarios = itAluno->retornaSemanasLetivas();
-
-			ITERA_GGROUP_LESSPTR( itSL, calendarios, Calendario )
+			int k = retornaCombinacaoSLAlunoTaticoAnterior( aluno, dia );
+			
+			// se a variavel c_{a,t,k} existir para o aluno (pesquisa no tatico anterior)
+			// significa que o aluno já possui alguma aula alocada no dia
+			if ( k != -1 )
 			{
-				Calendario *sl = *itSL;
+				GGroup< Calendario*, LessPtr<Calendario> > calendarios = itAluno->retornaSemanasLetivas();
+
+				ITERA_GGROUP_LESSPTR( itSL, calendarios, Calendario )
+				{
+					Calendario *sl = *itSL;
+
+					c.reset();
+					c.setType( ConstraintPre::C_PRE_MAX_CREDS_ALUNO_DIA );
+					c.setAluno( aluno );
+					c.setDia( dia );
+					c.setCampus( *itCampus );
+					c.setSemanaLetiva( sl );
+
+					sprintf( name, "%s", c.toString().c_str() ); 
+					if ( cHashPre.find( c ) != cHashPre.end() )
+					{
+					   continue;
+					}
+
+					// Calcula rhs								
+					int rhs = 0.0;
+					std::map< Trio<int, int, Calendario*>, int >::iterator it_map = aluno->combinaCredSL.begin();
+					for ( ; it_map != aluno->combinaCredSL.end(); it_map++  )
+					{
+						if ( it_map->first.first == dia &&
+							 it_map->first.second == k &&
+							 it_map->first.third == sl )
+						{
+							rhs = aluno->getNroMaxCredCombinaSL( k, sl, dia );
+						}
+					}
+
+					nnz = 5;
+				
+					OPT_ROW row( nnz, OPT_ROW::LESS , rhs, name );
+				
+					ITERA_GGROUP_LESSPTR( it_al_dem, aluno->demandas, AlunoDemanda )
+					{
+						disciplina = ( *it_al_dem )->demanda->disciplina;
+
+						#pragma region Equivalencias
+						if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+							   problemData->mapDiscSubstituidaPor.end() ) &&
+							 !problemData->ehSubstituta( disciplina ) )
+						{
+							continue;
+						}
+						#pragma endregion	
+
+						// Só considera disciplinas da semana letiva corrente
+						if ( disciplina->getCalendario() != *itSL )
+						{
+							continue;
+						}
+
+						// P1 - aluno já alocado em uma turma
+						if ( (*it_al_dem)->getPrioridade() < prioridade )
+						{
+ 							int turma = problemData->retornaTurmaDiscAluno( aluno, disciplina );
+
+							if ( turma != -1 )
+							{
+								double nCredsDia = retornaNCredsAlocados( turma, disciplina, dia );
+
+								// Se a alocação for no dia
+								if ( nCredsDia > 1e-5 )
+								{
+									v.reset();
+									v.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC );
+									v.setTurma( turma );
+									v.setDisciplina( disciplina );
+									v.setAluno( aluno );
+									v.setCampus( campus );
+
+									it_v = vHashPre.find( v );
+									if ( it_v != vHashPre.end() )
+									{								
+										row.insert( it_v->second, nCredsDia );  
+									}
+								}
+							}
+							else
+							{
+								std::cout<<"\n\nAtencao em SolverMIP::cria_preRestricao_maxCredsAlunoDia(), isto pode ser um erro."
+										 <<"\nAluno nao encontrado em turma alguma para demanda de prioridade anterior!"
+										 <<"\nAluno: "<<aluno->getAlunoId()<<" Disciplina: "<<disciplina->getId();
+							}
+						}
+						else // P2 - aluno tentando ser alocado em uma turma já existente
+						{
+							for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+							{
+								double nCredsDia = retornaNCredsAlocados( turma, disciplina, dia );
+
+								if ( nCredsDia > 1e-5 ) // Se já existe a turma fixada no dia
+								{
+									v.reset();
+									v.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC );
+									v.setTurma( turma );
+									v.setDisciplina( disciplina );
+									v.setAluno( aluno );
+									v.setCampus( campus );
+
+									it_v = vHashPre.find( v );
+									if ( it_v != vHashPre.end() )
+									{								
+										row.insert( it_v->second, nCredsDia );  
+									}
+								}
+							}
+						}
+					}
+
+					if ( row.getnnz() > 0 )
+					{
+					   cHashPre[ c ] = lp->getNumRows();
+
+					   lp->addRow( row );
+					   restricoes++;
+					}
+				}
+			}
+			else
+			{
+				// a variavel c_{a,t,k} não existe para o aluno (pesquisa no tatico anterior)
+				// significa que o aluno não possui aula alocada no dia.
+				// O rhs da restrição será Min{ MaxCreds{t,sl1}, MaxCreds{t,sl2} },
+				// logo a restrição não será por semana letiva
 
 				c.reset();
 				c.setType( ConstraintPre::C_PRE_MAX_CREDS_ALUNO_DIA );
 				c.setAluno( aluno );
 				c.setDia( dia );
 				c.setCampus( *itCampus );
-				c.setSemanaLetiva( sl );
-
+				
 				sprintf( name, "%s", c.toString().c_str() ); 
 				if ( cHashPre.find( c ) != cHashPre.end() )
 				{
-				   continue;
+					continue;
 				}
 
-				int k = retornaCombinacaoSLAlunoTaticoAnterior( aluno, dia );
-				int rhs = 0.0;
+				// Calcula rhs								
+				double rhs = 9999999.9;
 
-				// Calcula rhs
-				std::map< Trio<int, int, Calendario*>, int >::iterator it_map = aluno->combinaCredSL.begin();
-				for ( ; it_map != aluno->combinaCredSL.end(); it_map++  )
-				{
-					if ( it_map->first.first == dia &&
-						 it_map->first.second == k &&
-						 it_map->first.third == sl )
-					{
-						rhs = aluno->getNroMaxCredCombinaSL( k, sl, dia );
-					}
-				}
-
-				nnz = 5;
-				
+				nnz = 5;				
 				OPT_ROW row( nnz, OPT_ROW::LESS , rhs, name );
-				
+
 				ITERA_GGROUP_LESSPTR( it_al_dem, aluno->demandas, AlunoDemanda )
 				{
 					disciplina = ( *it_al_dem )->demanda->disciplina;
 
 					#pragma region Equivalencias
 					if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-						   problemData->mapDiscSubstituidaPor.end() ) &&
+							problemData->mapDiscSubstituidaPor.end() ) &&
 						 !problemData->ehSubstituta( disciplina ) )
 					{
 						continue;
 					}
 					#pragma endregion	
 
-				    // Só considera disciplinas da semana letiva corrente
-				    if ( disciplina->getCalendario() != *itSL )
-				    {
-					    continue;
-				    }
-
-					// P1 - aluno já alocado em uma turma
-					if ( (*it_al_dem)->getPrioridade() < prioridade )
-					{
- 						int turma = problemData->retornaTurmaDiscAluno( aluno, disciplina );
-
-						if ( turma != -1 )
-						{
-							double nCredsDia = retornaNCredsAlocados( turma, disciplina, dia );
-
-							// Se a alocação for no dia
-							if ( nCredsDia > 1e-5 )
-							{
-								v.reset();
-								v.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC );
-								v.setTurma( turma );
-								v.setDisciplina( disciplina );
-								v.setAluno( aluno );
-								v.setCampus( campus );
-
-								it_v = vHashPre.find( v );
-								if ( it_v != vHashPre.end() )
-								{								
-									row.insert( it_v->second, nCredsDia );  
-								}
-							}
-						}
-						else
-						{
-							std::cout<<"\n\nAtencao em SolverMIP::cria_preRestricao_maxCredsAlunoDia(), isto pode ser um erro."
-									 <<"\nAluno nao encontrado em turma alguma para demanda de prioridade anterior!"
-									 <<"\nAluno: "<<aluno->getAlunoId()<<" Disciplina: "<<disciplina->getId();
-						}
-					}
-					else // P2 - aluno tentando ser alocado em uma turma já existente
+					// P2 - aluno tentando ser alocado em uma turma já existente no dia
+					if ( (*it_al_dem)->getPrioridade() == prioridade )
 					{
 						for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
 						{
@@ -15654,20 +15737,28 @@ int SolverMIP::cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosAt
 
 								it_v = vHashPre.find( v );
 								if ( it_v != vHashPre.end() )
-								{								
-									row.insert( it_v->second, nCredsDia );  
+								{
+									double maxTempoDia = disciplina->getCalendario()->getTempoTotal( dia );
+									if ( rhs - maxTempoDia > 1e-5 )
+									{
+										rhs = maxTempoDia;
+									}
+
+									row.insert( it_v->second, nCredsDia*disciplina->getTempoCredSemanaLetiva() );  
 								}
 							}
 						}
-					}
+					}					
 				}
+
+				row.setRhs( rhs );
 
 				if ( row.getnnz() > 0 )
 				{
-				   cHashPre[ c ] = lp->getNumRows();
+					cHashPre[ c ] = lp->getNumRows();
 
-				   lp->addRow( row );
-				   restricoes++;
+					lp->addRow( row );
+					restricoes++;
 				}
 			}
          }
@@ -47071,7 +47162,7 @@ int SolverMIP::criaVariavelFolgaFixProfSala()
 
    return num_vars;
 }
-
+/*
 int SolverMIP::criaVariavelFolgaDisciplinaHorario()
 {
    int num_vars = 0;
@@ -47118,7 +47209,7 @@ int SolverMIP::criaVariavelFolgaDisciplinaHorario()
 
    return num_vars;
 }
-
+*/
 int SolverMIP::criaVariavelProfessorCurso()
 {
    int num_vars = 0;
@@ -47808,7 +47899,7 @@ int SolverMIP::criaVariavelFolgaDisciplinaTurmaHorario( void )
 
 					if ( nHor <= 0 )
 					{
-						std::cout << "\nAtencao na funcao SolverMIP::criaVariavelFolgaDisciplinaHorario:"
+						std::cout << "\nAtencao na funcao SolverMIP::criaVariavelFolgaDisciplinaTurmaHorario:"
 						<< " nao ha horarios disponiveis para a disciplina "<<disciplina->getId();
 					}
 
@@ -50008,6 +50099,14 @@ int SolverMIP::criaRestricaoFixProfSala()
    return restricoes;
 }
 
+/*
+	sum[p] sum[pv] sum[u] sum[s] x_{p,i,d,u,s,t,h} + x_{pv,i,d,u,s,t,h} <= z_{i,d,h}
+
+	forall d \in D
+	forall i \in I_{d}
+	forall t \in T
+	forall h \in H
+*/
 int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
 {
    int restricoes = 0;
@@ -50070,8 +50169,7 @@ int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
    {
       VariableOp v = vit->first;
 
-      if ( v.getType() != VariableOp::V_F_DISC_HOR
-         && v.getType() != VariableOp::V_Z_DISCIPLINA_HOR )
+      if ( v.getType() != VariableOp::V_Z_DISCIPLINA_HOR )
       {
          continue;
       }
@@ -50098,24 +50196,6 @@ int SolverMIP::criaRestricaoDisciplinaMesmoHorario()
                coeffList.push_back( auxCoef );
                coeffListVal.push_back( -1.0 );
             }
-         }
-      }
-      else if ( v.getType() == VariableOp::V_F_DISC_HOR )
-      {
-         c.reset();
-         c.setType( ConstraintOp::C_DISC_HORARIO );
-         c.setDisciplina( v.getDisciplina() );
-         c.setTurma( v.getTurma() );
-         c.setHorarioAula( v.getHorarioAula() );
-         c.setDia( v.getDia() );
-
-         cit = cHashOp.find( c );
-         if ( cit != cHashOp.end() )
-         {
-            auxCoef.first = cit->second;
-            auxCoef.second = vit->second;
-            coeffList.push_back( auxCoef );
-            coeffListVal.push_back( -1.0 );
          }
       }
    }
