@@ -11,6 +11,7 @@
 #include "opt_gurobi.cpp"
 #endif
 
+using namespace std;
 
 /*==================================================================/
 %DocBegin TRIEDA_LOAD_MODEL
@@ -8403,6 +8404,24 @@ int SolverMIP::solveOperacionalMIP()
  //  lp->writeProbLP( "SolverOperacional" );
 #endif
 
+   map<int, double> cost;
+   VariableOpHash::iterator vit;
+
+   vit = vHashOp.begin();
+
+   for (; vit != vHashOp.end(); vit++ )
+   {
+	   VariableOp v = vit->first;
+	   if(v.getType() != VariableOp::V_FOLGA_DEMANDA)
+	   {
+		   cost[vit->second] = lp->getObj(vit->second);
+		   lp->chgObj(vit->second, 0.0);
+	   }
+
+	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && v.getProfessor() != NULL)
+		   lp->chgUB(vit->second, 0.0);
+   }
+
    int status = 0;
 
 #ifdef DEBUG
@@ -8414,11 +8433,12 @@ int SolverMIP::solveOperacionalMIP()
    //lp->setMIPRelTol( 0.01 );
    lp->setMIPEmphasis(0);
    lp->setVarSel(4);
-   lp->setCuts(5);
+   lp->setCuts(0);
    lp->setMIPScreenLog( 4 );
    lp->setTimeLimit( 3600*24 );
-   lp->setPolishAfterNode( 1 );
-   
+   lp->setNodeLimit(3100);
+   lp->setPolishAfterNode( 3000 );
+
    lp->setPreSolve(OPT_TRUE);
 
    status = lp->optimize( METHOD_MIP );
@@ -8426,8 +8446,32 @@ int SolverMIP::solveOperacionalMIP()
    double * x = new double[ lp->getNumCols() ];
 
    lp->getX( x );
+   vit = vHashOp.begin();
 
-   VariableOpHash::iterator vit;
+   for (; vit != vHashOp.end(); vit++ )
+   {
+	   VariableOp v = vit->first;
+	   if(v.getType() == VariableOp::V_FOLGA_DEMANDA  && x[vit->second] < 0.1)
+		   lp->chgUB(vit->second, 0.0);
+	   else if(v.getType() == VariableOp::V_FOLGA_DEMANDA)
+		   lp->chgLB(vit->second, 1.0);
+
+	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && v.getProfessor() != NULL)
+		   lp->chgUB(vit->second, 1.0);
+
+	   if(v.getType() != VariableOp::V_FOLGA_DEMANDA)
+		   lp->chgObj(vit->second, cost[vit->second]);
+   }
+
+   lp->setMIPEmphasis(0);
+   lp->setCuts(5);
+   lp->setNodeLimit(1000);
+   lp->setPolishAfterNode(1);
+   status = lp->optimize( METHOD_MIP );
+
+   lp->getX( x );
+
+   /*VariableOpHash::iterator vit;*/
    FILE * fout = fopen( "solucaoOp.txt", "wt" );
    solVarsOp.clear();
 
@@ -46398,14 +46442,14 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif
 
-   lp->updateLP();
+   /*lp->updateLP();
    numVars += criaVariavelCustoCorpoDocente();
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_CUSTO_CORPO_DOCENTE: "
              << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
-#endif
+#endif*/
 
    lp->updateLP();
    numVars += criaVariavelDiasProfessoresMinistramAulas();
@@ -46663,8 +46707,8 @@ int SolverMIP::criaVariavelProfessorDisciplina()
    int num_vars = 0;
 
    double coeff = 0.0;
-   double pesoNota = 100;
-   double pesoPreferencia = 100;
+   double pesoNota = 10;//100;
+   double pesoPreferencia = 10;//100;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -47321,7 +47365,7 @@ int SolverMIP::criaVariavelCustoCorpoDocente()
 int SolverMIP::criaVariavelDiasProfessoresMinistramAulas()
 {
    int num_vars = 0;
-   double coeff = 1000.0;
+   double coeff = 0.0;//1000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -47373,7 +47417,7 @@ int SolverMIP::criaVariavelDiasProfessoresMinistramAulas()
 int SolverMIP::criaVariavelFolgaMinimoMestresCurso()
 {
    int num_vars = 0;
-   double coeff = 60000.0;
+   double coeff = 6000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -47408,7 +47452,7 @@ int SolverMIP::criaVariavelFolgaMinimoMestresCurso()
 int SolverMIP::criaVariavelFolgaMinimoDoutoresCurso()
 {
    int num_vars = 0;
-   double coeff = 50000.0;
+   double coeff = 5000.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -47648,7 +47692,7 @@ int SolverMIP::criaVariavelAvaliacaoCorpoDocente()
 {
    int num_vars = 0;
    double coeff = 0.0;
-   double alfa = 500.0;
+   double alfa = 1.0;//500.0;
 
    GGroup< Professor *, LessPtr< Professor > > professores
       = problemData->getProfessores();
@@ -47850,7 +47894,23 @@ int SolverMIP::criaVariavelFolgaDemanda( void )
 		
 		if ( vHashOp.find( v ) == vHashOp.end() )
 		{
-			double coeff = 500000.0;
+			double coeff = 0.0;
+
+			int campusId = problemData->retornaCampus( v.getAula()->getSala()->getIdUnidade() )->getId();
+			int turma = v.getAula()->getTurma();
+			Disciplina* disc = v.getAula()->getDisciplina();
+
+			std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator itMapAtend;
+
+			Trio< int, int, Disciplina* > trio;
+			trio.set( campusId, turma, disc );
+
+			itMapAtend = problemData->mapCampusTurmaDisc_AlunosDemanda.find( trio );
+			if ( itMapAtend != problemData->mapCampusTurmaDisc_AlunosDemanda.end() )
+			{
+				GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = (*itMapAtend).second;
+				coeff = alunosDemanda.size()*100000.0;
+			}
 
 			vHashOp[ v ] = lp->getNumCols();
 
@@ -48287,7 +48347,7 @@ int SolverMIP::criaRestricoesOperacional()
 	numRestAnterior = restricoes;
 #endif
 
-	lp->updateLP();
+	/*lp->updateLP();
 	timer.start();
 	restricoes += criaRestricaoCustoCorpoDocente();
 	timer.stop();
@@ -48297,7 +48357,7 @@ int SolverMIP::criaRestricoesOperacional()
 	std::cout << "numRest C_CUSTO_CORPO_DOCENTE: "
 		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
 	numRestAnterior = restricoes;
-#endif
+#endif*/
 
 	lp->updateLP();
 	timer.start();
