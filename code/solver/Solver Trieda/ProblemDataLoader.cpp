@@ -2004,7 +2004,7 @@ void ProblemDataLoader::atualizaOfertasDemandas()
 		Disciplina *discNova = problemData->mapDiscSubstituidaPor[ discAntiga ];
 			  
 		itDemanda->setDisciplinaId( discNova->getId() );
-		itDemanda->disciplina = discNova;	
+		itDemanda->disciplina = discNova;
 	}
 }
 
@@ -2233,77 +2233,6 @@ void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 
 }
 
-/*
-void ProblemDataLoader::relacionaDisciplinasEquivalentes()
-{
-   Curso * curso = NULL;
-   Curriculo * curriculo = NULL;
-
-   Disciplina * disciplina = NULL;
-   Disciplina * disciplina_equivalente = NULL;
-   Disciplina * disciplina_substituta = NULL;
-
-   ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
-   {
-      curso = ( *it_curso );
-
-      ITERA_GGROUP_LESSPTR( it_curriculo, curso->curriculos, Curriculo )
-      {
-         curriculo = ( *it_curriculo );
-
-         // Período - Disciplina
-         map < Disciplina*, int, LessPtr< Disciplina > >::iterator
-            it_periodo_disciplina = curriculo->disciplinas_periodo.begin();
-
-         for (; it_periodo_disciplina != curriculo->disciplinas_periodo.end();
-            it_periodo_disciplina++ )
-         {
-			 disciplina = it_periodo_disciplina->first;
-
-            ITERA_GGROUP_LESSPTR( it_disc_equivalente,
-               disciplina->discEquivalentes, Disciplina )
-            {
-               disciplina_equivalente = ( *it_disc_equivalente );
-
-               //------------------------------------------------------------------------------------------------
-               // Procuro por todos os pares curso/curriculo
-               // onde a disciplina 'disciplina_equivalente' está incluída,
-               // para informar a substituição dessa disciplina por uma equivalente
-               GGroup< std::pair< Curso *, Curriculo * > > cursos_curriculos
-                  = problemData->retornaCursosCurriculosDisciplina( disciplina_equivalente );
-
-               GGroup< std::pair< Curso *, Curriculo * > >::iterator
-                  it_curso_curriculo = cursos_curriculos.begin();
-
-               // Informa a substituição para cada um dos pares curso/curriculo
-               for (; it_curso_curriculo != cursos_curriculos.end(); it_curso_curriculo++ )
-               {
-                  std::pair< Curso *, Curriculo * > curso_curriculo = ( *it_curso_curriculo );
-
-                  disciplina_substituta = disciplina;
-
-                  // Verifica se 'disciplina' já foi anteriormente substituída
-                  if ( problemData->map_CursoCurriculo_DiscSubst[ curso_curriculo ].find( disciplina )
-                     != problemData->map_CursoCurriculo_DiscSubst[ curso_curriculo ].end() )
-                  {
-                     disciplina_substituta = problemData->map_CursoCurriculo_DiscSubst[ curso_curriculo ][ disciplina ];
-                  }
-
-                  // Informa que a 'disciplina_equivalente' será substituída pela 'disciplina_substituta'
-                  problemData->map_CursoCurriculo_DiscSubst[ curso_curriculo ][ disciplina_equivalente ] = disciplina_substituta;
-
-                  // Adiciona a 'disciplina_equivalente' no conjunto de disciplinas que foram substituidas por 'disciplina_substituta'
-                  problemData->mapGroupDisciplinasSubstituidas[ curso_curriculo ][ disciplina_substituta ].add( disciplina_equivalente );
-               }
-               //------------------------------------------------------------------------------------------------
-            }
-         }
-      }
-   }
-
-   substituiDisciplinasEquivalentes();
-}
-*/
 
 void ProblemDataLoader::divideDisciplinas()
 {
@@ -2667,7 +2596,7 @@ void ProblemDataLoader::divideDisciplinas()
 void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
 {
 	// Para cada nova disciplina Pratica criada, verifica se a sua Teorica
-	// correspondente substituiu alguma disciplina. Se sim, acrescenta essa
+	// correspondente substituiu alguma equivalência. Se sim, acrescenta essa
 	// Pratica nos maps necessários, substituindo a original prática
 	// correspondente ou, se essa não existir, a teórica corresponte.
    ITERA_GGROUP_LESSPTR( itDisciplina, problemData->novasDisciplinas, Disciplina )

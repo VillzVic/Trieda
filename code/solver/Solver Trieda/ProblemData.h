@@ -312,10 +312,7 @@ public:
    // caso tenha ocorrido uma substituição por equivalência entre essas disciplinas
    std::map< std::pair< Curso *, Curriculo * >,
 	         std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > >, LessPtr< Disciplina > > > mapGroupDisciplinasSubstituidas;
-
-   //std::map< std::pair< Curso *, Curriculo * >,
-   //		    std::map< Disciplina *, GGroup< Disciplina *, LessPtr< Disciplina > > > > mapGroupDisciplinasSubstituidasAux;
-
+   
    // Dada uma disciplina, informamos o seu curso e curriculo
    std::map< Disciplina *, std::pair< Curso *, Curriculo * >, LessPtr< Disciplina > > map_Disc_CursoCurriculo;
 
@@ -327,9 +324,9 @@ public:
    // Informa se uma dada disciplina é substituta de alguma outra.
    bool ehSubstituta( Disciplina* d );
 
-   // Dada uma disciplina, esse método retorna qual
-   // disciplina a substituiu, ou retorna NULL caso
-   // a disciplina não tenha sido substituída
+   // Dada uma disciplina original, um curso e um curriculo,
+   // esse método retorna qual disciplina a substituiu,
+   // ou retorna NULL caso a disciplina não tenha sido substituída
    Disciplina * retornaDisciplinaSubstituta( Curso *, Curriculo *, Disciplina * );
 
    bool cursosCompativeis( Curso *, Curso * );
@@ -444,12 +441,11 @@ public:
    int retornaCjtAlunosId( Aluno* aluno );
    int haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId );
    int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
-   bool haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina );
-   
+   bool haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina );   
    int getQtdAlunoDemandaAtualPorCampus( int campusId );
 
    void imprimeCjtAlunos( int campusId );
-
+   
    bool EQUIV_TRANSITIVIDADE;
 
    private:

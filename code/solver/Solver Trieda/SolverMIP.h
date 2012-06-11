@@ -58,7 +58,7 @@
 #endif
 
 
-#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -213,7 +213,7 @@ public:
    int cria_restricao_disc_pratica_teorica( int campusId, int cjtAlunosId );
    int cria_restricao_ativacao_var_ca( int campusId, int cjtAlunosId );
    int cria_restricao_aluno_unid_dif_dia( int campusId, int cjtAlunosId );
-
+   int cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjtAlunosId );
    
 
 #endif TATICO_CJT_ALUNOS
@@ -488,7 +488,6 @@ public:
    int criaVariavelFolgaFixProfDisc( void );
    int criaVariavelFolgaFixProfDiscSala( void );
    int criaVariavelFolgaFixProfSala( void );
-   int criaVariavelFolgaDisciplinaHorario( void );
    int criaVariavelProfessorCurso( void );
    int criaVariavelAvaliacaoCorpoDocente( void );
    int criaVariavelCustoCorpoDocente( void );
@@ -631,6 +630,10 @@ public:
       Campus *, Unidade *, ConjuntoSala *, Sala *,
       int, Oferta *, Curso *, Disciplina *, int, BlocoCurricular * );
 
+   
+   GGroup< int > retornaCliques( int turma, Disciplina* disciplina, int campusId );
+   void imprimeCliques( int campusId, int prioridade, int cjtAlunosId );
+
 private:
 
 	bool CARREGA_SOLUCAO;
@@ -653,6 +656,8 @@ private:
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId );	
 
     std::string getSolVarsPreFileName( int campusId, int prioridade, int cjtAlunosId );
+
+    std::string getCliquesFileName( int campusId, int prioridade, int cjtAlunosId );
 
 	// Filtro para a criação das variaveis do pre-modelo,
 	// caso haja solução do tatico para iteração de prioridade de demanda anterior
@@ -749,6 +754,13 @@ private:
    int alteraHorarioAulaAtendimento( const int, const int );
 
    int calculaDeslocamentoUnidades( const int, const int );
+
+   void encontraCliques( int campusAtualId );
+   
+   typedef std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > Cliques;
+
+   std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > cliques;
+   
 };
 
 #endif

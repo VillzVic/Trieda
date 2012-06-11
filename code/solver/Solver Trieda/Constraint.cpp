@@ -56,6 +56,7 @@ Constraint& Constraint::operator = ( const Constraint & cons )
    this->turma2 = cons.getTurma2();
    this->disc1 = cons.getDisciplina1();
    this->disc2 = cons.getDisciplina2();
+   this->clique = cons.getClique();
 
    return *this;
 }
@@ -131,6 +132,9 @@ bool Constraint::operator < ( const Constraint & cons ) const
    if ( E_MENOR( this->getDisciplina2(),cons.getDisciplina2() ) ) return true;
    if ( E_MENOR( cons.getDisciplina2(), this->getDisciplina2() ) ) return false;
 
+   if ( this->getClique() < cons.getClique() ) return true;
+   if ( this->getClique() > cons.getClique() ) return false;
+
    return false;
 
 }
@@ -165,7 +169,7 @@ void Constraint::reset()
    turma2 = -1;
    disc1 = NULL;
    disc2 = NULL;
-
+   clique = -1;
 }
 
 std::string Constraint::toString()
@@ -293,8 +297,9 @@ std::string Constraint::toString()
       ss << "__(C_ATIVA_CA):"; break;	  	    
   case C_ALUNO_VARIAS_UNIDADES_DIA:
       ss << "__(C_ALUNO_VARIAS_UNIDADES_DIA):"; break;	  	    
-	  	  	  
-
+  case C_EVITA_SOBREPOS_CLIQUE:
+      ss << "__(C_EVITA_SOBREPOS_CLIQUE):"; break; 	    
+	  
    default:
       ss << "!";
    }
@@ -404,7 +409,12 @@ std::string Constraint::toString()
    {
       ss << "_Disc2." << disc2->getId();
    }
-   
+
+   if ( clique >= 0 )
+   {
+      ss << "Clique." << clique;
+   }
+
    ss << "_}";
    std::string consName = "";
    ss >> consName;

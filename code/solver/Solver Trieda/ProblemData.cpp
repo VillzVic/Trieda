@@ -2045,6 +2045,7 @@ int ProblemData::getQtdAlunoDemandaAtualPorCampus( int campusId )
 	return n;
 }
 
+
 void ProblemData::imprimeCjtAlunos( int campusId )
 {
 	bool CONSIDERAR_PRATICAS = false;

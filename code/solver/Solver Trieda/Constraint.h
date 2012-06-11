@@ -78,7 +78,8 @@ public:
 	  C_ALOC_DEM = 56,
 	  C_DISC_PRATICA_TEORICA = 57,
 	  C_ATIVA_CA = 58,
-	  C_ALUNO_VARIAS_UNIDADES_DIA = 59
+	  C_ALUNO_VARIAS_UNIDADES_DIA = 59,
+	  C_EVITA_SOBREPOS_CLIQUE = 60
    };
 
    /** Default constructor. */
@@ -133,6 +134,7 @@ public:
    int getTurma2() const { return turma2; }
    Disciplina* getDisciplina1() const { return disc1; }   
    Disciplina* getDisciplina2() const { return disc2; }
+   int getClique() const { return clique; }
 
    //==================================================
    // SET METHODS 
@@ -166,6 +168,7 @@ public:
    void setTurma2( int i2 ) { turma2 = i2; }
    void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
    void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
+   void setClique( int k ){ clique = k; }
 
 private:
 
@@ -220,6 +223,8 @@ private:
    Disciplina *disc1;   // d1
    int turma2;          // i2
    Disciplina *disc2;   // d2
+
+   int clique;
 
 };
 

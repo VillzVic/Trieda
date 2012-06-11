@@ -23,7 +23,6 @@ public:
       V_F_FIX_PROF_DISC = 6,
       V_F_FIX_PROF_DISC_SALA = 7,
       V_F_FIX_PROF_SALA = 8,
-      //V_F_DISC_HOR = 9,
       V_PROF_CURSO = 10,
       V_F_MIN_MEST_CURSO = 11,
       V_F_MIN_DOUT_CURSO = 12,

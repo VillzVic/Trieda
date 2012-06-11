@@ -258,8 +258,6 @@ std::string VariableOp::toString()
         str << "F_FIX_PROF_DISC_SALA"; break;
       case V_F_FIX_PROF_SALA:
         str << "F_FIX_PROF_SALA"; break;
-    //  case V_F_DISC_HOR:
-    //    str << "F_DISC_HOR"; break;
       case V_PROF_CURSO:
         str << "V_PROF_CURSO"; break;
       case V_F_MIN_MEST_CURSO:

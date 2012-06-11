@@ -30,6 +30,17 @@ public:
 		third = t3;
 	}
 	
+   //==================================================
+   // OPERATORS 
+   //==================================================
+   
+   Trio & operator = ( const Trio & t )
+   {
+		this->first = t.first;
+		this->second = t.second;
+		this->second = t.third;
+   }
+
    bool operator < ( Trio const & right ) const
    {
 	  if ( first < right.first &&
