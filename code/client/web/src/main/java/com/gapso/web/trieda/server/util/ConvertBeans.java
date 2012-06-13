@@ -956,6 +956,7 @@ public class ConvertBeans {
 		dto.setHorarioDeAulaVersion( domain.getVersion() );
 		dto.setTurnoString( domain.getTurno().getNome() );
 		dto.setSemanaLetivaId( domain.getSemanaLetiva().getId() );
+		dto.setSemanaLetivaString(domain.getSemanaLetiva().getCodigo());
 
 		dto.setSegunda( false );
 		dto.setTerca( false );
@@ -1055,6 +1056,7 @@ public class ConvertBeans {
 			if ( horarioAula.getSemanaLetiva() != null )
 			{
 				dto.setSemanaLetivaId( horarioAula.getSemanaLetiva().getId() );
+				dto.setSemanaLetivaString(horarioAula.getSemanaLetiva().getCodigo());
 
 				instituicaoEnsino = horarioAula.getSemanaLetiva().getInstituicaoEnsino();
 			}
@@ -3226,11 +3228,16 @@ public class ConvertBeans {
 		dto.setOtimizarPor(parametro.getOtimizarPor());
 		dto.setFuncaoObjetivo(FuncaoObjetivoComboBox.CargaHoraria.values()[parametro.getFuncaoObjetivo()].getText());
 		String campiSelecionados = "";
+		Set<Long> professoresRelacionadosIDs = new HashSet<Long>();
 		for (Campus campus : parametro.getCampi()) {
 			campiSelecionados += campus.getCodigo() + ", ";
+			for (Professor professor : campus.getProfessores()) {
+				professoresRelacionadosIDs.add(professor.getId());
+			}
 		}
 		campiSelecionados = campiSelecionados.substring(0,campiSelecionados.length()-2);
 		dto.setCampiSelecionados(campiSelecionados);
+		dto.setProfessoresRelacionadosIDs(professoresRelacionadosIDs);
 		dto.setTurno(parametro.getTurno().getNome());
 		
 		InstituicaoEnsino instituicaoEnsino = domain.getCenario().getInstituicaoEnsino();

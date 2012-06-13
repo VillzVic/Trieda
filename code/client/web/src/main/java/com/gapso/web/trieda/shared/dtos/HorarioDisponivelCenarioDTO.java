@@ -29,6 +29,7 @@ public class HorarioDisponivelCenarioDTO
 	public static final String PROPERTY_DOMINGO = "domingo";
 	public static final String PROPERTY_DOMINGO_ID = "domingoId";
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
+	public static final String PROPERTY_SEMANA_LETIVA_STRING = "semanaLetivaString";
 
 	public HorarioDisponivelCenarioDTO()
 	{
@@ -233,6 +234,16 @@ public class HorarioDisponivelCenarioDTO
 	public Long getSemanaLetivaId()
 	{
 		return get( PROPERTY_SEMANA_LETIVA_ID );
+	}
+	
+	public void setSemanaLetivaString( String value )
+	{
+		set( PROPERTY_SEMANA_LETIVA_STRING, value );
+	}
+
+	public String getSemanaLetivaString()
+	{
+		return get( PROPERTY_SEMANA_LETIVA_STRING );
 	}
 
 	@Override

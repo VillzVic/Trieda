@@ -51,6 +51,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	private boolean selectDefault = false;
 	private String horarioAulaIdPropertyName;
 	private String lastTurno = "";
+	private String lastSemanaLetiva = "";
 
 	public SemanaLetivaDoCenarioGrid(
 		List< M > horariosDisponiveisDisponivel,
@@ -114,13 +115,15 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	public List< ColumnConfig > getColumnList()
 	{
 		createComboboxWeek();
-
-		GridCellRenderer< M > mergeRenderer = new GridCellRenderer< M >()
+		
+		GridCellRenderer< M > semanaLetivaMergeRenderer = new GridCellRenderer< M >()
 		{
 			@Override
 			public Object render( M model, String property, ColumnData config,
 				int rowIndex, int colIndex, ListStore< M > store, Grid< M > grid )
 			{
+				String value = model.get( property ).toString();
+				String key = model.get("semanaLetivaId").toString();
 				config.style += ( "border-right: 1px solid #EDEDED;" );
 				config.style += ( "border-top: 1px solid #FFF;" );
 
@@ -129,14 +132,41 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 					config.style += ( "border-bottom: 1px solid #EDEDED;" );
 				}
 
-				if ( model.get( property ).equals( lastTurno ) )
+				if ( key.equals( lastSemanaLetiva ) )
 				{
 					return "";
 				}
 
-				lastTurno = model.get( property );
+				lastSemanaLetiva = key;
 				config.style += ( "border-top: 1px solid #EDEDED;" );
-				return lastTurno;
+				return value;
+			}  
+		};
+
+		GridCellRenderer< M > turnoMergeRenderer = new GridCellRenderer< M >()
+		{
+			@Override
+			public Object render( M model, String property, ColumnData config,
+				int rowIndex, int colIndex, ListStore< M > store, Grid< M > grid )
+			{
+				String value = model.get( property );
+				String key = model.get("semanaLetivaId") + "-" + model.get( property );
+				config.style += ( "border-right: 1px solid #EDEDED;" );
+				config.style += ( "border-top: 1px solid #FFF;" );
+
+				if ( ( rowIndex + 1 ) == store.getModels().size() )
+				{
+					config.style += ( "border-bottom: 1px solid #EDEDED;" );
+				}
+
+				if ( key.equals( lastTurno ) )
+				{
+					return "";
+				}
+
+				lastTurno = key;
+				config.style += ( "border-top: 1px solid #EDEDED;" );
+				return value;
 			}  
 		};
 
@@ -218,7 +248,8 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >( 9 );
 
-		list.add( createColumnConfig( "turnoString", "Turno", 100, mergeRenderer, null ) );
+		list.add( createColumnConfig( "semanaLetivaString", "Semana Letiva", 100, semanaLetivaMergeRenderer, null ) );
+		list.add( createColumnConfig( "turnoString", "Turno", 100, turnoMergeRenderer, null ) );
 		list.add( createColumnConfig( "horarioString", "Horario", 90, horarioRenderer, null ) );
 		list.add( createColumnConfig( "segunda", "Seg", 55, buttonRenderer, this.segCB ) );
 		list.add( createColumnConfig( "terca",   "Ter", 55, buttonRenderer, this.terCB ) );
@@ -228,13 +259,13 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 		list.add( createColumnConfig( "sabado",  "Sab", 55, buttonRenderer, this.sabCB ) );
 		list.add( createColumnConfig( "domingo", "Dom", 55, buttonRenderer, this.domCB ) );
 		
-		this.checkHeader.put(2, false);
 		this.checkHeader.put(3, false);
-		this.checkHeader.put(4, false);
 		this.checkHeader.put(4, false);
 		this.checkHeader.put(5, false);
 		this.checkHeader.put(6, false);
 		this.checkHeader.put(7, false);
+		this.checkHeader.put(8, false);
+		this.checkHeader.put(9, false);
 
 		return list;
 	}
@@ -380,6 +411,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	
 	public void updateList()
 	{
+		this.lastSemanaLetiva = "";
 		this.lastTurno = "";
 		this.loader.load();
 	}

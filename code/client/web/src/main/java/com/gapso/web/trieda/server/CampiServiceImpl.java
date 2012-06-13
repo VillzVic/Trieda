@@ -54,6 +54,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.CampiService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.ibm.icu.util.Calendar;
 
 @Transactional
 public class CampiServiceImpl extends RemoteService
@@ -81,14 +82,10 @@ public class CampiServiceImpl extends RemoteService
 	}
 
 	@Override
-	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		CampusDTO campusDTO )
-	{
-		Campus campus = Campus.find(
-			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(CampusDTO campusDTO) {
+		Campus campus = Campus.find(campusDTO.getId(),this.getInstituicaoEnsinoUser());
 
-		List< HorarioDisponivelCenario > list
-			= new ArrayList< HorarioDisponivelCenario>();
+		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario>();
 
 		if ( campus != null )
 		{
@@ -104,56 +101,56 @@ public class CampiServiceImpl extends RemoteService
 		List< HorarioDisponivelCenarioDTO > listDTO
 			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
 
-		Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
-			= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
-
+		// [SemanaLetiva-Turno -> List<HorarioDisponivelCenarioDTO>]
+		Map< String, List< HorarioDisponivelCenarioDTO > > semanaLetivaTurnoToHorariosMap = new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
 		for ( HorarioDisponivelCenarioDTO o : listDTO )
 		{
-			List< HorarioDisponivelCenarioDTO > horarios
-				= horariosTurnos.get( o.getTurnoString() );
-
-			if ( horarios == null )
-			{
+			String key = o.getSemanaLetivaId() + "-" + o.getTurnoString();
+			List< HorarioDisponivelCenarioDTO > horarios = semanaLetivaTurnoToHorariosMap.get(key);
+			if ( horarios == null ) {
 				horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
-				horariosTurnos.put( o.getTurnoString(), horarios );
+				semanaLetivaTurnoToHorariosMap.put(key,horarios);
 			}
 
 			horarios.add( o );
 		}
 
 		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
-			: horariosTurnos.entrySet() )
+			: semanaLetivaTurnoToHorariosMap.entrySet() )
 		{
 			Collections.sort( entry.getValue() );
 		}
 
-		Map< Date, List< String > > horariosFinalTurnos
-			= new TreeMap< Date, List< String > >();
-
+		// [UltimoHorario -> List<"SemanaLetivaId-Turno">]
+		Map< Date, List< String > > horariosFinalToSemanasLetivasTurnosMap = new TreeMap< Date, List< String > >();
 		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
-			: horariosTurnos.entrySet() )
+			: semanaLetivaTurnoToHorariosMap.entrySet() )
 		{
-			Date ultimoHorario = entry.getValue().get(
-				entry.getValue().size() - 1 ).getHorario();
-
-			List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
-			if ( turnos == null )
+			Date ultimoHorario = entry.getValue().get(entry.getValue().size() - 1 ).getHorario();
+			// trata o horário para que todas as datas (dia/mês/ano) sejam iguais, pois, somente o horário importa 
+			Calendar ultimoHorarioCalendar = Calendar.getInstance();
+			ultimoHorarioCalendar.setTime(ultimoHorario);
+			ultimoHorarioCalendar.set(1979,Calendar.NOVEMBER,6);
+			ultimoHorario = ultimoHorarioCalendar.getTime(); 
+			
+			List< String > semanasLetivasTurnos = horariosFinalToSemanasLetivasTurnosMap.get( ultimoHorario );
+			if ( semanasLetivasTurnos == null )
 			{
-				turnos = new ArrayList< String >();
-				horariosFinalTurnos.put( ultimoHorario, turnos );
+				semanasLetivasTurnos = new ArrayList< String >();
+				horariosFinalToSemanasLetivasTurnosMap.put( ultimoHorario, semanasLetivasTurnos );
 			}
 
-			turnos.add( entry.getKey() );
+			semanasLetivasTurnos.add( entry.getKey() );
 		}
 
 		listDTO.clear();
 
 		for ( Entry< Date, List< String > > entry
-			: horariosFinalTurnos.entrySet() )
+			: horariosFinalToSemanasLetivasTurnosMap.entrySet() )
 		{
-			for ( String turno : entry.getValue() )
+			for ( String semanaLetivaTurno : entry.getValue() )
 			{
-				listDTO.addAll( horariosTurnos.get( turno ) );
+				listDTO.addAll( semanaLetivaTurnoToHorariosMap.get( semanaLetivaTurno ) );
 			}
 		}
 

@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comparable<RequisicaoOtimizacaoDTO> {
 
@@ -20,6 +21,14 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	public static final String PROPERTY_TURNO = "turno";
 	
 	static public enum StatusRequisicaoOtimizacao implements Serializable {EM_ANDAMENTO,FINALIZADA_COM_OUTPUT,FINALIZADA_SEM_OUTPUT}
+	
+	transient private Set<Long> professoresRelacionadosIDs;
+	public void setProfessoresRelacionadosIDs(Set<Long> professoresRelacionadosIDs) {
+		this.professoresRelacionadosIDs = professoresRelacionadosIDs; 
+	}
+	public Set<Long> getProfessoresRelacionadosIDs() {
+		return this.professoresRelacionadosIDs;
+	}
 	
 	public void setId(Long value) {
 		set(PROPERTY_ID,value);

@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
+import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -54,6 +56,7 @@ import com.gapso.web.trieda.server.xml.input.TriedaInput;
 import com.gapso.web.trieda.server.xml.output.ItemError;
 import com.gapso.web.trieda.server.xml.output.ItemWarning;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -84,6 +87,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			List<String> errors = new ArrayList<String>();
 			
 			// realiza verificações
+			
 			System.out.print("checkDisciplinasSemCurriculo(parametro,warnings);");long start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasSemCurriculo(parametro,warnings);
 			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
@@ -92,9 +96,15 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			checkDisciplinasSemLaboratorios(parametro,errors);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
-			System.out.print("checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo");start = System.currentTimeMillis(); // TODO: retirar
-			checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
+				System.out.print("checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo");start = System.currentTimeMillis(); // TODO: retirar
+				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors);
+				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			} else {
+				System.out.print("checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno");start = System.currentTimeMillis(); // TODO: retirar
+				checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors);
+				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			}
 
 			System.out.print("checkDemandasComDisciplinasSemCurriculo(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
@@ -110,9 +120,15 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 				
 				if (!detectouCiclo) {
-					System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
-					checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);
-					time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+					if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
+						System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
+						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);
+						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+					} else {
+						System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
+						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,errors);
+						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+					}
 				}
 			}
 			
@@ -236,53 +252,162 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	@Override
 	@Transactional
 	public ParDTO<Long,ParametroDTO> enviaRequisicaoDeOtimizacao(ParametroDTO parametroDTO) throws TriedaException {
-		if (!parametroDTO.isValid()) {
-			String errorMessage = "";
-			if (parametroDTO.getCampi() == null || parametroDTO.getCampi().isEmpty()) {
-				errorMessage += HtmlUtils.htmlUnescape("Nenhum campus foi selecionado.");
-			}
-			if (parametroDTO.getTurnoId() == null) {
-				errorMessage += HtmlUtils.htmlUnescape(" Nenhum turno foi selecionado.");
-			}
-			throw new TriedaException(errorMessage);
-		}
-
+		TriedaException exception = null;
+		
 		try {
-			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
-	
-			parametro.setId(null);
-			parametro.flush();
-			parametro.save();
-	
-			Cenario cenario = parametro.getCenario();
-			cenario.getParametros().add(parametro);
-			List<Campus> campi = new ArrayList<Campus>(parametro.getCampi().size());
-			campi.addAll(parametro.getCampi());
-	
-			SolverInput solverInput = new SolverInput(getInstituicaoEnsinoUser(),cenario,parametro,campi);
-			TriedaInput triedaInput = null;
-			if (parametro.isTatico()) {
-				triedaInput = solverInput.generateTaticoTriedaInput();
+			if (!parametroDTO.isValid()) {
+				String errorMessage = "";
+				if (parametroDTO.getCampi() == null || parametroDTO.getCampi().isEmpty()) {
+					errorMessage += HtmlUtils.htmlUnescape("Nenhum campus foi selecionado.");
+				}
+				if (parametroDTO.getTurnoId() == null) {
+					errorMessage += HtmlUtils.htmlUnescape(" Nenhum turno foi selecionado.");
+				}
+				
+				exception = new TriedaException(errorMessage);
 			} else {
-				triedaInput = solverInput.generateOperacionalTriedaInput();
-			}
-	
-			final ByteArrayOutputStream temp = new ByteArrayOutputStream();
-			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
-			Marshaller m = jc.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
-			m.setProperty(Marshaller.JAXB_ENCODING,"ISO-8859-1");
-			m.marshal(triedaInput,temp);
-			byte [] fileBytes = temp.toByteArray();
-			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
-	
-			Long round = solverClient.requestOptimization(fileBytes);
+				ParDTO<Boolean,String> parDTOConflito = checkExistenciaRequisicaoOtimizacaoConflitanteEmAndamento(parametroDTO);
+				boolean haConflito = parDTOConflito.getPrimeiro();
+				if (!haConflito) {
+					Parametro parametro = ConvertBeans.toParametro(parametroDTO);
 			
-			return ParDTO.<Long,ParametroDTO>create(round,ConvertBeans.toParametroDTO(parametro));
+					parametro.setId(null);
+					parametro.flush();
+					parametro.save();
+			
+					Cenario cenario = parametro.getCenario();
+					cenario.getParametros().add(parametro);
+					List<Campus> campi = new ArrayList<Campus>(parametro.getCampi().size());
+					campi.addAll(parametro.getCampi());
+			
+					SolverInput solverInput = new SolverInput(getInstituicaoEnsinoUser(),cenario,parametro,campi);
+					TriedaInput triedaInput = null;
+					if (parametro.isTatico()) {
+						triedaInput = solverInput.generateTaticoTriedaInput();
+					} else {
+						triedaInput = solverInput.generateOperacionalTriedaInput();
+					}
+			
+					final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+					JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.input");
+					Marshaller m = jc.createMarshaller();
+					m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+					m.setProperty(Marshaller.JAXB_ENCODING,"ISO-8859-1");
+					m.marshal(triedaInput,temp);
+					byte [] fileBytes = temp.toByteArray();
+					SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+			
+					Long round = solverClient.requestOptimization(fileBytes);
+					
+					return ParDTO.<Long,ParametroDTO>create(round,ConvertBeans.toParametroDTO(parametro));
+				} else {
+					String msgConflito = parDTOConflito.getSegundo();
+					exception = new TriedaException(HtmlUtils.htmlUnescape(msgConflito));
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new TriedaException(e);
+			exception = new TriedaException(e);
 		}
+		
+		throw exception;
+	}
+
+	private ParDTO<Boolean,String> checkExistenciaRequisicaoOtimizacaoConflitanteEmAndamento(ParametroDTO parametroDTO) throws TriedaException {
+		boolean haConflito = false;
+		String msgConflito = "";
+		Set<Long> professoresRelacionadosIDsRequisicaoAtual = null;
+		
+		// obtém as requisições de otimização
+		List<RequisicaoOtimizacaoDTO> requisicoesOtimizacaoDTO = consultaRequisicoesDeOtimizacao(false);
+		// verifica se há alguma requisição de otimização em andamento que tenha conflito com a nova requisição
+		boolean haIntersecaoDeCampi = false;
+		boolean haIntersecaoDeProfessor = false;
+		RequisicaoOtimizacaoDTO requisicaoConflitanteEmAndamento = null;
+		for (RequisicaoOtimizacaoDTO reqOtmDTO : requisicoesOtimizacaoDTO) {
+			StatusRequisicaoOtimizacao status = StatusRequisicaoOtimizacao.values()[reqOtmDTO.getStatusIndex()];
+			if (StatusRequisicaoOtimizacao.EM_ANDAMENTO.equals(status)) {
+				// VERIFICAÇÃO 1
+				// verifica se há interseção de campi selecionados
+				String campiSelecionados = reqOtmDTO.getCampiSelecionados();
+				for (CampusDTO campusDTO : parametroDTO.getCampi()) {
+					if (campiSelecionados.contains(campusDTO.getCodigo())) {
+						haIntersecaoDeCampi = true;
+						requisicaoConflitanteEmAndamento = reqOtmDTO;
+						break;
+					}
+				}
+				
+				// VERIFICAÇÃO 2
+				// verifica se há requisições com modo de otimização operacional e, em caso afirmativo, se há
+				// recursos compartilhados entre as requisições
+				if (!haIntersecaoDeCampi && Parametro.OPERACIONAL.equals(parametroDTO.getModoOtimizacao())) {
+					if (Parametro.OPERACIONAL.equals(reqOtmDTO.getModoOtimizacao())) {
+						// se necessário, obtém professores relacionados com a requisição de otimização atual
+						if (professoresRelacionadosIDsRequisicaoAtual == null) {
+							List<Long> campiIDs = new ArrayList<Long>(parametroDTO.getCampi().size());
+							for (CampusDTO campusDTO : parametroDTO.getCampi()) {
+								campiIDs.add(campusDTO.getId());
+							}
+							List<Campus> campi = Campus.find(campiIDs,getInstituicaoEnsinoUser());
+							professoresRelacionadosIDsRequisicaoAtual = new HashSet<Long>();
+							for (Campus campus : campi) {
+								for (Professor professor : campus.getProfessores()) {
+									professoresRelacionadosIDsRequisicaoAtual.add(professor.getId());
+								}
+							}
+						}
+						// verifica se há professores em comum
+						for (Long professorId : professoresRelacionadosIDsRequisicaoAtual) {
+							if (reqOtmDTO.getProfessoresRelacionadosIDs().contains(professorId)) {
+								haIntersecaoDeProfessor = true;
+								requisicaoConflitanteEmAndamento = reqOtmDTO;
+								break;
+							}
+						}
+					}
+				} else {
+					break;
+				}
+				
+				if (haIntersecaoDeProfessor) {
+					break;
+				}
+			}
+		}
+		
+		if (haIntersecaoDeCampi || haIntersecaoDeProfessor) {
+			msgConflito = "No momento não será possível tratar a requisição de otimização para";
+			
+			if (parametroDTO.getCampi().size() == 1) {
+				msgConflito += " o campus [";
+			} else {
+				msgConflito += " os campi [";
+			}
+			
+			for (CampusDTO campusDTO : parametroDTO.getCampi()) {
+				msgConflito += campusDTO.getCodigo() + ", ";
+			}
+			msgConflito = msgConflito.substring(0,msgConflito.length()-2) + "]";
+			
+			if (haIntersecaoDeCampi) {
+				msgConflito += " pois há outra requisição em andamento para";
+				
+				if (!requisicaoConflitanteEmAndamento.getCampiSelecionados().contains(",")) {
+					msgConflito += " o campus [";
+				} else {
+					msgConflito += " os campi [";
+				}
+				
+				msgConflito += requisicaoConflitanteEmAndamento.getCampiSelecionados() + "].";
+			} else {
+				msgConflito += " pois há outra requisição em andamento que leva em consideração professores associados com a requisição atual.";
+			}
+			
+			haConflito = true;
+		}
+		
+		return ParDTO.<Boolean,String>create(haConflito,msgConflito);
 	}
 	
 	/** 
@@ -291,34 +416,38 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	@Override
 	public List<RequisicaoOtimizacaoDTO> consultaRequisicoesDeOtimizacao() throws TriedaException {
 		try {
-			// obtém o usuário logado em questão
-			Usuario usuarioAtual = getUsuario();
-			// obtém as requisições de otimização relacionadas com o usuário atual
-			List<RequisicaoOtimizacao> requisicoesOtimizacao = RequisicaoOtimizacao.findBy(usuarioAtual);
-			// ...
-			List<RequisicaoOtimizacaoDTO> requisicoesOtimizacaoDTOs = new ArrayList<RequisicaoOtimizacaoDTO>();
-			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
-			for (RequisicaoOtimizacao requisicaoOtimizacao : requisicoesOtimizacao) {
-				RequisicaoOtimizacaoDTO dto = ConvertBeans.toRequisicaoOtimizacaoDTO(requisicaoOtimizacao);
-				
-				if (solverClient.isFinished(requisicaoOtimizacao.getRound())) {
-					if (solverClient.containsResult(requisicaoOtimizacao.getRound())) {
-						dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_COM_OUTPUT.ordinal());
-					} else {
-						dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT.ordinal());
-					}
-				} else {
-					dto.setStatusIndex(StatusRequisicaoOtimizacao.EM_ANDAMENTO.ordinal());
-				}
-				
-				requisicoesOtimizacaoDTOs.add(dto);
-			}
-			
-			return requisicoesOtimizacaoDTOs;
+			return consultaRequisicoesDeOtimizacao(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new TriedaException(e);
 		}
+	}
+	
+	private List<RequisicaoOtimizacaoDTO> consultaRequisicoesDeOtimizacao(boolean onlyCurrentUser) {
+		// obtém o usuário logado em questão
+		Usuario usuarioAtual = getUsuario();
+		// obtém as requisições de otimização relacionadas com o usuário atual
+		List<RequisicaoOtimizacao> requisicoesOtimizacao = onlyCurrentUser ? RequisicaoOtimizacao.findBy(usuarioAtual) : RequisicaoOtimizacao.findAll();
+		// ...
+		List<RequisicaoOtimizacaoDTO> requisicoesOtimizacaoDTOs = new ArrayList<RequisicaoOtimizacaoDTO>();
+		SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+		for (RequisicaoOtimizacao requisicaoOtimizacao : requisicoesOtimizacao) {
+			RequisicaoOtimizacaoDTO dto = ConvertBeans.toRequisicaoOtimizacaoDTO(requisicaoOtimizacao);
+			
+			if (solverClient.isFinished(requisicaoOtimizacao.getRound())) {
+				if (solverClient.containsResult(requisicaoOtimizacao.getRound())) {
+					dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_COM_OUTPUT.ordinal());
+				} else {
+					dto.setStatusIndex(StatusRequisicaoOtimizacao.FINALIZADA_SEM_OUTPUT.ordinal());
+				}
+			} else {
+				dto.setStatusIndex(StatusRequisicaoOtimizacao.EM_ANDAMENTO.ordinal());
+			}
+			
+			requisicoesOtimizacaoDTOs.add(dto);
+		}
+		
+		return requisicoesOtimizacaoDTOs;
 	}
 	
 	/**
@@ -416,7 +545,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		for (Disciplina disciplina : parametro.getCenario().getDisciplinas()) {
 			if (disciplinasComCurriculoMap.get(disciplina.getId()) == null) {
 				warnings.add(HtmlUtils.htmlUnescape("A disciplina " + disciplina.getCodigo() + " n&atilde;o foi associada a nenhuma matriz curricular."));
-				System.out.println("A disciplina " + disciplina.getCodigo() + " n&atilde;o foi associada a nenhuma matriz curricular.");
 			}
 		}
 	}
@@ -491,7 +619,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			}
 		}
 		
-		// [CurriculoId -> Máximo Créditos Semanais]
+		// [SemanaLetivaId -> Máximo Créditos Semanais]
 		Map<Long,Integer> maxCreditosSemanaisPorSemanaLetivaMap = new HashMap<Long,Integer>();
  
 		for (Curriculo curriculo : parametro.getCenario().getCurriculos()) {
@@ -531,6 +659,78 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					errors.add(HtmlUtils.htmlUnescape("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString()));
 					System.out.println("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString());
 				}
+			}
+		}
+	}
+	
+	private void checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
+		boolean consideraSomenteDemandasDePrioridade1 = true;
+		
+		// obtém os alunos do campus selecionado para otimização
+		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,parametro.getCampi(),parametro.getTurno());
+		Map<Aluno,List<AlunoDemanda>> alunoToAlunoDemandasMap = new HashMap<Aluno,List<AlunoDemanda>>();
+		Map<Aluno,List<SemanaLetiva>> alunoToSemanasLetivasMap = new HashMap<Aluno,List<SemanaLetiva>>();
+		for (AlunoDemanda alunoDemanda : demandasDeAlunoDosCampiSelecionados) {
+			// demandas do aluno
+			List<AlunoDemanda> demandasDoAluno = alunoToAlunoDemandasMap.get(alunoDemanda.getAluno());
+			if (demandasDoAluno == null) {
+				demandasDoAluno = new ArrayList<AlunoDemanda>();
+				alunoToAlunoDemandasMap.put(alunoDemanda.getAluno(),demandasDoAluno);
+			}
+			demandasDoAluno.add(alunoDemanda);
+			
+			// semanas letivas associadas com o aluno
+			List<SemanaLetiva> semanasLetivasAssociadasComAluno = alunoToSemanasLetivasMap.get(alunoDemanda.getAluno());
+			if (semanasLetivasAssociadasComAluno == null) {
+				semanasLetivasAssociadasComAluno = new ArrayList<SemanaLetiva>();
+				alunoToSemanasLetivasMap.put(alunoDemanda.getAluno(),semanasLetivasAssociadasComAluno);
+			}
+			semanasLetivasAssociadasComAluno.add(alunoDemanda.getDemanda().getOferta().getCurriculo().getSemanaLetiva());
+		}
+		
+		// [SemanaLetivaId -> Máximo Créditos Semanais]
+		Map<Long,Integer> maxCreditosSemanaisPorSemanaLetivaMap = new HashMap<Long,Integer>();
+ 
+		for (Entry<Aluno,List<AlunoDemanda>> entry : alunoToAlunoDemandasMap.entrySet()) {
+			Aluno aluno = entry.getKey();
+			List<AlunoDemanda> demandasDoAluno = entry.getValue();
+			
+			// obtém o máximo de créditos semanais das semanas letivas associadas com o aluno
+			Integer maxCreditosSemanais = 0;
+			List<SemanaLetiva> semanasLetivasAssociadasComAluno = alunoToSemanasLetivasMap.get(aluno);
+			for (SemanaLetiva semanaLetiva : semanasLetivasAssociadasComAluno) {
+				Integer localMaxCreditosSemanais = maxCreditosSemanaisPorSemanaLetivaMap.get(semanaLetiva.getId());
+				if (localMaxCreditosSemanais == null) {
+					localMaxCreditosSemanais = semanaLetiva.calcTotalCreditosSemanais(parametro.getTurno());
+					maxCreditosSemanaisPorSemanaLetivaMap.put(semanaLetiva.getId(),localMaxCreditosSemanais);
+				}
+				
+				if (localMaxCreditosSemanais > maxCreditosSemanais) {
+					maxCreditosSemanais = localMaxCreditosSemanais;
+				}
+			}
+			
+			// calcula total de créditos do aluno e verifica existência de disciplinas repetidas
+			Set<Long> disciplinasDoAluno = new HashSet<Long>();
+			Set<String> disciplinasRepetidasParaOAluno = new HashSet<String>();
+			Integer totalCreditosDoAluno = 0;
+			for (AlunoDemanda alunoDemanda : demandasDoAluno) {
+				Disciplina disciplina = alunoDemanda.getDemanda().getDisciplina();
+				if (!disciplinasDoAluno.add(disciplina.getId())) {
+					disciplinasRepetidasParaOAluno.add(disciplina.getCodigo());
+				}
+				
+				if (!consideraSomenteDemandasDePrioridade1 || (alunoDemanda.getPrioridade() == 1)) {
+					totalCreditosDoAluno += disciplina.getCreditosTotal();
+				}
+			}
+			
+			if (!disciplinasRepetidasParaOAluno.isEmpty()) {
+				errors.add(HtmlUtils.htmlUnescape("O aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] pede por disciplinas repetidas, são elas: " + disciplinasRepetidasParaOAluno.toString()));
+			}
+			
+			if (totalCreditosDoAluno > maxCreditosSemanais) {
+				errors.add(HtmlUtils.htmlUnescape("O aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] viola a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Total de créditos do aluno = " + totalCreditosDoAluno));
 			}
 		}
 	}
@@ -782,88 +982,14 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	}
 	
 	private void checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(Parametro parametro, List<String> errors) {
-		// monta estruturas para armazenar as equivalências
-		Set<Pair<Long,Long>> equivalenciasOriginais = new HashSet<Pair<Long,Long>>();
 		// [DisciplinaId -> Disciplina]
 		Map<Long,Disciplina> disciplinasMap = new HashMap<Long,Disciplina>();
-		// [DisciplinaEliminaId -> Par<DisciplinaCursouId,DisciplinaEliminaId>]
-		Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasOriginaisMap = new HashMap<Long,Set<Pair<Long,Long>>>();
-		for(Disciplina disciplina : parametro.getCenario().getDisciplinas()){
-			disciplinasMap.put(disciplina.getId(),disciplina);
-			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
-				Disciplina cursou = equivalencia.getCursou();
-				for(Disciplina elimina : equivalencia.getElimina()){
-					Pair<Long,Long> equivalenciaOriginal = Pair.create(cursou.getId(),elimina.getId());
-					
-					equivalenciasOriginais.add(equivalenciaOriginal);
-
-					Set<Pair<Long,Long>> eliminaEquivalencias = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(elimina.getId());
-					if (eliminaEquivalencias == null) {
-						eliminaEquivalencias = new HashSet<Pair<Long,Long>>();
-						disciplinaEliminaIdToEquivalenciasOriginaisMap.put(elimina.getId(),eliminaEquivalencias);
-					}
-					eliminaEquivalencias.add(equivalenciaOriginal);
-				}
-			}
-		}
-		
-		// aplica equivalências umas nas outras
-		boolean consideraTransitividadeNasRegrasDeEquivalencia = false;
-		Set<Pair<Long,Long>> equivalenciasAposAplicacoes = new HashSet<Pair<Long,Long>>();
+		//
 		Map<Pair<Long,Long>,Set<Pair<Long,Long>>> equivalenciaCalculadaToEquivalenciasOriginaisMap = new HashMap<Pair<Long,Long>,Set<Pair<Long,Long>>>();
-		if (consideraTransitividadeNasRegrasDeEquivalencia) {
-			Set<Pair<Long,Long>> equivalenciasAnalisadas = new HashSet<Pair<Long,Long>>(equivalenciasOriginais);
-			boolean ocorreuAlgumaSubstituicao = false;
-			do {
-				ocorreuAlgumaSubstituicao = false;
-				for (Pair<Long,Long> equivalenciaAnalisada : equivalenciasAnalisadas) {
-					Long disCursouIdAnalisada = equivalenciaAnalisada.getLeft();
-					Long disEliminaIdAnalisada = equivalenciaAnalisada.getRight();
-					
-					Set<Pair<Long,Long>> equivalenciasOriginaisAplicaveis = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(disCursouIdAnalisada);
-					if (equivalenciasOriginaisAplicaveis != null) {
-						for (Pair<Long,Long> equivalenciaOriginalAplicavel : equivalenciasOriginaisAplicaveis) {
-							Long disCursouIdOriginalAplicavel = equivalenciaOriginalAplicavel.getLeft();
-							Pair<Long,Long> equivalenciaCalculada = Pair.<Long,Long>create(disCursouIdOriginalAplicavel,disEliminaIdAnalisada); 
-							
-							equivalenciasAposAplicacoes.add(equivalenciaCalculada);
-							
-							Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(equivalenciaCalculada);
-							if (equivalenciasOriginaisQueGeraramACalculada == null) {
-								equivalenciasOriginaisQueGeraramACalculada = new HashSet<Pair<Long,Long>>();
-								equivalenciaCalculadaToEquivalenciasOriginaisMap.put(equivalenciaCalculada,equivalenciasOriginaisQueGeraramACalculada);
-							}
-							equivalenciasOriginaisQueGeraramACalculada.add(equivalenciaOriginalAplicavel);
-						}
-						ocorreuAlgumaSubstituicao = true;
-					} else {
-						equivalenciasAposAplicacoes.add(equivalenciaAnalisada);
-					}
-				}
-				
-				if (ocorreuAlgumaSubstituicao) {
-					equivalenciasAnalisadas.clear();
-					equivalenciasAnalisadas.addAll(equivalenciasAposAplicacoes);
-					equivalenciasAposAplicacoes.clear();
-				}
-			} while (ocorreuAlgumaSubstituicao);
-		} else {
-			equivalenciasAposAplicacoes.addAll(equivalenciasOriginais);
-		}
-		
-		// recalcula algumas estruturas com base nas equivalencias calculadas 
 		// [DisciplinaEliminaId -> Par<DisciplinaCursouId,DisciplinaEliminaId>]
 		Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasCalculadasMap = new HashMap<Long,Set<Pair<Long,Long>>>();
-		for (Pair<Long,Long> equivalenciaCalculada : equivalenciasAposAplicacoes) {
-			Long disEliminaIdCalculada = equivalenciaCalculada.getRight();
-			
-			Set<Pair<Long,Long>> equivalenciasCalculadas = disciplinaEliminaIdToEquivalenciasCalculadasMap.get(disEliminaIdCalculada);
-			if (equivalenciasCalculadas == null) {
-				equivalenciasCalculadas = new HashSet<Pair<Long,Long>>();
-				disciplinaEliminaIdToEquivalenciasCalculadasMap.put(disEliminaIdCalculada,equivalenciasCalculadas);
-			}
-			equivalenciasCalculadas.add(equivalenciaCalculada);
-		}
+		
+		preencheEstruturasParaCheckDeEquivalencias(parametro,disciplinasMap,equivalenciaCalculadaToEquivalenciasOriginaisMap,disciplinaEliminaIdToEquivalenciasCalculadasMap);
 		
 		// obtém curriculos
 		Set<Curriculo> curriculos = new HashSet<Curriculo>();
@@ -955,6 +1081,198 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					}
 				}
 			}
+		}
+	}
+	
+	private void checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(Parametro parametro, List<String> errors) {
+		// [DisciplinaId -> Disciplina]
+		Map<Long,Disciplina> disciplinasMap = new HashMap<Long,Disciplina>();
+		// 
+		Map<Pair<Long,Long>,Set<Pair<Long,Long>>> equivalenciaCalculadaToEquivalenciasOriginaisMap = new HashMap<Pair<Long,Long>,Set<Pair<Long,Long>>>();
+		// [DisciplinaEliminaId -> Par<DisciplinaCursouId,DisciplinaEliminaId>]
+		Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasCalculadasMap = new HashMap<Long,Set<Pair<Long,Long>>>();
+		
+		preencheEstruturasParaCheckDeEquivalencias(parametro,disciplinasMap,equivalenciaCalculadaToEquivalenciasOriginaisMap,disciplinaEliminaIdToEquivalenciasCalculadasMap);
+		
+		// obtém os alunos do campus selecionado para otimização
+		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(getInstituicaoEnsinoUser(),parametro.getCampi(),parametro.getTurno());
+		Map<Aluno,List<AlunoDemanda>> alunoToAlunoDemandasMap = new HashMap<Aluno,List<AlunoDemanda>>();
+		for (AlunoDemanda alunoDemanda : demandasDeAlunoDosCampiSelecionados) {
+			// demandas do aluno
+			List<AlunoDemanda> demandasDoAluno = alunoToAlunoDemandasMap.get(alunoDemanda.getAluno());
+			if (demandasDoAluno == null) {
+				demandasDoAluno = new ArrayList<AlunoDemanda>();
+				alunoToAlunoDemandasMap.put(alunoDemanda.getAluno(),demandasDoAluno);
+			}
+			demandasDoAluno.add(alunoDemanda);
+		}
+		
+		for (Entry<Aluno,List<AlunoDemanda>> entryAluno : alunoToAlunoDemandasMap.entrySet()) {
+			Aluno aluno = entryAluno.getKey();
+			List<AlunoDemanda> demandasDoAluno = entryAluno.getValue();
+			
+			// obtém as disciplinas associadas com o aluno em questão
+			Map<Long,Disciplina> disciplinasDoAluno = new HashMap<Long,Disciplina>();
+			for (AlunoDemanda alunoDemanda : demandasDoAluno) {
+				Disciplina disciplina = alunoDemanda.getDemanda().getDisciplina();
+				disciplinasDoAluno.put(disciplina.getId(),disciplina);
+			}
+			
+			Set<Pair<Long,Long>> equivalenciasAplicaveisNasDisciplinasDoAluno = new HashSet<Pair<Long,Long>>();
+			
+			// verifica se alguma equivalência invalida as escolhas (disciplinas) do aluno em questão
+			boolean detectouEquivalenciaInconsistentePrimeiroTeste = false;
+			
+			// primeiro, verifica se a aplicação de cada equivalência nas escolhas (disciplinas) do aluno gera repetição de disciplina
+			for (Long disciplinaDoAlunoId : disciplinasDoAluno.keySet()) {
+				// obtém as equivalências que podem ser aplicadas na disciplina em questão
+				Set<Pair<Long,Long>> equivalenciasAplicaveisNaDisciplina = disciplinaEliminaIdToEquivalenciasCalculadasMap.get(disciplinaDoAlunoId);
+				if (equivalenciasAplicaveisNaDisciplina != null) {
+					// acumula todas as equivalências aplicáveis nas escolhas (disciplinas) do aluno em questão
+					equivalenciasAplicaveisNasDisciplinasDoAluno.addAll(equivalenciasAplicaveisNaDisciplina);
+					 
+					for (Pair<Long,Long> equivalenciaAplicavelNaDisciplina : equivalenciasAplicaveisNaDisciplina) {
+						Long disciplinaCursouId = equivalenciaAplicavelNaDisciplina.getLeft();
+						Long disciplinaEliminaId = equivalenciaAplicavelNaDisciplina.getRight();
+						// verifica se a equivalência aplicável na disciplina em questão irá transformá-la em outra disciplina
+						// já escolhida pelo aluno
+						Disciplina disciplinaDoAluno = disciplinasDoAluno.get(disciplinaCursouId);
+						if (disciplinaDoAluno != null) {
+							String equivalenciasInfo = "";
+							Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(equivalenciaAplicavelNaDisciplina);
+							if (equivalenciasOriginaisQueGeraramACalculada != null) {
+								// a equivalência aplicável na disciplina é uma equivalência calculada
+								equivalenciasInfo = imprimeEquivalenciasEmUmaString(equivalenciasOriginaisQueGeraramACalculada,disciplinasMap);
+							} else {
+								// a equivalência aplicável na disciplina é uma equivalência original
+								Disciplina cursou = disciplinasMap.get(disciplinaCursouId);
+								Disciplina elimina = disciplinasMap.get(disciplinaEliminaId);
+								equivalenciasInfo = cursou.getCodigo() + "->" + elimina.getCodigo();
+							}
+							
+							errors.add(HtmlUtils.htmlUnescape("A(s) equivalência(s) [" + equivalenciasInfo + "] invalida(m) a(s) escolha(s) do aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] por conta da disciplina [" + disciplinaDoAluno.getCodigo() + "]."));
+							detectouEquivalenciaInconsistentePrimeiroTeste = true;
+						}
+					}
+				}
+			}
+			
+			if (!detectouEquivalenciaInconsistentePrimeiroTeste) {
+				// organiza equivalências aplicáveis nas escolhas (disciplinas) do aluno pela extremidade Cursou da relação (Cursou,Elimina) 
+				// [DisciplinaCursouId -> Set<Par<DisciplinaCursouId,DisciplinaEliminaId>>]
+				Map<Long,Set<Pair<Long,Long>>> cursouToEquivalenciasAplicaveisMap = new HashMap<Long,Set<Pair<Long,Long>>>();
+				for (Pair<Long,Long> parCursouElimina : equivalenciasAplicaveisNasDisciplinasDoAluno) {
+					Long disciplinaCursouId = parCursouElimina.getLeft();
+					Set<Pair<Long,Long>> equivalencias = cursouToEquivalenciasAplicaveisMap.get(disciplinaCursouId);
+					if (equivalencias == null) {
+						equivalencias = new HashSet<Pair<Long,Long>>();
+						cursouToEquivalenciasAplicaveisMap.put(disciplinaCursouId,equivalencias);
+					}
+					equivalencias.add(parCursouElimina);
+				}
+				
+				// segundo, verifica se há mais de uma equivalência, aplicável nas escolhas (disciplinas) do aluno, que leva para uma mesma disciplina
+				for (Entry<Long,Set<Pair<Long,Long>>> entry : cursouToEquivalenciasAplicaveisMap.entrySet()) {
+					Set<Pair<Long,Long>> equivalenciasComMesmaExtremidadeCursou = entry.getValue();
+					// verifica se há mais de uma equivalência, aplicável nas escolhas (disciplinas) do aluno, que leva para uma mesma disciplina
+					if (equivalenciasComMesmaExtremidadeCursou.size() > 1) {
+						Set<Pair<Long,Long>> equivalenciasParaImprimir = new HashSet<Pair<Long,Long>>();
+						for (Pair<Long,Long> e : equivalenciasComMesmaExtremidadeCursou) {
+							Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(e);
+							if (equivalenciasOriginaisQueGeraramACalculada != null) {
+								// a equivalência 'e' é uma equivalência calculada
+								equivalenciasParaImprimir.addAll(equivalenciasOriginaisQueGeraramACalculada);
+							} else {
+								// a equivalência 'e' é uma equivalência original
+								equivalenciasParaImprimir.add(e);
+							}
+						}
+						String equivalenciasStr = imprimeEquivalenciasEmUmaString(equivalenciasParaImprimir,disciplinasMap);
+						// gera mensagem de erro
+						errors.add(HtmlUtils.htmlUnescape("As equivalências [" + equivalenciasStr + "] invalidam a(s) escolha(s) do aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] pois levam para uma mesma disciplina."));
+					}
+				}
+			}
+		}
+	}
+
+	private void preencheEstruturasParaCheckDeEquivalencias(Parametro parametro, Map<Long,Disciplina> disciplinasMap, Map<Pair<Long,Long>,Set<Pair<Long,Long>>> equivalenciaCalculadaToEquivalenciasOriginaisMap, Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasCalculadasMap) {
+		// monta estruturas para armazenar as equivalências
+		Set<Pair<Long,Long>> equivalenciasOriginais = new HashSet<Pair<Long,Long>>();
+		// [DisciplinaEliminaId -> Par<DisciplinaCursouId,DisciplinaEliminaId>]
+		Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasOriginaisMap = new HashMap<Long,Set<Pair<Long,Long>>>();
+		for(Disciplina disciplina : parametro.getCenario().getDisciplinas()){
+			disciplinasMap.put(disciplina.getId(),disciplina);
+			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
+				Disciplina cursou = equivalencia.getCursou();
+				for(Disciplina elimina : equivalencia.getElimina()){
+					Pair<Long,Long> equivalenciaOriginal = Pair.create(cursou.getId(),elimina.getId());
+					
+					equivalenciasOriginais.add(equivalenciaOriginal);
+
+					Set<Pair<Long,Long>> eliminaEquivalencias = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(elimina.getId());
+					if (eliminaEquivalencias == null) {
+						eliminaEquivalencias = new HashSet<Pair<Long,Long>>();
+						disciplinaEliminaIdToEquivalenciasOriginaisMap.put(elimina.getId(),eliminaEquivalencias);
+					}
+					eliminaEquivalencias.add(equivalenciaOriginal);
+				}
+			}
+		}
+		
+		// aplica equivalências umas nas outras
+		boolean consideraTransitividadeNasRegrasDeEquivalencia = false;
+		Set<Pair<Long,Long>> equivalenciasAposAplicacoes = new HashSet<Pair<Long,Long>>();
+		if (consideraTransitividadeNasRegrasDeEquivalencia) {
+			Set<Pair<Long,Long>> equivalenciasAnalisadas = new HashSet<Pair<Long,Long>>(equivalenciasOriginais);
+			boolean ocorreuAlgumaSubstituicao = false;
+			do {
+				ocorreuAlgumaSubstituicao = false;
+				for (Pair<Long,Long> equivalenciaAnalisada : equivalenciasAnalisadas) {
+					Long disCursouIdAnalisada = equivalenciaAnalisada.getLeft();
+					Long disEliminaIdAnalisada = equivalenciaAnalisada.getRight();
+					
+					Set<Pair<Long,Long>> equivalenciasOriginaisAplicaveis = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(disCursouIdAnalisada);
+					if (equivalenciasOriginaisAplicaveis != null) {
+						for (Pair<Long,Long> equivalenciaOriginalAplicavel : equivalenciasOriginaisAplicaveis) {
+							Long disCursouIdOriginalAplicavel = equivalenciaOriginalAplicavel.getLeft();
+							Pair<Long,Long> equivalenciaCalculada = Pair.<Long,Long>create(disCursouIdOriginalAplicavel,disEliminaIdAnalisada); 
+							
+							equivalenciasAposAplicacoes.add(equivalenciaCalculada);
+							
+							Set<Pair<Long,Long>> equivalenciasOriginaisQueGeraramACalculada = equivalenciaCalculadaToEquivalenciasOriginaisMap.get(equivalenciaCalculada);
+							if (equivalenciasOriginaisQueGeraramACalculada == null) {
+								equivalenciasOriginaisQueGeraramACalculada = new HashSet<Pair<Long,Long>>();
+								equivalenciaCalculadaToEquivalenciasOriginaisMap.put(equivalenciaCalculada,equivalenciasOriginaisQueGeraramACalculada);
+							}
+							equivalenciasOriginaisQueGeraramACalculada.add(equivalenciaOriginalAplicavel);
+						}
+						ocorreuAlgumaSubstituicao = true;
+					} else {
+						equivalenciasAposAplicacoes.add(equivalenciaAnalisada);
+					}
+				}
+				
+				if (ocorreuAlgumaSubstituicao) {
+					equivalenciasAnalisadas.clear();
+					equivalenciasAnalisadas.addAll(equivalenciasAposAplicacoes);
+					equivalenciasAposAplicacoes.clear();
+				}
+			} while (ocorreuAlgumaSubstituicao);
+		} else {
+			equivalenciasAposAplicacoes.addAll(equivalenciasOriginais);
+		}
+		
+		// recalcula algumas estruturas com base nas equivalencias calculadas 
+		for (Pair<Long,Long> equivalenciaCalculada : equivalenciasAposAplicacoes) {
+			Long disEliminaIdCalculada = equivalenciaCalculada.getRight();
+			
+			Set<Pair<Long,Long>> equivalenciasCalculadas = disciplinaEliminaIdToEquivalenciasCalculadasMap.get(disEliminaIdCalculada);
+			if (equivalenciasCalculadas == null) {
+				equivalenciasCalculadas = new HashSet<Pair<Long,Long>>();
+				disciplinaEliminaIdToEquivalenciasCalculadasMap.put(disEliminaIdCalculada,equivalenciasCalculadas);
+			}
+			equivalenciasCalculadas.add(equivalenciaCalculada);
 		}
 	}
 

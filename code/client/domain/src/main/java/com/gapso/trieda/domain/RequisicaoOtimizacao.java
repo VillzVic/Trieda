@@ -190,6 +190,12 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<RequisicaoOtimizacao> findAll() {
+		Query q = entityManager().createQuery("SELECT o FROM RequisicaoOtimizacao o");
+		return q.getResultList();
+	}
+	
 	public static final EntityManager entityManager() {
 		EntityManager em = new RequisicaoOtimizacao().entityManager;
 		if (em == null){
