@@ -4915,8 +4915,8 @@ void ProblemDataLoader::calculaCombinaCredSLPorAluno()
 			{
 				int dia = *itDia;
 
-				GGroup<HorarioAula*> horDispDiaSL1 = sl1->retornaHorariosDisponiveisNoDia( dia );
-				GGroup<HorarioAula*> horDispDiaSL2 = sl2->retornaHorariosDisponiveisNoDia( dia );
+				GGroup<HorarioAula*, LessPtr<HorarioAula>> horDispDiaSL1 = sl1->retornaHorariosDisponiveisNoDia( dia );
+				GGroup<HorarioAula*, LessPtr<HorarioAula>> horDispDiaSL2 = sl2->retornaHorariosDisponiveisNoDia( dia );
 
 				#pragma region Cria o mapa de compatibilidade de horarios de sl1 e sl2
 
@@ -4924,9 +4924,9 @@ void ProblemDataLoader::calculaCombinaCredSLPorAluno()
 				// Para cada HorarioAula H, lista todos os HorarioAula h que não sobrepõem H
 				std::map< HorarioAula*, GGroup<HorarioAula*> > map_compatHorarioSL1PorSalaDia;
 
-				ITERA_GGROUP( it_H, horDispDiaSL1, HorarioAula )
+				ITERA_GGROUP_LESSPTR( it_H, horDispDiaSL1, HorarioAula )
 				{
-					ITERA_GGROUP( it_h, horDispDiaSL2, HorarioAula )
+					ITERA_GGROUP_LESSPTR( it_h, horDispDiaSL2, HorarioAula )
 					{
 						// Se it_H não se sobrepor com it_h
 						if ( problemData->compatibilidadesDeHorarios[ *it_H ].find( *it_h ) !=

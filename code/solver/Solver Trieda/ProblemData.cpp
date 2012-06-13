@@ -2047,10 +2047,9 @@ int ProblemData::getQtdAlunoDemandaAtualPorCampus( int campusId )
 
 
 void ProblemData::imprimeCjtAlunos( int campusId )
-{
-	bool CONSIDERAR_PRATICAS = false;
-
+{	
 	int totalAlunos = 0, totalDemandas = 0, totalAlunoDemanda = 0;
+	int totalDemandasSP = 0, totalAlunoDemandaSP = 0;
 
 	std::cout << "\nNumero de conjuntos: " << this->cjtAlunos.size();
 
@@ -2062,41 +2061,39 @@ void ProblemData::imprimeCjtAlunos( int campusId )
 		int id = itMapCjtAlunos->first;
 		int nroAlunos = itMapCjtAlunos->second.size();
 
-		if ( CONSIDERAR_PRATICAS )
-		{
-			std::cout << "\nConjunto " << id
-					  << ": nro de alunos = " << nroAlunos
-					  << ", nro de alunosDemanda = " << this->cjtAlunoDemanda[id].size()
-					  << ", nro de demandas = " << this->cjtDemandas[id].size();
+		// --------------------------------------------
+		// CONSIDERANDO PRATICAS SEPARADAS
+		std::cout << "\nConjunto " << id
+					<< ": nro de alunos = " << nroAlunos
+					<< ", nro de alunosDemanda = " << this->cjtAlunoDemanda[id].size()
+					<< ", nro de demandas = " << this->cjtDemandas[id].size();
 			
-			totalDemandas += this->cjtDemandas[id].size();
-			totalAlunoDemanda += this->cjtAlunoDemanda[id].size();
-		}
-		else
+		totalDemandas += this->cjtDemandas[id].size();
+		totalAlunoDemanda += this->cjtAlunoDemanda[id].size();
+
+		// --------------------------------------------
+		// SEM CONSIDERAR PRATICAS
+		int nAlDem = 0, nDem = 0;
+
+		GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > gad = this->cjtAlunoDemanda[id];
+		ITERA_GGROUP_LESSPTR( itAlDem, gad, AlunoDemanda )
 		{
-			int nAlDem = 0, nDem = 0;
-
-			GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > gad = this->cjtAlunoDemanda[id];
-			ITERA_GGROUP_LESSPTR( itAlDem, gad, AlunoDemanda )
-			{
-				if ( itAlDem->demanda->getDisciplinaId() >= 0 )
-					nAlDem++;
-			}
-			GGroup< Demanda *, LessPtr< Demanda > > gd = this->cjtDemandas[id];
-			ITERA_GGROUP_LESSPTR( itDem, gd, Demanda )
-			{
-				if ( itDem->getDisciplinaId() >= 0 )
-					nDem++;
-			}
-
-			std::cout << "\nConjunto " << id
-					  << ": nro de alunos = " << nroAlunos
-					  << ", nro de alunosDemanda = " << nAlDem
-					  << ", nro de demandas = " << nDem;
-
-			totalDemandas += nDem;
-			totalAlunoDemanda += nAlDem;
+			if ( itAlDem->demanda->getDisciplinaId() >= 0 )
+				nAlDem++;
 		}
+		GGroup< Demanda *, LessPtr< Demanda > > gd = this->cjtDemandas[id];
+		ITERA_GGROUP_LESSPTR( itDem, gd, Demanda )
+		{
+			if ( itDem->getDisciplinaId() >= 0 )
+				nDem++;
+		}
+
+		std::cout << ", nro de alunosDemanda sem divisao de pratica = " << nAlDem
+				  << ", nro de demandas sem divisao de pratica = " << nDem;
+
+		totalDemandasSP += nDem;
+		totalAlunoDemandaSP += nAlDem;
+		// --------------------------------------------
 
 		totalAlunos += nroAlunos;
 	}
@@ -2104,5 +2101,63 @@ void ProblemData::imprimeCjtAlunos( int campusId )
 	std::cout << "\nTotal de alunos: " << totalAlunos;
 	std::cout << "\nTotal de demandas: " << totalDemandas;
 	std::cout << "\nTotal de alunosDemanda: " << totalAlunoDemanda;
+	std::cout << "\nTotal de demandas sem divisao de pratica: " << totalDemandasSP;
+	std::cout << "\nTotal de alunosDemanda sem divisao de pratica: " << totalAlunoDemandaSP;
+
+}
+
+
+// Verifica se disciplina, sala e professor possuem o horario no dia
+bool ProblemData::verificaDisponibilidadeHorario( HorarioAula *horarioAula, int dia, Sala *sala, Professor *prof, Disciplina* disc )
+{
+	bool achouNaSala = false;
+	ITERA_GGROUP( itHorDia, sala->horariosDia, HorarioDia )
+	{
+		if ( (*itHorDia)->getHorarioAula() == horarioAula &&
+			(*itHorDia)->getDia() == dia )
+		{
+			achouNaSala = true;
+			break;
+		}
+	}
+	if ( !achouNaSala )
+	{
+		return false;
+	}
+
+	bool achouNaDisc = false;
+	ITERA_GGROUP( itHorDia, disc->horariosDia, HorarioDia )
+	{
+		if ( (*itHorDia)->getHorarioAula() == horarioAula &&
+			(*itHorDia)->getDia() == dia )
+		{
+			achouNaDisc = true;
+			break;
+		}
+	}
+	if ( !achouNaDisc )
+	{
+		return false;
+	}
+
+	if ( prof != NULL )
+	{
+		bool achouNoProf = false;
+		ITERA_GGROUP_LESSPTR( itHorDia, prof->horariosDia, HorarioDia )
+		{
+			if ( (*itHorDia)->getHorarioAula() == horarioAula &&
+				(*itHorDia)->getDia() == dia )
+			{
+				achouNoProf = true;
+				break;
+			}
+		}
+		if ( !achouNoProf )
+		{
+			return false;
+		}
+	}
+
+	return true;
 
 }

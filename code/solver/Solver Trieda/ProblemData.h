@@ -448,6 +448,8 @@ public:
    
    bool EQUIV_TRANSITIVIDADE;
 
+   bool verificaDisponibilidadeHorario( HorarioAula *horarioAula, int dia, Sala *sala, Professor *prof, Disciplina* disc );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

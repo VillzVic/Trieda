@@ -164,9 +164,9 @@ double Calendario::getTempoTotal( int dia )
 	return ( tempo_aula * this->getNroDeHorariosAula(dia) ); 
 }
 
-GGroup<HorarioAula*> Calendario::retornaHorariosDisponiveisNoDia( int dia )
+GGroup<HorarioAula*, LessPtr<HorarioAula>> Calendario::retornaHorariosDisponiveisNoDia( int dia )
 {
-	GGroup<HorarioAula*> horarios;
+	GGroup<HorarioAula*, LessPtr<HorarioAula>> horarios;
 
 	ITERA_GGROUP_LESSPTR( itTurno, turnos, Turno )
 	{

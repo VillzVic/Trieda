@@ -35,7 +35,7 @@ public:
 
    bool possuiHorario( HorarioAula *h );
 
-   GGroup<HorarioAula*> retornaHorariosDisponiveisNoDia( int dia );
+   GGroup<HorarioAula*, LessPtr<HorarioAula>> retornaHorariosDisponiveisNoDia( int dia );
 
 private:   
    std::string codigo;

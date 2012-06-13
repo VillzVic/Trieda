@@ -2796,7 +2796,7 @@ void SolverMIP::limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId )
 
 void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024] )
 {	
-
+	int nroAtendsRemovidosAlunoDemanda = 0;
 
 	GGroup< Trio< int, int, Disciplina* > > remocao; // campusId, turma, disc
 
@@ -2839,6 +2839,8 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].remove( ad );
 				 
 				problemData->listSlackDemandaAluno.add( ad );
+				
+				nroAtendsRemovidosAlunoDemanda++;
 
 				int nroAlunos = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].size();
 
@@ -2879,6 +2881,8 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].remove( ad );
 				 
 				problemData->listSlackDemandaAluno.add( ad );
+
+				nroAtendsRemovidosAlunoDemanda++;
 
 				int nroAlunos = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].size();
 
@@ -3083,6 +3087,7 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 	   fprintf( fout, "%s = %f\n", v->toString().c_str(), v->getValue() );
 		   
    }
+   fprintf( fout, "\nAlunosDemanda removidos = %d", nroAtendsRemovidosAlunoDemanda );
    fclose( fout );
 
 }
@@ -4014,6 +4019,9 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 	   }
    }
 
+   int nroNaoAtendimentoAlunoDemanda = 0;
+   int nroAtendimentoAlunoDemanda = 0;
+
    while ( vit != vHashPre.end() )
    {
       VariablePre * v = new VariablePre( vit->first );
@@ -4049,6 +4057,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 						  << " para a turma " << v->getTurma()
 						  << " do curso " << v->getOferta()->curso->getCodigo()
 						  << std::endl << std::endl;
+				nroAtendimentoAlunoDemanda += v->getValue();
 				break;
 			 case VariablePre::V_PRE_ALOC_ALUNO: break;
 			 case VariablePre::V_PRE_SLACK_DEMANDA: 
@@ -4062,7 +4071,8 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 					 AlunoDemanda *ad = problemData->procuraAlunoDemanda( d->getId(), aluno->getAlunoId() );
 
 					 problemData->listSlackDemandaAluno.add( ad );		 
-		 					 
+					 
+					 nroNaoAtendimentoAlunoDemanda++;		 					 
 				 }
 				 // ------------------------------------------------------------
 
@@ -4078,6 +4088,9 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 
       vit++;
    }
+   
+   fprintf( fout, "\nAlunosDemanda nao atendidos = %d\n", nroNaoAtendimentoAlunoDemanda );
+   fprintf( fout, "AlunosDemanda atendidos = %d", nroAtendimentoAlunoDemanda );
 
    //#ifdef DEBUG
    if ( fout )
@@ -4187,7 +4200,9 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
 			exit(0);
 	   }
    }
-
+      
+   int nroNaoAtendimentoAlunoDemanda = 0;
+   int nroAtendimentoAlunoDemanda = 0;
    Disciplina *vDisc;
    int vTurma;
    int vCampusId;
@@ -4227,6 +4242,8 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
 						  << " no dia " << v->getDia()
 						  << " para a sala " << v->getSubCjtSala()->salas.begin()->first
 						  << std::endl << std::endl;
+
+				 nroAtendimentoAlunoDemanda += problemData->mapCampusTurmaDisc_AlunosDemanda[trio].size();
 				break;
 			 case Variable::V_SLACK_DEMANDA_ALUNO:
 
@@ -4247,6 +4264,7 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
 				 
 					 ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
 					 {
+						 nroNaoAtendimentoAlunoDemanda++;
 						 problemData->listSlackDemandaAluno.add( *itAlDem );				 
 
 						 itMapSlackDemanda = mapSlackDemanda.find( std::make_pair( vDisc, itAlDem->demanda->oferta ) );
@@ -4278,6 +4296,8 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtual
 			itMapSlackDemanda->first.second->getId(), 
 			itMapSlackDemanda->second );
 	}
+	fprintf( fout, "\nAlunosDemanda nao atendidos = %d\n", nroNaoAtendimentoAlunoDemanda );
+	fprintf( fout, "AlunosDemanda atendidos = %d", nroAtendimentoAlunoDemanda );
 
 	std::cout << std::endl;
 
@@ -4362,10 +4382,10 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 				statusPre = solvePreTaticoCjtAlunos( campusId, P, grupoId );    
 				carregaVariaveisSolucaoPreTatico_CjtAlunos( campusId, P, grupoId );
 								
-				imprimeSolVarsPre( campusId, P, grupoId );
+				//imprimeSolVarsPre( campusId, P, grupoId );
 
 				preencheMapAtendimentoAluno( campusId );
-				imprimeAlocacaoAlunos( campusId, P, grupoId );
+				//imprimeAlocacaoAlunos( campusId, P, grupoId );
 
 				encontraCliques( campusId );
 				imprimeCliques( campusId, P, grupoId );
@@ -11351,11 +11371,11 @@ int SolverMIP::cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, i
 
 								if ( problemData->parametros->funcao_objetivo == 0 )
 								{
-									coef = -cp->getCusto()/2;
+									coef = -50*cp->getCusto();
 								}
 								else if( problemData->parametros->funcao_objetivo == 1 )
 								{
-									coef = cp->getCusto()/2;
+									coef = 50*cp->getCusto();
 								}
 						  
 								double upperBound = itDisc->getNumTurmas();						 
@@ -22434,11 +22454,11 @@ int SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjt
    Constraint c;
    VariableHash::iterator vit;
    ConstraintHash::iterator cit;
-      
    
    for (vit = vHash.begin(); vit != vHash.end(); vit++ )
    {
 	   Variable v = vit->first;
+	   
 	   if ( v.getType() != Variable::V_CREDITOS )
 	   {
 		   continue;
@@ -22447,7 +22467,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjt
 	   Disciplina *disciplina = v.getDisciplina();
 	   int turma = v.getTurma();
 	   int dia = v.getDia();
-	   
+
 		map< Disciplina *, int /* cjtAlunosId */, LessPtr< Disciplina > >::iterator 
 		itMapDiscCjt = problemData->cjtDisciplinas.find( disciplina );
 
@@ -22455,10 +22475,14 @@ int SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjt
 		{
 			if ( itMapDiscCjt->second != cjtAlunosAtualId &&
 				 NAO_CRIAR_RESTRICOES_CJT_ANTERIORES )
+			{
 				continue;
+			}
 		}
 		else
 		{
+			std::cout<<"\nERRO em SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos: disciplina "
+				<< disciplina->getId() << " nao encontrada em cjtDisciplinas\n";
 			continue;
 		}
 
@@ -22467,7 +22491,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjt
 	   ITERA_GGROUP_N_PT( itClique, clique, int )
 	   {
 		    int clique = *itClique;
-		   
+
 			c.reset();
 			c.setType( Constraint::C_EVITA_SOBREPOS_CLIQUE );
 			c.setDia( dia );
@@ -22502,7 +22526,6 @@ int SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjt
 			}			
 	   }
 
-	   vit++;
    }
 
    return restricoes;
@@ -47226,186 +47249,53 @@ int SolverMIP::criaVariavelDisciplinaHorario()
 
 void SolverMIP::retornaHorariosPossiveis( Professor * prof,
    Aula * aula, std::list< HorarioDia * > & listaHor )
-{
-   listaHor.clear();
+{  
+	listaHor.clear();
 
-   // Verifica-se a disponibilidade do
-   // professor, da disciplina e da sala
-   if ( prof != NULL )
-   {
-      Disciplina * disc = aula->getDisciplina();
-      Sala * sala = aula->getSala();
+    // Verifica-se a disponibilidade do
+    // professor, da disciplina e da sala
+    Disciplina * disc = aula->getDisciplina();
+    Sala * sala = aula->getSala();
 
-      int nCred = this->problemData->totalHorariosTurnoAula( aula );
-      int diaS = aula->getDiaSemana();
-      int nCredAula = aula->getTotalCreditos();
+    int nCred = this->problemData->totalHorariosTurnoAula( aula );
+    int diaS = aula->getDiaSemana();
+    int nCredAula = aula->getTotalCreditos();
 
-      for ( int i = 0; i <= problemData->maxHorariosDif; i++ )
-      {
-         int idx = problemData->getHorarioDiaIdx( diaS, i );
+	Calendario *calendario = disc->getCalendario();	
 
-         HorarioDia * horarioDia = problemData->horariosDiaIdx[ idx ];
+	GGroup<HorarioAula*, LessPtr<HorarioAula>> horarios = calendario->retornaHorariosDisponiveisNoDia( diaS );	
+	ITERA_GGROUP_LESSPTR( itHor, horarios, HorarioAula )
+	{
+        HorarioAula * horarioAula = *itHor;	 
+		bool disponivel = problemData->verificaDisponibilidadeHorario( horarioAula, diaS, sala, prof, disc );
 
-         if ( horarioDia == NULL )
-         {
-            continue;
-         }
+		if ( !disponivel )
+		{
+			continue;
+		}
+		bool available = true;
 
-         // Verifica nCred horarios para frente
-         bool horarioOK = true;
+		HorarioAula *hf = horarioAula;
+		int i = 1;
+		for ( ; i < nCredAula; i++ )
+		{
+		 	hf = calendario->getProximoHorario( hf );
+			disponivel = problemData->verificaDisponibilidadeHorario( hf, diaS, sala, prof, disc );	
 
-         // Verifica se disciplina, sala e professor possuem o horario
-         if ( sala->horariosDia.find( horarioDia ) == sala->horariosDia.end() )
-         {
-            continue;
-         }
+			if ( !disponivel )
+			{
+				break;
+				available = false;
+			}
+		}	 
 
-         if ( disc->horariosDia.find( horarioDia ) == disc->horariosDia.end() )
-         {
-            continue;
-         }
+        if ( i == nCredAula && available )
+        {
+			HorarioDia *horarioDia = problemData->getHorarioDiaCorrespondente( horarioAula, diaS );		
+			listaHor.push_back( horarioDia );
+        }
+	}
 
-         if ( prof->horariosDia.find( horarioDia ) == prof->horariosDia.end() )
-         {
-            continue;
-         }
-
-         int nCredAux = 1;
-
-         for ( int j = i + 1; j <= problemData->maxHorariosDif && nCredAux < nCred && nCredAux < nCredAula; j++ )
-         {
-            int idx2 = problemData->getHorarioDiaIdx( diaS, j );
-
-            HorarioDia * horarioDia2 = problemData->horariosDiaIdx[ idx2 ];
-
-            if ( horarioDia2 == NULL )
-            {
-               horarioOK = false;
-               break;
-            }
-
-            // Verifica se disciplina e sala possuem o horario
-            if ( sala->horariosDia.find( horarioDia2 ) == sala->horariosDia.end() )
-            {
-               horarioOK = false;
-               break;
-            }
-
-            if ( disc->horariosDia.find( horarioDia2 ) == disc->horariosDia.end() )
-            {
-               horarioOK = false;
-               break;
-            }
-
-            if ( prof->horariosDia.find( horarioDia2 ) == prof->horariosDia.end() )
-            {
-               horarioOK = false;
-               break;
-            }
-
-            nCredAux++;
-         }
-
-         if ( nCredAux < nCredAula )
-         {
-            horarioOK = false;
-         }
-
-         if ( horarioOK )
-         {
-            bool verificaDisciplinaHorario = this->problemData->verificaDisponibilidadeDisciplinaHorario(
-               aula->getDisciplina(), horarioDia->getHorarioAula() );
-
-            if ( verificaDisciplinaHorario )
-            {
-               listaHor.push_back( horarioDia );
-            }
-         }
-      }
-   }
-   // Como se trata de um professor virtual, iremos
-   // verificar apenas a disponibilidade da disciplina e da sala
-   else
-   {
-      Disciplina * disc = aula->getDisciplina();
-      Sala * sala = aula->getSala();
-
-      int nCred = this->problemData->totalHorariosTurnoAula( aula );
-      int diaS = aula->getDiaSemana();
-      int nCredAula = aula->getTotalCreditos();
-
-      for ( int i = 0; i <= problemData->maxHorariosDif; i++ )
-      {
-         int idx = problemData->getHorarioDiaIdx( diaS, i );
-
-         HorarioDia * horarioDia = problemData->horariosDiaIdx[ idx ];
-
-         if ( horarioDia == NULL )
-         {
-            continue;
-         }
-
-         // Verifica nCred horarios para frente
-         bool horarioOK = true;
-
-         // Verifica se disciplina e sala possuem o horario
-         if ( sala->horariosDia.find( horarioDia ) == sala->horariosDia.end() )
-         {
-            continue;
-         }
-
-         if ( disc->horariosDia.find( horarioDia ) == disc->horariosDia.end() )
-         {
-            continue;
-         }
-
-         int nCredAux = 1;
-
-         for ( int j = i + 1; j <= problemData->maxHorariosDif && nCredAux < nCred && nCredAux < nCredAula; j++ )
-         {
-            int idx2 = problemData->getHorarioDiaIdx( diaS, j );
-
-            HorarioDia * horarioDia2 = problemData->horariosDiaIdx[ idx2 ];
-
-            if ( horarioDia2 == NULL )
-            {
-               horarioOK = false;
-               break;
-            }
-
-            // Verifica se disciplina e sala possuem o horario
-            if ( sala->horariosDia.find( horarioDia2 ) == sala->horariosDia.end() )
-            {
-               horarioOK = false;
-               break;
-            }
-
-            if ( disc->horariosDia.find( horarioDia2 ) == disc->horariosDia.end() )
-            {
-               horarioOK = false;
-               break;
-            }
-
-            nCredAux++;
-         }
-
-         if ( nCredAux < nCredAula )
-         {
-            horarioOK = false;
-         }
-
-         if ( horarioOK )
-         {
-            bool verificaDisciplinaHorario = this->problemData->verificaDisponibilidadeDisciplinaHorario(
-               aula->getDisciplina(), horarioDia->getHorarioAula() );
-
-            if ( verificaDisciplinaHorario )
-            {
-               listaHor.push_back( horarioDia );
-            }
-         }
-      }
-   }
 }
 
 int SolverMIP::criaVariavelFolgaFixProfDiscSalaDiaHor()
