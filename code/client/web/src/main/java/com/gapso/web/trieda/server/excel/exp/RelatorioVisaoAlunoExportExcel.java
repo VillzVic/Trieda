@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,7 +21,6 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
-import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -247,20 +246,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 		// escreve cabeçalho da grade horária da sala
 		row = writeHeader(getRowsHeadersPairs(campus, turno, aluno), row, ehTatico);
 		
-		// processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
-		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
-		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
-		if(!ehTatico){
-			List<AtendimentoOperacionalDTO> atendimentosOperacionaisDTO = new ArrayList<AtendimentoOperacionalDTO>();
-			for(AtendimentoRelatorioDTO atendimentoDTO : atendimentos){
-				atendimentosOperacionaisDTO.add((AtendimentoOperacionalDTO) atendimentoDTO);
-			}
-			aulas.addAll(atendimentosService.extraiAulas(atendimentosOperacionaisDTO));
-		}
-		else aulas.addAll(atendimentos);
-		List<AtendimentoRelatorioDTO> aulasParaVisaoSala = atendimentosService.uneAulasQuePodemSerCompartilhadas(aulas);
-		
-		return writeAulas(aulasParaVisaoSala, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+		return writeAulas(atendimentos, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
 	}
 	
 	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {
