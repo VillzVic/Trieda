@@ -112,6 +112,7 @@ public:
 
    int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );			// w_{i,d,i',d'}
 
+   int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );
 
 
    /********************************************************************
@@ -151,6 +152,8 @@ public:
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade );
    int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );
    int cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosId, int prioridade );
+
+   int cria_preRestricao_distribuicao_aluno( int campusId, int cjtAlunosId  );
    
 
    /********************************************************************

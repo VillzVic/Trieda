@@ -198,7 +198,8 @@ std::string VariablePre::toString()
 		str <<"ft"; break;
 	 case V_PRE_TURMAS_COMPART:
 		str <<"w"; break;
-
+	 case V_PRE_FOLGA_DISTR_ALUNOS:
+		 str <<"fda"; break;
 						
     default:
         str << "!";
