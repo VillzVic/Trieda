@@ -35,7 +35,7 @@ public class HorarioDisponivelProfessorFormView extends MyComposite implements H
 	{
 		simpleModal = new SimpleModal("Disponibilidade de Professor (" + professorDTO.getCpf() + ")", Resources.DEFAULTS.professor16());
 		simpleModal.setHeight(500);
-		simpleModal.setWidth(600);
+		simpleModal.setWidth(750);
 	}
 
 	private void createGrid()

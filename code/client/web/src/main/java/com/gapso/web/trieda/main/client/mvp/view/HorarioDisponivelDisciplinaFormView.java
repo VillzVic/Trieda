@@ -35,7 +35,7 @@ public class HorarioDisponivelDisciplinaFormView extends MyComposite implements 
 	{
 		simpleModal = new SimpleModal("Disponibilidade da Disciplina (" + disciplinaDTO.getCodigo() + ")", Resources.DEFAULTS.disciplina16());
 		simpleModal.setHeight(500);
-		simpleModal.setWidth(600);
+		simpleModal.setWidth(750);
 	}
 
 	private void createGrid()

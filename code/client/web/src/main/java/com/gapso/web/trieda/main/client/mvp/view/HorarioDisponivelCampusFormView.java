@@ -36,7 +36,7 @@ public class HorarioDisponivelCampusFormView extends MyComposite implements Hora
 		simpleModal = new SimpleModal(
 			"Disponibilidade de Campus (" + campusDTO.getCodigo() + ")", Resources.DEFAULTS.campus16());
 		simpleModal.setHeight(500);
-		simpleModal.setWidth(600);
+		simpleModal.setWidth(750);
 	}
 
 	private void createGrid()

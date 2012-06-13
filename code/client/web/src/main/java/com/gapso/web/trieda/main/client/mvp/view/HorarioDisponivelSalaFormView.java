@@ -42,7 +42,7 @@ public class HorarioDisponivelSalaFormView
 			this.salaDTO.getCodigo() + ")", Resources.DEFAULTS.sala16() );
 
 		this.simpleModal.setHeight( 500 );
-		this.simpleModal.setWidth( 600 );
+		this.simpleModal.setWidth( 750 );
 	}
 
 	private void createGrid()
