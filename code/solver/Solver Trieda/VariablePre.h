@@ -36,9 +36,9 @@ public:
 	  V_PRE_SLACK_PRIOR_SUP = 14,					// fps_{a}
 	  V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL = 15,		// ft_{i,d}
 
-	  V_PRE_TURMAS_COMPART = 16,
+	  V_PRE_TURMAS_COMPART = 16,					// w_{i,d,i',d'}
 
-	  V_PRE_FOLGA_DISTR_ALUNOS = 17		// fda_{}
+	  V_PRE_FOLGA_DISTR_ALUNOS = 17					// fda_{}
 
    };
 

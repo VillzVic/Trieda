@@ -34,6 +34,16 @@
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
 
+
+#ifdef SOLVER_CPLEX
+#include "opt_cplex.h"
+#endif
+
+#ifdef SOLVER_GUROBI
+#include "opt_gurobi.h"
+#endif
+
+
 #define PRINT_cria_variaveis
 #define PRINT_cria_restricoes
 
@@ -58,7 +68,7 @@
 #endif
 
 
-//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -112,7 +122,7 @@ public:
 
    int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );			// w_{i,d,i',d'}
 
-   int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );
+   int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );			// fda
 
 
    /********************************************************************
@@ -622,7 +632,7 @@ public:
    std::pair<ConjuntoSala*, GGroup<int> > retornaSalaEDiasDeAtendimentoTaticoAnterior( int turma, Disciplina* disciplina, Campus* campus );
    GGroup< std::pair< int,Disciplina* > > retornaAtendTaticoEmCjtSala( ConjuntoSala * cjtSala );
 
-   double retornaNCredsAlocados( int turma, Disciplina* disciplina, int dia );
+   double retornaNCredsAlocados( int turma, Disciplina* disciplina, int dia, int campusId );
    int retornaCombinacaoSLAlunoTaticoAnterior( Aluno* aluno, int dia );
    
    Variable * criaVariavelAlunos(
@@ -637,7 +647,15 @@ public:
    GGroup< int > retornaCliques( int turma, Disciplina* disciplina, int campusId );
    void imprimeCliques( int campusId, int prioridade, int cjtAlunosId );
 
+   // Usada somente para soluções intermediárias dos pre-modelos, em prioridade maior que 2
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > > 
+	   auxMapCampusTurmaDisc_AlunosDemanda;
+   bool aux_possuiAlunosEmComum( int turma1, Disciplina* disc1, int cp1, int turma2, Disciplina* disc2, int cp2 );
+   void preencheAuxMapCampusTurmaDisc_AlunosDemanda( double *xSol ); 
+   bool solucaoValidaCliques( double *xSol );
+   
 private:
+	int nroPreSolAvaliadas;
 
 	bool CARREGA_SOLUCAO;
 
@@ -704,8 +722,14 @@ private:
    ProblemSolution * problemSolution;
    ProblemDataLoader * problemDataLoader;
 
-   // The linear problem.
-   OPT_LP * lp;
+   // The linear problem.	
+   //OPT_LP * lp;
+	#ifdef SOLVER_CPLEX 
+	   OPT_CPLEX *lp;
+	#endif
+	#ifdef SOLVER_GUROBI 
+	   OPT_GUROBI* lp;
+	#endif
 
    // Hash which associates the column number with the VariablePre object.
    VariablePreHash vHashPre;
@@ -758,12 +782,12 @@ private:
 
    int calculaDeslocamentoUnidades( const int, const int );
 
-   void encontraCliques( int campusAtualId );
+   void encontraCliques( bool solucaoFinal );
    
-   typedef std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > Cliques;
-
    std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > cliques;
-   
+      
+   int campusAtualId;
+
 };
 
 #endif

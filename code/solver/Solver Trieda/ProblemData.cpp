@@ -14,7 +14,7 @@
 
 ProblemData::ProblemData()
 {
-   EQUIV_TRANSITIVIDADE = false;
+   EQUIV_TRANSITIVIDADE = true;
 
    this->atendimentosTatico = NULL;
 }

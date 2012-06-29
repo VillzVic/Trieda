@@ -95,7 +95,10 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
    considerar_equivalencia = elem.considerarEquivalencia();
    permite_compartilhamento_turma_sel = elem.permiteCompartilhamentoTurmaSel();
    permitir_alunos_em_varios_campi = elem.permitirAlunosEmVariosCampi();
+   min_doutores = elem.percentuaisMinimoDoutores();
+   min_mestres = elem.percentuaisMinimoMestres();
+   considerar_preferencia_prof = elem.preferenciaProfessorDisciplina();
+   considerar_desempenho_prof = elem.desempenhoProfDisponibilidade();
 
    min_alunos_abertura_turmas_value = elem.minAlunosAberturaTurmasValor().get();
-
 }

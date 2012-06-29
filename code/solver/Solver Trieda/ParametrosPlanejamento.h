@@ -45,6 +45,10 @@ public:
    bool considerar_equivalencia;
    bool permite_compartilhamento_turma_sel;
    bool permitir_alunos_em_varios_campi;
+   bool min_mestres;
+   bool min_doutores;
+   bool considerar_preferencia_prof;
+   bool considerar_desempenho_prof;
 
    virtual void le_arvore( ItemParametrosPlanejamento & );
 };

@@ -2276,6 +2276,7 @@ void ProblemDataLoader::divideDisciplinas()
 
             // Alterações relacionadas à disciplina antiga
             delete it_disc->divisao_creditos;
+			it_disc->divisao_creditos = NULL;
 
             it_Creds_Regras = problemData->creds_Regras.find( it_disc->getCredTeoricos() );
 
@@ -2339,10 +2340,10 @@ void ProblemDataLoader::divideDisciplinas()
          }
 
          //>>> Copiando HORARIO
-         ITERA_GGROUP( it_hr, it_disc->horarios, Horario )
+         ITERA_GGROUP( it_hr, (*it_disc)->horarios, Horario )
          {
             Horario * h =  new Horario();
-            h->setId( it_hr->getId() );
+            h->setId( (*it_hr)->getId() );
 
             //>>> >>> Copiando DiaSemana
             GGroup< int >::iterator it_dia
@@ -3677,6 +3678,11 @@ void ProblemDataLoader::associaDisciplinasSalas()
 
             Disciplina * disciplina
                = ( problemData->refDisciplinas.find( *it_disciplina )->second );
+
+			if ( disciplina->getId() == 5932 )
+			{
+				std::cout<<"\naCHEI";
+			}
 
             // Se a disciplina foi associada pelo usuário para o campus corrente.
             std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > >::iterator
