@@ -1666,16 +1666,21 @@ public class SolverInput
 			}
 		});
 		
-		for ( Demanda demanda : demandas )
-		{
-			ItemDemanda itemDemanda = this.of.createItemDemanda();
-
-			itemDemanda.setId( demanda.getId().intValue() );
-			itemDemanda.setOfertaCursoCampiId( demanda.getOferta().getId().intValue() );
-			itemDemanda.setDisciplinaId( demanda.getDisciplina().getId().intValue() );
-			itemDemanda.setQuantidade( demanda.getQuantidade() == null ? 0 : demanda.getQuantidade() );
-
-			grupoDemanda.getDemanda().add( itemDemanda );
+		for ( Demanda demanda : demandas ) {
+			// verifica se é uma demanda que ocupa grade, pois, demandas que não ocupam grade não precisam ser enviadas
+			// para o solver. Atualmente, as demandas que não ocupam grade são:
+			//   - de disciplinas do tipo "online";
+			//   - de disciplinas que possuam créditos (teóricos e práticos) zerados
+			if (demanda.ocupaGrade()) {
+				ItemDemanda itemDemanda = this.of.createItemDemanda();
+	
+				itemDemanda.setId( demanda.getId().intValue() );
+				itemDemanda.setOfertaCursoCampiId( demanda.getOferta().getId().intValue() );
+				itemDemanda.setDisciplinaId( demanda.getDisciplina().getId().intValue() );
+				itemDemanda.setQuantidade( demanda.getQuantidade() == null ? 0 : demanda.getQuantidade() );
+	
+				grupoDemanda.getDemanda().add( itemDemanda );
+			}
 		}
 
 		this.triedaInput.setDemandas( grupoDemanda );
@@ -1693,15 +1698,21 @@ public class SolverInput
 					continue;
 				}
 	
-				ItemAlunoDemanda itemAlunoDemanda = this.of.createItemAlunoDemanda();
-	
-				itemAlunoDemanda.setId(alunoDemanda.getId().intValue());
-				itemAlunoDemanda.setAlunoId(alunoDemanda.getAluno().getId().intValue());
-				itemAlunoDemanda.setNomeAluno(alunoDemanda.getAluno().getNome());
-				itemAlunoDemanda.setDemandaId(alunoDemanda.getDemanda().getId().intValue());
-				itemAlunoDemanda.setPrioridade(alunoDemanda.getPrioridade());
-	
-				grupoAlunosDemanda.getAlunoDemanda().add(itemAlunoDemanda);
+				// verifica se é uma demanda que ocupa grade, pois, demandas que não ocupam grade não precisam ser enviadas
+				// para o solver. Atualmente, as demandas que não ocupam grade são:
+				//   - de disciplinas do tipo "online";
+				//   - de disciplinas que possuam créditos (teóricos e práticos) zerados
+				if (alunoDemanda.getDemanda().ocupaGrade()) {
+					ItemAlunoDemanda itemAlunoDemanda = this.of.createItemAlunoDemanda();
+		
+					itemAlunoDemanda.setId(alunoDemanda.getId().intValue());
+					itemAlunoDemanda.setAlunoId(alunoDemanda.getAluno().getId().intValue());
+					itemAlunoDemanda.setNomeAluno(alunoDemanda.getAluno().getNome());
+					itemAlunoDemanda.setDemandaId(alunoDemanda.getDemanda().getId().intValue());
+					itemAlunoDemanda.setPrioridade(alunoDemanda.getPrioridade());
+		
+					grupoAlunosDemanda.getAlunoDemanda().add(itemAlunoDemanda);
+				}
 			}
 		}
 

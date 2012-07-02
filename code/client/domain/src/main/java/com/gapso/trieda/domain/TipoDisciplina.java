@@ -71,6 +71,15 @@ public class TipoDisciplina
 
         return sb.toString();
     }
+	
+	/**
+	 * Informa se uma disciplina do tipo em questão ocupa grade de horários ou não. Uma disciplina ocupa grade de horários
+	 * caso a mesma seja dos tipos "Presencial" ou "Telepresencial" e não ocupa grade caso seja do tipo "Online".
+	 * @return true caso uma disciplina do tipo em questão ocupa grade de horários e false caso contrário
+	 */
+	public boolean ocupaGrade() {
+		return !this.nome.equals("Online");
+	}
 
 	@PersistenceContext
     transient EntityManager entityManager;

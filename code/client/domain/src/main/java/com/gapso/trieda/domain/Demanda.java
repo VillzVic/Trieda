@@ -89,6 +89,17 @@ public class Demanda
 	{
         this.quantidade = quantidade;
     }
+	
+	/**
+	 * Informa se a demanda ocupa grade de horários ou não. Uma demanda ocupa grade de horários nos seguintes casos:
+	 *    - a demanda está associada com uma disciplina do tipo "Presencial" ou "Telepresencial";
+	 *    - a demanda está associada com uma disciplina que possue créditos teóricos ou práticos;
+	 * @return true caso a demanda ocupa grade de horários e false caso contrário
+	 */
+	public boolean ocupaGrade() {
+		int totalCreditos = this.disciplina.getCreditosTeorico() + this.disciplina.getCreditosPratico(); 
+		return this.disciplina.getTipoDisciplina().ocupaGrade() && totalCreditos > 0;
+	}
 
 	@PersistenceContext
     transient EntityManager entityManager;
