@@ -200,6 +200,64 @@ public:
 	   return maxTempo;
    }
 
+   /*
+	   Retorna o menor dentre todos os totais de tempo disponível na semana
+	   para os calendários existentes no conjunto sala.
+	   Função usada na restrição de máximo de crédito por sala na semana,
+	   no modelo pre-tático.
+   */
+   int minLimiteTempoPermitidoNaSemana( std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > > mapDiscSubstituidaPor )
+   {
+	   int maxTempo = 0;
+
+	   GGroup< Calendario*, LessPtr<Calendario> > calendarios;
+	   ITERA_GGROUP_LESSPTR (itDisc, this->disciplinas_associadas, Disciplina )
+       {
+		   if (itDisc->getCalendario() == NULL)
+			   continue;
+			   
+			#pragma region Equivalencias
+			if ( mapDiscSubstituidaPor.find( *itDisc ) !=
+				 mapDiscSubstituidaPor.end() )
+			{
+				continue;
+			}
+			#pragma endregion
+
+		   if (  calendarios.find( itDisc->getCalendario() ) == calendarios.end() )
+		   {
+			   calendarios.add( itDisc->getCalendario() );
+		   }
+       }
+
+	   GGroup<int> dias;
+       std::map< int /*Id Sala*/, Sala * >::iterator itSala = salas.begin();
+       for (; itSala != salas.end(); itSala++ )
+       {
+		   ITERA_GGROUP_N_PT( itDia, itSala->second->diasLetivos, int )
+		   {
+				if (  dias.find( *itDia ) == dias.end() )
+				{
+					dias.add( itSala->second->diasLetivos );		   
+				}
+		   }
+       }
+
+	   ITERA_GGROUP_N_PT (itDia, dias, int )
+	   {
+		    int minT = 1000;
+			ITERA_GGROUP_LESSPTR (itCalend, calendarios, Calendario )
+			{
+				int tempoSL = maxTempoPermitidoPorDiaPorSL( *itDia, *itCalend );	
+				if ( minT > tempoSL )
+					minT = tempoSL;
+		    }
+			maxTempo += minT;
+	   }
+	   
+	   return maxTempo;
+   }
+
    // Retorna o máximo de créditos para um dado dia.
    int maxCredsDia( int dia )
    {

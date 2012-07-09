@@ -38,7 +38,10 @@ public:
 
 	  V_PRE_TURMAS_COMPART = 16,					// w_{i,d,i',d'}
 
-	  V_PRE_FOLGA_DISTR_ALUNOS = 17					// fda_{}
+	  V_PRE_FOLGA_DISTR_ALUNOS = 17,		// fda_{}
+     V_PRE_CRED_SALA_F1 = 18, // xcs1
+     V_PRE_CRED_SALA_F2 = 19, // xcs2
+     V_PRE_CRED_SALA_F3 = 20 // xcs3
 
    };
 

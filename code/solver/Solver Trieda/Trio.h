@@ -38,7 +38,9 @@ public:
    {
 		this->first = t.first;
 		this->second = t.second;
-		this->second = t.third;
+		this->third = t.third;
+
+      return *this;
    }
 
    bool operator < ( Trio const & right ) const

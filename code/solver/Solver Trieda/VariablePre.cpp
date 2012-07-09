@@ -200,6 +200,12 @@ std::string VariablePre::toString()
 		str <<"w"; break;
 	 case V_PRE_FOLGA_DISTR_ALUNOS:
 		 str <<"fda"; break;
+    case V_PRE_CRED_SALA_F1:
+       str <<"xcs1"; break;
+    case V_PRE_CRED_SALA_F2:
+       str <<"xcs2"; break;
+    case V_PRE_CRED_SALA_F3:
+       str <<"xcs3"; break;
 						
     default:
         str << "!";

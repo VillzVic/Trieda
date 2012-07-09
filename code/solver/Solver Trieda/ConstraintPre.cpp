@@ -224,6 +224,10 @@ std::string ConstraintPre::toString()
       ss << "__(C_PRE_MAX_CREDS_ALUNO_DIA):"; break; 	
    case C_PRE_DISTR_ALUNOS:
 	   ss <<"_(C_PRE_DISTR_ALUNOS):"; break;
+   case C_PRE_SOMA_CRED_SALA:
+      ss <<"_(C_PRE_SOMA_CRED_SALA):"; break;
+   case C_PRE_MAX_CREDS_ALUNO_SEMANA:
+      ss <<"_(C_PRE_MAX_CREDS_ALUNO_SEMANA):"; break;
 
    default:
       ss << "!";

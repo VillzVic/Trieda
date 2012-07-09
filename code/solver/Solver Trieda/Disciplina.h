@@ -77,6 +77,7 @@ public:
    int getCapacMediaSala( int campusId );
    Calendario* getCalendario() const { return calendario; }
    int getNSalasAptas() const { return this->nSalasAptas; }
+   int getTempoTotalSemana();
 
    // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
    double getTempoCredSemanaLetiva() const { return this->calendario->getTempoAula(); } 

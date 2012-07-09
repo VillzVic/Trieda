@@ -33,6 +33,7 @@
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
+#include "SolucaoTaticoHeur.h"
 
 
 #ifdef SOLVER_CPLEX
@@ -68,7 +69,7 @@
 #endif
 
 
-#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -111,6 +112,7 @@ public:
    int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL  ); // fs_{d,s,oft}
    int cria_preVariavel_limite_sup_creds_sala( int campusId );												// Hs_{cp}
    int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId, int P_ATUAL  );				// c_{i,d,oft,s}
+   int cria_preVariavel_soma_cred_sala( int campusId );
    
 
    // Usadas somente para o modelo Tatico-Aluno:
@@ -147,6 +149,7 @@ public:
    int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala( int campusId, int cjtAlunosId  );		// Restricao 1.15
    int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId, int cjtAlunosId  );	// Restricao 1.16
+   int cria_preRestricao_soma_cred_sala( int campusId, int cjtAlunosId  );	// Restricao 1.26
 
    // Usadas somente para o modelo Tatico-BlocoCurricular:
    int cria_preRestricao_cap_aloc_dem_disc_oft( int campusId );		// Restrição 1.5
@@ -157,6 +160,7 @@ public:
    int cria_preRestricao_aluno_unica_turma_disc( int campusId, int cjtAlunosId  );	 // Restricao 1.19
    int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20
    int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
+   int cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId, int prior); 
 
    // Só para p2 em diante
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade );
@@ -561,6 +565,9 @@ public:
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
+   int localBranchingPre( double *, double );
+   void polishPreTatico(double *xSol, double maxTime, int percIni, int percMin);
+   void polishTatico(double*, double, int percIni, int percMin);
    void carregaVariaveisSolucaoTatico( int campusId );
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );
@@ -785,9 +792,8 @@ private:
    void encontraCliques( bool solucaoFinal );
    
    std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > cliques;
-      
-   int campusAtualId;
 
+   int campusAtualId;
 };
 
 #endif

@@ -131,7 +131,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 
 		   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
 		   {
-			   if ( itAlDem->getDemandaId() == id )
+            if ( itAlDem->getDemandaId() == id )
 			   {
 					n++;
 			   }
@@ -1702,7 +1702,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 				{
 					ITERA_GGROUP_LESSPTR( itAlDemInt, itAlunoInt->demandas, AlunoDemanda )
 					{
-						if ( itAlDemInt->demanda->disciplina == d )
+						if ( true)//itAlDemInt->demanda->disciplina == d )
 						{
 							EXISTE_CJT = true;
 							EXISTE_NO_CJT_ATUAL = true;

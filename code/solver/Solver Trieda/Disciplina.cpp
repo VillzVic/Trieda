@@ -97,3 +97,16 @@ int Disciplina::getCapacMediaSala( int campusId )
 	else
 		return 0;
 }
+
+int Disciplina::getTempoTotalSemana()
+{
+   int tempoDisciplina = 0;
+   for (GGroup< int >::iterator itD = diasLetivos.begin();
+      itD != diasLetivos.end();
+      itD++)
+   {
+      tempoDisciplina += calendario->getTempoTotal(*itD);
+   }
+
+   return tempoDisciplina;
+}
