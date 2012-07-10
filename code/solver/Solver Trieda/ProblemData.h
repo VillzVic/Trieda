@@ -408,6 +408,9 @@ public:
 
    std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > > mapCampusTurmaDisc_AlunosDemanda;
 
+   void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
+   void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
+
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > listSlackDemandaAluno;
 
    // Retorna a turma da disciplina disc na qual o aluno foi alocado.
@@ -449,6 +452,9 @@ public:
    bool EQUIV_TRANSITIVIDADE;
 
    bool verificaDisponibilidadeHorario( HorarioAula *horarioAula, int dia, Sala *sala, Professor *prof, Disciplina* disc );
+
+   double cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId );
+   double cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno );
 
    private:
    

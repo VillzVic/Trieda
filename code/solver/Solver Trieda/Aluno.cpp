@@ -5,6 +5,7 @@ Aluno::Aluno( void )
    this->setAlunoId( -1 );
    this->oferta = NULL;
    this->ofertaId = -1;
+   this->nCredsAlocados.clear();
 }
 
 Aluno::Aluno( int id, std::string nome, Oferta* oft )
@@ -13,6 +14,7 @@ Aluno::Aluno( int id, std::string nome, Oferta* oft )
    this->setNomeAluno( nome );
    this->oferta = oft;
    this->ofertaId = oft->getId();
+   this->nCredsAlocados.clear();
 }
 
 Aluno::~Aluno( void )
@@ -30,6 +32,19 @@ bool Aluno::demandaDisciplina( int idDisc )
 	}
 	return false;
 }
+
+AlunoDemanda* Aluno::getAlunoDemanda( int disciplinaId )
+{
+	ITERA_GGROUP_LESSPTR( itAlunoDemanda, this->demandas, AlunoDemanda )
+	{
+		if ( (*itAlunoDemanda)->demanda->getDisciplinaId() == disciplinaId )
+		{
+			return (*itAlunoDemanda);
+		}
+	}
+	return NULL;
+}
+
 
 std::ostream & operator << (
    std::ostream & out, Aluno & aluno )
@@ -86,6 +101,40 @@ int Aluno::getNroMaxCredCombinaSL( int k, Calendario *c, int dia )
 	
 	return n;
 }
+
+
+double Aluno::getNroCreditosJaAlocados( Calendario* c, int dia )
+{
+	double tempo = 0.0;
+
+	std::map< Calendario*, std::map< int /*dia*/, double /*nCreds*/> >::iterator
+		itMap1 = nCredsAlocados.find( c );
+	if ( itMap1 != nCredsAlocados.end() )
+	{
+		std::map< int /*dia*/, double /*nCreds*/>::iterator
+			itMap2 = itMap1->second.find( dia );
+		if ( itMap2 != itMap1->second.end() )
+			tempo += itMap2->second;
+	}
+	return tempo;
+}
+
+double Aluno::getTempoJaAlocado( int dia )
+{
+	double tempo = 0.0;
+
+	std::map< Calendario*, std::map< int /*dia*/, double /*nCreds*/> >::iterator
+		itMap1 = nCredsAlocados.begin();
+	for ( ; itMap1 != nCredsAlocados.end(); itMap1++ )
+	{
+		std::map< int /*dia*/, double /*nCreds*/>::iterator
+			itMap2 = itMap1->second.find( dia );
+		if ( itMap2 != itMap1->second.end() )
+			tempo += itMap2->second;
+	}
+	return tempo;
+}
+
 
 /*
 	Retorna todos os calendarios associados às demandas do aluno.
@@ -267,4 +316,35 @@ std::map< Trio<int, int, Calendario*>, int > Aluno::retornaCombinaCredSL_Dominad
 	}
 
 	return dominados;
+}
+
+
+void Aluno::addNCredsAlocados( Calendario* sl, int dia, double value ) 
+{ 
+	std::map< Calendario*, std::map< int /*dia*/, double /*nCreds*/> >::iterator 
+		it1 = nCredsAlocados.find(sl);
+	
+	if ( it1 == nCredsAlocados.end() )
+	{
+		std::map< int /*dia*/, double /*nCreds*/> diasCreds;
+		diasCreds[dia] = value;
+
+		nCredsAlocados[ sl ] = diasCreds;
+	}
+	else
+	{
+		std::map< int , double >::iterator 
+			it2 = nCredsAlocados[sl].find( dia );
+		if ( it2 == nCredsAlocados[sl].end() )
+		{
+			std::map< int /*dia*/, double /*nCreds*/> diasCreds;
+			diasCreds[dia] = value;
+
+			nCredsAlocados[sl] = diasCreds;
+		}
+		else
+		{
+			nCredsAlocados[sl][dia] += value;
+		}
+	}	
 }

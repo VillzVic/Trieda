@@ -1686,7 +1686,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 		map< int, GGroup< Aluno *, LessPtr< Aluno > > >::iterator itCjtAlunos;
 
 		// Procura se já existe grupo com demanda de alguma disciplina do aluno
-		ITERA_GGROUP_LESSPTR( itAlDem, itAluno->demandas, AlunoDemanda )
+		ITERA_GGROUP_LESSPTR( itAlDem, aluno->demandas, AlunoDemanda )
 		{
 			AlunoDemanda *ad = *itAlDem;
 			Disciplina *d = ad->demanda->disciplina;
@@ -1754,7 +1754,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 				map_CjtAlunosId_SizeDemanda[ biggestId ] = nroAlDem;
 			}
 		}
-		else
+		else if ( aluno->demandas.size() != 0 )
 		{
 			biggestId++;
 			GGroup< Aluno *, LessPtr< Aluno > > novoGrupo;
@@ -1949,8 +1949,11 @@ int ProblemData::retornaCjtAlunosId( Aluno* aluno )
 		}
 	}
 
-	std::cout << "\nErro em int ProblemData::retornaCjtAlunosId( Aluno* aluno )."
-			  << "\nAluno " << aluno->getAlunoId() << "nao encontrado.\n";
+	if ( aluno->demandas.size() != 0 )
+	{
+		std::cout << "\nErro em int ProblemData::retornaCjtAlunosId( Aluno* aluno )."
+				  << "\nAluno " << aluno->getAlunoId() << "nao encontrado.\n";
+	}
 	return 0;
 }
 
@@ -2160,4 +2163,82 @@ bool ProblemData::verificaDisponibilidadeHorario( HorarioAula *horarioAula, int 
 
 	return true;
 
+}
+
+
+void ProblemData::insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int/*dia*/, double> diasNCreds )
+{
+	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
+	if ( alDem != NULL )
+	{
+		this->mapAluno_CampusTurmaDisc[aluno].add( trio );
+		this->mapCampusTurmaDisc_AlunosDemanda[trio].add( alDem );
+
+	}
+		
+	Calendario *sl = trio.third->getCalendario();
+	
+	std::map<int, double>::iterator itMap = diasNCreds.begin();
+	for( ; itMap != diasNCreds.end(); itMap++ )
+	{
+		int dia = (*itMap).first;
+		double value = (*itMap).second;
+		aluno->addNCredsAlocados( sl, dia, value );
+	}
+}
+
+void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds )
+{
+	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
+	if ( alDem != NULL )
+	{	
+		this->mapAluno_CampusTurmaDisc[aluno].remove( trio );
+		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDem );
+	}
+		
+	Calendario *sl = trio.third->getCalendario();
+	
+	std::map<int, double>::iterator itMap = diasNCreds.begin();
+	for( ; itMap != diasNCreds.end(); itMap++ )
+	{
+		int dia = (*itMap).first;
+		double value = - (*itMap).second;
+		aluno->addNCredsAlocados( sl, dia, value );
+	}
+}
+
+
+double ProblemData::cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId )
+{
+	double cargaHorariaNaoAtendida = 0.0;
+	ITERA_GGROUP_LESSPTR( itAlDemanda, this->listSlackDemandaAluno, AlunoDemanda )
+	{
+		if ( itAlDemanda->getPrioridade() != prior )
+			continue;
+
+		if ( itAlDemanda->getAlunoId() == alunoId )
+		{
+			int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
+			int duracaoCred = itAlDemanda->demanda->disciplina->getTempoCredSemanaLetiva();
+
+			cargaHorariaNaoAtendida += nCreds*duracaoCred;
+		}
+	}
+	return cargaHorariaNaoAtendida;
+}
+
+double ProblemData::cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno )
+{
+	double cargaHorariaP2 = 0.0;
+	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	{
+		Disciplina *disciplina = itAlDemanda->demanda->disciplina;
+		if ( itAlDemanda->getPrioridade() == prior )
+		{
+			int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
+			int duracaoCred = itAlDemanda->demanda->disciplina->getTempoCredSemanaLetiva();
+			cargaHorariaP2 += nCreds*duracaoCred;
+		}
+	}
+	return cargaHorariaP2;
 }

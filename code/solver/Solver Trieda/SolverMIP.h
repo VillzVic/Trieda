@@ -33,8 +33,13 @@
 #include "IteratedLocalSearchLevels.h"
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
-#include "SolucaoTaticoHeur.h"
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/undirected_graph.hpp>
+#include <boost/graph/bron_kerbosch_all_cliques.hpp>
+#include <boost/graph/graph_utility.hpp>
+
+using namespace boost;
 
 #ifdef SOLVER_CPLEX
 #include "opt_cplex.h"
@@ -69,7 +74,7 @@
 #endif
 
 
-//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -596,6 +601,7 @@ public:
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
    bool FIXAR_P1;
    bool FIXAR_TATICO_P1;
+   bool PERMITIR_INSERCAO_ALUNODEMANDAP2_EM_TURMAP1;
 
 #endif
 
@@ -654,13 +660,8 @@ public:
    GGroup< int > retornaCliques( int turma, Disciplina* disciplina, int campusId );
    void imprimeCliques( int campusId, int prioridade, int cjtAlunosId );
 
-   // Usada somente para soluções intermediárias dos pre-modelos, em prioridade maior que 2
-   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > > 
-	   auxMapCampusTurmaDisc_AlunosDemanda;
-   bool aux_possuiAlunosEmComum( int turma1, Disciplina* disc1, int cp1, int turma2, Disciplina* disc2, int cp2 );
-   void preencheAuxMapCampusTurmaDisc_AlunosDemanda( double *xSol ); 
-   bool solucaoValidaCliques( double *xSol );
-   
+    bool solucaoValidaCliquesAux( double *xSol ); // pode deletar se não for usar mais a função de callback
+
 private:
 	int nroPreSolAvaliadas;
 
@@ -788,12 +789,43 @@ private:
    int alteraHorarioAulaAtendimento( const int, const int );
 
    int calculaDeslocamentoUnidades( const int, const int );
-
-   void encontraCliques( bool solucaoFinal );
    
+   typedef undirected_graph<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > MyGraph;
+   typedef graph_traits<MyGraph>::vertex_descriptor Vertex;
+   typedef graph_traits<MyGraph>::edge_descriptor Edge;
+   
+   MyGraph graph;
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, Vertex > mapVertex;
+
+   void encontraCliques( bool zerarGrafo );
+   void encontraCliquesAux();
+   void constroiGrafo( int campusAtualId );
+   void constroiGrafoAux( int campusAtualId );
+   void atualizaGrafoInsercao( Aluno* aluno, Trio<int,int,Disciplina*> node );
+   void atualizaGrafoRemocao( Aluno* aluno, Trio<int,int,Disciplina*> node );
+
+   // ---------------
+   // Usada somente para soluções intermediárias dos pre-modelos, em prioridade maior que 2
+   // Pode deletar se não for usar mais a função de callback
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > > 
+	   auxMapCampusTurmaDisc_AlunosDemanda;
+   bool aux_possuiAlunosEmComum( int turma1, Disciplina* disc1, int cp1, int turma2, Disciplina* disc2, int cp2 );
+   void preencheAuxMapCampusTurmaDisc_AlunosDemanda( double *xSol ); 
+  
+   // ---------------
+
+   bool solucaoValidaCliques( bool zerarGrafo );
+
    std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > cliques;
 
    int campusAtualId;
+   void heuristicaAlocaAlunos( int campusId, int prioridade, int cjtAlunosId );
+   void atualizaNroCredsPorDiaAlunos( int campusAtualId, int prioridade );
+   bool heuristicaTentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int turma, std::vector<double> alunoDiaRhs, std::string heurFilename );
+
+   GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alunoDemandaAtendsHeuristica;
+
+
 };
 
 #endif

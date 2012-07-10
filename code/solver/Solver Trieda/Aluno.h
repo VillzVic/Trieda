@@ -17,6 +17,9 @@ public:
    void setOfertaId( int oftId ) { this->ofertaId = oftId; }
    void setCombinaCredSL( int dia, int k, Calendario* sl , int n );
    void setCombinaCredSLSize(int dia, int size) { combinaCredSLSize[dia] = size; }
+     
+   // só usado a partir de prioridade 2
+   void addNCredsAlocados( Calendario* sl, int dia, double value );
 
    int getAlunoId() const { return this->alunoId; }
    std::string getNomeAluno() const { return this->nomeAluno; }
@@ -24,6 +27,9 @@ public:
    int getOfertaId() const { return this->ofertaId; }
 
    int getNroMaxCredCombinaSL( int k, Calendario *c, int dia );
+   double getNroCreditosJaAlocados( Calendario* c, int dia );
+   double getTempoJaAlocado( int dia );
+   AlunoDemanda* getAlunoDemanda( int disciplinaId );
    std::map< int /*dia*/, int /*size*/ > getCombinaCredSLSize() const { return combinaCredSLSize; }
    void removeCombinaCredSL( Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t );
    
@@ -66,6 +72,9 @@ private:
    Oferta *oferta;
    int ofertaId;
    std::map< int /*dia*/, int /*size*/ > combinaCredSLSize; // informa o numero total de combinações existentes para cada dia
+
+   // só usado a partir de prioridade 2
+   std::map< Calendario*, std::map< int /*dia*/, double /*nCreds*/> > nCredsAlocados;
 
 };
 
