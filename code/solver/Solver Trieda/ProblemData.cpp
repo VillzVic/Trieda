@@ -1,6 +1,7 @@
 #include "ProblemData.h"
 
 #include <iostream>
+#include <fstream>
 
 // Macro baseada na ITERA_SEQ para facilitar a leitura dos dados no
 // ProblemData
@@ -1347,6 +1348,13 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 			}
 		}
 	}
+
+	// Atualiza total de turmas existentes referentes aos alunos-demanda atuais existentes
+	this->totalTurmas_AlDem = 0;
+	ITERA_GGROUP_LESSPTR( it_aldem, this->alunosDemanda, AlunoDemanda )
+	{
+		this->totalTurmas_AlDem += it_aldem->demanda->disciplina->getNumTurmas();
+	}
 		
 	// Filtrando as demandas
 	ITERA_GGROUP_LESSPTR( itDem, this->demandasTotal, Demanda )
@@ -2195,7 +2203,11 @@ void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int 
 		this->mapAluno_CampusTurmaDisc[aluno].remove( trio );
 		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDem );
 	}
-		
+	else
+	{
+		std::cout<<"\nError: AlDem nao encontrado! Aluno "<<aluno->getAlunoId()<<" Disc"<<trio.third->getId()<<endl;
+	}
+
 	Calendario *sl = trio.third->getCalendario();
 	
 	std::map<int, double>::iterator itMap = diasNCreds.begin();
@@ -2241,4 +2253,107 @@ double ProblemData::cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno 
 		}
 	}
 	return cargaHorariaP2;
+}
+
+
+void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica )
+{
+	stringstream ssCp;
+	stringstream ssP;
+	stringstream ssCjt;
+
+	ssCp << campusId;
+	ssP << prioridade;	
+	ssCjt << cjtAlunosId;
+		
+	// Alunos ------------------------------------------------------------
+
+	ofstream alunosFile;
+	std::string alunosFilename( "AlocacaoAlunos_Cp" );    
+	alunosFilename += ssCp.str();
+	if ( heuristica )
+		alunosFilename += "_PH";
+	else
+		alunosFilename += "_P";
+	alunosFilename += ssP.str();
+	alunosFilename += "_Cjt"; 
+	alunosFilename += ssCjt.str();
+    alunosFilename += ".txt";
+		
+	alunosFile.open(alunosFilename, ios::out);
+	if (!alunosFile)
+	{
+		cerr << "Can't open output file " << alunosFilename << endl;
+		exit(1);
+	}
+
+	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
+		itMapAlunos = this->mapAluno_CampusTurmaDisc.begin();
+	
+	for ( ; itMapAlunos != this->mapAluno_CampusTurmaDisc.end() ; itMapAlunos++ )
+	{
+		if ( itMapAlunos->first->getOferta()->getCampusId() != campusId )
+			continue;
+
+		int alunoId = itMapAlunos->first->getAlunoId();
+
+		alunosFile << "\n\nAluno " << alunoId << ": ";
+
+		GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator itGGroup = itMapAlunos->second.begin();
+		for ( ; itGGroup != itMapAlunos->second.end() ; itGGroup++ )
+		{
+			int turma = (*itGGroup).second;
+			int disc = (*itGGroup).third->getId();
+
+			alunosFile << "i" << turma << "_Disc" << disc << "; ";	
+		}
+	}
+
+	alunosFile.close();
+
+	// Turmas ------------------------------------------------------------
+	
+	ofstream turmasFile;
+	std::string turmasFilename( "AlocacaoTurmas_Cp" );
+	turmasFilename += ssCp.str();
+	if ( heuristica )
+		turmasFilename += "_PH";
+	else
+		turmasFilename += "_P";
+	turmasFilename += ssP.str();
+	turmasFilename += "_Cjt"; 
+	turmasFilename += ssCjt.str();
+    turmasFilename += ".txt";
+	
+	turmasFile.open(turmasFilename, ios::out);
+	if (!turmasFile)
+	{
+		std::cout << "Error: Can't open output file " << turmasFilename << endl;
+		return;
+	}
+	
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
+		itMapTurmas = this->mapCampusTurmaDisc_AlunosDemanda.begin();
+
+	for ( ; itMapTurmas != this->mapCampusTurmaDisc_AlunosDemanda.end() ; itMapTurmas++ )
+	{		
+		int cp = itMapTurmas->first.first;
+		int turma = itMapTurmas->first.second;
+		int disc = itMapTurmas->first.third->getId();
+
+		if ( cp != campusId )
+			continue;
+
+		turmasFile << "\n\ni" << turma << "_Disc" << disc << ": ";
+
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > >::iterator itGGroup = itMapTurmas->second.begin();
+		for ( ; itGGroup != itMapTurmas->second.end() ; itGGroup++ )
+		{
+			int alunoId = itGGroup->getAlunoId();
+			turmasFile << "Aluno " << alunoId << "; ";
+						
+		}	
+	}
+	
+	turmasFile.close();
 }

@@ -182,7 +182,7 @@ public:
    int cria_variaveis_aluno_sh( int campusId, int cjtAlunosId, int prioridade );
 
    int cria_variavel_creditos( int campusId, int cjtAlunosId, int P );									// x_{i,d,u,tps,t}
-   int cria_variavel_oferecimentos( int campusId, int cjtAlunosId, int P );							// o_{i,d,u,tps,t}
+   int cria_variavel_oferecimentos( int campusId, int cjtAlunosId, int P );								// o_{i,d,u,tps,t}
    int cria_variavel_abertura( int campusId, int cjtAlunosId, int P );									// z_{i,d,cp}
    int cria_variavel_consecutivos( int campusId, int cjtAlunosId, int P );								// c_{i,d,t}   
    int cria_variavel_de_folga_dist_cred_dia_superior( int campusId, int cjtAlunosId, int P );			// fcp_{i,d,t}
@@ -582,7 +582,6 @@ public:
    
    void removeAtendimentosParciais( double *xSol, char solFilename[1024] );
 
-   void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId );
    void imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId );
 
 
@@ -675,6 +674,8 @@ private:
 	std::string getPreLpFileName( int campusId, int prioridade, int cjtAlunosId );
 
 	std::string getTaticoLpFileName( int campusId, int prioridade, int cjtAlunosId );
+
+    std::string getSolHeuristBinFileName( int campusId, int prioridade, int cjtAlunosId );
 
 	std::string getSolBinFileName( int campusId, int prioridade, int cjtAlunosId );
 
@@ -814,9 +815,11 @@ private:
   
    // ---------------
 
-   bool solucaoValidaCliques( bool zerarGrafo );
+   bool solucaoValidaCliques( bool zerarGrafo, GGroup<int> dias, Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio );
 
    std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > cliques;
+
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup<int /*cliqueId*/ > > cliquesPorTrio;
 
    int campusAtualId;
    void heuristicaAlocaAlunos( int campusId, int prioridade, int cjtAlunosId );
@@ -825,6 +828,9 @@ private:
 
    GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alunoDemandaAtendsHeuristica;
 
+   void imprimeAlocacaoFinalHeuristica( int campusId, int prioridade, int grupoAlunosAtualId );
+   void escreveSolucaoBinHeuristica( int campusId, int prioridade, int grupoAlunosAtualId );
+   bool leSolucaoHeuritica( int campusId, int prioridade, int grupoAlunosAtualId );
 
 };
 

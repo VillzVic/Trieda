@@ -3590,6 +3590,12 @@ void ProblemDataLoader::cache()
       problemData->totalTurmas += it_disciplinas->getNumTurmas();
    }
 
+   problemData->totalTurmas_AlDem = 0;
+   ITERA_GGROUP_LESSPTR( it_aldem, problemData->alunosDemanda, AlunoDemanda )
+   {
+	   problemData->totalTurmas_AlDem += it_aldem->demanda->disciplina->getNumTurmas();
+   }
+
    ITERA_GGROUP_LESSPTR( it_bloco, problemData->blocos, BlocoCurricular )
    {
       int totalTurmas = 0;

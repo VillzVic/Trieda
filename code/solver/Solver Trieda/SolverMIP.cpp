@@ -495,6 +495,39 @@ std::string SolverMIP::getTaticoLpFileName( int campusId, int prioridade, int cj
    return solName;
 }
 
+std::string SolverMIP::getSolHeuristBinFileName( int campusId, int prioridade, int cjtAlunosId )
+{
+   std::string solName( "solHeuristBin" );
+   
+   if ( campusId != 0 )
+   {	   
+		 stringstream ss;
+		 ss << campusId;
+		 solName += "_Cp"; 
+		 solName += ss.str();
+   }
+
+   if ( prioridade != 0 )
+   {
+		stringstream ss;
+		ss << prioridade;
+		solName += "_P"; 
+		solName += ss.str();   		
+   }
+
+   if ( cjtAlunosId != 0 )
+   {
+	    stringstream ss;
+		ss << cjtAlunosId;		
+		solName += "_Cjt"; 
+		solName += ss.str();   		
+   }
+
+   solName += ".bin";
+      
+   return solName;
+}
+
 std::string SolverMIP::getSolBinFileName( int campusId, int prioridade, int cjtAlunosId )
 {
    std::string solName( "solBin" );
@@ -3217,20 +3250,28 @@ int SolverMIP::fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v )
 
 			 // Procura na sala s, se o atendimento for nessa sala, retorna o nro de atendimentos
 			 // e a variavel a_{i,d,s,oft} será criada com lowerBound igual a nroDeAtendimentos
-			 // Se não achar, é pq o atendimento foi feito em outra sala. Retorna zero.
+			 // Se achar o atendimento feito em outra sala, retorna -1.
 			 // x_{i,d,u,s,t}
 			 ITERA_VECTOR( it_Vars_x, vars_x, Variable )
 			 {
 				 Variable *vSol = *it_Vars_x;
 				 if ( vSol->getTurma() == v->getTurma() &&
-					 vSol->getDisciplina()->getId() == v->getDisciplina()->getId() &&
-					  vSol->getUnidade()->getId() == v->getUnidade()->getId() &&
-					  vSol->getSubCjtSala()->getId() == v->getSubCjtSala()->getId() )
+					 vSol->getDisciplina()->getId() == v->getDisciplina()->getId() )
 				 {					 
-					return nroDeAtendimentos;
+					if ( vSol->getUnidade()->getId() == v->getUnidade()->getId() &&
+						 vSol->getSubCjtSala()->getId() == v->getSubCjtSala()->getId() )
+					{
+						return nroDeAtendimentos;
+					}
+					else
+					{
+						return -1; // há atendimento, mas em outra sala
+					}
 				 }
 			 }
 
+			 std::cout<<"\nError em SolverMIP::fixaLimiteInferiorVariavelPre_CjtAlunos: "
+					  <<"Acho que nao deveria chegar ate aqui\n";
 			 return 0;
 		 }
 		 case VariablePre::V_PRE_ALOC_ALUNO:  //  b_{i,d,c}
@@ -4039,9 +4080,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    }
    solVarsPre.clear();
    // --------------------------------------------
-
-   vit = vHashPre.begin();
-
+   
    char solFilename[1024];
    strcpy( solFilename, getSolucaoPreTaticoFileName( campusId, prioridade, cjtAlunos  ).c_str() );
 
@@ -4062,6 +4101,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    int nroNaoAtendimentoAlunoDemanda = 0;
    int nroAtendimentoAlunoDemanda = 0;
 
+   vit = vHashPre.begin();
    while ( vit != vHashPre.end() )
    {
       VariablePre * v = new VariablePre( vit->first );
@@ -4428,7 +4468,7 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 				//imprimeSolVarsPre( campusId, P, grupoId );
 
 				preencheMapAtendimentoAluno( campusId );
-				//imprimeAlocacaoAlunos( campusId, P, grupoId );
+				//problemData->imprimeAlocacaoAlunos( campusId, P, grupoId, false );
 
 				encontraCliques(true);
 				
@@ -4445,7 +4485,7 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 				
 				mudaCjtSalaParaSala();										
 				
-				imprimeAlocacaoAlunos( campusId, P, grupoId );
+				problemData->imprimeAlocacaoAlunos( campusId, P, grupoId, false );
 
 				statusTatico = ( statusTatico && statusPre );
 			}
@@ -4482,7 +4522,7 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 
 int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId )
 {
-
+	bool CARREGOU_HEURISTICA = false;
    if ( this->CARREGA_SOLUCAO )
    {
 	   char solName[1024];
@@ -4490,8 +4530,13 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	   FILE* fin = fopen( solName,"rb");
 	   if ( fin == NULL )
 	   {
-		   std::cout << "\nA partir de " << solName << " , nao foram lidas mais solucoes.\n";
-		   CARREGA_SOLUCAO = false;
+		   CARREGA_SOLUCAO = false;		   		
+		   if ( leSolucaoHeuritica( campusId, prioridade, cjtAlunosId ) )
+		   {
+			   CARREGOU_HEURISTICA = true;		
+			   problemData->imprimeAlocacaoAlunos( campusId, prioridade, cjtAlunosId, true );
+			   std::cout << "\nA partir de " << solName << " , nao foram lidas mais solucoes.\n";
+		   }
 	   }
 	   else
 	   {
@@ -4502,10 +4547,13 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
    // --------------------------------------------------------
    // HEURISTICA
    // Aloca alunos de prioridade 2 em turmas já existentes
-   if ( ! this->CARREGA_SOLUCAO && prioridade > 1 )
+   if ( !this->CARREGA_SOLUCAO && !CARREGOU_HEURISTICA && prioridade > 1 )
    {
 	   this->heuristicaAlocaAlunos( campusId, prioridade, cjtAlunosId );
-   
+	   problemData->imprimeAlocacaoAlunos( campusId, prioridade, cjtAlunosId, true );
+	   this->imprimeAlocacaoFinalHeuristica( campusId, prioridade, cjtAlunosId );
+
+	   escreveSolucaoBinHeuristica( campusId, prioridade, cjtAlunosId );	   
    }
    // --------------------------------------------------------
 
@@ -4559,7 +4607,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
    printf( "Total of Variables: %i\n\n", varNum );
 #endif
 
-   if ( ! this->CARREGA_SOLUCAO )
+   if ( !this->CARREGA_SOLUCAO )
    {
 	   // Constraint creation
 	   constNum = cria_preRestricoes( campusId, prioridade, cjtAlunosId );
@@ -5643,7 +5691,7 @@ int SolverMIP::solveTaticoPorCampus()
 
 			mudaCjtSalaParaSala();
 
-			//imprimeAlocacaoAlunos( campusId, P );
+			//problemData->imprimeAlocacaoAlunos( campusId, P );
 			
 			statusTatico = ( statusTatico && statusPre );
 
@@ -9243,103 +9291,6 @@ void SolverMIP::getSolutionOperacionalMIP()
 }
 
 
-void SolverMIP::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId )
-{
-	stringstream ssCp;
-	stringstream ssP;
-	stringstream ssCjt;
-
-	ssCp << campusId;
-	ssP << prioridade;	
-	ssCjt << cjtAlunosId;
-
-	// Alunos ------------------------------------------------------------
-
-	ofstream alunosFile;
-	std::string alunosFilename( "AlocacaoAlunos_Cp" );    
-	alunosFilename += ssCp.str();
-	alunosFilename += "_P"; 
-	alunosFilename += ssP.str();
-	alunosFilename += "_Cjt"; 
-	alunosFilename += ssCjt.str();
-    alunosFilename += ".txt";
-
-	
-	alunosFile.open(alunosFilename, ios::out);
-	if (!alunosFile)
-	{
-		cerr << "Can't open output file " << alunosFilename << endl;
-		exit(1);
-	}
-
-	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
-		itMapAlunos = problemData->mapAluno_CampusTurmaDisc.begin();
-	
-	for ( ; itMapAlunos != problemData->mapAluno_CampusTurmaDisc.end() ; itMapAlunos++ )
-	{
-		if ( itMapAlunos->first->getOferta()->getCampusId() != campusId )
-			continue;
-
-		int alunoId = itMapAlunos->first->getAlunoId();
-
-		alunosFile << "\n\nAluno " << alunoId << ": ";
-
-		GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator itGGroup = itMapAlunos->second.begin();
-		for ( ; itGGroup != itMapAlunos->second.end() ; itGGroup++ )
-		{
-			int turma = (*itGGroup).second;
-			int disc = (*itGGroup).third->getId();
-
-			alunosFile << "i" << turma << "_Disc" << disc << "; ";	
-		}
-	}
-
-	alunosFile.close();
-
-	// Turmas ------------------------------------------------------------
-
-	ofstream turmasFile;
-	std::string turmasFilename( "AlocacaoTurmas_Cp" );
-	turmasFilename += ssCp.str();
-	turmasFilename += "_P"; 
-	turmasFilename += ssP.str();
-	turmasFilename += "_Cjt"; 
-	turmasFilename += ssCjt.str();
-    turmasFilename += ".txt";
-
-	turmasFile.open(turmasFilename, ios::out);
-	if (!turmasFile)
-	{
-		cerr << "Can't open output file " << turmasFilename << endl;
-		exit(1);
-	}
-
-	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
-		itMapTurmas = problemData->mapCampusTurmaDisc_AlunosDemanda.begin();
-
-	for ( ; itMapTurmas != problemData->mapCampusTurmaDisc_AlunosDemanda.end() ; itMapTurmas++ )
-	{		
-		int cp = itMapTurmas->first.first;
-		int turma = itMapTurmas->first.second;
-		int disc = itMapTurmas->first.third->getId();
-
-		if ( cp != campusId )
-			continue;
-
-		turmasFile << "\n\ni" << turma << "_Disc" << disc << ": ";
-
-		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > >::iterator itGGroup = itMapTurmas->second.begin();
-		for ( ; itGGroup != itMapTurmas->second.end() ; itGGroup++ )
-		{
-			int alunoId = itGGroup->getAlunoId();
-			turmasFile << "Aluno " << alunoId << "; ";
-						
-		}	
-	}
-
-	turmasFile.close();
-}
-
 void SolverMIP::imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId )
 {
 
@@ -11786,20 +11737,38 @@ int SolverMIP::cria_preVariavel_alunos( int campusId, int grupoAlunosId, int P_A
 									
 									if ( FIXAR_P1 && P_ATUAL > 1 )
 									{
-										lowerBound = this->fixaLimiteInferiorVariavelPre_CjtAlunos( &v );
-										
-										if ( lowerBound > 0 && !PERMITIR_INSERCAO_ALUNODEMANDAP2_EM_TURMAP1 )
-											upperBound = lowerBound;
-
-										if ( discGrupoAlunosId < grupoAlunosId && lowerBound == 0 )
+										int nAtend = this->fixaLimiteInferiorVariavelPre_CjtAlunos( &v );
+										if ( nAtend == -1 ) // a turma já esta alocada em outra sala
 										{
+											lowerBound = 0.0;										
 											upperBound = lowerBound;
+										}
+										else
+										{
+											lowerBound = nAtend;
+											if ( nAtend > 0 && !PERMITIR_INSERCAO_ALUNODEMANDAP2_EM_TURMAP1 )
+											{
+												upperBound = nAtend;
+											}
+											if ( discGrupoAlunosId < grupoAlunosId && nAtend == 0 )
+											{
+												upperBound = nAtend;
+											}
 										}
 									}
 									else if ( discGrupoAlunosId < grupoAlunosId )
 									{
-										lowerBound = this->fixaLimiteInferiorVariavelPre_CjtAlunos( &v );										
-										upperBound = this->fixaLimiteSuperiorVariavelPre_CjtAlunos( &v );
+										int nAtend = this->fixaLimiteInferiorVariavelPre_CjtAlunos( &v );
+										if ( nAtend == -1 ) // a turma já esta alocada em outra sala
+										{
+											lowerBound = 0.0;										
+											upperBound = lowerBound;
+										}
+										else
+										{
+											lowerBound = nAtend;										
+											upperBound = lowerBound;
+										}
 									}
 
 									OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound,
@@ -55444,6 +55413,8 @@ GGroup< int > SolverMIP::retornaCliques( int turma, Disciplina* disciplina, int 
 struct CliqueComputation
 {
     std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > *cliqueList;
+	
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup<int> > *cliquesListPorTrio;
 
     CliqueComputation()
     { cliqueList = NULL; }
@@ -55452,16 +55423,21 @@ struct CliqueComputation
     inline void
     clique(const Clique& c, Graph& g)
     {
-        std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > auxList;
-        typename Clique::const_iterator i, end = c.end();
-        for(i = c.begin(); i != end; ++i) 
-		  {
-			auxList.insert(g[*i]);
-        }
-
 		int n = cliqueList->size();
 		++n;
-		(*cliqueList)[n] = auxList;
+	
+		std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > auxList;
+        typename Clique::const_iterator i, end = c.end();
+        for(i = c.begin(); i != end; ++i) 
+		{
+			Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio = g[*i];
+
+			auxList.insert(g[*i]);
+
+			(*cliquesListPorTrio)[trio].add( n );
+        }
+
+		(*cliqueList)[n] = auxList;		
     }
 };
 
@@ -55560,7 +55536,8 @@ void SolverMIP::constroiGrafoAux( int campusAtualId )
 {	
    // -------------------------------------------------
    // Constroi grafo
-   	
+   	std::cout<<"\nConstroi grafo aux...";fflush(NULL);
+
    graph.clear();
    mapVertex.clear();
 
@@ -55628,6 +55605,8 @@ void SolverMIP::constroiGrafoAux( int campusAtualId )
 			}
 		}
    }
+   std::cout<<" construiu grafo";fflush(NULL);
+
 }
 
 // Usada somente para soluções finais dos pre-modelos
@@ -55635,7 +55614,8 @@ void SolverMIP::constroiGrafo( int campusAtualId )
 {
    // -------------------------------------------------
    // Constroi grafo
-   
+   std::cout<<"\nConstroi grafo...";fflush(NULL);
+
 	graph.clear();
 	mapVertex.clear();   
 
@@ -55705,11 +55685,13 @@ void SolverMIP::constroiGrafo( int campusAtualId )
 			}
 		}
    }
+   std::cout<<" construiu";fflush(NULL);
 }
 
 void SolverMIP::encontraCliques( bool zerarGrafo )
 {
 	cliques.clear();
+	cliquesPorTrio.clear();
 
 	if (zerarGrafo)
 		constroiGrafo( campusAtualId );
@@ -55717,8 +55699,13 @@ void SolverMIP::encontraCliques( bool zerarGrafo )
     CliqueComputation cliquesComput;
 
     cliquesComput.cliqueList = & cliques;
-   
-    bron_kerbosch_all_cliques( graph,cliquesComput );  
+	cliquesComput.cliquesListPorTrio = & cliquesPorTrio;
+
+    std::cout<<"\nCalculando cliques...";fflush(NULL);
+    
+	bron_kerbosch_all_cliques( graph,cliquesComput );
+	
+	std::cout<<" calculou cliques";fflush(NULL);
 }
 
 // pode deletar se não for usar mais a função de callback
@@ -55751,7 +55738,9 @@ void SolverMIP::imprimeCliques( int campusId, int prioridade, int cjtAlunosId )
 		return;
 	}
 	cliquesFile << "Cliques" <<endl;
-	
+
+	// POR CLIQUE:
+   cliquesFile<<"\n\nPOR CLIQUE:\n\n";
    std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > >::iterator itL1;
    std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator itL2;
 
@@ -55766,6 +55755,25 @@ void SolverMIP::imprimeCliques( int campusId, int prioridade, int cjtAlunosId )
       }
       cliquesFile << "\n";
    }
+
+   // POR TRIO:
+   cliquesFile<<"\n\nPOR TRIO:\n";
+
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup<int/*cliqueId*/> >::iterator itL3;
+   
+   for (itL3 = cliquesPorTrio.begin(); itL3 != cliquesPorTrio.end(); itL3++)
+   {
+	  Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio = itL3->first;
+	  cliquesFile << "\n(cp" << trio.first<< " i" << trio.second << " d" << trio.third->getId() << "): ";
+      
+	  ITERA_GGROUP_N_PT( itL4, itL3->second, int )
+      {
+		  int cN = *itL4;
+		  cliquesFile << cN <<"; ";
+      }
+      cliquesFile << "\n";
+   }
+
 
    cliquesFile.close();
 }
@@ -55839,7 +55847,8 @@ bool SolverMIP::solucaoValidaCliquesAux( double *xSol )
 }
 
 // Acha o grafo e os cliques atuais, e verifica se a soluçao é válida para passar para o tático
-bool SolverMIP::solucaoValidaCliques( bool zerarGrafo )
+// devido a alteração da composição do "trio" nos "dias"
+bool SolverMIP::solucaoValidaCliques( bool zerarGrafo, GGroup<int> dias_a_validar, Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio )
 {
 	(this->nroPreSolAvaliadas)++;
 	std::cout<<"\nValidando solucao " << this->nroPreSolAvaliadas <<"..."; fflush(NULL);
@@ -55848,21 +55857,30 @@ bool SolverMIP::solucaoValidaCliques( bool zerarGrafo )
 
 	std::cout<<"\nEncontrou cliques";fflush(NULL);
 
-   for ( int dia = 2; dia <= 7; dia++ )
-   {	
-	   std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > >::iterator 
-		   itCliques = this->cliques.begin();
+	ITERA_GGROUP_N_PT( itDia, dias_a_validar, int )
+    {
+		int dia = *itDia;
+		std::cout<<"\n\nDia "<<dia<<endl; fflush(NULL);
 
-	   for ( ; itCliques != this->cliques.end(); itCliques++ )
-	   {
-		    int cliqueId = (*itCliques).first;
+		GGroup<int /*cliqueId*/ > cliques_a_validar;
+
+	    std::map< Trio< int, int, Disciplina* >, GGroup<int> >::iterator itCliquesPorTrio = this->cliquesPorTrio.find( trio );
+
+	    if ( itCliquesPorTrio != this->cliquesPorTrio.end() )
+		    cliques_a_validar = itCliquesPorTrio->second;
+
+		ITERA_GGROUP_N_PT( itCliques, cliques_a_validar, int )
+		{ 
+			int cliqueId = *itCliques;
+			std::cout<<" Clique " << cliqueId; fflush(NULL);
+
+			std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > vertices = this->cliques[cliqueId];
 			
 			// -----------------------------------------------------------------------------
 			// Restrição-teste: calcula o tempo total alocado no dia (somaTempoAlocado) e o máximo possível
 			double somaTempoAlocado = 0.0;
 			double rhs = 0.0;
 
-		    std::set<Trio< int, int, Disciplina* > > vertices = (*itCliques).second;
 			std::set<Trio< int, int, Disciplina* > >::iterator itVertices = vertices.begin();
 			for ( ; itVertices != vertices.end(); itVertices++ )
 			{
@@ -55897,7 +55915,8 @@ bool SolverMIP::solucaoValidaCliques( bool zerarGrafo )
 				}
 				fflush(NULL);
 				return false;
-			}						
+			}
+			std::cout<<": Ok "; fflush(NULL);
 	   }
 
    }
@@ -56150,7 +56169,7 @@ void SolverMIP::heuristicaAlocaAlunos( int campusId, int prioridade, int grupoAl
 
 			std::cout<<"\nIterando as praticas-teoricas";	fflush(NULL);
 
-			// TODO: tratar caso de disciplina pratica+teorica
+			// Trata caso de disciplina pratica+teorica
 			ITERA_GGROUP_LESSPTR( itAlDem, alunosDemandaPT, AlunoDemanda )
 			{
 				// ---------------------------------------------
@@ -56160,14 +56179,7 @@ void SolverMIP::heuristicaAlocaAlunos( int campusId, int prioridade, int grupoAl
 				Disciplina *disciplina1 = alDem1->demanda->disciplina;
 				Calendario *sl1 = disciplina1->getCalendario();
 
-				if ( problemData->retornaTurmaDiscAluno( aluno, disciplina1 ) != -1 )
-				{
-					if ( alDem1->getPrioridade() == prioridade )
-						std::cout<<"\nError: aluno ja esta alocado. Como? Nao deveria!!!";	fflush(NULL);
-					continue;
-				}
-
-				// Segunda disciplina
+				// Selecionando a segunda disciplina
 				AlunoDemanda *alDem2 = NULL;
 				ITERA_GGROUP_INIC_LESSPTR( it2AlDem, itAlDem, alunosDemandaPT, AlunoDemanda )
 				{
@@ -56178,9 +56190,16 @@ void SolverMIP::heuristicaAlocaAlunos( int campusId, int prioridade, int grupoAl
 					}
 				}
 				if ( alDem2 == NULL )
-					continue;
+					continue; // se alDem2 == NULL é pq essa par de disciplinas já foi avaliado
 
 				std::cout<<"\nAlDem1 disc"<<disciplina1->getId();	fflush(NULL);
+
+				if ( problemData->retornaTurmaDiscAluno( aluno, disciplina1 ) != -1 )
+				{
+					if ( alDem1->getPrioridade() == prioridade )
+						std::cout<<"\nError: aluno ja esta alocado. Como? Nao deveria!!!";	fflush(NULL);
+					continue;
+				}
 
 				for ( int turma1 = 0; turma1 < disciplina1->getNumTurmas(); turma1++ )
 				{
@@ -56202,9 +56221,11 @@ void SolverMIP::heuristicaAlocaAlunos( int campusId, int prioridade, int grupoAl
 								std::cout<<"\nError: aluno ja esta alocado. Como? Nao deveria!!!";	fflush(NULL);
 							continue;
 						}
+						
+						bool SUCESSO2 = false;
 
 						std::cout<<"\nAlDem2 disc"<<disciplina2->getId();	fflush(NULL);
-
+						
 						for ( int turma2 = 0; turma2 < disciplina2->getNumTurmas(); turma2++ )
 						{
 							std::cout<<"\nTurma"<<turma2;	fflush(NULL);
@@ -56214,53 +56235,59 @@ void SolverMIP::heuristicaAlocaAlunos( int campusId, int prioridade, int grupoAl
 								std::cout<<"... inseriu";	fflush(NULL);
 								tempoAddP2 += disciplina1->getTempoCredSemanaLetiva() * disciplina1->getTotalCreditos();
 								tempoAddP2 += disciplina2->getTempoCredSemanaLetiva() * disciplina2->getTotalCreditos();
+								SUCESSO2 = true;
 								break;
 							}
-							else
-							{
-								std::cout<<"\nRemovendo disc 1";	fflush(NULL);
+						}
+						if ( !SUCESSO2 )
+						{
+							std::cout<<"\nRemovendo disc 1";	fflush(NULL);
 
-								// Retira a inserção feita da PRIMEIRA disciplina
-								Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-								trio.set( campus1Id, turma1, disciplina1 );
+							// Retira a inserção feita da PRIMEIRA disciplina
+							Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+							trio.set( campus1Id, turma1, disciplina1 );
 								
-								std::cout<<"\nAtualiza grafo";	fflush(NULL);
-								// Remove possíveis arestas do grafo
-								atualizaGrafoRemocao( aluno, trio );
+							std::cout<<"\nAtualiza grafo";	fflush(NULL);
+							// Remove possíveis arestas do grafo
+							atualizaGrafoRemocao( aluno, trio );
 
-								std::cout<<"\nCalcula diasNCreds";	fflush(NULL);
-								std::pair<ConjuntoSala*, GGroup<int> > atend =
-									this->retornaSalaEDiasDeAtendimentoTaticoAnterior( turma1, disciplina1, cp );
-								std::map<int/*dia*/, double> diasNCreds;
-								GGroup<int> dias = atend.second;
-								ITERA_GGROUP_N_PT( itDia, dias, int )
+							std::cout<<"\nCalcula diasNCreds";	fflush(NULL);
+							std::pair<ConjuntoSala*, GGroup<int> > atend =
+								this->retornaSalaEDiasDeAtendimentoTaticoAnterior( turma1, disciplina1, cp );
+							std::map<int/*dia*/, double> diasNCreds;
+							GGroup<int> dias = atend.second;
+							ITERA_GGROUP_N_PT( itDia, dias, int )
+							{
+								int dia = *itDia;
+								double nCredsTurmaDia = this->retornaNCredsAlocados( turma1, disciplina1, dia, campus1Id );
+								if ( nCredsTurmaDia > 1e-5 )
 								{
-									int dia = *itDia;
-									double nCredsTurmaDia = this->retornaNCredsAlocados( turma1, disciplina1, dia, campus1Id );
-									if ( nCredsTurmaDia > 1e-5 )
-									{
-										diasNCreds[dia] = nCredsTurmaDia;
-									}
+									diasNCreds[dia] = nCredsTurmaDia;
 								}
-
-								std::cout<<"\nRemovendo aluno de turma";	fflush(NULL);
-								// Remove aluno da turma e atualiza o nro de creditos por dia alocados pro aluno
-								problemData->removeAlunoDeTurma( aluno, trio, diasNCreds );
-
-								alunoDemandaAtendsHeuristica.remove( alDem1 );
-								ofstream heurisFile;
-								heurisFile.open(heurFilename, ios::app);
-								if ( heurisFile )
-								{
-									heurisFile << "\nRemovido: AlunoDemandaId" << alDem1->getId() 
-											<< " Aluno" << alDem1->getAlunoId() 
-											<< " Demanda" <<  alDem1->getDemandaId() 
-											<< " Disc" <<  alDem1->demanda->getDisciplinaId()
-											<< " Prior" <<  alDem1->getPrioridade() << endl;
-									heurisFile.close();
-								}
-								std::cout<<"\nFim da remocao";	fflush(NULL);
 							}
+
+							std::cout<<"\nRemovendo aluno de turma";	fflush(NULL);
+							// Remove aluno da turma e atualiza o nro de creditos por dia alocados pro aluno
+							problemData->removeAlunoDeTurma( aluno, trio, diasNCreds );
+
+							alunoDemandaAtendsHeuristica.remove( alDem1 );
+							ofstream heurisFile;
+							heurisFile.open(heurFilename, ios::app);
+							if ( heurisFile )
+							{
+								heurisFile << "\nRemovido: AlunoDemandaId" << alDem1->getId() 
+										<< " Aluno" << alDem1->getAlunoId() 
+										<< " Demanda" << alDem1->getDemandaId() 
+										<< " Disc" << alDem1->demanda->getDisciplinaId()
+										<< " Turma" << turma1
+										<< " Prior" << alDem1->getPrioridade() << endl;
+								heurisFile.close();
+							}
+							std::cout<<"\nFim da remocao";	fflush(NULL);
+						}
+						else
+						{
+							break;
 						}
 						// ---------------------------------------------
 					}
@@ -56343,8 +56370,8 @@ bool SolverMIP::heuristicaTentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int 
 					
 	std::map<int/*dia*/, double> diasNCreds;
 
-	GGroup<int> dias = atend.second;
-	ITERA_GGROUP_N_PT( itDia, dias, int )
+	GGroup<int> dias_a_validar = atend.second;
+	ITERA_GGROUP_N_PT( itDia, dias_a_validar, int )
 	{
 		int dia = *itDia;
 		double nCredsTurmaDia = this->retornaNCredsAlocados( turma, disciplina, dia, campusId );
@@ -56398,8 +56425,9 @@ bool SolverMIP::heuristicaTentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int 
 		atualizaGrafoInsercao( aluno, trio );
 
 		std::cout<<"\nValidando solucao...";	fflush(NULL);
+		
 		// valida solucao
-		if ( solucaoValidaCliques( false ) )
+		if ( solucaoValidaCliques( false, dias_a_validar, trio ) )
 		{
 			std::cout<<"\nSolucao valida!!!";	fflush(NULL);
 
@@ -56409,6 +56437,7 @@ bool SolverMIP::heuristicaTentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int 
 						<< " Aluno" << alunoDemanda->getAlunoId() 
 						<< " Demanda" <<  alunoDemanda->getDemandaId() 
 						<< " Disc" <<  alunoDemanda->demanda->getDisciplinaId()
+						<< " Turma" <<  turma
 						<< " Prior" <<  alunoDemanda->getPrioridade() << endl;
 
 			if (heurisFile)
@@ -56435,4 +56464,144 @@ bool SolverMIP::heuristicaTentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int 
 
 	fflush(NULL);
 	return false;
+}
+
+void SolverMIP::imprimeAlocacaoFinalHeuristica( int campusId, int prioridade, int grupoAlunosAtualId )
+{
+	stringstream ssCp; 	stringstream ssP; 	stringstream ssCjt;
+	ssCp << campusId; 	ssP << prioridade;	ssCjt << grupoAlunosAtualId;
+	std::string heurFilename( "HeuristicaFinalAlunoDemanda_Cp" );    
+	heurFilename += ssCp.str();
+	heurFilename += "_P"; 
+	heurFilename += ssP.str();
+	heurFilename += "_Cjt"; 
+	heurFilename += ssCjt.str();
+    heurFilename += ".txt";
+
+	ofstream heurisFile;
+	heurisFile.open(heurFilename, ios::out);
+	if (!heurisFile)
+	{
+		std::cout << "Error: Can't open output file " << heurFilename << endl;fflush(NULL);
+		return;
+	}
+	
+	ITERA_GGROUP_LESSPTR( itAlDem, this->alunoDemandaAtendsHeuristica, AlunoDemanda )
+	{
+		heurisFile << "AlunoDemandaId" << itAlDem->getId() 
+					<< " Aluno" << itAlDem->getAlunoId() 
+					<< " Demanda" <<  itAlDem->getDemandaId() 
+					<< " Disc" <<  itAlDem->demanda->getDisciplinaId()
+					<< " Prior" <<  itAlDem->getPrioridade() << endl;
+	}
+	heurisFile.close();
+}
+
+void SolverMIP::escreveSolucaoBinHeuristica( int campusId, int prioridade, int grupoAlunosAtualId )
+{
+	// WRITES SOLUTION
+	char solName[1024];
+	strcpy( solName, getSolHeuristBinFileName( campusId, prioridade, grupoAlunosAtualId ).c_str() );
+
+	FILE * fout = fopen( solName, "wb" );
+	if ( fout == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::gravaSolucaoBinHeuristica( int campusId, int prioridade, int cjtAlunosId ):"
+				<< "\nArquivo nao pode ser aberto.\n";
+	}
+	else
+	{		 
+		 fwrite( &problemData->totalTurmas_AlDem, sizeof( int ), 1, fout );
+
+		 ITERA_GGROUP_LESSPTR( itAlDem, problemData->alunosDemanda, AlunoDemanda )
+		 {
+			 Aluno* aluno = problemData->retornaAluno( (*itAlDem)->getAlunoId() );
+			 Disciplina *disciplina = (*itAlDem)->demanda->disciplina;
+
+			 int turmaAloc = problemData->retornaTurmaDiscAluno( aluno, disciplina );
+
+			 for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+			 {
+				 if ( turma == turmaAloc )
+				 {
+					double value = 1.0;
+					fwrite( &value, sizeof( double ), 1, fout );
+				 }
+				 else
+				 {
+					 double value = -1.0;
+					 fwrite( &value, sizeof( double ), 1, fout );
+				 }
+			 }
+		 }
+		 fclose( fout ); 
+	}
+
+}
+
+bool SolverMIP::leSolucaoHeuritica( int campusId, int prioridade, int grupoAlunosAtualId )
+{
+	char solHeuristName[1024];
+	strcpy( solHeuristName, getSolHeuristBinFileName( campusId, prioridade, grupoAlunosAtualId ).c_str() );
+	FILE* finh = fopen( solHeuristName,"rb");
+	if ( finh == NULL )
+	{
+		std::cout << "\nA partir de " << solHeuristName << " , nao foram lidas mais solucoes.\n";
+		return false;
+	}
+	else
+	{
+		cout<<"\n====================> carregando pre " <<solHeuristName <<endl;
+
+		// lê Solucao Heuristica   	
+		int nCols = 0;
+		fread(&nCols,sizeof(int),1,finh);
+		
+		double * xSol = new double[ nCols ];
+
+		for (int i=0; i < nCols; i++)
+		{
+			double auxDbl;
+			fread(&auxDbl,sizeof(double),1,finh);
+			xSol[i] = auxDbl;
+		}	
+		fclose(finh);
+		
+		if ( nCols != problemData->totalTurmas_AlDem )
+		{
+			std::cout<<"\nError em leSolucaoHeuritica: O TOTAL DE TURMAS NAO BATE!\n";
+			std::cout<<"\nnCols="<<nCols<<"   total de turma="<<problemData->totalTurmas_AlDem<<endl;
+			return false;
+		}
+
+		int at = 0;
+		ITERA_GGROUP_LESSPTR( itAlDem, problemData->alunosDemanda, AlunoDemanda )
+		{
+			Aluno* aluno = problemData->retornaAluno( (*itAlDem)->getAlunoId() );
+			Disciplina *disciplina = (*itAlDem)->demanda->disciplina;
+			int campusId = aluno->getOferta()->getCampusId();
+
+			for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+			{
+				if ( xSol[at] == 1.0 )
+				{					
+					Trio< int, int, Disciplina* > trio;
+					trio.set( campusId, turma, disciplina);
+					std::map<int/*dia*/, double> diasNCreds;
+
+					// enviando diasNCreds vazio. Nao dará problema,
+					// pois por enquanto isso só é usado na execução da heuristica.
+					problemData->insereAlunoEmTurma( aluno, trio, diasNCreds );
+				}
+				else if ( xSol[at] != -1.0 )
+				{
+					std::cout<<"\nError!!!!!!!!!\nSo deveria ter 1.0 e -1.0\n";
+				}
+				at++;
+			}
+		}
+
+		cout<<"<==================== Solucao carregada com sucesso"<<endl<<endl;
+		return true;
+	}
 }

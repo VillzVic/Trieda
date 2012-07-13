@@ -135,6 +135,7 @@ public:
    int totalSalas;
    int totalTurmas;
    int totalConjuntosSalas;
+   int totalTurmas_AlDem; // total de turmas existentes referentes aos alunos-demanda atuais existentes
 
    // Informa o maior valor de horários
    // disponíveis entre os professores
@@ -410,6 +411,8 @@ public:
 
    void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
    void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
+   
+   void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica );
 
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > listSlackDemandaAluno;
 
