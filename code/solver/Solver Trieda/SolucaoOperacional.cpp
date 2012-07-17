@@ -283,7 +283,10 @@ void SolucaoOperacional::toString2() const
       professor = this->getProfessorMatriz( i );
       if ( professor != NULL )
       {
-         std::cout << "P" << professor->getId() << ", ";
+		  if ( professor->eVirtual() )
+			  std::cout << "ProfVirtual" << professor->titulacao->toString() << ", ";
+		  else
+		     std::cout << "P" << professor->getId() << ", ";
       }
 
       std::vector< Aula * > * aulas = ( this->getMatrizAulas()->at( i ) );

@@ -16,6 +16,16 @@ public:
 
    std::string getNome() const { return nome; }
 
+   std::string toString() const { return nome; }
+
+   /*
+		id = 1 - Licenciado
+		id = 2 - Bacharel
+		id = 3 - Especialista
+		id = 4 - Mestre
+		id = 5 - Doutor
+   */
+
 private:
    std::string nome;
 };

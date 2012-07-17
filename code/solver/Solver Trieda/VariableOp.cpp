@@ -259,11 +259,11 @@ std::string VariableOp::toString()
       case V_F_FIX_PROF_SALA:
         str << "F_FIX_PROF_SALA"; break;
       case V_PROF_CURSO:
-        str << "V_PROF_CURSO"; break;
+        str << "W"; break;
       case V_F_MIN_MEST_CURSO:
-        str << "V_F_MIN_MEST_CURSO"; break;
+        str << "FMM"; break;
       case V_F_MIN_DOUT_CURSO:
-        str << "V_F_MIN_DOUT_CURSO"; break;
+        str << "FMD"; break;
       case V_F_CARGA_HOR_MIN_PROF:
         str << "V_F_CARGA_HOR_MIN_PROF"; break;
       case V_F_CARGA_HOR_MIN_PROF_SEMANA:
@@ -293,7 +293,13 @@ std::string VariableOp::toString()
 	  case V_HF_PROFESSORES:
         str << "V_HF_PROFESSORES"; break;		
   	  case V_NRO_PROFS_CURSO:
-        str << "V_NRO_PROFS_CURSO"; break;		
+        str << "NP"; break;		
+  	  case V_NRO_PROFS_VIRTUAIS_CURSO:
+        str << "NPV"; break;					
+	  case V_NRO_PROFS_VIRTUAIS_MEST_CURSO:
+        str << "NPVM"; break;					
+	  case V_NRO_PROFS_VIRTUAIS_DOUT_CURSO:
+        str << "NPVD"; break;					
 				
 
       default:
@@ -304,7 +310,10 @@ std::string VariableOp::toString()
 
    if ( professor != NULL )
    {
-      str << "_Prof" << professor->getId();
+	   if ( professor->eVirtual() )
+		   str << "_ProfVirtual" << professor->titulacao->toString();
+	   else
+		   str << "_Prof" << professor->getId();
    }
 
    if ( curso != NULL )

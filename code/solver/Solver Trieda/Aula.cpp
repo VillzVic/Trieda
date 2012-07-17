@@ -138,6 +138,19 @@ Disciplina* Aula::getDisciplinaSubstituida() const
    return this->disciplinaSubstituida;
 }
 
+bool Aula::atendeAoCurso( int cursoId )
+{
+	ITERA_GGROUP_LESSPTR( it_oferta, this->ofertas, Oferta )
+	{
+		Oferta * oferta = ( *it_oferta );
+		if ( oferta->getCursoId() == cursoId )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void Aula::toString()
 {
    //-------------------------------------------------------------

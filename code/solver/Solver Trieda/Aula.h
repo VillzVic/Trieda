@@ -42,6 +42,8 @@ public:
    int getQuantidadeTotal();
    Disciplina * getDisciplinaSubstituida() const;
 
+   bool atendeAoCurso( int cursoId );
+
    virtual bool operator < ( Aula const & right )
    { 
       if ( *disciplina < *right.getDisciplina() )

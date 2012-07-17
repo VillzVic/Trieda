@@ -63,6 +63,7 @@ public:
    GGroup< Fixacao *, LessPtr< Fixacao > > fixacoes;
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
    GGroup< Aluno *, LessPtr< Aluno > > alunos;
+   GGroup< Professor *, LessPtr< Professor > > profsVirtuais; // 1 por tipo de titulação
 
    map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > > cjtAlunos;
    map< int /* cjtAlunosId */, GGroup< Demanda *, LessPtr< Demanda > > > cjtDemandas;

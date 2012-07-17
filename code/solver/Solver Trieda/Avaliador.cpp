@@ -1729,7 +1729,7 @@ void Avaliador::avaliaProfessorMesmoBlocoCurricular( SolucaoOperacional & soluca
             std::pair< Professor *, std::vector< HorarioAula * > >
                professor_horarios_aula = solucao.blocoAulas[ aula ];
 
-            // Professor que mininstra a aula e o shorários dessa aula
+            // Professor que mininstra a aula e os horários dessa aula
             professor = professor_horarios_aula.first;
 				std::vector< HorarioAula * > horarios_professor = professor_horarios_aula.second;
 				if ( professor == NULL || horarios_professor.size() == 0 )

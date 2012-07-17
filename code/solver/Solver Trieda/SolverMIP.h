@@ -74,7 +74,7 @@ using namespace boost;
 #endif
 
 
-#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -127,7 +127,7 @@ public:
    int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
    int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL );			// ft_{i,d}
 
-   int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );			// w_{i,d,i',d'}
+   int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );	// w_{i,d,i',d'} //nao precisa, pq tem cliques agora
 
    int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );			// fda
 
@@ -168,8 +168,8 @@ public:
    int cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId, int prior); 
 
    // Só para p2 em diante
-   int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade );
-   int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );
+   int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade ); //nao precisa, pq tem cliques agora
+   int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );				//nao precisa, pq tem cliques agora
    int cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosId, int prioridade );
 
    int cria_preRestricao_distribuicao_aluno( int campusId, int cjtAlunosId  );
@@ -526,8 +526,10 @@ public:
    int criaVariavelFolgaDemanda( void );
    int criaVariavelFolgaDisciplinaTurmaHorario( void );
    int criaVariavelProfessorDiaHorarioIF();
-   int criaVariavelNroProfsAlocadosCurso();
-
+   int criaVariavelNroProfsReaisAlocadosCurso();
+   int criaVariavelNroProfsVirtuaisAlocadosCurso();
+   int criaVariavelNroProfsVirtuaisMestresAlocadosCurso();
+   int criaVariavelNroProfsVirtuaisDoutoresAlocadosCurso();
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO OPERACIONAL               **
@@ -560,6 +562,8 @@ public:
    int criaRestricaoAlocacaoProfessorCurso( void ); // x12
    int criaRestricaoMinimoMestresCurso( void ); // x12
    int criaRestricaoMinimoDoutoresCurso( void ); // x12
+   int criaRestricaoMaximoNaoMestresCurso();
+   int criaRestricaoMaximoNaoDoutoresCurso();
    int criaRestricaoMaxDiscProfCurso( void ); // x13
    int criaRestricaoCargaHorariaMinimaProfessorSemana( void ); // x14
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void ); // x15
@@ -567,6 +571,9 @@ public:
    int criaRestricaoProfHorarioMultiUnid( void );
    int criaRestricaoGapsHorariosProfessores();
    int criaRestricaoCalculaNroProfsAlocadosCurso();
+   int criaRestricaoCalculaNroProfsVirtuaisAlocadosCurso();
+   int criaRestricaoCalculaNroProfsVirtuaisMestresAlocadosCurso();
+   int criaRestricaoCalculaNroProfsVirtuaisDoutoresAlocadosCurso();
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );

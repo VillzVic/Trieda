@@ -431,7 +431,17 @@ std::string ConstraintOp::toString()
 		   ss <<"C_GAPS_PROFESSORES_I_F"; break;  
 	   case C_CALCULA_NRO_PROFS_CURSO:
 		   ss <<"C_CALCULA_NRO_PROFS_CURSO"; break;
-
+	   case C_MAX_NAO_MEST_CURSO:
+		   ss <<"C_MAX_NAO_MEST_CURSO"; break;
+	   case C_MAX_NAO_DOUT_CURSO:
+		   ss <<"C_MAX_NAO_DOUT_CURSO"; break;
+	   case C_CALCULA_NRO_PROFS_VIRTUAIS_CURSO:
+		   ss <<"C_CALCULA_NRO_PROFS_VIRTUAIS_CURSO"; break;		   
+	   case C_CALCULA_NRO_PROFS_VIRTUAIS_MEST_CURSO:
+		   ss <<"C_CALCULA_NRO_PROFS_VIRTUAIS_MEST_CURSO"; break;		   
+	   case C_CALCULA_NRO_PROFS_VIRTUAIS_DOUT_CURSO:
+		   ss <<"C_CALCULA_NRO_PROFS_VIRTUAIS_DOUT_CURSO"; break;		   
+		   		   	   
 	   default:
 		  ss << "!";
    }
@@ -440,7 +450,10 @@ std::string ConstraintOp::toString()
 
    if ( professor != NULL )
    {
-      ss << "_Prof" << professor->getId();
+		if ( professor->eVirtual() )
+		   ss << "_ProfVirtual" << professor->titulacao->toString();
+	    else
+		   ss << "_Prof" << professor->getId();      
    }
 
    if ( curso != NULL )

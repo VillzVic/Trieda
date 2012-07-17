@@ -236,6 +236,38 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		exit( 1 );
 	}
 
+    // cria professores virtuais com diferentes titulações
+    if ( segundoCaso || terceiroCaso )
+	{
+		GGroup<int> titulMinId;
+		titulMinId.add(1);
+		if ( this->parametros->min_mestres )
+			titulMinId.add(4);
+		if ( this->parametros->min_doutores )
+			titulMinId.add(5);
+
+		int i=1;
+		ITERA_GGROUP_LESSPTR( itTitul, tipos_titulacao, TipoTitulacao )
+		{
+			TipoTitulacao *titulacao = (*itTitul);
+
+			if ( titulMinId.find( titulacao->getId() ) != titulMinId.end() )
+			{
+				Professor *pv = new Professor(true);
+				pv->setTitulacaoId( titulacao->getId() );
+				pv->titulacao = titulacao;
+				pv->setId(-i);
+				std::string nome = pv->getNome();
+				stringstream ss; ss << -i;
+				nome += ss.str();
+				pv->setNome( nome );
+
+				this->profsVirtuais.add( pv );
+				i++;
+			}
+		}
+	}
+
    // Prencher os horários e/ou créditos das salas
    ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )
    {
