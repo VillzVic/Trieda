@@ -530,6 +530,7 @@ public:
    int criaVariavelNroProfsVirtuaisAlocadosCurso();
    int criaVariavelNroProfsVirtuaisMestresAlocadosCurso();
    int criaVariavelNroProfsVirtuaisDoutoresAlocadosCurso();
+   int criaVariavelNroProfsVirtuaisGeraisAlocadosCurso();
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO OPERACIONAL               **
@@ -574,6 +575,8 @@ public:
    int criaRestricaoCalculaNroProfsVirtuaisAlocadosCurso();
    int criaRestricaoCalculaNroProfsVirtuaisMestresAlocadosCurso();
    int criaRestricaoCalculaNroProfsVirtuaisDoutoresAlocadosCurso();
+   int criaRestricaoCalculaNroProfsVirtuaisGeraisAlocadosCurso();
+   int criaRestricaoSomaNroProfsVirtuaisAlocadosCurso();
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
@@ -629,8 +632,8 @@ public:
    void getSolutionOperacional();
    void getSolutionOperacionalMIP();
    void geraProfessoresVirtuaisMIP();
-   Professor * criaProfessorVirtual( HorarioDia *, int,
-   std::set< std::pair< Professor *, HorarioDia * > > & );
+   Professor * criaProfessorVirtual( Professor *professor, HorarioDia *, int,
+									std::set< std::pair< Professor *, HorarioDia * > > & );
    void preencheOutputOperacional( ProblemSolution * );
    void preencheOutputOperacionalMIP( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );

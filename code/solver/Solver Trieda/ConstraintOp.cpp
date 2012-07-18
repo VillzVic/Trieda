@@ -441,7 +441,11 @@ std::string ConstraintOp::toString()
 		   ss <<"C_CALCULA_NRO_PROFS_VIRTUAIS_MEST_CURSO"; break;		   
 	   case C_CALCULA_NRO_PROFS_VIRTUAIS_DOUT_CURSO:
 		   ss <<"C_CALCULA_NRO_PROFS_VIRTUAIS_DOUT_CURSO"; break;		   
-		   		   	   
+	   case C_CALCULA_NRO_PROFS_VIRTUAIS_GERAIS_CURSO:
+		   ss <<"C_CALCULA_NRO_PROFS_VIRTUAIS_GERAIS_CURSO"; break;		   
+	   case C_SOMA_NRO_PROFS_VIRTUAIS_CURSO:
+		   ss <<"C_SOMA_NRO_PROFS_VIRTUAIS_CURSO"; break;  		   	      		   	      		   	      		   	   
+		   
 	   default:
 		  ss << "!";
    }

@@ -9069,16 +9069,20 @@ void SolverMIP::getSolutionOperacional()
    }
 }
 
-Professor * SolverMIP::criaProfessorVirtual( HorarioDia * horario, int cred,
+Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * horario, int cred,
    std::set< std::pair< Professor *, HorarioDia * > > & profVirtualList )
 {
    // Procura primeiro professor virtual livre no horario
    Professor * prof = NULL;
+   TipoTitulacao *titulacao = professor->titulacao;
    int nCreds;
    int dia = horario->getDia();
 
    for ( int i = 0; i < (int)problemData->professores_virtuais.size(); i++ )
    {
+	   if ( problemData->professores_virtuais[ i ]->getTitulacaoId() != titulacao->getId() )
+		   continue;
+
       std::pair< Professor *, HorarioDia * > auxPair;
 	  
       // Tenta professor livre para todos os creditos
@@ -9120,6 +9124,9 @@ Professor * SolverMIP::criaProfessorVirtual( HorarioDia * horario, int cred,
 			  }
 		  }
 
+		  if ( !profOK )
+			  break;
+
 		  // itera
 		  nCreds++;
 		  h = c->getProximoHorario( h );
@@ -9159,6 +9166,13 @@ Professor * SolverMIP::criaProfessorVirtual( HorarioDia * horario, int cred,
    int idProf = -1 * (int)( problemData->professores_virtuais.size() );
    idProf--;
    prof->setId( idProf );
+
+	prof->setTitulacaoId( titulacao->getId() );
+	prof->titulacao = titulacao;
+	std::string nome = prof->getNome();
+	stringstream ss; ss << idProf;
+	nome += ss.str();
+	prof->setNome( nome );
 
    // Setando alguns dados para o novo professor
    prof->tipo_contrato = ( *problemData->tipos_contrato.begin() );
@@ -9237,8 +9251,7 @@ void SolverMIP::geraProfessoresVirtuaisMIP()
 
       int nCred = v->getAula()->getTotalCreditos();
 
-      Professor * profVirtual = criaProfessorVirtual(
-        v->getHorario(), nCred, profVirtualList );
+	  Professor * profVirtual = criaProfessorVirtual( v->getProfessor(), v->getHorario(), nCred, profVirtualList );
 
       v->setProfessor( profVirtual );
    }
@@ -11111,7 +11124,6 @@ void SolverMIP::getSolution( ProblemSolution * problem_solution )
 		   }
       }
 
-      // getSolutionOperacional();
       getSolutionOperacionalMIP();
    }
 
@@ -48511,7 +48523,7 @@ int SolverMIP::criaVariaveisOperacional()
 #endif
 
    lp->updateLP();
-   numVars += criaVariavelFolgaDemanda();
+ //  numVars += criaVariavelFolgaDemanda();
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_FOLGA_DEMANDA: "
@@ -48565,6 +48577,17 @@ int SolverMIP::criaVariaveisOperacional()
    numVarsAnterior = numVars;
 #endif   
    
+
+   lp->updateLP();
+   numVars += criaVariavelNroProfsVirtuaisGeraisAlocadosCurso();
+
+#ifdef PRINT_cria_variaveis
+   std::cout << "numVars V_NRO_PROFS_VIRTUAIS_GERAIS_CURSO: "
+             << ( numVars - numVarsAnterior ) << std::endl;
+   numVarsAnterior = numVars;
+#endif   
+   
+
    lp->updateLP(); 
 
    return numVars;
@@ -48684,7 +48707,7 @@ int SolverMIP::criaVariavelProfessorAulaHorario( void )
 			 v.setSala( aula->getSala() );
 			 v.setUnidade( problemData->refUnidade[ aula->getSala()->getIdUnidade() ] );
 
-			 double coeff = 3000.0;
+			 double coeff = 500.0;
 
 			 if ( vHashOp.find( v ) == vHashOp.end() )
 			 {
@@ -49157,6 +49180,8 @@ int SolverMIP::criaVariavelProfessorCurso()
       }
    }
 
+   // Pode deletar esse trecho se w realmente não for mais util para profs virtuais 
+   /*
    ITERA_GGROUP_LESSPTR( itPV, problemData->profsVirtuais, Professor )
    {
 	   ITERA_GGROUP_LESSPTR( itCursos, problemData->cursos, Curso )
@@ -49185,7 +49210,7 @@ int SolverMIP::criaVariavelProfessorCurso()
             }
        }
    }
-
+   */
    return num_vars;
 }
 
@@ -50082,8 +50107,9 @@ int SolverMIP::criaVariavelNroProfsVirtuaisMestresAlocadosCurso()
 				vHashOp[ v ] = lp->getNumCols();
 			   
 				int ub = 100;
+				double coef = 5000;
 
-				OPT_COL col( OPT_COL::VAR_INTEGRAL, 1.0, 0.0, ub,
+				OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, ub,
 					( char * ) v.toString().c_str() );
 
 				lp->newCol( col );
@@ -50133,8 +50159,9 @@ int SolverMIP::criaVariavelNroProfsVirtuaisDoutoresAlocadosCurso()
 				vHashOp[ v ] = lp->getNumCols();
 			   
 				int ub = 100;
+				double coef = 5000;
 
-				OPT_COL col( OPT_COL::VAR_INTEGRAL, 1.0, 0.0, ub,
+				OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, ub,
 					( char * ) v.toString().c_str() );
 
 				lp->newCol( col );
@@ -50145,6 +50172,58 @@ int SolverMIP::criaVariavelNroProfsVirtuaisDoutoresAlocadosCurso()
    return num_vars;
 }
 
+int SolverMIP::criaVariavelNroProfsVirtuaisGeraisAlocadosCurso()
+{
+   int num_vars = 0;
+      
+   if ( ! problemData->parametros->min_doutores &&
+	    ! problemData->parametros->min_mestres )
+   {
+		return num_vars;
+   }
+
+   ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
+   {
+        Curso *curso = ( *itCurso );
+		
+		// Se o curso tem aula associada
+		bool DEMANDA = false;
+		ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+		{
+			Aula * aula = ( *it_aula );			
+			ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
+			{
+				if ( it_oferta->getCursoId() == curso->getId() )
+				{
+					DEMANDA = true;
+					break;
+				}
+			}
+		}
+		if ( DEMANDA )
+		{
+			VariableOp v;
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_GERAIS_CURSO );		
+			v.setCurso( curso );
+
+			if ( vHashOp.find( v ) == vHashOp.end() )
+			{
+				vHashOp[ v ] = lp->getNumCols();
+			   
+				int ub = 100;
+				double coef = 5000;
+
+				OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, 0.0, ub,
+					( char * ) v.toString().c_str() );
+
+				lp->newCol( col );
+				num_vars++;
+			}
+		} 
+   }
+   return num_vars;
+}
 
 int SolverMIP::criaRestricoesOperacional()
 {
@@ -50574,8 +50653,59 @@ int SolverMIP::criaRestricoesOperacional()
 		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
 	numRestAnterior = restricoes;
 #endif
+	
+
+	lp->updateLP();
+	timer.start();
+	restricoes += criaRestricaoCalculaNroProfsVirtuaisMestresAlocadosCurso();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest C_CALCULA_NRO_PROFS_VIRTUAIS_MEST_CURSO: "
+		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
+	numRestAnterior = restricoes;
+#endif
 
 
+	lp->updateLP();
+	timer.start();
+	restricoes += criaRestricaoCalculaNroProfsVirtuaisDoutoresAlocadosCurso();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest C_CALCULA_NRO_PROFS_VIRTUAIS_DOUT_CURSO: "
+		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
+	numRestAnterior = restricoes;
+#endif
+	
+
+	lp->updateLP();
+	timer.start();
+	restricoes += criaRestricaoCalculaNroProfsVirtuaisGeraisAlocadosCurso();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest C_CALCULA_NRO_PROFS_VIRTUAIS_GERAIS_CURSO: "
+		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+
+	lp->updateLP();
+	timer.start();
+	restricoes += criaRestricaoSomaNroProfsVirtuaisAlocadosCurso();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest C_SOMA_NRO_PROFS_VIRTUAIS_CURSO: "
+		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
+	numRestAnterior = restricoes;
+#endif
+			
 	lp->updateLP();	
 
 	return restricoes;
@@ -52802,9 +52932,20 @@ int SolverMIP::criaRestricaoMinimoMestresCurso()
 				   }
 				}
 			}
-						
-			// Variavel npvd_{c}
+
+			// Variavel npvm_{c}
 			VariableOp v;
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_MEST_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
+
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, 1.0 );
+			}
+
+			// Variavel npvd_{c}			
 			v.reset();
 			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_DOUT_CURSO );
 			v.setCurso( curso );
@@ -52950,10 +53091,10 @@ int SolverMIP::criaRestricaoMinimoDoutoresCurso()
 				}
 			}
 
-			// Variavel npvm_{c}
+			// Variavel npvd_{c}
 			VariableOp v;
 			v.reset();
-			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_MEST_CURSO );
+			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_DOUT_CURSO );
 			v.setCurso( curso );
 			vit = vHashOp.find( v );
 
@@ -53281,19 +53422,20 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 	VariableOpHash::iterator vit_f;
 	ConstraintOpHash::iterator cit;
 
-	// Informando quais disciplinas estão associadas a cada curso
-	std::map< Disciplina *, GGroup< Curso *,
-		LessPtr< Curso > > > mapCursoDisciplinas;
+	// Informando quais cursos estão associadas a cada aula
+	std::map< std::pair<int, Disciplina*>, GGroup< Curso *,
+			LessPtr< Curso > > > mapAulaCurso;
 
 	ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
 	{
 		Aula * aula = ( *it_aula );
+		std::pair<int, Disciplina*> par( aula->getTurma(), aula->getDisciplina() );
 
 		ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
 		{
 			Oferta * oferta = ( *it_oferta );
 
-			mapCursoDisciplinas[ aula->getDisciplina() ].add( oferta->curso );
+			mapAulaCurso[ par ].add( oferta->curso );
 		}
 	}
 
@@ -53347,7 +53489,9 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 			continue;
 		}
 
-		GGroup< Curso *, LessPtr< Curso > > cursos = mapCursoDisciplinas[v.getDisciplina()];
+		std::pair<int, Disciplina*> par( v.getTurma(), v.getDisciplina() );
+
+		GGroup< Curso *, LessPtr< Curso > > cursos = mapAulaCurso[ par ];
 		for(GGroup< Curso *, LessPtr< Curso > >::iterator itC = cursos.begin();
 			itC != cursos.end();
 			itC++)
@@ -55726,7 +55870,7 @@ int SolverMIP::criaRestricaoCalculaNroProfsVirtuaisDoutoresAlocadosCurso()
 					v = ( vit->first );
 					if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR &&
 						 v.getProfessor()->eVirtual() &&
-						 v.getProfessor()->getTitulacaoId() >= 5 &&
+						 v.getProfessor()->getTitulacaoId() == 5 &&
 						 v.getDia() == dia &&
 						 v.getAula()->atendeAoCurso( curso->getId() ) )
 					{	
@@ -55818,7 +55962,7 @@ int SolverMIP::criaRestricaoCalculaNroProfsVirtuaisMestresAlocadosCurso()
 					v = ( vit->first );
 					if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR &&
 						 v.getProfessor()->eVirtual() &&
-						 v.getProfessor()->getTitulacaoId() >= 4 &&
+						 v.getProfessor()->getTitulacaoId() == 4 &&
 						 v.getDia() == dia &&
 						 v.getAula()->atendeAoCurso( curso->getId() ) )
 					{	
@@ -55861,7 +56005,192 @@ int SolverMIP::criaRestricaoCalculaNroProfsVirtuaisMestresAlocadosCurso()
 
    return restricoes;
 }
+int SolverMIP::criaRestricaoCalculaNroProfsVirtuaisGeraisAlocadosCurso()
+ {
+    int restricoes = 0;  
+      
+   if ( ! problemData->parametros->min_mestres &&
+	    ! problemData->parametros->min_doutores )
+   {
+		return restricoes;
+   }
 
+   int nnz;
+   double rhs;
+   char name[ 200 ];
+
+   ConstraintOp c;
+   VariableOpHash::iterator vit;
+   ConstraintOpHash::iterator cit;
+   VariableOp v;
+
+   ITERA_GGROUP_LESSPTR( itHorDia, problemData->horariosDia, HorarioDia )
+   {
+	   int dia = (*itHorDia)->getDia();
+	   HorarioAula *horarioAula = (*itHorDia)->getHorarioAula();
+
+	   ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
+	   {
+		   Curso *curso = *itCurso;
+	   	   
+		   c.reset();
+		   c.setType( ConstraintOp::C_CALCULA_NRO_PROFS_VIRTUAIS_GERAIS_CURSO );
+		   c.setCurso( curso );
+		   c.setDia( dia );
+		   c.setHorarioAula( horarioAula );
+
+		   cit = cHashOp.find( c );
+
+			if ( cit == cHashOp.end() )
+			{
+				sprintf( name, "%s", c.toString().c_str() );
+				nnz = problemData->profsVirtuais.size() * problemData->horariosDia.size() + 1;
+				rhs = 0;
+
+				OPT_ROW row( nnz, OPT_ROW::LESS, rhs, name );
+					   				  
+				for ( vit = vHashOp.begin(); vit != vHashOp.end(); vit++ )
+				{
+					v.reset();
+					v = ( vit->first );
+					if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR &&
+						 v.getProfessor()->eVirtual() &&
+						 v.getProfessor()->getTitulacaoId() < 4 &&
+						 v.getDia() == dia &&
+						 v.getAula()->atendeAoCurso( curso->getId() ) )
+					{	
+						HorarioAula *h = v.getHorarioAula();
+						Calendario *sl = h->getCalendario();
+						for ( int i=1; i<=v.getAula()->getTotalCreditos(); i++ )
+						{
+							if ( h->sobrepoe( *horarioAula ) )
+							{
+								row.insert( vit->second, 1.0 );
+								break;
+							}
+							h = sl->getProximoHorario( h );
+						}
+					}					
+				}      
+					
+				// Variavel npvg_{c}
+				v.reset();
+				v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_GERAIS_CURSO );
+				v.setCurso( curso );
+				vit = vHashOp.find( v );
+
+				if ( vit != vHashOp.end() )
+				{
+					row.insert( vit->second, -1.0 );
+				}
+
+				// Insere restrição
+				if ( row.getnnz() > 1 )
+				{
+					cHashOp[ c ] = lp->getNumRows();
+					lp->addRow( row );
+					restricoes++;
+				}
+			}
+	   }
+
+   }
+
+   return restricoes;
+ }
+int SolverMIP::criaRestricaoSomaNroProfsVirtuaisAlocadosCurso()
+ {
+    int restricoes = 0;  
+      
+	if ( ! problemData->parametros->min_mestres &&
+		 ! problemData->parametros->min_doutores )
+	{
+		return restricoes;
+	}
+
+	int nnz;
+	double rhs;
+	char name[ 200 ];
+
+	ConstraintOp c;
+	VariableOpHash::iterator vit;
+	ConstraintOpHash::iterator cit;
+	VariableOp v;
+
+	ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
+	{
+		Curso *curso = *itCurso;
+	   	   
+		c.reset();
+		c.setType( ConstraintOp::C_SOMA_NRO_PROFS_VIRTUAIS_CURSO );
+		c.setCurso( curso );
+
+		cit = cHashOp.find( c );
+
+		if ( cit == cHashOp.end() )
+		{
+			sprintf( name, "%s", c.toString().c_str() );
+			nnz = problemData->profsVirtuais.size() * problemData->horariosDia.size() + 1;
+			rhs = 0;
+
+			OPT_ROW row( nnz, OPT_ROW::EQUAL, rhs, name );				   				  
+
+			// Variavel npvg_{c}
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_GERAIS_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
+
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, 1.0 );
+			}
+
+			// Variavel npvm_{c}
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_MEST_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
+
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, 1.0 );
+			}
+
+			// Variavel npvd_{c}
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_DOUT_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
+
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, 1.0 );
+			}
+
+			// Variavel npv_{c}
+			v.reset();
+			v.setType( VariableOp::V_NRO_PROFS_VIRTUAIS_CURSO );
+			v.setCurso( curso );
+			vit = vHashOp.find( v );
+
+			if ( vit != vHashOp.end() )
+			{
+				row.insert( vit->second, -1.0 );
+			}
+
+			// Insere restrição
+			if ( row.getnnz() != 0 )
+			{
+				cHashOp[ c ] = lp->getNumRows();
+				lp->addRow( row );
+				restricoes++;
+			}
+		}
+	}
+	   
+   return restricoes;
+ }
 
 
 //int SolverMIP::criaRestricaoProfHorarioMultiUnid( void )

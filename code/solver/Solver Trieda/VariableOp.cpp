@@ -300,8 +300,9 @@ std::string VariableOp::toString()
         str << "NPVM"; break;					
 	  case V_NRO_PROFS_VIRTUAIS_DOUT_CURSO:
         str << "NPVD"; break;					
-				
-
+	  case V_NRO_PROFS_VIRTUAIS_GERAIS_CURSO:
+        str << "NPVG"; break;					
+										
       default:
         str << "!";
    }
