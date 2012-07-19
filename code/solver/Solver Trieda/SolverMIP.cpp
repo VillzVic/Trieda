@@ -9094,9 +9094,6 @@ Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * 
 	 
 	  while ( h != NULL && nCreds <= cred )
       {
-		  DateTime inicio = h->getInicio();
-		  DateTime fim = h->getFinal();
-
 		  std::set< std::pair< Professor *, HorarioDia * > >::iterator itProfV = profVirtualList.begin();
 		  for ( ; itProfV != profVirtualList.end(); itProfV++ )
 		  {
@@ -9110,14 +9107,9 @@ Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * 
 				  continue;
 			  }
 
-			  HorarioDia* hd = itProfV->second;
-			  			  
-			  DateTime dt2Inicio = hd->getHorarioAula()->getInicio();			   
-			  DateTime dt2Fim = hd->getHorarioAula()->getFinal();
-
-			  if ( ( hd->getHorarioAula() == h ) ||				    
-				   ( ( dt2Inicio <= inicio ) && ( dt2Fim > inicio ) ) ||
-				   ( ( dt2Inicio >= inicio ) && ( dt2Inicio < fim ) ) )
+			  HorarioAula* ha = itProfV->second->getHorarioAula();
+			  
+			  if ( ha == h || h->sobrepoe( *ha ) )
 			  {
 				  profOK = false; // prof já possui horario que sobrepõe h no dia
 				  break;
@@ -48523,7 +48515,7 @@ int SolverMIP::criaVariaveisOperacional()
 #endif
 
    lp->updateLP();
- //  numVars += criaVariavelFolgaDemanda();
+   numVars += criaVariavelFolgaDemanda();
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_FOLGA_DEMANDA: "
