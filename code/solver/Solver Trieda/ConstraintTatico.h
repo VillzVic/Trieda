@@ -37,7 +37,8 @@ public:
 	  C_MIN_CREDS_ALUNO = 14,						// Restricao 1.2.15
 	  C_MAX_CREDS_ALUNO = 15,						// Restricao 1.2.16
 	  C_ALUNO_DISC_PRATICA_TEORICA = 16,			// Restricao 1.2.17
-	  C_DISC_PRATICA_TEORICA = 17					// Restricao 1.2.17
+	  C_DISC_PRATICA_TEORICA = 17,					// Restricao 1.2.17
+	  C_ALUNO_HORARIO = 18							// Restricao 1.2.12	  
    };
 
    /** Default constructor. */

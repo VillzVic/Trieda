@@ -213,6 +213,8 @@ std::string ConstraintTatico::toString()
       ss << "__(C_DISC_INCOMPATIVEIS):"; break;	  
    case C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO:
       ss << "__(C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO):"; break;	  
+   case C_ALUNO_HORARIO:
+      ss << "__(C_ALUNO_HORARIO):"; break;	  	  
    case C_ATIVA_Y:
       ss << "__(C_ATIVA_Y):"; break;	  
    case C_ALUNO_VARIAS_UNIDADES_DIA:

@@ -288,7 +288,8 @@ public:
    int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
    int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
    int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
-   int criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId );	// Restricao 1.2.12
+   int criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId );	// Restricao 1.2.12 // ou esta, ou a restrição abaixo. Esta sendo usada a de baixo.
+   int criaRestricaoTaticoAlunoHorario( int campusId );					// Restricao 1.2.12
    int criaRestricaoTaticoAtivaY( int campusId );						// Restricao 1.2.13
    int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
    int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
@@ -624,6 +625,7 @@ public:
    void separaDisciplinasEquivalentes();
    void getSolutionTatico();
    void getSolutionTaticoPorAluno();
+   void getSolutionTaticoPorAlunoComHorario();
 
    int solveOperacional();
    int solveOperacionalMIP();
@@ -718,7 +720,7 @@ private:
 
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do tipo V_CREDITOS com credito(s) alocado(s).
-   typedef GGroup< VariableTatico * > vars__X__i_d_u_s_hi_hf_t;
+   typedef GGroup< VariableTatico *, LessPtr<VariableTatico> > vars__X__i_d_u_s_hi_hf_t;
 
    // Vetor responsável por armazenar ponteiros para todas as
    // variáveis do  tipo V_CREDITOS com credito(s) alocado(s).
@@ -776,6 +778,8 @@ private:
    std::set< VariablePre*, LessPtr<VariablePre> > solVarsPre;
 	
    GGroup< Variable *, LessPtr<Variable> > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
+
+   GGroup< VariableTatico *, LessPtr<VariableTatico> > solVarsTatico; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 
    std::vector< VariableOp * > solVarsOp;
    
