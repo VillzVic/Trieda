@@ -5681,7 +5681,6 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 		if ( ! this->CARREGA_SOLUCAO )
 		{
-
 		   // Constraint creation
 		   constNum = cria_restricoes_aluno_sh( campusId, cjtAlunosId, prioridade );
 
@@ -5690,7 +5689,6 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 			#ifdef PRINT_cria_restricoes
 		   printf( "Total of Constraints: %i\n\n", constNum );
 			#endif
-
 		}
    }
 #endif
@@ -5709,14 +5707,17 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 	   printf( "Total of Variables: %i\n\n", varNum );
 		#endif
 
-	   // Constraint creation
-	   constNum = criaRestricoesTatico( campusId );
+		if ( ! this->CARREGA_SOLUCAO )
+		{
+		   // Constraint creation
+		   constNum = criaRestricoesTatico( campusId );
 
-	   lp->updateLP();
+		   lp->updateLP();
 
-		#ifdef PRINT_cria_restricoes
-	   printf( "Total of Constraints: %i\n\n", constNum );
-		#endif	
+			#ifdef PRINT_cria_restricoes
+		   printf( "Total of Constraints: %i\n\n", constNum );
+			#endif	
+		}
    }
 #endif
 // ---------------------------------------------------------------
@@ -48366,7 +48367,7 @@ int SolverMIP::criaVariaveisOperacional()
 #endif
 
    lp->updateLP();
-  // numVars += criaVariavelFolgaDemanda();
+   numVars += criaVariavelFolgaDemanda();
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_FOLGA_DEMANDA: "
