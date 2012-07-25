@@ -17,8 +17,12 @@ public:
    void setOfertaId( int oftId ) { this->ofertaId = oftId; }
    void setCombinaCredSL( int dia, int k, Calendario* sl , int n );
    void setCombinaCredSLSize(int dia, int size) { combinaCredSLSize[dia] = size; }
-     
-   // só usado a partir de prioridade 2
+   void addHorarioDiaOcupado( HorarioDia* hd ){ horariosDiaOcupados.add(hd); }
+   void addHorarioDiaOcupado( GGroup<HorarioDia*> hds );
+   void removeHorarioDiaOcupado( HorarioDia* hd ){ horariosDiaOcupados.remove(hd); }
+   void clearHorariosDiaOcupados(){ horariosDiaOcupados.clear(); }
+
+   // só usado a partir de prioridade 2 para a primeira heuristica (modelo tatico sem horarios)
    void addNCredsAlocados( Calendario* sl, int dia, double value );
 
    int getAlunoId() const { return this->alunoId; }
@@ -45,6 +49,8 @@ public:
    bool demandaDisciplina( int idDisc );
 
    GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> > demandas;
+
+   bool sobrepoeHorarioDiaOcupado( HorarioDia *hd );
 
    virtual bool operator < ( const Aluno & var ) const
    {
@@ -73,8 +79,10 @@ private:
    int ofertaId;
    std::map< int /*dia*/, int /*size*/ > combinaCredSLSize; // informa o numero total de combinações existentes para cada dia
 
-   // só usado a partir de prioridade 2
+   // só usado a partir de prioridade 2 para a primeira heuristica (modelo tatico sem horarios)
    std::map< Calendario*, std::map< int /*dia*/, double /*nCreds*/> > nCredsAlocados;
+
+   GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDiaOcupados;
 
 };
 

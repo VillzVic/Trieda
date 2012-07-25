@@ -2252,6 +2252,45 @@ void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int 
 }
 
 
+/*
+	Usado para a heuristica do modelo Tatico Com Horarios
+*/
+void ProblemData::insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias )
+{
+	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
+	if ( alDem != NULL )
+	{
+		this->mapAluno_CampusTurmaDisc[aluno].add( trio );
+		this->mapCampusTurmaDisc_AlunosDemanda[trio].add( alDem );
+
+	}	
+	
+	ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
+	{
+		aluno->addHorarioDiaOcupado( *itHorDia );
+	}
+}
+
+void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias )
+{
+	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
+	if ( alDem != NULL )
+	{	
+		this->mapAluno_CampusTurmaDisc[aluno].remove( trio );
+		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDem );
+	}
+	else
+	{
+		std::cout<<"\nError: AlDem nao encontrado! Aluno "<<aluno->getAlunoId()<<" Disc"<<trio.third->getId()<<endl;
+	}
+	
+	ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
+	{
+		aluno->removeHorarioDiaOcupado( *itHorDia );
+	}
+}
+
+
 double ProblemData::cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId )
 {
 	double cargaHorariaNaoAtendida = 0.0;

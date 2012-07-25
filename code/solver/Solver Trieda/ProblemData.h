@@ -413,6 +413,9 @@ public:
    void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
    void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
    
+   void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
+   void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
+
    void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica );
 
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > listSlackDemandaAluno;

@@ -703,11 +703,17 @@ private:
 	// caso haja solução do tatico para iteração de prioridade de demanda anterior
    int fixaLimiteInferiorVariavelPre( VariablePre *v );
 
+	// Filtro para a criação das variaveis do pre-modelo,
+	// caso haja solução do tatico COM horarios para iteração de prioridade de demanda anterior
+   int fixaLimitesVariavelPre( VariablePre *v );
+
 	// Filtro para a criação das variaveis do modelo tatico, caso haja solução do pre-modelo
    bool criaVariavelTatico( Variable *v );
 
    	// Filtro para a criação das variaveis do modelo tatico que considera horarios e alunos, caso haja solução do pre-modelo
    bool criaVariavelTatico( VariableTatico *v );
+
+   GGroup< VariableTatico*, LessPtr<VariableTatico> > retornaVariableTaticoCreditosAnterior( int turma, Disciplina* disciplina, Campus* campus );
 
    // Dada uma disciplina 'A' que foi substituída por uma de suas disciplinas equivalentes 'B',
    // esse map informa o conjunto de variáveis que foram criadas para 'B' referentes à disciplina 'A'
@@ -843,6 +849,10 @@ private:
    void imprimeAlocacaoFinalHeuristica( int campusId, int prioridade, int grupoAlunosAtualId );
    void escreveSolucaoBinHeuristica( int campusId, int prioridade, int grupoAlunosAtualId );
    bool leSolucaoHeuritica( int campusId, int prioridade, int grupoAlunosAtualId );
+
+
+   void heuristica2AlocaAlunos( int campusId, int prioridade, int grupoAlunosAtualId );
+   bool heuristica2TentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int turma, std::string heurFilename );
 
 };
 

@@ -348,3 +348,27 @@ void Aluno::addNCredsAlocados( Calendario* sl, int dia, double value )
 		}
 	}	
 }
+
+ bool Aluno::sobrepoeHorarioDiaOcupado( HorarioDia *hd )
+ {
+	 ITERA_GGROUP_LESSPTR( itHorDia, horariosDiaOcupados, HorarioDia )
+	 {
+		 int dia = (*itHorDia)->getDia();
+		 HorarioAula *horAulaOcup = (*itHorDia)->getHorarioAula();
+
+		 if( dia == hd->getDia() )
+		 {
+			 if ( horAulaOcup->sobrepoe( *hd->getHorarioAula() ) )
+				 return true;
+		 }
+	 }
+	 return false;
+ }
+
+ void Aluno::addHorarioDiaOcupado( GGroup<HorarioDia*> hds )
+ { 
+	 ITERA_GGROUP( it, hds, HorarioDia )
+	 {
+		 horariosDiaOcupados.add(*it); 
+	 }
+ }
