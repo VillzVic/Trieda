@@ -251,10 +251,10 @@ public:
    *********************************************************************/
 
    
-   int criaVariaveisTatico( int campusId );
+   int criaVariaveisTatico( int campusId, int P );
 
-   int criaVariavelTaticoCreditos( int campusId );									// x_{i,d,u,s,hi,hf,t}      
-   int criaVariavelTaticoAbertura( int campusId );									// z_{i,d,cp}
+   int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
+   int criaVariavelTaticoAbertura( int campusId, int P );									// z_{i,d,cp}
    int criaVariavelTaticoConsecutivos( int campusId );								// c_{i,d,t}
    int criaVariavelTaticoMinCreds( int campusId );									// h_{a}
    int criaVariavelTaticoMaxCreds( int campusId );									// H_{a}
@@ -603,6 +603,7 @@ public:
 
    double fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
    double fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
+   double fixaLimitesVariavelTaticoComHorPriorAnterior( VariableTatico *v, bool &found );
 
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
    bool FIXAR_P1;
