@@ -4559,9 +4559,25 @@ double SolverMIP::fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOU
 	return 0.0;
 }
 
-double SolverMIP::fixaLimitesVariavelTaticoComHorPriorAnterior( VariableTatico *v, bool &FOUND )
-{	
-	if ( v->getType() == VariableTatico::V_CREDITOS )
+double SolverMIP::fixaLimitesVariavelTaticoComHorAnterior( VariableTatico *v, bool &FOUND )
+{
+	if ( v->getType() == VariableTatico::V_SLACK_DEMANDA )
+	{
+		ITERA_GGROUP_LESSPTR ( itVar, solVarsTatico, VariableTatico )
+		{
+			VariableTatico vSol = **itVar;		
+
+			if ( vSol.getType() == VariableTatico::V_ABERTURA &&
+				 vSol.getTurma() == v->getTurma() &&
+				 vSol.getDisciplina() == v->getDisciplina() &&		
+				 vSol.getCampus() == v->getCampus() )
+			{
+				FOUND = true;
+				return (0.0);				
+			}
+		}
+	}
+	else if ( v->getType() == VariableTatico::V_CREDITOS )
 	{
 		// A variavel x adquire o campo "sala" em solVars, mas v ainda não o tem,
 		// por isso x tem que ser comparada separada, por atributo
@@ -4576,7 +4592,7 @@ double SolverMIP::fixaLimitesVariavelTaticoComHorPriorAnterior( VariableTatico *
 				 vSol.getDia() == v->getDia() &&
 				 vSol.getHorarioAulaInicial() == v->getHorarioAulaInicial() &&
 				 vSol.getHorarioAulaFinal() == v->getHorarioAulaFinal() &&
-				 vSol.getType() == Variable::V_CREDITOS )
+				 vSol.getType() == VariableTatico::V_CREDITOS )
 			{
 				FOUND = true;
 				return (1.0);				
@@ -4589,7 +4605,8 @@ double SolverMIP::fixaLimitesVariavelTaticoComHorPriorAnterior( VariableTatico *
 		if ( itVar != solVarsTatico.end() )
 		{
 			FOUND = true;
-			return (*itVar)->getValue();
+			int intValue = (int) ( (*itVar)->getValue() + 0.5 );
+			return (double) intValue;
 		}
 	}
 	
@@ -25085,7 +25102,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 
 
 	timer.start();
-	num_vars += criaVariavelTaticoConsecutivos( campusId ); // c
+	num_vars += criaVariavelTaticoConsecutivos( campusId, P ); // c
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25096,7 +25113,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 
 
 	timer.start();
-	num_vars += criaVariavelTaticoMinCreds( campusId ); // h
+	num_vars += criaVariavelTaticoMinCreds( campusId, P ); // h
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25107,7 +25124,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 	
 
 	timer.start();
-	num_vars += criaVariavelTaticoMaxCreds( campusId ); // H
+	num_vars += criaVariavelTaticoMaxCreds( campusId, P ); // H
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25118,7 +25135,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 
 
 	timer.start();
-	num_vars += criaVariavelTaticoCombinacaoDivisaoCredito( campusId ); // m_{i,d,k}
+	num_vars += criaVariavelTaticoCombinacaoDivisaoCredito( campusId, P ); // m_{i,d,k}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25129,7 +25146,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 
 				
 	timer.start();
-	num_vars += criaVariavelTaticoFolgaCombinacaoDivisaoCredito( campusId ); // fk_{i,d,k}
+	num_vars += criaVariavelTaticoFolgaCombinacaoDivisaoCredito( campusId, P ); // fk_{i,d,k}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25140,7 +25157,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 
 
 	timer.start();
-	num_vars += criaVariavelTaticoFolgaDistCredDiaSuperior( campusId ); // fcp_{d,t}
+	num_vars += criaVariavelTaticoFolgaDistCredDiaSuperior( campusId, P ); // fcp_{d,t}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25151,7 +25168,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
    		
 
 	timer.start();
-	num_vars += criaVariavelTaticoFolgaDistCredDiaInferior( campusId ); // fcm_{d,t}
+	num_vars += criaVariavelTaticoFolgaDistCredDiaInferior( campusId, P ); // fcm_{d,t}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25162,7 +25179,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 	
 
 	timer.start();
-	num_vars += criaVariavelTaticoAberturaCompativel( campusId ); // zc
+	num_vars += criaVariavelTaticoAberturaCompativel( campusId, P ); // zc
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25173,7 +25190,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 
 
 	timer.start();
-	num_vars += criaVariavelTaticoFolgaDemandaDisc( campusId ); // fd
+	num_vars += criaVariavelTaticoFolgaDemandaDisc( campusId, P ); // fd
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25206,7 +25223,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 	*/
 
 	timer.start();
-	num_vars += criaVariavelTaticoFolgaAlunoUnidDifDia( campusId ); // fu_{i1,d1,i2,d2,t,cp}
+	num_vars += criaVariavelTaticoFolgaAlunoUnidDifDia( campusId, P ); // fu_{i1,d1,i2,d2,t,cp}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25216,7 +25233,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P )
 #endif
 
 	timer.start();
-	num_vars += criaVariavelTaticoFolgaFolgaDemandaPT( campusId ); // ffd_{i1,-d,i2,d,cp}
+	num_vars += criaVariavelTaticoFolgaFolgaDemandaPT( campusId, P ); // ffd_{i1,-d,i2,d,cp}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -25355,11 +25372,11 @@ int SolverMIP::criaVariavelTaticoCreditos( int campusId, int P )
 									if ( P > 1 && FIXAR_TATICO_P1 )
 									{
 										bool found = false;
-										double value = fixaLimitesVariavelTaticoComHorPriorAnterior( &v, found );
+										double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
 										if ( found ) // fixa!
 										{
-											lowerBound = value - 1e-8;
-											upperBound = lowerBound + 1e-8 + 1e-8;
+											lowerBound = value;
+											upperBound = lowerBound;
 										}
 									}
 
@@ -25457,11 +25474,11 @@ int SolverMIP::criaVariavelTaticoAbertura( int campusId, int P )
 				if ( P > 1 && FIXAR_TATICO_P1 )
 				{
 					bool found = false;
-					double value = fixaLimitesVariavelTaticoComHorPriorAnterior( &v, found );
+					double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
 					if ( found ) // fixa!
 					{
-						lowerBound = value - 1e-8;
-						upperBound = lowerBound + 1e-8 + 1e-8;
+						lowerBound = value;
+						upperBound = lowerBound;
 					}
 				}
 
@@ -25574,7 +25591,7 @@ peso associado a função objetivo.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::criaVariavelTaticoConsecutivos( int campusId )
+int SolverMIP::criaVariavelTaticoConsecutivos( int campusId, int P )
 {
 	int numVars = 0;
 
@@ -25643,7 +25660,21 @@ int SolverMIP::criaVariavelTaticoConsecutivos( int campusId )
 							coef = 1.0;
 						}
                            
-						OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0, ( char * )v.toString().c_str() );
+						double lowerBound = 0.0;
+						double upperBound = 1.0;
+
+						if ( P > 1 && FIXAR_TATICO_P1 )
+						{
+							bool found = false;
+							double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
+							if ( found ) // fixa!
+							{
+								lowerBound = value;
+								upperBound = lowerBound;
+							}
+						}
+
+						OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
 						                           
 						lp->newCol( col );
 
@@ -25660,7 +25691,7 @@ int SolverMIP::criaVariavelTaticoConsecutivos( int campusId )
 }
 
 // h_{a}
-int SolverMIP::criaVariavelTaticoMinCreds( int campusId )
+int SolverMIP::criaVariavelTaticoMinCreds( int campusId, int P )
 {
    int numVars = 0;
    
@@ -25717,7 +25748,20 @@ int SolverMIP::criaVariavelTaticoMinCreds( int campusId )
                 }
             }
                
-			OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0, ( char * )v.toString().c_str() );
+			double lowerBound = 0.0;
+			double upperBound = 1000.0;
+
+			if ( P > 1 && FIXAR_TATICO_P1 )
+			{
+				bool found = false;
+				double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
+				if ( found ) // fixa!
+				{
+					lowerBound = value;
+				}
+			}
+
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, lowerBound, upperBound, ( char * )v.toString().c_str() );
 
 			lp->newCol( col );
 			numVars++;
@@ -25728,7 +25772,7 @@ int SolverMIP::criaVariavelTaticoMinCreds( int campusId )
 }
 
 // H_{a}
-int SolverMIP::criaVariavelTaticoMaxCreds( int campusId )
+int SolverMIP::criaVariavelTaticoMaxCreds( int campusId, int P )
 {
    int numVars = 0;
    
@@ -25785,8 +25829,21 @@ int SolverMIP::criaVariavelTaticoMaxCreds( int campusId )
                     obj = 0.0;
                 }
             }
+
+			double lowerBound = 0.0;
+			double upperBound = 1000.0;
+
+			if ( P > 1 && FIXAR_TATICO_P1 )
+			{
+				bool found = false;
+				double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
+				if ( found ) // fixa!
+				{
+					lowerBound = value;
+				}
+			}
                
-			OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, 0.0, 1000.0, ( char * )v.toString().c_str() );
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, obj, lowerBound, upperBound, ( char * )v.toString().c_str() );
 
 			lp->newCol( col );
 			numVars++;
@@ -25809,7 +25866,7 @@ $k$ foi escolhida para a turma $i$ da disciplina $d$.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::criaVariavelTaticoCombinacaoDivisaoCredito( int campusId )
+int SolverMIP::criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P )
 {
    int numVars = 0;
 
@@ -25852,9 +25909,21 @@ int SolverMIP::criaVariavelTaticoCombinacaoDivisaoCredito( int campusId )
 
                vHashTatico[ v ] = lp->getNumCols();
 
-               OPT_COL col( OPT_COL::VAR_BINARY,
-                            0.0, 0.0, 1.0,
-                            ( char * )v.toString().c_str() );
+				double lowerBound = 0.0;
+				double upperBound = 1.0;
+
+				if ( P > 1 && FIXAR_TATICO_P1 )
+				{
+					bool found = false;
+					double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
+					if ( found ) // fixa!
+					{
+						lowerBound = value;
+						upperBound = lowerBound;
+					}
+				}
+
+               OPT_COL col( OPT_COL::VAR_BINARY, 0.0, lowerBound, upperBound, ( char * )v.toString().c_str() );
 
                lp->newCol( col );
                numVars++;
@@ -25898,7 +25967,7 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId )
+int SolverMIP::criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int P )
 {
    int numVars = 0;
 
@@ -26038,7 +26107,7 @@ peso associado a função objetivo.
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId )
+int SolverMIP::criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId, int P )
 {
    int numVars = 0;
 
@@ -26155,7 +26224,7 @@ variável de folga inferior para a restrição de fixação da distribuição de crédit
 %DocEnd
 /====================================================================*/
 
-int SolverMIP::criaVariavelTaticoFolgaDistCredDiaInferior( int campusId )
+int SolverMIP::criaVariavelTaticoFolgaDistCredDiaInferior( int campusId, int P )
 {
    int numVars = 0;
 
@@ -26267,7 +26336,7 @@ indica se houve abertura da disciplina $d$ no dia $t$.
 
 %DocEnd
 /====================================================================*/
-int SolverMIP::criaVariavelTaticoAberturaCompativel( int campusId )
+int SolverMIP::criaVariavelTaticoAberturaCompativel( int campusId, int P )
 {
    int numVars = 0;
 
@@ -26319,7 +26388,20 @@ int SolverMIP::criaVariavelTaticoAberturaCompativel( int campusId )
 					coef = 1.0;
 			 	}
 
-                OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, 1.0,
+				double lowerBound = 0.0;
+				double upperBound = 1.0;
+
+				if ( P > 1 && FIXAR_TATICO_P1 )
+				{
+					bool found = false;
+					double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
+					if ( found ) // fixa!
+					{
+						lowerBound = value;
+					}
+				}
+
+                OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
                 ( char * )v.toString().c_str() );
 
                 lp->newCol( col );
@@ -26402,7 +26484,7 @@ int SolverMIP::criaVariavelTaticoFolgaDemandaDiscAluno( int campusId )
 */
 
 // fd_{i,d,cp}
-int SolverMIP::criaVariavelTaticoFolgaDemandaDisc( int campusId )
+int SolverMIP::criaVariavelTaticoFolgaDemandaDisc( int campusId, int P )
 {
 	int numVars = 0;
    
@@ -26473,10 +26555,22 @@ int SolverMIP::criaVariavelTaticoFolgaDemandaDisc( int campusId )
 				{
 					coef = 10 * disciplina->getTotalCreditos() * it_campus->getCusto();
 			 	}
+								
+				double lowerBound = 0.0;
+				double upperBound = 1.0;
 
-				double ub = 1.0;
+				if ( P > 1 && FIXAR_TATICO_P1 )
+				{
+					bool found = false;
+					double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
+					if ( found ) // fixa!
+					{
+						lowerBound = value;
+						upperBound = lowerBound;
+					}
+				}
                   
-			    OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, ub, ( char * )v.toString().c_str() );
+			    OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
 
                 lp->newCol( col );
 				 
@@ -26491,7 +26585,7 @@ int SolverMIP::criaVariavelTaticoFolgaDemandaDisc( int campusId )
 }
 
 // y_{a,u,t}
-int SolverMIP::criaVariavelTaticoAlunoUnidDia( int campusId )
+int SolverMIP::criaVariavelTaticoAlunoUnidDia( int campusId, int P )
 {
    int numVars = 0;
    
@@ -26553,7 +26647,7 @@ int SolverMIP::criaVariavelTaticoAlunoUnidDia( int campusId )
 
 
 // w_{a,t}
-int SolverMIP::criaVariavelTaticoAlunoUnidadesDifDia( int campusId )
+int SolverMIP::criaVariavelTaticoAlunoUnidadesDifDia( int campusId, int P )
 {
    int numVars = 0;
    
@@ -26608,7 +26702,7 @@ int SolverMIP::criaVariavelTaticoAlunoUnidadesDifDia( int campusId )
 
 
 // fu_{i1,d1,i2,d2,t,cp}
-int SolverMIP::criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId )
+int SolverMIP::criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P )
 {
 	int numVars = 0;
    
@@ -26717,9 +26811,21 @@ int SolverMIP::criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId )
 									coef = 10 * nroAlunos;
 			 					}
 
-								double ub = 1.0;
+								double lowerBound = 0.0;
+								double upperBound = 1.0;
+
+								if ( P > 1 && FIXAR_TATICO_P1 )
+								{
+									bool found = false;
+									double value = fixaLimitesVariavelTaticoComHorAnterior( &v, found );
+									if ( found ) // fixa!
+									{
+										lowerBound = value;
+										upperBound = lowerBound;
+									}
+								}
                   
-								OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, ub, ( char * )v.toString().c_str() );
+								OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
 
 								lp->newCol( col );
 				 
@@ -26738,7 +26844,7 @@ int SolverMIP::criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId )
 
 
 // ffd_{i1,-d,i2,d,cp}
-int SolverMIP::criaVariavelTaticoFolgaFolgaDemandaPT( int campusId )
+int SolverMIP::criaVariavelTaticoFolgaFolgaDemandaPT( int campusId, int P )
 {
 	int numVars = 0;
      
@@ -26819,9 +26925,10 @@ int SolverMIP::criaVariavelTaticoFolgaFolgaDemandaPT( int campusId )
 						coef = 5000 * campus->getCusto(); // TODO
 			 		}
 
-					double ub = 1.0;
+					double lowerBound = 0.0;
+					double upperBound = 1.0;
                   
-					OPT_COL col( OPT_COL::VAR_BINARY, coef, 0.0, ub, ( char * )v.toString().c_str() );
+					OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
 
 					lp->newCol( col );
 				 

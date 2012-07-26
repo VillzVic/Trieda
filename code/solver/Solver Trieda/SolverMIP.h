@@ -255,21 +255,21 @@ public:
 
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoAbertura( int campusId, int P );									// z_{i,d,cp}
-   int criaVariavelTaticoConsecutivos( int campusId );								// c_{i,d,t}
-   int criaVariavelTaticoMinCreds( int campusId );									// h_{a}
-   int criaVariavelTaticoMaxCreds( int campusId );									// H_{a}
-   int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId );					// m_{i,d,k}   
-   int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId );				// fkp_{i,d,k} e fkm_{i,d,k}
-   int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId );					// fcp_{d,t}   
-   int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId );					// fcm_{d,t}
-   int criaVariavelTaticoAberturaCompativel( int campusId );						// zc_{d,t}
+   int criaVariavelTaticoConsecutivos( int campusId, int P );								// c_{i,d,t}
+   int criaVariavelTaticoMinCreds( int campusId, int P );									// h_{a}
+   int criaVariavelTaticoMaxCreds( int campusId, int P );									// H_{a}
+   int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P );					// m_{i,d,k}   
+   int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int P );				// fkp_{i,d,k} e fkm_{i,d,k}
+   int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId, int P );					// fcp_{d,t}   
+   int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId, int P );					// fcm_{d,t}
+   int criaVariavelTaticoAberturaCompativel( int campusId, int P );							// zc_{d,t}
 //   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );					// fd_{d,a}   
-   int criaVariavelTaticoFolgaDemandaDisc( int campusId );							// fd_{i,d,cp}
-   int criaVariavelTaticoAlunoUnidDia( int campusId );								// y_{a,u,t} 
-   int criaVariavelTaticoAlunoUnidadesDifDia( int campusId );						// w_{a,t}
+   int criaVariavelTaticoFolgaDemandaDisc( int campusId, int P );							// fd_{i,d,cp}
+   int criaVariavelTaticoAlunoUnidDia( int campusId, int P );								// y_{a,u,t}  // Não usada
+   int criaVariavelTaticoAlunoUnidadesDifDia( int campusId, int P );						// w_{a,t}	  // Não usada
 
-   int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId );						// fu_{i1,d1,i2,d2,t,cp}
-   int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId );						// ffd_{i1,-d,i2,d,cp}
+   int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
+   int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId, int P );						// ffd_{i1,-d,i2,d,cp}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -603,7 +603,7 @@ public:
 
    double fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
    double fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
-   double fixaLimitesVariavelTaticoComHorPriorAnterior( VariableTatico *v, bool &found );
+   double fixaLimitesVariavelTaticoComHorAnterior( VariableTatico *v, bool &found );
 
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
    bool FIXAR_P1;
