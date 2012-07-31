@@ -74,7 +74,7 @@ using namespace boost;
 #endif
 
 
-#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -256,8 +256,8 @@ public:
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoAbertura( int campusId, int P );									// z_{i,d,cp}
    int criaVariavelTaticoConsecutivos( int campusId, int P );								// c_{i,d,t}
-   int criaVariavelTaticoMinCreds( int campusId, int P );									// h_{a}
-   int criaVariavelTaticoMaxCreds( int campusId, int P );									// H_{a}
+   int criaVariavelTaticoMinCreds( int campusId, int P );									// h_{a} // Não usada
+   int criaVariavelTaticoMaxCreds( int campusId, int P );									// H_{a} // Não usada
    int criaVariavelTaticoCombinacaoDivisaoCredito( int campusId, int P );					// m_{i,d,k}   
    int criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int campusId, int P );				// fkp_{i,d,k} e fkm_{i,d,k}
    int criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId, int P );					// fcp_{d,t}   
@@ -270,6 +270,7 @@ public:
 
    int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
    int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId, int P );						// ffd_{i1,-d,i2,d,cp}
+   int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -297,6 +298,8 @@ public:
 //   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );	// Restricao 1.2.17
    int criaRestricaoTaticoDiscPraticaTeorica( int campusId );			// Restricao 1.2.17
    int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
+   int criaRestricaoTaticoMinDiasAluno( int campusId );
+   int criaRestricaoTaticoMaxDiasAluno( int campusId );
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
      

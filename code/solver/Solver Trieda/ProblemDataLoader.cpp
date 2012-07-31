@@ -93,10 +93,6 @@ void ProblemDataLoader::load()
    // ---------
    disciplinasCursosCompativeis();
 
-   //std::cout << "Relacionando disciplinas equivalentes..." << std::endl;
-   // ---------
-   //relacionaDisciplinasEquivalentes();
-
    std::cout << "Preenchendo disciplinas de cursos compativeis..." << std::endl;
    // ---------
    preencheDisciplinasDeCursosCompativeis();
@@ -1184,9 +1180,9 @@ void ProblemDataLoader::combinacaoDivCreditos()
       if ( itDisc->divisao_creditos != NULL )
       {
          std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vAux; 
-         for ( int i = 1; i <= 7; i++ )
+         for ( int i = 0; i < 7; i++ )
          {
-            p = std::make_pair( i, itDisc->divisao_creditos->dia[i] );
+            p = std::make_pair( i+2, itDisc->divisao_creditos->dia[i] );
             vAux.push_back( p );
          }
 
@@ -1709,8 +1705,9 @@ void ProblemDataLoader::removeFixacoesComDisciplinasSubstituidas()
 			   Disciplina *d = problemData->refDisciplinas[ discId ];
 
 			   // Se a disciplina d tiver sido substituída
-			   if ( problemData->mapDiscSubstituidaPor.find( d ) ==
-					problemData->mapDiscSubstituidaPor.end() )
+			   if ( problemData->mapDiscSubstituidaPor.find( d ) !=
+					problemData->mapDiscSubstituidaPor.end() &&
+					!problemData->ehSubstituta( d ) )
 			   {
 				   // Remove a fixação referente a d
 				   GGroup< Fixacao *, LessPtr< Fixacao > >::iterator it = problemData->fixacoes.remove( *it_fixacao );
@@ -1933,7 +1930,8 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 				std::map< Disciplina*, Disciplina*, LessPtr< Disciplina > >::iterator
 					itMapEquiv = problemData->mapDiscSubstituidaPor.find( discAntiga );
 
-				if ( itMapEquiv != problemData->mapDiscSubstituidaPor.end() )
+				if ( itMapEquiv != problemData->mapDiscSubstituidaPor.end() ) // Se a disciplina tiver uma equivalente
+				if ( !problemData->ehSubstitutaDe( discAntiga, std::make_pair(curso, curriculo) ) ) // E se não já for uma substituta
 				{
 
 				//-----------------------------------------------------------------------------
@@ -2269,7 +2267,10 @@ void ProblemDataLoader::divideDisciplinas()
 		 
 		 nova_disc->setCalendario( it_disc->getCalendario() );
 
-         if( it_disc->divisao_creditos != NULL )
+		 // Enquanto não há divisão da regra no input para práticas e teóricas, o solver
+		 // vai separar sempre essas regras de acordo com as genéricas existentes. Portanto,
+		 // isso deve ser feito sempre, mesmo quando it_disc->divisao_creditos == NULL
+         if(1)// it_disc->divisao_creditos != NULL )
          {
             std::map< int /*Num. Creds*/ ,
                GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > >::iterator it_Creds_Regras;
@@ -2281,7 +2282,7 @@ void ProblemDataLoader::divideDisciplinas()
             it_Creds_Regras = problemData->creds_Regras.find( it_disc->getCredTeoricos() );
 
             // Checando se existe alguma regra de crédito
-            // cadastrada para o total de créditos da nova disciplina.
+            // cadastrada para o total de créditos da disciplina teórica.
             if ( it_Creds_Regras != problemData->creds_Regras.end() )
             {
                if ( it_Creds_Regras->second.size() == 1 )
@@ -2312,7 +2313,7 @@ void ProblemDataLoader::divideDisciplinas()
                nova_disc->getCredPraticos() );
 
             // Checando se existe alguma regra de crédito
-            // cadastrada para o total de créditos da nova disciplina.
+            // cadastrada para o total de créditos da nova disciplina prática.
             if ( it_Creds_Regras != problemData->creds_Regras.end() )
             {
                if ( it_Creds_Regras->second.size() == 1 )
@@ -2505,11 +2506,14 @@ void ProblemDataLoader::divideDisciplinas()
 		 // -----------------------------------------------------------------
 		 //							DEMANDAS
 
-		 // Só cria nova demanda para disciplinas que não foram substituidas.
+		 // Só cria nova demanda para disciplinas que não foram substituidas ou
+		 // para aquelas que foram substituidas E substitutas (caso em que a 
+		 // equivalencia é não-transitiva).
 		 // Disciplina substituidas tiveram suas demandas tambem substituidas,
 		 // e não criadas.
 		 if ( problemData->mapDiscSubstituidaPor.find( *it_disc ) ==
-			  problemData->mapDiscSubstituidaPor.end() )
+			  problemData->mapDiscSubstituidaPor.end() ||
+			  problemData->ehSubstituta( *it_disc ) )
 		 {
 			 // Procura pelo maior id de demanda já cadastrado
 			 int id = retornaMaiorIdDemandas();
@@ -3332,7 +3336,8 @@ void ProblemDataLoader::calculaMenorCapacSalaPorDisc()
 
 			#pragma region Equivalência de disciplinas
 			if ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-				 problemData->mapDiscSubstituidaPor.end() )
+				 problemData->mapDiscSubstituidaPor.end() &&
+				!problemData->ehSubstituta( disciplina ) )
 			{
 				continue;
 			}
@@ -3370,7 +3375,8 @@ void ProblemDataLoader::calculaCapacMediaSalaPorDisc()
 
 			#pragma region Equivalência de disciplinas
 			if ( problemData->mapDiscSubstituidaPor.find(disciplina) !=
-				 problemData->mapDiscSubstituidaPor.end() )
+				 problemData->mapDiscSubstituidaPor.end() &&
+				!problemData->ehSubstituta( disciplina ) )
 			{
 				continue;
 			}

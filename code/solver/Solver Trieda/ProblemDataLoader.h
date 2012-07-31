@@ -68,7 +68,6 @@ public:
    // Trata das equivalências entre disciplinas
    void referenciaDisciplinasEquivalentes();
 
- //  void relacionaDisciplinasEquivalentes();
    void substituiDisciplinasEquivalentes();
    void atualizaOfertasDemandas();
 
