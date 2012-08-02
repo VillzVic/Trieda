@@ -1,9 +1,11 @@
 \documentclass[landscape, lettersize]{article}
-
+\usepackage[dvips]{geometry} 
 \usepackage[brazil]{babel}
 \usepackage[latin1]{inputenc}
 \usepackage{amsfonts}
+\usepackage{amsmath}
 \usepackage{epsfig}
+%\usepackage[pdftex,hyperfigures]{hyperref}
 
 \textheight 17.29cm
 \textwidth 22.94cm 
@@ -194,6 +196,8 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \end{itemize}
 
+
+
 \section{Módulo Operacional - Modelo Matemático}
 
 \subsection{Notação}
@@ -212,7 +216,17 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \item $P$ - Conjunto de professores. Os elementos desse conjunto são denotados por $p$.
 
+\item $P_{m}$ - Conjunto de professores com título de mestre. Professores com título acima de mestre (doutores) não são incluídos aqui, somente no conjunto correspondente ao título máximo do professor. Os elementos desse conjunto são denotados por $p$.
+
+\item $P_{d}$ - Conjunto de professores com título de doutor. Os elementos desse conjunto são denotados por $p$.
+
 \item $PV$ - Conjunto de professores virtuais. Os elementos desse conjunto são denotados por $pv$.
+
+\item $PV_{d}$ - Conjunto de professores virtuais doutores. Os elementos desse conjunto são denotados por $pv$.
+
+\item $PV_{m}$ - Conjunto de professores virtuais mestres. Os elementos desse conjunto são denotados por $pv$.
+
+\item $PV_{g}$ - Conjunto de professores virtuais gerais (nem mestres nem doutores). Os elementos desse conjunto são denotados por $pv$.
 
 \item $B$ - Conjunto de blocos curriculares. Os elementos desse conjunto são denotados por $bc$.
 
@@ -222,7 +236,11 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \item $I_{d}$ - conjunto de turmas de uma disciplina $d$. Os elementos desse conjunto são denotados por $i$.
 
+\item $I_{d,c}$ - conjunto de turmas de uma disciplina $d$ que possui alunos do curso $c$. Os elementos desse conjunto são denotados por $i$.
+
 \item $A$ - conjunto de aulas. Uma aula corresponde a um determinado número de créditos da turma $i$ disciplina $d$ que devem ser dados em um sala $s$ no dia $t$. Os elementos desse conjunto são denotados por $a$.
+
+\item $A_{c}$ - conjunto de aulas que possuem alunos do curso $c$. Os elementos desse conjunto são denotados por $a$.
 
 \item $F_{p,d,s,t,h}$ - conjunto de fixações do professor $p$ a disciplina $d$ na sala $s$ no dia $t$ no horário $h$. Os elementos desse conjunto são denotados por $f$.
 
@@ -233,6 +251,8 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 \item $F_{p,d,s}$ - conjunto de fixações do professor $p$ a disciplina $d$ na sala $s$. Os elementos desse conjunto são denotados por $f$.
 
 \item $F_{p,s}$ - conjunto de fixações do professor $p$ na sala $s$. Os elementos desse conjunto são denotados por $f$.
+
+\item $Al$ - conjunto de alunos. 
 
 \end{itemize}
 
@@ -250,6 +270,8 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \item $\gamma$ - peso associado a função objetivo.
 
+\item $m(h)$ - dateTime do horario h convertida em minutos.
+
 \end{itemize}
 
 \newpage
@@ -258,16 +280,38 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \begin{itemize}
 
-\item $x_{p,a,s,d,i,t,h}$ - variável binária indicando que o professor $p$ foi alocado a aula $a$ no horário $h$.
-\item $x_{pv,a,s,d,i,t,h}$ - variável binária indicando que o professor virtual $pv$ foi alocado a aula $a$ no horário $h$.
+\item $x_{p,a,h}$ - variável binária indicando que o professor $p$ foi alocado a aula $a$ no horário $h$.
+\item $x_{pv,a,h}$ - variável binária indicando que o professor virtual $pv$ foi alocado a aula $a$ no horário $h$.
 \item $y_{p,d,i}$ - variável binária indicando que o professor $p$ foi alocado a turma $i$ da disciplina $d$.
 \item $z_{d,i,h}$ - variável binária indicando que o horário $h$ foi alocado para a turma $i$ da disciplina $d$.
-\item $f1_{p,d,s,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, sala $s$, dia $t$ e horário $h$. 
-\item $f2_{p,d,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, dia $t$ e horário $h$. 
-\item $f3_{p,d}$ - variável de folga para a restrição de fixação de professor $p$ e disciplina $d$. 
-\item $f4_{p,d,s}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$ e sala $s$. 
-\item $f5_{p,s}$ - variável de folga para a restrição de fixação de professor $p$ e sala $s$. 
-\item $fdh_{d,i,t,h}$ - variável de folga para a restrição de um horário $h$ no dia $t$ para a turma $i$ da disciplina $d$. 
+
+%\item $f1_{p,d,s,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, sala $s$, dia $t$ e horário $h$. 
+%\item $f2_{p,d,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, dia $t$ e horário $h$. 
+%\item $f3_{p,d}$ - variável de folga para a restrição de fixação de professor $p$ e disciplina $d$. 
+%\item $f4_{p,d,s}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$ e sala $s$. 
+%\item $f5_{p,s}$ - variável de folga para a restrição de fixação de professor $p$ e sala $s$. 
+
+\item $w_{p,c}$ - variável binária indicando que o professor $p$ ministra aula para o curso $c$.
+\item $fmm_{c}$ - variável de folga inteira para o mínimo de professores mestres em um curso $c$.
+\item $fmd_{c}$ - variável de folga inteira para o mínimo de professores doutores em um curso $c$. 
+\item $fchmp_{p}$ - variável de folga inteira para a carga horária mínima do professor $p$ na semana, em relação ao semestre anterior.
+\item $fchip_{p}$ - variável de folga inteira para a carga horária mínima do professor $p$ na semana.
+\item $fchsp_{p}$ - variável de folga inteira para a carga horária máxima do professor $p$ na semana.
+\item $pt_{p,t}$ - variável binária que indica se o professor $p$ ministra aula no dia $t$.
+\item $dpc_{p,d,c}$ - variável binária que indica se o professor $p$ ministra alguma aula da disciplina $d$ para o curso $c$.
+\item $fmdpc_{p,c}$ - variável de folga inteira associada ao máximo de disciplinas que o professor $p$ pode ministrar para o curso $c$.
+\item $fupap_{p,t}$ - variável de folga binária indicando se um professor $p$ ministra aula no último horário do dia $t$
+ e no primeiro horário do dia seguinte $t+1$.
+\item $fd_{a}$ - variável binária de folga de demanda da aula $a$.
+\item $fh_{d,i,cp}$ - variável de folga inteira que indica se a turma $i$ da disciplina $d$ no campus $cp$ foi alocado a mais de um horário durante a semana.
+\item $hip_{p,t}$ - variável inteira que indica o tempo de início da primeira aula ministrada pelo professor $p$ no dia $t$.
+\item $hfp_{p,t}$ - variável inteira que indica o tempo de fim da última aula ministrada pelo professor $p$ no dia $t$.
+\item $np_{c}$ - variável inteira que indica o número de professores reais alocados para o curso $c$.
+\item $npv_{c}$ - variável inteira que indica o número de professores virtuais alocados para o curso $c$.
+\item $npvm_{c}$ - variável inteira que indica o número de professores virtuais mestres alocados para o curso $c$.
+\item $npvd_{c}$ - variável inteira que indica o número de professores virtuais doutores alocados para o curso $c$.
+\item $npvg_{c}$ - variável inteira que indica o número de professores virtuais gerais (nem mestres nem doutores) alocados para o curso $c$.
+
 
 \end{itemize}
 
@@ -281,30 +325,71 @@ $$
        + \alpha \cdot \sum\limits_{pv \in PV} \sum\limits_{a \in A} \sum\limits_{h \in H} x_{p,a,s,d,i,t,h}
       \\
       &
-       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{s \in S} \sum\limits_{t \in T} \sum\limits_{h \in H} f1_{p,d,s,t,h}
+%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{s \in S} \sum\limits_{t \in T} \sum\limits_{h \in H} f1_{p,d,s,t,h}
+%      \\
+%      &
+%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{t \in T} \sum\limits_{h \in H} f2_{p,d,t,h}
+%      \\
+%      &
+%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} f3_{p,d}
+%      \\
+%      &
+%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{s \in S} f4_{p,d,s}
+%      \\
+%      &
+%       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{s \in S} f5_{p,s}
+%      \\
+%      &
+       + \sum\limits_{p \in P} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D}
+       ( ( 10 - nota ) * pesoNota + ( 10 - preferencia ) * pesoPreferencia + custoCred * nCredsDisc ) \cdot y_{p,d,i}
+      \\ 
+      &
+       + \gamma \cdot \sum\limits_{p \in P} \sum\limits_{c \in C} fmdpc_{p,c}
       \\
       &
-       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{t \in T} \sum\limits_{h \in H} f2_{p,d,t,h}
+       + \gamma \cdot \sum\limits_{p \in P} fchmp_{p}
+      \\                 
+      &
+       + \gamma \cdot \sum\limits_{p \in P} fchip_{p}
       \\
       &
-       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} f3_{p,d}
+       + \gamma \cdot \sum\limits_{p \in P} fchsp_{p}
+      \\                       
+      &
+       + \gamma \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} ( hfp_{p,t} - hip_{p,t} )
+      \\                                         
+      &
+       + 1000000 \cdot \sum\limits_{c \in A} nroAlunosNaTurma_{a} \cdot fd_{a}
+      \\  
+      &      
+       + \gamma \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{cp \in Cp} fh_{d,i,cp}
       \\
       &
-       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{d \in D} \sum\limits_{s \in S} f4_{p,d,s}
-      \\
+       + \sum\limits_{c \in C} npv_{c}
+      \\   
       &
-       + \beta \cdot \sum\limits_{p \in P} \sum\limits_{s \in S} f5_{p,s}
-      \\
+       + \gamma \cdot \sum\limits_{c \in C} npvm_{c}
+      \\   
       &
-       + \gamma \cdot \sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{t \in T} \sum\limits_{h \in H} fdh_{d,i,t,h}
-      \\
+       + \gamma \cdot \sum\limits_{c \in C} npvd_{c}
+      \\               
+      &
+       + \gamma \cdot \sum\limits_{c \in C} npvg_{c}
+      \\                     
+      &
+       (+-) \gamma \cdot \sum\limits_{p \in P} \sum\limits_{t \in T} pt_{p,t}
+      \\   
+      &
+       + \gamma \cdot \sum\limits_{p \in P}\sum\limits_{t \in T} fupap_{p,t}
+      \\                     
+
 \end{array}
 $$
 
 \subsubsection{Alocação das aulas}
 
 \begin{eqnarray}
-\sum\limits_{p \in P}\sum\limits_{pv \in PV}\sum\limits_{h \in H} x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h}  =  1 \nonumber \qquad 
+\sum\limits_{p \in P}\sum\limits_{pv \in PV}\sum\limits_{h \in H} x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} + fd_{a} =  1 \nonumber \qquad 
 \forall a \in A 
 \end{eqnarray}
 
@@ -312,32 +397,47 @@ $$
 \subsubsection{Uso das salas para cada horário}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{a \in A} x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq  1 \nonumber \qquad 
+\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{p,a,h'} + x_{pv,a,h'} \leq  1 \nonumber \qquad 
 \forall s \in S \quad
 \forall t \in T \quad
 \forall h \in H
 \end{eqnarray}
 
+
 \subsubsection{Uso dos professores para cada horário}
 
 \begin{eqnarray}
-\sum\limits_{s \in S} \sum\limits_{a \in A} x_{p,a,s,d,i,t,h} \leq  1 \nonumber \qquad 
+\sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{p,a,h'} \leq  1 \nonumber \qquad 
 \forall p \in P \quad
 \forall t \in T \quad
 \forall h \in H
 \end{eqnarray}
 
-\subsubsection{Aulas de mesmo bloco para cada horário}
+% VERIFICAR A MODELAGEM ABAIXO
+%
+%\subsubsection{Aulas de mesmo bloco para cada horário (Somente para otimização por bloco)}
+%
+%\begin{eqnarray}
+%\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S} \sum\limits_{a \in A} x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq  1 \nonumber \qquad 
+%\forall bc \in B \quad
+%\forall i \in I_{bc} \quad
+%\forall t \in T \quad
+%\forall h \in H
+%\end{eqnarray}
+
+
+\subsubsection{Aulas de mesmo aluno para cada horário (Somente para otimização por aluno)}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S} \sum\limits_{a \in A} x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq  1 \nonumber \qquad 
-\forall bc \in B \quad
-\forall i \in I_{bc} \quad
+\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{a \in A} \sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}}
+  x_{p,a,h'} + x_{pv,a,h'} \leq  1 \nonumber \qquad 
+\forall al \in Al \quad
 \forall t \in T \quad
 \forall h \in H
 \end{eqnarray}
 
-\subsubsection{Associação das variáveis x e y}
+
+\subsubsection{Calcula se um professor ministra as aulas de uma turma e disciplina}
 
 \begin{eqnarray}
 \sum\limits_{a \in A} \sum\limits_{s \in S} \sum\limits_{h \in H} x_{p,a,s,d,i,t,h} \leq  M \cdot y_{p,d,i} \nonumber \qquad 
@@ -346,83 +446,276 @@ $$
 \forall i \in I_{d}
 \end{eqnarray}
 
-\subsubsection{Um mesmo professor tem que ser alocado para aulas de mesma disciplina e turma}
+
+\subsubsection{Somente um professor deve ser alocado para aulas de turma e disciplina}
 
 \begin{eqnarray}
-y_{p,d,i} \leq 1 \nonumber \qquad 
-\forall p \in P \quad
+\sum\limits_{p \in P} y_{p,d,i} \leq 1 \nonumber \qquad
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
 
-\subsubsection{Restrição de fixação de professor, disciplina, sala, dia e horário}
-
-\begin{eqnarray}
-\sum\limits_{i \in I_{d}}  x_{p,a,s,d,i,t,h} + f1_{p,d,s,t,h} =  1 \nonumber \qquad 
-\forall p \in P \quad
-\forall d \in D \quad
-\forall s \in S \quad
-\forall t \in T \quad
-\forall h \in H \quad
-\forall f \in F_{p,d,s,t,h}
-\end{eqnarray}
-
-\subsubsection{Restrição de fixação de professor, disciplina, dia e horário}
-
-\begin{eqnarray}
-\sum\limits_{i \in I_{d}} \sum\limits_{s \in S}  x_{p,a,s,d,i,t,h} + f2_{p,d,t,h} =  1 \nonumber \qquad 
-\forall p \in P \quad
-\forall d \in D \quad
-\forall t \in T \quad
-\forall h \in H \quad
-\forall f \in F_{p,d,t,h}
-\end{eqnarray}
-
-\subsubsection{Restrição de fixação de professor, disciplina}
-
-\begin{eqnarray}
-\sum\limits_{i \in I_{d}} y_{p,d,i} + f3_{p,d} =  1 \nonumber \qquad 
-\forall p \in P \quad
-\forall d \in D \quad
-\forall f \in F_{p,d}
-\end{eqnarray}
-
-\subsubsection{Restrição de fixação de professor, disciplina e sala}
-
-\begin{eqnarray}
-\sum\limits_{i \in I_{d}} y_{p,d,i} + f4_{p,d,s} =  1 \nonumber \qquad 
-\forall p \in P \quad
-\forall d \in D \quad
-\forall s \in S \quad
-\forall f \in F_{p,d,s}
-\end{eqnarray}
-
-\subsubsection{Restrição de fixação de professor e sala}
-
-\begin{eqnarray}
-\sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{t \in T} \sum\limits_{h \in H} \sum\limits_{(s1 \neq s) \in S}  x_{p,a,s1,d,i,t,h} - f5_{p,s} =  0 \nonumber \qquad 
-\forall p \in P \quad
-\forall s \in S \quad
-\forall f \in F_{p,s}
-\end{eqnarray}
+% RESTRIÇÕES DE FIXAÇÕES ABAIXO ESTÃO ERRADAS. FIX-ME
+%\subsubsection{Restrição de fixação de professor, disciplina, sala, dia e horário}
+%
+%\begin{eqnarray}
+%\sum\limits_{i \in I_{d}}  x_{p,a,s,d,i,t,h} + f1_{p,d,s,t,h} =  1 \nonumber \qquad 
+%\forall p \in P \quad
+%\forall d \in D \quad
+%\forall s \in S \quad
+%\forall t \in T \quad
+%\forall h \in H \quad
+%\forall f \in F_{p,d,s,t,h}
+%\end{eqnarray}
+%
+%\subsubsection{Restrição de fixação de professor, disciplina, dia e horário}
+%
+%\begin{eqnarray}
+%\sum\limits_{i \in I_{d}} \sum\limits_{s \in S}  x_{p,a,s,d,i,t,h} + f2_{p,d,t,h} =  1 \nonumber \qquad 
+%\forall p \in P \quad
+%\forall d \in D \quad
+%\forall t \in T \quad
+%\forall h \in H \quad
+%\forall f \in F_{p,d,t,h}
+%\end{eqnarray}
+%
+%\subsubsection{Restrição de fixação de professor, disciplina}
+%
+%\begin{eqnarray}
+%\sum\limits_{i \in I_{d}} y_{p,d,i} + f3_{p,d} =  1 \nonumber \qquad 
+%\forall p \in P \quad
+%\forall d \in D \quad
+%\forall f \in F_{p,d}
+%\end{eqnarray}
+%
+%\subsubsection{Restrição de fixação de professor, disciplina e sala}
+%
+%\begin{eqnarray}
+%\sum\limits_{i \in I_{d}} y_{p,d,i} + f4_{p,d,s} =  1 \nonumber \qquad 
+%\forall p \in P \quad
+%\forall d \in D \quad
+%\forall s \in S \quad
+%\forall f \in F_{p,d,s}
+%\end{eqnarray}
+%
+%\subsubsection{Restrição de fixação de professor e sala}
+%
+%\begin{eqnarray}
+%\sum\limits_{d \in D} \sum\limits_{i \in I_{d}} \sum\limits_{t \in T} \sum\limits_{h \in H} \sum\limits_{(s1 \neq s) \in S}  x_{p,a,s1,d,i,t,h} - f5_{p,s} =  0 \nonumber \qquad 
+%\forall p \in P \quad
+%\forall s \in S \quad
+%\forall f \in F_{p,s}
+%\end{eqnarray}
 
 \subsubsection{Restrição de horário de disciplina no dia associando x e z}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S}  x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq z_{d,i,h} + fdh_{d,i,t,h} \nonumber \qquad 
+\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S}  x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq z_{d,i,h} \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall t \in T \quad
 \forall h \in H 
 \end{eqnarray}
 
+
 \subsubsection{Restrição de horário de disciplina único na semana}
 
 \begin{eqnarray}
-\sum\limits_{h \in H} z_{d,i,h} \leq 1 \nonumber \qquad 
+\sum\limits_{h \in H} z_{d,i,h} - fh_{d,i,cp} \leq 1 \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d}
+\forall cp \in Cp
 \end{eqnarray}
+
+
+\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de minimizar o número de dias}
+
+\begin{eqnarray}
+pt_{p,t} \ge \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qquad 
+\forall p \in P \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de maximizar o número de dias}
+
+\begin{eqnarray}
+pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qquad 
+\forall p \in P \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Contabiliza o número de professores virtuais no curso}
+
+\begin{eqnarray}
+\sum\limits_{pv \in PV}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npv_{c} \nonumber \qquad 
+\forall h \in H \quad
+\forall c \in C \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Contabiliza o número de professores virtuais mestres no curso}
+
+\begin{eqnarray}
+\sum\limits_{pv \in PV_{m}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvm_{c} \nonumber \qquad 
+\forall h \in H \quad
+\forall c \in C \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Contabiliza o número de professores virtuais doutores no curso}
+
+\begin{eqnarray}
+\sum\limits_{pv \in PV_{d}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvm_{c} \nonumber \qquad 
+\forall h \in H \quad
+\forall c \in C \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Contabiliza o número de professores virtuais gerais no curso}
+
+\begin{eqnarray}
+\sum\limits_{pv \in PV_{g}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvm_{c} \nonumber \qquad 
+\forall h \in H \quad
+\forall c \in C \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Garante o máximo de professores não mestres}
+
+\begin{eqnarray}
+\sum\limits_{p \in P_{g}} w_{p,c} \le (1-mm) \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\forall c \in C \quad
+\end{eqnarray}
+
+
+\subsubsection{Garante o máximo de professores não doutores}
+
+\begin{eqnarray}
+\sum\limits_{p \in P_{g} \cup P_{m} } w_{p,c} \le (1-md) \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\forall c \in C \quad
+\end{eqnarray}
+
+
+\subsubsection{Garantia do percentual mínimo de mestres}
+
+\begin{eqnarray}
+npvm_{c} + npvd_{c} + \sum\limits_{p \in P_{m}} w_{p,c} \ge mm_{c} \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\forall c \in C \quad
+\end{eqnarray}
+
+
+\subsubsection{Garantia do percentual mínimo de doutores}
+
+\begin{eqnarray}
+npvd_{c} + \sum\limits_{p \in P_{d}} w_{p,c} \ge md_{c} \cdot (np_{c}+npv_{c}) \nonumber \qquad 
+\forall c \in C \quad
+\end{eqnarray}
+
+
+\subsubsection{Consistência para o número de professores virtuais}
+
+\begin{eqnarray}
+npvg_{c} + npvm_{c} + npvd_{c} = npv_{c} \nonumber \qquad 
+\forall c \in C \quad
+\end{eqnarray}
+
+
+\subsubsection{Calcula tempo de início da primeira aula do professor no dia}
+
+\begin{eqnarray}
+hip_{p,t} \le m(h) + M*( 1 - \sum\limits_{a \in A_{t}} x_{p,a,h} ) \nonumber \qquad 
+\forall p \in P \quad
+\forall t \in T \quad
+\forall h \in H
+\end{eqnarray}
+
+
+\subsubsection{Calcula tempo de fim da última aula do professor no dia}
+
+\begin{eqnarray}
+hfp_{p,t} \ge m(h) + \sum\limits_{a \in A_{t}} x_{p,a,h} \nonumber \qquad 
+\forall p \in P \quad
+\forall t \in T \quad
+\forall h \in H
+\end{eqnarray}
+
+
+\subsubsection{Consistência dos tempos de início de fim das aulas de um professor em uma dia}
+
+\begin{eqnarray}
+hip_{p,t} <= hfp_{p,t} \nonumber \qquad 
+\forall p \in P \quad
+\forall t \in T
+\end{eqnarray}
+
+
+\subsubsection{Evita que um professor seja alocado em aula do último horário do dia $d$ e do primeiro horário do dia seguinte $d+1$}
+
+\begin{eqnarray}
+\sum\limits_{a \in A_{t}} x_{p,a,hf} + \sum\limits_{a \in A_{t+1}} x_{p,a,hi} - fupap_{p,t} \le 1 \nonumber \qquad 
+\forall p \in P \quad
+\forall t \in T \quad 
+hi \in H \mbox{, hi é o primeiro horário do dia} \quad 
+hf \in H \mbox{, hf é o último horário do dia}
+\end{eqnarray}
+
+
+\subsubsection{Calcula se o professor está alocado para alguma aula do curso}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d,c}}\sum\limits_{d \in D} y_{p,d,i} \le M \cdot w_{p,c} \nonumber \qquad 
+\forall p \in P \quad
+\forall c \in C
+\end{eqnarray}
+
+
+\subsubsection{Garante a carga horária mínima de um professor na semana em relação à carga horária do semestre anterior}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d}}\sum\limits_{d \in D} nCreds_{d} \cdot y_{p,d,i} + fchm_{p} \ge chMinAnterior_{p} \nonumber \qquad 
+\forall p \in P \quad
+\end{eqnarray}
+
+
+\subsubsection{Garante a carga horária mínima de um professor na semana}
+
+\begin{eqnarray}
+\sum\limits_{a \in A}\sum\limits_{h \in H} nCreds_{a} \cdot x_{p,a,h} + fchi_{p} \ge chMin_{p} \nonumber \qquad 
+\forall p \in P \quad
+\end{eqnarray}
+
+
+\subsubsection{Garante a carga horária máxima de um professor na semana}
+
+\begin{eqnarray}
+\sum\limits_{a \in A}\sum\limits_{h \in H} nCreds_{a} \cdot x_{p,a,h} - fchs_{p} \le chMax_{p} \nonumber \qquad 
+\forall p \in P \quad
+\end{eqnarray}
+
+
+\subsubsection{Calcula se um professor ministra a disciplina para o curso}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d,c}} y_{p,d,i} \le nTurmas_{d} \cdot dpc_{p,c,d} \nonumber \qquad 
+\forall p \in P \quad
+\forall c \in C \quad
+\forall d \in D
+\end{eqnarray}    
+
+\subsubsection{Garante o máximo de disciplinas ministradas por um professor por curso}
+
+\begin{eqnarray}
+\sum\limits_{d \in C} dpc_{p,c,d} - fmdpc_{p,c} \le MaxDiscProfCurso_{p,c} \nonumber \qquad 
+\forall p \in P \quad
+\forall c \in C
+\end{eqnarray}
+                             
 
 \clearpage
 \end{document}
