@@ -511,12 +511,12 @@ public:
    int criaVariavelFolgaFixProfDiscSala( void );
    int criaVariavelFolgaFixProfSala( void );
    int criaVariavelProfessorCurso( void );
-   int criaVariavelAvaliacaoCorpoDocente( void );
-   int criaVariavelCustoCorpoDocente( void );
+   int criaVariavelAvaliacaoCorpoDocente( void ); // NÃO ESTÁ SENDO MAIS USADA; PODE DELETAR SE FOR SUFICIENTE O CUSTO EM Y
+   int criaVariavelCustoCorpoDocente( void );	  // NÃO ESTÁ SENDO MAIS USADA; PODE DELETAR SE FOR SUFICIENTE O CUSTO EM Y
    int criaVariavelDiasProfessoresMinistramAulas( void );
    int criaVariavelFolgaUltimaPrimeiraAulas( void );
-   int criaVariavelFolgaMinimoMestresCurso( void );
-   int criaVariavelFolgaMinimoDoutoresCurso( void );
+   int criaVariavelFolgaMinimoMestresCurso( void );	// NÃO ESTÁ SENDO MAIS USADA, A DELETAR
+   int criaVariavelFolgaMinimoDoutoresCurso( void );// NÃO ESTÁ SENDO MAIS USADA, A DELETAR
    int criaVariavelMaxDiscProfCurso( void );
    int criaVariavelFolgaMaxDiscProfCurso( void );
    int criaVariavelFolgaCargaHorariaMinimaProfessor( void );
@@ -555,9 +555,10 @@ public:
    int criaRestricaoDisciplinaHorarioUnico( void );
    int criaRestricaoDeslocamentoViavel( void ); // x3
    int criaRestricaoDeslocamentoProfessor( void ); // x5
-   int criaRestricaoAvaliacaoCorpoDocente( void ); // x6
-   int criaRestricaoCustoCorpoDocente( void ); // x7
-   int criaRestricaoRelacionaVariavelXDiaProf( void ); // x9
+   int criaRestricaoAvaliacaoCorpoDocente( void ); // x6  // NÃO ESTÁ SENDO MAIS USADA; PODE DELETAR SE FOR SUFICIENTE O CUSTO EM Y
+   int criaRestricaoCustoCorpoDocente( void ); // x7	  // NÃO ESTÁ SENDO MAIS USADA; PODE DELETAR SE FOR SUFICIENTE O CUSTO EM Y
+   int criaRestricaoCalculaDiasProfMinistra_Min( void ); // x9
+   int criaRestricaoCalculaDiasProfMinistra_Max( void ); // x9
    int criaRestricaoCargaHorariaMinimaProfessor( void ); // x10
    int criaRestricaoUltimaPrimeiraAulas( void ); // x11
    int criaRestricaoAlocacaoProfessorCurso( void ); // x12
@@ -568,7 +569,7 @@ public:
    int criaRestricaoMaxDiscProfCurso( void ); // x13
    int criaRestricaoCargaHorariaMinimaProfessorSemana( void ); // x14
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void ); // x15
-   int criaRestricaoGapsProfessores( void );
+   int criaRestricaoGapsProfessores( void );			// NÃO ESTÁ SENDO MAIS USADA, A DELETAR
    int criaRestricaoProfHorarioMultiUnid( void );
    int criaRestricaoGapsHorariosProfessores();
    int criaRestricaoCalculaNroProfsAlocadosCurso();

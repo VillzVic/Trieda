@@ -72,6 +72,7 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
 	   }
    }
 
+   // ALUNO
    if ( elem.cargaHorariaSemanalAluno().equilibrar() )
    {
       carga_horaria_semanal_aluno = EQUILIBRAR;
@@ -85,6 +86,20 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
       carga_horaria_semanal_aluno = INDIFERENTE;
    }
 
+   // PROFESSOR
+   if ( elem.cargaHorariaSemanalProfessor().equilibrar() )
+   {
+      carga_horaria_semanal_prof = EQUILIBRAR;
+   }
+   else if ( elem.cargaHorariaSemanalProfessor().minimizarDias() )
+   {
+      carga_horaria_semanal_prof = MINIMIZAR_DIAS;
+   }
+   else if ( elem.cargaHorariaSemanalProfessor().indiferente() )
+   {
+      carga_horaria_semanal_prof = INDIFERENTE;
+   }
+   
    minimizar_horarios_vazios_professor = elem.minimizarHorariosVaziosProfessor();
    desempenho_prof_disponibilidade = elem.desempenhoProfDisponibilidade();
    custo_prof_disponibilidade = elem.custoProfDisponibilidade();
@@ -100,5 +115,6 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
    considerar_preferencia_prof = elem.preferenciaProfessorDisciplina();
    considerar_desempenho_prof = elem.desempenhoProfDisponibilidade();
 
+   perc_max_reducao_CHP = elem.evitarReducaoCargaHorariaProfValor().get();
    min_alunos_abertura_turmas_value = elem.minAlunosAberturaTurmasValor().get();
 }

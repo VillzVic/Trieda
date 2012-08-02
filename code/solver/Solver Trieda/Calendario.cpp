@@ -181,3 +181,17 @@ GGroup<HorarioAula*, LessPtr<HorarioAula>> Calendario::retornaHorariosDisponivei
 
 	return horarios;
 }
+
+HorarioAula* Calendario::addNCredsHorario( HorarioAula *h, int nCreds )
+{
+	if ( h == NULL ) return NULL;
+
+	HorarioAula *hf = h;
+
+	for ( int i=1; i<=nCreds; i++ )
+	{
+		hf = this->getProximoHorario( hf );
+	}
+
+	return hf;
+}

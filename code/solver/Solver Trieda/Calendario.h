@@ -28,7 +28,7 @@ public:
    double getTempoTotal( int dia );
 
    HorarioAula * getProximoHorario( HorarioAula *h );
-   
+
    int retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf );
 
    bool intervaloEntreHorarios( HorarioAula *hi, HorarioAula *hf );
@@ -36,6 +36,8 @@ public:
    bool possuiHorario( HorarioAula *h );
 
    GGroup<HorarioAula*, LessPtr<HorarioAula>> retornaHorariosDisponiveisNoDia( int dia );
+   
+   HorarioAula * addNCredsHorario( HorarioAula *h, int nCreds );
 
 private:   
    std::string codigo;

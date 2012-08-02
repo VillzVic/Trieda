@@ -553,12 +553,14 @@ std::string ConstraintOp::toString()
 
    if ( horarioDiaD != NULL )
    {
-	   ss << "_HDD." << horarioDiaD->getId();
+	   ss << "_(H" << horarioDiaD->getHorarioAulaId()
+		  << ",Dia)" << horarioDiaD->getDia();
    }
 
    if ( horarioDiaD1 != NULL )
    {
-	   ss << "_HDD1." << horarioDiaD1->getId();
+	   ss << "_(H" << horarioDiaD1->getHorarioAulaId()
+		  << ",Dia)" << horarioDiaD1->getDia();
    }
 
    if ( aluno != NULL )

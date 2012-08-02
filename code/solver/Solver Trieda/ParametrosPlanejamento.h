@@ -18,8 +18,9 @@ public:
    GGroup< int > maximizar_avaliacao_cursos;
    GGroup< int > minimizar_custo_docente_cursos;
    GGroup< GGroup< int > * > nao_permite_compart_turma;
-   enum CHSA { EQUILIBRAR, MINIMIZAR_DIAS, INDIFERENTE };
-   CHSA carga_horaria_semanal_aluno;
+   enum CHS { EQUILIBRAR, MINIMIZAR_DIAS, INDIFERENTE };
+   CHS carga_horaria_semanal_aluno;
+   CHS carga_horaria_semanal_prof;
 
    int maxDeslocProf;
    
@@ -29,6 +30,7 @@ public:
    int funcao_objetivo;
 
    int min_alunos_abertura_turmas_value;
+   double perc_max_reducao_CHP;
 
    // ALUNO ou BLOCOCURRICULAR
    std::string otimizarPor;

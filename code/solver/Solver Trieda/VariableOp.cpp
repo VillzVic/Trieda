@@ -388,14 +388,17 @@ std::string VariableOp::toString()
 
    if ( horarioDiaD != NULL )
    {
-	   str << "_HDD." << horarioDiaD->getId();
+	   str << "_(H" << horarioDiaD->getHorarioAulaId()
+		  << ",Dia)" << horarioDiaD->getDia();
    }
 
    if ( horarioDiaD1 != NULL )
    {
-	   str << "_HDD1." << horarioDiaD1->getId();
+	   str << "_(H" << horarioDiaD1->getHorarioAulaId()
+		  << ",Dia)" << horarioDiaD1->getDia();
    }
-   
+
+
    str << "}";
 
    str >> output;
