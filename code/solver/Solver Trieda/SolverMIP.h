@@ -581,9 +581,13 @@ public:
 
    void cria_solucao_inicial( int , int * , double * );
    int localBranching( double *, double );
+   int localBranchingHor( double *, double );
    int localBranchingPre( double *, double );
+   int localBranchingOperacional( double * xSol, double maxTime );
    void polishPreTatico(double *xSol, double maxTime, int percIni, int percMin);
    void polishTatico(double*, double, int percIni, int percMin);
+   void polishTaticoHor(double*, double, int percIni, int percMin);
+   void polishOperacional(double*, double, int percIni, int percMin);
    void carregaVariaveisSolucaoTatico( int campusId );
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );

@@ -5463,6 +5463,12 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		// -------------------------------------------------------------------
 		// Fixa o ub = 0 para todas as variaveis que possuem lb zero
 		std::map< int, double > vHashLivresOriginais;
+
+      int *idxUB = new int[lp->getNumCols()];
+      double *valUB = new double[lp->getNumCols()];
+      BOUNDTYPE *bts = new BOUNDTYPE[lp->getNumCols()];
+
+      int nChgUB = 0;
 		
 		VariablePreHash::iterator vit = vHashPre.begin();
 		for ( ; vit != vHashPre.end(); vit++ )
@@ -5487,31 +5493,28 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 				{
 					vHashLivresOriginais[ vit->second ] = lp->getUB(vit->second);
 
-					lp->chgUB(vit->second, 0.0);
+               idxUB[nChgUB] = vit->second;
+               valUB[nChgUB] = 0.0;
+               bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
+               nChgUB++;
 				}
 			}
 		}
 		// -------------------------------------------------------------------
+
+      lp->chgBds(nChgUB,idxUB,bts,valUB);
 	
 		lp->updateLP();
 	
-
 		lp->setTimeLimit( 1e10 );
 		lp->setMIPRelTol( 0.01 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPEmphasis(0);
 		lp->setSymetry(0);
-		//lp->setNoCuts();
 		lp->setMIPScreenLog( 4 );
 		lp->setNumIntSols(1);
-		lp->setPreSolve(OPT_TRUE);
 
-		char lpNameTemp[1024];
-		strcpy( lpNameTemp, "fixa" );
-		strcat( lpNameTemp, lpName );
-		lp->writeProbLP( lpNameTemp );
-	
 		lp->updateLP();
 	
 		// GENERATES SOLUTION 
@@ -5527,40 +5530,52 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 	    // -------------------------------------------------------------------
 	    // Volta as variaveis z_{i,d,cp} que estavam livres
+      nChgUB = 0;
          
 		for ( std::map< int, double >::iterator it = vHashLivresOriginais.begin();
 			  it != vHashLivresOriginais.end(); it++)
 		{
 			int col = (*it).first;
 			double ub = (*it).second;
-			lp->chgUB(col, ub);
+         idxUB[nChgUB] = col;
+         valUB[nChgUB] = ub;
+         bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
+         nChgUB++;
 		}
 	
+      lp->chgBds(nChgUB,idxUB,bts,valUB);
 		lp->updateLP();	   
-		lp->writeProbLP( lpName );
 		// -------------------------------------------------------------------
 
-	    lp->setNumIntSols(0);
+#ifdef SOLVER_CPLEX
+	   lp->setNumIntSols(0);
 		lp->setTimeLimit( 7200 );
-		//lp->setMIPRelTol( 0.01 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPEmphasis(4);
-		lp->setSymetry(0);
-	    lp->setCuts(0);
-	    lp->setSolNPoolCapacity(20);
-	    //lp->setSolNPoolReplace(2);
-		//lp->setPolishAfterTime( 4800 ); //todo ?
-	    lp->setPolishAfterNode(1);
-	    lp->setNodeLimit(2);
-	    lp->setVarSel(4);
-	    lp->setHeur(10);
-	    lp->setRins(10);
-	    //lp->setFPHeur(1);
-		//lp->setNoCuts();
-		lp->setMIPScreenLog( 4 );
-
+      lp->setSymetry(0);
+      lp->setCuts(0);
+      lp->setSolNPoolCapacity(20);
+      lp->setPolishAfterNode(1);
+      lp->setNodeLimit(2);
+      lp->setVarSel(4);
+      lp->setHeur(10);
+      lp->setRins(10);
+      lp->setMIPScreenLog( 4 );
 		lp->setPreSolve(OPT_TRUE);
+#endif
+
+#ifdef SOLVER_GUROBI
+	   lp->setNumIntSols(0);
+		lp->setTimeLimit( 7200 );
+		lp->setPreSolve(OPT_TRUE);
+		lp->setHeurFrequency(1.0);
+		lp->setMIPEmphasis(0);
+      lp->setSymetry(0);
+      lp->setCuts(-1);
+      lp->setNodeLimit(10000000);
+      lp->setMIPScreenLog( 4 );
+#endif
 
 		lp->updateLP();
  
@@ -5569,6 +5584,8 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		double *objN = new double[lp->getNumCols()];
 		int *idxN = new int[lp->getNumCols()];
 		lp->getObj(0,lp->getNumCols()-1,objN);
+
+      nChgUB = 0;
 
 		vit = vHashPre.begin();
 		for ( ; vit != vHashPre.end(); vit++ )
@@ -5579,82 +5596,107 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 			if ( v.getType() != VariablePre::V_PRE_SLACK_DEMANDA )
 			{
-				lp->chgObj(vit->second,0.0); 
+            idxUB[nChgUB] = vit->second;
+            valUB[nChgUB] = 0.0;
+            nChgUB++;
 			}
 			else
 			{
-				lp->chgObj(vit->second,1.0);
+            idxUB[nChgUB] = vit->second;
+            valUB[nChgUB] = 1.0;
+            nChgUB++;
 			}
 		}
 
-		if ( prioridade > 1 && FIXAR_TATICO_P1 )
-		{
-			status = lp->optimize(METHOD_MIP);
-		}
-		else
-		{
-			polishPreTatico(xS,7200,90,45);
-		}
+      lp->chgObj(nChgUB,idxUB,valUB);
+      lp->updateLP();
+
+      if ( prioridade > 1 && FIXAR_TATICO_P1 )
+      {
+         status = lp->optimize(METHOD_MIP);
+      }
+      else
+      {
+#ifdef SOLVER_CPLEX
+         polishPreTatico(xS,7200,90,10);
+#endif
+#ifdef SOLVER_GUROBI
+         status = lp->optimize(METHOD_MIP);
+#endif
+      }
 
 		vit = vHashPre.begin();
+      nChgUB = 0;
 		for ( ; vit != vHashPre.end(); vit++ )
 		{
 			VariablePre v = vit->first;
 
 			if ( v.getType() == VariablePre::V_PRE_SLACK_DEMANDA && xS[vit->second] < 0.1 )
 			{
-				lp->chgUB(vit->second,0.0); 
-			}
-			/* // comentado por teste
-			if ( v.getType() == VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC )
-			{
-				if (xS[vit->second] < 0.1)
-					lp->chgUB(vit->second,0.0); 
-				else
-					lp->chgLB(vit->second,1.0); 
-			}*/
+            idxUB[nChgUB] = vit->second;
+            valUB[nChgUB] = 0.0;
+            bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
+            nChgUB++;
+         }
 		}
 
+      lp->chgBds(nChgUB,idxUB,bts,valUB);
 		lp->chgObj(lp->getNumCols(),idxN,objN);
+      lp->updateLP();  
 
-		delete[] xS;
-		delete[] objN;
-		delete[] idxN;
-  
+      // -------------------------------------------------------------------
 
-	    // -------------------------------------------------------------------
+      int tempoDeExecucao = retornaTempoDeExecucaoPreModelo( campusId, cjtAlunosId, prioridade );
 
-		int tempoDeExecucao = retornaTempoDeExecucaoPreModelo( campusId, cjtAlunosId, prioridade );
+#ifdef SOLVER_CPLEX
+      lp->setNumIntSols(0);
+      lp->setTimeLimit(3600);
+      lp->setPreSolve(OPT_TRUE);
+      lp->setHeurFrequency(1.0);
+      lp->setMIPEmphasis(0);
+      lp->setSymetry(0);
+      lp->setPolishAfterNode(10000000000);
+      lp->setPolishAfterTime(2400);
+      lp->setNodeLimit(10000000);
+      lp->setCuts(0);
+      lp->setMIPScreenLog( 4 );
+#endif
+#ifdef SOLVER_GUROBI
+      lp->setNumIntSols(0);
+      lp->setTimeLimit(3600);
+      lp->setPreSolve(OPT_TRUE);
+      lp->setHeurFrequency(1.0);
+      lp->setMIPEmphasis(0);
+      lp->setSymetry(0);
+      lp->setNodeLimit(10000000);
+      lp->setCuts(-1);
+      lp->setMIPScreenLog( 4 );
+#endif
 
-		lp->setNumIntSols(0);
-		//lp->setTimeLimit( tempoDeExecucao );
-	    lp->setTimeLimit(3600);
-		//lp->setMIPRelTol( 0.01 );
-		lp->setPreSolve(OPT_TRUE);
-		lp->setHeurFrequency(1.0);
-		lp->setMIPEmphasis(0);
-		lp->setSymetry(0);
-	    lp->setPolishAfterNode(1);
-	    lp->setNodeLimit(10000000);
-		//lp->setPolishAfterTime( tempoDeExecucao/4 ); //todo ?
-	    lp->setCuts(4);
-	    //lp->setPolishAfterNode(1);
-		//lp->setNoCuts();
-		lp->setMIPScreenLog( 4 );
+      lp->updateLP();
 
-		lp->setPreSolve(OPT_TRUE);
-
-		lp->updateLP();
+      lp->writeProbLP( lpName );
 		
 		// GENERATES SOLUTION
 		this->nroPreSolAvaliadas = 0;
 		std::cout<<"\n\nOtimizando...\n\n";
-		status = lp->optimize( METHOD_MIP );
+		//status = lp->optimize( METHOD_MIP );
+      polishPreTatico(xS,3600,70,30);
 		std::cout<<"\n\nOtimizado!\n\n";
-
 		double * xSol = NULL;
 		xSol = new double[ lp->getNumCols() ];
-		lp->getX( xSol );
+		//lp->getX( xSol );
+      for (int i=0; i < lp->getNumCols(); i++)
+      {
+         xSol[i] = xS[i];
+      }
+
+      delete[] xS;
+		delete[] objN;
+		delete[] idxN;
+      delete[] idxUB;
+      delete[] bts;
+      delete[] valUB;
 
 		// Imprime Gap
 		ofstream outGaps;
@@ -5860,6 +5902,11 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		}
 		#endif
 
+      int *idxs = new int[lp->getNumCols()];
+      double *vals = new double[lp->getNumCols()];
+      BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()];
+      int nBds = 0;
+
 		#ifdef TATICO_COM_HORARIOS
 		VariableTaticoHash::iterator vit = vHashTatico.begin();
 		for ( ; vit != vHashTatico.end(); vit++ )
@@ -5875,14 +5922,18 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 				{
 					vHashLivresOriginais.insert( vit->second );
 
-					lp->chgUB(vit->second, 0.0);
+               idxs[nBds] = vit->second;
+               vals[nBds] = 0.0;
+               bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+               nBds++;
 				}
 			}
 		}
 		#endif
 
+      lp->chgBds(nBds,idxs,bds,vals);
+      lp->updateLP();
 		lp->setTimeLimit( 1e10 );
-		//lp->setMIPRelTol( 0.01 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
@@ -5890,7 +5941,6 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		lp->setSymetry(0);
 		lp->setCuts(3);
 		lp->setNumIntSols(1);	
-		lp->setPreSolve(OPT_TRUE);
 		lp->updateLP();
 
 		if( ! this->CARREGA_SOLUCAO )	
@@ -5905,29 +5955,47 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		// -------------------------------------------------------------------
 		// Volta as variaveis z_{i,d,cp} que estavam livres
          
+      nBds = 0;
+
 		for ( std::set< int >::iterator it = vHashLivresOriginais.begin();
 			  it != vHashLivresOriginais.end(); it++)
 		{
-			lp->chgUB(*it, 1.0);
+         idxs[nBds] = *it;
+         vals[nBds] = 1.0;
+         bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+         nBds++;
 		}
+
+      lp->chgBds(nBds,idxs,bds,vals);
+      lp->updateLP();
 
 		int tempoDeExecucao = retornaTempoDeExecucaoTatico( campusId, cjtAlunosId, prioridade );   
 
+#ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
 		lp->setTimeLimit( 7200 );
-		//lp->setMIPRelTol( 0.01 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
 		lp->setMIPEmphasis(4);
-	    //lp->setPolishAfterIntSol(1);
 	    lp->setPolishAfterNode(1);
 		lp->setSymetry(0);
 		lp->setCuts(2);
-	    //lp->setNoCuts();
-		lp->setPreSolve(OPT_TRUE);
 		lp->updateLP();
+#endif
+#ifdef SOLVER_GUROBI
+		lp->setNumIntSols(0);
+		lp->setTimeLimit( 10800 );
+		lp->setPreSolve(OPT_TRUE);
+		lp->setHeurFrequency(1.0);
+		lp->setMIPScreenLog( 4 );
+		lp->setMIPEmphasis(0);
+		lp->setSymetry(0);
+		lp->setCuts(-1);
+		lp->updateLP();
+#endif
 
+      lp->updateLP();
 		lp->writeProbLP( lpName );
    
 	    // -------------------------------------------------------------------
@@ -5953,6 +6021,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		}
 		#endif
 
+      nBds = 0;
 		#ifdef TATICO_COM_HORARIOS
 		vit = vHashTatico.begin();
 		for ( ; vit != vHashTatico.end(); vit++ )
@@ -5961,15 +6030,22 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 			if ( v.getType() != VariableTatico::V_SLACK_DEMANDA )
 			{            
-				lp->chgObj(vit->second,0.0); 
+            idxs[nBds] = vit->second;
+            vals[nBds] = 0.0;
+            nBds++;
 			}
 			else
 			{
+            idxs[nBds] = vit->second;
 				int nroAlunos = problemData->existeTurmaDiscCampus( v.getTurma(), v.getDisciplina()->getId(), campusId );
-				lp->chgObj(vit->second,nroAlunos);
+            vals[nBds] = nroAlunos;
+            nBds++;
 			}
 		}
 		#endif
+
+      lp->chgObj(nBds,idxs,vals);
+      lp->updateLP();
 
 		int *idxN = new int[lp->getNumCols()];
 
@@ -5978,24 +6054,14 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 			idxN[i] = i;
 		}
 
-		polishTatico(xS, 7200, 60, 25);
-
-		lp->setNumIntSols(0);
-		lp->setTimeLimit( 10800 );
-		//lp->setMIPRelTol( 0.01 );
-		lp->setPreSolve(OPT_TRUE);
-		lp->setHeurFrequency(1.0);
-		lp->setMIPScreenLog( 4 );
-		lp->setMIPEmphasis(0);
-		lp->setNodeLimit(100000000);
-		//lp->setPolishAfterIntSol(1);
-		lp->setPolishAfterNode(1);
-		lp->setSymetry(0);
-		lp->setCuts(2);
-		lp->setVarSel(4);
-		//lp->setNoCuts();
-		lp->setPreSolve(OPT_TRUE);
-		lp->updateLP();
+#ifndef TATICO_COM_HORARIOS
+      polishTatico(xS, 7200, 60, 25);
+#else
+      if ( prioridade == 1 )
+         polishTaticoHor(xS, 7200, 70, 15);
+      else
+         polishTaticoHor(xS, 7200, 70, 15);
+#endif
 
 		#ifndef TATICO_COM_HORARIOS
 		vit = vHash.begin();
@@ -6010,6 +6076,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		}
 		#endif
 
+      nBds = 0;
 		#ifdef TATICO_COM_HORARIOS
 		vit = vHashTatico.begin();
 		for ( ; vit != vHashTatico.end(); vit++ )
@@ -6018,16 +6085,22 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 			if (  v.getType() == VariableTatico::V_SLACK_DEMANDA && xS[vit->second] < 0.1 )
 			{
-				lp->chgUB(vit->second,0.0); 
+            idxs[nBds] = vit->second;
+            vals[nBds] = 0.0;
+            bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+            nBds++;
+				//lp->chgUB(vit->second,0.0); 
 			}
 		}
 		#endif
 
+      lp->chgBds(nBds,idxs,bds,vals);
 		lp->chgObj(lp->getNumCols(),idxN,objN);
+      lp->updateLP();
 
 		delete[] objN;
       
-
+#ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
 		//lp->setTimeLimit( tempoDeExecucao );
 		lp->setTimeLimit(7200);
@@ -6043,21 +6116,40 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		lp->setCuts(1);
 		lp->setPreSolve(OPT_TRUE);
 		lp->updateLP();
+#endif
+#ifdef SOLVER_GUROBI
+		lp->setNumIntSols(0);
+		lp->setTimeLimit(7200);
+		lp->setPreSolve(OPT_TRUE);
+		lp->setHeurFrequency(1.0);
+		lp->setMIPScreenLog( 4 );
+		lp->setPolishAfterTime(100000000);
+		lp->setPolishAfterIntSol(100000000);
+		lp->setMIPEmphasis(0);
+		lp->setSymetry(0);
+		lp->setCuts(1);
+		lp->updateLP();
+#endif
 
 		// GENERATES SOLUTION
-		polishTatico(xS,3600,50,25);
+      //polishTatico(xS,3600,50,25);
+      status = lp->optimize(METHOD_MIP);
 
 		double * xSol = NULL;
 		xSol = new double[ lp->getNumCols() ];
-		for (int i=0; i < lp->getNumCols(); i++)
-		{
-			xSol[i] = xS[i];
-		}
+      lp->getX(xSol);
+		//for (int i=0; i < lp->getNumCols(); i++)
+		//{
+	//		xSol[i] = xS[i];
+		//}
 		delete[] xS;
 
-		lp->setNumIntSols(1);
-		lp->copyMIPStartSol(lp->getNumCols(),idxN,xSol);
+		//lp->setNumIntSols(1);
+		//lp->copyMIPStartSol(lp->getNumCols(),idxN,xSol);
 		delete[] idxN;
+      delete[] idxs;
+      delete[] bds;
+      delete[] vals;
 
 		lp->optimize(METHOD_MIP);
 
@@ -9712,14 +9804,40 @@ int SolverMIP::solveOperacionalMIP()
    printf( "Total of Constraints: %i\n\n", constNum );
 #endif
 
-   lp->writeProbLP( "SolverOperacional" );
-
 #ifdef DEBUG
  //  lp->writeProbLP( "SolverOperacional" );
 #endif
 
-   map<int, double> cost;
    VariableOpHash::iterator vit;
+
+   vit = vHashOp.begin();
+
+   for (; vit != vHashOp.end(); vit++ )
+   {
+	   VariableOp v = vit->first;
+	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+	   {
+         lp->chgUB(vit->second,0.0);
+	   }
+   }
+
+   lp->setMIPScreenLog( 4 );
+   lp->setNumIntSols(1);
+
+   lp->optimize(METHOD_MIP);
+
+   vit = vHashOp.begin();
+
+   for (; vit != vHashOp.end(); vit++ )
+   {
+	   VariableOp v = vit->first;
+	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+	   {
+         lp->chgUB(vit->second,1.0);
+	   }
+   }
+
+   map<int, double> cost;
 
    vit = vHashOp.begin();
 
@@ -9731,9 +9849,18 @@ int SolverMIP::solveOperacionalMIP()
 		   cost[vit->second] = lp->getObj(vit->second);
 		   lp->chgObj(vit->second, 0.0);
 	   }
+      else
+      {
+         cost[vit->second] = lp->getObj(vit->second);
+         lp->chgObj(vit->second, cost[vit->second]/100000.0);
+      }
 
-	   //if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && !v.getProfessor()->eVirtual() )
-		//   lp->chgUB(vit->second, 0.0);
+      if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && !v.getProfessor()->eVirtual() )
+		   lp->chgUB(vit->second, 0.0);
+      else if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && v.getProfessor()->eVirtual() && v.getProfessor()->getTitulacaoId() != 1 )
+      {
+         lp->chgUB(vit->second, 0.0);
+      }
    }
 
    int status = 0;
@@ -9745,21 +9872,68 @@ int SolverMIP::solveOperacionalMIP()
 #endif
 
    //lp->setMIPRelTol( 0.01 );
-   lp->setMIPEmphasis(0);
+   lp->setMIPEmphasis(4);
    lp->setVarSel(4);
-   lp->setCuts(0);
+   lp->setNumIntSols(0);
+   //lp->setCuts(0);
+   lp->setNoCuts();
    lp->setMIPScreenLog( 4 );
    lp->setTimeLimit( 3600*6 );
    lp->setNodeLimit(3100);
-   lp->setPolishAfterNode( 3000 );
+   lp->setPolishAfterNode( 1 );
 
    lp->setPreSolve(OPT_TRUE);
+
+   lp->writeProbLP( "SolverOperacional" );
 
    status = lp->optimize( METHOD_MIP );
 
    double * x = new double[ lp->getNumCols() ];
-
    lp->getX( x );
+
+   /*FILE * fin = fopen( "solOpAtual.bin", "rb" );
+   if ( fin == NULL )
+   {
+      std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+         << "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
+   }
+   else
+   {
+      int nCols = 0;
+
+      fread( &nCols, sizeof( int ), 1, fin );
+
+      for ( int i = 0; i < nCols; i++ )
+      {
+         double auxR;
+         fread( &auxR, sizeof( double ), 1, fin );
+
+         x[ i ] = auxR;
+      }
+
+      fclose( fin );
+   }*/
+
+   /*FILE * fout2 = fopen( "solOpAtual.bin", "wb" );
+   if ( fout2 == NULL )
+   {
+      std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+         << "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
+   }
+   else
+   {
+      int nCols = lp->getNumCols();
+
+      fwrite( &nCols, sizeof( int ), 1, fout2 );
+      for ( int i = 0; i < lp->getNumCols(); i++ )
+      {
+         fwrite( &( x[ i ] ), sizeof( double ), 1, fout2 );
+      }
+
+      fclose( fout2 );
+   }*/
+
+   std::list<VariableOpHash::iterator> usedVars;
    vit = vHashOp.begin();
 
    for (; vit != vHashOp.end(); vit++ )
@@ -9770,17 +9944,84 @@ int SolverMIP::solveOperacionalMIP()
 	   else if(v.getType() == VariableOp::V_FOLGA_DEMANDA)
 		   lp->chgLB(vit->second, 1.0);
 
-	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && !v.getProfessor()->eVirtual() )
-		   lp->chgUB(vit->second, 1.0);
-
-	   if(v.getType() != VariableOp::V_FOLGA_DEMANDA)
-		   lp->chgObj(vit->second, cost[vit->second]);
+      if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && x[vit->second] >= 0.1 )
+         usedVars.push_back(vit);
+      else if (v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+         lp->chgUB(vit->second,0.0);
+      if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR )
+         lp->chgObj(vit->second, cost[vit->second]);
    }
+
+   vit = vHashOp.begin();
+
+   for (; vit != vHashOp.end(); vit++ )
+   {
+	   VariableOp v = vit->first;
+      if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+      {
+         for (std::list<VariableOpHash::iterator>::iterator itL = usedVars.begin();
+            itL != usedVars.end();
+            itL++)
+         {
+            VariableOpHash::iterator vit2 = *itL;
+
+            if ( vit2->first.getAula() == v.getAula() &&
+               vit2->first.getCampus() == v.getCampus() &&
+               vit2->first.getCurso() == v.getCurso() &&
+               vit2->first.getDia() == v.getDia() &&
+               vit2->first.getDisciplina() == v.getDisciplina() &&
+               vit2->first.getH1() == v.getH1() &&
+               vit2->first.getH2() == v.getH2() &&
+               vit2->first.getHorario() == v.getHorario() &&
+               vit2->first.getHorarioAula() == v.getHorarioAula() &&
+               vit2->first.getHorarioDiaD() == v.getHorarioDiaD() &&
+               vit2->first.getHorarioDiaD1() == v.getHorarioDiaD1() &&
+               vit2->first.getSala() == v.getSala() &&
+               vit2->first.getTurma() == v.getTurma() &&
+               vit2->first.getUnidade() == v.getUnidade() )
+            {
+               lp->chgUB(vit->second,1.0);
+            }
+         }
+      }
+   }
+
+   usedVars.clear();
 
    lp->setMIPEmphasis(0);
    lp->setCuts(5);
-   lp->setNodeLimit(1000);
+   lp->setNodeLimit(10000000000);
    lp->setPolishAfterNode(1);
+   lp->setTimeLimit(600);
+   status = lp->optimize( METHOD_MIP );
+
+   lp->getX( x );
+
+   vit = vHashOp.begin();
+
+   for (; vit != vHashOp.end(); vit++ )
+   {
+	   VariableOp v = vit->first;
+
+	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR )
+		   lp->chgUB(vit->second, 1.0);
+
+      if ( v.getType() == VariableOp::V_Y_PROF_DISCIPLINA )
+      {
+         if ( x[vit->second] > 0.1 )
+            lp->chgLB(vit->second,1.0);
+         else
+            lp->chgUB(vit->second,0.0);
+      }
+
+      lp->chgObj(vit->second, cost[vit->second]);
+   }
+
+   lp->setMIPEmphasis(0);
+   lp->setNoCuts();
+   lp->setTimeLimit(7200);
+   lp->setVarSel(4);
+   lp->setPolishAfterIntSol(1);
    status = lp->optimize( METHOD_MIP );
 
    lp->getX( x );
@@ -11379,14 +11620,12 @@ int SolverMIP::localBranching( double * xSol, double maxTime )
    return status;
 }
 
-void SolverMIP::polishTatico(double *xSol, double maxTime, int percIni, int percMin)
+int SolverMIP::localBranchingHor( double * xSol, double maxTime )
 {
    // Adiciona restrição de local branching
    int status = 0;
    int nIter = 0;
    int * idxSol = new int[ lp->getNumCols() ];
-   double *ubVars = new double[ lp->getNumCols() ];
-   double *lbVars = new double[ lp->getNumCols() ];
 
    for ( int i = 0; i < lp->getNumCols(); i++ )
    {
@@ -11395,12 +11634,10 @@ void SolverMIP::polishTatico(double *xSol, double maxTime, int percIni, int perc
 
    double objAtual = 100000000000.0;
    double okIter = true;
-   CPUTimer tempoPol;
 
-   tempoPol.reset();
-   tempoPol.start();
+   int k = -10;
 
-   /*FILE * fin = fopen( "solLBAtual.bin", "rb" );
+   FILE * fin = fopen( "solPolAtual.bin", "rb" );
    if ( fin == NULL )
    {
       std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
@@ -11421,7 +11658,136 @@ void SolverMIP::polishTatico(double *xSol, double maxTime, int percIni, int perc
       }
 
       fclose( fin );
-   }*/
+   }
+
+   int tempoIter = 600;
+   k = -3;
+
+   while (okIter)
+   {
+      VariableTaticoHash::iterator vit = vHashTatico.begin();
+
+      OPT_ROW nR( 50, OPT_ROW::GREATER, 0.0, "LOCBRANCH" );
+      double rhsLB = k;
+
+      while ( vit != vHashTatico.end() )
+      {
+         if ( vit->first.getType() == VariableTatico::V_ABERTURA )
+         {
+            if ( xSol[vit->second] > 0.1 )
+            {
+               rhsLB += 1.0;
+               nR.insert( vit->second,1.0 );
+            }
+            else
+            {
+               nR.insert( vit->second, -1.0 );
+            }
+         }
+
+         vit++;
+      }
+
+      nR.setRhs( rhsLB );
+
+      lp->addRow( nR );
+      lp->updateLP();
+      lp->setNodeLimit( 100000000 );
+      lp->setTimeLimit( tempoIter );
+      //lp->setMIPRelTol( 0.02 );
+      lp->setNodeLimit( 100000000 );
+      lp->setPolishAfterNode(1);
+      lp->setPolishAfterTime(100000000);
+      lp->setMIPEmphasis( 4 );
+      lp->setCuts(4);
+      //lp->setNoCuts();
+      lp->setVarSel(4);
+      lp->setHeurFrequency( 1.0 );
+      lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
+
+      status = lp->optimize( METHOD_MIP );
+
+      double objN = lp->getObjVal();
+
+      if ( fabs(objAtual-objN) < 100.0  )
+      {
+         lp->setNodeLimit(10000000);
+         lp->setPolishAfterNode(1);
+         lp->setTimeLimit( tempoIter );
+         status = lp->optimize( METHOD_MIP );
+
+         if ( k == -100 )
+            k = -50;
+
+         if ( k == -150 )
+            k = -100;
+      }
+
+      lp->getX( xSol );
+
+      FILE * fout = fopen( "solLBAtual.bin", "wb" );
+		if ( fout == NULL )
+		{
+			std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+					<< "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
+		}
+		else
+		{
+			int nCols = lp->getNumCols();
+
+			fwrite( &nCols, sizeof( int ), 1, fout );
+			for ( int i = 0; i < lp->getNumCols(); i++ )
+			{
+				fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
+			}
+
+			fclose( fout );
+		}
+
+      if ( fabs(objN-objAtual) < 0.0001 && k >= -10 )
+      {
+         okIter = false;
+      }
+      else if (fabs(objN-objAtual) < 0.0001 && k < -10 )
+      {
+         k += 10;
+         tempoIter += 300;
+      }
+
+      objAtual = objN;
+
+      int * idxs = new int[ 1 ];
+      idxs[ 0 ] = lp->getNumRows() - 1;
+      lp->delSetRows( 1, idxs );
+      lp->updateLP();
+      delete [] idxs;
+   }
+
+   delete [] idxSol;
+
+   return status;
+}
+
+void SolverMIP::polishTatico(double *xSol, double maxTime, int percIni, int percMin)
+{
+   // Adiciona restrição de local branching
+   int status = 0;
+   int nIter = 0;
+   int * idxSol = new int[ lp->getNumCols() ];
+   double *ubVars = new double[ lp->getNumCols() ];
+   double *lbVars = new double[ lp->getNumCols() ];
+
+   for ( int i = 0; i < lp->getNumCols(); i++ )
+   {
+      idxSol[ i ] = i;
+   }
+
+   double objAtual = 100000000000.0;
+   double okIter = true;
+   CPUTimer tempoPol;
+
+   tempoPol.reset();
+   tempoPol.start();
 
    srand(123);
 
@@ -11590,6 +11956,285 @@ void SolverMIP::polishTatico(double *xSol, double maxTime, int percIni, int perc
    delete [] lbVars;
 }
 
+void SolverMIP::polishTaticoHor(double *xSol, double maxTime, int percIni, int percMin)
+{
+   // Adiciona restrição de local branching
+   int status = 0;
+   int nIter = 0;
+   int * idxSol = new int[ lp->getNumCols() ];
+   double *ubVars = new double[ lp->getNumCols() ];
+   double *lbVars = new double[ lp->getNumCols() ];
+
+   for ( int i = 0; i < lp->getNumCols(); i++ )
+   {
+      idxSol[ i ] = i;
+   }
+
+   double objAtual = 100000000000.0;
+   double okIter = true;
+   CPUTimer tempoPol;
+
+   tempoPol.reset();
+   tempoPol.start();
+
+   srand(123);
+
+   lp->getUB(0,lp->getNumCols()-1,ubVars);
+   lp->getLB(0,lp->getNumCols()-1,lbVars);
+
+   int tempoIter = 100;
+   int perc = percIni;
+   int *idxs = new int[lp->getNumCols()*2];
+   double *vals = new double[lp->getNumCols()*2];
+   BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
+   int nBds = 0;
+
+   int fixType = 1;
+
+   while (okIter)
+   {
+      VariableTaticoHash::iterator vit = vHashTatico.begin();
+
+      // Seleciona turmas e disciplinas para fixar
+      std::set<std::pair<int,Disciplina*> > paraFixarUm;
+      std::set<std::pair<int,Disciplina*> > paraFixarZero;
+      std::map<Trio<int,Disciplina*,int>,int > paraFixarDia;
+
+      if ( fixType == 1 )
+      {
+         nBds = 0;
+         while ( vit != vHashTatico.end() )
+         {
+            if ( vit->first.getType() == VariableTatico::V_ABERTURA )
+            {
+               if ( rand() % 100 >= perc  )
+               {
+                  vit++;
+                  continue;
+               }
+
+               if (xSol[vit->second] > 0.1 )
+               {
+                  idxs[nBds] = vit->second;
+                  vals[nBds] = (int)(xSol[vit->second]+0.5);
+                  bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+                  nBds++;
+                  std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
+                  paraFixarUm.insert(auxPair);
+               }
+               else
+               {
+                  idxs[nBds] = vit->second;
+                  vals[nBds] = 0.0;
+                  bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+                  nBds++;
+                  std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
+                  paraFixarZero.insert(auxPair);
+               }
+            }
+
+            vit++;
+         }
+         lp->chgBds(nBds,idxs,bds,vals);
+         lp->updateLP();
+      }
+
+      vit = vHashTatico.begin();
+
+      nBds = 0;
+      while ( vit != vHashTatico.end() )
+      {
+         if ( vit->first.getType() == VariableTatico::V_CREDITOS )
+         {
+            if ( fixType == 1 )
+            {
+               std::pair<int,Disciplina*> auxPair(vit->first.getTurma(),vit->first.getDisciplina());
+               if ( paraFixarUm.find(auxPair) != paraFixarUm.end() )
+               {
+                  if ( xSol[vit->second] > 0.1 )
+                  {
+                     //lp->chgLB(vit->second,(int)(xSol[vit->second]+0.5));
+                     //lp->chgUB(vit->second,(int)(xSol[vit->second]+0.5));
+                     idxs[nBds] = vit->second;
+                     vals[nBds] = (int)(xSol[vit->second]+0.5);
+                     bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+                     nBds++;
+                     idxs[nBds] = vit->second;
+                     vals[nBds] = (int)(xSol[vit->second]+0.5);
+                     bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+                     nBds++;
+                  }
+                  else
+                  {
+                     idxs[nBds] = vit->second;
+                     vals[nBds] = 0.0;
+                     bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+                     nBds++;
+                     //lp->chgUB(vit->second,0.0);
+                  }
+               }
+               else if ( paraFixarZero.find(auxPair) != paraFixarZero.end() )
+               {
+                  idxs[nBds] = vit->second;
+                  vals[nBds] = 0.0;
+                  bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+                  nBds++;
+                  //lp->chgUB(vit->second,0.0);
+               }
+            }
+            else
+            {
+               if ( rand() % 100 >= perc  )
+               {
+                  vit++;
+                  continue;
+               }
+
+               if ( xSol[vit->second] > 0.1 )
+               {
+                  idxs[nBds] = vit->second;
+                  vals[nBds] = (int)(xSol[vit->second]+0.5);
+                  bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+                  nBds++;
+                  idxs[nBds] = vit->second;
+                  vals[nBds] = (int)(xSol[vit->second]+0.5);
+                  bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+                  nBds++;
+                  //lp->chgLB(vit->second,(int)(xSol[vit->second]+0.5));
+                  //lp->chgUB(vit->second,(int)(xSol[vit->second]+0.5));
+               }
+               else
+               {
+                  idxs[nBds] = vit->second;
+                  vals[nBds] = 0.0;
+                  bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+                  nBds++;
+                  lp->chgUB(vit->second,0.0);
+               }
+            }
+         }
+
+         vit++;
+      }
+
+      lp->chgBds(nBds,idxs,bds,vals);
+      lp->updateLP();
+
+#ifdef SOLVER_CPLEX
+      lp->updateLP();
+      lp->setNodeLimit( 100000000 );
+      lp->setTimeLimit( tempoIter );
+      lp->setMIPRelTol( 0.01 );
+      lp->setPolishAfterNode(1);
+      lp->setPolishAfterTime(100000000);
+      lp->setMIPEmphasis( 4 );
+      lp->setCuts(0);
+      if ( perc < percIni )
+         lp->setCuts(1);
+      lp->setNoCuts();
+      //lp->setNoCuts();
+      lp->setVarSel(4);
+      lp->setNodeLimit(200);
+      lp->setHeurFrequency( 1.0 );
+#endif
+#ifdef SOLVER_GUROBI
+      lp->updateLP();
+      lp->setNodeLimit( 100000000 );
+      lp->setTimeLimit( tempoIter );
+      lp->setMIPRelTol( 0.01 );
+      lp->setMIPEmphasis( 0 );
+      //lp->setNoCuts();
+      lp->setCuts(4);
+      lp->setVarSel(4);
+      lp->setNodeLimit(1000000000);
+      lp->setHeurFrequency( 1.0 );
+      lp->updateLP();
+#endif
+      lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
+      lp->updateLP();
+
+      status = lp->optimize( METHOD_MIP );
+
+      double objN = lp->getObjVal();
+
+      lp->getX( xSol );
+
+      if ( fabs(objN-objAtual) < 0.0001 && perc < percMin )
+      {
+         if ( fixType == 2 )
+         {
+            okIter = false;
+            perc -= 5;
+            fixType = 1;
+         }
+         else
+         {
+            fixType = 2;
+         }
+      }
+
+      if ( fabs(objN-objAtual) < 0.0001 && perc >= percMin)
+      {
+         if ( fixType == 2 )
+         {
+            perc -= 5;
+            lp->setCuts(1);
+            tempoIter += 20;
+            fixType = 1;
+         }
+         else
+         {
+            fixType = 2;
+         }
+      }
+
+      objAtual = objN;
+
+      tempoPol.stop();
+      double tempoAtual = tempoPol.getCronoTotalSecs();
+      tempoPol.start();
+      if ( tempoAtual >= maxTime )
+      {
+         okIter = false;
+         tempoPol.stop();
+      }
+
+      // Volta bounds
+      vit = vHashTatico.begin();
+
+      nBds = 0;
+      while ( vit != vHashTatico.end() )
+      {
+         if ( vit->first.getType() == VariableTatico::V_CREDITOS || vit->first.getType() == VariableTatico::V_ABERTURA )
+         {
+            idxs[nBds] = vit->second;
+            vals[nBds] = ubVars[vit->second];
+            bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+            nBds++;
+            idxs[nBds] = vit->second;
+            vals[nBds] = lbVars[vit->second];
+            bds[nBds] = BOUNDTYPE::BOUND_LOWER;
+            nBds++;
+            //lp->chgLB(vit->second,lbVars[vit->second]);
+            //lp->chgUB(vit->second,ubVars[vit->second]);
+         }
+         vit++;
+      }
+      lp->chgBds(nBds,idxs,bds,vals);
+      lp->updateLP();
+
+      lp->setPolishAfterNode(1);
+      lp->setMIPRelTol( 0.0 );
+   }
+
+   delete [] idxSol;
+   delete [] ubVars;
+   delete [] lbVars;
+   delete [] idxs;
+   delete [] vals;
+   delete [] bds;
+}
+
 int SolverMIP::localBranchingPre( double * xSol, double maxTime )
 {
    // Adiciona restrição de local branching
@@ -11755,7 +12400,6 @@ int SolverMIP::localBranchingPre( double * xSol, double maxTime )
 void SolverMIP::polishPreTatico(double *xSol, double maxTime, int percIni, int percMin)
 {
    int status = 0;
-   int nIter = 0;
    int * idxSol = new int[ lp->getNumCols() ];
    double *ubVars = new double[ lp->getNumCols() ];
    double *lbVars = new double[ lp->getNumCols() ];
@@ -11772,29 +12416,6 @@ void SolverMIP::polishPreTatico(double *xSol, double maxTime, int percIni, int p
    tempoPol.reset();
    tempoPol.start();
 
-   /*FILE * fin = fopen( "solLBAtual.bin", "rb" );
-   if ( fin == NULL )
-   {
-      std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
-         << "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
-   }
-   else
-   {
-      int nCols = 0;
-
-      fread( &nCols, sizeof( int ), 1, fin );
-
-      for ( int i = 0; i < nCols; i++ )
-      {
-         double auxR;
-         fread( &auxR, sizeof( double ), 1, fin );
-
-         xSol[ i ] = auxR;
-      }
-
-      fclose( fin );
-   }*/
-
    srand(123);
 
    lp->getUB(0,lp->getNumCols()-1,ubVars);
@@ -11803,12 +12424,20 @@ void SolverMIP::polishPreTatico(double *xSol, double maxTime, int percIni, int p
    int tempoIter = 300;
    int perc = percIni;
 
+   int nIter = 1;
+
+   int *idxBds = new int[lp->getNumCols()*2];
+   double *valBds = new double[lp->getNumCols()*2];
+   BOUNDTYPE *bts = new BOUNDTYPE[lp->getNumCols()*2];
+   int nChgBds = 0;
+
    while (okIter)
    {
       VariablePreHash::iterator vit = vHashPre.begin();
 
       vit = vHashPre.begin();
 
+      nChgBds = 0;
       while ( vit != vHashPre.end() )
       {
          if ( vit->first.getType() == VariablePre::V_PRE_OFERECIMENTO )
@@ -11821,29 +12450,52 @@ void SolverMIP::polishPreTatico(double *xSol, double maxTime, int percIni, int p
 
             if ( xSol[vit->second] > 0.1 )
             {
-               lp->chgLB(vit->second,(int)(xSol[vit->second]+0.5));
+               idxBds[nChgBds] = vit->second;
+               valBds[nChgBds] = (int)(xSol[vit->second]+0.5);
+               bts[nChgBds] = BOUNDTYPE::BOUND_LOWER;
+               nChgBds++;
+               //lp->chgLB(vit->second,(int)(xSol[vit->second]+0.5));
             }
             else
             {
-               lp->chgUB(vit->second,0.0);
+               idxBds[nChgBds] = vit->second;
+               valBds[nChgBds] = 0.0;
+               bts[nChgBds] = BOUNDTYPE::BOUND_UPPER;
+               nChgBds++;
+               //lp->chgUB(vit->second,0.0);
             }
          }
 
          vit++;
       }
 
+      lp->chgBds(nChgBds,idxBds,bts,valBds);
+
+#ifdef SOLVER_CPLEX
       lp->updateLP();
       lp->setNodeLimit( 100000000 );
       lp->setTimeLimit( tempoIter );
-      //lp->setMIPRelTol( 0.02 );
       lp->setPolishAfterNode(1);
       lp->setPolishAfterTime(100000000);
       lp->setMIPEmphasis( 4 );
       lp->setCuts(4);
-      //lp->setNoCuts();
       lp->setVarSel(4);
       lp->setHeurFrequency( 1.0 );
       lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
+      lp->updateLP();
+#endif
+
+#ifdef SOLVER_GUROBI
+      lp->updateLP();
+      lp->setNodeLimit( 100000000 );
+      lp->setTimeLimit( tempoIter );
+      lp->setPolishAfterTime(100000000);
+      lp->setMIPEmphasis( 0 );
+      lp->setCuts(4);
+      lp->setHeurFrequency( 1.0 );
+      lp->copyMIPStartSol( lp->getNumCols(), idxSol, xSol );
+      lp->updateLP();
+#endif
 
       status = lp->optimize( METHOD_MIP );
 
@@ -11851,37 +12503,31 @@ void SolverMIP::polishPreTatico(double *xSol, double maxTime, int percIni, int p
 
       lp->getX( xSol );
 
-      FILE * fout = fopen( "solLBAtual.bin", "wb" );
-		if ( fout == NULL )
-		{
-			std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
-					<< "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
-		}
-		else
-		{
-			int nCols = lp->getNumCols();
-
-			fwrite( &nCols, sizeof( int ), 1, fout );
-			for ( int i = 0; i < lp->getNumCols(); i++ )
-			{
-				fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
-			}
-
-			fclose( fout );
-		}
-
-      //okIter = false;
-
       if ( fabs(objN-objAtual) < 0.0001 && perc < percMin )
       {
-         okIter = false;
-         perc -= 5;
+         if ( nIter == 2 )
+         {
+            okIter = false;
+            perc -= 5;
+         }
+         else
+         {
+            perc -= 5;
+         }
       }
 
       if ( fabs(objN-objAtual) < 0.0001 && perc >= percMin)
       {
          perc -= 5;
       }
+
+      if ( perc < percMin && nIter == 1 )
+      {
+         nIter++;
+      }
+
+      if ( objN < 0.0001 )
+         okIter = false;
 
       objAtual = objN;
 
@@ -11896,21 +12542,35 @@ void SolverMIP::polishPreTatico(double *xSol, double maxTime, int percIni, int p
 
       // Volta bounds
       vit = vHashPre.begin();
+      nChgBds = 0;
 
       while ( vit != vHashPre.end() )
       {
          if ( vit->first.getType() == VariablePre::V_PRE_OFERECIMENTO )
          {
-            lp->chgLB(vit->second,lbVars[vit->second]);
-            lp->chgUB(vit->second,ubVars[vit->second]);
+            idxBds[nChgBds] = vit->second;
+            valBds[nChgBds] = lbVars[vit->second];
+            bts[nChgBds] = BOUNDTYPE::BOUND_LOWER;
+            nChgBds++;
+            idxBds[nChgBds] = vit->second;
+            valBds[nChgBds] = ubVars[vit->second];
+            bts[nChgBds] = BOUNDTYPE::BOUND_UPPER;
+            nChgBds++;
+            //lp->chgLB(vit->second,lbVars[vit->second]);
+            //lp->chgUB(vit->second,ubVars[vit->second]);
          }
          vit++;
       }
+      lp->chgBds(nChgBds,idxBds,bts,valBds);
+      lp->updateLP();
    }
 
    delete [] idxSol;
    delete [] ubVars;
    delete [] lbVars;
+   delete [] idxBds;
+   delete [] valBds;
+   delete [] bts;
 }
 
 void SolverMIP::getSolution( ProblemSolution * problem_solution )
@@ -27372,6 +28032,10 @@ int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
 	if(!campus)
 		return 0;
 
+   std::vector<int> idxC;
+   std::vector<int> idxR;
+   std::vector<double> valC;
+
 	vit = vHashTatico.begin();
 	while(vit != vHashTatico.end())
 	{
@@ -27418,7 +28082,10 @@ int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
 			else
 			{
 				int NCH = v.getDisciplina()->getCalendario()->retornaNroCreditosEntreHorarios( v.getHorarioAulaInicial(), v.getHorarioAulaFinal());
-				lp->chgCoef(cit->second, vit->second,  NCH);
+            idxC.push_back(vit->second);
+            idxR.push_back(cit->second);
+            valC.push_back(NCH);
+				//lp->chgCoef(cit->second, vit->second,  NCH);
 			}
 		}
 		else
@@ -27452,13 +28119,24 @@ int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
 			}
 			else
 			{
-				lp->chgCoef(cit->second, vit->second,  -( v.getDisciplina()->getCredPraticos() + v.getDisciplina()->getCredTeoricos() ));
+            idxC.push_back(vit->second);
+            idxR.push_back(cit->second);
+            valC.push_back(-( v.getDisciplina()->getCredPraticos() + v.getDisciplina()->getCredTeoricos() ));
+				//lp->chgCoef(cit->second, vit->second,  -( v.getDisciplina()->getCredPraticos() + v.getDisciplina()->getCredTeoricos() ));
 			}
 		}
 
 
 		vit++;
 	}
+
+   lp->updateLP();
+   lp->chgCoefList(idxC.size(),idxR.data(),idxC.data(),valC.data());
+   lp->updateLP();
+
+   idxC.clear();
+   idxR.clear();
+   valC.clear();
 
 	return restricoes;
 }
@@ -27489,6 +28167,10 @@ int SolverMIP::criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId )
 
 	if(!campus)
 		return 0;
+
+   std::vector<int> idxC;
+   std::vector<int> idxR;
+   std::vector<double> valC;
 
 	vit = vHashTatico.begin();
 	while(vit != vHashTatico.end())
@@ -27547,13 +28229,24 @@ int SolverMIP::criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId )
 				}
 				else
 				{
-					lp->chgCoef(cit->second, vit->second,  1.0);
+               idxC.push_back(vit->second);
+               idxR.push_back(cit->second);
+               valC.push_back(1.0);
+					//lp->chgCoef(cit->second, vit->second,  1.0);
 				}
 			}
 		}
 
 		vit++;
 	}
+
+   lp->updateLP();
+   lp->chgCoefList(idxC.size(),idxR.data(),idxC.data(),valC.data());
+   lp->updateLP();
+
+   idxC.clear();
+   idxR.clear();
+   valC.clear();
 
 	return restricoes;
 
@@ -27573,6 +28266,9 @@ int SolverMIP::criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId )
 	ConstraintTaticoHash::iterator cit;
 
 	Campus *campus = NULL;
+   std::vector<int> idxC;
+   std::vector<int> idxR;
+   std::vector<double> valC;
 
 	ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
 	{
@@ -27616,7 +28312,6 @@ int SolverMIP::criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId )
 
 		cit = cHashTatico.find(c);
 
-		cit = cHashTatico.find(c);
 		if(cit == cHashTatico.end())
 		{
 			sprintf( name, "%s", c.toString().c_str() );
@@ -27630,11 +28325,23 @@ int SolverMIP::criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId )
 		}
 		else
 		{
-			lp->chgCoef(cit->second, vit->second,  1.0);
+         idxC.push_back(vit->second);
+         idxR.push_back(cit->second);
+         valC.push_back(1.0);
+
+			//lp->chgCoef(cit->second, vit->second,  1.0);
 		}
 
 		vit++;
 	}
+
+   lp->updateLP();
+   lp->chgCoefList(idxC.size(),idxR.data(),idxC.data(),valC.data());
+   lp->updateLP();
+
+   idxC.clear();
+   idxR.clear();
+   valC.clear();
 
 	return restricoes;
 }
@@ -29381,33 +30088,50 @@ int SolverMIP::criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId )
    if(!campus)
 	   return 0;
 
+   std::map<Trio<int,Disciplina*,int>,std::list<VariableTaticoHash::iterator> > varsDiaDiscTurma;
+
+   VariableTaticoHash::iterator vit;
+   vit = vHashTatico.begin();
+   while(vit != vHashTatico.end())
+   {
+      if(vit->first.getType() == VariableTatico::V_CREDITOS)
+      {
+         VariableTatico v = vit->first;
+
+         Trio<int,Disciplina*,int> auxTrio(v.getDia(),v.getDisciplina(),v.getTurma());
+
+         varsDiaDiscTurma[auxTrio].push_back(vit);
+      }
+      vit++;
+   }
+
    GGroup< int > disciplinasIds = problemData->cp_discs[campusId];
 
    // Disciplina 1
    ITERA_GGROUP_N_PT( itDisc1, disciplinasIds, int )
    {
-	   Disciplina *disc1 = problemData->refDisciplinas[ *itDisc1 ];
-		   
-	   if ( ! problemData->haDemandaDiscNoCampus( disc1->getId(), campusId ) )
-		   continue;
+      Disciplina *disc1 = problemData->refDisciplinas[ *itDisc1 ];
 
-	   // Turma 1
-	   for ( int turma1 = 0; turma1 < disc1->getNumTurmas(); turma1++ )
-	   {
-		   // Disciplina 2
-		   ITERA_GGROUP_INIC_N_PT( itDisc2, itDisc1, disciplinasIds, int )
-		   {
-			   if ( itDisc2 == itDisc1 )
-				   continue;
+      if ( ! problemData->haDemandaDiscNoCampus( disc1->getId(), campusId ) )
+         continue;
 
-			   Disciplina *disc2 = problemData->refDisciplinas[ *itDisc2 ];
+      // Disciplina 2
+      ITERA_GGROUP_INIC_N_PT( itDisc2, itDisc1, disciplinasIds, int )
+      {
+         if ( itDisc2 == itDisc1 )
+            continue;
 
-			   if ( ! problemData->haDemandaDiscNoCampus( disc2->getId(), campusId ) )
-					continue;
+         Disciplina *disc2 = problemData->refDisciplinas[ *itDisc2 ];
 
-			   // Turma 2
-			   for ( int turma2 = 0; turma2 < disc2->getNumTurmas(); turma2++ )
-			   {
+         if ( ! problemData->haDemandaDiscNoCampus( disc2->getId(), campusId ) )
+            continue;
+
+         // Turma 1
+         for ( int turma1 = 0; turma1 < disc1->getNumTurmas(); turma1++ )
+         {
+            // Turma 2
+            for ( int turma2 = 0; turma2 < disc2->getNumTurmas(); turma2++ )
+            {
 				    // Restrição só para as turmas com alunos em comum
 				    GGroup<Aluno*> alunosEmComum = problemData->alunosEmComum( turma1, disc1, turma2, disc2, campus );
 					int nAlunosComuns = alunosEmComum.size();
@@ -29448,68 +30172,115 @@ int SolverMIP::criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId )
 						// Para cada horario
 						ITERA_GGROUP( itHor, horarios, HorarioAula )
 						{
-							HorarioAula* h = *itHor;				   
+							HorarioAula* h = *itHor;			
 						
 							// Seleciona variaveis
-							VariableTaticoHash::iterator vit;
-							vit = vHashTatico.begin();
-							while(vit != vHashTatico.end())
+                     Trio<int,Disciplina*,int> auxTrio(dia,disc1,turma1);
+
+							std::list<VariableTaticoHash::iterator>::iterator lit;
+							lit = varsDiaDiscTurma[auxTrio].begin();
+							while(lit != varsDiaDiscTurma[auxTrio].end())
 							{
-								if(vit->first.getType() == VariableTatico::V_CREDITOS)
-								{
-									VariableTatico v = vit->first;
+                        VariableTaticoHash::iterator vit = *lit;
+                        VariableTatico v = vit->first;
+								
+                        HorarioAula *hi = v.getHorarioAulaInicial();
+                        HorarioAula *hf = v.getHorarioAulaFinal();
 
-									if( ( ( v.getDisciplina()->getId() == disc1->getId() &&
-									        v.getTurma() == turma1 ) ||
-									      ( v.getDisciplina()->getId() == disc2->getId() &&
-									        v.getTurma() == turma2 ) ) &&
-										    v.getDia() == dia )
-									{
-										HorarioAula *hi = v.getHorarioAulaInicial();
-										HorarioAula *hf = v.getHorarioAulaFinal();
-										
-										DateTime inicio = hi->getInicio();
-										DateTime fim = hf->getInicio();
-										fim.addMinutes( hf->getTempoAula() );
-				   
-										// ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
+                        DateTime inicio = hi->getInicio();
+                        DateTime fim = hf->getInicio();
+                        fim.addMinutes( hf->getTempoAula() );
 
-										if ( ( inicio <= h->getInicio() ) && ( fim > h->getInicio() ) )
-										{
-											c.reset();
-											c.setType( ConstraintTatico::C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO );
-											c.setCampus( campus );
-											c.setDia( dia );
-											c.setHorarioAula( h );
-											c.setDisciplina1( disc1 );
-											c.setDisciplina2( disc2 );
-											c.setTurma1( turma1 );
-											c.setTurma2( turma2 );
+                        // ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
 
-											cit = cHashTatico.find(c);
-											if(cit == cHashTatico.end())
-											{
-												int nnz = 5; // estima numero de horarios
+                        if ( ( inicio <= h->getInicio() ) && ( fim > h->getInicio() ) )
+                        {
+                           c.reset();
+                           c.setType( ConstraintTatico::C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO );
+                           c.setCampus( campus );
+                           c.setDia( dia );
+                           c.setHorarioAula( h );
+                           c.setDisciplina1( disc1 );
+                           c.setDisciplina2( disc2 );
+                           c.setTurma1( turma1 );
+                           c.setTurma2( turma2 );
 
-												sprintf( name, "%s", c.toString().c_str() );
-												OPT_ROW row( nnz, OPT_ROW::LESS , 1.0 , name );
+                           cit = cHashTatico.find(c);
+                           if(cit == cHashTatico.end())
+                           {
+                              int nnz = 5; // estima numero de horarios
 
-												row.insert( vit->second, 1.0 );
+                              sprintf( name, "%s", c.toString().c_str() );
+                              OPT_ROW row( nnz, OPT_ROW::LESS , 1.0 , name );
 
-												cHashTatico[ c ] = lp->getNumRows();
+                              row.insert( vit->second, 1.0 );
 
-												lp->addRow( row );
-												restricoes++;
-											}
-											else
-											{
-												lp->chgCoef(cit->second, vit->second, 1.0);
-											}
-										}									
-									}
-								}
+                              cHashTatico[ c ] = lp->getNumRows();
 
-								vit++;
+                              lp->addRow( row );
+                              restricoes++;
+                           }
+                           else
+                           {
+                              lp->chgCoef(cit->second, vit->second, 1.0);
+                           }
+                        }									
+
+								lit++;
+							}
+
+                     // Seleciona variaveis
+                     Trio<int,Disciplina*,int> auxTrio2(dia,disc2,turma2);
+
+							lit = varsDiaDiscTurma[auxTrio2].begin();
+							while(lit != varsDiaDiscTurma[auxTrio2].end())
+							{
+                        VariableTaticoHash::iterator vit = *lit;
+                        VariableTatico v = vit->first;
+								
+                        HorarioAula *hi = v.getHorarioAulaInicial();
+                        HorarioAula *hf = v.getHorarioAulaFinal();
+
+                        DateTime inicio = hi->getInicio();
+                        DateTime fim = hf->getInicio();
+                        fim.addMinutes( hf->getTempoAula() );
+
+                        // ---- Só insere variaveis com horarios (hi,hf) que possuem interseção com h
+
+                        if ( ( inicio <= h->getInicio() ) && ( fim > h->getInicio() ) )
+                        {
+                           c.reset();
+                           c.setType( ConstraintTatico::C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO );
+                           c.setCampus( campus );
+                           c.setDia( dia );
+                           c.setHorarioAula( h );
+                           c.setDisciplina1( disc1 );
+                           c.setDisciplina2( disc2 );
+                           c.setTurma1( turma1 );
+                           c.setTurma2( turma2 );
+
+                           cit = cHashTatico.find(c);
+                           if(cit == cHashTatico.end())
+                           {
+                              int nnz = 5; // estima numero de horarios
+
+                              sprintf( name, "%s", c.toString().c_str() );
+                              OPT_ROW row( nnz, OPT_ROW::LESS , 1.0 , name );
+
+                              row.insert( vit->second, 1.0 );
+
+                              cHashTatico[ c ] = lp->getNumRows();
+
+                              lp->addRow( row );
+                              restricoes++;
+                           }
+                           else
+                           {
+                              lp->chgCoef(cit->second, vit->second, 1.0);
+                           }
+                        }									
+
+								lit++;
 							}
 						}
 					}
@@ -51251,6 +52022,7 @@ void SolverMIP::chgCoeffList(
    }
 
    lp->chgCoefList( (int) cL.size(), rList, cList, vList );
+   lp->updateLP();
 
    delete [] rList;
    delete [] cList;
