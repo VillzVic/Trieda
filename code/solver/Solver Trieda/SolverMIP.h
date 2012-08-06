@@ -522,7 +522,7 @@ public:
    int criaVariavelFolgaCargaHorariaMinimaProfessor( void );
    int criaVariavelFolgaCargaHorariaMinimaProfessorSemana( void );
    int criaVariavelFolgaCargaHorariaMaximaProfessorSemana( void );
-   int criaVariavelGapsProfessores( void );
+   int criaVariavelGapsProfessores( void );	// NÃO ESTÁ SENDO MAIS USADA, A DELETAR
    int criaVariavelFolgaDemanda( void );
    int criaVariavelFolgaDisciplinaTurmaHorario( void );
    int criaVariavelProfessorDiaHorarioIF();

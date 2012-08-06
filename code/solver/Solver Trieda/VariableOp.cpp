@@ -243,11 +243,11 @@ std::string VariableOp::toString()
    switch ( type )
    {
      case V_X_PROF_AULA_HOR:
-        str << "X"; break;
+        str << "x"; break;
      case V_Y_PROF_DISCIPLINA:
-        str << "Y"; break;
+        str << "y"; break;
      case V_Z_DISCIPLINA_HOR:
-        str << "Z"; break;
+        str << "z"; break;
      case V_F_FIX_PROF_DISC_SALA_DIA_HOR:
         str << "F_FIX_PROF_DISC_SALA_DIA_HOR"; break;
      case V_F_FIX_PROF_DISC_DIA_HOR:
@@ -259,49 +259,49 @@ std::string VariableOp::toString()
       case V_F_FIX_PROF_SALA:
         str << "F_FIX_PROF_SALA"; break;
       case V_PROF_CURSO:
-        str << "W"; break;
+        str << "w"; break;
       case V_F_MIN_MEST_CURSO:
-        str << "FMM"; break;
+        str << "fmm"; break;
       case V_F_MIN_DOUT_CURSO:
-        str << "FMD"; break;
+        str << "fmd"; break;
       case V_F_CARGA_HOR_MIN_PROF:
-        str << "V_F_CARGA_HOR_MIN_PROF"; break;
+        str << "fchmp"; break;
       case V_F_CARGA_HOR_MIN_PROF_SEMANA:
-        str << "V_F_CARGA_HOR_MIN_PROF_SEMANA"; break;
+        str << "fchip"; break;
       case V_F_CARGA_HOR_MAX_PROF_SEMANA:
-        str << "V_F_CARGA_HOR_MAX_PROF_SEMANA"; break;
+        str << "fchsp"; break;
       case V_DIAS_PROF_MINISTRA_AULAS:
-        str << "V_DIAS_PROF_MINISTRA_AULAS"; break;
-      case V_CUSTO_CORPO_DOCENTE:
-        str << "V_CUSTO_CORPO_DOCENTE"; break;
-      case V_MAX_DISC_PROF_CURSO:
-        str << "V_MAX_DISC_PROF_CURSO"; break;
+        str << "pt"; break;
+      case V_CUSTO_CORPO_DOCENTE: // NÃO ESTÁ SENDO MAIS USADA; PODE DELETAR SE FOR SUFICIENTE O CUSTO EM Y
+        str << "ccd"; break;
+      case V_DISC_PROF_CURSO:
+        str << "dpc"; break;
       case V_F_MAX_DISC_PROF_CURSO:
-        str << "V_F_MAX_DISC_PROF_CURSO"; break;
-      case V_AVALIACAO_CORPO_DOCENTE:
-        str << "V_AVALIACAO_CORPO_DOCENTE"; break;
+        str << "fmdpc"; break;
+      case V_AVALIACAO_CORPO_DOCENTE:// NÃO ESTÁ SENDO MAIS USADA; PODE DELETAR SE FOR SUFICIENTE O CUSTO EM Y
+        str << "acd"; break; 
       case V_F_ULTIMA_PRIMEIRA_AULA_PROF:
-        str << "V_F_ULTIMA_PRIMEIRA_AULA_PROF"; break;
-      case V_GAPS_PROFESSORES:
-        str << "V_GAPS_PROFESSORES"; break;		
+        str << "fupap"; break;
+      case V_GAPS_PROFESSORES:  // NÃO ESTÁ SENDO MAIS USADA, A DELETAR
+        str << "gp"; break;			
 	  case V_FOLGA_DEMANDA:
-        str << "V_FOLGA_DEMANDA"; break;
+        str << "fd"; break;
 	  case V_FOLGA_DISCIPLINA_HOR:
-        str << "V_FOLGA_DISCIPLINA_HOR"; break;
+        str << "fh"; break;
 	  case V_HI_PROFESSORES:
-        str << "V_HI_PROFESSORES"; break;
+        str << "hip"; break;
 	  case V_HF_PROFESSORES:
-        str << "V_HF_PROFESSORES"; break;		
+        str << "hfp"; break;		
   	  case V_NRO_PROFS_CURSO:
-        str << "NP"; break;		
+        str << "np"; break;		
   	  case V_NRO_PROFS_VIRTUAIS_CURSO:
-        str << "NPV"; break;					
+        str << "npv"; break;					
 	  case V_NRO_PROFS_VIRTUAIS_MEST_CURSO:
-        str << "NPVM"; break;					
+        str << "npvm"; break;					
 	  case V_NRO_PROFS_VIRTUAIS_DOUT_CURSO:
-        str << "NPVD"; break;					
+        str << "npvd"; break;					
 	  case V_NRO_PROFS_VIRTUAIS_GERAIS_CURSO:
-        str << "NPVG"; break;					
+        str << "npvg"; break;					
 										
       default:
         str << "!";

@@ -5637,7 +5637,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
             valUB[nChgUB] = 0.0;
             bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
             nChgUB++;
-         }
+			}
 		}
 
       lp->chgBds(nChgUB,idxUB,bts,valUB);
@@ -5680,16 +5680,16 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		// GENERATES SOLUTION
 		this->nroPreSolAvaliadas = 0;
 		std::cout<<"\n\nOtimizando...\n\n";
-		//status = lp->optimize( METHOD_MIP );
-      polishPreTatico(xS,3600,70,30);
+		status = lp->optimize( METHOD_MIP );
+		//polishPreTatico(xS,3600,70,30);
 		std::cout<<"\n\nOtimizado!\n\n";
 		double * xSol = NULL;
 		xSol = new double[ lp->getNumCols() ];
-		//lp->getX( xSol );
-      for (int i=0; i < lp->getNumCols(); i++)
-      {
-         xSol[i] = xS[i];
-      }
+		lp->getX( xSol );
+      //for (int i=0; i < lp->getNumCols(); i++)
+      //{
+      //   xSol[i] = xS[i];
+      //}
 
       delete[] xS;
 		delete[] objN;
@@ -49750,7 +49750,7 @@ int SolverMIP::criaVariaveisOperacional()
    numVars += criaVariavelMaxDiscProfCurso();
 
 #ifdef PRINT_cria_variaveis
-   std::cout << "numVars V_MAX_DISC_PROF_CURSO: "
+   std::cout << "numVars V_DISC_PROF_CURSO: "
              << ( numVars - numVarsAnterior ) << std::endl;
    numVarsAnterior = numVars;
 #endif
@@ -50715,7 +50715,7 @@ int SolverMIP::criaVariavelMaxDiscProfCurso()
 
             VariableOp v;
             v.reset();
-            v.setType( VariableOp::V_MAX_DISC_PROF_CURSO );
+            v.setType( VariableOp::V_DISC_PROF_CURSO );
 
             v.setProfessor( professor );
             v.setDisciplina( disciplina );
@@ -55399,14 +55399,14 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 	{
 		VariableOp v = ( vit->first );
 
-		if (v.getType() != VariableOp::V_MAX_DISC_PROF_CURSO && v.getType() != VariableOp::V_Y_PROF_DISCIPLINA
+		if (v.getType() != VariableOp::V_DISC_PROF_CURSO && v.getType() != VariableOp::V_Y_PROF_DISCIPLINA
 			&& v.getType() != VariableOp::V_F_MAX_DISC_PROF_CURSO)
 		{
 			vit++;
 			continue;
 		}
 
-		if(v.getType() == VariableOp::V_MAX_DISC_PROF_CURSO)
+		if(v.getType() == VariableOp::V_DISC_PROF_CURSO)
 		{
 			c.reset();
 			c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
@@ -55583,7 +55583,7 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 //
 //               // Procura pela variável 'Lpcd'
 //               v_find.reset();
-//               v_find.setType( VariableOp::V_MAX_DISC_PROF_CURSO );
+//               v_find.setType( VariableOp::V_DISC_PROF_CURSO );
 //
 //               v_find.setProfessor( professor );
 //               v_find.setCurso( curso );
@@ -55640,7 +55640,7 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 //            vit = vHashOp.begin();
 //            for (; vit != vHashOp.end(); vit++ )
 //            {
-//               if ( vit->first.getType() == VariableOp::V_MAX_DISC_PROF_CURSO
+//               if ( vit->first.getType() == VariableOp::V_DISC_PROF_CURSO
 //                  && vit->first.getProfessor() == professor
 //                  && vit->first.getCurso() == curso )
 //               {

@@ -46,6 +46,24 @@ public:
          return false;
       }
 
+      if ( (int) this->getPrioridade() < (int) var.getPrioridade() )
+      {
+         return true;
+      }
+      else if ( (int) this->getPrioridade() > (int) var.getPrioridade() )
+      {
+         return false;
+      }
+
+      if ( (int) this->getId() < (int) var.getId() )
+      {
+         return true;
+      }
+      else if ( (int) this->getId() > (int) var.getId() )
+      {
+         return false;
+      }
+
       return false;
    }
 

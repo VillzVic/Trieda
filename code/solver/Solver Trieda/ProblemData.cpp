@@ -132,7 +132,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 
 		   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
 		   {
-            if ( itAlDem->getDemandaId() == id )
+			   if ( itAlDem->getDemandaId() == id )
 			   {
 					n++;
 			   }

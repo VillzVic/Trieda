@@ -27,7 +27,7 @@ void ProblemDataLoader::load()
    std::cout << "Extraindo dados..." << std::endl;
 
    problemData->le_arvore( *root );
-   
+
    std::cout << "Pre-processamento..." << std::endl << std::endl;
 
    // ---------
@@ -60,7 +60,7 @@ void ProblemDataLoader::load()
    std::cout << "Referencia os cursos, os calendarios dos curriculos e os calendarios das disciplinas..." << std::endl;
    // ---------
    referenciaCursos_DiscCalendarios();
-
+  
    std::cout << "Referencia disciplinas equivalentes..." << std::endl;
    // ---------
    referenciaDisciplinasEquivalentes();
@@ -100,6 +100,24 @@ void ProblemDataLoader::load()
    std::cout << "Preenchendo disciplinas de ofertas compativeis..." << std::endl;
    // ---------
    preencheDisciplinasDeOfertasCompativeis();
+
+
+	ITERA_GGROUP_LESSPTR( it_aluno_dem, problemData->alunosDemanda, AlunoDemanda )
+	{
+			bool achou = false;
+			ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda )
+			{
+				if ( ( *it_dem )->getId() == (*it_aluno_dem)->getDemandaId() )
+				{
+					achou = true;
+				}
+			}
+			if (!achou){
+				std::cout<<"\nERRO ANTES! Incluiu AlunoDemanda sem ter incluido a Demanda\n";		
+				int v; cin>>v;
+			}
+	}
+
 
    std::cout << "Dividindo disciplinas..." << std::endl;
    // ---------
@@ -2001,8 +2019,8 @@ void ProblemDataLoader::atualizaOfertasDemandas()
 		Disciplina *discAntiga = (*itDemanda)->disciplina;
 		Disciplina *discNova = problemData->mapDiscSubstituidaPor[ discAntiga ];
 			  
-		itDemanda->setDisciplinaId( discNova->getId() );
-		itDemanda->disciplina = discNova;
+		(*itDemanda)->setDisciplinaId( discNova->getId() );
+		(*itDemanda)->disciplina = discNova;
 	}
 }
 
@@ -2095,6 +2113,11 @@ void ProblemDataLoader::referenciaCalendariosCurriculos()
 
 void ProblemDataLoader::referenciaDisciplinasEquivalentes()
 {
+	if ( ! problemData->parametros->considerar_equivalencia )
+	{
+		return;
+	}
+
 	// Não considera transitividade entre equivalências
 	if ( ! problemData->EQUIV_TRANSITIVIDADE )
 	{
@@ -2245,27 +2268,27 @@ void ProblemDataLoader::divideDisciplinas()
       {
          Disciplina * nova_disc = new Disciplina();
 
-         nova_disc->setId( -it_disc->getId() );
-         nova_disc->setCodigo( it_disc->getCodigo() + "-P" );
-         nova_disc->setNome( it_disc->getNome() + "PRATICA" );
+         nova_disc->setId( -(*it_disc)->getId() );
+         nova_disc->setCodigo( (*it_disc)->getCodigo() + "-P" );
+         nova_disc->setNome( (*it_disc)->getNome() + "PRATICA" );
          nova_disc->setCredTeoricos( 0 );
-         nova_disc->setCredPraticos( it_disc->getCredPraticos() );
+         nova_disc->setCredPraticos( (*it_disc)->getCredPraticos() );
          it_disc->setCredPraticos( 0 );
 
          nova_disc->setMaxCreds( nova_disc->getCredPraticos() );
-         it_disc->setMaxCreds( it_disc->getCredTeoricos() );
+         it_disc->setMaxCreds( (*it_disc)->getCredTeoricos() );
 
-         nova_disc->setELab( it_disc->eLab() );
+         nova_disc->setELab( (*it_disc)->eLab() );
          it_disc->setELab( false );
 
          nova_disc->setMaxAlunosT( -1 );
-         nova_disc->setMaxAlunosP( it_disc->getMaxAlunosP() );
+         nova_disc->setMaxAlunosP( (*it_disc)->getMaxAlunosP() );
          it_disc->setMaxAlunosP( -1 );
 
-         nova_disc->setTipoDisciplinaId( it_disc->getTipoDisciplinaId() );
-         nova_disc->setNivelDificuldadeId( it_disc->getNivelDificuldadeId() );
+         nova_disc->setTipoDisciplinaId( (*it_disc)->getTipoDisciplinaId() );
+         nova_disc->setNivelDificuldadeId( (*it_disc)->getNivelDificuldadeId() );
 		 
-		 nova_disc->setCalendario( it_disc->getCalendario() );
+		 nova_disc->setCalendario( (*it_disc)->getCalendario() );
 
 		 // Enquanto não há divisão da regra no input para práticas e teóricas, o solver
 		 // vai separar sempre essas regras de acordo com as genéricas existentes. Portanto,
@@ -2276,8 +2299,8 @@ void ProblemDataLoader::divideDisciplinas()
                GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > >::iterator it_Creds_Regras;
 
             // Alterações relacionadas à disciplina antiga
-            delete it_disc->divisao_creditos;
-			it_disc->divisao_creditos = NULL;
+            delete (*it_disc)->divisao_creditos;
+			(*it_disc)->divisao_creditos = NULL;
 
             it_Creds_Regras = problemData->creds_Regras.find( it_disc->getCredTeoricos() );
 
@@ -2287,7 +2310,7 @@ void ProblemDataLoader::divideDisciplinas()
             {
                if ( it_Creds_Regras->second.size() == 1 )
                {
-                  it_disc->divisao_creditos = new DivisaoCreditos(
+                  (*it_disc)->divisao_creditos = new DivisaoCreditos(
                      **it_Creds_Regras->second.begin());
                }
                else // Greather
@@ -2304,7 +2327,7 @@ void ProblemDataLoader::divideDisciplinas()
                      continuar = rand() % 2;
                   }
 
-                  it_disc->divisao_creditos = new DivisaoCreditos( **it_Regra );
+                  (*it_disc)->divisao_creditos = new DivisaoCreditos( **it_Regra );
                }
             }
 
@@ -2524,24 +2547,27 @@ void ProblemDataLoader::divideDisciplinas()
 			 // Adicionando os dados da nova disciplina em <Demanda>			  
 			 ITERA_GGROUP_LESSPTR( it_dem, problemData->demandasTotal, Demanda )
 			 {
-				if( it_dem->getDisciplinaId() == it_disc->getId())
+				if( (*it_dem)->getDisciplinaId() == (*it_disc)->getId())
 				{
+					bool inseriuNovaDemanda=false;
+
 					// Copia demanda da disciplina teorica correspondente
 					Demanda *nova_demanda = new Demanda();
 					id++;
 					nova_demanda->setId( id );
-					nova_demanda->setOfertaId( it_dem->getOfertaId() );
+					nova_demanda->setOfertaId( (*it_dem)->getOfertaId() );
 					nova_demanda->setDisciplinaId( nova_disc->getId() );
-					nova_demanda->setQuantidade( it_dem->getQuantidade() );
-					nova_demanda->oferta = it_dem->oferta;
+					nova_demanda->setQuantidade( (*it_dem)->getQuantidade() );
+					nova_demanda->oferta = (*it_dem)->oferta;
 					nova_demanda->disciplina = nova_disc;
 
 					problemData->demandasTotal.add( nova_demanda );
-
+					 
 					if ( problemData->demandas.find( *it_dem ) !=
 						 problemData->demandas.end() )
 					{
 						problemData->demandas.add( nova_demanda );
+						inseriuNovaDemanda = true;
 					}
 
 					// Adicionando novo AlunoDemanda com a nova_demanda (disciplina pratica)
@@ -2562,6 +2588,11 @@ void ProblemDataLoader::divideDisciplinas()
 							if ( problemData->alunosDemanda.find( *it_aluno_dem ) !=
 								 problemData->alunosDemanda.end() )
 							{
+								if (!inseriuNovaDemanda)
+									std::cout<<"\nERRO1! Incluindo AlunoDemanda sem ter incluido a NovaDemanda";								
+								if ( problemData->demandas.find( *it_dem ) == problemData->demandas.end() ) 
+									std::cout<<"\nERRO2! Incluindo AlunoDemanda sem ter incluido a Demanda";
+
 								problemData->alunosDemanda.add( aluno_demanda );
 								this->problemData->mapDemandaAlunos[ nova_demanda ].add( aluno_demanda );
 							}
@@ -2581,9 +2612,29 @@ void ProblemDataLoader::divideDisciplinas()
          }
 
          problemData->novasDisciplinas.add( nova_disc );
-
       }
    }
+
+   // Testa se existe referencia para todas as demandas corretamente
+	ITERA_GGROUP_LESSPTR( it_aluno_dem, problemData->alunosDemanda, AlunoDemanda )
+	{
+		bool achou = false;
+		int id = (*it_aluno_dem)->getDemandaId();
+		ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda )
+		{
+			if ( ( *it_dem )->getId() == id )
+			{
+				achou = true;
+			}
+		}
+		if (!achou){
+			std::cout<<"\nERRO FINAL! Inclui AlunoDemanda sem ter incluido a Demanda\n"
+			<<"DemandaId = "<<id<<" AlDemId="<<(*it_aluno_dem)->getId()<<" Disc"
+			<<(*it_aluno_dem)->demanda->getDisciplinaId()
+			<<"\nDemanda.Id = "<< (*it_aluno_dem)->demanda->getId()<<" P"
+			<<(*it_aluno_dem)->getPrioridade()<<" aluno"<<(*it_aluno_dem)->getAlunoId();
+		}
+	}
 
    ITERA_GGROUP_LESSPTR( itDisciplina, problemData->novasDisciplinas, Disciplina )
    {
@@ -3044,7 +3095,9 @@ void ProblemDataLoader::gera_refs()
       if ( !encontrouDemanda )
       {
          std::cout << "Demanda nao encontrada em gera_refs(): "
-                   << it_aluno_demanda->getDemandaId() << std::endl;       
+				   << "AlunoId: " << (*it_aluno_demanda)->getAlunoId()
+				   << "  DemandaId: " << (*it_aluno_demanda)->getDemandaId() << std::endl;
+		 int v; cin>>v;
          continue;
       }
 

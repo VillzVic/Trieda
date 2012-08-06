@@ -32,6 +32,15 @@ void Demanda::le_arvore( ItemDemanda & elem )
 
 bool Demanda::operator < ( const Demanda & right ) const
 {
+   if ( this->getId() < right.getId() )
+   {
+      return true;
+   }
+   else if ( this->getId() > right.getId() )
+   {
+      return false;
+   }
+
    if ( quantidade < right.quantidade )
    {
       return true;
@@ -64,6 +73,15 @@ bool Demanda::operator < ( const Demanda & right ) const
 
 bool Demanda::operator > ( const Demanda & right ) const
 {
+   if ( this->getId() < right.getId() )
+   {
+      return false;
+   }
+   else if ( this->getId() > right.getId() )
+   {
+      return true;
+   }
+
    if ( quantidade < right.quantidade )
    {
       return false;
