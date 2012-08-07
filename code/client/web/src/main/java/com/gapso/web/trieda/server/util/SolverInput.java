@@ -1288,7 +1288,11 @@ public class SolverInput
 			
 			GrupoIdentificador grupoIdentificadorEquivalencias = this.of.createGrupoIdentificador();
 
-			if ( this.parametro.getConsiderarEquivalencia() )
+			// Verifica se a disciplina em questão ocupa grade. Em caso negativo, tal disciplina não pode ser candidata a substituir outras
+			// nas equivalências, por conta disso, a lista de disciplinas equivalentes não deve ser enviada para o solver nestes casos.
+			boolean disciplinaOcupaGrade = disciplina.ocupaGrade();
+			
+			if (this.parametro.getConsiderarEquivalencia() && disciplinaOcupaGrade)
 			{
 				List< Equivalencia > equivalencias = new ArrayList<Equivalencia>(disciplina.getEquivalencias());
 				// ordena para manter inputs iguais
@@ -1307,8 +1311,8 @@ public class SolverInput
 					{
 						for ( Disciplina disciplinaElimina : eliminas )
 						{
-							grupoIdentificadorEquivalencias.getId().add(
-								disciplinaElimina.getId().intValue() );
+							grupoIdentificadorEquivalencias.getId().add(disciplinaElimina.getId().intValue());
+							
 						}
 					}
 				}

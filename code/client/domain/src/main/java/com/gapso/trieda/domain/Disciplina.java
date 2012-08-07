@@ -1069,4 +1069,15 @@ public class Disciplina
 		}
 		return semanasLetivas;
 	}
+	
+	/**
+	 * Informa se a disciplina ocupa grade de horários ou não. Uma disciplina ocupa grade de horários nos seguintes casos:
+	 *    - a disciplina é do tipo "Presencial" ou "Telepresencial";
+	 *    - a disciplina possui créditos teóricos ou práticos;
+	 * @return true caso a disciplina ocupa grade de horários e false caso contrário
+	 */
+	public boolean ocupaGrade() {
+		int totalCreditos = this.getCreditosTeorico() + this.getCreditosPratico(); 
+		return this.getTipoDisciplina().ocupaGrade() && totalCreditos > 0;
+	}
 }
