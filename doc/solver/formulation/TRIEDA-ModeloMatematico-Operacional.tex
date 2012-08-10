@@ -196,7 +196,7 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \end{itemize}
 
-
+\pagebreak
 
 \section{Módulo Operacional - Modelo Matemático}
 
@@ -256,7 +256,6 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \end{itemize}
 
-\newpage
 
 \subsubsection{Dados do Modelo}
 
@@ -274,7 +273,7 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \end{itemize}
 
-\newpage
+
 
 \subsubsection{Variáveis}
 
@@ -546,6 +545,14 @@ pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qqu
 \end{eqnarray}
 
 
+\subsubsection{Contabiliza o número de professores reais no curso}
+
+\begin{eqnarray}
+\sum\limits_{p \in P} w_{p,c} = np_{c} \nonumber \qquad 
+\forall c \in C
+\end{eqnarray}
+
+
 \subsubsection{Contabiliza o número de professores virtuais no curso}
 
 \begin{eqnarray}
@@ -649,7 +656,7 @@ hfp_{p,t} \ge m(h) + \sum\limits_{a \in A_{t}} x_{p,a,h} \nonumber \qquad
 \subsubsection{Consistência dos tempos de início de fim das aulas de um professor em uma dia}
 
 \begin{eqnarray}
-hip_{p,t} <= hfp_{p,t} \nonumber \qquad 
+hip_{p,t} \le hfp_{p,t} \nonumber \qquad 
 \forall p \in P \quad
 \forall t \in T
 \end{eqnarray}
