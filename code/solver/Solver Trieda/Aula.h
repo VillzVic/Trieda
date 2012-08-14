@@ -26,7 +26,7 @@ public:
    void setAulaVirtual( bool );
    void setAulaFixada( bool );
    void setQuantidade( int, Oferta* );
-   void setDisciplinaSubstituida( Disciplina * );
+   void setDisciplinaSubstituida( Disciplina *, Oferta* );
 
    int getTurma() const;
    Disciplina * getDisciplina() const;
@@ -40,7 +40,7 @@ public:
    std::map<Oferta*,int> getQuantidade() const;
    int getQuantidadePorOft( Oferta *oft );
    int getQuantidadeTotal();
-   Disciplina * getDisciplinaSubstituida() const;
+   Disciplina * getDisciplinaSubstituida(Oferta* oft);
 
    bool atendeAoCurso( int cursoId );
 
@@ -86,6 +86,7 @@ public:
       else if ( quantidade > right.quantidade )
          return false;
       
+	  /*
 	  if( disciplinaSubstituida == NULL && right.getDisciplinaSubstituida() != NULL )
 		  return true;
 	  else if( disciplinaSubstituida != NULL && right.getDisciplinaSubstituida() == NULL )
@@ -96,7 +97,7 @@ public:
 				return true;
 		  else if( *right.getDisciplinaSubstituida() < *disciplinaSubstituida )
 				return false;
-	  }
+	  }*/
 	  
       return false;
    }
@@ -133,6 +134,7 @@ public:
       else if ( quantidade < right.quantidade )
          return false;
 
+	  /*
 	  if( disciplinaSubstituida == NULL && right.getDisciplinaSubstituida() != NULL )
 		  return false;
 	  else if( disciplinaSubstituida != NULL && right.getDisciplinaSubstituida() == NULL )
@@ -143,7 +145,7 @@ public:
 				return false;
 		  else if( *right.getDisciplinaSubstituida() < *disciplinaSubstituida )
 				return true;
-	  }
+	  }*/
 
       return false;
    }
@@ -157,8 +159,8 @@ public:
          && ( dia_semana == right.getDiaSemana() )
          && ( creditos_teoricos == right.getCreditosTeoricos() )
          && ( creditos_praticos == right.getCreditosPraticos() )
-         && ( quantidade == right.quantidade ) 
-         && ( *disciplinaSubstituida == *right.getDisciplinaSubstituida() ) );
+         && ( quantidade == right.quantidade ) );
+         //&& ( *disciplinaSubstituida == *right.getDisciplinaSubstituida() ) );
    }
 
    virtual bool operator != ( Aula const & right )
@@ -179,7 +181,7 @@ private:
 	
    // disciplina original, que foi substituida em um curriculo.
    // Se for NULL é porque não houve substituição, e "disciplina" já é a original.
-   Disciplina * disciplinaSubstituida;
+   std::map<Oferta*,Disciplina*, LessPtr<Oferta>> disciplinaSubstituida;
 
    // Indica se uma aula é virtual ou não.
    bool aula_virtual;

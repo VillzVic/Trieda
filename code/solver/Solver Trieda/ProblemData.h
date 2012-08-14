@@ -463,6 +463,8 @@ public:
    double cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId );
    double cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno );
 
+   int retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

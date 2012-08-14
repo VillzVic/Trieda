@@ -11,7 +11,7 @@ Aula::Aula(bool _aulaVirtual)
    creditos_praticos = 0;
    aula_fixada = false;
    aula_virtual = _aulaVirtual;
-   disciplinaSubstituida = NULL;
+   disciplinaSubstituida.clear();
 }
 
 Aula::~Aula(void)
@@ -63,11 +63,10 @@ void Aula::setQuantidade( int value, Oferta* oft )
    quantidade[oft] = value;
 }
 
-void Aula::setDisciplinaSubstituida(Disciplina * d)
+void Aula::setDisciplinaSubstituida( Disciplina * d, Oferta* oft )
 {
-   this->disciplinaSubstituida = d;
+   this->disciplinaSubstituida[oft] = d;
 }
-
 
 int Aula::getTurma() const
 {
@@ -133,9 +132,14 @@ int Aula::getQuantidadeTotal()
 	return n;
 }
 
-Disciplina* Aula::getDisciplinaSubstituida() const
+Disciplina* Aula::getDisciplinaSubstituida( Oferta* oft )
 {
-   return this->disciplinaSubstituida;
+	std::map<Oferta*,Disciplina*, LessPtr<Oferta>>::iterator 
+		it = disciplinaSubstituida.find(oft);
+	if ( it == disciplinaSubstituida.end() )
+		return NULL;
+	else
+		return (*it).second;
 }
 
 bool Aula::atendeAoCurso( int cursoId )
@@ -157,21 +161,21 @@ void Aula::toString()
    std::cout << "\n=================AULA================="
 			    << "\nTurma: " << turma
 			    << "\nDisciplina: " << disciplina->getCodigo();
-				if ( disciplinaSubstituida != NULL )
-					std::cout << "\tDisciplina Substituida: " << disciplinaSubstituida->getCodigo()
-			    << std::endl;
    //-------------------------------------------------------------
 
    //-------------------------------------------------------------
    // Exibe a lista de ofertas atendidas por essa aula
-   std::cout << "Ofertas atendidas: ";
+   std::cout << "\nOfertas atendidas: ";
 
    GGroup< Oferta *, LessPtr< Oferta > >::iterator 
       itOferta = ofertas.begin();
 
    for (; itOferta != ofertas.end(); ++itOferta )
    {
-      std::cout << itOferta->getId() << " ";
+        std::cout << itOferta->getId() << " ";
+		Disciplina* original = disciplinaSubstituida[*itOferta];
+		if ( original != NULL )
+			std::cout << " (Disciplina Substituida: " << original->getCodigo() << ")";
    }
    //-------------------------------------------------------------
 

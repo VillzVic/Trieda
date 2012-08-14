@@ -329,8 +329,14 @@ std::string VariableOp::toString()
           << ",Dia" << aula->getDiaSemana()
           << ",Sala" << aula->getSala()->getId()
           << ",NCred" << aula->getTotalCreditos();
-	  if ( aula->getDisciplinaSubstituida() != NULL )
-		  str  << ",DiscAntiga" << aula->getDisciplinaSubstituida()->getId();
+	  ITERA_GGROUP_LESSPTR( itOft, aula->ofertas, Oferta )
+	  {
+		  str << "(Oft" << (*itOft)->getId();
+		  if ( aula->getDisciplinaSubstituida(*itOft) != NULL )
+			str << ",DiscAntiga" << aula->getDisciplinaSubstituida(*itOft)->getId()<<")";
+		  else
+			str << ")";
+	  }
 	  str << ")";
    }
 
@@ -389,13 +395,13 @@ std::string VariableOp::toString()
    if ( horarioDiaD != NULL )
    {
 	   str << "_(H" << horarioDiaD->getHorarioAulaId()
-		  << ",Dia)" << horarioDiaD->getDia();
+		  << ",Dia" << horarioDiaD->getDia() << ")";
    }
 
    if ( horarioDiaD1 != NULL )
    {
 	   str << "_(H" << horarioDiaD1->getHorarioAulaId()
-		  << ",Dia)" << horarioDiaD1->getDia();
+		  << ",Dia" << horarioDiaD1->getDia() << ")";
    }
 
 

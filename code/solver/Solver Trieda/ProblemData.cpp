@@ -1357,12 +1357,26 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 	
 	// -----------------------------------------------------
 	// NOVAS DEMANDAS de novaPrioridade
-
 	// Filtrando alunosDemanda: somente os alunosDemanda que tiverem a prioridade procurada
 	// FILTRAR: NOVAS PRIORIDADES SOMENTE PARA OS ALUNOS QUE NÃO TIVERAM TOTAL ATENDIMENTO ANTERIORMENTE!
 	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemandaTotal, AlunoDemanda )
 	{
-		int alunoId = itAlDem->getAlunoId();
+		int alunoId = (*itAlDem)->getAlunoId();
+		Aluno *aluno = this->retornaAluno(alunoId);
+		if (aluno==NULL){
+			std::cout<<"\nATENCAO: ALUNO NAO ENCONTRADO. ID="<<alunoId; fflush(NULL);	continue;
+		}
+		// Pula AlunoDemanda possivel repetido devido à equivalencias
+		bool repetido=false;
+		ITERA_GGROUP_LESSPTR( itAlDem2, aluno->demandas, AlunoDemanda )
+		{
+			if ( (*itAlDem2)->demanda->getDisciplinaId() == (*itAlDem)->demanda->getDisciplinaId() )
+			{
+				repetido=true;
+				break;
+			}
+		}
+		if (repetido) continue;
 
 		if ( itAlDem->getPrioridade() == novaPrioridade && 
 			 itAlDem->demanda->oferta->getCampusId() == campusId )
@@ -1370,11 +1384,10 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 			// Só insere o alunoDemanda novo se existir folga de demanda anterior para o aluno correspondente
 			ITERA_GGROUP_LESSPTR( itSlack, this->listSlackDemandaAluno, AlunoDemanda )
 			{
-				if ( itSlack->getAlunoId() == alunoId )
+				if ( (*itSlack)->getAlunoId() == alunoId )
 				{
-					this->alunosDemanda.add( *itAlDem );
-					Aluno *a = retornaAluno( alunoId );
-					a->demandas.add( *itAlDem );
+					this->alunosDemanda.add( *itAlDem );					
+					aluno->demandas.add( *itAlDem );
 					break;
 				}
 			}
@@ -1387,7 +1400,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 	{
 		this->totalTurmas_AlDem += it_aldem->demanda->disciplina->getNumTurmas();
 	}
-		
+
 	// Filtrando as demandas
 	ITERA_GGROUP_LESSPTR( itDem, this->demandasTotal, Demanda )
 	{
@@ -1408,7 +1421,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 			this->demandas.add( *itDem );
 		}
 	}
-	
+
 	calculaDemandas();
 }
 
@@ -2427,4 +2440,40 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	}
 	
 	turmasFile.close();
+}
+
+int ProblemData::retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia )
+{
+	Calendario *sl = d->getCalendario();
+
+	if ( hf->getCalendario() != sl || hi->getCalendario() != sl )
+		 return 0;
+
+	std::pair< int, int > parDiscSala = std::make_pair( d->getId(), s->getId() );
+
+	std::map< std::pair< int /*idDisc*/, int /*idSala*/ >, 
+				std::map< int /*Dia*/, GGroup< HorarioAula *, LessPtr< HorarioAula > > > >::iterator
+
+	it_Disc_Sala_Dias_HorariosAula = this->disc_Salas_Dias_HorariosAula.find( parDiscSala );
+
+	if ( it_Disc_Sala_Dias_HorariosAula == this->disc_Salas_Dias_HorariosAula.end() )
+		return 0;
+
+	GGroup< HorarioAula *, LessPtr< HorarioAula > > horarios = (*it_Disc_Sala_Dias_HorariosAula).second[dia];
+
+	if ( horarios.find(hi) == horarios.end() || horarios.find(hf) == horarios.end() )
+		return 0;
+
+	// Verifica se os horarios entre hi e hf estão disponiveis na sala
+	int n = 0;
+	HorarioAula *h=hi;
+	while( h<=hf && h!=NULL )
+	{
+		if ( horarios.find( h ) != horarios.end() ) 
+			n++;
+
+		h = sl->getProximoHorario(h);
+	}
+
+	return n;
 }

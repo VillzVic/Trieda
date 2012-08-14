@@ -4214,23 +4214,10 @@ void ProblemDataLoader::criaAulas()
                            && ( itAula->getCreditosPraticos() == creditos_praticos )
                            && ( itAula->getCreditosTeoricos() == creditos_teoricos ) )
                         {
-							if ( itAula->getDisciplinaSubstituida() != NULL && disciplinaSubstituida != NULL )
-							{
-								if ( *(itAula->getDisciplinaSubstituida()) == *disciplinaSubstituida )
-								{
-									aulaAntiga = *itAula;
-									novaAula = false;
-									problemData->aulas.remove(itAula);
-									break;
-								}
-							}	 
-							else if ( itAula->getDisciplinaSubstituida() == NULL && disciplinaSubstituida == NULL )
-							{
-							   aulaAntiga = *itAula;
-							   novaAula = false;
-							   problemData->aulas.remove(itAula);
-							   break;
-							}
+							aulaAntiga = *itAula;
+							novaAula = false;
+							problemData->aulas.remove(itAula);
+							break;
                         }
                      }
 
@@ -4248,7 +4235,7 @@ void ProblemDataLoader::criaAulas()
                         aula->setCreditosTeoricos( creditos_teoricos );
                         aula->setCreditosPraticos( creditos_praticos );
 						aula->setQuantidade( demandaAtendida, oferta );
-                        aula->setDisciplinaSubstituida( disciplinaSubstituida );
+                        aula->setDisciplinaSubstituida( disciplinaSubstituida, oferta );
 
                         problemData->aulas.add( aula );
                      }
@@ -4256,6 +4243,7 @@ void ProblemDataLoader::criaAulas()
                      {
                         aulaAntiga->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );
                         aulaAntiga->setQuantidade( demandaAtendida, oferta );
+                        aulaAntiga->setDisciplinaSubstituida( disciplinaSubstituida, oferta );
                         problemData->aulas.add( aulaAntiga );
                      }
                   }
