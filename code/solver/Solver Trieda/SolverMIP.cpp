@@ -6011,7 +6011,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		if ( ! this->CARREGA_SOLUCAO )
 		{
 		   // Constraint creation
-		   constNum = criaRestricoesTatico( campusId );
+		   constNum = criaRestricoesTatico( campusId, prioridade );
 
 		   lp->updateLP();
 
@@ -15330,7 +15330,7 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_limita_abertura_turmas( campusId, cjtAlunosId );		// Restrição 1.12
+	restricoes += cria_preRestricao_limita_abertura_turmas( campusId, cjtAlunosId, prioridade );		// Restrição 1.12
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -17026,7 +17026,7 @@ int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtA
 }   
    
 // Restricao 1.12
-int SolverMIP::cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId  )
+int SolverMIP::cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade )
 {
    int restricoes = 0;
    char name[ 100 ];
@@ -17039,7 +17039,7 @@ int SolverMIP::cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAl
 
    Disciplina * disciplina = NULL;
    
-   if ( problemData->parametros->min_alunos_abertura_turmas )
+   if ( problemData->parametros->min_alunos_abertura_turmas && prioridade==1 )
    {
 		min = problemData->parametros->min_alunos_abertura_turmas_value;
 		if ( min <= 0 ) min = 1;
@@ -27985,7 +27985,7 @@ int SolverMIP::criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P )
  ---------------------------------------------------------------------------------- */
 
 
-int SolverMIP::criaRestricoesTatico( int campusId )
+int SolverMIP::criaRestricoesTatico( int campusId, int prioridade )
 {
 	int restricoes = 0;
 
@@ -28052,7 +28052,7 @@ int SolverMIP::criaRestricoesTatico( int campusId )
 
 
 	timer.start();
-	restricoes += criaRestricaoTaticoLimitaAberturaTurmas( campusId );			// Restricao 1.2.7
+	restricoes += criaRestricaoTaticoLimitaAberturaTurmas( campusId, prioridade );			// Restricao 1.2.7
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -28281,7 +28281,7 @@ int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
 			c.setDisciplina( disciplina );
 
 			cit = cHashTatico.find(c);
-
+			
 			if(cit == cHashTatico.end())
 			{
 				sprintf( name, "%s", c.toString().c_str() );
@@ -28290,7 +28290,7 @@ int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
 				//int NCH = v.getDisciplina()->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
 				int NCH = problemData->retornaNroCreditos( hi, hf, sala, disciplina, dia );
 
-				row.insert( vit->second, NCH);
+				row.insert( vit->second, NCH );
 
 				cHashTatico[ c ] = lp->getNumRows();
 				lp->addRow( row );
@@ -28300,9 +28300,10 @@ int SolverMIP::criaRestricaoTaticoCargaHoraria( int campusId )
 			{
 				//int NCH = v.getDisciplina()->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
 				int NCH = problemData->retornaNroCreditos( hi, hf, sala, disciplina, dia );
-            idxC.push_back(vit->second);
-            idxR.push_back(cit->second);
-            valC.push_back(NCH);
+								
+				idxC.push_back(vit->second);
+				idxR.push_back(cit->second);
+				valC.push_back(NCH);
 				//lp->chgCoef(cit->second, vit->second,  NCH);
 			}
 		}
@@ -29212,7 +29213,7 @@ int SolverMIP::criaRestricaoTaticoProibeCompartilhamento( int campusId )
 */
 
 // Restricao 1.2.12
-int SolverMIP::criaRestricaoTaticoLimitaAberturaTurmas( int campusId )
+int SolverMIP::criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade )
 {
    int restricoes = 0;
 	
@@ -29226,7 +29227,7 @@ int SolverMIP::criaRestricaoTaticoLimitaAberturaTurmas( int campusId )
    Disciplina * disciplina = NULL;
 
    int minAlunos;
-   if ( problemData->parametros->min_alunos_abertura_turmas )
+   if ( problemData->parametros->min_alunos_abertura_turmas && prioridade == 1 )
    {
 		minAlunos = problemData->parametros->min_alunos_abertura_turmas_value;
 		if ( minAlunos <= 0 ) minAlunos = 1;

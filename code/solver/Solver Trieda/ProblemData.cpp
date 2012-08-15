@@ -2467,12 +2467,13 @@ int ProblemData::retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, 
 	// Verifica se os horarios entre hi e hf estão disponiveis na sala
 	int n = 0;
 	HorarioAula *h=hi;
-	while( h<=hf && h!=NULL )
+	
+	while( h!=NULL && ( *h < *hf || *h == *hf ) )
 	{
 		if ( horarios.find( h ) != horarios.end() ) 
 			n++;
 
-		h = sl->getProximoHorario(h);
+		h = sl->getProximoHorario(h);				
 	}
 
 	return n;

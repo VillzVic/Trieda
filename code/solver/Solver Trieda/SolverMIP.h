@@ -74,7 +74,7 @@ using namespace boost;
 #endif
 
 
-#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -151,7 +151,7 @@ public:
    int cria_preRestricao_proibe_compartilhamento( int campusId, int cjtAlunosId  );	// Restrição 1.9
    int cria_preRestricao_ativacao_var_z( int campusId, int cjtAlunosId  );			// Restricao 1.10
    int cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtAlunosId  );	// Restricao 1.11
-   int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId  );    // Restricao 1.12
+   int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade );    // Restricao 1.12
    int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId, int prioridade );  // Restricao 1.13
    int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala( int campusId, int cjtAlunosId  );		// Restricao 1.15
@@ -276,7 +276,7 @@ public:
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
    *********************************************************************/
 
-   int criaRestricoesTatico( int campusId );
+   int criaRestricoesTatico( int campusId, int prioridade );
 
    int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
    int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
@@ -284,7 +284,7 @@ public:
 //   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
    int criaRestricaoTaticoAtendeDemanda( int campusID );				// Restricao 1.2.5   
    int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
-   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId );			// Restricao 1.2.7
+   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade );		// Restricao 1.2.7
    int criaRestricaoTaticoDivisaoCredito( int campusId );				// Restricao 1.2.8      
    int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
    int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
