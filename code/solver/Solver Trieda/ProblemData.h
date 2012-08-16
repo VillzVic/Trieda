@@ -465,6 +465,8 @@ public:
 
    int retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia );
 
+   bool possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplina* disciplina2, int campusId, int P_ATUAL );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

@@ -74,7 +74,7 @@ using namespace boost;
 #endif
 
 
-#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -114,7 +114,7 @@ public:
    int cria_preVariavel_abertura( int campusId, int grupoAlunosId, int P_ATUAL  );						// z_{i,d,cp}
    int cria_preVariavel_alunos( int campusId, int grupoAlunosId, int P_ATUAL  );							// a_{i,d,oft,s}
    int cria_preVariavel_aloc_alunos( int campusId, int grupoAlunosId, int P_ATUAL  );						// b_{i,d,c}   
-   int cria_preVariavel_folga_compartilhamento_incomp( int campusId, int grupoAlunosId, int P_ATUAL  );	// bs_{i,d,c1,c2}
+   int cria_preVariavel_folga_compartilhamento_incomp( int campusId, int grupoAlunosId, int P_ATUAL  );	// bs_{i,d,c1,c2} // não esta sendo usada, é restrição forte
    int cria_preVariavel_folga_proibe_compartilhamento( int campusId, int grupoAlunosId, int P_ATUAL  );	// fc_{i,d,c1,c2}
    int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL  ); // fs_{d,s,oft}
    int cria_preVariavel_limite_sup_creds_sala( int campusId );												// Hs_{cp}
@@ -129,7 +129,7 @@ public:
    int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
    int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL );			// ft_{i,d}
 
-   int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );	// w_{i,d,i',d'} //nao precisa, pq tem cliques agora
+   int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );	// w_{i,d,i',d'}
 
    int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );			// fda
 
@@ -171,7 +171,7 @@ public:
 
    // Só para p2 em diante
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade ); //nao precisa, pq tem cliques agora
-   int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );				//nao precisa, pq tem cliques agora
+   int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );
    int cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosId, int prioridade );
 
    int cria_preRestricao_distribuicao_aluno( int campusId, int cjtAlunosId  );
@@ -284,7 +284,7 @@ public:
 //   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
    int criaRestricaoTaticoAtendeDemanda( int campusID );				// Restricao 1.2.5   
    int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
-   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade );		// Restricao 1.2.7
+   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade );		// Restricao 1.2.7 // Não está sendo mais usada. Inutil.
    int criaRestricaoTaticoDivisaoCredito( int campusId );				// Restricao 1.2.8      
    int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
    int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10

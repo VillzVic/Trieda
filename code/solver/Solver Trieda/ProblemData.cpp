@@ -2478,3 +2478,39 @@ int ProblemData::retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, 
 
 	return n;
 }
+
+bool ProblemData::possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplina* disciplina2, int campusId, int P_ATUAL )
+{
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != campusId )
+		{
+			continue;
+		}
+		
+		bool possuiD1=false;
+		bool possuiD2=false;
+
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
+				continue;
+
+			Disciplina *disciplina = it1AlDemanda->demanda->disciplina;
+			
+			if ( disciplina == disciplina1 )
+				possuiD1 = true;
+			else if ( disciplina == disciplina2 )
+				possuiD2 = true;
+
+			if ( possuiD1 & possuiD2 )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
