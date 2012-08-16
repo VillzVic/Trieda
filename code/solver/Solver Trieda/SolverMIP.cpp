@@ -6054,10 +6054,13 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		}
 		#endif
 
-      int *idxs = new int[lp->getNumCols()*2];
-      double *vals = new double[lp->getNumCols()*2];
-      BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
-      int nBds = 0;
+		int *idxs = new int[lp->getNumCols()*2];
+		double *vals = new double[lp->getNumCols()*2];
+		BOUNDTYPE *bds = new BOUNDTYPE[lp->getNumCols()*2];
+		int nBds = 0;
+
+		std::cout << "\n=========================================";
+	    std::cout << "\nGarantindo solucao...\n"; fflush(NULL);
 
 		#ifdef TATICO_COM_HORARIOS
 		VariableTaticoHash::iterator vit = vHashTatico.begin();
@@ -6083,8 +6086,8 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		}
 		#endif
 
-      lp->chgBds(nBds,idxs,bds,vals);
-      lp->updateLP();
+		lp->chgBds(nBds,idxs,bds,vals);
+		lp->updateLP();
 		lp->setTimeLimit( 1e10 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
@@ -6107,19 +6110,19 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		// -------------------------------------------------------------------
 		// Volta as variaveis z_{i,d,cp} que estavam livres
          
-      nBds = 0;
+		nBds = 0;
 
 		for ( std::set< int >::iterator it = vHashLivresOriginais.begin();
 			  it != vHashLivresOriginais.end(); it++)
 		{
-         idxs[nBds] = *it;
-         vals[nBds] = 1.0;
-         bds[nBds] = BOUNDTYPE::BOUND_UPPER;
-         nBds++;
+			idxs[nBds] = *it;
+			vals[nBds] = 1.0;
+			bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+			nBds++;
 		}
 
-      lp->chgBds(nBds,idxs,bds,vals);
-      lp->updateLP();
+		lp->chgBds(nBds,idxs,bds,vals);
+		lp->updateLP();
 
 		int tempoDeExecucao = retornaTempoDeExecucaoTatico( campusId, cjtAlunosId, prioridade );   
 
@@ -6147,10 +6150,13 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		lp->updateLP();
 #endif
 
-      lp->updateLP();
+		lp->updateLP();
 		lp->writeProbLP( lpName );
    
 	    // -------------------------------------------------------------------
+	    
+		std::cout << "\n=========================================";
+	    std::cout << "\nGarantindo maximo atendimento...\n"; fflush(NULL);
 
 		double *objN = new double[lp->getNumCols()];
 		lp->getObj(0,lp->getNumCols()-1,objN);
@@ -6163,17 +6169,17 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 			if ( v.getType() != Variable::V_SLACK_DEMANDA_ALUNO )
 			{            
-			lp->chgObj(vit->second,0.0); 
+				lp->chgObj(vit->second,0.0); 
 			}
 			else
 			{
-			int nroAlunos = problemData->existeTurmaDiscCampus( v.getTurma(), v.getDisciplina()->getId(), campusId );
-			lp->chgObj(vit->second,nroAlunos);
+				int nroAlunos = problemData->existeTurmaDiscCampus( v.getTurma(), v.getDisciplina()->getId(), campusId );
+				lp->chgObj(vit->second,nroAlunos);
 			}
 		}
 		#endif
 
-      nBds = 0;
+        nBds = 0;
 		#ifdef TATICO_COM_HORARIOS
 		vit = vHashTatico.begin();
 		for ( ; vit != vHashTatico.end(); vit++ )
@@ -6224,6 +6230,9 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
          polishTaticoHor(xS, 7200, 70, 15);
 #endif
 
+		std::cout << "\n=========================================";
+	    std::cout << "\nGarantindo o resto dos parametros...\n"; fflush(NULL);
+
 		#ifndef TATICO_COM_HORARIOS
 		vit = vHash.begin();
 		for ( ; vit != vHash.end(); vit++ )
@@ -6232,7 +6241,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 			if (  v.getType() == Variable::V_SLACK_DEMANDA_ALUNO && xS[vit->second] < 0.1 )
 			{
-			lp->chgUB(vit->second,0.0); 
+				lp->chgUB(vit->second,0.0); 
 			}
 		}
 		#endif
@@ -6316,9 +6325,9 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		//lp->setNumIntSols(1);
 		//lp->copyMIPStartSol(lp->getNumCols(),idxN,xSol);
 		delete[] idxN;
-      delete[] idxs;
-      delete[] bds;
-      delete[] vals;
+		delete[] idxs;
+		delete[] bds;
+		delete[] vals;
 
 		lp->optimize(METHOD_MIP);
 
@@ -26268,34 +26277,34 @@ int SolverMIP::criaVariavelTaticoCreditos( int campusId, int P )
 									continue;
 								 }
 
-                         if ( disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf ) == 2 &&
-                              disciplina->getCalendario()->intervaloEntreHorarios(hi,hf) )
+								 if ( disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf ) == 2 &&
+									  disciplina->getCalendario()->intervaloEntreHorarios(hi,hf) )
 								 {
 									continue;
 								 }
 
-                         if ( disciplina->combinacao_divisao_creditos.size() > 0 )
-                         {
-                            bool CRIAR = false;
-                            int nCredHor = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
-                            std::vector< std::vector< std::pair< int /*dia*/, int /*nCreds*/ > > >::iterator 
-                               it1 = disciplina->combinacao_divisao_creditos.begin();
-                            for ( ; it1 != disciplina->combinacao_divisao_creditos.end(); it1++ )
-                            {
-                               std::vector< std::pair< int /*dia*/, int /*nCreds*/ > >::iterator
-                                  it2 = (*it1).begin();
-                               for ( ; it2 != (*it1).end(); it2++ )
-                               {	
-                                  if ( (*it2).second == nCredHor )
-                                  {
-                                     CRIAR = true; break;
-                                  }
-                               }
-                               if ( CRIAR ) break;										
-                            }
+								 if ( disciplina->combinacao_divisao_creditos.size() > 0 )
+								 {
+									bool CRIAR = false;
+									int nCredHor = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
+									std::vector< std::vector< std::pair< int /*dia*/, int /*nCreds*/ > > >::iterator 
+									   it1 = disciplina->combinacao_divisao_creditos.begin();
+									for ( ; it1 != disciplina->combinacao_divisao_creditos.end(); it1++ )
+									{
+									   std::vector< std::pair< int /*dia*/, int /*nCreds*/ > >::iterator
+										  it2 = (*it1).begin();
+									   for ( ; it2 != (*it1).end(); it2++ )
+									   {	
+										  if ( (*it2).second == nCredHor )
+										  {
+											 CRIAR = true; break;
+										  }
+									   }
+									   if ( CRIAR ) break;										
+									}
 
-                            if ( !CRIAR ) continue;
-                         }
+									if ( !CRIAR ) continue;
+								 }
 								 
 
 								 VariableTatico v;
@@ -28050,7 +28059,7 @@ int SolverMIP::criaRestricoesTatico( int campusId, int prioridade )
 #endif
 
 
-
+	/*
 	timer.start();
 	restricoes += criaRestricaoTaticoLimitaAberturaTurmas( campusId, prioridade );			// Restricao 1.2.7
 	timer.stop();
@@ -28060,7 +28069,7 @@ int SolverMIP::criaRestricoesTatico( int campusId, int prioridade )
 	std::cout << "numRest \"1.2.7\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
 	numRestAnterior = restricoes;
 #endif
-
+	*/
 
 
 	timer.start();
@@ -29227,9 +29236,8 @@ int SolverMIP::criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int priori
    Disciplina * disciplina = NULL;
 
    int minAlunos;
-   if ( problemData->parametros->min_alunos_abertura_turmas && prioridade == 1 )
+   if ( problemData->parametros->min_alunos_abertura_turmas )
    {
-		minAlunos = problemData->parametros->min_alunos_abertura_turmas_value;
 		if ( minAlunos <= 0 ) minAlunos = 1;
    }
    else
