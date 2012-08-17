@@ -3528,6 +3528,228 @@ void SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024]
 
 }
 
+void SolverMIP::testeCarregaPreSol( int campusId, int prioridade, int cjtAlunosId )
+{
+	double * xSol = NULL;
+
+	lp->updateLP();
+	int nroColsLP = lp->getNumCols();
+	xSol = new double[ nroColsLP ];
+   
+	char solName[1024];
+
+	strcpy( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId ).c_str() );
+	cout<<"====================> TESTE => carregando pre " <<solName <<endl;
+	FILE* fin = fopen( solName,"rb");
+	if ( fin == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::testeCarregaPreSol(int campusId, int prioridade, int cjtAlunosId): arquivo "
+					<< solName << " nao encontrado.\n";
+		return;
+	}
+
+	int nCols = 0;
+	fread(&nCols,sizeof(int),1,fin);
+
+	if ( nCols == nroColsLP )
+	{
+		for (int i =0; i < nCols; i++)
+		{
+			double auxDbl;
+			fread(&auxDbl,sizeof(double),1,fin);
+			xSol[i] = auxDbl;
+		}
+	}
+	else
+	{
+		std::cout << "\nErro em testeCarregaPreSol(int campusAtualId, int prioridade, int cjtAlunos): "
+					<< " \nNumero diferente de variaveis: " << nCols << " != " << nroColsLP;
+		return;
+	}
+	fclose(fin);
+	
+	int nChg = 0;
+	int *idx = new int[lp->getNumCols()*2];
+	double *valOrigUB = new double[lp->getNumCols()*2];
+	double *valOrigLB = new double[lp->getNumCols()*2];
+	double *valUB = new double[lp->getNumCols()*2];
+	double *valLB = new double[lp->getNumCols()*2];
+	BOUNDTYPE *bts1 = new BOUNDTYPE[lp->getNumCols()*2];
+	BOUNDTYPE *bts2 = new BOUNDTYPE[lp->getNumCols()*2];
+	
+    VariablePreHash::iterator vit;
+	vit = vHashPre.begin();
+	while ( vit != vHashPre.end() )
+	{
+		int col = vit->second;
+		double ub = xSol[ col ];
+		double lb = xSol[ col ];
+		idx[nChg] = col;
+		valOrigUB[nChg] = lp->getUB(col);
+		valOrigLB[nChg] = lp->getLB(col);
+		valUB[nChg] = ub + 1e-5;
+		valLB[nChg] = lb - 1e-5;
+		bts1[nChg] = BOUNDTYPE::BOUND_UPPER;
+		bts2[nChg] = BOUNDTYPE::BOUND_LOWER;
+		nChg++;
+	}
+	 
+	lp->chgBds(nChg,idx,bts1,valUB);
+	lp->chgBds(nChg,idx,bts2,valLB);
+	lp->updateLP();
+
+	lp->setTimeLimit( 1e10 );
+	lp->setMIPRelTol( 0.01 );
+	lp->setPreSolve(OPT_TRUE);
+	lp->setHeurFrequency(1.0);
+	lp->setMIPEmphasis(0);
+	lp->setSymetry(0);
+	lp->setMIPScreenLog( 4 );
+	lp->setNumIntSols(1);
+
+	lp->updateLP();
+	
+	char lpName[1024];
+    strcpy( lpName, getPreLpFileName( campusId, prioridade, cjtAlunosId ).c_str() );
+	strcat( lpName, "_teste" );
+
+	lp->writeProbLP(lpName);
+
+	int status = lp->optimize( METHOD_MIP );	
+
+	lp->chgBds(nChg,idx,bts1,valOrigUB);
+	lp->chgBds(nChg,idx,bts2,valOrigLB);
+	lp->updateLP();
+
+}
+void SolverMIP::testeCarregaSol( int campusId, int prioridade, int cjtAlunosId )
+{
+	std::cout<<"\nCarregamento de teste...\n";
+
+	double * xSol = NULL;
+   
+	lp->updateLP();
+	int nroColsLP = lp->getNumCols();
+	xSol = new double[ nroColsLP ];
+   
+	char solName[1024];
+
+	strcpy( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId ).c_str() );
+	cout<<"====================> TESTE => carregando tatico " <<solName <<endl;
+	FILE* fin = fopen( solName,"rb");
+	if ( fin == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::testeCarregaSol(int campusId, int prioridade, int cjtAlunosId): arquivo "
+					<< solName << " nao encontrado.\n";
+		return;
+	}
+
+	int nCols = 0;
+	fread(&nCols,sizeof(int),1,fin);
+
+	if ( nCols == nroColsLP )
+	{
+		for (int i =0; i < nCols; i++)
+		{
+			double auxDbl;
+			fread(&auxDbl,sizeof(double),1,fin);
+			xSol[i] = auxDbl;
+		}
+	}
+	else
+	{
+		std::cout << "\nErro em testeCarregaSol(int campusAtualId, int prioridade, int cjtAlunos): "
+					<< " \nNumero diferente de variaveis: " << nCols << " != " << nroColsLP;
+		return;
+	}
+	fclose(fin);
+
+	int nChg = 0;
+	int *idx = new int[lp->getNumCols()*2];
+	double *valOrigUB = new double[lp->getNumCols()*2];
+	double *valOrigLB = new double[lp->getNumCols()*2];
+	double *valUB = new double[lp->getNumCols()*2];
+	double *valLB = new double[lp->getNumCols()*2];
+	BOUNDTYPE *bts1 = new BOUNDTYPE[lp->getNumCols()*2];
+	BOUNDTYPE *bts2 = new BOUNDTYPE[lp->getNumCols()*2];
+	
+	std::cout<<"\nFixando a solucao lida...\n";
+
+	// Alteração toda a solucao
+    VariableTaticoHash::iterator vit;
+	vit = vHashTatico.begin();
+	while ( vit != vHashTatico.end() )
+	{
+		int col = vit->second;
+		double ub = xSol[ col ];
+		double lb = xSol[ col ];
+		idx[nChg] = col;
+		valOrigUB[nChg] = lp->getUB(col);
+		valOrigLB[nChg] = lp->getLB(col);
+		valUB[nChg] = ub + 1e-5;
+		valLB[nChg] = lb - 1e-5;
+		bts1[nChg] = BOUNDTYPE::BOUND_UPPER;
+		bts2[nChg] = BOUNDTYPE::BOUND_LOWER;
+		nChg++;
+	}
+
+	std::cout<<"\nFixando alteracao especifica...\n";
+
+	// Alteração especifica:
+	vit = vHashTatico.begin();
+	while ( vit != vHashTatico.end() )
+	{
+		VariableTatico v = vit->first;
+
+		if ( v.getType() == VariableTatico::V_SLACK_DEMANDA && 
+			 v.getTurma() == 0 && 
+			 v.getDisciplina()->getId() == 6055 )
+		{
+			int col = vit->second;
+			double value = 0.0;
+			valUB[nChg] = value + 1e-5;
+			valLB[nChg] = value - 1e-5;
+			break;
+		}
+	}	 
+
+	std::cout<<"\nAlterando bounds...\n";
+
+	lp->chgBds(nChg,idx,bts1,valUB);
+	lp->chgBds(nChg,idx,bts2,valLB);
+	lp->updateLP();
+
+	lp->updateLP();
+	lp->setTimeLimit( 1e10 );
+	lp->setPreSolve(OPT_TRUE);
+	lp->setHeurFrequency(1.0);
+	lp->setMIPScreenLog( 4 );
+	lp->setMIPEmphasis(0);
+	lp->setSymetry(0);
+	lp->setCuts(3);
+	lp->setNumIntSols(1);	
+	lp->updateLP();
+	
+	char lpName[1024];
+    strcpy( lpName, getTaticoLpFileName( campusId, prioridade, cjtAlunosId ).c_str() );
+	strcat( lpName, "_teste" );
+
+	lp->writeProbLP(lpName);
+	
+	std::cout<<"\nOtimizando o teste...";
+
+	int status = lp->optimize( METHOD_MIP );	
+
+	std::cout<<" otimizado!\n";
+
+	lp->chgBds(nChg,idx,bts1,valOrigUB);
+	lp->chgBds(nChg,idx,bts2,valOrigLB);
+	lp->updateLP();
+
+	std::cout<<"\nFim do carregamento de teste!\n";
+}
+
+
 #ifdef TATICO_CJT_ALUNOS
 
 /*
@@ -5456,19 +5678,20 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	    lp->updateLP();
 
 		#ifdef PRINT_cria_restricoes
-	   printf( "Total of Constraints: %i\n\n", constNum );
+	    printf( "Total of Constraints: %i\n\n", constNum );
 		#endif   
 
+	    lp->writeProbLP( lpName );
    
 		// -------------------------------------------------------------------
 		// Fixa o ub = 0 para todas as variaveis que possuem lb zero
 		std::map< int, double > vHashLivresOriginais;
 
-      int *idxUB = new int[lp->getNumCols()*2];
-      double *valUB = new double[lp->getNumCols()*2];
-      BOUNDTYPE *bts = new BOUNDTYPE[lp->getNumCols()*2];
+		int *idxUB = new int[lp->getNumCols()*2];
+		double *valUB = new double[lp->getNumCols()*2];
+		BOUNDTYPE *bts = new BOUNDTYPE[lp->getNumCols()*2];
 
-      int nChgUB = 0;
+		int nChgUB = 0;
 		
 		VariablePreHash::iterator vit = vHashPre.begin();
 		for ( ; vit != vHashPre.end(); vit++ )
@@ -5493,16 +5716,16 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 				{
 					vHashLivresOriginais[ vit->second ] = lp->getUB(vit->second);
 
-               idxUB[nChgUB] = vit->second;
-               valUB[nChgUB] = 0.0;
-               bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
-               nChgUB++;
+					idxUB[nChgUB] = vit->second;
+					valUB[nChgUB] = 0.0;
+					bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
+					nChgUB++;
 				}
 			}
 		}
 		// -------------------------------------------------------------------
 
-      lp->chgBds(nChgUB,idxUB,bts,valUB);
+        lp->chgBds(nChgUB,idxUB,bts,valUB);
 	
 		lp->updateLP();
 	
@@ -5530,20 +5753,20 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 	    // -------------------------------------------------------------------
 	    // Volta as variaveis z_{i,d,cp} que estavam livres
-      nChgUB = 0;
+        nChgUB = 0;
          
 		for ( std::map< int, double >::iterator it = vHashLivresOriginais.begin();
 			  it != vHashLivresOriginais.end(); it++)
 		{
 			int col = (*it).first;
 			double ub = (*it).second;
-         idxUB[nChgUB] = col;
-         valUB[nChgUB] = ub;
-         bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
-         nChgUB++;
+			idxUB[nChgUB] = col;
+			valUB[nChgUB] = ub;
+			bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
+			nChgUB++;
 		}
-	
-      lp->chgBds(nChgUB,idxUB,bts,valUB);
+	 
+        lp->chgBds(nChgUB,idxUB,bts,valUB);
 		lp->updateLP();	   
 		// -------------------------------------------------------------------
 
@@ -5587,7 +5810,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		int *idxN = new int[lp->getNumCols()];
 		lp->getObj(0,lp->getNumCols()-1,objN);
 
-      nChgUB = 0;
+        nChgUB = 0;
 
 		vit = vHashPre.begin();
 		for ( ; vit != vHashPre.end(); vit++ )
@@ -5598,22 +5821,22 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 			if ( v.getType() == VariablePre::V_PRE_SLACK_DEMANDA )
 			{
-            idxUB[nChgUB] = vit->second;
-            valUB[nChgUB] = 100.0;
-            nChgUB++;
+				idxUB[nChgUB] = vit->second;
+				valUB[nChgUB] = 100.0;
+				nChgUB++;
 			}
-         else if ( v.getType() == VariablePre::V_PRE_ABERTURA )
+			else if ( v.getType() == VariablePre::V_PRE_ABERTURA )
 			{
-            idxUB[nChgUB] = vit->second;
-            valUB[nChgUB] = 1.0;
-            nChgUB++;
+				idxUB[nChgUB] = vit->second;
+				valUB[nChgUB] = 1.0;
+				nChgUB++;
 			}
-         else
-         {
-            idxUB[nChgUB] = vit->second;
-            valUB[nChgUB] = 0.0;
-            nChgUB++;
-         }
+			else
+			{
+				idxUB[nChgUB] = vit->second;
+				valUB[nChgUB] = 0.0;
+				nChgUB++;
+			}
       }
 
       lp->chgObj(nChgUB,idxUB,valUB);
@@ -5645,18 +5868,18 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 			if ( v.getType() == VariablePre::V_PRE_SLACK_DEMANDA && xS[vit->second] < 0.1 )
 			{
-            idxUB[nChgUB] = vit->second;
-            valUB[nChgUB] = 0.0;
-            bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
-            nChgUB++;
+				idxUB[nChgUB] = vit->second;
+				valUB[nChgUB] = 0.0;
+				bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
+				nChgUB++;
 			}
-         else if ( v.getType() == VariablePre::V_PRE_ABERTURA && xS[vit->second] < 0.1 )
+			else if ( v.getType() == VariablePre::V_PRE_ABERTURA && xS[vit->second] < 0.1 )
 			{
-            idxUB[nChgUB] = vit->second;
-            valUB[nChgUB] = 0.0;
-            bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
-            nChgUB++;
-         }
+				idxUB[nChgUB] = vit->second;
+				valUB[nChgUB] = 0.0;
+				bts[nChgUB] = BOUNDTYPE::BOUND_UPPER;
+				nChgUB++;
+			}
 		}
 
       lp->chgBds(nChgUB,idxUB,bts,valUB);
@@ -5900,6 +6123,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 {
 	int status = 0;
 
+	bool CARREGA_TESTE = false;
+
+	if ( CARREGA_TESTE ) CARREGA_SOLUCAO = false;
+
    if ( this->CARREGA_SOLUCAO )
    {
 	   char solName[1024];
@@ -6017,7 +6244,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 			#ifdef PRINT_cria_restricoes
 		   printf( "Total of Constraints: %i\n\n", constNum );
-			#endif	
+			#endif
+		   		   
+			if ( CARREGA_TESTE ) testeCarregaSol( campusId, prioridade, cjtAlunosId );
+
 		}
    }
 #endif
@@ -6077,10 +6307,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 				{
 					vHashLivresOriginais.insert( vit->second );
 
-               idxs[nBds] = vit->second;
-               vals[nBds] = 0.0;
-               bds[nBds] = BOUNDTYPE::BOUND_UPPER;
-               nBds++;
+				   idxs[nBds] = vit->second;
+				   vals[nBds] = 0.0;
+				   bds[nBds] = BOUNDTYPE::BOUND_UPPER;
+				   nBds++;
 				}
 			}
 		}

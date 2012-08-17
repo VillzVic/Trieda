@@ -74,7 +74,7 @@ using namespace boost;
 #endif
 
 
-//#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
+#define READ_SOLUTION // Se der certo o uso desse define, pode deletar os READ_SOLUTION_TATICO_BIN e READ_SOLUTION_PRETATICO_BIN
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -599,6 +599,10 @@ public:
 
    void imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId );
 
+   // funções de teste para quando quiser fixar toda uma solução,
+   // e dps alterar um valor especifico para se observar o comportamento
+   void testeCarregaPreSol( int campusId, int prioridade, int cjtAlunosId );
+   void testeCarregaSol( int campusId, int prioridade, int cjtAlunosId );
 
 #ifdef TATICO_CJT_ALUNOS
    void carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int prioridade, int cjtAlunosId );
