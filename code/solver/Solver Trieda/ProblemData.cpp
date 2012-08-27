@@ -1592,6 +1592,30 @@ int ProblemData::existeTurmaDiscCampus( int turma, int discId, int campusId )
 	return 0;
 }
 
+int ProblemData::receitaMediaTurmaDiscCampus( int turma, int discId, int campusId )
+{
+	Disciplina *disciplina = this->refDisciplinas[ discId ];
+
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+	trio.set( campusId, turma, disciplina );
+
+	std::map< Trio< int, int, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
+		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
+
+	int media = 0;
+	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
+	{
+		ITERA_GGROUP_LESSPTR( itAlDem, itMap->second, AlunoDemanda )
+		{
+			media += itAlDem->demanda->oferta->getReceita();
+		}
+		if ( media > 0 )
+			media /= itMap->second.size();
+	}
+	
+	return media;
+}
+
 GGroup<Aluno*> ProblemData::alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus )
 {
 	GGroup<Aluno*> alunosEmComum;
@@ -2340,16 +2364,20 @@ double ProblemData::cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno 
 }
 
 
-void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica )
+void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int tatico )
 {
+	int totalAtendimentos=0;
+	
 	stringstream ssCp;
 	stringstream ssP;
 	stringstream ssCjt;
+	stringstream ssTat;
 
 	ssCp << campusId;
 	ssP << prioridade;	
 	ssCjt << cjtAlunosId;
-		
+	ssTat << tatico;
+
 	// Alunos ------------------------------------------------------------
 
 	ofstream alunosFile;
@@ -2362,7 +2390,9 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	alunosFilename += ssP.str();
 	alunosFilename += "_Cjt"; 
 	alunosFilename += ssCjt.str();
-    alunosFilename += ".txt";
+	alunosFilename += "_R"; 
+	alunosFilename += ssTat.str();
+	alunosFilename += ".txt";
 		
 	alunosFile.open(alunosFilename, ios::out);
 	if (!alunosFile)
@@ -2389,9 +2419,12 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 			int turma = (*itGGroup).second;
 			int disc = (*itGGroup).third->getId();
 
-			alunosFile << "i" << turma << "_Disc" << disc << "; ";	
+			alunosFile << "i" << turma << "_Disc" << disc << "; ";
+			
+			totalAtendimentos++;
 		}
 	}
+	alunosFile << "\n\nTotal de AlunosDemanda atendidos: " << totalAtendimentos;
 
 	alunosFile.close();
 
@@ -2407,6 +2440,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	turmasFilename += ssP.str();
 	turmasFilename += "_Cjt"; 
 	turmasFilename += ssCjt.str();
+	turmasFilename += "_R"; 
+	turmasFilename += ssTat.str();
     turmasFilename += ".txt";
 	
 	turmasFile.open(turmasFilename, ios::out);
@@ -2416,6 +2451,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 		return;
 	}
 	
+	totalAtendimentos=0;
+
 	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 		itMapTurmas = this->mapCampusTurmaDisc_AlunosDemanda.begin();
 
@@ -2435,10 +2472,12 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 		{
 			int alunoId = itGGroup->getAlunoId();
 			turmasFile << "Aluno " << alunoId << "; ";
-						
+			
+			totalAtendimentos++;			
 		}	
 	}
-	
+	turmasFile << "\n\nTotal de AlunosDemanda atendidos: " << totalAtendimentos;
+
 	turmasFile.close();
 }
 
@@ -2510,6 +2549,22 @@ bool ProblemData::possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplin
 				return true;
 			}
 		}
+	}
+
+	return false;
+}
+
+bool ProblemData::possuiNaoAtend(Aluno* aluno)
+{
+	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
+		it = mapSlackAluno_CampusTurmaDisc.find( aluno );
+
+	if ( it != mapSlackAluno_CampusTurmaDisc.end() )
+	{
+		if ( (*it).second.size() != 0 )
+			return true;
+		else
+			return false;
 	}
 
 	return false;

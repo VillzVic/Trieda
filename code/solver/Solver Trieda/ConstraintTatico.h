@@ -40,7 +40,11 @@ public:
 	  C_DISC_PRATICA_TEORICA = 17,					// Restricao 1.2.17
 	  C_ALUNO_HORARIO = 18,							// Restricao 1.2.12	  
 	  C_MIN_DIAS_ALUNO = 19,
-	  C_MAX_DIAS_ALUNO = 20
+	  C_MAX_DIAS_ALUNO = 20,
+	  C_DESALOCA_ALUNO_TURMA_HORARIO = 21,
+	  C_DESALOCA_ALUNO_HORARIO = 22,
+	  C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA = 23,
+	  C_SUM_DESALOCA_ALUNO = 24
    };
 
    /** Default constructor. */

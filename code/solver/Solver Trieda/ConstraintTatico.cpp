@@ -231,7 +231,15 @@ std::string ConstraintTatico::toString()
       ss << "__(C_MIN_DIAS_ALUNO):"; break;	  
    case C_MAX_DIAS_ALUNO:
       ss << "__(C_MAX_DIAS_ALUNO):"; break;	  
-
+   case C_DESALOCA_ALUNO_TURMA_HORARIO:
+      ss << "__(C_DESALOCA_ALUNO_TURMA_HORARIO):"; break;	  
+   case C_DESALOCA_ALUNO_HORARIO:
+      ss << "__(C_DESALOCA_ALUNO_HORARIO):"; break;	  
+   case C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA:
+      ss << "__(C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA):"; break;	  
+   case C_SUM_DESALOCA_ALUNO:
+      ss << "__(C_SUM_DESALOCA_ALUNO):"; break;	  
+	  	  	    
    default:
       ss << "!";
    }

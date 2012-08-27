@@ -107,24 +107,24 @@ public:
    **                      Variaveis do pre-tatico                    **
    *********************************************************************/
 
-   int cria_preVariaveis( int campusId, int prioridade, int grupoAlunosId );
+   int cria_preVariaveis( int campusId, int prioridade, int grupoAlunosId, int r );
 
-   int cria_preVariavel_creditos( int campusId, int grupoAlunosId, int P_ATUAL  );						// x_{i,d,s}
-   int cria_preVariavel_oferecimentos( int campusId, int grupoAlunosId, int P_ATUAL  );					// o_{i,d,s}
-   int cria_preVariavel_abertura( int campusId, int grupoAlunosId, int P_ATUAL  );						// z_{i,d,cp}
-   int cria_preVariavel_alunos( int campusId, int grupoAlunosId, int P_ATUAL  );							// a_{i,d,oft,s}
-   int cria_preVariavel_aloc_alunos( int campusId, int grupoAlunosId, int P_ATUAL  );						// b_{i,d,c}   
+   int cria_preVariavel_creditos( int campusId, int grupoAlunosId, int P_ATUAL, int r );						// x_{i,d,s}
+   int cria_preVariavel_oferecimentos( int campusId, int grupoAlunosId, int P_ATUAL, int r );					// o_{i,d,s}
+   int cria_preVariavel_abertura( int campusId, int grupoAlunosId, int P_ATUAL, int r );						// z_{i,d,cp}
+   int cria_preVariavel_alunos( int campusId, int grupoAlunosId, int P_ATUAL, int r );							// a_{i,d,oft,s}
+   int cria_preVariavel_aloc_alunos( int campusId, int grupoAlunosId, int P_ATUAL, int r );						// b_{i,d,c}   
    int cria_preVariavel_folga_compartilhamento_incomp( int campusId, int grupoAlunosId, int P_ATUAL  );	// bs_{i,d,c1,c2} // não esta sendo usada, é restrição forte
-   int cria_preVariavel_folga_proibe_compartilhamento( int campusId, int grupoAlunosId, int P_ATUAL  );	// fc_{i,d,c1,c2}
-   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL  ); // fs_{d,s,oft}
+   int cria_preVariavel_folga_proibe_compartilhamento( int campusId, int grupoAlunosId, int P_ATUAL, int r );	// fc_{i,d,c1,c2}
+   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // fs_{d,s,oft}
    int cria_preVariavel_limite_sup_creds_sala( int campusId );												// Hs_{cp}
-   int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId, int P_ATUAL  );				// c_{i,d,oft,s}
+   int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId, int P_ATUAL, int r );				// c_{i,d,oft,s}
    int cria_preVariavel_soma_cred_sala( int campusId );
    
 
    // Usadas somente para o modelo Tatico-Aluno:
    int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, int grupoAlunosAtualId, int P_ATUAL );	// fd_{d,a}
-   int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL );			// s_{i,d,a,cp}
+   int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL, int r );			// s_{i,d,a,cp}
    int cria_preVariavel_folga_prioridade_inf( int campusId, int prior, int grupoAlunosAtualId );			// fpi_{a}
    int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
    int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL );			// ft_{i,d}
@@ -251,7 +251,7 @@ public:
    *********************************************************************/
 
    
-   int criaVariaveisTatico( int campusId, int P );
+   int criaVariaveisTatico( int campusId, int P, int tatico );
 
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoAbertura( int campusId, int P );									// z_{i,d,cp}
@@ -264,19 +264,21 @@ public:
    int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId, int P );					// fcm_{d,t}
    int criaVariavelTaticoAberturaCompativel( int campusId, int P );							// zc_{d,t}
 //   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );					// fd_{d,a}   
-   int criaVariavelTaticoFolgaDemandaDisc( int campusId, int P );							// fd_{i,d,cp}
+   int criaVariavelTaticoFolgaDemandaDisc( int campusId, int P );					// fd_{i,d,cp}
    int criaVariavelTaticoAlunoUnidDia( int campusId, int P );								// y_{a,u,t}  // Não usada
    int criaVariavelTaticoAlunoUnidadesDifDia( int campusId, int P );						// w_{a,t}	  // Não usada
 
    int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
    int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId, int P );						// ffd_{i1,-d,i2,d,cp}
    int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
+   int criaVariavelTaticoDesalocaAlunoDia( int campusId, int P, int tatico );					// fa_{i,d,a,t}
+   int criaVariavelTaticoDesalocaAluno( int campusId, int P, int tatico );					// fa_{i,d,a}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
    *********************************************************************/
 
-   int criaRestricoesTatico( int campusId, int prioridade );
+   int criaRestricoesTatico( int campusId, int prioridade, int tatico );
 
    int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
    int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
@@ -300,6 +302,11 @@ public:
    int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
    int criaRestricaoTaticoMinDiasAluno( int campusId );
    int criaRestricaoTaticoMaxDiasAluno( int campusId );
+
+   int criaRestricaoTaticoDesalocaAlunoTurmaHorario( int campusId );
+   int criaRestricaoTaticoDesalocaAlunoHorario( int campusId );
+   int criaRestricaoTaticoSumDesalocaAlunoFolgaDemanda( int campusId );
+   int criaRestricaoTaticoSumDesalocaAluno( int campusId );
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
      
@@ -595,23 +602,25 @@ public:
 
    void limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId );
    
-   void removeAtendimentosParciais( double *xSol, char solFilename[1024] );
+   int removeAtendimentosParciais( double *xSol, char solFilename[1024] );
 
    void imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId );
 
    // funções de teste para quando quiser fixar toda uma solução,
    // e dps alterar um valor especifico para se observar o comportamento
-   void testeCarregaPreSol( int campusId, int prioridade, int cjtAlunosId );
-   void testeCarregaSol( int campusId, int prioridade, int cjtAlunosId );
+   void testeCarregaPreSol( int campusId, int prioridade, int cjtAlunosId, int it );
+   void testeCarregaSol( int campusId, int prioridade, int cjtAlunosId, int it );
 
 #ifdef TATICO_CJT_ALUNOS
-   void carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int prioridade, int cjtAlunosId );
-   void carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, int prioridade, int cjtAlunosId );
+   void carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int prioridade, int cjtAlunosId, int r );
+   int carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, int prioridade, int cjtAlunosId, int r, int tatico );
    int solveTaticoPorCampusCjtAlunos();
-   int solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId );
-   int solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId );
+   int solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId, int r );
+   int solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId, int r, int tatico );
    int fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v );
    int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
+   void fixaAtendimentosVariaveisCreditosAnterior();
+   void voltaComAlunosNaoAlocados();
 
    double fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
    double fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v );
@@ -694,19 +703,19 @@ private:
 	int retornaTempoDeExecucaoPreModelo( int campusId, int cjtAlunosId, int prioridade );
 	int retornaTempoDeExecucaoTatico( int campusId, int cjtAlunosId, int prioridade );
 
-	std::string getPreLpFileName( int campusId, int prioridade, int cjtAlunosId );
+	std::string getPreLpFileName( int campusId, int prioridade, int cjtAlunosId, int it );
 
-	std::string getTaticoLpFileName( int campusId, int prioridade, int cjtAlunosId );
+	std::string getTaticoLpFileName( int campusId, int prioridade, int cjtAlunosId, int it );
 
     std::string getSolHeuristBinFileName( int campusId, int prioridade, int cjtAlunosId );
 
-	std::string getSolBinFileName( int campusId, int prioridade, int cjtAlunosId );
+	std::string getSolBinFileName( int campusId, int prioridade, int cjtAlunosId, int it );
 
-	std::string getSolPreBinFileName( int campusId, int prioridade, int cjtAlunosId );
+	std::string getSolPreBinFileName( int campusId, int prioridade, int cjtAlunosId, int it );
 
-	std::string getSolucaoPreTaticoFileName( int campusId, int prioridade, int cjtAlunosId );	
+	std::string getSolucaoPreTaticoFileName( int campusId, int prioridade, int cjtAlunosId, int it );	
 	
-	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId );	
+	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId, int it );	
 
     std::string getSolVarsPreFileName( int campusId, int prioridade, int cjtAlunosId );
 
@@ -866,6 +875,7 @@ private:
 
    void heuristica2AlocaAlunos( int campusId, int prioridade, int grupoAlunosAtualId );
    bool heuristica2TentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int turma, std::string heurFilename );
+   void heuristicaP1AlocaAlunos( int campusId, int prioridade, int grupoAlunosAtualId );
 
 };
 

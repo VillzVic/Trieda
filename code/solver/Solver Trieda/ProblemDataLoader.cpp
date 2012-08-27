@@ -101,24 +101,6 @@ void ProblemDataLoader::load()
    // ---------
    preencheDisciplinasDeOfertasCompativeis();
 
-
-	ITERA_GGROUP_LESSPTR( it_aluno_dem, problemData->alunosDemanda, AlunoDemanda )
-	{
-			bool achou = false;
-			ITERA_GGROUP_LESSPTR( it_dem, problemData->demandas, Demanda )
-			{
-				if ( ( *it_dem )->getId() == (*it_aluno_dem)->getDemandaId() )
-				{
-					achou = true;
-				}
-			}
-			if (!achou){
-				std::cout<<"\nERRO ANTES! Incluiu AlunoDemanda sem ter incluido a Demanda\n";		
-				int v; cin>>v;
-			}
-	}
-
-
    std::cout << "Dividindo disciplinas..." << std::endl;
    // ---------
    divideDisciplinas();
@@ -3496,7 +3478,13 @@ void ProblemDataLoader::estima_turmas_sem_compart()
 		   Disciplina *d = problemData->refDisciplinas[discId];
 
 		   int capacMediaSala = d->getCapacMediaSala( cp->getId() );
-		   
+
+		   int maximoAlunosTurma = 999;
+		   if ( discId < 0 ) maximoAlunosTurma = d->getMaxAlunosP();
+		   else maximoAlunosTurma = d->getMaxAlunosT();
+		   if ( maximoAlunosTurma < capacMediaSala )
+			   capacMediaSala = maximoAlunosTurma;
+
 		   if ( d->getNumTurmas() < 0 ) d->setNumTurmas( 0 );
 		   
 		   int numTurmas = d->getNumTurmas();

@@ -217,7 +217,11 @@ std::string VariableTatico::toString()
   	 case V_SLACK_SLACKDEMANDA_PT:
 		str <<"ffd"; break;			
   	 case V_ALUNO_DIA:
-		str <<"du"; break;			
+		str <<"du"; break;		
+	 case V_DESALOCA_ALUNO:
+		str <<"fa"; break;	
+	 case V_DESALOCA_ALUNO_DIA:
+		str <<"fad"; break;	
 
     default:
         str << "!";

@@ -407,8 +407,11 @@ public:
 
    // Resultado da alocação de alunos no pre-modelo:
    std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > > mapAluno_CampusTurmaDisc;
-
    std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > > mapCampusTurmaDisc_AlunosDemanda;
+
+   // Folgas de atendimento ao final do tático de p1:
+   std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > > mapSlackAluno_CampusTurmaDisc;
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > > mapSlackCampusTurmaDisc_AlunosDemanda;
 
    void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
    void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
@@ -416,7 +419,7 @@ public:
    void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
    void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
 
-   void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica );
+   void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int tatico );
 
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > listSlackDemandaAluno;
 
@@ -438,6 +441,7 @@ public:
    bool haDemandaDiscNoCampus( int disciplina, int campusId, int prioridade );
    
    int existeTurmaDiscCampus( int turma, int discId, int campusId );
+   int receitaMediaTurmaDiscCampus( int turma, int discId, int campusId );
 
    GGroup<Aluno*> alunosEmComum( int turma1, Disciplina* disc1, int turma2, Disciplina* disc2, Campus* campus );
 
@@ -466,6 +470,7 @@ public:
    int retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia );
 
    bool possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplina* disciplina2, int campusId, int P_ATUAL );
+   bool possuiNaoAtend(Aluno* aluno);
 
    private:
    
