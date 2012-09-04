@@ -24,24 +24,27 @@ public:
       V_PRE_ALOC_ALUNO = 5,				            // b_{i,d,c}
       V_PRE_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT = 6,   // bs_{i,d,c1,c2}
       V_PRE_SLACK_DEMANDA = 7,						// fd_{d,oft} ou fd_{d,a}, depende se a otimização é por bloco ou por aluno
-	  V_PRE_SLACK_COMPARTILHAMENTO = 8,				// fc_{i,d,c1,c2}
-	  V_PRE_SLACK_SALA = 9,							// fs_{d,s,oft}
-	  V_PRE_LIM_SUP_CREDS_SALA = 10,				// Hs_{cp}
-	  V_PRE_ALOC_ALUNO_OFT = 11,					// c_{i,d,s,oft}
+	  V_PRE_SLACK_COMPARTILHAMENTO = 8,				// fc_{i,d,c1,c2}	  
+	  V_PRE_LIM_SUP_CREDS_SALA = 9,					// Hs_{cp}
 
 	  // Variaveis usadas somente para o modelo Tatico-Aluno:
 
-	  V_PRE_ALOCA_ALUNO_TURMA_DISC = 12,			// s_{a,i,d,cp}
-	  V_PRE_SLACK_PRIOR_INF = 13,					// fpi_{a}
-	  V_PRE_SLACK_PRIOR_SUP = 14,					// fps_{a}
-	  V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL = 15,		// ft_{i,d}
+	  V_PRE_ALOCA_ALUNO_TURMA_DISC = 10,			// s_{a,i,d,cp}
+	  V_PRE_SLACK_PRIOR_INF = 11,					// fpi_{a}
+	  V_PRE_SLACK_PRIOR_SUP = 12,					// fps_{a}
+	  V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL = 13,		// ft_{i,d}
+	  V_PRE_TURMAS_COMPART = 14,					// w_{i,d,i',d'}
+	  V_PRE_FOLGA_DISTR_ALUNOS = 15,				// fda_{}
+      V_PRE_CRED_SALA_F1 = 16,						// xcs1
+      V_PRE_CRED_SALA_F2 = 17,						// xcs2
+      V_PRE_CRED_SALA_F3 = 18,						// xcs3
+	  V_PRE_SLACK_DISC_SALA = 19,					// fs_{d,s}
+	  V_PRE_ALUNO_SALA = 20,						// as_{a,s}
 
-	  V_PRE_TURMAS_COMPART = 16,					// w_{i,d,i',d'}
+	  // Variaveis usadas somente para o modelo Tatico-BlocoCurricular:
 
-	  V_PRE_FOLGA_DISTR_ALUNOS = 17,		// fda_{}
-     V_PRE_CRED_SALA_F1 = 18, // xcs1
-     V_PRE_CRED_SALA_F2 = 19, // xcs2
-     V_PRE_CRED_SALA_F3 = 20 // xcs3
+	  V_PRE_SLACK_SALA = 21,						// fs_{d,s,oft}
+	  V_PRE_ALOC_ALUNO_OFT = 22						// c_{i,d,s,oft}
 
    };
 

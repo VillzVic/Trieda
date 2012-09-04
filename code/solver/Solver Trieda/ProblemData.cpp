@@ -2367,7 +2367,9 @@ double ProblemData::cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno 
 void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int tatico )
 {
 	int totalAtendimentos=0;
-	
+	int totalAtendimentosSemDivPT=0;
+	long int totalCargaHoraria=0;
+
 	stringstream ssCp;
 	stringstream ssP;
 	stringstream ssCjt;
@@ -2421,10 +2423,14 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 
 			alunosFile << "i" << turma << "_Disc" << disc << "; ";
 			
+			totalCargaHoraria += (*itGGroup).third->getTotalCreditos();
 			totalAtendimentos++;
+			if ( disc > 0 ) totalAtendimentosSemDivPT++;
 		}
 	}
 	alunosFile << "\n\nTotal de AlunosDemanda atendidos: " << totalAtendimentos;
+	alunosFile << "\nTotal de AlunosDemanda sem divisao PT atendidos: " << totalAtendimentosSemDivPT;
+	alunosFile << "\nCarga Horaria Total atendida: " << totalCargaHoraria;
 
 	alunosFile.close();
 
@@ -2452,6 +2458,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	}
 	
 	totalAtendimentos=0;
+	totalAtendimentosSemDivPT=0;
+	totalCargaHoraria=0;
 
 	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
 		itMapTurmas = this->mapCampusTurmaDisc_AlunosDemanda.begin();
@@ -2464,6 +2472,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 
 		if ( cp != campusId )
 			continue;
+		
+		totalCargaHoraria += itMapTurmas->second.size() * itMapTurmas->first.third->getTotalCreditos();
 
 		turmasFile << "\n\ni" << turma << "_Disc" << disc << ": ";
 
@@ -2473,10 +2483,13 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 			int alunoId = itGGroup->getAlunoId();
 			turmasFile << "Aluno " << alunoId << "; ";
 			
-			totalAtendimentos++;			
+			totalAtendimentos++;	
+			if ( disc > 0 ) totalAtendimentosSemDivPT++;
 		}	
 	}
 	turmasFile << "\n\nTotal de AlunosDemanda atendidos: " << totalAtendimentos;
+	turmasFile << "\nTotal de AlunosDemanda sem divisao PT atendidos: " << totalAtendimentosSemDivPT;
+	turmasFile << "\nCarga Horaria Total atendida: " << totalCargaHoraria;
 
 	turmasFile.close();
 }

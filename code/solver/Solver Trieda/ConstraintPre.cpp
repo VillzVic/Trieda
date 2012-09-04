@@ -200,6 +200,8 @@ std::string ConstraintPre::toString()
       ss << "__(C_PRE_LIMITA_ABERTURA_TURMAS):"; break;
    case C_PRE_ABRE_TURMAS_EM_SEQUENCIA:
       ss << "__(C_PRE_ABRE_TURMAS_EM_SEQUENCIA):"; break;
+   case C_PRE_TURMA_MESMA_DISC_OFT_SALA_DIF:
+      ss << "__(C_PRE_TURMA_MESMA_DISC_OFT_SALA_DIF):"; break;
    case C_PRE_TURMA_MESMA_DISC_SALA_DIF:
       ss << "__(C_PRE_TURMA_MESMA_DISC_SALA_DIF):"; break;
    case C_PRE_LIM_SUP_CREDS_SALA:
@@ -228,7 +230,9 @@ std::string ConstraintPre::toString()
       ss <<"_(C_PRE_SOMA_CRED_SALA):"; break;
    case C_PRE_MAX_CREDS_ALUNO_SEMANA:
       ss <<"_(C_PRE_MAX_CREDS_ALUNO_SEMANA):"; break;
-
+   case C_PRE_ALUNO_SALA:
+      ss <<"_(C_PRE_ALUNO_SALA):"; break;
+	  
    default:
       ss << "!";
    }

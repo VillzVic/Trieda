@@ -36,24 +36,26 @@ public:
 	  C_PRE_LIM_SUP_CREDS_SALA		= 15,			// Restricao 1.15
 	  C_PRE_ATIVA_C					= 16,			// Restricao 1.16
 
-	  // Restrição só usada para o modelo Tatico (sem aluno):
+	  // Restrição só usada para o modelo Tatico BlocoCurr (sem aluno):
 
 	  C_PRE_FIXA_NAO_COMPARTILHAMENTO = 17,			// Restricao 1.17
+	  C_PRE_TURMA_MESMA_DISC_OFT_SALA_DIF = 18,
 
 	  // Restrição só usada para o modelo Tatico-Aluno:
 
-	  C_ATENDIMENTO_ALUNO = 18,						// Restricao 1.18
-	  C_ALUNO_UNICA_TURMA_DISC = 19,				// Restricao 1.19
-	  C_ALUNO_DISC_PRATICA_TEORICA = 20,			// Restricao 1.20
-	  C_ALUNO_PRIORIDADES_DEMANDA = 21,				// Restricao 1.21
+	  C_ATENDIMENTO_ALUNO = 19,						// Restricao 1.18
+	  C_ALUNO_UNICA_TURMA_DISC = 20,				// Restricao 1.19
+	  C_ALUNO_DISC_PRATICA_TEORICA = 21,			// Restricao 1.20
+	  C_ALUNO_PRIORIDADES_DEMANDA = 22,				// Restricao 1.21
 
-	  C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO = 22,
-	  C_PRE_ATIVA_VAR_COMPART_TURMA = 23,
-	  C_PRE_MAX_CREDS_ALUNO_DIA = 24,
+	  C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO = 23,
+	  C_PRE_ATIVA_VAR_COMPART_TURMA = 24,
+	  C_PRE_MAX_CREDS_ALUNO_DIA = 25,
 
-	  C_PRE_DISTR_ALUNOS = 25,
-     C_PRE_SOMA_CRED_SALA = 26,
-     C_PRE_MAX_CREDS_ALUNO_SEMANA = 27
+	  C_PRE_DISTR_ALUNOS = 26,
+     C_PRE_SOMA_CRED_SALA = 27,
+     C_PRE_MAX_CREDS_ALUNO_SEMANA = 28,
+	 C_PRE_ALUNO_SALA = 29
 
    };
 

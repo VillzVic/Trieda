@@ -116,23 +116,23 @@ public:
    int cria_preVariavel_aloc_alunos( int campusId, int grupoAlunosId, int P_ATUAL, int r );						// b_{i,d,c}   
    int cria_preVariavel_folga_compartilhamento_incomp( int campusId, int grupoAlunosId, int P_ATUAL  );	// bs_{i,d,c1,c2} // não esta sendo usada, é restrição forte
    int cria_preVariavel_folga_proibe_compartilhamento( int campusId, int grupoAlunosId, int P_ATUAL, int r );	// fc_{i,d,c1,c2}
-   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // fs_{d,s,oft}
    int cria_preVariavel_limite_sup_creds_sala( int campusId );												// Hs_{cp}
-   int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId, int P_ATUAL, int r );				// c_{i,d,oft,s}
    int cria_preVariavel_soma_cred_sala( int campusId );
    
+   // Só para modelo de bloco curricular:
+   int cria_preVariavel_folga_turma_mesma_disc_oft_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // fs_{d,s,oft}
+   int cria_preVariavel_aloca_alunos_oferta( int campusId, int grupoAlunosId, int P_ATUAL, int r );				// c_{i,d,oft,s}
 
-   // Usadas somente para o modelo Tatico-Aluno:
+   // Só para o modelo Tatico-Aluno:
    int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, int grupoAlunosAtualId, int P_ATUAL );	// fd_{d,a}
    int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL, int r );			// s_{i,d,a,cp}
    int cria_preVariavel_folga_prioridade_inf( int campusId, int prior, int grupoAlunosAtualId );			// fpi_{a}
    int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
    int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL );			// ft_{i,d}
-
    int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );	// w_{i,d,i',d'}
-
    int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );			// fda
-
+   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // fs_{d,s}
+   int cria_preVariavel_aluno_sala( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // as_{a,s}
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
@@ -153,21 +153,23 @@ public:
    int cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtAlunosId  );	// Restricao 1.11
    int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade );    // Restricao 1.12
    int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId, int prioridade );  // Restricao 1.13
-   int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala( int campusId, int cjtAlunosId  );		// Restricao 1.15
-   int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId, int cjtAlunosId  );	// Restricao 1.16
    int cria_preRestricao_soma_cred_sala( int campusId, int cjtAlunosId  );	// Restricao 1.26
 
    // Usadas somente para o modelo Tatico-BlocoCurricular:
    int cria_preRestricao_cap_aloc_dem_disc_oft( int campusId );		// Restrição 1.5
    int cria_preRestricao_fixa_nao_compartilhamento( int campusId );	// Restricao 1.17
-   
+   int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId, int cjtAlunosId  );	// Restricao 1.16
+   int cria_preRestricao_turma_mesma_disc_oft_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
+
    // Usadas somente para o modelo Tatico-Aluno:
    int cria_preRestricao_atendimento_aluno( int campusId, int cjtAlunosId  );			 // Restricao 1.18
    int cria_preRestricao_aluno_unica_turma_disc( int campusId, int cjtAlunosId  );	 // Restricao 1.19
    int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20
    int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
    int cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId, int prior); 
+   int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
+   int cria_preRestricao_aluno_sala( int campusId, int cjtAlunosId  );
 
    // Só para p2 em diante
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade ); //nao precisa, pq tem cliques agora
@@ -335,7 +337,7 @@ public:
    int cria_preVariavel_folga_demanda_disciplina_oft( int campusId );	// fd_{d,oft}
    int cria_preVariavel_folga_compartilhamento_incomp( int campusId );	// bs_{i,d,c1,c2}
    int cria_preVariavel_folga_proibe_compartilhamento( int campusId );	// fc_{i,d,c1,c2}
-   int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId );// fs_{d,s,oft}
+   int cria_preVariavel_folga_turma_mesma_disc_oft_sala_dif( int campusId );// fs_{d,s,oft}
    int cria_preVariavel_limite_sup_creds_sala( int campusId );			// Hs_{cp}
    int cria_preVariavel_aloca_alunos_oferta( int campusId );			// c_{i,d,oft,s}
 	
@@ -364,7 +366,7 @@ public:
    int cria_preRestricao_evita_turma_disc_camp_d( int campusId );	// Restricao 1.11
    int cria_preRestricao_limita_abertura_turmas( int campusId );    // Restricao 1.12
    int cria_preRestricao_abre_turmas_em_sequencia( int campusId );  // Restricao 1.13
-   int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId ); // Restricao 1.14
+   int cria_preRestricao_turma_mesma_disc_oft_sala_dif( int campusId ); // Restricao 1.14
    int cria_preRestricao_limite_sup_creds_sala( int campusId );		// Restricao 1.15
    int cria_preRestricao_ativa_var_aloc_aluno_oft( int campusId );	// Restricao 1.16
 
@@ -602,7 +604,7 @@ public:
 
    void limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId );
    
-   int removeAtendimentosParciais( double *xSol, char solFilename[1024] );
+   int removeAtendimentosParciais( double *xSol, char solFilename[1024], int prioridade );
 
    void imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId );
 
