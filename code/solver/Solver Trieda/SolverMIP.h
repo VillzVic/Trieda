@@ -133,6 +133,7 @@ public:
    int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );			// fda
    int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // fs_{d,s}
    int cria_preVariavel_aluno_sala( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // as_{a,s}
+   int cria_preVariavel_formandosNaTurma( int campusId, int grupoAlunosId, int P_ATUAL, int r );			// f_{i,d,cp}
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
@@ -170,6 +171,7 @@ public:
    int cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId, int prior); 
    int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
    int cria_preRestricao_aluno_sala( int campusId, int cjtAlunosId  );
+   int cria_preRestricao_formandos( int campusId, int cjtAlunosId, int prioridade );
 
    // Só para p2 em diante
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade ); //nao precisa, pq tem cliques agora
@@ -177,7 +179,6 @@ public:
    int cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosId, int prioridade );
 
    int cria_preRestricao_distribuicao_aluno( int campusId, int cjtAlunosId  );
-   
    
 #ifndef TATICO_COM_HORARIOS
 
@@ -273,7 +274,7 @@ public:
    int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
    int criaVariavelTaticoFolgaFolgaDemandaPT( int campusId, int P );						// ffd_{i1,-d,i2,d,cp}
    int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
-   int criaVariavelTaticoDesalocaAlunoDia( int campusId, int P, int tatico );					// fa_{i,d,a,t}
+   int criaVariavelTaticoDesalocaAlunoDiaHor( int campusId, int P, int tatico );			// fad_{i,d,a,t,hi,hf}
    int criaVariavelTaticoDesalocaAluno( int campusId, int P, int tatico );					// fa_{i,d,a}
 
    /********************************************************************

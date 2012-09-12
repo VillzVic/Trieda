@@ -52,6 +52,8 @@ public:
 
    bool sobrepoeHorarioDiaOcupado( HorarioDia *hd );
 
+   bool ehFormando() const { return this->formando; }
+
    virtual bool operator < ( const Aluno & var ) const
    {
       if ( (int) this->getAlunoId() < (int) var.getAlunoId() )
@@ -77,6 +79,7 @@ private:
    std::string nomeAluno;
    Oferta *oferta;
    int ofertaId;
+   bool formando;
    std::map< int /*dia*/, int /*size*/ > combinaCredSLSize; // informa o numero total de combinações existentes para cada dia
 
    // só usado a partir de prioridade 2 para a primeira heuristica (modelo tatico sem horarios)

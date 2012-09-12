@@ -88,6 +88,8 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    this->parametros = new ParametrosPlanejamento;
    this->parametros->le_arvore( raiz.parametrosPlanejamento() );
 
+   this->parametros->considerar_formandos=false;
+
    ITERA_SEQ( it_oferta,
       raiz.ofertaCursosCampi(), OfertaCurso )
    {
@@ -2581,4 +2583,62 @@ bool ProblemData::possuiNaoAtend(Aluno* aluno)
 	}
 
 	return false;
+}
+
+bool ProblemData::haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL )
+{
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != cp->getId() )
+		{
+			continue;
+		}
+
+		if ( ! aluno->ehFormando() )
+			continue;
+
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
+				continue;
+
+			Disciplina *disc = it1AlDemanda->demanda->disciplina;			
+			if ( disc == disciplina )
+				return true;
+		}
+	}
+
+	return false;
+}
+
+bool ProblemData::getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL )
+{
+	int n = 0;
+
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != cp->getId() )
+		{
+			continue;
+		}
+
+		if ( ! aluno->ehFormando() )
+			continue;
+
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
+				continue;
+
+			Disciplina *disc = it1AlDemanda->demanda->disciplina;			
+			if ( disc == disciplina )
+				n++;
+		}
+	}
+
+	return n;
 }

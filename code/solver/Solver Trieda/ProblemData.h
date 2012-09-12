@@ -472,6 +472,9 @@ public:
    bool possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplina* disciplina2, int campusId, int P_ATUAL );
    bool possuiNaoAtend(Aluno* aluno);
 
+   bool haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
+   bool getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

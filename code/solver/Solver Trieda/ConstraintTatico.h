@@ -41,7 +41,7 @@ public:
 	  C_ALUNO_HORARIO = 18,							// Restricao 1.2.12	  
 	  C_MIN_DIAS_ALUNO = 19,
 	  C_MAX_DIAS_ALUNO = 20,
-	  C_DESALOCA_ALUNO_TURMA_HORARIO = 21,
+	  C_DESALOCA_ALUNO_TURMA = 21,
 	  C_DESALOCA_ALUNO_HORARIO = 22,
 	  C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA = 23,
 	  C_SUM_DESALOCA_ALUNO = 24
@@ -100,6 +100,8 @@ public:
    int getTurma2() const { return turma2; }
    Disciplina* getDisciplina1() const { return disc1; }   
    Disciplina* getDisciplina2() const { return disc2; }
+   HorarioAula* getHorarioAulaInicial() const { return horarioAulaI; }
+   HorarioAula* getHorarioAulaFinal() const { return horarioAulaF; }
 
    //==================================================
    // SET METHODS 
@@ -133,6 +135,8 @@ public:
    void setTurma2( int i2 ) { turma2 = i2; }
    void setDisciplina1( Disciplina * d1 ) {  disc1 = d1; }
    void setDisciplina2( Disciplina * d2 ) {  disc2 = d2; }
+   void setHorarioAulaInicial( HorarioAula* h ) { horarioAulaI = h; }
+   void setHorarioAulaFinal( HorarioAula* h ) { horarioAulaF = h; }
 
 private:
 
@@ -177,6 +181,8 @@ private:
    int turma2;          // i2
    Disciplina *disc2;   // d2
 
+   HorarioAula* horarioAulaI;
+   HorarioAula* horarioAulaF;
 };
 
 /**

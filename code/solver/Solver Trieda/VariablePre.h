@@ -44,7 +44,8 @@ public:
 	  // Variaveis usadas somente para o modelo Tatico-BlocoCurricular:
 
 	  V_PRE_SLACK_SALA = 21,						// fs_{d,s,oft}
-	  V_PRE_ALOC_ALUNO_OFT = 22						// c_{i,d,s,oft}
+	  V_PRE_ALOC_ALUNO_OFT = 22,					// c_{i,d,s,oft}
+	  V_PRE_FORMANDOS_NA_TURMA = 23					// f_{i,d,cp}
 
    };
 

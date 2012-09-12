@@ -58,6 +58,8 @@ ConstraintTatico& ConstraintTatico::operator = ( const ConstraintTatico & cons )
    this->turma2 = cons.getTurma2();
    this->disc1 = cons.getDisciplina1();
    this->disc2 = cons.getDisciplina2();
+   this->horarioAulaI = cons.getHorarioAulaInicial();
+   this->horarioAulaF = cons.getHorarioAulaFinal();
 
    return *this;
 }
@@ -142,6 +144,12 @@ bool ConstraintTatico::operator < ( const ConstraintTatico & cons ) const
    if ( E_MENOR( this->getDisciplina2(),cons.getDisciplina2() ) ) return true;
    if ( E_MENOR( cons.getDisciplina2(), this->getDisciplina2() ) ) return false;
 
+   if ( E_MENOR( this->getHorarioAulaInicial(), cons.getHorarioAulaInicial() ) ) return true;
+   if ( E_MENOR( cons.getHorarioAulaInicial(), this->getHorarioAulaInicial() ) ) return false;
+
+   if ( E_MENOR( this->getHorarioAulaFinal(), cons.getHorarioAulaFinal() ) ) return true;
+   if ( E_MENOR( cons.getHorarioAulaFinal(), this->getHorarioAulaFinal() ) ) return false;
+
    return false;
 
 }
@@ -179,6 +187,8 @@ void ConstraintTatico::reset()
    turma2 = -1;
    disc1 = NULL;
    disc2 = NULL;
+   horarioAulaI = NULL;
+   horarioAulaF = NULL;
 
 }
 
@@ -231,8 +241,8 @@ std::string ConstraintTatico::toString()
       ss << "__(C_MIN_DIAS_ALUNO):"; break;	  
    case C_MAX_DIAS_ALUNO:
       ss << "__(C_MAX_DIAS_ALUNO):"; break;	  
-   case C_DESALOCA_ALUNO_TURMA_HORARIO:
-      ss << "__(C_DESALOCA_ALUNO_TURMA_HORARIO):"; break;	  
+   case C_DESALOCA_ALUNO_TURMA:
+      ss << "__(C_DESALOCA_ALUNO_TURMA):"; break;	  
    case C_DESALOCA_ALUNO_HORARIO:
       ss << "__(C_DESALOCA_ALUNO_HORARIO):"; break;	  
    case C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA:
@@ -359,6 +369,16 @@ std::string ConstraintTatico::toString()
    if ( disc2 != NULL )
    {
       ss << "_Disc2." << disc2->getId();
+   }
+   
+   if ( horarioAulaI )
+   {
+      ss << "_Hi" << horarioAulaI->getId();
+   }
+
+   if ( horarioAulaF )
+   {
+      ss << "_Hf" << horarioAulaF->getId();
    }
 
    ss << "_}";

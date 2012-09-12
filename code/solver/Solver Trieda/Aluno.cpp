@@ -6,6 +6,7 @@ Aluno::Aluno( void )
    this->oferta = NULL;
    this->ofertaId = -1;
    this->nCredsAlocados.clear();
+   this->formando = false;
 }
 
 Aluno::Aluno( int id, std::string nome, Oferta* oft )
