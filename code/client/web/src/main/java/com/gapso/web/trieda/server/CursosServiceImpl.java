@@ -290,11 +290,11 @@ public class CursosServiceImpl
 
 				resumoDTO.setOfertaId(oferta.getId());
 				resumoDTO.setCampusId(oferta.getCampus().getId());
-				resumoDTO.setCampusString(oferta.getCampus().getNome());
+				resumoDTO.setCampusString(oferta.getCampus().getCodigo());
 				resumoDTO.setTurnoId(aula.getTurnoId());
 				resumoDTO.setTurnoString(aula.getTurnoString());
 				resumoDTO.setCursoId(aula.getCursoId());
-				resumoDTO.setCursoString(aula.getCursoNome());
+				resumoDTO.setCursoString(aula.getCursoString());
 				resumoDTO.setMatrizCurricularId(aula.getCurriculoId());
 				resumoDTO.setMatrizCurricularString(aula.getCurriculoString());
 				resumoDTO.setPeriodo(Integer.valueOf(aula.getPeriodoString()));
