@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
@@ -56,7 +57,8 @@ public class CursoFormView
 		String title = (cursoDTO.getId() == null) ? "Inserção de Curso"
 				: "Edição de Curso";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.curso16());
-		simpleModal.setHeight(430);
+		simpleModal.setWidth(550);
+		simpleModal.setHeight(320);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -65,6 +67,9 @@ public class CursoFormView
 	{
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
+		formPanel.setLabelWidth(210);
+		//formPanel.setFieldWidth(fieldWidth);
+		formPanel.setLabelAlign(LabelAlign.RIGHT);
 		formPanel.setHeaderVisible(false);
 
 		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.CURSO );
@@ -98,7 +103,7 @@ public class CursoFormView
 		numMinMestresTF = new NumberField();
 		numMinMestresTF.setName(CursoDTO.PROPERTY_NUM_MIN_MESTRES);
 		numMinMestresTF.setValue(cursoDTO.getNumMinMestres());
-		numMinMestresTF.setFieldLabel("% Min. MSc");
+		numMinMestresTF.setFieldLabel("% Min. Mestres + Doutores");
 		numMinMestresTF.setAllowBlank(false);
 		numMinMestresTF.setAllowDecimals(false);
 		numMinMestresTF.setMaxValue(100);
@@ -109,7 +114,7 @@ public class CursoFormView
 		numMinDoutoresTF = new NumberField();
 		numMinDoutoresTF.setName(CursoDTO.PROPERTY_NUM_MIN_DOUTORES);
 		numMinDoutoresTF.setValue(cursoDTO.getNumMinDoutores());
-		numMinDoutoresTF.setFieldLabel("% Min. PhD");
+		numMinDoutoresTF.setFieldLabel("% Min. Doutores");
 		numMinDoutoresTF.setAllowBlank(false);
 		numMinDoutoresTF.setAllowDecimals(false);
 		numMinDoutoresTF.setMaxValue(100);
@@ -122,7 +127,7 @@ public class CursoFormView
 				.setName(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL);
 		minTempoIntegralParcialTF.setValue(cursoDTO
 				.getMinTempoIntegralParcial());
-		minTempoIntegralParcialTF.setFieldLabel("% min Tempo Int + Par");
+		minTempoIntegralParcialTF.setFieldLabel("% Min. Tempo Integral + Parcial");
 		minTempoIntegralParcialTF.setAllowBlank(false);
 		minTempoIntegralParcialTF.setAllowDecimals(false);
 		minTempoIntegralParcialTF.setMaxValue(100);
@@ -131,7 +136,7 @@ public class CursoFormView
 		minTempoIntegralTF = new NumberField();
 		minTempoIntegralTF.setName(CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL);
 		minTempoIntegralTF.setValue(cursoDTO.getMinTempoIntegral());
-		minTempoIntegralTF.setFieldLabel("% min Tempo Integral");
+		minTempoIntegralTF.setFieldLabel("% Min Tempo Integral");
 		minTempoIntegralTF.setAllowBlank(false);
 		minTempoIntegralTF.setAllowDecimals(false);
 		minTempoIntegralTF.setMaxValue(100);
@@ -142,7 +147,7 @@ public class CursoFormView
 				.setName(CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR);
 		maxDisciplinasPeloProfessorTF.setValue(cursoDTO
 				.getMaxDisciplinasPeloProfessor());
-		maxDisciplinasPeloProfessorTF.setFieldLabel("Max. Disc. por Prof.");
+		maxDisciplinasPeloProfessorTF.setFieldLabel("Max. Disciplinas por Professor");
 		maxDisciplinasPeloProfessorTF.setAllowBlank(false);
 		maxDisciplinasPeloProfessorTF.setAllowDecimals(false);
 		maxDisciplinasPeloProfessorTF.setMaxValue(99);
