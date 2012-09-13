@@ -164,6 +164,11 @@ public class ResumoDisciplinaExportExcel
 	private int writeData( ResumoDisciplinaDTO resumoDisciplinaDTO, int row, HSSFSheet sheet )
 	{
 		int i = 2;
+		// Campus
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+			resumoDisciplinaDTO.getCampusString());
+		
 		// Disciplina
 		setCell( row, i++, sheet,
 			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],

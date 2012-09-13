@@ -21,6 +21,7 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_SALA_ID = "salaId";
 	public static final String PROPERTY_SALA_STRING = "salaString";
 	public static final String PROPERTY_DIA_SEMANA = "semana";
+	public static final String PROPERTY_DIA_DA_SEMANA = "diaSemana";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_CURSO_NOME = "cursoNome";
 	public static final String PROPERTY_CURSO_ID = "cursoId";
@@ -31,11 +32,14 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_DISCIPLINA_NOME = "disciplinaNome";
+	public static final String PROPERTY_DISCIPLINA_USA_LABORATORIO = "disciplinaUsaLaboratorio";
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_ID = "disciplinaSubstitutaId";
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_STRING = "disciplinaSubstitutaString";
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_NOME = "disciplinaSubstitutaNome";
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID = "disciplinaSubstitutaSemanaLetivaId";
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA = "disciplinaSubstitutaSemanaLetivaTempoAula";
+	public static final String PROPERTY_TOTAL_CRETIDOS_TEORICOS_DISCIPLINA = "totalCreditosTeoricosDisciplina";
+	public static final String PROPERTY_TOTAL_CRETIDOS_PRATICOS_DISCIPLINA = "totalCreditosPraticosDisciplina";
 	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA = "totalCreditoDisciplina";
 	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA_SUBSTITUTA = "totalCreditoDisciplinaSubstituta";
 	public static final String PROPERTY_OFERTA_ID = "ofertaId";
@@ -51,6 +55,13 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 	public static final String PROPERTY_SEMANA_LETIVA_TEMPO_AULA = "semanaLetivaTempoAula";
 	public static final String PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL = "professorCustoCreditoSemanal";
+	public static final String PROPERTY_QTD_DEMANDA_ALUNOS_P1 = "qtdDemandaAlunosP1";
+	public static final String PROPERTY_QTD_DEMANDA_ALUNOS_P2 = "qtdDemandaAlunosP2";
+	public static final String PROPERTY_QTD_DEMANDA_ALUNOS_TOTAL = "qtdDemandaAlunosTotal";
+	public static final String PROPERTY_QUANTIDADE_ALUNOS_P1 = "quantidadeAlunosP1";
+	public static final String PROPERTY_QUANTIDADE_ALUNOS_P2 = "quantidadeAlunosP2";
+	public static final String PROPERTY_PROFESSOR_CPF = "professorCPF";
+	public static final String PROPERTY_PROFESSOR_VIRTUAL_CPF = "professorVirtualCPF";
 
 	public AtendimentoTaticoDTO() {
 		super();
@@ -71,6 +82,7 @@ public class AtendimentoTaticoDTO
 		this.setSalaId( other.getSalaId() );
 		this.setSalaString( other.getSalaString() );
 		this.setSemana( other.getSemana() );
+		this.setDiaSemana( other.getDiaSemana() );
 		this.setCursoString( other.getCursoString() );
 		this.setCursoNome( other.getCursoNome() );
 		this.setCursoId( other.getCursoId() );
@@ -89,6 +101,8 @@ public class AtendimentoTaticoDTO
 		this.setTurnoId( other.getTurnoId() );
 		this.setTurnoString( other.getTurnoString() );
 		this.setTotalCreditoDisciplina( other.getTotalCreditoDisciplina() );
+		this.setTotalCreditosPraticosDisciplina( other.getTotalCreditosPraticosDisciplina() );
+		this.setTotalCreditosTeoricosDisciplina( other.getTotalCreditosTeoricosDisciplina() );
 		this.setTotalCreditoDisciplinaSubstituta( other.getTotalCreditoDisciplinaSubstituta() );
 		this.setOfertaId( other.getOfertaId() );
 		this.setTurma( other.getTurma() );
@@ -98,6 +112,43 @@ public class AtendimentoTaticoDTO
 		this.setCreditosPratico( other.getCreditosPratico() );
 		this.setCompartilhamentoCursosString( other.getCompartilhamentoCursosString() );
 		this.setProfessorCustoCreditoSemanal( other.getProfessorCustoCreditoSemanal() );
+		this.setQtdDemandaAlunosP1(other.getQtdDemandaAlunosP1());
+		this.setQtdDemandaAlunosP2(other.getQtdDemandaAlunosP2());
+		this.setQtdDemandaAlunosTotal(other.getQtdDemandaAlunosTotal());
+		this.setQuantidadeAlunosP1(other.getQuantidadeAlunosP1());
+		this.setQuantidadeAlunosP2(other.getQuantidadeAlunosP2());
+		this.setProfessorCPF(other.getProfessorCPF());
+		this.setProfessorVirtualCPF(other.getProfessorVirtualCPF());
+	}
+	
+	public void setDiaSemana( Integer value )
+	{
+		set( PROPERTY_DIA_DA_SEMANA, value );
+	}
+
+	public Integer getDiaSemana()
+	{
+		return get( PROPERTY_DIA_DA_SEMANA );
+	}
+	
+	public void setProfessorCPF( String value )
+	{
+		set( PROPERTY_PROFESSOR_CPF, value );
+	}
+
+	public String getProfessorCPF()
+	{
+		return get( PROPERTY_PROFESSOR_CPF );
+	}
+	
+	public void setProfessorVirtualCPF( String value )
+	{
+		set( PROPERTY_PROFESSOR_VIRTUAL_CPF, value );
+	}
+
+	public String getProfessorVirtualCPF()
+	{
+		return get( PROPERTY_PROFESSOR_VIRTUAL_CPF );
 	}
 
 	public void setId( Long value )
@@ -300,6 +351,16 @@ public class AtendimentoTaticoDTO
 		set( PROPERTY_DISCIPLINA_NOME, value );
 	}
 	
+	public Boolean getDisciplinaUsaLaboratorio()
+	{
+		return get( PROPERTY_DISCIPLINA_USA_LABORATORIO );
+	}
+
+	public void setDisciplinaUsaLaboratorio( Boolean value )
+	{
+		set( PROPERTY_DISCIPLINA_USA_LABORATORIO, value );
+	}
+	
 	public void setDisciplinaSubstitutaId( Long value )
 	{
 		set( PROPERTY_DISCIPLINA_SUBSTITUTA_ID, value );
@@ -377,6 +438,28 @@ public class AtendimentoTaticoDTO
 	public Integer getTotalCreditoDisciplina()
 	{
 		return get( PROPERTY_TOTAL_CRETIDOS_DISCIPLINA );
+	}
+	
+	public void setTotalCreditosTeoricosDisciplina( Integer value )
+	{
+		set( PROPERTY_TOTAL_CRETIDOS_TEORICOS_DISCIPLINA, value );
+	}
+
+	@Override
+	public Integer getTotalCreditosTeoricosDisciplina()
+	{
+		return get(PROPERTY_TOTAL_CRETIDOS_TEORICOS_DISCIPLINA);
+	}
+	
+	public void setTotalCreditosPraticosDisciplina( Integer value )
+	{
+		set( PROPERTY_TOTAL_CRETIDOS_PRATICOS_DISCIPLINA, value );
+	}
+
+	@Override
+	public Integer getTotalCreditosPraticosDisciplina()
+	{
+		return get(PROPERTY_TOTAL_CRETIDOS_PRATICOS_DISCIPLINA);
 	}
 	
 	public void setTotalCreditoDisciplinaSubstituta( Integer value )
@@ -637,5 +720,37 @@ public class AtendimentoTaticoDTO
 	
 	public void setProfessorCustoCreditoSemanal( Double value ) {
 		set( PROPERTY_PROFESSOR_CUSTO_CREDITO_SEMANAL, value );
+	}
+	
+	public void setQtdDemandaAlunosP1(Integer value) {
+		set( PROPERTY_QTD_DEMANDA_ALUNOS_P1, value );
+	}
+	public Integer getQtdDemandaAlunosP1() {
+		return get( PROPERTY_QTD_DEMANDA_ALUNOS_P1 );
+	}
+	public void setQtdDemandaAlunosP2(Integer value) {
+		set( PROPERTY_QTD_DEMANDA_ALUNOS_P2, value );
+	}
+	public Integer getQtdDemandaAlunosP2() {
+		return get( PROPERTY_QTD_DEMANDA_ALUNOS_P2 );
+	}
+	public void setQtdDemandaAlunosTotal(Integer value) {
+		set( PROPERTY_QTD_DEMANDA_ALUNOS_TOTAL, value );
+	}
+	public Integer getQtdDemandaAlunosTotal() {
+		return get( PROPERTY_QTD_DEMANDA_ALUNOS_TOTAL );
+	}
+	
+	public void setQuantidadeAlunosP1(Integer value) {
+		set( PROPERTY_QUANTIDADE_ALUNOS_P1, value );
+	}
+	public Integer getQuantidadeAlunosP1() {
+		return get( PROPERTY_QUANTIDADE_ALUNOS_P1 );
+	}
+	public void setQuantidadeAlunosP2(Integer value) {
+		set( PROPERTY_QUANTIDADE_ALUNOS_P2, value );
+	}
+	public Integer getQuantidadeAlunosP2() {
+		return get( PROPERTY_QUANTIDADE_ALUNOS_P2 );
 	}
 }

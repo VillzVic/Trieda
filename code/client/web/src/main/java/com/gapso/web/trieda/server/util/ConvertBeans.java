@@ -2042,6 +2042,7 @@ public class ConvertBeans {
 		dto.setDisciplinaId(disciplina.getId());
 		dto.setDisciplinaString(disciplina.getCodigo());
 		dto.setDisciplinaNome(disciplina.getNome());
+		dto.setDisciplinaUsaLaboratorio(disciplina.getLaboratorio());
 		if (disciplinaSubstituta != null) {
 			dto.setDisciplinaSubstitutaId(disciplinaSubstituta.getId());
 			dto.setDisciplinaSubstitutaString(disciplinaSubstituta.getCodigo());
@@ -2067,6 +2068,8 @@ public class ConvertBeans {
 		dto.setPeriodo( periodo );
 		dto.setPeriodoString(String.valueOf(periodo));
 
+		dto.setTotalCreditosTeoricosDisciplina( domain.getDisciplina().getCreditosTeorico() );
+		dto.setTotalCreditosPraticosDisciplina( domain.getDisciplina().getCreditosPratico() );
 		dto.setTotalCreditoDisciplina(disciplina.getTotalCreditos());
 		dto.setTurnoId(turno.getId());
 		dto.setTurnoString(turno.getNome());
@@ -2084,15 +2087,45 @@ public class ConvertBeans {
 		dto.setProfessorCustoCreditoSemanal(campus.getValorCredito());
 		
 		StringBuffer str = new StringBuffer(""); 
+		int totalAtendimentosP1 = 0;
+		int totalAtendimentosP2 = 0;
 		for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
 			Aluno aluno = alunoDemanda.getAluno();
 			str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
+			if (alunoDemanda.getPrioridade() == 1) {
+				totalAtendimentosP1++;	
+			} else {
+				totalAtendimentosP2++;
+			}
 		}
 		if (str.length() > 1) {
 			dto.setNomesAlunos(str.toString().substring(0,str.length()-2));
 		} else {
 			dto.setNomesAlunos("");
 		}
+		dto.setQuantidadeAlunosP1(totalAtendimentosP1);
+		dto.setQuantidadeAlunosP2(totalAtendimentosP2);
+		
+//		Demanda demanda = null;
+//		for (Demanda d : domain.getOferta().getDemandas()) {
+//			if (d.getDisciplina().getId().equals(domain.getDisciplina().getId())) {
+//				demanda = d;
+//				break;
+//			}
+//		}
+//		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByDemanda(instituicaoEnsino,demanda);
+//		int totalDemandaP1 = 0;
+//		int totalDemandaP2 = 0;
+//		for (AlunoDemanda ad : alunosDemanda) {
+//			if (ad.getPrioridade() == 1) {
+//				totalDemandaP1++;
+//			} else {
+//				totalDemandaP2++;
+//			}
+//		}
+//		dto.setQtdDemandaAlunosP1(totalDemandaP1);
+//		dto.setQtdDemandaAlunosP2(totalDemandaP2);
+//		dto.setQtdDemandaAlunosTotal(demanda.getQuantidade());
 
 		return dto;
 	}
@@ -2231,6 +2264,7 @@ public class ConvertBeans {
 		HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
 		dto.setHorarioDisponivelCenarioId( hdc.getId() );
 		dto.setSemana( Semanas.toInt( hdc.getDiaSemana() ) );
+		dto.setDiaSemana( Semanas.toInt( hdc.getDiaSemana() ) );
 
 		HorarioAula ha = hdc.getHorarioAula();
 		dto.setHorarioId( ha.getId() );
@@ -2241,12 +2275,14 @@ public class ConvertBeans {
 		if ( domain.getProfessorVirtual() == null )
 		{
 			dto.setProfessorId( domain.getProfessor().getId() );
+			dto.setProfessorCPF( domain.getProfessor().getCpf() );
 			dto.setProfessorString( domain.getProfessor().getNome() );
 			dto.setProfessorCustoCreditoSemanal(domain.getProfessor().getValorCredito());
 		}
 		else
 		{
 			dto.setProfessorVirtualId( domain.getProfessorVirtual().getId() );
+			dto.setProfessorCPF( domain.getProfessorVirtual().getId().toString() );
 			dto.setProfessorVirtualString("Professor Virtual " + domain.getProfessorVirtual().getId() );
 			dto.setProfessorCustoCreditoSemanal(domain.getOferta().getCampus().getValorCredito());
 		}
@@ -2256,6 +2292,7 @@ public class ConvertBeans {
 		dto.setDisciplinaId( domain.getDisciplina().getId() );
 		dto.setDisciplinaString( domain.getDisciplina().getCodigo() );
 		dto.setDisciplinaNome( domain.getDisciplina().getNome() );
+		dto.setDisciplinaUsaLaboratorio(domain.getDisciplina().getLaboratorio());
 		if (domain.getDisciplinaSubstituta() != null) {
 			dto.setDisciplinaSubstitutaId( domain.getDisciplinaSubstituta().getId() );
 			dto.setDisciplinaSubstitutaString( domain.getDisciplinaSubstituta().getCodigo() );
@@ -2267,6 +2304,8 @@ public class ConvertBeans {
 				dto.setDisciplinaSubstitutaSemanaLetivaTempoAula(semanaLetivaDisciplinaSubstituta.getTempo());
 			}
 		}
+		dto.setTotalCreditosTeoricosDisciplina( domain.getDisciplina().getCreditosTeorico() );
+		dto.setTotalCreditosPraticosDisciplina( domain.getDisciplina().getCreditosPratico() );
 		dto.setTotalCreditoDisciplina( domain.getDisciplina().getTotalCreditos() );
 		dto.setQuantidadeAlunos( domain.getQuantidadeAlunos() );
 		dto.setQuantidadeAlunosString( domain.getQuantidadeAlunos().toString() );
@@ -2295,16 +2334,46 @@ public class ConvertBeans {
 			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
 		}
 		
-		StringBuffer str = new StringBuffer(""); 
+		StringBuffer str = new StringBuffer("");
+		int totalAtendimentosP1 = 0;
+		int totalAtendimentosP2 = 0;
 		for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
 			Aluno aluno = alunoDemanda.getAluno();
 			str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
+			if (alunoDemanda.getPrioridade() == 1) {
+				totalAtendimentosP1++;	
+			} else {
+				totalAtendimentosP2++;
+			}
 		}
 		if (str.length() > 1) {
 			dto.setNomesAlunos(str.toString().substring(0,str.length()-2));
 		} else {
 			dto.setNomesAlunos("");
 		}
+		dto.setQuantidadeAlunosP1(totalAtendimentosP1);
+		dto.setQuantidadeAlunosP2(totalAtendimentosP2);
+		
+//		Demanda demanda = null;
+//		for (Demanda d : domain.getOferta().getDemandas()) {
+//			if (d.getDisciplina().getId().equals(domain.getDisciplina().getId())) {
+//				demanda = d;
+//				break;
+//			}
+//		}
+//		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByDemanda(instituicaoEnsino,demanda);
+//		int totalDemandaP1 = 0;
+//		int totalDemandaP2 = 0;
+//		for (AlunoDemanda ad : alunosDemanda) {
+//			if (ad.getPrioridade() == 1) {
+//				totalDemandaP1++;
+//			} else {
+//				totalDemandaP2++;
+//			}
+//		}
+//		dto.setQtdDemandaAlunosP1(totalDemandaP1);
+//		dto.setQtdDemandaAlunosP2(totalDemandaP2);
+//		dto.setQtdDemandaAlunosTotal(demanda.getQuantidade());
 
 		return dto;
 	}

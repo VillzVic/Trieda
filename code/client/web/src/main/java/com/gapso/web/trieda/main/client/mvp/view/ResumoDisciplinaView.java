@@ -153,7 +153,7 @@ public class ResumoDisciplinaView
 		tipoDeCreditoColumnConfig.setRenderer( tipoDeCreditoRenderer );
 		list.add( tipoDeCreditoColumnConfig );
 
-		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT,
+		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_TOTAL_CREDITOS_INT,
 			this.getI18nConstants().totalDecreditos(), 100 ) );
 
 		list.add( new ColumnConfig( ResumoDisciplinaDTO.PROPERTY_CREDITOS_INT,

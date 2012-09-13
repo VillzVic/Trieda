@@ -1118,7 +1118,7 @@ public class DisciplinasServiceImpl
 		List< AtendimentoOperacional > listOperacional = AtendimentoOperacional.findAll( campus, getInstituicaoEnsinoUser() );
 		List< AtendimentoOperacionalDTO > listOperacionalDTOPorHorario = ConvertBeans.toListAtendimentoOperacionalDTO(listOperacional);
 		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-		List< AtendimentoRelatorioDTO > listOperacionalDTOPorAula = service.transformaAtendimentosPorHorarioEmAtendimentosPorAula(listOperacionalDTOPorHorario);
+		List< AtendimentoRelatorioDTO > listOperacionalDTOPorAula = new ArrayList<AtendimentoRelatorioDTO>(service.extraiAulas(listOperacionalDTOPorHorario));
 
 		boolean ehTatico = !listTatico.isEmpty();
 		
@@ -1153,7 +1153,10 @@ public class DisciplinasServiceImpl
 
 			ResumoDisciplinaDTO resumoDTO = new ResumoDisciplinaDTO();
 
+			resumoDTO.setCampusId(atendimento.getCampusId());
+			resumoDTO.setCampusString(atendimento.getCampusString());
 			resumoDTO.setCursoId(atendimento.getCursoId());
+			resumoDTO.setCurriculoId(atendimento.getCurriculoId());
 			resumoDTO.setDisciplinaId( disciplina.getId() );
 			resumoDTO.setDisciplinaString( disciplina.getCodigo() );
 			resumoDTO.setTurma( atendimento.getTurma() );
@@ -1161,6 +1164,8 @@ public class DisciplinasServiceImpl
 			resumoDTO.setCreditos( atendimento.getTotalCreditos() );
 			resumoDTO.setTotalCreditos( disciplina.getCreditosTotal() );
 			resumoDTO.setQuantidadeAlunos( atendimento.getQuantidadeAlunos() );
+			resumoDTO.setDiaSemanaId(atendimento.getSemana());
+			resumoDTO.setHorarioId(atendimento.getHorarioId());
 			if (ehTatico) {
 				resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
 			} else {
@@ -1173,7 +1178,7 @@ public class DisciplinasServiceImpl
 				}
 			}
 			resumoDTO.setReceita(new TriedaCurrency(oferta.getReceita()));
-
+			
 			createResumoNivel1( nivel1Map, nivel2Map, resumoDTO );
 			createResumoNivel2( nivel2Map, resumoDTO );
 		}
@@ -1247,28 +1252,48 @@ public class DisciplinasServiceImpl
 		Locale pt_BR = new Locale("pt","BR");
 		CurrencyFormatter currencyFormatter = new CurrencyFormatter();
 		
+		// key1 = disciplinaId
 		for ( String key1 : map2.keySet() ) {
+			// key2 = disciplinaId-turma-tipoCredito
 			for ( String key2 : map2.get( key1 ).keySet() ) {
 				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 );
 				ResumoDisciplinaDTO mainDTO = pair.getLeft();
 				
-				// separar por curso por conta do compartilhamento de aulas entre cursos
-				Map<Long,List<ResumoDisciplinaDTO>> dtoPorCursoMap = new HashMap<Long,List<ResumoDisciplinaDTO>>();
+				System.out.println("***"+mainDTO.getDisciplinaString()+"-"+mainDTO.getTurma()+"-"+mainDTO.getTipoCreditoTeorico());//TODO: retirar
+				
+				// separar por curso-curriculo por conta do compartilhamento de aulas entre cursos
+				Map<String,List<ResumoDisciplinaDTO>> dtoPorCursoCurriculoMap = new HashMap<String,List<ResumoDisciplinaDTO>>();
+				// separar por DiaSemana-Horario
+				Map<String,List<ResumoDisciplinaDTO>> dtoPorDiaSemanaMap = new HashMap<String,List<ResumoDisciplinaDTO>>();
 				for (ResumoDisciplinaDTO dto : pair.getRight()) {
-					List<ResumoDisciplinaDTO> list = dtoPorCursoMap.get(dto.getCursoId());
-					if (list == null) {
-						list = new ArrayList<ResumoDisciplinaDTO>();
-						dtoPorCursoMap.put(dto.getCursoId(),list);
+					// curso-curriculo
+					String cursoCurriculoKey = dto.getCursoId()+"-"+dto.getCurriculoId();
+					List<ResumoDisciplinaDTO> list1 = dtoPorCursoCurriculoMap.get(cursoCurriculoKey);
+					if (list1 == null) {
+						list1 = new ArrayList<ResumoDisciplinaDTO>();
+						dtoPorCursoCurriculoMap.put(cursoCurriculoKey,list1);
 					}
-					list.add(dto);
+					list1.add(dto);
+					System.out.println("   @ "+cursoCurriculoKey);//TODO: retirar
+					
+					// dia semana
+					String key = dto.getDiaSemanaId()+"-"+dto.getHorarioId();
+					List<ResumoDisciplinaDTO> list2 = dtoPorDiaSemanaMap.get(key);
+					if (list2 == null) {
+						list2 = new ArrayList<ResumoDisciplinaDTO>();
+						dtoPorDiaSemanaMap.put(key,list2);
+					}
+					list2.add(dto);
 				}
 				
-				if (dtoPorCursoMap.keySet().size() > 1) {
-					Long primeiroCursoId = dtoPorCursoMap.keySet().iterator().next();
+				if (dtoPorCursoCurriculoMap.keySet().size() > 1) {
+					String primeiroCursoCurriculoId = dtoPorCursoCurriculoMap.keySet().iterator().next();
+					System.out.println("   # "+primeiroCursoCurriculoId);//TODO: retirar
 					
-					for (ResumoDisciplinaDTO dto : dtoPorCursoMap.get(primeiroCursoId)) {
+					for (ResumoDisciplinaDTO dto : dtoPorCursoCurriculoMap.get(primeiroCursoCurriculoId)) {
 						// acumula a qtde de créditos
 						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
+						System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos()+" "+dto.getCursoId()+"-"+dto.getCurriculoId());//TODO: retirar
 						// calcula e acumula custo docente
 						Double docente = dto.getCustoDocente().getDoubleValue();
 						int creditos = dto.getCreditos();
@@ -1285,17 +1310,12 @@ public class DisciplinasServiceImpl
 						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
 						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
 						mainDTO.setReceitaString(currencyFormatter.print(mainDTO.getReceita().getDoubleValue(),pt_BR));
-					}
-					
-					mainDTO.setQuantidadeAlunos(0);
-					for (Long cursoId : dtoPorCursoMap.keySet()) {
-						List<ResumoDisciplinaDTO> dtos = dtoPorCursoMap.get(cursoId);
-						mainDTO.setQuantidadeAlunos(dtos.get(0).getQuantidadeAlunos() + mainDTO.getQuantidadeAlunos());
 					}
 				} else {
 					for (ResumoDisciplinaDTO dto : pair.getRight()) {
 						// acumula a qtde de créditos
 						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
+						System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos());//TODO: retirar
 						// calcula e acumula custo docente
 						Double docente = dto.getCustoDocente().getDoubleValue();
 						Double receita = dto.getReceita().getDoubleValue();
@@ -1309,6 +1329,14 @@ public class DisciplinasServiceImpl
 						mainDTO.setReceita(TriedaUtil.parseTriedaCurrency(receitaLocal + mainDTO.getReceita().getDoubleValue()));
 						mainDTO.setReceitaString(currencyFormatter.print(mainDTO.getReceita().getDoubleValue(),pt_BR));
 					}
+				}
+				
+				// calcula quantidade de alunos
+				mainDTO.setQuantidadeAlunos(0);
+				String diaSemanaHorarioId = dtoPorDiaSemanaMap.keySet().iterator().next();
+				List<ResumoDisciplinaDTO> dtos = dtoPorDiaSemanaMap.get(diaSemanaHorarioId);
+				for (ResumoDisciplinaDTO dto : dtos) {
+					mainDTO.setQuantidadeAlunos(dto.getQuantidadeAlunos() + mainDTO.getQuantidadeAlunos());
 				}
 				
 				// calcula margem
@@ -1391,7 +1419,9 @@ public class DisciplinasServiceImpl
 
 	private void createResumoNivel2( Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2, ResumoDisciplinaDTO resumoDTO )
 	{
+		// disciplina
 		String key1 = resumoDTO.getDisciplinaId().toString();
+		// disciplina-turma-tipoCredito
 		String key2 = key1 + "-" + resumoDTO.getTurma() + "-" + resumoDTO.getTipoCreditoTeorico();
 
 		Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get(key1).get(key2);
@@ -1399,6 +1429,7 @@ public class DisciplinasServiceImpl
 			List<ResumoDisciplinaDTO> list = new ArrayList<ResumoDisciplinaDTO>();
 			ResumoDisciplinaDTO dtoMain = new ResumoDisciplinaDTO();
 			dtoMain.setCursoId( resumoDTO.getCursoId() );
+			dtoMain.setCurriculoId( resumoDTO.getCurriculoId() );
 			dtoMain.setDisciplinaId( resumoDTO.getDisciplinaId() );
 			dtoMain.setDisciplinaString( resumoDTO.getDisciplinaString() );
 			dtoMain.setTurma( resumoDTO.getTurma() );
@@ -1411,6 +1442,7 @@ public class DisciplinasServiceImpl
 		
 		ResumoDisciplinaDTO dtoNew = new ResumoDisciplinaDTO();
 		dtoNew.setCursoId( resumoDTO.getCursoId() );
+		dtoNew.setCurriculoId( resumoDTO.getCurriculoId() );
 		dtoNew.setDisciplinaId( resumoDTO.getDisciplinaId() );
 		dtoNew.setDisciplinaString( resumoDTO.getDisciplinaString() );
 		dtoNew.setTurma( resumoDTO.getTurma() );
@@ -1418,6 +1450,8 @@ public class DisciplinasServiceImpl
 		dtoNew.setCreditos( resumoDTO.getCreditos() );
 		dtoNew.setTotalCreditos( resumoDTO.getTotalCreditos() );
 		dtoNew.setQuantidadeAlunos( resumoDTO.getQuantidadeAlunos() );
+		dtoNew.setDiaSemanaId( resumoDTO.getDiaSemanaId() );
+		dtoNew.setHorarioId( resumoDTO.getHorarioId() );
 		dtoNew.setCustoDocente( resumoDTO.getCustoDocente() );
 		dtoNew.setReceita( resumoDTO.getReceita() );
 		

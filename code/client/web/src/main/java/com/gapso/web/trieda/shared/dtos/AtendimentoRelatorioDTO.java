@@ -1,11 +1,16 @@
 package com.gapso.web.trieda.shared.dtos;
 
+
+
+
+
 public interface AtendimentoRelatorioDTO
 {
 	static public enum ReportType {EXCEL, WEB};
 	
 	public Long getOfertaId();
 	public Long getCampusId();
+	public String getCampusString();
 	public Integer getSemana();
 	public Integer getTotalCreditos();
 	public Long getDisciplinaId();
@@ -27,6 +32,7 @@ public interface AtendimentoRelatorioDTO
 	public String getNomesAlunos();
 	public String getTurma();
 	public String getCursoNome();
+	public String getCursoString();
 	public Long getCursoId();
 	public String getTurnoString();
 	public Long getTurnoId();
@@ -51,6 +57,8 @@ public interface AtendimentoRelatorioDTO
 	public Long getProfessorVirtualId();
 	public String getProfessorString();
 	public String getProfessorVirtualString();
+	public String getProfessorCPF();
+	public String getProfessorVirtualCPF();
 	public Double getProfessorCustoCreditoSemanal();
 	public String getCompartilhamentoCursosString();
 	public Long getHorarioId();
@@ -61,4 +69,21 @@ public interface AtendimentoRelatorioDTO
 	public void setQuantidadeAlunosString( String value );
 	public void setQuantidadeAlunos( Integer value );
 	public void setNomesAlunos(String nomesAlunos);
+	public void setTotalCreditosTeoricosDisciplina(Integer value);
+	public Integer getTotalCreditosTeoricosDisciplina();
+	public void setTotalCreditosPraticosDisciplina(Integer value);
+	public Integer getTotalCreditosPraticosDisciplina();
+	public void setDisciplinaUsaLaboratorio(Boolean value);
+	public Boolean getDisciplinaUsaLaboratorio();
+	public void setQtdDemandaAlunosP1(Integer valye);
+	public Integer getQtdDemandaAlunosP1();
+	public void setQtdDemandaAlunosP2(Integer valye);
+	public Integer getQtdDemandaAlunosP2();
+	public void setQtdDemandaAlunosTotal(Integer valye);
+	public Integer getQtdDemandaAlunosTotal();
+	public void setQuantidadeAlunosP1(Integer value);
+	public Integer getQuantidadeAlunosP1();
+	public void setQuantidadeAlunosP2(Integer value);
+	public Integer getQuantidadeAlunosP2();
+	public Integer getDiaSemana();
 }

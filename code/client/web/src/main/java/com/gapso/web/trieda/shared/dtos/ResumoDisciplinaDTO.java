@@ -9,6 +9,8 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	private static final long serialVersionUID = -5134820110949139907L;
 
 	// Propriedades
+	public static final String PROPERTY_CAMPUS_ID = "campusId";
+	public static final String PROPERTY_CAMPUS_STRING = "campusString";
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_TURMA_STRING = "turmaString";
@@ -25,17 +27,15 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	public static final String PROPERTY_MARGEM_PERCENTE_DOUBLE = "margemPercenteDouble";
 	public static final String PROPERTY_MARGEM_PERCENTE_STRING = "margemPercenteString";
 	public static final String PROPERTY_CURSO_ID = "CursoId";
+	public static final String PROPERTY_CURRICULO_ID = "curriculoId";
+	public static final String PROPERTY_DIA_SEMANA_ID = "diaSemanaId";
+	public static final String PROPERTY_HORARIO_ID = "horarioId";
 
 	private boolean hasChildren = false;
 
 	public ResumoDisciplinaDTO()
 	{
 		super();
-	}
-
-	public void setDisciplinaId( Long value )
-	{
-		set(PROPERTY_DISCIPLINA_ID, value);
 	}
 
 	public Long getCursoId()
@@ -47,7 +47,22 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	{
 		set(PROPERTY_CURSO_ID, value);
 	}
+	
+	public Long getCurriculoId()
+	{
+		return get( PROPERTY_CURRICULO_ID );
+	}
+	
+	public void setCurriculoId( Long value )
+	{
+		set(PROPERTY_CURRICULO_ID, value);
+	}
 
+	public void setDisciplinaId( Long value )
+	{
+		set(PROPERTY_DISCIPLINA_ID, value);
+	}
+	
 	public Long getDisciplinaId()
 	{
 		return get( PROPERTY_DISCIPLINA_ID );
@@ -61,6 +76,26 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	public String getDisciplinaString()
 	{
 		return get( PROPERTY_DISCIPLINA_STRING );
+	}
+	
+	public void setCampusId( Long value )
+	{
+		set(PROPERTY_CAMPUS_ID, value);
+	}
+	
+	public Long getCampusId()
+	{
+		return get( PROPERTY_CAMPUS_ID );
+	}
+
+	public void setCampusString( String value )
+	{
+		set( PROPERTY_CAMPUS_STRING, value );
+	}
+
+	public String getCampusString()
+	{
+		return get( PROPERTY_CAMPUS_STRING );
 	}
 
 	public void setTurma( String value )
@@ -185,6 +220,22 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 
 	public String getMargemPercenteString() {
 		return get(PROPERTY_MARGEM_PERCENTE_STRING);
+	}
+	
+	public void setDiaSemanaId(Integer value) {
+		set(PROPERTY_DIA_SEMANA_ID, value);
+	}
+
+	public Integer getDiaSemanaId() {
+		return get(PROPERTY_DIA_SEMANA_ID);
+	}
+	
+	public void setHorarioId(Long value) {
+		set(PROPERTY_HORARIO_ID, value);
+	}
+
+	public Long getHorarioId() {
+		return get(PROPERTY_HORARIO_ID);
 	}
 
 	public boolean hasChildren()

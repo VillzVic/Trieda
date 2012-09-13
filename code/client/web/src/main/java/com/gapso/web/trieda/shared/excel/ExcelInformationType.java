@@ -25,7 +25,8 @@ public enum ExcelInformationType
 	RESUMO_CURSO( "Resumo por curso" ),
 	RESUMO_DISCIPLINA( "Resumo por disciplina" ),
 	HABILITACAO_PROFESSORES( "Habilitacao dos Professores" ),
-	ATENDIMENTOS_POR_ALUNO( "Atendimentos por Aluno" );
+	ATENDIMENTOS_POR_ALUNO( "Atendimentos por Aluno" ),
+	AULAS( "Aulas" );
 
 	private String sheetName;
 
