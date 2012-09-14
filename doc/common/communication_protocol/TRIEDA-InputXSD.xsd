@@ -100,6 +100,7 @@
             <xs:documentation>lista de todos os atendimentos, para o modelo tático, realizados em cada campus que foi considerado no planejamento; e que serão utilizados como entrada para o modelo operacional</xs:documentation>
           </xs:annotation>
         </xs:element>
+        <xs:element name="alunos" type="GrupoAlunos" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -133,7 +134,7 @@
       <xs:element name="alunoId" type="xs:int" />
       <xs:element name="nomeAluno" type="xs:string" />
       <xs:element name="demandaId" type="xs:int" />
-	  <xs:element name="prioridade" type="xs:string" />
+      <xs:element name="prioridade" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemTurno">
@@ -814,7 +815,7 @@
           <xs:documentation>Indica o modo de otimização que foi selecionado. Atualmente, os possíveis valores para esta campo são: "TATICO", "OPERACIONAL".</xs:documentation>
         </xs:annotation>
       </xs:element>
-	  <xs:element name="otimizarPor" type="xs:string">
+      <xs:element name="otimizarPor" type="xs:string">
         <xs:annotation>
           <xs:documentation>Indica o modo como o otimizador deve tratar as associações de alunos às demandas. Atualmente, os possíveis valores para esta campo são: "ALUNO", "BLOCOCURRICULAR".</xs:documentation>
         </xs:annotation>
@@ -1325,7 +1326,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
         </xs:annotation>
       </xs:element>
       <xs:element name="turma" type="xs:string" />
-	  <xs:element name="alunosDemandasAtendidas" type="GrupoIdentificador">
+      <xs:element name="alunosDemandasAtendidas" type="GrupoIdentificador">
         <xs:annotation>
           <xs:documentation>Caso a otimização tenha informação de alunos (isto é, caso o modo de otimização tenha sido por ALUNO ao invés de por BLOCOCURRICULAR) esta tag conterá os identificadores das entidades &lt;AlunoDemanda&gt; (</xs:documentation>
         </xs:annotation>
@@ -1394,6 +1395,21 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>representa uma oferta atendida</xs:documentation>
         </xs:annotation>
       </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoAlunos">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Aluno" type="ItemAluno" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAluno">
+    <xs:sequence>
+      <xs:element name="alunoId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>aluno id</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="formando" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
