@@ -990,6 +990,16 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>considerar a custo docente do professor para desempate de disponibilidade. Ver requisito RF-PP-7.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="violarMinAlunosTurmasFormandos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Permite que turmas que possuem alunos formandos violem o mínimo de alunos necessários para abertura de uma turma.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="utilizarDemandasP2" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Utiliza demandas de prioridade 2 caso não haja total atendimento das demandas de prioridade 1.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemNivelDificuldadeHorario">
