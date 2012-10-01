@@ -38,12 +38,14 @@ public:
    void setTotalSalas( int value ) { this->totalSalas = value; }
    void setMaiorSala( int value ) { this->maiorSala = value; }
    void setCusto( double c ) { this->custo = c; }
+   void setPossuiAlunoFormando( bool value ) { this->possuiAlunoFormando = value; }
 
    std::string getCodigo() const { return this->codigo; }
    std::string getNome() const { return this->nome; }
    int getTotalSalas() const { return this->totalSalas; }
    int getMaiorSala() const { return this->maiorSala; }
    double getCusto() const { return this->custo; }
+   bool getPossuiAlunoFormando() const { return this->possuiAlunoFormando; }
 
    GGroup<Calendario*> getCalendarios();
 
@@ -54,7 +56,8 @@ private:
    std::string nome;
    int totalSalas;
    int maiorSala;
-   double custo; // custo semanal de 1 credito no campus
+   double custo; // custo semanal de 1 credito no campus.
+   bool possuiAlunoFormando;
 };
 
 #endif

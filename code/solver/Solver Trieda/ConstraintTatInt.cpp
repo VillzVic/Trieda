@@ -1,4 +1,4 @@
-#include "ConstraintTatico.h"
+#include "ConstraintTatInt.h"
 #include "HashUtil.h"
 
 #define E_MENOR( a, b ) \
@@ -16,22 +16,22 @@
 	 ) \
    )
 
-ConstraintTatico::ConstraintTatico()
+ConstraintTatInt::ConstraintTatInt()
 {
    reset();
 }
 
-ConstraintTatico::ConstraintTatico( const ConstraintTatico & cons )
+ConstraintTatInt::ConstraintTatInt( const ConstraintTatInt & cons )
 {
    *this = cons;
 }
 
-ConstraintTatico::~ConstraintTatico()
+ConstraintTatInt::~ConstraintTatInt()
 {
    reset();
 }
 
-ConstraintTatico& ConstraintTatico::operator = ( const ConstraintTatico & cons )
+ConstraintTatInt& ConstraintTatInt::operator = ( const ConstraintTatInt & cons )
 {   
    this->type = cons.getType();
 
@@ -64,7 +64,7 @@ ConstraintTatico& ConstraintTatico::operator = ( const ConstraintTatico & cons )
    return *this;
 }
 
-bool ConstraintTatico::operator < ( const ConstraintTatico & cons ) const
+bool ConstraintTatInt::operator < ( const ConstraintTatInt & cons ) const
 {
 
    if( (int)this->getType() < (int) cons.getType() )
@@ -154,12 +154,12 @@ bool ConstraintTatico::operator < ( const ConstraintTatico & cons ) const
 
 }
 
-bool ConstraintTatico::operator== (const ConstraintTatico& cons) const
+bool ConstraintTatInt::operator== (const ConstraintTatInt& cons) const
 {
    return (!(*this < cons) && !(cons < *this));
 }
 
-void ConstraintTatico::reset()
+void ConstraintTatInt::reset()
 {
    cp = NULL;
    u = NULL;
@@ -192,7 +192,7 @@ void ConstraintTatico::reset()
 
 }
 
-std::string ConstraintTatico::toString()
+std::string ConstraintTatInt::toString()
 {
    std::stringstream ss;
    ss << "CType[" << (int) type << "]";
@@ -205,14 +205,12 @@ std::string ConstraintTatico::toString()
       ss << "__(C_SALA_HORARIO):"; break;	  
    case C_UNICO_ATEND_TURMA_DISC_DIA:
       ss << "__(C_UNICO_ATEND_TURMA_DISC_DIA):"; break;
-   case C_DEMANDA_DISC:
-      ss << "__(C_DEMANDA_DISC):"; break;
-//   case C_DEMANDA_DISC_ALUNO:
-//      ss << "__(C_DEMANDA_DISC_ALUNO):"; break;
+   case C_PROIBE_COMPARTILHAMENTO:
+      ss << "__(C_PROIBE_COMPARTILHAMENTO):"; break;
    case C_TURMA_DISC_DIAS_CONSEC:
       ss << "__(C_TURMAS_DISC_DIAS_CONSEC):"; break;	  
-   case C_LIMITA_ABERTURA_TURMAS:
-      ss << "__(C_LIMITA_ABERTURA_TURMAS):"; break;
+   case C_MIN_ALUNOS_TURMA:
+      ss << "__(C_MIN_ALUNOS_TURMA):"; break;
    case C_DIVISAO_CREDITO:
       ss << "__(C_DIVISAO_CREDITO):"; break;	  
    case C_COMBINACAO_DIVISAO_CREDITO:
@@ -220,19 +218,11 @@ std::string ConstraintTatico::toString()
    case C_VAR_ZC:
       ss << "__(C_VAR_ZC):"; break;	  
    case C_DISC_INCOMPATIVEIS:
-      ss << "__(C_DISC_INCOMPATIVEIS):"; break;	  
-   case C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO:
-      ss << "__(C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO):"; break;	  
+      ss << "__(C_DISC_INCOMPATIVEIS):"; break;	   
    case C_ALUNO_HORARIO:
       ss << "__(C_ALUNO_HORARIO):"; break;	  	  
-   case C_ATIVA_Y:
-      ss << "__(C_ATIVA_Y):"; break;	  
    case C_ALUNO_VARIAS_UNIDADES_DIA:
       ss << "__(C_ALUNO_VARIAS_UNIDADES_DIA):"; break;	  
-   case C_MIN_CREDS_ALUNO:
-      ss << "__(C_MIN_CREDS_ALUNO):"; break;	  
-   case C_MAX_CREDS_ALUNO:
-      ss << "__(C_MAX_CREDS_ALUNO):"; break;
    case C_ALUNO_DISC_PRATICA_TEORICA:
       ss << "__(C_ALUNO_DISC_PRATICA_TEORICA):"; break;	  
    case C_DISC_PRATICA_TEORICA:
@@ -241,18 +231,21 @@ std::string ConstraintTatico::toString()
       ss << "__(C_MIN_DIAS_ALUNO):"; break;	  
    case C_MAX_DIAS_ALUNO:
       ss << "__(C_MAX_DIAS_ALUNO):"; break;	  
-   case C_DESALOCA_ALUNO_TURMA:
-      ss << "__(C_DESALOCA_ALUNO_TURMA):"; break;	  
-   case C_DESALOCA_ALUNO_HORARIO:
-      ss << "__(C_DESALOCA_ALUNO_HORARIO):"; break;	  
-   case C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA:
-      ss << "__(C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA):"; break;	  
-   case C_SUM_DESALOCA_ALUNO:
-      ss << "__(C_SUM_DESALOCA_ALUNO):"; break;	  
-   case C_MIN_ALUNOS_TURMA:
-      ss << "__(C_MIN_ALUNOS_TURMA):"; break;	  	  	    
-   case C_DESALOCA_PT:
-      ss << "__(C_DESALOCA_PT):"; break;	  	  	      
+   case C_ASSOCIA_V_X:
+      ss << "__(C_ASSOCIA_V_X):"; break;	  
+	case C_DEMANDA_DISC_ALUNO:
+      ss << "__(C_DEMANDA_DISC_ALUNO):"; break;	  
+	case C_SALA_UNICA:
+      ss << "__(C_SALA_UNICA):"; break;
+	case C_SALA_TURMA:
+      ss << "__(C_SALA_TURMA):"; break;	  
+	case C_ASSOCIA_S_V:
+      ss << "__(C_ASSOCIA_S_V):"; break; 
+	case C_ABRE_TURMAS_EM_SEQUENCIA:
+      ss << "__(C_ABRE_TURMAS_EM_SEQUENCIA):"; break;
+	case C_ALUNO_CURSO:
+      ss << "__(C_ALUNO_CURSO):"; break;
+	  	  	  
 
    default:
       ss << "!";

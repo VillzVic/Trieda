@@ -371,39 +371,48 @@ void ProblemDataLoader::geraRefsDemandas()
 
 void ProblemDataLoader::criaAlunos()
 {
-   ITERA_GGROUP_LESSPTR( itAlunoDem, problemData->alunosDemanda, AlunoDemanda )
+   ITERA_GGROUP_LESSPTR( itAlunoDem, problemData->alunosDemandaTotal, AlunoDemanda )
    {
 	   AlunoDemanda *alunoDemanda = *itAlunoDem;
 
 	   int id = alunoDemanda->getAlunoId();
-	   std::string nome = alunoDemanda->getNomeAluno();
 	   int demId = alunoDemanda->getDemandaId();
 	   Oferta *oft = alunoDemanda->demanda->oferta;
+	   int p = alunoDemanda->getPrioridade();
 
-	   // Verifica se o aluno já não existe
-	   bool EXISTE = false;
-	   ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	   Aluno* aluno = problemData->retornaAluno( id );
+
+	   if (aluno==NULL)
 	   {
-		   if ( itAluno->getAlunoId() == id )
-		   {
-			   itAluno->demandas.add( alunoDemanda );
+		   std::cout<<"\nERRO em ProblemDataLoader::criaAlunos: alunoDemanda "<<alunoDemanda->getId()
+					<<" esta associada ao alunoId " << id <<" inexistente.\n";
+		   continue;
+	   }
+	   
+	   if ( p==1 )
+		  aluno->demandas.add( alunoDemanda );
 
-			   EXISTE = true;
-			   if ( itAluno->getOfertaId() != oft->getId() )
-			   {
-					std::cout<<"\nATENCAO em ProblemDataLoader::criaAlunos: o alunoId "<<id<<" esta associado a mais de uma oferta!!\n";
-			   }
+	   if ( aluno->getOferta() != NULL )
+	   {
+		   if ( aluno->getOferta()->getId() != oft->getId() )
+		   {
+				std::cout<<"\nATENCAO em ProblemDataLoader::criaAlunos: o alunoId "<<id<<" esta associado a mais de uma oferta!!\n";
 		   }
 	   }
-	   	   
-	   // Se o aluno não existir ainda, o insere
-	   if ( !EXISTE )
+	   else
 	   {
-		   Aluno *aluno = new Aluno( id, nome, oft );
-		   problemData->alunos.add( aluno );
-		   aluno->demandas.add( alunoDemanda );
+		   aluno->setOferta( oft );
+		   aluno->setOfertaId( oft->getId() );
 	   }
    }
+
+	// Atribui true ao "possuiAlunoFormando" do campus, caso haja aluno formando
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	{
+		if ( itAluno->ehFormando() ){
+			problemData->refCampus[ itAluno->getCampusId() ]->setPossuiAlunoFormando( true );			
+		}
+	}
 
 }
 
@@ -2559,11 +2568,10 @@ void ProblemDataLoader::divideDisciplinas()
 						if ( it_aluno_dem->getDemandaId() == it_dem->getId() )
 						{
 							int alunoId = it_aluno_dem->getAlunoId();
-							std::string alunoNome = it_aluno_dem->getNomeAluno();
 							int prior = it_aluno_dem->getPrioridade();
 							idAlDemanda++;
 
-							AlunoDemanda *aluno_demanda = new AlunoDemanda( idAlDemanda, alunoId, alunoNome, prior, nova_demanda );
+							AlunoDemanda *aluno_demanda = new AlunoDemanda( idAlDemanda, alunoId, prior, nova_demanda );
 							
 							problemData->alunosDemandaTotal.add( aluno_demanda );
 
@@ -3728,14 +3736,8 @@ void ProblemDataLoader::associaDisciplinasSalas()
          // Para cada disciplina associada ao campus em questao
          ITERA_GGROUP_N_PT( it_disciplina, it_Cp_Discs->second, int )
          {
-
             Disciplina * disciplina
                = ( problemData->refDisciplinas.find( *it_disciplina )->second );
-
-			if ( disciplina->getId() == 5932 )
-			{
-				std::cout<<"\naCHEI";
-			}
 
             // Se a disciplina foi associada pelo usuário para o campus corrente.
             std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > >::iterator
@@ -4934,6 +4936,12 @@ void ProblemDataLoader::calculaCombinaCredSLPorAluno()
 	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
     {
 	    Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()==NULL )
+		{
+			std::cout<<"\nAluno "<<aluno->getAlunoId()<<"  Oferta NULL";			
+			continue;
+		}
 
 		Campus * campus = aluno->getOferta()->campus;
 

@@ -114,6 +114,8 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
    min_mestres = elem.percentuaisMinimoMestres();
    considerar_preferencia_prof = elem.preferenciaProfessorDisciplina();
    considerar_desempenho_prof = elem.desempenhoProfDisponibilidade();
+   violar_min_alunos_turmas_formandos = elem.violarMinAlunosTurmasFormandos();
+   utilizarDemandasP2 = elem.utilizarDemandasP2();
 
    perc_max_reducao_CHP = elem.evitarReducaoCargaHorariaProfValor().get();
    min_alunos_abertura_turmas_value = elem.minAlunosAberturaTurmasValor().get();

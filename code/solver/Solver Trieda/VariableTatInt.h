@@ -1,5 +1,5 @@
-#ifndef VARIABLE_TATICO_H
-#define VARIABLE_TATICO_H
+#ifndef VARIABLE_TAT_INT_H
+#define VARIABLE_TAT_INT_H
 
 #ifndef WIN32
 #include <map>
@@ -10,41 +10,39 @@
 #include "ProblemData.h"
 
 // Variables
-class VariableTatico 
+class VariableTatInt 
 {
 public:
    // All variable types
    enum VariableType
    {
       V_ERROR = 0,
-      V_CREDITOS = 1,							// x_{i,d,u,s,hi,hf,t}
-      V_ABERTURA = 2,							// z_{i,d,cp}
-      V_DIAS_CONSECUTIVOS = 5,					// c_{i,d,t}
-      V_SLACK_DEMANDA = 6,						// fd_{i,d,cp}
-	  V_MIN_CRED_SEMANA = 8,					// h_{a}
-      V_MAX_CRED_SEMANA = 9,					// H_{a}
-      V_SLACK_DIST_CRED_DIA_SUPERIOR = 11,		// fcp_{i,d,s,t}
+	  V_ALUNO_CREDITOS = 1,						// v_{a,i,d,u,s,hi,hf,t}
+	  V_CREDITOS = 2,							// x_{i,d,u,s,hi,hf,t}
+      V_OFERECIMENTO = 3,						// o_{i,d,u,s}
+      V_ALOCA_ALUNO_TURMA_DISC = 4,				// s_{i,d,a}
+	  V_DIAS_CONSECUTIVOS = 5,					// c_{i,d,t}
+      V_SLACK_DEMANDA_ALUNO = 6,				// fd_{d,a}
+	  V_TURMA_ATEND_CURSO = 7,					// b_{i,d,c}
+      V_SLACK_ABERT_SEQ_TURMA = 10,				// ft_{i,d,cp}
+	  V_SLACK_DIST_CRED_DIA_SUPERIOR = 11,		// fcp_{i,d,s,t}
       V_SLACK_DIST_CRED_DIA_INFERIOR = 12,		// fcm_{i,d,s,t}
       
-      V_COMBINACAO_DIVISAO_CREDITO = 13,		// m{i,d,k}
-      V_SLACK_COMBINACAO_DIVISAO_CREDITO_M = 14,// fkm{i,d,t}
-      V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 15,// fkp{i,d,t}
+      V_COMBINACAO_DIVISAO_CREDITO = 13,		// m{i,d,k,cp}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_M = 14,// fkm{i,d,t,cp}
+      V_SLACK_COMBINACAO_DIVISAO_CREDITO_P = 15,// fkp{i,d,t,cp}
 	  V_ABERTURA_COMPATIVEL = 16,				// zc_{d,t}
-	  V_ALUNO_UNID_DIA = 17,					// y_{a,u,t}
-	  V_ALUNO_VARIAS_UNID_DIA = 18,				// w_{a,t}
+	  V_SLACK_COMPARTILHAMENTO = 17,			// fc_{i,d,c,c'}
 	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 19,		// fu_{i1,d1,i2,d2,t,cp}
-	  V_SLACK_SLACKDEMANDA_PT = 20,				// ffd_{i1,-d,i2,d,cp}
-	  V_ALUNO_DIA = 21,							// du_{a,t}
-	  V_DESALOCA_ALUNO = 22,					// fa_{i,d,a}
-	  V_DESALOCA_ALUNO_DIA = 23					// fad_{i,d,a,t}
+	  V_ALUNO_DIA = 21							// du_{a,t}
    };
 
    //Constructors
-   VariableTatico();
-   VariableTatico( const VariableTatico & );
+   VariableTatInt();
+   VariableTatInt( const VariableTatInt & );
 
    //Destructor
-   virtual ~VariableTatico();
+   virtual ~VariableTatInt();
 
    //==================================================
    // GET METHODS 
@@ -159,11 +157,11 @@ public:
    // OPERATORS 
    //==================================================
    // Assignment 
-   VariableTatico & operator = ( const VariableTatico & );
+   VariableTatInt & operator = ( const VariableTatInt & );
    // Less 
-   bool operator < ( const VariableTatico & ) const;
+   bool operator < ( const VariableTatInt & ) const;
    // Equals 
-   bool operator == ( const VariableTatico & ) const;
+   bool operator == ( const VariableTatInt & ) const;
 
    // Variable name
    std::string toString();
@@ -201,7 +199,7 @@ private:
 /**
 //* Type definition for the hash object.
 */
-typedef std::map< VariableTatico, int > VariableTaticoHash;
+typedef std::map< VariableTatInt, int > VariableTatIntHash;
 
 
 #endif 

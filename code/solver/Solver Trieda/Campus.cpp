@@ -6,6 +6,7 @@ Campus::Campus( void )
    totalSalas = 0;
    maiorSala  = 0;
    custo = 0;
+   possuiAlunoFormando=false;
 }
 
 Campus::~Campus( void )

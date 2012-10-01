@@ -439,7 +439,8 @@ public:
 
    bool haDemandaDiscNoCampus( int disciplina, int campusId );
    bool haDemandaDiscNoCampus( int disciplina, int campusId, int prioridade );
-   
+   GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaDemandasDiscNoCampus( int disciplinaId, int campusId, int prioridade );
+
    int existeTurmaDiscCampus( int turma, int discId, int campusId );
    int receitaMediaTurmaDiscCampus( int turma, int discId, int campusId );
 
@@ -454,6 +455,7 @@ public:
    int retornaCjtAlunosId( int discId );
    int retornaCjtAlunosId( Aluno* aluno );
    int haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId );
+   int haDemandaDiscNoCurso( int discId, int cursoId );
    int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
    bool haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina );   
    int getQtdAlunoDemandaAtualPorCampus( int campusId );
@@ -466,6 +468,7 @@ public:
 
    double cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId );
    double cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno );
+   double cargaHorariaJaAtendida( Aluno* aluno );
 
    int retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia );
 
@@ -473,7 +476,11 @@ public:
    bool possuiNaoAtend(Aluno* aluno);
 
    bool haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
-   bool getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
+   int getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
+   bool possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp );
+
+   bool haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
+   int getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
 
    private:
    

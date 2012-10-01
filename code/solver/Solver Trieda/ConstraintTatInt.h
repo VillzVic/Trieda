@@ -1,5 +1,5 @@
-#ifndef _CONSTRAINT_TATICO_H_
-#define _CONSTRAINT_TATICO_H_
+#ifndef _CONSTRAINT_TAT_INT_H_
+#define _CONSTRAINT_TAT_INT_H_
 
 #ifndef WIN32
 #include <map>
@@ -12,7 +12,7 @@
 /**
 * Class which defines a contraint in the LP.
 */
-class ConstraintTatico
+class ConstraintTatInt
 {
 public:
    /** All constraint types */
@@ -22,50 +22,46 @@ public:
       C_CARGA_HORARIA = 1,							// Restricao 1.2.2
 	  C_SALA_HORARIO = 2,							// Restricao 1.2.3
 	  C_UNICO_ATEND_TURMA_DISC_DIA = 3,				// Restricao 1.2.4
-	  C_DEMANDA_DISC = 4,							// Restricao 1.2.5	
-//	  C_DEMANDA_DISC_ALUNO = 4,						// Restricao 1.2.5	  
+	  C_DEMANDA_DISC_ALUNO = 4,						// Restricao 1.2.5	  
 	  C_TURMA_DISC_DIAS_CONSEC = 5,					// Restricao 1.2.6
-
-      C_LIMITA_ABERTURA_TURMAS = 6,					// Restricao 1.2.7
+      C_MIN_ALUNOS_TURMA = 6,						// Restricao 1.2.7
 	  C_DIVISAO_CREDITO = 7,						// Restricao 1.2.8
 	  C_COMBINACAO_DIVISAO_CREDITO = 8,				// Restricao 1.2.9
 	  C_VAR_ZC = 9,									// Restricao 1.2.10
 	  C_DISC_INCOMPATIVEIS = 10,					// Restricao 1.2.11
-	  C_EVITA_SOBREPOSICAO_TURMA_DISC_ALUNO = 11,	// Restricao 1.2.12
-	  C_ATIVA_Y = 12,								// Restricao 1.2.13
+	  C_ASSOCIA_V_X = 11,
 	  C_ALUNO_VARIAS_UNIDADES_DIA = 13,				// Restricao 1.2.14
-	  C_MIN_CREDS_ALUNO = 14,						// Restricao 1.2.15
-	  C_MAX_CREDS_ALUNO = 15,						// Restricao 1.2.16
 	  C_ALUNO_DISC_PRATICA_TEORICA = 16,			// Restricao 1.2.17
 	  C_DISC_PRATICA_TEORICA = 17,					// Restricao 1.2.17
 	  C_ALUNO_HORARIO = 18,							// Restricao 1.2.12	  
 	  C_MIN_DIAS_ALUNO = 19,
 	  C_MAX_DIAS_ALUNO = 20,
-	  C_DESALOCA_ALUNO_TURMA = 21,
-	  C_DESALOCA_ALUNO_HORARIO = 22,
-	  C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA = 23,
-	  C_SUM_DESALOCA_ALUNO = 24,
-	  C_MIN_ALUNOS_TURMA = 25,
-	  C_DESALOCA_PT = 26
+	  C_ALUNOS_CURSOS_INCOMP = 21,
+	  C_PROIBE_COMPARTILHAMENTO = 22,
+	  C_SALA_UNICA = 23,
+	  C_SALA_TURMA = 24,
+	  C_ASSOCIA_S_V = 25,
+	  C_ABRE_TURMAS_EM_SEQUENCIA = 26,
+	  C_ALUNO_CURSO = 27
    };
 
    /** Default constructor. */
-   ConstraintTatico();
+   ConstraintTatInt();
 
    /** Copy constructor. */
-   ConstraintTatico( const ConstraintTatico & );
+   ConstraintTatInt( const ConstraintTatInt & );
 
    /** Destructor. */
-   virtual ~ConstraintTatico();
+   virtual ~ConstraintTatInt();
 
    /** Assign operator. */
-   ConstraintTatico & operator = ( const ConstraintTatico & );
+   ConstraintTatInt & operator = ( const ConstraintTatInt & );
 
    /** Less operator. */
-   bool operator < ( const ConstraintTatico & ) const;
+   bool operator < ( const ConstraintTatInt & ) const;
 
    /** Equals operator. */
-   bool operator == ( const ConstraintTatico & ) const;
+   bool operator == ( const ConstraintTatInt & ) const;
 
    /**
    * Returns a string containing an unique name for the constraint.
@@ -190,6 +186,6 @@ private:
 /**
 //* Type definition for the hash object.
 */
-typedef std::map< ConstraintTatico, int > ConstraintTaticoHash;
+typedef std::map< ConstraintTatInt, int > ConstraintTatIntHash;
 
 #endif

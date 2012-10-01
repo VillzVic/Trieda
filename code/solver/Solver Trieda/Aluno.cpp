@@ -9,10 +9,11 @@ Aluno::Aluno( void )
    this->formando = false;
 }
 
-Aluno::Aluno( int id, std::string nome, Oferta* oft )
+Aluno::Aluno( int id, std::string nome, bool formando, Oferta* oft )
 {
    this->setAlunoId( id );
    this->setNomeAluno( nome );
+   this->formando = formando;
    this->oferta = oft;
    this->ofertaId = oft->getId();
    this->nCredsAlocados.clear();
@@ -20,6 +21,13 @@ Aluno::Aluno( int id, std::string nome, Oferta* oft )
 
 Aluno::~Aluno( void )
 {
+}
+
+void Aluno::le_arvore( ItemAluno & elem )
+{
+   this->setAlunoId( elem.alunoId() );
+   this->setNomeAluno( elem.nomeAluno() );
+   this->setFormando( elem.formando() );
 }
 
 bool Aluno::demandaDisciplina( int idDisc )

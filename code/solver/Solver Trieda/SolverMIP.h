@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "TaticoIntAlunoHor.h"
 #include "ValidateSolution.h"
 #include "Solver.h"
 #include "VariablePre.h"
@@ -128,18 +129,18 @@ public:
    int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL, int r );			// s_{i,d,a,cp}
    int cria_preVariavel_folga_prioridade_inf( int campusId, int prior, int grupoAlunosAtualId );			// fpi_{a}
    int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
-   int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL );			// ft_{i,d}
+   int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL, int r );	// ft_{i,d}
    int cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlunosId, int P_ATUAL );	// w_{i,d,i',d'}
    int cria_preVariavel_folga_distribuicao_aluno( int campusId, int cjtAlunosId, int P_ATUAL );			// fda
    int cria_preVariavel_folga_turma_mesma_disc_sala_dif( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // fs_{d,s}
-   int cria_preVariavel_aluno_sala( int campusId, int grupoAlunosId, int P_ATUAL, int r ); // as_{a,s}
-   int cria_preVariavel_formandosNaTurma( int campusId, int grupoAlunosId, int P_ATUAL, int r );			// f_{i,d,cp}
+   int cria_preVariavel_aluno_sala( int campusId, int grupoAlunosId, int P_ATUAL ); // as_{a,s}
+   int cria_preVariavel_formandosNaTurma( int campusId, int grupoAlunosId, int P_ATUAL, int r );		// f_{i,d,cp}
 
    /********************************************************************
    **                    Restrições do pre-Tatico                     **
    *********************************************************************/
 
-   int cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId );
+   int cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId, int r );
 
    int cria_preRestricao_carga_horaria( int campusId, int cjtAlunosId  );				// Restrição 1.1
    int cria_preRestricao_max_cred_sala_sl( int campusId, int cjtAlunosId  );			// Restrição 1.2
@@ -152,8 +153,8 @@ public:
    int cria_preRestricao_proibe_compartilhamento( int campusId, int cjtAlunosId  );	// Restrição 1.9
    int cria_preRestricao_ativacao_var_z( int campusId, int cjtAlunosId  );			// Restricao 1.10
    int cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtAlunosId  );	// Restricao 1.11
-   int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade );    // Restricao 1.12
-   int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId, int prioridade );  // Restricao 1.13
+   int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade, int r );    // Restricao 1.12
+   int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId, int prioridade, int r );  // Restricao 1.13
    int cria_preRestricao_limite_sup_creds_sala( int campusId, int cjtAlunosId  );		// Restricao 1.15
    int cria_preRestricao_soma_cred_sala( int campusId, int cjtAlunosId  );	// Restricao 1.26
 
@@ -171,7 +172,7 @@ public:
    int cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId, int prior); 
    int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
    int cria_preRestricao_aluno_sala( int campusId, int cjtAlunosId  );
-   int cria_preRestricao_formandos( int campusId, int cjtAlunosId, int prioridade );
+   int cria_preRestricao_formandos( int campusId, int cjtAlunosId, int prioridade, int r );
 
    // Só para p2 em diante
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade ); //nao precisa, pq tem cliques agora
@@ -254,7 +255,7 @@ public:
    *********************************************************************/
 
    
-   int criaVariaveisTatico( int campusId, int P, int tatico );
+   int criaVariaveisTatico( int campusId, int P, int r, int tatico );
 
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoAbertura( int campusId, int P );									// z_{i,d,cp}
@@ -281,7 +282,7 @@ public:
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
    *********************************************************************/
 
-   int criaRestricoesTatico( int campusId, int prioridade, int tatico );
+   int criaRestricoesTatico( int campusId, int prioridade, int r, int tatico );
 
    int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
    int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
@@ -310,6 +311,8 @@ public:
    int criaRestricaoTaticoDesalocaAlunoHorario( int campusId );
    int criaRestricaoTaticoSumDesalocaAlunoFolgaDemanda( int campusId );
    int criaRestricaoTaticoSumDesalocaAluno( int campusId );
+   int criaRestricaoTaticoGaranteMinAlunosTurma( int campusId, int r );
+   int criaRestricaoTaticoDesalocaPT( int campusId, int r );
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
      
@@ -611,8 +614,8 @@ public:
 
    // funções de teste para quando quiser fixar toda uma solução,
    // e dps alterar um valor especifico para se observar o comportamento
-   void testeCarregaPreSol( int campusId, int prioridade, int cjtAlunosId, int it );
-   void testeCarregaSol( int campusId, int prioridade, int cjtAlunosId, int it );
+   void testeCarregaPreSol( int campusId, int prioridade, int cjtAlunosId, int r );
+   void testeCarregaSol( int campusId, int prioridade, int cjtAlunosId, int r, int tatico );
 
 #ifdef TATICO_CJT_ALUNOS
    void carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int prioridade, int cjtAlunosId, int r );
@@ -706,19 +709,19 @@ private:
 	int retornaTempoDeExecucaoPreModelo( int campusId, int cjtAlunosId, int prioridade );
 	int retornaTempoDeExecucaoTatico( int campusId, int cjtAlunosId, int prioridade );
 
-	std::string getPreLpFileName( int campusId, int prioridade, int cjtAlunosId, int it );
+	std::string getPreLpFileName( int campusId, int prioridade, int cjtAlunosId, int r );
 
-	std::string getTaticoLpFileName( int campusId, int prioridade, int cjtAlunosId, int it );
+	std::string getTaticoLpFileName( int campusId, int prioridade, int cjtAlunosId, int r, int tatico );
 
     std::string getSolHeuristBinFileName( int campusId, int prioridade, int cjtAlunosId );
 
-	std::string getSolBinFileName( int campusId, int prioridade, int cjtAlunosId, int it );
+	std::string getSolBinFileName( int campusId, int prioridade, int cjtAlunosId, int r, int tatico );
 
-	std::string getSolPreBinFileName( int campusId, int prioridade, int cjtAlunosId, int it );
+	std::string getSolPreBinFileName( int campusId, int prioridade, int cjtAlunosId, int r );
 
-	std::string getSolucaoPreTaticoFileName( int campusId, int prioridade, int cjtAlunosId, int it );	
+	std::string getSolucaoPreTaticoFileName( int campusId, int prioridade, int cjtAlunosId, int r );	
 	
-	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId, int it );	
+	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId, int r, int tatico );	
 
     std::string getSolVarsPreFileName( int campusId, int prioridade, int cjtAlunosId );
 
@@ -880,6 +883,7 @@ private:
    bool heuristica2TentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int turma, std::string heurFilename );
    void heuristicaP1AlocaAlunos( int campusId, int prioridade, int grupoAlunosAtualId );
 
+   
 };
 
 #endif

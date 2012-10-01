@@ -9,7 +9,7 @@ class AlunoDemanda :
 {
 public:
    AlunoDemanda( void );
-   AlunoDemanda( int id, int alunoId, std::string nome, int prior, Demanda* demanda );
+   AlunoDemanda( int id, int alunoId, int prior, Demanda* demanda );
    virtual ~AlunoDemanda( void );
 
    virtual void le_arvore( ItemAlunoDemanda & );
@@ -18,13 +18,11 @@ public:
 
    void setAlunoId( int value ) { this->alunoId = value; }
    void setDemandaId( int value ) { this->demandaId = value; }
-   void setNomeAluno( std::string s ) { this->nomeAluno = s; }
    void setPrioridade( int p ) { this->prioridade = p; }
 
    int getPrioridade() const { return this->prioridade; }
    int getAlunoId() const { return this->alunoId; }
    int getDemandaId() const { return this->demandaId; }
-   std::string getNomeAluno() const { return this->nomeAluno; }
 
    virtual bool operator < ( const AlunoDemanda & var ) const
    {
@@ -75,7 +73,6 @@ public:
 private:
    int demandaId;
    int alunoId;
-   std::string nomeAluno;
    int prioridade;
 
 };

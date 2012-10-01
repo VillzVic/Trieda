@@ -8,15 +8,17 @@ class Aluno
 {
 public:
    Aluno( void );
-   Aluno( int id, std::string nome, Oferta* oft );
+   Aluno( int id, std::string nome, bool formando, Oferta* oft );
    virtual ~Aluno( void );
          
    void setAlunoId( int value ) { this->alunoId = value; }
    void setNomeAluno( std::string s ) { this->nomeAluno = s; }
+   void setFormando( bool value ) { this->formando = value; }
    void setOferta( Oferta* o ) { this->oferta = o; }
    void setOfertaId( int oftId ) { this->ofertaId = oftId; }
    void setCombinaCredSL( int dia, int k, Calendario* sl , int n );
    void setCombinaCredSLSize(int dia, int size) { combinaCredSLSize[dia] = size; }
+
    void addHorarioDiaOcupado( HorarioDia* hd ){ horariosDiaOcupados.add(hd); }
    void addHorarioDiaOcupado( GGroup<HorarioDia*> hds );
    void removeHorarioDiaOcupado( HorarioDia* hd ){ horariosDiaOcupados.remove(hd); }
@@ -29,6 +31,7 @@ public:
    std::string getNomeAluno() const { return this->nomeAluno; }
    Oferta* getOferta() const { return this->oferta; }
    int getOfertaId() const { return this->ofertaId; }
+   inline int getCampusId() { return this->oferta->getCampusId(); }
 
    int getNroMaxCredCombinaSL( int k, Calendario *c, int dia );
    double getNroCreditosJaAlocados( Calendario* c, int dia );
@@ -53,6 +56,8 @@ public:
    bool sobrepoeHorarioDiaOcupado( HorarioDia *hd );
 
    bool ehFormando() const { return this->formando; }
+
+   void le_arvore( ItemAluno & elem );
 
    virtual bool operator < ( const Aluno & var ) const
    {

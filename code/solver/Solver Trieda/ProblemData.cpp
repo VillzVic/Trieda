@@ -83,13 +83,10 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    LE_SEQ( this->disciplinas, raiz.disciplinas(), Disciplina );
    LE_SEQ( this->cursos, raiz.cursos(), Curso );
    LE_SEQ( this->demandasTotal, raiz.demandas(), Demanda );
-   LE_SEQ( this->alunosDemandaTotal, raiz.alunosDemanda(), AlunoDemanda );
-   
+
    this->parametros = new ParametrosPlanejamento;
    this->parametros->le_arvore( raiz.parametrosPlanejamento() );
-
-   this->parametros->considerar_formandos=false;
-
+   
    ITERA_SEQ( it_oferta,
       raiz.ofertaCursosCampi(), OfertaCurso )
    {
@@ -100,6 +97,9 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 
    if ( this->parametros->otimizarPor == "ALUNO" )
    {
+	   LE_SEQ( this->alunosDemandaTotal, raiz.alunosDemanda(), AlunoDemanda );
+	   LE_SEQ( this->alunos, raiz.alunos(), Aluno );
+
 	   // Inicializa com zero o numero de prioridades de cada campus
 	   ITERA_GGROUP_LESSPTR( it_campi, this->campi, Campus )
 	   {
@@ -125,7 +125,7 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		   }
 	   }
 	   
-	   // Filtrando demanda: referencia somente para as que possuirem alunoDemanda associado
+	   // Filtrando demanda: referência somente para as que possuirem alunoDemanda associado
 	   // e ajustando a quantidade associada à demanda.
 	   ITERA_GGROUP_LESSPTR( itDem, this->demandasTotal, Demanda )
 	   {
@@ -1559,6 +1559,30 @@ bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId )
 	return false;
 }
 
+/*
+	Pesquisa em demanda, ou seja, considerando no maximo a prioridade atual.
+*/
+GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoCampus( int disciplinaId, int campusId, int prioridade )
+{	
+	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alunosDemanda;
+
+	ITERA_GGROUP_LESSPTR ( itAl, this->alunos, Aluno )
+	{
+		if ( (*itAl)->getOferta()->getCampusId() != campusId )
+			continue;
+
+		ITERA_GGROUP_LESSPTR ( itAlDem, (*itAl)->demandas, AlunoDemanda )
+		{
+			if ( (*itAlDem)->demanda->getDisciplinaId() == disciplinaId &&				
+				(*itAlDem)->getPrioridade() <= prioridade )
+			{
+				alunosDemanda.add( *itAlDem );
+			}
+		}
+	}
+
+	return alunosDemanda;
+}
 
 bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId, int prioridade )
 {	
@@ -2099,6 +2123,22 @@ int ProblemData::haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int 
 	return qtdDem;
 }
 
+int ProblemData::haDemandaDiscNoCurso( int discId, int cursoId )
+{	
+	// Calculando P_{d,o}
+	int qtdDem = 0;
+
+	ITERA_GGROUP_LESSPTR( itDem, demandas, Demanda )
+	{
+		if ( itDem->getDisciplinaId() == discId && 
+			itDem->oferta->getCursoId() == cursoId )
+		{
+			qtdDem += itDem->getQuantidade();
+		}
+	}
+
+	return qtdDem;
+}
 
 bool ProblemData::haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina )
 {
@@ -2365,6 +2405,24 @@ double ProblemData::cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno 
 	return cargaHorariaP2;
 }
 
+double ProblemData::cargaHorariaJaAtendida( Aluno* aluno )
+{
+	double cargaHoraria = 0.0;
+	
+	GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >
+		atendAluno = this->mapAluno_CampusTurmaDisc[aluno];
+
+	GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator
+		itAtends = atendAluno.begin();
+	for ( ; itAtends != atendAluno.end(); itAtends++ )
+	{
+		Disciplina *disciplina = (*itAtends).third;
+		int nCreds = disciplina->getTotalCreditos();
+		int duracaoCred = disciplina->getTempoCredSemanaLetiva();
+		cargaHoraria += nCreds*duracaoCred;	
+	}
+	return cargaHoraria;
+}
 
 void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int tatico )
 {
@@ -2613,7 +2671,7 @@ bool ProblemData::haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int
 	return false;
 }
 
-bool ProblemData::getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL )
+int ProblemData::getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL )
 {
 	int n = 0;
 
@@ -2638,6 +2696,64 @@ bool ProblemData::getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp,
 			if ( disc == disciplina )
 				n++;
 		}
+	}
+
+	return n;
+}
+
+bool ProblemData::possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp )
+{
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+	trio.set( cp->getId(), turma, disciplina );
+
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, 
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
+		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
+
+	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
+	{
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMap->second;
+
+		ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
+		{
+			Aluno *aluno = this->retornaAluno( (*itAlDem)->getAlunoId() );
+			if ( aluno->ehFormando() )
+				return true;
+		}
+	}
+	return false;
+}
+
+
+
+bool ProblemData::haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId )
+{
+	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDem = this->retornaDemandasDiscNoCampus( disciplina->getId(), campusId, prioridade );
+
+	ITERA_GGROUP_LESSPTR( itAlDem, alDem, AlunoDemanda )
+	{
+		int id = (*itAlDem)->getAlunoId();
+		Aluno *aluno = this->retornaAluno( id );
+
+		if ( this->retornaTurmaDiscAluno( aluno, disciplina ) == -1 )
+			return true;
+	}
+
+	return false;
+}
+
+int ProblemData::getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId )
+{
+	int n = 0;
+	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDem = this->retornaDemandasDiscNoCampus( disciplina->getId(), campusId, prioridade );
+
+	ITERA_GGROUP_LESSPTR( itAlDem, alDem, AlunoDemanda )
+	{
+		int id = (*itAlDem)->getAlunoId();
+		Aluno *aluno = this->retornaAluno( id );
+
+		if ( this->retornaTurmaDiscAluno( aluno, disciplina ) == -1 )
+			n++;
 	}
 
 	return n;

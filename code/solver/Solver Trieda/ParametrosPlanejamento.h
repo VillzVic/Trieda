@@ -51,7 +51,8 @@ public:
    bool min_doutores;
    bool considerar_preferencia_prof;
    bool considerar_desempenho_prof;
-   bool considerar_formandos;
+   bool violar_min_alunos_turmas_formandos;
+   bool utilizarDemandasP2;
 
    virtual void le_arvore( ItemParametrosPlanejamento & );
 };

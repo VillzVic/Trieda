@@ -130,6 +130,69 @@ turnos (::std::auto_ptr< turnos_type > x)
 }
 
 
+// ItemAluno
+// 
+
+const ItemAluno::alunoId_type& ItemAluno::
+alunoId () const
+{
+  return this->alunoId_.get ();
+}
+
+ItemAluno::alunoId_type& ItemAluno::
+alunoId ()
+{
+  return this->alunoId_.get ();
+}
+
+void ItemAluno::
+alunoId (const alunoId_type& x)
+{
+  this->alunoId_.set (x);
+}
+
+const ItemAluno::nomeAluno_type& ItemAluno::
+nomeAluno () const
+{
+  return this->nomeAluno_.get ();
+}
+
+ItemAluno::nomeAluno_type& ItemAluno::
+nomeAluno ()
+{
+  return this->nomeAluno_.get ();
+}
+
+void ItemAluno::
+nomeAluno (const nomeAluno_type& x)
+{
+  this->nomeAluno_.set (x);
+}
+
+void ItemAluno::
+nomeAluno (::std::auto_ptr< nomeAluno_type > x)
+{
+  this->nomeAluno_.set (x);
+}
+
+const ItemAluno::formando_type& ItemAluno::
+formando () const
+{
+  return this->formando_.get ();
+}
+
+ItemAluno::formando_type& ItemAluno::
+formando ()
+{
+  return this->formando_.get ();
+}
+
+void ItemAluno::
+formando (const formando_type& x)
+{
+  this->formando_.set (x);
+}
+
 // ItemAlunoDemanda
 // 
 
@@ -167,30 +230,6 @@ void ItemAlunoDemanda::
 alunoId (const alunoId_type& x)
 {
   this->alunoId_.set (x);
-}
-
-const ItemAlunoDemanda::nomeAluno_type& ItemAlunoDemanda::
-nomeAluno () const
-{
-  return this->nomeAluno_.get ();
-}
-
-ItemAlunoDemanda::nomeAluno_type& ItemAlunoDemanda::
-nomeAluno ()
-{
-  return this->nomeAluno_.get ();
-}
-
-void ItemAlunoDemanda::
-nomeAluno (const nomeAluno_type& x)
-{
-  this->nomeAluno_.set (x);
-}
-
-void ItemAlunoDemanda::
-nomeAluno (::std::auto_ptr< nomeAluno_type > x)
-{
-  this->nomeAluno_.set (x);
 }
 
 const ItemAlunoDemanda::demandaId_type& ItemAlunoDemanda::
@@ -3327,6 +3366,24 @@ minAlunosAberturaTurmasValor (const minAlunosAberturaTurmasValor_optional& x)
   this->minAlunosAberturaTurmasValor_ = x;
 }
 
+const ItemParametrosPlanejamento::violarMinAlunosTurmasFormandos_type& ItemParametrosPlanejamento::
+violarMinAlunosTurmasFormandos () const
+{
+  return this->violarMinAlunosTurmasFormandos_.get ();
+}
+
+ItemParametrosPlanejamento::violarMinAlunosTurmasFormandos_type& ItemParametrosPlanejamento::
+violarMinAlunosTurmasFormandos ()
+{
+  return this->violarMinAlunosTurmasFormandos_.get ();
+}
+
+void ItemParametrosPlanejamento::
+violarMinAlunosTurmasFormandos (const violarMinAlunosTurmasFormandos_type& x)
+{
+  this->violarMinAlunosTurmasFormandos_.set (x);
+}
+
 const ItemParametrosPlanejamento::niveisDificuldadeHorario_type& ItemParametrosPlanejamento::
 niveisDificuldadeHorario () const
 {
@@ -3639,6 +3696,24 @@ custoProfDisponibilidade (const custoProfDisponibilidade_type& x)
   this->custoProfDisponibilidade_.set (x);
 }
 
+const ItemParametrosPlanejamento::utilizarDemandasP2_type& ItemParametrosPlanejamento::
+utilizarDemandasP2 () const
+{
+  return this->utilizarDemandasP2_.get ();
+}
+
+ItemParametrosPlanejamento::utilizarDemandasP2_type& ItemParametrosPlanejamento::
+utilizarDemandasP2 ()
+{
+  return this->utilizarDemandasP2_.get ();
+}
+
+void ItemParametrosPlanejamento::
+utilizarDemandasP2 (const utilizarDemandasP2_type& x)
+{
+  this->utilizarDemandasP2_.set (x);
+}
+
 
 // ItemNivelDificuldadeHorario
 // 
@@ -3707,6 +3782,26 @@ Calendario (const Calendario_sequence& s)
   this->Calendario_ = s;
 }
 
+// GrupoAluno
+// 
+
+const GrupoAluno::Aluno_sequence& GrupoAluno::
+Aluno () const
+{
+  return this->Aluno_;
+}
+
+GrupoAluno::Aluno_sequence& GrupoAluno::
+Aluno ()
+{
+  return this->Aluno_;
+}
+
+void GrupoAluno::
+Aluno (const Aluno_sequence& s)
+{
+  this->Aluno_ = s;
+}
 
 // GrupoAlunoDemanda
 // 
@@ -5321,6 +5416,30 @@ demandas (::std::auto_ptr< demandas_type > x)
   this->demandas_.set (x);
 }
 
+const TriedaInput::alunos_type& TriedaInput::
+alunos () const
+{
+  return this->alunos_.get ();
+}
+
+TriedaInput::alunos_type& TriedaInput::
+alunos ()
+{
+  return this->alunos_.get ();
+}
+
+void TriedaInput::
+alunos (const alunos_type& x)
+{
+  this->alunos_.set (x);
+}
+
+void TriedaInput::
+alunos (::std::auto_ptr< alunos_type > x)
+{
+  this->alunos_.set (x);
+}
+
 const TriedaInput::alunosDemanda_type& TriedaInput::
 alunosDemanda () const
 {
@@ -5776,19 +5895,142 @@ ItemCalendario::
 {
 }
 
+// ItemAluno
+//
+
+ItemAluno::
+ItemAluno ( const alunoId_type& alunoId,
+            const nomeAluno_type& nomeAluno,
+			const formando_type& formando)
+: ::xml_schema::type (),
+  alunoId_ (alunoId, ::xml_schema::flags (), this),
+  nomeAluno_ (nomeAluno, ::xml_schema::flags (), this),
+  formando_ (formando, ::xml_schema::flags (), this)
+{
+}
+
+ItemAluno::
+ItemAluno (const ItemAluno& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  alunoId_ (x.alunoId_, f, this),
+  nomeAluno_ (x.nomeAluno_, f, this),
+  formando_ (x.formando_, f, this)
+{
+}
+
+ItemAluno::
+ItemAluno (const ::xercesc::DOMElement& e,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  alunoId_ (f, this),
+  nomeAluno_ (f, this),
+  formando_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void ItemAluno::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // alunoId
+    //
+    if (n.name () == "alunoId" && n.namespace_ ().empty ())
+    {
+      if (!alunoId_.present ())
+      {
+        this->alunoId_.set (alunoId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // nomeAluno
+    //
+    if (n.name () == "nomeAluno" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< nomeAluno_type > r (
+        nomeAluno_traits::create (i, f, this));
+
+      if (!nomeAluno_.present ())
+      {
+        this->nomeAluno_.set (r);
+        continue;
+      }
+    }
+
+    // formando
+    //
+    if (n.name () == "formando" && n.namespace_ ().empty ())
+    {
+      if (!formando_.present ())
+      {
+        this->formando_.set (formando_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!alunoId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "alunoId",
+      "");
+  }
+
+  if (!nomeAluno_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "nomeAluno",
+      "");
+  }
+
+  if (!formando_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "formando",
+      "");
+  }
+}
+
+ItemAluno* ItemAluno::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ItemAluno (*this, f, c);
+}
+
+ItemAluno::
+~ItemAluno ()
+{
+}
+
+
 // ItemAlunoDemanda
 //
 
 ItemAlunoDemanda::
 ItemAlunoDemanda (const id_type& id,
                   const alunoId_type& alunoId,
-                  const nomeAluno_type& nomeAluno,
                   const demandaId_type& demandaId,
 				  const prioridade_type& prioridade)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   alunoId_ (alunoId, ::xml_schema::flags (), this),
-  nomeAluno_ (nomeAluno, ::xml_schema::flags (), this),
   demandaId_ (demandaId, ::xml_schema::flags (), this),
   prioridade_ (prioridade, ::xml_schema::flags (), this)
 {
@@ -5801,7 +6043,6 @@ ItemAlunoDemanda (const ItemAlunoDemanda& x,
 : ::xml_schema::type (x, f, c),
   id_ (x.id_, f, this),
   alunoId_ (x.alunoId_, f, this),
-  nomeAluno_ (x.nomeAluno_, f, this),
   demandaId_ (x.demandaId_, f, this),
   prioridade_ (x.prioridade_, f, this)
 {
@@ -5814,7 +6055,6 @@ ItemAlunoDemanda (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   id_ (f, this),
   alunoId_ (f, this),
-  nomeAluno_ (f, this),
   demandaId_ (f, this),
   prioridade_ (f, this)
 {
@@ -5857,20 +6097,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // nomeAluno
-    //
-    if (n.name () == "nomeAluno" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< nomeAluno_type > r (
-        nomeAluno_traits::create (i, f, this));
-
-      if (!nomeAluno_.present ())
-      {
-        this->nomeAluno_.set (r);
-        continue;
-      }
-    }
-
     // demandaId
     //
     if (n.name () == "demandaId" && n.namespace_ ().empty ())
@@ -5907,13 +6133,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "alunoId",
-      "");
-  }
-
-  if (!nomeAluno_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "nomeAluno",
       "");
   }
 
@@ -10367,6 +10586,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const funcaoObjetivo_type& funcaoObjetivo,
                             const considerarEquivalencia_type& considerarEquivalencia,
                             const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
+							const violarMinAlunosTurmasFormandos_type& violarMinAlunosTurmasFormandos,
                             const niveisDificuldadeHorario_type& niveisDificuldadeHorario,
                             const equilibrarDiversidadeDiscDia_type& equilibrarDiversidadeDiscDia,
                             const regrasGenericasDivisaoCredito_type& regrasGenericasDivisaoCredito,
@@ -10378,7 +10598,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
                             const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
+							const utilizarDemandasP2_type& utilizarDemandasP2)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   otimizarPor_ (otimizarPor, ::xml_schema::flags (), this),
@@ -10400,6 +10621,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   considerarEquivalencia_ (considerarEquivalencia, ::xml_schema::flags (), this),
   minAlunosAberturaTurmas_ (minAlunosAberturaTurmas, ::xml_schema::flags (), this),
   minAlunosAberturaTurmasValor_ (::xml_schema::flags (), this),
+  violarMinAlunosTurmasFormandos_ (violarMinAlunosTurmasFormandos, ::xml_schema::flags (), this),
   niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
   equilibrarDiversidadeDiscDia_ (equilibrarDiversidadeDiscDia, ::xml_schema::flags (), this),
   regrasGenericasDivisaoCredito_ (regrasGenericasDivisaoCredito, ::xml_schema::flags (), this),
@@ -10414,7 +10636,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
   maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
+  utilizarDemandasP2_ (utilizarDemandasP2, ::xml_schema::flags (), this)
 {
 }
 
@@ -10436,6 +10659,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const funcaoObjetivo_type& funcaoObjetivo,
                             const considerarEquivalencia_type& considerarEquivalencia,
                             const minAlunosAberturaTurmas_type& minAlunosAberturaTurmas,
+							const violarMinAlunosTurmasFormandos_type& violarMinAlunosTurmasFormandos,
                             ::std::auto_ptr< niveisDificuldadeHorario_type >& niveisDificuldadeHorario,
                             const equilibrarDiversidadeDiscDia_type& equilibrarDiversidadeDiscDia,
                             const regrasGenericasDivisaoCredito_type& regrasGenericasDivisaoCredito,
@@ -10447,7 +10671,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
                             const percentuaisMinimoDoutores_type& percentuaisMinimoDoutores,
                             const areaTitulacaoProfessorCurso_type& areaTitulacaoProfessorCurso,
                             const maximoDisciplinasDeUmProfessorPorCurso_type& maximoDisciplinasDeUmProfessorPorCurso,
-                            const custoProfDisponibilidade_type& custoProfDisponibilidade)
+                            const custoProfDisponibilidade_type& custoProfDisponibilidade,
+							const utilizarDemandasP2_type& utilizarDemandasP2)
 : ::xml_schema::type (),
   modoOtimizacao_ (modoOtimizacao, ::xml_schema::flags (), this),
   otimizarPor_ (otimizarPor, ::xml_schema::flags (), this),
@@ -10469,6 +10694,7 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   considerarEquivalencia_ (considerarEquivalencia, ::xml_schema::flags (), this),
   minAlunosAberturaTurmas_ (minAlunosAberturaTurmas, ::xml_schema::flags (), this),
   minAlunosAberturaTurmasValor_ (::xml_schema::flags (), this),
+  violarMinAlunosTurmasFormandos_ (violarMinAlunosTurmasFormandos, ::xml_schema::flags (), this),
   niveisDificuldadeHorario_ (niveisDificuldadeHorario, ::xml_schema::flags (), this),
   equilibrarDiversidadeDiscDia_ (equilibrarDiversidadeDiscDia, ::xml_schema::flags (), this),
   regrasGenericasDivisaoCredito_ (regrasGenericasDivisaoCredito, ::xml_schema::flags (), this),
@@ -10483,7 +10709,8 @@ ItemParametrosPlanejamento (const modoOtimizacao_type& modoOtimizacao,
   percentuaisMinimoDoutores_ (percentuaisMinimoDoutores, ::xml_schema::flags (), this),
   areaTitulacaoProfessorCurso_ (areaTitulacaoProfessorCurso, ::xml_schema::flags (), this),
   maximoDisciplinasDeUmProfessorPorCurso_ (maximoDisciplinasDeUmProfessorPorCurso, ::xml_schema::flags (), this),
-  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this)
+  custoProfDisponibilidade_ (custoProfDisponibilidade, ::xml_schema::flags (), this),
+  utilizarDemandasP2_ (utilizarDemandasP2, ::xml_schema::flags (), this)
 {
 }
 
@@ -10512,6 +10739,7 @@ ItemParametrosPlanejamento (const ItemParametrosPlanejamento& x,
   considerarEquivalencia_ (x.considerarEquivalencia_, f, this),
   minAlunosAberturaTurmas_ (x.minAlunosAberturaTurmas_, f, this),
   minAlunosAberturaTurmasValor_ (x.minAlunosAberturaTurmasValor_, f, this),
+  violarMinAlunosTurmasFormandos_ (x.violarMinAlunosTurmasFormandos_, f, this),
   niveisDificuldadeHorario_ (x.niveisDificuldadeHorario_, f, this),
   equilibrarDiversidadeDiscDia_ (x.equilibrarDiversidadeDiscDia_, f, this),
   regrasGenericasDivisaoCredito_ (x.regrasGenericasDivisaoCredito_, f, this),
@@ -10526,7 +10754,8 @@ ItemParametrosPlanejamento (const ItemParametrosPlanejamento& x,
   percentuaisMinimoDoutores_ (x.percentuaisMinimoDoutores_, f, this),
   areaTitulacaoProfessorCurso_ (x.areaTitulacaoProfessorCurso_, f, this),
   maximoDisciplinasDeUmProfessorPorCurso_ (x.maximoDisciplinasDeUmProfessorPorCurso_, f, this),
-  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this)
+  custoProfDisponibilidade_ (x.custoProfDisponibilidade_, f, this),
+  utilizarDemandasP2_ (x.utilizarDemandasP2_, f, this)
 {
 }
 
@@ -10555,6 +10784,7 @@ ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
   considerarEquivalencia_ (f, this),
   minAlunosAberturaTurmas_ (f, this),
   minAlunosAberturaTurmasValor_ (f, this),
+  violarMinAlunosTurmasFormandos_ (f, this),
   niveisDificuldadeHorario_ (f, this),
   equilibrarDiversidadeDiscDia_ (f, this),
   regrasGenericasDivisaoCredito_ (f, this),
@@ -10569,7 +10799,8 @@ ItemParametrosPlanejamento (const ::xercesc::DOMElement& e,
   percentuaisMinimoDoutores_ (f, this),
   areaTitulacaoProfessorCurso_ (f, this),
   maximoDisciplinasDeUmProfessorPorCurso_ (f, this),
-  custoProfDisponibilidade_ (f, this)
+  custoProfDisponibilidade_ (f, this),
+  utilizarDemandasP2_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -10820,6 +11051,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // violarMinAlunosTurmasFormandos
+    //
+    if (n.name () == "violarMinAlunosTurmasFormandos" && n.namespace_ ().empty ())
+    {
+      if (!violarMinAlunosTurmasFormandos_.present ())
+      {
+        this->violarMinAlunosTurmasFormandos_.set (violarMinAlunosTurmasFormandos_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     // niveisDificuldadeHorario
     //
     if (n.name () == "niveisDificuldadeHorario" && n.namespace_ ().empty ())
@@ -10997,6 +11239,18 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+
+    // utilizarDemandasP2
+    //
+    if (n.name () == "utilizarDemandasP2" && n.namespace_ ().empty ())
+    {
+      if (!utilizarDemandasP2_.present ())
+      {
+        this->utilizarDemandasP2_.set (utilizarDemandasP2_traits::create (i, f, this));
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -11119,6 +11373,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!violarMinAlunosTurmasFormandos_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "violarMinAlunosTurmasFormandos",
+      "");
+  }
+
   if (!niveisDificuldadeHorario_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -11202,6 +11463,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "custoProfDisponibilidade",
       "");
   }
+
+  if (!utilizarDemandasP2_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "utilizarDemandasP2",
+      "");
+  }  
+
 }
 
 ItemParametrosPlanejamento* ItemParametrosPlanejamento::
@@ -11396,6 +11665,77 @@ GrupoCalendario::
 ~GrupoCalendario ()
 {
 }
+
+// GrupoAluno
+//
+
+GrupoAluno::
+GrupoAluno ()
+: ::xml_schema::type (),
+  Aluno_ (::xml_schema::flags (), this)
+{
+}
+
+GrupoAluno::
+GrupoAluno (const GrupoAluno& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Aluno_ (x.Aluno_, f, this)
+{
+}
+
+GrupoAluno::
+GrupoAluno (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Aluno_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void GrupoAluno::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Aluno
+    //
+    if (n.name () == "Aluno" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Aluno_type > r (
+        Aluno_traits::create (i, f, this));
+
+      this->Aluno_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+GrupoAluno* GrupoAluno::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class GrupoAluno (*this, f, c);
+}
+
+GrupoAluno::
+~GrupoAluno ()
+{
+}
+
 
 // GrupoAlunoDemanda
 //
@@ -14723,7 +15063,8 @@ TriedaInput (const calendarios_type& calendarios,
              const cursos_type& cursos,
              const ofertaCursosCampi_type& ofertaCursosCampi,
              const demandas_type& demandas,
-             const alunosDemanda_type& alunosDemanda,
+			 const alunos_type& alunos,
+			 const alunosDemanda_type& alunosDemanda,
              const parametrosPlanejamento_type& parametrosPlanejamento,
              const fixacoes_type& fixacoes)
 : ::xml_schema::type (),
@@ -14743,6 +15084,7 @@ TriedaInput (const calendarios_type& calendarios,
   cursos_ (cursos, ::xml_schema::flags (), this),
   ofertaCursosCampi_ (ofertaCursosCampi, ::xml_schema::flags (), this),
   demandas_ (demandas, ::xml_schema::flags (), this),
+  alunos_ (alunos, ::xml_schema::flags (), this),
   alunosDemanda_ (alunosDemanda, ::xml_schema::flags (), this),
   parametrosPlanejamento_ (parametrosPlanejamento, ::xml_schema::flags (), this),
   fixacoes_ (fixacoes, ::xml_schema::flags (), this),
@@ -14767,7 +15109,8 @@ TriedaInput (::std::auto_ptr< calendarios_type >& calendarios,
              ::std::auto_ptr< cursos_type >& cursos,
              ::std::auto_ptr< ofertaCursosCampi_type >& ofertaCursosCampi,
              ::std::auto_ptr< demandas_type >& demandas,
-             ::std::auto_ptr< alunosDemanda_type >& alunosDemanda,
+			 ::std::auto_ptr< alunos_type >& alunos,
+			 ::std::auto_ptr< alunosDemanda_type >& alunosDemanda,
              ::std::auto_ptr< parametrosPlanejamento_type >& parametrosPlanejamento,
              ::std::auto_ptr< fixacoes_type >& fixacoes)
 : ::xml_schema::type (),
@@ -14787,6 +15130,7 @@ TriedaInput (::std::auto_ptr< calendarios_type >& calendarios,
   cursos_ (cursos, ::xml_schema::flags (), this),
   ofertaCursosCampi_ (ofertaCursosCampi, ::xml_schema::flags (), this),
   demandas_ (demandas, ::xml_schema::flags (), this),
+  alunos_ (alunos, ::xml_schema::flags (), this),
   alunosDemanda_ (alunosDemanda, ::xml_schema::flags (), this),
   parametrosPlanejamento_ (parametrosPlanejamento, ::xml_schema::flags (), this),
   fixacoes_ (fixacoes, ::xml_schema::flags (), this),
@@ -14815,6 +15159,7 @@ TriedaInput (const TriedaInput& x,
   cursos_ (x.cursos_, f, this),
   ofertaCursosCampi_ (x.ofertaCursosCampi_, f, this),
   demandas_ (x.demandas_, f, this),
+  alunos_ (x.alunos_, f, this),
   alunosDemanda_ (x.alunosDemanda_, f, this),
   parametrosPlanejamento_ (x.parametrosPlanejamento_, f, this),
   fixacoes_ (x.fixacoes_, f, this),
@@ -14843,6 +15188,7 @@ TriedaInput (const ::xercesc::DOMElement& e,
   cursos_ (f, this),
   ofertaCursosCampi_ (f, this),
   demandas_ (f, this),
+  alunos_ (f, this),
   alunosDemanda_ (f, this),
   parametrosPlanejamento_ (f, this),
   fixacoes_ (f, this),
@@ -15089,6 +15435,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // alunos
+    //
+    if (n.name () == "alunos" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< alunos_type > r (
+        alunos_traits::create (i, f, this));
+
+      if (!alunos_.present ())
+      {
+        this->alunos_.set (r);
+        continue;
+      }
+    }
+
     // alunosDemanda
     //
     if (n.name () == "alunosDemanda" && n.namespace_ ().empty ())
@@ -15257,6 +15617,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "demandas",
+      "");
+  }
+
+  if (!alunos_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "alunos",
       "");
   }
 
