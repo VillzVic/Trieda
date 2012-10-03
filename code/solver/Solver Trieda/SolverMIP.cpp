@@ -273,7 +273,26 @@ TaticoP2callback (CPXCENVptr xenv, void *cbdata,
 
 #endif
 
-
+// comparison function.
+bool compare_dif_func ( std::pair< AlunoDemanda*, int > first, std::pair< AlunoDemanda*, int > second )
+{
+  if ( first.second < second.second )
+	  return true;
+  else if ( first.second > second.second )
+	  return false;
+  else if ( abs( first.first->demanda->getDisciplinaId() ) == abs( second.first->demanda->getDisciplinaId() ) )
+  {	  
+	  // first/second são um par de pratica-teorica
+	  if ( first.first->getId() < second.first->getId() )
+		 return true;
+	  else
+		  return false;
+  }
+  else if ( first.first->demanda->getDisciplinaId() < second.first->demanda->getDisciplinaId() )
+	  return true;
+  else
+	  return false;
+}
 
 
 SolverMIP::SolverMIP( ProblemData * aProblemData,
@@ -5189,15 +5208,6 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 	   lp->getX( xSol );
    }
 
-
-   // Deleta as variaveis em solVarsPre ----------
-   std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
-   for ( ; it != solVarsPre.end(); it++ )
-   {
-		delete *it;    
-   }
-   solVarsPre.clear();
-   // --------------------------------------------
    
    char solFilename[1024];
    strcpy( solFilename, getSolucaoPreTaticoFileName( campusId, prioridade, cjtAlunos, r ).c_str() );
@@ -5298,6 +5308,15 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    }
    //#endif
 
+   
+   if ( vHashPre.size() > 0 )
+   {
+	   vHashPre.clear();
+   }
+   if ( cHashPre.size() > 0 )
+   {
+	   cHashPre.clear();
+   }
 
    char solFilenameCreditosSala[1024];   
    strcpy( solFilenameCreditosSala, string("CreditosSala_"+getSolucaoPreTaticoFileName( campusId, prioridade, cjtAlunos, r )).c_str() );
@@ -5381,31 +5400,8 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
    std::map< std::pair<Disciplina*, Oferta*>, int > mapSlackDemanda;
    std::map< std::pair<Disciplina*, Oferta*>, int >::iterator itMapSlackDemanda;
 
-#ifndef TATICO_COM_HORARIOS
-   // -----------------------------------------------------
-   // Deleta todas as variaveis referenciadas em solVars (e em vars_x)
-   ITERA_GGROUP_LESSPTR ( it, solVars, Variable )
-   {
-		delete *it;    
-   }
 
-   vars_x.clear();
-   solVars.clear();
-   // -----------------------------------------------------
-#endif
 
-#ifdef TATICO_COM_HORARIOS
-   // -----------------------------------------------------
-   // Deleta todas as variaveis referenciadas em solVarsTatico (e em vars_xh)
-   ITERA_GGROUP_LESSPTR ( it, solVarsTatico, VariableTatico )
-   {
-		delete *it;    
-   }
-
-   vars_xh.clear();
-   solVarsTatico.clear();
-   // -----------------------------------------------------
-#endif
 
    char solFilename[1024];
    strcpy( solFilename, getSolucaoTaticoFileName( campusAtualId, prioridade, cjtAlunos, r, tatico ).c_str() );
@@ -5688,6 +5684,27 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
    }
 #endif
 
+  
+   if ( tatico==2 ) // para a segunda rodada do tatico, aproveita-se as variaveis. Logo, não posso deletar o primeiro.
+   {
+	   if ( vHash.size() > 0 )
+	   {
+		   vHash.clear();
+	   }
+	   if ( vHashTatico.size() > 0 )
+	   {
+		   vHashTatico.clear();
+	   }
+   }    
+   if ( cHash.size() > 0 )
+   {
+	   cHash.clear();
+   }
+   if ( cHashTatico.size() > 0 )
+   {
+	   cHashTatico.clear();
+   }
+
    if ( xSol )
    {
       delete [] xSol;
@@ -5783,16 +5800,19 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 							voltaComAlunosNaoAlocados();							
 						}
 					}
-
+						   
+					vHash.clear();
+					vHashTatico.clear();
 
 					// ==================================
-					// TESTE 
+					// MODELO INTEGRADO 
 					
 					if ( P==1 )
 					if ( problemData->listSlackDemandaAluno.size() != 0 )
 					{
 						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), this->CARREGA_SOLUCAO );
 						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );
+						delete solverTaticoInt;
 					}
 					// ==================================
 
@@ -5968,6 +5988,15 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 #ifdef PRINT_cria_variaveis
    printf( "Total of Variables: %i\n\n", varNum );
 #endif
+      
+   // Deleta as variaveis em solVarsPre ----------
+   std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
+   for ( ; it != solVarsPre.end(); it++ )
+   {
+		delete *it;    
+   }
+   solVarsPre.clear();
+   // --------------------------------------------
 
    if ( !this->CARREGA_SOLUCAO )
    {
@@ -6578,6 +6607,17 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 	   printf( "Total of Variables: %i\n\n", varNum );
 		#endif
 
+	    // -----------------------------------------------------
+		// Deleta todas as variaveis referenciadas em solVars (e em vars_x)
+		ITERA_GGROUP_LESSPTR ( it, solVars, Variable )
+		{
+			delete *it;    
+		}
+
+		vars_x.clear();
+		solVars.clear();
+		// -----------------------------------------------------
+		
 		if ( ! this->CARREGA_SOLUCAO )
 		{
 		   // Constraint creation
@@ -6606,6 +6646,17 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 	    printf( "Total of Variables: %i\n\n", varNum );
 		#endif
 
+		// -----------------------------------------------------
+		// Deleta todas as variaveis referenciadas em solVarsTatico (e em vars_xh)
+		ITERA_GGROUP_LESSPTR ( it, solVarsTatico, VariableTatico )
+		{
+			delete *it;    
+		}
+
+		vars_xh.clear();
+		solVarsTatico.clear();
+		// -----------------------------------------------------
+		
 		if ( ! this->CARREGA_SOLUCAO )
 		{
 		   // Constraint creation
@@ -7009,16 +7060,16 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 #endif
 
 		// GENERATES SOLUTION
-        //polishTatico(xS,3600,50,25);
-        status = lp->optimize(METHOD_MIP);
+        polishTatico(xS,3600,50,25);
+        //status = lp->optimize(METHOD_MIP);
 
 		double * xSol = NULL;
 		xSol = new double[ lp->getNumCols() ];
         lp->getX(xSol);
-		//for (int i=0; i < lp->getNumCols(); i++)
-		//{
-	//		xSol[i] = xS[i];
-		//}
+		for (int i=0; i < lp->getNumCols(); i++)
+		{
+			xSol[i] = xS[i];
+		}
 
 		delete[] xS;
 
@@ -12905,7 +12956,7 @@ void SolverMIP::polishTatico(double *xSol, double maxTime, int percIni, int perc
       FILE * fout = fopen( "solLBAtual.bin", "wb" );
 		if ( fout == NULL )
 		{
-			std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+			std::cout << "\nErro em SolverMIP::polishTatico():"
 					<< "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
 		}
 		else
@@ -13826,7 +13877,9 @@ int SolverMIP::cria_preVariaveis(  int campusId, int prioridade, int grupoAlunos
 
 
 		timer.start();
-		num_vars += cria_preVariavel_aluno_sala( campusId, grupoAlunosId, prioridade ); // as_{a,s}
+
+		if ( campusId==19 )
+			num_vars += cria_preVariavel_aluno_sala( campusId, grupoAlunosId, prioridade ); // as_{a,s}
 		timer.stop();
 		dif = timer.getCronoCurrSecs();
 
@@ -16882,7 +16935,8 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 		#endif
 		   
 		timer.start();
-		restricoes += cria_preRestricao_aluno_sala( campusId, cjtAlunosId );		// Restrição 1.23
+		if ( campusId==19 )
+			restricoes += cria_preRestricao_aluno_sala( campusId, cjtAlunosId );		// Restrição 1.23
 		timer.stop();
 		dif = timer.getCronoCurrSecs();
 
@@ -62333,9 +62387,204 @@ void SolverMIP::heuristica2AlocaAlunos( int campusId, int prioridade, int grupoA
 			
 			std::cout<<"\nItera alunoDemandas";	fflush(NULL);
 
-			double tempoAddP2 = 0.0;
+			double tempoAddP2 = 0.0;		
+			
+			GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDemList = aluno->demandas;
+			
+			std::list< std::pair< AlunoDemanda*, int > > 
+				alunosDemandaP2Ordenados = ordenaAlunosDemandaP2ParaHeurist( alDemList, aluno, prioridade ); 
+
+			while (1)
+			{
+				bool sucesso=false; 
+
+				std::list< std::pair< AlunoDemanda*, int > >::iterator 
+					itList = alunosDemandaP2Ordenados.begin();
+				for ( ; itList!=alunosDemandaP2Ordenados.end(); itList++ )
+				{
+					// ---------------------------------------------
+					// Primeira disciplina
+					AlunoDemanda *alDem1 = (*itList).first;
+
+					Disciplina *disciplina1 = alDem1->demanda->disciplina;
+					Calendario *sl1 = disciplina1->getCalendario();
+				
+					std::cout<<"\nAlDem1 disc"<<disciplina1->getId();	fflush(NULL);
+
+					// Se existir a disciplina teorica/pratica correspondente
+					bool TEOR_PRAT=false;
+					Disciplina *disciplina2 = problemData->getDisciplinaTeorPrat( disciplina1 );
+					if ( disciplina2 != NULL ) TEOR_PRAT = true;
+								
+					if ( TEOR_PRAT )
+					{	
+						if ( problemData->retornaTurmaDiscAluno( aluno, disciplina1 ) != -1 && 
+							 problemData->retornaTurmaDiscAluno( aluno, disciplina2 ) != -1 )
+							continue; // alocações já efetivadas
+
+						AlunoDemanda *alDem2=NULL;				
+
+						std::list< std::pair< AlunoDemanda*, int > >::iterator 
+							itListAux = alunosDemandaP2Ordenados.begin();
+						for ( ; itListAux!=alunosDemandaP2Ordenados.end(); itListAux++ )
+						{
+							if ( itListAux->first->demanda->getDisciplinaId() == disciplina2->getId() ){
+								alDem2 = itListAux->first;
+								break;
+							}
+						}					
+						if ( alDem2 == NULL )
+						{
+							std::cout<<"\nError: nao existe o par da disciplina teorica/pratica "
+							<<disciplina2->getId()<<" nas demandas do aluno "<<aluno->getAlunoId();
+							continue;
+						}
+						if ( ( problemData->retornaTurmaDiscAluno( aluno, disciplina1 ) != -1 && 
+							   problemData->retornaTurmaDiscAluno( aluno, disciplina2 ) == -1 ) ||
+							 ( problemData->retornaTurmaDiscAluno( aluno, disciplina1 ) == -1 && 
+							   problemData->retornaTurmaDiscAluno( aluno, disciplina2 ) != -1 ) )
+						{
+							std::cout<<"\nAtencao1: aluno alocado somente em 1 das disciplinas de par teorico/pratico "<<disciplina1->getId();
+							fflush(NULL);
+							continue;
+						}
+					
+						for ( int turma1 = 0; turma1 < disciplina1->getNumTurmas(); turma1++ )
+						{
+							std::cout<<"\nTurma"<<turma1;	fflush(NULL);
+
+							if ( heuristica2TentaInsercaoNaTurma( alDem1, turma1, heurFilename ) )
+							{		
+								std::cout<<"... inseriu";	fflush(NULL);
+
+								// ---------------------------------------------
+								// Segunda disciplina
+
+								Calendario *sl2 = disciplina2->getCalendario();
+						
+								bool SUCESSO2 = false;
+
+								std::cout<<"\nAlDem2 disc"<<disciplina2->getId();	fflush(NULL);
+						
+								for ( int turma2 = 0; turma2 < disciplina2->getNumTurmas(); turma2++ )
+								{
+									std::cout<<"\nTurma"<<turma2;	fflush(NULL);
+
+									if ( heuristica2TentaInsercaoNaTurma( alDem2, turma2, heurFilename ) )
+									{
+										std::cout<<"... inseriu";	fflush(NULL);
+										tempoAddP2 += disciplina1->getTempoCredSemanaLetiva() * disciplina1->getTotalCreditos();
+										tempoAddP2 += disciplina2->getTempoCredSemanaLetiva() * disciplina2->getTotalCreditos();										
+										SUCESSO2 = true;
+										break;
+									}
+								}
+								if ( !SUCESSO2 )
+								{									
+									std::cout<<"\nRemovendo disc 1";	fflush(NULL);
+
+									// Retira a inserção feita da PRIMEIRA disciplina
+
+									Trio< int, int, Disciplina* > trio1;
+									trio1.set( campus1Id, turma1, disciplina1 );
+															
+									// Recupera os HorarioDia da turma
+									GGroup<HorarioDia*> horariosDias1;
+									GGroup< VariableTatico*, LessPtr<VariableTatico> > varsTaticoX =
+										this->retornaVariableTaticoCreditosAnterior( turma1, disciplina1, campus1 );
+									ITERA_GGROUP_LESSPTR( itVarX, varsTaticoX, VariableTatico )
+									{
+										int dia = (*itVarX)->getDia();
+										HorarioAula* hi = (*itVarX)->getHorarioAulaInicial();
+										HorarioAula* hf = (*itVarX)->getHorarioAulaFinal();
+		
+										int nCreds = sl1->retornaNroCreditosEntreHorarios( hi, hf );
+										HorarioAula *ha = hi;
+										for ( int i = 1; i <= nCreds; i++ )
+										{
+											HorarioDia *hd = problemData->getHorarioDiaCorrespondente( ha, dia );
+											horariosDias1.add( hd );
+											ha = sl1->getProximoHorario( ha );				
+										}
+									}
+
+									std::cout<<"\nRemovendo aluno de turma";	fflush(NULL);							
+									problemData->removeAlunoDeTurma( aluno, trio1, horariosDias1 );
+
+									alunoDemandaAtendsHeuristica.remove( alDem1 );
+									ofstream heurisFile;
+									heurisFile.open(heurFilename, ios::app);
+									if ( heurisFile )
+									{
+										heurisFile << "\nRemovido: AlunoDemandaId" << alDem1->getId() 
+												<< " Aluno" << alDem1->getAlunoId() 
+												<< " Demanda" << alDem1->getDemandaId() 
+												<< " Disc" << alDem1->demanda->getDisciplinaId()
+												<< " Turma" << turma1
+												<< " Prior" << alDem1->getPrioridade() << endl;
+										heurisFile.close();
+									}
+									std::cout<<"\nFim da remocao";	fflush(NULL);
+								}
+								else
+								{
+									sucesso=true;
+									break; // SUCESSO!
+								}
+								// ---------------------------------------------
+							}
+						}
+				
+					}
+					else
+					{
+						for ( int turma = 0; turma < disciplina1->getNumTurmas(); turma++ )
+						{
+							std::cout<<"\nTurma"<<turma;	fflush(NULL);
+
+							if ( heuristica2TentaInsercaoNaTurma( alDem1, turma, heurFilename ) )
+							{
+								std::cout<<"... inseriu";	fflush(NULL);
+
+								tempoAddP2 += disciplina1->getTempoCredSemanaLetiva() * disciplina1->getTotalCreditos();
+								sucesso=true;
+								break;
+							}
+						}
+					}
+
+					if ( sucesso ) break;
+				
+				} // FIM DE INSERÇÃO BEM SUCEDIDA
+								
+				if ( tempoAddP2 - maxTempoP2 > -1e-5 )
+					break;
+
+				// Reconstroi a lista de AlunoDemanda contendo somente os alunoDemanda não testados ainda.
+				alDemList.clear();
+				if ( sucesso )
+				{
+					alunosDemandaP2Ordenados.reverse();
+					std::list< std::pair< AlunoDemanda*, int > >::iterator 
+						itListAux = alunosDemandaP2Ordenados.begin();
+					for ( ; itListAux!=itList; itListAux++ )
+					{
+						alDemList.add( itListAux->first );
+					}
+				}
+
+				alunosDemandaP2Ordenados = ordenaAlunosDemandaP2ParaHeurist( alDemList, aluno, prioridade );
+   
+				if ( alunosDemandaP2Ordenados.size() == 0 )
+					break;
+			}
+
+			std::cout<<"\n-------------------------Fim aluno\n";	fflush(NULL);	
+			
+			/*
 			
 			GGroup< AlunoDemanda*, LessPtr< AlunoDemanda> > alunosDemandaPT;
+			// ----------------------------------------------------------------
 
 			ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
 			{
@@ -62553,8 +62802,7 @@ void SolverMIP::heuristica2AlocaAlunos( int campusId, int prioridade, int grupoA
 			}
 			std::cout<<"\n-------------------------Fim aluno\n";	fflush(NULL);
 	
-
-			
+			*/
 		}
 	}
 	
@@ -62690,6 +62938,57 @@ bool SolverMIP::heuristica2TentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int
 	fflush(NULL);
 	return false;
 }
+
+
+std::list< std::pair< AlunoDemanda*, int > > SolverMIP::ordenaAlunosDemandaP2ParaHeurist( 
+	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDemList, Aluno *aluno, int prioridade )
+{
+	std::list< std::pair< AlunoDemanda*, int > > alunosDemandaP2Ordenados;
+
+	double tempoRequeridoP1 = problemData->cargaHorariaRequeridaPorPrioridade( 1, aluno );	
+	double totalJaAtendido = problemData->cargaHorariaJaAtendida( aluno );
+
+	double tempoNaoAtendido = tempoRequeridoP1 - totalJaAtendido;
+	if ( tempoNaoAtendido<=0 )
+		return alunosDemandaP2Ordenados;
+
+	// ----------------------------------------------------------------
+	// Ordena as demandas de P2 para tentativas de inserção em ordem apropriada.
+			
+	ITERA_GGROUP_LESSPTR( itAlDemanda, alDemList, AlunoDemanda )
+	{
+		AlunoDemanda *alDem = *itAlDemanda;
+		Disciplina *disciplina = alDem->demanda->disciplina;
+		
+		if ( alDem->getPrioridade() != prioridade )
+			continue;
+		if ( problemData->retornaTurmaDiscAluno( aluno, disciplina ) != -1 )
+			continue;
+
+		double tempoDisc = disciplina->getTempoCredSemanaLetiva() * disciplina->getTotalCreditos();
+		int discId = disciplina->getId();
+
+		// se for pratica/teorica, adiciona a tempoDisc a duração da disciplina-par
+		std::map< int, Disciplina* >::iterator itMapDisc = problemData->refDisciplinas.find(-discId );
+		if ( itMapDisc != problemData->refDisciplinas.end() )
+		{  
+			tempoDisc += (*itMapDisc).second->getTempoCredSemanaLetiva() *
+							(*itMapDisc).second->getTotalCreditos();
+		}
+
+		double dif = fabs(tempoDisc-tempoNaoAtendido);
+		std::pair< AlunoDemanda*, int > alDem_dif( alDem, dif );
+
+		alunosDemandaP2Ordenados.push_back( alDem_dif );
+	}
+
+	alunosDemandaP2Ordenados.sort( compare_dif_func );
+
+	// ----------------------------------------------------------------
+
+	return alunosDemandaP2Ordenados;
+}
+
 
 // TODO
 /*

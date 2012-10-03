@@ -89,10 +89,8 @@ private:
    int criaRestricoesTatico( int campusId, int prioridade, int r );
 
    int criaRestricaoTaticoAssociaVeX( int campusId );
-   int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
    int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
    int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId ); // Restricao 1.2.4
-   int criaRestricaoTaticoAtendeDemanda( int campusID );				// Restricao 1.2.5   
    int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
    int criaRestricaoTaticoCursosIncompat( int campusId );
    int criaRestricaoTaticoProibeCompartilhamento( int campusId );
@@ -103,7 +101,6 @@ private:
    int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
    int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
    int criaRestricaoTaticoAlunoHorario( int campusId );					// Restricao 1.2.12
-   int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
    int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
    int criaRestricaoTaticoMinDiasAluno( int campusId );
    int criaRestricaoTaticoMaxDiasAluno( int campusId );

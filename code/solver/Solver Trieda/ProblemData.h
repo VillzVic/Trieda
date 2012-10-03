@@ -482,6 +482,8 @@ public:
    bool haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
    int getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
 
+   Disciplina* getDisciplinaTeorPrat( Disciplina *disciplina );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

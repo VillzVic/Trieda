@@ -3361,6 +3361,18 @@ int TaticoIntAlunoHor::criaRestricoesTatico( int campusId, int prioridade, int r
 #endif
 
 
+	
+	timer.start();
+	restricoes += criaRestricaoTaticoAssociaVeX( campusId );				// Restricao 1.2.2
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.2\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
+	
+
 	timer.start();
 	restricoes += criaRestricaoTaticoUsoDeSalaParaCadaHorario( campusId );				// Restricao 1.2.3
 	timer.stop();
@@ -3566,6 +3578,28 @@ int TaticoIntAlunoHor::criaRestricoesTatico( int campusId, int prioridade, int r
 	std::cout << "numRest \"1.2.24\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
 	numRestAnterior = restricoes;
 #endif
+
+  	timer.start();
+	restricoes += criaRestricaoTaticoCursosIncompat( campusId );	// Restricao 1.2.20
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.25\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+
+  	timer.start();
+	restricoes += criaRestricaoTaticoProibeCompartilhamento( campusId );	// Restricao 1.2.21
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.26\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
+	
 
 	return restricoes;
 }
@@ -4547,8 +4581,6 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 
    ITERA_GGROUP_LESSPTR( it_disciplina, problemData->disciplinas, Disciplina )
    {
-	   std::cout<<"\nDisciplina"<< it_disciplina->getId();
-
       disciplina = ( *it_disciplina );
 	  
 	  // A disciplina deve ser ofertada no campus especificado
@@ -4570,22 +4602,13 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 	  if ( ! problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 		  continue;
 		 
-	  std::cout<<"\nHa demanda";
-
-
       if ( disciplina->divisao_creditos != NULL )
-      {
-		  std::cout<<"\ndisciplina->divisao_creditos != NULL";
-
+      {		 
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
-         {
-			 std::cout<<"\nturma"<< turma;
-
+         {		
             ITERA_GGROUP_N_PT( itDiasLetDisc, disciplina->diasLetivos, int )
             {
 				int dia = *itDiasLetDisc;
-
-				std::cout<<"\nDia"<< dia;
 
                 c.reset();
                 c.setType( ConstraintTatInt::C_DIVISAO_CREDITO );
@@ -4601,12 +4624,8 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
                    continue;
                 }
 
-				std::cout<<"\nNova restricao";
-
                 nnz = ( problemData->totalSalas + ( (int)( disciplina->combinacao_divisao_creditos.size() ) * 2 ) );
                 OPT_ROW row( nnz, OPT_ROW::EQUAL , 0.0 , name );
-
-				std::cout<<"\nInserindo os x...";
 
                 ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
                 {
@@ -4661,12 +4680,8 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
                     }
                 }
 
-				std::cout<<"\nInseriu os x";
-
 				for ( int k = 0; k < (int)disciplina->combinacao_divisao_creditos.size(); k++ )
-				{	
-					std::cout<<"\nCombinacao"<< k;
-
+				{				
 					v.reset();
 					v.setType( VariableTatInt::V_COMBINACAO_DIVISAO_CREDITO );
 					v.setDisciplina( disciplina );
@@ -4684,8 +4699,6 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 					}
 				}
 
-				std::cout<<"\nfkm";
-
 				// fkm
 				v.reset();
 				v.setType( VariableTatInt::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M );
@@ -4696,11 +4709,8 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 				it_v = vHashTatico.find( v );
 				if( it_v != vHashTatico.end() )
 				{
-					std::cout<<"... inserindo fkm...";
 					row.insert( it_v->second, 1.0 );
 				}
-
-				std::cout<<"\nfkp";
 
 				// fkp
 				v.reset();
@@ -4712,11 +4722,8 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 				it_v = vHashTatico.find( v );
 				if( it_v != vHashTatico.end() )
 				{
-					std::cout<<"... inserindo fkp...";
 					row.insert( it_v->second, -1.0 );
 				}
-
-				std::cout<<"\ninserindo...";
 
                 if ( row.getnnz() != 0 )
                 {
@@ -4724,16 +4731,12 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 
                    lp->addRow( row );
                    restricoes++;
-				   std::cout<<" inseriu";
                 }
-
-				std::cout<<"\nPassou pro proximo";
             }
          }
       }
    }
 
-   std::cout<<"\nFim";
    return restricoes;
 }
 

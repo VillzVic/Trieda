@@ -2392,8 +2392,11 @@ double ProblemData::cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId
 double ProblemData::cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno )
 {
 	double cargaHorariaP2 = 0.0;
-	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	ITERA_GGROUP_LESSPTR( itAlDemanda, alunosDemandaTotal, AlunoDemanda )
 	{
+		if ( itAlDemanda->getAlunoId() != aluno->getAlunoId() )
+			continue;
+
 		Disciplina *disciplina = itAlDemanda->demanda->disciplina;
 		if ( itAlDemanda->getPrioridade() == prior )
 		{
@@ -2757,4 +2760,16 @@ int ProblemData::getNroFolgasDeAtendimento( int prioridade, Disciplina *discipli
 	}
 
 	return n;
+}
+
+Disciplina* ProblemData::getDisciplinaTeorPrat( Disciplina *disciplina )
+{
+	// Se existir a disciplina teorica/pratica correspondente
+	int discId2 = - disciplina->getId();
+	std::map< int, Disciplina* >::iterator itMapDisc = this->refDisciplinas.find( discId2 );
+	if ( itMapDisc != this->refDisciplinas.end() )				
+	{
+		return itMapDisc->second;
+	}
+	return NULL;
 }

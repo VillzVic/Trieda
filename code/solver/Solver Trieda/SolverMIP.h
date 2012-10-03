@@ -883,6 +883,7 @@ private:
    bool heuristica2TentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int turma, std::string heurFilename );
    void heuristicaP1AlocaAlunos( int campusId, int prioridade, int grupoAlunosAtualId );
 
+   std::list< std::pair< AlunoDemanda*, int > > SolverMIP::ordenaAlunosDemandaP2ParaHeurist( GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDemList, Aluno* aluno, int prioridade );
    
 };
 
