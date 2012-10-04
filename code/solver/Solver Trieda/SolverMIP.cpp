@@ -5739,11 +5739,11 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 		for( int P = 1; P <= n_prioridades; P++ )
 		{			
 			std::cout<<"\n-------------------------- Prioridade " << P << "---------------------------\n";
-
+			
 			// limpa o atendimento anterior, correspondente à prioridade anterior
 			if ( !FIXAR_P1 )
 				limpaMapAtendimentoAlunoPrioridadeAnterior( campusId );
-						
+			
 			// Cria e ordena os conjuntos de alunos
 			problemData->criaCjtAlunos( campusId, P, this->FIXAR_P1 );
 			
@@ -5758,7 +5758,10 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 				int grupoId = itMapCjtAlunos->first;
 				GGroup< Aluno *, LessPtr< Aluno > > gruposAlunos = itMapCjtAlunos->second;
 
-				int nRodadas=2;
+				int nRodadas;
+				if ( problemData->parametros->min_alunos_abertura_turmas ) nRodadas = 2;
+				else nRodadas = 1;
+
 				for ( int r=1; r<=nRodadas ;r++ )
 				{					
 					std::cout<<"\n---------------------Rodada "<< r <<" -----------------------\n";
@@ -5806,14 +5809,14 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 
 					// ==================================
 					// MODELO INTEGRADO 
-					
+					/*
 					if ( P==1 )
 					if ( problemData->listSlackDemandaAluno.size() != 0 )
 					{
 						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), this->CARREGA_SOLUCAO );
 						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );
 						delete solverTaticoInt;
-					}
+					}*/
 					// ==================================
 
 					mudaCjtSalaParaSala();
@@ -5936,6 +5939,12 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	   escreveSolucaoBinHeuristica( campusId, prioridade, cjtAlunosId );	   
    }
    // --------------------------------------------------------
+
+   if ( prioridade>1 )
+   {
+	//   problemData->removeDemandasEmExcesso( campusId, prioridade, cjtAlunosId );
+	//   problemData->reduzNroTurmasPorDisciplina( campusId, prioridade );
+   }
 
    if ( lp != NULL )
    {
@@ -6756,6 +6765,9 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		{ 
 			status = lp->optimize( METHOD_MIP );	
 		}
+		
+	    double *xS = new double[lp->getNumCols()];
+	    lp->getX(xS);
 
 #pragma region Imprime Gap
 	 	  // Imprime Gap
@@ -6775,11 +6787,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 #pragma endregion
 
 		fflush(NULL);
-		
-	    double *xS = new double[lp->getNumCols()];
-	    lp->getX(xS);
-
-	
+			
 		// -------------------------------------------------------------------
 		// Volta as variaveis z_{i,d,cp} que estavam livres
          
@@ -6906,12 +6914,12 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
       polishTatico(xS, 7200, 60, 25);
 #else
 
-      //if ( prioridade == 1 && tatico == 1 )
-         polishTaticoHor(xS, 7200, 70, 15);
+   //   if ( prioridade == 1 && tatico == 1 )
+        polishTaticoHor(xS, 7200, 70, 15);
    //   else
 	  //{
-	 	// status = lp->optimize( METHOD_MIP );	
-		 //lp->getX(xS); 
+	// 	 status = lp->optimize( METHOD_MIP );	
+//		 lp->getX(xS); 
 	  //}
 
 #endif
@@ -6933,6 +6941,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 #pragma endregion
 
 	    fflush(NULL);
+
 		std::cout << "\n=========================================";
 	    std::cout << "\nGarantindo o resto dos parametros...\n"; fflush(NULL);
 
@@ -7060,12 +7069,17 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 #endif
 
 		// GENERATES SOLUTION
-        polishTatico(xS,3600,50,25);
-        //status = lp->optimize(METHOD_MIP);
 
-		double * xSol = NULL;
-		xSol = new double[ lp->getNumCols() ];
-        lp->getX(xSol);
+#ifndef TATICO_COM_HORARIOS
+      polishTatico(xS, 7200, 60, 25);
+#else     
+	  //status = lp->optimize( METHOD_MIP );	
+	  //lp->getX(xS); 		
+		polishTaticoHor(xS, 3600, 50, 25);
+#endif
+
+
+		double * xSol = new double[ lp->getNumCols() ];        
 		for (int i=0; i < lp->getNumCols(); i++)
 		{
 			xSol[i] = xS[i];
@@ -13397,7 +13411,7 @@ int SolverMIP::localBranchingPre( double * xSol, double maxTime )
       FILE * fout = fopen( "solLBAtualPre.bin", "wb" );
 		if ( fout == NULL )
 		{
-			std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+			std::cout << "\nErro em SolverMIP::localBranchingPre( ):"
 					<< "\nArquivo " << "solLBAtualPre.bin" << " nao pode ser aberto.\n";
 		}
 		else

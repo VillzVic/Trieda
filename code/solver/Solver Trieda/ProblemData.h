@@ -484,6 +484,9 @@ public:
 
    Disciplina* getDisciplinaTeorPrat( Disciplina *disciplina );
 
+   void reduzNroTurmasPorDisciplina( int campusId, int prioridade );
+   void removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId );
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

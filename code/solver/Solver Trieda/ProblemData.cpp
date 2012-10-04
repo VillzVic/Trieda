@@ -1560,7 +1560,7 @@ bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId )
 }
 
 /*
-	Pesquisa em demanda, ou seja, considerando no maximo a prioridade atual.
+	Pesquisa em demanda de cada aluno, ou seja, considerando no maximo a prioridade atual.
 */
 GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoCampus( int disciplinaId, int campusId, int prioridade )
 {	
@@ -2772,4 +2772,150 @@ Disciplina* ProblemData::getDisciplinaTeorPrat( Disciplina *disciplina )
 		return itMapDisc->second;
 	}
 	return NULL;
+}
+
+
+void ProblemData::reduzNroTurmasPorDisciplina( int campusId, int prioridade )
+{
+	ITERA_GGROUP_LESSPTR( itDisc, disciplinas, Disciplina )
+	{
+		Disciplina *disciplina = (*itDisc);
+
+		GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>>
+			alDemGroup = retornaDemandasDiscNoCampus( disciplina->getId(), campusId, prioridade );
+
+		int sizeTotal = alDemGroup.size();
+		int nroTurmasAbertas = 0;
+		int sizeAlocados = 0;
+		std::vector< int > turma_size( disciplina->getNumTurmas() );
+
+		for ( int turma=0; turma<disciplina->getNumTurmas(); turma++ )
+		{
+			Trio< int, int, Disciplina* > trio;
+			trio.set(campusId, turma, disciplina);
+			
+			int nAlunos=0;
+
+			std::map< Trio< int, int, Disciplina* >, GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> >::iterator
+				it = mapCampusTurmaDisc_AlunosDemanda.find(trio);
+			if ( it != mapCampusTurmaDisc_AlunosDemanda.end() )
+			{
+				nAlunos = (*it).second.size();
+			}
+			
+			sizeAlocados += nAlunos;
+			turma_size[turma] = nAlunos;
+			if ( nAlunos>0 ) nroTurmasAbertas++;
+		}
+
+		int sizeAindaNaoAlocados = sizeTotal - sizeAlocados;
+
+		int capacMediaSala = disciplina->getCapacMediaSala( campusId );
+
+		int nroTurmasAMais=0;
+
+		if ( capacMediaSala > 0 )
+			nroTurmasAMais = int( std::floor( double(sizeAindaNaoAlocados+capacMediaSala-1)/capacMediaSala ) );
+		
+		disciplina->setNumTurmas( nroTurmasAbertas + nroTurmasAMais );
+	}
+}
+
+
+
+void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId )
+{
+	std::cout<<"\nREMOVENDO DEMANDAS EM EXCESSO\n";	fflush(NULL);
+
+	Campus *cp = refCampus[campusId];
+
+	map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > >::iterator
+		itMapCjtAlunos = this->cjtAlunos.begin();
+	
+	// Para o conjunto de alunos com id igual ao atual
+	for ( ; itMapCjtAlunos != this->cjtAlunos.end(); itMapCjtAlunos++ )
+	{
+		int grupoAlunosId = itMapCjtAlunos->first;
+		if ( grupoAlunosId != grupoAlunosAtualId )
+		{
+			break;
+		}
+
+		// Para cada aluno do conjunto
+		GGroup< Aluno *, LessPtr< Aluno > > cjtAlunos = this->cjtAlunos[ grupoAlunosId ];	
+		ITERA_GGROUP_LESSPTR( itAluno, cjtAlunos, Aluno )
+		{
+			Aluno *aluno = *itAluno;
+
+			if ( aluno->getOferta()->getCampusId() != campusId )
+			{
+				continue;
+			}
+
+			std::cout<<"\n--------------------------\nAluno "<<aluno->getAlunoId();	fflush(NULL);
+
+			Campus *campus1 = aluno->getOferta()->campus;
+			int campus1Id = campus1->getId();
+			
+			// Calcula a carga horária máxima que deve ser atendida de P2
+			double tempoAtendido = this->cargaHorariaJaAtendida( aluno );		
+			double tempoP1 = this->cargaHorariaRequeridaPorPrioridade( 1, aluno );
+			if ( tempoAtendido < tempoP1 )
+				continue;
+
+			// Aluno já atendido por completo. Retirar demandas de p2 em aberto.
+
+			std::cout<<"\nItera alunoDemandas";	fflush(NULL);
+
+			GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDemRemover;
+
+			ITERA_GGROUP_LESSPTR( itAlDem, aluno->demandas, AlunoDemanda )
+			{
+				AlunoDemanda *alDem = (*itAlDem);
+				Disciplina *disciplina = alDem->demanda->disciplina;
+				
+				if ( retornaTurmaDiscAluno( aluno, disciplina ) == -1 )			
+				{
+					// aluno nao alocado. Remove demanda.
+					alDemRemover.add( alDem );
+				}
+			}
+
+			// Remove
+			ITERA_GGROUP_LESSPTR( itAlDem, alDemRemover, AlunoDemanda )
+			{
+				aluno->demandas.remove( *itAlDem );
+				this->alunosDemanda.remove( *itAlDem );
+				std::cout<<"\nRemoveu demanda da disc "<<itAlDem->demanda->getDisciplinaId();	fflush(NULL);
+			}
+			std::cout<<"\n-------------------------- FIM Aluno ";	fflush(NULL);
+
+		}
+		
+	   // recalcular demanda: referência somente para as que possuirem alunoDemanda associado
+	   // e ajustando a quantidade associada à demanda.	
+	   GGroup< Demanda*, LessPtr<Demanda> > demRemover;
+	   ITERA_GGROUP_LESSPTR( itDem, this->demandas, Demanda )
+	   {
+		   int id = itDem->getId();
+		   int n = 0;
+
+		   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
+		   {
+			   if ( itAlDem->getDemandaId() == id )
+			   {
+					n++;
+			   }
+		   }
+		   if ( n > 0 )
+		   {
+			   if ( n==0 ) demRemover.add( *itDem );
+			   else itDem->setQuantidade( n );
+		   }
+	   }
+	   ITERA_GGROUP_LESSPTR( itDem, demRemover, Demanda )
+	   {
+			this->demandas.remove( *itDem );
+	   }
+	}
 }

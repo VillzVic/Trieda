@@ -11053,7 +11053,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
 
     // violarMinAlunosTurmasFormandos
     //
-    if (n.name () == "violarMinAlunosTurmasFormandos" && n.namespace_ ().empty ())
+    if (n.name () == "violarMinTurmasFormandos" && n.namespace_ ().empty ())
     {
       if (!violarMinAlunosTurmasFormandos_.present ())
       {
@@ -11376,7 +11376,7 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   if (!violarMinAlunosTurmasFormandos_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "violarMinAlunosTurmasFormandos",
+      "violarMinTurmasFormandos",
       "");
   }
 
