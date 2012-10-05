@@ -808,6 +808,147 @@ std::string SolverMIP::getCliquesFileName( int campusId, int prioridade, int cjt
    return solName;
 }
 
+void SolverMIP::writeSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol )
+{
+	char solName[1024];
+
+	switch (type)
+	{
+		case (PRE_TAT_BIN):
+			strcpy( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN1):
+			strcpy( solName, "1" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN2):
+			strcpy( solName, "2" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN3):
+			strcpy( solName, "3" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN4):
+			strcpy( solName, "4" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (TAT_HOR_BIN):
+			strcpy( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );			
+			break;
+		case (TAT_HOR_BIN1):
+			strcpy( solName, "1" );
+			strcat( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );
+			break;
+		case (TAT_HOR_BIN2):
+			strcpy( solName, "2" );
+			strcat( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );
+			break;
+		case (TAT_HOR_BIN3):
+			strcpy( solName, "3" );
+			strcat( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );
+			break;
+	}
+
+	// WRITES SOLUTION
+		
+	FILE * fout = fopen( solName, "wb" );
+	if ( fout == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::writeSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type ):"
+				<< "\nArquivo " << solName << " nao pode ser aberto.\n";
+	}
+	else
+	{
+		int nCols = lp->getNumCols();
+
+		fwrite( &nCols, sizeof( int ), 1, fout );
+		for ( int i = 0; i < lp->getNumCols(); i++ )
+		{
+			fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
+		}
+
+		fclose( fout );
+	}
+}
+
+int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol )
+{
+	char solName[1024];
+
+	switch (type)
+	{
+		case (PRE_TAT_BIN):
+			strcpy( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN1):
+			strcpy( solName, "1" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN2):
+			strcpy( solName, "2" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN3):
+			strcpy( solName, "3" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (PRE_TAT_BIN4):
+			strcpy( solName, "4" );
+			strcat( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
+			break;
+		case (TAT_HOR_BIN):
+			strcpy( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );			
+			break;
+		case (TAT_HOR_BIN1):
+			strcpy( solName, "1" );
+			strcat( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );
+			break;
+		case (TAT_HOR_BIN2):
+			strcpy( solName, "2" );
+			strcat( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );
+			break;
+		case (TAT_HOR_BIN3):
+			strcpy( solName, "3" );
+			strcat( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );
+			break;
+	}
+
+	// READS THE SOLUTION
+		
+	cout<<"====================> carregando solucao " <<solName <<endl;
+	FILE* fin = fopen( solName,"rb");
+
+	if ( fin == NULL )
+	{
+		return (0);
+	}
+
+	int nCols = 0;
+    int nroColsLP = lp->getNumCols();
+
+	fread(&nCols,sizeof(int),1,fin);
+   
+	if ( nCols == nroColsLP )
+	{
+		for (int i =0; i < nCols; i++)
+		{
+			double auxDbl;
+			fread(&auxDbl,sizeof(double),1,fin);
+			xSol[i] = auxDbl;
+		}
+	}
+	else
+	{
+		std::cout << "\nErro em readSolBin(int campusAtualId, int prioridade, int cjtAlunos, int r): "
+					<< " \nNumero diferente de variaveis: " << nCols << " != " << nroColsLP;
+		return (0);
+	}
+	fclose(fin);
+	
+	return (1);
+}
+
 
 bool SolverMIP::SolVarsPreFound( VariablePre v )
 {	
@@ -5168,42 +5309,16 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    int nroColsLP = lp->getNumCols();
    xSol = new double[ nroColsLP ];
    
-   if ( this->CARREGA_SOLUCAO ) // #ifdef READ_SOLUTION_TATICO_BIN
+   if ( this->CARREGA_SOLUCAO )
    {
-	   char solName[1024];
-
-	   strcpy( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunos, r ).c_str() );
-	   cout<<"====================> carregando pre " <<solName <<endl;
-	   FILE* fin = fopen( solName,"rb");
-
-	   if ( fin == NULL )
+	   int status = readSolBin( campusId, prioridade, cjtAlunos, r, 0, OutPutFileType::PRE_TAT_BIN, xSol );
+	   if ( !status )
 	   {
-		   std::cout << "\nErro em SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade, int cjtAlunos, int r ): arquivo "
-					 << solName << " nao encontrado.\n";
+		   std::cout << "\nErro em SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int prioridade, int cjtAlunos, int r ): arquivo nao encontrado.\n";
 		   exit(0);
 	   }
-
-	   int nCols = 0;
-
-	   fread(&nCols,sizeof(int),1,fin);
-
-	   if ( nCols == nroColsLP )
-	   {
-		  for (int i =0; i < nCols; i++)
-		  {
-			 double auxDbl;
-			 fread(&auxDbl,sizeof(double),1,fin);
-			 xSol[i] = auxDbl;
-		  }
-	   }
-	   else
-	   {
-		   std::cout << "\nErro em carregaVariaveisSolucaoPreTatico_CjtAlunos(int campusAtualId, int prioridade, int cjtAlunos, int r): "
-					 << " \nNumero diferente de variaveis: " << nCols << " != " << nroColsLP;
-	   }
-	   fclose(fin);
    }
-   else //#ifndef READ_SOLUTION_PRETATICO_BIN
+   else
    {
 	   lp->getX( xSol );
    }
@@ -5355,53 +5470,25 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
    xSol = new double[ nroColsLP ];
 	
 	#pragma region Carrega solucao
-   if ( this->CARREGA_SOLUCAO ) // #ifdef READ_SOLUTION_TATICO_BIN
-   {
-	   char solName[1024];
-
-	   strcpy( solName, getSolBinFileName( campusAtualId, prioridade, cjtAlunos, r, tatico ).c_str() );
-	   cout<<"====================> carregando " <<solName <<endl;
-	   FILE* fin = fopen( solName,"rb");
-      
-	   if ( fin == NULL )
-	   {
-		   std::cout << "\nErro em carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos(int campusAtualId, int prioridade, int cjtAlunos): arquivo "
-					 << solName << " nao encontrado.\n";
-		   exit(0);
-	   }
-
-	   int nCols = 0;
-
-	   fread(&nCols,sizeof(int),1,fin);
-
-	   if ( nCols == nroColsLP )
-	   {
-		  for (int i =0; i < nCols; i++)
-		  {
-			 double auxDbl;
-			 fread(&auxDbl,sizeof(double),1,fin);
-			 xSol[i] = auxDbl;
-		  }
-	   }
-	   else
-	   {
-		   std::cout << "\nErro em carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos(int campusAtualId, int prioridade, int cjtAlunos): "
-					 << " \nNumero diferente de variaveis: " << nCols << " != " << nroColsLP;
-	   }
-
-	   fclose(fin);
-   }
-   else
-   {
-	   lp->getX( xSol ); fflush( NULL );
-   }
+	if ( this->CARREGA_SOLUCAO )
+	{
+		int status = readSolBin( campusAtualId, prioridade, cjtAlunos, r, tatico, OutPutFileType::TAT_HOR_BIN, xSol );
+		if ( !status )
+		{
+		   std::cout << "\nErro em SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, int prioridade, int cjtAlunos, int r, int tatico ): arquivo "
+					" nao encontrado.\n";
+			exit(0);
+		}
+	}
+	else
+	{
+		lp->getX( xSol );
+	}
 	#pragma endregion
 
    std::map< std::pair<Disciplina*, Oferta*>, int > mapSlackDemanda;
    std::map< std::pair<Disciplina*, Oferta*>, int >::iterator itMapSlackDemanda;
-
-
-
+   
 
    char solFilename[1024];
    strcpy( solFilename, getSolucaoTaticoFileName( campusAtualId, prioridade, cjtAlunos, r, tatico ).c_str() );
@@ -5809,14 +5896,14 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 
 					// ==================================
 					// MODELO INTEGRADO 
-					/*
+					
 					if ( P==1 )
 					if ( problemData->listSlackDemandaAluno.size() != 0 )
 					{
 						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), this->CARREGA_SOLUCAO );
 						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );
 						delete solverTaticoInt;
-					}*/
+					}
 					// ==================================
 
 					mudaCjtSalaParaSala();
@@ -5898,6 +5985,8 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId, int r )
 {
 	int status = 0;
+	
+	bool CARREGA_SOL_PARCIAL = this->CARREGA_SOLUCAO;
 
 	bool CARREGOU_HEURISTICA = false;
 
@@ -5937,13 +6026,15 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	   this->imprimeAlocacaoFinalHeuristica( campusId, prioridade, cjtAlunosId );
 
 	   escreveSolucaoBinHeuristica( campusId, prioridade, cjtAlunosId );	   
+   
+	   CARREGA_SOL_PARCIAL=false;
    }
    // --------------------------------------------------------
-
+      
    if ( prioridade>1 )
    {
-	//   problemData->removeDemandasEmExcesso( campusId, prioridade, cjtAlunosId );
-	//   problemData->reduzNroTurmasPorDisciplina( campusId, prioridade );
+	   problemData->removeDemandasEmExcesso( campusId, prioridade, cjtAlunosId );
+	   problemData->reduzNroTurmasPorDisciplina( campusId, prioridade );
    }
 
    if ( lp != NULL )
@@ -6009,6 +6100,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
    if ( !this->CARREGA_SOLUCAO )
    {
+
 	    ofstream outGaps;
 
 	    // Constraint creation
@@ -6086,10 +6178,27 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 		lp->writeProbLP( string( "2"+string(lpName) ).c_str() );
 	
-		// GENERATES SOLUTION 		 
-		this->nroPreSolAvaliadas = 0;
-		status = lp->optimize( METHOD_MIP );
-						
+		double *xS = new double[lp->getNumCols()];
+
+	    if ( CARREGA_SOL_PARCIAL )
+		{
+			// procura e carrega solucao parcial
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN2, xS );
+			if ( !statusReadBin )
+			{
+				CARREGA_SOL_PARCIAL=false;
+			}
+		}
+		if ( !CARREGA_SOL_PARCIAL )
+		{
+			// GENERATES SOLUTION 		 
+			this->nroPreSolAvaliadas = 0;
+			status = lp->optimize( METHOD_MIP );
+			lp->getX(xS);
+		
+			writeSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN2, xS );
+		}					
+
 #pragma region Imprime Gap
 	 	  // Imprime Gap
 		outGaps.open("gaps.txt", ofstream::app);
@@ -6105,10 +6214,6 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 			outGaps.close();
 		} 
 #pragma endregion
-
-		double *xS = new double[lp->getNumCols()];
-		lp->getX(xS);
-
 
 	    // -------------------------------------------------------------------
 	    // Volta as variaveis que estavam livres
@@ -6222,23 +6327,25 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
       lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
 
-      if ( prioridade > 1 && FIXAR_TATICO_P1 )
-      {
-         status = lp->optimize(METHOD_MIP);
-         lp->getX(xS);
-      }
-      else
-      {
-#ifdef SOLVER_CPLEX
-         //polishPreTatico(xS,7200,90,10);
-         status = lp->optimize(METHOD_MIP);
-         lp->getX(xS);      
-#endif
-#ifdef SOLVER_GUROBI
-         status = lp->optimize(METHOD_MIP);
-         lp->getX(xS);      
-#endif
-      }
+		
+	  if ( CARREGA_SOL_PARCIAL )
+	  {
+			// procura e carrega solucao parcial
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN3, xS );
+			if ( !statusReadBin )
+			{
+				CARREGA_SOL_PARCIAL=false;
+			}
+	  }
+	  if ( !CARREGA_SOL_PARCIAL )
+	  {
+			// GENERATES SOLUTION 		 
+			this->nroPreSolAvaliadas = 0;
+			status = lp->optimize( METHOD_MIP );
+			lp->getX(xS);
+		
+			writeSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN3, xS );
+	  }		
 
 #pragma region Imprime Gap
 	 	  // Imprime Gap
@@ -6362,9 +6469,26 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 #endif
 	 
 	  lp->writeProbLP( string( "4"+string(lpName) ).c_str() );
+	  		
+	  if ( CARREGA_SOL_PARCIAL )
+	  {
+			// procura e carrega solucao parcial
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN4, xS );
+			if ( !statusReadBin )
+			{
+				CARREGA_SOL_PARCIAL=false;
+			}
+	  }
+	  if ( !CARREGA_SOL_PARCIAL )
+	  {
+			// GENERATES SOLUTION 		 
+			this->nroPreSolAvaliadas = 0;
+			status = lp->optimize( METHOD_MIP );
+			lp->getX(xS);
 
-      status = lp->optimize(METHOD_MIP);
-      
+			writeSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN4, xS );
+	  }	
+
 #pragma region Imprime Gap
 	 	  // Imprime Gap
 		outGaps.open("gaps.txt", ofstream::app);
@@ -6380,9 +6504,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 			outGaps.close();
 		} 
 #pragma endregion
-
-	  lp->getX(xS);
-	  
+			  
 		std::cout << "\n=========================================";
 		std::cout << "\nFixando 'w' e 'as' e garantindo o resto...\n"; fflush(NULL);
 
@@ -6450,16 +6572,29 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	  lp->writeProbLP( lpName );
 
 	  lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
+	  		
+	  if ( CARREGA_SOL_PARCIAL )
+	  {
+			// procura e carrega solucao parcial
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN, xS );
+			if ( !statusReadBin )
+			{
+				CARREGA_SOL_PARCIAL=false;
+			}
+	  }
+	  if ( !CARREGA_SOL_PARCIAL )
+	  {
+			// GENERATES SOLUTION 		 
+			this->nroPreSolAvaliadas = 0;
+			status = lp->optimize( METHOD_MIP );
+			lp->getX(xS);
+	  
+			writeSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN, xS );
+	  }      
 
-      status = lp->optimize(METHOD_MIP);
-
-		std::cout<<"\n\nOtimizado!\n\n"; fflush(NULL);
-		double * xSol = NULL;
-		xSol = new double[ lp->getNumCols() ];
-
-      lp->getX(xSol);
+	  std::cout<<"\n\nOtimizado!\n\n"; fflush(NULL);
       
-      delete[] xS;
+	  delete[] xS;
 	  delete[] objN;
 	  delete[] idxN;
       delete[] idxUB;
@@ -6480,35 +6615,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 			outGaps << "\nGap = " << lp->getMIPGap() * 100 << "%" << "\tTempo de execucao = " << tempoDeExecucao;
 			outGaps << "\n\n";
 			outGaps.close();
-		}
-
-		// WRITES SOLUTION
-
-		lp->updateLP();
-
-		char solName[1024];
-		strcpy( solName, getSolPreBinFileName( campusId, prioridade, cjtAlunosId, r ).c_str() );
-		FILE * fout = fopen( solName, "wb" );
-		if ( fout == NULL )
-		{
-			std::cout << "\nErro em SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
-					<< "\nArquivo nao pode ser aberto.\n"; fflush(NULL);
-		}
-		else
-		{
-			int nCols = lp->getNumCols();
-
-			fwrite( &nCols, sizeof( int ), 1, fout );
-			for ( int i = 0; i < lp->getNumCols(); i++ )
-			{
-				fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
-			}
-	   
-			fclose( fout );
-		}
-
-		delete [] xSol;
-
+		}		
    }
 
    return status;
@@ -6518,6 +6625,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 {
 	int status = 0;
 
+	bool CARREGA_SOL_PARCIAL = this->CARREGA_SOLUCAO;
 	bool CARREGA_TESTE = false;
 
 	//if ( tatico==2 && prioridade==1 ) 
@@ -6760,15 +6868,27 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		lp->setNumIntSols(1);	
 		lp->updateLP();
 		lp->writeProbLP( string("1"+ string(lpName) ).c_str() );
-
-		if( ! this->CARREGA_SOLUCAO )	
-		{ 
-			status = lp->optimize( METHOD_MIP );	
-		}
 		
 	    double *xS = new double[lp->getNumCols()];
-	    lp->getX(xS);
 
+		if ( CARREGA_SOL_PARCIAL )
+		{
+			// procura e carrega solucao parcial
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN1, xS );
+			if ( !statusReadBin )
+			{
+				CARREGA_SOL_PARCIAL=false;
+			}
+		}
+		if ( !CARREGA_SOL_PARCIAL )
+		{
+			// GENERATES SOLUTION 		 
+			status = lp->optimize( METHOD_MIP );
+			lp->getX(xS);
+	  
+			writeSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN1, xS );
+		}      
+				
 #pragma region Imprime Gap
 	 	  // Imprime Gap
 		ofstream outGaps;
@@ -6910,20 +7030,24 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 				
 		lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
 
-#ifndef TATICO_COM_HORARIOS
-      polishTatico(xS, 7200, 60, 25);
-#else
-
-   //   if ( prioridade == 1 && tatico == 1 )
-        polishTaticoHor(xS, 7200, 70, 15);
-   //   else
-	  //{
-	// 	 status = lp->optimize( METHOD_MIP );	
-//		 lp->getX(xS); 
-	  //}
-
-#endif
-
+		if ( CARREGA_SOL_PARCIAL )
+		{
+			// procura e carrega solucao parcial
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN2, xS );
+			if ( !statusReadBin )
+			{
+				CARREGA_SOL_PARCIAL=false;
+			}
+		}
+		if ( !CARREGA_SOL_PARCIAL )
+		{
+			// GENERATES SOLUTION 		 
+			status = lp->optimize( METHOD_MIP );
+			lp->getX(xS);
+	  
+			writeSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN2, xS );
+		}      
+		
 #pragma region Imprime Gap
 	 	  // Imprime Gap
 		outGaps.open("gaps.txt", ofstream::app);
@@ -7036,6 +7160,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		lp->copyMIPStartSol(lp->getNumCols(),idxN,xS);
 
 		delete[] objN;
+		delete[] idxN;
+		delete[] idxs;
+		delete[] bds;
+		delete[] vals;
 
 #ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
@@ -7067,33 +7195,29 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		lp->setCuts(1);
 		lp->updateLP();
 #endif
-
-		// GENERATES SOLUTION
-
-#ifndef TATICO_COM_HORARIOS
-      polishTatico(xS, 7200, 60, 25);
-#else     
-	  //status = lp->optimize( METHOD_MIP );	
-	  //lp->getX(xS); 		
-		polishTaticoHor(xS, 3600, 50, 25);
-#endif
-
-
-		double * xSol = new double[ lp->getNumCols() ];        
-		for (int i=0; i < lp->getNumCols(); i++)
-		{
-			xSol[i] = xS[i];
-		}
-
-		delete[] xS;
-
-		//lp->setNumIntSols(1);
-		
-		delete[] idxN;
-		delete[] idxs;
-		delete[] bds;
-		delete[] vals;
 				
+		//polishTaticoHor(xS, 3600, 50, 25);
+
+		if ( CARREGA_SOL_PARCIAL )
+		{
+			// procura e carrega solucao parcial
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN, xS );
+			if ( !statusReadBin )
+			{
+				CARREGA_SOL_PARCIAL=false;
+			}
+		}
+		if ( !CARREGA_SOL_PARCIAL )
+		{
+			// GENERATES SOLUTION 		 
+			status = lp->optimize( METHOD_MIP );
+			lp->getX(xS);
+	  
+			writeSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN, xS );
+		}      
+			  		
+		delete[] xS;	
+						
 	    // Imprime Gap
 		outGaps.open("gaps.txt", ofstream::app);
 		if ( !outGaps )
@@ -7110,30 +7234,6 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		}
 			
 		lp->updateLP();
-		
-		// WRITES SOLUTION
-		char solName[1024];
-		strcpy( solName, getSolBinFileName( campusId, prioridade, cjtAlunosId, r, tatico ).c_str() );
-		FILE * fout = fopen( solName, "wb" );
-		if ( fout == NULL )
-		{
-			std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
-					<< "\nArquivo " << solName << " nao pode ser aberto.\n";
-		}
-		else
-		{
-			int nCols = lp->getNumCols();
-
-			fwrite( &nCols, sizeof( int ), 1, fout );
-			for ( int i = 0; i < lp->getNumCols(); i++ )
-			{
-				fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
-			}
-
-			fclose( fout );
-		}
-
-		delete [] xSol;
    }
 
    return status;
@@ -31966,7 +32066,7 @@ int SolverMIP::criaRestricaoTaticoDivisaoCredito( int campusId )
 								{
 									HorarioAula *hf = *itHorario;
 
-									if ( hf < hi )
+									if ( *hf < *hi )
 									{
 							 			continue;
 									}
@@ -31983,7 +32083,7 @@ int SolverMIP::criaRestricaoTaticoDivisaoCredito( int campusId )
 									v.setDia( *itDiasLetDisc );
 
 									int nCreds = disciplina->getCalendario()->retornaNroCreditosEntreHorarios(hi,hf);
-
+									
 									it_v = vHashTatico.find( v );
 									if ( it_v != vHashTatico.end() )
 									{
@@ -62412,6 +62512,8 @@ void SolverMIP::heuristica2AlocaAlunos( int campusId, int prioridade, int grupoA
 			{
 				bool sucesso=false; 
 
+				GGroup<AlunoDemanda*> alDemPTnaoConsiderar;
+
 				std::list< std::pair< AlunoDemanda*, int > >::iterator 
 					itList = alunosDemandaP2Ordenados.begin();
 				for ( ; itList!=alunosDemandaP2Ordenados.end(); itList++ )
@@ -62458,7 +62560,7 @@ void SolverMIP::heuristica2AlocaAlunos( int campusId, int prioridade, int grupoA
 							 ( problemData->retornaTurmaDiscAluno( aluno, disciplina1 ) == -1 && 
 							   problemData->retornaTurmaDiscAluno( aluno, disciplina2 ) != -1 ) )
 						{
-							std::cout<<"\nAtencao1: aluno alocado somente em 1 das disciplinas de par teorico/pratico "<<disciplina1->getId();
+							std::cout<<"\nAtencao/Erro1: aluno alocado somente em 1 das disciplinas de par teorico/pratico "<<disciplina1->getId();
 							fflush(NULL);
 							continue;
 						}
@@ -62548,7 +62650,13 @@ void SolverMIP::heuristica2AlocaAlunos( int campusId, int prioridade, int grupoA
 								// ---------------------------------------------
 							}
 						}
-				
+						if (!sucesso)
+						{
+							// Não conseguiu inserir a disciplina 1,
+							// não considerar a disciplina-par que está ADIANTE
+							// na list alunosDemandaP2Ordenados (ou seja, alDem2).
+							alDemPTnaoConsiderar.add( alDem2 );
+						}
 					}
 					else
 					{
@@ -62583,6 +62691,9 @@ void SolverMIP::heuristica2AlocaAlunos( int campusId, int prioridade, int grupoA
 						itListAux = alunosDemandaP2Ordenados.begin();
 					for ( ; itListAux!=itList; itListAux++ )
 					{
+						if ( alDemPTnaoConsiderar.find( itListAux->first ) != alDemPTnaoConsiderar.end() ) 
+							continue;	
+
 						alDemList.add( itListAux->first );
 					}
 				}

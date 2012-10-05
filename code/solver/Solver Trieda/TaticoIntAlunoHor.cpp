@@ -398,10 +398,13 @@ void TaticoIntAlunoHor::carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtua
 		 Disciplina *vDisc;
 		 HorarioAula *vhi;
 		 HorarioAula *vhf;
+		 HorarioAula *ha;
 		 Sala *vSala;
 		 int vDia;
 		 int vTurma;
 		 int vCampusId;
+		 int nCreds;
+		 GGroup<HorarioDia*> horariosDias;				 
 
          switch( v->getType() )
          {
@@ -411,18 +414,12 @@ void TaticoIntAlunoHor::carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtua
 				std::cout << "Variável inválida " << std::endl;
 				break;
 			 case VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC:	
-				 vDisc = v->getDisciplina();
-				 vTurma = v->getTurma();
-				 vCampusId = v->getCampus()->getId();	 
-				 trio.set(vCampusId, vTurma, vDisc);
-
 				 vAluno = v->getAluno();
+				 vDisc = v->getDisciplina();				 
 				 alunoDem = problemData->procuraAlunoDemanda( vDisc->getId(), vAluno->getAlunoId() );
-
-				 problemData->mapCampusTurmaDisc_AlunosDemanda[trio].add( alunoDem );
-				 problemData->mapAluno_CampusTurmaDisc[ vAluno ].add( trio );		
+				 				 
 				 nroAtendimentoAlunoDemanda++;
-
+				 
 				 // -------------------------------------------
 				 // Remove o alunoDemanda dos não-atendimentos, caso ele esteja lá
 				 if ( problemData->listSlackDemandaAluno.find( alunoDem ) !=
@@ -454,8 +451,29 @@ void TaticoIntAlunoHor::carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtua
 					 }
 				 }				 
 				 // -------------------------------------------
+
 				 break;
 			 case VariableTatInt::V_ALUNO_CREDITOS:
+				 vDia = v->getDia();
+				 vhi = v->getHorarioAulaInicial();
+				 vhf = v->getHorarioAulaFinal();
+				 vAluno = v->getAluno();
+				 vDisc = v->getDisciplina();
+				 vTurma = v->getTurma();
+				 vCampusId = v->getUnidade()->getIdCampus();	 
+				 trio.set(vCampusId, vTurma, vDisc);
+				 
+				 ha = vhi;
+				 nCreds = vDisc->getCalendario()->retornaNroCreditosEntreHorarios( vhi, vhf );				 
+				 for ( int i = 1; i <= nCreds; i++ )
+				 {
+					HorarioDia *hd = problemData->getHorarioDiaCorrespondente( ha, vDia );
+					horariosDias.add( hd );
+					ha = vDisc->getCalendario()->getProximoHorario( ha );			
+				 }
+				 				 
+				 problemData->insereAlunoEmTurma( vAluno, trio, horariosDias );
+
 				 vars_v.add( v );
 				 break;
 			 case VariableTatInt::V_CREDITOS:				 					 
@@ -4651,7 +4669,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 								{
 									HorarioAula *hf = *itHorario;
 
-									if ( hf < hi )
+									if ( *hf < *hi )
 									{
 							 			continue;
 									}

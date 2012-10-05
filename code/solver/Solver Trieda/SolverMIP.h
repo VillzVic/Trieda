@@ -700,6 +700,20 @@ public:
     bool solucaoValidaCliquesAux( double *xSol ); // pode deletar se não for usar mais a função de callback
 
 private:
+
+   enum OutPutFileType
+   {
+      PRE_TAT_BIN = 0,
+      PRE_TAT_BIN1 = 1,
+      PRE_TAT_BIN2 = 2,
+      PRE_TAT_BIN3 = 3,
+      PRE_TAT_BIN4 = 4,
+	  TAT_HOR_BIN = 5,					
+	  TAT_HOR_BIN1 = 6,				
+	  TAT_HOR_BIN2 = 7,		
+	  TAT_HOR_BIN3 = 8
+   };
+
 	int nroPreSolAvaliadas;
 
 	bool CARREGA_SOLUCAO;
@@ -726,6 +740,10 @@ private:
     std::string getSolVarsPreFileName( int campusId, int prioridade, int cjtAlunosId );
 
     std::string getCliquesFileName( int campusId, int prioridade, int cjtAlunosId );
+
+	void writeSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol );
+
+	int readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol );
 
 	// Filtro para a criação das variaveis do pre-modelo,
 	// caso haja solução do tatico para iteração de prioridade de demanda anterior

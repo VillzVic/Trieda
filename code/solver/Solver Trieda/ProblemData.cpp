@@ -2292,7 +2292,6 @@ void ProblemData::insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int 
 	{
 		this->mapAluno_CampusTurmaDisc[aluno].add( trio );
 		this->mapCampusTurmaDisc_AlunosDemanda[trio].add( alDem );
-
 	}
 		
 	Calendario *sl = trio.third->getCalendario();
@@ -2342,11 +2341,15 @@ void ProblemData::insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int 
 		this->mapAluno_CampusTurmaDisc[aluno].add( trio );
 		this->mapCampusTurmaDisc_AlunosDemanda[trio].add( alDem );
 
+		ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
+		{
+			aluno->addHorarioDiaOcupado( *itHorDia );
+		}
 	}	
-	
-	ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
+	else
 	{
-		aluno->addHorarioDiaOcupado( *itHorDia );
+		std::cout<<"\nAtencao, erro em insereAlunoEmTurma: alunoDemanda nao encontrado. DiscId "
+			<< trio.third->getId() << " AlunoId " << aluno->getAlunoId() << endl;
 	}
 }
 
@@ -2357,15 +2360,16 @@ void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int 
 	{	
 		this->mapAluno_CampusTurmaDisc[aluno].remove( trio );
 		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDem );
+	
+		ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
+		{
+			aluno->removeHorarioDiaOcupado( *itHorDia );
+		}
 	}
 	else
 	{
-		std::cout<<"\nError: AlDem nao encontrado! Aluno "<<aluno->getAlunoId()<<" Disc"<<trio.third->getId()<<endl;
-	}
-	
-	ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
-	{
-		aluno->removeHorarioDiaOcupado( *itHorDia );
+		std::cout<<"\nAtencao, erro em removeAlunoDeTurma: alunoDemanda nao encontrado. DiscId "
+			<< trio.third->getId() << " AlunoId " << aluno->getAlunoId() << endl;
 	}
 }
 
@@ -2462,8 +2466,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	alunosFile.open(alunosFilename, ios::out);
 	if (!alunosFile)
 	{
-		cerr << "Can't open output file " << alunosFilename << endl;
-		exit(1);
+		cerr << "Error: Can't open output file " << alunosFilename << endl;
+		return;
 	}
 
 	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
@@ -2777,6 +2781,30 @@ Disciplina* ProblemData::getDisciplinaTeorPrat( Disciplina *disciplina )
 
 void ProblemData::reduzNroTurmasPorDisciplina( int campusId, int prioridade )
 {
+	stringstream ssCp;
+	stringstream ssP;
+
+	ssCp << campusId;
+	ssP << prioridade;	
+
+	// Alunos ------------------------------------------------------------
+
+	ofstream reducaoFile;
+	std::string reducaoFilename( "ReduzNroTurmasDisc_Cp" );    
+	reducaoFilename += ssCp.str();
+	reducaoFilename += "_P";
+	reducaoFilename += ssP.str();
+	reducaoFilename += ".txt";
+		
+	reducaoFile.open(reducaoFilename, ios::out);
+	if (!reducaoFile)
+	{
+		cerr << "Error: Can't open output file " << reducaoFilename << endl;
+		return;
+	}
+
+	int countReducao=0;
+
 	ITERA_GGROUP_LESSPTR( itDisc, disciplinas, Disciplina )
 	{
 		Disciplina *disciplina = (*itDisc);
@@ -2814,18 +2842,68 @@ void ProblemData::reduzNroTurmasPorDisciplina( int campusId, int prioridade )
 
 		int nroTurmasAMais=0;
 
+		// TODO: AINDA NÃO ESTOU CONSIDERANDO AQUI O NÃO-COMPARTILHAMENTO DE TURMAS POR CURSOS DIFERENTES.
 		if ( capacMediaSala > 0 )
 			nroTurmasAMais = int( std::floor( double(sizeAindaNaoAlocados+capacMediaSala-1)/capacMediaSala ) );
-		
-		disciplina->setNumTurmas( nroTurmasAbertas + nroTurmasAMais );
-	}
-}
+			
+		if ( this->parametros->min_alunos_abertura_turmas )
+		if ( !this->parametros->violar_min_alunos_turmas_formandos )
+		if ( this->parametros->min_alunos_abertura_turmas_value > sizeAindaNaoAlocados )
+			nroTurmasAMais = 0;
 
+		int novoNroTurmas = nroTurmasAbertas + nroTurmasAMais;
+		if ( novoNroTurmas > 0 )
+		{
+			// Devido a não-atendimento de turmas no tático, é possível que haja "buracos" na sequencia
+			// das turmas. Isto é, as turmas 0 e 2 foram abertas, mas a turma 1 não. Nesses casos,
+			// o novo numero de turmas será no mínimo igual ao maior indice de turma aberta.
+			for ( int turma=novoNroTurmas; turma<disciplina->getNumTurmas(); turma++ )
+			{
+				if ( turma_size[turma] > 0 )
+					novoNroTurmas = turma;
+			}
+		}
+
+		reducaoFile << "\nDisciplina "<<disciplina->getId() << ": reducao de "<<disciplina->getNumTurmas()
+			<<" turmas para "<< novoNroTurmas << " turmas";
+		
+		countReducao += disciplina->getNumTurmas() - novoNroTurmas;
+
+		disciplina->setNumTurmas( novoNroTurmas );
+	}
+
+	reducaoFile << "\n\nNumero total de turmas eliminadas: "<< countReducao;
+
+	reducaoFile.close();
+
+}
 
 
 void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId )
 {
 	std::cout<<"\nREMOVENDO DEMANDAS EM EXCESSO\n";	fflush(NULL);
+
+	stringstream ssCp;
+	stringstream ssP;
+
+	ssCp << campusId;
+	ssP << prioridade;	
+
+	// Alunos ------------------------------------------------------------
+
+	ofstream removeFile;
+	std::string removeFilename( "RemoveDemExcesso_Cp" );    
+	removeFilename += ssCp.str();
+	removeFilename += "_P";
+	removeFilename += ssP.str();
+	removeFilename += ".txt";
+		
+	removeFile.open(removeFilename, ios::out);
+	if (!removeFile)
+	{
+		cerr << "Error: Can't open output file " << removeFilename << endl;
+		return;
+	}
 
 	Campus *cp = refCampus[campusId];
 
@@ -2841,6 +2919,8 @@ void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int gru
 			break;
 		}
 
+		removeFile << "\n\nRemovendo alunosDemanda...\n";
+
 		// Para cada aluno do conjunto
 		GGroup< Aluno *, LessPtr< Aluno > > cjtAlunos = this->cjtAlunos[ grupoAlunosId ];	
 		ITERA_GGROUP_LESSPTR( itAluno, cjtAlunos, Aluno )
@@ -2852,8 +2932,8 @@ void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int gru
 				continue;
 			}
 
-			std::cout<<"\n--------------------------\nAluno "<<aluno->getAlunoId();	fflush(NULL);
-
+			removeFile << "\nAluno "<<aluno->getAlunoId();	fflush(NULL);
+			
 			Campus *campus1 = aluno->getOferta()->campus;
 			int campus1Id = campus1->getId();
 			
@@ -2865,7 +2945,7 @@ void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int gru
 
 			// Aluno já atendido por completo. Retirar demandas de p2 em aberto.
 
-			std::cout<<"\nItera alunoDemandas";	fflush(NULL);
+			removeFile << "\nItera alunoDemandas";	fflush(NULL);
 
 			GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDemRemover;
 
@@ -2886,12 +2966,14 @@ void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int gru
 			{
 				aluno->demandas.remove( *itAlDem );
 				this->alunosDemanda.remove( *itAlDem );
-				std::cout<<"\nRemoveu demanda da disc "<<itAlDem->demanda->getDisciplinaId();	fflush(NULL);
+				removeFile << "\nRemoveu demanda da disc "<<itAlDem->demanda->getDisciplinaId();	fflush(NULL);
 			}
-			std::cout<<"\n-------------------------- FIM Aluno ";	fflush(NULL);
+			removeFile << "\nFIM Aluno";	fflush(NULL);
 
 		}
 		
+		removeFile << "\n\nRemovendo demandas...\n";
+
 	   // recalcular demanda: referência somente para as que possuirem alunoDemanda associado
 	   // e ajustando a quantidade associada à demanda.	
 	   GGroup< Demanda*, LessPtr<Demanda> > demRemover;
@@ -2916,6 +2998,10 @@ void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int gru
 	   ITERA_GGROUP_LESSPTR( itDem, demRemover, Demanda )
 	   {
 			this->demandas.remove( *itDem );
+			removeFile << "\nRemoveu demanda "<<itDem->getId();	fflush(NULL);
 	   }
+	   removeFile << "\nFim da remocao"; fflush(NULL);
 	}
+
+	removeFile.close();
 }
