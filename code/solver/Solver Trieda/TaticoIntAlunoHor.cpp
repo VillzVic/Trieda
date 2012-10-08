@@ -9,13 +9,13 @@ const bool PERMITIR_NOVAS_TURMAS = false;
 
 TaticoIntAlunoHor::TaticoIntAlunoHor( ProblemData * aProblemData, 
 				GGroup< VariableTatico *, LessPtr<VariableTatico> > *aSolVarsTatico, 
-				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh, bool endCARREGA_SOLUCAO ) 
+				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh, bool *endCARREGA_SOLUCAO ) 
 				: Solver( aProblemData )
 {
    solVarsTatico = aSolVarsTatico;
    vars_xh = avars_xh;
 
-   CARREGA_SOLUCAO = &endCARREGA_SOLUCAO;
+   CARREGA_SOLUCAO = endCARREGA_SOLUCAO;
 
    NAO_CRIAR_RESTRICOES_CJT_ANTERIORES = true;
    FIXAR_P1 = true;
@@ -302,7 +302,7 @@ void TaticoIntAlunoHor::carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtua
    xSol = new double[ nroColsLP ];
 	
 	#pragma region Carrega solucao
-   if ( this->CARREGA_SOLUCAO )
+   if ( (*this->CARREGA_SOLUCAO) )
    {
 	   char solName[1024];
 
@@ -535,7 +535,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 		
 	int status = 0;
 		
-   if ( this->CARREGA_SOLUCAO )
+   if ( (*this->CARREGA_SOLUCAO) )
    {
 	   char solName[1024];
 	   strcpy( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
@@ -543,7 +543,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 	   if ( fin == NULL )
 	   {
 		   std::cout << "\nA partir de " << solName << " , nao foram lidas mais solucoes.\n"; fflush(NULL);
-		   CARREGA_SOLUCAO = false;
+		   *CARREGA_SOLUCAO = false;
 	   }
 	   else
 	   {
@@ -607,7 +607,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 	    printf( "Total of Variables: %i\n\n", varNum );
 		#endif
 
-		if ( ! this->CARREGA_SOLUCAO )
+		if ( ! (*this->CARREGA_SOLUCAO) )
 		{
 		   // Constraint creation
 		   constNum = criaRestricoesTatico( campusId, prioridade, r );
@@ -629,7 +629,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 		exit(0);
    }  
 
-   if ( ! this->CARREGA_SOLUCAO )
+   if ( ! (*this->CARREGA_SOLUCAO) )
    {   
 	   /* 
 
@@ -678,7 +678,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 		lp->updateLP();
 		lp->writeProbLP( string("1"+ string(lpName) ).c_str() );
 
-		if( ! this->CARREGA_SOLUCAO )	
+		if( ! (*this->CARREGA_SOLUCAO) )	
 		{ 
 			status = lp->optimize( METHOD_MIP );	
 		}

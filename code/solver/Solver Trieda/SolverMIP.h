@@ -743,7 +743,9 @@ private:
 
 	void writeSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol );
 
-	int readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol );
+	int readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double **xSol );
+
+    void writeSolTxt( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol );
 
 	// Filtro para a criação das variaveis do pre-modelo,
 	// caso haja solução do tatico para iteração de prioridade de demanda anterior

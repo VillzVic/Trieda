@@ -46,7 +46,7 @@ public:
 	
 	TaticoIntAlunoHor::TaticoIntAlunoHor( ProblemData * aProblemData, 
 				GGroup< VariableTatico *, LessPtr<VariableTatico> > *aSolVarsTatico, 
-				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh, bool endCARREGA_SOLUCAO );
+				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh, bool *endCARREGA_SOLUCAO );
 	virtual ~TaticoIntAlunoHor();
 
 
