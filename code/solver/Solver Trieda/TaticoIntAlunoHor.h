@@ -82,6 +82,7 @@ private:
    int criaVariavelFolgaProibeCompartilhamento( int campusId, int P );
    int criaVariavelFolgaPrioridadeInf( int campusId, int prior );							// fpi_{a,cp}
    int criaVariavelFolgaPrioridadeSup( int campusId, int prior );							// fps_{a,cp}
+   int criaVariavelTaticoFormandosNaTurma( int campusId, int prior, int r );				// f_{i,d,cp}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -112,6 +113,7 @@ private:
    int criaRestricaoTaticoAbreTurmasEmSequencia( int campusId );
    int criaRestricaoTaticoAlunoCurso( int campusId );
    int criaRestricaoPrioridadesDemanda( int campusId, int prior );
+   int criaRestricaoTaticoFormandos( int campusId, int prioridade, int r );
 
    // The linear problem.	
    

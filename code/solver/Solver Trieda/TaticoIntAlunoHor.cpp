@@ -1618,6 +1618,16 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 #endif
 	
 
+	timer.start();
+	num_vars += criaVariavelTaticoFormandosNaTurma( campusId, P, r ); // f_{i,d,cp}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"f\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl; fflush(NULL);
+	numVarsAnterior = num_vars;
+#endif
+
 	return num_vars;
 
 }
@@ -3542,7 +3552,76 @@ int TaticoIntAlunoHor::criaVariavelFolgaPrioridadeSup( int campusId, int prior )
 	return numVars;
 }
 
+// f_{i,d,cp}
+int TaticoIntAlunoHor::criaVariavelTaticoFormandosNaTurma( int campusId, int prior, int r )
+{
+	int numVars = 0;
+	
+	if ( !problemData->parametros->violar_min_alunos_turmas_formandos )
+		return numVars;
 
+	if ( prior==1 && r==1 ) // só considera formandos a partir da segunda rodada
+		return numVars;
+
+	std::map< int /*Id Campus*/, GGroup< int > /*Id Discs*/ >::iterator it_CpDisc = problemData->cp_discs.begin();
+
+   for ( ; it_CpDisc != problemData->cp_discs.end(); it_CpDisc++ )
+   {
+	  Campus *cp = problemData->refCampus[ it_CpDisc->first ];
+
+	  if ( cp->getId() != campusId )
+	  {
+		  continue;
+	  }
+
+      ITERA_GGROUP_N_PT( it_disciplina, it_CpDisc->second, int )
+      {
+		 Disciplina *disciplina = problemData->refDisciplinas[ *it_disciplina ];
+		 		 
+		 #pragma region Equivalencias
+		 if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
+				problemData->mapDiscSubstituidaPor.end() ) &&
+				!problemData->ehSubstituta( disciplina ) )
+		 {
+		 	continue;
+		 }
+		 #pragma endregion
+		 
+		 if ( ! problemData->haDemandaPorFormandos( disciplina, cp, prior ) )
+			 continue;
+		 
+         for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+         {
+			 VariableTatInt v;
+			 v.reset();
+			 v.setType( VariableTatInt::V_FORMANDOS_NA_TURMA );
+			 v.setTurma( turma );            // i
+			 v.setDisciplina( disciplina );  // d
+			 v.setCampus( cp );				// cp
+
+			 if ( vHashTatico.find(v) == vHashTatico.end() )
+			 {
+                lp->getNumCols();
+                vHashTatico[v] = lp->getNumCols();
+
+			    double coef = 0.0;
+						 
+				double lowerBound = 0.0;
+				double upperBound = 1.0;
+
+				OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
+                     ( char * )v.toString().c_str() );
+
+                lp->newCol( col ); 
+                
+				numVars++;
+            }
+         }
+      }
+   }
+
+	return numVars;
+}
 
 
 /* ----------------------------------------------------------------------------------
@@ -3810,6 +3889,17 @@ int TaticoIntAlunoHor::criaRestricoesTatico( int campusId, int prioridade, int r
 
 #ifdef PRINT_cria_restricoes
 	std::cout << "numRest \"1.2.27\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
+	
+
+  	timer.start();
+	restricoes += criaRestricaoTaticoFormandos( campusId, prioridade, r );	// Restricao 1.2.21
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.28\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
 	numRestAnterior = restricoes;
 #endif
 	
@@ -4576,7 +4666,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoProibeCompartilhamento( int campusId )
 /*
 	Para cada turma i, disciplina d:
 
-	sum[a] s_{i,d,a} >= MinAlunos
+	sum[a] s_{i,d,a} >= MinAlunos * (1 - f_{i,d,cp})
 */
 int TaticoIntAlunoHor::criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade )
 {
@@ -4607,14 +4697,27 @@ int TaticoIntAlunoHor::criaRestricaoTaticoLimitaAberturaTurmas( int campusId, in
    {
 		VariableTatInt v = vit->first;
 
-		if ( v.getType() != VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC )
+		if ( v.getType() != VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC &&
+			 v.getType() != VariableTatInt::V_FORMANDOS_NA_TURMA )
 		{
 			continue;
 		}
 		
-		Campus *campus = v.getAluno()->getOferta()->campus;
+		Campus *campus;
+		
+		if ( v.getType() == VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC )
+			campus = v.getAluno()->getOferta()->campus;
+		else if ( v.getType() == VariableTatInt::V_FORMANDOS_NA_TURMA )
+			campus = v.getCampus();
+
 		int turma = v.getTurma();
 		Disciplina* disc = v.getDisciplina();
+
+		double coef=0.0;
+		if ( v.getType() == VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC )
+			coef = 1.0;
+		else if ( v.getType() == VariableTatInt::V_FORMANDOS_NA_TURMA )
+			coef = MinAlunos;
 			
 		c.reset();
 		c.setType( ConstraintTatInt::C_MIN_ALUNOS_TURMA );
@@ -4630,16 +4733,16 @@ int TaticoIntAlunoHor::criaRestricaoTaticoLimitaAberturaTurmas( int campusId, in
 			auxCoef.second = vit->second;
 
 			coeffList.push_back( auxCoef );
-			coeffListVal.push_back( 1.0 );
+			coeffListVal.push_back( coef );
 		}
 		else
 		{			
 			sprintf( name, "%s", c.toString().c_str() );
-			nnz = 100; // TODO
+			nnz = 60; // TODO
 
 			OPT_ROW row( nnz, OPT_ROW::GREATER , MinAlunos, name );
 						
-			row.insert( vit->second, 1.0 );
+			row.insert( vit->second, coef );
 
 			// Insere restrição
 			cHashTatico[ c ] = lp->getNumRows();
@@ -6531,4 +6634,182 @@ int TaticoIntAlunoHor::criaRestricaoPrioridadesDemanda( int campusId, int prior 
 
 	return restricoes;
 
+}
+
+/*
+	Seta a variavel f_{i,d,cp}, que indica se uma turma possui aluno formando. Só está sendo necessária em rodada 2
+	(só a partir de r=2 pode ser permitida a violação do min de alunos por turma caso haja formando).
+
+	Restrição 1: 
+	
+		M * f_{i,d,cp} >= sum[a] s_{i,d,a}	sendo 'a' formando		Para cada turma i, disc d, campus cp
+
+	Restrição 2: 
+	
+		f_{i,d,cp} <= sum[a] s_{i,d,a}  sendo 'a' formando		Para cada turma i, disc d, campus cp
+*/
+int TaticoIntAlunoHor::criaRestricaoTaticoFormandos( int campusId, int prioridade, int r )
+{
+    int restricoes = 0;
+
+	if ( !problemData->parametros->violar_min_alunos_turmas_formandos )
+		return restricoes;		
+
+	if ( prioridade==1 && r==1 ) // só considera formandos na segunda rodada
+		return restricoes;
+		
+    char name[ 100 ];
+
+    ConstraintTatInt c;
+	ConstraintTatIntHash::iterator cit;
+    VariableTatInt v;
+    VariableTatIntHash::iterator vit;
+
+	vit = vHashTatico.begin();
+
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		// s_{i,d,a}
+		if( vit->first.getType() == VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC )
+		{			
+			VariableTatInt v = vit->first;
+
+			Aluno *aluno = v.getAluno();
+			Disciplina *disciplina = v.getDisciplina();
+			int turma = v.getTurma();
+			Campus *campus = v.getCampus();
+
+			if ( !aluno->ehFormando() )
+				continue;
+
+			// -----------------------------------------
+			// Constraint 1
+		
+			c.reset();
+			c.setType( ConstraintTatInt::C_FORMANDOS1 );
+			c.setDisciplina(disciplina);
+			c.setTurma(turma);
+			c.setCampus(campus);
+
+			cit = cHashTatico.find(c);
+
+			if(cit != cHashTatico.end())
+			{
+				lp->chgCoef(cit->second, vit->second, -1.0);
+			}
+			else
+			{
+				int nnz=50;
+				sprintf( name, "%s", c.toString().c_str() ); 
+				OPT_ROW row( nnz, OPT_ROW::GREATER, 0.0, name );
+
+				row.insert(vit->second, -1.0);
+
+				cHashTatico[ c ] = lp->getNumRows();
+
+				lp->addRow( row );
+				restricoes++;
+			}						
+		
+			// -----------------------------------------
+			// Constraint 2
+			
+			c.reset();
+			c.setType( ConstraintTatInt::C_FORMANDOS2 );
+			c.setDisciplina(disciplina);
+			c.setTurma(turma);
+			c.setCampus(campus);
+
+			cit = cHashTatico.find(c);
+
+			if(cit != cHashTatico.end())
+			{
+				lp->chgCoef(cit->second, vit->second, -1.0);
+			}
+			else
+			{
+				int nnz=50;
+				sprintf( name, "%s", c.toString().c_str() ); 
+				OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
+
+				row.insert(vit->second, -1.0);
+
+				cHashTatico[ c ] = lp->getNumRows();
+
+				lp->addRow( row );
+				restricoes++;
+			}
+		}
+
+		// f_{i,d,cp}
+		else if( vit->first.getType() == VariableTatInt::V_FORMANDOS_NA_TURMA )
+		{			
+			VariableTatInt v = vit->first;
+
+			Campus *campus = v.getCampus();
+			Disciplina *disciplina = v.getDisciplina();
+			int turma = v.getTurma();
+
+			// -----------------------------------------
+			// Constraint 1
+
+			double M = problemData->getNroDemandaPorFormandos( disciplina, campus, prioridade );
+
+			c.reset();
+			c.setType( ConstraintTatInt::C_FORMANDOS1 );
+			c.setDisciplina(disciplina);
+			c.setTurma(turma);
+			c.setCampus(campus);
+
+			cit = cHashTatico.find(c);
+			if(cit != cHashTatico.end())
+			{
+				lp->chgCoef(cit->second, vit->second, M);
+			}
+			else
+			{
+				int nnz=50;
+				sprintf( name, "%s", c.toString().c_str() ); 
+				OPT_ROW row( nnz, OPT_ROW::GREATER, 0.0, name );
+
+				row.insert(vit->second, M);
+
+				cHashTatico[ c ] = lp->getNumRows();
+
+				lp->addRow( row );
+				restricoes++;
+			}						
+		
+			// -----------------------------------------
+			// Constraint 2
+						
+			c.reset();
+			c.setType( ConstraintTatInt::C_FORMANDOS2 );
+			c.setDisciplina(disciplina);
+			c.setTurma(turma);
+			c.setCampus(campus);
+
+			cit = cHashTatico.find(c);
+
+			if(cit != cHashTatico.end())
+			{
+				lp->chgCoef(cit->second, vit->second, 1.0);
+			}
+			else
+			{
+				int nnz=50;
+				sprintf( name, "%s", c.toString().c_str() ); 
+				OPT_ROW row( nnz, OPT_ROW::LESS, 0.0, name );
+
+				row.insert(vit->second, 1.0);
+
+				cHashTatico[ c ] = lp->getNumRows();
+
+				lp->addRow( row );
+				restricoes++;
+			}		
+		}
+	}
+	
+	return restricoes;
 }

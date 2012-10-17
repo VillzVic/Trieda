@@ -222,7 +222,9 @@ std::string VariableTatInt::toString()
 		str <<"fpi"; break;
   	 case V_SLACK_PRIOR_SUP:
 		str <<"fps"; break;		
-
+  	 case V_FORMANDOS_NA_TURMA:
+		str <<"f"; break;	
+		
     default:
         str << "!";
    }

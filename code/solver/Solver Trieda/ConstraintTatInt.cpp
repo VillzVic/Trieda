@@ -245,6 +245,10 @@ std::string ConstraintTatInt::toString()
       ss << "__(C_ALUNO_CURSO):"; break;
 	case C_ALUNO_PRIORIDADES_DEMANDA:
       ss << "__(C_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
+	case C_FORMANDOS1:
+      ss << "__(C_FORMANDOS1):"; break;	  
+	case C_FORMANDOS2:
+      ss << "__(C_FORMANDOS2):"; break;	    
 
    default:
       ss << "!";

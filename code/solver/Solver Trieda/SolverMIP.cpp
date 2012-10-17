@@ -7346,6 +7346,8 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 			writeSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN, xS );
 		}      
 			  		
+		fflush(NULL);
+
 		delete[] xS;	
 						
 	    // Imprime Gap

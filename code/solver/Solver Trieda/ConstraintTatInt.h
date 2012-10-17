@@ -42,7 +42,9 @@ public:
 	  C_ASSOCIA_S_V = 25,
 	  C_ABRE_TURMAS_EM_SEQUENCIA = 26,
 	  C_ALUNO_CURSO = 27,
-	  C_ALUNO_PRIORIDADES_DEMANDA = 28
+	  C_ALUNO_PRIORIDADES_DEMANDA = 28,
+	  C_FORMANDOS1 = 29,
+	  C_FORMANDOS2 = 30
    };
 
    /** Default constructor. */
