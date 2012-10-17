@@ -253,7 +253,12 @@ std::string ConstraintTatico::toString()
       ss << "__(C_MIN_ALUNOS_TURMA):"; break;	  	  	    
    case C_DESALOCA_PT:
       ss << "__(C_DESALOCA_PT):"; break;	  	  	      
+   case C_FORMANDOS1:
+      ss << "__(C_FORMANDOS1):"; break;	  	  	      
+   case C_FORMANDOS2:
+      ss << "__(C_FORMANDOS2):"; break;	  	  	      
 
+	  
    default:
       ss << "!";
    }

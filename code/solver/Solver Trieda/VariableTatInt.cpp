@@ -218,7 +218,10 @@ std::string VariableTatInt::toString()
 		str <<"ft"; break;
   	 case V_SLACK_COMPARTILHAMENTO:
 		str <<"fc"; break;
-		
+  	 case V_SLACK_PRIOR_INF:
+		str <<"fpi"; break;
+  	 case V_SLACK_PRIOR_SUP:
+		str <<"fps"; break;		
 
     default:
         str << "!";

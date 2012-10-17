@@ -588,10 +588,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 		lp->createLP( lpName, OPTSENSE_MINIMIZE, PROB_MIP );
 	}
 
-#ifdef DEBUG
-   printf( "Creating LP...\n" );
-#endif
-
+   std::cout<<"\nCreating LP...\n"; fflush(NULL);
 
 // ---------------------------------------------------------------
 // Tatico por aluno com horarios:
@@ -1598,6 +1595,27 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 	numVarsAnterior = num_vars;
 #endif
 		
+
+	timer.start();
+	num_vars += criaVariavelFolgaPrioridadeInf( campusId, P ); // fpi_{a,cp}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"fpi\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl; fflush(NULL);
+	numVarsAnterior = num_vars;
+#endif
+		
+
+	timer.start();
+	num_vars += criaVariavelFolgaPrioridadeSup( campusId, P ); // fps_{a,cp}
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_variaveis
+	std::cout << "numVars \"fps\": " << (num_vars - numVarsAnterior)  <<" "<<dif <<" sec" << std::endl; fflush(NULL);
+	numVarsAnterior = num_vars;
+#endif
 	
 
 	return num_vars;
@@ -2934,15 +2952,21 @@ int TaticoIntAlunoHor::criaVariavelTaticoFolgaDemandaDiscAluno( int campusId, in
 				if ( fixar ) lowerBound = 1.0;
 								
 				double coef = 0.0;
-
-				if ( problemData->parametros->funcao_objetivo == 0 )
+				if ( itAlDemanda->getPrioridade() > 1 )
 				{
-					coef = - 50 * disciplina->getTotalCreditos() * aluno->getOferta()->getReceita();
+					coef = 0.0; // para P2, quem controla o custo da folga de demanda são fpi e fps
 				}
-				else if ( problemData->parametros->funcao_objetivo == 1 )
+				else
 				{
-					coef = 10 * disciplina->getTotalCreditos() * cp->getCusto();
-			 	}
+					if ( problemData->parametros->funcao_objetivo == 0 )
+					{
+						coef = - 50 * disciplina->getTotalCreditos() * aluno->getOferta()->getReceita();
+					}
+					else if ( problemData->parametros->funcao_objetivo == 1 )
+					{
+						coef = 10 * disciplina->getTotalCreditos() * cp->getCusto();
+					}
+				}
 								
 				OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
 				( char * )v.toString().c_str() );
@@ -3361,6 +3385,166 @@ int TaticoIntAlunoHor::criaVariavelFolgaProibeCompartilhamento( int campusId, in
 
 
 
+// fpi_{a}
+// Só para P2 em diante
+int TaticoIntAlunoHor::criaVariavelFolgaPrioridadeInf( int campusId, int prior )
+{
+	int numVars = 0;
+
+	if ( prior < 2 )
+	{
+	   return numVars;
+	}
+
+	Campus *cp = problemData->refCampus[campusId];
+
+	// Para cada aluno do conjunto	
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != campusId )
+		{
+			continue;
+		}
+
+		VariableTatInt v;
+		v.reset();
+		v.setType( VariableTatInt::V_SLACK_PRIOR_INF );
+		v.setAluno( aluno );
+		v.setCampus( cp );
+
+		if ( vHashTatico.find( v ) == vHashTatico.end() )
+		{
+			vHashTatico[v] = lp->getNumCols();					
+
+			double upperBound = 0.0;
+			int totalCreditos = 0;
+						 
+			double lowerBound = 0.0;
+							
+			ITERA_GGROUP_LESSPTR( itAlunoDem, aluno->demandas, AlunoDemanda )
+			{
+				if ( itAlunoDem->getPrioridade() != prior )
+					continue;
+
+				int nCreds = itAlunoDem->demanda->disciplina->getTotalCreditos();
+				int tempo = itAlunoDem->demanda->disciplina->getTempoCredSemanaLetiva();
+				totalCreditos += nCreds;
+
+				upperBound += nCreds*tempo;
+			}
+			
+			if ( upperBound == 0 ) // se não houver demanda de P2 para o aluno
+			{
+				continue;
+			}
+
+			double coef = 0.0;
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{
+				double custo = cp->getCusto();
+							 
+				coef = -50 * custo * totalCreditos;
+			}
+			else if ( problemData->parametros->funcao_objetivo == 1 )
+			{
+				double custo = cp->getCusto();
+
+				coef = 5 * custo * totalCreditos;
+			}	
+
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
+
+			lp->newCol( col );
+			numVars++;
+		}
+	}
+
+	return numVars;
+}
+
+// fps_{a}
+// Só para P2 em diante
+int TaticoIntAlunoHor::criaVariavelFolgaPrioridadeSup( int campusId, int prior )
+{
+	int numVars = 0;
+	
+	if ( prior < 2 )
+	{
+	   return numVars;
+	}
+
+	Campus *cp = problemData->refCampus[campusId];
+		
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != campusId )
+		{
+			continue;
+		}
+
+		VariableTatInt v;
+		v.reset();
+		v.setType( VariableTatInt::V_SLACK_PRIOR_SUP );
+		v.setAluno( aluno );
+		v.setCampus( cp );
+
+		if ( vHashTatico.find( v ) == vHashTatico.end() )
+		{
+			vHashTatico[v] = lp->getNumCols();
+				
+			double upperBound = 0.0;
+			int totalCreditos = 0;
+						 
+			double lowerBound = 0.0;
+
+			ITERA_GGROUP_LESSPTR( itAlunoDem, aluno->demandas, AlunoDemanda )
+			{
+				if ( itAlunoDem->getPrioridade() != prior )
+					continue;
+
+				int nCreds = itAlunoDem->demanda->disciplina->getTotalCreditos();
+				int tempo = itAlunoDem->demanda->disciplina->getTempoCredSemanaLetiva();
+				totalCreditos += nCreds;
+
+				upperBound += nCreds*tempo;
+			}
+
+			if ( upperBound == 0 ) // se não houver demanda de P2 para o aluno
+			{
+				continue;
+			}
+
+			double coef = 0.0;
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{
+				double custo = cp->getCusto();
+							 
+				coef = -60 * custo * totalCreditos;
+			}
+			else if ( problemData->parametros->funcao_objetivo == 1 )
+			{
+				double custo = cp->getCusto();
+
+				coef = 6 * custo * totalCreditos;
+			}	
+
+			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
+
+			lp->newCol( col );
+			numVars++;
+		}
+	}
+
+	return numVars;
+}
+
+
+
+
 /* ----------------------------------------------------------------------------------
 	
 							RESTRICOES TATICO POR ALUNO COM HORARIOS
@@ -3615,6 +3799,17 @@ int TaticoIntAlunoHor::criaRestricoesTatico( int campusId, int prioridade, int r
 
 #ifdef PRINT_cria_restricoes
 	std::cout << "numRest \"1.2.26\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
+	numRestAnterior = restricoes;
+#endif
+	
+
+  	timer.start();
+	restricoes += criaRestricaoPrioridadesDemanda( campusId, prioridade );	// Restricao 1.2.21
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest \"1.2.27\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
 	numRestAnterior = restricoes;
 #endif
 	
@@ -6226,4 +6421,114 @@ int TaticoIntAlunoHor::criaRestricaoTaticoAlunoCurso( int campusId )
    chgCoeffList( coeffList, coeffListVal );
 
    return restricoes;
+}
+
+// Restricao 1.21
+int TaticoIntAlunoHor::criaRestricaoPrioridadesDemanda( int campusId, int prior )
+{
+    int restricoes = 0;
+
+    if ( prior < 2 )
+	   return restricoes;
+
+    char name[ 200 ];
+    int nnz;
+
+    ConstraintTatInt c;
+    VariableTatInt v;
+    VariableTatIntHash::iterator it_v;   
+
+    Campus *campus = problemData->refCampus[campusId];
+
+	ITERA_GGROUP_LESSPTR( itAluno, problemData->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != campusId )
+		{
+			continue;
+		}
+
+		c.reset();
+		c.setType( ConstraintTatInt::C_ALUNO_PRIORIDADES_DEMANDA );
+		c.setAluno( aluno );
+		c.setCampus( campus );
+
+		sprintf( name, "%s", c.toString().c_str() ); 
+
+		if ( cHashTatico.find( c ) != cHashTatico.end() )
+		{
+			continue;
+		}
+
+		nnz = aluno->demandas.size()*3 + 2;
+		
+		double cargaHorariaNaoAtendida = problemData->cargaHorariaNaoAtendidaPorPrioridade( prior-1, aluno->getAlunoId() );		
+		double cargaHorariaP2 = problemData->cargaHorariaAtualRequeridaPorPrioridade( prior, aluno );
+
+		double rhs = cargaHorariaNaoAtendida;
+		if (rhs>cargaHorariaP2)
+			rhs=cargaHorariaP2;
+
+		OPT_ROW row( nnz, OPT_ROW::EQUAL , rhs, name );
+		
+		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			Disciplina *disciplina = itAlDemanda->demanda->disciplina;
+
+			if ( itAlDemanda->getPrioridade() != prior )
+				continue;
+
+			for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+			{
+				VariableTatInt v;
+				v.reset();
+				v.setType( VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC );
+				v.setAluno( aluno );
+				v.setDisciplina( disciplina );
+				v.setTurma( turma );
+				v.setCampus( campus );
+
+				it_v = vHashTatico.find( v );
+				if( it_v != vHashTatico.end() )
+				{
+					double tempo = disciplina->getTotalCreditos() * disciplina->getTempoCredSemanaLetiva();
+
+					row.insert( it_v->second, tempo );
+				}
+			}
+		}
+
+		VariableTatInt v;
+		v.reset();
+		v.setType( VariableTatInt::V_SLACK_PRIOR_INF );
+		v.setAluno( aluno );
+		v.setCampus( campus );
+		it_v = vHashTatico.find( v );
+		if( it_v != vHashTatico.end() )
+		{
+			row.insert( it_v->second, -1.0 );
+		}
+
+		v.reset();
+		v.setType( VariableTatInt::V_SLACK_PRIOR_SUP );
+		v.setAluno( aluno );
+		v.setCampus( campus );
+		it_v = vHashTatico.find( v );
+		if( it_v != vHashTatico.end() )
+		{
+			row.insert( it_v->second, 1.0 );
+		}
+
+
+		if ( row.getnnz() >= 3 )
+		{
+			cHashTatico[ c ] = lp->getNumRows();
+			lp->addRow( row );
+			restricoes++;
+		}
+	}
+
+	return restricoes;
+
 }

@@ -125,6 +125,38 @@ void ProblemData::le_arvore( TriedaInput & raiz )
 		   }
 	   }
 	   
+	   if ( !this->parametros->min_alunos_abertura_turmas )
+	   {
+		   // Removendo alunosDemanda replicados, caso existam
+
+		   GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > remover;
+		   ITERA_GGROUP_LESSPTR( itAlDemTotal, this->alunosDemandaTotal, AlunoDemanda )
+		   {
+			   int demId = itAlDemTotal->getDemandaId();
+			   int alunoId = itAlDemTotal->getAlunoId();
+			   int p = itAlDemTotal->getPrioridade();
+
+			   if ( p > 1 )
+			   {
+				   ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda ) // Só p1
+				   {
+					   if ( (*itAlDem)->getDemandaId() == demId && (*itAlDem)->getAlunoId() == alunoId ) 
+						  remover.add( *itAlDemTotal );
+				   }
+			   }
+		   }
+		   ITERA_GGROUP_LESSPTR( itAlDem, remover, AlunoDemanda )
+		   {
+			   this->alunosDemandaTotal.remove( *itAlDem );
+			   std::cout<<"\nAlunoDemanda replicado removido definitivamente: id " << (*itAlDem)->getId();
+		   }
+		   ITERA_GGROUP_LESSPTR( itAlDemTotal, this->alunosDemandaTotal, AlunoDemanda )
+		   {
+			   if ( remover.find(*itAlDemTotal) != remover.end() ) std::cout<<"\nERRO, alunoDemanda nao removido!!!\n";
+		   }
+		   std::cout<<endl;
+	   }
+
 	   // Filtrando demanda: referência somente para as que possuirem alunoDemanda associado
 	   // e ajustando a quantidade associada à demanda.
 	   ITERA_GGROUP_LESSPTR( itDem, this->demandasTotal, Demanda )
@@ -2393,10 +2425,29 @@ double ProblemData::cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId
 	return cargaHorariaNaoAtendida;
 }
 
-double ProblemData::cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno )
+double ProblemData::cargaHorariaOriginalRequeridaPorPrioridade( int prior, Aluno* aluno )
 {
 	double cargaHorariaP2 = 0.0;
 	ITERA_GGROUP_LESSPTR( itAlDemanda, alunosDemandaTotal, AlunoDemanda )
+	{
+		if ( itAlDemanda->getAlunoId() != aluno->getAlunoId() )
+			continue;
+
+		Disciplina *disciplina = itAlDemanda->demanda->disciplina;
+		if ( itAlDemanda->getPrioridade() == prior )
+		{
+			int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
+			int duracaoCred = itAlDemanda->demanda->disciplina->getTempoCredSemanaLetiva();
+			cargaHorariaP2 += nCreds*duracaoCred;
+		}
+	}
+	return cargaHorariaP2;
+}
+
+double ProblemData::cargaHorariaAtualRequeridaPorPrioridade( int prior, Aluno* aluno )
+{
+	double cargaHorariaP2 = 0.0;
+	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
 	{
 		if ( itAlDemanda->getAlunoId() != aluno->getAlunoId() )
 			continue;
@@ -2730,8 +2781,31 @@ bool ProblemData::possuiAlunoFormando( int turma, Disciplina *disciplina, Campus
 	}
 	return false;
 }
+   
+int ProblemData::getNroFormandos( int turma, Disciplina *disciplina, Campus *cp )
+{
+	int n = 0;
 
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+	trio.set( cp->getId(), turma, disciplina );
 
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, 
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator 
+		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
+
+	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
+	{
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMap->second;
+
+		ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
+		{
+			Aluno *aluno = this->retornaAluno( (*itAlDem)->getAlunoId() );
+			if ( aluno->ehFormando() )
+				n++;
+		}
+	}
+	return n;
+}
 
 bool ProblemData::haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId )
 {
@@ -2860,7 +2934,7 @@ void ProblemData::reduzNroTurmasPorDisciplina( int campusId, int prioridade )
 			for ( int turma=novoNroTurmas; turma<disciplina->getNumTurmas(); turma++ )
 			{
 				if ( turma_size[turma] > 0 )
-					novoNroTurmas = turma;
+					novoNroTurmas = turma+1;
 			}
 		}
 
@@ -2939,7 +3013,7 @@ void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int gru
 			
 			// Calcula a carga horária máxima que deve ser atendida de P2
 			double tempoAtendido = this->cargaHorariaJaAtendida( aluno );		
-			double tempoP1 = this->cargaHorariaRequeridaPorPrioridade( 1, aluno );
+			double tempoP1 = this->cargaHorariaOriginalRequeridaPorPrioridade( 1, aluno );
 			if ( tempoAtendido < tempoP1 )
 				continue;
 

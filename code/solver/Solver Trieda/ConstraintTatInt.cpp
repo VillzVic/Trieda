@@ -199,8 +199,6 @@ std::string ConstraintTatInt::toString()
 
    switch( type )
    {
-   case C_CARGA_HORARIA:
-      ss << "__(C_CARGA_HORARIA):"; break;
    case C_SALA_HORARIO:
       ss << "__(C_SALA_HORARIO):"; break;	  
    case C_UNICO_ATEND_TURMA_DISC_DIA:
@@ -245,7 +243,8 @@ std::string ConstraintTatInt::toString()
       ss << "__(C_ABRE_TURMAS_EM_SEQUENCIA):"; break;
 	case C_ALUNO_CURSO:
       ss << "__(C_ALUNO_CURSO):"; break;
-	  	  	  
+	case C_ALUNO_PRIORIDADES_DEMANDA:
+      ss << "__(C_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
 
    default:
       ss << "!";

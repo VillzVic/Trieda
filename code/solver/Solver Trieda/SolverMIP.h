@@ -167,14 +167,14 @@ public:
    // Usadas somente para o modelo Tatico-Aluno:
    int cria_preRestricao_atendimento_aluno( int campusId, int cjtAlunosId  );			 // Restricao 1.18
    int cria_preRestricao_aluno_unica_turma_disc( int campusId, int cjtAlunosId  );	 // Restricao 1.19
-   int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20
-   int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
+   int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20  
    int cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId, int prior); 
    int cria_preRestricao_turma_mesma_disc_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
    int cria_preRestricao_aluno_sala( int campusId, int cjtAlunosId  );
    int cria_preRestricao_formandos( int campusId, int cjtAlunosId, int prioridade, int r );
 
    // Só para p2 em diante
+   int cria_preRestricao_prioridadesDemanda( int campus, int prior, int cjtAlunosId  );// Restricao 1.21
    int cria_preRestricao_evita_sobrepos_turmas_mesmos_alunos( int campusId, int cjtAlunosId, int prioridade ); //nao precisa, pq tem cliques agora
    int cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtAlunosId, int prior  );
    int cria_preRestricao_maxCredsAlunoDia( int campusId, int cjtAlunosId, int prioridade );
@@ -277,6 +277,7 @@ public:
    int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
    int criaVariavelTaticoDesalocaAlunoDiaHor( int campusId, int P, int tatico );			// fad_{i,d,a,t,hi,hf}
    int criaVariavelTaticoDesalocaAluno( int campusId, int P, int tatico );					// fa_{i,d,a}
+   int criaVariavelTaticoFormandosNaTurma( int campusId, int P_ATUAL, int r, int tatico );	// f_{i,d,cp}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -313,6 +314,7 @@ public:
    int criaRestricaoTaticoSumDesalocaAluno( int campusId );
    int criaRestricaoTaticoGaranteMinAlunosTurma( int campusId, int r );
    int criaRestricaoTaticoDesalocaPT( int campusId, int r );
+   int criaRestricaoTaticoFormandos( int campusId, int prioridade, int r, int tatico );
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
      

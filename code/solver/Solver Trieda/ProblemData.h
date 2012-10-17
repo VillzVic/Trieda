@@ -467,7 +467,8 @@ public:
    bool verificaDisponibilidadeHorario( HorarioAula *horarioAula, int dia, Sala *sala, Professor *prof, Disciplina* disc );
 
    double cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId );
-   double cargaHorariaRequeridaPorPrioridade( int prior, Aluno* aluno );
+   double cargaHorariaOriginalRequeridaPorPrioridade( int prior, Aluno* aluno );
+   double cargaHorariaAtualRequeridaPorPrioridade( int prior, Aluno* aluno );
    double cargaHorariaJaAtendida( Aluno* aluno );
 
    int retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia );
@@ -478,6 +479,7 @@ public:
    bool haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
    int getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
    bool possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp );
+   int getNroFormandos( int turma, Disciplina *disciplina, Campus *cp );
 
    bool haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
    int getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );

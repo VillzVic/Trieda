@@ -34,7 +34,9 @@ public:
 	  V_ABERTURA_COMPATIVEL = 16,				// zc_{d,t}
 	  V_SLACK_COMPARTILHAMENTO = 17,			// fc_{i,d,c,c'}
 	  V_SLACK_ALUNO_VARIAS_UNID_DIA = 19,		// fu_{i1,d1,i2,d2,t,cp}
-	  V_ALUNO_DIA = 21							// du_{a,t}
+	  V_ALUNO_DIA = 21,							// du_{a,t}
+	  V_SLACK_PRIOR_INF = 22,					// fpi_{a,cp}
+	  V_SLACK_PRIOR_SUP = 23					// fps_{a,cp}
    };
 
    //Constructors

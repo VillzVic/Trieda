@@ -46,7 +46,9 @@ public:
 	  C_SUM_DESALOCA_ALUNOS_FOLGA_DEMANDA = 23,
 	  C_SUM_DESALOCA_ALUNO = 24,
 	  C_MIN_ALUNOS_TURMA = 25,
-	  C_DESALOCA_PT = 26
+	  C_DESALOCA_PT = 26,
+	  C_FORMANDOS1 = 27,
+	  C_FORMANDOS2 = 28
    };
 
    /** Default constructor. */

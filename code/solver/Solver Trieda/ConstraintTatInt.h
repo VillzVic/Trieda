@@ -19,7 +19,6 @@ public:
    enum ConstraintType
    {
       C_ERROR = 0,
-      C_CARGA_HORARIA = 1,							// Restricao 1.2.2
 	  C_SALA_HORARIO = 2,							// Restricao 1.2.3
 	  C_UNICO_ATEND_TURMA_DISC_DIA = 3,				// Restricao 1.2.4
 	  C_DEMANDA_DISC_ALUNO = 4,						// Restricao 1.2.5	  
@@ -42,7 +41,8 @@ public:
 	  C_SALA_TURMA = 24,
 	  C_ASSOCIA_S_V = 25,
 	  C_ABRE_TURMAS_EM_SEQUENCIA = 26,
-	  C_ALUNO_CURSO = 27
+	  C_ALUNO_CURSO = 27,
+	  C_ALUNO_PRIORIDADES_DEMANDA = 28
    };
 
    /** Default constructor. */
