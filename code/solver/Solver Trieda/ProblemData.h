@@ -480,6 +480,7 @@ public:
    int getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
    bool possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp );
    int getNroFormandos( int turma, Disciplina *disciplina, Campus *cp );
+   bool haAlunoFormandoNaoAlocado( Disciplina *disciplina, Campus *cp, int prioridadeAtual );
 
    bool haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
    int getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );

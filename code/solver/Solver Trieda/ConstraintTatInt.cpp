@@ -200,55 +200,55 @@ std::string ConstraintTatInt::toString()
    switch( type )
    {
    case C_SALA_HORARIO:
-      ss << "__(C_SALA_HORARIO):"; break;	  
+      ss << "__(C_INT_SALA_HORARIO):"; break;	  
    case C_UNICO_ATEND_TURMA_DISC_DIA:
-      ss << "__(C_UNICO_ATEND_TURMA_DISC_DIA):"; break;
+      ss << "__(C_INT_UNICO_ATEND_TURMA_DISC_DIA):"; break;
    case C_PROIBE_COMPARTILHAMENTO:
-      ss << "__(C_PROIBE_COMPARTILHAMENTO):"; break;
+      ss << "__(C_INT_PROIBE_COMPARTILHAMENTO):"; break;
    case C_TURMA_DISC_DIAS_CONSEC:
-      ss << "__(C_TURMAS_DISC_DIAS_CONSEC):"; break;	  
+      ss << "__(C_INT_TURMAS_DISC_DIAS_CONSEC):"; break;	  
    case C_MIN_ALUNOS_TURMA:
-      ss << "__(C_MIN_ALUNOS_TURMA):"; break;
+      ss << "__(C_INT_MIN_ALUNOS_TURMA):"; break;
    case C_DIVISAO_CREDITO:
-      ss << "__(C_DIVISAO_CREDITO):"; break;	  
+      ss << "__(C_INT_DIVISAO_CREDITO):"; break;	  
    case C_COMBINACAO_DIVISAO_CREDITO:
-      ss << "__(C_COMBINACAO_DIVISAO_CREDITO):"; break;	  
+      ss << "__(C_INT_COMBINACAO_DIVISAO_CREDITO):"; break;	  
    case C_VAR_ZC:
-      ss << "__(C_VAR_ZC):"; break;	  
+      ss << "__(C_INT_VAR_ZC):"; break;	  
    case C_DISC_INCOMPATIVEIS:
-      ss << "__(C_DISC_INCOMPATIVEIS):"; break;	   
+      ss << "__(C_INT_DISC_INCOMPATIVEIS):"; break;	   
    case C_ALUNO_HORARIO:
-      ss << "__(C_ALUNO_HORARIO):"; break;	  	  
+      ss << "__(C_INT_ALUNO_HORARIO):"; break;	  	  
    case C_ALUNO_VARIAS_UNIDADES_DIA:
-      ss << "__(C_ALUNO_VARIAS_UNIDADES_DIA):"; break;	  
+      ss << "__(C_INT_ALUNO_VARIAS_UNIDADES_DIA):"; break;	  
    case C_ALUNO_DISC_PRATICA_TEORICA:
-      ss << "__(C_ALUNO_DISC_PRATICA_TEORICA):"; break;	  
+      ss << "__(C_INT_ALUNO_DISC_PRATICA_TEORICA):"; break;	  
    case C_DISC_PRATICA_TEORICA:
-      ss << "__(C_DISC_PRATICA_TEORICA):"; break;	  
+      ss << "__(C_INT_DISC_PRATICA_TEORICA):"; break;	  
    case C_MIN_DIAS_ALUNO:
-      ss << "__(C_MIN_DIAS_ALUNO):"; break;	  
+      ss << "__(C_INT_MIN_DIAS_ALUNO):"; break;	  
    case C_MAX_DIAS_ALUNO:
-      ss << "__(C_MAX_DIAS_ALUNO):"; break;	  
+      ss << "__(C_INT_MAX_DIAS_ALUNO):"; break;	  
    case C_ASSOCIA_V_X:
-      ss << "__(C_ASSOCIA_V_X):"; break;	  
+      ss << "__(C_INT_ASSOCIA_V_X):"; break;	  
 	case C_DEMANDA_DISC_ALUNO:
-      ss << "__(C_DEMANDA_DISC_ALUNO):"; break;	  
+      ss << "__(C_INT_DEMANDA_DISC_ALUNO):"; break;	  
 	case C_SALA_UNICA:
-      ss << "__(C_SALA_UNICA):"; break;
+      ss << "__(C_INT_SALA_UNICA):"; break;
 	case C_SALA_TURMA:
-      ss << "__(C_SALA_TURMA):"; break;	  
+      ss << "__(C_INT_SALA_TURMA):"; break;	  
 	case C_ASSOCIA_S_V:
-      ss << "__(C_ASSOCIA_S_V):"; break; 
+      ss << "__(C_INT_ASSOCIA_S_V):"; break; 
 	case C_ABRE_TURMAS_EM_SEQUENCIA:
-      ss << "__(C_ABRE_TURMAS_EM_SEQUENCIA):"; break;
+      ss << "__(C_INT_ABRE_TURMAS_EM_SEQUENCIA):"; break;
 	case C_ALUNO_CURSO:
-      ss << "__(C_ALUNO_CURSO):"; break;
+      ss << "__(C_INT_ALUNO_CURSO):"; break;
 	case C_ALUNO_PRIORIDADES_DEMANDA:
-      ss << "__(C_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
+      ss << "__(C_INT_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
 	case C_FORMANDOS1:
-      ss << "__(C_FORMANDOS1):"; break;	  
+      ss << "__(C_INT_FORMANDOS1):"; break;	  
 	case C_FORMANDOS2:
-      ss << "__(C_FORMANDOS2):"; break;	    
+      ss << "__(C_INT_FORMANDOS2):"; break;	    
 
    default:
       ss << "!";

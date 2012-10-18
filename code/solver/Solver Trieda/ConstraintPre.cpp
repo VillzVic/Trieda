@@ -175,19 +175,19 @@ std::string ConstraintPre::toString()
    switch( type )
    {
    case C_PRE_CARGA_HORARIA:
-      ss << "__(CARGA_HORARIA):"; break;
+      ss << "__(C_PRE_CARGA_HORARIA):"; break;
    case C_PRE_MAX_CRED_SALA:
       ss << "__(C_PRE_MAX_CRED_SALA):"; break;
    case C_PRE_VAR_O:
       ss << "__(C_PRE_VAR_O):"; break;
    case C_EVITA_MUDANCA_DE_SALA:
-      ss << "__(C_EVITA_MUDANCA_DE_SALA):"; break;	  
+      ss << "__(C_PRE_EVITA_MUDANCA_DE_SALA):"; break;	  
    case C_PRE_CAP_ALOC_DEM_DISC:
       ss << "__(C_PRE_CAP_ALOC_DEM_DISC):"; break;
    case C_ALUNO_OFT_DISC:
-      ss << "__(C_ALUNO_OFT_DISC):"; break;
+      ss << "__(C_PRE_ALUNO_OFT_DISC):"; break;
    case C_CAP_SALA:
-      ss << "__(C_CAP_SALA):"; break;
+      ss << "__(C_PRE_CAP_SALA):"; break;
    case C_PRE_ALUNOS_CURSOS_INCOMP:
       ss << "__(C_PRE_ALUNOS_CURSOS_INCOMP):"; break;
    case C_PRE_PROIBE_COMPARTILHAMENTO:
@@ -211,13 +211,13 @@ std::string ConstraintPre::toString()
    case C_PRE_FIXA_NAO_COMPARTILHAMENTO:
       ss << "__(C_PRE_FIXA_NAO_COMPARTILHAMENTO):"; break;	 
    case C_ATENDIMENTO_ALUNO:
-      ss << "__(C_ATENDIMENTO_ALUNO):"; break;	 
+      ss << "__(C_PRE_ATENDIMENTO_ALUNO):"; break;	 
    case C_ALUNO_UNICA_TURMA_DISC:
-      ss << "__(C_ALUNO_UNICA_TURMA_DISC):"; break;	 
+      ss << "__(C_PRE_ALUNO_UNICA_TURMA_DISC):"; break;	 
    case C_ALUNO_DISC_PRATICA_TEORICA:
-      ss << "__(C_ALUNO_DISC_PRATICA_TEORICA):"; break;	    
+      ss << "__(C_PRE_ALUNO_DISC_PRATICA_TEORICA):"; break;	    
    case C_ALUNO_PRIORIDADES_DEMANDA:
-      ss << "__(C_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
+      ss << "__(C_PRE_ALUNO_PRIORIDADES_DEMANDA):"; break;	  
    case C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO:
       ss << "__(C_PRE_EVITA_SOBREPOS_SALA_DIA_ALUNO):"; break;	  
    case C_PRE_ATIVA_VAR_COMPART_TURMA:

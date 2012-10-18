@@ -6431,6 +6431,12 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 				valFO[nChgFO] = 1.0;
 				nChgFO++;
 			}
+			else if ( v.getType() == VariablePre::V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL )
+			{
+				idxFO[nChgFO] = vit->second;
+				valFO[nChgFO] = 0.1;
+				nChgFO++;
+			}
 			else
 			{
 				idxFO[nChgFO] = vit->second;
@@ -6513,7 +6519,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
       lp->updateLP();
 
       // ----------------------------------------
-	  // Função Obj só com variaveis w e as
+	  // Função Obj só com variaveis w, as, fpi, fps, ft
       vit = vHashPre.begin();
       nChgFO = 0;
 	  for ( ; vit != vHashPre.end(); vit++ )
@@ -6542,6 +6548,12 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 			{
 				idxFO[nChgFO] = vit->second;
 				valFO[nChgFO] = 0.25;
+				nChgFO++;
+			}
+			else if ( v.getType() == VariablePre::V_PRE_FOLGA_ABRE_TURMA_SEQUENCIAL )
+			{
+				idxFO[nChgFO] = vit->second;
+				valFO[nChgFO] = 0.1;
 				nChgFO++;
 			}
 			else
@@ -16880,6 +16892,12 @@ int SolverMIP::cria_preVariavel_formandosNaTurma( int campusId, int grupoAlunosI
 
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
+			 if ( !problemData->possuiAlunoFormando( turma, disciplina, cp ) &&
+				  !problemData->haAlunoFormandoNaoAlocado( disciplina, cp, P_ATUAL ) )
+			 {
+				 continue;
+			 }
+
             VariablePre v;
             v.reset();
             v.setType( VariablePre::V_PRE_FORMANDOS_NA_TURMA );

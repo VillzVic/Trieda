@@ -2180,6 +2180,9 @@ int TaticoIntAlunoHor::criaVariavelTaticoCursoAlunos( int campusId, int P )
 		  }
 		  #pragma endregion
 
+		  int n = problemData->haDemandaDiscNoCurso( disciplina->getId(), pt_Curso->getId() );
+		  if ( n <= 0 ) continue;
+
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
             VariableTatInt v;
@@ -3592,6 +3595,12 @@ int TaticoIntAlunoHor::criaVariavelTaticoFormandosNaTurma( int campusId, int pri
 		 
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
+			 if ( !problemData->possuiAlunoFormando( turma, disciplina, cp ) &&
+				  !problemData->haAlunoFormandoNaoAlocado( disciplina, cp, prior ) )
+			 {
+				 continue;
+			 }
+
 			 VariableTatInt v;
 			 v.reset();
 			 v.setType( VariableTatInt::V_FORMANDOS_NA_TURMA );
@@ -5303,7 +5312,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoAtivacaoVarZC( int campusId )
 				 row.insert( it_v->second, - disciplina->getNumTurmas() );
 			 }
 
-			 if ( row.getnnz() != 0 )
+			 if ( row.getnnz() > 1 )
 			 {
 				cHashTatico[ c ] = lp->getNumRows();
 

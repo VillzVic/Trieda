@@ -2807,6 +2807,36 @@ int ProblemData::getNroFormandos( int turma, Disciplina *disciplina, Campus *cp 
 	return n;
 }
 
+bool ProblemData::haAlunoFormandoNaoAlocado( Disciplina *disciplina, Campus *cp, int prioridadeAtual )
+{
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != cp->getId() )
+		{
+			continue;
+		}
+
+		if ( ! aluno->ehFormando() )
+			continue;
+
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			Disciplina *d = it1AlDemanda->demanda->disciplina;			
+
+			if ( it1AlDemanda->getPrioridade() <= prioridadeAtual )
+			if ( d == disciplina )
+			{
+				if ( this->retornaTurmaDiscAluno( aluno, d ) == -1 )
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool ProblemData::haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId )
 {
 	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDem = this->retornaDemandasDiscNoCampus( disciplina->getId(), campusId, prioridade );
