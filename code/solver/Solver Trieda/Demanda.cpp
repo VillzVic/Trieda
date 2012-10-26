@@ -41,15 +41,6 @@ bool Demanda::operator < ( const Demanda & right ) const
       return false;
    }
 
-   if ( quantidade < right.quantidade )
-   {
-      return true;
-   }
-   else if ( quantidade > right.quantidade )
-   {
-      return false;
-   }
-
    if ( disciplina_id < right.disciplina_id )
    {
       return true;
@@ -64,6 +55,15 @@ bool Demanda::operator < ( const Demanda & right ) const
       return true;
    }
    else if ( oferta_id > right.oferta_id )
+   {
+      return false;
+   }
+
+   if ( quantidade < right.quantidade )
+   {
+      return true;
+   }
+   else if ( quantidade > right.quantidade )
    {
       return false;
    }
@@ -82,15 +82,6 @@ bool Demanda::operator > ( const Demanda & right ) const
       return true;
    }
 
-   if ( quantidade < right.quantidade )
-   {
-      return false;
-   }
-   else if ( quantidade > right.quantidade )
-   {
-      return true;
-   }
-
    if ( disciplina_id < right.disciplina_id )
    {
       return false;
@@ -109,14 +100,21 @@ bool Demanda::operator > ( const Demanda & right ) const
       return true;
    }
 
+   if ( quantidade < right.quantidade )
+   {
+      return false;
+   }
+   else if ( quantidade > right.quantidade )
+   {
+      return true;
+   }
+
    return false;
 }
 
 bool Demanda::operator == ( const Demanda & right ) const
 {
-   return ( ( quantidade == right.quantidade )
-     && ( disciplina_id == right.disciplina_id )
-     && ( oferta_id == right.oferta_id ) );
+	return ( !( *this < right ) && !( right < *this ) );
 }
 
 bool Demanda::operator != ( const Demanda & right ) const

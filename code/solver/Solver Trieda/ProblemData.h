@@ -416,8 +416,8 @@ public:
    void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
    void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, std::map<int, double> diasNCreds );
    
-   void insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
-   void removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
+   void insereAlunoEmTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
+   void removeAlunoDeTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
 
    void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int tatico );
 
@@ -426,8 +426,12 @@ public:
    // Retorna a turma da disciplina disc na qual o aluno foi alocado.
    // Caso contrario, retorna -1
    int retornaTurmaDiscAluno( Aluno* aluno, Disciplina* disc );
-
+   
+   int retornaMaiorIdDemandas();
+   int retornaMaiorIdAlunoDemandas();
    AlunoDemanda* procuraAlunoDemanda( int discId, int alunoId );
+   AlunoDemanda* procuraAlunoDemanda( int discId, int alunoId, int prioridade );
+   AlunoDemanda* procuraAlunoDemandaEquiv( Disciplina* disc, Aluno *aluno, int prioridade );
 
    void atualizaDemandas( int novaPrioridade, int campusId );
    
@@ -456,6 +460,7 @@ public:
    int retornaCjtAlunosId( Aluno* aluno );
    int haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int cjtAlunosId );
    int haDemandaDiscNoCurso( int discId, int cursoId );
+   int haDemandaDiscNoCursoEquiv( Disciplina *disciplina, int cursoId );
    int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
    bool haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina );   
    int getQtdAlunoDemandaAtualPorCampus( int campusId );
@@ -489,6 +494,8 @@ public:
 
    void reduzNroTurmasPorDisciplina( int campusId, int prioridade );
    void removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId );
+
+   GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade );
 
    private:
    

@@ -44,7 +44,9 @@ public:
 	  C_ALUNO_CURSO = 27,
 	  C_ALUNO_PRIORIDADES_DEMANDA = 28,
 	  C_FORMANDOS1 = 29,
-	  C_FORMANDOS2 = 30
+	  C_FORMANDOS2 = 30,
+	  C_DEMANDA_EQUIV_ALUNO = 31,
+	  C_ALUNO_DISC_PRATICA_TEORICA_EQUIV = 32
    };
 
    /** Default constructor. */

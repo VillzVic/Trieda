@@ -7,6 +7,7 @@ AlunoDemanda::AlunoDemanda( void )
    this->demandaId = -1;
    this->alunoId = -1;
    this->prioridade = -1;
+   this->demandaOriginal = NULL;
 }
 
 AlunoDemanda::AlunoDemanda( int id, int alunoId, int prior, Demanda* demanda )
@@ -16,6 +17,7 @@ AlunoDemanda::AlunoDemanda( int id, int alunoId, int prior, Demanda* demanda )
    this->demandaId = demanda->getId();
    this->alunoId = alunoId;
    this->prioridade = prior;
+   this->demandaOriginal = NULL;
 }
 
 
@@ -25,6 +27,7 @@ AlunoDemanda::~AlunoDemanda( void )
    this->demanda = NULL;
    this->demandaId = -1;
    this->alunoId = -1;
+   this->demandaOriginal = NULL;
 }
 
 void AlunoDemanda::le_arvore( ItemAlunoDemanda & elem )
@@ -48,6 +51,12 @@ std::ostream & operator << (
 
    out << "<demandaId>" << alunoDemanda.demanda->getId()
 	    << "</demandaId>" << std::endl;
+
+   if ( alunoDemanda.demandaOriginal != NULL )
+   {
+	   out << "<demandaOriginalId>" << alunoDemanda.demandaOriginal->getId()
+			<< "</demandaOriginalId>" << std::endl;
+   }
 
    out << "<prioridade>" << alunoDemanda.getPrioridade()
 	    << "</prioridade>" << std::endl;

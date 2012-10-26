@@ -53,6 +53,7 @@ public:
    bool considerar_desempenho_prof;
    bool violar_min_alunos_turmas_formandos;
    bool utilizarDemandasP2;
+   bool considerar_equivalencia_por_aluno;
 
    virtual void le_arvore( ItemParametrosPlanejamento & );
 };

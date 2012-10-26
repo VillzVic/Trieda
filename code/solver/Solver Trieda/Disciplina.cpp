@@ -72,15 +72,6 @@ void Disciplina::le_arvore( ItemDisciplina & elem )
    }
 }
 
-// Informa se uma dada disciplina é equivalente à esta disciplina
-bool Disciplina::eh_equivalente( Disciplina * other )
-{
-	return (   ( this->getCredTeoricos() == other->getCredTeoricos() )
-			&& ( this->getCredPraticos() == other->getCredPraticos() )
-			&& ( this->eLab() == other->eLab() )
-			&& ( this->getTipoDisciplinaId() == other->getTipoDisciplinaId() ) );
-}
-
 int Disciplina::getMenorCapacSala( int campusId ) 
 {
 	if ( this->menorCapacSala.find( campusId ) != this->menorCapacSala.end()  )
@@ -109,4 +100,18 @@ int Disciplina::getTempoTotalSemana()
    }
 
    return tempoDisciplina;
+}
+
+int Disciplina::getMaxTempoDiscEquivSubstituta()
+{
+   int tempoMax = 0;
+   
+   ITERA_GGROUP_LESSPTR( it, discEquivSubstitutas, Disciplina )
+   {
+	   int t = (*it)->getTotalCreditos() * (*it)->getTempoCredSemanaLetiva();
+	   if ( t > tempoMax )
+		   tempoMax = t;
+   }
+
+   return tempoMax;
 }

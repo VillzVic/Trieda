@@ -1824,53 +1824,27 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 		 case VariableTatico::V_MAX_CRED_SEMANA: // H_{a}
 		 {
 			 Aluno *aluno = v->getAluno();
-
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC ); //s_{i,d,a,cp}
-			 preV.setAluno( aluno );
-			 		 	
-			 ITERA_GGROUP_LESSPTR( itCampi, problemData->campi, Campus )
+	
+			 if ( problemData->mapAluno_CampusTurmaDisc.find(aluno) !=
+				  problemData->mapAluno_CampusTurmaDisc.end() )
 			 {
-				 preV.setCampus( *itCampi );
-				 ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
-				 {
-					 Disciplina* d = (*itAlDemanda)->demanda->disciplina;
-					 preV.setDisciplina( d );
-				 
-					 for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
-					 {
-						preV.setTurma( turma );
-						if ( SolVarsPreFound( preV ) )
-							return true;
-					 }
-				 }
+				 if ( problemData->mapAluno_CampusTurmaDisc[aluno].size() > 0 )
+					return true;			
 			 }
+
 			 return false;
 		 }
 		 case VariableTatico::V_MIN_CRED_SEMANA: // h_{a}
 		 {
 			 Aluno *aluno = v->getAluno();
-
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC ); //s_{i,d,a,cp}
-			 preV.setAluno( aluno );
-			 		 	
-			 ITERA_GGROUP_LESSPTR( itCampi, problemData->campi, Campus )
+	
+			 if ( problemData->mapAluno_CampusTurmaDisc.find(aluno) !=
+				  problemData->mapAluno_CampusTurmaDisc.end() )
 			 {
-				 preV.setCampus( *itCampi );
-				 ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
-				 {
-					 Disciplina* d = itAlDemanda->demanda->disciplina;
-					 preV.setDisciplina( d );
-				 
-					 for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
-					 {
-						preV.setTurma( turma );
-						if ( SolVarsPreFound( preV ) )
-							return true;
-					 }						 
-				 }
+				 if ( problemData->mapAluno_CampusTurmaDisc[aluno].size() > 0 )
+					return true;			
 			 }
+
 			 return false;
 		 }
 		 case VariableTatico::V_ALUNO_UNID_DIA:// y_{a,u,t}
@@ -1878,35 +1852,32 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 			 Aluno *aluno = v->getAluno();
 			 Unidade *unid = v->getUnidade();
 			 Campus *cp = problemData->retornaCampus( unid->getId() );
-			 
-			 ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	
+			 if ( problemData->mapAluno_CampusTurmaDisc.find(aluno) !=
+				  problemData->mapAluno_CampusTurmaDisc.end() )
 			 {
-				 Disciplina* d = itAlDemanda->demanda->disciplina;
-				 				 
-				 for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
+				 GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >::iterator
+					 itTrio = problemData->mapAluno_CampusTurmaDisc[aluno].begin();
+
+				 for ( ; itTrio != problemData->mapAluno_CampusTurmaDisc[aluno].end(); itTrio++ )
 				 {
-					preV.reset();
-					preV.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC ); //s_{i,d,a,cp}
-					preV.setAluno( aluno );
-					preV.setTurma( turma );
-					preV.setDisciplina( d );
-					preV.setCampus( cp );
+					 if ( (*itTrio).first != cp->getId() ) continue;
 
-					if ( SolVarsPreFound( preV ) )
-					{
-						ITERA_GGROUP_LESSPTR( itCjtSala, unid->conjutoSalas, ConjuntoSala )
-						{
-							preV.reset();
-							preV.setType( VariablePre::V_PRE_CREDITOS ); //x_{i,d,u,s}
-							preV.setTurma( turma );
-							preV.setDisciplina( d );
-							preV.setUnidade( unid );
-							preV.setSubCjtSala( *itCjtSala );
+					 int turma = (*itTrio).second;
+					 Disciplina *disc = (*itTrio).third;
+					 
+					 ITERA_GGROUP_LESSPTR( itCjtSala, unid->conjutoSalas, ConjuntoSala )
+					 {
+						preV.reset();
+						preV.setType( VariablePre::V_PRE_CREDITOS ); //x_{i,d,u,s}
+						preV.setTurma( turma );
+						preV.setDisciplina( disc );
+						preV.setUnidade( unid );
+						preV.setSubCjtSala( *itCjtSala );
 
-							if ( SolVarsPreFound( preV ) )
-								return true;
-						}
-					}
+						if ( SolVarsPreFound( preV ) )
+							return true;
+					 }					
 				 }						 
 			 }
 			 return false;
@@ -2013,7 +1984,7 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 			 {
 				preV.setTurma( turma );
 				if	( SolVarsPreFound( preV ) )
-				return true;
+					return true;
 			 }
 			 
 			 return false;
@@ -2021,27 +1992,14 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 		 case VariableTatico::V_ALUNO_VARIAS_UNID_DIA: // w_{a,t}
 		 {
 			 Aluno *aluno = v->getAluno();
-
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC ); //s_{i,d,a,cp}
-			 preV.setAluno( aluno );
-
-			 ITERA_GGROUP_LESSPTR( itCampi, problemData->campi, Campus )
+	
+			 if ( problemData->mapAluno_CampusTurmaDisc.find(aluno) !=
+				  problemData->mapAluno_CampusTurmaDisc.end() )
 			 {
-				 preV.setCampus( *itCampi );
-				 ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
-				 {
-					 Disciplina* d = itAlDemanda->demanda->disciplina;
-					 preV.setDisciplina( d );
-				 
-					 for ( int turma = 0; turma < d->getNumTurmas(); turma++ )
-					 {
-						preV.setTurma( turma );
-						if ( SolVarsPreFound( preV ) )
-							return true;
-					 }						 
-				 }
+				 if ( problemData->mapAluno_CampusTurmaDisc[aluno].size() > 0 )
+					return true;			
 			 }
+
 			 return false;
 		 }
 		
@@ -3198,7 +3156,10 @@ void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 			if ( !repetido )
 			{
 				problemData->mapAluno_CampusTurmaDisc[ aluno ].add( trio );
-				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].add( alunoDemanda );
+
+				GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > ggroup = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ];
+				if ( ggroup.find( alunoDemanda ) == ggroup.end() )
+					problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].add( alunoDemanda );
 			}
 		}
 	}
@@ -3277,7 +3238,7 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 
 				Trio< int, int, Disciplina* > trio;
 				trio.set( campusId, turma, disciplina );
-				
+
 				problemData->mapAluno_CampusTurmaDisc[aluno].remove( trio );				
 				problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].remove( ad );
 				
@@ -5991,6 +5952,8 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 						}
 					}
 						   
+					statusTatico = ( statusTatico && statusPre );
+					
 					vHash.clear();
 					vHashTatico.clear();
 
@@ -6000,17 +5963,26 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 					if ( P==1 )
 					if ( problemData->listSlackDemandaAluno.size() != 0 )
 					{
-						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO );
+						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, false );
+						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );
+						delete solverTaticoInt;
+					}
+					// ==================================															
+					
+					if ( problemData->listSlackDemandaAluno.size() == 0 ) break;
+					
+					// ==================================
+					// MODELO INTEGRADO COM EQUIVALENCIAS
+					
+					if ( problemData->parametros->considerar_equivalencia_por_aluno )					
+					if ( problemData->listSlackDemandaAluno.size() != 0 )
+					{
+						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true );
 						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );
 						delete solverTaticoInt;
 					}
 					// ==================================
 
-										
-					statusTatico = ( statusTatico && statusPre );
-					
-					if ( problemData->listSlackDemandaAluno.size() == 0 ) break;
-					
 					/*
 					if (P==1)
 						heuristicaP1AlocaAlunos( campusId, P, grupoId );					
@@ -6030,13 +6002,12 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 					{
 						GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > >::iterator 
 							itAlDem=problemData->listSlackDemandaAluno.begin();
-						for ( ; itAlDem != problemData->listSlackDemandaAluno.end() ; )
+						while ( itAlDem != problemData->listSlackDemandaAluno.end() )
 						{
 							AlunoDemanda *ad = *itAlDem;
 							if ( ad->getPrioridade() == P )
 							{
-								problemData->listSlackDemandaAluno.remove( *itAlDem );
-								itAlDem = problemData->listSlackDemandaAluno.begin();
+								itAlDem = problemData->listSlackDemandaAluno.remove( *itAlDem );								
 							}
 							else
 								itAlDem++;
@@ -6068,7 +6039,7 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 #ifdef MODELO_INTEGRADO_P2
 				if ( problemData->listSlackDemandaAluno.size() != 0 )
 				{
-					TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO );
+					TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, false );
 					solverTaticoInt->solveTaticoIntegrado( campusId, P+1, 1 );
 					delete solverTaticoInt;
 				}
@@ -63169,7 +63140,7 @@ void SolverMIP::heuristica2AlocaAlunos( int campusId, int prioridade, int grupoA
 									}
 
 									std::cout<<"\nRemovendo aluno de turma";	fflush(NULL);							
-									problemData->removeAlunoDeTurma( aluno, trio1, horariosDias1 );
+									problemData->removeAlunoDeTurma( alDem1, trio1, horariosDias1 );
 
 									alunoDemandaAtendsHeuristica.remove( alDem1 );
 									ofstream heurisFile;
@@ -63579,7 +63550,7 @@ bool SolverMIP::heuristica2TentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int
 		std::cout<<"\nSolucao valida!!!";	fflush(NULL);
 
 		// Insere aluno na turma e atualiza o nro de creditos por dia alocados pro aluno
-		problemData->insereAlunoEmTurma( aluno, trio, horariosDias );	
+		problemData->insereAlunoEmTurma( alunoDemanda, trio, horariosDias );	
 		
 		alunoDemandaAtendsHeuristica.add( alunoDemanda );
 

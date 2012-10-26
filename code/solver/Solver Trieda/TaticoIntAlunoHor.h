@@ -46,7 +46,7 @@ public:
 	
 	TaticoIntAlunoHor::TaticoIntAlunoHor( ProblemData * aProblemData, 
 				GGroup< VariableTatico *, LessPtr<VariableTatico> > *aSolVarsTatico, 
-				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh, bool *endCARREGA_SOLUCAO );
+				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh, bool *endCARREGA_SOLUCAO, bool equiv );
 	virtual ~TaticoIntAlunoHor();
 
 
@@ -83,6 +83,7 @@ private:
    int criaVariavelFolgaPrioridadeInf( int campusId, int prior );							// fpi_{a,cp}
    int criaVariavelFolgaPrioridadeSup( int campusId, int prior );							// fps_{a,cp}
    int criaVariavelTaticoFormandosNaTurma( int campusId, int prior, int r );				// f_{i,d,cp}
+   int criaVariavelTaticoAlocaAlunoTurmaDiscEquiv( int campusId, int P );					// s_{i,d,a,cp}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -114,6 +115,8 @@ private:
    int criaRestricaoTaticoAlunoCurso( int campusId );
    int criaRestricaoPrioridadesDemanda( int campusId, int prior );
    int criaRestricaoTaticoFormandos( int campusId, int prioridade, int r );
+   int criaRestricaoTaticoAtendeAlunoEquiv( int campusId, int prioridade );
+   int criaRestricaoTaticoAlunoDiscPraticaTeoricaEquiv( int campusId, int prioridade );
 
    // The linear problem.	
    
@@ -136,7 +139,8 @@ private:
    bool FIXAR_TATICO_P1;
    bool PERMITIR_INSERCAO_ALUNODEMANDAP2_EM_TURMAP1;
    bool *CARREGA_SOLUCAO;
-   
+   bool USAR_EQUIVALENCIA;
+
     void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 	void calculaNroFolgas( int prioridade, int campusId );
 	std::string getTaticoLpFileName( int campusId, int prioridade, int r );
@@ -144,6 +148,7 @@ private:
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r );	
 	 	
 	void sincronizaSolucao( int campusAtualId, int prioridade, int r );
+	void addVariaveisTatico();
 	void carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtualId, int prioridade, int r );
 	int solveTaticoIntAlunoHor( int campusId, int prioridade, int r );
 	bool SolVarsFound( VariableTatico v );
@@ -162,6 +167,8 @@ private:
 	std::map< Disciplina*, int, LessPtr< Disciplina > > mapDiscNroFolgasDemandas;
 	inline int haFolgaDeAtendimento( Disciplina *disciplina ) { return this->mapDiscNroFolgasDemandas[disciplina]; }
 	bool permitirAbertura( int turma, Disciplina *disciplina, int campusId );
+
+	void atualizarDemandasEquiv( int campusId, int prioridade );
 };
 
 

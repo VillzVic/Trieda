@@ -19,7 +19,7 @@ public:
       V_ERROR = 0,
       V_CREDITOS = 1,							// x_{i,d,u,s,hi,hf,t}
       V_ABERTURA = 2,							// z_{i,d,cp}
-      V_DIAS_CONSECUTIVOS = 5,					// c_{i,d,t}
+      V_DIAS_CONSECUTIVOS = 5,					// c_{i,d,t,cp}
       V_SLACK_DEMANDA = 6,						// fd_{i,d,cp}
 	  V_MIN_CRED_SEMANA = 8,					// h_{a}
       V_MAX_CRED_SEMANA = 9,					// H_{a}

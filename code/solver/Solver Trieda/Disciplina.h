@@ -37,7 +37,9 @@ public:
    // Armazena os dias letivos em que a disciplina pode ser ministrada.
    GGroup< int > diasLetivos;
 
-   GGroup< Disciplina *, LessPtr< Disciplina > > discEquivalentes;
+   GGroup< Disciplina *, LessPtr< Disciplina > > discEquivSubstitutas; // possíveis de serem substitutas desta
+
+   GGroup< Disciplina *, LessPtr< Disciplina > > discEquivalentes; // substituídas por essa
    GGroup< Disciplina *, LessPtr< Disciplina > > discIncompativeis;
 
    void setDemandaTotal( int value ) { demanda_total = value; }
@@ -81,13 +83,12 @@ public:
 
    // tempo de duracao de 1 credito da disciplina. Obtido a partir da semana letiva a qual pertence a disciplina.
    double getTempoCredSemanaLetiva() const { return this->calendario->getTempoAula(); } 
-   
-   // Informa se uma dada disciplina é equivalente à esta disciplina
-   bool eh_equivalente( Disciplina * );
 
    int getTotalCreditos() const { return this->getCredTeoricos() + this->getCredPraticos(); }
 
    Disciplina* substituidaPor() const { return substituta; }
+   
+   int getMaxTempoDiscEquivSubstituta();
 
 private:
 	

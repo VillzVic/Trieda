@@ -598,6 +598,7 @@ void ProblemDataLoader::referenciaDisciplinasEquivalentesIncompativeis()
             {
                disc_equivalente = ( *it_disc_aux );
                disciplina->discEquivalentes.add( disc_equivalente );
+			   disc_equivalente->discEquivSubstitutas.add( disciplina );
                break;
             }
          }
@@ -1994,7 +1995,7 @@ void ProblemDataLoader::substituiDisciplinasEquivalentes()
 
 void ProblemDataLoader::atualizaOfertasDemandas()
 {
-    int id_demanda = retornaMaiorIdDemandas();
+    int id_demanda = problemData->retornaMaiorIdDemandas();
     id_demanda++;
 
     // A partir de cada demanda existente de disciplinas que
@@ -2015,37 +2016,6 @@ void ProblemDataLoader::atualizaOfertasDemandas()
 	}
 }
 
-// Retorna o maior id das demandas já cadastradas
-int ProblemDataLoader::retornaMaiorIdDemandas()
-{
-   int id_demanda = -1;
-
-   ITERA_GGROUP_LESSPTR( it_demanda, problemData->demandasTotal, Demanda )
-   {
-      if ( it_demanda->getId() > id_demanda )
-      {
-         id_demanda = it_demanda->getId();
-      }
-   }
-
-   return id_demanda;
-}
-
-// Retorna o maior id das demandas já cadastradas
-int ProblemDataLoader::retornaMaiorIdAlunoDemandas()
-{
-   int alDemId = -1;
-
-   ITERA_GGROUP_LESSPTR( it_alunoDemanda, problemData->alunosDemandaTotal, AlunoDemanda )
-   {
-      if ( it_alunoDemanda->getId() > alDemId )
-      {
-         alDemId = it_alunoDemanda->getId();
-      }
-   }
-
-   return alDemId;
-}
 
 
 void ProblemDataLoader::referenciaCursos_DiscCalendarios()
@@ -2530,10 +2500,10 @@ void ProblemDataLoader::divideDisciplinas()
 			  problemData->ehSubstituta( *it_disc ) )
 		 {
 			 // Procura pelo maior id de demanda já cadastrado
-			 int id = retornaMaiorIdDemandas();
+			 int id = problemData->retornaMaiorIdDemandas();
 
 			 // Procura pelo maior id de alunoDemanda já cadastrado
-			 int idAlDemanda = retornaMaiorIdAlunoDemandas();
+			 int idAlDemanda = problemData->retornaMaiorIdAlunoDemandas();
 
 			 // Adicionando os dados da nova disciplina em <Demanda>			  
 			 ITERA_GGROUP_LESSPTR( it_dem, problemData->demandasTotal, Demanda )
@@ -2632,7 +2602,8 @@ void ProblemDataLoader::divideDisciplinas()
    }
 
    // Equivalências para disciplinas praticas
-   relacionaEquivalenciasDisciplinasPraticas();
+   if ( problemData->parametros->considerar_equivalencia )
+	  relacionaEquivalenciasDisciplinasPraticas();
 
 
    // ---------

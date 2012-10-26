@@ -978,16 +978,10 @@ Demanda * ProblemData::buscaDemanda( int id_oferta, int id_disciplina )
    ITERA_GGROUP_LESSPTR( it_demanda,
      this->demandas, Demanda )
    {
-      demanda = ( *it_demanda );
-
-      if ( demanda == NULL )
+      if ( it_demanda->getOfertaId() == id_oferta
+         && it_demanda->getDisciplinaId() == id_disciplina )
       {
-         continue;
-      }
-
-      if ( demanda->getOfertaId() == id_oferta
-         && demanda->getDisciplinaId() == id_disciplina )
-      {
+		 demanda = ( *it_demanda );
          break;
       }
    }
@@ -1292,6 +1286,39 @@ HorarioDia* ProblemData::getHorarioDiaCorrespondente( HorarioAula *ha, int dia )
 	return NULL;
 }
 
+// Retorna o maior id das demandas já cadastradas
+int ProblemData::retornaMaiorIdDemandas()
+{
+   int id_demanda = -1;
+
+   ITERA_GGROUP_LESSPTR( it_demanda, this->demandasTotal, Demanda )
+   {
+      if ( it_demanda->getId() > id_demanda )
+      {
+         id_demanda = it_demanda->getId();
+      }
+   }
+
+   return id_demanda;
+}
+
+// Retorna o maior id das demandas já cadastradas
+int ProblemData::retornaMaiorIdAlunoDemandas()
+{
+   int alDemId = -1;
+
+   ITERA_GGROUP_LESSPTR( it_alunoDemanda, this->alunosDemandaTotal, AlunoDemanda )
+   {
+      if ( it_alunoDemanda->getId() > alDemId )
+      {
+         alDemId = it_alunoDemanda->getId();
+      }
+   }
+
+   return alDemId;
+}
+
+
 AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId )
 {
 	ITERA_GGROUP_LESSPTR( itAlDemanda, alunosDemandaTotal, AlunoDemanda )
@@ -1302,6 +1329,51 @@ AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId )
 			return *itAlDemanda;
 		}
 	}
+
+	return NULL;
+}
+
+AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId, int prioridade )
+{
+	ITERA_GGROUP_LESSPTR( itAlDemanda, alunosDemandaTotal, AlunoDemanda )
+	{
+		if ( itAlDemanda->demanda->getDisciplinaId() == discId &&
+			 itAlDemanda->getAlunoId() == alunoId &&
+			 itAlDemanda->getPrioridade() == prioridade )
+		{
+			return *itAlDemanda;
+		}
+	}
+
+	return NULL;
+}
+
+AlunoDemanda* ProblemData::procuraAlunoDemandaEquiv( Disciplina* disc, Aluno *aluno, int prioridade )
+{
+	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	{
+		if ( itAlDemanda->demanda->disciplina == disc &&
+			 itAlDemanda->getPrioridade() <= prioridade )
+		{
+			return *itAlDemanda;
+		}
+	}
+
+	// not found at first level, search deeper
+	
+	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+	{
+		if ( retornaTurmaDiscAluno( aluno, itAlDemanda->demanda->disciplina ) == -1 &&
+			 itAlDemanda->demanda->disciplina->discEquivSubstitutas.find( disc ) !=
+			 itAlDemanda->demanda->disciplina->discEquivSubstitutas.end() &&
+			 itAlDemanda->getPrioridade() <= prioridade )
+		{
+			return *itAlDemanda;
+		}
+	}
+
+	std::cout<<"\nProblemData::procuraAlunoDemandaEquiv: Demanda nao encontrada. Aluno "
+		<< aluno->getAlunoId() << " Disc " << disc->getId() << endl;
 
 	return NULL;
 }
@@ -1318,7 +1390,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 
 	// -----------------------------------------------------
 	// NAO-ATENDIMENTO de velhaPrioridade
-
+	
 	// Retira de alunosDemanda e de cada aluno todos os AlunosDemanda de velhaPrioridade que não foram atendidos
 	ITERA_GGROUP_LESSPTR( itAlDem, this->listSlackDemandaAluno, AlunoDemanda )
 	{
@@ -1335,7 +1407,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 
 		Aluno *a = retornaAluno( ad->getAlunoId() );
 		a->demandas.remove( ad );
-
+		
 	}
 
 	// Retira de alunosDemanda e de cada aluno todos os AlunosDemanda de velhaPrioridade que não foram TOTALMENTE atendidos
@@ -1365,28 +1437,16 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 			}
 		}
 	}
-
+	
 	// Retira de demandas todas as Demanda que não possuem mais alunos associados (quantidade = 0)
-	GGroup< Demanda*, LessPtr<Demanda> > remover;
-	GGroup< Demanda*, LessPtr<Demanda> > todas;
-	ITERA_GGROUP_LESSPTR( itDem, this->demandas, Demanda )
+	GGroup< Demanda *, LessPtr< Demanda > >::iterator itDem = this->demandas.begin();
+	while( itDem != this->demandas.end() )
 	{
 		if ( itDem->getQuantidade() == 0 )
 		{
-			remover.add( *itDem );
+			itDem = this->demandas.remove( (*itDem) );
 		}
-		todas.add( *itDem );
-	}
-
-	this->demandas.clear();
-
-	ITERA_GGROUP_LESSPTR( itDem, todas, Demanda )
-	{
-		GGroup< Demanda*, LessPtr<Demanda> >::iterator itRemover = remover.find( *itDem );
-		if ( itRemover == remover.end() )
-		{
-			this->demandas.add( *itDem );
-		}
+		else itDem++;
 	}
 	
 	// -----------------------------------------------------
@@ -1582,7 +1642,8 @@ bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId )
 	ITERA_GGROUP_LESSPTR ( itDem, this->demandas, Demanda )
 	{
 		if ( (*itDem)->getDisciplinaId() == disciplina &&
-			 (*itDem)->oferta->getCampusId() == campusId )
+			 (*itDem)->oferta->getCampusId() == campusId &&
+			 (*itDem)->getQuantidade() > 0 )
 		{
 			return true;
 		}
@@ -1607,6 +1668,50 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoC
 		{
 			if ( (*itAlDem)->demanda->getDisciplinaId() == disciplinaId &&				
 				(*itAlDem)->getPrioridade() <= prioridade )
+			{
+				alunosDemanda.add( *itAlDem );
+			}
+		}
+	}
+
+	return alunosDemanda;
+}
+
+/*
+	Pesquisa em demanda de cada aluno, ou seja, considerando no maximo a prioridade atual, olhando também pelas
+	disciplinas equivalentes caso o aluno não esteja alocado na disciplina original da demanda corrente.
+	Só retorna AlunoDemanda com disciplinaId sendo a original se este aluno já estiver alocado na disciplina. Se
+	não estiver, não permite novas tentativas de inserção, e sim tenta as equivalentes da original.
+*/
+GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade )
+{	
+	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alunosDemanda;
+
+	ITERA_GGROUP_LESSPTR ( itAl, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAl;
+		if ( aluno->getOferta()->getCampusId() != campusId )
+			continue;
+
+		ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda )
+		{
+			if ( (*itAlDem)->getPrioridade() > prioridade )
+				continue;
+
+			Disciplina *d = (*itAlDem)->demanda->disciplina;
+			int turmaAluno = this->retornaTurmaDiscAluno( aluno, d );				
+			if ( turmaAluno == -1 && d->getId()!=disciplinaId ) // aluno não alocado, procura disciplinaId nas equivalencias
+			{
+				ITERA_GGROUP_LESSPTR ( itDiscEq, d->discEquivSubstitutas, Disciplina )
+				{
+					if ( (*itDiscEq)->getId() == disciplinaId )
+					{
+						alunosDemanda.add( *itAlDem );
+						break;
+					}
+				}
+			}
+			else if ( turmaAluno != -1 && d->getId() == disciplinaId )
 			{
 				alunosDemanda.add( *itAlDem );
 			}
@@ -2030,7 +2135,7 @@ void ProblemData::criaCjtAlunos( int campusId, int prioridade, bool FIXAR_P1 )
 
 	  if ( itMapDiscCjt == this->cjtDisciplinas.end() )
 	  {
-		  std::cout<<"\nAtencao em cria_preRestricao_abre_turmas_em_sequencia: disciplina "
+		  std::cout<<"\nAtencao em criaCjtAlunos: disciplina "
 						<<disciplina->getId() <<" nao pertence a nenhum conjunto\n";
 	  }
 
@@ -2170,6 +2275,45 @@ int ProblemData::haDemandaDiscNoCurso( int discId, int cursoId )
 	}
 
 	return qtdDem;
+}
+
+int ProblemData::haDemandaDiscNoCursoEquiv( Disciplina *disciplina, int cursoId )
+{	
+	int n = 0;
+
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCursoId() != cursoId )
+		{
+			continue;
+		}
+
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			Disciplina *disc = it1AlDemanda->demanda->disciplina;
+			if ( disc == disciplina )
+			{
+				n++;
+			}
+			else
+			{
+				int turma = this->retornaTurmaDiscAluno( aluno, disc );
+				if ( turma == -1 )
+				{
+					if ( disc->discEquivSubstitutas.find( disciplina ) !=
+						 disc->discEquivSubstitutas.end() )
+					{
+						n++;
+					}
+				}
+			}
+				
+		}
+	}
+
+	return n;
 }
 
 bool ProblemData::haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina )
@@ -2365,44 +2509,37 @@ void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int 
 /*
 	Usado para a heuristica do modelo Tatico Com Horarios
 */
-void ProblemData::insereAlunoEmTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias )
+void ProblemData::insereAlunoEmTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias )
 {
-	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
-	if ( alDem != NULL )
+	if ( alunoDemanda != NULL )
 	{
+		Aluno *aluno = this->retornaAluno( alunoDemanda->getAlunoId() );
+		
 		this->mapAluno_CampusTurmaDisc[aluno].add( trio );
-		this->mapCampusTurmaDisc_AlunosDemanda[trio].add( alDem );
+		this->mapCampusTurmaDisc_AlunosDemanda[trio].add( alunoDemanda );
 
 		ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
 		{
 			aluno->addHorarioDiaOcupado( *itHorDia );
 		}
 	}	
-	else
-	{
-		std::cout<<"\nAtencao, erro em insereAlunoEmTurma: alunoDemanda nao encontrado. DiscId "
-			<< trio.third->getId() << " AlunoId " << aluno->getAlunoId() << endl;
-	}
+	else std::cout<<"\nAtencao, erro em insereAlunoEmTurma: alunoDemanda NULL\n";
 }
 
-void ProblemData::removeAlunoDeTurma( Aluno* aluno, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias )
+void ProblemData::removeAlunoDeTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias )
 {
-	AlunoDemanda *alDem = aluno->getAlunoDemanda( trio.third->getId() );
-	if ( alDem != NULL )
+	if ( alunoDemanda != NULL )
 	{	
+		Aluno *aluno = this->retornaAluno( alunoDemanda->getAlunoId() );
 		this->mapAluno_CampusTurmaDisc[aluno].remove( trio );
-		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDem );
+		this->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alunoDemanda );
 	
 		ITERA_GGROUP( itHorDia, horariosDias, HorarioDia )
 		{
 			aluno->removeHorarioDiaOcupado( *itHorDia );
 		}
 	}
-	else
-	{
-		std::cout<<"\nAtencao, erro em removeAlunoDeTurma: alunoDemanda nao encontrado. DiscId "
-			<< trio.third->getId() << " AlunoId " << aluno->getAlunoId() << endl;
-	}
+	else std::cout<<"\nAtencao, erro em removeAlunoDeTurma: alunoDemanda NULL\n";
 }
 
 
