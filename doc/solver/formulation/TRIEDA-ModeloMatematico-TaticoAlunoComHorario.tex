@@ -59,6 +59,8 @@ denotados por $s$.
 
 \item $Al$ - Conjunto de alunos. Os elementos desse conjunto são denotados por $a$.
 
+\item $Af$ - Conjunto de alunos formandos. Os elementos desse conjunto são denotados por $a$.
+
 \item $I_{d',s',t}$ - Conjunto de turmas da disciplina $d$ já alocadas na sala $s'$ no dia $t$. Só usado na iteração de prioridade 2
 em diante.
 
@@ -116,6 +118,7 @@ compartilha alunos com a turma $i$ da disciplina $d$.
 \item $ft_{i,d,cp}$ - usada somente em rodada de prioridade 2 em diante e caso haja fixação do resultado de prioridades
 anteriores. Variável binária de folga, usada na restrição de abertura sequencial de turmas. Assume o valor 1 caso exista uma turma
 $i'$ da disciplina $d$ alocada, com $i' > i$, sendo que $i$ não foi alocada.
+\item $f_{i,d,cp}$ - variável binária que indica se há aluno formando alocado na turma $i$ da disciplina $d$ do campus $cp$.
 
 \end{itemize}
 
@@ -323,16 +326,35 @@ b_{i,d,c} + b_{i,d,c'}\leq 1 \nonumber \qquad
 \end{eqnarray}
 
 
+
+\subsubsection{Formandos 1}
+
+\begin{eqnarray}
+M \cdot f_{i,d,cp} \ge \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP
+\end{eqnarray}
+
+
+\subsubsection{Formandos 2}
+
+\begin{eqnarray}
+f_{i,d,cp} \le \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP
+\end{eqnarray}
+
+
 \subsubsection{Limita a abertura de turmas}
 
 \begin{eqnarray}
-MinAlunos \cdot z_{i,d,cp} \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft}  \nonumber \qquad 
+MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft}  \nonumber \qquad 
 \forall cp \in CP \quad
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
-
-
 
 
 \subsubsection{Abertura sequencial de turmas}
