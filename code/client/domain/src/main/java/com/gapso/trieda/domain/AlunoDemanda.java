@@ -270,6 +270,21 @@ public class AlunoDemanda
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findAll(InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.cenario = :cenario ");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByDemanda(
@@ -448,5 +463,35 @@ public class AlunoDemanda
 		}
 
 		return alunosDemandaMap;
+	}
+	
+	public static Map<String,Integer[]> buildDemandaKeyToQtdAlunosMap(InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+		// [OfertaId-DisciplinaId -> {totalDemandaP1,totalDemandaP2,totalDemanda}]
+		Map<String,Integer[]> demandaKeyToQtdAlunosMap = new HashMap<String, Integer[]>();
+		
+		List<AlunoDemanda> alunosDemandas = AlunoDemanda.findAll(instituicaoEnsino,cenario);
+		
+		for (AlunoDemanda ad : alunosDemandas) {
+			// monta a chave da demanda
+			Long ofertaId = ad.getDemanda().getOferta().getId();
+			Long disciplinaId = ad.getDemanda().getDisciplina().getId();
+			String demandaId = ofertaId+"-"+disciplinaId;
+			
+			// atualiza map
+			Integer[] trio = demandaKeyToQtdAlunosMap.get(demandaId);
+			if (trio == null) {
+				trio = new Integer[]{0,0,0};
+				demandaKeyToQtdAlunosMap.put(demandaId,trio);
+			}
+			
+			if (ad.getPrioridade() == 1) {
+				trio[0]++;
+			} else {
+				trio[1]++;
+			}
+			trio[2]++;
+		}
+		
+		return demandaKeyToQtdAlunosMap;
 	}
 }

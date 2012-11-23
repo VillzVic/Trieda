@@ -82,8 +82,8 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 	protected boolean fillInExcel(HSSFWorkbook workbook){
 		return this.<List<AtendimentoServiceRelatorioResponse>>fillInExcelImpl(workbook);
 	}
-
-	public Set<Map<String,Object>> opcoesBuscaOperacional(Cenario cenario, Map<String,List<AtendimentoRelatorioDTO>> atendimentosMap) {
+	
+	protected List<AtendimentoRelatorioDTO> getAtendimentosRelatorioDTOFromCenario(Cenario cenario) {
 		Set<AtendimentoTatico> atendimentosTatico = cenario.getAtendimentosTaticos();//;AtendimentoTatico.findByCenario( this.instituicaoEnsino, cenario );
 		Set<AtendimentoOperacional> atendimentosOperacional = cenario.getAtendimentosOperacionais();//;AtendimentoOperacional.findByCenario( this.instituicaoEnsino, cenario );
 		
@@ -94,6 +94,12 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 		for (AtendimentoOperacional atdOperacional : atendimentosOperacional) {
 			atendimentos.add(ConvertBeans.toAtendimentoOperacionalDTO(atdOperacional));
 		}
+		
+		return atendimentos;
+	}
+
+	public Set<Map<String,Object>> opcoesBuscaOperacional(Cenario cenario, Map<String,List<AtendimentoRelatorioDTO>> atendimentosMap) {
+		List<AtendimentoRelatorioDTO> atendimentos = getAtendimentosRelatorioDTOFromCenario(cenario);
 
 		Set<Map<String,Object>> opcoes = new HashSet<Map<String,Object>>();
 		for (AtendimentoRelatorioDTO atendimentoRelatorio : atendimentos) {

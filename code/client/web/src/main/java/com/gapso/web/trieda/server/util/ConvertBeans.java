@@ -2038,6 +2038,7 @@ public class ConvertBeans {
 		dto.setSalaId(sala.getId());
 		dto.setSalaString(sala.getCodigo());
 		dto.setSemana(Semanas.toInt(domain.getSemana()));
+		dto.setDiaSemana( dto.getSemana() );
 		dto.setOfertaId(oferta.getId());
 		dto.setDisciplinaId(disciplina.getId());
 		dto.setDisciplinaString(disciplina.getCodigo());
@@ -2126,6 +2127,20 @@ public class ConvertBeans {
 //		dto.setQtdDemandaAlunosP1(totalDemandaP1);
 //		dto.setQtdDemandaAlunosP2(totalDemandaP2);
 //		dto.setQtdDemandaAlunosTotal(demanda.getQuantidade());
+
+		return dto;
+	}
+	
+	public static AtendimentoTaticoDTO toAtendimentoTaticoDTO(AtendimentoTatico domain, Map<String,Integer[]> demandaKeyToQtdAlunosMap) {
+		AtendimentoTaticoDTO dto = toAtendimentoTaticoDTO(domain);
+		
+		String demandaId = dto.getOfertaId()+"-"+dto.getDisciplinaId();
+		Integer[] trio = demandaKeyToQtdAlunosMap.get(demandaId);
+		if (trio != null) {
+			dto.setQtdDemandaAlunosP1(trio[0]);
+			dto.setQtdDemandaAlunosP2(trio[1]);
+			dto.setQtdDemandaAlunosTotal(trio[2]);			
+		}
 
 		return dto;
 	}
@@ -2264,7 +2279,7 @@ public class ConvertBeans {
 		HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
 		dto.setHorarioDisponivelCenarioId( hdc.getId() );
 		dto.setSemana( Semanas.toInt( hdc.getDiaSemana() ) );
-		dto.setDiaSemana( Semanas.toInt( hdc.getDiaSemana() ) );
+		dto.setDiaSemana( dto.getSemana() );
 
 		HorarioAula ha = hdc.getHorarioAula();
 		dto.setHorarioId( ha.getId() );
@@ -2374,6 +2389,20 @@ public class ConvertBeans {
 //		dto.setQtdDemandaAlunosP1(totalDemandaP1);
 //		dto.setQtdDemandaAlunosP2(totalDemandaP2);
 //		dto.setQtdDemandaAlunosTotal(demanda.getQuantidade());
+
+		return dto;
+	}
+	
+	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTO(AtendimentoOperacional domain, Map<String,Integer[]> demandaKeyToQtdAlunosMap) {
+		AtendimentoOperacionalDTO dto = toAtendimentoOperacionalDTO(domain);
+		
+		String demandaId = dto.getOfertaId()+"-"+dto.getDisciplinaId();
+		Integer[] trio = demandaKeyToQtdAlunosMap.get(demandaId);
+		if (trio != null) {
+			dto.setQtdDemandaAlunosP1(trio[0]);
+			dto.setQtdDemandaAlunosP2(trio[1]);
+			dto.setQtdDemandaAlunosTotal(trio[2]);			
+		}
 
 		return dto;
 	}

@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.web.util.HtmlUtils;
 
+import com.gapso.trieda.domain.AlunoDemanda;
+import com.gapso.trieda.domain.AtendimentoOperacional;
+import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -45,7 +50,6 @@ public class AulasExportExcel extends AbstractExportExcel {
 
 	private HSSFCellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
-	private int initialRow;
 
 	public AulasExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino) {
 		this(true,cenario,i18nConstants,i18nMessages,instituicaoEnsino);
@@ -56,7 +60,6 @@ public class AulasExportExcel extends AbstractExportExcel {
 
 		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.initialRow = 8;
 	}
 
 	@Override
@@ -78,14 +81,32 @@ public class AulasExportExcel extends AbstractExportExcel {
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
 		RelatorioVisaoCursoExportExcel visaoCursoExpExcel = new RelatorioVisaoCursoExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino) {
 			@Override
+			protected List<AtendimentoRelatorioDTO> getAtendimentosRelatorioDTOFromCenario(Cenario cenario) {
+				Set<AtendimentoTatico> atendimentosTatico = cenario.getAtendimentosTaticos();
+				Set<AtendimentoOperacional> atendimentosOperacional = cenario.getAtendimentosOperacionais();
+				
+				List<AtendimentoRelatorioDTO> atendimentos = new ArrayList<AtendimentoRelatorioDTO>(atendimentosTatico.size()+atendimentosOperacional.size());
+				if (!atendimentosTatico.isEmpty() || !atendimentosOperacional.isEmpty()) {
+					// [OfertaId-DisciplinaId -> {totalDemandaP1,totalDemandaP2,totalDemanda}]
+					Map<String,Integer[]> demandaKeyToQtdAlunosMap = AlunoDemanda.buildDemandaKeyToQtdAlunosMap(instituicaoEnsino,cenario);
+					for (AtendimentoTatico atdTatico : atendimentosTatico) {
+						atendimentos.add(ConvertBeans.toAtendimentoTaticoDTO(atdTatico,demandaKeyToQtdAlunosMap));
+					}
+					for (AtendimentoOperacional atdOperacional : atendimentosOperacional) {
+						atendimentos.add(ConvertBeans.toAtendimentoOperacionalDTO(atdOperacional,demandaKeyToQtdAlunosMap));
+					}
+				}				
+				
+				return atendimentos;
+			}
+
+			@Override
 			protected int writeHeader(List<List<ParDTO<String,?>>> rowsHeadersPairs, int row, boolean ehTatico) {
 				return row;
 			}
 			
 			@Override
 			protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria) {
-				int col = 2;
-				
 				// agrupa as aulas por dia da semana e coleta disciplinas
 				Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
 				for(AtendimentoRelatorioDTO aula : aulas){
@@ -99,8 +120,6 @@ public class AulasExportExcel extends AbstractExportExcel {
 
 				// para cada dia da semana, escreve as aulas no excel
 				for (Integer colunaGradeHoraria : colunaGradeHorariaToAulasMap.keySet()) {
-					Semanas diaSemana = Semanas.get(colunaGradeHoraria);
-					
 					List<AtendimentoRelatorioDTO> aulasDoDia = colunaGradeHorariaToAulasMap.get(colunaGradeHoraria);
 					if(aulasDoDia == null || aulasDoDia.isEmpty()) continue;
 
