@@ -32,6 +32,7 @@ public class ImportExcelFactory
 			case UNIDADES: importer = new UnidadesImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case SALAS: importer = new SalasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DEMANDAS: importer = new DemandasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case ALUNOS: importer = new AlunosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DEMANDAS_POR_ALUNO: importer = new AlunosDemandaImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case HABILITACAO_PROFESSORES: importer = new HabilitacoesProfessoresImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 		}

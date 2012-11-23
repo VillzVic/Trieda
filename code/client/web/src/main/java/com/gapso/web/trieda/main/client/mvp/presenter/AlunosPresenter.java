@@ -16,11 +16,16 @@ import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AlunosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.ExcelParametros;
+import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,11 +33,12 @@ import com.google.gwt.user.client.ui.Widget;
 public class AlunosPresenter
 	implements Presenter
 {
-	public interface Display
-	{
+	public interface Display extends ITriedaI18nGateway {
 		Button getNewButton();
 		Button getEditButton();
 		Button getRemoveButton();
+		Button getImportExcelButton();
+		Button getExportExcelButton();
 		TextField< String > getNomeBuscaTextField();
 		TextField< String > getMatriculaBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -132,6 +138,24 @@ public class AlunosPresenter
 						Info.display( "Removido", "Aluno(s) removido(s) com sucesso!" );
 					}
 				});
+			}
+		});
+		
+		this.display.getImportExcelButton().addSelectionListener(new SelectionListener< ButtonEvent >() {
+			@Override
+			public void componentSelected( ButtonEvent ce ) {
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO);
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(parametros,display.getGrid());
+				importExcelFormView.show();
+			}
+		});
+
+		this.display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected( ButtonEvent ce ) {
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO);
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(parametros,display.getI18nConstants(),display.getI18nMessages());
+				e.submit();
 			}
 		});
 

@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -25,6 +26,7 @@ public class AlunosFormPresenter
 	{
 		UniqueTextField getMatriculaTextField();
 		TextField< String > getNomeTextField();
+		CheckBox getFormandoCheckBox();
 		Button getSalvarButton();
 		AlunoDTO getAlunoDTO();
 		boolean isValid();
@@ -109,6 +111,7 @@ public class AlunosFormPresenter
 		alunoDTO.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		alunoDTO.setNome( this.display.getNomeTextField().getValue() );
 		alunoDTO.setMatricula( this.display.getMatriculaTextField().getValue() );
+		alunoDTO.setFormando( this.display.getFormandoCheckBox().getValue() );
 		alunoDTO.setCenarioId( this.cenarioDTO.getId() );
 
 		return alunoDTO;

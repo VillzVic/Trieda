@@ -13,6 +13,7 @@ import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
+import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -49,6 +50,7 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Dificuldades;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.xml.input.GrupoAlunoDemanda;
+import com.gapso.web.trieda.server.xml.input.GrupoAlunos;
 import com.gapso.web.trieda.server.xml.input.GrupoAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoCalendario;
 import com.gapso.web.trieda.server.xml.input.GrupoCampus;
@@ -78,6 +80,7 @@ import com.gapso.web.trieda.server.xml.input.GrupoTipoSala;
 import com.gapso.web.trieda.server.xml.input.GrupoTipoTitulacao;
 import com.gapso.web.trieda.server.xml.input.GrupoTurno;
 import com.gapso.web.trieda.server.xml.input.GrupoUnidade;
+import com.gapso.web.trieda.server.xml.input.ItemAluno;
 import com.gapso.web.trieda.server.xml.input.ItemAlunoDemanda;
 import com.gapso.web.trieda.server.xml.input.ItemAreaTitulacao;
 import com.gapso.web.trieda.server.xml.input.ItemAtendimentoCampusSolucao;
@@ -523,8 +526,8 @@ public class SolverInput
 		System.out.print("generateDemandas();");start = System.currentTimeMillis(); // TODO: retirar
 		generateDemandas();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-		System.out.print("generateAlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
-		generateAlunosDemanda();
+		System.out.print("generateAlunos_e_AlunosDemanda();");start = System.currentTimeMillis(); // TODO: retirar
+		generateAlunos_e_AlunosDemanda();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("generateParametrosPlanejamento();");start = System.currentTimeMillis(); // TODO: retirar
 		generateParametrosPlanejamento( tatico );
@@ -1690,12 +1693,16 @@ public class SolverInput
 		this.triedaInput.setDemandas( grupoDemanda );
 	}
 
-	private void generateAlunosDemanda() {
+	private void generateAlunos_e_AlunosDemanda() {
+		GrupoAlunos grupoAlunos = this.of.createGrupoAlunos();
 		GrupoAlunoDemanda grupoAlunosDemanda = this.of.createGrupoAlunoDemanda();
 
 		if(this.parametro.getOtimizarPor().equals(ParametroDTO.OTIMIZAR_POR_ALUNO)) {
-			List<AlunoDemanda> alunos = AlunoDemanda.findAll(this.instituicaoEnsino);
-			for (AlunoDemanda alunoDemanda : alunos) {
+			
+			// cria as demandas por aluno
+			Set<Aluno> alunos = new HashSet<Aluno>(); // armazena somente os alunos cuja alguma demanda será considerada na otimização
+			List<AlunoDemanda> alunosDemanda = AlunoDemanda.findAll(this.instituicaoEnsino);
+			for (AlunoDemanda alunoDemanda : alunosDemanda) {
 				boolean contemDemanda = this.demandasCampusTurno.contains(alunoDemanda.getDemanda());
 				boolean contemDisciplina = this.disciplinasComDemandaCurriculo.contains(alunoDemanda.getDemanda().getDisciplina());
 				if (!contemDemanda || !contemDisciplina) {
@@ -1707,19 +1714,33 @@ public class SolverInput
 				//   - de disciplinas do tipo "online";
 				//   - de disciplinas que possuam créditos (teóricos e práticos) zerados
 				if (alunoDemanda.getDemanda().ocupaGrade()) {
+					// armazena o aluno para criação posterior da lista de alunos
+					alunos.add(alunoDemanda.getAluno());
+					
 					ItemAlunoDemanda itemAlunoDemanda = this.of.createItemAlunoDemanda();
 		
 					itemAlunoDemanda.setId(alunoDemanda.getId().intValue());
 					itemAlunoDemanda.setAlunoId(alunoDemanda.getAluno().getId().intValue());
-					itemAlunoDemanda.setNomeAluno(alunoDemanda.getAluno().getNome());
 					itemAlunoDemanda.setDemandaId(alunoDemanda.getDemanda().getId().intValue());
 					itemAlunoDemanda.setPrioridade(alunoDemanda.getPrioridade());
 		
 					grupoAlunosDemanda.getAlunoDemanda().add(itemAlunoDemanda);
 				}
 			}
+			
+			// cria os alunos
+			for (Aluno aluno : alunos) {
+				ItemAluno itemAluno = this.of.createItemAluno();
+				
+				itemAluno.setAlunoId(aluno.getId().intValue());
+				itemAluno.setNomeAluno(aluno.getNome());
+				itemAluno.setFormando(aluno.getFormando());
+	
+				grupoAlunos.getAluno().add(itemAluno);
+			}
 		}
 
+		this.triedaInput.setAlunos( grupoAlunos );
 		this.triedaInput.setAlunosDemanda( grupoAlunosDemanda );
 	}
 
@@ -1820,6 +1841,9 @@ public class SolverInput
 
 		itemParametrosPlanejamento.setMinAlunosAberturaTurmasValor(
 			this.parametro.getMinAlunosParaAbrirTurmaValue() );
+		
+		itemParametrosPlanejamento.setViolarMinTurmasFormandos(
+				this.parametro.getViolarMinTurmasFormandos() );
 
 		itemParametrosPlanejamento.setNiveisDificuldadeHorario(
 			this.of.createGrupoNivelDificuldadeHorario() );
@@ -1899,6 +1923,8 @@ public class SolverInput
 			this.parametro.getLimitarMaximoDisciplinaProfessor() );
 
 		itemParametrosPlanejamento.setCustoProfDisponibilidade( false );
+		
+		itemParametrosPlanejamento.setUtilizarDemandasP2(this.parametro.getUtilizarDemandasP2());
 
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}

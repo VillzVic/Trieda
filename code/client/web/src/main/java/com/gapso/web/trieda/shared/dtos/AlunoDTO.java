@@ -9,8 +9,9 @@ public class AlunoDTO
 	// Propriedades
 	public static final String PROPERTY_ALUNO_ID = "alunoId";
 	public static final String PROPERTY_VERSION = "version";
-	public static final String PROPERTY_ALUNO_NOME = "alunoNome";
-	public static final String PROPERTY_ALUNO_MATRICULA = "alunoMatricula";
+	public static final String PROPERTY_ALUNO_NOME = "nome";
+	public static final String PROPERTY_ALUNO_MATRICULA = "matricula";
+	public static final String PROPERTY_ALUNO_FORMANDO = "formando";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	public AlunoDTO()
@@ -67,6 +68,16 @@ public class AlunoDTO
 	{
 		return get( PROPERTY_ALUNO_MATRICULA );
 	}
+	
+	public void setFormando( Boolean value )
+	{
+		set( PROPERTY_ALUNO_FORMANDO, value );
+	}
+
+	public Boolean getFormando()
+	{
+		return get( PROPERTY_ALUNO_FORMANDO );
+	}
 
 	@Override
 	public String getNaturalKey()
@@ -82,7 +93,7 @@ public class AlunoDTO
 
 		if ( result == 0 )
 		{
-			result = this.getNome().compareTo( o.getNome() );
+			result = this.getMatricula().compareTo( o.getMatricula() );
 		}
 
 		return result;

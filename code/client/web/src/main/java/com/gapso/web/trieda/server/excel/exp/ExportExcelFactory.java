@@ -23,6 +23,7 @@ public class ExportExcelFactory {
 
 		switch ( informationToBeExported )
 		{
+			case ALUNOS: exporter = new AlunosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case AREAS_TITULACAO: exporter = new AreasTitulacaoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case CAMPI: exporter = new CampiExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case CAMPI_TRABALHO: exporter = new CampiTrabalhoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;

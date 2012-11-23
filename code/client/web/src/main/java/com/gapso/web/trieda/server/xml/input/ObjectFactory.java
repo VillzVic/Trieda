@@ -179,6 +179,14 @@ public class ObjectFactory {
     public GrupoAlunoDemanda createGrupoAlunoDemanda() {
         return new GrupoAlunoDemanda();
     }
+    
+    /**
+     * Create an instance of {@link GrupoAlunos }
+     * 
+     */
+    public GrupoAlunos createGrupoAlunos() {
+        return new GrupoAlunos();
+    }
 
     /**
      * Create an instance of {@link GrupoFixacao }
@@ -602,6 +610,14 @@ public class ObjectFactory {
      */
     public ItemAtendimentoDiaSemanaSolucao createItemAtendimentoDiaSemanaSolucao() {
         return new ItemAtendimentoDiaSemanaSolucao();
+    }
+    
+    /**
+     * Create an instance of {@link ItemAluno }
+     * 
+     */
+    public ItemAluno createItemAluno() {
+        return new ItemAluno();
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -22,6 +23,7 @@ public class AlunosFormView
 	private FormPanel formPanel;
 	private UniqueTextField matriculaTF;
 	private TextField< String > nomeTF;
+	private CheckBox formandoCB;
 	private AlunoDTO alunoDTO;
 	private CenarioDTO cenarioDTO;
 
@@ -42,7 +44,7 @@ public class AlunosFormView
 		simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		simpleModal.setHeight( 138 );
+		simpleModal.setHeight( 160 );
 		createForm();
 		simpleModal.setContent( formPanel );
 	}
@@ -72,6 +74,12 @@ public class AlunosFormView
 		matriculaTF.setMaxLength( 50 );
 		matriculaTF.setEmptyText( "Preencha a matrícula" );
 		formPanel.add( matriculaTF, formData );
+		
+		formandoCB = new CheckBox();
+		formandoCB.setName(AlunoDTO.PROPERTY_ALUNO_FORMANDO);
+		formandoCB.setValue(alunoDTO.getFormando());
+		formandoCB.setFieldLabel("Formando?");
+		formPanel.add( formandoCB, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );
 		binding.addButton( simpleModal.getSalvarBt() );
@@ -112,5 +120,10 @@ public class AlunosFormView
 	public UniqueTextField getMatriculaTextField()
 	{
 		return matriculaTF;
+	}
+	
+	@Override
+	public CheckBox getFormandoCheckBox() {
+		return formandoCB;
 	}
 }

@@ -47,6 +47,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_CONSIDERAREQUIVALENCIA = "considerarEquivalencias";
 	public static final String PROPERTY_MINALUNOSPARAABRIRTURMA = "minalunosparaabrirturma";
 	public static final String PROPERTY_MINALUNOSPARAABRIRTURMAVALUE = "minalunosparaabrirturmavalue";
+	public static final String PROPERTY_VIOLARMINALUNOSPARAABRIRTURMAPARAFORMANDO = "violarMinAlunosAbrirTurmaParaFormandos";
 	public static final String PROPERTY_COMPARTILHARDISCIPLINASCAMPI = "compartilhardisciplinascampi";
 	public static final String PROPERTY_PERCENTUAISMINIMOSMESTRES = "percentuaisminimosmestres";
 	public static final String PROPERTY_PERCENTUAISMINIMOSDOUTORES = "percentuaisminimosdoutores";
@@ -55,6 +56,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_FUNCAOOBJETIVO = "funcaoObjetivo";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
+	public static final String PROPERTY_CONSIDERARDEMANDASDEPRIORIDADE2 = "considerarDemandasDePrioridade2";
 
 	public ParametroDTO() {
 		super();
@@ -221,6 +223,13 @@ public class ParametroDTO extends AbstractDTO<Long>
 		set(PROPERTY_MINALUNOSPARAABRIRTURMA, value);
 	}
 	
+	public Boolean getViolarMinAlunosAbrirTurmaParaFormandos() {
+		return get(PROPERTY_VIOLARMINALUNOSPARAABRIRTURMAPARAFORMANDO);
+	}
+	public void setViolarMinAlunosAbrirTurmaParaFormandos(Boolean value) {
+		set(PROPERTY_VIOLARMINALUNOSPARAABRIRTURMAPARAFORMANDO, value);
+	}
+	
 	public Boolean getConsiderarEquivalencia() {
 		return get(PROPERTY_CONSIDERAREQUIVALENCIA);
 	}
@@ -310,6 +319,13 @@ public class ParametroDTO extends AbstractDTO<Long>
 	}
 	public void setLimitarMaximoDisciplinaProfessor(Boolean value) {
 		set(PROPERTY_LIMITARMAXIMODISCIPLINAPROFESSOR, value);
+	}
+	
+	public Boolean getConsiderarDemandasDePrioridade2() {
+		return get(PROPERTY_CONSIDERARDEMANDASDEPRIORIDADE2);
+	}
+	public void setConsiderarDemandasDePrioridade2(Boolean value) {
+		set(PROPERTY_CONSIDERARDEMANDASDEPRIORIDADE2, value);
 	}
 
 	public String getCargaHorariaAlunoSel() {

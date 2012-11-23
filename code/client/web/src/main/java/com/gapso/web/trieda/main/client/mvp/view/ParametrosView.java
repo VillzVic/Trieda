@@ -76,11 +76,13 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox minimizarCustoDocenteCursosCheckBox;
 	private CheckBox minAlunosParaAbrirTurmaCheckBox;
 	private NumberField minAlunosParaAbrirTurmaValueNumberField;
+	private CheckBox violarMinAlunosAbrirTurmaParaFormandosCheckBox;
 	private CheckBox compartilharDisciplinasCampiCheckBox;
 	private CheckBox percentuaisMinimosMestresCheckBox;
 	private CheckBox percentuaisMinimosDoutoresCheckBox;
 	private CheckBox areaTitulacaoProfessoresECursosCheckBox;
 	private CheckBox limitarMaximoDisciplinaProfessorCheckBox;
+	private CheckBox considerarDemandasPrioridade2CheckBox;
 
 	private Button maximizarNotaAvaliacaoCorpoDocenteButton; 
 	private Button minimizarCustoDocenteCursosButton; 
@@ -124,6 +126,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private FieldSet criaParametrosPreferenciasInstituicaoEnsino() {
 		this.considerarEquivalenciaCheckBox = createCheckBox("Considerar Equivalências entre Disciplinas",this.parametroDTO.getConsiderarEquivalencia());
 		this.minAlunosParaAbrirTurmaCheckBox = createCheckBox("Número mínimo de alunos para abertura de turma",this.parametroDTO.getMinAlunosParaAbrirTurma());
+		this.violarMinAlunosAbrirTurmaParaFormandosCheckBox = createCheckBox("Desconsiderar mínimo de alunos para abertura de turma no caso de formandos",this.parametroDTO.getViolarMinAlunosAbrirTurmaParaFormandos());
 		this.nivelDificuldadeDisciplinaCheckBox = createCheckBox("Considerar nível de dificuldade de disciplinas",this.parametroDTO.getNivelDificuldadeDisciplina());
 		this.nivelDificuldadeDisciplinaCheckBox.disable();
 		this.compatibilidadeDisciplinasMesmoDiaCheckBox = createCheckBox("Considerar compatibilidade de disciplinas no mesmo dia",this.parametroDTO.getCompatibilidadeDisciplinasMesmoDia());
@@ -136,6 +139,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.percentuaisMinimosDoutoresCheckBox = createCheckBox("Considerar percentuais mínimos de doutores",this.parametroDTO.getPercentuaisMinimosDoutores());
 		this.areaTitulacaoProfessoresECursosCheckBox = createCheckBox("Considerar áreas de titulação dos professores e cursos",this.parametroDTO.getAreaTitulacaoProfessoresECursos());
 		this.limitarMaximoDisciplinaProfessorCheckBox = createCheckBox("Limitar máximo de disciplinas que um professor pode ministrar por curso",this.parametroDTO.getLimitarMaximoDisciplinaProfessor());
+		this.considerarDemandasPrioridade2CheckBox = createCheckBox("Considerar demandas de prioridade 2 para preencher não atendimentos de prioridade 1",this.parametroDTO.getConsiderarDemandasDePrioridade2());
 		
 		FormData formData = new FormData("100%");
 		
@@ -144,6 +148,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		LayoutContainer instituicaoLeft = new LayoutContainer(preferenciasInstituicaoEnsinoFormLayout);
 		instituicaoLeft.add(this.considerarEquivalenciaCheckBox,formData);
 		instituicaoLeft.add(this.minAlunosParaAbrirTurmaCheckBox,formData);
+		instituicaoLeft.add(this.violarMinAlunosAbrirTurmaParaFormandosCheckBox,formData);
 		instituicaoLeft.add(this.nivelDificuldadeDisciplinaCheckBox,formData);
 		instituicaoLeft.add(this.compatibilidadeDisciplinasMesmoDiaCheckBox,formData);
 		instituicaoLeft.add(this.regrasGenericasDivisaoCreditoCheckBox,formData);
@@ -155,6 +160,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoLeft.add(this.percentuaisMinimosDoutoresCheckBox,formData);
 		instituicaoLeft.add(this.areaTitulacaoProfessoresECursosCheckBox,formData);
 		instituicaoLeft.add(this.limitarMaximoDisciplinaProfessorCheckBox,formData);
+		instituicaoLeft.add(this.considerarDemandasPrioridade2CheckBox,formData);
 
 		this.minAlunosParaAbrirTurmaValueNumberField = new NumberField();
 		this.minAlunosParaAbrirTurmaValueNumberField.setEmptyText("Quantidade mínimo");
@@ -172,6 +178,9 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		label.setHeight(22);
 		instituicaoRight.add(label);
 		instituicaoRight.add(this.minAlunosParaAbrirTurmaValueNumberField);
+		label = new Label();
+		label.setHeight(22);
+		instituicaoRight.add(label);
 		instituicaoRight.add(dificuldadeButton);
 		instituicaoRight.add(createButton("Configurar compatibilidades"));
 		instituicaoRight.add(createButton("Configurar regras genéricas"));
@@ -181,7 +190,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoRight.add(this.maximizarNotaAvaliacaoCorpoDocenteButton);
 		instituicaoRight.add(this.minimizarCustoDocenteCursosButton);
 		instituicaoRight.add(this.compartilharDisciplinasCampiButton);
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			label = new Label();
 			label.setHeight(22);
 			instituicaoRight.add(label);
@@ -536,6 +545,11 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	{
 		return this.minAlunosParaAbrirTurmaValueNumberField;
 	}
+	
+	@Override
+	public CheckBox getViolarMinAlunosAbrirTurmaParaFormandosCheckBoxCheckBox() {
+		return this.violarMinAlunosAbrirTurmaParaFormandosCheckBox;
+	}
 
 	@Override
 	public CheckBox getCompartilharDisciplinasCampiCheckBox()
@@ -565,6 +579,11 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	public CheckBox getLimitarMaximoDisciplinaProfessorCheckBox()
 	{
 		return this.limitarMaximoDisciplinaProfessorCheckBox;
+	}
+	
+	@Override
+	public CheckBox getConsiderarDemandasPrioridade2CheckBox() {
+		return this.considerarDemandasPrioridade2CheckBox;
 	}
 
 	@Override

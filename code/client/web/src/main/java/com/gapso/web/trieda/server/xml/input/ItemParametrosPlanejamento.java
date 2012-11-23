@@ -69,6 +69,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="considerarEquivalencia" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="minAlunosAberturaTurmas" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="minAlunosAberturaTurmasValor" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="violarMinTurmasFormandos" type="{http://www.w3.org/2001/XMLSchema}boolean"/>         
  *         &lt;element name="niveisDificuldadeHorario" type="{}GrupoNivelDificuldadeHorario"/>
  *         &lt;element name="equilibrarDiversidadeDiscDia" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="regrasGenericasDivisaoCredito" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
@@ -84,6 +85,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="areaTitulacaoProfessorCurso" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="maximoDisciplinasDeUmProfessorPorCurso" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="custoProfDisponibilidade" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="utilizarDemandasP2" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -114,6 +116,7 @@ import javax.xml.bind.annotation.XmlType;
     "considerarEquivalencia",
     "minAlunosAberturaTurmas",
     "minAlunosAberturaTurmasValor",
+    "violarMinTurmasFormandos",
     "niveisDificuldadeHorario",
     "equilibrarDiversidadeDiscDia",
     "regrasGenericasDivisaoCredito",
@@ -128,7 +131,8 @@ import javax.xml.bind.annotation.XmlType;
     "percentuaisMinimoDoutores",
     "areaTitulacaoProfessorCurso",
     "maximoDisciplinasDeUmProfessorPorCurso",
-    "custoProfDisponibilidade"
+    "custoProfDisponibilidade",
+    "utilizarDemandasP2"
 })
 public class ItemParametrosPlanejamento {
 
@@ -156,6 +160,7 @@ public class ItemParametrosPlanejamento {
     protected boolean considerarEquivalencia;
     protected boolean minAlunosAberturaTurmas;
     protected Integer minAlunosAberturaTurmasValor;
+    protected boolean violarMinTurmasFormandos;
     @XmlElement(required = true)
     protected GrupoNivelDificuldadeHorario niveisDificuldadeHorario;
     protected boolean equilibrarDiversidadeDiscDia;
@@ -172,6 +177,7 @@ public class ItemParametrosPlanejamento {
     protected boolean areaTitulacaoProfessorCurso;
     protected boolean maximoDisciplinasDeUmProfessorPorCurso;
     protected boolean custoProfDisponibilidade;
+    protected boolean utilizarDemandasP2;
 
     /**
      * Gets the value of the modoOtimizacao property.
@@ -548,6 +554,22 @@ public class ItemParametrosPlanejamento {
     public void setMinAlunosAberturaTurmasValor(Integer value) {
         this.minAlunosAberturaTurmasValor = value;
     }
+    
+    /**
+     * Gets the value of the violarMinTurmasFormandos property.
+     * 
+     */
+    public boolean isViolarMinTurmasFormandos() {
+        return violarMinTurmasFormandos;
+    }
+
+    /**
+     * Sets the value of the violarMinTurmasFormandos property.
+     * 
+     */
+    public void setViolarMinTurmasFormandos(boolean value) {
+        this.violarMinTurmasFormandos = value;
+    }
 
     /**
      * Gets the value of the niveisDificuldadeHorario property.
@@ -819,6 +841,22 @@ public class ItemParametrosPlanejamento {
      */
     public void setCustoProfDisponibilidade(boolean value) {
         this.custoProfDisponibilidade = value;
+    }
+    
+    /**
+     * Gets the value of the utilizarDemandasP2 property.
+     * 
+     */
+    public boolean isUtilizarDemandasP2() {
+        return utilizarDemandasP2;
+    }
+
+    /**
+     * Sets the value of the utilizarDemandasP2 property.
+     * 
+     */
+    public void setUtilizarDemandasP2(boolean value) {
+        this.utilizarDemandasP2 = value;
     }
 
 

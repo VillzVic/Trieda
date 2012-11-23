@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -62,7 +63,7 @@ public class AlunosView
 	private void createToolBar()
 	{
 		this.toolBar = new SimpleToolBar(
-			true, true, true, false, false, this );
+			true, true, true, true, true, this );
 
 		this.panel.setTopComponent( this.toolBar );
 	}
@@ -83,7 +84,8 @@ public class AlunosView
 			= new ArrayList< ColumnConfig >();
 
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_NOME, "Nome", 400 ) );
-		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, "Matricula" , 150 ) );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, "Matrícula" , 150 ) );
+		list.add( new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_FORMANDO, "Formando?" , 100 ) );
 
 		return list;
 	}
@@ -123,6 +125,18 @@ public class AlunosView
 	public Button getRemoveButton()
 	{
 		return this.toolBar.getRemoveButton();
+	}
+	
+	@Override
+	public Button getImportExcelButton()
+	{
+		return this.toolBar.getImportExcelButton();
+	}
+
+	@Override
+	public Button getExportExcelButton()
+	{
+		return this.toolBar.getExportExcelButton();
 	}
 
 	@Override

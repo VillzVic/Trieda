@@ -76,11 +76,13 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getConsiderarEquivalenciaCheckBox();
 		NumberField getMinAlunosParaAbrirTurmaValueNumberField();
 		CheckBox getMinAlunosParaAbrirTurmaCheckBox();
+		CheckBox getViolarMinAlunosAbrirTurmaParaFormandosCheckBoxCheckBox();
 		CheckBox getCompartilharDisciplinasCampiCheckBox();
 		CheckBox getPercentuaisMinimosMestresCheckBox();
 		CheckBox getPercentuaisMinimosDoutoresCheckBox();
 		CheckBox getAreaTitulacaoProfessoresECursosCheckBox();
 		CheckBox getLimitarMaximoDisciplinaProfessorCheckBox();
+		CheckBox getConsiderarDemandasPrioridade2CheckBox();
 		FuncaoObjetivoComboBox getFuncaoObjetivoComboBox();
 		Button getMaximizarNotaAvaliacaoCorpoDocenteButton();
 		Button getMinimizarCustoDocenteCursosButton();
@@ -273,6 +275,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setMaximizarNotaAvaliacaoCorpoDocente(this.display.getMaximizarNotaAvaliacaoCorpoDocenteCheckBox().getValue());
 		dto.setMinimizarCustoDocenteCursos(this.display.getMinimizarCustoDocenteCursosCheckBox().getValue());
 		dto.setMinAlunosParaAbrirTurma(this.display.getMinAlunosParaAbrirTurmaCheckBox().getValue());
+		dto.setViolarMinAlunosAbrirTurmaParaFormandos(this.display.getViolarMinAlunosAbrirTurmaParaFormandosCheckBoxCheckBox().getValue());
 
 		Number minAlunosParaAbrirTurmaValue = this.display.getMinAlunosParaAbrirTurmaValueNumberField().getValue();
 		if (minAlunosParaAbrirTurmaValue == null) {
@@ -285,6 +288,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setPercentuaisMinimosDoutores(this.display.getPercentuaisMinimosDoutoresCheckBox().getValue());
 		dto.setAreaTitulacaoProfessoresECursos(this.display.getAreaTitulacaoProfessoresECursosCheckBox().getValue());
 		dto.setLimitarMaximoDisciplinaProfessor(this.display.getLimitarMaximoDisciplinaProfessorCheckBox().getValue());
+		dto.setConsiderarDemandasDePrioridade2(this.display.getConsiderarDemandasPrioridade2CheckBox().getValue());
 
 		return dto;
 	}

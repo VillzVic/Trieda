@@ -2880,6 +2880,7 @@ public class ConvertBeans {
 		domain.setConsiderarEquivalencia( dto.getConsiderarEquivalencia() );
 		domain.setMinAlunosParaAbrirTurma( dto.getMinAlunosParaAbrirTurma() );
 		domain.setMinAlunosParaAbrirTurmaValue( dto.getMinAlunosParaAbrirTurmaValue() );
+		domain.setViolarMinTurmasFormandos( dto.getViolarMinAlunosAbrirTurmaParaFormandos() );
 		domain.setNivelDificuldadeDisciplina( dto.getNivelDificuldadeDisciplina() );
 		domain.setCompatibilidadeDisciplinasMesmoDia( dto.getCompatibilidadeDisciplinasMesmoDia() );
 		domain.setRegrasGenericasDivisaoCredito( dto.getRegrasGenericasDivisaoCredito() );
@@ -2891,6 +2892,7 @@ public class ConvertBeans {
 		domain.setPercentuaisMinimosDoutores( dto.getPercentuaisMinimosDoutores() );
 		domain.setAreaTitulacaoProfessoresECursos( dto.getAreaTitulacaoProfessoresECursos() );
 		domain.setLimitarMaximoDisciplinaProfessor( dto.getLimitarMaximoDisciplinaProfessor() );
+		domain.setUtilizarDemandasP2( dto.getConsiderarDemandasDePrioridade2() );
 		domain.setCargaHorariaAlunoSel( dto.getCargaHorariaAlunoSel() );
 		domain.setCargaHorariaProfessorSel( dto.getCargaHorariaProfessorSel() );
 		domain.setFuncaoObjetivo( dto.getFuncaoObjetivo() );
@@ -2963,6 +2965,7 @@ public class ConvertBeans {
 		dto.setConsiderarEquivalencia( domain.getConsiderarEquivalencia() );
 		dto.setMinAlunosParaAbrirTurma( domain.getMinAlunosParaAbrirTurma() );
 		dto.setMinAlunosParaAbrirTurmaValue( domain.getMinAlunosParaAbrirTurmaValue() );
+		dto.setViolarMinAlunosAbrirTurmaParaFormandos( domain.getViolarMinTurmasFormandos() );
 		dto.setNivelDificuldadeDisciplina( domain.getNivelDificuldadeDisciplina() );
 		dto.setCompatibilidadeDisciplinasMesmoDia( domain.getCompatibilidadeDisciplinasMesmoDia() );
 		dto.setRegrasGenericasDivisaoCredito( domain.getRegrasGenericasDivisaoCredito() );
@@ -2974,6 +2977,7 @@ public class ConvertBeans {
 		dto.setPercentuaisMinimosDoutores( domain.getPercentuaisMinimosDoutores() );
 		dto.setAreaTitulacaoProfessoresECursos( domain.getAreaTitulacaoProfessoresECursos() );
 		dto.setLimitarMaximoDisciplinaProfessor( domain.getLimitarMaximoDisciplinaProfessor() );
+		dto.setConsiderarDemandasDePrioridade2( domain.getUtilizarDemandasP2() );
 		dto.setCargaHorariaAlunoSel( domain.getCargaHorariaAlunoSel() );
 		dto.setCargaHorariaProfessorSel( domain.getCargaHorariaProfessorSel() );
 		dto.setMinimizarDeslocamentoProfessorValue( domain.getMinimizarDeslocamentoProfessorValue() );
@@ -3216,6 +3220,7 @@ public class ConvertBeans {
 		domain.setVersion( dto.getVersion() );
 		domain.setNome( dto.getNome() );
 		domain.setMatricula( dto.getMatricula() );
+		domain.setFormando( dto.getFormando() );
 		domain.setCenario( cenario );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 
@@ -3230,6 +3235,7 @@ public class ConvertBeans {
 		dto.setNome( domain.getNome() );
 		dto.setVersion( domain.getVersion() );
 		dto.setMatricula( domain.getMatricula() );
+		dto.setFormando( domain.getFormando() );
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setDisplayText( domain.getNome() );
 

@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="cursos" type="{}GrupoCurso"/>
  *         &lt;element name="ofertaCursosCampi" type="{}GrupoOfertaCurso"/>
  *         &lt;element name="demandas" type="{}GrupoDemanda"/>
+ *         &lt;element name="alunos" type="{}GrupoAlunos"/>
  *         &lt;element name="alunosDemanda" type="{}GrupoAlunoDemanda"/>
  *         &lt;element name="parametrosPlanejamento" type="{}ItemParametrosPlanejamento"/>
  *         &lt;element name="fixacoes" type="{}GrupoFixacao"/>
@@ -71,6 +72,7 @@ import javax.xml.bind.annotation.XmlType;
     "cursos",
     "ofertaCursosCampi",
     "demandas",
+    "alunos",
     "alunosDemanda",
     "parametrosPlanejamento",
     "fixacoes",
@@ -111,6 +113,8 @@ public class TriedaInput {
     protected GrupoOfertaCurso ofertaCursosCampi;
     @XmlElement(required = true)
     protected GrupoDemanda demandas;
+    @XmlElement(required = true)
+    protected GrupoAlunos alunos;
     @XmlElement(required = true)
     protected GrupoAlunoDemanda alunosDemanda;
     @XmlElement(required = true)
@@ -501,6 +505,30 @@ public class TriedaInput {
      */
     public void setDemandas(GrupoDemanda value) {
         this.demandas = value;
+    }
+    
+    /**
+     * Gets the value of the alunos property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoAlunos }
+     *     
+     */
+    public GrupoAlunos getAlunos() {
+        return alunos;
+    }
+
+    /**
+     * Sets the value of the alunos property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoAlunos }
+     *     
+     */
+    public void setAlunos(GrupoAlunos value) {
+        this.alunos = value;
     }
 
     /**

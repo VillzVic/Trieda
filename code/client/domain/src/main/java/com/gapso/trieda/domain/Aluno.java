@@ -58,6 +58,10 @@ public class Aluno
 	@Column( name = "ALN_NOME" )
 	@Size( min = 3, max = 500 )
 	private String nome;
+	
+	@NotNull
+	@Column( name = "ALN_FORMANDO" )
+	private Boolean formando;
 
 	public String toString()
 	{
@@ -67,7 +71,8 @@ public class Aluno
 		sb.append( "Version: " ).append( getVersion() ).append( ", " );
 		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
 		sb.append( "Nome: " ).append( getNome() ).append( ", " );
-		sb.append( "Matricula: " ).append( getMatricula() );
+		sb.append( "Matricula: " ).append( getMatricula() ).append( ", " );
+		sb.append( "Formando: " ).append( getFormando() );
 
 		return sb.toString();
 	}
@@ -90,6 +95,16 @@ public class Aluno
 	public void setNome( String nome )
 	{
 		this.nome = nome;
+	}
+	
+	public Boolean getFormando()
+	{
+		return this.formando;
+	}
+
+	public void setFormando( Boolean formando )
+	{
+		this.formando = formando;
 	}
 
 	@PersistenceContext
@@ -316,6 +331,19 @@ public class Aluno
 
 		q.setParameter("campus", campus);
 		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List<Aluno> findByCenario(InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Aluno o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return q.getResultList();
 	}

@@ -179,6 +179,9 @@ public class Parametro
     private Boolean minAlunosParaAbrirTurma = false;
     @Column(name = "PAR_MINALUNTURMAVALUE")
     private Integer minAlunosParaAbrirTurmaValue;
+    // Permite a violação do mínimo de alunos para abertura de uma turma caso haja aluno formando alocado na turma
+    @Column(name = "PAR_VIOLAR_MIN_TURMAS_FORMANDOS")
+    private Boolean violarMinTurmasFormandos = true;
 
     //Considerar nível de dificuldade de disciplinas
     @Column(name = "PAR_NIVELDIFDISCI")
@@ -229,6 +232,10 @@ public class Parametro
     //Limitar máximo de disciplinas que um professor pode ministrar por curso
     @Column(name = "PAR_LIMMAXDISCPRO")
     private Boolean limitarMaximoDisciplinaProfessor = false;
+    
+    // Utiliza demandas de prioridade 2 caso não haja total atendimento das demandas de prioridade 1
+    @Column(name = "PAR_UTILIZAR_DEMANDAS_P2")
+    private Boolean utilizarDemandasP2 = true;
 
     @Column(name = "PAR_OTIMIZARPOR")
 	private String otimizarPor;
@@ -507,6 +514,13 @@ public class Parametro
 		this.minAlunosParaAbrirTurmaValue = minAlunosParaAbrirTurmaValue;
 	}
 	
+	public Boolean getViolarMinTurmasFormandos() {
+		return violarMinTurmasFormandos;
+	}
+	public void setViolarMinTurmasFormandos(Boolean violarMinTurmasFormandos) {
+		this.violarMinTurmasFormandos = violarMinTurmasFormandos;
+	}
+	
 	public Boolean getConsiderarEquivalencia() {
 		return considerarEquivalencia;
 	}
@@ -640,6 +654,13 @@ public class Parametro
 	}
 	public void setCursosDescompartDiscCampi(Set<CursoDescompartilha> cursosDescompartDiscCampi) {
 		this.cursosDescompartDiscCampi = cursosDescompartDiscCampi;
+	}
+	
+	public Boolean getUtilizarDemandasP2() {
+		return utilizarDemandasP2;
+	}
+	public void setUtilizarDemandasP2(Boolean utilizarDemandasP2) {
+		this.utilizarDemandasP2 = utilizarDemandasP2;
 	}
 	
 	public Set<Campus> getCampi() {

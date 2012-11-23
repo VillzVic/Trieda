@@ -10,23 +10,23 @@ package com.gapso.web.trieda.server.xml.input;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ItemAlunoDemanda complex type.
+ * <p>Java class for ItemAluno complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ItemAlunoDemanda">
+ * &lt;complexType name="ItemAluno">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="alunoId" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="demandaId" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="prioridade" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="nomeAluno" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="formando" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,34 +36,17 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ItemAlunoDemanda", propOrder = {
-    "id",
+@XmlType(name = "ItemAluno", propOrder = {
     "alunoId",
-    "demandaId",
-    "prioridade"
+    "nomeAluno",
+    "formando"
 })
-public class ItemAlunoDemanda {
+public class ItemAluno {
 
-    protected int id;
     protected int alunoId;
-    protected int demandaId;
-    protected int prioridade;
-
-    /**
-     * Gets the value of the id property.
-     * 
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Sets the value of the id property.
-     * 
-     */
-    public void setId(int value) {
-        this.id = value;
-    }
+    @XmlElement(required = true)
+    protected String nomeAluno;
+    protected boolean formando;
 
     /**
      * Gets the value of the alunoId property.
@@ -82,35 +65,42 @@ public class ItemAlunoDemanda {
     }
 
     /**
-     * Gets the value of the demandaId property.
+     * Gets the value of the nomeAluno property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public int getDemandaId() {
-        return demandaId;
+    public String getNomeAluno() {
+        return nomeAluno;
     }
 
     /**
-     * Sets the value of the demandaId property.
+     * Sets the value of the nomeAluno property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setDemandaId(int value) {
-        this.demandaId = value;
+    public void setNomeAluno(String value) {
+        this.nomeAluno = value;
     }
     
     /**
-     * Gets the value of the prioridade property.
+     * Gets the value of the formando property.
      * 
      */
-    public int getPrioridade() {
-        return prioridade;
+    public boolean isFormando() {
+        return formando;
     }
 
     /**
-     * Sets the value of the prioridade property.
+     * Sets the value of the Formando property.
      * 
      */
-    public void setPrioridade(int value) {
-        this.prioridade = value;
+    public void setFormando(boolean value) {
+        this.formando = value;
     }
-
 }

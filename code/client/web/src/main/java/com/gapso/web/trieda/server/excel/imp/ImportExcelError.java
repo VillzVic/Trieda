@@ -4,6 +4,11 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
 public enum ImportExcelError
 {
+	ALUNO_MATRICULA_VAZIO,
+	ALUNO_NOME_VAZIO,
+	ALUNO_FORMANDO_VAZIO,
+	ALUNO_FORMANDO_FORMATO_INVALIDO,
+	
 	ALUNO_DEMANDA_CAMPUS_VAZIO,
 	ALUNO_DEMANDA_CURSO_VAZIO,
 	ALUNO_DEMANDA_CURRICULO_VAZIO,
@@ -154,6 +159,11 @@ public enum ImportExcelError
 	{
 		switch ( this )
 		{
+			case ALUNO_MATRICULA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.MATRICULA_COLUMN_NAME );
+			case ALUNO_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.NOME_COLUMN_NAME );
+			case ALUNO_FORMANDO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,AlunosImportExcel.FORMANDO_COLUMN_NAME);
+			case ALUNO_FORMANDO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.FORMANDO_COLUMN_NAME );
+		
 			case ALUNO_DEMANDA_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CAMPUS_COLUMN_NAME );
 			case ALUNO_DEMANDA_CURSO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CURSO_COLUMN_NAME );
 			case ALUNO_DEMANDA_CURRICULO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CURRICULO_COLUMN_NAME );
