@@ -1318,7 +1318,7 @@ int ProblemData::retornaMaiorIdAlunoDemandas()
    return alDemId;
 }
 
-
+/*
 AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId )
 {
 	ITERA_GGROUP_LESSPTR( itAlDemanda, alunosDemandaTotal, AlunoDemanda )
@@ -1331,7 +1331,7 @@ AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId )
 	}
 
 	return NULL;
-}
+}*/
 
 AlunoDemanda* ProblemData::procuraAlunoDemanda( int discId, int alunoId, int prioridade )
 {
@@ -1409,7 +1409,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 		a->demandas.remove( ad );
 		
 	}
-
+	
 	// Retira de alunosDemanda e de cada aluno todos os AlunosDemanda de velhaPrioridade que não foram TOTALMENTE atendidos
 	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
 	{
@@ -1420,7 +1420,7 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 		if ( this->refDisciplinas.find( - discId ) !=
 			 this->refDisciplinas.end() )
 		{	
-			AlunoDemanda * ad = procuraAlunoDemanda( - discId, alunoId );
+			AlunoDemanda * ad = procuraAlunoDemanda( - discId, alunoId, itAlDem->getPrioridade() );
 
 			// Se não houve o atendimento completo de itAlDem (ad=NULL),
 			// então este deve ser retirado de alunosDemanda
@@ -2542,6 +2542,22 @@ void ProblemData::removeAlunoDeTurma( AlunoDemanda* alunoDemanda, Trio< int /*ca
 	else std::cout<<"\nAtencao, erro em removeAlunoDeTurma: alunoDemanda NULL\n";
 }
 
+int ProblemData::creditosNaoAtendidosPorPrioridade( int prior, int alunoId )
+{
+	double cargaHorariaNaoAtendida = 0.0;
+	ITERA_GGROUP_LESSPTR( itAlDemanda, this->listSlackDemandaAluno, AlunoDemanda )
+	{
+		if ( itAlDemanda->getPrioridade() != prior )
+			continue;
+
+		if ( itAlDemanda->getAlunoId() == alunoId )
+		{
+			int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
+			cargaHorariaNaoAtendida += nCreds;
+		}
+	}
+	return cargaHorariaNaoAtendida;
+}
 
 double ProblemData::cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId )
 {
@@ -2619,7 +2635,7 @@ double ProblemData::cargaHorariaJaAtendida( Aluno* aluno )
 	return cargaHoraria;
 }
 
-void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int tatico )
+void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico )
 {
 	int totalAtendimentos=0;
 	int totalAtendimentosSemDivPT=0;
@@ -2628,11 +2644,13 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	stringstream ssCp;
 	stringstream ssP;
 	stringstream ssCjt;
+	stringstream ssR;
 	stringstream ssTat;
 
 	ssCp << campusId;
 	ssP << prioridade;	
 	ssCjt << cjtAlunosId;
+	ssR << r;
 	ssTat << tatico;
 
 	// Alunos ------------------------------------------------------------
@@ -2648,6 +2666,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	alunosFilename += "_Cjt"; 
 	alunosFilename += ssCjt.str();
 	alunosFilename += "_R"; 
+	alunosFilename += ssR.str();
+	alunosFilename += "_T"; 
 	alunosFilename += ssTat.str();
 	alunosFilename += ".txt";
 		
@@ -2702,6 +2722,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	turmasFilename += "_Cjt"; 
 	turmasFilename += ssCjt.str();
 	turmasFilename += "_R"; 
+	turmasFilename += ssR.str();
+	turmasFilename += "_T"; 
 	turmasFilename += ssTat.str();
     turmasFilename += ".txt";
 	
@@ -3245,4 +3267,129 @@ void ProblemData::removeDemandasEmExcesso( int campusId, int prioridade, int gru
 	}
 
 	removeFile.close();
+}
+
+bool ProblemData::violaMinTurma( int campusId )
+{
+	bool viola=false;
+
+	if ( !this->parametros->min_alunos_abertura_turmas )
+		return false;
+
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
+		itMapTurmas = this->mapCampusTurmaDisc_AlunosDemanda.begin();
+
+	for ( ; itMapTurmas != this->mapCampusTurmaDisc_AlunosDemanda.end() ; itMapTurmas++ )
+	{		
+		int cp = itMapTurmas->first.first;
+		int turma = itMapTurmas->first.second;
+		int disc = itMapTurmas->first.third->getId();
+
+		if ( cp != campusId )
+			continue;
+		
+		int size = itMapTurmas->second.size();
+		if ( size >= this->parametros->min_alunos_abertura_turmas_value )
+			continue;
+
+		if ( !this->parametros->violar_min_alunos_turmas_formandos )
+		{
+			viola=true;
+			std::cout<<"\nErro:Turma "<<turma<<" Disc "<<disc
+				 <<" possui somente "<<size<<" alunos"; fflush(NULL); continue;
+		}
+		bool possuiFormando=false;
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMapTurmas->second;
+		ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
+		{
+			Aluno *aluno = this->retornaAluno( (*itAlDem)->getAlunoId() );
+			if ( aluno->ehFormando() )
+			{
+				possuiFormando=true; break;
+			}
+		}
+
+		if ( !possuiFormando )
+		{   viola=true;
+			std::cout<<"\nErro:Turma "<<turma<<" Disc "<<disc
+				<<" possui somente "<<size<<" alunos e sem formandos"; fflush(NULL); 
+		}
+	}
+
+	return viola;
+}
+
+bool ProblemData::violaMinTurma( Trio< int, int, Disciplina* > trio )
+{
+	if ( !this->parametros->min_alunos_abertura_turmas )
+		return false;
+
+	int cp = trio.first;
+	int turma = trio.second;
+	Disciplina *disc = trio.third;
+
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
+		itMapTurmas = this->mapCampusTurmaDisc_AlunosDemanda.find( trio );
+
+	if ( itMapTurmas != this->mapCampusTurmaDisc_AlunosDemanda.end() )
+	{				
+		int size = itMapTurmas->second.size();
+		if ( size >= this->parametros->min_alunos_abertura_turmas_value )
+			return false;
+
+		if ( !this->parametros->violar_min_alunos_turmas_formandos )
+		{
+			return true;
+		}
+
+		bool possuiFormando=false;
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMapTurmas->second;
+		ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
+		{
+			Aluno *aluno = this->retornaAluno( (*itAlDem)->getAlunoId() );
+			if ( aluno->ehFormando() )
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	std::cout<<"\nAtencao em  ProblemData::violaMinTurma( Trio< int, int, Disciplina* > trio ): trio nao encontrado!!\n";
+	return false;
+}
+
+   
+void ProblemData::imprimeFormandos()
+{
+	if ( this->parametros->otimizarPor != "ALUNO" )
+		return;
+
+	ofstream formandosFile;
+	std::string formandosFilename( "alunosFormandos.txt" );		
+	formandosFile.open(formandosFilename, ios::out);
+	if (!formandosFile)
+	{
+		cerr << "Error: Can't open output file " << formandosFilename << endl;
+		return;
+	}
+
+	int totalAlunos = 0, totalFormandos = 0;
+	
+	ITERA_GGROUP_LESSPTR( itAluno, alunos, Aluno )
+	{		
+		if ( itAluno->ehFormando() )
+		{
+			formandosFile << "\nAluno " << itAluno->getAlunoId() << "  " << itAluno->getNomeAluno();
+			totalFormandos++;
+		}
+				
+		totalAlunos++;
+	}
+	
+	formandosFile << "\n\nTotal de alunos: " << totalAlunos;
+	formandosFile << "\nTotal de formandos: " << totalFormandos;
+
+	formandosFile.close();
 }

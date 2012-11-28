@@ -27,6 +27,10 @@ void ProblemDataLoader::load()
    std::cout << "Extraindo dados..." << std::endl;
 
    problemData->le_arvore( *root );
+   
+   std::cout << "Imprime arquivo com alunos formandos..." << std::endl << std::endl;
+
+   problemData->imprimeFormandos();
 
    std::cout << "Pre-processamento..." << std::endl << std::endl;
 

@@ -14,6 +14,20 @@
 #include "SolverMIP.h"
 #include "ErrorHandler.h"
 
+
+//#define LEAK_MEMORY
+
+#ifdef LEAK_MEMORY
+#ifdef DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+#endif
+
+
 #ifndef PATH_SEPARATOR
 #ifdef WIN32
 #define PATH_SEPARATOR "\\"
@@ -165,9 +179,15 @@ int main( int argc, char** argv )
 		 outTestFile << "Solving..." <<endl;
 		 
 		 solver->solve();
-		 
-		 outTestFile << "Deleting solver and dataLoader..." <<endl;
+		 		 
+#ifdef LEAK_MEMORY
+#ifdef DEBUG
+		 _CrtDumpMemoryLeaks();
+#endif
+#endif
+		 outTestFile << "Deleting data, solver and dataLoader..." <<endl;
 
+		 delete data;
          delete solver;
          delete dataLoader;
       }

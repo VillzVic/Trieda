@@ -79,7 +79,7 @@ private:
    int criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int P );						// fu_{i1,d1,i2,d2,t,cp}
    int criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P );							// du_{a,t}
    int criaVariavelTaticoFolgaAbreTurmaSequencial( int campusId, int P );					// ft_{i,d,cp}
-   int criaVariavelFolgaProibeCompartilhamento( int campusId, int P );
+   int criaVariavelFolgaProibeCompartilhamento( int campusId, int P );						// fc_{i,d,c,c',cp}
    int criaVariavelFolgaPrioridadeInf( int campusId, int prior );							// fpi_{a,cp}
    int criaVariavelFolgaPrioridadeSup( int campusId, int prior );							// fps_{a,cp}
    int criaVariavelTaticoFormandosNaTurma( int campusId, int prior, int r );				// f_{i,d,cp}
@@ -146,7 +146,8 @@ private:
 	std::string getTaticoLpFileName( int campusId, int prioridade, int r );
 	std::string getSolBinFileName( int campusId, int prioridade, int r );	
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r );	
-	 	
+	std::string getEquivFileName( int campusId, int prioridade );
+
 	void sincronizaSolucao( int campusAtualId, int prioridade, int r );
 	void addVariaveisTatico();
 	void carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtualId, int prioridade, int r );

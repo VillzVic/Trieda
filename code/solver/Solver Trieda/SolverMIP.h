@@ -126,7 +126,7 @@ public:
 
    // Só para o modelo Tatico-Aluno:
    int cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, int grupoAlunosAtualId, int P_ATUAL );	// fd_{d,a}
-   int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL, int r );			// s_{i,d,a,cp}
+   int cria_preVariavel_aloca_aluno_turma_disc( int campusId, int grupoAlunosAtualId, int P_ATUAL, int r );		// s_{i,d,a,cp}
    int cria_preVariavel_folga_prioridade_inf( int campusId, int prior, int grupoAlunosAtualId );			// fpi_{a}
    int cria_preVariavel_folga_prioridade_sup( int campusId, int prior, int grupoAlunosAtualId );			// fps_{a}
    int cria_preVariavel_folga_abre_turma_sequencial( int campusId, int cjtAlunosId, int P_ATUAL, int r );	// ft_{i,d}
@@ -257,8 +257,8 @@ public:
    
    int criaVariaveisTatico( int campusId, int P, int r, int tatico );
 
-   int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
-   int criaVariavelTaticoAbertura( int campusId, int P );									// z_{i,d,cp}
+   int criaVariavelTaticoCreditos( int campusId, int P, int r );							// x_{i,d,u,s,hi,hf,t}      
+   int criaVariavelTaticoAbertura( int campusId, int P, int r );							// z_{i,d,cp}
    int criaVariavelTaticoConsecutivos( int campusId, int P );								// c_{i,d,t}
    int criaVariavelTaticoMinCreds( int campusId, int P );									// h_{a} // Não usada
    int criaVariavelTaticoMaxCreds( int campusId, int P );									// H_{a} // Não usada
@@ -268,7 +268,7 @@ public:
    int criaVariavelTaticoFolgaDistCredDiaInferior( int campusId, int P );					// fcm_{d,t}
    int criaVariavelTaticoAberturaCompativel( int campusId, int P );							// zc_{d,t}
 //   int criaVariavelTaticoFolgaDemandaDiscAluno( int campusId );					// fd_{d,a}   
-   int criaVariavelTaticoFolgaDemandaDisc( int campusId, int P );					// fd_{i,d,cp}
+   int criaVariavelTaticoFolgaDemandaDisc( int campusId, int P, int r );					// fd_{i,d,cp}
    int criaVariavelTaticoAlunoUnidDia( int campusId, int P );								// y_{a,u,t}  // Não usada
    int criaVariavelTaticoAlunoUnidadesDifDia( int campusId, int P );						// w_{a,t}	  // Não usada
 
@@ -285,35 +285,35 @@ public:
 
    int criaRestricoesTatico( int campusId, int prioridade, int r, int tatico );
 
-   int criaRestricaoTaticoCargaHoraria( int campusId );					// Restricao 1.2.2   
-   int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId );		// Restricao 1.2.3   
-   int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId ); // Restricao 1.2.4
+   int criaRestricaoTaticoCargaHoraria( int campusId, int prioridade, int r, int tatico );					// Restricao 1.2.2   
+   int criaRestricaoTaticoUsoDeSalaParaCadaHorario( int campusId, int prioridade, int r, int tatico );		// Restricao 1.2.3   
+   int criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId, int prioridade, int r, int tatico ); // Restricao 1.2.4
 //   int criaRestricaoTaticoAtendeDemandaAluno( int campusID );			// Restricao 1.2.5   
-   int criaRestricaoTaticoAtendeDemanda( int campusID );				// Restricao 1.2.5   
-   int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId );		    // Restricao 1.2.6
-   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade );		// Restricao 1.2.7 // Não está sendo mais usada. Inutil.
-   int criaRestricaoTaticoDivisaoCredito( int campusId );				// Restricao 1.2.8      
-   int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId );		// Restricao 1.2.9
-   int criaRestricaoTaticoAtivacaoVarZC( int campusId );				// Restricao 1.2.10
-   int criaRestricaoTaticoDisciplinasIncompativeis( int campusId );		// Restricao 1.2.11
-   int criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId );	// Restricao 1.2.12 // ou esta, ou a restrição abaixo. Esta sendo usada a de baixo.
-   int criaRestricaoTaticoAlunoHorario( int campusId );					// Restricao 1.2.12
-   int criaRestricaoTaticoAtivaY( int campusId );						// Restricao 1.2.13
-   int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId );			// Restricao 1.2.14
-   int criaRestricaoTaticoMinCreds( int campusId );						// Restricao 1.2.15
-   int criaRestricaoTaticoMaxCreds( int campusId );						// Restricao 1.2.16
+   int criaRestricaoTaticoAtendeDemanda( int campusId, int prioridade, int r, int tatico );				// Restricao 1.2.5   
+   int criaRestricaoTaticoTurmaDiscDiasConsec( int campusId, int prioridade, int r, int tatico );		    // Restricao 1.2.6
+   int criaRestricaoTaticoLimitaAberturaTurmas( int campusId, int prioridade, int r, int tatico );		// Restricao 1.2.7 // Não está sendo mais usada. Inutil.
+   int criaRestricaoTaticoDivisaoCredito( int campusId, int prioridade, int r, int tatico );				// Restricao 1.2.8      
+   int criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId, int prioridade, int r, int tatico );		// Restricao 1.2.9
+   int criaRestricaoTaticoAtivacaoVarZC( int campusId, int prioridade, int r, int tatico );				// Restricao 1.2.10
+   int criaRestricaoTaticoDisciplinasIncompativeis( int campusId, int prioridade, int r, int tatico );		// Restricao 1.2.11
+   int criaRestricaoTaticoEvitaSobreposicaoAulaAluno( int campusId, int prioridade, int r, int tatico );	// Restricao 1.2.12 // ou esta, ou a restrição abaixo. Esta sendo usada a de baixo.
+   int criaRestricaoTaticoAlunoHorario( int campusId, int prioridade, int r, int tatico );					// Restricao 1.2.12
+   int criaRestricaoTaticoAtivaY( int campusId, int prioridade, int r, int tatico );						// Restricao 1.2.13
+   int criaRestricaoTaticoAlunoUnidadesDifDia( int campusId, int prioridade, int r, int tatico );			// Restricao 1.2.14
+   int criaRestricaoTaticoMinCreds( int campusId, int prioridade, int r, int tatico );						// Restricao 1.2.15
+   int criaRestricaoTaticoMaxCreds( int campusId, int prioridade, int r, int tatico );						// Restricao 1.2.16
 //   int criaRestricaoTaticoAlunoDiscPraticaTeorica( int campusId );	// Restricao 1.2.17
-   int criaRestricaoTaticoDiscPraticaTeorica( int campusId );			// Restricao 1.2.17
-   int criaRestricaoTaticoAlunoUnidDifDia( int campusId );
-   int criaRestricaoTaticoMinDiasAluno( int campusId );
-   int criaRestricaoTaticoMaxDiasAluno( int campusId );
+   int criaRestricaoTaticoDiscPraticaTeorica( int campusId, int prioridade, int r, int tatico );			// Restricao 1.2.17
+   int criaRestricaoTaticoAlunoUnidDifDia( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoMinDiasAluno( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoMaxDiasAluno( int campusId, int prioridade, int r, int tatico );
 
-   int criaRestricaoTaticoDesalocaAlunoTurmaHorario( int campusId );
-   int criaRestricaoTaticoDesalocaAlunoHorario( int campusId );
-   int criaRestricaoTaticoSumDesalocaAlunoFolgaDemanda( int campusId );
-   int criaRestricaoTaticoSumDesalocaAluno( int campusId );
-   int criaRestricaoTaticoGaranteMinAlunosTurma( int campusId, int r );
-   int criaRestricaoTaticoDesalocaPT( int campusId, int r );
+   int criaRestricaoTaticoDesalocaAlunoTurmaHorario( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoDesalocaAlunoHorario( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoSumDesalocaAlunoFolgaDemanda( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoSumDesalocaAluno( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoGaranteMinAlunosTurma( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoDesalocaPT( int campusId, int prioridade, int r, int tatico );
    int criaRestricaoTaticoFormandos( int campusId, int prioridade, int r, int tatico );
 
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
@@ -763,6 +763,9 @@ private:
    	// Filtro para a criação das variaveis do modelo tatico que considera horarios e alunos, caso haja solução do pre-modelo
    bool criaVariavelTatico( VariableTatico *v );
 
+   // Filtro para a criação das variaveis do modelo tatico que considera horarios e alunos, caso haja solução de tatico anterior
+   bool criaVariavelTatico_Anterior( VariableTatico *v );
+
    GGroup< VariableTatico*, LessPtr<VariableTatico> > retornaVariableTaticoCreditosAnterior( int turma, Disciplina* disciplina, Campus* campus );
 
    // Dada uma disciplina 'A' que foi substituída por uma de suas disciplinas equivalentes 'B',
@@ -838,7 +841,8 @@ private:
    GGroup< VariableTatico *, LessPtr<VariableTatico> > solVarsTatico; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 
    std::vector< VariableOp * > solVarsOp;
-   
+
+   bool SolVarsFound( VariableTatico v );
    bool SolVarsPreFound( VariablePre v );
    
    double alpha, beta, gamma, delta, lambda, epsilon, rho, M, psi, tau, eta;

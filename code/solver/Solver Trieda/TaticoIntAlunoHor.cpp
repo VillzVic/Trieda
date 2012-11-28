@@ -70,7 +70,7 @@ void TaticoIntAlunoHor::solveTaticoIntegrado( int campusId, int prioridade, int 
 	
 	std::cout<<"\nImprimindo alocacoes...\n"; fflush(NULL);
 
-	problemData->imprimeAlocacaoAlunos( campusId, prioridade, -1, false, r );
+	problemData->imprimeAlocacaoAlunos( campusId, prioridade, -1, false, r, 0 );
 
 	if (this->USAR_EQUIVALENCIA)
 	{
@@ -462,6 +462,29 @@ std::string TaticoIntAlunoHor::getSolucaoTaticoFileName( int campusId, int prior
    return solName;
 }
 
+std::string TaticoIntAlunoHor::getEquivFileName( int campusId, int prioridade )
+{
+   std::string solName( "equivalencias" );
+   
+   if ( campusId != 0 )
+   {	   
+		 stringstream ss;
+		 ss << campusId;
+		 solName += "_Cp"; 
+		 solName += ss.str();
+   }
+   if ( prioridade != 0 )
+   {
+		stringstream ss;
+		ss << prioridade;
+		solName += "_P"; 
+		solName += ss.str();   		
+   }
+   solName += ".txt";
+      
+   return solName;
+}
+
 void TaticoIntAlunoHor::carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtualId, int prioridade, int r )
 {
    double * xSol = NULL;
@@ -590,7 +613,7 @@ void TaticoIntAlunoHor::carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtua
 				 if ( this->USAR_EQUIVALENCIA )
 					alunoDem = problemData->procuraAlunoDemandaEquiv( vDisc, vAluno, prioridade );
 				 else
-					alunoDem = problemData->procuraAlunoDemanda( vDisc->getId(), vAluno->getAlunoId() );
+					 alunoDem = vAluno->getAlunoDemanda( vDisc->getId() );
 
 				 nroAtendimentoAlunoDemanda++;
 				 
@@ -649,7 +672,7 @@ void TaticoIntAlunoHor::carregaVariaveisSolucaoTaticoPorAlunoHor( int campusAtua
 				 if ( this->USAR_EQUIVALENCIA )
 					alunoDem = problemData->procuraAlunoDemandaEquiv( vDisc, vAluno, prioridade );
 				 else
-					alunoDem = problemData->procuraAlunoDemanda( vDisc->getId(), vAluno->getAlunoId() );
+					 alunoDem = vAluno->getAlunoDemanda( vDisc->getId() );
 
 				 problemData->insereAlunoEmTurma( alunoDem, trio, horariosDias );
 
@@ -1583,7 +1606,21 @@ bool TaticoIntAlunoHor::criaVariavelTatico( VariableTatInt *v, bool &fixar, int 
 			 }
 			 break;
 		 }		 		 
-		 		
+		 case VariableTatInt::V_FORMANDOS_NA_TURMA: // f_{i,d,cp}
+		 {
+			vSol.reset();
+			vSol.setType( VariableTatico::V_ABERTURA ); // z_{i,d,cp}
+			vSol.setTurma( v->getTurma() );
+			vSol.setDisciplina( v->getDisciplina() );
+			vSol.setCampus( v->getCampus() );
+
+			if ( SolVarsFound(vSol) ) // existe 'z'
+			{
+				return true;
+			}
+			return false;
+		 } 	
+
 		 default:
 		 {
 			 fixar=false;
@@ -1598,6 +1635,16 @@ bool TaticoIntAlunoHor::criaVariavelTatico( VariableTatInt *v, bool &fixar, int 
 
 void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 {	
+#pragma region Imprime Equiv
+		ofstream outEquiv;
+		outEquiv.open( getEquivFileName(campusId,prioridade).c_str(), ofstream::app);
+		if ( !outEquiv )
+		{
+			std::cerr<<"\nAbertura do arquivo "<< getEquivFileName(campusId,prioridade).c_str()
+				<< " falhou em TaticoIntAlunoHor::atualizarDemandasEquiv().\n";
+		}
+#pragma endregion
+
 
 	ITERA_GGROUP_LESSPTR ( itVar, this->solVarsTatInt, VariableTatInt )
 	{
@@ -1614,6 +1661,8 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 
 			if ( alDemOrig==NULL ) // disciplina substituta
 			{
+				bool achou=false;
+
 				ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda )
 				{
 					AlunoDemanda *alDem = (*itAlDem);
@@ -1625,6 +1674,14 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 					if ( discOrig->discEquivSubstitutas.find( disciplina ) !=
 						 discOrig->discEquivSubstitutas.end() ) // 'disciplina' é substituta de 'discOrig'
 					{
+						achou=true;
+
+						if ( outEquiv )
+						{
+							outEquiv<<"\nAluno "<<aluno->getAlunoId()<<" Disc original "<<discOrig->getId()
+								<<" Disc substituta "<<disciplina->getId()<<" Prioridade "<<alDem->getPrioridade();
+						}
+
 						// Modificar referência de demanda
 						// -----------------------------------------------------------------
 						//							DEMANDAS
@@ -1667,12 +1724,27 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 							problemData->listSlackDemandaAluno.remove( alDem );
 						}
 						// -----------------------------------------------------------------
+
+						break;
+					}
+				}
+				if (!achou)
+				{
+					if (  prioridade==1 || 
+						( prioridade==2 && problemData->procuraAlunoDemanda(disciplina->getId(), aluno->getAlunoId(), 1)==NULL ) )
+					{
+						std::cout<<"\nErro! Nao achei AlunoDemanda original nem substituto. Aluno"
+						<<aluno->getAlunoId()<<" Disc"<<disciplina->getId()<<". Rodada P"<<prioridade<<"\n";
 					}
 				}
 			}
 		}
 	}
 
+	if ( outEquiv )
+	{
+		outEquiv.close();
+	}
 }
 
 
@@ -2376,9 +2448,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoAlocaAlunoTurmaDisc( int campusId, int 
 		ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
 		{
 			Disciplina *disciplina = (*itAlDemanda)->demanda->disciplina;
-
-			int turmaAluno = problemData->retornaTurmaDiscAluno( aluno, disciplina );
-				
+	
 			for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
 			{
 				VariableTatInt v;
@@ -3699,52 +3769,43 @@ int TaticoIntAlunoHor::criaVariavelFolgaPrioridadeInf( int campusId, int prior )
 			vHashTatico[v] = lp->getNumCols();					
 
 			double upperBound = 0.0;
-			int totalCreditos = 0;
-						 
 			double lowerBound = 0.0;
-							
+			int totalCreditosP2 = 0;
+			double tempoMaxCred=0;
+
 			ITERA_GGROUP_LESSPTR( itAlunoDem, aluno->demandas, AlunoDemanda )
 			{
 				if ( itAlunoDem->getPrioridade() != prior )
 					continue;
 
-				if ( USAR_EQUIVALENCIA )
-				{					
-					Disciplina *disciplina = (*itAlunoDem)->demanda->disciplina;
-					int tempo = disciplina->getTempoCredSemanaLetiva();
-					int nCreds = disciplina->getTotalCreditos();
-					int turmaAluno = problemData->retornaTurmaDiscAluno( aluno, disciplina );				
-					if ( turmaAluno == -1 ) upperBound += disciplina->getMaxTempoDiscEquivSubstituta(); 
-					else upperBound += nCreds*tempo;
-					
-					totalCreditos += nCreds;
-				}
-				else
-				{
-					int nCreds = itAlunoDem->demanda->disciplina->getTotalCreditos();
-					int tempo = itAlunoDem->demanda->disciplina->getTempoCredSemanaLetiva();					
-					upperBound += nCreds*tempo;
-					totalCreditos += nCreds;
-				}				
+				int nCreds = itAlunoDem->demanda->disciplina->getTotalCreditos();
+				int tempo = itAlunoDem->demanda->disciplina->getTempoCredSemanaLetiva();					
+				totalCreditosP2 += nCreds;
+
+				if ( tempoMaxCred < tempo )
+					tempoMaxCred=tempo;							
 			}
 			
-			if ( upperBound == 0 ) // se não houver demanda de P2 para o aluno
+			if ( totalCreditosP2 == 0 ) // se não houver demanda de P2 para o aluno
 			{
 				continue;
 			}
+
+			// Limita o tanto de carga horária do aluno que pode ser excedido em P2 em 2 créditos.
+			upperBound = tempoMaxCred*2;
 
 			double coef = 0.0;
 			if ( problemData->parametros->funcao_objetivo == 0 )
 			{
 				double custo = cp->getCusto();
 							 
-				coef = -50 * custo * totalCreditos;
+				coef = -50 * custo * totalCreditosP2;
 			}
 			else if ( problemData->parametros->funcao_objetivo == 1 )
 			{
 				double custo = cp->getCusto();
 
-				coef = 5 * custo * totalCreditos;
+				coef = 5 * custo * totalCreditosP2;
 			}	
 
 			OPT_COL col( OPT_COL::VAR_INTEGRAL, coef, lowerBound, upperBound, ( char * )v.toString().c_str() );
@@ -3788,41 +3849,16 @@ int TaticoIntAlunoHor::criaVariavelFolgaPrioridadeSup( int campusId, int prior )
 		if ( vHashTatico.find( v ) == vHashTatico.end() )
 		{
 			vHashTatico[v] = lp->getNumCols();
-				
-			double upperBound = 0.0;
-			int totalCreditos = 0;
-						 
-			double lowerBound = 0.0;
-
-			ITERA_GGROUP_LESSPTR( itAlunoDem, aluno->demandas, AlunoDemanda )
-			{
-				if ( itAlunoDem->getPrioridade() != prior )
-					continue;
-
-				if ( USAR_EQUIVALENCIA )
-				{					
-					Disciplina *disciplina = (*itAlunoDem)->demanda->disciplina;
-					int tempo = disciplina->getTempoCredSemanaLetiva();
-					int nCreds = disciplina->getTotalCreditos();
-					int turmaAluno = problemData->retornaTurmaDiscAluno( aluno, disciplina );				
-					if ( turmaAluno == -1 ) upperBound += disciplina->getMaxTempoDiscEquivSubstituta(); 
-					else upperBound += nCreds*tempo;
 					
-					totalCreditos += nCreds;
-				}
-				else
-				{
-					int nCreds = itAlunoDem->demanda->disciplina->getTotalCreditos();
-					int tempo = itAlunoDem->demanda->disciplina->getTempoCredSemanaLetiva();					
-					upperBound += nCreds*tempo;
-					totalCreditos += nCreds;
-				}		
-			}
-
-			if ( upperBound == 0 ) // se não houver demanda de P2 para o aluno
+			int totalCreditos = problemData->creditosNaoAtendidosPorPrioridade( 1, aluno->getAlunoId() );
+			double cargaHorariaNaoAtendida = problemData->cargaHorariaNaoAtendidaPorPrioridade( 1, aluno->getAlunoId() );	
+			if ( cargaHorariaNaoAtendida == 0 ) // se não houver folga de demanda de P1
 			{
 				continue;
 			}
+
+			double lowerBound = 0.0;
+			double upperBound = cargaHorariaNaoAtendida;				
 
 			double coef = 0.0;
 			if ( problemData->parametros->funcao_objetivo == 0 )
@@ -3903,6 +3939,10 @@ int TaticoIntAlunoHor::criaVariavelTaticoFormandosNaTurma( int campusId, int pri
 
 			 if ( vHashTatico.find(v) == vHashTatico.end() )
 			 {
+				bool fixar=false;
+				if ( !criaVariavelTatico( &v, fixar, prior ) )
+					continue;
+
                 lp->getNumCols();
                 vHashTatico[v] = lp->getNumCols();
 
@@ -4758,7 +4798,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoTurmaDiscDiasConsec( int campusId )
 					}
 				}
 
-				if ( row.getnnz() != 0 )
+				if ( row.getnnz() > 1 )
 				{
 				   cHashTatico[ c ] = lp->getNumRows();
 
@@ -5451,7 +5491,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoDivisaoCredito( int campusId )
 					row.insert( it_v->second, -1.0 );
 				}
 
-                if ( row.getnnz() != 0 )
+                if ( row.getnnz() > 1 )
                 {
                    cHashTatico[ c ] = lp->getNumRows();
 
@@ -5555,7 +5595,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoCombinacaoDivisaoCredito( int campusId
             }
          }
 
-         if ( row.getnnz() != 0 )
+         if ( row.getnnz() > 1 )
          {
             cHashTatico[ c ] = lp->getNumRows();
 
@@ -6317,7 +6357,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoMinDiasAluno( int campusId )
 		if ( v.getType() == VariableTatInt::V_ALUNO_CREDITOS )
 			coef = -1.0;
 		else if ( v.getType() == VariableTatInt::V_ALUNO_DIA )
-			coef = 1.0;
+			coef = 10.0;
 
 		c.reset();
 		c.setType( ConstraintTatInt::C_MIN_DIAS_ALUNO );

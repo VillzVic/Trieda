@@ -419,7 +419,7 @@ public:
    void insereAlunoEmTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
    void removeAlunoDeTurma( AlunoDemanda* alunoDemanda, Trio< int /*campusId*/, int /*turma*/, Disciplina*> trio, GGroup<HorarioDia*> horariosDias );
 
-   void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int tatico );
+   void imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico );
 
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > listSlackDemandaAluno;
 
@@ -429,7 +429,7 @@ public:
    
    int retornaMaiorIdDemandas();
    int retornaMaiorIdAlunoDemandas();
-   AlunoDemanda* procuraAlunoDemanda( int discId, int alunoId );
+  // AlunoDemanda* procuraAlunoDemanda( int discId, int alunoId );
    AlunoDemanda* procuraAlunoDemanda( int discId, int alunoId, int prioridade );
    AlunoDemanda* procuraAlunoDemandaEquiv( Disciplina* disc, Aluno *aluno, int prioridade );
 
@@ -471,6 +471,7 @@ public:
 
    bool verificaDisponibilidadeHorario( HorarioAula *horarioAula, int dia, Sala *sala, Professor *prof, Disciplina* disc );
 
+   int creditosNaoAtendidosPorPrioridade( int prior, int alunoId );
    double cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId );
    double cargaHorariaOriginalRequeridaPorPrioridade( int prior, Aluno* aluno );
    double cargaHorariaAtualRequeridaPorPrioridade( int prior, Aluno* aluno );
@@ -496,6 +497,10 @@ public:
    void removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId );
 
    GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade );
+   
+   bool violaMinTurma( int campusId );
+   bool violaMinTurma( Trio< int, int, Disciplina* > trio );
+   void imprimeFormandos();
 
    private:
    

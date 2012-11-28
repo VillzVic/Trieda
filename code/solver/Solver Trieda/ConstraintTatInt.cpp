@@ -206,7 +206,7 @@ std::string ConstraintTatInt::toString()
    case C_PROIBE_COMPARTILHAMENTO:
       ss << "__(C_INT_PROIBE_COMPARTILHAMENTO):"; break;
    case C_TURMA_DISC_DIAS_CONSEC:
-      ss << "__(C_INT_TURMAS_DISC_DIAS_CONSEC):"; break;	  
+      ss << "__(C_INT_TURMA_DISC_DIAS_CONSEC):"; break;	  
    case C_MIN_ALUNOS_TURMA:
       ss << "__(C_INT_MIN_ALUNOS_TURMA):"; break;
    case C_DIVISAO_CREDITO:

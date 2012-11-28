@@ -2,10 +2,6 @@
 
 #pragma once
    
-//template<class T3>
-//typename std::remove_reference< T3 >::type& object( T3&& t )
-//{ return t; }
-
 template<class T1, class T2, class T3 > 
 class Trio
 {
