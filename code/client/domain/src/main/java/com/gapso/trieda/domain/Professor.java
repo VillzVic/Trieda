@@ -350,11 +350,13 @@ public class Professor
 	
 	@Transactional
 	static public void preencheHorariosDosProfessores(List<Professor> professores, List<SemanaLetiva> semanasLetivas) {
+		int count = 0;
 		for (SemanaLetiva semanaLetiva : semanasLetivas) {
 			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
 				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
 					hdc.getProfessores().addAll(professores);
 					hdc.merge();
+					count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
 				}
 			}
 		}
@@ -435,6 +437,18 @@ public class Professor
 
 		Professor merged = this.entityManager.merge( this );
 		this.entityManager.flush();
+		return merged;
+	}
+	
+	@Transactional
+	public Professor mergeWithoutFlush()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		Professor merged = this.entityManager.merge( this );
 		return merged;
 	}
 

@@ -20,11 +20,14 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
+@ProgressDeclarationAnnotation
 public class ProfessoresImportExcel
 	extends AbstractImportExcel< ProfessoresImportExcelBean >
 {
@@ -160,6 +163,7 @@ public class ProfessoresImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(
 		String sheetName, List< ProfessoresImportExcelBean > sheetContent )
 	{
@@ -361,6 +365,7 @@ public class ProfessoresImportExcel
 	}
 
 	@Transactional
+	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
 	private void updateDataBase( String sheetName,
 		List< ProfessoresImportExcelBean > sheetContent )
 	{
@@ -369,6 +374,7 @@ public class ProfessoresImportExcel
 				Professor.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List<Professor> persistedProfessores = new ArrayList<Professor>();
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( ProfessoresImportExcelBean professorExcel : sheetContent )
 		{
 			Professor professorBD = professoresBDMap.get( professorExcel.getCpfStr() );
@@ -385,7 +391,7 @@ public class ProfessoresImportExcel
 				professorBD.setCreditoAnterior( professorExcel.getCargaHorariaAnterior() );
 				professorBD.setValorCredito( professorExcel.getValorCredito() );
 
-				professorBD.merge();
+				professorBD.mergeWithoutFlush();
 			}
 			else
 			{
@@ -406,6 +412,11 @@ public class ProfessoresImportExcel
 				newProfessor.persist();
 				persistedProfessores.add(newProfessor);
 			}
+			
+			count++;total--;if (count == 100) {
+				System.out.println("\t   Faltam "+total+" professores"); 
+				count = 0;
+				}
 		}
 		
 		if (!persistedProfessores.isEmpty()) {

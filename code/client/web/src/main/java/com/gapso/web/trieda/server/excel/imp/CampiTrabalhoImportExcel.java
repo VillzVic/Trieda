@@ -18,11 +18,14 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
+@ProgressDeclarationAnnotation
 public class CampiTrabalhoImportExcel
 	extends AbstractImportExcel< CampiTrabalhoImportExcelBean >
 {
@@ -120,6 +123,7 @@ public class CampiTrabalhoImportExcel
 	}
 	
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent( String sheetName,
 		List< CampiTrabalhoImportExcelBean > sheetContent )
 	{
@@ -234,6 +238,7 @@ public class CampiTrabalhoImportExcel
 	}
 
 	@Transactional
+	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
 	private void updateDataBase( String sheetName,
 		List< CampiTrabalhoImportExcelBean > sheetContent )
 	{
@@ -245,9 +250,11 @@ public class CampiTrabalhoImportExcel
 			campiTrabalhoExcel.getProfessor().getCampi().add( campiTrabalhoExcel.getCampus() );
 		}
 
+		int count = 0, total=professorMerge.size(); System.out.print(" "+total);
 		for ( Professor professor : professorMerge )
 		{
-			professor.merge();
+			professor.mergeWithoutFlush();
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" professores"); count = 0;}
 		}
 	}
 
