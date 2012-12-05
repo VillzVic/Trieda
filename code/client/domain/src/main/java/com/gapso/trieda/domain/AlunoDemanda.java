@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -493,5 +494,70 @@ public class AlunoDemanda
 		}
 		
 		return demandaKeyToQtdAlunosMap;
+	}
+	
+	public static int sumDemandaPorPrioridade(InstituicaoEnsino instituicaoEnsino, Campus campus, int prioridade) {
+		Query q = entityManager().createQuery(
+			" SELECT COUNT(o) FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus = :campus " +
+			" AND o.prioridade = :prioridade " 
+		);
+
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("campus",campus);
+		q.setParameter("prioridade",prioridade);
+
+		Object rs = q.getSingleResult();
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
+	}
+	
+	public static int sumDemandaPresencialPorPrioridade(InstituicaoEnsino instituicaoEnsino, Campus campus, int prioridade) {
+		// obtem os tipos de disciplinas que ocupam grade
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
+		for (TipoDisciplina td : tiposDisciplinas) {
+			if (td.ocupaGrade()) {
+				tiposDisciplinasPresenciais.add(td);
+			}
+		}
+		
+		Query q = entityManager().createQuery(
+			" SELECT COUNT(o) FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus = :campus " +
+			" AND o.prioridade = :prioridade " +
+			" AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) " +
+			" AND (o.demanda.disciplina.creditosTeorico + o.demanda.disciplina.creditosPratico) > 0 "
+		);
+
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("campus",campus);
+		q.setParameter("prioridade",prioridade);
+		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
+
+		Object rs = q.getSingleResult();
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
+	}
+	
+	public static int sumDemandaAtendidaPorPrioridade(InstituicaoEnsino instituicaoEnsino, Campus campus, int prioridade) {
+		Query q = entityManager().createQuery(
+			" SELECT COUNT(o) FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus = :campus " +
+			" AND o.prioridade = :prioridade " +
+			" AND o.atendido = :atendido " 
+		);
+
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("campus",campus);
+		q.setParameter("prioridade",prioridade);
+		q.setParameter("atendido",true);
+
+		Object rs = q.getSingleResult();
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
 	}
 }
