@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.server;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +16,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.TipoContrato;
@@ -426,6 +430,53 @@ public class ProfessoresServiceImpl
 				professor.getCampi().remove( campus );
 				professor.merge();
 			}
+		}
+	}
+	
+	public void geraHabilitacaoParaProfessoresVirtuaisCadastrados() {
+		List<Professor> professores = Professor.findAll(getInstituicaoEnsinoUser());
+		
+		List<Professor> professoresVirtuais = new ArrayList<Professor>(professores.size());
+		for (Professor p : professores) {
+			if (p.getNome().contains("Virtual")) {
+				professoresVirtuais.add(p);
+			}
+		}
+		
+		List<Disciplina> disciplinas = Disciplina.findAll(getInstituicaoEnsinoUser());
+		try {
+			File f = new File("script_inserts.sql");
+			
+			f.createNewFile();
+			f.setWritable(true);
+			
+			FileOutputStream fos = new FileOutputStream(f);
+			
+			int p = professoresVirtuais.size();
+			int d = disciplinas.size();
+			int total = p * d;
+			System.out.println("Total = "+total);
+			for (Professor professorVirtual : professoresVirtuais) {
+				for (Disciplina disciplina : disciplinas) {
+					// Insert
+	//				ProfessorDisciplina newPd = new ProfessorDisciplina();
+	//
+	//				newPd.setDisciplina(disciplina);
+	//				newPd.setProfessor(professorVirtual);
+	//				newPd.setNota(1);
+	//				newPd.setPreferencia(1);
+	
+					//newPd.persist();
+					
+					System.out.println(--total);
+					String s = "INSERT INTO `trieda`.`professores_disciplinas` (`prf_id`,`dis_id`,`prf_nota`,`prf_preferencia`,`version`) VALUES (" + professorVirtual.getId() + "," + disciplina.getId() + ",1,1,0);\n";
+					fos.write(s.getBytes());
+				}
+			}
+			
+			fos.close();
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

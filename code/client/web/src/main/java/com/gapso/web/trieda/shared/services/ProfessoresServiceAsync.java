@@ -37,4 +37,6 @@ public interface ProfessoresServiceAsync
 	void getProfessoresNaoEmCampus( CampusDTO campusDTO, AsyncCallback< List< ProfessorDTO > > callback );
 	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList, AsyncCallback< Void > callback );
 	void getProfessorCampusByCurrentProfessor( AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
+	
+	void geraHabilitacaoParaProfessoresVirtuaisCadastrados(AsyncCallback< Void > callback );
 }

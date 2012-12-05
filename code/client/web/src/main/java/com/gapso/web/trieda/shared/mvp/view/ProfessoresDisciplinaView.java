@@ -6,8 +6,11 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -15,7 +18,9 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
+import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
@@ -88,6 +93,20 @@ public class ProfessoresDisciplinaView extends MyComposite
 		{
 			toolBar = new SimpleToolBar( this );
 		}
+		
+		Button btn = new Button("Teste");
+		toolBar.add(btn);
+		btn.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Services.professores().geraHabilitacaoParaProfessoresVirtuaisCadastrados(new AbstractAsyncCallbackWithDefaultOnFailure<Void>(ProfessoresDisciplinaView.this) {
+					@Override
+					public void onSuccess(Void result) {
+						MessageBox.info("Sucesso","Sucesso",null);
+					}
+				});
+			}
+		});
 
 		panel.setTopComponent( toolBar );
 	}

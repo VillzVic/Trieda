@@ -39,4 +39,6 @@ public interface ProfessoresService
 	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList );
 	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusByCurrentProfessor();
 	
+	void geraHabilitacaoParaProfessoresVirtuaisCadastrados();
+	
 }
