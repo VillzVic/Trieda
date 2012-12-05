@@ -1269,9 +1269,10 @@ public class SolverInput
 				divisaoCredito = disciplina.getDivisaoCreditos();
 			}
 
-			if (divisaoCredito == null&& this.parametro.getRegrasGenericasDivisaoCredito()) {
-				divisaoCredito = qtdCreditoToRegraDivisaoCreditoMap.get(disciplina.getTotalCreditos());
-			}
+			// TODO: temporário
+//			if (divisaoCredito == null&& this.parametro.getRegrasGenericasDivisaoCredito()) {
+//				divisaoCredito = qtdCreditoToRegraDivisaoCreditoMap.get(disciplina.getTotalCreditos());
+//			}
 
 			if (divisaoCredito != null) {
 				ItemDivisaoCreditos itemDivisaoCreditos = this.of.createItemDivisaoCreditos();
