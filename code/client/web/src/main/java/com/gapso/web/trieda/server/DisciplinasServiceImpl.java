@@ -1304,7 +1304,7 @@ public class DisciplinasServiceImpl
 					
 					for (ResumoDisciplinaDTO dto : pair.getRight()) {
 						// calcula e acumula receita
-						Double receita = dto.getReceita().getDoubleValue();
+						double receita = dto.getReceita().getDoubleValue();
 						int qtdAlunos = dto.getQuantidadeAlunos();
 						int creditos = dto.getCreditos();
 						double receitaLocal = creditos * receita * qtdAlunos * 4.5 * 6.0;
@@ -1428,6 +1428,7 @@ public class DisciplinasServiceImpl
 		if ( pair == null ) {
 			List<ResumoDisciplinaDTO> list = new ArrayList<ResumoDisciplinaDTO>();
 			ResumoDisciplinaDTO dtoMain = new ResumoDisciplinaDTO();
+			dtoMain.setCampusString( resumoDTO.getCampusString() );
 			dtoMain.setCursoId( resumoDTO.getCursoId() );
 			dtoMain.setCurriculoId( resumoDTO.getCurriculoId() );
 			dtoMain.setDisciplinaId( resumoDTO.getDisciplinaId() );
