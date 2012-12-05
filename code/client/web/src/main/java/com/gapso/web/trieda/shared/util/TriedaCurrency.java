@@ -48,7 +48,7 @@ public class TriedaCurrency
 		Integer y = ( (Double) ( this.value * 100 ) ).intValue();
 
 		// Casas decimais
-		Integer resto = ( y % 100 );
+		Integer resto = Math.abs(( y % 100 ));
 		String str1 = ( resto == 0 ? "00" :
 			( ( resto >= 10 ) ? resto.toString() : "0" + resto.toString() ) );
 
