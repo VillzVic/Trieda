@@ -18,15 +18,17 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 
+@ProgressDeclarationAnnotation
 public class HabilitacoesProfessoresImportExcel
 	extends AbstractImportExcel< HabilitacoesProfessoresImportExcelBean >
 {
-	static public String CODIGO_CAMPUS_COLUMN_NAME;
 	static public String CPF_PROFESSOR_COLUMN_NAME;
 	static public String DISCIPLINA_COLUMN_NAME;
 	static public String PREFERENCIA_COLUMN_NAME;
@@ -43,7 +45,6 @@ public class HabilitacoesProfessoresImportExcel
 		resolveHeaderColumnNames();
 
 		this.headerColumnsNames = new ArrayList< String >();
-		this.headerColumnsNames.add( CODIGO_CAMPUS_COLUMN_NAME );
 		this.headerColumnsNames.add( CPF_PROFESSOR_COLUMN_NAME );
 		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
 		this.headerColumnsNames.add( PREFERENCIA_COLUMN_NAME );
@@ -87,11 +88,7 @@ public class HabilitacoesProfessoresImportExcel
         			String columnName = headerCell.getRichStringCellValue().getString();
 					String cellValue = getCellValue( cell );
 
-					if ( CODIGO_CAMPUS_COLUMN_NAME.equals( columnName ) )
-					{
-						bean.setCodigoCampusStr( cellValue );
-					}
-					else if ( CPF_PROFESSOR_COLUMN_NAME.endsWith( columnName ) )
+					if ( CPF_PROFESSOR_COLUMN_NAME.endsWith( columnName ) )
 					{
 						cell.setCellType( HSSFCell.CELL_TYPE_STRING );
 
@@ -132,6 +129,7 @@ public class HabilitacoesProfessoresImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent( String sheetName,
 		List< HabilitacoesProfessoresImportExcelBean > sheetContent )
 	{
@@ -299,6 +297,7 @@ public class HabilitacoesProfessoresImportExcel
 	}
 
 	@Transactional
+	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
 	private void updateDataBase( String sheetName,
 		List< HabilitacoesProfessoresImportExcelBean > sheetContent )
 	{
@@ -306,6 +305,7 @@ public class HabilitacoesProfessoresImportExcel
 			= ProfessorDisciplina.buildCursoNaturalKeyToProfessorDisciplinaMap(
 				ProfessorDisciplina.findAll( this.instituicaoEnsino ) );
 
+		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( HabilitacoesProfessoresImportExcelBean pdExcel : sheetContent )
 		{
 			ProfessorDisciplina pdBD = professoresDisciplinasBDMap.get(
@@ -330,14 +330,15 @@ public class HabilitacoesProfessoresImportExcel
 
 				newPd.persist();
 			}
+			
+			count++;total--;if (count == 100) {System.out.println("   Faltam "+total+" habilitações de professores"); count = 0;}
 		}
 	}
 
 	private void resolveHeaderColumnNames()
 	{
-		if ( CODIGO_CAMPUS_COLUMN_NAME == null )
+		if ( CPF_PROFESSOR_COLUMN_NAME == null )
 		{
-			CODIGO_CAMPUS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoCampus() );
 			CPF_PROFESSOR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cpfProfessor() );
 			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
 			PREFERENCIA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().preferencia() );

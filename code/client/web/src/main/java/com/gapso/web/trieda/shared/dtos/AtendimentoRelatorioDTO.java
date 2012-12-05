@@ -1,8 +1,6 @@
 package com.gapso.web.trieda.shared.dtos;
 
-
-
-
+import java.util.List;
 
 public interface AtendimentoRelatorioDTO
 {
@@ -86,4 +84,6 @@ public interface AtendimentoRelatorioDTO
 	public void setQuantidadeAlunosP2(Integer value);
 	public Integer getQuantidadeAlunosP2();
 	public Integer getDiaSemana();
+	
+	public List<AlunoDemandaDTO> getAlunosDemandas();
 }

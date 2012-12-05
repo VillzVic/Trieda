@@ -101,6 +101,7 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 		setQuantidadeAlunosString( T + getQuantidadeAlunosString() + T + " / " + O + other.getQuantidadeAlunosString() + O );
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 		setNomesAlunos(getNomesAlunos() + ", " + other.getNomesAlunos());
+		getAlunosDemandas().addAll(other.getAlunosDemandas());
 	}
 	
 	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other ) {}

@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -576,7 +577,7 @@ public class AtendimentoTaticoDTO
 			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
 		}
 		
-		String nomesAlunos = getNomesAlunos().replaceAll(", ",BR);
+		//String nomesAlunos = getNomesAlunos().replaceAll(", ",BR);
 		
 		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
 			 + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
@@ -586,8 +587,8 @@ public class AtendimentoTaticoDTO
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
 			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR
-			 + nomesAlunos;
+			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED;// + BR
+			 //+ nomesAlunos;
 	}
 
 	public String getContentToolTipVisaoSala(ReportType reportType){
@@ -752,5 +753,10 @@ public class AtendimentoTaticoDTO
 	}
 	public Integer getQuantidadeAlunosP2() {
 		return get( PROPERTY_QUANTIDADE_ALUNOS_P2 );
+	}
+	
+	private List<AlunoDemandaDTO> alunosDemandasDTO = new ArrayList<AlunoDemandaDTO>(); 
+	public List<AlunoDemandaDTO> getAlunosDemandas() {
+		return alunosDemandasDTO;
 	}
 }

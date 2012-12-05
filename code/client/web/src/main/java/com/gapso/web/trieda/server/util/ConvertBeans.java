@@ -2090,7 +2090,9 @@ public class ConvertBeans {
 		StringBuffer str = new StringBuffer(""); 
 		int totalAtendimentosP1 = 0;
 		int totalAtendimentosP2 = 0;
+		dto.getAlunosDemandas().clear();
 		for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
+			dto.getAlunosDemandas().add(toAlunoDemandaDTO(alunoDemanda));
 			Aluno aluno = alunoDemanda.getAluno();
 			str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
 			if (alunoDemanda.getPrioridade() == 1) {
@@ -2352,7 +2354,9 @@ public class ConvertBeans {
 		StringBuffer str = new StringBuffer("");
 		int totalAtendimentosP1 = 0;
 		int totalAtendimentosP2 = 0;
+		dto.getAlunosDemandas().clear();
 		for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
+			dto.getAlunosDemandas().add(toAlunoDemandaDTO(alunoDemanda));
 			Aluno aluno = alunoDemanda.getAluno();
 			str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
 			if (alunoDemanda.getPrioridade() == 1) {
@@ -3170,6 +3174,7 @@ public class ConvertBeans {
 		// Aluno
 		dto.setIdAluno( domain.getAluno().getId() );
 		dto.setAlunoString( domain.getAluno().getNome() );
+		dto.setAlunoMatricula( domain.getAluno().getMatricula() );
 		
 		// Demanda
 		dto.setDemandaId( domain.getDemanda().getId() );

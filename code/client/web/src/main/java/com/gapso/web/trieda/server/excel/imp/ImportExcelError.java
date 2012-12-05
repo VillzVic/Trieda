@@ -266,7 +266,6 @@ public enum ImportExcelError
 			case EQUIVALENCIA_CURSOU_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.CURSOU_COLUMN_NAME);
 			case EQUIVALENCIA_ELIMINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.ELIMINA_COLUMN_NAME);
 			
-			case HABILITACOESPROFESSORES_CODIGO_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,HabilitacoesProfessoresImportExcel.CODIGO_CAMPUS_COLUMN_NAME);
 			case HABILITACOESPROFESSORES_CPF_PROFESSOR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,HabilitacoesProfessoresImportExcel.CPF_PROFESSOR_COLUMN_NAME);
 			case HABILITACOESPROFESSORES_DISCIPLINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,HabilitacoesProfessoresImportExcel.DISCIPLINA_COLUMN_NAME);
 			case HABILITACOESPROFESSORES_NOTA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,HabilitacoesProfessoresImportExcel.NOTA_COLUMN_NAME);

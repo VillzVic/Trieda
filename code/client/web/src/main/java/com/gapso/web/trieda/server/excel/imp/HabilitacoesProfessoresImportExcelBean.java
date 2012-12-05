@@ -3,7 +3,6 @@ package com.gapso.web.trieda.server.excel.imp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Professor;
 
@@ -11,13 +10,11 @@ public class HabilitacoesProfessoresImportExcelBean
 	extends AbstractImportExcelBean
 	implements Comparable< HabilitacoesProfessoresImportExcelBean >
 {
-	private String codigoCampusStr;
 	private String cpfProfessorStr;
 	private String codigoDisciplinaStr;
 	private String preferenciaStr;
 	private String notaStr;
 
-	private Campus campus;
 	private Disciplina disciplina;
 	private Professor professor;
 	private Integer preferencia;
@@ -34,7 +31,6 @@ public class HabilitacoesProfessoresImportExcelBean
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( codigoCampusStr, ImportExcelError.HABILITACOESPROFESSORES_CODIGO_CAMPUS_VAZIO, erros );
 			checkMandatoryField( cpfProfessorStr, ImportExcelError.HABILITACOESPROFESSORES_CPF_PROFESSOR_VAZIO, erros );
 			checkMandatoryField( codigoDisciplinaStr, ImportExcelError.HABILITACOESPROFESSORES_DISCIPLINA_VAZIO, erros );
 			checkMandatoryField( preferenciaStr, ImportExcelError.HABILITACOESPROFESSORES_PREFERENCIA_VAZIO, erros );
@@ -58,17 +54,9 @@ public class HabilitacoesProfessoresImportExcelBean
 
 	private boolean tudoVazio()
 	{
-		return isEmptyField( codigoCampusStr ) && isEmptyField( cpfProfessorStr )
+		return isEmptyField( cpfProfessorStr )
 			&& isEmptyField( codigoDisciplinaStr ) && isEmptyField( preferenciaStr )
 			&& isEmptyField( notaStr );
-	}
-
-	public String getCodigoCampusStr() {
-		return codigoCampusStr;
-	}
-
-	public void setCodigoCampusStr(String codigoCampusStr) {
-		this.codigoCampusStr = codigoCampusStr;
 	}
 
 	public String getCpfProfessorStr() {
@@ -85,14 +73,6 @@ public class HabilitacoesProfessoresImportExcelBean
 
 	public void setCodigoDisciplinaStr(String codigoDisciplinaStr) {
 		this.codigoDisciplinaStr = codigoDisciplinaStr;
-	}
-
-	public Campus getCampus() {
-		return campus;
-	}
-
-	public void setCampus(Campus campus) {
-		this.campus = campus;
 	}
 
 	public String getPreferenciaStr() {
@@ -157,8 +137,7 @@ public class HabilitacoesProfessoresImportExcelBean
 
 	public String getNaturalKeyString()
 	{
-		return this.getCodigoCampusStr()
-			+ "-" + this.getCpfProfessorStr()
+		return this.getCpfProfessorStr()
 			+ "-" + this.getCodigoDisciplinaStr();
 	}
 }

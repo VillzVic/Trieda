@@ -3,7 +3,6 @@ package com.gapso.web.trieda.server.excel.exp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -109,20 +108,20 @@ public class HabilitacoesProfessoresExportExcel
 
 			for ( ProfessorDisciplina professorDisciplina : professoresDisciplinas )
 			{
-				Set< Campus > campiProfessor = professorDisciplina.getProfessor().getCampi();
+				//Set< Campus > campiProfessor = professorDisciplina.getProfessor().getCampi();
 
-				for ( Campus c : campiProfessor )
-				{
-					// Impedindo a inserção de dados repetidos
-					String key = getKeyData( professorDisciplina, c );
-					Boolean data = registeredData.get( key );
-
-					if ( data == null || data == false )
-					{
-						nextRow = writeData( c, professorDisciplina, nextRow, sheet );
-						registeredData.put( key, true );
-					}
-				}
+//				for ( Campus c : campiProfessor )
+//				{
+//					// Impedindo a inserção de dados repetidos
+//					String key = getKeyData( professorDisciplina, c );
+//					Boolean data = registeredData.get( key );
+//
+//					if ( data == null || data == false )
+//					{
+						nextRow = writeData( null, professorDisciplina, nextRow, sheet );
+//						registeredData.put( key, true );
+//					}
+//				}
 			}
 
 			return true;
@@ -144,22 +143,18 @@ public class HabilitacoesProfessoresExportExcel
 	private int writeData( Campus campus, ProfessorDisciplina pd, int row, HSSFSheet sheet )
 	{
 		Professor professor = pd.getProfessor();
-		String codigoCampus = ( campus == null ? "" : campus.getCodigo() );
-
-		// Código Campus
-		setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], codigoCampus );
-
+		
 		// CPF Professor
-		setCell( row, 3, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], professor.getCpf() );
+		setCell( row, 2, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], professor.getCpf() );
 
 		// Disciplina
-		setCell( row, 4, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], pd.getDisciplina().getCodigo() );
+		setCell( row, 3, sheet, cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], pd.getDisciplina().getCodigo() );
 
 		// Preferência
-		setCell( row, 5, sheet, cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ], pd.getPreferencia() );
+		setCell( row, 4, sheet, cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ], pd.getPreferencia() );
 
 		// Nota Desempenho
-		setCell( row, 6, sheet, cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ], pd.getNota() );
+		setCell( row, 5, sheet, cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ], pd.getNota() );
 
 		row++;
 		return row;

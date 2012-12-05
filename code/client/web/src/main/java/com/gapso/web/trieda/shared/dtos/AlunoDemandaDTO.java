@@ -9,6 +9,7 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_ALUNO_DEMANDA_ID = "alunoDemandaId";
 	public static final String PROPERTY_ALUNO_ID = "alunoId";
 	public static final String PROPERTY_ALUNO_STRING = "alunoString";
+	public static final String PROPERTY_ALUNO_MATRICULA = "alunoMatricula";
 	public static final String PROPERTY_ALUNO_ATENDIDO = "alunoAtendido";
 	public static final String PROPERTY_ALUNO_ATENDIDO_STRING = "alunoAtendidoString";
 	public static final String PROPERTY_VERSION = "version";
@@ -62,6 +63,16 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public String getAlunoString()
 	{
 		return get( PROPERTY_ALUNO_STRING );
+	}
+	
+	public void setAlunoMatricula( String value )
+	{
+		set( PROPERTY_ALUNO_MATRICULA, value );
+	}
+
+	public String getAlunoMatricula()
+	{
+		return get( PROPERTY_ALUNO_MATRICULA );
 	}
 
 	public void setAlunoAtendido( Boolean value )
