@@ -220,7 +220,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 				modelCenario.set( property, ( model == null ) ? false : model.get( property ) );
 
 				checkColumnUpdate(colIndex, rowIndex, flag);
-				if((rowIndex + 1) == store.getModels().size()) checkColumn(colIndex);
+				//if((rowIndex + 1) == store.getModels().size()) checkColumn(colIndex);
 				
 				if ( isSelectDefault() )
 				{
@@ -228,8 +228,8 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 					flag = true;
 				}
 
-				ToggleImageButton tb = new ToggleImageButton( flag,
-					Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16() );
+				ToggleImageButton tb = new ToggleImageButton( flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16() );
+				tb.toggle(flag);
 
 				tb.addSelectionListener( new SelectionListener< ButtonEvent >()
 				{
