@@ -464,7 +464,7 @@ public class AlunosDemandaImportExcel
 			// Relaciona o aluno com a demanda
 			if ( demandaBD != null && alunoBD != null )
 			{
-				String codeAlunoDemanda = getCodeAlunoDemanda( alunoBD, demandaBD );
+				String codeAlunoDemanda = getCodeAlunoDemanda( alunoBD, demandaBD, alunosDemandaExcel.getPrioridade() );
 				AlunoDemanda alunoDemandaBD = alunosDemandaBD.get( codeAlunoDemanda );
 
 				if ( alunoDemandaBD != null )
@@ -535,24 +535,25 @@ public class AlunosDemandaImportExcel
 		List< AlunoDemanda > list
 			= AlunoDemanda.findAll( this.instituicaoEnsino );
 
-		Map< Demanda, Set< Aluno > > map
-			= new HashMap< Demanda, Set< Aluno > >();
+		Map< Demanda, Set< String > > map
+			= new HashMap< Demanda, Set< String > >();
 
 		for ( AlunoDemanda ad : list )
 		{
-			Set< Aluno > alunos = map.get( ad.getDemanda() );
+			Set< String > alunoPrioridadeSet = map.get( ad.getDemanda() );
 
-			if ( alunos == null )
+			if ( alunoPrioridadeSet == null )
 			{
-				alunos = new HashSet< Aluno >();
-				map.put( ad.getDemanda(), alunos );
+				alunoPrioridadeSet = new HashSet< String >();
+				map.put( ad.getDemanda(), alunoPrioridadeSet );
 			}
 
-			alunos.add( ad.getAluno() );
+			String value = ad.getAluno().getId() + "-" + ad.getPrioridade();
+			alunoPrioridadeSet.add( value );
 		}
 
 		int count = 0;
-		for ( Entry< Demanda, Set< Aluno > > entry : map.entrySet() )
+		for ( Entry< Demanda, Set< String > > entry : map.entrySet() )
 		{
 			Demanda demanda = entry.getKey();
 			Integer quantidade = entry.getValue().size();
@@ -599,9 +600,9 @@ public class AlunosDemandaImportExcel
 	}
 
 	// MatriculaAluno + IdDemanda
-	private String getCodeAlunoDemanda( Aluno aluno, Demanda demanda )
+	private String getCodeAlunoDemanda( Aluno aluno, Demanda demanda, Integer prioridade )
 	{
-		return ( aluno.getMatricula() + "-" + demanda.getId() );
+		return ( aluno.getMatricula() + "-" + demanda.getId() + "-" + prioridade );
 	}
 
 	private String getCodeCurriculoDisciplina(

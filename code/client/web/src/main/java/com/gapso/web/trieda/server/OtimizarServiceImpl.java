@@ -664,7 +664,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	}
 	
 	private void checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
-		boolean consideraSomenteDemandasDePrioridade1 = true;
+		boolean realizaVerificacaoSomenteParaDemandasDePrioridade1 = true;
 		
 		// obtém os alunos do campus selecionado para otimização
 		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,parametro.getCampi(),parametro.getTurno());
@@ -715,12 +715,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			Set<String> disciplinasRepetidasParaOAluno = new HashSet<String>();
 			Integer totalCreditosDoAluno = 0;
 			for (AlunoDemanda alunoDemanda : demandasDoAluno) {
-				Disciplina disciplina = alunoDemanda.getDemanda().getDisciplina();
-				if (!disciplinasDoAluno.add(disciplina.getId())) {
-					disciplinasRepetidasParaOAluno.add(disciplina.getCodigo());
-				}
-				
-				if (!consideraSomenteDemandasDePrioridade1 || (alunoDemanda.getPrioridade() == 1)) {
+				if (!realizaVerificacaoSomenteParaDemandasDePrioridade1 || (alunoDemanda.getPrioridade() == 1)) { // IF utilizado para, quando for o caso, considerar o check somente para demandas de prioridade 1
+					Disciplina disciplina = alunoDemanda.getDemanda().getDisciplina();
+					if (!disciplinasDoAluno.add(disciplina.getId())) {
+						disciplinasRepetidasParaOAluno.add(disciplina.getCodigo());
+					}
+					
 					totalCreditosDoAluno += disciplina.getCreditosTotal();
 				}
 			}
@@ -864,18 +864,18 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		List<Long> nodeMap = new ArrayList<Long>();
 		List<Disciplina> disMap = new ArrayList<Disciplina>();
 		Set<Pair<Integer, Integer>> pairs = new HashSet<Pair<Integer, Integer>>();
-//		Map<Long,Integer> disciplinaIdToQtdDemandadaMap = new HashMap<Long,Integer>();
+		Map<Long,Integer> disciplinaIdToQtdDemandadaMap = new HashMap<Long,Integer>();
 
 		// Para cada disciplina, obtem-se as suas equivalencias para montar tres estruturas:
 		// -> disMap mapeia o index associado a cada disciplina identificada
 		// -> nodeMap faz o controle de qual disciplina estah mapeada ou nao
 		// -> pairs obtem a relação de equivalencia de uma disciplina com outra. 
 		for(Disciplina disciplina : cenario.getDisciplinas()){
-//			Integer qtdDemandada = 0;
-//			for (Demanda demanda : disciplina.getDemandas()) {
-//				qtdDemandada += demanda.getQuantidade();
-//			}
-//			disciplinaIdToQtdDemandadaMap.put(disciplina.getId(),qtdDemandada);
+			Integer qtdDemandada = 0;
+			for (Demanda demanda : disciplina.getDemandas()) {
+				qtdDemandada += demanda.getQuantidade();
+			}
+			disciplinaIdToQtdDemandadaMap.put(disciplina.getId(),qtdDemandada);
 			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
 				Disciplina cursou = equivalencia.getCursou();
 				if((cIndex = (Integer) nodeMap.indexOf(cursou.getId())) == -1){
@@ -924,7 +924,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					ciclosStr += dis.getNome() + " [" + dis.getCodigo() + "] -> ";
 				}
 				String sugestaoParaEliminarCiclo = "";
-//				sugestaoParaEliminarCiclo = avaliaSugestoesParaEliminacaoDeCiclos(disMap,disciplinaIdToQtdDemandadaMap,ciclo);
+				sugestaoParaEliminarCiclo = avaliaSugestoesParaEliminacaoDeCiclos(disMap,disciplinaIdToQtdDemandadaMap,ciclo);
 				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 3) + sugestaoParaEliminarCiclo + "<br /><br />";
 			}
 			ciclosStr += " \n";
@@ -1085,6 +1085,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	}
 	
 	private void checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(Parametro parametro, List<String> errors) {
+		boolean realizaVerificacaoSomenteParaDemandasDePrioridade1 = true;
+		
 		// [DisciplinaId -> Disciplina]
 		Map<Long,Disciplina> disciplinasMap = new HashMap<Long,Disciplina>();
 		// 
@@ -1098,13 +1100,15 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(getInstituicaoEnsinoUser(),parametro.getCampi(),parametro.getTurno());
 		Map<Aluno,List<AlunoDemanda>> alunoToAlunoDemandasMap = new HashMap<Aluno,List<AlunoDemanda>>();
 		for (AlunoDemanda alunoDemanda : demandasDeAlunoDosCampiSelecionados) {
-			// demandas do aluno
-			List<AlunoDemanda> demandasDoAluno = alunoToAlunoDemandasMap.get(alunoDemanda.getAluno());
-			if (demandasDoAluno == null) {
-				demandasDoAluno = new ArrayList<AlunoDemanda>();
-				alunoToAlunoDemandasMap.put(alunoDemanda.getAluno(),demandasDoAluno);
+			if (!realizaVerificacaoSomenteParaDemandasDePrioridade1 || (alunoDemanda.getPrioridade() == 1)) { // IF utilizado para, quando for o caso, considerar o check somente para demandas de prioridade 1
+				// demandas do aluno
+				List<AlunoDemanda> demandasDoAluno = alunoToAlunoDemandasMap.get(alunoDemanda.getAluno());
+				if (demandasDoAluno == null) {
+					demandasDoAluno = new ArrayList<AlunoDemanda>();
+					alunoToAlunoDemandasMap.put(alunoDemanda.getAluno(),demandasDoAluno);
+				}
+				demandasDoAluno.add(alunoDemanda);
 			}
-			demandasDoAluno.add(alunoDemanda);
 		}
 		
 		for (Entry<Aluno,List<AlunoDemanda>> entryAluno : alunoToAlunoDemandasMap.entrySet()) {
