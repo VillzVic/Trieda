@@ -12,12 +12,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
+import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.web.trieda.server.util.Atendimento;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -78,7 +80,7 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 	@Override
 	protected boolean fillInExcel(HSSFWorkbook workbook) {
 		List<Oferta> ofertas = Oferta.findByCenario(instituicaoEnsino,getCenario());
-		Map<Demanda,Map<AtendimentoTatico,List<Aluno>>> demandaToAlunosPorAtendimentosMap = getMapDemandaToAlunosPorAtendimento(ofertas);
+		Map<Demanda,Map<Atendimento,List<Aluno>>> demandaToAlunosPorAtendimentosMap = getMapDemandaToAlunosPorAtendimento(ofertas);
 
 		if (!demandaToAlunosPorAtendimentosMap.isEmpty()) {
 			if (this.removeUnusedSheets) {
@@ -90,8 +92,8 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 			
 			int nextRow = this.initialRow;
 			for(Demanda demanda: demandaToAlunosPorAtendimentosMap.keySet()){
-				Map<AtendimentoTatico,List<Aluno>> atendimentosMap = demandaToAlunosPorAtendimentosMap.get(demanda);
-				for(AtendimentoTatico atendimento : atendimentosMap.keySet()){
+				Map<Atendimento,List<Aluno>> atendimentosMap = demandaToAlunosPorAtendimentosMap.get(demanda);
+				for(Atendimento atendimento : atendimentosMap.keySet()){
 					for(Aluno aluno : atendimentosMap.get(atendimento)){
 						nextRow = writeData(demanda,atendimento,aluno,nextRow,sheet);
 					}
@@ -104,15 +106,15 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 		return false;
 	}
 	
-	private Map<Demanda, Map<AtendimentoTatico, List<Aluno>>> getMapDemandaToAlunosPorAtendimento(List<Oferta> ofertas){
-		Map<Demanda, Map<AtendimentoTatico, List<Aluno>>> demandaToAlunosPorAtendimentosMap = new HashMap<Demanda, Map<AtendimentoTatico, List<Aluno>>>();
+	private Map<Demanda, Map<Atendimento, List<Aluno>>> getMapDemandaToAlunosPorAtendimento(List<Oferta> ofertas){
+		Map<Demanda, Map<Atendimento, List<Aluno>>> demandaToAlunosPorAtendimentosMap = new HashMap<Demanda, Map<Atendimento, List<Aluno>>>();
 		
 		for(Oferta oferta: ofertas){
 			Set<Demanda> demandas = oferta.getDemandas();
 			for(Demanda demanda : demandas){
-				Map<AtendimentoTatico, List<Aluno>> atendimentosMap = demandaToAlunosPorAtendimentosMap.get(demanda);
+				Map<Atendimento, List<Aluno>> atendimentosMap = demandaToAlunosPorAtendimentosMap.get(demanda);
 				if(atendimentosMap == null){
-					atendimentosMap = new HashMap<AtendimentoTatico,List<Aluno>>();
+					atendimentosMap = new HashMap<Atendimento,List<Aluno>>();
 					demandaToAlunosPorAtendimentosMap.put(demanda, atendimentosMap);
 				}
 				
@@ -122,23 +124,33 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 					Set<AtendimentoTatico> atts = alunoDemanda.getAtendimentosTatico();
 					List<Aluno> alunosAtendimento;
 					for(AtendimentoTatico att : atts){
-						alunosAtendimento = atendimentosMap.get(att);
+						Atendimento at = new Atendimento(att);
+						alunosAtendimento = atendimentosMap.get(at);
 						if(alunosAtendimento == null){
 							alunosAtendimento = new ArrayList<Aluno>();
-							atendimentosMap.put(att, alunosAtendimento);
+							atendimentosMap.put(at, alunosAtendimento);
 						}
 						alunosAtendimento.add(alunoDemanda.getAluno());
-						
+					}
+					
+					Set<AtendimentoOperacional> atops = alunoDemanda.getAtendimentosOperacional();
+					for(AtendimentoOperacional atop : atops){
+						Atendimento at = new Atendimento(atop);
+						alunosAtendimento = atendimentosMap.get(at);
+						if(alunosAtendimento == null){
+							alunosAtendimento = new ArrayList<Aluno>();
+							atendimentosMap.put(at, alunosAtendimento);
+						}
+						alunosAtendimento.add(alunoDemanda.getAluno());
 					}
 				}
-				
 			}
 		}
 		
 		return demandaToAlunosPorAtendimentosMap;
 	}
 
-	private int writeData(Demanda demanda, AtendimentoTatico atendimento, Aluno aluno, int row, HSSFSheet sheet) {
+	private int writeData(Demanda demanda, Atendimento atendimento, Aluno aluno, int row, HSSFSheet sheet) {
 		Oferta oferta = demanda.getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
 		
@@ -158,13 +170,13 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],demanda.getQuantidade());
 		
 		// Créditos Práticos
-		setCell(row,9,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],atendimento.getCreditosPratico());
+		setCell(row,9,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],atendimento.getCreditosPraticos());
 		// Créditos Teóricos
-		setCell(row,10,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],atendimento.getCreditosTeorico());
+		setCell(row,10,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],atendimento.getCreditosTeoricos());
 		// Qtd Atendida
 		setCell(row,11,sheet,cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],atendimento.getQuantidadeAlunos());
 		// Dia da Semana
-		setCell(row,12,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],atendimento.getSemana().name());
+		setCell(row,12,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],atendimento.getDiaSemana().name());
 		// Turma
 		setCell(row,13,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],atendimento.getTurma());
 		// Sala

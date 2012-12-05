@@ -6,7 +6,9 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
+import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.misc.Semanas;
 
 public class Atendimento {
 	
@@ -70,6 +72,14 @@ public class Atendimento {
 	public int getTotalCreditos() {
 		return (isTatico()) ? tatico.getTotalCreditos() : 1;
 	}
+	
+	public int getCreditosTeoricos() {
+		return (isTatico()) ? tatico.getCreditosTeorico() : (operacional.getCreditoTeorico() ? 1 : 0);
+	}
+	
+	public int getCreditosPraticos() {
+		return (isTatico()) ? tatico.getCreditosPratico() : (operacional.getCreditoTeorico() ? 0 : 1);
+	}
 
 	public String getTurma() {
 		return (isTatico()) ? tatico.getTurma() : operacional.getTurma();
@@ -79,4 +89,11 @@ public class Atendimento {
 		return (isTatico()) ? tatico.getOferta().getTurno() : operacional.getOferta().getTurno();
 	}
 	
+	public Sala getSala() {
+		return (isTatico()) ? tatico.getSala() : operacional.getSala();
+	}
+	
+	public Semanas getDiaSemana() {
+		return (isTatico()) ? tatico.getSemana() : operacional.getHorarioDisponivelCenario().getDiaSemana();
+	}
 }
