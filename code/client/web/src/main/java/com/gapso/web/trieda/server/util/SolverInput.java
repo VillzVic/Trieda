@@ -1767,11 +1767,13 @@ public class SolverInput
 					CargaHoraria.CONCENTRAR.name() ) )
 			{
 				cargaHorariaSemanalAluno.setMinimizarDias( "" );
+				cargaHorariaSemanalAluno.setIndiferente(null);
 			}
 			else if ( parametro.getCargaHorariaAlunoSel().equals(
 						CargaHoraria.DISTRIBUIR.name() ) )
 			{
 				cargaHorariaSemanalAluno.setEquilibrar( "" );
+				cargaHorariaSemanalAluno.setIndiferente(null);
 			}
 		}
 
@@ -1797,11 +1799,13 @@ public class SolverInput
 					CargaHoraria.CONCENTRAR.name() ) )
 			{
 				cargaHorariaSemanaProfessor.setMinimizarDias( "" );
+				cargaHorariaSemanaProfessor.setIndiferente(null);
 			}
-			else if ( this.parametro.getCargaHorariaAlunoSel().equals(
+			else if ( this.parametro.getCargaHorariaProfessorSel().equals(
 						CargaHoraria.DISTRIBUIR.name() ) )
 			{
 				cargaHorariaSemanaProfessor.setEquilibrar( "" );
+				cargaHorariaSemanaProfessor.setIndiferente(null);
 			}
 		}
 
