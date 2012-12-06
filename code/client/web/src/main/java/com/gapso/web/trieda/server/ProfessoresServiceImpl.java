@@ -225,7 +225,7 @@ public class ProfessoresServiceImpl
 		try {
 			onlyAdministrador();
 	
-			Professor professor = ConvertBeans.toProfessor( professorDTO );
+			Professor professor = ConvertBeans.toProfessorComCampiTrabalho(professorDTO);
 	
 			if ( professor.getId() != null && professor.getId() > 0 )
 			{

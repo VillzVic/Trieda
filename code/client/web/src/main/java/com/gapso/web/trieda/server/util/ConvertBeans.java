@@ -2493,28 +2493,38 @@ public class ConvertBeans {
 	}
 
 	// PROFESSOR
-	public static Professor toProfessor( ProfessorDTO dto )
-	{
+	public static Professor toProfessor(ProfessorDTO dto) {
 		Professor domain = new Professor();
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
+		fillProfessorWithProfessorDTO(domain, dto, instituicaoEnsino);
+		return domain;
+	}
 
-		InstituicaoEnsino instituicaoEnsino
-			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
-
+	private static void fillProfessorWithProfessorDTO(Professor domain, ProfessorDTO dto,  InstituicaoEnsino instituicaoEnsino) {
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 		domain.setCenario( Cenario.find( dto.getCenarioId(), instituicaoEnsino ) );
 		domain.setNome( dto.getNome() );
 		domain.setCpf( dto.getCpf() );
-		domain.setTipoContrato( TipoContrato.find(
-			dto.getTipoContratoId(), instituicaoEnsino ) );
+		domain.setTipoContrato( TipoContrato.find(dto.getTipoContratoId(), instituicaoEnsino ) );
 		domain.setCargaHorariaMax( dto.getCargaHorariaMax() );
 		domain.setCargaHorariaMin( dto.getCargaHorariaMin() );
 		domain.setTitulacao( Titulacao.find( dto.getTitulacaoId(), instituicaoEnsino ) );
-		domain.setAreaTitulacao( AreaTitulacao.find(
-			dto.getAreaTitulacaoId(), instituicaoEnsino ) );
+		domain.setAreaTitulacao( AreaTitulacao.find(dto.getAreaTitulacaoId(), instituicaoEnsino ) );
 		domain.setCreditoAnterior( dto.getCreditoAnterior() );
 		domain.setValorCredito( dto.getValorCredito().getDoubleValue() );
-
+	}
+	
+	public static Professor toProfessorComCampiTrabalho(ProfessorDTO dto) {
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(dto.getInstituicaoEnsinoId());
+		
+		Professor domain = null;
+		if (dto.getId() != null) {
+			domain = Professor.find(dto.getId(),instituicaoEnsino); // esta busca pelo professor preenche a sua lista de campi
+		}
+		
+		fillProfessorWithProfessorDTO(domain,dto,instituicaoEnsino);
+		
 		return domain;
 	}
 
