@@ -103,7 +103,7 @@ public class AlunosDemandaImportExcel
         			String columnName = headerCell.getRichStringCellValue().getString();
 					String cellValue = getCellValue( cell );
 
-					if ( CAMPUS_COLUMN_NAME.endsWith( columnName ) )
+					if ( CAMPUS_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setCodigoCampusStr( cellValue );
 					}
@@ -111,33 +111,33 @@ public class AlunosDemandaImportExcel
 					{
 						bean.setCodigoTurnoStr( cellValue );
 					}
-					else if ( CURSO_COLUMN_NAME.endsWith( columnName ) )
+					else if ( CURSO_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setCodigoCursoStr( cellValue );
 					}
-					else if ( CURRICULO_COLUMN_NAME.endsWith( columnName ) )
+					else if ( CURRICULO_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setCodigoCurriculoStr( cellValue );
 					}
-					else if ( PERIODO_COLUMN_NAME.endsWith( columnName ) )
+					else if ( PERIODO_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setPeriodoStr( cellValue );
 					}
-					else if ( DISCIPLINA_COLUMN_NAME.endsWith( columnName ) )
+					else if ( DISCIPLINA_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setDisciplinaCodigoStr( cellValue );
 					}
-					else if ( MATRICULA_ALUNO_COLUMN_NAME.endsWith( columnName ) )
+					else if ( MATRICULA_ALUNO_COLUMN_NAME.equals( columnName ) )
 					{
 						cell.setCellType( HSSFCell.CELL_TYPE_STRING );
 						cellValue = getCellValue( cell );
 						bean.setMatriculaAlunoStr( cellValue );
 					}
-					else if ( NOME_ALUNO_COLUMN_NAME.endsWith( columnName ) )
+					else if ( NOME_ALUNO_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setNomeAlunoStr( cellValue );
 					}
-					else if ( PRIORIDADE_COLUMN_NAME.endsWith( columnName ) )
+					else if ( PRIORIDADE_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setPrioridadeAlunoStr( cellValue );
 					}
@@ -455,6 +455,7 @@ public class AlunosDemandaImportExcel
 				alunoBD.setCenario( this.cenario );
 				alunoBD.setNome( alunosDemandaExcel.getNomeAlunoStr() );
 				alunoBD.setMatricula( alunosDemandaExcel.getMatriculaAlunoStr() );
+				alunoBD.setFormando(false);
 
 				alunoBD.persist();
 				//Aluno.entityManager().refresh( alunoBD );
