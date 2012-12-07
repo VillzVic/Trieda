@@ -1214,15 +1214,6 @@ public class SolverInput
 	}
 
 	private void generateDisciplinas() {
-		// Estruturas auxiliares
-		Map<Integer,DivisaoCredito> qtdCreditoToRegraDivisaoCreditoMap = new HashMap<Integer,DivisaoCredito>();
-		if (parametro.getRegrasGenericasDivisaoCredito() ) {
-			List<DivisaoCredito> regrasDivisaoCredito = DivisaoCredito.findByInstituicaoEnsino(instituicaoEnsino);
-			for (DivisaoCredito regra : regrasDivisaoCredito) {
-				qtdCreditoToRegraDivisaoCreditoMap.put(regra.getCreditos(),regra);
-			}
-		}
-		
 		GrupoDisciplina grupoDisciplina = this.of.createGrupoDisciplina();
 
 		boolean disciplinaSemDemanda = ( this.disciplinasComDemandaCurriculo.size()
@@ -1268,11 +1259,6 @@ public class SolverInput
 			if (this.parametro.getRegrasEspecificasDivisaoCredito()) {
 				divisaoCredito = disciplina.getDivisaoCreditos();
 			}
-
-			// TODO: temporário
-//			if (divisaoCredito == null&& this.parametro.getRegrasGenericasDivisaoCredito()) {
-//				divisaoCredito = qtdCreditoToRegraDivisaoCreditoMap.get(disciplina.getTotalCreditos());
-//			}
 
 			if (divisaoCredito != null) {
 				ItemDivisaoCreditos itemDivisaoCreditos = this.of.createItemDivisaoCreditos();
