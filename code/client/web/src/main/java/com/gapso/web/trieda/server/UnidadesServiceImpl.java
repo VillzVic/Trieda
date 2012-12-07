@@ -3,13 +3,8 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +21,7 @@ import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
@@ -53,79 +49,17 @@ public class UnidadesServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(
-		UnidadeDTO unidadeDTO )
-	{
-		List< HorarioDisponivelCenario > list
-			= new ArrayList< HorarioDisponivelCenario >();
-
-		Unidade unidade = Unidade.find(
-			unidadeDTO.getId(), getInstituicaoEnsinoUser() );
-
-		if ( unidade != null )
-		{
-			list.addAll( unidade.getHorarios(
-				getInstituicaoEnsinoUser() ) );
+	public PagingLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(UnidadeDTO unidadeDTO) {
+		Unidade unidade = Unidade.find(unidadeDTO.getId(),getInstituicaoEnsinoUser());
+		
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>();
+		if (unidade != null) {
+			list.addAll(unidade.getHorarios(getInstituicaoEnsinoUser()));
 		}
 
-		List< HorarioDisponivelCenarioDTO > listDTO
-			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
+		List<HorarioDisponivelCenarioDTO> listDTO = TriedaServerUtil.ordenaHorariosPorSemanaLetivaETurno(list);
 
-		Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
-			= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
-
-		for ( HorarioDisponivelCenarioDTO o : listDTO )
-		{
-			List< HorarioDisponivelCenarioDTO > horarios
-				= horariosTurnos.get( o.getTurnoString() );
-
-			if ( horarios == null )
-			{
-				horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
-				horariosTurnos.put( o.getTurnoString(), horarios );
-			}
-
-			horarios.add( o );
-		}
-
-		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
-			: horariosTurnos.entrySet() )
-		{
-			Collections.sort( entry.getValue() );
-		}
-
-		Map< Date, List< String > > horariosFinalTurnos
-			= new TreeMap< Date, List< String > >();
-
-		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
-			: horariosTurnos.entrySet() )
-		{
-			Date ultimoHorario = entry.getValue().get(
-				entry.getValue().size() - 1 ).getHorario();
-
-			List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
-
-			if ( turnos == null )
-			{
-				turnos = new ArrayList< String >();
-				horariosFinalTurnos.put( ultimoHorario, turnos );
-			}
-
-			turnos.add( entry.getKey() );
-		}
-
-		listDTO.clear();
-
-		for ( Entry< Date, List< String > > entry
-			: horariosFinalTurnos.entrySet() )
-		{
-			for ( String turno : entry.getValue() )
-			{
-				listDTO.addAll( horariosTurnos.get( turno ) );
-			}
-		}
-
-		return new BasePagingLoadResult< HorarioDisponivelCenarioDTO >( listDTO );
+		return new BasePagingLoadResult<HorarioDisponivelCenarioDTO>(listDTO);
 	}
 	
 	@Override

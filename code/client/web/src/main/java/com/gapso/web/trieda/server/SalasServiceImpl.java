@@ -1,13 +1,9 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +21,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
@@ -53,74 +50,10 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(SalaDTO salaDTO)
-	{
-		Sala sala = Sala.find( salaDTO.getId(), getInstituicaoEnsinoUser() );
-
-//		SemanaLetiva semanaLetiva = SemanaLetiva.find(
-//			semanaLetivaDTO.getId(), this.getInstituicaoEnsinoUser() ); 
-
-		List< HorarioDisponivelCenario > list = new ArrayList< HorarioDisponivelCenario >(
-			sala.getHorarios( getInstituicaoEnsinoUser() ) );
-
-		List< HorarioDisponivelCenarioDTO > listDTO
-			= ConvertBeans.toHorarioDisponivelCenarioDTO( list );
-
-		// ORDENANDO HORARIOS POR ORDEM DE TURNOS E HORARIOS
-		Map< String, List< HorarioDisponivelCenarioDTO > > horariosTurnos
-			= new HashMap< String, List< HorarioDisponivelCenarioDTO > >();
-
-		for ( HorarioDisponivelCenarioDTO o : listDTO )
-		{
-			List< HorarioDisponivelCenarioDTO > horarios
-				= horariosTurnos.get( o.getTurnoString() );
-
-			if ( horarios == null )
-			{
-				horarios = new ArrayList< HorarioDisponivelCenarioDTO >();
-				horariosTurnos.put( o.getTurnoString(), horarios );
-			}
-
-			horarios.add( o );
-		}
-
-		for ( Entry< String, List< HorarioDisponivelCenarioDTO > > entry
-			: horariosTurnos.entrySet() )
-		{
-			Collections.sort( entry.getValue() );
-		}
-
-		Map< Date, List< String > > horariosFinalTurnos
-			= new TreeMap< Date, List< String > >();
-
-		for ( Entry<String, List< HorarioDisponivelCenarioDTO > > entry
-			: horariosTurnos.entrySet() )
-		{
-			Date ultimoHorario = entry.getValue().get(
-				entry.getValue().size() - 1 ).getHorario();
-
-			List< String > turnos = horariosFinalTurnos.get( ultimoHorario );
-
-			if ( turnos == null )
-			{
-				turnos = new ArrayList< String >();
-				horariosFinalTurnos.put( ultimoHorario, turnos );
-			}
-
-			turnos.add( entry.getKey() );
-		}
-
-		listDTO.clear();
-
-		for ( Entry< Date, List< String > > entry
-			: horariosFinalTurnos.entrySet() )
-		{
-			for ( String turno : entry.getValue() )
-			{
-				listDTO.addAll( horariosTurnos.get( turno ) );
-			}
-		}
-
+	public List<HorarioDisponivelCenarioDTO> getHorariosDisponiveis(SalaDTO salaDTO) {
+		Sala sala = Sala.find(salaDTO.getId(),getInstituicaoEnsinoUser());
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>(sala.getHorarios(getInstituicaoEnsinoUser()));
+		List<HorarioDisponivelCenarioDTO> listDTO = TriedaServerUtil.ordenaHorariosPorSemanaLetivaETurno(list);
 		return listDTO;
 	}
 
