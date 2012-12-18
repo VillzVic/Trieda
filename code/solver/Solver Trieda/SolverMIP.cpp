@@ -372,8 +372,16 @@ SolverMIP::~SolverMIP()
    {
 		delete *it;    
    }
-
    solVarsPre.clear();
+
+	// -----------------------------------------------------
+	// Deleta as variaveis em solVarsXPre 
+	ITERA_GGROUP_LESSPTR ( it, solVarsXPre, VariablePre )
+	{
+		delete *it;    
+	}
+	solVarsXPre.clear();
+
 }
 
 int SolverMIP::retornaTempoDeExecucaoPreModelo( int campusId, int cjtAlunosId, int prioridade )
@@ -880,7 +888,7 @@ void SolverMIP::writeSolBin( int campusId, int prioridade, int cjtAlunosId, int 
 	}
 }
 
-int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double **xSol )
+int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *&xSol )
 {
 	char solName[1024];
 
@@ -944,7 +952,7 @@ int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r,
 		{
 			double auxDbl;
 			fread(&auxDbl,sizeof(double),1,fin);
-			(*xSol)[i] = auxDbl;
+			(xSol)[i] = auxDbl;
 		}
 	}
 	else
@@ -1071,9 +1079,9 @@ bool SolverMIP::SolVarsPreFound( VariablePre v )
 	}
 	return false;*/
 	
-	std::set< VariablePre*, LessPtr<VariablePre> >::iterator itPreSol = solVarsPre.find(&v);
+	GGroup< VariablePre *, LessPtr<VariablePre> >::iterator itPreSol = solVarsXPre.find(&v);
 
-	if(itPreSol != solVarsPre.end())
+	if(itPreSol != solVarsXPre.end())
 		return true;
 	else
 		return false;
@@ -1849,29 +1857,41 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 		 }
 		case VariableTatico::V_ABERTURA: // z_{i,d,cp}
 		 {
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
-			 preV.setTurma( v->getTurma() );
-			 preV.setDisciplina( v->getDisciplina() );
-			 preV.setCampus( v->getCampus() );
-		 		 
-			 if ( SolVarsPreFound(preV) )
+			 // z_{i,d,cp}
+			 if ( problemData->existeTurmaDiscCampus( v->getTurma(), v->getDisciplina()->getId(), v->getCampus()->getId() ) )
 				return true;
-			 else
-				return false;
+			 
+			 return false;
+
+			 //preV.reset();
+			 //preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
+			 //preV.setTurma( v->getTurma() );
+			 //preV.setDisciplina( v->getDisciplina() );
+			 //preV.setCampus( v->getCampus() );
+		 	//	 
+			 //if ( SolVarsPreFound(preV) )
+				//return true;
+			 //else
+				//return false;
 		 }
 		 case VariableTatico::V_DIAS_CONSECUTIVOS: // c_{i,d,t}
 		 {
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
-			 preV.setTurma( v->getTurma() );
-			 preV.setDisciplina( v->getDisciplina() );
-			 preV.setCampus( v->getCampus() );		 // cp
+			 // z_{i,d,cp}
+			 if ( problemData->existeTurmaDiscCampus( v->getTurma(), v->getDisciplina()->getId(), v->getCampus()->getId() ) )
+				return true;
+			 
+			 return false;
 
-			 if ( SolVarsPreFound( preV ) )
-				 return true;
-			 else
-				return false;
+			 //preV.reset();
+			 //preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
+			 //preV.setTurma( v->getTurma() );
+			 //preV.setDisciplina( v->getDisciplina() );
+			 //preV.setCampus( v->getCampus() );		 // cp
+
+			 //if ( SolVarsPreFound( preV ) )
+				// return true;
+			 //else
+				//return false;
 		 }
 		 case VariableTatico::V_MAX_CRED_SEMANA: // H_{a}
 		 {
@@ -1937,7 +1957,7 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 		 case VariableTatico::V_SLACK_DIST_CRED_DIA_SUPERIOR: // fcp_{i,d,s,t}
 		 {
 			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_OFERECIMENTO );	// o_{i,d,s}
+			 preV.setType( VariablePre::V_PRE_CREDITOS ); // x_{i,d,u,s}
 			 preV.setTurma( v->getTurma() );
 			 preV.setDisciplina( v->getDisciplina() );
 			 preV.setUnidade( v->getUnidade() );
@@ -1951,7 +1971,7 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 		 case VariableTatico::V_SLACK_DIST_CRED_DIA_INFERIOR: // fcm_{i,d,s,t}
 		 {
 			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_OFERECIMENTO );	// o_{i,d,s}
+			 preV.setType( VariablePre::V_PRE_CREDITOS ); // x_{i,d,u,s}
 			 preV.setTurma( v->getTurma() );
 			 preV.setDisciplina( v->getDisciplina() );
 			 preV.setUnidade( v->getUnidade() );
@@ -1982,64 +2002,98 @@ bool SolverMIP::criaVariavelTatico( VariableTatico *v )
 		 }
 		 case VariableTatico::V_COMBINACAO_DIVISAO_CREDITO: // m{i,d,k}
 		 {
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
-			 preV.setTurma( v->getTurma() );
-			 preV.setDisciplina( v->getDisciplina() );
-
+			 // z_{i,d,cp}
 			 ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
 			 {
-				 preV.setCampus( *itCp );
-				 if ( SolVarsPreFound( preV ) )
-					 return true;
-			 }
+				 int cpId = (*itCp)->getId();
+				 if ( problemData->existeTurmaDiscCampus( v->getTurma(), v->getDisciplina()->getId(), cpId ) )
+				 	return true;
+			 }			 
 			 return false;
+
+			 //preV.reset();
+			 //preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
+			 //preV.setTurma( v->getTurma() );
+			 //preV.setDisciplina( v->getDisciplina() );
+
+			 //ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
+			 //{
+				// preV.setCampus( *itCp );
+				// if ( SolVarsPreFound( preV ) )
+				//	 return true;
+			 //}
+			 //return false;
 		 }
 		 case VariableTatico::V_SLACK_COMBINACAO_DIVISAO_CREDITO_M: // fkm{i,d,k}
 		 {
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
-			 preV.setTurma( v->getTurma() );
-			 preV.setDisciplina( v->getDisciplina() );
-
+			 // z_{i,d,cp}
 			 ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
 			 {
-				 preV.setCampus( *itCp );
-				 if ( SolVarsPreFound( preV ) )
-					 return true;
-			 }
+				 int cpId = (*itCp)->getId();
+				 if ( problemData->existeTurmaDiscCampus( v->getTurma(), v->getDisciplina()->getId(), cpId ) )
+				 	return true;
+			 }			 
 			 return false;
+
+			 //preV.reset();
+			 //preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
+			 //preV.setTurma( v->getTurma() );
+			 //preV.setDisciplina( v->getDisciplina() );
+
+			 //ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
+			 //{
+				// preV.setCampus( *itCp );
+				// if ( SolVarsPreFound( preV ) )
+				//	 return true;
+			 //}
+			 //return false;
 		 }
 		 case VariableTatico::V_SLACK_COMBINACAO_DIVISAO_CREDITO_P: // fkp{i,d,t}
 		 {
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
-			 preV.setTurma( v->getTurma() );
-			 preV.setDisciplina( v->getDisciplina() );
-
+			 // z_{i,d,cp}
 			 ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
 			 {
-				 preV.setCampus( *itCp );
-				 if ( SolVarsPreFound( preV ) )
-					 return true;
-			 }
+				 int cpId = (*itCp)->getId();
+				 if ( problemData->existeTurmaDiscCampus( v->getTurma(), v->getDisciplina()->getId(), cpId ) )
+				 	return true;
+			 }			 
 			 return false;
+
+			 //preV.reset();
+			 //preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
+			 //preV.setTurma( v->getTurma() );
+			 //preV.setDisciplina( v->getDisciplina() );
+
+			 //ITERA_GGROUP_LESSPTR( itCp, problemData->campi, Campus )
+			 //{
+				// preV.setCampus( *itCp );
+				// if ( SolVarsPreFound( preV ) )
+				//	 return true;
+			 //}
+			 //return false;
 		 }
 		 case VariableTatico::V_ABERTURA_COMPATIVEL: // zc_{d,t,cp}
 		 {
-			 preV.reset();
-			 preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
-			 preV.setDisciplina( v->getDisciplina() );
-			 preV.setCampus( v->getCampus() );
-
+			 // z_{i,d,cp}
 			 for ( int turma = 0; turma < v->getDisciplina()->getNumTurmas(); turma++ )
 			 {
-				preV.setTurma( turma );
-				if	( SolVarsPreFound( preV ) )
-					return true;
-			 }
-			 
+				 if ( problemData->existeTurmaDiscCampus( turma, v->getDisciplina()->getId(), v->getCampus()->getId() ) )
+				 	return true;
+			 }			 
 			 return false;
+
+			 //preV.reset();
+			 //preV.setType( VariablePre::V_PRE_ABERTURA ); // z_{i,d,cp}
+			 //preV.setDisciplina( v->getDisciplina() );
+			 //preV.setCampus( v->getCampus() );
+
+			 //for ( int turma = 0; turma < v->getDisciplina()->getNumTurmas(); turma++ )
+			 //{
+				//preV.setTurma( turma );
+				//if	( SolVarsPreFound( preV ) )
+				//	return true;
+			 //}			 
+			 //return false;
 		 }		 		 
 		 case VariableTatico::V_ALUNO_VARIAS_UNID_DIA: // w_{a,t}
 		 {
@@ -2283,8 +2337,7 @@ GGroup< std::pair< int,Disciplina* > > SolverMIP::retornaAtendEmCjtSala( Conjunt
 {
 	GGroup< std::pair<int,Disciplina*>  > turmaDiscsAtendidas;
 
-	std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
-	for ( ; it != solVarsPre.end() ; it++ )
+	ITERA_GGROUP_LESSPTR ( it, solVarsXPre, VariablePre )
 	{
 		VariablePre *var = *it;
 		if ( var->getType() == VariablePre::V_PRE_CREDITOS )
@@ -3157,15 +3210,15 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico( int campusId, int prioridade )
 
 }
 
-void SolverMIP::preencheMapAtendimentoAluno( int campusId )
+void SolverMIP::preencheMapAtendimentoAluno( VariablePre *&var )
 {
 
 	// Resultado da alocação de alunos no pre-modelo:
-	std::set< VariablePre*, LessPtr<VariablePre> >::iterator itSol = solVarsPre.begin();
+	//std::set< VariablePre*, LessPtr<VariablePre> >::iterator itSol = solVarsPre.begin();
 
-	for ( ; itSol != solVarsPre.end(); itSol++ )
-	{
-		VariablePre *var = *itSol;
+	//for ( ; itSol != solVarsPre.end(); itSol++ )
+	//{
+	//	VariablePre *var = *itSol;
 		if ( var->getType() == VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC )
 		{
 			Aluno *aluno = var->getAluno();
@@ -3179,8 +3232,7 @@ void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 
 			// Verificando consistência -------------------
 			
-			AlunoDemanda *alunoDemanda = aluno->getAlunoDemanda( disciplina->getId() ); 
-					//problemData->procuraAlunoDemanda( disciplina->getId(), aluno->getAlunoId() );
+			AlunoDemanda *alunoDemanda = aluno->getAlunoDemanda( disciplina->getId() );
 
 			GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > > atendimentos = 
 				problemData->mapAluno_CampusTurmaDisc[ aluno ];
@@ -3216,7 +3268,7 @@ void SolverMIP::preencheMapAtendimentoAluno( int campusId )
 					problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].add( alunoDemanda );
 			}
 		}
-	}
+//	}
 	
 }
 
@@ -3261,8 +3313,9 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 	// acrescenta em listSlackDemandaAluno.
 	// Deleta os atendimentos em vars_x que não tiverem nenhum aluno alocado.
 	#pragma region Retira Atendimentos Incompletos
-
-	for ( int itera=1; itera<=2; itera++ )
+	
+	int itera=1;
+	while ( 1 )
 	{
 		GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> > novasFolgasAlDem;
 		ITERA_GGROUP_LESSPTR( itSlack, problemData->listSlackDemandaAluno, AlunoDemanda )
@@ -3308,7 +3361,6 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 					std::cout<<"\nRemove "<<itera<<" (1): Aluno"<<aluno->getAlunoId()<<" AlunoDemanda"
 						<<ad->getId()<<" Prior"<<ad->getPrioridade()<<" da turma"<<turma<<" disc"<<discId;
 
-					//problemData->listSlackDemandaAluno.add( ad );
 					novasFolgasAlDem.add( ad );
 
 					if ( alunoDemandaAtendsHeuristica.find(ad) != alunoDemandaAtendsHeuristica.end() )
@@ -3326,7 +3378,6 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 					else if ( problemData->violaMinTurma( trio ) )
 					{
 						std::cout<<"\nViolou o min de alunos:";
-
 						GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > >
 							alunosDemanda = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ];
 						ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
@@ -3367,9 +3418,7 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 
 					if ( alunoDemandaAtendsHeuristica.find(ad) != alunoDemandaAtendsHeuristica.end() )
 						alunoDemandaAtendsHeuristica.remove( ad );
-
-					//nroAtendsRemovidosAlunoDemanda++;
-
+										
 					int nroAlunos = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ].size();
 
 					if ( nroAlunos == 0 )
@@ -3380,7 +3429,6 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 					else if ( problemData->violaMinTurma( trio ) )
 					{
 						std::cout<<"\nViolou o min de alunos:";
-
 						GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > >
 							alunosDemanda = problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ];
 						ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
@@ -3398,6 +3446,9 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 			problemData->listSlackDemandaAluno.add( *itNovasFolgas );
 		}		
 
+		if ( novasFolgasAlDem.size() == 0 )
+			break;
+		itera++;
 	}
 
 	#pragma endregion
@@ -3699,6 +3750,19 @@ int SolverMIP::removeAtendimentosParciais( double *xSol, char solFilename[1024],
 						  Aluno *aluno = problemData->retornaAluno( (*itAlDem)->getAlunoId() );
 						  aluno->addHorarioDiaOcupado( horariosDias );
 					  }
+
+					  Sala *sala = v->getSubCjtSala()->salas.begin()->second;
+					  sala->addHorarioDiaOcupado( horariosDias );
+
+					  hi = v->getHorarioAulaInicial();
+					  hf = v->getHorarioAulaFinal();
+					  std::cout << std::endl << problemData->mapCampusTurmaDisc_AlunosDemanda[trio].size() << " vagas para a aula de "
+							<< problemData->retornaNroCreditos( hi, hf, sala, v->getDisciplina(), dia )
+							<< " creditos da disciplina " << v->getDisciplina()->getCodigo() << " id" <<v->getDisciplina()->getId()
+							<< " para a turma " << v->getTurma()
+							<< " no dia " << dia
+							<< " para a sala " << sala->getId()
+							<< std::endl;
 				  }
 				  else
 				  {
@@ -4195,6 +4259,79 @@ void SolverMIP::testeCarregaSol( int campusId, int prioridade, int cjtAlunosId, 
 	lp->updateLP();
 
 	std::cout<<"\nFim do carregamento de teste!\n"; fflush(NULL);
+}
+
+void SolverMIP::teste(double *& xSol, int n )
+{
+	stringstream ss;
+	ss << n;
+	std::string fileName( "teste_" );
+	fileName += ss.str();
+	fileName += ".txt";
+
+	ofstream fout;
+	fout.open( fileName, ios::app );
+	if ( fout == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::teste(): Arquivo teste.txt nao pode ser aberto.\n";
+	}
+	else
+	{
+		int size = vHashTatico.size();
+		int nCols = lp->getNumCols();
+		
+		fout << "nCols: " << nCols;
+		fout << "\nhash size: " << size;
+		 
+		VariableTaticoHash::iterator vit = vHashTatico.begin();
+		for ( int i = 0; i < lp->getNumCols(); i++ )
+		{
+			VariableTatico v = vit->first;
+
+			fout << "\n" << i << ": " << v.toString() << " = " << xSol[ i ];
+			  
+			vit++;
+		}
+
+		fout.close();
+	}
+
+}
+void SolverMIP::teste( int n )
+{
+	stringstream ss;
+	ss << n;
+	std::string fileName( "testeSimples_" );
+	fileName += ss.str();
+	fileName += ".txt";
+
+	ofstream fout;
+	fout.open( fileName, ios::app );
+	if ( fout == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::teste(): Arquivo teste.txt nao pode ser aberto.\n";
+	}
+	else
+	{
+		int size = vHashTatico.size();
+		int nCols = lp->getNumCols();
+		
+		fout << "nCols: " << nCols;
+		fout << "\nhash size: " << size;
+		 
+		VariableTaticoHash::iterator vit = vHashTatico.begin();
+		for ( int i = 0; i < lp->getNumCols(); i++ )
+		{
+			VariableTatico v = vit->first;
+
+			fout << "\n" << i << ": " << v.toString();
+			  
+			vit++;
+		}
+
+		fout.close();
+	}
+
 }
 
 #ifdef TATICO_CJT_ALUNOS
@@ -5376,7 +5513,6 @@ double SolverMIP::fixaLimitesVariavelTaticoCjtAlunosAnterior( Variable *v )
 
 }
 
-
 /*
 	Recebe uma Variavel v correspondente a um conjunto de alunos de P2.
 	Procura v no conjunto solução de P1. Se encontrar retorna o seu valor.
@@ -5507,7 +5643,7 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    
    if ( this->CARREGA_SOLUCAO )
    {
-	   int status = readSolBin( campusId, prioridade, cjtAlunos, r, 0, OutPutFileType::PRE_TAT_BIN, &xSol );
+	   int status = readSolBin( campusId, prioridade, cjtAlunos, r, 0, OutPutFileType::PRE_TAT_BIN, xSol );
 	   if ( !status )
 	   {
 		   std::cout << "\nErro em SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int prioridade, int cjtAlunos, int r ): arquivo nao encontrado.\n";
@@ -5543,14 +5679,14 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    vit = vHashPre.begin();
    while ( vit != vHashPre.end() )
    {
-      VariablePre * v = new VariablePre( vit->first );
-      int col = vit->second;
-      v->setValue( xSol[ col ] );
+	  double value = xSol[ vit->second ];
 
-      if ( v->getValue() > 0.00001 )
+      if ( value > 0.00001 )
       {
-		 solVarsPre.insert( v );
-         
+		  VariablePre * v = new VariablePre( vit->first );
+		  int col = vit->second;
+		  v->setValue( xSol[ col ] );
+		           
 		 char auxName[100];
          lp->getColName( auxName, col, 100 );
          fprintf( fout, "%s = %f\n", auxName, v->getValue() );
@@ -5566,10 +5702,9 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 						  << " para a turma " << v->getTurma()
 						  << " para alguma de sala do conjunto de salas " << v->getSubCjtSala()->getId()
 						  << std::endl << std::endl;
-            mapCreditosSalas[v->getSubCjtSala()] += ((int)(xSol[ col ] + 0.5)) * ((int)(v->getDisciplina()->getTempoCredSemanaLetiva()+0.5));
+				mapCreditosSalas[v->getSubCjtSala()] += ((int)(xSol[ col ] + 0.5)) * ((int)(v->getDisciplina()->getTempoCredSemanaLetiva()+0.5));
+				solVarsXPre.add( v );
 				break;
-			 case VariablePre::V_PRE_OFERECIMENTO: break;
-			 case VariablePre::V_PRE_ABERTURA: break;
 			 case VariablePre::V_PRE_ALUNOS:
 				std::cout << "Oferecimento de " << v->getValue()
 						  << " vagas da disciplina " << v->getDisciplina()->getCodigo()
@@ -5577,11 +5712,12 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 						  << " da oferta " << v->getOferta()->getId()
 						  << " do curso " << v->getOferta()->curso->getCodigo()
 						  << std::endl << std::endl;
-				nroAtendimentoAlunoDemanda += v->getValue();
+				nroAtendimentoAlunoDemanda += v->getValue();				
 				break;
-			 case VariablePre::V_PRE_ALOC_ALUNO: break;
-			 case VariablePre::V_PRE_SLACK_DEMANDA: 
-				 				 
+			 case VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC: 
+				 this->preencheMapAtendimentoAluno( v );
+				 break;
+			 case VariablePre::V_PRE_SLACK_DEMANDA:				 				 
 				 // ------------ Preenche listSlackDemandaAluno ----------------
 				 if ( problemData->parametros->otimizarPor == "ALUNO" )
 				 {
@@ -5595,16 +5731,12 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
 					 nroNaoAtendimentoAlunoDemanda++;		 					 
 				 }
 				 // ------------------------------------------------------------
-
-				 break;			 
-			 case VariablePre::V_PRE_SLACK_COMPARTILHAMENTO: break;
-			 case VariablePre::V_PRE_SLACK_ALOC_ALUNOS_CURSO_INCOMPAT: break;			 
+				 break; 
          }
+
+		 if ( v->getType() != VariablePre::V_PRE_CREDITOS )
+			 delete v;
       }
-	  else
-	  {
-		  delete v;
-	  }
 
       vit++;
    }
@@ -5612,14 +5744,11 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    fprintf( fout, "\nAlunosDemanda nao atendidos = %d\n", nroNaoAtendimentoAlunoDemanda );
    fprintf( fout, "AlunosDemanda atendidos = %d", nroAtendimentoAlunoDemanda );
 
-   //#ifdef DEBUG
    if ( fout )
    {
       fclose( fout );
    }
-   //#endif
-
-   
+      
    if ( vHashPre.size() > 0 )
    {
 	   vHashPre.clear();
@@ -5649,7 +5778,10 @@ void SolverMIP::carregaVariaveisSolucaoPreTatico_CjtAlunos( int campusId, int pr
    {
       delete [] xSol;
    }
-
+   						
+   bool violou = problemData->violaMinTurma( campusId );
+   
+   return;
 }
 
 int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualId, int prioridade, int cjtAlunos, int r, int tatico )
@@ -5668,7 +5800,7 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
 	#pragma region Carrega solucao
 	if ( this->CARREGA_SOLUCAO )
 	{
-		int status = readSolBin( campusAtualId, prioridade, cjtAlunos, r, tatico, OutPutFileType::TAT_HOR_BIN, &xSol );
+		int status = readSolBin( campusAtualId, prioridade, cjtAlunos, r, tatico, OutPutFileType::TAT_HOR_BIN, xSol );
 		if ( !status )
 		{
 		   std::cout << "\nErro em SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusId, int prioridade, int cjtAlunos, int r, int tatico ): arquivo "
@@ -5701,6 +5833,9 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
 			exit(0);
 	   }
    }
+
+   if ( tatico==2 && prioridade==1 )
+	  teste( xSol, 1 );
       
    int nroNaoAtendimentoAlunoDemanda = 0;
    int nroAtendimentoAlunoDemanda = 0;
@@ -5824,22 +5959,6 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
 				std::cout << "Variável inválida " << std::endl;
 				break;
 			 case VariableTatico::V_CREDITOS:				 					 
-				 vhi = v->getHorarioAulaInicial();
-				 vhf = v->getHorarioAulaFinal();
-				 vSala = v->getSubCjtSala()->salas.begin()->second;
-				 vDia = v->getDia();
-				 vDisc = v->getDisciplina();
-				 vTurma = v->getTurma();
-				 vCampusId = v->getUnidade()->getIdCampus();
-				 
-				 trio.set(vCampusId, vTurma, vDisc);
-				 std::cout << problemData->mapCampusTurmaDisc_AlunosDemanda[trio].size() << " vagas para a aula de "
-						  << problemData->retornaNroCreditos( vhi, vhf, vSala, vDisc, vDia )
-						  << " creditos da disciplina " << vDisc->getCodigo() << " id" <<vDisc->getId()
-						  << " para a turma " << vTurma
-						  << " no dia " << vDia
-						  << " para a sala " << vSala->getId()
-						  << std::endl << std::endl;
 				break;
 			 case VariableTatico::V_ABERTURA:
 				 vDisc = v->getDisciplina();
@@ -5935,6 +6054,10 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
         fclose( fout );
     }	
     
+	
+   if ( tatico==2 && prioridade==1 )
+	  teste( xSol, 2 );
+
 	int nar = removeAtendimentosParciais( xSol, solFilename, prioridade );
 
 #ifndef TATICO_COM_HORARIOS
@@ -5971,6 +6094,10 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
    }
 #endif
 
+
+   if ( tatico==2 && prioridade==1 )
+	  teste( xSol, 3 );
+
   
    if ( tatico==2 ) // para a segunda rodada do tatico, aproveita-se as variaveis. Logo, não posso deletar o primeiro.
    {
@@ -5997,6 +6124,8 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
       delete [] xSol;
    }
    
+   bool violou = problemData->violaMinTurma( campusAtualId );
+
    return ( nar + nroNaoAtendimentoAlunoDemanda );
 }
 
@@ -6051,87 +6180,83 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 
 				for ( int r=1; r<=nRodadas ;r++ )
 				{
-					std::cout<<"\n---------------------Rodada "<< r <<" -----------------------\n";
-					std::cout<<"\n------- Campus "<< campusId << " , Conjunto-Aluno "<< grupoId << ", Prior " << P << "----------\n";
-					std::cout<<"\n------------------------------Pre-modelo------------------------------\n"; fflush(NULL);
-				
-					statusPre = solvePreTaticoCjtAlunos( campusId, P, grupoId, r );    
-
-					carregaVariaveisSolucaoPreTatico_CjtAlunos( campusId, P, grupoId, r );
-								
-					bool violou = problemData->violaMinTurma( campusId );
-					//imprimeSolVarsPre( campusId, P, grupoId );
-
-					preencheMapAtendimentoAluno( campusId );
-					//problemData->imprimeAlocacaoAlunos( campusId, P, grupoId, false, tatico );
-
-				#ifndef TATICO_COM_HORARIOS
-					encontraCliques(true);				
-					imprimeCliques( campusId, P, grupoId );
-				#endif
-					int nTaticos=2;
-					for ( int tatico=1; tatico<=nTaticos; tatico++ )
+					
+					if ( P == 1 )
 					{
 						std::cout<<"\n---------------------Rodada "<< r <<" -----------------------\n";
 						std::cout<<"\n------- Campus "<< campusId << " , Conjunto-Aluno "<< grupoId << ", Prior " << P << "----------\n";
-						std::cout<<"\n------------------------------Tatico "<<tatico<<"------------------------------\n"; fflush(NULL);
-
-						statusTatico = solveTaticoBasicoCjtAlunos( campusId, P, grupoId, r, tatico );
-
-						int na = carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( campusId, P, grupoId, r, tatico );
-
-						violou = problemData->violaMinTurma( campusId );
-
-						std::cout<<"\nCarregou solucao tatica\n";
+						std::cout<<"\n------------------------------Pre-modelo------------------------------\n"; fflush(NULL);
 				
-						problemData->imprimeAlocacaoAlunos( campusId, P, grupoId, false, r, tatico );
-						
-						if ( na == 0 ) break;
-						
-						if (tatico < nTaticos) 
-						{
-							voltaComAlunosNaoAlocados();							
-						}
-					}
-						   
-					statusTatico = ( statusTatico && statusPre );
-					
-					vHash.clear();
-					vHashTatico.clear();
+						statusPre = solvePreTaticoCjtAlunos( campusId, P, grupoId, r );    
 
-					// ==================================
-					// MODELO INTEGRADO 
+						carregaVariaveisSolucaoPreTatico_CjtAlunos( campusId, P, grupoId, r );								
+						//imprimeSolVarsPre( campusId, P, grupoId );
+
+						//preencheMapAtendimentoAluno( campusId );
 					
-					if ( P==1 )
+						problemData->imprimeAlocacaoAlunos( campusId, P, grupoId, false, r, 0 );
+
+					#ifndef TATICO_COM_HORARIOS
+						encontraCliques(true);				
+						imprimeCliques( campusId, P, grupoId );
+					#endif
+						int nTaticos=2;
+						for ( int tatico=1; tatico<=nTaticos; tatico++ )
+						{
+							std::cout<<"\n---------------------Rodada "<< r <<" -----------------------\n";
+							std::cout<<"\n------- Campus "<< campusId << " , Conjunto-Aluno "<< grupoId << ", Prior " << P << "----------\n";
+							std::cout<<"\n------------------------------Tatico "<<tatico<<"------------------------------\n"; fflush(NULL);
+
+							statusTatico = solveTaticoBasicoCjtAlunos( campusId, P, grupoId, r, tatico );
+
+							int na = carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( campusId, P, grupoId, r, tatico );
+						
+							std::cout<<"\nCarregou solucao tatica\n";
+				
+							problemData->imprimeAlocacaoAlunos( campusId, P, grupoId, false, r, tatico );
+						
+							if ( na == 0 ) break;
+						
+							if (tatico < nTaticos) 
+							{
+								voltaComAlunosNaoAlocados();							
+							}
+						}
+						   
+						statusTatico = ( statusTatico && statusPre );
+					
+						vHash.clear();
+						vHashTatico.clear();
+					}												
+					
+					// ==================================
+					// MODELO INTEGRADO	COM NOVAS TURMAS	
+					bool NOVAS_TURMAS = true;
+					if ( NOVAS_TURMAS )					
 					if ( problemData->listSlackDemandaAluno.size() != 0 )
 					{
-						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, false );
+						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh),
+																					&this->CARREGA_SOLUCAO, false, NOVAS_TURMAS );
 						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );
-						violou = problemData->violaMinTurma( campusId );
 						delete solverTaticoInt;
 					}
-					// ==================================															
+					// ==================================	
 					
 					if ( problemData->listSlackDemandaAluno.size() == 0 ) break;
 					
 					// ==================================
-					// MODELO INTEGRADO COM EQUIVALENCIAS
-					
+					// MODELO INTEGRADO COM EQUIVALENCIAS					
 					if ( r==1 )
 					if ( problemData->parametros->considerar_equivalencia_por_aluno )					
 					if ( problemData->listSlackDemandaAluno.size() != 0 )
 					{
-						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, true );
-						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );
-						violou = problemData->violaMinTurma( campusId );
+						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), 
+																					&this->CARREGA_SOLUCAO, true, false );
+						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );						
 						delete solverTaticoInt;
 					}
 					// ==================================
 
-					/*
-					if (P==1)
-						heuristicaP1AlocaAlunos( campusId, P, grupoId );					
-					*/
 					if ( problemData->listSlackDemandaAluno.size() == 0 ) break;
 
 					// Faz rodadas duplas só para p1
@@ -6184,9 +6309,9 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 #ifdef MODELO_INTEGRADO_P2
 				if ( problemData->listSlackDemandaAluno.size() != 0 )
 				{
-					TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), &this->CARREGA_SOLUCAO, false );
+					TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh),
+																				&this->CARREGA_SOLUCAO, false, false );
 					solverTaticoInt->solveTaticoIntegrado( campusId, P+1, 1 );
-					bool violou = problemData->violaMinTurma( campusId );
 					delete solverTaticoInt;
 				}
 #endif
@@ -6194,7 +6319,9 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 
 			}			
 		}
-
+		
+		problemData->confereExcessoP2( campusId );
+		
 		problemData->listSlackDemandaAluno.clear(); // Caso seja util ter isso depois, entao tem que fazer um map com campus
 
 		mudaCjtSalaParaSala();
@@ -6208,7 +6335,7 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 #endif
 		status = ( status && statusTatico );
 	}
-
+	
 	return (status);
 }
 
@@ -6323,19 +6450,21 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
    printf( "Total of Variables: %i\n\n", varNum );
 #endif
       
-   // Deleta as variaveis em solVarsPre ----------
-   std::set< VariablePre*, LessPtr<VariablePre> >::iterator it = solVarsPre.begin();
-   for ( ; it != solVarsPre.end(); it++ )
-   {
+	// -----------------------------------------------------
+	// Deleta as variaveis em solVarsXPre 
+	ITERA_GGROUP_LESSPTR ( it, solVarsXPre, VariablePre )
+	{
 		delete *it;    
-   }
-   solVarsPre.clear();
-   // --------------------------------------------
+	}
+	solVarsXPre.clear();
+    // --------------------------------------------
 
    if ( !this->CARREGA_SOLUCAO )
    {
-
 	    ofstream outGaps;
+		std::string gapFilename( "gap_input" );
+		gapFilename += problemData->getInputFileName();
+		gapFilename += ".txt";	
 
 	    // Constraint creation
 	    constNum = cria_preRestricoes( campusId, prioridade, cjtAlunosId, r );
@@ -6417,7 +6546,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	    if ( CARREGA_SOL_PARCIAL )
 		{
 			// procura e carrega solucao parcial
-			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN2, &xS );
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN2, xS );
 			if ( !statusReadBin )
 			{
 				CARREGA_SOL_PARCIAL=false;
@@ -6436,11 +6565,11 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		}					
 
 #pragma region Imprime Gap
-	 	  // Imprime Gap
-		outGaps.open("gaps.txt", ofstream::app);
+	 	// Imprime Gap
+		outGaps.open(gapFilename, ofstream::app);
 		if ( !outGaps )
 		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
+			std::cerr<<"\nErro: Abertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
 		}
 		else
 		{
@@ -6472,7 +6601,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 #ifdef SOLVER_CPLEX
 	    lp->setNumIntSols(0);
-		lp->setTimeLimit( 7200 );
+		lp->setTimeLimit( 7200+3600 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPEmphasis(0);
@@ -6573,7 +6702,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	  if ( CARREGA_SOL_PARCIAL )
 	  {
 			// procura e carrega solucao parcial
-			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN3, &xS );
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN3, xS );
 			if ( !statusReadBin )
 			{
 				CARREGA_SOL_PARCIAL=false;
@@ -6593,10 +6722,10 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 #pragma region Imprime Gap
 	 	  // Imprime Gap
-		outGaps.open("gaps.txt", ofstream::app);
+		outGaps.open(gapFilename, ofstream::app);
 		if ( !outGaps )
 		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
+			std::cerr<<"\nErro: Abertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
 		}
 		else
 		{
@@ -6688,17 +6817,17 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
  
 
 #ifdef SOLVER_CPLEX
-	lp->setPolishAfterIntSol(1);
-	//lp->setPolishAfterNode(1);
-	lp->setNumIntSols(0);
-	if ( prioridade==1 ) lp->setTimeLimit(7200);
-	else lp->setTimeLimit(3600);
+//	lp->setPolishAfterIntSol(10000000);
+//	lp->setPolishAfterNode(1);
+	lp->setNumIntSols(1);
+	if ( prioridade==1 ) lp->setTimeLimit( 7200+7200+3600 );
+	else lp->setTimeLimit(7200);
 	lp->setPreSolve(OPT_TRUE);
 	lp->setHeurFrequency(1.0);
 	lp->setMIPEmphasis(0);
 	lp->setSymetry(0);
-	lp->setPolishAfterNode(10000000000);
-	lp->setPolishAfterTime(3600);
+//	lp->setPolishAfterNode(10000000000);
+	lp->setPolishAfterTime(7200);
 	lp->setNodeLimit(10000000);
 	lp->setNoCuts();
 	//lp->setCuts(0);
@@ -6723,7 +6852,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	  if ( CARREGA_SOL_PARCIAL )
 	  {
 			// procura e carrega solucao parcial
-			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN4, &xS );
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN4, xS );
 			if ( !statusReadBin )
 			{
 				CARREGA_SOL_PARCIAL=false;
@@ -6743,10 +6872,10 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 #pragma region Imprime Gap
 	 	  // Imprime Gap
-		outGaps.open("gaps.txt", ofstream::app);
+		outGaps.open(gapFilename, ofstream::app);
 		if ( !outGaps )
 		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
+			std::cerr<<"\nErro: Abertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
 		}
 		else
 		{
@@ -6796,7 +6925,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 #ifdef SOLVER_CPLEX
       lp->setNumIntSols(0);
-      lp->setTimeLimit(3600);
+      lp->setTimeLimit(7200);
       lp->setPreSolve(OPT_TRUE);
       lp->setHeurFrequency(1.0);
       lp->setMIPEmphasis(0);
@@ -6828,7 +6957,7 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	  if ( CARREGA_SOL_PARCIAL )
 	  {
 			// procura e carrega solucao parcial
-			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN, &xS );
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, 0, OutPutFileType::PRE_TAT_BIN, xS );
 			if ( !statusReadBin )
 			{
 				CARREGA_SOL_PARCIAL=false;
@@ -6856,10 +6985,10 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
       delete[] idxFO;
 
 	  // Imprime Gap
-		outGaps.open("gaps.txt", ofstream::app);
+		outGaps.open(gapFilename, ofstream::app);
 		if ( !outGaps )
 		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
+			std::cerr<<"\nErro: Abertura do arquivo gaps.txt falhou em SolverMIP::solvePreTaticoCjtAlunos().\n";
 		}
 		else
 		{
@@ -7011,17 +7140,25 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		
 	    lp->updateLP();
 
+		if ( tatico==2 && prioridade==1 ) teste( 0 );
+
 		#ifdef PRINT_cria_variaveis
 	    printf( "Total of Variables: %i\n\n", varNum );
 		#endif
 
+		// -----------------------------------------------------
+		// Deleta as variaveis em solVarsXPre 
+		ITERA_GGROUP_LESSPTR ( it, solVarsXPre, VariablePre )
+		{
+			delete *it;    
+		}
+		solVarsXPre.clear();
 		// -----------------------------------------------------
 		// Deleta todas as variaveis referenciadas em solVarsTatico (e em vars_xh)
 		ITERA_GGROUP_LESSPTR ( it, solVarsTatico, VariableTatico )
 		{
 			delete *it;    
 		}
-
 		vars_xh.clear();
 		solVarsTatico.clear();
 		// -----------------------------------------------------
@@ -7052,6 +7189,11 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
    if ( ! this->CARREGA_SOLUCAO )
    {   
+		ofstream outGaps;
+		std::string gapFilename( "gap_input" );
+		gapFilename += problemData->getInputFileName();
+		gapFilename += ".txt";
+
 	   std::set< int > vHashLivresOriginais;
 
 		#ifndef TATICO_COM_HORARIOS
@@ -7126,7 +7268,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		if ( CARREGA_SOL_PARCIAL )
 		{
 			// procura e carrega solucao parcial
-			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN1, &xS );
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN1, xS );
 			if ( !statusReadBin )
 			{
 				CARREGA_SOL_PARCIAL=false;
@@ -7147,11 +7289,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 #pragma region Imprime Gap
 	 	  // Imprime Gap
-		ofstream outGaps;
-		outGaps.open("gaps.txt", ofstream::app);
+		outGaps.open(gapFilename, ofstream::app);
 		if ( !outGaps )
 		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em SolverMIP::solveTaticoBasicoCjtAlunos().\n";
+			std::cerr<<"\nErro: Abertura do arquivo gaps.txt falhou em SolverMIP::solveTaticoBasicoCjtAlunos().\n";
 		}
 		else
 		{
@@ -7185,7 +7326,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 
 #ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
-		lp->setTimeLimit( 7200+3600 );
+		lp->setTimeLimit( 7200+7200+3600 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
@@ -7290,7 +7431,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		if ( CARREGA_SOL_PARCIAL )
 		{
 			// procura e carrega solucao parcial
-			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN2, &xS );
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN2, xS );
 			if ( !statusReadBin )
 			{
 				CARREGA_SOL_PARCIAL=false;
@@ -7307,10 +7448,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		
 #pragma region Imprime Gap
 	 	  // Imprime Gap
-		outGaps.open("gaps.txt", ofstream::app);
+		outGaps.open(gapFilename, ofstream::app);
 		if ( !outGaps )
 		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em SolverMIP::solveTaticoBasicoCjtAlunos().\n";
+			std::cerr<<"\nErro: Abertura do arquivo gaps.txt falhou em SolverMIP::solveTaticoBasicoCjtAlunos().\n";
 		}
 		else
 		{
@@ -7425,7 +7566,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 #ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
 		//lp->setTimeLimit( tempoDeExecucao );
-		lp->setTimeLimit(7200+3600);
+		lp->setTimeLimit(7200+7200);
 		//lp->setMIPRelTol( 0.01 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
@@ -7458,7 +7599,7 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		if ( CARREGA_SOL_PARCIAL )
 		{
 			// procura e carrega solucao parcial
-			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN, &xS );
+			int statusReadBin = readSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN, xS );
 			if ( !statusReadBin )
 			{
 				CARREGA_SOL_PARCIAL=false;
@@ -7471,6 +7612,9 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 			lp->getX(xS);
 	  
 			writeSolBin( campusId, prioridade, cjtAlunosId, r, tatico, OutPutFileType::TAT_HOR_BIN, xS );
+
+			if (tatico==2 && prioridade==1) teste( xS, 0 );
+
 		}      
 			  		
 		fflush(NULL);
@@ -7478,10 +7622,10 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		delete[] xS;	
 						
 	    // Imprime Gap
-		outGaps.open("gaps.txt", ofstream::app);
+		outGaps.open(gapFilename, ofstream::app);
 		if ( !outGaps )
 		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em SolverMIP::solveTaticoBasicoCjtAlunos().\n";
+			std::cerr<<"\nErro: Abertura do arquivo gaps.txt falhou em SolverMIP::solveTaticoBasicoCjtAlunos().\n";
 		}
 		else
 		{
@@ -7624,6 +7768,37 @@ void SolverMIP::fixaAtendimentosVariaveisCreditosAnterior()
 	
 	lp->chgBds(nBds,idxs,bdsl,vals);
 	lp->chgBds(nBds,idxs,bdsu,vals);
+}
+
+void SolverMIP::liberaAtendimentosVariaveisFFD()
+{
+	int nBds=0;
+	int *idxs = new int[lp->getNumCols()*2];
+	double *vall = new double[lp->getNumCols()*2];
+	double *valu = new double[lp->getNumCols()*2];
+	BOUNDTYPE *bdsl = new BOUNDTYPE[lp->getNumCols()*2];
+	BOUNDTYPE *bdsu = new BOUNDTYPE[lp->getNumCols()*2];
+
+	VariableTaticoHash::iterator vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++ )
+	{
+		VariableTatico v = vit->first;
+
+		if ( v.getType() == VariableTatico::V_SLACK_SLACKDEMANDA_PT )
+		{
+			int lb = 0.0;
+			int ub = 1.0;
+			idxs[nBds] = vit->second;
+			vall[nBds] = lb;
+			valu[nBds] = ub;
+			bdsl[nBds] = BOUNDTYPE::BOUND_LOWER;
+			bdsu[nBds] = BOUNDTYPE::BOUND_UPPER;
+			nBds++;
+		}
+	}
+	
+	lp->chgBds(nBds,idxs,bdsl,vall);
+	lp->chgBds(nBds,idxs,bdsu,valu);
 }
 
 void SolverMIP::voltaComAlunosNaoAlocados()
@@ -11260,6 +11435,8 @@ int SolverMIP::solveOperacionalMIP()
    lp->setMIPScreenLog( 4 );
    lp->setNumIntSols(1);
 
+   lp->writeProbLP( "SolverOperacional1" );
+
    lp->optimize(METHOD_MIP);
     
    fflush(NULL);
@@ -11335,6 +11512,8 @@ int SolverMIP::solveOperacionalMIP()
    lp->setPreSolve(OPT_TRUE);
    
    lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
+
+   lp->writeProbLP( "SolverOperacional2" );
 
    status = lp->optimize( METHOD_MIP );
    
@@ -11447,9 +11626,11 @@ int SolverMIP::solveOperacionalMIP()
    lp->setCuts(5);
    lp->setNodeLimit(10000000000);
    lp->setPolishAfterNode(1);
-   lp->setTimeLimit(4*3600);
+   lp->setTimeLimit(6*3600);
 
    lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
+
+   lp->writeProbLP( "SolverOperacional3" );
 
    status = lp->optimize( METHOD_MIP );
 
@@ -11496,12 +11677,10 @@ int SolverMIP::solveOperacionalMIP()
 
    fflush(NULL);
 
-   /*VariableOpHash::iterator vit;*/
    FILE * fout = fopen( "solucaoOp.txt", "wt" );
    solVarsOp.clear();
 
    vit = vHashOp.begin();
-
    for (; vit != vHashOp.end(); vit++ )
    {
       VariableOp v = vit->first;
@@ -11846,10 +12025,9 @@ void SolverMIP::imprimeSolVarsPre( int campusId, int prioridade, int cjtAlunosId
    strcpy( solPosFilename, getSolVarsPreFileName( campusId, prioridade, cjtAlunosId ).c_str() );
    FILE * fout = fopen( solPosFilename, "wt" );
    
-   std::set< VariablePre*, LessPtr<VariablePre> >::iterator itSol = this->solVarsPre.begin();
-   for ( ; itSol != solVarsPre.end(); itSol++ )
+   ITERA_GGROUP_LESSPTR ( itSolX, solVarsXPre, VariablePre )
    {      
-	   VariablePre *v = *itSol;
+	   VariablePre *v = *itSolX;
 	   
 	   fprintf( fout, "%s = %f\n", v->toString().c_str(), v->getValue() );
 		   
@@ -17014,7 +17192,7 @@ int SolverMIP::cria_preVariavel_formandosNaTurma( int campusId, int grupoAlunosI
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
 			 if ( !problemData->possuiAlunoFormando( turma, disciplina, cp ) &&
-				  !problemData->haAlunoFormandoNaoAlocado( disciplina, cp, P_ATUAL ) )
+				  !problemData->haAlunoFormandoNaoAlocado( disciplina, campusId, P_ATUAL ) )
 			 {
 				 continue;
 			 }
@@ -26210,7 +26388,7 @@ int SolverMIP::cria_restricao_divisao_credito( int campusId, int cjtAlunosAtualI
 			continue;
 		}
 
-      if ( disciplina->divisao_creditos != NULL )
+      if ( disciplina->divisao_creditos.size() != 0 )
       {
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
@@ -28458,6 +28636,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P, int r, int tatico )
 		
 
 		fixaAtendimentosVariaveisCreditosAnterior();
+		liberaAtendimentosVariaveisFFD();
 
 		return num_vars;
 	}
@@ -28712,73 +28891,8 @@ int SolverMIP::criaVariavelTaticoCreditos( int campusId, int P, int r )
 							{
 								 HorarioAula *hf = *itHorario;
 
-								 if ( *hf < *hi )
-								 {
-							 		 continue;
-								 }
-
-								 if ( *hf == *hi )
-								 {
-									 // Não permite que uma disciplina com nro par de creditos
-									 // tenha uma aula com somente 1 credito, a não ser que 
-									 // esteja determinado por regra de divisão de créditos
-									 if ( disciplina->getTotalCreditos() % 2 == 0 )
-									 {
-										 bool CRIAR = false;
-										 std::vector< std::vector< std::pair< int /*dia*/, int /*nCreds*/ > > >::iterator 
-											 it1 = disciplina->combinacao_divisao_creditos.begin();
-										for ( ; it1 != disciplina->combinacao_divisao_creditos.end(); it1++ )
-										{
-											std::vector< std::pair< int /*dia*/, int /*nCreds*/ > >::iterator
-												it2 = (*it1).begin();
-											for ( ; it2 != (*it1).end(); it2++ )
-											{	
-												if ( (*it2).second == 1 )
-												{
-													CRIAR = true; break;
-												}
-											}
-											if ( CRIAR ) break;										
-										}
-										if ( !CRIAR ) continue;
-									 }
-								 }
-
-								 int nIntervalo = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
-								 if ( nIntervalo > disciplina->getTotalCreditos() )
-								 {
-									continue;
-								 }
-
-								 if ( disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf ) == 2 &&
-									  disciplina->getCalendario()->intervaloEntreHorarios(hi,hf) )
-								 {
-									continue;
-								 }
-
-								 if ( disciplina->combinacao_divisao_creditos.size() > 0 )
-								 {
-									bool CRIAR = false;
-									int nCredHor = disciplina->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
-									std::vector< std::vector< std::pair< int /*dia*/, int /*nCreds*/ > > >::iterator 
-									   it1 = disciplina->combinacao_divisao_creditos.begin();
-									for ( ; it1 != disciplina->combinacao_divisao_creditos.end(); it1++ )
-									{
-									   std::vector< std::pair< int /*dia*/, int /*nCreds*/ > >::iterator
-										  it2 = (*it1).begin();
-									   for ( ; it2 != (*it1).end(); it2++ )
-									   {	
-										  if ( (*it2).second == nCredHor )
-										  {
-											 CRIAR = true; break;
-										  }
-									   }
-									   if ( CRIAR ) break;										
-									}
-
-									if ( !CRIAR ) continue;
-								 }
-								 
+								 if ( ! disciplina->inicioTerminoValidos( hi, hf ) )
+									 continue;								 						 
 
 								 VariableTatico v;
 								 v.reset();
@@ -32409,7 +32523,7 @@ int SolverMIP::criaRestricaoTaticoDivisaoCredito( int campusId, int prioridade, 
 	  if ( ! problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 		  continue;
 		 
-      if ( disciplina->divisao_creditos != NULL )
+	  if ( disciplina->divisao_creditos.size() != 0 )
       {
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {
@@ -33983,9 +34097,9 @@ int SolverMIP::criaRestricaoTaticoGaranteMinAlunosTurma( int campusId, int prior
 		else if ( v.getType() == VariableTatico::V_ABERTURA )
 			campus = v.getCampus();
 
-		if ( r==2 && problemData->parametros->violar_min_alunos_turmas_formandos )
-		if ( problemData->possuiAlunoFormando(turma,disc,campus) )
-			continue;
+		//if ( r==2 && problemData->parametros->violar_min_alunos_turmas_formandos )
+		//if ( problemData->possuiAlunoFormando(turma,disc,campus) && fixada )
+		//	continue;
 
 		double coef=0;
 		if ( v.getType() == VariableTatico::V_DESALOCA_ALUNO )
@@ -34136,7 +34250,7 @@ int SolverMIP::criaRestricaoTaticoFormandos( int campusId, int prioridade, int r
 	if ( !problemData->parametros->violar_min_alunos_turmas_formandos )
 		return restricoes;		
 
-	if ( !tatico==2 ) // só no tático 2 é que existe restrição de min alunos
+	if ( !tatico==2 ) // só no tático 2 é que existe restrição de formandos
 		return restricoes;
 	if ( prioridade==1 && r==1 ) // só considera formandos a partir da segunda rodada
 		return restricoes;
@@ -49047,7 +49161,7 @@ int SolverMIP::cria_restricao_divisao_credito( int campusId )
 	  }
 	  #pragma endregion	
 
-      if ( disciplina->divisao_creditos != NULL )
+      if ( disciplina->divisao_creditos.size() != 0 )
       {
          for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
          {

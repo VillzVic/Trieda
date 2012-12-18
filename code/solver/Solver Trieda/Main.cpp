@@ -57,8 +57,7 @@ int main( int argc, char** argv )
 		exit(1);
 	}
 	outTestFile << "Started..." <<endl;
-
-
+	
 
    //unsigned seed = time(NULL);
    unsigned seed = 1305057265;
@@ -82,11 +81,6 @@ int main( int argc, char** argv )
    char tempOutput[ 1024 ];
    char outputFile[ 1024 ];
    bool error;
-
-   ProblemDataLoader * dataLoader;
-   ProblemData * data = new ProblemData();
-   ProblemSolution * solution;
-   Solver * solver;
 
    // Initializations
    path[0] = '\0';
@@ -121,13 +115,19 @@ int main( int argc, char** argv )
    strcat( path, argv[2] );
    strcat( path, PATH_SEPARATOR );
 
-
    outTestFile << "Reading inputFile..." <<endl;
 
    // Input file name
    strcat( inputFile, path );
    strcat( inputFile, "input" );
    strcat( inputFile, argv[ 1 ] );
+
+   std::cout << inputFile << std::endl;
+
+   ProblemDataLoader * dataLoader;
+   ProblemData * data = new ProblemData( argv[ 1 ] );
+   ProblemSolution * solution;
+   Solver * solver;
 
    outTestFile << "dataLoader constructor..." <<endl;
 

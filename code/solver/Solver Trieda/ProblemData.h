@@ -40,7 +40,7 @@ class ProblemData
 	: public OFBase
 {
 public:
-   ProblemData( void );
+   ProblemData( char input[1024] );
    virtual ~ProblemData( void );
 
    GGroup< Calendario *, LessPtr< Calendario > > calendarios;
@@ -486,7 +486,7 @@ public:
    int getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
    bool possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp );
    int getNroFormandos( int turma, Disciplina *disciplina, Campus *cp );
-   bool haAlunoFormandoNaoAlocado( Disciplina *disciplina, Campus *cp, int prioridadeAtual );
+   bool haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, int prioridadeAtual );
 
    bool haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
    int getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
@@ -501,11 +501,20 @@ public:
    bool violaMinTurma( int campusId );
    bool violaMinTurma( Trio< int, int, Disciplina* > trio );
    void imprimeFormandos();
+   void imprimeCombinacaoCredsDisciplinas();
+
+   std::string getInputFileName() const { return inputFileName; }
+   std::string getAlocacaoAlunosFileName( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico );
+   std::string getAlocacaoTurmasFileName( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico );
+   std::string getAlocacoesFileName();
+
+   void confereExcessoP2( int campusId );
 
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );
 
+		std::string inputFileName;
 };
 
 #endif

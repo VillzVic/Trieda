@@ -44,9 +44,11 @@ class TaticoIntAlunoHor : public Solver
 {
 public:
 	
-	TaticoIntAlunoHor::TaticoIntAlunoHor( ProblemData * aProblemData, 
+	TaticoIntAlunoHor::TaticoIntAlunoHor( ProblemData * &aProblemData, 
 				GGroup< VariableTatico *, LessPtr<VariableTatico> > *aSolVarsTatico, 
-				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh, bool *endCARREGA_SOLUCAO, bool equiv );
+				GGroup< VariableTatico *, LessPtr<VariableTatico> > *avars_xh,
+				bool *endCARREGA_SOLUCAO, bool equiv, bool permitirNovasTurmas );
+
 	virtual ~TaticoIntAlunoHor();
 
 
@@ -84,6 +86,7 @@ private:
    int criaVariavelFolgaPrioridadeSup( int campusId, int prior );							// fps_{a,cp}
    int criaVariavelTaticoFormandosNaTurma( int campusId, int prior, int r );				// f_{i,d,cp}
    int criaVariavelTaticoAlocaAlunoTurmaDiscEquiv( int campusId, int P );					// s_{i,d,a,cp}
+   int criaVariavelTaticoAbertura( int campusId, int prior, int r );						// z_{i,d,cp}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -117,6 +120,7 @@ private:
    int criaRestricaoTaticoFormandos( int campusId, int prioridade, int r );
    int criaRestricaoTaticoAtendeAlunoEquiv( int campusId, int prioridade );
    int criaRestricaoTaticoAlunoDiscPraticaTeoricaEquiv( int campusId, int prioridade );
+   int criaRestricaoTaticoAtivaZ( int campusId );
 
    // The linear problem.	
    
@@ -137,11 +141,13 @@ private:
    bool NAO_CRIAR_RESTRICOES_CJT_ANTERIORES;
    bool FIXAR_P1;
    bool FIXAR_TATICO_P1;
-   bool PERMITIR_INSERCAO_ALUNODEMANDAP2_EM_TURMAP1;
+ //  bool PERMITIR_INSERCAO_ALUNODEMANDAP2_EM_TURMAP1;	// pode deletar? acho que pode, nao sei se isso ainda faz sentido
    bool *CARREGA_SOLUCAO;
    bool USAR_EQUIVALENCIA;
+   bool PERMITIR_NOVAS_TURMAS;
 
     void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
+	void investigandoNaoAtendimentos( int campusId, int prioridade, int r );
 	void calculaNroFolgas( int prioridade, int campusId );
 	std::string getTaticoLpFileName( int campusId, int prioridade, int r );
 	std::string getSolBinFileName( int campusId, int prioridade, int r );	
@@ -156,8 +162,10 @@ private:
 	bool criaVariavelTatico( VariableTatInt *v, bool &fixar, int prioridade );
 	Unidade* retornaUnidadeDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
 	ConjuntoSala* retornaSalaDeAtendimento( int turma, Disciplina* disciplina, Campus* campus );
+	GGroup< VariableTatico *, LessPtr<VariableTatico> > retornaAulasEmVarX( int turma, Disciplina* disciplina, int campusId );
+	GGroup< VariableTatInt *, LessPtr<VariableTatInt> > retornaAulasEmVarXFinal( int turma, Disciplina* disciplina, int campusId );
+	GGroup< VariableTatInt *, LessPtr<VariableTatInt> > retornaAulasEmVarV( Aluno* aluno, GGroup< VariableTatInt *, LessPtr<VariableTatInt> > aulasX );
 
-	
 	GGroup< VariableTatInt *, LessPtr<VariableTatInt> > vars_v;
 	GGroup< VariableTatInt *, LessPtr<VariableTatInt> > solVarsTatInt;
 

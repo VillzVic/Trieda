@@ -73,7 +73,7 @@ public:
    * Returns a string containing an unique name for the constraint.
    * @return a string containing an unique name for the constraint.
    */
-   std::string toString(int p, int r, int t);
+   std::string toString(int prior, int rod, int tat);
 
    //==================================================
    // GET METHODS 

@@ -17,7 +17,8 @@ public:
    Disciplina( void );
    virtual ~Disciplina( void );
 
-   DivisaoCreditos * divisao_creditos;
+   GGroup< DivisaoCreditos*, LessPtr<DivisaoCreditos> > divisao_creditos;
+ //  DivisaoCreditos * divisao_creditos;
    TipoDisciplina * tipo_disciplina;
    NivelDificuldade * nivel_dificuldade;
 
@@ -90,6 +91,8 @@ public:
    
    int getMaxTempoDiscEquivSubstituta();
 
+   bool inicioTerminoValidos( HorarioAula *&hi, HorarioAula *&hf );
+   
 private:
 	
    Calendario* calendario;

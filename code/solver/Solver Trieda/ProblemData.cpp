@@ -13,8 +13,10 @@
    __obj_##type->le_arvore(*__##type##_it); \
    ggroup.add(__obj_##type); } 
 
-ProblemData::ProblemData()
+ProblemData::ProblemData( char input[1024] )
 {
+	inputFileName = input;
+
    EQUIV_TRANSITIVIDADE = false;
 
    this->atendimentosTatico = NULL;
@@ -1653,7 +1655,7 @@ bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId )
 }
 
 /*
-	Pesquisa em demanda de cada aluno, ou seja, considerando no maximo a prioridade atual.
+	Pesquisa em demanda de cada aluno, ou seja, considerando no MAXIMO a prioridade atual.
 */
 GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoCampus( int disciplinaId, int campusId, int prioridade )
 {	
@@ -2635,43 +2637,121 @@ double ProblemData::cargaHorariaJaAtendida( Aluno* aluno )
 	return cargaHoraria;
 }
 
+
+std::string ProblemData::getAlocacaoAlunosFileName( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico )
+{
+   std::string solName( "AlocacaoAlunos" );
+   
+   if ( campusId != 0 )
+   {	   
+		 stringstream ss;
+		 ss << campusId;
+		 solName += "_Cp"; 
+		 solName += ss.str();
+   }
+   if ( prioridade != 0 )
+   {
+		stringstream ss;
+		ss << prioridade;
+		if ( heuristica ) solName += "_PH";
+		else solName += "_P";
+		solName += ss.str();   		
+   }
+   if ( cjtAlunosId != 0 )
+   {
+	    stringstream ss;
+		ss << cjtAlunosId;		
+		solName += "_Cjt"; 
+		solName += ss.str();   		
+   } 
+   if ( r != 0 )
+   {
+		stringstream ss;
+		ss << r;
+		solName += "_R"; 
+		solName += ss.str();   		
+   } 
+   if ( tatico != 0 )
+   {
+		stringstream ss;
+		ss << tatico;
+		solName += "_T"; 
+		solName += ss.str();   		
+   }        
+   solName += ".txt";
+      
+   return solName;
+}
+
+std::string ProblemData::getAlocacaoTurmasFileName( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico )
+{
+   std::string solName( "AlocacaoTurmas" );
+
+   if ( tatico == 0 )
+   {
+		 solName += "Pre"; 
+   }
+   if ( campusId != 0 )
+   {	   
+		 stringstream ss;
+		 ss << campusId;
+		 solName += "_Cp"; 
+		 solName += ss.str();
+   }
+   if ( prioridade != 0 )
+   {
+		stringstream ss;
+		ss << prioridade;
+		if ( heuristica ) solName += "_PH";
+		else solName += "_P";
+		solName += ss.str();   		
+   }
+   if ( cjtAlunosId != 0 )
+   {
+	    stringstream ss;
+		ss << cjtAlunosId;		
+		solName += "_Cjt"; 
+		solName += ss.str();   		
+   } 
+   if ( r != 0 )
+   {
+		stringstream ss;
+		ss << r;
+		solName += "_R"; 
+		solName += ss.str();   		
+   } 
+   if ( tatico != 0 )
+   {
+		stringstream ss;
+		ss << tatico;
+		solName += "_T"; 
+		solName += ss.str();   		
+   }        
+   solName += ".txt";
+      
+   return solName;
+}
+
+std::string ProblemData::getAlocacoesFileName()
+{
+   std::string solName( "Alocacoes" );
+   solName += "_input";
+   solName += getInputFileName();	      
+   solName += ".txt";
+      
+   return solName;
+}
+
 void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAlunosId, bool heuristica, int r, int tatico )
 {
 	int totalAtendimentos=0;
 	int totalAtendimentosSemDivPT=0;
 	long int totalCargaHoraria=0;
 
-	stringstream ssCp;
-	stringstream ssP;
-	stringstream ssCjt;
-	stringstream ssR;
-	stringstream ssTat;
-
-	ssCp << campusId;
-	ssP << prioridade;	
-	ssCjt << cjtAlunosId;
-	ssR << r;
-	ssTat << tatico;
-
 	// Alunos ------------------------------------------------------------
-
 	ofstream alunosFile;
-	std::string alunosFilename( "AlocacaoAlunos_Cp" );    
-	alunosFilename += ssCp.str();
-	if ( heuristica )
-		alunosFilename += "_PH";
-	else
-		alunosFilename += "_P";
-	alunosFilename += ssP.str();
-	alunosFilename += "_Cjt"; 
-	alunosFilename += ssCjt.str();
-	alunosFilename += "_R"; 
-	alunosFilename += ssR.str();
-	alunosFilename += "_T"; 
-	alunosFilename += ssTat.str();
-	alunosFilename += ".txt";
-		
-	alunosFile.open(alunosFilename, ios::out);
+	std::string alunosFilename( this->getAlocacaoAlunosFileName( campusId, prioridade, cjtAlunosId, heuristica, r, tatico ) );	
+	alunosFile.open( alunosFilename, ios::out );
 	if (!alunosFile)
 	{
 		cerr << "Error: Can't open output file " << alunosFilename << endl;
@@ -2711,22 +2791,8 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 
 	// Turmas ------------------------------------------------------------
 	
-	ofstream turmasFile;
-	std::string turmasFilename( "AlocacaoTurmas_Cp" );
-	turmasFilename += ssCp.str();
-	if ( heuristica )
-		turmasFilename += "_PH";
-	else
-		turmasFilename += "_P";
-	turmasFilename += ssP.str();
-	turmasFilename += "_Cjt"; 
-	turmasFilename += ssCjt.str();
-	turmasFilename += "_R"; 
-	turmasFilename += ssR.str();
-	turmasFilename += "_T"; 
-	turmasFilename += ssTat.str();
-    turmasFilename += ".txt";
-	
+	ofstream turmasFile;	
+	std::string turmasFilename( this->getAlocacaoTurmasFileName( campusId, prioridade, cjtAlunosId, heuristica, r, tatico ) );	
 	turmasFile.open(turmasFilename, ios::out);
 	if (!turmasFile)
 	{
@@ -2769,6 +2835,30 @@ void ProblemData::imprimeAlocacaoAlunos( int campusId, int prioridade, int cjtAl
 	turmasFile << "\nCarga Horaria Total atendida: " << totalCargaHoraria;
 
 	turmasFile.close();
+
+	// Geral -------------------------------------------------------------------------------------------
+		
+	ofstream alocacoesFile;	
+	std::string alocacoesFilename( this->getAlocacoesFileName() );	
+	alocacoesFile.open(alocacoesFilename, ios::app);
+	if (!alocacoesFile)
+	{
+		std::cout << "Error: Can't open output file " << alocacoesFilename << endl;
+		return;
+	}
+	
+	alocacoesFile<<"\n\n------- Campus "<< campusId << "---------------------------";		
+	alocacoesFile<<"\n------- Prioridade " << prioridade << "--------------------";			
+	alocacoesFile<<"\n------- CjtAlunosId " << cjtAlunosId << "--------------------";	
+	alocacoesFile<<"\n------- Rodada "<< r <<" -----------------------";
+	alocacoesFile<<"\n------- Tatico "<<tatico<<"------------------------------";
+
+	alocacoesFile << "\n\nTotal de AlunosDemanda atendidos: " << totalAtendimentos;
+	alocacoesFile << "\nTotal de AlunosDemanda sem divisao PT atendidos: " << totalAtendimentosSemDivPT;
+	alocacoesFile << "\nCarga Horaria Total atendida: " << totalCargaHoraria;
+
+	alocacoesFile.close();
+
 }
 
 int ProblemData::retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, Disciplina *d, int dia )
@@ -2966,13 +3056,13 @@ int ProblemData::getNroFormandos( int turma, Disciplina *disciplina, Campus *cp 
 	return n;
 }
 
-bool ProblemData::haAlunoFormandoNaoAlocado( Disciplina *disciplina, Campus *cp, int prioridadeAtual )
+bool ProblemData::haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, int prioridadeAtual )
 {
 	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
 	{
 		Aluno *aluno = *itAluno;
 
-		if ( aluno->getOferta()->getCampusId() != cp->getId() )
+		if ( aluno->getOferta()->getCampusId() != cpId )
 		{
 			continue;
 		}
@@ -3367,7 +3457,9 @@ void ProblemData::imprimeFormandos()
 		return;
 
 	ofstream formandosFile;
-	std::string formandosFilename( "alunosFormandos.txt" );		
+	std::string formandosFilename( "alunosFormandos" );
+	formandosFilename += this->inputFileName;
+	formandosFilename += ".txt";
 	formandosFile.open(formandosFilename, ios::out);
 	if (!formandosFile)
 	{
@@ -3392,4 +3484,81 @@ void ProblemData::imprimeFormandos()
 	formandosFile << "\nTotal de formandos: " << totalFormandos;
 
 	formandosFile.close();
+}
+
+void ProblemData::imprimeCombinacaoCredsDisciplinas()
+{
+	ofstream divCredFile;
+	std::string divFilename( "divCredsDisciplinas_input" );
+	divFilename += this->inputFileName;
+	divFilename += ".txt";
+	divCredFile.open(divFilename, ios::out);
+	if (!divCredFile)
+	{
+		cerr << "Error: Can't open output file " << divFilename << endl;
+		return;
+	}
+
+    ITERA_GGROUP_LESSPTR( itDisc, this->disciplinas, Disciplina )
+    {
+	   Disciplina *disciplina = *itDisc;
+
+	   if ( disciplina->divisao_creditos.size() != 0 )
+	   {
+		   divCredFile << "\n\nDisciplina " << disciplina->getId() << ":";
+	
+		   for ( int k = 0; k < (int)disciplina->combinacao_divisao_creditos.size(); k++ )
+		   {	
+			   divCredFile << "\nk = " << k << ":  ";
+	           ITERA_GGROUP_N_PT( itDiasLetDisc, disciplina->diasLetivos, int )
+		       {
+				   int dia = *itDiasLetDisc;
+				   
+				   // N{d,k,t}
+				   int numCreditos = ( disciplina->combinacao_divisao_creditos[ k ] )[ dia - 2 ].second;
+				   divCredFile << dia << "->" << numCreditos << "  ";
+			   }
+		   }
+	   }
+    }
+
+	divCredFile.close();
+}
+
+
+void ProblemData::confereExcessoP2( int campusId )
+{
+	if ( ! this->parametros->utilizarDemandasP2 )
+		return;
+
+	ofstream excessosP2File;
+	std::string excessosP2Filename( "excessosP2_" );
+	excessosP2Filename += this->inputFileName;
+	excessosP2Filename += ".txt";
+	excessosP2File.open(excessosP2Filename, ios::app);
+	if (!excessosP2File)
+	{
+		cerr << "Error: Can't open output file " << excessosP2Filename << endl;
+		return;
+	}
+
+	excessosP2File <<"-----------------------------------------------------------------------------------------\n";
+	excessosP2File <<"Aluno \t\t\t Id \t Carga horaria semanal excedida (em minutos)\n";
+
+	ITERA_GGROUP_LESSPTR( itAluno, alunos, Aluno )
+	{		
+		Aluno *a = (*itAluno);
+		if ( a->getCampusId() == campusId )
+		{
+			double chr_p1 = this->cargaHorariaOriginalRequeridaPorPrioridade( 1, a );
+			double cha = this->cargaHorariaJaAtendida( a );		
+			double excesso = cha - chr_p1;
+			if ( excesso )
+			{
+				excessosP2File <<"\n" << a->getNomeAluno() << "\t" << a->getAlunoId() << "\t\t" << excesso;
+			}
+		}
+	}
+
+	excessosP2File.close();
 }

@@ -68,6 +68,12 @@ public:
 	void setNumero( std::string n ) { numero  = n; }
 	void setCombinaCredSL( int dia, int k, Calendario* sl , int n );
 	void setCombinaCredSLSize(int dia, int size) { combinaCredSLSize[dia] = size; }
+	
+	// Alocações na sala
+	void addHorarioDiaOcupado( GGroup<HorarioDia*> hds );
+	bool sobrepoeHorarioDiaOcupado( HorarioAula *ha, int dia );
+	bool sobrepoeAulaJaAlocada( HorarioAula *hi, HorarioAula *hf, int dia );
+
 
 	void removeCombinaCredSL( Trio< int/*dia*/, int /*id*/, Calendario* /*sl*/ > t );
 	void construirCreditosHorarios( ItemSala &, std::string, bool );
@@ -118,7 +124,8 @@ private:
 	void setTempoDispPorDiaSL( int dia, Calendario* sl, int t ){ tempoDispPorDiaSL[std::make_pair(dia,sl)] = t; }
 
 	std::map< int /*dia*/, int /*size*/ > combinaCredSLSize;
-
+	
+    GGroup< HorarioDia*, LessPtr<HorarioDia> > horariosDiaOcupados; // aulas alocadas. Preenchido após alocado por modelo tático / integrado.
 };
 
 #endif

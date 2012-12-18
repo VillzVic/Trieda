@@ -397,3 +397,51 @@ std::map< Trio<int, int, Calendario*>, int > Sala::retornaCombinaCredSL_Dominado
 
 	return dominados;
 }
+
+ void Sala::addHorarioDiaOcupado( GGroup<HorarioDia*> hds )
+ { 
+	 ITERA_GGROUP( it, hds, HorarioDia )
+	 {
+		 horariosDiaOcupados.add(*it); 
+	 }
+ }
+
+ bool Sala::sobrepoeHorarioDiaOcupado( HorarioAula *ha, int dia )
+ {
+	 ITERA_GGROUP_LESSPTR( itHorDia, horariosDiaOcupados, HorarioDia )
+	 {
+		 int diaOcupado = (*itHorDia)->getDia();
+		 HorarioAula *horAulaOcup = (*itHorDia)->getHorarioAula();
+
+		 if( diaOcupado == dia )
+		 {
+			 if ( horAulaOcup->sobrepoe( *ha ) )
+				 return true;
+		 }
+	 }
+	 return false;
+ }
+ 
+ bool Sala::sobrepoeAulaJaAlocada( HorarioAula *hi, HorarioAula *hf, int dia )
+ {
+	Calendario *calendario = hi->getCalendario();
+	int nCreds = calendario->retornaNroCreditosEntreHorarios( hi, hf );
+	HorarioAula *ha = hi;
+
+	bool fim=false;
+	for ( int i = 1; i <= nCreds; i++ )
+	{
+		if ( this->sobrepoeHorarioDiaOcupado( ha, dia ) )
+			return true;
+
+		if ( ha == hf )
+			fim=true;
+		ha = calendario->getProximoHorario( ha );
+	}
+	
+	if (!fim) 
+		std::cout<<"\nErro em Sala::sobrepoeAulaJaAlocada: nro de creditos nao corresponde ao intervalo hi-hf"
+		<<"\nhi = "<<hi->getId()<<" hf = "<<hf->getId()<<" dia = "<<dia<<" nCreds = "<<nCreds<<"\n";
+
+	return false;
+ }

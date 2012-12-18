@@ -606,7 +606,7 @@ public:
    void carregaVariaveisSolucaoTatico( int campusId );
    void relacionaProfessoresDisciplinas();
    void carregaVariaveisSolucaoPreTatico( int campusId, int prioridade );
-   void preencheMapAtendimentoAluno( int campusId );
+   void preencheMapAtendimentoAluno( VariablePre *&var );
 
    void limpaMapAtendimentoAlunoPrioridadeAnterior( int campusId );
    
@@ -628,6 +628,7 @@ public:
    int fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v );
    int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
    void fixaAtendimentosVariaveisCreditosAnterior();
+   void liberaAtendimentosVariaveisFFD();
    void voltaComAlunosNaoAlocados();
 
    double fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
@@ -745,7 +746,7 @@ private:
 
 	void writeSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol );
 
-	int readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double **xSol );
+	int readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *&xSol );
 
     void writeSolTxt( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol );
 
@@ -832,10 +833,14 @@ private:
 
    // Hash which associates the row number with the ConstraintOp object.
    ConstraintOpHash cHashOp;
-
-   // Stores the solution variables ( non - zero ).
+   
+   // Armazena as variaveis 'x' e 's' não nulas. As 's' são deletadas depois
+   // que os maps de atendimentos de aluno são preenchidos
    std::set< VariablePre*, LessPtr<VariablePre> > solVarsPre;
-	
+
+   // Armazena as pre-variaveis 'x'
+   GGroup< VariablePre *, LessPtr<VariablePre> > solVarsXPre;  
+   	
    GGroup< Variable *, LessPtr<Variable> > solVars; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
 
    GGroup< VariableTatico *, LessPtr<VariableTatico> > solVarsTatico; // usado para armazenar a solução tatica da iteração cjtAluno anterior, a fim de fazer a fixação de valores
@@ -910,7 +915,11 @@ private:
    void heuristicaP1AlocaAlunos( int campusId, int prioridade, int grupoAlunosAtualId );
 
    std::list< std::pair< AlunoDemanda*, int > > SolverMIP::ordenaAlunosDemandaP2ParaHeurist( GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alDemList, Aluno* aluno, int prioridade );
-   
+  
+
+   void teste(double *& xSol, int n );
+   void teste( int n );
+
 };
 
 #endif

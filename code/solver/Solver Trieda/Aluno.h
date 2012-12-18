@@ -54,6 +54,8 @@ public:
    GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> > demandas;
 
    bool sobrepoeHorarioDiaOcupado( HorarioDia *hd );
+   bool sobrepoeHorarioDiaOcupado( HorarioAula *ha, int dia );
+   bool sobrepoeAulaJaAlocada( HorarioAula *hi, HorarioAula *hf, int dia );
 
    bool ehFormando() const { return this->formando; }
 

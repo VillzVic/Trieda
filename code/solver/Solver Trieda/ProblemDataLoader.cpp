@@ -1191,98 +1191,112 @@ void ProblemDataLoader::combinacaoDivCreditos()
 
    ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
    {
-      if ( itDisc->divisao_creditos != NULL )
-      {
-         std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vAux; 
-         for ( int i = 0; i < 7; i++ )
-         {
-            p = std::make_pair( i+2, itDisc->divisao_creditos->dia[i] );
-            vAux.push_back( p );
-         }
+	   Disciplina *disciplina = *itDisc;
 
-         // Verifica se a regra de divisão de créditos é válida
-         for ( int a = 0; a < 7; a++ )
-         {
-            if ( vAux[a].second != 0 )
-            {
-               GGroup< int >::iterator itDiasLetivosDiscs
-                  = itDisc->diasLetivos.begin();
+	   // Se a disciplina não tem regra de divisão de créditos especificada, procura regras
+	   // gerais com o mesmo número total de créditos
+	   if ( disciplina->divisao_creditos.size() == 0 )
+		{
+			ITERA_GGROUP_LESSPTR( itDiv, problemData->regras_div, DivisaoCreditos )
+			{
+				if ( itDiv->getCreditos() == disciplina->getTotalCreditos() )
+					disciplina->divisao_creditos.add( *itDiv ); // todo: duvida, devo criar outra ou posso usar só referencia?
+			}
+		}
 
-               for (; itDiasLetivosDiscs != itDisc->diasLetivos.end();
-                      itDiasLetivosDiscs++ )
-               { 
-                  if ( vAux[ a ].first == ( *itDiasLetivosDiscs ) )
-                  {
-                     atualiza = true;
-                     break;
-                  }
-                  else
-                  {
-                     atualiza = false;
-                  }
-               }
-            }
-         }
+	   if ( disciplina->divisao_creditos.size() == 0 )
+			continue;
 
-         if ( atualiza )
-         {
-            itDisc->combinacao_divisao_creditos.push_back( vAux );
-            atualiza = false;
-         }
+	   ITERA_GGROUP_LESSPTR( itDiv, disciplina->divisao_creditos, DivisaoCreditos )
+	   {
+		   DivisaoCreditos *divisao = *itDiv;
 
-         // Para cada regra de divisão de creditos pode existir mais 6
-         for ( int k = 0; k < 6; k++ )
-         {
-            for ( int j = 0; j < 7; j++ )
-            {
-               if ( j == 0 )
-               {
-                  p = std::make_pair( vAux[0].first, vAux[6].second );
-               }
-               else
-               {
-                  p = std::make_pair( vAux[j].first, vAux[j-1].second );
-               }
+			std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > vAux; 
+			for ( int i = 0; i < 7; i++ )
+			{
+				p = std::make_pair( i+2, divisao->dia[i] );
+				vAux.push_back( p );
+			}
 
-               vec.push_back( p );
-            }
+			// Verifica se a regra de divisão de créditos possui dias válidos
+			for ( int a = 0; a < 7; a++ )
+			{
+				if ( vAux[a].second != 0 )
+				{
+					GGroup< int >::iterator itDiasLetivosDiscs = disciplina->diasLetivos.begin();
+					for (; itDiasLetivosDiscs != disciplina->diasLetivos.end();	itDiasLetivosDiscs++ )
+					{ 
+						if ( vAux[ a ].first == ( *itDiasLetivosDiscs ) )
+						{
+							atualiza = true;
+							break;
+						}
+						else
+						{
+							atualiza = false;
+						}
+					}
+				}
+			}
 
-            vAux.clear();
-            vAux = vec;
-            vec.clear();
+			if ( atualiza )
+			{
+				disciplina->combinacao_divisao_creditos.push_back( vAux );
+				atualiza = false;
+			}
 
-            // Verifica se as regras de divisão de créditos criadas são válidas
-            for ( int b = 0; b < 7; b++ )
-            {
-               if ( vAux[ b ].second != 0 )
-               {
-                  GGroup< int >::iterator itDiasLetivosDiscs
-                     = itDisc->diasLetivos.begin();
+			// Para cada regra de divisão de creditos pode existir mais 6
+			for ( int k = 0; k < 6; k++ )
+			{
+				for ( int j = 0; j < 7; j++ )
+				{
+					if ( j == 0 )
+					{
+						p = std::make_pair( vAux[0].first, vAux[6].second );
+					}
+					else
+					{
+						p = std::make_pair( vAux[j].first, vAux[j-1].second );
+					}
 
-                  for (; itDiasLetivosDiscs != itDisc->diasLetivos.end();
-                         itDiasLetivosDiscs++ )
-                  { 
-                     if ( vAux[ b ].first == ( *itDiasLetivosDiscs ) )
-                     {
-                        atualiza = true;
-                        break;
-                     }
-                     else
-                     {
-                        atualiza = false;
-                     }
-                  }
-               }
-            }
+					vec.push_back( p );
+				}
 
-            if ( atualiza )
-            {
-               (*itDisc)->combinacao_divisao_creditos.push_back( vAux );
-               atualiza = false;
-            }	
-         }
-      }
+				vAux.clear();
+				vAux = vec;
+				vec.clear();
+
+				// Verifica se as regras de divisão de créditos criadas são válidas
+				for ( int b = 0; b < 7; b++ )
+				{
+					if ( vAux[ b ].second != 0 )
+					{
+						GGroup< int >::iterator itDiasLetivosDiscs = disciplina->diasLetivos.begin();
+						for (; itDiasLetivosDiscs != disciplina->diasLetivos.end(); itDiasLetivosDiscs++ )
+						{ 
+							if ( vAux[ b ].first == ( *itDiasLetivosDiscs ) )
+							{
+								atualiza = true;
+								break;
+							}
+							else
+							{
+								atualiza = false;
+							}
+						}
+					}
+				}
+
+				if ( atualiza )
+				{
+					disciplina->combinacao_divisao_creditos.push_back( vAux );
+					atualiza = false;
+				}	
+			}
+	   }
    }
+
+   problemData->imprimeCombinacaoCredsDisciplinas();
 }
 
 /*
@@ -2258,79 +2272,42 @@ void ProblemDataLoader::divideDisciplinas()
 		 // Enquanto não há divisão da regra no input para práticas e teóricas, o solver
 		 // vai separar sempre essas regras de acordo com as genéricas existentes. Portanto,
 		 // isso deve ser feito sempre, mesmo quando it_disc->divisao_creditos == NULL
-         if(1)// it_disc->divisao_creditos != NULL )
-         {
-            std::map< int /*Num. Creds*/ ,
+         if(1)
+         {			
+			std::map< int /*Num. Creds*/ ,
                GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > > >::iterator it_Creds_Regras;
 
             // Alterações relacionadas à disciplina antiga
-            delete (*it_disc)->divisao_creditos;
-			(*it_disc)->divisao_creditos = NULL;
+			ITERA_GGROUP_LESSPTR( itDiv, (*it_disc)->divisao_creditos, DivisaoCreditos )
+				delete (*itDiv);
+			(*it_disc)->divisao_creditos.clear();
 
             it_Creds_Regras = problemData->creds_Regras.find( it_disc->getCredTeoricos() );
 
-            // Checando se existe alguma regra de crédito
+            // Checando se existem regras de crédito
             // cadastrada para o total de créditos da disciplina teórica.
             if ( it_Creds_Regras != problemData->creds_Regras.end() )
             {
-               if ( it_Creds_Regras->second.size() == 1 )
-               {
-                  (*it_disc)->divisao_creditos = new DivisaoCreditos(
-                     **it_Creds_Regras->second.begin());
-               }
-               else // Greather
-               {
-                  GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > >::iterator 
-                     it_Regra = it_Creds_Regras->second.begin();
-
-                  int continuar = ( rand() % 2 );
-
-                  while ( 1 == continuar
-                     && ( it_Regra != it_Creds_Regras->second.end() ) )
-                  {
-                     ++it_Regra;
-                     continuar = rand() % 2;
-                  }
-
-                  (*it_disc)->divisao_creditos = new DivisaoCreditos( **it_Regra );
-               }
+				ITERA_GGROUP_LESSPTR( itDiv, it_Creds_Regras->second, DivisaoCreditos )
+					(*it_disc)->divisao_creditos.add( *itDiv );
             }
 
             // Alterações relacionadas à nova disciplina
             it_Creds_Regras = problemData->creds_Regras.find(
                nova_disc->getCredPraticos() );
 
-            // Checando se existe alguma regra de crédito
+            // Checando se existem regras de crédito
             // cadastrada para o total de créditos da nova disciplina prática.
             if ( it_Creds_Regras != problemData->creds_Regras.end() )
             {
-               if ( it_Creds_Regras->second.size() == 1 )
-               {
-                  nova_disc->divisao_creditos = new DivisaoCreditos(
-                     ( **it_Creds_Regras->second.begin() ) );
-               }
-               else // Greather
-               {
-                  GGroup< DivisaoCreditos *, LessPtr< DivisaoCreditos > >::iterator 
-                     it_Regra = it_Creds_Regras->second.begin();
-
-                  int continuar = ( rand() % 2 );
-
-                  while( 1 == continuar
-                     && ( it_Regra != it_Creds_Regras->second.end() ) )
-                  {
-                     ++it_Regra;
-                     continuar = rand() % 2;
-                  }
-
-                  nova_disc->divisao_creditos = new DivisaoCreditos( **it_Regra );
-               }
+				ITERA_GGROUP_LESSPTR( itDiv, it_Creds_Regras->second, DivisaoCreditos )
+					nova_disc->divisao_creditos.add( *itDiv );
             }
          }
 
          //>>> Copiando HORARIO
          ITERA_GGROUP( it_hr, (*it_disc)->horarios, Horario )
-         {
+         {	   
             Horario * h =  new Horario();
             h->setId( (*it_hr)->getId() );
 
@@ -2413,7 +2390,7 @@ void ProblemDataLoader::divideDisciplinas()
          int idDisc = nova_disc->getId();
 
          ITERA_GGROUP_LESSPTR( it_cp, problemData->campi, Campus )
-         {
+         {	   
             // Adicionando os dados da nova disciplina
             // em <Campi->Unidade->Sala->disciplinasAssociadas>:
             ITERA_GGROUP_LESSPTR( it_und, it_cp->unidades, Unidade )
@@ -2463,9 +2440,9 @@ void ProblemDataLoader::divideDisciplinas()
             }
          }
 
-         // Adicionando os dados da nova disciplina em < GrupoCurso->curriculos >
+		 // Adicionando os dados da nova disciplina em < GrupoCurso->curriculos >
          ITERA_GGROUP_LESSPTR( it_curso, problemData->cursos, Curso )
-         {
+         {		
             ITERA_GGROUP_LESSPTR( it_curriculo, it_curso->curriculos, Curriculo )
             {
 				if ( it_curriculo->disciplinas_periodo.find( *it_disc  )
@@ -2553,9 +2530,11 @@ void ProblemDataLoader::divideDisciplinas()
 								 problemData->alunosDemanda.end() )
 							{
 								if (!inseriuNovaDemanda)
-									std::cout<<"\nERRO1! Incluindo AlunoDemanda sem ter incluido a NovaDemanda";								
+									std::cout<<"\nERRO1! Incluindo AlunoDemanda sem ter incluido a NovaDemanda"; 
+								fflush(NULL);								
 								if ( problemData->demandas.find( *it_dem ) == problemData->demandas.end() ) 
-									std::cout<<"\nERRO2! Incluindo AlunoDemanda sem ter incluido a Demanda";
+									std::cout<<"\nERRO2! Incluindo AlunoDemanda sem ter incluido a Demanda"; 
+								fflush(NULL);
 
 								problemData->alunosDemanda.add( aluno_demanda );
 								this->problemData->mapDemandaAlunos[ nova_demanda ].add( aluno_demanda );
@@ -2566,8 +2545,8 @@ void ProblemDataLoader::divideDisciplinas()
 			 }
 		 }
 		 // -----------------------------------------------------------------
-
-         GGroup< int >::iterator itDiasLetivosDiscs = it_disc->diasLetivos.begin();
+  
+		 GGroup< int >::iterator itDiasLetivosDiscs = it_disc->diasLetivos.begin();
 
          for (; itDiasLetivosDiscs != it_disc->diasLetivos.end();
                 itDiasLetivosDiscs++ )
@@ -3648,25 +3627,27 @@ void ProblemDataLoader::cache()
 	   else
 			it_disc->setMinCreds( 1 );
 
-
-       if ( it_disc->divisao_creditos != NULL )
-       {
-         it_disc->setMaxCreds(0);
-
-         for ( int t = 0; t < 8; t++ )
-         {
-            if ( it_disc->divisao_creditos->dia[t] > 0 )
-            {
-               it_disc->setMaxCreds( 
-                  std::max(it_disc->getMaxCreds(),
-                  it_disc->divisao_creditos->dia[t]) );
-            }
-         }
-       }
-       else
-       {
+	   // acho que esse trecho comentado abaixo é inutil
+	  // if ( it_disc->divisao_creditos.size() != 0 )
+   //    {
+   //      it_disc->setMaxCreds(0);
+		 //ITERA_GGROUPS_LESSPTR( itDiv, it_disc->divisao_creditos, DivisaoCreditos )
+		 //{
+			// for ( int t = 0; t < 8; t++ )
+			// {
+			//	if ( itDiv->dia[t] > 0 )
+			//	{
+			//	   it_disc->setMaxCreds( 
+			//		  std::max(it_disc->getMaxCreds(),
+			//		  it_disc->divisao_creditos->dia[t]) );
+			//	}
+			// }
+		 //}
+   //    }
+   //    else
+   //    {
          it_disc->setMaxCreds( nCredsP + nCredsT );
-       }
+      // }
 
    }
 }

@@ -6,7 +6,7 @@ Disciplina::Disciplina(void)
    max_alunos_t = -1;
    max_alunos_p = -1;
 
-   divisao_creditos = NULL;
+   divisao_creditos.clear();
    tipo_disciplina = NULL;
    nivel_dificuldade = NULL;
    calendario = NULL;
@@ -47,11 +47,13 @@ void Disciplina::le_arvore( ItemDisciplina & elem )
    tipo_disciplina_id = elem.tipoDisciplinaId();
    nivel_dificuldade_id = elem.nivelDificuldadeId();
 
-   divisao_creditos = NULL;
+   divisao_creditos.clear();
    if ( elem.divisaoDeCreditos().present() )
    {
-      divisao_creditos = new DivisaoCreditos();
-      divisao_creditos->le_arvore( elem.divisaoDeCreditos().get() );
+	   DivisaoCreditos * divisao = new DivisaoCreditos();
+	   divisao->le_arvore( elem.divisaoDeCreditos().get() );
+
+	   divisao_creditos.add( divisao );
    }
 
    ITERA_NSEQ( it_contem, elem.disciplinasEquivalentes(), id, Identificador )
@@ -114,4 +116,75 @@ int Disciplina::getMaxTempoDiscEquivSubstituta()
    }
 
    return tempoMax;
+}
+
+bool Disciplina::inicioTerminoValidos( HorarioAula *&hi, HorarioAula *&hf )
+{	
+	if ( *hf < *hi )
+	{
+		return false;
+	}
+
+	if ( *hf == *hi )
+	{
+		// Não permite que uma disciplina com nro par de creditos
+		// tenha uma aula com somente 1 credito, a não ser que 
+		// esteja determinado por regra de divisão de créditos
+		if ( this->getTotalCreditos() % 2 == 0 )
+		{
+			bool CRIAR = false;
+			std::vector< std::vector< std::pair< int /*dia*/, int /*nCreds*/ > > >::iterator 
+				it1 = this->combinacao_divisao_creditos.begin();
+			for ( ; it1 != this->combinacao_divisao_creditos.end(); it1++ )
+			{
+				std::vector< std::pair< int /*dia*/, int /*nCreds*/ > >::iterator
+					it2 = (*it1).begin();
+				for ( ; it2 != (*it1).end(); it2++ )
+				{	
+					if ( (*it2).second == 1 )
+					{
+						CRIAR = true; break;
+					}
+				}
+				if ( CRIAR ) break;										
+			}
+			if ( !CRIAR ) return false;
+		}
+	}
+
+	int nIntervalo = this->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
+	if ( nIntervalo > this->getTotalCreditos() )
+	{
+		return false;
+	}
+
+	if ( this->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf ) == 2 &&
+		 this->getCalendario()->intervaloEntreHorarios(hi,hf) )
+	{
+		return false;
+	}
+
+	if ( this->combinacao_divisao_creditos.size() > 0 )
+	{
+		bool CRIAR = false;
+		int nCredHor = this->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
+		std::vector< std::vector< std::pair< int /*dia*/, int /*nCreds*/ > > >::iterator 
+			it1 = this->combinacao_divisao_creditos.begin();
+		for ( ; it1 != this->combinacao_divisao_creditos.end(); it1++ )
+		{
+			std::vector< std::pair< int /*dia*/, int /*nCreds*/ > >::iterator
+				it2 = (*it1).begin();
+			for ( ; it2 != (*it1).end(); it2++ )
+			{	
+				if ( (*it2).second == nCredHor )
+				{
+					CRIAR = true; break;
+				}
+			}
+			if ( CRIAR ) break;										
+		}
+		if ( !CRIAR ) return false;
+	}
+
+	return true;
 }

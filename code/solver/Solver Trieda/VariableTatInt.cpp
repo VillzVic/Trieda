@@ -224,7 +224,9 @@ std::string VariableTatInt::toString()
 		str <<"fps"; break;		
   	 case V_FORMANDOS_NA_TURMA:
 		str <<"f"; break;	
-		
+	 case V_ABERTURA:
+		str <<"z"; break;
+
     default:
         str << "!";
    }

@@ -192,10 +192,10 @@ void ConstraintTatico::reset()
 
 }
 
-std::string ConstraintTatico::toString(int p, int r, int t)
+std::string ConstraintTatico::toString(int prior, int rod, int tat)
 {
    std::stringstream ss;
-   ss << "CType[" << (int) type << "][p" << p << "r" << r << "t" << t << "]";
+   ss << "CType[" << (int) type << "][p" << prior << "r" << rod << "t" << tat << "]";
 
    switch( type )
    {

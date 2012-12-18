@@ -37,7 +37,8 @@ public:
 	  V_ALUNO_DIA = 21,							// du_{a,t}
 	  V_SLACK_PRIOR_INF = 22,					// fpi_{a,cp}
 	  V_SLACK_PRIOR_SUP = 23,					// fps_{a,cp}
-	  V_FORMANDOS_NA_TURMA = 24					// f_{i,d,cp}
+	  V_FORMANDOS_NA_TURMA = 24,				// f_{i,d,cp}
+	  V_ABERTURA = 25							// z_{i,d,cp}
    };
 
    //Constructors
