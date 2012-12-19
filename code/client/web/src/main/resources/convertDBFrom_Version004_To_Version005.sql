@@ -43,11 +43,11 @@ BEGIN
     IF actual_db_version = 4 THEN
       SET msg_status = 'Base de dados compativel com script de conversao, inicio processo conversao';
       
-      /*  */
+      /* TRIEDA-1461: Controlar por parâmetros a proibição (ou não) de ciclos em equivalências e o uso (ou não) de transitividade em equivalências */
       ALTER TABLE `trieda`.`parametros` ADD COLUMN `par_proibir_ciclos_equiv` BIT(1) DEFAULT NULL AFTER `par_considerar_equiv`;
       UPDATE `trieda`.`parametros` SET `par_proibir_ciclos_equiv` = b'0';
       
-      /*  */
+      /* TRIEDA-1461: Controlar por parâmetros a proibição (ou não) de ciclos em equivalências e o uso (ou não) de transitividade em equivalências */
       ALTER TABLE `trieda`.`parametros` ADD COLUMN `par_considerar_transitividade_equiv` BIT(1) DEFAULT NULL AFTER `par_proibir_ciclos_equiv`;
       UPDATE `trieda`.`parametros` SET `par_considerar_transitividade_equiv` = b'0';
       

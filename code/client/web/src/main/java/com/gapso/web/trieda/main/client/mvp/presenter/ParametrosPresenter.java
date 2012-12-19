@@ -234,7 +234,11 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 			@Override
 			public void handleEvent(BaseEvent be) {
 				boolean value = ((CheckBox)be.getSource()).getValue();
-				display.getProibeCiclosEmEquivalenciaCheckBox().setEnabled(value);
+				if (value) {
+					display.getProibeCiclosEmEquivalenciaCheckBox().setEnabled(!display.getConsideraTransitividadeEmEquivalenciaCheckBox().getValue());
+				} else {
+					display.getProibeCiclosEmEquivalenciaCheckBox().setEnabled(false);
+				}
 				display.getConsideraTransitividadeEmEquivalenciaCheckBox().setEnabled(value);
 				display.getProibeTrocaPorDisciplinasOnlineOuSemCreditosEmEquivalenciaCheckBox().setEnabled(value);
 			}
@@ -248,6 +252,9 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 					// se o parâmetro de considerar transitividade em regras de equivalência estiver ligado, então, é necessário
 					// proibir ciclos, do contrário, os algoritmos que checam inconsistências em regras de equivalências podem entrar
 					// em loop infinito
+					display.getProibeCiclosEmEquivalenciaCheckBox().setValue(true);
+					display.getProibeCiclosEmEquivalenciaCheckBox().setEnabled(false);
+				} else {
 					display.getProibeCiclosEmEquivalenciaCheckBox().setEnabled(true);
 				}
 			}
