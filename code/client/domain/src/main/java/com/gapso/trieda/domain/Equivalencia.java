@@ -280,6 +280,17 @@ public class Equivalencia
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< Equivalencia > find(InstituicaoEnsino instituicaoEnsino) {
+		Query q = entityManager().createQuery(
+        	" SELECT o FROM Equivalencia o " +
+    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
+    }
 
 	@SuppressWarnings( "unchecked" )
     public static List< Equivalencia > find(

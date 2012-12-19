@@ -173,6 +173,12 @@ public class Parametro
     //Considerar Equivalências entre Disciplinas
     @Column(name = "PAR_CONSIDERAR_EQUIV")
     private Boolean considerarEquivalencia = false;
+    @Column(name = "PAR_PROIBIR_CICLOS_EQUIV")
+    private Boolean proibirCiclosEmEquivalencia = false;
+    @Column(name = "PAR_CONSIDERAR_TRANSITIVIDADE_EQUIV")
+    private Boolean considerarTransitividadeEmEquivalencia = false;
+    @Column(name = "PAR_PROIBIR_TROCA_POR_DISC_ONLINE_CREDZERADOS_EQUIV")
+    private Boolean proibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia = true;
     
     //Número mínimo de alunos para abrir uma turma
     @Column(name = "PAR_MINALUNTURMA")
@@ -524,9 +530,29 @@ public class Parametro
 	public Boolean getConsiderarEquivalencia() {
 		return considerarEquivalencia;
 	}
-
 	public void setConsiderarEquivalencia(Boolean considerarEquivalencia) {
 		this.considerarEquivalencia = considerarEquivalencia;
+	}
+	
+	public Boolean getProibirCiclosEmEquivalencia() {
+		return proibirCiclosEmEquivalencia;
+	}
+	public void setProibirCiclosEmEquivalencia(Boolean proibirCiclosEmEquivalencia) {
+		this.proibirCiclosEmEquivalencia = proibirCiclosEmEquivalencia;
+	}
+
+    public Boolean getConsiderarTransitividadeEmEquivalencia() {
+		return considerarTransitividadeEmEquivalencia;
+	}
+	public void setConsiderarTransitividadeEmEquivalencia(Boolean considerarTransitividadeEmEquivalencia) {
+		this.considerarTransitividadeEmEquivalencia = considerarTransitividadeEmEquivalencia;
+	}
+
+    public Boolean getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia() {
+		return proibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia;
+	}
+	public void setProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia(Boolean proibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia) {
+		this.proibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia = proibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia;
 	}
 
 	public Boolean getNivelDificuldadeDisciplina() {

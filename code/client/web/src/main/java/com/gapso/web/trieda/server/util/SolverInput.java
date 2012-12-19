@@ -1061,9 +1061,8 @@ public class SolverInput
 
 				for ( ProfessorDisciplina professorDisciplina : professorDisciplinas )
 				{
-					if ( !this.disciplinasComDemandaCurriculo.contains(
-						professorDisciplina.getDisciplina() ) )
-					{
+					// TRIEDA-1387: Se as equivalências estão sendo consideradas, o input gerado deve vir também com as disciplinas relacionadas nas equivalências.
+					if (this.parametro.getConsiderarEquivalencia() && !this.disciplinasComDemandaCurriculo.contains(professorDisciplina.getDisciplina())) {
 						continue;
 					}
 
@@ -1216,22 +1215,15 @@ public class SolverInput
 	private void generateDisciplinas() {
 		GrupoDisciplina grupoDisciplina = this.of.createGrupoDisciplina();
 
-		boolean disciplinaSemDemanda = ( this.disciplinasComDemandaCurriculo.size()
-			!= this.cenario.getDisciplinas().size() );
-
-		if ( disciplinaSemDemanda )
-		{
-			String warningMessage1 = "H&aacute; disciplinas cadastradas no sistema" +
-				"que n&atilde;o possuem demanda associada a ela.";
-
-			String warningMessage2 = "H&aacute; disciplinas cadastradas no sistema" +
-				"que n&atilde;o est&atilde;o associadas a nenhuma matriz curricular.";
-
-			createWarningMessage( warningMessage1 );
-			createWarningMessage( warningMessage2 );
+		// TRIEDA-1387: Se as equivalências estão sendo consideradas, o input gerado deve vir também com as disciplinas relacionadas nas equivalências.
+		Set<Disciplina> disciplinasConsideradas = null;
+		if (this.parametro.getConsiderarEquivalencia()) {
+			disciplinasConsideradas = this.cenario.getDisciplinas();
+		} else {
+			disciplinasConsideradas = this.disciplinasComDemandaCurriculo;
 		}
 		
-		List<Disciplina> disciplinasOrdenadas = new ArrayList<Disciplina>(this.disciplinasComDemandaCurriculo);
+		List<Disciplina> disciplinasOrdenadas = new ArrayList<Disciplina>(disciplinasConsideradas);
 		// ordena para manter os inputs iguais
 		Collections.sort(disciplinasOrdenadas,new Comparator<Disciplina>() {
 			@Override

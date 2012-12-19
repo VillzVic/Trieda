@@ -131,6 +131,7 @@ public class Login
 		usernameTF.setName( "j_username" );
 		usernameTF.setLabelSeparator("");
 		usernameTF.setWidth(230);
+		usernameTF.focus();
 		form.add( usernameTF, formData );
 
 		TextField< String > passwordTF = new TextField< String >(){

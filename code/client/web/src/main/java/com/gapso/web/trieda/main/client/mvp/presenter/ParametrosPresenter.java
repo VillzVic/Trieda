@@ -2,7 +2,9 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -74,6 +76,9 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getMaximizarNotaAvaliacaoCorpoDocenteCheckBox();
 		CheckBox getMinimizarCustoDocenteCursosCheckBox();
 		CheckBox getConsiderarEquivalenciaCheckBox();
+		CheckBox getProibeCiclosEmEquivalenciaCheckBox();
+		CheckBox getConsideraTransitividadeEmEquivalenciaCheckBox();
+		CheckBox getProibeTrocaPorDisciplinasOnlineOuSemCreditosEmEquivalenciaCheckBox();
 		NumberField getMinAlunosParaAbrirTurmaValueNumberField();
 		CheckBox getMinAlunosParaAbrirTurmaCheckBox();
 		CheckBox getViolarMinAlunosAbrirTurmaParaFormandosCheckBoxCheckBox();
@@ -224,6 +229,29 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 				});
 			}
 		});
+		
+		this.display.getConsiderarEquivalenciaCheckBox().addListener(Events.Change,new Listener<BaseEvent>() {
+			@Override
+			public void handleEvent(BaseEvent be) {
+				boolean value = ((CheckBox)be.getSource()).getValue();
+				display.getProibeCiclosEmEquivalenciaCheckBox().setEnabled(value);
+				display.getConsideraTransitividadeEmEquivalenciaCheckBox().setEnabled(value);
+				display.getProibeTrocaPorDisciplinasOnlineOuSemCreditosEmEquivalenciaCheckBox().setEnabled(value);
+			}
+		});
+		
+		this.display.getConsideraTransitividadeEmEquivalenciaCheckBox().addListener(Events.Change,new Listener<BaseEvent>() {
+			@Override
+			public void handleEvent(BaseEvent be) {
+				boolean value = ((CheckBox)be.getSource()).getValue();
+				if (value) {
+					// se o parâmetro de considerar transitividade em regras de equivalência estiver ligado, então, é necessário
+					// proibir ciclos, do contrário, os algoritmos que checam inconsistências em regras de equivalências podem entrar
+					// em loop infinito
+					display.getProibeCiclosEmEquivalenciaCheckBox().setEnabled(true);
+				}
+			}
+		});
 	}
 
 	private ParametroDTO getDTO() {
@@ -268,6 +296,9 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setPreferenciaDeProfessores(this.display.getPreferenciaDeProfessoresCheckBox().getValue());
 		dto.setAvaliacaoDesempenhoProfessor(this.display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
 		dto.setConsiderarEquivalencia(this.display.getConsiderarEquivalenciaCheckBox().getValue());
+		dto.setProibirCiclosEmEquivalencia(this.display.getProibeCiclosEmEquivalenciaCheckBox().getValue());
+		dto.setConsiderarTransitividadeEmEquivalencia(this.display.getConsideraTransitividadeEmEquivalenciaCheckBox().getValue());
+		dto.setProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia(this.display.getProibeTrocaPorDisciplinasOnlineOuSemCreditosEmEquivalenciaCheckBox().getValue());
 		dto.setNivelDificuldadeDisciplina(this.display.getNivelDificuldadeDisciplinaCheckBox().getValue());
 		dto.setCompatibilidadeDisciplinasMesmoDia(this.display.getCompatibilidadeDisciplinasMesmoDiaCheckBox().getValue());
 		dto.setRegrasGenericasDivisaoCredito(this.display.getRegrasGenericasDivisaoCreditoCheckBox().getValue());

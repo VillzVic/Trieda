@@ -96,6 +96,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			checkDisciplinasSemLaboratorios(parametro,errors);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
+			System.out.print("checkDisciplinasComCreditosZerados(parametro,warnings);");start = System.currentTimeMillis(); // TODO: retirar
+			checkDisciplinasComCreditosZerados(parametro,warnings);
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
 			if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
 				System.out.print("checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo");start = System.currentTimeMillis(); // TODO: retirar
 				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors);
@@ -115,18 +119,24 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 //			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			if (parametro.getConsiderarEquivalencia()) {
+				if (parametro.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia()) {
+					System.out.print("checkEquivalenciasQueLevamParaDisciplinasOnlineOuSemCreditos(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
+					checkEquivalenciasQueLevamParaDisciplinasOnlineOuSemCreditos(parametro.getCenario(),errors);
+					time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+				}
+				
 				System.out.print("checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);");start = System.currentTimeMillis(); // TODO: retirar
-				boolean detectouCiclo = checkCicloDisciplinasEquivalentes(parametro.getCenario(),errors);
+				boolean detectouCiclo = checkCicloDisciplinasEquivalentes(parametro.getCenario(),(parametro.getProibirCiclosEmEquivalencia() ? errors : warnings));
 				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 				
-				if (!detectouCiclo) {
+				if (!detectouCiclo || !parametro.getConsiderarTransitividadeEmEquivalencia()) {
 					if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
-						System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
-						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,errors);
+						System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,warnings);");start = System.currentTimeMillis(); // TODO: retirar
+						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmMesmoCurriculo(parametro,warnings);
 						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 					} else {
-						System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
-						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,errors);
+						System.out.print("checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,warnings);");start = System.currentTimeMillis(); // TODO: retirar
+						checkEquivalenciasQueGeramDisciplinasRepetidasEmUmAluno(parametro,warnings);
 						time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 					}
 				}
@@ -542,10 +552,15 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			}
 		}
 
+		List<String> disciplinasSemCurriculo = new ArrayList<String>();
 		for (Disciplina disciplina : parametro.getCenario().getDisciplinas()) {
 			if (disciplinasComCurriculoMap.get(disciplina.getId()) == null) {
-				warnings.add(HtmlUtils.htmlUnescape("A disciplina " + disciplina.getCodigo() + " n&atilde;o foi associada a nenhuma matriz curricular."));
+				disciplinasSemCurriculo.add(disciplina.getCodigo());
 			}
+		}
+		
+		if (!disciplinasSemCurriculo.isEmpty()) {
+			warnings.add(HtmlUtils.htmlUnescape("As disciplinas " + disciplinasSemCurriculo + " n&atilde;o estão associadas a nenhuma matriz curricular."));
 		}
 	}
 
@@ -607,6 +622,29 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 				errors.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getCodigo() + "], que exige laboratório, contém pares (Matriz Curricular, Período) não associados a nenhum laboratório do campus [" + campus.getCodigo() + ", são eles: " + pares));
 			}
+		}
+	}
+	
+	private void checkDisciplinasComCreditosZerados(Parametro parametro, List<String> warnings) {
+		// colhe as disciplinas de acordo com os campi selecionados para otimização
+		Set<Disciplina> disciplinasSelecionadas = new HashSet<Disciplina>();
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				for (Demanda demanda : oferta.getDemandas()) {
+					disciplinasSelecionadas.add(demanda.getDisciplina());
+				}
+			}
+		}
+		
+		List<String> disciplinasComCreditosZerados = new ArrayList<String>();
+		for (Disciplina disciplina : disciplinasSelecionadas) {
+			if (disciplina.getCreditosTotal() == 0) {
+				disciplinasComCreditosZerados.add(disciplina.getCodigo());
+			}
+		}
+		
+		if (!disciplinasComCreditosZerados.isEmpty()) {
+			warnings.add(HtmlUtils.htmlUnescape("A(s) disciplina(s) " + disciplinasComCreditosZerados + " apresentam total de créditos igual a zero e, por isso, serão desconsideradas da otimização."));
 		}
 	}
 	
@@ -856,6 +894,28 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 	}
 	
+	private void checkEquivalenciasQueLevamParaDisciplinasOnlineOuSemCreditos(Cenario cenario, List<String> errors) { 
+		// TRIEDA-1404: Notificar usuário da existência de regras de equivalência que levam para disciplinas disciplinas com total de créditos (teóricos + práticos) zerados
+		
+		StringBuffer equivalenciasStrBuffer = new StringBuffer("");
+		List<Equivalencia> equivalencias = Equivalencia.find(getInstituicaoEnsinoUser());
+		for (Equivalencia eq : equivalencias) {
+			Disciplina discCursou = eq.getCursou();
+			if (!discCursou.ocupaGrade()) {
+				for (Disciplina discElimina : eq.getElimina()) {
+					if (discElimina.ocupaGrade()) {
+						equivalenciasStrBuffer.append(discCursou.getCodigo() + "->" + discElimina.getCodigo() + "; ");
+					}
+				}
+			}
+		}
+		
+		if (equivalenciasStrBuffer.length() > 0) {
+			String equivalenciasStr = equivalenciasStrBuffer.substring(0,equivalenciasStrBuffer.length()-2);
+			errors.add(HtmlUtils.htmlUnescape("As equivalências [" + equivalenciasStr + "] substituem disciplinas que ocupam grade (presenciais ou tele-presenciais) por disciplinas que não ocupam grade (online ou com créditos zerados)."));
+		}
+	}
+	
 	private boolean checkCicloDisciplinasEquivalentes(Cenario cenario, List<String> errors){
 		boolean detectouCiclo = false;
 		
@@ -921,14 +981,13 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				ciclosStr += i++ + ") ";
 				for(Integer idc: ciclo){
 					Disciplina dis = disMap.get(idc);
-					ciclosStr += dis.getNome() + " [" + dis.getCodigo() + "] -> ";
+					ciclosStr += dis.getCodigo() + "->";
 				}
 				String sugestaoParaEliminarCiclo = "";
 				sugestaoParaEliminarCiclo = avaliaSugestoesParaEliminacaoDeCiclos(disMap,disciplinaIdToQtdDemandadaMap,ciclo);
-				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 3) + sugestaoParaEliminarCiclo + "<br /><br />";
+				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 2) + " " + sugestaoParaEliminarCiclo + "<br /><br />";
 			}
-			ciclosStr += " \n";
-			System.out.println(ciclosStr.replaceAll("<br />", "\n"));
+			ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 12);
 			errors.add(HtmlUtils.htmlUnescape(ciclosStr));
 			
 			detectouCiclo = true;
@@ -1038,7 +1097,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 								equivalenciasInfo = cursou.getCodigo() + "->" + elimina.getCodigo();
 							}
 							
-							errors.add(HtmlUtils.htmlUnescape("A(s) equivalência(s) [" + equivalenciasInfo + "] invalida(m) a matriz curricular [" + curriculo.getCodigo() + "] por conta da disciplina [" + curriculoDisciplina.getDisciplina().getCodigo() + "] no período [" + curriculoDisciplina.getPeriodo() + "]."));
+							errors.add(HtmlUtils.htmlUnescape("A(s) equivalência(s) [" + equivalenciasInfo + "] pode(m) invalidar a matriz curricular [" + curriculo.getCodigo() + "] por conta da disciplina [" + curriculoDisciplina.getDisciplina().getCodigo() + "] no período [" + curriculoDisciplina.getPeriodo() + "]."));
 							detectouEquivalenciaInconsistentePrimeiroTeste = true;
 						}
 					}
@@ -1077,7 +1136,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						}
 						String equivalenciasStr = imprimeEquivalenciasEmUmaString(equivalenciasParaImprimir,disciplinasMap);
 						// gera mensagem de erro
-						errors.add(HtmlUtils.htmlUnescape("As equivalências [" + equivalenciasStr + "] invalidam a matriz curricular [" + curriculo.getCodigo() + "] pois levam para uma mesma disciplina."));
+						errors.add(HtmlUtils.htmlUnescape("As equivalências [" + equivalenciasStr + "] pode(m) invalidar a matriz curricular [" + curriculo.getCodigo() + "] pois levam para uma mesma disciplina."));
 					}
 				}
 			}
@@ -1154,7 +1213,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 								equivalenciasInfo = cursou.getCodigo() + "->" + elimina.getCodigo();
 							}
 							
-							errors.add(HtmlUtils.htmlUnescape("A(s) equivalência(s) [" + equivalenciasInfo + "] invalida(m) a(s) escolha(s) do aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] por conta da disciplina [" + disciplinaDoAluno.getCodigo() + "]."));
+							errors.add(HtmlUtils.htmlUnescape("A(s) equivalência(s) [" + equivalenciasInfo + "] pode(m) invalidar a(s) escolha(s) do aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] por conta da disciplina [" + disciplinaDoAluno.getCodigo() + "]."));
 							detectouEquivalenciaInconsistentePrimeiroTeste = true;
 						}
 					}
@@ -1193,7 +1252,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						}
 						String equivalenciasStr = imprimeEquivalenciasEmUmaString(equivalenciasParaImprimir,disciplinasMap);
 						// gera mensagem de erro
-						errors.add(HtmlUtils.htmlUnescape("As equivalências [" + equivalenciasStr + "] invalidam a(s) escolha(s) do aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] pois levam para uma mesma disciplina."));
+						errors.add(HtmlUtils.htmlUnescape("As equivalências [" + equivalenciasStr + "] pode(m) invalidar a(s) escolha(s) do aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] pois levam para uma mesma disciplina."));
 					}
 				}
 			}
@@ -1225,9 +1284,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 		
 		// aplica equivalências umas nas outras
-		boolean consideraTransitividadeNasRegrasDeEquivalencia = false;
 		Set<Pair<Long,Long>> equivalenciasAposAplicacoes = new HashSet<Pair<Long,Long>>();
-		if (consideraTransitividadeNasRegrasDeEquivalencia) {
+		if (parametro.getConsiderarTransitividadeEmEquivalencia()) {
 			Set<Pair<Long,Long>> equivalenciasAnalisadas = new HashSet<Pair<Long,Long>>(equivalenciasOriginais);
 			boolean ocorreuAlgumaSubstituicao = false;
 			do {

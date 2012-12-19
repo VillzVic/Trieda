@@ -45,6 +45,9 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_MAXIMIZARNOTAAVALIACAOCORPODOCENTE = "maximizarnotaavaliacaocorpodocente";
 	public static final String PROPERTY_MINIMIZARCUSTODOCENTECURSOS = "minimizarcustodocentecursos";
 	public static final String PROPERTY_CONSIDERAREQUIVALENCIA = "considerarEquivalencias";
+	public static final String PROPERTY_PROIBIRCICLOSEMEQUIVALENCIA = "proibirCiclosEmEquivalencia";
+	public static final String PROPERTY_CONSIDERARTRANSITIVIDADEEMEQUIVALENCIA = "considerarTransitividadeEmEquivalencia";
+	public static final String PROPERTY_PROIBIRTROCAPORDISCONLINEOUCREDZERADOSEMEQUIVALENCIA = "proibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia";
 	public static final String PROPERTY_MINALUNOSPARAABRIRTURMA = "minalunosparaabrirturma";
 	public static final String PROPERTY_MINALUNOSPARAABRIRTURMAVALUE = "minalunosparaabrirturmavalue";
 	public static final String PROPERTY_VIOLARMINALUNOSPARAABRIRTURMAPARAFORMANDO = "violarMinAlunosAbrirTurmaParaFormandos";
@@ -235,6 +238,27 @@ public class ParametroDTO extends AbstractDTO<Long>
 	}
 	public void setConsiderarEquivalencia(Boolean value) {
 		set(PROPERTY_CONSIDERAREQUIVALENCIA, value);
+	}
+	
+	public Boolean getProibirCiclosEmEquivalencia() {
+		return get(PROPERTY_PROIBIRCICLOSEMEQUIVALENCIA);
+	}
+	public void setProibirCiclosEmEquivalencia(Boolean value) {
+		set(PROPERTY_PROIBIRCICLOSEMEQUIVALENCIA, value);
+	}
+	
+	public Boolean getConsiderarTransitividadeEmEquivalencia() {
+		return get(PROPERTY_CONSIDERARTRANSITIVIDADEEMEQUIVALENCIA);
+	}
+	public void setConsiderarTransitividadeEmEquivalencia(Boolean value) {
+		set(PROPERTY_CONSIDERARTRANSITIVIDADEEMEQUIVALENCIA, value);
+	}
+	
+	public Boolean getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia() {
+		return get(PROPERTY_PROIBIRTROCAPORDISCONLINEOUCREDZERADOSEMEQUIVALENCIA);
+	}
+	public void setProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia(Boolean value) {
+		set(PROPERTY_PROIBIRTROCAPORDISCONLINEOUCREDZERADOSEMEQUIVALENCIA, value);
 	}
 
 	public Integer getMinAlunosParaAbrirTurmaValue() {

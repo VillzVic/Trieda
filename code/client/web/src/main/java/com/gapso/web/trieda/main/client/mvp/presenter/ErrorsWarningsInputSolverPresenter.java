@@ -50,12 +50,12 @@ public class ErrorsWarningsInputSolverPresenter extends AbstractRequisicaoOtimiz
 	private void initUI() {
 		if(this.warnings != null)
 			for (String msg : this.warnings) {
-				this.display.getMessagesWarningPanel().addText("• " + msg);
+				this.display.getMessagesWarningPanel().addText("• " + msg + "<br /><br />");
 			}
 
 		if(this.errors != null)
 			for (String msg : this.errors) {
-				this.display.getMessagesErrorPanel().addText("• " + msg);
+				this.display.getMessagesErrorPanel().addText("• " + msg + "<br /><br />");
 			}
 
 		this.display.getMessagesWarningPanel().setVisible(this.warnings != null && !this.warnings.isEmpty());

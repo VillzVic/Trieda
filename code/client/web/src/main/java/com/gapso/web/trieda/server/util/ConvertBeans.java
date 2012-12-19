@@ -2921,6 +2921,9 @@ public class ConvertBeans {
 		domain.setPreferenciaDeProfessores( dto.getPreferenciaDeProfessores() );
 		domain.setAvaliacaoDesempenhoProfessor( dto.getAvaliacaoDesempenhoProfessor() );
 		domain.setConsiderarEquivalencia( dto.getConsiderarEquivalencia() );
+		domain.setProibirCiclosEmEquivalencia( dto.getProibirCiclosEmEquivalencia() );
+		domain.setConsiderarTransitividadeEmEquivalencia( dto.getConsiderarTransitividadeEmEquivalencia() );
+		domain.setProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia( dto.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia() );
 		domain.setMinAlunosParaAbrirTurma( dto.getMinAlunosParaAbrirTurma() );
 		domain.setMinAlunosParaAbrirTurmaValue( dto.getMinAlunosParaAbrirTurmaValue() );
 		domain.setViolarMinTurmasFormandos( dto.getViolarMinAlunosAbrirTurmaParaFormandos() );
@@ -3006,6 +3009,9 @@ public class ConvertBeans {
 		dto.setPreferenciaDeProfessores( domain.getPreferenciaDeProfessores() );
 		dto.setAvaliacaoDesempenhoProfessor( domain.getAvaliacaoDesempenhoProfessor() );
 		dto.setConsiderarEquivalencia( domain.getConsiderarEquivalencia() );
+		dto.setProibirCiclosEmEquivalencia( domain.getProibirCiclosEmEquivalencia() );
+		dto.setConsiderarTransitividadeEmEquivalencia( domain.getConsiderarTransitividadeEmEquivalencia() );
+		dto.setProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia( domain.getProibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia() );
 		dto.setMinAlunosParaAbrirTurma( domain.getMinAlunosParaAbrirTurma() );
 		dto.setMinAlunosParaAbrirTurmaValue( domain.getMinAlunosParaAbrirTurmaValue() );
 		dto.setViolarMinAlunosAbrirTurmaParaFormandos( domain.getViolarMinTurmasFormandos() );
