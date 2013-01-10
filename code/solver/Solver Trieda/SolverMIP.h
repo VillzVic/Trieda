@@ -532,7 +532,7 @@ public:
    int criaVariavelFolgaUltimaPrimeiraAulas( void );
    int criaVariavelFolgaMinimoMestresCurso( void );	// NÃO ESTÁ SENDO MAIS USADA, A DELETAR
    int criaVariavelFolgaMinimoDoutoresCurso( void );// NÃO ESTÁ SENDO MAIS USADA, A DELETAR
-   int criaVariavelMaxDiscProfCurso( void );
+   int criaVariavelDiscProfCurso( void );
    int criaVariavelFolgaMaxDiscProfCurso( void );
    int criaVariavelFolgaCargaHorariaMinimaProfessor( void );
    int criaVariavelFolgaCargaHorariaMinimaProfessorSemana( void );
@@ -581,6 +581,7 @@ public:
    int criaRestricaoMinimoDoutoresCurso( void ); // x12
    int criaRestricaoMaximoNaoMestresCurso();
    int criaRestricaoMaximoNaoDoutoresCurso();
+   int criaRestricaoDiscProfCurso( void ); // x13
    int criaRestricaoMaxDiscProfCurso( void ); // x13
    int criaRestricaoCargaHorariaMinimaProfessorSemana( void ); // x14
    int criaRestricaoCargaHorariaMaximaProfessorSemana( void ); // x15

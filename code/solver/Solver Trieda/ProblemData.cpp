@@ -712,17 +712,24 @@ int ProblemData::creditosFixadosDisciplinaDia(
 	return creditos_fixados;
 }
 
-bool ProblemData::aulaAtendeCurso( Aula * aula, Curso * curso )
+bool ProblemData::aulaAtendeCurso( int turma, Disciplina *disciplina, Curso * curso )
 {
    ITERA_GGROUP_LESSPTR( it_aula, this->aulas, Aula )
    {
-      ITERA_GGROUP_LESSPTR( it_oferta, it_aula->ofertas, Oferta )
-      {
-         if ( it_oferta->curso == curso )
-         {
-            return true;
-         }
-      }
+	   Aula *aula = *it_aula;
+
+	   if ( aula->getTurma() == turma &&
+		    aula->getDisciplina() == disciplina )
+	   {
+			ITERA_GGROUP_LESSPTR( it_oferta, it_aula->ofertas, Oferta )
+			{
+				if ( it_oferta->curso->getId() == curso->getId() )
+				{
+					return true;
+				}
+			}
+			return false;
+	   }
    }
 
    return false;
@@ -1374,7 +1381,7 @@ AlunoDemanda* ProblemData::procuraAlunoDemandaEquiv( Disciplina* disc, Aluno *al
 		}
 	}
 
-	std::cout<<"\nProblemData::procuraAlunoDemandaEquiv: Demanda nao encontrada. Aluno "
+	std::cout<<"\nAtencao: ProblemData::procuraAlunoDemandaEquiv: Demanda nao encontrada. Aluno "
 		<< aluno->getAlunoId() << " Disc " << disc->getId() << endl;
 
 	return NULL;
@@ -1462,11 +1469,18 @@ void ProblemData::atualizaDemandas( int novaPrioridade, int campusId )
 		if (aluno==NULL){
 			std::cout<<"\nATENCAO: ALUNO NAO ENCONTRADO. ID="<<alunoId; fflush(NULL);	continue;
 		}
-		// Pula AlunoDemanda possivel repetido devido à equivalencias
+		// Pula AlunoDemanda possivelmente repetido
 		bool repetido=false;
 		ITERA_GGROUP_LESSPTR( itAlDem2, aluno->demandas, AlunoDemanda )
 		{
 			if ( (*itAlDem2)->demanda->getDisciplinaId() == (*itAlDem)->demanda->getDisciplinaId() )
+			{
+				repetido=true;
+				break;
+			}
+
+			if ( (*itAlDem2)->demandaOriginal != NULL ) // CASO DE SUBSTITUIÇÃO POR EQUIVALENCIA
+			if ( (*itAlDem2)->demandaOriginal->getDisciplinaId() == (*itAlDem)->demanda->getDisciplinaId() )
 			{
 				repetido=true;
 				break;
@@ -1685,7 +1699,7 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoC
 	Só retorna AlunoDemanda com disciplinaId sendo a original se este aluno já estiver alocado na disciplina. Se
 	não estiver, não permite novas tentativas de inserção, e sim tenta as equivalentes da original.
 */
-GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade )
+GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoCampus_Equiv( Disciplina* disciplina, int campusId, int prioridade )
 {	
 	GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alunosDemanda;
 
@@ -1702,18 +1716,16 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoC
 
 			Disciplina *d = (*itAlDem)->demanda->disciplina;
 			int turmaAluno = this->retornaTurmaDiscAluno( aluno, d );				
-			if ( turmaAluno == -1 && d->getId()!=disciplinaId ) // aluno não alocado, procura disciplinaId nas equivalencias
+			if ( turmaAluno == -1 && *d != *disciplina ) // aluno não alocado, procura disciplinaId nas equivalencias
 			{
-				ITERA_GGROUP_LESSPTR ( itDiscEq, d->discEquivSubstitutas, Disciplina )
-				{
-					if ( (*itDiscEq)->getId() == disciplinaId )
-					{
-						alunosDemanda.add( *itAlDem );
-						break;
-					}
-				}
+				if ( this->cargaHorariaOriginalRequeridaPorPrioridade( 1, aluno ) -
+					 this->cargaHorariaJaAtendida( aluno ) <= 0 )
+					 continue;
+				
+				if ( d->discEquivSubstitutas.find( disciplina ) != d->discEquivSubstitutas.end() )
+					alunosDemanda.add( *itAlDem );
 			}
-			else if ( turmaAluno != -1 && d->getId() == disciplinaId )
+			else if ( turmaAluno != -1 && *d == *disciplina )
 			{
 				alunosDemanda.add( *itAlDem );
 			}
@@ -1721,6 +1733,45 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoC
 	}
 
 	return alunosDemanda;
+}
+
+bool ProblemData::haDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade )
+{		
+	ITERA_GGROUP_LESSPTR ( itAl, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAl;
+		if ( aluno->getOferta()->getCampusId() != campusId )
+			continue;
+
+		ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda )
+		{
+			if ( (*itAlDem)->getPrioridade() > prioridade )
+				continue;
+
+			Disciplina *d = (*itAlDem)->demanda->disciplina;
+			int turmaAluno = this->retornaTurmaDiscAluno( aluno, d );				
+			if ( turmaAluno == -1 && d->getId()!=disciplinaId ) // aluno não alocado, procura disciplinaId nas equivalencias
+			{
+				if ( this->cargaHorariaOriginalRequeridaPorPrioridade( 1, aluno ) -
+					 this->cargaHorariaJaAtendida( aluno ) <= 0 )
+					 continue;
+
+				ITERA_GGROUP_LESSPTR ( itDiscEq, d->discEquivSubstitutas, Disciplina )
+				{
+					if ( (*itDiscEq)->getId() == disciplinaId )
+					{
+						return true;
+					}
+				}
+			}
+			else if ( turmaAluno != -1 && d->getId() == disciplinaId )
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId, int prioridade )
@@ -2566,13 +2617,14 @@ double ProblemData::cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId
 	double cargaHorariaNaoAtendida = 0.0;
 	ITERA_GGROUP_LESSPTR( itAlDemanda, this->listSlackDemandaAluno, AlunoDemanda )
 	{
-		if ( itAlDemanda->getPrioridade() != prior )
+		if ( (*itAlDemanda)->getPrioridade() != prior )
 			continue;
 
-		if ( itAlDemanda->getAlunoId() == alunoId )
+		if ( (*itAlDemanda)->getAlunoId() == alunoId )
 		{
-			int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
-			int duracaoCred = itAlDemanda->demanda->disciplina->getTempoCredSemanaLetiva();
+			Disciplina *disciplina = (*itAlDemanda)->demanda->disciplina;
+			int nCreds = disciplina->getTotalCreditos();
+			int duracaoCred = disciplina->getTempoCredSemanaLetiva();
 
 			cargaHorariaNaoAtendida += nCreds*duracaoCred;
 		}
@@ -2585,14 +2637,14 @@ double ProblemData::cargaHorariaOriginalRequeridaPorPrioridade( int prior, Aluno
 	double cargaHorariaP2 = 0.0;
 	ITERA_GGROUP_LESSPTR( itAlDemanda, alunosDemandaTotal, AlunoDemanda )
 	{
-		if ( itAlDemanda->getAlunoId() != aluno->getAlunoId() )
+		if ( (*itAlDemanda)->getAlunoId() != aluno->getAlunoId() )
 			continue;
-
-		Disciplina *disciplina = itAlDemanda->demanda->disciplina;
-		if ( itAlDemanda->getPrioridade() == prior )
+				
+		if ( (*itAlDemanda)->getPrioridade() == prior )
 		{
-			int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
-			int duracaoCred = itAlDemanda->demanda->disciplina->getTempoCredSemanaLetiva();
+			Disciplina *disciplina = (*itAlDemanda)->demanda->disciplina;
+			int nCreds = disciplina->getTotalCreditos();
+			int duracaoCred = disciplina->getTempoCredSemanaLetiva();
 			cargaHorariaP2 += nCreds*duracaoCred;
 		}
 	}
@@ -2603,15 +2655,12 @@ double ProblemData::cargaHorariaAtualRequeridaPorPrioridade( int prior, Aluno* a
 {
 	double cargaHorariaP2 = 0.0;
 	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
-	{
-		if ( itAlDemanda->getAlunoId() != aluno->getAlunoId() )
-			continue;
-
-		Disciplina *disciplina = itAlDemanda->demanda->disciplina;
-		if ( itAlDemanda->getPrioridade() == prior )
+	{		
+		if ( (*itAlDemanda)->getPrioridade() == prior )
 		{
-			int nCreds = itAlDemanda->demanda->disciplina->getTotalCreditos();
-			int duracaoCred = itAlDemanda->demanda->disciplina->getTempoCredSemanaLetiva();
+			Disciplina *disciplina = (*itAlDemanda)->demanda->disciplina;
+			int nCreds = disciplina->getTotalCreditos();
+			int duracaoCred = disciplina->getTempoCredSemanaLetiva();
 			cargaHorariaP2 += nCreds*duracaoCred;
 		}
 	}
@@ -2917,11 +2966,11 @@ bool ProblemData::possuiDemandasAlunoEmComum( Disciplina *disciplina1, Disciplin
 			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
 				continue;
 
-			Disciplina *disciplina = it1AlDemanda->demanda->disciplina;
+			Disciplina *disciplina = (*it1AlDemanda)->demanda->disciplina;
 			
-			if ( disciplina == disciplina1 )
+			if ( disciplina->getId() == disciplina1->getId() )
 				possuiD1 = true;
-			else if ( disciplina == disciplina2 )
+			else if ( disciplina->getId() == disciplina2->getId() )
 				possuiD2 = true;
 
 			if ( possuiD1 & possuiD2 )
@@ -2970,13 +3019,58 @@ bool ProblemData::haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int
 				continue;
 
 			Disciplina *disc = it1AlDemanda->demanda->disciplina;			
-			if ( disc == disciplina )
+			if ( *disc == *disciplina )
 				return true;
 		}
 	}
 
 	return false;
 }
+
+bool ProblemData::haDemandaPorFormandosEquiv( Disciplina *disciplina, Campus *cp, int P_ATUAL )
+{
+	if ( ! this->parametros->considerar_equivalencia_por_aluno )
+		std::cout<<"\nAtencao: ProblemData::haDemandaPorFormandosEquiv sendo chamada sendo que nao ha equiv. Estranho.\n";
+
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != cp->getId() )
+		{
+			continue;
+		}
+
+		if ( ! aluno->ehFormando() )
+			continue;
+
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			if ( it1AlDemanda->getPrioridade() > P_ATUAL )
+				continue;
+
+			Disciplina *disc = it1AlDemanda->demanda->disciplina;			
+			if ( *disc == *disciplina )
+				return true;
+			else
+			{
+				int turma = this->retornaTurmaDiscAluno( aluno, disc );
+				if ( turma == -1 )
+				{
+					if ( disc->discEquivSubstitutas.find( disciplina ) !=
+						 disc->discEquivSubstitutas.end() )
+					{
+						return true;
+					}
+				}
+			}
+
+		}
+	}
+
+	return false;
+}
+
 
 int ProblemData::getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL )
 {
@@ -3075,7 +3169,7 @@ bool ProblemData::haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, i
 			Disciplina *d = it1AlDemanda->demanda->disciplina;			
 
 			if ( it1AlDemanda->getPrioridade() <= prioridadeAtual )
-			if ( d == disciplina )
+			if ( *d == *disciplina )
 			{
 				if ( this->retornaTurmaDiscAluno( aluno, d ) == -1 )
 					return true;
@@ -3085,6 +3179,46 @@ bool ProblemData::haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, i
 
 	return false;
 }
+
+bool ProblemData::haAlunoFormandoNaoAlocadoEquiv( Disciplina *disciplina, int cpId, int prioridadeAtual )
+{
+	ITERA_GGROUP_LESSPTR( itAluno, this->alunos, Aluno )
+	{
+		Aluno *aluno = *itAluno;
+
+		if ( aluno->getOferta()->getCampusId() != cpId )
+		{
+			continue;
+		}
+
+		if ( ! aluno->ehFormando() )
+			continue;
+
+		ITERA_GGROUP_LESSPTR( it1AlDemanda, aluno->demandas, AlunoDemanda )
+		{
+			Disciplina *d = it1AlDemanda->demanda->disciplina;			
+
+			int turma = this->retornaTurmaDiscAluno( aluno, d );
+
+			if ( it1AlDemanda->getPrioridade() <= prioridadeAtual )
+			if ( *d == *disciplina && turma == -1 )
+			{	
+				return true;
+			}
+			else if ( *d != *disciplina && turma == -1 )
+			{
+				if ( d->discEquivSubstitutas.find( disciplina ) !=
+					 d->discEquivSubstitutas.end() )
+				{
+					return true;
+				}				
+			}
+		}
+	}
+
+	return false;
+}
+
 
 bool ProblemData::haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId )
 {
@@ -3561,4 +3695,75 @@ void ProblemData::confereExcessoP2( int campusId )
 	}
 
 	excessosP2File.close();
+}
+
+void ProblemData::imprimeResumoDemandasPorAluno()
+{
+	if ( this->parametros->otimizarPor != "ALUNO" )
+		return;
+
+	ofstream demandasFile;
+	std::string demandasFilename( "demandasAlunos_" );
+	demandasFilename += this->inputFileName;
+	demandasFilename += ".txt";
+	demandasFile.open(demandasFilename, ios::out);
+	if (!demandasFile)
+	{
+		cerr << "Error: Can't open output file " << demandasFilename << endl;
+		return;
+	}
+
+	demandasFile <<"Demandas por aluno:";
+
+	ITERA_GGROUP_LESSPTR( itAluno, alunos, Aluno )
+	{		
+		Aluno *a = (*itAluno);
+		
+		double tempoTotal=0.0;
+
+		demandasFile <<"\n\n" << a->getNomeAluno() << "\t" << a->getAlunoId();
+
+		ITERA_GGROUP_LESSPTR( itAlunoDemanda, a->demandas, AlunoDemanda )
+		{
+			demandasFile <<"\nDiscId " << (*itAlunoDemanda)->demanda->getDisciplinaId() 
+				<< ", AlunoDemandaId " << (*itAlunoDemanda)->getId()
+				<< ", DemandaId " << (*itAlunoDemanda)->getDemandaId()
+				<< ", Prioridade " << (*itAlunoDemanda)->getPrioridade()
+				<< ", " << (*itAlunoDemanda)->demanda->disciplina->getTotalCreditos() << " creditos";
+			
+			tempoTotal += (*itAlunoDemanda)->demanda->disciplina->getTotalTempo();
+
+			if ( this->parametros->considerar_equivalencia_por_aluno )
+			{
+				demandasFile <<"\tPossiveis substitutas por equivalencia: ";
+				ITERA_GGROUP_LESSPTR( itDiscEquiv, (*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas, Disciplina )	
+					demandasFile <<"DiscId " << (*itDiscEquiv)->getId() << "  ";
+			}				
+		}		
+		demandasFile <<"\nTempo total requerido: "<< tempoTotal<< endl;
+
+		ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemandaTotal, AlunoDemanda )
+		{				
+			if ( (*itAlunoDemanda)->getAlunoId() != a->getAlunoId() )
+				continue;
+			
+			if ( a->demandas.find( (*itAlunoDemanda) ) != a->demandas.end() )
+				continue;
+
+			demandasFile <<"\nDiscId " << (*itAlunoDemanda)->demanda->getDisciplinaId()
+				<< ", AlunoDemandaId " << (*itAlunoDemanda)->getId()
+				<< ", DemandaId " << (*itAlunoDemanda)->getDemandaId()
+				<< ", Prioridade " << (*itAlunoDemanda)->getPrioridade()
+				<< ", " << (*itAlunoDemanda)->demanda->disciplina->getTotalCreditos() << " creditos";
+
+			if ( this->parametros->considerar_equivalencia_por_aluno )
+			{
+				demandasFile <<"\tPossiveis substitutas por equivalencia: ";
+				ITERA_GGROUP_LESSPTR( itDiscEquiv, (*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas, Disciplina )	
+					demandasFile <<"DiscId " << (*itDiscEquiv)->getId() << "  "; 
+			}
+		}
+	}
+
+	demandasFile.close();
 }

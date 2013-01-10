@@ -271,6 +271,10 @@ void ProblemDataLoader::load()
    std::cout << "Calculando combinacao de creditos por aluno..." << std::endl;
 
    calculaCombinaCredSLPorAluno();
+   
+   std::cout << "Imprimindo resumo de demandas de alunos..." << std::endl;
+
+   problemData->imprimeResumoDemandasPorAluno();
 
 }
 
@@ -2579,18 +2583,47 @@ void ProblemDataLoader::divideDisciplinas()
 		}
 	}
 
+   // Equivalências (conceito novo) envolvendo disciplinas praticas
+   if ( problemData->parametros->considerar_equivalencia_por_aluno )
+	  addEquivDisciplinasPraticasEmTeoricas();
+
    ITERA_GGROUP_LESSPTR( itDisciplina, problemData->novasDisciplinas, Disciplina )
    {
       problemData->disciplinas.add( *itDisciplina );
    }
 
-   // Equivalências para disciplinas praticas
+   // Equivalências (conceito antigo) para disciplinas praticas
    if ( problemData->parametros->considerar_equivalencia )
 	  relacionaEquivalenciasDisciplinasPraticas();
 
-
    // ---------
    criaFixacoesDisciplinasDivididas();
+}
+
+void ProblemDataLoader::addEquivDisciplinasPraticasEmTeoricas()
+{
+	std::map< int, Disciplina* >::iterator itMapP;
+	std::map< int, Disciplina* > mapPraticas;
+    ITERA_GGROUP_LESSPTR( itDisciplina, problemData->novasDisciplinas, Disciplina )
+    {
+		mapPraticas[ (*itDisciplina)->getId() ] = *itDisciplina;
+    }
+
+	ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
+	{
+		Disciplina *disciplina = *it_disc;
+		GGroup<Disciplina*, LessPtr<Disciplina>> praticasEquiv;
+		ITERA_GGROUP_LESSPTR ( itEquiv, disciplina->discEquivSubstitutas, Disciplina )
+		{
+			int idP = - itEquiv->getId();
+			itMapP = mapPraticas.find( idP );
+			if ( itMapP != mapPraticas.end() )
+			{
+				praticasEquiv.add( itMapP->second );
+			}
+		}
+		disciplina->discEquivSubstitutas.add( praticasEquiv );
+	}
 }
 
 void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
@@ -2609,7 +2642,7 @@ void ProblemDataLoader::relacionaEquivalenciasDisciplinasPraticas()
 		ITERA_GGROUP_LESSPTR( it_disc, problemData->disciplinas, Disciplina )
 		{
 			if ( it_disc->getId() == idT )
-				dt = *it_disc;
+			{	dt = *it_disc; break;}
 		}
 
 		if ( dt != NULL )

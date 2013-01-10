@@ -43,6 +43,9 @@ private:
    std::string codigo;
    std::string descricao;
    double tempo_aula;
+
+   std::map< std::pair<HorarioAula*, HorarioAula*>, int > horarios_nroCreds;
+
 };
 
 #endif

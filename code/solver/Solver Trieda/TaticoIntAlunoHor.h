@@ -66,6 +66,13 @@ private:
    
    int criaVariaveisTatico( int campusId, int P, int r );
 
+   int criaVariavelTaticoAlunoCreditosAPartirDeX( int campusId, int P );
+   int criaVariavelTaticoOferecimentosAPartirDeX( int campusId, int P );
+   int criaVariavelTaticoConsecutivosAPartirDeX( int campusId, int P );
+   int criaVariavelTaticoCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P );
+   int criaVariavelTaticoFolgaCombinacaoDivisaoCreditoAPartirDeX( int campusId, int P );   
+   int criaVariavelTaticoAberturaCompativelAPartirDeX( int campusId, int P );
+
    int criaVariavelTaticoAlunoCreditos( int campusId, int P );								// v_{a,i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoOferecimentos( int campusId, int P );								// o_{i,d,u,s}
@@ -117,11 +124,12 @@ private:
    int criaRestricaoTaticoAbreTurmasEmSequencia( int campusId );
    int criaRestricaoTaticoAlunoCurso( int campusId );
    int criaRestricaoPrioridadesDemanda( int campusId, int prior );
+   int criaRestricaoPrioridadesDemandaEquiv( int campusId, int prior );
    int criaRestricaoTaticoFormandos( int campusId, int prioridade, int r );
    int criaRestricaoTaticoAtendeAlunoEquiv( int campusId, int prioridade );
    int criaRestricaoTaticoAlunoDiscPraticaTeoricaEquiv( int campusId, int prioridade );
-   int criaRestricaoTaticoAtivaZ( int campusId );
-
+   int criaRestricaoTaticoAtivaZ( int campusId ); // não precisa, pode deletar. A restrição criaRestricaoTaticoSalaUnica engloba esta
+   int criaRestricaoTaticoTurmaComOsMesmosAlunosPorAula( int campusId );
    // The linear problem.	
    
 	#ifdef SOLVER_CPLEX 
@@ -148,6 +156,7 @@ private:
 
     void chgCoeffList( std::vector< std::pair< int, int > > , std::vector< double > );
 	void investigandoNaoAtendimentos( int campusId, int prioridade, int r );
+	bool violaInsercao( Aluno* aluno, GGroup< VariableTatInt *, LessPtr<VariableTatInt> > aulasX );
 	void calculaNroFolgas( int prioridade, int campusId );
 	std::string getTaticoLpFileName( int campusId, int prioridade, int r );
 	std::string getSolBinFileName( int campusId, int prioridade, int r );	
@@ -178,6 +187,10 @@ private:
 	bool permitirAbertura( int turma, Disciplina *disciplina, int campusId );
 
 	void atualizarDemandasEquiv( int campusId, int prioridade );
+	void atualizarDemandasEquiv222( int campusId, int prioridade );
+
+	std::map< Trio< int, Disciplina *, int >, bool > mapPermitirAbertura;
+
 };
 
 

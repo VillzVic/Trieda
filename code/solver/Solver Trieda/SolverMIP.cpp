@@ -2438,7 +2438,7 @@ double SolverMIP::retornaNCredsAlocados( int turma, Disciplina* disciplina, int 
 
 			if ( var_dia == dia &&
 				 var_turma == turma &&
-				 var_disciplina == disciplina && 
+				 var_disciplina->getId() == disciplina->getId() && 
 				 var_campusId == campusId )
 			{
 				int nCreds = var->getValue();
@@ -3246,7 +3246,7 @@ void SolverMIP::preencheMapAtendimentoAluno( VariablePre *&var )
 			{
 				Disciplina *d = (*itAtend).third;
 				int i = (*itAtend).second;
-				if ( d == disciplina && i != turma )
+				if ( d->getId() == disciplina->getId() && i != turma )
 				{
 					if ( alunoDemanda!=NULL && alunoDemanda->getPrioridade() == 1 )
 					{
@@ -5834,8 +5834,8 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
 	   }
    }
 
-   if ( tatico==2 && prioridade==1 )
-	  teste( xSol, 1 );
+//   if ( tatico==2 && prioridade==1 )
+//	  teste( xSol, 1 );
       
    int nroNaoAtendimentoAlunoDemanda = 0;
    int nroAtendimentoAlunoDemanda = 0;
@@ -6055,8 +6055,8 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
     }	
     
 	
-   if ( tatico==2 && prioridade==1 )
-	  teste( xSol, 2 );
+//   if ( tatico==2 && prioridade==1 )
+//	  teste( xSol, 2 );
 
 	int nar = removeAtendimentosParciais( xSol, solFilename, prioridade );
 
@@ -6095,8 +6095,8 @@ int SolverMIP::carregaVariaveisSolucaoTaticoPorAluno_CjtAlunos( int campusAtualI
 #endif
 
 
-   if ( tatico==2 && prioridade==1 )
-	  teste( xSol, 3 );
+//   if ( tatico==2 && prioridade==1 )
+//	  teste( xSol, 3 );
 
   
    if ( tatico==2 ) // para a segunda rodada do tatico, aproveita-se as variaveis. Logo, não posso deletar o primeiro.
@@ -6246,12 +6246,13 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 					
 					// ==================================
 					// MODELO INTEGRADO COM EQUIVALENCIAS					
+					if ( P==1 )
 					if ( r==1 )
 					if ( problemData->parametros->considerar_equivalencia_por_aluno )					
 					if ( problemData->listSlackDemandaAluno.size() != 0 )
 					{
 						TaticoIntAlunoHor * solverTaticoInt = new TaticoIntAlunoHor( this->problemData, &(this->solVarsTatico), &(this->vars_xh), 
-																					&this->CARREGA_SOLUCAO, true, false );
+																					&this->CARREGA_SOLUCAO, true, true );
 						solverTaticoInt->solveTaticoIntegrado( campusId, P, r );						
 						delete solverTaticoInt;
 					}
@@ -8040,7 +8041,7 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno( int campusId, int priorid
 						todos.add( v );
 
 						if ( v->getTurma() == turma &&
-							 v->getDisciplina() == disciplina &&
+							 v->getDisciplina()->getId() == disciplina->getId() &&
 							 problemData->retornaCampus( v->getUnidade()->getId() )->getId() == campusId )
 						{
 							remover.add( v );
@@ -8110,7 +8111,7 @@ void SolverMIP::carregaVariaveisSolucaoTaticoPorAluno( int campusId, int priorid
 						todos.add( v );
 
 						if ( v->getTurma() == turma &&
-							 v->getDisciplina() == disciplina &&
+							 v->getDisciplina()->getId() == disciplina->getId() &&
 							 problemData->retornaCampus( v->getUnidade()->getId() )->getId() == campusId )
 						{
 							remover.add( v );
@@ -8994,7 +8995,7 @@ void SolverMIP::converteCjtSalaEmSala()
       // Listando todas as variaveis "x" para a disciplina em questão.
       ITERA_VECTOR( it_Vars_x, vars_x, Variable )
       {
-         if ( ( *it_Vars_x )->getDisciplina() == disciplina )
+         if ( ( *it_Vars_x )->getDisciplina()->getId() == disciplina->getId() )
          {
             vars_x_Disc.push_back( *it_Vars_x );
          }
@@ -10152,9 +10153,6 @@ void SolverMIP::getSolutionTaticoPorAluno()
             if ( it_At_Campus->atendimentos_unidades->size() == 0 )
             {
                std::cout << "Achei que nao era pra cair aqui <dbg1>" << std::endl;
-
-               // NOVA UNIDADE
-               // exit( 1 );
             }
             else
             {
@@ -10166,9 +10164,6 @@ void SolverMIP::getSolutionTaticoPorAluno()
                      if ( it_At_Unidade->atendimentos_salas->size() == 0 )
                      {
                         std::cout << "Achei que nao era pra cair aqui <dbg2>" << std::endl;
-
-                        // NOVA SALA
-                        // exit( 1 );
                      }
                      else
                      {
@@ -10183,9 +10178,6 @@ void SolverMIP::getSolutionTaticoPorAluno()
                                 if ( it_At_Sala->atendimentos_dias_semana->size() == 0 )
                                 {
                                    std::cout << "Achei que nao era pra cair aqui <dbg3>" << std::endl;
-
-                                   // NOVO DIA SEMANA
-                                   // exit( 1 );
                                 }
                                 else
                                 {
@@ -10197,8 +10189,6 @@ void SolverMIP::getSolutionTaticoPorAluno()
 											if ( it_At_Dia->atendimentos_tatico->size() == 0 )
 											{
 												std::cout << "Achei que nao era pra cair aqui <dbg4>" << std::endl;
-												// NOVO ATENDIMENTO
-												// exit( 1 );
 											}
 
 											at_Dia_Semana = *it_At_Dia;
@@ -11625,8 +11615,9 @@ int SolverMIP::solveOperacionalMIP()
    lp->setMIPEmphasis(0);
    lp->setCuts(5);
    lp->setNodeLimit(10000000000);
-   lp->setPolishAfterNode(1);
-   lp->setTimeLimit(6*3600);
+   ///lp->setPolishAfterNode(1);
+   lp->setPolishAfterTime(3600);
+   lp->setTimeLimit(10*3600);
 
    lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
 
@@ -11663,10 +11654,11 @@ int SolverMIP::solveOperacionalMIP()
 
    lp->setMIPEmphasis(0);
    lp->setNoCuts();
-   lp->setTimeLimit(3*3600);
+   lp->setTimeLimit(6*3600);
    lp->setVarSel(4);
-   lp->setPolishAfterIntSol(1);
-   lp->setNumIntSols(0);
+   //lp->setPolishAfterIntSol(1);
+   lp->setPolishAfterTime(3600);
+  // lp->setNumIntSols(0);
    lp->setNodeLimit(1000000000);
    
    lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
@@ -12319,7 +12311,7 @@ void SolverMIP::relacionaAlunosDemandas()
 		   for ( GGroup< Trio<int, int, Disciplina*> >::iterator it_at_aluno = campusTurmaDiscAluno.begin();
 				 it_at_aluno != campusTurmaDiscAluno.end(); it_at_aluno++ )
 		   {
-			   if ( (*it_at_aluno).third == disc )
+			   if ( (*it_at_aluno).third->getId() == disc->getId() )
 			   {
 					this->problemSolution->alunosDemanda->add( aluno_demanda );
 			   }
@@ -16983,7 +16975,7 @@ int SolverMIP::cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlun
 		 {
 			Disciplina *disciplina2 = problemData->refDisciplinas[ *itDisc2 ];
 		 
-			if ( disciplina2 == disciplina1 )
+			if ( disciplina2->getId() == disciplina1->getId() )
 				continue;
 
 			#pragma region Equivalencias
@@ -17004,7 +16996,7 @@ int SolverMIP::cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlun
 			}
 		 	
 			bool demandasAlunoEmComum = problemData->possuiDemandasAlunoEmComum( disciplina1, disciplina2, campusId, P_ATUAL );
-
+			
 			if ( !demandasAlunoEmComum )
 			{
 				continue;
@@ -17052,7 +17044,7 @@ int SolverMIP::cria_preVariavel_turmas_compartilhadas( int campusId, int cjtAlun
 
 						lp->newCol( col ); 
                 
-						num_vars++;
+						num_vars++;												
 					}
 				}
 			}
@@ -21210,7 +21202,7 @@ int SolverMIP::cria_preRestricao_ativa_var_compart_turma( int campusId, int cjtA
 
 					Disciplina *disciplina2 = it2AlDemanda->demanda->disciplina;
 
-					if ( disciplina1 == disciplina2 )
+					if ( disciplina1->getId() == disciplina2->getId() )
 						continue;
 
 					for ( int turma2 = 0; turma2 < disciplina2->getNumTurmas(); turma2++ )
@@ -28289,12 +28281,12 @@ int SolverMIP::cria_restricao_aluno_unid_dif_dia( int campusId, int cjtAlunosAtu
 								// Insere variavel o_{i1,d1,u1,s1,t} ou o_{i2,d2,u2,s2,t}
 								
 								if ( ( v.getTurma() == turma1 &&
-									   v.getDisciplina() == disciplina1 && 
+									   v.getDisciplina()->getId() == disciplina1->getId() && 
 									   v.getDia() == dia && 
 									   v.getUnidade() == u1 ) 
 									   ||
 									 ( v.getTurma() == turma2 &&
-									   v.getDisciplina() == disciplina2 && 
+									   v.getDisciplina()->getId() == disciplina2->getId() && 
 									   v.getDia() == dia && 
 									   v.getUnidade() == u2 ) )
 								{
@@ -31421,26 +31413,20 @@ int SolverMIP::criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId, in
 		return 0;
 
 	vit = vHashTatico.begin();
-	while(vit != vHashTatico.end())
+	for ( ; vit != vHashTatico.end(); vit++)
 	{
-		if(vit->first.getType() != VariableTatico::V_CREDITOS)
-		{
-			vit++;
-			continue;
-		}
-
 		VariableTatico v = vit->first;
 
+		if (v.getType() != VariableTatico::V_CREDITOS)
+		{
+			continue;
+		}
 		if ( problemData->cp_discs[campusId].find( v.getDisciplina()->getId() ) ==
 			 problemData->cp_discs[campusId].end() )
 		{
-			vit++;
 			continue;
 		}
 
-		 if ( ! problemData->haDemandaDiscNoCampus( v.getDisciplina()->getId(), campusId ) )
-			 continue;
-		 
 		c.reset();
 		c.setType( ConstraintTatico::C_UNICO_ATEND_TURMA_DISC_DIA );
 		c.setCampus( campus );
@@ -31463,14 +31449,10 @@ int SolverMIP::criaRestricaoTaticoAtendimentoUnicoTurmaDiscDia( int campusId, in
 		}
 		else
 		{
-         idxC.push_back(vit->second);
-         idxR.push_back(cit->second);
-         valC.push_back(1.0);
-
-			//lp->chgCoef(cit->second, vit->second,  1.0);
+			idxC.push_back(vit->second);
+			idxR.push_back(cit->second);
+			valC.push_back(1.0);
 		}
-
-		vit++;
 	}
 
    lp->updateLP();
@@ -31785,7 +31767,7 @@ int SolverMIP::criaRestricaoTaticoTurmaDiscDiasConsec( int campusId, int priorid
 							{
 								HorarioAula *hf = *itHorario;
 
-								if ( hf < hi )
+								if ( *hf < *hi )
 								{
 							 		continue;
 								}
@@ -32867,7 +32849,7 @@ int SolverMIP::criaRestricaoTaticoAtivacaoVarZC( int campusId, int prioridade, i
 						{
 							HorarioAula *hf = *itHorario;
 
-							if ( hf < hi )
+							if ( *hf < *hi )
 							{
 							 	continue;
 							}
@@ -35166,12 +35148,12 @@ int SolverMIP::criaRestricaoTaticoAlunoUnidDifDia( int campusId, int prioridade,
 								// Insere variavel x_{i1,d1,u1,s1,hi,hf,t} ou x_{i2,d2,u2,s2,hi,hf,t}
 								
 								if ( ( v.getTurma() == turma1 &&
-									   v.getDisciplina() == disciplina1 && 
+									   v.getDisciplina()->getId() == disciplina1->getId() && 
 									   v.getDia() == dia && 
 									   v.getUnidade() == u1 ) 
 									   ||
 									 ( v.getTurma() == turma2 &&
-									   v.getDisciplina() == disciplina2 && 
+									   v.getDisciplina()->getId() == disciplina2->getId() && 
 									   v.getDia() == dia && 
 									   v.getUnidade() == u2 ) )
 								{
@@ -53821,7 +53803,7 @@ int SolverMIP::criaVariaveisOperacional()
 #endif*/
 
    lp->updateLP();
-   numVars += criaVariavelMaxDiscProfCurso();
+   numVars += criaVariavelDiscProfCurso();
 
 #ifdef PRINT_cria_variaveis
    std::cout << "numVars V_DISC_PROF_CURSO: "
@@ -54526,8 +54508,6 @@ int SolverMIP::criaVariavelProfessorCurso()
 
                if ( vHashOp.find( v ) == vHashOp.end() )
                {
-                  v.setValue( 1.0 );
-
                   vHashOp[ v ] = lp->getNumCols();
 
                   OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
@@ -54761,7 +54741,7 @@ int SolverMIP::criaVariavelFolgaMinimoDoutoresCurso()
    return num_vars;
 }
 
-int SolverMIP::criaVariavelMaxDiscProfCurso()
+int SolverMIP::criaVariavelDiscProfCurso()
 {
    int num_vars = 0;
    double coeff = 0.0;
@@ -55891,6 +55871,18 @@ int SolverMIP::criaRestricoesOperacional()
 
 #ifdef PRINT_cria_restricoes
 	std::cout << "numRest C_CARGA_HOR_MIN_PROF: "
+		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
+	numRestAnterior = restricoes;
+#endif
+
+	lp->updateLP();
+	timer.start();
+	restricoes += criaRestricaoDiscProfCurso();
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+
+#ifdef PRINT_cria_restricoes
+	std::cout << "numRest C_DISC_PROF_CURSO1 e C_DISC_PROF_CURSO2: "
 		<< ( restricoes - numRestAnterior ) <<" " <<dif <<"seg" <<std::endl;
 	numRestAnterior = restricoes;
 #endif
@@ -58874,7 +58866,105 @@ int SolverMIP::criaRestricaoMaximoNaoDoutoresCurso()
 }
 
 
+/*
+	1) sum[d] dpc_{p,c,d} <= M*w_{p,c}		Para todo p, c
+
+	&
+
+	2) sum[d] dpc_{p,c,d} >= w_{p,c}		Para todo p, c
+*/
 int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
+{
+	int restricoes = 0;
+	char name[ 200 ];
+	double bigM = 80;
+
+	ConstraintOp c;
+	VariableOpHash::iterator vit;
+	VariableOpHash::iterator vit_f;
+	ConstraintOpHash::iterator cit;
+
+	vit = vHashOp.begin();
+	for (; vit != vHashOp.end(); vit++ )
+	{
+		VariableOp v = ( vit->first );
+
+		double coef=0.0;
+
+		// CONSTRAINT 1 -----------------------------
+
+		if (v.getType() == VariableOp::V_PROF_CURSO)
+		{
+			coef=-bigM;
+		}
+		else if (v.getType() == VariableOp::V_DISC_PROF_CURSO)
+		{
+			coef=1.0;
+		}
+		else
+		{
+			continue;
+		}
+
+		c.reset();
+		c.setType( ConstraintOp::C_ALOC_PROF_CURSO1 );
+		c.setProfessor( v.getProfessor() );
+		c.setCurso( v.getCurso() );
+
+		cit = cHashOp.find(c);
+		if ( cit == cHashOp.end() )
+		{
+			cHashOp[ c ] = lp->getNumRows();
+
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
+
+			row.insert( vit->second, coef );
+
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			lp->chgCoef(cit->second, vit->second, coef);
+		}
+
+		// CONSTRAINT 2 -----------------------------
+
+		if (v.getType() == VariableOp::V_PROF_CURSO)
+		{
+			coef=-1.0;
+		}
+
+		c.reset();
+		c.setType( ConstraintOp::C_ALOC_PROF_CURSO2 );
+		c.setProfessor( v.getProfessor() );
+		c.setCurso( v.getCurso() );
+
+		cit = cHashOp.find(c);
+		if ( cit == cHashOp.end() )
+		{
+			cHashOp[ c ] = lp->getNumRows();
+
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::GREATER, 0.0, name );
+
+			row.insert( vit->second, coef );
+
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			lp->chgCoef(cit->second, vit->second, coef);
+		}
+	}
+
+	return restricoes;
+}
+
+/* // Se a nova modelagem (acima) funcionar beleza, pode deletar essa aqui
+int SolverMIP::criaRestricaoAlocacaoProfessorCursoAntiga()
 {
 	int restricoes = 0;
 	int nnz = 0;
@@ -58978,110 +59068,7 @@ int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
 
 	return restricoes;
 }
-
-//int SolverMIP::criaRestricaoAlocacaoProfessorCurso()
-//{
-//   int restricoes = 0;
-//   int nnz = 0;
-//   double rhs = 0.0;
-//   char name[ 200 ];
-//   int bigM = 1000;
-//
-//   ConstraintOp c;
-//   VariableOpHash::iterator vit;
-//   VariableOpHash::iterator vit_f;
-//   ConstraintOpHash::iterator cit;
-//
-//   // Informando quais disciplinas estão associadas a cada curso
-//   std::map< Curso *, GGroup< Disciplina *,
-//      LessPtr< Disciplina > > > mapCursoDisciplinas;
-//
-//   ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
-//   {
-//      Aula * aula = ( *it_aula );
-//
-//      ITERA_GGROUP_LESSPTR( it_oferta, aula->ofertas, Oferta )
-//      {
-//         Oferta * oferta = ( *it_oferta );
-//
-//         mapCursoDisciplinas[ oferta->curso ].add( aula->getDisciplina() );
-//      }
-//   }
-//
-//   GGroup< Professor *, LessPtr< Professor > > professores
-//      = problemData->getProfessores();
-//
-//   int totalCursos = problemData->cursos.size();
-//   int totalProfessores = professores.size();
-//
-//   ITERA_GGROUP_LESSPTR( itProf, professores, Professor )
-//   {
-//      Professor * professor = ( *itProf );
-//
-//      ITERA_GGROUP_LESSPTR( itCurso, problemData->cursos, Curso )
-//      {
-//         Curso * curso = ( *itCurso );
-//
-//         VariableOp v;
-//         v.reset();
-//
-//         v.setType( VariableOp::V_PROF_CURSO );
-//         v.setProfessor( professor );
-//         v.setCurso( curso );
-//         vit = vHashOp.find( v );
-//
-//         if ( vit != vHashOp.end() )
-//         {
-//            // Cria a restriçao de m ( p, c ) * M >= E ( E ( y( p, d, i ) ) )
-//            c.reset();
-//            c.setType( ConstraintOp::C_ALOC_PROF_CURSO );
-//
-//            c.setProfessor( v.getProfessor() );
-//            c.setCurso( v.getCurso() );
-//
-//            cit = cHashOp.find( c );
-//
-//            if ( cit == cHashOp.end() )
-//            {
-//               sprintf( name, "%s", c.toString().c_str() );
-//               nnz = ( totalProfessores + totalCursos );
-//
-//               OPT_ROW row( nnz, OPT_ROW::GREATER, rhs, name );
-//               row.insert( vit->second, bigM );
-//
-//               VariableOpHash::iterator vit_find = vHashOp.begin();
-//
-//               for (; vit_find != vHashOp.end(); vit_find++ )
-//               {
-//                  VariableOp v_find = vit_find->first;
-//
-//                  if ( v_find.getType() == VariableOp::V_Y_PROF_DISCIPLINA 
-//                        && v_find.getProfessor() == professor )
-//                  {
-//                     // Verifica se a disciplina da variável está associada ao curso
-//                     GGroup< Disciplina *, LessPtr< Disciplina > >::iterator
-//                        it_find = mapCursoDisciplinas[ curso ].find( v_find.getDisciplina() );
-//
-//                     if ( it_find != mapCursoDisciplinas[ curso ].end() )
-//                     {
-//                        row.insert( vit_find->second, -1.0 );
-//                     }
-//                  }
-//               }
-//
-//               cHashOp[ c ] = lp->getNumRows();
-//               lp->addRow( row );
-//
-//               restricoes++;
-//            }
-//         }
-//      }
-//   }
-//
-//   return restricoes;
-//}
-
-
+*/
 int SolverMIP::criaRestricaoCargaHorariaMinimaProfessor()
 {
    int restricoes = 0;
@@ -59205,7 +59192,7 @@ int SolverMIP::criaRestricaoCargaHorariaMinimaProfessorSemana()
                for (; it_disciplinas != problemData->mapProfessorDisciplinas[ professor ].end();
                       it_disciplinas++ )
                {
-                  if ( ( *it_disciplinas ).second == v.getDisciplina() )
+                  if ( ( *it_disciplinas ).second->getId() == v.getDisciplina()->getId() )
                   {
                      encontrou = true;
                      break;
@@ -59300,7 +59287,7 @@ int SolverMIP::criaRestricaoCargaHorariaMaximaProfessorSemana()
                for (; it_disciplinas != problemData->mapProfessorDisciplinas[ professor ].end();
                       it_disciplinas++ )
                {
-                  if ( ( *it_disciplinas ).second == v.getDisciplina() )
+                  if ( ( *it_disciplinas ).second->getId() == v.getDisciplina()->getId() )
                   {
                      encontrou = true;
                      break;
@@ -59440,7 +59427,17 @@ int SolverMIP::criaRestricaoAvaliacaoCorpoDocente()
    return restricoes;
 }
 
-int SolverMIP::criaRestricaoMaxDiscProfCurso()
+/*
+	1) sum[i] y_{p,d,i} <= nTurmas_{d} * dpc_{p,c,d}		Para todo prof p, curso c, disc d
+
+		i pertencente a I_{d,c} ( contem alunos do curso c )
+
+
+	2) sum[i] y_{p,d,i} >= dpc_{p,c,d}		Para todo prof p, curso c, disc d
+
+		i pertencente a I_{d,c} ( contem alunos do curso c )
+*/
+int SolverMIP::criaRestricaoDiscProfCurso()
 {
    int restricoes = 0;
    int nnz = 0;
@@ -59455,34 +59452,35 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 
 	vit = vHashOp.begin();
 
-	while(vit != vHashOp.end())
+	for( ; vit != vHashOp.end(); vit++ )
 	{
 		VariableOp v = ( vit->first );
 
-		if (v.getType() != VariableOp::V_DISC_PROF_CURSO && v.getType() != VariableOp::V_Y_PROF_DISCIPLINA
-			&& v.getType() != VariableOp::V_F_MAX_DISC_PROF_CURSO)
+		if (v.getType() != VariableOp::V_DISC_PROF_CURSO &&
+			v.getType() != VariableOp::V_Y_PROF_DISCIPLINA)
 		{
-			vit++;
 			continue;
 		}
 
-		if(v.getType() == VariableOp::V_DISC_PROF_CURSO)
+		if(v.getType() == VariableOp::V_DISC_PROF_CURSO) // dpc
 		{
+			// CONTRAINT 1 -----------------------
+
 			c.reset();
-			c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+			c.setType( ConstraintOp::C_DISC_PROF_CURSO1 );
 			c.setProfessor( v.getProfessor() );
 			c.setCurso( v.getCurso() );
 			c.setDisciplina( v.getDisciplina() );
 
+			double M = v.getDisciplina()->getNumTurmas();
+			
 			cit = cHashOp.find(c);
 			if ( cit == cHashOp.end() )
 			{
 				cHashOp[ c ] = lp->getNumRows();
-
 				sprintf( name, "%s", c.toString().c_str() );
 				OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
-
-				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
+								
 				row.insert( vit->second, -M );
 
 				lp->addRow( row );
@@ -59490,33 +59488,32 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 			}
 			else
 			{
-				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
 				lp->chgCoef(cit->second, vit->second, -M);
-			}
+			}		
+
+			// CONTRAINT 2 -----------------------
 
 			c.reset();
-			c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO2 );
+			c.setType( ConstraintOp::C_DISC_PROF_CURSO2 );
 			c.setProfessor( v.getProfessor() );
 			c.setCurso( v.getCurso() );
-
+			c.setDisciplina( v.getDisciplina() );
+			
 			cit = cHashOp.find(c);
 			if ( cit == cHashOp.end() )
 			{
 				cHashOp[ c ] = lp->getNumRows();
-
 				sprintf( name, "%s", c.toString().c_str() );
-				rhs = v.getCurso()->getQtdMaxProfDisc();
-				OPT_ROW row( 100, OPT_ROW::LESS, rhs, name );
-
-				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
-				row.insert( vit->second, 1.0 );
+				OPT_ROW row( 100, OPT_ROW::GREATER, 0.0, name );
+								
+				row.insert( vit->second, -1.0 );
 
 				lp->addRow( row );
 				restricoes++;
 			}
 			else
 			{
-				lp->chgCoef(cit->second, vit->second, 1.0);
+				lp->chgCoef(cit->second, vit->second, -1.0);
 			}
 		}
 		else if(v.getType() == VariableOp::V_Y_PROF_DISCIPLINA)
@@ -59525,14 +59522,19 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 			{
 				Curso * curso = *it_curso;
 
-				if(!problemData->aulaAtendeCurso( v.getAula(), curso))
+				if ( v.getDisciplina()->getId() == 5940 )
+					std::cout<<"\nDisc5940 turma"<<v.getTurma();
+
+				if( ! problemData->aulaAtendeCurso( v.getTurma(), v.getDisciplina(), curso ) )
 					continue;
 
 				if ( !curso->possuiDisciplina( v.getDisciplina() ) )
 					continue;
 
+				// CONTRAINT 1 -----------------------
+
 				c.reset();
-				c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+				c.setType( ConstraintOp::C_DISC_PROF_CURSO1 );
 				c.setProfessor( v.getProfessor() );
 				c.setCurso( curso );
 				c.setDisciplina( v.getDisciplina() );
@@ -59554,180 +59556,101 @@ int SolverMIP::criaRestricaoMaxDiscProfCurso()
 				{
 					lp->chgCoef(cit->second, vit->second, 1.0);
 				}
+
+				// CONTRAINT 2 -----------------------
+
+				c.reset();
+				c.setType( ConstraintOp::C_DISC_PROF_CURSO2 );
+				c.setProfessor( v.getProfessor() );
+				c.setCurso( curso );
+				c.setDisciplina( v.getDisciplina() );
+
+				cit = cHashOp.find(c);
+				if ( cit == cHashOp.end() )
+				{
+					cHashOp[ c ] = lp->getNumRows();
+
+					sprintf( name, "%s", c.toString().c_str() );
+					OPT_ROW row( 100, OPT_ROW::GREATER, 0.0, name );
+
+					row.insert( vit->second, 1.0 );
+
+					lp->addRow( row );
+					restricoes++;
+				}
+				else
+				{
+					lp->chgCoef(cit->second, vit->second, 1.0);
+				}
 			}
-		}
-		else if(v.getType() == VariableOp::V_F_MAX_DISC_PROF_CURSO)
-		{
-			c.reset();
-			c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO2 );
-			c.setProfessor( v.getProfessor() );
-			c.setCurso( v.getCurso() );
-
-			cit = cHashOp.find(c);
-			if ( cit == cHashOp.end() )
-			{
-				cHashOp[ c ] = lp->getNumRows();
-
-				sprintf( name, "%s", c.toString().c_str() );
-				rhs = v.getCurso()->getQtdMaxProfDisc();
-				OPT_ROW row( 100, OPT_ROW::LESS, rhs, name );
-
-				double M = ( v.getDisciplina()->getCredTeoricos() + v.getDisciplina()->getCredPraticos() );
-				row.insert( vit->second, -1.0 );
-
-				lp->addRow( row );
-				restricoes++;
-			}
-			else
-			{
-				lp->chgCoef(cit->second, vit->second, -1.0);
-			}
-		}
-
-		vit++;
+		}		
 	}
-
-
+	
 	return restricoes;
 }
 
-//int SolverMIP::criaRestricaoMaxDiscProfCurso()
-//{
-//   int restricoes = 0;
-//   int nnz = 0;
-//   double rhs = 0.0;
-//   char name[ 200 ];
-//   double M = 1000000.0;
-//
-//   ConstraintOp c;
-//   VariableOp v_find;
-//   VariableOpHash::iterator vit;
-//   ConstraintOpHash::iterator cit;
-//
-//   GGroup< Professor *, LessPtr< Professor > > professores
-//      = problemData->getProfessores();
-//
-//   GGroup< Disciplina *, LessPtr< Disciplina > > disciplinas
-//      = problemData->disciplinas;
-//
-//   GGroup< Curso *, LessPtr< Curso > > cursos
-//      = problemData->cursos;
-//
-//   GGroup< Aula *, LessPtr< Aula > > aulas
-//      = problemData->aulas;
-//
-//   ITERA_GGROUP_LESSPTR( it_prof, professores, Professor )
-//   {
-//      Professor * professor = ( *it_prof );
-//      
-//      ITERA_GGROUP_LESSPTR( it_curso, cursos, Curso )
-//      {
-//         Curso * curso = ( *it_curso );
-//
-//         c.reset();
-//         c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
-//
-//         c.setProfessor( professor );
-//         c.setCurso( curso );
-//
-//         if ( cHashOp.find( c ) == cHashOp.end() )
-//         {
-//            sprintf( name, "%s", c.toString().c_str() );
-//
-//            ITERA_GGROUP_LESSPTR( it_disc, disciplinas, Disciplina )
-//            {
-//               Disciplina * disciplina = ( *it_disc );
-//
-//			   if ( !curso->possuiDisciplina( disciplina ) )
-//					continue;
-//
-//               // Procura pela variável 'Lpcd'
-//               v_find.reset();
-//               v_find.setType( VariableOp::V_DISC_PROF_CURSO );
-//
-//               v_find.setProfessor( professor );
-//               v_find.setCurso( curso );
-//               v_find.setDisciplina( disciplina );
-//
-//               vit = vHashOp.find( v_find );
-//
-//               if ( vit == vHashOp.end() )
-//               {
-//                  continue;
-//               }
-//
-//               // Hash da variável 'Lpcd'
-//               int idHashVLpcd = vit->second;
-//               ///////
-//
-//               // Sum[ Xpah ] - ( M * Lpcd ) <= 0
-//               rhs = 0.0;
-//               nnz = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() + 1 );
-//
-//               OPT_ROW row1( nnz, OPT_ROW::LESS, rhs, name );
-//
-//               // Máximo de horários que a disciplina pode ocupar
-//               M = ( disciplina->getCredTeoricos() + disciplina->getCredPraticos() );
-//
-//               // ( - M * Lpcd )
-//               row1.insert( idHashVLpcd, -M );
-//
-//               vit = vHashOp.begin();
-//               for (; vit != vHashOp.end(); vit++ )
-//               {
-//                  if ( vit->first.getType() == VariableOp::V_Y_PROF_DISCIPLINA
-//                     && vit->first.getProfessor() == professor
-//                     && vit->first.getDisciplina() == disciplina )
-//                  {
-//                     if ( problemData->aulaAtendeCurso( vit->first.getAula(), curso ) )
-//                     {
-//                        // Sum[ Xpah ]
-//                        row1.insert( vit->second, 1.0 );
-//                     }
-//                  }
-//               }
-//
-//               lp->addRow( row1 );
-//               ///////
-//            }
-//
-//            // SUM[ Lpcd ] - SUM[ LpcdSlack ] <= MaxDiscCurso
-//            rhs = curso->getQtdMaxProfDisc();
-//            nnz = ( 2 * disciplinas.size() );
-//
-//            OPT_ROW row2( nnz, OPT_ROW::LESS, rhs, name );
-//
-//            vit = vHashOp.begin();
-//            for (; vit != vHashOp.end(); vit++ )
-//            {
-//               if ( vit->first.getType() == VariableOp::V_DISC_PROF_CURSO
-//                  && vit->first.getProfessor() == professor
-//                  && vit->first.getCurso() == curso )
-//               {
-//                  // Sum[ Lpcd ]
-//                  row2.insert( vit->second, 1.0 );
-//               }
-//
-//               if ( vit->first.getType() == VariableOp::V_F_MAX_DISC_PROF_CURSO
-//                  && vit->first.getProfessor() == professor
-//                  && vit->first.getCurso() == curso )
-//               {
-//                  // - SUM[ LpcdSlack ]
-//                  row2.insert( vit->second, -1.0 );
-//               }
-//            }
-//
-//            lp->addRow( row2 );
-//            ///////
-//
-//            cHashOp[ c ] = lp->getNumRows();
-//            restricoes++;
-//         }
-//      }
-//   }
-//
-//   return restricoes;
-//}
+
+int SolverMIP::criaRestricaoMaxDiscProfCurso()
+{
+   int restricoes = 0;
+   int nnz = 0;
+   double rhs = 0.0;
+   char name[ 200 ];
+   double M = 1000000.0;
+
+   ConstraintOp c;
+   VariableOp v_find;
+   VariableOpHash::iterator vit;
+   ConstraintOpHash::iterator cit;
+
+	vit = vHashOp.begin();
+
+	for (; vit != vHashOp.end(); vit++)
+	{
+		VariableOp v = ( vit->first );
+				
+		double coef = 0.0;
+
+		if (v.getType() == VariableOp::V_DISC_PROF_CURSO) // dpc_{p,c,d}
+		{
+			coef = 1.0;
+		}
+		else if(v.getType() == VariableOp::V_F_MAX_DISC_PROF_CURSO) // fmdpc_{p,c,d}
+		{
+			coef = -1.0;
+		}
+		else
+		{
+			continue;
+		}
+
+		c.reset();
+		c.setType( ConstraintOp::C_MAX_DISC_PROF_CURSO );
+		c.setProfessor( v.getProfessor() );
+		c.setCurso( v.getCurso() );
+
+		cit = cHashOp.find(c);
+		if ( cit == cHashOp.end() )
+		{
+			cHashOp[ c ] = lp->getNumRows();
+
+			sprintf( name, "%s", c.toString().c_str() );
+			rhs = v.getCurso()->getQtdMaxProfDisc();
+			OPT_ROW row( 50, OPT_ROW::LESS, rhs, name );
+
+			row.insert( vit->second, coef );
+
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			lp->chgCoef(cit->second, vit->second, coef );
+		}
+	}
+
+	return restricoes;
+}
 
 int SolverMIP::criaRestricaoDeslocamentoProfessor()
 {
@@ -62058,7 +61981,7 @@ void SolverMIP::atualizaGrafoInsercao( Aluno* aluno, Trio<int,int,Disciplina*> n
 			Disciplina *disciplina2 = (*itTrio).third;			
 
 			if ( turma == turma2 &&
-				 disciplina == disciplina2 &&
+				 disciplina->getId() == disciplina2->getId() &&
 				 campusId == campusId2 )
 				 continue;
 

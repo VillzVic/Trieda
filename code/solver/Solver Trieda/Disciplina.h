@@ -86,7 +86,9 @@ public:
    double getTempoCredSemanaLetiva() const { return this->calendario->getTempoAula(); } 
 
    int getTotalCreditos() const { return this->getCredTeoricos() + this->getCredPraticos(); }
-
+   
+   double getTotalTempo() const { return ( getTotalCreditos() * getTempoCredSemanaLetiva() ); }
+   
    Disciplina* substituidaPor() const { return substituta; }
    
    int getMaxTempoDiscEquivSubstituta();
@@ -119,6 +121,8 @@ private:
    std::map<int, int> capacMediaSala; // capacidade media dentre as salas de cada campus aonde a disciplina pode ser ministrada
    int nSalasAptas;
    Disciplina* substituta;
+
+   std::map< std::pair<HorarioAula* /* hi */, HorarioAula* /* hf */>, bool > horarios_hihf_validos;
 
 };
 

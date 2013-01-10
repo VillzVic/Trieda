@@ -47,7 +47,8 @@ public:
 	  C_FORMANDOS2 = 30,
 	  C_DEMANDA_EQUIV_ALUNO = 31,
 	  C_ALUNO_DISC_PRATICA_TEORICA_EQUIV = 32,
-	  C_ATIVA_Z = 33
+	  C_ATIVA_Z = 33,
+	  C_TURMA_COM_MESMOS_ALUNOS_POR_AULA = 34
    };
 
    /** Default constructor. */

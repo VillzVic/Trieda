@@ -175,6 +175,7 @@ private:
    std::auto_ptr< TriedaInput > root;
 
    void relacionaEquivalenciasDisciplinasPraticas();
+   void addEquivDisciplinasPraticasEmTeoricas();
 
    void referenciaCampusUnidadesSalas();
    void referenciaDisciplinas();

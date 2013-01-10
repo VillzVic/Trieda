@@ -82,15 +82,19 @@ HorarioAula * Calendario::getProximoHorario( HorarioAula *h )
 */
 int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf )
 {
+	std::pair<HorarioAula*, HorarioAula*> parHorarios( hi, hf );
+	if ( this->horarios_nroCreds.find( parHorarios ) != this->horarios_nroCreds.end() )
+	{
+		return horarios_nroCreds[ parHorarios ];
+	}
+
 	if ( !possuiHorario( hi ) ||
 		 !possuiHorario( hf ) )
 	{
 		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ): \n";
-		std::cout<<"Horario hf ou hi nao encontrado no calendario.\n";
-		
+		std::cout<<"Horario hf ou hi nao encontrado no calendario.\n";		
 		return 0;
-	}
-	
+	}	
 	if ( *hi > *hf )
 	{
 		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ): ";
@@ -101,9 +105,7 @@ int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *h
 	}
 
 	int n = 1;
-
-	HorarioAula *h = hi;
-	
+	HorarioAula *h = hi;	
 	while ( h != NULL && *h != *hf )
 	{
 		h = getProximoHorario( h );
@@ -117,6 +119,8 @@ int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *h
 
 		return 0;
 	}
+
+	horarios_nroCreds[ parHorarios ] = n;
 
 	return n;
 }

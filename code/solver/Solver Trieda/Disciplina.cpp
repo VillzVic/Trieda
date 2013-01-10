@@ -120,8 +120,18 @@ int Disciplina::getMaxTempoDiscEquivSubstituta()
 
 bool Disciplina::inicioTerminoValidos( HorarioAula *&hi, HorarioAula *&hf )
 {	
+	// Procura, caso já tenho sido calculado
+	std::pair<HorarioAula*, HorarioAula*> parHorarios( hi, hf );
+	if ( this->horarios_hihf_validos.find( parHorarios ) != this->horarios_hihf_validos.end() )
+	{
+		return this->horarios_hihf_validos[ parHorarios ];
+	}	
+
+	// Não foi calculado ainda. Calcula e insere no map horarios_hihf_validos.
+
 	if ( *hf < *hi )
 	{
+		this->horarios_hihf_validos[ parHorarios ] = false;
 		return false;
 	}
 
@@ -148,19 +158,21 @@ bool Disciplina::inicioTerminoValidos( HorarioAula *&hi, HorarioAula *&hf )
 				}
 				if ( CRIAR ) break;										
 			}
-			if ( !CRIAR ) return false;
+			if ( !CRIAR ){ this->horarios_hihf_validos[ parHorarios ] = false; return false; }
 		}
 	}
 
 	int nIntervalo = this->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf );
 	if ( nIntervalo > this->getTotalCreditos() )
 	{
+		this->horarios_hihf_validos[ parHorarios ] = false;
 		return false;
 	}
 
 	if ( this->getCalendario()->retornaNroCreditosEntreHorarios( hi, hf ) == 2 &&
 		 this->getCalendario()->intervaloEntreHorarios(hi,hf) )
 	{
+		this->horarios_hihf_validos[ parHorarios ] = false;
 		return false;
 	}
 
@@ -183,8 +195,10 @@ bool Disciplina::inicioTerminoValidos( HorarioAula *&hi, HorarioAula *&hf )
 			}
 			if ( CRIAR ) break;										
 		}
-		if ( !CRIAR ) return false;
+		if ( !CRIAR ){ this->horarios_hihf_validos[ parHorarios ] = false; return false; }
 	}
+
+	this->horarios_hihf_validos[ parHorarios ] = true;
 
 	return true;
 }

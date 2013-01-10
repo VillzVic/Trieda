@@ -393,8 +393,10 @@ std::string ConstraintOp::toString()
 		  ss << "C_MIN_MEST_CURSO"; break;
 	   case C_MIN_DOUT_CURSO:
 		  ss << "C_MIN_DOUT_CURSO"; break;
-	   case C_ALOC_PROF_CURSO:
-		  ss << "C_ALOC_PROF_CURSO"; break;
+	   case C_ALOC_PROF_CURSO1:
+		  ss << "C_ALOC_PROF_CURSO1"; break;
+	   case C_ALOC_PROF_CURSO2:
+		  ss << "C_ALOC_PROF_CURSO2"; break;
 	   case C_CARGA_HOR_MIN_PROF:
 		  ss << "C_CARGA_HOR_MIN_PROF"; break;
 	   case C_CARGA_HOR_MIN_PROF_SEMANA:
@@ -405,6 +407,10 @@ std::string ConstraintOp::toString()
 		  ss << "C_DIAS_PROF_MINISTRA_AULA"; break;
 	   case C_CUSTO_CORPO_DOCENTE:
 		  ss << "C_CUSTO_CORPO_DOCENTE"; break;
+	   case C_DISC_PROF_CURSO1:
+		  ss << "C_DISC_PROF_CURSO1"; break;		  
+	   case C_DISC_PROF_CURSO2:
+		  ss << "C_DISC_PROF_CURSO2"; break;		  
 	   case C_MAX_DISC_PROF_CURSO:
 		  ss << "C_MAX_DISC_PROF_CURSO"; break;
 	   case C_AVALIACAO_CORPO_DOCENTE:
@@ -419,8 +425,6 @@ std::string ConstraintOp::toString()
 		  ss << "C_GAPS_PROFESSORES"; break;
 	   case C_PROF_HORARIO_MULTIUNID:
 		   ss << "C_PROF_HORARIO_MULTIUNID"; break;
-	   case C_MAX_DISC_PROF_CURSO2:
-		   ss <<"C_MAX_DISC_PROF_CURSO2"; break;
 	   case C_ALUNO_HORARIO:
 		   ss <<"C_ALUNO_HORARIO"; break;		   
 	   case C_GAPS_PROFESSORES_I:

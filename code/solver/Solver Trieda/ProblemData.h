@@ -83,7 +83,7 @@ public:
    
    HorarioDia* getHorarioDiaCorrespondente( HorarioAula *ha, int dia );
 
-   bool aulaAtendeCurso( Aula *, Curso * );
+   bool aulaAtendeCurso( int turma, Disciplina *disciplina, Curso * curso );
 
    // Calcula o tempo NECESSÁRIO para
    // se deslocar entre uma aula e outra
@@ -483,10 +483,12 @@ public:
    bool possuiNaoAtend(Aluno* aluno);
 
    bool haDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
+   bool haDemandaPorFormandosEquiv( Disciplina *disciplina, Campus *cp, int P_ATUAL );
    int getNroDemandaPorFormandos( Disciplina *disciplina, Campus *cp, int P_ATUAL );
    bool possuiAlunoFormando( int turma, Disciplina *disciplina, Campus *cp );
    int getNroFormandos( int turma, Disciplina *disciplina, Campus *cp );
    bool haAlunoFormandoNaoAlocado( Disciplina *disciplina, int cpId, int prioridadeAtual );
+   bool haAlunoFormandoNaoAlocadoEquiv( Disciplina *disciplina, int cpId, int prioridadeAtual );
 
    bool haFolgaDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
    int getNroFolgasDeAtendimento( int prioridade, Disciplina *disciplina, int campusId );
@@ -496,8 +498,9 @@ public:
    void reduzNroTurmasPorDisciplina( int campusId, int prioridade );
    void removeDemandasEmExcesso( int campusId, int prioridade, int grupoAlunosAtualId );
 
-   GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade );
-   
+   GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> retornaDemandasDiscNoCampus_Equiv( Disciplina* disciplina, int campusId, int prioridade );
+   bool haDemandasDiscNoCampus_Equiv( int disciplinaId, int campusId, int prioridade );
+
    bool violaMinTurma( int campusId );
    bool violaMinTurma( Trio< int, int, Disciplina* > trio );
    void imprimeFormandos();
@@ -509,6 +512,7 @@ public:
    std::string getAlocacoesFileName();
 
    void confereExcessoP2( int campusId );
+   void imprimeResumoDemandasPorAluno();
 
    private:
    
