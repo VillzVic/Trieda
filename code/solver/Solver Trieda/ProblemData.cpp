@@ -1651,7 +1651,7 @@ int ProblemData::atendeTurmaDiscOferta( int turma, int discId, int ofertaId )
 }
 
 /*
-	Pesquisa em demanda, ou seja, considerando a prioridade atual.
+	Pesquisa em demanda, ou seja, considerando no maximo a prioridade atual.
 */
 bool ProblemData::haDemandaDiscNoCampus( int disciplina, int campusId )
 {	
@@ -2367,20 +2367,6 @@ int ProblemData::haDemandaDiscNoCursoEquiv( Disciplina *disciplina, int cursoId 
 	}
 
 	return n;
-}
-
-bool ProblemData::haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina )
-{
-	ITERA_GGROUP_LESSPTR( itAlDem, this->alunosDemanda, AlunoDemanda )
-	{
-		if ( itAlDem->demanda->getDisciplinaId() == disciplina->getId() && 
-		 	 itAlDem->getPrioridade() == P_ATUAL && 
-			 itAlDem->demanda->oferta->getCampusId() == campusId )
-		{
-			return true;
-		}
-	}
-	return false;
 }
 
 int ProblemData::getQtdAlunoDemandaAtualPorCampus( int campusId )
@@ -3733,9 +3719,10 @@ void ProblemData::imprimeResumoDemandasPorAluno()
 			
 			tempoTotal += (*itAlunoDemanda)->demanda->disciplina->getTotalTempo();
 
-			if ( this->parametros->considerar_equivalencia_por_aluno )
+			if ( this->parametros->considerar_equivalencia_por_aluno &&
+				(*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas.size() > 0 )
 			{
-				demandasFile <<"\tPossiveis substitutas por equivalencia: ";
+				demandasFile <<"\tPossiveis substitutas por equiv: ";
 				ITERA_GGROUP_LESSPTR( itDiscEquiv, (*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas, Disciplina )	
 					demandasFile <<"DiscId " << (*itDiscEquiv)->getId() << "  ";
 			}				
@@ -3756,9 +3743,10 @@ void ProblemData::imprimeResumoDemandasPorAluno()
 				<< ", Prioridade " << (*itAlunoDemanda)->getPrioridade()
 				<< ", " << (*itAlunoDemanda)->demanda->disciplina->getTotalCreditos() << " creditos";
 
-			if ( this->parametros->considerar_equivalencia_por_aluno )
+			if ( this->parametros->considerar_equivalencia_por_aluno &&
+				(*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas.size() > 0 )
 			{
-				demandasFile <<"\tPossiveis substitutas por equivalencia: ";
+				demandasFile <<"\tPossiveis substitutas por equiv: ";
 				ITERA_GGROUP_LESSPTR( itDiscEquiv, (*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas, Disciplina )	
 					demandasFile <<"DiscId " << (*itDiscEquiv)->getId() << "  "; 
 			}

@@ -462,7 +462,6 @@ public:
    int haDemandaDiscNoCurso( int discId, int cursoId );
    int haDemandaDiscNoCursoEquiv( Disciplina *disciplina, int cursoId );
    int haDemandaDiscNoCjtAlunosPorCurso( int discId, int cursoId, int cjtAlunosId );
-   bool haDemandaP2DiscNoCampus( int campusId, int P_ATUAL, Disciplina* disciplina );   
    int getQtdAlunoDemandaAtualPorCampus( int campusId );
 
    void imprimeCjtAlunos( int campusId );

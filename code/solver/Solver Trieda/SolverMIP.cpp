@@ -17284,7 +17284,7 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_aluno_curso_disc( campusId, cjtAlunosId );				// Restrição 1.6
+	restricoes += cria_preRestricao_aluno_curso_disc_peloHash( campusId, cjtAlunosId );				// Restrição 1.6
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -17294,7 +17294,7 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 #endif
 
 	timer.start();
-	restricoes += cria_preRestricao_cap_sala( campusId, cjtAlunosId );						// Restrição 1.7
+	restricoes += cria_preRestricao_cap_sala_peloHash( campusId, cjtAlunosId );						// Restrição 1.7
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -17344,7 +17344,7 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 #endif   
 
 	timer.start();
-	restricoes += cria_preRestricao_limita_abertura_turmas( campusId, cjtAlunosId, prioridade, r );		// Restrição 1.12
+	restricoes += cria_preRestricao_limita_abertura_turmas_peloHash( campusId, cjtAlunosId );		// Restrição 1.12
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -17454,7 +17454,7 @@ int SolverMIP::cria_preRestricoes( int campusId, int prioridade, int cjtAlunosId
 	   #endif
 
 		timer.start();
-		restricoes += cria_preRestricao_atendimento_aluno( campusId, cjtAlunosId );				// Restrição 1.18
+		restricoes += cria_preRestricao_atendimento_aluno_peloHash( campusId, cjtAlunosId );			// Restrição 1.18
 		timer.stop();
 		dif = timer.getCronoCurrSecs();
 
@@ -18025,6 +18025,7 @@ int SolverMIP::cria_preRestricao_evita_mudanca_de_sala( int campusId, int cjtAlu
 /*
 	Alocação de demanda por oferta
 */
+
 int SolverMIP::cria_preRestricao_cap_aloc_dem_disc_oft( int campusId  )
 {
     int restricoes = 0;
@@ -18260,6 +18261,81 @@ int SolverMIP::cria_preRestricao_cap_aloc_dem_disc_aluno( int campusId, int cjtA
 
 
 // Restrição 1.6
+int SolverMIP::cria_preRestricao_aluno_curso_disc_peloHash( int campusId, int cjtAlunosId  )
+{
+   int restricoes = 0;
+   char name[ 100 ];
+   int nnz;
+
+   ConstraintPre c;
+   VariablePre v;
+   ConstraintPreHash::iterator cit;
+   VariablePreHash::iterator vit;
+
+   std::vector<int> idxC;
+   std::vector<int> idxR;
+   std::vector<double> valC;
+
+	vit = vHashPre.begin();
+	for ( ; vit != vHashPre.end(); vit++)
+	{		
+		VariablePre v = vit->first;
+			
+		Curso *curso;
+		double coef = 0.0;
+		if( v.getType() == VariablePre::V_PRE_ALOC_ALUNO )
+		{
+			curso = v.getCurso();
+			coef = - problemData->haDemandaDiscNoCurso( v.getDisciplina()->getId(), curso->getId() );			
+		}
+		else if( v.getType() == VariablePre::V_PRE_ALUNOS )
+		{
+			curso = v.getOferta()->curso;
+			coef = 1.0;		
+		}
+		else
+		{
+			continue;
+		}
+		
+		c.reset();
+        c.setType( ConstraintPre::C_ALUNO_OFT_DISC );
+		c.setCurso( curso );
+		c.setDisciplina( v.getDisciplina() );
+		c.setTurma( v.getTurma() );
+				
+		cit = cHashPre.find(c);
+
+		if ( cit == cHashPre.end() )
+		{
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
+
+			row.insert( vit->second, coef);
+
+			cHashPre[ c ] = lp->getNumRows();
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			idxC.push_back(vit->second);
+			idxR.push_back(cit->second);
+			valC.push_back(coef);
+		}
+	}
+
+   lp->updateLP();
+   lp->chgCoefList(idxC.size(),idxR.data(),idxC.data(),valC.data());
+   lp->updateLP();
+
+   idxC.clear();
+   idxR.clear();
+   valC.clear();
+   
+   return restricoes;
+}
+
 int SolverMIP::cria_preRestricao_aluno_curso_disc( int campusId, int cjtAlunosId  )
 {
 	int restricoes = 0;
@@ -18417,6 +18493,82 @@ int SolverMIP::cria_preRestricao_aluno_curso_disc( int campusId, int cjtAlunosId
 }
 
 // Restrição 1.7
+int SolverMIP::cria_preRestricao_cap_sala_peloHash( int campusId, int cjtAlunosId  )
+{
+   int restricoes = 0;
+   char name[ 100 ];
+   int nnz;
+
+   ConstraintPre c;
+   VariablePre v;
+   ConstraintPreHash::iterator cit;
+   VariablePreHash::iterator vit;
+
+   std::vector<int> idxC;
+   std::vector<int> idxR;
+   std::vector<double> valC;
+
+	vit = vHashPre.begin();
+	for ( ; vit != vHashPre.end(); vit++)
+	{		
+		VariablePre v = vit->first;
+				
+		double coef = 0.0;
+		if( v.getType() == VariablePre::V_PRE_OFERECIMENTO )
+		{
+			coef = - v.getSubCjtSala()->capTotalSalas();
+		}
+		else if( v.getType() == VariablePre::V_PRE_ALUNOS )
+		{
+			coef = 1.0;		
+		}
+		else
+		{
+			continue;
+		}
+
+		if ( v.getUnidade()->getIdCampus() != campusId ) continue;
+
+		c.reset();
+        c.setType( ConstraintPre::C_CAP_SALA );
+
+		c.setDisciplina( v.getDisciplina() );
+		c.setTurma( v.getTurma() );
+		c.setUnidade( v.getUnidade() );
+		c.setSubCjtSala( v.getSubCjtSala() );
+
+		cit = cHashPre.find(c);
+
+		if ( cit == cHashPre.end() )
+		{
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
+
+			row.insert( vit->second, coef);
+
+			cHashPre[ c ] = lp->getNumRows();
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			idxC.push_back(vit->second);
+			idxR.push_back(cit->second);
+			valC.push_back(coef);
+		}
+	}
+
+   lp->updateLP();
+   lp->chgCoefList(idxC.size(),idxR.data(),idxC.data(),valC.data());
+   lp->updateLP();
+
+   idxC.clear();
+   idxR.clear();
+   valC.clear();
+   
+   return restricoes;
+}
+
 int SolverMIP::cria_preRestricao_cap_sala( int campusId, int cjtAlunosId  )
 {
 	int restricoes = 0;
@@ -19061,6 +19213,99 @@ int SolverMIP::cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtA
 }   
    
 // Restricao 1.12
+int SolverMIP::cria_preRestricao_limita_abertura_turmas_peloHash( int campusId, int cjtAlunosId  )
+{
+   int restricoes = 0;
+   char name[ 100 ];
+   int nnz;
+
+   ConstraintPre c;
+   VariablePre v;
+   ConstraintPreHash::iterator cit;
+   VariablePreHash::iterator vit;
+
+   std::vector<int> idxC;
+   std::vector<int> idxR;
+   std::vector<double> valC;
+   
+   int minalunos;
+   if ( problemData->parametros->min_alunos_abertura_turmas )
+   {
+		minalunos = problemData->parametros->min_alunos_abertura_turmas_value;
+		if ( minalunos <= 0 ) minalunos = 1;
+   }
+   else
+   {
+	   minalunos = 1;
+   }
+
+   Campus *campus = problemData->refCampus[campusId];
+
+	vit = vHashPre.begin();
+	for ( ; vit != vHashPre.end(); vit++)
+	{		
+		VariablePre v = vit->first;
+				
+		double coef = 0.0;
+		if( v.getType() == VariablePre::V_PRE_ABERTURA )
+		{
+			coef = minalunos;
+			if ( v.getCampus()->getId() != campusId ) continue;
+		}
+		else if( v.getType() == VariablePre::V_PRE_ALUNOS )
+		{
+			coef = -1.0;		
+			if ( v.getUnidade()->getIdCampus() != campusId ) continue;
+		}
+		else if( v.getType() == VariablePre::V_PRE_FORMANDOS_NA_TURMA )
+		{
+			coef = - minalunos;		
+			if ( v.getCampus()->getId() != campusId ) continue;
+		}
+		else 
+		{
+			continue;
+		}
+		
+		c.reset();
+        c.setType( ConstraintPre::C_PRE_LIMITA_ABERTURA_TURMAS );
+
+		c.setDisciplina( v.getDisciplina() );
+		c.setTurma( v.getTurma() );
+		c.setCampus( campus );
+
+		cit = cHashPre.find(c);
+
+		if ( cit == cHashPre.end() )
+		{
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::LESS, 0.0, name );
+
+			row.insert( vit->second, coef);
+
+			cHashPre[ c ] = lp->getNumRows();
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			idxC.push_back(vit->second);
+			idxR.push_back(cit->second);
+			valC.push_back(coef);
+		}
+	}
+
+   lp->updateLP();
+   lp->chgCoefList(idxC.size(),idxR.data(),idxC.data(),valC.data());
+   lp->updateLP();
+
+   idxC.clear();
+   idxR.clear();
+   valC.clear();
+   
+   return restricoes;
+}
+
 int SolverMIP::cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade, int r )
 {
    int restricoes = 0;
@@ -20189,6 +20434,85 @@ int SolverMIP::cria_preRestricao_fixa_nao_compartilhamento( int campusId )
 
 	Define qual aluno foi atendido em cada atendimento feito.
 */
+int SolverMIP::cria_preRestricao_atendimento_aluno_peloHash( int campusId, int cjtAlunosId  )
+{
+   int restricoes = 0;
+   char name[ 100 ];
+   int nnz;
+
+   ConstraintPre c;
+   VariablePre v;
+   ConstraintPreHash::iterator cit;
+   VariablePreHash::iterator vit;
+
+   std::vector<int> idxC;
+   std::vector<int> idxR;
+   std::vector<double> valC;
+
+	vit = vHashPre.begin();
+	for ( ; vit != vHashPre.end(); vit++)
+	{		
+		VariablePre v = vit->first;
+		
+		Oferta *oferta;
+
+		double coef = 0.0;
+		if( v.getType() == VariablePre::V_PRE_ALOCA_ALUNO_TURMA_DISC )
+		{
+			coef = - 1.0;	
+			oferta = v.getAluno()->getOferta();
+		}
+		else if( v.getType() == VariablePre::V_PRE_ALUNOS )
+		{
+			coef = 1.0;
+			oferta = v.getOferta();			
+		}
+		else
+		{
+			continue;
+		}
+
+		if ( oferta->getCampusId() != campusId ) continue;
+
+		c.reset();
+        c.setType( ConstraintPre::C_ATENDIMENTO_ALUNO );
+		c.setOferta( oferta );
+		c.setDisciplina( v.getDisciplina() );
+		c.setTurma( v.getTurma() );
+        
+		cit = cHashPre.find(c);
+
+		if ( cit == cHashPre.end() )
+		{
+			sprintf( name, "%s", c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::EQUAL, 0.0, name );
+
+			row.insert( vit->second, coef);
+
+			cHashPre[ c ] = lp->getNumRows();
+			lp->addRow( row );
+			restricoes++;
+		}
+		else
+		{
+			idxC.push_back(vit->second);
+			idxR.push_back(cit->second);
+			valC.push_back(coef);
+		}
+	}
+
+   lp->updateLP();
+   lp->chgCoefList(idxC.size(),idxR.data(),idxC.data(),valC.data());
+   lp->updateLP();
+
+   idxC.clear();
+   idxR.clear();
+   valC.clear();
+   
+   return restricoes;
+}
+
+
 int SolverMIP::cria_preRestricao_atendimento_aluno( int campusId, int cjtAlunosId  )
 {
     int restricoes = 0;

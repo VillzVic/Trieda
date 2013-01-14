@@ -2379,13 +2379,13 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 			// Continue, caso seja alocação de prioridade passada
 			if ( prioridade==2 && problemData->procuraAlunoDemanda(disciplina->getId(), aluno->getAlunoId(), 1) != NULL )
 				continue;
-
+			
 			AlunoDemanda *alDemOrig = problemData->procuraAlunoDemanda( disciplina->getId(), aluno->getAlunoId(), prioridade );
 			
 			if ( alDemOrig==NULL ) // disciplina substituta
 			{
 				bool achou=false;
-
+				
 				ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda ) // procura AlunoDemanda original
 				{
 					AlunoDemanda *alDem = (*itAlDem);
@@ -2398,6 +2398,9 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 						 discOrig->discEquivSubstitutas.end() ) // 'disciplina' é substituta de 'discOrig'
 					{
 						achou=true;
+										
+						int cjtAlunoId = problemData->retornaCjtAlunosId( aluno );
+						if ( cjtAlunoId==0 ) std::cout<<"\nERRO: nao achei cjtAlunoId, muito estranho!\n";
 
 						bool existePraticaNova = problemData->refDisciplinas.find(-disciplina->getId()) != problemData->refDisciplinas.end();
 						bool existePraticaAntiga = problemData->refDisciplinas.find(-discOrig->getId()) != problemData->refDisciplinas.end();
@@ -2406,8 +2409,6 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 								   ( existePraticaAntiga && !existePraticaNova ? 3 : 
 								   ( existePraticaAntiga && existePraticaNova ? 4 : 0 ) ) ) ) );
 						
-						if (caso==0) std::cout<<"\nErro! Impossivel!!\n";
-
 						switch ( caso )
 						{
 							case 1: // (T => T)
@@ -2421,11 +2422,15 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 								{
 									AlunoDemanda *alunoDemandaPraticaOrig = aluno->getAlunoDemanda( - abs( discOrig->getId() ) );
 									aluno->demandas.remove( alunoDemandaPraticaOrig );
+									problemData->listSlackDemandaAluno.remove( alunoDemandaPraticaOrig );
+									problemData->cjtAlunoDemanda[cjtAlunoId].remove( alunoDemandaPraticaOrig );
 
 									// Reduz qtd demanda pratica original
 									Demanda *demPraticaOriginal = alunoDemandaPraticaOrig->demanda;
 									demPraticaOriginal->setQuantidade( demPraticaOriginal->getQuantidade() - 1 );
 									this->problemData->mapDemandaAlunos[ demPraticaOriginal ].remove( alunoDemandaPraticaOrig );
+									if ( this->problemData->mapDemandaAlunos[demPraticaOriginal ].size() == 0 )
+										this->problemData->mapDemandaAlunos.erase( demPraticaOriginal );
 								}
 								break;
 							case 4: // (PT => PT)
@@ -2474,6 +2479,9 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 
 							problemData->demandasTotal.add( dem );
 					 		problemData->demandas.add( dem );
+
+							problemData->ofertasDisc[ disciplina->getId() ].add( oft );														
+							problemData->cjtDemandas[cjtAlunoId].add( dem );
 						}
 
 						// Cria AlunoDemanda para disciplina pratica
@@ -2483,8 +2491,9 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 							AlunoDemanda *novo_aluno_demanda_p = new AlunoDemanda( idAlDemanda, aluno->getAlunoId(), alDem->getPrioridade(), dem );
 							problemData->alunosDemandaTotal.add( novo_aluno_demanda_p );
 							problemData->alunosDemanda.add( novo_aluno_demanda_p );
-							aluno->demandas.add( novo_aluno_demanda_p ); // todo: add depois?
+							aluno->demandas.add( novo_aluno_demanda_p );
 							this->problemData->mapDemandaAlunos[ dem ].add( novo_aluno_demanda_p );
+							this->problemData->cjtAlunoDemanda[cjtAlunoId].add( novo_aluno_demanda_p );
 
 							alDem = novo_aluno_demanda_p;
 						}
@@ -2496,6 +2505,8 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 						dem->setQuantidade( dem->getQuantidade() + 1 );
 						problemData->listSlackDemandaAluno.remove( alDem );
 						this->problemData->mapDemandaAlunos[ alDem->demandaOriginal ].remove( alDem );
+						if ( this->problemData->mapDemandaAlunos[ alDem->demandaOriginal ].size() == 0 )
+							this->problemData->mapDemandaAlunos.erase( alDem->demandaOriginal );
 						this->problemData->mapDemandaAlunos[ dem ].add( alDem );
 
 						// -----------------------------------------------------------------
@@ -3183,7 +3194,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoCreditos( int campusId, int P )
 	else
 	{
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
-			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId, P );
+			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId );
 	}
 
     ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
@@ -3391,7 +3402,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoOferecimentos( int campusId, int P )
 	else
 	{
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
-			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId, P );
+			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId );
 	}
 
    ITERA_GGROUP_LESSPTR( itCampus, problemData->campi, Campus )
@@ -3745,7 +3756,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoConsecutivos( int campusId, int P )
 	else
 	{
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
-			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId, P );
+			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId );
 	}
 		
 	GGroup< int > disciplinasIds = problemData->cp_discs[campusId];
@@ -3940,7 +3951,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoCombinacaoDivisaoCredito( int campusId,
 		}
 		else
 		{
-			if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId, P ) )
+			if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 				continue;
 		}
 		
@@ -4127,7 +4138,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoFolgaCombinacaoDivisaoCredito( int camp
 	else
 	{
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
-			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId, P );
+			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId );
 	}
 
 	GGroup< int > disciplinasIds = problemData->cp_discs[campusId];
@@ -4298,7 +4309,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoFolgaDistCredDiaSuperior( int campusId,
 				}
 				else
 				{
-					if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId, P ) )
+					if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 						continue;
 				}
 
@@ -4428,7 +4439,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoFolgaDistCredDiaInferior( int campusId,
 				}
 				else
 				{
-					if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId, P ) )
+					if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 						continue;
 				}
 
@@ -4614,7 +4625,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoAberturaCompativel( int campusId, int P
 	else
 	{
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
-			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId, P );
+			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId );
 	}
 
 
@@ -4777,7 +4788,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoFolgaAlunoUnidDifDia( int campusId, int
 	else
 	{
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
-			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId, P );
+			mapDiscAlunosDemandaBool[*itDisc] = problemData->haDemandaDiscNoCampus( (*itDisc)->getId(), campusId );
 	}
 	
    ITERA_GGROUP_LESSPTR( it_campus, problemData->campi, Campus )
@@ -5013,7 +5024,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoFolgaAbreTurmaSequencial( int campusId,
 		 }
 		 else
 		 {
-			if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId, P ) )
+			if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 		 	    continue;
 		 }
 
@@ -5577,7 +5588,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoAbertura( int campusId, int prior, int 
 		 }
 		 else
 		 {
-			if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId, prior ) )
+			if ( !problemData->haDemandaDiscNoCampus( disciplina->getId(), campusId ) )
 				continue;
 		 }
 		 

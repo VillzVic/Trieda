@@ -147,13 +147,16 @@ public:
    int cria_preRestricao_ativacao_var_o( int campusId, int cjtAlunosId  );			// Restrição 1.3
    int cria_preRestricao_evita_mudanca_de_sala( int campusId, int cjtAlunosId  );		// Restrição 1.4
    int cria_preRestricao_cap_aloc_dem_disc_aluno( int campusId, int cjtAlunosId  );	// Restrição 1.5
-   int cria_preRestricao_aluno_curso_disc( int campusId, int cjtAlunosId  );			// Restrição 1.6
-   int cria_preRestricao_cap_sala( int campusId, int cjtAlunosId  );					// Restrição 1.7
+   int cria_preRestricao_aluno_curso_disc_peloHash( int campusId, int cjtAlunosId  );
+   /* deletar qdo a de cima tiver substituido */ int cria_preRestricao_aluno_curso_disc( int campusId, int cjtAlunosId  );			// Restrição 1.6
+   int cria_preRestricao_cap_sala_peloHash( int campusId, int cjtAlunosId  );
+   /* deletar qdo a de cima tiver substituido */ int cria_preRestricao_cap_sala( int campusId, int cjtAlunosId  );					// Restrição 1.7
    int cria_preRestricao_compartilhamento_incompat( int campusId, int cjtAlunosId  );	// Restrição 1.8
    int cria_preRestricao_proibe_compartilhamento( int campusId, int cjtAlunosId  );	// Restrição 1.9
    int cria_preRestricao_ativacao_var_z( int campusId, int cjtAlunosId  );			// Restricao 1.10
    int cria_preRestricao_evita_turma_disc_camp_d( int campusId, int cjtAlunosId  );	// Restricao 1.11
-   int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade, int r );    // Restricao 1.12
+   int cria_preRestricao_limita_abertura_turmas_peloHash( int campusId, int cjtAlunosId  );
+   /* deletar qdo a de cima tiver substituido */ int cria_preRestricao_limita_abertura_turmas( int campusId, int cjtAlunosId, int prioridade, int r );    // Restricao 1.12
    int cria_preRestricao_abre_turmas_em_sequencia( int campusId, int cjtAlunosId, int prioridade, int r );  // Restricao 1.13
    int cria_preRestricao_limite_sup_creds_sala( int campusId, int cjtAlunosId  );		// Restricao 1.15
    int cria_preRestricao_soma_cred_sala( int campusId, int cjtAlunosId  );	// Restricao 1.26
@@ -165,7 +168,8 @@ public:
    int cria_preRestricao_turma_mesma_disc_oft_sala_dif( int campusId, int cjtAlunosId  ); // Restricao 1.14
 
    // Usadas somente para o modelo Tatico-Aluno:
-   int cria_preRestricao_atendimento_aluno( int campusId, int cjtAlunosId  );			 // Restricao 1.18
+   int cria_preRestricao_atendimento_aluno_peloHash( int campusId, int cjtAlunosId  );
+   /* deletar qdo a de cima tiver substituido */ int cria_preRestricao_atendimento_aluno( int campusId, int cjtAlunosId  );			 // Restricao 1.18
    int cria_preRestricao_aluno_unica_turma_disc( int campusId, int cjtAlunosId  );	 // Restricao 1.19
    int cria_preRestricao_aluno_discPraticaTeorica( int campusId, int cjtAlunosId  );	 // Restricao 1.20  
    int cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId, int prior); 
