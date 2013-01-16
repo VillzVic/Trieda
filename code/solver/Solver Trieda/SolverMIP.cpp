@@ -25579,7 +25579,7 @@ int SolverMIP::cria_restricao_max_tempo_s_t_SL( int campusId, int cjtAlunosAtual
 							Disciplina *disciplina = *itDisc;
 
 							// Verifica se é a semana letiva corrente
-							if ( disciplina->getCalendario() != *it_Sl )
+							if ( disciplina->getCalendario()->getId() != *it_Sl->getId() )
 							{
 								continue;
 							}
@@ -27403,7 +27403,7 @@ int SolverMIP::cria_restricao_max_cred_disc_aluno( int campusId, int cjtAlunosAt
 					#pragma endregion	
 
 				   // Só considera disciplinas da semana letiva corrente
-				   if ( disciplina->getCalendario() != *itSL )
+				   if ( disciplina->getCalendario()->getId() != *itSL->getId() )
 				   {
 					   continue;
 				   }
@@ -46164,7 +46164,7 @@ int SolverMIP::cria_restricao_max_tempo_s_t_SL( int campusId )
 							Disciplina *disciplina = *itDisc;
 
 							// Verifica se é a semana letiva corrente
-							if ( disciplina->getCalendario() != *it_Sl )
+							if ( disciplina->getCalendario()->getId() != *it_Sl->getId() )
 							{
 								continue;
 							}
@@ -47246,7 +47246,7 @@ int SolverMIP::cria_restricao_max_cred_disc_bloco( int campusId )
 					#pragma endregion	
 
 				   // Só considera disciplinas da semana letiva corrente
-				   if ( disciplina->getCalendario() != *itSL )
+				   if ( disciplina->getCalendario()->getId() != *itSL->getId() )
 				   {
 					   continue;
 				   }
@@ -52263,7 +52263,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_sala_por_div_turmas( int campusId )
 						Disciplina * d = it_disc->first;
 
 						// Disciplina deve pertencer à mesma semana letiva corrente
-						if ( d->getCalendario() != sl )
+						if ( d->getCalendario()->getId() != sl->getId() )
 						{
 							continue;
 						}
@@ -53007,7 +53007,7 @@ int SolverMIP::cria_restricao_max_cred_disc_aluno( int campusId )
 					#pragma endregion	
 
 				   // Só considera disciplinas da semana letiva corrente
-				   if ( disciplina->getCalendario() != *itSL )
+				   if ( disciplina->getCalendario()->getId() != *itSL->getId() )
 				   {
 					   continue;
 				   }
@@ -55359,7 +55359,7 @@ int SolverMIP::criaVariavelGapsProfessores()
                   continue;
                }
 
-               if ( h1->getCalendario() != h2->getCalendario() )
+               if ( h1->getCalendario()->getId() != h2->getCalendario()->getId() )
                {
                   continue;
                }

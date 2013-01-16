@@ -2816,6 +2816,16 @@ void ProblemDataLoader::gera_refs()
          }
       }
    }
+	
+   // teste			 
+	ITERA_GGROUP_LESSPTR( it_t, problemData->todos_turnos, Turno )
+	{
+		std::cout<<"\nTurno "<<it_t->getId()<< ": ";
+		ITERA_GGROUP_LESSPTR( it_h, it_t->horarios_aula, HorarioAula )
+		{
+		std::cout<<" "<<it_h->getId();				 
+		}
+	}
 
    ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
    {
@@ -4577,7 +4587,7 @@ void ProblemDataLoader::calculaCompatibilidadeDeHorarios()
 				// calendario 2
 				ITERA_GGROUP_LESSPTR( it_calendarios2, problemData->calendarios, Calendario )
 				{
-					if ( *it_calendarios2 == *it_calendarios1)
+					if ( (*it_calendarios2)->getId() == (*it_calendarios1)->getId() )
 						continue;
 
 					ITERA_GGROUP_LESSPTR( it_turno2, it_calendarios2->turnos, Turno )
@@ -4586,7 +4596,7 @@ void ProblemDataLoader::calculaCompatibilidadeDeHorarios()
 						{
 							HorarioAula *h2 = *it_hor2;
 							
-							if ( h1->getCalendario() == h2->getCalendario() )
+							if ( h1->getCalendario()->getId() == h2->getCalendario()->getId() )
 								continue;
 					
 							if ( !h1->sobrepoe( *h2 ) )

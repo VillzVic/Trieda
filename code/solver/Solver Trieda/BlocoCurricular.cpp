@@ -76,7 +76,7 @@ GGroup<HorarioAula*> BlocoCurricular::retornaHorariosDisponiveisNoDiaPorSL( int 
 	{
 		Disciplina *d = itPeriodoDisc->first;
 
-		if ( d->getCalendario() == sl )
+		if ( d->getCalendario()->getId() == sl->getId() )
 		{
 			for ( GGroup< Horario * >::iterator it_horarios = d->horarios.begin();
 				  it_horarios != d->horarios.end(); it_horarios++ )

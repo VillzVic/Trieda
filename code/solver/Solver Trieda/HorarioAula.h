@@ -45,28 +45,39 @@ public:
       }
       else
       {
-         // Quando os horários_aula começam no mesmo
-         // instante, comparamos o horário de final da aula
-         result = ( this->getTempoAula() < right.getTempoAula() );
+		 // Quando os horários_aula começam no mesmo
+		 // instante, comparamos o horário de final da aula
+		 int mesmoFim = ( this->getTempoAula() == right.getTempoAula() );
+         if ( mesmoFim )
+		 {	// inicio e fim identicos, compara o id
+			// result = ( this->getId() < right.getId() );				 
+		 }
+		 else
+		 {			
+			result = ( this->getTempoAula() < right.getTempoAula() );
+		 }
       }
+
 
       return result;
    }
 
    virtual bool operator == ( HorarioAula const & right ) const
    { 
-      // 0 --> FALSE
-      // outro valor --> TRUE
-      bool result = ( ( this->getInicio() == right.getInicio() ) != 0 );
+		return ( !( *this < right ) && !( right < *this ) );
 
-      // Quando os horários_aula começam no mesmo
-      // instante, comparamos o horário de final da aula
-	   if ( result )
-	   {
-         result = ( this->getTempoAula() == right.getTempoAula() );
-	   }
+    //  // 0 --> FALSE
+    //  // outro valor --> TRUE
+    //  bool result = ( ( this->getInicio() == right.getInicio() ) != 0 );
 
-	   return result;
+    //  // Quando os horários_aula começam no mesmo
+    //  // instante, comparamos o horário de final da aula
+	   //if ( result )
+	   //{
+    //     result = ( this->getTempoAula() == right.getTempoAula() );
+	   //}
+
+	   //return result;
    }
 
 private:

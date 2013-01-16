@@ -2900,7 +2900,7 @@ int ProblemData::retornaNroCreditos( HorarioAula *hi, HorarioAula *hf, Sala *s, 
 {
 	Calendario *sl = d->getCalendario();
 
-	if ( hf->getCalendario() != sl || hi->getCalendario() != sl )
+	if ( hf->getCalendario()->getId() != sl->getId() || hi->getCalendario()->getId() != sl->getId() )
 		 return 0;
 
 	std::pair< int, int > parDiscSala = std::make_pair( d->getId(), s->getId() );

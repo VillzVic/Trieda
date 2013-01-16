@@ -128,7 +128,7 @@ void Sala::calculaTempoDispPorDiaSL()
 			{
 				if ( it_horarios->dias_semana.find(dia) != it_horarios->dias_semana.end() )
 				{
-					if ( it_horarios->horario_aula->getCalendario() == sl )
+					if ( it_horarios->horario_aula->getCalendario()->getId() == sl->getId() )
 						horariosAula.add( it_horarios->horario_aula );
 				}
 			}
@@ -231,7 +231,7 @@ GGroup<HorarioAula*> Sala::retornaHorariosDisponiveisNoDiaPorSL( int dia, Calend
 	ITERA_GGROUP(it_horarios, this->horarios_disponiveis, Horario)
 	{
 		if ( ( it_horarios->dias_semana.find(dia) != it_horarios->dias_semana.end() ) &&
-			 ( it_horarios->horario_aula->getCalendario() == sl ) )
+			 ( it_horarios->horario_aula->getCalendario()->getId() == sl->getId() ) )
 		{
 				horarios.add( it_horarios->horario_aula );
 		}

@@ -79,7 +79,7 @@ void TaticoIntAlunoHor::solveTaticoIntegrado( int campusId, int prioridade, int 
 	if (this->USAR_EQUIVALENCIA)
 	{
 		std::cout<<"\nAtualizando demandas substitutas por equivalencia...\n"; fflush(NULL);
-		atualizarDemandasEquiv222( campusId, prioridade );		
+		atualizarDemandasEquiv( campusId, prioridade );		
 	}
 	
 	std::cout<<"\nInvestigando nao atendimentos...\n";
@@ -2351,7 +2351,7 @@ bool TaticoIntAlunoHor::criaVariavelTatico( VariableTatInt *v, bool &fixar, int 
 	P = disciplina de credito pratico
 	T = disciplina de credito teorico
 */
-void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade )
+void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 {	
 #pragma region Imprime Equiv
 		ofstream outEquiv;
@@ -2540,154 +2540,6 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv222( int campusId, int prioridade 
 }
 
 
-
-void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
-{	
-#pragma region Imprime Equiv
-		ofstream outEquiv;
-		outEquiv.open( getEquivFileName(campusId,prioridade).c_str(), ofstream::app);
-		if ( !outEquiv )
-		{
-			std::cerr<<"\nAbertura do arquivo "<< getEquivFileName(campusId,prioridade).c_str()
-				<< " falhou em TaticoIntAlunoHor::atualizarDemandasEquiv().\n";
-		}
-#pragma endregion
-
-
-	ITERA_GGROUP_LESSPTR ( itVar, this->solVarsTatInt, VariableTatInt )
-	{
-		if ( (*itVar)->getType() == VariableTatInt::V_ALOCA_ALUNO_TURMA_DISC )
-		{
-			VariableTatInt *v = *itVar; // s_{a,i,d,cp}
-			Aluno *aluno = v->getAluno();
-			Disciplina *disciplina = v->getDisciplina();
-
-			if ( v->getCampus()->getId() != campusId )
-				continue;
-			
-			// Continue, caso seja alocação de prioridade passada
-			if ( prioridade==2 && problemData->procuraAlunoDemanda(disciplina->getId(), aluno->getAlunoId(), 1) != NULL )
-				continue;
-
-			AlunoDemanda *alDemOrig = problemData->procuraAlunoDemanda( disciplina->getId(), aluno->getAlunoId(), prioridade );
-			
-			if ( alDemOrig==NULL ) // disciplina substituta
-			{
-				bool achou=false;
-
-				ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda ) // procura AlunoDemanda original
-				{
-					AlunoDemanda *alDem = (*itAlDem);
-
-					Disciplina *discOrig = alDem->demanda->disciplina;
-					int turmaAluno = problemData->retornaTurmaDiscAluno( aluno, discOrig );	
-
-					if ( turmaAluno == -1 ) // aluno não alocado
-					if ( discOrig->discEquivSubstitutas.find( disciplina ) !=
-						 discOrig->discEquivSubstitutas.end() ) // 'disciplina' é substituta de 'discOrig'
-					{
-						achou=true;
-
-						if ( outEquiv )
-						{
-							outEquiv<<"\nAluno "<<aluno->getAlunoId()<<" Disc original "<<discOrig->getId()
-								<<" Disc substituta "<<disciplina->getId()<<" Prioridade "<<alDem->getPrioridade();
-						}
-
-						// Modificar referência de demanda
-						// -----------------------------------------------------------------
-						//							DEMANDAS
-												
-						Oferta *oft = alDem->demanda->oferta;
-						Demanda *dem = problemData->buscaDemanda( oft->getId(), disciplina->getId() );
-						if ( dem != NULL )
-						{
-							// Referencia demanda já existente
-
-							// Debita 1 unidade na quantidade de alunos para a disc de credito teorico original
-							alDem->demandaOriginal = alDem->demanda;
-							if ( disciplina->getId() > 0 ) 
-							{
-								alDem->demandaOriginal->setQuantidade( alDem->demandaOriginal->getQuantidade() - 1 );							
-							}
-
-							// Debita 1 unidade na quantidade de alunos para a disc de credito pratico original
-							Demanda *demPraticaOriginal = problemData->buscaDemanda( oft->getId(), - discOrig->getId() );
-							bool naoExistePraticaNova = problemData->refDisciplinas.find(-disciplina->getId()) == problemData->refDisciplinas.end();
-							if( demPraticaOriginal != NULL && ( disciplina->getId() < 0 || naoExistePraticaNova ) )
-							{
-								// Casos de equivalencia (antiga=>nova): (PT => T) ou (PT => PT)
-								demPraticaOriginal->setQuantidade( demPraticaOriginal->getQuantidade() - 1 );
-							}
-
-							alDem->demanda = dem;
-							alDem->setDemandaId( dem->getId() );
-							dem->setQuantidade( dem->getQuantidade() + 1 );
-							problemData->listSlackDemandaAluno.remove( alDem );
-						}
-						else
-						{
-							// Cria nova Demanda
-
-							int id = problemData->retornaMaiorIdDemandas() + 1;		
-
-							Demanda *nova_demanda = new Demanda();
-							nova_demanda->setId( id );
-							nova_demanda->setOfertaId( oft->getId() );
-							nova_demanda->setDisciplinaId( disciplina->getId() );
-							nova_demanda->setQuantidade( 1 );
-							nova_demanda->oferta = oft;
-							nova_demanda->disciplina = disciplina;
-
-							problemData->demandasTotal.add( nova_demanda );
-					 		problemData->demandas.add( nova_demanda );
-							
-							// Debita 1 unidade na quantidade de alunos para a disc de credito teorico original
-							alDem->demandaOriginal = alDem->demanda;
-							if ( disciplina->getId() > 0 ) 
-							{
-								alDem->demandaOriginal->setQuantidade( alDem->demandaOriginal->getQuantidade() - 1 );							
-							}
-
-							// Debita 1 unidade na quantidade de alunos para a disc de credito pratico original
-							Demanda *demPraticaOriginal = problemData->buscaDemanda( oft->getId(), - discOrig->getId() );
-							bool naoExistePraticaNova = problemData->refDisciplinas.find(-disciplina->getId()) == problemData->refDisciplinas.end();
-							if( demPraticaOriginal != NULL && ( disciplina->getId() < 0 || naoExistePraticaNova ) )
-							{
-								// Casos de equivalencia (antiga=>nova): (PT => T) ou (PT => PT)
-								demPraticaOriginal->setQuantidade( demPraticaOriginal->getQuantidade() - 1 );
-							}
-
-							alDem->demanda = nova_demanda;
-							alDem->setDemandaId( nova_demanda->getId() );
-							problemData->listSlackDemandaAluno.remove( alDem );
-						}
-						// -----------------------------------------------------------------
-
-						break;
-					}
-				}
-				if (!achou)
-				{
-					if (  prioridade==1 || 
-						( prioridade==2 && problemData->procuraAlunoDemanda(disciplina->getId(), aluno->getAlunoId(), 1)==NULL ) )
-					{
-						std::cout<<"\nErro! Nao achei AlunoDemanda original nem substituto. Aluno"
-						<<aluno->getAlunoId()<<" Disc"<<disciplina->getId()<<". Rodada P"<<prioridade<<"\n";
-					}
-				}
-			}
-		}
-	}
-
-	if ( outEquiv )
-	{
-		outEquiv.close();
-	}
-}
-
-
-
 /* ----------------------------------------------------------------------------------
 							VARIAVEIS TATICO POR ALUNO COM HORARIOS
  ---------------------------------------------------------------------------------- */
@@ -2727,7 +2579,8 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 
 	
 	timer.start();
-	num_vars += this->criaVariavelTaticoOferecimentos( campusId, P ); // o_{i,d,u,s}
+	num_vars += this->criaVariavelTaticoOferecimentosAPartirDeX( campusId, P ); // o_{i,d,u,s}
+	//num_vars += this->criaVariavelTaticoOferecimentos( campusId, P ); // o_{i,d,u,s}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 	
@@ -2867,7 +2720,8 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 		
 
 	timer.start();
-	num_vars += this->criaVariavelTaticoFolgaAbreTurmaSequencial( campusId, P ); // ft_{i,d,cp}
+	num_vars += this->criaVariavelTaticoFolgaAbreTurmaSequencialAPartirDeX( campusId, P ); // ft_{i,d,cp}
+	//num_vars += this->criaVariavelTaticoFolgaAbreTurmaSequencial( campusId, P ); // ft_{i,d,cp}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -2911,7 +2765,8 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 
 
 	timer.start();
-	num_vars += this->criaVariavelTaticoAbertura( campusId, P, r ); // z_{i,d,cp}
+	num_vars += this->criaVariavelTaticoAberturaAPartirDeX( campusId, P ); // z_{i,d,cp}
+	//num_vars += this->criaVariavelTaticoAbertura( campusId, P, r ); // z_{i,d,cp}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 
@@ -4998,6 +4853,94 @@ int TaticoIntAlunoHor::criaVariavelTaticoDiaUsadoPeloAluno( int campusId, int P 
 }
 
 // ft_{i,d,cp}
+int TaticoIntAlunoHor::criaVariavelTaticoFolgaAbreTurmaSequencialAPartirDeX( int campusId, int P )
+{
+	int numVars = 0;
+
+	Campus *campus = problemData->refCampus[campusId];	   
+	
+	VariableTatIntHash varHashAux;	
+	std::map< int, Trio<double, double, double> > varId_Bounds;
+
+	VariableTatIntHash::iterator vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++)
+	{		
+		VariableTatInt v = vit->first;
+
+		if( v.getType() != VariableTatInt::V_CREDITOS )
+		{
+			continue;
+		}
+
+		if ( v.getUnidade()->getIdCampus() != campusId )
+			continue;
+		
+		int turma = v.getTurma();
+		Disciplina* disciplina = v.getDisciplina();
+				
+		v.reset();
+		v.setType( VariableTatInt::V_SLACK_ABERT_SEQ_TURMA );
+        v.setTurma( turma );            // i
+        v.setDisciplina( disciplina );  // d
+        v.setCampus( campus );			// cp
+
+		if ( varHashAux.find( v ) == varHashAux.end() )
+		{
+			bool fixar=false;
+
+			if ( !criaVariavelTatico( &v, fixar, P ) )
+			{
+				continue;
+			}
+						
+			int id = numVars;
+			varHashAux[ v ] = id;
+				
+			double coef = 0.0;
+			if ( problemData->parametros->funcao_objetivo == 0 )
+			{							 
+				coef = -10 * (turma+1);
+			}
+			else if ( problemData->parametros->funcao_objetivo == 1 )
+			{					
+				coef = 10 * (turma+1);
+			}			
+			double lowerBound = 0.0;
+			double upperBound = 1.0;
+
+			if ( fixar ) lowerBound = 1.0;
+				
+			Trio<double, double, double> trio;
+			trio.set( coef,lowerBound, upperBound );
+
+			varId_Bounds[ id ] = trio;
+				
+			numVars++;
+		}
+    }
+    
+	// Insere todas as variaveis em vHashTatico e no lp	
+	for ( vit = varHashAux.begin(); vit != varHashAux.end(); vit++)
+	{		
+		VariableTatInt v = vit->first;
+		int id = vit->second;
+
+		vHashTatico[ v ] = lp->getNumCols();
+		
+		double coef = varId_Bounds[id].first;
+		double lowerBound = varId_Bounds[id].second;
+		double upperBound = varId_Bounds[id].third;
+
+		OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
+			( char * )v.toString().c_str());
+
+		lp->newCol( col );
+	}
+
+	return numVars;
+}
+
+// ft_{i,d,cp}
 int TaticoIntAlunoHor::criaVariavelTaticoFolgaAbreTurmaSequencial( int campusId, int P )
 {
 	int numVars = 0;
@@ -5551,6 +5494,86 @@ int TaticoIntAlunoHor::criaVariavelTaticoAlocaAlunoTurmaDiscEquiv( int campusId,
 	return numVars;
 }
 
+// z_{i,d,cp}
+int TaticoIntAlunoHor::criaVariavelTaticoAberturaAPartirDeX( int campusId, int prior )
+{
+	int numVars = 0;
+
+	Campus *campus = problemData->refCampus[campusId];	   
+	
+	VariableTatIntHash varHashAux;	
+	std::map< int, Trio<double, double, double> > varId_Bounds;
+
+	VariableTatIntHash::iterator vit = vHashTatico.begin();
+	for ( ; vit != vHashTatico.end(); vit++)
+	{		
+		VariableTatInt v = vit->first;
+
+		if( v.getType() != VariableTatInt::V_CREDITOS )
+		{
+			continue;
+		}
+
+		if ( v.getUnidade()->getIdCampus() != campusId )
+			continue;
+		
+		int turma = v.getTurma();
+		Disciplina* disciplina = v.getDisciplina();
+				
+		v.reset();
+		v.setType( VariableTatInt::V_ABERTURA );
+        v.setTurma( turma );            // i
+        v.setDisciplina( disciplina );  // d
+        v.setCampus( campus );			// cp
+
+		if ( varHashAux.find( v ) == varHashAux.end() )
+		{
+			bool fixar=false;
+
+			if ( !criaVariavelTatico( &v, fixar, prior ) )
+			{
+				std::cout<<"\nEstranho!! Tem x e nao tem z?";
+				continue;
+			}
+						
+			int id = numVars;
+			varHashAux[ v ] = id;
+				
+			double coef = 1.0;		
+			double lowerBound = 0.0;
+			double upperBound = 1.0;
+
+			if ( fixar ) lowerBound = 1.0;
+				
+			Trio<double, double, double> trio;
+			trio.set( coef,lowerBound, upperBound );
+
+			varId_Bounds[ id ] = trio;
+				
+			numVars++;
+		}
+    }
+    
+	// Insere todas as variaveis em vHashTatico e no lp	
+	for ( vit = varHashAux.begin(); vit != varHashAux.end(); vit++)
+	{		
+		VariableTatInt v = vit->first;
+		int id = vit->second;
+
+		vHashTatico[ v ] = lp->getNumCols();
+		
+		double coef = varId_Bounds[id].first;
+		double lowerBound = varId_Bounds[id].second;
+		double upperBound = varId_Bounds[id].third;
+
+		OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
+			( char * )v.toString().c_str());
+
+		lp->newCol( col );
+	}
+
+	return numVars;
+}
 
 // z_{i,d,cp}
 int TaticoIntAlunoHor::criaVariavelTaticoAbertura( int campusId, int prior, int r )

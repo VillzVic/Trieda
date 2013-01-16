@@ -72,6 +72,8 @@ private:
    int criaVariavelTaticoCombinacaoDivisaoCreditoAPartirDeO( int campusId, int P );
    int criaVariavelTaticoFolgaCombinacaoDivisaoCreditoAPartirDeX( int campusId, int P );   
    int criaVariavelTaticoAberturaCompativelAPartirDeX( int campusId, int P );
+   int criaVariavelTaticoAberturaAPartirDeX( int campusId, int prior );
+   int criaVariavelTaticoFolgaAbreTurmaSequencialAPartirDeX( int campusId, int P );
 
    int criaVariavelTaticoAlunoCreditos( int campusId, int P );								// v_{a,i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
@@ -187,7 +189,6 @@ private:
 	bool permitirAbertura( int turma, Disciplina *disciplina, int campusId );
 
 	void atualizarDemandasEquiv( int campusId, int prioridade );
-	void atualizarDemandasEquiv222( int campusId, int prioridade );
 
 	std::map< Trio< int, Disciplina *, int >, bool > mapPermitirAbertura;
 
