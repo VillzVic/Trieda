@@ -2720,8 +2720,8 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 		
 
 	timer.start();
-	num_vars += this->criaVariavelTaticoFolgaAbreTurmaSequencialAPartirDeX( campusId, P ); // ft_{i,d,cp}
-	//num_vars += this->criaVariavelTaticoFolgaAbreTurmaSequencial( campusId, P ); // ft_{i,d,cp}
+	//num_vars += this->criaVariavelTaticoFolgaAbreTurmaSequencialAPartirDeX( campusId, P ); // ft_{i,d,cp}
+	num_vars += this->criaVariavelTaticoFolgaAbreTurmaSequencial( campusId, P ); // ft_{i,d,cp}
 	timer.stop();
 	dif = timer.getCronoCurrSecs();
 

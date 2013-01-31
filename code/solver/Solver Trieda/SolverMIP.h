@@ -35,6 +35,7 @@
 #include "RandomDescentMethod.h"
 #include "RVND.hpp"
 
+#ifdef SOLVER_CPLEX
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/bron_kerbosch_all_cliques.hpp>
@@ -42,7 +43,6 @@
 
 using namespace boost;
 
-#ifdef SOLVER_CPLEX
 #include "opt_cplex.h"
 #endif
 
@@ -701,11 +701,12 @@ public:
       Campus *, Unidade *, ConjuntoSala *, Sala *,
       int, Oferta *, Curso *, Disciplina *, int, BlocoCurricular * );
 
-   
+#ifdef SOLVER_CPLEX
    GGroup< int > retornaCliques( int turma, Disciplina* disciplina, int campusId );
    void imprimeCliques( int campusId, int prioridade, int cjtAlunosId );
 
     bool solucaoValidaCliquesAux( double *xSol ); // pode deletar se não for usar mais a função de callback
+#endif
 
 private:
 
@@ -873,6 +874,7 @@ private:
 
    int calculaDeslocamentoUnidades( const int, const int );
    
+#ifdef SOLVER_CPLEX
    typedef undirected_graph<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > MyGraph;
    typedef graph_traits<MyGraph>::vertex_descriptor Vertex;
    typedef graph_traits<MyGraph>::edge_descriptor Edge;
@@ -886,6 +888,12 @@ private:
    void constroiGrafoAux( int campusAtualId );
    void atualizaGrafoInsercao( Aluno* aluno, Trio<int,int,Disciplina*> node );
    void atualizaGrafoRemocao( Aluno* aluno, Trio<int,int,Disciplina*> node );
+   
+   bool solucaoValidaCliques( bool zerarGrafo, GGroup<int> dias, Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio );
+
+   std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > cliques;
+
+   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup<int /*cliqueId*/ > > cliquesPorTrio;
 
    // ---------------
    // Usada somente para soluções intermediárias dos pre-modelos, em prioridade maior que 2
@@ -896,13 +904,8 @@ private:
    void preencheAuxMapCampusTurmaDisc_AlunosDemanda( double *xSol ); 
   
    // ---------------
-
-   bool solucaoValidaCliques( bool zerarGrafo, GGroup<int> dias, Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio );
-
-   std::map< int, std::set<Trio< int /*campusId*/, int /*turma*/, Disciplina* > > > cliques;
-
-   std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup<int /*cliqueId*/ > > cliquesPorTrio;
-
+#endif
+   
    int campusAtualId;
    void heuristicaAlocaAlunos( int campusId, int prioridade, int cjtAlunosId );
    void atualizaNroCredsPorDiaAlunos( int campusAtualId, int prioridade );

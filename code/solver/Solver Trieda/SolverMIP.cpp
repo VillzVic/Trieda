@@ -346,10 +346,13 @@ SolverMIP::SolverMIP( ProblemData * aProblemData,
    {
    }
 
-   cliques.clear();
    solVars.clear();
+
+    #ifdef SOLVER_CPLEX
+   cliques.clear();
    graph.clear();
    mapVertex.clear();
+	#endif
 }
 
 SolverMIP::~SolverMIP()
@@ -6197,8 +6200,10 @@ int SolverMIP::solveTaticoPorCampusCjtAlunos()
 						problemData->imprimeAlocacaoAlunos( campusId, P, grupoId, false, r, 0 );
 
 					#ifndef TATICO_COM_HORARIOS
+						#ifdef SOLVER_CPLEX
 						encontraCliques(true);				
 						imprimeCliques( campusId, P, grupoId );
+						#endif
 					#endif
 						int nTaticos=2;
 						for ( int tatico=1; tatico<=nTaticos; tatico++ )
@@ -6581,6 +6586,9 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 		} 
 #pragma endregion
 
+		std::cout << "\n=========================================";
+	    std::cout << "\nGarantindo maximo atendimento...\n"; fflush(NULL);
+
 	    // -------------------------------------------------------------------
 	    // Volta as variaveis que estavam livres
         nChgUB = 0;
@@ -6621,21 +6629,19 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 
 #ifdef SOLVER_GUROBI
 	    lp->setNumIntSols(0);
-		lp->setTimeLimit( 7200 );
+		lp->setTimeLimit( 3600 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPEmphasis(0);
 		lp->setSymetry(0);
-		lp->setCuts(-1);
+		lp->setCuts(0);
+		lp->setPolishAfterTime(2400);
 		lp->setNodeLimit(10000000);
 		lp->setMIPScreenLog( 4 );
 		lp->setMIPRelTol( 0.0 );
 #endif
 
 		lp->updateLP();
-
-		std::cout << "\n=========================================";
-	    std::cout << "\nGarantindo maximo atendimento...\n"; fflush(NULL);
 
 		int *idxN = new int[lp->getNumCols()];
 		double *objN = new double[lp->getNumCols()];
@@ -6836,14 +6842,16 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 	lp->setMIPRelTol(0.0);
 #endif
 #ifdef SOLVER_GUROBI
-      lp->setNumIntSols(0);
-      lp->setTimeLimit(3600);
+	  lp->setPolishAfterIntSol(1);
+	  if ( prioridade==1 ) lp->setTimeLimit( 7200+3600 );
+	  else lp->setTimeLimit(3600);
       lp->setPreSolve(OPT_TRUE);
       lp->setHeurFrequency(1.0);
       lp->setMIPEmphasis(0);
       lp->setSymetry(0);
+	  lp->setPolishAfterTime(9500);
       lp->setNodeLimit(10000000);
-      lp->setCuts(-1);
+      lp->setCuts(0);
       lp->setMIPScreenLog( 4 );
       lp->setMIPRelTol(0.0);
 #endif
@@ -6939,13 +6947,14 @@ int SolverMIP::solvePreTaticoCjtAlunos( int campusId, int prioridade, int cjtAlu
 #endif
 #ifdef SOLVER_GUROBI
       lp->setNumIntSols(0);
-      lp->setTimeLimit(3600);
+      lp->setTimeLimit(1200);
       lp->setPreSolve(OPT_TRUE);
       lp->setHeurFrequency(1.0);
       lp->setMIPEmphasis(0);
       lp->setSymetry(0);
+	  lp->setPolishAfterNode(10000000000);      
       lp->setNodeLimit(10000000);
-      lp->setCuts(-1);
+      lp->setCuts(0);
       lp->setMIPScreenLog( 4 );
 #endif
 
@@ -7303,8 +7312,12 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 			outGaps.close();
 		} 
 #pragma endregion
+				
 
-		fflush(NULL);
+	    // -------------------------------------------------------------------
+	    fflush(NULL);
+		std::cout << "\n=========================================";
+	    std::cout << "\nGarantindo maximo atendimento...\n"; fflush(NULL);
 			
 		// -------------------------------------------------------------------
 		// Volta as variaveis z_{i,d,cp} que estavam livres
@@ -7340,24 +7353,20 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 #endif
 #ifdef SOLVER_GUROBI
 		lp->setNumIntSols(0);
-		lp->setTimeLimit( 10800 );
+		lp->setTimeLimit( 3600 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
 		lp->setMIPEmphasis(0);
+		lp->setPolishAfterTime(900);
 		lp->setSymetry(0);
-		lp->setCuts(-1);
+		lp->setCuts(2);
 		lp->updateLP();
 #endif
 
 		lp->updateLP();
 
 		int *idxN = new int[lp->getNumCols()];
-
-	    // -------------------------------------------------------------------
-	    
-		std::cout << "\n=========================================";
-	    std::cout << "\nGarantindo maximo atendimento...\n"; fflush(NULL);
 
 		double *objN = new double[lp->getNumCols()];
 		lp->getObj(0,lp->getNumCols()-1,objN);
@@ -7583,13 +7592,14 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 #endif
 #ifdef SOLVER_GUROBI
 		lp->setNumIntSols(0);
-		lp->setTimeLimit(7200);
+		lp->setTimeLimit(2700);
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
 		lp->setPolishAfterTime(100000000);
 		lp->setPolishAfterIntSol(100000000);
 		lp->setMIPEmphasis(0);
+		lp->setPolishAfterNode(1);
 		lp->setSymetry(0);
 		lp->setCuts(1);
 		lp->updateLP();
@@ -25137,7 +25147,7 @@ int SolverMIP::cria_restricoes_aluno_sh( int campusId, int cjtAlunosId, int prio
 	numRestAnterior = restricoes;
 #endif
 
-
+	#ifdef SOLVER_CPLEX
 	timer.start();
 	restricoes += cria_restricao_evita_sobrepos_cliqueAlunos( campusId, cjtAlunosId );
 	timer.stop();
@@ -25147,7 +25157,8 @@ int SolverMIP::cria_restricoes_aluno_sh( int campusId, int cjtAlunosId, int prio
 	std::cout << "numRest \"1.2.54\": " << (restricoes - numRestAnterior)  <<" "<<dif <<" sec" << std::endl;
 	numRestAnterior = restricoes;
 #endif
-	
+	#endif
+
 	return restricoes;
 }
 
@@ -28767,7 +28778,7 @@ int SolverMIP::cria_restricao_aluno_unid_dif_dia( int campusId, int cjtAlunosAtu
 //	return restricoes;
 //}
 
-
+#ifdef SOLVER_CPLEX
 int SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjtAlunosAtualId )
 {
    int restricoes = 0;
@@ -28888,7 +28899,7 @@ int SolverMIP::cria_restricao_evita_sobrepos_cliqueAlunos( int campusId, int cjt
 
    return restricoes;
 }
-
+#endif
 
 #endif
 
@@ -62223,7 +62234,7 @@ int SolverMIP::calculaDeslocamentoUnidades(
    return contDeslocamentos;
 }
 
-
+#ifdef SOLVER_CPLEX
 
 GGroup< int > SolverMIP::retornaCliques( int turma, Disciplina* disciplina, int campusId )
 {
@@ -63314,6 +63325,8 @@ bool SolverMIP::heuristicaTentaInsercaoNaTurma( AlunoDemanda *alunoDemanda, int 
 	fflush(NULL);
 	return false;
 }
+
+#endif
 
 void SolverMIP::imprimeAlocacaoFinalHeuristica( int campusId, int prioridade, int grupoAlunosAtualId )
 {
