@@ -39,11 +39,18 @@ public:
    
    GGroup< Calendario*, LessPtr<Calendario> > retornaSemanasLetivasNoPeriodo( int periodo );
 
+   bool possuiDisciplinaComoEquiv( int deq_id );
+   void addIdDiscSubstitutas( int newId ){ ids_discs_substitutas.add(newId); }
+
 private:
    GGroup< std::pair< int, int > > ids_disciplinas_periodo;
    std::string codigo;
    int semanaLetivaId;
    map< int, int > mapMaxCreds;
+    
+   // Armazena os ids das disciplinas que foram usadas como substitutas para alunos do curriculo.
+   // Logo, essa estrutura só tem a chance de ser preenchida após a rodada com equivalencias
+   GGroup<int> ids_discs_substitutas;
 };
 
 #endif

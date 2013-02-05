@@ -84,6 +84,9 @@ bool Curriculo::possuiDisciplina( Disciplina *d )
 	if(it != disciplinas_periodo.end())
 		return true;
 
+	if ( possuiDisciplinaComoEquiv( d->getId() ) )
+		return true;
+
 	return false;
 }
 
@@ -98,3 +101,11 @@ GGroup< Calendario*, LessPtr<Calendario> > Curriculo::retornaSemanasLetivasNoPer
 
 	return calendarios;
 }
+
+ bool Curriculo::possuiDisciplinaComoEquiv( int deq_id )
+ {
+	 if ( ids_discs_substitutas.find( deq_id ) != ids_discs_substitutas.end() )
+		 return true;
+	 else
+		 return false;
+ }

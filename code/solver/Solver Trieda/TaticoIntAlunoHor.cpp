@@ -2398,6 +2398,8 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 						 discOrig->discEquivSubstitutas.end() ) // 'disciplina' é substituta de 'discOrig'
 					{
 						achou=true;
+
+						aluno->getOferta()->curriculo->addIdDiscSubstitutas( disciplina->getId() );
 										
 						int cjtAlunoId = problemData->retornaCjtAlunosId( aluno );
 						if ( cjtAlunoId==0 ) std::cout<<"\nERRO: nao achei cjtAlunoId, muito estranho!\n";
