@@ -9632,86 +9632,116 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
 									}
 
 									// Todas as ofertas atendidas
-									GGroup< Oferta*, LessPtr<Oferta> > ofertas;
+									map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> > mapOftDiscOriginais;
 									ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-									{
-										ofertas.add( itAlunoDemanda->demanda->oferta );									
-									}
-
-									ITERA_GGROUP_LESSPTR( itOferta, ofertas, Oferta )
-									{										
-										Oferta *oferta = *itOferta;
-
-										AtendimentoTatico * at_Tatico = new AtendimentoTatico(
-										this->problemSolution->getIdAtendimentos(),
-										this->problemSolution->getIdAtendimentos() );
-
-										// Verificando se a disciplina é de carater prático ou teórico.
-										if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
-										{
-											at_Tatico->setQtdCreditosTeoricos( nCreds );
-										}
+									{									
+										Demanda *demOrig = itAlunoDemanda->demandaOriginal;
+										if ( demOrig != NULL )
+											mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ demOrig->disciplina ].add( *itAlunoDemanda );
 										else
-										{
-											at_Tatico->setQtdCreditosPraticos( nCreds );
-										}
+											mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ itAlunoDemanda->demanda->disciplina ].add( *itAlunoDemanda );
+									}
+																							
+									map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> >::iterator
+											itMapOft_DiscOrig = mapOftDiscOriginais.begin();
+									for ( ; itMapOft_DiscOrig != mapOftDiscOriginais.end() ; itMapOft_DiscOrig++ )
+									{
+										Oferta *oferta = itMapOft_DiscOrig->first;
 
-										AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
+										map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> > 
+											mapDisc_Alunos = itMapOft_DiscOrig->second;
+
+										map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >::iterator
+											itMap_DiscOrig = mapDisc_Alunos.begin();
+										for ( ; itMap_DiscOrig != mapDisc_Alunos.end(); itMap_DiscOrig++ )
+										{	
+											Disciplina* discOrig = itMap_DiscOrig->first;																																		
 										
-										ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-										{
-											if ( itAlunoDemanda->demanda->oferta != oferta )
-												continue;
+											GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> > alunosDemanda = itMap_DiscOrig->second;
 
-											if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+											AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+											this->problemSolution->getIdAtendimentos(),
+											this->problemSolution->getIdAtendimentos() );
+
+											// Verificando se a disciplina é de carater prático ou teórico.
+											if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
 											{
-												int alunoId = itAlunoDemanda->getAlunoId();
-												int discId = - itAlunoDemanda->demanda->getDisciplinaId();
-												Aluno* aluno = problemData->retornaAluno( alunoId );
+												at_Tatico->setQtdCreditosTeoricos( nCreds );
+											}
+											else
+											{
+												at_Tatico->setQtdCreditosPraticos( nCreds );
+											}
 
-												// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
-												// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
-												AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
-												if ( alunoDemanda != NULL )
+											AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
+										
+											ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemanda, AlunoDemanda )
+											{
+												if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
 												{
-													at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+													int alunoId = itAlunoDemanda->getAlunoId();
+													int discId = - itAlunoDemanda->demanda->getDisciplinaId();
+													Aluno* aluno = problemData->retornaAluno( alunoId );
+
+													// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
+													// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
+													AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
+													if ( alunoDemanda != NULL )
+													{
+														at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+													}
+													else std::cout<<"\nERROR: alunodemanda teorico nao encontrado\n";
+												}
+												else
+												{
+													at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+												}
+											}
+																																	 
+											stringstream str;
+											str << oferta->getId();
+											at_Oferta->setOfertaCursoCampiId( str.str() );
+
+											int id_disc = d->getId();
+											
+											if ( problemData->parametros->considerar_equivalencia &&
+												! problemData->parametros->considerar_equivalencia_por_aluno )
+											{
+												std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
+												Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
+												if ( discOriginal != NULL )
+												{
+													at_Oferta->setDisciplinaSubstitutaId( id_disc );
+													at_Oferta->setDisciplinaId( discOriginal->getId() );
+													at_Oferta->disciplina = d;
+												}
+												else
+												{
+													at_Oferta->setDisciplinaId( id_disc );
+													at_Oferta->disciplina = d;
 												}
 											}
 											else
 											{
-												at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+												at_Oferta->setDisciplinaId( discOrig->getId() );
+												at_Oferta->disciplina = d;
+
+												if ( id_disc != discOrig->getId() )
+												{
+													at_Oferta->setDisciplinaSubstitutaId( id_disc );
+												}
 											}
+
+											at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
+											at_Oferta->setTurma( turma );
+											at_Oferta->oferta = oferta;
+
+											at_Tatico->atendimento_oferta = at_Oferta;
+
+											at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
+
+											++at_Tatico_Counter;
 										}
-																																	 
-										stringstream str;
-										str << oferta->getId();
-										at_Oferta->setOfertaCursoCampiId( str.str() );
-
-										int id_disc = d->getId();
-											 
-										std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
-										Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
-										if ( discOriginal != NULL )
-										{
-											at_Oferta->setDisciplinaSubstitutaId( id_disc );
-											at_Oferta->setDisciplinaId( discOriginal->getId() );
-											at_Oferta->disciplina = d;
-										}
-										else
-										{
-											at_Oferta->setDisciplinaId( id_disc );
-											at_Oferta->disciplina = d;
-										}
-
-										at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
-										at_Oferta->setTurma( turma );
-										at_Oferta->oferta = oferta;
-
-										at_Tatico->atendimento_oferta = at_Oferta;
-
-										at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
-
-										++at_Tatico_Counter;
 
 									}
 
@@ -9762,91 +9792,121 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
 							}
 
 							// Todas as ofertas atendidas
-							GGroup< Oferta*, LessPtr<Oferta> > ofertas;
+							map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> > mapOftDiscOriginais;
 							ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-							{
-								ofertas.add( itAlunoDemanda->demanda->oferta );									
-							}
-
-							ITERA_GGROUP_LESSPTR( itOferta, ofertas, Oferta )
-							{										
-								Oferta *oferta = *itOferta;
-
-								AtendimentoTatico * at_Tatico = new AtendimentoTatico(
-								this->problemSolution->getIdAtendimentos(),
-								this->problemSolution->getIdAtendimentos() );
-
-								// Verificando se a disciplina é de carater prático ou teórico.
-								if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
-								{
-									at_Tatico->setQtdCreditosTeoricos( nCreds );
-								}
+							{									
+								Demanda *demOrig = itAlunoDemanda->demandaOriginal;
+								if ( demOrig != NULL )
+									mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ demOrig->disciplina ].add( *itAlunoDemanda );
 								else
-								{
-									at_Tatico->setQtdCreditosPraticos( nCreds );
-								}
+									mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ itAlunoDemanda->demanda->disciplina ].add( *itAlunoDemanda );
+							}
+																							
+							map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> >::iterator
+									itMapOft_DiscOrig = mapOftDiscOriginais.begin();
+							for ( ; itMapOft_DiscOrig != mapOftDiscOriginais.end() ; itMapOft_DiscOrig++ )
+							{
+								Oferta *oferta = itMapOft_DiscOrig->first;
 
-								AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
-											
-								ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-								{
-									if ( itAlunoDemanda->demanda->oferta != oferta )
-										continue;
+								map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> > 
+									mapDisc_Alunos = itMapOft_DiscOrig->second;
 
-									if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+								map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >::iterator
+									itMap_DiscOrig = mapDisc_Alunos.begin();
+								for ( ; itMap_DiscOrig != mapDisc_Alunos.end(); itMap_DiscOrig++ )
+								{	
+									Disciplina* discOrig = itMap_DiscOrig->first;																																		
+										
+									GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> > alunosDemanda = itMap_DiscOrig->second;
+
+									AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+									this->problemSolution->getIdAtendimentos(),
+									this->problemSolution->getIdAtendimentos() );
+
+									// Verificando se a disciplina é de carater prático ou teórico.
+									if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
 									{
-										int alunoId = itAlunoDemanda->getAlunoId();
-										int discId = - itAlunoDemanda->demanda->getDisciplinaId();
-										Aluno* aluno = problemData->retornaAluno( alunoId );
-
-										// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
-										// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
-										AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
-										if ( alunoDemanda != NULL )
-										{
-											at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
-										}
+										at_Tatico->setQtdCreditosTeoricos( nCreds );
 									}
 									else
 									{
-										at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+										at_Tatico->setQtdCreditosPraticos( nCreds );
 									}
-								}
+
+									AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
+										
+									ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemanda, AlunoDemanda )
+									{
+										if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+										{
+											int alunoId = itAlunoDemanda->getAlunoId();
+											int discId = - itAlunoDemanda->demanda->getDisciplinaId();
+											Aluno* aluno = problemData->retornaAluno( alunoId );
+
+											// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
+											// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
+											AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
+											if ( alunoDemanda != NULL )
+											{
+												at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+											}
+											else std::cout<<"\nERROR: alunodemanda teorico nao encontrado\n";
+										}
+										else
+										{
+											at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+										}
+									}
 																																	 
-								stringstream str;
-								str << oferta->getId();
-								at_Oferta->setOfertaCursoCampiId( str.str() );
+									stringstream str;
+									str << oferta->getId();
+									at_Oferta->setOfertaCursoCampiId( str.str() );
 
-								int id_disc = d->getId();
-											 
-								std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
-								Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
-								if ( discOriginal != NULL )
-								{
-									at_Oferta->setDisciplinaSubstitutaId( id_disc );
-									at_Oferta->setDisciplinaId( discOriginal->getId() );
-									at_Oferta->disciplina = d;
+									int id_disc = d->getId();
+											
+									if ( problemData->parametros->considerar_equivalencia &&
+										! problemData->parametros->considerar_equivalencia_por_aluno )
+									{
+										std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
+										Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
+										if ( discOriginal != NULL )
+										{
+											at_Oferta->setDisciplinaSubstitutaId( id_disc );
+											at_Oferta->setDisciplinaId( discOriginal->getId() );
+											at_Oferta->disciplina = d;
+										}
+										else
+										{
+											at_Oferta->setDisciplinaId( id_disc );
+											at_Oferta->disciplina = d;
+										}
+									}
+									else
+									{		
+										at_Oferta->setDisciplinaId( discOrig->getId() );
+										at_Oferta->disciplina = d;
+
+										if ( id_disc != discOrig->getId() )
+										{
+											at_Oferta->setDisciplinaSubstitutaId( id_disc );
+										}																					
+									}
+
+									at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
+									at_Oferta->setTurma( turma );
+									at_Oferta->oferta = oferta;
+
+									at_Tatico->atendimento_oferta = at_Oferta;
+
+									at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
+
+									++at_Tatico_Counter;
 								}
-								else
-								{
-									at_Oferta->setDisciplinaId( id_disc );
-									at_Oferta->disciplina = d;
-								}
 
-								at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
-								at_Oferta->setTurma( turma );
-								at_Oferta->oferta = oferta;
-
-								at_Tatico->atendimento_oferta = at_Oferta;
-
-								at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
-
-								++at_Tatico_Counter;
-							
 							}
 
 							#pragma endregion
-
+							
                            at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
                            it_At_Unidade->atendimentos_salas->add( at_Sala );
                         }
@@ -9881,9 +9941,9 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
                      this->problemSolution->getIdAtendimentos() );
 
                    at_Dia_Semana->setDiaSemana( dia );
- 					
+ 										
 					#pragma region CADASTRO DE ATENDIMENTO TATICO PARA NOVA UNIDADE
-				   
+
 					Trio<int,int,Disciplina*> trio;
 					trio.set(campus->getId(), turma, d );
 
@@ -9900,88 +9960,121 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
 					}
 
 					// Todas as ofertas atendidas
-					GGroup< Oferta*, LessPtr<Oferta> > ofertas;
+					map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> > mapOftDiscOriginais;
 					ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-					{
-						ofertas.add( itAlunoDemanda->demanda->oferta );									
-					}
-
-					ITERA_GGROUP_LESSPTR( itOferta, ofertas, Oferta )
-					{										
-						Oferta *oferta = *itOferta;
-
-						AtendimentoTatico * at_Tatico = new AtendimentoTatico(
-						this->problemSolution->getIdAtendimentos(),
-						this->problemSolution->getIdAtendimentos() );
-
-						// Verificando se a disciplina é de carater prático ou teórico.
-						if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
-						{
-							at_Tatico->setQtdCreditosTeoricos( nCreds );
-						}
+					{									
+						Demanda *demOrig = itAlunoDemanda->demandaOriginal;
+						if ( demOrig != NULL )
+							mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ demOrig->disciplina ].add( *itAlunoDemanda );
 						else
-						{
-							at_Tatico->setQtdCreditosPraticos( nCreds );
-						}
+							mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ itAlunoDemanda->demanda->disciplina ].add( *itAlunoDemanda );
+					}
+																							
+					map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> >::iterator
+							itMapOft_DiscOrig = mapOftDiscOriginais.begin();
+					for ( ; itMapOft_DiscOrig != mapOftDiscOriginais.end() ; itMapOft_DiscOrig++ )
+					{
+						Oferta *oferta = itMapOft_DiscOrig->first;
 
-						AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
-									
-						ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-						{
-							if ( itAlunoDemanda->demanda->oferta != oferta )
-								continue;
+						map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> > 
+							mapDisc_Alunos = itMapOft_DiscOrig->second;
 
-							if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+						map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >::iterator
+							itMap_DiscOrig = mapDisc_Alunos.begin();
+						for ( ; itMap_DiscOrig != mapDisc_Alunos.end(); itMap_DiscOrig++ )
+						{	
+							Disciplina* discOrig = itMap_DiscOrig->first;																																		
+										
+							GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> > alunosDemanda = itMap_DiscOrig->second;
+
+							AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+							this->problemSolution->getIdAtendimentos(),
+							this->problemSolution->getIdAtendimentos() );
+
+							// Verificando se a disciplina é de carater prático ou teórico.
+							if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
 							{
-								int alunoId = itAlunoDemanda->getAlunoId();
-								int discId = - itAlunoDemanda->demanda->getDisciplinaId();
-								Aluno* aluno = problemData->retornaAluno( alunoId );
-								
-								// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
-								// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
-								AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
-								if ( alunoDemanda != NULL )
-								{
-									at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
-								}
+								at_Tatico->setQtdCreditosTeoricos( nCreds );
 							}
 							else
 							{
-								at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+								at_Tatico->setQtdCreditosPraticos( nCreds );
 							}
-						}
+
+							AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
+										
+							ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemanda, AlunoDemanda )
+							{
+								if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+								{
+									int alunoId = itAlunoDemanda->getAlunoId();
+									int discId = - itAlunoDemanda->demanda->getDisciplinaId();
+									Aluno* aluno = problemData->retornaAluno( alunoId );
+
+									// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
+									// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
+									AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
+									if ( alunoDemanda != NULL )
+									{
+										at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+									}
+									else std::cout<<"\nERROR: alunodemanda teorico nao encontrado\n";
+								}
+								else
+								{
+									at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+								}
+							}
 																																	 
-						stringstream str;
-						str << oferta->getId();
-						at_Oferta->setOfertaCursoCampiId( str.str() );
+							stringstream str;
+							str << oferta->getId();
+							at_Oferta->setOfertaCursoCampiId( str.str() );
 
-						int id_disc = d->getId();
-											 
-						std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
-						Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
-						if ( discOriginal != NULL )
-						{
-							at_Oferta->setDisciplinaSubstitutaId( id_disc );
-							at_Oferta->setDisciplinaId( discOriginal->getId() );
-							at_Oferta->disciplina = d;
+							int id_disc = d->getId();
+											
+							if ( problemData->parametros->considerar_equivalencia &&
+								! problemData->parametros->considerar_equivalencia_por_aluno )
+							{
+								std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
+								Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
+								if ( discOriginal != NULL )
+								{
+									at_Oferta->setDisciplinaSubstitutaId( id_disc );
+									at_Oferta->setDisciplinaId( discOriginal->getId() );
+									at_Oferta->disciplina = d;
+								}
+								else
+								{
+									at_Oferta->setDisciplinaId( id_disc );
+									at_Oferta->disciplina = d;
+								}
+							}
+							else
+							{		
+								at_Oferta->setDisciplinaId( discOrig->getId() );
+								at_Oferta->disciplina = d;
+
+								if ( id_disc != discOrig->getId() )
+								{
+									at_Oferta->setDisciplinaSubstitutaId( id_disc );
+								}																				
+							}
+
+							at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
+							at_Oferta->setTurma( turma );
+							at_Oferta->oferta = oferta;
+
+							at_Tatico->atendimento_oferta = at_Oferta;
+
+							at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
+
+							++at_Tatico_Counter;
 						}
-						else
-						{
-							at_Oferta->setDisciplinaId( id_disc );
-							at_Oferta->disciplina = d;
-						}
 
-						at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
-						at_Oferta->setTurma( turma );
-						at_Oferta->oferta = oferta;
-
-						at_Tatico->atendimento_oferta = at_Oferta;
-
-						at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
-
-						++at_Tatico_Counter;
 					}
+
 					#pragma endregion
+							
 
                     at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
                     at_Unidade->atendimentos_salas->add( at_Sala );
@@ -10024,8 +10117,8 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
 			this->problemSolution->getIdAtendimentos() );
 
 			at_Dia_Semana->setDiaSemana( dia );
-
-			#pragma region CADASTRO DE ATENDIMENTO TATICO PARA NOVO CAMPUS
+         						
+			#pragma region CADASTRO DE ATENDIMENTO TATICO PARA NOVA CAMPUS
 
 			Trio<int,int,Disciplina*> trio;
 			trio.set(campus->getId(), turma, d );
@@ -10043,89 +10136,121 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
 			}
 
 			// Todas as ofertas atendidas
-			GGroup< Oferta*, LessPtr<Oferta> > ofertas;
+			map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> > mapOftDiscOriginais;
 			ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-			{
-				ofertas.add( itAlunoDemanda->demanda->oferta );									
-			}
-
-			ITERA_GGROUP_LESSPTR( itOferta, ofertas, Oferta )
-			{										
-				Oferta *oferta = *itOferta;
-				
-				AtendimentoTatico * at_Tatico = new AtendimentoTatico(
-				this->problemSolution->getIdAtendimentos(),
-				this->problemSolution->getIdAtendimentos() );
-
-				// Verificando se a disciplina é de carater prático ou teórico.
-				if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
-				{
-					at_Tatico->setQtdCreditosTeoricos( nCreds );
-				}
+			{									
+				Demanda *demOrig = itAlunoDemanda->demandaOriginal;
+				if ( demOrig != NULL )
+					mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ demOrig->disciplina ].add( *itAlunoDemanda );
 				else
-				{
-					at_Tatico->setQtdCreditosPraticos( nCreds );
-				}
+					mapOftDiscOriginais[ itAlunoDemanda->demanda->oferta ][ itAlunoDemanda->demanda->disciplina ].add( *itAlunoDemanda );
+			}
+																							
+			map< Oferta*, map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >, LessPtr<Oferta> >::iterator
+					itMapOft_DiscOrig = mapOftDiscOriginais.begin();
+			for ( ; itMapOft_DiscOrig != mapOftDiscOriginais.end() ; itMapOft_DiscOrig++ )
+			{
+				Oferta *oferta = itMapOft_DiscOrig->first;
 
-				AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
-								
-				ITERA_GGROUP_LESSPTR( itAlunoDemanda, itMap->second, AlunoDemanda )
-				{
-					if ( itAlunoDemanda->demanda->oferta != oferta )
-						continue;
+				map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> > 
+					mapDisc_Alunos = itMapOft_DiscOrig->second;
 
-					if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+				map< Disciplina*, GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> >, LessPtr<Disciplina> >::iterator
+					itMap_DiscOrig = mapDisc_Alunos.begin();
+				for ( ; itMap_DiscOrig != mapDisc_Alunos.end(); itMap_DiscOrig++ )
+				{	
+					Disciplina* discOrig = itMap_DiscOrig->first;																																		
+										
+					GGroup< AlunoDemanda*, LessPtr<AlunoDemanda> > alunosDemanda = itMap_DiscOrig->second;
+
+					AtendimentoTatico * at_Tatico = new AtendimentoTatico(
+					this->problemSolution->getIdAtendimentos(),
+					this->problemSolution->getIdAtendimentos() );
+
+					// Verificando se a disciplina é de carater prático ou teórico.
+					if ( d->getId() > 0 && d->getCredTeoricos() > 0 )
 					{
-						int alunoId = itAlunoDemanda->getAlunoId();
-						int discId = - itAlunoDemanda->demanda->getDisciplinaId();
-						Aluno* aluno = problemData->retornaAluno( alunoId );
-
-						// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
-						// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
-						AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
-						if ( alunoDemanda != NULL )
-						{
-							at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
-						}
+						at_Tatico->setQtdCreditosTeoricos( nCreds );
 					}
 					else
 					{
-						at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+						at_Tatico->setQtdCreditosPraticos( nCreds );
 					}
-				}
+
+					AtendimentoOferta * at_Oferta = new AtendimentoOferta( this->problemSolution->getIdAtendimentos() );
+										
+					ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemanda, AlunoDemanda )
+					{
+						if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+						{
+							int alunoId = itAlunoDemanda->getAlunoId();
+							int discId = - itAlunoDemanda->demanda->getDisciplinaId();
+							Aluno* aluno = problemData->retornaAluno( alunoId );
+
+							// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
+							// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
+							AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
+							if ( alunoDemanda != NULL )
+							{
+								at_Oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+							}
+							else std::cout<<"\nERROR: alunodemanda teorico nao encontrado\n";
+						}
+						else
+						{
+							at_Oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+						}
+					}
 																																	 
-				stringstream str;
-				str << oferta->getId();
-				at_Oferta->setOfertaCursoCampiId( str.str() );
+					stringstream str;
+					str << oferta->getId();
+					at_Oferta->setOfertaCursoCampiId( str.str() );
 
-				int id_disc = d->getId();
-											 
-				std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
-				Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
-				if ( discOriginal != NULL )
-				{
-					at_Oferta->setDisciplinaSubstitutaId( id_disc );
-					at_Oferta->setDisciplinaId( discOriginal->getId() );
-					at_Oferta->disciplina = d;
+					int id_disc = d->getId();
+											
+					if ( problemData->parametros->considerar_equivalencia &&
+						! problemData->parametros->considerar_equivalencia_por_aluno )
+					{
+						std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
+						Disciplina *discOriginal = problemData->ehSubstitutaDe( d, parCursoCurr );
+						if ( discOriginal != NULL )
+						{
+							at_Oferta->setDisciplinaSubstitutaId( id_disc );
+							at_Oferta->setDisciplinaId( discOriginal->getId() );
+							at_Oferta->disciplina = d;
+						}
+						else
+						{
+							at_Oferta->setDisciplinaId( id_disc );
+							at_Oferta->disciplina = d;
+						}
+					}
+					else
+					{		
+						at_Oferta->setDisciplinaId( discOrig->getId() );
+						at_Oferta->disciplina = d;
+
+						if ( id_disc != discOrig->getId() )
+						{
+							at_Oferta->setDisciplinaSubstitutaId( id_disc );
+						}
+					}
+
+					at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
+					at_Oferta->setTurma( turma );
+					at_Oferta->oferta = oferta;
+
+					at_Tatico->atendimento_oferta = at_Oferta;
+
+					at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
+
+					++at_Tatico_Counter;
 				}
-				else
-				{
-					at_Oferta->setDisciplinaId( id_disc );
-					at_Oferta->disciplina = d;
-				}
 
-				at_Oferta->setQuantidade( at_Oferta->alunosDemandasAtendidas.size() );
-				at_Oferta->setTurma( turma );
-				at_Oferta->oferta = oferta;
-
-				at_Tatico->atendimento_oferta = at_Oferta;
-
-				at_Dia_Semana->atendimentos_tatico->add( at_Tatico );
-
-				++at_Tatico_Counter;
 			}
-			#pragma endregion
-         
+
+			#pragma endregion							
+
 			at_Sala->atendimentos_dias_semana->add( at_Dia_Semana );
 			at_Unidade->atendimentos_salas->add( at_Sala );
 			at_Campus->atendimentos_unidades->add( at_Unidade );
@@ -15281,7 +15406,7 @@ int SolverMIP::cria_preVariavel_folga_demanda_disciplina_aluno( int campusId, in
 						//if ( aluno->ehFormando() )
 						//	coef = 150.0 * cp->getCusto() * disciplina->getTotalCreditos();
 						//else
-							coef = 50.0 * cp->getCusto() * disciplina->getTotalCreditos();
+							coef = 100.0 * cp->getCusto() * disciplina->getTotalCreditos();
 					}
 				}
 				
@@ -21052,58 +21177,58 @@ int SolverMIP::cria_preRestricao_limite_cred_aluno(int campusId, int cjtAlunosId
 				continue;
 			}
 
-         c.reset();
-         c.setType( ConstraintPre::C_PRE_MAX_CREDS_ALUNO_SEMANA );
-         c.setAluno( aluno );
-         c.setCampus( cp );
+			c.reset();
+			c.setType( ConstraintPre::C_PRE_MAX_CREDS_ALUNO_SEMANA );
+			c.setAluno( aluno );
+			c.setCampus( cp );
 
-         sprintf( name, "%s", c.toString().c_str() ); 
+			sprintf( name, "%s", c.toString().c_str() ); 
 
-         if ( cHashPre.find( c ) != cHashPre.end() )
-         {
-            continue;
-         }
+			if ( cHashPre.find( c ) != cHashPre.end() )
+			{
+				continue;
+			}
 
-         int maxTempoSemana = 0;
+			int maxTempoSemana = 0;
 
-         OPT_ROW row( 100, OPT_ROW::LESS , maxTempoSemana, (char*)c.toString().c_str() );
+			OPT_ROW row( 100, OPT_ROW::LESS , maxTempoSemana, (char*)c.toString().c_str() );
 
 			ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
 			{
 				Disciplina *disciplina = (*itAlDemanda)->demanda->disciplina;
 
-            int ttSem = disciplina->getTempoTotalSemana();
-            if ( ttSem > maxTempoSemana )
-               maxTempoSemana = ttSem;
+				int ttSem = disciplina->getTempoTotalSemana();
+				if ( ttSem > maxTempoSemana )
+					maxTempoSemana = ttSem;
 
-            std::list<VariablePreHash::iterator> listVars = mapDiscVarCred[disciplina];
+				std::list<VariablePreHash::iterator> listVars = mapDiscVarCred[disciplina];
 
-            for (std::list<VariablePreHash::iterator>::iterator itVars = listVars.begin();
-               itVars != listVars.end();
-               itVars++)
-            {
-               int col = (*itVars)->second;
-               v = (*itVars)->first;
+				for (std::list<VariablePreHash::iterator>::iterator itVars = listVars.begin();
+					itVars != listVars.end();
+					itVars++)
+				{
+					int col = (*itVars)->second;
+					v = (*itVars)->first;
 
-               if ( v.getAluno() != aluno )
-                  continue;
+					if ( v.getAluno() != aluno )
+						continue;
 
-               double coef = disciplina->getTotalCreditos();
-               coef *= disciplina->getTempoCredSemanaLetiva();
+					double coef = disciplina->getTotalCreditos();
+					coef *= disciplina->getTempoCredSemanaLetiva();
 
-               row.insert(col,coef);
-            }
+					row.insert(col,coef);
+				}
 
-            row.setRhs(maxTempoSemana);
+			}
+			row.setRhs(maxTempoSemana);
 
-            if ( row.getnnz() >= 1 )
-            {
-               cHashPre[ c ] = lp->getNumRows();
-               lp->addRow( row );
-               restricoes++;
-            }
-         }
-      }
+			if ( row.getnnz() >= 1 )
+			{
+				cHashPre[ c ] = lp->getNumRows();
+				lp->addRow( row );
+				restricoes++;
+			}
+       }
    }
 
 	return restricoes;

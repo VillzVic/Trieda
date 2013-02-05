@@ -1617,7 +1617,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 #endif
 #ifdef SOLVER_GUROBI
 		lp->setNumIntSols(0);
-		lp->setTimeLimit(7200);
+		lp->setTimeLimit(7200 + 1800);
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
@@ -3402,86 +3402,71 @@ int TaticoIntAlunoHor::criaVariavelTaticoCursoAlunos( int campusId, int P )
 {
 	int numVars = 0;
    
-	Disciplina * disciplina = NULL;
-   
-   ITERA_GGROUP_LESSPTR( it_Oferta, problemData->ofertas, Oferta )
-   {
-       Campus * pt_Campus = it_Oferta->campus;
-       Curso * pt_Curso = it_Oferta->curso;
+	ITERA_GGROUP_LESSPTR( it_Disc, problemData->disciplinas, Disciplina )
+    {
+		 Disciplina * disciplina = *it_Disc;
 
-	   if ( pt_Campus->getId() != campusId )
-	   {
-		   continue;
-	   }
+		 GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> alunosdemanda;
 
-       map < Disciplina*, int, LessPtr< Disciplina > >::iterator it_Prd_Disc = 
-         it_Oferta->curriculo->disciplinas_periodo.begin();
-      for(; it_Prd_Disc != it_Oferta->curriculo->disciplinas_periodo.end();
-         it_Prd_Disc++ )
-      {
-		  disciplina = it_Prd_Disc->first;
+		 if ( problemData->parametros->considerar_equivalencia_por_aluno && USAR_EQUIVALENCIA )
+			alunosdemanda = problemData->retornaDemandasDiscNoCampus_Equiv( disciplina, campusId, P );
+		 else
+			 alunosdemanda = problemData->retornaDemandasDiscNoCampus( disciplina->getId(), campusId, P );
 
-		  #pragma region Equivalencias
-		  if ( ( problemData->mapDiscSubstituidaPor.find( disciplina ) !=
-				problemData->mapDiscSubstituidaPor.end() ) &&
-				!problemData->ehSubstituta( disciplina ) )
-		  {
-			  continue;
-		  }
-		  #pragma endregion
+		 ITERA_GGROUP_LESSPTR( it_AlDem, alunosdemanda, AlunoDemanda )
+		 {
+			 Campus * pt_Campus = it_AlDem->demanda->oferta->campus;
+			 Curso * pt_Curso = it_AlDem->demanda->oferta->curso;
+		
+			 if ( pt_Campus->getId() != campusId )
+			 {
+				 continue;
+			 }
 
-		  int n=0;		  
-		  if ( problemData->parametros->considerar_equivalencia_por_aluno && USAR_EQUIVALENCIA )
-			n = problemData->haDemandaDiscNoCursoEquiv( disciplina, pt_Curso->getId() );
-		  else
-			n = problemData->haDemandaDiscNoCurso( disciplina->getId(), pt_Curso->getId() );
-		  
-		  if ( n <= 0 ) continue;
+			 for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+			 {
+				VariableTatInt v;
+				v.reset();
+				v.setType( VariableTatInt::V_TURMA_ATEND_CURSO );
 
-         for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
-         {
-            VariableTatInt v;
-            v.reset();
-            v.setType( VariableTatInt::V_TURMA_ATEND_CURSO );
+				v.setTurma( turma );           // i
+				v.setDisciplina( disciplina ); // d
+				v.setCurso( pt_Curso );        // c
+				v.setCampus( pt_Campus );	    // cp
 
-            v.setTurma( turma );           // i
-            v.setDisciplina( disciplina ); // d
-            v.setCurso( pt_Curso );        // c
-            v.setCampus( pt_Campus );	    // cp
+				if ( vHashTatico.find( v ) == vHashTatico.end() )
+				{
+					bool fixar=false;
 
-            if ( vHashTatico.find( v ) == vHashTatico.end() )
-            {
-				bool fixar=false;
+					if ( !criaVariavelTatico( &v, fixar, P ) )
+						continue;
 
-				if ( !criaVariavelTatico( &v, fixar, P ) )
-					continue;
-
-				vHashTatico[ v ] = lp->getNumCols();
+					vHashTatico[ v ] = lp->getNumCols();
 									
-				double lowerBound = 0.0;
-				double upperBound = 1.0;
+					double lowerBound = 0.0;
+					double upperBound = 1.0;
 
-				if ( fixar ) lowerBound = 1.0;
+					if ( fixar ) lowerBound = 1.0;
 
-				double coef=0.0;
-				if ( problemData->parametros->funcao_objetivo == 0 )
-				{
-					coef = -1.0;
+					double coef=0.0;
+					if ( problemData->parametros->funcao_objetivo == 0 )
+					{
+						coef = -1.0;
+					}
+					else if ( problemData->parametros->funcao_objetivo == 1 )
+					{
+						coef = 1.0;
+					}
+
+				   OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
+					  ( char * )v.toString().c_str() );
+
+				   lp->newCol( col );
+				   numVars++;
 				}
-				else if ( problemData->parametros->funcao_objetivo == 1 )
-				{
-					coef = 1.0;
-				}
-
-               OPT_COL col( OPT_COL::VAR_BINARY, coef, lowerBound, upperBound,
-                  ( char * )v.toString().c_str() );
-
-               lp->newCol( col );
-               numVars++;
-            }
-         }
-      }
-   }
+			 }
+		 }
+    }
 	
 	return numVars;
 }

@@ -2817,16 +2817,6 @@ void ProblemDataLoader::gera_refs()
       }
    }
 	
-   // teste			 
-	ITERA_GGROUP_LESSPTR( it_t, problemData->todos_turnos, Turno )
-	{
-		std::cout<<"\nTurno "<<it_t->getId()<< ": ";
-		ITERA_GGROUP_LESSPTR( it_h, it_t->horarios_aula, HorarioAula )
-		{
-		std::cout<<" "<<it_h->getId();				 
-		}
-	}
-
    ITERA_GGROUP_LESSPTR( it_campi, problemData->campi, Campus )
    {
       ITERA_GGROUP_LESSPTR( it_unidades, it_campi->unidades, Unidade )
@@ -3485,7 +3475,7 @@ void ProblemDataLoader::estima_turmas_sem_compart()
 		   int capacMediaSala = d->getCapacMediaSala( cp->getId() );
 
 		   int maximoAlunosTurma = 999;
-		   if ( discId < 0 ) maximoAlunosTurma = d->getMaxAlunosP();
+		   if ( d->getCredPraticos() > 0 ) maximoAlunosTurma = d->getMaxAlunosP();
 		   else maximoAlunosTurma = d->getMaxAlunosT();
 		   if ( maximoAlunosTurma < capacMediaSala )
 			   capacMediaSala = maximoAlunosTurma;

@@ -121,6 +121,7 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
    min_alunos_abertura_turmas_value = elem.minAlunosAberturaTurmasValor().get();
 
    // TODO
+  // considerar_equivalencia_por_aluno = false;
    considerar_equivalencia_por_aluno = considerar_equivalencia;
    considerar_equivalencia = false;
 
