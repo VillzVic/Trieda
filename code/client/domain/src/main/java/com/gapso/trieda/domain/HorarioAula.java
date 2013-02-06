@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,6 +77,23 @@ public class HorarioAula
         sb.append( "Horario: ").append( getHorario() );
 
         return sb.toString();
+    }
+    
+    public boolean estahContidoEm(Calendar horarioInicio, Calendar horarioFim) {
+    	// dado que iremos comparar apenas horas é necessário que todas as instâncias de calendário estejam no mesmo dia
+    	
+    	horarioInicio.set(1979,Calendar.NOVEMBER,6,horarioInicio.get(Calendar.HOUR_OF_DAY),horarioInicio.get(Calendar.MINUTE),0);
+    	horarioFim.set(1979,Calendar.NOVEMBER,6,horarioFim.get(Calendar.HOUR_OF_DAY),horarioFim.get(Calendar.MINUTE),0);
+    	
+    	Calendar thisHorarioInicio = Calendar.getInstance();
+    	thisHorarioInicio.setTime(horario);
+    	thisHorarioInicio.set(1979,Calendar.NOVEMBER,6,thisHorarioInicio.get(Calendar.HOUR_OF_DAY),thisHorarioInicio.get(Calendar.MINUTE),0);
+    	Calendar thisHorarioFim = Calendar.getInstance();
+    	thisHorarioFim.setTime(thisHorarioInicio.getTime());
+    	thisHorarioFim.add(Calendar.MINUTE,semanaLetiva.getTempo());
+    	
+    	return (horarioInicio.compareTo(thisHorarioInicio) <= 0) && 
+    		   (thisHorarioFim.compareTo(horarioFim) <= 0);
     }
 
     @PersistenceContext

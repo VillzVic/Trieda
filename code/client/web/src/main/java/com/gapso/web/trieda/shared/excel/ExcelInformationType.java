@@ -15,6 +15,7 @@ public enum ExcelInformationType
 	DISCIPLINAS_SALAS( "Disciplinas-Salas" ),
 	PALETA_CORES( "PaletaCores" ),
 	PROFESSORES( "Professores" ),
+	DISPONIBILIDADES_PROFESSORES( "Disponibilidades Professores" ),
 	CAMPI_TRABALHO( "Campi de Trabalho" ),
 	RELATORIO_VISAO_SALA( "Relatorio Visao Sala" ),
 	RELATORIO_VISAO_CURSO( "Relatorio Visao Curso" ),
@@ -27,7 +28,10 @@ public enum ExcelInformationType
 	HABILITACAO_PROFESSORES( "Habilitacao dos Professores" ),
 	ATENDIMENTOS_POR_ALUNO( "Atendimentos por Aluno" ),
 	AULAS( "Aulas" ),
-	ALUNOS( "Alunos" );
+	ALUNOS( "Alunos" ),
+	TODAS_TABELAS( "" ),
+	TODAS_GRADES_HORARIAS( "" ),
+	TODAS_VISAO_ALUNO( "" );
 
 	private String sheetName;
 

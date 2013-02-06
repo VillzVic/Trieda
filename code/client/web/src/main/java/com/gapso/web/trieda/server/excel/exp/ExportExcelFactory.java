@@ -35,7 +35,8 @@ public class ExportExcelFactory {
 			case DISCIPLINAS_SALAS: exporter = new DisciplinasSalasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case EQUIVALENCIAS: exporter = new EquivalenciasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino); break;
 			case HABILITACAO_PROFESSORES: exporter = new HabilitacoesProfessoresExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
-			case PROFESSORES: exporter = new ProfessoresExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			//case PROFESSORES: exporter = new ProfessoresExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case PROFESSORES: exporter = new MultiExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{ProfessoresExportExcel.class,DisponibilidadesProfessoresExportExcel.class} ); break;
 			case RELATORIO_VISAO_CURSO: exporter = new RelatorioVisaoCursoExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino ); break;
 			case RELATORIO_VISAO_SALA: exporter = new RelatorioVisaoSalaExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino ); break;
 			case RELATORIO_VISAO_PROFESSOR: exporter = new RelatorioVisaoProfessorExportExcel(cenario, i18nConstants, i18nMessages, filter, visaoProfessor, instituicaoEnsino ); break;
@@ -45,6 +46,9 @@ public class ExportExcelFactory {
 			case SALAS: exporter = new SalasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case TUDO: exporter = new TRIEDAExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino ); break;
 			case UNIDADES: exporter = new UnidadesExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case TODAS_TABELAS:  exporter = new TRIEDATabelasExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino ); break;
+			case TODAS_GRADES_HORARIAS:  exporter = new TRIEDAGradesHorariasExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino ); break;
+			case TODAS_VISAO_ALUNO:  exporter = new TRIEDAVisaoAlunoExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino ); break;
 		}
 
 		return exporter;

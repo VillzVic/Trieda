@@ -24,7 +24,8 @@ public class ImportExcelFactory
 			case CURSOS: importer = new CursosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case AREAS_TITULACAO: importer = new AreasTitulacaoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DISCIPLINAS_SALAS: importer = new DisciplinasSalasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
-			case PROFESSORES: importer = new ProfessoresImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			//case PROFESSORES: importer = new ProfessoresImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case PROFESSORES: importer = new MultiImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{ProfessoresImportExcel.class,DisponibilidadesProfessoresImportExcel.class} ); break;
 			case DISCIPLINAS: importer = new DisciplinasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case EQUIVALENCIAS: importer = new EquivalenciasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case CURSO_AREAS_TITULACAO: importer = new CursoAreasTitulacaoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;

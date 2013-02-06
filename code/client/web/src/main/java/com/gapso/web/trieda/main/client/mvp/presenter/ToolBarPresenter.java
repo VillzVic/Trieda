@@ -137,6 +137,9 @@ public class ToolBarPresenter
 		Button getUsuariosListButton();
 		Button getImportarButton();
 		Button getExportarButton();
+		Button getExportarTabelasButton();
+		Button getExportarGradesHorariasButton();
+		Button getExportarVisaoAlunoButton();
 		Button getCarregarSolucaoButton();
 
 		Button getSemanasLetivaListCampiButton();
@@ -627,6 +630,57 @@ public class ToolBarPresenter
 			{
 				ExcelParametros parametros = new ExcelParametros(
 					ExcelInformationType.TUDO, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		this.toolBar.getExportarTabelasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			// Fazendo com que exporte todos dados do masterdata.
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TODAS_TABELAS, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		this.toolBar.getExportarGradesHorariasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			// Fazendo com que exporte todos dados do masterdata.
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TODAS_GRADES_HORARIAS, instituicaoEnsinoDTO );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		this.toolBar.getExportarVisaoAlunoButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			// Fazendo com que exporte todos dados do masterdata.
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TODAS_VISAO_ALUNO, instituicaoEnsinoDTO );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );

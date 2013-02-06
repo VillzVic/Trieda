@@ -14,10 +14,10 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-public class TRIEDAExportExcel
+public class TRIEDAVisaoAlunoExportExcel
 	extends AbstractExportExcel
 {
-	public TRIEDAExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+	public TRIEDAVisaoAlunoExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor,
 		InstituicaoEnsino instituicaoEnsino )
 	{
@@ -52,7 +52,7 @@ public class TRIEDAExportExcel
 	@Override
 	protected String getReportName()
 	{
-		return getI18nConstants().trieda();
+		return getI18nConstants().trieda() + "VisaoAluno";
 	}
 
 	@Override
@@ -60,31 +60,9 @@ public class TRIEDAExportExcel
 	{
 		List< IExportExcel > exporters = new ArrayList< IExportExcel >();
 
-		exporters.add( new CampiExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new UnidadesExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new SalasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new CursosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new AreasTitulacaoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new CursoAreasTitulacaoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new DisciplinasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new DisciplinasSalasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new EquivalenciasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new CampiTrabalhoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new CurriculosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
 		exporters.add( new DemandasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new AlunosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
 		exporters.add( new AlunosDemandaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new ProfessoresExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new DisponibilidadesProfessoresExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new HabilitacoesProfessoresExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new ResumoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new ResumoDisciplinaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new RelatorioVisaoSalaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new RelatorioVisaoProfessorExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.isVisaoProfessor(), this.instituicaoEnsino ) );
-		exporters.add( new RelatorioVisaoCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
 		exporters.add( new RelatorioVisaoAlunoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new AtendimentosPorSalaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
-		exporters.add( new AulasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino ) );
 
 		Exception exception = null;
 		try {

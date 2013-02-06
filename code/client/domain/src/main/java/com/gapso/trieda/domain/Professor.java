@@ -1,11 +1,13 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -34,6 +36,8 @@ import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gapso.trieda.misc.Semanas;
 
 @Configurable
 @Entity
@@ -244,7 +248,7 @@ public class Professor
 		this.campi = campi;
 	}
 
-	private Set< HorarioDisponivelCenario > getHorarios()
+	public Set< HorarioDisponivelCenario > getHorarios()
 	{
 		return this.horarios;
 	}
@@ -359,6 +363,52 @@ public class Professor
 					count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
 				}
 			}
+		}
+	}
+	
+	@Transactional
+	static public void atualizaHorariosDosProfessores(Map<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>> disponibilidadeToProfessoresMap, List<SemanaLetiva> semanasLetivas) {
+		// coleta os professores disponíveis por dia da semana e tempo de aula
+		int count = 0;
+		Map<HorarioDisponivelCenario, Set<Professor>> hdcToProfessorMap = new HashMap<HorarioDisponivelCenario, Set<Professor>>();
+		for (Entry<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>> entry : disponibilidadeToProfessoresMap.entrySet()) {
+			TriedaTrio<Semanas,Calendar,Calendar> disponibilidade = entry.getKey();
+			List<Professor> professores = entry.getValue();			
+			for (SemanaLetiva semanaLetiva : semanasLetivas) {
+				// para cada tempo de aula
+				for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+					// verifica se o intervalo de horas é compatível
+					boolean horarioAulaEstahContidoEmDisponibilidade = horarioAula.estahContidoEm(disponibilidade.getSegundo(),disponibilidade.getTerceiro()); 
+					// para cada dia da semana
+					for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+						Set<Professor> professoresDisponiveisNoDiaEHorario = hdcToProfessorMap.get(hdc);
+						if (professoresDisponiveisNoDiaEHorario == null) {
+							professoresDisponiveisNoDiaEHorario = new HashSet<Professor>();
+							hdcToProfessorMap.put(hdc,professoresDisponiveisNoDiaEHorario);
+						}
+						
+						// verifica se o dia da semana é compatível
+						if (horarioAulaEstahContidoEmDisponibilidade && hdc.getDiaSemana().equals(disponibilidade.getPrimeiro())) {
+							professoresDisponiveisNoDiaEHorario.addAll(professores);
+						}
+						
+						count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
+					}
+				}
+			}
+		}
+		
+		// atualiza disponibilidades de professores
+		count = 0;
+		for (Entry<HorarioDisponivelCenario, Set<Professor>> entry : hdcToProfessorMap.entrySet()) {
+			HorarioDisponivelCenario hdc = entry.getKey();
+			Set<Professor> professoresDisponiveisNoDiaEHorario = entry.getValue();
+			
+			hdc.getProfessores().clear();
+			hdc.getProfessores().addAll(professoresDisponiveisNoDiaEHorario);
+			hdc.merge();
+			
+			count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
 		}
 	}
 

@@ -1259,7 +1259,7 @@ public class DisciplinasServiceImpl
 				Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> pair = map2.get( key1 ).get( key2 );
 				ResumoDisciplinaDTO mainDTO = pair.getLeft();
 				
-				System.out.println("***"+mainDTO.getDisciplinaString()+"-"+mainDTO.getTurma()+"-"+mainDTO.getTipoCreditoTeorico());//TODO: retirar
+				//System.out.println("***"+mainDTO.getDisciplinaString()+"-"+mainDTO.getTurma()+"-"+mainDTO.getTipoCreditoTeorico());//TODO: retirar
 				
 				// separar por curso-curriculo por conta do compartilhamento de aulas entre cursos
 				Map<String,List<ResumoDisciplinaDTO>> dtoPorCursoCurriculoMap = new HashMap<String,List<ResumoDisciplinaDTO>>();
@@ -1274,7 +1274,7 @@ public class DisciplinasServiceImpl
 						dtoPorCursoCurriculoMap.put(cursoCurriculoKey,list1);
 					}
 					list1.add(dto);
-					System.out.println("   @ "+cursoCurriculoKey);//TODO: retirar
+					//System.out.println("   @ "+cursoCurriculoKey);//TODO: retirar
 					
 					// dia semana
 					String key = dto.getDiaSemanaId()+"-"+dto.getHorarioId();
@@ -1288,12 +1288,12 @@ public class DisciplinasServiceImpl
 				
 				if (dtoPorCursoCurriculoMap.keySet().size() > 1) {
 					String primeiroCursoCurriculoId = dtoPorCursoCurriculoMap.keySet().iterator().next();
-					System.out.println("   # "+primeiroCursoCurriculoId);//TODO: retirar
+					//System.out.println("   # "+primeiroCursoCurriculoId);//TODO: retirar
 					
 					for (ResumoDisciplinaDTO dto : dtoPorCursoCurriculoMap.get(primeiroCursoCurriculoId)) {
 						// acumula a qtde de créditos
 						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
-						System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos()+" "+dto.getCursoId()+"-"+dto.getCurriculoId());//TODO: retirar
+						//System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos()+" "+dto.getCursoId()+"-"+dto.getCurriculoId());//TODO: retirar
 						// calcula e acumula custo docente
 						Double docente = dto.getCustoDocente().getDoubleValue();
 						int creditos = dto.getCreditos();
@@ -1315,7 +1315,7 @@ public class DisciplinasServiceImpl
 					for (ResumoDisciplinaDTO dto : pair.getRight()) {
 						// acumula a qtde de créditos
 						mainDTO.setCreditos(dto.getCreditos() + (mainDTO.getCreditos() != null ? mainDTO.getCreditos(): 0));
-						System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos());//TODO: retirar
+						//System.out.println("   + "+dto.getCreditos()+" = "+mainDTO.getCreditos());//TODO: retirar
 						// calcula e acumula custo docente
 						Double docente = dto.getCustoDocente().getDoubleValue();
 						Double receita = dto.getReceita().getDoubleValue();

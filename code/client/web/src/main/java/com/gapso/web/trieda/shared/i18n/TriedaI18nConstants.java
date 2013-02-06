@@ -54,11 +54,13 @@ public interface TriedaI18nConstants
 	String descricaoCurriculo();
 	String deslocamentoUnidades();
 	String deslocamentoUnidadesCampus();
+	String dia();
 	String diasHorariosAula();
 	String disciplina();
 	String disciplinas();
 	String disciplinasAssociadas();
 	String disciplinasSalas();
+	String disponibilidadesProfessores();
 	String disponibilidadesSemanaLetiva();
 	String edicaoDe();
 	String editar();
@@ -69,6 +71,8 @@ public interface TriedaI18nConstants
 	String habilitacaoProfessores();
 	String gruposSalas();
 	String horarios();
+	String horarioInicial();
+	String horarioFinal();
 	String importarExcel();
 	String informacao();
 	String insercaoDe();

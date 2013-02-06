@@ -208,6 +208,11 @@ public class GTriedaI18nConstants
 	}
 	
 	@Override
+	public String dia() {
+		return this.languageManager.getText("dia");
+	}
+	
+	@Override
 	public String diasHorariosAula() {
 		return this.languageManager.getText("diasHorariosAula");
 	}
@@ -230,6 +235,11 @@ public class GTriedaI18nConstants
 	@Override
 	public String disciplinasSalas() {
 		return this.languageManager.getText("disciplinasSalas");
+	}
+	
+	@Override
+	public String disponibilidadesProfessores() {
+		return this.languageManager.getText("disponibilidadesProfessores");
 	}
 
 	@Override
@@ -280,6 +290,16 @@ public class GTriedaI18nConstants
 	@Override
 	public String horarios() {
 		return this.languageManager.getText("horarios");
+	}
+	
+	@Override
+	public String horarioInicial() {
+		return this.languageManager.getText("horarioInicial");
+	}
+
+	@Override
+	public String horarioFinal() {
+		return this.languageManager.getText("horarioFinal");
 	}
 
 	@Override

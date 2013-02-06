@@ -109,6 +109,13 @@ public enum ImportExcelError
 	DISCIPLINASALA_PERIODO_VAZIO,
 	DISCIPLINASALA_SALA_VAZIO,
 	
+	DISPONIBILIDADE_DIA_SEMANA_VALOR_INVALIDO,
+	DISPONIBILIDADE_DIA_SEMANA_VAZIO,
+	DISPONIBILIDADE_HORARIO_INICIAL_FORMATO_INVALIDO,
+	DISPONIBILIDADE_HORARIO_INICIAL_VAZIO,
+	DISPONIBILIDADE_HORARIO_FINAL_FORMATO_INVALIDO,
+	DISPONIBILIDADE_HORARIO_FINAL_VAZIO,
+	
 	EQUIVALENCIA_CURSOU_VAZIO,
 	EQUIVALENCIA_ELIMINA_VAZIO,
 	
@@ -262,6 +269,13 @@ public enum ImportExcelError
 			case DISCIPLINASALA_PERIODO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DisciplinasSalasImportExcel.PERIODO_COLUMN_NAME);
 			case DISCIPLINASALA_PERIODO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.PERIODO_COLUMN_NAME);
 			case DISCIPLINASALA_SALA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.SALA_COLUMN_NAME);
+			
+			case DISPONIBILIDADE_DIA_SEMANA_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,DisponibilidadesProfessoresImportExcel.DIA_SEMANA_COLUMN_NAME);
+			case DISPONIBILIDADE_DIA_SEMANA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisponibilidadesProfessoresImportExcel.DIA_SEMANA_COLUMN_NAME);
+			case DISPONIBILIDADE_HORARIO_INICIAL_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisponibilidadesProfessoresImportExcel.HORARIO_INICIAL_COLUMN_NAME);
+			case DISPONIBILIDADE_HORARIO_INICIAL_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisponibilidadesProfessoresImportExcel.HORARIO_INICIAL_COLUMN_NAME);
+			case DISPONIBILIDADE_HORARIO_FINAL_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisponibilidadesProfessoresImportExcel.HORARIO_FINAL_COLUMN_NAME);
+			case DISPONIBILIDADE_HORARIO_FINAL_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisponibilidadesProfessoresImportExcel.HORARIO_FINAL_COLUMN_NAME);
 			
 			case EQUIVALENCIA_CURSOU_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.CURSOU_COLUMN_NAME);
 			case EQUIVALENCIA_ELIMINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.ELIMINA_COLUMN_NAME);

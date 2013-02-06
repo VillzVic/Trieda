@@ -71,6 +71,7 @@ public class TRIEDAImportExcel
 			importers.add( new AlunosImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new AlunosDemandaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new ProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
+			importers.add( new DisponibilidadesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CampiTrabalhoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new HabilitacoesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 
@@ -133,5 +134,4 @@ public class TRIEDAImportExcel
 	{
 		return ExcelInformationType.TUDO.getSheetName();
 	}
-
 }

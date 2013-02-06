@@ -97,6 +97,9 @@ public class ToolBarView
 	private Button usuariosListBt;
 	private Button importarBt;
 	private Button exportarBt;
+	private Button exportarTabelasBt;
+	private Button exportarGradesHorariasBt;
+	private Button exportarVisaoAlunoBt;
 	private Button carregarSolucaoBt;
 
 	// Calendário
@@ -430,6 +433,15 @@ public class ToolBarView
 		exportarBt = createButton("Exportar<br />Tudo","Exportar Tudo",Resources.DEFAULTS.exportar24());
 		administracaoToolBar.add(exportarBt);
 		
+		exportarTabelasBt = createButton("Exportar<br />Tabelas","Exportar Tabelas",Resources.DEFAULTS.exportar24());
+		administracaoToolBar.add(exportarTabelasBt);
+		
+		exportarGradesHorariasBt = createButton("Exportar<br />Grades","Exportar Grades Horárias",Resources.DEFAULTS.exportar24());
+		administracaoToolBar.add(exportarGradesHorariasBt);
+		
+		exportarVisaoAlunoBt = createButton("Exportar<br />Visão Aluno","Exportar Visão Aluno",Resources.DEFAULTS.exportar24());
+		administracaoToolBar.add(exportarVisaoAlunoBt);
+		
 		carregarSolucaoBt = createButton("Carregar<br />Solução","Carregar Solução",Resources.DEFAULTS.trieda24());
 		administracaoToolBar.add(carregarSolucaoBt);
 	}
@@ -586,6 +598,24 @@ public class ToolBarView
 	public Button getExportarButton()
 	{
 		return exportarBt;
+	}
+	
+	@Override
+	public Button getExportarTabelasButton()
+	{
+		return exportarTabelasBt;
+	}
+	
+	@Override
+	public Button getExportarGradesHorariasButton()
+	{
+		return exportarGradesHorariasBt;
+	}
+	
+	@Override
+	public Button getExportarVisaoAlunoButton()
+	{
+		return exportarVisaoAlunoBt;
 	}
 	
 	@Override
