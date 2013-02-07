@@ -1369,17 +1369,32 @@ AlunoDemanda* ProblemData::procuraAlunoDemandaEquiv( Disciplina* disc, Aluno *al
 	}
 
 	// not found at first level, search deeper
-	
-	ITERA_GGROUP_LESSPTR( itAlDemanda, aluno->demandas, AlunoDemanda )
+
+	Disciplina *disciplina=NULL;
+	if ( disc->getId() < 0 ) disciplina = this->refDisciplinas[ -disc->getId() ];
+	else disciplina = disc;
+
+	ITERA_GGROUP_LESSPTR( itDiscOrig, disciplina->discEquivalentes, Disciplina ) // itera as possiveis substituídas (originais)
 	{
-		if ( retornaTurmaDiscAluno( aluno, itAlDemanda->demanda->disciplina ) == -1 &&
-			 itAlDemanda->demanda->disciplina->discEquivSubstitutas.find( disc ) !=
-			 itAlDemanda->demanda->disciplina->discEquivSubstitutas.end() &&
-			 itAlDemanda->getPrioridade() <= prioridade )
-		{
-			return *itAlDemanda;
+		int origId = (*itDiscOrig)->getId();
+
+		AlunoDemanda *alDem = aluno->getAlunoDemanda( origId );
+		if ( retornaTurmaDiscAluno( aluno, *itDiscOrig ) == -1 &&
+			 alDem != NULL &&
+			 alDem->getPrioridade() <= prioridade )
+		{			
+			if ( disc->getId() < 0 && origId > 0 )
+			{
+				if ( this->refDisciplinas.find(-origId) != this->refDisciplinas.end() )
+				{
+					AlunoDemanda *alDemPratica = aluno->getAlunoDemanda( -origId );
+					return alDemPratica;
+				}
+			}
+			return alDem;
 		}
 	}
+
 
 	std::cout<<"\nAtencao: ProblemData::procuraAlunoDemandaEquiv: Demanda nao encontrada. Aluno "
 		<< aluno->getAlunoId() << " Disc " << disc->getId() << endl;
@@ -2677,6 +2692,10 @@ std::string ProblemData::getAlocacaoAlunosFileName( int campusId, int prioridade
 {
    std::string solName( "AlocacaoAlunos" );
    
+   if ( tatico == 0 )
+   {
+		 solName += "Pre"; 
+   }
    if ( campusId != 0 )
    {	   
 		 stringstream ss;

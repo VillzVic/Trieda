@@ -329,14 +329,20 @@ std::string VariableOp::toString()
           << ",Dia" << aula->getDiaSemana()
           << ",Sala" << aula->getSala()->getId()
           << ",NCred" << aula->getTotalCreditos();
-	  ITERA_GGROUP_LESSPTR( itOft, aula->ofertas, Oferta )
-	  {
-		  str << "(Oft" << (*itOft)->getId();
-		  if ( aula->getDisciplinaSubstituida(*itOft) != NULL )
-			str << ",DiscAntiga" << aula->getDisciplinaSubstituida(*itOft)->getId()<<")";
-		  else
+
+	   ITERA_GGROUP_LESSPTR( itOft, aula->ofertas, Oferta )
+	   {
+			str << "(Oft" << (*itOft)->getId();
+			GGroup<Disciplina*, LessPtr<Disciplina>> discsOrig = aula->getDisciplinasSubstituidas(*itOft);
+			ITERA_GGROUP_LESSPTR( itDiscOrig, discsOrig, Disciplina )
+			{
+				Disciplina* original = *itDiscOrig;
+				if ( original != NULL )
+					str << " ,DiscAntiga" << original->getCodigo();
+			}
 			str << ")";
-	  }
+	   }
+
 	  str << ")";
    }
 

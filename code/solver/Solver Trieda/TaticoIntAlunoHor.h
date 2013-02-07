@@ -192,6 +192,8 @@ private:
 
 	std::map< Trio< int, Disciplina *, int >, bool > mapPermitirAbertura;
 
+	std::map< int /*discId*/, GGroup<AlunoDemanda*,LessPtr<AlunoDemanda>> > mapDiscAlunosDemanda; // para auxilio na criação das variaveis
+
 };
 
 

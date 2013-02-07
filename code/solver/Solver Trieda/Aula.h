@@ -40,7 +40,7 @@ public:
    std::map<Oferta*,int> getQuantidade() const;
    int getQuantidadePorOft( Oferta *oft );
    int getQuantidadeTotal();
-   Disciplina * getDisciplinaSubstituida(Oferta* oft);
+   GGroup<Disciplina*, LessPtr<Disciplina>> getDisciplinasSubstituidas(Oferta* oft);
 
    bool atendeAoCurso( int cursoId );
 
@@ -181,7 +181,7 @@ private:
 	
    // disciplina original, que foi substituida em um curriculo.
    // Se for NULL é porque não houve substituição, e "disciplina" já é a original.
-   std::map<Oferta*,Disciplina*, LessPtr<Oferta>> disciplinaSubstituida;
+   std::map<Oferta*, GGroup<Disciplina*, LessPtr<Disciplina>>, LessPtr<Oferta>> disciplinaSubstituida;
 
    // Indica se uma aula é virtual ou não.
    bool aula_virtual;

@@ -12589,73 +12589,92 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
                      atendimento_horario_aula->setCreditoTeorico( aula->getCreditosTeoricos() > 0 );
                      atendimento_horario_aula->horario_aula = h;
                      atendimento_horario_aula->professor = professor;
-
+					 					 
                      GGroup< Oferta *, LessPtr< Oferta > >::iterator 
                         it_oferta = aula->ofertas.begin();
 
                      for (; it_oferta != aula->ofertas.end(); ++it_oferta )
                      {
                         Oferta * oferta = ( *it_oferta );
-                        AtendimentoOferta * atendimento_oferta = new AtendimentoOferta(
-                           this->problemSolution->getIdAtendimentos() );
 
- 						std::pair< Curso *, Curriculo * > parCursoCurr = std::make_pair( oferta->curso, oferta->curriculo );
-						Disciplina *discOriginal = problemData->ehSubstitutaDe( aula->getDisciplina(), parCursoCurr );
-						if ( discOriginal != NULL )
+						GGroup<Disciplina*, LessPtr<Disciplina>> discsOrig = aula->getDisciplinasSubstituidas( oferta );
+
+						ITERA_GGROUP_LESSPTR( itDisc, discsOrig, Disciplina )
 						{
-							atendimento_oferta->setDisciplinaSubstitutaId( aula->getDisciplina()->getId() );
-							atendimento_oferta->setDisciplinaId( discOriginal->getId() );
-							atendimento_oferta->disciplina = discOriginal;
-						}
-						else
-						{
-							atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
-							atendimento_oferta->disciplina = aula->getDisciplina();
-						}
-						
-                        atendimento_oferta->setId( oferta->getId() );
-                        atendimento_oferta->setTurma( aula->getTurma() );
-                        atendimento_oferta->setQuantidade( aula->getQuantidadePorOft(oferta) );
+							Disciplina *discOriginal = *itDisc;
 
-						// ----- alunosDemandasAtendidas -----
-						Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
-						trio.set( campus->getId(), aula->getTurma(), aula->getDisciplina() );
+							// se discOriginal for null, é pq não houve substituição para algum aluno da 'oferta' na 'aula',
+							// e a disc original é a aula->getDisciplina() mesmo.
 
-						GGroup<AlunoDemanda*, LessPtr< AlunoDemanda >> alunosDemanda =
-							problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ];
-
-						ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemanda, AlunoDemanda )
-						{
-							if ( itAlunoDemanda->demanda->oferta != oferta )
-								continue;
-
-							if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+							AtendimentoOferta * atendimento_oferta = new AtendimentoOferta(
+							   this->problemSolution->getIdAtendimentos() );
+												
+							if ( problemData->parametros->considerar_equivalencia_por_aluno )
 							{
-								int alunoId = itAlunoDemanda->getAlunoId();
-								int discId = - itAlunoDemanda->demanda->getDisciplinaId();
-								Aluno* aluno = problemData->retornaAluno( alunoId );
-
-								// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
-								// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
-								AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
-								if ( alunoDemanda != NULL )
+								if ( discOriginal != NULL )
 								{
-									atendimento_oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+									atendimento_oferta->setDisciplinaSubstitutaId( aula->getDisciplina()->getId() );
+									atendimento_oferta->setDisciplinaId( discOriginal->getId() );
+									atendimento_oferta->disciplina = discOriginal;
+								}
+								else
+								{
+									atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
+									atendimento_oferta->disciplina = aula->getDisciplina();
+								}						
+							}
+
+							atendimento_oferta->setId( oferta->getId() );
+							atendimento_oferta->setTurma( aula->getTurma() );
+
+							// ----- alunosDemandasAtendidas -----
+							Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+							trio.set( campus->getId(), aula->getTurma(), aula->getDisciplina() );
+
+							int n=0;
+
+							GGroup<AlunoDemanda*, LessPtr< AlunoDemanda >> alunosDemanda =
+								problemData->mapCampusTurmaDisc_AlunosDemanda[ trio ];
+							ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemanda, AlunoDemanda )
+							{
+								if ( itAlunoDemanda->demanda->oferta != oferta )
+									continue;
+
+								if ( ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == NULL ) ||
+									 ( ( itAlunoDemanda->demandaOriginal != NULL && discOriginal != NULL ) &&
+									   ( itAlunoDemanda->demandaOriginal->getDisciplinaId() == discOriginal->getId() ) ) )
+								{
+									n++;
+									if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
+									{
+										int alunoId = itAlunoDemanda->getAlunoId();
+										int discId = - itAlunoDemanda->demanda->getDisciplinaId();
+										Aluno* aluno = problemData->retornaAluno( alunoId );
+
+										// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
+										// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
+										AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
+										if ( alunoDemanda != NULL )
+										{
+											atendimento_oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+										}
+									}
+									else
+									{
+										atendimento_oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+									}									
 								}
 							}
-							else
-							{
-								atendimento_oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
-							}
-						}
-						// -----
-						
-						stringstream str;
-                        str << oferta->getId();
-                        atendimento_oferta->setOfertaCursoCampiId( str.str() );
-                        atendimento_oferta->oferta = oferta;
+							// -----
 
-                        atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta );                        
+							atendimento_oferta->setQuantidade( n );
+							stringstream str;
+							str << oferta->getId();
+							atendimento_oferta->setOfertaCursoCampiId( str.str() );
+							atendimento_oferta->oferta = oferta;
+
+							atendimento_horario_aula->atendimentos_ofertas->add( atendimento_oferta ); 
+						}
                      }
 
                      atendimento_turno->atendimentos_horarios_aula->add( atendimento_horario_aula );

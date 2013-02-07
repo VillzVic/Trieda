@@ -65,7 +65,8 @@ void Aula::setQuantidade( int value, Oferta* oft )
 
 void Aula::setDisciplinaSubstituida( Disciplina * d, Oferta* oft )
 {
-   this->disciplinaSubstituida[oft] = d;
+   this->disciplinaSubstituida[oft];
+   this->disciplinaSubstituida[oft].add(d);
 }
 
 int Aula::getTurma() const
@@ -132,14 +133,15 @@ int Aula::getQuantidadeTotal()
 	return n;
 }
 
-Disciplina* Aula::getDisciplinaSubstituida( Oferta* oft )
+GGroup<Disciplina*, LessPtr<Disciplina>> Aula::getDisciplinasSubstituidas( Oferta* oft )
 {
-	std::map<Oferta*,Disciplina*, LessPtr<Oferta>>::iterator 
+	GGroup<Disciplina*, LessPtr<Disciplina>> disciplinas;
+
+	std::map<Oferta*,GGroup<Disciplina*, LessPtr<Disciplina>>, LessPtr<Oferta>>::iterator 
 		it = disciplinaSubstituida.find(oft);
-	if ( it == disciplinaSubstituida.end() )
-		return NULL;
-	else
-		return (*it).second;
+	if ( it != disciplinaSubstituida.end() )
+		disciplinas = (*it).second;
+	return disciplinas;
 }
 
 bool Aula::atendeAoCurso( int cursoId )
@@ -173,9 +175,13 @@ void Aula::toString()
    for (; itOferta != ofertas.end(); ++itOferta )
    {
         std::cout << itOferta->getId() << " ";
-		Disciplina* original = disciplinaSubstituida[*itOferta];
-		if ( original != NULL )
-			std::cout << " (Disciplina Substituida: " << original->getCodigo() << ")";
+		GGroup<Disciplina*, LessPtr<Disciplina>> discsOrig = disciplinaSubstituida[*itOferta];
+		ITERA_GGROUP_LESSPTR( itDiscOrig, discsOrig, Disciplina )
+		{
+			Disciplina* original = *itDiscOrig;
+			if ( original != NULL )
+				std::cout << " (Disciplina Substituida: " << original->getCodigo() << ")";
+		}
    }
    //-------------------------------------------------------------
 
