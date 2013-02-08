@@ -2544,11 +2544,17 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 							{
 								std::cout<<"ERRO BRUTO!"; continue;
 							}
-							if ( alDemTeorico->demanda->getDisciplinaId() != abs(disciplina->getId()) && 
-								 alDemTeorico->demanda->disciplina->discEquivSubstitutas.find( problemData->refDisciplinas[abs(disciplina->getId())] ) !=
-								 alDemTeorico->demanda->disciplina->discEquivSubstitutas.end() )
+							if ( alDemTeorico->demanda->getDisciplinaId() != abs(disciplina->getId()) ) // ainda nao troquei a teorica substituta
+							if ( alDemTeorico->demanda->disciplina->discEquivSubstitutas.find( disciplina ) ==
+								 alDemTeorico->demanda->disciplina->discEquivSubstitutas.end() ) // entao alDemTeorico->demanda->disciplina deve ser a original teorica
+							{
+								if ( alDemTeorico->demanda->disciplina->getId() != discOrig->getId() )
+									std::cout<<"\nErro1: origId"<<discOrig->getId();
 								std::cout<<"\nErro, a disc"<<alDemTeorico->demanda->getDisciplinaId()<<" nao eh a teorica correta"
-								<<" nem substituta da disc"<<disciplina->getId();
+								<<" nem substituida da disc"<<disciplina->getId()<<"\n\tsubstitutas:";
+								ITERA_GGROUP_LESSPTR( it, alDemTeorico->demanda->disciplina->discEquivSubstitutas, Disciplina )
+									std::cout<<" "<<it->getId();
+							}
 
 							if ( alDemTeorico!=NULL )
 								this->problemData->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDemTeorico );
@@ -2599,6 +2605,9 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 	{
 		outEquiv.close();
 	}
+
+	problemData->imprimeResumoDemandasPorAlunoPosEquiv();
+
 }
 
 
@@ -2617,6 +2626,8 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 #endif
 	
 	// Preenche o map para auxilio na criação das variaveis
+	std::cout << "\nPreenchendo mapDiscAlunosDemanda para auxilio na criacao de variaveis..." ;
+	timer.start();	
 	if ( problemData->parametros->considerar_equivalencia_por_aluno && USAR_EQUIVALENCIA ) 
 	{		
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
@@ -2627,7 +2638,10 @@ int TaticoIntAlunoHor::criaVariaveisTatico( int campusId, int P, int r )
 		ITERA_GGROUP_LESSPTR( itDisc, problemData->disciplinas, Disciplina )
 			this->mapDiscAlunosDemanda[(*itDisc)->getId()] = problemData->retornaDemandasDiscNoCampus( (*itDisc)->getId(), campusId, P );
 	}
-	
+	timer.stop();
+	dif = timer.getCronoCurrSecs();
+	std::cout << " preenchido! \t" << dif <<" sec" <<std::endl;
+
 
 	timer.start();
 	num_vars += this->criaVariavelTaticoCreditos( campusId, P ); // x_{i,d,u,s,t,h,i,hf}
@@ -9173,7 +9187,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoAtendeAlunoEquiv( int campusId, int pr
 					continue;
 				}
 
-				for ( int turma = 0; turma < disciplina->getNumTurmas(); turma++ )
+				for ( int turma = 0; turma < deq->getNumTurmas(); turma++ )
 				{
 					VariableTatInt v;
 					v.reset();

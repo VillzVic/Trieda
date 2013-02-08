@@ -512,6 +512,7 @@ public:
 
    void confereExcessoP2( int campusId );
    void imprimeResumoDemandasPorAluno();
+   void imprimeResumoDemandasPorAlunoPosEquiv();
 
    private:
    

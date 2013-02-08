@@ -3774,3 +3774,82 @@ void ProblemData::imprimeResumoDemandasPorAluno()
 
 	demandasFile.close();
 }
+
+
+void ProblemData::imprimeResumoDemandasPorAlunoPosEquiv()
+{
+	if ( this->parametros->otimizarPor != "ALUNO" )
+		return;
+
+	ofstream demandasFile;
+	std::string demandasFilename( "demandasAlunosPosEquiv_" );
+	demandasFilename += this->inputFileName;
+	demandasFilename += ".txt";
+	demandasFile.open(demandasFilename, ios::out);
+	if (!demandasFile)
+	{
+		cerr << "Error: Can't open output file " << demandasFilename << endl;
+		return;
+	}
+
+	demandasFile <<"Demandas por aluno:";
+
+	ITERA_GGROUP_LESSPTR( itAluno, alunos, Aluno )
+	{		
+		Aluno *a = (*itAluno);
+		
+		double tempoTotal=0.0;
+
+		demandasFile <<"\n\n" << a->getNomeAluno() << "\t" << a->getAlunoId();
+
+		ITERA_GGROUP_LESSPTR( itAlunoDemanda, a->demandas, AlunoDemanda )
+		{
+			AlunoDemanda *alDem = (*itAlunoDemanda);
+
+			demandasFile <<"\nDiscId " << alDem->demanda->getDisciplinaId() 
+				<< ", AlunoDemandaId " << alDem->getId()
+				<< ", DemandaId " << alDem->getDemandaId()
+				<< ", Prioridade " << alDem->getPrioridade()
+				<< ", " << alDem->demanda->disciplina->getTotalCreditos() << " creditos";
+			
+			tempoTotal += (*itAlunoDemanda)->demanda->disciplina->getTotalTempo();
+			
+			if ( alDem->demandaOriginal!=NULL )
+				demandasFile <<"\tDemanda Original: " << alDem->demandaOriginal->getId() << " Disc: " << alDem->demandaOriginal->getDisciplinaId();
+			else if ( this->parametros->considerar_equivalencia_por_aluno &&
+				      (*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas.size() > 0 )
+			{
+				demandasFile <<"\tPossiveis substitutas por equiv: ";
+				ITERA_GGROUP_LESSPTR( itDiscEquiv, (*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas, Disciplina )	
+					demandasFile <<"DiscId " << (*itDiscEquiv)->getId() << "  ";
+			}
+
+		}		
+		demandasFile <<"\nTempo total requerido: "<< tempoTotal<< endl;
+
+		ITERA_GGROUP_LESSPTR( itAlunoDemanda, alunosDemandaTotal, AlunoDemanda )
+		{				
+			if ( (*itAlunoDemanda)->getAlunoId() != a->getAlunoId() )
+				continue;
+			
+			if ( a->demandas.find( (*itAlunoDemanda) ) != a->demandas.end() )
+				continue;
+
+			demandasFile <<"\nDiscId " << (*itAlunoDemanda)->demanda->getDisciplinaId()
+				<< ", AlunoDemandaId " << (*itAlunoDemanda)->getId()
+				<< ", DemandaId " << (*itAlunoDemanda)->getDemandaId()
+				<< ", Prioridade " << (*itAlunoDemanda)->getPrioridade()
+				<< ", " << (*itAlunoDemanda)->demanda->disciplina->getTotalCreditos() << " creditos";
+
+			if ( this->parametros->considerar_equivalencia_por_aluno &&
+				(*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas.size() > 0 )
+			{
+				demandasFile <<"\tPossiveis substitutas por equiv: ";
+				ITERA_GGROUP_LESSPTR( itDiscEquiv, (*itAlunoDemanda)->demanda->disciplina->discEquivSubstitutas, Disciplina )	
+					demandasFile <<"DiscId " << (*itDiscEquiv)->getId() << "  "; 
+			}
+		}
+	}
+
+	demandasFile.close();
+}
