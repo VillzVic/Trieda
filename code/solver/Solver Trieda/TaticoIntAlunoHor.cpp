@@ -2394,6 +2394,7 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 				ITERA_GGROUP_LESSPTR ( itAlDem, aluno->demandas, AlunoDemanda ) // procura AlunoDemanda original
 				{
 					AlunoDemanda *alDem = (*itAlDem);
+					Demanda *demandaOriginal;
 
 					Disciplina *discOrig = alDem->demanda->disciplina;
 					int turmaAluno = problemData->retornaTurmaDiscAluno( aluno, discOrig );	
@@ -2404,6 +2405,7 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 						 ( disciplina->getId() < 0 && discOrig->getId() == -disciplina->getId() ) &&
 						 ( alDem->demandaOriginal != NULL ) )  // teorica de 'disciplina' ja foi trocada
 					{
+						 demandaOriginal = alDem->demandaOriginal;
 						 discOrig = alDem->demandaOriginal->disciplina;
 						 OK=true;
 					}
@@ -2411,6 +2413,7 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 					          ( discOrig->discEquivSubstitutas.find( disciplina ) !=
 						        discOrig->discEquivSubstitutas.end() ) ) // 'disciplina' é substituta de 'discOrig'
 					{
+						demandaOriginal = alDem->demanda;
 						OK=true;
 					}
 
@@ -2510,13 +2513,12 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 
 						// Cria AlunoDemanda para disciplina pratica
 						if ( caso==2 && disciplina->getId() < 0 )
-						{
+						{						
 							idAlDemanda++;
-							AlunoDemanda *novo_aluno_demanda_p = new AlunoDemanda( idAlDemanda, aluno->getAlunoId(), alDem->getPrioridade(), dem );
+							AlunoDemanda *novo_aluno_demanda_p = new AlunoDemanda( idAlDemanda, aluno->getAlunoId(), alDem->getPrioridade(), demandaOriginal );
 							problemData->alunosDemandaTotal.add( novo_aluno_demanda_p );
 							problemData->alunosDemanda.add( novo_aluno_demanda_p );
 							aluno->demandas.add( novo_aluno_demanda_p );
-							this->problemData->mapDemandaAlunos[ dem ].add( novo_aluno_demanda_p );
 							this->problemData->cjtAlunoDemanda[cjtAlunoId].add( novo_aluno_demanda_p );
 							
 							// reinsere corretamente o alunoDemanda pratico nos maps!
@@ -2557,8 +2559,7 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 							}
 
 							if ( alDemTeorico!=NULL )
-								this->problemData->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDemTeorico );
-							
+								this->problemData->mapCampusTurmaDisc_AlunosDemanda[trio].remove( alDemTeorico );							
 							this->problemData->mapCampusTurmaDisc_AlunosDemanda[trio].add( novo_aluno_demanda_p );
 
 							alDem = novo_aluno_demanda_p;
@@ -5321,7 +5322,7 @@ int TaticoIntAlunoHor::criaVariavelTaticoFormandosNaTurma( int campusId, int pri
 	if ( !problemData->parametros->violar_min_alunos_turmas_formandos )
 		return numVars;
 
-	if ( prior==1 && r==1 ) // só considera formandos a partir da segunda rodada
+	if ( prior==1 && r==1 ) // não considera formandos em r1 de p1
 		return numVars;
 
 	std::map< int /*Id Campus*/, GGroup< int > /*Id Discs*/ >::iterator it_CpDisc = problemData->cp_discs.begin();

@@ -7184,6 +7184,8 @@ int SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjt
 		   printf( "Total of Constraints: %i\n\n", constNum );
 			#endif
 		   		   
+		   	lp->writeProbLP( string("0"+ string(lpName) ).c_str() );
+
 			if ( CARREGA_TESTE ) testeCarregaSol( campusId, prioridade, cjtAlunosId, r, tatico );
 
 		}
@@ -7781,7 +7783,7 @@ void SolverMIP::fixaAtendimentosVariaveisCreditosAnterior()
 	lp->chgBds(nBds,idxs,bdsu,vals);
 }
 
-void SolverMIP::liberaAtendimentosVariaveisFFD()
+void SolverMIP::liberaAtendimentosVariaveis_FFD_FD()
 {
 	int nBds=0;
 	int *idxs = new int[lp->getNumCols()*2];
@@ -7805,6 +7807,35 @@ void SolverMIP::liberaAtendimentosVariaveisFFD()
 			bdsl[nBds] = BOUNDTYPE::BOUND_LOWER;
 			bdsu[nBds] = BOUNDTYPE::BOUND_UPPER;
 			nBds++;
+		}
+		else if ( v.getType() == VariableTatico::V_SLACK_DEMANDA ) // necessario nos casos de atendimento parcial, por pratica+teorica
+		{
+			//int turma = v.getTurma();
+			//int discId = v.getDisciplina()->getId();
+			//int campusId = v.getCampus()->getId();
+
+			//if ( problemData->existeTurmaDiscCampus(turma, discId, campusId ) )
+			//{
+			//	int lb = 0.0;
+			//	int ub = 0.0;
+			//	idxs[nBds] = vit->second;
+			//	vall[nBds] = lb;
+			//	valu[nBds] = ub;
+			//	bdsl[nBds] = BOUNDTYPE::BOUND_LOWER;
+			//	bdsu[nBds] = BOUNDTYPE::BOUND_UPPER;
+			//	nBds++;
+			//}
+			//else
+			//{
+				int lb = 0.0;
+				int ub = 1.0;
+				idxs[nBds] = vit->second;
+				vall[nBds] = lb;
+				valu[nBds] = ub;
+				bdsl[nBds] = BOUNDTYPE::BOUND_LOWER;
+				bdsu[nBds] = BOUNDTYPE::BOUND_UPPER;
+				nBds++;			
+			//}
 		}
 	}
 	
@@ -9538,6 +9569,9 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
 	  Sala *sala = ( *it_Vars_x )->getSala();
       Unidade * unidade = ( *it_Vars_x )->getUnidade();
 
+	  if ( d->getId() == -9868 )
+		  std::cout<<"\naqui";
+
       // Descobrindo qual Campus a variável x em questão pertence.
       Campus * campus = problemData->refCampus[ ( *it_Vars_x )->getUnidade()->getIdCampus() ];
 	
@@ -10118,7 +10152,7 @@ void SolverMIP::getSolutionTaticoPorAlunoComHorario()
 
 			at_Dia_Semana->setDiaSemana( dia );
          						
-			#pragma region CADASTRO DE ATENDIMENTO TATICO PARA NOVA CAMPUS
+			#pragma region CADASTRO DE ATENDIMENTO TATICO PARA NOVO CAMPUS
 
 			Trio<int,int,Disciplina*> trio;
 			trio.set(campus->getId(), turma, d );
@@ -29107,7 +29141,7 @@ int SolverMIP::criaVariaveisTatico( int campusId, int P, int r, int tatico )
 		
 
 		fixaAtendimentosVariaveisCreditosAnterior();
-		liberaAtendimentosVariaveisFFD();
+		liberaAtendimentosVariaveis_FFD_FD();
 
 		return num_vars;
 	}

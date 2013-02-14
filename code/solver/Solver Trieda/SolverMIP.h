@@ -75,7 +75,7 @@ using namespace boost;
 #endif
 
 
-#define READ_SOLUTION
+//#define READ_SOLUTION
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -633,7 +633,7 @@ public:
    int fixaLimiteInferiorVariavelPre_CjtAlunos( VariablePre *v );
    int fixaLimiteSuperiorVariavelPre_CjtAlunos( VariablePre *v );
    void fixaAtendimentosVariaveisCreditosAnterior();
-   void liberaAtendimentosVariaveisFFD();
+   void liberaAtendimentosVariaveis_FFD_FD();
    void voltaComAlunosNaoAlocados();
 
    double fixaLimitesVariavelTaticoPriorAnterior( Variable *v, bool &FOUND );
