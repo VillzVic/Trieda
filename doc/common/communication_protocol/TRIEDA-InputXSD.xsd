@@ -1359,6 +1359,7 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>informa a quantidade de créditos práticos consumidos pela atendimento da oferta em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="horarioAula" type="GrupoIdentificador" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoCampusSolucao">
