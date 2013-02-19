@@ -204,6 +204,7 @@
           <xs:documentation>informa a quantidade de créditos práticos consumidos pela atendimento da oferta em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="horariosAula" type="GrupoIdentificador" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAlunoDemanda">
