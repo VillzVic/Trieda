@@ -2916,6 +2916,22 @@ class ItemAtendimentoTatico: public ::xml_schema::type
   void
   qtdeCreditosPraticos (const qtdeCreditosPraticos_type& x);
 
+
+  /*
+	 List of schedules
+  */ 
+
+
+
+
+
+
+
+
+
+
+
+
   //@}
 
   /**

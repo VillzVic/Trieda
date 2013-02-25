@@ -257,6 +257,8 @@ std::string ConstraintTatInt::toString()
       ss << "__(C_INT_ATIVA_Z):"; break;  	    
 	case C_TURMA_COM_MESMOS_ALUNOS_POR_AULA:
       ss << "__(C_INT_TURMA_COM_MESMOS_ALUNOS_POR_AULA):"; break;  	      
+	case C_DISC_DIA_HOR_PROF:
+      ss << "__(C_INT_DISC_DIA_HOR_PROF):"; break;  
 
    default:
       ss << "!";

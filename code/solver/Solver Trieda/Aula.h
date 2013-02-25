@@ -27,6 +27,11 @@ public:
    void setAulaFixada( bool );
    void setQuantidade( int, Oferta* );
    void setDisciplinaSubstituida( Disciplina *, Oferta* );
+   void setHorarioAulaInicial( HorarioAula *h );
+   void setHorarioAulaFinal( HorarioAula *h );
+
+   void addHorariosAulaId( int id );
+   
 
    int getTurma() const;
    Disciplina * getDisciplina() const;
@@ -41,6 +46,9 @@ public:
    int getQuantidadePorOft( Oferta *oft );
    int getQuantidadeTotal();
    GGroup<Disciplina*, LessPtr<Disciplina>> getDisciplinasSubstituidas(Oferta* oft);
+   HorarioAula* getHorarioAulaInicial() const;
+   HorarioAula* getHorarioAulaFinal() const;
+   GGroup<int> getHorariosAulaId() const;
 
    bool atendeAoCurso( int cursoId );
 
@@ -85,19 +93,30 @@ public:
          return true;
       else if ( quantidade > right.quantidade )
          return false;
-      
-	  /*
-	  if( disciplinaSubstituida == NULL && right.getDisciplinaSubstituida() != NULL )
+
+	  if ( hi == NULL && right.getHorarioAulaInicial() != NULL )
 		  return true;
-	  else if( disciplinaSubstituida != NULL && right.getDisciplinaSubstituida() == NULL )
+	  else if ( hi != NULL && right.getHorarioAulaInicial() == NULL )
 		  return false;
-	  else if( disciplinaSubstituida != NULL && right.getDisciplinaSubstituida() != NULL )
+	  else if ( hi != NULL && right.getHorarioAulaInicial() != NULL )
 	  {
-		  if( *disciplinaSubstituida < *right.getDisciplinaSubstituida() )
-				return true;
-		  else if( *right.getDisciplinaSubstituida() < *disciplinaSubstituida )
-				return false;
-	  }*/
+		  if ( *hi < *right.getHorarioAulaInicial() )
+			 return true;
+		  else if ( *hi > *right.getHorarioAulaInicial() )
+			 return false;
+	  }
+
+	  if ( hf == NULL && right.getHorarioAulaFinal() != NULL )
+		  return true;
+	  else if ( hf != NULL && right.getHorarioAulaFinal() == NULL )
+		  return false;
+	  else if ( hf != NULL && right.getHorarioAulaFinal() != NULL )
+	  {
+		  if ( *hf < *right.getHorarioAulaFinal() )
+			 return true;
+		  else if ( *hf > *right.getHorarioAulaFinal() )
+			 return false;
+	  }
 	  
       return false;
    }
@@ -134,18 +153,29 @@ public:
       else if ( quantidade < right.quantidade )
          return false;
 
-	  /*
-	  if( disciplinaSubstituida == NULL && right.getDisciplinaSubstituida() != NULL )
-		  return false;
-	  else if( disciplinaSubstituida != NULL && right.getDisciplinaSubstituida() == NULL )
+	  if ( hi != NULL && right.getHorarioAulaInicial() == NULL )
 		  return true;
-	  else if( disciplinaSubstituida != NULL && right.getDisciplinaSubstituida() != NULL )
+	  else if ( hi == NULL && right.getHorarioAulaInicial() != NULL )
+		  return false;
+	  else if ( hi != NULL && right.getHorarioAulaInicial() != NULL )
 	  {
-		  if( *disciplinaSubstituida < *right.getDisciplinaSubstituida() )
-				return false;
-		  else if( *right.getDisciplinaSubstituida() < *disciplinaSubstituida )
-				return true;
-	  }*/
+		  if ( *hi > *right.getHorarioAulaInicial() )
+			 return true;
+		  else if ( *hi < *right.getHorarioAulaInicial() )
+			 return false;
+	  }
+
+	  if ( hf != NULL && right.getHorarioAulaFinal() == NULL )
+		  return true;
+	  else if ( hf == NULL && right.getHorarioAulaFinal() != NULL )
+		  return false;
+	  else if ( hf != NULL && right.getHorarioAulaFinal() != NULL )
+	  {
+		  if ( *hf > *right.getHorarioAulaFinal() )
+			 return true;
+		  else if ( *hf < *right.getHorarioAulaFinal() )
+			 return false;
+	  }
 
       return false;
    }
@@ -159,8 +189,11 @@ public:
          && ( dia_semana == right.getDiaSemana() )
          && ( creditos_teoricos == right.getCreditosTeoricos() )
          && ( creditos_praticos == right.getCreditosPraticos() )
-         && ( quantidade == right.quantidade ) );
-         //&& ( *disciplinaSubstituida == *right.getDisciplinaSubstituida() ) );
+         && ( quantidade == right.quantidade ) 
+		 && ( ( hi!=NULL && right.hi!=NULL && *hi == *right.hi ) ||
+			  ( hi==NULL && right.hi==NULL ) )
+		 && ( ( hf!=NULL && right.hf!=NULL &&  *hf == *right.hf ) ||
+			  ( hf==NULL && right.hf==NULL ) ) );         
    }
 
    virtual bool operator != ( Aula const & right )
@@ -178,7 +211,12 @@ private:
    std::map<Oferta*, int> quantidade;
    int creditos_teoricos;
    int creditos_praticos;
-	
+   HorarioAula *hi;
+   HorarioAula *hf;
+
+   // armazena o id de todos os horarios utilizados pela aula (logo, horariosAula entre hi e hf)
+   GGroup<int> horariosAulaId;
+
    // disciplina original, que foi substituida em um curriculo.
    // Se for NULL é porque não houve substituição, e "disciplina" já é a original.
    std::map<Oferta*, GGroup<Disciplina*, LessPtr<Disciplina>>, LessPtr<Oferta>> disciplinaSubstituida;

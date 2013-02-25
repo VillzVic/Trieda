@@ -257,8 +257,9 @@ std::string ConstraintTatico::toString(int prior, int rod, int tat)
       ss << "__(C_FORMANDOS1):"; break;	  	  	      
    case C_FORMANDOS2:
       ss << "__(C_FORMANDOS2):"; break;	  	  	      
-
-	  
+   case C_DISC_DIA_HOR_PROF:
+      ss << "__(C_DISC_DIA_HOR_PROF):"; break;	  	  	      
+	  	  
    default:
       ss << "!";
    }

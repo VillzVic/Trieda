@@ -4919,6 +4919,31 @@ qtdeCreditosPraticos (const qtdeCreditosPraticos_type& x)
 }
 
 
+const ItemAtendimentoTaticoSolucao::horariosAula_type& ItemAtendimentoTaticoSolucao::
+horariosAula () const
+{
+  return this->horariosAula_.get ();
+}
+
+ItemAtendimentoTaticoSolucao::horariosAula_type& ItemAtendimentoTaticoSolucao::
+horariosAula ()
+{
+  return this->horariosAula_.get ();
+}
+
+void ItemAtendimentoTaticoSolucao::
+horariosAula (const horariosAula_type& x)
+{
+  this->horariosAula_.set (x);
+}
+
+void ItemAtendimentoTaticoSolucao::
+horariosAula (::std::auto_ptr< horariosAula_type > x)
+{
+  this->horariosAula_.set (x);
+}
+
+
 // GrupoAtendimentoCampusSolucao
 // 
 
@@ -14564,22 +14589,26 @@ ItemAtendimentoOfertaSolucao::
 ItemAtendimentoTaticoSolucao::
 ItemAtendimentoTaticoSolucao (const atendimentoOferta_type& atendimentoOferta,
                               const qtdeCreditosTeoricos_type& qtdeCreditosTeoricos,
-                              const qtdeCreditosPraticos_type& qtdeCreditosPraticos)
+                              const qtdeCreditosPraticos_type& qtdeCreditosPraticos,
+							  const horariosAula_type& horariosAula)
 : ::xml_schema::type (),
   atendimentoOferta_ (atendimentoOferta, ::xml_schema::flags (), this),
   qtdeCreditosTeoricos_ (qtdeCreditosTeoricos, ::xml_schema::flags (), this),
-  qtdeCreditosPraticos_ (qtdeCreditosPraticos, ::xml_schema::flags (), this)
+  qtdeCreditosPraticos_ (qtdeCreditosPraticos, ::xml_schema::flags (), this),
+  horariosAula_ (horariosAula, ::xml_schema::flags (), this)
 {
 }
 
 ItemAtendimentoTaticoSolucao::
 ItemAtendimentoTaticoSolucao (::std::auto_ptr< atendimentoOferta_type >& atendimentoOferta,
                               const qtdeCreditosTeoricos_type& qtdeCreditosTeoricos,
-                              const qtdeCreditosPraticos_type& qtdeCreditosPraticos)
+                              const qtdeCreditosPraticos_type& qtdeCreditosPraticos,
+							  const horariosAula_type& horariosAula)
 : ::xml_schema::type (),
   atendimentoOferta_ (atendimentoOferta, ::xml_schema::flags (), this),
   qtdeCreditosTeoricos_ (qtdeCreditosTeoricos, ::xml_schema::flags (), this),
-  qtdeCreditosPraticos_ (qtdeCreditosPraticos, ::xml_schema::flags (), this)
+  qtdeCreditosPraticos_ (qtdeCreditosPraticos, ::xml_schema::flags (), this),
+  horariosAula_ (horariosAula, ::xml_schema::flags (), this)
 {
 }
 
@@ -14590,7 +14619,8 @@ ItemAtendimentoTaticoSolucao (const ItemAtendimentoTaticoSolucao& x,
 : ::xml_schema::type (x, f, c),
   atendimentoOferta_ (x.atendimentoOferta_, f, this),
   qtdeCreditosTeoricos_ (x.qtdeCreditosTeoricos_, f, this),
-  qtdeCreditosPraticos_ (x.qtdeCreditosPraticos_, f, this)
+  qtdeCreditosPraticos_ (x.qtdeCreditosPraticos_, f, this),
+  horariosAula_ (x.horariosAula_, f, this)
 {
 }
 
@@ -14601,7 +14631,8 @@ ItemAtendimentoTaticoSolucao (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   atendimentoOferta_ (f, this),
   qtdeCreditosTeoricos_ (f, this),
-  qtdeCreditosPraticos_ (f, this)
+  qtdeCreditosPraticos_ (f, this),
+  horariosAula_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -14656,6 +14687,19 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+
+    // horariosAulaId
+    //
+    if (n.name () == "horariosAula" && n.namespace_ ().empty ())
+    {
+      if (!horariosAula_.present ())
+      {
+        this->horariosAula_.set (horariosAula_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+
     break;
   }
 
@@ -14679,6 +14723,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "qtdeCreditosPraticos",
       "");
   }
+
+  if (!horariosAula_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "horariosAula",
+      "");
+  }
+
 }
 
 ItemAtendimentoTaticoSolucao* ItemAtendimentoTaticoSolucao::

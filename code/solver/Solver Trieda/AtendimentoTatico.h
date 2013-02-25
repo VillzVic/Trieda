@@ -17,13 +17,17 @@ public:
 
    void setQtdCreditosTeoricos( int value ) { this->qtde_creditos_teoricos = value; }
    void setQtdCreditosPraticos( int value ) { this->qtde_creditos_praticos = value; }
+   void addHorarioAula( int hor ) { this->horariosAula.add(hor); }
 
    int getQtdCreditosTeoricos() const { return this->qtde_creditos_teoricos; }
    int getQtdCreditosPraticos() const { return this->qtde_creditos_praticos; }
+   GGroup< int > getHorariosAula() const { return this->horariosAula; }
 
 private:
 	int qtde_creditos_teoricos;
 	int qtde_creditos_praticos;
+
+    GGroup< int > horariosAula;
 };
 
 std::ostream& operator << ( std::ostream &, AtendimentoTatico & );

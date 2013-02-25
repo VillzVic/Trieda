@@ -26,7 +26,7 @@ public:
    GGroup< int > ids_disciplinas_incompativeis;
    GGroup< Horario * > horarios;
 
-   GGroup< HorarioDia * > horariosDia;
+   GGroup< HorarioDia *, LessPtr<HorarioDia> > horariosDia;
 
    // Conjunto de combinações possíveis de divisão de créditos de uma disciplina 'd'
    std::vector< std::vector< std::pair< int /*dia*/, int /*numCreditos*/ > > > combinacao_divisao_creditos;

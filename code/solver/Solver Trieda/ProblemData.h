@@ -82,6 +82,7 @@ public:
    int getHorarioDiaIdx( int, int );
    
    HorarioDia* getHorarioDiaCorrespondente( HorarioAula *ha, int dia );
+   HorarioDia* getHorarioDiaCorrespondente( int horarioAulaId, int dia );
 
    bool aulaAtendeCurso( int turma, Disciplina *disciplina, Curso * curso );
 
@@ -468,7 +469,7 @@ public:
    
    bool EQUIV_TRANSITIVIDADE;
 
-   bool verificaDisponibilidadeHorario( HorarioAula *horarioAula, int dia, Sala *sala, Professor *prof, Disciplina* disc );
+   bool verificaDisponibilidadeHorario( int horarioAulaId, int dia, Sala *sala, Professor *prof, Disciplina* disc );
 
    int creditosNaoAtendidosPorPrioridade( int prior, int alunoId );
    double cargaHorariaNaoAtendidaPorPrioridade( int prior, int alunoId );

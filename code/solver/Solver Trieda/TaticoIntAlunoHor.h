@@ -57,7 +57,14 @@ public:
 	void solveTaticoIntegrado( int campusId, int prioridade, int r );
 
 private:
-	  
+
+   enum OutPutFileType
+   {
+	  TAT_INT_BIN = 0,
+	  TAT_INT_BIN1 = 1,				
+	  TAT_INT_BIN2 = 2,		
+	  TAT_INT_BIN3 = 3
+   };	  
 
    /********************************************************************
    **             CRIAÇÃO DE VARIAVEIS DO TATICO-ALUNO                **
@@ -74,6 +81,7 @@ private:
    int criaVariavelTaticoAberturaCompativelAPartirDeX( int campusId, int P );
    int criaVariavelTaticoAberturaAPartirDeX( int campusId, int prior );
    int criaVariavelTaticoFolgaAbreTurmaSequencialAPartirDeX( int campusId, int P );
+   int criaVariavelTaticoFolgaProfAPartirDeX( int campusId, int P );
 
    int criaVariavelTaticoAlunoCreditos( int campusId, int P );								// v_{a,i,d,u,s,hi,hf,t}      
    int criaVariavelTaticoCreditos( int campusId, int P );									// x_{i,d,u,s,hi,hf,t}      
@@ -96,6 +104,7 @@ private:
    int criaVariavelTaticoFormandosNaTurma( int campusId, int prior, int r );				// f_{i,d,cp}
    int criaVariavelTaticoAlocaAlunoTurmaDiscEquiv( int campusId, int P );					// s_{i,d,a,cp}
    int criaVariavelTaticoAbertura( int campusId, int prior, int r );						// z_{i,d,cp}
+   int criaVariavelTaticoFolgaProf( int campusId, int P );									// fp_{d,t,h}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -132,6 +141,8 @@ private:
    int criaRestricaoTaticoAlunoDiscPraticaTeoricaEquiv( int campusId, int prioridade );
    int criaRestricaoTaticoAtivaZ( int campusId ); // não precisa, pode deletar. A restrição criaRestricaoTaticoSalaUnica engloba esta
    int criaRestricaoTaticoTurmaComOsMesmosAlunosPorAula( int campusId );
+   int criaRestricaoTaticoConsideraHorariosProfs( int campusId );
+
    // The linear problem.	
    
 	#ifdef SOLVER_CPLEX 
@@ -164,6 +175,9 @@ private:
 	std::string getSolBinFileName( int campusId, int prioridade, int r );	
 	std::string getSolucaoTaticoFileName( int campusId, int prioridade, int r );	
 	std::string getEquivFileName( int campusId, int prioridade );
+	void writeSolBin( int campusId, int prioridade, int r, int type, double *xSol );
+	void writeSolTxt( int campusId, int prioridade, int r, int type, double *xSol );
+	int readSolBin( int campusId, int prioridade, int r, int type, double *xSol );
 
 	void sincronizaSolucao( int campusAtualId, int prioridade, int r );
 	void addVariaveisTatico();

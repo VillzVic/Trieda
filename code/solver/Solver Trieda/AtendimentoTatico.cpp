@@ -39,6 +39,18 @@ std::ostream & operator << ( std::ostream& out, AtendimentoTatico & tatico )
 
    out << "<qtdeCreditosPraticos>" << tatico.getQtdCreditosPraticos()
 	    << "</qtdeCreditosPraticos>" << std::endl;
+   
+   GGroup<int> hors = tatico.getHorariosAula();   
+
+   if ( hors.size() > 0 )
+   {
+	   out << "<horariosAula>" << std::endl;  
+	   ITERA_GGROUP_N_PT( it, hors, int )
+	   {
+		   out << "<horarioAulaId>" << *it << "</horarioAulaId>" << std::endl;
+	   }
+	   out << "</horariosAula>" << std::endl;
+   }
 
    out << "</AtendimentoTatico>" << std::endl;
 

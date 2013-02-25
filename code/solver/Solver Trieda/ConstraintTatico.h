@@ -48,7 +48,8 @@ public:
 	  C_MIN_ALUNOS_TURMA = 25,
 	  C_DESALOCA_PT = 26,
 	  C_FORMANDOS1 = 27,
-	  C_FORMANDOS2 = 28
+	  C_FORMANDOS2 = 28,
+	  C_DISC_DIA_HOR_PROF = 29
    };
 
    /** Default constructor. */

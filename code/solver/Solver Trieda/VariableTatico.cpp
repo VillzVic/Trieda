@@ -224,7 +224,9 @@ std::string VariableTatico::toString()
 		str <<"fad"; break;	
 	 case V_FORMANDOS_NA_TURMA:
 		str <<"f"; break;	
-
+	 case V_FOLGA_HOR_PROF:
+		str <<"fp"; break;	
+		
     default:
         str << "!";
    }

@@ -54,6 +54,7 @@ public:
    bool violar_min_alunos_turmas_formandos;
    bool utilizarDemandasP2;
    bool considerar_equivalencia_por_aluno;
+   bool considerar_disponibilidade_prof_em_tatico;
 
    virtual void le_arvore( ItemParametrosPlanejamento & );
 };

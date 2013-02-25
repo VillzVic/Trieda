@@ -75,7 +75,7 @@ using namespace boost;
 #endif
 
 
-//#define READ_SOLUTION
+#define READ_SOLUTION
 
 // ----------------------------------
 // NOVA ABORDAGEM
@@ -282,6 +282,8 @@ public:
    int criaVariavelTaticoDesalocaAlunoDiaHor( int campusId, int P, int tatico );			// fad_{i,d,a,t,hi,hf}
    int criaVariavelTaticoDesalocaAluno( int campusId, int P, int tatico );					// fa_{i,d,a}
    int criaVariavelTaticoFormandosNaTurma( int campusId, int P_ATUAL, int r, int tatico );	// f_{i,d,cp}
+   int criaVariavelTaticoFolgaProf( int campusId, int P );									// fp_{d,t,h}
+   int criaVariavelTaticoFolgaProfAPartirDeX( int campusId, int P );						// fp_{d,t,h}
 
    /********************************************************************
    **              CRIAÇÃO DE RESTRIÇÕES DO TATICO-ALUNO              **
@@ -311,6 +313,7 @@ public:
    int criaRestricaoTaticoAlunoUnidDifDia( int campusId, int prioridade, int r, int tatico );
    int criaRestricaoTaticoMinDiasAluno( int campusId, int prioridade, int r, int tatico );
    int criaRestricaoTaticoMaxDiasAluno( int campusId, int prioridade, int r, int tatico );
+   int criaRestricaoTaticoConsideraHorariosProfs( int campusId, int prioridade, int r, int tatico );
 
    int criaRestricaoTaticoDesalocaAlunoTurmaHorario( int campusId, int prioridade, int r, int tatico );
    int criaRestricaoTaticoDesalocaAlunoHorario( int campusId, int prioridade, int r, int tatico );
@@ -319,7 +322,7 @@ public:
    int criaRestricaoTaticoGaranteMinAlunosTurma( int campusId, int prioridade, int r, int tatico );
    int criaRestricaoTaticoDesalocaPT( int campusId, int prioridade, int r, int tatico );
    int criaRestricaoTaticoFormandos( int campusId, int prioridade, int r, int tatico );
-
+      
   // int criaRestricaoTaticoFixaDistribCredDia( int campusId );			 //TODO
      
 #endif

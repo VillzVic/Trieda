@@ -43,7 +43,7 @@ public:
    int getDisciplinaSubstituidaId() const { return this->disciplinaSubstituidaId; }
    
    GGroup< int > alunosDemandasAtendidas;
-
+   
 private:
    int ofertaCursoCampiId;
    int disciplinaId;  // Informa a disciplina atendida (caso tenha havido substituição, é a substituta)

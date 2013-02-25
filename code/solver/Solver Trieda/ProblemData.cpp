@@ -1281,12 +1281,26 @@ AlunoDemanda* ProblemData::retornaAlunoDemanda( int idAlunoDem )
 
 
 HorarioDia* ProblemData::getHorarioDiaCorrespondente( HorarioAula *ha, int dia )
-{
-	
+{	
 	ITERA_GGROUP_LESSPTR( itHd, horariosDia, HorarioDia )
 	{
 		if ( itHd->getDia() == dia &&
-			 itHd->getHorarioAula() == ha )
+			 *itHd->getHorarioAula() == *ha )
+		{
+			return *itHd;
+		}
+	}
+
+	return NULL;
+}
+
+
+HorarioDia* ProblemData::getHorarioDiaCorrespondente( int horarioAulaId, int dia )
+{	
+	ITERA_GGROUP_LESSPTR( itHd, horariosDia, HorarioDia )
+	{
+		if ( itHd->getDia() == dia &&
+			itHd->getHorarioAula()->getId() == horarioAulaId )
 		{
 			return *itHd;
 		}
@@ -2460,12 +2474,12 @@ void ProblemData::imprimeCjtAlunos( int campusId )
 
 
 // Verifica se disciplina, sala e professor possuem o horario no dia
-bool ProblemData::verificaDisponibilidadeHorario( HorarioAula *horarioAula, int dia, Sala *sala, Professor *prof, Disciplina* disc )
+bool ProblemData::verificaDisponibilidadeHorario( int horarioAulaId, int dia, Sala *sala, Professor *prof, Disciplina* disc )
 {
 	bool achouNaSala = false;
 	ITERA_GGROUP( itHorDia, sala->horariosDia, HorarioDia )
 	{
-		if ( (*itHorDia)->getHorarioAula() == horarioAula &&
+		if ( (*itHorDia)->getHorarioAula()->getId() == horarioAulaId &&
 			(*itHorDia)->getDia() == dia )
 		{
 			achouNaSala = true;
@@ -2478,9 +2492,9 @@ bool ProblemData::verificaDisponibilidadeHorario( HorarioAula *horarioAula, int 
 	}
 
 	bool achouNaDisc = false;
-	ITERA_GGROUP( itHorDia, disc->horariosDia, HorarioDia )
+	ITERA_GGROUP_LESSPTR( itHorDia, disc->horariosDia, HorarioDia )
 	{
-		if ( (*itHorDia)->getHorarioAula() == horarioAula &&
+		if ( (*itHorDia)->getHorarioAula()->getId() == horarioAulaId &&
 			(*itHorDia)->getDia() == dia )
 		{
 			achouNaDisc = true;
@@ -2497,7 +2511,7 @@ bool ProblemData::verificaDisponibilidadeHorario( HorarioAula *horarioAula, int 
 		bool achouNoProf = false;
 		ITERA_GGROUP_LESSPTR( itHorDia, prof->horariosDia, HorarioDia )
 		{
-			if ( (*itHorDia)->getHorarioAula() == horarioAula &&
+			if ( (*itHorDia)->getHorarioAula()->getId() == horarioAulaId &&
 				(*itHorDia)->getDia() == dia )
 			{
 				achouNoProf = true;

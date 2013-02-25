@@ -4155,6 +4155,10 @@ void ProblemDataLoader::criaAulas()
                         exit( 1 );
                      }
 					 
+					 // Informa os horariosAula
+					 GGroup<int> horarios = it_atend_tatico->getHorariosAula();
+
+
 					 // Preenche os maps de atendimentos de alunos
 					 Trio< int, int, Disciplina* > trio;
 					 trio.set( campusId, turma, disciplina );
@@ -4215,6 +4219,33 @@ void ProblemDataLoader::criaAulas()
                         aula->setCreditosPraticos( creditos_praticos );
 						aula->setQuantidade( demandaAtendida, oferta );
                         aula->setDisciplinaSubstituida( disciplinaSubstituida, oferta );
+						
+						HorarioAula *hi=NULL;
+						HorarioAula *hf=NULL;
+						ITERA_GGROUP_N_PT( itHor, horarios, int )
+						{
+							int id = *itHor;
+							aula->addHorariosAulaId(id);
+
+							// Acha o objeto HorarioAula correspondente ao id
+							HorarioAula *ha=NULL;
+							GGroup<HorarioAula*, LessPtr<HorarioAula>> horsAula = problemData->horarios_aula_dia_semana[diaSemana];
+							ITERA_GGROUP_LESSPTR( itHorDia, horsAula, HorarioAula )
+							{
+								if ( itHorDia->getId() == id )
+								{
+									ha = *itHorDia;
+									break;
+								}
+							}
+							if ( ha == NULL ) { std::cout<<"\nErro grave, horarioAula nao encontrado na sala!!!\n"; continue;}
+							if ( hi == NULL ) hi = ha;
+							if ( hf == NULL ) hf = ha;
+							if ( *hi > *ha ) hi = ha;
+							if ( *hf < *ha ) hf = ha;
+						}						
+						aula->setHorarioAulaInicial( hi );
+						aula->setHorarioAulaFinal( hf );
 
                         problemData->aulas.add( aula );
                      }

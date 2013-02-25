@@ -25,6 +25,11 @@ void AtendimentoTaticoSolucao::le_arvore( ItemAtendimentoTaticoSolucao & elem )
    qtdeCreditosTeoricos = elem.qtdeCreditosTeoricos();
    qtdeCreditosPraticos = elem.qtdeCreditosPraticos();
 
+   ITERA_NSEQ( itAlunoDemId,elem.horariosAula(), id, Identificador )
+   {
+		horariosAula.add( *itAlunoDemId );
+   }
+   
    atendimento_oferta = new AtendimentoOfertaSolucao();
    atendimento_oferta->le_arvore(elem.atendimentoOferta());
 }

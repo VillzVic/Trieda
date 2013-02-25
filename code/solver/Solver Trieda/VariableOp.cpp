@@ -338,7 +338,7 @@ std::string VariableOp::toString()
 			{
 				Disciplina* original = *itDiscOrig;
 				if ( original != NULL )
-					str << " ,DiscAntiga" << original->getCodigo();
+					str << ",DiscOrig" << original->getId();
 			}
 			str << ")";
 	   }

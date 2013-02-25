@@ -226,7 +226,9 @@ std::string VariableTatInt::toString()
 		str <<"f"; break;	
 	 case V_ABERTURA:
 		str <<"z"; break;
-
+	 case V_FOLGA_HOR_PROF:
+		str <<"fp"; break;
+		
     default:
         str << "!";
    }

@@ -37,7 +37,8 @@ public:
 	  V_ALUNO_DIA = 21,							// du_{a,t}
 	  V_DESALOCA_ALUNO = 22,					// fa_{i,d,a}
 	  V_DESALOCA_ALUNO_DIA = 23,				// fad_{i,d,a,t}
-	  V_FORMANDOS_NA_TURMA = 24					// f_{i,d,cp}
+	  V_FORMANDOS_NA_TURMA = 24,				// f_{i,d,cp}
+	  V_FOLGA_HOR_PROF = 25						// fp_{d,t,h}
    };
 
    //Constructors

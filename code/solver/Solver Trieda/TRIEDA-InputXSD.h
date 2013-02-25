@@ -6453,6 +6453,7 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
   void
   alunosDemanda (::std::auto_ptr< alunosDemanda_type > p);
 
+
   // Constructors.
   //
   ItemAtendimentoOfertaSolucao (const ofertaCursoCampiId_type&,
@@ -6496,6 +6497,7 @@ class ItemAtendimentoOfertaSolucao: public ::xml_schema::type
   ::xsd::cxx::tree::one< quantidade_type > quantidade_;
   ::xsd::cxx::tree::one< turma_type > turma_;
   ::xsd::cxx::tree::one< alunosDemanda_type > alunosDemanda_;
+  
 };
 
 class ItemAtendimentoTaticoSolucao: public ::xml_schema::type
@@ -6545,16 +6547,37 @@ class ItemAtendimentoTaticoSolucao: public ::xml_schema::type
 
   void
   qtdeCreditosPraticos (const qtdeCreditosPraticos_type& x);
+  
+  // horariosAulaId
+  // 
+
+  typedef ::GrupoIdentificador horariosAula_type;
+  typedef ::xsd::cxx::tree::traits< horariosAula_type, char > horariosAula_traits;
+
+  const horariosAula_type&
+  horariosAula () const;
+
+  horariosAula_type&
+  horariosAula ();
+
+  void 
+  horariosAula (const horariosAula_type& x);
+    
+  void
+  horariosAula (::std::auto_ptr< horariosAula_type > p);
+    
 
   // Constructors.
   //
   ItemAtendimentoTaticoSolucao (const atendimentoOferta_type&,
                                 const qtdeCreditosTeoricos_type&,
-                                const qtdeCreditosPraticos_type&);
+                                const qtdeCreditosPraticos_type&,
+								const horariosAula_type&);
 
   ItemAtendimentoTaticoSolucao (::std::auto_ptr< atendimentoOferta_type >&,
                                 const qtdeCreditosTeoricos_type&,
-                                const qtdeCreditosPraticos_type&);
+                                const qtdeCreditosPraticos_type&,
+								const horariosAula_type&);
 
   ItemAtendimentoTaticoSolucao (const ::xercesc::DOMElement& e,
                                 ::xml_schema::flags f = 0,
@@ -6582,6 +6605,8 @@ class ItemAtendimentoTaticoSolucao: public ::xml_schema::type
   ::xsd::cxx::tree::one< atendimentoOferta_type > atendimentoOferta_;
   ::xsd::cxx::tree::one< qtdeCreditosTeoricos_type > qtdeCreditosTeoricos_;
   ::xsd::cxx::tree::one< qtdeCreditosPraticos_type > qtdeCreditosPraticos_;
+  ::xsd::cxx::tree::one< horariosAula_type > horariosAula_;
+
 };
 
 class GrupoAtendimentoCampusSolucao: public ::xml_schema::type

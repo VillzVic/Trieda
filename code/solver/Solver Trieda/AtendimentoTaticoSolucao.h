@@ -36,9 +36,13 @@ public:
    int getQtdeCreditosTeoricos() const { return this->qtdeCreditosTeoricos; }
    int getQtdeCreditosPraticos() const { return this->qtdeCreditosPraticos; }
 
+   GGroup< int > getHorariosAula() const { return this->horariosAula;}
+
 private:
    int qtdeCreditosTeoricos;
    int qtdeCreditosPraticos;
+   
+   GGroup< int > horariosAula;
 };
 
 #endif

@@ -12,6 +12,8 @@ Aula::Aula(bool _aulaVirtual)
    aula_fixada = false;
    aula_virtual = _aulaVirtual;
    disciplinaSubstituida.clear();
+   hi = NULL;
+   hf = NULL;
 }
 
 Aula::~Aula(void)
@@ -67,6 +69,21 @@ void Aula::setDisciplinaSubstituida( Disciplina * d, Oferta* oft )
 {
    this->disciplinaSubstituida[oft];
    this->disciplinaSubstituida[oft].add(d);
+}
+
+void Aula::setHorarioAulaInicial( HorarioAula *h )
+{
+   hi = h;
+}
+
+void Aula::setHorarioAulaFinal( HorarioAula *h )
+{
+   hf = h;
+}
+
+void Aula::addHorariosAulaId( int id )
+{
+	horariosAulaId.add(id);
 }
 
 int Aula::getTurma() const
@@ -144,6 +161,21 @@ GGroup<Disciplina*, LessPtr<Disciplina>> Aula::getDisciplinasSubstituidas( Ofert
 	return disciplinas;
 }
 
+HorarioAula* Aula::getHorarioAulaInicial() const
+{
+   return hi;
+}
+
+HorarioAula* Aula::getHorarioAulaFinal() const
+{
+   return hf;
+}
+
+GGroup<int> Aula::getHorariosAulaId() const
+{
+	return horariosAulaId;
+}
+
 bool Aula::atendeAoCurso( int cursoId )
 {
 	ITERA_GGROUP_LESSPTR( it_oferta, this->ofertas, Oferta )
@@ -197,5 +229,10 @@ void Aula::toString()
 	for ( ; it != quantidade.end(); it++ )
 		std::cout << it->second << "/";	
 	std::cout << std::endl;
+
+	if ( hi != NULL )
+		std::cout << "\nHorario inicial: " << hi->getId();
+	if ( hf != NULL )
+		std::cout << "\nHorario final: " << hf->getId();
    //-------------------------------------------------------------
 }
