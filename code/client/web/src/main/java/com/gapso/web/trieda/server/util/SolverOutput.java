@@ -69,56 +69,30 @@ public class SolverOutput
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnoSelecionado);
 		
-		List< ItemAtendimentoCampus > itemAtendimentoCampusList
-			= this.triedaOutput.getAtendimentos().getAtendimentoCampus();
-
-		for ( ItemAtendimentoCampus itemAtendimentoCampus : itemAtendimentoCampusList )
-		{
-			List< ItemAtendimentoUnidade > itemAtendimentoUnidadeList
-				= itemAtendimentoCampus.getAtendimentosUnidades().getAtendimentoUnidade();
-
-			for ( ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList )
-			{
-				List< ItemAtendimentoSala > itemAtendimentoSalaList
-					= itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
-
-				for ( ItemAtendimentoSala itemAtendimentoSala : itemAtendimentoSalaList )
-				{
-					Sala sala = Sala.find( Long.valueOf(
-						itemAtendimentoSala.getSalaId() ), this.instituicaoEnsino );
-
-					List< ItemAtendimentoDiaSemana > itemAtendimentoDiaSemanaList
-						= itemAtendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana();
-
-					for ( ItemAtendimentoDiaSemana itemAtendimentoDiaSemana
-						: itemAtendimentoDiaSemanaList )
-					{
-						Semanas semana = Semanas.get(
-							itemAtendimentoDiaSemana.getDiaSemana() );
-
-						if ( itemAtendimentoDiaSemana.getAtendimentosTatico() == null )
-						{
+		List< ItemAtendimentoCampus > itemAtendimentoCampusList = this.triedaOutput.getAtendimentos().getAtendimentoCampus();
+		for ( ItemAtendimentoCampus itemAtendimentoCampus : itemAtendimentoCampusList ) {
+			List< ItemAtendimentoUnidade > itemAtendimentoUnidadeList = itemAtendimentoCampus.getAtendimentosUnidades().getAtendimentoUnidade();
+			for ( ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList ) {
+				List< ItemAtendimentoSala > itemAtendimentoSalaList = itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
+				for ( ItemAtendimentoSala itemAtendimentoSala : itemAtendimentoSalaList ) {
+					Sala sala = Sala.find( Long.valueOf(itemAtendimentoSala.getSalaId() ), this.instituicaoEnsino );
+					List< ItemAtendimentoDiaSemana > itemAtendimentoDiaSemanaList = itemAtendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana();
+					for ( ItemAtendimentoDiaSemana itemAtendimentoDiaSemana : itemAtendimentoDiaSemanaList ) {
+						Semanas semana = Semanas.get( itemAtendimentoDiaSemana.getDiaSemana() );
+						if ( itemAtendimentoDiaSemana.getAtendimentosTatico() == null ) {
 							continue;
 						}
 
 						// COLETANDO INFORMAÇÕES DO TÁTICO
-						List< ItemAtendimentoTatico > itemAtendimentoTaticoList
-							= itemAtendimentoDiaSemana.getAtendimentosTatico().getAtendimentoTatico();
-
-						for ( ItemAtendimentoTatico itemAtendimentoTatico
-							: itemAtendimentoTaticoList )
-						{
+						List< ItemAtendimentoTatico > itemAtendimentoTaticoList = itemAtendimentoDiaSemana.getAtendimentosTatico().getAtendimentoTatico();
+						for ( ItemAtendimentoTatico itemAtendimentoTatico : itemAtendimentoTaticoList ) {
 							int qtdeCreditosTeoricos = itemAtendimentoTatico.getQtdeCreditosTeoricos();
 							int qtdeCreditosPraticos = itemAtendimentoTatico.getQtdeCreditosPraticos();
 
-							ItemAtendimentoOferta itemAtendimentoOferta
-								= itemAtendimentoTatico.getAtendimentoOferta();
+							ItemAtendimentoOferta itemAtendimentoOferta = itemAtendimentoTatico.getAtendimentoOferta();
+							Oferta oferta = Oferta.find( Long.valueOf( itemAtendimentoOferta.getOfertaCursoCampiId() ), this.instituicaoEnsino );
 
-							Oferta oferta = Oferta.find( Long.valueOf(
-								itemAtendimentoOferta.getOfertaCursoCampiId() ), this.instituicaoEnsino );
-
-							Disciplina disciplina = Disciplina.find( Long.valueOf(
-								itemAtendimentoOferta.getDisciplinaId() ), this.instituicaoEnsino );
+							Disciplina disciplina = Disciplina.find( Long.valueOf( itemAtendimentoOferta.getDisciplinaId() ), this.instituicaoEnsino );
 							Disciplina disciplinaSubstituta = null;
 							if (itemAtendimentoOferta.getDisciplinaSubstitutaId() != null) {
 								disciplinaSubstituta = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()),this.instituicaoEnsino);
@@ -368,11 +342,14 @@ public class SolverOutput
 		
 		for(AlunoDemanda alunoDemanda : alunosDemandaTatico.keySet()){
 			int creditosAtendidos = 0;
+			Disciplina disciplinaSubstituta = null;
 			for(AtendimentoTatico tatico : alunosDemandaTatico.get(alunoDemanda)){
+				disciplinaSubstituta = tatico.getDisciplinaSubstituta();
 				alunoDemanda.getAtendimentosTatico().add(tatico);
 				creditosAtendidos += tatico.getCreditosPratico() + tatico.getCreditosTeorico();
 			}
-			alunoDemanda.setAtendido(alunoDemanda.getDemanda().getDisciplina().getCreditosTotal() == creditosAtendidos);
+			int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
+			alunoDemanda.setAtendido(totalCreditosDemanda == creditosAtendidos);
 			alunoDemanda.merge();
 		}
 	}
