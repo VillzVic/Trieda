@@ -14,6 +14,7 @@ public class UsuarioDTO extends AbstractDTO< String >
 	public static final String PROPERTY_ENABLED = "enabled";
 	public static final String PROPERTY_PROFESSOR_ID = "professorId";
 	public static final String PROPERTY_PROFESSOR_DISPLAYTEXT = "professorDisplayText";
+	public static final String PROPERTY_PROFESSOR_CPF = "professorCpf";
 
 	public UsuarioDTO() { }
 
@@ -96,12 +97,22 @@ public class UsuarioDTO extends AbstractDTO< String >
 	{
 		return get( PROPERTY_PROFESSOR_DISPLAYTEXT );
 	}
+	
+	public void setProfessorCpf( String value )
+	{
+		set( PROPERTY_PROFESSOR_CPF, value );
+	}
+
+	public String getProfessorCpf()
+	{
+		return get( PROPERTY_PROFESSOR_CPF );
+	}
 
 	public boolean isProfessor()
 	{
 		return ( getProfessorId() != null && getProfessorId() > 0 );
 	}
-
+	
 	public boolean isAdministrador()
 	{
 		return !isProfessor();

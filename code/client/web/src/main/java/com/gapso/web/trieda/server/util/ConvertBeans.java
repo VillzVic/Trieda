@@ -149,6 +149,7 @@ public class ConvertBeans {
 		{
 			dto.setProfessorId( domain.getProfessor().getId() );
 			dto.setProfessorDisplayText( domain.getProfessor().getNome() );
+			dto.setProfessorCpf( domain.getProfessor().getCpf() );
 		}
 
 		return dto;
@@ -2065,7 +2066,12 @@ public class ConvertBeans {
 		dto.setCurricularId(curriculo.getId());
 
 		//int periodo = domain.getOferta().getCurriculo().getPeriodo(instituicaoEnsino, domain.getDisciplina(), domain.getOferta() );
-		int periodo = curriculo.getPeriodo(domain.getDisciplina());
+		// TODO: retirar
+		Integer per = curriculo.getPeriodo(domain.getDisciplina());
+		if (per == null) {
+			System.out.println("*** disc="+domain.getDisciplina().getCodigo()+" curr="+curriculo.getCodigo()+" discSubs="+(disciplinaSubstituta!=null?disciplinaSubstituta.getCodigo():"null"));
+		}
+		int periodo = per==null?-1:per;
 		dto.setPeriodo( periodo );
 		dto.setPeriodoString(String.valueOf(periodo));
 

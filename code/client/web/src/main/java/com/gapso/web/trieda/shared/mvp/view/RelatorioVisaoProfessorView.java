@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaProfessorGrid;
@@ -85,8 +86,13 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 			rightList.add(this.professorVirtualCB);
 		}
 		else{
-			this.professorCB = new ProfessorComboBox(usuario.getProfessorId());
+			ProfessorDTO professorDTO = new ProfessorDTO();
+			professorDTO.setId(usuario.getProfessorId());
+			professorDTO.setCpf(usuario.getProfessorCpf());
+			professorDTO.setNome(usuario.getProfessorDisplayText());
+			this.professorCB = new ProfessorComboBox(professorDTO);
 			this.professorCB.setReadOnly(true);
+			filtro.setProfessorDTO(professorDTO);
 		}
 		filtro.addProfessorValueListener(this.professorCB);
 		rightList.add(this.professorCB);

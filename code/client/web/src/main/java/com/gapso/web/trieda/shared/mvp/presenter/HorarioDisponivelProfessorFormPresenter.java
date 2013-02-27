@@ -1,4 +1,4 @@
-package com.gapso.web.trieda.main.client.mvp.presenter;
+package com.gapso.web.trieda.shared.mvp.presenter;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
-import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;

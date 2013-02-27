@@ -296,6 +296,10 @@
 		<servlet-name>uniquesServlet</servlet-name>
 		<url-pattern>/professor/uniques</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+  		<servlet-name>exportExcelServlet</servlet-name>
+  		<url-pattern>/professor/exportExcelServlet</url-pattern>
+	</servlet-mapping>
 	
 	<servlet-mapping>
   		<servlet-name>usuariosServlet</servlet-name>

@@ -46,12 +46,14 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 			}
 		});
 
-		display.getProfessorVirtualComboBox().addSelectionChangedListener(new SelectionChangedListener<ProfessorVirtualDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<ProfessorVirtualDTO> se){
-				display.getProfessorComboBox().setValue(null);
-			}
-		});
+		if (display.getProfessorVirtualComboBox() != null) {
+			display.getProfessorVirtualComboBox().addSelectionChangedListener(new SelectionChangedListener<ProfessorVirtualDTO>(){
+				@Override
+				public void selectionChanged(SelectionChangedEvent<ProfessorVirtualDTO> se){
+					display.getProfessorComboBox().setValue(null);
+				}
+			});
+		}
 	}
 
 	public boolean isVisaoProfessor(){

@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.shared.util.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
@@ -26,24 +29,15 @@ public class ProfessorComboBox extends ComboBox<ProfessorDTO>{
 		this(campusCB, false);
 	}
 	
-	public ProfessorComboBox(Long professorId){
+	public ProfessorComboBox(ProfessorDTO professorDTO){
 		this.setReadOnly(true);
-
-		RpcProxy<ListLoadResult<ProfessorDTO>> proxy = new RpcProxy<ListLoadResult<ProfessorDTO>>(){
-			@Override
-			public void load(Object loadConfig, AsyncCallback<ListLoadResult<ProfessorDTO>> callback){
-				if(campusComboBox != null && campusComboBox.getValue() != null){
-					Services.professores().getProfessoresEmCampus(campusComboBox.getValue(), callback);
-				}
-				else{
-					Services.professores().getList(callback);
-				}
-			}
-		};
-
-		setStore(new ListStore<ProfessorDTO>(new BaseListLoader<BaseListLoadResult<ProfessorDTO>>(proxy)));
-
+		ListStore<ProfessorDTO> store = new ListStore<ProfessorDTO>();
+		store.add(professorDTO);
+		setStore(store);
 		this.configComboBox();
+		List<ProfessorDTO> list = new ArrayList<ProfessorDTO>();
+		list.add(professorDTO);
+		this.setSelection(list);
 	}
 
 	public ProfessorComboBox(CampusComboBox campusCB, boolean readOnly){
