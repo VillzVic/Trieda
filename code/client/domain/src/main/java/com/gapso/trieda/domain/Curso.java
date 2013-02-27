@@ -63,7 +63,7 @@ public class Curso
 
 	@NotNull
 	@Column( name = "CUR_NOME" )
-	@Size( min = 1, max = 200 )
+	@Size( min = 1, max = 255 )
 	private String nome;
 
 	@NotNull

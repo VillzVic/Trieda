@@ -88,7 +88,7 @@ public class CursoFormView
 		nomeTF.setFieldLabel("Nome");
 		nomeTF.setAllowBlank(false);
 		nomeTF.setMinLength(1);
-		nomeTF.setMaxLength(50);
+		nomeTF.setMaxLength(255);
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 
