@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
@@ -43,7 +43,7 @@ public class AreasTitulacaoImportExcel
 
 	@Override
 	protected boolean sheetMustBeProcessed(
-		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+		int sheetIndex, Sheet sheet, Workbook workbook )
 	{
 		String sheetName = workbook.getSheetName( sheetIndex );
 		return ExcelInformationType.AREAS_TITULACAO.getSheetName().equals( sheetName );
@@ -51,15 +51,15 @@ public class AreasTitulacaoImportExcel
 
 	@Override
 	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+		int sheetIndex, Sheet sheet, Workbook workbook )
 	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
 	protected AreasTitulacaoImportExcelBean createExcelBean(
-		HSSFRow header, HSSFRow row, int sheetIndex,
-		HSSFSheet sheet, HSSFWorkbook workbook )
+		Row header, Row row, int sheetIndex,
+		Sheet sheet, Workbook workbook )
 	{
 		AreasTitulacaoImportExcelBean bean
 			= new AreasTitulacaoImportExcelBean( row.getRowNum() + 1 );
@@ -67,11 +67,11 @@ public class AreasTitulacaoImportExcel
         for ( int cellIndex = row.getFirstCellNum();
               cellIndex <= row.getLastCellNum(); cellIndex++ )
         {
-            HSSFCell cell = row.getCell( cellIndex );
+            Cell cell = row.getCell( cellIndex );
 
         	if ( cell != null )
         	{
-        		HSSFCell headerCell
+        		Cell headerCell
         			= header.getCell( cell.getColumnIndex() );
 
         		if ( headerCell != null )

@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
@@ -58,7 +58,7 @@ public class CurriculosImportExcel
 
 	@Override
 	protected boolean sheetMustBeProcessed(
-		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+		int sheetIndex, Sheet sheet, Workbook workbook )
 	{
 		String sheetName = workbook.getSheetName( sheetIndex );
 		return ExcelInformationType.CURRICULOS.getSheetName().equals( sheetName );
@@ -66,15 +66,15 @@ public class CurriculosImportExcel
 
 	@Override
 	protected List< String > getHeaderColumnsNames(
-		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook )
+		int sheetIndex, Sheet sheet, Workbook workbook )
 	{
 		return this.headerColumnsNames;
 	}
 
 	@Override
 	protected CurriculosImportExcelBean createExcelBean(
-		HSSFRow header, HSSFRow row, int sheetIndex,
-		HSSFSheet sheet, HSSFWorkbook workbook )
+		Row header, Row row, int sheetIndex,
+		Sheet sheet, Workbook workbook )
 	{
 		CurriculosImportExcelBean bean
 			= new CurriculosImportExcelBean( row.getRowNum() + 1 );
@@ -82,11 +82,11 @@ public class CurriculosImportExcel
         for ( int cellIndex = row.getFirstCellNum();
         	  cellIndex <= row.getLastCellNum(); cellIndex++ )
         {
-            HSSFCell cell = row.getCell( cellIndex );
+            Cell cell = row.getCell( cellIndex );
 
         	if ( cell != null )
         	{
-        		HSSFCell headerCell = header.getCell( cell.getColumnIndex() );
+        		Cell headerCell = header.getCell( cell.getColumnIndex() );
 
         		if ( headerCell != null )
         		{

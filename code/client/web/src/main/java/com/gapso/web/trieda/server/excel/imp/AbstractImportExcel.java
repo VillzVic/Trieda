@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -45,14 +45,14 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	}
 
 	protected abstract boolean sheetMustBeProcessed(
-		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook );
+		int sheetIndex, Sheet sheet, Workbook workbook );
 
 	protected abstract List< String > getHeaderColumnsNames(
-		int sheetIndex, HSSFSheet sheet, HSSFWorkbook workbook );
+		int sheetIndex, Sheet sheet, Workbook workbook );
 
 	protected abstract ExcelBeanType createExcelBean(
-		HSSFRow header, HSSFRow row, int sheetIndex,
-		HSSFSheet sheet, HSSFWorkbook workbook );
+		Row header, Row row, int sheetIndex,
+		Sheet sheet, Workbook workbook );
 
 	protected abstract String getHeaderToString();
 
@@ -61,7 +61,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 
 	//@Transactional
 	@Override
-	public boolean load( String fileName, HSSFWorkbook workbook )
+	public boolean load( String fileName, Workbook workbook )
 	{
 		this.errors.clear();
 		this.warnings.clear();
@@ -131,7 +131,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	}
 
 	private Map< String, List< ExcelBeanType > > readInputStream(
-		String fileName, InputStream inputStream, HSSFWorkbook workbook )
+		String fileName, InputStream inputStream, Workbook workbook )
 	{
 		// [ SheetName, List< ExcelBeanType > ]
 		Map< String, List< ExcelBeanType > > excelBeansMap
@@ -141,13 +141,12 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		{
 			if ( workbook == null )
 			{
-				POIFSFileSystem poifs = new POIFSFileSystem( inputStream );
-				workbook = new HSSFWorkbook( poifs );
+				workbook = WorkbookFactory.create( inputStream );
 			}
 
 			for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
 			{
-				HSSFSheet sheet = workbook.getSheetAt( sheetIndex );
+				Sheet sheet = workbook.getSheetAt( sheetIndex );
 
 				// Verifica se a aba deve ou não ser processada
 				if ( sheetMustBeProcessed( sheetIndex, sheet, workbook ) )
@@ -160,7 +159,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 						= getHeaderColumnsNames( sheetIndex, sheet, workbook );
 
 					int rowIndex = sheet.getFirstRowNum();
-	                HSSFRow header = sheet.getRow( rowIndex );
+	                Row header = sheet.getRow( rowIndex );
 
 	                boolean validHeader = isHeaderValid(
 	                	header, sheetIndex, sheet, workbook, headerColumnsNames );
@@ -180,7 +179,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	                	// Efetua a leitura dos dados do arquivo
 	                    for (; rowIndex <= sheet.getLastRowNum(); rowIndex++ )
 	                    {
-	                    	HSSFRow row = sheet.getRow( rowIndex );
+	                    	Row row = sheet.getRow( rowIndex );
 
 	                    	if ( row != null )
 	                    	{
@@ -216,8 +215,8 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		return excelBeansMap;
 	}
 
-	private boolean isHeaderValid( HSSFRow candidateHeader, int sheetIndex,
-		HSSFSheet sheet, HSSFWorkbook workbook, List< String > headerColumnsNames )
+	private boolean isHeaderValid( Row candidateHeader, int sheetIndex,
+		Sheet sheet, Workbook workbook, List< String > headerColumnsNames )
 	{
 		if ( candidateHeader != null )
 		{
@@ -227,9 +226,9 @@ public abstract class AbstractImportExcel< ExcelBeanType >
             for ( int cellIndex = candidateHeader.getFirstCellNum();
             	  cellIndex <= candidateHeader.getLastCellNum(); cellIndex++ )
             {
-            	HSSFCell cell = candidateHeader.getCell( cellIndex );
+            	Cell cell = candidateHeader.getCell( cellIndex );
 
-            	if ( cell != null && cell.getCellType() == HSSFCell.CELL_TYPE_STRING )
+            	if ( cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING )
             	{
 	            	String columnName = cell.getRichStringCellValue().getString();
 
@@ -265,15 +264,15 @@ public abstract class AbstractImportExcel< ExcelBeanType >
     	return false;
 	}
 
-	protected String getCellValue( HSSFCell cell )
+	protected String getCellValue( Cell cell )
 	{
 		switch ( cell.getCellType() )
 		{
-    		case HSSFCell.CELL_TYPE_STRING:
+    		case Cell.CELL_TYPE_STRING:
     		{
     			return getCellStringValue( cell );
     		}
-    		case HSSFCell.CELL_TYPE_NUMERIC:
+    		case Cell.CELL_TYPE_NUMERIC:
     		{
     			return getCellNumericValue( cell );
     		}
@@ -282,12 +281,12 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		return null;
 	}
 
-	protected String getCellStringValue( HSSFCell cell )
+	protected String getCellStringValue( Cell cell )
 	{
 		return cell.getRichStringCellValue().getString().trim();
 	}
 
-	protected String getCellNumericValue( HSSFCell cell )
+	protected String getCellNumericValue( Cell cell )
 	{
 		return Double.toString( cell.getNumericCellValue() );
 	}

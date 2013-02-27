@@ -141,6 +141,11 @@
 			<artifactId>poi</artifactId>
 			<version>3.8-beta4</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.8</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 
@@ -332,6 +337,6 @@
 			</plugin>
 		</plugins>
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
-		</outputDirectory> 
+		</outputDirectory>
 	</build>
 </project>

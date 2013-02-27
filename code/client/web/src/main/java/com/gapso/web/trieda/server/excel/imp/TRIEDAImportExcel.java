@@ -4,8 +4,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -41,7 +41,7 @@ public class TRIEDAImportExcel
 
 	@Override
 	public boolean load(
-		String fileName, HSSFWorkbook workbook )
+		String fileName, Workbook workbook )
 	{
 		return false;
 	}
@@ -52,8 +52,7 @@ public class TRIEDAImportExcel
 		boolean flag = true;
 		try
 		{
-			POIFSFileSystem poifs = new POIFSFileSystem( inputStream );
-			HSSFWorkbook workbook = new HSSFWorkbook( poifs );
+			Workbook workbook = WorkbookFactory.create( inputStream );
 
 			List< IImportExcel > importers = new ArrayList< IImportExcel >();
 
