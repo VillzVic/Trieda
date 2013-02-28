@@ -478,13 +478,20 @@ public class AtendimentoTatico
 	public static int countTurma(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
-		Query q = entityManager().createQuery(
-			" SELECT count ( * ) FROM AtendimentoTatico o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.oferta.campus = :campus GROUP BY o.disciplina, o.turma " );
-
-		q.setParameter( "campus", campus );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		Query q = entityManager().createNativeQuery(
+			" SELECT o.dis_id, o.turma FROM atendimento_tatico o " +
+			" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
+			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+			" GROUP BY o.dis_id, o.turma " +
+			" UNION " +
+			" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_tatico o1 " +
+			" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
+			" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+			" GROUP BY o1.dis_substituta_id, o1.turma ");
+		
+		q.setParameter( "campus", campus.getId() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
 
 		return q.getResultList().size();
 	}
