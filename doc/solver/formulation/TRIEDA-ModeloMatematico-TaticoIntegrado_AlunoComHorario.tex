@@ -228,7 +228,7 @@ M \cdot o_{i,d,s}  \geq \sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{
 \subsubsection{Sala única}
 
 \begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s}  \leq  1  \nonumber \qquad 
+\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,s}  \leq  z_{i,d,cp}  \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \end{eqnarray}
@@ -252,6 +252,16 @@ C_{d} \cdot s_{i,d,a} = \sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{h
 \forall a \in A \quad
 \forall i \in I_{d} \quad
 \forall d \in D_{a}
+\end{eqnarray}
+
+
+\subsubsection{Garante que se um aluno pertence a uma turma de uma disciplina, ele pertencerá a todas as aulas da mesma}
+
+\begin{eqnarray}
+\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} NHC_{d,hi,hf} \cdot x_{i,d,s,t,hi,hf} = NC_{d} \cdot z_{i,d,cp} \nonumber \qquad
+\forall i \in I_{d} \quad
+\forall d \in D \quad
+\forall cp \in CP
 \end{eqnarray}
 
 
