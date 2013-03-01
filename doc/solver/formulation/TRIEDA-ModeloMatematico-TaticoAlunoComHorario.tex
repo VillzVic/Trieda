@@ -64,6 +64,10 @@ denotados por $s$.
 \item $I_{d',s',t}$ - Conjunto de turmas da disciplina $d$ já alocadas na sala $s'$ no dia $t$. Só usado na iteração de prioridade 2
 em diante.
 
+\item $IH$ - Conjunto de pares de semanas letivas que não possui horários em comum, que são incompatíveis de horários. Os elementos desse
+conjunto são denotados por $(sl1,sl2)$.
+
+
 \end{itemize}
 
 \subsubsection{Dados do Modelo}
@@ -119,9 +123,12 @@ $i'$ da disciplina $d$ alocada, com $i' > i$, sendo que $i$ não foi alocada.
 \item $f_{i,d,cp}$ - variável binária que indica se há aluno formando alocado na turma $i$ da disciplina $d$ do campus $cp$.
 \item $fpi_{a,cp}$ - variável inteira que indica o tempo extra alocado para que o aluno $a$ no campus $cp$ (prioridade 2).
 \item $fps_{a,cp}$ - variável inteira que indica o tempo que faltou ser alocado para que o aluno $a$ no campus $cp$ (prioridade 2).
+\item $as_{a,s}$ - variável binaria que indica se o aluno $a$ usa a sala $s$.
 \item $xcs1$
 \item $xcs2$
 \item $xcs3$
+\item $v_{i,d,sl}$ - variável binaria que indica se a turma $i$ da disciplina $d$ possui alunos pertencentes ao calendario $sl$.
+
 
 \end{itemize}
 
@@ -162,7 +169,17 @@ $$
       \\
       &        
       + \sum\limits_{i \in I_{d}} \sum\limits_{d \in D}\sum\limits_{i' \in I_{d'}} \sum\limits_{d' \in D} w_{i,d,i',d'}
-                    
+      \\
+      &        
+      + 100 \cdot \sum\limits_{a \in A} \sum\limits_{s \in S} as_{a,s}
+      \\
+      &        
+      + 50 \cdot \sum\limits_{s \in S} xcs2_{s}
+      \\
+      &        
+      + 1000 \cdot \sum\limits_{s \in S} xcs3_{s}
+      
+                          
 \end{array}
 $$
 
@@ -201,47 +218,75 @@ $$
       \\
       &        
       - \sum\limits_{i \in I_{d}} \sum\limits_{d \in D}\sum\limits_{i' \in I_{d'}} \sum\limits_{d' \in D} w_{i,d,i',d'}
-      
+      \\
+      &        
+      - 100 \cdot \sum\limits_{a \in A} \sum\limits_{s \in S} as_{a,s}
+       \\
+      &        
+      - 50 \cdot \sum\limits_{s \in S} xcs2_{s}
+      \\
+      &        
+      - 1000 \cdot \sum\limits_{s \in S} xcs3_{s}
+           
 \end{array}
 $$
+
+
+%\subsubsection{Carga horária de todas as turmas de cada disciplina}
+%
+%\begin{eqnarray}
+%\sum\limits_{u \in U}\sum\limits_{s \in S_{u}} x_{i,d,u,s}  =  C_{d} \cdot z_{i,d,cp} \nonumber \qquad 
+%\forall d \in D \quad
+%\forall i \in I_{d} \quad 
+%\forall cp \in CP 
+%\end{eqnarray}
 
 
 \subsubsection{Carga horária de todas as turmas de cada disciplina}
 
 \begin{eqnarray}
-\sum\limits_{u \in U}\sum\limits_{s \in S_{u}} x_{i,d,u,s}  =  C_{d} \cdot z_{i,d,cp} \nonumber \qquad 
+\sum\limits_{u \in U}\sum\limits_{s \in S_{u}} o_{i,d,u,s}  =  z_{i,d,cp} \nonumber \qquad 
 \forall d \in D \quad
 \forall i \in I_{d} \quad 
 \forall cp \in CP 
 \end{eqnarray}
 
 
+%
+%\subsubsection{Ativação da variável $o$}
+%
+%\begin{eqnarray}
+%C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad 
+%\forall d \in D \quad
+%\forall i \in I_{d} \quad
+%\forall u \in U \quad
+%\forall s \in S_{u} \quad
+%\end{eqnarray}
+%
+%
+%\subsubsection{Evitar sobreposição de turmas da mesma disciplina}
+%
+%\begin{eqnarray}
+%\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,u,s}  \leq  1  \nonumber \qquad 
+%\forall d \in D \quad
+%\forall i \in I_{d} \quad
+%\end{eqnarray}
 
-\subsubsection{Ativação da variável $o$}
 
-\begin{eqnarray}
-C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad 
-\forall d \in D \quad
-\forall i \in I_{d} \quad
-\forall u \in U \quad
-\forall s \in S_{u} \quad
-\end{eqnarray}
-
-
-\subsubsection{Evitar sobreposição de turmas da mesma disciplina}
-
-\begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,u,s}  \leq  1  \nonumber \qquad 
-\forall d \in D \quad
-\forall i \in I_{d} \quad
-\end{eqnarray}
-
+%
+%\subsubsection{Número de créditos por sala na semana}
+%
+%\begin{eqnarray}
+%\sum\limits_{d \in D}\sum\limits_{i \in I_{d}} tempo_{d} \cdot x_{i,d,u,s}  \leq  HTPS_{s}  \nonumber \qquad 
+%\forall u \in U \quad
+%\forall s \in S_{u} \quad
+%\end{eqnarray}
 
 
 \subsubsection{Número de créditos por sala na semana}
 
 \begin{eqnarray}
-\sum\limits_{d \in D}\sum\limits_{i \in I_{d}} tempo_{d} \cdot x_{i,d,u,s}  \leq  HTPS_{s}  \nonumber \qquad 
+\sum\limits_{d \in D}\sum\limits_{i \in I_{d}} tempo_{d} \cdot C_{d} \cdot o_{i,d,u,s}  \leq  HTPS_{s}  \nonumber \qquad 
 \forall u \in U \quad
 \forall s \in S_{u} \quad
 \end{eqnarray}
@@ -266,11 +311,24 @@ C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad
 \end{eqnarray}
 
 
+% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
+%
+%\subsubsection{Se alocar uma sala para uma turma, tem que respeitar capacidade da sala}
+%
+%\begin{eqnarray}
+%\sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft} \leq Cap_{s,u} \cdot o_{i,d,u,s} 
+%\nonumber \qquad 
+%\forall u \in U \quad
+%\forall s \in S_{u} \quad
+%\forall d \in D \quad
+%\forall i \in I_{d} \quad
+%\end{eqnarray}
+
 
 \subsubsection{Se alocar uma sala para uma turma, tem que respeitar capacidade da sala}
 
 \begin{eqnarray}
-\sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft} \leq Cap_{s,u} \cdot o_{i,d,u,s} 
+\sum\limits_{a \in A} s_{i,d,a} \leq (Cap_{s} - BigM) \cdot o_{i,d,u,s} + BigM
 \nonumber \qquad 
 \forall u \in U \quad
 \forall s \in S_{u} \quad
@@ -279,14 +337,27 @@ C_{d} \cdot o_{i,d,u,s}  \geq  x_{i,d,u,s}  \nonumber \qquad
 \end{eqnarray}
 
 
+% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
+%
+%\subsubsection{Contabiliza se houve aluno de determinado curso alocado em uma turma (*)}
+%
+%\begin{eqnarray}
+%\sum\limits_{oft \in Oft_{c}} \sum\limits_{s \in S_{u}} a_{i,d,s,oft} \leq M \cdot b_{i,d,c} \nonumber \qquad
+%\forall c \in C \quad
+%\forall d \in D \quad
+%\forall i \in I_{d}
+%\end{eqnarray}
+
+
 \subsubsection{Contabiliza se houve aluno de determinado curso alocado em uma turma (*)}
 
 \begin{eqnarray}
-\sum\limits_{oft \in Oft_{c}} \sum\limits_{s \in S_{u}} a_{i,d,s,oft} \leq M \cdot b_{i,d,c} \nonumber \qquad
+\sum\limits_{a \in A_{c}} s_{i,d,a} \leq M \cdot b_{i,d,c} \nonumber \qquad
 \forall c \in C \quad
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
+
 
 
 \subsubsection{Não permitir que alunos de cursos diferentes compartilhem turmas (*)}
@@ -309,16 +380,16 @@ b_{i,d,c} + b_{i,d,c'}\leq 1 \nonumber \qquad
 \forall c,c' \notin CC \quad
 \end{eqnarray}
 
-
-
-\subsubsection{Ativa variável z}
-
-\begin{eqnarray}
-\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,u,s} \leq M \cdot z_{i,d,cp} \nonumber \qquad 
-\forall cp \in CP \quad
-\forall d \in D \quad
-\forall i \in I_{d}
-\end{eqnarray}
+%
+%
+%\subsubsection{Ativa variável z}
+%
+%\begin{eqnarray}
+%\sum\limits_{u \in U} \sum\limits_{s \in S_{u}} o_{i,d,u,s} \leq M \cdot z_{i,d,cp} \nonumber \qquad 
+%\forall cp \in CP \quad
+%\forall d \in D \quad
+%\forall i \in I_{d}
+%\end{eqnarray}
 
 
 
@@ -342,10 +413,23 @@ f_{i,d,cp} \le \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
 \end{eqnarray}
 
 
+
+% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
+%
+%\subsubsection{Limita a abertura de turmas}
+%
+%\begin{eqnarray}
+%MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft}  \nonumber \qquad 
+%\forall cp \in CP \quad
+%\forall d \in D \quad
+%\forall i \in I_{d}
+%\end{eqnarray}
+
+
 \subsubsection{Limita a abertura de turmas}
 
 \begin{eqnarray}
-MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft}  \nonumber \qquad 
+MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{a \in A} s_{i,d,a}  \nonumber \qquad 
 \forall cp \in CP \quad
 \forall d \in D \quad
 \forall i \in I_{d}
@@ -382,22 +466,41 @@ MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{u \in U} \sum\limits
 \forall d \in D \quad
 \end{eqnarray}
 
+%
+%
+%\subsubsection{Favorece a distribuição equilibrada das turmas entre as salas}
+%
+%\begin{eqnarray}
+%H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} x_{i,d,u,s} \nonumber \qquad 
+%\forall u \in U \quad
+%\forall s \in S_{u} \quad
+%\end{eqnarray}
+%
 
 
 \subsubsection{Favorece a distribuição equilibrada das turmas entre as salas}
 
 \begin{eqnarray}
-H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} x_{i,d,u,s} \nonumber \qquad 
+H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} C_{d} \cdot o_{i,d,u,s} \nonumber \qquad 
 \forall u \in U \quad
 \forall s \in S_{u} \quad
 \end{eqnarray}
 
 
 
-\subsubsection{Atendimento de alunos}
+% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e acrescentar a restrição abaixo
+%\subsubsection{Atendimento de alunos}
+%
+%\begin{eqnarray}
+%\sum\limits_{s \in S} a_{i,d,s,oft} = \sum\limits_{a \in Al \cap d \in D_{a} } s_{i,d,a} \nonumber \qquad 
+%\forall d \in D_{oft} \quad
+%\forall i \in I_{d} \quad
+%\forall oft \in O \quad
+%\end{eqnarray}
 
+\subsubsection{Só permite alocação de aluno na turma caso essa tenha sido aberta}
 \begin{eqnarray}
-\sum\limits_{s \in S} a_{i,d,s,oft} = \sum\limits_{a \in Al \cap d \in D_{a} } s_{i,d,a} \nonumber \qquad 
+\sum\limits_{a \in A} s_{i,d,a} \le MaxAlunos \cdot z_{i,d,cp} \nonumber \qquad 
 \forall d \in D_{oft} \quad
 \forall i \in I_{d} \quad
 \forall oft \in O \quad
@@ -461,9 +564,62 @@ s_{i,d,a} + s_{i',d',a} - w_{i,d,i',d'} \le 1 \nonumber \qquad
 \begin{eqnarray}
 \sum\limits_{i \in I_{d}}\sum\limits_{d \in D} tempo_{i,d,t} \cdot s_{i,d,a} \le MaxTempo_{a,t} \nonumber \qquad 
 \forall a \in Al \quad
-\forall t \in T \quad
+\forall t \in T
 \end{eqnarray}
 
+
+
+\subsubsection{Contabiliza variaveis xcs1, xcs2 e xcs3}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d}} \sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot o_{i,d,s} = xcs1_{s} + xcs2_{s} + xcs3_{s} \nonumber \qquad 
+\forall s \in S \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Seta variavel as, para tentar minimizar o numero de salas usadas por um aluno, e consequentemente minizar o numero de conflitos observados no tático para a alocação das turmas do aluno}
+
+\begin{eqnarray}
+as_{a,s} \ge o_{i,d,s} + s_{i,d,a} - 1 \nonumber \qquad 
+\forall a \in Al \quad
+\forall s \in S \quad
+\forall i \in I_{d} \quad
+\forall d \in D_{a}
+\end{eqnarray}
+
+
+
+\subsubsection{Seta a variavel v (1)}
+
+\begin{eqnarray}
+M \cdot v_{i,d,sl} \ge \sum\limits_{a \in A_{sl}} s_{i,d,a} \nonumber \qquad 
+\forall sl \in SL \quad
+\forall i \in I_{d} \quad
+\forall d \in D
+\end{eqnarray}
+
+
+
+\subsubsection{Seta a variavel v (2)}
+
+\begin{eqnarray}
+v_{i,d,sl} \le \sum\limits_{a \in A_{sl}} s_{i,d,a} \nonumber \qquad 
+\forall sl \in SL \quad
+\forall i \in I_{d} \quad
+\forall d \in D
+\end{eqnarray}
+
+
+
+\subsubsection{Garante que caso uma mesma turma possua alunos de diferentes semanas letivas alocados, estas devem possuir horários em comum}
+
+\begin{eqnarray}
+v_{i,d,sl1} + v_{i,d,sl2} \le 1 \nonumber \qquad 
+\forall (sl1,sl2) \in IH \quad
+\forall i \in I_{d} \quad
+\forall d \in D
+\end{eqnarray}
 
 
 \pagebreak
