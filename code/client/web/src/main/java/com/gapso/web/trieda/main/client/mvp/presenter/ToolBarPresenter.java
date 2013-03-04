@@ -3,10 +3,12 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
@@ -136,10 +138,14 @@ public class ToolBarPresenter
 
 		Button getUsuariosListButton();
 		Button getImportarButton();
-		Button getExportarButton();
-		Button getExportarTabelasButton();
-		Button getExportarGradesHorariasButton();
-		Button getExportarVisaoAlunoButton();
+		MenuItem getExportarXlsButton();
+		MenuItem getExportarXlsxButton();
+		MenuItem getExportarXlsTabelasButton();
+		MenuItem getExportarXlsxTabelasButton();
+		MenuItem getExportarXlsGradesHorariasButton();
+		MenuItem getExportarXlsxGradesHorariasButton();
+		MenuItem getExportarXlsVisaoAlunoButton();
+		MenuItem getExportarXlsxVisaoAlunoButton();
 		Button getCarregarSolucaoButton();
 
 		Button getSemanasLetivaListCampiButton();
@@ -621,15 +627,17 @@ public class ToolBarPresenter
 			}
 		});
 
-		this.toolBar.getExportarButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getExportarXlsButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			// Fazendo com que exporte todos dados do masterdata.
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xls";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.TUDO, instituicaoEnsinoDTO );
+					ExcelInformationType.TUDO, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
@@ -638,15 +646,36 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getExportarTabelasButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.toolBar.getExportarXlsxButton().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+			{
+				// Fazendo com que exporte todos dados do masterdata.
+				@Override
+				public void componentSelected( MenuEvent ce )
+				{
+					String fileExtension = "xlsx";
+					
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.TUDO, instituicaoEnsinoDTO, fileExtension );
+
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+						parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
+					e.submit();
+				}
+			});
+		
+		this.toolBar.getExportarXlsTabelasButton().addSelectionListener(
+				new SelectionListener< MenuEvent >()
 		{
 			// Fazendo com que exporte todos dados do masterdata.
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xls";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.TODAS_TABELAS, instituicaoEnsinoDTO );
+					ExcelInformationType.TODAS_TABELAS, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
@@ -655,15 +684,17 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getExportarGradesHorariasButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.toolBar.getExportarXlsxTabelasButton().addSelectionListener(
+				new SelectionListener< MenuEvent >()
 		{
 			// Fazendo com que exporte todos dados do masterdata.
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xlsx";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.TODAS_GRADES_HORARIAS, instituicaoEnsinoDTO );
+					ExcelInformationType.TODAS_TABELAS, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
@@ -672,15 +703,74 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getExportarVisaoAlunoButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.toolBar.getExportarXlsGradesHorariasButton().addSelectionListener(
+				new SelectionListener< MenuEvent >()
 		{
 			// Fazendo com que exporte todos dados do masterdata.
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xls";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.TODAS_VISAO_ALUNO, instituicaoEnsinoDTO );
+					ExcelInformationType.TODAS_GRADES_HORARIAS, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		this.toolBar.getExportarXlsxGradesHorariasButton().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			// Fazendo com que exporte todos dados do masterdata.
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TODAS_GRADES_HORARIAS, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		this.toolBar.getExportarXlsVisaoAlunoButton().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			// Fazendo com que exporte todos dados do masterdata.
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				String fileExtension = "xls";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TODAS_VISAO_ALUNO, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		this.toolBar.getExportarXlsxVisaoAlunoButton().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			// Fazendo com que exporte todos dados do masterdata.
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.TODAS_VISAO_ALUNO, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );

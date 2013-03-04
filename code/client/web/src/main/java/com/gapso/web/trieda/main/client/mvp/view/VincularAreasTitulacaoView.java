@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.VincularAreasTitulacaoPresenter;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
@@ -170,7 +171,12 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 }

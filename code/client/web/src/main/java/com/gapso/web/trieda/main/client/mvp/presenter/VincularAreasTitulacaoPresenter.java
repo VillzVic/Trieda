@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.LoadListener;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -17,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -47,7 +49,8 @@ public class VincularAreasTitulacaoPresenter
 		Button getAdicionaBT();
 		Button getRemoveBT();
 		Button getImportExcelButton();
-		Button getExportExcelButton();
+		MenuItem getExportXlsExcelButton();
+		MenuItem getExportXlsxExcelButton();
 		Component getComponent();
 	}
 
@@ -156,12 +159,28 @@ public class VincularAreasTitulacaoPresenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getExportXlsExcelButton().addSelectionListener(new SelectionListener<MenuEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected(MenuEvent ce) {
+				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO );
+					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		display.getExportXlsxExcelButton().addSelectionListener(new SelectionListener<MenuEvent>(){
+			@Override
+			public void componentSelected(MenuEvent ce) {
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

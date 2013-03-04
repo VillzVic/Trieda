@@ -30,6 +30,10 @@ public class ExportExcelFormSubmit
         this.addParameter(
         	ExcelInformationType.getInformationParameterName(),
         	parametros.getInfo().toString() );
+        
+        this.addParameter(
+        	ExcelInformationType.getFileExtensionParameterName(),
+        	parametros.getFileExtension() );
 
         // Deve ser setado em toda classe que realiza exportação de dados
 		addParameter( "instituicaoEnsinoId",

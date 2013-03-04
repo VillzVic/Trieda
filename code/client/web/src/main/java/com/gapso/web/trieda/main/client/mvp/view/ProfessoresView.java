@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresPresenter;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -171,9 +172,15 @@ public class ProfessoresView extends MyComposite
 	}
 
 	@Override
-	public Button getExportExcelButton()
+	public MenuItem getExportXlsExcelButton()
 	{
-		return this.toolBar.getExportExcelButton();
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 
 	@Override

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
@@ -46,18 +46,24 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 		}
 	}
 
-	private HSSFCellStyle [] cellStyles;
+	private CellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
 
-	public AtendimentosPorAlunoExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino) {
-		this(true,cenario,i18nConstants,i18nMessages,instituicaoEnsino);
+	public AtendimentosPorAlunoExportExcel(Cenario cenario,
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+			InstituicaoEnsino instituicaoEnsino, String fileExtension)
+	{
+		this(true,cenario,i18nConstants,i18nMessages,instituicaoEnsino, fileExtension);
 	}
 
-	public AtendimentosPorAlunoExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino) {
-		super(true,ExcelInformationType.ATENDIMENTOS_POR_ALUNO.getSheetName(),cenario,i18nConstants,i18nMessages,instituicaoEnsino);
+	public AtendimentosPorAlunoExportExcel(boolean removeUnusedSheets, Cenario cenario,
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+			InstituicaoEnsino instituicaoEnsino, String fileExtension)
+	{
+		super(true,ExcelInformationType.ATENDIMENTOS_POR_ALUNO.getSheetName(),cenario,i18nConstants,i18nMessages,instituicaoEnsino, fileExtension);
 
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+		this.cellStyles = new CellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 7;
 	}
@@ -69,7 +75,12 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getPathExcelTemplate() {
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 
 	@Override
@@ -78,7 +89,7 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
+	protected boolean fillInExcel(Workbook workbook) {
 		List<Oferta> ofertas = Oferta.findByCenario(instituicaoEnsino,getCenario());
 		Map<Demanda,Map<Atendimento,List<Aluno>>> demandaToAlunosPorAtendimentosMap = getMapDemandaToAlunosPorAtendimento(ofertas);
 
@@ -87,7 +98,7 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 				removeUnusedSheets(this.getSheetName(),workbook);
 			}
 
-			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			Sheet sheet = workbook.getSheet(this.getSheetName());
 			fillInCellStyles(sheet);
 			
 			int nextRow = this.initialRow;
@@ -150,7 +161,7 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 		return demandaToAlunosPorAtendimentosMap;
 	}
 
-	private int writeData(Demanda demanda, Atendimento atendimento, Aluno aluno, int row, HSSFSheet sheet) {
+	private int writeData(Demanda demanda, Atendimento atendimento, Aluno aluno, int row, Sheet sheet) {
 		Oferta oferta = demanda.getOferta();
 		Curriculo curriculo = oferta.getCurriculo();
 		
@@ -193,7 +204,7 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 		return row;
 	}
 
-	private void fillInCellStyles(HSSFSheet sheet) {
+	private void fillInCellStyles(Sheet sheet) {
 		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
 			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
 		}

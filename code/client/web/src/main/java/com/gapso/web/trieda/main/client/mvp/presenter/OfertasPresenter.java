@@ -6,11 +6,13 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.OfertaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -50,7 +52,8 @@ public class OfertasPresenter
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
-		Button getExportExcelButton();
+		MenuItem getExportXlsExcelButton();
+		MenuItem getExportXlsxExcelButton();
 		TurnoComboBox getTurnoBuscaComboBox();
 		CampusComboBox getCampusBuscaComboBox();
 		CursoComboBox getCursoBuscaComboBox();
@@ -200,14 +203,34 @@ public class OfertasPresenter
 			}
 		});
 
-		display.getExportExcelButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		display.getExportXlsExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xls";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO );
+					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		display.getExportXlsxExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

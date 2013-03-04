@@ -3,9 +3,9 @@ package com.gapso.web.trieda.server.excel.exp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
@@ -43,24 +43,24 @@ public class EquivalenciasExportExcel
 		}
 	}
 
-	private HSSFCellStyle [] cellStyles;
+	private CellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
 
 	public EquivalenciasExportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 	}
 
 	public EquivalenciasExportExcel( boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		super( true, ExcelInformationType.EQUIVALENCIAS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.EQUIVALENCIAS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 
-		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
+		this.cellStyles = new CellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 6;
 	}
@@ -72,7 +72,12 @@ public class EquivalenciasExportExcel
 	
 	@Override
 	protected String getPathExcelTemplate() {
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 
 	@Override
@@ -81,7 +86,7 @@ public class EquivalenciasExportExcel
 	}
 
 	@Override
-	protected boolean fillInExcel( HSSFWorkbook workbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Equivalencia > equivalencias
 			= Equivalencia.findAll( this.instituicaoEnsino );
@@ -93,7 +98,7 @@ public class EquivalenciasExportExcel
 				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			Sheet sheet = workbook.getSheet(this.getSheetName());
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 			for (Equivalencia equivalencia : equivalencias) {
@@ -106,7 +111,7 @@ public class EquivalenciasExportExcel
 		return false;
 	}
 	
-	private int writeData(Equivalencia equivalencia, int row, HSSFSheet sheet) {
+	private int writeData(Equivalencia equivalencia, int row, Sheet sheet) {
 		// Cursou
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],equivalencia.getCursou().getCodigo());
 		// Elimina
@@ -120,7 +125,7 @@ public class EquivalenciasExportExcel
 		return row;
 	}
 	
-	private void fillInCellStyles(HSSFSheet sheet) {
+	private void fillInCellStyles(Sheet sheet) {
 		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
 			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
 		}

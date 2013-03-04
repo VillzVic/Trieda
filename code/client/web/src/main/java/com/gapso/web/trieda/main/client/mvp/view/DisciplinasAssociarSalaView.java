@@ -34,6 +34,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.TreeNode;
@@ -628,9 +629,15 @@ public class DisciplinasAssociarSalaView extends MyComposite implements
 	}
 
 	@Override
-	public Button getExportExcelButton()
+	public MenuItem getExportXlsExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 	
 	@Override

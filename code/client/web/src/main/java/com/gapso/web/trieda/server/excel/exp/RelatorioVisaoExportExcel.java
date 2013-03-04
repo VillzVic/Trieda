@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Font;
 import org.springframework.web.util.HtmlUtils;
 
@@ -52,23 +52,24 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		
 	}
 	
-	protected HSSFCellStyle [] cellStyles;
-	protected HSSFSheet sheet;
-	protected Map<Long,HSSFCellStyle> codigoDisciplinaToColorMap;
-	protected List<HSSFCellStyle> excelColorsPool;
+	protected CellStyle [] cellStyles;
+	protected Sheet sheet;
+	protected Map<Long,CellStyle> codigoDisciplinaToColorMap;
+	protected List<CellStyle> excelColorsPool;
 	protected boolean removeUnusedSheets;
 	protected int initialRow;
 	
 	public RelatorioVisaoExportExcel(boolean removeUnusedSheets, Cenario cenario, 
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino)
+		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino,
+		String fileExtension)
 	{
-		super(false, null, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super(false, null, cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 		this.setSheetName(getReportSheetName());
 		
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+		this.cellStyles = new CellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
-		this.codigoDisciplinaToColorMap = new HashMap<Long,HSSFCellStyle>();
+		this.codigoDisciplinaToColorMap = new HashMap<Long,CellStyle>();
 		this.initialRow = 5;
 
 		this.setFilter(filter);
@@ -79,7 +80,12 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	
 	@Override
 	protected String getPathExcelTemplate(){
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 	
 	private String getRelatorioVisaoName(){
@@ -115,7 +121,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		
 	}
 	
-	protected <T> boolean fillInExcelImpl(HSSFWorkbook workbook){
+	protected <T> boolean fillInExcelImpl(Workbook workbook){
 		boolean result = false;
 		
 		T structureControl = this.<T>getStructureReportControl();
@@ -197,7 +203,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 			// para cada aula
 			for (AtendimentoRelatorioDTO aula : aulasDoDia) {
 				// obtém o estilo que será aplicado nas células que serão desenhadas
-				HSSFCellStyle style = getCellStyle(aula);
+				CellStyle style = getCellStyle(aula);
 				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
 				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 				
@@ -244,14 +250,14 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		List<Long> disciplinasOrdenadas = new ArrayList<Long>(disciplinasIDs);
 		Collections.sort(disciplinasOrdenadas);
 		for (Long disciplinaId : disciplinasOrdenadas) {
-			HSSFCellStyle style = excelColorsPool.get(codigoDisciplinaToColorMap.size() % excelColorsPool.size());
+			CellStyle style = excelColorsPool.get(codigoDisciplinaToColorMap.size() % excelColorsPool.size());
 			codigoDisciplinaToColorMap.put(disciplinaId,style);
 		}
 	}
 
-	protected HSSFCellStyle getCellStyle(AtendimentoRelatorioDTO aula){
+	protected CellStyle getCellStyle(AtendimentoRelatorioDTO aula){
 		Long disciplinaId = aula.getDisciplinaSubstitutaId() != null ? aula.getDisciplinaSubstitutaId() : aula.getDisciplinaId(); 
-		HSSFCellStyle style = codigoDisciplinaToColorMap.get(disciplinaId);
+		CellStyle style = codigoDisciplinaToColorMap.get(disciplinaId);
 //		if(style == null){
 //			style = excelColorsPool.get(codigoDisciplinaToColorMap.size() % excelColorsPool.size());
 //			codigoDisciplinaToColorMap.put(aula.getDisciplinaString(), style);
@@ -309,18 +315,18 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		}
 	}
 	
-	protected void buildColorPaletteCellStyles(HSSFWorkbook workbook){
-		excelColorsPool = new ArrayList<HSSFCellStyle>();
+	protected void buildColorPaletteCellStyles(Workbook workbook){
+		excelColorsPool = new ArrayList<CellStyle>();
 		
 		Font whiteFont = workbook.createFont();
-		whiteFont.setColor(HSSFColor.WHITE.index);
+		whiteFont.setColor(IndexedColors.WHITE.index);
 		Font blackFont = workbook.createFont();
-		blackFont.setColor(HSSFColor.BLACK.index);
+		blackFont.setColor(IndexedColors.BLACK.index);
 		for (HSSFColor color : HSSFColor.getIndexHash().values()) {
-			HSSFCellStyle cellStyle = workbook.createCellStyle();
+			CellStyle cellStyle = workbook.createCellStyle();
 			cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 			cellStyle.setFillForegroundColor(color.getIndex());
-			cellStyle.setFont(calculateForegroundColorIndex(color.getTriplet()) == HSSFColor.WHITE.index ? whiteFont : blackFont);
+			cellStyle.setFont(calculateForegroundColorIndex(color.getTriplet()) == IndexedColors.WHITE.index ? whiteFont : blackFont);
 			cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
 			cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 			cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
@@ -329,12 +335,12 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 			cellStyle.setBorderTop(CellStyle.BORDER_THIN);
 			excelColorsPool.add(cellStyle);
 		}
-//		HSSFSheet sheet = workbook.getSheet(ExcelInformationType.PALETA_CORES.getSheetName());
+//		Sheet sheet = workbook.getSheet(ExcelInformationType.PALETA_CORES.getSheetName());
 //		if(sheet != null){
 //            for(int rowIndex = sheet.getFirstRowNum(); rowIndex <= sheet.getLastRowNum(); rowIndex++){
-//            	HSSFRow row = sheet.getRow(rowIndex);
+//        	Row row = sheet.getRow(rowIndex);
 //            	if(row != null){
-//            		HSSFCell cell = row.getCell((int) row.getFirstCellNum());
+//            		Cell cell = row.getCell((int) row.getFirstCellNum());
 //            		if(cell != null) excelColorsPool.add(cell.getCellStyle());
 //            	}
 //            }
@@ -347,9 +353,9 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		float b = colorRGB[2];
 		
 		if ((0.3 * r + 0.59 * g + 0.11 * b) <= 127) {
-			return HSSFColor.WHITE.index;
+			return IndexedColors.WHITE.index;
 		}
 		
-		return HSSFColor.BLACK.index;
+		return IndexedColors.BLACK.index;
 	}
 }

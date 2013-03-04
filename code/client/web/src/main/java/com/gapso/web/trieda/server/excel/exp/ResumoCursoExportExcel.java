@@ -3,9 +3,9 @@ package com.gapso.web.trieda.server.excel.exp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.util.HtmlUtils;
 
 import com.extjs.gxt.ui.client.data.ModelData;
@@ -52,35 +52,39 @@ public class ResumoCursoExportExcel
 	}
 
 	private ResumoCursoFiltroExcel filter;
-	private HSSFCellStyle[] cellStyles;
+	private CellStyle[] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
 
 	public ResumoCursoExportExcel( Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
-	}
-
-	public ResumoCursoExportExcel( boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
-	{
-		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino );
-	}
-		
-	public ResumoCursoExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
-	{
-		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino );
+		this( true, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino, fileExtension );
 	}
 
 	public ResumoCursoExportExcel( boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		super( true, ExcelInformationType.RESUMO_CURSO.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		this( removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino, fileExtension );
+	}
+		
+	public ResumoCursoExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
+	{
+		this( true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension );
+	}
 
-		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
+	public ResumoCursoExportExcel( boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino,
+		String fileExtension)
+	{
+		super( true, ExcelInformationType.RESUMO_CURSO.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
+
+		this.cellStyles = new CellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 6;
 		this.setFilter( filter );
@@ -95,7 +99,12 @@ public class ResumoCursoExportExcel
 	@Override
 	protected String getPathExcelTemplate()
 	{
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 
 	@Override
@@ -105,7 +114,7 @@ public class ResumoCursoExportExcel
 	}
 
 	@Override
-	protected boolean fillInExcel( HSSFWorkbook workbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		boolean result = false;
 
@@ -138,7 +147,7 @@ public class ResumoCursoExportExcel
 
 		if ( !resumoCursoDTOList.isEmpty() )
 		{
-			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
+			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
 
@@ -164,7 +173,7 @@ public class ResumoCursoExportExcel
 		return result;
 	}
 
-	private int writeData( ResumoCursoDTO resumoCursoDTO, int row, HSSFSheet sheet )
+	private int writeData( ResumoCursoDTO resumoCursoDTO, int row, Sheet sheet )
 	{
 		int i = 2;
 
@@ -227,7 +236,7 @@ public class ResumoCursoExportExcel
 		return row;
 	}
 
-	private void fillInCellStyles( HSSFSheet sheet )
+	private void fillInCellStyles( Sheet sheet )
 	{
 		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
 		{

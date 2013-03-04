@@ -3,9 +3,11 @@ package com.gapso.web.trieda.shared.util.relatorioVisao;
 import java.util.Map;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -20,7 +22,8 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 		GradeHorariaVisao getGrid();
 		Component getComponent();
 		Button getSubmitBuscaButton();
-		Button getExportExcelButton();
+		MenuItem getExportXlsExcelButton();
+		MenuItem getExportXlsxExcelButton();
 		RelatorioVisaoFiltro getFiltro();
 	}
 
@@ -42,11 +45,34 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 			}
 		});
 
-		this.display.getExportExcelButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		this.display.getExportXlsExcelButton().addSelectionListener(new SelectionListener<MenuEvent>(){
 			@Override
-			public void componentSelected(ButtonEvent ce){
+			public void componentSelected(MenuEvent ce){
+				String fileExtension = "xls";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					display.getFiltro().getExcelType(), instituicaoEnsinoDTO
+					display.getFiltro().getExcelType(), instituicaoEnsinoDTO, fileExtension
+				);
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages()
+				);
+				
+				Map<String, String> mapStringIds = display.getFiltro().getMapStringIds();
+
+				for(String id : mapStringIds.keySet()) e.addParameter(id, mapStringIds.get(id));
+
+				e.submit();
+			}
+		});
+
+		this.display.getExportXlsxExcelButton().addSelectionListener(new SelectionListener<MenuEvent>(){
+			@Override
+			public void componentSelected(MenuEvent ce){
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					display.getFiltro().getExcelType(), instituicaoEnsinoDTO, fileExtension
 				);
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(

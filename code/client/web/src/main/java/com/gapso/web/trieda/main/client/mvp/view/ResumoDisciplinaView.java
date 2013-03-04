@@ -8,7 +8,6 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -20,6 +19,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGridCellRenderer;
 import com.gapso.web.trieda.main.client.mvp.presenter.ResumoDisciplinaPresenter;
@@ -195,8 +195,14 @@ public class ResumoDisciplinaView
 	}
 
 	@Override
-	public Button getExportExcelButton()
+	public MenuItem getExportXlsExcelButton()
 	{
-		return this.toolBar.getExportExcelButton();
-	}	
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
+	}
 }

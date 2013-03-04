@@ -55,6 +55,11 @@ public enum ExcelInformationType
 		return "uploadedFile";
 	}
 
+	public static String getFileExtensionParameterName()
+	{
+		return "fileExtension";
+	}
+	
 	public static String prefixError()
 	{
 		return "@e@";

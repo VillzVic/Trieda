@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.SalasPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -176,9 +177,15 @@ public class SalasView
 	}
 
 	@Override
-	public Button getExportExcelButton()
+	public MenuItem getExportXlsExcelButton()
 	{
-		return toolBar.getExportExcelButton();
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 
 	@Override

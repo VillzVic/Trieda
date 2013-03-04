@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -46,6 +46,13 @@ public class ExportExcelServlet extends HttpServlet
 		// Obtém os parâmetros
 		String informationToBeExported = request.getParameter(
 			ExcelInformationType.getInformationParameterName() );
+		
+		String fileExtension = request.getParameter(
+			ExcelInformationType.getFileExtensionParameterName() );
+		
+		if(fileExtension.isEmpty()) {
+			fileExtension = "xls";
+		}
 
 		InstituicaoEnsino instituicaoEnsino = null;
 		try{
@@ -64,14 +71,14 @@ public class ExportExcelServlet extends HttpServlet
 			// Get Excel Data
 			IExportExcel exporter = ExportExcelFactory.createExporter(
 				informationToBeExported, this.cenario, ExportExcelServlet.i18nConstants,
-				ExportExcelServlet.i18nMessages, filter, getInstituicaoEnsino()
+				ExportExcelServlet.i18nMessages, filter, getInstituicaoEnsino(), fileExtension
 			);
 
-			HSSFWorkbook workbook = exporter.export();
+			Workbook workbook = exporter.export();
 
 			if(exporter.getErrors().isEmpty()){
 				// Write data on response output stream
-				writeExcelToHttpResponse(exporter.getFileName(), workbook, response);
+				writeExcelToHttpResponse(exporter.getFileName(), fileExtension, workbook, response);
 			}
 			else{
 				response.setContentType("text/html");
@@ -89,11 +96,11 @@ public class ExportExcelServlet extends HttpServlet
 		}
 	}
 
-	private void writeExcelToHttpResponse( String excelFileName,
-		HSSFWorkbook excel, HttpServletResponse response ) throws IOException
+	private void writeExcelToHttpResponse( String excelFileName, String fileExtension,
+		Workbook excel, HttpServletResponse response ) throws IOException
 	{
 		response.setContentType( "application/vnd.ms-excel" );  
-		response.setHeader( "Content-disposition", "attachment; filename=" + excelFileName + ".xls" );
+		response.setHeader( "Content-disposition", "attachment; filename=" + excelFileName + "." + fileExtension );
 
 		ServletOutputStream out = null;
 		try

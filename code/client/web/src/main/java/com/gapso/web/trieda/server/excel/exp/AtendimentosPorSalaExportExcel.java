@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -43,17 +43,23 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 		}
 	}
 
-	private HSSFCellStyle [] cellStyles;
+	private CellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 
-	public AtendimentosPorSalaExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino) {
-		this(true,cenario,i18nConstants,i18nMessages,instituicaoEnsino);
+	public AtendimentosPorSalaExportExcel(Cenario cenario,
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+			InstituicaoEnsino instituicaoEnsino, String fileExtension) 
+	{
+		this(true,cenario,i18nConstants,i18nMessages,instituicaoEnsino, fileExtension);
 	}
 
-	public AtendimentosPorSalaExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino) {
-		super(true,ExcelInformationType.ATENDIMENTOS_POR_ALUNO.getSheetName(),cenario,i18nConstants,i18nMessages,instituicaoEnsino);
+	public AtendimentosPorSalaExportExcel(boolean removeUnusedSheets, Cenario cenario,
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+			InstituicaoEnsino instituicaoEnsino, String fileExtension)
+	{
+		super(true,ExcelInformationType.ATENDIMENTOS_POR_ALUNO.getSheetName(),cenario,i18nConstants,i18nMessages,instituicaoEnsino, fileExtension);
 
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+		this.cellStyles = new CellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 	}
 
@@ -64,7 +70,12 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 
 	@Override
 	protected String getPathExcelTemplate() {
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 
 	@Override
@@ -73,8 +84,8 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
-		RelatorioVisaoSalaExportExcel visaoSalaExpExcel = new RelatorioVisaoSalaExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino) {
+	protected boolean fillInExcel(Workbook workbook) {
+		RelatorioVisaoSalaExportExcel visaoSalaExpExcel = new RelatorioVisaoSalaExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino, fileExtension) {
 			@Override
 			protected int writeHeader(List<List<ParDTO<String,?>>> rowsHeadersPairs, int row, boolean ehTatico) {
 				return row;
@@ -188,7 +199,7 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 		return false;
 	}
 
-	private void fillInCellStyles(HSSFSheet sheet) {
+	private void fillInCellStyles(Sheet sheet) {
 		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
 			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
 		}

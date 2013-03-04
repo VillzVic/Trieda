@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
@@ -41,30 +41,31 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 	private List<TrioDTO<Integer,Integer,String>> hyperlinkInfo;
 
 	public RelatorioVisaoProfessorExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino)
+		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		this(true, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino);
+		this(true, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino, fileExtension);
 	}
 
 	public RelatorioVisaoProfessorExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, boolean isVisaoProfessor, 
-		InstituicaoEnsino instituicaoEnsino)
+		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		this(true, cenario, i18nConstants, i18nMessages, filter, isVisaoProfessor, instituicaoEnsino);
+		this(true, cenario, i18nConstants, i18nMessages, filter, isVisaoProfessor, instituicaoEnsino, fileExtension);
 	}
 
 	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, boolean isVisaoProfessor, 
-		InstituicaoEnsino instituicaoEnsino)
+		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		this(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino);
+		this(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, isVisaoProfessor, instituicaoEnsino, fileExtension);
 	}
 
 	public RelatorioVisaoProfessorExportExcel(boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, ExportExcelFilter filter, 
-		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino)
+		boolean isVisaoProfessor, InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(removeUnusedSheets, false, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+		super(removeUnusedSheets, false, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension);
 
 		this.isVisaoProfessor = isVisaoProfessor;
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
@@ -151,10 +152,10 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 	}
 	
 	@Override
-	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, Workbook workbook) {
 		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName());
 		if (mapLevel2 != null && !mapLevel2.isEmpty()) {
-			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			Sheet sheet = workbook.getSheet(this.getSheetName());
 			for (Entry<String,Map<String,String>> entry : mapLevel2.entrySet()) {
 				String cellValue = entry.getKey();
 				if (cellValue.equals(ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName())) { 

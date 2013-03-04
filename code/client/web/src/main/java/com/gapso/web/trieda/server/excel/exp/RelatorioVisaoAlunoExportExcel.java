@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
@@ -37,16 +37,18 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	private List<TrioDTO<Integer,Integer,String>> hyperlinkInfo;
 	
 	public RelatorioVisaoAlunoExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino)
+		TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+		super(true, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension);
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 	
 	public RelatorioVisaoAlunoExportExcel(boolean removeUnusedSheets, Cenario cenario,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino)
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino);
+		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, null, instituicaoEnsino, fileExtension);
 		this.hyperlinkInfo = new ArrayList<TrioDTO<Integer,Integer,String>>();
 	}
 
@@ -69,7 +71,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	}
 	
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook){
+	protected boolean fillInExcel(Workbook workbook){
 		return this.<Map<Campus, Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>>>>fillInExcelImpl(workbook);
 	}
 	
@@ -214,10 +216,10 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	}
 	
 	@Override
-	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, Workbook workbook) {
 		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(ExcelInformationType.RELATORIO_VISAO_ALUNO.getSheetName());
 		if (mapLevel2 != null && !mapLevel2.isEmpty()) {
-			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			Sheet sheet = workbook.getSheet(this.getSheetName());
 			for (Entry<String,Map<String,String>> entry : mapLevel2.entrySet()) {
 				String cellValue = entry.getKey();
 				if (cellValue.equals(ExcelInformationType.RELATORIO_VISAO_SALA.getSheetName())) { 

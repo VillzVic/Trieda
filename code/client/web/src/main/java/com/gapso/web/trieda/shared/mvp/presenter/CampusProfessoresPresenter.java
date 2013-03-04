@@ -5,10 +5,12 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -41,7 +43,8 @@ public class CampusProfessoresPresenter
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
-		Button getExportExcelButton();
+		MenuItem getExportXlsExcelButton();
+		MenuItem getExportXlsxExcelButton();
 		CampusComboBox getCampusBuscaComboBox();
 		ProfessorComboBox getProfessorBuscaComboBox();
 		Button getSubmitBuscaButton();
@@ -181,13 +184,32 @@ public class CampusProfessoresPresenter
 				}
 			});
 
-			display.getExportExcelButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+			display.getExportXlsExcelButton().addSelectionListener( new SelectionListener< MenuEvent >()
 			{
 				@Override
-				public void componentSelected( ButtonEvent ce )
+				public void componentSelected( MenuEvent ce )
 				{
+					String fileExtension = "xls";
+					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO );
+						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO, fileExtension );
+
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit( parametros,
+						display.getI18nConstants(), display.getI18nMessages() );
+
+					e.submit();
+				}
+			});
+			
+			display.getExportXlsxExcelButton().addSelectionListener( new SelectionListener< MenuEvent >()
+			{
+				@Override
+				public void componentSelected( MenuEvent ce )
+				{
+					String fileExtension = "xlsx";
+					
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit( parametros,
 						display.getI18nConstants(), display.getI18nMessages() );

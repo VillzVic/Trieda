@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -54,26 +54,27 @@ public class DemandasExportExcel
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
+	private CellStyle[] cellStyles;
 	
 	private boolean removeUnusedSheets;
 	private int initialRow;
 	private Map< String, Boolean > mapDemandasExportadas = new HashMap< String, Boolean >();
 
-	public DemandasExportExcel(
-		Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	public DemandasExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 	}
 
 	public DemandasExportExcel(
-		boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+		boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		super( true, ExcelInformationType.DEMANDAS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.DEMANDAS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+		this.cellStyles = new CellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 6;
 	}
@@ -87,7 +88,12 @@ public class DemandasExportExcel
 	@Override
 	protected String getPathExcelTemplate()
 	{
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 
 	@Override
@@ -97,7 +103,7 @@ public class DemandasExportExcel
 	}
 
 	@Override
-	protected boolean fillInExcel( HSSFWorkbook workbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		boolean result = false;
 		
@@ -109,7 +115,7 @@ public class DemandasExportExcel
 
 		if ( !ofertas.isEmpty() )
 		{
-			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
+			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 			
 			DemandasServiceImpl demandasService = new DemandasServiceImpl();
@@ -134,17 +140,17 @@ public class DemandasExportExcel
 	}
 	
 	@Override
-	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, Workbook workbook) {
 		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(ExcelInformationType.DEMANDAS.getSheetName());
 		if (mapLevel2 != null && !mapLevel2.isEmpty()) {
-			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			Sheet sheet = workbook.getSheet(this.getSheetName());
 			int nextRow = this.initialRow;
 			
-			HSSFCell campusCell = getCell(nextRow,2,sheet);
-			HSSFCell turnoCell = getCell(nextRow,3,sheet);
-			HSSFCell cursoCell = getCell(nextRow,4,sheet);
-			HSSFCell curriculoCell = getCell(nextRow,5,sheet);
-			HSSFCell periodoCell = getCell(nextRow,6,sheet);
+			Cell campusCell = getCell(nextRow,2,sheet);
+			Cell turnoCell = getCell(nextRow,3,sheet);
+			Cell cursoCell = getCell(nextRow,4,sheet);
+			Cell curriculoCell = getCell(nextRow,5,sheet);
+			Cell periodoCell = getCell(nextRow,6,sheet);
 			
 			int lastRowNumber = sheet.getLastRowNum()+1;
 			while (campusCell != null && nextRow <= lastRowNumber) {
@@ -171,7 +177,7 @@ public class DemandasExportExcel
 		}		
 	}
 	
-	private int writeData( Oferta oferta, int row, HSSFSheet sheet , Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap)
+	private int writeData( Oferta oferta, int row, Sheet sheet , Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap)
 	{
 		if ( oferta.getDemandas().isEmpty() )
 		{
@@ -299,7 +305,7 @@ public class DemandasExportExcel
 		return row;
 	}
 
-	private void fillInCellStyles( HSSFSheet sheet )
+	private void fillInCellStyles( Sheet sheet )
 	{
 		for ( ExcelCellStyleReference cellStyleReference
 			: ExcelCellStyleReference.values() )

@@ -6,10 +6,12 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AlunoDemandaView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -57,10 +59,12 @@ public class DemandasPresenter
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
-		Button getExportExcelButton();
+		MenuItem getExportXlsExcelButton();
+		MenuItem getExportXlsxExcelButton();
 		Button getAssociarAlunosDemanda();
 		Button getImportExcelAlunosDemandaBT();
-		Button getExportExcelAlunosDemandaBT();
+		MenuItem getExportXlsExcelAlunosDemandaBT();
+		MenuItem getExportXlsxExcelAlunosDemandaBT();
 		CampusComboBox getCampusBuscaComboBox();
 		CursoComboBox getCursoBuscaComboBox();
 		CurriculoComboBox getCurriculoBuscaComboBox();
@@ -214,14 +218,34 @@ public class DemandasPresenter
 			}
 		});
 
-		this.display.getExportExcelButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.display.getExportXlsExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xls";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO );
+					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+				e.submit();
+			}
+		});
+		
+		this.display.getExportXlsxExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -292,14 +316,16 @@ public class DemandasPresenter
 				}
 			});
 		
-		this.display.getExportExcelAlunosDemandaBT().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.display.getExportXlsExcelAlunosDemandaBT().addSelectionListener(
+				new SelectionListener< MenuEvent >()
 			{
 				@Override
-				public void componentSelected( ButtonEvent ce )
+				public void componentSelected( MenuEvent ce )
 				{
+					String fileExtension = "xls";
+					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.DEMANDAS_POR_ALUNO, instituicaoEnsinoDTO );
+						ExcelInformationType.DEMANDAS_POR_ALUNO, instituicaoEnsinoDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -307,6 +333,23 @@ public class DemandasPresenter
 					e.submit();
 				}
 			});
+		this.display.getExportXlsxExcelAlunosDemandaBT().addSelectionListener(
+			new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DEMANDAS_POR_ALUNO, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+				e.submit();
+			}
+		});
 	}
 
 	@Override

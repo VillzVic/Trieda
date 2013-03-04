@@ -7,13 +7,23 @@ public class ExcelParametros
 {
 	private ExcelInformationType info;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private String fileExtension;
 
 	public ExcelParametros(
 		ExcelInformationType info,
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO)
 	{
 		this.info = info;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+	}
+	
+	public ExcelParametros(
+		ExcelInformationType info,
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, String fileExtension )
+	{
+		this.info = info;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.fileExtension = fileExtension;
 	}
 
 	public ExcelInformationType getInfo() {
@@ -31,5 +41,13 @@ public class ExcelParametros
 
 	public void setInstituicaoEnsinoDTO(InstituicaoEnsinoDTO instituicaoEnsinoDTO) {
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+	}
+	
+	public void setFileExtension ( String extension ) {
+		this.fileExtension = extension;
+	}
+	
+	public String getFileExtension () {
+		return fileExtension;
 	}
 }

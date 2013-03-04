@@ -1979,11 +1979,11 @@ fieldset.x-panel-collapsed .x-fieldset-bwrap {
     background:transparent no-repeat right center;
 	padding-right:14px;
 }
-.x-btn-mc em.x-btn-arrow-bottom {
+/* .x-btn-mc em.x-btn-arrow-bottom {
     display:block;
     background:transparent no-repeat center bottom;
 	padding-bottom:14px;
-}
+} */
 .x-btn-mc em.x-btn-split-bottom {
     display:block;
     background:transparent no-repeat center bottom;
@@ -6364,9 +6364,9 @@ ul.x-tab-strip-bottom{
 .x-btn-over .x-btn-mc em.x-btn-split, .x-btn-click .x-btn-mc em.x-btn-split, .x-btn-menu-active .x-btn-mc em.x-btn-split, .x-btn-pressed .x-btn-mc em.x-btn-split {
     background-image:url(../images/default/button/s-arrow-o.gif);
 }
-.x-btn-mc em.x-btn-arrow-bottom {
+/* .x-btn-mc em.x-btn-arrow-bottom {
     background-image:url(../images/default/button/s-arrow-b-noline.gif);
-}
+} */
 .x-btn-mc em.x-btn-split-bottom {
     background-image:url(../images/default/button/s-arrow-b.gif);
 }

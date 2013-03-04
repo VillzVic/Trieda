@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandasPresenter;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
@@ -72,12 +73,14 @@ public class DemandasView
 	
 	private void createToolBar()
 	{
+		String[] menus = {"Exportar como xls", "Exportar como xlsx"};
+		
 		this.toolBar = new SimpleToolBar( this );
 		this.toolBar.add( new SeparatorToolItem() );
 		
 		this.importExcelAlunosDemandaBT = this.toolBar.createButton(getI18nConstants().importarExcel()+" por Aluno",Resources.DEFAULTS.importar16());
 		this.toolBar.add(this.importExcelAlunosDemandaBT);
-		this.exportExcelAlunosDemandaBT = this.toolBar.createButton(getI18nConstants().exportarExcel()+" por Aluno",Resources.DEFAULTS.exportar16());
+		this.exportExcelAlunosDemandaBT = this.toolBar.createMenuButton(getI18nConstants().exportarExcel()+" por Aluno",Resources.DEFAULTS.exportar16(), menus);
 		this.toolBar.add(this.exportExcelAlunosDemandaBT);
 		
 		this.toolBar.add( new SeparatorToolItem() );
@@ -148,9 +151,15 @@ public class DemandasView
 	}
 
 	@Override
-	public Button getExportExcelButton()
+	public MenuItem getExportXlsExcelButton()
 	{
-		return this.toolBar.getExportExcelButton();
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 
 	@Override
@@ -239,8 +248,14 @@ public class DemandasView
 	}
 	
 	@Override
-	public Button getExportExcelAlunosDemandaBT()
+	public MenuItem getExportXlsExcelAlunosDemandaBT()
 	{
-		return this.exportExcelAlunosDemandaBT;
+		return (MenuItem) this.exportExcelAlunosDemandaBT.getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelAlunosDemandaBT()
+	{
+		return (MenuItem) this.exportExcelAlunosDemandaBT.getMenu().getItem(1);
 	}
 }

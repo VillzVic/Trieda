@@ -11,13 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFComment;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
@@ -26,8 +21,11 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -48,11 +46,13 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	private Drawing drawing;
 	private Map<String,Map<String,Map<String,String>>> hyperlinksMap;
 	private CellStyle hlinkStyle;
+	protected String fileExtension;
 
 	protected AbstractExportExcel(boolean autoSizeColumns, String sheetName, Cenario cenario,
 		TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino,
+		String fileExtension)
 	{
 		this.autoSizeColumns = autoSizeColumns;
 		this.instituicaoEnsino = instituicaoEnsino;
@@ -64,19 +64,21 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		this.errors = new ArrayList< String >();
 		this.warnings = new ArrayList< String >();
 		this.hyperlinksMap = new HashMap<String,Map<String,Map<String,String>>>();
+		
+		this.fileExtension = fileExtension;
 	}
 
 	protected abstract String getPathExcelTemplate();
 	protected abstract String getReportName();
-	protected abstract boolean fillInExcel( HSSFWorkbook workbook );
+	protected abstract boolean fillInExcel( Workbook workbook );
 
 	@Override
-	public HSSFWorkbook export()
+	public Workbook export()
 	{
 		this.errors.clear();
 		this.warnings.clear();
 
-		HSSFWorkbook workbook = null;
+		Workbook workbook = null;
 		try
 		{
 			workbook = getExcelTemplate( getPathExcelTemplate() );
@@ -96,7 +98,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	}
 
 	@Override
-	public boolean export( HSSFWorkbook workbook )
+	public boolean export( Workbook workbook )
 	{
 		if ( workbook != null )
 		{
@@ -116,8 +118,8 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		return false;
 	}
 
-	private void autoSizeColumns(HSSFWorkbook workbook) {
-		HSSFSheet sheet = workbook.getSheet(getSheetName());
+	private void autoSizeColumns(Workbook workbook) {
+		Sheet sheet = workbook.getSheet(getSheetName());
 		if (sheet != null) {
 			autoSizeColumns((short)0,(short)20,sheet);			
 		}
@@ -141,7 +143,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	}
 	
 	@Override
-	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, HSSFWorkbook workbook) {}
+	public void resolveHyperlinks(Map<String,Map<String,Map<String,String>>> hyperlinksMap, Workbook workbook) {}
 	
 	protected void registerHyperlink(String sheetTarget, String sheetOrigin, String key, String hyperlink) {
 		Map<String,Map<String,String>> mapLevel2 = hyperlinksMap.get(sheetTarget);
@@ -189,7 +191,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	}
 
 	protected void autoSizeColumns( short firstColumn,
-		short lastColumn, HSSFSheet sheet )
+		short lastColumn, Sheet sheet )
 	{
 		for ( short col = firstColumn; col <= lastColumn; col++ )
 		{
@@ -198,7 +200,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	}
 
 	protected void removeUnusedSheets(
-		String usedSheetName, HSSFWorkbook workbook )
+		String usedSheetName, Workbook workbook )
 	{
 		while ( workbook.getNumberOfSheets() > 1 )
 		{
@@ -213,12 +215,12 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	}
 
 	protected void removeUnusedSheets(
-		List< String > usedSheetsName, HSSFWorkbook workbook )
+		List< String > usedSheetsName, Workbook workbook )
 	{
-		Set< HSSFSheet > usedSheets = new HashSet< HSSFSheet >();
+		Set< Sheet > usedSheets = new HashSet< Sheet >();
 		for ( String usedSheetName : usedSheetsName )
 		{
-			HSSFSheet sheet = workbook.getSheet( usedSheetName );
+			Sheet sheet = workbook.getSheet( usedSheetName );
 			if ( sheet != null )
 			{
 				usedSheets.add( sheet );
@@ -228,7 +230,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		int sheetIx = 0;
 		while ( workbook.getNumberOfSheets() > usedSheets.size() )
 		{
-			HSSFSheet sheet = workbook.getSheetAt( sheetIx++ );
+			Sheet sheet = workbook.getSheetAt( sheetIx++ );
 			if ( !usedSheets.contains( sheet ) )
 			{
 				workbook.removeSheetAt( sheetIx );
@@ -237,13 +239,13 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		}
 	}
 
-	protected void mergeCells( int rowI, int rowF, int colI, int colF, HSSFSheet sheet )
+	protected void mergeCells( int rowI, int rowF, int colI, int colF, Sheet sheet )
 	{
 		sheet.addMergedRegion( new CellRangeAddress( rowI - 1, rowF - 1, colI - 1, colF - 1 ) );
 	}
 
 	protected void mergeCells( int rowI, int rowF, int colI,
-		int colF, HSSFSheet sheet, HSSFCellStyle style )
+		int colF, Sheet sheet, CellStyle style )
 	{
 		for ( int row = rowI; row <= rowF; row++ )
 		{
@@ -256,16 +258,16 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		sheet.addMergedRegion( new CellRangeAddress( rowI - 1, rowF - 1, colI - 1, colF - 1 ) );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet, Calendar date )
+	protected void setCell( int row, int col, Sheet sheet, Calendar date )
 	{
-		final HSSFCell cell = getCell( row, col, sheet );
+		final Cell cell = getCell( row, col, sheet );
 		cell.setCellValue( date );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet,
-		HSSFCellStyle style, int mes, int ano )
+	protected void setCell( int row, int col, Sheet sheet,
+		CellStyle style, int mes, int ano )
 	{
-		final HSSFCell cell = getCell( row, col, sheet );
+		final Cell cell = getCell( row, col, sheet );
 		Calendar date = Calendar.getInstance();
 
 		// Utilizado para limpar todas as
@@ -277,39 +279,39 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		cell.setCellStyle( style );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet,
-		HSSFCellStyle style, Calendar date )
+	protected void setCell( int row, int col, Sheet sheet,
+		CellStyle style, Calendar date )
 	{
-		final HSSFCell cell = getCell( row ,col, sheet );
+		final Cell cell = getCell( row ,col, sheet );
 		cell.setCellValue( date );
 		cell.setCellStyle( style );
 	}
 
-	protected void setCell(int row, int col, HSSFSheet sheet,
-		HSSFCellStyle style, Date date )
+	protected void setCell(int row, int col, Sheet sheet,
+		CellStyle style, Date date )
 	{ 
-		final HSSFCell cell = getCell( row, col, sheet );
+		final Cell cell = getCell( row, col, sheet );
 		cell.setCellValue( date );
 		cell.setCellStyle( style );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet, String value )
+	protected void setCell( int row, int col, Sheet sheet, String value )
 	{
-		HSSFCell cell = getCell( row, col, sheet );
-		cell.setCellValue( new HSSFRichTextString( value ) );
+		Cell cell = getCell( row, col, sheet );
+		cell.setCellValue( factory.createRichTextString( value ) );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet,
-		HSSFCellStyle style, String value )
+	protected void setCell( int row, int col, Sheet sheet,
+		CellStyle style, String value )
 	{
-		HSSFCell cell = getCell( row, col, sheet );
-		cell.setCellValue( new HSSFRichTextString( value ) );
+		Cell cell = getCell( row, col, sheet );
+		cell.setCellValue( factory.createRichTextString( value ) );
 		cell.setCellStyle( style );
 	}
 
-	protected void setCell(int row, int col, HSSFSheet sheet, HSSFCellStyle style, String value, String comment) {
-		HSSFCell cell = getCell( row, col, sheet );
-		cell.setCellValue( new HSSFRichTextString( value ) );
+	protected void setCell(int row, int col, Sheet sheet, CellStyle style, String value, String comment) {
+		Cell cell = getCell( row, col, sheet );
+		cell.setCellValue( factory.createRichTextString( value ) );
 
 		Comment cellComment = cell.getCellComment();
 		if (cellComment == null) {
@@ -329,10 +331,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		cell.setCellStyle(style);
 	}
 	
-	protected void setCellWithHyperlink(int row, int col, HSSFSheet sheet, String value, String hyperlink, boolean withHyperlinkStyle) {
-		HSSFCell cell = getCell(row,col,sheet);
+	protected void setCellWithHyperlink(int row, int col, Sheet sheet, String value, String hyperlink, boolean withHyperlinkStyle) {
+		Cell cell = getCell(row,col,sheet);
 		if (value != null) {
-			cell.setCellValue(new HSSFRichTextString(value));
+			cell.setCellValue(factory.createRichTextString(value));
 		}
 		
 		if (withHyperlinkStyle) {
@@ -356,58 +358,58 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		cell.setHyperlink(link);
 	}
 	
-	protected void setCellWithHyperlink(int row, int col, HSSFSheet sheet, String hyperlink, boolean withHyperlinkStyle) {
+	protected void setCellWithHyperlink(int row, int col, Sheet sheet, String hyperlink, boolean withHyperlinkStyle) {
 		setCellWithHyperlink(row,col,sheet,null,hyperlink,withHyperlinkStyle);
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet, HSSFCellStyle style,
-		Iterator< HSSFComment > itExcelCommentsPool, String value, String comment )
+	protected void setCell( int row, int col, Sheet sheet, CellStyle style,
+		Iterator< Comment > itExcelCommentsPool, String value, String comment )
 	{
-		HSSFCell cell = getCell( row, col, sheet );
-		cell.setCellValue( new HSSFRichTextString( value ) );
+		Cell cell = getCell( row, col, sheet );
+		cell.setCellValue( factory.createRichTextString( value ) );
 
-		HSSFComment cellComment = cell.getCellComment();
+		Comment cellComment = cell.getCellComment();
 		if ( cellComment == null )
 		{
 			if ( itExcelCommentsPool.hasNext() )
 			{
 				cellComment = itExcelCommentsPool.next();
 				cell.setCellComment( cellComment );
-				cellComment.setString( new HSSFRichTextString( comment ) );
+				cellComment.setString( factory.createRichTextString( comment ) );
 			}
 		}
 		else
 		{
-			cellComment.setString( new HSSFRichTextString( comment ) );
+			cellComment.setString( factory.createRichTextString( comment ) );
 		}
 
 		cell.setCellStyle( style );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet, double value )
+	protected void setCell( int row, int col, Sheet sheet, double value )
 	{
-		HSSFCell cell = getCell( row, col, sheet );
+		Cell cell = getCell( row, col, sheet );
 		cell.setCellValue( value );
 	}
 
-	protected void setCell( int row, int col, HSSFSheet sheet,
-		HSSFCellStyle style, double value )
+	protected void setCell( int row, int col, Sheet sheet,
+		CellStyle style, double value )
 	{
-		HSSFCell cell = getCell(row, col, sheet );
+		Cell cell = getCell(row, col, sheet );
 		cell.setCellValue( value );
 		cell.setCellStyle( style );
 	}
 
-	protected HSSFCell getCell( int row, int col, HSSFSheet sheet )
+	protected Cell getCell( int row, int col, Sheet sheet )
 	{
-		final HSSFRow hssfRow = getRow( row - 1, sheet );
-		final HSSFCell cell = getCell( hssfRow, ( col - 1 ) );
+		final Row ssRow = getRow( row - 1, sheet );
+		final Cell cell = getCell( ssRow, ( col - 1 ) );
 		return cell;
 	}
 
-	private HSSFRow getRow( int index, HSSFSheet sheet )
+	private Row getRow( int index, Sheet sheet )
 	{
-		HSSFRow row = sheet.getRow( index );
+		Row row = sheet.getRow( index );
 		if ( row == null )
 		{
 			row = sheet.createRow( index );
@@ -416,9 +418,9 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		return row;
 	}
 
-	private HSSFCell getCell( HSSFRow row, int col )
+	private Cell getCell( Row row, int col )
 	{
-		HSSFCell cell = row.getCell( col );
+		Cell cell = row.getCell( col );
 		if ( cell == null )
 		{
 			cell = row.createCell( col );
@@ -427,16 +429,23 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		return cell;
 	}
 
-	private HSSFWorkbook getExcelTemplate( String pathExcelTemplate )
+	private Workbook getExcelTemplate( String pathExcelTemplate )
 		throws IOException
 	{
 		final InputStream inTemplate
 			= ExportExcelServlet.class.getResourceAsStream( pathExcelTemplate );
 
-		HSSFWorkbook workBook = null;
+		Workbook workBook = null;
 		try
 		{
-			workBook = new HSSFWorkbook( inTemplate );
+			if ( fileExtension.equals("xls") )
+			{
+				workBook = new HSSFWorkbook( inTemplate );
+			}
+			else if ( fileExtension.equals("xlsx") )
+			{
+				workBook = new XSSFWorkbook( inTemplate );
+			}
 		}
 		catch ( IOException e )
 		{

@@ -2,13 +2,13 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -36,7 +36,8 @@ public class ResumoDisciplinaPresenter
 		CampusComboBox getCampusComboBox();
 		TreeStore< ResumoDisciplinaDTO > getStore();
 		TreeGrid< ResumoDisciplinaDTO > getTree();
-		Button getExportExcelButton();
+		MenuItem getExportXlsExcelButton();
+		MenuItem getExportXlsxExcelButton();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -85,14 +86,44 @@ public class ResumoDisciplinaPresenter
 				}
 			});
 
-		this.display.getExportExcelButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.display.getExportXlsExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 			{
 				@Override
-				public void componentSelected( ButtonEvent ce )
+				public void componentSelected( MenuEvent ce )
 				{
+					String fileExtension = "xls";
+					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.RESUMO_DISCIPLINA, instituicaoEnsinoDTO ); 
+						ExcelInformationType.RESUMO_DISCIPLINA, instituicaoEnsinoDTO, fileExtension ); 
+
+					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+						parametros,	display.getI18nConstants(), display.getI18nMessages() );
+
+					if ( display.getCampusComboBox() == null
+						|| display.getCampusComboBox().getValue() == null
+						|| display.getCampusComboBox().getValue().getId() == null )
+					{
+						return;
+					}
+
+					String campusId = display.getCampusComboBox().getValue().getId().toString();
+					e.addParameter( "campusId", campusId );
+
+					e.submit();
+				}
+			});
+		
+		this.display.getExportXlsxExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
+			{
+				@Override
+				public void componentSelected( MenuEvent ce )
+				{
+					String fileExtension = "xlsx";
+						
+					ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.RESUMO_DISCIPLINA, instituicaoEnsinoDTO, fileExtension ); 
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros,	display.getI18nConstants(), display.getI18nMessages() );

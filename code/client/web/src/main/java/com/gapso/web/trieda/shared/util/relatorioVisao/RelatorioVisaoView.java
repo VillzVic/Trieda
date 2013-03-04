@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -131,8 +132,13 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 	}
 
 	@Override
-	public Button getExportExcelButton(){
-		return this.toolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton(){
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton(){
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 	
 	public abstract RelatorioVisaoFiltro getFiltro();

@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -44,24 +44,25 @@ public class CurriculosExportExcel
 		}
 	}
 
-	private HSSFCellStyle [] cellStyles;
+	private CellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
 	private Map< String, Boolean > mapCurriculosExportados = new HashMap< String, Boolean >();
 
-	public CurriculosExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
-		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino )
+	public CurriculosExportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		this( true, cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 	}
 
 	public CurriculosExportExcel( boolean removeUnusedSheets, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		super( true, ExcelInformationType.CURRICULOS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		super( true, ExcelInformationType.CURRICULOS.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 
-		this.cellStyles = new HSSFCellStyle[ ExcelCellStyleReference.values().length ];
+		this.cellStyles = new CellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 6;
 	}
@@ -75,7 +76,12 @@ public class CurriculosExportExcel
 	@Override
 	protected String getPathExcelTemplate()
 	{
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 
 	@Override
@@ -85,7 +91,7 @@ public class CurriculosExportExcel
 	}
 
 	@Override
-	protected boolean fillInExcel( HSSFWorkbook workbook )
+	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Curriculo > curriculos
 			= Curriculo.findByCenario(
@@ -98,7 +104,7 @@ public class CurriculosExportExcel
 				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			HSSFSheet sheet = workbook.getSheet( this.getSheetName() );
+			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			fillInCellStyles( sheet );
 			int nextRow = this.initialRow;
 
@@ -113,7 +119,7 @@ public class CurriculosExportExcel
 		return false;
 	}
 	
-	private int writeData( Curriculo curriculo, int row, HSSFSheet sheet )
+	private int writeData( Curriculo curriculo, int row, Sheet sheet )
 	{
 		List< Integer > listPeriodos
 			= curriculo.getPeriodos();
@@ -184,7 +190,7 @@ public class CurriculosExportExcel
 		return row;
 	}
 
-	private void fillInCellStyles( HSSFSheet sheet )
+	private void fillInCellStyles( Sheet sheet )
 	{
 		for ( ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values() )
 		{

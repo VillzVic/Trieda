@@ -12,6 +12,8 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.Menu;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.main.client.mvp.presenter.ToolBarPresenter;
@@ -424,22 +426,24 @@ public class ToolBarView
 	}
 
 	private void createAdministracao() {
+		String[] menus = {"Exportar como xls","Exportar como xlsx"};
+		
 		usuariosListBt = createButton("Usuários","Usuários",Resources.DEFAULTS.turno24());
 		administracaoToolBar.add(usuariosListBt);
 
 		importarBt = createButton("Importar<br />Tudo","Importar Tudo",Resources.DEFAULTS.importar24());
 		administracaoToolBar.add(importarBt);
 
-		exportarBt = createButton("Exportar<br />Tudo","Exportar Tudo",Resources.DEFAULTS.exportar24());
+		exportarBt = createMenuButton("Exportar<br />Tudo","Exportar Tudo",Resources.DEFAULTS.exportar24(),menus);
 		administracaoToolBar.add(exportarBt);
 		
-		exportarTabelasBt = createButton("Exportar<br />Tabelas","Exportar Tabelas",Resources.DEFAULTS.exportar24());
+		exportarTabelasBt = createMenuButton("Exportar<br />Tabelas","Exportar Tabelas",Resources.DEFAULTS.exportar24(),menus);
 		administracaoToolBar.add(exportarTabelasBt);
 		
-		exportarGradesHorariasBt = createButton("Exportar<br />Grades","Exportar Grades Horárias",Resources.DEFAULTS.exportar24());
+		exportarGradesHorariasBt = createMenuButton("Exportar<br />Grades","Exportar Grades Horárias",Resources.DEFAULTS.exportar24(),menus);
 		administracaoToolBar.add(exportarGradesHorariasBt);
 		
-		exportarVisaoAlunoBt = createButton("Exportar<br />Visão Aluno","Exportar Visão Aluno",Resources.DEFAULTS.exportar24());
+		exportarVisaoAlunoBt = createMenuButton("Exportar<br />Visão Aluno","Exportar Visão Aluno",Resources.DEFAULTS.exportar24(),menus);
 		administracaoToolBar.add(exportarVisaoAlunoBt);
 		
 		carregarSolucaoBt = createButton("Carregar<br />Solução","Carregar Solução",Resources.DEFAULTS.trieda24());
@@ -478,6 +482,26 @@ public class ToolBarView
 		bt.setArrowAlign( ButtonArrowAlign.BOTTOM );
 		bt.setHeight( 60 );
 
+		return bt;
+	}
+	
+	private Button createMenuButton( String text, String toolTip, ImageResource icon, String[] menus )
+	{
+		Button bt = new Button( text,
+			AbstractImagePrototype.create( icon ) );
+		bt.setToolTip( toolTip );
+		bt.setScale( ButtonScale.MEDIUM );
+		bt.setIconAlign( IconAlign.TOP );
+		bt.setArrowAlign( ButtonArrowAlign.BOTTOM );
+		bt.setHeight( 60 );
+		
+		Menu menu = new Menu();
+		
+		for(String s : menus) {
+			menu.add(new MenuItem(s));
+		}
+		bt.setMenu(menu);
+		
 		return bt;
 	}
 	
@@ -595,27 +619,51 @@ public class ToolBarView
 	}
 
 	@Override
-	public Button getExportarButton()
+	public MenuItem getExportarXlsButton()
 	{
-		return exportarBt;
+		return (MenuItem) exportarBt.getMenu().getItem(0);
 	}
 	
 	@Override
-	public Button getExportarTabelasButton()
+	public MenuItem getExportarXlsxButton()
 	{
-		return exportarTabelasBt;
+		return (MenuItem) exportarBt.getMenu().getItem(1);
 	}
 	
 	@Override
-	public Button getExportarGradesHorariasButton()
+	public MenuItem getExportarXlsTabelasButton()
 	{
-		return exportarGradesHorariasBt;
+		return (MenuItem) exportarTabelasBt.getMenu().getItem(0);
 	}
 	
 	@Override
-	public Button getExportarVisaoAlunoButton()
+	public MenuItem getExportarXlsxTabelasButton()
 	{
-		return exportarVisaoAlunoBt;
+		return (MenuItem) exportarTabelasBt.getMenu().getItem(1);
+	}
+	
+	@Override
+	public MenuItem getExportarXlsGradesHorariasButton()
+	{
+		return (MenuItem) exportarGradesHorariasBt.getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportarXlsxGradesHorariasButton()
+	{
+		return (MenuItem) exportarGradesHorariasBt.getMenu().getItem(1);
+	}
+	
+	@Override
+	public MenuItem getExportarXlsVisaoAlunoButton()
+	{
+		return (MenuItem) exportarVisaoAlunoBt.getMenu().getItem(0);
+	}
+
+	@Override
+	public MenuItem getExportarXlsxVisaoAlunoButton()
+	{
+		return (MenuItem) exportarVisaoAlunoBt.getMenu().getItem(1);
 	}
 	
 	@Override

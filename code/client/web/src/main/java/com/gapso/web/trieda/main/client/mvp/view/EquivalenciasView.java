@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.EquivalenciasPresenter;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -102,8 +103,13 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 	
 	@Override

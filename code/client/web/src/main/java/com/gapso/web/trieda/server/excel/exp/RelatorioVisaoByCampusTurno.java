@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -27,11 +27,12 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 	
 	private boolean deveProcessarAtendimentosTaticos;
 	
-	public RelatorioVisaoByCampusTurno(boolean removeUnusedSheets, boolean deveProcessarAtendimentosTaticos, Cenario cenario, 
-			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-			ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino)
+	public RelatorioVisaoByCampusTurno(boolean removeUnusedSheets, boolean deveProcessarAtendimentosTaticos,
+			Cenario cenario, TriedaI18nConstants i18nConstants,
+			TriedaI18nMessages i18nMessages, ExportExcelFilter filter,
+			InstituicaoEnsino instituicaoEnsino, String fileExtension)
 	{
-		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino);
+		super(removeUnusedSheets, cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension);
 		this.deveProcessarAtendimentosTaticos = deveProcessarAtendimentosTaticos;
 	}
 	
@@ -86,7 +87,7 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 	}
 	
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook){
+	protected boolean fillInExcel(Workbook workbook){
 		return this.<RelatorioVisaoMap<Campus, Turno, ?>>fillInExcelImpl(workbook);
 	}
 	

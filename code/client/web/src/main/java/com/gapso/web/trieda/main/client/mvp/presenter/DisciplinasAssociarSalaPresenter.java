@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.IconButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -20,6 +21,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -65,7 +67,8 @@ public class DisciplinasAssociarSalaPresenter
 		TreePanel< TreeNodeDTO > getSalasList();
 		ToolButton getRemoveButton();
 		Button getImportExcelButton();
-		Button getExportExcelButton();
+		MenuItem getExportXlsExcelButton();
+		MenuItem getExportXlsxExcelButton();
 		void setTabEnabled( boolean flag );
 		Component getComponent();
 		Button getAssociarDisciplinasPraticasLaboratoriosBT();
@@ -393,18 +396,38 @@ public class DisciplinasAssociarSalaPresenter
 			}
 		});
 
-		this.display.getExportExcelButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.display.getExportXlsExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xls";
+				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO );
+					ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
 
+				e.submit();
+			}
+		});
+		
+		this.display.getExportXlsxExcelButton().addSelectionListener(
+			new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.DISCIPLINAS_SALAS, instituicaoEnsinoDTO, fileExtension );
+				
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+				
 				e.submit();
 			}
 		});

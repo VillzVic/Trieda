@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.UnidadesPresenter;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -127,8 +128,13 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	}
 
 	@Override
-	public Button getExportExcelButton() {
-		return toolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 	
 	@Override

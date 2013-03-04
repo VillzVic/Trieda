@@ -3,9 +3,9 @@ package com.gapso.web.trieda.server.excel.exp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -37,18 +37,22 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 		}
 	}
 
-	private HSSFCellStyle[] cellStyles;
+	private CellStyle[] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
 
-	public DisponibilidadesProfessoresExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino) {
-		this(true, cenario, i18nConstants, i18nMessages, instituicaoEnsino);
+	public DisponibilidadesProfessoresExportExcel(Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension) {
+		this(true, cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension);
 	}
 
-	public DisponibilidadesProfessoresExportExcel(boolean removeUnusedSheets, Cenario cenario, TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino) {
-		super(true, ExcelInformationType.DISPONIBILIDADES_PROFESSORES.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino);
+	public DisponibilidadesProfessoresExportExcel(boolean removeUnusedSheets, Cenario cenario,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino, String fileExtension) {
+		super(true, ExcelInformationType.DISPONIBILIDADES_PROFESSORES.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension);
 
-		this.cellStyles = new HSSFCellStyle[ExcelCellStyleReference.values().length];
+		this.cellStyles = new CellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 6;
 	}
@@ -60,7 +64,12 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 
 	@Override
 	protected String getPathExcelTemplate() {
-		return "/templateExport.xls";
+		if ( fileExtension.equals("xlsx") )
+		{
+			return "/templateExport.xlsx";
+		}
+		else
+			return "/templateExport.xls";
 	}
 
 	@Override
@@ -69,7 +78,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 	}
 
 	@Override
-	protected boolean fillInExcel(HSSFWorkbook workbook) {
+	protected boolean fillInExcel(Workbook workbook) {
 		List<Professor> professores = Professor.findByCenario(this.instituicaoEnsino,getCenario());
 
 		if (!professores.isEmpty()) {
@@ -77,7 +86,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 				removeUnusedSheets(this.getSheetName(), workbook);
 			}
 
-			HSSFSheet sheet = workbook.getSheet(this.getSheetName());
+			Sheet sheet = workbook.getSheet(this.getSheetName());
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
 
@@ -93,7 +102,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 		return false;
 	}
 
-	private int writeData(Professor professor, HorarioDisponivelCenario hdc, int row, HSSFSheet sheet) {
+	private int writeData(Professor professor, HorarioDisponivelCenario hdc, int row, Sheet sheet) {
 		// CPF
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],professor.getCpf());
 		// Dia
@@ -112,7 +121,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 		return row;
 	}
 
-	private void fillInCellStyles(HSSFSheet sheet) {
+	private void fillInCellStyles(Sheet sheet) {
 		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
 			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
 		}
