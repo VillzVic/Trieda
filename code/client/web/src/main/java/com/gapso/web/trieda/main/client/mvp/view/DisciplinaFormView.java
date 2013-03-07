@@ -30,6 +30,8 @@ public class DisciplinaFormView
 	private NumberField creditosTeoricoTF;
 	private NumberField creditosPraticoTF;
 	private CheckBox laboratorioCB;
+	private CheckBox usaSabadoCB;
+	private CheckBox usaDomingoCB;
 	private TipoDisciplinaComboBox tipoDisciplinaCB;
 	private DificuldadeComboBox dificuldadeCB;
 	private NumberField maxAlunosTeoricoTF;
@@ -57,7 +59,7 @@ public class DisciplinaFormView
 		String title = (disciplinaDTO.getId() == null) ? "Inserção de Disciplina"
 				: "Edição de Disciplina";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.disciplina16());
-		simpleModal.setHeight(400);
+		simpleModal.setHeight(450);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -152,6 +154,18 @@ public class DisciplinaFormView
 		maxAlunosPraticoTF
 				.setEmptyText("Preencha o número máximo de alunos práticos");
 		formPanel.add(maxAlunosPraticoTF, formData);
+		
+		usaSabadoCB = new CheckBox();
+		usaSabadoCB.setName(DisciplinaDTO.PROPERTY_USA_SABADO);
+		usaSabadoCB.setValue(disciplinaDTO.getUsaSabado());
+		usaSabadoCB.setFieldLabel("Usa Sábado");
+		formPanel.add(usaSabadoCB, formData);
+
+		usaDomingoCB = new CheckBox();
+		usaDomingoCB.setName(DisciplinaDTO.PROPERTY_USA_DOMINGO);
+		usaDomingoCB.setValue(disciplinaDTO.getUsaDomingo());
+		usaDomingoCB.setFieldLabel("Usa Domingo");
+		formPanel.add(usaDomingoCB, formData);
 
 		FormButtonBinding binding = new FormButtonBinding(formPanel);
 		binding.addButton(simpleModal.getSalvarBt());
@@ -222,5 +236,16 @@ public class DisciplinaFormView
 	public NumberField getMaxAlunosPraticoTextField() {
 		return maxAlunosPraticoTF;
 	}
+	
+	@Override
+	public CheckBox getUsaSabadoCheckBox() {
+		return usaSabadoCB;
+	}
+	
+	@Override
+	public CheckBox getUsaDomingoCheckBox() {
+		return usaDomingoCB;
+	}
+
 
 }

@@ -37,6 +37,8 @@ public class DisciplinasImportExcel
 	static public String NIVEL_DIFICULDADE_COLUMN_NAME;
 	static public String MAX_ALUNOS_TEORICOS_COLUMN_NAME;
 	static public String MAX_ALUNOS_PRATICOS_COLUMN_NAME;
+	static public String USA_SABADO_COLUMN_NAME;
+	static public String USA_DOMINGO_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -58,6 +60,8 @@ public class DisciplinasImportExcel
 		this.headerColumnsNames.add( NIVEL_DIFICULDADE_COLUMN_NAME );
 		this.headerColumnsNames.add( MAX_ALUNOS_TEORICOS_COLUMN_NAME );
 		this.headerColumnsNames.add( MAX_ALUNOS_PRATICOS_COLUMN_NAME );
+		this.headerColumnsNames.add( USA_SABADO_COLUMN_NAME );
+		this.headerColumnsNames.add( USA_DOMINGO_COLUMN_NAME );
 	}
 
 	@Override
@@ -132,6 +136,14 @@ public class DisciplinasImportExcel
 					else if ( MAX_ALUNOS_PRATICOS_COLUMN_NAME.endsWith( columnName ) )
 					{
 						bean.setMaxAlunosPraticoStr( cellValue );
+					}
+					else if ( USA_SABADO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setUsaSabadoStr( cellValue );
+					}
+					else if ( USA_DOMINGO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setUsaDomingoStr( cellValue );
 					}
         		}
         	}
@@ -313,8 +325,11 @@ public class DisciplinasImportExcel
 				disciplinaBD.setMaxAlunosTeorico( disciplinaExcel.getMaxAlunosTeorico() );
 				disciplinaBD.setDificuldade( disciplinaExcel.getNivelDificuldade() );
 				disciplinaBD.setTipoDisciplina( disciplinaExcel.getTipo() );
+				disciplinaBD.setUsaSabado( disciplinaExcel.getUsaSabado() );
+				disciplinaBD.setUsaDomingo( disciplinaExcel.getUsaDomingo() );
 				
 				disciplinaBD.merge();
+				persistedDisciplinas.add(disciplinaBD);
 			}
 			else
 			{
@@ -331,6 +346,8 @@ public class DisciplinasImportExcel
 				newDisciplina.setMaxAlunosTeorico( disciplinaExcel.getMaxAlunosTeorico() );
 				newDisciplina.setDificuldade( disciplinaExcel.getNivelDificuldade() );
 				newDisciplina.setTipoDisciplina( disciplinaExcel.getTipo() );
+				newDisciplina.setUsaSabado( disciplinaExcel.getUsaSabado() );
+				newDisciplina.setUsaDomingo( disciplinaExcel.getUsaDomingo() );
 
 				newDisciplina.persist();
 				persistedDisciplinas.add(newDisciplina);
@@ -361,6 +378,8 @@ public class DisciplinasImportExcel
 			NIVEL_DIFICULDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nivelDificuldade() );
 			MAX_ALUNOS_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maxAlunosTeorico() );
 			MAX_ALUNOS_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maxAlunosPratico() );
+			USA_SABADO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().usaSabado() );
+			USA_DOMINGO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().usaDomingo() );
 		}
 	}
 	

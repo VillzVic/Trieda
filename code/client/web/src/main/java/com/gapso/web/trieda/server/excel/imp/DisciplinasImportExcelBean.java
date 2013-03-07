@@ -19,6 +19,8 @@ public class DisciplinasImportExcelBean
 	private String nivelDificuldadeStr;
 	private String maxAlunosTeoricoStr;
 	private String maxAlunosPraticoStr;
+	private String usaSabadoStr;
+	private String usaDomingoStr;
 
 	private Integer creditosTeoricos;
 	private Integer creditosPraticos;
@@ -27,6 +29,8 @@ public class DisciplinasImportExcelBean
 	private Dificuldades nivelDificuldade;
 	private Integer maxAlunosTeorico;
 	private Integer maxAlunosPratico;
+	private Boolean usaSabado;
+	private Boolean usaDomingo;
 
 	public DisciplinasImportExcelBean( int row )
 	{
@@ -48,6 +52,8 @@ public class DisciplinasImportExcelBean
 			checkMandatoryField( nivelDificuldadeStr, ImportExcelError.DISCIPLINA_NIVEL_DIFICULDADE_VAZIO, erros );
 			checkMandatoryField( maxAlunosTeoricoStr, ImportExcelError.DISCIPLINA_MAX_ALUNOS_TEORICOS_VAZIO, erros );
 			checkMandatoryField( maxAlunosPraticoStr, ImportExcelError.DISCIPLINA_MAX_ALUNOS_PRATICOS_VAZIO, erros );
+			checkMandatoryField( usaSabadoStr, ImportExcelError.DISCIPLINA_USA_SABADO_VAZIO, erros );
+			checkMandatoryField( usaDomingoStr, ImportExcelError.DISCIPLINA_USA_DOMINGO_VAZIO, erros );
 
 			creditosTeoricos = checkNonNegativeIntegerField( creditosTeoricosStr,
 				ImportExcelError.DISCIPLINA_CREDITOS_TEORICOS_FORMATO_INVALIDO,
@@ -70,6 +76,12 @@ public class DisciplinasImportExcelBean
 			maxAlunosPratico = checkNonNegativeIntegerField( maxAlunosPraticoStr,
 				ImportExcelError.DISCIPLINA_MAX_ALUNOS_PRATICOS_FORMATO_INVALIDO,
 				ImportExcelError.DISCIPLINA_MAX_ALUNOS_PRATICOS_VALOR_NEGATIVO, erros );
+			
+			usaSabado = checkBooleanField( usaSabadoStr,
+					ImportExcelError.DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO, erros );
+			
+			usaDomingo = checkBooleanField( usaDomingoStr,
+					ImportExcelError.DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO, erros );
 		}
 		else
 		{
@@ -89,7 +101,9 @@ public class DisciplinasImportExcelBean
 			&& isEmptyField( tipoStr )
 			&& isEmptyField( nivelDificuldadeStr )
 			&& isEmptyField( maxAlunosTeoricoStr )
-			&& isEmptyField( maxAlunosPraticoStr ) );
+			&& isEmptyField( maxAlunosPraticoStr ) 
+			&& isEmptyField( usaSabadoStr )
+			&& isEmptyField( usaDomingoStr )	);
 	}
 
 	public String getCodigoStr()
@@ -181,7 +195,27 @@ public class DisciplinasImportExcelBean
 	{
 		this.maxAlunosPraticoStr = maxAlunosPraticoStr;
 	}
+	
+	public String getUsaSabadoStr()
+	{
+		return usaSabadoStr;
+	}
 
+	public void setUsaSabadoStr( String usaSabadoStr )
+	{
+		this.usaSabadoStr = usaSabadoStr;
+	}
+
+	public String getUsaDomingoStr()
+	{
+		return usaDomingoStr;
+	}
+
+	public void setUsaDomingoStr( String usaDomingoStr )
+	{
+		this.usaDomingoStr = usaDomingoStr;
+	}
+	
 	public TipoDisciplina getTipo()
 	{
 		return tipo;
@@ -220,6 +254,16 @@ public class DisciplinasImportExcelBean
 	public Integer getMaxAlunosPratico()
 	{
 		return maxAlunosPratico;
+	}
+	
+	public Boolean getUsaSabado()
+	{
+		return usaSabado;
+	}
+	
+	public Boolean getUsaDomingo()
+	{
+		return usaDomingo;
 	}
 
 	@Override

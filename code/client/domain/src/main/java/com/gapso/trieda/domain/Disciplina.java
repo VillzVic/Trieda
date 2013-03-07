@@ -39,6 +39,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gapso.trieda.misc.Dificuldades;
+import com.gapso.trieda.misc.Semanas;
 
 @Configurable
 @Entity
@@ -95,6 +96,12 @@ public class Disciplina
 
 	@Column( name = "DIS_LABORATORIO" )
 	private Boolean laboratorio;
+	
+	@Column( name = "DIS_USA_SABADO" )
+	private Boolean usaSabado;
+	
+	@Column( name = "DIS_USA_DOMINGO" )
+	private Boolean usaDomingo;
 
 	@NotNull
 	@Enumerated
@@ -168,6 +175,8 @@ public class Disciplina
 		sb.append( "Dificuldade: " ).append( getDificuldade() ).append( ", " );
 		sb.append( "MaxAlunosTeorico: " ).append( getMaxAlunosTeorico() ).append( ", " );
 		sb.append( "MaxAlunosPratico: " ).append( getMaxAlunosPratico() ).append( ", " );
+		sb.append( "UsaSabado: ").append( getUsaSabado() ).append( ", " );
+		sb.append( "UsaDomingo: ").append( getUsaDomingo() ).append( ", " );
 		sb.append( "Horarios: " ).append( getHorarios() == null ?
 			"null" : getHorarios().size() ).append( ", " );
 		sb.append( "Professores: " ).append( getProfessores() == null ?
@@ -259,9 +268,30 @@ public class Disciplina
 		for (SemanaLetiva semanaLetiva : semanasLetivas) {
 			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
 				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
-					hdc.getDisciplinas().addAll(disciplinas);
+					//Remove as disciplinas para atualizar os horarios
+					hdc.getDisciplinas().removeAll(disciplinas);
+					//Verifica no domingo se existem disciplinas marcadas com usaSabado
+					if (hdc.getDiaSemana() == Semanas.SAB) {
+						for(Disciplina d : disciplinas) {
+							if (d.getUsaSabado()) {
+								hdc.getDisciplinas().add(d);
+							}
+						}
+					}
+					//Verifica no domingo se existem disciplinas marcadas com usaDomingo
+					else if (hdc.getDiaSemana() == Semanas.DOM){
+						for(Disciplina d : disciplinas) {
+							if (d.getUsaDomingo()) {
+								hdc.getDisciplinas().add(d);
+							}
+						}
+					}
+					//Adiciona para todos os outros dias da semana
+					else {
+						hdc.getDisciplinas().addAll(disciplinas);
+					}
 					hdc.merge();
-					count++;if (count == 100) {System.out.println("   100 horários de disciplinas processadas"); count = 0;}
+					count++;if (count == 100) {System.out.println("   100 horï¿½rios de disciplinas processadas"); count = 0;}
 				}
 			}
 		}
@@ -282,7 +312,23 @@ public class Disciplina
 				for ( HorarioDisponivelCenario hdc
 					: horarioAula.getHorariosDisponiveisCenario() )
 				{
-					hdc.getDisciplinas().add( this );
+					hdc.getDisciplinas().remove( this );
+					if ( hdc.getDiaSemana() == Semanas.SAB )
+					{
+						if ( this.getUsaSabado() ) {
+							hdc.getDisciplinas().add( this );
+						}
+					}
+					else if ( hdc.getDiaSemana() == Semanas.DOM )
+					{
+						if ( this.getUsaDomingo() ) {
+							hdc.getDisciplinas().add( this );
+						}
+					}
+					else
+					{
+						hdc.getDisciplinas().add( this );
+					}
 					hdc.merge();
 				}
 			}
@@ -915,6 +961,26 @@ public class Disciplina
 	{
 		this.maxAlunosPratico = maxAlunosPratico;
 	}
+	
+	public Boolean getUsaSabado()
+	{
+		return this.usaSabado;
+	}
+	
+	public void setUsaSabado(Boolean usaSabado )
+	{
+		this.usaSabado = usaSabado;
+	}
+	
+	public Boolean getUsaDomingo()
+	{
+		return this.usaDomingo;
+	}
+	
+	public void setUsaDomingo( Boolean usaDomingo )
+	{
+		this.usaDomingo = usaDomingo;
+	}
 
 	private Set< HorarioDisponivelCenario > getHorarios()
 	{
@@ -1056,11 +1122,22 @@ public class Disciplina
 		return true;
 	}
 	
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+
+		result = ( prime * result + ( ( this.id == null ) ? 0 : this.id.hashCode() ) );
+		result = ( prime * result + ( ( this.version == null ) ? 0 : this.version.hashCode() ) );
+
+		return result;
+	}
+	
 	/**
-	 * Este método foi implementado por conta da issue TRIEDA-1154 (Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente
+	 * Este mï¿½todo foi implementado por conta da issue TRIEDA-1154 (Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente
 	 * 'a semana letiva da matriz curricular correspondente).
-	 * @return as semanas letivas associadas com a disciplina em questão, isto é, as semanas letivas associadas com as matrizes
-	 * curriculares que contém a disciplina em questão. 
+	 * @return as semanas letivas associadas com a disciplina em questï¿½o, isto ï¿½, as semanas letivas associadas com as matrizes
+	 * curriculares que contï¿½m a disciplina em questï¿½o. 
 	 */
 	public Set<SemanaLetiva> getSemanasLetivas() {
 		Set<SemanaLetiva> semanasLetivas = new HashSet<SemanaLetiva>();
@@ -1071,10 +1148,10 @@ public class Disciplina
 	}
 	
 	/**
-	 * Informa se a disciplina ocupa grade de horários ou não. Uma disciplina ocupa grade de horários nos seguintes casos:
-	 *    - a disciplina é do tipo "Presencial" ou "Telepresencial";
-	 *    - a disciplina possui créditos teóricos ou práticos;
-	 * @return true caso a disciplina ocupa grade de horários e false caso contrário
+	 * Informa se a disciplina ocupa grade de horï¿½rios ou nï¿½o. Uma disciplina ocupa grade de horï¿½rios nos seguintes casos:
+	 *    - a disciplina ï¿½ do tipo "Presencial" ou "Telepresencial";
+	 *    - a disciplina possui crï¿½ditos teï¿½ricos ou prï¿½ticos;
+	 * @return true caso a disciplina ocupa grade de horï¿½rios e false caso contrï¿½rio
 	 */
 	public boolean ocupaGrade() {
 		int totalCreditos = this.getCreditosTeorico() + this.getCreditosPratico(); 

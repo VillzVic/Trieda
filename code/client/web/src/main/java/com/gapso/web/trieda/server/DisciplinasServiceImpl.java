@@ -37,6 +37,7 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoDisciplina;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
@@ -418,6 +419,41 @@ public class DisciplinasServiceImpl
 
 		if ( disciplina.getId() != null && disciplina.getId() > 0 )
 		{
+		
+			List< SemanaLetiva > semanasLetivas
+			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+
+			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
+	
+			for ( SemanaLetiva semanaLetiva : semanasLetivas )
+			{
+				horariosAula.addAll( semanaLetiva.getHorariosAula() );
+			}
+	
+			for ( HorarioAula horarioAula : horariosAula )
+			{
+				for ( HorarioDisponivelCenario horarioDisponivel : horarioAula.getHorariosDisponiveisCenario() )
+				{
+					horarioDisponivel.getDisciplinas().remove( disciplina );
+					if (horarioDisponivel.getDiaSemana() == Semanas.SAB)
+					{
+						if (disciplina.getUsaSabado()) {
+							horarioDisponivel.getDisciplinas().add( disciplina );
+						}
+					}
+					else if (horarioDisponivel.getDiaSemana() == Semanas.DOM)
+					{
+						if (disciplina.getUsaDomingo()) {
+							horarioDisponivel.getDisciplinas().add( disciplina );
+						}
+					}
+					else
+					{
+						horarioDisponivel.getDisciplinas().add( disciplina );
+					}
+					horarioDisponivel.merge();
+				}
+			}
 			disciplina.merge();
 		}
 		else
@@ -441,7 +477,22 @@ public class DisciplinasServiceImpl
 
 				for ( HorarioDisponivelCenario horarioDisponivel : horariosDisponiveis )
 				{
-					horarioDisponivel.getDisciplinas().add( disciplina );
+					if (horarioDisponivel.getDiaSemana() == Semanas.SAB)
+					{
+						if (disciplina.getUsaSabado()) {
+							horarioDisponivel.getDisciplinas().add( disciplina );
+						}
+					}
+					else if (horarioDisponivel.getDiaSemana() == Semanas.DOM)
+					{
+						if (disciplina.getUsaDomingo()) {
+							horarioDisponivel.getDisciplinas().add( disciplina );
+						}
+					}
+					else
+					{
+						horarioDisponivel.getDisciplinas().add( disciplina );
+					}
 					horarioDisponivel.merge();
 				}
 			}

@@ -98,7 +98,7 @@ public class DisciplinasView
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
-		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_NOME, getI18nConstants().nomeDisciplina(), 250 ) );
+		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_NOME, getI18nConstants().nomeDisciplina(), 200 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CODIGO, getI18nConstants().codigoDisciplina(), 100 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CREDITOS_TEORICO, getI18nConstants().creditosTeoricos(), 100 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CREDITOS_PRATICO, getI18nConstants().creditosPraticos(), 100 ) );
@@ -107,6 +107,8 @@ public class DisciplinasView
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_DIFICULDADE, getI18nConstants().nivelDificuldade(), 120 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, getI18nConstants().maxAlunosTeorico(), 120 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, getI18nConstants().maxAlunosPratico(), 120 ) );
+		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_SABADO, getI18nConstants().usaSabado(), 80 ) );
+		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_DOMINGO, getI18nConstants().usaDomingo(), 80 ) );
 
 		return list;
 	}

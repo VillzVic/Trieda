@@ -148,6 +148,8 @@ public interface TriedaI18nConstants
 	String unidades();
 	String unidadesHeadingPanel();
 	String usaLaboratorio();
+	String usaSabado();
+	String usaDomingo();
 	String valorCredito();
 	String otimizadoTatico();
 	String otimizadoOperacional();

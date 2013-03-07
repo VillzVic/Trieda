@@ -615,6 +615,18 @@ public class GTriedaI18nConstants
 	{
 		return this.languageManager.getText("usaLaboratorio");
 	}
+	
+	@Override
+	public String usaSabado()
+	{
+		return this.languageManager.getText("usaSabado");
+	}
+	
+	@Override
+	public String usaDomingo()
+	{
+		return this.languageManager.getText("usaDomingo");
+	}
 
 	@Override
 	public String valorCredito()

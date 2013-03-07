@@ -32,6 +32,8 @@ public class DisciplinaFormPresenter
 		NumberField getCreditosTeoricoTextField();
 		NumberField getCreditosPraticoTextField();
 		CheckBox getLaboratorioCheckBox();
+		CheckBox getUsaSabadoCheckBox();
+		CheckBox getUsaDomingoCheckBox();
 		TipoDisciplinaComboBox getTipoDisciplinaComboBox();
 		DificuldadeComboBox getDificuldadeComboBox();
 		NumberField getMaxAlunosTeoricoTextField();
@@ -114,6 +116,8 @@ public class DisciplinaFormPresenter
 		disciplinaDTO.setDificuldade(display.getDificuldadeComboBox().getValue().getValue().name());
 		disciplinaDTO.setMaxAlunosTeorico(display.getMaxAlunosTeoricoTextField().getValue().intValue());
 		disciplinaDTO.setMaxAlunosPratico(display.getMaxAlunosPraticoTextField().getValue().intValue());
+		disciplinaDTO.setUsaSabado(display.getUsaSabadoCheckBox().getValue());
+		disciplinaDTO.setUsaDomingo(display.getUsaDomingoCheckBox().getValue());
 
 		return disciplinaDTO;
 	}
