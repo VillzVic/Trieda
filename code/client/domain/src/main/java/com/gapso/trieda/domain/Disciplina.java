@@ -1157,4 +1157,24 @@ public class Disciplina
 		int totalCreditos = this.getCreditosTeorico() + this.getCreditosPratico(); 
 		return this.getTipoDisciplina().ocupaGrade() && totalCreditos > 0;
 	}
+	
+	public boolean usaSabado(){
+		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+		for ( HorarioDisponivelCenario horario : horarios ) {
+			if (horario.getDiaSemana() == Semanas.SAB) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean usaDomingo(){
+		Set< HorarioDisponivelCenario > horarios = this.getHorarios();
+		for ( HorarioDisponivelCenario horario : horarios ) {
+			if (horario.getDiaSemana() == Semanas.DOM) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
