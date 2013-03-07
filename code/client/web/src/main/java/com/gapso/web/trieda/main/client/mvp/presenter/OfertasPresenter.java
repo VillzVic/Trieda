@@ -35,6 +35,7 @@ import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -197,9 +198,13 @@ public class OfertasPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				// ImportExcelFormView importExcelFormView = new ImportExcelFormView(
-				// 	ExcelInformationType.DEMANDAS,display.getGrid() );
-				// importExcelFormView.show();
+				ExcelParametros parametros = new ExcelParametros(
+						ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO );
+				
+				ImportExcelFormView importExcelFormView = new ImportExcelFormView(
+						parametros ,display.getGrid() );
+				
+				importExcelFormView.show();
 			}
 		});
 

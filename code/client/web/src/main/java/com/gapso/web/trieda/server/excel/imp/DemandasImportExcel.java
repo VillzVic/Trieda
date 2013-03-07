@@ -461,7 +461,7 @@ public class DemandasImportExcel
 				oferta.setTurno( demandasExcel.getTurno() );
 				oferta.setCurriculo( demandasExcel.getMatrizCurricular() );
 				oferta.setCurso( demandasExcel.getCurso() );
-				oferta.setReceita( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
+				oferta.setReceitaWithPrecision( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
 
 				oferta.persist();
 
@@ -470,7 +470,7 @@ public class DemandasImportExcel
 			}
 			else
 			{
-				oferta.setReceita( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
+				oferta.setReceitaWithPrecision( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
 				oferta.merge();
 			}
 

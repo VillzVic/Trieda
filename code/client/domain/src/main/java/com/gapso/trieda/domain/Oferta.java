@@ -584,4 +584,12 @@ public class Oferta
 		}
 		return map;
 	}
+	
+	public void setReceitaWithPrecision (double d) {
+		long factor = (long) Math.pow(10, 2);
+		d = d*factor;
+		long tmp = Math.round(d);
+		
+		this.setReceita( (double)tmp/factor );
+	}
 }
