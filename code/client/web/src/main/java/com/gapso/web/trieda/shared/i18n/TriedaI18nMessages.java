@@ -26,6 +26,7 @@ public interface TriedaI18nMessages
 	String excelErroSintaticoCabecalhoAusente( String cabecalho, String nomeArquivo );
 	String excelErroSintaticoColunaVazia( String linhasComErro, String nomeColuna );
 	String excelErroSintaticoFormatoInvalido( String linhasComErro, String nomeColuna );
+	String excelErroSintaticoFormula ( String formula, String colunaComErro );
 	String excelErroSintaticoLinhasInvalidas( String linhasComErro, String nomeArquivo );
 	String excelErroSintaticoLinhaVazia( String linhasComErro );
 	String excelErroSintaticoValorInvalido( String linhasComErro, String nomeColuna );

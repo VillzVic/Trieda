@@ -178,6 +178,16 @@ public class GTriedaI18nMessages
 		return this.languageManager.getFormattedText(
 			"excelErroSintaticoFormatoInvalido", params );
 	}
+	
+	@Override
+	public String excelErroSintaticoFormula(
+		String formula, String colunaComErro){
+		
+		String [] params = { formula, colunaComErro };
+		
+		return this.languageManager.getFormattedText(
+			"excelErroSintaticoFormula", params	);
+	}
 
 	@Override
 	public String excelErroSintaticoLinhasInvalidas(

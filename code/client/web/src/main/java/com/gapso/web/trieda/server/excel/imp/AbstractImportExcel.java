@@ -276,6 +276,11 @@ public abstract class AbstractImportExcel< ExcelBeanType >
     		{
     			return getCellNumericValue( cell );
     		}
+    		case Cell.CELL_TYPE_FORMULA:
+    		{
+    			this.errors.add( getI18nMessages().excelErroSintaticoFormula(
+                		cell.getCellFormula(), Integer.toString(cell.getColumnIndex())) );
+    		}
     	}
 
 		return null;
