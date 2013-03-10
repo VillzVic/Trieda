@@ -298,24 +298,24 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	protected void setCell( int row, int col, Sheet sheet, String value )
 	{
 		Cell cell = getCell( row, col, sheet );
-		cell.setCellValue( factory.createRichTextString( value ) );
+		cell.setCellValue( getCreationHelper(sheet.getWorkbook()).createRichTextString( value ) );
 	}
 
 	protected void setCell( int row, int col, Sheet sheet,
 		CellStyle style, String value )
 	{
 		Cell cell = getCell( row, col, sheet );
-		cell.setCellValue( factory.createRichTextString( value ) );
+		cell.setCellValue( getCreationHelper(sheet.getWorkbook()).createRichTextString( value ) );
 		cell.setCellStyle( style );
 	}
 
 	protected void setCell(int row, int col, Sheet sheet, CellStyle style, String value, String comment) {
 		Cell cell = getCell( row, col, sheet );
-		cell.setCellValue( factory.createRichTextString( value ) );
+		cell.setCellValue( getCreationHelper(sheet.getWorkbook()).createRichTextString( value ) );
 
 		Comment cellComment = cell.getCellComment();
 		if (cellComment == null) {
-			ClientAnchor anchor = factory.createClientAnchor();
+			ClientAnchor anchor = getCreationHelper(sheet.getWorkbook()).createClientAnchor();
 		    anchor.setCol1(cell.getColumnIndex());
 		    anchor.setCol2(cell.getColumnIndex()+4);
 		    anchor.setRow1(row);
@@ -327,14 +327,14 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			cell.setCellComment(cellComment);
 		}
 
-		cellComment.setString(factory.createRichTextString(comment));
+		cellComment.setString(getCreationHelper(sheet.getWorkbook()).createRichTextString(comment));
 		cell.setCellStyle(style);
 	}
 	
 	protected void setCellWithHyperlink(int row, int col, Sheet sheet, String value, String hyperlink, boolean withHyperlinkStyle) {
 		Cell cell = getCell(row,col,sheet);
 		if (value != null) {
-			cell.setCellValue(factory.createRichTextString(value));
+			cell.setCellValue(getCreationHelper(sheet.getWorkbook()).createRichTextString(value));
 		}
 		
 		if (withHyperlinkStyle) {
@@ -353,7 +353,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			cell.setCellStyle(hlinkStyle);
 		}
 		
-		Hyperlink link = factory.createHyperlink(Hyperlink.LINK_DOCUMENT);
+		Hyperlink link = getCreationHelper(sheet.getWorkbook()).createHyperlink(Hyperlink.LINK_DOCUMENT);
 		link.setAddress(hyperlink);
 		cell.setHyperlink(link);
 	}
@@ -366,7 +366,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		Iterator< Comment > itExcelCommentsPool, String value, String comment )
 	{
 		Cell cell = getCell( row, col, sheet );
-		cell.setCellValue( factory.createRichTextString( value ) );
+		cell.setCellValue( getCreationHelper(sheet.getWorkbook()).createRichTextString( value ) );
 
 		Comment cellComment = cell.getCellComment();
 		if ( cellComment == null )
@@ -375,12 +375,12 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			{
 				cellComment = itExcelCommentsPool.next();
 				cell.setCellComment( cellComment );
-				cellComment.setString( factory.createRichTextString( comment ) );
+				cellComment.setString( getCreationHelper(sheet.getWorkbook()).createRichTextString( comment ) );
 			}
 		}
 		else
 		{
-			cellComment.setString( factory.createRichTextString( comment ) );
+			cellComment.setString( getCreationHelper(sheet.getWorkbook()).createRichTextString( comment ) );
 		}
 
 		cell.setCellStyle( style );
@@ -405,6 +405,13 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		final Row ssRow = getRow( row - 1, sheet );
 		final Cell cell = getCell( ssRow, ( col - 1 ) );
 		return cell;
+	}
+	
+	private CreationHelper getCreationHelper(Workbook workbook) {
+		if (this.factory == null) {
+			this.factory = workbook.getCreationHelper();
+		}
+		return this.factory;
 	}
 
 	private Row getRow( int index, Sheet sheet )
