@@ -19,6 +19,7 @@ public interface AtendimentoRelatorioDTO
 	public String getDisciplinaSubstitutaString();
 	public Long getDisciplinaSubstitutaSemanaLetivaId();
 	public Integer getDisciplinaSubstitutaSemanaLetivaTempoAula();
+	public String getDisciplinaOriginalCodigo();
 	public String getContentToolTipVisaoSala(ReportType reportType);
 	public String getContentToolTipVisaoCurso(ReportType reportType);
 	public String getContentToolTipVisaoAluno(ReportType reportType);
@@ -67,6 +68,7 @@ public interface AtendimentoRelatorioDTO
 	public void setQuantidadeAlunosString( String value );
 	public void setQuantidadeAlunos( Integer value );
 	public void setNomesAlunos(String nomesAlunos);
+	public void setDisciplinaOriginalCodigo(String value);
 	public void setTotalCreditosTeoricosDisciplina(Integer value);
 	public Integer getTotalCreditosTeoricosDisciplina();
 	public void setTotalCreditosPraticosDisciplina(Integer value);

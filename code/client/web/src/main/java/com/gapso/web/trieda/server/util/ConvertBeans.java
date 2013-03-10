@@ -2048,6 +2048,7 @@ public class ConvertBeans {
 		dto.setDisciplinaId(disciplina.getId());
 		dto.setDisciplinaString(disciplina.getCodigo());
 		dto.setDisciplinaNome(disciplina.getNome());
+		dto.setDisciplinaOriginalCodigo(disciplina.getCodigo());
 		dto.setDisciplinaUsaLaboratorio(disciplina.getLaboratorio());
 		if (disciplinaSubstituta != null) {
 			dto.setDisciplinaSubstitutaId(disciplinaSubstituta.getId());
@@ -2319,6 +2320,7 @@ public class ConvertBeans {
 		dto.setDisciplinaId( domain.getDisciplina().getId() );
 		dto.setDisciplinaString( domain.getDisciplina().getCodigo() );
 		dto.setDisciplinaNome( domain.getDisciplina().getNome() );
+		dto.setDisciplinaOriginalCodigo(domain.getDisciplina().getCodigo());
 		dto.setDisciplinaUsaLaboratorio(domain.getDisciplina().getLaboratorio());
 		if (domain.getDisciplinaSubstituta() != null) {
 			dto.setDisciplinaSubstitutaId( domain.getDisciplinaSubstituta().getId() );
@@ -3223,7 +3225,7 @@ public class ConvertBeans {
 
 		// Disciplina
 		dto.setDisciplinaId( domain.getDemanda().getDisciplina().getId() );
-		dto.setDisciplinaString( domain.getDemanda().getDisciplina().getNome() );
+		dto.setDisciplinaString( domain.getDemanda().getDisciplina().getCodigo() );
 
 		return dto;
 	}

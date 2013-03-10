@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.format.number.CurrencyFormatter;
@@ -550,20 +551,29 @@ public class CampiServiceImpl extends RemoteService
 			
 			// cálculo das quantidades de alunos atendidos e não atendidos
 			DemandasServiceImpl demandasService = new DemandasServiceImpl();
-			ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
+			ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
 			qtdAlunosNaoAtendidos = pair.getSegundo();
 			qtdAlunosAtendidos = (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
-			Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
+			Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
 	
 			// cálculo do indicador de receita semestral
 			for (Demanda demanda : demandaToQtdAlunosNaoAtendidosMap.keySet()) {
-				ParDTO<Integer,Disciplina> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
+				ParDTO<Integer,Map<Disciplina,Integer>> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
 				int qtdAlunosNaoAtendidosDemanda = par.getPrimeiro();
-				Disciplina disciplinaSubstituta = par.getSegundo();
-				Disciplina disciplinaASerConsiderada = (disciplinaSubstituta != null) ? disciplinaSubstituta : demanda.getDisciplina();
+				Map<Disciplina,Integer> disciplinaSubstitutaToQtdAlunos = par.getSegundo();
 				
-				int qtdAlunosAtendidosDemanda = (demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda);
-				receitaSemestral += (disciplinaASerConsiderada.getCreditosTotal()*qtdAlunosAtendidosDemanda*demanda.getOferta().getReceita());
+				// calcula receita com uso de equivalências
+				int totalAlunosAtendidosComSubstituta = 0;
+				for (Entry<Disciplina, Integer> e : disciplinaSubstitutaToQtdAlunos.entrySet()) {
+					Disciplina disciplinaSubstituta = e.getKey();
+					int qtdAlunosAtendidosComSubstituta = e.getValue();
+					receitaSemestral += (disciplinaSubstituta.getCreditosTotal()*qtdAlunosAtendidosComSubstituta*demanda.getOferta().getReceita());
+					totalAlunosAtendidosComSubstituta += qtdAlunosAtendidosComSubstituta;
+				}
+				
+				// calcula receita sem uso de equivalências
+				int qtdAlunosAtendidosDemanda = (demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda) - totalAlunosAtendidosComSubstituta;
+				receitaSemestral += (demanda.getDisciplina().getCreditosTotal()*qtdAlunosAtendidosDemanda*demanda.getOferta().getReceita());
 			}
 			receitaSemestral *= ( 4.5 * 6.0 );
 			receitaSemestral = TriedaUtil.round(receitaSemestral,2);

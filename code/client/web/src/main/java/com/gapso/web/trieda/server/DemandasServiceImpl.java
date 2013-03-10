@@ -45,8 +45,85 @@ public class DemandasServiceImpl
 	extends RemoteService implements DemandasService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
+	
+	public ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> calculaQuantidadeDeNaoAtendimentosPorDemanda(Collection<Oferta> ofertas) {
+		// preenche estruturas auxiliares
+		List<Demanda> demandas = new ArrayList<Demanda>();
+		Map<String,List<Atendimento>> ofertaIdDisciplinaIdToAtendimentosMap = new HashMap<String,List<Atendimento>>();
+		for (Oferta oferta : ofertas) {
+			demandas.addAll(oferta.getDemandas());
+			// atendimentos táticos
+			for (AtendimentoTatico atendimentoTatico : oferta.getAtendimentosTaticos()) {
+				Atendimento atendimento = new Atendimento(atendimentoTatico);
+				String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
+				List<Atendimento> atendimentos = ofertaIdDisciplinaIdToAtendimentosMap.get(key);
+				if (atendimentos == null) {
+					atendimentos = new ArrayList<Atendimento>();
+					ofertaIdDisciplinaIdToAtendimentosMap.put(key,atendimentos);
+				}
+				atendimentos.add(atendimento);
+			}
+			// atendimentos operacionais
+			for (AtendimentoOperacional atendimentoOperacional : oferta.getAtendimentosOperacionais()) {
+				Atendimento atendimento = new Atendimento(atendimentoOperacional);
+				String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
+				List<Atendimento> atendimentos = ofertaIdDisciplinaIdToAtendimentosMap.get(key);
+				if (atendimentos == null) {
+					atendimentos = new ArrayList<Atendimento>();
+					ofertaIdDisciplinaIdToAtendimentosMap.put(key,atendimentos);
+				}
+				atendimentos.add(atendimento);
+			}
+		}
+		
+		// calcula map de demandas por quantidade de não atendimentos
+		Integer qtdAlunosNaoAtendidosTotal = 0;
+		Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>> demandaToQtdAlunosNaoAtendidosMap = new HashMap<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>();
+		for (Demanda demanda : demandas) {
+			// obtém a lista de atendimentos relacionados com a demanda em questão
+			String key = demanda.getOferta().getId() + "-" + demanda.getDisciplina().getId();
+			List<Atendimento> atendimentosDaDemanda = ofertaIdDisciplinaIdToAtendimentosMap.get(key);
+			if (atendimentosDaDemanda == null) {
+				atendimentosDaDemanda = Collections.<Atendimento> emptyList();
+			}
+			
+			Set<Long> alunosDemandasAtendidos = new HashSet<Long>();
+			Map<Disciplina,Set<Long>> disciplinaSubstitutaToAlunosDemandasAtendidos = new HashMap<Disciplina, Set<Long>>();
+			for (Atendimento atendimento : atendimentosDaDemanda) {
+				// coleta pares aluno demanda atendidos
+				Set<Long> alunosDemandasAtendidosLocal = new HashSet<Long>();
+				for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemandas()) {
+					if (alunoDemanda.getAtendido() != null && alunoDemanda.getAtendido()) {
+						alunosDemandasAtendidosLocal.add(alunoDemanda.getId());
+					}
+				}
+				alunosDemandasAtendidos.addAll(alunosDemandasAtendidosLocal);
+				
+				// coleta disciplinas substitutas utilizadas
+				if (atendimento.getDisciplinaSubstituta() != null) {
+					Set<Long> alunosDemandasAtendidosDaSubstituta = disciplinaSubstitutaToAlunosDemandasAtendidos.get(atendimento.getDisciplinaSubstituta());
+					if (alunosDemandasAtendidosDaSubstituta == null) {
+						alunosDemandasAtendidosDaSubstituta = new HashSet<Long>();
+						disciplinaSubstitutaToAlunosDemandasAtendidos.put(atendimento.getDisciplinaSubstituta(), alunosDemandasAtendidosDaSubstituta);
+					}
+					alunosDemandasAtendidosDaSubstituta.addAll(alunosDemandasAtendidosLocal);
+				}
+			}
+			
+			Map<Disciplina,Integer> disciplinaSubstitutaToQtdAlunosDemandasAtendidos = new HashMap<Disciplina, Integer>();
+			for (Entry<Disciplina, Set<Long>> e : disciplinaSubstitutaToAlunosDemandasAtendidos.entrySet()) {
+				disciplinaSubstitutaToQtdAlunosDemandasAtendidos.put(e.getKey(), e.getValue().size());
+			}
+			
+			int qtdAlunosNaoAtendidosDemanda = demanda.getQuantidade() - alunosDemandasAtendidos.size();
+			demandaToQtdAlunosNaoAtendidosMap.put(demanda,ParDTO.create(qtdAlunosNaoAtendidosDemanda,disciplinaSubstitutaToQtdAlunosDemandasAtendidos));
+			qtdAlunosNaoAtendidosTotal += qtdAlunosNaoAtendidosDemanda;
+		}
+		
+		return ParDTO.create(demandaToQtdAlunosNaoAtendidosMap,qtdAlunosNaoAtendidosTotal);
+	}
 
-	public ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> calculaQuantidadeDeNaoAtendimentosPorDemanda(Collection<Oferta> ofertas) {
+	public ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> calculaQuantidadeDeNaoAtendimentosPorDemanda_(Collection<Oferta> ofertas) {
 		// preenche estruturas auxiliares
 		List<Demanda> demandas = new ArrayList<Demanda>();
 		Map<String,List<Atendimento>> ofertaIdDisciplinaIdToAtendimentosMap = new HashMap<String,List<Atendimento>>();

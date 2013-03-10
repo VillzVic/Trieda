@@ -39,6 +39,7 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_NOME = "disciplinaSubstitutaNome";
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_ID = "disciplinaSubstitutaSemanaLetivaId";
 	public static final String PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA = "disciplinaSubstitutaSemanaLetivaTempoAula";
+	public static final String PROPERTY_DISCIPLINA_ORIGINAL_CODIGO = "disciplinaOriginalCodigo";
 	public static final String PROPERTY_TOTAL_CRETIDOS_TEORICOS_DISCIPLINA = "totalCreditosTeoricosDisciplina";
 	public static final String PROPERTY_TOTAL_CRETIDOS_PRATICOS_DISCIPLINA = "totalCreditosPraticosDisciplina";
 	public static final String PROPERTY_TOTAL_CRETIDOS_DISCIPLINA = "totalCreditoDisciplina";
@@ -412,6 +413,16 @@ public class AtendimentoTaticoDTO
 		return get( PROPERTY_DISCIPLINA_SUBSTITUTA_SEMANA_LETIVA_TEMPO_AULA );
 	}
 	
+	public String getDisciplinaOriginalCodigo()
+	{
+		return get( PROPERTY_DISCIPLINA_ORIGINAL_CODIGO );
+	}
+	
+	public void setDisciplinaOriginalCodigo( String value )
+	{
+		set( PROPERTY_DISCIPLINA_ORIGINAL_CODIGO, value );
+	}
+	
 	public void setTurnoId( Long value )
 	{
 		set( PROPERTY_TURNO_ID, value );
@@ -565,42 +576,51 @@ public class AtendimentoTaticoDTO
 		return ( getCreditosTeorico() + getCreditosPratico() );
 	}
 	
-	private String getContentToolTipVisao(ReportType reportType){
+	private String getContentToolTipVisao(ReportType reportType, boolean flagQuantidadeAlunos){
 		String BG = TriedaUtil.beginBold(reportType);
 		String ED = TriedaUtil.endBold(reportType);
 		String BR = TriedaUtil.newLine(reportType);
 		
+		String disciplinaCodigoDaAula = "";
+		String disciplinaNomeDaAula = "";
 		String creditosDisciplinaInfo = "";
 		if (getDisciplinaSubstitutaId() != null) {
+			disciplinaCodigoDaAula = getDisciplinaSubstitutaString();
+			disciplinaNomeDaAula = getDisciplinaSubstitutaNome();
 			creditosDisciplinaInfo = getTotalCreditoDisciplinaSubstituta().toString();
 		} else {
+			disciplinaCodigoDaAula = getDisciplinaString();
+			disciplinaNomeDaAula = getDisciplinaNome();
 			creditosDisciplinaInfo = getTotalCreditoDisciplina().toString();
 		}
 		
+		boolean usouEquivalencia = (getDisciplinaSubstitutaId() != null) || getQuantidadeAlunosString().contains("*");
+		
 		//String nomesAlunos = getNomesAlunos().replaceAll(", ",BR);
 		
-		return BG + "Disciplina: " + ED + getDisciplinaString() + " - " + getDisciplinaNome() + BR
-			 + ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
+		return BG + "Aula: " + ED + disciplinaCodigoDaAula + " - " + disciplinaNomeDaAula + BR
+			 //+ ((getDisciplinaSubstitutaId() != null) ? (BG + "Substituta: " + ED + getDisciplinaSubstitutaString() + " - " + getDisciplinaSubstitutaNome() + BR) : "")
 		     + BG + "Turma: " + ED + getTurma() + BR
 			 + BG + "Cr&eacute;dito(s) " + ( ( isTeorico() ) ? "Te&oacute;rico(s)" : "Pr&aacute;tico(s)" ) + ": " + ED + getTotalCreditos() + " de " + creditosDisciplinaInfo + BR
 			 + BG + "Curso(s): " + ED + getCursoNome() + BR
 			 + BG + "Matriz(es) Curricular(es): " + ED + getCurriculoString() + BR
 			 + BG + "Per&iacute;odo(s): " + ED + getPeriodoString() + BR
 			 + BG + "Sala: " + ED + getSalaString() + BR
-			 + BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED;// + BR
+			 + ((flagQuantidadeAlunos) ? (BG + getQuantidadeAlunosString() + " = " + getQuantidadeAlunos() + " aluno(s)" + ED + BR) : "")
+			 + ((usouEquivalencia) ? (BG + "Demanda(s): " + ED + getDisciplinaOriginalCodigo()) : ""); 
 			 //+ nomesAlunos;
 	}
 
 	public String getContentToolTipVisaoSala(ReportType reportType){
-		return getContentToolTipVisao(reportType);
+		return getContentToolTipVisao(reportType,true);
 	}
 
 	public String getContentToolTipVisaoCurso(ReportType reportType) {
-		return getContentToolTipVisao(reportType);
+		return getContentToolTipVisao(reportType,true);
 	}
 	
 	public String getContentToolTipVisaoAluno(ReportType reportType){
-		return getContentToolTipVisao(reportType);
+		return getContentToolTipVisao(reportType,false);
 	}
 
 	@Override

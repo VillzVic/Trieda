@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.server.util;
 
+import java.util.Set;
+
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
@@ -95,5 +98,9 @@ public class Atendimento {
 	
 	public Semanas getDiaSemana() {
 		return (isTatico()) ? tatico.getSemana() : operacional.getHorarioDisponivelCenario().getDiaSemana();
+	}
+	
+	public Set<AlunoDemanda> getAlunosDemandas() {
+		return (isTatico()) ? tatico.getAlunosDemanda() : operacional.getAlunosDemanda();
 	}
 }

@@ -37,6 +37,9 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 				disciplinaInfo = "*" + getDisciplinaSubstitutaString() + "*";
 			} else {
 				disciplinaInfo = getDisciplinaString();
+				if (getQuantidadeAlunosString().contains("*")) {
+					disciplinaInfo = "*" + disciplinaInfo + "*";
+				}
 			}
 			return disciplinaInfo + " / " + getTurma();
 		}
@@ -102,6 +105,7 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 		setQuantidadeAlunos( getQuantidadeAlunos() + other.getQuantidadeAlunos() );
 		setNomesAlunos(getNomesAlunos() + ", " + other.getNomesAlunos());
 		getAlunosDemandas().addAll(other.getAlunosDemandas());
+		setDisciplinaOriginalCodigo( T + ((getDisciplinaOriginalCodigo() != null) ? getDisciplinaOriginalCodigo() : getDisciplinaString()) + T + " / " + O + other.getDisciplinaString() + O );
 	}
 	
 	public void concatenateVisaoCurso( AtendimentoRelatorioDTO other ) {}

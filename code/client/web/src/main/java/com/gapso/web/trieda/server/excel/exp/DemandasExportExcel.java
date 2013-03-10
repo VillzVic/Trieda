@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -119,8 +121,8 @@ public class DemandasExportExcel
 			fillInCellStyles( sheet );
 			
 			DemandasServiceImpl demandasService = new DemandasServiceImpl();
-			ParDTO<Map<Demanda,ParDTO<Integer,Disciplina>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(ofertas);
-			Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
+			ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(ofertas);
+			Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
 
 			int nextRow = this.initialRow;
 			for ( Oferta oferta : ofertas )
@@ -177,7 +179,7 @@ public class DemandasExportExcel
 		}		
 	}
 	
-	private int writeData( Oferta oferta, int row, Sheet sheet , Map<Demanda,ParDTO<Integer,Disciplina>> demandaToQtdAlunosNaoAtendidosMap)
+	private int writeData( Oferta oferta, int row, Sheet sheet , Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>> demandaToQtdAlunosNaoAtendidosMap)
 	{
 		if ( oferta.getDemandas().isEmpty() )
 		{
@@ -254,9 +256,9 @@ public class DemandasExportExcel
 							this.mapDemandasExportadas.put( key, true );
 						}
 						
-						ParDTO<Integer,Disciplina> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
+						ParDTO<Integer,Map<Disciplina,Integer>> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
 						Integer qtdNaoAtendida = par.getPrimeiro();
-						Disciplina disciplinaSubstituta = par.getSegundo();
+						Set<Disciplina> disciplinasSubstitutas = par.getSegundo().keySet();
 
 						// Campus
 						setCell( row, 2, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
@@ -293,8 +295,21 @@ public class DemandasExportExcel
 						// Demanda Não Atendida
 						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
 						
-						// Disciplina Substituta
-						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], (disciplinaSubstituta != null ? disciplinaSubstituta.getCodigo() : "") );
+						// Disciplinas Substitutas
+						String disciplinasSubstitutasStr = "";
+						if (disciplinasSubstitutas != null && !disciplinasSubstitutas.isEmpty()) {
+							List<String> codigosDisciplinasSubstitutas = new ArrayList<String>();
+							for (Disciplina disciplinaSubistituta : disciplinasSubstitutas) {
+								codigosDisciplinasSubstitutas.add(disciplinaSubistituta.getCodigo());
+							}
+							Collections.sort(codigosDisciplinasSubstitutas);
+							StringBuffer disciplinasSubstitutasStrB = new StringBuffer("");
+							for (String codigoDisciplinaSubstituta : codigosDisciplinasSubstitutas) {
+								disciplinasSubstitutasStrB.append(codigoDisciplinaSubstituta + ", ");
+							}
+							disciplinasSubstitutasStr = disciplinasSubstitutasStrB.substring(0, disciplinasSubstitutasStrB.length() - 2);
+						}
+						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], disciplinasSubstitutasStr);
 						
 						row++;
 					}
