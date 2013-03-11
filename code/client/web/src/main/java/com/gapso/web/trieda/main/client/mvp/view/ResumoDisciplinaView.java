@@ -139,7 +139,7 @@ public class ResumoDisciplinaView
 
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 		ColumnConfig campusColumnConfig = new ColumnConfig(
-			ResumoDisciplinaDTO.PROPERTY_DISCIPLINA_STRING, getI18nConstants().disciplina(), 250 );
+			ResumoDisciplinaDTO.PROPERTY_DISCIPLINA_STRING_DA_AULA, getI18nConstants().disciplina(), 250 );
 		campusColumnConfig.setRenderer( new TreeGridCellRenderer< ResumoDisciplinaDTO >() );
 
 		list.add( campusColumnConfig );

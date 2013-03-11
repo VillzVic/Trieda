@@ -11,8 +11,10 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	// Propriedades
 	public static final String PROPERTY_CAMPUS_ID = "campusId";
 	public static final String PROPERTY_CAMPUS_STRING = "campusString";
-	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
-	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
+	public static final String PROPERTY_DISCIPLINA_ID_DA_AULA = "disciplinaIdDaAula";
+	public static final String PROPERTY_DISCIPLINA_STRING_DA_AULA = "disciplinaStringDaAula";
+	public static final String PROPERTY_DISCIPLINA_ID_DEMANDADA = "disciplinaIdDemandada";
+	public static final String PROPERTY_DISCIPLINA_STRING_DEMANDADA = "disciplinaStringDemandada";
 	public static final String PROPERTY_TURMA_STRING = "turmaString";
 	public static final String PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN = "tipoCreditoString";
 	public static final String PROPERTY_CREDITOS_INT = "creditosInt";
@@ -58,24 +60,44 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 		set(PROPERTY_CURRICULO_ID, value);
 	}
 
-	public void setDisciplinaId( Long value )
+	public void setDisciplinaIdDaAula( Long value )
 	{
-		set(PROPERTY_DISCIPLINA_ID, value);
+		set(PROPERTY_DISCIPLINA_ID_DA_AULA, value);
 	}
 	
-	public Long getDisciplinaId()
+	public Long getDisciplinaIdDaAula()
 	{
-		return get( PROPERTY_DISCIPLINA_ID );
+		return get( PROPERTY_DISCIPLINA_ID_DA_AULA );
 	}
 
-	public void setDisciplinaString( String value )
+	public void setDisciplinaStringDaAula( String value )
 	{
-		set( PROPERTY_DISCIPLINA_STRING, value );
+		set( PROPERTY_DISCIPLINA_STRING_DA_AULA, value );
 	}
 
-	public String getDisciplinaString()
+	public String getDisciplinaStringDaAula()
 	{
-		return get( PROPERTY_DISCIPLINA_STRING );
+		return get( PROPERTY_DISCIPLINA_STRING_DA_AULA );
+	}
+	
+	public void setDisciplinaIdDemandada( Long value )
+	{
+		set(PROPERTY_DISCIPLINA_ID_DEMANDADA, value);
+	}
+	
+	public Long getDisciplinaIdDemandada()
+	{
+		return get( PROPERTY_DISCIPLINA_ID_DEMANDADA );
+	}
+
+	public void setDisciplinaStringDemandada( String value )
+	{
+		set( PROPERTY_DISCIPLINA_STRING_DEMANDADA, value );
+	}
+
+	public String getDisciplinaStringDemandada()
+	{
+		return get( PROPERTY_DISCIPLINA_STRING_DEMANDADA );
 	}
 	
 	public void setCampusId( Long value )
@@ -251,7 +273,7 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	@Override
 	public String getNaturalKey()
 	{
-		return getDisciplinaId() +
+		return getDisciplinaIdDaAula() +
 			"-" + getTurma() +
 			"-" + getTipoCreditoTeorico();
 	}
@@ -259,6 +281,6 @@ public class ResumoDisciplinaDTO extends AbstractTreeDTO< String >
 	@Override
 	public int compareTo( ResumoDisciplinaDTO o )
 	{
-		return getDisciplinaString().compareTo( o.getDisciplinaString() );
+		return getDisciplinaStringDaAula().compareTo( o.getDisciplinaStringDaAula() );
 	}
 }

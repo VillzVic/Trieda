@@ -181,7 +181,7 @@ public class ResumoDisciplinaExportExcel
 		// Disciplina
 		setCell( row, i++, sheet,
 			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-			resumoDisciplinaDTO.getDisciplinaString() );
+			resumoDisciplinaDTO.getDisciplinaStringDaAula() );
 
 		// Turma
 		setCell( row, i++, sheet,
