@@ -158,7 +158,7 @@ public:
    // Essa estrutura ficaria melhor dentro das disciplinas !!!!
    // Armazena todas as salas ( sala de aula ou lab ) em que uma 
    // disciplina pode ser oferecida.
-   std::map< Disciplina *, std::vector< Sala * >, LessPtr< Disciplina > > discSalas;
+   std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > > discSalas;
 
    //------------------
    // Armazena todas as salas (sala de aula ou lab) em que uma 

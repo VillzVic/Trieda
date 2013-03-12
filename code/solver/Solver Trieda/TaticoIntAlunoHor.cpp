@@ -1452,7 +1452,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 		
 	int status = 0;
 		
-	bool CARREGA_SOL_PARCIAL = this->CARREGA_SOLUCAO;
+	bool CARREGA_SOL_PARCIAL = *this->CARREGA_SOLUCAO;
 
    if ( (*this->CARREGA_SOLUCAO) )
    {
@@ -2820,10 +2820,7 @@ void TaticoIntAlunoHor::atualizarDemandasEquiv( int campusId, int prioridade )
 							case 1: // (T => T)
 								break;
 							case 2: // (T => PT)								
-								// CRIA ALUNODEMANDA PARA DISCIPLINA PRATICA
-
-								// todo: trocar o alunoDemanda inserido no map de turmas/alunoDemanda, inserindo o correto da disc pratica
-								
+								// CRIA ALUNODEMANDA PARA DISCIPLINA PRATICA																
 								break;
 							case 3: // (PT => T)
 								// REMOVE ALUNODEMANDA DE DISCIPLINA PRATICA

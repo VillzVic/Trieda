@@ -9194,12 +9194,12 @@ void SolverMIP::converteCjtSalaEmSala()
       }
 
       // Adicionando as demais salas associadas à disciplina em questão.
-      std::map< Disciplina *, std::vector< Sala * >, LessPtr< Disciplina > >::iterator
+      std::map< Disciplina *, GGroup< Sala *, LessPtr< Sala > >, LessPtr< Disciplina > >::iterator
          it_Disc_Demais_Salas = problemData->discSalas.find( disciplina );
 
       if ( it_Disc_Demais_Salas != problemData->discSalas.end() )
       {
-         ITERA_VECTOR( it_Sala, it_Disc_Demais_Salas->second, Sala )
+         ITERA_GGROUP_LESSPTR( it_Sala, it_Disc_Demais_Salas->second, Sala )
          {
             // Para não adicionar repetidas
             if ( std::find( salas_Ordenadas.begin(),
@@ -12791,19 +12791,16 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 							AtendimentoOferta * atendimento_oferta = new AtendimentoOferta(
 							   this->problemSolution->getIdAtendimentos() );
 												
-							if ( problemData->parametros->considerar_equivalencia_por_aluno )
+							if ( problemData->parametros->considerar_equivalencia_por_aluno && discOriginal != NULL )
 							{
-								if ( discOriginal != NULL )
-								{
-									atendimento_oferta->setDisciplinaSubstitutaId( aula->getDisciplina()->getId() );
-									atendimento_oferta->setDisciplinaId( discOriginal->getId() );
-									atendimento_oferta->disciplina = discOriginal;
-								}
-								else
-								{
-									atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
-									atendimento_oferta->disciplina = aula->getDisciplina();
-								}						
+								atendimento_oferta->setDisciplinaSubstitutaId( aula->getDisciplina()->getId() );
+								atendimento_oferta->setDisciplinaId( discOriginal->getId() );
+								atendimento_oferta->disciplina = discOriginal;								
+							}
+							else
+							{
+								atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
+								atendimento_oferta->disciplina = aula->getDisciplina();
 							}
 
 							atendimento_oferta->setId( oferta->getId() );
