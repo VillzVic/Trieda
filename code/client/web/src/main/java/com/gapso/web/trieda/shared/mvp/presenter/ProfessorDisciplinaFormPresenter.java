@@ -74,7 +74,7 @@ public class ProfessorDisciplinaFormPresenter implements Presenter {
 	}
 	
 	private boolean isValid() {
-		return display.isValid();
+		return display.isValid() && (display.getDisciplinaComboBox().getValue() != null);
 	}
 	
 	private ProfessorDisciplinaDTO getDTO()

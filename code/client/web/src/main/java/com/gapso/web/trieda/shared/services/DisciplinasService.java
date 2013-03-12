@@ -17,6 +17,7 @@ import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -96,4 +97,5 @@ public interface DisciplinasService
 	DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO );
 	List< ResumoDisciplinaDTO > getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO );
+	ListLoadResult<DisciplinaDTO> getDisciplinaNaoAssociada( ProfessorDTO professorDTO, String nome );
 }

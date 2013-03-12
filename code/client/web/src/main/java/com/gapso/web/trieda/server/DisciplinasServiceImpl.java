@@ -54,6 +54,7 @@ import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -1248,6 +1249,32 @@ public class DisciplinasServiceImpl
 		return createResumoEstrutura( nivel1Map, nivel2Map );
 	}
 
+	@Override
+	public ListLoadResult<DisciplinaDTO> getDisciplinaNaoAssociada( ProfessorDTO professorDTO, String nome )
+	{
+		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
+		
+		InstituicaoEnsino instituicaoEnsino
+			= getUsuario().getInstituicaoEnsino(); 
+		
+		List< Disciplina > listDisciplinas
+			= Disciplina.findAllByCodigo(instituicaoEnsino, nome);
+
+		List< Disciplina > listDisciplinasProfessor
+			= Disciplina.findByProfessor(instituicaoEnsino, ConvertBeans.toProfessor(professorDTO));
+		
+		listDisciplinas.removeAll(listDisciplinasProfessor);
+		
+		int maxSize = (listDisciplinas.size() > 10) ? 10 : listDisciplinas.size();
+		
+		for (int i = 0; i < maxSize; i++)
+		{
+			list.add( ConvertBeans.toDisciplinaDTO( listDisciplinas.get(i) ) );
+		}
+		
+		return new BaseListLoadResult< DisciplinaDTO >( list );
+	}
+	
 	private List< ResumoDisciplinaDTO > createResumoEstrutura(
 		Map< String, ResumoDisciplinaDTO > map1,
 		Map< String, Map< String, Pair<ResumoDisciplinaDTO,List<ResumoDisciplinaDTO>> > > map2 )

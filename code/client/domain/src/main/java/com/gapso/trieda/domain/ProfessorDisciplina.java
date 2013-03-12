@@ -360,7 +360,6 @@ public class ProfessorDisciplina
 		Professor professor = getProfessor();
 
 		return professor.getCpf()
-			+ "-" + professor.getNome()
 			+ "-" + getDisciplina().getCodigo();
 	}
 }

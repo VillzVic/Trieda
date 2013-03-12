@@ -1,19 +1,23 @@
 package com.gapso.web.trieda.shared.mvp.view;
 
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessorDisciplinaFormPresenter;
+import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ProfessorDisciplinaFormView extends MyComposite implements ProfessorDisciplinaFormPresenter.Display {
 
@@ -64,7 +68,13 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 
-		disciplinaCB = new DisciplinaComboBox(usuario.isProfessor());
+		disciplinaCB = new DisciplinaComboBox(professorCB){
+			@Override
+			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
+				ProfessorDTO professorDTO = (ProfessorDTO) abdto;
+				Services.disciplinas().getDisciplinaNaoAssociada(professorDTO, this.input.getValue() , callback);
+			}
+		};
 		disciplinaCB.setAllowBlank(false);
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);

@@ -522,6 +522,24 @@ public class Disciplina
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Disciplina > findAllByCodigo(
+		InstituicaoEnsino instituicaoEnsino , String codigo)
+	{
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+		
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "codigo", codigo );
+
+		return q.getResultList();
+	}
 
 	public static Map< String, Disciplina > buildDisciplinaCodigoToDisciplinaMap(
 		List< Disciplina > disciplinas )
@@ -1176,5 +1194,20 @@ public class Disciplina
 			}
 		}
 		return false;
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public static List<Disciplina> findByProfessor( InstituicaoEnsino instituicaoEnsino, Professor professor ) {
+		
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Disciplina o " +
+			" INNER JOIN o.professores p" +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND p.professor = :professor " );
+		
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "professor", professor );
+
+		return q.getResultList();
 	}
 }
