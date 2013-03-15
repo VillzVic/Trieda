@@ -33,6 +33,8 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -162,6 +164,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 					public void handleEvent(MessageBoxEvent be) {
 						if (be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
 							try {
+						    	new AcompanhamentoPanelPresenter("chaveOtimizacao", new AcompanhamentoPanelView());
 								service.checkInputDataBeforeRequestOptimization(getDTO(),new AbstractAsyncCallbackWithDefaultOnFailure<ErrorsWarningsInputSolverDTO>("Não foi possível gerar a grade de horários.",display) {
 									@Override
 									public void onFailure(Throwable caught) {

@@ -292,7 +292,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	}
 
 	private void criaParametrosGerais() {
-		
+	
 		// MODO DE OTIMIZAÇÃO
 		RadioGroup modoDeOtimizacaoRadioGroup = new RadioGroup();  
 		modoDeOtimizacaoRadioGroup.setFieldLabel("Modo de Otimização");

@@ -11,7 +11,10 @@ import com.extjs.gxt.ui.client.widget.button.ToolButton;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
@@ -68,6 +71,8 @@ public class ErrorsWarningsInputSolverPresenter extends AbstractRequisicaoOtimiz
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				desabilitaBotaoParametros();
+				Presenter presenter = new AcompanhamentoPanelPresenter("chaveOtimizacaoReq", new AcompanhamentoPanelView());
+				presenter.go(null);
 				enviaRequisicaoDeOtimizacao(parametroDTO,cenarioDTO);
 			}
 		});
