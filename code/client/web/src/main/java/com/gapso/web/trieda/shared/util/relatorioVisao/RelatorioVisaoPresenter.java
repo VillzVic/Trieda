@@ -11,6 +11,8 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -63,6 +65,7 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 				for(String id : mapStringIds.keySet()) e.addParameter(id, mapStringIds.get(id));
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 
@@ -84,6 +87,7 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 				for(String id : mapStringIds.keySet()) e.addParameter(id, mapStringIds.get(id));
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 	}

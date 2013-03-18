@@ -68,6 +68,8 @@ import com.gapso.web.trieda.shared.mvp.view.ProfessoresDisciplinaView;
 import com.gapso.web.trieda.shared.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
@@ -643,6 +645,7 @@ public class ToolBarPresenter
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 		
@@ -662,6 +665,7 @@ public class ToolBarPresenter
 						parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 					e.submit();
+					new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 				}
 			});
 		
@@ -681,6 +685,7 @@ public class ToolBarPresenter
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 		
@@ -700,6 +705,7 @@ public class ToolBarPresenter
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 		
@@ -719,6 +725,7 @@ public class ToolBarPresenter
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 		
@@ -738,6 +745,7 @@ public class ToolBarPresenter
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 		
@@ -757,6 +765,7 @@ public class ToolBarPresenter
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 		
@@ -776,6 +785,7 @@ public class ToolBarPresenter
 					parametros, toolBar.getI18nConstants(), toolBar.getI18nMessages() );
 
 				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 		

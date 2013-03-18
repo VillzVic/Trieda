@@ -15,6 +15,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.Atendimento;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -87,6 +88,7 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 	}
 	
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel(Workbook workbook){
 		return this.<RelatorioVisaoMap<Campus, Turno, ?>>fillInExcelImpl(workbook);
 	}

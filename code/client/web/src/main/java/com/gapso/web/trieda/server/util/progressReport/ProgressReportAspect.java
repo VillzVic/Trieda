@@ -44,6 +44,20 @@ public class ProgressReportAspect {
 		
 		return obj;
 	}
+	
+	@Pointcut("execution(* com.gapso.web.trieda.server.excel.exp.IExportExcel.export(..)) && target(com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration)")
+	public void interceptOfIExportExcelExport(){}
+	
+	@Around("interceptOfIExportExcelExport()")
+	public Object aroundInterceptOfIExportExcelExport(ProceedingJoinPoint pjp) throws Throwable{
+		ProgressReportWriter prw = ((ProgressDeclaration) pjp.getTarget()).getProgressReport();
+
+		if(prw != null) prw.start();
+		Object obj = pjp.proceed(pjp.getArgs());
+		if(prw != null) prw.finish();
+		
+		return obj;
+	}
 	/*
 	@Pointcut("call(* com.gapso.web.trieda.server.excel.imp.IImportExcel.load(..)) && withincode(* com.gapso.web.trieda.server.excel.imp.IImportExcel.load(..)) && target(teste)")
 	public void interceptOfSecondIImportExcelLoad(Object teste){}

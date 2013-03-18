@@ -11,11 +11,14 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.ibm.icu.util.Calendar;
 
+@ProgressDeclarationAnnotation
 public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel {
 	enum ExcelCellStyleReference {
 		TEXT(6, 2);
@@ -78,6 +81,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel(Workbook workbook) {
 		List<Professor> professores = Professor.findByCenario(this.instituicaoEnsino,getCenario());
 

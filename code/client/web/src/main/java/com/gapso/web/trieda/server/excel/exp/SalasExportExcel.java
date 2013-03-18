@@ -9,10 +9,13 @@ import org.apache.poi.ss.usermodel.Workbook;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class SalasExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
@@ -75,6 +78,7 @@ public class SalasExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Sala > salas = Sala.findByCenario( this.instituicaoEnsino, getCenario() );

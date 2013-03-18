@@ -1,6 +1,8 @@
 package com.gapso.web.trieda.server.excel.exp;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -15,8 +17,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Usuario;
+import com.gapso.web.trieda.server.ProgressReportServiceImpl;
 import com.gapso.web.trieda.server.util.GTriedaI18nConstants;
 import com.gapso.web.trieda.server.util.GTriedaI18nMessages;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclaration;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportListReader;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -50,6 +56,8 @@ public class ExportExcelServlet extends HttpServlet
 		String fileExtension = request.getParameter(
 			ExcelInformationType.getFileExtensionParameterName() );
 		
+		String chaveRegistro = request.getParameter("chaveRegistro");
+		
 		if(fileExtension.isEmpty()) {
 			fileExtension = "xls";
 		}
@@ -73,6 +81,24 @@ public class ExportExcelServlet extends HttpServlet
 				informationToBeExported, this.cenario, ExportExcelServlet.i18nConstants,
 				ExportExcelServlet.i18nMessages, filter, getInstituicaoEnsino(), fileExtension
 			);
+			
+			if ( exporter != null )
+			{
+				if(exporter instanceof ProgressDeclaration){
+					try{
+						List<String> feedbackList = new ArrayList<String>();
+
+						((ProgressDeclaration) exporter).setProgressReport(feedbackList);
+
+						ProgressReportReader progressSource = new ProgressReportListReader(feedbackList);
+						progressSource.start();
+						ProgressReportServiceImpl.getProgressReportSession(request).put(chaveRegistro, progressSource);
+					}
+					catch(Exception e){
+						System.out.println("Nao foi possivel realizar o acompanhamento da progressao.");
+					}
+				}
+			}
 
 			Workbook workbook = exporter.export();
 

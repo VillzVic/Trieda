@@ -7,10 +7,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class TRIEDATabelasExportExcel
 	extends AbstractExportExcel
 {
@@ -86,11 +88,13 @@ public class TRIEDATabelasExportExcel
 		Exception exception = null;
 		try {
 			for (IExportExcel exporter : exporters) {
+				getProgressReport().setInitNewPartial("Exportando " + exporter.getFileName());
 				//TODO: MEDIÇÃO PERFORMANCE
 				double start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
 				exporter.export(workbook);
 				//TODO: MEDIÇÃO PERFORMANCE
 				double time = (System.currentTimeMillis() - start)/1000.0;System.out.println(" tempo = " + time + " segundos");
+				getProgressReport().setPartial("Etapa concluída");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

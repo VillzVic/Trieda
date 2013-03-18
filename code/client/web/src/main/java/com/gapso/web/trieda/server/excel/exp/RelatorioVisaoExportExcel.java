@@ -19,6 +19,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
@@ -27,6 +28,7 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
 
+@ProgressDeclarationAnnotation
 public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	enum ExcelCellStyleReference{
 		HEADER_LEFT_TEXT(5, 3),
@@ -120,7 +122,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {
 		
 	}
-	
+
 	protected <T> boolean fillInExcelImpl(Workbook workbook){
 		boolean result = false;
 		

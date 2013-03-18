@@ -14,6 +14,8 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.DisciplinasServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoDisciplinaDTO;
@@ -22,6 +24,7 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
 
+@ProgressDeclarationAnnotation
 public class ResumoDisciplinaExportExcel
 	extends AbstractExportExcel
 {
@@ -115,6 +118,7 @@ public class ResumoDisciplinaExportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel( Workbook workbook )
 	{
 		boolean result = false;

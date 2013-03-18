@@ -13,10 +13,13 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class AlunosDemandaExportExcel
 	extends AbstractExportExcel
 {
@@ -91,6 +94,7 @@ public class AlunosDemandaExportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel( Workbook workbook )
 	{
 		boolean result = false;

@@ -10,10 +10,13 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class CursosExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
@@ -77,6 +80,7 @@ public class CursosExportExcel extends AbstractExportExcel {
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel( Workbook workbook )
 	{
 		List< Curso > cursos = Curso.findByCenario(

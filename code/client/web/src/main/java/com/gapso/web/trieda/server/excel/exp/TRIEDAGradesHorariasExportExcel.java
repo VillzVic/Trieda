@@ -10,10 +10,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class TRIEDAGradesHorariasExportExcel
 	extends AbstractExportExcel
 {
@@ -76,6 +78,7 @@ public class TRIEDAGradesHorariasExportExcel
 			// [sheetTarget -> [sheetOrigin -> [key -> link]]]
 			Map<String,Map<String,Map<String,String>>> hyperlinksMap = new HashMap<String,Map<String,Map<String,String>>>();
 			for (IExportExcel exporter : exporters) {
+				getProgressReport().setInitNewPartial("Exportando " + exporter.getFileName());
 				//TODO: MEDIÇÃO PERFORMANCE
 				double start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
 				exporter.export(workbook);
@@ -98,9 +101,11 @@ public class TRIEDAGradesHorariasExportExcel
 				}
 				//TODO: MEDIÇÃO PERFORMANCE
 				double time = (System.currentTimeMillis() - start)/1000.0;System.out.println(" tempo = " + time + " segundos");
+				getProgressReport().setPartial("Etapa concluída");
 			}
 			
 			// escreve hyperlinks
+			getProgressReport().setInitNewPartial("Escrevendo hyperlinks");
 			for (IExportExcel exporter : exporters) {
 				//TODO: MEDIÇÃO PERFORMANCE
 				double start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
@@ -108,6 +113,7 @@ public class TRIEDAGradesHorariasExportExcel
 				//TODO: MEDIÇÃO PERFORMANCE
 				double time = (System.currentTimeMillis() - start)/1000.0;System.out.println(" tempo = " + time + " segundos");
 			}
+			getProgressReport().setPartial("Etapa concluída");
 		} catch (Exception e) {
 			e.printStackTrace();
 			exception = e;
