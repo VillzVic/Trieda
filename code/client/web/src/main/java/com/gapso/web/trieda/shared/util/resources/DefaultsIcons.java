@@ -100,6 +100,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("resumo_cenario_24.png") ImageResource resumoCenario24();
 	@Source("resumo_campi_24.png") ImageResource resumoCampi24();
 	@Source("resumo_disciplinas_24.png") ImageResource resumoDisciplinas24();
+	@Source("resumo_matricula_24.png") ImageResource resumoMatricula24();
 	@Source("resumo_cursos_24.png") ImageResource resumoCursos24();
 	@Source("campi_trabalho_24.png") ImageResource campiTrabalho24();
 	
@@ -108,6 +109,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("resumo_campi_16.png") ImageResource resumoCampi16();
 	@Source("resumo_disciplinas_16.png") ImageResource resumoDisciplinas16();
 	@Source("resumo_cursos_16.png") ImageResource resumoCursos16();
+	@Source("resumo_matricula_16.png") ImageResource resumoMatricula16();
 	@Source("campus_16.png") ImageResource campus16();
 	@Source("curso_16.png") ImageResource curso16();
 	@Source("sala_16.png") ImageResource sala16();

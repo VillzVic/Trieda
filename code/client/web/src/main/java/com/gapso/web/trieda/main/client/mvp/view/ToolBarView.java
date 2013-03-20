@@ -94,6 +94,7 @@ public class ToolBarView
 	private Button resumoCampiBt;
 	private Button resumoCursosBt;
 	private Button resumoDisciplinasBt;
+	private Button resumoMatriculasBt;
 
 	// Administracao
 	private Button usuariosListBt;
@@ -405,6 +406,10 @@ public class ToolBarView
 		resumoDisciplinasBt = createButton( "Resumo por<br />Disciplinas",
 			"Resumo por Disciplina", Resources.DEFAULTS.resumoDisciplinas24() );
 		relatoriosToolBar.add( resumoDisciplinasBt );
+		
+		resumoMatriculasBt = createButton( "Atendimento por<br />Matrículas",
+				"Atendimento por Matrículas", Resources.DEFAULTS.resumoMatricula24() );
+			relatoriosToolBar.add( resumoMatriculasBt );
 
 		relatoriosToolBar.add( new SeparatorToolItem() );
 
@@ -776,6 +781,12 @@ public class ToolBarView
 	public Button getResumoDisciplinasButton()
 	{
 		return resumoDisciplinasBt;
+	}
+	
+	@Override
+	public Button getResumoMatriculasButton()
+	{
+		return resumoMatriculasBt;
 	}
 
 	@Override
