@@ -407,9 +407,9 @@ public class ToolBarView
 			"Resumo por Disciplina", Resources.DEFAULTS.resumoDisciplinas24() );
 		relatoriosToolBar.add( resumoDisciplinasBt );
 		
-		resumoMatriculasBt = createButton( "Atendimento por<br />Matrículas",
-				"Atendimento por Matrículas", Resources.DEFAULTS.resumoMatricula24() );
-			relatoriosToolBar.add( resumoMatriculasBt );
+		resumoMatriculasBt = createButton( "Atendimentos por<br />Matrícula",
+				"Atendimentos por Matrícula", Resources.DEFAULTS.resumoMatricula24() );
+		relatoriosToolBar.add( resumoMatriculasBt );
 
 		relatoriosToolBar.add( new SeparatorToolItem() );
 

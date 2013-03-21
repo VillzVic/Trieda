@@ -53,7 +53,7 @@ public class ResumoMatriculasView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Resumo de Atendimento por Matrículas" );
+		panel.setHeading( "Master Data » Resumo de Atendimentos por Matrícula" );
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class ResumoMatriculasView extends MyComposite
 	private void createTabItem()
 	{
 		tabItem = new GTabItem(
-			"Atendimento por Matrículas", Resources.DEFAULTS.resumoMatricula16() );
+			"Atendimentos por Matrícula", Resources.DEFAULTS.resumoMatricula16() );
 
 		tabItem.setContent( panel );
 	}
