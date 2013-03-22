@@ -578,7 +578,25 @@ public class AlunoDemanda
 	}
 	
 	@SuppressWarnings( "unchecked" )
-	public static List< AlunoDemanda > findBy(
+	public static List< AlunoDemanda > findByDisciplinaAndCampus(
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina = :disciplina " +
+			" AND o.demanda.oferta.campus = :campus ");
+		
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "disciplina", disciplina );
+		q.setParameter( "campus", campus );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findMatriculasBy(
 		InstituicaoEnsino instituicaoEnsino, String aluno,
 		String matricula, Campus campus, Curso curso,
 		int firstResult, int maxResults, String orderBy )
@@ -607,7 +625,7 @@ public class AlunoDemanda
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
 			" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) " +
-			" AND o.prioridade = 1" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
+			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
 			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
 			" GROUP BY o.aluno ");
 
@@ -629,7 +647,55 @@ public class AlunoDemanda
 		return q.getResultList();
 	}
 	
-	public static int count(
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findDisciplinasBy(
+		InstituicaoEnsino instituicaoEnsino, String codigo,
+		Campus campus, Curso curso, int firstResult,
+		int maxResults, String orderBy )
+	{
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+
+		String queryCampus = "";
+		if ( campus != null )
+		{
+			queryCampus = ( " o.demanda.oferta.campus = :campus AND " );
+		}
+		
+		String queryCurso = "";
+		if ( curso != null )
+		{
+			queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND " + queryCampus + queryCurso + " LOWER ( o.demanda.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
+			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
+			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
+			" GROUP BY o.demanda.disciplina, o.demanda.oferta.campus ");
+
+		if ( curso != null )
+		{
+			q.setParameter("curso", curso);
+		}
+		if ( campus != null )
+		{
+			q.setParameter("campus", campus);
+		}
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "codigo", codigo );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
+	}
+	
+	public static int countMatriculas(
 		InstituicaoEnsino instituicaoEnsino, String aluno,
 		String matricula, Campus campus, Curso curso )
 	{
@@ -654,7 +720,7 @@ public class AlunoDemanda
 			" SELECT COUNT (DISTINCT o.aluno ) FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
-			" AND o.prioridade = 1" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
+			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
 			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
 			" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) ");
 
@@ -673,4 +739,47 @@ public class AlunoDemanda
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
+	
+	public static int countDisciplinas(
+			InstituicaoEnsino instituicaoEnsino, String codigo,
+			Campus campus, Curso curso )
+		{
+			codigo = ( ( codigo == null ) ? "" : codigo );
+			codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+
+			String queryCampus = "";
+			if ( campus != null )
+			{
+				queryCampus = ( " o.demanda.oferta.campus = :campus AND " );
+			}
+			
+			String queryCurso = "";
+			if ( curso != null )
+			{
+				queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
+			}
+
+			Query q = entityManager().createQuery(
+				" SELECT DISTINCT o.demanda.disciplina, o.demanda.oferta.campus FROM AlunoDemanda o " +
+				" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+				" AND " + queryCampus + queryCurso + " LOWER ( o.demanda.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
+				" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
+				" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" );
+
+			if ( curso != null )
+			{
+				q.setParameter("curso", curso);
+			}
+			if ( campus != null )
+			{
+				q.setParameter("campus", campus);
+			}
+
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			q.setParameter( "codigo", codigo );;
+			
+			q.getResultList().size();
+
+			return q.getResultList().size();
+		}
 }

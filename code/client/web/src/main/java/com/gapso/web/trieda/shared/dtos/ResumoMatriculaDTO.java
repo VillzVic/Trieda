@@ -17,7 +17,11 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_DISCIPLINA_ATENDIDOS_P1 = "disAtendidosP1";
 	public static final String PROPERTY_DISCIPLINA_NAO_ATENDIDOS_P1 = "disNaoAtendidosP1";
 	public static final String PROPERTY_DISCIPLINA_ATENDIDOS_P2 = "disAtendidosP2";
-	public static final String PROPERTY_CREDITO_EXCESSO_P2 = "credExcessoP2"; 
+	public static final String PROPERTY_CREDITO_EXCESSO_P2 = "credExcessoP2";
+
+	public static final String PROPERTY_CODIGO_DISCIPLINA = "codDisciplina";
+	public static final String PROPERTY_DISCIPLINA_ATENDIDOS_SOMA = "disAtendidosSoma";
+	public static final String PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA = "disDemandaNaoAtendida"; 
 	
 	public ResumoMatriculaDTO()
 	{
@@ -110,6 +114,30 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	
 	public int getCredExcessoP2(){
 		return get(PROPERTY_CREDITO_EXCESSO_P2);
+	}
+	
+	public void setCodDisciplina(String value) {
+		set(PROPERTY_CODIGO_DISCIPLINA, value);
+	}
+	
+	public String getCodDisciplina(){
+		return get(PROPERTY_CODIGO_DISCIPLINA);
+	}
+	
+	public void setDisDemandaNaoAtendida(int value) {
+		set(PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA, value);
+	}
+	
+	public int getDisDemandaNaoAtendida(){
+		return get(PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA);
+	}
+	
+	public void setDisAtendidosSoma(int value) {
+		set(PROPERTY_DISCIPLINA_ATENDIDOS_SOMA, value);
+	}
+	
+	public int getDisAtendidosSoma(){
+		return get(PROPERTY_DISCIPLINA_ATENDIDOS_SOMA);
 	}
 	
 	@Override

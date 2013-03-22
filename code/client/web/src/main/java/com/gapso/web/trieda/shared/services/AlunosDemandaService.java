@@ -22,6 +22,8 @@ public interface AlunosDemandaService
 	ListLoadResult< AlunoDemandaDTO > getAlunosDemandaList( DemandaDTO demandaDTO );
 	void saveAlunoDemanda( DemandaDTO demandaDTO, AlunoDemandaDTO alunoDemandaDTO ) throws TriedaException;
 	void removeAlunosDemanda( List< AlunoDemandaDTO > list );
-	PagingLoadResult<ResumoMatriculaDTO> getResumoList( String aluno, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO,
+	PagingLoadResult<ResumoMatriculaDTO> getResumoMatriculasList( String aluno, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO,
+			PagingLoadConfig loadConfig );
+	PagingLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( String codigo, CampusDTO campusDTO, CursoDTO cursoDTO,
 			PagingLoadConfig loadConfig );
 }

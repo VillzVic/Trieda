@@ -26,16 +26,15 @@ import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ResumoMatriculasPresenter 
-	implements Presenter{
-
-	public interface Display
+public class ResumoAtendimentosDisciplinaPresenter 
+	implements Presenter
+{
+		public interface Display
 		extends ITriedaI18nGateway
 	{
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
-		TextField< String > getAlunoBuscaTextField();
-		TextField< String > getMatriculaBuscaTextField();
+		TextField< String > getCodigoBuscaTextField();
 		CampusComboBox getCampusBuscaComboBox();
 		CursoComboBox getCursoBuscaComboBox();
 		Button getSubmitBuscaButton();
@@ -47,12 +46,12 @@ public class ResumoMatriculasPresenter
 	
 	private Display display; 
 	
-	public ResumoMatriculasPresenter(
+	public ResumoAtendimentosDisciplinaPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 			CenarioDTO cenario, Display display )
 	{
 			this.display = display;
-
+	
 			configureProxy();
 			setListeners();
 	}
@@ -60,7 +59,7 @@ public class ResumoMatriculasPresenter
 	private void configureProxy()
 	{
 		final AlunosDemandaServiceAsync service = Services.alunosDemanda();
-
+	
 		RpcProxy< PagingLoadResult< ResumoMatriculaDTO > > proxy =
 			new RpcProxy< PagingLoadResult< ResumoMatriculaDTO > >()
 		{
@@ -68,20 +67,19 @@ public class ResumoMatriculasPresenter
 			public void load( Object loadConfig,
 				AsyncCallback< PagingLoadResult< ResumoMatriculaDTO > > callback )
 			{
-				String aluno = display.getAlunoBuscaTextField().getValue();
-				String matricula = display.getMatriculaBuscaTextField().getValue();
-
+				String codigo = display.getCodigoBuscaTextField().getValue();
+	
 				CampusDTO campusDTO
 					= display.getCampusBuscaComboBox().getValue();
 				
 				CursoDTO cursoDTO
 					= display.getCursoBuscaComboBox().getValue();
-
-				service.getResumoMatriculasList( aluno, matricula, campusDTO,
+	
+				service.getResumoAtendimentosDisciplinaList( codigo, campusDTO,
 					cursoDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
-
+	
 		this.display.setProxy( proxy );
 	}
 	
@@ -93,8 +91,7 @@ public class ResumoMatriculasPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				display.getAlunoBuscaTextField().setValue( null );
-				display.getMatriculaBuscaTextField().setValue( null );
+				display.getCodigoBuscaTextField().setValue( null );
 				display.getCampusBuscaComboBox().setValue( null );
 				display.getCursoBuscaComboBox().setValue( null );
 				
@@ -120,4 +117,6 @@ public class ResumoMatriculasPresenter
 		tab.add( (GTabItem) this.display.getComponent() );
 	}
 
+	
+	
 }

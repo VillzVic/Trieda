@@ -110,7 +110,7 @@ public class AlunosDemandaServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult<ResumoMatriculaDTO> getResumoList( String nome, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO,
+	public PagingLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( String codigo, CampusDTO campusDTO, CursoDTO cursoDTO,
 			PagingLoadConfig config ) {
 		List< ResumoMatriculaDTO > list = new ArrayList< ResumoMatriculaDTO >();
 		String orderBy = config.getSortField();
@@ -142,9 +142,105 @@ public class AlunosDemandaServiceImpl
 			curso = ConvertBeans.toCurso(cursoDTO);
 		}
 		
-		int numTotalMatriculas = AlunoDemanda.count(getInstituicaoEnsinoUser(), nome, matricula, campus, curso);
+		int numTotalDisciplinas = AlunoDemanda.countDisciplinas(getInstituicaoEnsinoUser(), codigo, campus, curso);
 		
-		List< AlunoDemanda > busca = AlunoDemanda.findBy(getInstituicaoEnsinoUser(), nome, matricula, campus, curso,
+		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy(getInstituicaoEnsinoUser(), codigo, campus, curso,
+				config.getOffset(), config.getLimit(), orderBy);
+		
+		for ( AlunoDemanda disciplinas : busca )
+		{
+			List < AlunoDemanda > alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
+					disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
+			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
+			resumoMatricula.setCampusString(disciplinas.getDemanda().getOferta().getCampus().getNome());
+			resumoMatricula.setCodDisciplina(disciplinas.getDemanda().getDisciplina().getCodigo());
+			int disDemandaP1 = 0;
+			int disAtendidosP1 = 0;
+			int disNaoAtendidosP1 = 0;
+			int disAtendidosP2 = 0;
+			int disAtendidosSoma = 0;
+			int disDemandaNaoAtendida = 0;
+			for ( AlunoDemanda demandas : alunoDemanda )
+			{
+				if ( demandas.getDemanda().ocupaGrade() )
+				{
+					if ( demandas.getPrioridade() == 1 )
+					{
+						disDemandaP1++;
+						if ( demandas.getAtendido() )
+						{
+							disAtendidosP1++;
+						}
+						else
+						{
+							disNaoAtendidosP1++;
+						}
+					}
+					else
+					{
+						if ( demandas.getAtendido() )
+						{
+							disAtendidosP2++;
+						}
+					}
+				}
+				disAtendidosSoma = disAtendidosP1 + disAtendidosP2;
+				disDemandaNaoAtendida = disDemandaP1 - (disAtendidosSoma);
+			}
+			resumoMatricula.setDisDemandaP1(disDemandaP1);
+			resumoMatricula.setDisAtendidosP1(disAtendidosP1);
+			resumoMatricula.setDisNaoAtendidosP1(disNaoAtendidosP1);
+			resumoMatricula.setDisAtendidosP2(disAtendidosP2);
+			resumoMatricula.setDisAtendidosSoma(disAtendidosSoma);
+			resumoMatricula.setDisDemandaNaoAtendida(disDemandaNaoAtendida);
+			
+			list.add(resumoMatricula);
+		}
+		BasePagingLoadResult< ResumoMatriculaDTO > result
+		= new BasePagingLoadResult< ResumoMatriculaDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( numTotalDisciplinas );
+	
+		return result;
+	}
+
+	@Override
+	public PagingLoadResult<ResumoMatriculaDTO> getResumoMatriculasList( String aluno, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO,
+			PagingLoadConfig config ) {
+		List< ResumoMatriculaDTO > list = new ArrayList< ResumoMatriculaDTO >();
+		String orderBy = config.getSortField();
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
+			}
+		}		
+
+		Campus campus = null;
+		
+		if ( campusDTO != null )
+		{
+			campus = ConvertBeans.toCampus(campusDTO);
+		}
+		
+		Curso curso = null;
+		
+		if ( cursoDTO != null )
+		{
+			curso = ConvertBeans.toCurso(cursoDTO);
+		}
+		
+		int numTotalMatriculas = AlunoDemanda.countMatriculas(getInstituicaoEnsinoUser(), aluno, matricula, campus, curso);
+		
+		List< AlunoDemanda > busca = AlunoDemanda.findMatriculasBy(getInstituicaoEnsinoUser(), aluno, matricula, campus, curso,
 				config.getOffset(), config.getLimit(), orderBy);
 		
 		for ( AlunoDemanda alunos : busca )
@@ -229,7 +325,7 @@ public class AlunosDemandaServiceImpl
 			curso = ConvertBeans.toCurso(cursoDTO);
 		}
 		
-		List< AlunoDemanda > busca = AlunoDemanda.findBy(getInstituicaoEnsinoUser(), nome, matricula, campus, curso,
+		List< AlunoDemanda > busca = AlunoDemanda.findMatriculasBy(getInstituicaoEnsinoUser(), nome, matricula, campus, curso,
 				0, numTotalmatriculas, null);
 		
 		int credDemandaP1 = 0;
@@ -268,8 +364,8 @@ public class AlunosDemandaServiceImpl
 						}
 					}
 				}
-				if (credAtendidosP1 > count*1000) {
-					System.out.println( count*1000 + " Matriculas processadas");
+				if (credDemandaP1 > count*1000) {
+					System.out.println( count*1000 + " Creditos processados");
 					count++;
 				}
 			}
@@ -278,5 +374,71 @@ public class AlunosDemandaServiceImpl
 		System.out.println("Soma creditos atendidos P1: " + credAtendidosP1);
 		System.out.println("Soma creditos nao atendidos P1: " + credNaoAtendidosP1);
 		System.out.println("Soma creditos atendidos P2: " + credAtendidosP2);
+	}
+	
+	public void somaDisciplinasDemanda( String nome, CampusDTO campusDTO, CursoDTO cursoDTO, int numTotalDisciplinas ){
+		
+		Campus campus = null;
+		
+		if ( campusDTO != null )
+		{
+			campus = ConvertBeans.toCampus(campusDTO);
+		}
+		
+		Curso curso = null;
+		
+		if ( cursoDTO != null )
+		{
+			curso = ConvertBeans.toCurso(cursoDTO);
+		}
+		
+		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy(getInstituicaoEnsinoUser(), nome, campus, curso,
+				0, numTotalDisciplinas, null);
+		
+		int disDemandaP1 = 0;
+		int disAtendidosP1 = 0;
+		int disNaoAtendidosP1 = 0;
+		int disAtendidosP2 = 0;
+		int count = 1;
+		
+		for ( AlunoDemanda disciplinas : busca )
+		{
+			List < AlunoDemanda > alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
+					disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
+
+			for ( AlunoDemanda demandas : alunoDemanda )
+			{
+				if ( demandas.getDemanda().ocupaGrade() )
+				{
+					if ( demandas.getPrioridade() == 1 )
+					{
+						disDemandaP1++;
+						if ( demandas.getAtendido() )
+						{
+							disAtendidosP1++;
+						}
+						else
+						{
+							disNaoAtendidosP1++;
+						}
+					}
+					else
+					{
+						if ( demandas.getAtendido() )
+						{
+							disAtendidosP2++;
+						}
+					}
+				}
+				if (disDemandaP1 > count*1000) {
+					System.out.println( count*1000 + " Disciplinas processadas");
+					count++;
+				}
+			}
+		}
+		System.out.println("Soma demanda P1: " + disDemandaP1);
+		System.out.println("Soma disciplinas atendidas P1: " + disAtendidosP1);
+		System.out.println("Soma disciplinas nao atendidas P1: " + disNaoAtendidosP1);
+		System.out.println("Soma disciplinas atendidas P2: " + disAtendidosP2);
 	}
 }
