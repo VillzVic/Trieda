@@ -12791,7 +12791,7 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 							AtendimentoOferta * atendimento_oferta = new AtendimentoOferta(
 							   this->problemSolution->getIdAtendimentos() );
 												
-							if ( problemData->parametros->considerar_equivalencia_por_aluno && discOriginal != NULL )
+							if ( problemData->parametros->considerar_equivalencia_por_aluno && discOriginal != aula->getDisciplina() )
 							{
 								atendimento_oferta->setDisciplinaSubstitutaId( aula->getDisciplina()->getId() );
 								atendimento_oferta->setDisciplinaId( discOriginal->getId() );
@@ -12819,8 +12819,8 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 								if ( itAlunoDemanda->demanda->oferta != oferta )
 									continue;
 
-								if ( ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == NULL ) ||
-									 ( ( itAlunoDemanda->demandaOriginal != NULL && discOriginal != NULL ) &&
+								if ( ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == aula->getDisciplina() ) ||
+									 ( ( itAlunoDemanda->demandaOriginal != NULL && discOriginal != aula->getDisciplina() ) &&
 									   ( itAlunoDemanda->demandaOriginal->getDisciplinaId() == discOriginal->getId() ) ) )
 								{
 									n++;

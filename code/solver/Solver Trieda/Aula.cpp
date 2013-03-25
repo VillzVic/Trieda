@@ -67,8 +67,14 @@ void Aula::setQuantidade( int value, Oferta* oft )
 
 void Aula::setDisciplinaSubstituida( Disciplina * d, Oferta* oft )
 {
-   this->disciplinaSubstituida[oft];
-   this->disciplinaSubstituida[oft].add(d);
+	if ( d== NULL )
+		std::cout<<"\nDisciplina substituida NULL, nao deveria! Em casos de nao haver substituida, enviar a original!\n";
+	else
+	{
+		this->disciplinaSubstituida[oft];
+		this->disciplinaSubstituida[oft].add(d);
+	}
+
 }
 
 void Aula::setHorarioAulaInicial( HorarioAula *h )
@@ -211,7 +217,7 @@ void Aula::toString()
 		ITERA_GGROUP_LESSPTR( itDiscOrig, discsOrig, Disciplina )
 		{
 			Disciplina* original = *itDiscOrig;
-			if ( original != NULL )
+			if ( original->getId() != disciplina->getId() )
 				std::cout << " (Disciplina Substituida: " << original->getCodigo() << ")";
 		}
    }

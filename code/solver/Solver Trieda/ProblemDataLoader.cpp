@@ -4139,6 +4139,8 @@ void ProblemDataLoader::criaAulas()
 					 {
 						 disciplinaSubstituida = problemData->refDisciplinas.find( atendOferta->getDisciplinaSubstituidaId() )->second;
 					 }
+					 else // se disciplinaSubstituida == disciplina, significa que NÃO houve substituição por equivalencia
+						 disciplinaSubstituida = disciplina;
 
                      Sala * sala = problemData->refSala.find(
                         it_atend_sala->getSalaId() )->second;
@@ -4161,7 +4163,7 @@ void ProblemDataLoader::criaAulas()
                         std::cout << "Aula com creditos teoricos e praticos maiores que 0.\n";
                         exit( 1 );
                      }
-					 
+
 					 // Informa os horariosAula
 					 GGroup<int> horarios = it_atend_tatico->getHorariosAula();
 
@@ -4251,17 +4253,18 @@ void ProblemDataLoader::criaAulas()
 							if ( *hi > *ha ) hi = ha;
 							if ( *hf < *ha ) hf = ha;
 						}						
+
 						aula->setHorarioAulaInicial( hi );
 						aula->setHorarioAulaFinal( hf );
 
                         problemData->aulas.add( aula );
                      }
                      else
-                     {
-                        aulaAntiga->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );
-                        aulaAntiga->setQuantidade( demandaAtendida, oferta );
+                     {						 
+                        aulaAntiga->ofertas.add( problemData->refOfertas[ atendOferta->getOfertaCursoCampiId() ] );						 
+						aulaAntiga->setQuantidade( demandaAtendida, oferta );						
                         aulaAntiga->setDisciplinaSubstituida( disciplinaSubstituida, oferta );
-                        problemData->aulas.add( aulaAntiga );
+                        problemData->aulas.add( aulaAntiga );						   
                      }
                   }
                }

@@ -337,7 +337,7 @@ std::string VariableOp::toString()
 			ITERA_GGROUP_LESSPTR( itDiscOrig, discsOrig, Disciplina )
 			{
 				Disciplina* original = *itDiscOrig;
-				if ( original != NULL )
+				if ( original->getId() != aula->getDisciplina()->getId() )
 					str << ",DiscOrig" << original->getId();
 			}
 			str << ")";
