@@ -800,4 +800,14 @@ public class GTriedaI18nConstants
 	public String relatorioVisaoAluno(){
 		return this.languageManager.getText("relatorioVisaoAluno");
 	}
+
+	@Override
+	public String atendimentosDisciplina() {
+		return this.languageManager.getText("atendimentosDisciplina");
+	}
+
+	@Override
+	public String atendimentosMatricula() {
+		return this.languageManager.getText("atendimentosMatricula");
+	}
 }

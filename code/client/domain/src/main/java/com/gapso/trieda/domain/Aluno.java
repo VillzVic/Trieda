@@ -478,6 +478,17 @@ public class Aluno
 
 		return true;
 	}
+	
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+
+		result = ( prime * result + ( ( this.id == null ) ? 0 : this.id.hashCode() ) );
+		result = ( prime * result + ( ( this.version == null ) ? 0 : this.version.hashCode() ) );
+
+		return result;
+	}
 
 	public static Map< String, Aluno > buildMatriculaAlunoToAlunoMap( 
 		List< Aluno > alunos )

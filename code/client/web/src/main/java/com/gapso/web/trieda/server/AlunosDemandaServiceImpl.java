@@ -3,7 +3,9 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curso;
@@ -142,15 +145,48 @@ public class AlunosDemandaServiceImpl
 			curso = ConvertBeans.toCurso(cursoDTO);
 		}
 		
-		int numTotalDisciplinas = AlunoDemanda.countDisciplinas(getInstituicaoEnsinoUser(), codigo, campus, curso);
+		// Conta numero total de matriculas (para ser mostrado na paginacao)
+		int numTotalDisciplinas = AlunoDemanda.countDisciplinas( getInstituicaoEnsinoUser(), codigo, campus, curso );
 		
-		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy(getInstituicaoEnsinoUser(), codigo, campus, curso,
-				config.getOffset(), config.getLimit(), orderBy);
+		// Busca as disciplinas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de disciplinas.
+		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy( getInstituicaoEnsinoUser(), codigo, campus, curso,
+				config.getOffset(), config.getLimit(), orderBy );
 		
+		// Se a busca tiver um tamanho muito grande (por exemplo no caso da exportacao do excel). 
+		// Faz um pre-processamento antes para melhorar o desempenho.
+		Map< Long, List<AlunoDemanda> > demandaMapAluno = new HashMap< Long, List<AlunoDemanda> >();
+		if (config.getLimit() > 100) 
+		{
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser() );
+			for ( AlunoDemanda disciplinas : busca )
+			{
+				List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
+				for ( AlunoDemanda alunoDemanda : totalAlunoDemanda )
+				{
+					if ( alunoDemanda.getDemanda().getDisciplina().getId() == disciplinas.getDemanda().getDisciplina().getId() 
+							&& alunoDemanda.getDemanda().getOferta().getCampus().getId() == disciplinas.getDemanda().getOferta().getCampus().getId() )
+					{
+						demandas.add(alunoDemanda);
+					}
+				}
+				long key = 31*(31 + disciplinas.getDemanda().getDisciplina().getId()) + disciplinas.getDemanda().getOferta().getCampus().getId();
+				demandaMapAluno.put( key, demandas );
+			}
+		}
+		
+		List < AlunoDemanda > alunoDemanda;
 		for ( AlunoDemanda disciplinas : busca )
 		{
-			List < AlunoDemanda > alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
-					disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
+			if (config.getLimit() > 100)
+			{
+				alunoDemanda = demandaMapAluno.get( 31*(31 + disciplinas.getDemanda().getDisciplina().getId()) +
+						disciplinas.getDemanda().getOferta().getCampus().getId() );
+			}
+			else 
+			{
+				alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
+						disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
+			}
 			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
 			resumoMatricula.setCampusString(disciplinas.getDemanda().getOferta().getCampus().getNome());
 			resumoMatricula.setCodDisciplina(disciplinas.getDemanda().getDisciplina().getCodigo());
@@ -210,7 +246,7 @@ public class AlunosDemandaServiceImpl
 			PagingLoadConfig config ) {
 		List< ResumoMatriculaDTO > list = new ArrayList< ResumoMatriculaDTO >();
 		String orderBy = config.getSortField();
-
+		
 		if ( orderBy != null )
 		{
 			if ( config.getSortDir() != null
@@ -238,14 +274,44 @@ public class AlunosDemandaServiceImpl
 			curso = ConvertBeans.toCurso(cursoDTO);
 		}
 		
+		// Conta numero total de matriculas (para ser mostrado na paginacao)
 		int numTotalMatriculas = AlunoDemanda.countMatriculas(getInstituicaoEnsinoUser(), aluno, matricula, campus, curso);
 		
+		// Busca as matriculas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de matriculas.
 		List< AlunoDemanda > busca = AlunoDemanda.findMatriculasBy(getInstituicaoEnsinoUser(), aluno, matricula, campus, curso,
 				config.getOffset(), config.getLimit(), orderBy);
 		
+		// Se a busca tiver um tamanho muito grande (por exemplo no caso da exportacao do excel). 
+		// Faz um pre-processamento antes para melhorar o desempenho.
+		Map< Aluno, List<AlunoDemanda> > demandaMapAluno = new HashMap< Aluno, List<AlunoDemanda> >();
+		if (config.getLimit() > 100) 
+		{
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll(getInstituicaoEnsinoUser());
+			for (AlunoDemanda alunos : busca) 
+			{
+				List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
+				for (AlunoDemanda alunoDemanda : totalAlunoDemanda)
+				{
+					if ( alunoDemanda.getAluno().getId() == alunos.getAluno().getId() )
+					{
+						demandas.add(alunoDemanda);
+					}
+				}
+				demandaMapAluno.put(alunos.getAluno(), demandas);
+			}
+		}
+		
+		List < AlunoDemanda > alunoDemanda;
 		for ( AlunoDemanda alunos : busca )
 		{
-			List < AlunoDemanda > alunoDemanda = AlunoDemanda.findByAluno(getInstituicaoEnsinoUser(), alunos.getAluno());
+			if (config.getLimit() > 100)
+			{
+				alunoDemanda = demandaMapAluno.get(alunos.getAluno());
+			}
+			else 
+			{
+				alunoDemanda = AlunoDemanda.findByAluno(getInstituicaoEnsinoUser(), alunos.getAluno());
+			}
 			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
 			resumoMatricula.setCampusString(alunos.getDemanda().getOferta().getCampus().getNome());
 			resumoMatricula.setAlunoMatricula(alunos.getAluno().getMatricula());

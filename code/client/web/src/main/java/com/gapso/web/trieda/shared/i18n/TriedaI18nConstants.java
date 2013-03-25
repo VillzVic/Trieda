@@ -11,6 +11,8 @@ public interface TriedaI18nConstants
 	String areaTitulacao();
 	String areasTitulacao();
 	String associacaoAlunoDemanda();
+	String atendimentosDisciplina();
+	String atendimentosMatricula();
 	String bairro();
 	String campi();
 	String campiHeadingPanel();
