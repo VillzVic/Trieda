@@ -675,6 +675,22 @@ std::string SolverMIP::getSolPreBinFileName( int campusId, int prioridade, int c
    return solName;
 }
 
+std::string SolverMIP::getSolOpBinFileName( int etapa )
+{
+   std::string solName( "solOp" );
+   
+   if ( etapa != -1 )
+   {	   
+		 stringstream ss;
+		 ss << etapa;
+		 solName += "_"; 
+		 solName += ss.str();
+   }
+   solName += ".bin";
+      
+   return solName;
+}
+
 std::string SolverMIP::getSolucaoTaticoFileName( int campusId, int prioridade, int cjtAlunosId, int r, int tatico )
 {
    std::string solName( "solucaoTatico" );
@@ -794,6 +810,23 @@ std::string SolverMIP::getSolVarsPreFileName( int campusId, int prioridade, int 
    return solName;
 }
 
+std::string SolverMIP::getSolucaoOpFileName( int etapa )
+{
+   std::string solName( "solucaoOperacional" );
+
+   if ( etapa != -1 )
+   {	   
+		 stringstream ss;
+		 ss << etapa;
+		 solName += "_"; 
+		 solName += ss.str();
+   }
+
+   solName += ".txt";
+      
+   return solName;
+}
+
 std::string SolverMIP::getCliquesFileName( int campusId, int prioridade, int cjtAlunosId )
 {
    std::string solName( "cliques" );
@@ -891,7 +924,7 @@ void SolverMIP::writeSolBin( int campusId, int prioridade, int cjtAlunosId, int 
 	}
 }
 
-int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *&xSol )
+int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol )
 {
 	char solName[1024];
 
@@ -1058,6 +1091,151 @@ void SolverMIP::writeSolTxt( int campusId, int prioridade, int cjtAlunosId, int 
 		}
 	}
 }
+
+
+void SolverMIP::writeOpSolBin( int type, double *xSol )
+{
+	char solName[1024];
+
+	switch (type)
+	{
+		case (OP_BIN):
+			strcpy( solName, getSolOpBinFileName( -1 ).c_str() );
+			break;
+		case (OP_BIN1):
+			strcat( solName, getSolOpBinFileName( 1 ).c_str() );
+			break;
+		case (OP_BIN2):
+			strcat( solName, getSolOpBinFileName( 2 ).c_str() );
+			break;
+		case (OP_BIN3):
+			strcat( solName, getSolOpBinFileName( 3 ).c_str() );
+			break;
+	}
+
+	// WRITES SOLUTION
+		
+	FILE * fout = fopen( solName, "wb" );
+	if ( fout == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::writeOpSolBin( int etapa, int type, double *xSol ):"
+				<< "\nArquivo " << solName << " nao pode ser aberto.\n";
+	}
+	else
+	{
+		int nCols = lp->getNumCols();
+
+		fwrite( &nCols, sizeof( int ), 1, fout );
+		for ( int i = 0; i < lp->getNumCols(); i++ )
+		{
+			fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
+		}
+
+		fclose( fout );
+	}
+}
+
+int SolverMIP::readOpSolBin( int type, double *xSol )
+{
+	char solName[1024];
+
+	switch (type)
+	{
+		case (OP_BIN):
+			strcpy( solName, getSolOpBinFileName( -1 ).c_str() );
+			break;
+		case (OP_BIN1):
+			strcat( solName, getSolOpBinFileName( 1 ).c_str() );
+			break;
+		case (OP_BIN2):
+			strcat( solName, getSolOpBinFileName( 2 ).c_str() );
+			break;
+		case (OP_BIN3):
+			strcat( solName, getSolOpBinFileName( 3 ).c_str() );
+			break;
+	}
+
+	// READS THE SOLUTION
+		
+	cout<<"====================> carregando solucao " <<solName <<endl; fflush(NULL);
+	FILE* fin = fopen( solName,"rb");
+
+	if ( fin == NULL )
+	{
+		std::cout << "<============ Arquivo " << solName << " nao encontrado. Fim do carregamento de solucao.\n\n"; fflush(NULL);
+		return (0);
+	}
+
+	int nCols = 0;
+    int nroColsLP = lp->getNumCols();
+
+	fread(&nCols,sizeof(int),1,fin);
+   
+	if ( nCols == nroColsLP )
+	{
+		for (int i =0; i < nCols; i++)
+		{
+			double auxDbl;
+			fread(&auxDbl,sizeof(double),1,fin);
+			(xSol)[i] = auxDbl;
+		}
+	}
+	else
+	{
+		std::cout << "\nErro em readOpSolBin( int etapa, int type, double *xSol ): "
+					<< " \nNumero diferente de variaveis: " << nCols << " != " << nroColsLP; fflush(NULL);
+		return (0);
+	}
+	fclose(fin);
+	
+	return (1);
+}
+
+void SolverMIP::writeOpSolTxt( int type, double *xSol )
+{
+	char solName[1024];
+
+	switch (type)
+	{
+		case (OP_BIN):
+			strcpy( solName, getSolucaoOpFileName( -1 ).c_str() );
+			break;
+		case (OP_BIN1):
+			strcat( solName, getSolucaoOpFileName( 1 ).c_str() );
+			break;
+		case (OP_BIN2):
+			strcat( solName, getSolucaoOpFileName( 2 ).c_str() );
+			break;
+		case (OP_BIN3):
+			strcat( solName, getSolucaoOpFileName( 3 ).c_str() );
+			break;
+	}
+
+	// WRITES SOLUTION
+		
+	ofstream fout( solName, ios_base::out );
+	if ( fout == NULL )
+	{
+		std::cout << "\nErro em SolverMIP::writeOpSolTxt( int etapa, int type, double *xSol ):"
+				<< "\nArquivo " << solName << " nao pode ser aberto.\n";
+	}
+	else
+	{		
+		VariableOpHash::iterator vit = vHashOp.begin();
+		while ( vit != vHashOp.end() )
+		{
+				VariableOp v = vit->first;
+				int col = vit->second;
+				double value = xSol[ col ];
+		  
+				fout << v.toString() << " = " << value << endl;
+				  
+				vit++;
+		}
+		fout.close();		
+	}
+}
+
 
 bool SolverMIP::SolVarsFound( VariableTatico v )
 {	
@@ -11745,11 +11923,14 @@ int SolverMIP::solveOperacionalMIP()
    lp->writeProbLP( "SolverOperacional1" );
 
    lp->optimize(METHOD_MIP);
-    
+   
    fflush(NULL);
    
    double *x = new double[ lp->getNumCols() ];
    lp->getX( x );
+   
+   writeOpSolBin( OutPutFileType::OP_BIN1, x );
+   writeOpSolTxt( OutPutFileType::OP_BIN1, x );
 
    int *idxN = new int[ lp->getNumCols() ];
 
@@ -11824,10 +12005,13 @@ int SolverMIP::solveOperacionalMIP()
 
    status = lp->optimize( METHOD_MIP );
    
-   // ------------------------------------
-
    lp->getX( x );
-
+   
+   writeOpSolBin( OutPutFileType::OP_BIN2, x );
+   writeOpSolTxt( OutPutFileType::OP_BIN2, x );
+   
+   // ------------------------------------
+   
    /*FILE * fin = fopen( "solOpAtual.bin", "rb" );
    if ( fin == NULL )
    {
@@ -11943,6 +12127,9 @@ int SolverMIP::solveOperacionalMIP()
    status = lp->optimize( METHOD_MIP );
 
    lp->getX( x );
+   
+   writeOpSolBin( OutPutFileType::OP_BIN3, x );
+   writeOpSolTxt( OutPutFileType::OP_BIN3, x );
 
    std::cout<<"\n------------------------------------";
    std::cout<<"\Maximo atendimento fixado e profs livres\n\n"; fflush(NULL);
@@ -11985,6 +12172,9 @@ int SolverMIP::solveOperacionalMIP()
    lp->getX( x );
 
    fflush(NULL);
+
+   writeOpSolBin( OutPutFileType::OP_BIN, x );
+   writeOpSolTxt( OutPutFileType::OP_BIN, x );
 
    FILE * fout = fopen( "solucaoOp.txt", "wt" );
    solVarsOp.clear();
@@ -12819,7 +13009,8 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 								if ( itAlunoDemanda->demanda->oferta != oferta )
 									continue;
 
-								if ( ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == aula->getDisciplina() ) ||
+								if ( ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == itAlunoDemanda->demanda->disciplina ) || //precisou desta primeira linha pq o operacional não esta criando as demandas substitutas, enquanto o tatico está
+									 ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == aula->getDisciplina() ) ||
 									 ( ( itAlunoDemanda->demandaOriginal != NULL && discOriginal != aula->getDisciplina() ) &&
 									   ( itAlunoDemanda->demandaOriginal->getDisciplinaId() == discOriginal->getId() ) ) )
 								{
