@@ -113,11 +113,11 @@ public class ResumoAtendimentosDisciplinaView extends MyComposite
 		
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_CAMPUS_STRING, getI18nConstants().campus(), 120 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_CODIGO_DISCIPLINA, getI18nConstants().codigoDisciplina(), 100 ) );
-		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_DEMANDA_P1, "Demanda P1 (disc)", 110 ) );
-		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_P1, "Atendidos P1 (disc)", 110 ) );
-		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_NAO_ATENDIDOS_P1, "Nao Atendidos P1 (disc)", 130 ) );
-		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_P2, "Atendidos P2 (disc)", 110 ) );
-		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_SOMA, "Atendidos P1 + P2", 110 ) );
+		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_DEMANDA_P1, "Demanda P1",80 ) );
+		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_P1, "Atendidos P1", 80 ) );
+		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_NAO_ATENDIDOS_P1, "Nao Atendidos P1", 100 ) );
+		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_P2, "Atendidos P2", 80 ) );
+		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_ATENDIDOS_SOMA, "Atendidos P1 + P2", 100 ) );
 		list.add( new ColumnConfig( ResumoMatriculaDTO.PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA, "Demanda P1 - Atendidos", 130 ) );
 
 		return list;
