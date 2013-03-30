@@ -171,7 +171,7 @@ public class Cenario
 			"null" : getAtendimentosTaticos().size() ).append( ", " );
 		sb.append( "Parametros: " ).append( getParametros() == null ?
 			"null" : getParametros().size() );
-		sb.append("Requisições de Otimização: ").append(getRequisicoesDeOtimizacao() == null ? "null" : getRequisicoesDeOtimizacao().size() ).append( ", " );
+		sb.append("RequisiÃ§Ãµes de OtimizaÃ§Ã£o: ").append(getRequisicoesDeOtimizacao() == null ? "null" : getRequisicoesDeOtimizacao().size() ).append( ", " );
 
 		return sb.toString();
 	}
@@ -697,7 +697,7 @@ public class Cenario
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( Cenario o )
 	{
 		int result = getAno().compareTo(o.getAno());

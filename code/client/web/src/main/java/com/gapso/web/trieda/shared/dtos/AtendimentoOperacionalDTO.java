@@ -26,9 +26,9 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public static final String PROPERTY_DIA_DA_SEMANA = "diaSemana";
 	public static final String PROPERTY_TURNO_ID = "turnoId";
 	public static final String PROPERTY_TURNO_STRING = "turnoString";
-	public static final String PROPERTY_HORARIO_ID = "horarioID";
+	public static final String PROPERTY_HORARIO_AULA_ID = "horarioAulaId";
 	public static final String PROPERTY_HORARIO_DISPONIVEL_CENARIO_ID = "horarioDisponivelCenarioID";
-	public static final String PROPERTY_HORARIO_STRING = "horarioString";
+	public static final String PROPERTY_HORARIO_AULA_STRING = "horarioAulaString";
 	public static final String PROPERTY_PROFESSOR_ID = "professorId";
 	public static final String PROPERTY_PROFESSOR_STRING = "professorString";
 	public static final String PROPERTY_PROFESSOR_VIRTUAL_ID = "professorVirtualId";
@@ -96,8 +96,8 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		this.setSalaString( other.getSalaString() );
 		this.setTurnoId( other.getTurnoId() );
 		this.setTurnoString( other.getTurnoString() );
-		this.setHorarioId( other.getHorarioId() );
-		this.setHorarioString( other.getHorarioString() );
+		this.setHorarioAulaId( other.getHorarioAulaId() );
+		this.setHorarioAulaString( other.getHorarioAulaString() );
 		this.setProfessorId( other.getProfessorId() );
 		this.setProfessorString( other.getProfessorString() );
 		this.setProfessorVirtualId( other.getProfessorVirtualId() );
@@ -252,15 +252,26 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		return get( PROPERTY_TURNO_STRING );
 	}
 
-	public void setHorarioId( Long value )
+	public void setHorarioAulaId( Long value )
 	{
-		set( PROPERTY_HORARIO_ID, value );
+		set( PROPERTY_HORARIO_AULA_ID, value );
 	}
 
 	@Override
-	public Long getHorarioId()
+	public Long getHorarioAulaId()
 	{
-		return get( PROPERTY_HORARIO_ID );
+		return get( PROPERTY_HORARIO_AULA_ID );
+	}
+	
+	public void setHorarioAulaString( String value )
+	{
+		set( PROPERTY_HORARIO_AULA_STRING, value );
+	}
+
+	@Override
+	public String getHorarioAulaString()
+	{
+		return get( PROPERTY_HORARIO_AULA_STRING );
 	}
 
 	public void setHorarioDisponivelCenarioId( Long value )
@@ -271,16 +282,6 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public Long getHorarioDisponivelCenarioId()
 	{
 		return get( PROPERTY_HORARIO_DISPONIVEL_CENARIO_ID );
-	}
-
-	public void setHorarioString( String value )
-	{
-		set( PROPERTY_HORARIO_STRING, value );
-	}
-
-	public String getHorarioString()
-	{
-		return get( PROPERTY_HORARIO_STRING );
 	}
 
 	public void setProfessorId( Long value )
@@ -802,7 +803,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 			+ "-" + getSalaString() + "-" + getSemana()
 			+ "-" + getCursoString() + "-" + getCurriculoString()
 			+ "-" + getPeriodo() + "-" + getDisciplinaString()
-			+ "-" + getTurma() + "-" + getHorarioString();
+			+ "-" + getTurma() + "-" + getHorarioAulaString();
 	}
 
 	@Override
@@ -816,7 +817,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	{
 		return getDisciplinaString() + "@" + getTurma()
 			+ "@" + getSalaString() + "@" + getSemana()
-			+ "#" + getTotalCreditos() + "#" + getHorarioId();
+			+ "#" + getTotalCreditos() + "#" + getHorarioAulaId();
 	}
 
 	static public boolean compatibleByApproach1(

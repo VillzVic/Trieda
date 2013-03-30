@@ -554,6 +554,20 @@ public class Disciplina
 
 		return disciplinasMap;
 	}
+	
+	public static Map< Long, Disciplina > buildDisciplinaIdToDisciplinaMap(
+			List< Disciplina > disciplinas )
+		{
+			Map< Long, Disciplina > disciplinasMap
+				= new HashMap< Long, Disciplina >();
+
+			for ( Disciplina disciplina : disciplinas )
+			{
+				disciplinasMap.put( disciplina.getId(), disciplina );
+			}
+
+			return disciplinasMap;
+		}
 
 	public static Disciplina find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
@@ -1109,7 +1123,7 @@ public class Disciplina
 		this.atendimentosTaticos = atendimentosTaticos;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( Disciplina o )
 	{
 		return getCodigo().compareTo( o.getCodigo() );

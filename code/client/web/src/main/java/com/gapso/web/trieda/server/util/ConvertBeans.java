@@ -1994,6 +1994,8 @@ public class ConvertBeans {
 			dto.getSalaId(), instituicaoEnsino ) );
 
 		domain.setSemana( Semanas.get( dto.getSemana() ) );
+		
+		domain.setHorarioAula(HorarioAula.find(dto.getHorarioAulaId(), instituicaoEnsino));
 
 		domain.setOferta( Oferta.find(
 			dto.getOfertaId(), instituicaoEnsino ) );
@@ -2044,6 +2046,10 @@ public class ConvertBeans {
 		dto.setSalaString(sala.getCodigo());
 		dto.setSemana(Semanas.toInt(domain.getSemana()));
 		dto.setDiaSemana( dto.getSemana() );
+		if (domain.getHorarioAula() != null) {
+			dto.setHorarioAulaId(domain.getHorarioAula().getId());
+			dto.setHorarioAulaString( TriedaUtil.shortTimeString(domain.getHorarioAula().getHorario()));
+		}
 		dto.setOfertaId(oferta.getId());
 		dto.setDisciplinaId(disciplina.getId());
 		dto.setDisciplinaString(disciplina.getCodigo());
@@ -2295,8 +2301,8 @@ public class ConvertBeans {
 		dto.setDiaSemana( dto.getSemana() );
 
 		HorarioAula ha = hdc.getHorarioAula();
-		dto.setHorarioId( ha.getId() );
-		dto.setHorarioString( TriedaUtil.shortTimeString( ha.getHorario() ) );
+		dto.setHorarioAulaId( ha.getId() );
+		dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );
 		dto.setTurnoId( ha.getTurno().getId() );
 		dto.setTurnoString( ha.getTurno().getNome() );
 

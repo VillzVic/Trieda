@@ -2232,13 +2232,14 @@ public class SolverInput
 			alunosDemandasAtendidas.getId().add(alunoDemanda.getId().intValue());
 		}
 		atOfertaSolucao.setAlunosDemandasAtendidas(alunosDemandasAtendidas);
-
+		
 		ItemAtendimentoTaticoSolucao atTaticoSolucao
 			= this.of.createItemAtendimentoTaticoSolucao();
 
 		atTaticoSolucao.setAtendimentoOferta( atOfertaSolucao );
 		atTaticoSolucao.setQtdeCreditosPraticos( qtdCreditosPraticos );
 		atTaticoSolucao.setQtdeCreditosTeoricos( qtdCreditosTeoricos );
+		atTaticoSolucao.setHorariosAula(this.of.createGrupoIdentificador()); // TODO: finalizar implementação que trata horário no tático
 
 		if ( atDiaSemanaSolucao.getAtendimentosTatico() == null )
 		{

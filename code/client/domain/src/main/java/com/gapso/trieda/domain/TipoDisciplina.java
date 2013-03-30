@@ -73,9 +73,9 @@ public class TipoDisciplina
     }
 	
 	/**
-	 * Informa se uma disciplina do tipo em questão ocupa grade de horários ou não. Uma disciplina ocupa grade de horários
-	 * caso a mesma seja dos tipos "Presencial" ou "Telepresencial" e não ocupa grade caso seja do tipo "Online".
-	 * @return true caso uma disciplina do tipo em questão ocupa grade de horários e false caso contrário
+	 * Informa se uma disciplina do tipo em questï¿½o ocupa grade de horÃ¡rios ou nÃ£o. Uma disciplina ocupa grade de horÃ¡rios
+	 * caso a mesma seja dos tipos "Presencial" ou "Telepresencial" e nï¿½o ocupa grade caso seja do tipo "Online".
+	 * @return true caso uma disciplina do tipo em questï¿½o ocupa grade de horÃ¡rios e false caso contrÃ¡rio
 	 */
 	public boolean ocupaGrade() {
 		return !this.nome.equals("Online");
@@ -304,7 +304,7 @@ public class TipoDisciplina
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( TipoDisciplina o )
 	{
 		int result = this.getInstituicaoEnsino().compareTo( o.getInstituicaoEnsino() );

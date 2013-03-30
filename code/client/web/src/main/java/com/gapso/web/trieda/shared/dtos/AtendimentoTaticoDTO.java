@@ -23,6 +23,8 @@ public class AtendimentoTaticoDTO
 	public static final String PROPERTY_SALA_STRING = "salaString";
 	public static final String PROPERTY_DIA_SEMANA = "semana";
 	public static final String PROPERTY_DIA_DA_SEMANA = "diaSemana";
+	public static final String PROPERTY_HORARIO_AULA_ID = "horarioAulaId";
+	public static final String PROPERTY_HORARIO_AULA_STRING = "horarioAulaString";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_CURSO_NOME = "cursoNome";
 	public static final String PROPERTY_CURSO_ID = "cursoId";
@@ -85,6 +87,7 @@ public class AtendimentoTaticoDTO
 		this.setSalaString( other.getSalaString() );
 		this.setSemana( other.getSemana() );
 		this.setDiaSemana( other.getDiaSemana() );
+		this.setHorarioAulaId(other.getHorarioAulaId());
 		this.setCursoString( other.getCursoString() );
 		this.setCursoNome( other.getCursoNome() );
 		this.setCursoId( other.getCursoId() );
@@ -131,6 +134,28 @@ public class AtendimentoTaticoDTO
 	public Integer getDiaSemana()
 	{
 		return get( PROPERTY_DIA_DA_SEMANA );
+	}
+	
+	public void setHorarioAulaId( Long value )
+	{
+		set( PROPERTY_HORARIO_AULA_ID, value );
+	}
+
+	@Override
+	public Long getHorarioAulaId()
+	{
+		return get( PROPERTY_HORARIO_AULA_ID );
+	}
+	
+	public void setHorarioAulaString( String value )
+	{
+		set( PROPERTY_HORARIO_AULA_STRING, value );
+	}
+
+	@Override
+	public String getHorarioAulaString()
+	{
+		return get( PROPERTY_HORARIO_AULA_STRING );
 	}
 	
 	public void setProfessorCPF( String value )
@@ -645,25 +670,38 @@ public class AtendimentoTaticoDTO
 			+ "@" + getSalaString() + "@" + getSemana() );
 	}
 
-	static public boolean podemOcorrerEmParaleloAbordagem1(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
-		return dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
-			&& !dto1.getSalaId().equals( dto2.getSalaId() )
-			&& !dto1.getTurma().equals( dto2.getTurma() )
-			&& dto1.getTotalCreditos().equals( dto2.getTotalCreditos() )
-			&& dto1.getSemana().equals( dto2.getSemana() );
+	static public boolean podemOcorrerEmParaleloAbordagem1(AtendimentoRelatorioDTO dto1, AtendimentoRelatorioDTO dto2) {
+		Long discId1 = (dto1.getDisciplinaSubstitutaId() != null) ? dto1.getDisciplinaSubstitutaId() : dto1.getDisciplinaId();
+		Long discId2 = (dto2.getDisciplinaSubstitutaId() != null) ? dto2.getDisciplinaSubstitutaId() : dto2.getDisciplinaId();
+		
+		String discTurma1 = discId1 + "-" + dto1.getTurma();
+		String discTurma2 = discId2 + "-" + dto2.getTurma();
+		
+		return dto1.getSemana().equals(dto2.getSemana())
+			&& !discTurma1.equals(discTurma2)
+			&& !dto1.getSalaId().equals(dto2.getSalaId())
+			&& !dto1.getTurma().equals(dto2.getTurma())
+			&& dto1.getTotalCreditos().equals(dto2.getTotalCreditos());
 	}
 
-	static public boolean podemOcorrerEmParaleloAbordagem2(AtendimentoTaticoDTO dto1, AtendimentoTaticoDTO dto2) {
-		return !dto1.getDisciplinaId().equals( dto2.getDisciplinaId() )
-			&& !dto1.getSalaId().equals( dto2.getSalaId() )
-			&& !dto1.getTurma().equals( dto2.getTurma() )
-			&& dto1.getTotalCreditos().equals( dto2.getTotalCreditos() )
-			&& dto1.getSemana().equals( dto2.getSemana() );
+	static public boolean podemOcorrerEmParaleloAbordagem2(AtendimentoRelatorioDTO dto1, AtendimentoRelatorioDTO dto2, int maxCreditosDiaSemana) {
+		Long discId1 = (dto1.getDisciplinaSubstitutaId() != null) ? dto1.getDisciplinaSubstitutaId() : dto1.getDisciplinaId();
+		Long discId2 = (dto2.getDisciplinaSubstitutaId() != null) ? dto2.getDisciplinaSubstitutaId() : dto2.getDisciplinaId();
+		
+		String discTurma1 = discId1 + "-" + dto1.getTurma();
+		String discTurma2 = discId2 + "-" + dto2.getTurma();
+		Integer somaCreditos = dto1.getTotalCreditos() + dto2.getTotalCreditos();
+		
+		return dto1.getSemana().equals(dto2.getSemana())
+			&& !discTurma1.equals(discTurma2)
+			&& !dto1.getSalaId().equals(dto2.getSalaId())
+			&& !dto1.getTurma().equals(dto2.getTurma())
+			&& (somaCreditos > maxCreditosDiaSemana);
 	}
 	
-	static public int calculaTotalDeCreditos(List<AtendimentoTaticoDTO> aulas) {
+	static public int calculaTotalDeCreditos(List<AtendimentoRelatorioDTO> aulas) {
 		int count = 0;
-		for (AtendimentoTaticoDTO aula : aulas) {
+		for (AtendimentoRelatorioDTO aula : aulas) {
 			count += aula.getTotalCreditos();
 		}
 
@@ -671,10 +709,10 @@ public class AtendimentoTaticoDTO
 	}
 	
 	static public int calculaTotalDeCreditosDasAulas(
-		List< List< AtendimentoTaticoDTO > > listListDTOs )
+		List< List< AtendimentoRelatorioDTO > > listListDTOs )
 	{
 		int count = 0;
-		for ( List< AtendimentoTaticoDTO > listDTOs : listListDTOs )
+		for ( List< AtendimentoRelatorioDTO > listDTOs : listListDTOs )
 		{
 			count += listDTOs.get( 0 ).getTotalCreditos();
 		}

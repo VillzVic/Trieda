@@ -17,15 +17,25 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
+import com.gapso.web.trieda.server.AtendimentosServiceImpl.IAtendimentosServiceDAO;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
+import com.gapso.web.trieda.shared.dtos.AlunoDTO;
+import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -78,10 +88,13 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	}
 	
 	private boolean getAtendimentosRelatorioDTOListByAluno(Campus campus, Turno turno, Set<AlunoDemanda> alunosDemanda,
-		Map<Campus, Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>>> mapControl)
+		Map<Campus, Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>>> mapControl,
+		Map<Long,CampusDTO> campusIdToCampusDTOMap,
+		Map<Long,TurnoDTO> turnoIdToTurnoDTOMap,
+		AtendimentosServiceImpl service,
+		IAtendimentosServiceDAO dao)
 	{
 		boolean result = false;
-		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 		
 		Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>> mapTurnoControl = mapControl.get(campus);
 		if(mapTurnoControl == null){
@@ -100,10 +113,22 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 			if(quinteto == null){
 				RelatorioVisaoAlunoFiltro filtro = new RelatorioVisaoAlunoFiltro();
 				filtro.setAlunoDTO(ConvertBeans.toAlunoDTO(aluno));
-				filtro.setTurnoDTO(ConvertBeans.toTurnoDTO(turno));
-				filtro.setCampusDTO(ConvertBeans.toCampusDTO(campus));
 				
-				quinteto = service.getAtendimentosParaGradeHorariaVisaoAluno(filtro);
+				TurnoDTO turnoDTO = turnoIdToTurnoDTOMap.get(turno.getId());
+				if (turnoDTO == null) {
+					turnoDTO = ConvertBeans.toTurnoDTO(turno);
+					turnoIdToTurnoDTOMap.put(turno.getId(),turnoDTO);
+				}
+				filtro.setTurnoDTO(turnoDTO);
+				
+				CampusDTO campusDTO = campusIdToCampusDTOMap.get(campus.getId());
+				if (campusDTO == null) {
+					campusDTO = ConvertBeans.toCampusDTO(campus);
+					campusIdToCampusDTOMap.put(campus.getId(),campusDTO);
+				}
+				filtro.setCampusDTO(campusDTO);
+				
+				quinteto = service.getAtendimentosParaGradeHorariaVisaoAluno(filtro,dao);
 				mapAluno.put(aluno, quinteto);
 				
 				result = true;
@@ -121,21 +146,127 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 		boolean result = false;
 		
 		if(this.getFilter() == null){
-			// se nao ha filtro, entao lista todos os alunos associados ao cenario
+			Map<Long,CampusDTO> campusIdToCampusDTOMap = new HashMap<Long,CampusDTO>();
+			Map<Long,TurnoDTO> turnoIdToCampusDTOMap = new HashMap<Long,TurnoDTO>();
+			
+			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 			Cenario cenario = getCenario();
-			List<AtendimentoTatico> atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario);
+			
+			// map de semanas letivas
+			Map<Long,SemanaLetiva> semanaLetivasMap = new HashMap<Long,SemanaLetiva>();
+			for (Turno turno : cenario.getTurnos()) {
+				for (HorarioAula ha : turno.getHorariosAula()) {
+					SemanaLetiva sl = ha.getSemanaLetiva();
+					semanaLetivasMap.put(sl.getId(),sl);
+				}
+			}
+			final Map<Long,SemanaLetiva> finalSemanaLetivasMap = semanaLetivasMap;
+			
+			// se nao ha filtro, entao lista todos os alunos associados ao cenario
+			List<AtendimentoTatico> atdTaticoList = new ArrayList<AtendimentoTatico>(cenario.getAtendimentosTaticos());//AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario);
 			if(atdTaticoList.size() != 0){
+				// preenche estrutura para organizar os atendimentos por [aluno-turno-campus]
+				Map<String,List<AtendimentoRelatorioDTO>> atendimentosDTOMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+				for (AtendimentoTatico atdTatico : atdTaticoList) {
+					AtendimentoTaticoDTO dto = ConvertBeans.toAtendimentoTaticoDTO(atdTatico);
+					for (AlunoDemandaDTO aldDTO : dto.getAlunosDemandas()) {
+						String key = aldDTO.getIdAluno() + "-" + dto.getTurnoId() + "-" + dto.getCampusId(); 
+						List<AtendimentoRelatorioDTO> atendimentosDaKey = atendimentosDTOMap.get(key);
+						if (atendimentosDaKey == null) {
+							atendimentosDaKey = new ArrayList<AtendimentoRelatorioDTO>();
+							atendimentosDTOMap.put(key,atendimentosDaKey);
+						}
+						atendimentosDaKey.add(dto);
+					}
+				}
+				
+				// cria DAO
+				final Map<String,List<AtendimentoRelatorioDTO>> finalAtendimentosDTOMap = atendimentosDTOMap;
+				IAtendimentosServiceDAO daoTatico = new IAtendimentosServiceDAO() {
+					@Override
+					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {return null;}
+					@Override
+					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {return null;}
+
+					@Override
+					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {
+						List<AtendimentoTaticoDTO> atendimentosTaticoDTO = new ArrayList<AtendimentoTaticoDTO>();
+						String key = alunoDTO.getId() + "-" + turnoDTO.getId() + "-" + campusDTO.getId();
+						List<AtendimentoRelatorioDTO> atendimentosDaKey = finalAtendimentosDTOMap.get(key);
+						if (atendimentosDaKey != null) {
+							for (AtendimentoRelatorioDTO at : atendimentosDaKey) {
+								atendimentosTaticoDTO.add((AtendimentoTaticoDTO)at);
+							}
+						}				
+						return atendimentosTaticoDTO;
+					}
+					
+					@Override
+					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {return null;}
+					
+					@Override
+					public Map<Long,SemanaLetiva> buscaSemanasLetivas() {
+						return finalSemanaLetivasMap;
+					}
+				};
+				
 				for(AtendimentoTatico atendimento : atdTaticoList){
 					if(getAtendimentosRelatorioDTOListByAluno(atendimento.getOferta().getCampus(), 
-						atendimento.getOferta().getTurno(), atendimento.getAlunosDemanda(), mapControl)) result = true;
+						atendimento.getOferta().getTurno(), atendimento.getAlunosDemanda(), mapControl,
+						campusIdToCampusDTOMap, turnoIdToCampusDTOMap, service, daoTatico)) result = true;
 				}
 			}
 			else{
-				List<AtendimentoOperacional> atdOperacionalList = AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario);
+				List<AtendimentoOperacional> atdOperacionalList = new ArrayList<AtendimentoOperacional>(cenario.getAtendimentosOperacionais());//AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario);
+				
+				// preenche estrutura para organizar os atendimentos por [aluno-turno-campus]
+				Map<String,List<AtendimentoRelatorioDTO>> atendimentosDTOMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+				for (AtendimentoOperacional atdOp : atdOperacionalList) {
+					AtendimentoOperacionalDTO dto = ConvertBeans.toAtendimentoOperacionalDTO(atdOp);
+					for (AlunoDemandaDTO aldDTO : dto.getAlunosDemandas()) {
+						String key = aldDTO.getIdAluno() + "-" + dto.getTurnoId() + "-" + dto.getCampusId(); 
+						List<AtendimentoRelatorioDTO> atendimentosDaKey = atendimentosDTOMap.get(key);
+						if (atendimentosDaKey == null) {
+							atendimentosDaKey = new ArrayList<AtendimentoRelatorioDTO>();
+							atendimentosDTOMap.put(key,atendimentosDaKey);
+						}
+						atendimentosDaKey.add(dto);
+					}
+				}
+				
+				// cria DAO
+				final Map<String,List<AtendimentoRelatorioDTO>> finalAtendimentosDTOMap = atendimentosDTOMap;
+				IAtendimentosServiceDAO daoOp = new IAtendimentosServiceDAO() {
+					@Override
+					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {return null;}
+					@Override
+					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {return null;}
+					@Override
+					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {return null;}
+					
+					@Override
+					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {
+						List<AtendimentoOperacionalDTO> atendimentosOpDTO = new ArrayList<AtendimentoOperacionalDTO>();
+						String key = alunoDTO.getId() + "-" + turnoDTO.getId() + "-" + campusDTO.getId();
+						List<AtendimentoRelatorioDTO> atendimentosDaKey = finalAtendimentosDTOMap.get(key);
+						if (atendimentosDaKey != null) {
+							for (AtendimentoRelatorioDTO at : atendimentosDaKey) {
+								atendimentosOpDTO.add((AtendimentoOperacionalDTO)at);
+							}
+						}				
+						return atendimentosOpDTO;
+					}
+					
+					@Override
+					public Map<Long,SemanaLetiva> buscaSemanasLetivas() {
+						return finalSemanaLetivasMap;
+					}
+				};
 				
 				for(AtendimentoOperacional atendimento : atdOperacionalList){
 					if(getAtendimentosRelatorioDTOListByAluno(atendimento.getOferta().getCampus(), 
-						atendimento.getOferta().getTurno(), atendimento.getAlunosDemanda(), mapControl)) result = true;
+						atendimento.getOferta().getTurno(), atendimento.getAlunosDemanda(), mapControl,
+						campusIdToCampusDTOMap, turnoIdToCampusDTOMap, service, daoOp)) result = true;
 				}
 			}
 		}
@@ -198,23 +329,25 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 					AtendimentoServiceRelatorioResponse quinteto = alunoMap.get(aluno);
 					Integer mdcTemposAula = quinteto.getMdcTemposAula();
 					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
-					List<String> labelsDasLinhasDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
+					List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
+					List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();
+					List<String> horariosDeFimDeAula = quinteto.getHorariosDeFimDeAula();
 					
 					if(atendimentos.isEmpty()) continue;
 					
 					boolean ehTatico = atendimentos.get(0) instanceof AtendimentoTaticoDTO;
 
-					nextRow = writeAluno(campus, turno, aluno, atendimentos, nextRow, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+					nextRow = writeAluno(campus, turno, aluno, atendimentos, nextRow, mdcTemposAula, ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 				}
 			}
 		}
 	}
 
 	@Override
-	protected int writeHeader(List<List<ParDTO<String,?>>> rowsHeadersPairs, int row, boolean ehTatico) {
+	protected int writeHeader(List<List<ParDTO<String,?>>> rowsHeadersPairs, int row, boolean temInfoDeHorarios) {
 		// mescla células relativas ao nome do aluno
 		mergeCells(row+1,row+1,4,6,sheet,cellStyles[ExcelCellStyleReference.HEADER_LEFT_TEXT.ordinal()]);
-		return super.writeHeader(rowsHeadersPairs,row,ehTatico);
+		return super.writeHeader(rowsHeadersPairs,row,temInfoDeHorarios);
 	}
 	
 	@Override
@@ -238,7 +371,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	}
 
 	private int writeAluno(Campus campus, Turno turno, Aluno aluno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
-		boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
+		boolean ehTatico, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
 		registerHyperlink(
 			ExcelInformationType.DEMANDAS_POR_ALUNO.getSheetName(),
@@ -246,11 +379,13 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 			aluno.getMatricula(), 
 			"'"+ExcelInformationType.RELATORIO_VISAO_ALUNO.getSheetName()+"'!B"+row
 		);
+		
+		boolean temInfoDeHorarios = !atendimentos.isEmpty() ? (atendimentos.iterator().next().getHorarioAulaId() != null) : false;
 	
 		// escreve cabeçalho da grade horária da sala
-		row = writeHeader(getRowsHeadersPairs(campus, turno, aluno), row, ehTatico);
+		row = writeHeader(getRowsHeadersPairs(campus, turno, aluno), row, temInfoDeHorarios);
 		
-		return writeAulas(atendimentos, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+		return writeAulas(atendimentos, row, mdcTemposAula, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 	}
 	
 	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {

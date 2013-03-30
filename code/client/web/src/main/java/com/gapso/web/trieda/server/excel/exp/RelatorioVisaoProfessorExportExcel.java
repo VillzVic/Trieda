@@ -193,7 +193,7 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 	}
 
 	protected <T> int writeEntity(Campus campus, Turno turno, T entity, List<AtendimentoRelatorioDTO> atendimentos, int row, 
-		int mdcTemposAula, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
+		int mdcTemposAula, boolean ehTatico, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
 		String professorKey;
 		ProfessorWrapper professor = (ProfessorWrapper) entity;
@@ -208,9 +208,11 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 			"'"+ExcelInformationType.RELATORIO_VISAO_PROFESSOR.getSheetName()+"'!B"+row
 		);
 		
-		row = writeHeader(getRowsHeadersPairs(campus, professor.getProfessor(), professor.getProfessorVirtual(), turno), row, false);
+		boolean temInfoDeHorarios = !atendimentos.isEmpty() ? (atendimentos.iterator().next().getHorarioAulaId() != null) : false;
 		
-		return writeAulas(atendimentos, row, mdcTemposAula, false, labelsDasLinhasDaGradeHoraria);
+		row = writeHeader(getRowsHeadersPairs(campus, professor.getProfessor(), professor.getProfessorVirtual(), turno), row, temInfoDeHorarios);
+		
+		return writeAulas(atendimentos, row, mdcTemposAula, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 	}
 	
 	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {

@@ -10,23 +10,23 @@ import java.util.Set;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Font;
 import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
-import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
+import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHoraria;
 
 @ProgressDeclarationAnnotation
 public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
@@ -147,36 +147,41 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		return result;
 	}
 	
-	protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean ehTatico, 
-		List<String> labelsDasLinhasDaGradeHoraria)
+	protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, 
+				List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
+		List<String> labelsDasLinhasDaGradeHoraria;
+		if (temInfoDeHorarios) {
+			labelsDasLinhasDaGradeHoraria = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+		} else {
+			labelsDasLinhasDaGradeHoraria = horariosDaGradeHoraria;
+		}
+		
+		// TODO: Utilizar ideia abaixo para generalizar impressão de mais de 65536 linhas em extensão XLS
+		// verifica se o max de linhas será extrapolado
+//		if ((row + labelsDasLinhasDaGradeHoraria.size() + 12) >= 65536) {
+//			//autoSizeColumns((short)1,(short)1,sheet);
+//			
+//			Workbook workbook = sheet.getWorkbook();
+//			Sheet newSheet = workbook.createSheet(sheet.getSheetName()+"1");
+//			sheet = newSheet;
+//			drawing = newSheet.createDrawingPatriarch();
+//			
+//			row = this.initialRow;
+//		}
+		
 		int initialRow = row;
 		int col = 2;
 
 		// preenche grade vazia
-		if(ehTatico){
-			for(int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++){
-				// coluna de carga horária
-				setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], labelsDasLinhasDaGradeHoraria.get(i));
-				// colunas dos dias da semana
-				for(int j = 0; j < Semanas.values().length; j++)
-					setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
-				
-				col = 2;
+		for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
+			// coluna de carga horária
+			setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], labelsDasLinhasDaGradeHoraria.get(i));
+			// colunas dos dias da semana
+			for(int j = 0; j < Semanas.values().length; j++) {
+				setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
 			}
-		}
-		else{
-			for(int i = 0; i < labelsDasLinhasDaGradeHoraria.size() - 1; i++){
-				// coluna de carga horária
-				String label = labelsDasLinhasDaGradeHoraria.get(i) + " / " + labelsDasLinhasDaGradeHoraria.get(i + 1);
-				setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], label);
-				// colunas dos dias da semana
-				for(int j = 0; j < Semanas.values().length; j++){
-					setCell((row + i), col++, sheet, this.cellStyles[ExcelCellStyleReference.TEXT.ordinal()], "");
-				}
-				
-				col = 2;
-			}
+			col = 2;
 		}
 
 		// agrupa as aulas por dia da semana e coleta disciplinas
@@ -209,9 +214,8 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
 				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 				
-				if(!ehTatico){
-					AtendimentoOperacionalDTO aulaOp = (AtendimentoOperacionalDTO) aula;
-					int index = labelsDasLinhasDaGradeHoraria.indexOf(aulaOp.getHorarioString());
+				if (temInfoDeHorarios) {
+					int index = horariosDeInicioDeAula.indexOf(aula.getHorarioAulaString());
 					if (index != -1) {
 						row = initialRow + index;
 					}
@@ -238,13 +242,13 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				// fornece a oportunidade das classes concretas executarem algum processamento relacionado com aula durante a escrita da aula
 				onWriteAula(row,col,aula);
 
-				if(ehTatico){
+				if (!temInfoDeHorarios) {
 					row += aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
 				}
 			}
 		}
 		
-		return (initialRow + (ehTatico ? labelsDasLinhasDaGradeHoraria.size() : (labelsDasLinhasDaGradeHoraria.size() - 1)) + 1);
+		return (initialRow + labelsDasLinhasDaGradeHoraria.size() + 1);
 	}
 	
 	protected void buildCodigoDisciplinaToColorMap(Set<Long> disciplinasIDs) {
@@ -267,7 +271,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		return style;
 	}
 	
-	protected int writeHeader(List<List<ParDTO<String, ?>>> rowsHeadersPairs, int row, boolean ehTatico){
+	protected int writeHeader(List<List<ParDTO<String, ?>>> rowsHeadersPairs, int row, boolean temInfoDeHorarios){
 		int col = 3;
 		
 		for(List<ParDTO<String, ?>> headersPairs : rowsHeadersPairs){
@@ -296,7 +300,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 
 		// Créditos ou Horários
 		setCell(row, col++, sheet, this.cellStyles[ExcelCellStyleReference.HEADER_CENTER_TEXT.ordinal()],
-			HtmlUtils.htmlUnescape(ehTatico ? this.getI18nConstants().cargaHorariaMinutos() : this.getI18nConstants().horarios()));
+			HtmlUtils.htmlUnescape(temInfoDeHorarios ? this.getI18nConstants().horarios() : this.getI18nConstants().cargaHorariaMinutos()));
 
 		// Dias Semana
 		return setSemanasCell(col, row);

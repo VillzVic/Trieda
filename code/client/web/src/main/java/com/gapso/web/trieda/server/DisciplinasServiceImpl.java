@@ -1225,7 +1225,7 @@ public class DisciplinasServiceImpl
 			resumoDTO.setTotalCreditos( disciplinaDaAula.getCreditosTotal() );
 			resumoDTO.setQuantidadeAlunos( atendimento.getQuantidadeAlunos() );
 			resumoDTO.setDiaSemanaId(atendimento.getSemana());
-			resumoDTO.setHorarioId(atendimento.getHorarioId());
+			resumoDTO.setHorarioId(atendimento.getHorarioAulaId());
 			if (ehTatico) {
 				resumoDTO.setCustoDocente(new TriedaCurrency(oferta.getCampus().getValorCredito()));
 			} else {

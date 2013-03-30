@@ -227,7 +227,7 @@ public class InstituicaoEnsino
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( InstituicaoEnsino o )
 	{
 		return this.getNomeInstituicao().compareTo( o.getNomeInstituicao() );

@@ -612,7 +612,7 @@ public class Curriculo
         return sb.toString();
     }
 
-	@Override
+	//@Override
 	public int compareTo( Curriculo o )
 	{
 		int result = getCurso().compareTo( o.getCurso() );

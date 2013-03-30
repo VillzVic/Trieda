@@ -511,6 +511,19 @@ public class Sala
 
 		return salasMap;
 	}
+	
+	public static Map< Long, Sala > buildSalaIdToSalaMap( List< Sala > salas )
+	{
+		Map< Long, Sala > salasMap
+			= new HashMap< Long, Sala >();
+
+		for ( Sala sala : salas )
+		{
+			salasMap.put( sala.getId(), sala );
+		}
+
+		return salasMap;
+	}
 
 	public static List< Sala > findAndaresAll( InstituicaoEnsino instituicaoEnsino )
 	{
@@ -905,7 +918,7 @@ public class Sala
 		this.fixacoes = fixacoes;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( Sala o )
 	{
 		return getCodigo().compareTo( o.getCodigo() );

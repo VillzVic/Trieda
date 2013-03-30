@@ -326,7 +326,7 @@ public class ProfessorVirtual
 		return list;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( ProfessorVirtual o )
 	{
 		return this.getId().compareTo( o.getId() );

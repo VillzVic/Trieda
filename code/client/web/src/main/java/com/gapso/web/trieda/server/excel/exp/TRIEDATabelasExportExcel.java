@@ -12,7 +12,6 @@ import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
-@ProgressDeclarationAnnotation
 public class TRIEDATabelasExportExcel
 	extends AbstractExportExcel
 {

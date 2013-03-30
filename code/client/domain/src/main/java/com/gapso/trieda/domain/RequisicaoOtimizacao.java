@@ -116,7 +116,7 @@ public class RequisicaoOtimizacao implements Serializable, Comparable<Requisicao
 		this.parametro = parametro;
 	}
 	
-	@Override
+	//@Override
 	public int compareTo(RequisicaoOtimizacao o) {
 		return getId().compareTo(o.getId());
 	}

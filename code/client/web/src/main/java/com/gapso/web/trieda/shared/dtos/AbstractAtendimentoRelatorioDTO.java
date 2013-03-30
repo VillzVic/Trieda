@@ -56,7 +56,7 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 			}
 			return disciplinaInfo + BR
 			+ "Turma " + getTurma() + BR
-			+ getUnidadeString() + BR
+			//+ getUnidadeString() + BR
 			+ getSalaString() + BR;
 		} else {
 			String disciplinaInfo = "";
@@ -115,10 +115,5 @@ public abstract class AbstractAtendimentoRelatorioDTO<NKType> extends AbstractDT
 			return getDisciplinaSubstitutaSemanaLetivaTempoAula();
 		}
 		return getSemanaLetivaTempoAula();
-	}
-	
-	@Override
-	public Long getHorarioId() {
-		return null;
 	}
 }

@@ -25,9 +25,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
-import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.dom.client.Style.Unit;
@@ -37,10 +35,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public abstract class GradeHorariaVisao extends ContentPanel{
 	protected Grid<LinhaDeCredito> grid;
 	protected ListStore<LinhaDeCredito> store;
+	protected boolean temInfoDeHorarios;
 	protected Integer mdcTemposAula;
 	protected Integer tamanhoLinhaGradeHorariaEmPixels;
 	protected List<AtendimentoRelatorioDTO> atendimentoDTO;
 	protected List<String> labelsDasLinhasDaGradeHoraria;
+	protected List<String> horariosDeInicioDeAula;
 	protected TurnoDTO turnoDTO;
 	protected QuickTip quickTip;
 	protected List<Long> disciplinasCores = new ArrayList<Long>();
@@ -50,9 +50,11 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	
 	public GradeHorariaVisao(){
 		super(new FitLayout());
+		this.temInfoDeHorarios = true;
 		this.mdcTemposAula = 1;
 		this.tamanhoLinhaGradeHorariaEmPixels = 0;
 		this.labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
+		this.horariosDeInicioDeAula = new ArrayList<String>();
 		this.setHeaderVisible(false);
 	}
 	
@@ -112,16 +114,23 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 			@Override
 			public void onSuccess(AtendimentoServiceRelatorioResponse result){
 				labelsDasLinhasDaGradeHoraria.clear();
+				horariosDeInicioDeAula.clear();
 				atendimentoDTO = result.getAtendimentosDTO();
 				if(!atendimentoDTO.isEmpty()){
+					temInfoDeHorarios = (atendimentoDTO.iterator().next().getHorarioAulaId() != null);
 					mdcTemposAula = result.getMdcTemposAula();
-					labelsDasLinhasDaGradeHoraria.addAll(result.getLabelsDasLinhasDaGradeHoraria());
+					if (temInfoDeHorarios) {
+						horariosDeInicioDeAula.addAll(result.getHorariosDeInicioDeAula());
+						labelsDasLinhasDaGradeHoraria.addAll(GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(result.getLabelsDasLinhasDaGradeHoraria(),result.getHorariosDeInicioDeAula(),result.getHorariosDeFimDeAula()));
+					} else {
+						labelsDasLinhasDaGradeHoraria.addAll(result.getLabelsDasLinhasDaGradeHoraria());
+					}
 					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO * mdcTemposAula);
 					List<ColumnConfig> columns = getColumnList(result.getQtdColunasPorDiaSemana());
 					preencheCores();
 					grid.reconfigure(getListStore(), new ColumnModel(columns));
 					grid.getView().setEmptyText(emptyTextAfterSearch);
-					int totalLinhas = isTatico() ? labelsDasLinhasDaGradeHoraria.size() : labelsDasLinhasDaGradeHoraria.size() - 1;
+					int totalLinhas = labelsDasLinhasDaGradeHoraria.size();
 					for(int row = 0; row < totalLinhas; row++){
 						grid.getView().getRow(row).getStyle().setHeight(tamanhoLinhaGradeHorariaEmPixels - 2, Unit.PX);
 					}
@@ -140,16 +149,8 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		if(this.store == null) this.store = new ListStore<LinhaDeCredito>();
 		else this.store.removeAll();
 
-		if(isTatico()){
-			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-				this.store.add(new LinhaDeCredito(labelsDasLinhasDaGradeHoraria.get(i), i));
-			}
-		}
-		else{
-			for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size()-1; i++) {
-				String label = labelsDasLinhasDaGradeHoraria.get(i) + " / " + labelsDasLinhasDaGradeHoraria.get(i + 1); 
-				this.store.add(new LinhaDeCredito(label, i));
-			}
+		for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) { 
+			this.store.add(new LinhaDeCredito(labelsDasLinhasDaGradeHoraria.get(i), i));
 		}
 		
 		return this.store;
@@ -163,8 +164,11 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	public List<ColumnConfig> getColumnList(List<Integer> l){
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 
-		if(isTatico()) addColumn(list, "display", "Carga Horária (Min)");
-		else addColumn(list, "display", "Horários");
+		if(temInfoDeHorarios) {
+			addColumn(list, "display", "Horários");
+		} else {
+			addColumn(list, "display", "Carga Horária (Min)");
+		}
 
 		addColumn(list, "segunda", "Segunda");
 		addColumn(list, "terca", "Terça");
@@ -212,10 +216,10 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				int semana = getSemana(colIndex);
 
 				AtendimentoRelatorioDTO aulaDTO = null;
-				if (isTatico()) {
-					aulaDTO = getAulaTatico(rowIndex+1,semana);
+				if (temInfoDeHorarios) {
+					aulaDTO = getAulaPorHorario(model.getLinhaNaGradeHoraria(),semana);
 				} else {
-					aulaDTO = getAulaOperacional(model.getLinhaNaGradeHoraria(),semana);
+					aulaDTO = getProximaAula(rowIndex+1,semana);
 				}
 
 				if (aulaDTO == null) {
@@ -265,13 +269,12 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	
 	protected abstract TrioDTO<String, String, String> getHTMLInfo(AtendimentoRelatorioDTO atendimentoDTO);
 	
-	protected AtendimentoRelatorioDTO getAulaOperacional(int linhaGradeHoraria, int colunaGradeHoraria){
+	protected AtendimentoRelatorioDTO getAulaPorHorario(int linhaGradeHoraria, int colunaGradeHoraria){
 		if(this.atendimentoDTO != null){
-			String labelHorario = labelsDasLinhasDaGradeHoraria.get(linhaGradeHoraria);
+			String labelHorario = horariosDeInicioDeAula.get(linhaGradeHoraria);
 			for(AtendimentoRelatorioDTO aula : this.atendimentoDTO){
 				if(aula.getSemana() == colunaGradeHoraria){
-					AtendimentoOperacionalDTO aulaOperacional = (AtendimentoOperacionalDTO) aula;
-					if(aulaOperacional.getHorarioString().equals(labelHorario)) return aula;
+					if(labelHorario.contains(aula.getHorarioAulaString())) return aula;
 				}
 			}
 		}
@@ -279,7 +282,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		return null;
 	}
 	
-	protected AtendimentoRelatorioDTO getAulaTatico(int linhaGradeHoraria, int colunaGradeHoraria){
+	protected AtendimentoRelatorioDTO getProximaAula(int linhaGradeHoraria, int colunaGradeHoraria){
 		int diaDaSemanaQueEstahSendoDesenhado = colunaGradeHoraria;
 		int linhaDaGradeEmQueAulaDeveSerDesenhada = 1; // a primeira aula do dia deve ser desenhada na linha 1
 		if(this.atendimentoDTO != null){
@@ -300,17 +303,6 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		}
 
 		return null;
-	}
-	
-	protected boolean isTatico(){
-		if(this.atendimentoDTO == null) return false;
-		if(this.atendimentoDTO.isEmpty()) return true;
-
-		AtendimentoRelatorioDTO atm = this.atendimentoDTO.get(0);
-
-		if(atm == null) return false;
-
-		return (atm instanceof AtendimentoTaticoDTO);
 	}
 	
 	public String getCssDisciplina(long id){

@@ -80,6 +80,11 @@ public class AtendimentoTatico
 	@JoinColumn( name = "DIS_SUBSTITUTA_ID" )
 	private Disciplina disciplinaSubstituta;
 	
+	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, targetEntity = HorarioAula.class )
+	@JoinColumn( name = "HOR_ID" )
+	private HorarioAula horarioAula;
+	
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE},
 		mappedBy="atendimentosTatico")
 	private Set<AlunoDemanda> alunosDemanda = new HashSet<AlunoDemanda>();
@@ -130,6 +135,7 @@ public class AtendimentoTatico
 		sb.append( "Turma: " ).append( getTurma() ).append( ", " );
 		sb.append( "Sala: " ).append( getSala() ).append( ", " );
 		sb.append( "Semana: " ).append( getSemana() ).append( ", " );
+		sb.append( "HorarioAula: " ).append( getHorarioAula() ).append( ", " );
 		sb.append( "Oferta: " ).append( getOferta() ).append( ", " );
 		sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
 		sb.append( "DisciplinaSubstituta: " ).append( getDisciplinaSubstituta() ).append( ", " );
@@ -751,6 +757,17 @@ public class AtendimentoTatico
 	{
 		this.disciplinaSubstituta = disciplinaSubstituta;
 	}
+	
+	
+	public HorarioAula getHorarioAula()
+	{
+		return this.horarioAula;
+	}
+
+	public void setHorarioAula( HorarioAula horarioAula )
+	{
+		this.horarioAula = horarioAula;
+	}
 
 	public Integer getQuantidadeAlunos()
 	{
@@ -795,22 +812,22 @@ public class AtendimentoTatico
 		return this.alunosDemanda;
 	}
 
-	public String getNaturalKey()
-	{
-		Oferta oferta = getOferta();
-		Curriculo curriculo = oferta.getCurriculo();
-
-		Integer periodo = curriculo.getPeriodo(this.getDisciplina());
-
-		return oferta.getCampus().getId()
-			+ "-" + oferta.getTurno().getId()
-			+ "-" + curriculo.getCurso().getId()
-			+ "-" + curriculo.getId()
-			+ "-" + periodo
-			+ "-" + getDisciplina().getId()
-			+ "-" + getTurma()
-			+ "-" + ( getCreditosTeorico() > 0 );
-	}
+//	public String getNaturalKey()
+//	{
+//		Oferta oferta = getOferta();
+//		Curriculo curriculo = oferta.getCurriculo();
+//
+//		Integer periodo = curriculo.getPeriodo(this.getDisciplina());
+//
+//		return oferta.getCampus().getId()
+//			+ "-" + oferta.getTurno().getId()
+//			+ "-" + curriculo.getCurso().getId()
+//			+ "-" + curriculo.getId()
+//			+ "-" + periodo
+//			+ "-" + getDisciplina().getId()
+//			+ "-" + getTurma()
+//			+ "-" + ( getCreditosTeorico() > 0 );
+//	}
 
 	@Override
 	public boolean equals( Object obj )

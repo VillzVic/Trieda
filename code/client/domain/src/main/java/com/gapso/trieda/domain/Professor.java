@@ -360,7 +360,7 @@ public class Professor
 				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
 					hdc.getProfessores().addAll(professores);
 					hdc.merge();
-					count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
+					count++;if (count == 100) {System.out.println("   100 horï¿½rios de professores processados"); count = 0;}
 				}
 			}
 		}
@@ -368,7 +368,7 @@ public class Professor
 	
 	@Transactional
 	static public void atualizaHorariosDosProfessores(Map<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>> disponibilidadeToProfessoresMap, List<SemanaLetiva> semanasLetivas) {
-		// coleta os professores disponíveis por dia da semana e tempo de aula
+		// coleta os professores disponÃ­veis por dia da semana e tempo de aula
 		int count = 0;
 		Map<HorarioDisponivelCenario, Set<Professor>> hdcToProfessorMap = new HashMap<HorarioDisponivelCenario, Set<Professor>>();
 		for (Entry<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>> entry : disponibilidadeToProfessoresMap.entrySet()) {
@@ -377,7 +377,7 @@ public class Professor
 			for (SemanaLetiva semanaLetiva : semanasLetivas) {
 				// para cada tempo de aula
 				for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-					// verifica se o intervalo de horas é compatível
+					// verifica se o intervalo de horas Ã© compatÃ­vel
 					boolean horarioAulaEstahContidoEmDisponibilidade = horarioAula.estahContidoEm(disponibilidade.getSegundo(),disponibilidade.getTerceiro()); 
 					// para cada dia da semana
 					for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
@@ -387,12 +387,12 @@ public class Professor
 							hdcToProfessorMap.put(hdc,professoresDisponiveisNoDiaEHorario);
 						}
 						
-						// verifica se o dia da semana é compatível
+						// verifica se o dia da semana Ã© compatÃ­vel
 						if (horarioAulaEstahContidoEmDisponibilidade && hdc.getDiaSemana().equals(disponibilidade.getPrimeiro())) {
 							professoresDisponiveisNoDiaEHorario.addAll(professores);
 						}
 						
-						count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
+						count++;if (count == 100) {System.out.println("   100 horÃ¡rios de professores processados"); count = 0;}
 					}
 				}
 			}
@@ -408,7 +408,7 @@ public class Professor
 			hdc.getProfessores().addAll(professoresDisponiveisNoDiaEHorario);
 			hdc.merge();
 			
-			count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
+			count++;if (count == 100) {System.out.println("   100 horÃ¡rios de professores processados"); count = 0;}
 		}
 	}
 
@@ -756,7 +756,7 @@ public class Professor
 		return ( size.intValue() > 0 );
 	}
 
-	@Override
+	//@Override
 	public int compareTo( Professor o )
 	{
 		return this.getNome().compareTo( o.getNome() );

@@ -1481,94 +1481,76 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	}
 
 	@Override
-	public Map< String, List< String > > saveContent(
-		CenarioDTO cenarioDTO, Long round )
-	{
-		Cenario cenario = Cenario.find(
-			cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
+	@Transactional
+	public Map<String, List<String>> saveContent(CenarioDTO cenarioDTO,Long round) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
 
-		Map< String, List< String > > ret
-			= new HashMap< String, List< String > >( 2 );
+		Map<String, List<String>> ret = new HashMap<String, List<String>>(2);
+		ret.put("warning", new ArrayList<String>());
+		ret.put("error", new ArrayList<String>());
 
-		ret.put( "warning", new ArrayList< String >() );
-		ret.put( "error", new ArrayList< String >() );
-
-		try
-		{
+		try {
 			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
 
-			System.out.println("solverClient.getContent( round ) ...");// TODO: LOG
-			byte [] xmlBytes = solverClient.getContent( round );
-			System.out.println("solverClient.getContent( round ) FINALIZADO");// TODO: LOG
+			System.out.println("solverClient.getContent( round ) ...");// TODO:
+			byte[] xmlBytes = solverClient.getContent(round);
+			System.out.println("solverClient.getContent( round ) FINALIZADO");// TODO:
 
-			if ( xmlBytes == null )
-			{
-				ret.get( "error" ).add( "Erro no servidor" );
+			if (xmlBytes == null) {
+				ret.get("error").add("Erro no servidor");
 				return ret;
 			}
 
-			JAXBContext jc = JAXBContext.newInstance(
-				"com.gapso.web.trieda.server.xml.output" );
-
+			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.output");
 			Unmarshaller u = jc.createUnmarshaller();
-			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); ...");// TODO: LOG
-			StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) );
-			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); FINALIZADO");// TODO: LOG
-			
-			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); ...");// TODO: LOG
-			TriedaOutput triedaOutput = ( TriedaOutput ) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
-			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); FINALIZADO");// TODO: LOG
+			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); ...");// TODO:
+			StringBuffer xmlStr = new StringBuffer(new String(xmlBytes));
+			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); FINALIZADO");// TODO:
 
-			for ( ItemError erro : triedaOutput.getErrors().getError() )
-			{
-				ret.get( "error" ).add( erro.getMessage() );
+			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); ...");// TODO:
+			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
+			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); FINALIZADO");// TODO:
+
+			for (ItemError erro : triedaOutput.getErrors().getError()) {
+				ret.get("error").add(erro.getMessage());
+			}
+			for (ItemWarning warning : triedaOutput.getWarnings().getWarning()) {
+				ret.get("warning").add(warning.getMessage());
 			}
 
-			for ( ItemWarning warning : triedaOutput.getWarnings().getWarning() )
-			{
-				ret.get( "warning" ).add( warning.getMessage() );
-			}
-
-			if ( !triedaOutput.getErrors().getError().isEmpty() )
-			{
+			if (!triedaOutput.getErrors().getError().isEmpty()) {
 				return ret;
 			}
 
-			Parametro parametro = cenario.getUltimoParametro(
-				this.getInstituicaoEnsinoUser() );
+			Parametro parametro = cenario.getUltimoParametro(this.getInstituicaoEnsinoUser());
 
-			SolverOutput solverOutput = new SolverOutput(
-				getInstituicaoEnsinoUser(), cenario, triedaOutput );
-
-			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); ...");// TODO: LOG
+			SolverOutput solverOutput = new SolverOutput(getInstituicaoEnsinoUser(), cenario, triedaOutput);
+			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); ...");// TODO:
 			solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno());
-			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO: LOG
+			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO:
 
 			if (parametro.isTatico()) {
-				System.out.println("solverOutput.generateAtendimentosTatico(); ...");// TODO: LOG
+				System.out.println("solverOutput.generateAtendimentosTatico(); ...");// TODO:
 				solverOutput.generateAtendimentosTatico(parametro.getTurno());
-				System.out.println("solverOutput.generateAtendimentosTatico(); FINALIZADO");// TODO: LOG
+				System.out.println("solverOutput.generateAtendimentosTatico(); FINALIZADO");// TODO:
 
-				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); ...");// TODO: LOG
+				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); ...");// TODO:
 				solverOutput.salvarAtendimentosTatico(parametro.getCampi(),parametro.getTurno());
-				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO: LOG
+				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO:
 			} else {
-				System.out.println("solverOutput.generateAtendimentosOperacional(); ...");// TODO: LOG
+				System.out.println("solverOutput.generateAtendimentosOperacional(); ...");// TODO:
 				solverOutput.generateAtendimentosOperacional(parametro.getTurno());
-				System.out.println("solverOutput.generateAtendimentosOperacional(); FINALIZADO");// TODO: LOG
-				
-				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); ...");// TODO: LOG
-				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno());
-				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO: LOG
+				System.out.println("solverOutput.generateAtendimentosOperacional(); FINALIZADO");// TODO:
+
+				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); ...");// TODO:
+				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(), parametro.getTurno());
+				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO:
 			}
-		}
-		catch ( JAXBException e )
-		{
+		} catch (JAXBException e) {
 			e.printStackTrace();
-			ret.get( "error" ).add( "Erro ao salvar o resultado na base de dados" );
+			ret.get("error").add("Erro ao salvar o resultado na base de dados");
 			return ret;
-		}
-		catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			ret.get("error").add(e.getMessage());
 			return ret;

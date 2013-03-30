@@ -18,14 +18,17 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl.IAtendimentosServiceDAO;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
+import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
@@ -184,6 +187,16 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 		}
 		Map<String,List<AtendimentoRelatorioDTO>> atendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
 		
+		// map de semanas letivas
+		Map<Long,SemanaLetiva> semanaLetivasMap = new HashMap<Long,SemanaLetiva>();
+		for (Turno turno : cenario.getTurnos()) {
+			for (HorarioAula ha : turno.getHorariosAula()) {
+				SemanaLetiva sl = ha.getSemanaLetiva();
+				semanaLetivasMap.put(sl.getId(),sl);
+			}
+		}
+		final Map<Long,SemanaLetiva> finalSemanaLetivasMap = semanaLetivasMap;
+		
 		Set<Map<String,Object>> opcoes = opcoesBuscaOperacional(cenario,atendimentosMap);
 		if (this.relatorioFiltro != null) {
 			opcoes = this.filtraAtendimentos(opcoes);
@@ -215,6 +228,16 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 					}
 				}				
 				return atendimentosOperacionalDTO;
+			}
+
+			@Override
+			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {return null;}
+			@Override
+			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {return null;}
+
+			@Override
+			public Map<Long, SemanaLetiva> buscaSemanasLetivas() {
+				return finalSemanaLetivasMap;
 			}
 		};
 
@@ -284,7 +307,9 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			Integer mdcTemposAula = sexteto.getMdcTemposAula();
 			List<AtendimentoRelatorioDTO> aulas = sexteto.getAtendimentosDTO();
 			List<Integer> qtdColunasPorDiaSemana = sexteto.getQtdColunasPorDiaSemana();
-			List<String> labelsDasLinhasDaGradeHoraria = sexteto.getLabelsDasLinhasDaGradeHoraria();
+			List<String> horariosDaGradeHoraria = sexteto.getLabelsDasLinhasDaGradeHoraria();
+			List<String> horariosDeInicioDeAula = sexteto.getHorariosDeInicioDeAula();
+			List<String> horariosDeFimDeAula = sexteto.getHorariosDeFimDeAula();
 			
 			if(aulas.isEmpty()) continue;
 
@@ -292,7 +317,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			Integer periodo = Integer.valueOf(aulas.get(0).getPeriodoString());
 			boolean ehTatico = aulas.get(0) instanceof AtendimentoTaticoDTO;
 
-			nextRow = writeCurso(oferta, periodo, mdcTemposAula, aulas, qtdColunasPorDiaSemana, nextRow, ehTatico, labelsDasLinhasDaGradeHoraria);
+			nextRow = writeCurso(oferta, periodo, mdcTemposAula, aulas, qtdColunasPorDiaSemana, nextRow, ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 		}
 	}
 	
@@ -317,7 +342,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 	}
 	
 	private int writeCurso(Oferta oferta, Integer periodo, Integer mdcTemposAula, List<AtendimentoRelatorioDTO> aulas, 
-		List<Integer> qtdColunasPorDiaSemana, int row, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
+		List<Integer> qtdColunasPorDiaSemana, int row, boolean ehTatico, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
 		registerHyperlink(
 			ExcelInformationType.DEMANDAS.getSheetName(),
@@ -332,11 +357,13 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			"'"+ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName()+"'!B"+row
 		);
 		
+		boolean temInfoDeHorarios = !aulas.isEmpty() ? (aulas.iterator().next().getHorarioAulaId() != null) : false;
+		
 		// escreve cabeçalho da grade horária do bloco curricular
 		this.qtdColunasPorDiaSemana = qtdColunasPorDiaSemana;
-		row = writeHeader(getRowsHeadersPairs(oferta, periodo), row, ehTatico);
+		row = writeHeader(getRowsHeadersPairs(oferta, periodo), row, temInfoDeHorarios);
 
-		return writeAulas(aulas, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+		return writeAulas(aulas, row, mdcTemposAula, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 	}
 	
 	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {

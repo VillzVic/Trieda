@@ -668,7 +668,7 @@ public class Curso
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( Curso c )
 	{
 		return this.getCodigo().compareTo( c.getCodigo() );

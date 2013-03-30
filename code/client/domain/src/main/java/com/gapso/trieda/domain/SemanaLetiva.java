@@ -527,7 +527,7 @@ public class SemanaLetiva
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( SemanaLetiva o )
 	{
 		int result = getInstituicaoEnsino().compareTo( o.getInstituicaoEnsino() );

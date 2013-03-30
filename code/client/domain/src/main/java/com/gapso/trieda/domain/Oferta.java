@@ -285,6 +285,19 @@ public class Oferta
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino ")
 			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
+	
+	public static Map< Long, Oferta > buildOfertaIdToOfertaMap( List< Oferta > ofertas )
+	{
+		Map< Long, Oferta > ofertasMap
+			= new HashMap< Long, Oferta >();
+
+		for ( Oferta oferta : ofertas )
+		{
+			ofertasMap.put( oferta.getId(), oferta );
+		}
+
+		return ofertasMap;
+	}
 
 	public static Oferta find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
@@ -571,7 +584,7 @@ public class Oferta
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( Oferta o )
 	{
 		return this.getCampus().getNome().compareTo( o.getCampus().getNome() );

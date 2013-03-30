@@ -15,7 +15,6 @@ import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
-import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
@@ -96,7 +95,7 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 			}
 			
 			@Override
-			protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria) {
+			protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula) {
 				// agrupa as aulas por dia da semana e coleta disciplinas
 				Map<Integer,List<AtendimentoRelatorioDTO>> colunaGradeHorariaToAulasMap = new HashMap<Integer,List<AtendimentoRelatorioDTO>>();
 				for(AtendimentoRelatorioDTO aula : aulas){
@@ -122,13 +121,12 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 						int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 						
 						// calcula horario de inicio e fim
-						if(!ehTatico){
-							AtendimentoOperacionalDTO aulaOp = (AtendimentoOperacionalDTO) aula;
-							horarioInicio = aulaOp.getHorarioString();
-							int index = labelsDasLinhasDaGradeHoraria.indexOf(horarioInicio);
+						if(temInfoDeHorarios){
+							horarioInicio = aula.getHorarioAulaString();
+							int index = horariosDeInicioDeAula.indexOf(horarioInicio);
 							if (index != -1) {
 								index = index + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
-								horarioFim = labelsDasLinhasDaGradeHoraria.get(index);
+								horarioFim = horariosDeFimDeAula.get(index);
 							}
 						}
 						

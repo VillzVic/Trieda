@@ -26,6 +26,7 @@ import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.xml.output.GrupoHorarioAula;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoHorarioAula;
@@ -64,8 +65,15 @@ public class SolverOutput
 		this.alunosDemandaOperacional = new HashMap<AlunoDemanda, List<AtendimentoOperacional>>();
 	}
 
-	@Transactional
+	//@Transactional
 	public List<AtendimentoTatico> generateAtendimentosTatico(Turno turnoSelecionado) throws Exception {
+		Map<Long,Sala> salasMap = new HashMap<Long,Sala>();// [SalaId -> Sala]
+		Map<Long,Oferta> ofertasMap = new HashMap<Long,Oferta>();// [OfertaId -> Oferta]
+		Map<Long,Disciplina> disciplinasMap = new HashMap<Long,Disciplina>();// [DisciplinaId -> Disciplina]
+		Map<Long,HorarioAula> horarioAulaIdToHorarioAulaMap = new HashMap<Long,HorarioAula>();// [HorarioAulaId -> Sala]
+		Map<String,HorarioDisponivelCenario> horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap = new HashMap<String,HorarioDisponivelCenario>();// [InstituicaoEnsinoId-HorarioAulaId-DiaSemanaId -> HorarioDisponivelCenario]
+		preencheMaps(salasMap,ofertasMap,disciplinasMap,horarioAulaIdToHorarioAulaMap,horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap);
+		
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnoSelecionado);
 		
@@ -75,7 +83,7 @@ public class SolverOutput
 			for ( ItemAtendimentoUnidade itemAtendimentoUnidade : itemAtendimentoUnidadeList ) {
 				List< ItemAtendimentoSala > itemAtendimentoSalaList = itemAtendimentoUnidade.getAtendimentosSalas().getAtendimentoSala();
 				for ( ItemAtendimentoSala itemAtendimentoSala : itemAtendimentoSalaList ) {
-					Sala sala = Sala.find( Long.valueOf(itemAtendimentoSala.getSalaId() ), this.instituicaoEnsino );
+					Sala sala = salasMap.get(Long.valueOf(itemAtendimentoSala.getSalaId()));//Sala.find( Long.valueOf(itemAtendimentoSala.getSalaId() ), this.instituicaoEnsino );
 					List< ItemAtendimentoDiaSemana > itemAtendimentoDiaSemanaList = itemAtendimentoSala.getAtendimentosDiasSemana().getAtendimentoDiaSemana();
 					for ( ItemAtendimentoDiaSemana itemAtendimentoDiaSemana : itemAtendimentoDiaSemanaList ) {
 						Semanas semana = Semanas.get( itemAtendimentoDiaSemana.getDiaSemana() );
@@ -90,16 +98,27 @@ public class SolverOutput
 							int qtdeCreditosPraticos = itemAtendimentoTatico.getQtdeCreditosPraticos();
 
 							ItemAtendimentoOferta itemAtendimentoOferta = itemAtendimentoTatico.getAtendimentoOferta();
-							Oferta oferta = Oferta.find( Long.valueOf( itemAtendimentoOferta.getOfertaCursoCampiId() ), this.instituicaoEnsino );
+							Oferta oferta = ofertasMap.get(Long.valueOf(itemAtendimentoOferta.getOfertaCursoCampiId()));//Oferta.find( Long.valueOf( itemAtendimentoOferta.getOfertaCursoCampiId() ), this.instituicaoEnsino );
 
-							Disciplina disciplina = Disciplina.find( Long.valueOf( itemAtendimentoOferta.getDisciplinaId() ), this.instituicaoEnsino );
+							Disciplina disciplina = disciplinasMap.get(Long.valueOf(itemAtendimentoOferta.getDisciplinaId()));//Disciplina.find( Long.valueOf( itemAtendimentoOferta.getDisciplinaId() ), this.instituicaoEnsino );
 							Disciplina disciplinaSubstituta = null;
 							if (itemAtendimentoOferta.getDisciplinaSubstitutaId() != null) {
-								disciplinaSubstituta = Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()),this.instituicaoEnsino);
+								disciplinaSubstituta = disciplinasMap.get(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()));//Disciplina.find(Long.valueOf(itemAtendimentoOferta.getDisciplinaSubstitutaId()),this.instituicaoEnsino);
 							}
 
 							int quantidade = itemAtendimentoOferta.getQuantidade();
 							String turma = itemAtendimentoOferta.getTurma();
+							
+							HorarioAula menorHorarioAula = null;
+							GrupoHorarioAula grupoHorarioAula = itemAtendimentoTatico.getHorariosAula();
+							if (grupoHorarioAula != null && grupoHorarioAula.getHorarioAulaId() != null) {
+								for (Integer horarioAulaId : grupoHorarioAula.getHorarioAulaId()) {
+									HorarioAula ha = horarioAulaIdToHorarioAulaMap.get(Long.valueOf(horarioAulaId));//HorarioAula.find(Long.valueOf(itemAtendimentoHorarioAula.getHorarioAulaId()),this.instituicaoEnsino);
+									if ((menorHorarioAula == null) || (menorHorarioAula.compareTo(ha) > 1)) {
+										menorHorarioAula = ha;
+									}
+								}
+							}
 
 							AtendimentoTatico atendimentoTatico = new AtendimentoTatico();
 
@@ -114,6 +133,7 @@ public class SolverOutput
 							atendimentoTatico.setDisciplina( disciplina );
 							atendimentoTatico.setDisciplinaSubstituta(disciplinaSubstituta);
 							atendimentoTatico.setQuantidadeAlunos( quantidade );
+							atendimentoTatico.setHorarioAula(menorHorarioAula);
 							
 							Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta,alunosDemandaTatico,atendimentoTatico,alunoDemandaIdToAlunoDemandaMap);
 							atendimentoTatico.getAlunosDemanda().addAll(listAlunoDemanda);
@@ -130,46 +150,18 @@ public class SolverOutput
 
 	@Transactional
 	public List<AtendimentoOperacional> generateAtendimentosOperacional(Turno turnoSelecionado) throws Exception {
-		// [SalaId -> Sala]
-		Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>();
-		// [OfertaId -> Oferta]
-		Map<Long,Oferta> ofertaIdToOfertaMap = new HashMap<Long,Oferta>();
-		for (Campus campus : this.cenario.getCampi()) {
-			for (Unidade unidade : campus.getUnidades()) {
-				for (Sala sala : unidade.getSalas()) {
-					salaIdToSalaMap.put(sala.getId(),sala);
-				}
-			}
-			for (Oferta oferta : campus.getOfertas()) {
-				ofertaIdToOfertaMap.put(oferta.getId(),oferta);
-			}
-		}
-		
-		// [HorarioAulaId -> Sala]
-		Map<Long,HorarioAula> horarioAulaIdToHorarioAulaMap = new HashMap<Long,HorarioAula>();
-		// [InstituicaoEnsinoId-HorarioAulaId-DiaSemanaId -> HorarioDisponivelCenario]
-		Map<String,HorarioDisponivelCenario> horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap = new HashMap<String,HorarioDisponivelCenario>();
-		for (Turno turno : this.cenario.getTurnos()) {
-			for (HorarioAula horarioAula : turno.getHorariosAula()) {
-				horarioAulaIdToHorarioAulaMap.put(horarioAula.getId(),horarioAula);
-				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
-					String key = this.instituicaoEnsino.getId() + "-" + horarioAula.getId() + "-" + hdc.getDiaSemana().ordinal();
-					horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap.put(key,hdc);
-				}
-			}
-		}
+		Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>(); // [SalaId -> Sala]
+		Map<Long,Oferta> ofertaIdToOfertaMap = new HashMap<Long,Oferta>(); // [OfertaId -> Oferta]
+		Map<Long,Disciplina> disciplinaIdToDisciplinaMap = new HashMap<Long,Disciplina>(); // [DisciplinaId -> Disciplina]
+		Map<Long,HorarioAula> horarioAulaIdToHorarioAulaMap = new HashMap<Long,HorarioAula>();// [HorarioAulaId -> Sala]
+		Map<String,HorarioDisponivelCenario> horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap = new HashMap<String,HorarioDisponivelCenario>();// [InstituicaoEnsinoId-HorarioAulaId-DiaSemanaId -> HorarioDisponivelCenario]
+		preencheMaps(salaIdToSalaMap,ofertaIdToOfertaMap,disciplinaIdToDisciplinaMap,horarioAulaIdToHorarioAulaMap,horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap);
 		
 		// [ProfessorId -> Professor]
 		Map<Long,Professor> professorIdToProfessorMap = new HashMap<Long,Professor>();
 		for (Professor professor : this.cenario.getProfessores()) {
 			professorIdToProfessorMap.put(professor.getId(),professor);
-		}
-		
-		// [DisciplinaId -> Disciplina]
-		Map<Long,Disciplina> disciplinaIdToDisciplinaMap = new HashMap<Long,Disciplina>();
-		for (Disciplina disciplina : this.cenario.getDisciplinas()) {
-			disciplinaIdToDisciplinaMap.put(disciplina.getId(),disciplina);
-		}
+		}		
 		
 		// [TitulacaoId -> Titulacao]
 		Map<Long,Titulacao> titulacaoIdToTitulacaoMap = new HashMap<Long,Titulacao>();
@@ -295,11 +287,45 @@ public class SolverOutput
 
 		return this.atendimentosOperacional;
 	}
+	
+	private void preencheMaps(Map<Long,Sala> salaIdToSalaMap, 
+			                  Map<Long,Oferta> ofertaIdToOfertaMap,
+			                  Map<Long,Disciplina> disciplinaIdToDisciplinaMap,
+			                  Map<Long,HorarioAula> horarioAulaIdToHorarioAulaMap,
+			                  Map<String,HorarioDisponivelCenario> horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap) {
+		// preenche salas e ofertas
+		for (Campus campus : this.cenario.getCampi()) {
+			for (Unidade unidade : campus.getUnidades()) {
+				for (Sala sala : unidade.getSalas()) {
+					salaIdToSalaMap.put(sala.getId(),sala);
+				}
+			}
+			for (Oferta oferta : campus.getOfertas()) {
+				ofertaIdToOfertaMap.put(oferta.getId(),oferta);
+			}
+		}
+		
+		// preenche disciplinas
+		for (Disciplina disciplina : this.cenario.getDisciplinas()) {
+			disciplinaIdToDisciplinaMap.put(disciplina.getId(),disciplina);
+		}
+		
+		// preenche horários
+		for (Turno turno : this.cenario.getTurnos()) {
+			for (HorarioAula horarioAula : turno.getHorariosAula()) {
+				horarioAulaIdToHorarioAulaMap.put(horarioAula.getId(),horarioAula);
+				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+					String key = this.instituicaoEnsino.getId() + "-" + horarioAula.getId() + "-" + hdc.getDiaSemana().ordinal();
+					horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap.put(key,hdc);
+				}
+			}
+		}
+	}
 
 	private Map<Long, AlunoDemanda> createAlunoDemandasMap(Turno turnoSelecionado) {
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = new HashMap<Long,AlunoDemanda>();
-		AlunoDemanda.entityManager().flush();
+		
 		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurno(this.instituicaoEnsino,this.cenario.getCampi(),turnoSelecionado);
 		for (AlunoDemanda alunoDemanda : alunosDemanda) {
 			alunoDemandaIdToAlunoDemandaMap.put(alunoDemanda.getId(),alunoDemanda);
@@ -333,12 +359,15 @@ public class SolverOutput
 		removerTodosAtendimentosTaticoJaSalvos(campi,turno);
 		removerTodosAtendimentosOperacionalJaSalvos(campi,turno);
 
+		boolean atualizouEntidade = false;
 		for (AtendimentoTatico at : this.atendimentosTatico) {
 			at.detach();
 			at.persist();
+			atualizouEntidade = true;
 		}
-		
-		AlunoDemanda.entityManager().flush();
+		if (atualizouEntidade) {
+			AlunoDemanda.entityManager().flush();
+		}
 		
 		for(AlunoDemanda alunoDemanda : alunosDemandaTatico.keySet()){
 			int creditosAtendidos = 0;
@@ -359,20 +388,26 @@ public class SolverOutput
 		removerTodosAtendimentosTaticoJaSalvos(campi,turno);
 		removerTodosAtendimentosOperacionalJaSalvos(campi,turno);
 
+		boolean atualizouEntidade = false;
 		for (AtendimentoOperacional at : this.atendimentosOperacional) {
 			at.detach();
 			at.persist();
+			atualizouEntidade = true;
 		}
-		
-		AtendimentoOperacional.entityManager().flush();
+		if (atualizouEntidade) {
+			AtendimentoOperacional.entityManager().flush();
+		}
 		
 		for(AlunoDemanda alunoDemanda : alunosDemandaOperacional.keySet()){
 			int creditosAtendidos = 0;
+			Disciplina disciplinaSubstituta = null;
 			for(AtendimentoOperacional operacional : alunosDemandaOperacional.get(alunoDemanda)){
+				disciplinaSubstituta = operacional.getDisciplinaSubstituta();
 				alunoDemanda.getAtendimentosOperacional().add(operacional);
 				creditosAtendidos += 1;
 			}
-			alunoDemanda.setAtendido(alunoDemanda.getDemanda().getDisciplina().getCreditosTotal() == creditosAtendidos);
+			int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
+			alunoDemanda.setAtendido(totalCreditosDemanda == creditosAtendidos);
 			alunoDemanda.merge();
 		}
 	}
@@ -396,11 +431,16 @@ public class SolverOutput
 	@Transactional
 	public void atualizarAlunosDemanda(Set<Campus> campi, Turno turno){
 		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,campi,turno);
+		boolean atualizouEntidade = false;
 		for(AlunoDemanda alunoDemandaBD : alunosDemandasBD){
 			if(alunoDemandaBD.getAtendido()){
 				alunoDemandaBD.setAtendido(false);
 				alunoDemandaBD.merge();
+				atualizouEntidade = true;
 			}
+		}
+		if (atualizouEntidade) {
+			AlunoDemanda.entityManager().flush();
 		}
 	}
 }

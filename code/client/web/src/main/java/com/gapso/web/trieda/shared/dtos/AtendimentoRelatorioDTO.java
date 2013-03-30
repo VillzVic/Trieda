@@ -10,6 +10,7 @@ public interface AtendimentoRelatorioDTO
 	public Long getCampusId();
 	public String getCampusString();
 	public Integer getSemana();
+	public void setSemana(Integer value);
 	public Integer getTotalCreditos();
 	public Long getDisciplinaId();
 	public String getDisciplinaNome();
@@ -60,7 +61,8 @@ public interface AtendimentoRelatorioDTO
 	public String getProfessorVirtualCPF();
 	public Double getProfessorCustoCreditoSemanal();
 	public String getCompartilhamentoCursosString();
-	public Long getHorarioId();
+	public Long getHorarioAulaId();
+	public String getHorarioAulaString();
 	public void setCompartilhamentoCursosString( String s );
 	public void setCursoNome( String value );
 	public void setCurricularString( String value );

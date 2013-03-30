@@ -132,10 +132,12 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 					if(atendimentos.isEmpty()) continue;
 					
 					Integer mdcTemposAula = quinteto.getMdcTemposAula();
-					List<String> labelsDasLinhasDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
+					List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
+					List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();
+					List<String> horariosDeFimDeAula = quinteto.getHorariosDeFimDeAula();
 					boolean ehTatico = atendimentos.get(0) instanceof AtendimentoTaticoDTO;
 
-					nextRow = writeEntity(campus, turno, entity, atendimentos, nextRow, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+					nextRow = writeEntity(campus, turno, entity, atendimentos, nextRow, mdcTemposAula, ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 				}
 			}
 		}
@@ -144,7 +146,7 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 	protected abstract <V> Map<V, AtendimentoServiceRelatorioResponse> sortEntityMap(Map<V, AtendimentoServiceRelatorioResponse> unsortMap);
 	
 	protected abstract <T> int writeEntity(Campus campus, Turno turno, T entity, List<AtendimentoRelatorioDTO> atendimentos,
-		int row, int mdcTemposAula, boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria
+		int row, int mdcTemposAula, boolean ehTatico, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula
 	);
 	
 }

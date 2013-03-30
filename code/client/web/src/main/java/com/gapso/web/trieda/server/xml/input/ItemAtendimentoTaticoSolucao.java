@@ -39,7 +39,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ItemAtendimentoTaticoSolucao", propOrder = {
     "atendimentoOferta",
     "qtdeCreditosTeoricos",
-    "qtdeCreditosPraticos"
+    "qtdeCreditosPraticos",
+    "horariosAula"
 })
 public class ItemAtendimentoTaticoSolucao {
 
@@ -47,6 +48,7 @@ public class ItemAtendimentoTaticoSolucao {
     protected ItemAtendimentoOfertaSolucao atendimentoOferta;
     protected int qtdeCreditosTeoricos;
     protected int qtdeCreditosPraticos;
+    protected GrupoIdentificador horariosAula;
 
     /**
      * Gets the value of the atendimentoOferta property.
@@ -102,6 +104,30 @@ public class ItemAtendimentoTaticoSolucao {
      */
     public void setQtdeCreditosPraticos(int value) {
         this.qtdeCreditosPraticos = value;
+    }
+    
+    /**
+     * Gets the value of the horarioAula property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public GrupoIdentificador getHorariosAula() {
+        return horariosAula;
+    }
+
+    /**
+     * Sets the value of the horarioAula property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public void setHorariosAula(GrupoIdentificador horariosAula) {
+        this.horariosAula = horariosAula;
     }
 
 }

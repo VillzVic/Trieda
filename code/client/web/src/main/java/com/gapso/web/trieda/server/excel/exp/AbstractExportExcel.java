@@ -29,10 +29,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.google.gwt.dev.util.collect.HashSet;
 
+@ProgressDeclarationAnnotation
 public abstract class AbstractExportExcel implements IExportExcel {
 	protected List<String> errors;
 	protected List<String> warnings;
@@ -43,7 +45,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 	private String sheetName;
 	protected InstituicaoEnsino instituicaoEnsino;
 	private CreationHelper factory;
-	private Drawing drawing;
+	protected Drawing drawing;
 	private Map<String,Map<String,Map<String,String>>> hyperlinksMap;
 	private CellStyle hlinkStyle;
 	protected String fileExtension;

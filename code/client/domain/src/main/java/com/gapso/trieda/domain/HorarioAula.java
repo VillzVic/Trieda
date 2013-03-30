@@ -80,7 +80,7 @@ public class HorarioAula
     }
     
     public boolean estahContidoEm(Calendar horarioInicio, Calendar horarioFim) {
-    	// dado que iremos comparar apenas horas È necess·rio que todas as inst‚ncias de calend·rio estejam no mesmo dia
+    	// dado que iremos comparar apenas horas √© necess√°rio que todas as inst√¢ncias de calend√°rio estejam no mesmo dia
     	
     	horarioInicio.set(1979,Calendar.NOVEMBER,6,horarioInicio.get(Calendar.HOUR_OF_DAY),horarioInicio.get(Calendar.MINUTE),0);
     	horarioFim.set(1979,Calendar.NOVEMBER,6,horarioFim.get(Calendar.HOUR_OF_DAY),horarioFim.get(Calendar.MINUTE),0);
@@ -443,7 +443,7 @@ public class HorarioAula
         this.horariosDisponiveisCenario = horariosDisponiveisCenario;
     }
 
-	@Override
+    //@Override
 	public int compareTo( HorarioAula o )
 	{
 		if ( this.getHorario() == null )

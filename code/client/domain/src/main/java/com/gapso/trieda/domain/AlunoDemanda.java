@@ -434,7 +434,7 @@ public class AlunoDemanda
 		return true;
 	}
 
-	@Override
+	//@Override
 	public int compareTo( AlunoDemanda o )
 	{
 		int compare = this.getDemanda().getId().compareTo( o.getDemanda().getId() );

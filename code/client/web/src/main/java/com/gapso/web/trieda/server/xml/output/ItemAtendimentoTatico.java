@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="atendimentoOferta" type="{}ItemAtendimentoOferta"/>
  *         &lt;element name="qtdeCreditosTeoricos" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="qtdeCreditosPraticos" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="horariosAula" type="{}GrupoHorarioAula"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,7 +40,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ItemAtendimentoTatico", propOrder = {
     "atendimentoOferta",
     "qtdeCreditosTeoricos",
-    "qtdeCreditosPraticos"
+    "qtdeCreditosPraticos",
+    "horariosAula"
 })
 public class ItemAtendimentoTatico {
 
@@ -47,6 +49,7 @@ public class ItemAtendimentoTatico {
     protected ItemAtendimentoOferta atendimentoOferta;
     protected int qtdeCreditosTeoricos;
     protected int qtdeCreditosPraticos;
+    protected GrupoHorarioAula horariosAula;
 
     /**
      * Gets the value of the atendimentoOferta property.
@@ -104,4 +107,27 @@ public class ItemAtendimentoTatico {
         this.qtdeCreditosPraticos = value;
     }
 
+    /**
+     * Gets the value of the horariosAula property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoHorarioAula }
+     *     
+     */
+    public GrupoHorarioAula getHorariosAula() {
+        return horariosAula;
+    }
+
+    /**
+     * Sets the value of the horariosAula property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoHorarioAula }
+     *     
+     */
+    public void setHorariosAula(GrupoHorarioAula horariosAula) {
+        this.horariosAula = horariosAula;
+    }
 }

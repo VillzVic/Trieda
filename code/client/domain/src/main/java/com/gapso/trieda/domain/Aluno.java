@@ -440,7 +440,7 @@ public class Aluno
 		return ( listAlunos.size() > 0 );
 	}
 
-	@Override
+	//@Override
 	public int compareTo( Aluno o )
 	{
 		int result = this.getInstituicaoEnsino().compareTo( o.getInstituicaoEnsino() );

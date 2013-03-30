@@ -29,6 +29,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -133,6 +134,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		int nextRow = this.initialRow;
 		
 		boolean ehTatico = atendimentosDTO.get(0) instanceof AtendimentoTaticoDTO;
+		boolean temInfoDeHorarios = !atendimentosDTO.isEmpty() ? (atendimentosDTO.iterator().next().getHorarioAulaId() != null) : false;
 
 		// Estruturas auxiliares
 		// [SalaId -> Sala]
@@ -206,6 +208,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		});
 		
 		// imprime uma grade de horários para cada sala
+		int count = 0, total=salasOrdenadasPorCampusEPelaCapacidade.size(); System.out.print(" "+total);//TODO: debug
 		for (Sala sala : salasOrdenadasPorCampusEPelaCapacidade) {
 			// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
 			Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(sala.getId());
@@ -223,12 +226,15 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 				}
 				
 				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-				TrioDTO<Integer,SemanaLetiva,List<String>> trio = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,ehTatico,turnoId);
-				int mdcTemposAula = trio.getPrimeiro();
-				List<String> labelsDasLinhasDaGradeHoraria = trio.getTerceiro();
+				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnoId);
+				int mdcTemposAula = quarteto.getPrimeiro();
+				List<String> horariosDaGradeHoraria = quarteto.getSegundo();
+				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
+				List<String> horariosDeFimDeAula = quarteto.getQuarto();
 				
-				nextRow = writeSala(sala, turno, atendimentosDeTodasSemanasLetivas, nextRow, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
-			}				
+				nextRow = writeSala(sala, turno, atendimentosDeTodasSemanasLetivas, nextRow, mdcTemposAula, ehTatico, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+			}
+			count++;total--;if (count == 100) {System.out.println("\t   Faltam "+total+" salas"); count = 0;}//TODO: debug
 		}
 	}
 	
@@ -253,7 +259,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 	}
 
 	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
-		boolean ehTatico, List<String> labelsDasLinhasDaGradeHoraria)
+		boolean ehTatico, boolean temInfoDeHorarios, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
 		String[] sheetsTargets = {
 			ExcelInformationType.RELATORIO_VISAO_CURSO.getSheetName(),
@@ -268,7 +274,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		);
 			
 		// escreve cabeçalho da grade horária da sala
-		row = writeHeader(getRowsHeadersPairs(sala, turno), row, ehTatico);
+		row = writeHeader(getRowsHeadersPairs(sala, turno), row, temInfoDeHorarios);
 		
 		// processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
@@ -283,7 +289,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		else aulas.addAll(atendimentos);
 		List<AtendimentoRelatorioDTO> aulasParaVisaoSala = atendimentosService.uneAulasQuePodemSerCompartilhadas(aulas);
 		
-		return writeAulas(aulasParaVisaoSala, row, mdcTemposAula, ehTatico, labelsDasLinhasDaGradeHoraria);
+		return writeAulas(aulasParaVisaoSala, row, mdcTemposAula, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 	}
 	
 	protected void onWriteAula(int row, int col, AtendimentoRelatorioDTO aula) {
