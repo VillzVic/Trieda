@@ -810,4 +810,9 @@ public class GTriedaI18nConstants
 	public String atendimentosMatricula() {
 		return this.languageManager.getText("atendimentosMatricula");
 	}
+
+	@Override
+	public String atendimentosFaixaDemanda() {
+		return this.languageManager.getText("atendimentosFaixaDemanda");
+	}
 }

@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
-import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -85,6 +84,7 @@ public class TRIEDATabelasExportExcel
 		exporters.add( new AulasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		exporters.add( new AtendimentosDisciplinaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		exporters.add( new AtendimentosMatriculaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		exporters.add( new AtendimentosFaixaDemandaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 
 		Exception exception = null;
 		try {

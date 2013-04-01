@@ -31,6 +31,7 @@ public enum ExcelInformationType
 	ALUNOS( "Alunos" ),
 	ATENDIMENTOS_MATRICULA("Atendimentos por Matricula"),
 	ATENDIMENTOS_DISCIPLINA("Atendimentos por Disciplina"),
+	ATENDIMENTOS_FAIXA_DEMANDA("Atendimentos Faixa de Demanda"),
 	TODAS_TABELAS( "" ),
 	TODAS_GRADES_HORARIAS( "" ),
 	TODAS_VISAO_ALUNO( "" );

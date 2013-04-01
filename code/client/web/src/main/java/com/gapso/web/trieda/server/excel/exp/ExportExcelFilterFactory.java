@@ -32,6 +32,7 @@ public class ExportExcelFilterFactory{
 			case RELATORIO_VISAO_ALUNO: return getExportVisaoAluno(request, instituicaoEnsino);
 			case RESUMO_DISCIPLINA: return getExportResumoDisciplina(request, instituicaoEnsino.getId());
 			case RESUMO_CURSO: return getExportResumoCurso(request, instituicaoEnsino.getId());
+			case ATENDIMENTOS_FAIXA_DEMANDA: return getExportAtendimentosFaixaDemanda(request, instituicaoEnsino.getId());
 		}
 
 		return null;
@@ -135,6 +136,16 @@ public class ExportExcelFilterFactory{
 		try{
 			Long campusId = Long.parseLong(request.getParameter("campusId"));
 			return new ResumoCursoFiltroExcel(instituicaoEnsinoId, campusId);
+		}
+		catch(Exception ex){
+			return null;
+		}
+	}
+	
+	private static AtendimentosFaixaDemandaFiltroExcel getExportAtendimentosFaixaDemanda(HttpServletRequest request, Long instituicaoEnsinoId){
+		try{
+			Long campusId = Long.parseLong(request.getParameter("campusId"));
+			return new AtendimentosFaixaDemandaFiltroExcel(instituicaoEnsinoId, campusId);
 		}
 		catch(Exception ex){
 			return null;

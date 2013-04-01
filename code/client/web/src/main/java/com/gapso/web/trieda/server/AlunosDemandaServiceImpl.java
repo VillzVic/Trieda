@@ -608,6 +608,7 @@ public class AlunosDemandaServiceImpl
 			
 			double atendimentoSomaAcumPercent = ( (double)atendimentoSomaAcum[i] ) / demandaP1Acum[i];
 			
+			resumoFaixaDemandaDTO.setCampusNome( campus.getNome() );
 			resumoFaixaDemandaDTO.setDemandaP1( demandaP1[i] );
 			resumoFaixaDemandaDTO.setAtendimentoP1( atendimentoP1[i] );
 			resumoFaixaDemandaDTO.setAtendimentoPercentP1( TriedaUtil.round(atendimentoP1Percent*100.0,2)+"%" );

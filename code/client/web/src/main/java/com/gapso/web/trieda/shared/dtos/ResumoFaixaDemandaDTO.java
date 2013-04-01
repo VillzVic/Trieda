@@ -6,6 +6,7 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 
 	private static final long serialVersionUID = 2913513728511317302L;
 	
+	public static final String PROPERTY_CAMPUS_NOME = "campusNome";
 	public static final String PROPERTY_DEMANDA_DISCIPLINA = "demandaDisc";
 	public static final String PROPERTY_DEMANDA_P1 = "demandaP1";
 	public static final String PROPERTY_ATENDIMENTO_P1 = "atendimentoP1";
@@ -118,6 +119,14 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 
 	public String getAtendimentoSomaAcumPercent() {
 		return get(PROPERTY_ATENDIMENTO_ACUM_PERCENT);
+	}
+	
+	public void setCampusNome(String value) {
+		set(PROPERTY_CAMPUS_NOME, value);
+	}
+
+	public String getCampusNome() {
+		return get(PROPERTY_CAMPUS_NOME);
 	}
 	
 	@Override
