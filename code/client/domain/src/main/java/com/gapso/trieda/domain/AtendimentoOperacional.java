@@ -841,6 +841,83 @@ public class AtendimentoOperacional
 
 			return q.getResultList().size();
 	}
+	
+	public static int countTurmaByDisciplinas(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas)
+	{
+			Query q1 = entityManager().createQuery(
+				" SELECT o FROM AtendimentoOperacional o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.disciplinaSubstituta IS NULL" +
+				" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
+				" GROUP BY o.disciplina, o.turma " );
+			
+			q1.setParameter( "campus", campus );
+			q1.setParameter( "disciplinas", disciplinas);
+			q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			
+			Query q2 = entityManager().createQuery(
+				" SELECT o FROM AtendimentoOperacional o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.disciplinaSubstituta IS NOT NULL" +
+				" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
+				" GROUP BY o.disciplinaSubstituta, o.turma " );
+			
+			q2.setParameter( "campus", campus );
+			q2.setParameter( "disciplinas", disciplinas);
+			q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			
+
+			return q1.getResultList().size() + q2.getResultList().size();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static int countCreditosByTurmas(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
+	{
+		int credTeorico = 0;
+		int credPratico = 0;
+
+		Query qT = entityManager().createQuery(
+			" SELECT o " +
+			" FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus" +
+			" AND o.disciplina IN (:disciplinas) " +
+			" AND o.creditoTeorico = TRUE" +
+			" GROUP BY o.disciplina, o.turma) ");
+
+		Query qP = entityManager().createQuery(
+			" SELECT o " +
+			" FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus" +
+			" AND o.disciplina IN (:disciplinas) " +
+			" AND o.creditoTeorico = FALSE" +
+			" GROUP BY o.disciplina, o.turma) ");
+
+		qT.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		qT.setParameter("campus", campus);
+		qT.setParameter( "disciplinas", disciplinas);
+
+		qP.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		qP.setParameter("campus", campus);
+		qP.setParameter( "disciplinas", disciplinas);
+
+		List< AtendimentoOperacional > srT = qT.getResultList();
+		List< AtendimentoOperacional > srP = qP.getResultList();
+
+		for(AtendimentoOperacional teorico : srT)
+		{
+			credTeorico += teorico.getDisciplina().getCreditosTeorico();
+		}
+		for(AtendimentoOperacional pratico : srP)
+		{
+			credPratico += pratico.getDisciplina().getCreditosPratico();
+		}
+
+		return ( credPratico + credTeorico );
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllByCampus(

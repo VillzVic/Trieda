@@ -501,6 +501,34 @@ public class AtendimentoTatico
 
 		return q.getResultList().size();
 	}
+	
+	public static int countTurmaByDisciplinas(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas)
+	{
+		Query q1 = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplinaSubstituta IS NULL" +
+			" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
+			" GROUP BY o.disciplina, o.turma " );
+		
+		q1.setParameter( "campus", campus );
+		q1.setParameter( "disciplinas", disciplinas);
+		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		
+		Query q2 = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplinaSubstituta IS NOT NULL" +
+			" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
+			" GROUP BY o.disciplinaSubstituta, o.turma " );
+		
+		q2.setParameter( "campus", campus );
+		q2.setParameter( "disciplinas", disciplinas);
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		
+		return q1.getResultList().size() + q2.getResultList().size();
+	}
 
 	public static int countCreditos(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
@@ -531,6 +559,52 @@ public class AtendimentoTatico
 
 		return ( iT + iP );
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static int countCreditosByTurmas(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
+		{
+			int credTeorico = 0;
+			int credPratico = 0;
+		
+			Query qT = entityManager().createQuery(
+				" SELECT o " +
+				" FROM AtendimentoTatico o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.oferta.campus = :campus" +
+				" AND o.disciplina IN (:disciplinas) " +
+				" GROUP BY o.disciplina, o.turma, o.creditosTeorico, o.creditosPratico, o.semana) ");
+
+			Query qP = entityManager().createQuery(
+				" SELECT o " +
+				" FROM AtendimentoTatico o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.oferta.campus = :campus" +
+				" AND o.disciplina IN (:disciplinas) " +
+				" GROUP BY o.disciplina, o.turma, o.creditosTeorico, o.creditosPratico, o.semana) ");
+
+			qT.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			qT.setParameter("campus", campus);
+			qT.setParameter( "disciplinas", disciplinas);
+
+			qP.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			qP.setParameter("campus", campus);
+			qP.setParameter( "disciplinas", disciplinas);
+
+			List< AtendimentoTatico > srT = qT.getResultList();
+			List< AtendimentoTatico > srP = qP.getResultList();
+
+			for(AtendimentoTatico teorico : srT)
+			{
+				credTeorico += teorico.getCreditosTeorico();
+			}
+			for(AtendimentoTatico pratico : srP)
+			{
+				credPratico += pratico.getCreditosPratico();
+			}
+
+			return ( credPratico + credTeorico );
+		}
 
 	public static int countSalasDeAula(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )

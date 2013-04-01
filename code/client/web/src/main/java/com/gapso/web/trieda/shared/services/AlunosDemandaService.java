@@ -9,6 +9,7 @@ import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
+import com.gapso.web.trieda.shared.dtos.ResumoFaixaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -26,4 +27,5 @@ public interface AlunosDemandaService
 			PagingLoadConfig loadConfig );
 	PagingLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( String codigo, CampusDTO campusDTO, CursoDTO cursoDTO,
 			PagingLoadConfig loadConfig );
+	List<ResumoFaixaDemandaDTO> getResumoFaixaDemandaList(CampusDTO campusDTO);
 }

@@ -38,6 +38,7 @@ import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoAlunoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoSalaView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoAtendimentosDisciplinaView;
+import com.gapso.web.trieda.main.client.mvp.view.ResumoAtendimentosFaixaDemandaView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCampiView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCenarioView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCursosView;
@@ -137,6 +138,7 @@ public class ToolBarPresenter
 		Button getResumoDisciplinasButton();
 		Button getResumoMatriculasButton();
 		Button getResumoAtendimentosDisciplinaButton();
+		Button getResumoAtendimentosFaixaDemandaButton();
 
 		Button getFixacoesListButton();
 		Button getParametrosButton();
@@ -1009,6 +1011,19 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new ResumoAtendimentosDisciplinaPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new ResumoAtendimentosDisciplinaView() );
+
+				presenter.go( gTab );
+			}
+		});
+
+		this.toolBar.getResumoAtendimentosFaixaDemandaButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ResumoAtendimentosFaixaDemandaPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ResumoAtendimentosFaixaDemandaView() );
 
 				presenter.go( gTab );
 			}
