@@ -432,7 +432,7 @@ x_{i,d,u,s,hi,hf,t} + fcp_{i,d,t} - fcm_{i,d,t} = FC_{d,t} \cdot z_{i,d,cp}  \no
 
 \begin{eqnarray}
 \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}}
- x_{i,d,u,s,hi,hf,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fkp_{d,i,t} - fkm_{d,i,t} \nonumber \qquad 
+ NCreds_{hi,hf} \cdot x_{i,d,u,s,hi,hf,t} = \sum\limits_{k \in K_{d}}N_{d,k,t} \cdot m_{d,i,k} + fkp_{d,i,t} - fkm_{d,i,t} \nonumber \qquad 
 \forall cp \in CP \quad
 \forall d \in D \quad
 \forall i \in I_{d} \quad
