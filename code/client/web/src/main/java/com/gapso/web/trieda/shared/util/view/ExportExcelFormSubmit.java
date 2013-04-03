@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
 import com.extjs.gxt.ui.client.widget.form.HiddenField;
@@ -20,7 +21,7 @@ public class ExportExcelFormSubmit
 	private HiddenField< String > chaveField;
 
 	public ExportExcelFormSubmit( ExcelParametros parametros,
-		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, FormPanel formPanel )
 	{
 		this.instituicaoEnsinoDTO = parametros.getInstituicaoEnsinoDTO();
 
@@ -29,6 +30,12 @@ public class ExportExcelFormSubmit
         this.formPanel.setAction( GWT.getModuleBaseURL() + "exportExcelServlet" );
         this.formPanel.addListener( Events.Submit,
         new ExcelFormListener( i18nConstants, i18nMessages ) );
+        
+        if (formPanel != null){
+        	for (Field<?> f : formPanel.getFields()){
+    			this.addParameter(f.getName(), (Boolean) f.getValue());
+        	}
+		}
 
 		chaveField = new HiddenField<String>();
 		chaveField.setName("chaveRegistro");
@@ -56,6 +63,12 @@ public class ExportExcelFormSubmit
 		
 		this.formPanel.add(chaveField);
 	}
+	
+	public ExportExcelFormSubmit( ExcelParametros parametros,
+		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages )
+	{
+        this(parametros, i18nConstants, i18nMessages, null);
+	}
 
 	public InstituicaoEnsinoDTO getInstituicaoEnsinoDTO()
 	{
@@ -77,6 +90,17 @@ public class ExportExcelFormSubmit
 	{
 		HiddenField< String > hiddenField
 			= new HiddenField< String >();
+
+		hiddenField.setName( name );
+		hiddenField.setValue( value );
+
+		this.formPanel.add( hiddenField );
+	}
+	
+	public void addParameter( String name, Boolean value )
+	{
+		HiddenField< Boolean > hiddenField
+			= new HiddenField< Boolean >();
 
 		hiddenField.setName( name );
 		hiddenField.setValue( value );

@@ -33,6 +33,8 @@ public class ExportExcelFilterFactory{
 			case RESUMO_DISCIPLINA: return getExportResumoDisciplina(request, instituicaoEnsino.getId());
 			case RESUMO_CURSO: return getExportResumoCurso(request, instituicaoEnsino.getId());
 			case ATENDIMENTOS_FAIXA_DEMANDA: return getExportAtendimentosFaixaDemanda(request, instituicaoEnsino.getId());
+		default:
+			break;
 		}
 
 		return null;

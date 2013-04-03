@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.Map;
+
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -11,7 +13,8 @@ public class ExportExcelFactory {
 	
 	static public IExportExcel createExporter( String infoToBeExported, Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
-		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino, String fileExtension )
+		ExportExcelFilter filter, InstituicaoEnsino instituicaoEnsino, String fileExtension,
+		Map< String, Boolean > planilhasExportExcel)
 	{
 		boolean visaoProfessor = ( cenario.getCriadoPor() == null ? true :
 			cenario.getCriadoPor().getProfessor() != null && cenario.getCriadoPor().getProfessor().getId() > 0 );
@@ -47,11 +50,13 @@ public class ExportExcelFactory {
 			case RESUMO_DISCIPLINA: exporter = new ResumoDisciplinaExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case RESUMO_CURSO: exporter = new ResumoCursoExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case SALAS: exporter = new SalasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
-			case TUDO: exporter = new TRIEDAExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino, fileExtension ); break;
+			case TUDO: exporter = new TRIEDAExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino, fileExtension, planilhasExportExcel ); break;
 			case UNIDADES: exporter = new UnidadesExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case TODAS_TABELAS:  exporter = new TRIEDATabelasExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino, fileExtension ); break;
 			case TODAS_GRADES_HORARIAS:  exporter = new TRIEDAGradesHorariasExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino, fileExtension ); break;
 			case TODAS_VISAO_ALUNO:  exporter = new TRIEDAVisaoAlunoExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino, fileExtension ); break;
+		default:
+			break;
 		}
 
 		return exporter;

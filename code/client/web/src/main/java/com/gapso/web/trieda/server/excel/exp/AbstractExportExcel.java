@@ -232,11 +232,14 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		int sheetIx = 0;
 		while ( workbook.getNumberOfSheets() > usedSheets.size() )
 		{
-			Sheet sheet = workbook.getSheetAt( sheetIx++ );
+			Sheet sheet = workbook.getSheetAt( sheetIx );
 			if ( !usedSheets.contains( sheet ) )
 			{
 				workbook.removeSheetAt( sheetIx );
 				sheetIx = 0;
+			} else
+			{
+				sheetIx++;
 			}
 		}
 	}
