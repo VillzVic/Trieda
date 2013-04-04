@@ -43,7 +43,7 @@ BEGIN
     IF actual_db_version = 7 THEN
       SET msg_status = 'Base de dados compativel com script de conversao, inicio processo conversao';
       
-      /*  */
+      /* TRIEDA-1614: Adequar o cliente para trabalhar com informação de horário no tático */
       ALTER TABLE `trieda`.`atendimento_tatico` ADD COLUMN `hor_id` BIGINT(20) AFTER `semana`,
         ADD CONSTRAINT `FK_HOR_ID_ATT` FOREIGN KEY `FK_HOR_ID_ATT` (`hor_id`) REFERENCES `horarios_aula` (`hor_id`)
           ON DELETE RESTRICT
