@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -845,7 +846,36 @@ public class AtendimentoOperacional
 	public static int countTurmaByDisciplinas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas)
 	{
-			Query q1 = entityManager().createQuery(
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
+		}
+		
+		Query q = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.turma FROM atendimento_operacional o " +
+				" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.turma " +
+				" UNION " +
+				" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_operacional o1 " +
+				" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
+				" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+				" GROUP BY o1.dis_substituta_id, o1.turma ");
+
+		q.setParameter( "campus", campus.getId() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		int countTurmas = 0;
+		for (Object registro : q.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			if (disciplinasIDs.contains(disId)) {
+				countTurmas++;
+			}
+		}
+
+		return countTurmas;
+				
+			/*Query q1 = entityManager().createQuery(
 				" SELECT o FROM AtendimentoOperacional o " +
 				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 				" AND o.disciplinaSubstituta IS NULL" +
@@ -868,7 +898,7 @@ public class AtendimentoOperacional
 			q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
 			
 
-			return q1.getResultList().size() + q2.getResultList().size();
+			return q1.getResultList().size() + q2.getResultList().size();*/
 	}
 	
 	@SuppressWarnings("unchecked")

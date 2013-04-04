@@ -439,35 +439,35 @@ public class AlunosDemandaServiceImpl
 				atendimentoSoma[0] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas100.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if ( disciplina.getDisDemandaP1() > 74 && disciplina.getDisDemandaP1() <= 100 )
+			else if (76 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 100 )
 			{
 				demandaP1[1] += disciplina.getDisDemandaP1();
 				atendimentoP1[1] += disciplina.getDisAtendidosP1();
 				atendimentoSoma[1] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas75.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if ( disciplina.getDisDemandaP1() > 50 && disciplina.getDisDemandaP1() < 75 )
+			else if (51 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 75 )
 			{
 				demandaP1[2] += disciplina.getDisDemandaP1();
 				atendimentoP1[2] += disciplina.getDisAtendidosP1();
 				atendimentoSoma[2] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas50.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if ( disciplina.getDisDemandaP1() > 30 && disciplina.getDisDemandaP1() <= 50 )
+			else if (31 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 50 )
 			{
 				demandaP1[3] += disciplina.getDisDemandaP1();
 				atendimentoP1[3] += disciplina.getDisAtendidosP1();
 				atendimentoSoma[3] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas30.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if ( disciplina.getDisDemandaP1() > 20 && disciplina.getDisDemandaP1() <= 30 )
+			else if (21 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 30 )
 			{
 				demandaP1[4] += disciplina.getDisDemandaP1();
 				atendimentoP1[4] += disciplina.getDisAtendidosP1();
 				atendimentoSoma[4] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas20.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if ( disciplina.getDisDemandaP1() >= 10 && disciplina.getDisDemandaP1() <= 20 )
+			else if (10 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 20 )
 			{
 				demandaP1[5] += disciplina.getDisDemandaP1();
 				atendimentoP1[5] += disciplina.getDisAtendidosP1();
@@ -509,7 +509,7 @@ public class AlunosDemandaServiceImpl
 					atendimentoSomaAcum[i] = atendimentoSoma[i];
 					break;
 				case 1:
-					resumoFaixaDemandaDTO.setDemandaDisc("Entre 75 e 100 alunos");
+					resumoFaixaDemandaDTO.setDemandaDisc("Entre 76 e 100 alunos");
 					if ( ehTatico )
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas75 );
@@ -525,7 +525,7 @@ public class AlunosDemandaServiceImpl
 					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
 					break;
 				case 2:
-					resumoFaixaDemandaDTO.setDemandaDisc("Entre 50 e 75 alunos");
+					resumoFaixaDemandaDTO.setDemandaDisc("Entre 51 e 75 alunos");
 					if ( ehTatico )
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas50 );
@@ -541,7 +541,7 @@ public class AlunosDemandaServiceImpl
 					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
 					break;
 				case 3:
-					resumoFaixaDemandaDTO.setDemandaDisc("Entre 30 e 50 alunos");
+					resumoFaixaDemandaDTO.setDemandaDisc("Entre 31 e 50 alunos");
 					if ( ehTatico )
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas30 );
@@ -557,7 +557,7 @@ public class AlunosDemandaServiceImpl
 					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
 					break;
 				case 4:
-					resumoFaixaDemandaDTO.setDemandaDisc("Entre 20 e 30 alunos");
+					resumoFaixaDemandaDTO.setDemandaDisc("Entre 21 e 30 alunos");
 					if ( ehTatico )
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas20 );
