@@ -25,6 +25,7 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 
 @ProgressDeclarationAnnotation
@@ -143,15 +144,16 @@ public class AulasExportExcel extends AbstractExportExcel {
 						String horarioFim = "N/A";
 						
 						// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
-						int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
+//						int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 						
 						// calcula horario de inicio e fim
 						if(temInfoDeHorarios){
 							horarioInicio = aula.getHorarioAulaString();
 							int index = horariosDeInicioDeAula.indexOf(horarioInicio);
 							if (index != -1) {
-								index = index + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
-								horarioFim = horariosDeFimDeAula.get(index);
+//								index = index + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
+//								horarioFim = horariosDeFimDeAula.get(index);
+								horarioFim = TriedaUtil.calculaHorarioFim(horarioInicio,aula.getDuracaoDeUmaAulaEmMinutos()*aula.getTotalCreditos());
 							}
 						}
 						

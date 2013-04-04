@@ -21,6 +21,7 @@ import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 @ProgressDeclarationAnnotation
 public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
@@ -118,15 +119,16 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 						String horarioFim = "N/A";
 						
 						// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
-						int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
+						//int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 						
 						// calcula horario de inicio e fim
 						if(temInfoDeHorarios){
 							horarioInicio = aula.getHorarioAulaString();
 							int index = horariosDeInicioDeAula.indexOf(horarioInicio);
 							if (index != -1) {
-								index = index + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
-								horarioFim = horariosDeFimDeAula.get(index);
+//								index = index + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
+//								horarioFim = horariosDeFimDeAula.get(index);
+								horarioFim = TriedaUtil.calculaHorarioFim(horarioInicio,aula.getDuracaoDeUmaAulaEmMinutos()*aula.getTotalCreditos());
 							}
 						}
 						
@@ -169,11 +171,11 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 				// Aula - Total
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],credT+credP);
 				// Aula - Carga Horária Teórica
-				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],credT*aula.getSemanaLetivaTempoAula());
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],credT*aula.getDuracaoDeUmaAulaEmMinutos());
 				// Aula - Carga Horária Prática
-				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],credP*aula.getSemanaLetivaTempoAula());
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],credP*aula.getDuracaoDeUmaAulaEmMinutos());
 				// Aula - Carga Horária Total
-				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],(credT+credP)*aula.getSemanaLetivaTempoAula());
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.NUMBER.ordinal()],(credT+credP)*aula.getDuracaoDeUmaAulaEmMinutos());
 				
 				// Aluno - Matrícula
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getAlunoMatricula());
