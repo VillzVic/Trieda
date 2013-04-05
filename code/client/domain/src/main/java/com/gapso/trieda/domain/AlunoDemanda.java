@@ -674,8 +674,7 @@ public class AlunoDemanda
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.demanda.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
-			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
-			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
+			" AND o.demanda.disciplina.tipoDisciplina = 1" +
 			" GROUP BY o.demanda.disciplina, o.demanda.oferta.campus ");
 
 		if ( curso != null )
@@ -763,8 +762,7 @@ public class AlunoDemanda
 				" SELECT DISTINCT o.demanda.disciplina, o.demanda.oferta.campus FROM AlunoDemanda o " +
 				" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 				" AND " + queryCampus + queryCurso + " LOWER ( o.demanda.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
-				" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
-				" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" );
+				" AND o.demanda.disciplina.tipoDisciplina = 1" );
 
 			if ( curso != null )
 			{

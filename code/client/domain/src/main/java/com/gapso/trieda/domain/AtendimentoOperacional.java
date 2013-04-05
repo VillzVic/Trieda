@@ -874,79 +874,39 @@ public class AtendimentoOperacional
 		}
 
 		return countTurmas;
-				
-			/*Query q1 = entityManager().createQuery(
-				" SELECT o FROM AtendimentoOperacional o " +
-				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.disciplinaSubstituta IS NULL" +
-				" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
-				" GROUP BY o.disciplina, o.turma " );
-			
-			q1.setParameter( "campus", campus );
-			q1.setParameter( "disciplinas", disciplinas);
-			q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
-			
-			Query q2 = entityManager().createQuery(
-				" SELECT o FROM AtendimentoOperacional o " +
-				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.disciplinaSubstituta IS NOT NULL" +
-				" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
-				" GROUP BY o.disciplinaSubstituta, o.turma " );
-			
-			q2.setParameter( "campus", campus );
-			q2.setParameter( "disciplinas", disciplinas);
-			q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
-			
-
-			return q1.getResultList().size() + q2.getResultList().size();*/
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static int countCreditosByTurmas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 	{
-		int credTeorico = 0;
-		int credPratico = 0;
-
-		Query qT = entityManager().createQuery(
-			" SELECT o " +
-			" FROM AtendimentoOperacional o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.oferta.campus = :campus" +
-			" AND o.disciplina IN (:disciplinas) " +
-			" AND o.creditoTeorico = TRUE" +
-			" GROUP BY o.disciplina, o.turma) ");
-
-		Query qP = entityManager().createQuery(
-			" SELECT o " +
-			" FROM AtendimentoOperacional o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.oferta.campus = :campus" +
-			" AND o.disciplina IN (:disciplinas) " +
-			" AND o.creditoTeorico = FALSE" +
-			" GROUP BY o.disciplina, o.turma) ");
-
-		qT.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		qT.setParameter("campus", campus);
-		qT.setParameter( "disciplinas", disciplinas);
-
-		qP.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		qP.setParameter("campus", campus);
-		qP.setParameter( "disciplinas", disciplinas);
-
-		List< AtendimentoOperacional > srT = qT.getResultList();
-		List< AtendimentoOperacional > srP = qP.getResultList();
-
-		for(AtendimentoOperacional teorico : srT)
-		{
-			credTeorico += teorico.getDisciplina().getCreditosTeorico();
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
 		}
-		for(AtendimentoOperacional pratico : srP)
-		{
-			credPratico += pratico.getDisciplina().getCreditosPratico();
+		
+		Query q = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.hdc_id, o.turma FROM atendimento_operacional o " +
+				" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.hdc_id, o.turma" +
+				" UNION " +
+				" SELECT o1.dis_substituta_id, o1.hdc_id, o1.turma FROM atendimento_operacional o1 " +
+				" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
+				" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+				" GROUP BY o1.dis_substituta_id, o1.hdc_id, o1.turma ");
+
+		q.setParameter( "campus", campus.getId() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		int countTurmas = 0;
+		for (Object registro : q.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			if (disciplinasIDs.contains(disId)) {
+				countTurmas++;
+			}
 		}
 
-		return ( credPratico + credTeorico );
+		return countTurmas;
 	}
 
 	@SuppressWarnings( "unchecked" )

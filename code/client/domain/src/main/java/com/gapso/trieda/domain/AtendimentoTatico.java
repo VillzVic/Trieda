@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -505,29 +506,35 @@ public class AtendimentoTatico
 	public static int countTurmaByDisciplinas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas)
 	{
-		Query q1 = entityManager().createQuery(
-			" SELECT o FROM AtendimentoTatico o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.disciplinaSubstituta IS NULL" +
-			" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
-			" GROUP BY o.disciplina, o.turma " );
 		
-		q1.setParameter( "campus", campus );
-		q1.setParameter( "disciplinas", disciplinas);
-		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
+		}
 		
-		Query q2 = entityManager().createQuery(
-			" SELECT o FROM AtendimentoTatico o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.disciplinaSubstituta IS NOT NULL" +
-			" AND o.oferta.campus = :campus AND o.disciplina IN (:disciplinas) " +
-			" GROUP BY o.disciplinaSubstituta, o.turma " );
+		Query q = entityManager().createNativeQuery(
+			" SELECT o.dis_id, o.turma FROM atendimento_tatico o " +
+			" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
+			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+			" GROUP BY o.dis_id, o.turma " +
+			" UNION " +
+			" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_tatico o1 " +
+			" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
+			" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+			" GROUP BY o1.dis_substituta_id, o1.turma ");
+
+		q.setParameter( "campus", campus.getId() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
 		
-		q2.setParameter( "campus", campus );
-		q2.setParameter( "disciplinas", disciplinas);
-		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		
-		return q1.getResultList().size() + q2.getResultList().size();
+		int countTurmas = 0;
+		for (Object registro : q.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			if (disciplinasIDs.contains(disId)) {
+				countTurmas++;
+			}
+		}
+
+		return countTurmas;
 	}
 
 	public static int countCreditos(
@@ -560,51 +567,38 @@ public class AtendimentoTatico
 		return ( iT + iP );
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static int countCreditosByTurmas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 		{
-			int credTeorico = 0;
-			int credPratico = 0;
-		
-			Query qT = entityManager().createQuery(
-				" SELECT o " +
-				" FROM AtendimentoTatico o " +
-				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.oferta.campus = :campus" +
-				" AND o.disciplina IN (:disciplinas) " +
-				" GROUP BY o.disciplina, o.turma, o.creditosTeorico, o.creditosPratico, o.semana) ");
-
-			Query qP = entityManager().createQuery(
-				" SELECT o " +
-				" FROM AtendimentoTatico o " +
-				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-				" AND o.oferta.campus = :campus" +
-				" AND o.disciplina IN (:disciplinas) " +
-				" GROUP BY o.disciplina, o.turma, o.creditosTeorico, o.creditosPratico, o.semana) ");
-
-			qT.setParameter( "instituicaoEnsino", instituicaoEnsino );
-			qT.setParameter("campus", campus);
-			qT.setParameter( "disciplinas", disciplinas);
-
-			qP.setParameter( "instituicaoEnsino", instituicaoEnsino );
-			qP.setParameter("campus", campus);
-			qP.setParameter( "disciplinas", disciplinas);
-
-			List< AtendimentoTatico > srT = qT.getResultList();
-			List< AtendimentoTatico > srP = qP.getResultList();
-
-			for(AtendimentoTatico teorico : srT)
-			{
-				credTeorico += teorico.getCreditosTeorico();
-			}
-			for(AtendimentoTatico pratico : srP)
-			{
-				credPratico += pratico.getCreditosPratico();
-			}
-
-			return ( credPratico + credTeorico );
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
 		}
+		
+		Query q = entityManager().createNativeQuery(
+			" SELECT o.dis_id, o.att_cred_pratico, o.att_cred_teorico, o.turma, o.semana FROM atendimento_tatico o " +
+			" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
+			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+			" GROUP BY o.dis_id, o.turma, o.att_cred_pratico, o.att_cred_teorico, o.semana " +
+			" UNION " +
+			" SELECT o1.dis_substituta_id, o1.att_cred_pratico, o1.att_cred_teorico, o1.turma, o1.semana FROM atendimento_tatico o1 " +
+			" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
+			" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+			" GROUP BY o1.dis_substituta_id, o1.turma, o1.att_cred_pratico, o1.att_cred_teorico, o1.semana ");
+
+		q.setParameter( "campus", campus.getId() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		int countCreditos = 0;
+		for (Object registro : q.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			if (disciplinasIDs.contains(disId)) {
+				countCreditos += ((Integer)((Object[])registro)[1]).intValue() + ((Integer)((Object[])registro)[2]).intValue();
+			}
+		}
+
+		return countCreditos;
+	}
 
 	public static int countSalasDeAula(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
