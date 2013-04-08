@@ -18,6 +18,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
@@ -25,7 +26,6 @@ import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
-import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 
 @ProgressDeclarationAnnotation
@@ -153,7 +153,7 @@ public class AulasExportExcel extends AbstractExportExcel {
 							if (index != -1) {
 //								index = index + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
 //								horarioFim = horariosDeFimDeAula.get(index);
-								horarioFim = TriedaUtil.calculaHorarioFim(horarioInicio,aula.getDuracaoDeUmaAulaEmMinutos()*aula.getTotalCreditos());
+								horarioFim = TriedaServerUtil.calculaHorarioFim(horarioInicio,aula.getDuracaoDeUmaAulaEmMinutos()*aula.getTotalCreditos());
 							}
 						}
 						

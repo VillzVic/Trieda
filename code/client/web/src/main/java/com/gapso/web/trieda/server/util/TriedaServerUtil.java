@@ -107,4 +107,17 @@ public class TriedaServerUtil{
 			}
 		}
 	}
+	
+	static public String calculaHorarioFim(String horarioInicio, int minutosAteHorarioFim) {
+		String[] horarioInicioArray = horarioInicio.split(":");
+		int hora = Integer.parseInt(horarioInicioArray[0]);
+		int minutos = Integer.parseInt(horarioInicioArray[1]);
+		Calendar c = Calendar.getInstance();
+		c.set(1979,Calendar.NOVEMBER,6,hora,minutos,0);
+		c.add(Calendar.MINUTE,minutosAteHorarioFim);
+		hora = c.get(Calendar.HOUR_OF_DAY);
+		minutos = c.get(Calendar.MINUTE);
+		
+		return (hora < 10 ? ("0"+hora) : hora) + ":" + (minutos < 10 ? ("0"+minutos) : minutos);
+	}
 }
