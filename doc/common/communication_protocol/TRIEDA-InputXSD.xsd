@@ -69,6 +69,7 @@
             <xs:documentation>lista de disciplinas que serão consideradas no planejamento</xs:documentation>
           </xs:annotation>
         </xs:element>
+        <xs:element name="equivalencias" type="GrupoEquivalencia" />
         <xs:element name="cursos" type="GrupoCurso">
           <xs:annotation>
             <xs:documentation>lista dos cursos que serão consideradas no planejamento</xs:documentation>
@@ -700,6 +701,7 @@
       </xs:element>
       <xs:element name="minTempoIntegral" type="xs:double" />
       <xs:element name="minTempoIntegralParcial" type="xs:double" />
+      <xs:element name="equivalencias" type="GrupoIdentificador" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemPercentualMinimo">
@@ -1421,6 +1423,35 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
       </xs:element>
       <xs:element name="nomeAluno" type="xs:string" />
       <xs:element name="formando" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemEquivalencia">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Identificador único da regra de equivalência.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaCursouId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Uma regra de equivalência é composta por um par de disciplinas que representa uma relação do tipo (CURSOU_DISCIPLINA, ELIMINA_DISCIPLINA), isto é, a disciplina do lado ELIMINA_DISCIPLINA pode ser substituída pela disciplina do lado CURSOU_DISCIPLINA.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaEliminaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Uma regra de equivalência é composta por um par de disciplinas que representa uma relação do tipo (CURSOU_DISCIPLINA, ELIMINA_DISCIPLINA), isto é, a disciplina do lado ELIMINA_DISCIPLINA pode ser substituída pela disciplina do lado CURSOU_DISCIPLINA.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="geral" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Se verdadeiro, significa que a regra de equivalência é geral e vale para todos os cursos, do contrário, significa que a regra de equivalência será válida apenas para alguns cursos.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoEquivalencia">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Equivalencia" type="ItemEquivalencia" />
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
