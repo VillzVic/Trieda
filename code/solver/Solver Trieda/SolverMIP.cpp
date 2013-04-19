@@ -11860,6 +11860,22 @@ int SolverMIP::solveOperacionalMIP()
 {
    int varNum = 0;
    int constNum = 0;
+   
+   if ( this->CARREGA_SOLUCAO )
+   {
+	   char solName[1024];
+	   strcpy( solName, getSolOpBinFileName( -1 ).c_str() );
+	   FILE* fin = fopen( solName,"rb");
+	   if ( fin == NULL )
+	   {
+		   std::cout << "\nA partir de " << solName << " , nao foram lidas mais solucoes.\n";
+		   CARREGA_SOLUCAO = false;
+	   }
+	   else
+	   {
+		  fclose(fin);
+	   }
+   }
 
    if ( lp != NULL )
    {
@@ -11888,319 +11904,355 @@ int SolverMIP::solveOperacionalMIP()
 #ifdef PRINT_cria_variaveis
    printf( "Total of Variables: %i\n\n", varNum );
 #endif
-
-   // Constraint creation
-   constNum = criaRestricoesOperacional();
-
-#ifdef PRINT_cria_restricoes
-   printf( "Total of Constraints: %i\n\n", constNum );
-#endif
-
-#ifdef DEBUG
- //  lp->writeProbLP( "SolverOperacional" );
-#endif
-
-   VariableOpHash::iterator vit;
-
-   // ------------------------------------
-   // Garantia de solucao
-   std::cout<<"\n------------------------------------";
-   std::cout<<"\nGarantia de solucao\n\n"; fflush(NULL);
-
-   vit = vHashOp.begin();
-   for (; vit != vHashOp.end(); vit++ )
-   {
-	   VariableOp v = vit->first;
-	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
-	   {
-         lp->chgUB(vit->second,0.0);
-	   }
-   }
-
-   lp->setMIPScreenLog( 4 );
-   lp->setNumIntSols(1);
-
-   lp->writeProbLP( "SolverOperacional1" );
-
-   lp->optimize(METHOD_MIP);
-   
-   fflush(NULL);
-   
-   double *x = new double[ lp->getNumCols() ];
-   lp->getX( x );
-   
-   writeOpSolBin( OutPutFileType::OP_BIN1, x );
-   writeOpSolTxt( OutPutFileType::OP_BIN1, x );
-
-   int *idxN = new int[ lp->getNumCols() ];
-
-   vit = vHashOp.begin();
-   for (; vit != vHashOp.end(); vit++ )
-   {
-	   idxN[vit->second] = vit->second;
-
-	   VariableOp v = vit->first;
-	   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
-	   {
-           lp->chgUB(vit->second,1.0);
-	   }
-   }
-   // ------------------------------------
-
-   int maxTitulId = 5;
-   if ( !problemData->parametros->min_doutores )
-   {
-	   maxTitulId = 4;
-	   if ( !problemData->parametros->min_mestres )
-		   maxTitulId = 1;
-   }
-
-   map<int, double> cost;
-
-   // ------------------------------------
-   // Garantia de máximo atendimento
-   std::cout<<"\n------------------------------------";
-   std::cout<<"\nGarantia de máximo atendimento usando profs só virtuais de alta titulação\n\n"; fflush(NULL);
-
-   vit = vHashOp.begin();
-   for (; vit != vHashOp.end(); vit++ )
-   {
-		VariableOp v = vit->first;
-		if(v.getType() != VariableOp::V_FOLGA_DEMANDA)
-		{
-			cost[vit->second] = lp->getObj(vit->second);
-			lp->chgObj(vit->second, 0.0);
-		}
-		else
-		{
-			cost[vit->second] = lp->getObj(vit->second);
-			lp->chgObj(vit->second, cost[vit->second]/100000.0);
-		}
-
-		if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && !v.getProfessor()->eVirtual() )
-			lp->chgUB(vit->second, 0.0);
-		else if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && v.getProfessor()->eVirtual() && v.getProfessor()->getTitulacaoId() != maxTitulId )
-		{
-			lp->chgUB(vit->second, 0.0);
-		}
-   }
-   
-   int status = 0;
-
-   //lp->setMIPRelTol( 0.01 );
-   lp->setMIPEmphasis(4);
-   lp->setVarSel(4);
-   lp->setNumIntSols(0);
-   //lp->setCuts(0);
-   lp->setNoCuts();
-   lp->setMIPScreenLog( 4 );
-   lp->setTimeLimit( 3600 );
-   lp->setNodeLimit(3100);
-   lp->setPolishAfterNode( 1 );
-   lp->setPreSolve(OPT_TRUE);
-   
-   lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
-
-   lp->writeProbLP( "SolverOperacional2" );
-
-   status = lp->optimize( METHOD_MIP );
-   
-   lp->getX( x );
-   
-   writeOpSolBin( OutPutFileType::OP_BIN2, x );
-   writeOpSolTxt( OutPutFileType::OP_BIN2, x );
-   
-   // ------------------------------------
-   
-   /*FILE * fin = fopen( "solOpAtual.bin", "rb" );
-   if ( fin == NULL )
-   {
-      std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
-         << "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
-   }
-   else
-   {
-      int nCols = 0;
-
-      fread( &nCols, sizeof( int ), 1, fin );
-
-      for ( int i = 0; i < nCols; i++ )
-      {
-         double auxR;
-         fread( &auxR, sizeof( double ), 1, fin );
-
-         x[ i ] = auxR;
-      }
-
-      fclose( fin );
-   }*/
-
-   /*FILE * fout2 = fopen( "solOpAtual.bin", "wb" );
-   if ( fout2 == NULL )
-   {
-      std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
-         << "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
-   }
-   else
-   {
-      int nCols = lp->getNumCols();
-
-      fwrite( &nCols, sizeof( int ), 1, fout2 );
-      for ( int i = 0; i < lp->getNumCols(); i++ )
-      {
-         fwrite( &( x[ i ] ), sizeof( double ), 1, fout2 );
-      }
-
-      fclose( fout2 );
-   }*/
-
-   std::cout<<"\n------------------------------------";
-   std::cout<<"\nFixa máximo atendimento e volta pesos originais\n\n"; fflush(NULL);
-
-   std::list<VariableOpHash::iterator> usedVars;
-   vit = vHashOp.begin();
-   for (; vit != vHashOp.end(); vit++ )
-   {
-		VariableOp v = vit->first;
-		if(v.getType() == VariableOp::V_FOLGA_DEMANDA  && x[vit->second] < 0.1)
-			lp->chgUB(vit->second, 0.0);
-		else if(v.getType() == VariableOp::V_FOLGA_DEMANDA)
-			lp->chgLB(vit->second, 1.0);
-
-		if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && x[vit->second] >= 0.1 )
-			usedVars.push_back(vit);
-		else if (v.getType() == VariableOp::V_X_PROF_AULA_HOR)
-			lp->chgUB(vit->second,0.0);
-		if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR )
-			lp->chgObj(vit->second, cost[vit->second]);
-   }
-
-   vit = vHashOp.begin();
-
-   for (; vit != vHashOp.end(); vit++ )
-   {
-	  VariableOp v = vit->first;
-      if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
-      {
-         for (std::list<VariableOpHash::iterator>::iterator itL = usedVars.begin();
-            itL != usedVars.end();
-            itL++)
-         {
-            VariableOpHash::iterator vit2 = *itL;
-
-            if ( vit2->first.getAula() == v.getAula() &&
-               vit2->first.getCampus() == v.getCampus() &&
-               vit2->first.getCurso() == v.getCurso() &&
-               vit2->first.getDia() == v.getDia() &&
-               vit2->first.getDisciplina() == v.getDisciplina() &&
-               vit2->first.getH1() == v.getH1() &&
-               vit2->first.getH2() == v.getH2() &&
-               vit2->first.getHorario() == v.getHorario() &&
-               vit2->first.getHorarioAula() == v.getHorarioAula() &&
-               vit2->first.getHorarioDiaD() == v.getHorarioDiaD() &&
-               vit2->first.getHorarioDiaD1() == v.getHorarioDiaD1() &&
-               vit2->first.getSala() == v.getSala() &&
-               vit2->first.getTurma() == v.getTurma() &&
-               vit2->first.getUnidade() == v.getUnidade() ) // Só não compara o prof
-            {
-               lp->chgUB(vit->second,1.0);
-            }
-         }
-      }
-	  
-	  lp->chgObj(vit->second, cost[vit->second]);
-   }
-
-   usedVars.clear();
-   
-   lp->setMIPEmphasis(0);
-   lp->setCuts(5);
-   lp->setNodeLimit(10000000000);
-   ///lp->setPolishAfterNode(1);
-   lp->setPolishAfterTime(3600);
-   lp->setTimeLimit(10*3600);
-
-   lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
-
-   lp->writeProbLP( "SolverOperacional3" );
-
-   status = lp->optimize( METHOD_MIP );
-
-   lp->getX( x );
-   
-   writeOpSolBin( OutPutFileType::OP_BIN3, x );
-   writeOpSolTxt( OutPutFileType::OP_BIN3, x );
-
-   std::cout<<"\n------------------------------------";
-   std::cout<<"\Maximo atendimento fixado e profs livres\n\n"; fflush(NULL);
-
-   vit = vHashOp.begin();
-   for (; vit != vHashOp.end(); vit++ )
-   {
-	  VariableOp v = vit->first;
-
-	  if(v.getType() == VariableOp::V_X_PROF_AULA_HOR )
-		  lp->chgUB(vit->second, 1.0);
-
-	  // fixa cada prof para cada turma, deixando portanto so o horario livre para decidir
-      //if ( v.getType() == VariableOp::V_Y_PROF_DISCIPLINA )
-      //{
-      //   if ( x[vit->second] > 0.1 )
-      //      lp->chgLB(vit->second,1.0);
-      //   else
-      //      lp->chgUB(vit->second,0.0);
-      //}
-
-      lp->chgObj(vit->second, cost[vit->second]);
-   }
-      
-   lp->writeProbLP( "SolverOperacional" );
-
-   lp->setMIPEmphasis(0);
-   lp->setNoCuts();
-   lp->setTimeLimit(6*3600);
-   lp->setVarSel(4);
-   //lp->setPolishAfterIntSol(1);
-   lp->setPolishAfterTime(3600);
-  // lp->setNumIntSols(0);
-   lp->setNodeLimit(1000000000);
-   
-   lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
-
-   status = lp->optimize( METHOD_MIP );
     
-   lp->getX( x );
+    int status = 1;
 
-   fflush(NULL);
+	if ( ! this->CARREGA_SOLUCAO )
+	{
+		   // Constraint creation
+		   constNum = criaRestricoesOperacional();
 
-   writeOpSolBin( OutPutFileType::OP_BIN, x );
-   writeOpSolTxt( OutPutFileType::OP_BIN, x );
+		#ifdef PRINT_cria_restricoes
+		   printf( "Total of Constraints: %i\n\n", constNum );
+		#endif
 
-   FILE * fout = fopen( "solucaoOp.txt", "wt" );
-   solVarsOp.clear();
+		#ifdef DEBUG
+		 //  lp->writeProbLP( "SolverOperacional" );
+		#endif
 
-   vit = vHashOp.begin();
-   for (; vit != vHashOp.end(); vit++ )
-   {
-      VariableOp v = vit->first;
+		   VariableOpHash::iterator vit;
 
-      if ( x[ vit->second ] > 0.01 )
-      {
-         VariableOp * newVar = new VariableOp( v );
+		   // ------------------------------------
+		   // Garantia de solucao
+		   std::cout<<"\n------------------------------------";
+		   std::cout<<"\nGarantia de solucao\n\n"; fflush(NULL);
 
-         newVar->setValue( x[ vit->second ] );
-         fprintf( fout, "%s = %f\n", v.toString().c_str(), x[ vit->second ] );
+		   vit = vHashOp.begin();
+		   for (; vit != vHashOp.end(); vit++ )
+		   {
+			   VariableOp v = vit->first;
+			   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+			   {
+				 lp->chgUB(vit->second,0.0);
+			   }
+		   }
 
-         solVarsOp.push_back( newVar );
-      }
+		   lp->setMIPScreenLog( 4 );
+		   lp->setNumIntSols(1);
+
+		   lp->writeProbLP( "SolverOperacional1" );
+
+		   lp->optimize(METHOD_MIP);
+   
+		   fflush(NULL);
+   
+		   double *x = new double[ lp->getNumCols() ];
+		   lp->getX( x );
+   
+		   writeOpSolBin( OutPutFileType::OP_BIN1, x );
+		   writeOpSolTxt( OutPutFileType::OP_BIN1, x );
+
+		   int *idxN = new int[ lp->getNumCols() ];
+
+		   vit = vHashOp.begin();
+		   for (; vit != vHashOp.end(); vit++ )
+		   {
+			   idxN[vit->second] = vit->second;
+
+			   VariableOp v = vit->first;
+			   if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+			   {
+				   lp->chgUB(vit->second,1.0);
+			   }
+		   }
+		   // ------------------------------------
+
+		   int maxTitulId = 5;
+		   if ( !problemData->parametros->min_doutores )
+		   {
+			   maxTitulId = 4;
+			   if ( !problemData->parametros->min_mestres )
+				   maxTitulId = 1;
+		   }
+
+		   map<int, double> cost;
+
+		   // ------------------------------------
+		   // Garantia de máximo atendimento
+		   std::cout<<"\n------------------------------------";
+		   std::cout<<"\nGarantia de máximo atendimento usando profs só virtuais de alta titulação\n\n"; fflush(NULL);
+
+		   vit = vHashOp.begin();
+		   for (; vit != vHashOp.end(); vit++ )
+		   {
+				VariableOp v = vit->first;
+				if(v.getType() != VariableOp::V_FOLGA_DEMANDA)
+				{
+					cost[vit->second] = lp->getObj(vit->second);
+					lp->chgObj(vit->second, 0.0);
+				}
+				else
+				{
+					cost[vit->second] = lp->getObj(vit->second);
+					lp->chgObj(vit->second, cost[vit->second]/100000.0);
+				}
+
+				if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && !v.getProfessor()->eVirtual() )
+					lp->chgUB(vit->second, 0.0);
+				else if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && v.getProfessor()->eVirtual() && v.getProfessor()->getTitulacaoId() != maxTitulId )
+				{
+					lp->chgUB(vit->second, 0.0);
+				}
+		   }
+   		  
+		   //lp->setMIPRelTol( 0.01 );
+		   lp->setMIPEmphasis(4);
+		   lp->setVarSel(4);
+		   lp->setNumIntSols(0);
+		   //lp->setCuts(0);
+		   lp->setNoCuts();
+		   lp->setMIPScreenLog( 4 );
+		   lp->setTimeLimit( 3600 );
+		   lp->setNodeLimit(3100);
+		   lp->setPolishAfterNode( 1 );
+		   lp->setPreSolve(OPT_TRUE);
+   
+		   lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
+
+		   lp->writeProbLP( "SolverOperacional2" );
+
+		   status = lp->optimize( METHOD_MIP );
+   
+		   lp->getX( x );
+   
+		   writeOpSolBin( OutPutFileType::OP_BIN2, x );
+		   writeOpSolTxt( OutPutFileType::OP_BIN2, x );
+   
+		   // ------------------------------------
+   
+		   /*FILE * fin = fopen( "solOpAtual.bin", "rb" );
+		   if ( fin == NULL )
+		   {
+			  std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+				 << "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
+		   }
+		   else
+		   {
+			  int nCols = 0;
+
+			  fread( &nCols, sizeof( int ), 1, fin );
+
+			  for ( int i = 0; i < nCols; i++ )
+			  {
+				 double auxR;
+				 fread( &auxR, sizeof( double ), 1, fin );
+
+				 x[ i ] = auxR;
+			  }
+
+			  fclose( fin );
+		   }*/
+
+		   /*FILE * fout2 = fopen( "solOpAtual.bin", "wb" );
+		   if ( fout2 == NULL )
+		   {
+			  std::cout << "\nErro em SolverMIP::solveTaticoBasicoCjtAlunos( int campusId, int prioridade, int cjtAlunosId ):"
+				 << "\nArquivo " << "solLBAtual.bin" << " nao pode ser aberto.\n";
+		   }
+		   else
+		   {
+			  int nCols = lp->getNumCols();
+
+			  fwrite( &nCols, sizeof( int ), 1, fout2 );
+			  for ( int i = 0; i < lp->getNumCols(); i++ )
+			  {
+				 fwrite( &( x[ i ] ), sizeof( double ), 1, fout2 );
+			  }
+
+			  fclose( fout2 );
+		   }*/
+
+		   std::cout<<"\n------------------------------------";
+		   std::cout<<"\nFixa máximo atendimento e volta pesos originais\n\n"; fflush(NULL);
+
+		   std::list<VariableOpHash::iterator> usedVars;
+		   vit = vHashOp.begin();
+		   for (; vit != vHashOp.end(); vit++ )
+		   {
+				VariableOp v = vit->first;
+				if(v.getType() == VariableOp::V_FOLGA_DEMANDA  && x[vit->second] < 0.1)
+					lp->chgUB(vit->second, 0.0);
+				else if(v.getType() == VariableOp::V_FOLGA_DEMANDA)
+					lp->chgLB(vit->second, 1.0);
+
+				if(v.getType() == VariableOp::V_X_PROF_AULA_HOR && x[vit->second] >= 0.1 )
+					usedVars.push_back(vit);
+				else if (v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+					lp->chgUB(vit->second,0.0);
+				if ( v.getType() == VariableOp::V_X_PROF_AULA_HOR )
+					lp->chgObj(vit->second, cost[vit->second]);
+		   }
+
+		   vit = vHashOp.begin();
+
+		   for (; vit != vHashOp.end(); vit++ )
+		   {
+			  VariableOp v = vit->first;
+			  if(v.getType() == VariableOp::V_X_PROF_AULA_HOR)
+			  {
+				 for (std::list<VariableOpHash::iterator>::iterator itL = usedVars.begin();
+					itL != usedVars.end();
+					itL++)
+				 {
+					VariableOpHash::iterator vit2 = *itL;
+
+					if ( vit2->first.getAula() == v.getAula() &&
+					   vit2->first.getCampus() == v.getCampus() &&
+					   vit2->first.getCurso() == v.getCurso() &&
+					   vit2->first.getDia() == v.getDia() &&
+					   vit2->first.getDisciplina() == v.getDisciplina() &&
+					   vit2->first.getH1() == v.getH1() &&
+					   vit2->first.getH2() == v.getH2() &&
+					   vit2->first.getHorario() == v.getHorario() &&
+					   vit2->first.getHorarioAula() == v.getHorarioAula() &&
+					   vit2->first.getHorarioDiaD() == v.getHorarioDiaD() &&
+					   vit2->first.getHorarioDiaD1() == v.getHorarioDiaD1() &&
+					   vit2->first.getSala() == v.getSala() &&
+					   vit2->first.getTurma() == v.getTurma() &&
+					   vit2->first.getUnidade() == v.getUnidade() ) // Só não compara o prof
+					{
+					   lp->chgUB(vit->second,1.0);
+					}
+				 }
+			  }
+	  
+			  lp->chgObj(vit->second, cost[vit->second]);
+		   }
+
+		   usedVars.clear();
+   
+		   lp->setMIPEmphasis(0);
+		   lp->setCuts(5);
+		   lp->setNodeLimit(10000000000);
+		   ///lp->setPolishAfterNode(1);
+		   lp->setPolishAfterTime(3600);
+		   lp->setTimeLimit(10*3600);
+
+		   lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
+
+		   lp->writeProbLP( "SolverOperacional3" );
+
+		   status = lp->optimize( METHOD_MIP );
+
+		   lp->getX( x );
+   
+		   writeOpSolBin( OutPutFileType::OP_BIN3, x );
+		   writeOpSolTxt( OutPutFileType::OP_BIN3, x );
+
+		   std::cout<<"\n------------------------------------";
+		   std::cout<<"\Maximo atendimento fixado e profs livres\n\n"; fflush(NULL);
+
+		   vit = vHashOp.begin();
+		   for (; vit != vHashOp.end(); vit++ )
+		   {
+			  VariableOp v = vit->first;
+
+			  if(v.getType() == VariableOp::V_X_PROF_AULA_HOR )
+				  lp->chgUB(vit->second, 1.0);
+
+			  // fixa cada prof para cada turma, deixando portanto so o horario livre para decidir
+			  //if ( v.getType() == VariableOp::V_Y_PROF_DISCIPLINA )
+			  //{
+			  //   if ( x[vit->second] > 0.1 )
+			  //      lp->chgLB(vit->second,1.0);
+			  //   else
+			  //      lp->chgUB(vit->second,0.0);
+			  //}
+
+			  lp->chgObj(vit->second, cost[vit->second]);
+		   }
+      
+		   lp->writeProbLP( "SolverOperacional" );
+
+		   lp->setMIPEmphasis(0);
+		   lp->setNoCuts();
+		   lp->setTimeLimit(2*3600);
+		   lp->setVarSel(4);
+		   //lp->setPolishAfterIntSol(1);
+		   lp->setPolishAfterTime(3600);
+		  // lp->setNumIntSols(0);
+		   lp->setNodeLimit(1000000000);
+   
+		   lp->copyMIPStartSol(lp->getNumCols(),idxN,x);
+
+		   status = lp->optimize( METHOD_MIP );
+    
+		   lp->getX( x );
+
+		   fflush(NULL);
+
+		   writeOpSolBin( OutPutFileType::OP_BIN, x );
+		   writeOpSolTxt( OutPutFileType::OP_BIN, x );
+
+		   delete [] x;
    }
 
-   fclose( fout );
-   delete [] x;
+   carregaSolucaoOperacional();
+
+   return status;
+}
+
+
+void SolverMIP::carregaSolucaoOperacional()
+{	
+   double * xSol = NULL;
+   
+   int nroColsLP = lp->getNumCols();
+   xSol = new double[ nroColsLP ];
+	
+	#pragma region Carrega solucao
+	if ( this->CARREGA_SOLUCAO )
+	{
+		int status = readOpSolBin( OutPutFileType::OP_BIN, xSol );
+		if ( !status )
+		{
+		   std::cout << "\nErro em SolverMIP::carregaSolucaoOperacional(): arquivo"
+					" nao encontrado.\n";
+			exit(0);
+		}
+	}
+	else
+	{
+		lp->getX( xSol );
+	}
+	#pragma endregion
+
+	FILE * fout = fopen( this->getSolucaoOpFileName( -1 ).c_str(), "wt" );
+
+	VariableOpHash::iterator vit;
+
+	vit = vHashOp.begin();
+	for (; vit != vHashOp.end(); vit++ )
+	{
+		VariableOp v = vit->first;
+
+		if ( xSol[ vit->second ] > 0.01 )
+		{
+			VariableOp * newVar = new VariableOp( v );
+
+			newVar->setValue( xSol[ vit->second ] );
+			if ( fout )
+			{
+				fprintf( fout, "%s = %f\n", v.toString().c_str(), xSol[ vit->second ] );
+			}
+
+			solVarsOp.push_back( newVar );
+		}
+	}
+	fclose(fout);
 
    geraProfessoresVirtuaisMIP();
 
-   return status;
 }
 
 void SolverMIP::relacionaProfessoresDisciplinas()

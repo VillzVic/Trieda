@@ -668,6 +668,7 @@ public:
 
    int solveOperacional();
    int solveOperacionalMIP();
+   void carregaSolucaoOperacional();
    void getSolutionOperacional();
    void getSolutionOperacionalMIP();
    void geraProfessoresVirtuaisMIP();
