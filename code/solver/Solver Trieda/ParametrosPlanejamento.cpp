@@ -125,6 +125,6 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
    considerar_equivalencia_por_aluno = considerar_equivalencia;
    considerar_equivalencia = false;
    
-   considerar_disponibilidade_prof_em_tatico = false;
+   considerar_disponibilidade_prof_em_tatico = true;
 
 }

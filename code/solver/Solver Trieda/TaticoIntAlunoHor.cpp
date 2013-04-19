@@ -88,7 +88,7 @@ void TaticoIntAlunoHor::solveTaticoIntegrado( int campusId, int prioridade, int 
 
 	std::cout<<"\nInvestigando nao atendimentos...\n";
 
-	investigandoNaoAtendimentos( campusId, prioridade, r );
+//	investigandoNaoAtendimentos( campusId, prioridade, r );
 
 	std::cout<<"\nSincronizando as solucoes...\n"; fflush(NULL);
 

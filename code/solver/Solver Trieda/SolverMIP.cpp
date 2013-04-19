@@ -862,7 +862,7 @@ std::string SolverMIP::getCliquesFileName( int campusId, int prioridade, int cjt
 
 void SolverMIP::writeSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol )
 {
-	char solName[1024];
+	char solName[1024]="\0";
 
 	switch (type)
 	{
@@ -926,7 +926,7 @@ void SolverMIP::writeSolBin( int campusId, int prioridade, int cjtAlunosId, int 
 
 int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol )
 {
-	char solName[1024];
+	char solName[1024]="\0";
 
 	switch (type)
 	{
@@ -1005,7 +1005,7 @@ int SolverMIP::readSolBin( int campusId, int prioridade, int cjtAlunosId, int r,
 
 void SolverMIP::writeSolTxt( int campusId, int prioridade, int cjtAlunosId, int r, int tatico, int type, double *xSol )
 {
-	char solName[1024];
+	char solName[1024]="\0";
 
 	switch (type)
 	{
@@ -1095,7 +1095,7 @@ void SolverMIP::writeSolTxt( int campusId, int prioridade, int cjtAlunosId, int 
 
 void SolverMIP::writeOpSolBin( int type, double *xSol )
 {
-	char solName[1024];
+	char solName[1024]="\0";
 
 	switch (type)
 	{
@@ -1137,7 +1137,7 @@ void SolverMIP::writeOpSolBin( int type, double *xSol )
 
 int SolverMIP::readOpSolBin( int type, double *xSol )
 {
-	char solName[1024];
+	char solName[1024]="\0";
 
 	switch (type)
 	{
@@ -1193,7 +1193,7 @@ int SolverMIP::readOpSolBin( int type, double *xSol )
 
 void SolverMIP::writeOpSolTxt( int type, double *xSol )
 {
-	char solName[1024];
+	char solName[1024]="\0";
 
 	switch (type)
 	{
@@ -12981,16 +12981,20 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 							AtendimentoOferta * atendimento_oferta = new AtendimentoOferta(
 							   this->problemSolution->getIdAtendimentos() );
 												
+							bool EQUIV;
+
 							if ( problemData->parametros->considerar_equivalencia_por_aluno && discOriginal != aula->getDisciplina() )
 							{
 								atendimento_oferta->setDisciplinaSubstitutaId( aula->getDisciplina()->getId() );
 								atendimento_oferta->setDisciplinaId( discOriginal->getId() );
 								atendimento_oferta->disciplina = discOriginal;								
+								EQUIV = true;
 							}
 							else
 							{
 								atendimento_oferta->setDisciplinaId( aula->getDisciplina()->getId() );
 								atendimento_oferta->disciplina = aula->getDisciplina();
+								EQUIV = false;
 							}
 
 							atendimento_oferta->setId( oferta->getId() );
@@ -13009,30 +13013,63 @@ void SolverMIP::preencheOutputOperacionalMIP( ProblemSolution * solution )
 								if ( itAlunoDemanda->demanda->oferta != oferta )
 									continue;
 
-								if ( ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == itAlunoDemanda->demanda->disciplina ) || //precisou desta primeira linha pq o operacional não esta criando as demandas substitutas, enquanto o tatico está
-									 ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == aula->getDisciplina() ) ||
-									 ( ( itAlunoDemanda->demandaOriginal != NULL && discOriginal != aula->getDisciplina() ) &&
-									   ( itAlunoDemanda->demandaOriginal->getDisciplinaId() == discOriginal->getId() ) ) )
+								if ( EQUIV )
 								{
-									n++;
-									if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )
-									{
-										int alunoId = itAlunoDemanda->getAlunoId();
-										int discId = - itAlunoDemanda->demanda->getDisciplinaId();
-										Aluno* aluno = problemData->retornaAluno( alunoId );
+									//precisou desta primeira linha pq o operacional não esta criando as demandas substitutas, enquanto o tatico está
+									if ( ( itAlunoDemanda->demandaOriginal == NULL && abs(discOriginal->getId()) == itAlunoDemanda->demanda->disciplina->getId()
+										   && discOriginal != aula->getDisciplina() ) ||
 
-										// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
-										// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
-										AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
-										if ( alunoDemanda != NULL )
-										{
-											atendimento_oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
-										}
-									}
-									else
+										 ( ( itAlunoDemanda->demandaOriginal != NULL && discOriginal != aula->getDisciplina() ) &&
+										 ( itAlunoDemanda->demandaOriginal->getDisciplinaId() == discOriginal->getId() ) ) )
 									{
-										atendimento_oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
-									}									
+										// Aluno que foi alocado por equivalência
+
+										n++;
+										if ( aula->getDisciplina()->getId() < 0 )								
+										{
+											int alunoId = itAlunoDemanda->getAlunoId();
+											int discId = abs( discOriginal->getId() );
+											Aluno* aluno = problemData->retornaAluno( alunoId );
+
+											// Disciplina pratica que teve seu AlunoDemanda criado internamente, pelo solver.
+											// Deve-se passar o AlunoDemanda original, que corresponde ao da disciplina teorica.
+											AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
+											if ( alunoDemanda != NULL )
+											{
+												atendimento_oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+											}
+										}
+										else
+										{
+											atendimento_oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+										}	
+									}
+								}
+								else
+								{
+									if ( itAlunoDemanda->demandaOriginal == NULL && discOriginal == aula->getDisciplina() 
+											&& abs(discOriginal->getId()) == itAlunoDemanda->demanda->disciplina->getId() )
+									{
+										// Aluno que pediu pela original
+
+										n++;
+										if ( itAlunoDemanda->demanda->getDisciplinaId() < 0 )								
+										{
+											int alunoId = itAlunoDemanda->getAlunoId();
+											int discId = - itAlunoDemanda->demanda->getDisciplinaId();
+											Aluno* aluno = problemData->retornaAluno( alunoId );
+
+											AlunoDemanda* alunoDemanda = aluno->getAlunoDemanda( discId );
+											if ( alunoDemanda != NULL )
+											{
+												atendimento_oferta->alunosDemandasAtendidas.add( alunoDemanda->getId() );
+											}
+										}
+										else
+										{
+											atendimento_oferta->alunosDemandasAtendidas.add( itAlunoDemanda->getId() );
+										}	
+									}
 								}
 							}
 							// -----
