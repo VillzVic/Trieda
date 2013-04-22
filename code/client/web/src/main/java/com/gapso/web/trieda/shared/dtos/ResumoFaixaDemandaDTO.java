@@ -20,6 +20,13 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_ATENDIMENTO_SOMA_ACUM = "atendimentoSomaAcum";
 	public static final String PROPERTY_ATENDIMENTO_ACUM_PERCENT = "atendimentoAcumPercent";
 	
+	public static final String PROPERTY_RECEITA_SEMANAL = "receitaSemanal";
+	public static final String PROPERTY_CUSTO_DOCENTE_SEMANAL = "custoDocenteSemanal";
+	public static final String PROPERTY_CUSTO_DOCENTE_POR_RECEITA_PERCENT = "custoDocentePorReceitaPercent";
+	public static final String PROPERTY_RECEITA_ACUMULADA = "receitaAcumulada";
+	public static final String PROPERTY_CUSTO_DOCENTE_ACUMULADO = "custoDocenteAcumulado";
+	public static final String PROPERTY_CUSTO_DOCENTE_POR_RECEITA_ACUMULADO_PERCENT = "custoDocentePorReceitaAcumuladoPercent";
+	
 	public ResumoFaixaDemandaDTO()
 	{
 		super();
@@ -119,6 +126,54 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 
 	public String getAtendimentoSomaAcumPercent() {
 		return get(PROPERTY_ATENDIMENTO_ACUM_PERCENT);
+	}
+	
+	public void setReceitaSemanal(Double value) {
+		set(PROPERTY_RECEITA_SEMANAL, value);
+	}
+
+	public Double getReceitaSemanal() {
+		return get(PROPERTY_RECEITA_SEMANAL);
+	}
+	
+	public void setCustoDocenteSemanal(Double value) {
+		set(PROPERTY_CUSTO_DOCENTE_SEMANAL, value);
+	}
+
+	public Double getCustoDocenteSemanal() {
+		return get(PROPERTY_CUSTO_DOCENTE_SEMANAL);
+	}
+	
+	public void setCustoDocentePorReceitaPercent(String value) {
+		set(PROPERTY_CUSTO_DOCENTE_POR_RECEITA_PERCENT, value);
+	}
+
+	public String getCustoDocentePorReceitaPercent() {
+		return get(PROPERTY_CUSTO_DOCENTE_POR_RECEITA_PERCENT);
+	}
+	
+	public void setReceitaAcumulada(Double value) {
+		set(PROPERTY_RECEITA_ACUMULADA, value);
+	}
+
+	public Double getReceitaAcumulada() {
+		return get(PROPERTY_RECEITA_ACUMULADA);
+	}
+	
+	public void setCustoDocenteAcumulado(Double value) {
+		set(PROPERTY_CUSTO_DOCENTE_ACUMULADO, value);
+	}
+
+	public Double getCustoDocenteAcumulado() {
+		return get(PROPERTY_CUSTO_DOCENTE_ACUMULADO);
+	}
+	
+	public void setCustoDocentePorReceitaAcumuladoPercent(String value) {
+		set(PROPERTY_CUSTO_DOCENTE_POR_RECEITA_ACUMULADO_PERCENT, value);
+	}
+
+	public String getCustoDocentePorReceitaAcumuladoPercent() {
+		return get(PROPERTY_CUSTO_DOCENTE_POR_RECEITA_ACUMULADO_PERCENT);
 	}
 	
 	public void setCampusNome(String value) {

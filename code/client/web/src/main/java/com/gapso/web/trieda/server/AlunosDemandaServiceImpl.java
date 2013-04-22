@@ -389,7 +389,7 @@ public class AlunosDemandaServiceImpl
 		
 		boolean ehTatico = false;
 		
-		int numLinhas = 7;
+		int numLinhas = 6;//int numLinhas = 7;
 		
 		Campus campus = null;
 		
@@ -421,7 +421,7 @@ public class AlunosDemandaServiceImpl
 		double[] mediaTurma = {0, 0, 0, 0, 0, 0, 0};
 		int[] demandaP1Acum = {0, 0, 0, 0, 0, 0, 0};
 		int[] atendimentoSomaAcum = {0, 0, 0, 0, 0, 0, 0};
-		
+		double[] receita = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		
 		List< Disciplina > disciplinas100 = new ArrayList< Disciplina >();
 		List< Disciplina > disciplinas75 = new ArrayList< Disciplina >();
@@ -433,6 +433,7 @@ public class AlunosDemandaServiceImpl
 		for ( ResumoMatriculaDTO disciplina : disciplinas )
 		{
 			if ( disciplina.getDisDemandaP1() > 100 )
+			//if ( (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) > 100 )
 			{
 				demandaP1[0] += disciplina.getDisDemandaP1();
 				atendimentoP1[0] += disciplina.getDisAtendidosP1();
@@ -440,6 +441,7 @@ public class AlunosDemandaServiceImpl
 				disciplinas100.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
 			else if (76 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 100 )
+			//else if (76 <= (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) && (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) <= 100 )
 			{
 				demandaP1[1] += disciplina.getDisDemandaP1();
 				atendimentoP1[1] += disciplina.getDisAtendidosP1();
@@ -447,6 +449,7 @@ public class AlunosDemandaServiceImpl
 				disciplinas75.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
 			else if (51 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 75 )
+			//else if (51 <= (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) && (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) <= 75 )
 			{
 				demandaP1[2] += disciplina.getDisDemandaP1();
 				atendimentoP1[2] += disciplina.getDisAtendidosP1();
@@ -454,35 +457,47 @@ public class AlunosDemandaServiceImpl
 				disciplinas50.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
 			else if (31 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 50 )
+			//else if (31 <= (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) && (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) <= 50 )
 			{
 				demandaP1[3] += disciplina.getDisDemandaP1();
 				atendimentoP1[3] += disciplina.getDisAtendidosP1();
 				atendimentoSoma[3] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas30.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if (21 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 30 )
+			else if (14 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 30 )
+			//else if (14 <= (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) && (disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) <= 30 )
 			{
 				demandaP1[4] += disciplina.getDisDemandaP1();
 				atendimentoP1[4] += disciplina.getDisAtendidosP1();
 				atendimentoSoma[4] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas20.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if (10 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 20 )
+			else if (disciplina.getDisDemandaP1() <= 14 )
+			//else if ((disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2()) <= 14 )
 			{
 				demandaP1[5] += disciplina.getDisDemandaP1();
 				atendimentoP1[5] += disciplina.getDisAtendidosP1();
 				atendimentoSoma[5] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
 				disciplinas10.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
 			}
-			else if ( disciplina.getDisDemandaP1() < 10 )
-			{
-				demandaP1[6] += disciplina.getDisDemandaP1();
-				atendimentoP1[6] += disciplina.getDisAtendidosP1();
-				atendimentoSoma[6] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
-				disciplinas0.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
-			}
+//			else if (10 <= disciplina.getDisDemandaP1() && disciplina.getDisDemandaP1() <= 20 )
+//			{
+//				demandaP1[5] += disciplina.getDisDemandaP1();
+//				atendimentoP1[5] += disciplina.getDisAtendidosP1();
+//				atendimentoSoma[5] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
+//				disciplinas10.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
+//			}
+//			else if ( disciplina.getDisDemandaP1() < 10 )
+//			{
+//				demandaP1[6] += disciplina.getDisDemandaP1();
+//				atendimentoP1[6] += disciplina.getDisAtendidosP1();
+//				atendimentoSoma[6] += disciplina.getDisAtendidosP1() + disciplina.getDisAtendidosP2();
+//				disciplinas0.add( codigoMapDisciplina.get( disciplina.getCodDisciplina() ) );
+//			}
 		}
 		
+		double custoDocenteSemanalAcum = 0.0;
+		double receitaAcum = 0.0;
 		for ( int i = 0; i < numLinhas; i++ )
 		{
 			ResumoFaixaDemandaDTO resumoFaixaDemandaDTO = new ResumoFaixaDemandaDTO();
@@ -498,11 +513,13 @@ public class AlunosDemandaServiceImpl
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas100 );
 						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas100 );
+						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas100 );
 					}
 					else
 					{
 						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas100 );
 						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas100 );
+						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas100 );
 					}
 					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
 					demandaP1Acum[i] = demandaP1[i];
@@ -514,11 +531,13 @@ public class AlunosDemandaServiceImpl
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas75 );
 						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas75 );
+						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas75 );
 					}
 					else
 					{
 						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas75 );
 						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas75 );
+						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas75 );
 					}
 					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
 					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
@@ -530,11 +549,13 @@ public class AlunosDemandaServiceImpl
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas50 );
 						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas50 );
+						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas50 );
 					}
 					else
 					{
 						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas50 );
 						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas50 );
+						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas50 );
 					}
 					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
 					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
@@ -546,67 +567,98 @@ public class AlunosDemandaServiceImpl
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas30 );
 						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas30 );
+						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas30 );
 					}
 					else
 					{
 						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas30 );
 						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas30 );
+						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas30 );
 					}
 					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
 					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
 					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
 					break;
 				case 4:
-					resumoFaixaDemandaDTO.setDemandaDisc("Entre 21 e 30 alunos");
+					resumoFaixaDemandaDTO.setDemandaDisc("Entre 14 e 30 alunos");
 					if ( ehTatico )
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas20 );
 						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas20 );
+						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas20 );
 					}
 					else
 					{
 						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas20 );
 						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas20 );
+						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas20 );
 					}
 					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
 					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
 					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
 					break;
 				case 5:
-					resumoFaixaDemandaDTO.setDemandaDisc("Entre 10 e 20 alunos");
+					resumoFaixaDemandaDTO.setDemandaDisc("Abaixo de 14 alunos");
 					if ( ehTatico )
 					{
 						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
 						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas10 );
 					}
 					else
 					{
 						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
 						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas10 );
 					}
 					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
 					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
 					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
 					break;
-				case 6:
-					resumoFaixaDemandaDTO.setDemandaDisc("Abaixo de 10 alunos");
-					if ( ehTatico )
-					{
-						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
-						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
-					}
-					else
-					{
-						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
-						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
-					}
-					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
-					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
-					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
-					break;
+//				case 5:
+//					resumoFaixaDemandaDTO.setDemandaDisc("Entre 10 e 20 alunos");
+//					if ( ehTatico )
+//					{
+//						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+//						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+//						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+//					}
+//					else
+//					{
+//						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+//						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+//						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas10 );
+//					}
+//					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
+//					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
+//					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
+//					break;
+//				case 6:
+//					resumoFaixaDemandaDTO.setDemandaDisc("Abaixo de 10 alunos");
+//					if ( ehTatico )
+//					{
+//						creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
+//						turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
+//						receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas0 );
+//					}
+//					else
+//					{
+//						creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
+//						turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, disciplinas0 );
+//						receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, disciplinas0 );
+//					}
+//					mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
+//					demandaP1Acum[i] = demandaP1[i] + demandaP1Acum[i-1];
+//					atendimentoSomaAcum[i] = atendimentoSoma[i] + atendimentoSomaAcum[i-1];
+//					break;
 			}
 			
 			double atendimentoSomaAcumPercent = ( (double)atendimentoSomaAcum[i] ) / demandaP1Acum[i];
+			double custoDocenteSemanal = (double)creditosPagos[i] * campus.getValorCredito() * 4.5 * 6;
+			double custoDocentePorReceitaPercent = custoDocenteSemanal / receita[i];
+			custoDocenteSemanalAcum += custoDocenteSemanal;
+			receitaAcum += receita[i];
+			double custoDocentePorReceitaAcumPercent = custoDocenteSemanalAcum / receitaAcum;
 			
 			resumoFaixaDemandaDTO.setCampusNome( campus.getNome() );
 			resumoFaixaDemandaDTO.setDemandaP1( demandaP1[i] );
@@ -620,6 +672,12 @@ public class AlunosDemandaServiceImpl
 			resumoFaixaDemandaDTO.setDemandaAcumP1( demandaP1Acum[i] );
 			resumoFaixaDemandaDTO.setAtendimentoSomaAcum( atendimentoSomaAcum[i] );
 			resumoFaixaDemandaDTO.setAtendimentoSomaAcumPercent( TriedaUtil.round(atendimentoSomaAcumPercent*100.0,2)+"%" );
+			resumoFaixaDemandaDTO.setReceitaSemanal(TriedaUtil.round(receita[i],2));
+			resumoFaixaDemandaDTO.setCustoDocenteSemanal( TriedaUtil.round(custoDocenteSemanal,2) );
+			resumoFaixaDemandaDTO.setCustoDocentePorReceitaPercent(TriedaUtil.round(custoDocentePorReceitaPercent*100.0,2)+"%" );
+			resumoFaixaDemandaDTO.setReceitaAcumulada(TriedaUtil.round(receitaAcum,2));
+			resumoFaixaDemandaDTO.setCustoDocenteAcumulado( TriedaUtil.round(custoDocenteSemanalAcum,2) );
+			resumoFaixaDemandaDTO.setCustoDocentePorReceitaAcumuladoPercent(TriedaUtil.round(custoDocentePorReceitaAcumPercent*100.0,2)+"%" );
 			
 			result.add( resumoFaixaDemandaDTO );
 		}
