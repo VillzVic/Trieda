@@ -132,11 +132,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
 				System.out.print("Checando disciplinas repetidas por curriculo");start = System.currentTimeMillis(); // TODO: retirar
-				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors);
+				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors,warnings);
 				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			} else {
 				System.out.print("Checando creditos semanais e disciplinas repetidas por aluno");start = System.currentTimeMillis(); // TODO: retirar
-				checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors);
+				checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(parametro,getInstituicaoEnsinoUser(),errors,warnings);
 				time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			}
 
@@ -692,7 +692,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 	}
 	
-	private void checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
+	private void checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors, List<String> warnings) {
 		// obtém os currículos do campus selecionado para otimização
 		Set<Curriculo> curriculosDoCampusSelecionado = new HashSet<Curriculo>();
 		for (Campus campus : parametro.getCampi()) {
@@ -738,14 +738,14 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				}
 				
 				if (!periodosQueViolamMaxCreditosSemanais.isEmpty()) {
-					errors.add(HtmlUtils.htmlUnescape("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString()));
+					warnings.add(HtmlUtils.htmlUnescape("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString()));
 					System.out.println("Na matriz curricular [" + curriculo.getCodigo() + "] existem períodos que violam a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Período(TotalCréditos) = " + periodosQueViolamMaxCreditosSemanais.toString());
 				}
 			}
 		}
 	}
 	
-	private void checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors) {
+	private void checkMaxCreditosSemanaisPorAluno_e_DisciplinasRepetidasPorAluno(Parametro parametro, InstituicaoEnsino instituicaoEnsino, List<String> errors, List<String> warnings) {
 		boolean realizaVerificacaoSomenteParaDemandasDePrioridade1 = true;
 		
 		// obtém os alunos do campus selecionado para otimização
@@ -812,7 +812,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			}
 			
 			if (totalCreditosDoAluno > maxCreditosSemanais) {
-				errors.add(HtmlUtils.htmlUnescape("O aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] viola a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Total de créditos do aluno = " + totalCreditosDoAluno));
+				warnings.add(HtmlUtils.htmlUnescape("O aluno [" + aluno.getNome() + "] de matrícula [" + aluno.getMatricula() + "] viola a quantidade máxima de créditos semanais da Semana Letiva. Máximo de Créditos Semanais = " + maxCreditosSemanais + ". Total de créditos do aluno = " + totalCreditosDoAluno));
 			}
 		}
 	}
