@@ -220,11 +220,23 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		List< String > usedSheetsName, Workbook workbook )
 	{
 		Set< Sheet > usedSheets = new HashSet< Sheet >();
-		for ( String usedSheetName : usedSheetsName )
-		{
-			Sheet sheet = workbook.getSheet( usedSheetName );
-			if ( sheet != null )
-			{
+		
+		for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+			Sheet sheet = workbook.getSheetAt(sheetIndex);
+			
+			boolean isSheetUsed = false;
+			for (String usedSheetName : usedSheetsName) {
+				// é necessário utilizar o método contains no teste por conta da funcionalidade que utiliza
+				// mais de uma aba para exportar relatórios da versão XLS com mais do que 65.535 linhas, pois
+				// o nome das demais abas será o da aba original concatenado com "#1", "#2", ..., por exemplo, 
+				// "Demandas por Aluno", "Demandas por Aluno#1", "Demandas por Aluno#2", ...
+				if (sheet.getSheetName().contains(usedSheetName)) {
+					isSheetUsed = true;
+					break;
+				}
+			}
+			
+			if (isSheetUsed) {
 				usedSheets.add( sheet );
 			}
 		}
@@ -410,6 +422,30 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		final Row ssRow = getRow( row - 1, sheet );
 		final Cell cell = getCell( ssRow, ( col - 1 ) );
 		return cell;
+	}
+	
+	protected Sheet restructuringWorkbookIfRowLimitIsViolated(int actualRow, int numberOfRowsThatWillBeWritten, Sheet sheet) {
+		if ((actualRow + numberOfRowsThatWillBeWritten) >= 65536) {
+			Workbook workbook = sheet.getWorkbook();
+			
+			String sheetName = sheet.getSheetName();
+			String[] splitSheetName = sheetName.split("#");
+			String newSheetNamePart1 = splitSheetName[0];
+			String newSheetNamePart2 = "";
+			if (splitSheetName.length == 2) {
+				String s = splitSheetName[1];
+				int number = Integer.parseInt(s);
+				number++;
+				newSheetNamePart2 = Integer.toString(number);
+			} else {
+				newSheetNamePart2 = "1";
+			}
+			
+			Sheet newSheet = workbook.createSheet(newSheetNamePart1+"#"+newSheetNamePart2);
+			drawing = newSheet.createDrawingPatriarch();
+			return newSheet;
+		}
+		return null;
 	}
 	
 	private CreationHelper getCreationHelper(Workbook workbook) {

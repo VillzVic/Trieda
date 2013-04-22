@@ -151,14 +151,22 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
 		List<String> labelsDasLinhasDaGradeHoraria;
-		if (temInfoDeHorarios) {
-			labelsDasLinhasDaGradeHoraria = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+		List<String> hiDasLinhasDaGradeHoraria = new ArrayList<String>();
+		if (temInfoDeHorarios) { 
+			ParDTO<List<String>,List<String>> parDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			labelsDasLinhasDaGradeHoraria = parDTO.getPrimeiro();
+			hiDasLinhasDaGradeHoraria = parDTO.getSegundo();
 		} else {
 			labelsDasLinhasDaGradeHoraria = horariosDaGradeHoraria;
 		}
 		
 		// TODO: Utilizar ideia abaixo para generalizar impressão de mais de 65536 linhas em extensão XLS
 		// verifica se o max de linhas será extrapolado
+		Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,(labelsDasLinhasDaGradeHoraria.size()+12),sheet);
+		if (newSheet != null) {
+			row = this.initialRow;
+			sheet = newSheet;
+		}
 //		if ((row + labelsDasLinhasDaGradeHoraria.size() + 12) >= 65536) {
 //			//autoSizeColumns((short)1,(short)1,sheet);
 //			
@@ -215,7 +223,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
 				
 				if (temInfoDeHorarios) {
-					int index = horariosDeInicioDeAula.indexOf(aula.getHorarioAulaString());
+					int index = hiDasLinhasDaGradeHoraria.indexOf(aula.getHorarioAulaString());//int index = horariosDeInicioDeAula.indexOf(aula.getHorarioAulaString());
 					if (index != -1) {
 						row = initialRow + index;
 					}

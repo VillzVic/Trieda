@@ -158,6 +158,11 @@ public class AulasExportExcel extends AbstractExportExcel {
 						}
 						
 						/////////////////////////////////////////////////////////////////
+						Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+						if (newSheet != null) {
+							row = this.initialRow;
+							sheet = newSheet;
+						}
 						// Código Campus
 						int column = 2;
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getCampusString());

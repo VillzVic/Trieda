@@ -51,6 +51,7 @@ public class AlunosDemandaExportExcel
 	private CellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
+	private Sheet sheet;
 
 	public AlunosDemandaExportExcel(Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
@@ -107,15 +108,16 @@ public class AlunosDemandaExportExcel
 
 		if ( !alunosDemanda.isEmpty() )
 		{
-			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			this.sheet = workbook.getSheet( this.getSheetName() );
+			fillInCellStyles();
 			int nextRow = this.initialRow;
 
 			for ( AlunoDemanda alunoDemanda : alunosDemanda )
 			{
-				nextRow = writeData( alunoDemanda, nextRow, sheet );
+				nextRow = writeData( alunoDemanda, nextRow);
 			}
 
+			this.sheet = null;
 			result = true;
 		}
 
@@ -173,8 +175,14 @@ public class AlunosDemandaExportExcel
 		}		
 	}
 
-	private int writeData( AlunoDemanda alunoDemanda, int row, Sheet sheet )
+	private int writeData( AlunoDemanda alunoDemanda, int row)
 	{
+		Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+		if (newSheet != null) {
+			row = this.initialRow;
+			sheet = newSheet;
+		}
+		
 		// Codigo Campus
 		setCell( row, 2, sheet,
 			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
@@ -242,7 +250,7 @@ public class AlunosDemandaExportExcel
 		return row;
 	}
 
-	private void fillInCellStyles( Sheet sheet )
+	private void fillInCellStyles()
 	{
 		for ( ExcelCellStyleReference cellStyleReference
 			: ExcelCellStyleReference.values() )

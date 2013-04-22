@@ -134,6 +134,11 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 						
 						// para cada aluno na aula
 						for (AlunoDemandaDTO alunoDTO : aula.getAlunosDemandas()) {
+							Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+							if (newSheet != null) {
+								row = this.initialRow;
+								sheet = newSheet;
+							}
 							writeCells(row,alunoDTO,aula,horarioInicio,horarioFim);
 							row++;
 						}

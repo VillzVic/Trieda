@@ -54,6 +54,7 @@ public class AtendimentosMatriculaExportExcel
 	private CellStyle[] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
+	private Sheet sheet;
 	
 	public AtendimentosMatriculaExportExcel( Cenario cenario,
 			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
@@ -116,13 +117,15 @@ public class AtendimentosMatriculaExportExcel
 		if ( !resumoMatriculaDTOList.isEmpty() )
 		{
 			System.out.println(this.getSheetName());
-			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			this.sheet = workbook.getSheet( this.getSheetName() );
+			fillInCellStyles();
 			int nextRow = this.initialRow;
 			for ( ResumoMatriculaDTO resumoMatriculaDTO : resumoMatriculaDTOList )
 			{
-				nextRow = writeData( resumoMatriculaDTO, nextRow, sheet );
+				nextRow = writeData( resumoMatriculaDTO, nextRow);
 			}
+			
+			this.sheet = null;
 
 			result = true;
 		}
@@ -135,8 +138,14 @@ public class AtendimentosMatriculaExportExcel
 		return result;
 	}
 	
-	private int writeData( ResumoMatriculaDTO resumoMatriculaDTO, int row, Sheet sheet )
+	private int writeData( ResumoMatriculaDTO resumoMatriculaDTO, int row)
 	{
+		Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+		if (newSheet != null) {
+			row = this.initialRow;
+			sheet = newSheet;
+		}
+		
 		int i = 2;
 		// Campus
 		setCell( row, i++, sheet,
@@ -196,7 +205,7 @@ public class AtendimentosMatriculaExportExcel
 		return row;
 	}
 	
-	private void fillInCellStyles( Sheet sheet )
+	private void fillInCellStyles()
 	{
 		for ( ExcelCellStyleReference cellStyleReference
 			: ExcelCellStyleReference.values() )

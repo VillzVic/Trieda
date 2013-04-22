@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.dom.client.Style.Unit;
@@ -120,8 +121,9 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					temInfoDeHorarios = (atendimentoDTO.iterator().next().getHorarioAulaId() != null);
 					mdcTemposAula = result.getMdcTemposAula();
 					if (temInfoDeHorarios) {
-						horariosDeInicioDeAula.addAll(result.getHorariosDeInicioDeAula());
-						labelsDasLinhasDaGradeHoraria.addAll(GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(result.getLabelsDasLinhasDaGradeHoraria(),result.getHorariosDeInicioDeAula(),result.getHorariosDeFimDeAula()));
+						ParDTO<List<String>,List<String>> parDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(result.getLabelsDasLinhasDaGradeHoraria(),result.getHorariosDeInicioDeAula(),result.getHorariosDeFimDeAula());
+						labelsDasLinhasDaGradeHoraria.addAll(parDTO.getPrimeiro());
+						horariosDeInicioDeAula.addAll(parDTO.getSegundo());//horariosDeInicioDeAula.addAll(result.getHorariosDeInicioDeAula());
 					} else {
 						labelsDasLinhasDaGradeHoraria.addAll(result.getLabelsDasLinhasDaGradeHoraria());
 					}
@@ -204,6 +206,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				if (colIndex == 0) {
 					Html html = new Html(model.getDisplay());
 					html.setStyleAttribute("line-height", tamanhoLinhaGradeHorariaEmPixels - 2 + "px");
+					html.setStyleAttribute("margin-top", "-4px");
 					return html;
 				}
 
