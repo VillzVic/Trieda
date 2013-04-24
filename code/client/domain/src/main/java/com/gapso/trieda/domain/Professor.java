@@ -367,33 +367,34 @@ public class Professor
 	}
 	
 	@Transactional
-	static public void atualizaHorariosDosProfessores(Map<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>> disponibilidadeToProfessoresMap, List<SemanaLetiva> semanasLetivas) {
+	static public void atualizaHorariosDosProfessores(Map<Professor, List<TriedaTrio<Semanas,Calendar,Calendar>>> professoreToDisponibilidadesMap, List<SemanaLetiva> semanasLetivas) {
 		// coleta os professores disponíveis por dia da semana e tempo de aula
 		int count = 0;
 		Map<HorarioDisponivelCenario, Set<Professor>> hdcToProfessorMap = new HashMap<HorarioDisponivelCenario, Set<Professor>>();
-		for (Entry<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>> entry : disponibilidadeToProfessoresMap.entrySet()) {
-			TriedaTrio<Semanas,Calendar,Calendar> disponibilidade = entry.getKey();
-			List<Professor> professores = entry.getValue();			
+		for (Entry<Professor, List<TriedaTrio<Semanas,Calendar,Calendar>>> entry : professoreToDisponibilidadesMap.entrySet()) {
+			List<TriedaTrio<Semanas,Calendar,Calendar>> disponibilidades = entry.getValue();
+			Professor professor = entry.getKey();
 			for (SemanaLetiva semanaLetiva : semanasLetivas) {
 				// para cada tempo de aula
 				for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-					// verifica se o intervalo de horas é compatível
-					boolean horarioAulaEstahContidoEmDisponibilidade = horarioAula.estahContidoEm(disponibilidade.getSegundo(),disponibilidade.getTerceiro()); 
-					// para cada dia da semana
-					for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
-						Set<Professor> professoresDisponiveisNoDiaEHorario = hdcToProfessorMap.get(hdc);
-						if (professoresDisponiveisNoDiaEHorario == null) {
-							professoresDisponiveisNoDiaEHorario = new HashSet<Professor>();
-							hdcToProfessorMap.put(hdc,professoresDisponiveisNoDiaEHorario);
+					for (TriedaTrio<Semanas,Calendar,Calendar> trio : disponibilidades){
+						// verifica se o intervalo de horas é compatível
+						boolean horarioAulaEstahContidoEmDisponibilidade = horarioAula.estahContidoEm(trio.getSegundo(),trio.getTerceiro()); 
+						// para cada dia da semana
+						for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+							Set<Professor> professoresDisponiveisNoDiaEHorario = hdcToProfessorMap.get(hdc);
+							if (professoresDisponiveisNoDiaEHorario == null) {
+								professoresDisponiveisNoDiaEHorario = new HashSet<Professor>();
+								hdcToProfessorMap.put(hdc,professoresDisponiveisNoDiaEHorario);
+							}
+							
+							// verifica se o dia da semana é compatível
+							if (horarioAulaEstahContidoEmDisponibilidade && hdc.getDiaSemana().equals(trio.getPrimeiro())) {
+								professoresDisponiveisNoDiaEHorario.add(professor);
+							}
 						}
-						
-						// verifica se o dia da semana é compatível
-						if (horarioAulaEstahContidoEmDisponibilidade && hdc.getDiaSemana().equals(disponibilidade.getPrimeiro())) {
-							professoresDisponiveisNoDiaEHorario.addAll(professores);
-						}
-						
-						count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
 					}
+					count++;if (count == 100) {System.out.println("   100 horários de professores processados"); count = 0;}
 				}
 			}
 		}

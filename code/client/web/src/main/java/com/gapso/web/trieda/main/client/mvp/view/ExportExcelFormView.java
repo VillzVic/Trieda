@@ -174,7 +174,7 @@ public class ExportExcelFormView
 		left.add(professoresExportExcelCB, formData);
 		
 		disponibilidadesProfessoresExportExcelCB = new CheckBox();
-		disponibilidadesProfessoresExportExcelCB.setName("disponibilidadeProfessores");
+		disponibilidadesProfessoresExportExcelCB.setName(PlanilhasExportExcel.DISPONIBILIDADES_PROFESSORES);
 		disponibilidadesProfessoresExportExcelCB.setValue(false);
 		disponibilidadesProfessoresExportExcelCB.setFieldLabel("Disponibilidades Professores");
 		left.add(disponibilidadesProfessoresExportExcelCB, formData);

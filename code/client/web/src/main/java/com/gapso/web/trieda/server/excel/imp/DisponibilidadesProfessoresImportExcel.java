@@ -163,17 +163,27 @@ public class DisponibilidadesProfessoresImportExcel extends AbstractImportExcel<
 	private void updateDataBase(String sheetName, List<DisponibilidadesProfessoresImportExcelBean> sheetContent) {
 		int count = 0, total = sheetContent.size();
 		System.out.print(" " + total);
-		
-		Map<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>> disponibilidadeToProfessoresMap = new HashMap<TriedaTrio<Semanas,Calendar,Calendar>,List<Professor>>();
+
+		Map<Professor, List<TriedaTrio<Semanas,Calendar,Calendar>>> professoreToDisponibilidadesMap = new HashMap<Professor, List<TriedaTrio<Semanas,Calendar,Calendar>>>();
 		for (DisponibilidadesProfessoresImportExcelBean bean : sheetContent) {
 			TriedaTrio<Semanas,Calendar,Calendar> disponibilidade = TriedaTrio.create(bean.getDiaSemana(),bean.getHorarioInicial(),bean.getHorarioFinal());
-			
-			List<Professor> professores = disponibilidadeToProfessoresMap.get(disponibilidade);
-			if (professores == null) {
-				professores = new ArrayList<Professor>();
-				disponibilidadeToProfessoresMap.put(disponibilidade,professores);
+
+			if (professoreToDisponibilidadesMap.containsKey(bean.getProfessor())) {
+				Boolean concatenouHorario = false;
+				for (TriedaTrio<Semanas,Calendar,Calendar> trio : professoreToDisponibilidadesMap.get(bean.getProfessor()) ) {
+					if (trio.getTerceiro().equals(disponibilidade.getSegundo())) {
+						trio.setTerceiro(disponibilidade.getTerceiro());
+						concatenouHorario = true;
+					}
+				}
+				if (!concatenouHorario)
+					professoreToDisponibilidadesMap.get(bean.getProfessor()).add(disponibilidade);
 			}
-			professores.add(bean.getProfessor());
+			else {
+				List<TriedaTrio<Semanas,Calendar,Calendar>> trios = new ArrayList<TriedaTrio<Semanas,Calendar,Calendar>>();
+				trios.add(disponibilidade);
+				professoreToDisponibilidadesMap.put(bean.getProfessor(), trios);
+			}
 
 			count++;
 			total--;
@@ -182,10 +192,10 @@ public class DisponibilidadesProfessoresImportExcel extends AbstractImportExcel<
 				count = 0;
 			}
 		}
-
-		if (!disponibilidadeToProfessoresMap.isEmpty()) {
+		
+		if (!professoreToDisponibilidadesMap.isEmpty()) {
 			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
-			Professor.atualizaHorariosDosProfessores(disponibilidadeToProfessoresMap,semanasLetivas);
+			Professor.atualizaHorariosDosProfessores(professoreToDisponibilidadesMap,semanasLetivas);
 		}
 	}
 
