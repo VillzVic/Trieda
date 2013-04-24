@@ -96,7 +96,7 @@ public class AlunosDemandaExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		boolean result = false;
 		
@@ -108,8 +108,14 @@ public class AlunosDemandaExportExcel
 
 		if ( !alunosDemanda.isEmpty() )
 		{
-			this.sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles();
+			this.sheet = workbook.getSheet(this.getSheetName());
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 
 			for ( AlunoDemanda alunoDemanda : alunosDemanda )
@@ -250,7 +256,7 @@ public class AlunosDemandaExportExcel
 		return row;
 	}
 
-	private void fillInCellStyles()
+	private void fillInCellStyles(Sheet sheet)
 	{
 		for ( ExcelCellStyleReference cellStyleReference
 			: ExcelCellStyleReference.values() )

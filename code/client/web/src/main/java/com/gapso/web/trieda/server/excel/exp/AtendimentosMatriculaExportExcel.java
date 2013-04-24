@@ -101,7 +101,7 @@ public class AtendimentosMatriculaExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		boolean result = false;
 
@@ -118,7 +118,13 @@ public class AtendimentosMatriculaExportExcel
 		{
 			System.out.println(this.getSheetName());
 			this.sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles();
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 			for ( ResumoMatriculaDTO resumoMatriculaDTO : resumoMatriculaDTOList )
 			{
@@ -205,7 +211,7 @@ public class AtendimentosMatriculaExportExcel
 		return row;
 	}
 	
-	private void fillInCellStyles()
+	private void fillInCellStyles(Sheet sheet)
 	{
 		for ( ExcelCellStyleReference cellStyleReference
 			: ExcelCellStyleReference.values() )

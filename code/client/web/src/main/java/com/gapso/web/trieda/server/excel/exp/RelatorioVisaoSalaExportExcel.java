@@ -117,8 +117,8 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 	
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook){
-		return this.<List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>>>fillInExcelImpl(workbook);
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook){
+		return this.<List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>>>fillInExcelImpl(workbook, templateWorkbook);
 	}
 
 	@SuppressWarnings("unchecked")

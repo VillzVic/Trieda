@@ -93,7 +93,7 @@ public class CurriculosExportExcelWithMergedCells
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< Curriculo > curriculo
 			= Curriculo.findByCenario( this.instituicaoEnsino, getCenario() );
@@ -106,7 +106,13 @@ public class CurriculosExportExcelWithMergedCells
 			}
 
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 
 			for ( Curriculo c : curriculo )

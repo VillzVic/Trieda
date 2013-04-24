@@ -78,7 +78,7 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< AreaTitulacao > areas
 			= AreaTitulacao.findAll( this.instituicaoEnsino );
@@ -91,7 +91,13 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 			}
 
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 
 			for ( AreaTitulacao area : areas )

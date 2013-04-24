@@ -56,6 +56,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	
 	protected CellStyle [] cellStyles;
 	protected Sheet sheet;
+	protected Sheet templateSheet;
 	protected Map<Long,CellStyle> codigoDisciplinaToColorMap;
 	protected List<CellStyle> excelColorsPool;
 	protected boolean removeUnusedSheets;
@@ -72,7 +73,12 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		this.cellStyles = new CellStyle[ExcelCellStyleReference.values().length];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.codigoDisciplinaToColorMap = new HashMap<Long,CellStyle>();
-		this.initialRow = 5;
+		if (isXls()) {
+			this.initialRow = 5;
+		}
+		else {
+			this.initialRow = 10;
+		}
 
 		this.setFilter(filter);
 	}
@@ -123,7 +129,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		
 	}
 
-	protected <T> boolean fillInExcelImpl(Workbook workbook){
+	protected <T> boolean fillInExcelImpl(Workbook workbook, Workbook templateWorkbook){
 		boolean result = false;
 		
 		T structureControl = this.<T>getStructureReportControl();
@@ -132,16 +138,23 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 			sheet = workbook.getSheet(this.getSheetName());
 			
 			// monta estruturas de estilos
-			fillInCellStyles();
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			buildColorPaletteCellStyles(workbook);
 			
 			processStructureReportControl(structureControl);
 			
 			result = true;
 			
-			autoSizeColumns((short)1,(short)1,sheet);
+			if (isXls())
+				autoSizeColumns((short)1,(short)1,sheet);
 		}
-
+		
 		if(this.removeUnusedSheets) removeUnusedSheets(this.getSheetName(), workbook);
 
 		return result;
@@ -149,7 +162,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 	
 	protected int writeAulas(List<AtendimentoRelatorioDTO> aulas, int row, int mdcTemposAula, boolean temInfoDeHorarios, 
 				List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
-	{
+	{		
 		List<String> labelsDasLinhasDaGradeHoraria;
 		List<String> hiDasLinhasDaGradeHoraria = new ArrayList<String>();
 		if (temInfoDeHorarios) { 
@@ -162,10 +175,12 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		
 		// TODO: Utilizar ideia abaixo para generalizar impressão de mais de 65536 linhas em extensão XLS
 		// verifica se o max de linhas será extrapolado
-		Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,(labelsDasLinhasDaGradeHoraria.size()+12),sheet);
-		if (newSheet != null) {
-			row = this.initialRow;
-			sheet = newSheet;
+		if (isXls()){
+			Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,(labelsDasLinhasDaGradeHoraria.size()+12),sheet);
+			if (newSheet != null) {
+				row = this.initialRow;
+				sheet = newSheet;
+			}
 		}
 //		if ((row + labelsDasLinhasDaGradeHoraria.size() + 12) >= 65536) {
 //			//autoSizeColumns((short)1,(short)1,sheet);
@@ -245,7 +260,9 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 				setCell(row, col, sheet, style, HtmlUtils.htmlUnescape(contentString), HtmlUtils.htmlUnescape(contentToolTipString));
 				// une células de acordo com a quantidade de créditos da aula
 				int rowF = row + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula - 1;
-				mergeCells(row, rowF, col, col, sheet, style);
+				if ( (row != rowF)){
+					mergeCells(row, rowF, col, col, sheet, style);
+				}
 				
 				// fornece a oportunidade das classes concretas executarem algum processamento relacionado com aula durante a escrita da aula
 				onWriteAula(row,col,aula);
@@ -322,7 +339,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		return ++row;
 	}
 	
-	protected void fillInCellStyles(){
+	protected void fillInCellStyles(Sheet sheet){
 		for(ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()){
 			this.cellStyles[cellStyleReference.ordinal()] = 
 				getCell(cellStyleReference.getRow(), cellStyleReference.getCol(), sheet).getCellStyle();

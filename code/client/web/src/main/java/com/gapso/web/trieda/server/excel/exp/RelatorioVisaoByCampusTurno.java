@@ -89,8 +89,8 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 	
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook){
-		return this.<RelatorioVisaoMap<Campus, Turno, ?>>fillInExcelImpl(workbook);
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook){
+		return this.<RelatorioVisaoMap<Campus, Turno, ?>>fillInExcelImpl(workbook, templateWorkbook);
 	}
 	
 	@Override

@@ -93,7 +93,7 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook) {
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
 		List<Oferta> ofertas = Oferta.findByCenario(instituicaoEnsino,getCenario());
 		Map<Demanda,Map<Atendimento,List<Aluno>>> demandaToAlunosPorAtendimentosMap = getMapDemandaToAlunosPorAtendimento(ofertas);
 
@@ -103,7 +103,13 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 			}
 
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			fillInCellStyles(sheet);
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			
 			int nextRow = this.initialRow;
 			for(Demanda demanda: demandaToAlunosPorAtendimentosMap.keySet()){

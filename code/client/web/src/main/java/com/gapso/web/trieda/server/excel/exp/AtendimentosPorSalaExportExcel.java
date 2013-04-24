@@ -88,7 +88,7 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook) {
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
 		RelatorioVisaoSalaExportExcel visaoSalaExpExcel = new RelatorioVisaoSalaExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino, fileExtension) {
 			@Override
 			protected int writeHeader(List<List<ParDTO<String,?>>> rowsHeadersPairs, int row, boolean ehTatico) {
@@ -134,10 +134,12 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 						
 						// para cada aluno na aula
 						for (AlunoDemandaDTO alunoDTO : aula.getAlunosDemandas()) {
-							Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
-							if (newSheet != null) {
-								row = this.initialRow;
-								sheet = newSheet;
+							if (isXls()){
+								Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+								if (newSheet != null) {
+									row = this.initialRow;
+									sheet = newSheet;
+								}
 							}
 							writeCells(row,alunoDTO,aula,horarioInicio,horarioFim);
 							row++;
@@ -197,7 +199,13 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 			}
 			
 			visaoSalaExpExcel.sheet = workbook.getSheet(this.getSheetName());
-			fillInCellStyles(visaoSalaExpExcel.sheet);
+			if (isXls()) {
+				fillInCellStyles(visaoSalaExpExcel.sheet);
+			}
+			else {
+				visaoSalaExpExcel.templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(visaoSalaExpExcel.templateSheet);
+			}
 			visaoSalaExpExcel.buildColorPaletteCellStyles(workbook);
 			visaoSalaExpExcel.initialRow = 7;
 			visaoSalaExpExcel.processStructureReportControl(structureReportControl);

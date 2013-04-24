@@ -88,7 +88,7 @@ public class UnidadesExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< Unidade > unidades = Unidade.findByCenario(
 		 	this.instituicaoEnsino, getCenario() );
@@ -98,7 +98,13 @@ public class UnidadesExportExcel
 				removeUnusedSheets(this.getSheetName(),workbook);
 			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			fillInCellStyles(sheet);
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 			for ( Unidade u : unidades )
 			{

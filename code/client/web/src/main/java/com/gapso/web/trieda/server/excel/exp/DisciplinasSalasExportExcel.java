@@ -49,6 +49,7 @@ public class DisciplinasSalasExportExcel
 	}
 
 	private CellStyle [] cellStyles;
+	private Sheet sheet;
 	private boolean removeUnusedSheets;
 	private int initialRow;
 
@@ -95,7 +96,7 @@ public class DisciplinasSalasExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< Sala > salas = Sala.findByCenario(
 			this.instituicaoEnsino, getCenario() );
@@ -107,13 +108,19 @@ public class DisciplinasSalasExportExcel
 				removeUnusedSheets( this.getSheetName(), workbook );
 			}
 
-			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			sheet = workbook.getSheet( this.getSheetName() );
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 
 			int nextRow = this.initialRow;
 			for ( Sala sala : salas )
 			{
-				nextRow = writeData( sala, nextRow, sheet );
+				nextRow = writeData( sala, nextRow );
 			}
 
 			return true;
@@ -122,7 +129,7 @@ public class DisciplinasSalasExportExcel
 		return false;
 	}
 
-	private int writeData( Sala sala, int row, Sheet sheet )
+	private int writeData( Sala sala, int row )
 	{
 		// Agrupa as informações por período
 		Map< Integer, List< CurriculoDisciplina > > periodoToCurriculosDisciplinasMap
@@ -149,6 +156,13 @@ public class DisciplinasSalasExportExcel
 			for ( CurriculoDisciplina disciplinaDeUmPeriodo :
 					periodoToCurriculosDisciplinasMap.get( periodo ) )
 			{
+				if (isXls()){
+					Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+					if (newSheet != null) {
+						row = this.initialRow;
+						sheet = newSheet;
+					}
+				}
 				// Sala
 				setCell( row, 2, sheet,
 					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], sala.getCodigo() );

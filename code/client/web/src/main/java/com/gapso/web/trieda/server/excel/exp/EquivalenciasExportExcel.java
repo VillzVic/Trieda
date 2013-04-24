@@ -90,7 +90,7 @@ public class EquivalenciasExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< Equivalencia > equivalencias
 			= Equivalencia.findAll( this.instituicaoEnsino );
@@ -103,7 +103,13 @@ public class EquivalenciasExportExcel
 			}
 
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			fillInCellStyles(sheet);
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 			for (Equivalencia equivalencia : equivalencias) {
 				nextRow = writeData(equivalencia,nextRow,sheet);

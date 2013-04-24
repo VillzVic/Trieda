@@ -93,7 +93,7 @@ public class AulasExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook) {
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
 		RelatorioVisaoCursoExportExcel visaoCursoExpExcel = new RelatorioVisaoCursoExportExcel(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino, fileExtension) {
 			@Override
 			protected List<AtendimentoRelatorioDTO> getAtendimentosRelatorioDTOFromCenario(Cenario cenario) {
@@ -110,7 +110,7 @@ public class AulasExportExcel extends AbstractExportExcel {
 					for (AtendimentoOperacional atdOperacional : atendimentosOperacional) {
 						atendimentos.add(ConvertBeans.toAtendimentoOperacionalDTO(atdOperacional,demandaKeyToQtdAlunosMap));
 					}
-				}				
+				}
 				
 				return atendimentos;
 			}
@@ -158,10 +158,12 @@ public class AulasExportExcel extends AbstractExportExcel {
 						}
 						
 						/////////////////////////////////////////////////////////////////
-						Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
-						if (newSheet != null) {
-							row = this.initialRow;
-							sheet = newSheet;
+						if (isXls()){
+							Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+							if (newSheet != null) {
+								row = this.initialRow;
+								sheet = newSheet;
+							}
 						}
 						// Código Campus
 						int column = 2;
@@ -231,7 +233,13 @@ public class AulasExportExcel extends AbstractExportExcel {
 			}
 			
 			visaoCursoExpExcel.sheet = workbook.getSheet(this.getSheetName());
-			fillInCellStyles(visaoCursoExpExcel.sheet);
+			if (isXls()) {
+				fillInCellStyles(visaoCursoExpExcel.sheet);
+			}
+			else {
+				visaoCursoExpExcel.templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(visaoCursoExpExcel.templateSheet);
+			}
 			visaoCursoExpExcel.buildColorPaletteCellStyles(workbook);
 			visaoCursoExpExcel.initialRow = 8;
 			visaoCursoExpExcel.processStructureReportControl(structureReportControl);

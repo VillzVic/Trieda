@@ -109,7 +109,7 @@ public class DemandasExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		boolean result = false;
 		
@@ -122,7 +122,13 @@ public class DemandasExportExcel
 		if ( !ofertas.isEmpty() )
 		{
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			
 			DemandasServiceImpl demandasService = new DemandasServiceImpl();
 			ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(ofertas);

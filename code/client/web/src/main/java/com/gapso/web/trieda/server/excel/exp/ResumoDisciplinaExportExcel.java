@@ -119,7 +119,7 @@ public class ResumoDisciplinaExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		boolean result = false;
 		CenarioDTO cenarioDTO = ConvertBeans.toCenarioDTO( getCenario() );
@@ -153,7 +153,13 @@ public class ResumoDisciplinaExportExcel
 		if ( !resumoDisciplinaDTOList.isEmpty() )
 		{
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 			for ( ResumoDisciplinaDTO resumoDisciplinaDTO1 : resumoDisciplinaDTOList )
 			{

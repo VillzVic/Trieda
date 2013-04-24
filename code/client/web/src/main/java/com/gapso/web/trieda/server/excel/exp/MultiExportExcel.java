@@ -51,7 +51,7 @@ public class MultiExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook) {
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
 		List<IExportExcel> exporters = new ArrayList<IExportExcel>();
 		for (Class<? extends IExportExcel> c : this.arrayExporters) {
 			Constructor<? extends IExportExcel> constructor;
@@ -71,7 +71,7 @@ public class MultiExportExcel extends AbstractExportExcel {
 				// TODO: MEDIÇÃO PERFORMANCE
 				double start = System.currentTimeMillis();
 				System.out.print(exporter.getClass().getName());
-				exporter.export(workbook);
+				exporter.export(workbook, templateWorkbook);
 				// se necessário, colhe as informações de hyperlinks
 				Map<String, Map<String, Map<String, String>>> localHyperlinksMap = exporter
 						.getHyperlinksMap();

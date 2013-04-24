@@ -96,7 +96,7 @@ public class HabilitacoesProfessoresExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< ProfessorDisciplina > professoresDisciplinas
 			= ProfessorDisciplina.findAll( this.instituicaoEnsino );
@@ -112,7 +112,13 @@ public class HabilitacoesProfessoresExportExcel
 			}
 
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 
 			for ( ProfessorDisciplina professorDisciplina : professoresDisciplinas )

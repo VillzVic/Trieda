@@ -58,7 +58,7 @@ public class TRIEDATabelasExportExcel
 	}
 
 	@Override
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< IExportExcel > exporters = new ArrayList< IExportExcel >();
 
@@ -92,7 +92,7 @@ public class TRIEDATabelasExportExcel
 				getProgressReport().setInitNewPartial("Exportando " + exporter.getFileName());
 				//TODO: MEDIÇÃO PERFORMANCE
 				double start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
-				exporter.export(workbook);
+				exporter.export(workbook, templateWorkbook);
 				//TODO: MEDIÇÃO PERFORMANCE
 				double time = (System.currentTimeMillis() - start)/1000.0;System.out.println(" tempo = " + time + " segundos");
 				getProgressReport().setPartial("Etapa concluída");

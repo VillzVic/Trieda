@@ -83,7 +83,7 @@ public class CursoAreasTitulacaoExportExcel extends AbstractExportExcel {
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< Curso > cursos = Curso.findByCenario(
 			this.instituicaoEnsino, getCenario() );
@@ -110,7 +110,13 @@ public class CursoAreasTitulacaoExportExcel extends AbstractExportExcel {
 		}
 	
 		Sheet sheet = workbook.getSheet( this.getSheetName() );
-		fillInCellStyles( sheet );
+		if (isXls()) {
+			fillInCellStyles(sheet);
+		}
+		else {
+			Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+			fillInCellStyles(templateSheet);
+		}
 
 		int nextRow = this.initialRow;
 		for ( Curso curso : cursos )

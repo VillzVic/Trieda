@@ -82,7 +82,7 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook) {
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
 		List<Professor> professores = Professor.findByCenario(this.instituicaoEnsino,getCenario());
 
 		if (!professores.isEmpty()) {
@@ -91,7 +91,13 @@ public class DisponibilidadesProfessoresExportExcel extends AbstractExportExcel 
 			}
 
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			fillInCellStyles(sheet);
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 
 			for (Professor professor : professores) {

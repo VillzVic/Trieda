@@ -132,7 +132,15 @@ public class ExportExcelServlet extends HttpServlet
 	private void writeExcelToHttpResponse( String excelFileName, String fileExtension,
 		Workbook excel, HttpServletResponse response ) throws IOException
 	{
-		response.setContentType( "application/vnd.ms-excel" );  
+		if ( fileExtension == "xlsx" )
+		{
+			response.setContentType( "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" );
+		}
+		else
+		{
+			response.setContentType( "application/vnd.ms-excel" );
+		}
+		
 		response.setHeader( "Content-disposition", "attachment; filename=" + excelFileName + "." + fileExtension );
 
 		ServletOutputStream out = null;

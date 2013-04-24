@@ -107,7 +107,7 @@ public class AtendimentosFaixaDemandaExportExcel
 
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		boolean result = false;
 		
@@ -140,7 +140,13 @@ public class AtendimentosFaixaDemandaExportExcel
 		if ( !resumoFaixaDemandaDTO.isEmpty() )
 		{
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
-			fillInCellStyles( sheet );
+			if (isXls()) {
+				fillInCellStyles(sheet);
+			}
+			else {
+				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
+				fillInCellStyles(templateSheet);
+			}
 			int nextRow = this.initialRow;
 			for ( ResumoFaixaDemandaDTO resumoFaixaDemandaDTO1 : resumoFaixaDemandaDTO )
 			{

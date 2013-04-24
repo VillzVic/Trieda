@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gapso.trieda.domain.Cenario;
@@ -72,7 +73,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 
 	protected abstract String getPathExcelTemplate();
 	protected abstract String getReportName();
-	protected abstract boolean fillInExcel( Workbook workbook );
+	protected abstract boolean fillInExcel( Workbook workbook, Workbook templateWorkbook );
 
 	@Override
 	public Workbook export()
@@ -81,9 +82,12 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		this.warnings.clear();
 
 		Workbook workbook = null;
+		Workbook templateWorkbook = null;
 		try
 		{
 			workbook = getExcelTemplate( getPathExcelTemplate() );
+			if ( !isXls() )
+				templateWorkbook = getSimpleExcelTemplate( getPathExcelTemplate() );
 		}
 		catch ( Exception e )
 		{
@@ -95,12 +99,12 @@ public abstract class AbstractExportExcel implements IExportExcel {
 				getPathExcelTemplate(), getReportName(), msg ) );
 		}
 
-		export( workbook );
+		export( workbook, templateWorkbook );
 		return workbook;
 	}
 
 	@Override
-	public boolean export( Workbook workbook )
+	public boolean export( Workbook workbook, Workbook templateWorkbook )
 	{
 		if ( workbook != null )
 		{
@@ -109,9 +113,10 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			this.errors.clear();
 			this.warnings.clear();
 			
-			if (fillInExcel( workbook )) {
+			if (fillInExcel( workbook, templateWorkbook )) {
 				if (this.autoSizeColumns) {
-					autoSizeColumns(workbook);
+					if( isXls() )
+						autoSizeColumns(workbook);
 				}
 				return true;
 			}
@@ -492,7 +497,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			}
 			else if ( fileExtension.equals("xlsx") )
 			{
-				workBook = new XSSFWorkbook( inTemplate );
+				workBook = new SXSSFWorkbook(new XSSFWorkbook(inTemplate));
 			}
 		}
 		catch ( IOException e )
@@ -508,5 +513,40 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		}
 
 		return workBook;
+	}
+	
+	private Workbook getSimpleExcelTemplate( String pathExcelTemplate )
+			throws IOException
+		{
+			final InputStream inTemplate
+				= ExportExcelServlet.class.getResourceAsStream( pathExcelTemplate );
+
+			Workbook workBook = null;
+			try
+			{
+					workBook = new XSSFWorkbook(inTemplate);
+			}
+			catch ( IOException e )
+			{
+				throw e;
+			}
+			finally
+			{
+				if ( inTemplate != null )
+				{
+					inTemplate.close();
+				}
+			}
+
+			return workBook;
+		}
+	
+	protected Boolean isXls()
+	{
+		if( fileExtension.equals("xls") )
+		{
+			return true;
+		}
+		return false;
 	}
 }

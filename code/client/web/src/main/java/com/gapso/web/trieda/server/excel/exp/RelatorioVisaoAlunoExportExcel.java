@@ -84,8 +84,8 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 	
 	@Override
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
-	protected boolean fillInExcel(Workbook workbook){
-		return this.<Map<Campus, Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>>>>fillInExcelImpl(workbook);
+	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook){
+		return this.<Map<Campus, Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>>>>fillInExcelImpl(workbook, templateWorkbook);
 	}
 	
 	private boolean getAtendimentosRelatorioDTOListByAluno(Campus campus, Turno turno, Set<AlunoDemanda> alunosDemanda,

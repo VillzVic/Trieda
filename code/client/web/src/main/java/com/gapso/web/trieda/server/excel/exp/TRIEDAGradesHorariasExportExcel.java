@@ -63,7 +63,7 @@ public class TRIEDAGradesHorariasExportExcel
 	}
 
 	@Override
-	protected boolean fillInExcel( Workbook workbook )
+	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< IExportExcel > exporters = new ArrayList< IExportExcel >();
 
@@ -81,7 +81,7 @@ public class TRIEDAGradesHorariasExportExcel
 				getProgressReport().setInitNewPartial("Exportando " + exporter.getFileName());
 				//TODO: MEDIÇÃO PERFORMANCE
 				double start = System.currentTimeMillis();System.out.print(exporter.getClass().getName());
-				exporter.export(workbook);
+				exporter.export(workbook, templateWorkbook);
 				// se necessário, colhe as informações de hyperlinks
 				Map<String,Map<String,Map<String,String>>> localHyperlinksMap = exporter.getHyperlinksMap();
 				if (localHyperlinksMap != null && !localHyperlinksMap.isEmpty()) {
