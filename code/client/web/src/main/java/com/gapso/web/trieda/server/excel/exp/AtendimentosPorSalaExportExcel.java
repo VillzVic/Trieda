@@ -118,18 +118,10 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 						String horarioInicio = "N/A";
 						String horarioFim = "N/A";
 						
-						// obtém a qtd de linhas que devem ser desenhadas para cada crédito da aula em questão
-						//int linhasDeExcelPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
-						
 						// calcula horario de inicio e fim
 						if(temInfoDeHorarios){
 							horarioInicio = aula.getHorarioAulaString();
-							int index = horariosDeInicioDeAula.indexOf(horarioInicio);
-							if (index != -1) {
-//								index = index + aula.getTotalCreditos() * linhasDeExcelPorCreditoDaAula;
-//								horarioFim = horariosDeFimDeAula.get(index);
-								horarioFim = TriedaServerUtil.calculaHorarioFim(horarioInicio,aula.getDuracaoDeUmaAulaEmMinutos()*aula.getTotalCreditos());
-							}
+							horarioFim = TriedaServerUtil.calculaHorarioFim(horarioInicio,aula.getDuracaoDeUmaAulaEmMinutos()*aula.getTotalCreditos());
 						}
 						
 						// para cada aluno na aula
