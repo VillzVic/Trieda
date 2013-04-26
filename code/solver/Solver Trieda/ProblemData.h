@@ -515,6 +515,10 @@ public:
    void imprimeResumoDemandasPorAluno();
    void imprimeResumoDemandasPorAlunoPosEquiv();
 
+   //std::map<int, std::pair<DateTime*,int> > horarioAulaDateTime; 
+   //GGroup<DateTime*,LessPtr<DateTime> > horariosValidos;
+
+
    private:
    
 		void insereDisciplinaEmCursosComp( std::pair<Curso*, Curso*> pc, int idDisc );

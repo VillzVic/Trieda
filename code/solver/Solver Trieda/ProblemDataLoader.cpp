@@ -44,6 +44,10 @@ void ProblemDataLoader::load()
    std::cout << "Relacionando calendario horarios e aulas..." << std::endl;
    // ---------
    relacionaCalendarioHorariosAula();
+   
+   //std::cout << "Preenche Hash HorarioAula DateTime..." << std::endl;
+   //// ---------
+   //preencheHashHorarioAulaDateTime();
 
    std::cout << "Referenciando ofertas..." << std::endl;
    // ---------
@@ -5236,4 +5240,58 @@ void ProblemDataLoader::backtrack(int a[], int k, int n, std::set< std::set<int>
 /*
 	Fim dos métodos de cálculo de subconjuntos 
 	-----------------------------------------------------------------------------
+*/
+
+
+/*
+void ProblemDataLoader::preencheHashHorarioAulaDateTime()
+{
+   problemData->horarioAulaDateTime.clear();
+   problemData->horariosValidos.clear();
+
+   ITERA_GGROUP_LESSPTR( it_calendario, this->problemData->calendarios, Calendario )
+   {
+      Calendario * calendario = ( *it_calendario );
+
+      ITERA_GGROUP_LESSPTR( it_horario_aula, calendario->horarios_aula, HorarioAula )
+      {
+         HorarioAula* hAula = *it_horario_aula;
+         DateTime *newDt = new DateTime(hAula->getInicio());
+
+         GGroup<DateTime*,LessPtr<DateTime> >::iterator itDt = problemData->horariosValidos.find(newDt);
+         if ( itDt != problemData->horariosValidos.end() )
+         {
+            delete newDt;
+         }
+         else
+         {
+            problemData->horariosValidos.add(newDt);
+         }
+      }
+   }
+
+   ITERA_GGROUP_LESSPTR( it_calendario, this->problemData->calendarios, Calendario )
+   {
+      Calendario * calendario = ( *it_calendario );
+
+      ITERA_GGROUP_LESSPTR( it_horario_aula, calendario->horarios_aula, HorarioAula )
+      {
+         HorarioAula * horario_aula = ( *it_horario_aula );
+         DateTime *busca = new DateTime(horario_aula->getInicio());
+
+         GGroup<DateTime*,LessPtr<DateTime> >::iterator itDt = this->problemData->horariosValidos.find(busca);
+
+         delete busca;
+
+         if ( itDt != this->problemData->horariosValidos.end() )
+         {
+            DateTime *dateTime = *itDt;
+            std::pair<DateTime*,int> auxP;
+            auxP.first = dateTime;
+            auxP.second = (int)(horario_aula->getTempoAula()+0.5);
+            problemData->horarioAulaDateTime[horario_aula->getId()] = auxP; 
+         }
+      }
+   }
+}
 */

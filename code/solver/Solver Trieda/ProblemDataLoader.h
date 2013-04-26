@@ -266,6 +266,8 @@ private:
 
    /* -------------------------------------------------------------------- */
 
+   void preencheHashHorarioAulaDateTime();
+
 };
 
 #endif
