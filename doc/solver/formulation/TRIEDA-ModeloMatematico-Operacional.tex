@@ -281,8 +281,8 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 
 \item $x_{p,a,h}$ - variável binária indicando que o professor $p$ foi alocado a aula $a$ no horário $h$.
 \item $x_{pv,a,h}$ - variável binária indicando que o professor virtual $pv$ foi alocado a aula $a$ no horário $h$.
-\item $y_{p,d,i}$ - variável binária indicando que o professor $p$ foi alocado a turma $i$ da disciplina $d$.
-\item $z_{d,i,h}$ - variável binária indicando que o horário $h$ foi alocado para a turma $i$ da disciplina $d$.
+\item $y_{p,d,i,cp}$ - variável binária indicando que o professor $p$ foi alocado a turma $i$ da disciplina $d$.
+\item $z_{d,i,h,cp}$ - variável binária indicando que o horário $h$ foi alocado para a turma $i$ da disciplina $d$.
 
 %\item $f1_{p,d,s,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, sala $s$, dia $t$ e horário $h$. 
 %\item $f2_{p,d,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, dia $t$ e horário $h$. 
@@ -439,8 +439,9 @@ $$
 \subsubsection{Calcula se um professor ministra as aulas de uma turma e disciplina}
 
 \begin{eqnarray}
-\sum\limits_{a \in A} \sum\limits_{s \in S} \sum\limits_{h \in H} x_{p,a,s,d,i,t,h} \leq  M \cdot y_{p,d,i} \nonumber \qquad 
+\sum\limits_{a \in A} \sum\limits_{s \in S} \sum\limits_{t \in T} \sum\limits_{h \in H} x_{p,a,s,d,i,t,h} \leq  M \cdot y_{p,d,i,cp} \nonumber \qquad 
 \forall p \in P \quad
+\forall cp \in Cp \quad
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
@@ -449,7 +450,8 @@ $$
 \subsubsection{Somente um professor deve ser alocado para aulas de turma e disciplina}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} y_{p,d,i} \leq 1 \nonumber \qquad
+\sum\limits_{p \in P} y_{p,d,i,cp} \leq 1 \nonumber \qquad
+\forall cp \in Cp \quad
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
@@ -509,7 +511,8 @@ $$
 \subsubsection{Restrição de horário de disciplina no dia associando x e z}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S}  x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq z_{d,i,h} \nonumber \qquad 
+\sum\limits_{p \in P} \sum\limits_{pv \in PV} \sum\limits_{s \in S_{cp}}  x_{p,a,s,d,i,t,h} + x_{pv,a,s,d,i,t,h} \leq z_{d,i,h,cp} \nonumber \qquad 
+\forall cp \in Cp \quad
 \forall d \in D \quad
 \forall i \in I_{d} \quad
 \forall t \in T \quad
@@ -520,9 +523,9 @@ $$
 \subsubsection{Restrição de horário de disciplina único na semana}
 
 \begin{eqnarray}
-\sum\limits_{h \in H} z_{d,i,h} - fh_{d,i,cp} \leq 1 \nonumber \qquad 
+\sum\limits_{h \in H} z_{d,i,h,cp} - fh_{d,i,cp} \leq 1 \nonumber \qquad 
 \forall d \in D \quad
-\forall i \in I_{d}
+\forall i \in I_{d} \quad
 \forall cp \in Cp
 \end{eqnarray}
 
