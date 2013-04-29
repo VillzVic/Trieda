@@ -9,7 +9,8 @@ import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
-import com.gapso.web.trieda.shared.dtos.ResumoFaixaDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -23,5 +24,5 @@ public interface AlunosDemandaServiceAsync
 			AsyncCallback<PagingLoadResult<ResumoMatriculaDTO>> callback );
 	void getResumoAtendimentosDisciplinaList(String codigo,	CampusDTO campusDTO, CursoDTO cursoDTO,	PagingLoadConfig loadConfig,
 			AsyncCallback<PagingLoadResult<ResumoMatriculaDTO>> callback );
-	void getResumoFaixaDemandaList( CampusDTO campusDTO,	AsyncCallback<List<ResumoFaixaDemandaDTO>> callback );
+	void getResumoFaixaDemandaList( CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas, AsyncCallback<List<AtendimentoFaixaDemandaDTO>> callback );
 }

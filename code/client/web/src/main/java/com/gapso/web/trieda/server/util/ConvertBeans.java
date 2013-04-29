@@ -19,6 +19,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.AtendimentoFaixaDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
@@ -60,6 +61,7 @@ import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -3389,4 +3391,60 @@ public class ConvertBeans {
 		
 		return dto;
 	}
+
+	public static AtendimentoFaixaDemandaDTO toAtendimentoFaixaDemandaDTO(
+			AtendimentoFaixaDemanda domain) {
+		AtendimentoFaixaDemandaDTO dto = new AtendimentoFaixaDemandaDTO();
+		
+		dto.setCampusNome( domain.getCampus().getNome() );
+		dto.setDemandaP1( domain.getDemandaP1() );
+		dto.setAtendimentoP1( domain.getAtendimentoP1() );
+		dto.setAtendimentoPercentP1( TriedaUtil.round(domain.getAtendimentoPercentP1()*100.0,2)+"%" );
+		dto.setAtendimentoSoma(domain.getAtendimentoSoma());
+		dto.setAtendimentoSomaPercent( TriedaUtil.round(domain.getAtendimentoSomaPercent()*100.0,2)+"%" );
+		dto.setTurmasAbertas( domain.getTurmasAbertas() );
+		dto.setMediaTurma( TriedaUtil.round(domain.getMediaTurma(), 2) );
+		dto.setCreditosPagos( domain.getCreditosPagos() );
+		dto.setDemandaAcumP1( domain.getDemandaAcumP1() );
+		dto.setAtendimentoSomaAcum( domain.getAtendimentoSomaAcum() );
+		dto.setAtendimentoSomaAcumPercent( TriedaUtil.round(domain.getAtendimentoSomaPercent()*100.0,2)+"%" );
+		dto.setReceitaSemanal(TriedaUtil.round(domain.getReceitaSemanal(),2));
+		dto.setCustoDocenteSemanal( TriedaUtil.round(domain.getCustoDocenteSemanal(),2) );
+		dto.setCustoDocentePorReceitaPercent(TriedaUtil.round(domain.getCustoDocentePercent()*100.0,2)+"%" );
+		dto.setReceitaAcumulada(TriedaUtil.round(domain.getReceitaAcumulada(),2));
+		dto.setCustoDocenteAcumulado( TriedaUtil.round(domain.getCustoDocenteAcumulado(),2) );
+		dto.setCustoDocentePorReceitaAcumuladoPercent(TriedaUtil.round(domain.getCustoDocentePorReceitaAcumuladoPercent()*100.0,2)+"%" );
+		
+		if(domain.getFaixaInferior() == 0 && domain.getFaixaSuperior() > 0) {
+			dto.setDemandaDisc("Acima de " + domain.getFaixaSuperior() + " alunos");
+		}
+		else if (domain.getFaixaInferior() > 0 && domain.getFaixaSuperior() == 0) {
+			dto.setDemandaDisc("Abaixo de " + domain.getFaixaInferior() + " alunos");
+		}
+		else if (domain.getFaixaInferior() != 0 && domain.getFaixaSuperior() != 0) {
+			dto.setDemandaDisc("Entre " + domain.getFaixaSuperior() + " e " + domain.getFaixaInferior() + " alunos");
+		}
+
+		return dto;
+		
+	}
+	
+	public static List < AtendimentoFaixaDemandaDTO > toListAtendimentoFaixaDemandaDTO(
+			List< AtendimentoFaixaDemanda > listDomains )
+		{
+			if ( listDomains == null )
+			{
+				return Collections.< AtendimentoFaixaDemandaDTO > emptyList();
+			}
+
+			List< AtendimentoFaixaDemandaDTO > listDTOs
+				= new ArrayList< AtendimentoFaixaDemandaDTO >();
+
+			for ( AtendimentoFaixaDemanda domain : listDomains )
+			{
+				listDTOs.add( ConvertBeans.toAtendimentoFaixaDemandaDTO( domain ) );
+			}
+
+			return listDTOs;
+		}
 }

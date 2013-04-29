@@ -1,7 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
-public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
-	implements Comparable< ResumoFaixaDemandaDTO >
+public class AtendimentoFaixaDemandaDTO extends AbstractDTO< String >
+	implements Comparable< AtendimentoFaixaDemandaDTO >
 {
 
 	private static final long serialVersionUID = 2913513728511317302L;
@@ -27,7 +27,7 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_CUSTO_DOCENTE_ACUMULADO = "custoDocenteAcumulado";
 	public static final String PROPERTY_CUSTO_DOCENTE_POR_RECEITA_ACUMULADO_PERCENT = "custoDocentePorReceitaAcumuladoPercent";
 	
-	public ResumoFaixaDemandaDTO()
+	public AtendimentoFaixaDemandaDTO()
 	{
 		super();
 	}
@@ -40,19 +40,19 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_DEMANDA_DISCIPLINA);
 	}
 	
-	public void setDemandaP1(int value) {
+	public void setDemandaP1(Integer value) {
 		set(PROPERTY_DEMANDA_P1, value);
 	}
 
-	public int getDemandaP1() {
+	public Integer getDemandaP1() {
 		return get(PROPERTY_DEMANDA_P1);
 	}
 	
-	public void setAtendimentoP1(int value) {
+	public void setAtendimentoP1(Integer value) {
 		set(PROPERTY_ATENDIMENTO_P1, value);
 	}
 
-	public int getAtendimentoP1() {
+	public Integer getAtendimentoP1() {
 		return get(PROPERTY_ATENDIMENTO_P1);
 	}
 	
@@ -64,11 +64,11 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_ATENDIMENTO_PERCENT_P1);
 	}
 
-	public void setAtendimentoSoma(int value) {
+	public void setAtendimentoSoma(Integer value) {
 		set(PROPERTY_ATENDIMENTO_SOMA, value);
 	}
 
-	public int getAtendimentoSoma() {
+	public Integer getAtendimentoSoma() {
 		return get(PROPERTY_ATENDIMENTO_SOMA);
 	}
 	
@@ -80,11 +80,11 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_ATENDIMENTO_SOMA_PERCENT);
 	}
 	
-	public void setTurmasAbertas(int value) {
+	public void setTurmasAbertas(Integer value) {
 		set(PROPERTY_TURMAS_ABERTAS, value);
 	}
 
-	public int getTurmasAbertas() {
+	public Integer getTurmasAbertas() {
 		return get(PROPERTY_TURMAS_ABERTAS);
 	}
 	
@@ -96,27 +96,27 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_MEDIA_TURMA);
 	}
 	
-	public void setDemandaAcumP1(int value) {
+	public void setDemandaAcumP1(Integer value) {
 		set(PROPERTY_DEMANDA_ACUM_P1, value);
 	}
 
-	public int getDemandaAcumP1() {
+	public Integer getDemandaAcumP1() {
 		return get(PROPERTY_DEMANDA_ACUM_P1);
 	}
 	
-	public void setCreditosPagos(int value) {
+	public void setCreditosPagos(Integer value) {
 		set(PROPERTY_CREDITOS_PAGOS, value);
 	}
 
-	public int getCreditosPagos() {
+	public Integer getCreditosPagos() {
 		return get(PROPERTY_CREDITOS_PAGOS);
 	}
 	
-	public void setAtendimentoSomaAcum(int value) {
+	public void setAtendimentoSomaAcum(Integer value) {
 		set(PROPERTY_ATENDIMENTO_SOMA_ACUM, value);
 	}
 
-	public int getAtendimentoSomaAcum() {
+	public Integer getAtendimentoSomaAcum() {
 		return get(PROPERTY_ATENDIMENTO_SOMA_ACUM);
 	}
 	
@@ -185,7 +185,7 @@ public class ResumoFaixaDemandaDTO extends AbstractDTO< String >
 	}
 	
 	@Override
-	public int compareTo(ResumoFaixaDemandaDTO o) {
+	public int compareTo(AtendimentoFaixaDemandaDTO o) {
 		return getDemandaDisc().compareTo(o.getDemandaDisc());
 	}
 

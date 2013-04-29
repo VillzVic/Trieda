@@ -14,7 +14,7 @@ import com.gapso.web.trieda.server.AlunosDemandaServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.ResumoFaixaDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
@@ -128,13 +128,13 @@ public class AtendimentosFaixaDemandaExportExcel
 			campusDTOList.add( this.getFilter().getCampusDTO() );
 		}
 
-		List< ResumoFaixaDemandaDTO > resumoFaixaDemandaDTO
-			= new ArrayList< ResumoFaixaDemandaDTO >();
+		List< AtendimentoFaixaDemandaDTO > resumoFaixaDemandaDTO
+			= new ArrayList< AtendimentoFaixaDemandaDTO >();
 		AlunosDemandaServiceImpl alunosDemandaServiceImpl = new AlunosDemandaServiceImpl();
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
 			resumoFaixaDemandaDTO.addAll(
-					alunosDemandaServiceImpl.getResumoFaixaDemandaList(campusDTO) );
+					alunosDemandaServiceImpl.getResumoFaixaDemandaList(campusDTO, null) );
 		}
 
 		if ( !resumoFaixaDemandaDTO.isEmpty() )
@@ -148,7 +148,7 @@ public class AtendimentosFaixaDemandaExportExcel
 				fillInCellStyles(templateSheet);
 			}
 			int nextRow = this.initialRow;
-			for ( ResumoFaixaDemandaDTO resumoFaixaDemandaDTO1 : resumoFaixaDemandaDTO )
+			for ( AtendimentoFaixaDemandaDTO resumoFaixaDemandaDTO1 : resumoFaixaDemandaDTO )
 			{
 				nextRow = writeData( resumoFaixaDemandaDTO1, nextRow, sheet );
 			}
@@ -164,7 +164,7 @@ public class AtendimentosFaixaDemandaExportExcel
 		return result;
 	}
 
-	private int writeData( ResumoFaixaDemandaDTO resumoFaixaDemandaDTO, int row, Sheet sheet )
+	private int writeData( AtendimentoFaixaDemandaDTO resumoFaixaDemandaDTO, int row, Sheet sheet )
 	{
 		int i = 2;
 		

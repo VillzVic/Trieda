@@ -44,75 +44,75 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 		return get( PROPERTY_ALUNO_MATRICULA );
 	}
 
-	public void setCredDemandaP1(int value) {
+	public void setCredDemandaP1(Integer value) {
 		set(PROPERTY_CREDITO_DEMANDA_P1, value);
 	}
 	
-	public int getCredDemandaP1(){
+	public Integer getCredDemandaP1(){
 		return get(PROPERTY_CREDITO_DEMANDA_P1);
 	}
 	
-	public void setCredAtendidosP1(int value) {
+	public void setCredAtendidosP1(Integer value) {
 		set(PROPERTY_CREDITO_ATENDIDOS_P1, value);
 	}
 	
-	public int getCredAtendidosP1(){
+	public Integer getCredAtendidosP1(){
 		return get(PROPERTY_CREDITO_ATENDIDOS_P1);
 	}
 	
-	public void setCredNaoAtendidosP1(int value) {
+	public void setCredNaoAtendidosP1(Integer value) {
 		set(PROPERTY_CREDITO_NAO_ATENDIDOS_P1, value);
 	}
 	
-	public int getCredNaoAtendidosP1(){
+	public Integer getCredNaoAtendidosP1(){
 		return get(PROPERTY_CREDITO_NAO_ATENDIDOS_P1);
 	}
 	
-	public void setCredAtendidosP2(int value) {
+	public void setCredAtendidosP2(Integer value) {
 		set(PROPERTY_CREDITO_ATENDIDOS_P2, value);
 	}
 	
-	public int getCredAtendidosP2(){
+	public Integer getCredAtendidosP2(){
 		return get(PROPERTY_CREDITO_ATENDIDOS_P2);
 	}
 
-	public void setDisDemandaP1(int value) {
+	public void setDisDemandaP1(Integer value) {
 		set(PROPERTY_DISCIPLINA_DEMANDA_P1, value);
 	}
 	
-	public int getDisDemandaP1(){
+	public Integer getDisDemandaP1(){
 		return get(PROPERTY_DISCIPLINA_DEMANDA_P1);
 	}
 	
-	public void setDisAtendidosP1(int value) {
+	public void setDisAtendidosP1(Integer value) {
 		set(PROPERTY_DISCIPLINA_ATENDIDOS_P1, value);
 	}
 	
-	public int getDisAtendidosP1(){
+	public Integer getDisAtendidosP1(){
 		return get(PROPERTY_DISCIPLINA_ATENDIDOS_P1);
 	}
 	
-	public void setDisNaoAtendidosP1(int value) {
+	public void setDisNaoAtendidosP1(Integer value) {
 		set(PROPERTY_DISCIPLINA_NAO_ATENDIDOS_P1, value);
 	}
 	
-	public int getDisNaoAtendidosP1(){
+	public Integer getDisNaoAtendidosP1(){
 		return get(PROPERTY_DISCIPLINA_NAO_ATENDIDOS_P1);
 	}
 	
-	public void setDisAtendidosP2(int value) {
+	public void setDisAtendidosP2(Integer value) {
 		set(PROPERTY_DISCIPLINA_ATENDIDOS_P2, value);
 	}
 	
-	public int getDisAtendidosP2(){
+	public Integer getDisAtendidosP2(){
 		return get(PROPERTY_DISCIPLINA_ATENDIDOS_P2);
 	}
 	
-	public void setCredExcessoP2(int value) {
+	public void setCredExcessoP2(Integer value) {
 		set(PROPERTY_CREDITO_EXCESSO_P2, value);
 	}
 	
-	public int getCredExcessoP2(){
+	public Integer getCredExcessoP2(){
 		return get(PROPERTY_CREDITO_EXCESSO_P2);
 	}
 	
@@ -124,19 +124,19 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 		return get(PROPERTY_CODIGO_DISCIPLINA);
 	}
 	
-	public void setDisDemandaNaoAtendida(int value) {
+	public void setDisDemandaNaoAtendida(Integer value) {
 		set(PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA, value);
 	}
 	
-	public int getDisDemandaNaoAtendida(){
+	public Integer getDisDemandaNaoAtendida(){
 		return get(PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA);
 	}
 	
-	public void setDisAtendidosSoma(int value) {
+	public void setDisAtendidosSoma(Integer value) {
 		set(PROPERTY_DISCIPLINA_ATENDIDOS_SOMA, value);
 	}
 	
-	public int getDisAtendidosSoma(){
+	public Integer getDisAtendidosSoma(){
 		return get(PROPERTY_DISCIPLINA_ATENDIDOS_SOMA);
 	}
 	
