@@ -165,20 +165,17 @@ public class AlunosDemandaServiceImpl
 		Map< Long, List<AlunoDemanda> > demandaMapAluno = new HashMap< Long, List<AlunoDemanda> >();
 		if (config.getLimit() > 100) 
 		{
-			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser() );
-			for ( AlunoDemanda disciplinas : busca )
-			{
-				List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
-				for ( AlunoDemanda alunoDemanda : totalAlunoDemanda )
-				{
-					if ( alunoDemanda.getDemanda().getDisciplina().getId() == disciplinas.getDemanda().getDisciplina().getId() 
-							&& alunoDemanda.getDemanda().getOferta().getCampus().getId() == disciplinas.getDemanda().getOferta().getCampus().getId() )
-					{
-						demandas.add(alunoDemanda);
-					}
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser() );			
+			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
+				long key = 31*(31 + alunoDemanda.getDemanda().getDisciplina().getId()) + alunoDemanda.getDemanda().getOferta().getCampus().getId();
+				if (demandaMapAluno.get(key) == null) {
+					List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
+					demandas.add(alunoDemanda);
+					demandaMapAluno.put(key, demandas);
 				}
-				long key = 31*(31 + disciplinas.getDemanda().getDisciplina().getId()) + disciplinas.getDemanda().getOferta().getCampus().getId();
-				demandaMapAluno.put( key, demandas );
+				else {
+					demandaMapAluno.get(key).add(alunoDemanda);
+				}
 			}
 		}
 		
@@ -282,7 +279,7 @@ public class AlunosDemandaServiceImpl
 			curso = ConvertBeans.toCurso(cursoDTO);
 		}
 		
-		// Conta numero total de matriculas (para ser mostrado na paginacao)
+		// Conta numero total de matriculas (para ser mostrado na paginacao
 		int numTotalMatriculas = AlunoDemanda.countMatriculas(getInstituicaoEnsinoUser(), aluno, matricula, campus, curso);
 		
 		// Busca as matriculas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de matriculas.
@@ -294,18 +291,16 @@ public class AlunosDemandaServiceImpl
 		Map< Aluno, List<AlunoDemanda> > demandaMapAluno = new HashMap< Aluno, List<AlunoDemanda> >();
 		if (config.getLimit() > 100) 
 		{
-			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll(getInstituicaoEnsinoUser());
-			for (AlunoDemanda alunos : busca) 
-			{
-				List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
-				for (AlunoDemanda alunoDemanda : totalAlunoDemanda)
-				{
-					if ( alunoDemanda.getAluno().getId() == alunos.getAluno().getId() )
-					{
-						demandas.add(alunoDemanda);
-					}
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll(getInstituicaoEnsinoUser());			
+			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
+				if (demandaMapAluno.get(alunoDemanda.getAluno()) == null) {
+					List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
+					demandas.add(alunoDemanda);
+					demandaMapAluno.put(alunoDemanda.getAluno(), demandas);
 				}
-				demandaMapAluno.put(alunos.getAluno(), demandas);
+				else {
+					demandaMapAluno.get(alunoDemanda.getAluno()).add(alunoDemanda);
+				}
 			}
 		}
 		
