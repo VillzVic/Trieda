@@ -378,7 +378,7 @@ public class SolverOutput
 				creditosAtendidos += tatico.getCreditosPratico() + tatico.getCreditosTeorico();
 			}
 			int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
-			alunoDemanda.setAtendido(totalCreditosDemanda == creditosAtendidos);
+			alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);
 			alunoDemanda.merge();
 		}
 	}
@@ -407,7 +407,7 @@ public class SolverOutput
 				creditosAtendidos += 1;
 			}
 			int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
-			alunoDemanda.setAtendido(totalCreditosDemanda == creditosAtendidos);
+			alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);
 			alunoDemanda.merge();
 		}
 	}
