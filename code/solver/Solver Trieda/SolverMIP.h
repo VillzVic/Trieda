@@ -672,8 +672,10 @@ public:
    void getSolutionOperacional();
    void getSolutionOperacionalMIP();
    void geraProfessoresVirtuaisMIP();
-   Professor * criaProfessorVirtual( Professor *professor, HorarioDia *, int,
-									std::set< std::pair< Professor *, HorarioDia * > > & );
+   Professor * criaProfessorVirtual( Professor *professor, HorarioDia *, 
+									std::set< std::pair< Professor *, HorarioDia * > > &,
+									Aula*,
+									std::map<Professor*, Curso*,LessPtr<Professor>> & );
    void preencheOutputOperacional( ProblemSolution * );
    void preencheOutputOperacionalMIP( ProblemSolution * );
    bool aulaAlocada( Aula *, Campus *, Unidade *, Sala *, int );

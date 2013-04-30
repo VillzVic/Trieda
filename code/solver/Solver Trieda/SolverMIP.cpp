@@ -12317,9 +12317,16 @@ void SolverMIP::getSolutionOperacional()
    }
 }
 
-Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * horario, int cred,
-   std::set< std::pair< Professor *, HorarioDia * > > & profVirtualList )
+Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * horario,
+   std::set< std::pair< Professor *, HorarioDia * > > & profVirtualList, Aula* aula, std::map<Professor*, Curso*,LessPtr<Professor>> &mapProfVirtualCurso )
 {
+    int cred = aula->getTotalCreditos();
+	int turma = aula->getTurma();
+	Disciplina *disciplina = aula->getDisciplina();
+	int campusId = problemData->retornaCampus( aula->getSala()->getIdUnidade() )->getId();
+
+	Curso *cursoDaAula = problemData->retornaCursoAtendido( turma, disciplina, campusId );
+	
    // Procura primeiro professor virtual livre no horario
    Professor * prof = NULL;
    TipoTitulacao *titulacao = professor->titulacao;
@@ -12328,7 +12335,12 @@ Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * 
 
    for ( int i = 0; i < (int)problemData->professores_virtuais.size(); i++ )
    {
-	   if ( problemData->professores_virtuais[ i ]->getTitulacaoId() != titulacao->getId() )
+	  if ( problemData->professores_virtuais[ i ]->getTitulacaoId() != titulacao->getId() )
+		   continue;
+
+	  // Verifica se o Professor é magistrado para essa disciplina
+	  if ( mapProfVirtualCurso[ problemData->professores_virtuais[ i ] ] != cursoDaAula && 
+		   !problemData->professores_virtuais[ i ]->possuiMagisterioEm( disciplina ) )
 		   continue;
 
       std::pair< Professor *, HorarioDia * > auxPair;
@@ -12379,7 +12391,19 @@ Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * 
 		 nCreds = 1;
 		 Calendario* c = horario->getHorarioAula()->getCalendario();
 		 HorarioAula* h = horario->getHorarioAula();
-	     		 
+	     
+		 if ( ! prof->possuiMagisterioEm( disciplina ) )
+		 {
+			 Magisterio * mag = new Magisterio();
+			 mag->setId( prof->magisterio.size() + 1 );
+			 mag->disciplina = ( disciplina );
+			 mag->setDisciplinaId( disciplina->getId() );
+			 mag->setNota( 10 );
+			 mag->setPreferencia( 1 );
+ 
+			 prof->magisterio.add( mag );
+		 }
+
 		 while ( h!=NULL && nCreds <= cred )
 		 {
             auxPair.first = prof;
@@ -12414,42 +12438,23 @@ Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * 
 	nome += ss.str();
 	prof->setNome( nome );
 
-   // Setando alguns dados para o novo professor
-   prof->tipo_contrato = ( *problemData->tipos_contrato.begin() );
+    // Setando alguns dados para o novo professor
+    prof->tipo_contrato = ( *problemData->tipos_contrato.begin() );
+	    
+	Magisterio * mag = new Magisterio();
+	mag->setId( 1 );
+	mag->disciplina = ( disciplina );
+	mag->setDisciplinaId( disciplina->getId() );
+	mag->setNota( 10 );
+	mag->setPreferencia( 1 );
+	prof->magisterio.add( mag );
+   
+    problemData->campi.begin()->professores.add( prof );
+    prof->horarios = problemData->campi.begin()->horarios;
 
-   // Temporariamente vou setar os ids
-   // dos magistérios com valores negativos.
-   int idMag = 0;
+    problemData->professores_virtuais.push_back( prof );
 
-   ITERA_GGROUP_LESSPTR( itDisciplina,
-      problemData->disciplinas, Disciplina )
-   {
-	  #pragma region Equivalencias
-	  if ( ( problemData->mapDiscSubstituidaPor.find( *itDisciplina ) !=
-			 problemData->mapDiscSubstituidaPor.end() ) &&
-			!problemData->ehSubstituta( *itDisciplina ) )
-	  {
-		  continue;
-	  }
-	  #pragma endregion
-
-      Magisterio * mag = new Magisterio();
-
-      mag->setId( --idMag );
-      mag->disciplina = ( *itDisciplina );
-      mag->setDisciplinaId( itDisciplina->getId() );
-      mag->setNota( 10 );
-      mag->setPreferencia( 1 );
-
-      prof->magisterio.add( mag );
-   }
-
-   problemData->campi.begin()->professores.add( prof );
-   prof->horarios = problemData->campi.begin()->horarios;
-
-   problemData->professores_virtuais.push_back( prof );
-
-   std::pair< Professor *, HorarioDia * > auxPair;
+    std::pair< Professor *, HorarioDia * > auxPair;
    
 	nCreds = 1;
 	Calendario* c = horario->getHorarioAula()->getCalendario();
@@ -12467,12 +12472,16 @@ Professor * SolverMIP::criaProfessorVirtual( Professor *professor, HorarioDia * 
 	   h = c->getProximoHorario( h );
     }
 
-   return prof;
+	mapProfVirtualCurso[ prof ] = cursoDaAula;
+
+    return prof;
 }
 
 void SolverMIP::geraProfessoresVirtuaisMIP()
 {
 	std::set<std::pair< Professor *, HorarioDia * > > profVirtualList;
+
+	std::map<Professor*, Curso*,LessPtr<Professor>> mapProfVirtualCurso;
 
    // Procura variaveis que usem professor virtual
    for ( int i = 0; i < (int) solVarsOp.size(); i++ )
@@ -12489,9 +12498,7 @@ void SolverMIP::geraProfessoresVirtuaisMIP()
          continue;
       }
 
-      int nCred = v->getAula()->getTotalCreditos();
-
-	  Professor * profVirtual = criaProfessorVirtual( v->getProfessor(), v->getHorario(), nCred, profVirtualList );
+	  Professor * profVirtual = criaProfessorVirtual( v->getProfessor(), v->getHorario(), profVirtualList, v->getAula(), mapProfVirtualCurso );
 
       v->setProfessor( profVirtual );
    }

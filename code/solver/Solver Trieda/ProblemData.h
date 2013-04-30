@@ -518,6 +518,7 @@ public:
    //std::map<int, std::pair<DateTime*,int> > horarioAulaDateTime; 
    //GGroup<DateTime*,LessPtr<DateTime> > horariosValidos;
 
+   Curso* retornaCursoAtendido( int turma, Disciplina* disciplina, int campusId );
 
    private:
    

@@ -155,3 +155,13 @@ HorarioAula* Professor::getUltimoHorarioDisponivelDia( int dia )
 
 	return hf;
 }
+
+ bool Professor::possuiMagisterioEm( Disciplina* disciplina )
+ {
+	ITERA_GGROUP_LESSPTR( itMagist, magisterio, Magisterio )
+	{
+		if ( itMagist->disciplina == disciplina )
+			return true;
+	}
+	return false;
+ }

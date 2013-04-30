@@ -3867,3 +3867,38 @@ void ProblemData::imprimeResumoDemandasPorAlunoPosEquiv()
 
 	demandasFile.close();
 }
+
+Curso* ProblemData::retornaCursoAtendido( int turma, Disciplina* disciplina, int campusId )
+{
+	Curso* cursoMajor = NULL;
+
+	Trio< int /*campusId*/, int /*turma*/, Disciplina* > trio;
+	trio.set( campusId, turma, disciplina );
+
+	std::map< Trio< int /*campusId*/, int /*turma*/, Disciplina* >, GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > >::iterator
+		itMap = mapCampusTurmaDisc_AlunosDemanda.find( trio );
+	if ( itMap != mapCampusTurmaDisc_AlunosDemanda.end() )
+	{
+		std::map< Curso*, int > mapCursoAlunos;
+		int maxAlunos = 0;
+
+		GGroup< AlunoDemanda*, LessPtr< AlunoDemanda > > alunosDemanda = itMap->second;
+		ITERA_GGROUP_LESSPTR( itAlDem, alunosDemanda, AlunoDemanda )
+		{
+			Curso* curso = itAlDem->demanda->oferta->curso;
+
+			if ( mapCursoAlunos.find( curso ) != mapCursoAlunos.end() )
+				mapCursoAlunos[ curso ]++;
+			else
+				mapCursoAlunos[ curso ] = 1;
+
+			if ( maxAlunos < mapCursoAlunos[ curso ] )
+			{
+				maxAlunos = mapCursoAlunos[ curso ];
+				cursoMajor = curso;
+			}
+		}
+	}
+
+	return cursoMajor;
+}

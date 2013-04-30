@@ -56,6 +56,8 @@ public:
    HorarioAula* getPrimeiroHorarioDisponivelDia( int dia );
    HorarioAula* getUltimoHorarioDisponivelDia( int dia );
 
+   bool possuiMagisterioEm( Disciplina* disciplina );
+
 private:
    std::string cpf;
    std::string nome;
