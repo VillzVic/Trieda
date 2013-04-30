@@ -153,7 +153,11 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 				// Horário Fim
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],horarioFim);
 				// Disciplina da Aula
-				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getDisciplinaString());
+				String disciplinaAula = aula.getDisciplinaSubstitutaString();
+				if (disciplinaAula == null || disciplinaAula.isEmpty()) {
+					disciplinaAula = aula.getDisciplinaString();
+				}
+				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],disciplinaAula);
 				// Disciplina da Demanda
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],alunoDTO.getDisciplinaString());
 				// Turma
