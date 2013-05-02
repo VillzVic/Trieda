@@ -49,6 +49,7 @@ public class ExportExcelFormView
 	private CheckBox relatorioVisaoCursoExportExcelCB;
 	private CheckBox relatorioVisaoAlunoExportExcelCB;
 	private CheckBox atendimentosPorAlunoExportExcelCB;
+	private CheckBox percentMestresDoutoresExportExcelCB;
 	private CheckBox aulasExportExcelCB;
 	
 	public ExportExcelFormView()
@@ -60,7 +61,7 @@ public class ExportExcelFormView
 	{
 		String title = "Exportação Excel";
 		exportExcelModal = new ExportExcelModal(title, Resources.DEFAULTS.exportar16());
-		exportExcelModal.setHeight(600);
+		exportExcelModal.setHeight(630);
 		exportExcelModal.setWidth(500);
 		createForm();
 		exportExcelModal.setContent(formPanel);
@@ -80,7 +81,7 @@ public class ExportExcelFormView
 	    
 	    LayoutContainer left = new LayoutContainer();
 	    FormLayout layout = new FormLayout();
-	    left.setLayout(layout);  
+	    left.setLayout(layout);
 		
 		campiExportExcelCB = new CheckBox();
 		campiExportExcelCB.setName(PlanilhasExportExcel.CAMPI);
@@ -249,6 +250,12 @@ public class ExportExcelFormView
 		atendimentosPorAlunoExportExcelCB.setValue(false);
 		atendimentosPorAlunoExportExcelCB.setFieldLabel("Atendimentos por Sala");
 		right.add(atendimentosPorAlunoExportExcelCB, formData);
+		
+		percentMestresDoutoresExportExcelCB = new CheckBox();
+		percentMestresDoutoresExportExcelCB.setName(PlanilhasExportExcel.PERCENT_MESTRES_DOUTORES);
+		percentMestresDoutoresExportExcelCB.setValue(false);
+		percentMestresDoutoresExportExcelCB.setFieldLabel("Porcentagem de Mestres e Doutores");
+		right.add(percentMestresDoutoresExportExcelCB, formData);
 		
 		aulasExportExcelCB = new CheckBox();
 		aulasExportExcelCB.setName(PlanilhasExportExcel.AULAS);
@@ -432,6 +439,9 @@ public class ExportExcelFormView
 		return aulasExportExcelCB;
 	}
 	
-	
+	@Override
+	public CheckBox getPercentMestresDoutores() {
+		return percentMestresDoutoresExportExcelCB;
+	}
 
 }

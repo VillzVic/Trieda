@@ -815,4 +815,8 @@ public class GTriedaI18nConstants
 	public String atendimentosFaixaDemanda() {
 		return this.languageManager.getText("atendimentosFaixaDemanda");
 	}
+	
+	public String percentMestresDoutores() {
+		return this.languageManager.getText("percentMestresDoutores");
+	}
 }

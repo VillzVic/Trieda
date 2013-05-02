@@ -2,6 +2,7 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -963,6 +964,10 @@ public class AtendimentoOperacional
 	public static List< AtendimentoOperacional > findAllByCampi(
 		InstituicaoEnsino instituicaoEnsino, List< Campus > campi )
 	{
+		if (campi.isEmpty()) {
+			return new ArrayList< AtendimentoOperacional >();
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +

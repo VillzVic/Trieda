@@ -1431,8 +1431,8 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			percentMestresDoutoresDTO.setTotal(total);
 			percentMestresDoutoresDTO.setDoutoresPercent(TriedaUtil.round(doutoresPercent*100.0,2)+"%");
 			percentMestresDoutoresDTO.setMestresDoutoresPercent(TriedaUtil.round(mestresDoutoresPercent*100.0,2)+"%");
-			percentMestresDoutoresDTO.setDoutoresMin(curso.getNumMinDoutores() + "%");
-			percentMestresDoutoresDTO.setMestresDoutoresMin(curso.getNumMinMestres() + "%");
+			percentMestresDoutoresDTO.setDoutoresMin((double)curso.getNumMinDoutores() + "%");
+			percentMestresDoutoresDTO.setMestresDoutoresMin((double)curso.getNumMinMestres() + "%");
 
 			result.add(percentMestresDoutoresDTO);
 		}

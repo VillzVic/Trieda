@@ -55,6 +55,7 @@ public class ExportExcelFormPresenter
 		CheckBox getRelatorioVisaoCursoExportExcelCheckBox();
 		CheckBox getAtendimentosPorAlunoExportExcelCheckBox();
 		CheckBox getAulasExportExcelCheckBox();
+		CheckBox getPercentMestresDoutores();
 		FormPanel getFormPanel();
 	}
 	

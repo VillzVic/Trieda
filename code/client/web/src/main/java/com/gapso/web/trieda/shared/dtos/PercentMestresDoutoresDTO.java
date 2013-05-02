@@ -90,7 +90,7 @@ public class PercentMestresDoutoresDTO extends AbstractDTO< String >
 	}
 	
 	public String getMestresDoutoresMin() {
-		return get(PROPERTY_MESTRES);
+		return get(PROPERTY_MESTRES_DOUTORES_MIN);
 	}
 	
 	public void setMestresDoutoresMin(String value) {

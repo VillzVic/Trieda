@@ -26,6 +26,7 @@ public class ExportExcelFilterFactory{
 		ExcelInformationType informationToBeExported = ExcelInformationType.valueOf(info);
 
 		switch(informationToBeExported){
+			case PERCENT_MESTRES_DOUTORES: return getExportPercentMestresDoutores(request, instituicaoEnsino.getId());
 			case RELATORIO_VISAO_CURSO: return getExportVisaoCurso(request, instituicaoEnsino);
 			case RELATORIO_VISAO_SALA: return getExportVisaoSala(request, instituicaoEnsino);
 			case RELATORIO_VISAO_PROFESSOR: return getExportVisaoProfessor(request, instituicaoEnsino);
@@ -148,6 +149,16 @@ public class ExportExcelFilterFactory{
 		try{
 			Long campusId = Long.parseLong(request.getParameter("campusId"));
 			return new AtendimentosFaixaDemandaFiltroExcel(instituicaoEnsinoId, campusId);
+		}
+		catch(Exception ex){
+			return null;
+		}
+	}
+	
+	private static PercentMestresDoutoresFiltroExcel getExportPercentMestresDoutores(HttpServletRequest request, Long instituicaoEnsinoId){
+		try{
+			Long campusId = Long.parseLong(request.getParameter("campusId"));
+			return new PercentMestresDoutoresFiltroExcel(instituicaoEnsinoId, campusId);
 		}
 		catch(Exception ex){
 			return null;

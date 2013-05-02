@@ -91,7 +91,26 @@ public class ResumoPercentMestresDoutoresPresenter
 			@Override
 			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xls";
 
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.PERCENT_MESTRES_DOUTORES, instituicaoEnsinoDTO, fileExtension );
+
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+
+				if ( display.getCampusComboBox() == null
+						|| display.getCampusComboBox().getValue() == null
+						|| display.getCampusComboBox().getValue().getId() == null )
+				{
+					return;
+				}
+
+				String campusId = display.getCampusComboBox().getValue().getId().toString();
+				e.addParameter( "campusId", campusId );
+
+				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 					
@@ -101,7 +120,26 @@ public class ResumoPercentMestresDoutoresPresenter
 			@Override
 			public void componentSelected( MenuEvent ce )
 			{
+				String fileExtension = "xlsx";
+				
+				ExcelParametros parametros = new ExcelParametros(
+					ExcelInformationType.PERCENT_MESTRES_DOUTORES, instituicaoEnsinoDTO, fileExtension );
 
+				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
+					parametros, display.getI18nConstants(), display.getI18nMessages() );
+				
+				if ( display.getCampusComboBox() == null
+						|| display.getCampusComboBox().getValue() == null
+						|| display.getCampusComboBox().getValue().getId() == null )
+				{
+					return;
+				}
+
+				String campusId = display.getCampusComboBox().getValue().getId().toString();
+				e.addParameter( "campusId", campusId );
+
+				e.submit();
+				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
 	}

@@ -107,6 +107,7 @@ public interface TriedaI18nConstants
 	String otimizado();
 	String periodo();
 	String periodos();
+	String percentMestresDoutores();
 	String pratico();
 	String pratico_s();
 	String preenchaA();

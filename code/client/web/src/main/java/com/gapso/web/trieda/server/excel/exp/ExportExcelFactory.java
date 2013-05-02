@@ -41,6 +41,7 @@ public class ExportExcelFactory {
 			case DISCIPLINAS_SALAS: exporter = new DisciplinasSalasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case EQUIVALENCIAS: exporter = new EquivalenciasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case HABILITACAO_PROFESSORES: exporter = new HabilitacoesProfessoresExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case PERCENT_MESTRES_DOUTORES: exporter = new PercentMestresDoutoresExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			//case PROFESSORES: exporter = new ProfessoresExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case PROFESSORES: exporter = new MultiExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{ProfessoresExportExcel.class,DisponibilidadesProfessoresExportExcel.class}, fileExtension ); break;
 			case RELATORIO_VISAO_CURSO: exporter = new RelatorioVisaoCursoExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;

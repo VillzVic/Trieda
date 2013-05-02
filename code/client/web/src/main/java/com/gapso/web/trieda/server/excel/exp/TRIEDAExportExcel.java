@@ -125,6 +125,8 @@ public class TRIEDAExportExcel
 			exporters.add( new RelatorioVisaoAlunoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.ATENDIMENTOS_POR_ALUNO) )
 			exporters.add( new AtendimentosPorSalaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.PERCENT_MESTRES_DOUTORES) )
+			exporters.add( new PercentMestresDoutoresExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.AULAS) )
 			exporters.add( new AulasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 

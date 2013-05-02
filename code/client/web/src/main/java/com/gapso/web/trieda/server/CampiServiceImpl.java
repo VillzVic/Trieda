@@ -193,6 +193,7 @@ public class CampiServiceImpl extends RemoteService
 		CampusDTO todos = new CampusDTO();
 		todos.setNome("TODOS");
 		todos.setCodigo("Todos os campi");
+		todos.setId(-1L);
 		
 		campiDTO.add(todos);
 
