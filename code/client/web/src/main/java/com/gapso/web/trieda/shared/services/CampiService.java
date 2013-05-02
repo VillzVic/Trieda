@@ -36,4 +36,5 @@ public interface CampiService
 	List< TreeNodeDTO > getResumos( CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO );
 	void saveDeslocamento( CenarioDTO cenario, List< DeslocamentoCampusDTO > list );
 	ListLoadResult< CampusDTO > getListByCurriculo( CurriculoDTO curriculoDTO );
+	ListLoadResult<CampusDTO> getListAllCampiTodos();
 }

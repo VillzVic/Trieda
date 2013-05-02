@@ -958,6 +958,22 @@ public class AtendimentoOperacional
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllByCampi(
+		InstituicaoEnsino instituicaoEnsino, List< Campus > campi )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus IN (:campi) " +
+			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "campi", campi );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
 
 	@Override
 	public boolean equals( Object obj )

@@ -67,7 +67,7 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 		
 		List<Field<?>> rightList = new ArrayList<Field<?>>();
 		
-		this.campusCB = new CampusComboBox(this.curriculoCB);
+		this.campusCB = new CampusComboBox(this.curriculoCB, false);
 		filtro.addCampusValueListener(this.campusCB);
 		rightList.add(this.campusCB);
 		

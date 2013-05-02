@@ -95,6 +95,7 @@ public class ToolBarView
 	private Button resumoMatriculasBt;
 	private Button resumoAtendimentosDisciplinaBt;
 	private Button resumoAtendimentosFaixaDemandaBt;
+	private Button resumoPercentMestresDoutoresBt;
 
 	// Administracao
 	private Button usuariosListBt;
@@ -415,6 +416,10 @@ public class ToolBarView
 		resumoAtendimentosFaixaDemandaBt = createButton( "Atendimentos por<br />Faixa de Demanda",
 				"Atendimentos por Faixa de Demanda", Resources.DEFAULTS.resumoFaixaDemanda24() );
 		relatoriosToolBar.add( resumoAtendimentosFaixaDemandaBt );
+		
+		resumoPercentMestresDoutoresBt = createButton( "Porcentagem de<br /> Mestres e Doutores",
+				"Porcentagem de Mestres e Doutores", Resources.DEFAULTS.resumoMatricula24() );
+		relatoriosToolBar.add( resumoPercentMestresDoutoresBt );
 
 		relatoriosToolBar.add( new SeparatorToolItem() );
 
@@ -732,6 +737,12 @@ public class ToolBarView
 	public Button getResumoAtendimentosFaixaDemandaButton()
 	{
 		return resumoAtendimentosFaixaDemandaBt;
+	}
+	
+	@Override
+	public Button getResumoPercentMestresDoutoresButton()
+	{
+		return resumoPercentMestresDoutoresBt;
 	}
 
 	@Override

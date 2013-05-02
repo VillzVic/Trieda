@@ -17,15 +17,17 @@ public class CampusComboBox
 	extends ComboBox< CampusDTO >
 {
 	private CurriculoComboBox curriculoComboBox;
+	private boolean campusTodos;
 
 	public CampusComboBox()
 	{
-		this( null );
+		this( null, false );
 	}
 
-	public CampusComboBox( CurriculoComboBox curriculoCB )
+	public CampusComboBox( CurriculoComboBox curriculoCB, boolean adicionaCampusTodos )
 	{
 		this.curriculoComboBox = curriculoCB;
+		this.campusTodos = adicionaCampusTodos;
 
 		RpcProxy< ListLoadResult< CampusDTO > > proxy =
 			new RpcProxy< ListLoadResult< CampusDTO > >()
@@ -41,11 +43,20 @@ public class CampusComboBox
 				}
 				else
 				{
-					Services.campi().getListAll( callback );
+					if( campusTodos )
+					{
+						//Lista com todos os campi mais um campus com nome TODOS
+						Services.campi().getListAllCampiTodos( callback );
+					}
+					else
+					{
+						Services.campi().getListAll( callback );
+					}
 				}
 			}
 		};
 
+		
 		setStore( new ListStore< CampusDTO >(
 			new BaseListLoader< BaseListLoadResult< CampusDTO > >( proxy ) ) );
 

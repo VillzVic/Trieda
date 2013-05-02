@@ -39,6 +39,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
@@ -1317,5 +1318,124 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 
 		return 0;
+	}
+	
+	@Override
+	public List<PercentMestresDoutoresDTO> getPercentMestresDoutoresList( CampusDTO campusDTO ) {
+		Campus campus = null;
+		boolean ehTatico = false;
+		List< PercentMestresDoutoresDTO > result = new ArrayList< PercentMestresDoutoresDTO >();
+		Map<Curso, Map<String, String>> cursoToProfessoresMap = new HashMap<Curso, Map<String, String>>(); 
+		List<AtendimentoOperacional> atendimentoOperacionalList;
+		
+		if ( campusDTO != null )
+		{
+			campus = ConvertBeans.toCampus(campusDTO);
+		}
+		
+		List<Campus> listCampus = new ArrayList<Campus>();
+		if ( campus.getNome().equals("TODOS") )
+		{
+			for (Campus campiOtimizados : Campus.findAllOtimized(getInstituicaoEnsinoUser()) )
+			{
+				if(	campiOtimizados.isOtimizadoOperacional(getInstituicaoEnsinoUser()) )
+				{
+					listCampus.add(campiOtimizados);
+				}
+			}
+		}
+		else
+		{
+			if ( campus.isOtimizado(getInstituicaoEnsinoUser()) )
+			{
+				ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			}
+		}
+		
+		if ( !ehTatico )
+		{
+			if ( campus.getNome().equals("TODOS") )
+			{
+				atendimentoOperacionalList = AtendimentoOperacional.findAllByCampi(getInstituicaoEnsinoUser(), listCampus);
+			}
+			else
+			{
+				atendimentoOperacionalList = AtendimentoOperacional.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+			}
+			for ( AtendimentoOperacional atendimento : atendimentoOperacionalList )
+			{
+				if ( cursoToProfessoresMap.get(atendimento.getOferta().getCurso()) == null )
+				{
+					Map<String, String> professoresTitulacao = new HashMap<String, String>();
+					if ( atendimento.getProfessor().getId() != null )
+					{
+						professoresTitulacao.put(atendimento.getProfessor().getNome(), atendimento.getProfessor().getTitulacao().getNome());
+					}
+					else
+					{
+						professoresTitulacao.put(atendimento.getProfessorVirtual().getNome(), atendimento.getProfessorVirtual().getTitulacao().getNome());
+					}
+					cursoToProfessoresMap.put( atendimento.getOferta().getCurso(), professoresTitulacao );
+				}
+				else
+				{
+					if ( atendimento.getProfessor().getId() != null )
+					{
+						if ( cursoToProfessoresMap.get(atendimento.getOferta().getCurso()).get(atendimento.getProfessor().getNome()) != null);
+							cursoToProfessoresMap.get(atendimento.getOferta().getCurso()).put(atendimento.getProfessor().getNome(), atendimento.getProfessor().getTitulacao().getNome());
+					}
+					else
+					{
+						if ( cursoToProfessoresMap.get(atendimento.getOferta().getCurso()).get(atendimento.getProfessorVirtual().getNome()) != null);
+							cursoToProfessoresMap.get(atendimento.getOferta().getCurso()).put(atendimento.getProfessorVirtual().getNome(), atendimento.getProfessorVirtual().getTitulacao().getNome());
+					}					
+					cursoToProfessoresMap.get(atendimento.getOferta().getCurso());
+				}
+			}
+		}
+
+		for ( Curso curso : cursoToProfessoresMap.keySet() ) {
+			int doutores = 0;
+			int mestres = 0;
+			int outros = 0;
+			int total = 0;
+			double doutoresPercent = 0.0;
+			double mestresDoutoresPercent = 0.0;
+			
+			PercentMestresDoutoresDTO percentMestresDoutoresDTO = new PercentMestresDoutoresDTO();
+			percentMestresDoutoresDTO.setCampusString(campus.getNome());
+			percentMestresDoutoresDTO.setCursoString(curso.getNome());
+			
+			for ( String professor : cursoToProfessoresMap.get(curso).values() )
+			{
+				if ( professor.contains("Doutor") )
+				{
+					doutores++;
+				}
+				else if ( professor.contains("Mestre") )
+				{
+					mestres++;
+				}
+				else
+				{
+					outros++;
+				}
+			}
+			total = doutores + mestres + outros;
+			doutoresPercent = ( (double) doutores ) / total;
+			mestresDoutoresPercent = ( (double) mestres+doutores ) / total;
+			
+			percentMestresDoutoresDTO.setDoutores(doutores);
+			percentMestresDoutoresDTO.setMestres(mestres);
+			percentMestresDoutoresDTO.setOutros(outros);
+			percentMestresDoutoresDTO.setTotal(total);
+			percentMestresDoutoresDTO.setDoutoresPercent(TriedaUtil.round(doutoresPercent*100.0,2)+"%");
+			percentMestresDoutoresDTO.setMestresDoutoresPercent(TriedaUtil.round(mestresDoutoresPercent*100.0,2)+"%");
+			percentMestresDoutoresDTO.setDoutoresMin(curso.getNumMinDoutores() + "%");
+			percentMestresDoutoresDTO.setMestresDoutoresMin(curso.getNumMinMestres() + "%");
+
+			result.add(percentMestresDoutoresDTO);
+		}
+		return result;
 	}
 }

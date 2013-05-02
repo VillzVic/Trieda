@@ -36,4 +36,5 @@ public interface CampiServiceAsync {
 	void getHorariosDisponiveis( CampusDTO campusDTO,
 		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
 	void getListByCurriculo( CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CampusDTO > > callback );
+	void getListAllCampiTodos(AsyncCallback<ListLoadResult<CampusDTO>> callback);
 }

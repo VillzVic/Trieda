@@ -1,9 +1,12 @@
 package com.gapso.web.trieda.shared.services;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
@@ -29,4 +32,7 @@ public interface AtendimentosServiceAsync {
 
 	void getProfessoresVirtuais( CampusDTO campusDTO,
 		AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
+
+	void getPercentMestresDoutoresList( CampusDTO campusDTO,
+			AsyncCallback<List<PercentMestresDoutoresDTO>> callback );
 }

@@ -180,6 +180,26 @@ public class CampiServiceImpl extends RemoteService
 	}
 	
 	@Override
+	public ListLoadResult< CampusDTO > getListAllCampiTodos()
+	{
+		List< CampusDTO > campiDTO = new ArrayList< CampusDTO >();
+		List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
+
+		for ( Campus c : campi )
+		{
+			campiDTO.add( ConvertBeans.toCampusDTO( c ) );
+		}
+		
+		CampusDTO todos = new CampusDTO();
+		todos.setNome("TODOS");
+		todos.setCodigo("Todos os campi");
+		
+		campiDTO.add(todos);
+
+		return new BaseListLoadResult< CampusDTO >( campiDTO );
+	}
+	
+	@Override
 	public ListLoadResult<CampusDTO> getCampiNaoSelecionadosParaOtimizacao(List<CampusDTO> campiSelecionados) {
 		List<CampusDTO> campiDTOsNaoSelecionados = new ArrayList<CampusDTO>();
 		

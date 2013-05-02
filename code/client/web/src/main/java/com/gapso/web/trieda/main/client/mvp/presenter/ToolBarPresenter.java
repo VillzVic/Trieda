@@ -43,6 +43,7 @@ import com.gapso.web.trieda.main.client.mvp.view.ResumoCenarioView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoCursosView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoMatriculasView;
+import com.gapso.web.trieda.main.client.mvp.view.ResumoPercentMestresDoutoresView;
 import com.gapso.web.trieda.main.client.mvp.view.SalaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalasView;
 import com.gapso.web.trieda.main.client.mvp.view.SemanasLetivaView;
@@ -135,6 +136,7 @@ public class ToolBarPresenter
 		Button getResumoMatriculasButton();
 		Button getResumoAtendimentosDisciplinaButton();
 		Button getResumoAtendimentosFaixaDemandaButton();
+		Button getResumoPercentMestresDoutoresButton();
 
 		Button getFixacoesListButton();
 		Button getParametrosButton();
@@ -866,6 +868,19 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new ResumoAtendimentosFaixaDemandaPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new ResumoAtendimentosFaixaDemandaView() );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getResumoPercentMestresDoutoresButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new ResumoPercentMestresDoutoresPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ResumoPercentMestresDoutoresView() );
 
 				presenter.go( gTab );
 			}
