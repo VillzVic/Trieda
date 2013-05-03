@@ -1050,4 +1050,34 @@ public class AtendimentoOperacional
 
 		return menorHorario;
 	}
+	
+	public static int countProfessores(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.professor ) FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus " +
+			" AND o.professor IS NOT NULL " );
+
+			q.setParameter( "campus", campus );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			return q.getResultList().size();
+	}
+	
+	public static int countProfessoresVirtuais(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.professorVirtual ) FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus = :campus " +
+			" AND o.professorVirtual IS NOT NULL " );
+
+			q.setParameter( "campus", campus );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			return q.getResultList().size();
+	}
 }
