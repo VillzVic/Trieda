@@ -29,6 +29,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -109,7 +110,12 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		return (AsyncCallback<AtendimentoServiceRelatorioResponse>) new AsyncCallback<AtendimentoServiceRelatorioResponse>(){
 			@Override
 			public void onFailure(Throwable caught) {
-				MessageBox.alert("ERRO!","Não foi possível carregar a grade de horários", null);
+				if (caught instanceof TriedaException) {
+					MessageBox.alert("ERRO!",caught.getMessage(), null);
+				}
+				else {
+					MessageBox.alert("ERRO!","Não foi possível carregar a grade de horários", null);
+				}
 			}
 
 			@Override

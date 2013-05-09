@@ -1,20 +1,19 @@
 package com.gapso.web.trieda.shared.util.relatorioVisao;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.form.Field;
-import com.gapso.web.trieda.shared.dtos.CampusDTO;
-import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
 public class RelatorioVisaoProfessorFiltro extends RelatorioVisaoFiltro{
 	private static final long serialVersionUID = 1L;
-	private CampusDTO campusDTO;
-	private ProfessorDTO professorDTO;
+	private String professorNome;
+	private String professorCpf;
 	private ProfessorVirtualDTO professorVirtualDTO;
 	
 	public ExcelInformationType getExcelType(){
@@ -22,29 +21,29 @@ public class RelatorioVisaoProfessorFiltro extends RelatorioVisaoFiltro{
 	}
 	
 	public Map<String, String> getMapStringIds(){
-		Map<String, String> mapIds = super.getMapStringIds();
+		Map<String, String> mapIds =  new HashMap<String, String>();
 		
-		mapIds.put("campusId", campusDTO.getId().toString());
-		mapIds.put("professorId", (professorDTO != null) ? professorDTO.getId().toString() : "-1");
+		mapIds.put("professorCpf", professorCpf);
+		mapIds.put("professorNome", professorNome);
 		mapIds.put("professorVirtualId", (professorVirtualDTO != null) ? professorVirtualDTO.getId().toString() : "-1");
 		
 		return mapIds;
 	}
 
-	public void addCampusValueListener(Field<CampusDTO> f){
+	public void addProfessorNomeValueListener(Field<String> f){
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				campusDTO = (CampusDTO) fe.getValue();
+				professorNome = (String) fe.getValue();
 			}
 		});
 	}
 	
-	public void addProfessorValueListener(Field<ProfessorDTO> f){
+	public void addProfessorCpfValueListener(Field<String> f){
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				professorDTO = (ProfessorDTO) fe.getValue();
+				professorCpf = (String) fe.getValue();
 			}
 		});
 	}
@@ -58,20 +57,20 @@ public class RelatorioVisaoProfessorFiltro extends RelatorioVisaoFiltro{
 		});
 	}
 
-	public CampusDTO getCampusDTO(){
-		return campusDTO;
+	public String getProfessorNome(){
+		return professorNome;
 	}
 
-	public void setCampusDTO(CampusDTO campusDTO){
-		this.campusDTO = campusDTO;
+	public void setProfessorNome(String professorNome){
+		this.professorNome = professorNome;
 	}
 
-	public ProfessorDTO getProfessorDTO(){
-		return this.professorDTO;
+	public String getProfessorCpf(){
+		return this.professorCpf;
 	}
 
-	public void setProfessorDTO(ProfessorDTO professorDTO){
-		this.professorDTO = professorDTO;
+	public void setProfessorCpf(String professorCpf){
+		this.professorCpf = professorCpf;
 	}
 
 	public ProfessorVirtualDTO getProfessorVirtualDTO(){

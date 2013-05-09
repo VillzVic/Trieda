@@ -679,6 +679,52 @@ public class Professor
 
 		return q.getResultList();
 	}
+	
+	public static Professor findByNomeCpf( InstituicaoEnsino instituicaoEnsino,
+		String nome, String cpf)
+	{
+		if ( cpf == null && nome == null ) return null;
+		else if ( cpf.isEmpty() && nome.isEmpty() ) return null;
+		
+		String cpfQuery = "";
+		
+		if ( cpf != null )
+		{
+			if( !cpf.isEmpty())
+				cpfQuery += " AND  LOWER ( o.cpf ) LIKE LOWER ( :cpf )";
+		}
+
+		String nomeQuery = "";
+		
+		if ( nome != null )
+		{
+			if( !nome.isEmpty())
+				nomeQuery +=  " AND LOWER ( o.nome ) LIKE LOWER ( :nome )";
+		}
+		
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Professor o" +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino" +
+			nomeQuery +
+			cpfQuery);
+		
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( cpf != null )
+		{
+			if( !cpf.isEmpty())
+				q.setParameter( "cpf", cpf );
+		}
+
+		if ( nome != null )
+		{
+			if( !nome.isEmpty())
+				q.setParameter( "nome", nome );	
+		}
+
+		return (Professor) q.getSingleResult();
+	}
 
 	public static Professor find( Long id, InstituicaoEnsino instituicaoEnsino )
 	{

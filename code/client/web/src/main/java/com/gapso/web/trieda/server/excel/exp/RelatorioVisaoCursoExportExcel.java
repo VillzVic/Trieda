@@ -28,7 +28,6 @@ import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl.IAtendimentosServiceDAO;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
-import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
@@ -231,9 +230,9 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			}
 
 			@Override
-			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {return null;}
+			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(String alunoNome, String alunoMatricula) {return null;}
 			@Override
-			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {return null;}
+			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(String alunoNome, String alunoMatricula) {return null;}
 
 			@Override
 			public Map<Long, SemanaLetiva> buscaSemanasLetivas() {

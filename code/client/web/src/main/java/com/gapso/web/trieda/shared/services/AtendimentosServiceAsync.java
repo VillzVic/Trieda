@@ -30,8 +30,7 @@ public interface AtendimentosServiceAsync {
 //	void getBusca( CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO,
 //		AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
 
-	void getProfessoresVirtuais( CampusDTO campusDTO,
-		AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
+	void getProfessoresVirtuais( AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
 
 	void getPercentMestresDoutoresList( CampusDTO campusDTO,
 			AsyncCallback<List<PercentMestresDoutoresDTO>> callback );

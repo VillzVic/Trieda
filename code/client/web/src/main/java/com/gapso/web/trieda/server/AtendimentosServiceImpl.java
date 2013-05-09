@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
@@ -31,7 +33,6 @@ import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
-import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
@@ -54,6 +55,7 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoCursoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoProfessorFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.dev.util.Pair;
 
 public class AtendimentosServiceImpl extends RemoteService implements AtendimentosService {
@@ -61,9 +63,9 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	
 	static public interface IAtendimentosServiceDAO {
 		List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO);
-		List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO,  CampusDTO campusDTO);
+		List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(String alunoNome, String alunoMatricula);
 		List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO);
-		List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO);
+		List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(String alunoNome, String alunoMatricula);
 		Map<Long,SemanaLetiva> buscaSemanasLetivas();
 	}
 	
@@ -80,13 +82,13 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			}
 
 			@Override
-			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {
-				return buscaNoBancoDadosDTOsDeAtendimentoTatico(alunoDTO,turnoDTO,campusDTO);
+			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(String alunoNome, String alunoMatricula) {
+				return buscaNoBancoDadosDTOsDeAtendimentoTatico(alunoNome,alunoMatricula);
 			}
 
 			@Override
-			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO) {
-				return buscaNoBancoDadosDTOsDeAtendimentoOperacional(alunoDTO,turnoDTO,campusDTO);
+			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(String alunoNome, String alunoMatricula) {
+				return buscaNoBancoDadosDTOsDeAtendimentoOperacional(alunoNome,alunoMatricula);
 			}
 
 			@Override
@@ -137,48 +139,54 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	/**
+	 * @throws TriedaException 
 	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoSala(com.gapso.web.trieda.shared.dtos.SalaDTO, com.gapso.web.trieda.shared.dtos.TurnoDTO)
 	 */
 	@Override
-	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(RelatorioVisaoSalaFiltro filtro){
+	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(RelatorioVisaoSalaFiltro filtro) throws TriedaException{
 		QuintetoDTO<List<AtendimentoRelatorioDTO>,Integer,List<String>,List<String>,List<String>> q;
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
 		boolean temInfoDeHorario = true;
 
 		// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
-		List<AtendimentoTaticoDTO> atendimentosTaticoDTO = buscaNoBancoDadosDTOsDeAtendimentoTatico(filtro.getSalaDTO(), filtro.getTurnoDTO());
-		if (!atendimentosTaticoDTO.isEmpty()) {
-			temInfoDeHorario = (atendimentosTaticoDTO.iterator().next().getHorarioAulaId() != null);
-			// insere os atendimentos do modo tático na lista de atendimentos
-			aulas.addAll(atendimentosTaticoDTO);
-		}
-		else {
-			temInfoDeHorario = true;
-			// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
-			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = buscaNoBancoDadosDTOsDeAtendimentoOperacional(filtro.getSalaDTO(), filtro.getTurnoDTO());
-			// processa os atendimentos do operacional e os transforma em aulas
-			List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
-			// insere as aulas do modo operacional na lista de atendimentos
-			aulas.addAll(aulasOperacional);
-		}
-		
-		if (!aulas.isEmpty()) {
-	 		// trata compartilhamento de turmas entre cursos
-			List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
+		try {
+			List<AtendimentoTaticoDTO> atendimentosTaticoDTO = buscaNoBancoDadosDTOsDeAtendimentoTatico(filtro.getSalaCodigo());
+			if (!atendimentosTaticoDTO.isEmpty()) {
+				temInfoDeHorario = (atendimentosTaticoDTO.iterator().next().getHorarioAulaId() != null);
+				// insere os atendimentos do modo tático na lista de atendimentos
+				aulas.addAll(atendimentosTaticoDTO);
+			}
+			else {
+				temInfoDeHorario = true;
+				// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
+				List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = buscaNoBancoDadosDTOsDeAtendimentoOperacional(filtro.getSalaCodigo());
+				// processa os atendimentos do operacional e os transforma em aulas
+				List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
+				// insere as aulas do modo operacional na lista de atendimentos
+				aulas.addAll(aulasOperacional);
+			}
 			
-			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
-			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
-			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
-			Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = buscaNoBancoDadosSemanasLetivas();
-			QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, filtro.getTurnoDTO().getId());
-			int mdcTemposAula = quarteto.getPrimeiro();
-			List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
-			List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
-			List<String> horariosDeFimDeAula = quarteto.getQuarto();
-			
-			q = QuintetoDTO.create(aulasComCompartilhamentos,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			if (!aulas.isEmpty()) {
+		 		// trata compartilhamento de turmas entre cursos
+				List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
+				
+				// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+				// créditos em um dia das semanas letivas relacionadas com as aulas em questão
+				Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
+				Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = buscaNoBancoDadosSemanasLetivas();
+				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, aulas.get(0).getTurnoId());
+				int mdcTemposAula = quarteto.getPrimeiro();
+				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
+				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
+				List<String> horariosDeFimDeAula = quarteto.getQuarto();
+				
+				q = QuintetoDTO.create(aulasComCompartilhamentos,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			}
+			else q = QuintetoDTO.create(aulas,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
 		}
-		else q = QuintetoDTO.create(aulas,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
+		catch (EmptyResultDataAccessException ex){
+			throw new TriedaException("Os campos do digitados no filtro não foram encontrados");
+		}
 		
 		return AtendimentoServiceRelatorioResponse.create(q);
 	}
@@ -332,97 +340,108 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return getAtendimentosParaGradeHorariaVisaoCurso(filtro,getDAO());
 	}
 	
-	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor){
+	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor) throws TriedaException{
 		QuintetoDTO<List<AtendimentoRelatorioDTO>,Integer,List<String>,List<String>,List<String>> q;
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
 		boolean temInfoDeHorario = true;
 		boolean isAdmin = isAdministrador();
 		
-		Turno turno = Turno.find(filtro.getTurnoDTO().getId(), getInstituicaoEnsinoUser());
-		Professor professor = (filtro.getProfessorDTO() == null) ? null : Professor.find(filtro.getProfessorDTO().getId(), getInstituicaoEnsinoUser());
-		ProfessorVirtual professorVirtual = (filtro.getProfessorVirtualDTO() == null ? null : ProfessorVirtual.find(filtro.getProfessorVirtualDTO().getId(), getInstituicaoEnsinoUser() ) );
-		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.getAtendimentosOperacional(getInstituicaoEnsinoUser(), isAdmin, professor, professorVirtual, turno, isVisaoProfessor);
-		List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosOperacional);
-		
-		// processa os atendimentos do operacional e os transforma em aulas
-		List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
-		// insere as aulas do modo operacional na lista de atendimentos
-		aulas.addAll(aulasOperacional);
-		
-		if(!aulas.isEmpty()){
-			// trata compartilhamento de turmas entre cursos
-			List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
-			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
-			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
-			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
+		String professorNome = (filtro.getProfessorNome() == null ? "" : filtro.getProfessorNome());
+		String professorCpf = (filtro.getProfessorCpf() == null ? "" : filtro.getProfessorCpf());
+
+		try {
+			Professor professor = (professorCpf.isEmpty() && professorNome.isEmpty()) ? null : Professor.findByNomeCpf(getInstituicaoEnsinoUser(), professorNome, professorCpf);
+			ProfessorVirtual professorVirtual = (filtro.getProfessorVirtualDTO() == null ? null : ProfessorVirtual.find(filtro.getProfessorVirtualDTO().getId(), getInstituicaoEnsinoUser() ) );
+			List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.getAtendimentosOperacional(getInstituicaoEnsinoUser(), isAdmin, professor, professorVirtual, null, isVisaoProfessor);
+			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosOperacional);
 			
-			List<AtendimentoOperacionalDTO> atendimentosOperacionais = new ArrayList<AtendimentoOperacionalDTO>();
-			for(AtendimentoRelatorioDTO dto : aulasComCompartilhamentos){
-				atendimentosOperacionais.add((AtendimentoOperacionalDTO) dto);
+			// processa os atendimentos do operacional e os transforma em aulas
+			List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
+			// insere as aulas do modo operacional na lista de atendimentos
+			aulas.addAll(aulasOperacional);
+			
+			if(!aulas.isEmpty()){
+				// trata compartilhamento de turmas entre cursos
+				List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
+				// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+				// créditos em um dia das semanas letivas relacionadas com as aulas em questão
+				Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
+				
+				List<AtendimentoOperacionalDTO> atendimentosOperacionais = new ArrayList<AtendimentoOperacionalDTO>();
+				for(AtendimentoRelatorioDTO dto : aulasComCompartilhamentos){
+					atendimentosOperacionais.add((AtendimentoOperacionalDTO) dto);
+				}
+				
+				List<AtendimentoRelatorioDTO> atendimentosParaEscrita = new ArrayList<AtendimentoRelatorioDTO>();
+				for(AtendimentoOperacionalDTO dto : this.ordenaPorHorarioAula(atendimentosOperacionais)){
+					atendimentosParaEscrita.add((AtendimentoRelatorioDTO) dto);
+				}
+				
+				Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = buscaNoBancoDadosSemanasLetivas();
+				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, aulas.get(0).getTurnoId());
+				int mdcTemposAula = quarteto.getPrimeiro();
+				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
+				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
+				List<String> horariosDeFimDeAula = quarteto.getQuarto();
+				
+				q = QuintetoDTO.create(atendimentosParaEscrita,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			}
-			
-			List<AtendimentoRelatorioDTO> atendimentosParaEscrita = new ArrayList<AtendimentoRelatorioDTO>();
-			for(AtendimentoOperacionalDTO dto : this.ordenaPorHorarioAula(atendimentosOperacionais)){
-				atendimentosParaEscrita.add((AtendimentoRelatorioDTO) dto);
-			}
-			
-			Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = buscaNoBancoDadosSemanasLetivas();
-			QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, filtro.getTurnoDTO().getId());
-			int mdcTemposAula = quarteto.getPrimeiro();
-			List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
-			List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
-			List<String> horariosDeFimDeAula = quarteto.getQuarto();
-			
-			q = QuintetoDTO.create(atendimentosParaEscrita,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			else q = QuintetoDTO.create(aulas,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
 		}
-		else q = QuintetoDTO.create(aulas,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
+		catch (EmptyResultDataAccessException ex){
+			throw new TriedaException("Os campos do digitados no filtro não foram encontrados");
+		}
 		
 		return AtendimentoServiceRelatorioResponse.create(q);
 	}
 	
-	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoAluno(RelatorioVisaoAlunoFiltro filtro, IAtendimentosServiceDAO dao){
+	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoAluno(RelatorioVisaoAlunoFiltro filtro, IAtendimentosServiceDAO dao) throws TriedaException{
 		List<AtendimentoRelatorioDTO> atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
 		QuintetoDTO<List<AtendimentoRelatorioDTO>,Integer,List<String>,List<String>,List<String>> q;
 		boolean temInfoDeHorario = true;
 
 		// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
-		List<AtendimentoTaticoDTO> atendimentosTaticoDTO = dao.buscaDTOsDeAtendimentoTatico(filtro.getAlunoDTO(), filtro.getTurnoDTO(), filtro.getCampusDTO());
-		if(!atendimentosTaticoDTO.isEmpty()){
-			temInfoDeHorario = (atendimentosTaticoDTO.iterator().next().getHorarioAulaId() != null);
-			// insere os atendimentos do modo tático na lista de atendimentos
-			atendimentos.addAll(atendimentosTaticoDTO);
-		}
-		else{
-			temInfoDeHorario = true;
-			// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
-			List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = dao.buscaDTOsDeAtendimentoOperacional(filtro.getAlunoDTO(), filtro.getTurnoDTO(), filtro.getCampusDTO());
-			// processa os atendimentos do operacional e os transforma em aulas
-			List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
-			//ordena os atendimentos
-			ordenaPorHorarioAula(aulasOperacional);
-			// insere as aulas do modo operacional na lista de atendimentos
-			atendimentos.addAll(aulasOperacional);
-		}
-		
-		if(!atendimentos.isEmpty()){
-			// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
-			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
-			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(atendimentos);
-			Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = dao.buscaSemanasLetivas();
-			QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, filtro.getTurnoDTO().getId());
-			int mdcTemposAula = quarteto.getPrimeiro();
-			List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
-			List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
-			List<String> horariosDeFimDeAula = quarteto.getQuarto();
+		try {
+			List<AtendimentoTaticoDTO> atendimentosTaticoDTO = dao.buscaDTOsDeAtendimentoTatico(filtro.getAlunoNome(), filtro.getAlunoMatricula());
+			if(!atendimentosTaticoDTO.isEmpty()){
+				temInfoDeHorario = (atendimentosTaticoDTO.iterator().next().getHorarioAulaId() != null);
+				// insere os atendimentos do modo tático na lista de atendimentos
+				atendimentos.addAll(atendimentosTaticoDTO);
+			}
+			else{
+				temInfoDeHorario = true;
+				// busca no BD os atendimentos do modo operacional e transforma os mesmos em DTOs
+				List<AtendimentoOperacionalDTO> atendimentosOperacionalDTO = dao.buscaDTOsDeAtendimentoOperacional(filtro.getAlunoNome(), filtro.getAlunoMatricula());
+				// processa os atendimentos do operacional e os transforma em aulas
+				List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
+				//ordena os atendimentos
+				ordenaPorHorarioAula(aulasOperacional);
+				// insere as aulas do modo operacional na lista de atendimentos
+				atendimentos.addAll(aulasOperacional);
+			}
 			
-			q = QuintetoDTO.create(atendimentos,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			if(!atendimentos.isEmpty()){
+				// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+				// créditos em um dia das semanas letivas relacionadas com as aulas em questão
+				Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(atendimentos);
+				Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = dao.buscaSemanasLetivas();
+				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, atendimentos.get(0).getTurnoId());
+				int mdcTemposAula = quarteto.getPrimeiro();
+				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
+				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
+				List<String> horariosDeFimDeAula = quarteto.getQuarto();
+				
+				q = QuintetoDTO.create(atendimentos,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			}
+			else q = QuintetoDTO.create(atendimentos,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
 		}
-		else q = QuintetoDTO.create(atendimentos,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
-		
+		catch (EmptyResultDataAccessException ex){
+			throw new TriedaException("Os campos do digitados no filtro não foram encontrados");
+		}
 		return AtendimentoServiceRelatorioResponse.create(q);
 	}
 	
-	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoAluno(RelatorioVisaoAlunoFiltro filtro){
+	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoAluno(RelatorioVisaoAlunoFiltro filtro) throws TriedaException{
 		return getAtendimentosParaGradeHorariaVisaoAluno(filtro,getDAO());
 	}
 	
@@ -452,13 +471,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @param turnoDTO turno
 	 * @return uma lista com DTOs que representam atendimentos do modo tático
 	 */
-	public List<AtendimentoTaticoDTO> buscaNoBancoDadosDTOsDeAtendimentoTatico(SalaDTO salaDTO, TurnoDTO turnoDTO) {
+	public List<AtendimentoTaticoDTO> buscaNoBancoDadosDTOsDeAtendimentoTatico(String salaCodigo) {
 		// obtém os beans de Banco de Dados
-		Sala sala = Sala.find(salaDTO.getId(),getInstituicaoEnsinoUser());
-		Turno turno = Turno.find(turnoDTO.getId(),getInstituicaoEnsinoUser());
+		Sala sala = Sala.findByCodigo(getInstituicaoEnsinoUser(), salaCodigo);
 
 		// busca no BD os atendimentos do modo tático
-		List<AtendimentoTatico> atendimentosTaticoBD = AtendimentoTatico.findBySalaAndTurno(getInstituicaoEnsinoUser(),sala,turno,null);
+		List<AtendimentoTatico> atendimentosTaticoBD = AtendimentoTatico.findBySalaAndTurno(getInstituicaoEnsinoUser(),sala,null,null);
 		
 		// transforma os atendimentos obtidos do BD em DTOs
 		return ConvertBeans.toListAtendimentoTaticoDTO(atendimentosTaticoBD);
@@ -496,14 +514,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @param turnoDTO turno
 	 * @return uma lista com DTOs que representam atendimentos do modo tático
 	 */
-	public List<AtendimentoTaticoDTO> buscaNoBancoDadosDTOsDeAtendimentoTatico(AlunoDTO alunoDTO, TurnoDTO turnoDTO,  CampusDTO campusDTO) {
+	public List<AtendimentoTaticoDTO> buscaNoBancoDadosDTOsDeAtendimentoTatico(String alunoNome, String alunoMatricula) {
 		// obtém os beans de Banco de Dados
-		Aluno aluno = Aluno.find(alunoDTO.getId(), getInstituicaoEnsinoUser());
-		Turno turno = Turno.find(turnoDTO.getId(), getInstituicaoEnsinoUser());
-		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+		Aluno aluno = Aluno.findOneByNomeMatricula(getInstituicaoEnsinoUser(), alunoNome, alunoMatricula);
 
 		// busca no BD os atendimentos do modo tático
-		List<AtendimentoTatico> atendimentosTaticoBD = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), aluno, turno, campus);
+		List<AtendimentoTatico> atendimentosTaticoBD = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), aluno, null, null);
 		
 		// transforma os atendimentos obtidos do BD em DTOs
 		return ConvertBeans.toListAtendimentoTaticoDTO(atendimentosTaticoBD);
@@ -535,13 +551,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @param turnoDTO turno
 	 * @return uma lista com DTOs que representam atendimentos do modo operacional
 	 */
-	public List<AtendimentoOperacionalDTO> buscaNoBancoDadosDTOsDeAtendimentoOperacional(SalaDTO salaDTO, TurnoDTO turnoDTO) {
+	public List<AtendimentoOperacionalDTO> buscaNoBancoDadosDTOsDeAtendimentoOperacional(String salaCodigo) {
 		// obtém os beans de Banco de Dados
-		Sala sala = Sala.find(salaDTO.getId(),getInstituicaoEnsinoUser());
-		Turno turno = Turno.find(turnoDTO.getId(),getInstituicaoEnsinoUser());
+		Sala sala = Sala.findByCodigo(getInstituicaoEnsinoUser(), salaCodigo);
 
 		// busca no BD os atendimentos do modo operacional
-		List<AtendimentoOperacional> atendimentosOperacionalBD = AtendimentoOperacional.findBySalaAndTurno(sala,turno,null,getInstituicaoEnsinoUser());
+		List<AtendimentoOperacional> atendimentosOperacionalBD = AtendimentoOperacional.findBySalaAndTurno(sala,null,null,getInstituicaoEnsinoUser());
 
 		// transforma os atendimentos obtidos do BD em DTOs
 		return ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosOperacionalBD);		
@@ -553,17 +568,15 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @param turnoDTO turno
 	 * @return uma lista com DTOs que representam atendimentos do modo operacional
 	 */
-	public List<AtendimentoOperacionalDTO> buscaNoBancoDadosDTOsDeAtendimentoOperacional(AlunoDTO alunoDTO, TurnoDTO turnoDTO, CampusDTO campusDTO){
+	public List<AtendimentoOperacionalDTO> buscaNoBancoDadosDTOsDeAtendimentoOperacional(String alunoNome, String alunoMatricula){
 		// obtém os beans de Banco de Dados
-		Aluno aluno = Aluno.find(alunoDTO.getId(),getInstituicaoEnsinoUser());
-		Turno turno = Turno.find(turnoDTO.getId(),getInstituicaoEnsinoUser());
-		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+		Aluno aluno = Aluno.findOneByNomeMatricula(getInstituicaoEnsinoUser(), alunoNome, alunoMatricula);
 
 		// busca no BD os atendimentos do modo operacional
-		List<AtendimentoOperacional> atendimentosOperacionalBD = AtendimentoOperacional.findBy(aluno, turno, campus, getInstituicaoEnsinoUser());
+		List<AtendimentoOperacional> atendimentosOperacionalBD = AtendimentoOperacional.findBy(aluno, null, null, getInstituicaoEnsinoUser());
 		
 		// transforma os atendimentos obtidos do BD em DTOs
-		return ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosOperacionalBD);		
+		return ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosOperacionalBD);
 	}
 	
 	/**
@@ -1232,13 +1245,10 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 
 	@Override
-	public ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CampusDTO campusDTO )
+	public ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais()
 	{
-		Campus campus = Campus.find(
-			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
-
 		List< ProfessorVirtual > professoresVirtuais
-			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), campus );
+			= ProfessorVirtual.findAll( getInstituicaoEnsinoUser() );
 
 		List< ProfessorVirtualDTO > professoresVirtuaisDTO
 			= new ArrayList< ProfessorVirtualDTO >();

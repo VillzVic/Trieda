@@ -9,7 +9,7 @@ public class GradeHorariaAlunoGrid extends GradeHorariaVisao{
 	private RelatorioVisaoAlunoFiltro filtro;
 
 	public void requestAtendimentos(){
-		if(filtro.getTurnoDTO() == null || filtro.getAlunoDTO() == null) return;
+		if(filtro.getAlunoNome() == null && filtro.getAlunoMatricula() == null) return;
 
 		this.grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 		

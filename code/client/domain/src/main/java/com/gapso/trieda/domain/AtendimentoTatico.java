@@ -271,21 +271,31 @@ public class AtendimentoTatico
 		{
 			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
 		}
+		
+		String turnoQuery = "";
+		
+		if ( turno != null )
+		{
+			turnoQuery = " AND o.oferta.turno = :turno ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoTatico o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.sala = :sala " +
-			" AND o.oferta.turno = :turno "
+			" AND o.sala = :sala "
+			+ turnoQuery
 			+ semanaLetivaQuery );
 
 		q.setParameter( "sala", sala );
-		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( semanaLetiva != null )
 		{
 			q.setParameter( "semanaLetiva", semanaLetiva );
+		}
+		if( turno != null)
+		{
+			q.setParameter( "turno", turno );
 		}
 
 		return q.getResultList();
@@ -295,20 +305,41 @@ public class AtendimentoTatico
 	public static List<AtendimentoTatico> findBy(
 		InstituicaoEnsino instituicaoEnsino, Aluno aluno, Turno turno, Campus campus)
 	{
-
+		String turnoQuery = "";
+		
+		if ( turno != null )
+		{
+			turnoQuery = " AND o.oferta.turno = :turno";
+		}
+		
+		String campusQuery = "";
+		
+		if ( campus != null )
+		{
+			campusQuery = " AND o.oferta.campus = :campus ";
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoTatico o, " +
 			" IN (o.alunosDemanda) ald" +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.oferta.turno = :turno " +
-			" AND o.oferta.campus = :campus " +
+			turnoQuery +
+			campusQuery +
 			" AND ald.aluno = :aluno "
 		);
 
 		q.setParameter("aluno", aluno);
-		q.setParameter("turno", turno);
-		q.setParameter("campus", campus);
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		
+		if ( turno != null )
+		{
+			q.setParameter("turno", turno);
+		}
+		
+		if ( campus != null )
+		{
+			q.setParameter("campus", campus);
+		}
 
 		return q.getResultList();
 	}
@@ -366,8 +397,7 @@ public class AtendimentoTatico
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoTatico > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Campus campus , Unidade unidade, Sala sala,
-		Turno turno, SemanaLetiva semanaLetiva )
+		Sala sala, SemanaLetiva semanaLetiva )
 	{
 		String semanaLetivaQuery = "";
 
@@ -380,17 +410,11 @@ public class AtendimentoTatico
 			" SELECT o FROM AtendimentoTatico o "
 			+ " WHERE cenario = :cenario"
 			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
-			+ " AND o.oferta.turno = :turno"
-			+ " AND o.oferta.campus = :campus"
 			+ " AND o.sala = :sala"
-			+ " AND o.sala.unidade = :unidade"
 			+ semanaLetivaQuery );
 
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "campus", campus );
-		q.setParameter( "unidade", unidade );
 		q.setParameter( "sala", sala );
-		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( semanaLetiva != null )

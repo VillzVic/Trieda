@@ -316,6 +316,46 @@ public class Aluno
 		return q.getResultList();
 	}
 	
+	public static Aluno findOneByNomeMatricula(
+		InstituicaoEnsino instituicaoEnsino,
+		String nome, String matricula )
+	{
+		String nomeQuery = "";
+		if ( nome != null )
+		{
+			if ( !nome.isEmpty() )
+				nomeQuery = " AND LOWER ( o.nome ) LIKE LOWER ( :nome ) ";
+		}
+
+		String matriculaQuery = "";
+		if ( matricula != null )
+		{
+			if ( !matricula.isEmpty() )
+				matriculaQuery = " AND LOWER ( o.matricula ) LIKE LOWER ( :matricula ) ";
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Aluno o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			nomeQuery + matriculaQuery );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( nome != null )
+		{
+			if ( !nome.isEmpty() )
+				q.setParameter( "nome", nome );
+		}
+
+		if ( matricula != null )
+		{
+			if ( !matricula.isEmpty() )
+				q.setParameter( "matricula", matricula );	
+		}
+
+		return (Aluno) q.getSingleResult();
+	}
+	
 	@SuppressWarnings( "unchecked" )
 	public static List<Aluno> findByCampus(InstituicaoEnsino instituicaoEnsino, Campus campus, boolean tatico) {
 		

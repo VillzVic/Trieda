@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
@@ -108,13 +109,28 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		AtendimentoServiceRelatorioResponse quinteto = mapEntity.get((V) professor);
 		if(quinteto == null){
 			RelatorioVisaoProfessorFiltro filtro = new RelatorioVisaoProfessorFiltro();
-			if(professor.getProfessor() != null)filtro.setProfessorDTO(ConvertBeans.toProfessorDTO(professor.getProfessor()));
+			if(professor.getProfessor() != null)filtro.setProfessorNome(professor.getProfessor().getNome());
+			if(professor.getProfessor() != null)filtro.setProfessorCpf(professor.getProfessor().getCpf());
 			if(professor.getProfessorVirtual() != null)filtro.setProfessorVirtualDTO(ConvertBeans.toProfessorVirtualDTO(professor.getProfessorVirtual()));
 			filtro.setTurnoDTO(ConvertBeans.toTurnoDTO(atendimento.getTurno()));
-			filtro.setCampusDTO(ConvertBeans.toCampusDTO(atendimento.getCampus()));
 		
 			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-			quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(filtro, this.isVisaoProfessor);
+			try {
+				quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(filtro, this.isVisaoProfessor);
+			} catch (Exception e) {
+				String msg = "";
+				if (e instanceof EmptyResultDataAccessException) {
+					msg = "Os campos do digitados no filtro não foram encontrados";
+				}
+				else {
+					msg = ( e.getMessage() + ( e.getCause() != null ?
+							e.getCause().getMessage() : "" ) );
+				}
+				
+				this.errors.add( getI18nMessages().excelErroGenericoExportacao(
+					msg ) );
+				e.printStackTrace();
+			}
 			mapEntity.put((V) professor, quinteto);
 			
 			return true;
@@ -131,19 +147,33 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 		AtendimentoServiceRelatorioResponse quinteto;
 		
-		ProfessorWrapper professor = null;
-		Professor atProf = ConvertBeans.toProfessor(this.relatorioFiltro.getProfessorDTO());
-		if(atProf == null) professor = new ProfessorWrapper(ConvertBeans.toProfessorVirtual(this.relatorioFiltro.getProfessorVirtualDTO()));
-		else professor = new ProfessorWrapper(atProf);
-		
-		quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(this.relatorioFiltro, this.isVisaoProfessor);
-		
-		Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse> mapAluno = new HashMap<ProfessorWrapper, AtendimentoServiceRelatorioResponse>();
-		mapAluno.put(professor, quinteto);
-		Map<Turno, Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse>> mapTurnoControl = 
-			new HashMap<Turno, Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse>>();
-		mapTurnoControl.put(ConvertBeans.toTurno(this.relatorioFiltro.getTurnoDTO()), mapAluno);
-		mapControl.put(ConvertBeans.toCampus(this.relatorioFiltro.getCampusDTO()), mapTurnoControl);
+		try {
+			ProfessorWrapper professor = null;
+			Professor atProf = Professor.findByNomeCpf(instituicaoEnsino, this.relatorioFiltro.getProfessorNome(), this.relatorioFiltro.getProfessorCpf());
+			if(atProf == null) professor = new ProfessorWrapper(ConvertBeans.toProfessorVirtual(this.relatorioFiltro.getProfessorVirtualDTO()));
+			else professor = new ProfessorWrapper(atProf);
+
+			quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(this.relatorioFiltro, this.isVisaoProfessor);
+			Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse> mapAluno = new HashMap<ProfessorWrapper, AtendimentoServiceRelatorioResponse>();
+			mapAluno.put(professor, quinteto);
+			Map<Turno, Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse>> mapTurnoControl = 
+				new HashMap<Turno, Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse>>();
+			mapTurnoControl.put(Turno.find(quinteto.getAtendimentosDTO().get(0).getTurnoId(), instituicaoEnsino), mapAluno);
+			mapControl.put(Campus.find(quinteto.getAtendimentosDTO().get(0).getCampusId(), instituicaoEnsino), mapTurnoControl);
+		} catch (Exception e) {
+				String msg = "";
+				if (e instanceof EmptyResultDataAccessException) {
+					msg = "Os campos do digitados no filtro não foram encontrados";
+				}
+				else {
+					msg = ( e.getMessage() + ( e.getCause() != null ?
+							e.getCause().getMessage() : "" ) );
+				}
+				
+				this.errors.add( getI18nMessages().excelErroGenericoExportacao(
+					msg ) );
+				e.printStackTrace();
+			}
 	}
 	
 	@SuppressWarnings("unchecked")

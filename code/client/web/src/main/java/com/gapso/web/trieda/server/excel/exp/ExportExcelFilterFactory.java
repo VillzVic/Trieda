@@ -2,16 +2,12 @@ package com.gapso.web.trieda.server.excel.exp;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.InstituicaoEnsino;
-import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
-import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Turno;
-import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
@@ -45,15 +41,17 @@ public class ExportExcelFilterFactory{
 		try{
 			RelatorioVisaoProfessorFiltro filtro = new RelatorioVisaoProfessorFiltro();
 			
-			Long campusId = Long.parseLong(request.getParameter("campusId"));
-			Long turnoId = Long.parseLong(request.getParameter("turnoId"));
-			Long professorId = Long.parseLong(request.getParameter("professorId"));
+			String professorNome = request.getParameter("professorNome");
+			String professorCpf = request.getParameter("professorCpf");
 			Long professorVirtualId = Long.parseLong(request.getParameter("professorVirtualId"));
-			
-			filtro.setCampusDTO(ConvertBeans.toCampusDTO(Campus.find(campusId, instituicaoEnsino)));
-			filtro.setTurnoDTO(ConvertBeans.toTurnoDTO(Turno.find(turnoId, instituicaoEnsino)));
-			if(professorVirtualId < 0) filtro.setProfessorDTO(ConvertBeans.toProfessorDTO(Professor.find(professorId, instituicaoEnsino)));
+
+			if(professorVirtualId < 0) {
+				filtro.setProfessorNome(professorNome);
+				filtro.setProfessorCpf(professorCpf);
+			}
 			else filtro.setProfessorVirtualDTO(ConvertBeans.toProfessorVirtualDTO(ProfessorVirtual.find(professorVirtualId, instituicaoEnsino)));
+			
+			if (professorCpf.isEmpty() && professorNome.isEmpty() && professorVirtualId < 0) return null;
 			
 			return filtro;
 		}
@@ -66,14 +64,14 @@ public class ExportExcelFilterFactory{
 		try{
 			RelatorioVisaoAlunoFiltro filtro = new RelatorioVisaoAlunoFiltro();
 			
-			Long turnoId = Long.parseLong(request.getParameter("turnoId"));
-			Long alunoId = Long.parseLong(request.getParameter("alunoId"));
-			Long campusId = Long.parseLong(request.getParameter("campusId"));
+			String alunoNome = request.getParameter("alunoNome");
+			String alunoMatricula = request.getParameter("alunoMatricula");
 			
-			filtro.setTurnoDTO(ConvertBeans.toTurnoDTO(Turno.find(turnoId, instituicaoEnsino)));
-			filtro.setCampusDTO(ConvertBeans.toCampusDTO(Campus.find(campusId, instituicaoEnsino)));
-			filtro.setAlunoDTO(ConvertBeans.toAlunoDTO(Aluno.find(alunoId, instituicaoEnsino)));
-			
+			if (alunoNome.isEmpty() && alunoMatricula.isEmpty()) return null;
+
+			filtro.setAlunoNome(alunoNome);
+			filtro.setAlunoMatricula(alunoMatricula);
+
 			return filtro;
 		}
 		catch(Exception ex){
@@ -107,16 +105,12 @@ public class ExportExcelFilterFactory{
 	private static RelatorioVisaoSalaFiltro getExportVisaoSala(HttpServletRequest request, InstituicaoEnsino instituicaoEnsino){
 		try{
 			RelatorioVisaoSalaFiltro filtro = new RelatorioVisaoSalaFiltro();
+
+			String salaCodigo = request.getParameter("salaCodigo");
 			
-			Long campusId = Long.parseLong(request.getParameter("campusId"));
-			Long unidadeId = Long.parseLong(request.getParameter("unidadeId"));
-			Long salaId = Long.parseLong(request.getParameter("salaId"));
-			Long turnoId = Long.parseLong(request.getParameter("turnoId"));
-			
-			filtro.setCampusDTO(ConvertBeans.toCampusDTO(Campus.find(campusId, instituicaoEnsino)));
-			filtro.setUnidadeDTO(ConvertBeans.toUnidadeDTO(Unidade.find(unidadeId, instituicaoEnsino)));
-			filtro.setSalaDTO(ConvertBeans.toSalaDTO(Sala.find( salaId, instituicaoEnsino)));
-			filtro.setTurnoDTO(ConvertBeans.toTurnoDTO(Turno.find(turnoId, instituicaoEnsino)));
+			if ( salaCodigo.isEmpty() ) return null;
+
+			filtro.setSalaCodigo(salaCodigo);
 			
 			return filtro;
 		}

@@ -1,65 +1,64 @@
 package com.gapso.web.trieda.shared.util.relatorioVisao;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.widget.form.Field;
-import com.gapso.web.trieda.shared.dtos.AlunoDTO;
-import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
 public class RelatorioVisaoAlunoFiltro extends RelatorioVisaoFiltro{
 	private static final long serialVersionUID = 1L;
-	private CampusDTO campusDTO;
-	private AlunoDTO alunoDTO;
+	private String alunoNome;
+	private String alunoMatricula;
 	
 	public ExcelInformationType getExcelType(){
 		return ExcelInformationType.RELATORIO_VISAO_ALUNO;
 	}
 	
 	public Map<String, String> getMapStringIds(){
-		Map<String, String> mapIds = super.getMapStringIds();
+		Map<String, String> mapIds = new HashMap<String, String>();
 		
-		mapIds.put("campusId", campusDTO.getId().toString());
-		mapIds.put("alunoId", alunoDTO.getId().toString());
+		mapIds.put("alunoNome", alunoNome);
+		mapIds.put("alunoMatricula", alunoMatricula);
 		
 		return mapIds;
 	}
 
-	public void addCampusValueListener(Field<CampusDTO> f){
+	public void addAlunoNomeValueListener(Field<String> f){
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				campusDTO = (CampusDTO) fe.getValue();
+				alunoNome = (String) fe.getValue();
 			}
 		});
 	}
 	
-	public void addAlunoValueListener(Field<AlunoDTO> f){
+	public void addAlunoMatriculaValueListener(Field<String> f){
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				alunoDTO = (AlunoDTO) fe.getValue();
+				alunoMatricula = (String) fe.getValue();
 			}
 		});
 	}
 	
-	public CampusDTO getCampusDTO(){
-		return this.campusDTO;
+	public String getAlunoNome(){
+		return this.alunoNome;
 	}
 
-	public void setCampusDTO(CampusDTO campusDTO){
-		this.campusDTO = campusDTO;
+	public void setAlunoNome(String alunoNome){
+		this.alunoNome = alunoNome;
 	}
 
-	public AlunoDTO getAlunoDTO(){
-		return this.alunoDTO;
+	public String getAlunoMatricula(){
+		return this.alunoMatricula;
 	}
 
-	public void setAlunoDTO(AlunoDTO alunoDTO){
-		this.alunoDTO = alunoDTO;
+	public void setAlunoMatricula(String alunoMatricula){
+		this.alunoMatricula = alunoMatricula;
 	}
 	
 }

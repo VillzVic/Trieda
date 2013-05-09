@@ -310,8 +310,7 @@ public class AtendimentoOperacional
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findByCenario(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Campus campus, Unidade unidade, Sala sala,
-		Turno turno, SemanaLetiva semanaLetiva )
+		Sala sala, SemanaLetiva semanaLetiva )
 	{
 		String semanaLetivaQuery = "";
 
@@ -323,18 +322,12 @@ public class AtendimentoOperacional
 		Query q = entityManager().createQuery(
 			"SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
 			+ " WHERE cenario = :cenario "
-			+ " AND o.oferta.turno = :turno "
-			+ " AND o.oferta.campus = :campus "
 			+ " AND o.sala = :sala "
 			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
-			+ " AND o.sala.unidade = :unidade "
 			+ semanaLetivaQuery );
 
 		q.setParameter( "cenario", cenario );
-		q.setParameter( "campus", campus );
-		q.setParameter( "unidade", unidade );
 		q.setParameter( "sala", sala );
-		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( semanaLetiva != null )
@@ -389,21 +382,32 @@ public class AtendimentoOperacional
 		{
 			publicado = ( " AND o.oferta.campus.publicado = :publicado " );
 		}
+		
+		String turnoQuery = "";
+		
+		if ( turno != null)
+		{
+			turnoQuery = " AND o.oferta.turno = :turno";
+		}
 
 		String queryString = "SELECT DISTINCT ( o ) FROM AtendimentoOperacional o"
-			+ " WHERE o.oferta.turno = :turno "
-			+ " AND o.instituicaoEnsino = :instituicaoEnsino "
+			+ " WHERE o.instituicaoEnsino = :instituicaoEnsino"
+			+ turnoQuery
 			+ " AND o.professor = :professor " + publicado;
 
 		Query q = entityManager().createQuery( queryString );
 
-		q.setParameter( "turno", turno );
 		q.setParameter( "professor", professor );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( apenasCampusPublicado )
 		{
 			q.setParameter( "publicado", true );
+		}
+		
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
 		}
 		
 		return q.getResultList();
@@ -423,20 +427,31 @@ public class AtendimentoOperacional
 		{
 			publicado = " AND o.oferta.campus.publicado = :publicado ";
 		}
+		
+		String turnoQuery = "";
+		
+		if ( turno != null)
+		{
+			turnoQuery = " AND o.oferta.turno = :turno";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
-			" WHERE o.oferta.turno = :turno " +
-			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino" +
+			turnoQuery +
 			" AND o.professorVirtual = :professorVirtual " + publicado);
 
-		q.setParameter( "turno", turno );
 		q.setParameter( "professorVirtual", professorVirtual );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( apenasCampusPublicado )
 		{
 			q.setParameter( "publicado", true );
+		}
+		
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
 		}
 
 		return q.getResultList();
@@ -567,21 +582,32 @@ public class AtendimentoOperacional
 		{
 			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
 		}
+		
+		String turnoQuery = "";
+		
+		if ( turno != null )
+		{
+			turnoQuery = " AND o.oferta.turno = :turno";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
 			+ " WHERE o.sala = :sala "
 			+ " AND o.instituicaoEnsino = :instituicaoEnsino"
-			+ " AND o.oferta.turno = :turno"
+			+ turnoQuery
 			+ semanaLetivaQuery );
 
 		q.setParameter( "sala", sala );
-		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( semanaLetiva != null )
 		{
 			q.setParameter( "semanaLetiva", semanaLetiva );
+		}
+		
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
 		}
 
 		return q.getResultList();
@@ -591,20 +617,42 @@ public class AtendimentoOperacional
 	public static List<AtendimentoOperacional> findBy(
 		Aluno aluno, Turno turno, Campus campus, InstituicaoEnsino instituicaoEnsino)
 	{
+		String turnoQuery = "";
+		
+		if ( turno != null )
+		{
+			turnoQuery = " AND o.oferta.turno = :turno";
+		}
+		
+		String campusQuery = "";
+		
+		if ( campus != null )
+		{
+			campusQuery = " AND o.oferta.campus = :campus ";
+		}
+		
 
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o, "
 			+ " IN (o.alunosDemanda) ald"
 			+ " WHERE o.instituicaoEnsino = :instituicaoEnsino"
-			+ " AND o.oferta.turno = :turno"
-			+ " AND o.oferta.campus = :campus "
+			+ turnoQuery
+			+ campusQuery
 			+ " AND ald.aluno = :aluno "
 		);
 
 		q.setParameter("aluno", aluno);
-		q.setParameter("turno", turno);
-		q.setParameter("campus", campus);
 		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		
+		if ( turno != null )
+		{
+			q.setParameter("turno", turno);
+		}
+		
+		if ( campus != null )
+		{
+			q.setParameter("campus", campus);
+		}
 
 		return q.getResultList();
 	}

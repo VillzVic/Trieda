@@ -2,25 +2,21 @@ package com.gapso.web.trieda.shared.mvp.presenter;
 
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoPresenter;
-import com.gapso.web.trieda.shared.util.view.CampusComboBox;
-import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
-import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 
 public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 	public interface Display extends RelatorioVisaoPresenter.Display{
-		CampusComboBox getCampusComboBox();
-		TurnoComboBox getTurnoComboBox();
-		ProfessorComboBox getProfessorComboBox();
 		ProfessorVirtualComboBox getProfessorVirtualComboBox();
 		GradeHorariaProfessorGrid getGrid();
+		TextField<String> getCpfTextField();
+		TextField<String> getProfessorTextField();
 	}
 
 	private boolean isVisaoProfessor;
@@ -30,8 +26,6 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 	{
 		super(instituicaoEnsinoDTO, display);
 		this.isVisaoProfessor = isVisaoProfessor;
-
-		this.setListeners();
 	}
 
 	protected void setListeners(){
@@ -39,18 +33,12 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 		
 		final Display display = (Display) this.getDisplay();
 		
-		display.getProfessorComboBox().addSelectionChangedListener(new SelectionChangedListener<ProfessorDTO>(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se){
-				display.getProfessorVirtualComboBox().setValue(null);
-			}
-		});
-
 		if (display.getProfessorVirtualComboBox() != null) {
 			display.getProfessorVirtualComboBox().addSelectionChangedListener(new SelectionChangedListener<ProfessorVirtualDTO>(){
 				@Override
 				public void selectionChanged(SelectionChangedEvent<ProfessorVirtualDTO> se){
-					display.getProfessorComboBox().setValue(null);
+					display.getProfessorTextField().setValue(null);
+					display.getCpfTextField().setValue(null);
 				}
 			});
 		}

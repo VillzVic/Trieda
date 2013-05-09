@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
-import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaProfessorGrid;
@@ -15,17 +15,14 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoProfessorFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoView;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
-import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
+
 
 public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements RelatorioVisaoProfessorPresenter.Display{
-	private CampusComboBox campusCB;
-	private TurnoComboBox turnoCB;
-	private ProfessorComboBox professorCB;
 	private ProfessorVirtualComboBox professorVirtualCB;
+	private TextField<String> professorTF;
+	private TextField<String> cpfTF;
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor;
 	private RelatorioVisaoProfessorFiltro filtro;
@@ -66,39 +63,31 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
-		if(this.usuario.isAdministrador()){
-			this.campusCB = new CampusComboBox();
-			filtro.addCampusValueListener(this.campusCB);
-			leftList.add(this.campusCB);
-		}
+		this.professorTF = new TextField<String>();
+		this.professorTF.setEmptyText("Digite o nome do professor");
+		this.professorTF.setName("professor");
+		this.professorTF.setFieldLabel("Professor");
+		filtro.addProfessorNomeValueListener(professorTF);
+		leftList.add(professorTF);
 		
-		this.turnoCB = new TurnoComboBox(this.campusCB, usuario.isProfessor());
-		filtro.addTurnoValueListener(this.turnoCB);
-		leftList.add(this.turnoCB);
+		List<Field<?>> centerList = new ArrayList<Field<?>>();
+		
+		this.cpfTF = new TextField<String>();
+		this.cpfTF.setEmptyText("Digite o cpf do professor");
+		this.cpfTF.setName("cpf");
+		this.cpfTF.setFieldLabel("CPF");
+		filtro.addProfessorCpfValueListener(cpfTF);
+		centerList.add(cpfTF);
 		
 		List<Field<?>> rightList = new ArrayList<Field<?>>();
-		
-		if(this.usuario.isAdministrador()){
-			this.professorCB = new ProfessorComboBox(this.campusCB);
-			
-			this.professorVirtualCB = new ProfessorVirtualComboBox(this.campusCB);
-			filtro.addProfessorVirtualValueListener(this.professorVirtualCB);
-			rightList.add(this.professorVirtualCB);
-		}
-		else{
-			ProfessorDTO professorDTO = new ProfessorDTO();
-			professorDTO.setId(usuario.getProfessorId());
-			professorDTO.setCpf(usuario.getProfessorCpf());
-			professorDTO.setNome(usuario.getProfessorDisplayText());
-			this.professorCB = new ProfessorComboBox(professorDTO);
-			this.professorCB.setReadOnly(true);
-			filtro.setProfessorDTO(professorDTO);
-		}
-		filtro.addProfessorValueListener(this.professorCB);
-		rightList.add(this.professorCB);
+				
+		this.professorVirtualCB = new ProfessorVirtualComboBox();
+		filtro.addProfessorVirtualValueListener(this.professorVirtualCB);
+		rightList.add(this.professorVirtualCB);
 		
 		mapLayout.put(LabelAlign.LEFT, leftList);
 		mapLayout.put(LabelAlign.RIGHT, rightList);
+		mapLayout.put(LabelAlign.TOP, centerList);
 		
 		super.createFilter(mapLayout);
 	}
@@ -108,6 +97,15 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		return (GradeHorariaProfessorGrid) this.grid;
 	}
 	
+	@Override
+	public TextField<String> getProfessorTextField(){
+		return this.professorTF;
+	}
+	
+	@Override
+	public TextField<String> getCpfTextField(){
+		return this.cpfTF;
+	}
 
 	@Override
 	public RelatorioVisaoProfessorFiltro getFiltro(){
@@ -117,21 +115,6 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 	@Override
 	public void setFiltro(RelatorioVisaoFiltro filtro){
 		this.filtro = (RelatorioVisaoProfessorFiltro) filtro;
-	}
-
-	@Override
-	public CampusComboBox getCampusComboBox(){
-		return this.campusCB;
-	}
-
-	@Override
-	public TurnoComboBox getTurnoComboBox(){
-		return this.turnoCB;
-	}
-
-	@Override
-	public ProfessorComboBox getProfessorComboBox(){
-		return this.professorCB;
 	}
 
 	@Override

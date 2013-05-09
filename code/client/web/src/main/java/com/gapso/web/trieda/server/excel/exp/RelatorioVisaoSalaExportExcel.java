@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -89,18 +90,29 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 			atdOperacionalList = AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario);
 		}
 		else{
-			RelatorioVisaoSalaFiltro filter = (RelatorioVisaoSalaFiltro) this.getFilter();
+			try {
+				RelatorioVisaoSalaFiltro filter = (RelatorioVisaoSalaFiltro) this.getFilter();
+	
+				Sala sala = Sala.findByCodigo(this.instituicaoEnsino, filter.getSalaCodigo());
+	
+				atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario, sala, null);
+	
+				atdOperacionalList = AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario, sala, null);
+			} catch (Exception e) {
+				String msg = "";
+				if (e instanceof EmptyResultDataAccessException) {
+					msg = "Os campos do digitados no filtro não foram encontrados";
+				}
+				else {
+					msg = ( e.getMessage() + ( e.getCause() != null ?
+							e.getCause().getMessage() : "" ) );
+				}
+				
+				this.errors.add( getI18nMessages().excelErroGenericoExportacao(
+					msg ) );
+				e.printStackTrace();
+			}
 			
-			Campus campus = Campus.find(filter.getCampusDTO().getId(), this.instituicaoEnsino );
-			Unidade unidade = Unidade.find(filter.getUnidadeDTO().getId(), this.instituicaoEnsino);
-			Sala sala = Sala.find(filter.getSalaDTO().getId(), this.instituicaoEnsino);
-			Turno turno = Turno.find(filter.getTurnoDTO().getId(), this.instituicaoEnsino);
-
-			atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario, campus, unidade, sala, 
-				turno, null);
-
-			atdOperacionalList = AtendimentoOperacional.findByCenario(this.instituicaoEnsino, cenario, campus, unidade, 
-				sala, turno, null);
 		}
 
 		List<AtendimentoTaticoDTO> listAtendTaticoDTO = ConvertBeans.toListAtendimentoTaticoDTO(atdTaticoList);

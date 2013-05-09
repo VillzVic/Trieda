@@ -67,16 +67,18 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 		
 		List<Field<?>> rightList = new ArrayList<Field<?>>();
 		
+		List<Field<?>> centerList = new ArrayList<Field<?>>();
+		
 		this.campusCB = new CampusComboBox(this.curriculoCB, false);
 		filtro.addCampusValueListener(this.campusCB);
-		rightList.add(this.campusCB);
+		centerList.add(this.campusCB);
 		
 		this.periodoCB = new SimpleComboBox<Integer>();
 		this.periodoCB.setFieldLabel("Período");
 		this.periodoCB.setEditable(false);
 		this.periodoCB.setTriggerAction(TriggerAction.ALL);
 		filtro.addPeriodoValueListener(this.periodoCB);
-		rightList.add(this.periodoCB);
+		centerList.add(this.periodoCB);
 		
 		this.turnoCB = new TurnoComboBox(this.campusCB);
 		filtro.addTurnoValueListener(this.turnoCB);
@@ -84,6 +86,7 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 
 		mapLayout.put(LabelAlign.LEFT, leftList);
 		mapLayout.put(LabelAlign.RIGHT, rightList);
+		mapLayout.put(LabelAlign.TOP, centerList);
 		
 		super.createFilter(mapLayout);
 	}

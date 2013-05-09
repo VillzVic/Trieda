@@ -13,6 +13,7 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoCursoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoProfessorFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -21,19 +22,19 @@ public interface AtendimentosService extends RemoteService {
 
 	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro);
 
-	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(RelatorioVisaoSalaFiltro filtro);
+	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(RelatorioVisaoSalaFiltro filtro) throws TriedaException;
 	
-	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor);
+	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor) throws TriedaException;
 	
-	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoAluno(RelatorioVisaoAlunoFiltro filtro);
+	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoAluno(RelatorioVisaoAlunoFiltro filtro) throws TriedaException;
 	
 	PagingLoadResult< AtendimentoTaticoDTO > getList();
 
 //	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 //		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO );
 
-	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CampusDTO campusDTO );
+	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais();
 
-	List<PercentMestresDoutoresDTO> getPercentMestresDoutoresList( CampusDTO campusDTO );
+	List< PercentMestresDoutoresDTO > getPercentMestresDoutoresList( CampusDTO campusDTO );
 
 }

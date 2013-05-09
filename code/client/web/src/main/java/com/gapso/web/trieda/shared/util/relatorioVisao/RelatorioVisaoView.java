@@ -3,7 +3,7 @@ package com.gapso.web.trieda.shared.util.relatorioVisao;
 import java.util.List;
 import java.util.Map;
 
-import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.Style.ButtonArrowAlign;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -18,19 +18,20 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public abstract class RelatorioVisaoView extends MyComposite implements RelatorioVisaoPresenter.Display{
-	private SimpleToolBar toolBar;
 	protected GradeHorariaVisao grid;
 	private Button submitBt;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private Button exportExcelBt;
 	
 	public RelatorioVisaoView(){}
 
@@ -46,19 +47,11 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 	protected void initUI(){
 		this.panel = new ContentPanel(new BorderLayout());
 		this.panel.setHeading(this.getHeadingPanel());
-		
-		this.createToolBar();
+
 		this.createGrid();
 		this.createFilter();
 		this.createTabItem();
 		this.initComponent(this.tabItem);
-	}
-	
-	private void createToolBar(){
-		// Exibe apenas o botão 'exportExcel'
-		this.toolBar = new SimpleToolBar(false, false, false, false, true, this);
-
-		this.panel.setTopComponent(this.toolBar);
 	}
 
 	private void createTabItem(){
@@ -85,25 +78,36 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 		
 		panel.setHeaderVisible(true);
 		panel.setHeading("Filtro");
-		panel.setButtonAlign(HorizontalAlignment.RIGHT);
 
 		final LayoutContainer main = new LayoutContainer(new ColumnLayout());
 		LayoutContainer left = new LayoutContainer(new FormLayout(LabelAlign.LEFT));
 		LayoutContainer right = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
 		LayoutContainer center = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
+		LayoutContainer submit = new LayoutContainer(new FormLayout());
+		LayoutContainer export = new LayoutContainer(new FormLayout());
 		
 		boolean threeColumns = mapLayout.get(LabelAlign.TOP) != null;
 
 		for(Field<?> campo : mapLayout.get(LabelAlign.LEFT)) left.add(campo, formData);
 		for(Field<?> campo : mapLayout.get(LabelAlign.RIGHT)) right.add(campo, formData);
-		if(threeColumns) for(Field<?> campo : mapLayout.get(LabelAlign.TOP)) center.add(campo, formData);
+		for(Field<?> campo : mapLayout.get(LabelAlign.TOP)) center.add(campo, formData);
 		
 		this.submitBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
-		panel.addButton(this.submitBt);
+		submit.add(submitBt, new HBoxLayoutData(new Margins(0, 0, 0, 5)));
 		
-		main.add(left, new ColumnData(threeColumns ? 0.33 : 0.5));
-		if(threeColumns) main.add(center, new ColumnData(0.33));
-		main.add(right, new ColumnData(threeColumns ? 0.33 : 0.5));
+		this.exportExcelBt = new Button("ExportarExcel", AbstractImagePrototype.create(Resources.DEFAULTS.exportar16()));
+		this.exportExcelBt.setArrowAlign(ButtonArrowAlign.RIGHT);
+		Menu menu = new Menu();
+		menu.add(new MenuItem("Exportar como xls"));
+		menu.add(new MenuItem("Exportar como xlsx"));
+		this.exportExcelBt.setMenu(menu);
+		export.add(this.exportExcelBt, new HBoxLayoutData(new Margins(0, 0, 0, 5)));
+		
+		main.add(left, new ColumnData(0.29));
+		main.add(center, new ColumnData(0.29));
+		main.add(right, new ColumnData(0.28));
+		main.add(submit, new ColumnData(0.05));
+		main.add(export, new ColumnData(0.09));
 
 		panel.add(main, new FormData("100%"));
 
@@ -116,7 +120,7 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 		int numRows = mapLayout.get(LabelAlign.RIGHT).size();
 		if(numRows < mapLayout.get(LabelAlign.LEFT).size()) numRows = mapLayout.get(LabelAlign.LEFT).size();
 		if(threeColumns && numRows < mapLayout.get(LabelAlign.TOP).size()) numRows = mapLayout.get(LabelAlign.TOP).size();
-		bld.setSize(83 + numRows * 26);
+		bld.setSize(48 + numRows * 26);
 
 		this.panel.add(panel, bld);
 	}
@@ -133,12 +137,12 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 
 	@Override
 	public MenuItem getExportXlsExcelButton(){
-		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+		return (MenuItem) this.exportExcelBt.getMenu().getItem(0);
 	}
 	
 	@Override
 	public MenuItem getExportXlsxExcelButton(){
-		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
+		return (MenuItem) this.exportExcelBt.getMenu().getItem(1);
 	}
 	
 	public abstract RelatorioVisaoFiltro getFiltro();

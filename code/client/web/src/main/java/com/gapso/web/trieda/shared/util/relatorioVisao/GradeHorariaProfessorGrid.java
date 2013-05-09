@@ -25,7 +25,7 @@ public class GradeHorariaProfessorGrid extends GradeHorariaVisao{
 	}
 
 	public void requestAtendimentos(){
-		if(getFiltro().getTurnoDTO() == null || (getFiltro().getProfessorDTO() == null && getFiltro().getProfessorVirtualDTO() == null)) return;
+		if(getFiltro().getProfessorCpf() == null && getFiltro().getProfessorNome() == null && getFiltro().getProfessorVirtualDTO() == null) return;
 
 		this.grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 		

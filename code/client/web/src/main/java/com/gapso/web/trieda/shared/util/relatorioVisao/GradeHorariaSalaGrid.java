@@ -9,7 +9,7 @@ public class GradeHorariaSalaGrid extends GradeHorariaVisao{
 	private RelatorioVisaoSalaFiltro filtro;
 	
 	public void requestAtendimentos() {
-		if(getFiltro().getSalaDTO() == null || getFiltro().getTurnoDTO() == null) return;
+		if(getFiltro().getSalaCodigo() == null) return;
 
 		this.grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 
