@@ -254,7 +254,7 @@ std::string VariablePre::toString()
 
    if ( tps )
    {
-      str << "_Tps" << tps->getId();
+      str << "_Tps" << tps->getId() << "Sl" << tps->salas.begin()->first;
    }
 
    if ( j >= 0 )

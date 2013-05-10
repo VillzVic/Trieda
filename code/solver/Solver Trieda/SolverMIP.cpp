@@ -31602,10 +31602,12 @@ int SolverMIP::criaVariavelTaticoDesalocaAlunoDiaHor( int campusId, int P, int t
 
 		lp->newCol( col );		
 		numVars++;	
-
+	}
+	ITERA_GGROUP_LESSPTR( itVar, auxVariables, VariableTatico )
+	{
 		delete (*itVar);
 	}
-	
+
 	return numVars;
 }
 
@@ -31615,6 +31617,8 @@ int SolverMIP::criaVariavelTaticoDesalocaAluno( int campusId, int P, int r )
     int numVars = 0;
 
     if ( r<=1 ) return numVars;
+	
+	GGroup< VariableTatico*, LessPtr<VariableTatico> > auxVariables;
 	
 	std::map< Aluno*, GGroup< Trio< int /*campusId*/, int /*turma*/, Disciplina* > >, LessPtr< Aluno > >::iterator
 		it = problemData->mapSlackAluno_CampusTurmaDisc.begin();
@@ -31636,38 +31640,49 @@ int SolverMIP::criaVariavelTaticoDesalocaAluno( int campusId, int P, int r )
 			int turma = (*itGGroup).second;
 			Disciplina *disciplina = (*itGGroup).third;
 
-			VariableTatico v;
-			v.reset();
-			v.setType( VariableTatico::V_DESALOCA_ALUNO );
-			v.setAluno( aluno );			// a
-			v.setTurma( turma );			// i
-			v.setDisciplina( disciplina );	// d
+			VariableTatico *v = new VariableTatico();
+			v->reset();
+			v->setType( VariableTatico::V_DESALOCA_ALUNO );
+			v->setAluno( aluno );			// a
+			v->setTurma( turma );			// i
+			v->setDisciplina( disciplina );	// d
 
-			if ( vHashTatico.find( v ) == vHashTatico.end() )
+			if ( auxVariables.find( v ) == auxVariables.end() )
 			{
-				vHashTatico[ v ] = lp->getNumCols();
-
-				double obj = 0.0;
-
-				if ( problemData->parametros->funcao_objetivo == 0 ) // MAX
-				{
-					obj = -disciplina->getTotalCreditos()*aluno->getOferta()->getReceita();
-				}
-				else if ( problemData->parametros->funcao_objetivo == 1 ) // MIN
-				{
-					obj = disciplina->getTotalCreditos()*aluno->getOferta()->getReceita();
-				}
-               
-				double lowerBound = 0.0;
-				double upperBound = 1.0;
-
-				OPT_COL col( OPT_COL::VAR_BINARY, obj, lowerBound, upperBound, ( char * )v.toString().c_str() );
-
-				lp->newCol( col );
-				numVars++;
+				auxVariables.add( v );				
 			}
 		}
    }
+	
+	ITERA_GGROUP_LESSPTR( itVar, auxVariables, VariableTatico )
+	{
+		VariableTatico v = **itVar;
+
+		vHashTatico[ v ] = lp->getNumCols();
+
+		double obj = 0.0;
+		if ( problemData->parametros->funcao_objetivo == 0 ) // MAX
+		{
+			obj = - v.getDisciplina()->getTotalCreditos() * v.getAluno()->getOferta()->getReceita();
+		}
+		else if ( problemData->parametros->funcao_objetivo == 1 ) // MIN
+		{
+			obj = v.getDisciplina()->getTotalCreditos() * v.getAluno()->getOferta()->getReceita();
+		}
+               
+		double lowerBound = 0.0;
+		double upperBound = 1.0;
+
+		OPT_COL col( OPT_COL::VAR_BINARY, obj, lowerBound, upperBound, ( char * )v.toString().c_str() );
+
+		lp->newCol( col );
+		numVars++;
+	}
+
+	ITERA_GGROUP_LESSPTR( itVar, auxVariables, VariableTatico )
+	{
+		delete (*itVar);
+	}
 
    return numVars;
 }
@@ -34631,11 +34646,13 @@ int SolverMIP::criaRestricaoTaticoAlunoHorario( int campusId, int prioridade, in
 
 					if ( cit != cHashTatico.end() )
 					{
-						auxCoef.first = cit->second;
-						auxCoef.second = vit->second;
+						//auxCoef.first = cit->second;
+						//auxCoef.second = vit->second;
 
-						coeffList.push_back( auxCoef );
-						coeffListVal.push_back( 1.0 );
+						//coeffList.push_back( auxCoef );
+						//coeffListVal.push_back( 1.0 );
+
+						lp->chgCoef(cit->second, vit->second, 1.0);
 					}
 					else
 					{
@@ -34655,7 +34672,7 @@ int SolverMIP::criaRestricaoTaticoAlunoHorario( int campusId, int prioridade, in
        }
    }
 
-   chgCoeffList( coeffList, coeffListVal );
+   //chgCoeffList( coeffList, coeffListVal );
 
    return restricoes;
 }

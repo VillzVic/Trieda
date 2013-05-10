@@ -2289,7 +2289,7 @@ int ProblemData::haDemandaDiscNoCjtAlunosPorOferta( int discId, int oftId, int c
 	if ( itMap == this->cjtDemandas.end() )
 	{
 		std::cout << "\nConjunto de alunos " << cjtAlunosId << " nao encontrado.\n";
-		return false;
+		return 0;
 	}
 	else
 	{

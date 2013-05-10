@@ -75,7 +75,7 @@ using namespace boost;
 #endif
 
 
-//#define READ_SOLUTION
+#define READ_SOLUTION
 
 // ----------------------------------
 // NOVA ABORDAGEM

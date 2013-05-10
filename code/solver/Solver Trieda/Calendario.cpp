@@ -91,8 +91,15 @@ int Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *h
 	if ( !possuiHorario( hi ) ||
 		 !possuiHorario( hf ) )
 	{
-		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ): \n";
-		std::cout<<"Horario hf ou hi nao encontrado no calendario.\n";		
+		std::cout<<"\nAtencao em Calendario::retornaNroCreditosEntreHorarios( HorarioAula *hi, HorarioAula *hf ):";
+		if ( !possuiHorario( hi ) )
+		{
+			std::cout<<"\nHorario hi"<<" = "<<hi->getInicio() <<" nao encontrado no calendario.";
+		}
+		if ( !possuiHorario( hf ) )
+		{
+			std::cout<<"\nHorario hf"<<" = "<<hf->getInicio() <<" nao encontrado no calendario.";	
+		}
 		return 0;
 	}	
 	if ( *hi > *hf )

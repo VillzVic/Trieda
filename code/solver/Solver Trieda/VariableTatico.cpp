@@ -260,7 +260,7 @@ std::string VariableTatico::toString()
 
    if ( tps )
    {
-      str << "_Tps" << tps->getId();
+      str << "_Tps" << tps->getId() << "Sl" << tps->salas.begin()->first;
    }
 
    if ( t >= 0 )

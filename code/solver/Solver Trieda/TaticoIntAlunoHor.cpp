@@ -1534,7 +1534,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 		   printf( "Total of Constraints: %i\n\n", constNum );
 			#endif
 
-		   lp->writeProbLP( lpName );
+			lp->writeProbLP( string("0"+ string(lpName) ).c_str() );
 		}
    }
 // ---------------------------------------------------------------
@@ -1661,7 +1661,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 				
 #ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
-		lp->setTimeLimit( 7200+7200+3600 );
+		lp->setTimeLimit( 7200+1200 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
@@ -8369,11 +8369,13 @@ int TaticoIntAlunoHor::criaRestricaoTaticoAlunoHorario( int campusId )
 
 			if ( cit != cHashTatico.end() )
 			{
-				auxCoef.first = cit->second;
-				auxCoef.second = vit->second;
+				//auxCoef.first = cit->second;
+				//auxCoef.second = vit->second;
 
-				coeffList.push_back( auxCoef );
-				coeffListVal.push_back( 1.0 );
+				//coeffList.push_back( auxCoef );
+				//coeffListVal.push_back( 1.0 );
+						
+				lp->chgCoef(cit->second, vit->second, 1.0);
 			}
 			else
 			{
@@ -8391,7 +8393,7 @@ int TaticoIntAlunoHor::criaRestricaoTaticoAlunoHorario( int campusId )
        }
    }
 
-   chgCoeffList( coeffList, coeffListVal );
+   //chgCoeffList( coeffList, coeffListVal );
 
    return restricoes;
 }
