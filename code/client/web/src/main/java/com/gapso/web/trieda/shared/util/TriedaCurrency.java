@@ -45,7 +45,7 @@ public class TriedaCurrency
 	@Override
 	public String toString()
 	{
-		Integer y = ( (Double) ( this.value * 100 ) ).intValue();
+		Integer y = (int) ( Math.round( this.value * 100 ) );
 
 		// Casas decimais
 		Integer resto = Math.abs(( y % 100 ));
