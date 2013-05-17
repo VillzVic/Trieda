@@ -440,7 +440,7 @@ $$
 
 \begin{eqnarray}
 \sum\limits_{a \in A} \sum\limits_{s \in S} \sum\limits_{t \in T} \sum\limits_{h \in H} x_{p,a,s,d,i,t,h} \leq  M \cdot y_{p,d,i,cp} \nonumber \qquad 
-\forall p \in P \quad
+\forall p \in P \cup PV \quad
 \forall cp \in Cp \quad
 \forall d \in D \quad
 \forall i \in I_{d}
@@ -450,7 +450,7 @@ $$
 \subsubsection{Somente um professor deve ser alocado para aulas de turma e disciplina}
 
 \begin{eqnarray}
-\sum\limits_{p \in P} y_{p,d,i,cp} \leq 1 \nonumber \qquad
+\sum\limits_{p \in P \cup PV} y_{p,d,i,cp} \leq 1 \nonumber \qquad
 \forall cp \in Cp \quad
 \forall d \in D \quad
 \forall i \in I_{d}
