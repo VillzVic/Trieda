@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -56,6 +57,7 @@ public class ExportExcelFormPresenter
 		CheckBox getAtendimentosPorAlunoExportExcelCheckBox();
 		CheckBox getAulasExportExcelCheckBox();
 		CheckBox getPercentMestresDoutores();
+		TextField<String> getNomeArquivoTextField();
 		FormPanel getFormPanel();
 	}
 	

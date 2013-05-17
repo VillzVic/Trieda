@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
@@ -51,6 +52,7 @@ public class ExportExcelFormView
 	private CheckBox atendimentosPorAlunoExportExcelCB;
 	private CheckBox percentMestresDoutoresExportExcelCB;
 	private CheckBox aulasExportExcelCB;
+	private TextField<String> nomeArquivoTF;
 	
 	public ExportExcelFormView()
 	{
@@ -61,7 +63,7 @@ public class ExportExcelFormView
 	{
 		String title = "Exportação Excel";
 		exportExcelModal = new ExportExcelModal(title, Resources.DEFAULTS.exportar16());
-		exportExcelModal.setHeight(630);
+		exportExcelModal.setHeight(660);
 		exportExcelModal.setWidth(500);
 		createForm();
 		exportExcelModal.setContent(formPanel);
@@ -263,8 +265,14 @@ public class ExportExcelFormView
 		aulasExportExcelCB.setFieldLabel("Aulas");
 		right.add(aulasExportExcelCB, formData);
 		
-		main.add(left, new ColumnData(.5));  
-	    main.add(right, new ColumnData(.5));  
+		nomeArquivoTF = new TextField<String>();
+		nomeArquivoTF.setEmptyText("digite um nome para a planilha a ser exportada");
+		nomeArquivoTF.setFieldLabel("Nome do Arquivo");
+		nomeArquivoTF.setName("nomeArquivo");
+		formPanel.add(nomeArquivoTF, new FormData("100%"));
+		
+		main.add(left, new ColumnData(.5));
+	    main.add(right, new ColumnData(.5));
 	  
 	    formPanel.add(main, new FormData("100%"));  
 
@@ -442,6 +450,11 @@ public class ExportExcelFormView
 	@Override
 	public CheckBox getPercentMestresDoutores() {
 		return percentMestresDoutoresExportExcelCB;
+	}
+	
+	@Override
+	public TextField<String> getNomeArquivoTextField() {
+		return nomeArquivoTF;
 	}
 
 }

@@ -62,6 +62,12 @@ public class ExportExcelServlet extends HttpServlet
 
 		Map< String, Boolean > planilhasExportExcel = getPlanilhasExportExcel(request);
 		
+		String nomeArquivo = request.getParameter("nomeArquivo");
+		
+		if(nomeArquivo.isEmpty()) {
+			nomeArquivo = "Trieda";
+		}
+		
 		String chaveRegistro = request.getParameter("chaveRegistro");
 		
 		if(fileExtension.isEmpty()) {
@@ -86,7 +92,7 @@ public class ExportExcelServlet extends HttpServlet
 			IExportExcel exporter = ExportExcelFactory.createExporter(
 				informationToBeExported, this.cenario, ExportExcelServlet.i18nConstants,
 				ExportExcelServlet.i18nMessages, filter, getInstituicaoEnsino(), fileExtension,
-				planilhasExportExcel
+				planilhasExportExcel, nomeArquivo
 			);
 			
 			if ( exporter != null )

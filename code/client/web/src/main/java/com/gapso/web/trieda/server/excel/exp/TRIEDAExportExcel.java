@@ -23,14 +23,16 @@ public class TRIEDAExportExcel
 	public TRIEDAExportExcel( Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, boolean isVisaoProfessor,
 		InstituicaoEnsino instituicaoEnsino, String fileExtension,
-		Map< String, Boolean > planilhasExportExcel )
+		Map< String, Boolean > planilhasExportExcel, String nomeArquivo )
 	{
 		super(false, "", cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 		this.isVisaoProfessor = isVisaoProfessor;
 		this.planilhasExportExcel = planilhasExportExcel;
+		this.nomeArquivo = nomeArquivo;
 	}
 
 	private boolean isVisaoProfessor;
+	private String nomeArquivo;
 	private Map<String, Boolean> planilhasExportExcel;
 
 	public boolean isVisaoProfessor()
@@ -46,7 +48,7 @@ public class TRIEDAExportExcel
 	@Override
 	public String getFileName()
 	{
-		return getI18nConstants().trieda();
+		return nomeArquivo;
 	}
 
 	@Override

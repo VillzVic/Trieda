@@ -33,7 +33,12 @@ public class ExportExcelFormSubmit
         
         if (formPanel != null){
         	for (Field<?> f : formPanel.getFields()){
-    			this.addParameter(f.getName(), (Boolean) f.getValue());
+        		if (f.getName().equals("nomeArquivo")) {
+        			this.addParameter(f.getName(), (String) f.getValue());
+        		}
+        		else {
+        			this.addParameter(f.getName(), (Boolean) f.getValue());
+        		}
         	}
 		}
 
