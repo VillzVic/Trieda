@@ -48,7 +48,7 @@ public class TRIEDAExportExcel
 	@Override
 	public String getFileName()
 	{
-		return (nomeArquivo == null ? getI18nConstants().trieda() : nomeArquivo);
+		return (nomeArquivo.isEmpty() ? getI18nConstants().trieda() : nomeArquivo);
 	}
 
 	@Override
