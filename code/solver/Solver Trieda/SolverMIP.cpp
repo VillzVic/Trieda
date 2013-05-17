@@ -34928,21 +34928,32 @@ int SolverMIP::criaRestricaoTaticoDesalocaAlunoHorario( int campusId, int priori
 					if ( cit != cHashTatico.end() )
 					{
 						// insere x
-						auxCoef.first = cit->second;
-						auxCoef.second = vit->second;
-						coeffList.push_back( auxCoef );
-						coeffListVal.push_back( 1.0 );
-
+						lp->chgCoef( cit->second, vit->second, 1.0 );
+						
 						// insere fad_{i,d,a,t,hi,hf}
 						VariableTaticoHash::iterator it_v;
 						it_v = vHashTatico.find( v_fa );
 						if( it_v != vHashTatico.end() )
 						{
-							auxCoef.first = cit->second;
-							auxCoef.second = it_v->second;
-							coeffList.push_back( auxCoef );
-							coeffListVal.push_back( -1.0 );						
+							lp->chgCoef( cit->second, it_v->second, -1.0 );
 						}
+
+						//// insere x
+						//auxCoef.first = cit->second;
+						//auxCoef.second = vit->second;
+						//coeffList.push_back( auxCoef );
+						//coeffListVal.push_back( 1.0 );
+
+						//// insere fad_{i,d,a,t,hi,hf}
+						//VariableTaticoHash::iterator it_v;
+						//it_v = vHashTatico.find( v_fa );
+						//if( it_v != vHashTatico.end() )
+						//{
+						//	auxCoef.first = cit->second;
+						//	auxCoef.second = it_v->second;
+						//	coeffList.push_back( auxCoef );
+						//	coeffListVal.push_back( -1.0 );						
+						//}
 					}
 					else
 					{
@@ -34971,7 +34982,7 @@ int SolverMIP::criaRestricaoTaticoDesalocaAlunoHorario( int campusId, int priori
        }
    }
 
-   chgCoeffList( coeffList, coeffListVal );
+ //  chgCoeffList( coeffList, coeffListVal );
 
    return restricoes;
 }
@@ -55466,6 +55477,60 @@ int SolverMIP::criaVariavelProfessorDisciplina()
       }
    }
 
+   int nota = 10;
+   int preferencia = 10;
+   double custoCredito = 200; // todo
+
+   // Professores virtuais para as aulas
+   ITERA_GGROUP_LESSPTR( itPV, problemData->profsVirtuais, Professor )
+   {
+	   Professor *pv = *itPV;   
+	   
+	   ITERA_GGROUP_LESSPTR( it_aula, problemData->aulas, Aula )
+	   {
+		    Aula * aula = ( *it_aula );
+		    Disciplina * discAula = aula->getDisciplina();
+
+		    Campus *campus = problemData->retornaCampus( aula->getSala()->getIdUnidade() );
+		  
+			VariableOp v;
+			v.reset();
+			v.setType( VariableOp::V_Y_PROF_DISCIPLINA );
+			v.setDisciplina( discAula ); 
+            v.setProfessor( pv );
+            v.setTurma( aula->getTurma() );
+			v.setCampus( campus );
+
+			//------------------------------------------------------
+			// Preferência:
+			// 10  --> Maior preferência
+			// 1 --> Menor preferência
+			//------------------------------------------------------
+			// Nota de desempenho:
+			// 1  --> Menor desempenho
+			// 10 --> Maior desempenho
+			//------------------------------------------------------
+			// Assim, o 'peso' da preferência e da nota
+			// de desempenho na função objetivo variam
+			// entre 0 e 9, sendo 0 o MELHOR CASO e 9 o PIOR CASO
+		 	//------------------------------------------------------
+			coeff = ( ( 10 - nota ) * ( pesoNota )
+			+ ( 10 - preferencia ) * ( pesoPreferencia )
+			+ custoCredito * aula->getDisciplina()->getTotalCreditos() );
+
+			if ( vHashOp.find( v ) == vHashOp.end() )
+			{
+				vHashOp[ v ] = lp->getNumCols();
+
+				OPT_COL col( OPT_COL::VAR_BINARY, coeff, 0.0, 1.0,
+					( char * ) v.toString().c_str() );
+
+				lp->newCol( col );
+				num_vars++;
+			}
+	   }
+   }
+
    return num_vars;
 }
 
@@ -58698,10 +58763,10 @@ int SolverMIP::criaRestricaoProfessorDisciplina()
 		  continue;
 	  }
 
-      if ( v.getProfessor()->eVirtual() )
-      {
-         continue;
-      }
+      //if ( v.getProfessor()->eVirtual() )
+      //{
+      //   continue;
+      //}
 
       if ( v.getType() == VariableOp::V_Y_PROF_DISCIPLINA )
       {
@@ -60917,6 +60982,11 @@ int SolverMIP::criaRestricaoDiscProfCurso()
 
 		if (v.getType() != VariableOp::V_DISC_PROF_CURSO &&
 			v.getType() != VariableOp::V_Y_PROF_DISCIPLINA)
+		{
+			continue;
+		}
+
+		if ( v.getProfessor()->eVirtual() )
 		{
 			continue;
 		}

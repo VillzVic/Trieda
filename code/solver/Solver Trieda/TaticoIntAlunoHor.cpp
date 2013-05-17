@@ -1661,7 +1661,10 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 				
 #ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
-		lp->setTimeLimit( 7200+1200 );
+		if ( r == 1 )
+			lp->setTimeLimit( 7200+1200 );
+		else
+			lp->setTimeLimit( 3600 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
 		lp->setMIPScreenLog( 4 );
@@ -1820,7 +1823,10 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 
 	#ifdef SOLVER_CPLEX
 			lp->setNumIntSols(0);
-			lp->setTimeLimit(7200);
+			if ( r == 1 )
+				lp->setTimeLimit( 7200 );
+			else
+				lp->setTimeLimit( 3600 );
 			//lp->setMIPRelTol( 0.01 );
 			lp->setPreSolve(OPT_TRUE);
 			lp->setHeurFrequency(1.0);
@@ -1909,7 +1915,10 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 
 #ifdef SOLVER_CPLEX
 		lp->setNumIntSols(0);
-		lp->setTimeLimit(7200 + 7200);
+		if ( r == 1 )
+			lp->setTimeLimit( 7200+7200 );
+		else
+			lp->setTimeLimit( 3600 );		
 		//lp->setMIPRelTol( 0.01 );
 		lp->setPreSolve(OPT_TRUE);
 		lp->setHeurFrequency(1.0);
@@ -1977,94 +1986,7 @@ int TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int
 		}
 			
 		lp->updateLP();
-				
 	   
-	   /*
-
-#ifdef SOLVER_CPLEX
-		lp->setNumIntSols(0);
-		lp->setTimeLimit(7200 + 7200);
-		//lp->setMIPRelTol( 0.01 );
-		lp->setPreSolve(OPT_TRUE);
-		lp->setHeurFrequency(1.0);
-		lp->setMIPScreenLog( 4 );
-		lp->setPolishAfterTime(7200);
-		lp->setPolishAfterIntSol(1);
-		lp->setMIPEmphasis(0);
-		lp->setPolishAfterNode(1);
-		lp->setSymetry(0);
-		lp->setCuts(1);
-	//	lp->setScreenLog(OPT_TRUE); // deu msg de erro com esse parametro
-		lp->updateLP();
-#endif
-#ifdef SOLVER_GUROBI
-		lp->setNumIntSols(0);
-		lp->setTimeLimit(7200 + 1800);
-		lp->setPreSolve(OPT_TRUE);
-		lp->setHeurFrequency(1.0);
-		lp->setMIPScreenLog( 4 );
-		lp->setPolishAfterTime(100000000);
-		lp->setPolishAfterIntSol(100000000);
-		lp->setMIPEmphasis(0);
-		lp->setSymetry(0);
-		lp->setCuts(1);
-		lp->updateLP();
-#endif
-
-		// GENERATES SOLUTION
-        status = lp->optimize(METHOD_MIP);
-
-		std::cout<<"\n\nOtimizado! Status = "<<status<<"\n\n"; fflush(NULL);
-
-		double * xSol = NULL;
-		xSol = new double[ lp->getNumCols() ];
-        lp->getX(xSol);
-		
-	    // Imprime Gap
-		ofstream outGaps;
-		std::string gapFilename( "gap_input" );
-		gapFilename += problemData->getInputFileName();
-		gapFilename += ".txt";
-		outGaps.open(gapFilename, ofstream::app);
-		if ( !outGaps )
-		{
-			std::cerr<<"\nAbertura do arquivo gaps.txt falhou em TaticoIntAlunoHor::solveTaticoIntAlunoHor().\n"; fflush(NULL);
-		}
-		else
-		{
-			outGaps << "Tatico Integrado - campus "<< campusId << ", Prioridade " << prioridade << ", R "<< r;
-			if ( USAR_EQUIVALENCIA ) outGaps << ", Com equivalencias";			
-			outGaps << "\nGap = " << lp->getMIPGap() * 100 << "%";
-			outGaps << "\n\n\n";
-			outGaps.close();
-		}
-			
-		lp->updateLP();
-		
-		// WRITES SOLUTION
-		char solName[1024];
-		strcpy( solName, getSolBinFileName( campusId, prioridade, r ).c_str() );
-		FILE * fout = fopen( solName, "wb" );
-		if ( fout == NULL )
-		{
-			std::cout << "\nErro em TaticoIntAlunoHor::solveTaticoIntAlunoHor( int campusId, int prioridade, int cjtAlunosId ):"
-					<< "\nArquivo " << solName << " nao pode ser aberto.\n"; fflush(NULL);
-		}
-		else
-		{
-			int nCols = lp->getNumCols();
-
-			fwrite( &nCols, sizeof( int ), 1, fout );
-			for ( int i = 0; i < lp->getNumCols(); i++ )
-			{
-				fwrite( &( xSol[ i ] ), sizeof( double ), 1, fout );
-			}
-
-			fclose( fout );
-		}
-
-		delete [] xSol;   
-   */
 	}
 
 	std::cout<<"\n------------------------------Fim do Tatico Integrado -----------------------------\n"; fflush(NULL);
