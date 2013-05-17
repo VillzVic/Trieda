@@ -64,10 +64,6 @@ public class ExportExcelServlet extends HttpServlet
 		
 		String nomeArquivo = request.getParameter("nomeArquivo");
 		
-		if(nomeArquivo.isEmpty()) {
-			nomeArquivo = "Trieda";
-		}
-		
 		String chaveRegistro = request.getParameter("chaveRegistro");
 		
 		if(fileExtension.isEmpty()) {
