@@ -119,6 +119,8 @@ void ParametrosPlanejamento::le_arvore( ItemParametrosPlanejamento & elem )
 
    perc_max_reducao_CHP = elem.evitarReducaoCargaHorariaProfValor().get();
    min_alunos_abertura_turmas_value = elem.minAlunosAberturaTurmasValor().get();
+      
+   if ( min_alunos_abertura_turmas_value <= 0 ) min_alunos_abertura_turmas=false;
 
    // TODO
   // considerar_equivalencia_por_aluno = false;
