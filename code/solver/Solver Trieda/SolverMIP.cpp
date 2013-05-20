@@ -29943,16 +29943,6 @@ int SolverMIP::criaVariavelTaticoAbertura( int campusId, int P, int r )
                vHashTatico[v] = lp->getNumCols();
 
 			   double coef = 0.0;
-
-               if ( problemData->parametros->funcao_objetivo == 0 )
-               {
-				   coef = -10 * it_campus->getCusto() * disciplina->getTotalCreditos();
-               }
-               else if ( problemData->parametros->funcao_objetivo == 1 )
-               {
-				   coef = it_campus->getCusto() * disciplina->getTotalCreditos();
-               }
-                  
 				double lowerBound = 0.0;
 				double upperBound = 1.0;
 
