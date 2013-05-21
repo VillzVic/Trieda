@@ -202,7 +202,7 @@ public class AulasExportExcel extends AbstractExportExcel {
 						// Horário Fim
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],horarioFim);
 						// Professor
-						String professorCPF = (aula.getProfessorId() != null) ? aula.getProfessorCPF() : aula.getProfessorVirtualCPF();
+						String professorCPF = aula.getProfessorCPF();//(aula.getProfessorId() != null) ? aula.getProfessorCPF() : aula.getProfessorVirtualCPF();
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],professorCPF);
 						// Sala
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getSalaString());

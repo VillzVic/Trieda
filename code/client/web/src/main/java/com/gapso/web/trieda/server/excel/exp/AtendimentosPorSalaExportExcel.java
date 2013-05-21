@@ -163,7 +163,7 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 				// Turma
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getTurma());
 				// Professor
-				String professorCPF = (aula.getProfessorId() != null) ? aula.getProfessorCPF() : aula.getProfessorVirtualCPF();
+				String professorCPF = aula.getProfessorCPF();//(aula.getProfessorId() != null) ? aula.getProfessorCPF() : aula.getProfessorVirtualCPF();
 				setCell(row,column++,sheet,AtendimentosPorSalaExportExcel.this.cellStyles[AtendimentosPorSalaExportExcel.ExcelCellStyleReference.TEXT.ordinal()],professorCPF);
 				// Aula - Créditos Teóricos
 				int credT = (aula.isTeorico() ? aula.getTotalCreditos() : 0);
