@@ -3407,7 +3407,7 @@ public class ConvertBeans {
 		dto.setCreditosPagos( domain.getCreditosPagos() );
 		dto.setDemandaAcumP1( domain.getDemandaAcumP1() );
 		dto.setAtendimentoSomaAcum( domain.getAtendimentoSomaAcum() );
-		dto.setAtendimentoSomaAcumPercent( TriedaUtil.round(domain.getAtendimentoSomaPercent()*100.0,2)+"%" );
+		dto.setAtendimentoSomaAcumPercent( TriedaUtil.round(domain.getAtendimentoAcumPercent()*100.0,2)+"%" );
 		dto.setReceitaSemanal(TriedaUtil.round(domain.getReceitaSemanal(),2));
 		dto.setCustoDocenteSemanal( TriedaUtil.round(domain.getCustoDocenteSemanal(),2) );
 		dto.setCustoDocentePorReceitaPercent(TriedaUtil.round(domain.getCustoDocentePercent()*100.0,2)+"%" );

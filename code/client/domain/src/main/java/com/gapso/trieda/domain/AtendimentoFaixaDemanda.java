@@ -230,8 +230,9 @@ public class AtendimentoFaixaDemanda
 		return q.getResultList();
 	}
 	
-	public static Integer deleteAll() {
-		Query q = entityManager().createQuery( "DELETE FROM AtendimentoFaixaDemanda");
+	public static Integer deleteAllFromCampus(Campus campus) {
+		Query q = entityManager().createQuery( "DELETE FROM AtendimentoFaixaDemanda WHERE campus = :campus");
+		q.setParameter( "campus", campus );
 		
 		return q.executeUpdate();
 	}

@@ -392,7 +392,7 @@ public class AlunosDemandaServiceImpl
 			result = ConvertBeans.toListAtendimentoFaixaDemandaDTO( AtendimentoFaixaDemanda.findByCampus(getInstituicaoEnsinoUser(), campus) );
 		}
 		else {
-			AtendimentoFaixaDemanda.deleteAll();
+			AtendimentoFaixaDemanda.deleteAllFromCampus(campus);
 			for (AtendimentoFaixaDemanda atendimento : createResumoFaixaDemandaList(campusDTO, faixas)) {
 				result.add(ConvertBeans.toAtendimentoFaixaDemandaDTO(atendimento));
 				atendimento.persist();
@@ -530,9 +530,9 @@ public class AlunosDemandaServiceImpl
 				receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
 			}
 			mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
-			demandaP1Acum[i] = demandaP1[i];
-			atendimentoSomaAcum[i] = atendimentoSoma[i];
-			
+			demandaP1Acum[i] = (i == 0 ? demandaP1[i] : demandaP1[i] + demandaP1Acum[i-1]);
+			atendimentoSomaAcum[i] = (i == 0 ? atendimentoSoma[i] : atendimentoSoma[i] + atendimentoSomaAcum[i-1]);
+
 			double atendimentoSomaAcumPercent = ( (double)atendimentoSomaAcum[i] ) / demandaP1Acum[i];
 			double custoDocenteSemanal = (double)creditosPagos[i] * campus.getValorCredito() * 4.5 * 6;
 			double custoDocentePorReceitaPercent = custoDocenteSemanal / receita[i];
@@ -551,7 +551,7 @@ public class AlunosDemandaServiceImpl
 			resumoFaixaDemanda.setCreditosPagos( creditosPagos[i] );
 			resumoFaixaDemanda.setDemandaAcumP1( demandaP1Acum[i] );
 			resumoFaixaDemanda.setAtendimentoSomaAcum( atendimentoSomaAcum[i] );
-			resumoFaixaDemanda.setAtendimentoAcumPercent( TriedaUtil.round(atendimentoSomaAcumPercent,2) );
+			resumoFaixaDemanda.setAtendimentoAcumPercent( atendimentoSomaAcumPercent );
 			resumoFaixaDemanda.setReceitaSemanal(TriedaUtil.round(receita[i],2));
 			resumoFaixaDemanda.setCustoDocenteSemanal( TriedaUtil.round(custoDocenteSemanal,2) );
 			resumoFaixaDemanda.setCustoDocentePercent( TriedaUtil.round(custoDocentePorReceitaPercent,2) );
