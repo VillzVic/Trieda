@@ -208,6 +208,8 @@ public class AulasExportExcel extends AbstractExportExcel {
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getSalaString());
 						// Disciplina Substituta
 						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getDisciplinaSubstitutaString());
+						// Disciplina Aula
+						setCell(row,column++,sheet,AulasExportExcel.this.cellStyles[AulasExportExcel.ExcelCellStyleReference.TEXT.ordinal()],aula.getDisciplinaSubstitutaString() == null ? aula.getDisciplinaString() : aula.getDisciplinaSubstitutaString());
 						/////////////////////////////////////////////////////////////////
 						row++;
 					}
