@@ -44,9 +44,11 @@ BEGIN
       SET msg_status = 'Base de dados compativel com script de conversao, inicio processo conversao';
       
       /* TRIEDA-1617: Permitir regras de equivalências por curso */
+      DROP TABLE IF EXISTS `trieda`.`equivalencias_old`;
+      DROP TABLE IF EXISTS `trieda`.`cursos_equivalencias`;
       RENAME TABLE `trieda`.`equivalencias` TO `equivalencias_old`;
       CREATE TABLE  `trieda`.`equivalencias` (
-     	`eqv_id` bigint(20) NOT NULL,
+     	`eqv_id` bigint(20) NOT NULL AUTO_INCREMENT,
         `dis_cursou_id` bigint(20) NOT NULL,
         `dis_elimina_id` bigint(20) NOT NULL,
         `eqv_geral` BIT(1),

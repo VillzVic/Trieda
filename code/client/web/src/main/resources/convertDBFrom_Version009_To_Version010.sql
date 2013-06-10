@@ -44,6 +44,7 @@ BEGIN
       SET msg_status = 'Base de dados compativel com script de conversao, inicio processo conversao';
       
       /* TRIEDA-1624: Atendimento por faixa de demanda salvo no banco e valores de faixas customizáveis */
+      DROP TABLE IF EXISTS `trieda`.`atendimentos_faixa_demanda`;
       CREATE TABLE  `trieda`.`atendimentos_faixa_demanda` (
      	`afd_id` bigint(20) NOT NULL AUTO_INCREMENT,
         `cam_id` bigint(20) NOT NULL,
