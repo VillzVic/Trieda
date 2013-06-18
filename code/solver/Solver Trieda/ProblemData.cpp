@@ -85,8 +85,18 @@ void ProblemData::le_arvore( TriedaInput & raiz )
    LE_SEQ( this->disciplinas, raiz.disciplinas(), Disciplina );
    LE_SEQ( this->cursos, raiz.cursos(), Curso );
    LE_SEQ( this->demandasTotal, raiz.demandas(), Demanda );
+   LE_SEQ( this->equivalencias, raiz.equivalencias(), Equivalencia );
 
-   this->parametros = new ParametrosPlanejamento;
+   ITERA_GGROUP_LESSPTR( itEquiv, this->equivalencias, Equivalencia )
+   {
+	   int disc1 = itEquiv->getDisciplinaEliminaId();
+	   int disc2 = itEquiv->getDisciplinaCursouId();
+	   int idEquiv = itEquiv->getId();
+
+	   this->mapParDisc_EquivId[ std::make_pair( disc1, disc2 ) ] = idEquiv;
+   }
+
+   this->parametros = new ParametrosPlanejamento();
    this->parametros->le_arvore( raiz.parametrosPlanejamento() );
    
    ITERA_SEQ( it_oferta,
@@ -1751,8 +1761,11 @@ GGroup<AlunoDemanda*, LessPtr<AlunoDemanda>> ProblemData::retornaDemandasDiscNoC
 					 this->cargaHorariaJaAtendida( aluno ) <= 0 )
 					 continue;
 				
-				if ( d->discEquivSubstitutas.find( disciplina ) != d->discEquivSubstitutas.end() )
-					alunosDemanda.add( *itAlDem );
+				if ( d->discEquivSubstitutas.find( disciplina ) == d->discEquivSubstitutas.end() )
+					continue;
+
+				if ( this->ehSubstituivel( d->getId(), disciplina->getId(), aluno->getOferta()->curso ) )
+					alunosDemanda.add( *itAlDem );	
 			}
 			else if ( turmaAluno != -1 && *d == *disciplina )
 			{
@@ -3901,4 +3914,37 @@ Curso* ProblemData::retornaCursoAtendido( int turma, Disciplina* disciplina, int
 	}
 
 	return cursoMajor;
+}
+
+bool ProblemData::ehSubstituivel( int disciplina, int disciplinaEquiv, Curso *curso )
+{
+	std::pair<int, int> parDisc( disciplina, disciplinaEquiv );
+	std::map< std::pair< int/*oldDisc*/, int/*newDisc*/ >, int /*equiv*/>::iterator
+		itMap = this->mapParDisc_EquivId.find( parDisc );
+	if ( itMap!= this->mapParDisc_EquivId.end() )
+	{
+		int equivId = itMap->second;
+
+		bool geral=false;
+		Equivalencia* equiv = new Equivalencia();
+		equiv->setId(equivId);
+		GGroup< Equivalencia*, LessPtr< Equivalencia > >::iterator
+			itEquiv = this->equivalencias.find(equiv);
+		delete equiv;
+		if ( itEquiv != this->equivalencias.end() )
+		{
+			equiv = *itEquiv;
+			geral = equiv->getGeral();								
+		}
+		if (!geral)
+		{
+			if ( curso->equiv_ids.find(equivId) ==
+				 curso->equiv_ids.end() )
+			{
+				return false;
+			}
+		}
+		else return true;
+	}
+	return false;
 }

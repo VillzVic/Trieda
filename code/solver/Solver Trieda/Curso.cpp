@@ -41,6 +41,11 @@ void Curso::le_arvore( ItemCurso & elem )
       curriculos.add( curriculo );
    }
 
+   ITERA_NSEQ( it_equiv, elem.equivalencias(), id, Identificador )
+   {
+      equiv_ids.add( *it_equiv );
+   }
+
    // Porcentagens mínimas de professores que trabalham em regime
    // de dedicação parcial e/ouo integral, de acordo com o tipo de
    // contrato do professor, que devem ministrar aulas desse curso

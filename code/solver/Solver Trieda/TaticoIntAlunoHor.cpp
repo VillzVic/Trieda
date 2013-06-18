@@ -5763,6 +5763,9 @@ int TaticoIntAlunoHor::criaVariavelTaticoAlocaAlunoTurmaDiscEquiv( int campusId,
 				{
 					Disciplina *disciplinaEquiv = (*itDiscEq);
 
+					if ( ! problemData->ehSubstituivel( disciplina->getId(), disciplinaEquiv->getId(), aluno->getOferta()->curso ) )
+						continue;					
+
 					for ( int turma = 0; turma < disciplinaEquiv->getNumTurmas(); turma++ )
 					{
 						VariableTatInt v;
@@ -9352,6 +9355,9 @@ int TaticoIntAlunoHor::criaRestricaoPrioridadesDemandaEquiv( int campusId, int p
 				ITERA_GGROUP_LESSPTR( itDiscEq, disciplina->discEquivSubstitutas, Disciplina )
 				{
 					Disciplina *disciplinaEquiv = (*itDiscEq);
+					
+					if ( ! problemData->ehSubstituivel( disciplina->getId(), disciplinaEquiv->getId(), aluno->getOferta()->curso ) )
+						continue;	
 
 					int turmaAluno = problemData->retornaTurmaDiscAluno( aluno, disciplinaEquiv );				
 					if ( turmaAluno != -1 ) // dentre as equivalentes, evita aqui considerar as duplicatas de p1
@@ -9680,6 +9686,9 @@ int TaticoIntAlunoHor::criaRestricaoTaticoAtendeAlunoEquiv( int campusId, int pr
 				if ( deq->getId() < 0 )
 					continue;
 
+				if ( ! problemData->ehSubstituivel( disciplina->getId(), deq->getId(), aluno->getOferta()->curso ) )
+					continue;	
+
 				if ( problemData->retornaTurmaDiscAluno( aluno, deq ) != -1 )
 				{
 					std::cout<<"\nEstranho, isso nao faz muito sentido. Significa que o aluno possui duas demandas"
@@ -9774,15 +9783,18 @@ int TaticoIntAlunoHor::criaRestricaoTaticoAlunoDiscPraticaTeoricaEquiv( int camp
 			if ( itAlDemanda->demanda->disciplina->getId() < 0 )
 				continue;
 
-			Disciplina *discTeorica = itAlDemanda->demanda->disciplina;
+			Disciplina *discOrigTeorica = itAlDemanda->demanda->disciplina;
 
-			ITERA_GGROUP_LESSPTR( itDisc, discTeorica->discEquivSubstitutas, Disciplina )
+			ITERA_GGROUP_LESSPTR( itDisc, discOrigTeorica->discEquivSubstitutas, Disciplina )
 			{								
 				// Pula disciplina pratica
 				if ( itDisc->getId() < 0 )
 					continue;
 				
 				Disciplina *discTeorica = *itDisc;
+
+				if ( ! problemData->ehSubstituivel( discOrigTeorica->getId(), discTeorica->getId(), aluno->getOferta()->curso ) )
+					continue;	
 
 				if ( problemData->refDisciplinas.find( - discTeorica->getId() ) ==
 					 problemData->refDisciplinas.end() ) // Restrição somente para disciplinas de creditos praticos+teoricos

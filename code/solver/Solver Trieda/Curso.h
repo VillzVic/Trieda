@@ -17,6 +17,7 @@ public:
 
    GGroup< int > area_ids;
    GGroup< Curriculo *, LessPtr< Curriculo > > curriculos;
+   GGroup< int > equiv_ids; // equivalencias especificas
 
    TipoCurso * tipo_curso;
 

@@ -2436,6 +2436,30 @@ minTempoIntegralParcial (const minTempoIntegralParcial_type& x)
   this->minTempoIntegralParcial_.set (x);
 }
 
+const ItemCurso::equivalencias_type& ItemCurso::
+equivalencias () const
+{
+  return this->equivalencias_.get ();
+}
+
+ItemCurso::equivalencias_type& ItemCurso::
+equivalencias ()
+{
+  return this->equivalencias_.get ();
+}
+
+void ItemCurso::
+equivalencias (const equivalencias_type& x)
+{
+  this->equivalencias_.set (x);
+}
+
+void ItemCurso::
+equivalencias (::std::auto_ptr< equivalencias_type > x)
+{
+  this->equivalencias_.set (x);
+}
+
 
 // ItemPercentualMinimo
 // 
@@ -3760,6 +3784,82 @@ horariosAula (::std::auto_ptr< horariosAula_type > x)
   this->horariosAula_.set (x);
 }
 
+// ItemEquivalencia
+// 
+
+const ItemEquivalencia::equivId_type& ItemEquivalencia::
+equivId () const
+{
+  return this->equivId_.get ();
+}
+
+ItemEquivalencia::equivId_type& ItemEquivalencia::
+equivId ()
+{
+  return this->equivId_.get ();
+}
+
+void ItemEquivalencia::
+equivId (const equivId_type& x)
+{
+  this->equivId_.set (x);
+}
+
+const ItemEquivalencia::disciplinaCursouId_type& ItemEquivalencia::
+disciplinaCursouId () const
+{
+  return this->disciplinaCursouId_.get ();
+}
+
+ItemEquivalencia::disciplinaCursouId_type& ItemEquivalencia::
+disciplinaCursouId ()
+{
+  return this->disciplinaCursouId_.get ();
+}
+
+void ItemEquivalencia::
+disciplinaCursouId (const disciplinaCursouId_type& x)
+{
+  this->disciplinaCursouId_.set (x);
+}
+
+const ItemEquivalencia::disciplinaEliminaId_type& ItemEquivalencia::
+disciplinaEliminaId () const
+{
+  return this->disciplinaEliminaId_.get ();
+}
+
+ItemEquivalencia::disciplinaEliminaId_type& ItemEquivalencia::
+disciplinaEliminaId ()
+{
+  return this->disciplinaEliminaId_.get ();
+}
+
+void ItemEquivalencia::
+disciplinaEliminaId (const disciplinaEliminaId_type& x)
+{
+  this->disciplinaEliminaId_.set (x);
+}
+
+const ItemEquivalencia::geral_type& ItemEquivalencia::
+geral () const
+{
+  return this->geral_.get ();
+}
+
+ItemEquivalencia::geral_type& ItemEquivalencia::
+geral ()
+{
+  return this->geral_.get ();
+}
+
+void ItemEquivalencia::
+geral (const geral_type& x)
+{
+  this->geral_.set (x);
+}
+
+
 
 // GrupoCalendario
 // 
@@ -4462,6 +4562,26 @@ GrupoIdentificador (const GrupoIdentificador_sequence& s)
   this->GrupoIdentificador_ = s;
 }
 
+// GrupoEquivalencia
+// 
+
+const GrupoEquivalencia::Equivalencia_sequence& GrupoEquivalencia::
+Equivalencia () const
+{
+  return this->Equivalencia_;
+}
+
+GrupoEquivalencia::Equivalencia_sequence& GrupoEquivalencia::
+Equivalencia ()
+{
+  return this->Equivalencia_;
+}
+
+void GrupoEquivalencia::
+Equivalencia (const Equivalencia_sequence& s)
+{
+  this->Equivalencia_ = s;
+}
 
 // ItemAtendimentoCampusSolucao
 // 
@@ -5367,6 +5487,30 @@ void TriedaInput::
 disciplinas (::std::auto_ptr< disciplinas_type > x)
 {
   this->disciplinas_.set (x);
+}
+
+const TriedaInput::equivalencias_type& TriedaInput::
+equivalencias () const
+{
+  return this->equivalencias_.get ();
+}
+
+TriedaInput::equivalencias_type& TriedaInput::
+equivalencias ()
+{
+  return this->equivalencias_.get ();
+}
+
+void TriedaInput::
+equivalencias (const equivalencias_type& x)
+{
+  this->equivalencias_.set (x);
+}
+
+void TriedaInput::
+equivalencias (::std::auto_ptr< equivalencias_type > x)
+{
+  this->equivalencias_.set (x);
 }
 
 const TriedaInput::cursos_type& TriedaInput::
@@ -9414,7 +9558,8 @@ ItemCurso (const id_type& id,
            const areasTitulacao_type& areasTitulacao,
            const curriculos_type& curriculos,
            const minTempoIntegral_type& minTempoIntegral,
-           const minTempoIntegralParcial_type& minTempoIntegralParcial)
+           const minTempoIntegralParcial_type& minTempoIntegralParcial,
+		   const equivalencias_type& equivalencias )
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
@@ -9426,7 +9571,8 @@ ItemCurso (const id_type& id,
   areasTitulacao_ (areasTitulacao, ::xml_schema::flags (), this),
   curriculos_ (curriculos, ::xml_schema::flags (), this),
   minTempoIntegral_ (minTempoIntegral, ::xml_schema::flags (), this),
-  minTempoIntegralParcial_ (minTempoIntegralParcial, ::xml_schema::flags (), this)
+  minTempoIntegralParcial_ (minTempoIntegralParcial, ::xml_schema::flags (), this),
+  equivalencias_ (equivalencias, ::xml_schema::flags (), this)
 {
 }
 
@@ -9441,7 +9587,8 @@ ItemCurso (const id_type& id,
            ::std::auto_ptr< areasTitulacao_type >& areasTitulacao,
            ::std::auto_ptr< curriculos_type >& curriculos,
            const minTempoIntegral_type& minTempoIntegral,
-           const minTempoIntegralParcial_type& minTempoIntegralParcial)
+           const minTempoIntegralParcial_type& minTempoIntegralParcial,
+		   ::std::auto_ptr< equivalencias_type >& equivalencias)
 : ::xml_schema::type (),
   id_ (id, ::xml_schema::flags (), this),
   codigo_ (codigo, ::xml_schema::flags (), this),
@@ -9453,7 +9600,8 @@ ItemCurso (const id_type& id,
   areasTitulacao_ (areasTitulacao, ::xml_schema::flags (), this),
   curriculos_ (curriculos, ::xml_schema::flags (), this),
   minTempoIntegral_ (minTempoIntegral, ::xml_schema::flags (), this),
-  minTempoIntegralParcial_ (minTempoIntegralParcial, ::xml_schema::flags (), this)
+  minTempoIntegralParcial_ (minTempoIntegralParcial, ::xml_schema::flags (), this),
+  equivalencias_ (equivalencias, ::xml_schema::flags (), this)
 {
 }
 
@@ -9472,7 +9620,8 @@ ItemCurso (const ItemCurso& x,
   areasTitulacao_ (x.areasTitulacao_, f, this),
   curriculos_ (x.curriculos_, f, this),
   minTempoIntegral_ (x.minTempoIntegral_, f, this),
-  minTempoIntegralParcial_ (x.minTempoIntegralParcial_, f, this)
+  minTempoIntegralParcial_ (x.minTempoIntegralParcial_, f, this),
+  equivalencias_ (x.equivalencias_, f, this)
 {
 }
 
@@ -9491,7 +9640,8 @@ ItemCurso (const ::xercesc::DOMElement& e,
   areasTitulacao_ (f, this),
   curriculos_ (f, this),
   minTempoIntegral_ (f, this),
-  minTempoIntegralParcial_ (f, this)
+  minTempoIntegralParcial_ (f, this),
+  equivalencias_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -9646,6 +9796,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // equivalencias
+    //
+    if (n.name () == "equivalencias" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< equivalencias_type > r (
+        equivalencias_traits::create (i, f, this));
+
+      if (!equivalencias_.present ())
+      {
+        this->equivalencias_.set (r);
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -9723,6 +9887,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "minTempoIntegralParcial",
+      "");
+  }
+
+  if (!equivalencias_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "equivalencias",
       "");
   }
 }
@@ -11620,6 +11791,152 @@ ItemNivelDificuldadeHorario::
 ~ItemNivelDificuldadeHorario ()
 {
 }
+
+
+
+// ItemEquivalencia
+//
+
+ItemEquivalencia::
+ItemEquivalencia ( const equivId_type& equivId,
+            const disciplinaCursouId_type& disciplinaCursouId,
+			const disciplinaEliminaId_type& disciplinaEliminaId,
+			const geral_type& geral)
+: ::xml_schema::type (),
+  equivId_ (equivId, ::xml_schema::flags (), this),
+  disciplinaCursouId_ (disciplinaCursouId, ::xml_schema::flags (), this),
+  disciplinaEliminaId_ (disciplinaEliminaId, ::xml_schema::flags (), this),
+  geral_ (geral, ::xml_schema::flags (), this)
+{
+}
+
+ItemEquivalencia::
+ItemEquivalencia (const ItemEquivalencia& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  equivId_ (x.equivId_, f, this),
+  disciplinaCursouId_ (x.disciplinaCursouId_, f, this),
+  disciplinaEliminaId_ (x.disciplinaEliminaId_, f, this),
+  geral_ (x.geral_, f, this)
+{
+}
+
+ItemEquivalencia::
+ItemEquivalencia (const ::xercesc::DOMElement& e,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  equivId_ (f, this),
+  disciplinaCursouId_ (f, this),
+  disciplinaEliminaId_ (f, this),
+  geral_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void ItemEquivalencia::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // equivId
+    //
+    if (n.name () == "id" && n.namespace_ ().empty ())
+    {
+      if (!equivId_.present ())
+      {
+        this->equivId_.set (equivId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // disciplinaCursouId
+    //
+    if (n.name () == "disciplinaCursouId" && n.namespace_ ().empty ())
+    {
+      if (!disciplinaCursouId_.present ())
+      {
+        this->disciplinaCursouId_.set (disciplinaCursouId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // disciplinaEliminaId
+    //
+    if (n.name () == "disciplinaEliminaId" && n.namespace_ ().empty ())
+    {
+      if (!disciplinaEliminaId_.present ())
+      {
+        this->disciplinaEliminaId_.set (disciplinaEliminaId_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // geral
+    //
+    if (n.name () == "geral" && n.namespace_ ().empty ())
+    {
+      if (!geral_.present ())
+      {
+        this->geral_.set (geral_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!equivId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "id",
+      "");
+  }
+
+  if (!disciplinaCursouId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "disciplinaCursouId",
+      "");
+  }
+
+  if (!disciplinaEliminaId_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "disciplinaEliminaId",
+      "");
+  }
+
+  if (!geral_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "geral",
+      "");
+  }
+}
+
+ItemEquivalencia* ItemEquivalencia::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class ItemEquivalencia (*this, f, c);
+}
+
+ItemEquivalencia::
+~ItemEquivalencia ()
+{
+}
+
 
 // GrupoCalendario
 //
@@ -13856,6 +14173,77 @@ GrupoGrupo::
 {
 }
 
+// GrupoEquivalencia
+//
+
+GrupoEquivalencia::
+GrupoEquivalencia ()
+: ::xml_schema::type (),
+  Equivalencia_ (::xml_schema::flags (), this)
+{
+}
+
+GrupoEquivalencia::
+GrupoEquivalencia (const GrupoEquivalencia& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  Equivalencia_ (x.Equivalencia_, f, this)
+{
+}
+
+GrupoEquivalencia::
+GrupoEquivalencia (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  Equivalencia_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void GrupoEquivalencia::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // Equivalencia
+    //
+    if (n.name () == "Equivalencia" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< Equivalencia_type > r (
+        Equivalencia_traits::create (i, f, this));
+
+      this->Equivalencia_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+GrupoEquivalencia* GrupoEquivalencia::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class GrupoEquivalencia (*this, f, c);
+}
+
+GrupoEquivalencia::
+~GrupoEquivalencia ()
+{
+}
+
+
 // ItemAtendimentoCampusSolucao
 //
 
@@ -15112,7 +15500,8 @@ TriedaInput (const calendarios_type& calendarios,
              const temposDeslocamentosCampi_type& temposDeslocamentosCampi,
              const temposDeslocamentosUnidades_type& temposDeslocamentosUnidades,
              const disciplinas_type& disciplinas,
-             const cursos_type& cursos,
+             const equivalencias_type& equivalencias,
+			 const cursos_type& cursos,
              const ofertaCursosCampi_type& ofertaCursosCampi,
              const demandas_type& demandas,
 			 const alunos_type& alunos,
@@ -15133,6 +15522,7 @@ TriedaInput (const calendarios_type& calendarios,
   temposDeslocamentosCampi_ (temposDeslocamentosCampi, ::xml_schema::flags (), this),
   temposDeslocamentosUnidades_ (temposDeslocamentosUnidades, ::xml_schema::flags (), this),
   disciplinas_ (disciplinas, ::xml_schema::flags (), this),
+  equivalencias_ (equivalencias, ::xml_schema::flags (), this),
   cursos_ (cursos, ::xml_schema::flags (), this),
   ofertaCursosCampi_ (ofertaCursosCampi, ::xml_schema::flags (), this),
   demandas_ (demandas, ::xml_schema::flags (), this),
@@ -15158,6 +15548,7 @@ TriedaInput (::std::auto_ptr< calendarios_type >& calendarios,
              ::std::auto_ptr< temposDeslocamentosCampi_type >& temposDeslocamentosCampi,
              ::std::auto_ptr< temposDeslocamentosUnidades_type >& temposDeslocamentosUnidades,
              ::std::auto_ptr< disciplinas_type >& disciplinas,
+             ::std::auto_ptr< equivalencias_type >& equivalencias,
              ::std::auto_ptr< cursos_type >& cursos,
              ::std::auto_ptr< ofertaCursosCampi_type >& ofertaCursosCampi,
              ::std::auto_ptr< demandas_type >& demandas,
@@ -15179,6 +15570,7 @@ TriedaInput (::std::auto_ptr< calendarios_type >& calendarios,
   temposDeslocamentosCampi_ (temposDeslocamentosCampi, ::xml_schema::flags (), this),
   temposDeslocamentosUnidades_ (temposDeslocamentosUnidades, ::xml_schema::flags (), this),
   disciplinas_ (disciplinas, ::xml_schema::flags (), this),
+  equivalencias_ (equivalencias, ::xml_schema::flags (), this),
   cursos_ (cursos, ::xml_schema::flags (), this),
   ofertaCursosCampi_ (ofertaCursosCampi, ::xml_schema::flags (), this),
   demandas_ (demandas, ::xml_schema::flags (), this),
@@ -15208,6 +15600,7 @@ TriedaInput (const TriedaInput& x,
   temposDeslocamentosCampi_ (x.temposDeslocamentosCampi_, f, this),
   temposDeslocamentosUnidades_ (x.temposDeslocamentosUnidades_, f, this),
   disciplinas_ (x.disciplinas_, f, this),
+  equivalencias_ (x.equivalencias_, f, this),
   cursos_ (x.cursos_, f, this),
   ofertaCursosCampi_ (x.ofertaCursosCampi_, f, this),
   demandas_ (x.demandas_, f, this),
@@ -15237,6 +15630,7 @@ TriedaInput (const ::xercesc::DOMElement& e,
   temposDeslocamentosCampi_ (f, this),
   temposDeslocamentosUnidades_ (f, this),
   disciplinas_ (f, this),
+  equivalencias_ (f, this),
   cursos_ (f, this),
   ofertaCursosCampi_ (f, this),
   demandas_ (f, this),
@@ -15441,6 +15835,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!disciplinas_.present ())
       {
         this->disciplinas_.set (r);
+        continue;
+      }
+    }
+
+    // equivalencias
+    //
+    if (n.name () == "equivalencias" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< equivalencias_type > r (
+        equivalencias_traits::create (i, f, this));
+
+      if (!equivalencias_.present ())
+      {
+        this->equivalencias_.set (r);
         continue;
       }
     }
@@ -15650,7 +16058,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "disciplinas",
       "");
   }
-
+  
+  if (!equivalencias_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "equivalencias",
+      "");
+  }
+  
   if (!cursos_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (

@@ -284,6 +284,7 @@ class GrupoFixacao;
 class GrupoNivelDificuldadeHorario;
 class GrupoIdentificador;
 class GrupoGrupo;
+class GrupoEquivalencia;
 class ItemAtendimentoCampusSolucao;
 class ItemAtendimentoUnidadeSolucao;
 class ItemAtendimentoSalaSolucao;
@@ -2969,6 +2970,23 @@ class ItemCurso: public ::xml_schema::type
 
   void
   minTempoIntegralParcial (const minTempoIntegralParcial_type& x);
+  
+  // equivalencias
+  // 
+  typedef ::GrupoIdentificador equivalencias_type;
+  typedef ::xsd::cxx::tree::traits< equivalencias_type, char > equivalencias_traits;
+
+  const equivalencias_type&
+  equivalencias () const;
+
+  equivalencias_type&
+  equivalencias ();
+
+  void
+  equivalencias (const equivalencias_type& x);
+
+  void
+  equivalencias (::std::auto_ptr< equivalencias_type > p);
 
   // Constructors.
   //
@@ -2982,7 +3000,8 @@ class ItemCurso: public ::xml_schema::type
              const areasTitulacao_type&,
              const curriculos_type&,
              const minTempoIntegral_type&,
-             const minTempoIntegralParcial_type&);
+             const minTempoIntegralParcial_type&,
+			 const equivalencias_type&);
 
   ItemCurso (const id_type&,
              const codigo_type&,
@@ -2994,7 +3013,8 @@ class ItemCurso: public ::xml_schema::type
              ::std::auto_ptr< areasTitulacao_type >&,
              ::std::auto_ptr< curriculos_type >&,
              const minTempoIntegral_type&,
-             const minTempoIntegralParcial_type&);
+             const minTempoIntegralParcial_type&,
+			 ::std::auto_ptr< equivalencias_type >&);
 
   ItemCurso (const ::xercesc::DOMElement& e,
              ::xml_schema::flags f = 0,
@@ -3030,6 +3050,7 @@ class ItemCurso: public ::xml_schema::type
   ::xsd::cxx::tree::one< curriculos_type > curriculos_;
   ::xsd::cxx::tree::one< minTempoIntegral_type > minTempoIntegral_;
   ::xsd::cxx::tree::one< minTempoIntegralParcial_type > minTempoIntegralParcial_;
+  ::xsd::cxx::tree::one< equivalencias_type > equivalencias_;
 };
 
 class ItemPercentualMinimo: public ::xml_schema::type
@@ -4416,6 +4437,101 @@ class ItemNivelDificuldadeHorario: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< nivelDificuldadeId_type > nivelDificuldadeId_;
   ::xsd::cxx::tree::one< horariosAula_type > horariosAula_;
+};
+
+class ItemEquivalencia: public ::xml_schema::type
+{
+  public:
+  // Id
+  // 
+  typedef ::xml_schema::int_ equivId_type;
+  typedef ::xsd::cxx::tree::traits< equivId_type, char > equivId_traits;
+
+  const equivId_type&
+  equivId () const;
+
+  equivId_type&
+  equivId ();
+
+  void
+  equivId (const equivId_type& x);
+
+  // disciplinaCursouId
+  // 
+  typedef ::xml_schema::int_ disciplinaCursouId_type;
+  typedef ::xsd::cxx::tree::traits< disciplinaCursouId_type, char > disciplinaCursouId_traits;
+
+  const disciplinaCursouId_type&
+  disciplinaCursouId () const;
+
+  disciplinaCursouId_type&
+  disciplinaCursouId ();
+
+  void
+  disciplinaCursouId (const disciplinaCursouId_type& x);
+
+  // disciplinaEliminaId_type
+  // 
+  typedef ::xml_schema::int_ disciplinaEliminaId_type;
+  typedef ::xsd::cxx::tree::traits< disciplinaEliminaId_type, char > disciplinaEliminaId_traits;
+
+  const disciplinaEliminaId_type&
+  disciplinaEliminaId () const;
+
+  disciplinaEliminaId_type&
+  disciplinaEliminaId ();
+
+  void
+  disciplinaEliminaId (const disciplinaEliminaId_type& x);
+
+  // geral
+  // 
+  typedef ::xml_schema::boolean geral_type;
+  typedef ::xsd::cxx::tree::traits< geral_type, char > geral_traits;
+
+  const geral_type&
+  geral () const;
+
+  geral_type&
+  geral ();
+
+  void
+  geral (const geral_type& x);
+
+  // Constructors.
+  //
+  ItemEquivalencia (const equivId_type&,
+             const disciplinaCursouId_type&,
+             const disciplinaEliminaId_type&,
+             const geral_type&);
+
+  ItemEquivalencia (const ::xercesc::DOMElement& e,
+             ::xml_schema::flags f = 0,
+             ::xml_schema::container* c = 0);
+
+  ItemEquivalencia (const ItemEquivalencia& x,
+             ::xml_schema::flags f = 0,
+             ::xml_schema::container* c = 0);
+
+  virtual ItemEquivalencia*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~ItemEquivalencia ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< equivId_type > equivId_;
+  ::xsd::cxx::tree::one< disciplinaCursouId_type > disciplinaCursouId_;
+  ::xsd::cxx::tree::one< disciplinaEliminaId_type > disciplinaEliminaId_;
+  ::xsd::cxx::tree::one< geral_type > geral_;
 };
 
 class GrupoCalendario: public ::xml_schema::type
@@ -6018,6 +6134,56 @@ class GrupoGrupo: public ::xml_schema::type
   GrupoIdentificador_sequence GrupoIdentificador_;
 };
 
+class GrupoEquivalencia: public ::xml_schema::type
+{
+  public:
+  // Equivalencia
+  // 
+  typedef ::ItemEquivalencia Equivalencia_type;
+  typedef ::xsd::cxx::tree::sequence< Equivalencia_type > Equivalencia_sequence;
+  typedef Equivalencia_sequence::iterator Equivalencia_iterator;
+  typedef Equivalencia_sequence::const_iterator Equivalencia_const_iterator;
+  typedef ::xsd::cxx::tree::traits< Equivalencia_type, char > Equivalencia_traits;
+
+  const Equivalencia_sequence&
+  Equivalencia () const;
+
+  Equivalencia_sequence&
+  Equivalencia ();
+
+  void
+  Equivalencia (const Equivalencia_sequence& s);
+
+  // Constructors.
+  //
+  GrupoEquivalencia ();
+
+  GrupoEquivalencia (const ::xercesc::DOMElement& e,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  GrupoEquivalencia (const GrupoEquivalencia& x,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  virtual GrupoEquivalencia*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~GrupoEquivalencia ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  Equivalencia_sequence Equivalencia_;
+};
+
 class ItemAtendimentoCampusSolucao: public ::xml_schema::type
 {
   public:
@@ -7081,7 +7247,24 @@ class TriedaInput: public ::xml_schema::type
   disciplinas (const disciplinas_type& x);
 
   void
-  disciplinas (::std::auto_ptr< disciplinas_type > p);
+	  disciplinas (::std::auto_ptr< disciplinas_type > p);
+
+  // equivalencias
+  // 
+  typedef ::GrupoEquivalencia equivalencias_type;
+  typedef ::xsd::cxx::tree::traits< equivalencias_type, char > equivalencias_traits;
+
+  const equivalencias_type&
+  equivalencias () const;
+
+  equivalencias_type&
+  equivalencias ();
+
+  void
+  equivalencias (const equivalencias_type& x);
+
+  void
+  equivalencias (::std::auto_ptr< equivalencias_type > p);
 
   // cursos
   // 
@@ -7239,6 +7422,7 @@ class TriedaInput: public ::xml_schema::type
                const temposDeslocamentosCampi_type&,
                const temposDeslocamentosUnidades_type&,
                const disciplinas_type&,
+               const equivalencias_type&,
                const cursos_type&,
                const ofertaCursosCampi_type&,
                const demandas_type&,
@@ -7260,6 +7444,7 @@ class TriedaInput: public ::xml_schema::type
                ::std::auto_ptr< temposDeslocamentosCampi_type >&,
                ::std::auto_ptr< temposDeslocamentosUnidades_type >&,
                ::std::auto_ptr< disciplinas_type >&,
+               ::std::auto_ptr< equivalencias_type >&,
                ::std::auto_ptr< cursos_type >&,
                ::std::auto_ptr< ofertaCursosCampi_type >&,
                ::std::auto_ptr< demandas_type >&,
@@ -7304,6 +7489,7 @@ class TriedaInput: public ::xml_schema::type
   ::xsd::cxx::tree::one< temposDeslocamentosCampi_type > temposDeslocamentosCampi_;
   ::xsd::cxx::tree::one< temposDeslocamentosUnidades_type > temposDeslocamentosUnidades_;
   ::xsd::cxx::tree::one< disciplinas_type > disciplinas_;
+  ::xsd::cxx::tree::one< equivalencias_type > equivalencias_;
   ::xsd::cxx::tree::one< cursos_type > cursos_;
   ::xsd::cxx::tree::one< ofertaCursosCampi_type > ofertaCursosCampi_;
   ::xsd::cxx::tree::one< demandas_type > demandas_;

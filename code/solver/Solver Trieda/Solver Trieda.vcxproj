@@ -937,6 +937,7 @@
     <ClCompile Include="ConstraintPre.cpp" />
     <ClCompile Include="ConstraintTatico.cpp" />
     <ClCompile Include="ConstraintTatInt.cpp" />
+    <ClCompile Include="Equivalencia.cpp" />
     <ClCompile Include="Main.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">SOLVER_CPLEX;WIN32;_WINDOWS;PORTUGUES;VERSAOCPLEX10;_CRT_SECURE_NO_DEPRECATE;_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -1064,6 +1065,7 @@
     <ClInclude Include="Deslocamento.h" />
     <ClInclude Include="Disciplina.h" />
     <ClInclude Include="DivisaoCreditos.h" />
+    <ClInclude Include="Equivalencia.h" />
     <ClInclude Include="Fixacao.h" />
     <ClInclude Include="Horario.h" />
     <ClInclude Include="HorarioAula.h" />

@@ -58753,11 +58753,6 @@ int SolverMIP::criaRestricaoProfessorDisciplina()
 		  continue;
 	  }
 
-      //if ( v.getProfessor()->eVirtual() )
-      //{
-      //   continue;
-      //}
-
       if ( v.getType() == VariableOp::V_Y_PROF_DISCIPLINA )
       {
          c.reset();

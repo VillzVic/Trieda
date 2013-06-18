@@ -32,7 +32,7 @@
 #include "AtendimentoUnidadeSolucao.h"
 #include "Aula.h"
 #include "HorarioDia.h"
-
+#include "Equivalencia.h"
 
 class Variable;
 
@@ -64,6 +64,9 @@ public:
    GGroup< AlunoDemanda *, LessPtr< AlunoDemanda > > alunosDemanda;
    GGroup< Aluno *, LessPtr< Aluno > > alunos;
    GGroup< Professor *, LessPtr< Professor > > profsVirtuais; // 1 por tipo de titulação
+   GGroup< Equivalencia*, LessPtr< Equivalencia > > equivalencias; // só contém as teoricas
+
+   std::map< std::pair< int/*oldDisc*/, int/*newDisc*/ >, int /*equiv*/> mapParDisc_EquivId; // só contém as teoricas
 
    map< int /* cjtAlunosId */, GGroup< Aluno *, LessPtr< Aluno > > > cjtAlunos;
    map< int /* cjtAlunosId */, GGroup< Demanda *, LessPtr< Demanda > > > cjtDemandas;
@@ -519,6 +522,8 @@ public:
    //GGroup<DateTime*,LessPtr<DateTime> > horariosValidos;
 
    Curso* retornaCursoAtendido( int turma, Disciplina* disciplina, int campusId );
+   
+   bool ehSubstituivel( int disciplina, int disciplinaEquiv, Curso *curso );
 
    private:
    

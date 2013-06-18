@@ -349,18 +349,22 @@ void ProblemDataLoader::geraRefsOfertas()
 {
    ITERA_GGROUP_LESSPTR( it_oferta, problemData->ofertas, Oferta )
    {
+	   std::cout<<"\nCurso";
       find_and_set_lessptr( it_oferta->getCursoId(),
          problemData->cursos,
          it_oferta->curso, false );
 
+	   std::cout<<"\ncurriculo";
       find_and_set_lessptr( it_oferta->getCurriculoId(),
          it_oferta->curso->curriculos,
          it_oferta->curriculo, false );
 
+	   std::cout<<"\nTurno";
       find_and_set_lessptr( it_oferta->getTurnoId(),
          problemData->todos_turnos,
          it_oferta->turno, false );
 
+	   std::cout<<"\nCampus";
       find_and_set_lessptr( it_oferta->getCampusId(),
          problemData->campi,
          it_oferta->campus, false );
@@ -1932,7 +1936,7 @@ void ProblemDataLoader::find_and_set_lessptr(
    {
       std::cout << "Warnning: Problema na funcao"
                 << "FindAndSet do ProblemDataLoader." << std::endl;
-
+      std::cout << " Id " << id << " not found." << std::endl;
       exit( 1 );
    }
 
