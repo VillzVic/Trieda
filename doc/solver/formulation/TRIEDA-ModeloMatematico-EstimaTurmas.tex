@@ -1,0 +1,205 @@
+\documentclass[landscape, lettersize]{article}
+\usepackage[dvips]{geometry} 
+\usepackage[brazil]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{epsfig}
+%\usepackage[pdftex,hyperfigures]{hyperref}
+
+\textheight 17.29cm
+\textwidth 22.94cm 
+
+\oddsidemargin -0.6mm
+\evensidemargin -0.6mm
+
+\topmargin -1.5cm
+\begin{document}
+
+\title{TRIEDA - ESTIMA TURMAS}
+
+\author{Gapso}
+
+\maketitle
+
+\section{ESTIMA TURMAS - Modelo de estimativa de turmas e salas}
+
+\subsection{Notação}
+
+\subsubsection{Conjuntos}
+
+\begin{itemize}
+
+\item $C$ - Conjunto de cursos. Os elementos desse conjunto são denotados por $c$.
+
+\item $CC$ - Conjunto de cursos compatíveis.
+
+\item $CP$ - Conjunto de campus. Os elementos desse conjunto são denotados por $cp$.
+
+\item $D$ - Conjunto de disciplinas. Os elementos desse conjunto são denotados por $d$.
+
+\item $D_{oft}$ - Conjunto de disciplinas de uma oferta $oft$. 
+Os elementos desse conjunto são denotados por $d_{oft}$.
+
+\item $D_{7}$ - Conjunto de disciplinas cuja disponibilidade é somente nos sábados.
+
+\item $Oft$ - Conjunto de ofertas de cursos. Os elementos desse conjunto são 
+denotados por $oft$.
+
+\item $Oft_{d}$ - Conjunto de ofertas de uma disciplina $d$. 
+Os elementos desse conjunto são denotados por $oft_{d}$.
+
+\item $SCAP_{u}$ - Conjunto de salas da unidade $u$ classificadas de acordo com as suas 
+capacidades. Os elementos desse conjunto são denotados por $tps$.
+
+\item $S_{u}$ - Conjunto de salas da unidade $u$. Os elementos desse conjunto são 
+denotados por $s$.
+
+\item $U$ - Conjunto de unidades. Os elementos desse conjunto são denotados por $u$.
+
+\item $Al$ - Conjunto de alunos. Os elementos desse conjunto são denotados por $a$.
+
+
+\end{itemize}
+
+\subsubsection{Dados do Modelo}
+
+\begin{itemize}
+
+\item $Cap_{s,u}$ - Capacidade da sala $s$ da unidade $u$.
+
+\item $C_{d}$ - Total de créditos da disciplina $d$.
+
+\item $HTPS_{s}$ - Total de créditos disponíveis para a sala $s$ na semana. É calculado como sendo o máximo entre os totais de
+créditos disponíveis de todas as semanas letivas na sala $s$ na semana.
+
+\item $I_{d}$ - máximo de turmas que podem ser abertas da disciplina $d$.
+
+\item $MinAlunos$ - mínimo de alunos para abertura de turmas.
+
+\item $M$ - big $M$.
+
+\item $O_{cp}$ - conjunto de ofertas de um campus $cp$.
+
+\item $G$ - conjunto de turnos $g$.
+
+\end{itemize}
+
+\subsubsection{Variáveis}
+
+\begin{itemize}
+
+\item $x_{d,s,g}$ - número de turmas da disciplina $d$ na sala $s$ no turno $g$.
+\item $fs_{d,s}$ - número de turmas excedentes a 1 da disciplina $d$ alocadas na sala $s$.
+\item $fd_{a,d}$ - variável binária de folga para o aluno $a$ e disciplina demandada $d$.
+\item $s_{a,d}$ - variável binária de alocação para o aluno $a$ e disciplina demandada $d$.
+\item $a_{d,sl,g,s}$ - variável inteira que indica o número de alunos atendidos na disciplina $d$, usando semana letiva $sl$, no turno $g$ e na sala $s$.
+\item $H$ - variável inteira que indica o maior tempo de utilização das salas na semana.
+\item $xcs1_{s}$ - variável inteira que indica ocupação da sala $s$ sem custo.
+\item $xcs2_{s}$ - variável inteira de saturação da ocupação da sala $s$ com custo baixo.
+\item $xcs3_{s}$ - variável inteira de saturação da ocupação da sala $s$ com custo alto.
+
+\end{itemize}
+
+\subsection{Formulação}
+
+\subsubsection{Função Objetivo}
+
+$$
+\begin{array}{rll}
+   \mbox{MIN} &
+       100 \cdot \sum\limits_{a \in A} \sum\limits_{d \in D_{a}} fd_{d,a}
+      \\
+      &
+       + \cdot \sum\limits_{d \in D} \sum\limits_{s \in S} \sum\limits_{g \in G} x_{d,s,g}
+      \\
+      &
+      + 10 \cdot \sum\limits_{d \in D}\sum\limits_{s \in S} fs_{d,s}
+      \\
+      & 
+      + H
+                          
+\end{array}
+$$
+
+
+\subsubsection{Capacidade de salas}
+
+\begin{eqnarray}
+Cap_{s} \cdot x_{d,s,g} = \sum\limits_{sl \in SL} a_{d,sl,g,s}\nonumber \qquad 
+\forall d \in D \quad
+\forall g \in G \quad 
+\forall s \in S 
+\end{eqnarray}
+
+
+
+\subsubsection{Atendimento de demandas}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} \sum\limits_{g \in G} a_{d,sl,g,s} = \sum\limits_{a \in A_{sl}} s_{a,d}  \nonumber \qquad 
+\forall d \in D \quad
+\forall sl \in SL \quad
+\end{eqnarray}
+
+
+\subsubsection{Atendimento por aluno}
+\begin{eqnarray}
+\sum\limits_{d \in D_{eq}} s_{a,d} + fd_{a,d} =  1  \nonumber \qquad 
+\forall d \in D_{a} \quad
+\forall a \in A
+\end{eqnarray}
+
+
+\subsubsection{Tempo máximo por sala}
+\begin{eqnarray}
+\sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} \le TempoMax_{s,g}  \nonumber \qquad 
+\forall s \in S \quad
+\forall g \in G
+\end{eqnarray}
+
+
+\subsubsection{Tempo máximo por sala no sábado}
+\begin{eqnarray}
+\sum\limits_{d \in D_{7}} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} \le TempoMax_{s,g,7}  \nonumber \qquad 
+\forall s \in S \quad
+\forall g \in G
+\end{eqnarray}
+
+
+\subsubsection{Distribuição equilibrada entre as salas}
+\begin{eqnarray}
+H \ge \sum\limits_{g \in G}\sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} \nonumber \qquad
+\forall s \in S \quad
+\end{eqnarray}
+
+
+\subsubsection{Favorece turmas de mesma disciplina a serem abertas em salas diferentes}
+\begin{eqnarray}
+\sum\limits_{g \in G} x_{d,s,g} - fs_{d,s} \le 1 \nonumber \qquad 
+\forall s \in S_{u} \quad
+\forall d \in D \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Garante a alocação do aluno na disciplina prática e teórica}
+\begin{eqnarray}
+s_{a,dp} = s_{a,dt} \nonumber \qquad 
+\forall a \in Al \quad
+\forall (dp,dt) \in D_{a} \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Contabiliza variaveis xcs1, xcs2 e xcs3}
+\begin{eqnarray}
+\sum\limits_{d \in D} \sum\limits_{g \in G} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} = xcs1_{s} + xcs2_{s} + xcs3_{s} \nonumber \qquad 
+\forall s \in S \quad
+\end{eqnarray}
+
+
+\pagebreak
+	 
+\clearpage
+\end{document}
