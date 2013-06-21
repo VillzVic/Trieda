@@ -92,8 +92,8 @@ créditos disponíveis de todas as semanas letivas na sala $s$ na semana.
 \item $x_{d,s,g}$ - número de turmas da disciplina $d$ na sala $s$ no turno $g$.
 \item $fs_{d,s}$ - número de turmas excedentes a 1 da disciplina $d$ alocadas na sala $s$.
 \item $fd_{a,d}$ - variável binária de folga para o aluno $a$ e disciplina demandada $d$.
-\item $s_{a,d}$ - variável binária de alocação para o aluno $a$ e disciplina demandada $d$.
-\item $a_{d,sl,g,s}$ - variável inteira que indica o número de alunos atendidos na disciplina $d$, usando semana letiva $sl$, no turno $g$ e na sala $s$.
+\item $s_{a,d,g}$ - variável binária de alocação para o aluno $a$, disciplina demandada $d$, no turno $g$.
+\item $a_{d,g,s}$ - variável inteira que indica o número de alunos atendidos na disciplina $d$, no turno $g$ e na sala $s$.
 \item $H$ - variável inteira que indica o maior tempo de utilização das salas na semana.
 \item $xcs1_{s}$ - variável inteira que indica ocupação da sala $s$ sem custo.
 \item $xcs2_{s}$ - variável inteira de saturação da ocupação da sala $s$ com custo baixo.
@@ -118,6 +118,12 @@ $$
       \\
       & 
       + H
+      &
+      + \sum\limits_{s \in S} xcs2_{s}
+      \\
+      &
+      + 10 \cdot \sum\limits_{s \in S} xcs3_{s}
+      \\
                           
 \end{array}
 $$
@@ -126,7 +132,7 @@ $$
 \subsubsection{Capacidade de salas}
 
 \begin{eqnarray}
-Cap_{s} \cdot x_{d,s,g} = \sum\limits_{sl \in SL} a_{d,sl,g,s}\nonumber \qquad 
+Cap_{s} \cdot x_{d,s,g} \ge a_{d,g,s}\nonumber \qquad 
 \forall d \in D \quad
 \forall g \in G \quad 
 \forall s \in S 
@@ -137,18 +143,28 @@ Cap_{s} \cdot x_{d,s,g} = \sum\limits_{sl \in SL} a_{d,sl,g,s}\nonumber \qquad
 \subsubsection{Atendimento de demandas}
 
 \begin{eqnarray}
-\sum\limits_{s \in S} \sum\limits_{g \in G} a_{d,sl,g,s} = \sum\limits_{a \in A_{sl}} s_{a,d}  \nonumber \qquad 
+\sum\limits_{s \in S} a_{d,g,s} = \sum\limits_{a \in A_{d,g}} s_{a,d,g}  \nonumber \qquad 
 \forall d \in D \quad
-\forall sl \in SL \quad
+\forall g \in G
 \end{eqnarray}
 
 
 \subsubsection{Atendimento por aluno}
 \begin{eqnarray}
-\sum\limits_{d \in D_{eq}} s_{a,d} + fd_{a,d} =  1  \nonumber \qquad 
+\sum\limits_{d \in D_{eq}}\sum\limits_{g \in G} s_{a,d,g} + fd_{a,d} =  1  \nonumber \qquad 
 \forall d \in D_{a} \quad
 \forall a \in A
 \end{eqnarray}
+
+
+
+\subsubsection{Garante a alocação do aluno na disciplina prática e teórica}
+\begin{eqnarray}
+\sum\limits_{g \in G} s_{a,dp,g} = \sum\limits_{g \in G} s_{a,dt,g} \nonumber \qquad 
+\forall a \in Al \quad
+\forall (dp,dt) \in D_{a} \quad
+\end{eqnarray}
+
 
 
 \subsubsection{Tempo máximo por sala}
@@ -180,16 +196,6 @@ H \ge \sum\limits_{g \in G}\sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{
 \forall s \in S_{u} \quad
 \forall d \in D \quad
 \end{eqnarray}
-
-
-
-\subsubsection{Garante a alocação do aluno na disciplina prática e teórica}
-\begin{eqnarray}
-s_{a,dp} = s_{a,dt} \nonumber \qquad 
-\forall a \in Al \quad
-\forall (dp,dt) \in D_{a} \quad
-\end{eqnarray}
-
 
 
 \subsubsection{Contabiliza variaveis xcs1, xcs2 e xcs3}
