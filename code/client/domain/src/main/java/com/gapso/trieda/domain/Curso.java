@@ -101,12 +101,17 @@ public class Curso
 
 	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "cursos" )
 	private Set< AreaTitulacao > areasTitulacao = new HashSet< AreaTitulacao >();
+	
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "cursos" )
+	private Set< Equivalencia > equivalencias = new HashSet< Equivalencia >();
 
 	@OneToMany( mappedBy = "curso" )
 	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
 
     @OneToMany( mappedBy = "curso" )
     private Set< Oferta > ofertas = new HashSet< Oferta >();
+    
+    
 
 	public String toString()
 	{
@@ -257,6 +262,16 @@ public class Curso
 	public void setOfertas( Set< Oferta > ofertas )
 	{
 		this.ofertas = ofertas;
+	}
+	
+	public Set< Equivalencia > getEquivalencias()
+	{
+		return this.equivalencias;
+	}
+
+	public void setEquivalencias( Set< Equivalencia > equivalencias )
+	{
+		this.equivalencias = equivalencias;
 	}
 
 	@PersistenceContext

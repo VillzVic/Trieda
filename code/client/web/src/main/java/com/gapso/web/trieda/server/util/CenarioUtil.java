@@ -153,7 +153,7 @@ public class CenarioUtil
 			for ( Disciplina d : disciplinaList )
 			{
 				compatibilidadeList.addAll( d.getIncompatibilidades() );
-				equivalenciaList.addAll( d.getEquivalencias() );
+				equivalenciaList.addAll( d.getEliminam() );
 				divisaoCreditoList.add( d.getDivisaoCreditos() );
 				demandaList.addAll( d.getDemandas() );
 			}
@@ -215,7 +215,7 @@ public class CenarioUtil
 			for ( Disciplina d : disciplinaList )
 			{
 				compatibilidadeList.addAll( d.getIncompatibilidades() );
-				equivalenciaList.addAll( d.getEquivalencias() );
+				equivalenciaList.addAll( d.getEliminam() );
 				divisaoCreditoList.add( d.getDivisaoCreditos() );
 				demandaList.addAll( d.getDemandas() );
 			}

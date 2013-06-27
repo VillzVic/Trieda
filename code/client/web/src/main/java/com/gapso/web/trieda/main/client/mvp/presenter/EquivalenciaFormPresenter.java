@@ -4,23 +4,27 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
-import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.future.FutureResult;
@@ -32,17 +36,18 @@ public class EquivalenciaFormPresenter
 	public interface Display
 	{
 		Button getSalvarButton();
-		CursoComboBox getCursoComboBox();
-		DisciplinaComboBox getDisciplinaComboBox();
-		ListView< CursoDTO > getCursosList();
-		ListView< DisciplinaDTO > getDisciplinasNaoPertencesList();
-		ListView< DisciplinaDTO > getDisciplinasPertencesList();
-		Button getAtualizaDisciplinasDoCursoBT();
-		Button getAdicionaDisciplinasBT();
-		Button getRemoveDisciplinasBT();
+		DisciplinaComboBox getDisciplinaCursouComboBox();
+		DisciplinaComboBox getDisciplinaEliminaComboBox();
+		CheckBox getEquivalenciaGeralCheckBox();
 		EquivalenciaDTO getEquivalenciaDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
+		ListView<CursoDTO> getCursosList();
+		ListView<CursoDTO> getCursosPertencesList();
+		Button getAdicionaCursoBT();
+		Button getRemoveCursoBT();
+		ContentPanel getAssociadosListPanel();
+		ContentPanel getCursosListPanel();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO; 
@@ -81,100 +86,89 @@ public class EquivalenciaFormPresenter
 			}
 		});
 	}
-
+	
 	private void setListeners() {
 		display.getSalvarButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
-					Services.equivalencias().save(getDTO(), getDisciplinasSelecionadas(), new AsyncCallback<Void>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert("ERRO!", "Deu falha na conexão", null);
-						}
-						@Override
-						public void onSuccess(Void result) {
-							display.getSimpleModal().hide();
-							gridPanel.updateList();
-							Info.display("Salvo", "Item salvo com sucesso!");
-						}
-					});
+					try {
+						Services.equivalencias().save(getDTO(), getCursosSelecionados(), new AsyncCallback<Void>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								if (caught instanceof TriedaException)
+									MessageBox.alert("ERRO!", caught.getMessage(), null);
+								else
+									MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+							}
+							@Override
+							public void onSuccess(Void result) {
+								display.getSimpleModal().hide();
+								gridPanel.updateList();
+								Info.display("Salvo", "Item salvo com sucesso!");
+							}
+						});
+					} catch (Exception e) {
+						MessageBox.alert("ERRO!", "Deu falha na conexão", null);
+					}
 				} else {
 					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
 				}
 			}
 		});
 		
-		display.getAtualizaDisciplinasDoCursoBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		
+		display.getEquivalenciaGeralCheckBox().addListener(Events.Change,new Listener<BaseEvent>() {
 			@Override
-			public void componentSelected(ButtonEvent ce) {
-				List<CursoDTO> cursoSelecionadoList = display.getCursosList().getSelectionModel().getSelectedItems();
-				
-				final FutureResult<ListLoadResult<DisciplinaDTO>> futureDisciplinaDTOList = new FutureResult<ListLoadResult<DisciplinaDTO>>();
-				Services.disciplinas().getListByCursos(cursoSelecionadoList, futureDisciplinaDTOList);
-				
-				FutureSynchronizer synch = new FutureSynchronizer(futureDisciplinaDTOList);
-				synch.addCallback(new AsyncCallback<Boolean>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						caught.printStackTrace();
-					}
-
-					@Override
-					public void onSuccess(Boolean result) {
-						ListLoadResult<DisciplinaDTO> disciplinaDTOList = futureDisciplinaDTOList.result();
-						
-						display.getDisciplinasNaoPertencesList().getStore().removeAll();
-						display.getDisciplinasNaoPertencesList().getStore().add(disciplinaDTOList.getData());
-						display.getDisciplinasNaoPertencesList().refresh();
-						
-						Info.display("Atualizado", "Lista de disciplinas atualizada!");
-					}
-					
-				});
+			public void handleEvent(BaseEvent be) {
+				boolean value = ((CheckBox)be.getSource()).getValue();
+				display.getCursosListPanel().setEnabled(!value);
+				display.getAssociadosListPanel().setEnabled(!value);
+				display.getRemoveCursoBT().setEnabled(!value);
+				display.getAdicionaCursoBT().setEnabled(!value);
 			}
 		});
 		
-		display.getAdicionaDisciplinasBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getAdicionaCursoBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<DisciplinaDTO> disciplinaList = display.getDisciplinasNaoPertencesList().getSelectionModel().getSelectedItems();
+				List<CursoDTO> cursoListSelecionado = display.getCursosList().getSelectionModel().getSelectedItems();
+				List<CursoDTO> cursoListInserido = display.getCursosPertencesList().getStore().getModels();
 
-				display.getDisciplinasPertencesList().getStore().add(disciplinaList);
-				display.getDisciplinasPertencesList().getStore().sort("codigo", SortDir.ASC);
-				display.getDisciplinasPertencesList().refresh();
-				
-				for(DisciplinaDTO d : disciplinaList) {
-					display.getDisciplinasNaoPertencesList().getStore().remove(d);
+				for ( CursoDTO c : cursoListInserido ) {
+					if ( cursoListSelecionado.contains(c) ) {
+						Info.display("Erro", "Algum curso(s) selecionado já está associado");
+						return;
+					}
 				}
-				display.getDisciplinasNaoPertencesList().refresh();
+				display.getCursosPertencesList().getStore().add(cursoListSelecionado);
+				display.getCursosPertencesList().getStore().sort("codigo", SortDir.ASC);
+				display.getCursosPertencesList().refresh();
 				
-				Info.display("Atualizado", "Disciplina adicionada à lista!");
+				Info.display("Atualizado", "Curso(s) adicionado(s) à lista!");
 			}
 		});
 		
-		display.getRemoveDisciplinasBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
+		display.getRemoveCursoBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				List<DisciplinaDTO> disciplinaList = display.getDisciplinasPertencesList().getSelectionModel().getSelectedItems();
-
-				display.getDisciplinasNaoPertencesList().getStore().add(disciplinaList);
-				display.getDisciplinasNaoPertencesList().getStore().sort("codigo", SortDir.ASC);
-				display.getDisciplinasNaoPertencesList().refresh();
+				List<CursoDTO> cursoList = display.getCursosPertencesList().getSelectionModel().getSelectedItems();
 				
-				for(DisciplinaDTO d : disciplinaList) {
-					display.getDisciplinasPertencesList().getStore().remove(d);
+				for(CursoDTO c : cursoList) {
+					display.getCursosPertencesList().getStore().remove(c);
 				}
-				display.getDisciplinasPertencesList().refresh();
+				display.getCursosPertencesList().refresh();
 				
-				Info.display("Atualizado", "Disciplina removida da lista!");
+				Info.display("Atualizado", "Curso(s) removido(s) da lista!");
 			}
 		});
 	}
 
 	private boolean isValid()
 	{
+		if ( (getCursosSelecionados() == null || getCursosSelecionados().isEmpty())	
+				&& !display.getEquivalenciaGeralCheckBox().getValue() )
+			return false;
 		return display.isValid();
 	}
 
@@ -183,15 +177,18 @@ public class EquivalenciaFormPresenter
 		EquivalenciaDTO equivalenciaDTO = display.getEquivalenciaDTO();
 
 		equivalenciaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		equivalenciaDTO.setCursouId( display.getDisciplinaComboBox().getValue().getId() );
-		equivalenciaDTO.setCursouString( display.getDisciplinaComboBox().getValue().getCodigo() );
+		equivalenciaDTO.setCursouId( display.getDisciplinaCursouComboBox().getValue().getId() );
+		equivalenciaDTO.setCursouString( display.getDisciplinaCursouComboBox().getValue().getCodigo() );
+		equivalenciaDTO.setEliminaId( display.getDisciplinaEliminaComboBox().getValue().getId() );
+		equivalenciaDTO.setEliminaString( display.getDisciplinaEliminaComboBox().getValue().getCodigo() );
+		equivalenciaDTO.setEquivalenciaGeral( display.getEquivalenciaGeralCheckBox().getValue() );
 
 		return equivalenciaDTO;
 	}
 	
-	private List< DisciplinaDTO > getDisciplinasSelecionadas()
+	private List< CursoDTO > getCursosSelecionados()
 	{
-		return display.getDisciplinasPertencesList().getStore().getModels();
+		return display.getCursosPertencesList().getStore().getModels();
 	}
 	
 	@Override

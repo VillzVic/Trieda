@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.server.excel.exp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -8,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
@@ -16,7 +15,6 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
-import com.gapso.web.trieda.shared.util.TriedaUtil;
 
 @ProgressDeclarationAnnotation
 public class EquivalenciasExportExcel
@@ -122,16 +120,29 @@ public class EquivalenciasExportExcel
 	}
 	
 	private int writeData(Equivalencia equivalencia, int row, Sheet sheet) {
-		// Cursou
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],equivalencia.getCursou().getCodigo());
-		// Elimina
-		ArrayList<String> eliminaArray = new ArrayList<String>();
-		for(Disciplina disciplinaElimina : equivalencia.getElimina()) {
-			eliminaArray.add(disciplinaElimina.getCodigo());
+		if ( !equivalencia.getEquivalenciaGeral() && !equivalencia.getCursos().isEmpty() )
+		{
+			for ( Curso curso : equivalencia.getCursos() ) {
+				// Cursou
+				setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],equivalencia.getCursou().getCodigo());
+				// Elimina
+				setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],equivalencia.getElimina().getCodigo());
+				//Curso
+				setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()], curso.getCodigo() );
+				
+				row++;
+			}
 		}
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],TriedaUtil.arrayJoin(eliminaArray, ";"));
+		else
+		{
+			// Cursou
+			setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],equivalencia.getCursou().getCodigo());
+			// Elimina
+			setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],equivalencia.getElimina().getCodigo());
+			
+			row++;
+		}
 		
-		row++;
 		return row;
 	}
 	

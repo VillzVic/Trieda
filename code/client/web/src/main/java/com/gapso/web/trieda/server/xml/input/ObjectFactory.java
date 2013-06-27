@@ -147,6 +147,14 @@ public class ObjectFactory {
     public GrupoDisciplina createGrupoDisciplina() {
         return new GrupoDisciplina();
     }
+    
+    /**
+     * Create an instance of {@link GrupoEquivalencia }
+     * 
+     */
+    public GrupoEquivalencia createGrupoEquivalencia() {
+        return new GrupoEquivalencia();
+    }
 
     /**
      * Create an instance of {@link GrupoCurso }
@@ -578,6 +586,14 @@ public class ObjectFactory {
      */
     public ItemDisciplina createItemDisciplina() {
         return new ItemDisciplina();
+    }
+    
+    /**
+     * Create an instance of {@link ItemEquivalencia }
+     * 
+     */
+    public ItemEquivalencia createItemEquivalencia() {
+        return new ItemEquivalencia();
     }
 
     /**

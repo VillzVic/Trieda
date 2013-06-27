@@ -10,10 +10,12 @@ import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.EquivalenciaFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -25,6 +27,7 @@ import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnF
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
@@ -34,6 +37,8 @@ import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class EquivalenciasPresenter
 	implements Presenter
@@ -42,12 +47,14 @@ public class EquivalenciasPresenter
 		extends ITriedaI18nGateway
 	{
 		Button getNewButton();
+		Button getEditButton();
 		Button getRemoveButton();
 		Button getImportExcelButton();
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
 		CampusComboBox getCampusComboBox();
 		DisciplinaComboBox getDisciplinaComboBox();
+		CursoComboBox getCursoComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid<EquivalenciaDTO> getGrid();
@@ -74,7 +81,8 @@ public class EquivalenciasPresenter
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<EquivalenciaDTO>> callback) {
 				DisciplinaDTO disciplina = display.getDisciplinaComboBox().getValue();
-				Services.equivalencias().getBuscaList(disciplina, (PagingLoadConfig)loadConfig, callback);
+				CursoDTO  curso = display.getCursoComboBox().getValue();
+				Services.equivalencias().getBuscaList(disciplina, curso, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -92,6 +100,49 @@ public class EquivalenciasPresenter
 					new EquivalenciaFormView( new EquivalenciaDTO() ), display.getGrid() );
 
 				presenter.go( null );
+			}
+		});
+		
+		this.display.getEditButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final EquivalenciaDTO equivalenciaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
+				final FutureResult< List< CursoDTO > > futureCursosDTO = new FutureResult< List< CursoDTO > >();
+				final FutureResult< DisciplinaDTO > futureDisciplinaCursouDTO = new FutureResult< DisciplinaDTO >();
+				final FutureResult< DisciplinaDTO > futureDisciplinaEliminaDTO = new FutureResult< DisciplinaDTO >();
+
+				Services.equivalencias().getCursosEquivalencia( equivalenciaDTO, futureCursosDTO );
+				Services.disciplinas().getDisciplina( equivalenciaDTO.getCursouId(), futureDisciplinaCursouDTO );
+				Services.disciplinas().getDisciplina( equivalenciaDTO.getEliminaId(), futureDisciplinaEliminaDTO );
+
+				FutureSynchronizer synch = new FutureSynchronizer(
+					futureCursosDTO, futureDisciplinaCursouDTO, futureDisciplinaEliminaDTO );
+
+				synch.addCallback( new AsyncCallback< Boolean >()
+				{
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Não foi possível editar a equivalencia", null );
+					}
+
+					public void onSuccess( Boolean result )
+					{
+						List< CursoDTO > cursosDTO = futureCursosDTO.result();
+						DisciplinaDTO disciplinaCursouDTO = futureDisciplinaCursouDTO.result();
+						DisciplinaDTO disciplinaEliminaDTO = futureDisciplinaEliminaDTO.result();
+
+						Presenter presenter = new EquivalenciaFormPresenter( instituicaoEnsinoDTO,
+							new EquivalenciaFormView( equivalenciaDTO, cursosDTO, disciplinaCursouDTO,
+								disciplinaEliminaDTO), display.getGrid() );
+
+						presenter.go( null );
+					}
+				});
 			}
 		});
 
@@ -160,6 +211,7 @@ public class EquivalenciasPresenter
 			public void componentSelected(ButtonEvent ce) {
 				display.getCampusComboBox().setValue(null);
 				display.getDisciplinaComboBox().setValue(null);
+				display.getCursoComboBox().setValue(null);
 				display.getGrid().updateList();
 			}
 		});

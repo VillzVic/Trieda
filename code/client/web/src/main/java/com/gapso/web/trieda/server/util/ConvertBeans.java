@@ -2739,7 +2739,10 @@ public class ConvertBeans {
 		domain.setVersion( dto.getVersion() );
 		domain.setCursou( Disciplina.find(
 			dto.getCursouId(), instituicaoEnsino ) );
-
+		domain.setElimina( Disciplina.find(
+				dto.getEliminaId(), instituicaoEnsino) );
+		domain.setEquivalenciaGeral( dto.getEquivalenciaGeral() );
+		
 		return domain;
 	}
 
@@ -2754,23 +2757,25 @@ public class ConvertBeans {
 		dto.setVersion( domain.getVersion() );
 		dto.setCursouId( domain.getCursou().getId() );
 		dto.setCursouString( domain.getCursou().getNome() + "(" + domain.getCursou().getCodigo() + ")" );
-
-		Set< Disciplina > eliminaList
-			= new TreeSet< Disciplina >( domain.getElimina() );
-
-		String eliminaString = "";
-		for ( Disciplina d : eliminaList )
+		dto.setEliminaId( domain.getElimina().getId()  );
+		dto.setEliminaString( domain.getElimina().getNome() + "(" + domain.getElimina().getCodigo() + ")" );
+		dto.setEquivalenciaGeral( domain.getEquivalenciaGeral() );
+		if ( domain.getCursos().isEmpty() || domain.getEquivalenciaGeral() )
 		{
-			eliminaString += ( d.getNome() + "(" + d.getCodigo() + "); " );
+			dto.setCursoString( "GERAL" );
 		}
-
-		if ( eliminaString.length() > 0 )
+		else
 		{
-			eliminaString = eliminaString.substring(
-				0, eliminaString.length() - 2 );
+			String cursos = "";
+			for (Curso curso : domain.getCursos() )
+			{
+				if (cursos == "")
+					cursos += curso.getNome();
+				else
+					cursos += ", " + curso.getNome();
+			}
+			dto.setCursoString( cursos );
 		}
-
-		dto.setEliminaString(eliminaString);
 
 		if ( instituicaoEnsino != null )
 		{

@@ -7,12 +7,15 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.services.EquivalenciasService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public class EquivalenciasServiceImpl
 	extends RemoteService implements EquivalenciasService
@@ -39,7 +42,7 @@ public class EquivalenciasServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult<EquivalenciaDTO> getBuscaList(DisciplinaDTO disciplinaDTO, PagingLoadConfig config) {
+	public PagingLoadResult<EquivalenciaDTO> getBuscaList(DisciplinaDTO disciplinaDTO, CursoDTO cursoDTO, PagingLoadConfig config) {
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
 			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
@@ -51,9 +54,12 @@ public class EquivalenciasServiceImpl
 
 		Disciplina disciplina = (disciplinaDTO == null) ? null :
 			Disciplina.find( disciplinaDTO.getId(), getInstituicaoEnsinoUser() );
+		
+		Curso curso = (cursoDTO == null) ? null :
+			ConvertBeans.toCurso(cursoDTO);
 
 		List< Equivalencia > list = Equivalencia.findBy( getInstituicaoEnsinoUser(),
-			disciplina, config.getOffset(), config.getLimit(), orderBy );
+			disciplina, curso, config.getOffset(), config.getLimit(), orderBy );
 
 		List< EquivalenciaDTO > listDTO
 			= new ArrayList< EquivalenciaDTO >();
@@ -68,24 +74,43 @@ public class EquivalenciasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Equivalencia.count(
-			getInstituicaoEnsinoUser(), disciplina ) );
+			getInstituicaoEnsinoUser(), disciplina, curso ) );
 
 		return result;
 	}
 	
 	@Override
-	public void save( EquivalenciaDTO equivalenciaDTO, List< DisciplinaDTO > eliminaList )
+	public void save( EquivalenciaDTO equivalenciaDTO, List<CursoDTO> cursosSelecionados ) throws TriedaException
 	{
 		Equivalencia equivalencia
 			= ConvertBeans.toEquivalencia( equivalenciaDTO );
-
-		for ( DisciplinaDTO d : eliminaList )
+		
+		if ( equivalencia.getId() != null && equivalencia.getId() >0 )
 		{
-			equivalencia.getElimina().add(
-				Disciplina.find( d.getId(), getInstituicaoEnsinoUser() ) );
+			if ( !equivalenciaDTO.getEquivalenciaGeral() || cursosSelecionados != null )
+			{
+				for ( CursoDTO cursoDTO : cursosSelecionados )
+				{
+						equivalencia.getCursos().add( Curso.find(cursoDTO.getId(), getInstituicaoEnsinoUser()) );
+				}
+			}
+			equivalencia.merge();
 		}
-
-		equivalencia.persist();
+		else
+		{
+			if ( Equivalencia.findBy(getInstituicaoEnsinoUser(), equivalencia.getCursou(), equivalencia.getElimina()).size() > 0)
+			{
+				throw new TriedaException("Conjunto de disciplinas cursou-elimina já existe");
+			}
+			if ( !equivalenciaDTO.getEquivalenciaGeral() || cursosSelecionados != null )
+			{
+				for ( CursoDTO cursoDTO : cursosSelecionados )
+				{
+					equivalencia.getCursos().add( Curso.find(cursoDTO.getId(), getInstituicaoEnsinoUser()) );
+				}
+			}
+			equivalencia.persist();
+		}
 	}
 	
 	@Override
@@ -101,6 +126,19 @@ public class EquivalenciasServiceImpl
 				equivalencia.remove();
 			}
 		}
+	}
+	
+	@Override
+	public List< CursoDTO > getCursosEquivalencia( EquivalenciaDTO equivalenciaDTO )
+	{
+		List< CursoDTO > cursosEquivalencia= new ArrayList< CursoDTO >();
+		
+		for( Curso curso : Equivalencia.find( equivalenciaDTO.getId(), getInstituicaoEnsinoUser() ).getCursos() )
+		{
+			cursosEquivalencia.add( ConvertBeans.toCursoDTO(curso) );
+		}
+		
+		return cursosEquivalencia;
 	}
 
 }

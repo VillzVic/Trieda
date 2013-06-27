@@ -132,10 +132,10 @@ public class Disciplina
 	private Set< Incompatibilidade > incompatibilidades = new HashSet< Incompatibilidade >();
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cursou" )
-	private Set< Equivalencia > equivalencias = new HashSet< Equivalencia >();
+	private Set< Equivalencia > eliminam = new HashSet< Equivalencia >();
 
-	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "elimina" )
-	private Set< Equivalencia > eliminadaPor = new HashSet< Equivalencia >();
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "elimina" )
+	private Set< Equivalencia > eliminadasPor = new HashSet< Equivalencia >();
 
 	@NotNull
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
@@ -183,10 +183,10 @@ public class Disciplina
 			"null" : getProfessores().size() ).append( ", "  );
 		sb.append( "Incompatibilidades: " ).append( getIncompatibilidades() == null ?
 			"null" : getIncompatibilidades().size() ).append( ", " );
-		sb.append( "Equivalencias: " ).append( getEquivalencias() == null ?
-			"null" : getEquivalencias().size() ).append( ", " );
-		sb.append( "EliminadaPor: " ).append( getEliminadaPor() == null ?
-			"null" : getEliminadaPor().size() ).append( ", " );
+		sb.append( "Equivalencias: " ).append( getEliminam() == null ?
+			"null" : getEliminam().size() ).append( ", " );
+		sb.append( "EliminadaPor: " ).append( getEliminadasPor() == null ?
+			"null" : getEliminadasPor().size() ).append( ", " );
 		sb.append( "Curriculos: " ).append( getCurriculos() == null ?
 			"null" : getCurriculos().size() ).append( ", " );
 		sb.append( "Demandas: " ).append( getDemandas() == null ?
@@ -422,11 +422,11 @@ public class Disciplina
 	@Transactional
 	public void removeEliminadasPor()
 	{
-		Set< Equivalencia > eliminadasPor = this.getEliminadaPor();
+		Set< Equivalencia > eliminadasPor = this.getEliminadasPor();
 
 		for ( Equivalencia equivalencia : eliminadasPor )
 		{
-			equivalencia.getElimina().remove( this );
+			equivalencia.getElimina().remove();
 			equivalencia.merge();
 		}
 	}
@@ -1046,26 +1046,26 @@ public class Disciplina
 		this.incompatibilidades = incompatibilidades;
 	}
 
-	public Set< Equivalencia > getEquivalencias()
+	public Set< Equivalencia > getEliminam()
 	{
-		return this.equivalencias;
+		return this.eliminam;
 	}
 
-	public void setEquivalencias(
-		Set< Equivalencia > equivalencias )
+	public void setEliminam(
+		Set< Equivalencia > eliminam )
 	{
-		this.equivalencias = equivalencias;
+		this.eliminam = eliminam;
 	}
 
-	public Set< Equivalencia > getEliminadaPor()
+	public Set< Equivalencia > getEliminadasPor()
 	{
-		return this.eliminadaPor;
+		return this.eliminadasPor;
 	}
 
-	public void setEliminadaPor(
-		Set< Equivalencia > eliminadaPor )
+	public void setEliminadasPor(
+		Set< Equivalencia > eliminadasPor )
 	{
-		this.eliminadaPor = eliminadaPor;
+		this.eliminadasPor = eliminadasPor;
 	}
 
 	public Set< CurriculoDisciplina > getCurriculos()

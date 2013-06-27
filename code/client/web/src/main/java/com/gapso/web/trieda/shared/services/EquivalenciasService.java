@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -16,8 +18,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface EquivalenciasService extends RemoteService {
 
 	EquivalenciaDTO getEquivalencia(Long id);
-	PagingLoadResult<EquivalenciaDTO> getBuscaList(DisciplinaDTO disciplinaDTO, PagingLoadConfig config);
-	void save(EquivalenciaDTO equivalenciaDTO, List<DisciplinaDTO> eliminaList);
+	void save(EquivalenciaDTO equivalenciaDTO, List<CursoDTO> cursosSelecionados) throws TriedaException;
 	void remove(List<EquivalenciaDTO> equivalenciaDTOList);
+	PagingLoadResult<EquivalenciaDTO> getBuscaList(DisciplinaDTO disciplinaDTO,
+			CursoDTO cursoDTO, PagingLoadConfig config);
+	List<CursoDTO> getCursosEquivalencia(EquivalenciaDTO equivalenciaDTO);
 	
 }

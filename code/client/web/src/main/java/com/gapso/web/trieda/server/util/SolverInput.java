@@ -63,6 +63,7 @@ import com.gapso.web.trieda.server.xml.input.GrupoDiaSemana;
 import com.gapso.web.trieda.server.xml.input.GrupoDisciplina;
 import com.gapso.web.trieda.server.xml.input.GrupoDisciplinaPeriodo;
 import com.gapso.web.trieda.server.xml.input.GrupoDivisaoCreditos;
+import com.gapso.web.trieda.server.xml.input.GrupoEquivalencia;
 import com.gapso.web.trieda.server.xml.input.GrupoFixacao;
 import com.gapso.web.trieda.server.xml.input.GrupoGrupo;
 import com.gapso.web.trieda.server.xml.input.GrupoHorario;
@@ -99,6 +100,7 @@ import com.gapso.web.trieda.server.xml.input.ItemDeslocamento;
 import com.gapso.web.trieda.server.xml.input.ItemDisciplina;
 import com.gapso.web.trieda.server.xml.input.ItemDisciplinaPeriodo;
 import com.gapso.web.trieda.server.xml.input.ItemDivisaoCreditos;
+import com.gapso.web.trieda.server.xml.input.ItemEquivalencia;
 import com.gapso.web.trieda.server.xml.input.ItemFixacao;
 import com.gapso.web.trieda.server.xml.input.ItemHorario;
 import com.gapso.web.trieda.server.xml.input.ItemHorarioAula;
@@ -513,6 +515,9 @@ public class SolverInput
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando disciplinas");start = System.currentTimeMillis(); // TODO: retirar
 		generateDisciplinas();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		System.out.print("Gerando equivalencias");start = System.currentTimeMillis(); // TODO: retirar
+		generateEquivalencias();
 		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		System.out.print("Gerando curso");start = System.currentTimeMillis(); // TODO: retirar
 		generateCurso();
@@ -1276,7 +1281,7 @@ public class SolverInput
 			
 			if (this.parametro.getConsiderarEquivalencia() && disciplinaOcupaGrade)
 			{
-				List< Equivalencia > equivalencias = new ArrayList<Equivalencia>(disciplina.getEquivalencias());
+				List< Equivalencia > equivalencias = new ArrayList<Equivalencia>(disciplina.getEliminam());
 				// ordena para manter inputs iguais
 				Collections.sort(equivalencias, new Comparator<Equivalencia>() {
 					@Override
@@ -1287,15 +1292,11 @@ public class SolverInput
 
 				for ( Equivalencia equivalencia : equivalencias )
 				{
-					Set< Disciplina > eliminas = equivalencia.getElimina();
+					Disciplina eliminas = equivalencia.getElimina();
 
-					if ( eliminas != null && eliminas.size() > 0 )
+					if ( eliminas != null )
 					{
-						for ( Disciplina disciplinaElimina : eliminas )
-						{
-							grupoIdentificadorEquivalencias.getId().add(disciplinaElimina.getId().intValue());
-							
-						}
+						grupoIdentificadorEquivalencias.getId().add(eliminas.getId().intValue());
 					}
 				}
 			}
@@ -1539,6 +1540,22 @@ public class SolverInput
 			if ( grupoCurriculo.getCurriculo().size() > 0 )
 			{
 				grupoCurso.getCurso().add( itemCurso );
+			}
+			
+			// EQUIVALENCIAS
+			Set< Equivalencia > equivalencias = curso.getEquivalencias();
+
+			if ( equivalencias != null)
+			{
+				GrupoIdentificador grupoIdentificadorEquivalencias
+					= this.of.createGrupoIdentificador();
+				
+				for ( Equivalencia equivalencia : equivalencias )
+				{
+					grupoIdentificadorEquivalencias.getId().add(
+						equivalencia.getId().intValue() );
+				}
+				itemCurso.setEquivalencias(grupoIdentificadorEquivalencias);
 			}
 		}
 
@@ -2355,5 +2372,28 @@ public class SolverInput
 		{
 			this.getErrors().add( HtmlUtils.htmlUnescape( errorMessage ) );
 		}
+	}
+	
+	private void generateEquivalencias() {
+		GrupoEquivalencia grupoEquivalencia
+			= this.of.createGrupoEquivalencia();
+		
+		List< Equivalencia > equivalencias
+			= Equivalencia.findAll( this.instituicaoEnsino );
+		
+		for ( Equivalencia equivalencia : equivalencias )
+		{
+			ItemEquivalencia itemEquivalencia
+				= this.of.createItemEquivalencia();
+			
+			itemEquivalencia.setId( equivalencia.getId().intValue() );
+			itemEquivalencia.setDisciplinaCursouId( equivalencia.getCursou().getId().intValue() );
+			itemEquivalencia.setDisciplinaEliminaId( equivalencia.getElimina().getId().intValue() );
+			itemEquivalencia.setGeral( equivalencia.getEquivalenciaGeral() );
+			
+			grupoEquivalencia.getEquivalencia().add( itemEquivalencia );
+		}
+		
+		this.triedaInput.setEquivalencias( grupoEquivalencia );	
 	}
 }

@@ -2,7 +2,9 @@ package com.gapso.web.trieda.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -946,10 +948,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		for (Equivalencia eq : equivalencias) {
 			Disciplina discCursou = eq.getCursou();
 			if (!discCursou.ocupaGrade()) {
-				for (Disciplina discElimina : eq.getElimina()) {
-					if (discElimina.ocupaGrade()) {
-						equivalenciasStrBuffer.append(discCursou.getCodigo() + "->" + discElimina.getCodigo() + "; ");
-					}
+				Disciplina discElimina = eq.getElimina();
+				if (discElimina.ocupaGrade()) {
+					equivalenciasStrBuffer.append(discCursou.getCodigo() + "->" + discElimina.getCodigo() + "; ");
 				}
 			}
 		}
@@ -980,26 +981,25 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				qtdDemandada += demanda.getQuantidade();
 			}
 			disciplinaIdToQtdDemandadaMap.put(disciplina.getId(),qtdDemandada);
-			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
+			for(Equivalencia equivalencia : disciplina.getEliminam()){
 				Disciplina cursou = equivalencia.getCursou();
+				Disciplina elimina = equivalencia.getElimina();
 				if((cIndex = (Integer) nodeMap.indexOf(cursou.getId())) == -1){
 					cIndex = id++;
 					nodeMap.add(cursou.getId());
 					disMap.add(cursou);
 				}
-				for(Disciplina elimina : equivalencia.getElimina()){
-					if((eIndex = (Integer) nodeMap.indexOf(elimina.getId())) == -1){
-						eIndex = id++;
-						nodeMap.add(elimina.getId());
-						disMap.add(elimina);
-					}
-					pairs.add(Pair.create(cIndex, eIndex));
-					if (cIndex > maxIndex) {
-						maxIndex = cIndex;
-					}
-					if (eIndex > maxIndex) {
-						maxIndex = eIndex;
-					}
+				if((eIndex = (Integer) nodeMap.indexOf(elimina.getId())) == -1){
+					eIndex = id++;
+					nodeMap.add(elimina.getId());
+					disMap.add(elimina);
+				}
+				pairs.add(Pair.create(cIndex, eIndex));
+				if (cIndex > maxIndex) {
+					maxIndex = cIndex;
+				}
+				if (eIndex > maxIndex) {
+					maxIndex = eIndex;
 				}
 			}
 		}
@@ -1310,20 +1310,21 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		Map<Long,Set<Pair<Long,Long>>> disciplinaEliminaIdToEquivalenciasOriginaisMap = new HashMap<Long,Set<Pair<Long,Long>>>();
 		for(Disciplina disciplina : parametro.getCenario().getDisciplinas()){
 			disciplinasMap.put(disciplina.getId(),disciplina);
-			for(Equivalencia equivalencia : disciplina.getEquivalencias()){
+			for(Equivalencia equivalencia : disciplina.getEliminam()){
 				Disciplina cursou = equivalencia.getCursou();
-				for(Disciplina elimina : equivalencia.getElimina()){
-					Pair<Long,Long> equivalenciaOriginal = Pair.create(cursou.getId(),elimina.getId());
-					
-					equivalenciasOriginais.add(equivalenciaOriginal);
+				Disciplina elimina = equivalencia.getElimina();
 
-					Set<Pair<Long,Long>> eliminaEquivalencias = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(elimina.getId());
-					if (eliminaEquivalencias == null) {
-						eliminaEquivalencias = new HashSet<Pair<Long,Long>>();
-						disciplinaEliminaIdToEquivalenciasOriginaisMap.put(elimina.getId(),eliminaEquivalencias);
-					}
-					eliminaEquivalencias.add(equivalenciaOriginal);
+				Pair<Long,Long> equivalenciaOriginal = Pair.create(cursou.getId(),elimina.getId());
+					
+				equivalenciasOriginais.add(equivalenciaOriginal);
+
+				Set<Pair<Long,Long>> eliminaEquivalencias = disciplinaEliminaIdToEquivalenciasOriginaisMap.get(elimina.getId());
+				if (eliminaEquivalencias == null) {
+					eliminaEquivalencias = new HashSet<Pair<Long,Long>>();
+					disciplinaEliminaIdToEquivalenciasOriginaisMap.put(elimina.getId(),eliminaEquivalencias);
 				}
+				eliminaEquivalencias.add(equivalenciaOriginal);
+
 			}
 		}
 		

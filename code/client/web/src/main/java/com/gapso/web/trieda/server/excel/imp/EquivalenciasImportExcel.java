@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -29,6 +30,7 @@ public class EquivalenciasImportExcel
 {
 	static public String CURSOU_COLUMN_NAME;
 	static public String ELIMINA_COLUMN_NAME;
+	static public String CURSO_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -42,6 +44,7 @@ public class EquivalenciasImportExcel
 		this.headerColumnsNames = new ArrayList< String >();
 		this.headerColumnsNames.add( CURSOU_COLUMN_NAME );
 		this.headerColumnsNames.add( ELIMINA_COLUMN_NAME );
+		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
 	}
 
 	@Override
@@ -88,6 +91,10 @@ public class EquivalenciasImportExcel
 					else if ( ELIMINA_COLUMN_NAME.endsWith( columnName ) )
 					{
 						bean.setEliminaStr( cellValue );
+					}
+					else if ( CURSO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setCursoStr( cellValue );
 					}
         		}
         	}
@@ -168,6 +175,10 @@ public class EquivalenciasImportExcel
 		// Verifica se alguma disciplina apareceu
 		// mais de uma vez no arquivo de entrada
 		// checkUniqueness( sheetContent );
+		
+		// Checa se uma equivalencia esta marcado como geral
+		// e por curso ao mesmo tempo
+		checkEquivalenciaGeral( sheetContent );
 
 		// Verifica se há referência a alguma unidade não cadastrada
 		checkNonRegisteredDisciplina( sheetContent );
@@ -175,6 +186,38 @@ public class EquivalenciasImportExcel
 		return getErrors().isEmpty();
 	}
 
+	private void checkEquivalenciaGeral(
+			List< EquivalenciasImportExcelBean > sheetContent)
+	{
+		// [ Equivalencia -> Equivalencia Geral ]
+		Map< String, Boolean > codigoToRowsMap
+			= new HashMap< String, Boolean >();
+		
+		List< Integer > rowsWithErrorsEqvGeral = new ArrayList< Integer >();
+
+		for ( EquivalenciasImportExcelBean bean : sheetContent )
+		{
+			Boolean row = codigoToRowsMap.get( bean.getCursouStr()+bean.getEliminaStr() );
+
+			if ( row == null )
+			{
+				codigoToRowsMap.put( bean.getCursouStr()+bean.getEliminaStr(), bean.getCursoStr()==null );
+			}
+			else
+			{
+				if ( !(row == (bean.getCursoStr()==null)) )
+				{
+					rowsWithErrorsEqvGeral.add(bean.getRow());
+				}
+			}
+		}
+		
+		if ( !rowsWithErrorsEqvGeral.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEquivalenciaGeral( rowsWithErrorsEqvGeral.toString() ) );
+		}
+	}
+	
 	// FIXME
 	// A disciplina 'cursou' pode aparacer mais de
 	// uma vez na planilha de importação, pois ela
@@ -224,9 +267,14 @@ public class EquivalenciasImportExcel
 		Map< String, Disciplina > disciplinaBDMap
 			= Disciplina.buildDisciplinaCodigoToDisciplinaMap(
 				Disciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		
+		Map< String, Curso > cursoBDMap
+			= Curso.buildCursoCodigoToCursoMap(
+					Curso.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrorsCursou = new ArrayList< Integer >();
 		List< Integer > rowsWithErrorsElimina = new ArrayList< Integer >();
+		List< Integer > rowsWithErrorsCurso = new ArrayList< Integer >();
 
 		for ( EquivalenciasImportExcelBean bean : sheetContent )
 		{
@@ -235,6 +283,9 @@ public class EquivalenciasImportExcel
 
 			Disciplina disciplinaElimina
 				= disciplinaBDMap.get( bean.getEliminaStr() );
+			
+			Curso equivalenciaCurso
+				= cursoBDMap.get( bean.getCursoStr() );
 
 			if ( disciplinaCursou != null )
 			{
@@ -247,12 +298,25 @@ public class EquivalenciasImportExcel
 
 			if ( disciplinaElimina != null )
 			{
-				bean.getDisciplinasElimina().add( disciplinaElimina );
+				bean.setDisciplinaElimina( disciplinaElimina );
 			}
 			else
 			{
 				rowsWithErrorsElimina.add( bean.getRow() );
 			}
+			
+			if ( bean.getCursoStr() != null )
+			{
+				if ( equivalenciaCurso != null )
+				{
+					bean.setCurso( equivalenciaCurso );
+				}
+				else
+				{
+					rowsWithErrorsCurso.add( bean.getRow() );
+				}
+			}
+
 		}
 		
 		if ( !rowsWithErrorsCursou.isEmpty() )
@@ -265,6 +329,12 @@ public class EquivalenciasImportExcel
 		{
 			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
 				ELIMINA_COLUMN_NAME, rowsWithErrorsElimina.toString() ) );
+		}
+		
+		if ( !rowsWithErrorsCurso.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
+				CURSO_COLUMN_NAME, rowsWithErrorsElimina.toString() ) );
 		}
 
 		/*
@@ -309,27 +379,29 @@ public class EquivalenciasImportExcel
 		List< EquivalenciasImportExcelBean > sheetContent )
 	{
 		Map< String, Equivalencia > equivalenciasBDMap
-			= Equivalencia.buildEquivalenciaCursouCodigoToEquivalenciaMap(
+			= Equivalencia.buildEquivalenciaCursouCodigoEliminaCodigoToEquivalenciaMap(
 				Equivalencia.findAll( this.instituicaoEnsino ) );
 
 		//int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( EquivalenciasImportExcelBean equivalenciaExcel : sheetContent )
 		{
 			if ( equivalenciaExcel.getDisciplinaCursou() == null
-				|| equivalenciaExcel.getDisciplinasElimina() == null
-				|| equivalenciaExcel.getDisciplinasElimina().size() == 0 )
+				|| equivalenciaExcel.getDisciplinaElimina() == null )
 			{
 				continue;
 			}
 
 			Equivalencia equivalenciaBD = equivalenciasBDMap.get(
-				equivalenciaExcel.getCursouStr() );
+				equivalenciaExcel.getCursouStr() + equivalenciaExcel.getEliminaStr() );
 
 			if ( equivalenciaBD != null )
 			{
 				// Update
-				equivalenciaBD.setElimina(
-					equivalenciaExcel.getDisciplinasElimina() );
+				if ( equivalenciaExcel.getCurso() != null )
+				{
+					equivalenciaBD.setEquivalenciaGeral( false );
+					equivalenciaBD.getCursos().add( equivalenciaExcel.getCurso() );
+				}
 
 				equivalenciaBD.merge();
 			}
@@ -339,7 +411,16 @@ public class EquivalenciasImportExcel
 				Equivalencia newEquivalencia = new Equivalencia();
 
 				newEquivalencia.setCursou( equivalenciaExcel.getDisciplinaCursou() );
-				newEquivalencia.setElimina( equivalenciaExcel.getDisciplinasElimina() );
+				newEquivalencia.setElimina( equivalenciaExcel.getDisciplinaElimina() );
+				if ( equivalenciaExcel.getCurso() != null )
+				{
+					newEquivalencia.setEquivalenciaGeral( true );
+					newEquivalencia.getCursos().add( equivalenciaExcel.getCurso() );
+				}
+				else
+				{
+					newEquivalencia.setEquivalenciaGeral( false );
+				}
 
 				newEquivalencia.persist();
 			}
@@ -354,6 +435,7 @@ public class EquivalenciasImportExcel
 		{
 			CURSOU_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cursou() );
 			ELIMINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().elimina() );
+			CURSO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().curso() );
 		}
 	}
 }

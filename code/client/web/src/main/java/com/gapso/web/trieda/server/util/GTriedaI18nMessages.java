@@ -108,6 +108,16 @@ public class GTriedaI18nMessages
 		return this.languageManager.getFormattedText(
 			"excelErroLogicoUnicidadeViolada", params );
 	}
+	
+	@Override
+	public String excelErroLogicoEquivalenciaGeral(
+		String linhasComErro )
+	{
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoEquivalenciaGeral", params );
+	}
 
 	@Override
 	public String excelErroLogicoUnicidadeVioladaCurriculoPorCurso(

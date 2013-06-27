@@ -18,6 +18,7 @@ import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
@@ -31,6 +32,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	private SimpleFilter filter;
 	private CampusComboBox campusCB;
 	private DisciplinaComboBox disciplinaCB;
+	private CursoComboBox cursoCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	
@@ -54,7 +56,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar(true, false, true, true, true, this);
+		toolBar = new SimpleToolBar(true, true, true, true, true, this);
 		panel.setTopComponent(toolBar);
 	}
 	
@@ -69,7 +71,8 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	private List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_CURSOU_STRING, "Cursou", 350));
-		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_ELIMINA_STRING, "Elimina", 700));
+		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_ELIMINA_STRING, "Elimina", 350));
+		list.add(new ColumnConfig(EquivalenciaDTO.PROPERTY_CURSO_STRING, "Curso", 350) );
 		return list;
 	}
 
@@ -81,8 +84,10 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 		filter = new SimpleFilter();
 		campusCB = new CampusComboBox();
 		disciplinaCB = new DisciplinaComboBox();
+		cursoCB = new CursoComboBox();
 		filter.addField(campusCB);
 		filter.addField(disciplinaCB);
+		filter.addField(cursoCB);
 		
 		panel.add(filter, bld);
 	}
@@ -90,6 +95,11 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	@Override
 	public Button getNewButton() {
 		return toolBar.getNewButton();
+	}
+	
+	@Override
+	public Button getEditButton() {
+		return toolBar.getEditButton();
 	}
 
 	@Override
@@ -130,6 +140,11 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	@Override
 	public DisciplinaComboBox getDisciplinaComboBox() {
 		return disciplinaCB;
+	}
+	
+	@Override
+	public CursoComboBox getCursoComboBox() {
+		return cursoCB;
 	}
 
 	@Override

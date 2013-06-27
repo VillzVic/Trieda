@@ -55,7 +55,8 @@ import javax.xml.bind.annotation.XmlType;
     "areasTitulacao",
     "curriculos",
     "minTempoIntegral",
-    "minTempoIntegralParcial"
+    "minTempoIntegralParcial",
+    "equivalencias"
 })
 public class ItemCurso {
 
@@ -75,6 +76,7 @@ public class ItemCurso {
     protected GrupoCurriculo curriculos;
     protected double minTempoIntegral;
     protected double minTempoIntegralParcial;
+    protected GrupoIdentificador equivalencias;
 
     /**
      * Gets the value of the id property.
@@ -290,6 +292,30 @@ public class ItemCurso {
      */
     public void setMinTempoIntegralParcial(double value) {
         this.minTempoIntegralParcial = value;
+    }
+    
+    /**
+     * Gets the value of the equivalencias property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public GrupoIdentificador getEquivalencias() {
+        return equivalencias;
+    }
+
+    /**
+     * Sets the value of the equivalencias property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoIdentificador }
+     *     
+     */
+    public void setEquivalencias(GrupoIdentificador value) {
+        this.equivalencias = value;
     }
 
 }

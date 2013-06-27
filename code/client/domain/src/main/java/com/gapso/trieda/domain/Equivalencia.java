@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -13,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
@@ -44,9 +46,19 @@ public class Equivalencia
     private Disciplina cursou;
 
     @NotNull
-    @ManyToMany( targetEntity = Disciplina.class )
+    @ManyToOne( targetEntity = Disciplina.class )
     @JoinColumn( name = "DIS_ELIMINA_ID" )
-    private Set< Disciplina > elimina = new HashSet< Disciplina >();
+    private Disciplina elimina;
+    
+	@Column( name = "EQV_GERAL" )
+	private Boolean equivalenciaGeral;
+	
+	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name="cursos_equivalencias",
+	joinColumns={ @JoinColumn(name="eqv_id") },
+	inverseJoinColumns={ @JoinColumn(name="cur_id") })
+	private Set< Curso > cursos = new HashSet< Curso >();
+
 
 	public String toString()
 	{
@@ -55,7 +67,7 @@ public class Equivalencia
         sb.append( "Id: " ).append( getId() ).append( ", " );
         sb.append( "Version: " ).append( getVersion() ).append( ", " );
         sb.append( "Cursou: " ).append( getCursou() ).append( ", " );
-        sb.append( "Elimina: " ).append( getElimina() == null ? "null" : getElimina().size() );
+        sb.append( "Elimina: " ).append( getElimina()).append( ", " );
 
         return sb.toString();
     }
@@ -70,15 +82,34 @@ public class Equivalencia
         this.cursou = cursou;
     }
 
-	public Set< Disciplina > getElimina()
+	public Disciplina getElimina()
 	{
         return this.elimina;
     }
 
-	public void setElimina(
-		Set< Disciplina > elimina )
+	public void setElimina( Disciplina elimina )
 	{
         this.elimina = elimina;
+    }
+	
+	public Boolean getEquivalenciaGeral()
+	{
+        return this.equivalenciaGeral;
+    }
+
+	public void setEquivalenciaGeral( Boolean equivalenciaGeral )
+	{
+        this.equivalenciaGeral = equivalenciaGeral;
+    }
+	
+	public Set< Curso > getCursos()
+	{
+        return this.cursos;
+    }
+
+	public void setCursos( Set< Curso > cursos )
+	{
+        this.cursos = cursos;
     }
 
 	@PersistenceContext
@@ -230,23 +261,36 @@ public class Equivalencia
     }
 	
 	public static int count(
-		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina )
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Curso curso )
 	{
 		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ";
+		String from = " FROM Equivalencia o ";
 
 		if ( disciplina != null )
 		{
 			where += ( " AND o.cursou = :disciplina " );
 		}
+		
+		Set<Curso> cursoBusca = new HashSet<Curso>();
+		if ( curso != null )
+		{
+			cursoBusca.add(curso);
+			from += ", IN ( o.cursos ) cur";
+			where += ( " AND cur IN ( :curso )" );
+		}
 
 		Query q = entityManager().createQuery(
-			" SELECT COUNT ( o ) FROM Equivalencia o " + where );
+			" SELECT COUNT ( o )" + from + where );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( disciplina != null )
 		{
 			q.setParameter( "disciplina", disciplina );
+		}
+		if ( curso != null )
+		{
+			q.setParameter( "curso", cursoBusca);
 		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
@@ -255,19 +299,28 @@ public class Equivalencia
 	@SuppressWarnings( "unchecked" )
 	public static List< Equivalencia > findBy(
 		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina,
-		int firstResult, int maxResults, String orderBy )
+		Curso curso, int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
 
 		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ";
+		String from = "FROM Equivalencia o";
 
 		if ( disciplina != null )
 		{
 			where += ( " AND o.cursou = :disciplina " );
 		}
+		
+		Set<Curso> cursoBusca = new HashSet<Curso>();
+		if ( curso != null )
+		{
+			cursoBusca.add(curso);
+			from += ", IN ( o.cursos ) cur";
+			where += ( " AND cur IN ( :curso )" );
+		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM Equivalencia o " + where + orderBy );
+			" SELECT o "+ from + where + orderBy );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setFirstResult( firstResult );
@@ -276,6 +329,10 @@ public class Equivalencia
 		if ( disciplina != null )
 		{
 			q.setParameter( "disciplina", disciplina );
+		}
+		if ( curso != null )
+		{
+			q.setParameter( "curso", cursoBusca);
 		}
 
 		return q.getResultList();
@@ -308,7 +365,7 @@ public class Equivalencia
         return q.getResultList();
     }
 
-	public static Map< String, Equivalencia > buildEquivalenciaCursouCodigoToEquivalenciaMap(
+	public static Map< String, Equivalencia > buildEquivalenciaCursouCodigoEliminaCodigoToEquivalenciaMap(
 		List< Equivalencia > equivalencias )
 	{
 		Map< String, Equivalencia > equivalenciasMap
@@ -316,9 +373,27 @@ public class Equivalencia
 
 		for ( Equivalencia equivalencia : equivalencias )
 		{
-			equivalenciasMap.put( equivalencia.getCursou().getCodigo(), equivalencia );
+			equivalenciasMap.put( equivalencia.getCursou().getCodigo() +
+					equivalencia.getElimina().getCodigo(), equivalencia );
 		}
 
 		return equivalenciasMap;
 	}
+
+	@SuppressWarnings( "unchecked" )
+	public static List< Equivalencia > findBy(InstituicaoEnsino instituicaoEnsino,
+		Disciplina cursou, Disciplina elimina)
+	{
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Equivalencia o " +
+	   		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+	       	" AND o.cursou = :cursou AND o.elimina = :elimina");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cursou", cursou);
+		q.setParameter( "elimina", elimina);
+		
+		return q.getResultList();
+	}
+
 }

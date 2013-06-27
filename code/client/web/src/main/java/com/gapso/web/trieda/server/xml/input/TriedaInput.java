@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="temposDeslocamentosCampi" type="{}GrupoDeslocamento"/>
  *         &lt;element name="temposDeslocamentosUnidades" type="{}GrupoDeslocamento"/>
  *         &lt;element name="disciplinas" type="{}GrupoDisciplina"/>
+ *         &lt;element name="equivalencias" type="{}GrupoEquivalencia"/>
  *         &lt;element name="cursos" type="{}GrupoCurso"/>
  *         &lt;element name="ofertaCursosCampi" type="{}GrupoOfertaCurso"/>
  *         &lt;element name="demandas" type="{}GrupoDemanda"/>
@@ -69,6 +70,7 @@ import javax.xml.bind.annotation.XmlType;
     "temposDeslocamentosCampi",
     "temposDeslocamentosUnidades",
     "disciplinas",
+    "equivalencias",
     "cursos",
     "ofertaCursosCampi",
     "demandas",
@@ -107,6 +109,8 @@ public class TriedaInput {
     protected GrupoDeslocamento temposDeslocamentosUnidades;
     @XmlElement(required = true)
     protected GrupoDisciplina disciplinas;
+    @XmlElement(required = true)
+    protected GrupoEquivalencia equivalencias;
     @XmlElement(required = true)
     protected GrupoCurso cursos;
     @XmlElement(required = true)
@@ -433,6 +437,30 @@ public class TriedaInput {
      */
     public void setDisciplinas(GrupoDisciplina value) {
         this.disciplinas = value;
+    }
+    
+    /**
+     * Gets the value of the equivalencias property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoEquivalencia }
+     *     
+     */
+    public GrupoEquivalencia getEquivalencias() {
+        return equivalencias;
+    }
+
+    /**
+     * Sets the value of the equivalencias property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoEquivalencia }
+     *     
+     */
+    public void setEquivalencias(GrupoEquivalencia value) {
+        this.equivalencias = value;
     }
 
     /**

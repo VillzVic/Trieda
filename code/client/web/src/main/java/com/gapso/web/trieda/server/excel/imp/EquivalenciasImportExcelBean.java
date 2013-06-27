@@ -1,10 +1,9 @@
 package com.gapso.web.trieda.server.excel.imp;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 
 public class EquivalenciasImportExcelBean
@@ -13,9 +12,11 @@ public class EquivalenciasImportExcelBean
 {
 	private String cursouStr;
 	private String eliminaStr;
+	private String cursoStr;
 
 	private Disciplina disciplinaCursou;
-	private Set< Disciplina > disciplinasElimina = new HashSet< Disciplina >();
+	private Disciplina disciplinaElimina;
+	private Curso curso;
 
 	public EquivalenciasImportExcelBean( int row )
 	{
@@ -65,6 +66,16 @@ public class EquivalenciasImportExcelBean
 	{
 		this.eliminaStr = eliminaStr;
 	}
+	
+	public String getCursoStr()
+	{
+		return this.cursoStr;
+	}
+
+	public void setCursoStr( String cursoStr )
+	{
+		this.cursoStr = cursoStr;
+	}
 
 	public Disciplina getDisciplinaCursou()
 	{
@@ -76,15 +87,24 @@ public class EquivalenciasImportExcelBean
 		this.disciplinaCursou = disciplinaCursou;
 	}
 
-	public Set< Disciplina > getDisciplinasElimina()
+	public Disciplina getDisciplinaElimina()
 	{
-		return this.disciplinasElimina;
+		return this.disciplinaElimina;
 	}
 
-	public void setDisciplinasElimina(
-		Set< Disciplina > disciplinasElimina )
+	public void setDisciplinaElimina(Disciplina disciplinaElimina )
 	{
-		this.disciplinasElimina = disciplinasElimina;
+		this.disciplinaElimina = disciplinaElimina;
+	}
+	
+	public Curso getCurso()
+	{
+		return this.curso;
+	}
+
+	public void setCurso(Curso curso )
+	{
+		this.curso = curso;
 	}
 
 	@Override
