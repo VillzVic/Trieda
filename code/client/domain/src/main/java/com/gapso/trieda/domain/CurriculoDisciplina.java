@@ -60,8 +60,8 @@ public class CurriculoDisciplina
 
     @NotNull
     @Column( name = "CDI_PERIODO" )
-    @Min( 1L )
-    @Max( 99L )
+    @Min( 0L )
+    @Max( 100L )
     private Integer periodo;
 
     @ManyToMany( cascade = { CascadeType.PERSIST,

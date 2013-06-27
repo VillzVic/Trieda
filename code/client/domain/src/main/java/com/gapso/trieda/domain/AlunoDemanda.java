@@ -89,7 +89,7 @@ public class AlunoDemanda
 	@NotNull
 	@Column( name = "ALD_PERIODO" )
 	@Min( 0L )
-	@Max( 10L )
+	@Max( 100L )
 	private Integer periodo;
 
 	public Long getId()
