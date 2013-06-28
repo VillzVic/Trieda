@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.services.DivisoesCreditosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -70,8 +71,10 @@ public class DivisaoCreditosFormPresenter
 						@Override
 						public void onFailure( Throwable caught )
 						{
-							MessageBox.alert( "ERRO!",
-								"Não foi possível salvar a divisão de créditos.", null );
+							if (caught instanceof TriedaException)
+								MessageBox.alert("ERRO!", caught.getMessage(), null);
+							else
+								MessageBox.alert("ERRO!", "Deu falha na conexão", null);
 						}
 
 						@Override

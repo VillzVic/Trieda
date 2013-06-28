@@ -14,6 +14,7 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.services.DivisoesCreditosService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public class DivisoesCreditosServiceImpl
 	extends RemoteService implements DivisoesCreditosService
@@ -63,7 +64,7 @@ public class DivisoesCreditosServiceImpl
 	}
 	
 	@Override
-	public void save( DivisaoCreditoDTO divisaoCreditoDTO )
+	public void save( DivisaoCreditoDTO divisaoCreditoDTO ) throws TriedaException
 	{
 		DivisaoCredito divisaoCredito
 			= ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
@@ -75,7 +76,13 @@ public class DivisoesCreditosServiceImpl
 		}
 		else
 		{
-			divisaoCredito.persist();
+			if (DivisaoCredito.findByDias(getInstituicaoEnsinoUser(), divisaoCredito.getDia1(), divisaoCredito.getDia2(),
+					divisaoCredito.getDia3(), divisaoCredito.getDia4(), divisaoCredito.getDia5(), divisaoCredito.getDia6(),
+					divisaoCredito.getDia7()).isEmpty())
+				divisaoCredito.persist();
+			else {
+				throw new TriedaException("Esta divisão de creditos já existe");
+			}
 		}
 	}
 

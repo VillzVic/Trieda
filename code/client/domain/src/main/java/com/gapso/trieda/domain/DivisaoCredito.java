@@ -253,7 +253,6 @@ public class DivisaoCredito
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM DivisaoCredito o, IN ( o.cenario ) c " +
 			" WHERE c = :cenario " +
-			" AND o.disciplina is null " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "cenario", cenario );
@@ -338,6 +337,31 @@ public class DivisaoCredito
         return q.getResultList();
     }
 
+	@SuppressWarnings( "unchecked" )
+    public static List< DivisaoCredito > findByDias(
+    	InstituicaoEnsino instituicaoEnsino, int dia1, int dia2, int dia3, int dia4,
+    	int dia5, int dia6, int dia7)
+    {
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM DivisaoCredito o " +
+        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.dia1 = :dia1 AND o.dia2 = :dia2 AND o.dia3 = :dia3" +
+        	" AND o.dia4 = :dia4 AND o.dia5 = :dia5 AND o.dia6 = :dia6" +
+        	" AND o.dia7 = :dia7"
+        	 );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "dia1", dia1 );
+        q.setParameter( "dia2", dia2 );
+        q.setParameter( "dia3", dia3 );
+        q.setParameter( "dia4", dia4 );
+        q.setParameter( "dia5", dia5 );
+        q.setParameter( "dia6", dia6 );
+        q.setParameter( "dia7", dia7 );
+
+        return q.getResultList();
+    }
+	
 	public String toString()
 	{
         StringBuilder sb = new StringBuilder();
