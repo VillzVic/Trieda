@@ -565,7 +565,7 @@ public class AlunosDemandaServiceImpl
 		
 		return result;
 	}
-	
+
 	public void somaCreditosDemanda( String nome, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO, int numTotalmatriculas ){
 		
 		Campus campus = null;
