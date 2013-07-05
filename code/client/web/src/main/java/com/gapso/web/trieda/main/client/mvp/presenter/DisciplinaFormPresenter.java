@@ -47,6 +47,7 @@ public class DisciplinaFormPresenter
 	private CenarioDTO cenario;
 	private SimpleGrid< DisciplinaDTO > gridPanel;
 	private Display display;
+	private String errorMessage;
 
 	public DisciplinaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
@@ -90,14 +91,31 @@ public class DisciplinaFormPresenter
 						}
 					});
 				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+					MessageBox.alert("ERRO!", errorMessage, null);
 				}
 			}
 		});
 	}
 	
 	private boolean isValid() {
-		return display.isValid();
+		if (display.isValid()) {
+			if (display.getCreditosTeoricoTextField().getValue().intValue() > 0) {
+				if (display.getMaxAlunosTeoricoTextField().getValue().intValue() <= 0) {
+					errorMessage = "Max Alunos - Teórico deve ter um valor maior que 0";
+					return false;
+				}
+			}
+			if (display.getCreditosPraticoTextField().getValue().intValue() > 0) {
+				if (display.getMaxAlunosPraticoTextField().getValue().intValue() <= 0) {
+					errorMessage = "Max Alunos - Prático deve ter um valor maior que 0";
+					return false;
+				}
+			}
+			return true;
+		}
+		else
+			errorMessage = "Verifique os campos digitados";
+			return false;
 	}
 	
 	private DisciplinaDTO getDTO()
