@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.util;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -3400,25 +3401,26 @@ public class ConvertBeans {
 	public static AtendimentoFaixaDemandaDTO toAtendimentoFaixaDemandaDTO(
 			AtendimentoFaixaDemanda domain) {
 		AtendimentoFaixaDemandaDTO dto = new AtendimentoFaixaDemandaDTO();
+		DecimalFormat dec = new DecimalFormat("#.00");
 		
 		dto.setCampusNome( domain.getCampus().getNome() );
 		dto.setDemandaP1( domain.getDemandaP1() );
 		dto.setAtendimentoP1( domain.getAtendimentoP1() );
-		dto.setAtendimentoPercentP1( TriedaUtil.round(domain.getAtendimentoPercentP1()*100.0,2)+"%" );
+		dto.setAtendimentoPercentP1( dec.format(TriedaUtil.round(domain.getAtendimentoPercentP1()*100.0,2))+"%" );
 		dto.setAtendimentoSoma(domain.getAtendimentoSoma());
-		dto.setAtendimentoSomaPercent( TriedaUtil.round(domain.getAtendimentoSomaPercent()*100.0,2)+"%" );
+		dto.setAtendimentoSomaPercent( dec.format(TriedaUtil.round(domain.getAtendimentoSomaPercent()*100.0,2))+"%" );
 		dto.setTurmasAbertas( domain.getTurmasAbertas() );
-		dto.setMediaTurma( TriedaUtil.round(domain.getMediaTurma(), 2) );
+		dto.setMediaTurma( (int) Math.round(domain.getMediaTurma()) );
 		dto.setCreditosPagos( domain.getCreditosPagos() );
 		dto.setDemandaAcumP1( domain.getDemandaAcumP1() );
 		dto.setAtendimentoSomaAcum( domain.getAtendimentoSomaAcum() );
-		dto.setAtendimentoSomaAcumPercent( TriedaUtil.round(domain.getAtendimentoAcumPercent()*100.0,2)+"%" );
-		dto.setReceitaSemanal(TriedaUtil.round(domain.getReceitaSemanal(),2));
-		dto.setCustoDocenteSemanal( TriedaUtil.round(domain.getCustoDocenteSemanal(),2) );
-		dto.setCustoDocentePorReceitaPercent(TriedaUtil.round(domain.getCustoDocentePercent()*100.0,2)+"%" );
-		dto.setReceitaAcumulada(TriedaUtil.round(domain.getReceitaAcumulada(),2));
-		dto.setCustoDocenteAcumulado( TriedaUtil.round(domain.getCustoDocenteAcumulado(),2) );
-		dto.setCustoDocentePorReceitaAcumuladoPercent(TriedaUtil.round(domain.getCustoDocentePorReceitaAcumuladoPercent()*100.0,2)+"%" );
+		dto.setAtendimentoSomaAcumPercent( dec.format(TriedaUtil.round(domain.getAtendimentoAcumPercent()*100.0,2))+"%" );
+		dto.setReceitaSemanal( (int) Math.round(domain.getReceitaSemanal()));
+		dto.setCustoDocenteSemanal( (int) Math.round(domain.getCustoDocenteSemanal()) );
+		dto.setCustoDocentePorReceitaPercent(dec.format(TriedaUtil.round(domain.getCustoDocentePercent()*100.0,2))+"%" );
+		dto.setReceitaAcumulada( (int) Math.round(domain.getReceitaAcumulada()));
+		dto.setCustoDocenteAcumulado( (int) Math.round(domain.getCustoDocenteAcumulado()) );
+		dto.setCustoDocentePorReceitaAcumuladoPercent(dec.format(TriedaUtil.round(domain.getCustoDocentePorReceitaAcumuladoPercent()*100.0,2))+"%" );
 		
 		if(domain.getFaixaInferior() == 0 && domain.getFaixaSuperior() > 0) {
 			dto.setDemandaDisc("Acima de " + domain.getFaixaSuperior() + " alunos");

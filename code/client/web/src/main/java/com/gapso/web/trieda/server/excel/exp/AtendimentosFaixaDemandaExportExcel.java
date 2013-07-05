@@ -202,21 +202,6 @@ public class AtendimentosFaixaDemandaExportExcel
 		setCell( row, i++, sheet,
 			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 			resumoFaixaDemandaDTO.getAtendimentoSomaPercent() );
-
-		// Trumas Abertas
-		setCell( row, i++, sheet,
-			cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
-			resumoFaixaDemandaDTO.getTurmasAbertas() );
-
-		// Media alunos por turma
-		setCell( row, i++, sheet,
-			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
-			resumoFaixaDemandaDTO.getMediaTurma() );
-		
-		// Creditos Pagos
-		setCell( row, i++, sheet,
-			cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
-			resumoFaixaDemandaDTO.getCreditosPagos() );
 		
 		// Demanda P1 Acum
 		setCell( row, i++, sheet,
@@ -232,6 +217,21 @@ public class AtendimentosFaixaDemandaExportExcel
 		setCell( row, i++, sheet,
 			cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 			resumoFaixaDemandaDTO.getAtendimentoSomaAcumPercent() );
+		
+		// Trumas Abertas
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+			resumoFaixaDemandaDTO.getTurmasAbertas() );
+
+		// Media alunos por turma
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			resumoFaixaDemandaDTO.getMediaTurma() );
+		
+		// Creditos Pagos
+		setCell( row, i++, sheet,
+			cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+			resumoFaixaDemandaDTO.getCreditosPagos() );
 		
 		// Receita Semanal
 		setCell( row, i++, sheet,

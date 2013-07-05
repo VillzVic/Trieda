@@ -122,16 +122,16 @@ public class ResumoAtendimentosFaixaDemandaView extends MyComposite
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_ATENDIMENTO_PERCENT_P1, "% Atendimento P1", 100 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_ATENDIMENTO_SOMA, "Atendimento P1+P2", 110 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_ATENDIMENTO_SOMA_PERCENT, " % Atendimento P1+P2", 120 ) );
-		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_TURMAS_ABERTAS, "Turmas abertas", 90 ) );
-		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_MEDIA_TURMA, "Media alunos por turma", 130 ) );
-		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_CREDITOS_PAGOS, "Creditos pagos", 90 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_DEMANDA_ACUM_P1, "Demanda P1 acum", 110 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_ATENDIMENTO_SOMA_ACUM, "Atendimento P1+P2 acum", 140 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_ATENDIMENTO_ACUM_PERCENT, "% Atendimento acumulado", 140 ) );
+		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_TURMAS_ABERTAS, "Turmas abertas", 90 ) );
+		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_MEDIA_TURMA, "Media alunos por turma", 130 ) );
+		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_CREDITOS_PAGOS, "Creditos pagos", 90 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_RECEITA_SEMANAL, "Receita Semanal", 90 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_CUSTO_DOCENTE_SEMANAL, "Custo Docente Semanal", 130 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_CUSTO_DOCENTE_POR_RECEITA_PERCENT, "Custo Docente / Receita", 130 ) );
-		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_RECEITA_ACUMULADA, "Receita Acumulada", 90 ) );
+		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_RECEITA_ACUMULADA, "Receita Acumulada", 110 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_CUSTO_DOCENTE_ACUMULADO, "Custo Docente Acumulado", 130 ) );
 		list.add( new ColumnConfig( AtendimentoFaixaDemandaDTO.PROPERTY_CUSTO_DOCENTE_POR_RECEITA_ACUMULADO_PERCENT, "Custo Docente / Receita Acum", 140 ) );
 	
