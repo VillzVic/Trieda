@@ -114,7 +114,7 @@ public class SolverOutput
 							if (grupoHorarioAula != null && grupoHorarioAula.getHorarioAulaId() != null) {
 								for (Integer horarioAulaId : grupoHorarioAula.getHorarioAulaId()) {
 									HorarioAula ha = horarioAulaIdToHorarioAulaMap.get(Long.valueOf(horarioAulaId));//HorarioAula.find(Long.valueOf(itemAtendimentoHorarioAula.getHorarioAulaId()),this.instituicaoEnsino);
-									if ((menorHorarioAula == null) || (menorHorarioAula.compareTo(ha) > 1)) {
+									if ((menorHorarioAula == null) || (menorHorarioAula.compareTo(ha) > 0)) {
 										menorHorarioAula = ha;
 									}
 								}

@@ -457,7 +457,15 @@ public class HorarioAula
 				return 1;
 			}
 		}
-
-		return this.getHorario().compareTo( o.getHorario() );
+		
+    	Calendar thisHorario = Calendar.getInstance();
+    	thisHorario.setTime(this.getHorario());
+    	thisHorario.set(1979,Calendar.NOVEMBER,6);
+    	
+    	Calendar oHorario = Calendar.getInstance();
+    	oHorario.setTime(o.getHorario());
+    	oHorario.set(1979,Calendar.NOVEMBER,6);
+    	
+		return thisHorario.compareTo( oHorario );
 	}
 }
