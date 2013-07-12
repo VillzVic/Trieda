@@ -632,6 +632,21 @@ public class Campus
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Campus > findAllOtimizedTatico(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.oferta.campus ) " +
+			" FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findByCenario(

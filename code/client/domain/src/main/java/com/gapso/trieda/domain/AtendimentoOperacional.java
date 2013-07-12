@@ -1128,4 +1128,20 @@ public class AtendimentoOperacional
 
 			return q.getResultList().size();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Object > findAllAlunosCargaHorariaOperacional(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		
+		Query q = entityManager().createQuery(
+				" SELECT a.aluno.matricula, ao.HorarioDisponivelCenario.diaSemana, COUNT(*) " +
+				" FROM AlunoDemanda a JOIN a.atendimentosOperacional ao " +
+				" WHERE ao.instituicaoEnsino = :instituicaoEnsino" +
+				" GROUP BY a.aluno, ao.HorarioDisponivelCenario.diaSemana" );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
 }

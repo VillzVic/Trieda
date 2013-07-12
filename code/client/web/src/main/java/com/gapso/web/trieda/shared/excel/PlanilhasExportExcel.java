@@ -31,5 +31,6 @@ public class PlanilhasExportExcel {
 	public static final String ATENDIMENTOS_DISCIPLINA = "atendimentosDisciplina";
 	public static final String ATENDIMENTOS_FAIXA_DEMANDA = "atendimentosFaixaDemanda";
 	public static final String PERCENT_MESTRES_DOUTORES = "percentMestresDoutores";
+	public static final String ATENDIMENTOS_CARGA_HORARIA = "atendimentosCargaHoraria";
 
 }

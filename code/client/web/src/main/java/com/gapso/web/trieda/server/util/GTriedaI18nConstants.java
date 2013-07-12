@@ -819,4 +819,9 @@ public class GTriedaI18nConstants
 	public String percentMestresDoutores() {
 		return this.languageManager.getText("percentMestresDoutores");
 	}
+
+	@Override
+	public String atendimentosCargaHoraria() {
+		return this.languageManager.getText("atendimentosCargaHoraria");
+	}
 }

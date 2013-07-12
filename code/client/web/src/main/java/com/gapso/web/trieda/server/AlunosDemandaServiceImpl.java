@@ -24,8 +24,10 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoCargaHorariaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
@@ -554,7 +556,7 @@ public class AlunosDemandaServiceImpl
 			resumoFaixaDemanda.setAtendimentoAcumPercent( atendimentoSomaAcumPercent );
 			resumoFaixaDemanda.setReceitaSemanal(TriedaUtil.round(receita[i],2));
 			resumoFaixaDemanda.setCustoDocenteSemanal( TriedaUtil.round(custoDocenteSemanal,2) );
-			resumoFaixaDemanda.setCustoDocentePercent( TriedaUtil.round(custoDocentePorReceitaPercent,2) );
+			resumoFaixaDemanda.setCustoDocentePercent( custoDocentePorReceitaPercent );
 			resumoFaixaDemanda.setReceitaAcumulada(TriedaUtil.round(receitaAcum,2));
 			resumoFaixaDemanda.setCustoDocenteAcumulado( TriedaUtil.round(custoDocenteSemanalAcum,2) );
 			resumoFaixaDemanda.setCustoDocentePorReceitaAcumuladoPercent( custoDocentePorReceitaAcumPercent );
@@ -564,6 +566,93 @@ public class AlunosDemandaServiceImpl
 		
 		
 		return result;
+	}
+	
+	public List< AtendimentoCargaHorariaDTO > getAtendimentoCargaHoraria() {
+
+		Map< String,  AtendimentoCargaHorariaDTO> matriculaMapAtendimento = new HashMap< String, AtendimentoCargaHorariaDTO >();
+		List< Campus > todosCampi = Campus.findAllOtimized(getInstituicaoEnsinoUser());
+		todosCampi.addAll( Campus.findAllOtimizedTatico(getInstituicaoEnsinoUser()) );
+		
+		if (!todosCampi.isEmpty()) {
+			for (Campus campus : todosCampi) {
+				List < Object > alunosCargaHoraria;
+				if ( campus.isOtimizadoTatico(getInstituicaoEnsinoUser()) ) {
+					alunosCargaHoraria = AtendimentoTatico.findAllAlunosCargaHorariaTatico( getInstituicaoEnsinoUser() );
+				}
+				else {
+					alunosCargaHoraria = AtendimentoOperacional.findAllAlunosCargaHorariaOperacional( getInstituicaoEnsinoUser() );
+				}
+				for (Object registro : alunosCargaHoraria) {
+					String matricula = ((String)((Object[])registro)[0]).toString();
+					if (matriculaMapAtendimento.get(matricula) != null) {
+						switch ( Semanas.toInt(((Semanas)((Object[])registro)[1])) ) {
+						case 1:
+							matriculaMapAtendimento.get(matricula).setDia1(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 2:
+							matriculaMapAtendimento.get(matricula).setDia2(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 3:
+							matriculaMapAtendimento.get(matricula).setDia3(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 4:
+							matriculaMapAtendimento.get(matricula).setDia4(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 5:
+							matriculaMapAtendimento.get(matricula).setDia5(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 6:
+							matriculaMapAtendimento.get(matricula).setDia6(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 7:
+							matriculaMapAtendimento.get(matricula).setDia7(((Long)((Object[])registro)[2]).intValue());
+							break;
+						}
+					}
+					else {
+						AtendimentoCargaHorariaDTO atendimento = new AtendimentoCargaHorariaDTO();
+						atendimento.setAlunoMatricula( ((String)((Object[])registro)[0]).toString() );
+						atendimento.setDia1(0);
+						atendimento.setDia2(0);
+						atendimento.setDia3(0);
+						atendimento.setDia4(0);
+						atendimento.setDia5(0);
+						atendimento.setDia6(0);
+						atendimento.setDia7(0);
+						switch ( Semanas.toInt(((Semanas)((Object[])registro)[1])) ) {
+						case 1:
+							atendimento.setDia1(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 2:
+							atendimento.setDia2(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 3:
+							atendimento.setDia3(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 4:
+							atendimento.setDia4(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 5:
+							atendimento.setDia5(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 6:
+							atendimento.setDia6(((Long)((Object[])registro)[2]).intValue());
+							break;
+						case 7:
+							atendimento.setDia7(((Long)((Object[])registro)[2]).intValue());
+							break;
+						}
+						matriculaMapAtendimento.put( ((String)((Object[])registro)[0]).toString(), atendimento );
+					}
+				}
+			}
+		}
+		else {
+			return new ArrayList<AtendimentoCargaHorariaDTO>();
+		}
+
+		return new ArrayList<AtendimentoCargaHorariaDTO>(matriculaMapAtendimento.values());
 	}
 
 	public void somaCreditosDemanda( String nome, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO, int numTotalmatriculas ){

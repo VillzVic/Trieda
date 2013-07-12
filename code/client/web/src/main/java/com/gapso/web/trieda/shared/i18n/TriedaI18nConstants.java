@@ -13,6 +13,7 @@ public interface TriedaI18nConstants
 	String associacaoAlunoDemanda();
 	String atendimentosDisciplina();
 	String atendimentosFaixaDemanda();
+	String atendimentosCargaHoraria();
 	String atendimentosMatricula();
 	String bairro();
 	String campi();

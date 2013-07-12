@@ -50,6 +50,7 @@ public class ExportExcelFormPresenter
 		CheckBox getAtendimentosMatriculaExportExcelCheckBox();
 		CheckBox getAtendimentosDisciplinaExportExcelCheckBox();
 		CheckBox getAtendimentosFaixaDemandaExportExcelCheckBox();
+		CheckBox getAtendimentosCargaHorariaExportExcelCheckBox();
 		CheckBox getRelatorioVisaoSalaExportExcelCheckBox();
 		CheckBox getRelatorioVisaoProfessorExportExcelCheckBox();
 		CheckBox getRelatorioVisaoAlunoExportExcelCheckBox();

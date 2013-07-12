@@ -814,6 +814,22 @@ public class AtendimentoTatico
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Object > findAllAlunosCargaHorariaTatico(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		
+		Query q = entityManager().createQuery(
+				" SELECT a.aluno.matricula, at.semana, SUM(at.creditosTeorico+at.creditosPratico) " +
+				" FROM AlunoDemanda a JOIN a.atendimentosTatico at " +
+				" WHERE at.instituicaoEnsino = :instituicaoEnsino" +
+				" GROUP BY a.aluno, at.semana" );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
 
 	public Cenario getCenario()
 	{

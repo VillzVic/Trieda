@@ -45,6 +45,7 @@ public class ExportExcelFormView
 	private CheckBox atendimentosMatriculaExportExcelCB;
 	private CheckBox atendimentosDisciplinaExportExcelCB;
 	private CheckBox atendimentosFaixaDemandaExportExcelCB;
+	private CheckBox atendimentosCargaHorariaExportExcelCB;
 	private CheckBox relatorioVisaoSalaExportExcelCB;
 	private CheckBox relatorioVisaoProfessorExportExcelCB;
 	private CheckBox relatorioVisaoCursoExportExcelCB;
@@ -181,6 +182,12 @@ public class ExportExcelFormView
 		disponibilidadesProfessoresExportExcelCB.setValue(false);
 		disponibilidadesProfessoresExportExcelCB.setFieldLabel("Disponibilidades Professores");
 		left.add(disponibilidadesProfessoresExportExcelCB, formData);
+		
+		atendimentosCargaHorariaExportExcelCB = new CheckBox();
+		atendimentosCargaHorariaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_CARGA_HORARIA);
+		atendimentosCargaHorariaExportExcelCB.setValue(false);
+		atendimentosCargaHorariaExportExcelCB.setFieldLabel("Atendimentos Por Carga Horária");
+		left.add(atendimentosCargaHorariaExportExcelCB, formData);
 		
 	    LayoutContainer right = new LayoutContainer();
 	    right.setStyleAttribute("paddingLeft", "10px");
@@ -415,6 +422,11 @@ public class ExportExcelFormView
 	@Override
 	public CheckBox getAtendimentosFaixaDemandaExportExcelCheckBox() {
 		return atendimentosFaixaDemandaExportExcelCB;
+	}
+	
+	@Override
+	public CheckBox getAtendimentosCargaHorariaExportExcelCheckBox() {
+		return atendimentosCargaHorariaExportExcelCB;
 	}
 
 	@Override

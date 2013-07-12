@@ -117,6 +117,8 @@ public class TRIEDAExportExcel
 			exporters.add( new AtendimentosDisciplinaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DEMANDA) )
 			exporters.add( new AtendimentosFaixaDemandaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.ATENDIMENTOS_CARGA_HORARIA) )
+			exporters.add( new AtendimentosCargaHorariaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.RELATORIO_VISAO_SALA) )
 			exporters.add( new RelatorioVisaoSalaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.RELATORIO_VISAO_PROFESSOR) )
