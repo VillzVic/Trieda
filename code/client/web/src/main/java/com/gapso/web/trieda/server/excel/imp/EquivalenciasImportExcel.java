@@ -414,14 +414,15 @@ public class EquivalenciasImportExcel
 				newEquivalencia.setElimina( equivalenciaExcel.getDisciplinaElimina() );
 				if ( equivalenciaExcel.getCurso() != null )
 				{
-					newEquivalencia.setEquivalenciaGeral( true );
+					newEquivalencia.setEquivalenciaGeral( false );
 					newEquivalencia.getCursos().add( equivalenciaExcel.getCurso() );
 				}
 				else
 				{
-					newEquivalencia.setEquivalenciaGeral( false );
+					newEquivalencia.setEquivalenciaGeral( true );
 				}
 
+				equivalenciasBDMap.put( equivalenciaExcel.getCursouStr() + equivalenciaExcel.getEliminaStr() , newEquivalencia);
 				newEquivalencia.persist();
 			}
 			
