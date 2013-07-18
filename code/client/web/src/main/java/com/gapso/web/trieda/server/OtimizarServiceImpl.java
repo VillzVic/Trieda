@@ -968,7 +968,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		Integer cIndex = 0, eIndex = 0, maxIndex = 0;
 		List<Long> nodeMap = new ArrayList<Long>();
 		List<Disciplina> disMap = new ArrayList<Disciplina>();
-		Set<Pair<Integer, Integer>> pairs = new HashSet<Pair<Integer, Integer>>();
+		Map<String, Set<Pair<Integer, Integer>>> pairs = new HashMap<String, Set<Pair<Integer, Integer>>>();
 		Map<Long,Integer> disciplinaIdToQtdDemandadaMap = new HashMap<Long,Integer>();
 
 		// Para cada disciplina, obtem-se as suas equivalencias para montar tres estruturas:
@@ -994,47 +994,74 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					nodeMap.add(elimina.getId());
 					disMap.add(elimina);
 				}
-				pairs.add(Pair.create(cIndex, eIndex));
+				if (equivalencia.getEquivalenciaGeral()){
+					if ( pairs.get("GERAL") != null ){
+						pairs.get("GERAL").add( Pair.create(cIndex, eIndex) );
+					}
+					else{
+						Set<Pair<Integer, Integer>> pair = new HashSet<Pair<Integer, Integer>>();
+						pair.add(Pair.create(cIndex, eIndex));
+						pairs.put("GERAL", pair);
+					}
+				}
+				else {
+					for (Curso curso : equivalencia.getCursos()){
+						if ( pairs.get(curso.getCodigo()) != null ){
+							pairs.get(curso.getCodigo()).add( Pair.create(cIndex, eIndex) );
+						}
+						else {
+							Set<Pair<Integer, Integer>> pair = new HashSet<Pair<Integer, Integer>>();
+							pair.add(Pair.create(cIndex, eIndex));
+							pairs.put(curso.getCodigo(), pair);
+						}
+					}
+				}
 				if (cIndex > maxIndex) {
 					maxIndex = cIndex;
 				}
 				if (eIndex > maxIndex) {
 					maxIndex = eIndex;
 				}
-			}
+			}	
 		}
 		
 		// Constroi um grafo a partir dos pares obtidos e realiza a busca para verificar
 		// a existencia de ciclos. Nesse grafo, os indices associados aos nos sao os
-		// mesmos identificados em disMap. 
-		
-		Grafo g = new Grafo(maxIndex+1);
-		for(Pair<Integer, Integer> par: pairs) {
-			g.insereArco(par.getLeft(), par.getRight());
+		// mesmos identificados em disMap.
+		Map<String, Grafo> grafos = new HashMap<String, Grafo>();
+		for (String curso : pairs.keySet()){
+			Grafo g = new Grafo(maxIndex+1);
+			for(Pair<Integer, Integer> par: pairs.get(curso)) {
+				g.insereArco(par.getLeft(), par.getRight());
+			}
+			grafos.put(curso, g);
 		}
 		
 		Profundidade p = new Profundidade();
-		if(!p.testeCiclos(g)){
-			
-			// Obtem-se os ciclos identificados e os imprime num formato adequado para
-			// informar ao usuario quais sao eles.
-			List<List<Integer>> ciclos = p.getCiclos();
-			int i = 1;
-			String ciclosStr = "Foram detectados os seguintes ciclos entre disciplinas equivalentes:<br /><br />";
-			for(List<Integer> ciclo: ciclos){
-				ciclosStr += i++ + ") ";
-				for(Integer idc: ciclo){
-					Disciplina dis = disMap.get(idc);
-					ciclosStr += dis.getCodigo() + "->";
+		for (String curso : grafos.keySet()){
+			Grafo g = grafos.get(curso);
+			if(!p.testeCiclos(g)){
+				
+				// Obtem-se os ciclos identificados e os imprime num formato adequado para
+				// informar ao usuario quais sao eles.
+				List<List<Integer>> ciclos = p.getCiclos();
+				int i = 1;
+				String ciclosStr = "Foram detectados os seguintes ciclos entre disciplinas equivalentes do Curso ( " + curso + " ) :<br /><br />";
+				for(List<Integer> ciclo: ciclos){
+					ciclosStr += i++ + ") ";
+					for(Integer idc: ciclo){
+						Disciplina dis = disMap.get(idc);
+						ciclosStr += dis.getCodigo() + "->";
+					}
+					String sugestaoParaEliminarCiclo = "";
+					sugestaoParaEliminarCiclo = avaliaSugestoesParaEliminacaoDeCiclos(disMap,disciplinaIdToQtdDemandadaMap,ciclo);
+					ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 2) + " " + sugestaoParaEliminarCiclo + "<br /><br />";
 				}
-				String sugestaoParaEliminarCiclo = "";
-				sugestaoParaEliminarCiclo = avaliaSugestoesParaEliminacaoDeCiclos(disMap,disciplinaIdToQtdDemandadaMap,ciclo);
-				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 2) + " " + sugestaoParaEliminarCiclo + "<br /><br />";
+				ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 12);
+				errors.add(HtmlUtils.htmlUnescape(ciclosStr));
+				
+				detectouCiclo = true;
 			}
-			ciclosStr = ciclosStr.substring(0, ciclosStr.length() - 12);
-			errors.add(HtmlUtils.htmlUnescape(ciclosStr));
-			
-			detectouCiclo = true;
 		}
 		
 		return detectouCiclo;
