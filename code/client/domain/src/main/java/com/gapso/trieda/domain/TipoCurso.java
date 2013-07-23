@@ -226,7 +226,7 @@ public class TipoCurso
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM TipoCurso o " +
-	        " WHERE o.instituicaoEnsino = :instituicaoEnsino " );
+	        " WHERE o.instituicaoEnsino = :instituicaoEnsino " + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setFirstResult( firstResult );

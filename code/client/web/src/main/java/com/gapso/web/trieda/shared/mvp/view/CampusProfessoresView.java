@@ -86,12 +86,22 @@ public class CampusProfessoresView extends MyComposite
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
-		list.add( new ColumnConfig( ProfessorCampusDTO.PROPERTY_CAMPUS_STRING, "Campus", 150 ) );
-		list.add( new ColumnConfig( ProfessorCampusDTO.PROPERTY_PROFESSOR_CPF, "CPF Professor", 110 ) );
-		list.add( new ColumnConfig( ProfessorCampusDTO.PROPERTY_PROFESSOR_STRING, "Professor", 250 ) );
+		list.add( createColumnConfig( ProfessorCampusDTO.PROPERTY_CAMPUS_STRING, "Campus", 150, false ) );	
+		list.add( createColumnConfig( ProfessorCampusDTO.PROPERTY_PROFESSOR_CPF, "CPF Professor", 110, false ) );
+		list.add( createColumnConfig( ProfessorCampusDTO.PROPERTY_PROFESSOR_STRING, "Professor", 250, false ) );
 
 		return list;
 	}
+	
+	private ColumnConfig createColumnConfig(
+			String id, String text, int width, boolean sortable )
+	{
+		ColumnConfig cc = new ColumnConfig( id, text, width );
+		cc.setSortable( sortable );
+
+		return cc;
+	}
+
 
 	private void createFilter()
 	{

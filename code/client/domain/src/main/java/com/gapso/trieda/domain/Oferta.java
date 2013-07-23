@@ -383,7 +383,7 @@ public class Oferta
 		Turno turno, Campus campus, Curso curso, Curriculo curriculo,
 		int firstResult, int maxResults, String orderBy )
 	{
-		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
 		String queryTurno = ( ( turno != null ) ? " o.turno = :turno AND " : "" );
 		String queryCampus = ( ( campus != null ) ? " o.campus = :campus AND " : "" );
@@ -393,7 +393,7 @@ public class Oferta
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Oferta o " +
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " );
+			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setFirstResult( firstResult );

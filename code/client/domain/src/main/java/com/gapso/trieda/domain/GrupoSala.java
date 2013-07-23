@@ -247,7 +247,7 @@ public class GrupoSala
         codigo = ( ( codigo == null ) ? "" : codigo );
         codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
-        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
+        orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy.replace("String", "") : "" );
         String unidadeQuery = ( ( unidade == null )? "" : "o.unidade = :unidade AND " );
 
         Query q = entityManager().createQuery(

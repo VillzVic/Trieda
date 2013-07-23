@@ -11,8 +11,8 @@ public class CursoDTO extends AbstractDTO<String>
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_NOME = "nome";
-	public static final String PROPERTY_TIPO_ID = "tipoId";
-	public static final String PROPERTY_TIPO_STRING = "tipoString";
+	public static final String PROPERTY_TIPO_ID = "tipoCursoId";
+	public static final String PROPERTY_TIPO_STRING = "tipoCursoString";
 	public static final String PROPERTY_NUM_MIN_DOUTORES = "numMinDoutores";
 	public static final String PROPERTY_NUM_MIN_MESTRES = "numMinMestres";
 	public static final String PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL = "minTempoIntegralParcial";

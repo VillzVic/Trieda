@@ -648,10 +648,20 @@ public class Professor
 			where = " WHERE " + where.substring( 0, where.length() - 4 );
 		}
 
-		where += ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		if ( orderBy != null )
+		{
+			if( orderBy.contains("notaDesempenho") )
+				orderBy = orderBy.replace("notaDesempenho", "ORDER BY AVG(d.nota)");
+			else
+				orderBy = " ORDER BY o." + orderBy.replace("String", "");
+		}
+		else
+		{
+			orderBy = "";
+		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM Professor o " + where );
+			" SELECT o FROM Professor o LEFT JOIN o.disciplinas d" + where + "GROUP BY o " + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setFirstResult( firstResult );

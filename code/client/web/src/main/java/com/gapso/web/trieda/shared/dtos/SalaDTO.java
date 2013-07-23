@@ -16,8 +16,8 @@ public class SalaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_UNIDADE_STRING = "unidadeString";
 	public static final String PROPERTY_NUMERO = "numero";
 	public static final String PROPERTY_ANDAR = "andar";
-	public static final String PROPERTY_TIPO_ID = "tipoId";
-	public static final String PROPERTY_TIPO_STRING = "tipoString";
+	public static final String PROPERTY_TIPO_ID = "tipoSalaId";
+	public static final String PROPERTY_TIPO_STRING = "tipoSalaString";
 	public static final String PROPERTY_CAPACIDADE = "capacidade";
 	public static final String PROPERTY_CONTAINS_CURRICULO_DISCIPLINA = "containsCurriculoDisciplina";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";

@@ -720,7 +720,7 @@ public class Sala
     	Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy )
     {
 		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino ";
-		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
 		if ( campus != null || unidade != null )
 		{
@@ -743,7 +743,7 @@ public class Sala
 		}
 
 		Query q = entityManager().createQuery(
-			"SELECT o FROM Sala o " + orderBy + whereString );
+			"SELECT o FROM Sala o " + whereString + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setFirstResult( firstResult );

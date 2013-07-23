@@ -104,12 +104,21 @@ public class CampiView
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_VALOR_CREDITO, getI18nConstants().custoMedioCredito(), 170 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_ESTADO, getI18nConstants().estado(), 100 ) );
 		list.add( new ColumnConfig( CampusDTO.PROPERTY_MUNICIPIO, getI18nConstants().municipio(), 100 ) );
-		list.add( new ColumnConfig( CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 200 ) );
-		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_TATICO, getI18nConstants().otimizadoTatico() + "?", 100 ) );
-		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_OPERACIONAL, getI18nConstants().otimizadoOperacional() + "?", 100 ) );
-		list.add( new CheckColumnConfig( CampusDTO.PROPERTY_PUBLICADO, getI18nConstants().publicado() + "?", 100 ) );
+		list.add( new ColumnConfig( CampusDTO.PROPERTY_BAIRRO, getI18nConstants().bairro(), 200 ) );	
+		list.add( createCheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_TATICO, getI18nConstants().otimizadoTatico() + "?", 100, false ) );
+		list.add( createCheckColumnConfig( CampusDTO.PROPERTY_OTIMIZADO_OPERACIONAL, getI18nConstants().otimizadoOperacional() + "?", 100, false ) );
+		list.add( createCheckColumnConfig( CampusDTO.PROPERTY_PUBLICADO, getI18nConstants().publicado() + "?", 100, false ) );
 
 		return list;
+	}
+	
+	private CheckColumnConfig createCheckColumnConfig(
+			String id, String text, int width, boolean sortable )
+	{
+		CheckColumnConfig cc = new CheckColumnConfig( id, text, width );
+		cc.setSortable( sortable );
+
+		return cc;
 	}
 
 	private void createFilter()

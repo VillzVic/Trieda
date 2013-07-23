@@ -743,7 +743,7 @@ public class Disciplina
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
-		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
 		String queryCampus = "";
 		if ( tipoDisciplina != null )
@@ -755,7 +755,7 @@ public class Disciplina
 			" SELECT o FROM Disciplina o " +
 			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND " + queryCampus + " LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
-			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " + orderBy );
 
 		if ( tipoDisciplina != null )
 		{

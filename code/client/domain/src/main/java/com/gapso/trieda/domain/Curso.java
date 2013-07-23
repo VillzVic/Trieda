@@ -559,7 +559,7 @@ public class Curso
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
-		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
 		String queryCampus = "";
 		if ( tipoCurso != null )
@@ -571,7 +571,7 @@ public class Curso
 			" SELECT o FROM Curso o WHERE "	+ queryCampus +
 			" LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
-			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
+			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " + orderBy );
 
 		if ( tipoCurso != null )
 		{

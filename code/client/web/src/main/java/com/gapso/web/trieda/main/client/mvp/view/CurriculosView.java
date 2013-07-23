@@ -98,10 +98,19 @@ public class CurriculosView extends MyComposite
 		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_CURSO_STRING, getI18nConstants().codigoCurso(), 250 ) );
 		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_CODIGO, getI18nConstants().codigoCurriculo(), 120 ) );
 		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_DESCRICAO, getI18nConstants().descricaoCurriculo(), 150 ) );
-		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_PERIODOS, getI18nConstants().periodos(), 110 ) );
+		list.add( createColumnConfig( CurriculoDTO.PROPERTY_PERIODOS, getI18nConstants().periodos(), 110, false ) );
 		list.add( new ColumnConfig( CurriculoDTO.PROPERTY_SEMANA_LETIVA_STRING, getI18nConstants().semanaLetiva(), 110 ) );
 
 		return list;
+	}
+	
+	private ColumnConfig createColumnConfig(
+			String id, String text, int width, boolean sortable )
+	{
+		ColumnConfig cc = new ColumnConfig( id, text, width );
+		cc.setSortable( sortable );
+
+		return cc;
 	}
 
 	private void createFilter()

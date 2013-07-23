@@ -21,7 +21,7 @@ public class DemandaDTO
 	public static final String PROPERTY_TURNO_STRING = "turnoString";
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
-	public static final String PROPERTY_DEMANDA = "demanda";
+	public static final String PROPERTY_DEMANDA = "quantidade";
 	public static final String PROPERTY_QUANTIDADE_DEMANDA_ENABLE = "quantidadeDemandaEnable";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";

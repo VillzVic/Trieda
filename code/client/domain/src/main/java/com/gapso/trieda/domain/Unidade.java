@@ -523,7 +523,16 @@ public class Unidade implements Serializable
         codigo = ( ( codigo == null )? "" : codigo );
         codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 
-        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+        if (orderBy == null) {
+        	orderBy = "";
+        }
+        else if (orderBy.contains("capSalas")) {
+        	orderBy = orderBy.replace("capSalas", "ORDER BY AVG(s.capacidade)");
+        }
+        else {
+        	orderBy = ( ( orderBy != null ) ? " ORDER BY unidade." + orderBy.replace("String", "") : "" );
+        }
+        
         String queryCampus = "";
         if ( campus != null )
         {
@@ -531,11 +540,11 @@ public class Unidade implements Serializable
         }
 
         Query q = entityManager().createQuery(
-        	"SELECT Unidade FROM Unidade AS unidade " +
+        	"SELECT Unidade FROM Unidade AS unidade LEFT JOIN unidade.salas s" +
         	" WHERE " + queryCampus +
         	" LOWER ( unidade.nome ) LIKE LOWER ( :nome ) " +
         	" AND unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND LOWER ( unidade.codigo ) LIKE LOWER ( :codigo ) " );
+        	" AND LOWER ( unidade.codigo ) LIKE LOWER ( :codigo ) GROUP BY unidade " + orderBy );
 
         if ( campus != null )
         {

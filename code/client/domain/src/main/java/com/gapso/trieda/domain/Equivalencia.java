@@ -301,7 +301,8 @@ public class Equivalencia
 		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina,
 		Curso curso, int firstResult, int maxResults, String orderBy )
 	{
-		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." +
+				orderBy.replace("String", "").replace("curso", "equivalenciaGeral") : "" );
 
 		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ";
 		String from = "FROM Equivalencia o";

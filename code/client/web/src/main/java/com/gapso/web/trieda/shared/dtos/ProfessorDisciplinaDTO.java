@@ -19,7 +19,7 @@ public class ProfessorDisciplinaDTO extends AbstractDTO<String> implements Compa
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_PREFERENCIA = "preferencia";
-	public static final String PROPERTY_NOTA_DESEMPENHO = "notaDesempenho";
+	public static final String PROPERTY_NOTA_DESEMPENHO = "nota";
 
 	public void setId(Long value) {
 		set(PROPERTY_ID, value);

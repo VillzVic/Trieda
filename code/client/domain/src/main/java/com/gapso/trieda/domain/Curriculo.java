@@ -468,7 +468,7 @@ public class Curriculo
         descricao = ( ( descricao == null ) ? "" : descricao );
         descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
 
-        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
         String queryCurso = "";
 
         if ( curso != null )
@@ -481,7 +481,7 @@ public class Curriculo
         	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
         	" AND " + queryCurso +
         	" LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " +
-        	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo )" );
+        	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo )" + orderBy );
 
         if ( curso != null )
         {

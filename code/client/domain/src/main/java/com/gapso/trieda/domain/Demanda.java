@@ -91,10 +91,10 @@ public class Demanda
     }
 	
 	/**
-	 * Informa se a demanda ocupa grade de hor·rios ou n„o. Uma demanda ocupa grade de hor·rios nos seguintes casos:
-	 *    - a demanda est· associada com uma disciplina do tipo "Presencial" ou "Telepresencial";
-	 *    - a demanda est· associada com uma disciplina que possui crÈditos teÛricos ou pr·ticos;
-	 * @return true caso a demanda ocupa grade de hor·rios e false caso contr·rio
+	 * Informa se a demanda ocupa grade de hor√°rios ou n√£o. Uma demanda ocupa grade de hor√°rios nos seguintes casos:
+	 *    - a demanda est√° associada com uma disciplina do tipo "Presencial" ou "Telepresencial";
+	 *    - a demanda est√° associada com uma disciplina que possui cr√©ditos te√≥ricos ou pr√°ticos;
+	 * @return true caso a demanda ocupa grade de hor√°rios e false caso contr√°rio
 	 */
 	public boolean ocupaGrade() {
 		return this.disciplina.ocupaGrade();
@@ -478,7 +478,18 @@ public class Demanda
 		Turno turno, Disciplina disciplina,
 		int firstResult, int maxResults, String orderBy )
 	{
-        orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+    	
+        if (orderBy != null)
+        {
+        	if (orderBy.contains("quantidade") || orderBy.contains("disciplina"))
+        		orderBy = "ORDER BY o." + orderBy.replace("String", "");
+        	else
+        		orderBy = "ORDER BY o.oferta." + orderBy.replace("String", "");
+        }
+        else
+        {
+        	orderBy = "";
+        }
 
 		String queryCampus = "";
 		if ( campus != null )
@@ -515,7 +526,7 @@ public class Demanda
         Query q = entityManager().createQuery(
         	" SELECT o FROM Demanda o " +
         	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND " + queryString + " 1=1 " );
+        	" AND " + queryString + " 1=1 " + orderBy );
 
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );

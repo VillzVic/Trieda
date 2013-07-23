@@ -265,10 +265,32 @@ public class ProfessorDisciplina
 			where = ( " WHERE " + where.substring( 0, where.length() - 4 ) );
 		}
 
-		where += ( ( orderBy != null ) ? " ORDER BY o." + orderBy : "" );
+		if ( orderBy != null )
+		{
+			if ( orderBy.contains("professorCpf") )
+			{
+				orderBy = orderBy.replace("professorCpf", " ORDER BY o.professor.cpf");
+			}
+			else if ( orderBy.contains("professorString") )
+			{
+				orderBy = orderBy.replace("professorString", " ORDER BY o.professor.nome");
+			}
+			else if ( orderBy.contains("disciplinaString") )
+			{
+				orderBy = orderBy.replace("disciplinaString", " ORDER BY o.disciplina.codigo");
+			}
+			else
+			{
+				orderBy = " ORDER BY o." + orderBy;
+			}
+		}
+		else
+		{
+			orderBy = "";
+		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM ProfessorDisciplina o " + where );
+			" SELECT o FROM ProfessorDisciplina o " + where + orderBy );
 
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );

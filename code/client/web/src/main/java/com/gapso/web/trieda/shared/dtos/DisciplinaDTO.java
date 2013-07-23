@@ -14,8 +14,8 @@ public class DisciplinaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_CREDITOS_TEORICO = "creditosTeorico";
 	public static final String PROPERTY_CREDITOS_PRATICO = "creditosPratico";
 	public static final String PROPERTY_LABORATORIO = "laboratorio";
-	public static final String PROPERTY_TIPO_ID = "tipoId";
-	public static final String PROPERTY_TIPO_STRING = "tipoString";
+	public static final String PROPERTY_TIPO_ID = "tipoDisciplinaId";
+	public static final String PROPERTY_TIPO_STRING = "tipoDisciplinaString";
 	public static final String PROPERTY_DIFICULDADE = "dificuldade";
 	public static final String PROPERTY_MAX_ALUNOS_TEORICO = "maxAlunosTeorico";
 	public static final String PROPERTY_MAX_ALUNOS_PRATICO = "maxAlunosPratico";
