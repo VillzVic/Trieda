@@ -389,19 +389,19 @@ public class AlunosDemandaServiceImpl
 		{
 			campus = ConvertBeans.toCampus(campusDTO);
 		}
-		
-		if( AtendimentoFaixaDemanda.isSalvo(getInstituicaoEnsinoUser(), campus) && faixas == null) {
-			result = ConvertBeans.toListAtendimentoFaixaDemandaDTO( AtendimentoFaixaDemanda.findByCampus(getInstituicaoEnsinoUser(), campus) );
-		}
-		else {
-			AtendimentoFaixaDemanda.deleteAllFromCampus(campus);
-			for (AtendimentoFaixaDemanda atendimento : createResumoFaixaDemandaList(campusDTO, faixas)) {
-				result.add(ConvertBeans.toAtendimentoFaixaDemandaDTO(atendimento));
-				atendimento.persist();
+		if (campus.isOtimizado(getInstituicaoEnsinoUser())) {
+			if( AtendimentoFaixaDemanda.isSalvo(getInstituicaoEnsinoUser(), campus) && faixas == null) {
+				result = ConvertBeans.toListAtendimentoFaixaDemandaDTO( AtendimentoFaixaDemanda.findByCampus(getInstituicaoEnsinoUser(), campus) );
 			}
+			else {
+				AtendimentoFaixaDemanda.deleteAllFromCampus(campus);
+				for (AtendimentoFaixaDemanda atendimento : createResumoFaixaDemandaList(campusDTO, faixas)) {
+					result.add(ConvertBeans.toAtendimentoFaixaDemandaDTO(atendimento));
+					atendimento.persist();
+				}
 			
-		}
-		
+			}
+		}	
 		return result;
 	}
 	
