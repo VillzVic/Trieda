@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -117,6 +118,37 @@ public class ProfessoresServiceImpl
 		return new BaseListLoadResult< ProfessorDTO >( list );
 	}
 
+	@Override
+	public ListLoadResult< ProfessorDTO > getAutoCompleteList(
+			BasePagingLoadConfig loadConfig, String tipoComboBox)
+	{
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		
+		List< Professor > listDomains = new ArrayList< Professor >();
+		
+		if ( tipoComboBox.equals(ProfessorDTO.PROPERTY_NOME) )
+		{
+			listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
+					loadConfig.get("query").toString(), null, loadConfig.getOffset(), loadConfig.getLimit() );
+		}
+		else if ( tipoComboBox.equals(ProfessorDTO.PROPERTY_CPF) )
+		{
+			listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
+					null, loadConfig.get("query").toString(), loadConfig.getOffset(), loadConfig.getLimit() );
+		}
+
+		for ( Professor professor : listDomains )
+		{
+			list.add( ConvertBeans.toProfessorDTO( professor ) );
+		}
+
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+		result.setOffset( loadConfig.getOffset() );
+
+		return result;
+	}
+	
 	@Override
 	public PagingLoadResult< ProfessorDTO > getBuscaList( String cpf,
 		TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,

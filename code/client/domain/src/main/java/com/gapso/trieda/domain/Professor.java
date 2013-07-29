@@ -690,6 +690,45 @@ public class Professor
 		return q.getResultList();
 	}
 	
+	@SuppressWarnings( "unchecked" )
+	public static List< Professor > findBy( InstituicaoEnsino instituicaoEnsino,
+		String nome, String cpf, int firstResult, int maxResults )
+	{
+	
+		String where = "";
+		
+		if ( nome != null )
+		{
+			where += " AND o.nome LIKE LOWER (:nome)";
+		}
+		if ( cpf != null )
+		{
+			where += " AND o.cpf LIKE LOWER (:cpf)";
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Professor o" +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino" +
+			where 
+			);
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		if ( cpf != null )
+		{
+			q.setParameter( "cpf", "%" + cpf + "%" );
+		}
+		
+		if ( nome != null )
+		{
+			q.setParameter( "nome", "%" + nome + "%" );
+		}
+
+		return q.getResultList();
+	}
+	
 	public static Professor findByNomeCpf( InstituicaoEnsino instituicaoEnsino,
 		String nome, String cpf)
 	{

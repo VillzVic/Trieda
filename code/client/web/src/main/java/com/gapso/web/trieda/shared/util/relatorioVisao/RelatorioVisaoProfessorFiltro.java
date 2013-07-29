@@ -6,7 +6,9 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.Field;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
@@ -30,20 +32,30 @@ public class RelatorioVisaoProfessorFiltro extends RelatorioVisaoFiltro{
 		return mapIds;
 	}
 
-	public void addProfessorNomeValueListener(Field<String> f){
+	public void addProfessorNomeValueListener(ComboBox<ProfessorDTO> f){
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				professorNome = (String) fe.getValue();
+				if (fe.getValue() != null){
+					professorNome = ((ProfessorDTO) fe.getValue()).getNome();
+				}
+				else {
+					professorNome = null;
+				}
 			}
 		});
 	}
 	
-	public void addProfessorCpfValueListener(Field<String> f){
+	public void addProfessorCpfValueListener(ComboBox<ProfessorDTO> f){
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				professorCpf = (String) fe.getValue();
+				if (fe.getValue() != null){
+					professorCpf = ((ProfessorDTO) fe.getValue()).getCpf();
+				}
+				else {
+					professorCpf = null;
+				}
 			}
 		});
 	}

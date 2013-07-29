@@ -7,18 +7,19 @@ import java.util.Map;
 
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoAlunoPresenter;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaAlunoGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoView;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.AlunosComboBox;
+import com.gapso.web.trieda.shared.util.view.AlunosMatriculaComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 
 public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements RelatorioVisaoAlunoPresenter.Display{
-	private TextField<String> alunoTF;
-	private TextField<String> matriculaTF;
+	private AlunosComboBox alunoTF;
+	private AlunosMatriculaComboBox matriculaTF;
 	private RelatorioVisaoAlunoFiltro filtro;
 
 	public RelatorioVisaoAlunoView(){
@@ -46,7 +47,7 @@ public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements Relat
 		
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
-		this.alunoTF = new TextField<String>();
+		this.alunoTF = new AlunosComboBox();
 		this.alunoTF.setEmptyText("Digite o nome do aluno");
 		this.alunoTF.setName("aluno");
 		this.alunoTF.setFieldLabel("Aluno");
@@ -57,7 +58,7 @@ public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements Relat
 		
 		List<Field<?>> rightList = new ArrayList<Field<?>>();
 		
-		this.matriculaTF = new TextField<String>();
+		this.matriculaTF = new AlunosMatriculaComboBox();
 		this.matriculaTF.setEmptyText("Digite o número da matricula");
 		this.matriculaTF.setName("matricula");
 		this.matriculaTF.setFieldLabel("Matricula");
@@ -86,4 +87,13 @@ public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements Relat
 		this.filtro = (RelatorioVisaoAlunoFiltro) filtro;
 	}
 	
+	@Override
+	public AlunosComboBox getAlunoTextField(){
+		return this.alunoTF;
+	}
+	
+	@Override
+	public AlunosMatriculaComboBox getAlunoMatriculaTextField(){
+		return this.matriculaTF;
+	}
 }

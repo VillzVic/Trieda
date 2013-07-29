@@ -2,6 +2,8 @@ package com.gapso.web.trieda.shared.services;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
@@ -20,4 +22,5 @@ public interface AlunosService
 	PagingLoadResult< AlunoDTO > getAlunosListByCampus(CampusDTO campusDTO);
 	void saveAluno( AlunoDTO alunoDTO );
 	void removeAlunos( List< AlunoDTO > list );
+	ListLoadResult<AlunoDTO> getAutoCompleteList(BasePagingLoadConfig loadConfig, String tipoComboBox);
 }

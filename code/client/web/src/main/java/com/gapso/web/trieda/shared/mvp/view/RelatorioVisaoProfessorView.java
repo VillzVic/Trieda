@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaProfessorGrid;
@@ -16,13 +15,15 @@ import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoProfessorFi
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoView;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.ProfessorCpfComboBox;
+import com.gapso.web.trieda.shared.util.view.ProfessorNomeComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
 
 
 public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements RelatorioVisaoProfessorPresenter.Display{
 	private ProfessorVirtualComboBox professorVirtualCB;
-	private TextField<String> professorTF;
-	private TextField<String> cpfTF;
+	private ProfessorNomeComboBox professorTF;
+	private ProfessorCpfComboBox cpfTF;
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor;
 	private RelatorioVisaoProfessorFiltro filtro;
@@ -63,7 +64,7 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
-		this.professorTF = new TextField<String>();
+		this.professorTF = new ProfessorNomeComboBox();
 		this.professorTF.setEmptyText("Digite o nome do professor");
 		this.professorTF.setName("professor");
 		this.professorTF.setFieldLabel("Professor");
@@ -72,7 +73,7 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		
 		List<Field<?>> centerList = new ArrayList<Field<?>>();
 		
-		this.cpfTF = new TextField<String>();
+		this.cpfTF = new ProfessorCpfComboBox();
 		this.cpfTF.setEmptyText("Digite o cpf do professor");
 		this.cpfTF.setName("cpf");
 		this.cpfTF.setFieldLabel("CPF");
@@ -98,12 +99,12 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 	}
 	
 	@Override
-	public TextField<String> getProfessorTextField(){
+	public ProfessorNomeComboBox getProfessorTextField(){
 		return this.professorTF;
 	}
 	
 	@Override
-	public TextField<String> getCpfTextField(){
+	public ProfessorCpfComboBox getCpfTextField(){
 		return this.cpfTF;
 	}
 

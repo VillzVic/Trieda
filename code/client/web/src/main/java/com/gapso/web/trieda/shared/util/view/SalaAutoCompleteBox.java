@@ -12,19 +12,17 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AlunosComboBox	extends ComboBox<AlunoDTO>{
-	private ListStore<AlunoDTO> store;
+public class SalaAutoCompleteBox extends ComboBox<SalaDTO> {
 	
-	public AlunosComboBox(){
+	public SalaAutoCompleteBox() {
 		this(false);
 	}
 
-	public AlunosComboBox(boolean readOnly) {
+	public SalaAutoCompleteBox(boolean readOnly) {
 		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
 	}
@@ -33,11 +31,11 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 		if(!readOnly){
 			// Configura a store
 			
-			RpcProxy<ListLoadResult<AlunoDTO>> proxy = new RpcProxy<ListLoadResult<AlunoDTO>>() {
+			RpcProxy<ListLoadResult<SalaDTO>> proxy = new RpcProxy<ListLoadResult<SalaDTO>>() {
 				// realiza o filtro dos valores do comboBox
 				@Override
-				public void load(Object loadConfig, AsyncCallback<ListLoadResult<AlunoDTO>> callback){
-					Services.alunos().getAutoCompleteList((BasePagingLoadConfig)loadConfig, AlunoDTO.PROPERTY_ALUNO_NOME, callback);
+				public void load(Object loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback){
+					Services.salas().getAutoCompleteList((BasePagingLoadConfig)loadConfig, callback);
 				}
 			};
 			
@@ -49,17 +47,17 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 				}
 			});
 			
-			setStore(new ListStore<AlunoDTO>(listLoader));
+			setStore(new ListStore<SalaDTO>(listLoader));
 		}
 		else{
-			setStore(new ListStore<AlunoDTO>());
+			setStore(new ListStore<SalaDTO>());
 		}
 	}
 	
 	private void configureView(boolean readOnly) {
-		setDisplayField(AlunoDTO.PROPERTY_ALUNO_NOME);
-		setFieldLabel("Nome");
-		setEmptyText("Digite o nome de um aluno");
+		setDisplayField(SalaDTO.PROPERTY_CODIGO);
+		setFieldLabel("Sala");
+		setEmptyText("Selecione uma sala");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
 		setHideTrigger(true);
@@ -70,9 +68,8 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 	private native String getTemplateCB() /*-{
 		return  [
 			'<tpl for=".">',
-			'<div class="x-combo-list-item">{nome} ({matricula})</div>',
+			'<div class="x-combo-list-item">{codigo} ({numero})</div>',
 			'</tpl>'
 		].join("");
 	}-*/;
-
 }

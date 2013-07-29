@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -117,6 +118,28 @@ public class SalasServiceImpl
 		BaseListLoadResult< SalaDTO > result
 			= new BaseListLoadResult< SalaDTO >( listDTO );
 
+		return result;
+	}
+	
+	@Override
+	public ListLoadResult< SalaDTO > getAutoCompleteList(
+		BasePagingLoadConfig loadConfig )
+	{
+		List< SalaDTO > list = new ArrayList< SalaDTO >();
+		
+		List< Sala > listDomains = Sala.find( getInstituicaoEnsinoUser(),
+			loadConfig.get("query").toString(), loadConfig.getOffset(), loadConfig.getLimit() );
+
+		for ( Sala sala : listDomains )
+		{
+			list.add( ConvertBeans.toSalaDTO( sala ) );
+		}
+
+		BasePagingLoadResult< SalaDTO > result
+			= new BasePagingLoadResult< SalaDTO >( list );
+		result.setOffset( loadConfig.getOffset() );
+		result.setTotalLength( Sala.count(
+				getInstituicaoEnsinoUser(), null, null ) );
 		return result;
 	}
 

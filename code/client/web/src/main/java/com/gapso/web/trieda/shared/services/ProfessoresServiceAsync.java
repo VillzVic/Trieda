@@ -2,6 +2,7 @@ package com.gapso.web.trieda.shared.services;
 
 import java.util.List;
 
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -39,4 +40,6 @@ public interface ProfessoresServiceAsync
 	void getProfessorCampusByCurrentProfessor( AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
 	
 	void geraHabilitacaoParaProfessoresVirtuaisCadastrados(AsyncCallback< Void > callback );
+	void getAutoCompleteList(BasePagingLoadConfig loadConfig, String tipoComboBox,
+			AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 }

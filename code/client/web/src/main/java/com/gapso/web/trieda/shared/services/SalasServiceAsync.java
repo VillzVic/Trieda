@@ -3,6 +3,7 @@ package com.gapso.web.trieda.shared.services;
 import java.util.List;
 import java.util.Map;
 
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -34,4 +35,6 @@ public interface SalasServiceAsync
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 	void getSalasDoAndareList( UnidadeDTO unidade, List< String > andares,
 		AsyncCallback< ListLoadResult< SalaDTO > > callback );
+	void getAutoCompleteList(BasePagingLoadConfig loadConfig,
+			AsyncCallback<ListLoadResult<SalaDTO>> callback);
 }

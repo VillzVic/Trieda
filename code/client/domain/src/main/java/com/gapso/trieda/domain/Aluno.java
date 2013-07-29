@@ -388,6 +388,43 @@ public class Aluno
 		return q.getResultList();
 	}
 	
+	@SuppressWarnings( "unchecked" )
+	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, String nome, String matricula, int firstResult, int maxResults) {
+		if ( nome != null )
+		{
+			nome = "%" + nome + "%";
+		}
+		if ( matricula != null )
+		{
+			matricula = "%" + matricula + "%";
+		}
+		
+		String nomeQuery = ( ( nome == null ) ? "" : " AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " );
+		String matriculaQuery = ( ( matricula == null ) ? "" : " AND LOWER ( o.matricula ) LIKE LOWER ( :matricula ) " );
+
+		EntityManager em = Campus.entityManager();
+		Query q = em.createQuery(
+			" SELECT o FROM Aluno o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			nomeQuery +
+			matriculaQuery
+		);
+
+		if ( nome != null )
+		{
+			q.setParameter("nome",nome);
+		}
+		if ( matricula != null )
+		{
+			q.setParameter("matricula",matricula);
+		}
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
+	}
 	
 	@SuppressWarnings( "unchecked" )
 	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, String nome, String matricula, int firstResult, int maxResults, String orderBy) {

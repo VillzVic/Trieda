@@ -6,7 +6,8 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.FieldEvent;
 import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.widget.form.Field;
+import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 
 public class RelatorioVisaoSalaFiltro extends RelatorioVisaoFiltro{
@@ -25,11 +26,11 @@ public class RelatorioVisaoSalaFiltro extends RelatorioVisaoFiltro{
 		return mapIds;
 	}
 	
-	public void addSalaValueListener(Field<String> f){
+	public void addSalaValueListener(ComboBox<SalaDTO> f){
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				salaCodigo = (String) fe.getValue();
+				salaCodigo = ((SalaDTO) fe.getValue()).getCodigo();
 			}
 		});
 	}

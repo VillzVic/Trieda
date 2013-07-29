@@ -12,19 +12,17 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
-import com.gapso.web.trieda.shared.dtos.AlunoDTO;
-import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AlunosComboBox	extends ComboBox<AlunoDTO>{
-	private ListStore<AlunoDTO> store;
-	
-	public AlunosComboBox(){
+public class ProfessorCpfComboBox extends ComboBox<ProfessorDTO>{
+
+	public ProfessorCpfComboBox() {
 		this(false);
 	}
 
-	public AlunosComboBox(boolean readOnly) {
+	public ProfessorCpfComboBox(boolean readOnly) {
 		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
 	}
@@ -33,15 +31,15 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 		if(!readOnly){
 			// Configura a store
 			
-			RpcProxy<ListLoadResult<AlunoDTO>> proxy = new RpcProxy<ListLoadResult<AlunoDTO>>() {
+			RpcProxy<ListLoadResult<ProfessorDTO>> proxy = new RpcProxy<ListLoadResult<ProfessorDTO>>() {
 				// realiza o filtro dos valores do comboBox
 				@Override
-				public void load(Object loadConfig, AsyncCallback<ListLoadResult<AlunoDTO>> callback){
-					Services.alunos().getAutoCompleteList((BasePagingLoadConfig)loadConfig, AlunoDTO.PROPERTY_ALUNO_NOME, callback);
+				public void load(Object loadConfig, AsyncCallback<ListLoadResult<ProfessorDTO>> callback){
+					Services.professores().getAutoCompleteList((BasePagingLoadConfig)loadConfig,  ProfessorDTO.PROPERTY_CPF, callback);
 				}
 			};
 			
-			ListLoader<BaseListLoadResult<SalaDTO>> listLoader = new BaseListLoader<BaseListLoadResult<SalaDTO>>(proxy);
+			ListLoader<BaseListLoadResult<ProfessorDTO>> listLoader = new BaseListLoader<BaseListLoadResult<ProfessorDTO>>(proxy);
 			listLoader.addListener(Loader.BeforeLoad, new Listener<LoadEvent> () {
 				public void handleEvent(LoadEvent be) {
 					be.<ModelData>getConfig().set("offset",offset);
@@ -49,17 +47,17 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 				}
 			});
 			
-			setStore(new ListStore<AlunoDTO>(listLoader));
+			setStore(new ListStore<ProfessorDTO>(listLoader));
 		}
 		else{
-			setStore(new ListStore<AlunoDTO>());
+			setStore(new ListStore<ProfessorDTO>());
 		}
 	}
 	
 	private void configureView(boolean readOnly) {
-		setDisplayField(AlunoDTO.PROPERTY_ALUNO_NOME);
-		setFieldLabel("Nome");
-		setEmptyText("Digite o nome de um aluno");
+		setDisplayField(ProfessorDTO.PROPERTY_CPF);
+		setFieldLabel("CPF");
+		setEmptyText("Digite o cpf do professor");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
 		setHideTrigger(true);
@@ -70,9 +68,10 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 	private native String getTemplateCB() /*-{
 		return  [
 			'<tpl for=".">',
-			'<div class="x-combo-list-item">{nome} ({matricula})</div>',
+			'<div class="x-combo-list-item">{cpf} ({nome})</div>',
 			'</tpl>'
 		].join("");
 	}-*/;
-
+	
 }
+

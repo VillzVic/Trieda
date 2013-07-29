@@ -17,14 +17,14 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AlunosComboBox	extends ComboBox<AlunoDTO>{
+public class AlunosMatriculaComboBox	extends ComboBox<AlunoDTO>{
 	private ListStore<AlunoDTO> store;
 	
-	public AlunosComboBox(){
+	public AlunosMatriculaComboBox(){
 		this(false);
 	}
 
-	public AlunosComboBox(boolean readOnly) {
+	public AlunosMatriculaComboBox(boolean readOnly) {
 		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
 	}
@@ -37,7 +37,7 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 				// realiza o filtro dos valores do comboBox
 				@Override
 				public void load(Object loadConfig, AsyncCallback<ListLoadResult<AlunoDTO>> callback){
-					Services.alunos().getAutoCompleteList((BasePagingLoadConfig)loadConfig, AlunoDTO.PROPERTY_ALUNO_NOME, callback);
+					Services.alunos().getAutoCompleteList((BasePagingLoadConfig)loadConfig, AlunoDTO.PROPERTY_ALUNO_MATRICULA, callback);
 				}
 			};
 			
@@ -57,9 +57,9 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 	}
 	
 	private void configureView(boolean readOnly) {
-		setDisplayField(AlunoDTO.PROPERTY_ALUNO_NOME);
-		setFieldLabel("Nome");
-		setEmptyText("Digite o nome de um aluno");
+		setDisplayField(AlunoDTO.PROPERTY_ALUNO_MATRICULA);
+		setFieldLabel("Matricula");
+		setEmptyText("Digite o número da matricula");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
 		setHideTrigger(true);
@@ -70,7 +70,7 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 	private native String getTemplateCB() /*-{
 		return  [
 			'<tpl for=".">',
-			'<div class="x-combo-list-item">{nome} ({matricula})</div>',
+			'<div class="x-combo-list-item">{matricula} ({nome})</div>',
 			'</tpl>'
 		].join("");
 	}-*/;

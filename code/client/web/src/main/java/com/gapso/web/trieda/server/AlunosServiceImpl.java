@@ -7,7 +7,9 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
@@ -70,6 +72,37 @@ public class AlunosServiceImpl
 		BasePagingLoadResult<AlunoDTO> result = new BasePagingLoadResult<AlunoDTO> (list);
 		result.setOffset(config.getOffset());
 		result.setTotalLength(Aluno.count(this.getInstituicaoEnsinoUser(),cenario,nome,matricula));
+
+		return result;
+	}
+	
+	@Override
+	public ListLoadResult< AlunoDTO > getAutoCompleteList(
+		BasePagingLoadConfig loadConfig, String tipoComboBox )
+	{
+		List< AlunoDTO > list = new ArrayList< AlunoDTO >();
+		
+		List< Aluno > listDomains = new ArrayList< Aluno >();
+		
+		if ( tipoComboBox.equals(AlunoDTO.PROPERTY_ALUNO_NOME) )
+		{
+			listDomains = Aluno.findBy( getInstituicaoEnsinoUser(),
+					loadConfig.get("query").toString(), null, loadConfig.getOffset(), loadConfig.getLimit() );
+		}
+		else if ( tipoComboBox.equals(AlunoDTO.PROPERTY_ALUNO_MATRICULA) )
+		{
+			listDomains = Aluno.findBy( getInstituicaoEnsinoUser(),
+					null, loadConfig.get("query").toString(), loadConfig.getOffset(), loadConfig.getLimit() );
+		}
+
+		for ( Aluno aluno : listDomains )
+		{
+			list.add( ConvertBeans.toAlunoDTO( aluno ) );
+		}
+
+		BasePagingLoadResult< AlunoDTO > result
+			= new BasePagingLoadResult< AlunoDTO >( list );
+		result.setOffset( loadConfig.getOffset() );
 
 		return result;
 	}

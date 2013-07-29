@@ -761,6 +761,23 @@ public class Sala
 
         return q.getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+    public static List< Sala > find( InstituicaoEnsino instituicaoEnsino,
+    	String codigo, int firstResult, int maxResults )
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Sala o " +
+			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND codigo LIKE LOWER (:codigo) " );
+
+		q.setParameter( "codigo", "%"+codigo+"%" );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+        return q.getResultList();
+    }
 
 	@SuppressWarnings( "unchecked" )
 	public List< HorarioDisponivelCenario > getHorarios(

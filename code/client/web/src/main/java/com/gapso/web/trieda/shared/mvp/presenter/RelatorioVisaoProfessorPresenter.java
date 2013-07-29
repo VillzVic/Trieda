@@ -2,21 +2,23 @@ package com.gapso.web.trieda.shared.mvp.presenter;
 
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
-import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaProfessorGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoPresenter;
+import com.gapso.web.trieda.shared.util.view.ProfessorCpfComboBox;
+import com.gapso.web.trieda.shared.util.view.ProfessorNomeComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorVirtualComboBox;
 
 public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 	public interface Display extends RelatorioVisaoPresenter.Display{
 		ProfessorVirtualComboBox getProfessorVirtualComboBox();
 		GradeHorariaProfessorGrid getGrid();
-		TextField<String> getCpfTextField();
-		TextField<String> getProfessorTextField();
+		ProfessorCpfComboBox getCpfTextField();
+		ProfessorNomeComboBox getProfessorTextField();
 	}
 
 	private boolean isVisaoProfessor;
@@ -39,6 +41,28 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 				public void selectionChanged(SelectionChangedEvent<ProfessorVirtualDTO> se){
 					display.getProfessorTextField().setValue(null);
 					display.getCpfTextField().setValue(null);
+				}
+			});
+		}
+		
+		if (display.getProfessorTextField() != null) {
+			display.getProfessorTextField().addSelectionChangedListener(new SelectionChangedListener<ProfessorDTO>(){
+				@Override
+				public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se){
+					if (display.getProfessorTextField().getValue() != null){
+						display.getCpfTextField().setValue(null);
+					}
+				}
+			});
+		}
+		
+		if (display.getCpfTextField() != null) {
+			display.getCpfTextField().addSelectionChangedListener(new SelectionChangedListener<ProfessorDTO>(){
+				@Override
+				public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se){
+					if (display.getCpfTextField().getValue() != null){
+						display.getProfessorTextField().setValue(null);
+					}
 				}
 			});
 		}
