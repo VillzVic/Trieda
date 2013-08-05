@@ -896,40 +896,7 @@ public class AtendimentoOperacional
 			return q.getResultList().size();
 	}
 	
-	public static int countTurmaByDisciplinas(
-			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas)
-	{
-		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
-		for (Disciplina d : disciplinas) {
-			disciplinasIDs.add(d.getId());
-		}
-		
-		Query q = entityManager().createNativeQuery(
-				" SELECT o.dis_id, o.turma FROM atendimento_operacional o " +
-				" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
-				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
-				" GROUP BY o.dis_id, o.turma " +
-				" UNION " +
-				" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_operacional o1 " +
-				" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
-				" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
-				" GROUP BY o1.dis_substituta_id, o1.turma ");
-
-		q.setParameter( "campus", campus.getId() );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
-		
-		int countTurmas = 0;
-		for (Object registro : q.getResultList()) {
-			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
-			if (disciplinasIDs.contains(disId)) {
-				countTurmas++;
-			}
-		}
-
-		return countTurmas;
-	}
-	
-	public static double countTurmaByDisciplinas2(
+	public static double countTurmaByDisciplinas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 	{
 		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
@@ -998,40 +965,6 @@ public class AtendimentoOperacional
 		return countTurmas;
 	}
 	
-	public static double calcReceita(
-			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
-	{
-		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
-		for (Disciplina d : disciplinas) {
-			disciplinasIDs.add(d.getId());
-		}
-		
-		Query q = entityManager().createNativeQuery(
-				" SELECT o.dis_id, o.hdc_id, o.turma, SUM(o.atp_quantidade*of.ofe_receita) FROM atendimento_operacional o, ofertas of " +
-				" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL AND o.ofe_id=of.ofe_id" +
-				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
-				" GROUP BY o.dis_id, o.hdc_id, o.turma" +
-				" UNION " +
-				" SELECT o1.dis_substituta_id, o1.hdc_id, o1.turma, SUM(o1.atp_quantidade*of1.ofe_receita) FROM atendimento_operacional o1, ofertas of1 " +
-				" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL AND o1.ofe_id=of1.ofe_id" +
-				" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
-				" GROUP BY o1.dis_substituta_id, o1.hdc_id, o1.turma ");
-
-		q.setParameter( "campus", campus.getId() );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
-		
-		double receita = 0.0;
-		for (Object registro : q.getResultList()) {
-			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
-			if (disciplinasIDs.contains(disId)) {
-				double qtdAlunos_x_ReceitaCredito = ((Double)((Object[])registro)[3]).doubleValue();
-				receita += qtdAlunos_x_ReceitaCredito;
-			}
-		}
-
-		return receita * 4.5 * 6.0;
-	}
-	
 	public static double calcReceita(InstituicaoEnsino instituicaoEnsino, Campus campus) {
 		Query q = entityManager().createNativeQuery(
 				" SELECT SUM(o.atp_quantidade*of.ofe_receita) FROM atendimento_operacional o, ofertas of " +
@@ -1050,7 +983,7 @@ public class AtendimentoOperacional
 		return receita * 4.5 * 6.0;
 	}
 	
-	public static double calcReceita2(
+	public static double calcReceita(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 	{
 		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
@@ -1079,40 +1012,7 @@ public class AtendimentoOperacional
 		return receitaSemanalTotal * 4.5 * 6.0;
 	}
 	
-	public static int countCreditosByTurmas(
-			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
-	{
-		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
-		for (Disciplina d : disciplinas) {
-			disciplinasIDs.add(d.getId());
-		}
-		
-		Query q = entityManager().createNativeQuery(
-				" SELECT o.dis_id, o.hdc_id, o.turma FROM atendimento_operacional o " +
-				" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
-				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
-				" GROUP BY o.dis_id, o.hdc_id, o.turma" +
-				" UNION " +
-				" SELECT o1.dis_substituta_id, o1.hdc_id, o1.turma FROM atendimento_operacional o1 " +
-				" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
-				" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
-				" GROUP BY o1.dis_substituta_id, o1.hdc_id, o1.turma ");
-
-		q.setParameter( "campus", campus.getId() );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
-		
-		int countTurmas = 0;
-		for (Object registro : q.getResultList()) {
-			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
-			if (disciplinasIDs.contains(disId)) {
-				countTurmas++;
-			}
-		}
-
-		return countTurmas;
-	}
-	
-	public static double countCreditosByTurmas2(
+	public static double countCreditosByTurmas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 	{
 		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());

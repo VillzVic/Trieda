@@ -3410,16 +3410,16 @@ public class ConvertBeans {
 		dto.setAtendimentoSoma(domain.getAtendimentoSoma());
 		dto.setAtendimentoSomaPercent( dec.format(TriedaUtil.round(domain.getAtendimentoSomaPercent()*100.0,2))+"%" );
 		dto.setTurmasAbertas( domain.getTurmasAbertas() );
-		dto.setMediaTurma( (int) Math.round(domain.getMediaTurma()) );
+		dto.setMediaTurma( domain.getMediaTurma() );
 		dto.setCreditosPagos( domain.getCreditosPagos() );
 		dto.setDemandaAcumP1( domain.getDemandaAcumP1() );
 		dto.setAtendimentoSomaAcum( domain.getAtendimentoSomaAcum() );
 		dto.setAtendimentoSomaAcumPercent( dec.format(TriedaUtil.round(domain.getAtendimentoAcumPercent()*100.0,2))+"%" );
-		dto.setReceitaSemanal( (int) Math.round(domain.getReceitaSemanal()));
-		dto.setCustoDocenteSemanal( (int) Math.round(domain.getCustoDocenteSemanal()) );
+		dto.setReceitaSemanal( domain.getReceitaSemanal() );
+		dto.setCustoDocenteSemanal( domain.getCustoDocenteSemanal() );
 		dto.setCustoDocentePorReceitaPercent(dec.format(TriedaUtil.round(domain.getCustoDocentePercent()*100.0,2))+"%" );
-		dto.setReceitaAcumulada( (int) Math.round(domain.getReceitaAcumulada()));
-		dto.setCustoDocenteAcumulado( (int) Math.round(domain.getCustoDocenteAcumulado()) );
+		dto.setReceitaAcumulada( domain.getReceitaAcumulada() );
+		dto.setCustoDocenteAcumulado( domain.getCustoDocenteAcumulado() );
 		dto.setCustoDocentePorReceitaAcumuladoPercent(dec.format(TriedaUtil.round(domain.getCustoDocentePorReceitaAcumuladoPercent()*100.0,2))+"%" );
 		
 		if(domain.getFaixaInferior() == 0 && domain.getFaixaSuperior() > 0) {

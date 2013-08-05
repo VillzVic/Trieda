@@ -525,11 +525,11 @@ public class AlunosDemandaServiceImpl
 				creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
 				turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
 				receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
-				//custoDocente[i] = ;
+				custoDocente[i] = (double)creditosPagos[i] * campus.getValorCredito() * 4.5 * 6;
 			} else {
-				creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas2( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
-				turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas2( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
-				receita[i] = AtendimentoOperacional.calcReceita2( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
+				creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
+				turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
+				receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
 				custoDocente[i] = AtendimentoOperacional.calcCustoDocente(getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i));
 			}
 			mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
@@ -548,9 +548,9 @@ public class AlunosDemandaServiceImpl
 			resumoFaixaDemanda.setAtendimentoPercentP1( atendimentoP1Percent );
 			resumoFaixaDemanda.setAtendimentoSoma(atendimentoSoma[i]);
 			resumoFaixaDemanda.setAtendimentoSomaPercent( atendimentoSomaPercent );
-			resumoFaixaDemanda.setTurmasAbertas( turmasAbertas[i] );
+			resumoFaixaDemanda.setTurmasAbertas( TriedaUtil.round(turmasAbertas[i], 2) );
 			resumoFaixaDemanda.setMediaTurma( TriedaUtil.round(mediaTurma[i], 2) );
-			resumoFaixaDemanda.setCreditosPagos( creditosPagos[i] );
+			resumoFaixaDemanda.setCreditosPagos( TriedaUtil.round(creditosPagos[i], 2) );
 			resumoFaixaDemanda.setDemandaAcumP1( demandaP1Acum[i] );
 			resumoFaixaDemanda.setAtendimentoSomaAcum( atendimentoSomaAcum[i] );
 			resumoFaixaDemanda.setAtendimentoAcumPercent( atendimentoSomaAcumPercent );
@@ -787,4 +787,11 @@ public class AlunosDemandaServiceImpl
 		System.out.println("Soma disciplinas nao atendidas P1: " + disNaoAtendidosP1);
 		System.out.println("Soma disciplinas atendidas P2: " + disAtendidosP2);
 	}
+	
+	public int calculaQuantTurmaPorDisciplina(Campus campus, List<Disciplina> disciplinas){
+		
+		
+		return 0;
+	}
+	
 }

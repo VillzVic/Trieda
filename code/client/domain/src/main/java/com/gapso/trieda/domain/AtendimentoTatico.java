@@ -1,11 +1,15 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -527,34 +531,69 @@ public class AtendimentoTatico
 		return q.getResultList().size();
 	}
 	
-	public static int countTurmaByDisciplinas(
-			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas)
+	public static double countTurmaByDisciplinas(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 	{
-		
 		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
 		for (Disciplina d : disciplinas) {
 			disciplinasIDs.add(d.getId());
 		}
 		
-		Query q = entityManager().createNativeQuery(
-			" SELECT o.dis_id, o.turma FROM atendimento_tatico o " +
-			" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
-			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
-			" GROUP BY o.dis_id, o.turma " +
-			" UNION " +
-			" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_tatico o1 " +
-			" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
-			" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
-			" GROUP BY o1.dis_substituta_id, o1.turma ");
-
-		q.setParameter( "campus", campus.getId() );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		double countTurmas = 0;
 		
-		int countTurmas = 0;
-		for (Object registro : q.getResultList()) {
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.dis_substituta_id, SUM(att_quantidade), o.turma FROM atendimento_tatico o " +
+				" WHERE o.ins_id = :instituicaoEnsino" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.dis_substituta_id, o.att_cred_teorico, o.att_cred_pratico, o.semana, o.turma");
+
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		Map<String,Integer> turmaIdToAlnCredAtendMap = new HashMap<String,Integer>();
+		Map<String,Map<Long,Integer>> turmaIdToDisAlnCredAtendMap = new HashMap<String,Map<Long,Integer>>();
+		for (Object registro : q2.getResultList()) {
 			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			Long disSubsId = (((Object[])registro)[1]) == null ? null : ((BigInteger)((Object[])registro)[1]).longValue();
+			int totalAlunos = ((BigDecimal)((Object[])registro)[2]).intValue();
+			String turma = ((String)((Object[])registro)[3]);
+			
+			Long disIdASerUsada = disSubsId != null ? disSubsId : disId;
+			String turmaId = disIdASerUsada + "-" + turma;
+			
+			Map<Long,Integer> disToAlnCredAtendMap = turmaIdToDisAlnCredAtendMap.get(turmaId);
+			if (disToAlnCredAtendMap == null) {
+				disToAlnCredAtendMap = new HashMap<Long, Integer>();
+				turmaIdToDisAlnCredAtendMap.put(turmaId,disToAlnCredAtendMap);
+			}
+			Integer totalAlnCredAtend = disToAlnCredAtendMap.get(disId);
+			totalAlnCredAtend = (totalAlnCredAtend == null) ? 0 : totalAlnCredAtend;
+			disToAlnCredAtendMap.put(disId, totalAlnCredAtend + totalAlunos);
+			
+			totalAlnCredAtend = turmaIdToAlnCredAtendMap.get(turmaId);
+			totalAlnCredAtend = (totalAlnCredAtend == null) ? 0 : totalAlnCredAtend;
+			turmaIdToAlnCredAtendMap.put(turmaId, totalAlnCredAtend + totalAlunos);
+		}
+		
+		Map<Long,Double> disIdToTotalTurmas = new HashMap<Long, Double>();
+		for (Entry<String,Map<Long,Integer>> entry : turmaIdToDisAlnCredAtendMap.entrySet()) {
+			String turmaId = entry.getKey();
+			int totalAlnCredAtendDaTurma = turmaIdToAlnCredAtendMap.get(turmaId);
+			for (Entry<Long,Integer> entry2 : entry.getValue().entrySet()) {
+				Long disId = entry2.getKey();
+				int alnCredAtendDaDiscNaTurma = entry2.getValue();
+				double parcelaTotalTurmasDaDisc = (double)alnCredAtendDaDiscNaTurma / (double)totalAlnCredAtendDaTurma;
+				
+				Double totalTurmasDaDisc = disIdToTotalTurmas.get(disId);
+				totalTurmasDaDisc = (totalTurmasDaDisc == null) ? 0.0 : totalTurmasDaDisc;
+				disIdToTotalTurmas.put(disId, totalTurmasDaDisc + parcelaTotalTurmasDaDisc);
+			}
+		}
+		
+		for (Entry<Long, Double> entry : disIdToTotalTurmas.entrySet()) {
+			Long disId = entry.getKey();
 			if (disciplinasIDs.contains(disId)) {
-				countTurmas++;
+				countTurmas += entry.getValue();
 			}
 		}
 
@@ -591,72 +630,105 @@ public class AtendimentoTatico
 		return ( iT + iP );
 	}
 	
-	public static int countCreditosByTurmas(
+	public static double countCreditosByTurmas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
-		{
+	{
 		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
 		for (Disciplina d : disciplinas) {
 			disciplinasIDs.add(d.getId());
 		}
 		
-		Query q = entityManager().createNativeQuery(
-			" SELECT o.dis_id, o.att_cred_pratico, o.att_cred_teorico, o.turma, o.semana FROM atendimento_tatico o " +
-			" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
-			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
-			" GROUP BY o.dis_id, o.turma, o.att_cred_pratico, o.att_cred_teorico, o.semana " +
-			" UNION " +
-			" SELECT o1.dis_substituta_id, o1.att_cred_pratico, o1.att_cred_teorico, o1.turma, o1.semana FROM atendimento_tatico o1 " +
-			" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
-			" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
-			" GROUP BY o1.dis_substituta_id, o1.turma, o1.att_cred_pratico, o1.att_cred_teorico, o1.semana ");
-
-		q.setParameter( "campus", campus.getId() );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		double countCreditos = 0;
 		
-		int countCreditos = 0;
-		for (Object registro : q.getResultList()) {
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.dis_substituta_id, SUM(att_quantidade), o.att_cred_teorico, o.att_cred_pratico, o.semana, o.turma FROM atendimento_tatico o " +
+				" WHERE o.ins_id = :instituicaoEnsino" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.dis_substituta_id, o.att_cred_teorico, o.att_cred_pratico, o.semana, o.turma");
+
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		Map<String,Integer> tempoAulaIdToTotalAlnMap = new HashMap<String,Integer>();
+		Map<String,Map<Long,Integer>> tempoAulaIdToDisAlnMap = new HashMap<String,Map<Long,Integer>>();
+		for (Object registro : q2.getResultList()) {
 			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			Long disSubsId = (((Object[])registro)[1]) == null ? null : ((BigInteger)((Object[])registro)[1]).longValue();
+			int totalAlunos = ((BigDecimal)((Object[])registro)[2]).intValue();
+			int credPratico = ((Integer)((Object[])registro)[3]).intValue();
+			int credTeorico = ((Integer)((Object[])registro)[4]).intValue();
+			int semana = ((Integer)((Object[])registro)[5]).intValue();
+			String turma = ((String)((Object[])registro)[6]);
+			
+			Long disIdASerUsada = disSubsId != null ? disSubsId : disId;
+			String tempoAulaId = disIdASerUsada + "-" + credPratico + "-" + credTeorico + "-" + semana + "-" + turma;
+			
+			Map<Long,Integer> disToAlnMap = tempoAulaIdToDisAlnMap.get(tempoAulaId);
+			if (disToAlnMap == null) {
+				disToAlnMap = new HashMap<Long, Integer>();
+				tempoAulaIdToDisAlnMap.put(tempoAulaId,disToAlnMap);
+			}
+			disToAlnMap.put(disId,totalAlunos*(credTeorico+credPratico));
+			
+			Integer total = tempoAulaIdToTotalAlnMap.get(tempoAulaId);
+			total = (total == null) ? 0 : total;
+			tempoAulaIdToTotalAlnMap.put(tempoAulaId, total + totalAlunos);
+		}
+		
+		Map<Long,Double> disIdToTotalCred = new HashMap<Long, Double>();
+		for (Entry<String,Map<Long,Integer>> entry : tempoAulaIdToDisAlnMap.entrySet()) {
+			String tempoAulaId = entry.getKey();
+			int total = tempoAulaIdToTotalAlnMap.get(tempoAulaId);
+			for (Entry<Long,Integer> entry2 : entry.getValue().entrySet()) {
+				Long disId = entry2.getKey();
+				int parcialAlunos = entry2.getValue();
+				double contribTotalAlunos = (double)parcialAlunos / (double)total;
+				
+				Double value = disIdToTotalCred.get(disId);
+				value = (value == null) ? 0.0 : value;
+				disIdToTotalCred.put(disId, value + contribTotalAlunos);
+			}
+		}
+		
+		for (Entry<Long, Double> entry : disIdToTotalCred.entrySet()) {
+			Long disId = entry.getKey();
 			if (disciplinasIDs.contains(disId)) {
-				countCreditos += ((Integer)((Object[])registro)[1]).intValue() + ((Integer)((Object[])registro)[2]).intValue();
+				countCreditos += entry.getValue();
 			}
 		}
 
 		return countCreditos;
 	}
-	
+		
 	public static double calcReceita(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
-		{
+	{
 		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
 		for (Disciplina d : disciplinas) {
 			disciplinasIDs.add(d.getId());
 		}
 		
-		Query q = entityManager().createNativeQuery(
-			" SELECT o.dis_id, o.att_cred_pratico, o.att_cred_teorico, o.turma, o.semana, SUM(o.att_quantidade*of.ofe_receita) FROM atendimento_tatico o, ofertas of " +
-			" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL AND o.ofe_id=of.ofe_id" +
-			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
-			" GROUP BY o.dis_id, o.turma, o.att_cred_pratico, o.att_cred_teorico, o.semana " +
-			" UNION " +
-			" SELECT o1.dis_substituta_id, o1.att_cred_pratico, o1.att_cred_teorico, o1.turma, o1.semana, SUM(o1.att_quantidade*of1.ofe_receita) FROM atendimento_tatico o1, ofertas of1 " +
-			" WHERE o1.ins_id = :instituicaoEnsino AND o1.dis_substituta_id IS NOT NULL AND o1.ofe_id=of1.ofe_id" +
-			" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
-			" GROUP BY o1.dis_substituta_id, o1.turma, o1.att_cred_pratico, o1.att_cred_teorico, o1.semana ");
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, SUM(att_quantidade*of.ofe_receita), o.att_cred_teorico, o.att_cred_pratico, o.semana" +
+				" FROM atendimento_tatico o, ofertas of " +
+				" WHERE o.ins_id = :instituicaoEnsino AND o.ofe_id=of.ofe_id" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.att_cred_teorico, o.att_cred_pratico, o.semana");
 
-		q.setParameter( "campus", campus.getId() );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
 		
-		double receita = 0.0;
-		for (Object registro : q.getResultList()) {
+		double receitaSemanalTotal = 0.0;
+		for (Object registro : q2.getResultList()) {
 			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
 			if (disciplinasIDs.contains(disId)) {
-				int countCreditos = ((Integer)((Object[])registro)[1]).intValue() + ((Integer)((Object[])registro)[2]).intValue();
-				double qtdAlunos_x_ReceitaCredito = ((Double)((Object[])registro)[5]).doubleValue();
-				receita += qtdAlunos_x_ReceitaCredito * countCreditos;
+				double receitaSemanal = ((Double)((Object[])registro)[1]).doubleValue();
+				int countCreditos = ((Integer)((Object[])registro)[2]).intValue() + ((Integer)((Object[])registro)[3]).intValue();
+				receitaSemanalTotal += receitaSemanal * countCreditos;
 			}
 		}
 
-		return receita * 4.5 * 6.0;
+		return receitaSemanalTotal * 4.5 * 6.0;
 	}
 	
 	public static double calcReceita(InstituicaoEnsino instituicaoEnsino, Campus campus) {

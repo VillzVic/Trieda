@@ -88,11 +88,11 @@ public class AtendimentoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_TURMAS_ABERTAS);
 	}
 	
-	public void setMediaTurma(Integer value) {
+	public void setMediaTurma(Double value) {
 		set(PROPERTY_MEDIA_TURMA, value);
 	}
 
-	public Integer getMediaTurma() {
+	public Double getMediaTurma() {
 		return get(PROPERTY_MEDIA_TURMA);
 	}
 	
@@ -128,19 +128,19 @@ public class AtendimentoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_ATENDIMENTO_ACUM_PERCENT);
 	}
 	
-	public void setReceitaSemanal(Integer value) {
+	public void setReceitaSemanal(Double value) {
 		set(PROPERTY_RECEITA_SEMANAL, value);
 	}
 
-	public Integer getReceitaSemanal() {
+	public Double getReceitaSemanal() {
 		return get(PROPERTY_RECEITA_SEMANAL);
 	}
 	
-	public void setCustoDocenteSemanal(Integer value) {
+	public void setCustoDocenteSemanal(Double value) {
 		set(PROPERTY_CUSTO_DOCENTE_SEMANAL, value);
 	}
 
-	public Integer getCustoDocenteSemanal() {
+	public Double getCustoDocenteSemanal() {
 		return get(PROPERTY_CUSTO_DOCENTE_SEMANAL);
 	}
 	
@@ -152,19 +152,19 @@ public class AtendimentoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_CUSTO_DOCENTE_POR_RECEITA_PERCENT);
 	}
 	
-	public void setReceitaAcumulada(Integer value) {
+	public void setReceitaAcumulada(Double value) {
 		set(PROPERTY_RECEITA_ACUMULADA, value);
 	}
 
-	public Integer getReceitaAcumulada() {
+	public Double getReceitaAcumulada() {
 		return get(PROPERTY_RECEITA_ACUMULADA);
 	}
 	
-	public void setCustoDocenteAcumulado(Integer value) {
+	public void setCustoDocenteAcumulado(Double value) {
 		set(PROPERTY_CUSTO_DOCENTE_ACUMULADO, value);
 	}
 
-	public Integer getCustoDocenteAcumulado() {
+	public Double getCustoDocenteAcumulado() {
 		return get(PROPERTY_CUSTO_DOCENTE_ACUMULADO);
 	}
 	
