@@ -185,7 +185,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			else q = QuintetoDTO.create(aulas,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
 		}
 		catch (EmptyResultDataAccessException ex){
-			throw new TriedaException("Os campos do digitados no filtro não foram encontrados");
+			throw new TriedaException("Os campos digitados no filtro não foram encontrados");
 		}
 		
 		return AtendimentoServiceRelatorioResponse.create(q);

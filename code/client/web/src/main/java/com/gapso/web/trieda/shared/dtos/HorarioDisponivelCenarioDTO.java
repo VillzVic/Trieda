@@ -260,7 +260,13 @@ public class HorarioDisponivelCenarioDTO
 		{
 			result = this.getTurnoString().compareTo(o.getTurnoString());
 			if ( result == 0 ) {
-				result = this.getHorario().compareTo( o.getHorario() );
+				Date thisDate = (Date)this.getHorario().clone();
+				Date oDate = (Date)o.getHorario().clone();
+				thisDate.setYear(oDate.getYear());
+				thisDate.setMonth(oDate.getMonth());
+				thisDate.setDate(oDate.getDate());
+				
+				result = thisDate.compareTo( oDate );
 			}
 		}
 

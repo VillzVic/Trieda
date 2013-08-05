@@ -1,11 +1,15 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -925,6 +929,75 @@ public class AtendimentoOperacional
 		return countTurmas;
 	}
 	
+	public static double countTurmaByDisciplinas2(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
+	{
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
+		}
+		
+		double countTurmas = 0;
+		
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.dis_substituta_id, SUM(atp_quantidade), o.hdc_id, o.turma FROM atendimento_operacional o " +
+				" WHERE o.ins_id = :instituicaoEnsino" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.dis_substituta_id, o.hdc_id, o.turma");
+
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		Map<String,Integer> turmaIdToAlnCredAtendMap = new HashMap<String,Integer>();
+		Map<String,Map<Long,Integer>> turmaIdToDisAlnCredAtendMap = new HashMap<String,Map<Long,Integer>>();
+		for (Object registro : q2.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			Long disSubsId = (((Object[])registro)[1]) == null ? null : ((BigInteger)((Object[])registro)[1]).longValue();
+			int totalAlunos = ((BigDecimal)((Object[])registro)[2]).intValue();
+			String turma = ((String)((Object[])registro)[4]);
+			
+			Long disIdASerUsada = disSubsId != null ? disSubsId : disId;
+			String turmaId = disIdASerUsada + "-" + turma;
+			
+			Map<Long,Integer> disToAlnCredAtendMap = turmaIdToDisAlnCredAtendMap.get(turmaId);
+			if (disToAlnCredAtendMap == null) {
+				disToAlnCredAtendMap = new HashMap<Long, Integer>();
+				turmaIdToDisAlnCredAtendMap.put(turmaId,disToAlnCredAtendMap);
+			}
+			Integer totalAlnCredAtend = disToAlnCredAtendMap.get(disId);
+			totalAlnCredAtend = (totalAlnCredAtend == null) ? 0 : totalAlnCredAtend;
+			disToAlnCredAtendMap.put(disId, totalAlnCredAtend + totalAlunos);
+			
+			totalAlnCredAtend = turmaIdToAlnCredAtendMap.get(turmaId);
+			totalAlnCredAtend = (totalAlnCredAtend == null) ? 0 : totalAlnCredAtend;
+			turmaIdToAlnCredAtendMap.put(turmaId, totalAlnCredAtend + totalAlunos);
+		}
+		
+		Map<Long,Double> disIdToTotalTurmas = new HashMap<Long, Double>();
+		for (Entry<String,Map<Long,Integer>> entry : turmaIdToDisAlnCredAtendMap.entrySet()) {
+			String turmaId = entry.getKey();
+			int totalAlnCredAtendDaTurma = turmaIdToAlnCredAtendMap.get(turmaId);
+			for (Entry<Long,Integer> entry2 : entry.getValue().entrySet()) {
+				Long disId = entry2.getKey();
+				int alnCredAtendDaDiscNaTurma = entry2.getValue();
+				double parcelaTotalTurmasDaDisc = (double)alnCredAtendDaDiscNaTurma / (double)totalAlnCredAtendDaTurma;
+				
+				Double totalTurmasDaDisc = disIdToTotalTurmas.get(disId);
+				totalTurmasDaDisc = (totalTurmasDaDisc == null) ? 0.0 : totalTurmasDaDisc;
+				disIdToTotalTurmas.put(disId, totalTurmasDaDisc + parcelaTotalTurmasDaDisc);
+			}
+		}
+		
+		for (Entry<Long, Double> entry : disIdToTotalTurmas.entrySet()) {
+			Long disId = entry.getKey();
+			if (disciplinasIDs.contains(disId)) {
+				countTurmas += entry.getValue();
+			}
+		}
+
+		return countTurmas;
+	}
+	
 	public static double calcReceita(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 	{
@@ -959,6 +1032,53 @@ public class AtendimentoOperacional
 		return receita * 4.5 * 6.0;
 	}
 	
+	public static double calcReceita(InstituicaoEnsino instituicaoEnsino, Campus campus) {
+		Query q = entityManager().createNativeQuery(
+				" SELECT SUM(o.atp_quantidade*of.ofe_receita) FROM atendimento_operacional o, ofertas of " +
+				" WHERE o.ins_id = :instituicaoEnsino AND o.ofe_id=of.ofe_id" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)");
+
+		q.setParameter( "campus", campus.getId() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		double receita = 0.0;
+		for (Object registro : q.getResultList()) {
+			double receitaLocal = (Double)registro;
+			receita += receitaLocal;
+		}
+
+		return receita * 4.5 * 6.0;
+	}
+	
+	public static double calcReceita2(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
+	{
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
+		}
+		
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, SUM(atp_quantidade*of.ofe_receita) FROM atendimento_operacional o, ofertas of " +
+				" WHERE o.ins_id = :instituicaoEnsino AND o.ofe_id=of.ofe_id" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id");
+
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		double receitaSemanalTotal = 0.0;
+		for (Object registro : q2.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			if (disciplinasIDs.contains(disId)) {
+				double receitaSemanal = ((Double)((Object[])registro)[1]).doubleValue();
+				receitaSemanalTotal += receitaSemanal;
+			}
+		}
+
+		return receitaSemanalTotal * 4.5 * 6.0;
+	}
+	
 	public static int countCreditosByTurmas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
 	{
@@ -990,6 +1110,164 @@ public class AtendimentoOperacional
 		}
 
 		return countTurmas;
+	}
+	
+	public static double countCreditosByTurmas2(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
+	{
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
+		}
+		
+		double countCreditos = 0;
+		
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.dis_substituta_id, SUM(atp_quantidade), o.hdc_id, o.turma FROM atendimento_operacional o " +
+				" WHERE o.ins_id = :instituicaoEnsino" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.dis_substituta_id, o.hdc_id, o.turma");
+
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		Map<String,Integer> tempoAulaIdToTotalAlnMap = new HashMap<String,Integer>();
+		Map<String,Map<Long,Integer>> tempoAulaIdToDisAlnMap = new HashMap<String,Map<Long,Integer>>();
+		for (Object registro : q2.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			Long disSubsId = (((Object[])registro)[1]) == null ? null : ((BigInteger)((Object[])registro)[1]).longValue();
+			int totalAlunos = ((BigDecimal)((Object[])registro)[2]).intValue();
+			Long hdcId = ((BigInteger)((Object[])registro)[3]).longValue();
+			String turma = ((String)((Object[])registro)[4]);
+			
+			Long disIdASerUsada = disSubsId != null ? disSubsId : disId;
+			String tempoAulaId = disIdASerUsada + "-" + hdcId + "-" + turma;
+			
+			Map<Long,Integer> disToAlnMap = tempoAulaIdToDisAlnMap.get(tempoAulaId);
+			if (disToAlnMap == null) {
+				disToAlnMap = new HashMap<Long, Integer>();
+				tempoAulaIdToDisAlnMap.put(tempoAulaId,disToAlnMap);
+			}
+			disToAlnMap.put(disId,totalAlunos);
+			
+			Integer total = tempoAulaIdToTotalAlnMap.get(tempoAulaId);
+			total = (total == null) ? 0 : total;
+			tempoAulaIdToTotalAlnMap.put(tempoAulaId, total + totalAlunos);
+		}
+		
+		Map<Long,Double> disIdToTotalCred = new HashMap<Long, Double>();
+		for (Entry<String,Map<Long,Integer>> entry : tempoAulaIdToDisAlnMap.entrySet()) {
+			String tempoAulaId = entry.getKey();
+			int total = tempoAulaIdToTotalAlnMap.get(tempoAulaId);
+			for (Entry<Long,Integer> entry2 : entry.getValue().entrySet()) {
+				Long disId = entry2.getKey();
+				int parcialAlunos = entry2.getValue();
+				double contribTotalAlunos = (double)parcialAlunos / (double)total;
+				
+				Double value = disIdToTotalCred.get(disId);
+				value = (value == null) ? 0.0 : value;
+				disIdToTotalCred.put(disId, value + contribTotalAlunos);
+			}
+		}
+		
+		for (Entry<Long, Double> entry : disIdToTotalCred.entrySet()) {
+			Long disId = entry.getKey();
+			if (disciplinasIDs.contains(disId)) {
+				countCreditos += entry.getValue();
+			}
+		}
+
+		return countCreditos;
+	}
+	
+	public static double calcCustoDocente(
+			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
+	{
+		Set<Long> disciplinasIDs = new HashSet<Long>(disciplinas.size());
+		for (Disciplina d : disciplinas) {
+			disciplinasIDs.add(d.getId());
+		}
+		
+		Map<Long,Double> profIdToCustoCredito = new HashMap<Long,Double>();
+		Query q1 = entityManager().createNativeQuery(
+				" SELECT p.prf_id, p.prf_valor_credito FROM professores p, titulacoes t " +
+				" WHERE p.tit_id = t.tit_id AND t.ins_id = :instituicaoEnsino");
+		q1.setParameter( "instituicaoEnsino", instituicaoEnsino.getId());
+		for (Object registro : q1.getResultList()) {
+			Long prfId = ((BigInteger)((Object[])registro)[0]).longValue();
+			double custoCredito = ((Double)((Object[])registro)[1]);
+			profIdToCustoCredito.put(prfId,custoCredito);
+		}
+		
+		double custoDocente = 0.0;
+		
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.dis_substituta_id, SUM(atp_quantidade), o.hdc_id, o.turma, prf_id FROM atendimento_operacional o " +
+				" WHERE o.ins_id = :instituicaoEnsino" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.dis_substituta_id, o.hdc_id, o.turma");
+
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		Map<String,Integer> tempoAulaIdToTotalAlnCredAtendMap = new HashMap<String,Integer>();
+		Map<String,Double> tempoAulaIdToCustoCreditoMap = new HashMap<String,Double>();
+		Map<String,Map<Long,Integer>> tempoAulaIdToDisAlnCredAtendMap = new HashMap<String,Map<Long,Integer>>();
+		for (Object registro : q2.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			Long disSubsId = (((Object[])registro)[1]) == null ? null : ((BigInteger)((Object[])registro)[1]).longValue();
+			int alnCredAtend = ((BigDecimal)((Object[])registro)[2]).intValue();
+			Long hdcId = ((BigInteger)((Object[])registro)[3]).longValue();
+			String turma = ((String)((Object[])registro)[4]);
+			Long prfId = (((Object[])registro)[5]) == null ? null : ((BigInteger)((Object[])registro)[5]).longValue();
+			
+			Long disIdASerUsada = disSubsId != null ? disSubsId : disId;
+			String tempoAulaId = disIdASerUsada + "-" + hdcId + "-" + turma;
+			
+			Map<Long,Integer> disToAlnCredAtendMap = tempoAulaIdToDisAlnCredAtendMap.get(tempoAulaId);
+			if (disToAlnCredAtendMap == null) {
+				disToAlnCredAtendMap = new HashMap<Long, Integer>();
+				tempoAulaIdToDisAlnCredAtendMap.put(tempoAulaId,disToAlnCredAtendMap);
+			}
+			disToAlnCredAtendMap.put(disId,alnCredAtend);
+			
+			Integer totalAlnCredAtendDoTempoAula = tempoAulaIdToTotalAlnCredAtendMap.get(tempoAulaId);
+			totalAlnCredAtendDoTempoAula = (totalAlnCredAtendDoTempoAula == null) ? 0 : totalAlnCredAtendDoTempoAula;
+			tempoAulaIdToTotalAlnCredAtendMap.put(tempoAulaId, totalAlnCredAtendDoTempoAula + alnCredAtend);
+			
+			double custoCredito = 0.0;
+			if (prfId != null) {
+				custoCredito = profIdToCustoCredito.get(prfId);
+			} else {
+				custoCredito = campus.getValorCredito();
+			}
+			tempoAulaIdToCustoCreditoMap.put(tempoAulaId,custoCredito);
+		}
+		
+		Map<Long,Double> disIdToTotalCustoDocente = new HashMap<Long, Double>();
+		for (Entry<String,Map<Long,Integer>> entry : tempoAulaIdToDisAlnCredAtendMap.entrySet()) {
+			String tempoAulaId = entry.getKey();
+			double custoCredito = tempoAulaIdToCustoCreditoMap.get(tempoAulaId);
+			int totalAlnCredAtendDoTempoAula = tempoAulaIdToTotalAlnCredAtendMap.get(tempoAulaId);
+			for (Entry<Long,Integer> entry2 : entry.getValue().entrySet()) {
+				Long disId = entry2.getKey();
+				int alnCredAtendDaDiscNoTempoAula = entry2.getValue();
+				double contribCustoDocente = ((double)alnCredAtendDaDiscNoTempoAula / (double)totalAlnCredAtendDoTempoAula) * custoCredito;
+				
+				Double custoDocenteTotalDaDisc = disIdToTotalCustoDocente.get(disId);
+				custoDocenteTotalDaDisc = (custoDocenteTotalDaDisc == null) ? 0.0 : custoDocenteTotalDaDisc;
+				disIdToTotalCustoDocente.put(disId, custoDocenteTotalDaDisc + contribCustoDocente);
+			}
+		}
+		
+		for (Entry<Long, Double> entry : disIdToTotalCustoDocente.entrySet()) {
+			Long disId = entry.getKey();
+			if (disciplinasIDs.contains(disId)) {
+				custoDocente += entry.getValue();
+			}
+		}
+
+		return custoDocente * 4.5 * 6.0;
 	}
 
 	@SuppressWarnings( "unchecked" )

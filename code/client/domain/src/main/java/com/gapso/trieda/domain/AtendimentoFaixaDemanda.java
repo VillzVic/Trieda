@@ -83,7 +83,7 @@ public class AtendimentoFaixaDemanda
 	
 	@Column( name = "AFD_TURMAS_ABERTAS" )
 	@Min( 0L )
-	private Integer turmasAbertas;
+	private Double turmasAbertas;
 	
 	@Column( name = "AFD_MEDIA_TURMA" )
 	private Double mediaTurma;
@@ -94,7 +94,7 @@ public class AtendimentoFaixaDemanda
 	
 	@Column( name = "AFD_CREDITOS_PAGOS" )
 	@Min( 0L )
-	private Integer creditosPagos;
+	private Double creditosPagos;
 	
 	@Column( name = "AFD_ATEND_SOMA_ACUM" )
 	@Min( 0L )
@@ -230,6 +230,7 @@ public class AtendimentoFaixaDemanda
 		return q.getResultList();
 	}
 	
+	@Transactional
 	public static Integer deleteAllFromCampus(Campus campus) {
 		Query q = entityManager().createQuery( "DELETE FROM AtendimentoFaixaDemanda WHERE campus = :campus");
 		q.setParameter( "campus", campus );
@@ -318,11 +319,11 @@ public class AtendimentoFaixaDemanda
 		this.atendimentoSomaPercent = atendimentoSomaPercent;
 	}
 
-	public Integer getTurmasAbertas() {
+	public Double getTurmasAbertas() {
 		return turmasAbertas;
 	}
 
-	public void setTurmasAbertas(Integer turmasAbertas) {
+	public void setTurmasAbertas(Double turmasAbertas) {
 		this.turmasAbertas = turmasAbertas;
 	}
 
@@ -342,11 +343,11 @@ public class AtendimentoFaixaDemanda
 		this.demandaAcumP1 = demandaAcumP1;
 	}
 
-	public Integer getCreditosPagos() {
+	public Double getCreditosPagos() {
 		return creditosPagos;
 	}
 
-	public void setCreditosPagos(Integer creditosPagos) {
+	public void setCreditosPagos(Double creditosPagos) {
 		this.creditosPagos = creditosPagos;
 	}
 

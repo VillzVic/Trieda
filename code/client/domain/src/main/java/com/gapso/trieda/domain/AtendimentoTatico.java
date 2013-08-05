@@ -658,6 +658,24 @@ public class AtendimentoTatico
 
 		return receita * 4.5 * 6.0;
 	}
+	
+	public static double calcReceita(InstituicaoEnsino instituicaoEnsino, Campus campus) {
+		Query q = entityManager().createNativeQuery(
+			" SELECT SUM(o.att_quantidade*(o.att_cred_pratico+o.att_cred_teorico)*of.ofe_receita) FROM atendimento_tatico o, ofertas of " +
+			" WHERE o.ins_id = :instituicaoEnsino AND o.ofe_id=of.ofe_id" +
+			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)");
+
+		q.setParameter( "campus", campus.getId() );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		double receita = 0.0;
+		for (Object registro : q.getResultList()) {
+			double receitaLocal = (Double)registro;
+			receita += receitaLocal;
+		}
+
+		return receita * 4.5 * 6.0;
+	}
 
 	public static int countSalasDeAula(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )

@@ -449,12 +449,13 @@ public class AlunosDemandaServiceImpl
 		int demandaP1[] = new int[numFaixas];
 		int atendimentoP1[] = new int[numFaixas];
 		int atendimentoSoma[] = new int[numFaixas];
-		int turmasAbertas[] = new int[numFaixas];
-		int creditosPagos[] = new int[numFaixas];
+		double turmasAbertas[] = new double[numFaixas];
+		double creditosPagos[] = new double[numFaixas];
 		double mediaTurma[] = new double[numFaixas];
 		int demandaP1Acum[] = new int[numFaixas];
 		int atendimentoSomaAcum[] = new int[numFaixas];
 		double receita[] = new double[numFaixas];
+		double custoDocente[] = new double[numFaixas];
 		
 		List<List<Disciplina>> listDisciplinas = new ArrayList<List<Disciplina>>();
 		
@@ -469,7 +470,8 @@ public class AlunosDemandaServiceImpl
 			mediaTurma[i] = 0;
 			demandaP1Acum[i] = 0;
 			atendimentoSomaAcum[i] = 0;
-			receita[i] = 0;
+			receita[i] = 0.0;
+			custoDocente[i] = 0.0;
 			listDisciplinas.add(new ArrayList<Disciplina>());
 		}
 
@@ -508,7 +510,7 @@ public class AlunosDemandaServiceImpl
 			}
 		}
 		
-		double custoDocenteSemanalAcum = 0.0;
+		double custoDocenteSemestralAcum = 0.0;
 		double receitaAcum = 0.0;
 		for ( int i = 0; i < numFaixas; i++ )
 		{
@@ -519,28 +521,26 @@ public class AlunosDemandaServiceImpl
 			
 			resumoFaixaDemanda.setFaixaSuperior(faixas.get(i).getPrimeiro());
 			resumoFaixaDemanda.setFaixaInferior(faixas.get(i).getSegundo());
-			if ( ehTatico )
-			{
+			if ( ehTatico ) {
 				creditosPagos[i] = AtendimentoTatico.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
 				turmasAbertas[i] = AtendimentoTatico.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
 				receita[i] = AtendimentoTatico.calcReceita( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
-			}
-			else
-			{
-				creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
-				turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
-				receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
+				//custoDocente[i] = ;
+			} else {
+				creditosPagos[i] = AtendimentoOperacional.countCreditosByTurmas2( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
+				turmasAbertas[i] = AtendimentoOperacional.countTurmaByDisciplinas2( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
+				receita[i] = AtendimentoOperacional.calcReceita2( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
+				custoDocente[i] = AtendimentoOperacional.calcCustoDocente(getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i));
 			}
 			mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
 			demandaP1Acum[i] = (i == 0 ? demandaP1[i] : demandaP1[i] + demandaP1Acum[i-1]);
 			atendimentoSomaAcum[i] = (i == 0 ? atendimentoSoma[i] : atendimentoSoma[i] + atendimentoSomaAcum[i-1]);
 
 			double atendimentoSomaAcumPercent = ( (double)atendimentoSomaAcum[i] ) / demandaP1Acum[i];
-			double custoDocenteSemanal = (double)creditosPagos[i] * campus.getValorCredito() * 4.5 * 6;
-			double custoDocentePorReceitaPercent = custoDocenteSemanal / receita[i];
-			custoDocenteSemanalAcum += custoDocenteSemanal;
+			double custoDocentePorReceitaPercent = custoDocente[i] / receita[i];
+			custoDocenteSemestralAcum += custoDocente[i];
 			receitaAcum += receita[i];
-			double custoDocentePorReceitaAcumPercent = custoDocenteSemanalAcum / receitaAcum;
+			double custoDocentePorReceitaAcumPercent = custoDocenteSemestralAcum / receitaAcum;
 			
 			resumoFaixaDemanda.setCampus( campus );
 			resumoFaixaDemanda.setDemandaP1( demandaP1[i] );
@@ -555,10 +555,10 @@ public class AlunosDemandaServiceImpl
 			resumoFaixaDemanda.setAtendimentoSomaAcum( atendimentoSomaAcum[i] );
 			resumoFaixaDemanda.setAtendimentoAcumPercent( atendimentoSomaAcumPercent );
 			resumoFaixaDemanda.setReceitaSemanal(TriedaUtil.round(receita[i],2));
-			resumoFaixaDemanda.setCustoDocenteSemanal( TriedaUtil.round(custoDocenteSemanal,2) );
+			resumoFaixaDemanda.setCustoDocenteSemanal( TriedaUtil.round(custoDocente[i],2) );
 			resumoFaixaDemanda.setCustoDocentePercent( custoDocentePorReceitaPercent );
 			resumoFaixaDemanda.setReceitaAcumulada(TriedaUtil.round(receitaAcum,2));
-			resumoFaixaDemanda.setCustoDocenteAcumulado( TriedaUtil.round(custoDocenteSemanalAcum,2) );
+			resumoFaixaDemanda.setCustoDocenteAcumulado( TriedaUtil.round(custoDocenteSemestralAcum,2) );
 			resumoFaixaDemanda.setCustoDocentePorReceitaAcumuladoPercent( custoDocentePorReceitaAcumPercent );
 			
 			result.add( resumoFaixaDemanda );

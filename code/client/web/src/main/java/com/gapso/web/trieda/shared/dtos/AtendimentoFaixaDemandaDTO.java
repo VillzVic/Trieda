@@ -80,11 +80,11 @@ public class AtendimentoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_ATENDIMENTO_SOMA_PERCENT);
 	}
 	
-	public void setTurmasAbertas(Integer value) {
+	public void setTurmasAbertas(Double value) {
 		set(PROPERTY_TURMAS_ABERTAS, value);
 	}
 
-	public Integer getTurmasAbertas() {
+	public Double getTurmasAbertas() {
 		return get(PROPERTY_TURMAS_ABERTAS);
 	}
 	
@@ -104,11 +104,11 @@ public class AtendimentoFaixaDemandaDTO extends AbstractDTO< String >
 		return get(PROPERTY_DEMANDA_ACUM_P1);
 	}
 	
-	public void setCreditosPagos(Integer value) {
+	public void setCreditosPagos(Double value) {
 		set(PROPERTY_CREDITOS_PAGOS, value);
 	}
 
-	public Integer getCreditosPagos() {
+	public Double getCreditosPagos() {
 		return get(PROPERTY_CREDITOS_PAGOS);
 	}
 	
