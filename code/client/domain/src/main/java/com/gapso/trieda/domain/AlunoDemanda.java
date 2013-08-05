@@ -619,13 +619,21 @@ public class AlunoDemanda
 		{
 			queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
 		}
+		
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
+		for (TipoDisciplina td : tiposDisciplinas) {
+			if (td.ocupaGrade()) {
+				tiposDisciplinasPresenciais.add(td);
+			}
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
 			" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) " +
-			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
+			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + " AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
 			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
 			" GROUP BY o.aluno ");
 
@@ -641,6 +649,7 @@ public class AlunoDemanda
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "aluno", aluno );
 		q.setParameter( "matricula", matricula );
+		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
@@ -723,12 +732,20 @@ public class AlunoDemanda
 		{
 			queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
 		}
+		
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
+		for (TipoDisciplina td : tiposDisciplinas) {
+			if (td.ocupaGrade()) {
+				tiposDisciplinasPresenciais.add(td);
+			}
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT COUNT (DISTINCT o.aluno ) FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
-			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + "AND o.demanda.disciplina.tipoDisciplina = 1" +
+			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + " AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
 			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
 			" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) ");
 
@@ -744,6 +761,7 @@ public class AlunoDemanda
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "aluno", aluno );
 		q.setParameter( "matricula", matricula );
+		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
