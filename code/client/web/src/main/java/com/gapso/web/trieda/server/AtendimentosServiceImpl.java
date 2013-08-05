@@ -725,7 +725,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 
 				// transforma um subgrupo de atendimentos consecutivos em apenas um atendimento (na prática, uma aula)
 				for (List<AtendimentoOperacionalDTO> subgrupoDeAtendimentosConsecutivos : subgruposDeAtendimentosConsecutivos) {
-					AtendimentoOperacionalDTO aula = subgrupoDeAtendimentosConsecutivos.get(0) ;
+					AtendimentoOperacionalDTO aula = new AtendimentoOperacionalDTO(subgrupoDeAtendimentosConsecutivos.get(0));
 					aula.setTotalCreditos(subgrupoDeAtendimentosConsecutivos.size());
 					aulas.add(aula);
 				}
