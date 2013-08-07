@@ -787,11 +787,5 @@ public class AlunosDemandaServiceImpl
 		System.out.println("Soma disciplinas nao atendidas P1: " + disNaoAtendidosP1);
 		System.out.println("Soma disciplinas atendidas P2: " + disAtendidosP2);
 	}
-	
-	public int calculaQuantTurmaPorDisciplina(Campus campus, List<Disciplina> disciplinas){
-		
-		
-		return 0;
-	}
-	
+
 }

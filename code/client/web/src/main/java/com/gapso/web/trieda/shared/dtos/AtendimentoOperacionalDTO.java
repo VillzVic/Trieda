@@ -148,6 +148,7 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 		this.setUnidadeId(other.getUnidadeId());
 		this.setUnidadeString(other.getUnidadeString());
 		this.setVersion(other.getVersion());
+		this.alunosDemandasDTO = other.getAlunosDemandas();
 	}
 
 	public void setId( Long value )
