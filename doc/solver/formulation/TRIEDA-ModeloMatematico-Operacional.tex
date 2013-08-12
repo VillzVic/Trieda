@@ -447,7 +447,7 @@ $$
 \end{eqnarray}
 
 
-\subsubsection{Somente um professor deve ser alocado para aulas de turma e disciplina}
+\subsubsection{Somente um professor deve ser alocado para aulas de uma mesma turma de disciplina}
 
 \begin{eqnarray}
 \sum\limits_{p \in P \cup PV} y_{p,d,i,cp} \leq 1 \nonumber \qquad
@@ -455,6 +455,20 @@ $$
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
+
+
+\subsubsection{Somente um professor deve ser alocado para duas turmas de disciplina prática e teórica com aluno em comum}
+
+\begin{eqnarray}
+y_{p,dt,it,cpt} = y_{p,dp,ip,cpp} \nonumber \qquad
+\forall p \in P \quad
+\forall cpp \in Cp \quad
+\forall cpt \in Cp \quad
+\forall d=(dt,dp) \in D \quad
+\forall it \in I_{dt} \quad
+\forall ip \in I_{dp} \quad \mbox{(ip,dp) tem aluno em comum com (it,dt)} \quad
+\end{eqnarray}
+
 
 % RESTRIÇÕES DE FIXAÇÕES ABAIXO ESTÃO ERRADAS. FIX-ME
 %\subsubsection{Restrição de fixação de professor, disciplina, sala, dia e horário}
@@ -530,16 +544,16 @@ $$
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de minimizar o número de dias}
+\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de minimizar o número de dias (distribuir carga horária semanal)}
 
 \begin{eqnarray}
-pt_{p,t} \ge \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qquad 
+M \cdot pt_{p,t} \ge \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qquad 
 \forall p \in P \quad
 \forall t \in T
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de maximizar o número de dias}
+\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de maximizar o número de dias (equilibrar carga horária semanal)}
 
 \begin{eqnarray}
 pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qquad 
@@ -556,7 +570,7 @@ pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qqu
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza o número de professores virtuais no curso}
+\subsubsection{Estima o número de professores virtuais no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
 \sum\limits_{pv \in PV}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npv_{c} \nonumber \qquad 
@@ -566,7 +580,7 @@ pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qqu
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza o número de professores virtuais mestres no curso}
+\subsubsection{Estima o número de professores virtuais mestres no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
 \sum\limits_{pv \in PV_{m}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvm_{c} \nonumber \qquad 
@@ -576,7 +590,7 @@ pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qqu
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza o número de professores virtuais doutores no curso}
+\subsubsection{Estima o número de professores virtuais doutores no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
 \sum\limits_{pv \in PV_{d}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvd_{c} \nonumber \qquad 
@@ -586,13 +600,54 @@ pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qqu
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza o número de professores virtuais gerais no curso}
+\subsubsection{Estima o número de professores virtuais gerais no curso (Somente para primeira rodada, quando professores virtuais estão sendo estimados)}
 
 \begin{eqnarray}
 \sum\limits_{pv \in PV_{g}}\sum\limits_{a \in A_{c}}\sum\limits_{\substack {h' \in H \\ h'\mbox{ sobrepoe }h}} x_{pv,a,h'} \le npvg_{c} \nonumber \qquad 
 \forall h \in H \quad
 \forall c \in C \quad
 \forall t \in T
+\end{eqnarray}
+
+
+
+\subsubsection{Calcula o número de professores virtuais no curso ((Somente para segunda rodada, quando professores virtuais já foram criados)}
+
+\begin{eqnarray}
+\sum\limits_{p \in PV} w_{p,c} = npv_{c} \nonumber \qquad 
+\forall c \in C
+\end{eqnarray}
+
+
+\subsubsection{Calcula o número de professores virtuais mestres no curso (Somente para segunda rodada, quando professores virtuais já foram criados)}
+
+\begin{eqnarray}
+\sum\limits_{p \in PV_{m}} w_{p,c} = npvm_{c} \nonumber \qquad 
+\forall c \in C
+\end{eqnarray}
+
+
+\subsubsection{Calcula o número de professores virtuais doutores no curso (Somente para segunda rodada, quando professores virtuais já foram criados)}
+
+\begin{eqnarray}
+\sum\limits_{p \in PV_{d}} w_{p,c} = npvd_{c} \nonumber \qquad 
+\forall c \in C
+\end{eqnarray}
+
+
+\subsubsection{Calcula o número de professores virtuais gerais no curso (Somente para segunda rodada, quando professores virtuais já foram criados)}
+
+\begin{eqnarray}
+\sum\limits_{p \in PV_{g}} w_{p,c} = npvg_{c} \nonumber \qquad 
+\forall c \in C
+\end{eqnarray}
+      
+
+\subsubsection{Uso de professor virtual (Somente para segunda rodada, quando professores virtuais já foram criados) }
+
+\begin{eqnarray}
+M \cdot pv_{p} \ge \sum\limits_{c \in C} w_{p,c} \nonumber \qquad 
+\forall p \in PV
 \end{eqnarray}
 
 
@@ -679,11 +734,16 @@ hf \in H \mbox{, hf é o último horário do dia}
 \subsubsection{Calcula se o professor está alocado para alguma aula do curso}
 
 \begin{eqnarray}
-\sum\limits_{i \in I_{d,c}}\sum\limits_{d \in D} y_{p,d,i} \le M \cdot w_{p,c} \nonumber \qquad 
+\sum\limits_{d \in D} dpc_{d,p,c} \le M \cdot w_{p,c} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
 
+\begin{eqnarray}
+\sum\limits_{d \in D} dpc_{d,p,c} \ge w_{p,c} \nonumber \qquad 
+\forall p \in P \quad
+\forall c \in C
+\end{eqnarray}
 
 \subsubsection{Garante a carga horária mínima de um professor na semana em relação à carga horária do semestre anterior}
 
@@ -718,6 +778,13 @@ hf \in H \mbox{, hf é o último horário do dia}
 \forall d \in D
 \end{eqnarray}    
 
+\begin{eqnarray}
+\sum\limits_{i \in I_{d,c}} y_{p,d,i} \ge dpc_{p,c,d} \nonumber \qquad 
+\forall p \in P \quad
+\forall c \in C \quad
+\forall d \in D
+\end{eqnarray}    
+
 \subsubsection{Garante o máximo de disciplinas ministradas por um professor por curso}
 
 \begin{eqnarray}
@@ -725,7 +792,7 @@ hf \in H \mbox{, hf é o último horário do dia}
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
-                             
+                       
 
 \clearpage
 \end{document}
