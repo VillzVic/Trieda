@@ -650,6 +650,7 @@
           <xs:documentation>lista dos identificadores (ItemDisciplina) das disciplinas não compatíveis com a disciplina em questão, isto é, as disciplinas que não poderão ser oferecidas no mesmo dia (por razões pedagócias) da disciplina em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="profUnicoCredsTeorPrat" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemCurso">
