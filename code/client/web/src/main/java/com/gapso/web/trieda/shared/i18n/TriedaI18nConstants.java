@@ -159,4 +159,6 @@ public interface TriedaI18nConstants
 	String otimizadoTatico();
 	String otimizadoOperacional();
 	String tipoDisciplina();
+	String aulasContinuas();
+	String professorUnico();
 }

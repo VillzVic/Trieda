@@ -824,4 +824,13 @@ public class GTriedaI18nConstants
 	public String atendimentosCargaHoraria() {
 		return this.languageManager.getText("atendimentosCargaHoraria");
 	}
+	
+	public String aulasContinuas() {
+		return this.languageManager.getText("aulasContinuas");
+	}
+
+	@Override
+	public String professorUnico() {
+		return this.languageManager.getText("professorUnico");
+	}
 }

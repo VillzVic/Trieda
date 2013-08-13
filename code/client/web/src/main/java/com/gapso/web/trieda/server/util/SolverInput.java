@@ -1251,6 +1251,8 @@ public class SolverInput
 			itemDisciplina.setMaxAlunosPratico( disciplina.getMaxAlunosPratico() );
 			itemDisciplina.setTipoDisciplinaId( disciplina.getTipoDisciplina().getId().intValue() );
 			itemDisciplina.setNivelDificuldadeId( Dificuldades.toInt( disciplina.getDificuldade() ) );
+			itemDisciplina.setProfUnicoCredsTeorPrat( disciplina.getProfessorUnico() );
+			itemDisciplina.setProfUnicoCredsTeorPrat( disciplina.getAulasContinuas() );
 			
 			DivisaoCredito divisaoCredito = null;
 

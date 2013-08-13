@@ -38,6 +38,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="horariosDisponiveis" type="{}GrupoHorario"/>
  *         &lt;element name="disciplinasEquivalentes" type="{}GrupoIdentificador"/>
  *         &lt;element name="disciplinasIncompativeis" type="{}GrupoIdentificador"/>
+ *         &lt;element name="profUnicoCredsTeorPrat" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="aulasContinuasTeorPrat" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -61,7 +63,9 @@ import javax.xml.bind.annotation.XmlType;
     "divisaoDeCreditos",
     "horariosDisponiveis",
     "disciplinasEquivalentes",
-    "disciplinasIncompativeis"
+    "disciplinasIncompativeis",
+    "profUnicoCredsTeorPrat",
+    "aulasContinuasTeorPrat"
 })
 public class ItemDisciplina {
 
@@ -84,6 +88,8 @@ public class ItemDisciplina {
     protected GrupoIdentificador disciplinasEquivalentes;
     @XmlElement(required = true)
     protected GrupoIdentificador disciplinasIncompativeis;
+    protected boolean profUnicoCredsTeorPrat;
+    protected boolean aulasContinuasTeorPrat;
 
     /**
      * Gets the value of the id property.
@@ -373,4 +379,35 @@ public class ItemDisciplina {
         this.disciplinasIncompativeis = value;
     }
 
+    /**
+     * Gets the value of the profUnicoCredsTeorPrat property.
+     * 
+     */
+    public boolean isProfUnicoCredsTeorPrat() {
+        return profUnicoCredsTeorPrat;
+    }
+
+    /**
+     * Sets the value of the profUnicoCredsTeorPrat property.
+     * 
+     */
+    public void setProfUnicoCredsTeorPrat(boolean value) {
+        this.profUnicoCredsTeorPrat = value;
+    }
+    
+    /**
+     * Gets the value of the aulasContinuasTeorPrat property.
+     * 
+     */
+    public boolean isAulasContinuasTeorPrat() {
+        return aulasContinuasTeorPrat;
+    }
+
+    /**
+     * Sets the value of the profUnicoCredsTeorPrat property.
+     * 
+     */
+    public void setAulasContinuasTeorPrat(boolean value) {
+        this.aulasContinuasTeorPrat = value;
+    }
 }

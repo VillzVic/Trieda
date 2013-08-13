@@ -1626,6 +1626,8 @@ public class ConvertBeans {
 		domain.setDificuldade( Dificuldades.get( dto.getDificuldade() ) );
 		domain.setUsaDomingo( dto.getUsaDomingo() );
 		domain.setUsaSabado( dto.getUsaSabado() );
+		domain.setAulasContinuas( dto.getAulasContinuas() );
+		domain.setProfessorUnico( dto.getProfessorUnico() );
 
 		domain.setTipoDisciplina( TipoDisciplina.find(
 			dto.getTipoId(), instituicaoEnsino ) );
@@ -1656,6 +1658,8 @@ public class ConvertBeans {
 		dto.setDisplayText( domain.getCodigo() + " (" + domain.getNome() + ")" );
 		dto.setUsaDomingo( domain.getUsaDomingo() );
 		dto.setUsaSabado( domain.getUsaSabado() );
+		dto.setAulasContinuas( domain.getAulasContinuas() );
+		dto.setProfessorUnico( domain.getProfessorUnico() );
 
 		if ( instituicaoEnsino != null )
 		{

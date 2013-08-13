@@ -32,6 +32,8 @@ public class DisciplinaFormPresenter
 		NumberField getCreditosTeoricoTextField();
 		NumberField getCreditosPraticoTextField();
 		CheckBox getLaboratorioCheckBox();
+		CheckBox getAulasContinuasCheckBox();
+		CheckBox getProfessorUnicoCheckBox();
 		CheckBox getUsaSabadoCheckBox();
 		CheckBox getUsaDomingoCheckBox();
 		TipoDisciplinaComboBox getTipoDisciplinaComboBox();
@@ -111,6 +113,26 @@ public class DisciplinaFormPresenter
 					return false;
 				}
 			}
+			if (display.getAulasContinuasCheckBox().getValue().booleanValue()) {
+				if (display.getCreditosTeoricoTextField().getValue().intValue() <= 0 ||
+						display.getCreditosPraticoTextField().getValue().intValue() <= 0 ||
+						!display.getLaboratorioCheckBox().getValue().booleanValue() ||
+						(display.getCreditosTeoricoTextField().getValue().intValue() +
+						display.getCreditosPraticoTextField().getValue().intValue() > 4)) {
+					errorMessage = "Aulas Continuas? Selecionado - A disciplina deve conter creditos praticos e teoricos (soma 2, 3 ou 4)" +
+							" e usar laboratório";
+					return false;
+				}
+			}
+			if (!display.getProfessorUnicoCheckBox().getValue().booleanValue()) {
+				if (display.getCreditosTeoricoTextField().getValue().intValue() <= 0 ||
+						display.getCreditosPraticoTextField().getValue().intValue() <= 0 ||
+						!display.getLaboratorioCheckBox().getValue().booleanValue() ) {
+					errorMessage = "Professor Único? Não selecionado - A disciplina deve conter creditos praticos e teoricos" +
+							" e usar laboratório";
+					return false;
+				}
+			}
 			return true;
 		}
 		else
@@ -136,6 +158,8 @@ public class DisciplinaFormPresenter
 		disciplinaDTO.setMaxAlunosPratico(display.getMaxAlunosPraticoTextField().getValue().intValue());
 		disciplinaDTO.setUsaSabado(display.getUsaSabadoCheckBox().getValue());
 		disciplinaDTO.setUsaDomingo(display.getUsaDomingoCheckBox().getValue());
+		disciplinaDTO.setAulasContinuas(display.getAulasContinuasCheckBox().getValue());
+		disciplinaDTO.setProfessorUnico(display.getProfessorUnicoCheckBox().getValue());
 
 		return disciplinaDTO;
 	}

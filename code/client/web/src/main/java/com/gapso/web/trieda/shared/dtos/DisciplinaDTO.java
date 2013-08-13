@@ -21,6 +21,8 @@ public class DisciplinaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_MAX_ALUNOS_PRATICO = "maxAlunosPratico";
 	public static final String PROPERTY_USA_SABADO = "usaSabado";
 	public static final String PROPERTY_USA_DOMINGO = "usaDomingo";
+	public static final String PROPERTY_AULAS_CONTINUAS = "aulasContinuas";
+	public static final String PROPERTY_PROFESSOR_UNICO = "professorUnico";
 
 	public DisciplinaDTO()
 	{
@@ -132,6 +134,22 @@ public class DisciplinaDTO extends AbstractDTO<String>
 	
 	public void setUsaDomingo(Boolean value) {
 		set(PROPERTY_USA_DOMINGO, value);
+	}
+	
+	public Boolean getAulasContinuas() {
+		return get(PROPERTY_AULAS_CONTINUAS);
+	}
+	
+	public void setAulasContinuas(Boolean value) {
+		set(PROPERTY_AULAS_CONTINUAS, value);
+	}
+	
+	public Boolean getProfessorUnico() {
+		return get(PROPERTY_PROFESSOR_UNICO);
+	}
+	
+	public void setProfessorUnico(Boolean value) {
+		set(PROPERTY_PROFESSOR_UNICO, value);
 	}
 	
 	public int getTotalCreditos() {

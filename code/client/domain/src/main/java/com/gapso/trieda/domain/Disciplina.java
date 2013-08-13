@@ -119,6 +119,14 @@ public class Disciplina
 	@Min( 0L )
 	@Max( 999L )
 	private Integer maxAlunosPratico;
+	
+	@NotNull
+	@Column( name = "DIS_AULAS_CONTINUAS" )
+	private Boolean aulasContinuas;
+	
+	@NotNull
+	@Column( name = "DIS_PROFESSOR_UNICO" )
+	private Boolean professorUnico;
 
 	@ManyToMany( cascade = { CascadeType.PERSIST,
 		CascadeType.MERGE }, mappedBy = "disciplinas" )
@@ -1033,6 +1041,26 @@ public class Disciplina
 		Integer maxAlunosPratico )
 	{
 		this.maxAlunosPratico = maxAlunosPratico;
+	}
+	
+	public Boolean getAulasContinuas()
+	{
+		return this.aulasContinuas;
+	}
+	
+	public void setAulasContinuas(Boolean aulasContinuas )
+	{
+		this.aulasContinuas = aulasContinuas;
+	}
+	
+	public Boolean getProfessorUnico()
+	{
+		return this.professorUnico;
+	}
+	
+	public void setProfessorUnico(Boolean professorUnico )
+	{
+		this.professorUnico = professorUnico;
 	}
 	
 	public Boolean getUsaSabado()

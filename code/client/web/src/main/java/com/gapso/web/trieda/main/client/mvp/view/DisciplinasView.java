@@ -114,6 +114,8 @@ public class DisciplinasView
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_DIFICULDADE, getI18nConstants().nivelDificuldade(), 120 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, getI18nConstants().maxAlunosTeorico(), 120 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, getI18nConstants().maxAlunosPratico(), 120 ) );
+		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_AULAS_CONTINUAS, getI18nConstants().aulasContinuas(), 100 ) );
+		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_PROFESSOR_UNICO, getI18nConstants().professorUnico(), 100 ) );
 		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_SABADO, getI18nConstants().usaSabado(), 80 ) );
 		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_DOMINGO, getI18nConstants().usaDomingo(), 80 ) );
 
