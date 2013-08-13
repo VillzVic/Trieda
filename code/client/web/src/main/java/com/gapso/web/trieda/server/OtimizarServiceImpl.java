@@ -2,9 +2,7 @@ package com.gapso.web.trieda.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -647,7 +645,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					// apenas faz validação se currículo tem oferta no campus a ser otimizado
 					if (curriculoTemOfertaNoCampusASerOtimizado) {
 						boolean estaAssociadoComAlgumLaboratorio = false;
-						for (Sala sala : curriculoDisciplina.getSalas()) {
+						for (Sala sala : curriculoDisciplina.getDisciplina().getSalas()) {
 							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(campus)) {
 								estaAssociadoComAlgumLaboratorio = true;
 								break;

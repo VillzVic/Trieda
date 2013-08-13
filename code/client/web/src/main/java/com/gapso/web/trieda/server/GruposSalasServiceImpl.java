@@ -14,10 +14,12 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -184,5 +186,88 @@ public class GruposSalasServiceImpl
 			getInstituicaoEnsinoUser(), nome, codigo, unidade ) );
 
 		return result;
+	}
+	
+	@Override
+	public void vincula( DisciplinaDTO disciplinaDTO, List< GrupoSalaDTO > gruposSalasDTO )
+	{
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		for ( GrupoSalaDTO gruposSalaDTO : gruposSalasDTO )
+		{
+			GrupoSala sal = GrupoSala.find(
+					gruposSalaDTO.getId(), this.getInstituicaoEnsinoUser() );
+			sal.getDisciplinas().add( disciplina );
+			sal.merge();
+		}
+	}
+	
+	@Override
+	public void desvincula( DisciplinaDTO disciplinaDTO, List< GrupoSalaDTO > gruposSalasDTO )
+	{
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		for ( GrupoSalaDTO gruposSalaDTO : gruposSalasDTO )
+		{
+			GrupoSala sal = GrupoSala.find(
+					gruposSalaDTO.getId(), this.getInstituicaoEnsinoUser() );
+			sal.getDisciplinas().remove( disciplina );
+			sal.merge();
+		}
+	}
+	
+	@Override
+	public List< GrupoSalaDTO > getListVinculadas( DisciplinaDTO disciplinaDTO )
+	{
+		if ( disciplinaDTO == null )
+		{
+			return Collections.< GrupoSalaDTO >emptyList();
+		}
+
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		Set< GrupoSala > grupoSalaList = disciplina.getGruposSala();
+		List< GrupoSalaDTO > grupoSalaDTOList
+			= new ArrayList< GrupoSalaDTO >( grupoSalaList.size() );
+
+		for ( GrupoSala grupoSala : grupoSalaList )
+		{
+			grupoSalaDTOList.add(
+				ConvertBeans.toGrupoSalaDTO( grupoSala ) );
+		}
+
+		return grupoSalaDTOList;
+	}
+
+	@Override
+	public List< GrupoSalaDTO > getListNaoVinculadas( DisciplinaDTO disciplinaDTO )
+	{
+		if ( disciplinaDTO == null )
+		{
+			return Collections.< GrupoSalaDTO >emptyList();
+		}
+
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		Set< GrupoSala > grupoSalaList = disciplina.getGruposSala();
+		List< GrupoSala > todasGrupoSalaList
+			= new ArrayList< GrupoSala >( GrupoSala.findAll(getInstituicaoEnsinoUser()) );
+
+		todasGrupoSalaList.removeAll( grupoSalaList );
+
+		List< GrupoSalaDTO > grupoSalaDTOList
+			= new ArrayList< GrupoSalaDTO >( todasGrupoSalaList.size() );
+
+		for ( GrupoSala grupoSala : todasGrupoSalaList )
+		{
+			grupoSalaDTOList.add(
+				ConvertBeans.toGrupoSalaDTO( grupoSala ) );
+		}
+
+		return grupoSalaDTOList;
 	}
 }

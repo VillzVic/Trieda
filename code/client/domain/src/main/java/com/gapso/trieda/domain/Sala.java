@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -106,8 +107,11 @@ public class Sala
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
-    private Set< CurriculoDisciplina > curriculoDisciplinas = new HashSet< CurriculoDisciplina >();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="disciplinas_salas",
+	joinColumns={ @JoinColumn(name="sal_id") },
+	inverseJoinColumns={ @JoinColumn(name="dis_id") })
+    private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
     private Set< GrupoSala > gruposSala = new HashSet< GrupoSala >();
@@ -139,7 +143,7 @@ public class Sala
         sb.append( "Capacidade: " ).append( getCapacidade() ).append(", ");
         sb.append( "Horarios: " ).append( getHorarios() == null ? "null" : getHorarios().size() ).append(", ");
         sb.append( "CurriculoDisciplinas: " ).append(
-        	getCurriculoDisciplinas() == null ? "null" : getCurriculoDisciplinas().size() ).append(", ");
+        	getDisciplinas() == null ? "null" : getDisciplinas().size() ).append(", ");
         sb.append( "GruposSala: " ).append(
         	getGruposSala() == null ? "null" : getGruposSala().size() );
         sb.append( "Atendimentos Operacionais: " ).append(
@@ -317,7 +321,7 @@ public class Sala
 			}
         }
     }
-
+	
     @Transactional
     public void removeHorariosDisponivelCenario()
     {
@@ -333,13 +337,13 @@ public class Sala
     @Transactional
     public void removeCurriculoDisciplinas()
     {
-    	Set< CurriculoDisciplina > curriculoDisciplinas
-    		= this.getCurriculoDisciplinas();
+    	Set< Disciplina > disciplinas
+    		= this.getDisciplinas();
 
-    	for ( CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas )
+    	for ( Disciplina disciplina : disciplinas )
     	{
-    		curriculoDisciplina.getSalas().remove( this );
-    		curriculoDisciplina.merge();
+    		disciplina.getSalas().remove( this );
+    		disciplina.merge();
     	}
     }
 
@@ -488,9 +492,9 @@ public class Sala
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
-			"SELECT cd FROM CurriculoDisciplina cd " +
-			"WHERE cd.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
-			" AND :sala IN ELEMENTS ( cd.salas ) " );
+			"SELECT d FROM Disciplina d " +
+			"WHERE d.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND :sala IN ELEMENTS ( d.salas ) " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "sala", this );
@@ -882,15 +886,15 @@ public class Sala
         this.horarios = horarios;
     }
 
-	public Set< CurriculoDisciplina > getCurriculoDisciplinas()
+	public Set< Disciplina > getDisciplinas()
 	{
-        return this.curriculoDisciplinas;
+        return this.disciplinas;
     }
 
 	public void setCurriculoDisciplinas(
-		Set< CurriculoDisciplina > curriculoDisciplinas )
+		Set< Disciplina > disciplinas )
 	{
-        this.curriculoDisciplinas = curriculoDisciplinas;
+        this.disciplinas = disciplinas;
     }
 
 	public Set< GrupoSala > getGruposSala()

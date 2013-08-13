@@ -38,6 +38,7 @@ public class DisciplinasView
 	private TipoDisciplinaComboBox tipoDisciplinaBuscaComboBox;
 	private Button disponibilidadeBT;
 	private Button divisaoCreditoBT;
+	private Button associarSalasBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 
@@ -82,6 +83,12 @@ public class DisciplinasView
 			Resources.DEFAULTS.disponibilidade16() );
 
 		this.toolBar.add( this.disponibilidadeBT );
+		
+		this.associarSalasBT = this.toolBar.createButton(
+				getI18nConstants().disciplinasSalas(),
+				Resources.DEFAULTS.associacaoDisciplinaSala16() );
+
+		this.toolBar.add( this.associarSalasBT );
 		this.panel.setTopComponent( this.toolBar );
 	}
 
@@ -223,5 +230,11 @@ public class DisciplinasView
 	public Button getDivisaoCreditoButton()
 	{
 		return this.divisaoCreditoBT;
+	}
+	
+	@Override
+	public Button getAssociarSalasButton()
+	{
+		return this.associarSalasBT;
 	}
 }

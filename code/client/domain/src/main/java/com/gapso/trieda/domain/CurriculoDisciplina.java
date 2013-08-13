@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -64,15 +61,6 @@ public class CurriculoDisciplina
     @Max( 100L )
     private Integer periodo;
 
-    @ManyToMany( cascade = { CascadeType.PERSIST,
-    	CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
-    private Set< Sala > salas = new HashSet< Sala >();
-
-    @ManyToMany( cascade = { CascadeType.PERSIST,
-    	CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH },
-    	mappedBy = "curriculoDisciplinas" )
-    private Set< GrupoSala > gruposSala = new HashSet< GrupoSala >();
-
 	public String toString()
 	{
         StringBuilder sb = new StringBuilder();
@@ -82,10 +70,6 @@ public class CurriculoDisciplina
         sb.append( "Curriculo: " ).append( getCurriculo() ).append( ", " );
         sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
         sb.append( "Periodo: " ).append( getPeriodo() ).append( ", " );
-        sb.append( "Salas: " ).append( getSalas() == null ? "null" :
-        	getSalas().size() ).append( ", " );
-        sb.append( "GruposSala: " ).append( getGruposSala() == null ? "null" :
-        	getGruposSala().size() );
 
         return sb.toString();
     }
@@ -118,28 +102,6 @@ public class CurriculoDisciplina
 	public void setPeriodo( Integer periodo )
 	{
         this.periodo = periodo;
-    }
-
-	public Set< Sala > getSalas()
-	{
-        return this.salas;
-    }
-
-	public void setSalas(
-		Set< Sala > salas )
-	{
-        this.salas = salas;
-    }
-
-	public Set< GrupoSala > getGruposSala()
-	{
-        return this.gruposSala;
-    }
-
-	public void setGruposSala(
-		Set< GrupoSala > gruposSala )
-	{
-        this.gruposSala = gruposSala;
     }
 	
 	public String getNaturalKeyString()
@@ -216,7 +178,6 @@ public class CurriculoDisciplina
 
         if ( this.entityManager.contains( this ) )
         {
-        	this.removeGruposSala();
             this.entityManager.remove( this );
         }
         else
@@ -224,21 +185,11 @@ public class CurriculoDisciplina
             CurriculoDisciplina attached
             	= this.entityManager.find( this.getClass(), this.id );
 
-            attached.removeGruposSala();
             this.entityManager.remove( attached );
         }
     }
 
-    @Transactional
-    public void removeGruposSala()
-    {
-    	Set< GrupoSala > gruposSala = this.getGruposSala();
-    	for ( GrupoSala grupoSala : gruposSala )
-    	{
-    		grupoSala.getCurriculoDisciplinas().remove( this );
-    		grupoSala.merge();
-    	}
-    }
+
 
 	@Transactional
     public void flush()
@@ -454,7 +405,7 @@ public class CurriculoDisciplina
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o, " +
-			" IN ( o.salas ) sala " +
+			" IN ( o.disciplina.salas ) sala " +
 			" WHERE sala = :sala " +
 			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +

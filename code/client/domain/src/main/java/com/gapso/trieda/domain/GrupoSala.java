@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -12,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
@@ -58,8 +60,11 @@ public class GrupoSala
     @ManyToMany
     private Set<Sala> salas = new HashSet<Sala>();
 
-    @ManyToMany
-    private Set<CurriculoDisciplina> curriculoDisciplinas = new HashSet<CurriculoDisciplina>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="disciplinas_grupos_sala",
+	joinColumns={ @JoinColumn(name="grs_id") },
+	inverseJoinColumns={ @JoinColumn(name="dis_id") })
+    private Set<Disciplina> disciplinas = new HashSet<Disciplina>();
 
 	public Unidade getUnidade() {
         return this.unidade;
@@ -93,12 +98,12 @@ public class GrupoSala
         this.salas = salas;
     }
 
-	public Set<CurriculoDisciplina> getCurriculoDisciplinas() {
-        return this.curriculoDisciplinas;
+	public Set<Disciplina> getDisciplinas() {
+        return this.disciplinas;
     }
 
-	public void setCurriculoDisciplinas(Set<CurriculoDisciplina> curriculoDisciplinas) {
-        this.curriculoDisciplinas = curriculoDisciplinas;
+	public void setDisciplinas(Set<Disciplina> disciplinas) {
+        this.disciplinas = disciplinas;
     }
 
 	public String toString()
@@ -111,8 +116,8 @@ public class GrupoSala
         sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
         sb.append( "Nome: " ).append( getNome() ).append( ", " );
         sb.append( "Salas: " ).append( getSalas() == null ? "null" : getSalas().size()).append( ", " );
-        sb.append( "CurriculoDisciplinas: " ).append( getCurriculoDisciplinas() == null ?
-        	"null" : getCurriculoDisciplinas().size() );
+        sb.append( "Disciplinas: " ).append( getDisciplinas() == null ?
+        	"null" : getDisciplinas().size() );
 
         return sb.toString();
     }

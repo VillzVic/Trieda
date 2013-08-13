@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -21,5 +22,9 @@ public interface GruposSalasServiceAsync {
 	void getSalas(GrupoSalaDTO grupoSalaDTO, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void saveSalas(List<SalaDTO> salaDTOList, GrupoSalaDTO grupoSalaDTO, AsyncCallback<Void> callback);
 	void getListByUnidade(UnidadeDTO unidadeDTO, AsyncCallback<ListLoadResult<GrupoSalaDTO>> callback);
+	void vincula(DisciplinaDTO disciplinaDTO, List<GrupoSalaDTO> gruposSalasDTO, AsyncCallback<Void> callback);
+	void desvincula(DisciplinaDTO disciplinaDTO, List<GrupoSalaDTO> gruposSalasDTO, AsyncCallback<Void> callback);
+	void getListVinculadas(DisciplinaDTO disciplinaDTO,	AsyncCallback<List<GrupoSalaDTO>> callback);
+	void getListNaoVinculadas(DisciplinaDTO disciplinaDTO, AsyncCallback<List<GrupoSalaDTO>> callback);
 	
 }

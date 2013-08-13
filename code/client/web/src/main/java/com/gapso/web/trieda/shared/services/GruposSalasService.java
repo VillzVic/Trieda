@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -26,5 +27,9 @@ public interface GruposSalasService extends RemoteService {
 	ListLoadResult<SalaDTO> getSalas(GrupoSalaDTO grupoSalaDTO);
 	void saveSalas(List<SalaDTO> salaDTOList, GrupoSalaDTO grupoSalaDTO);
 	ListLoadResult<GrupoSalaDTO> getListByUnidade(UnidadeDTO unidadeDTO);
+	void vincula(DisciplinaDTO disciplinaDTO, List<GrupoSalaDTO> gruposSalasDTO);
+	void desvincula(DisciplinaDTO disciplinaDTO, List<GrupoSalaDTO> gruposSalasDTO);
+	List<GrupoSalaDTO> getListVinculadas(DisciplinaDTO disciplinaDTO);
+	List<GrupoSalaDTO> getListNaoVinculadas(DisciplinaDTO disciplinaDTO);
 	
 }

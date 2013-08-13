@@ -204,15 +204,15 @@ public class Oferta
 			"SELECT DISTINCT ( o ) FROM Oferta o, IN " +
 			"( o.curriculo.disciplinas ) dis " +
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND dis IN ( :disciplinas ) " );
+			" AND dis.disciplina IN ( :disciplinas ) " );
 
-		Set< CurriculoDisciplina > curriculoDisciplinas
-			= sala.getCurriculoDisciplinas();
+		Set< Disciplina > disciplinas
+			= sala.getDisciplinas();
 
-		q.setParameter( "disciplinas", sala.getCurriculoDisciplinas() );
+		q.setParameter( "disciplinas", sala.getDisciplinas() );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		if ( curriculoDisciplinas.isEmpty() )
+		if ( disciplinas.isEmpty() )
 		{
 			return Collections.< Oferta > emptyList();
 		}
@@ -228,12 +228,12 @@ public class Oferta
 			" SELECT DISTINCT ( o ) FROM Oferta o, " +
 			" IN ( o.curriculo.disciplinas ) dis " +
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND dis IN ( :disciplinas ) " );
+			" AND dis.disciplina IN ( :disciplinas ) " );
 
-		Set< CurriculoDisciplina > curriculoDisciplinas
-			= grupoSala.getCurriculoDisciplinas();
+		Set< Disciplina > curriculoDisciplinas
+			= grupoSala.getDisciplinas();
 
-		q.setParameter( "disciplinas", grupoSala.getCurriculoDisciplinas() );
+		q.setParameter( "disciplinas", grupoSala.getDisciplinas() );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( curriculoDisciplinas.isEmpty() )

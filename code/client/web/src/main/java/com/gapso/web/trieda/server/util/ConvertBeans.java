@@ -494,8 +494,6 @@ public class ConvertBeans {
 		dto.setCampusId( domain.getUnidade().getCampus().getId() );
 		dto.setUnidadeId( domain.getUnidade().getId() );
 		dto.setUnidadeString( domain.getUnidade().getCodigo() );
-		dto.setContainsCurriculoDisciplina(
-			domain.getContainsCurriculoDisciplina( instituicaoEnsino ) );
 		dto.setDisplayText( domain.getCodigo() + " (" + domain.getNumero() + ")" );
 		
 		if ( instituicaoEnsino != null )

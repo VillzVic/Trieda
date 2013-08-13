@@ -236,7 +236,7 @@ public class Unidade implements Serializable
     	{
     		for ( Sala s : this.getSalas() )
     		{
-    			cd.getSalas().remove( s );
+    			cd.getDisciplina().getSalas().remove( s );
     			cd.merge();
     		}
     	}

@@ -1,9 +1,11 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -24,6 +27,7 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -352,5 +356,88 @@ public class SalasServiceImpl
 		}
 
 		return new BaseListLoadResult< TipoSalaDTO >( listDTO );
+	}
+	
+	@Override
+	public void vincula( DisciplinaDTO disciplinaDTO, List< SalaDTO > salasDTO )
+	{
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		for ( SalaDTO salaDTO : salasDTO )
+		{
+			Sala sal = Sala.find(
+					salaDTO.getId(), this.getInstituicaoEnsinoUser() );
+			sal.getDisciplinas().add( disciplina );
+			sal.merge();
+		}
+	}
+	
+	@Override
+	public void desvincula( DisciplinaDTO disciplinaDTO, List< SalaDTO > salasDTO )
+	{
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		for ( SalaDTO salaDTO : salasDTO )
+		{
+			Sala sal = Sala.find(
+					salaDTO.getId(), this.getInstituicaoEnsinoUser() );
+			sal.getDisciplinas().remove( disciplina );
+			sal.merge();
+		}
+	}
+	
+	@Override
+	public List< SalaDTO > getListVinculadas( DisciplinaDTO disciplinaDTO )
+	{
+		if ( disciplinaDTO == null )
+		{
+			return Collections.< SalaDTO >emptyList();
+		}
+
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		Set< Sala > salaList = disciplina.getSalas();
+		List< SalaDTO > salaDTOList
+			= new ArrayList< SalaDTO >( salaList.size() );
+
+		for ( Sala sala : salaList )
+		{
+			salaDTOList.add(
+				ConvertBeans.toSalaDTO( sala ) );
+		}
+
+		return salaDTOList;
+	}
+
+	@Override
+	public List< SalaDTO > getListNaoVinculadas( DisciplinaDTO disciplinaDTO )
+	{
+		if ( disciplinaDTO == null )
+		{
+			return Collections.< SalaDTO >emptyList();
+		}
+
+		Disciplina disciplina = Disciplina.find(
+				disciplinaDTO.getId(), this.getInstituicaoEnsinoUser() );
+
+		Set< Sala > salaList = disciplina.getSalas();
+		List< Sala > salaDTOList
+			= new ArrayList< Sala >( Sala.findAll(getInstituicaoEnsinoUser()) );
+
+		salaDTOList.removeAll( salaList );
+
+		List< SalaDTO > areaTitulacaoDTOList
+			= new ArrayList< SalaDTO >( salaDTOList.size() );
+
+		for ( Sala sala : salaDTOList )
+		{
+			areaTitulacaoDTOList.add(
+				ConvertBeans.toSalaDTO( sala ) );
+		}
+
+		return areaTitulacaoDTOList;
 	}
 }

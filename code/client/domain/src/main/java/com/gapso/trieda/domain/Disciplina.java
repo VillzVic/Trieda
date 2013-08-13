@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -157,6 +158,20 @@ public class Disciplina
 	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 		CascadeType.REFRESH }, mappedBy="disciplinas" )
 	private Set< ProfessorVirtual > professoresVirtuais = new HashSet< ProfessorVirtual >();
+	
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
+	@JoinTable(name="disciplinas_salas",
+	joinColumns={ @JoinColumn(name="dis_id") },
+	inverseJoinColumns={ @JoinColumn(name="sal_id") })
+    private Set< Sala > salas = new HashSet< Sala >();
+
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
+	@JoinTable(name="disciplinas_grupos_sala",
+	joinColumns={ @JoinColumn(name="dis_id") },
+	inverseJoinColumns={ @JoinColumn(name="grs_id") })
+    private Set< GrupoSala > gruposSala = new HashSet< GrupoSala >();
 
 	public String toString()
 	{
@@ -197,6 +212,10 @@ public class Disciplina
 			"null" : getAtendimentosOperacionais().size() ).append( ", " );
 		sb.append( "Atendimentos Taticos: " ).append( getAtendimentosTaticos() == null ?
 			"null" : getAtendimentosTaticos().size() );
+        sb.append( "Salas: " ).append( getSalas() == null ? "null" :
+        	getSalas().size() ).append( ", " );
+        sb.append( "GruposSala: " ).append( getGruposSala() == null ? "null" :
+        	getGruposSala().size() );
 
 		return sb.toString();
 	}
@@ -233,6 +252,28 @@ public class Disciplina
 		this.version = version;
 	}
 
+	public Set< Sala > getSalas()
+	{
+        return this.salas;
+    }
+
+	public void setSalas(
+		Set< Sala > salas )
+	{
+        this.salas = salas;
+    }
+
+	public Set< GrupoSala > getGruposSala()
+	{
+        return this.gruposSala;
+    }
+
+	public void setGruposSala(
+		Set< GrupoSala > gruposSala )
+	{
+        this.gruposSala = gruposSala;
+    }
+	
 	@Transactional
 	public void detach()
 	{

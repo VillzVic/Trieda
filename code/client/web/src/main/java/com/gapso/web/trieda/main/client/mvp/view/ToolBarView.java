@@ -53,6 +53,7 @@ public class ToolBarView
 	private Button salasListSalasBt;
 	private Button gruposSalasListSalasBt;
 	private Button associarDisciplinasSalasListSalasBt;
+	private Button associarDisciplinasGruposSalasListSalasBt;
 
 	// Cursos
 	private Button cursosNovoCursosBt;
@@ -69,6 +70,7 @@ public class ToolBarView
 	private Button demandasDisciplinasBt;
 	private Button curriculosListDisciplinasBt;
 	private Button associarDisciplinasSalasListDisciplinasBt;
+	private Button associarDisciplinasGruposSalasListDisciplinasBt;
 	private Button divisaoCreditosListDisciplinasBt;
 	private Button equivalenciasListDisciplinasBt;
 	private Button compatibilidadesListDisciplinasBt;
@@ -280,6 +282,11 @@ public class ToolBarView
 			"Associação de<br />Disciplinas à Salas",
 			"Associação de Disciplinas à Salas", Resources.DEFAULTS.associacaoDisciplinaSala24() );
 		salasToolBar.add( associarDisciplinasSalasListSalasBt );
+		
+		associarDisciplinasGruposSalasListSalasBt = createButton(
+				"Associação de<br />Disciplinas à Grupos Salas",
+				"Associação de Disciplinas à Grupos Salas", Resources.DEFAULTS.grupoSala24() );
+			salasToolBar.add( associarDisciplinasGruposSalasListSalasBt );
 	}
 
 	private void createCursos()
@@ -331,6 +338,11 @@ public class ToolBarView
 			"Associação de<br />Disciplinas à Salas",
 			"Associação de Disciplinas à Salas", Resources.DEFAULTS.associacaoDisciplinaSala24() );
 		disciplinasToolBar.add( associarDisciplinasSalasListDisciplinasBt );
+		
+		associarDisciplinasGruposSalasListDisciplinasBt = createButton(
+			"Associação de<br />Disciplinas à Grupos Salas",
+			"Associação de Disciplinas à Grupos Salas", Resources.DEFAULTS.grupoSala24() );
+		disciplinasToolBar.add( associarDisciplinasGruposSalasListDisciplinasBt );
 
 		curriculosListDisciplinasBt = createButton( "Matrizes<br />Curriculares",
 			"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
@@ -619,6 +631,12 @@ public class ToolBarView
 	{
 		return associarDisciplinasSalasListSalasBt;
 	}
+	
+	@Override
+	public Button getAssociarDisciplinasGruposSalasListSalasButton()
+	{
+		return associarDisciplinasGruposSalasListSalasBt;
+	}
 
 	@Override
 	public Button getDemandasDisciplinasButton()
@@ -785,6 +803,12 @@ public class ToolBarView
 	public Button getAssociarDisciplinasSalasListDisciplinasButton()
 	{
 		return associarDisciplinasSalasListDisciplinasBt;
+	}
+	
+	@Override
+	public Button getAssociarDisciplinasGruposSalasListDisciplinasButton()
+	{
+		return associarDisciplinasGruposSalasListDisciplinasBt;
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.DivisaoCreditoDisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelDisciplinaFormView;
+import com.gapso.web.trieda.main.client.mvp.view.SalasAssociarDisciplinaView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
@@ -61,6 +62,7 @@ implements Presenter
 		TipoDisciplinaComboBox getTipoDisciplinaBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
+		Button getAssociarSalasButton();
 		SimpleGrid< DisciplinaDTO > getGrid();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< DisciplinaDTO > > proxy );
@@ -288,6 +290,20 @@ implements Presenter
 						presenter.go( null );
 					}
 				});
+			}
+		});
+		
+		this.display.getAssociarSalasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				Presenter presenter = new SalasAssociarDisciplinaPresenter(
+						instituicaoEnsinoDTO,
+						new SalasAssociarDisciplinaView( disciplinaDTO ) );
+					presenter.go( gTab );
 			}
 		});
 

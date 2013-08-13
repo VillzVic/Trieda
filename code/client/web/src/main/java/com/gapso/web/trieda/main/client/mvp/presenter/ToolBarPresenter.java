@@ -22,12 +22,12 @@ import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CursosView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandasView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
-import com.gapso.web.trieda.main.client.mvp.view.DisciplinasAssociarSalaView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.main.client.mvp.view.DivisoesCreditosView;
 import com.gapso.web.trieda.main.client.mvp.view.EquivalenciasView;
 import com.gapso.web.trieda.main.client.mvp.view.ExportExcelFormView;
 import com.gapso.web.trieda.main.client.mvp.view.FixacoesView;
+import com.gapso.web.trieda.main.client.mvp.view.GruposSalasAssociarDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosView;
@@ -45,6 +45,7 @@ import com.gapso.web.trieda.main.client.mvp.view.ResumoDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoMatriculasView;
 import com.gapso.web.trieda.main.client.mvp.view.ResumoPercentMestresDoutoresView;
 import com.gapso.web.trieda.main.client.mvp.view.SalaFormView;
+import com.gapso.web.trieda.main.client.mvp.view.SalasAssociarDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.SalasView;
 import com.gapso.web.trieda.main.client.mvp.view.SemanasLetivaView;
 import com.gapso.web.trieda.main.client.mvp.view.TiposCursosView;
@@ -57,6 +58,7 @@ import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
@@ -99,6 +101,7 @@ public class ToolBarPresenter
 		Button getSalasListSalasButton();
 		Button getGruposSalasListSalasButton();
 		Button getAssociarDisciplinasSalasListSalasButton();
+		Button getAssociarDisciplinasGruposSalasListSalasButton();
 
 		Button getCursosNovoCursosButton();
 		Button getCurriculosListCursosButton();
@@ -112,6 +115,7 @@ public class ToolBarPresenter
 		Button getDisciplinasListDisciplinasButton();
 		Button getDemandasDisciplinasButton();
 		Button getAssociarDisciplinasSalasListDisciplinasButton();
+		Button getAssociarDisciplinasGruposSalasListDisciplinasButton();
 		Button getCurriculosListDisciplinasButton();
 		Button getDivisaoCreditosListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
@@ -666,8 +670,21 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new DisciplinasAssociarSalaPresenter(
-					instituicaoEnsinoDTO, new DisciplinasAssociarSalaView() );
+				Presenter presenter = new SalasAssociarDisciplinaPresenter(
+					instituicaoEnsinoDTO, new SalasAssociarDisciplinaView( new DisciplinaDTO() ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAssociarDisciplinasGruposSalasListSalasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new GruposSalasAssociarDisciplinaPresenter(
+					instituicaoEnsinoDTO, new GruposSalasAssociarDisciplinaView( new DisciplinaDTO() ) );
 
 				presenter.go( gTab );
 			}
@@ -679,8 +696,21 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new DisciplinasAssociarSalaPresenter(
-					instituicaoEnsinoDTO, new DisciplinasAssociarSalaView() );
+				Presenter presenter = new SalasAssociarDisciplinaPresenter(
+						instituicaoEnsinoDTO, new SalasAssociarDisciplinaView( new DisciplinaDTO() ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAssociarDisciplinasGruposSalasListDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new GruposSalasAssociarDisciplinaPresenter(
+						instituicaoEnsinoDTO, new GruposSalasAssociarDisciplinaView( new DisciplinaDTO() ) );
 
 				presenter.go( gTab );
 			}

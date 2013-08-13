@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -37,4 +38,8 @@ public interface SalasService
 	void saveHorariosDisponiveis( SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	ListLoadResult< SalaDTO > getSalasDoAndareList( UnidadeDTO unidade, List< String > andares );
 	ListLoadResult<SalaDTO> getAutoCompleteList(BasePagingLoadConfig loadConfig);
+	void vincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO);
+	void desvincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO);
+	List<SalaDTO> getListVinculadas(DisciplinaDTO disciplinaDTO);
+	List<SalaDTO> getListNaoVinculadas(DisciplinaDTO disciplinaDTO);
 }

@@ -270,12 +270,7 @@ public enum ImportExcelError
 			case DISCIPLINA_USA_SABADO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.USA_SABADO_COLUMN_NAME);
 			case DISCIPLINA_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.TIPO_COLUMN_NAME);
 			
-			case DISCIPLINASALA_CURSO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.CURSO_COLUMN_NAME);
 			case DISCIPLINASALA_DISCIPLINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.DISCIPLINA_COLUMN_NAME);
-			case DISCIPLINASALA_MATRIZ_CURRIULAR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.MATRIZ_CURRICULAR_COLUMN_NAME);
-			case DISCIPLINASALA_PERIODO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasSalasImportExcel.PERIODO_COLUMN_NAME);
-			case DISCIPLINASALA_PERIODO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DisciplinasSalasImportExcel.PERIODO_COLUMN_NAME);
-			case DISCIPLINASALA_PERIODO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.PERIODO_COLUMN_NAME);
 			case DISCIPLINASALA_SALA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.SALA_COLUMN_NAME);
 			
 			case DISPONIBILIDADE_DIA_SEMANA_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,DisponibilidadesProfessoresImportExcel.DIA_SEMANA_COLUMN_NAME);

@@ -1,16 +1,13 @@
 package com.gapso.web.trieda.server.excel.exp;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.gapso.trieda.domain.Cenario;
-import com.gapso.trieda.domain.CurriculoDisciplina;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
@@ -100,7 +97,7 @@ public class DisciplinasSalasExportExcel
 	{
 		List< Sala > salas = Sala.findByCenario(
 			this.instituicaoEnsino, getCenario() );
-
+		
 		if ( !salas.isEmpty() )
 		{
 			if ( this.removeUnusedSheets )
@@ -131,63 +128,26 @@ public class DisciplinasSalasExportExcel
 
 	private int writeData( Sala sala, int row )
 	{
-		// Agrupa as informações por período
-		Map< Integer, List< CurriculoDisciplina > > periodoToCurriculosDisciplinasMap
-			= new TreeMap< Integer, List< CurriculoDisciplina > >();
-
-		for ( CurriculoDisciplina disciplinaDeUmPeriodo :
-				sala.getCurriculoDisciplinas() )
+		for ( Disciplina disciplinas :
+				sala.getDisciplinas() )
 		{
-			List<CurriculoDisciplina> list = periodoToCurriculosDisciplinasMap
-					.get( disciplinaDeUmPeriodo.getPeriodo() );
-
-			if ( list == null )
-			{
-				list = new ArrayList< CurriculoDisciplina >();
-				periodoToCurriculosDisciplinasMap.put(
-					disciplinaDeUmPeriodo.getPeriodo(), list );
-			}
-
-			list.add( disciplinaDeUmPeriodo );
-		}
-
-		for ( Integer periodo : periodoToCurriculosDisciplinasMap.keySet() )
-		{
-			for ( CurriculoDisciplina disciplinaDeUmPeriodo :
-					periodoToCurriculosDisciplinasMap.get( periodo ) )
-			{
-				if (isXls()){
-					Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
-					if (newSheet != null) {
-						row = this.initialRow;
-						sheet = newSheet;
-					}
+			if (isXls()){
+				Sheet newSheet = restructuringWorkbookIfRowLimitIsViolated(row,1,sheet);
+				if (newSheet != null) {
+					row = this.initialRow;
+					sheet = newSheet;
 				}
-				// Sala
-				setCell( row, 2, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], sala.getCodigo() );
-
-				// Curso
-				setCell( row, 3, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-					disciplinaDeUmPeriodo.getCurriculo().getCurso().getCodigo() );
-
-				// Matriz Curricular
-				setCell( row, 4, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-					disciplinaDeUmPeriodo.getCurriculo().getCodigo() );
-
-				// Período
-				setCell( row, 5, sheet,
-					cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], periodo );
-
-				// Disciplina
-				setCell( row, 6, sheet,
-					cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-					disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
-
-				row++;
 			}
+			// Sala
+			setCell( row, 2, sheet,
+				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], sala.getCodigo() );
+
+			// Disciplina
+			setCell( row, 3, sheet,
+				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				disciplinas.getCodigo() );
+			
+			row++;
 		}
 
 		return row;

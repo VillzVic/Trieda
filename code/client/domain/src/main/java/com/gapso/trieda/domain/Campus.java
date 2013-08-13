@@ -447,7 +447,7 @@ public class Campus
     	{
     		for ( Sala s : salas )
     		{
-    			cd.getSalas().remove( s );
+    			cd.getDisciplina().getSalas().remove( s );
     			cd.merge();
     		}
     	}

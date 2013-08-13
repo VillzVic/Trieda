@@ -970,22 +970,23 @@ public class SolverInput
 
 					GrupoIdentificador grupoIdentificador = this.of.createGrupoIdentificador();
 
-					List< CurriculoDisciplina > curriculoDisciplinas = new ArrayList<CurriculoDisciplina>(sala.getCurriculoDisciplinas());
+					List< Disciplina > disciplinas = new ArrayList<Disciplina>(sala.getDisciplinas());
+					
 					// ordena para manter inputs iguais
-					Collections.sort(curriculoDisciplinas,new Comparator<CurriculoDisciplina>() {
+					Collections.sort(disciplinas,new Comparator<Disciplina>() {
 						@Override
-						public int compare(CurriculoDisciplina o1, CurriculoDisciplina o2) {
+						public int compare(Disciplina o1, Disciplina o2) {
 							return o1.getId().compareTo(o2.getId());
 						}
 					});
 
-					for ( CurriculoDisciplina curriculoDisciplina : curriculoDisciplinas )
+					for ( Disciplina disciplina : disciplinas )
 					{
 						if ( salasJaAssociadasADisciplina.add(
-								curriculoDisciplina.getDisciplina().getId() + "-" + sala.getId() ) )
+								disciplina.getId() + "-" + sala.getId() ) )
 						{
 							grupoIdentificador.getId().add(
-									curriculoDisciplina.getDisciplina().getId().intValue() );
+									disciplina.getId().intValue() );
 						}
 					}
 

@@ -156,7 +156,7 @@ public class DisciplinasServiceImpl
 					if (curriculoDisciplina.getDisciplina().getLaboratorio()) {
 						// verifica se há associação com algum laboratorio
 						boolean estaAssociadoComAlgumLaboratorio = false;
-						for (Sala sala : curriculoDisciplina.getSalas()) {
+						for (Sala sala : curriculoDisciplina.getDisciplina().getSalas()) {
 							if (sala.isLaboratorio() && sala.getUnidade().getCampus().equals(oferta.getCampus())) {
 								estaAssociadoComAlgumLaboratorio = true;
 								break;
@@ -171,7 +171,7 @@ public class DisciplinasServiceImpl
 				
 				// atualiza, em memória, os curriculosDisplinas com os laboratórios
 				for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplinasASeremProcessados) {
-					curriculoDisciplina.getSalas().addAll(laboratorios);
+					curriculoDisciplina.getDisciplina().getSalas().addAll(laboratorios);
 					curriculosDisciplinasAtualizados.add(curriculoDisciplina);
 				}
 			}
@@ -968,7 +968,7 @@ public class DisciplinasServiceImpl
 
 		for ( CurriculoDisciplina curriculoDisciplina : list )
 		{
-			curriculoDisciplina.getSalas().add( sala );
+			curriculoDisciplina.getDisciplina().getSalas().add( sala );
 			curriculoDisciplina.persist();
 		}
 	}
@@ -1012,8 +1012,11 @@ public class DisciplinasServiceImpl
 				cdDTO.getId(), getInstituicaoEnsinoUser() ) );
 		}
 
-		grupoSala.getCurriculoDisciplinas().addAll( list );
-		grupoSala.persist();
+		for (Disciplina disciplina : grupoSala.getDisciplinas())
+		{
+			disciplina.getCurriculos().addAll( list );
+			disciplina.persist();
+		}
 	}
 
 	@Override
@@ -1028,7 +1031,7 @@ public class DisciplinasServiceImpl
 			= CurriculoDisciplina.find(
 				cdDTO.getId(), getInstituicaoEnsinoUser() );
 
-		grupoSala.getCurriculoDisciplinas().remove( curriculoDisciplina );
+		grupoSala.getDisciplinas().remove( curriculoDisciplina.getDisciplina() );
 		grupoSala.merge();
 	}
 
@@ -1041,7 +1044,7 @@ public class DisciplinasServiceImpl
 			= CurriculoDisciplina.find(
 				cdDTO.getId(), getInstituicaoEnsinoUser() );
 
-		curriculoDisciplina.getSalas().remove( sala );
+		curriculoDisciplina.getDisciplina().getSalas().remove( sala );
 		curriculoDisciplina.merge();
 	}
 
