@@ -23,6 +23,7 @@ import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnota
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.relatorioVisao.ExportExcelFilter;
@@ -166,7 +167,7 @@ public abstract class RelatorioVisaoExportExcel extends AbstractExportExcel{
 		List<String> labelsDasLinhasDaGradeHoraria;
 		List<String> hiDasLinhasDaGradeHoraria = new ArrayList<String>();
 		if (temInfoDeHorarios) { 
-			ParDTO<List<String>,List<String>> parDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			TrioDTO<List<String>,List<String>, List<Boolean>> parDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(horariosDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			labelsDasLinhasDaGradeHoraria = parDTO.getPrimeiro();
 			hiDasLinhasDaGradeHoraria = parDTO.getSegundo();
 		} else {
