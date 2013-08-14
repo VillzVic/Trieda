@@ -19,6 +19,8 @@ public class DisciplinasImportExcelBean
 	private String nivelDificuldadeStr;
 	private String maxAlunosTeoricoStr;
 	private String maxAlunosPraticoStr;
+	private String aulasContinuasStr;
+	private String professorUnicoStr;
 	private String usaSabadoStr;
 	private String usaDomingoStr;
 
@@ -29,6 +31,8 @@ public class DisciplinasImportExcelBean
 	private Dificuldades nivelDificuldade;
 	private Integer maxAlunosTeorico;
 	private Integer maxAlunosPratico;
+	private Boolean aulasContinuas;
+	private Boolean professorUnico;
 	private Boolean usaSabado;
 	private Boolean usaDomingo;
 
@@ -52,6 +56,8 @@ public class DisciplinasImportExcelBean
 			checkMandatoryField( nivelDificuldadeStr, ImportExcelError.DISCIPLINA_NIVEL_DIFICULDADE_VAZIO, erros );
 			checkMandatoryField( maxAlunosTeoricoStr, ImportExcelError.DISCIPLINA_MAX_ALUNOS_TEORICOS_VAZIO, erros );
 			checkMandatoryField( maxAlunosPraticoStr, ImportExcelError.DISCIPLINA_MAX_ALUNOS_PRATICOS_VAZIO, erros );
+			checkMandatoryField( aulasContinuasStr, ImportExcelError.DISCIPLINA_AULAS_CONTINUAS_VAZIO, erros );
+			checkMandatoryField( professorUnicoStr, ImportExcelError.DISCIPLINA_PROFESSOR_UNICO_VAZIO, erros );
 			checkMandatoryField( usaSabadoStr, ImportExcelError.DISCIPLINA_USA_SABADO_VAZIO, erros );
 			checkMandatoryField( usaDomingoStr, ImportExcelError.DISCIPLINA_USA_DOMINGO_VAZIO, erros );
 
@@ -77,11 +83,17 @@ public class DisciplinasImportExcelBean
 				ImportExcelError.DISCIPLINA_MAX_ALUNOS_PRATICOS_FORMATO_INVALIDO,
 				ImportExcelError.DISCIPLINA_MAX_ALUNOS_PRATICOS_VALOR_NEGATIVO, erros );
 			
+			aulasContinuas = checkBooleanField( aulasContinuasStr,
+					ImportExcelError.DISCIPLINA_AULAS_CONTINUAS_FORMATO_INVALIDO, erros );
+			
+			professorUnico = checkBooleanField( professorUnicoStr,
+					ImportExcelError.DISCIPLINA_PROFESSOR_UNICO_FORMATO_INVALIDO, erros );
+			
 			usaSabado = checkBooleanField( usaSabadoStr,
-					ImportExcelError.DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO, erros );
+					ImportExcelError.DISCIPLINA_USA_SABADO_FORMATO_INVALIDO, erros );
 			
 			usaDomingo = checkBooleanField( usaDomingoStr,
-					ImportExcelError.DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO, erros );
+					ImportExcelError.DISCIPLINA_USA_DOMINGO_FORMATO_INVALIDO, erros );
 		}
 		else
 		{
@@ -101,7 +113,9 @@ public class DisciplinasImportExcelBean
 			&& isEmptyField( tipoStr )
 			&& isEmptyField( nivelDificuldadeStr )
 			&& isEmptyField( maxAlunosTeoricoStr )
-			&& isEmptyField( maxAlunosPraticoStr ) 
+			&& isEmptyField( maxAlunosPraticoStr )
+			&& isEmptyField( aulasContinuasStr )
+			&& isEmptyField( professorUnicoStr )
 			&& isEmptyField( usaSabadoStr )
 			&& isEmptyField( usaDomingoStr )	);
 	}
@@ -216,6 +230,26 @@ public class DisciplinasImportExcelBean
 		this.usaDomingoStr = usaDomingoStr;
 	}
 	
+	public String getAulasContinuasStr()
+	{
+		return aulasContinuasStr;
+	}
+
+	public void setAulasContinuasStr( String aulasContinuasStr )
+	{
+		this.aulasContinuasStr = aulasContinuasStr;
+	}
+	
+	public String getProfessorUnicoStr()
+	{
+		return professorUnicoStr;
+	}
+
+	public void setProfessorUnicoStr( String professorUnicoStr )
+	{
+		this.professorUnicoStr = professorUnicoStr;
+	}
+	
 	public TipoDisciplina getTipo()
 	{
 		return tipo;
@@ -264,6 +298,16 @@ public class DisciplinasImportExcelBean
 	public Boolean getUsaDomingo()
 	{
 		return usaDomingo;
+	}
+	
+	public Boolean getAulasContinuas()
+	{
+		return aulasContinuas;
+	}
+	
+	public Boolean getProfessorUnico()
+	{
+		return professorUnico;
 	}
 
 	@Override

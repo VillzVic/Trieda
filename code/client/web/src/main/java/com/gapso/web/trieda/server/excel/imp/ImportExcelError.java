@@ -99,6 +99,10 @@ public enum ImportExcelError
 	DISCIPLINA_NOME_VAZIO,
 	DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO,
 	DISCIPLINA_USA_LABORATORIO_VAZIO,
+	DISCIPLINA_AULAS_CONTINUAS_VAZIO,
+	DISCIPLINA_AULAS_CONTINUAS_FORMATO_INVALIDO,
+	DISCIPLINA_PROFESSOR_UNICO_VAZIO,
+	DISCIPLINA_PROFESSOR_UNICO_FORMATO_INVALIDO,
 	DISCIPLINA_USA_DOMINGO_VAZIO,
 	DISCIPLINA_USA_DOMINGO_FORMATO_INVALIDO,
 	DISCIPLINA_USA_SABADO_VAZIO,
@@ -264,6 +268,10 @@ public enum ImportExcelError
 			case DISCIPLINA_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.NOME_COLUMN_NAME);
 			case DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.USA_LABORATORIO_COLUMN_NAME);
 			case DISCIPLINA_USA_LABORATORIO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.USA_LABORATORIO_COLUMN_NAME);
+			case DISCIPLINA_AULAS_CONTINUAS_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.AULAS_CONTINUAS_COLUMN_NAME);
+			case DISCIPLINA_AULAS_CONTINUAS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.AULAS_CONTINUAS_COLUMN_NAME);
+			case DISCIPLINA_PROFESSOR_UNICO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.PROFESSOR_UNICO_COLUMN_NAME);
+			case DISCIPLINA_PROFESSOR_UNICO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.PROFESSOR_UNICO_COLUMN_NAME);
 			case DISCIPLINA_USA_DOMINGO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.USA_DOMINGO_COLUMN_NAME);
 			case DISCIPLINA_USA_DOMINGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.USA_DOMINGO_COLUMN_NAME);
 			case DISCIPLINA_USA_SABADO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisciplinasImportExcel.USA_SABADO_COLUMN_NAME);

@@ -155,13 +155,23 @@ public class DisciplinasExportExcel
 		setCell(row, 10, sheet,
 				cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],
 				disciplina.getMaxAlunosPratico());
-		// Usa Sábado?
+		// Aulas Continuas?
 		setCell(row, 11, sheet,
+				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
+				(disciplina.getAulasContinuas() ? getI18nConstants().sim()
+						: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
+		// Professor Unico?
+		setCell(row, 12, sheet,
+				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
+				(disciplina.getProfessorUnico() ? getI18nConstants().sim()
+						: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
+		// Usa Sábado?
+		setCell(row, 13, sheet,
 				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
 				(disciplina.usaSabado() ? getI18nConstants().sim()
 						: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 		// Usa Domingo?
-		setCell(row, 12, sheet,
+		setCell(row, 14, sheet,
 				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
 				(disciplina.usaDomingo() ? getI18nConstants().sim()
 						: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
