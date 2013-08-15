@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.DivisaoCreditoDisciplinaFormView;
+import com.gapso.web.trieda.main.client.mvp.view.GruposSalasAssociarDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelDisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalasAssociarDisciplinaView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -63,6 +64,7 @@ implements Presenter
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		Button getAssociarSalasButton();
+		Button getAssociarGruposSalasButton();
 		SimpleGrid< DisciplinaDTO > getGrid();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< DisciplinaDTO > > proxy );
@@ -70,7 +72,7 @@ implements Presenter
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
-	private Display display; 
+	private Display display;
 	private GTab gTab;
 
 	public DisciplinasPresenter(
@@ -307,6 +309,20 @@ implements Presenter
 			}
 		});
 
+		this.display.getAssociarGruposSalasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+					Presenter presenter = new GruposSalasAssociarDisciplinaPresenter(
+							instituicaoEnsinoDTO,
+							new GruposSalasAssociarDisciplinaView( disciplinaDTO ) );
+						presenter.go( gTab );
+				}
+			});
+		
 		this.display.getResetBuscaButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{

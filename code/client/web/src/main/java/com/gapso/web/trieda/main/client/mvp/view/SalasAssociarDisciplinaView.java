@@ -71,8 +71,8 @@ public class SalasAssociarDisciplinaView extends MyComposite implements
 	private void createToolBar() {
 		toolBar = new SimpleToolBar(false, false, false, true, true, this);
 		this.associarDisciplinasPraticasLaboratoriosBT = this.toolBar.createButton("Associar Disciplinas a Laboratórios",Resources.DEFAULTS.associacaoDisciplinaSala16());
-		this.toolBar.add(this.associarDisciplinasPraticasLaboratoriosBT);
 		toolBar.add(new SeparatorToolItem());
+		this.toolBar.add(this.associarDisciplinasPraticasLaboratoriosBT);
 		panel.setTopComponent(toolBar);
 	}
 	

@@ -39,6 +39,7 @@ public class DisciplinasView
 	private Button disponibilidadeBT;
 	private Button divisaoCreditoBT;
 	private Button associarSalasBT;
+	private Button associarGruposSalasBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 
@@ -89,6 +90,13 @@ public class DisciplinasView
 				Resources.DEFAULTS.associacaoDisciplinaSala16() );
 
 		this.toolBar.add( this.associarSalasBT );
+		
+		this.associarGruposSalasBT = this.toolBar.createButton(
+				getI18nConstants().disciplinasSalas(),
+				Resources.DEFAULTS.grupoSala16() );
+		
+		this.toolBar.add( this.associarGruposSalasBT );
+		
 		this.panel.setTopComponent( this.toolBar );
 	}
 
@@ -238,5 +246,11 @@ public class DisciplinasView
 	public Button getAssociarSalasButton()
 	{
 		return this.associarSalasBT;
+	}
+	
+	@Override
+	public Button getAssociarGruposSalasButton()
+	{
+		return this.associarGruposSalasBT;
 	}
 }

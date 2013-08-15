@@ -311,13 +311,13 @@ public class Unidade implements Serializable
 	}
 
 	@Transactional
-	private void removeSalas( boolean removeCurriculosDisciplinas )
+	private void removeSalas( boolean removeDisciplinas )
 	{
 		Set< Sala > salas = this.getSalas();
 
 		for ( Sala sala : salas )
 		{
-			sala.remove( false, removeCurriculosDisciplinas );
+			sala.remove( false, removeDisciplinas );
 		}
 	}
     

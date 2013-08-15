@@ -684,9 +684,9 @@ public class Disciplina
 		InstituicaoEnsino instituicaoEnsino, List< Sala > salas )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o.disciplina ) " +
-			" FROM SalasDisciplinas o " +
-			" WHERE o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" SELECT DISTINCT ( o ) " +
+			" FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.sala IN ( :salas ) " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );

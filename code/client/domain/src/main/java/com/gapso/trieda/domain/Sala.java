@@ -142,7 +142,7 @@ public class Sala
         sb.append( "Andar: " ).append( getAndar() ).append( ", " );
         sb.append( "Capacidade: " ).append( getCapacidade() ).append(", ");
         sb.append( "Horarios: " ).append( getHorarios() == null ? "null" : getHorarios().size() ).append(", ");
-        sb.append( "CurriculoDisciplinas: " ).append(
+        sb.append( "Disciplinas: " ).append(
         	getDisciplinas() == null ? "null" : getDisciplinas().size() ).append(", ");
         sb.append( "GruposSala: " ).append(
         	getGruposSala() == null ? "null" : getGruposSala().size() );
@@ -275,7 +275,7 @@ public class Sala
 
 	@Transactional
     public void remove( boolean removeHorariosDisponiveisCenario,
-    	boolean removeCurriculosDisciplinas )
+    	boolean removeDisciplinas )
 	{
         if ( this.entityManager == null )
         {
@@ -289,9 +289,9 @@ public class Sala
 				this.removeHorariosDisponivelCenario();
         	}
 
-			if ( removeCurriculosDisciplinas )
+			if ( removeDisciplinas )
 			{
-				this.removeCurriculoDisciplinas();
+				this.removeDisciplinas();
 			}
 
         	this.removeGruposSala();
@@ -310,9 +310,9 @@ public class Sala
 					attached.removeHorariosDisponivelCenario();
 	        	}
 
-				if ( removeCurriculosDisciplinas )
+				if ( removeDisciplinas )
 				{
-					attached.removeCurriculoDisciplinas();
+					attached.removeDisciplinas();
 				}
 
             	attached.removeGruposSala();
@@ -335,7 +335,7 @@ public class Sala
     }
 
     @Transactional
-    public void removeCurriculoDisciplinas()
+    public void removeDisciplinas()
     {
     	Set< Disciplina > disciplinas
     		= this.getDisciplinas();
@@ -469,38 +469,6 @@ public class Sala
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return ( (Number) q.getSingleResult() ).intValue();
-	}
-
-	@SuppressWarnings("unchecked")
-	public List< Curriculo > getCurriculos( InstituicaoEnsino instituicaoEnsino )
-	{
-		Query q = entityManager().createQuery(
-			" SELECT DISTINCT( cd.curriculo ) " +
-			" FROM CurriculoDisciplina cd " +
-			" WHERE cd.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
-			" AND :sala IN ELEMENTS( cd.salas )" );
-
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "sala", this );
-
-		List< Curriculo > list = q.getResultList();
-		return list;
-	}
-
-	@SuppressWarnings("unchecked")
-	public Boolean getContainsCurriculoDisciplina(
-		InstituicaoEnsino instituicaoEnsino )
-	{
-		Query q = entityManager().createQuery(
-			"SELECT d FROM Disciplina d " +
-			"WHERE d.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-			" AND :sala IN ELEMENTS ( d.salas ) " );
-
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "sala", this );
-
-		List< CurriculoDisciplina > list = q.getResultList();
-		return ( list.size() > 0 );
 	}
 
 	public static Map< String, Sala > buildSalaCodigoToSalaMap( List< Sala > salas )
@@ -891,7 +859,7 @@ public class Sala
         return this.disciplinas;
     }
 
-	public void setCurriculoDisciplinas(
+	public void setDisciplinas(
 		Set< Disciplina > disciplinas )
 	{
         this.disciplinas = disciplinas;

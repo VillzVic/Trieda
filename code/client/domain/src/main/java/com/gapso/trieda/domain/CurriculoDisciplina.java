@@ -297,7 +297,7 @@ public class CurriculoDisciplina
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o, " +
-			" IN ( o.salas ) sala, IN ( o.curriculo.ofertas ) oferta " +
+			" IN ( o.disciplina.salas ) sala, IN ( o.curriculo.ofertas ) oferta " +
 			" WHERE sala = :sala " +
 			" AND oferta = :oferta " +
 			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
@@ -319,7 +319,7 @@ public class CurriculoDisciplina
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o, " +
-			" IN ( o.gruposSala ) grupoSala, IN ( o.curriculo.ofertas ) oferta " +
+			" IN ( o.disciplina.gruposSala ) grupoSala, IN ( o.curriculo.ofertas ) oferta " +
 			" WHERE grupoSala = :grupoSala " +
 			" AND grupoSala.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
 			" AND oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
@@ -360,7 +360,7 @@ public class CurriculoDisciplina
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o, " +
-			" IN ( o.gruposSala ) grupoSala " +
+			" IN ( o.disciplina.gruposSala ) grupoSala " +
 			" WHERE o.periodo = :periodo " +
 			" AND o.curriculo = :curriculo " +
 			" AND grupoSala = :grupoSala " +
@@ -383,7 +383,7 @@ public class CurriculoDisciplina
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o, " +
-			" IN ( o.salas ) sala " +
+			" IN ( o.disciplina.salas ) sala " +
 			" WHERE o.periodo = :periodo " +
 			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +

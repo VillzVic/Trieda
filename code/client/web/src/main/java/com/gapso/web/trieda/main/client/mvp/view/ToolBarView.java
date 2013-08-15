@@ -284,7 +284,7 @@ public class ToolBarView
 		salasToolBar.add( associarDisciplinasSalasListSalasBt );
 		
 		associarDisciplinasGruposSalasListSalasBt = createButton(
-				"Associação de<br />Disciplinas à Grupos Salas",
+				"Associação de Disciplinas<br />à Grupos de Salas",
 				"Associação de Disciplinas à Grupos Salas", Resources.DEFAULTS.grupoSala24() );
 			salasToolBar.add( associarDisciplinasGruposSalasListSalasBt );
 	}
@@ -340,7 +340,7 @@ public class ToolBarView
 		disciplinasToolBar.add( associarDisciplinasSalasListDisciplinasBt );
 		
 		associarDisciplinasGruposSalasListDisciplinasBt = createButton(
-			"Associação de<br />Disciplinas à Grupos Salas",
+			"Associação de Disciplinas<br />à Grupos de Salas",
 			"Associação de Disciplinas à Grupos Salas", Resources.DEFAULTS.grupoSala24() );
 		disciplinasToolBar.add( associarDisciplinasGruposSalasListDisciplinasBt );
 
