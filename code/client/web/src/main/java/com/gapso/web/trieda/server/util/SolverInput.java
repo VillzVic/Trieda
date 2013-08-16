@@ -1252,7 +1252,7 @@ public class SolverInput
 			itemDisciplina.setTipoDisciplinaId( disciplina.getTipoDisciplina().getId().intValue() );
 			itemDisciplina.setNivelDificuldadeId( Dificuldades.toInt( disciplina.getDificuldade() ) );
 			itemDisciplina.setProfUnicoCredsTeorPrat( disciplina.getProfessorUnico() );
-			itemDisciplina.setProfUnicoCredsTeorPrat( disciplina.getAulasContinuas() );
+			itemDisciplina.setAulasContinuasTeorPrat( disciplina.getAulasContinuas() );
 			
 			DivisaoCredito divisaoCredito = null;
 
