@@ -22,7 +22,7 @@
 
 \maketitle
 
-\section{Modelo de alocação de salas}
+\section{PRE-MODELO - Modelo de alocação de salas}
 
 \subsection{Notação}
 
@@ -128,6 +128,7 @@ $i'$ da disciplina $d$ alocada, com $i' > i$, sendo que $i$ não foi alocada.
 \item $xcs2$
 \item $xcs3$
 \item $v_{i,d,sl}$ - variável binaria que indica se a turma $i$ da disciplina $d$ possui alunos pertencentes ao calendario $sl$.
+\item $sab_{i,d,s}$ - variável binaria que indica que a turma $i$ da disciplina $d$ está alocada na sala $s$ e só pode ter aula no sábado.
 
 
 \end{itemize}
@@ -311,12 +312,11 @@ $$
 \end{eqnarray}
 
 
-% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
-%
+% Pode tirar se for colocar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
 %\subsubsection{Se alocar uma sala para uma turma, tem que respeitar capacidade da sala}
 %
 %\begin{eqnarray}
-%\sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft} \leq Cap_{s,u} \cdot o_{i,d,u,s} 
+%\sum\limits_{a \in A} s_{i,d,a} \leq (Cap_{s} - BigM) \cdot o_{i,d,u,s} + BigM
 %\nonumber \qquad 
 %\forall u \in U \quad
 %\forall s \in S_{u} \quad
@@ -324,11 +324,10 @@ $$
 %\forall i \in I_{d} \quad
 %\end{eqnarray}
 
-
 \subsubsection{Se alocar uma sala para uma turma, tem que respeitar capacidade da sala}
 
 \begin{eqnarray}
-\sum\limits_{a \in A} s_{i,d,a} \leq (Cap_{s} - BigM) \cdot o_{i,d,u,s} + BigM
+\sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft} \leq Cap_{s,u} \cdot o_{i,d,u,s} 
 \nonumber \qquad 
 \forall u \in U \quad
 \forall s \in S_{u} \quad
@@ -337,12 +336,10 @@ $$
 \end{eqnarray}
 
 
-% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
-%
+% Pode tirar se for colocar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
 %\subsubsection{Contabiliza se houve aluno de determinado curso alocado em uma turma (*)}
-%
 %\begin{eqnarray}
-%\sum\limits_{oft \in Oft_{c}} \sum\limits_{s \in S_{u}} a_{i,d,s,oft} \leq M \cdot b_{i,d,c} \nonumber \qquad
+%\sum\limits_{a \in A_{c}} s_{i,d,a} \leq M \cdot b_{i,d,c} \nonumber \qquad
 %\forall c \in C \quad
 %\forall d \in D \quad
 %\forall i \in I_{d}
@@ -350,13 +347,13 @@ $$
 
 
 \subsubsection{Contabiliza se houve aluno de determinado curso alocado em uma turma (*)}
-
 \begin{eqnarray}
-\sum\limits_{a \in A_{c}} s_{i,d,a} \leq M \cdot b_{i,d,c} \nonumber \qquad
+\sum\limits_{oft \in Oft_{c}} \sum\limits_{s \in S_{u}} a_{i,d,s,oft} \leq M \cdot b_{i,d,c} \nonumber \qquad
 \forall c \in C \quad
 \forall d \in D \quad
 \forall i \in I_{d}
 \end{eqnarray}
+
 
 
 
@@ -414,22 +411,20 @@ f_{i,d,cp} \le \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
 
 
 
-% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
+% Pode tirar se for colocar a_{i,d,s,oft} do modelo, e deixar só a restrição correspondente a essa abaixo!
 %
 %\subsubsection{Limita a abertura de turmas}
 %
 %\begin{eqnarray}
-%MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft}  \nonumber \qquad 
+%MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{a \in A} s_{i,d,a}  \nonumber \qquad 
 %\forall cp \in CP \quad
 %\forall d \in D \quad
 %\forall i \in I_{d}
 %\end{eqnarray}
 
-
 \subsubsection{Limita a abertura de turmas}
-
 \begin{eqnarray}
-MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{a \in A} s_{i,d,a}  \nonumber \qquad 
+MinAlunos \cdot (z_{i,d,cp} - f_{i,d,cp}) \leq \sum\limits_{u \in U} \sum\limits_{s \in S_{u}} \sum\limits_{oft \in Oft_{d}} a_{i,d,u,s,oft}  \nonumber \qquad 
 \forall cp \in CP \quad
 \forall d \in D \quad
 \forall i \in I_{d}
@@ -488,19 +483,19 @@ H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} C_{d} \cdot o_{i,d,u,s} \n
 
 
 
-% Pode tirar se for retirar a_{i,d,s,oft} do modelo, e acrescentar a restrição abaixo
-%\subsubsection{Atendimento de alunos}
+% Pode tirar se for colocar a_{i,d,s,oft} do modelo, e acrescentar a restrição abaixo
 %
+%\subsubsection{Só permite alocação de aluno na turma caso essa tenha sido aberta}
 %\begin{eqnarray}
-%\sum\limits_{s \in S} a_{i,d,s,oft} = \sum\limits_{a \in Al \cap d \in D_{a} } s_{i,d,a} \nonumber \qquad 
+%\sum\limits_{a \in A} s_{i,d,a} \le MaxAlunos \cdot z_{i,d,cp} \nonumber \qquad 
 %\forall d \in D_{oft} \quad
 %\forall i \in I_{d} \quad
 %\forall oft \in O \quad
 %\end{eqnarray}
 
-\subsubsection{Só permite alocação de aluno na turma caso essa tenha sido aberta}
+\subsubsection{Atendimento de alunos}
 \begin{eqnarray}
-\sum\limits_{a \in A} s_{i,d,a} \le MaxAlunos \cdot z_{i,d,cp} \nonumber \qquad 
+\sum\limits_{s \in S} a_{i,d,s,oft} = \sum\limits_{a \in Al \cap d \in D_{a} } s_{i,d,a} \nonumber \qquad 
 \forall d \in D_{oft} \quad
 \forall i \in I_{d} \quad
 \forall oft \in O \quad
@@ -510,12 +505,22 @@ H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} C_{d} \cdot o_{i,d,u,s} \n
 
 \subsubsection{Garante a alocação do aluno na disciplina prática e teórica}
 
+\mbox{Se houver mistura de alunos entre turmas práticas e teóricas:}
+
 \begin{eqnarray}
 \sum\limits_{i \in I_{dp}} s_{i,dp,a} = \sum\limits_{ i \in I_{dt} } s_{i,dt,a} \nonumber \qquad 
 \forall a \in Al \quad
 \forall (dp,dt) \in D_{a} \quad
 \end{eqnarray}
 
+\mbox{Se não houver mistura de alunos entre turmas práticas e teóricas:}
+
+\begin{eqnarray}
+s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad 
+\forall a \in Al \quad
+\forall i \in I_{d} \quad
+\forall (dp,dt) \in D_{a} \quad
+\end{eqnarray}
 
 
 
@@ -593,7 +598,8 @@ as_{a,s} \ge o_{i,d,s} + s_{i,d,a} - 1 \nonumber \qquad
 \subsubsection{Seta a variavel v (1)}
 
 \begin{eqnarray}
-M \cdot v_{i,d,sl} \ge \sum\limits_{a \in A_{sl}} s_{i,d,a} \nonumber \qquad 
+M \cdot v_{i,d,sl,s} \ge \sum\limits_{oft \in Oft_{sl}} a_{i,d,s,oft} \nonumber \qquad 
+\forall s \in S \quad
 \forall sl \in SL \quad
 \forall i \in I_{d} \quad
 \forall d \in D
@@ -604,7 +610,8 @@ M \cdot v_{i,d,sl} \ge \sum\limits_{a \in A_{sl}} s_{i,d,a} \nonumber \qquad
 \subsubsection{Seta a variavel v (2)}
 
 \begin{eqnarray}
-v_{i,d,sl} \le \sum\limits_{a \in A_{sl}} s_{i,d,a} \nonumber \qquad 
+v_{i,d,sl,s} \le \sum\limits_{oft \in Oft_{sl}} a_{i,d,s,oft} \nonumber \qquad 
+\forall s \in S \quad
 \forall sl \in SL \quad
 \forall i \in I_{d} \quad
 \forall d \in D
@@ -615,12 +622,21 @@ v_{i,d,sl} \le \sum\limits_{a \in A_{sl}} s_{i,d,a} \nonumber \qquad
 \subsubsection{Garante que caso uma mesma turma possua alunos de diferentes semanas letivas alocados, estas devem possuir horários em comum}
 
 \begin{eqnarray}
-v_{i,d,sl1} + v_{i,d,sl2} \le 1 \nonumber \qquad 
+v_{i,d,sl1,s} + v_{i,d,sl2,s} - sab_{i,d,s} \le 1 \nonumber \qquad 
 \forall (sl1,sl2) \in IH \quad
+\forall s \in S \quad
 \forall i \in I_{d} \quad
 \forall d \in D
 \end{eqnarray}
 
+
+
+\subsubsection{Garante um tempo máximo de alocação por sala no sábado}
+
+\begin{eqnarray}
+\sum\limits_{d \in D} \sum\limits_{i \in I_{d}} sab_{i,d,s} \le TempoMaxSab_{s} \nonumber \qquad 
+\forall s \in S \quad
+\end{eqnarray}
 
 \pagebreak
 
@@ -955,22 +971,23 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 \forall cp \in CP \quad
 \forall a \in A \quad
 \forall t \in T \quad
-\forall h \in H_{d} \quad \quad \mbox{     USADA}
+\forall h \in H_{d} %\quad \quad \mbox{     USADA}
 \end{eqnarray}
 
-\begin{center} ou \end{center}
-
-\begin{eqnarray}
-\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\text{ \footnotesize{sobrepoe} }h}} x_{i,d,u,s,hi,hf,t} 
-+
-\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{i' \in I_{d'}} \sum\limits_{d' \in D} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\text{ \footnotesize{sobrepoe} }h}} x_{i',d',u,s,hi,hf,t} 
-\leq  1  \nonumber \qquad 
-\\
-\forall cp \in CP \quad
-\forall {(i,d),(i',d')} \mbox{ com alunos em comum} \quad 
-\forall t \in T \quad
-\forall h \in H_{d}
-\end{eqnarray}
+% ALTERNATIVA 2 para "Evita Sobreposicao por aluno"
+%\begin{center} ou \end{center}
+%
+%\begin{eqnarray}
+%\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\text{ \footnotesize{sobrepoe} }h}} x_{i,d,u,s,hi,hf,t} 
+%+
+%\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{i' \in I_{d'}} \sum\limits_{d' \in D} \sum\limits_{hi \in H_{d}} \sum_{\substack {hf \in H_{d} \\ hi\le hf \\ (hi,hf)\text{ \footnotesize{sobrepoe} }h}} x_{i',d',u,s,hi,hf,t} 
+%\leq  1  \nonumber \qquad 
+%\\
+%\forall cp \in CP \quad
+%\forall {(i,d),(i',d')} \mbox{ com alunos em comum} \quad 
+%\forall t \in T \quad
+%\forall h \in H_{d}
+%\end{eqnarray}
 
 
 \subsubsection{Contabiliza se há turmas com o mesmo aluno abertas no mesmo dia em unidades distintas}
@@ -993,7 +1010,7 @@ zc_{d_1,t} + zc_{d_2,t} \leq 1 \nonumber \qquad
 \subsubsection{Evita atendimento parcial de disciplina com crédito prático e teórico}
 
 \begin{eqnarray}
-fd_{i1,d,cp} + fd_{i2,-d,cp} - 2 \cdot ffd_{i1,d,i2,-d,cp} \le 0  \nonumber \qquad 
+fd_{i1,d,cp} + fd_{i2,-d,cp} \le 2 \cdot ffd_{i1,d,i2,-d,cp} \nonumber \qquad 
 \forall {(i1,d),(i2,-d)} \mbox{ com alunos em comum} \quad
 \forall cp \in Cp
 \end{eqnarray}
@@ -1122,6 +1139,34 @@ f_{i,d,cp} \le nFormandos_{i,d,cp} \cdot z_{i,d,cp} - \sum\limits_{a \in Af_{i,d
 \forall (i,d) \mbox{ não atendido na iteração tática anterior}
 \end{eqnarray}
 	 
+
+   
+   
+\subsubsection{Professores disponiveis por dia e disciplina}
+
+\begin{eqnarray}
+\sum\limits_{s \in S}\sum\limits_{i \in I}\sum\limits_{hi \in H}\sum\limits_{\substack {hf \in H \\ h \in [hi,hf]}}
+x_{i,d,s,t,hi,hf} - fp_{d,t,h} \le nProfs_{d,t,h} \nonumber \qquad 
+\forall t \in T \quad
+\forall h \in H \quad
+\forall d \in D
+\end{eqnarray}
+ 
+
+	
+
+\subsubsection{Aulas de disciplinas pratica/teorica continuas}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} x_{it,dt,s,t,hi,hf} \le \sum\limits_{h \in H}\sum\limits_{s \in S} x_{ip,dp,s,t,h,hi-1} + \sum\limits_{h \in H}\sum\limits_{s \in S} x_{ip,dp,s,t,hf+1,h}  \nonumber \qquad
+\\
+\forall d=(dt,dp) \in D \quad \mbox{ sendo d com obrigação de créditos contínuos} \quad
+\\
+\forall it \in I_{dt} \quad ip \in I_{dp} \quad \mbox{(it,dt) tem aluno comum com (ip,dp)} \quad
+\\
+\forall t \in T \quad
+\forall hi,hf \in H
+\end{eqnarray}
 
 
 \clearpage

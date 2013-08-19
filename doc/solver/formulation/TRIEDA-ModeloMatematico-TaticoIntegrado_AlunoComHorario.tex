@@ -153,7 +153,7 @@ com alunos de cursos diferentes é proibido.
 \item $fps_{a,cp}$ - variável inteira que indica o tempo que faltou ser alocado para que o aluno $a$ no campus $cp$ (prioridade 2).
 \item $f_{i,d,cp}$ - variável binária que indica se há aluno formando alocado na turma $i$ da disciplina $d$ do campus $cp$.
 \item $du_{a,t}$ - variável binária que indica se o aluno $a$ tem aula no dia $t$.
-
+\item $fp_{d,t,h}$ - variável de folga inteira que indica se a disciplina $d$ tem aula no dia $t$ e horario $h$ e não possui professor real com disponibilidade nesse dia e horário para ministra-la.
 
 \end{itemize}
 
@@ -306,11 +306,23 @@ f_{i,d,cp} \le \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
 \end{eqnarray}
 
 
+
 \subsubsection{Garante a alocação do aluno na disciplina prática e teórica}
+
+\mbox{Se houver mistura de alunos entre turmas práticas e teóricas:}
 
 \begin{eqnarray}
 \sum\limits_{i \in I_{dp}} s_{i,dp,a} = \sum\limits_{ i \in I_{dt} } s_{i,dt,a} \nonumber \qquad 
 \forall a \in Al \quad
+\forall (dp,dt) \in D_{a} \quad
+\end{eqnarray}
+
+\mbox{Se não houver mistura de alunos entre turmas práticas e teóricas:}
+
+\begin{eqnarray}
+s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad 
+\forall a \in Al \quad
+\forall i \in I_{d} \quad
 \forall (dp,dt) \in D_{a} \quad
 \end{eqnarray}
 
@@ -508,6 +520,32 @@ du_{a,t} \le \sum\limits_{i \in I_{d}} \sum\limits_{d \in D_{a}} \sum\limits_{u 
 \forall a \in A \quad
 \forall t \in T \quad
 \forall cp \in CP
+\end{eqnarray}
+
+   
+   
+\subsubsection{Professores disponiveis por dia e disciplina}
+
+\begin{eqnarray}
+\sum\limits_{s \in S}\sum\limits_{i \in I}\sum\limits_{hi \in H}\sum\limits_{\substack {hf \in H \\ h \in [hi,hf]}}
+x_{i,d,s,t,hi,hf} - fp_{d,t,h} \le nProfs_{d,t,h} \nonumber \qquad 
+\forall t \in T \quad
+\forall h \in H \quad
+\forall d \in D
+\end{eqnarray}
+ 
+
+\subsubsection{Aulas de disciplinas pratica/teorica continuas}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} x_{it,dt,s,t,hi,hf} \le \sum\limits_{h \in H}\sum\limits_{s \in S} x_{ip,dp,s,t,h,hi-1} + \sum\limits_{h \in H}\sum\limits_{s \in S} x_{ip,dp,s,t,hf+1,h}  \nonumber \qquad
+\\
+\forall d=(dt,dp) \in D \quad \mbox{ sendo d com obrigação de créditos contínuos} \quad
+\\
+\forall it \in I_{dt} \quad ip \in I_{dp} \quad \mbox{(it,dt) tem aluno comum com (ip,dp)} \quad
+\\
+\forall t \in T \quad
+\forall hi,hf \in H
 \end{eqnarray}
 
 

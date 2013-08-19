@@ -544,7 +544,7 @@ y_{p,dt,it,cpt} = y_{p,dp,ip,cpp} \nonumber \qquad
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de minimizar o número de dias (distribuir carga horária semanal)}
+\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de minimizar o número de dias (concentrar carga horária semanal)}
 
 \begin{eqnarray}
 M \cdot pt_{p,t} \ge \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qquad 
@@ -553,7 +553,7 @@ M \cdot pt_{p,t} \ge \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonum
 \end{eqnarray}
 
 
-\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de maximizar o número de dias (equilibrar carga horária semanal)}
+\subsubsection{Contabiliza se o professor ministra aula no dia, a fim de maximizar o número de dias (distribuir carga horária semanal)}
 
 \begin{eqnarray}
 pt_{p,t} \le \sum\limits_{a \in A}\sum\limits_{h \in H} x_{p,a,h} \nonumber \qquad 
@@ -792,7 +792,21 @@ hf \in H \mbox{, hf é o último horário do dia}
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
-                       
+
+
+\subsubsection{Aulas de disciplinas pratica/teorica continuas}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} \sum\limits_{p \in P} x_{p,it,dt,s,t,hi,hf} \le \sum\limits_{h \in H}\sum\limits_{s \in S} \sum\limits_{p \in P} x_{p,ip,dp,s,t,h,hi-1} + \sum\limits_{h \in H}\sum\limits_{s \in S} \sum\limits_{p \in P} x_{p,ip,dp,s,t,hf+1,h}  \nonumber \qquad
+\\
+\forall d=(dt,dp) \in D \quad \mbox{ sendo d com obrigação de créditos contínuos} \quad
+\\
+\forall it \in I_{dt} \quad ip \in I_{dp} \quad \mbox{(it,dt) tem aluno comum com (ip,dp)} \quad
+\\
+\forall t \in T \quad
+\forall hi,hf \in H
+\end{eqnarray}
+
 
 \clearpage
 \end{document}
