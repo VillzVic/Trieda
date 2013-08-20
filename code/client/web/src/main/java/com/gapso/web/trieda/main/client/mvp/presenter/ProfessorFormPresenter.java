@@ -182,7 +182,6 @@ public class ProfessorFormPresenter
 				if (semanaLetiva.getHorariosInicioMap().keySet().size() > maiorSemanaLetiva)
 					maiorSemanaLetiva = semanaLetiva.getHorariosInicioMap().keySet().size();
 			}
-			System.out.println("TESTE: " + maiorSemanaLetiva);
 			return (display.getMinCreditosDiaNumberField().getValue().intValue() > maiorSemanaLetiva);
 		}
 		else {
