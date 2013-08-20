@@ -537,6 +537,16 @@
           <xs:documentation>lista das disciplinas que o professor em questão é capaz de lecionar</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="maxDiasSemana" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>número máximo de dias na semana que o professor vai à faculdade</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="minCredsDiarios" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>número mínimo de créditos para o professor ministrar aula no dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemProfessorDisciplina">
@@ -650,7 +660,16 @@
           <xs:documentation>lista dos identificadores (ItemDisciplina) das disciplinas não compatíveis com a disciplina em questão, isto é, as disciplinas que não poderão ser oferecidas no mesmo dia (por razões pedagócias) da disciplina em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="profUnicoCredsTeorPrat" type="xs:boolean" />
+      <xs:element name="profUnicoCredsTeorPrat" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>indica obrigatoriedade de que o professor alocado para o crédito prático seja o mesmo alocado para o crédito teórico da aula da disciplina</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="aulasContinuasTeorPrat" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>indice se os créditos da disciplina (teóricos e práticos) devem ser dados de uma vez, em horários sequenciais em um mesmo dia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemCurso">
