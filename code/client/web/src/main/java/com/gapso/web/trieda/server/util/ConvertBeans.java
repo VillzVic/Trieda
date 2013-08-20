@@ -2536,6 +2536,8 @@ public class ConvertBeans {
 		domain.setAreaTitulacao( AreaTitulacao.find(dto.getAreaTitulacaoId(), instituicaoEnsino ) );
 		domain.setCreditoAnterior( dto.getCreditoAnterior() );
 		domain.setValorCredito( dto.getValorCredito().getDoubleValue() );
+		domain.setMaxDiasSemana( dto.getMaxDiasSemana() );
+		domain.setMinCreditosDia( dto.getMinCreditosDia() );
 	}
 	
 	public static Professor toProfessorComCampiTrabalho(ProfessorDTO dto) {
@@ -2580,6 +2582,8 @@ public class ConvertBeans {
 		dto.setValorCredito( TriedaUtil.parseTriedaCurrency( domain.getValorCredito() ) );
 		dto.setDisplayText( domain.getNome() + " (" + domain.getCpf() + ")" );
 		dto.setNotaDesempenho( ConvertBeans.getNotaDesempenho( domain ).intValue() );
+		dto.setMaxDiasSemana(domain.getMaxDiasSemana());
+		dto.setMinCreditosDia(domain.getMinCreditosDia());
 
 		if ( instituicaoEnsino != null )
 		{

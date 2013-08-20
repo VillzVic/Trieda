@@ -46,7 +46,10 @@ BEGIN
       /* TRIEDA-1674: Disciplinas que Devem Ser Lecionadas em Sequência */
       ALTER TABLE  `trieda`.`disciplinas` ADD COLUMN `dis_aulas_continuas` BIT(1) NOT NULL DEFAULT b'0' AFTER `dis_cred_teorico`;
       ALTER TABLE  `trieda`.`disciplinas` ADD COLUMN `dis_professor_unico` BIT(1) NOT NULL DEFAULT b'1' AFTER `dis_aulas_continuas`;
-      
+      /* TRIEDA-1683: Criar parâmetros máximo de dias por semana e mínimo de créditos diários para professores */
+      ALTER TABLE  `trieda`.`professores` ADD COLUMN `prf_max_dias_semana` INTEGER NOT NULL DEFAULT 5 AFTER `prf_valor_credito`;
+      ALTER TABLE  `trieda`.`professores` ADD COLUMN `prf_min_cred_dia` INTEGER NOT NULL DEFAULT 1 AFTER `prf_max_dias_semana`;
+
       INSERT INTO `trieda`.`db_version` (`db_version`) VALUES (13);
       SET msg_status = 'Base de dados compativel com script de conversao, conversao realizada';
     ELSE

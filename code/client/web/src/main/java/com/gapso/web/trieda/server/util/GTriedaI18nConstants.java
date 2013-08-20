@@ -833,4 +833,14 @@ public class GTriedaI18nConstants
 	public String professorUnico() {
 		return this.languageManager.getText("professorUnico");
 	}
+
+	@Override
+	public String maxDiasSemana() {
+		return this.languageManager.getText("maxDiasSemana");
+	}
+
+	@Override
+	public String minCreditosDia() {
+		return this.languageManager.getText("minCreditosDia");
+	}
 }

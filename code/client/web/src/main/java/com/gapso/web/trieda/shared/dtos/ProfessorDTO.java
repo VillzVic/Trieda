@@ -25,6 +25,8 @@ public class ProfessorDTO extends AbstractDTO< String >
 	public static final String PROPERTY_NOTA_DESEMPENHO = "notaDesempenho";
 	public static final String PROPERTY_CREDITO_ANTERIOR = "creditoAnterior";
 	public static final String PROPERTY_VALOR_CREDITO = "valorCredito";
+	public static final String PROPERTY_MAX_DIAS_SEMANA = "maxDiasSemana";
+	public static final String PROPERTY_MIN_CREDITOS_DIA = "minCreditosDia";
 
 	public ProfessorDTO()
 	{
@@ -157,6 +159,22 @@ public class ProfessorDTO extends AbstractDTO< String >
 
 	public TriedaCurrency getValorCredito() {
 		return TriedaUtil.parseTriedaCurrency(get(PROPERTY_VALOR_CREDITO));
+	}
+	
+	public void setMaxDiasSemana(Integer value) {
+		set(PROPERTY_MAX_DIAS_SEMANA, value);
+	}
+
+	public Integer getMaxDiasSemana() {
+		return get(PROPERTY_MAX_DIAS_SEMANA);
+	}
+	
+	public void setMinCreditosDia(Integer value) {
+		set(PROPERTY_MIN_CREDITOS_DIA, value);
+	}
+
+	public Integer getMinCreditosDia() {
+		return get(PROPERTY_MIN_CREDITOS_DIA);
 	}
 
 	@Override

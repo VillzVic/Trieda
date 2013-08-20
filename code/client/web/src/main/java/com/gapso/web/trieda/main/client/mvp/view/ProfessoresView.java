@@ -143,6 +143,12 @@ public class ProfessoresView extends MyComposite
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_VALOR_CREDITO,
 			getI18nConstants().valorCredito(), 170 ) );
+		
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_MAX_DIAS_SEMANA,
+				getI18nConstants().maxDiasSemana(), 140 ) );
+		
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_MIN_CREDITOS_DIA,
+				getI18nConstants().minCreditosDia(), 140 ) );
 
 		return list;
 	}

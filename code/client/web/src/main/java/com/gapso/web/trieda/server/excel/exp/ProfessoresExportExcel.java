@@ -195,6 +195,16 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 		setCell( row, 11, sheet,
 				 cellStyles[ ExcelCellStyleReference.NUMBER_DOUBLE.ordinal() ],
 				 professor.getValorCredito() );
+		
+		// Max Dias Semana
+		setCell( row, 12, sheet,
+				 cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ],
+				 professor.getMaxDiasSemana() );
+		
+		// Min Creditos Dia
+		setCell( row, 13, sheet,
+				 cellStyles[ ExcelCellStyleReference.NUMBER_INT.ordinal() ],
+				 professor.getMinCreditosDia() );
 
 		row++;
 		return row;

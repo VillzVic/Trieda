@@ -161,4 +161,6 @@ public interface TriedaI18nConstants
 	String tipoDisciplina();
 	String aulasContinuas();
 	String professorUnico();
+	String maxDiasSemana();
+	String minCreditosDia();
 }

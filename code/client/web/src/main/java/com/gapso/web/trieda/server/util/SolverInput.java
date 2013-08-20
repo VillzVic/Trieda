@@ -1022,6 +1022,8 @@ public class SolverInput
 					professor.getTipoContrato().getId().intValue() );
 				itemProfessor.setChMin( professor.getCargaHorariaMin() );
 				itemProfessor.setChMax( professor.getCargaHorariaMax() );
+				itemProfessor.setMaxDiasSemana( professor.getMaxDiasSemana() );
+				itemProfessor.setMinCredsDiarios( professor.getMinCreditosDia() );
 				itemProfessor.setTitulacaoId(
 					professor.getTitulacao().getId().intValue() );
 

@@ -154,6 +154,12 @@ public enum ImportExcelError
 	PROFESSOR_CARGA_HORARIA_ANTERIOR_VALOR_NEGATIVO,
 	PROFESSOR_VALOR_CREDITO_FORMATO_INVALIDO,
 	PROFESSOR_VALOR_CREDITO_VALOR_NEGATIVO,
+	PROFESSOR_MAX_DIAS_SEMANA_VAZIO,
+	PROFESSOR_MIN_CREDITOS_DIA_VAZIO,
+	PROFESSOR_MAX_DIAS_SEMANA_FORMATO_INVALIDO,
+	PROFESSOR_MAX_DIAS_SEMANA_VALOR_NEGATIVO,
+	PROFESSOR_MIN_CREDITOS_DIA_FORMATO_INVALIDO,
+	PROFESSOR_MIN_CREDITOS_DIA_VALOR_NEGATIVO,
 	
 	SALA_ANDAR_VAZIO,
 	SALA_CAPACIDADE_FORMATO_INVALIDO,
@@ -317,6 +323,12 @@ public enum ImportExcelError
 			case PROFESSOR_CARGA_HORARIA_MIN_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,ProfessoresImportExcel.CARGA_HORARIA_MIN_COLUMN_NAME);
 			case PROFESSOR_CARGA_HORARIA_ANTERIOR_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,ProfessoresImportExcel.CARGA_HORARIA_ANTERIOR_COLUMN_NAME);
 			case PROFESSOR_VALOR_CREDITO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,ProfessoresImportExcel.VALOR_CREDITO_COLUMN_NAME);
+			case PROFESSOR_MAX_DIAS_SEMANA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,ProfessoresImportExcel.MAX_DIAS_SEMANA);
+			case PROFESSOR_MIN_CREDITOS_DIA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,ProfessoresImportExcel.MIN_CREDITOS_DIA);
+			case PROFESSOR_MAX_DIAS_SEMANA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,ProfessoresImportExcel.MAX_DIAS_SEMANA);
+			case PROFESSOR_MAX_DIAS_SEMANA_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,ProfessoresImportExcel.MAX_DIAS_SEMANA);
+			case PROFESSOR_MIN_CREDITOS_DIA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,ProfessoresImportExcel.MIN_CREDITOS_DIA);
+			case PROFESSOR_MIN_CREDITOS_DIA_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,ProfessoresImportExcel.MIN_CREDITOS_DIA);
 			
 			case SALA_ANDAR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.ANDAR_COLUMN_NAME);
 			case SALA_CAPACIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);

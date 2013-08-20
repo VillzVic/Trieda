@@ -36,6 +36,8 @@ public class ProfessorFormView
 	private AreaTitulacaoComboBox areaTitulacaoCB;
 	private NumberField creditoAnteriorNF;
 	private NumberField valorCreditoNF;
+	private NumberField maxDiasSemanaNF;
+	private NumberField minCreditosDiaNF;
 	private ProfessorDTO professorDTO;
 	private TipoContratoDTO tipoContratoDTO;
 	private TitulacaoDTO titulacaoDTO;
@@ -67,7 +69,7 @@ public class ProfessorFormView
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		this.simpleModal.setHeight( 395 );
+		this.simpleModal.setHeight( 450 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
 	}
@@ -152,6 +154,26 @@ public class ProfessorFormView
 		this.valorCreditoNF.setMaxValue( 999999 );
 		this.valorCreditoNF.setEmptyText( "Somente números" );
 		this.formPanel.add( this.valorCreditoNF, formData );
+		
+		this.maxDiasSemanaNF = new NumberField();
+		this.maxDiasSemanaNF.setName( ProfessorDTO.PROPERTY_MAX_DIAS_SEMANA );
+		this.maxDiasSemanaNF.setValue( this.professorDTO.getMaxDiasSemana() );
+		this.maxDiasSemanaNF.setFieldLabel( "Máx. Dias por Semana" );
+		this.maxDiasSemanaNF.setAllowBlank( false );
+		this.maxDiasSemanaNF.setAllowDecimals( false );
+		this.maxDiasSemanaNF.setMaxValue( 7 );
+		this.maxDiasSemanaNF.setEmptyText( "Somente números" );
+		this.formPanel.add( this.maxDiasSemanaNF, formData );
+		
+		this.minCreditosDiaNF = new NumberField();
+		this.minCreditosDiaNF.setName( ProfessorDTO.PROPERTY_MIN_CREDITOS_DIA );
+		this.minCreditosDiaNF.setValue( this.professorDTO.getMinCreditosDia() );
+		this.minCreditosDiaNF.setFieldLabel( "Min. Creditos Diários" );
+		this.minCreditosDiaNF.setAllowBlank( false );
+		this.minCreditosDiaNF.setAllowDecimals( false );
+		this.minCreditosDiaNF.setMaxValue( 100 );
+		this.minCreditosDiaNF.setEmptyText( "Somente números" );
+		this.formPanel.add( this.minCreditosDiaNF, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
@@ -230,6 +252,18 @@ public class ProfessorFormView
 		return this.valorCreditoNF;
 	}
 
+	@Override
+	public NumberField getMaxDiasSemanaNumberField()
+	{
+		return this.maxDiasSemanaNF;
+	}
+	
+	@Override
+	public NumberField getMinCreditosDiaNumberField()
+	{
+		return this.minCreditosDiaNF;
+	}
+	
 	@Override
 	public ProfessorDTO getProfessorDTO()
 	{

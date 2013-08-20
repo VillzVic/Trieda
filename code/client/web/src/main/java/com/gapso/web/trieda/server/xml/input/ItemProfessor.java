@@ -36,6 +36,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="valorCred" type="{http://www.w3.org/2001/XMLSchema}double"/>
  *         &lt;element name="horariosDisponiveis" type="{}GrupoHorario"/>
  *         &lt;element name="disciplinas" type="{}GrupoProfessorDisciplina"/>
+ *         &lt;element name="maxDiasSemana" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="minCredsDiarios" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -57,7 +59,9 @@ import javax.xml.bind.annotation.XmlType;
     "credAnterior",
     "valorCred",
     "horariosDisponiveis",
-    "disciplinas"
+    "disciplinas",
+    "maxDiasSemana",
+    "minCredsDiarios"
 })
 public class ItemProfessor {
 
@@ -77,6 +81,8 @@ public class ItemProfessor {
     protected GrupoHorario horariosDisponiveis;
     @XmlElement(required = true)
     protected GrupoProfessorDisciplina disciplinas;
+    protected int maxDiasSemana;
+    protected int minCredsDiarios;
 
     /**
      * Gets the value of the id property.
@@ -308,6 +314,38 @@ public class ItemProfessor {
      */
     public void setDisciplinas(GrupoProfessorDisciplina value) {
         this.disciplinas = value;
+    }
+    
+    /**
+     * Gets the value of the maxDiasSemana property.
+     * 
+     */
+    public int getMaxDiasSemana() {
+        return maxDiasSemana;
+    }
+
+    /**
+     * Sets the value of the maxDiasSemana property.
+     * 
+     */
+    public void setMaxDiasSemana(int value) {
+        this.maxDiasSemana = value;
+    }
+    
+    /**
+     * Gets the value of the maxDiasSemana property.
+     * 
+     */
+    public int getMinCredsDiarios() {
+        return minCredsDiarios;
+    }
+
+    /**
+     * Sets the value of the maxDiasSemana property.
+     * 
+     */
+    public void setMinCredsDiarios(int value) {
+        this.minCredsDiarios = value;
     }
 
 }

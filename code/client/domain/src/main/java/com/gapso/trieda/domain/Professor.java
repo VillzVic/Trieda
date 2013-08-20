@@ -96,6 +96,14 @@ public class Professor
 	@Column( name = "PRF_VALOR_CREDITO" )
 	@Digits( integer = 6, fraction = 2 )
 	private Double valorCredito;
+	
+	@Column( name = "PRF_MAX_DIAS_SEMANA" )
+	@Max( 7L )
+	private Integer maxDiasSemana;
+	
+	@Column( name = "PRF_MIN_CRED_DIA" )
+	@Max( 100L )
+	private Integer minCreditosDia;
 
 	@ManyToMany
 	private Set< Campus > campi = new HashSet< Campus >();
@@ -236,6 +244,26 @@ public class Professor
 	public void setValorCredito( Double valorCredito )
 	{
 		this.valorCredito = valorCredito;
+	}
+	
+	public Integer getMaxDiasSemana()
+	{
+		return this.maxDiasSemana;
+	}
+
+	public void setMaxDiasSemana( Integer maxDiaSemana )
+	{
+		this.maxDiasSemana = maxDiaSemana;
+	}
+	
+	public Integer getMinCreditosDia()
+	{
+		return this.minCreditosDia;
+	}
+
+	public void setMinCreditosDia( Integer minCreditosDia )
+	{
+		this.minCreditosDia = minCreditosDia;
 	}
 
 	public Set< Campus > getCampi()

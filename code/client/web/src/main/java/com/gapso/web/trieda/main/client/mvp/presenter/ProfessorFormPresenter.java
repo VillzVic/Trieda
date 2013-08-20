@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
@@ -11,11 +14,13 @@ import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
+import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
@@ -25,6 +30,7 @@ import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ProfessorFormPresenter
 	implements Presenter
@@ -40,6 +46,8 @@ public class ProfessorFormPresenter
 		AreaTitulacaoComboBox getAreaTitulacaoComboBox();
 		NumberField getCreditoAnteriorNumberField();
 		NumberField getValorCreditoNumberField();
+		NumberField getMaxDiasSemanaNumberField();
+		NumberField getMinCreditosDiaNumberField();
 		Button getSalvarButton();
 		ProfessorDTO getProfessorDTO();
 		boolean isValid();
@@ -81,21 +89,37 @@ public class ProfessorFormPresenter
 			{
 				if ( isValid() )
 				{
-					final ProfessoresServiceAsync service = Services.professores();
-
-					service.save( getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().professor()),display)
-					{
+					final SemanasLetivaServiceAsync service = Services.semanasLetiva();
+					service.getList(new AsyncCallback<ListLoadResult<SemanaLetivaDTO>>() {
 						@Override
-						public void onSuccess( Void result )
-						{
-							display.getSimpleModal().hide();
-
-							if ( gridPanel != null )
-							{
-								gridPanel.updateList();
+						public void onFailure(Throwable caught) {
+							MessageBox.alert( "ERRO!", "Erro no servidor", null );
+						}
+						@Override
+						public void onSuccess(ListLoadResult<SemanaLetivaDTO> result) {
+							if( !checkMinCredMaiorSemanaLetiva(result.getData()) ) {
+								final ProfessoresServiceAsync service = Services.professores();
+			
+								service.save( getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().professor()),display)
+								{
+									@Override
+									public void onSuccess( Void result )
+									{
+										display.getSimpleModal().hide();
+			
+										if ( gridPanel != null )
+										{
+											gridPanel.updateList();
+										}
+			
+										Info.display( "Salvo", "Item salvo com sucesso!" );
+									}
+								});
 							}
-
-							Info.display( "Salvo", "Item salvo com sucesso!" );
+							else
+							{
+								MessageBox.alert( "ERRO!", "Minimo de creditos diários é maior que a maior semana letiva", null );
+							}
 						}
 					});
 				}
@@ -138,6 +162,8 @@ public class ProfessorFormPresenter
 		professorDTO.setValorCredito( TriedaUtil.parseTriedaCurrency(
 			display.getValorCreditoNumberField().getValue().doubleValue() ) );
 		professorDTO.setCenarioId( cenario.getId() );
+		professorDTO.setMaxDiasSemana( display.getMaxDiasSemanaNumberField().getValue().intValue() );
+		professorDTO.setMinCreditosDia( display.getMinCreditosDiaNumberField().getValue().intValue() );
 
 		return professorDTO;
 	}
@@ -146,5 +172,21 @@ public class ProfessorFormPresenter
 	public void go( Widget widget )
 	{
 		display.getSimpleModal().show();
+	}
+	
+	private boolean checkMinCredMaiorSemanaLetiva(List<SemanaLetivaDTO> semanasLetiva)
+	{
+		int maiorSemanaLetiva = 0;
+		if(!semanasLetiva.isEmpty()) {
+			for(SemanaLetivaDTO semanaLetiva: semanasLetiva) {
+				if (semanaLetiva.getHorariosInicioMap().keySet().size() > maiorSemanaLetiva)
+					maiorSemanaLetiva = semanaLetiva.getHorariosInicioMap().keySet().size();
+			}
+			System.out.println("TESTE: " + maiorSemanaLetiva);
+			return (display.getMinCreditosDiaNumberField().getValue().intValue() > maiorSemanaLetiva);
+		}
+		else {
+			return false;
+		}
 	}
 }

@@ -20,6 +20,8 @@ public class ProfessoresImportExcelBean
 	private String areaTitulacaoStr;
 	private String cargaHorariaAnteriorStr;
 	private String valorCreditoStr;
+	private String maxDiasSemanaStr;
+	private String minCreditosDiaStr;
 
 	private TipoContrato tipo;
 	private Integer cargaHorariaMax;
@@ -28,6 +30,8 @@ public class ProfessoresImportExcelBean
 	private AreaTitulacao areaTitulacao;
 	private Integer cargaHorariaAnterior;
 	private Double valorCredito;
+	private Integer maxDiasSemana;
+	private Integer minCreditosDia;
 	
 	public ProfessoresImportExcelBean( int row )
 	{
@@ -50,6 +54,8 @@ public class ProfessoresImportExcelBean
 			checkMandatoryField( this.areaTitulacaoStr, ImportExcelError.PROFESSOR_AREA_TITULACAO_VAZIO, erros );
 			checkMandatoryField( this.cargaHorariaAnteriorStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_ANTERIOR_VAZIO, erros );
 			checkMandatoryField( this.valorCreditoStr, ImportExcelError.PROFESSOR_VALOR_CREDITO_VAZIO, erros );
+			checkMandatoryField( this.maxDiasSemanaStr, ImportExcelError.PROFESSOR_MAX_DIAS_SEMANA_VAZIO, erros );
+			checkMandatoryField( this.minCreditosDiaStr, ImportExcelError.PROFESSOR_MIN_CREDITOS_DIA_VAZIO, erros );
 
 			this.cargaHorariaMax = checkNonNegativeIntegerField( this.cargaHorariaMaxStr,
 				ImportExcelError.PROFESSOR_CARGA_HORARIA_MAX_FORMATO_INVALIDO,
@@ -66,6 +72,14 @@ public class ProfessoresImportExcelBean
 			this.valorCredito = checkNonNegativeDoubleField( this.valorCreditoStr,
 				ImportExcelError.PROFESSOR_VALOR_CREDITO_FORMATO_INVALIDO,
 				ImportExcelError.PROFESSOR_VALOR_CREDITO_VALOR_NEGATIVO, erros );
+			
+			this.maxDiasSemana = checkNonNegativeIntegerField( this.maxDiasSemanaStr,
+					ImportExcelError.PROFESSOR_MAX_DIAS_SEMANA_FORMATO_INVALIDO,
+					ImportExcelError.PROFESSOR_MAX_DIAS_SEMANA_VALOR_NEGATIVO, erros );
+			
+			this.minCreditosDia = checkNonNegativeIntegerField( this.minCreditosDiaStr,
+					ImportExcelError.PROFESSOR_MIN_CREDITOS_DIA_FORMATO_INVALIDO,
+					ImportExcelError.PROFESSOR_MIN_CREDITOS_DIA_VALOR_NEGATIVO, erros );
 		}
 		else
 		{
@@ -81,7 +95,8 @@ public class ProfessoresImportExcelBean
 			&& isEmptyField( this.tipoStr ) && isEmptyField( this.cargaHorariaMaxStr )
 			&& isEmptyField( this.cargaHorariaMinStr ) && isEmptyField( this.titulacaoStr )
 			&& isEmptyField( this.areaTitulacaoStr ) && isEmptyField( this.cargaHorariaAnteriorStr )
-			&& isEmptyField( this.valorCreditoStr ) );
+			&& isEmptyField( this.valorCreditoStr ) ) && isEmptyField( this.maxDiasSemanaStr )
+			&& isEmptyField( minCreditosDiaStr );
 	}
 
 	public String getCpfStr()
@@ -173,6 +188,26 @@ public class ProfessoresImportExcelBean
 	{
 		this.valorCreditoStr = valorCreditoStr;
 	}
+	
+	public String getMaxDiasSemanaStr()
+	{
+		return this.maxDiasSemanaStr;
+	}
+
+	public void setMaxDiasSemanaStr( String maxDiasSemanaStr )
+	{
+		this.maxDiasSemanaStr = maxDiasSemanaStr;
+	}
+	
+	public String getMinCreditosDiaStr()
+	{
+		return this.minCreditosDiaStr;
+	}
+
+	public void setMinCreditosDiaStr( String minCreditosDiaStr )
+	{
+		this.minCreditosDiaStr = minCreditosDiaStr;
+	}
 
 	public TipoContrato getTipo()
 	{
@@ -208,6 +243,16 @@ public class ProfessoresImportExcelBean
 	{
 		return this.valorCredito;
 	}
+	
+	public Integer getMaxDiasSemana()
+	{
+		return this.maxDiasSemana;
+	}
+	
+	public Integer getMinCreditosDia()
+	{
+		return this.minCreditosDia;
+	}
 
 	public void setTipo( TipoContrato tipo )
 	{
@@ -217,6 +262,16 @@ public class ProfessoresImportExcelBean
 	public void setTitulacao( Titulacao titulacao )
 	{
 		this.titulacao = titulacao;
+	}
+	
+	public void setMaxDiasSemana( Integer maxDiasSemana )
+	{
+		this.maxDiasSemana = maxDiasSemana;
+	}
+	
+	public void setMinCreditosDia( Integer minCreditosDia )
+	{
+		this.minCreditosDia = minCreditosDia;
 	}
 
 	public void setAreaTitulacao( AreaTitulacao areaTitulacao )

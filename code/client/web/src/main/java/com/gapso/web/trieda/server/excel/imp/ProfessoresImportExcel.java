@@ -41,6 +41,8 @@ public class ProfessoresImportExcel
 	static public String NOTA_DESEMPENHO_COLUMN_NAME;
 	static public String CARGA_HORARIA_ANTERIOR_COLUMN_NAME;
 	static public String VALOR_CREDITO_COLUMN_NAME;
+	static public String MAX_DIAS_SEMANA;
+	static public String MIN_CREDITOS_DIA;
 
 	private List< String > headerColumnsNames;
 
@@ -63,6 +65,8 @@ public class ProfessoresImportExcel
 		this.headerColumnsNames.add( NOTA_DESEMPENHO_COLUMN_NAME );
 		this.headerColumnsNames.add( CARGA_HORARIA_ANTERIOR_COLUMN_NAME );
 		this.headerColumnsNames.add( VALOR_CREDITO_COLUMN_NAME );
+		this.headerColumnsNames.add( MAX_DIAS_SEMANA );
+		this.headerColumnsNames.add( MIN_CREDITOS_DIA );
 	}
 
 	@Override
@@ -142,6 +146,14 @@ public class ProfessoresImportExcel
 					else if ( VALOR_CREDITO_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setValorCreditoStr( cellValue );
+					}
+					else if ( MAX_DIAS_SEMANA.equals( columnName ) )
+					{
+						bean.setMaxDiasSemanaStr( cellValue );
+					}
+					else if ( MIN_CREDITOS_DIA.equals( columnName ) )
+					{
+						bean.setMinCreditosDiaStr( cellValue );
 					}
         		}
         	}
@@ -390,6 +402,8 @@ public class ProfessoresImportExcel
 				professorBD.setAreaTitulacao( professorExcel.getAreaTitulacao() );
 				professorBD.setCreditoAnterior( professorExcel.getCargaHorariaAnterior() );
 				professorBD.setValorCredito( professorExcel.getValorCredito() );
+				professorBD.setMaxDiasSemana( professorExcel.getMaxDiasSemana() );
+				professorBD.setMinCreditosDia( professorExcel.getMinCreditosDia() );
 
 				professorBD.mergeWithoutFlush();
 			}
@@ -408,6 +422,8 @@ public class ProfessoresImportExcel
 				newProfessor.setAreaTitulacao( professorExcel.getAreaTitulacao() );
 				newProfessor.setCreditoAnterior( professorExcel.getCargaHorariaAnterior() );
 				newProfessor.setValorCredito( professorExcel.getValorCredito() );
+				newProfessor.setMaxDiasSemana( professorExcel.getMaxDiasSemana() );
+				newProfessor.setMinCreditosDia( professorExcel.getMinCreditosDia() );
 
 				newProfessor.persist();
 				persistedProfessores.add(newProfessor);
@@ -438,7 +454,9 @@ public class ProfessoresImportExcel
 			AREA_TITULACAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().areaTitulacao() );
 			NOTA_DESEMPENHO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().notaDesempenho() );
 			CARGA_HORARIA_ANTERIOR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().cargaHorariaAnterior() );
-			VALOR_CREDITO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().valorCredito() );	
+			VALOR_CREDITO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().valorCredito() );
+			MAX_DIAS_SEMANA = HtmlUtils.htmlUnescape( getI18nConstants().maxDiasSemana() );
+			MIN_CREDITOS_DIA = HtmlUtils.htmlUnescape( getI18nConstants().minCreditosDia() );
 		}
 	}
 }
