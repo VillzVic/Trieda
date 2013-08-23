@@ -86,11 +86,11 @@ public class CampusProfessoresPresenter
 				{
 					CampusDTO campus = display.getCampusBuscaComboBox().getValue();
 					ProfessorDTO professor = display.getProfessorBuscaComboBox().getValue();
-					Services.professores().getProfessorCampusList( campus, professor, callback );
+					Services.professores().getProfessorCampusList( cenario, campus, professor, callback );
 				}
 				else
 				{
-					Services.professores().getProfessorCampusByCurrentProfessor( callback );
+					Services.professores().getProfessorCampusByCurrentProfessor( cenario, callback );
 				}
 			}
 		};
@@ -108,7 +108,7 @@ public class CampusProfessoresPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					Presenter presenter = new CampusProfessorFormPresenter( instituicaoEnsinoDTO,
-						cenario, new CampusProfessorFormView( null ), display.getGrid() );
+						cenario, new CampusProfessorFormView( cenario, null ), display.getGrid() );
 
 					presenter.go( null );
 				}
@@ -127,7 +127,7 @@ public class CampusProfessoresPresenter
 
 					Presenter presenter = new CampusProfessorFormPresenter(
 						instituicaoEnsinoDTO, cenario,
-						new CampusProfessorFormView( campusDTO ), display.getGrid() );
+						new CampusProfessorFormView( cenario, campusDTO ), display.getGrid() );
 
 					presenter.go( null );
 				}

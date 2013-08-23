@@ -72,7 +72,7 @@ public class TurnosPresenter
 				AsyncCallback< PagingLoadResult< TurnoDTO > > callback )
 			{
 				String nome = display.getNomeBuscaTextField().getValue();
-				service.getBuscaList( nome, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( nome, cenario, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 

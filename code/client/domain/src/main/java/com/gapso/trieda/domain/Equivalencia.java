@@ -261,9 +261,10 @@ public class Equivalencia
     }
 	
 	public static int count(
-		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Curso curso )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Disciplina disciplina, Curso curso )
 	{
-		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ";
+		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+				"AND o.cursou.cenario = :cenario ";
 		String from = " FROM Equivalencia o ";
 
 		if ( disciplina != null )
@@ -283,6 +284,7 @@ public class Equivalencia
 			" SELECT COUNT ( o )" + from + where );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( disciplina != null )
 		{
@@ -298,13 +300,14 @@ public class Equivalencia
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Equivalencia > findBy(
-		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Disciplina disciplina,
 		Curso curso, int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." +
 				orderBy.replace("String", "").replace("curso", "equivalenciaGeral") : "" );
 
-		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino ";
+		String where = " WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+				"AND o.cursou.cenario = :cenario";
 		String from = "FROM Equivalencia o";
 
 		if ( disciplina != null )
@@ -324,6 +327,7 @@ public class Equivalencia
 			" SELECT o "+ from + where + orderBy );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 

@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
@@ -123,14 +124,16 @@ public class DisciplinasServiceImpl
 	 */
 	@Override
 	@Transactional
-	public void associarDisciplinasSemLaboratorioATodosLaboratorios() throws TriedaException {
+	public void associarDisciplinasSemLaboratorioATodosLaboratorios(CenarioDTO cenarioDTO) throws TriedaException {
 		try {
+			Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+			
 			// [CampusId -> Lista de Laboratorios]
 			Map<Long,List<Sala>> campusIdToLaboratoriosMap = new HashMap<Long,List<Sala>>();
 			List<CurriculoDisciplina> curriculosDisciplinasAtualizados = new ArrayList<CurriculoDisciplina>();
 			
 			// 
-			List<Oferta> ofertas = Oferta.findAll(getInstituicaoEnsinoUser());
+			List<Oferta> ofertas = Oferta.findByCenario(getInstituicaoEnsinoUser(), cenario);
 			for (Oferta oferta : ofertas) {
 				// obtém os laboratórios do campus associado com a oferta
 				List<Sala> laboratorios = campusIdToLaboratoriosMap.get(oferta.getCampus().getId());
@@ -268,12 +271,14 @@ public class DisciplinasServiceImpl
 
 	@Override
 	public ListLoadResult< DisciplinaDTO > getListByCurriculoIdAndName(
-		Long curriculoId, String nome)
+		CenarioDTO cenarioDTO, Long curriculoId, String nome)
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
 
 		List< Disciplina > disciplinas = Disciplina.findByCurriculoIdAndName(
-			getInstituicaoEnsinoUser(), nome, curriculoId);
+			getInstituicaoEnsinoUser(), cenario, nome, curriculoId);
 
 		for ( Disciplina disciplina : disciplinas )
 		{
@@ -285,8 +290,10 @@ public class DisciplinasServiceImpl
 	
 	@Override
 	public ListLoadResult< DisciplinaDTO > getListByCursoAndName(
-		List< CursoDTO > cursosDTO, String nome)
+		CenarioDTO cenarioDTO, List< CursoDTO > cursosDTO, String nome)
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
 		List< Curso > cursos = new ArrayList< Curso >();
 
@@ -296,7 +303,7 @@ public class DisciplinasServiceImpl
 		}
 
 		List< Disciplina > disciplinas = Disciplina.findByCursoAndName(
-			getInstituicaoEnsinoUser(), nome, cursos );
+			getInstituicaoEnsinoUser(), cenario, nome, cursos );
 
 		for ( Disciplina disciplina : disciplinas )
 		{
@@ -349,18 +356,20 @@ public class DisciplinasServiceImpl
 
 	@Override
 	public ListLoadResult< DisciplinaDTO > getList(
-		BasePagingLoadConfig loadConfig )
+		CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig )
 	{
-		return getBuscaList( null, loadConfig.get(
+		return getBuscaList( cenarioDTO, null, loadConfig.get(
 			"query" ).toString(), null, loadConfig );
 	}
 
 	@Override
 	public PagingLoadResult< DisciplinaDTO > getBuscaList(
-		String nome, String codigo,
+		CenarioDTO cenarioDTO, String nome, String codigo,
 		TipoDisciplinaDTO tipoDisciplinaDTO,
 		PagingLoadConfig config )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
 		String orderBy = config.getSortField();
 
@@ -385,7 +394,7 @@ public class DisciplinasServiceImpl
 		}
 
 		List< Disciplina > disciplinas = Disciplina.findBy(
-			getInstituicaoEnsinoUser(), codigo, nome, tipoDisciplina,
+			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoDisciplina,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Disciplina disciplina : disciplinas )
@@ -401,7 +410,7 @@ public class DisciplinasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Disciplina.count(
-			getInstituicaoEnsinoUser(), codigo, nome, tipoDisciplina ) );
+			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoDisciplina ) );
 
 		return result;
 	}
@@ -848,15 +857,17 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult<DisciplinaDTO> getDisciplinaNaoAssociada( ProfessorDTO professorDTO, String nome )
+	public ListLoadResult<DisciplinaDTO> getDisciplinaNaoAssociada( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String nome )
 	{
 		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
 		
 		InstituicaoEnsino instituicaoEnsino
 			= getUsuario().getInstituicaoEnsino(); 
 		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< Disciplina > listDisciplinas
-			= Disciplina.findAllByCodigo(instituicaoEnsino, nome);
+			= Disciplina.findAllByCodigo(instituicaoEnsino, cenario, nome);
 
 		List< Disciplina > listDisciplinasProfessor
 			= Disciplina.findByProfessor(instituicaoEnsino, ConvertBeans.toProfessor(professorDTO));

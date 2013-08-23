@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,23 +18,25 @@ public class TurnoComboBox
 	extends ComboBox< TurnoDTO >
 {
 	private CampusComboBox campusComboBox;
+	private CenarioDTO cenarioDTO;
 
-	public TurnoComboBox()
+	public TurnoComboBox( CenarioDTO cenarioDTO )
 	{
-		this( null, false );
+		this( null, cenarioDTO, false );
 	}
 
 	public TurnoComboBox(
-		CampusComboBox campusCB )
+		CampusComboBox campusCB, CenarioDTO cenarioDTO )
 	{
-		this( campusCB, false );
+		this( campusCB, cenarioDTO, false );
 	}
 
 	public TurnoComboBox(
-		CampusComboBox campusCB,
+		CampusComboBox campusCB, CenarioDTO cenario,
 		final boolean somenteOtimizadoOperacional )
 	{
 		this.campusComboBox = campusCB;
+		this.cenarioDTO = cenario;
 
 		RpcProxy< ListLoadResult< TurnoDTO > > proxy =
 			new RpcProxy< ListLoadResult< TurnoDTO > >()
@@ -45,7 +48,7 @@ public class TurnoComboBox
 				if ( campusComboBox != null )
 				{
 					Services.turnos().getListByCampus(
-						campusComboBox.getValue(), callback );
+						cenarioDTO, campusComboBox.getValue(), callback );
 				}
 				else
 				{
@@ -55,7 +58,7 @@ public class TurnoComboBox
 					}
 					else
 					{
-						Services.turnos().getList( callback );
+						Services.turnos().getList( cenarioDTO, callback );
 					}
 				}
 			}

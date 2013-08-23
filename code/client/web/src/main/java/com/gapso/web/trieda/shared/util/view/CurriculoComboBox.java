@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.services.Services;
@@ -17,15 +18,17 @@ public class CurriculoComboBox
 	extends ComboBox< CurriculoDTO >
 {
 	private CursoComboBox cursoComboBox;
+	private CenarioDTO cenarioDTO;
 
-	public CurriculoComboBox()
+	public CurriculoComboBox( CenarioDTO cenario )
 	{
-		this( null );
+		this( cenario, null );
 	}
 
-	public CurriculoComboBox( CursoComboBox cursoCB )
+	public CurriculoComboBox( CenarioDTO cenario, CursoComboBox cursoCB )
 	{
 		this.cursoComboBox = cursoCB;
+		this.cenarioDTO = cenario;
 
 		RpcProxy< ListLoadResult< CurriculoDTO > > proxy =
 			new RpcProxy< ListLoadResult< CurriculoDTO > >()
@@ -41,7 +44,7 @@ public class CurriculoComboBox
 				}
 				else
 				{
-					Services.curriculos().getListAll( callback );
+					Services.curriculos().getListAll( cenarioDTO, callback );
 				}
 			}
 		};

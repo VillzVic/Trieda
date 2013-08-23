@@ -197,7 +197,7 @@ public class CenarioCriarFormView extends MyComposite
 
 	private void populaCampi() {
 		final CampiServiceAsync service = Services.campi();
-		service.getListAll(new AsyncCallback<ListLoadResult<CampusDTO>>() {
+		service.getListAll( cenarioDTO, new AsyncCallback<ListLoadResult<CampusDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();

@@ -70,7 +70,7 @@ public class CurriculoFormView extends MyComposite
 		codigoTF.setEmptyText( "Preencha o código" );
 		formPanel.add( codigoTF, formData );
 
-		cursoCB = new CursoComboBox();
+		cursoCB = new CursoComboBox(cenarioDTO);
 		cursoCB.setName( "curso" );
 		cursoCB.setFieldLabel( "Curso" );
 		cursoCB.setAllowBlank( false );

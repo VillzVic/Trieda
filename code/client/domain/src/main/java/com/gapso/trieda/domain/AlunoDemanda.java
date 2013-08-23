@@ -597,8 +597,8 @@ public class AlunoDemanda
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findMatriculasBy(
-		InstituicaoEnsino instituicaoEnsino, String aluno,
-		String matricula, Campus campus, Curso curso,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		String aluno, String matricula, Campus campus, Curso curso,
 		int firstResult, int maxResults, String orderBy )
 	{
 		aluno = ( ( aluno == null ) ? "" : aluno );
@@ -631,6 +631,7 @@ public class AlunoDemanda
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND  o.demanda.oferta.campus.cenario = :cenario " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
 			" AND LOWER ( o.aluno.matricula ) LIKE LOWER ( :matricula ) " +
 			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + " AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
@@ -647,6 +648,7 @@ public class AlunoDemanda
 		}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "aluno", aluno );
 		q.setParameter( "matricula", matricula );
 		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
@@ -658,9 +660,9 @@ public class AlunoDemanda
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findDisciplinasBy(
-		InstituicaoEnsino instituicaoEnsino, String codigo,
-		Campus campus, Curso curso, int firstResult,
-		int maxResults, String orderBy )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, 
+		String codigo, Campus campus, Curso curso,
+		int firstResult, int maxResults, String orderBy )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -690,6 +692,7 @@ public class AlunoDemanda
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND  o.demanda.oferta.campus.cenario = :cenario " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.demanda.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
 			" AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) " +
 			" GROUP BY o.demanda.disciplina, o.demanda.oferta.campus ");
@@ -704,6 +707,7 @@ public class AlunoDemanda
 		}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "codigo", codigo );
 		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
 		q.setFirstResult( firstResult );
@@ -713,8 +717,8 @@ public class AlunoDemanda
 	}
 	
 	public static int countMatriculas(
-		InstituicaoEnsino instituicaoEnsino, String aluno,
-		String matricula, Campus campus, Curso curso )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		String aluno, String matricula, Campus campus, Curso curso )
 	{
 		aluno = ( ( aluno == null ) ? "" : aluno );
 		aluno = ( "%" + aluno.replace( '*', '%' ) + "%" );
@@ -744,6 +748,7 @@ public class AlunoDemanda
 		Query q = entityManager().createQuery(
 			" SELECT COUNT (DISTINCT o.aluno ) FROM AlunoDemanda o " +
 			" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND  o.demanda.oferta.campus.cenario = :cenario " +
 			" AND " + queryCampus + queryCurso + " LOWER ( o.aluno.nome ) LIKE LOWER ( :aluno ) " +
 			" AND ( o.prioridade = 1 OR o.atendido = TRUE )" + " AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais)" +
 			" AND ( o.demanda.disciplina.creditosTeorico > 0 OR o.demanda.disciplina.creditosPratico > 0 )" +
@@ -759,6 +764,7 @@ public class AlunoDemanda
 		}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "aluno", aluno );
 		q.setParameter( "matricula", matricula );
 		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
@@ -767,8 +773,8 @@ public class AlunoDemanda
 	}
 	
 	public static int countDisciplinas(
-			InstituicaoEnsino instituicaoEnsino, String codigo,
-			Campus campus, Curso curso )
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			String codigo, Campus campus, Curso curso )
 		{
 			codigo = ( ( codigo == null ) ? "" : codigo );
 			codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -796,6 +802,7 @@ public class AlunoDemanda
 			Query q = entityManager().createQuery(
 				" SELECT DISTINCT o.demanda.disciplina, o.demanda.oferta.campus FROM AlunoDemanda o " +
 				" WHERE  o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+				" AND  o.demanda.oferta.campus.cenario = :cenario " +
 				" AND " + queryCampus + queryCurso + " LOWER ( o.demanda.disciplina.codigo ) LIKE LOWER ( :codigo ) " +
 				" AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) ");
 
@@ -809,6 +816,7 @@ public class AlunoDemanda
 			}
 
 			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			q.setParameter( "cenario", cenario );
 			q.setParameter( "codigo", codigo );;
 			q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
 			

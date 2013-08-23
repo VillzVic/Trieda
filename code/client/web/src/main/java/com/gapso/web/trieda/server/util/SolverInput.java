@@ -567,7 +567,7 @@ public class SolverInput
 			GrupoTurno grupoTurno = this.of.createGrupoTurno();
 
 			List< Turno > turnos = Turno.findByCalendario(
-				this.instituicaoEnsino, calendario );
+				this.instituicaoEnsino, cenario, calendario );
 
 			Collections.sort(turnos); // para que as informações sejam impressas em ordem alfabética e, desse modo, facilitar a comparação entre dois XMLs de input
 			// Lendo turnos

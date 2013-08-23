@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlunosDemandaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -25,10 +26,12 @@ public class AlunosDemandaFormView
 	private DemandaDTO demandaDTO;
 	private NumberField prioridade;
 	private NumberField periodoNF;
+	private CenarioDTO cenarioDTO;
 
-	public AlunosDemandaFormView(
+	public AlunosDemandaFormView( CenarioDTO cenarioDTO,
 		AlunoDemandaDTO alunoDemandaDTO, DemandaDTO demandaDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.alunoDemandaDTO = alunoDemandaDTO;
 		this.demandaDTO = demandaDTO;
 		this.initUI();
@@ -91,7 +94,7 @@ public class AlunosDemandaFormView
 		this.formPanel.add( this.periodoNF, formData );
 		
 		// Aluno
-		this.alunosComboBox = new AlunosComboBox();
+		this.alunosComboBox = new AlunosComboBox(cenarioDTO);
 		this.alunosComboBox.setName( "aluno" );
 		this.alunosComboBox.setFieldLabel( "Aluno" );
 		this.alunosComboBox.setAllowBlank( false );

@@ -98,7 +98,7 @@ public class SalasPresenter
 				CampusDTO campusDTO = display.getCampusCB().getValue();
 				UnidadeDTO unidadeDTO = display.getUnidadeCB().getValue();
 
-				service.getList( campusDTO, unidadeDTO,
+				service.getList( cenario, campusDTO, unidadeDTO,
 					(PagingLoadConfig) loadConfig, callback );
 			}
 		};

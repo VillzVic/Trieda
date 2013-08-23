@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -53,14 +54,16 @@ public class EquivalenciaFormPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO; 
 	private SimpleGrid< EquivalenciaDTO > gridPanel;
 	private Display display;
+	private CenarioDTO cenarioDTO;
 
 	public EquivalenciaFormPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO,
 		Display display, SimpleGrid< EquivalenciaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+		this.cenarioDTO = cenarioDTO;
 
 		setListeners();
 		populaListas();
@@ -68,7 +71,7 @@ public class EquivalenciaFormPresenter
 
 	private void populaListas() {
 		final FutureResult<ListLoadResult<CursoDTO>> futureCursoDTOList = new FutureResult<ListLoadResult<CursoDTO>>();
-		Services.cursos().getListAll(futureCursoDTOList);
+		Services.cursos().getListAll(cenarioDTO, futureCursoDTOList);
 		FutureSynchronizer synch = new FutureSynchronizer(futureCursoDTOList);
 		synch.addCallback(new AsyncCallback<Boolean>() {
 			@Override

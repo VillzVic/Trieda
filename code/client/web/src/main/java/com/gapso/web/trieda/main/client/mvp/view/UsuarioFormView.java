@@ -101,7 +101,7 @@ public class UsuarioFormView extends MyComposite
 	    fieldSet.setCheckboxToggle(true);
 	    fieldSet.setExpanded(usuarioDTO.isProfessor());
 
-	    professorCB = new ProfessorComboBox();
+	    professorCB = new ProfessorComboBox( cenarioDTO );
 		professorCB.setValue(professorDTO);
 		fieldSet.add(professorCB, formData);
 

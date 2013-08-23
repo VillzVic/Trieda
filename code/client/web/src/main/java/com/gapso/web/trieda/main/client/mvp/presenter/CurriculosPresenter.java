@@ -91,7 +91,7 @@ public class CurriculosPresenter
 				String descricao = display.getDescricaoBuscaTextField().getValue();
 				CursoDTO cursoDTO = display.getCursoBuscaComboBox().getValue();
 
-				service.getBuscaList( cursoDTO, codigo, descricao, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, cursoDTO, codigo, descricao, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -253,7 +253,7 @@ public class CurriculosPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					CurriculoDTO curriculoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-					Presenter presenter = new CurriculoDisciplinasPresenter( instituicaoEnsinoDTO,
+					Presenter presenter = new CurriculoDisciplinasPresenter( cenario, instituicaoEnsinoDTO,
 						new CurriculoDisciplinasView( curriculoDTO ) );
 
 					presenter.go( gTab );

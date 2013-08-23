@@ -20,6 +20,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.ResumoAtendimentosFaixaDemandaPresenter;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
@@ -36,15 +37,17 @@ public class ResumoAtendimentosFaixaDemandaView extends MyComposite
  	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CampusComboBox campusCB;
+	private CenarioDTO cenarioDTO;
 	
-	public ResumoAtendimentosFaixaDemandaView()
+	public ResumoAtendimentosFaixaDemandaView(CenarioDTO cenarioDTO)
 	{
-			initUI();
-			createToolBar();
-			createForm();
-			createGrid();
-			createTabItem();
-			initComponent( this.tabItem );
+		this.cenarioDTO = cenarioDTO;
+		initUI();
+		createToolBar();
+		createForm();
+		createGrid();
+		createTabItem();
+		initComponent( this.tabItem );
 	}
 	
 	private void initUI()
@@ -89,7 +92,7 @@ public class ResumoAtendimentosFaixaDemandaView extends MyComposite
 		formPanel.setHeaderVisible( false );
 		formPanel.setAutoHeight( true );
 
-		this.campusCB = new CampusComboBox();
+		this.campusCB = new CampusComboBox(cenarioDTO);
 		formPanel.add( this.campusCB, formData );
 
 	    BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );

@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
@@ -43,8 +44,9 @@ public class DemandaFormView
 	private CurriculoDTO curriculoDTO;
 	private TurnoDTO turnoDTO;
 	private DisciplinaDTO disciplinaDTO;
+	private CenarioDTO cenarioDTO;
 
-	public DemandaFormView( DemandaDTO demandaDTO,
+	public DemandaFormView( CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
 		CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
 		TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO )
 	{
@@ -54,6 +56,7 @@ public class DemandaFormView
 		this.curriculoDTO = curriculoDTO;
 		this.turnoDTO = turnoDTO;
 		this.disciplinaDTO = disciplinaDTO;
+		this.cenarioDTO = cenarioDTO;
 
 		initUI();
 	}
@@ -78,7 +81,7 @@ public class DemandaFormView
 		this.formPanel = new FormPanel();
 		this.formPanel.setHeaderVisible( false );
 		
-		this.ofertaCB = new OfertaComboBox();
+		this.ofertaCB = new OfertaComboBox(cenarioDTO);
 		this.ofertaCB.setAllowBlank( true );
 		this.formPanel.add( this.ofertaCB, formData );
 
@@ -110,11 +113,11 @@ public class DemandaFormView
 		this.turnoTF.setReadOnly(true);
 		this.formPanel.add( this.turnoTF, formData );
 
-		this.disciplinaCB = new DisciplinaComboBox(ofertaCB){
+		this.disciplinaCB = new DisciplinaComboBox(cenarioDTO, ofertaCB){
 			@Override
 			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
 				OfertaDTO ofertaDTO = (OfertaDTO) abdto;
-				Services.disciplinas().getListByCurriculoIdAndName(ofertaDTO.getMatrizCurricularId(), this.input.getValue(), callback);
+				Services.disciplinas().getListByCurriculoIdAndName(cenarioDTO, ofertaDTO.getMatrizCurricularId(), this.input.getValue(), callback);
 			}
 		};
 		this.disciplinaCB.setAllowBlank( false );

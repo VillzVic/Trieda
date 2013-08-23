@@ -586,10 +586,11 @@ public class Professor
 		return q.getResultList();
 	}
 
-	public static int count( InstituicaoEnsino instituicaoEnsino, String cpf,
+	public static int count( InstituicaoEnsino instituicaoEnsino, Cenario cenario, String cpf,
 		TipoContrato tipoContrato, Titulacao titulacao, AreaTitulacao areaTitulacao )
 	{
-		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND ";
+		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND" +
+				" o.cenario = :cenario AND";
 
 		if ( cpf != null )
 		{
@@ -620,6 +621,7 @@ public class Professor
 			" SELECT COUNT ( o ) FROM Professor o " + where );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( cpf != null )
 		{
@@ -646,10 +648,11 @@ public class Professor
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findBy( InstituicaoEnsino instituicaoEnsino,
-		String cpf, TipoContrato tipoContrato, Titulacao titulacao,
+		Cenario cenario, String cpf, TipoContrato tipoContrato, Titulacao titulacao,
 		AreaTitulacao areaTitulacao, int firstResult, int maxResults, String orderBy )
 	{
-		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND ";
+		String where = " o.tipoContrato.instituicaoEnsino = :instituicaoEnsino AND" +
+				" o.cenario = :cenario AND ";
 
 		if ( cpf != null )
 		{
@@ -692,6 +695,7 @@ public class Professor
 			" SELECT o FROM Professor o LEFT JOIN o.disciplinas d" + where + "GROUP BY o " + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
@@ -720,7 +724,7 @@ public class Professor
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findBy( InstituicaoEnsino instituicaoEnsino,
-		String nome, String cpf, int firstResult, int maxResults )
+		Cenario cenario, String nome, String cpf, int firstResult, int maxResults )
 	{
 	
 		String where = "";
@@ -737,10 +741,12 @@ public class Professor
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Professor o" +
 			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino" +
+			" AND o.cenario = :cenario" +
 			where 
 			);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 

@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -27,6 +28,7 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
@@ -127,11 +129,13 @@ public class SalasServiceImpl
 	
 	@Override
 	public ListLoadResult< SalaDTO > getAutoCompleteList(
-		BasePagingLoadConfig loadConfig )
+		CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< SalaDTO > list = new ArrayList< SalaDTO >();
 		
-		List< Sala > listDomains = Sala.find( getInstituicaoEnsinoUser(),
+		List< Sala > listDomains = Sala.find( getInstituicaoEnsinoUser(), cenario,
 			loadConfig.get("query").toString(), loadConfig.getOffset(), loadConfig.getLimit() );
 
 		for ( Sala sala : listDomains )
@@ -142,17 +146,16 @@ public class SalasServiceImpl
 		BasePagingLoadResult< SalaDTO > result
 			= new BasePagingLoadResult< SalaDTO >( list );
 		result.setOffset( loadConfig.getOffset() );
-		result.setTotalLength( Sala.count(
-				getInstituicaoEnsinoUser(), null, null ) );
 		return result;
 	}
 
 	@Override
-	public PagingLoadResult< SalaDTO > getList( CampusDTO campusDTO,
+	public PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
 		UnidadeDTO unidadeDTO, PagingLoadConfig config )
 	{
 		List< SalaDTO > list = new ArrayList< SalaDTO >();
 		String orderBy = config.getSortField();
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
 		if ( orderBy != null )
 		{
@@ -173,7 +176,7 @@ public class SalasServiceImpl
 		Unidade unidade = unidadeDTO == null ? null :
 			Unidade.find( unidadeDTO.getId(), getInstituicaoEnsinoUser() );
 
-		List< Sala > listDomains = Sala.find( getInstituicaoEnsinoUser(),
+		List< Sala > listDomains = Sala.find( getInstituicaoEnsinoUser(), cenario,
 			campus, unidade, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Sala sala : listDomains )
@@ -185,7 +188,7 @@ public class SalasServiceImpl
 			= new BasePagingLoadResult< SalaDTO >( list );
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Sala.count(
-				getInstituicaoEnsinoUser(), campus, unidade ) );
+				getInstituicaoEnsinoUser(), cenario, campus, unidade ) );
 		return result;
 	}
 
@@ -413,8 +416,10 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public List< SalaDTO > getListNaoVinculadas( DisciplinaDTO disciplinaDTO )
+	public List< SalaDTO > getListNaoVinculadas( CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		if ( disciplinaDTO == null )
 		{
 			return Collections.< SalaDTO >emptyList();
@@ -425,7 +430,7 @@ public class SalasServiceImpl
 
 		Set< Sala > salaList = disciplina.getSalas();
 		List< Sala > salaDTOList
-			= new ArrayList< Sala >( Sala.findAll(getInstituicaoEnsinoUser()) );
+			= new ArrayList< Sala >( Sala.findByCenario(getInstituicaoEnsinoUser(), cenario) );
 
 		salaDTOList.removeAll( salaList );
 

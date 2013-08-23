@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandasPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -45,9 +46,11 @@ public class DemandasView
 	private Button importExcelAlunosDemandaBT;
 	private Button exportExcelAlunosDemandaBT;
 	private Button associarAlunosDemandaBT;
+	private CenarioDTO cenarioDTO;
 
-	public DemandasView()
+	public DemandasView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
@@ -126,19 +129,19 @@ public class DemandasView
 
 		this.filter = new SimpleFilter();
 
-		this.campusBuscaCB = new CampusComboBox();
+		this.campusBuscaCB = new CampusComboBox( cenarioDTO );
 		this.filter.addField( this.campusBuscaCB );
 
-		this.cursoBuscaCB = new CursoComboBox();
+		this.cursoBuscaCB = new CursoComboBox( cenarioDTO );
 		this.filter.addField( this.cursoBuscaCB );
 
-		this.curriculoBuscaCB = new CurriculoComboBox();
+		this.curriculoBuscaCB = new CurriculoComboBox( cenarioDTO );
 		this.filter.addField( this.curriculoBuscaCB );
 
-		this.turnoBuscaCB = new TurnoComboBox();
+		this.turnoBuscaCB = new TurnoComboBox( cenarioDTO );
 		this.filter.addField( this.turnoBuscaCB );
 
-		this.disciplinaBuscaCB = new DisciplinaComboBox();
+		this.disciplinaBuscaCB = new DisciplinaComboBox( cenarioDTO );
 		this.filter.addField( this.disciplinaBuscaCB );
 
 		this.panel.add( this.filter, bld );

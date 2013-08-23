@@ -81,7 +81,7 @@ public class UnidadeFormView extends MyComposite
 		nomeTF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().nome() );
 		formPanel.add(nomeTF, formData);
 
-		campusCB = new CampusComboBox();
+		campusCB = new CampusComboBox(cenarioDTO);
 		campusCB.setName("campus");
 		campusCB.setFieldLabel(getI18nConstants().campus());
 		campusCB.setAllowBlank(false);

@@ -1482,8 +1482,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	{
 		Parametro parametro = new Parametro();
 
-		List< Campus > listCampus = Campus.findAll( instituicaoEnsino );
-		List< Turno > listTurnos = Turno.findAll( instituicaoEnsino );
+		List< Campus > listCampus = Campus.findByCenario( instituicaoEnsino, cenario );
+		List< Turno > listTurnos = Turno.findAll( instituicaoEnsino, cenario );
 
 		if ( cenario == null )
 		{

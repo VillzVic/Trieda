@@ -389,7 +389,8 @@ public class Aluno
 	}
 	
 	@SuppressWarnings( "unchecked" )
-	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, String nome, String matricula, int firstResult, int maxResults) {
+	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			String nome, String matricula, int firstResult, int maxResults) {
 		if ( nome != null )
 		{
 			nome = "%" + nome + "%";
@@ -406,6 +407,7 @@ public class Aluno
 		Query q = em.createQuery(
 			" SELECT o FROM Aluno o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
 			nomeQuery +
 			matriculaQuery
 		);
@@ -419,6 +421,7 @@ public class Aluno
 			q.setParameter("matricula",matricula);
 		}
 		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("cenario",cenario);
 
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );

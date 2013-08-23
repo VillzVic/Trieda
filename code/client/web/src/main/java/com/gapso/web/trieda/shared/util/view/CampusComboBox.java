@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -18,16 +19,18 @@ public class CampusComboBox
 {
 	private CurriculoComboBox curriculoComboBox;
 	private boolean campusTodos;
+	private CenarioDTO cenario;
 
-	public CampusComboBox()
+	public CampusComboBox(CenarioDTO cenarioDTO)
 	{
-		this( null, false );
+		this( cenarioDTO, null, false );
 	}
 
-	public CampusComboBox( CurriculoComboBox curriculoCB, boolean adicionaCampusTodos )
+	public CampusComboBox( CenarioDTO cenarioDTO, CurriculoComboBox curriculoCB, boolean adicionaCampusTodos )
 	{
 		this.curriculoComboBox = curriculoCB;
 		this.campusTodos = adicionaCampusTodos;
+		this.cenario = cenarioDTO;
 
 		RpcProxy< ListLoadResult< CampusDTO > > proxy =
 			new RpcProxy< ListLoadResult< CampusDTO > >()
@@ -38,7 +41,7 @@ public class CampusComboBox
 			{
 				if ( curriculoComboBox != null )
 				{
-					Services.campi().getListByCurriculo(
+					Services.campi().getListByCurriculo( cenario,
 						curriculoComboBox.getValue(), callback );
 				}
 				else
@@ -46,11 +49,11 @@ public class CampusComboBox
 					if( campusTodos )
 					{
 						//Lista com todos os campi mais um campus com nome TODOS
-						Services.campi().getListAllCampiTodos( callback );
+						Services.campi().getListAllCampiTodos( cenario, callback );
 					}
 					else
 					{
-						Services.campi().getListAll( callback );
+						Services.campi().getListAll( cenario, callback );
 					}
 				}
 			}

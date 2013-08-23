@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.UnidadesPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -38,8 +39,10 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	private Button deslocamentoUnidadesBT;
 	private Button salasBT;
 	private Button disponibilidadeBT;
+	private CenarioDTO cenarioDTO;
 	
-	public UnidadesView() {
+	public UnidadesView( CenarioDTO cenarioDTO ) {
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 	
@@ -93,7 +96,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();
-		campusBuscaComboBox = new CampusComboBox();
+		campusBuscaComboBox = new CampusComboBox(cenarioDTO);
 		campusBuscaComboBox.setFieldLabel(getI18nConstants().campus());
 		nomeBuscaTextField = new TextField<String>();
 		nomeBuscaTextField.setFieldLabel(getI18nConstants().nome());

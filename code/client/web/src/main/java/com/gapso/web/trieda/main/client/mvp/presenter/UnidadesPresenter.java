@@ -100,7 +100,7 @@ public class UnidadesPresenter
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				CampusDTO campusDTO = display.getCampusBuscaComboBox().getValue();
 			
-				service.getBuscaList( campusDTO, nome, codigo, (PagingLoadConfig)loadConfig, callback );
+				service.getBuscaList( cenario, campusDTO, nome, codigo, (PagingLoadConfig)loadConfig, callback );
 			}
 		};
 
@@ -282,7 +282,7 @@ public class UnidadesPresenter
 					{
 						Presenter presenter = new SalasPresenter(
 							instituicaoEnsinoDTO, cenario,
-							new SalasView( campusDTO, unidadeDTO ) );
+							new SalasView( cenario, campusDTO, unidadeDTO ) );
 
 						presenter.go( gTab );
 					}
@@ -341,7 +341,7 @@ public class UnidadesPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new UnidadesDeslocamentoPresenter(
-					new UnidadesDeslocamentoView( null, null ) );
+					new UnidadesDeslocamentoView( cenario, null, null ) );
 
 				presenter.go( gTab );
 			}

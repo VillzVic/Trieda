@@ -8,6 +8,7 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoSalaPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
@@ -20,8 +21,8 @@ public class RelatorioVisaoSalaView	extends RelatorioVisaoView	implements Relato
 	private SalaAutoCompleteBox salaTF;
 	private RelatorioVisaoSalaFiltro filtro;
 
-	public RelatorioVisaoSalaView(){
-		super(new RelatorioVisaoSalaFiltro());
+	public RelatorioVisaoSalaView(CenarioDTO cenarioDTO){
+		super(cenarioDTO, new RelatorioVisaoSalaFiltro());
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class RelatorioVisaoSalaView	extends RelatorioVisaoView	implements Relato
 		
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
-		this.salaTF = new SalaAutoCompleteBox();
+		this.salaTF = new SalaAutoCompleteBox(cenarioDTO);
 		this.salaTF.setEmptyText("Digite codigo da sala");
 		this.salaTF.setName("salaTF");
 		this.salaTF.setFieldLabel("Codigo da Sala");

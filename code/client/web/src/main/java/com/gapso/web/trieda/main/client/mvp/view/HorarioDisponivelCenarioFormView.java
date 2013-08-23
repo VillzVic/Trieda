@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.HorarioDisponivelCenarioFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -39,11 +40,13 @@ public class HorarioDisponivelCenarioFormView
 	private TextField< String > horarioInicioTF;
 	private Button adicionarHorarioBT;
 	private Button removerHorarioBT;
+	private CenarioDTO cenarioDTO;
 
 	public HorarioDisponivelCenarioFormView(
-		SemanaLetivaDTO semanaLetivaDTO )
+		CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO )
 	{
 		this.semanaLetivaDTO = semanaLetivaDTO;
+		this.cenarioDTO = cenarioDTO;
 
 		initUI();
 		createGrid();
@@ -72,7 +75,7 @@ public class HorarioDisponivelCenarioFormView
 		formPanel.setHeading( "Adicionar/Remover Horário de Aula" );
 		formPanel.setButtonAlign( HorizontalAlignment.RIGHT );
 
-		this.turnoCB = new TurnoComboBox();
+		this.turnoCB = new TurnoComboBox( cenarioDTO );
 		this.turnoCB.setName( "turno" );
 		this.turnoCB.setFieldLabel( "Turno" );
 		this.turnoCB.setAllowBlank( false );

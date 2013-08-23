@@ -68,7 +68,7 @@ public class GruposSalasPresenter
 		RpcProxy<PagingLoadResult<GrupoSalaDTO>> proxy = new RpcProxy<PagingLoadResult<GrupoSalaDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<GrupoSalaDTO>> callback) {
-				service.getBuscaList(null, null, null, (PagingLoadConfig)loadConfig, callback);
+				service.getBuscaList(cenario, null, null, null, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);

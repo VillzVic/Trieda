@@ -14,11 +14,13 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -50,8 +52,8 @@ public class GruposSalasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult<GrupoSalaDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, loadConfig.get("query").toString(), null,
+	public ListLoadResult<GrupoSalaDTO> getList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig) {
+		return getBuscaList(cenarioDTO, null, loadConfig.get("query").toString(), null,
 				loadConfig);
 	}
 
@@ -140,8 +142,9 @@ public class GruposSalasServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult<GrupoSalaDTO> getBuscaList(String nome,
+	public PagingLoadResult<GrupoSalaDTO> getBuscaList(CenarioDTO cenarioDTO, String nome,
 			String codigo, UnidadeDTO unidadeDTO, PagingLoadConfig config) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		List<GrupoSalaDTO> list = new ArrayList<GrupoSalaDTO>();
 		String orderBy = config.getSortField();
 		if (orderBy != null) {
@@ -158,7 +161,7 @@ public class GruposSalasServiceImpl
 		}
 
 		List< GrupoSala > listGruposSalas = GrupoSala.findBy(
-			getInstituicaoEnsinoUser(), nome, codigo, unidade,
+			getInstituicaoEnsinoUser(), cenario, nome, codigo, unidade,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( GrupoSala grupoSala : listGruposSalas )
@@ -183,7 +186,7 @@ public class GruposSalasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( GrupoSala.count(
-			getInstituicaoEnsinoUser(), nome, codigo, unidade ) );
+			getInstituicaoEnsinoUser(), cenario, nome, codigo, unidade ) );
 
 		return result;
 	}
@@ -243,8 +246,10 @@ public class GruposSalasServiceImpl
 	}
 
 	@Override
-	public List< GrupoSalaDTO > getListNaoVinculadas( DisciplinaDTO disciplinaDTO )
+	public List< GrupoSalaDTO > getListNaoVinculadas( CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		if ( disciplinaDTO == null )
 		{
 			return Collections.< GrupoSalaDTO >emptyList();
@@ -255,7 +260,7 @@ public class GruposSalasServiceImpl
 
 		Set< GrupoSala > grupoSalaList = disciplina.getGruposSala();
 		List< GrupoSala > todasGrupoSalaList
-			= new ArrayList< GrupoSala >( GrupoSala.findAll(getInstituicaoEnsinoUser()) );
+			= new ArrayList< GrupoSala >( GrupoSala.findByCenario(getInstituicaoEnsinoUser(), cenario) );
 
 		todasGrupoSalaList.removeAll( grupoSalaList );
 

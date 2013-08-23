@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -45,11 +46,11 @@ public interface CursosService extends RemoteService {
 	List<CursoDescompartilhaDTO> getParesCursosQueNaoPermitemCompartilhamentoDeTurmas(ParametroDTO dto) throws TriedaException;
 	
 	CursoDTO getCurso(Long id);
-	ListLoadResult<CursoDTO> getList(BasePagingLoadConfig loadConfig);
-	PagingLoadResult<CursoDTO> getBuscaList(String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config);
+	ListLoadResult<CursoDTO> getList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig);
+	PagingLoadResult<CursoDTO> getBuscaList(CenarioDTO cenarioDTO, String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config);
 	void save(CursoDTO cursoDTO);
 	void remove(List<CursoDTO> cursoDTOList);
-	ListLoadResult<CursoDTO> getListAll();
+	ListLoadResult<CursoDTO> getListAll(CenarioDTO cenarioDTO);
 	ListLoadResult<CursoDTO> getListByCampi(List<CampusDTO> campiDTOs, List<CursoDTO> retirarCursosDTO);
 	List<ResumoCursoDTO> getResumos(CampusDTO campusDTO);
 	

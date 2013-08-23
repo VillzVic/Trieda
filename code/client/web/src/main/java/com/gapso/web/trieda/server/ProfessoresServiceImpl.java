@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Professor;
@@ -25,6 +26,7 @@ import com.gapso.trieda.domain.Titulacao;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -102,11 +104,13 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< ProfessorDTO > getList()
+	public ListLoadResult< ProfessorDTO > getList(CenarioDTO cenarioDTO)
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		List< Professor > listProfessores
-			= Professor.findAll( getInstituicaoEnsinoUser() );
+			= Professor.findByCenario( getInstituicaoEnsinoUser(), cenario );
 
 		Collections.sort( listProfessores );
 
@@ -120,20 +124,22 @@ public class ProfessoresServiceImpl
 
 	@Override
 	public ListLoadResult< ProfessorDTO > getAutoCompleteList(
-			BasePagingLoadConfig loadConfig, String tipoComboBox)
+			CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox)
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		
 		List< Professor > listDomains = new ArrayList< Professor >();
 		
 		if ( tipoComboBox.equals(ProfessorDTO.PROPERTY_NOME) )
 		{
-			listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
+			listDomains = Professor.findBy( getInstituicaoEnsinoUser(), cenario,
 					loadConfig.get("query").toString(), null, loadConfig.getOffset(), loadConfig.getLimit() );
 		}
 		else if ( tipoComboBox.equals(ProfessorDTO.PROPERTY_CPF) )
 		{
-			listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
+			listDomains = Professor.findBy( getInstituicaoEnsinoUser(), cenario,
 					null, loadConfig.get("query").toString(), loadConfig.getOffset(), loadConfig.getLimit() );
 		}
 
@@ -150,10 +156,12 @@ public class ProfessoresServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult< ProfessorDTO > getBuscaList( String cpf,
-		TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
+	public PagingLoadResult< ProfessorDTO > getBuscaList( CenarioDTO cenarioDTO, 
+		String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
 		AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		TipoContrato tipoContrato = ( tipoContratoDTO == null ) ? null
 			: TipoContrato.find( tipoContratoDTO.getId(), getInstituicaoEnsinoUser() );
 
@@ -180,7 +188,7 @@ public class ProfessoresServiceImpl
 
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		List< Professor > listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
-			cpf, tipoContrato, titulacao, areaTitulacao,
+			cenario, cpf, tipoContrato, titulacao, areaTitulacao,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		if ( listDomains != null )
@@ -197,7 +205,7 @@ public class ProfessoresServiceImpl
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( Professor.count(
-			getInstituicaoEnsinoUser(), cpf,
+			getInstituicaoEnsinoUser(), cenario, cpf,
 			tipoContrato, titulacao, areaTitulacao ) );
 
 		return result;
@@ -312,13 +320,14 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public List< ProfessorDTO > getProfessoresNaoEmCampus( CampusDTO campusDTO )
+	public List< ProfessorDTO > getProfessoresNaoEmCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
 		onlyAdministrador();
-
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 		Set< Professor > listAssociados = campus.getProfessores();
-		List< Professor > list = Professor.findAll( getInstituicaoEnsinoUser() );
+		List< Professor > list = Professor.findByCenario( getInstituicaoEnsinoUser(), cenario );
 		list.removeAll( listAssociados );
 
 		List< ProfessorDTO > listDTO
@@ -333,7 +342,7 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult< ProfessorCampusDTO > getProfessorCampusByCurrentProfessor()
+	public PagingLoadResult< ProfessorCampusDTO > getProfessorCampusByCurrentProfessor( CenarioDTO cenarioDTO )
 	{
 		onlyProfessor();
 
@@ -345,9 +354,11 @@ public class ProfessoresServiceImpl
 
 	@Override
 	public PagingLoadResult< ProfessorCampusDTO > getProfessorCampusList(
-			CampusDTO campusDTO, ProfessorDTO professorDTO )
+			CenarioDTO cenarioDTO, CampusDTO campusDTO, ProfessorDTO professorDTO )
 	{
 		onlyAdministrador();
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
 		List< ProfessorCampusDTO > list = null;
 		if ( campusDTO != null && professorDTO == null )
@@ -370,7 +381,7 @@ public class ProfessoresServiceImpl
 			list = new ArrayList< ProfessorCampusDTO >();
 
 			List< Campus > listDomains
-				= Campus.findAll( this.getInstituicaoEnsinoUser() );
+				= Campus.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
 
 			for ( Campus campus : listDomains )
 			{

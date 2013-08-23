@@ -8,6 +8,7 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoAlunoPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaAlunoGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoFiltro;
@@ -22,8 +23,8 @@ public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements Relat
 	private AlunosMatriculaComboBox matriculaTF;
 	private RelatorioVisaoAlunoFiltro filtro;
 
-	public RelatorioVisaoAlunoView(){
-		super(new RelatorioVisaoAlunoFiltro());
+	public RelatorioVisaoAlunoView(CenarioDTO cenarioDTO){
+		super(cenarioDTO, new RelatorioVisaoAlunoFiltro());
 	}
 	
 	@Override
@@ -47,7 +48,7 @@ public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements Relat
 		
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
-		this.alunoTF = new AlunosComboBox();
+		this.alunoTF = new AlunosComboBox(cenarioDTO);
 		this.alunoTF.setEmptyText("Digite o nome do aluno");
 		this.alunoTF.setName("aluno");
 		this.alunoTF.setFieldLabel("Aluno");
@@ -58,7 +59,7 @@ public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements Relat
 		
 		List<Field<?>> rightList = new ArrayList<Field<?>>();
 		
-		this.matriculaTF = new AlunosMatriculaComboBox();
+		this.matriculaTF = new AlunosMatriculaComboBox(cenarioDTO);
 		this.matriculaTF.setEmptyText("Digite o número da matricula");
 		this.matriculaTF.setName("matricula");
 		this.matriculaTF.setFieldLabel("Matricula");

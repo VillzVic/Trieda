@@ -1883,6 +1883,8 @@ public class ConvertBeans {
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
+		Cenario cenario
+			= Cenario.find(dto.getCenarioId(), instituicaoEnsino);
 
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
@@ -1899,7 +1901,7 @@ public class ConvertBeans {
 			Curriculo curriculo = Curriculo.find( dto.getCurriculoId(), instituicaoEnsino );
 			Turno turno = Turno.find( dto.getTurnoId(), instituicaoEnsino );
 
-			List< Oferta > ofertas = Oferta.findBy( instituicaoEnsino,
+			List< Oferta > ofertas = Oferta.findBy( instituicaoEnsino, cenario,
 				turno, campus, curso, curriculo, 0, 1, null );
 
 			domain.setOferta( ( ofertas == null || ofertas.size() == 0 ) ? null : ofertas.get( 0 ) );
@@ -2526,7 +2528,7 @@ public class ConvertBeans {
 	private static void fillProfessorWithProfessorDTO(Professor domain, ProfessorDTO dto,  InstituicaoEnsino instituicaoEnsino) {
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
-		domain.setCenario( Cenario.find( dto.getCenarioId(), instituicaoEnsino ) );
+		domain.setCenario( Cenario.find(dto.getCenarioId(), instituicaoEnsino) );
 		domain.setNome( dto.getNome() );
 		domain.setCpf( dto.getCpf() );
 		domain.setTipoContrato( TipoContrato.find(dto.getTipoContratoId(), instituicaoEnsino ) );
@@ -2546,6 +2548,9 @@ public class ConvertBeans {
 		Professor domain = null;
 		if (dto.getId() != null) {
 			domain = Professor.find(dto.getId(),instituicaoEnsino); // esta busca pelo professor preenche a sua lista de campi
+		}
+		else {
+			domain = new Professor();
 		}
 		
 		fillProfessorWithProfessorDTO(domain,dto,instituicaoEnsino);

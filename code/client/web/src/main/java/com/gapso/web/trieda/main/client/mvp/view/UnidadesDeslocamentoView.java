@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.UnidadesDeslocamentoPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -30,8 +31,11 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public UnidadesDeslocamentoView(CampusDTO campusDTO, List<DeslocamentoUnidadeDTO> deslocamentoUnidadeDTOList) {
+	public UnidadesDeslocamentoView(CenarioDTO cenarioDTO, CampusDTO campusDTO,
+			List<DeslocamentoUnidadeDTO> deslocamentoUnidadeDTOList) {
+		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = campusDTO;
 		this.deslocamentoUnidadeDTOList = deslocamentoUnidadeDTOList;
 		initUI();
@@ -75,7 +79,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 		filter.setHeading("Campus");
 		FormData formData = new FormData("-5");
 		
-		campusBuscaComboBox = new CampusComboBox();
+		campusBuscaComboBox = new CampusComboBox(cenarioDTO);
 		campusBuscaComboBox.setFieldLabel("Campus");
 		if(campusDTO != null) {
 			campusBuscaComboBox.setValue(campusDTO);

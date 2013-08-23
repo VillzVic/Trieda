@@ -53,13 +53,15 @@ public class ResumoMatriculasPresenter
 	
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public ResumoMatriculasPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-			CenarioDTO cenario, Display display )
+			CenarioDTO cenarioDTO, Display display )
 	{
 			this.display = display;
 			this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+			this.cenarioDTO = cenarioDTO;
 
 			configureProxy();
 			setListeners();
@@ -85,7 +87,7 @@ public class ResumoMatriculasPresenter
 				CursoDTO cursoDTO
 					= display.getCursoBuscaComboBox().getValue();
 
-				service.getResumoMatriculasList( aluno, matricula, campusDTO,
+				service.getResumoMatriculasList( cenarioDTO, aluno, matricula, campusDTO,
 					cursoDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};

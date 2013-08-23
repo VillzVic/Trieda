@@ -13,6 +13,7 @@ import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.web.trieda.server.AlunosDemandaServiceImpl;
+import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
@@ -109,9 +110,10 @@ public class AtendimentosMatriculaExportExcel
 			= new ArrayList< ResumoMatriculaDTO >();
 		AlunosDemandaServiceImpl alunosDemandaServiceImpl = new AlunosDemandaServiceImpl();
 		
-		PagingLoadConfig todasPaginas = new BasePagingLoadConfig(0, AlunoDemanda.countMatriculas(instituicaoEnsino, null, null, null, null));
+		PagingLoadConfig todasPaginas = new BasePagingLoadConfig(0, AlunoDemanda.countMatriculas(instituicaoEnsino, getCenario(), null, null, null, null));
 		
-		resumoMatriculaDTOList = alunosDemandaServiceImpl.getResumoMatriculasList(null, null, null, null, todasPaginas).getData();
+		resumoMatriculaDTOList = alunosDemandaServiceImpl.getResumoMatriculasList(
+				ConvertBeans.toCenarioDTO(getCenario()), null, null, null, null, todasPaginas).getData();
 
 
 		if ( !resumoMatriculaDTOList.isEmpty() )

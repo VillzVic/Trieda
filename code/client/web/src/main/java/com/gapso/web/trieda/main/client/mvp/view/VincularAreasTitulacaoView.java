@@ -20,6 +20,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.VincularAreasTitulacaoPresenter;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
@@ -43,7 +44,10 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 	
 	private GTabItem tabItem;
 	
-	public VincularAreasTitulacaoView() {
+	private CenarioDTO cenarioDTO;
+	
+	public VincularAreasTitulacaoView(CenarioDTO cenarioDTO) {
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		createToolBar();
 		createTabItem();
@@ -76,7 +80,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		formPanel.setHeaderVisible(false);
 		formPanel.setAutoHeight(true);
 		
-		cursoCB = new CursoComboBox();
+		cursoCB = new CursoComboBox(cenarioDTO);
 		formPanel.add(cursoCB, formData);
 		
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.NORTH);

@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -35,9 +36,11 @@ public class ResumoPercentMestresDoutoresView extends MyComposite
  	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CampusComboBox campusCB;
+	private CenarioDTO cenarioDTO;
 	
-	public ResumoPercentMestresDoutoresView()
+	public ResumoPercentMestresDoutoresView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		createToolBar();
 		createForm();
@@ -86,7 +89,7 @@ public class ResumoPercentMestresDoutoresView extends MyComposite
 		formPanel.setHeaderVisible( false );
 		formPanel.setAutoHeight( true );
 
-		this.campusCB = new CampusComboBox(null, true);
+		this.campusCB = new CampusComboBox(cenarioDTO, null, true);
 		formPanel.add( this.campusCB, formData );
 
 

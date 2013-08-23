@@ -104,7 +104,7 @@ implements Presenter
 				TipoDisciplinaDTO tipoDisciplinaDTO
 					= display.getTipoDisciplinaBuscaComboBox().getValue();
 
-				service.getBuscaList( nome, codigo, tipoDisciplinaDTO,
+				service.getBuscaList( cenario, nome, codigo, tipoDisciplinaDTO,
 					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
@@ -303,8 +303,8 @@ implements Presenter
 			{
 				final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 				Presenter presenter = new SalasAssociarDisciplinaPresenter(
-						instituicaoEnsinoDTO,
-						new SalasAssociarDisciplinaView( disciplinaDTO ) );
+						instituicaoEnsinoDTO, cenario,
+						new SalasAssociarDisciplinaView( cenario, disciplinaDTO ) );
 					presenter.go( gTab );
 			}
 		});
@@ -317,8 +317,8 @@ implements Presenter
 				{
 					final DisciplinaDTO disciplinaDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 					Presenter presenter = new GruposSalasAssociarDisciplinaPresenter(
-							instituicaoEnsinoDTO,
-							new GruposSalasAssociarDisciplinaView( disciplinaDTO ) );
+							instituicaoEnsinoDTO, cenario,
+							new GruposSalasAssociarDisciplinaView( cenario, disciplinaDTO ) );
 						presenter.go( gTab );
 				}
 			});

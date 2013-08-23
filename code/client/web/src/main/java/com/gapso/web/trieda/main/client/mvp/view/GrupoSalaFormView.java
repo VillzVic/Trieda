@@ -85,7 +85,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 		
-		CampusComboBox campusCB = new CampusComboBox();
+		CampusComboBox campusCB = new CampusComboBox(cenarioDTO);
 		campusCB.setEnabled(!isEdited());
 		campusCB.setValue(campusDTO);
 		formPanel.add(campusCB, formData);

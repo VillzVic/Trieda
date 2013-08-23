@@ -150,7 +150,7 @@ public class SemanasLetivaPresenter
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				Presenter presenter = new HorarioDisponivelCenarioFormPresenter(
-					instituicaoEnsinoDTO, dto, new HorarioDisponivelCenarioFormView(dto ) );
+					instituicaoEnsinoDTO, dto, new HorarioDisponivelCenarioFormView(cenario, dto ) );
 
 				presenter.go( null );
 			}

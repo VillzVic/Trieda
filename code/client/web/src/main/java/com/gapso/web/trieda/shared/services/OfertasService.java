@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
@@ -20,9 +21,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ofertas")
 public interface OfertasService extends RemoteService {
 
-	ListLoadResult<OfertaDTO> getListAll();
+	ListLoadResult<OfertaDTO> getListAll( CenarioDTO cenarioDTO );
 	OfertaDTO getOferta(Long id);
-	PagingLoadResult<OfertaDTO> getBuscaList(TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config);
+	PagingLoadResult<OfertaDTO> getBuscaList(CenarioDTO cenarioDTO,TurnoDTO turnoDTO, CampusDTO campusDTO,
+			CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config);
 	void save(OfertaDTO ofertaDTO);
 	void remove(List<OfertaDTO> ofertaDTOList);
 	ListLoadResult<TreeNodeDTO> getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO);

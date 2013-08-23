@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.EquivalenciasPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -35,8 +36,10 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	private CursoComboBox cursoCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 	
-	public EquivalenciasView() {
+	public EquivalenciasView(CenarioDTO cenarioDTO) {
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 	
@@ -82,9 +85,9 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();
-		campusCB = new CampusComboBox();
-		disciplinaCB = new DisciplinaComboBox();
-		cursoCB = new CursoComboBox();
+		campusCB = new CampusComboBox(cenarioDTO);
+		disciplinaCB = new DisciplinaComboBox(cenarioDTO);
+		cursoCB = new CursoComboBox(cenarioDTO);
 		filter.addField(campusCB);
 		filter.addField(disciplinaCB);
 		filter.addField(cursoCB);

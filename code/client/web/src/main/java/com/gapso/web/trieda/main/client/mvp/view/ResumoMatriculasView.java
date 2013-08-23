@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -39,15 +40,17 @@ public class ResumoMatriculasView extends MyComposite
 	private CursoComboBox cursoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public ResumoMatriculasView()
+	public ResumoMatriculasView( CenarioDTO cenarioDTO )
 	{
-			initUI();
-			createToolBar();
-			createGrid();
-			createFilter();
-			createTabItem();
-			initComponent( this.tabItem );
+		this.cenarioDTO = cenarioDTO;
+		initUI();
+		createToolBar();
+		createGrid();
+		createFilter();
+		createTabItem();
+		initComponent( this.tabItem );
 	}
 	
 	private void initUI()
@@ -90,9 +93,9 @@ public class ResumoMatriculasView extends MyComposite
 		this.alunoBuscaTextField.setFieldLabel("Aluno");
 		this.matriculaBuscaTextField = new TextField<String>();
 		this.matriculaBuscaTextField.setFieldLabel("Matrícula");
-		this.cursoBuscaComboBox = new CursoComboBox();
+		this.cursoBuscaComboBox = new CursoComboBox(cenarioDTO);
 		this.cursoBuscaComboBox.setFieldLabel("Curso");
-		this.campusBuscaComboBox = new CampusComboBox();
+		this.campusBuscaComboBox = new CampusComboBox(cenarioDTO);
 		this.campusBuscaComboBox.setFieldLabel("Campus");
 		
 		this.filter.addField( this.alunoBuscaTextField );

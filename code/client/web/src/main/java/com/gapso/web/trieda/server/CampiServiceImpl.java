@@ -148,13 +148,15 @@ public class CampiServiceImpl extends RemoteService
 
 	@Override
 	public ListLoadResult< CampusDTO > getListByCurriculo(
-		CurriculoDTO curriculoDTO )
+		CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO )
 	{
 		Curriculo curriculo = Curriculo.find(
 			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
 		List< CampusDTO > campiDTO = new ArrayList< CampusDTO >();
-		List< Campus > campi = Campus.findByCurriculo(
+		List< Campus > campi = Campus.findByCurriculo( cenario,
 			this.getInstituicaoEnsinoUser(), curriculo );
 
 		for ( Campus c : campi )
@@ -165,10 +167,12 @@ public class CampiServiceImpl extends RemoteService
 	}
 
 	@Override
-	public ListLoadResult< CampusDTO > getListAll()
+	public ListLoadResult< CampusDTO > getListAll( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< CampusDTO > campiDTO = new ArrayList< CampusDTO >();
-		List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
+		List< Campus > campi = Campus.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
 
 		for ( Campus c : campi )
 		{
@@ -179,10 +183,12 @@ public class CampiServiceImpl extends RemoteService
 	}
 	
 	@Override
-	public ListLoadResult< CampusDTO > getListAllCampiTodos()
+	public ListLoadResult< CampusDTO > getListAllCampiTodos( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< CampusDTO > campiDTO = new ArrayList< CampusDTO >();
-		List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
+		List< Campus > campi = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
 
 		for ( Campus c : campi )
 		{
@@ -200,7 +206,8 @@ public class CampiServiceImpl extends RemoteService
 	}
 	
 	@Override
-	public ListLoadResult<CampusDTO> getCampiNaoSelecionadosParaOtimizacao(List<CampusDTO> campiSelecionados) {
+	public ListLoadResult<CampusDTO> getCampiNaoSelecionadosParaOtimizacao(CenarioDTO cenarioDTO, List<CampusDTO> campiSelecionados) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		List<CampusDTO> campiDTOsNaoSelecionados = new ArrayList<CampusDTO>();
 		
 		Set<Long> campiIDsSelecionados = new HashSet<Long>();
@@ -208,7 +215,7 @@ public class CampiServiceImpl extends RemoteService
 			campiIDsSelecionados.add(campusDTO.getId());
 		}
 		
-		List<Campus> todosCampi = Campus.findAll(this.getInstituicaoEnsinoUser());
+		List<Campus> todosCampi = Campus.findByCenario(this.getInstituicaoEnsinoUser(), cenario);
 		for (Campus campus : todosCampi) {
 			if (!campiIDsSelecionados.contains(campus.getId())) {
 				campiDTOsNaoSelecionados.add(ConvertBeans.toCampusDTO(campus));
@@ -368,13 +375,15 @@ public class CampiServiceImpl extends RemoteService
 	}
 
 	@Override
-	public List<DeslocamentoCampusDTO> getDeslocamentos()
+	public List<DeslocamentoCampusDTO> getDeslocamentos( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
+		
 		List< DeslocamentoCampusDTO > list
 			= new ArrayList< DeslocamentoCampusDTO >();
 
 		List< Campus > listCampi
-			= Campus.findAll( this.getInstituicaoEnsinoUser() );
+			= Campus.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
 
 		for ( Campus unidade : listCampi )
 		{

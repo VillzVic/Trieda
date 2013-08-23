@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.OfertaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -29,8 +30,10 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	private CampusDTO campusDTO;
 	private CurriculoDTO curriculoDTO;
 	private NumberField receitaNF;
+	private CenarioDTO cenarioDTO;
 	
-	public OfertaFormView(TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
+	public OfertaFormView(CenarioDTO cenarioDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
+		this.cenarioDTO = cenarioDTO;
 		this.ofertaDTO = new OfertaDTO();
 		this.turnoDTO = turnoDTO;
 		this.campusDTO = campusDTO;
@@ -38,7 +41,8 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		initUI();
 	}
 	
-	public OfertaFormView(OfertaDTO ofertaDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
+	public OfertaFormView(CenarioDTO cenarioDTO, OfertaDTO ofertaDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CurriculoDTO curriculoDTO) {
+		this.cenarioDTO = cenarioDTO;
 		this.ofertaDTO = ofertaDTO;
 		this.turnoDTO = turnoDTO;
 		this.campusDTO = campusDTO;
@@ -61,7 +65,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 		
-		turnoCB = new TurnoComboBox();
+		turnoCB = new TurnoComboBox(cenarioDTO);
 		turnoCB.setName("turno");
 		turnoCB.setFieldLabel("Turno");
 		turnoCB.setAllowBlank(false);
@@ -69,7 +73,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		turnoCB.setEmptyText("Selecione o turno");
 		formPanel.add(turnoCB, formData);
 		
-		campusCB = new CampusComboBox();
+		campusCB = new CampusComboBox(cenarioDTO);
 		campusCB.setName("campus");
 		campusCB.setFieldLabel("Campus");
 		campusCB.setAllowBlank(false);
@@ -77,7 +81,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		campusCB.setEmptyText("Selecione o campus");
 		formPanel.add(campusCB, formData);
 		
-		curriculoCB = new CurriculoComboBox();
+		curriculoCB = new CurriculoComboBox(cenarioDTO);
 		curriculoCB.setName("curriculo");
 		curriculoCB.setFieldLabel("Matriz Curricular");
 		curriculoCB.setAllowBlank(false);

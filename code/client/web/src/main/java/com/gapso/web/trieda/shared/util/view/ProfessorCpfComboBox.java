@@ -12,17 +12,21 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ProfessorCpfComboBox extends ComboBox<ProfessorDTO>{
 
-	public ProfessorCpfComboBox() {
-		this(false);
+	private CenarioDTO cenarioDTO;
+	
+	public ProfessorCpfComboBox(CenarioDTO cenarioDTO) {
+		this(cenarioDTO, false);
 	}
 
-	public ProfessorCpfComboBox(boolean readOnly) {
+	public ProfessorCpfComboBox(CenarioDTO cenarioDTO, boolean readOnly) {
+		this.cenarioDTO = cenarioDTO;
 		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
 	}
@@ -35,7 +39,7 @@ public class ProfessorCpfComboBox extends ComboBox<ProfessorDTO>{
 				// realiza o filtro dos valores do comboBox
 				@Override
 				public void load(Object loadConfig, AsyncCallback<ListLoadResult<ProfessorDTO>> callback){
-					Services.professores().getAutoCompleteList((BasePagingLoadConfig)loadConfig,  ProfessorDTO.PROPERTY_CPF, callback);
+					Services.professores().getAutoCompleteList(cenarioDTO, (BasePagingLoadConfig)loadConfig,  ProfessorDTO.PROPERTY_CPF, callback);
 				}
 			};
 			

@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -22,8 +23,8 @@ public interface ProfessoresService
 	extends RemoteService
 {
 	ProfessorDTO getProfessor( Long id );
-	ListLoadResult< ProfessorDTO > getList();
-	PagingLoadResult< ProfessorDTO > getBuscaList( String cpf, TipoContratoDTO tipoContratoDTO,
+	ListLoadResult< ProfessorDTO > getList( CenarioDTO cenarioDTO );
+	PagingLoadResult< ProfessorDTO > getBuscaList( CenarioDTO cenarioDTO, String cpf, TipoContratoDTO tipoContratoDTO,
 		TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config );
 	TipoContratoDTO getTipoContrato( Long id );
 	ListLoadResult< TipoContratoDTO > getTiposContratoAll();
@@ -33,15 +34,15 @@ public interface ProfessoresService
 	void remove( List< ProfessorDTO > professorDTOList );
 	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( ProfessorDTO professorDTO );
 	void saveHorariosDisponiveis( ProfessorDTO professorDTO, List< HorarioDisponivelCenarioDTO > listDTO );
-	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusList( CampusDTO campusDTO, ProfessorDTO professorDTO );
+	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusList( CenarioDTO cenarioDTO, CampusDTO campusDTO, ProfessorDTO professorDTO );
 	void removeProfessorCampus( List< ProfessorCampusDTO > professorCampusDTOList );
 	ListLoadResult<ProfessorDTO> getProfessoresEmCampus( CampusDTO campusDTO );
-	List< ProfessorDTO > getProfessoresNaoEmCampus( CampusDTO campusDTO );
+	List< ProfessorDTO > getProfessoresNaoEmCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList );
-	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusByCurrentProfessor();
+	PagingLoadResult< ProfessorCampusDTO > getProfessorCampusByCurrentProfessor( CenarioDTO cenarioDTO );
 	
 	void geraHabilitacaoParaProfessoresVirtuaisCadastrados();
 	ListLoadResult<ProfessorDTO> getAutoCompleteList(
-			BasePagingLoadConfig loadConfig, String tipoComboBox);
+			CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox);
 	
 }

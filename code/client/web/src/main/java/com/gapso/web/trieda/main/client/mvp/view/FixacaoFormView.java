@@ -19,6 +19,7 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.FixacaoFormPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
@@ -58,12 +59,13 @@ public class FixacaoFormView extends MyComposite implements
 	private UnidadeDTO unidadeDTO;
 	private SalaDTO salaDTO;
 	private List<HorarioDisponivelCenarioDTO> listHorarios;
+	private CenarioDTO cenarioDTO;
 
-	public FixacaoFormView(FixacaoDTO fixacaoDTO, ProfessorDTO professorDTO,
-			DisciplinaDTO disciplinaDTO, CampusDTO campusDTO,
-			UnidadeDTO unidadeDTO, SalaDTO salaDTO,
-			List<HorarioDisponivelCenarioDTO> listHorarios,
-			Boolean selectDefault) {
+	public FixacaoFormView(CenarioDTO cenarioDTO, FixacaoDTO fixacaoDTO,
+			ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO,
+			CampusDTO campusDTO, UnidadeDTO unidadeDTO, SalaDTO salaDTO,
+			List<HorarioDisponivelCenarioDTO> listHorarios,	Boolean selectDefault) {
+		this.cenarioDTO = cenarioDTO;
 		this.fixacaoDTO = fixacaoDTO;
 		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
@@ -117,15 +119,15 @@ public class FixacaoFormView extends MyComposite implements
 		descricaoTF.setEmptyText("Preencha a descrição");
 		formPanel.add(descricaoTF, formData);
 
-		professorCB = new ProfessorComboBox();
+		professorCB = new ProfessorComboBox(cenarioDTO);
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 
-		disciplinaCB = new DisciplinaComboBox();
+		disciplinaCB = new DisciplinaComboBox(cenarioDTO);
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
 
-		campusCB = new CampusComboBox();
+		campusCB = new CampusComboBox(cenarioDTO);
 		campusCB.setValue(campusDTO);
 		formPanel.add(campusCB, formData);
 

@@ -7,10 +7,12 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
@@ -42,7 +44,10 @@ public class EquivalenciasServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult<EquivalenciaDTO> getBuscaList(DisciplinaDTO disciplinaDTO, CursoDTO cursoDTO, PagingLoadConfig config) {
+	public PagingLoadResult<EquivalenciaDTO> getBuscaList(CenarioDTO cenarioDTO, 
+			DisciplinaDTO disciplinaDTO, CursoDTO cursoDTO, PagingLoadConfig config) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		String orderBy = config.getSortField();
 		if(orderBy != null) {
 			if(config.getSortDir() != null && config.getSortDir().equals(SortDir.DESC)) {
@@ -59,7 +64,7 @@ public class EquivalenciasServiceImpl
 			ConvertBeans.toCurso(cursoDTO);
 
 		List< Equivalencia > list = Equivalencia.findBy( getInstituicaoEnsinoUser(),
-			disciplina, curso, config.getOffset(), config.getLimit(), orderBy );
+			cenario, disciplina, curso, config.getOffset(), config.getLimit(), orderBy );
 
 		List< EquivalenciaDTO > listDTO
 			= new ArrayList< EquivalenciaDTO >();
@@ -74,7 +79,7 @@ public class EquivalenciasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Equivalencia.count(
-			getInstituicaoEnsinoUser(), disciplina, curso ) );
+			getInstituicaoEnsinoUser(), cenario, disciplina, curso ) );
 
 		return result;
 	}

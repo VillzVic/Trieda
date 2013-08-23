@@ -22,5 +22,5 @@ public interface AlunosService
 	PagingLoadResult< AlunoDTO > getAlunosListByCampus(CampusDTO campusDTO);
 	void saveAluno( AlunoDTO alunoDTO );
 	void removeAlunos( List< AlunoDTO > list );
-	ListLoadResult<AlunoDTO> getAutoCompleteList(BasePagingLoadConfig loadConfig, String tipoComboBox);
+	ListLoadResult<AlunoDTO> getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox);
 }

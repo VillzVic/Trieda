@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
@@ -40,10 +41,12 @@ public class ProfessoresDisciplinaView extends MyComposite
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private UsuarioDTO usuario;
+	private CenarioDTO cenarioDTO;
 
-	public ProfessoresDisciplinaView( UsuarioDTO usuario )
+	public ProfessoresDisciplinaView( CenarioDTO cenarioDTO, UsuarioDTO usuario )
 	{
 		this.usuario = usuario;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 
@@ -141,9 +144,9 @@ public class ProfessoresDisciplinaView extends MyComposite
 		bld.setCollapsible( true );
 
 		filter = new SimpleFilter();
-		professorBuscaCB = new ProfessorComboBox();
+		professorBuscaCB = new ProfessorComboBox( cenarioDTO );
 		professorBuscaCB.setAllowBlank( false );
-		disciplinaBuscaCB = new DisciplinaComboBox();
+		disciplinaBuscaCB = new DisciplinaComboBox( cenarioDTO );
 		disciplinaBuscaCB.setAllowBlank( false );
 
 		filter.addField( professorBuscaCB );

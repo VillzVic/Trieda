@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -43,15 +44,17 @@ public class ResumoAtendimentosFaixaDemandaFormPresenter
 	private int numFaixas;
 	private Grid< AtendimentoFaixaDemandaDTO > grid;
 	private CampusDTO campusDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public ResumoAtendimentosFaixaDemandaFormPresenter (
-			Display display, Grid< AtendimentoFaixaDemandaDTO > grid,
-			CampusDTO campusDTO)
+			CenarioDTO cenarioDTO, Display display,
+			Grid< AtendimentoFaixaDemandaDTO > grid, CampusDTO campusDTO)
 	{
 		this.display = display;
 		this.numFaixas = 0;
 		this.grid = grid;
 		this.campusDTO = campusDTO;
+		this.cenarioDTO = cenarioDTO;
 		
 		setListeners();
 	}
@@ -68,7 +71,7 @@ public class ResumoAtendimentosFaixaDemandaFormPresenter
 				{
 					grid.mask( display.getI18nMessages().loading() );
 					display.getSimpleModal().hide();
-					Services.alunosDemanda().getResumoFaixaDemandaList(campusDTO, getFaixas(),
+					Services.alunosDemanda().getResumoFaixaDemandaList( cenarioDTO, campusDTO, getFaixas(),
 					new AbstractAsyncCallbackWithDefaultOnFailure< List < AtendimentoFaixaDemandaDTO > >( display )
 					{
 						@Override

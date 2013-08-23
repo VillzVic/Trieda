@@ -34,18 +34,18 @@ public interface DisciplinasServiceAsync {
 	/**
 	 * @see com.gapso.web.trieda.shared.services.DisciplinasService#associarDisciplinasSemLaboratorioATodosLaboratorios()
 	 */
-	void associarDisciplinasSemLaboratorioATodosLaboratorios(AsyncCallback<Void> callback);
+	void associarDisciplinasSemLaboratorioATodosLaboratorios(CenarioDTO cenarioDTO, AsyncCallback<Void> callback);
 	
 	void getDisciplina( Long id, AsyncCallback< DisciplinaDTO > callback );
-	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
-	void getBuscaList(String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO,
+	void getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
+	void getBuscaList( CenarioDTO cenarioDTO, String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< DisciplinaDTO > > callback );
 	void save( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
 	void remove( List< DisciplinaDTO > disciplinaDTOList, AsyncCallback< Void > callback );
 	void getTipoDisciplinaList( AsyncCallback< ListLoadResult< TipoDisciplinaDTO > > callback );
 	void getTipoDisciplina( Long id, AsyncCallback< TipoDisciplinaDTO > callback );
-	void getListByCursoAndName( List< CursoDTO > cursos, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
-	void getListByCurriculoIdAndName( Long curriculoId, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
+	void getListByCursoAndName( CenarioDTO cenarioDTO, List< CursoDTO > cursos, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
+	void getListByCurriculoIdAndName( CenarioDTO cenarioDTO, Long curriculoId, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCursos( List< CursoDTO > cursos, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCurriculo( long curriculoId, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO,
@@ -57,5 +57,5 @@ public interface DisciplinasServiceAsync {
 	void getDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< DivisaoCreditoDTO > callback );
 	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoDisciplinaDTO > > callback );
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
-	void getDisciplinaNaoAssociada(ProfessorDTO professorDTO, String nome, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+	void getDisciplinaNaoAssociada( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String nome, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 }

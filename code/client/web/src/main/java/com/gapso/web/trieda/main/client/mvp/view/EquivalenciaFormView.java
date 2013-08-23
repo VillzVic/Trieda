@@ -27,6 +27,7 @@ import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.LabelToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.main.client.mvp.presenter.EquivalenciaFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
@@ -54,17 +55,19 @@ public class EquivalenciaFormView extends MyComposite implements
 	private List<CursoDTO> cursosDTO;
 	private ContentPanel associadosListPanel;
 	private ContentPanel cursosListPanel;
+	private CenarioDTO cenarioDTO;
 
-	public EquivalenciaFormView(EquivalenciaDTO equivalenciaDTO) {
-		this(equivalenciaDTO, null, null, null);
+	public EquivalenciaFormView(CenarioDTO cenarioDTO, EquivalenciaDTO equivalenciaDTO) {
+		this(cenarioDTO, equivalenciaDTO, null, null, null);
 	}
 	
-	public EquivalenciaFormView(EquivalenciaDTO equivalenciaDTO, List<CursoDTO> cursosDTO,
-			DisciplinaDTO disciplinaCursouDTO, DisciplinaDTO disciplinaEliminaDTO) {
+	public EquivalenciaFormView(CenarioDTO cenarioDTO, EquivalenciaDTO equivalenciaDTO,
+			List<CursoDTO> cursosDTO, DisciplinaDTO disciplinaCursouDTO, DisciplinaDTO disciplinaEliminaDTO) {
 		this.equivalenciaDTO = equivalenciaDTO;
 		this.disciplinaCursouDTO = disciplinaCursouDTO;
 		this.disciplinaEliminaDTO = disciplinaEliminaDTO;
 		this.cursosDTO = cursosDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 
@@ -85,13 +88,13 @@ public class EquivalenciaFormView extends MyComposite implements
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		disciplinaCursouComboBox = new DisciplinaComboBox();
+		disciplinaCursouComboBox = new DisciplinaComboBox(cenarioDTO);
 		disciplinaCursouComboBox.setAllowBlank(false);
 		disciplinaCursouComboBox.setFieldLabel("Disciplina (Cursou)");
 		disciplinaCursouComboBox.setValue(disciplinaCursouDTO);
 		formPanel.add(disciplinaCursouComboBox, formData);
 		
-		disciplinaEliminaComboBox = new DisciplinaComboBox();
+		disciplinaEliminaComboBox = new DisciplinaComboBox(cenarioDTO);
 		disciplinaEliminaComboBox.setAllowBlank(false);
 		disciplinaEliminaComboBox.setFieldLabel("Disciplina (Elimina)");
 		disciplinaEliminaComboBox.setValue(disciplinaEliminaDTO);

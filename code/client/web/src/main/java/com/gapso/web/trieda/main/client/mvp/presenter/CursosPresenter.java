@@ -94,7 +94,7 @@ public class CursosPresenter
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				TipoCursoDTO tipoCursoDTO = display.getTipoCursoBuscaComboBox().getValue();
 
-				service.getBuscaList( nome, codigo, tipoCursoDTO, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, nome, codigo, tipoCursoDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -259,7 +259,7 @@ public class CursosPresenter
 				final CursoDTO cursoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				Presenter presenter = new CurriculosPresenter(
-					instituicaoEnsinoDTO, cenario, new CurriculosView( cursoDTO ) );
+					instituicaoEnsinoDTO, cenario, new CurriculosView( cenario, cursoDTO ) );
 
 				presenter.go( gTab );
 			}

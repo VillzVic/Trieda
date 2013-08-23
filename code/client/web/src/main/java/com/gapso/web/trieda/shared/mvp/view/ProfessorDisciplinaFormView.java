@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
@@ -33,15 +34,17 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 	private ProfessorDisciplinaDTO professorDisciplinaDTO;
 	private ProfessorDTO professorDTO;
 	private DisciplinaDTO disciplinaDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public ProfessorDisciplinaFormView( UsuarioDTO usuario,
-		ProfessorDisciplinaDTO professorDisciplinaDTO,
+	public ProfessorDisciplinaFormView( CenarioDTO cenarioDTO, 
+		UsuarioDTO usuario,	ProfessorDisciplinaDTO professorDisciplinaDTO,
 		ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO )
 	{
 		this.usuario = usuario;
 		this.professorDisciplinaDTO = professorDisciplinaDTO;
 		this.professorDTO = professorDTO;
 		this.disciplinaDTO = disciplinaDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 
@@ -63,16 +66,16 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		professorCB = new ProfessorComboBox(usuario.isProfessor());
+		professorCB = new ProfessorComboBox(cenarioDTO, usuario.isProfessor());
 		professorCB.setAllowBlank(false);
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 
-		disciplinaCB = new DisciplinaComboBox(professorCB){
+		disciplinaCB = new DisciplinaComboBox(cenarioDTO, professorCB){
 			@Override
 			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
 				ProfessorDTO professorDTO = (ProfessorDTO) abdto;
-				Services.disciplinas().getDisciplinaNaoAssociada(professorDTO, this.input.getValue() , callback);
+				Services.disciplinas().getDisciplinaNaoAssociada(cenarioDTO, professorDTO, this.input.getValue() , callback);
 			}
 		};
 		disciplinaCB.setAllowBlank(false);

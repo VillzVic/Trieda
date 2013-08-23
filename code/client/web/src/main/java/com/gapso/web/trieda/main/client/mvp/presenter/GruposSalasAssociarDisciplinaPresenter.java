@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -48,12 +49,13 @@ public class GruposSalasAssociarDisciplinaPresenter
 	
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public GruposSalasAssociarDisciplinaPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-	
+		this.cenarioDTO = cenarioDTO;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -66,7 +68,7 @@ public class GruposSalasAssociarDisciplinaPresenter
 			@Override
 			public void load(Object loadConfig, AsyncCallback<List<GrupoSalaDTO>> callback) {
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
-				service.getListNaoVinculadas(disciplinaDTO, callback);
+				service.getListNaoVinculadas(cenarioDTO, disciplinaDTO, callback);
 			}
 		};
 		display.getNaoVinculadaList().setStore(new ListStore<GrupoSalaDTO>(new BaseListLoader<ListLoadResult<GrupoSalaDTO>>(proxyNaoVinculada)));

@@ -23,6 +23,7 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.CompartilharCursosPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -45,9 +46,11 @@ public class CompartilharCursosView extends MyComposite implements
 
 	private ParametroDTO parametro;
 	private List<CursoDescompartilhaDTO> cursos;
+	private CenarioDTO cenarioDTO;
 
-	public CompartilharCursosView(ParametroDTO parametro,
+	public CompartilharCursosView(CenarioDTO cenarioDTO, ParametroDTO parametro,
 			List<CursoDescompartilhaDTO> cursos) {
+		this.cenarioDTO = cenarioDTO;
 		this.parametro = parametro;
 		this.cursos = cursos;
 		initUI();
@@ -87,7 +90,7 @@ public class CompartilharCursosView extends MyComposite implements
 		right.setLayout(layoutRight);
 
 		left.setStyleAttribute("text-align", "center");
-		curso1CB = new CursoComboBox();
+		curso1CB = new CursoComboBox(cenarioDTO);
 		curso1CB.setLabelSeparator("");
 		left.add(curso1CB, formData);
 
@@ -97,7 +100,7 @@ public class CompartilharCursosView extends MyComposite implements
 		center.add(new Label("Não compartilha"));
 
 		right.setStyleAttribute("text-align", "center");
-		curso2CB = new CursoComboBox();
+		curso2CB = new CursoComboBox(cenarioDTO);
 		curso2CB.setLabelSeparator("");
 		right.add(curso2CB, formData);
 

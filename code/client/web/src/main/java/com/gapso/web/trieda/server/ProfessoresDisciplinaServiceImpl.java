@@ -7,10 +7,12 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
@@ -30,7 +32,10 @@ public class ProfessoresDisciplinaServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult<ProfessorDisciplinaDTO> getBuscaList(ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config) {
+	public PagingLoadResult<ProfessorDisciplinaDTO> getBuscaList(CenarioDTO cenarioDTO, ProfessorDTO professorDTO, 
+			DisciplinaDTO disciplinaDTO, PagingLoadConfig config) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		Professor professor = (professorDTO == null)? null :
 			Professor.find( professorDTO.getId(), getInstituicaoEnsinoUser() );
 
@@ -56,7 +61,7 @@ public class ProfessoresDisciplinaServiceImpl
 			= new ArrayList< ProfessorDisciplinaDTO >();
 
 		List< ProfessorDisciplina > listDomains = ProfessorDisciplina.findBy(
-			getInstituicaoEnsinoUser(), professor, disciplina,
+			getInstituicaoEnsinoUser(), cenario, professor, disciplina,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( ProfessorDisciplina professorDisciplina : listDomains )
@@ -69,7 +74,7 @@ public class ProfessoresDisciplinaServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( ProfessorDisciplina.count(
-			getInstituicaoEnsinoUser(), professor, disciplina ) );
+			getInstituicaoEnsinoUser(), cenario, professor, disciplina ) );
 
 		return result;
 	}

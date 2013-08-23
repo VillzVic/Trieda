@@ -341,7 +341,7 @@ public class Oferta
 	}
 
 	public static int count( InstituicaoEnsino instituicaoEnsino,
-		Turno turno, Campus campus, Curso curso, Curriculo curriculo )
+		Cenario cenario, Turno turno, Campus campus, Curso curso, Curriculo curriculo )
 	{
 		String queryTurno = ( ( turno != null ) ? " o.turno = :turno AND " : "" );
 		String queryCampus = ( ( campus != null ) ? " o.campus = :campus AND " : "" );
@@ -351,9 +351,11 @@ public class Oferta
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Oferta o " +
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.campus.cenario = :cenario " +
 			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( turno != null )
 		{
@@ -380,8 +382,8 @@ public class Oferta
 
 	@SuppressWarnings( "unchecked" )
 	public static List<Oferta> findBy( InstituicaoEnsino instituicaoEnsino,
-		Turno turno, Campus campus, Curso curso, Curriculo curriculo,
-		int firstResult, int maxResults, String orderBy )
+		Cenario cenario, Turno turno, Campus campus, Curso curso,
+		Curriculo curriculo, int firstResult, int maxResults, String orderBy )
 	{
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
@@ -393,9 +395,11 @@ public class Oferta
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Oferta o " +
 			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.campus.cenario = :cenario " +
 			" AND " + queryTurno + queryCampus + queryCurso + queryCurriculo + " 1=1 " + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 

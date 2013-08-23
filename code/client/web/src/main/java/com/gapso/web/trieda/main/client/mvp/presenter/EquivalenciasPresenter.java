@@ -64,14 +64,15 @@ public class EquivalenciasPresenter
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
+	private CenarioDTO cenarioDTO;
 	
 	public EquivalenciasPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display )
+		CenarioDTO cenarioDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
-
+		this.cenarioDTO = cenarioDTO;
 		configureProxy();
 		setListeners();
 	}
@@ -82,7 +83,7 @@ public class EquivalenciasPresenter
 			public void load(Object loadConfig, AsyncCallback<PagingLoadResult<EquivalenciaDTO>> callback) {
 				DisciplinaDTO disciplina = display.getDisciplinaComboBox().getValue();
 				CursoDTO  curso = display.getCursoComboBox().getValue();
-				Services.equivalencias().getBuscaList(disciplina, curso, (PagingLoadConfig)loadConfig, callback);
+				Services.equivalencias().getBuscaList(cenarioDTO, disciplina, curso, (PagingLoadConfig)loadConfig, callback);
 			}
 		};
 		display.setProxy(proxy);
@@ -96,8 +97,8 @@ public class EquivalenciasPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new EquivalenciaFormPresenter( instituicaoEnsinoDTO,
-					new EquivalenciaFormView( new EquivalenciaDTO() ), display.getGrid() );
+				Presenter presenter = new EquivalenciaFormPresenter( instituicaoEnsinoDTO, cenarioDTO,
+					new EquivalenciaFormView( cenarioDTO, new EquivalenciaDTO() ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -136,8 +137,8 @@ public class EquivalenciasPresenter
 						DisciplinaDTO disciplinaCursouDTO = futureDisciplinaCursouDTO.result();
 						DisciplinaDTO disciplinaEliminaDTO = futureDisciplinaEliminaDTO.result();
 
-						Presenter presenter = new EquivalenciaFormPresenter( instituicaoEnsinoDTO,
-							new EquivalenciaFormView( equivalenciaDTO, cursosDTO, disciplinaCursouDTO,
+						Presenter presenter = new EquivalenciaFormPresenter( instituicaoEnsinoDTO, cenarioDTO,
+							new EquivalenciaFormView( cenarioDTO, equivalenciaDTO, cursosDTO, disciplinaCursouDTO,
 								disciplinaEliminaDTO), display.getGrid() );
 
 						presenter.go( null );

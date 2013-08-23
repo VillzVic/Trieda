@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.CursoDescompartilha;
 import com.gapso.trieda.domain.Oferta;
@@ -31,6 +32,7 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -109,10 +111,12 @@ public class CursosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< CursoDTO > getListAll()
+	public ListLoadResult< CursoDTO > getListAll( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< CursoDTO > list = new ArrayList< CursoDTO >();
-		List< Curso > cursos = Curso.findAll( getInstituicaoEnsinoUser() );
+		List< Curso > cursos = Curso.findByCenario( getInstituicaoEnsinoUser(), cenario );
 
 		for ( Curso curso : cursos )
 		{
@@ -124,17 +128,19 @@ public class CursosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult<CursoDTO> getList(BasePagingLoadConfig loadConfig) {
-		return getBuscaList(null, loadConfig.get("query").toString(), null,
+	public ListLoadResult<CursoDTO> getList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig) {
+		return getBuscaList(cenarioDTO, null, loadConfig.get("query").toString(), null,
 				loadConfig);
 	}
 
 	@Override
-	public PagingLoadResult< CursoDTO > getBuscaList( String nome, String codigo,
-		TipoCursoDTO tipoCursoDTO, PagingLoadConfig config )
+	public PagingLoadResult< CursoDTO > getBuscaList( CenarioDTO cenarioDTO, String nome,
+		String codigo, TipoCursoDTO tipoCursoDTO, PagingLoadConfig config )
 	{
 		List< CursoDTO > list = new ArrayList< CursoDTO >();
 		String orderBy = config.getSortField();
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
 		if ( orderBy != null )
 		{
@@ -155,7 +161,7 @@ public class CursosServiceImpl
 			tipoCurso = ConvertBeans.toTipoCurso( tipoCursoDTO );
 		}
 
-		List< Curso > listDomains = Curso.findBy( getInstituicaoEnsinoUser(),
+		List< Curso > listDomains = Curso.findBy( getInstituicaoEnsinoUser(), cenario,
 			codigo, nome, tipoCurso, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Curso curso : listDomains )
@@ -170,7 +176,7 @@ public class CursosServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Curso.count(
-			getInstituicaoEnsinoUser(), codigo, nome, tipoCurso ) );
+			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoCurso ) );
 
 		return result;
 	}

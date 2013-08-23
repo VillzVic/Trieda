@@ -13,18 +13,21 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 	private ListStore<AlunoDTO> store;
+	private CenarioDTO cenarioDTO;
 	
-	public AlunosComboBox(){
-		this(false);
+	public AlunosComboBox(CenarioDTO cenarioDTO){
+		this(cenarioDTO, false);
 	}
 
-	public AlunosComboBox(boolean readOnly) {
+	public AlunosComboBox(CenarioDTO cenarioDTO, boolean readOnly) {
+		this.cenarioDTO = cenarioDTO;
 		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
 	}
@@ -37,7 +40,7 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 				// realiza o filtro dos valores do comboBox
 				@Override
 				public void load(Object loadConfig, AsyncCallback<ListLoadResult<AlunoDTO>> callback){
-					Services.alunos().getAutoCompleteList((BasePagingLoadConfig)loadConfig, AlunoDTO.PROPERTY_ALUNO_NOME, callback);
+					Services.alunos().getAutoCompleteList(cenarioDTO, (BasePagingLoadConfig)loadConfig, AlunoDTO.PROPERTY_ALUNO_NOME, callback);
 				}
 			};
 			

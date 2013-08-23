@@ -283,7 +283,7 @@ public class DemandasImportExcel
 	{
 		// [ NomeTurno -> Turno ]
 		Map< String, Turno > turnosBDMap = Turno.buildTurnoNomeToTurnoMap(
-			Turno.findAll( this.instituicaoEnsino ) );
+			Turno.findAll( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList<Integer >();
 

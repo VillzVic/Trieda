@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -41,11 +42,13 @@ public class SelecionarCampiPresenter implements Presenter {
 	private Display display;
 	private ParametroDTO parametroDTO;
 	private ParametrosViewGateway parametrosViewGateway;
+	private CenarioDTO cenarioDTO;
 	
-	public SelecionarCampiPresenter(ParametroDTO parametroDTO, Display display, ParametrosViewGateway parametrosViewGateway) {
+	public SelecionarCampiPresenter(CenarioDTO cenarioDTO, ParametroDTO parametroDTO, Display display, ParametrosViewGateway parametrosViewGateway) {
 		this.display = display;
 		this.parametroDTO = parametroDTO;
 		this.parametrosViewGateway = parametrosViewGateway;
+		this.cenarioDTO = cenarioDTO;
 
 		configureProxy();
 		setListeners();
@@ -56,7 +59,7 @@ public class SelecionarCampiPresenter implements Presenter {
 		RpcProxy<ListLoadResult<CampusDTO>> proxyNaoSelecionado = new RpcProxy<ListLoadResult<CampusDTO>>() {
 			@Override
 			public void load(Object loadConfig, AsyncCallback<ListLoadResult<CampusDTO>> callback) {
-				service.getCampiNaoSelecionadosParaOtimizacao(parametroDTO.getCampi(),callback);
+				service.getCampiNaoSelecionadosParaOtimizacao(cenarioDTO, parametroDTO.getCampi(),callback);
 			}
 		};
 		display.getNaoSelecionadoList().setStore(new ListStore<CampusDTO>(new BaseListLoader<ListLoadResult<CampusDTO>>(proxyNaoSelecionado)));

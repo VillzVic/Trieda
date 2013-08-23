@@ -84,7 +84,7 @@ public class SalaFormView extends MyComposite implements
 		codigoTF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().codigo() );
 		formPanel.add( codigoTF, formData );
 
-		CampusComboBox campusCB = new CampusComboBox();
+		CampusComboBox campusCB = new CampusComboBox(cenarioDTO);
 		campusCB.setValue( campusDTO );
 		formPanel.add( campusCB, formData );
 

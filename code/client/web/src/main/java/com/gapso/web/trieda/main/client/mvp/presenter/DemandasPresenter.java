@@ -82,14 +82,15 @@ public class DemandasPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private GTab gTab;
+	private CenarioDTO cenarioDTO;
 
 	public DemandasPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display )
+		CenarioDTO cenarioDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
-
+		this.cenarioDTO = cenarioDTO;
 		configureProxy();
 		setListeners();
 	}
@@ -111,7 +112,7 @@ public class DemandasPresenter
 				TurnoDTO turno = display.getTurnoBuscaComboBox().getValue();
 				DisciplinaDTO disciplina = display.getDisciplinaBuscaComboBox().getValue();
 
-				service.getBuscaList( campus, curso, curriculo, turno,
+				service.getBuscaList( cenarioDTO, campus, curso, curriculo, turno,
 					disciplina, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
@@ -128,7 +129,7 @@ public class DemandasPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new DemandaFormPresenter( instituicaoEnsinoDTO,
-					new DemandaFormView( new DemandaDTO(), null, null, null, null, null ), display.getGrid() );
+					new DemandaFormView( cenarioDTO, new DemandaDTO(), null, null, null, null, null ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -175,7 +176,8 @@ public class DemandasPresenter
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
 
 						Presenter presenter = new DemandaFormPresenter( instituicaoEnsinoDTO,
-							new DemandaFormView( demandaDTO, campusDTO, cursoDTO, curriculoDTO, turnoDTO, disciplinaDTO ), display.getGrid() );
+							new DemandaFormView( cenarioDTO, demandaDTO, campusDTO, cursoDTO, curriculoDTO,
+									turnoDTO, disciplinaDTO ), display.getGrid() );
 
 						presenter.go( null );	
 					}
@@ -297,7 +299,7 @@ public class DemandasPresenter
 					@Override
 					public void onSuccess(Integer result) {
 						demandaDTO.setPeriodo(result);
-						Presenter presenter = new AlunosDemandaPresenter(instituicaoEnsinoDTO,new AlunoDemandaView(demandaDTO));
+						Presenter presenter = new AlunosDemandaPresenter(instituicaoEnsinoDTO, cenarioDTO, new AlunoDemandaView(demandaDTO));
 						presenter.go( gTab );
 					}
 				});

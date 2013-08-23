@@ -23,6 +23,7 @@ import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.ParametrosPresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.SelecionarCampiPresenter.ParametrosViewGateway;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -88,8 +89,11 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private Button maximizarNotaAvaliacaoCorpoDocenteButton; 
 	private Button minimizarCustoDocenteCursosButton; 
 	private Button compartilharDisciplinasCampiButton; 
+	
+	private CenarioDTO cenarioDTO;
 
-	public ParametrosView(ParametroDTO parametroDTO) {
+	public ParametrosView(CenarioDTO cenarioDTO, ParametroDTO parametroDTO) {
+		this.cenarioDTO = cenarioDTO;
 		this.parametroDTO = parametroDTO;
 		initUI();
 	}
@@ -335,7 +339,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.form.add(campiSelecionadosContainer);
 
 		// TURNO
-		turnoComboBox = new TurnoComboBox();
+		turnoComboBox = new TurnoComboBox(cenarioDTO);
 		turnoComboBox.setFieldLabel("Turno");
 		this.form.add(turnoComboBox);
 		

@@ -204,11 +204,13 @@ public class ProfessorDisciplina
 	}
 
 	public static int count(
-		InstituicaoEnsino instituicaoEnsino,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		Professor professor, Disciplina disciplina )
 	{
 		String where = " o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino AND ";
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professor.cenario = :cenario " +
+			" AND o.disciplina.cenario = :cenario AND ";
 
 		if ( professor != null )
 		{
@@ -228,6 +230,7 @@ public class ProfessorDisciplina
 			" SELECT COUNT ( o ) FROM ProfessorDisciplina o " + where );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( professor != null )
 		{
@@ -244,11 +247,13 @@ public class ProfessorDisciplina
 
 	@SuppressWarnings("unchecked")
 	public static List< ProfessorDisciplina > findBy(
-		InstituicaoEnsino instituicaoEnsino, Professor professor,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Professor professor,
 		Disciplina disciplina, int firstResult, int maxResults,	String orderBy )
 	{
 		String where = " o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino AND ";
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professor.cenario = :cenario " +
+			" AND o.disciplina.cenario = :cenario AND ";
 
 		if ( professor != null )
 		{
@@ -295,6 +300,7 @@ public class ProfessorDisciplina
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( professor != null )
 		{

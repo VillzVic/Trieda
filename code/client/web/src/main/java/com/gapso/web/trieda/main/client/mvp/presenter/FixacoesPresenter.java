@@ -83,7 +83,7 @@ public class FixacoesPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
-					cenario, new FixacaoFormView( new FixacaoDTO(), null, null, null, null, null, null, false ), display.getGrid() );
+					cenario, new FixacaoFormView( cenario, new FixacaoDTO(), null, null, null, null, null, null, false ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -125,7 +125,7 @@ public class FixacoesPresenter
 						List<HorarioDisponivelCenarioDTO> horariosDTOList = futureHorariosDTO.result();
 						
 						Presenter presenter = new FixacaoFormPresenter( instituicaoEnsinoDTO,
-							cenario, new FixacaoFormView( fixacaoDTO, professorDTO, disciplinaDTO,
+							cenario, new FixacaoFormView( cenario, fixacaoDTO, professorDTO, disciplinaDTO,
 								campusDTO, unidadeDTO, salaDTO, horariosDTOList, false ), display.getGrid() );
 
 						presenter.go( null );

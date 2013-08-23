@@ -892,15 +892,17 @@ public class Campus
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findByCurriculo(
-		InstituicaoEnsino instituicaoEnsino, Curriculo curriculo )
+		Cenario cenario, InstituicaoEnsino instituicaoEnsino, Curriculo curriculo )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT c FROM Campus c, IN ( c.ofertas ) o " +
 			" WHERE c.instituicaoEnsino = :instituicaoEnsino " +
+			" AND c.cenario = :cenario " +
 			" AND o.curriculo = :curriculo " +
 			" AND o.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "curriculo", curriculo );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();

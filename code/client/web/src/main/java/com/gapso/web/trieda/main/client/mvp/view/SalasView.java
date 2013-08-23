@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.SalasPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -44,15 +45,17 @@ public class SalasView
 
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
+	private CenarioDTO cenarioDTO;
 
-	public SalasView()
+	public SalasView( CenarioDTO cenarioDTO )
 	{
-		this( null, null );
+		this( cenarioDTO, null, null );
 	}
 
-	public SalasView(
+	public SalasView( CenarioDTO cenarioDTO,
 		CampusDTO campusDTO, UnidadeDTO unidadeDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = campusDTO;
 		this.unidadeDTO = unidadeDTO;
 
@@ -141,7 +144,7 @@ public class SalasView
 
 		this.filter = new SimpleFilter();
 
-		this.campusCB = new CampusComboBox();
+		this.campusCB = new CampusComboBox(cenarioDTO);
 		this.campusCB.setValue( this.campusDTO );
 		this.unidadeCB = new UnidadeComboBox( this.campusCB );
 		this.unidadeCB.setValue( this.unidadeDTO );

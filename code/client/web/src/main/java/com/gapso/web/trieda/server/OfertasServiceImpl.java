@@ -13,12 +13,14 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
@@ -33,9 +35,11 @@ public class OfertasServiceImpl
 	private static final long serialVersionUID = -3010939181486905949L;
 	
 	@Override
-	public ListLoadResult<OfertaDTO> getListAll() {
+	public ListLoadResult<OfertaDTO> getListAll( CenarioDTO cenarioDTO ) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List<OfertaDTO> ofertasDTOs = new ArrayList<OfertaDTO>();
-		List<Oferta> ofertas = Oferta.findAll(this.getInstituicaoEnsinoUser());
+		List<Oferta> ofertas = Oferta.findByCenario(this.getInstituicaoEnsinoUser(), cenario);
 
 		for (Oferta oferta : ofertas) {
 			ofertasDTOs.add(ConvertBeans.toOfertaDTO(oferta));
@@ -59,10 +63,12 @@ public class OfertasServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult< OfertaDTO > getBuscaList( TurnoDTO turnoDTO,
-		CampusDTO campusDTO, CursoDTO cursoDTO,
+	public PagingLoadResult< OfertaDTO > getBuscaList( CenarioDTO cenarioDTO, 
+		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO,
 		CurriculoDTO curriculoDTO, PagingLoadConfig config )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< OfertaDTO > list = new ArrayList< OfertaDTO >();
 		String orderBy = config.getSortField();
 
@@ -84,7 +90,7 @@ public class OfertasServiceImpl
 		Curso curso = ( ( cursoDTO != null ) ? ConvertBeans.toCurso( cursoDTO ) : null );
 		Curriculo curriculo = ( ( curriculoDTO != null ) ? ConvertBeans.toCurriculo( curriculoDTO ) : null );
 
-		List< Oferta > listOfertas = Oferta.findBy( getInstituicaoEnsinoUser(),
+		List< Oferta > listOfertas = Oferta.findBy( getInstituicaoEnsinoUser(), cenario,
 			turno, campus, curso, curriculo, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Oferta oferta : listOfertas )
@@ -97,7 +103,7 @@ public class OfertasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Oferta.count(
-			getInstituicaoEnsinoUser(), turno, campus, curso, curriculo ) );
+			getInstituicaoEnsinoUser(), cenario, turno, campus, curso, curriculo ) );
 
 		return result;
 	}

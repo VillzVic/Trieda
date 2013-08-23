@@ -214,7 +214,7 @@ public class GrupoSala
 	}
 
 	public static int count( InstituicaoEnsino instituicaoEnsino,
-		String nome, String codigo, Unidade unidade )
+		Cenario cenario, String nome, String codigo, Unidade unidade )
 	{
 		nome = ( ( nome == null )? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -226,6 +226,7 @@ public class GrupoSala
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM GrupoSala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade.campus.cenario = :cenario" +
 			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
 			" AND " + unidadeQuery + " 1=1 " );
@@ -233,6 +234,7 @@ public class GrupoSala
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( unidade != null )
 		{
@@ -244,7 +246,7 @@ public class GrupoSala
 
     @SuppressWarnings("unchecked")
     public static List< GrupoSala > findBy( InstituicaoEnsino instituicaoEnsino,
-    	String nome, String codigo, Unidade unidade,
+    	Cenario cenario, String nome, String codigo, Unidade unidade,
     	int firstResult, int maxResults, String orderBy )
     {
         nome = ( ( nome == null ) ? "" : nome );
@@ -258,6 +260,7 @@ public class GrupoSala
         Query q = entityManager().createQuery(
         		" SELECT o FROM GrupoSala o " +
         		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+        		" AND o.unidade.campus.cenario = :cenario" +
         		" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
         		" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
         		" AND " + unidadeQuery + " 1=1 " + "" + orderBy );
@@ -265,6 +268,7 @@ public class GrupoSala
         q.setParameter( "nome", nome );
         q.setParameter( "codigo", codigo );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
 
         if ( unidade != null )
         {
@@ -355,4 +359,19 @@ public class GrupoSala
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );
 	}
+
+    @SuppressWarnings("unchecked")
+	public static List< GrupoSala > findByCenario(
+        	InstituicaoEnsino instituicaoEnsino, Cenario cenario)
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM GrupoSala o " +
+	        " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.unidade.campus.cenario = :cenario" );
+    	
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		
+        return q.getResultList();
+    }
 }

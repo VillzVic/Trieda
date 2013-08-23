@@ -71,7 +71,7 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new CampusProfessoresPresenter(
 					instituicaoEnsinoDTO, masterData, usuario,
-					new CampusProfessoresView( usuario ), true );
+					new CampusProfessoresView( masterData, usuario ), true );
 
 				presenter.go( gTab );
 			}
@@ -85,7 +85,7 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new ProfessoresDisciplinaPresenter(
 					instituicaoEnsinoDTO, masterData, usuario,
-					new ProfessoresDisciplinaView( usuario ), true );
+					new ProfessoresDisciplinaView( masterData, usuario ), true );
 
 				presenter.go( gTab );
 			}
@@ -128,7 +128,7 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new RelatorioVisaoProfessorPresenter(
 					instituicaoEnsinoDTO, masterData, usuario,
-					new RelatorioVisaoProfessorView( usuario, true ), true );
+					new RelatorioVisaoProfessorView( masterData, usuario, true ), true );
 
 				presenter.go( gTab );
 			}

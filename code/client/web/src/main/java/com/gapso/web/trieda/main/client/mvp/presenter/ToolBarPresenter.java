@@ -274,7 +274,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new UnidadesPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new UnidadesView() );
+					instituicaoEnsinoDTO, cenarioDTO, new UnidadesView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -300,7 +300,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new SalasPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new SalasView() );
+					instituicaoEnsinoDTO, cenarioDTO, new SalasView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -352,7 +352,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new VincularAreasTitulacaoPresenter(
-						instituicaoEnsinoDTO, new VincularAreasTitulacaoView() );
+						instituicaoEnsinoDTO, new VincularAreasTitulacaoView(cenarioDTO) );
 
 				presenter.go( gTab );
 			}
@@ -365,7 +365,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new UnidadesDeslocamentoPresenter(
-					new UnidadesDeslocamentoView( null, null ) );
+					new UnidadesDeslocamentoView( cenarioDTO, null, null ) );
 
 				presenter.go( gTab );
 			}
@@ -379,7 +379,7 @@ public class ToolBarPresenter
 			{
 				CampiServiceAsync service = Services.campi();
 
-				service.getDeslocamentos( new AsyncCallback< List< DeslocamentoCampusDTO > >()
+				service.getDeslocamentos( cenarioDTO, new AsyncCallback< List< DeslocamentoCampusDTO > >()
 				{
 					@Override
 					public void onFailure( Throwable caught )
@@ -459,7 +459,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new CurriculosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView() );
+					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView(cenarioDTO) );
 
 				presenter.go( gTab );
 			}
@@ -472,7 +472,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new CurriculosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView() );
+					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView(cenarioDTO) );
 
 				presenter.go( gTab );
 			}
@@ -498,7 +498,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new EquivalenciasPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new EquivalenciasView() );
+					instituicaoEnsinoDTO, cenarioDTO, new EquivalenciasView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -524,7 +524,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new CompatibilidadesPresenter(
-						cenarioDTO, new CompatibilidadesView() );
+						cenarioDTO, new CompatibilidadesView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -564,7 +564,7 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new ProfessoresDisciplinaPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
-					new ProfessoresDisciplinaView( usuarioDTO ), false );
+					new ProfessoresDisciplinaView( cenarioDTO, usuarioDTO ), false );
 
 				presenter.go( gTab );
 			}
@@ -578,7 +578,7 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new CampusProfessoresPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
-					new CampusProfessoresView( usuarioDTO ), false );
+					new CampusProfessoresView( cenarioDTO, usuarioDTO ), false );
 
 				presenter.go( gTab );
 			}
@@ -591,7 +591,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new OfertasPresenter(
-					instituicaoEnsinoDTO, new OfertasView() );
+					instituicaoEnsinoDTO, cenarioDTO, new OfertasView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -658,7 +658,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new OfertasPresenter(
-					instituicaoEnsinoDTO, new OfertasView() );
+					instituicaoEnsinoDTO, cenarioDTO, new OfertasView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -671,7 +671,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new SalasAssociarDisciplinaPresenter(
-					instituicaoEnsinoDTO, new SalasAssociarDisciplinaView( new DisciplinaDTO() ) );
+					instituicaoEnsinoDTO, cenarioDTO, new SalasAssociarDisciplinaView( cenarioDTO, new DisciplinaDTO() ) );
 
 				presenter.go( gTab );
 			}
@@ -684,7 +684,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new GruposSalasAssociarDisciplinaPresenter(
-					instituicaoEnsinoDTO, new GruposSalasAssociarDisciplinaView( new DisciplinaDTO() ) );
+					instituicaoEnsinoDTO, cenarioDTO, new GruposSalasAssociarDisciplinaView( cenarioDTO, new DisciplinaDTO() ) );
 
 				presenter.go( gTab );
 			}
@@ -697,7 +697,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new SalasAssociarDisciplinaPresenter(
-						instituicaoEnsinoDTO, new SalasAssociarDisciplinaView( new DisciplinaDTO() ) );
+						instituicaoEnsinoDTO, cenarioDTO, new SalasAssociarDisciplinaView( cenarioDTO, new DisciplinaDTO() ) );
 
 				presenter.go( gTab );
 			}
@@ -710,7 +710,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new GruposSalasAssociarDisciplinaPresenter(
-						instituicaoEnsinoDTO, new GruposSalasAssociarDisciplinaView( new DisciplinaDTO() ) );
+						instituicaoEnsinoDTO, cenarioDTO, new GruposSalasAssociarDisciplinaView( cenarioDTO, new DisciplinaDTO() ) );
 
 				presenter.go( gTab );
 			}
@@ -723,7 +723,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new DemandasPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new DemandasView() );
+					instituicaoEnsinoDTO, cenarioDTO, new DemandasView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -736,7 +736,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new RelatorioVisaoSalaPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoSalaView() );
+					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoSalaView(cenarioDTO) );
 
 				presenter.go( gTab );
 			}
@@ -760,7 +760,7 @@ public class ToolBarPresenter
 
 					@Override
 					public void onSuccess(ParametroDTO parametroDTO) {
-						ParametrosView view = new ParametrosView(parametroDTO);
+						ParametrosView view = new ParametrosView(cenarioDTO, parametroDTO);
 						Presenter presenter = new ParametrosPresenter(cenarioDTO,view,view);
 						presenter.go(gTab);
 					}
@@ -779,7 +779,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new RelatorioVisaoCursoPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoCursoView() );
+					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoCursoView(cenarioDTO) );
 
 				presenter.go( gTab );
 			}
@@ -793,7 +793,7 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new RelatorioVisaoProfessorPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
-					new RelatorioVisaoProfessorView( usuarioDTO, false ), false );
+					new RelatorioVisaoProfessorView( cenarioDTO, usuarioDTO, false ), false );
 
 				presenter.go( gTab );
 			}
@@ -804,7 +804,7 @@ public class ToolBarPresenter
 				@Override
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new RelatorioVisaoAlunoPresenter(
-						instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoAlunoView()
+						instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoAlunoView(cenarioDTO)
 					);
 
 					presenter.go(gTab);
@@ -871,7 +871,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new ResumoMatriculasPresenter( instituicaoEnsinoDTO,
-						cenarioDTO, new ResumoMatriculasView() );
+						cenarioDTO, new ResumoMatriculasView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -884,7 +884,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new ResumoAtendimentosDisciplinaPresenter( instituicaoEnsinoDTO,
-						cenarioDTO, new ResumoAtendimentosDisciplinaView() );
+						cenarioDTO, new ResumoAtendimentosDisciplinaView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -897,7 +897,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new ResumoAtendimentosFaixaDemandaPresenter( instituicaoEnsinoDTO,
-						cenarioDTO, new ResumoAtendimentosFaixaDemandaView() );
+						cenarioDTO, new ResumoAtendimentosFaixaDemandaView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -910,7 +910,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new ResumoPercentMestresDoutoresPresenter( instituicaoEnsinoDTO,
-						cenarioDTO, new ResumoPercentMestresDoutoresView() );
+						cenarioDTO, new ResumoPercentMestresDoutoresView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}

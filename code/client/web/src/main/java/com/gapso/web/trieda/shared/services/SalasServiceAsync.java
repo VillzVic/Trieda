@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
@@ -18,7 +19,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SalasServiceAsync
 {
-	void getList( CampusDTO campusDTO, UnidadeDTO unidadeDTO,
+	void getList( CenarioDTO cenarioDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< SalaDTO > > callback );
 	void getList( AsyncCallback< ListLoadResult< SalaDTO > > callback );
 	void save( SalaDTO salaDTO, AsyncCallback< Void > callback );
@@ -36,9 +37,9 @@ public interface SalasServiceAsync
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 	void getSalasDoAndareList( UnidadeDTO unidade, List< String > andares,
 		AsyncCallback< ListLoadResult< SalaDTO > > callback );
-	void getAutoCompleteList(BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback);
+	void getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback);
 	void vincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO, AsyncCallback<Void> callback);
 	void desvincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO, AsyncCallback<Void> callback);
 	void getListVinculadas(DisciplinaDTO disciplinaDTO,	AsyncCallback<List<SalaDTO>> callback);
-	void getListNaoVinculadas(DisciplinaDTO disciplinaDTO, AsyncCallback<List<SalaDTO>> callback);
+	void getListNaoVinculadas(CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO, AsyncCallback<List<SalaDTO>> callback);
 }

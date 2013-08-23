@@ -197,7 +197,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		this.display.getSelecionarCampiButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new SelecionarCampiPresenter(display.getParametroDTO(),new SelecionarCampiView(),parametrosViewGateway);
+				Presenter presenter = new SelecionarCampiPresenter(cenarioDTO, display.getParametroDTO(),new SelecionarCampiView(),parametrosViewGateway);
 				presenter.go(null);
 			}
 		});
@@ -226,7 +226,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 				Services.cursos().getParesCursosQueNaoPermitemCompartilhamentoDeTurmas(display.getParametroDTO(),new AbstractAsyncCallbackWithDefaultOnFailure<List<CursoDescompartilhaDTO>>(display) {
 					@Override
 					public void onSuccess(List<CursoDescompartilhaDTO> result) {
-						Presenter presenter = new CompartilharCursosPresenter(new CompartilharCursosView(display.getParametroDTO(),result));
+						Presenter presenter = new CompartilharCursosPresenter(new CompartilharCursosView(cenarioDTO, display.getParametroDTO(),result));
 						presenter.go(null);
 					}
 				});

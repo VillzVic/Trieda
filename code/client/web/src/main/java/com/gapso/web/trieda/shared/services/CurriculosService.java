@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
@@ -39,13 +40,13 @@ public interface CurriculosService
 	void save(CurriculoDTO curriculoDTO) throws TriedaException;
 	
 	CurriculoDTO getCurriculo( Long id );
-	ListLoadResult< CurriculoDTO > getList( BasePagingLoadConfig loadConfig );
-	PagingLoadResult< CurriculoDTO > getBuscaList( CursoDTO cursoDTO,
+	ListLoadResult< CurriculoDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig );
+	PagingLoadResult< CurriculoDTO > getBuscaList( CenarioDTO cenarioDTO, CursoDTO cursoDTO,
 		String codigo, String descricao, PagingLoadConfig config );
 	void remove( List< CurriculoDTO > curriculoDTOList );
 	ListLoadResult< CurriculoDisciplinaDTO > getDisciplinasList( CurriculoDTO curriculoDTO );
 	void removeDisciplina( List< CurriculoDisciplinaDTO > curriculoDisciplinaDTOList );
 	List< Integer > getPeriodos( CurriculoDTO curriculoDTO );
 	ListLoadResult< CurriculoDTO > getListByCurso( CursoDTO cursoDTO );
-	ListLoadResult< CurriculoDTO > getListAll();
+	ListLoadResult< CurriculoDTO > getListAll( CenarioDTO cenarioDTO );
 }

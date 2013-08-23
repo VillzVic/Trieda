@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -32,12 +33,12 @@ public interface CursosServiceAsync {
 	void getParesCursosQueNaoPermitemCompartilhamentoDeTurmas(ParametroDTO dto, AsyncCallback<List<CursoDescompartilhaDTO>> callback);
 	
 	void getCurso( Long id, AsyncCallback< CursoDTO > callback );
-	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CursoDTO > > callback );
-	void getBuscaList( String nome, String codigo, TipoCursoDTO tipoCurso,
+	void getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CursoDTO > > callback );
+	void getBuscaList( CenarioDTO cenarioDTO, String nome, String codigo, TipoCursoDTO tipoCurso,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< CursoDTO > > callback );
 	void save( CursoDTO cursoDTO, AsyncCallback< Void > callback );
 	void remove( List< CursoDTO > cursoDTOList, AsyncCallback< Void > callback );
-	void getListAll( AsyncCallback< ListLoadResult< CursoDTO > > callback );
+	void getListAll( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< CursoDTO > > callback );
 	void getListByCampi( List<CampusDTO> campiDTOs, List< CursoDTO > retirarCursosDTO,
 		AsyncCallback< ListLoadResult< CursoDTO > > callback );
 	void getResumos( CampusDTO campusDTO, AsyncCallback< List< ResumoCursoDTO > > callback );

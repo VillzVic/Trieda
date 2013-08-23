@@ -41,9 +41,11 @@ public class ResumoDisciplinaView
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CampusComboBox campusCB;
+	private CenarioDTO cenarioDTO;
 
-	public ResumoDisciplinaView( CenarioDTO cenario )
+	public ResumoDisciplinaView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
@@ -93,7 +95,7 @@ public class ResumoDisciplinaView
 		formPanel.setHeaderVisible( false );
 		formPanel.setAutoHeight( true );
 
-		this.campusCB = new CampusComboBox();
+		this.campusCB = new CampusComboBox(cenarioDTO);
 		formPanel.add( this.campusCB, formData );
 
 	    BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );

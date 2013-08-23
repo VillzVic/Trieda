@@ -78,20 +78,22 @@ public class AlunosServiceImpl
 	
 	@Override
 	public ListLoadResult< AlunoDTO > getAutoCompleteList(
-		BasePagingLoadConfig loadConfig, String tipoComboBox )
+		CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< AlunoDTO > list = new ArrayList< AlunoDTO >();
 		
 		List< Aluno > listDomains = new ArrayList< Aluno >();
 		
 		if ( tipoComboBox.equals(AlunoDTO.PROPERTY_ALUNO_NOME) )
 		{
-			listDomains = Aluno.findBy( getInstituicaoEnsinoUser(),
+			listDomains = Aluno.findBy( getInstituicaoEnsinoUser(), cenario,
 					loadConfig.get("query").toString(), null, loadConfig.getOffset(), loadConfig.getLimit() );
 		}
 		else if ( tipoComboBox.equals(AlunoDTO.PROPERTY_ALUNO_MATRICULA) )
 		{
-			listDomains = Aluno.findBy( getInstituicaoEnsinoUser(),
+			listDomains = Aluno.findBy( getInstituicaoEnsinoUser(), cenario,
 					null, loadConfig.get("query").toString(), loadConfig.getOffset(), loadConfig.getLimit() );
 		}
 

@@ -19,6 +19,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -61,12 +62,13 @@ public class SalasAssociarDisciplinaPresenter
 	
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public SalasAssociarDisciplinaPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-	
+		this.cenarioDTO = cenarioDTO;
 		this.display = display;
 		configureProxy();
 		setListeners();
@@ -79,7 +81,7 @@ public class SalasAssociarDisciplinaPresenter
 			@Override
 			public void load(Object loadConfig, AsyncCallback<List<SalaDTO>> callback) {
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaComboBox().getValue();
-				service.getListNaoVinculadas(disciplinaDTO, callback);
+				service.getListNaoVinculadas(cenarioDTO, disciplinaDTO, callback);
 			}
 		};
 		display.getNaoVinculadaList().setStore(new ListStore<SalaDTO>(new BaseListLoader<ListLoadResult<SalaDTO>>(proxyNaoVinculada)));
@@ -201,7 +203,7 @@ public class SalasAssociarDisciplinaPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				DisciplinasServiceAsync service = Services.disciplinas();
-				service.associarDisciplinasSemLaboratorioATodosLaboratorios(new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
+				service.associarDisciplinasSemLaboratorioATodosLaboratorios(cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
 						Info.display(display.getI18nConstants().informacao(),"A associação de disciplinas que exigem laboratórios com salas de aulas do tipo laboratório foi efetuada com sucesso!");

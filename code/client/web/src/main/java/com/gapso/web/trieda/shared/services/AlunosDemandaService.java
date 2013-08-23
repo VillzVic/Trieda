@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
@@ -24,9 +25,9 @@ public interface AlunosDemandaService
 	ListLoadResult< AlunoDemandaDTO > getAlunosDemandaList( DemandaDTO demandaDTO );
 	void saveAlunoDemanda( DemandaDTO demandaDTO, AlunoDemandaDTO alunoDemandaDTO ) throws TriedaException;
 	void removeAlunosDemanda( List< AlunoDemandaDTO > list );
-	PagingLoadResult<ResumoMatriculaDTO> getResumoMatriculasList( String aluno, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO,
-			PagingLoadConfig loadConfig );
-	PagingLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( String codigo, CampusDTO campusDTO, CursoDTO cursoDTO,
-			PagingLoadConfig loadConfig );
-	List<AtendimentoFaixaDemandaDTO> getResumoFaixaDemandaList(CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas);
+	PagingLoadResult<ResumoMatriculaDTO> getResumoMatriculasList( CenarioDTO cenarioDTO, String aluno, String matricula, CampusDTO campusDTO,
+			CursoDTO cursoDTO, PagingLoadConfig loadConfig );
+	PagingLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( CenarioDTO cenarioDTO, String codigo, CampusDTO campusDTO,
+			CursoDTO cursoDTO, PagingLoadConfig loadConfig );
+	List<AtendimentoFaixaDemandaDTO> getResumoFaixaDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas );
 }

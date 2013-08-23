@@ -21,6 +21,7 @@ import com.gapso.trieda.domain.AtendimentoFaixaDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
@@ -29,6 +30,7 @@ import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoCargaHorariaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
@@ -123,8 +125,10 @@ public class AlunosDemandaServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( String codigo, CampusDTO campusDTO, CursoDTO cursoDTO,
-			PagingLoadConfig config ) {
+	public PagingLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( CenarioDTO cenarioDTO, String codigo, 
+			CampusDTO campusDTO, CursoDTO cursoDTO, PagingLoadConfig config ) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< ResumoMatriculaDTO > list = new ArrayList< ResumoMatriculaDTO >();
 		String orderBy = config.getSortField();
 
@@ -156,10 +160,10 @@ public class AlunosDemandaServiceImpl
 		}
 		
 		// Conta numero total de matriculas (para ser mostrado na paginacao)
-		int numTotalDisciplinas = AlunoDemanda.countDisciplinas( getInstituicaoEnsinoUser(), codigo, campus, curso );
+		int numTotalDisciplinas = AlunoDemanda.countDisciplinas( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso );
 		
 		// Busca as disciplinas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de disciplinas.
-		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy( getInstituicaoEnsinoUser(), codigo, campus, curso,
+		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso,
 				config.getOffset(), config.getLimit(), orderBy );
 		
 		// Se a busca tiver um tamanho muito grande (por exemplo no caso da exportacao do excel). 
@@ -249,8 +253,10 @@ public class AlunosDemandaServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult<ResumoMatriculaDTO> getResumoMatriculasList( String aluno, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO,
-			PagingLoadConfig config ) {
+	public PagingLoadResult<ResumoMatriculaDTO> getResumoMatriculasList( CenarioDTO cenarioDTO, String aluno, String matricula, 
+			CampusDTO campusDTO, CursoDTO cursoDTO, PagingLoadConfig config ) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< ResumoMatriculaDTO > list = new ArrayList< ResumoMatriculaDTO >();
 		String orderBy = config.getSortField();
 		
@@ -282,10 +288,10 @@ public class AlunosDemandaServiceImpl
 		}
 		
 		// Conta numero total de matriculas (para ser mostrado na paginacao
-		int numTotalMatriculas = AlunoDemanda.countMatriculas(getInstituicaoEnsinoUser(), aluno, matricula, campus, curso);
+		int numTotalMatriculas = AlunoDemanda.countMatriculas(getInstituicaoEnsinoUser(), cenario, aluno, matricula, campus, curso);
 		
 		// Busca as matriculas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de matriculas.
-		List< AlunoDemanda > busca = AlunoDemanda.findMatriculasBy(getInstituicaoEnsinoUser(), aluno, matricula, campus, curso,
+		List< AlunoDemanda > busca = AlunoDemanda.findMatriculasBy(getInstituicaoEnsinoUser(), cenario, aluno, matricula, campus, curso,
 				config.getOffset(), config.getLimit(), orderBy);
 		
 		// Se a busca tiver um tamanho muito grande (por exemplo no caso da exportacao do excel). 
@@ -381,7 +387,8 @@ public class AlunosDemandaServiceImpl
 	}
 	
 	@Override
-	public List< AtendimentoFaixaDemandaDTO > getResumoFaixaDemandaList( CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas) {
+	public List< AtendimentoFaixaDemandaDTO > getResumoFaixaDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
+			List<ParDTO<Integer, Integer>> faixas) {
 		Campus campus = null;
 		List< AtendimentoFaixaDemandaDTO > result = new ArrayList< AtendimentoFaixaDemandaDTO >();
 		
@@ -395,7 +402,7 @@ public class AlunosDemandaServiceImpl
 			}
 			else {
 				AtendimentoFaixaDemanda.deleteAllFromCampus(campus);
-				for (AtendimentoFaixaDemanda atendimento : createResumoFaixaDemandaList(campusDTO, faixas)) {
+				for (AtendimentoFaixaDemanda atendimento : createResumoFaixaDemandaList(cenarioDTO, campusDTO, faixas)) {
 					result.add(ConvertBeans.toAtendimentoFaixaDemandaDTO(atendimento));
 					atendimento.persist();
 				}
@@ -405,7 +412,10 @@ public class AlunosDemandaServiceImpl
 		return result;
 	}
 	
-	public List< AtendimentoFaixaDemanda > createResumoFaixaDemandaList( CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas ) {
+	public List< AtendimentoFaixaDemanda > createResumoFaixaDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
+			List<ParDTO<Integer, Integer>> faixas ) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< ResumoMatriculaDTO > disciplinas = new ArrayList< ResumoMatriculaDTO >();
 		
 		List< AtendimentoFaixaDemanda > result = new ArrayList< AtendimentoFaixaDemanda >();
@@ -435,9 +445,9 @@ public class AlunosDemandaServiceImpl
 		
 		int numFaixas = faixas.size();
 		
-		PagingLoadConfig todasPaginas = new BasePagingLoadConfig( 0, AlunoDemanda.countDisciplinas(getInstituicaoEnsinoUser(), null, campus, null) );
+		PagingLoadConfig todasPaginas = new BasePagingLoadConfig( 0, AlunoDemanda.countDisciplinas(getInstituicaoEnsinoUser(), cenario, null, campus, null) );
 		
-		disciplinas = getResumoAtendimentosDisciplinaList( null, campusDTO, null, todasPaginas ).getData();
+		disciplinas = getResumoAtendimentosDisciplinaList( cenarioDTO, null, campusDTO, null, todasPaginas ).getData();
 		
 		Map< String, Disciplina > codigoMapDisciplina = new HashMap< String, Disciplina >();
 		List< Disciplina > totalDisciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
@@ -653,139 +663,6 @@ public class AlunosDemandaServiceImpl
 		}
 
 		return new ArrayList<AtendimentoCargaHorariaDTO>(matriculaMapAtendimento.values());
-	}
-
-	public void somaCreditosDemanda( String nome, String matricula, CampusDTO campusDTO, CursoDTO cursoDTO, int numTotalmatriculas ){
-		
-		Campus campus = null;
-		
-		if ( campusDTO != null )
-		{
-			campus = ConvertBeans.toCampus(campusDTO);
-		}
-		
-		Curso curso = null;
-		
-		if ( cursoDTO != null )
-		{
-			curso = ConvertBeans.toCurso(cursoDTO);
-		}
-		
-		List< AlunoDemanda > busca = AlunoDemanda.findMatriculasBy(getInstituicaoEnsinoUser(), nome, matricula, campus, curso,
-				0, numTotalmatriculas, null);
-		
-		int credDemandaP1 = 0;
-		int credAtendidosP1 = 0;
-		int credNaoAtendidosP1 = 0;
-		int credAtendidosP2 = 0;
-		int count = 1;
-		
-		for ( AlunoDemanda alunos : busca )
-		{
-			List < AlunoDemanda > alunoDemanda = AlunoDemanda.findByAluno(getInstituicaoEnsinoUser(), alunos.getAluno());
-			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
-			resumoMatricula.setCampusString(alunos.getDemanda().getOferta().getCampus().getNome());
-			resumoMatricula.setAlunoMatricula(alunos.getAluno().getMatricula());
-			for ( AlunoDemanda demandas : alunoDemanda )
-			{
-				if ( demandas.getDemanda().ocupaGrade() )
-				{
-					if ( demandas.getPrioridade() == 1 )
-					{
-						credDemandaP1 += demandas.getDemanda().getDisciplina().getCreditosTotal();
-						if ( demandas.getAtendido() )
-						{
-							credAtendidosP1 +=demandas.getDemanda().getDisciplina().getCreditosTotal();
-						}
-						else
-						{
-							credNaoAtendidosP1 +=demandas.getDemanda().getDisciplina().getCreditosTotal();
-						}
-					}
-					else
-					{
-						if ( demandas.getAtendido() )
-						{
-							credAtendidosP2 +=demandas.getDemanda().getDisciplina().getCreditosTotal();
-						}
-					}
-				}
-				if (credDemandaP1 > count*1000) {
-					System.out.println( count*1000 + " Creditos processados");
-					count++;
-				}
-			}
-		}
-		System.out.println("Soma demanda P1: " + credDemandaP1);
-		System.out.println("Soma creditos atendidos P1: " + credAtendidosP1);
-		System.out.println("Soma creditos nao atendidos P1: " + credNaoAtendidosP1);
-		System.out.println("Soma creditos atendidos P2: " + credAtendidosP2);
-	}
-	
-	public void somaDisciplinasDemanda( String nome, CampusDTO campusDTO, CursoDTO cursoDTO, int numTotalDisciplinas ){
-		
-		Campus campus = null;
-		
-		if ( campusDTO != null )
-		{
-			campus = ConvertBeans.toCampus(campusDTO);
-		}
-		
-		Curso curso = null;
-		
-		if ( cursoDTO != null )
-		{
-			curso = ConvertBeans.toCurso(cursoDTO);
-		}
-		
-		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy(getInstituicaoEnsinoUser(), nome, campus, curso,
-				0, numTotalDisciplinas, null);
-		
-		int disDemandaP1 = 0;
-		int disAtendidosP1 = 0;
-		int disNaoAtendidosP1 = 0;
-		int disAtendidosP2 = 0;
-		int count = 1;
-		
-		for ( AlunoDemanda disciplinas : busca )
-		{
-			List < AlunoDemanda > alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
-					disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
-
-			for ( AlunoDemanda demandas : alunoDemanda )
-			{
-				if ( demandas.getDemanda().ocupaGrade() )
-				{
-					if ( demandas.getPrioridade() == 1 )
-					{
-						disDemandaP1++;
-						if ( demandas.getAtendido() )
-						{
-							disAtendidosP1++;
-						}
-						else
-						{
-							disNaoAtendidosP1++;
-						}
-					}
-					else
-					{
-						if ( demandas.getAtendido() )
-						{
-							disAtendidosP2++;
-						}
-					}
-				}
-				if (disDemandaP1 > count*1000) {
-					System.out.println( count*1000 + " Disciplinas processadas");
-					count++;
-				}
-			}
-		}
-		System.out.println("Soma demanda P1: " + disDemandaP1);
-		System.out.println("Soma disciplinas atendidas P1: " + disAtendidosP1);
-		System.out.println("Soma disciplinas nao atendidas P1: " + disNaoAtendidosP1);
-		System.out.println("Soma disciplinas atendidas P2: " + disAtendidosP2);
 	}
 
 }

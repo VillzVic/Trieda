@@ -40,9 +40,11 @@ public class ResumoCursosView extends MyComposite
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CampusComboBox campusCB;
+	private CenarioDTO cenarioDTO;
 
-	public ResumoCursosView( CenarioDTO cenario )
+	public ResumoCursosView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 
@@ -88,7 +90,7 @@ public class ResumoCursosView extends MyComposite
 		formPanel.setHeaderVisible( false );
 		formPanel.setAutoHeight( true );
 
-		campusCB = new CampusComboBox();
+		campusCB = new CampusComboBox(cenarioDTO);
 		formPanel.add( campusCB, formData );
 
 	    BorderLayoutData bld = new BorderLayoutData( LayoutRegion.NORTH );

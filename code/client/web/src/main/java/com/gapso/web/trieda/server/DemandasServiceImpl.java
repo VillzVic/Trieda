@@ -20,6 +20,7 @@ import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
@@ -32,6 +33,7 @@ import com.gapso.web.trieda.server.util.Atendimento;
 import com.gapso.web.trieda.server.util.Atendimento.TipoCredito;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
@@ -530,10 +532,12 @@ public class DemandasServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult< DemandaDTO > getBuscaList( CampusDTO campusDTO,
-		CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
+	public PagingLoadResult< DemandaDTO > getBuscaList( CenarioDTO cenarioDTO,
+		CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
 		TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< DemandaDTO > list = new ArrayList< DemandaDTO >();
 		String orderBy = config.getSortField();
 
@@ -581,7 +585,7 @@ public class DemandasServiceImpl
 		}
 
 		List< Demanda > listDomains = Demanda.findBy( getInstituicaoEnsinoUser(),
-			campus, curso, curriculo, turno, disciplina,
+			cenario, campus, curso, curriculo, turno, disciplina,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Demanda demanda : listDomains )
@@ -594,7 +598,7 @@ public class DemandasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Demanda.count( getInstituicaoEnsinoUser(),
-			campus, curso, curriculo, turno, disciplina ) );
+			cenario, campus, curso, curriculo, turno, disciplina ) );
 
 		return result;
 	}
@@ -612,7 +616,7 @@ public class DemandasServiceImpl
 			else
 			{
 				List< Demanda > demandas = Demanda.findBy( getInstituicaoEnsinoUser(),
-					d.getOferta().getCampus(), d.getOferta().getCurriculo().getCurso(),
+					d.getOferta().getCampus().getCenario(),	d.getOferta().getCampus(), d.getOferta().getCurriculo().getCurso(),
 					d.getOferta().getCurriculo(), d.getOferta().getTurno(), d.getDisciplina(), 0, 1, null );
 	
 				if ( !demandas.isEmpty() )

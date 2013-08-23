@@ -551,8 +551,8 @@ public class Curso
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Curso > findBy(
-		InstituicaoEnsino instituicaoEnsino, String codigo, String nome,
-		TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
+		String nome, TipoCurso tipoCurso, int firstResult, int maxResults, String orderBy )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -571,6 +571,7 @@ public class Curso
 			" SELECT o FROM Curso o WHERE "	+ queryCampus +
 			" LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " + orderBy );
 
 		if ( tipoCurso != null )
@@ -579,6 +580,7 @@ public class Curso
 		}
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );
 		q.setFirstResult( firstResult );
@@ -588,7 +590,7 @@ public class Curso
 	}
 
 	public static int count(
-		InstituicaoEnsino instituicaoEnsino,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		String codigo, String nome, TipoCurso tipoCurso )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
@@ -606,6 +608,7 @@ public class Curso
 			" SELECT COUNT ( o ) FROM Curso o " +
 			" WHERE " + queryCampus	+ " LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND o.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " );
 
 		if ( tipoCurso != null )
@@ -616,6 +619,7 @@ public class Curso
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}

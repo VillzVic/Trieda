@@ -331,7 +331,7 @@ public class Demanda
 	}
 	
 	public static int count( InstituicaoEnsino instituicaoEnsino,
-		Campus campus, Curso curso, Curriculo curriculo,
+		Cenario cenario, Campus campus, Curso curso, Curriculo curriculo,
 		Turno turno, Disciplina disciplina )
 	{
 		String queryCampus = "";
@@ -369,9 +369,11 @@ public class Demanda
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Demanda o " +
 			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus.cenario = :cenario " +
 			" AND" + queryString + " 1=1 " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( campus != null )
 		{
@@ -474,7 +476,7 @@ public class Demanda
 	
     @SuppressWarnings( "unchecked" )
 	public static List< Demanda > findBy( InstituicaoEnsino instituicaoEnsino,
-		Campus campus, Curso curso, Curriculo curriculo,
+		Cenario cenario, Campus campus, Curso curso, Curriculo curriculo,
 		Turno turno, Disciplina disciplina,
 		int firstResult, int maxResults, String orderBy )
 	{
@@ -526,11 +528,13 @@ public class Demanda
         Query q = entityManager().createQuery(
         	" SELECT o FROM Demanda o " +
         	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.oferta.campus.cenario = :cenario " +
         	" AND " + queryString + " 1=1 " + orderBy );
 
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
 
         if ( campus != null )
         {

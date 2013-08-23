@@ -62,18 +62,18 @@ public interface DisciplinasService
 	 * 
 	 * @throws TriedaException
 	 */
-	void associarDisciplinasSemLaboratorioATodosLaboratorios() throws TriedaException;
+	void associarDisciplinasSemLaboratorioATodosLaboratorios(CenarioDTO cenarioDTO) throws TriedaException;
 	
 	DisciplinaDTO getDisciplina( Long id );
-	ListLoadResult< DisciplinaDTO > getList( BasePagingLoadConfig loadConfig );
-	PagingLoadResult<DisciplinaDTO> getBuscaList( String nome, String codigo,
+	ListLoadResult< DisciplinaDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig );
+	PagingLoadResult<DisciplinaDTO> getBuscaList( CenarioDTO cenarioDTO, String nome, String codigo,
 		TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config );
 	void save( DisciplinaDTO disciplinaDTO );
 	void remove( List< DisciplinaDTO > disciplinaDTOList );
 	ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList();
 	TipoDisciplinaDTO getTipoDisciplina( Long id );
-	ListLoadResult< DisciplinaDTO > getListByCursoAndName( List< CursoDTO > cursos, String name);
-	ListLoadResult< DisciplinaDTO > getListByCurriculoIdAndName( Long curriculoId, String name);
+	ListLoadResult< DisciplinaDTO > getListByCursoAndName( CenarioDTO cenarioDTO, List< CursoDTO > cursos, String name);
+	ListLoadResult< DisciplinaDTO > getListByCurriculoIdAndName( CenarioDTO cenarioDTO, Long curriculoId, String name);
 	ListLoadResult< DisciplinaDTO > getListByCursos( List< CursoDTO > cursos );
 	ListLoadResult< DisciplinaDTO > getListByCurriculo(long curriculoId);
 	void saveHorariosDisponiveis( DisciplinaDTO disciplinaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
@@ -83,5 +83,5 @@ public interface DisciplinasService
 	DivisaoCreditoDTO getDivisaoCredito( DisciplinaDTO disciplinaDTO );
 	List< ResumoDisciplinaDTO > getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO );
-	ListLoadResult<DisciplinaDTO> getDisciplinaNaoAssociada( ProfessorDTO professorDTO, String nome );
+	ListLoadResult<DisciplinaDTO> getDisciplinaNaoAssociada( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String nome );
 }

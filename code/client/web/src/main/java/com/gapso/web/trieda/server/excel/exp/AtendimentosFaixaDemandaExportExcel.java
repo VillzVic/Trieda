@@ -134,7 +134,7 @@ public class AtendimentosFaixaDemandaExportExcel
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
 			resumoFaixaDemandaDTO.addAll(
-					alunosDemandaServiceImpl.getResumoFaixaDemandaList(campusDTO, null) );
+					alunosDemandaServiceImpl.getResumoFaixaDemandaList(ConvertBeans.toCenarioDTO(getCenario()), campusDTO, null) );
 		}
 
 		if ( !resumoFaixaDemandaDTO.isEmpty() )

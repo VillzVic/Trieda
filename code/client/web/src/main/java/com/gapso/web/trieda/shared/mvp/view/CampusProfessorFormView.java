@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.CampusProfessorFormPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -41,9 +42,11 @@ public class CampusProfessorFormView extends MyComposite
 	private Button adicionaBT;
 	private Button removeBT;
 	private CampusDTO campusDTO;
+	private CenarioDTO cenarioDTO;
 
-	public CampusProfessorFormView( CampusDTO campusDTO )
+	public CampusProfessorFormView( CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = campusDTO;
 		initUI();
 	}
@@ -112,7 +115,7 @@ public class CampusProfessorFormView extends MyComposite
 		flex.setFlex(1);
 		container.add(panelLists, flex);
 
-		campusCB = new CampusComboBox();
+		campusCB = new CampusComboBox(cenarioDTO);
 		campusCB.setValue(campusDTO);
 		if (campusCB == null)
 			campusCB.disable();

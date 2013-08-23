@@ -67,14 +67,16 @@ public class ProfessoresDisciplinaPresenter
 	private Display display;
 	private UsuarioDTO usuario;
 	private boolean isVisaoProfessor;
+	private CenarioDTO cenarioDTO;
 
 	public ProfessoresDisciplinaPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
+		CenarioDTO cenarioDTO, UsuarioDTO usuario, Display display, boolean isVisaoProfessor )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 		this.usuario = usuario;
 		this.isVisaoProfessor = isVisaoProfessor;
+		this.cenarioDTO = cenarioDTO;
 
 		configureProxy();
 		setListeners();
@@ -104,7 +106,7 @@ public class ProfessoresDisciplinaPresenter
 				}
 
 				Services.professoresDisciplina().getBuscaList(
-					professorDTO, disciplinaDTO, (PagingLoadConfig) loadConfig, callback );
+					cenarioDTO, professorDTO, disciplinaDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -121,7 +123,7 @@ public class ProfessoresDisciplinaPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					Presenter presenter = new ProfessorDisciplinaFormPresenter( instituicaoEnsinoDTO,
-						usuario, new ProfessorDisciplinaFormView( usuario,
+						usuario, new ProfessorDisciplinaFormView( cenarioDTO, usuario,
 							new ProfessorDisciplinaDTO(), null, null ), display.getGrid() );
 
 					presenter.go( null );
@@ -163,7 +165,7 @@ public class ProfessoresDisciplinaPresenter
 						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
 
 						Presenter presenter = new ProfessorDisciplinaFormPresenter( instituicaoEnsinoDTO,
-							usuario, new ProfessorDisciplinaFormView( usuario, professorDisciplinaDTO,
+							usuario, new ProfessorDisciplinaFormView( cenarioDTO, usuario, professorDisciplinaDTO,
 								professorDTO, disciplinaDTO), display.getGrid() );
 
 						presenter.go( null );

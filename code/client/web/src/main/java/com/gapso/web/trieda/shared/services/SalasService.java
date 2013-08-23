@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
@@ -21,8 +22,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SalasService
 	extends RemoteService
 {
-	PagingLoadResult< SalaDTO > getList( CampusDTO campusDTO,
-		UnidadeDTO unidadeDTO, PagingLoadConfig config );
+	PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, 
+		CampusDTO campusDTO, UnidadeDTO unidadeDTO, PagingLoadConfig config );
 	ListLoadResult< SalaDTO > getList();
 	void save( SalaDTO salaDTO );
 	void remove( List< SalaDTO > salaDTOList );
@@ -37,9 +38,9 @@ public interface SalasService
 	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis(SalaDTO salaDTO);
 	void saveHorariosDisponiveis( SalaDTO salaDTO, List< HorarioDisponivelCenarioDTO > listDTO );
 	ListLoadResult< SalaDTO > getSalasDoAndareList( UnidadeDTO unidade, List< String > andares );
-	ListLoadResult<SalaDTO> getAutoCompleteList(BasePagingLoadConfig loadConfig);
+	ListLoadResult<SalaDTO> getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig);
 	void vincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO);
 	void desvincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO);
 	List<SalaDTO> getListVinculadas(DisciplinaDTO disciplinaDTO);
-	List<SalaDTO> getListNaoVinculadas(DisciplinaDTO disciplinaDTO);
+	List<SalaDTO> getListNaoVinculadas(CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO);
 }

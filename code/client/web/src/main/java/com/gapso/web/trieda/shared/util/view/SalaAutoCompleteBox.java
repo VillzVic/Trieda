@@ -12,17 +12,21 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SalaAutoCompleteBox extends ComboBox<SalaDTO> {
 	
-	public SalaAutoCompleteBox() {
-		this(false);
+	private CenarioDTO cenarioDTO;
+	
+	public SalaAutoCompleteBox(CenarioDTO cenarioDTO) {
+		this(cenarioDTO, false);
 	}
 
-	public SalaAutoCompleteBox(boolean readOnly) {
+	public SalaAutoCompleteBox(CenarioDTO cenarioDTO, boolean readOnly) {
+		this.cenarioDTO = cenarioDTO;
 		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
 	}
@@ -35,7 +39,7 @@ public class SalaAutoCompleteBox extends ComboBox<SalaDTO> {
 				// realiza o filtro dos valores do comboBox
 				@Override
 				public void load(Object loadConfig, AsyncCallback<ListLoadResult<SalaDTO>> callback){
-					Services.salas().getAutoCompleteList((BasePagingLoadConfig)loadConfig, callback);
+					Services.salas().getAutoCompleteList(cenarioDTO, (BasePagingLoadConfig)loadConfig, callback);
 				}
 			};
 			

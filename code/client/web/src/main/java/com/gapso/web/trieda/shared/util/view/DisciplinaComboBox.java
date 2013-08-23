@@ -15,18 +15,21 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 	ComboBox comboDep;
+	CenarioDTO cenarioDTO;
 	
-	public DisciplinaComboBox() {
-		this(false);
+	public DisciplinaComboBox(CenarioDTO cenarioDTO) {
+		this(cenarioDTO, false);
 	}
 
-	public DisciplinaComboBox(boolean readOnly) {
+	public DisciplinaComboBox(CenarioDTO cenarioDTO, boolean readOnly) {
+		this.cenarioDTO = cenarioDTO;
 		comboDep = null;
 		configureContentOfComboBox(readOnly, 0, 10);
 		configureView(readOnly);
@@ -35,7 +38,8 @@ public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 	/* Declaracao que indica que a instancia tem seu filtro
 	 * com criterios baseados nos valores de um outro ComboBox
 	 */
-	public DisciplinaComboBox(ComboBox combo) {
+	public DisciplinaComboBox(CenarioDTO cenarioDTO, ComboBox combo) {
+		this.cenarioDTO = cenarioDTO;
 		comboDep = combo;
 		configureContentOfComboBox(false, 0, 10);
 		configureView(false);
@@ -64,7 +68,7 @@ public class DisciplinaComboBox extends ComboBox<DisciplinaDTO> {
 						loadByCriteria((AbstractDTO) comboDep.getSelection().get(0), callback);
 					}
 					else{
-						Services.disciplinas().getList((BasePagingLoadConfig)loadConfig, callback);
+						Services.disciplinas().getList(cenarioDTO, (BasePagingLoadConfig)loadConfig, callback);
 					}
 				}
 			};

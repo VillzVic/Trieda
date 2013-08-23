@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.CurriculoDisciplinaFormPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -24,14 +25,15 @@ public class CurriculoDisciplinaFormView
 	private NumberField periodoTF;
 	private CurriculoDisciplinaDTO curriculoDisciplinaDTO;
 	private CurriculoDTO curriculoDTO;
+	private CenarioDTO cenarioDTO;
 
-	public CurriculoDisciplinaFormView(
+	public CurriculoDisciplinaFormView( CenarioDTO cenarioDTO,
 		CurriculoDisciplinaDTO curriculoDisciplinaDTO,
 		CurriculoDTO curriculoDTO )
 	{
 		this.curriculoDisciplinaDTO = curriculoDisciplinaDTO;
 		this.curriculoDTO = curriculoDTO;
-
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 
@@ -63,7 +65,7 @@ public class CurriculoDisciplinaFormView
 		cursoTF.setReadOnly( true );
 		formPanel.add( cursoTF, formData );
 
-		disciplinaCB = new DisciplinaComboBox();
+		disciplinaCB = new DisciplinaComboBox( cenarioDTO );
 		disciplinaCB.setName( "disciplina" );
 		disciplinaCB.setFieldLabel( "Disciplina" );
 		disciplinaCB.setAllowBlank( false );

@@ -12,9 +12,11 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.TurnosService;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -41,10 +43,16 @@ public class TurnosServiceImpl
 
 	@Override
 	public PagingLoadResult< TurnoDTO > getBuscaList(
-		String nome, PagingLoadConfig config )
+		String nome, CenarioDTO cenarioDTO, PagingLoadConfig config )
 	{
 		List< TurnoDTO > list = new ArrayList< TurnoDTO >();
 		String orderBy = config.getSortField();
+		Cenario cenario = null;
+		
+		if ( cenarioDTO != null )
+		{
+			cenario = ConvertBeans.toCenario(cenarioDTO);
+		}
 
 		if ( orderBy != null )
 		{
@@ -60,7 +68,7 @@ public class TurnosServiceImpl
 		}
 
 		List< Turno > listTurnos = Turno.findBy( getInstituicaoEnsinoUser(),
-			nome, config.getOffset(), config.getLimit(), orderBy );
+			nome, cenario, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Turno turno : listTurnos )
 		{
@@ -72,7 +80,7 @@ public class TurnosServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Turno.count(
-			nome, getInstituicaoEnsinoUser() ) );
+			nome, getInstituicaoEnsinoUser(), cenario ) );
 
 		return result;
 	}
@@ -109,14 +117,21 @@ public class TurnosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TurnoDTO > getListByCampus( CampusDTO campusDTO )
+	public ListLoadResult< TurnoDTO > getListByCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
 		List< TurnoDTO > list = new ArrayList< TurnoDTO >();
 		Campus campus = Campus.find(
 			campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		
+		Cenario cenario = null;
+		
+		if ( cenarioDTO != null )
+		{
+			cenario = ConvertBeans.toCenario(cenarioDTO);
+		}
 
 		List< Turno > turnos = Turno.findBy(
-			getInstituicaoEnsinoUser(), campus );
+			getInstituicaoEnsinoUser(), cenario, campus );
 
 		for ( Turno turno : turnos )
 		{
@@ -127,10 +142,17 @@ public class TurnosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TurnoDTO > getList()
+	public ListLoadResult< TurnoDTO > getList( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = null;
+		
+		if ( cenarioDTO != null )
+		{
+			cenario = ConvertBeans.toCenario(cenarioDTO);
+		}
+
 		List< Turno > list
-			= Turno.findAll( getInstituicaoEnsinoUser() );
+			= Turno.findAll( getInstituicaoEnsinoUser(), cenario );
 
 		List< TurnoDTO > listDTO
 			= new ArrayList< TurnoDTO >();
@@ -144,15 +166,22 @@ public class TurnosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TurnoDTO > getList( BasePagingLoadConfig loadConfig )
+	public ListLoadResult< TurnoDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig )
 	{
 		CampusDTO campusDTO = loadConfig.get( "campusDTO" );
 		ListLoadResult< TurnoDTO > list = null;
+		
+		Cenario cenario = null;
+		
+		if ( cenarioDTO != null )
+		{
+			cenario = ConvertBeans.toCenario(cenarioDTO);
+		}
 
 		if ( campusDTO == null )
 		{
 			list = getBuscaList( loadConfig.get(
-				"query" ).toString(), loadConfig );
+				"query" ).toString(), cenarioDTO, loadConfig );
 		}
 		else
 		{
@@ -160,7 +189,7 @@ public class TurnosServiceImpl
 				campusDTO.getId(), this.getInstituicaoEnsinoUser() );
 
 			List< Turno > turnos = Turno.findBy(
-				getInstituicaoEnsinoUser(), campus );
+				getInstituicaoEnsinoUser(), cenario, campus );
 
 			List< TurnoDTO > turnosDTO = new ArrayList< TurnoDTO >();
 

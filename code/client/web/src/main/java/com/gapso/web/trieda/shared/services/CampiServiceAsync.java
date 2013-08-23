@@ -16,9 +16,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CampiServiceAsync {
 	
-	void getCampiNaoSelecionadosParaOtimizacao(List<CampusDTO> campiSelecionados, AsyncCallback<ListLoadResult<CampusDTO>> callback);
+	void getCampiNaoSelecionadosParaOtimizacao(CenarioDTO cenarioDTO, List<CampusDTO> campiSelecionados, AsyncCallback<ListLoadResult<CampusDTO>> callback);
 	
-	void getListAll( AsyncCallback<ListLoadResult< CampusDTO > > callback );
+	void getListAll( CenarioDTO cenarioDTO, AsyncCallback<ListLoadResult< CampusDTO > > callback );
 	void getList( PagingLoadConfig config, AsyncCallback< PagingLoadResult< CampusDTO > > callback );
 	void getList( AsyncCallback< ListLoadResult< CampusDTO > > callback );
 	void getList( BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CampusDTO > > callback );
@@ -28,13 +28,13 @@ public interface CampiServiceAsync {
 		String municipio, String bairro, PagingLoadConfig config,
 		AsyncCallback< PagingLoadResult< CampusDTO > > callback );
 	void getCampus( Long id, AsyncCallback< CampusDTO > callback );
-	void getDeslocamentos( AsyncCallback< List< DeslocamentoCampusDTO > > callback );
+	void getDeslocamentos( CenarioDTO cenarioDTO, AsyncCallback< List< DeslocamentoCampusDTO > > callback );
 	void saveHorariosDisponiveis( CampusDTO campusDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 	void getResumos( CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO, AsyncCallback< List< TreeNodeDTO > > callback );
 	void saveDeslocamento( CenarioDTO cenario, List< DeslocamentoCampusDTO > list, AsyncCallback< Void > callback );
 	void getHorariosDisponiveis( CampusDTO campusDTO,
 		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
-	void getListByCurriculo( CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CampusDTO > > callback );
-	void getListAllCampiTodos(AsyncCallback<ListLoadResult<CampusDTO>> callback);
+	void getListByCurriculo( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CampusDTO > > callback );
+	void getListAllCampiTodos( CenarioDTO cenarioDTO, AsyncCallback<ListLoadResult<CampusDTO>> callback );
 }

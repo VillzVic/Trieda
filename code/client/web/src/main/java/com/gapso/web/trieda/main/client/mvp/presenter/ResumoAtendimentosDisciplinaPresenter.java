@@ -52,16 +52,17 @@ public class ResumoAtendimentosDisciplinaPresenter
 	
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public ResumoAtendimentosDisciplinaPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-			CenarioDTO cenario, Display display )
+			CenarioDTO cenarioDTO, Display display )
 	{
-			this.display = display;
-			this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
-	
-			configureProxy();
-			setListeners();
+		this.display = display;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
+		configureProxy();
+		setListeners();
 	}
 	
 	private void configureProxy()
@@ -83,7 +84,7 @@ public class ResumoAtendimentosDisciplinaPresenter
 				CursoDTO cursoDTO
 					= display.getCursoBuscaComboBox().getValue();
 	
-				service.getResumoAtendimentosDisciplinaList( codigo, campusDTO,
+				service.getResumoAtendimentosDisciplinaList( cenarioDTO, codigo, campusDTO,
 					cursoDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};

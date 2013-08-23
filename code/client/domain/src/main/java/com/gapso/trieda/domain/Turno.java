@@ -217,15 +217,17 @@ public class Turno
     
     @SuppressWarnings( "unchecked" )
     public static List< Turno > findBy(
-    	InstituicaoEnsino instituicaoEnsino, Campus campus )
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus )
     {
     	Query q = entityManager().createQuery(
     		" SELECT distinct ( o.turno ) FROM Oferta o " +
     		" WHERE o.turno.instituicaoEnsino = :instituicaoEnsino " +
     		" AND o.campus.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.turno.cenario = :cenario" +
     		" AND o.campus = :campus " );
 
     	q.setParameter( "campus", campus );
+    	q.setParameter( "cenario", cenario );
     	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
     	return q.getResultList();
@@ -249,13 +251,15 @@ public class Turno
 
     @SuppressWarnings( "unchecked" )
     public static List< Turno > findAll(
-    	InstituicaoEnsino instituicaoEnsino )
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
     {
     	Query q = entityManager().createQuery(
     		" SELECT o FROM Turno o " +
-    		" WHERE o.instituicaoEnsino = :instituicaoEnsino" );
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino" +
+    		" AND o.cenario = :cenario ");
 
     	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+    	q.setParameter( "cenario", cenario );
 
     	List< Turno > list = q.getResultList();
         return list;
@@ -308,7 +312,7 @@ public class Turno
     }
 
     public static int count(
-    	String nome, InstituicaoEnsino instituicaoEnsino )
+    	String nome, InstituicaoEnsino instituicaoEnsino, Cenario cenario )
     {
     	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
     	nome = nome.replace( '*', '%' );
@@ -326,9 +330,11 @@ public class Turno
     	Query q = entityManager().createQuery(
     		" SELECT COUNT ( o ) FROM Turno o " +
     		" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.cenario = :cenario " +
     		" AND LOWER ( o.nome ) LIKE LOWER( :nome ) " );
 
     	q.setParameter( "nome", nome );
+    	q.setParameter( "cenario", cenario );
     	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
     	return ( (Number)q.getSingleResult() ).intValue();
@@ -337,7 +343,7 @@ public class Turno
     @SuppressWarnings( "unchecked" )
     public static List< Turno > findBy(
     	InstituicaoEnsino instituicaoEnsino, String nome,
-    	int firstResult, int maxResults, String orderBy )
+    	Cenario cenario, int firstResult, int maxResults, String orderBy )
     {
     	nome = ( ( nome == null || nome.length() == 0 ) ? "" : nome );
 
@@ -358,10 +364,12 @@ public class Turno
         Query q = entityManager().createQuery(
         	" SELECT o FROM Turno o " +
         	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.cenario = :cenario" +
         	" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " + " " + orderBy );
 
         q.setParameter( "nome", nome );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
         q.setFirstResult( firstResult );
         q.setMaxResults( maxResults );
 
@@ -383,10 +391,10 @@ public class Turno
 	}
 
 	public static List< Turno > findByCalendario(
-		InstituicaoEnsino instituicaoEnsino, SemanaLetiva calendario )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,SemanaLetiva calendario )
 	{
 		Set< Turno > turnosDistinct = new HashSet< Turno >();
-		List< Turno > turnos = Turno.findAll( instituicaoEnsino );
+		List< Turno > turnos = Turno.findAll( instituicaoEnsino, cenario );
 
 		for ( Turno turno : turnos )
 		{

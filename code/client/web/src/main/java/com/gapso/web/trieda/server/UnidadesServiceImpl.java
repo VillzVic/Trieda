@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Sala;
@@ -23,6 +24,7 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -104,10 +106,9 @@ public class UnidadesServiceImpl
 
 	@Override
 	public ListLoadResult< UnidadeDTO > getList(
-		BasePagingLoadConfig loadConfig )
+		CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig )
 	{
 		Long campusID = loadConfig.get( "campusId" );
-		System.out.println( "Buscando: " + campusID );
 		CampusDTO campusDTO = null;
 
 		if ( campusID != null )
@@ -116,17 +117,18 @@ public class UnidadesServiceImpl
 				Campus.find( campusID, this.getInstituicaoEnsinoUser() ) );
 		}
 
-		return getBuscaList( campusDTO, null,
+		return getBuscaList( cenarioDTO, campusDTO, null,
 			loadConfig.get( "query" ).toString(), loadConfig );
 	}
 	
 	@Override
 	public PagingLoadResult< UnidadeDTO > getBuscaList(
-		CampusDTO campusDTO, String nome,
+		CenarioDTO cenarioDTO, CampusDTO campusDTO, String nome,
 		String codigo, PagingLoadConfig config )
 	{
 		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
 		String orderBy = config.getSortField();
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
 		if ( orderBy != null )
 		{
@@ -149,7 +151,7 @@ public class UnidadesServiceImpl
 		}
 
 		List< Unidade > listUnidades = Unidade.findBy(
-			getInstituicaoEnsinoUser(), campus, nome,
+			getInstituicaoEnsinoUser(), cenario, campus, nome,
 			codigo, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Unidade unidade : listUnidades )
@@ -166,7 +168,7 @@ public class UnidadesServiceImpl
 			= new BasePagingLoadResult< UnidadeDTO >( list );
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Unidade.count(
-			getInstituicaoEnsinoUser(), campus, nome, codigo ) );
+			getInstituicaoEnsinoUser(), cenario, campus, nome, codigo ) );
 
 		return result;
 	}

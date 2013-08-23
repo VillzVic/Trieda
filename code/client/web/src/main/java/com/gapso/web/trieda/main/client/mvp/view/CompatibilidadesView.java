@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.layout.RowData;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.main.client.mvp.presenter.CompatibilidadesPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
@@ -33,9 +34,11 @@ public class CompatibilidadesView extends MyComposite
 	private Button salvarBt;
 	private Button cancelarBt;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public CompatibilidadesView()
+	public CompatibilidadesView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		createTabItem();
 		createToolBar();
@@ -84,10 +87,10 @@ public class CompatibilidadesView extends MyComposite
 		formPanel.setHeaderVisible( false );
 		formPanel.setAutoHeight( true );
 
-		cursoCB = new CursoComboBox();
+		cursoCB = new CursoComboBox( cenarioDTO );
 		formPanel.add( cursoCB, formData );
 
-		curriculoCB = new CurriculoComboBox( cursoCB );
+		curriculoCB = new CurriculoComboBox( cenarioDTO, cursoCB );
 		formPanel.add( curriculoCB, formData );
 
 		periodoCB = new PeriodoComboBox(curriculoCB,this);

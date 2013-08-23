@@ -424,7 +424,7 @@ public class Curriculo
 	}
 
 	public static int count(
-		InstituicaoEnsino instituicaoEnsino,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		Curso curso, String codigo, String descricao )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
@@ -441,6 +441,7 @@ public class Curriculo
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Curriculo o " +
 			" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
 			" AND " + queryCurso + " LOWER ( o.descricao ) " +
 			" LIKE LOWER ( :descricao ) " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) ");
@@ -453,13 +454,14 @@ public class Curriculo
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
     @SuppressWarnings( "unchecked" )
 	public static List< Curriculo > findBy(
-		InstituicaoEnsino instituicaoEnsino,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		Curso curso, String codigo, String descricao,
 		int firstResult, int maxResults, String orderBy )
 	{
@@ -479,6 +481,7 @@ public class Curriculo
         Query q = entityManager().createQuery(
         	" SELECT o FROM Curriculo o " +
         	" WHERE o.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.cenario = :cenario " +
         	" AND " + queryCurso +
         	" LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " +
         	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo )" + orderBy );
@@ -493,6 +496,7 @@ public class Curriculo
         q.setParameter( "codigo", codigo );
         q.setParameter( "descricao", descricao );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
 
         return q.getResultList();
     }

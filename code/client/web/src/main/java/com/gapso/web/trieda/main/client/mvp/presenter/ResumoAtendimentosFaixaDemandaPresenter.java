@@ -48,13 +48,15 @@ public class ResumoAtendimentosFaixaDemandaPresenter
 	
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public ResumoAtendimentosFaixaDemandaPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-			CenarioDTO cenario, Display display )
+			CenarioDTO cenarioDTO, Display display )
 	{
 			this.display = display;
 			this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+			this.cenarioDTO = cenarioDTO;
 	
 			setListeners();
 	}
@@ -73,7 +75,7 @@ public class ResumoAtendimentosFaixaDemandaPresenter
 					return;
 				}
 				display.getGrid().mask( display.getI18nMessages().loading() );
-				Services.alunosDemanda().getResumoFaixaDemandaList(se.getSelectedItem(), null,
+				Services.alunosDemanda().getResumoFaixaDemandaList( cenarioDTO, se.getSelectedItem(), null,
 				new AbstractAsyncCallbackWithDefaultOnFailure< List < AtendimentoFaixaDemandaDTO > >( display )
 				{
 					@Override
@@ -95,7 +97,7 @@ public class ResumoAtendimentosFaixaDemandaPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new ResumoAtendimentosFaixaDemandaFormPresenter( new ResumoAtendimentosFaixaDemandaFormView(),
+				Presenter presenter = new ResumoAtendimentosFaixaDemandaFormPresenter( cenarioDTO, new ResumoAtendimentosFaixaDemandaFormView(),
 						display.getGrid(), display.getCampusComboBox().getValue());
 
 				presenter.go( null );

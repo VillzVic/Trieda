@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.OfertasPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -39,9 +40,11 @@ public class OfertasView
 	private CurriculoComboBox curriculoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public OfertasView()
+	public OfertasView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 
@@ -101,13 +104,13 @@ public class OfertasView
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
-		this.turnoBuscaComboBox = new TurnoComboBox();
+		this.turnoBuscaComboBox = new TurnoComboBox( cenarioDTO );
 		this.turnoBuscaComboBox.setFieldLabel( "Turno" );
-		this.campusBuscaComboBox = new CampusComboBox();
+		this.campusBuscaComboBox = new CampusComboBox(cenarioDTO);
 		this.campusBuscaComboBox.setFieldLabel( "Campus" );
-		this.cursoBuscaComboBox = new CursoComboBox();
+		this.cursoBuscaComboBox = new CursoComboBox(cenarioDTO);
 		this.cursoBuscaComboBox.setFieldLabel( "Curso" );
-		this.curriculoBuscaComboBox = new CurriculoComboBox();
+		this.curriculoBuscaComboBox = new CurriculoComboBox(cenarioDTO);
 		this.curriculoBuscaComboBox.setFieldLabel( "Matriz Curricular" );
 
 		this.filter.addField( this.turnoBuscaComboBox );

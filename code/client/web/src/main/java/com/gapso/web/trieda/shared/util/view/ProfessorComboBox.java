@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -16,17 +17,18 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class ProfessorComboBox extends ComboBox<ProfessorDTO>{
 	private CampusComboBox campusComboBox;
 	private Boolean readOnly;
+	private CenarioDTO cenarioDTO;
 
-	public ProfessorComboBox(){
+	public ProfessorComboBox(CenarioDTO cenarioDTO){
 		this(null, false);
 	}
 	
-	public ProfessorComboBox(boolean readOnly){
-		this(null, readOnly);
+	public ProfessorComboBox(CenarioDTO cenario,boolean readOnly){
+		this(cenario, null, readOnly);
 	}
 
-	public ProfessorComboBox(CampusComboBox campusCB){
-		this(campusCB, false);
+	public ProfessorComboBox(CenarioDTO cenarioDTO, CampusComboBox campusCB){
+		this(cenarioDTO, campusCB, false);
 	}
 	
 	public ProfessorComboBox(ProfessorDTO professorDTO){
@@ -40,9 +42,10 @@ public class ProfessorComboBox extends ComboBox<ProfessorDTO>{
 		this.setSelection(list);
 	}
 
-	public ProfessorComboBox(CampusComboBox campusCB, boolean readOnly){
+	public ProfessorComboBox(CenarioDTO cenario, CampusComboBox campusCB, boolean readOnly){
 		this.campusComboBox = campusCB;
 		this.readOnly = readOnly;
+		this.cenarioDTO = cenario;
 		this.setReadOnly(readOnly);
 
 		if(!this.readOnly){
@@ -53,7 +56,7 @@ public class ProfessorComboBox extends ComboBox<ProfessorDTO>{
 						Services.professores().getProfessoresEmCampus(campusComboBox.getValue(), callback);
 					}
 					else{
-						Services.professores().getList(callback);
+						Services.professores().getList(cenarioDTO, callback);
 					}
 				}
 			};

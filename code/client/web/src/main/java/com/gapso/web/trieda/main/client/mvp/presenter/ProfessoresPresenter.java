@@ -75,10 +75,10 @@ public class ProfessoresPresenter implements Presenter
 
 	public ProfessoresPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display )
+		CenarioDTO cenarioDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO  = instituicaoEnsinoDTO;
-		this.cenario = cenario;
+		this.cenario = cenarioDTO;
 		this.display = display;
 
 		configureProxy();
@@ -107,7 +107,7 @@ public class ProfessoresPresenter implements Presenter
 				AreaTitulacaoDTO areaTitulacaoDTO
 					= display.getAreaTitulacaoBuscaComboBox().getValue();
 
-				service.getBuscaList( cpf, tipoContratoDTO, titulacaoDTO,
+				service.getBuscaList( cenario, cpf, tipoContratoDTO, titulacaoDTO,
 					areaTitulacaoDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};

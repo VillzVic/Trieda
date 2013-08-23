@@ -50,14 +50,15 @@ public class CampusProfessorFormPresenter
 
 	private SimpleGrid< ProfessorCampusDTO > gridPanel;
 	private Display display;
+	private CenarioDTO cenarioDTO;
 
 	public CampusProfessorFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioDTO cenario, Display display, SimpleGrid< ProfessorCampusDTO > gridPanel )
+		CenarioDTO cenarioDTO, Display display, SimpleGrid< ProfessorCampusDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
-
+		this.cenarioDTO = cenarioDTO;
 		configureProxy();
 		setListeners();
 	}
@@ -70,7 +71,7 @@ public class CampusProfessorFormPresenter
 			public void load( Object loadConfig, AsyncCallback< List< ProfessorDTO > > callback )
 			{
 				CampusDTO campusDTO = display.getCampusComboBox().getValue();
-				Services.professores().getProfessoresNaoEmCampus( campusDTO, callback );
+				Services.professores().getProfessoresNaoEmCampus( cenarioDTO, campusDTO, callback );
 			}
 		};
 

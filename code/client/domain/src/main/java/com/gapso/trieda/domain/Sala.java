@@ -645,9 +645,10 @@ public class Sala
 	}
 
 	public static Integer count( InstituicaoEnsino instituicaoEnsino,
-		Campus campus, Unidade unidade )
+		Cenario cenario, Campus campus, Unidade unidade )
 	{
-		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino ";
+		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
+				" AND o.unidade.campus.cenario = :cenario";
 
 		if ( campus != null || unidade != null )
 		{
@@ -673,6 +674,7 @@ public class Sala
 			"SELECT COUNT ( o ) FROM Sala o " + whereString );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( campus != null )
 		{
@@ -688,10 +690,11 @@ public class Sala
 	}
 
 	@SuppressWarnings("unchecked")
-    public static List< Sala > find( InstituicaoEnsino instituicaoEnsino,
+    public static List< Sala > find( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
     	Campus campus, Unidade unidade, int firstResult, int maxResults, String orderBy )
     {
-		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino ";
+		String whereString = " WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino" +
+				" AND o.unidade.campus.cenario = :cenario";
 		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
 
 		if ( campus != null || unidade != null )
@@ -718,6 +721,7 @@ public class Sala
 			"SELECT o FROM Sala o " + whereString + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
@@ -736,15 +740,17 @@ public class Sala
 	
 	@SuppressWarnings("unchecked")
     public static List< Sala > find( InstituicaoEnsino instituicaoEnsino,
-    	String codigo, int firstResult, int maxResults )
+    	Cenario cenario, String codigo, int firstResult, int maxResults )
     {
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade.campus.cenario = :cenario " +
 			" AND codigo LIKE LOWER (:codigo) " );
 
 		q.setParameter( "codigo", "%"+codigo+"%" );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 

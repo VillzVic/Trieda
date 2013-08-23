@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculoDisciplinaFormView;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -41,12 +42,14 @@ public class CurriculoDisciplinasPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private GTab gTab;
+	private CenarioDTO cenarioDTO;
 
 	public CurriculoDisciplinasPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+		CenarioDTO cenarioDTO, InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+		this.cenarioDTO = cenarioDTO;
 
 		configureProxy();
 		setListeners();
@@ -80,7 +83,7 @@ public class CurriculoDisciplinasPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new CurriculoDisciplinaFormPresenter( instituicaoEnsinoDTO,
-					new CurriculoDisciplinaFormView( new CurriculoDisciplinaDTO(), display.getCurriculoDTO() ), display.getGrid() );
+					new CurriculoDisciplinaFormView( cenarioDTO, new CurriculoDisciplinaDTO(), display.getCurriculoDTO() ), display.getGrid() );
 
 				presenter.go( null );
 			}

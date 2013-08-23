@@ -481,7 +481,7 @@ public class Unidade implements Serializable
     }
 
     public static int count( InstituicaoEnsino instituicaoEnsino,
-    	Campus campus, String nome, String codigo )
+    	Cenario cenario, Campus campus, String nome, String codigo )
     {
         nome = ( ( nome == null ) ? "" : nome );
         nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -498,7 +498,8 @@ public class Unidade implements Serializable
         	" SELECT COUNT ( Unidade ) FROM Unidade AS unidade " +
         	" WHERE " + queryCampus +
         	" LOWER ( unidade.nome ) LIKE LOWER ( :nome ) " +
-        	" AND unidade.campus.instituicaoEnsino = :instituicaoEnsino " + 
+        	" AND unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+          	" AND unidade.campus.cenario = :cenario " +
         	" AND LOWER ( unidade.codigo ) LIKE LOWER ( :codigo ) " );
 
         if ( campus != null )
@@ -507,6 +508,7 @@ public class Unidade implements Serializable
         }
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
         q.setParameter( "nome", nome );
         q.setParameter( "codigo", codigo );
 
@@ -515,8 +517,8 @@ public class Unidade implements Serializable
 
     @SuppressWarnings("unchecked")
 	public static List< Unidade > findBy(
-		InstituicaoEnsino instituicaoEnsino, Campus campus, String nome,
-		String codigo, int firstResult, int maxResults, String orderBy )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus,
+		String nome, String codigo, int firstResult, int maxResults, String orderBy )
 	{
         nome = ( ( nome == null )? "" : nome );
         nome = ( "%" + nome.replace( '*', '%' ) + "%" );
@@ -544,6 +546,7 @@ public class Unidade implements Serializable
         	" WHERE " + queryCampus +
         	" LOWER ( unidade.nome ) LIKE LOWER ( :nome ) " +
         	" AND unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND unidade.campus.cenario = :cenario" +
         	" AND LOWER ( unidade.codigo ) LIKE LOWER ( :codigo ) GROUP BY unidade " + orderBy );
 
         if ( campus != null )
@@ -552,6 +555,7 @@ public class Unidade implements Serializable
         }
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
         q.setParameter( "nome", nome );
         q.setParameter( "codigo", codigo );
         q.setFirstResult( firstResult );

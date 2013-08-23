@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -18,8 +19,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ProfessoresServiceAsync
 {
 	void getProfessor( Long id, AsyncCallback< ProfessorDTO > callback );
-	void getList( AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
-	void getBuscaList( String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
+	void getList( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
+	void getBuscaList( CenarioDTO cenarioDTO, String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
 		AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config,
 		AsyncCallback< PagingLoadResult< ProfessorDTO > > callback );
 	void getTipoContrato( Long id, AsyncCallback< TipoContratoDTO > callback );
@@ -31,15 +32,15 @@ public interface ProfessoresServiceAsync
 	void getHorariosDisponiveis( ProfessorDTO professorDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );
 	void saveHorariosDisponiveis( ProfessorDTO professorDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
-	void getProfessorCampusList( CampusDTO campusDTO, ProfessorDTO professorDTO,
+	void getProfessorCampusList( CenarioDTO cenarioDTO, CampusDTO campusDTO, ProfessorDTO professorDTO,
 		AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
 	void removeProfessorCampus( List< ProfessorCampusDTO > professorCampusDTOList, AsyncCallback< Void > callback );
 	void getProfessoresEmCampus( CampusDTO campusDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
-	void getProfessoresNaoEmCampus( CampusDTO campusDTO, AsyncCallback< List< ProfessorDTO > > callback );
+	void getProfessoresNaoEmCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ProfessorDTO > > callback );
 	void salvarProfessorCampus( CampusDTO campusDTO, List< ProfessorDTO > professorDTOList, AsyncCallback< Void > callback );
-	void getProfessorCampusByCurrentProfessor( AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
+	void getProfessorCampusByCurrentProfessor( CenarioDTO cenarioDTO, AsyncCallback< PagingLoadResult< ProfessorCampusDTO > > callback );
 	
 	void geraHabilitacaoParaProfessoresVirtuaisCadastrados(AsyncCallback< Void > callback );
-	void getAutoCompleteList(BasePagingLoadConfig loadConfig, String tipoComboBox,
+	void getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox,
 			AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 }

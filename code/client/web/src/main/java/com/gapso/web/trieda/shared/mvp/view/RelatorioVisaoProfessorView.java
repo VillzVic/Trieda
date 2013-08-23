@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.RelatorioVisaoProfessorPresenter;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaProfessorGrid;
@@ -28,9 +29,10 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 	private boolean isVisaoProfessor;
 	private RelatorioVisaoProfessorFiltro filtro;
 
-	public RelatorioVisaoProfessorView(UsuarioDTO usuario, boolean isVisaoProfessor){
+	public RelatorioVisaoProfessorView(CenarioDTO cenarioDTO, UsuarioDTO usuario, boolean isVisaoProfessor){
 		this.usuario = usuario;
 		this.isVisaoProfessor = isVisaoProfessor;
+		this.cenarioDTO = cenarioDTO;
 		
 		this.setFiltro(new RelatorioVisaoProfessorFiltro());
 		this.initUI();
@@ -64,7 +66,7 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
-		this.professorTF = new ProfessorNomeComboBox();
+		this.professorTF = new ProfessorNomeComboBox(cenarioDTO);
 		this.professorTF.setEmptyText("Digite o nome do professor");
 		this.professorTF.setName("professor");
 		this.professorTF.setFieldLabel("Professor");
@@ -73,7 +75,7 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		
 		List<Field<?>> centerList = new ArrayList<Field<?>>();
 		
-		this.cpfTF = new ProfessorCpfComboBox();
+		this.cpfTF = new ProfessorCpfComboBox(cenarioDTO);
 		this.cpfTF.setEmptyText("Digite o cpf do professor");
 		this.cpfTF.setName("cpf");
 		this.cpfTF.setFieldLabel("CPF");

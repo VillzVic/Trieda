@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoCursoPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaCursoGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoCursoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoFiltro;
@@ -29,8 +30,8 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 	private SimpleComboBox<Integer> periodoCB;
 	private RelatorioVisaoCursoFiltro filtro;
 
-	public RelatorioVisaoCursoView(){
-		super(new RelatorioVisaoCursoFiltro());
+	public RelatorioVisaoCursoView(CenarioDTO cenarioDTO){
+		super(cenarioDTO, new RelatorioVisaoCursoFiltro());
 	}
 
 	@Override
@@ -54,12 +55,12 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 		
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
-		this.cursoCB = new CursoComboBox();
+		this.cursoCB = new CursoComboBox(cenarioDTO);
 		filtro.addCursoValueListener(this.cursoCB);
 		filtro.addCursoValueListener(this.cursoCB);
 		leftList.add(this.cursoCB);
 		
-		this.curriculoCB = new CurriculoComboBox(this.cursoCB);
+		this.curriculoCB = new CurriculoComboBox(cenarioDTO, this.cursoCB);
 		this.curriculoCB.setUseQueryCache(false);
 		filtro.addCurriculoValueListener(this.curriculoCB);
 		leftList.add(this.curriculoCB);
@@ -69,7 +70,7 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 		
 		List<Field<?>> centerList = new ArrayList<Field<?>>();
 		
-		this.campusCB = new CampusComboBox(this.curriculoCB, false);
+		this.campusCB = new CampusComboBox(cenarioDTO, this.curriculoCB, false);
 		filtro.addCampusValueListener(this.campusCB);
 		centerList.add(this.campusCB);
 		
@@ -80,7 +81,7 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 		filtro.addPeriodoValueListener(this.periodoCB);
 		centerList.add(this.periodoCB);
 		
-		this.turnoCB = new TurnoComboBox(this.campusCB);
+		this.turnoCB = new TurnoComboBox(this.campusCB, cenarioDTO);
 		filtro.addTurnoValueListener(this.turnoCB);
 		rightList.add(this.turnoCB);
 

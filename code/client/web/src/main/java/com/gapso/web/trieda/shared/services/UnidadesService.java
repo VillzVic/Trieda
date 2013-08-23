@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -21,9 +22,9 @@ public interface UnidadesService
 	ListLoadResult< UnidadeDTO > getList();
 	void save( UnidadeDTO unidadeDTO );
 	void remove( List< UnidadeDTO > unidadeDTOList ) throws TriedaException;
-	PagingLoadResult< UnidadeDTO > getBuscaList( CampusDTO campusDTO,
+	PagingLoadResult< UnidadeDTO > getBuscaList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
 		String nome, String codigo, PagingLoadConfig config );
-	ListLoadResult< UnidadeDTO > getList( BasePagingLoadConfig loadConfig );
+	ListLoadResult< UnidadeDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig );
 	UnidadeDTO getUnidade( Long id );
 	List< DeslocamentoUnidadeDTO > getDeslocamento( CampusDTO campusDTO );
 	ListLoadResult< UnidadeDTO > getListByCampus( CampusDTO campusDTO );

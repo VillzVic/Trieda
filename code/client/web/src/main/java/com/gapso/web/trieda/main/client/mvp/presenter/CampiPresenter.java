@@ -244,7 +244,7 @@ public class CampiPresenter
 							List<DeslocamentoUnidadeDTO> result )
 						{
 							Presenter presenter = new UnidadesDeslocamentoPresenter(
-								new UnidadesDeslocamentoView( campusDTO, result ) );
+								new UnidadesDeslocamentoView( cenario, campusDTO, result ) );
 
 							presenter.go( gTab );
 						}

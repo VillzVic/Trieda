@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.OfertaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -69,11 +70,13 @@ public class OfertasPresenter
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
-	private Display display; 
+	private Display display;
+	private CenarioDTO cenarioDTO;
 
 	public OfertasPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,Display display )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO, Display display )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
 
@@ -97,7 +100,7 @@ public class OfertasPresenter
 				CursoDTO cursoDTO = display.getCursoBuscaComboBox().getValue();
 				CurriculoDTO curriculoDTO = display.getCurriculoBuscaComboBox().getValue();
 
-				service.getBuscaList( turnoDTO, campusDTO, cursoDTO,
+				service.getBuscaList( cenarioDTO, turnoDTO, campusDTO, cursoDTO,
 					curriculoDTO, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
@@ -114,7 +117,7 @@ public class OfertasPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new OfertaFormPresenter( instituicaoEnsinoDTO, 
-					new OfertaFormView(null, null, null), display.getGrid() );
+					new OfertaFormView(cenarioDTO, null, null, null), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -159,7 +162,7 @@ public class OfertasPresenter
 						CurriculoDTO curriculoDTO = futureCurriculoDTO.result();
 
 						Presenter presenter = new OfertaFormPresenter( instituicaoEnsinoDTO,
-							new OfertaFormView( ofertaDTO, turnoDTO, campusDTO, curriculoDTO ), display.getGrid() );
+							new OfertaFormView( cenarioDTO, ofertaDTO, turnoDTO, campusDTO, curriculoDTO ), display.getGrid() );
 
 						presenter.go( null );	
 					}

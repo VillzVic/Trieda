@@ -19,9 +19,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface CampiService
 	extends RemoteService
 {
-	ListLoadResult<CampusDTO> getCampiNaoSelecionadosParaOtimizacao(List<CampusDTO> campiSelecionados);
+	ListLoadResult<CampusDTO> getCampiNaoSelecionadosParaOtimizacao(CenarioDTO cenarioDTO, List<CampusDTO> campiSelecionados);
 	PagingLoadResult< CampusDTO > getList( PagingLoadConfig config );
-	ListLoadResult< CampusDTO > getListAll();
+	ListLoadResult< CampusDTO > getListAll( CenarioDTO cenarioDTO );
 	ListLoadResult< CampusDTO > getList();
 	ListLoadResult< CampusDTO > getList( BasePagingLoadConfig loadConfig );
 	void save( CampusDTO campusDTO );
@@ -29,12 +29,12 @@ public interface CampiService
 	PagingLoadResult<CampusDTO> getBuscaList( CenarioDTO cenario, String nome, String codigo,
 		String estadoString, String municipio, String bairro, PagingLoadConfig config );
 	CampusDTO getCampus( Long id );
-	List< DeslocamentoCampusDTO > getDeslocamentos();
+	List< DeslocamentoCampusDTO > getDeslocamentos( CenarioDTO cenarioDTO );
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( CampusDTO campusDTO );
 	void saveHorariosDisponiveis( CampusDTO campusDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO );
 	List< TreeNodeDTO > getResumos( CenarioDTO cenarioDTO, TreeNodeDTO treeNodeDTO );
 	void saveDeslocamento( CenarioDTO cenario, List< DeslocamentoCampusDTO > list );
-	ListLoadResult< CampusDTO > getListByCurriculo( CurriculoDTO curriculoDTO );
-	ListLoadResult<CampusDTO> getListAllCampiTodos();
+	ListLoadResult< CampusDTO > getListByCurriculo( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO );
+	ListLoadResult<CampusDTO> getListAllCampiTodos( CenarioDTO cenarioDTO );
 }

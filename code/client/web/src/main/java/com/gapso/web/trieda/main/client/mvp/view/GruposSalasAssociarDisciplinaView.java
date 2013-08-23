@@ -19,6 +19,7 @@ import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.GruposSalasAssociarDisciplinaPresenter;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -38,6 +39,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 	
 	private DisciplinaComboBox disciplinaCB;
 	private DisciplinaDTO disciplinaDTO;
+	private CenarioDTO cenarioDTO;
 	
 	private ListView<GrupoSalaDTO> naoVinculadaList;
 	private ListView<GrupoSalaDTO> vinculadaList;
@@ -47,8 +49,9 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 	
 	private GTabItem tabItem;
 	
-	public GruposSalasAssociarDisciplinaView( DisciplinaDTO disciplinaDTO ) {
+	public GruposSalasAssociarDisciplinaView( CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO ) {
 		this.disciplinaDTO = disciplinaDTO;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 		createToolBar();
 		createTabItem();
@@ -81,7 +84,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 		formPanel.setHeaderVisible(false);
 		formPanel.setAutoHeight(true);
 		
-		disciplinaCB = new DisciplinaComboBox();
+		disciplinaCB = new DisciplinaComboBox(cenarioDTO);
 		disciplinaCB.setValue(this.disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
 		
