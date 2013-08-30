@@ -369,17 +369,20 @@ public class SolverOutput
 			AlunoDemanda.entityManager().flush();
 		}
 		
-		for(AlunoDemanda alunoDemanda : alunosDemandaTatico.keySet()){
-			int creditosAtendidos = 0;
-			Disciplina disciplinaSubstituta = null;
-			for(AtendimentoTatico tatico : alunosDemandaTatico.get(alunoDemanda)){
-				disciplinaSubstituta = tatico.getDisciplinaSubstituta();
-				alunoDemanda.getAtendimentosTatico().add(tatico);
-				creditosAtendidos += tatico.getCreditosPratico() + tatico.getCreditosTeorico();
+		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurnoFetchAtendimentoTatico(instituicaoEnsino, campi,turno);
+		
+		for(AlunoDemanda alunoDemanda : alunosDemanda){
+			if(alunosDemandaTatico.containsKey(alunoDemanda)){
+				int creditosAtendidos = 0;
+				Disciplina disciplinaSubstituta = null;
+				alunoDemanda.getAtendimentosTatico().addAll(alunosDemandaTatico.get(alunoDemanda));
+				for(AtendimentoTatico tatico : alunosDemandaTatico.get(alunoDemanda)){
+					disciplinaSubstituta = tatico.getDisciplinaSubstituta();
+					creditosAtendidos += tatico.getCreditosPratico() + tatico.getCreditosTeorico();
+				}
+				int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
+				alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);
 			}
-			int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
-			alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);
-			alunoDemanda.merge();
 		}
 	}
 
@@ -398,17 +401,20 @@ public class SolverOutput
 			AtendimentoOperacional.entityManager().flush();
 		}
 		
-		for(AlunoDemanda alunoDemanda : alunosDemandaOperacional.keySet()){
-			int creditosAtendidos = 0;
-			Disciplina disciplinaSubstituta = null;
-			for(AtendimentoOperacional operacional : alunosDemandaOperacional.get(alunoDemanda)){
-				disciplinaSubstituta = operacional.getDisciplinaSubstituta();
-				alunoDemanda.getAtendimentosOperacional().add(operacional);
-				creditosAtendidos += 1;
+		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurnoFetchAtendimentoOperacional(instituicaoEnsino, campi,turno);
+		
+		for(AlunoDemanda alunoDemanda : alunosDemanda){
+			if(alunosDemandaOperacional.containsKey(alunoDemanda)){
+				int creditosAtendidos = 0;
+				Disciplina disciplinaSubstituta = null;
+				alunoDemanda.getAtendimentosOperacional().addAll(alunosDemandaOperacional.get(alunoDemanda));
+				for(AtendimentoOperacional operacional : alunosDemandaOperacional.get(alunoDemanda)){
+					disciplinaSubstituta = operacional.getDisciplinaSubstituta();
+					creditosAtendidos += 1;
+				}
+				int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
+				alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);
 			}
-			int totalCreditosDemanda = (disciplinaSubstituta != null) ? disciplinaSubstituta.getCreditosTotal() : alunoDemanda.getDemanda().getDisciplina().getCreditosTotal();
-			alunoDemanda.setAtendido(totalCreditosDemanda <= creditosAtendidos);
-			alunoDemanda.merge();
 		}
 	}
 
@@ -431,16 +437,10 @@ public class SolverOutput
 	@Transactional
 	public void atualizarAlunosDemanda(Set<Campus> campi, Turno turno){
 		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,campi,turno);
-		boolean atualizouEntidade = false;
 		for(AlunoDemanda alunoDemandaBD : alunosDemandasBD){
 			if(alunoDemandaBD.getAtendido()){
 				alunoDemandaBD.setAtendido(false);
-				alunoDemandaBD.merge();
-				atualizouEntidade = true;
 			}
-		}
-		if (atualizouEntidade) {
-			AlunoDemanda.entityManager().flush();
 		}
 	}
 }

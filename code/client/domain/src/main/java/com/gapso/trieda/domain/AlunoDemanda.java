@@ -308,7 +308,43 @@ public class AlunoDemanda
 		InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Turno turno )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM AlunoDemanda o " +
+			" SELECT DISTINCT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus IN ( :campi ) " +
+			" AND o.demanda.oferta.turno = :turno " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campi", campi );
+		q.setParameter( "turno", turno );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByCampusAndTurnoFetchAtendimentoOperacional(
+		InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT o FROM AlunoDemanda o LEFT JOIN FETCH o.atendimentosOperacional " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus IN ( :campi ) " +
+			" AND o.demanda.oferta.turno = :turno " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campi", campi );
+		q.setParameter( "turno", turno );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByCampusAndTurnoFetchAtendimentoTatico(
+		InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Turno turno )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT o FROM AlunoDemanda o LEFT JOIN FETCH o.atendimentosTatico " +
 			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.oferta.campus IN ( :campi ) " +
