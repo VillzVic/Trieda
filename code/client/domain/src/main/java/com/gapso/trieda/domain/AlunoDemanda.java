@@ -860,4 +860,30 @@ public class AlunoDemanda
 
 			return q.getResultList().size();
 		}
+
+	public static Integer sumCredAlunosP1Atendidos(
+			InstituicaoEnsino instituicaoEnsino, Campus campus) {
+
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
+		for (TipoDisciplina td : tiposDisciplinas) {
+			if (td.ocupaGrade()) {
+				tiposDisciplinasPresenciais.add(td);
+			}
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT SUM(o.demanda.disciplina.creditosTeorico + o.demanda.disciplina.creditosPratico) " +
+			" FROM AlunoDemanda o WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus = :campus AND o.prioridade = 1 AND o.atendido = true " +
+			" AND o.demanda.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) "
+		);
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("campus",campus);
+		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
+
+		Object rs = q.getSingleResult();
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
+	}
 }

@@ -551,7 +551,6 @@ public class CampiServiceImpl extends RemoteService
 							totalCreditosSemanaisProfessores += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos();
 							totalCreditosSemanaisProfessoresVirtuais += (aula.getProfessorVirtualId() == null) ? 0 : aula.getTotalCreditos();
 							custoDocenteSemanal += aula.getTotalCreditos() * aula.getProfessorCustoCreditoSemanal();
-							
 
 							if(!sala.isLaboratorio()){
 								Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
@@ -648,6 +647,7 @@ public class CampiServiceImpl extends RemoteService
 		Double demandaAtendidaP2Percent = TriedaUtil.round(((double)demandaAtendidaP2QtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
 		Double demandaAtendidaPercent = TriedaUtil.round(((double)demandaAtendidaQtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
 		Double demandaNaoAtendidaPercent = TriedaUtil.round(((double)demandaNaoAtendidaQtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
+		Integer totalCreditosSemanaisAlunos = AlunoDemanda.sumCredAlunosP1Atendidos(getInstituicaoEnsinoUser(),campus);
 		
 		Integer qtdProfessores = ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
 				AtendimentoOperacional.countProfessores(getInstituicaoEnsinoUser(), campus) : 0);
@@ -680,7 +680,8 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Da Instituição: <b>" + numberFormatter.print(mediaCreditosProfessores,pt_BR) + " </b>",currentNode) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Gerados pelo Trieda: <b>" + numberFormatter.print(mediaCreditosProfessoresVirtuais,pt_BR) + " </b>",currentNode) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Turmas Abertas: <b>" + numberFormatter.print(qtdTurmasAbertas,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Total de Cr&eacute;ditos Semanais: <b>"	+ numberFormatter.print(totalCreditosSemanais,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Créditos Semanais Docentes: <b>"	+ numberFormatter.print(totalCreditosSemanais,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Créditos Semanais Alunos: <b>"	+ numberFormatter.print(totalCreditosSemanaisAlunos,pt_BR) + "</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "M&eacute;dia de Cr&eacute;ditos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeCreditosPorTurma,pt_BR) + "</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "M&eacute;dia de Alunos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeAlunosPorTurma,pt_BR) + "</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Custo M&eacute;dio do Cr&eacute;dito: <b> " + currencyFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>", currentNode ) );
