@@ -457,6 +457,13 @@ public class Cenario
 
 		return q.getResultList();
 	}
+	
+	public static Integer getDBVersion(){
+		Query q = entityManager().createNativeQuery(
+				" SELECT MAX(db_version) FROM db_version d " );
+		
+		return (Integer) q.getSingleResult();
+	}
 
 	public Usuario getCriadoPor()
 	{

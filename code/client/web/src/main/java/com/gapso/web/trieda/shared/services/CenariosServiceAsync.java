@@ -26,4 +26,5 @@ public interface CenariosServiceAsync
 	void clonar( CenarioDTO cenarioDTO, AsyncCallback< Void > callback );
 	void remove( List< CenarioDTO > cenarioDTOList, AsyncCallback< Void > callback );
 	void getResumos( CenarioDTO cenario, AsyncCallback< List< TreeNodeDTO > > callback );
+	void checkDBVersion(AsyncCallback<Integer> callback);
 }

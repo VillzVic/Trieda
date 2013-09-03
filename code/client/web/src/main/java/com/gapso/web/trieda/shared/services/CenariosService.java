@@ -27,4 +27,5 @@ public interface CenariosService
 	void clonar( CenarioDTO cenarioDTO );
 	void remove( List< CenarioDTO > cenarioDTOList );
 	List< TreeNodeDTO > getResumos( CenarioDTO cenario );
+	Integer checkDBVersion();
 }

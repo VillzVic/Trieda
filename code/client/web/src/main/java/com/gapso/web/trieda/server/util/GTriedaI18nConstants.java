@@ -183,6 +183,12 @@ public class GTriedaI18nConstants
 	}
 	
 	@Override
+	public String dbVersion() {
+		return this.languageManager.getText("dbVersion");
+	}
+
+	
+	@Override
 	public String demanda() {
 		return this.languageManager.getText("demanda");
 	}

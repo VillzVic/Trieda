@@ -3,8 +3,10 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import org.springframework.format.number.NumberFormatter;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
@@ -228,19 +230,27 @@ public class CenariosServiceImpl
 	{
 		Cenario cenario = Cenario.find(
 			cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
+		
+		Locale pt_BR = new Locale("pt","BR");
+		NumberFormatter numberFormatter = new NumberFormatter();
 
 		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
 
-		list.add( new TreeNodeDTO( "Total de Campi: <b>" + Campus.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Cursos: <b>" + Curso.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Matrizes Curriculares: <b>" + Curriculo.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Disciplinas: <b>" + Disciplina.count( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Demanda Total: <b>" + Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ) + " Alunos</b>", null ) );
+		list.add( new TreeNodeDTO( "Total de Campi: <b>" + numberFormatter.print( Campus.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Total de Cursos: <b>" +  numberFormatter.print( Curso.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Total de Matrizes Curriculares: <b>" +  numberFormatter.print( Curriculo.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Total de Disciplinas: <b>" +  numberFormatter.print( Disciplina.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Demanda Total: <b>" +  numberFormatter.print( Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + " Alunos</b>", null ) );
 		list.add( new TreeNodeDTO( "Total de Salas de Aula: <b>" +
-			Sala.countSalaDeAula( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
+				 numberFormatter.print( Sala.countSalaDeAula( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "Total de Salas de Laborat&oacute;rio: <b>" +
-			Sala.countLaboratorio( getInstituicaoEnsinoUser(), cenario ) + "</b>", null ) );
+				 numberFormatter.print( Sala.countLaboratorio( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
 		
 		return list;
+	}
+	
+	public Integer checkDBVersion()
+	{
+		return Cenario.getDBVersion();
 	}
 }

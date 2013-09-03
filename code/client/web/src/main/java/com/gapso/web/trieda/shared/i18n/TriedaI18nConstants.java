@@ -52,6 +52,7 @@ public interface TriedaI18nConstants
 	String custoDocente();
 	String custoMedioCredito();
 	String custoMedioCreditoExcel();
+	String dbVersion();
 	String demanda();
 	String demandaDeAlunos();
 	String descricao();
