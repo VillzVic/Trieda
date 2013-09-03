@@ -1292,6 +1292,21 @@ public class AtendimentoOperacional
 			return q.getResultList().size();
 	}
 	
+	public static int countProfessores(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+		{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o.professor ) FROM AtendimentoOperacional o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND o.professor IS NOT NULL " );
+
+			q.setParameter( "cenario", cenario );
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+			return q.getResultList().size();
+		}
+	
 	public static int countProfessoresVirtuais(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
@@ -1306,6 +1321,21 @@ public class AtendimentoOperacional
 
 			return q.getResultList().size();
 	}
+
+	public static int countProfessoresVirtuais(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT DISTINCT ( o.professorVirtual ) FROM AtendimentoOperacional o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				" AND o.professorVirtual IS NOT NULL " );
+
+				q.setParameter( "cenario", cenario );
+				q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+				return q.getResultList().size();
+		}
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< Object > findAllAlunosCargaHorariaOperacional(
