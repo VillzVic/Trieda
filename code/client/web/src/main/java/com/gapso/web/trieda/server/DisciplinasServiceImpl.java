@@ -1042,7 +1042,7 @@ public class DisciplinasServiceImpl
 				}
 				mainDTO.setMargem(TriedaUtil.parseTriedaCurrency(margem));
 				mainDTO.setMargemString(currencyFormatter.print(mainDTO.getMargem().getDoubleValue(),pt_BR));
-				mainDTO.setMargemPercente(margemPercent);
+				mainDTO.setMargemPercente(TriedaUtil.round(margemPercent, 2));
 				mainDTO.setMargemPercenteString(TriedaUtil.round(mainDTO.getMargemPercente()*100.0,2)+"%");
 			}
 		}

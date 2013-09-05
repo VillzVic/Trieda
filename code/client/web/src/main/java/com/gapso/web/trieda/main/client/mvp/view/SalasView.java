@@ -27,6 +27,7 @@ import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
+import com.google.gwt.i18n.client.NumberFormat;
 
 public class SalasView
 	extends MyComposite
@@ -130,7 +131,7 @@ public class SalasView
 			getI18nConstants().numero(), 100 ) );
 		list.add( new ColumnConfig( SalaDTO.PROPERTY_ANDAR,
 			getI18nConstants().andar(), 100 ) );
-		list.add( new ColumnConfig( SalaDTO.PROPERTY_CAPACIDADE,
+		list.add( createIntegerColumnConfig( SalaDTO.PROPERTY_CAPACIDADE,
 			getI18nConstants().capacidadeAlunos(), 130 ) );
 
 		return list;
@@ -153,6 +154,16 @@ public class SalasView
 		this.filter.addField( this.unidadeCB );
 
 		this.panel.add( this.filter, bld );
+	}
+	
+	private ColumnConfig createIntegerColumnConfig(
+			String id, String text, int width )
+	{
+		String pattern = "#,###";
+		ColumnConfig cc = new ColumnConfig( id, text, width );
+		cc.setNumberFormat(NumberFormat.getFormat(pattern));
+
+		return cc;
 	}
 
 	@Override

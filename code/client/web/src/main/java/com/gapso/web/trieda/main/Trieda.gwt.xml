@@ -25,6 +25,8 @@
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
   
-  <!--<extend-property name="locale" values="pt_BR"/>-->
+  <extend-property name="locale" values="pt_BR"/>
+  <set-property name="locale" value="pt_BR" />
+  <set-property-fallback name="locale" value="pt_BR" />
 
 </module>
