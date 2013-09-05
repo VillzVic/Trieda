@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.server;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -144,7 +145,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 */
 	@Override
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(RelatorioVisaoSalaFiltro filtro) throws TriedaException{
-		QuintetoDTO<List<AtendimentoRelatorioDTO>,Integer,List<String>,List<String>,List<String>> q;
+		QuintetoDTO<List<AtendimentoRelatorioDTO>, ParDTO<Integer, Integer>, List<String>, List<String>, List<String>> q;
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
 		boolean temInfoDeHorario = true;
 
@@ -170,19 +171,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		 		// trata compartilhamento de turmas entre cursos
 				List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = uneAulasQuePodemSerCompartilhadas(aulas);
 				
-				// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão e o máximo de 
+				// calcula MDC dos tempos de aula das semanas letivas relacionadas com as aulas em questão
+				// juntamente com o numero de semanas letivas utilizadas e o máximo de 
 				// créditos em um dia das semanas letivas relacionadas com as aulas em questão
 				Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(aulasComCompartilhamentos);
 				Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = buscaNoBancoDadosSemanasLetivas();
-				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, aulas.get(0).getTurnoId());
-				int mdcTemposAula = quarteto.getPrimeiro();
+				QuartetoDTO<ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, aulas.get(0).getTurnoId());
+				ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quarteto.getPrimeiro();
 				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
 				List<String> horariosDeFimDeAula = quarteto.getQuarto();
 				
-				q = QuintetoDTO.create(aulasComCompartilhamentos,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+				q = QuintetoDTO.create(aulasComCompartilhamentos,mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			}
-			else q = QuintetoDTO.create(aulas,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
+			else q = QuintetoDTO.create(aulas,ParDTO.create(0, 0),Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
 		}
 		catch (EmptyResultDataAccessException ex){
 			throw new TriedaException("Os campos digitados no filtro não foram encontrados");
@@ -191,7 +193,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return AtendimentoServiceRelatorioResponse.create(q);
 	}
 	
-	public QuartetoDTO<Integer,List<String>,List<String>,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulas, Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap, boolean temInfoDeHorario, Long turnoId) {
+	public QuartetoDTO<ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulas, Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap, boolean temInfoDeHorario, Long turnoId) {
 		List<String> labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
 		List<String> horariosDeInicioDeAula = new ArrayList<String>();
 		List<String> horariosDeFimDeAula = new ArrayList<String>();
@@ -204,13 +206,13 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				semanasLetivasDasAulas.add(semanaLetivaIdToSemanaLetivaMap.get(semanaLetivaId));
 			}
 			
-			int mdcTemposAula = SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivasDasAulas);
+			ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = ParDTO.create(SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivasDasAulas),semanasLetivasDasAulas.size()) ;
 			
-			calculaLabelsDasLinhasDaGradeHoraria(temInfoDeHorario,turnoId,semanasLetivasDasAulas,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			calculaLabelsDasLinhasDaGradeHoraria(temInfoDeHorario,turnoId,semanasLetivasDasAulas,mdcTemposAulaNumSemanasLetivas.getPrimeiro(),labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			
-			return QuartetoDTO.create(mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			return QuartetoDTO.create(mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 		}
-		return QuartetoDTO.create(0,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+		return QuartetoDTO.create(ParDTO.create(0, 0),labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 	}
 	
 	private void calculaLabelsDasLinhasDaGradeHoraria(boolean temInfoDeHorario, Long turnoId, List<SemanaLetiva> semanasLetivasDasAulas, int mdcTemposAula,
@@ -277,7 +279,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro, IAtendimentosServiceDAO dao){
-		SextetoDTO<List<AtendimentoRelatorioDTO>,Integer,List<String>,List<String>,List<String>,List<Integer>> s;
+		SextetoDTO<List<AtendimentoRelatorioDTO>,ParDTO<Integer, Integer>,List<String>,List<String>,List<String>,List<Integer>> s;
 		// Par<Aulas, Qtd de Colunas para cada Dia da Semana da Grade Horária>
 		ParDTO<List<AtendimentoRelatorioDTO>, List<Integer>> parResultante = ParDTO.<List<AtendimentoRelatorioDTO>, List<Integer>>create(new ArrayList<AtendimentoRelatorioDTO>(), null);
 		boolean temInfoDeHorario = true;
@@ -318,15 +320,15 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// créditos em um dia das semanas letivas relacionadas com as aulas em questão
 			Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(parResultante.getPrimeiro());
 			Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = dao.buscaSemanasLetivas();
-			QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala,semanaLetivaIdToSemanaLetivaMap,temInfoDeHorario,filtro.getTurnoDTO().getId());
-			int mdcTemposAula = quarteto.getPrimeiro();
+			QuartetoDTO<ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala,semanaLetivaIdToSemanaLetivaMap,temInfoDeHorario,filtro.getTurnoDTO().getId());
+			ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quarteto.getPrimeiro();
 			List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
 			List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
 			List<String> horariosDeFimDeAula = quarteto.getQuarto();
 			
-			s = SextetoDTO.create(parResultante.getPrimeiro(),mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula,parResultante.getSegundo());
+			s = SextetoDTO.create(parResultante.getPrimeiro(),mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula,parResultante.getSegundo());
 		} else {
-			s = SextetoDTO.create(parResultante.getPrimeiro(),0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList(),parResultante.getSegundo());
+			s = SextetoDTO.create(parResultante.getPrimeiro(),ParDTO.create(0, 0),Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList(),parResultante.getSegundo());
 		}
 		
 		return AtendimentoServiceRelatorioResponse.create(s);
@@ -341,7 +343,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor) throws TriedaException{
-		QuintetoDTO<List<AtendimentoRelatorioDTO>,Integer,List<String>,List<String>,List<String>> q;
+		QuintetoDTO<List<AtendimentoRelatorioDTO>,ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> q;
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
 		boolean temInfoDeHorario = true;
 		boolean isAdmin = isAdministrador();
@@ -378,15 +380,15 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 				
 				Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = buscaNoBancoDadosSemanasLetivas();
-				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, aulas.get(0).getTurnoId());
-				int mdcTemposAula = quarteto.getPrimeiro();
+				QuartetoDTO<ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, aulas.get(0).getTurnoId());
+				ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quarteto.getPrimeiro();
 				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
 				List<String> horariosDeFimDeAula = quarteto.getQuarto();
 				
-				q = QuintetoDTO.create(atendimentosParaEscrita,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+				q = QuintetoDTO.create(atendimentosParaEscrita,mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			}
-			else q = QuintetoDTO.create(aulas,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
+			else q = QuintetoDTO.create(aulas,ParDTO.create(0, 0),Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
 		}
 		catch (EmptyResultDataAccessException ex){
 			throw new TriedaException("Os campos do digitados no filtro não foram encontrados");
@@ -397,7 +399,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoAluno(RelatorioVisaoAlunoFiltro filtro, IAtendimentosServiceDAO dao) throws TriedaException{
 		List<AtendimentoRelatorioDTO> atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
-		QuintetoDTO<List<AtendimentoRelatorioDTO>,Integer,List<String>,List<String>,List<String>> q;
+		QuintetoDTO<List<AtendimentoRelatorioDTO>,ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> q;
 		boolean temInfoDeHorario = true;
 
 		// busca no BD os atendimentos do modo tático e transforma os mesmos em DTOs
@@ -425,15 +427,15 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				// créditos em um dia das semanas letivas relacionadas com as aulas em questão
 				Set<Long> semanasLetivasIDsDasAulasNaSala = obtemIDsDasSemanasLetivasAssociadasComAsAulas(atendimentos);
 				Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = dao.buscaSemanasLetivas();
-				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, atendimentos.get(0).getTurnoId());
-				int mdcTemposAula = quarteto.getPrimeiro();
+				QuartetoDTO<ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, atendimentos.get(0).getTurnoId());
+				ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quarteto.getPrimeiro();
 				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
 				List<String> horariosDeFimDeAula = quarteto.getQuarto();
 				
-				q = QuintetoDTO.create(atendimentos,mdcTemposAula,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+				q = QuintetoDTO.create(atendimentos,mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
 			}
-			else q = QuintetoDTO.create(atendimentos,0,Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
+			else q = QuintetoDTO.create(atendimentos,ParDTO.create(0, 0),Collections.<String>emptyList(),Collections.<String>emptyList(),Collections.<String>emptyList());
 		}
 		catch (EmptyResultDataAccessException ex){
 			throw new TriedaException("Os campos do digitados no filtro não foram encontrados");
@@ -1098,7 +1100,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 			}
 		}
-
 		return gruposAulasParalelas;
 	}
 
@@ -1435,14 +1436,16 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			doutoresPercent = ( (double) doutores ) / total;
 			mestresDoutoresPercent = ( (double) mestres+doutores ) / total;
 			
+			DecimalFormat dec = new DecimalFormat("#0.00");
+			
 			percentMestresDoutoresDTO.setDoutores(doutores);
 			percentMestresDoutoresDTO.setMestres(mestres);
 			percentMestresDoutoresDTO.setOutros(outros);
 			percentMestresDoutoresDTO.setTotal(total);
-			percentMestresDoutoresDTO.setDoutoresPercent(TriedaUtil.round(doutoresPercent*100.0,2)+"%");
-			percentMestresDoutoresDTO.setMestresDoutoresPercent(TriedaUtil.round(mestresDoutoresPercent*100.0,2)+"%");
-			percentMestresDoutoresDTO.setDoutoresMin((double)curso.getNumMinDoutores() + "%");
-			percentMestresDoutoresDTO.setMestresDoutoresMin((double)curso.getNumMinMestres() + "%");
+			percentMestresDoutoresDTO.setDoutoresPercent(dec.format(TriedaUtil.round(doutoresPercent*100.0,2))+"%");
+			percentMestresDoutoresDTO.setMestresDoutoresPercent(dec.format(TriedaUtil.round(mestresDoutoresPercent*100.0,2))+"%");
+			percentMestresDoutoresDTO.setDoutoresMin(dec.format((double)curso.getNumMinDoutores()) + "%");
+			percentMestresDoutoresDTO.setMestresDoutoresMin(dec.format((double)curso.getNumMinMestres()) + "%");
 
 			result.add(percentMestresDoutoresDTO);
 		}

@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 
 public class AtendimentoServiceRelatorioResponse implements Serializable{
 	private static final long serialVersionUID = -3735259680645261872L;
 	private List<AtendimentoRelatorioDTO> atendimentosDTO;
-	private Integer mdcTemposAula;
+	private ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas;
 	private List<String> labelsDasLinhasDaGradeHoraria;
 	private List<String> horariosDeInicioDeAula;
 	private List<String> horariosDeFimDeAula;
@@ -21,7 +22,7 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 	@SuppressWarnings("unchecked")
 	public <A, B, C, D, E> AtendimentoServiceRelatorioResponse(QuintetoDTO<A, B, C, D, E> result){
 		this.atendimentosDTO = (List<AtendimentoRelatorioDTO>) result.getPrimeiro();
-		this.mdcTemposAula = (Integer) result.getSegundo();
+		this.mdcTemposAulaNumSemanasLetivas = (ParDTO<Integer, Integer>) result.getSegundo();
 		this.labelsDasLinhasDaGradeHoraria = (List<String>) result.getTerceiro();
 		this.horariosDeInicioDeAula = (List<String>) result.getQuarto();
 		this.horariosDeFimDeAula = (List<String>) result.getQuinto();
@@ -31,7 +32,7 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 	@SuppressWarnings("unchecked")
 	public <A, B, C, D, E , F> AtendimentoServiceRelatorioResponse(SextetoDTO<A, B, C, D, E, F> result){
 		this.atendimentosDTO = (List<AtendimentoRelatorioDTO>) result.getPrimeiro();
-		this.mdcTemposAula = (Integer) result.getSegundo();
+		this.mdcTemposAulaNumSemanasLetivas = (ParDTO<Integer, Integer>) result.getSegundo();
 		this.labelsDasLinhasDaGradeHoraria = (List<String>) result.getTerceiro();
 		this.horariosDeInicioDeAula = (List<String>) result.getQuarto();
 		this.horariosDeFimDeAula = (List<String>) result.getQuinto();
@@ -48,8 +49,8 @@ public class AtendimentoServiceRelatorioResponse implements Serializable{
 		return atendimentosDTO;
 	}
 
-	public Integer getMdcTemposAula() {
-		return mdcTemposAula;
+	public ParDTO<Integer, Integer> getMdcTemposAulaNumSemanasLetivas() {
+		return mdcTemposAulaNumSemanasLetivas;
 	}
 
 	public List<String> getLabelsDasLinhasDaGradeHoraria() {

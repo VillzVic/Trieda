@@ -18,6 +18,7 @@ import com.gapso.web.trieda.server.util.Atendimento;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
@@ -131,13 +132,13 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
 					if(atendimentos.isEmpty()) continue;
 					
-					Integer mdcTemposAula = quinteto.getMdcTemposAula();
+					ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
 					List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
 					List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();
 					List<String> horariosDeFimDeAula = quinteto.getHorariosDeFimDeAula();
 					boolean ehTatico = atendimentos.get(0) instanceof AtendimentoTaticoDTO;
 
-					nextRow = writeEntity(campus, turno, entity, atendimentos, nextRow, mdcTemposAula, ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+					nextRow = writeEntity(campus, turno, entity, atendimentos, nextRow, mdcTemposAulaNumSemanasLetivas.getPrimeiro(), ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 				}
 			}
 		}

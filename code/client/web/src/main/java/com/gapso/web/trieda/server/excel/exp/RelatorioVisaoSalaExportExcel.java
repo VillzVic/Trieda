@@ -241,13 +241,13 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 				}
 				
 				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-				QuartetoDTO<Integer,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnoId);
-				int mdcTemposAula = quarteto.getPrimeiro();
+				QuartetoDTO<ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnoId);
+				ParDTO<Integer, Integer> mdcTemposAula = quarteto.getPrimeiro();
 				List<String> horariosDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
 				List<String> horariosDeFimDeAula = quarteto.getQuarto();
 				
-				nextRow = writeSala(sala, turno, atendimentosDeTodasSemanasLetivas, nextRow, mdcTemposAula, ehTatico, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+				nextRow = writeSala(sala, turno, atendimentosDeTodasSemanasLetivas, nextRow, mdcTemposAula.getPrimeiro(), ehTatico, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 			}
 			count++;total--;if (count == 100) {System.out.println("\t   Faltam "+total+" salas"); count = 0;}//TODO: debug
 		}

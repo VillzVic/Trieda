@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -37,7 +38,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected Grid<LinhaDeCredito> grid;
 	protected ListStore<LinhaDeCredito> store;
 	protected boolean temInfoDeHorarios;
-	protected Integer mdcTemposAula;
+	protected ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas;
 	protected Integer tamanhoLinhaGradeHorariaEmPixels;
 	protected List<AtendimentoRelatorioDTO> atendimentoDTO;
 	protected List<String> labelsDasLinhasDaGradeHoraria;
@@ -53,7 +54,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	public GradeHorariaVisao(){
 		super(new FitLayout());
 		this.temInfoDeHorarios = true;
-		this.mdcTemposAula = 1;
+		this.mdcTemposAulaNumSemanasLetivas = ParDTO.create(1, 1);
 		this.tamanhoLinhaGradeHorariaEmPixels = 0;
 		this.labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
 		this.horariosDeInicioDeAula = new ArrayList<String>();
@@ -127,7 +128,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				atendimentoDTO = result.getAtendimentosDTO();
 				if(!atendimentoDTO.isEmpty()){
 					temInfoDeHorarios = (atendimentoDTO.iterator().next().getHorarioAulaId() != null);
-					mdcTemposAula = result.getMdcTemposAula();
+					mdcTemposAulaNumSemanasLetivas = result.getMdcTemposAulaNumSemanasLetivas();
 					if (temInfoDeHorarios) {
 						TrioDTO<List<String>,List<String>, List<Boolean>> trioDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(result.getLabelsDasLinhasDaGradeHoraria(),result.getHorariosDeInicioDeAula(),result.getHorariosDeFimDeAula());
 						labelsDasLinhasDaGradeHoraria.addAll(trioDTO.getPrimeiro());
@@ -136,14 +137,14 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					} else {
 						labelsDasLinhasDaGradeHoraria.addAll(result.getLabelsDasLinhasDaGradeHoraria());
 					}
-					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO * mdcTemposAula);
+					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO * mdcTemposAulaNumSemanasLetivas.getPrimeiro());
 					List<ColumnConfig> columns = getColumnList(result.getQtdColunasPorDiaSemana());
 					preencheCores();
 					grid.reconfigure(getListStore(), new ColumnModel(columns));
 					grid.getView().setEmptyText(emptyTextAfterSearch);
 					int totalLinhas = labelsDasLinhasDaGradeHoraria.size();
 					for(int row = 0; row < totalLinhas; row++){
-						if(horarioEhIntervalo.get(row)) {
+						if(horarioEhIntervalo.get(row) && mdcTemposAulaNumSemanasLetivas.getSegundo() < 2) {
 							grid.getView().getRow(row).getStyle().setHeight(10, Unit.PX);
 						}
 						else {
@@ -152,7 +153,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					}
 				}
 				else{
-					mdcTemposAula = 1;
+					mdcTemposAulaNumSemanasLetivas = ParDTO.create(1, 1);
 					tamanhoLinhaGradeHorariaEmPixels = 0;
 					grid.reconfigure(getListStore(), new ColumnModel(getColumnList(null)));
 				}
@@ -166,7 +167,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		else this.store.removeAll();
 
 		for (int i = 0; i < labelsDasLinhasDaGradeHoraria.size(); i++) {
-			if(horarioEhIntervalo.get(i)) {
+			if(horarioEhIntervalo.get(i) && mdcTemposAulaNumSemanasLetivas.getSegundo() < 2) {
 				this.store.add(new LinhaDeCredito("", i));
 			}
 			else {
@@ -263,7 +264,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				html.addStyleName("horario");
 				html.setStyleAttribute("top", ((rowIndex-getNumeroIntervalos(rowIndex)) * tamanhoLinhaGradeHorariaEmPixels + 1 + (10 * getNumeroIntervalos(rowIndex))) + "px");
 				// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
-				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
+				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAulaNumSemanasLetivas.getPrimeiro();
 				html.setStyleAttribute("height", (aulaDTO.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula * tamanhoLinhaGradeHorariaEmPixels - 3) + "px");
 				html.addStyleName("s" + aulaDTO.getSemana()); // Posiciona na coluna ( dia semana )
 				html.addStyleName(getCssDisciplina(aulaDTO.getDisciplinaId()));
@@ -284,6 +285,8 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	
 	protected int getNumeroIntervalos(int rowIndex) {
 		int numeroIntervalos = 0;
+		if (mdcTemposAulaNumSemanasLetivas.getSegundo() > 1)
+			return 0;	
 		for(int i = 0; i<rowIndex; i++){
 			if(horarioEhIntervalo.get(i)){
 				numeroIntervalos++;
@@ -326,7 +329,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					if(linhaGradeHoraria == linhaDaGradeEmQueAulaDeveSerDesenhada) return aula;
 					
 					// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
-					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAula;
+					int qtdLinhasNaGradeHorariaPorCreditoDaAula = aula.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAulaNumSemanasLetivas.getPrimeiro();
 
 					// calcula a linha em que a próxima aula do dia da semana deve ser desenhada
 					linhaDaGradeEmQueAulaDeveSerDesenhada += aula.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula;

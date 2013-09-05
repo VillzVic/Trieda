@@ -303,7 +303,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 
 		// para cada bloco curricular
 		for(AtendimentoServiceRelatorioResponse sexteto : aulasInfo) {
-			Integer mdcTemposAula = sexteto.getMdcTemposAula();
+			ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = sexteto.getMdcTemposAulaNumSemanasLetivas();
 			List<AtendimentoRelatorioDTO> aulas = sexteto.getAtendimentosDTO();
 			List<Integer> qtdColunasPorDiaSemana = sexteto.getQtdColunasPorDiaSemana();
 			List<String> horariosDaGradeHoraria = sexteto.getLabelsDasLinhasDaGradeHoraria();
@@ -316,7 +316,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			Integer periodo = Integer.valueOf(aulas.get(0).getPeriodoString());
 			boolean ehTatico = aulas.get(0) instanceof AtendimentoTaticoDTO;
 
-			nextRow = writeCurso(oferta, periodo, mdcTemposAula, aulas, qtdColunasPorDiaSemana, nextRow, ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+			nextRow = writeCurso(oferta, periodo, mdcTemposAulaNumSemanasLetivas.getPrimeiro(), aulas, qtdColunasPorDiaSemana, nextRow, ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 		}
 	}
 	

@@ -344,7 +344,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 				Map<Aluno, AtendimentoServiceRelatorioResponse> alunoMap = turnoMap.get(turno);
 				for(Aluno aluno : alunoMap.keySet()){
 					AtendimentoServiceRelatorioResponse quinteto = alunoMap.get(aluno);
-					Integer mdcTemposAula = quinteto.getMdcTemposAula();
+					ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
 					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
 					List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
 					List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();
@@ -354,7 +354,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 					
 					boolean ehTatico = atendimentos.get(0) instanceof AtendimentoTaticoDTO;
 
-					nextRow = writeAluno(campus, turno, aluno, atendimentos, nextRow, mdcTemposAula, ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+					nextRow = writeAluno(campus, turno, aluno, atendimentos, nextRow, mdcTemposAulaNumSemanasLetivas.getPrimeiro(), ehTatico, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 				}
 			}
 		}
