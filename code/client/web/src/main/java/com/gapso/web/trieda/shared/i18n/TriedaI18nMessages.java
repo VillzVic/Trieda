@@ -38,6 +38,7 @@ public interface TriedaI18nMessages
 	String sucessoImportacaoExcel();
 	String sucessoRemoverDoBD( String codigoItem );
 	String sucessoSalvarNoBD( String codigoItem );
+	String excelErroLogicoCapacidadeInstaladaMaiorCapacidadeMax( String linhasComErro );
 
   // Exemplo com data
   // @DefaultMessage( "Last update: { 0, date, medium } { 0, time, medium }" )

@@ -13,11 +13,15 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 	private String tipoStr;
 	private String numeroStr;
 	private String andarStr;
-	private String capacidadeStr;
+	private String capacidadeInstaladaStr;
+	private String capacidadeMaxStr;
+	private String custoOperacaoCredStr;
 	
 	private TipoSala tipo;
 	private Unidade unidade;
-	private Integer capacidade;
+	private Integer capacidadeInstalada;
+	private Integer capacidadeMax;
+	private Double custoOperacaoCred;
 	
 	public SalasImportExcelBean( int row )
 	{
@@ -36,11 +40,19 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 			checkMandatoryField( this.tipoStr, ImportExcelError.SALA_TIPO_VAZIO, erros );
 			checkMandatoryField( this.numeroStr, ImportExcelError.SALA_NUMERO_VAZIO, erros );
 			checkMandatoryField( this.andarStr, ImportExcelError.SALA_ANDAR_VAZIO, erros );
-			checkMandatoryField( this.capacidadeStr, ImportExcelError.SALA_CAPACIDADE_VAZIO, erros );
+			checkMandatoryField( this.capacidadeInstaladaStr, ImportExcelError.SALA_CAPACIDADE_INSTALADA_VAZIO, erros );
+			checkMandatoryField( this.capacidadeMaxStr, ImportExcelError.SALA_CAPACIDADE_MAX_VAZIO, erros );
+			checkMandatoryField( this.custoOperacaoCredStr, ImportExcelError.SALA_CUSTO_OPERACAO_CRED_VAZIO, erros );
 
-			this.capacidade = checkNonNegativeIntegerField( this.capacidadeStr,
-				ImportExcelError.SALA_CAPACIDADE_FORMATO_INVALIDO,
-				ImportExcelError.SALA_CAPACIDADE_VALOR_NEGATIVO, erros );
+			this.capacidadeInstalada = checkNonNegativeIntegerField( this.capacidadeInstaladaStr,
+				ImportExcelError.SALA_CAPACIDADE_INSTALADA_FORMATO_INVALIDO,
+				ImportExcelError.SALA_CAPACIDADE_INSTALADA_VALOR_NEGATIVO, erros );
+			this.capacidadeMax = checkNonNegativeIntegerField( this.capacidadeMaxStr,
+				ImportExcelError.SALA_CAPACIDADE_MAX_FORMATO_INVALIDO,
+				ImportExcelError.SALA_CAPACIDADE_MAX_VALOR_NEGATIVO, erros );
+			this.custoOperacaoCred = checkNonNegativeDoubleField( this.custoOperacaoCredStr,
+				ImportExcelError.SALA_CUSTO_OPERACAO_CRED_FORMATO_INVALIDO,
+				ImportExcelError.SALA_CUSTO_OPERACAO_CRED_VALOR_NEGATIVO, erros );
 		}
 		else
 		{
@@ -57,7 +69,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 			&& isEmptyField( this.tipoStr )
 			&& isEmptyField( this.numeroStr )
 			&& isEmptyField( this.andarStr )
-			&& isEmptyField( this.capacidadeStr ) );
+			&& isEmptyField( this.capacidadeInstaladaStr ) );
 	}
 
 	public String getCodigoStr()
@@ -110,16 +122,36 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 		this.andarStr = andarStr;
 	}
 
-	public String getCapacidadeStr()
+	public String getCapacidadeInstaladaStr()
 	{
-		return this.capacidadeStr;
+		return this.capacidadeInstaladaStr;
 	}
 
-	public void setCapacidadeStr( String capacidadeStr )
+	public void setCapacidadeInstaladaStr( String capacidadeInstaladaStr )
 	{
-		this.capacidadeStr = capacidadeStr;
+		this.capacidadeInstaladaStr = capacidadeInstaladaStr;
 	}
 
+	public String getCapacidadeMaxStr()
+	{
+		return this.capacidadeMaxStr;
+	}
+
+	public void setCapacidadeMaxStr( String capacidadeMaxStr )
+	{
+		this.capacidadeMaxStr = capacidadeMaxStr;
+	}
+	
+	public String getCustoOperacaoCredStr()
+	{
+		return this.custoOperacaoCredStr;
+	}
+
+	public void setCustoOperacaoCredStr( String custoOperacaoCredStr )
+	{
+		this.custoOperacaoCredStr = custoOperacaoCredStr;
+	}
+	
 	public Unidade getUnidade()
 	{
 		return this.unidade;
@@ -140,9 +172,19 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 		this.tipo = tipo;
 	}
 
-	public Integer getCapacidade()
+	public Integer getCapacidadeInstalada()
 	{
-		return this.capacidade;
+		return this.capacidadeInstalada;
+	}
+	
+	public Integer getCapacidadeMax()
+	{
+		return this.capacidadeMax;
+	}
+	
+	public Double getCustoOperacaoCred()
+	{
+		return this.custoOperacaoCred;
 	}
 
 	@Override

@@ -60,6 +60,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 	public static final String PROPERTY_CONSIDERARDEMANDASDEPRIORIDADE2 = "considerarDemandasDePrioridade2";
+	public static final String PROPERTY_CONSIDERARCAPACIDADEMAXSALAS = "considerarCapacidadeMaxSalas";
 
 	public ParametroDTO() {
 		super();
@@ -350,6 +351,13 @@ public class ParametroDTO extends AbstractDTO<Long>
 	}
 	public void setConsiderarDemandasDePrioridade2(Boolean value) {
 		set(PROPERTY_CONSIDERARDEMANDASDEPRIORIDADE2, value);
+	}
+	
+	public Boolean getConsiderarCapacidadeMaxSalas() {
+		return get(PROPERTY_CONSIDERARCAPACIDADEMAXSALAS);
+	}
+	public void setConsiderarCapacidadeMaxSalas(Boolean value) {
+		set(PROPERTY_CONSIDERARCAPACIDADEMAXSALAS, value);
 	}
 
 	public String getCargaHorariaAlunoSel() {

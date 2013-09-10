@@ -85,6 +85,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox areaTitulacaoProfessoresECursosCheckBox;
 	private CheckBox limitarMaximoDisciplinaProfessorCheckBox;
 	private CheckBox considerarDemandasPrioridade2CheckBox;
+	private CheckBox considerarCapacidadeMaximaDasSalasCheckBox;
 
 	private Button maximizarNotaAvaliacaoCorpoDocenteButton; 
 	private Button minimizarCustoDocenteCursosButton; 
@@ -146,6 +147,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.areaTitulacaoProfessoresECursosCheckBox = createCheckBox("Considerar áreas de titulação dos professores e cursos",this.parametroDTO.getAreaTitulacaoProfessoresECursos());
 		this.limitarMaximoDisciplinaProfessorCheckBox = createCheckBox("Limitar máximo de disciplinas que um professor pode ministrar por curso",this.parametroDTO.getLimitarMaximoDisciplinaProfessor());
 		this.considerarDemandasPrioridade2CheckBox = createCheckBox("Considerar demandas de prioridade 2 para preencher não atendimentos de prioridade 1",this.parametroDTO.getConsiderarDemandasDePrioridade2());
+		this.considerarCapacidadeMaximaDasSalasCheckBox= createCheckBox("Considerar capacidade máxima das salas",this.parametroDTO.getConsiderarCapacidadeMaxSalas());;
 
 		// coluna 2
 		this.minAlunosParaAbrirTurmaValueNumberField = new NumberField();
@@ -218,6 +220,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		instituicaoFS.add(this.areaTitulacaoProfessoresECursosCheckBox);
 		instituicaoFS.add(this.limitarMaximoDisciplinaProfessorCheckBox);
 		instituicaoFS.add(this.considerarDemandasPrioridade2CheckBox);
+		instituicaoFS.add(this.considerarCapacidadeMaximaDasSalasCheckBox);
 		
 		return instituicaoFS;
 	}
@@ -570,6 +573,11 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	@Override
 	public CheckBox getConsiderarDemandasPrioridade2CheckBox() {
 		return this.considerarDemandasPrioridade2CheckBox;
+	}
+	
+	@Override
+	public CheckBox getConsiderarCapacidadeMaximaDasSalasCheckBox() {
+		return this.considerarCapacidadeMaximaDasSalasCheckBox;
 	}
 
 	@Override

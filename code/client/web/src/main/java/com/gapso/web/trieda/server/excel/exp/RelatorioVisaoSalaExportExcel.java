@@ -216,7 +216,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 					result = c1.getCodigo().compareTo(c2.getCodigo());
 				}
 				if (result == 0) {
-					result = -(o1.getCapacidade().compareTo(o2.getCapacidade())); 
+					result = -(o1.getCapacidadeInstalada().compareTo(o2.getCapacidadeInstalada())); 
 				}
 				return result;
 			}
@@ -319,7 +319,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		List<ParDTO<String, ?>> row = new ArrayList<ParDTO<String, ?>>();
 		row.add(ParDTO.create(this.getI18nConstants().campus(), sala.getUnidade().getCampus().getCodigo()));
 		row.add(ParDTO.create(this.getI18nConstants().sala(), sala.getCodigo()));
-		row.add(ParDTO.create(this.getI18nConstants().capacidade(), sala.getCapacidade()));
+		row.add(ParDTO.create(this.getI18nConstants().capacidadeInstalada(), sala.getCapacidadeInstalada()));
 		
 		list.add(row);
 		

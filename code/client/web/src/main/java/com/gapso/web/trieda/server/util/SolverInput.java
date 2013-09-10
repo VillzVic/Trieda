@@ -943,7 +943,12 @@ public class SolverInput
 					itemSala.setNumero( sala.getNumero() );
 					itemSala.setTipoSalaId(
 						sala.getTipoSala().getId().intValue() );
-					itemSala.setCapacidade( sala.getCapacidade() );
+					if(this.parametro.getCapacidadeMaxSalas()) {
+						itemSala.setCapacidade( sala.getCapacidadeMax() );
+					}
+					else {
+						itemSala.setCapacidade( sala.getCapacidadeInstalada() );
+					}
 
 					Set< HorarioDisponivelCenario > setHorariosSala
 						= new HashSet< HorarioDisponivelCenario >();

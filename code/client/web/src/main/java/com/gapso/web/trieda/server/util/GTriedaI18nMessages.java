@@ -297,4 +297,13 @@ public class GTriedaI18nMessages
 		return this.languageManager.getFormattedText(
 			"ofertasNaoCadastradas", params );
 	}
+	
+	@Override
+	public String excelErroLogicoCapacidadeInstaladaMaiorCapacidadeMax( String linhasComErro )
+	{
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoCapacidadeInstaladaMaiorCapacidadeMax", params );
+	}
 }

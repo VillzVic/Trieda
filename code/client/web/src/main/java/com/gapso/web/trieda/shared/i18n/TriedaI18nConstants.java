@@ -20,9 +20,11 @@ public interface TriedaI18nConstants
 	String campiHeadingPanel();
 	String campiTrabalho();
 	String campus();
-	String capacidade();
-	String capacidadeAlunos();
+	String capacidadeInstalada();
+	String capacidadeInstaladaAlunos();
 	String capacidadeMediaSalas();
+	String capacidadeMax();
+	String capacidadeMaxAlunos();
 	String cargaHorariaAnterior();
 	String cargaHorariaMax();
 	String cargaHorariaMin();
@@ -52,6 +54,7 @@ public interface TriedaI18nConstants
 	String custoDocente();
 	String custoMedioCredito();
 	String custoMedioCreditoExcel();
+	String custoOperacaoCred();
 	String dbVersion();
 	String demanda();
 	String demandaDeAlunos();

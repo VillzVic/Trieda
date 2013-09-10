@@ -29,7 +29,9 @@ public class SalaFormView extends MyComposite implements
 	private TextField< String > codigoTF;
 	private TextField< String > numeroTF;
 	private TextField< String > andarTF;
-	private NumberField capacidadeNF;
+	private NumberField capacidadeInstaladaNF;
+	private NumberField capacidadeMaxNF;
+	private NumberField custoOperacaoCredNF;
 	private UnidadeComboBox unidadeCB;
 	private TipoSalaComboBox tipoSalaCB;
 	private SalaDTO salaDTO;
@@ -62,7 +64,8 @@ public class SalaFormView extends MyComposite implements
 			( getI18nConstants().edicaoDe() + getI18nConstants().sala() );
 
 		simpleModal = new SimpleModal( title, Resources.DEFAULTS.sala16() );
-		simpleModal.setHeight( 265 );
+		simpleModal.setHeight( 360 );
+		simpleModal.setWidth( 313 );
 
 		createForm();
 		simpleModal.setContent( formPanel );
@@ -124,15 +127,37 @@ public class SalaFormView extends MyComposite implements
 		andarTF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().andar() );
 		formPanel.add( andarTF, formData );
 
-		capacidadeNF = new NumberField();
-		capacidadeNF.setName( SalaDTO.PROPERTY_CAPACIDADE );
-		capacidadeNF.setValue( salaDTO.getCapacidade() );
-		capacidadeNF.setFieldLabel( getI18nConstants().capacidade() );
-		capacidadeNF.setAllowBlank( false );
-		capacidadeNF.setMinLength( 1 );
-		capacidadeNF.setMaxLength( 20 );
-		capacidadeNF.setEmptyText( getI18nConstants().preenchaA() + getI18nConstants().capacidade() );
-		formPanel.add( capacidadeNF, formData );
+		capacidadeInstaladaNF = new NumberField();
+		capacidadeInstaladaNF.setName( SalaDTO.PROPERTY_CAPACIDADE_INSTALADA );
+		capacidadeInstaladaNF.setValue( salaDTO.getCapacidadeInstalada() );
+		capacidadeInstaladaNF.setFieldLabel( getI18nConstants().capacidadeInstalada() );
+		capacidadeInstaladaNF.setAllowBlank( false );
+		capacidadeInstaladaNF.setMinValue(1);
+		capacidadeInstaladaNF.setMinLength( 1 );
+		capacidadeInstaladaNF.setMaxLength( 20 );
+		capacidadeInstaladaNF.setEmptyText( getI18nConstants().preenchaA() + getI18nConstants().capacidadeInstalada() );
+		formPanel.add( capacidadeInstaladaNF, formData );
+		
+		capacidadeMaxNF = new NumberField();
+		capacidadeMaxNF.setName( SalaDTO.PROPERTY_CAPACIDADE_MAX );
+		capacidadeMaxNF.setValue( salaDTO.getCapacidadeInstalada() );
+		capacidadeMaxNF.setFieldLabel( getI18nConstants().capacidadeMax() );
+		capacidadeMaxNF.setAllowBlank( false );
+		capacidadeMaxNF.setMinValue(1);
+		capacidadeMaxNF.setMinLength( 1 );
+		capacidadeMaxNF.setMaxLength( 20 );
+		capacidadeMaxNF.setEmptyText( getI18nConstants().preenchaA() + getI18nConstants().capacidadeMax() );
+		formPanel.add( capacidadeMaxNF, formData );
+		
+		custoOperacaoCredNF = new NumberField();
+		custoOperacaoCredNF.setName( SalaDTO.PROPERTY_CUSTO_OPERACAO_CRED );
+		custoOperacaoCredNF.setValue( salaDTO.getCustoOperacaoCred() );
+		custoOperacaoCredNF.setFieldLabel( getI18nConstants().custoOperacaoCred() );
+		custoOperacaoCredNF.setAllowBlank( false );
+		custoOperacaoCredNF.setAllowDecimals( true );
+		custoOperacaoCredNF.setMaxValue( 999999 );
+		custoOperacaoCredNF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().custoOperacaoCred());
+		formPanel.add( custoOperacaoCredNF, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );
 		binding.addButton( simpleModal.getSalvarBt() );
@@ -170,11 +195,23 @@ public class SalaFormView extends MyComposite implements
 	}
 
 	@Override
-	public NumberField getCapacidadeNumberField()
+	public NumberField getCapacidadeInstaladaNumberField()
 	{
-		return capacidadeNF;
+		return capacidadeInstaladaNF;
 	}
 
+	@Override
+	public NumberField getCapacidadeMaxNumberField()
+	{
+		return capacidadeMaxNF;
+	}
+	
+	@Override
+	public NumberField getCustoOperacaoCredNumberField()
+	{
+		return custoOperacaoCredNF;
+	}
+	
 	@Override
 	public UnidadeComboBox getUnidadeComboBox()
 	{

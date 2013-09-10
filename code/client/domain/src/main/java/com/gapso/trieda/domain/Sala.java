@@ -25,6 +25,7 @@ import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -102,7 +103,17 @@ public class Sala
     @Column(name = "SAL_CAPACIDADE")
     @Min(1L)
     @Max(9999L)
-    private Integer capacidade;
+    private Integer capacidadeInstalada;
+    
+    @NotNull
+    @Column(name = "SAL_CAPACIDADE_MAX")
+    @Min(1L)
+    @Max(9999L)
+    private Integer capacidadeMax;
+    
+	@Column( name = "SAL_CUSTO_OPERACAO_CRED" )
+	@Digits( integer = 6, fraction = 2 )
+	private Double custoOperacaoCred;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "salas")
     private Set< HorarioDisponivelCenario > horarios = new HashSet< HorarioDisponivelCenario >();
@@ -140,7 +151,8 @@ public class Sala
         sb.append( "Codigo: " ).append( getCodigo() ).append( ", " );
         sb.append( "Numero: " ).append( getNumero() ).append( ", " );
         sb.append( "Andar: " ).append( getAndar() ).append( ", " );
-        sb.append( "Capacidade: " ).append( getCapacidade() ).append(", ");
+        sb.append( "Capacidade Instalada: " ).append( getCapacidadeInstalada() ).append(", ");
+        sb.append( "Capacidade Maxima: " ).append( getCapacidadeMax() ).append(", ");
         sb.append( "Horarios: " ).append( getHorarios() == null ? "null" : getHorarios().size() ).append(", ");
         sb.append( "Disciplinas: " ).append(
         	getDisciplinas() == null ? "null" : getDisciplinas().size() ).append(", ");
@@ -840,15 +852,35 @@ public class Sala
         this.andar = andar;
     }
 
-	public Integer getCapacidade()
+	public Integer getCapacidadeInstalada()
 	{
-        return this.capacidade;
+        return this.capacidadeInstalada;
     }
 
-	public void setCapacidade( Integer capacidade )
+	public void setCapacidadeInstalada( Integer capacidadeInstalada )
 	{
-        this.capacidade = capacidade;
+        this.capacidadeInstalada = capacidadeInstalada;
     }
+	
+	public Integer getCapacidadeMax()
+	{
+        return this.capacidadeMax;
+    }
+
+	public void setCapacidadeMax( Integer capacidadeMax )
+	{
+        this.capacidadeMax = capacidadeMax;
+    }
+	
+	public Double getCustoOperacaoCred()
+	{
+		return this.custoOperacaoCred;
+	}
+	
+	public Double setCustoOperacaoCred( Double custoOperacaoCred )
+	{
+		return this.custoOperacaoCred = custoOperacaoCred;
+	}
 
 	private Set< HorarioDisponivelCenario > getHorarios()
 	{

@@ -162,9 +162,15 @@ public enum ImportExcelError
 	PROFESSOR_MIN_CREDITOS_DIA_VALOR_NEGATIVO,
 	
 	SALA_ANDAR_VAZIO,
-	SALA_CAPACIDADE_FORMATO_INVALIDO,
-	SALA_CAPACIDADE_VALOR_NEGATIVO,
-	SALA_CAPACIDADE_VAZIO,
+	SALA_CAPACIDADE_INSTALADA_FORMATO_INVALIDO,
+	SALA_CAPACIDADE_INSTALADA_VALOR_NEGATIVO,
+	SALA_CAPACIDADE_INSTALADA_VAZIO,
+	SALA_CAPACIDADE_MAX_FORMATO_INVALIDO,
+	SALA_CAPACIDADE_MAX_VALOR_NEGATIVO,
+	SALA_CAPACIDADE_MAX_VAZIO,
+	SALA_CUSTO_OPERACAO_CRED_FORMATO_INVALIDO,
+	SALA_CUSTO_OPERACAO_CRED_VALOR_NEGATIVO,
+	SALA_CUSTO_OPERACAO_CRED_VAZIO,
 	SALA_CODIGO_VAZIO,
 	SALA_NUMERO_VAZIO,
 	SALA_TIPO_VAZIO,
@@ -331,9 +337,15 @@ public enum ImportExcelError
 			case PROFESSOR_MIN_CREDITOS_DIA_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,ProfessoresImportExcel.MIN_CREDITOS_DIA);
 			
 			case SALA_ANDAR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.ANDAR_COLUMN_NAME);
-			case SALA_CAPACIDADE_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);
-			case SALA_CAPACIDADE_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);
-			case SALA_CAPACIDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.CAPACIDADE_COLUMN_NAME);
+			case SALA_CAPACIDADE_INSTALADA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CAPACIDADE_INSTALADA_COLUMN_NAME);
+			case SALA_CAPACIDADE_INSTALADA_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,SalasImportExcel.CAPACIDADE_INSTALADA_COLUMN_NAME);
+			case SALA_CAPACIDADE_INSTALADA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.CAPACIDADE_INSTALADA_COLUMN_NAME);
+			case SALA_CAPACIDADE_MAX_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CAPACIDADE_MAX_COLUMN_NAME);
+			case SALA_CAPACIDADE_MAX_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,SalasImportExcel.CAPACIDADE_MAX_COLUMN_NAME);
+			case SALA_CAPACIDADE_MAX_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.CAPACIDADE_MAX_COLUMN_NAME);
+			case SALA_CUSTO_OPERACAO_CRED_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SalasImportExcel.CUSTO_OPERACAO_CRED_COLUMN_NAME);
+			case SALA_CUSTO_OPERACAO_CRED_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,SalasImportExcel.CUSTO_OPERACAO_CRED_COLUMN_NAME);
+			case SALA_CUSTO_OPERACAO_CRED_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.CUSTO_OPERACAO_CRED_COLUMN_NAME);
 			case SALA_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.CODIGO_COLUMN_NAME);
 			case SALA_NUMERO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.NUMERO_COLUMN_NAME);
 			case SALA_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.TIPO_COLUMN_NAME);

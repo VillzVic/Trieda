@@ -448,7 +448,7 @@ public class Unidade implements Serializable
     	InstituicaoEnsino instituicaoEnsino, Unidade unidade )
     {
     	Query q =  entityManager().createQuery(
-    		" SELECT AVG ( o.capacidade ) FROM Sala o " +
+    		" SELECT AVG ( o.capacidadeInstalada ) FROM Sala o " +
     		" WHERE o.unidade = :unidade " +
     		" AND o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " );
 
@@ -529,7 +529,7 @@ public class Unidade implements Serializable
         	orderBy = "";
         }
         else if (orderBy.contains("capSalas")) {
-        	orderBy = orderBy.replace("capSalas", "ORDER BY AVG(s.capacidade)");
+        	orderBy = orderBy.replace("capSalas", "ORDER BY AVG(s.capacidadeInstalada)");
         }
         else {
         	orderBy = ( ( orderBy != null ) ? " ORDER BY unidade." + orderBy.replace("String", "") : "" );

@@ -100,14 +100,14 @@ public class Parametro
 	// PREFERENCIAS DO ALUNO
 	//////////////////////////////////////////////
 	
-	//DistribuiÁ„o da carga hor·ria semanal do aluno
+	//Distribui√ß√£o da carga hor√°ria semanal do aluno
     @Column(name = "PAR_CARGAHORARIAALUNO")
     private Boolean cargaHorariaAluno = false;
     @Size(min = 1, max = 20)
     @Column(name = "PAR_CARGAHORARIAALUNOSEL")
     private String cargaHorariaAlunoSel;
     
-    //Manter alunos do mesmo curso-perÌodo na mesma sala
+    //Manter alunos do mesmo curso-per√≠odo na mesma sala
     @Column(name = "PAR_ALUNOPERIODOSALA")
     private Boolean alunoDePeriodoMesmaSala = false;
     
@@ -123,7 +123,7 @@ public class Parametro
 	// PREFERENCIAS DO PROFESSOR
     //////////////////////////////////////////////
     
-    //DistribuiÁ„o da carga hor·ria semanal do professor
+    //Distribui√ß√£o da carga hor√°ria semanal do professor
     @Column(name = "PAR_CARGAHORARIAPROF")
     private Boolean cargaHorariaProfessor = false;
     @Size(min = 1, max = 20)
@@ -140,37 +140,37 @@ public class Parametro
     @Column(name = "PAR_MINDESLPROFVALUE")
     private Integer minimizarDeslocamentoProfessorValue;
     
-    //Minimizar Gaps nos Hor·rios dos Professores
+    //Minimizar Gaps nos Hor√°rios dos Professores
     @Column(name = "PAR_MINGAPPROF")
     private Boolean minimizarGapProfessor = false;
     
-    //Evitar ReduÁ„o de Carga Hor·ria de Professor
+    //Evitar Redu√ß√£o de Carga Hor√°ria de Professor
     @Column(name = "PAR_EVITARREDCARGAHORPROF")
     private Boolean evitarReducaoCargaHorariaProfessor = false;
     @Column(name = "PAR_EVITARREDCARGAHORPROFVALUE")
     private Integer evitarReducaoCargaHorariaProfessorValue;
     
-    //Evitar alocaÁ„o de professores no ˙ltimo hor·rio do dia e primeiro do dia seguinte
+    //Evitar aloca√ß√£o de professores no √∫ltimo hor√°rio do dia e primeiro do dia seguinte
     @Column(name = "PAR_EVITARULTIMOPRIHORPROF")
     private Boolean evitarUltimoEPrimeiroHorarioProfessor = false;
     
-    //Considerar preferÍncia de professores por disciplinas
+    //Considerar prefer√™ncia de professores por disciplinas
     @Column(name = "PAR_PREFPROF")
     private Boolean preferenciaDeProfessores = false;
     
-    //Considerar avaliaÁ„o de desempenho de professores
+    //Considerar avalia√ß√£o de desempenho de professores
     @Column(name = "PAR_AVALIACAODESEMPROF")
     private Boolean avaliacaoDesempenhoProfessor = false;
 
     //////////////////////////////////////////////
-	// PREFERENCIAS DA INSTITUI«√O
+	// PREFERENCIAS DA INSTITUI√á√ÉO
     //////////////////////////////////////////////
     
-    // FuncÁ„o objetivo
+    // Fun√ß√£o objetivo
     @Column(name = "PAR_FUNCAOOBJETIVO")
     private Integer funcaoObjetivo = 0;
     
-    //Considerar EquivalÍncias entre Disciplinas
+    //Considerar Equival√™ncias entre Disciplinas
     @Column(name = "PAR_CONSIDERAR_EQUIV")
     private Boolean considerarEquivalencia = false;
     @Column(name = "PAR_PROIBIR_CICLOS_EQUIV")
@@ -180,16 +180,16 @@ public class Parametro
     @Column(name = "PAR_PROIBIR_TROCA_POR_DISC_ONLINE_CREDZERADOS_EQUIV")
     private Boolean proibirTrocaPorDiscOnlineOuCredZeradosEmEquivalencia = true;
     
-    //N˙mero mÌnimo de alunos para abrir uma turma
+    //N√∫mero m√≠nimo de alunos para abrir uma turma
     @Column(name = "PAR_MINALUNTURMA")
     private Boolean minAlunosParaAbrirTurma = false;
     @Column(name = "PAR_MINALUNTURMAVALUE")
     private Integer minAlunosParaAbrirTurmaValue;
-    // Permite a violaÁ„o do mÌnimo de alunos para abertura de uma turma caso haja aluno formando alocado na turma
+    // Permite a viola√ß√£o do m√≠nimo de alunos para abertura de uma turma caso haja aluno formando alocado na turma
     @Column(name = "PAR_VIOLAR_MIN_TURMAS_FORMANDOS")
     private Boolean violarMinTurmasFormandos = true;
 
-    //Considerar nÌvel de dificuldade de disciplinas
+    //Considerar n√≠vel de dificuldade de disciplinas
     @Column(name = "PAR_NIVELDIFDISCI")
     private Boolean nivelDificuldadeDisciplina = false;
 
@@ -197,21 +197,21 @@ public class Parametro
     @Column(name = "PAR_COMPATDISCDIA")
     private Boolean compatibilidadeDisciplinasMesmoDia = false;
 
-    //Considerar regras genÈricas de divis„o de crÈditos
+    //Considerar regras gen√©ricas de divis√£o de cr√©ditos
     @Column(name = "PAR_REGRASGENDIVCRE")
     private Boolean regrasGenericasDivisaoCredito = false;
 
-    //Considerar regras especÌficas de divis„o de crÈditos
+    //Considerar regras espec√≠ficas de divis√£o de cr√©ditos
     @Column(name = "PAR_REGRASESPDIVCRED")
     private Boolean regrasEspecificasDivisaoCredito = false;
 
-    //Maximizar nota da avaliaÁ„o do corpo docente de cursos especÌficos
+    //Maximizar nota da avalia√ß√£o do corpo docente de cursos espec√≠ficos
     @Column(name = "PAR_MAXNOTAAVALCORDOC")
     private Boolean maximizarNotaAvaliacaoCorpoDocente = false;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Curso> cursosMaxNotaAval = new HashSet<Curso>();
 
-    //Minimizar custo docente de cursos especÌficos
+    //Minimizar custo docente de cursos espec√≠ficos
     @Column(name = "PAR_MINCUSTDOCCUR")
     private Boolean minimizarCustoDocenteCursos = false;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -223,25 +223,29 @@ public class Parametro
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy="parametro")
     private Set<CursoDescompartilha> cursosDescompartDiscCampi = new HashSet<CursoDescompartilha>();
 
-    //Considerar percentuais mÌnimos de mestres
+    //Considerar percentuais m√≠nimos de mestres
     @Column(name = "PAR_PERCMINMEST")
     private Boolean percentuaisMinimosMestres = false;
 
-    //Considerar percentuais mÌnimos de doutores
+    //Considerar percentuais m√≠nimos de doutores
     @Column(name = "PAR_PERCMINDOUT")
     private Boolean percentuaisMinimosDoutores = false;
 
-    //Considerar ·reas de titulaÁ„o dos professores e cursos
+    //Considerar √°reas de titula√ß√£o dos professores e cursos
     @Column(name = "PAR_AREATITPROFCUR")
     private Boolean areaTitulacaoProfessoresECursos = false;
 
-    //Limitar m·ximo de disciplinas que um professor pode ministrar por curso
+    //Limitar m√°ximo de disciplinas que um professor pode ministrar por curso
     @Column(name = "PAR_LIMMAXDISCPRO")
     private Boolean limitarMaximoDisciplinaProfessor = false;
     
-    // Utiliza demandas de prioridade 2 caso n„o haja total atendimento das demandas de prioridade 1
+    // Utiliza demandas de prioridade 2 caso n√£o haja total atendimento das demandas de prioridade 1
     @Column(name = "PAR_UTILIZAR_DEMANDAS_P2")
     private Boolean utilizarDemandasP2 = true;
+    
+    // Considerar capacidade maxima das salas
+    @Column(name = "PAR_CAPACIDADE_MAX_SALAS")
+    private Boolean capacidadeMaxSalas = false;
 
     @Column(name = "PAR_OTIMIZARPOR")
 	private String otimizarPor;
@@ -715,6 +719,13 @@ public class Parametro
 	}
 	public void setOtimizarPor(String otimizarPor) {
 		this.otimizarPor = otimizarPor;
+	}
+	
+	public Boolean getCapacidadeMaxSalas() {
+		return capacidadeMaxSalas;
+	}
+	public void setCapacidadeMaxSalas(Boolean capacidadeMaxSalas) {
+		this.capacidadeMaxSalas = capacidadeMaxSalas;
 	}
 
 	public String toString()

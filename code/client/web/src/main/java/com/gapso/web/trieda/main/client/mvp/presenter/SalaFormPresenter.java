@@ -27,7 +27,9 @@ public class SalaFormPresenter implements Presenter
 		TextField< String > getCodigoTextField();
 		TextField< String > getNumeroTextField();
 		TextField< String > getAndarTextField();
-		NumberField getCapacidadeNumberField();
+		NumberField getCapacidadeInstaladaNumberField();
+		NumberField getCapacidadeMaxNumberField();
+		NumberField getCustoOperacaoCredNumberField();
 		UnidadeComboBox getUnidadeComboBox();
 		TipoSalaComboBox getTipoComboBox();
 		SalaDTO getSalaDTO();
@@ -38,6 +40,7 @@ public class SalaFormPresenter implements Presenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< SalaDTO > gridPanel;
 	private Display display;
+	private String errorMessage;
 
 	public SalaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
@@ -52,6 +55,7 @@ public class SalaFormPresenter implements Presenter
 		this.gridPanel = gridPanel;
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.errorMessage = "";
 
 		setListeners();
 	}
@@ -90,7 +94,7 @@ public class SalaFormPresenter implements Presenter
 						}
 						else
 						{
-							MessageBox.alert( "ERRO!", "Verifique os campos digitados", null );
+							MessageBox.alert( "ERRO!", errorMessage, null );
 						}
 					}
 				});
@@ -98,7 +102,21 @@ public class SalaFormPresenter implements Presenter
 
 	private boolean isValid()
 	{
-		return display.isValid();
+		if ( display.isValid())
+		{
+			if( display.getCapacidadeInstaladaNumberField().getValue().intValue() 
+					> display.getCapacidadeMaxNumberField().getValue().intValue() )
+			{
+				this.errorMessage = "A Capacidade Instalada não pode ser maior que a Capacidade Máxima";
+				return false;
+			}
+			return true;
+		}
+		else
+		{
+			this.errorMessage = "Verifique os campos digitados";
+			return false;
+		}
 	}
 
 	private SalaDTO getDTO()
@@ -108,7 +126,9 @@ public class SalaFormPresenter implements Presenter
 		salaDTO.setCodigo( display.getCodigoTextField().getValue() );
 		salaDTO.setNumero( display.getNumeroTextField().getValue() );
 		salaDTO.setAndar( display.getAndarTextField().getValue() );
-		salaDTO.setCapacidade( display.getCapacidadeNumberField().getValue().intValue() );
+		salaDTO.setCapacidadeInstalada( display.getCapacidadeInstaladaNumberField().getValue().intValue() );
+		salaDTO.setCapacidadeMax( display.getCapacidadeMaxNumberField().getValue().intValue() );
+		salaDTO.setCustoOperacaoCred( display.getCustoOperacaoCredNumberField().getValue().doubleValue() );
 		salaDTO.setTipoId( display.getTipoComboBox().getSelection().get( 0 ).getId() );
 		salaDTO.setTipoString( display.getTipoComboBox().getSelection().get( 0 ).getNome() );
 		salaDTO.setUnidadeId( display.getUnidadeComboBox().getSelection().get( 0 ).getId() );

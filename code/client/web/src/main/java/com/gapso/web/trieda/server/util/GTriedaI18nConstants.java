@@ -67,8 +67,13 @@ public class GTriedaI18nConstants
 	}
 
 	@Override
-	public String capacidade() {
-		return this.languageManager.getText("capacidade");
+	public String capacidadeInstalada() {
+		return this.languageManager.getText("capacidadeInstalada");
+	}
+	
+	@Override
+	public String capacidadeMax() {
+		return this.languageManager.getText("capacidadeMax");
 	}
 
 	@Override
@@ -659,9 +664,21 @@ public class GTriedaI18nConstants
 	}
 
 	@Override
-	public String capacidadeAlunos()
+	public String capacidadeInstaladaAlunos()
 	{
-		return this.languageManager.getText( "capacidadeAlunos" );
+		return this.languageManager.getText( "capacidadeInstaladaAlunos" );
+	}
+	
+	@Override
+	public String capacidadeMaxAlunos()
+	{
+		return this.languageManager.getText( "capacidadeMaxAlunos" );
+	}
+	
+	@Override
+	public String custoOperacaoCred()
+	{
+		return this.languageManager.getText( "custoOperacaoCred" );
 	}
 
 	@Override

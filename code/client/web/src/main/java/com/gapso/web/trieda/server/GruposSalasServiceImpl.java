@@ -171,7 +171,7 @@ public class GruposSalasServiceImpl
 			Collections.sort(salas);
 			for (Sala sala : salas) {
 				salasString += "<b>" +sala.getCodigo() + "</b> (" + sala.getNumero()
-					+ "," + sala.getCapacidade() + ") | ";
+					+ "," + sala.getCapacidadeInstalada() + ") | ";
 			}
 
 			GrupoSalaDTO gsDTO = ConvertBeans.toGrupoSalaDTO( grupoSala );

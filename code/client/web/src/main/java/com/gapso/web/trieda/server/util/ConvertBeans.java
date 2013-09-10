@@ -460,7 +460,9 @@ public class ConvertBeans {
 		domain.setCodigo( dto.getCodigo() );
 		domain.setNumero( dto.getNumero() );
 		domain.setAndar( dto.getAndar() );
-		domain.setCapacidade( dto.getCapacidade() );
+		domain.setCapacidadeInstalada( dto.getCapacidadeInstalada() );
+		domain.setCapacidadeMax( dto.getCapacidadeMax() );
+		domain.setCustoOperacaoCred( dto.getCustoOperacaoCred() );
 
 		InstituicaoEnsino instituicaoEnsino
 			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );  
@@ -488,7 +490,9 @@ public class ConvertBeans {
 		dto.setCodigo( domain.getCodigo() );
 		dto.setNumero( domain.getNumero() );
 		dto.setAndar( domain.getAndar() );
-		dto.setCapacidade( domain.getCapacidade() );
+		dto.setCapacidadeInstalada( domain.getCapacidadeInstalada() );
+		dto.setCapacidadeMax( domain.getCapacidadeMax() );
+		dto.setCustoOperacaoCred( domain.getCustoOperacaoCred() );
 		dto.setTipoId( domain.getTipoSala().getId() );
 		dto.setTipoString( domain.getTipoSala().getNome() );
 		dto.setCampusId( domain.getUnidade().getCampus().getId() );
@@ -2980,6 +2984,7 @@ public class ConvertBeans {
 		domain.setCargaHorariaProfessorSel( dto.getCargaHorariaProfessorSel() );
 		domain.setFuncaoObjetivo( dto.getFuncaoObjetivo() );
 		domain.setOtimizarPor(dto.getOtimizarPor());
+		domain.setCapacidadeMaxSalas(dto.getConsiderarCapacidadeMaxSalas());
 
 		for ( CursoDTO cursoDTO
 			: dto.getMaximizarNotaAvaliacaoCorpoDocenteList() )
@@ -3070,6 +3075,7 @@ public class ConvertBeans {
 		dto.setEvitarReducaoCargaHorariaProfessorValue( domain.getEvitarReducaoCargaHorariaProfessorValue() );
 		dto.setFuncaoObjetivo( domain.getFuncaoObjetivo() );
 		dto.setOtimizarPor(domain.getOtimizarPor());
+		dto.setConsiderarCapacidadeMaxSalas(domain.getCapacidadeMaxSalas());
 
 		Set< Curso > cursosMaxNotaAvalList = domain.getCursosMaxNotaAval();
 		List< CursoDTO > cursosMaxNotaAvalDTOList

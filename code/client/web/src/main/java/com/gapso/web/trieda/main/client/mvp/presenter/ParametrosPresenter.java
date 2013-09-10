@@ -90,6 +90,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getAreaTitulacaoProfessoresECursosCheckBox();
 		CheckBox getLimitarMaximoDisciplinaProfessorCheckBox();
 		CheckBox getConsiderarDemandasPrioridade2CheckBox();
+		CheckBox getConsiderarCapacidadeMaximaDasSalasCheckBox();
 		FuncaoObjetivoComboBox getFuncaoObjetivoComboBox();
 		Button getMaximizarNotaAvaliacaoCorpoDocenteButton();
 		Button getMinimizarCustoDocenteCursosButton();
@@ -331,6 +332,8 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setAreaTitulacaoProfessoresECursos(this.display.getAreaTitulacaoProfessoresECursosCheckBox().getValue());
 		dto.setLimitarMaximoDisciplinaProfessor(this.display.getLimitarMaximoDisciplinaProfessorCheckBox().getValue());
 		dto.setConsiderarDemandasDePrioridade2(this.display.getConsiderarDemandasPrioridade2CheckBox().getValue());
+		
+		dto.setConsiderarCapacidadeMaxSalas(this.display.getConsiderarCapacidadeMaximaDasSalasCheckBox().getValue());
 
 		return dto;
 	}

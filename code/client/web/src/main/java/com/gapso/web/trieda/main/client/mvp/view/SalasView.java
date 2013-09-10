@@ -131,8 +131,12 @@ public class SalasView
 			getI18nConstants().numero(), 100 ) );
 		list.add( new ColumnConfig( SalaDTO.PROPERTY_ANDAR,
 			getI18nConstants().andar(), 100 ) );
-		list.add( createIntegerColumnConfig( SalaDTO.PROPERTY_CAPACIDADE,
-			getI18nConstants().capacidadeAlunos(), 130 ) );
+		list.add( createIntegerColumnConfig( SalaDTO.PROPERTY_CAPACIDADE_INSTALADA,
+			getI18nConstants().capacidadeInstaladaAlunos(), 160 ) );
+		list.add( createIntegerColumnConfig( SalaDTO.PROPERTY_CAPACIDADE_MAX,
+				getI18nConstants().capacidadeMaxAlunos(), 160 ) );
+		list.add( createDecimalColumnConfig( SalaDTO.PROPERTY_CUSTO_OPERACAO_CRED,
+				getI18nConstants().custoOperacaoCred(), 185 ) );
 
 		return list;
 	}
@@ -160,6 +164,16 @@ public class SalasView
 			String id, String text, int width )
 	{
 		String pattern = "#,###";
+		ColumnConfig cc = new ColumnConfig( id, text, width );
+		cc.setNumberFormat(NumberFormat.getFormat(pattern));
+
+		return cc;
+	}
+	
+	private ColumnConfig createDecimalColumnConfig(
+			String id, String text, int width)
+	{
+		String pattern = "#,##0.00";
 		ColumnConfig cc = new ColumnConfig( id, text, width );
 		cc.setNumberFormat(NumberFormat.getFormat(pattern));
 

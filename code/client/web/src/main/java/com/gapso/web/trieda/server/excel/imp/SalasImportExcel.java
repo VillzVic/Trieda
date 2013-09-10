@@ -31,7 +31,9 @@ public class SalasImportExcel
 	static public String UNIDADE_COLUMN_NAME;
 	static public String NUMERO_COLUMN_NAME;
 	static public String ANDAR_COLUMN_NAME;
-	static public String CAPACIDADE_COLUMN_NAME;
+	static public String CAPACIDADE_INSTALADA_COLUMN_NAME;
+	static public String CAPACIDADE_MAX_COLUMN_NAME;
+	static public String CUSTO_OPERACAO_CRED_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -49,7 +51,9 @@ public class SalasImportExcel
 		this.headerColumnsNames.add( UNIDADE_COLUMN_NAME );
 		this.headerColumnsNames.add( NUMERO_COLUMN_NAME );
 		this.headerColumnsNames.add( ANDAR_COLUMN_NAME );
-		this.headerColumnsNames.add( CAPACIDADE_COLUMN_NAME );
+		this.headerColumnsNames.add( CAPACIDADE_INSTALADA_COLUMN_NAME );
+		this.headerColumnsNames.add( CAPACIDADE_MAX_COLUMN_NAME );
+		this.headerColumnsNames.add( CUSTO_OPERACAO_CRED_COLUMN_NAME );
 	}
 
 	@Override
@@ -108,9 +112,17 @@ public class SalasImportExcel
 					{
 						bean.setAndarStr( cellValue );
 					}
-					else if ( CAPACIDADE_COLUMN_NAME.endsWith( columnName ) )
+					else if ( CAPACIDADE_INSTALADA_COLUMN_NAME.endsWith( columnName ) )
 					{
-						bean.setCapacidadeStr( cellValue );
+						bean.setCapacidadeInstaladaStr( cellValue );
+					}
+					else if ( CAPACIDADE_MAX_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setCapacidadeMaxStr( cellValue );
+					}
+					else if ( CUSTO_OPERACAO_CRED_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setCustoOperacaoCredStr( cellValue );
 					}
         		}
         	}
@@ -196,6 +208,8 @@ public class SalasImportExcel
 
 		// verifica se há referência a algum tipo de sala não cadastrado
 		checkNonRegisteredTipoSala( sheetContent );
+		
+		checkCapacidadeInstaladaMaiorCapacidadeMax( sheetContent );
 
 		return getErrors().isEmpty();
 	}
@@ -299,6 +313,27 @@ public class SalasImportExcel
 				TIPO_COLUMN_NAME, rowsWithErrors.toString() ) );
 		}
 	}
+	
+	private void checkCapacidadeInstaladaMaiorCapacidadeMax(
+		List< SalasImportExcelBean > sheetContent )
+	{
+		List< Integer > rowsWithErrors
+			= new ArrayList< Integer >();
+
+		for ( SalasImportExcelBean bean : sheetContent )
+		{
+			if ( bean.getCapacidadeInstalada() > bean.getCapacidadeMax() )
+			{
+				rowsWithErrors.add( bean.getRow() );
+			}
+		}
+
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoCapacidadeInstaladaMaiorCapacidadeMax(
+					rowsWithErrors.toString() ) );
+		}
+	}
 
 	@Transactional
 	private void updateDataBase( String sheetName,
@@ -317,7 +352,9 @@ public class SalasImportExcel
 				// Update
 				salaBD.setNumero( salaExcel.getNumeroStr() );
 				salaBD.setAndar( salaExcel.getAndarStr() );
-				salaBD.setCapacidade( salaExcel.getCapacidade() );
+				salaBD.setCapacidadeInstalada( salaExcel.getCapacidadeInstalada() );
+				salaBD.setCapacidadeMax( salaExcel.getCapacidadeMax() );
+				salaBD.setCustoOperacaoCred( salaExcel.getCustoOperacaoCred() );
 				salaBD.setTipoSala( salaExcel.getTipo() );
 				salaBD.setUnidade( salaExcel.getUnidade() );
 
@@ -331,7 +368,9 @@ public class SalasImportExcel
 				newSala.setCodigo( salaExcel.getCodigoStr() );
 				newSala.setNumero( salaExcel.getNumeroStr() );
 				newSala.setAndar( salaExcel.getAndarStr() );
-				newSala.setCapacidade( salaExcel.getCapacidade() );
+				newSala.setCapacidadeInstalada( salaExcel.getCapacidadeInstalada() );
+				newSala.setCapacidadeMax( salaExcel.getCapacidadeMax() );
+				newSala.setCustoOperacaoCred( salaExcel.getCustoOperacaoCred() );
 				newSala.setTipoSala( salaExcel.getTipo() );
 				newSala.setUnidade( salaExcel.getUnidade() );
 
@@ -355,7 +394,9 @@ public class SalasImportExcel
 			UNIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoUnidade() );
 			NUMERO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().numero() );
 			ANDAR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().andar() );
-			CAPACIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeAlunos() );
+			CAPACIDADE_INSTALADA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeInstaladaAlunos() );
+			CAPACIDADE_MAX_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeMaxAlunos() );
+			CUSTO_OPERACAO_CRED_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().custoOperacaoCred() );
 		}
 	}
 }

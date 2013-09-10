@@ -18,7 +18,9 @@ public class SalaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_ANDAR = "andar";
 	public static final String PROPERTY_TIPO_ID = "tipoSalaId";
 	public static final String PROPERTY_TIPO_STRING = "tipoSalaString";
-	public static final String PROPERTY_CAPACIDADE = "capacidade";
+	public static final String PROPERTY_CAPACIDADE_INSTALADA = "capacidadeInstalada";
+	public static final String PROPERTY_CAPACIDADE_MAX = "capacidadeMax";
+	public static final String PROPERTY_CUSTO_OPERACAO_CRED = "custoOperacaoCred";
 	public static final String PROPERTY_CONTAINS_CURRICULO_DISCIPLINA = "containsCurriculoDisciplina";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
@@ -98,11 +100,25 @@ public class SalaDTO extends AbstractDTO< String >
 		set(PROPERTY_TIPO_STRING, value);
 	}
 
-	public Integer getCapacidade() {
-		return get(PROPERTY_CAPACIDADE);
+	public Integer getCapacidadeInstalada() {
+		return get(PROPERTY_CAPACIDADE_INSTALADA);
 	}
-	public void setCapacidade(Integer value) {
-		set(PROPERTY_CAPACIDADE, value);
+	public void setCapacidadeInstalada(Integer value) {
+		set(PROPERTY_CAPACIDADE_INSTALADA, value);
+	}
+	
+	public Integer getCapacidadeMax() {
+		return get(PROPERTY_CAPACIDADE_MAX);
+	}
+	public void setCapacidadeMax(Integer value) {
+		set(PROPERTY_CAPACIDADE_MAX, value);
+	}
+	
+	public Double getCustoOperacaoCred() {
+		return get(PROPERTY_CUSTO_OPERACAO_CRED);
+	}
+	public void setCustoOperacaoCred(Double value) {
+		set(PROPERTY_CUSTO_OPERACAO_CRED, value);
 	}
 	
 	public Boolean getContainsCurriculoDisciplina() {
