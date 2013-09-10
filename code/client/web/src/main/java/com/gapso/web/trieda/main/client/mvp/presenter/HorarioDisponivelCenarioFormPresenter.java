@@ -119,7 +119,8 @@ public class HorarioDisponivelCenarioFormPresenter
 									new Listener< MessageBoxEvent >(){
 										@Override
 										public void handleEvent(MessageBoxEvent be){
-											if(be.getButtonClicked().getText().equalsIgnoreCase("yes")){
+											if(be.getButtonClicked().getText().equalsIgnoreCase("yes") ||
+													be.getButtonClicked().getText().equalsIgnoreCase("sim")){
 												try{
 													final SemanasLetivaServiceAsync slsa = Services.semanasLetiva();
 													slsa.removeHorariosDisponiveisCenario(getDTO(), hdcDTOList,

@@ -27,7 +27,8 @@ public class ConfirmationButton extends Button {
 				MessageBox.confirm(i18nGateway.getI18nConstants().confirmacao(), i18nGateway.getI18nMessages().confirmacaoButton(), new Listener<MessageBoxEvent>() {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
-						if(be.getButtonClicked().getText().equalsIgnoreCase("yes")) {
+						if(be.getButtonClicked().getText().equalsIgnoreCase("yes") ||
+								be.getButtonClicked().getText().equalsIgnoreCase("sim")) {
 							for(SelectionListener<ButtonEvent> listener : listeners) {
 								listener.componentSelected(ce);
 							}
