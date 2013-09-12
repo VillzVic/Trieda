@@ -167,4 +167,5 @@ public interface TriedaI18nConstants
 	String professorUnico();
 	String maxDiasSemana();
 	String minCreditosDia();
+	String disponibilidadesSalas();
 }

@@ -2,11 +2,13 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,6 +38,8 @@ import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gapso.trieda.misc.Semanas;
 
 @Configurable
 @Entity
@@ -409,6 +413,53 @@ public class Sala
         return em;
     }
 
+	@Transactional
+	static public void atualizaHorariosDasSalas(Map<Sala, List<TriedaTrio<Semanas,Calendar,Calendar>>> SalaToDisponibilidadesMap, List<SemanaLetiva> semanasLetivas) {
+		// coleta as salas disponíveis por dia da semana e tempo de aula
+		int count = 0;
+		Map<HorarioDisponivelCenario, Set<Sala>> hdcToSalaMap = new HashMap<HorarioDisponivelCenario, Set<Sala>>();
+		for (Entry<Sala, List<TriedaTrio<Semanas,Calendar,Calendar>>> entry : SalaToDisponibilidadesMap.entrySet()) {
+			List<TriedaTrio<Semanas,Calendar,Calendar>> disponibilidades = entry.getValue();
+			Sala sala = entry.getKey();
+			for (SemanaLetiva semanaLetiva : semanasLetivas) {
+				// para cada tempo de aula
+				for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+					for (TriedaTrio<Semanas,Calendar,Calendar> trio : disponibilidades){
+						// verifica se o intervalo de horas é compatível
+						boolean horarioAulaEstahContidoEmDisponibilidade = horarioAula.estahContidoEm(trio.getSegundo(),trio.getTerceiro()); 
+						// para cada dia da semana
+						for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+							Set<Sala> salasDisponiveisNoDiaEHorario = hdcToSalaMap.get(hdc);
+							if (salasDisponiveisNoDiaEHorario == null) {
+								salasDisponiveisNoDiaEHorario = new HashSet<Sala>();
+								hdcToSalaMap.put(hdc,salasDisponiveisNoDiaEHorario);
+							}
+							
+							// verifica se o dia da semana é compatível
+							if (horarioAulaEstahContidoEmDisponibilidade && hdc.getDiaSemana().equals(trio.getPrimeiro())) {
+								salasDisponiveisNoDiaEHorario.add(sala);
+							}
+						}
+					}
+					count++;if (count == 100) {System.out.println("   100 horários das salas processados"); count = 0;}
+				}
+			}
+		}
+		
+		// atualiza disponibilidades das salas
+		count = 0;
+		for (Entry<HorarioDisponivelCenario, Set<Sala>> entry : hdcToSalaMap.entrySet()) {
+			HorarioDisponivelCenario hdc = entry.getKey();
+			Set<Sala> salasDisponiveisNoDiaEHorario = entry.getValue();
+			
+			hdc.getSalas().clear();
+			hdc.getSalas().addAll(salasDisponiveisNoDiaEHorario);
+			hdc.merge();
+			
+			count++;if (count == 100) {System.out.println("   100 horários das salas processados"); count = 0;}
+		}
+	}
+	
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
@@ -882,7 +933,7 @@ public class Sala
 		return this.custoOperacaoCred = custoOperacaoCred;
 	}
 
-	private Set< HorarioDisponivelCenario > getHorarios()
+	public Set< HorarioDisponivelCenario > getHorarios()
 	{
         return this.horarios;
     }

@@ -866,4 +866,9 @@ public class GTriedaI18nConstants
 	public String minCreditosDia() {
 		return this.languageManager.getText("minCreditosDia");
 	}
+
+	@Override
+	public String disponibilidadesSalas() {
+		return this.languageManager.getText("disponibilidadesSalas");
+	}
 }

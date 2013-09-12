@@ -56,8 +56,8 @@ public class MultiExportExcel extends AbstractExportExcel {
 		for (Class<? extends IExportExcel> c : this.arrayExporters) {
 			Constructor<? extends IExportExcel> constructor;
 			try {
-				constructor = c.getConstructor(new Class[]{boolean.class,Cenario.class,TriedaI18nConstants.class,TriedaI18nMessages.class,InstituicaoEnsino.class});
-				exporters.add((IExportExcel)constructor.newInstance(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino));
+				constructor = c.getConstructor(new Class[]{boolean.class,Cenario.class,TriedaI18nConstants.class,TriedaI18nMessages.class,InstituicaoEnsino.class, String.class});
+				exporters.add((IExportExcel)constructor.newInstance(false,getCenario(),getI18nConstants(),getI18nMessages(),this.instituicaoEnsino, this.fileExtension));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

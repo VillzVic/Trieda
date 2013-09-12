@@ -16,6 +16,7 @@ public enum ExcelInformationType
 	PALETA_CORES( "PaletaCores" ),
 	PROFESSORES( "Professores" ),
 	DISPONIBILIDADES_PROFESSORES( "Disponibilidades Professores" ),
+	DISPONIBILIDADES_SALAS( "Disponibilidades Salas" ),
 	CAMPI_TRABALHO( "Campi de Trabalho" ),
 	RELATORIO_VISAO_SALA( "Relatorio Visao Sala" ),
 	RELATORIO_VISAO_CURSO( "Relatorio Visao Curso" ),

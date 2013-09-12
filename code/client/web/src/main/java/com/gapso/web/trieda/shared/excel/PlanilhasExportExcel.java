@@ -20,6 +20,7 @@ public class PlanilhasExportExcel {
 	public static final String RELATORIO_VISAO_PROFESSOR = "relatorioVisaoProfessor";
 	public static final String RELATORIO_VISAO_ALUNO = "relatorioVisaoAluno";
 	public static final String SALAS = "salas";
+	public static final String DISPONIBILIDADES_SALAS = "DisponibilidadesSalas";
 	public static final String UNIDADES = "unidades";
 	public static final String RESUMO_CURSO = "resumoCurso";
 	public static final String RESUMO_DISCIPLINA = "resumoDisciplina";

@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -26,6 +27,7 @@ public class ExportExcelFormView
 	private CheckBox campiExportExcelCB;
 	private CheckBox unidadesExportExcelCB;
 	private CheckBox salasExportExcelCB;
+	private CheckBox disponibilidadesSalasExportExcelCB;
 	private CheckBox cursosExportExcelCB;
 	private CheckBox areasTitulacaoExportExcelCB;
 	private CheckBox cursoAreaTitulacaoExportExcelCB;
@@ -64,7 +66,7 @@ public class ExportExcelFormView
 	{
 		String title = "Exportação Excel";
 		exportExcelModal = new ExportExcelModal(title, Resources.DEFAULTS.exportar16());
-		exportExcelModal.setHeight(660);
+		exportExcelModal.setHeight(600);
 		exportExcelModal.setWidth(500);
 		createForm();
 		exportExcelModal.setContent(formPanel);
@@ -78,6 +80,7 @@ public class ExportExcelFormView
 		formPanel.setHeading("Escolha quais planilhas deseja exportar");
 		formPanel.setSize(600, -1);
 		formPanel.setButtonAlign(HorizontalAlignment.CENTER);
+		formPanel.setScrollMode(Style.Scroll.AUTOY);
 		
 		LayoutContainer main = new LayoutContainer();
 	    main.setLayout(new ColumnLayout());
@@ -103,6 +106,12 @@ public class ExportExcelFormView
 		salasExportExcelCB.setValue(false);
 		salasExportExcelCB.setFieldLabel("Salas");
 		left.add(salasExportExcelCB, formData);
+		
+		disponibilidadesSalasExportExcelCB = new CheckBox();
+		disponibilidadesSalasExportExcelCB.setName(PlanilhasExportExcel.DISPONIBILIDADES_SALAS);
+		disponibilidadesSalasExportExcelCB.setValue(false);
+		disponibilidadesSalasExportExcelCB.setFieldLabel("Disponibilidades Salas");
+		left.add(disponibilidadesSalasExportExcelCB, formData);
 		
 		cursosExportExcelCB = new CheckBox();
 		cursosExportExcelCB.setName(PlanilhasExportExcel.CURSOS);
@@ -327,6 +336,11 @@ public class ExportExcelFormView
 	@Override
 	public CheckBox getSalasExportExcelCheckBox() {
 		return salasExportExcelCB;
+	}
+	
+	@Override
+	public CheckBox getDisponibilidadesSalasExportExcelCheckBox() {
+		return disponibilidadesSalasExportExcelCB;
 	}
 
 	@Override

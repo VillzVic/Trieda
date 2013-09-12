@@ -31,6 +31,7 @@ public class ExportExcelFormPresenter
 		CheckBox getCampiExportExcelCheckBox();
 		CheckBox getUnidadesExportExcelCheckBox();
 		CheckBox getSalasExportExcelCheckBox();
+		CheckBox getDisponibilidadesSalasExportExcelCheckBox();
 		CheckBox getCursosExportExcelCheckBox();
 		CheckBox getAreasTitulacaoExportExcelCheckBox();
 		CheckBox getCursoAreaTitulacaoExportExcelCheckBox();
