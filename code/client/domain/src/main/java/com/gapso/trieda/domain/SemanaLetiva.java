@@ -2,6 +2,7 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -288,16 +289,31 @@ public class SemanaLetiva
 		Iterator<SemanaLetiva> it = semanasLetivas.iterator();
 		if (semanasLetivas.size() == 1) {
 			mdc = it.next().getTempo();
-		} else if (semanasLetivas.size() == 2) {
-			BigInteger tempo1 = BigInteger.valueOf(it.next().getTempo().longValue());
-			BigInteger tempo2 = BigInteger.valueOf(it.next().getTempo().longValue());
-			mdc = tempo1.gcd(tempo2).intValue();
 		} else {
-			BigInteger tempo1 = BigInteger.valueOf(it.next().getTempo().longValue());
-			BigInteger tempo2 = BigInteger.valueOf(it.next().getTempo().longValue());
+			mdc = 10;
+			//Obtem todosos horariosde aulas das semanas letivas e os ordena
+			Set<HorarioAula> horariosAulas = new HashSet<HorarioAula>();
+			for (SemanaLetiva semanaLetiva : semanasLetivas ){
+				horariosAulas.addAll(semanaLetiva.getHorariosAula());
+			}
+			List<HorarioAula> horariosAulasOrdenadosAulas = new ArrayList<HorarioAula>(horariosAulas);
+			Collections.sort(horariosAulasOrdenadosAulas);
+			
+			//Calcula o tempo entre os horarios ordenados em minutos
+			Set<Long> intervaloHorarios = new HashSet<Long>();
+			HorarioAula horarioAnterior = horariosAulasOrdenadosAulas.get(0);
+			for (HorarioAula horarioAula : horariosAulasOrdenadosAulas ){
+				intervaloHorarios.add(((horarioAula.getHorario().getTime() - horarioAnterior.getHorario().getTime())/60000));
+				horarioAnterior = horarioAula;
+			}
+			
+			//Calcula o mdc dos tempos entre os horarios
+			Iterator<Long> it2 = intervaloHorarios.iterator();
+			BigInteger tempo1 = BigInteger.valueOf(it2.next());
+			BigInteger tempo2 = BigInteger.valueOf(it2.next());
 			mdc = tempo1.gcd(tempo2).intValue();
-			while (it.hasNext()) {
-				tempo1 = BigInteger.valueOf(it.next().getTempo().longValue());
+			while (it2.hasNext()) {
+				tempo1 = BigInteger.valueOf(it2.next());
 				tempo2 = BigInteger.valueOf(mdc);
 				mdc = tempo1.gcd(tempo2).intValue();
 			}
