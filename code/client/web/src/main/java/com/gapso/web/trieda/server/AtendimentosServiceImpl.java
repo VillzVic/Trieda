@@ -869,35 +869,30 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			Integer diaSemana = entry.getKey();
 			List<AtendimentoRelatorioDTO> aulasMesmoDiaSemana = entry.getValue();
 			
-			List<List<AtendimentoRelatorioDTO>> gruposAulasParalelas = temInfoDeHorario ? 
-				agrupaAulasQueOcorreraoEmParalelo(aulasMesmoDiaSemana) :
+			List<List<AtendimentoRelatorioDTO>> colunasAulas = temInfoDeHorario ? 
+				agrupaAulasPorColunas(aulasMesmoDiaSemana) :
 				agrupaAulasQueOcorreraoEmParalelo(turnoDTO,diaSemana,aulasMesmoDiaSemana);
 
-			int maiorQuantidadeAulasEmParalelo = 1;
-			for (List<AtendimentoRelatorioDTO> aulasParalelas : gruposAulasParalelas) {
-				if (aulasParalelas.size() > maiorQuantidadeAulasEmParalelo) {
-					maiorQuantidadeAulasEmParalelo = aulasParalelas.size();
+			for (int j = 0; j < colunasAulas.size(); j++) {
+
+				AtendimentoRelatorioDTO primeiraAulaParalela = colunasAulas.get(j).get(0);
+				primeiraAulaParalela.setSemana(colunaNaGradeHoraria+j);
+				for (int i = 1; i < colunasAulas.get(j).size(); i++) {
+					AtendimentoRelatorioDTO proximaAulaParalela = colunasAulas.get(j).get(i);
+					proximaAulaParalela.setSemana(primeiraAulaParalela.getSemana());
 				}
 
-				AtendimentoRelatorioDTO primeiraAulaParalela = aulasParalelas.get(0);
-				primeiraAulaParalela.setSemana(colunaNaGradeHoraria);
-				for (int i = 1; i < aulasParalelas.size(); i++) {
-					AtendimentoRelatorioDTO proximaAulaParalela = aulasParalelas.get(i);
-					proximaAulaParalela.setSemana(primeiraAulaParalela.getSemana()+i);
-				}
-
-				listaResultanteComAulas.addAll(aulasParalelas);
+				listaResultanteComAulas.addAll(colunasAulas.get(j));
 			}
 			
-			if (!temInfoDeHorario && gruposAulasParalelas.isEmpty()) {
+			if (!temInfoDeHorario && colunasAulas.isEmpty()) {
 				for (AtendimentoRelatorioDTO aula : aulasMesmoDiaSemana) {
 					aula.setSemana(colunaNaGradeHoraria);
 				}
 				listaResultanteComAulas.addAll(aulasMesmoDiaSemana);
 			}
-
-			qtdColunasGradeHorariaPorDiaSemana.add(diaSemana,maiorQuantidadeAulasEmParalelo);
-			colunaNaGradeHoraria += maiorQuantidadeAulasEmParalelo;
+			qtdColunasGradeHorariaPorDiaSemana.add(diaSemana,colunasAulas.size() == 0 ? 1 : colunasAulas.size());
+			colunaNaGradeHoraria += colunasAulas.size() == 0 ? 1 : colunasAulas.size();
 		}
 
 		return ParDTO.create(listaResultanteComAulas,qtdColunasGradeHorariaPorDiaSemana);
@@ -1057,50 +1052,48 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @param aulasMesmoDiaSemana aulas no mesmo dia da semana
 	 * @return listas de aulas de forma que cada lista representa aulas que ocorrerão em paralelo umas com as outras
 	 */
-	private List<List<AtendimentoRelatorioDTO>> agrupaAulasQueOcorreraoEmParalelo(List<AtendimentoRelatorioDTO> aulasMesmoDiaSemana) {
-		List<List<AtendimentoRelatorioDTO>> gruposAulasParalelas = new ArrayList<List<AtendimentoRelatorioDTO>>();
+	private List<List<AtendimentoRelatorioDTO>> agrupaAulasPorColunas(List<AtendimentoRelatorioDTO> aulasMesmoDiaSemana) {
+		List<List<AtendimentoRelatorioDTO>> gruposAulasColunas = new ArrayList<List<AtendimentoRelatorioDTO>>();
 		
 		// ordena as aulas pela turma para garantir que o paralelismo viável seja construído corretamente
 		Collections.sort(aulasMesmoDiaSemana,new Comparator<AtendimentoRelatorioDTO>() {
 			@Override
 			public int compare(AtendimentoRelatorioDTO o1, AtendimentoRelatorioDTO o2) {
-				return o1.getTurma().compareTo(o2.getTurma());
+				if( o1.getDisciplinaNome().compareTo(o2.getDisciplinaNome()) == 0 )
+					return o1.getTurma().compareTo(o2.getTurma());
+				else
+					return o1.getDisciplinaNome().compareTo(o2.getDisciplinaNome());
 			}
 		});
 
 		for (AtendimentoRelatorioDTO aulaAtual : aulasMesmoDiaSemana) {
-			if (gruposAulasParalelas.isEmpty()) {
-				gruposAulasParalelas.add(new ArrayList<AtendimentoRelatorioDTO>());
-				gruposAulasParalelas.get(0).add(aulaAtual);
+			if (gruposAulasColunas.isEmpty()) {
+				gruposAulasColunas.add(new ArrayList<AtendimentoRelatorioDTO>());
+				gruposAulasColunas.get(0).add(aulaAtual);
 			}
 			else {
-				boolean paralelismoIdentificadoComAulaAtual = false;
+				boolean encontrouIntersecao = false;
 
-				// verifica se há paralelismo entre a aula atual e alguma aula processada anteriormente
-				for (List<AtendimentoRelatorioDTO> aulasParalelas : gruposAulasParalelas) {
-					boolean naoHaIntersecaoEntreAulas = false;
-					// verifica se há ou não interseção entre a aula atual e as aulas previamente processadas
-					for (AtendimentoRelatorioDTO aulaProcessadaAnteriormente : aulasParalelas) {
-						if (!temIntersecao(aulaAtual,aulaProcessadaAnteriormente)) {
-							naoHaIntersecaoEntreAulas = true;
-							break;
+				for (int i = 0; i < gruposAulasColunas.size(); i++) {
+					encontrouIntersecao = false;
+					for (int j = 0; j < gruposAulasColunas.get(i).size(); j++) {
+						if (temIntersecao(aulaAtual,gruposAulasColunas.get(i).get(j))) {
+							encontrouIntersecao = true;
 						}
 					}
-
-					if (!naoHaIntersecaoEntreAulas) {
-						aulasParalelas.add(aulaAtual);
-						paralelismoIdentificadoComAulaAtual = true;
+					if (!encontrouIntersecao) {
+						gruposAulasColunas.get(i).add(aulaAtual);
 						break;
 					}
 				}
 
-				if (!paralelismoIdentificadoComAulaAtual) {
-					gruposAulasParalelas.add(new ArrayList<AtendimentoRelatorioDTO>());
-					gruposAulasParalelas.get(gruposAulasParalelas.size()-1).add(aulaAtual);
+				if (encontrouIntersecao) {
+					gruposAulasColunas.add(new ArrayList<AtendimentoRelatorioDTO>());
+					gruposAulasColunas.get(gruposAulasColunas.size()-1).add(aulaAtual);
 				}
 			}
 		}
-		return gruposAulasParalelas;
+		return gruposAulasColunas;
 	}
 
 	@Override
