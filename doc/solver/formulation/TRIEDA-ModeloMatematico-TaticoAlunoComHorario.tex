@@ -129,6 +129,7 @@ $i'$ da disciplina $d$ alocada, com $i' > i$, sendo que $i$ não foi alocada.
 \item $xcs3$
 \item $v_{i,d,sl}$ - variável binaria que indica se a turma $i$ da disciplina $d$ possui alunos pertencentes ao calendario $sl$.
 \item $sab_{i,d,s}$ - variável binaria que indica que a turma $i$ da disciplina $d$ está alocada na sala $s$ e só pode ter aula no sábado.
+\item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
 
 
 \end{itemize}
@@ -179,7 +180,10 @@ $$
       \\
       &        
       + 1000 \cdot \sum\limits_{s \in S} xcs3_{s}
-      
+      \\
+      &
+       + \sum\limits_{a \in Al} fmd_{a}
+      \\                  
                           
 \end{array}
 $$
@@ -638,6 +642,29 @@ v_{i,d,sl1,s} + v_{i,d,sl2,s} - sab_{i,d,s} \le 1 \nonumber \qquad
 \forall s \in S \quad
 \end{eqnarray}
 
+
+
+\subsubsection{Alocação minima de demanda por aluno}
+
+\begin{eqnarray}
+\sum\limits_{d \in D} nCreds_{d} \cdot (1 - fd_{d,a}) \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
+\forall a \in Al \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Folga de ocupação de sala}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} Cap_{s} \cdot o_{i,d,s} - n_{i,d,cp} = fos_{i,d,cp} \nonumber \qquad 
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP
+\end{eqnarray}
+
+
+
+
 \pagebreak
 
 % ------------------------------------------------------------------------------------------------------------
@@ -795,6 +822,7 @@ uma das folgas de demanda foi utilizada. Se assumir 0, indica que as duas turmas
 \item $f_{i,d,cp}$ - variável binária que indica se há aluno formando alocado na turma $i$ da disciplina $d$ do campus $cp$.
 \item $fad_{i,d,a,hi,hf,t}$ - variável binária que indica se o aluno $a$ foi desalocado da aula da turma $i$ da disciplina $d$ no dia $t$ no horário inicial $hi$ e final $hf$.
 \item $fa_{i,d,a}$ - variável binária que indica se o aluno $a$ foi desalocado da aula da turma $i$ da disciplina $d$.
+\item $fos_{i,d,cp}$ - variável inteira de folga de ocupação de sala. Indica a diferença entre a capacidade da sala e o numero de alunos alocados na turma.
 
 \end{itemize}
 
@@ -1167,6 +1195,17 @@ x_{i,d,s,t,hi,hf} - fp_{d,t,h} \le nProfs_{d,t,h} \nonumber \qquad
 \forall t \in T \quad
 \forall hi,hf \in H
 \end{eqnarray}
+
+
+
+\subsubsection{Alocação minima de demanda por aluno}
+
+\begin{eqnarray}
+\sum\limits_{ \substack{d \in D \\ a \in (i,d)} } nCreds_{d} (1 - fd_{i,d,cp} - fa_{i,d,cp,a}) \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
+\forall a \in Al \quad
+\end{eqnarray}
+
+
 
 
 \clearpage

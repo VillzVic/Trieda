@@ -154,6 +154,8 @@ com alunos de cursos diferentes é proibido.
 \item $f_{i,d,cp}$ - variável binária que indica se há aluno formando alocado na turma $i$ da disciplina $d$ do campus $cp$.
 \item $du_{a,t}$ - variável binária que indica se o aluno $a$ tem aula no dia $t$.
 \item $fp_{d,t,h}$ - variável de folga inteira que indica se a disciplina $d$ tem aula no dia $t$ e horario $h$ e não possui professor real com disponibilidade nesse dia e horário para ministra-la.
+\item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
+\item $fos_{i,d,cp}$ - variável inteira de folga de ocupação de sala. Indica a diferença entre a capacidade da sala e o numero de alunos alocados na turma.
 
 \end{itemize}
 
@@ -546,6 +548,26 @@ x_{i,d,s,t,hi,hf} - fp_{d,t,h} \le nProfs_{d,t,h} \nonumber \qquad
 \\
 \forall t \in T \quad
 \forall hi,hf \in H
+\end{eqnarray}
+
+
+
+\subsubsection{Alocação minima de demanda por aluno}
+
+\begin{eqnarray}
+\sum\limits_{d \in D} nCreds_{d} (1 - fd_{d,a}) \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
+\forall a \in Al \quad
+\end{eqnarray}
+
+
+
+\subsubsection{Folga de ocupação de sala}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} Cap_{s} \cdot o_{i,d,s} - \sum\limits_{a \in Al} s_{i,d,cp,a} = fos_{i,d,cp} \nonumber \qquad 
+\forall i \in I \quad
+\forall d \in D \quad
+\forall cp \in CP
 \end{eqnarray}
 
 

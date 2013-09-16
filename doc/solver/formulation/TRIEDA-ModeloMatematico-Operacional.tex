@@ -310,6 +310,7 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 \item $npvm_{c}$ - variável inteira que indica o número de professores virtuais mestres alocados para o curso $c$.
 \item $npvd_{c}$ - variável inteira que indica o número de professores virtuais doutores alocados para o curso $c$.
 \item $npvg_{c}$ - variável inteira que indica o número de professores virtuais gerais (nem mestres nem doutores) alocados para o curso $c$.
+\item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
 
 
 \end{itemize}
@@ -380,7 +381,10 @@ $$
       \\   
       &
        + \gamma \cdot \sum\limits_{p \in P}\sum\limits_{t \in T} fupap_{p,t}
-      \\                     
+      \\      
+      &
+       + \sum\limits_{a \in Al} fmd_{a}
+      \\                  
 
 \end{array}
 $$
@@ -819,6 +823,17 @@ hf \in H \mbox{, hf é o último horário do dia}
 \forall hi,hf \in H
 \end{eqnarray}
 
+
+\subsubsection{Alocação minima de demanda por aluno}
+
+\begin{eqnarray}
+\sum\limits_{ \substack{ d \in D \\ a \in (i,d,cp) } } nCreds_{d} \cdot \sum\limits_{p \in P} y_{p,d,i,cp} \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
+\forall a \in Al \quad
+\end{eqnarray}
+
+	
+
+	
 
 \clearpage
 \end{document}
