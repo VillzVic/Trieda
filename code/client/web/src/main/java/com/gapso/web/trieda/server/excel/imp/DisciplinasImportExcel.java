@@ -123,7 +123,7 @@ public class DisciplinasImportExcel
 					}
 					else if ( USA_LABORATORIO_COLUMN_NAME.endsWith( columnName ) )
 					{
-						bean.setUsaLaboratorioStr( cellValue );
+						bean.setExigeLaboratorioStr( cellValue );
 					}
 					else if ( TIPO_COLUMN_NAME.endsWith( columnName ) )
 					{
@@ -332,7 +332,7 @@ public class DisciplinasImportExcel
 				disciplinaBD.setNome( disciplinaExcel.getNomeStr() );
 				disciplinaBD.setCreditosPratico( disciplinaExcel.getCreditosPraticos() );
 				disciplinaBD.setCreditosTeorico( disciplinaExcel.getCreditosTeoricos() );
-				disciplinaBD.setLaboratorio( disciplinaExcel.getUsaLaboratorio() );
+				disciplinaBD.setLaboratorio( disciplinaExcel.getExigeLaboratorio() );
 				disciplinaBD.setMaxAlunosPratico( disciplinaExcel.getMaxAlunosPratico() );
 				disciplinaBD.setMaxAlunosTeorico( disciplinaExcel.getMaxAlunosTeorico() );
 				disciplinaBD.setDificuldade( disciplinaExcel.getNivelDificuldade() );
@@ -355,7 +355,7 @@ public class DisciplinasImportExcel
 				newDisciplina.setNome( disciplinaExcel.getNomeStr() );
 				newDisciplina.setCreditosPratico( disciplinaExcel.getCreditosPraticos() );
 				newDisciplina.setCreditosTeorico( disciplinaExcel.getCreditosTeoricos() );
-				newDisciplina.setLaboratorio( disciplinaExcel.getUsaLaboratorio() );
+				newDisciplina.setLaboratorio( disciplinaExcel.getExigeLaboratorio() );
 				newDisciplina.setMaxAlunosPratico( disciplinaExcel.getMaxAlunosPratico() );
 				newDisciplina.setMaxAlunosTeorico( disciplinaExcel.getMaxAlunosTeorico() );
 				newDisciplina.setDificuldade( disciplinaExcel.getNivelDificuldade() );
@@ -389,7 +389,7 @@ public class DisciplinasImportExcel
 			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeDisciplina() );
 			CRED_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().creditosTeoricos() );
 			CRED_PRATICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().creditosPraticos() );
-			USA_LABORATORIO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().usaLaboratorio() );
+			USA_LABORATORIO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().exigeLaboratorio() );
 			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().tipo() );
 			NIVEL_DIFICULDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nivelDificuldade() );
 			MAX_ALUNOS_TEORICOS_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().maxAlunosTeorico() );

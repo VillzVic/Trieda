@@ -14,7 +14,7 @@ public class DisciplinasImportExcelBean
 	private String nomeStr;
 	private String creditosTeoricosStr;
 	private String creditosPraticosStr;
-	private String usaLaboratorioStr;
+	private String exigeLaboratorioStr;
 	private String tipoStr;
 	private String nivelDificuldadeStr;
 	private String maxAlunosTeoricoStr;
@@ -26,7 +26,7 @@ public class DisciplinasImportExcelBean
 
 	private Integer creditosTeoricos;
 	private Integer creditosPraticos;
-	private Boolean usaLaboratorio;
+	private Boolean exigeLaboratorio;
 	private TipoDisciplina tipo;
 	private Dificuldades nivelDificuldade;
 	private Integer maxAlunosTeorico;
@@ -51,7 +51,7 @@ public class DisciplinasImportExcelBean
 			checkMandatoryField( nomeStr, ImportExcelError.DISCIPLINA_NOME_VAZIO,erros );
 			checkMandatoryField( creditosTeoricosStr, ImportExcelError.DISCIPLINA_CREDITOS_TEORICOS_VAZIO, erros );
 			checkMandatoryField( creditosPraticosStr, ImportExcelError.DISCIPLINA_CREDITOS_PRATICOS_VAZIO, erros );
-			checkMandatoryField( usaLaboratorioStr, ImportExcelError.DISCIPLINA_USA_LABORATORIO_VAZIO, erros );
+			checkMandatoryField( exigeLaboratorioStr, ImportExcelError.DISCIPLINA_USA_LABORATORIO_VAZIO, erros );
 			checkMandatoryField( tipoStr, ImportExcelError.DISCIPLINA_TIPO_VAZIO, erros );
 			checkMandatoryField( nivelDificuldadeStr, ImportExcelError.DISCIPLINA_NIVEL_DIFICULDADE_VAZIO, erros );
 			checkMandatoryField( maxAlunosTeoricoStr, ImportExcelError.DISCIPLINA_MAX_ALUNOS_TEORICOS_VAZIO, erros );
@@ -69,7 +69,7 @@ public class DisciplinasImportExcelBean
 				ImportExcelError.DISCIPLINA_CREDITOS_PRATICOS_FORMATO_INVALIDO,
 				ImportExcelError.DISCIPLINA_CREDITOS_PRATICOS_VALOR_NEGATIVO, erros );
 
-			usaLaboratorio = checkBooleanField( usaLaboratorioStr,
+			exigeLaboratorio = checkBooleanField( exigeLaboratorioStr,
 				ImportExcelError.DISCIPLINA_USA_LABORATORIO_FORMATO_INVALIDO, erros );
 
 			nivelDificuldade = checkEnumField( nivelDificuldadeStr, Dificuldades.class,
@@ -109,7 +109,7 @@ public class DisciplinasImportExcelBean
 			&& isEmptyField( nomeStr )
 			&& isEmptyField( creditosTeoricosStr )
 			&& isEmptyField( creditosPraticosStr )
-			&& isEmptyField( usaLaboratorioStr )
+			&& isEmptyField( exigeLaboratorioStr )
 			&& isEmptyField( tipoStr )
 			&& isEmptyField( nivelDificuldadeStr )
 			&& isEmptyField( maxAlunosTeoricoStr )
@@ -160,14 +160,14 @@ public class DisciplinasImportExcelBean
 		this.creditosPraticosStr = creditosPraticosStr;
 	}
 
-	public String getUsaLaboratorioStr()
+	public String getExigeLaboratorioStr()
 	{
-		return usaLaboratorioStr;
+		return exigeLaboratorioStr;
 	}
 
-	public void setUsaLaboratorioStr( String usaLaboratorioStr )
+	public void setExigeLaboratorioStr( String exigeLaboratorioStr )
 	{
-		this.usaLaboratorioStr = usaLaboratorioStr;
+		this.exigeLaboratorioStr = exigeLaboratorioStr;
 	}
 
 	public String getTipoStr()
@@ -270,9 +270,9 @@ public class DisciplinasImportExcelBean
 		return creditosPraticos;
 	}
 
-	public Boolean getUsaLaboratorio()
+	public Boolean getExigeLaboratorio()
 	{
-		return usaLaboratorio;
+		return exigeLaboratorio;
 	}
 
 	public Dificuldades getNivelDificuldade()

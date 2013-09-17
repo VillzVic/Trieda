@@ -156,7 +156,7 @@ public interface TriedaI18nConstants
 	String unidade();
 	String unidades();
 	String unidadesHeadingPanel();
-	String usaLaboratorio();
+	String exigeLaboratorio();
 	String usaSabado();
 	String usaDomingo();
 	String valorCredito();

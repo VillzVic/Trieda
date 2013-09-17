@@ -134,7 +134,7 @@ public class DisciplinasExportExcel
 		setCell(row, 5, sheet,
 				cellStyles[ExcelCellStyleReference.NUMBER.ordinal()],
 				disciplina.getCreditosPratico());
-		// Usa Laboratório?
+		// Exige Laboratório?
 		setCell(row, 6, sheet,
 				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
 				(disciplina.getLaboratorio() ? getI18nConstants().sim()

@@ -622,9 +622,9 @@ public class GTriedaI18nConstants
 	}
 
 	@Override
-	public String usaLaboratorio()
+	public String exigeLaboratorio()
 	{
-		return this.languageManager.getText("usaLaboratorio");
+		return this.languageManager.getText("exigeLaboratorio");
 	}
 	
 	@Override
