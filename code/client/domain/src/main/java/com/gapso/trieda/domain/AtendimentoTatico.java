@@ -911,7 +911,8 @@ public class AtendimentoTatico
 	{
 		
 		Query q = entityManager().createQuery(
-				" SELECT a.aluno.matricula, at.semana, SUM(at.creditosTeorico+at.creditosPratico) " +
+				" SELECT a.aluno.matricula, at.semana, " +
+				" SUM(at.creditosTeorico+at.creditosPratico)*at.horarioAula.semanaLetiva.tempo " +
 				" FROM AlunoDemanda a JOIN a.atendimentosTatico at " +
 				" WHERE at.instituicaoEnsino = :instituicaoEnsino" +
 				" GROUP BY a.aluno, at.semana" );

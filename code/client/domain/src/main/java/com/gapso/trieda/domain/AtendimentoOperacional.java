@@ -1343,7 +1343,8 @@ public class AtendimentoOperacional
 	{
 		
 		Query q = entityManager().createQuery(
-				" SELECT a.aluno.matricula, ao.HorarioDisponivelCenario.diaSemana, COUNT(*) " +
+				" SELECT a.aluno.matricula, ao.HorarioDisponivelCenario.diaSemana, " +
+				" COUNT(*)*ao.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo " +
 				" FROM AlunoDemanda a JOIN a.atendimentosOperacional ao " +
 				" WHERE ao.instituicaoEnsino = :instituicaoEnsino" +
 				" GROUP BY a.aluno, ao.HorarioDisponivelCenario.diaSemana" );
