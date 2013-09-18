@@ -123,7 +123,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 					return;
 				}
 				
-				display.getCampiLabel().setText(parametroDTO.getCampi().size() + " campi selecionado(s).");
+				display.getCampiLabel().setHtml(parametroDTO.getCampi().size() + " campi selecionado(s).");
 
 				final TurnosServiceAsync turnosService = Services.turnos();
 				final FutureResult<TurnoDTO> futureTurnoDTO = new FutureResult<TurnoDTO>();
@@ -163,8 +163,8 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 				MessageBox.confirm("Otimizar?","Deseja otimizar o cenário?",new Listener<MessageBoxEvent>() {
 					@Override
 					public void handleEvent(MessageBoxEvent be) {
-						if (be.getButtonClicked().getText().equalsIgnoreCase("yes") ||
-								be.getButtonClicked().getText().equalsIgnoreCase("sim")) {
+						if (be.getButtonClicked().getHtml().equalsIgnoreCase("yes") ||
+								be.getButtonClicked().getHtml().equalsIgnoreCase("sim")) {
 							try {
 						    	new AcompanhamentoPanelPresenter("chaveOtimizacao", new AcompanhamentoPanelView());
 								service.checkInputDataBeforeRequestOptimization(getDTO(),new AbstractAsyncCallbackWithDefaultOnFailure<ErrorsWarningsInputSolverDTO>("Não foi possível gerar a grade de horários.",display) {

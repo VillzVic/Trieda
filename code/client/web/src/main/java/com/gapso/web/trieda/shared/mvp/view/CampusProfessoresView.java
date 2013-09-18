@@ -49,7 +49,7 @@ public class CampusProfessoresView extends MyComposite
 		String title = ( ( usuario.isAdministrador() ) ?
 			"Professor » Campi de Trabalho" : "Master Data » Campi de Trabalho" );
 
-		panel.setHeading( title );
+		panel.setHeadingHtml( title );
 		createGrid();
 
 		if ( usuario.isAdministrador() )

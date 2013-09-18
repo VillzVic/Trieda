@@ -39,7 +39,7 @@ public class SimpleFilter
 	private void configuration()
 	{
 		formDataFilter = new FormData( "-5" );
-		setHeading( "Filtro" );
+		setHeadingHtml( "Filtro" );
 		setWidth( 350 );
 		createButtons();
 	}

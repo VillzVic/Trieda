@@ -77,7 +77,7 @@ public class ExportExcelFormView
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setFrame(true);
-		formPanel.setHeading("Escolha quais planilhas deseja exportar");
+		formPanel.setHeadingHtml("Escolha quais planilhas deseja exportar");
 		formPanel.setSize(600, -1);
 		formPanel.setButtonAlign(HorizontalAlignment.CENTER);
 		formPanel.setScrollMode(Style.Scroll.AUTOY);

@@ -118,7 +118,7 @@ public class EquivalenciaFormView extends MyComposite implements
 		cursosListPanel = new ContentPanel(new FitLayout());
 		cursosListPanel.setWidth(200);
 		cursosListPanel.setHeight(250);
-		cursosListPanel.setHeading("Todos os Curso");
+		cursosListPanel.setHeadingHtml("Todos os Curso");
 		cursosListPanel.setEnabled(!equivalenciaGeralCheckBox.getValue());
 		ListStore<CursoDTO> store1 = new ListStore<CursoDTO>();
 		store1.setDefaultSort(CursoDTO.PROPERTY_NOME, SortDir.ASC);
@@ -158,7 +158,7 @@ public class EquivalenciaFormView extends MyComposite implements
 		associadosListPanel.setWidth(200);
 		associadosListPanel.setHeight(250);
 		associadosListPanel
-				.setHeading("Curso(s) associados a Equivalência");
+				.setHeadingHtml("Curso(s) associados a Equivalência");
 		associadosListPanel.setEnabled(!equivalenciaGeralCheckBox.getValue());
 		ListStore<CursoDTO> store3 = new ListStore<CursoDTO>();
 		if (cursosDTO != null )

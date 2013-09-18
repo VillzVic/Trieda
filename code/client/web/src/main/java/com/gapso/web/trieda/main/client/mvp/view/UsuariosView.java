@@ -39,7 +39,7 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Usuários");
+		panel.setHeadingHtml("Master Data » Usuários");
 		createToolBar();
 		createGrid();
 		createFilter();

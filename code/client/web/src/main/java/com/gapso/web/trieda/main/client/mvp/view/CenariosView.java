@@ -46,7 +46,7 @@ public class CenariosView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Cenários" );
+		this.panel.setHeadingHtml( "Master Data » Cenários" );
 
 		createToolBar();
 		createGrid();

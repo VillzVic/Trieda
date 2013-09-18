@@ -105,7 +105,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements
 		ContentPanel andaresListPanel = new ContentPanel(new FitLayout());
 		andaresListPanel.setWidth(95);
 		andaresListPanel.setHeight(320);
-		andaresListPanel.setHeading("Andares");
+		andaresListPanel.setHeadingHtml("Andares");
 		ListStore<SalaDTO> store = new ListStore<SalaDTO>();
 		store.setDefaultSort(SalaDTO.PROPERTY_ANDAR, SortDir.ASC);
 		andaresList = new ListView<SalaDTO>(store);
@@ -115,7 +115,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
 		naoAssociadasListPanel.setWidth(190);
 		naoAssociadasListPanel.setHeight(320);
-		naoAssociadasListPanel.setHeading("Sala(s) não associadas ao Grupo");
+		naoAssociadasListPanel.setHeadingHtml("Sala(s) não associadas ao Grupo");
 		store = new ListStore<SalaDTO>();
 		store.setDefaultSort(SalaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		salasNaoPertencesList = new ListView<SalaDTO>(store);
@@ -125,7 +125,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
 		associadasListPanel.setWidth(190);
 		associadasListPanel.setHeight(320);
-		associadasListPanel.setHeading("Sala(s) associadas ao Grupo");
+		associadasListPanel.setHeadingHtml("Sala(s) associadas ao Grupo");
 		store = new ListStore<SalaDTO>();
 		store.setDefaultSort(SalaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		salasPertencesList = new ListView<SalaDTO>(store);

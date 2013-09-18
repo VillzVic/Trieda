@@ -58,7 +58,7 @@ public class CurriculosView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Matrizes Curriculares" );
+		panel.setHeadingHtml( "Master Data » Matrizes Curriculares" );
 
 		createToolBar();
 		createGrid();

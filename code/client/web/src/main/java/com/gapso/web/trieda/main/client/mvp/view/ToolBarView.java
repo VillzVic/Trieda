@@ -124,7 +124,7 @@ public class ToolBarView
 		container = new LayoutContainer( new HBoxLayout() );
 
 		ContentPanel planejamentoPanel = new ContentPanel();
-		planejamentoPanel.setHeading( "Planejamento" );
+		planejamentoPanel.setHeadingHtml( "Planejamento" );
 		planejamentoPanel.setWidth( 270 );
 
 		ContentPanel masterDataPanel = new ContentPanel();

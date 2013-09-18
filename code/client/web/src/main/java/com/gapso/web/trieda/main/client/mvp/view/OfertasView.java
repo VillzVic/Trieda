@@ -51,7 +51,7 @@ public class OfertasView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading(
+		this.panel.setHeadingHtml(
 			"Master Data » Oferta de Cursos em Campi" );
 
 		createToolBar();

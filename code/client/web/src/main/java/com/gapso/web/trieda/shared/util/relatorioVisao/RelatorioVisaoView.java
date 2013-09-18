@@ -49,7 +49,7 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 
 	protected void initUI(){
 		this.panel = new ContentPanel(new BorderLayout());
-		this.panel.setHeading(this.getHeadingPanel());
+		this.panel.setHeadingHtml(this.getHeadingPanel());
 
 		this.createGrid();
 		this.createFilter();
@@ -80,7 +80,7 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 		FormPanel panel = new FormPanel();
 		
 		panel.setHeaderVisible(true);
-		panel.setHeading("Filtro");
+		panel.setHeadingHtml("Filtro");
 
 		final LayoutContainer main = new LayoutContainer(new ColumnLayout());
 		LayoutContainer left = new LayoutContainer(new FormLayout(LabelAlign.LEFT));

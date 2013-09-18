@@ -56,7 +56,7 @@ public class RequisicoesOtimizacaoView extends MyComposite implements IRequisico
 	
 	private void criaComponentes() {
 		window = new Window();
-		window.setHeading("Requisições de Otimização");
+		window.setHeadingHtml("Requisições de Otimização");
 		window.setModal(true);
 		window.setAutoWidth(true);
 		window.setAutoHeight(true);

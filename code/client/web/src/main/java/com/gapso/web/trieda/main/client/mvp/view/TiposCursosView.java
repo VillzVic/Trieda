@@ -42,7 +42,7 @@ public class TiposCursosView
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Tipos de Curso" );
+		panel.setHeadingHtml( "Master Data » Tipos de Curso" );
 
 		createToolBar();
 		createGrid();

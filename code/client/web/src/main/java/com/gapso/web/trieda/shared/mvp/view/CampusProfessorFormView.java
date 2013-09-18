@@ -84,7 +84,7 @@ public class CampusProfessorFormView extends MyComposite
 		naoVinculadaListPanel.setWidth(267);
 		naoVinculadaListPanel.setHeight(320);
 		naoVinculadaListPanel
-				.setHeading("Professor(es) NÃO associado(s) ao Campus");
+				.setHeadingHtml("Professor(es) NÃO associado(s) ao Campus");
 		professorNaoAssociadoList = new ListView<ProfessorDTO>();
 		professorNaoAssociadoList.disable();
 		professorNaoAssociadoList
@@ -96,7 +96,7 @@ public class CampusProfessorFormView extends MyComposite
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
 		vinculadaListPanel.setWidth(267);
 		vinculadaListPanel.setHeight(320);
-		vinculadaListPanel.setHeading("Professor(es) associado(s) ao Campus");
+		vinculadaListPanel.setHeadingHtml("Professor(es) associado(s) ao Campus");
 		professorAssociadoList = new ListView<ProfessorDTO>();
 		professorAssociadoList.disable();
 		professorAssociadoList.setDisplayProperty(ProfessorDTO.PROPERTY_NOME);

@@ -66,7 +66,7 @@ public class SalasView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( getI18nConstants().salasHeadingPanel() );
+		this.panel.setHeadingHtml( getI18nConstants().salasHeadingPanel() );
 
 		createToolBar();
 		createGrid();

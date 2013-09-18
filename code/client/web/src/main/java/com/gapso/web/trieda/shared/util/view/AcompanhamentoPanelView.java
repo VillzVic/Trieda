@@ -46,9 +46,9 @@ public class AcompanhamentoPanelView extends MyComposite
 	
 	@Override
 	public void updateMessagePanel(String msg){
-		String lblText = label.getText();
+		String lblText = (String) label.getValue();
 		if(lblText == null) lblText = "";
-		label.setText(lblText + "<div style=\"padding: 3px 10px; font-size: 11px;\">" + msg + "</div>");
+		label.setValue(lblText + "<div style=\"padding: 3px 10px; font-size: 11px;\">" + msg + "</div>");
 //		scrollLabelDown();
 	}
 	

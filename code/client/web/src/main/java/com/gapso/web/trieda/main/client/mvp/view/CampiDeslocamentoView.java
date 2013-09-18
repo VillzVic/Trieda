@@ -32,7 +32,7 @@ public class CampiDeslocamentoView extends MyComposite implements CampiDeslocame
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Deslocamentos entre Campi");
+		panel.setHeadingHtml("Master Data » Deslocamentos entre Campi");
 		createToolBar();
 		createGrid();
 		createTabItem();

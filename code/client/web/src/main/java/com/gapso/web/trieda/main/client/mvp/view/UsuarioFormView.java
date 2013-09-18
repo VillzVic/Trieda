@@ -97,7 +97,7 @@ public class UsuarioFormView extends MyComposite
 	    FormLayout layout = new FormLayout();  
 	    layout.setLabelWidth(70);
 	    fieldSet.setLayout(layout);
-	    fieldSet.setHeading("Professor?");  
+	    fieldSet.setHeadingHtml("Professor?");  
 	    fieldSet.setCheckboxToggle(true);
 	    fieldSet.setExpanded(usuarioDTO.isProfessor());
 

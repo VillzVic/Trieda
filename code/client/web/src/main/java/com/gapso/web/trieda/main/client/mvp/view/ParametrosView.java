@@ -112,7 +112,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 
 	private void createForm() {
 		this.form = new FormPanel();
-		this.form.setHeading("Master Data » Parâmetros de Planejamento");
+		this.form.setHeadingHtml("Master Data » Parâmetros de Planejamento");
 		this.form.setScrollMode(Scroll.AUTO);
 		this.form.setButtonAlign(HorizontalAlignment.RIGHT);
 		FormLayout formLayout = new FormLayout();
@@ -202,7 +202,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		compartilharDiscEntreCursosContainer.add(this.compartilharDisciplinasCampiButton);
 		
 		FieldSet instituicaoFS = new FieldSet();
-		instituicaoFS.setHeading("Preferências da Instituição");
+		instituicaoFS.setHeadingHtml("Preferências da Instituição");
 		instituicaoFS.setCollapsible(true);
 		instituicaoFS.setLayout(new RowLayout());
 		instituicaoFS.add(equivalenciasContainer);
@@ -258,7 +258,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		evitarReducaoCHProfessorContainer.add(this.evitarReducaoCargaHorariaProfessorNumberField);
 
 		FieldSet professorFS = new FieldSet();
-		professorFS.setHeading("Preferências do Professor");
+		professorFS.setHeadingHtml("Preferências do Professor");
 		professorFS.setCollapsible(true);
 		professorFS.setLayout(new RowLayout());
 		professorFS.add(cargaHorariaSemanalProfessorContainer);
@@ -287,7 +287,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		cargaHorariaSemanalAlunoContainer.add(this.cargaHorariaAlunoComboBox);
 
 		FieldSet preferenciasAlunosFS = new FieldSet();
-		preferenciasAlunosFS.setHeading("Preferências do Aluno");
+		preferenciasAlunosFS.setHeadingHtml("Preferências do Aluno");
 		preferenciasAlunosFS.setCollapsible(true);
 		preferenciasAlunosFS.setLayout(new RowLayout());
 		preferenciasAlunosFS.add(cargaHorariaSemanalAlunoContainer);
@@ -353,7 +353,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.otimizarPorAluno.setValue(otimizarPor);
 		this.otimizarPorBlocoCurricular.setValue(!otimizarPor);
 		this.funcaoObjetivoCheckBox.setValue(this.parametroDTO.getFuncaoObjetivo());
-		this.campiLabel.setText(this.parametroDTO.getCampi().isEmpty() ? "Nenhum campus selecionado" : (this.parametroDTO.getCampi().size() + " campi selecionado(s)"));
+		this.campiLabel.setHtml(this.parametroDTO.getCampi().isEmpty() ? "Nenhum campus selecionado" : (this.parametroDTO.getCampi().size() + " campi selecionado(s)"));
 	}
 
 	private CheckBox createCheckBox(
@@ -671,6 +671,6 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 
 	@Override
 	public void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados) {
-		this.campiLabel.setText(qtdCampiSelecionados == 0 ? "Nenhum campus selecionado" : (qtdCampiSelecionados + " campi selecionado(s)"));
+		this.campiLabel.setHtml(qtdCampiSelecionados == 0 ? "Nenhum campus selecionado" : (qtdCampiSelecionados + " campi selecionado(s)"));
 	}
 }

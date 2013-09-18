@@ -37,7 +37,7 @@ public class DivisoesCreditosView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Divisões de Créditos" );
+		this.panel.setHeadingHtml( "Master Data » Divisões de Créditos" );
 
 		this.createToolBar();
 		this.createGrid();

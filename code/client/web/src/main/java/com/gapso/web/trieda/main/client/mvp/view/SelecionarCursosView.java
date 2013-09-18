@@ -66,7 +66,7 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
         panelLists.setLayout(layout2);
 
 		ContentPanel naoSelecionadoListPanel = new ContentPanel(new FitLayout());
-		naoSelecionadoListPanel.setHeading("Cursos não selecionados");
+		naoSelecionadoListPanel.setHeadingHtml("Cursos não selecionados");
 		naoSelecionadoListPanel.setWidth(267);
 		naoSelecionadoListPanel.setHeight(320);
 		naoSelecionadoList = new ListView<CursoDTO>();
@@ -81,7 +81,7 @@ public class SelecionarCursosView extends MyComposite implements SelecionarCurso
 		naoSelecionadoListPanel.add(naoSelecionadoList);
 
 		ContentPanel selecionadoListPanel = new ContentPanel(new FitLayout());
-		selecionadoListPanel.setHeading("Cursos selecionados");
+		selecionadoListPanel.setHeadingHtml("Cursos selecionados");
 		selecionadoListPanel.setWidth(267);
 		selecionadoListPanel.setHeight(320);
 		selecionadoList = new ListView<CursoDTO>();

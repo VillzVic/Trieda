@@ -49,7 +49,7 @@ public class ProfessoresView extends MyComposite
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Professores" );
+		this.panel.setHeadingHtml( "Master Data » Professores" );
 
 		createToolBar();
 		createGrid();

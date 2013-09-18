@@ -76,7 +76,7 @@ public class CampusFormView
 		FormLayout formLayout = new FormLayout( LabelAlign.RIGHT );
 		formLayout.setLabelWidth( 75 );
 		geralFS.setLayout( formLayout );
-		geralFS.setHeading( "Informações Gerais" );
+		geralFS.setHeadingHtml( "Informações Gerais" );
 
 		this.codigoTF = new UniqueTextField( this.cenarioDTO, UniqueDomain.CAMPI );
 		this.codigoTF.setName( CampusDTO.PROPERTY_CODIGO );
@@ -125,7 +125,7 @@ public class CampusFormView
 		formLayout = new FormLayout( LabelAlign.RIGHT );
 		formLayout.setLabelWidth(75);
 		enderecoFS.setLayout( formLayout );
-		enderecoFS.setHeading( "Endereço" );
+		enderecoFS.setHeadingHtml( "Endereço" );
 
 		this.estadoCB = new EstadoComboBox();
 		this.estadoCB.setName( CampusDTO.PROPERTY_ESTADO );

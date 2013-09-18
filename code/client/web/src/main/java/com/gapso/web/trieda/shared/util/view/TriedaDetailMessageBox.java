@@ -84,7 +84,7 @@ public class TriedaDetailMessageBox {
 	
 	private static Widget getDetailMessageComponent(String detailMsg) {
 		FieldSet fieldSet = new FieldSet();
-		fieldSet.setHeading(I18N_CONSTANTS.triedaDetailMessageHeadingText());
+		fieldSet.setHeadingHtml(I18N_CONSTANTS.triedaDetailMessageHeadingText());
 		fieldSet.setCollapsible(true);
 		fieldSet.setExpanded(false);
 		fieldSet.addText(detailMsg);
@@ -104,7 +104,7 @@ public class TriedaDetailMessageBox {
 	private static Dialog getDialog(String title) {
 		Dialog dialog = new Dialog();
 		
-		dialog.setHeading(title);
+		dialog.setHeadingHtml(title);
 		dialog.setConstrain(true);
 		dialog.setMinimizable(false);
 		dialog.setMaximizable(false);

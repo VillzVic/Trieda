@@ -43,7 +43,7 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Resumo do Cenário");
+		panel.setHeadingHtml("Master Data » Resumo do Cenário");
 	}
 
 	@Override

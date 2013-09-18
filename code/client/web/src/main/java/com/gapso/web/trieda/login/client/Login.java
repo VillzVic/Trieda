@@ -103,7 +103,7 @@ public class Login
 		form.setAction( "../resources/j_spring_security_check" );
 		form.setMethod( Method.POST );
 		form.setFrame( true );
-		form.setHeading( "Área de Acesso" );  
+		form.setHeadingHtml( "Área de Acesso" );  
 		form.setWidth( 320 );
 
 		FormLayout layout = new FormLayout();  
@@ -113,7 +113,7 @@ public class Login
 		FormData formData = new FormData( "-20" );
 		
 		LabelField labelLogin = new LabelField();
-		labelLogin.setText("Login");
+		labelLogin.setValue("Login");
 		
 		form.add(labelLogin, formData);
 

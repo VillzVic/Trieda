@@ -43,7 +43,7 @@ public class AreasTitulacaoView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Áreas de Titulação" );
+		this.panel.setHeadingHtml( "Master Data » Áreas de Titulação" );
 
 		createToolBar();
 		createGrid();

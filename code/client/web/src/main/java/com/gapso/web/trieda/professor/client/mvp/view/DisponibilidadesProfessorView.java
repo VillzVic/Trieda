@@ -43,7 +43,7 @@ public class DisponibilidadesProfessorView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Professor » Disponibilidades do Professor" );
+		this.panel.setHeadingHtml( "Professor » Disponibilidades do Professor" );
 
 		createToolBar();
 		createGrid();

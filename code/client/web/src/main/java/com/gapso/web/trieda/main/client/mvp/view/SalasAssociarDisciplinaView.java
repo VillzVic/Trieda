@@ -63,7 +63,7 @@ public class SalasAssociarDisciplinaView extends MyComposite implements
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Associação de Disciplinas à Salas");
+		panel.setHeadingHtml("Master Data » Associação de Disciplinas à Salas");
 	}
 	
 	private void createTabItem() {
@@ -102,7 +102,7 @@ public class SalasAssociarDisciplinaView extends MyComposite implements
 		panelLists.setBodyBorder(false);
 		
 		ContentPanel naoVinculadaListPanel = new ContentPanel(new FitLayout());
-		naoVinculadaListPanel.setHeading("Sala(s) NÃO vinculada(s) a Disciplina");
+		naoVinculadaListPanel.setHeadingHtml("Sala(s) NÃO vinculada(s) a Disciplina");
 		naoVinculadaList = new ListView<SalaDTO>();
 		if(disciplinaDTO.getId() == null)
 			naoVinculadaList.disable();
@@ -111,7 +111,7 @@ public class SalasAssociarDisciplinaView extends MyComposite implements
 		naoVinculadaListPanel.add(naoVinculadaList);
 		
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
-		vinculadaListPanel.setHeading("Sala(s) vinculada(s) a Disciplina");
+		vinculadaListPanel.setHeadingHtml("Sala(s) vinculada(s) a Disciplina");
 		vinculadaList = new ListView<SalaDTO>();
 		if(disciplinaDTO.getId() == null)
 			vinculadaList.disable();

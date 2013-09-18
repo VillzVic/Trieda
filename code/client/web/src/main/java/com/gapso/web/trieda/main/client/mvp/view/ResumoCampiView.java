@@ -47,7 +47,7 @@ public class ResumoCampiView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Resultados por Campus" );
+		panel.setHeadingHtml( "Master Data » Resultados por Campus" );
 	}
 
 	@Override

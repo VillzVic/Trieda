@@ -54,7 +54,7 @@ public class GTabItem
 	{
 		super.setTitle( s );
 
-		this.panel.setHeading( s );
+		this.panel.setHeadingHtml( s );
 		this.panel.setHeaderVisible( s != null );
 	}
 

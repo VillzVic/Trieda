@@ -41,7 +41,7 @@ public class TurnosView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Turnos" );
+		this.panel.setHeadingHtml( "Master Data » Turnos" );
 
 		createToolBar();
 		createGrid();

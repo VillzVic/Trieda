@@ -69,7 +69,7 @@ public class AlunoDemandaView
 			}
 		};
 
-		this.panel.setHeading( "Master Data » Alunos relacionados à demanda " +
+		this.panel.setHeadingHtml( "Master Data » Alunos relacionados à demanda " +
 			"(" + demandaDTO.getDisciplinaString() + ")" );
 
 		createToolBar();
@@ -117,7 +117,7 @@ public class AlunoDemandaView
 		{  
 			public String render( GroupColumnData data )
 			{  
-				String f = columnModel.getColumnById( data.field ).getHeader();  
+				String f = columnModel.getColumnById( data.field ).getHeaderHtml();  
 				return f + " " + data.group;  
 			}
 		});

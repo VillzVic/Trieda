@@ -37,7 +37,7 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Fixações");
+		panel.setHeadingHtml("Master Data » Fixações");
 		createToolBar();
 		createGrid();
 		createFilter();

@@ -43,7 +43,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Deslocamentos entre Unidades");
+		panel.setHeadingHtml("Master Data » Deslocamentos entre Unidades");
 		createFilter();
 		createToolBar();
 		createGrid();
@@ -76,7 +76,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 		bld.setSize(65);
 		
 		FormPanel filter = new FormPanel();
-		filter.setHeading("Campus");
+		filter.setHeadingHtml("Campus");
 		FormData formData = new FormData("-5");
 		
 		campusBuscaComboBox = new CampusComboBox(cenarioDTO);

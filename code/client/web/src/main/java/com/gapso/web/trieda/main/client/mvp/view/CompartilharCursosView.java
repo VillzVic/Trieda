@@ -71,7 +71,7 @@ public class CompartilharCursosView extends MyComposite implements
 
 		ContentPanel formPanel = new ContentPanel(new ColumnLayout());
 		// formPanel.setHeaderVisible(false);
-		formPanel.setHeading("Cadastre os cursos que não permitem compartilhamento");
+		formPanel.setHeadingHtml("Cadastre os cursos que não permitem compartilhamento");
 		// formPanel.setBodyBorder(false);
 		formPanel.setBodyStyle("background-color: transparent; padding: 10px;");
 

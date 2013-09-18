@@ -37,7 +37,7 @@ public class ErrorsWarningsInputSolverView
 		this.panel.setHeaderVisible( false );
 
 		this.messagesWarningPanel = new ContentPanel();
-		this.messagesWarningPanel.setHeading( "Alertas" );
+		this.messagesWarningPanel.setHeadingHtml( "Alertas" );
 		this.messagesWarningPanel.setIcon( AbstractImagePrototype.create(
 			Resources.DEFAULTS.warning16() ) );
 		this.messagesWarningPanel.setBodyBorder( false );
@@ -47,7 +47,7 @@ public class ErrorsWarningsInputSolverView
 		this.panel.add( this.messagesWarningPanel );
 
 		this.messagesErrorPanel = new ContentPanel();
-		this.messagesErrorPanel.setHeading( "Erros" );
+		this.messagesErrorPanel.setHeadingHtml( "Erros" );
 		this.messagesErrorPanel.setIcon( AbstractImagePrototype.create(
 			Resources.DEFAULTS.error16() ) );
 		this.messagesErrorPanel.setBodyBorder( false );

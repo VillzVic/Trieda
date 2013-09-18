@@ -25,14 +25,14 @@ public class SimpleModal
 		this.textSalvar = textSalvar;
 		this.textCancelar = textCancelar;
 
-		setHeading( heading );
+		setHeadingHtml( heading );
 		setIcon( AbstractImagePrototype.create( icon ) );
 		configuration();
 	}
 
 	public SimpleModal( String heading, ImageResource icon )
 	{
-		setHeading( heading );
+		setHeadingHtml( heading );
 		setIcon( AbstractImagePrototype.create( icon ) );
 		configuration();
 	}

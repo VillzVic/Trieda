@@ -44,7 +44,7 @@ public class SemanasLetivaView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Semanas Letivas" );
+		this.panel.setHeadingHtml( "Master Data » Semanas Letivas" );
 
 		createToolBar();
 		createGrid();

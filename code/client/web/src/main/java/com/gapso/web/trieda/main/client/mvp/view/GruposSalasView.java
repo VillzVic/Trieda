@@ -38,7 +38,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeading("Master Data » Grupos de Salas");
+		panel.setHeadingHtml("Master Data » Grupos de Salas");
 		createToolBar();
 		createGrid();
 		createTabItem();

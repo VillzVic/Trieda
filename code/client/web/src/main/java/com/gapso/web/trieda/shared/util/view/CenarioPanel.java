@@ -26,7 +26,7 @@ public class CenarioPanel extends ContentPanel {
 		treePanel.getStyle().setLeafIcon(AbstractImagePrototype.create(Resources.DEFAULTS.document16())); 
 		treePanel.mask();
 		add(treePanel);
-		setHeading("Navegação");
+		setHeadingHtml("Navegação");
 	}
 
 

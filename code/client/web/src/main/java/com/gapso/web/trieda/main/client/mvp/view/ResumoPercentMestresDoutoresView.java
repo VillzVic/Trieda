@@ -52,7 +52,7 @@ public class ResumoPercentMestresDoutoresView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeading( "Master Data » Resumo de Porcentagem de Mestres e Doutores" );
+		panel.setHeadingHtml( "Master Data » Resumo de Porcentagem de Mestres e Doutores" );
 	}
 	
 	private void createTabItem()

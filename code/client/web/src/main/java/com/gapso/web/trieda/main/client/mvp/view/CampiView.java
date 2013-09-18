@@ -51,7 +51,7 @@ public class CampiView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( getI18nConstants().campiHeadingPanel() );
+		this.panel.setHeadingHtml( getI18nConstants().campiHeadingPanel() );
 
 		createToolBar();
 		createGrid();

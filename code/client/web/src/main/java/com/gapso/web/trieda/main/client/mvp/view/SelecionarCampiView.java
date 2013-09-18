@@ -59,7 +59,7 @@ public class SelecionarCampiView extends MyComposite implements SelecionarCampiP
 		panelLists = new LayoutContainer(layout2);
 
 		ContentPanel naoSelecionadoListPanel = new ContentPanel(new FitLayout());
-		naoSelecionadoListPanel.setHeading("Campi não selecionados");
+		naoSelecionadoListPanel.setHeadingHtml("Campi não selecionados");
 		naoSelecionadoListPanel.setWidth(267);
 		naoSelecionadoListPanel.setHeight(320);
 		naoSelecionadoList = new ListView<CampusDTO>();
@@ -68,7 +68,7 @@ public class SelecionarCampiView extends MyComposite implements SelecionarCampiP
 		naoSelecionadoListPanel.add(naoSelecionadoList);
 
 		ContentPanel selecionadoListPanel = new ContentPanel(new FitLayout());
-		selecionadoListPanel.setHeading("Campi selecionados");
+		selecionadoListPanel.setHeadingHtml("Campi selecionados");
 		selecionadoListPanel.setWidth(267);
 		selecionadoListPanel.setHeight(320);
 		selecionadoList = new ListView<CampusDTO>();

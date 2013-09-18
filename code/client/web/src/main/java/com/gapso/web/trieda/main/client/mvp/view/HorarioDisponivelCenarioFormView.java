@@ -72,7 +72,7 @@ public class HorarioDisponivelCenarioFormView
 		FormPanel formPanel = new FormPanel();
 		formPanel.setLayout( new HBoxLayout() );
 		formPanel.setHeaderVisible( true );
-		formPanel.setHeading( "Adicionar/Remover Horário de Aula" );
+		formPanel.setHeadingHtml( "Adicionar/Remover Horário de Aula" );
 		formPanel.setButtonAlign( HorizontalAlignment.RIGHT );
 
 		this.turnoCB = new TurnoComboBox( cenarioDTO );

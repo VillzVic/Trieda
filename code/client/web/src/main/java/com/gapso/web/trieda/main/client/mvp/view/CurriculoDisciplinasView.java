@@ -70,7 +70,7 @@ public class CurriculoDisciplinasView
 			}
 		};
 
-		panel.setHeading( "Master Data » Disciplinas na Matriz Curricular " +
+		panel.setHeadingHtml( "Master Data » Disciplinas na Matriz Curricular " +
 			"(" + curriculoDTO.getCodigo() +
 			" / " + curriculoDTO.getCursoString() + ")" );
 
@@ -120,7 +120,7 @@ public class CurriculoDisciplinasView
 		{  
 			public String render( GroupColumnData data )
 			{  
-				String f = columnModel.getColumnById( data.field ).getHeader();  
+				String f = columnModel.getColumnById( data.field ).getHeaderHtml();  
 				return f + " "+ data.group;  
 			}
 		});

@@ -51,7 +51,7 @@ public class DisciplinasView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeading( "Master Data » Disciplinas" );
+		this.panel.setHeadingHtml( "Master Data » Disciplinas" );
 
 		createToolBar();
 		createGrid();

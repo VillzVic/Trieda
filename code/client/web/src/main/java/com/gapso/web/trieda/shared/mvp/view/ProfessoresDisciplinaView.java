@@ -64,7 +64,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 			title = "Master Data » Habilitação dos Professores";
 		}
 
-		panel.setHeading( title );
+		panel.setHeadingHtml( title );
 		createToolBar();
 		createGrid();
 

@@ -23,7 +23,7 @@ public class ExportExcelModal
 
 	public ExportExcelModal( String heading, ImageResource icon )
 	{
-		setHeading( heading );
+		setHeadingHtml( heading );
 		setIcon( AbstractImagePrototype.create( icon ) );
 		configuration();
 	}
