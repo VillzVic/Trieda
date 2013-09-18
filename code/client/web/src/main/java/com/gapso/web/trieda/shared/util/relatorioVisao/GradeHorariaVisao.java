@@ -136,6 +136,9 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 						horarioEhIntervalo.addAll(trioDTO.getTerceiro());					
 					} else {
 						labelsDasLinhasDaGradeHoraria.addAll(result.getLabelsDasLinhasDaGradeHoraria());
+						for (int i = 0; i < result.getLabelsDasLinhasDaGradeHoraria().size(); i++) {
+							horarioEhIntervalo.add(false);
+						}
 					}
 					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO * mdcTemposAulaNumSemanasLetivas.getPrimeiro());
 					List<ColumnConfig> columns = getColumnList(result.getQtdColunasPorDiaSemana());
