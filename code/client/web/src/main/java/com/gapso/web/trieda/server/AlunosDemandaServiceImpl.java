@@ -526,8 +526,8 @@ public class AlunosDemandaServiceImpl
 		{
 			AtendimentoFaixaDemanda resumoFaixaDemanda = new AtendimentoFaixaDemanda();
 			
-			double atendimentoP1Percent = ((double)atendimentoP1[i]) / demandaP1[i];
-			double atendimentoSomaPercent = ((double)atendimentoSoma[i]) / demandaP1[i];
+			double atendimentoP1Percent = (demandaP1[i] == 0 ? 0 : ((double)atendimentoP1[i]) / demandaP1[i]);
+			double atendimentoSomaPercent = (demandaP1[i] == 0 ? 0 : ((double)atendimentoSoma[i]) / demandaP1[i]);
 			
 			resumoFaixaDemanda.setFaixaSuperior(faixas.get(i).getPrimeiro());
 			resumoFaixaDemanda.setFaixaInferior(faixas.get(i).getSegundo());
@@ -546,11 +546,11 @@ public class AlunosDemandaServiceImpl
 			demandaP1Acum[i] = (i == 0 ? demandaP1[i] : demandaP1[i] + demandaP1Acum[i-1]);
 			atendimentoSomaAcum[i] = (i == 0 ? atendimentoSoma[i] : atendimentoSoma[i] + atendimentoSomaAcum[i-1]);
 
-			double atendimentoSomaAcumPercent = ( (double)atendimentoSomaAcum[i] ) / demandaP1Acum[i];
-			double custoDocentePorReceitaPercent = custoDocente[i] / receita[i];
+			double atendimentoSomaAcumPercent = (demandaP1Acum[i] == 0 ? 0 : ( (double)atendimentoSomaAcum[i] ) / demandaP1Acum[i]);
+			double custoDocentePorReceitaPercent = (receita[i] == 0 ? 0 : custoDocente[i] / receita[i]);
 			custoDocenteSemestralAcum += custoDocente[i];
 			receitaAcum += receita[i];
-			double custoDocentePorReceitaAcumPercent = custoDocenteSemestralAcum / receitaAcum;
+			double custoDocentePorReceitaAcumPercent = (receitaAcum == 0 ? 0 : custoDocenteSemestralAcum / receitaAcum);
 			
 			resumoFaixaDemanda.setCampus( campus );
 			resumoFaixaDemanda.setDemandaP1( demandaP1[i] );
