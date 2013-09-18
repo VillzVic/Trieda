@@ -3418,7 +3418,7 @@ public class ConvertBeans {
 	public static AtendimentoFaixaDemandaDTO toAtendimentoFaixaDemandaDTO(
 			AtendimentoFaixaDemanda domain) {
 		AtendimentoFaixaDemandaDTO dto = new AtendimentoFaixaDemandaDTO();
-		DecimalFormat dec = new DecimalFormat("#.00");
+		DecimalFormat dec = new DecimalFormat("#0.00");
 		
 		dto.setCampusNome( domain.getCampus().getNome() );
 		dto.setDemandaP1( domain.getDemandaP1() );
