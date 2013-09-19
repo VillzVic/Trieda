@@ -98,6 +98,8 @@ public class DisciplinasView
 		this.toolBar.add( this.associarGruposSalasBT );
 		
 		this.panel.setTopComponent( this.toolBar );
+		
+		this.toolBar.activateEmptyState();
 	}
 
 	private void createGrid()
@@ -105,7 +107,7 @@ public class DisciplinasView
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-	    this.gridPanel = new SimpleGrid< DisciplinaDTO >( getColumnList(), this );
+	    this.gridPanel = new SimpleGrid< DisciplinaDTO >( getColumnList(), this, this.toolBar );
 	    this.panel.add( this.gridPanel, bld );
 	}
 

@@ -65,7 +65,7 @@ public class TiposCursosView
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<TipoCursoDTO>(getColumnList(), this);
+	    gridPanel = new SimpleGrid<TipoCursoDTO>(getColumnList(), this, this.toolBar);
 	    panel.add(gridPanel, bld);
 	}
 

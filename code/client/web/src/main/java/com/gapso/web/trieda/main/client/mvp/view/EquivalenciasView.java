@@ -67,7 +67,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<EquivalenciaDTO>(getColumnList(), this);
+	    gridPanel = new SimpleGrid<EquivalenciaDTO>(getColumnList(), this, this.toolBar);
 	    panel.add(gridPanel, bld);
 	}
 

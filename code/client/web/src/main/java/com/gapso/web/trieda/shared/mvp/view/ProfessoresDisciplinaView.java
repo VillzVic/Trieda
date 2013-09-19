@@ -120,7 +120,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-	    gridPanel = new SimpleGrid< ProfessorDisciplinaDTO >( getColumnList(), this );
+	    gridPanel = new SimpleGrid< ProfessorDisciplinaDTO >( getColumnList(), this, this.toolBar );
 	    panel.add( gridPanel, bld );
 	}
 

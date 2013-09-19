@@ -80,7 +80,7 @@ public class OfertasView
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-	    this.gridPanel = new SimpleGrid< OfertaDTO >( getColumnList(), this );
+	    this.gridPanel = new SimpleGrid< OfertaDTO >( getColumnList(), this, this.toolBar );
 	    this.panel.add( this.gridPanel, bld );
 	}
 

@@ -77,7 +77,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<UnidadeDTO>(getColumnList(), this);
+	    gridPanel = new SimpleGrid<UnidadeDTO>(getColumnList(), this, this.toolBar);
 	    panel.add(gridPanel, bld);
 	}
 

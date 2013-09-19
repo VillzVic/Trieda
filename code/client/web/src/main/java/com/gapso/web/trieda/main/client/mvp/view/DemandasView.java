@@ -101,7 +101,7 @@ public class DemandasView
 
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-	    this.gridPanel = new SimpleGrid< DemandaDTO >( getColumnList(), this );
+	    this.gridPanel = new SimpleGrid< DemandaDTO >( getColumnList(), this, this.toolBar );
 	    this.panel.add( this.gridPanel, bld );
 	}
 

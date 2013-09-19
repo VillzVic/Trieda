@@ -12,6 +12,8 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.LoadListener;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ComponentPlugin;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -33,14 +35,16 @@ public class SimpleGrid< M extends BaseModel >
 	private List< ColumnConfig > columnList;
 	private List< ComponentPlugin > plugins = new ArrayList< ComponentPlugin >();
 	private ITriedaI18nGateway i18nGateway;
+	private SimpleToolBar toolBar;
 
 	public SimpleGrid( List< ColumnConfig > columnList,
-		ITriedaI18nGateway i18nGateway )
+		ITriedaI18nGateway i18nGateway, SimpleToolBar toolBar )
 	{
 		super( new FitLayout() );
 
 		this.columnList = columnList;
 		this.i18nGateway = i18nGateway;
+		this.toolBar = toolBar;
 		setHeaderVisible( false );
 	}
 
@@ -84,7 +88,21 @@ public class SimpleGrid< M extends BaseModel >
 			public void loaderLoad( LoadEvent le )
 			{
 				grid.unmask();
+				toolBar.activateEmptyState();
 			}
+		});
+		
+		this.getGrid().getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<M>() {
+
+			@Override
+		    public void selectionChanged(SelectionChangedEvent<M> se) {
+		        if(getGrid().getSelectionModel().getSelectedItems().size() == 1) {
+		        	toolBar.enableSimpleState();
+		        }
+		        else if(getGrid().getSelectionModel().getSelectedItems().size() > 1) {
+		        	toolBar.enableMultiState();
+		        }
+		    }
 		});
 	}
 

@@ -61,7 +61,7 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.CENTER);
 	    bld.setMargins(new Margins(5, 5, 5, 5));
 	    
-	    gridPanel = new SimpleGrid<UsuarioDTO>(getColumnList(), this);
+	    gridPanel = new SimpleGrid<UsuarioDTO>(getColumnList(), this, this.toolBar);
 	    panel.add(gridPanel, bld);
 	}
 
