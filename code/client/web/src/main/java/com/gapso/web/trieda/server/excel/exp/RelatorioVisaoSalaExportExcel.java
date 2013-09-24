@@ -241,8 +241,8 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 				}
 				
 				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-				QuartetoDTO<ParDTO<Integer, Integer>,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnoId);
-				ParDTO<Integer, Integer> mdcTemposAula = quarteto.getPrimeiro();
+				QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnoId);
+				ParDTO<Integer, Boolean> mdcTemposAula = quarteto.getPrimeiro();
 				List<String> horariosDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
 				List<String> horariosDeFimDeAula = quarteto.getQuarto();

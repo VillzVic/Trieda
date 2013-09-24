@@ -132,7 +132,7 @@ public abstract class RelatorioVisaoByCampusTurno extends RelatorioVisaoExportEx
 					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
 					if(atendimentos.isEmpty()) continue;
 					
-					ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
+					ParDTO<Integer, Boolean> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
 					List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
 					List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();
 					List<String> horariosDeFimDeAula = quinteto.getHorariosDeFimDeAula();

@@ -344,7 +344,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 				Map<Aluno, AtendimentoServiceRelatorioResponse> alunoMap = turnoMap.get(turno);
 				for(Aluno aluno : alunoMap.keySet()){
 					AtendimentoServiceRelatorioResponse quinteto = alunoMap.get(aluno);
-					ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
+					ParDTO<Integer, Boolean> mdcTemposAulaNumSemanasLetivas = quinteto.getMdcTemposAulaNumSemanasLetivas();
 					List<AtendimentoRelatorioDTO> atendimentos = quinteto.getAtendimentosDTO();
 					List<String> horariosDaGradeHoraria = quinteto.getLabelsDasLinhasDaGradeHoraria();
 					List<String> horariosDeInicioDeAula = quinteto.getHorariosDeInicioDeAula();

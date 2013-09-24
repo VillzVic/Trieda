@@ -303,7 +303,7 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 
 		// para cada bloco curricular
 		for(AtendimentoServiceRelatorioResponse sexteto : aulasInfo) {
-			ParDTO<Integer, Integer> mdcTemposAulaNumSemanasLetivas = sexteto.getMdcTemposAulaNumSemanasLetivas();
+			ParDTO<Integer, Boolean> mdcTemposAulaNumSemanasLetivas = sexteto.getMdcTemposAulaNumSemanasLetivas();
 			List<AtendimentoRelatorioDTO> aulas = sexteto.getAtendimentosDTO();
 			List<Integer> qtdColunasPorDiaSemana = sexteto.getQtdColunasPorDiaSemana();
 			List<String> horariosDaGradeHoraria = sexteto.getLabelsDasLinhasDaGradeHoraria();
