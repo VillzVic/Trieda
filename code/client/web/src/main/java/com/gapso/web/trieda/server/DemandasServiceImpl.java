@@ -715,7 +715,6 @@ public class DemandasServiceImpl
 		List<Aluno> todosAlunos = Aluno.findAlunosComDisciplinasCursadas(getInstituicaoEnsinoUser());
 		Map<Curriculo, Map<Integer, List< CurriculoDisciplina >>> curriculoToPeriodosMapToDisciplinasMap =
 				montaCurriculoToPeriodosMapToDisciplinasMap(cenarioDTO);
-		System.out.println("Comecando alunos: " + todosAlunos.size() );
 		for (Aluno aluno : todosAlunos)
 		{
 			Curriculo curriculoAluno = encontraCurriculo(aluno);
@@ -756,7 +755,7 @@ public class DemandasServiceImpl
 								disciplinaPossuiPreRequisitoAindaNaoCursadoPeloAluno = temPreRequisitoAindaNaoCursadoPeloAluno(disciplina, curriculoAluno,
 										periodoToAlunoDisciplinasNaoCursadasMap);
 							}
-							Set<CurriculoDisciplina> coRequisitosAindaNaoCursadosENaoOferecidos = null;
+							Set<CurriculoDisciplina> coRequisitosAindaNaoCursadosENaoOferecidos = new HashSet<CurriculoDisciplina>();
 							if (parametroGeracaoDemanda.getConsiderarCoRequisitos())
 							{
 								coRequisitosAindaNaoCursadosENaoOferecidos = retornaCoRequisitosAindaNaoCursadosENaoOferecidos(curriculoAluno,
@@ -835,9 +834,6 @@ public class DemandasServiceImpl
 		getProgressReport().setInitNewPartial("Inserindo demandas no banco");
 		createOfertasDemandasEAlunosDemanda(ofertasCurriculosMap, demandas, disciplinasMapAlunos);
 		getProgressReport().setPartial("Etapa concluída");
-		System.out.println("Ofertas: " + ofertasCurriculosMap.size());
-		System.out.println("Demandas: " + demandas.size());
-		System.out.println("AlunosDemandas: " + disciplinasMapAlunos.size());
 		getProgressReport().finish();
 	}
 
@@ -863,7 +859,7 @@ public class DemandasServiceImpl
 					novoAlunoDemanda.setPrioridade(1);
 					novoAlunoDemanda.persist();
 					i++;
-					if (i%100 == 0) {
+					if (i%1000 == 0) {
 						System.out.println("Inseriu: " + i + " alunosDemanda");
 					}
 				}
