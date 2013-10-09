@@ -28,7 +28,7 @@ import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -53,7 +53,7 @@ public class EquivalenciasPresenter
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
 		CampusComboBox getCampusComboBox();
-		DisciplinaComboBox getDisciplinaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaComboBox();
 		CursoComboBox getCursoComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();

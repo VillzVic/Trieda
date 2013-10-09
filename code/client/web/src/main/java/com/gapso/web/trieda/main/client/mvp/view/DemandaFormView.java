@@ -20,7 +20,7 @@ import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.OfertaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -36,7 +36,7 @@ public class DemandaFormView
 	private TextField<CursoDTO> cursoTF;
 	private TextField<CurriculoDTO> curriculoTF;
 	private TextField<TurnoDTO> turnoTF;
-	private DisciplinaComboBox disciplinaCB;
+	private DisciplinaAutoCompleteBox disciplinaCB;
 	private NumberField demandaTF;
 	private DemandaDTO demandaDTO;
 	private CampusDTO campusDTO;
@@ -113,7 +113,7 @@ public class DemandaFormView
 		this.turnoTF.setReadOnly(true);
 		this.formPanel.add( this.turnoTF, formData );
 
-		this.disciplinaCB = new DisciplinaComboBox(cenarioDTO, ofertaCB){
+		this.disciplinaCB = new DisciplinaAutoCompleteBox(cenarioDTO, ofertaCB){
 			@Override
 			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
 				OfertaDTO ofertaDTO = (OfertaDTO) abdto;
@@ -206,7 +206,7 @@ public class DemandaFormView
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox()
+	public DisciplinaAutoCompleteBox getDisciplinaComboBox()
 	{
 		return disciplinaCB;
 	}

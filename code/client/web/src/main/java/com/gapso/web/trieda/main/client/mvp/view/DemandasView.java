@@ -22,7 +22,7 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -40,7 +40,7 @@ public class DemandasView
 	private CursoComboBox cursoBuscaCB;
 	private CurriculoComboBox curriculoBuscaCB;
 	private TurnoComboBox turnoBuscaCB;
-	private DisciplinaComboBox disciplinaBuscaCB;
+	private DisciplinaAutoCompleteBox disciplinaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button importExcelAlunosDemandaBT;
@@ -141,7 +141,7 @@ public class DemandasView
 		this.turnoBuscaCB = new TurnoComboBox( cenarioDTO );
 		this.filter.addField( this.turnoBuscaCB );
 
-		this.disciplinaBuscaCB = new DisciplinaComboBox( cenarioDTO );
+		this.disciplinaBuscaCB = new DisciplinaAutoCompleteBox( cenarioDTO );
 		this.filter.addField( this.disciplinaBuscaCB );
 
 		this.panel.add( this.filter, bld );
@@ -221,7 +221,7 @@ public class DemandasView
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaBuscaComboBox()
+	public DisciplinaAutoCompleteBox getDisciplinaBuscaComboBox()
 	{
 		return this.disciplinaBuscaCB;
 	}

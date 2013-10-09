@@ -2,9 +2,12 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -12,12 +15,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -62,6 +69,18 @@ public class Aluno
 	@NotNull
 	@Column( name = "ALN_FORMANDO" )
 	private Boolean formando;
+	
+    @Column( name = "ALN_PERIODO" )
+    @Min( 0L )
+    @Max( 100L )
+    private Integer periodo;
+    
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
+	@JoinTable(name="curriculos_disciplinas_alunos",
+	joinColumns={ @JoinColumn(name="aln_id") },
+	inverseJoinColumns={ @JoinColumn(name="cdi_id") })
+    private Set< CurriculoDisciplina > cursou = new HashSet< CurriculoDisciplina >();
 
 	public String toString()
 	{
@@ -72,7 +91,10 @@ public class Aluno
 		sb.append( "Instituicao de Ensino: " ).append( getInstituicaoEnsino() ).append( ", " );
 		sb.append( "Nome: " ).append( getNome() ).append( ", " );
 		sb.append( "Matricula: " ).append( getMatricula() ).append( ", " );
-		sb.append( "Formando: " ).append( getFormando() );
+		sb.append( "Formando: " ).append( getFormando() ).append( ", " );
+		sb.append( "Periodo: " ).append( getPeriodo() ).append( ", " );
+		sb.append( "Cursou: " ).append( getCursou() == null ?
+				"null" : getCursou().size() );
 
 		return sb.toString();
 	}
@@ -158,6 +180,26 @@ public class Aluno
 	public void setCenario( Cenario cenario )
 	{
 		this.cenario = cenario;
+	}
+	
+	public Integer getPeriodo()
+	{
+		return this.periodo;
+	}
+
+	public void setPeriodo( Integer periodo )
+	{
+		this.periodo = periodo;
+	}
+	
+	public Set<CurriculoDisciplina> getCursou()
+	{
+		return cursou;
+	}
+	
+	public void setCursou( Set<CurriculoDisciplina> cursou )
+	{
+		this.cursou = cursou;
 	}
 
 	@Transactional
@@ -582,5 +624,16 @@ public class Aluno
 		}
 
 		return alunosMap;
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Aluno > findAlunosComDisciplinasCursadas(
+		InstituicaoEnsino instituicaoEnsino )
+	{
+		return entityManager().createQuery(
+			" SELECT o FROM Aluno o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cursou IS NOT EMPTY" )
+			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
 }

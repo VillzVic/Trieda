@@ -6,10 +6,14 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AlunoDTO;
+import com.gapso.web.trieda.shared.dtos.AlunoDisciplinaCursadaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaRequisitoDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -49,4 +53,22 @@ public interface CurriculosService
 	List< Integer > getPeriodos( CurriculoDTO curriculoDTO );
 	ListLoadResult< CurriculoDTO > getListByCurso( CursoDTO cursoDTO );
 	ListLoadResult< CurriculoDTO > getListAll( CenarioDTO cenarioDTO );
+	PagingLoadResult<DisciplinaRequisitoDTO> getDisciplinasPreRequisitosList( CenarioDTO cenarioDTO,
+			DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO, Integer periodo, PagingLoadConfig config);
+	PagingLoadResult<DisciplinaRequisitoDTO> getDisciplinasCoRequisitosList( CenarioDTO cenarioDTO,
+			DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO, Integer periodo, PagingLoadConfig config);
+	void saveDisciplinaPreRequisito(CenarioDTO cenarioDTO, DisciplinaRequisitoDTO disciplinaRequisitoDTO,
+			DisciplinaDTO disciplinaDTO);
+	void removeDisciplinasPreRequisitos(CenarioDTO cenarioDTO, List<DisciplinaRequisitoDTO> disciplinasRequisitosDTO);
+	void saveDisciplinaCoRequisito(CenarioDTO cenarioDTO, DisciplinaRequisitoDTO disciplinaRequisitoDTO,
+			DisciplinaDTO disciplinaDTO);
+	void removeDisciplinasCoRequisitos(CenarioDTO cenarioDTO, List<DisciplinaRequisitoDTO> disciplinasRequisitosDTO);
+	PagingLoadResult<AlunoDisciplinaCursadaDTO> getAlunosDisciplinasCursadasList( CenarioDTO cenarioDTO,
+			DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO, Integer periodo, PagingLoadConfig config );
+	void saveAlunoDisciplinaCursada(CenarioDTO cenarioDTO, AlunoDTO alunoDTO,
+			List<CurriculoDisciplinaDTO> curriculosDisciplinasDTO);
+	void removeAlunosDisciplinasCursadas(CenarioDTO cenarioDTO,
+			List<AlunoDisciplinaCursadaDTO> alunosDisciplinasCursadasDTO);
+	ListLoadResult<CurriculoDisciplinaDTO> getAlunosDisciplinasNaoCursadasList(CenarioDTO cenarioDTO, AlunoDTO alunoDTO,
+			CurriculoDTO curriculoDTO);
 }

@@ -34,6 +34,7 @@ public class ToolBarView
 	private ToolBar professoresToolBar;
 	private ToolBar relatoriosToolBar;
 	private ToolBar administracaoToolBar;
+	private ToolBar geracaoDemandaToolBar;
 	private ToolBar calendarioToolBar;
 	private ToolBar planejamentoToolBar;
 
@@ -62,6 +63,8 @@ public class ToolBarView
 	private Button areasTitulacaoListCursosBt;
 	private Button vincularAreasTitulacaoListCursosBt;
 	private Button curriculosListCursosBt;
+	private Button curriculosDisciplinasPreRequisitosListCursosBt;
+	private Button curriculosDisciplinasCoRequisitosListCursosBt;
 	private Button ofertasListCursosBt;
 
 	// Disciplinas
@@ -69,6 +72,8 @@ public class ToolBarView
 	private Button disciplinasListDisciplinasBt;
 	private Button demandasDisciplinasBt;
 	private Button curriculosListDisciplinasBt;
+	private Button curriculosDisciplinasPreRequisitosListDisciplinasBt;
+	private Button curriculosDisciplinasCoRequisitosListDisciplinasBt;
 	private Button associarDisciplinasSalasListDisciplinasBt;
 	private Button associarDisciplinasGruposSalasListDisciplinasBt;
 	private Button divisaoCreditosListDisciplinasBt;
@@ -78,6 +83,7 @@ public class ToolBarView
 	// Alunos
 	private Button alunosNovoAlunoBt;
 	private Button alunosListAlunosBt;
+	private Button alunosDisciplinasCursadasBt;
 
 	// Professores
 	private Button professoresNovoProfessoresBt;
@@ -104,6 +110,13 @@ public class ToolBarView
 	private Button importarBt;
 	private Button exportarBt;
 	private Button carregarSolucaoBt;
+	
+	// Geracao de Demanda
+	private Button curriculosListDemandasBt;
+	private Button curriculosDisciplinasPreRequisitosListDemandasBt;
+	private Button curriculosDisciplinasCoRequisitosListDemandasBt;
+	private Button alunosDisciplinasCursadasDemandasBt;
+	private Button parametrosGeracaoDemandaBt;
 
 	// Calendário
 	private Button semanasLetivaListCampiBt;
@@ -149,6 +162,7 @@ public class ToolBarView
 		TabItem relatoriosTabItem = new TabItem( "Relatórios" );
 		TabItem administracaoTabItem = new TabItem( "Administração" );
 		TabItem calendarioTabItem = new TabItem( "Calendário" );
+		TabItem geracaoDemandaTabItem = new TabItem( "Geração de Demanda" );
 
 		planejamentoToolBar = new ToolBar();
 
@@ -162,6 +176,7 @@ public class ToolBarView
 		professoresToolBar = new ToolBar();
 		relatoriosToolBar = new ToolBar();
 		administracaoToolBar = new ToolBar();
+		geracaoDemandaToolBar = new ToolBar();
 		calendarioToolBar = new ToolBar();
 
 		campiTabItem.add( campiToolBar );
@@ -174,6 +189,7 @@ public class ToolBarView
 		relatoriosTabItem.add( relatoriosToolBar );
 		calendarioTabItem.add( calendarioToolBar );
 		administracaoTabItem.add( administracaoToolBar );
+		geracaoDemandaTabItem.add( geracaoDemandaToolBar );
 
 		createGroups();
 
@@ -197,6 +213,7 @@ public class ToolBarView
 		masterDataTab.add( professoresTabItem );
 		masterDataTab.add( relatoriosTabItem );
 		masterDataTab.add( administracaoTabItem );
+		masterDataTab.add( geracaoDemandaTabItem );
 
 		masterDataTab.setSelection( calendarioTabItem );
 
@@ -219,6 +236,7 @@ public class ToolBarView
 		createProfessores();
 		createRelatorios();
 		createAdministracao();
+		createGeracaoDemanda();
 		createCalendario();
 		createPlanejamento();
 	}
@@ -316,6 +334,14 @@ public class ToolBarView
 		curriculosListCursosBt = createButton( "Matrizes<br />Curriculares",
 			"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
 		cursosToolBar.add( curriculosListCursosBt );
+		
+		curriculosDisciplinasPreRequisitosListCursosBt = createButton( "Disciplinas<br />Pré-Requisitos",
+			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+		cursosToolBar.add( curriculosDisciplinasPreRequisitosListCursosBt );
+		
+		curriculosDisciplinasCoRequisitosListCursosBt = createButton( "Disciplinas<br />Co-Requisitos",
+				"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+			cursosToolBar.add( curriculosDisciplinasCoRequisitosListCursosBt );
 
 		tiposCursosListCursosBt = createButton( "Tipos de<br />Curso",
 			"Tipos de Curso", Resources.DEFAULTS.tipoCurso24() );
@@ -347,6 +373,14 @@ public class ToolBarView
 		curriculosListDisciplinasBt = createButton( "Matrizes<br />Curriculares",
 			"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
 		disciplinasToolBar.add( curriculosListDisciplinasBt );
+		
+		curriculosDisciplinasPreRequisitosListDisciplinasBt = createButton( "Disciplinas<br />Pré-Requisitos",
+			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+		disciplinasToolBar.add( curriculosDisciplinasPreRequisitosListDisciplinasBt );
+		
+		curriculosDisciplinasCoRequisitosListDisciplinasBt = createButton( "Disciplinas<br />Co-Requisitos",
+				"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+			disciplinasToolBar.add( curriculosDisciplinasCoRequisitosListDisciplinasBt );
 
 		demandasDisciplinasBt = createButton( "Previsão de<br />demanda",
 			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
@@ -375,6 +409,10 @@ public class ToolBarView
 		alunosListAlunosBt = createButton( "Listar",
 			"Listar Alunos", Resources.DEFAULTS.professorListar24() );
 		alunosToolBar.add( alunosListAlunosBt );
+		
+		alunosDisciplinasCursadasBt = createButton( "Disciplinas<br /> Cursadas",
+				"Disciplinas Cursadas", Resources.DEFAULTS.alunoCurriculo24() );
+			alunosToolBar.add( alunosDisciplinasCursadasBt );
 	}
 
 	private void createProfessores()
@@ -465,6 +503,30 @@ public class ToolBarView
 		
 		carregarSolucaoBt = createButton("Carregar<br />Solução","Carregar Solução",Resources.DEFAULTS.trieda24());
 		administracaoToolBar.add(carregarSolucaoBt);
+	}
+	
+	private void createGeracaoDemanda() {
+		
+		curriculosListDemandasBt = createButton( "Matrizes<br />Curriculares",
+				"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
+		geracaoDemandaToolBar.add( getCurriculosListDemandasButton() );
+			
+		curriculosDisciplinasPreRequisitosListDemandasBt = createButton( "Disciplinas<br />Pré-Requisitos",
+			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+		geracaoDemandaToolBar.add( getCurriculosDisciplinasPreRequisitosDemandasButton() );
+			
+		curriculosDisciplinasCoRequisitosListDemandasBt = createButton( "Disciplinas<br />Co-Requisitos",
+			"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+		geracaoDemandaToolBar.add( getCurriculosDisciplinasCoRequisitosDemandasButton() );
+		
+		alunosDisciplinasCursadasDemandasBt = createButton( "Disciplinas<br /> Cursadas",
+			"Disciplinas Cursadas", Resources.DEFAULTS.alunoCurriculo24() );
+		geracaoDemandaToolBar.add( alunosDisciplinasCursadasDemandasBt );
+		
+		parametrosGeracaoDemandaBt = createButton( "Parâmetros para<br /> Geração de Demanda",
+			"Parâmetros para Geração de Demanda", Resources.DEFAULTS.parametroPlanejamento24() );
+		geracaoDemandaToolBar.add( parametrosGeracaoDemandaBt );
+		
 	}
 
 	private void createCalendario()
@@ -828,4 +890,55 @@ public class ToolBarView
 	{
 		return alunosListAlunosBt;
 	}
+
+	@Override
+	public Button getCurriculosDisciplinasPreRequisitosCursosButton() {
+		return curriculosDisciplinasPreRequisitosListCursosBt;
+	}
+
+	@Override
+	public Button getCurriculosDisciplinasPreRequisitosDisciplinasButton() {
+		return curriculosDisciplinasPreRequisitosListDisciplinasBt;
+	}
+	
+	@Override
+	public Button getCurriculosDisciplinasCoRequisitosCursosButton() {
+		return curriculosDisciplinasCoRequisitosListCursosBt;
+	}
+
+	@Override
+	public Button getCurriculosDisciplinasCoRequisitosDisciplinasButton() {
+		return curriculosDisciplinasCoRequisitosListDisciplinasBt;
+	}
+	
+	@Override
+	public Button getAlunosDisciplinasCursadasButton() {
+		return alunosDisciplinasCursadasBt;
+	}
+
+	@Override
+	public Button getCurriculosListDemandasButton() {
+		return curriculosListDemandasBt;
+	}
+
+	@Override
+	public Button getCurriculosDisciplinasPreRequisitosDemandasButton() {
+		return curriculosDisciplinasPreRequisitosListDemandasBt;
+	}
+
+	@Override
+	public Button getCurriculosDisciplinasCoRequisitosDemandasButton() {
+		return curriculosDisciplinasCoRequisitosListDemandasBt;
+	}
+	
+	@Override
+	public Button getAlunosDisciplinasCursadasDemandasButton() {
+		return alunosDisciplinasCursadasDemandasBt;
+	}
+	
+	@Override
+	public Button getParametrosGeracaoDemandaButton() {
+		return parametrosGeracaoDemandaBt;
+	}
+
 }

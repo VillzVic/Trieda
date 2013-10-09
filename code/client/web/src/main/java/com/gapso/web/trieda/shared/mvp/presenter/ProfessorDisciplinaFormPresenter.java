@@ -11,7 +11,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
@@ -23,7 +23,7 @@ public class ProfessorDisciplinaFormPresenter implements Presenter {
 	public interface Display {
 		Button getSalvarButton();
 		ProfessorComboBox getProfessorComboBox();
-		DisciplinaComboBox getDisciplinaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaComboBox();
 		NumberField getPreferenciaNumberField();
 		NumberField getNotaDesempenhoNumberField();
 		ProfessorDisciplinaDTO getProfessorDisciplinaDTO();

@@ -38,6 +38,7 @@ public class DisciplinaFormView
 	private DificuldadeComboBox dificuldadeCB;
 	private NumberField maxAlunosTeoricoTF;
 	private NumberField maxAlunosPraticoTF;
+	private NumberField cargaHorariaTF;
 	private DisciplinaDTO disciplinaDTO;
 	private TipoDisciplinaDTO tipoDisciplinaDTO;
 	private CenarioDTO cenarioDTO;
@@ -61,7 +62,7 @@ public class DisciplinaFormView
 		String title = (disciplinaDTO.getId() == null) ? "Inserção de Disciplina"
 				: "Edição de Disciplina";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.disciplina16());
-		simpleModal.setHeight(530);
+		simpleModal.setHeight(580);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -157,6 +158,17 @@ public class DisciplinaFormView
 				.setEmptyText("Preencha o número máximo de alunos práticos");
 		formPanel.add(maxAlunosPraticoTF, formData);
 		
+		cargaHorariaTF = new NumberField();
+		cargaHorariaTF.setName(DisciplinaDTO.PROPERTY_CARGA_HORARIA);
+		cargaHorariaTF.setValue(disciplinaDTO.getCargaHoraria());
+		cargaHorariaTF.setFieldLabel("Carga Horária");
+		cargaHorariaTF.setAllowBlank(true);
+		cargaHorariaTF.setAllowDecimals(false);
+		cargaHorariaTF.setMaxValue(999);
+		cargaHorariaTF
+				.setEmptyText("Preencha a carga horária");
+		formPanel.add(cargaHorariaTF, formData);
+		
 		aulasContinuasCB = new CheckBox();
 		aulasContinuasCB.setName(DisciplinaDTO.PROPERTY_AULAS_CONTINUAS);
 		aulasContinuasCB.setValue(disciplinaDTO.getAulasContinuas());
@@ -249,6 +261,11 @@ public class DisciplinaFormView
 	@Override
 	public NumberField getMaxAlunosPraticoTextField() {
 		return maxAlunosPraticoTF;
+	}
+	
+	@Override
+	public NumberField getCargaHorariaTextField() {
+		return cargaHorariaTF;
 	}
 	
 	@Override

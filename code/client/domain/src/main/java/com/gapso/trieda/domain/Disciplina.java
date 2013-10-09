@@ -127,6 +127,10 @@ public class Disciplina
 	@NotNull
 	@Column( name = "DIS_PROFESSOR_UNICO" )
 	private Boolean professorUnico;
+	
+	@Column( name = "DIS_CARGA_HORARIA" )
+	@Max( 999L )
+	private Integer cargaHoraria;
 
 	@ManyToMany( cascade = { CascadeType.PERSIST,
 		CascadeType.MERGE }, mappedBy = "disciplinas" )
@@ -181,6 +185,20 @@ public class Disciplina
 	inverseJoinColumns={ @JoinColumn(name="grs_id") })
     private Set< GrupoSala > gruposSala = new HashSet< GrupoSala >();
 
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
+    @JoinTable(name="curriculos_disciplinas_disciplinas_prerequisitos",
+    joinColumns={ @JoinColumn(name="dis_id") },
+    inverseJoinColumns={ @JoinColumn(name="cdi_id") })
+    private Set< CurriculoDisciplina > preRequisitos = new HashSet< CurriculoDisciplina >();
+    
+    @ManyToMany( cascade = { CascadeType.PERSIST,
+    CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
+    @JoinTable(name="curriculos_disciplinas_disciplinas_corequisitos",
+    joinColumns={ @JoinColumn(name="dis_id") },
+    inverseJoinColumns={ @JoinColumn(name="cdi_id") })
+    private Set< CurriculoDisciplina > coRequisitos = new HashSet< CurriculoDisciplina >();
+    
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
@@ -200,6 +218,7 @@ public class Disciplina
 		sb.append( "MaxAlunosPratico: " ).append( getMaxAlunosPratico() ).append( ", " );
 		sb.append( "UsaSabado: ").append( getUsaSabado() ).append( ", " );
 		sb.append( "UsaDomingo: ").append( getUsaDomingo() ).append( ", " );
+		sb.append( "CargaHoraria: ").append( getCargaHoraria() ).append( ", " );
 		sb.append( "Horarios: " ).append( getHorarios() == null ?
 			"null" : getHorarios().size() ).append( ", " );
 		sb.append( "Professores: " ).append( getProfessores() == null ?
@@ -223,7 +242,11 @@ public class Disciplina
         sb.append( "Salas: " ).append( getSalas() == null ? "null" :
         	getSalas().size() ).append( ", " );
         sb.append( "GruposSala: " ).append( getGruposSala() == null ? "null" :
-        	getGruposSala().size() );
+        	getGruposSala().size() ).append( ", " );
+        sb.append( "PreRequisitos: " ).append( getPreRequisitos() == null ? "null" :
+        	getPreRequisitos().size() ).append( ", " );
+        sb.append( "CoRequisitos: " ).append( getCoRequisitos() == null ? "null" :
+        	getCoRequisitos().size() );
 
 		return sb.toString();
 	}
@@ -281,6 +304,26 @@ public class Disciplina
 	{
         this.gruposSala = gruposSala;
     }
+	
+	public Set<CurriculoDisciplina> getPreRequisitos()
+	{
+		return this.preRequisitos;
+	}
+	
+	public void setPreRequisitos( Set<CurriculoDisciplina> preRequisitos )
+	{
+		this.preRequisitos = preRequisitos;
+	}
+
+	public Set<CurriculoDisciplina> getCoRequisitos()
+	{
+		return this.coRequisitos;
+	}
+	
+	public void setCoRequisitos( Set<CurriculoDisciplina> coRequisitos )
+	{
+		this.coRequisitos = coRequisitos;
+	}
 	
 	@Transactional
 	public void detach()
@@ -1089,6 +1132,17 @@ public class Disciplina
 	public void setUsaDomingo( Boolean usaDomingo )
 	{
 		this.usaDomingo = usaDomingo;
+	}
+	
+	public Integer getCargaHoraria()
+	{
+		return this.cargaHoraria;
+	}
+
+	public void setCargaHoraria(
+		Integer cargaHoraria )
+	{
+		this.cargaHoraria = cargaHoraria;
 	}
 
 	private Set< HorarioDisponivelCenario > getHorarios()

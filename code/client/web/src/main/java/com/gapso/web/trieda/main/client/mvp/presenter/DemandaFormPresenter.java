@@ -21,7 +21,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.DemandasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.OfertaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
@@ -38,7 +38,7 @@ public class DemandaFormPresenter
 		TextField<CursoDTO> getCursoTextField();
 		TextField<CurriculoDTO> getCurriculoTextField();
 		TextField<TurnoDTO> getTurnoTextField();
-		DisciplinaComboBox getDisciplinaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaComboBox();
 		NumberField getDemandaTextField();
 		DemandaDTO getDemandaDTO();
 		boolean isValid();

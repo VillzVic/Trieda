@@ -35,6 +35,9 @@ public enum ExcelInformationType
 	ATENDIMENTOS_FAIXA_DEMANDA("Atendimentos Faixa de Demanda"),
 	PERCENT_MESTRES_DOUTORES("Porcentagem Mestres e Doutores"),
 	ATENDIMENTOS_CARGA_HORARIA("Atendimentos por Carga Horaria"),
+	DISCIPLINAS_PRE_REQUISITOS("Disciplinas Pre-Requisitos"),
+	DISCIPLINAS_CO_REQUISITOS("Disciplinas Co-Requisitos"),
+	ALUNOS_DISCIPLINAS_CURSADAS("Disciplinas Cursadas por Aluno"),
 	TODAS_TABELAS( "" ),
 	TODAS_GRADES_HORARIAS( "" ),
 	TODAS_VISAO_ALUNO( "" );

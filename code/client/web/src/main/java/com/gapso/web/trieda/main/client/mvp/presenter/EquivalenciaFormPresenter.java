@@ -22,7 +22,7 @@ import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -37,8 +37,8 @@ public class EquivalenciaFormPresenter
 	public interface Display
 	{
 		Button getSalvarButton();
-		DisciplinaComboBox getDisciplinaCursouComboBox();
-		DisciplinaComboBox getDisciplinaEliminaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaCursouComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaEliminaComboBox();
 		CheckBox getEquivalenciaGeralCheckBox();
 		EquivalenciaDTO getEquivalenciaDTO();
 		boolean isValid();

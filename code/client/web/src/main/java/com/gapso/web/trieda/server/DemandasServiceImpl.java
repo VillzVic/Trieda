@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.server;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
@@ -22,15 +26,22 @@ import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.ParametroGeracaoDemanda;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.Atendimento;
 import com.gapso.web.trieda.server.util.Atendimento.TipoCredito;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportFileWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportListReader;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportListWriter;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportReader;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportWriter;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -39,6 +50,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.DemandasService;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -47,6 +59,7 @@ public class DemandasServiceImpl
 	extends RemoteService implements DemandasService
 {
 	private static final long serialVersionUID = 5250776996542788849L;
+	private ProgressReportWriter progressReport;
 	
 	public ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> calculaQuantidadeDeNaoAtendimentosPorDemanda(Collection<Oferta> ofertas) {
 		// preenche estruturas auxiliares
@@ -670,4 +683,496 @@ public class DemandasServiceImpl
 		
 		return periodo; 
 	}
+	
+	@Override
+	public ParametroGeracaoDemandaDTO getParametroGeracaoDemanda( CenarioDTO cenarioDTO )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List< Campus > listCampus = Campus.findByCenario( getInstituicaoEnsinoUser(), cenario );
+		List< Turno > listTurnos = Turno.findAll( getInstituicaoEnsinoUser(), cenario );
+		
+		ParametroGeracaoDemanda parametroGeracaoDemanda = new ParametroGeracaoDemanda();
+		parametroGeracaoDemanda.setTurno( ( listTurnos == null || listTurnos.size() == 0 ? null : listTurnos.get( 0 ) ) );
+		parametroGeracaoDemanda.setCampus( ( listCampus == null || listCampus.size() == 0 ? null : listCampus.get( 0 ) ) );
+
+		return ConvertBeans.toParametroGeracaoDemandaDTO(parametroGeracaoDemanda);
+	}
+	
+	@Override
+	public void calculaPrioridadesParaDisciplinasNaoCursadasPorAluno( CenarioDTO cenarioDTO, ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO )
+	{
+		Map<Curriculo, Oferta> ofertasCurriculosMap = new HashMap<Curriculo, Oferta>();
+		Map<CurriculoDisciplina, Integer> demandas = new HashMap<CurriculoDisciplina, Integer>();
+		Map<CurriculoDisciplina, Set<Aluno>> disciplinasMapAlunos = new HashMap<CurriculoDisciplina, Set<Aluno>>();
+		ParametroGeracaoDemanda parametroGeracaoDemanda = ConvertBeans.toParametroGeracaoDemanda(parametroGeracaoDemandaDTO);
+		Campus campus = parametroGeracaoDemanda.getCampus();
+		Turno turno = parametroGeracaoDemanda.getTurno();
+		
+		initProgressReport("chaveGeracaoDemanda");
+		getProgressReport().setInitNewPartial("Iniciando geração das demandas");
+
+		List<Aluno> todosAlunos = Aluno.findAlunosComDisciplinasCursadas(getInstituicaoEnsinoUser());
+		Map<Curriculo, Map<Integer, List< CurriculoDisciplina >>> curriculoToPeriodosMapToDisciplinasMap =
+				montaCurriculoToPeriodosMapToDisciplinasMap(cenarioDTO);
+		System.out.println("Comecando alunos: " + todosAlunos.size() );
+		for (Aluno aluno : todosAlunos)
+		{
+			Curriculo curriculoAluno = encontraCurriculo(aluno);
+			Map<Integer, List<CurriculoDisciplina>> periodoToAlunoDisciplinasNaoCursadasMap = encontraDisciplinasNaoCursadas(
+					curriculoToPeriodosMapToDisciplinasMap, curriculoAluno, aluno);
+			int periodoDoAluno = aluno.getPeriodo() == null ? -1 : aluno.getPeriodo();
+			boolean alunoTemDisciplinasAtrasadas = false;
+			for (List<CurriculoDisciplina> disciplinasNaoCursadas : periodoToAlunoDisciplinasNaoCursadasMap.values() )
+			{
+				for (CurriculoDisciplina disciplinaNaoCursada : disciplinasNaoCursadas)
+				{
+					if(disciplinaNaoCursada.getPeriodo() < periodoDoAluno)
+					{
+						alunoTemDisciplinasAtrasadas = true;
+					}
+				}
+			}
+			
+			int maxCreditosSemanais = calculaMaxCreditosSemanaisParaOAluno(curriculoToPeriodosMapToDisciplinasMap,
+					curriculoAluno, periodoDoAluno, turno, alunoTemDisciplinasAtrasadas, parametroGeracaoDemanda);
+			
+			Set<Disciplina> disciplinasP1 = new HashSet<Disciplina>();
+			int somaCreditosP1 = 0;
+			
+			List<Integer> periodos = curriculoAluno.getPeriodos();
+			Collections.sort(periodos);
+			for (Integer periodo : periodos)
+			{
+				List<CurriculoDisciplina> disciplinasNaoCursadasPeriodo = periodoToAlunoDisciplinasNaoCursadasMap.get(periodo);
+				if(disciplinasNaoCursadasPeriodo != null){
+					for (CurriculoDisciplina disciplina : disciplinasNaoCursadasPeriodo)
+					{
+						if (!disciplinasP1.contains(disciplina.getDisciplina()))
+						{
+							boolean disciplinaPossuiPreRequisitoAindaNaoCursadoPeloAluno = false;
+							if (parametroGeracaoDemanda.getConsiderarPreRequisitos())
+							{
+								disciplinaPossuiPreRequisitoAindaNaoCursadoPeloAluno = temPreRequisitoAindaNaoCursadoPeloAluno(disciplina, curriculoAluno,
+										periodoToAlunoDisciplinasNaoCursadasMap);
+							}
+							Set<CurriculoDisciplina> coRequisitosAindaNaoCursadosENaoOferecidos = null;
+							if (parametroGeracaoDemanda.getConsiderarCoRequisitos())
+							{
+								coRequisitosAindaNaoCursadosENaoOferecidos = retornaCoRequisitosAindaNaoCursadosENaoOferecidos(curriculoAluno,
+										periodo, disciplina, periodoToAlunoDisciplinasNaoCursadasMap, maxCreditosSemanais, disciplinasP1);
+							}
+							
+							int prioridadeCalculada = calculaPrioridade(curriculoAluno, periodo, disciplina.getDisciplina().getTotalCreditos(),
+									periodoDoAluno, disciplinaPossuiPreRequisitoAindaNaoCursadoPeloAluno, coRequisitosAindaNaoCursadosENaoOferecidos,
+									periodoToAlunoDisciplinasNaoCursadasMap, somaCreditosP1, maxCreditosSemanais,
+									parametroGeracaoDemanda.getDistanciaMaxEmPeriodosParaPrioridade2());
+							if (prioridadeCalculada == 1)
+							{
+								somaCreditosP1 += disciplina.getDisciplina().getTotalCreditos();
+								disciplinasP1.add(disciplina.getDisciplina());
+								if(coRequisitosAindaNaoCursadosENaoOferecidos != null)
+								{
+									for (CurriculoDisciplina disciplinaCoRequisito : coRequisitosAindaNaoCursadosENaoOferecidos)
+									{
+										if (!disciplinasP1.contains(disciplinaCoRequisito.getDisciplina()))
+										{
+											disciplinasP1.add(disciplinaCoRequisito.getDisciplina());
+											somaCreditosP1 += disciplinaCoRequisito.getDisciplina().getTotalCreditos();
+											if(demandas.get(disciplinaCoRequisito) == null)
+											{
+												demandas.put(disciplinaCoRequisito, 1);
+											}
+											else
+											{
+												demandas.put(disciplinaCoRequisito, demandas.get(disciplinaCoRequisito)+1);
+											}
+											if(disciplinasMapAlunos.get(disciplinaCoRequisito) == null)
+											{
+												Set<Aluno> alunos = new HashSet<Aluno>();
+												alunos.add(aluno);
+												disciplinasMapAlunos.put(disciplinaCoRequisito, alunos);
+											}
+											else
+											{
+												disciplinasMapAlunos.get(disciplinaCoRequisito).add(aluno);
+											}
+										}
+									}
+								}
+								if(demandas.get(disciplina) == null)
+								{
+									demandas.put(disciplina, 1);
+								}
+								else
+								{
+									demandas.put(disciplina, demandas.get(disciplina)+1);
+								}
+								if(disciplinasMapAlunos.get(disciplina) == null)
+								{
+									Set<Aluno> alunos = new HashSet<Aluno>();
+									alunos.add(aluno);
+									disciplinasMapAlunos.put(disciplina, alunos);
+								}
+								else
+								{
+									disciplinasMapAlunos.get(disciplina).add(aluno);
+								}
+							}					
+						}
+					}
+				}
+			}
+			Oferta novaOferta = new Oferta();
+			novaOferta.setCampus(campus);
+			novaOferta.setCurriculo(curriculoAluno);
+			novaOferta.setTurno(turno);
+			novaOferta.setCurso(curriculoAluno.getCurso());
+			ofertasCurriculosMap.put(curriculoAluno, novaOferta);
+		}
+		getProgressReport().setPartial("Etapa concluída");
+		
+		getProgressReport().setInitNewPartial("Inserindo demandas no banco");
+		createOfertasDemandasEAlunosDemanda(ofertasCurriculosMap, demandas, disciplinasMapAlunos);
+		getProgressReport().setPartial("Etapa concluída");
+		System.out.println("Ofertas: " + ofertasCurriculosMap.size());
+		System.out.println("Demandas: " + demandas.size());
+		System.out.println("AlunosDemandas: " + disciplinasMapAlunos.size());
+		getProgressReport().finish();
+	}
+
+	@Transactional
+	private void createOfertasDemandasEAlunosDemanda(Map<Curriculo, Oferta> ofertasCurriculosMap,
+			Map<CurriculoDisciplina, Integer> demandas,	Map<CurriculoDisciplina, Set<Aluno>> alunosDemanda) {
+		int i = 0;
+		for (Entry<CurriculoDisciplina, Integer> demanda : demandas.entrySet())
+		{
+			if (demanda.getValue() > 0)
+			{
+				Demanda novaDemanda = new Demanda();
+				novaDemanda.setDisciplina(demanda.getKey().getDisciplina());
+				novaDemanda.setOferta(ofertasCurriculosMap.get(demanda.getKey().getCurriculo()));
+				novaDemanda.setQuantidade(demanda.getValue());
+				novaDemanda.persist();
+				for (Aluno aluno : alunosDemanda.get(demanda.getKey()))
+				{
+					AlunoDemanda novoAlunoDemanda = new AlunoDemanda();
+					novoAlunoDemanda.setAluno(aluno);
+					novoAlunoDemanda.setDemanda(novaDemanda);
+					novoAlunoDemanda.setPeriodo(demanda.getKey().getPeriodo());
+					novoAlunoDemanda.setPrioridade(1);
+					novoAlunoDemanda.persist();
+					i++;
+					if (i%100 == 0) {
+						System.out.println("Inseriu: " + i + " alunosDemanda");
+					}
+				}
+			}
+		}
+		System.out.println(i + " Demandas por aluno inseridas");
+		
+	}
+
+	private Curriculo encontraCurriculo( Aluno aluno )
+	{
+		Curriculo curriculo = null;
+		Map<Curriculo, Integer> curriculoToQuantidadeMap = new HashMap<Curriculo, Integer>();
+		for (CurriculoDisciplina disciplinasCursadas : aluno.getCursou())
+		{
+			int maiorNumCurriculos = 0;
+			if (curriculoToQuantidadeMap.get(disciplinasCursadas.getCurriculo()) == null)
+			{
+				curriculoToQuantidadeMap.put(disciplinasCursadas.getCurriculo(), 1);
+			}
+			else
+			{
+				curriculoToQuantidadeMap.put(disciplinasCursadas.getCurriculo(),
+						curriculoToQuantidadeMap.get(disciplinasCursadas.getCurriculo())+1);
+			}
+			
+			if (curriculoToQuantidadeMap.get(disciplinasCursadas.getCurriculo()) > maiorNumCurriculos)
+			{
+				curriculo = disciplinasCursadas.getCurriculo();
+				maiorNumCurriculos = curriculoToQuantidadeMap.get(disciplinasCursadas.getCurriculo());
+			}
+		}
+		
+		return curriculo;
+	}
+	
+	private Map<Curriculo, Map<Integer, List<CurriculoDisciplina>>> montaCurriculoToPeriodosMapToDisciplinasMap(CenarioDTO cenarioDTO)
+	{
+		List<CurriculoDisciplina> todosCurriculosDisciplinas =
+				CurriculoDisciplina.findByCenario(getInstituicaoEnsinoUser(), ConvertBeans.toCenario(cenarioDTO));
+		
+		Map<Curriculo, Map<Integer, List<CurriculoDisciplina>>> curriculoMapToPeriodosMapToDisciplinas =
+				new HashMap<Curriculo, Map<Integer, List<CurriculoDisciplina>>>();
+		
+		for (CurriculoDisciplina curriculoDisciplina : todosCurriculosDisciplinas)
+		{
+			if (curriculoMapToPeriodosMapToDisciplinas.get(curriculoDisciplina.getCurriculo()) == null)
+			{					
+				List<CurriculoDisciplina> novoCurriculoDisciplina = new ArrayList<CurriculoDisciplina>();
+				novoCurriculoDisciplina.add(curriculoDisciplina);
+				Map<Integer, List<CurriculoDisciplina>> periodoMapToDisciplinas = 
+						new HashMap<Integer, List<CurriculoDisciplina>>();
+				periodoMapToDisciplinas.put(curriculoDisciplina.getPeriodo(), novoCurriculoDisciplina);
+				curriculoMapToPeriodosMapToDisciplinas.put(curriculoDisciplina.getCurriculo(), periodoMapToDisciplinas);
+			}
+			else
+			{
+				if (curriculoMapToPeriodosMapToDisciplinas.get(curriculoDisciplina.getCurriculo())
+						.get(curriculoDisciplina.getPeriodo()) == null)
+				{
+					List<CurriculoDisciplina> novoCurriculoDisciplina = new ArrayList<CurriculoDisciplina>();
+					novoCurriculoDisciplina.add(curriculoDisciplina);
+					curriculoMapToPeriodosMapToDisciplinas.get(curriculoDisciplina.getCurriculo())
+						.put(curriculoDisciplina.getPeriodo(), novoCurriculoDisciplina);
+				}
+				else
+				{
+					curriculoMapToPeriodosMapToDisciplinas.get(curriculoDisciplina.getCurriculo())
+						.get(curriculoDisciplina.getPeriodo()).add(curriculoDisciplina);
+				}
+			}
+		}
+		
+		return curriculoMapToPeriodosMapToDisciplinas;
+	}
+
+	private Map<Integer, List<CurriculoDisciplina>> encontraDisciplinasNaoCursadas(
+			Map<Curriculo, Map<Integer, List<CurriculoDisciplina>>> curriculoToPeriodosMapToDisciplinasMap,
+			Curriculo curriculo, Aluno aluno)
+	{
+		Map<Integer, List<CurriculoDisciplina>> periodoToDisciplinasNaoCursadasMap = new HashMap<Integer, List<CurriculoDisciplina>>();
+
+		for (List<CurriculoDisciplina> disciplinas : curriculoToPeriodosMapToDisciplinasMap.get(curriculo).values())
+		{
+			for (CurriculoDisciplina disciplina : disciplinas)
+			{
+				if (!disciplina.getCursadoPor().contains(aluno))
+				{
+					if (periodoToDisciplinasNaoCursadasMap.get(disciplina.getPeriodo()) == null)
+					{
+						List<CurriculoDisciplina> disciplinasNaoCursadas = new ArrayList<CurriculoDisciplina>();
+						disciplinasNaoCursadas.add(disciplina);
+						periodoToDisciplinasNaoCursadasMap.put(disciplina.getPeriodo(), disciplinasNaoCursadas);
+					}
+					else
+					{
+						periodoToDisciplinasNaoCursadasMap.get(disciplina.getPeriodo()).add(disciplina);
+					}
+				}
+			}
+		}
+
+		return periodoToDisciplinasNaoCursadasMap;
+	}
+	
+	private int calculaMaxCreditosSemanaisParaOAluno(Map<Curriculo, Map<Integer, List<CurriculoDisciplina>>> curriculoToPeriodosMapToDisciplinasMap,
+			Curriculo curriculo, Integer periodoAluno, Turno turno, boolean alunoTemDisciplinasAtrasadas, ParametroGeracaoDemanda parametroGeracaoDemanda
+			)
+	{
+		int maxCreditosSemanais = 0;
+		
+		if(parametroGeracaoDemanda.getMaxCreditosPeriodo())
+		{
+			if (periodoAluno != -1 || curriculoToPeriodosMapToDisciplinasMap.get(curriculo).get(periodoAluno) != null)
+			{
+				maxCreditosSemanais = calculaTotalCreditosDasDisciplinas(curriculoToPeriodosMapToDisciplinasMap.get(curriculo).get(periodoAluno));
+			}
+			else
+			{
+				maxCreditosSemanais = calculaMaxCreditosCurriculo(curriculoToPeriodosMapToDisciplinasMap.get(curriculo));
+			}
+		}
+		else if(parametroGeracaoDemanda.getMaxCreditosManual() != null)
+		{
+			maxCreditosSemanais = parametroGeracaoDemanda.getMaxCreditosManual();
+			if (maxCreditosSemanais > curriculo.getSemanaLetiva().calcTotalCreditosSemanais(turno))
+			{
+				maxCreditosSemanais = curriculo.getSemanaLetiva().calcTotalCreditosSemanais(turno);
+			}
+		}
+		
+		if (parametroGeracaoDemanda.getAumentaMaxCreditosParaAlunosComDisciplinasAtrasadas())
+		{
+			maxCreditosSemanais = (int) Math.round((double) maxCreditosSemanais * (1 + parametroGeracaoDemanda.getFatorDeAumentoDeMaxCreditos()/100));
+		}
+		
+		return maxCreditosSemanais;
+	}
+
+	private boolean temPreRequisitoAindaNaoCursadoPeloAluno( CurriculoDisciplina disciplina, Curriculo curriculoAluno,
+			Map<Integer, List<CurriculoDisciplina>> periodoToAlunoDisciplinasNaoCursadasMap)
+	{
+		for (Disciplina preRequisito : disciplina.getPreRequisitos())
+		{
+			for (List<CurriculoDisciplina> disciplinasNaoCursadas : periodoToAlunoDisciplinasNaoCursadasMap.values())
+			{
+				for (CurriculoDisciplina disciplinaNaoCursada : disciplinasNaoCursadas)
+				if (disciplinaNaoCursada.getDisciplina().equals(preRequisito))
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean temPreRequisitoAindaNaoCursadoPeloAluno( Set<CurriculoDisciplina> disciplinas, Curriculo curriculoAluno,
+			Map<Integer, List<CurriculoDisciplina>> periodoToAlunoDisciplinasNaoCursadasMap) {
+		for (CurriculoDisciplina disciplina : disciplinas)
+		{
+			if (temPreRequisitoAindaNaoCursadoPeloAluno(disciplina, curriculoAluno, periodoToAlunoDisciplinasNaoCursadasMap))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private Set<CurriculoDisciplina> retornaCoRequisitosAindaNaoCursadosENaoOferecidos( Curriculo curriculoAluno, Integer periodo,
+			CurriculoDisciplina disciplina,	Map<Integer, List<CurriculoDisciplina>> periodoToAlunoDisciplinasNaoCursadasMap,
+			int maxCreditosSemanais, Set<Disciplina> disciplinasP1)
+	{
+		Set<CurriculoDisciplina> coRequisitosAindaNaoCursados = new HashSet<CurriculoDisciplina>();
+		
+		for (Disciplina coRequisito : disciplina.getCoRequisitos())
+		{
+			for (List<CurriculoDisciplina> disciplinasNaoCursadas : periodoToAlunoDisciplinasNaoCursadasMap.values())
+			{
+				for (CurriculoDisciplina disciplinaNaoCursada : disciplinasNaoCursadas)
+				if (disciplinaNaoCursada.getDisciplina().equals(coRequisito) && !disciplinasP1.contains(coRequisito))
+				{
+					coRequisitosAindaNaoCursados.add(disciplinaNaoCursada);
+				}
+			}
+		}
+		
+		return coRequisitosAindaNaoCursados;
+	}
+	
+	private int calculaPrioridade(Curriculo curriculoAluno, Integer periodo, Integer totalCreditos,
+			Integer periodoAluno, boolean disciplinaPossuiPreRequisitoAindaNaoCursadoPeloAluno,
+			Set<CurriculoDisciplina> coRequisitosAindaNaoCursadosENaoOferecidos,
+			Map<Integer, List<CurriculoDisciplina>> periodoToAlunoDisciplinasNaoCursadasMap,
+			int somaCreditosP1, int maxCreditosSemanais, int distanciaMaxEmPeriodosParaPrioridade2)
+	{
+		int prioridadeCalculada = 1;
+		if (!disciplinaPossuiPreRequisitoAindaNaoCursadoPeloAluno)
+		{
+            if (!coRequisitosAindaNaoCursadosENaoOferecidos.isEmpty())
+            {
+            	if (temPreRequisitoAindaNaoCursadoPeloAluno(coRequisitosAindaNaoCursadosENaoOferecidos,
+            			curriculoAluno, periodoToAlunoDisciplinasNaoCursadasMap))
+            	{
+            		prioridadeCalculada = -2;
+            	}
+            	else
+            	{
+            		int totalCreditosDisciplinaECoRequisitos = totalCreditos + calculaTotalCreditosDasDisciplinas(coRequisitosAindaNaoCursadosENaoOferecidos);
+            		prioridadeCalculada = defineEntrePrioridades1ou2ou3(totalCreditosDisciplinaECoRequisitos, somaCreditosP1, maxCreditosSemanais,
+            				periodoAluno, periodo, distanciaMaxEmPeriodosParaPrioridade2);
+            	}
+            }
+            else
+            {
+        		prioridadeCalculada = defineEntrePrioridades1ou2ou3(totalCreditos, somaCreditosP1, maxCreditosSemanais,
+        				periodoAluno, periodo, distanciaMaxEmPeriodosParaPrioridade2);
+            }
+		}
+		else
+		{
+			prioridadeCalculada = -1;
+		}
+		
+		
+		return prioridadeCalculada;
+	}
+
+	private int defineEntrePrioridades1ou2ou3( int totalCreditosASerTestado, int somaCreditosP1, int maxCreditosSemanais,
+			Integer periodoAluno, Integer periodo,	int distanciaMaxEmPeriodosParaPrioridade2) {
+		  if ((somaCreditosP1 + totalCreditosASerTestado) > maxCreditosSemanais)
+          {
+              // verifica se existe a informação do período atual do aluno
+              if (periodoAluno != -1)
+              {
+                  if (periodo > (periodoAluno + distanciaMaxEmPeriodosParaPrioridade2))
+                  {
+                      return 3; // ou seja, esta disciplina não cursada pelo aluno poderia fazer parte das ofertas candidatas para o próximo semestre do aluno, porém, não fará
+                  }
+                  else
+                  {
+                      return 2; // ou seja, esta disciplina não cursada pelo aluno fará parte das ofertas candidatas para o próximo semestre do aluno, porém, com prioridade 2
+                  }
+              }
+              else
+              {
+                  return 3; // ou seja, esta disciplina não cursada pelo aluno poderia fazer parte das ofertas candidatas para o próximo semestre do aluno, porém, não fará
+              }
+          }
+
+          return 1;
+	}
+
+	private Integer calculaTotalCreditosDasDisciplinas(
+			Collection<CurriculoDisciplina> disciplinas)
+	{
+		int totalCreditos = 0;
+		for (CurriculoDisciplina disciplina : disciplinas)
+		{
+			totalCreditos += disciplina.getDisciplina().getTotalCreditos();
+		}
+		return totalCreditos;
+	}
+	
+	private int calculaMaxCreditosCurriculo(
+			Map<Integer, List<CurriculoDisciplina>> periodoMapToDisciplinas)
+	{
+		int maxCreditos = 0;
+		for(Entry<Integer, List<CurriculoDisciplina>> disciplinasDoPeriodo : periodoMapToDisciplinas.entrySet())
+		{
+			int totalCreditosPeriodo = 0;
+			for (CurriculoDisciplina disciplina : disciplinasDoPeriodo.getValue())
+			{
+				totalCreditosPeriodo += disciplina.getDisciplina().getTotalCreditos();
+			}
+			if (totalCreditosPeriodo > maxCreditos)
+			{
+				maxCreditos = totalCreditosPeriodo;
+			}
+		}
+
+		return maxCreditos;
+	}
+	
+	public void initProgressReport(String chave) {
+		try {
+			List<String> feedbackList = new ArrayList<String>();
+			
+			setProgressReport(feedbackList);
+			ProgressReportReader progressSource = new ProgressReportListReader(feedbackList);
+			progressSource.start();
+			ProgressReportServiceImpl.getProgressReportSession(getThreadLocalRequest()).put(chave, progressSource);
+			getProgressReport().start();
+		}
+		catch(Exception e){
+			System.out.println("Nao foi possivel realizar o acompanhamento da progressao.");
+		}
+	}
+	
+	public void setProgressReport(List<String> fbl){
+		progressReport = new ProgressReportListWriter(fbl);
+	}
+	
+	public void setProgressReport(File f) throws IOException{
+		progressReport = new ProgressReportFileWriter(f);
+	}
+	
+	public ProgressReportWriter getProgressReport(){
+		return progressReport;
+	}
+
 }

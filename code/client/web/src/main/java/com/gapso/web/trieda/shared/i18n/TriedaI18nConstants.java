@@ -25,6 +25,7 @@ public interface TriedaI18nConstants
 	String capacidadeMediaSalas();
 	String capacidadeMax();
 	String capacidadeMaxAlunos();
+	String cargaHoraria();
 	String cargaHorariaAnterior();
 	String cargaHorariaMax();
 	String cargaHorariaMin();
@@ -168,4 +169,9 @@ public interface TriedaI18nConstants
 	String maxDiasSemana();
 	String minCreditosDia();
 	String disponibilidadesSalas();
+	String disciplinasPreRequisitos();
+	String codigoDisciplinaPreRequisito();
+	String disciplinasCoRequisitos();
+	String codigoDisciplinaCoRequisito();
+	String alunosDisciplinasCursadas();
 }

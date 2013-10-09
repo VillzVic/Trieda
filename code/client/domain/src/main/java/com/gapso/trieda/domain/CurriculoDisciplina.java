@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -60,6 +64,28 @@ public class CurriculoDisciplina
     @Min( 0L )
     @Max( 100L )
     private Integer periodo;
+    
+	@Column( name = "CDI_MATURIDADE" )
+	@Max( 999L )
+	private Integer maturidade;
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="curriculos_disciplinas_alunos",
+	joinColumns={ @JoinColumn(name="cdi_id") },
+	inverseJoinColumns={ @JoinColumn(name="aln_id") })
+    private Set< Aluno > cursadoPor = new HashSet< Aluno >();
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="curriculos_disciplinas_disciplinas_prerequisitos",
+	joinColumns={ @JoinColumn(name="cdi_id") },
+	inverseJoinColumns={ @JoinColumn(name="dis_id") })
+    private Set< Disciplina > preRequisitos = new HashSet< Disciplina >();
+    
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="curriculos_disciplinas_disciplinas_corequisitos",
+	joinColumns={ @JoinColumn(name="cdi_id") },
+	inverseJoinColumns={ @JoinColumn(name="dis_id") })
+    private Set< Disciplina > coRequisitos = new HashSet< Disciplina >();
 
 	public String toString()
 	{
@@ -70,6 +96,13 @@ public class CurriculoDisciplina
         sb.append( "Curriculo: " ).append( getCurriculo() ).append( ", " );
         sb.append( "Disciplina: " ).append( getDisciplina() ).append( ", " );
         sb.append( "Periodo: " ).append( getPeriodo() ).append( ", " );
+        sb.append( "Periodo: " ).append( getMaturidade() ).append( ", " );
+        sb.append( "cursadoPor: " ).append( getCursadoPor() == null ? "null" :
+        	getCursadoPor().size() ).append( ", " );
+        sb.append( "PreRequisitos: " ).append( getPreRequisitos() == null ? "null" :
+        	getPreRequisitos().size() ).append( ", " );
+        sb.append( "CoRequisitos: " ).append( getCoRequisitos() == null ? "null" :
+        	getCoRequisitos().size() );
 
         return sb.toString();
     }
@@ -104,10 +137,59 @@ public class CurriculoDisciplina
         this.periodo = periodo;
     }
 	
+	public Integer getMaturidade()
+	{
+        return this.maturidade;
+    }
+
+	public void setMaturidade( Integer maturidade )
+	{
+        this.maturidade = maturidade;
+    }
+	
+	public Set<Aluno> getCursadoPor()
+	{
+		return this.cursadoPor;
+	}
+	
+	public void setCursadoPor( Set<Aluno> cursadoPor )
+	{
+		this.cursadoPor = cursadoPor;
+	}
+	
+	public Set<Disciplina> getPreRequisitos()
+	{
+		return this.preRequisitos;
+	}
+	
+	public void setPreRequisitos( Set<Disciplina> preRequisitos )
+	{
+		this.preRequisitos = preRequisitos;
+	}
+
+	public Set<Disciplina> getCoRequisitos()
+	{
+		return this.coRequisitos;
+	}
+	
+	public void setCoRequisitos( Set<Disciplina> coRequisitos )
+	{
+		this.coRequisitos = coRequisitos;
+	}
+	
 	public String getNaturalKeyString()
 	{
 		String key = ( getCurriculo().getCurso().getCodigo()
-			+ "-" + getCurriculo().getCodigo()
+			+ "-" +	getCurriculo().getCodigo()
+			+ "-" + getPeriodo().toString()
+			+ "-" + getDisciplina().getCodigo() );
+
+		return key;
+	}
+	
+	public String getNaturalKeySemCursoString()
+	{
+		String key = ( getCurriculo().getCodigo()
 			+ "-" + getPeriodo().toString()
 			+ "-" + getDisciplina().getCodigo() );
 
@@ -260,6 +342,21 @@ public class CurriculoDisciplina
 		return curriculosDisciplinaMap;
 	}
 	
+	public static Map< String, CurriculoDisciplina > buildNaturalKeySemCursoToCurriculoDisciplinaMap(
+			List< CurriculoDisciplina > curriculosDisciplina )
+		{
+			Map< String, CurriculoDisciplina > curriculosDisciplinaMap
+				= new HashMap< String, CurriculoDisciplina >();
+
+			for ( CurriculoDisciplina curriculoDisciplina : curriculosDisciplina )
+			{
+				curriculosDisciplinaMap.put(
+					curriculoDisciplina.getNaturalKeySemCursoString(), curriculoDisciplina );
+			}
+
+			return curriculosDisciplinaMap;
+		}
+	
 	public static Map<String,List<CurriculoDisciplina>> buildDisciplinaToCurriculoDisciplinaMap(Collection<CurriculoDisciplina> curriculosDisciplina) {
 		Map<String,List<CurriculoDisciplina>> map = new HashMap<String,List<CurriculoDisciplina>>();
 
@@ -337,18 +434,30 @@ public class CurriculoDisciplina
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< CurriculoDisciplina > findAllByCurriculoAndPeriodo(
-		InstituicaoEnsino instituicaoEnsino, Curriculo curriculo, Integer periodo )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Curriculo curriculo, Integer periodo )
 	{
+		String periodoQuery = "";
+		if(periodo != null)
+		{
+			periodoQuery = " AND o.periodo = :periodo ";
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT o FROM CurriculoDisciplina o " +
 			" WHERE o.curriculo = :curriculo " +
-			" AND o.periodo = :periodo " +
+			periodoQuery +
 			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
-        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " );
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.cenario = :cenario " +
+        	" AND o.curriculo.cenario = :cenario " );
 
 		q.setParameter( "curriculo", curriculo );
-		q.setParameter( "periodo", periodo );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		if(periodo != null)
+		{
+			q.setParameter( "periodo", periodo );
+		}
 
 		return q.getResultList();
 	}
@@ -469,6 +578,118 @@ public class CurriculoDisciplina
 
         return q.getResultList();
     }
+	
+	public static List< Object[] > findBy( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Curriculo curriculo, Disciplina disciplina, Integer periodo, String associacao )
+	{
+		int maxResult = count(instituicaoEnsino, cenario, curriculo, disciplina, periodo, associacao);
+		
+		return findBy( instituicaoEnsino, cenario, curriculo, disciplina, periodo, associacao, null, 0, maxResult );
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Object[] > findBy( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Curriculo curriculo, Disciplina disciplina, Integer periodo, String associacao, String orderBy,
+			int firstResult, int maxResults)
+	{
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
+		
+		String curriculoQuery = "";
+		if ( curriculo != null )
+		{
+			curriculoQuery = " AND o.curriculo = :curriculo";
+		}
+		
+		String disciplinaQuery = "";
+		if ( disciplina != null )
+		{
+			disciplinaQuery = " AND o.disciplina = :disciplina";
+		}
+		
+		String periodoQuery = "";
+		if ( periodo != null )
+		{
+			periodoQuery = " AND o.periodo = :periodo";
+		}
+		
+		Query q = entityManager().createQuery(
+			" SELECT o, a FROM CurriculoDisciplina o INNER JOIN o." + associacao + " a " +
+			" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.curriculo.cenario = :cenario " +
+        	" AND o.disciplina.cenario = :cenario " +
+        	curriculoQuery + disciplinaQuery + periodoQuery + orderBy );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+		if ( curriculo != null )
+		{
+			q.setParameter( "curriculo", curriculo );
+		}
+		
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+		
+		if ( periodo != null )
+		{
+			q.setParameter( "periodo", periodo );
+		}
+
+		return q.getResultList();
+	}
+	
+	public static int count( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Curriculo curriculo, Disciplina disciplina, Integer periodo, String associacao)
+	{
+		String curriculoQuery = "";
+		if ( curriculo != null )
+		{
+			curriculoQuery = " AND o.curriculo = :curriculo";
+		}
+		
+		String disciplinaQuery = "";
+		if ( disciplina != null )
+		{
+			disciplinaQuery = " AND o.disciplina = :disciplina";
+		}
+		
+		String periodoQuery = "";
+		if ( periodo != null )
+		{
+			periodoQuery = " AND o.periodo = :periodo";
+		}
+		
+		Query q = entityManager().createQuery(
+			" SELECT o, a FROM CurriculoDisciplina o INNER JOIN o." + associacao + " a " +
+			" WHERE o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.curriculo.cenario = :cenario " +
+        	" AND o.disciplina.cenario = :cenario " +
+        	curriculoQuery + disciplinaQuery + periodoQuery);
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		if ( curriculo != null )
+		{
+			q.setParameter( "curriculo", curriculo );
+		}
+		
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+		
+		if ( periodo != null )
+		{
+			q.setParameter( "periodo", periodo );
+		}
+
+		return q.getResultList().size();
+	}
 
 	public static Map< String, CurriculoDisciplina > buildCurriculoDisciplinaPeriodoMap(
 		List< CurriculoDisciplina >  curriculosDisciplina )
@@ -509,5 +730,53 @@ public class CurriculoDisciplina
 
 		CurriculoDisciplina other = (CurriculoDisciplina) obj;
 		return this.getNaturalKeyString().equals( other.getNaturalKeyString() );
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<CurriculoDisciplina> findAllBy(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Curriculo curriculo, List<Disciplina> disciplinas, Integer periodo) {
+		
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o " +
+			" WHERE o.curriculo = :curriculo " +
+			" AND o.periodo = :periodo " +
+			" AND o.disciplina IN (:disciplinas) " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+	       	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+	       	" AND o.disciplina.cenario = :cenario " +
+	       	" AND o.curriculo.cenario = :cenario " );
+
+		q.setParameter( "curriculo", curriculo );
+		q.setParameter( "periodo", periodo );
+		q.setParameter( "disciplinas", disciplinas );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		
+		return q.getResultList();
+	}
+
+	public static CurriculoDisciplina findByCurriculoAndPeriodoAndDisciplina(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		Curriculo curriculo, Integer periodo, Disciplina disciplina) {
+		
+		Query q = entityManager().createQuery(
+			" SELECT o FROM CurriculoDisciplina o " +
+			" WHERE o.curriculo = :curriculo " +
+			" AND o.periodo = :periodo " +
+			" AND o.disciplina = :disciplina " +
+			" AND o.curriculo.curso.tipoCurso.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.disciplina.cenario = :cenario " +
+        	" AND o.curriculo.cenario = :cenario " );
+
+		q.setParameter( "curriculo", curriculo );
+		q.setParameter( "periodo", periodo );
+		q.setParameter( "disciplina", disciplina );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+
+		return (CurriculoDisciplina) q.getSingleResult();
 	}
 }

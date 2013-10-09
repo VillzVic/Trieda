@@ -23,7 +23,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
@@ -37,7 +37,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 	private SimpleGrid< ProfessorDisciplinaDTO > gridPanel;
 	private SimpleFilter filter;
 	private ProfessorComboBox professorBuscaCB;
-	private DisciplinaComboBox disciplinaBuscaCB;
+	private DisciplinaAutoCompleteBox disciplinaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private UsuarioDTO usuario;
@@ -146,7 +146,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 		filter = new SimpleFilter();
 		professorBuscaCB = new ProfessorComboBox( cenarioDTO );
 		professorBuscaCB.setAllowBlank( false );
-		disciplinaBuscaCB = new DisciplinaComboBox( cenarioDTO );
+		disciplinaBuscaCB = new DisciplinaAutoCompleteBox( cenarioDTO );
 		disciplinaBuscaCB.setAllowBlank( false );
 
 		filter.addField( professorBuscaCB );
@@ -211,7 +211,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaBuscaComboBox()
+	public DisciplinaAutoCompleteBox getDisciplinaBuscaComboBox()
 	{
 		return disciplinaBuscaCB;
 	}

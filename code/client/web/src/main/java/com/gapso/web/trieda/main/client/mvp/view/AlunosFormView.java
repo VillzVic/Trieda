@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlunosFormPresenter;
@@ -24,6 +25,7 @@ public class AlunosFormView
 	private UniqueTextField matriculaTF;
 	private TextField< String > nomeTF;
 	private CheckBox formandoCB;
+	private NumberField periodoNF;
 	private AlunoDTO alunoDTO;
 	private CenarioDTO cenarioDTO;
 
@@ -44,7 +46,7 @@ public class AlunosFormView
 		simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		simpleModal.setHeight( 160 );
+		simpleModal.setHeight( 185 );
 		createForm();
 		simpleModal.setContent( formPanel );
 	}
@@ -74,6 +76,16 @@ public class AlunosFormView
 		matriculaTF.setMaxLength( 50 );
 		matriculaTF.setEmptyText( "Preencha a matrícula" );
 		formPanel.add( matriculaTF, formData );
+		
+		periodoNF = new NumberField();
+		periodoNF.setName( AlunoDTO.PROPERTY_ALUNO_PERIODO );
+		periodoNF.setValue( alunoDTO.getPeriodo() );
+		periodoNF.setFieldLabel( "Período" );
+		periodoNF.setAllowBlank( true );
+		periodoNF.setAllowDecimals( false );
+		periodoNF.setMaxValue( 99 );
+		periodoNF.setEmptyText( "Preencha o período" );
+		formPanel.add( periodoNF, formData );
 		
 		formandoCB = new CheckBox();
 		formandoCB.setName(AlunoDTO.PROPERTY_ALUNO_FORMANDO);
@@ -125,5 +137,10 @@ public class AlunosFormView
 	@Override
 	public CheckBox getFormandoCheckBox() {
 		return formandoCB;
+	}
+	
+	@Override
+	public NumberField getPeriodoNumberField() {
+		return periodoNF;
 	}
 }

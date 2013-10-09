@@ -15,7 +15,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -25,8 +25,9 @@ public class CurriculoDisciplinaFormPresenter
 	public interface Display extends ITriedaI18nGateway
 	{
 		Button getSalvarButton();
-		DisciplinaComboBox getDisciplinaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaComboBox();
 		NumberField getPeriodoTextField();
+		NumberField getMaturidadeTextField();
 		CurriculoDTO getCurriculoDTO();
 		CurriculoDisciplinaDTO getCurriculoDisciplinaDTO();
 		boolean isValid();
@@ -92,6 +93,8 @@ public class CurriculoDisciplinaFormPresenter
 		curriculoDisciplinaDTO.setDisciplinaId( display.getDisciplinaComboBox().getValue().getId() );
 		curriculoDisciplinaDTO.setDisciplinaString( display.getDisciplinaComboBox().getValue().getCodigo() );
 		curriculoDisciplinaDTO.setPeriodo( display.getPeriodoTextField().getValue().intValue() );
+		curriculoDisciplinaDTO.setMaturidade( display.getMaturidadeTextField().getValue() != null ?
+				display.getMaturidadeTextField().getValue().intValue() : null);
 
 		Integer crTeorico = display.getDisciplinaComboBox().getValue().getCreditosTeorico();
 		Integer crPratico = display.getDisciplinaComboBox().getValue().getCreditosPratico();

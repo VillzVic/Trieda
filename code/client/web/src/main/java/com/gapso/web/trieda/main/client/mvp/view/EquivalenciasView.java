@@ -20,7 +20,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -32,7 +32,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	private SimpleGrid<EquivalenciaDTO> gridPanel;
 	private SimpleFilter filter;
 	private CampusComboBox campusCB;
-	private DisciplinaComboBox disciplinaCB;
+	private DisciplinaAutoCompleteBox disciplinaCB;
 	private CursoComboBox cursoCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -86,7 +86,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 		
 		filter = new SimpleFilter();
 		campusCB = new CampusComboBox(cenarioDTO);
-		disciplinaCB = new DisciplinaComboBox(cenarioDTO);
+		disciplinaCB = new DisciplinaAutoCompleteBox(cenarioDTO);
 		cursoCB = new CursoComboBox(cenarioDTO);
 		filter.addField(campusCB);
 		filter.addField(disciplinaCB);
@@ -141,7 +141,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox() {
+	public DisciplinaAutoCompleteBox getDisciplinaComboBox() {
 		return disciplinaCB;
 	}
 	

@@ -1444,4 +1444,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		return result;
 	}
+	
+
 }

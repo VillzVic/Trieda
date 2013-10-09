@@ -12,7 +12,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 
 public class CurriculoDisciplinaFormView
@@ -21,8 +21,9 @@ public class CurriculoDisciplinaFormView
 {
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-	private DisciplinaComboBox disciplinaCB;
+	private DisciplinaAutoCompleteBox disciplinaCB;
 	private NumberField periodoTF;
+	private NumberField maturidadeTF;
 	private CurriculoDisciplinaDTO curriculoDisciplinaDTO;
 	private CurriculoDTO curriculoDTO;
 	private CenarioDTO cenarioDTO;
@@ -42,7 +43,7 @@ public class CurriculoDisciplinaFormView
 		String title = "Inserção de Disciplina no Curriculo";
 		simpleModal = new SimpleModal( title,
 			Resources.DEFAULTS.disciplina16() );
-		simpleModal.setHeight( 200 );
+		simpleModal.setHeight( 230 );
 		createForm();
 		simpleModal.setContent( formPanel );
 	}
@@ -65,7 +66,7 @@ public class CurriculoDisciplinaFormView
 		cursoTF.setReadOnly( true );
 		formPanel.add( cursoTF, formData );
 
-		disciplinaCB = new DisciplinaComboBox( cenarioDTO );
+		disciplinaCB = new DisciplinaAutoCompleteBox( cenarioDTO );
 		disciplinaCB.setName( "disciplina" );
 		disciplinaCB.setFieldLabel( "Disciplina" );
 		disciplinaCB.setAllowBlank( false );
@@ -81,6 +82,16 @@ public class CurriculoDisciplinaFormView
 		periodoTF.setMaxValue( 99 );
 		periodoTF.setEmptyText( "Preencha o período" );
 		formPanel.add( periodoTF, formData );
+		
+		maturidadeTF = new NumberField();
+		maturidadeTF.setName( CurriculoDisciplinaDTO.PROPERTY_MATURIDADE );
+		maturidadeTF.setValue( curriculoDisciplinaDTO.getMaturidade() );
+		maturidadeTF.setFieldLabel( "Maturidade" );
+		maturidadeTF.setAllowBlank( true );
+		maturidadeTF.setAllowDecimals( false );
+		maturidadeTF.setMaxValue( 999 );
+		maturidadeTF.setEmptyText( "Preencha a maturidade" );
+		formPanel.add( maturidadeTF, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );
 		binding.addButton( simpleModal.getSalvarBt() );
@@ -106,7 +117,7 @@ public class CurriculoDisciplinaFormView
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox()
+	public DisciplinaAutoCompleteBox getDisciplinaComboBox()
 	{
 		return disciplinaCB;
 	}
@@ -116,6 +127,13 @@ public class CurriculoDisciplinaFormView
 	{
 		return periodoTF;
 	}
+	
+	@Override
+	public NumberField getMaturidadeTextField()
+	{
+		return maturidadeTF;
+	}
+
 
 	@Override
 	public CurriculoDTO getCurriculoDTO()

@@ -871,4 +871,34 @@ public class GTriedaI18nConstants
 	public String disponibilidadesSalas() {
 		return this.languageManager.getText("disponibilidadesSalas");
 	}
+
+	@Override
+	public String cargaHoraria() {
+		return this.languageManager.getText("cargaHoraria");
+	}
+
+	@Override
+	public String disciplinasPreRequisitos() {
+		return this.languageManager.getText("disciplinasPreRequisitos");
+	}
+
+	@Override
+	public String codigoDisciplinaPreRequisito() {
+		return this.languageManager.getText("codigoDisciplinaPreRequisito");
+	}
+
+	@Override
+	public String disciplinasCoRequisitos() {
+		return this.languageManager.getText("disciplinasCoRequisitos");
+	}
+
+	@Override
+	public String codigoDisciplinaCoRequisito() {
+		return this.languageManager.getText("codigoDisciplinaCoRequisito");
+	}
+
+	@Override
+	public String alunosDisciplinasCursadas() {
+		return this.languageManager.getText("alunosDisciplinasCursadas");
+	}
 }

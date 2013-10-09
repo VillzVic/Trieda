@@ -33,7 +33,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -42,8 +42,8 @@ public class EquivalenciaFormView extends MyComposite implements
 
 	private SimpleModal simpleModal;
 	private FormPanel formPanel;
-	private DisciplinaComboBox disciplinaCursouComboBox;
-	private DisciplinaComboBox disciplinaEliminaComboBox;
+	private DisciplinaAutoCompleteBox disciplinaCursouComboBox;
+	private DisciplinaAutoCompleteBox disciplinaEliminaComboBox;
 	private CheckBox equivalenciaGeralCheckBox;
 	private ListView<CursoDTO> cursosList;
 	private ListView<CursoDTO> cursosPertencesList;
@@ -88,13 +88,13 @@ public class EquivalenciaFormView extends MyComposite implements
 		formPanel = new FormPanel();
 		formPanel.setHeaderVisible(false);
 
-		disciplinaCursouComboBox = new DisciplinaComboBox(cenarioDTO);
+		disciplinaCursouComboBox = new DisciplinaAutoCompleteBox(cenarioDTO);
 		disciplinaCursouComboBox.setAllowBlank(false);
 		disciplinaCursouComboBox.setFieldLabel("Disciplina (Cursou)");
 		disciplinaCursouComboBox.setValue(disciplinaCursouDTO);
 		formPanel.add(disciplinaCursouComboBox, formData);
 		
-		disciplinaEliminaComboBox = new DisciplinaComboBox(cenarioDTO);
+		disciplinaEliminaComboBox = new DisciplinaAutoCompleteBox(cenarioDTO);
 		disciplinaEliminaComboBox.setAllowBlank(false);
 		disciplinaEliminaComboBox.setFieldLabel("Disciplina (Elimina)");
 		disciplinaEliminaComboBox.setValue(disciplinaEliminaDTO);
@@ -225,12 +225,12 @@ public class EquivalenciaFormView extends MyComposite implements
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaCursouComboBox() {
+	public DisciplinaAutoCompleteBox getDisciplinaCursouComboBox() {
 		return disciplinaCursouComboBox;
 	}
 	
 	@Override
-	public DisciplinaComboBox getDisciplinaEliminaComboBox() {
+	public DisciplinaAutoCompleteBox getDisciplinaEliminaComboBox() {
 		return disciplinaEliminaComboBox;
 	}
 	

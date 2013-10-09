@@ -42,6 +42,7 @@ import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
+import com.gapso.trieda.domain.ParametroGeracaoDemanda;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.ProfessorVirtual;
@@ -84,6 +85,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
@@ -1627,6 +1629,7 @@ public class ConvertBeans {
 		domain.setLaboratorio( dto.getLaboratorio() );
 		domain.setMaxAlunosTeorico( dto.getMaxAlunosTeorico() );
 		domain.setMaxAlunosPratico( dto.getMaxAlunosPratico() );
+		domain.setCargaHoraria( dto.getCargaHoraria() );
 		domain.setDificuldade( Dificuldades.get( dto.getDificuldade() ) );
 		domain.setUsaDomingo( dto.getUsaDomingo() );
 		domain.setUsaSabado( dto.getUsaSabado() );
@@ -1662,6 +1665,7 @@ public class ConvertBeans {
 		dto.setDisplayText( domain.getCodigo() + " (" + domain.getNome() + ")" );
 		dto.setUsaDomingo( domain.getUsaDomingo() );
 		dto.setUsaSabado( domain.getUsaSabado() );
+		dto.setCargaHoraria( domain.getCargaHoraria() );
 		dto.setAulasContinuas( domain.getAulasContinuas() );
 		dto.setProfessorUnico( domain.getProfessorUnico() );
 
@@ -1764,6 +1768,25 @@ public class ConvertBeans {
 
 		return dto;
 	}
+	
+	public static List < CurriculoDisciplina > toListCurriculoDisciplina(
+			List< CurriculoDisciplinaDTO > listDTO )
+	{
+		if ( listDTO == null )
+		{
+			return Collections.< CurriculoDisciplina > emptyList();
+		}
+
+		List< CurriculoDisciplina > listDomains
+			= new ArrayList< CurriculoDisciplina >();
+
+		for ( CurriculoDisciplinaDTO dto : listDTO )
+		{
+			listDomains.add( ConvertBeans.toCurriculoDisciplina( dto ) );
+		}
+
+		return listDomains;
+	}
 
 	// CURRICULO DISCIPLINA ( DISCIPLINA NA MATRIZ CURRICULAR )
 	public static CurriculoDisciplina toCurriculoDisciplina(
@@ -1777,6 +1800,7 @@ public class ConvertBeans {
 		domain.setId( dto.getId() );
 		domain.setVersion( dto.getVersion() );
 		domain.setPeriodo( dto.getPeriodo() );
+		domain.setMaturidade( dto.getMaturidade() );
 
 		Disciplina disciplina = Disciplina.find(
 			dto.getDisciplinaId(), instituicaoEnsino );
@@ -1812,6 +1836,7 @@ public class ConvertBeans {
 		dto.setCreditosPratico( crPratico );
 		dto.setCreditosTotal( crTeorico + crPratico );
 		dto.setCurriculoId( domain.getCurriculo().getId() );
+		dto.setMaturidade( domain.getMaturidade() );
 
 		if ( instituicaoEnsino != null )
 		{
@@ -3314,6 +3339,7 @@ public class ConvertBeans {
 		domain.setNome( dto.getNome() );
 		domain.setMatricula( dto.getMatricula() );
 		domain.setFormando( dto.getFormando() );
+		domain.setPeriodo( dto.getPeriodo() );
 		domain.setCenario( cenario );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 
@@ -3329,6 +3355,7 @@ public class ConvertBeans {
 		dto.setVersion( domain.getVersion() );
 		dto.setMatricula( domain.getMatricula() );
 		dto.setFormando( domain.getFormando() );
+		dto.setPeriodo( domain.getPeriodo() );
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setDisplayText( domain.getNome() );
 
@@ -3471,4 +3498,45 @@ public class ConvertBeans {
 
 			return listDTOs;
 		}
+	
+	public static ParametroGeracaoDemandaDTO toParametroGeracaoDemandaDTO(ParametroGeracaoDemanda domain)
+	{
+		ParametroGeracaoDemandaDTO dto = new ParametroGeracaoDemandaDTO();
+		
+		dto.setCampusId(domain.getCampus().getId());
+		dto.setTurnoId(domain.getTurno().getId());
+		dto.setUsarDemandasDePrioridade2(domain.getUsarDemandasDePrioridade2());
+		dto.setDistanciaMaxEmPeriodosParaPrioridade2(domain.getDistanciaMaxEmPeriodosParaPrioridade2());
+		dto.setConsiderarPreRequisitos(domain.getConsiderarPreRequisitos());
+		dto.setConsiderarCoRequisitos(domain.getConsiderarCoRequisitos());
+		dto.setMaxCreditosPeriodo(domain.getMaxCreditosPeriodo());
+		dto.setMaxCreditosManual(domain.getMaxCreditosManual());
+		dto.setAumentaMaxCreditosParaAlunosComDisciplinasAtrasadas(domain.getAumentaMaxCreditosParaAlunosComDisciplinasAtrasadas());
+		dto.setFatorDeAumentoDeMaxCreditos(domain.getFatorDeAumentoDeMaxCreditos());
+		
+		return dto;
+	}
+	
+	public static ParametroGeracaoDemanda toParametroGeracaoDemanda(ParametroGeracaoDemandaDTO dto)
+	{
+		ParametroGeracaoDemanda domain = new ParametroGeracaoDemanda();
+		
+		InstituicaoEnsino instituicaoEnsino
+			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
+		Campus campus = Campus.find(dto.getCampusId(), instituicaoEnsino);
+		Turno turno = Turno.find(dto.getTurnoId(), instituicaoEnsino);
+		
+		domain.setCampus(campus);
+		domain.setTurno(turno);
+		domain.setUsarDemandasDePrioridade2(dto.getUsarDemandasDePrioridade2());
+		domain.setDistanciaMaxEmPeriodosParaPrioridade2(dto.getDistanciaMaxEmPeriodosParaPrioridade2());
+		domain.setConsiderarPreRequisitos(dto.getConsiderarPreRequisitos());
+		domain.setConsiderarCoRequisitos(dto.getConsiderarCoRequisitos());
+		domain.setMaxCreditosPeriodo(dto.getMaxCreditosPeriodo());
+		domain.setMaxCreditosManual(dto.getMaxCreditosManual());
+		domain.setAumentaMaxCreditosParaAlunosComDisciplinasAtrasadas(dto.getAumentaMaxCreditosParaAlunosComDisciplinasAtrasadas());
+		domain.setFatorDeAumentoDeMaxCreditos(dto.getFatorDeAumentoDeMaxCreditos());
+		
+		return domain;
+	}
 }

@@ -106,20 +106,38 @@ public class SimpleToolBar extends ToolBar
 
 	public void activateEmptyState()
 	{
-		editButton.setEnabled( false );
-		removeButton.setEnabled( false );
+		if ( showEditButton )
+		{
+			editButton.setEnabled( false );
+		}
+		if ( showRemoveButton )
+		{
+			removeButton.setEnabled( false );
+		}
 	}
 
 	public void enableMultiState()
 	{
-		editButton.setEnabled( false );
-		removeButton.setEnabled( true );
+		if ( showEditButton )
+		{
+			editButton.setEnabled( false );
+		}
+		if ( showRemoveButton )
+		{
+			removeButton.setEnabled( true );
+		}
 	}
 
 	public void enableSimpleState()
 	{
-		editButton.setEnabled( true );
-		removeButton.setEnabled( true );
+		if ( showEditButton )
+		{
+			editButton.setEnabled( true );
+		}
+		if ( showRemoveButton )
+		{
+			removeButton.setEnabled( true );
+		}
 	}
 
 	public Button getNewButton()

@@ -24,7 +24,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -37,7 +37,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 	private ContentPanel panel;
 	private ContentPanel panelLists;
 	
-	private DisciplinaComboBox disciplinaCB;
+	private DisciplinaAutoCompleteBox disciplinaCB;
 	private DisciplinaDTO disciplinaDTO;
 	private CenarioDTO cenarioDTO;
 	
@@ -84,7 +84,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 		formPanel.setHeaderVisible(false);
 		formPanel.setAutoHeight(true);
 		
-		disciplinaCB = new DisciplinaComboBox(cenarioDTO);
+		disciplinaCB = new DisciplinaAutoCompleteBox(cenarioDTO);
 		disciplinaCB.setValue(this.disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
 		
@@ -152,7 +152,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 	}
 	
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox() {
+	public DisciplinaAutoCompleteBox getDisciplinaComboBox() {
 		return disciplinaCB;
 	}
 	

@@ -29,7 +29,7 @@ import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SalaComboBox;
 import com.gapso.web.trieda.shared.util.view.SemanaLetivaDoCenarioGrid;
@@ -45,7 +45,7 @@ public class FixacaoFormView extends MyComposite implements
 	private TextField<String> codigoTF;
 	private TextField<String> descricaoTF;
 	private ProfessorComboBox professorCB;
-	private DisciplinaComboBox disciplinaCB;
+	private DisciplinaAutoCompleteBox disciplinaCB;
 	private CampusComboBox campusCB;
 	private UnidadeComboBox unidadeCB;
 	private SalaComboBox salaCB;
@@ -123,7 +123,7 @@ public class FixacaoFormView extends MyComposite implements
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 
-		disciplinaCB = new DisciplinaComboBox(cenarioDTO);
+		disciplinaCB = new DisciplinaAutoCompleteBox(cenarioDTO);
 		disciplinaCB.setValue(disciplinaDTO);
 		formPanel.add(disciplinaCB, formData);
 
@@ -194,7 +194,7 @@ public class FixacaoFormView extends MyComposite implements
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox() {
+	public DisciplinaAutoCompleteBox getDisciplinaComboBox() {
 		return disciplinaCB;
 	}
 

@@ -27,6 +27,7 @@ public class ExportExcelFactory {
 		switch ( informationToBeExported )
 		{
 			case ALUNOS: exporter = new AlunosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case ALUNOS_DISCIPLINAS_CURSADAS: exporter = new AlunosDisciplinasCursadasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case AREAS_TITULACAO: exporter = new AreasTitulacaoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case ATENDIMENTOS_MATRICULA: exporter = new AtendimentosMatriculaExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension); break;
 			case ATENDIMENTOS_DISCIPLINA: exporter = new AtendimentosDisciplinaExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension); break;
@@ -39,6 +40,8 @@ public class ExportExcelFactory {
 			case DEMANDAS: exporter = new DemandasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DISCIPLINAS_SALAS: exporter = new DisciplinasSalasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case DISCIPLINAS_PRE_REQUISITOS: exporter = new DisciplinasPreRequisitosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case DISCIPLINAS_CO_REQUISITOS: exporter = new DisciplinasCoRequisitosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case EQUIVALENCIAS: exporter = new EquivalenciasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case HABILITACAO_PROFESSORES: exporter = new HabilitacoesProfessoresExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case PERCENT_MESTRES_DOUTORES: exporter = new PercentMestresDoutoresExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;

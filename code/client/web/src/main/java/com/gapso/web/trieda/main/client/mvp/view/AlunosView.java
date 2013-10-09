@@ -87,6 +87,7 @@ public class AlunosView
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_NOME, "Nome", 400 ) );
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, "Matrícula" , 150 ) );
 		list.add( new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_FORMANDO, "Formando?" , 100 ) );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_PERIODO, "Periodo" , 100 ) );
 
 		return list;
 	}

@@ -15,7 +15,7 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessorDisciplinaFormPresenter;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,7 +26,7 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 	private FormPanel formPanel;
 	
 	private ProfessorComboBox professorCB;
-	private DisciplinaComboBox disciplinaCB;
+	private DisciplinaAutoCompleteBox disciplinaCB;
 	private NumberField preferenciaNF;
 	private NumberField notaDesempenhoNF;
 
@@ -71,7 +71,7 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 		professorCB.setValue(professorDTO);
 		formPanel.add(professorCB, formData);
 
-		disciplinaCB = new DisciplinaComboBox(cenarioDTO, professorCB){
+		disciplinaCB = new DisciplinaAutoCompleteBox(cenarioDTO, professorCB){
 			@Override
 			public void loadByCriteria(AbstractDTO abdto, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback){
 				ProfessorDTO professorDTO = (ProfessorDTO) abdto;
@@ -135,7 +135,7 @@ public class ProfessorDisciplinaFormView extends MyComposite implements Professo
 	}
 
 	@Override
-	public DisciplinaComboBox getDisciplinaComboBox()
+	public DisciplinaAutoCompleteBox getDisciplinaComboBox()
 	{
 		return disciplinaCB;
 	}

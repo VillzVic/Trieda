@@ -26,7 +26,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.GruposSalasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -38,7 +38,7 @@ public class GruposSalasAssociarDisciplinaPresenter
 	public interface Display
 	extends ITriedaI18nGateway
 	{
-		DisciplinaComboBox getDisciplinaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaComboBox();
 		ListView< GrupoSalaDTO > getNaoVinculadaList();
 		ListView< GrupoSalaDTO > getVinculadaList();
 		Button getAdicionaBT();

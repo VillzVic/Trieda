@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
+import com.gapso.web.trieda.main.client.mvp.view.AlunosDisciplinasCursadasView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
@@ -22,6 +23,8 @@ import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CursosView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandasView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
+import com.gapso.web.trieda.main.client.mvp.view.DisciplinasCoRequisitosView;
+import com.gapso.web.trieda.main.client.mvp.view.DisciplinasPreRequisitosView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasView;
 import com.gapso.web.trieda.main.client.mvp.view.DivisoesCreditosView;
 import com.gapso.web.trieda.main.client.mvp.view.EquivalenciasView;
@@ -30,6 +33,7 @@ import com.gapso.web.trieda.main.client.mvp.view.FixacoesView;
 import com.gapso.web.trieda.main.client.mvp.view.GruposSalasAssociarDisciplinaView;
 import com.gapso.web.trieda.main.client.mvp.view.GruposSalasView;
 import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
+import com.gapso.web.trieda.main.client.mvp.view.ParametrosGeracaoDemandaView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessorFormView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresView;
@@ -61,6 +65,7 @@ import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -105,6 +110,8 @@ public class ToolBarPresenter
 
 		Button getCursosNovoCursosButton();
 		Button getCurriculosListCursosButton();
+		Button getCurriculosDisciplinasPreRequisitosCursosButton();
+		Button getCurriculosDisciplinasCoRequisitosCursosButton();
 		Button getCursosListCursosButton();
 		Button getAreasTitulacaoListCursosButton();
 		Button getVincularAreasTitulacaoListCursosButton();
@@ -117,12 +124,15 @@ public class ToolBarPresenter
 		Button getAssociarDisciplinasSalasListDisciplinasButton();
 		Button getAssociarDisciplinasGruposSalasListDisciplinasButton();
 		Button getCurriculosListDisciplinasButton();
+		Button getCurriculosDisciplinasPreRequisitosDisciplinasButton();
+		Button getCurriculosDisciplinasCoRequisitosDisciplinasButton();
 		Button getDivisaoCreditosListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
 		Button getCompatibilidadesListDisciplinasButton();
 
 		Button getAlunosNovoAlunoButton();
 		Button getAlunosListAlunosButton();
+		Button getAlunosDisciplinasCursadasButton();
 
 		Button getProfessoresNovoProfessoresButton();
 		Button getProfessoresListProfessoresButton();
@@ -150,6 +160,12 @@ public class ToolBarPresenter
 		Button getImportarButton();
 		Button getExportarButton();
 		Button getCarregarSolucaoButton();
+		
+		Button getCurriculosListDemandasButton();
+		Button getCurriculosDisciplinasPreRequisitosDemandasButton();
+		Button getCurriculosDisciplinasCoRequisitosDemandasButton();
+		Button getAlunosDisciplinasCursadasDemandasButton();
+		Button getParametrosGeracaoDemandaButton();
 
 		Button getSemanasLetivaListCampiButton();
 		Button getTurnosListCampiButton();
@@ -201,6 +217,19 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getAlunosDisciplinasCursadasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new AlunosDisciplinasCursadasPresenter(
+						instituicaoEnsinoDTO, cenarioDTO, new AlunosDisciplinasCursadasView(cenarioDTO) );
+
+					presenter.go( gTab );
+				}
+			});
 
 		this.toolBar.getTurnosListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
@@ -464,6 +493,32 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getCurriculosDisciplinasPreRequisitosCursosButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinasPreRequisitosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DisciplinasPreRequisitosView(cenarioDTO) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getCurriculosDisciplinasCoRequisitosCursosButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new DisciplinasCoRequisitosPresenter(
+						instituicaoEnsinoDTO, cenarioDTO, new DisciplinasCoRequisitosView(cenarioDTO) );
+
+					presenter.go( gTab );
+				}
+			});
 
 		this.toolBar.getCurriculosListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
@@ -477,6 +532,32 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getCurriculosDisciplinasPreRequisitosDisciplinasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new DisciplinasPreRequisitosPresenter(
+						instituicaoEnsinoDTO, cenarioDTO, new DisciplinasPreRequisitosView(cenarioDTO) );
+
+					presenter.go( gTab );
+				}
+			});
+		
+		this.toolBar.getCurriculosDisciplinasCoRequisitosDisciplinasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new DisciplinasCoRequisitosPresenter(
+						instituicaoEnsinoDTO, cenarioDTO, new DisciplinasCoRequisitosView(cenarioDTO) );
+
+					presenter.go( gTab );
+				}
+			});
 
 		this.toolBar.getDivisaoCreditosListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
@@ -915,6 +996,86 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getCurriculosListDemandasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CurriculosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView(cenarioDTO) );
+
+				presenter.go( gTab );
+			}
+		});
+			
+		this.toolBar.getCurriculosDisciplinasPreRequisitosDemandasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinasPreRequisitosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DisciplinasPreRequisitosView(cenarioDTO) );
+
+				presenter.go( gTab );
+			}
+		});
+			
+		this.toolBar.getCurriculosDisciplinasCoRequisitosDemandasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DisciplinasCoRequisitosPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DisciplinasCoRequisitosView(cenarioDTO) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAlunosDisciplinasCursadasDemandasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new AlunosDisciplinasCursadasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new AlunosDisciplinasCursadasView(cenarioDTO) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getParametrosGeracaoDemandaButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Services.demandas().getParametroGeracaoDemanda(
+							cenarioDTO, new AsyncCallback< ParametroGeracaoDemandaDTO >()
+						{
+							@Override
+							public void onFailure( Throwable caught )
+							{
+								MessageBox.alert( "ERRO!",
+									"Não foi possível abrir a tela de parâmetros", null );
+							}
+
+							@Override
+							public void onSuccess(ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO) {
+								Presenter presenter = new ParametrosGeracaoDemandaPresenter(
+										cenarioDTO, instituicaoEnsinoDTO,
+										new ParametrosGeracaoDemandaView(cenarioDTO, parametroGeracaoDemandaDTO) );
+
+									presenter.go( gTab );
+							}
+						});
+				}
+			});
 	}
 
 	@Override

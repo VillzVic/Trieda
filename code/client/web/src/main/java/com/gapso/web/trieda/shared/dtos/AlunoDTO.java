@@ -12,6 +12,7 @@ public class AlunoDTO
 	public static final String PROPERTY_ALUNO_NOME = "nome";
 	public static final String PROPERTY_ALUNO_MATRICULA = "matricula";
 	public static final String PROPERTY_ALUNO_FORMANDO = "formando";
+	public static final String PROPERTY_ALUNO_PERIODO = "periodo";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	public AlunoDTO()
@@ -77,6 +78,16 @@ public class AlunoDTO
 	public Boolean getFormando()
 	{
 		return get( PROPERTY_ALUNO_FORMANDO );
+	}
+	
+	public void setPeriodo( Integer value )
+	{
+		set( PROPERTY_ALUNO_PERIODO, value );
+	}
+
+	public Integer getPeriodo()
+	{
+		return get( PROPERTY_ALUNO_PERIODO );
 	}
 
 	@Override

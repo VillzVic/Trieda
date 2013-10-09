@@ -28,7 +28,7 @@ import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -54,7 +54,7 @@ public class ProfessoresDisciplinaPresenter
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
 		ProfessorComboBox getProfessorBuscaComboBox();
-		DisciplinaComboBox getDisciplinaBuscaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< ProfessorDisciplinaDTO > getGrid();

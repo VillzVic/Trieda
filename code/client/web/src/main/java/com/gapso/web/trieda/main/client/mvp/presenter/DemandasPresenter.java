@@ -38,7 +38,7 @@ import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
-import com.gapso.web.trieda.shared.util.view.DisciplinaComboBox;
+import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -71,7 +71,7 @@ public class DemandasPresenter
 		CursoComboBox getCursoBuscaComboBox();
 		CurriculoComboBox getCurriculoBuscaComboBox();
 		TurnoComboBox getTurnoBuscaComboBox();
-		DisciplinaComboBox getDisciplinaBuscaComboBox();
+		DisciplinaAutoCompleteBox getDisciplinaBuscaComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< DemandaDTO > getGrid();

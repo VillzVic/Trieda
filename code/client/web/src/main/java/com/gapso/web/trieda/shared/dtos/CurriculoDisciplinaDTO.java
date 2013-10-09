@@ -16,6 +16,7 @@ public class CurriculoDisciplinaDTO extends AbstractDTO<String> implements Compa
 	public static final String PROPERTY_CREDITOS_PRATICO = "creditosPratico";
 	public static final String PROPERTY_CREDITOS_TOTAL = "creditosTotal";
 	public static final String PROPERTY_CURRICULO_ID = "curriculoId";
+	public static final String PROPERTY_MATURIDADE = "maturidade";
 
 	public CurriculoDisciplinaDTO() {
 		super();
@@ -94,6 +95,13 @@ public class CurriculoDisciplinaDTO extends AbstractDTO<String> implements Compa
 	}
 	public Long getCurriculoId() {
 		return get(PROPERTY_CURRICULO_ID);
+	}
+	
+	public void setMaturidade(Integer value) {
+		set(PROPERTY_MATURIDADE, value);
+	}
+	public Integer getMaturidade() {
+		return get(PROPERTY_MATURIDADE);
 	}
 	
 	@Override

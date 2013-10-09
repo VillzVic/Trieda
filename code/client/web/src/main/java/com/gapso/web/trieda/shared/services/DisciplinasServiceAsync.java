@@ -58,4 +58,5 @@ public interface DisciplinasServiceAsync {
 	void getResumos( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< List< ResumoDisciplinaDTO > > callback );
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
 	void getDisciplinaNaoAssociada( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String nome, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
+	void getListByCurriculoIdAndPeriodo(CenarioDTO cenarioDTO, Long curriculoId, Integer periodo, AsyncCallback<ListLoadResult<DisciplinaDTO>> callback);
 }

@@ -164,6 +164,13 @@ public class CurriculoDisciplinasView
 				return ( value.intValue() > 1 ? value.intValue() + " Créditos" : value.intValue() + " Crédito" );  
 			}  
 		};
+		SummaryRenderer blankRenderer = new SummaryRenderer()
+		{  
+			public String render( Number value, Map< String, Number > data )
+			{  
+				return ("");
+			}  
+		};
 
 		SummaryColumnConfig< Double > cc2 = new SummaryColumnConfig< Double >(
 			CurriculoDisciplinaDTO.PROPERTY_CREDITOS_TEORICO, "Créditos Teóricos", 100 );
@@ -181,6 +188,12 @@ public class CurriculoDisciplinasView
 			CurriculoDisciplinaDTO.PROPERTY_CREDITOS_TOTAL, "Total de Créditos", 100 );
 		cc2.setSummaryType( SummaryType.SUM );
 		cc2.setSummaryRenderer( creditosRenderer );
+		list.add( cc2 );
+		
+		cc2 = new SummaryColumnConfig< Double >(
+			CurriculoDisciplinaDTO.PROPERTY_MATURIDADE, "Maturidade", 100 );
+		cc2.setSummaryType( SummaryType.SUM );
+		cc2.setSummaryRenderer( blankRenderer );
 		list.add( cc2 );
 
 		return list;

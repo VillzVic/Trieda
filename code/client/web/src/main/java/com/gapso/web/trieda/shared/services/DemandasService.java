@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -26,4 +27,7 @@ public interface DemandasService extends RemoteService {
 	void save(DemandaDTO demandaDTO) throws TriedaException;
 	void remove(List<DemandaDTO> demandaDTOList);
 	Integer findPeriodo(DemandaDTO demandaDTO) throws TriedaException;
+	ParametroGeracaoDemandaDTO getParametroGeracaoDemanda(CenarioDTO cenarioDTO);
+	void calculaPrioridadesParaDisciplinasNaoCursadasPorAluno(CenarioDTO cenarioDTO,
+			ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO);
 }
