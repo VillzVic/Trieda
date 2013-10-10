@@ -90,7 +90,7 @@ créditos disponíveis de todas as semanas letivas na sala $s$ na semana.
 \begin{itemize}
 
 \item $x_{d,s,g}$ - número de turmas da disciplina $d$ na sala $s$ no turno $g$.
-\item $fs_{d,s}$ - número de turmas excedentes a 1 da disciplina $d$ alocadas na sala $s$.
+\item $fs_{d,s,g}$ - número de turmas excedentes a 1 da disciplina $d$ alocadas na sala $s$ no turno $g$.
 \item $fd_{a,d}$ - variável binária de folga para o aluno $a$ e disciplina demandada $d$.
 \item $s_{a,d,g}$ - variável binária de alocação para o aluno $a$, disciplina demandada $d$, no turno $g$.
 \item $a_{d,g,s}$ - variável inteira que indica o número de alunos atendidos na disciplina $d$, no turno $g$ e na sala $s$.
@@ -132,10 +132,11 @@ $$
 \subsubsection{Capacidade de salas}
 
 \begin{eqnarray}
-Cap_{s} \cdot x_{d,s,g} \ge a_{d,g,s}\nonumber \qquad 
+Cap_{s} \cdot x_{d,s,g} \ge alfa \cdot a_{d,g,s}\nonumber \qquad 
 \forall d \in D \quad
 \forall g \in G \quad 
-\forall s \in S 
+\forall s \in S \quad
+\mbox{ aonde $alfa > 1$ é um fator de correção para forçar a criação de mais turmas.}
 \end{eqnarray}
 
 
@@ -167,6 +168,14 @@ Cap_{s} \cdot x_{d,s,g} \ge a_{d,g,s}\nonumber \qquad
 
 
 
+\subsubsection{Garante o mesmo número de turmas para disciplina prática e teórica, caso a relação seja 1x1}
+\begin{eqnarray}
+\sum\limits_{s \in S}\sum\limits_{g \in G} x_{dp,s,g} = \sum\limits_{s \in S}\sum\limits_{g \in G} x_{dt,s,g} \nonumber \qquad 
+\forall (dp,dt) \in D \quad
+\end{eqnarray}
+
+
+
 \subsubsection{Tempo máximo por sala}
 \begin{eqnarray}
 \sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} \le TempoMax_{s,g}  \nonumber \qquad 
@@ -190,11 +199,12 @@ H \ge \sum\limits_{g \in G}\sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{
 \end{eqnarray}
 
 
-\subsubsection{Favorece turmas de mesma disciplina a serem abertas em salas diferentes}
+\subsubsection{Favorece turmas de mesma disciplina e em mesmo turno a serem abertas em salas diferentes}
 \begin{eqnarray}
-\sum\limits_{g \in G} x_{d,s,g} - fs_{d,s} \le 1 \nonumber \qquad 
+\sum\limits_{g \in G} x_{d,s,g} - fs_{d,s,g} \le 1 \nonumber \qquad 
 \forall s \in S_{u} \quad
 \forall d \in D \quad
+\forall g \in G
 \end{eqnarray}
 
 
