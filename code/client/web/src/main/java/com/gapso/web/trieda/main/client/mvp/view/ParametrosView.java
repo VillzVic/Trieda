@@ -43,9 +43,10 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private Radio operacionalRadio;
 	private Radio otimizarPorBlocoCurricular;
 	private Radio otimizarPorAluno;
-	private TurnoComboBox turnoComboBox;
 	private Label campiLabel;
 	private Button selecionarCampiButton;
+	private Label turnosLabel;
+	private Button selecionarTurnosButton;
 
 	private CheckBox cargaHorariaAlunoCheckBox;
 	private CargaHorariaComboBox cargaHorariaAlunoComboBox;
@@ -340,11 +341,19 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
         campiSelecionadosContainer.add(this.campiLabel,layoutData);  
         campiSelecionadosContainer.add(this.selecionarCampiButton,layoutData);  
 		this.form.add(campiSelecionadosContainer);
-
-		// TURNO
-		turnoComboBox = new TurnoComboBox(cenarioDTO);
-		turnoComboBox.setFieldLabel("Turno");
-		this.form.add(turnoComboBox);
+		
+		// TURNOS SELECIONADOS
+		this.turnosLabel = new Label("Nenhum turno selecionado");
+		this.selecionarTurnosButton = new Button("Selecionar Turnos");
+		LayoutContainer turnosSelecionadosContainer = new LayoutContainer();  
+        HBoxLayout turnosSelecionadosLayout = new HBoxLayout();  
+        turnosSelecionadosLayout.setPadding(new Padding(5));  
+        turnosSelecionadosLayout.setHBoxLayoutAlign(HBoxLayoutAlign.MIDDLE);  
+        turnosSelecionadosLayout.setPack(BoxLayoutPack.START);  
+        turnosSelecionadosContainer.setLayout(turnosSelecionadosLayout);  
+        turnosSelecionadosContainer.add(this.turnosLabel,layoutData);  
+        turnosSelecionadosContainer.add(this.selecionarTurnosButton,layoutData);  
+		this.form.add(turnosSelecionadosContainer);
 		
 		// INICIALIZA PARAMETROS
 		this.taticoRadio.setValue(this.parametroDTO.isTatico() || !parametroDTO.isOperacional());
@@ -354,6 +363,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.otimizarPorBlocoCurricular.setValue(!otimizarPor);
 		this.funcaoObjetivoCheckBox.setValue(this.parametroDTO.getFuncaoObjetivo());
 		this.campiLabel.setHtml(this.parametroDTO.getCampi().isEmpty() ? "Nenhum campus selecionado" : (this.parametroDTO.getCampi().size() + " campi selecionado(s)"));
+		this.turnosLabel.setHtml(this.parametroDTO.getTurnos().isEmpty() ? "Nenhum turno selecionado" : (this.parametroDTO.getTurnos().size() + " turno(s) selecionado(s)"));
 	}
 
 	private CheckBox createCheckBox(
@@ -633,12 +643,6 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	}
 
 	@Override
-	public TurnoComboBox getTurnoComboBox()
-	{
-		return this.turnoComboBox;
-	}
-
-	@Override
 	public CheckBox getConsiderarEquivalenciaCheckBox()
 	{
 		return this.considerarEquivalenciaCheckBox;
@@ -668,9 +672,24 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	public Button getSelecionarCampiButton() {
 		return this.selecionarCampiButton;
 	}
+	
+	@Override
+	public Label getTurnosLabel() {
+		return this.turnosLabel;
+	}
+
+	@Override
+	public Button getSelecionarTurnosButton() {
+		return this.selecionarTurnosButton;
+	}
 
 	@Override
 	public void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados) {
 		this.campiLabel.setHtml(qtdCampiSelecionados == 0 ? "Nenhum campus selecionado" : (qtdCampiSelecionados + " campi selecionado(s)"));
+	}
+	
+	@Override
+	public void updateQuantidadeTurnosSelecionados(int qtdTurnosSelecionados) {
+		this.turnosLabel.setHtml(qtdTurnosSelecionados == 0 ? "Nenhum turno selecionado" : (qtdTurnosSelecionados + " turno(s) selecionado(s)"));
 	}
 }

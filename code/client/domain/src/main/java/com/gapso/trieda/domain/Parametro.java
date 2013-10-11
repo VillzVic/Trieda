@@ -91,10 +91,12 @@ public class Parametro
 	)
 	private Set<Campus> campi = new HashSet<Campus>();
 	
-	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "TUR_ID")
-	private Turno turno;
+	@ManyToMany
+	@JoinTable(name="PARAMETROS_TURNOS",
+		joinColumns=@JoinColumn(name="PAR_ID"),
+		inverseJoinColumns=@JoinColumn(name="TUR_ID")
+	)
+	private Set<Turno> turnos = new HashSet<Turno>();
 	
 	//////////////////////////////////////////////
 	// PREFERENCIAS DO ALUNO
@@ -354,13 +356,12 @@ public class Parametro
     }
     
     @SuppressWarnings("unchecked")
-	public static List<Parametro> findAll(String modoOtimizacao, String otimizarPor, Integer funcaoObjetivo, Turno turno, Cenario cenario, InstituicaoEnsino instituicaoEnsino) {
+	public static List<Parametro> findAll(String modoOtimizacao, String otimizarPor, Integer funcaoObjetivo, Cenario cenario, InstituicaoEnsino instituicaoEnsino) {
     	Query query = entityManager().createQuery(
         	"SELECT o FROM Parametro o" +
         	" WHERE o.modoOtimizacao = :modoOtimizacao" +
         	" AND o.otimizarPor = :otimizarPor" +
         	" AND o.funcaoObjetivo = :funcaoObjetivo" +
-        	" AND o.turno = :turno" +
         	" AND o.cenario = :cenario" +
         	" AND o.instituicaoEnsino = :instituicaoEnsino" +
         	" AND o.turno.instituicaoEnsino = :instituicaoEnsino"
@@ -369,7 +370,6 @@ public class Parametro
     	query.setParameter("modoOtimizacao",modoOtimizacao);
     	query.setParameter("otimizarPor",otimizarPor);
     	query.setParameter("funcaoObjetivo",funcaoObjetivo);
-    	query.setParameter("turno",turno);
     	query.setParameter("cenario",cenario);
     	query.setParameter("instituicaoEnsino",instituicaoEnsino);
     	
@@ -700,11 +700,11 @@ public class Parametro
 		this.campi = campi;
 	}
 
-	public Turno getTurno() {
-		return turno;
+	public Set<Turno> getTurnos() {
+		return turnos;
 	}
-	public void setTurno(Turno turno) {
-		this.turno = turno;
+	public void setTurnos(Set<Turno> turnos) {
+		this.turnos = turnos;
 	}
 
 	public String getModoOtimizacao() {
@@ -737,7 +737,7 @@ public class Parametro
         sb.append("Cenario: ").append(getCenario()).append(", ");
         sb.append("ModoOtimizacao: ").append(getModoOtimizacao()).append(", ");
         sb.append("Campi: ").append(getCampi().size()).append(", ");
-        sb.append("Turno: ").append(getTurno()).append(", ");
+        sb.append("Turno: ").append(getTurnos().size()).append(", ");
         sb.append("CargaHorariaAluno: ").append(getCargaHorariaAluno()).append(", ");
         sb.append("CargaHorariaAlunoSel: ").append(getCargaHorariaAlunoSel()).append(", ");
         sb.append("AlunoDePeriodoMesmaSala: ").append(getAlunoDePeriodoMesmaSala()).append(", ");

@@ -21,4 +21,6 @@ public interface TurnosServiceAsync
 	void getBuscaList( String nome, CenarioDTO cenarioDTO, PagingLoadConfig config, AsyncCallback< PagingLoadResult< TurnoDTO > > callback );
 	void getListByCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback< ListLoadResult< TurnoDTO > > callback );
 	void getListOtimizedOnly( AsyncCallback< ListLoadResult< TurnoDTO > > callback );
+	void getTurnosNaoSelecionadosParaOtimizacao(CenarioDTO cenarioDTO, List<TurnoDTO> turnosSelecionados,
+			AsyncCallback<ListLoadResult<TurnoDTO>> callback);
 }

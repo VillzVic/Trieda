@@ -202,7 +202,7 @@ public class SolverInput
 		this.disciplinasComDemandaCurriculo.addAll(Disciplina.findAll(this.instituicaoEnsino));
 
 		// Removemos do input todas as disciplinas que não possuem nenhuma demanda cadastrada
-		this.demandasCampusTurno.addAll(Demanda.findBy(this.instituicaoEnsino,this.parametro.getCampi(),this.parametro.getTurno()));
+		this.demandasCampusTurno.addAll(Demanda.findBy(this.instituicaoEnsino,this.parametro.getCampi(),this.parametro.getTurnos()));
 		Set<Disciplina> disciplinasComDemanda = new HashSet<Disciplina>();
 		for (Demanda demanda : this.demandasCampusTurno) {
 			disciplinasComDemanda.add(demanda.getDisciplina());
@@ -573,7 +573,7 @@ public class SolverInput
 			// Lendo turnos
 			for ( Turno turno : turnos )
 			{
-				if ( turno != this.parametro.getTurno() )
+				if ( !this.parametro.getTurnos().contains(turno) )
 				{
 					continue;
 				}
@@ -1354,7 +1354,7 @@ public class SolverInput
 		Curriculo curriculo = curriculoPeriodo.getCurriculo();
 		Set<Oferta> ofertasCandidatas = new HashSet<Oferta>(); 
 		for (Oferta oferta : ofertasCampi) {
-			if (oferta.getCurriculo().equals(curriculo) && oferta.getCurso().equals(curso) && oferta.getTurno().equals(this.parametro.getTurno())) {
+			if (oferta.getCurriculo().equals(curriculo) && oferta.getCurso().equals(curso) && this.parametro.getTurnos().contains(oferta.getTurno())) {
 				ofertasCandidatas.add(oferta);
 			}
 		}
@@ -1635,7 +1635,7 @@ public class SolverInput
 			}
 
 			for (Oferta oferta : ofertas) {
-				if (!oferta.getTurno().equals(this.parametro.getTurno()) || !this.parametro.getCampi().contains(oferta.getCampus())) {
+				if (!this.parametro.getTurnos().contains(oferta.getTurno()) || !this.parametro.getCampi().contains(oferta.getCampus())) {
 					continue;
 				}
 
@@ -1956,8 +1956,7 @@ public class SolverInput
 			{
 				for ( HorarioDisponivelCenario horario : horarios )
 				{
-					if ( !horario.getHorarioAula().getTurno().equals(
-							this.parametro.getTurno() ) )
+					if ( !this.parametro.getTurnos().contains(horario.getHorarioAula().getTurno()) )
 					{
 						continue;
 					}
@@ -2023,7 +2022,7 @@ public class SolverInput
 
 	private void generateTaticoInput() {
 		for (AtendimentoTatico at : this.cenario.getAtendimentosTaticos()) {
-			if (!at.getOferta().getTurno().equals(this.parametro.getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
+			if (!this.parametro.getTurnos().contains(at.getOferta().getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
 				continue;
 			}
 			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda());
@@ -2305,7 +2304,7 @@ public class SolverInput
 			}
 			else
 			{
-				if ( !horarioAula.getTurno().equals( this.parametro.getTurno() ) )
+				if ( !this.parametro.getTurnos().contains(horarioAula.getTurno()) )
 				{
 					continue;
 				}
@@ -2337,7 +2336,7 @@ public class SolverInput
 		{
 			for ( Turno turno : this.cenario.getTurnos() )
 			{
-				if ( !turno.equals( this.parametro.getTurno() ) )
+				if ( !this.parametro.getTurnos().contains(turno) )
 				{
 					continue;
 				}

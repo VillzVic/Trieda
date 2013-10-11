@@ -189,7 +189,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			if (parametroDTO.getCampi() == null || parametroDTO.getCampi().isEmpty()) {
 				message += HtmlUtils.htmlUnescape("O campus n&atilde;o foi informado.");
 			}
-			if (parametroDTO.getTurnoId() == null) {
+			if (parametroDTO.getTurnos().isEmpty()) {
 				if (!message.isEmpty()) {
 					message += " ";
 				}
@@ -220,11 +220,12 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			Parametro parametro = ConvertBeans.toParametro(parametroDTO);
 			if (parametro.getId() == null) {
 				// se entrou aqui é porque foi realizada uma requisição de otimização numa situação em que não havia nenhum parâmetro cadastrado no BD
-				List<Parametro> parametros = Parametro.findAll(parametro.getModoOtimizacao(),parametro.getOtimizarPor(),parametro.getFuncaoObjetivo(),parametro.getTurno(),parametro.getCenario(),parametro.getInstituicaoEnsino());
+				List<Parametro> parametros = Parametro.findAll(parametro.getModoOtimizacao(),parametro.getOtimizarPor(),parametro.getFuncaoObjetivo(),parametro.getCenario(),parametro.getInstituicaoEnsino());
 				Long maxId = -1L;
 				Set<Campus> campi = parametro.getCampi();
+				Set<Turno> turnos = parametro.getTurnos();
 				for (Parametro p : parametros) {
-					if (p.getId() > maxId && campi.containsAll(p.getCampi())) {
+					if (p.getId() > maxId && campi.containsAll(p.getCampi()) && turnos.containsAll(p.getTurnos())) {
 						maxId = p.getId();
 						parametro = p;
 					}
@@ -309,7 +310,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				if (parametroDTO.getCampi() == null || parametroDTO.getCampi().isEmpty()) {
 					errorMessage += HtmlUtils.htmlUnescape("Nenhum campus foi selecionado.");
 				}
-				if (parametroDTO.getTurnoId() == null) {
+				if (parametroDTO.getTurnos().isEmpty()) {
 					errorMessage += HtmlUtils.htmlUnescape(" Nenhum turno foi selecionado.");
 				}
 				
@@ -775,7 +776,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				// obtém o máximo de créditos semanais da semana letiva associada com o currículo
 				Integer maxCreditosSemanais = maxCreditosSemanaisPorSemanaLetivaMap.get(curriculo.getSemanaLetiva().getId());
 				if (maxCreditosSemanais == null) {
-					maxCreditosSemanais = curriculo.getSemanaLetiva().calcTotalCreditosSemanais(parametro.getTurno());
+					maxCreditosSemanais = 0;
+					for (Turno turno : parametro.getTurnos())
+					{
+						maxCreditosSemanais += curriculo.getSemanaLetiva().calcTotalCreditosSemanais(turno);
+					}
 					maxCreditosSemanaisPorSemanaLetivaMap.put(curriculo.getSemanaLetiva().getId(),maxCreditosSemanais);
 				}
 				
@@ -814,7 +819,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		boolean realizaVerificacaoSomenteParaDemandasDePrioridade1 = true;
 		
 		// obtém os alunos do campus selecionado para otimização
-		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,parametro.getCampi(),parametro.getTurno());
+		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,parametro.getCampi(),parametro.getTurnos());
 		Map<Aluno,List<AlunoDemanda>> alunoToAlunoDemandasMap = new HashMap<Aluno,List<AlunoDemanda>>();
 		Map<Aluno,List<SemanaLetiva>> alunoToSemanasLetivasMap = new HashMap<Aluno,List<SemanaLetiva>>();
 		for (AlunoDemanda alunoDemanda : demandasDeAlunoDosCampiSelecionados) {
@@ -848,7 +853,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			for (SemanaLetiva semanaLetiva : semanasLetivasAssociadasComAluno) {
 				Integer localMaxCreditosSemanais = maxCreditosSemanaisPorSemanaLetivaMap.get(semanaLetiva.getId());
 				if (localMaxCreditosSemanais == null) {
-					localMaxCreditosSemanais = semanaLetiva.calcTotalCreditosSemanais(parametro.getTurno());
+					localMaxCreditosSemanais = 0;
+					for (Turno turno : parametro.getTurnos())
+					{
+						localMaxCreditosSemanais = semanaLetiva.calcTotalCreditosSemanais(turno);
+					}
 					maxCreditosSemanaisPorSemanaLetivaMap.put(semanaLetiva.getId(),localMaxCreditosSemanais);
 				}
 				
@@ -1290,7 +1299,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		preencheEstruturasParaCheckDeEquivalencias(parametro,disciplinasMap,equivalenciaCalculadaToEquivalenciasOriginaisMap,disciplinaEliminaIdToEquivalenciasCalculadasMap);
 		
 		// obtém os alunos do campus selecionado para otimização
-		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(getInstituicaoEnsinoUser(),parametro.getCampi(),parametro.getTurno());
+		List<AlunoDemanda> demandasDeAlunoDosCampiSelecionados = AlunoDemanda.findByCampusAndTurno(getInstituicaoEnsinoUser(),parametro.getCampi(),parametro.getTurnos());
 		Map<Aluno,List<AlunoDemanda>> alunoToAlunoDemandasMap = new HashMap<Aluno,List<AlunoDemanda>>();
 		for (AlunoDemanda alunoDemanda : demandasDeAlunoDosCampiSelecionados) {
 			if (!realizaVerificacaoSomenteParaDemandasDePrioridade1 || (alunoDemanda.getPrioridade() == 1)) { // IF utilizado para, quando for o caso, considerar o check somente para demandas de prioridade 1
@@ -1559,7 +1568,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 
 		parametro.setCenario( cenario );
 		parametro.setCampi(new HashSet<Campus>(listCampus));
-		parametro.setTurno( ( listTurnos == null || listTurnos.size() == 0 ? null : listTurnos.get( 0 ) ) );
+		parametro.setTurnos( new HashSet<Turno>(listTurnos) );
 		
 		return parametro;
 	}
@@ -1617,24 +1626,24 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 
 			SolverOutput solverOutput = new SolverOutput(getInstituicaoEnsinoUser(), cenario, triedaOutput);
 			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); ...");// TODO:
-			solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno());
+			solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurnos());
 			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO:
 
 			if (parametro.isTatico()) {
 				System.out.println("solverOutput.generateAtendimentosTatico(); ...");// TODO:
-				solverOutput.generateAtendimentosTatico(parametro.getTurno());
+				solverOutput.generateAtendimentosTatico(parametro.getTurnos());
 				System.out.println("solverOutput.generateAtendimentosTatico(); FINALIZADO");// TODO:
 
 				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); ...");// TODO:
-				solverOutput.salvarAtendimentosTatico(parametro.getCampi(),parametro.getTurno());
+				solverOutput.salvarAtendimentosTatico(parametro.getCampi(),parametro.getTurnos());
 				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO:
 			} else {
 				System.out.println("solverOutput.generateAtendimentosOperacional(); ...");// TODO:
-				solverOutput.generateAtendimentosOperacional(parametro.getTurno());
+				solverOutput.generateAtendimentosOperacional(parametro.getTurnos());
 				System.out.println("solverOutput.generateAtendimentosOperacional(); FINALIZADO");// TODO:
 
 				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); ...");// TODO:
-				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(), parametro.getTurno());
+				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(), parametro.getTurnos());
 				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO:
 			}
 		} catch (JAXBException e) {

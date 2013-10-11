@@ -1,7 +1,9 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
@@ -237,5 +239,25 @@ public class TurnosServiceImpl
 			e.printStackTrace();
 			throw new TriedaException(e);
 		}
+	}
+	
+	@Override
+	public ListLoadResult<TurnoDTO> getTurnosNaoSelecionadosParaOtimizacao(CenarioDTO cenarioDTO, List<TurnoDTO> turnosSelecionados) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		List<TurnoDTO> turnosDTOsNaoSelecionados = new ArrayList<TurnoDTO>();
+		
+		Set<Long> turnosIDsSelecionados = new HashSet<Long>();
+		for (TurnoDTO turnoDTO : turnosSelecionados) {
+			turnosIDsSelecionados.add(turnoDTO.getId());
+		}
+		
+		List<Turno> todosTurnos = Turno.findByCenario(this.getInstituicaoEnsinoUser(), cenario);
+		for (Turno turno : todosTurnos) {
+			if (!turnosIDsSelecionados.contains(turno.getId())) {
+				turnosDTOsNaoSelecionados.add(ConvertBeans.toTurnoDTO(turno));
+			}
+		}
+
+		return new BaseListLoadResult<TurnoDTO>(turnosDTOsNaoSelecionados);
 	}
 }

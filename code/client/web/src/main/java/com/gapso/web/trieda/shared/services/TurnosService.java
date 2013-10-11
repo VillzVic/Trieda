@@ -25,4 +25,6 @@ public interface TurnosService
 	PagingLoadResult< TurnoDTO > getBuscaList( String nome, CenarioDTO cenarioDTO, PagingLoadConfig config );
 	ListLoadResult< TurnoDTO > getListByCampus( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 	ListLoadResult< TurnoDTO > getListOtimizedOnly();
+	ListLoadResult<TurnoDTO> getTurnosNaoSelecionadosParaOtimizacao( CenarioDTO cenarioDTO,
+			List<TurnoDTO> turnosSelecionados );
 }

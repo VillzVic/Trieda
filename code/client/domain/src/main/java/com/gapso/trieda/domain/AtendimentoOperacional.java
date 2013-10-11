@@ -539,16 +539,16 @@ public class AtendimentoOperacional
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoOperacional> findAllBy(Collection<Campus> campi, Turno turno, InstituicaoEnsino instituicaoEnsino) {
+	public static List<AtendimentoOperacional> findAllBy(Collection<Campus> campi, Collection<Turno> turnos, InstituicaoEnsino instituicaoEnsino) {
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
 			+ " WHERE o.oferta.campus IN ( :campi ) "
 			+ " AND o.instituicaoEnsino = :instituicaoEnsino"
-			+ " AND o.oferta.turno = :turno"
+			+ " AND o.oferta.turno IN ( :turnos )"
 		);
 
 		q.setParameter("campi",campi);
-		q.setParameter("turno",turno);
+		q.setParameter("turnos",turnos);
 		q.setParameter("instituicaoEnsino",instituicaoEnsino);
 
 		return q.getResultList();

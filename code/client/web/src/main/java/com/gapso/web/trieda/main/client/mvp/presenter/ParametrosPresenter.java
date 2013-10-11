@@ -20,17 +20,16 @@ import com.gapso.web.trieda.main.client.mvp.view.CompartilharCursosView;
 import com.gapso.web.trieda.main.client.mvp.view.ErrorsWarningsInputSolverView;
 import com.gapso.web.trieda.main.client.mvp.view.SelecionarCampiView;
 import com.gapso.web.trieda.main.client.mvp.view.SelecionarCursosView;
+import com.gapso.web.trieda.main.client.mvp.view.SelecionarTurnosView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.ErrorsWarningsInputSolverDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
-import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.OtimizarServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
@@ -39,11 +38,8 @@ import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
-import com.googlecode.future.FutureResult;
-import com.googlecode.future.FutureSynchronizer;
 
 public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 	public interface Display extends ITriedaI18nGateway {
@@ -52,9 +48,10 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		Radio getOperacionalRadio();
 		Radio getOtimizarPorAlunoRadio();
 		Radio getOtimizarPorBlocoRadio();
-		TurnoComboBox getTurnoComboBox();
 		Label getCampiLabel();
 		Button getSelecionarCampiButton();
+		Label getTurnosLabel();
+		Button getSelecionarTurnosButton();
 		CheckBox getCargaHorariaAlunoCheckBox();
 		CargaHorariaComboBox getCargaHorariaAlunoComboBox();
 		CheckBox getAlunoDePeriodoMesmaSalaCheckBox();
@@ -124,18 +121,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 				}
 				
 				display.getCampiLabel().setHtml(parametroDTO.getCampi().size() + " campi selecionado(s).");
-
-				final TurnosServiceAsync turnosService = Services.turnos();
-				final FutureResult<TurnoDTO> futureTurnoDTO = new FutureResult<TurnoDTO>();
-				turnosService.getTurno(parametroDTO.getTurnoId(),futureTurnoDTO);
-				FutureSynchronizer synch = new FutureSynchronizer(futureTurnoDTO);
-				synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(display) {
-					@Override
-					public void onSuccess(Boolean result) {
-						TurnoDTO turnoDTO = futureTurnoDTO.result();
-						display.getTurnoComboBox().setValue(turnoDTO);
-					}
-				});
+				display.getTurnosLabel().setHtml(parametroDTO.getTurnos().size() + " turno(s) selecionado(s).");
 			}
 		});
 	}
@@ -200,6 +186,14 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
 				Presenter presenter = new SelecionarCampiPresenter(cenarioDTO, display.getParametroDTO(),new SelecionarCampiView(),parametrosViewGateway);
+				presenter.go(null);
+			}
+		});
+		
+		this.display.getSelecionarTurnosButton().addSelectionListener(new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				Presenter presenter = new SelecionarTurnosPresenter(cenarioDTO, display.getParametroDTO(),new SelecionarTurnosView(),parametrosViewGateway);
 				presenter.go(null);
 			}
 		});
@@ -272,12 +266,6 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setModoOtimizacao(this.display.getTaticoRadio().getValue() ? ParametroDTO.TATICO : ParametroDTO.OPERACIONAL);
 		dto.setOtimizarPor(this.display.getOtimizarPorAlunoRadio().getValue() ? ParametroDTO.OTIMIZAR_POR_ALUNO : ParametroDTO.OTIMIZAR_POR_BLOCO);
 		dto.setFuncaoObjetivo(this.display.getFuncaoObjetivoComboBox().getValue().getValue().ordinal());
-
-		TurnoDTO turnoDTO = this.display.getTurnoComboBox().getValue();
-		if (turnoDTO != null) {
-			dto.setTurnoId(turnoDTO.getId());
-			dto.setTurnoDisplay(turnoDTO.getDisplayText());
-		}
 
 		dto.setCargaHorariaAluno(this.display.getCargaHorariaAlunoCheckBox().getValue());
 		dto.setCargaHorariaAlunoSel(this.display.getCargaHorariaAlunoComboBox().getValueString());

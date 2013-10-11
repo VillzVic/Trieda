@@ -18,7 +18,7 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 	public static final String PROPERTY_OTIMIZAR_POR = "otimizarPor";
 	public static final String PROPERTY_FUNCAO_OBJETIVO = "funcaoObjetivo";
 	public static final String PROPERTY_CAMPI_SELECIONADOS = "campiSelecionados";
-	public static final String PROPERTY_TURNO = "turno";
+	public static final String PROPERTY_TURNOS_SELECIONADOS = "turnosSelecionados";
 	
 	static public enum StatusRequisicaoOtimizacao implements Serializable {EM_ANDAMENTO,FINALIZADA_COM_OUTPUT,FINALIZADA_SEM_OUTPUT}
 	
@@ -110,12 +110,12 @@ public class RequisicaoOtimizacaoDTO extends AbstractDTO<String> implements Comp
 		return get(PROPERTY_CAMPI_SELECIONADOS);
 	}
 	
-	public void setTurno(String value) {
-		set(PROPERTY_TURNO,value);
+	public void setTurnosSelecionados(String value) {
+		set(PROPERTY_TURNOS_SELECIONADOS,value);
 	}
 	
-	public String getTurno() {
-		return get(PROPERTY_TURNO);
+	public String getTurnosSelecionados() {
+		return get(PROPERTY_TURNOS_SELECIONADOS);
 	}
 
 	@Override

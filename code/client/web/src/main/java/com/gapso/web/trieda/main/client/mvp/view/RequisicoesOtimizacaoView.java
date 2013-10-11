@@ -91,7 +91,7 @@ public class RequisicoesOtimizacaoView extends MyComposite implements IRequisico
 				"<tr> <td><b>Otimizar por</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_OTIMIZAR_POR+"}</td> </tr>" +
 				"<tr> <td><b>Função Objetivo</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_FUNCAO_OBJETIVO+"}</td> </tr>" +
 				"<tr> <td><b>Campi Selecionados</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_CAMPI_SELECIONADOS+"}</td> </tr>" +
-				"<tr> <td><b>Turno</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_TURNO+"}</td> </tr>" +
+				"<tr> <td><b>Turno</b></td> <td>{"+RequisicaoOtimizacaoDTO.PROPERTY_TURNOS_SELECIONADOS+"}</td> </tr>" +
 			"</table>"
 		));
 		ColumnConfig statusColumn = new ColumnConfig(RequisicaoOtimizacaoDTO.PROPERTY_STATUS_INDEX,"Status",50);

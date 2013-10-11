@@ -2965,10 +2965,12 @@ public class ConvertBeans {
 		List<Campus> campi = Campus.find(campiIDs,instituicaoEnsino);
 		domain.setCampi(new HashSet<Campus>(campi));
 
-		Turno turno = Turno.find(
-			dto.getTurnoId(), instituicaoEnsino );
-		turno.flush();
-		domain.setTurno( turno );
+		List<Long> turnosIDs = new ArrayList<Long>(dto.getTurnos().size());
+		for (TurnoDTO turnosDTO : dto.getTurnos()) {
+			turnosIDs.add(turnosDTO.getId());
+		}
+		List<Turno> turnos = Turno.find(turnosIDs, instituicaoEnsino);
+		domain.setTurnos(new HashSet<Turno>(turnos));
 
 		domain.setCargaHorariaAluno( dto.getCargaHorariaAluno() );
 		domain.setCargaHorariaAlunoSel( dto.getCargaHorariaAlunoSel() );
@@ -3055,13 +3057,11 @@ public class ConvertBeans {
 		}
 		dto.setCampi(campiDTOs);
 
-		Turno turno = domain.getTurno();
-
-		if ( turno != null )
-		{
-			dto.setTurnoId( turno.getId() );
-			dto.setTurnoDisplay( turno.getNome() );
+		List<TurnoDTO> turnosDTOs = new ArrayList<TurnoDTO>(domain.getTurnos().size());
+		for (Turno turno : domain.getTurnos()) {
+			turnosDTOs.add(toTurnoDTO(turno));
 		}
+		dto.setTurnos(turnosDTOs);
 
 		dto.setCargaHorariaAluno( domain.getCargaHorariaAluno() );
 		dto.setAlunoDePeriodoMesmaSala( domain.getAlunoDePeriodoMesmaSala() );
@@ -3433,7 +3433,13 @@ public class ConvertBeans {
 		campiSelecionados = campiSelecionados.substring(0,campiSelecionados.length()-2);
 		dto.setCampiSelecionados(campiSelecionados);
 		dto.setProfessoresRelacionadosIDs(professoresRelacionadosIDs);
-		dto.setTurno(parametro.getTurno().getNome());
+		
+		String turnosSelecionados = "";
+		for (Turno turno : parametro.getTurnos()) {
+			turnosSelecionados += turno.getNome() + ", ";
+		}
+		turnosSelecionados = turnosSelecionados.substring(0, turnosSelecionados.length()-2);
+		dto.setTurnosSelecionados(turnosSelecionados);
 		
 		InstituicaoEnsino instituicaoEnsino = domain.getCenario().getInstituicaoEnsino();
 		dto.setInstituicaoEnsinoId(instituicaoEnsino.getId());

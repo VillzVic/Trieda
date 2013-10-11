@@ -443,18 +443,18 @@ public class Demanda
 	}
     
     @SuppressWarnings("unchecked")
-	public static List<Demanda> findBy(InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Turno turno) {
+	public static List<Demanda> findBy(InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Collection<Turno> turnos) {
 		String queryCampi = "";
 		if (campi != null && !campi.isEmpty()) {
 			queryCampi = " o.oferta.campus IN ( :campi ) AND ";
 		}
 
-		String queryTurno = "";
-		if (turno != null) {
-			queryTurno = " o.oferta.turno = :turno AND ";
+		String queryTurnos = "";
+		if (turnos != null && !turnos.isEmpty()) {
+			queryTurnos = " o.oferta.turno IN ( :turnos ) AND ";
 		}
 
-		String queryString = queryCampi + queryTurno;
+		String queryString = queryCampi + queryTurnos;
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Demanda o "
@@ -467,8 +467,8 @@ public class Demanda
 			q.setParameter("campi",campi);
 		}
 
-		if (turno != null) {
-			q.setParameter("turno", turno);
+		if (!queryTurnos.isEmpty()) {
+			q.setParameter("turnos", turnos);
 		}
 
 		return q.getResultList();

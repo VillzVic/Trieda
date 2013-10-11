@@ -2,6 +2,7 @@ package com.gapso.trieda.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
@@ -62,7 +64,7 @@ public class Turno
     @OneToMany( mappedBy="turno" )
     Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
     
-    @OneToMany( cascade = CascadeType.ALL, mappedBy="turno" )
+	@ManyToMany( cascade = CascadeType.ALL, mappedBy = "turnos" )
     private Set< Parametro > parametros =  new HashSet< Parametro >();
 
     @PersistenceContext
@@ -234,6 +236,21 @@ public class Turno
     }
 
     @SuppressWarnings( "unchecked" )
+    public static List< Turno > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario)
+    {
+    	Query q = entityManager().createQuery(
+    		" SELECT o FROM Turno o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.cenario = :cenario" );
+
+    	q.setParameter( "cenario", cenario );
+    	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+    	return q.getResultList();
+    }
+    
+    @SuppressWarnings( "unchecked" )
     public static List< Turno > findByNome(
     	InstituicaoEnsino instituicaoEnsino, String nome )
     {
@@ -284,6 +301,20 @@ public class Turno
 
         return null;
     }
+    
+	@SuppressWarnings("unchecked")
+	public static List<Turno> find(Collection<Long> ids, InstituicaoEnsino instituicaoEnsino) {
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM Turno o "
+		  + " WHERE o.id IN ( :ids ) "
+		  + " AND o.instituicaoEnsino = :instituicaoEnsino"
+		);
+
+		q.setParameter("ids",ids);
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+
+		return q.getResultList();
+	}
 
     public static List< Turno > find(
     	InstituicaoEnsino instituicaoEnsino,

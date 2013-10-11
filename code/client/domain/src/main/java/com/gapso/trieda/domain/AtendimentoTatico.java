@@ -461,16 +461,16 @@ public class AtendimentoTatico
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<AtendimentoTatico> findAllBy(InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Turno turno) {
+	public static List<AtendimentoTatico> findAllBy(InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Collection<Turno> turnos) {
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoTatico o "
 		  + " WHERE o.oferta.campus IN ( :campi ) "
 		  + " AND o.instituicaoEnsino = :instituicaoEnsino "
-		  + " AND o.oferta.turno = :turno "
+		  + " AND o.oferta.turno IN ( :turnos ) "
 		);
 
 		q.setParameter("campi",campi);
-		q.setParameter("turno",turno);
+		q.setParameter("turnos",turnos);
 		q.setParameter("instituicaoEnsino",instituicaoEnsino);
 
 		return q.getResultList();

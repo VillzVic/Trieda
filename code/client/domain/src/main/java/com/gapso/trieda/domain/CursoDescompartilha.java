@@ -155,9 +155,9 @@ public class CursoDescompartilha
         	CursoDescompartilha.class, id );
 
         if ( cd != null && cd.getParametro() != null
-        	&& cd.getParametro().getTurno() != null
-        	&& cd.getParametro().getTurno().getInstituicaoEnsino() != null
-        	&& cd.getParametro().getTurno().getInstituicaoEnsino() == instituicaoEnsino )
+        	&& !cd.getParametro().getTurnos().isEmpty()
+        	&& cd.getParametro().getInstituicaoEnsino() != null
+        	&& cd.getParametro().getInstituicaoEnsino() == instituicaoEnsino )
         {
         	return cd;
         }

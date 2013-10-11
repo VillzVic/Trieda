@@ -66,7 +66,7 @@ public class SolverOutput
 	}
 
 	//@Transactional
-	public List<AtendimentoTatico> generateAtendimentosTatico(Turno turnoSelecionado) throws Exception {
+	public List<AtendimentoTatico> generateAtendimentosTatico(Set<Turno> turnosSelecionados) throws Exception {
 		Map<Long,Sala> salasMap = new HashMap<Long,Sala>();// [SalaId -> Sala]
 		Map<Long,Oferta> ofertasMap = new HashMap<Long,Oferta>();// [OfertaId -> Oferta]
 		Map<Long,Disciplina> disciplinasMap = new HashMap<Long,Disciplina>();// [DisciplinaId -> Disciplina]
@@ -75,7 +75,7 @@ public class SolverOutput
 		preencheMaps(salasMap,ofertasMap,disciplinasMap,horarioAulaIdToHorarioAulaMap,horarioDisponivelCenarioIdToHorarioDisponivelCenarioMap);
 		
 		// [AlunoDemandaId -> AlunoDemanda]
-		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnoSelecionado);
+		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnosSelecionados);
 		
 		List< ItemAtendimentoCampus > itemAtendimentoCampusList = this.triedaOutput.getAtendimentos().getAtendimentoCampus();
 		for ( ItemAtendimentoCampus itemAtendimentoCampus : itemAtendimentoCampusList ) {
@@ -149,7 +149,7 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public List<AtendimentoOperacional> generateAtendimentosOperacional(Turno turnoSelecionado) throws Exception {
+	public List<AtendimentoOperacional> generateAtendimentosOperacional(Set<Turno> turnosSelecionados) throws Exception {
 		Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>(); // [SalaId -> Sala]
 		Map<Long,Oferta> ofertaIdToOfertaMap = new HashMap<Long,Oferta>(); // [OfertaId -> Oferta]
 		Map<Long,Disciplina> disciplinaIdToDisciplinaMap = new HashMap<Long,Disciplina>(); // [DisciplinaId -> Disciplina]
@@ -195,7 +195,7 @@ public class SolverOutput
 		}
 		
 		// [AlunoDemandaId -> AlunoDemanda]
-		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnoSelecionado);
+		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnosSelecionados);
 		
 		List<ItemAtendimentoCampus> itemAtendimentoCampusList = this.triedaOutput.getAtendimentos().getAtendimentoCampus();
 		// para cada campi
@@ -322,11 +322,11 @@ public class SolverOutput
 		}
 	}
 
-	private Map<Long, AlunoDemanda> createAlunoDemandasMap(Turno turnoSelecionado) {
+	private Map<Long, AlunoDemanda> createAlunoDemandasMap(Set<Turno> turnosSelecionados) {
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = new HashMap<Long,AlunoDemanda>();
 		
-		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurno(this.instituicaoEnsino,this.cenario.getCampi(),turnoSelecionado);
+		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurno(this.instituicaoEnsino,this.cenario.getCampi(),turnosSelecionados);
 		for (AlunoDemanda alunoDemanda : alunosDemanda) {
 			alunoDemandaIdToAlunoDemandaMap.put(alunoDemanda.getId(),alunoDemanda);
 		}
@@ -355,9 +355,9 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public void salvarAtendimentosTatico(Set<Campus> campi, Turno turno) {
-		removerTodosAtendimentosTaticoJaSalvos(campi,turno);
-		removerTodosAtendimentosOperacionalJaSalvos(campi,turno);
+	public void salvarAtendimentosTatico(Set<Campus> campi, Set<Turno> turnos) {
+		removerTodosAtendimentosTaticoJaSalvos(campi,turnos);
+		removerTodosAtendimentosOperacionalJaSalvos(campi,turnos);
 
 		boolean atualizouEntidade = false;
 		for (AtendimentoTatico at : this.atendimentosTatico) {
@@ -369,7 +369,7 @@ public class SolverOutput
 			AlunoDemanda.entityManager().flush();
 		}
 		
-		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurnoFetchAtendimentoTatico(instituicaoEnsino, campi,turno);
+		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurnoFetchAtendimentoTatico(instituicaoEnsino, campi,turnos);
 		
 		for(AlunoDemanda alunoDemanda : alunosDemanda){
 			if(alunosDemandaTatico.containsKey(alunoDemanda)){
@@ -387,9 +387,9 @@ public class SolverOutput
 	}
 
 	@Transactional
-	public void salvarAtendimentosOperacional(Set<Campus> campi, Turno turno) {
-		removerTodosAtendimentosTaticoJaSalvos(campi,turno);
-		removerTodosAtendimentosOperacionalJaSalvos(campi,turno);
+	public void salvarAtendimentosOperacional(Set<Campus> campi, Set<Turno> turnos) {
+		removerTodosAtendimentosTaticoJaSalvos(campi,turnos);
+		removerTodosAtendimentosOperacionalJaSalvos(campi,turnos);
 
 		boolean atualizouEntidade = false;
 		for (AtendimentoOperacional at : this.atendimentosOperacional) {
@@ -401,7 +401,7 @@ public class SolverOutput
 			AtendimentoOperacional.entityManager().flush();
 		}
 		
-		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurnoFetchAtendimentoOperacional(instituicaoEnsino, campi,turno);
+		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurnoFetchAtendimentoOperacional(instituicaoEnsino, campi,turnos);
 		
 		for(AlunoDemanda alunoDemanda : alunosDemanda){
 			if(alunosDemandaOperacional.containsKey(alunoDemanda)){
@@ -419,24 +419,24 @@ public class SolverOutput
 	}
 
 	@Transactional
-	private void removerTodosAtendimentosTaticoJaSalvos(Set<Campus> campi, Turno turno) {
-		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findAllBy(instituicaoEnsino,campi,turno);
+	private void removerTodosAtendimentosTaticoJaSalvos(Set<Campus> campi, Set<Turno> turnos) {
+		List<AtendimentoTatico> atendimentosTatico = AtendimentoTatico.findAllBy(instituicaoEnsino,campi,turnos);
 		for (AtendimentoTatico at : atendimentosTatico) {
 			at.remove();
 		}
 	}
 
 	@Transactional
-	private void removerTodosAtendimentosOperacionalJaSalvos(Set<Campus> campi, Turno turno) {
-		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllBy(campi,turno,instituicaoEnsino);
+	private void removerTodosAtendimentosOperacionalJaSalvos(Set<Campus> campi, Set<Turno> turnos) {
+		List<AtendimentoOperacional> atendimentosOperacional = AtendimentoOperacional.findAllBy(campi,turnos,instituicaoEnsino);
 		for (AtendimentoOperacional at : atendimentosOperacional) {
 			at.remove();
 		}
 	}
 
 	@Transactional
-	public void atualizarAlunosDemanda(Set<Campus> campi, Turno turno){
-		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,campi,turno);
+	public void atualizarAlunosDemanda(Set<Campus> campi, Set<Turno> turnos){
+		List<AlunoDemanda> alunosDemandasBD = AlunoDemanda.findByCampusAndTurno(instituicaoEnsino,campi,turnos);
 		for(AlunoDemanda alunoDemandaBD : alunosDemandasBD){
 			if(alunoDemandaBD.getAtendido()){
 				alunoDemandaBD.setAtendido(false);
