@@ -763,7 +763,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				Pair<Calendar,Calendar> horariosAulaAnterior = extraiHorariosInicial_e_Final(aulaAnterior);
 				Pair<Calendar,Calendar> horariosAulaAtual = extraiHorariosInicial_e_Final(aulaAtual);
 	
-				if (!saoConsecutivos(horariosAulaAnterior,horariosAulaAtual)) {
+				
+				boolean disciplinasSubstitutasDiferentes = aulaAnterior.getDisciplinaSubstitutaString() != aulaAtual.getDisciplinaSubstitutaString();
+	
+				if (!saoConsecutivos(horariosAulaAnterior,horariosAulaAtual) || disciplinasSubstitutasDiferentes)
+				{
 					subgruposDeAtendimentosConsecutivos.add(new ArrayList<AtendimentoOperacionalDTO>());
 				}
 	
