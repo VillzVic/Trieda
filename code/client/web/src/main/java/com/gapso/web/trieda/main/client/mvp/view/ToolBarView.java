@@ -386,8 +386,8 @@ public class ToolBarView
 			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
 		disciplinasToolBar.add( demandasDisciplinasBt );
 
-		divisaoCreditosListDisciplinasBt = createButton( "Divisão de<br />Créditos",
-			"Divisão de Créditos", Resources.DEFAULTS.divisaoCredito24() );
+		divisaoCreditosListDisciplinasBt = createButton( "Regras de Divisão<br />de Créditos",
+			"Regras de Divisão de Créditos", Resources.DEFAULTS.divisaoCredito24() );
 		disciplinasToolBar.add( divisaoCreditosListDisciplinasBt );
 
 		equivalenciasListDisciplinasBt = createButton( "Equivalências",
