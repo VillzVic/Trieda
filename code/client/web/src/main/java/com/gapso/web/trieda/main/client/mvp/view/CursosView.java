@@ -71,7 +71,7 @@ public class CursosView
 		this.toolBar.add( new SeparatorToolItem() );
 
 		this.curriculosBT = toolBar.createButton(
-			"Matrizes Curriculares",
+			"Matrizes Curriculares do Curso Selecionado",
 			Resources.DEFAULTS.matrizCurricular16() );
 
 		this.toolBar.add( this.curriculosBT );

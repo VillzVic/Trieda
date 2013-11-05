@@ -413,7 +413,12 @@ public class ProfessoresServiceImpl
 			}
 		}
 
-		return new BasePagingLoadResult< ProfessorCampusDTO >( list );
+		BasePagingLoadResult< ProfessorCampusDTO > result
+			= new BasePagingLoadResult< ProfessorCampusDTO >( list );
+
+		result.setTotalLength( list.size() );
+	
+		return result;
 	}
 
 	@Override

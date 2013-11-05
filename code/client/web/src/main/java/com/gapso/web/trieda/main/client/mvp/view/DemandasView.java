@@ -79,11 +79,13 @@ public class DemandasView
 		String[] menus = {"Exportar como xls", "Exportar como xlsx"};
 		
 		this.toolBar = new SimpleToolBar( this );
+		this.toolBar.getImportExcelButton().setText("Importação de Ofertas e Demandas");
+		this.toolBar.getExportExcelButton().setText("Exportação de Ofertas e Demandas");
 		this.toolBar.add( new SeparatorToolItem() );
 		
-		this.importExcelAlunosDemandaBT = this.toolBar.createButton(getI18nConstants().importarExcel()+" por Aluno",Resources.DEFAULTS.importar16());
+		this.importExcelAlunosDemandaBT = this.toolBar.createButton("Importação de Demandas por Aluno",Resources.DEFAULTS.importar16());
 		this.toolBar.add(this.importExcelAlunosDemandaBT);
-		this.exportExcelAlunosDemandaBT = this.toolBar.createMenuButton(getI18nConstants().exportarExcel()+" por Aluno",Resources.DEFAULTS.exportar16(), menus);
+		this.exportExcelAlunosDemandaBT = this.toolBar.createMenuButton("Exportação de Demandas por Aluno",Resources.DEFAULTS.exportar16(), menus);
 		this.toolBar.add(this.exportExcelAlunosDemandaBT);
 		
 		this.toolBar.add( new SeparatorToolItem() );

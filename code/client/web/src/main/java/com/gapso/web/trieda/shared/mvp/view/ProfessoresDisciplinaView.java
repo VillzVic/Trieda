@@ -97,20 +97,6 @@ public class ProfessoresDisciplinaView extends MyComposite
 		{
 			toolBar = new SimpleToolBar( this );
 		}
-		
-		Button btn = new Button("Teste");
-		toolBar.add(btn);
-		btn.addSelectionListener(new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-				Services.professores().geraHabilitacaoParaProfessoresVirtuaisCadastrados(new AbstractAsyncCallbackWithDefaultOnFailure<Void>(ProfessoresDisciplinaView.this) {
-					@Override
-					public void onSuccess(Void result) {
-						MessageBox.info("Sucesso","Sucesso",null);
-					}
-				});
-			}
-		});
 
 		panel.setTopComponent( toolBar );
 	}

@@ -37,8 +37,8 @@ public class DivisaoCreditosFormView
 	private void initUI()
 	{
 		String title = ( ( this.divisaoCreditoDTO.getId() == null ) ?
-			"Inserção de Divisão de Créditos" :
-			"Edição de Divisão de Créditos" );
+			"Inserção de Regras de Divisão de Créditos" :
+			"Edição de Regras de Divisão de Créditos" );
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.divisaoDeCreditos16() );

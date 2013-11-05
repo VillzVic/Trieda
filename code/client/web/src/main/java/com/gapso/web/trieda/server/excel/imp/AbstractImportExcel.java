@@ -293,6 +293,10 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 
 	protected String getCellNumericValue( Cell cell )
 	{
+		if ( (int)cell.getNumericCellValue() == cell.getNumericCellValue())
+		{
+			return Integer.toString((int)cell.getNumericCellValue());
+		}
 		return Double.toString( cell.getNumericCellValue() );
 	}
 

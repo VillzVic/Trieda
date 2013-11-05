@@ -337,7 +337,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 			Resources.DEFAULTS.checkBoxChecked(),
 			Resources.DEFAULTS.checkBoxNotChecked() );
 
-		cb.setText( "<span style='padding-left: 15px;'>" + text + "</span>" );
+		cb.setHtml( "<span style='padding-left: 15px;'>" + text + "</span>" );
 		cb.addSelectionListener( getSelectionListener() );
 
 		return cb;
