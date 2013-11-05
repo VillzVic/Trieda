@@ -98,6 +98,7 @@ créditos disponíveis de todas as semanas letivas na sala $s$ na semana.
 \item $xcs1_{s}$ - variável inteira que indica ocupação da sala $s$ sem custo.
 \item $xcs2_{s}$ - variável inteira de saturação da ocupação da sala $s$ com custo baixo.
 \item $xcs3_{s}$ - variável inteira de saturação da ocupação da sala $s$ com custo alto.
+\item $k_{d}$ - variável binária que indica se a disciplina $d$ foi usada.
 
 \end{itemize}
 
@@ -123,6 +124,9 @@ $$
       \\
       &
       + 10 \cdot \sum\limits_{s \in S} xcs3_{s}
+      \\
+      &
+      + 10 \cdot \sum\limits_{d \in D} k_{d}
       \\
                           
 \end{array}
@@ -212,6 +216,13 @@ H \ge \sum\limits_{g \in G}\sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{
 \begin{eqnarray}
 \sum\limits_{d \in D} \sum\limits_{g \in G} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} = xcs1_{s} + xcs2_{s} + xcs3_{s} \nonumber \qquad 
 \forall s \in S \quad
+\end{eqnarray}
+
+
+\subsubsection{Usa a disciplina?}
+\begin{eqnarray}
+bigM \cdot k_{d} \ge \sum\limits_{s \in S} \sum\limits_{g \in G} x_{d,s,g} \nonumber \qquad 
+\forall d \in D
 \end{eqnarray}
 
 

@@ -134,6 +134,7 @@ $i'$ da disciplina $d$ alocada, com $i' > i$, sendo que $i$ não foi alocada.
 \item $v_{i,d,sl,s}$ - variável binaria que indica se a turma $i$ da disciplina $d$ alocada na sala $s$ possui alunos pertencentes ao calendario $sl$.
 \item $sab_{i,d,s}$ - variável binaria que indica que a turma $i$ da disciplina $d$ está alocada na sala $s$ e só pode ter aula no sábado.
 \item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
+\item $k_{d}$ - variável binária que indica se a disciplina $d$ foi usada.
 
 
 \end{itemize}
@@ -188,6 +189,9 @@ $$
       &
        + \sum\limits_{a \in Al} fmd_{a}
       \\                  
+      &
+      + 10 \cdot \sum\limits_{d \in D} k_{d}
+      \\
                           
 \end{array}
 $$
@@ -543,6 +547,14 @@ v_{i,d,sl1,s} + v_{i,d,sl2,s} - sab_{i,d,s} \le 1 \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D \quad
 \forall cp \in CP
+\end{eqnarray}
+
+
+
+\subsubsection{Usa a disciplina?}
+\begin{eqnarray}
+bigM \cdot k_{d} \ge \sum\limits_{i \in I} z_{i,d,cp} \nonumber \qquad 
+\forall d \in D
 \end{eqnarray}
 
 
