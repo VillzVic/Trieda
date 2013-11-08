@@ -95,9 +95,9 @@ créditos disponíveis de todas as semanas letivas na sala $s$ na semana.
 \item $s_{a,d,g}$ - variável binária de alocação para o aluno $a$, disciplina demandada $d$, no turno $g$.
 \item $a_{d,g,s}$ - variável inteira que indica o número de alunos atendidos na disciplina $d$, no turno $g$ e na sala $s$.
 \item $H$ - variável inteira que indica o maior tempo de utilização das salas na semana.
-\item $xcs1_{s}$ - variável inteira que indica ocupação da sala $s$ sem custo.
-\item $xcs2_{s}$ - variável inteira de saturação da ocupação da sala $s$ com custo baixo.
-\item $xcs3_{s}$ - variável inteira de saturação da ocupação da sala $s$ com custo alto.
+\item $xcs1_{s,g}$ - variável inteira que indica ocupação da sala $s$ no turno $g$ sem custo.
+\item $xcs2_{s,g}$ - variável inteira de saturação da ocupação da sala $s$ no turno $g$ com custo baixo.
+\item $xcs3_{s,g}$ - variável inteira de saturação da ocupação da sala $s$ no turno $g$ com custo alto.
 \item $k_{d}$ - variável binária que indica se a disciplina $d$ foi usada.
 
 \end{itemize}
@@ -214,8 +214,9 @@ H \ge \sum\limits_{g \in G}\sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{
 
 \subsubsection{Contabiliza variaveis xcs1, xcs2 e xcs3}
 \begin{eqnarray}
-\sum\limits_{d \in D} \sum\limits_{g \in G} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} = xcs1_{s} + xcs2_{s} + xcs3_{s} \nonumber \qquad 
+\sum\limits_{d \in D} tempo_{d} \cdot C_{d} \cdot x_{d,s,g} = xcs1_{s,g} + xcs2_{s,g} + xcs3_{s,g} \nonumber \qquad 
 \forall s \in S \quad
+\forall g \in G
 \end{eqnarray}
 
 

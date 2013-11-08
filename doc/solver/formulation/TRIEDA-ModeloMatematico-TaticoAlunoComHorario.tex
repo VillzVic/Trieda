@@ -207,14 +207,6 @@ $$
 \end{eqnarray}
 
 
-%\subsubsection{Número de créditos por sala na semana}
-%
-%\begin{eqnarray}
-%\sum\limits_{d \in D}\sum\limits_{i \in I_{d}} tempo_{d} \cdot C_{d} \cdot o_{i,d,u,s}  \leq  HTPS_{s}  \nonumber \qquad 
-%\forall u \in U \quad
-%\forall s \in S_{u} \quad
-%\end{eqnarray}
-
 
 \subsubsection{Número de créditos por sala e turno na semana}
 
@@ -259,10 +251,10 @@ $$
 
 
 
-\subsubsection{Capacidade alocada tem que permitir atender demanda da disciplina}
+\subsubsection{Capacidade alocada tem que permitir atender demanda da disciplina e turno único por Aluno-Demanda}
 
 \begin{eqnarray}
-\sum\limits_{i \in I_{d}} s_{i,d,a} + fd_{d,a} = 1  \nonumber \qquad 
+\sum\limits_{i \in I_{d}} \sum\limits_{g \in G} s_{i,d,a,g} + fd_{d,a} = 1  \nonumber \qquad 
 \forall a \in Al \quad
 \forall d \in D_{a}
 \end{eqnarray}
@@ -315,7 +307,7 @@ b_{i,d,c} + b_{i,d,c'}\leq 1 \nonumber \qquad
 \subsubsection{Seta variável de formandos 'f' (1)}
 
 \begin{eqnarray}
-M \cdot f_{i,d,cp} \ge \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
+M \cdot f_{i,d,cp} \ge \sum\limits_{g \in G} \sum\limits_{a \in Af} s_{i,d,a,g} \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D \quad
 \forall cp \in CP
@@ -325,7 +317,7 @@ M \cdot f_{i,d,cp} \ge \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
 \subsubsection{Seta variável de formandos 'f' (2)}
 
 \begin{eqnarray}
-f_{i,d,cp} \le \sum\limits_{a \in Af} s_{i,d,a} \nonumber \qquad
+f_{i,d,cp} \le \sum\limits_{g \in G} \sum\limits_{a \in Af} s_{i,d,a,g} \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D \quad
 \forall cp \in CP
@@ -385,7 +377,7 @@ H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} C_{d} \cdot o_{i,d,u,s} \n
 
 \subsubsection{Atendimento de alunos}
 \begin{eqnarray}
-\sum\limits_{s \in S} a_{i,d,s,oft} = \sum\limits_{a \in Al \cap d \in D_{a} } s_{i,d,a} \nonumber \qquad 
+\sum\limits_{s \in S} a_{i,d,s,oft} = \sum\limits_{g \in G} \sum\limits_{a \in Al \cap d \in D_{a} } s_{i,d,a,g} \nonumber \qquad 
 \forall d \in D_{oft} \quad
 \forall i \in I_{d} \quad
 \forall oft \in O \quad
@@ -398,7 +390,7 @@ H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} C_{d} \cdot o_{i,d,u,s} \n
 \mbox{Se houver mistura de alunos entre turmas práticas e teóricas:}
 
 \begin{eqnarray}
-\sum\limits_{i \in I_{dp}} s_{i,dp,a} = \sum\limits_{ i \in I_{dt} } s_{i,dt,a} \nonumber \qquad 
+\sum\limits_{g \in G} \sum\limits_{i \in I_{dp}} s_{i,dp,a,g} = \sum\limits_{g \in G} \sum\limits_{ i \in I_{dt} } s_{i,dt,a,g} \nonumber \qquad 
 \forall a \in Al \quad
 \forall (dp,dt) \in D_{a} \quad
 \end{eqnarray}
@@ -406,7 +398,7 @@ H \ge \sum\limits_{i \in I_{d}} \sum\limits_{d \in D} C_{d} \cdot o_{i,d,u,s} \n
 \mbox{Se não houver mistura de alunos entre turmas práticas e teóricas:}
 
 \begin{eqnarray}
-s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad 
+\sum\limits_{g \in G} s_{i,dp,a,g} = \sum\limits_{g \in G} s_{i,dt,a,g} \nonumber \qquad 
 \forall a \in Al \quad
 \forall i \in I_{d} \quad
 \forall (dp,dt) \in D_{a} \quad
@@ -417,7 +409,7 @@ s_{i,dp,a} = s_{i,dt,a} \nonumber \qquad
 \subsubsection{Atendimento de demandas por prioridades: só para rodada de prioridade 2 em diante}
 
 \begin{eqnarray}
-\sum\limits_{d \in D_{a,p2}} \sum\limits_{i \in I_{d}} tempo_{d} \cdot nCreds_{d} \dot s_{i,d,a} -
+\sum\limits_{g \in G} \sum\limits_{d \in D_{a,p2}} \sum\limits_{i \in I_{d}} tempo_{d} \cdot nCreds_{d} \dot s_{i,d,a,g} -
 tempoCredsNATEND_{p1,a} + fps_{a} - fpi_{a} = 0 \nonumber \qquad 
 \forall a \in Al \quad
 \end{eqnarray}
@@ -427,7 +419,7 @@ tempoCredsNATEND_{p1,a} + fps_{a} - fpi_{a} = 0 \nonumber \qquad
 \subsubsection{Ativa variável w de compartilhamento de turmas: só para rodada de prioridade 2 em diante e tático de P2 fixado}
 
 \begin{eqnarray}
-s_{i,d,a} + s_{i',d',a} - w_{i,d,i',d'} \le 1 \nonumber \qquad 
+\sum\limits_{g \in G} s_{i,d,a,g} + \sum\limits_{g \in G} s_{i',d',a,g} - w_{i,d,i',d'} \le 1 \nonumber \qquad 
 \forall a \in Al \quad
 \forall {(i,d),(i',d')} \mbox{ sendo i ou i' já atendidas em P1}  \quad
 \mbox{e d ou d' tem demanda de P2}
@@ -437,7 +429,7 @@ s_{i,d,a} + s_{i',d',a} - w_{i,d,i',d'} \le 1 \nonumber \qquad
 \subsubsection{Maximo de Creditos por Aluno no Dia: só para rodada de prioridade 2 em diante e tático de P2 fixado}
 
 \begin{eqnarray}
-\sum\limits_{i \in I_{d}}\sum\limits_{d \in D} nCreds_{i,d,t} \cdot s_{i,d,a} \le NroMaxCreds_{a,t,sl} \nonumber \qquad 
+\sum\limits_{g \in G} \sum\limits_{i \in I_{d}}\sum\limits_{d \in D} nCreds_{i,d,t} \cdot s_{i,d,a,g} \le NroMaxCreds_{a,t,sl} \nonumber \qquad 
 \forall a \in Al \quad
 \forall t \in T \quad
 \forall sl \in SL
@@ -446,7 +438,7 @@ s_{i,d,a} + s_{i',d',a} - w_{i,d,i',d'} \le 1 \nonumber \qquad
 \begin{center}ou, caso o aluno não possua alocação no dia t:\end{center}
 
 \begin{eqnarray}
-\sum\limits_{i \in I_{d}}\sum\limits_{d \in D} tempo_{i,d,t} \cdot s_{i,d,a} \le MaxTempo_{a,t} \nonumber \qquad 
+\sum\limits_{g \in G} \sum\limits_{i \in I_{d}}\sum\limits_{d \in D} tempo_{i,d,t} \cdot s_{i,d,a,g} \le MaxTempo_{a,t} \nonumber \qquad 
 \forall a \in Al \quad
 \forall t \in T
 \end{eqnarray}
@@ -466,7 +458,7 @@ s_{i,d,a} + s_{i',d',a} - w_{i,d,i',d'} \le 1 \nonumber \qquad
 \subsubsection{Seta variavel as, para tentar minimizar o numero de salas usadas por um aluno, e consequentemente minizar o numero de conflitos observados no tático para a alocação das turmas do aluno}
 
 \begin{eqnarray}
-as_{a,s} \ge o_{i,d,s} + s_{i,d,a} - 1 \nonumber \qquad 
+as_{a,s} \ge o_{i,d,s} + \sum\limits_{g \in G} s_{i,d,a,g} - 1 \nonumber \qquad 
 \forall a \in Al \quad
 \forall s \in S \quad
 \forall i \in I_{d} \quad
@@ -547,6 +539,38 @@ v_{i,d,sl1,s} + v_{i,d,sl2,s} - sab_{i,d,s} \le 1 \nonumber \qquad
 \forall i \in I \quad
 \forall d \in D \quad
 \forall cp \in CP
+\end{eqnarray}
+
+
+
+\subsubsection{Limita o tempo semanal do aluno por turno}
+
+\begin{eqnarray}
+\sum\limits_{d \in D} \sum\limits_{i \in I_{d}} Tempo_{d} \cdot C_{d} \cdot s_{i,d,a,g} \le Max_{g} \nonumber \qquad 
+\forall a \in A \quad
+\forall g \in G
+\end{eqnarray}
+
+
+
+\subsubsection{Limita o tempo no sábado do aluno por turno}
+
+\begin{eqnarray}
+\sum\limits_{d \in D_{g,sab}} \sum\limits_{i \in I_{d}} Tempo_{d} \cdot C_{d} \cdot s_{i,d,a,g} \le MaxSab_{g} \nonumber \qquad 
+\forall a \in A \quad
+\forall g \in G \quad
+\text{ aonde $D_{g,sab}$ contém as disciplinas que só podem ser dadas no turno g se for no sabado}
+\end{eqnarray}
+
+
+
+\subsubsection{Associa turno de Aluno-Demanda com o turno da turma}
+
+\begin{eqnarray}
+\sum\limits_{a \in A} s_{i,d,a,g} \le M \cdot \sum\limits_{s \in S}  q_{i,d,s,g} \nonumber \qquad 
+\forall i \in I \quad
+\forall d \in D \quad
+\forall g \in G
 \end{eqnarray}
 
 
