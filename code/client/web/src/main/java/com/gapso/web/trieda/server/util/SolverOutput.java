@@ -325,7 +325,7 @@ public class SolverOutput
 	private Map<Long, AlunoDemanda> createAlunoDemandasMap(Set<Turno> turnosSelecionados) {
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = new HashMap<Long,AlunoDemanda>();
-		
+		AlunoDemanda.entityManager().flush();
 		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByCampusAndTurno(this.instituicaoEnsino,this.cenario.getCampi(),turnosSelecionados);
 		for (AlunoDemanda alunoDemanda : alunosDemanda) {
 			alunoDemandaIdToAlunoDemandaMap.put(alunoDemanda.getId(),alunoDemanda);
