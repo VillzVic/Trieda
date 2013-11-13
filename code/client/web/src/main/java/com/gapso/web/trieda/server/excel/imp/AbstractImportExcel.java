@@ -130,7 +130,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		return this.warnings;
 	}
 
-	private Map< String, List< ExcelBeanType > > readInputStream(
+	protected Map< String, List< ExcelBeanType > > readInputStream(
 		String fileName, InputStream inputStream, Workbook workbook )
 	{
 		// [ SheetName, List< ExcelBeanType > ]
@@ -215,7 +215,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		return excelBeansMap;
 	}
 
-	private boolean isHeaderValid( Row candidateHeader, int sheetIndex,
+	protected boolean isHeaderValid( Row candidateHeader, int sheetIndex,
 		Sheet sheet, Workbook workbook, List< String > headerColumnsNames )
 	{
 		if ( candidateHeader != null )

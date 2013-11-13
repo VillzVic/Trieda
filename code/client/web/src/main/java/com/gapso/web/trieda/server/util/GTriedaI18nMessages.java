@@ -306,4 +306,28 @@ public class GTriedaI18nMessages
 		return this.languageManager.getFormattedText(
 			"excelErroLogicoCapacidadeInstaladaMaiorCapacidadeMax", params );
 	}
+
+	@Override
+	public String excelErroLogicoRegraCreditoInvalida(String linhasComErro) {
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoRegraCreditoInvalida", params );
+	}
+
+	@Override
+	public String excelErroLogicoDeslocamentoAssimetrico(String linhasComErro) {
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoDeslocamentoAssimetrico", params );
+	}
+
+	@Override
+	public String excelAvisoMesmaEntidadeDeslocamento(String linhasComErro) {
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelAvisoMesmaEntidadeDeslocamento", params );
+	}
 }

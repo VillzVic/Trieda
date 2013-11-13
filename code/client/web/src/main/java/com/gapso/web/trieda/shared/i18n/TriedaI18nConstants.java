@@ -7,12 +7,16 @@ public interface TriedaI18nConstants
 {
 	String alunosDemanda();
 	String adicionar();
+	String ambientesFaixaOcupacao();
+	String ambientesFaixaUsoCapacidade();
 	String andar();
 	String areaTitulacao();
 	String areasTitulacao();
 	String associacaoAlunoDemanda();
 	String atendimentosDisciplina();
 	String atendimentosFaixaDemanda();
+	String atendimentosFaixaCredito();
+	String atendimentosFaixaDisciplina();
 	String atendimentosCargaHoraria();
 	String atendimentosMatricula();
 	String bairro();
@@ -61,6 +65,7 @@ public interface TriedaI18nConstants
 	String demandaDeAlunos();
 	String descricao();
 	String descricaoCurriculo();
+	String deslocamentoCampi();
 	String deslocamentoUnidades();
 	String deslocamentoUnidadesCampus();
 	String dia();
@@ -71,6 +76,7 @@ public interface TriedaI18nConstants
 	String disciplinasSalas();
 	String disponibilidadesProfessores();
 	String disponibilidadesSemanaLetiva();
+	String divisoesCredito();
 	String edicaoDe();
 	String editar();
 	String elimina();
@@ -123,6 +129,11 @@ public interface TriedaI18nConstants
 	String professor();
 	String professorVirtual();
 	String professores();
+	String professoresQuantidadeJanelas();
+	String professoresDisciplinasHabilitadas();
+	String professoresDisciplinasLecionadas();
+	String professoresTitulacoes();
+	String professoresAreasConhecimento();
 	String publicado();
 	String quantidadeAlunos();
 	String rateio();
@@ -145,6 +156,7 @@ public interface TriedaI18nConstants
 	String teorico_s();
 	String tipo();
 	String tipoCurso();
+	String tiposCurso();
 	String tipoContrato();
 	String TipoCredito();
 	String titulacao();
@@ -154,6 +166,7 @@ public interface TriedaI18nConstants
 	String triedaDetailMessageHeadingText();
 	String turma();
 	String turno();
+	String turnos();
 	String unidade();
 	String unidades();
 	String unidadesHeadingPanel();

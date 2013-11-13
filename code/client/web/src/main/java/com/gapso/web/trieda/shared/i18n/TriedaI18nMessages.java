@@ -18,6 +18,7 @@ public interface TriedaI18nMessages
 	String excelErroLogicoEntidadesNaoCadastradas( String nomeColuna, String linhasComErro );
 	String excelErroLogicoDisciplinaEmMatrizCurricular( String nomeColuna, String linhasComErro );
 	String excelErroLogicoDisciplinaSemCurriculo( String linhasComErro );
+	String excelErroLogicoDeslocamentoAssimetrico( String linhasComErro );
 	String excelErroLogicoEquivalenciaGeral( String linhasComErro );
 	String excelErroLogicoUnicidadeViolada( String valorRepetido, String linhasComErro );
 	String excelErroLogicoUnicidadeVioladaCurriculoPorCurso( String valorRepetido, String linhasComErro );
@@ -39,6 +40,8 @@ public interface TriedaI18nMessages
 	String sucessoRemoverDoBD( String codigoItem );
 	String sucessoSalvarNoBD( String codigoItem );
 	String excelErroLogicoCapacidadeInstaladaMaiorCapacidadeMax( String linhasComErro );
+	String excelErroLogicoRegraCreditoInvalida( String linhasComErro );
+	String excelAvisoMesmaEntidadeDeslocamento( String linhasComErro );
 
   // Exemplo com data
   // @DefaultMessage( "Last update: { 0, date, medium } { 0, time, medium }" )

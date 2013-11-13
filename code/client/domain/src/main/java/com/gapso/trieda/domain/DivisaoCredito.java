@@ -1,8 +1,10 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -482,5 +484,22 @@ public class DivisaoCredito
 	public void setDisciplina( Disciplina disciplina )
 	{
 		this.disciplina = disciplina;
+	}
+	
+	public static Map<String, DivisaoCredito> buildDivisaoCreditoKeyToDivisaoCreditoMap(
+		List<DivisaoCredito> divisoesCredito )
+	{
+		Map<String, DivisaoCredito> divisoesMap = new HashMap<String, DivisaoCredito>();
+				
+		for (DivisaoCredito divisaoCredito : divisoesCredito)
+		{
+			String key = divisaoCredito.getDia1() + "-" + divisaoCredito.getDia2() + "-" + divisaoCredito.getDia3()
+				+ "-" + divisaoCredito.getDia4() + "-" + divisaoCredito.getDia5() + "-" + divisaoCredito.getDia6()
+				+ "-" + divisaoCredito.getDia7();
+			
+			divisoesMap.put(key, divisaoCredito);
+		}
+		
+		return divisoesMap;
 	}
 }

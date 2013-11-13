@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.DivisoesCreditosPresenter;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -119,10 +120,15 @@ public class DivisoesCreditosView
 	}
 
 	@Override
-	public Button getExportExcelButton()
-	{
-		return this.toolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(0);
 	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(1);
+	}
+
 
 	@Override
 	public SimpleGrid< DivisaoCreditoDTO > getGrid()

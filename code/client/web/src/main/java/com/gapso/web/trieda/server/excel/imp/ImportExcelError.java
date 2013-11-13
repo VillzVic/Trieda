@@ -23,6 +23,8 @@ public enum ImportExcelError
 	
 	AREA_TITULACAO_CODIGO_VAZIO,
 	
+	CAMPI_DESLOCAMENTO_CAMPUS_ORIGEM_VAZIO,
+	
 	CAMPITRABALHO_CAMPUS_VAZIO,
 	CAMPITRABALHO_CPF_VAZIO,
 	CAMPITRABALHO_PROFESSOR_VAZIO,
@@ -124,6 +126,13 @@ public enum ImportExcelError
 	DISPONIBILIDADE_HORARIO_FINAL_FORMATO_INVALIDO,
 	DISPONIBILIDADE_HORARIO_FINAL_VAZIO,
 	
+	DIVISAO_CREDITO_CREDITOS_VAZIO,
+	DIVISAO_CREDITO_CREDITOS_FORMATO_INVALIDO,
+	DIVISAO_CREDITO_CREDITOS_VALOR_NEGATIVO,
+	DIVISAO_CREDITO_DIA_VAZIO,
+	DIVISAO_CREDITO_DIA_FORMATO_INVALIDO,
+	DIVISAO_CREDITO_DIA_VALOR_NEGATIVO,
+	
 	EQUIVALENCIA_CURSOU_VAZIO,
 	EQUIVALENCIA_ELIMINA_VAZIO,
 	
@@ -176,11 +185,17 @@ public enum ImportExcelError
 	SALA_TIPO_VAZIO,
 	SALA_UNIDADE_VAZIO,
 	
+	TIPO_CURSO_CODIGO_VAZIO,
+	
 	TUDO_VAZIO,
+	
+	TURNO_NOME_VAZIO,
 
 	UNIDADE_CAMPUS_VAZIO,
 	UNIDADE_CODIGO_VAZIO,
-	UNIDADE_NOME_VAZIO;
+	UNIDADE_NOME_VAZIO,
+	
+	UNIDADES_DESLOCAMENTO_UNIDADE_ORIGEM_VAZIO;
 
 	public String getMessage( String param1, TriedaI18nMessages i18nMessages )
 	{
@@ -204,6 +219,8 @@ public enum ImportExcelError
 			case ALUNO_DEMANDA_PRIORIDADE_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, AlunosDemandaImportExcel.PRIORIDADE_COLUMN_NAME );
 		
 			case AREA_TITULACAO_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,AreasTitulacaoImportExcel.CODIGO_COLUMN_NAME);
+			
+			case CAMPI_DESLOCAMENTO_CAMPUS_ORIGEM_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,"Campus de Origem");
 			
 			case CAMPITRABALHO_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CampiTrabalhoImportExcel.CAMPUS_COLUMN_NAME);
 			case CAMPITRABALHO_CPF_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CampiTrabalhoImportExcel.CPF_COLUMN_NAME);
@@ -292,13 +309,20 @@ public enum ImportExcelError
 			
 			case DISCIPLINASALA_DISCIPLINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.DISCIPLINA_COLUMN_NAME);
 			case DISCIPLINASALA_SALA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasSalasImportExcel.SALA_COLUMN_NAME);
-			
+
 			case DISPONIBILIDADE_DIA_SEMANA_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido(param1,DisponibilidadesProfessoresImportExcel.DIA_SEMANA_COLUMN_NAME);
 			case DISPONIBILIDADE_DIA_SEMANA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisponibilidadesProfessoresImportExcel.DIA_SEMANA_COLUMN_NAME);
 			case DISPONIBILIDADE_HORARIO_INICIAL_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisponibilidadesProfessoresImportExcel.HORARIO_INICIAL_COLUMN_NAME);
 			case DISPONIBILIDADE_HORARIO_INICIAL_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisponibilidadesProfessoresImportExcel.HORARIO_INICIAL_COLUMN_NAME);
 			case DISPONIBILIDADE_HORARIO_FINAL_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DisponibilidadesProfessoresImportExcel.HORARIO_FINAL_COLUMN_NAME);
 			case DISPONIBILIDADE_HORARIO_FINAL_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisponibilidadesProfessoresImportExcel.HORARIO_FINAL_COLUMN_NAME);
+			
+			case DIVISAO_CREDITO_CREDITOS_VAZIO:  return i18nMessages.excelErroSintaticoColunaVazia(param1,DivisoesCreditoImportExcel.CREDITOS_COLUMN_NAME);
+			case DIVISAO_CREDITO_CREDITOS_FORMATO_INVALIDO:  return i18nMessages.excelErroSintaticoValorInvalido(param1,DivisoesCreditoImportExcel.CREDITOS_COLUMN_NAME);
+			case DIVISAO_CREDITO_CREDITOS_VALOR_NEGATIVO:  return i18nMessages.excelErroSintaticoValorNegativo(param1,DivisoesCreditoImportExcel.CREDITOS_COLUMN_NAME);
+			case DIVISAO_CREDITO_DIA_VAZIO:  return i18nMessages.excelErroSintaticoColunaVazia(param1,DivisoesCreditoImportExcel.DIA1_COLUMN_NAME);
+			case DIVISAO_CREDITO_DIA_FORMATO_INVALIDO:  return i18nMessages.excelErroSintaticoValorInvalido(param1,DivisoesCreditoImportExcel.DIA1_COLUMN_NAME);
+			case DIVISAO_CREDITO_DIA_VALOR_NEGATIVO:  return i18nMessages.excelErroSintaticoValorNegativo(param1,DivisoesCreditoImportExcel.DIA1_COLUMN_NAME);
 			
 			case EQUIVALENCIA_CURSOU_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.CURSOU_COLUMN_NAME);
 			case EQUIVALENCIA_ELIMINA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,EquivalenciasImportExcel.ELIMINA_COLUMN_NAME);
@@ -350,12 +374,18 @@ public enum ImportExcelError
 			case SALA_NUMERO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.NUMERO_COLUMN_NAME);
 			case SALA_TIPO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.TIPO_COLUMN_NAME);
 			case SALA_UNIDADE_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,SalasImportExcel.UNIDADE_COLUMN_NAME);
+			
+			case TIPO_CURSO_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,TiposCursoImportExcel.CODIGO_COLUMN_NAME );
 
 			case TUDO_VAZIO: return i18nMessages.excelErroSintaticoLinhaVazia( param1 );
+			
+			case TURNO_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,TurnosImportExcel.NOME_COLUMN_NAME );
 
 			case UNIDADE_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,UnidadesImportExcel.CAMPUS_COLUMN_NAME );
 			case UNIDADE_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,UnidadesImportExcel.CODIGO_COLUMN_NAME );
 			case UNIDADE_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,UnidadesImportExcel.NOME_COLUMN_NAME );
+			
+			case UNIDADES_DESLOCAMENTO_UNIDADE_ORIGEM_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,"Unidade de destino" );
 		}
 
 		return "";

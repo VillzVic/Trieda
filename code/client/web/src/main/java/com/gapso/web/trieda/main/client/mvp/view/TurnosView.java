@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.TurnosPresenter;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -120,9 +121,13 @@ public class TurnosView
 	}
 
 	@Override
-	public Button getExportExcelButton()
-	{
-		return this.toolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton() {
+		return (MenuItem) toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 
 	@Override

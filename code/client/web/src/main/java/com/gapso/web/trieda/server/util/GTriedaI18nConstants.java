@@ -901,4 +901,69 @@ public class GTriedaI18nConstants
 	public String alunosDisciplinasCursadas() {
 		return this.languageManager.getText("alunosDisciplinasCursadas");
 	}
+
+	@Override
+	public String atendimentosFaixaCredito() {
+		return this.languageManager.getText("atendimentosFaixaCredito");
+	}
+
+	@Override
+	public String atendimentosFaixaDisciplina() {
+		return this.languageManager.getText("atendimentosFaixaDisciplina");
+	}
+
+	@Override
+	public String professoresQuantidadeJanelas() {
+		return this.languageManager.getText("professoresQuantidadeJanelas");
+	}
+
+	@Override
+	public String professoresDisciplinasHabilitadas() {
+		return this.languageManager.getText("professoresDisciplinasHabilitadas");
+	}
+
+	@Override
+	public String professoresDisciplinasLecionadas() {
+		return this.languageManager.getText("professoresDisciplinasLecionadas");
+	}
+
+	@Override
+	public String professoresTitulacoes() {
+		return this.languageManager.getText("professoresTitulacoes");
+	}
+
+	@Override
+	public String professoresAreasConhecimento() {
+		return this.languageManager.getText("professoresAreasConhecimento");
+	}
+
+	@Override
+	public String ambientesFaixaOcupacao() {
+		return this.languageManager.getText("ambientesFaixaOcupacao");
+	}
+
+	@Override
+	public String ambientesFaixaUsoCapacidade() {
+		return this.languageManager.getText("ambientesFaixaUsoCapacidade");
+	}
+
+	@Override
+	public String divisoesCredito() {
+		return this.languageManager.getText("divisoesCredito");
+	}
+
+	@Override
+	public String tiposCurso() {
+		return this.languageManager.getText("tipoCurso");
+	}
+
+	@Override
+	public String turnos() {
+		return this.languageManager.getText("turnos");
+	}
+
+	@Override
+	public String deslocamentoCampi() {
+		return this.languageManager.getText("deslocamentoCampi");
+	}
 }

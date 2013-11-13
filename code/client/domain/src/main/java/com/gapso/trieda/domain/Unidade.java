@@ -403,6 +403,23 @@ public class Unidade implements Serializable
 
 		return unidadesMap;
 	}
+    
+    public static Map< String, Unidade > buildUnidadeNomeToUnidadeMap(
+        	List< Unidade > unidades )
+        {
+    		Map< String, Unidade > unidadesMap
+    			= new HashMap< String, Unidade >();
+
+    		if ( unidades != null && unidades.size() > 0 )
+    		{
+    			for ( Unidade unidade : unidades )
+    			{
+    				unidadesMap.put( unidade.getNome(), unidade );
+    			}
+    		}
+
+    		return unidadesMap;
+    	}
 
     public static Unidade find( Long id, InstituicaoEnsino instituicaoEnsino )
     {
@@ -684,4 +701,29 @@ public class Unidade implements Serializable
 
         return sb.toString();
     }
+   
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof Unidade ) )
+		{
+			return false;
+		}
+
+		Unidade other = (Unidade) obj;
+
+		if ( this.id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !this.id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
 }

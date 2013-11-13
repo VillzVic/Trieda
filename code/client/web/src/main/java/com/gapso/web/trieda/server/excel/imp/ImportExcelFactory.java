@@ -39,6 +39,10 @@ public class ImportExcelFactory
 			case ALUNOS: importer = new AlunosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DEMANDAS_POR_ALUNO: importer = new AlunosDemandaImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case HABILITACAO_PROFESSORES: importer = new HabilitacoesProfessoresImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case CAMPI_DESLOCAMENTO: importer = new CampiDeslocamentoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case UNIDADES_DESLOCAMENTO: importer = new UnidadesDeslocamentoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case TIPOS_CURSO: importer = new TiposCursoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case DIVISOES_CREDITO: importer = new DivisoesCreditoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 		}
 
 		return importer;

@@ -340,7 +340,7 @@ public class UnidadesPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new UnidadesDeslocamentoPresenter(
+				Presenter presenter = new UnidadesDeslocamentoPresenter( instituicaoEnsinoDTO,
 					new UnidadesDeslocamentoView( cenario, null, null ) );
 
 				presenter.go( gTab );

@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.CampiDeslocamentoPresenter;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -79,8 +80,13 @@ public class CampiDeslocamentoView extends MyComposite implements CampiDeslocame
 	}
 	
 	@Override
-	public Button getExportExcelButton() {
-		return deslocamentoToolBar.getExportExcelButton();
+	public MenuItem getExportXlsExcelButton() {
+		return (MenuItem) deslocamentoToolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton() {
+		return (MenuItem) deslocamentoToolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 
 	@Override
