@@ -43,6 +43,7 @@ public class ResumoPercentMestresDoutoresPresenter
 	
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public ResumoPercentMestresDoutoresPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
@@ -50,6 +51,7 @@ public class ResumoPercentMestresDoutoresPresenter
 	{
 			this.display = display;
 			this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+			this.cenarioDTO = cenario;
 	
 			setListeners();
 	}
@@ -68,7 +70,7 @@ public class ResumoPercentMestresDoutoresPresenter
 					return;
 				}
 				display.getGrid().mask( display.getI18nMessages().loading() );
-				Services.atendimentos().getPercentMestresDoutoresList(se.getSelectedItem(),
+				Services.atendimentos().getPercentMestresDoutoresList(cenarioDTO, se.getSelectedItem(),
 						new AbstractAsyncCallbackWithDefaultOnFailure< List < PercentMestresDoutoresDTO > >( display )
 				{
 					@Override

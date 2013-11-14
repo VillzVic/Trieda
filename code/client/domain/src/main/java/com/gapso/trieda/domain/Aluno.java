@@ -636,4 +636,36 @@ public class Aluno
 			" AND o.cursou IS NOT EMPTY" )
 			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
+
+	@SuppressWarnings("unchecked")
+	public static List<Aluno> findBy(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Curso curso, Boolean formando, Integer periodo) {
+		String cursoQuery = curso == null ? "" : " AND cursos.curriculo.curso = :curso ";
+		String cursoQuery2 = curso == null ? "" : " , IN (o.cursou) cursos  ";
+		String formandoQuery = formando == null ? "" : " AND o.formando = :formando ";
+		String periodoQuery = periodo == null ? "" : " AND o.periodo = :periodo ";
+		
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM Aluno o " + cursoQuery2 +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " + cursoQuery + formandoQuery +
+			periodoQuery );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		if (curso != null)
+		{
+			q.setParameter( "curso", curso );
+		}
+		if (formando != null)
+		{
+			q.setParameter( "formando", formando );
+		}
+		if (periodo != null)
+		{
+			q.setParameter( "periodo", periodo );
+		}
+
+		return q.getResultList();
+	}
 }

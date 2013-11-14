@@ -4,10 +4,15 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
+import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoCursoFiltro;
@@ -35,6 +40,19 @@ public interface AtendimentosService extends RemoteService {
 
 	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais();
 
-	List< PercentMestresDoutoresDTO > getPercentMestresDoutoresList( CampusDTO campusDTO );
+	List< PercentMestresDoutoresDTO > getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 
+	List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaCredito( CenarioDTO cenarioDTO, CampusDTO campusDTO );
+
+	List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaDisciplina( CenarioDTO cenarioDTO, CampusDTO campusDTO );
+
+	List<RelatorioQuantidadeDTO> getProfessoresJanelasGrade( CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO );
+
+	List<RelatorioQuantidadeDTO> getProfessoresDisciplinasLecionadas( CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO );
+
+	List<RelatorioQuantidadeDTO> getAmbientesFaixaOcupacaoHorarios( CenarioDTO cenarioDTO, CampusDTO campusDTO );
+
+	List<RelatorioQuantidadeDTO> getAmbientesFaixaUtilizacaoCapacidade( CenarioDTO cenarioDTO, CampusDTO campusDTO );
+
+	List<AtendimentoFaixaTurmaDTO> getAtendimentosFaixaTurma( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 }

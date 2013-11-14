@@ -10,11 +10,14 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.FaixaCapacidadeSalaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
+import com.gapso.web.trieda.shared.util.view.RelatorioSalaFiltro;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -43,4 +46,6 @@ public interface SalasService
 	void desvincula(DisciplinaDTO disciplinaDTO, List<SalaDTO> salasDTO);
 	List<SalaDTO> getListVinculadas(DisciplinaDTO disciplinaDTO);
 	List<SalaDTO> getListNaoVinculadas(CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO);
+	List<RelatorioDTO> getRelatorio( CenarioDTO cenarioDTO, RelatorioSalaFiltro salaFiltro, RelatorioDTO currentNode );
+	ListLoadResult<FaixaCapacidadeSalaDTO> getFaixasCapacidadeSala(CenarioDTO cenarioDTO,	Integer tamanhoFaixa);
 }

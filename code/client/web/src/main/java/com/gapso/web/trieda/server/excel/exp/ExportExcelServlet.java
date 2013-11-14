@@ -199,6 +199,18 @@ public class ExportExcelServlet extends HttpServlet
 		parametros.put( PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DEMANDA, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DEMANDA)) );
 		parametros.put( PlanilhasExportExcel.PERCENT_MESTRES_DOUTORES, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.PERCENT_MESTRES_DOUTORES)) );
 		parametros.put( PlanilhasExportExcel.ATENDIMENTOS_CARGA_HORARIA, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.ATENDIMENTOS_CARGA_HORARIA)) );
+		parametros.put( PlanilhasExportExcel.DISCIPLINAS_PRE_REQUISITOS, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.DISCIPLINAS_PRE_REQUISITOS)) );
+		parametros.put( PlanilhasExportExcel.DISCIPLINAS_CO_REQUISITOS, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.DISCIPLINAS_CO_REQUISITOS)) );
+		parametros.put( PlanilhasExportExcel.ALUNOS_DISCIPLINAS_CURSADAS, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.ALUNOS_DISCIPLINAS_CURSADAS)) );
+		parametros.put( PlanilhasExportExcel.ATENDIMENTOS_FAIXA_CREDITO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_CREDITO)) );
+		parametros.put( PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DISCIPLINA, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DISCIPLINA)) );
+		parametros.put( PlanilhasExportExcel.PROFESSORES_QUANTIDADE_JANELAS, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.PROFESSORES_QUANTIDADE_JANELAS)) );
+		parametros.put( PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS)) );
+		parametros.put( PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS)) );
+		parametros.put( PlanilhasExportExcel.PROFESSORES_TITULACOES, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.PROFESSORES_TITULACOES)) );
+		parametros.put( PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO)) );
+		parametros.put( PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO)) );
+		parametros.put( PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO)) );
 		
 		return parametros;
 		

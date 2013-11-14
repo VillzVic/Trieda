@@ -852,6 +852,25 @@ public class Sala
 		Number size = (Number) q.setMaxResults( 1 ).getSingleResult();
 		return ( size.intValue() > 0 );
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	public static List<Sala> findByCampus(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		Campus campus)
+	{
+    	Query q = entityManager().createQuery(
+       		" SELECT o FROM Sala o " +
+       		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+       		" AND o.unidade.campus.cenario = :cenario " +
+       		" AND o.unidade.campus = :campus ");
+
+       	q.setParameter( "cenario", cenario );
+       	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+       	q.setParameter( "campus", campus );
+
+       	return q.getResultList();
+	}
 
 	public TipoSala getTipoSala()
 	{
@@ -1000,5 +1019,18 @@ public class Sala
 	public int compareTo( Sala o )
 	{
 		return getCodigo().compareTo( o.getCodigo() );
+	}
+
+	public static int findCapacidadeMax(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+    	Query q = entityManager().createQuery(
+       		" SELECT MAX(o.capacidadeInstalada) FROM Sala o " +
+       		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+       		" AND o.unidade.campus.cenario = :cenario " );
+
+       	q.setParameter( "cenario", cenario );
+       	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+       	return (Integer) q.getSingleResult();
 	}
 }

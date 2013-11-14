@@ -55,6 +55,19 @@ public class ExportExcelFormView
 	private CheckBox atendimentosPorAlunoExportExcelCB;
 	private CheckBox percentMestresDoutoresExportExcelCB;
 	private CheckBox aulasExportExcelCB;
+	private CheckBox atendimentosCargaHorariaCB;
+	private CheckBox disicplinasPreRequisitosCB;
+	private CheckBox disicplinasCoRequisitosCB;
+	private CheckBox alunosDisciplinasCursadasCB;
+	private CheckBox atendimentosFaixaCreditoCB;
+	private CheckBox atendimentosFaixaDisciplinaCB;
+	private CheckBox professoresQuantidadeJanelasCB;
+	private CheckBox professoresDisciplinasHabilitadasCB;
+	private CheckBox professoresDisciplinasLecionadasCB;
+	private CheckBox professoresTitulacoesCB;
+	private CheckBox professoresAreasConhecimentoCB;
+	private CheckBox ambientesFaixaOcupacaoCB;
+	private CheckBox ambientesFaixaUtilizacaoCB;
 	private TextField<String> nomeArquivoTF;
 	
 	public ExportExcelFormView()
@@ -198,6 +211,42 @@ public class ExportExcelFormView
 		atendimentosCargaHorariaExportExcelCB.setFieldLabel("Atendimentos Por Carga Horária");
 		left.add(atendimentosCargaHorariaExportExcelCB, formData);
 		
+		professoresDisciplinasHabilitadasCB = new CheckBox();
+		professoresDisciplinasHabilitadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS);
+		professoresDisciplinasHabilitadasCB.setValue(false);
+		professoresDisciplinasHabilitadasCB.setFieldLabel("Professores por Quantidade de Disciplinas Habilitadas");
+		left.add(professoresDisciplinasHabilitadasCB, formData);
+		
+		professoresDisciplinasLecionadasCB = new CheckBox();
+		professoresDisciplinasLecionadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS);
+		professoresDisciplinasLecionadasCB.setValue(false);
+		professoresDisciplinasLecionadasCB.setFieldLabel("Professores por Quantidade de Disciplinas Lecionadas");
+		left.add(atendimentosCargaHorariaExportExcelCB, formData);
+		
+		professoresTitulacoesCB = new CheckBox();
+		professoresTitulacoesCB.setName(PlanilhasExportExcel.PROFESSORES_TITULACOES);
+		professoresTitulacoesCB.setValue(false);
+		professoresTitulacoesCB.setFieldLabel("Professores por Titulações");
+		left.add(professoresTitulacoesCB, formData);
+		
+		professoresAreasConhecimentoCB = new CheckBox();
+		professoresAreasConhecimentoCB.setName(PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO);
+		professoresAreasConhecimentoCB.setValue(false);
+		professoresAreasConhecimentoCB.setFieldLabel("Professores por Areas de Conhecimento");
+		left.add(professoresAreasConhecimentoCB, formData);
+		
+		ambientesFaixaOcupacaoCB = new CheckBox();
+		ambientesFaixaOcupacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO);
+		ambientesFaixaOcupacaoCB.setValue(false);
+		ambientesFaixaOcupacaoCB.setFieldLabel("Ambientes por Faixa de Ocupação de Horários");
+		left.add(ambientesFaixaOcupacaoCB, formData);
+		
+		ambientesFaixaUtilizacaoCB = new CheckBox();
+		ambientesFaixaUtilizacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO);
+		ambientesFaixaUtilizacaoCB.setValue(false);
+		ambientesFaixaUtilizacaoCB.setFieldLabel("Ambientes por Faixa de Utilização da Capacidade");
+		left.add(ambientesFaixaUtilizacaoCB, formData);
+		
 	    LayoutContainer right = new LayoutContainer();
 	    right.setStyleAttribute("paddingLeft", "10px");
 	    layout = new FormLayout();
@@ -280,6 +329,42 @@ public class ExportExcelFormView
 		aulasExportExcelCB.setValue(false);
 		aulasExportExcelCB.setFieldLabel("Aulas");
 		right.add(aulasExportExcelCB, formData);
+		
+		professoresQuantidadeJanelasCB = new CheckBox();
+		professoresQuantidadeJanelasCB.setName(PlanilhasExportExcel.PROFESSORES_QUANTIDADE_JANELAS);
+		professoresQuantidadeJanelasCB.setValue(false);
+		professoresQuantidadeJanelasCB.setFieldLabel("Professores por Quantidade de Janelas");
+		right.add(professoresQuantidadeJanelasCB, formData);
+		
+		disicplinasPreRequisitosCB = new CheckBox();
+		disicplinasPreRequisitosCB.setName(PlanilhasExportExcel.DISCIPLINAS_PRE_REQUISITOS);
+		disicplinasPreRequisitosCB.setValue(false);
+		disicplinasPreRequisitosCB.setFieldLabel("Disciplinas Pré-Requisitos");
+		right.add(disicplinasPreRequisitosCB, formData);
+		
+		disicplinasCoRequisitosCB = new CheckBox();
+		disicplinasCoRequisitosCB.setName(PlanilhasExportExcel.DISCIPLINAS_CO_REQUISITOS);
+		disicplinasCoRequisitosCB.setValue(false);
+		disicplinasCoRequisitosCB.setFieldLabel("Disciplinas Co-Requisitos");
+		right.add(disicplinasCoRequisitosCB, formData);
+		
+		alunosDisciplinasCursadasCB = new CheckBox();
+		alunosDisciplinasCursadasCB.setName(PlanilhasExportExcel.ALUNOS_DISCIPLINAS_CURSADAS);
+		alunosDisciplinasCursadasCB.setValue(false);
+		alunosDisciplinasCursadasCB.setFieldLabel("Disciplinas Cursadas por Alunos");
+		right.add(alunosDisciplinasCursadasCB, formData);
+		
+		atendimentosFaixaCreditoCB = new CheckBox();
+		atendimentosFaixaCreditoCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_CREDITO);
+		atendimentosFaixaCreditoCB.setValue(false);
+		atendimentosFaixaCreditoCB.setFieldLabel("Atendimentos por Faixa de Crédito");
+		right.add(atendimentosFaixaCreditoCB, formData);
+		
+		atendimentosFaixaDisciplinaCB = new CheckBox();
+		atendimentosFaixaDisciplinaCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DISCIPLINA);
+		atendimentosFaixaDisciplinaCB.setValue(false);
+		atendimentosFaixaDisciplinaCB.setFieldLabel("Atendimentos por Faixa de Disciplina");
+		right.add(atendimentosFaixaDisciplinaCB, formData);
 		
 		nomeArquivoTF = new TextField<String>();
 		nomeArquivoTF.setEmptyText("digite um nome para a planilha a ser exportada");
@@ -481,6 +566,71 @@ public class ExportExcelFormView
 	@Override
 	public TextField<String> getNomeArquivoTextField() {
 		return nomeArquivoTF;
+	}
+
+	@Override
+	public CheckBox getAtendimentosCargaHoraria() {
+		return atendimentosCargaHorariaCB;
+	}
+
+	@Override
+	public CheckBox getDisicplinasPreRequisitos() {
+		return disicplinasPreRequisitosCB;
+	}
+
+	@Override
+	public CheckBox getDisicplinasCoRequisitos() {
+		return disicplinasCoRequisitosCB;
+	}
+
+	@Override
+	public CheckBox getAlunosDisciplinasCursadas() {
+		return alunosDisciplinasCursadasCB;
+	}
+
+	@Override
+	public CheckBox getAtendimentosFaixaCredito() {
+		return atendimentosFaixaCreditoCB;
+	}
+
+	@Override
+	public CheckBox getAtendimentosFaixaDisciplina() {
+		return atendimentosFaixaDisciplinaCB;
+	}
+
+	@Override
+	public CheckBox getProfessoresQuantidadeJanelas() {
+		return professoresQuantidadeJanelasCB;
+	}
+
+	@Override
+	public CheckBox getProfessoresDisciplinasHabilitadas() {
+		return professoresDisciplinasHabilitadasCB;
+	}
+
+	@Override
+	public CheckBox getProfessoresDisciplinasLecionadas() {
+		return professoresDisciplinasLecionadasCB;
+	}
+
+	@Override
+	public CheckBox getProfessoresTitulacoes() {
+		return professoresTitulacoesCB;
+	}
+
+	@Override
+	public CheckBox getProfessoresAreasConhecimento() {
+		return professoresAreasConhecimentoCB;
+	}
+
+	@Override
+	public CheckBox getAmbientesFaixaOcupacao() {
+		return ambientesFaixaOcupacaoCB;
+	}
+
+	@Override
+	public CheckBox getAmbientesFaixaUtilizacao() {
+		return ambientesFaixaUtilizacaoCB;
 	}
 
 }

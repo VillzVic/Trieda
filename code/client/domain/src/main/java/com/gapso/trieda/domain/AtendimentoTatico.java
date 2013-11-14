@@ -3,6 +3,7 @@ package com.gapso.trieda.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -920,6 +921,33 @@ public class AtendimentoTatico
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
+	}
+	
+	public static Integer sumCredAlunosAtendidos(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
+		for (TipoDisciplina td : tiposDisciplinas) {
+			if (td.ocupaGrade()) {
+				tiposDisciplinasPresenciais.add(td);
+			}
+		}
+
+		Query q = entityManager().createQuery(
+				" SELECT SUM(o.creditosTeorico+o.creditosPratico)" +
+				" FROM AtendimentoTatico o INNER JOIN o.alunosDemanda a " +
+				" WHERE o.oferta.campus = :campus " +
+				" AND o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) " );
+
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("campus",campus);
+		q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
+
+		Object rs = q.getSingleResult();
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
 	}
 
 	public Cenario getCenario()

@@ -12,8 +12,12 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
+import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.util.view.RelatorioProfessorFiltro;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ProfessoresServiceAsync
@@ -43,4 +47,9 @@ public interface ProfessoresServiceAsync
 	void geraHabilitacaoParaProfessoresVirtuaisCadastrados(AsyncCallback< Void > callback );
 	void getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox,
 			AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
+	void getProfessoresDisciplinasHabilitadas(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
+	void getTiposProfessor(AsyncCallback<ListLoadResult<TipoProfessorDTO>> callback);
+	void getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
+	void getProfessoresAreasConhecimento(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO,	AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
+	void getRelatorio( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro,	RelatorioDTO currentNode, AsyncCallback<List<RelatorioDTO>> callback );
 }

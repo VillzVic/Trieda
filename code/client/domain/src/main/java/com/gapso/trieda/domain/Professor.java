@@ -560,13 +560,18 @@ public class Professor
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Professor > findByCampus(
-		InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		Campus campus)
 	{
 		Query q = entityManager().createQuery(
-			" SELECT o FROM Professor o " +
-			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " );
+			" SELECT o FROM Professor o, IN (o.campi) cmp " +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND cmp = :campus ");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campus", campus );
+		q.setParameter( "cenario", cenario );
 
 		return q.getResultList();
 	}
@@ -923,5 +928,25 @@ public class Professor
 			map.put(professor.getId(), professor);
 		}
 		return map;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<Professor> findProfessoresUteis(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Campus campus) {
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Professor o, IN (o.campi) cmp " +
+			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND cmp = :campus " +
+			" AND o.disciplinas IS NOT EMPTY " +
+			" AND o.horarios IS NOT EMPTY ");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "campus", campus );
+		q.setParameter( "cenario", cenario );
+
+		return q.getResultList();
 	}
 }

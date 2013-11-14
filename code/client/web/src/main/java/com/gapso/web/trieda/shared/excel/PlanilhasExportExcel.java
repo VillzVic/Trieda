@@ -33,5 +33,17 @@ public class PlanilhasExportExcel {
 	public static final String ATENDIMENTOS_FAIXA_DEMANDA = "atendimentosFaixaDemanda";
 	public static final String PERCENT_MESTRES_DOUTORES = "percentMestresDoutores";
 	public static final String ATENDIMENTOS_CARGA_HORARIA = "atendimentosCargaHoraria";
+	public static final String DISCIPLINAS_PRE_REQUISITOS = "DisciplinasPreRequisitos";
+	public static final String DISCIPLINAS_CO_REQUISITOS = "DisciplinasCoRequisitos";
+	public static final String ALUNOS_DISCIPLINAS_CURSADAS = "DisciplinasCursadasAluno";
+	public static final String ATENDIMENTOS_FAIXA_CREDITO = "AtendimentosFaixaCredito";
+	public static final String ATENDIMENTOS_FAIXA_DISCIPLINA = "AtendimentosFaixaDisciplina";
+	public static final String PROFESSORES_QUANTIDADE_JANELAS = "ProfessoresQuantidadeJanelas";
+	public static final String PROFESSORES_DISCIPLINAS_HABILITADAS = "ProfessoresDiscHabilitadas";
+	public static final String PROFESSORES_DISCIPLINAS_LECIONADAS = "ProfessoresDiscLecionadas";
+	public static final String PROFESSORES_TITULACOES = "ProfessoresTitulacoes";
+	public static final String PROFESSORES_AREAS_CONHECIMENTO = "ProfessoresAreasConhecimento";
+	public static final String AMBIENTES_FAIXA_OCUPACAO = "AmbientesFaixaOcupacao";
+	public static final String AMBIENTES_FAIXA_UTILIZACAO = "AmbientesFaixaUtilizacao";
 
 }

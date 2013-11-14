@@ -614,6 +614,38 @@ public class AlunoDemanda
 	}
 	
 	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByAlunos(
+		InstituicaoEnsino instituicaoEnsino, List<Aluno> alunos )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.aluno IN ( :alunos ) GROUP BY o.aluno" );
+		
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "alunos", alunos );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByAlunosAtendidos(
+		InstituicaoEnsino instituicaoEnsino, List<Aluno> alunos )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.aluno IN ( :alunos ) AND o.atendido = TRUE GROUP BY o.aluno" );
+		
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "alunos", alunos );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByDisciplinaAndCampus(
 		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Campus campus )
 	{
@@ -885,5 +917,34 @@ public class AlunoDemanda
 
 		Object rs = q.getSingleResult();
 		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<AlunoDemanda> findByCampus(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Campus campus) {
+		
+		String campusQuery = "";
+		if (campus != null)
+		{
+			campusQuery = "AND o.demanda.disciplina.campus = :campus";
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.cenario = :cenario " +
+			campusQuery
+			);
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		if (campus != null)
+		{
+			q.setParameter( "campus", campus );
+		}
+
+		return q.getResultList();
 	}
 }

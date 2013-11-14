@@ -298,15 +298,17 @@ public class ProfessorVirtual
 
 	@SuppressWarnings( "unchecked" )
 	public static List< ProfessorVirtual > findBy(
-		InstituicaoEnsino instituicaoEnsino, Campus campus )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT o.professorVirtual " +
 			" FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.campus = :campus " +
+			" AND o.cenario = :cenario " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();

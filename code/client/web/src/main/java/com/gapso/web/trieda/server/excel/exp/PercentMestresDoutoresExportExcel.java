@@ -133,7 +133,7 @@ public class PercentMestresDoutoresExportExcel
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
 			percentMestresDoutoresDTO.addAll(
-				atendimentosServiceImpl.getPercentMestresDoutoresList(campusDTO) );
+				atendimentosServiceImpl.getPercentMestresDoutoresList(ConvertBeans.toCenarioDTO(getCenario()), campusDTO) );
 		}
 		
 		if ( !percentMestresDoutoresDTO.isEmpty() )

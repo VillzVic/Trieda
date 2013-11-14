@@ -3,7 +3,9 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
+import org.springframework.format.number.NumberFormatter;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -13,14 +15,18 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curso;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.services.AlunosService;
+import com.gapso.web.trieda.shared.util.view.RelatorioAlunoFiltro;
 
 @Transactional
 public class AlunosServiceImpl
@@ -194,5 +200,61 @@ public class AlunosServiceImpl
 			Aluno aluno = ConvertBeans.toAluno( alunoDTO );
 			aluno.remove();
 		}
+	}
+	
+	@Override
+	public List<RelatorioDTO> getRelatorio(CenarioDTO cenarioDTO, RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode) {
+		List<RelatorioDTO> list = new ArrayList<RelatorioDTO>();
+		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
+		if (currentNode == null){
+			// disponibiliza uma pasta para cada campus no relatório de resumo por campi
+			List<Campus> campi = new ArrayList<Campus>(cenario.getCampi());
+			Collections.sort(campi);
+			for (Campus campus : campi) {
+				RelatorioDTO nodeDTO = new RelatorioDTO(campus.getCodigo() + "(" + campus.getNome() + ")");
+				nodeDTO.setCampusId(campus.getId());
+				getRelatorioParaCampus(cenario, campus, alunoFiltro, nodeDTO);
+				list.add( nodeDTO );
+			}
+		}
+
+		return list;
+	}
+	
+	public void getRelatorioParaCampus(Cenario cenario, Campus campus, RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode) {
+		
+		Curso curso = alunoFiltro.getCurso() != null ? 
+				Curso.find(alunoFiltro.getCurso().getId(), getInstituicaoEnsinoUser()) : null;
+		
+		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
+				alunoFiltro.getFormando(), alunoFiltro.getPeriodo());
+		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
+				true, alunoFiltro.getPeriodo()).size();
+		
+		List<AlunoDemanda> alunosUteis = todosAlunos.size() > 0 ?
+				AlunoDemanda.findByAlunos(getInstituicaoEnsinoUser(), todosAlunos) : new ArrayList<AlunoDemanda>();
+		int alunosAtendidos = todosAlunos.size() > 0 ?
+				AlunoDemanda.findByAlunosAtendidos(getInstituicaoEnsinoUser(), todosAlunos).size() : 0;
+
+		
+		Locale pt_BR = new Locale("pt","BR");
+		NumberFormatter numberFormatter = new NumberFormatter();
+
+		RelatorioDTO perfil = new RelatorioDTO( "<b>Perfil</b>");
+		perfil.add( new RelatorioDTO( "Total de Alunos Cadastrados: <b>" + numberFormatter.print(todosAlunos.size(),pt_BR)) );
+		perfil.add( new RelatorioDTO( "Total de Alunos Formandos: <b>" + numberFormatter.print(alunosFormandos,pt_BR)) );
+		perfil.add( new RelatorioDTO( "Total de Alunos Uteis: <b>" + numberFormatter.print(alunosUteis.size(),pt_BR)) );
+		currentNode.add(perfil);
+		
+		RelatorioDTO atendimento = new RelatorioDTO( "<b>Atendimento</b>");
+		atendimento.add( new RelatorioDTO( "Total de Alunos Atendidos: <b>" + numberFormatter.print(alunosAtendidos,pt_BR) + "</b>") );
+		currentNode.add(atendimento);
+		
+		RelatorioDTO histogramas = new RelatorioDTO("<b>Histogramas</b>");
+		RelatorioDTO histograma1 = new RelatorioDTO( "Faixa de Créditos Atendidos" );
+		histograma1.setButtonText(histograma1.getText());
+		histograma1.setButtonIndex(0);
+		histogramas.add( histograma1 );
+		currentNode.add(histogramas);
 	}
 }

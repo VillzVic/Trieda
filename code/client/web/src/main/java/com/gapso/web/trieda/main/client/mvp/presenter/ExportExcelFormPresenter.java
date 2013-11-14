@@ -59,6 +59,19 @@ public class ExportExcelFormPresenter
 		CheckBox getAtendimentosPorAlunoExportExcelCheckBox();
 		CheckBox getAulasExportExcelCheckBox();
 		CheckBox getPercentMestresDoutores();
+		CheckBox getAtendimentosCargaHoraria();
+		CheckBox getDisicplinasPreRequisitos();
+		CheckBox getDisicplinasCoRequisitos();
+		CheckBox getAlunosDisciplinasCursadas();
+		CheckBox getAtendimentosFaixaCredito();
+		CheckBox getAtendimentosFaixaDisciplina();
+		CheckBox getProfessoresQuantidadeJanelas();
+		CheckBox getProfessoresDisciplinasHabilitadas();
+		CheckBox getProfessoresDisciplinasLecionadas();
+		CheckBox getProfessoresTitulacoes();
+		CheckBox getProfessoresAreasConhecimento();
+		CheckBox getAmbientesFaixaOcupacao();
+		CheckBox getAmbientesFaixaUtilizacao();
 		TextField<String> getNomeArquivoTextField();
 		FormPanel getFormPanel();
 	}

@@ -135,6 +135,31 @@ public class TRIEDAExportExcel
 			exporters.add( new PercentMestresDoutoresExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.AULAS) )
 			exporters.add( new AulasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		
+		if( planilhasExportExcel.get(PlanilhasExportExcel.DISCIPLINAS_PRE_REQUISITOS) )
+			exporters.add( new DisciplinasPreRequisitosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.DISCIPLINAS_CO_REQUISITOS) )
+			exporters.add( new DisciplinasCoRequisitosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.ALUNOS_DISCIPLINAS_CURSADAS) )
+			exporters.add( new AlunosDisciplinasCursadasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_CREDITO) )
+			exporters.add( new AtendimentosFaixaCreditoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DISCIPLINA) )
+			exporters.add( new AtendimentosFaixaDisciplinaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.PROFESSORES_QUANTIDADE_JANELAS) )
+			exporters.add( new ProfessoresJanelasGradeExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS) )
+			exporters.add( new ProfessoresDisciplinasHabilitadasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS) )
+			exporters.add( new ProfessoresDisciplinasLecionadasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.PROFESSORES_TITULACOES) )
+			exporters.add( new ProfessoresTitulacoesExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO) )
+			exporters.add( new ProfessoresAreasConhecimentoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO) )
+			exporters.add( new AmbientesFaixaOcupacaoCapacidadeExportExcel(false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO) )
+			exporters.add( new AmbientesFaixaUtilizacaoHorariosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 
 		Exception exception = null;
 		try {

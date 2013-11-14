@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.shared.util.view;
 
+import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.button.ToolButton;
@@ -49,7 +50,7 @@ public class AcompanhamentoPanelView extends MyComposite
 		String lblText = (String) label.getValue();
 		if(lblText == null) lblText = "";
 		label.setValue(lblText + "<div style=\"padding: 3px 10px; font-size: 11px;\">" + msg + "</div>");
-//		scrollLabelDown();
+		scrollLabelDown();
 	}
 	
 	public void show(){

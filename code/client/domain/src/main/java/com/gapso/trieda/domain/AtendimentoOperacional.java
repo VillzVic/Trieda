@@ -493,14 +493,16 @@ public class AtendimentoOperacional
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAll(
-		Campus campus, InstituicaoEnsino instituicaoEnsino )
+		Campus campus, Cenario cenario, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.campus = :campus " +
-			" AND o.instituicaoEnsino = :instituicaoEnsino" );
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario ");
 
 		q.setParameter( "campus", campus );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
@@ -1169,22 +1171,6 @@ public class AtendimentoOperacional
 
 		return custoDocente * 4.5 * 6.0;
 	}
-
-	@SuppressWarnings( "unchecked" )
-	public static List< AtendimentoOperacional > findAllByCampus(
-		InstituicaoEnsino instituicaoEnsino, Campus campus )
-	{
-		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.oferta.campus = :campus " +
-			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
-
-		q.setParameter( "campus", campus );
-		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-
-		return q.getResultList();
-	}
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllByCampi(
@@ -1353,4 +1339,203 @@ public class AtendimentoOperacional
 
 		return q.getResultList();
 	}
+
+
+	@SuppressWarnings("unchecked")
+	public static List<Professor> findProfessoresUtilizados(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Campus campus, Curso curso, Turno turno, Titulacao titulacao,
+			AreaTitulacao areaTitulacao, TipoContrato tipoContrato) {
+		
+		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
+		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
+		String titulacaoQuery = titulacao == null ? "" : " AND o.professor.titulacao = :titulacao ";
+		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professor.areaTitulacao = :areaTitulacao ";
+		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professor.tipoContrato = :tipoContrato ";
+		
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT (o.professor) FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			turnoQuery + cursoQuery + titulacaoQuery +
+			areaTitulacaoQuery + tipoContratoQuery +
+			" AND o.professor IS NOT NULL ");
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		if (curso != null)
+		{
+			q.setParameter( "curso", curso );
+		}
+		if (turno != null)
+		{
+			q.setParameter( "turno", turno );
+		}
+		if (titulacao != null)
+		{
+			q.setParameter( "titulacao", titulacao );
+		}
+		if (areaTitulacao != null)
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+		if (tipoContrato != null)
+		{
+			q.setParameter( "tipoContrato", tipoContrato );
+		}
+
+		return q.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<ProfessorVirtual> findProfessoresVirtuaisUtilizados(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Campus campus, Curso curso, Turno turno, Titulacao titulacao,
+			AreaTitulacao areaTitulacao, TipoContrato tipoContrato) {
+
+		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
+		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
+		String titulacaoQuery = titulacao == null ? "" : " AND o.professorVirtual.titulacao = :titulacao ";
+		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professorVirtual.areaTitulacao = :areaTitulacao ";
+		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professorVirtual.tipoContrato = :tipoContrato ";
+		
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT (o.professorVirtual) FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			turnoQuery + cursoQuery + titulacaoQuery +
+			areaTitulacaoQuery + tipoContratoQuery +
+			" AND o.professor IS NULL ");
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		if (curso != null)
+		{
+			q.setParameter( "curso", curso );
+		}
+		if (turno != null)
+		{
+			q.setParameter( "turno", turno );
+		}
+		if (titulacao != null)
+		{
+			q.setParameter( "titulacao", titulacao );
+		}
+		if (areaTitulacao != null)
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+		if (tipoContrato != null)
+		{
+			q.setParameter( "tipoContrato", tipoContrato );
+		}
+
+		return q.getResultList();
+	}
+	
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllBy(
+		Campus campus, Cenario cenario, InstituicaoEnsino instituicaoEnsino,
+		Curso curso, Turno turno, Titulacao titulacao,
+		AreaTitulacao areaTitulacao, TipoContrato tipoContrato)
+	{
+		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
+		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
+		
+		String titulacaoProfessorQuery = titulacao == null ? "" : " AND o.professor.titulacao = :titulacao ";
+		String areaTitulacaoProfessorQuery = areaTitulacao == null ? "" : " AND o.professor.areaTitulacao = :areaTitulacao ";
+		String tipoContratoProfessorQuery = tipoContrato == null ? "" : " AND o.professor.tipoContrato = :tipoContrato ";
+		
+		String titulacaoVirtualQuery = titulacao == null ? "" : " AND o.professorVirtual.titulacao = :titulacao ";
+		String areaTitulacaoVirtualQuery = areaTitulacao == null ? "" : " AND o.professorVirtual.areaTitulacao = :areaTitulacao ";
+		String tipoContratoVirtualQuery = tipoContrato == null ? "" : " AND o.professorVirtual.tipoContrato = :tipoContrato ";
+		
+		Query q1 = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			turnoQuery + cursoQuery + titulacaoProfessorQuery +
+			areaTitulacaoProfessorQuery + tipoContratoProfessorQuery +
+			" AND o.professor IS NOT NULL ");
+
+		Query q2 = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			turnoQuery + cursoQuery + titulacaoVirtualQuery +
+			areaTitulacaoVirtualQuery + tipoContratoVirtualQuery +
+			" AND o.professor IS NULL ");
+		
+		q1.setParameter( "campus", campus );
+		q1.setParameter( "cenario", cenario );
+		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q2.setParameter( "campus", campus );
+		q2.setParameter( "cenario", cenario );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		if (curso != null)
+		{
+			q1.setParameter( "curso", curso );
+			q2.setParameter( "curso", curso );
+		}
+		if (turno != null)
+		{
+			q1.setParameter( "turno", turno );
+			q2.setParameter( "turno", turno );
+		}
+		if (titulacao != null)
+		{
+			q1.setParameter( "titulacao", titulacao );
+			q2.setParameter( "titulacao", titulacao );
+		}
+		if (areaTitulacao != null)
+		{
+			q1.setParameter( "areaTitulacao", areaTitulacao );
+			q2.setParameter( "areaTitulacao", areaTitulacao );
+		}
+		if (tipoContrato != null)
+		{
+			q1.setParameter( "tipoContrato", tipoContrato );
+			q2.setParameter( "tipoContrato", tipoContrato );
+		}
+
+		List<AtendimentoOperacional> result = new ArrayList<AtendimentoOperacional>();
+		result.addAll(q1.getResultList());
+		result.addAll(q2.getResultList());
+		
+		return result;
+	}
+	
+	public static Integer sumCredAlunosAtendidos(
+			InstituicaoEnsino instituicaoEnsino, Campus campus )
+		{
+			
+			List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+			List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
+			for (TipoDisciplina td : tiposDisciplinas) {
+				if (td.ocupaGrade()) {
+					tiposDisciplinasPresenciais.add(td);
+				}
+			}
+
+			Query q = entityManager().createQuery(
+					" SELECT COUNT(o) " +
+					" FROM AtendimentoOperacional o INNER JOIN o.alunosDemanda a " +
+					" WHERE o.oferta.campus = :campus " +
+					" AND o.instituicaoEnsino = :instituicaoEnsino " +
+					" AND o.disciplina.tipoDisciplina IN (:tiposDisciplinasPresenciais) " );
+
+			q.setParameter("instituicaoEnsino",instituicaoEnsino);
+			q.setParameter("campus",campus);
+			q.setParameter("tiposDisciplinasPresenciais",tiposDisciplinasPresenciais);
+
+			Object rs = q.getSingleResult();
+			return ( rs == null ? 0 : ( (Number) rs ).intValue() );
+		}
 }

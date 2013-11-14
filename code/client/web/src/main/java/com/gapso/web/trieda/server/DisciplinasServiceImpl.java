@@ -790,11 +790,12 @@ public class DisciplinasServiceImpl
 		CenarioDTO cenarioDTO, CampusDTO campusDTO )
 	{
 		Campus campus = Campus.find( campusDTO.getId(), this.getInstituicaoEnsinoUser() );
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
      	// Juntando os atendimentos tático e operacional
 		List< AtendimentoTatico > listTatico = AtendimentoTatico.findAllByCampus( getInstituicaoEnsinoUser(), campus );
 		List< AtendimentoTaticoDTO > aulasTatico = ConvertBeans.toListAtendimentoTaticoDTO(listTatico);
-		List< AtendimentoOperacional > listOperacional = AtendimentoOperacional.findAll( campus, getInstituicaoEnsinoUser() );
+		List< AtendimentoOperacional > listOperacional = AtendimentoOperacional.findAll( campus, cenario, getInstituicaoEnsinoUser() );
 		List< AtendimentoOperacionalDTO > listOperacionalDTOPorHorario = ConvertBeans.toListAtendimentoOperacionalDTO(listOperacional);
 		AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 		List< AtendimentoRelatorioDTO > aulasOperacional = new ArrayList<AtendimentoRelatorioDTO>(service.extraiAulas(listOperacionalDTOPorHorario));

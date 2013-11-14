@@ -3,10 +3,14 @@ package com.gapso.web.trieda.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.springframework.format.number.NumberFormatter;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -16,26 +20,39 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.AtendimentoOperacional;
+import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.GrupoSala;
+import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TipoSala;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
+import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.FaixaCapacidadeSalaDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.SalasService;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.view.RelatorioSalaFiltro;
 
 @Transactional
 public class SalasServiceImpl
@@ -444,5 +461,316 @@ public class SalasServiceImpl
 		}
 
 		return areaTitulacaoDTOList;
+	}
+	
+	@Override
+	public ListLoadResult<FaixaCapacidadeSalaDTO> getFaixasCapacidadeSala(CenarioDTO cenarioDTO, Integer tamanhoFaixa)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		List<FaixaCapacidadeSalaDTO> faixas = new ArrayList<FaixaCapacidadeSalaDTO>();
+		
+		int capacidadeMaxima = Sala.findCapacidadeMax(getInstituicaoEnsinoUser(), cenario);
+		for (int i = 0; i<capacidadeMaxima; i+=tamanhoFaixa)
+		{
+			FaixaCapacidadeSalaDTO novaFaixa = new FaixaCapacidadeSalaDTO(i, i+tamanhoFaixa);
+			faixas.add(novaFaixa);
+		}
+		
+		return new BaseListLoadResult< FaixaCapacidadeSalaDTO >( faixas );
+	}
+	
+	
+	@Override
+	public List<RelatorioDTO> getRelatorio(CenarioDTO cenarioDTO, RelatorioSalaFiltro salaFiltro, RelatorioDTO currentNode) {
+		List<RelatorioDTO> list = new ArrayList<RelatorioDTO>();
+		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
+		if (currentNode == null){
+			// disponibiliza uma pasta para cada campus no relatório de resumo por campi
+			List<Campus> campi = new ArrayList<Campus>(cenario.getCampi());
+			Collections.sort(campi);
+			for (Campus campus : campi) {
+				RelatorioDTO nodeDTO = new RelatorioDTO(campus.getCodigo() + "(" + campus.getNome() + ")");
+				nodeDTO.setCampusId(campus.getId());
+				getRelatorioParaCampus(cenario, campus, salaFiltro, nodeDTO);
+				list.add( nodeDTO );
+			}
+		}
+
+		return list;
+	}
+	
+	public void getRelatorioParaCampus(Cenario cenario, Campus campus, RelatorioSalaFiltro salaFiltro, RelatorioDTO currentNode) {
+		
+		Turno turnoFiltro = salaFiltro.getTurno() == null ? null :
+			Turno.find(salaFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		int faixaSuperior = salaFiltro.getFaixaCapacidadeSala() == null ? null :
+			salaFiltro.getFaixaCapacidadeSala().getFaixaSuperior();
+		int faixaInferior = salaFiltro.getFaixaCapacidadeSala() == null ? null :
+			salaFiltro.getFaixaCapacidadeSala().getFaixaInferior();
+		
+		List<Sala> todasSalas = Sala.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
+		
+		int numSalas = 0;
+		int numLaboratorios = 0;
+		
+		for (Sala sala : todasSalas)
+		{
+			if (sala.isLaboratorio())
+			{
+				numLaboratorios++;
+			}
+			else
+			{
+				numSalas++;
+			}
+		}
+		
+		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+		// cálculo dos indicadores de utilização das salas de aula e laboratórios
+		Set<Turno> turnosConsiderados = new HashSet<Turno>();
+		Set<Sala> salasUtilizadas = new HashSet<Sala>();
+		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
+		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+		if (turnoFiltro != null )
+		{
+			turnosConsiderados.add(turnoFiltro);
+		}
+		for (Oferta oferta : campus.getOfertas()) {
+			if (turnoFiltro == null) {
+				turnosConsiderados.add(oferta.getTurno());
+			}
+			if (ehTatico) {
+				// atendimentos táticos
+				for (AtendimentoTatico aula : oferta.getAtendimentosTaticos()) {
+					String key = aula.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (aulasPorSalaTurno == null) {
+						aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
+					}
+					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
+					
+					if (salaFiltro.getFaixaCapacidadeSala() != null && 
+							aula.getSala().getCapacidadeInstalada() >= faixaInferior && 
+								aula.getSala().getCapacidadeInstalada() <= faixaSuperior)
+					{
+						salasUtilizadas.add(aula.getSala());
+					}
+					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			} else {
+				// atendimentos operacionais
+				for (AtendimentoOperacional atendimento : oferta.getAtendimentosOperacionais()) {
+					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimetosPorSalaTurno == null) {
+						atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
+					}
+					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
+					
+					if (salaFiltro.getFaixaCapacidadeSala() != null && 
+							atendimento.getSala().getCapacidadeInstalada() >= faixaInferior && 
+									atendimento.getSala().getCapacidadeInstalada() <= faixaSuperior)
+					{
+						salasUtilizadas.add(atendimento.getSala());
+					}
+					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			}
+		}
+		
+		double utilizacaoMediaDosAmbientes = 0.0;
+		double utilizacaoMediaDasSalasDeAula = 0.0;
+		double utilizacaoMediaDosLaboratorios = 0.0;
+		Double mediaUtilizacaoHorarioAmbientes = 0.0;
+		Double mediaUtilizacaoHorarioSalas = 0.0;
+		Double mediaUtilizacaoHorarioLaboratorios = 0.0;
+		double somatorioDeAlunosDeTodasAsAulasEmSalasDeAula = 0.0;
+		double somatorioDeAlunosDeTodasAsAulasEmLaboratorios = 0.0;
+		double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula = 0.0;
+		double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios = 0.0;
+		double mediaAlunosPorTurmaPorSala = 0;
+		double mediaAlunosPorTurmaPorLaboratorio = 0;
+		double mediaAlunosPorTurmaPorAmbientes = 0;
+		Map<Sala, List<Integer>> mediaAlunosPorTurmaPorSalaMap =  new HashMap<Sala, List<Integer>>();
+		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+			// [SalaId -> Tempo de uso (min) semanal]
+			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
+			Map<Long,Integer> laboratorioIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
+			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+			for (Turno turno : turnosConsiderados) {
+				for (Sala sala : salasUtilizadas) {
+					String key = sala.getId() + "-" + turno.getId();
+					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimentosPorSalaTurno != null) {
+						List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+						if (ehTatico) {
+							aulas.addAll(atendimentosPorSalaTurno);
+						} else {
+							List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
+							for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
+								atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
+							}
+							// processa os atendimentos do operacional e os transforma em aulas
+							List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
+							// insere as aulas do modo operacional na lista de atendimentos
+							aulas.addAll(aulasOperacional);
+						}
+						
+						// trata compartilhamento de turmas entre cursos
+						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
+						
+						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+							if (mediaAlunosPorTurmaPorSalaMap.get(sala) == null)
+							{
+								List<Integer> novaQuantidadeAlunos = new ArrayList<Integer>();
+								novaQuantidadeAlunos.add(aula.getQuantidadeAlunos());
+								mediaAlunosPorTurmaPorSalaMap.put(sala, novaQuantidadeAlunos);
+							}
+							else
+							{
+								mediaAlunosPorTurmaPorSalaMap.get(sala).add(aula.getQuantidadeAlunos());
+							}
+							
+							if (!sala.isLaboratorio()) {
+								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos();
+								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada();
+							} else {
+								somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos();
+								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada();
+							}
+
+							if(!sala.isLaboratorio()){
+								Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+								salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							}
+							else {
+								Integer tempoUsoSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+								if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+								laboratorioIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+							}
+						}
+					}
+				}
+			}
+			utilizacaoMediaDosAmbientes = TriedaUtil.round((somatorioDeAlunosDeTodasAsAulasEmSalasDeAula+somatorioDeAlunosDeTodasAsAulasEmLaboratorios)
+					/(somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula+somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios)*100.0,2);
+			utilizacaoMediaDasSalasDeAula = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAula/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula*100.0,2);
+			utilizacaoMediaDosLaboratorios = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratorios/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios*100.0,2);
+			
+			//calculo do indicador de taxa de uso dos horarios das salas de aula
+			SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
+			Map<Integer, Integer> countHorariosAula = new HashMap<Integer, Integer>();
+			for(HorarioAula ha : maiorSemanaLetiva.getHorariosAula()){
+				for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
+					int semanaInt = Semanas.toInt(hdc.getDiaSemana());
+					Integer value = countHorariosAula.get(semanaInt);
+					value = ((value == null) ? 0 : value);
+					countHorariosAula.put(semanaInt, value + 1);
+				}
+			}
+			int cargaHorariaSemanalEmMinutos = 0;
+			for(Integer i : countHorariosAula.keySet()){
+				cargaHorariaSemanalEmMinutos += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
+			}
+			
+			for(Long salaId : salaIdToTempoUsoSemanalEmMinutosMap.keySet()){
+				Integer tempoUsoSalaSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(salaId);
+				mediaUtilizacaoHorarioSalas += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientes += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+			}
+			mediaUtilizacaoHorarioSalas = TriedaUtil.round(mediaUtilizacaoHorarioSalas / salaIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
+			for(Long salaId : laboratorioIdToTempoUsoSemanalEmMinutosMap.keySet()){
+				Integer tempoUsoSalaSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(salaId);
+				mediaUtilizacaoHorarioLaboratorios += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientes += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+			}
+			mediaUtilizacaoHorarioLaboratorios = TriedaUtil.round(mediaUtilizacaoHorarioLaboratorios / laboratorioIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
+			mediaUtilizacaoHorarioAmbientes = TriedaUtil.round(mediaUtilizacaoHorarioAmbientes / (laboratorioIdToTempoUsoSemanalEmMinutosMap.size()+salaIdToTempoUsoSemanalEmMinutosMap.size()) * 100, 2);
+			
+			for (Entry<Sala, List<Integer>> salaQuantidadeAlunosPorTurma : mediaAlunosPorTurmaPorSalaMap.entrySet())
+			{
+				int totalAlunos = 0;
+				if (salaQuantidadeAlunosPorTurma.getKey().isLaboratorio())
+				{
+					for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+					{
+						totalAlunos += quantidadeAlunos;
+					}
+					mediaAlunosPorTurmaPorLaboratorio += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
+				}
+				else
+				{
+					for (Integer quantidadeAlunos : salaQuantidadeAlunosPorTurma.getValue())
+					{
+						totalAlunos += quantidadeAlunos;
+					}
+					mediaAlunosPorTurmaPorSala += (double)totalAlunos/(double)salaQuantidadeAlunosPorTurma.getValue().size();
+				}
+			}
+			mediaAlunosPorTurmaPorAmbientes = (mediaAlunosPorTurmaPorSala + mediaAlunosPorTurmaPorLaboratorio) / salasUtilizadas.size();
+		}
+		
+		int numSalasUtilizadas = 0;
+		int numLaboratoriosUtilizados = 0;
+		for (Sala sala : salasUtilizadas)
+		{
+			if (sala.isLaboratorio())
+			{
+				numLaboratoriosUtilizados++;
+			}
+			else
+			{
+				numSalasUtilizadas++;
+			}
+		}
+		mediaAlunosPorTurmaPorLaboratorio = mediaAlunosPorTurmaPorLaboratorio/numLaboratoriosUtilizados;
+		mediaAlunosPorTurmaPorSala = mediaAlunosPorTurmaPorSala/numSalasUtilizadas;
+		
+		Locale pt_BR = new Locale("pt","BR");
+		NumberFormatter numberFormatter = new NumberFormatter();
+
+		RelatorioDTO perfil = new RelatorioDTO( "<b>Perfil</b>");
+		perfil.add( new RelatorioDTO( " Total de Ambientes Cadastrados: <b>" + numberFormatter.print(todasSalas.size(),pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " |--Total de Salas de Aula: <b>" + numberFormatter.print(numSalas,pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " |--Total de Laboratorios: <b>" + numberFormatter.print(numLaboratorios,pt_BR) + "</b>") );
+		currentNode.add(perfil);
+		
+		RelatorioDTO atendimento = new RelatorioDTO( "<b>Atendimento</b>");
+		atendimento.add( new RelatorioDTO( " Total de Ambientes Utilizados: <b>" + numberFormatter.print(salasUtilizadas.size(),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Total de Salas de Aula Utilizadas: <b>" + numberFormatter.print(numSalasUtilizadas,pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Total de Laboratorios Utilizados: <b>" + numberFormatter.print(numLaboratoriosUtilizados,pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Média de Alunos por Turma Alocada por Ambiente: <b>" + numberFormatter.print(
+				TriedaUtil.round(mediaAlunosPorTurmaPorAmbientes, 2),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Sala de Aula: <b>" + numberFormatter.print(
+				TriedaUtil.round(mediaAlunosPorTurmaPorSala, 2),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Laboratório: <b>" + numberFormatter.print(
+				TriedaUtil.round(mediaAlunosPorTurmaPorLaboratorio, 2),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Utilização Média da Capacidade dos Ambientes (%): <b>" + numberFormatter.print(
+				utilizacaoMediaDosAmbientes,pt_BR) + "%</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média da Capacidade das Salas de Aula: <b>" + numberFormatter.print(
+				utilizacaoMediaDasSalasDeAula,pt_BR) + "%</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média da Capacidade dos Laboratórios: <b>" + numberFormatter.print(
+				utilizacaoMediaDosLaboratorios,pt_BR) + "%</b>") );
+		atendimento.add( new RelatorioDTO( " Utilização Média dos Horários dos Ambientes (%): <b>" + numberFormatter.print(
+				mediaUtilizacaoHorarioAmbientes,pt_BR) + "%</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários das Salas de Aula: <b>" + numberFormatter.print(
+				mediaUtilizacaoHorarioSalas,pt_BR) + "%</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários dos Laboratórios: <b>" + numberFormatter.print(
+				mediaUtilizacaoHorarioLaboratorios,pt_BR) + "%</b>") );
+		currentNode.add(atendimento);
+		
+		RelatorioDTO histogramas = new RelatorioDTO( "<b>Histogramas</b>");
+		RelatorioDTO histograma1 = new RelatorioDTO( "Faixa de Ocupação de Horários" );
+		histograma1.setButtonText(histograma1.getText());
+		histograma1.setButtonIndex(0);
+		histogramas.add( histograma1 );
+		RelatorioDTO histograma2 = new RelatorioDTO( "Faixa de Utilização Média da Capacidade" );
+		histograma2.setButtonText(histograma2.getText());
+		histograma2.setButtonIndex(1);
+		histogramas.add( histograma2 );
+		currentNode.add(histogramas);
 	}
 }

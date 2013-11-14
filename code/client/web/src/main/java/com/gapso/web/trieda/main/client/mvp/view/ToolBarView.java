@@ -12,6 +12,8 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
+import com.extjs.gxt.ui.client.widget.menu.Menu;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.main.client.mvp.presenter.ToolBarPresenter;
@@ -92,18 +94,10 @@ public class ToolBarView
 	private Button professoresCampusListprofessoresBt;
 
 	// Relatórios
-	private Button relatorioVisaoSalaBt;
-	private Button relatorioVisaoCursoBt;
-	private Button relatorioVisaoProfessorBt;
-	private Button relatorioVisaoAlunoBt;
-	private Button resumoCenarioBt;
-	private Button resumoCampiBt;
-	private Button resumoCursosBt;
-	private Button resumoDisciplinasBt;
-	private Button resumoMatriculasBt;
-	private Button resumoAtendimentosDisciplinaBt;
-	private Button resumoAtendimentosFaixaDemandaBt;
-	private Button resumoPercentMestresDoutoresBt;
+	private Button gradeHorariaDropDownBt;
+	private Button resumosDropDownBt;
+	private Button atendimentosDropDownBt;
+	private Button docentesDropDownBt;
 
 	// Administracao
 	private Button usuariosListBt;
@@ -439,55 +433,56 @@ public class ToolBarView
 
 	private void createRelatorios()
 	{
-		resumoCenarioBt = createButton( "Resumo do<br />Cenário",
-			"Resumo do Cenário", Resources.DEFAULTS.resumoCenario24() );
-		relatoriosToolBar.add( resumoCenarioBt );
-
-		resumoCampiBt = createButton( "Resumo por<br />Campus",
-			"Resumo por Campus", Resources.DEFAULTS.resumoCampi24() );
-		relatoriosToolBar.add( resumoCampiBt );
-
-		resumoCursosBt = createButton( "Resumo por<br />Cursos",
-			"Resumo por Curso", Resources.DEFAULTS.resumoCursos24() );
-		relatoriosToolBar.add( resumoCursosBt );
-
-		resumoDisciplinasBt = createButton( "Resumo por<br />Disciplinas",
-			"Resumo por Disciplina", Resources.DEFAULTS.resumoDisciplinas24() );
-		relatoriosToolBar.add( resumoDisciplinasBt );
+		resumosDropDownBt = createButton( "Resumos",
+				"Resumos", Resources.DEFAULTS.resumoCenario24() );
+		Menu menuResumos = new Menu();
+		menuResumos.add( createMenuItem("Resumo do Cenário", Resources.DEFAULTS.resumoCenario16()) );
+		menuResumos.add( createMenuItem("Resumo por Campus", Resources.DEFAULTS.resumoCampi16()) );
+		menuResumos.add( createMenuItem("Resumo por Curso", Resources.DEFAULTS.resumoCursos16()) );
+		menuResumos.add( createMenuItem("Resumo por Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );
+		menuResumos.add( createMenuItem("Relatório de Alunos", Resources.DEFAULTS.professor16()) );
+		menuResumos.add( createMenuItem("Relatório de Professores", Resources.DEFAULTS.professor16()) );
+		menuResumos.add( createMenuItem("Relatório de Ambientes", Resources.DEFAULTS.sala16()) );
+		resumosDropDownBt.setMenu(menuResumos);
+		relatoriosToolBar.add(resumosDropDownBt);
 		
-		resumoMatriculasBt = createButton( "Atendimentos por<br />Matrícula",
-				"Atendimentos por Matrícula", Resources.DEFAULTS.resumoMatricula24() );
-		relatoriosToolBar.add( resumoMatriculasBt );
-
-		resumoAtendimentosDisciplinaBt = createButton( "Atendimentos por<br />Disciplina",
-				"Atendimentos por Disciplina", Resources.DEFAULTS.resumoDisciplinas24() );
-		relatoriosToolBar.add( resumoAtendimentosDisciplinaBt );
-
-		resumoAtendimentosFaixaDemandaBt = createButton( "Atendimentos por<br />Faixa de Demanda",
-				"Atendimentos por Faixa de Demanda", Resources.DEFAULTS.resumoFaixaDemanda24() );
-		relatoriosToolBar.add( resumoAtendimentosFaixaDemandaBt );
+		atendimentosDropDownBt = createButton( "Relatórios<br />Atendimentos",
+				"Relatórios Atendimentos", Resources.DEFAULTS.resumoFaixaDemanda24() );
+		Menu menuAtendimentos = new Menu();
+		menuAtendimentos.add( createMenuItem("Atendimentos por Matrícula", Resources.DEFAULTS.resumoMatricula16()) );
+		menuAtendimentos.add( createMenuItem("Atendimentos por Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );
+		//menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Turma", Resources.DEFAULTS.disciplinaCurriculo16()) );
+		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Demanda", Resources.DEFAULTS.resumoFaixaDemanda16()) );
+		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Crédito", Resources.DEFAULTS.divisaoDeCreditos16()) );
+		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );
+		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Ocupação dos Horários", Resources.DEFAULTS.sala16()) );
+		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Utilização Média da Capacidade", Resources.DEFAULTS.sala16()) );
+		atendimentosDropDownBt.setMenu(menuAtendimentos);
+		relatoriosToolBar.add(atendimentosDropDownBt);
 		
-		resumoPercentMestresDoutoresBt = createButton( "Porcentagem de<br /> Mestres e Doutores",
-				"Porcentagem de Mestres e Doutores", Resources.DEFAULTS.resumoMatricula24() );
-		relatoriosToolBar.add( resumoPercentMestresDoutoresBt );
+		docentesDropDownBt = createButton( "Relatórios<br />de Docentes",
+				"Relatórios de Docentes", Resources.DEFAULTS.resumoMatricula24() );
+		Menu menuDocentes = new Menu();
+		menuDocentes.add( createMenuItem("Porcentagem de Mestres e Doutores", Resources.DEFAULTS.resumoMatricula16()) );
+		menuDocentes.add( createMenuItem("Professores por Quantidade de Janelas", Resources.DEFAULTS.resumoMatricula16()) );
+		menuDocentes.add( createMenuItem("Professores por Quantidade de Disciplinas Habilitadas", Resources.DEFAULTS.resumoDisciplinas16()) );
+		menuDocentes.add( createMenuItem("Professores por Quantidade de Disciplinas Lecionadas", Resources.DEFAULTS.resumoDisciplinas16()) );
+		menuDocentes.add( createMenuItem("Professores por Titulações", Resources.DEFAULTS.tipoCurso16()) );
+		menuDocentes.add( createMenuItem("Professores por Areas de Conhecimento", Resources.DEFAULTS.habilitacaoProfessor16()) );
+		docentesDropDownBt.setMenu(menuDocentes);
+		relatoriosToolBar.add(docentesDropDownBt);
 
 		relatoriosToolBar.add( new SeparatorToolItem() );
-
-		relatorioVisaoSalaBt = createButton( "Grade Horária<br />Visão Sala",
-			"Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala24() );
-		relatoriosToolBar.add( relatorioVisaoSalaBt );
-
-		relatorioVisaoCursoBt = createButton( "Grade Horária<br />Visão Curso",
-			"Grade Horária Visão Curso", Resources.DEFAULTS.saidaCurso24() );
-		relatoriosToolBar.add( relatorioVisaoCursoBt );
-
-		relatorioVisaoProfessorBt = createButton( "Grade Horária<br />Visão Professor",
-			"Grade Horária Visão Professor", Resources.DEFAULTS.saidaProfessor24() );
-		relatoriosToolBar.add( relatorioVisaoProfessorBt );
 		
-		relatorioVisaoAlunoBt = createButton("Grade Horária<br />Visão Aluno",
-			"Grade Horária Visão Aluno", Resources.DEFAULTS.saidaProfessor24());
-		relatoriosToolBar.add(relatorioVisaoAlunoBt);
+		gradeHorariaDropDownBt = createButton( "Relatórios<br /> Grade Horária",
+				"Relatórios Grade Horária", Resources.DEFAULTS.saidaCurso24() );
+		Menu menuGradeHoraria = new Menu();
+		menuGradeHoraria.add( createMenuItem("Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala16()) );
+		menuGradeHoraria.add( createMenuItem("Grade Horária Visão Curso", Resources.DEFAULTS.saidaCurso16()) );
+		menuGradeHoraria.add( createMenuItem("Grade Horária Visão Professor", Resources.DEFAULTS.saidaProfessor16()) );
+		menuGradeHoraria.add( createMenuItem("Grade Horária Visão Aluno", Resources.DEFAULTS.saidaProfessor16()) );
+		gradeHorariaDropDownBt.setMenu(menuGradeHoraria);
+		relatoriosToolBar.add(gradeHorariaDropDownBt);
 	}
 
 	private void createAdministracao() {
@@ -562,6 +557,13 @@ public class ToolBarView
 		bt.setHeight( 60 );
 
 		return bt;
+	}
+	
+	private MenuItem createMenuItem( String text, ImageResource icon )
+	{
+		MenuItem menuItem = new MenuItem( text, AbstractImagePrototype.create( icon ) );
+		
+		return menuItem;
 	}
 	
 	@Override
@@ -755,74 +757,153 @@ public class ToolBarView
 	}
 
 	@Override
-	public Button getRelatorioVisaoSalaButton()
+	public MenuItem getRelatorioVisaoSalaMenuItem()
 	{
-		return relatorioVisaoSalaBt;
+		return (MenuItem) gradeHorariaDropDownBt.getMenu().getItem(0);
 	}
 
 	@Override
-	public Button getRelatorioVisaoCursoButton()
+	public MenuItem getRelatorioVisaoCursoMenuItem()
 	{
-		return relatorioVisaoCursoBt;
+		return (MenuItem) gradeHorariaDropDownBt.getMenu().getItem(1);
 	}
 
 	@Override
-	public Button getRelatorioVisaoProfessorButton()
+	public MenuItem getRelatorioVisaoProfessorMenuItem()
 	{
-		return relatorioVisaoProfessorBt;
+		return (MenuItem) gradeHorariaDropDownBt.getMenu().getItem(2);
 	}
 
 	@Override
-	public Button getRelatorioVisaoAlunoButton(){
-		return relatorioVisaoAlunoBt;
+	public MenuItem getRelatorioVisaoAlunoMenuItem()
+	{
+		return (MenuItem) gradeHorariaDropDownBt.getMenu().getItem(3);
 	}
 	
 	@Override
-	public Button getResumoCenarioButton()
+	public MenuItem getResumoCenarioMenuItem()
 	{
-		return resumoCenarioBt;
+		return (MenuItem) resumosDropDownBt.getMenu().getItem(0);
 	}
 
 	@Override
-	public Button getResumoCampiButton()
+	public MenuItem getResumoCampiMenuItem()
 	{
-		return resumoCampiBt;
+		return (MenuItem) resumosDropDownBt.getMenu().getItem(1);
 	}
 
 	@Override
-	public Button getResumoCursosButton()
+	public MenuItem getResumoCursosMenuItem()
 	{
-		return resumoCursosBt;
+		return (MenuItem) resumosDropDownBt.getMenu().getItem(2);
 	}
 
 	@Override
-	public Button getResumoDisciplinasButton()
+	public MenuItem getResumoDisciplinasMenuItem()
 	{
-		return resumoDisciplinasBt;
+		return (MenuItem) resumosDropDownBt.getMenu().getItem(3);
 	}
 	
 	@Override
-	public Button getResumoMatriculasButton()
+	public MenuItem getRelatorioAlunosMenuItem()
 	{
-		return resumoMatriculasBt;
+		return (MenuItem) resumosDropDownBt.getMenu().getItem(4);
 	}
 	
 	@Override
-	public Button getResumoAtendimentosDisciplinaButton()
+	public MenuItem getRelatorioProfessoresMenuItem()
 	{
-		return resumoAtendimentosDisciplinaBt;
+		return (MenuItem) resumosDropDownBt.getMenu().getItem(5);
 	}
+	
+	@Override
+	public MenuItem getRelatorioSalasMenuItem()
+	{
+		return (MenuItem) resumosDropDownBt.getMenu().getItem(6);
+	}
+	
+	@Override
+	public MenuItem getResumoMatriculasMenuItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getResumoAtendimentosDisciplinaMenuItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(1);
+	}
+	
+/*	@Override
+	public MenuItem getResumoAtendimentosFaixaTurmaMenuItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(2);
+	}*/
 
 	@Override
-	public Button getResumoAtendimentosFaixaDemandaButton()
+	public MenuItem getResumoAtendimentosFaixaDemandaMenuItem()
 	{
-		return resumoAtendimentosFaixaDemandaBt;
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(2);
 	}
 	
 	@Override
-	public Button getResumoPercentMestresDoutoresButton()
+	public MenuItem getAtendimentosFaixaCreditoMenuItem()
 	{
-		return resumoPercentMestresDoutoresBt;
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(3);
+	}
+	
+	@Override
+	public MenuItem getAtendimentosFaixaDisciplinaMenuItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(4);
+	}
+	
+	@Override
+	public MenuItem getAmbientesFaixaOcupacaoHorariosMenuItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(5);
+	}
+	
+	@Override
+	public MenuItem getAmbientesFaixaUtilizacaoCapacidadeMenuItem()
+	{
+		return (MenuItem) atendimentosDropDownBt.getMenu().getItem(6);
+	}
+	
+	@Override
+	public MenuItem getResumoPercentMestresDoutoresMenuItem()
+	{
+		return (MenuItem) docentesDropDownBt.getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getProfessoresJanelasGradeMenuItem()
+	{
+		return (MenuItem) docentesDropDownBt.getMenu().getItem(1);
+	}
+	
+	@Override
+	public MenuItem getProfessoresDisciplinasHabilitadasMenuItem()
+	{
+		return (MenuItem) docentesDropDownBt.getMenu().getItem(2);
+	}
+	
+	@Override
+	public MenuItem getProfessoresDisciplinasLecionadasMenuItem()
+	{
+		return (MenuItem) docentesDropDownBt.getMenu().getItem(3);
+	}
+	
+	@Override
+	public MenuItem getProfessoresTitulacoesMenuItem()
+	{
+		return (MenuItem) docentesDropDownBt.getMenu().getItem(4);
+	}
+	
+	@Override
+	public MenuItem getProfessoresAreasConhecimentoMenuItem()
+	{
+		return (MenuItem) docentesDropDownBt.getMenu().getItem(5);
 	}
 
 	@Override

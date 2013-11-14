@@ -3,16 +3,23 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosDisciplinasCursadasView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
+import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaUtilizacaoHorariosView;
+import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoCapacidadeView;
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
+import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaCreditoView;
+import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaDisciplinaView;
+import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaTurmaView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
@@ -36,7 +43,15 @@ import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosGeracaoDemandaView;
 import com.gapso.web.trieda.main.client.mvp.view.ParametrosView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessorFormView;
+import com.gapso.web.trieda.main.client.mvp.view.ProfessoresAreasConhecimentoView;
+import com.gapso.web.trieda.main.client.mvp.view.ProfessoresDisciplinasHabilitadasView;
+import com.gapso.web.trieda.main.client.mvp.view.ProfessoresDisciplinasLecionadasView;
+import com.gapso.web.trieda.main.client.mvp.view.ProfessoresJanelasGradeView;
+import com.gapso.web.trieda.main.client.mvp.view.ProfessoresTitulacoesView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresView;
+import com.gapso.web.trieda.main.client.mvp.view.RelatorioAlunosView;
+import com.gapso.web.trieda.main.client.mvp.view.RelatorioProfessoresView;
+import com.gapso.web.trieda.main.client.mvp.view.RelatorioSalasView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoAlunoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoCursoView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioVisaoSalaView;
@@ -139,18 +154,31 @@ public class ToolBarPresenter
 		Button getProfessoresDisciplinaListProfessoresButton();
 		Button getProfessoresCampusListprofessoresBt();
 
-		Button getRelatorioVisaoSalaButton();
-		Button getRelatorioVisaoCursoButton();
-		Button getRelatorioVisaoProfessorButton();
-		Button getRelatorioVisaoAlunoButton();
-		Button getResumoCenarioButton();
-		Button getResumoCampiButton();
-		Button getResumoCursosButton();
-		Button getResumoDisciplinasButton();
-		Button getResumoMatriculasButton();
-		Button getResumoAtendimentosDisciplinaButton();
-		Button getResumoAtendimentosFaixaDemandaButton();
-		Button getResumoPercentMestresDoutoresButton();
+		MenuItem getRelatorioVisaoSalaMenuItem();
+		MenuItem getRelatorioVisaoCursoMenuItem();
+		MenuItem getRelatorioVisaoProfessorMenuItem();
+		MenuItem getRelatorioVisaoAlunoMenuItem();
+		MenuItem getResumoCenarioMenuItem();
+		MenuItem getResumoCampiMenuItem();
+		MenuItem getResumoCursosMenuItem();
+		MenuItem getResumoDisciplinasMenuItem();
+		MenuItem getRelatorioAlunosMenuItem();
+		MenuItem getRelatorioProfessoresMenuItem();
+		MenuItem getRelatorioSalasMenuItem();
+		MenuItem getResumoMatriculasMenuItem();
+		MenuItem getResumoAtendimentosDisciplinaMenuItem();
+		//MenuItem getResumoAtendimentosFaixaTurmaMenuItem();
+		MenuItem getResumoAtendimentosFaixaDemandaMenuItem();
+		MenuItem getAtendimentosFaixaCreditoMenuItem();
+		MenuItem getAtendimentosFaixaDisciplinaMenuItem();
+		MenuItem getAmbientesFaixaOcupacaoHorariosMenuItem();
+		MenuItem getAmbientesFaixaUtilizacaoCapacidadeMenuItem();
+		MenuItem getResumoPercentMestresDoutoresMenuItem();
+		MenuItem getProfessoresJanelasGradeMenuItem();
+		MenuItem getProfessoresDisciplinasHabilitadasMenuItem();
+		MenuItem getProfessoresDisciplinasLecionadasMenuItem();
+		MenuItem getProfessoresTitulacoesMenuItem();
+		MenuItem getProfessoresAreasConhecimentoMenuItem();
 
 		Button getFixacoesListButton();
 		Button getParametrosButton();
@@ -393,8 +421,8 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new UnidadesDeslocamentoPresenter( instituicaoEnsinoDTO,
-					new UnidadesDeslocamentoView( cenarioDTO, null, null ) );
+				Presenter presenter = new UnidadesDeslocamentoPresenter(
+					instituicaoEnsinoDTO, new UnidadesDeslocamentoView( cenarioDTO, null, null ) );
 
 				presenter.go( gTab );
 			}
@@ -420,8 +448,8 @@ public class ToolBarPresenter
 					@Override
 					public void onSuccess( List< DeslocamentoCampusDTO > result )
 					{
-						Presenter presenter = new CampiDeslocamentoPresenter( instituicaoEnsinoDTO,
-							cenarioDTO, new CampiDeslocamentoView( result ) );
+						Presenter presenter = new CampiDeslocamentoPresenter(
+							instituicaoEnsinoDTO, cenarioDTO, new CampiDeslocamentoView( result ) );
 
 						presenter.go( gTab );	
 					}
@@ -810,11 +838,11 @@ public class ToolBarPresenter
 			}
 		});
 
-		this.toolBar.getRelatorioVisaoSalaButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getRelatorioVisaoSalaMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new RelatorioVisaoSalaPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoSalaView(cenarioDTO) );
@@ -853,11 +881,11 @@ public class ToolBarPresenter
 			CommandFactory.createConsultarRequisicoesOtimizacaoCommand(true)
 		));
 
-		this.toolBar.getRelatorioVisaoCursoButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getRelatorioVisaoCursoMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new RelatorioVisaoCursoPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoCursoView(cenarioDTO) );
@@ -866,11 +894,11 @@ public class ToolBarPresenter
 			}
 		});
 
-		this.toolBar.getRelatorioVisaoProfessorButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getRelatorioVisaoProfessorMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new RelatorioVisaoProfessorPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, usuarioDTO,
@@ -880,10 +908,10 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getRelatorioVisaoAlunoButton().addSelectionListener(
-			new SelectionListener<ButtonEvent>(){
+		this.toolBar.getRelatorioVisaoAlunoMenuItem().addSelectionListener(
+			new SelectionListener<MenuEvent>(){
 				@Override
-				public void componentSelected(ButtonEvent ce){
+				public void componentSelected(MenuEvent ce){
 					Presenter presenter = new RelatorioVisaoAlunoPresenter(
 						instituicaoEnsinoDTO, cenarioDTO, new RelatorioVisaoAlunoView(cenarioDTO)
 					);
@@ -893,11 +921,11 @@ public class ToolBarPresenter
 			}
 		);
 
-		this.toolBar.getResumoCenarioButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getResumoCenarioMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoCenarioPresenter(
 					cenarioDTO, new ResumoCenarioView( cenarioDTO ) );
@@ -906,11 +934,11 @@ public class ToolBarPresenter
 			}
 		});
 
-		this.toolBar.getResumoCampiButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getResumoCampiMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoCampiPresenter(
 					cenarioDTO, new ResumoCampiView( cenarioDTO ) );
@@ -919,11 +947,11 @@ public class ToolBarPresenter
 			}
 		});
 
-		this.toolBar.getResumoCursosButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getResumoCursosMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoCursosPresenter( instituicaoEnsinoDTO,
 					cenarioDTO, new ResumoCursosView( cenarioDTO ) );
@@ -932,11 +960,11 @@ public class ToolBarPresenter
 			}
 		});
 
-		this.toolBar.getResumoDisciplinasButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
+		this.toolBar.getResumoDisciplinasMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoDisciplinaPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new ResumoDisciplinaView( cenarioDTO ) );
@@ -945,11 +973,50 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getResumoMatriculasButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.toolBar.getRelatorioAlunosMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new RelatorioAlunosPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new RelatorioAlunosView( cenarioDTO ) );
+					presenter.go( gTab );
+
+			}
+		});
+		
+		this.toolBar.getRelatorioProfessoresMenuItem().addSelectionListener(
+			new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new RelatorioProfessoresPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new RelatorioProfessoresView( cenarioDTO ) );
+					presenter.go( gTab );
+
+				}
+		});
+		
+		this.toolBar.getRelatorioSalasMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+			{
+				@Override
+				public void componentSelected( MenuEvent ce )
+				{
+					Presenter presenter = new RelatorioSalasPresenter( instituicaoEnsinoDTO,
+							cenarioDTO, new RelatorioSalasView( cenarioDTO ) );
+						presenter.go( gTab );
+
+					}
+			});
+		
+		this.toolBar.getResumoMatriculasMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoMatriculasPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new ResumoMatriculasView( cenarioDTO ) );
@@ -958,11 +1025,11 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getResumoAtendimentosDisciplinaButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.toolBar.getResumoAtendimentosDisciplinaMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoAtendimentosDisciplinaPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new ResumoAtendimentosDisciplinaView( cenarioDTO ) );
@@ -970,12 +1037,25 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
-
-		this.toolBar.getResumoAtendimentosFaixaDemandaButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		
+/*		this.toolBar.getResumoAtendimentosFaixaTurmaMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AtendimentosFaixaTurmaPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AtendimentosFaixaTurmaView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});*/
+
+		this.toolBar.getResumoAtendimentosFaixaDemandaMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoAtendimentosFaixaDemandaPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new ResumoAtendimentosFaixaDemandaView( cenarioDTO ) );
@@ -984,14 +1064,131 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getResumoPercentMestresDoutoresButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.toolBar.getAtendimentosFaixaCreditoMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
 		{
 			@Override
-			public void componentSelected( ButtonEvent ce )
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AtendimentosFaixaCreditoPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AtendimentosFaixaCreditoView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAtendimentosFaixaDisciplinaMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AtendimentosFaixaDisciplinaPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AtendimentosFaixaDisciplinaView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAmbientesFaixaOcupacaoHorariosMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AmbientesFaixaUtilizacaoHorariosPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AmbientesFaixaUtilizacaoHorariosView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getAmbientesFaixaUtilizacaoCapacidadeMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new AmbientesFaixaOcupacaoCapacidadePresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new AmbientesFaixaOcupacaoCapacidadeView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getResumoPercentMestresDoutoresMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new ResumoPercentMestresDoutoresPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, new ResumoPercentMestresDoutoresView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getProfessoresJanelasGradeMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new ProfessoresJanelasGradePresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ProfessoresJanelasGradeView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getProfessoresDisciplinasHabilitadasMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new ProfessoresDisciplinasHabilitadasPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ProfessoresDisciplinasHabilitadasView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getProfessoresDisciplinasLecionadasMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new ProfessoresDisciplinasLecionadasPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ProfessoresDisciplinasLecionadasView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getProfessoresTitulacoesMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new ProfessoresTitulacoesPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ProfessoresTitulacoesView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getProfessoresAreasConhecimentoMenuItem().addSelectionListener(
+				new SelectionListener< MenuEvent >()
+		{
+			@Override
+			public void componentSelected( MenuEvent ce )
+			{
+				Presenter presenter = new ProfessoresAreasConhecimentoPresenter( instituicaoEnsinoDTO,
+						cenarioDTO, new ProfessoresAreasConhecimentoView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}

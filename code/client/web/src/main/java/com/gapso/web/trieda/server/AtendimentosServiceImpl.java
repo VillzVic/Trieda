@@ -20,25 +20,33 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.TriedaPar;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
+import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -46,9 +54,11 @@ import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
+import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -762,12 +772,10 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				
 				Pair<Calendar,Calendar> horariosAulaAnterior = extraiHorariosInicial_e_Final(aulaAnterior);
 				Pair<Calendar,Calendar> horariosAulaAtual = extraiHorariosInicial_e_Final(aulaAtual);
-	
 				
 				boolean disciplinasSubstitutasDiferentes = aulaAnterior.getDisciplinaSubstitutaString() != aulaAtual.getDisciplinaSubstitutaString();
 	
-				if (!saoConsecutivos(horariosAulaAnterior,horariosAulaAtual) || disciplinasSubstitutasDiferentes)
-				{
+				if (!saoConsecutivos(horariosAulaAnterior,horariosAulaAtual) || disciplinasSubstitutasDiferentes) {
 					subgruposDeAtendimentosConsecutivos.add(new ArrayList<AtendimentoOperacionalDTO>());
 				}
 	
@@ -1329,7 +1337,8 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	@Override
-	public List<PercentMestresDoutoresDTO> getPercentMestresDoutoresList( CampusDTO campusDTO ) {
+	public List<PercentMestresDoutoresDTO> getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO ) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = null;
 		boolean ehTatico = false;
 		List< PercentMestresDoutoresDTO > result = new ArrayList< PercentMestresDoutoresDTO >();
@@ -1368,7 +1377,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			}
 			else
 			{
-				atendimentoOperacionalList = AtendimentoOperacional.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+				atendimentoOperacionalList = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
 			}
 			for ( AtendimentoOperacional atendimento : atendimentoOperacionalList )
 			{
@@ -1449,5 +1458,717 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return result;
 	}
 	
+	@Override
+	public List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaCredito(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<AlunoDemanda> alunosDemandaList = AlunoDemanda.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
+		
+		Map<Aluno, List<AlunoDemanda>> alunoToListAlunoDemandaMap = new HashMap<Aluno, List<AlunoDemanda>>();
+		for (AlunoDemanda alunoDemanda : alunosDemandaList)
+		{
+			if (alunoToListAlunoDemandaMap.get(alunoDemanda.getAluno()) == null)
+			{
+				List<AlunoDemanda> novoAlunoDemandaList = new ArrayList<AlunoDemanda>();
+				novoAlunoDemandaList.add(alunoDemanda);
+				alunoToListAlunoDemandaMap.put(alunoDemanda.getAluno(), novoAlunoDemandaList);
+			}
+			else
+			{
+				alunoToListAlunoDemandaMap.get(alunoDemanda.getAluno()).add(alunoDemanda);
+			}
+		}
+		
+		List<AtendimentoFaixaCreditoDTO> faixasCredito = new ArrayList<AtendimentoFaixaCreditoDTO>();
+		faixasCredito.add(new AtendimentoFaixaCreditoDTO("100% dos créditos atendidos"));
+		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Entre 80 e 99% dos créditos atendidos"));
+		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Entre 60 e 79% dos créditos atendidos"));
+		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Entre 40 e 59% dos créditos atendidos"));
+		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Entre 20 e 39% dos créditos atendidos"));
+		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Até 19% dos créditos atendidos"));
+		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Nenhum crédito atendido"));
+		for(Entry<Aluno, List<AlunoDemanda>> aluno : alunoToListAlunoDemandaMap.entrySet())
+		{
+			int totalCreditosP1 = 0;
+			int totalCreditosP2 = 0;
+			int creditosAtendidos = 0;
+			for (AlunoDemanda alunoDemanda : aluno.getValue())
+			{
+				if (alunoDemanda.getPrioridade() == 1)
+				{
+					totalCreditosP1 += alunoDemanda.getDemanda().getDisciplina().getTotalCreditos();
+				}
+				else if (alunoDemanda.getPrioridade() == 2)
+				{
+					totalCreditosP2 += alunoDemanda.getDemanda().getDisciplina().getTotalCreditos();
+				}
+				if(alunoDemanda.getAtendido())
+				{
+					creditosAtendidos += alunoDemanda.getDemanda().getDisciplina().getTotalCreditos();
+				}
+			}
+			double creditosAtendidosPercent = ((double) creditosAtendidos)/ (totalCreditosP1 + totalCreditosP2);
+			
+			if (creditosAtendidosPercent == 1)
+			{
+				insereNaFaixaDeCredito(faixasCredito.get(0), totalCreditosP1, totalCreditosP2, creditosAtendidos );
+			}
+			else if (creditosAtendidosPercent < 1 && creditosAtendidosPercent >= 0.8)
+			{
+				insereNaFaixaDeCredito(faixasCredito.get(1), totalCreditosP1, totalCreditosP2, creditosAtendidos );
+			}
+			else if (creditosAtendidosPercent < 0.8 && creditosAtendidosPercent >= 0.6)
+			{
+				insereNaFaixaDeCredito(faixasCredito.get(2), totalCreditosP1, totalCreditosP2, creditosAtendidos );
+			}
+			else if (creditosAtendidosPercent < 0.6 && creditosAtendidosPercent >= 0.4)
+			{
+				insereNaFaixaDeCredito(faixasCredito.get(3), totalCreditosP1, totalCreditosP2, creditosAtendidos );
+			}
+			else if (creditosAtendidosPercent < 0.4 && creditosAtendidosPercent >= 0.2)
+			{
+				insereNaFaixaDeCredito(faixasCredito.get(4), totalCreditosP1, totalCreditosP2, creditosAtendidos );
+			}
+			else if (creditosAtendidosPercent < 0.2 && creditosAtendidosPercent > 0)
+			{
+				insereNaFaixaDeCredito(faixasCredito.get(5), totalCreditosP1, totalCreditosP2, creditosAtendidos );
+			}
+			else if (creditosAtendidosPercent == 0)
+			{
+				insereNaFaixaDeCredito(faixasCredito.get(6), totalCreditosP1, totalCreditosP2, creditosAtendidos );
+			}
+		}
+		return faixasCredito;
+	}
+	
+	private void insereNaFaixaDeCredito(AtendimentoFaixaCreditoDTO atendimentoFaixaCredito,	int totalCreditosP1,
+			int totalCreditosP2, int creditosAtendidos)
+	{
+		atendimentoFaixaCredito.setCreditosDemandadosP1(atendimentoFaixaCredito.getCreditosDemandadosP1() + totalCreditosP1);
+		atendimentoFaixaCredito.setCreditosAtendidosP1(atendimentoFaixaCredito.getCreditosAtendidosP1() + creditosAtendidos);
+		atendimentoFaixaCredito.setQuantidadeAlunos(atendimentoFaixaCredito.getQuantidadeAlunos() + 1);
+		atendimentoFaixaCredito.setCreditosDemandadosP2(atendimentoFaixaCredito.getCreditosDemandadosP2() + totalCreditosP2);
+	}
+	
+	@Override
+	public List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaDisciplina(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<AlunoDemanda> alunosDemandaList = AlunoDemanda.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);		
+		Map<Aluno, List<AlunoDemanda>> alunoToListAlunoDemandaMap = new HashMap<Aluno, List<AlunoDemanda>>();
+		for (AlunoDemanda alunoDemanda : alunosDemandaList)
+		{
+			if (alunoToListAlunoDemandaMap.get(alunoDemanda.getAluno()) == null)
+			{
+				List<AlunoDemanda> novoAlunoDemandaList = new ArrayList<AlunoDemanda>();
+				novoAlunoDemandaList.add(alunoDemanda);
+				alunoToListAlunoDemandaMap.put(alunoDemanda.getAluno(), novoAlunoDemandaList);
+			}
+			else
+			{
+				alunoToListAlunoDemandaMap.get(alunoDemanda.getAluno()).add(alunoDemanda);
+			}
+		}
+		
+		List<AtendimentoFaixaCreditoDTO> faixasCredito = new ArrayList<AtendimentoFaixaCreditoDTO>();
+		for(Entry<Aluno, List<AlunoDemanda>> aluno : alunoToListAlunoDemandaMap.entrySet())
+		{
+			int disciplinasNaoAtendidasP1 = 0;
+			int disciplinasNaoAtendidasP2 = 0;
+			for (AlunoDemanda alunoDemanda : aluno.getValue())
+			{
 
+				if(!alunoDemanda.getAtendido())
+				{
+					if (alunoDemanda.getPrioridade() == 1)
+					{
+						disciplinasNaoAtendidasP1++;
+					}
+					else if (alunoDemanda.getPrioridade() == 2)
+					{
+						disciplinasNaoAtendidasP2++;
+					}
+				}
+			}
+			if (faixasCredito.size() <= disciplinasNaoAtendidasP1)
+			{
+				for (int i = faixasCredito.size(); i <= disciplinasNaoAtendidasP1; i++)
+				{
+					String titulo = "";
+					if (i == 0)
+					{
+						titulo = "Todas as disciplina atendidas";
+					}
+					else
+					{
+						titulo = i + " disciplina" + ((i != 1) ? "s " : "") + " nao atendida" + ((i != 1) ? "s" : "");
+					}
+					AtendimentoFaixaCreditoDTO novaFaixa = new AtendimentoFaixaCreditoDTO(titulo);
+					faixasCredito.add(novaFaixa);
+				}
+			}
+			faixasCredito.get(disciplinasNaoAtendidasP1).setCreditosDemandadosP1(faixasCredito.get(disciplinasNaoAtendidasP1).getCreditosDemandadosP1() + 1);
+			if (disciplinasNaoAtendidasP2 > 0)
+			{
+				faixasCredito.get(disciplinasNaoAtendidasP1).setCreditosDemandadosP2(faixasCredito.get(disciplinasNaoAtendidasP1).getCreditosDemandadosP2() + 1);
+			}
+		}
+		return faixasCredito;
+	}
+	
+	@Override
+	public List<RelatorioQuantidadeDTO> getProfessoresJanelasGrade(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentosList = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+		
+		Map<String, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<String, Set<HorarioDisponivelCenario>>();
+		
+		for (AtendimentoOperacional atendimento : atendimentosList)
+		{
+			if (tipoProfessorDTO == null || (atendimento.getProfessor().getCpf() != null && tipoProfessorDTO.getInstitucional())
+					|| (atendimento.getProfessorVirtual() != null && tipoProfessorDTO.getVirtual()))
+			{
+				String professor;
+				if (atendimento.getProfessorVirtual() != null)
+				{
+					professor = atendimento.getProfessorVirtual().getNome();
+				}
+				else
+				{
+					professor = atendimento.getProfessor().getNome();
+				}
+				if (professorToListHorarioDisponivelCenario.get(professor) == null)
+				{
+					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
+					novoHorarioList.add(atendimento.getHorarioDisponivelCenario());
+					professorToListHorarioDisponivelCenario.put(professor, novoHorarioList);
+				}
+				else
+				{
+					professorToListHorarioDisponivelCenario.get(professor).add(atendimento.getHorarioDisponivelCenario());
+				}
+			}
+		}
+		
+		List<RelatorioQuantidadeDTO> janelasGradeHorariaDocente = new ArrayList<RelatorioQuantidadeDTO>();
+		
+		for (Entry<String, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
+		{
+			Map<Semanas, List<HorarioDisponivelCenario>> diaMapHorarios = new HashMap<Semanas, List<HorarioDisponivelCenario>>();
+					
+			for (HorarioDisponivelCenario horario : professor.getValue())
+			{
+				if (diaMapHorarios.get(horario.getDiaSemana()) == null)
+				{
+					List<HorarioDisponivelCenario> novoHorario = new ArrayList<HorarioDisponivelCenario>();
+					novoHorario.add(horario);
+					diaMapHorarios.put(horario.getDiaSemana(), novoHorario);
+				}
+				else
+				{
+					diaMapHorarios.get(horario.getDiaSemana()).add(horario);
+				}
+			}
+			int janelas = 0;
+			for (Entry<Semanas, List<HorarioDisponivelCenario>> horarioSemana : diaMapHorarios.entrySet())
+			{
+				List<HorarioDisponivelCenario> horarioProfessorOrdenado = horarioSemana.getValue();
+				
+				Collections.sort(horarioProfessorOrdenado, new Comparator<HorarioDisponivelCenario>() {
+					@Override
+					public int compare(HorarioDisponivelCenario arg1, HorarioDisponivelCenario arg2) {
+						Calendar h1 = Calendar.getInstance();
+						h1.setTime(arg1.getHorarioAula().getHorario());
+						h1.set(1979,Calendar.NOVEMBER,6);
+						
+						Calendar h2 = Calendar.getInstance();
+						h2.setTime(arg2.getHorarioAula().getHorario());
+						h2.set(1979,Calendar.NOVEMBER,6);
+						
+						
+						return h1.compareTo(h2);
+					}
+				});
+				if (!horarioProfessorOrdenado.isEmpty())
+				{
+					Calendar h1 = Calendar.getInstance();
+					h1.setTime(horarioProfessorOrdenado.get(0).getHorarioAula().getHorario());
+					for (int i = 1; i < horarioProfessorOrdenado.size(); i++)
+					{
+						h1.add(Calendar.MINUTE,horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo());
+						Calendar h2 = Calendar.getInstance();
+						h2.setTime(horarioProfessorOrdenado.get(i).getHorarioAula().getHorario());
+						
+						if (h2.getTimeInMillis() - h1.getTimeInMillis() > (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000))
+						{
+							janelas++;
+						}
+					}
+				}
+			}
+			
+			if (janelasGradeHorariaDocente.size() <= janelas)
+			{
+				for (int i = janelasGradeHorariaDocente.size(); i <= janelas; i++)
+				{
+					String titulo = "";
+					if (i == 0)
+					{
+						titulo = "Nenhuma janela";
+					}
+					else
+					{
+						titulo = i + " janela" + ((i != 1) ? "s " : "") + " na grade";
+					}
+					RelatorioQuantidadeDTO novaFaixa = new RelatorioQuantidadeDTO(titulo);
+					janelasGradeHorariaDocente.add(novaFaixa);
+				}
+			}
+			janelasGradeHorariaDocente.get(janelas).setQuantidade(janelasGradeHorariaDocente.get(janelas).getQuantidade() + 1);
+		}
+		return janelasGradeHorariaDocente;
+	}
+	
+	@Override
+	public List<RelatorioQuantidadeDTO> getProfessoresDisciplinasLecionadas(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentosList = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+		
+		Map<String, Set<String>> professorToQtdeDisciplinasLecionadas = new HashMap<String, Set<String>>();
+		
+		for (AtendimentoOperacional atendimento : atendimentosList)
+		{
+			if (tipoProfessorDTO == null || (atendimento.getProfessor().getCpf() != null && tipoProfessorDTO.getInstitucional())
+					|| (atendimento.getProfessorVirtual() != null && tipoProfessorDTO.getVirtual()))
+			{
+				String professor;
+				if (atendimento.getProfessorVirtual() != null)
+				{
+					professor = atendimento.getProfessorVirtual().getNome();
+				}
+				else
+				{
+					professor = atendimento.getProfessor().getNome();
+				}
+				if (professorToQtdeDisciplinasLecionadas.get(professor) == null)
+				{
+					Set<String> turmas = new HashSet<String>();
+					turmas.add((atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta() : atendimento.getDisciplina())
+							+ "-" + atendimento.getTurma());
+					professorToQtdeDisciplinasLecionadas.put(professor, turmas);
+				}
+				else
+				{
+					professorToQtdeDisciplinasLecionadas.get(professor).add(
+							(atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta() : atendimento.getDisciplina())
+							+ "-" + atendimento.getTurma());
+				}
+			}
+		}
+		
+		List<RelatorioQuantidadeDTO> professoresDisciplinasLecionadas = new ArrayList<RelatorioQuantidadeDTO>();
+		
+		List<String> todosProfessoresList = new ArrayList<String>();
+		if (tipoProfessorDTO == null || tipoProfessorDTO.getInstitucional())
+		{
+			for (Professor professorInstitucional : Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus))
+			{
+				todosProfessoresList.add(professorInstitucional.getNome());
+			}
+		}
+		if (tipoProfessorDTO == null || tipoProfessorDTO.getVirtual())
+		{
+			for (ProfessorVirtual professorVirtual : ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus))
+			{
+				todosProfessoresList.add(professorVirtual.getNome());
+			}
+		}
+		
+		for (String professor : todosProfessoresList )
+		{
+			int qtdeDisciplinasLecionadas = professorToQtdeDisciplinasLecionadas.get(professor) == null
+					? 0 : professorToQtdeDisciplinasLecionadas.get(professor).size() ;
+			if (professoresDisciplinasLecionadas.size() <= qtdeDisciplinasLecionadas)
+			{
+				for (int i = professoresDisciplinasLecionadas.size(); i <= qtdeDisciplinasLecionadas; i++)
+				{
+					String titulo = "";
+					if (i == 0)
+					{
+						titulo = "Professor não ativado";
+					}
+					else
+					{
+						titulo = i + " disciplina" + ((i != 1) ? "s " : "") + " lecionada" + ((i != 1) ? "s " : "");
+					}
+					RelatorioQuantidadeDTO novaFaixa = new RelatorioQuantidadeDTO(titulo);
+					professoresDisciplinasLecionadas.add(novaFaixa);
+				}
+			}
+			professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).setQuantidade(professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).getQuantidade() + 1);
+		}
+		return professoresDisciplinasLecionadas;
+	}
+	
+	@Override
+	public List<RelatorioQuantidadeDTO> getAmbientesFaixaOcupacaoHorarios(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	{
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		// cálculo dos indicadores de utilização das salas de aula e laboratórios
+		Set<Turno> turnosConsiderados = new HashSet<Turno>();
+		Set<Sala> salasUtilizadas = new HashSet<Sala>();
+		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
+		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+		for (Oferta oferta : campus.getOfertas()) {
+			turnosConsiderados.add(oferta.getTurno());
+			if (ehTatico) {
+				// atendimentos táticos
+				for (AtendimentoTatico aula : oferta.getAtendimentosTaticos()) {
+					String key = aula.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (aulasPorSalaTurno == null) {
+						aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
+					}
+					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
+					
+					salasUtilizadas.add(aula.getSala());
+					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			} else {
+				// atendimentos operacionais
+				for (AtendimentoOperacional atendimento : oferta.getAtendimentosOperacionais()) {
+					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimetosPorSalaTurno == null) {
+						atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
+					}
+					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
+					
+					salasUtilizadas.add(atendimento.getSala());
+					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			}
+		}
+		
+		List<RelatorioQuantidadeDTO> faixasOcupacaoHorario = new ArrayList<RelatorioQuantidadeDTO>();
+		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 81% e 100%"));
+		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 61% e 80%"));
+		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 41% e 60%"));
+		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 21% e 40%"));
+		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 0 e 20%"));
+		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+			// [SalaId -> Tempo de uso (min) semanal]
+			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
+			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+			for (Turno turno : turnosConsiderados) {
+				for (Sala sala : salasUtilizadas) {
+					String key = sala.getId() + "-" + turno.getId();
+					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimentosPorSalaTurno != null) {
+						List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+						if (ehTatico) {
+							aulas.addAll(atendimentosPorSalaTurno);
+						} else {
+							List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
+							for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
+								atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
+							}
+							// processa os atendimentos do operacional e os transforma em aulas
+							List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
+							// insere as aulas do modo operacional na lista de atendimentos
+							aulas.addAll(aulasOperacional);
+						}
+						
+						// trata compartilhamento de turmas entre cursos
+						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
+						
+						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+							Integer tempoUsoSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(aula.getSalaId());
+							if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
+							salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
+						}
+					}
+				}
+			}
+			
+			//calculo do indicador de taxa de uso dos horarios das salas de aula
+			SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
+			Map<Integer, Integer> countHorariosAula = new HashMap<Integer, Integer>();
+			for(HorarioAula ha : maiorSemanaLetiva.getHorariosAula()){
+				for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
+					int semanaInt = Semanas.toInt(hdc.getDiaSemana());
+					Integer value = countHorariosAula.get(semanaInt);
+					value = ((value == null) ? 0 : value);
+					countHorariosAula.put(semanaInt, value + 1);
+				}
+			}
+			int cargaHorariaSemanalEmMinutos = 0;
+			for(Integer i : countHorariosAula.keySet()){
+				cargaHorariaSemanalEmMinutos += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
+			}
+			for(Long salaId : salaIdToTempoUsoSemanalEmMinutosMap.keySet()){
+				Integer tempoUsoSalaSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(salaId);
+				Double mediaUtilizacaoHorarioSalas = ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				
+				if (mediaUtilizacaoHorarioSalas <= 1 && mediaUtilizacaoHorarioSalas > 0.8)
+				{
+					faixasOcupacaoHorario.get(0).setQuantidade(faixasOcupacaoHorario.get(0).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoHorarioSalas <= 0.8 && mediaUtilizacaoHorarioSalas > 0.6)
+				{
+					faixasOcupacaoHorario.get(1).setQuantidade(faixasOcupacaoHorario.get(1).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoHorarioSalas <= 0.6 && mediaUtilizacaoHorarioSalas > 0.4)
+				{
+					faixasOcupacaoHorario.get(2).setQuantidade(faixasOcupacaoHorario.get(2).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoHorarioSalas <= 0.4 && mediaUtilizacaoHorarioSalas > 0.2)
+				{
+					faixasOcupacaoHorario.get(3).setQuantidade(faixasOcupacaoHorario.get(3).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoHorarioSalas <= 0.2)
+				{
+					faixasOcupacaoHorario.get(4).setQuantidade(faixasOcupacaoHorario.get(4).getQuantidade() + 1);
+				}
+			}
+		}
+		return faixasOcupacaoHorario;		
+	}
+	
+	@Override
+	public List<RelatorioQuantidadeDTO> getAmbientesFaixaUtilizacaoCapacidade(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	{
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
+		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		// cálculo dos indicadores de utilização das salas de aula e laboratórios
+		Set<Turno> turnosConsiderados = new HashSet<Turno>();
+		Set<Sala> salasUtilizadas = new HashSet<Sala>();
+		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
+		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+		for (Oferta oferta : campus.getOfertas()) {
+			turnosConsiderados.add(oferta.getTurno());
+			if (ehTatico) {
+				// atendimentos táticos
+				for (AtendimentoTatico aula : oferta.getAtendimentosTaticos()) {
+					String key = aula.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (aulasPorSalaTurno == null) {
+						aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
+					}
+					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
+					
+					salasUtilizadas.add(aula.getSala());
+					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			} else {
+				// atendimentos operacionais
+				for (AtendimentoOperacional atendimento : oferta.getAtendimentosOperacionais()) {
+					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimetosPorSalaTurno == null) {
+						atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
+					}
+					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
+					
+					salasUtilizadas.add(atendimento.getSala());
+					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			}
+		}
+		
+		List<RelatorioQuantidadeDTO> faixasUtilizacaoCapacidade = new ArrayList<RelatorioQuantidadeDTO>();
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 81% e 100%"));
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 61% e 80%"));
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 41% e 60%"));
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 21% e 40%"));
+		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 0 e 20%"));
+		Map<Sala, List<Integer>> salasToQtdeAlunosPorAulaMap = new HashMap<Sala, List<Integer>>();
+		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+			// [SalaId -> Tempo de uso (min) semanal]
+			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+			for (Turno turno : turnosConsiderados) {
+				for (Sala sala : salasUtilizadas) {
+					String key = sala.getId() + "-" + turno.getId();
+					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimentosPorSalaTurno != null) {
+						List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+						if (ehTatico) {
+							aulas.addAll(atendimentosPorSalaTurno);
+						} else {
+							List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
+							for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
+								atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
+							}
+							// processa os atendimentos do operacional e os transforma em aulas
+							List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
+							// insere as aulas do modo operacional na lista de atendimentos
+							aulas.addAll(aulasOperacional);
+						}
+						
+						// trata compartilhamento de turmas entre cursos
+						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
+						
+						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+							if (salasToQtdeAlunosPorAulaMap.get(sala) == null )
+							{
+								List<Integer> alunosAula = new ArrayList<Integer>();
+								alunosAula.add(aula.getQuantidadeAlunos());
+								salasToQtdeAlunosPorAulaMap.put(sala, alunosAula);
+							}
+							else
+							{
+								salasToQtdeAlunosPorAulaMap.get(sala).add(aula.getQuantidadeAlunos());
+							}
+						}
+					}
+				}
+			}
+
+			for(Entry<Sala, List<Integer>> sala : salasToQtdeAlunosPorAulaMap.entrySet()){
+				Integer utilizacaoSala = 0;
+				for (Integer utilizacao : sala.getValue())
+				{
+					utilizacaoSala += utilizacao;
+				}
+				Double mediaUtilizacaoCapacidadeSala = ((double)utilizacaoSala/sala.getValue().size() / sala.getKey().getCapacidadeInstalada());
+				
+				if (mediaUtilizacaoCapacidadeSala <= 1 && mediaUtilizacaoCapacidadeSala > 0.8)
+				{
+					faixasUtilizacaoCapacidade.get(0).setQuantidade(faixasUtilizacaoCapacidade.get(0).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoCapacidadeSala <= 0.8 && mediaUtilizacaoCapacidadeSala > 0.6)
+				{
+					faixasUtilizacaoCapacidade.get(1).setQuantidade(faixasUtilizacaoCapacidade.get(1).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoCapacidadeSala <= 0.6 && mediaUtilizacaoCapacidadeSala > 0.4)
+				{
+					faixasUtilizacaoCapacidade.get(2).setQuantidade(faixasUtilizacaoCapacidade.get(2).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoCapacidadeSala <= 0.4 && mediaUtilizacaoCapacidadeSala > 0.2)
+				{
+					faixasUtilizacaoCapacidade.get(3).setQuantidade(faixasUtilizacaoCapacidade.get(3).getQuantidade() + 1);
+				}
+				else if (mediaUtilizacaoCapacidadeSala <= 0.2)
+				{
+					faixasUtilizacaoCapacidade.get(4).setQuantidade(faixasUtilizacaoCapacidade.get(4).getQuantidade() + 1);
+				}
+			}
+		}
+		return faixasUtilizacaoCapacidade;		
+	}
+	
+	@Override
+	public List<AtendimentoFaixaTurmaDTO> getAtendimentosFaixaTurma(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		boolean ehTatico = false;
+		
+		Campus campus = null;
+		
+		if ( campusDTO != null )
+		{
+			campus = ConvertBeans.toCampus(campusDTO);
+			if ( campus.isOtimizado(getInstituicaoEnsinoUser()) )
+			{
+				ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			}
+		}
+		
+		List<AtendimentoTatico> atendimentosTatico = new ArrayList<AtendimentoTatico>();
+		List<AtendimentoOperacional> atendimentosOperacional = new ArrayList<AtendimentoOperacional>();
+		if (ehTatico)
+		{
+			atendimentosTatico = AtendimentoTatico.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+		}
+		else
+		{
+			atendimentosOperacional = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+		}
+		
+		if (ehTatico)
+		{
+			return getAtendimentosFaixaTurmaTatico(atendimentosTatico);
+		}
+		else
+		{
+			return getAtendimentosFaixaTurmaOperacional(atendimentosOperacional);
+		}
+		
+		
+	}
+
+	private List<AtendimentoFaixaTurmaDTO> getAtendimentosFaixaTurmaOperacional(
+			List<AtendimentoOperacional> atendimentosOperacional)
+	{
+		List<AtendimentoFaixaTurmaDTO> atendimentosFaixaTurma = new ArrayList<AtendimentoFaixaTurmaDTO>();
+
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Abaixo de 10 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 10 e 19 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 10 e 29 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 30 e 39 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 40 e 49 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 50 e 59 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 60 e 69 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 70 e 79 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 80 e 89 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("Entre 90 e 99 alunos"));
+		atendimentosFaixaTurma.add(new AtendimentoFaixaTurmaDTO("100 ou mais alunos"));
+		
+		Map<String, List<AtendimentoOperacional>> turmaMapAtendimentos = new HashMap<String, List<AtendimentoOperacional>>();
+		for (AtendimentoOperacional atendimento : atendimentosOperacional)
+		{
+			String turmaKey = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta() : atendimento.getDisciplina())
+					+ "-" + atendimento.getTurma();
+			
+			if (turmaMapAtendimentos.get(turmaKey) == null)
+			{
+				List<AtendimentoOperacional> novoAtendimento = new ArrayList<AtendimentoOperacional>();
+				novoAtendimento.add(atendimento);
+				turmaMapAtendimentos.put(turmaKey, novoAtendimento);
+			}
+			else
+			{
+				turmaMapAtendimentos.get(turmaKey).add(atendimento);
+			}
+			
+		}
+		int atendimentos = 0;
+		for (Entry<String, List<AtendimentoOperacional>> turma : turmaMapAtendimentos.entrySet())
+		{
+			Long key = turma.getValue().get(0).getHorarioDisponivelCenario().getId();
+			for (AtendimentoOperacional atendimento : turma.getValue())
+			{
+				if (atendimento.getHorarioDisponivelCenario().getId() == key)
+				{
+					atendimentos += atendimento.getQuantidadeAlunos();
+				}
+			}
+		}
+		System.out.println("num " + atendimentos);
+		return atendimentosFaixaTurma;
+	}
+
+	private List<AtendimentoFaixaTurmaDTO> getAtendimentosFaixaTurmaTatico(
+			List<AtendimentoTatico> atendimentosTatico) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

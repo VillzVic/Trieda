@@ -9,6 +9,8 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
+import com.gapso.web.trieda.shared.util.view.RelatorioAlunoFiltro;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AlunosServiceAsync
@@ -21,4 +23,6 @@ public interface AlunosServiceAsync
 	void removeAlunos( List< AlunoDTO > list, AsyncCallback< Void > callback );
 	void getAutoCompleteList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, String tipoComboBox,
 			AsyncCallback<ListLoadResult<AlunoDTO>> callback);
+	void getRelatorio(CenarioDTO cenarioDTO,	RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode,
+			AsyncCallback<List<RelatorioDTO>> callback);
 }
