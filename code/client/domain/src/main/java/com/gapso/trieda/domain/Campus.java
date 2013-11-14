@@ -676,6 +676,20 @@ public class Campus
 
 		return campusMap;
 	}
+	
+	public static Map< String, Campus > buildCampusNomeToCampusMap( 
+			List< Campus > campi )
+		{
+			Map< String, Campus > campusMap
+				= new HashMap< String, Campus >();
+
+			for ( Campus campus : campi )
+			{
+				campusMap.put( campus.getNome(), campus );
+			}
+
+			return campusMap;
+		}
 
 	public static Campus find(
 		Long id, InstituicaoEnsino instituicaoEnsino )

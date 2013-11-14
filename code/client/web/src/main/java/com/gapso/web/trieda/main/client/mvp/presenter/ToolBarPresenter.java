@@ -393,7 +393,7 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new UnidadesDeslocamentoPresenter(
+				Presenter presenter = new UnidadesDeslocamentoPresenter( instituicaoEnsinoDTO,
 					new UnidadesDeslocamentoView( cenarioDTO, null, null ) );
 
 				presenter.go( gTab );
@@ -420,7 +420,7 @@ public class ToolBarPresenter
 					@Override
 					public void onSuccess( List< DeslocamentoCampusDTO > result )
 					{
-						Presenter presenter = new CampiDeslocamentoPresenter(
+						Presenter presenter = new CampiDeslocamentoPresenter( instituicaoEnsinoDTO,
 							cenarioDTO, new CampiDeslocamentoView( result ) );
 
 						presenter.go( gTab );	
