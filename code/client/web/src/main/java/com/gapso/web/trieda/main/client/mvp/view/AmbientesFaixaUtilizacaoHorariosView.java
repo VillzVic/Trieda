@@ -119,6 +119,8 @@ public class AmbientesFaixaUtilizacaoHorariosView extends MyComposite
 	
 		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Faixa de Ocupação dos Horáios", 240 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Quantidade de Ambientes", 140 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Salas", 100 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE3, "Laboratórios", 100 ) );
 		
 		return list;
 	}

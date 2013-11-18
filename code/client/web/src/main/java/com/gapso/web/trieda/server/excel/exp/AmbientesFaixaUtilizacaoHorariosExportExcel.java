@@ -173,10 +173,20 @@ public class AmbientesFaixaUtilizacaoHorariosExportExcel
 				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 				relatorioDocenteDTO.getFaixaCredito() );
 		
-		// Quantidade P1
+		// Quantidade de Ambientes
 		setCell( row, i++, sheet,
 				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
 				relatorioDocenteDTO.getQuantidade() );
+		
+		// Salas
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+				relatorioDocenteDTO.getQuantidade2() );
+		
+		// Laboratorios
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.INTEGER.ordinal() ],
+				relatorioDocenteDTO.getQuantidade3() );
 
 		row++;
 		return row;

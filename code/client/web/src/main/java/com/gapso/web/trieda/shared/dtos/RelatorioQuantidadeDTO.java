@@ -9,6 +9,8 @@ public class RelatorioQuantidadeDTO  extends AbstractDTO< String >
 	public static final String PROPERTY_CAMPUS_NOME = "campusNome";
 	public static final String PROPERTY_FAIXA_CREDITO = "faixaCredito";
 	public static final String PROPERTY_QUANTIDADE = "quantidade";
+	public static final String PROPERTY_QUANTIDADE2 = "quantidade2";
+	public static final String PROPERTY_QUANTIDADE3 = "quantidade3";
 	
 	public RelatorioQuantidadeDTO()
 	{
@@ -20,6 +22,8 @@ public class RelatorioQuantidadeDTO  extends AbstractDTO< String >
 		super();
 		setFaixaCredito(text);
 		setQuantidade(0);
+		setQuantidade2(0);
+		setQuantidade3(0);
 	}
 	
 	public void setCampusNome(String value) {
@@ -44,6 +48,22 @@ public class RelatorioQuantidadeDTO  extends AbstractDTO< String >
 	
 	public Integer getQuantidade() {
 		return get(PROPERTY_QUANTIDADE);
+	}
+	
+	public void setQuantidade2(Integer value) {
+		set(PROPERTY_QUANTIDADE2, value);
+	}
+	
+	public Integer getQuantidade2() {
+		return get(PROPERTY_QUANTIDADE2);
+	}
+	
+	public void setQuantidade3(Integer value) {
+		set(PROPERTY_QUANTIDADE3, value);
+	}
+	
+	public Integer getQuantidade3() {
+		return get(PROPERTY_QUANTIDADE3);
 	}
 	
 	@Override

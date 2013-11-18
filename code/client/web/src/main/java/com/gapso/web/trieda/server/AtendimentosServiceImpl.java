@@ -1920,6 +1920,8 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			for(Integer i : countHorariosAula.keySet()){
 				cargaHorariaSemanalEmMinutos += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
 			}
+			
+			Map<Long, Sala> salaIdToSalaMap = Sala.buildSalaIdToSalaMap(Sala.findAll(getInstituicaoEnsinoUser()));
 			for(Long salaId : salaIdToTempoUsoSemanalEmMinutosMap.keySet()){
 				Integer tempoUsoSalaSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(salaId);
 				Double mediaUtilizacaoHorarioSalas = ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
@@ -1927,22 +1929,62 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				if (mediaUtilizacaoHorarioSalas <= 1 && mediaUtilizacaoHorarioSalas > 0.8)
 				{
 					faixasOcupacaoHorario.get(0).setQuantidade(faixasOcupacaoHorario.get(0).getQuantidade() + 1);
+					if (!salaIdToSalaMap.get(salaId).isLaboratorio())
+					{
+						faixasOcupacaoHorario.get(0).setQuantidade2(faixasOcupacaoHorario.get(0).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasOcupacaoHorario.get(0).setQuantidade3(faixasOcupacaoHorario.get(0).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoHorarioSalas <= 0.8 && mediaUtilizacaoHorarioSalas > 0.6)
 				{
 					faixasOcupacaoHorario.get(1).setQuantidade(faixasOcupacaoHorario.get(1).getQuantidade() + 1);
+					if (!salaIdToSalaMap.get(salaId).isLaboratorio())
+					{
+						faixasOcupacaoHorario.get(1).setQuantidade2(faixasOcupacaoHorario.get(1).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasOcupacaoHorario.get(1).setQuantidade3(faixasOcupacaoHorario.get(1).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoHorarioSalas <= 0.6 && mediaUtilizacaoHorarioSalas > 0.4)
 				{
 					faixasOcupacaoHorario.get(2).setQuantidade(faixasOcupacaoHorario.get(2).getQuantidade() + 1);
+					if (!salaIdToSalaMap.get(salaId).isLaboratorio())
+					{
+						faixasOcupacaoHorario.get(2).setQuantidade2(faixasOcupacaoHorario.get(2).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasOcupacaoHorario.get(2).setQuantidade3(faixasOcupacaoHorario.get(2).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoHorarioSalas <= 0.4 && mediaUtilizacaoHorarioSalas > 0.2)
 				{
 					faixasOcupacaoHorario.get(3).setQuantidade(faixasOcupacaoHorario.get(3).getQuantidade() + 1);
+					if (!salaIdToSalaMap.get(salaId).isLaboratorio())
+					{
+						faixasOcupacaoHorario.get(3).setQuantidade2(faixasOcupacaoHorario.get(3).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasOcupacaoHorario.get(3).setQuantidade3(faixasOcupacaoHorario.get(3).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoHorarioSalas <= 0.2)
 				{
 					faixasOcupacaoHorario.get(4).setQuantidade(faixasOcupacaoHorario.get(4).getQuantidade() + 1);
+					if (!salaIdToSalaMap.get(salaId).isLaboratorio())
+					{
+						faixasOcupacaoHorario.get(4).setQuantidade2(faixasOcupacaoHorario.get(4).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasOcupacaoHorario.get(4).setQuantidade3(faixasOcupacaoHorario.get(4).getQuantidade3() + 1);
+					}
 				}
 			}
 		}
@@ -2052,22 +2094,62 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				if (mediaUtilizacaoCapacidadeSala <= 1 && mediaUtilizacaoCapacidadeSala > 0.8)
 				{
 					faixasUtilizacaoCapacidade.get(0).setQuantidade(faixasUtilizacaoCapacidade.get(0).getQuantidade() + 1);
+					if(!sala.getKey().isLaboratorio())
+					{
+						faixasUtilizacaoCapacidade.get(0).setQuantidade2(faixasUtilizacaoCapacidade.get(0).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasUtilizacaoCapacidade.get(0).setQuantidade3(faixasUtilizacaoCapacidade.get(0).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoCapacidadeSala <= 0.8 && mediaUtilizacaoCapacidadeSala > 0.6)
 				{
 					faixasUtilizacaoCapacidade.get(1).setQuantidade(faixasUtilizacaoCapacidade.get(1).getQuantidade() + 1);
+					if(!sala.getKey().isLaboratorio())
+					{
+						faixasUtilizacaoCapacidade.get(1).setQuantidade2(faixasUtilizacaoCapacidade.get(1).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasUtilizacaoCapacidade.get(1).setQuantidade3(faixasUtilizacaoCapacidade.get(1).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoCapacidadeSala <= 0.6 && mediaUtilizacaoCapacidadeSala > 0.4)
 				{
 					faixasUtilizacaoCapacidade.get(2).setQuantidade(faixasUtilizacaoCapacidade.get(2).getQuantidade() + 1);
+					if(!sala.getKey().isLaboratorio())
+					{
+						faixasUtilizacaoCapacidade.get(2).setQuantidade2(faixasUtilizacaoCapacidade.get(2).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasUtilizacaoCapacidade.get(2).setQuantidade3(faixasUtilizacaoCapacidade.get(2).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoCapacidadeSala <= 0.4 && mediaUtilizacaoCapacidadeSala > 0.2)
 				{
 					faixasUtilizacaoCapacidade.get(3).setQuantidade(faixasUtilizacaoCapacidade.get(3).getQuantidade() + 1);
+					if(!sala.getKey().isLaboratorio())
+					{
+						faixasUtilizacaoCapacidade.get(3).setQuantidade2(faixasUtilizacaoCapacidade.get(3).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasUtilizacaoCapacidade.get(3).setQuantidade3(faixasUtilizacaoCapacidade.get(3).getQuantidade3() + 1);
+					}
 				}
 				else if (mediaUtilizacaoCapacidadeSala <= 0.2)
 				{
 					faixasUtilizacaoCapacidade.get(4).setQuantidade(faixasUtilizacaoCapacidade.get(4).getQuantidade() + 1);
+					if(!sala.getKey().isLaboratorio())
+					{
+						faixasUtilizacaoCapacidade.get(4).setQuantidade2(faixasUtilizacaoCapacidade.get(4).getQuantidade2() + 1);
+					}
+					else
+					{
+						faixasUtilizacaoCapacidade.get(4).setQuantidade3(faixasUtilizacaoCapacidade.get(4).getQuantidade3() + 1);
+					}
 				}
 			}
 		}

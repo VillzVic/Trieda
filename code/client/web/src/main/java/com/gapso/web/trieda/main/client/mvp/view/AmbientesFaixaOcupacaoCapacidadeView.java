@@ -119,6 +119,8 @@ public class AmbientesFaixaOcupacaoCapacidadeView extends MyComposite
 	
 		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Faixa de Utilização Média da Capacidade", 240 ) );
 		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Quantidade de Ambientes", 140 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Salas", 140 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE3, "Laboratórios", 140 ) );
 		
 		return list;
 	}
