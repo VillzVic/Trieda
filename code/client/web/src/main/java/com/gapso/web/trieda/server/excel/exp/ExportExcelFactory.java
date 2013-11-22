@@ -63,6 +63,8 @@ public class ExportExcelFactory {
 			case RELATORIO_VISAO_SALA: exporter = new RelatorioVisaoSalaExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case RELATORIO_VISAO_PROFESSOR: exporter = new RelatorioVisaoProfessorExportExcel(cenario, i18nConstants, i18nMessages, filter, visaoProfessor, instituicaoEnsino, fileExtension ); break;
 			case RELATORIO_VISAO_ALUNO: exporter = new RelatorioVisaoAlunoExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case RESUMO_CAMPI: exporter = new ResumoCampiExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case RESUMO_CENARIO: exporter = new ResumoCenarioExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case RESUMO_DISCIPLINA: exporter = new ResumoDisciplinaExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case RESUMO_CURSO: exporter = new ResumoCursoExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case SALAS: exporter = new MultiExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{SalasExportExcel.class,DisponibilidadesSalasExportExcel.class}, fileExtension ); break;

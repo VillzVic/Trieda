@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.gapso.web.trieda.main.client.mvp.presenter.ResumoCenarioPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -20,6 +21,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ResumoCenarioView extends MyComposite implements ResumoCenarioPresenter.Display {
@@ -29,6 +31,7 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private SimpleToolBar toolBar;
 	
 	private CenarioDTO cenario;
 	
@@ -44,6 +47,8 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
 		panel.setHeadingHtml("Master Data » Resumo do Cenário");
+		toolBar = new SimpleToolBar( false, false, false, false, true, this );
+		panel.setTopComponent(toolBar);
 	}
 
 	@Override
@@ -83,7 +88,17 @@ public class ResumoCenarioView extends MyComposite implements ResumoCenarioPrese
 		return tree;
 	}
 
+	@Override
+	public MenuItem getExportXlsExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
 	
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
+	}
 	
 	private void configureProxy() {
 		RpcProxy<List<TreeNodeDTO>> proxy = new RpcProxy<List<TreeNodeDTO>>() {

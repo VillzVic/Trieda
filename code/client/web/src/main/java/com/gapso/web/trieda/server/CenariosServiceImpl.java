@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
@@ -236,6 +237,10 @@ public class CenariosServiceImpl
 		
 		Locale pt_BR = new Locale("pt","BR");
 		NumberFormatter numberFormatter = new NumberFormatter();
+		
+		int totalSalas = Sala.countSalaDeAula( getInstituicaoEnsinoUser(), cenario );
+		int totalLaboratorios = Sala.countLaboratorio( getInstituicaoEnsinoUser(), cenario );
+		int totalAmbientes = totalSalas + totalLaboratorios;
 
 		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
 
@@ -244,22 +249,28 @@ public class CenariosServiceImpl
 		list.add( new TreeNodeDTO( "Total de Matrizes Curriculares: <b>" +  numberFormatter.print( Curriculo.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "Total de Disciplinas: <b>" +  numberFormatter.print( Disciplina.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "Total de Alunos: <b>" +  numberFormatter.print( Aluno.count( getInstituicaoEnsinoUser(), cenario, null, null ),pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "|--- Alunos com Pelo Menos Uma Demanda: <b>" +
+				numberFormatter.print( AlunoDemanda.countAlunosUteis( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "Total de Professores: <b>" +  numberFormatter.print( Professor.count( getInstituicaoEnsinoUser(), cenario, null, null, null, null ),pt_BR ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "|--- Professores Utilizados: <b>" +
 				numberFormatter.print( AtendimentoOperacional.countProfessores( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "|--- Professores Virtuais Utilizados: <b>" +
 				numberFormatter.print( AtendimentoOperacional.countProfessoresVirtuais( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "|--- Professores com Pelo Menos Uma Habilitação, Disponibilidade e Campus de Trabalho: <b>" +
+				numberFormatter.print( Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, null).size(),pt_BR ) + "</b>", null ) );
 		list.add( new TreeNodeDTO( "Demanda Total: <b>" +  numberFormatter.print( Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + " Alunos</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Salas de Aula: <b>" +
-				 numberFormatter.print( Sala.countSalaDeAula( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Salas de Laborat&oacute;rio: <b>" +
-				 numberFormatter.print( Sala.countLaboratorio( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "Total Ambientes: <b>" +  numberFormatter.print( totalAmbientes,pt_BR ), null ) );
+		list.add( new TreeNodeDTO( "|--- Total de Salas de Aula: <b>" +
+				 numberFormatter.print( totalSalas,pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( "|--- Total de Salas de Laborat&oacute;rio: <b>" +
+				 numberFormatter.print( totalLaboratorios,pt_BR ) + "</b>", null ) );
 		
 		return list;
 	}
 	
 	public Integer checkDBVersion()
 	{
+		//Cenario.executeSqlUpdate(13, 14);
 		return Cenario.getDBVersion();
 	}
 }

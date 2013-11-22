@@ -1,7 +1,6 @@
 package com.gapso.web.trieda.shared.util.view;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +27,9 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.extjs.gxt.ui.client.widget.treegrid.WidgetTreeGridCellRenderer;
+import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.Joint;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -51,9 +52,13 @@ public abstract class RelatorioView extends MyComposite
 	LayoutContainer center;
 	private int numFiltros;
 	protected CenarioDTO cenarioDTO;
-	protected List<Button> histogramasBt = new ArrayList<Button>();
+	protected GTab gTab;
+	protected InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	
-	protected RelatorioView(CenarioDTO cenarioDTO){
+	protected RelatorioView(InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO,
+			GTab gTab){
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.gTab = gTab;
 		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
@@ -86,8 +91,10 @@ public abstract class RelatorioView extends MyComposite
 		
 		final LayoutContainer main = new LayoutContainer(new ColumnLayout());
 		left = new LayoutContainer(new FormLayout(LabelAlign.LEFT));
+		left.setStyleAttribute("margin-right", "20px");
 		right = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
 		center = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
+		center.setStyleAttribute("margin-right", "20px");
 		LayoutContainer submit = new LayoutContainer(new FormLayout());
 		LayoutContainer reset = new LayoutContainer(new FormLayout());
 		setFilter();
@@ -99,7 +106,7 @@ public abstract class RelatorioView extends MyComposite
 		submit.add(submitBt, new HBoxLayoutData(new Margins(0, 0, 0, 5)));
 		reset.add(resetBt, new HBoxLayoutData(new Margins(0, 0, 0, 5)));
 		
-		main.add(left, new ColumnData(0.31));
+		main.add(left, new ColumnData(0.26));
 		main.add(center, new ColumnData(0.26));
 		main.add(right, new ColumnData(0.26));
 		main.add(reset, new ColumnData(0.08));
@@ -120,35 +127,42 @@ public abstract class RelatorioView extends MyComposite
 	
 	protected abstract List<Field<?>> getFiltersList();
 	
-	protected void createHistogramasButton(int numHistogramas)
-	{
-		for (int i = 0; i<numHistogramas; i++)
-		{
-			Button bt = new Button();
-			histogramasBt.add(bt);
-		}
-	}
-	
-	protected Button getHistogramaButton(RelatorioDTO model)
-	{
-		if (histogramasBt.size() < model.getButtonIndex() + 1)
-		{
-			Button bt = new Button();
-			bt.setText(model.getButtonText());
-			histogramasBt.add(bt);
-			return bt;
-		}
-		else
-		{
-			histogramasBt.get(model.getButtonIndex()).setText(model.getButtonText());
-			return histogramasBt.get(model.getButtonIndex());
-		}
-	}
+	protected abstract void addListener(Button bt, RelatorioDTO model);
 	
 	private void createGrid()
 	{
-	    ColumnConfig text = new ColumnConfig(RelatorioDTO.PROPERTY_TEXT, "Texto", 800);  
-	    text.setRenderer(new WidgetTreeGridCellRenderer<RelatorioDTO>(){  
+	    ColumnConfig text = new ColumnConfig(RelatorioDTO.PROPERTY_TEXT, "Texto", 800); 
+	    text.setRenderer(new WidgetTreeGridCellRenderer<RelatorioDTO>(){ 
+	    	@SuppressWarnings({ "rawtypes", "unchecked" })
+			@Override
+	    	public Object render(RelatorioDTO model, String property,
+	    			com.extjs.gxt.ui.client.widget.grid.ColumnData config, int rowIndex,
+	    			int colIndex, ListStore<RelatorioDTO> store, Grid<RelatorioDTO> grid)
+	    	{
+	    	    config.css = "x-treegrid-column";
+
+	    	    assert grid instanceof TreeGrid : "TreeGridCellRenderer can only be used in a TreeGrid";
+
+	    	    TreeGrid tree = (TreeGrid) grid;
+	    	    TreeStore ts = tree.getTreeStore();
+
+	    	    int level = ts.getDepth(model);
+
+	    	    String id = getId(tree, model, property, rowIndex, colIndex);
+	    	    String text = getText(tree, model, property, rowIndex, colIndex);
+	    	    AbstractImagePrototype icon = calculateIconStyle(tree, model, property, rowIndex, colIndex);
+	    	    Joint j = calcualteJoint(tree, model, property, rowIndex, colIndex);
+
+	    	    if (model.getButtonIndex() != null)
+	    	    {
+		    	    return tree.getTreeView().getWidgetTemplate(model, id, text, icon, false, j, level - 1);
+	    	    }
+	    	    else
+	    	    {
+		    	    return tree.getTreeView().getTemplate(model, id, text, icon, false, j, level - 1);
+	    	    }
+	    	}
+	    	
 			@Override
 			public Widget getWidget(RelatorioDTO model, String property,
 					com.extjs.gxt.ui.client.widget.grid.ColumnData config,
@@ -156,7 +170,10 @@ public abstract class RelatorioView extends MyComposite
 					Grid<RelatorioDTO> grid) {
 				if (model.getButtonIndex() != null)
 				{
-			        return getHistogramaButton(model);
+			        Button bt = new Button();
+			        bt.setText(model.getButtonText());
+			        addListener(bt, model);
+			        return bt;
 				}
 				return null;
 			}
@@ -207,12 +224,6 @@ public abstract class RelatorioView extends MyComposite
 	public Button getResetBuscaButton()
 	{
 		return resetBt;
-	}
-	
-	@Override
-	public List<Button> getHistogramasButton()
-	{
-		return histogramasBt;
 	}
 	
 	protected void addFilter(Field<?> field){

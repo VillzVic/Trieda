@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
@@ -33,6 +34,7 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.Oferta;
+import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
@@ -50,6 +52,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.ResumoDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.CampiService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -434,10 +437,10 @@ public class CampiServiceImpl extends RemoteService
 	@Override
 	public List<TreeNodeDTO> getResumos(CenarioDTO cenarioDTO, TreeNodeDTO currentNode) {
 		List<TreeNodeDTO> list = new ArrayList<TreeNodeDTO>();
+		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
 
 		if (currentNode == null){
 			// disponibiliza uma pasta para cada campus no relatório de resumo por campi
-			Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
 			List<Campus> campi = new ArrayList<Campus>(cenario.getCampi());
 			Collections.sort(campi);
 			for (Campus campus : campi) {
@@ -450,13 +453,13 @@ public class CampiServiceImpl extends RemoteService
 			// disponibiliza o conteúdo de uma pasta que representa um determinado campus no relatório de resumo por campi
 			AbstractDTO<?> contentCurrentNode = currentNode.getContent();
 			Campus campus = Campus.find(((CampusDTO)contentCurrentNode ).getId(),this.getInstituicaoEnsinoUser());
-			list = getResumoParaCampus(campus,currentNode);
+			list = getResumoParaCampus(campus, cenario, currentNode);
 		}
 
 		return list;
 	}
 
-	private List<TreeNodeDTO> getResumoParaCampus(Campus campus, TreeNodeDTO currentNode) {
+	private List<TreeNodeDTO> getResumoParaCampus(Campus campus, Cenario cenario, TreeNodeDTO currentNode) {
 		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
 		
 		// cálculo dos indicadores de utilização das salas de aula e laboratórios
@@ -503,14 +506,18 @@ public class CampiServiceImpl extends RemoteService
 		Double custoDocenteSemanal = 0.0;
 		Integer qtdAlunosAtendidos = 0;
 		Integer qtdAlunosNaoAtendidos = 0;
+		double utilizacaoMediaDosAmbientes = 0.0;
 		double utilizacaoMediaDasSalasDeAula = 0.0;
 		double utilizacaoMediaDosLaboratorios = 0.0;
+		Double mediaUtilizacaoHorarioAmbientes = 0.0;
 		Double mediaUtilizacaoHorarioSalas = 0.0;
 		Double mediaUtilizacaoHorarioLaboratorios = 0.0;
 		Double receitaSemestral = 0.0;
 		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+			double somatorioDeAlunosDeTodasAsAulasEmAmbientes = 0.0;
 			double somatorioDeAlunosDeTodasAsAulasEmSalasDeAula = 0.0;
 			double somatorioDeAlunosDeTodasAsAulasEmLaboratorios = 0.0;
+			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes = 0.0;
 			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula = 0.0;
 			double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios = 0.0;
 			// [SalaId -> Tempo de uso (min) semanal]
@@ -540,6 +547,8 @@ public class CampiServiceImpl extends RemoteService
 						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
 						
 						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+							somatorioDeAlunosDeTodasAsAulasEmAmbientes += aula.getQuantidadeAlunos();
+							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes += sala.getCapacidadeInstalada();
 							if (!sala.isLaboratorio()) {
 								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos();
 								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada();
@@ -566,6 +575,7 @@ public class CampiServiceImpl extends RemoteService
 					}
 				}
 			}
+			utilizacaoMediaDosAmbientes = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmAmbientes/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes*100.0,2);
 			utilizacaoMediaDasSalasDeAula = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmSalasDeAula/somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula*100.0,2);
 			utilizacaoMediaDosLaboratorios = TriedaUtil.round(somatorioDeAlunosDeTodasAsAulasEmLaboratorios/somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios*100.0,2);
 			
@@ -588,13 +598,16 @@ public class CampiServiceImpl extends RemoteService
 			for(Long salaId : salaIdToTempoUsoSemanalEmMinutosMap.keySet()){
 				Integer tempoUsoSalaSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(salaId);
 				mediaUtilizacaoHorarioSalas += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientes += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
 			}
 			mediaUtilizacaoHorarioSalas = TriedaUtil.round(mediaUtilizacaoHorarioSalas / salaIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
 			for(Long salaId : laboratorioIdToTempoUsoSemanalEmMinutosMap.keySet()){
 				Integer tempoUsoSalaSemanalEmMinutos = laboratorioIdToTempoUsoSemanalEmMinutosMap.get(salaId);
 				mediaUtilizacaoHorarioLaboratorios += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
+				mediaUtilizacaoHorarioAmbientes += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
 			}
-			mediaUtilizacaoHorarioLaboratorios = TriedaUtil.round(mediaUtilizacaoHorarioLaboratorios / laboratorioIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);		
+			mediaUtilizacaoHorarioLaboratorios = TriedaUtil.round(mediaUtilizacaoHorarioLaboratorios / laboratorioIdToTempoUsoSemanalEmMinutosMap.size() * 100, 2);
+			mediaUtilizacaoHorarioAmbientes = TriedaUtil.round(mediaUtilizacaoHorarioAmbientes / (laboratorioIdToTempoUsoSemanalEmMinutosMap.size()+salaIdToTempoUsoSemanalEmMinutosMap.size()) * 100, 2);
 			
 			// cálculo das quantidades de alunos atendidos e não atendidos
 			DemandasServiceImpl demandasService = new DemandasServiceImpl();
@@ -628,11 +641,16 @@ public class CampiServiceImpl extends RemoteService
 		}
 		
 		// cálculo de outros indicadores
+		Integer qtdTotalAlunos = Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
+		Integer qtdTotalDocentes = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus).size();
+		Integer qtdTurmasAbertasProfessoresVirtuais = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresVirtuais(getInstituicaoEnsinoUser(),campus);
+		Integer qtdTurmasAbertasProfessoresInstituicao = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresInstituicao(getInstituicaoEnsinoUser(),campus);
 		Integer qtdTurmasAbertas = ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
-		Double qtdMediaDeCreditosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : (totalCreditosSemanais/qtdTurmasAbertas)),2);
-		Double qtdMediaDeAlunosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : (qtdAlunosAtendidos/qtdTurmasAbertas)),2);
+		Double qtdMediaDeCreditosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)totalCreditosSemanais/qtdTurmasAbertas)),2);
+		Double qtdMediaDeAlunosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)qtdAlunosAtendidos/qtdTurmasAbertas)),2);
 		Double custoMedioSemanalPorCredito = TriedaUtil.round(((totalCreditosSemanais != 0) ? custoDocenteSemanal/totalCreditosSemanais : 0.0),2);
 		Double custoDocenteSemestral = TriedaUtil.round((custoDocenteSemanal*4.5*6.0),2);
+		Double margemContribuicaoSemestral = TriedaUtil.round(receitaSemestral - custoDocenteSemanal, 2);
 		Double razaoCustoDocentePorReceitaSemestral = (receitaSemestral == 0.0) ? null : TriedaUtil.round((custoDocenteSemestral/receitaSemestral*100.0),2);
 		Integer demandaTotalP1QtdeAlunos = AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
 		Integer demandaTotalPresencialP1QtdeAlunos = AlunoDemanda.sumDemandaPresencialPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
@@ -642,6 +660,7 @@ public class CampiServiceImpl extends RemoteService
 		Integer demandaAtendidaQtdeAlunos = demandaAtendidaP1QtdeAlunos + demandaAtendidaP2QtdeAlunos + demandaTotalNaoPresencialP1QtdeAlunos;
 		Integer demandaNaoAtendidaQtdeAlunos = demandaTotalP1QtdeAlunos - demandaAtendidaQtdeAlunos;
 		demandaNaoAtendidaQtdeAlunos = (demandaNaoAtendidaQtdeAlunos < 0) ? 0 : demandaNaoAtendidaQtdeAlunos;
+		Double atendimentoPercent = TriedaUtil.round( qtdTotalAlunos == 0 ? 0.0 : (((double)qtdTotalAlunos)/qtdTotalAlunos)*100, 2 );
 		Double demandaTotalNaoPresencialP1Percent = TriedaUtil.round(((double)demandaTotalNaoPresencialP1QtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
 		Double demandaAtendidaP1Percent = TriedaUtil.round(((double)demandaAtendidaP1QtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
 		Double demandaAtendidaP2Percent = TriedaUtil.round(((double)demandaAtendidaP2QtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
@@ -656,9 +675,14 @@ public class CampiServiceImpl extends RemoteService
 				AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
 		Integer qtdDocentes = qtdProfessores + qtdProfessoresVirtuais;
 		
+		Double produtividadeTempoAula = TriedaUtil.round( totalCreditosSemanais == 0 ? 0.0 : ((double)totalCreditosSemanaisAlunos)/totalCreditosSemanais, 2 );
+		Double custoSobreReceitaCreditoPercent = TriedaUtil.round( totalCreditosSemanaisAlunos == 0 ? 0.0 : (((double)totalCreditosSemanais)/totalCreditosSemanaisAlunos)*100, 2 );
 		Double mediaCreditosPorDocente = TriedaUtil.round( qtdDocentes == 0 ? 0.0 : ((double)totalCreditosSemanais)/qtdDocentes, 2 );
 		Double mediaCreditosProfessores = TriedaUtil.round( qtdProfessores == 0 ? 0.0 : ((double)totalCreditosSemanaisProfessores)/qtdProfessores, 2 );
 		Double mediaCreditosProfessoresVirtuais = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)totalCreditosSemanaisProfessoresVirtuais)/qtdProfessoresVirtuais, 2 );
+		Double mediaTurmasPorDocente = TriedaUtil.round( qtdDocentes == 0 ? 0.0 : ((double)qtdTurmasAbertas)/qtdDocentes, 2 );
+		Double mediaTurmasPorProfessor = TriedaUtil.round( qtdProfessores == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresInstituicao)/qtdProfessores, 2 );
+		Double mediaTurmasPorProfessorVirtual = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresVirtuais)/qtdProfessoresVirtuais, 2 );
 		
 		// disponibilização dos indicadores
 		Locale pt_BR = new Locale("pt","BR");
@@ -666,37 +690,153 @@ public class CampiServiceImpl extends RemoteService
 		NumberFormatter numberFormatter = new NumberFormatter();
 		List<TreeNodeDTO> itensDoRelatorioParaUmCampus = new ArrayList<TreeNodeDTO>();
 		
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Demanda Total (Qtde Alunos): <b>" + numberFormatter.print(demandaTotalP1QtdeAlunos,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Presencial: <b>" + numberFormatter.print(demandaTotalPresencialP1QtdeAlunos,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- N&atilde;o Presencial: <b>" + numberFormatter.print(demandaTotalNaoPresencialP1QtdeAlunos,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Demanda Atendida (Qtde Alunos): <b>" + numberFormatter.print(demandaAtendidaQtdeAlunos,pt_BR) + "</b>  <b>(" + demandaAtendidaPercent + "%)</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Presencial P1: <b>" + numberFormatter.print(demandaAtendidaP1QtdeAlunos,pt_BR) + "</b>  <b>(" + demandaAtendidaP1Percent + "%)</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Presencial P2: <b>" + numberFormatter.print(demandaAtendidaP2QtdeAlunos,pt_BR) + "</b>  <b>(" + demandaAtendidaP2Percent + "%)</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- N&atilde;o Presencial: <b>" + numberFormatter.print(demandaTotalNaoPresencialP1QtdeAlunos,pt_BR) + "</b>  <b>(" + demandaTotalNaoPresencialP1Percent + "%)</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Demanda N&atilde;o Atendida (Qtde Alunos): <b>" + numberFormatter.print(demandaNaoAtendidaQtdeAlunos,pt_BR) + "</b>  <b>(" + demandaNaoAtendidaPercent + "%)</b>",currentNode) );
+		//Gerais
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Número de alunos: ", "<b>" + numberFormatter.print(qtdTotalAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Alunos atendidos (pelo menos 1 disc.): ", "<b>" + numberFormatter.print(qtdTotalAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Atendimento % (pelo menos 1 disc.): ", "<b>" + numberFormatter.print(atendimentoPercent,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Demanda total (Qtde alunos): ", "<b>" + numberFormatter.print(demandaTotalP1QtdeAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Presencial: ", "<b>" + numberFormatter.print(demandaTotalPresencialP1QtdeAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Não presencial: ", "<b>" + numberFormatter.print(demandaTotalNaoPresencialP1QtdeAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Demanda atendida (matrículas): ", "<b>" + numberFormatter.print(demandaAtendidaQtdeAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Presencial P1: ", "<b>" + numberFormatter.print(demandaAtendidaP1QtdeAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Presencial P2: ", "<b>" + numberFormatter.print(demandaAtendidaP2QtdeAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Créditos pagos aos docentes (A): ", "<b>" + numberFormatter.print(totalCreditosSemanais,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Créditos de professores da instituição: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessores,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Crédito de professores virtuais: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Créditos pagos pelos alunos (B): ", "<b>" + numberFormatter.print(totalCreditosSemanaisAlunos,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Turmas abertas: ", "<b>" + numberFormatter.print(qtdTurmasAbertas,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Docentes da instituição: ", "<b>" + numberFormatter.print(qtdTurmasAbertasProfessoresInstituicao,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Docentes virtuais: ", "<b>" + numberFormatter.print(qtdTurmasAbertasProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+		
+		//Eficiencia de alocacao
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Produtividade do tempo de aula pago (B/A): ", "<b>" + numberFormatter.print(produtividadeTempoAula,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Custo/ receita do crédito (A/B): ", "<b>" + numberFormatter.print(custoSobreReceitaCreditoPercent,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de alunos por turma: ", "<b>" + numberFormatter.print(qtdMediaDeAlunosPorTurma,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de créditos por turma: ", "<b>" + numberFormatter.print(qtdMediaDeCreditosPorTurma,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Ocupação geral da capacidade de ambientes: ", "<b>" + numberFormatter.print(utilizacaoMediaDosAmbientes,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Utilização geral de horários de ambientes: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes,pt_BR) + "%</b>") ,currentNode, true) );
+		
+		//Financeiro
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Receita semestral estimada: ", "<b>" + numberFormatter.print(receitaSemestral,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Custo docente semestral estimado: ", "<b>" + numberFormatter.print(custoDocenteSemestral,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Margem de contribuição semestral estimada: ", "<b>" + numberFormatter.print(margemContribuicaoSemestral,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"% do custo docente sobre a receita: ", "<b>" + ((razaoCustoDocentePorReceitaSemestral == null) ? "n.d.a." : numberFormatter.print(razaoCustoDocentePorReceitaSemestral, pt_BR)) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Ticket médio: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Custo médio do crédito: ", "<b>" + numberFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Custo médio docente (fornecido): ", "<b>" + "-" + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Custo médio docente (real alocado): ", "<b>" + numberFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>") ,currentNode, true) );
+		
+		//Uso dos Ambientes
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Ocupação média da capacidade dos ambientes: ", "<b>" + numberFormatter.print(utilizacaoMediaDosAmbientes,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Ocupação média da capacidade das salas de aula:  ", "<b>" + numberFormatter.print(utilizacaoMediaDasSalasDeAula,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Ocupação média da capacidade dos laboratórios: ", "<b>" + numberFormatter.print(utilizacaoMediaDosLaboratorios,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Utilização média dos horários dos ambientes: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Utilização média dos horários das salas de aula: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioSalas,pt_BR) + "%</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"|--- Utilização média dos horários dos laboratorios: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioLaboratorios,pt_BR) + "%</b>") ,currentNode, true) );
+		
+		//Uso dos Docentes
+		//|--- Total
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Docentes cadastrados:  ", "<b>" + numberFormatter.print(qtdTotalDocentes,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Docentes habilitados e disponíveis: ", "<b>" + numberFormatter.print(utilizacaoMediaDosLaboratorios,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Docentes utilizados (todos): ", "<b>" + numberFormatter.print(qtdDocentes,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de créditos semanais por docente: ", "<b>" + numberFormatter.print(mediaCreditosPorDocente,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de turmas por docente: ", "<b>" + numberFormatter.print(mediaTurmasPorDocente,pt_BR) + "</b>") ,currentNode, true) );
+		
+		//|--- Da Instituicao
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Docentes usados da instituição:  ", "<b>" + numberFormatter.print(qtdProfessores,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Créditos ministrados por docentes da instituição: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessores,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de créditos semanais por docente da instituição: ", "<b>" + numberFormatter.print(mediaCreditosProfessores,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Turmas ministradas por docentes da instituição : ", "<b>" + numberFormatter.print(qtdTurmasAbertasProfessoresInstituicao,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de turmas por docente da instituição: ", "<b>" + numberFormatter.print(mediaTurmasPorProfessor,pt_BR) + "</b>") ,currentNode, true) );
+		
+		//|--- Virtuais
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Docentes usados - virtuais:  ", "<b>" + numberFormatter.print(qtdProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Créditos ministrados por docentes virtuais: ", "<b>" + numberFormatter.print(totalCreditosSemanaisProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de créditos semanais por docente virtual: ", "<b>" + numberFormatter.print(mediaCreditosProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Turmas ministradas por docentes virtuais: ", "<b>" + numberFormatter.print(qtdTurmasAbertasProfessoresVirtuais,pt_BR) + "</b>") ,currentNode, true) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Média de turmas por docente virtual: ", "<b>" + numberFormatter.print(mediaTurmasPorProfessorVirtual,pt_BR) + "</b>") ,currentNode, true) );
+		
+/*		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Demanda Não Atendida (Qtde Alunos): <b>" + numberFormatter.print(demandaNaoAtendidaQtdeAlunos,pt_BR) + "</b>  <b>(" + numberFormatter.print(demandaNaoAtendidaPercent, pt_BR) + "%)</b>",currentNode) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Docentes Utilizados: <b>" + numberFormatter.print(qtdDocentes,pt_BR) + "</b>",currentNode) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Da Instituição: <b>" + numberFormatter.print(qtdProfessores,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Gerados pelo Trieda: <b>" + numberFormatter.print(qtdProfessoresVirtuais,pt_BR) + "</b>",currentNode) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Virtuais: <b>" + numberFormatter.print(qtdProfessoresVirtuais,pt_BR) + "</b>",currentNode) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Média de Créditos Semanais por Docente: <b>" + numberFormatter.print(mediaCreditosPorDocente,pt_BR) + "</b>",currentNode) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Da Instituição: <b>" + numberFormatter.print(mediaCreditosProfessores,pt_BR) + " </b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Gerados pelo Trieda: <b>" + numberFormatter.print(mediaCreditosProfessoresVirtuais,pt_BR) + " </b>",currentNode) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Virtuais: <b>" + numberFormatter.print(mediaCreditosProfessoresVirtuais,pt_BR) + " </b>",currentNode) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Turmas Abertas: <b>" + numberFormatter.print(qtdTurmasAbertas,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Docentes da Instituição <b>" + numberFormatter.print(qtdTurmasAbertasProfessoresInstituicao,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Docentes Virtuais <b>" + numberFormatter.print(qtdTurmasAbertasProfessoresVirtuais,pt_BR) + "</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Créditos Semanais Docentes: <b>"	+ numberFormatter.print(totalCreditosSemanais,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|-- Créditos de Professores da Instituição <b>"	+ numberFormatter.print(totalCreditosSemanaisProfessores,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|-- Crédito de Professores Virtuais: <b>"	+ numberFormatter.print(totalCreditosSemanaisProfessoresVirtuais,pt_BR) + "</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Créditos Semanais Alunos: <b>"	+ numberFormatter.print(totalCreditosSemanaisAlunos,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "M&eacute;dia de Cr&eacute;ditos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeCreditosPorTurma,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "M&eacute;dia de Alunos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeAlunosPorTurma,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Custo M&eacute;dio do Cr&eacute;dito: <b> " + currencyFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Média de Créditos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeCreditosPorTurma,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Média de Alunos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeAlunosPorTurma,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Custo Médio do Crédito: <b> " + currencyFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>", currentNode ) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Custo Docente Semestral Estimado: <b> "	+ currencyFormatter.print(custoDocenteSemestral,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Receita: <b> " + currencyFormatter.print(receitaSemestral,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Margem: <b> " + currencyFormatter.print(receitaSemestral-custoDocenteSemestral,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "% do Custo Docente sobre a Receita: <b> " + ((razaoCustoDocentePorReceitaSemestral == null) ? "n.d.a." : razaoCustoDocentePorReceitaSemestral) + "%</b>", currentNode));
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utiliza&ccedil;&atilde;o M&eacute;dia das Salas de Aula: <b>" + utilizacaoMediaDasSalasDeAula + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utiliza&ccedil;&atilde;o M&eacute;dia dos Laborat&oacute;rios: <b>"	+ utilizacaoMediaDosLaboratorios + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utiliza&ccedil;&atilde;o M&eacute;dia dos Hor&aacute;rios das Salas de Aula: <b>" + mediaUtilizacaoHorarioSalas + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utiliza&ccedil;&atilde;o M&eacute;dia dos Hor&aacute;rios dos Laboratorios: <b>" + mediaUtilizacaoHorarioLaboratorios + "%</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Receita Semestral Estimada: <b> " + currencyFormatter.print(receitaSemestral,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Margem Semestral Estimada: <b> " + currencyFormatter.print(receitaSemestral-custoDocenteSemestral,pt_BR) + "</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "% do Custo Docente sobre a Receita: <b> " + ((razaoCustoDocentePorReceitaSemestral == null) ? "n.d.a." : numberFormatter.print(razaoCustoDocentePorReceitaSemestral, pt_BR)) + "%</b>", currentNode));
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Ocupação Média da Capacidade dos Ambientes: <b>" + numberFormatter.print(utilizacaoMediaDosAmbientes, pt_BR) + "%</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Ocupação Média da Capacidade das Salas de Aula: <b>" + numberFormatter.print(utilizacaoMediaDasSalasDeAula, pt_BR) + "%</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Ocupação Média da Capacidade dos Laboratórios: <b>"	+ numberFormatter.print(utilizacaoMediaDosLaboratorios, pt_BR) + "%</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utilização Média dos Horários dos Ambientes: <b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes, pt_BR) + "%</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Utilização Média dos Horários das Salas de Aula: <b>" + numberFormatter.print(mediaUtilizacaoHorarioSalas, pt_BR) + "%</b>", currentNode ) );
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Utilização Média dos Horários dos Laboratórios: <b>" + numberFormatter.print(mediaUtilizacaoHorarioLaboratorios, pt_BR) + "%</b>", currentNode ) );
 		//itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Total de alunos atendidos: <b>"	+ numberFormatter.print(qtdAlunosAtendidos,pt_BR) + "</b>", currentNode ) );
 		//itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Total de alunos n&atilde;o atendidos: <b>" + numberFormatter.print(qtdAlunosNaoAtendidos,pt_BR) + "</b>", currentNode ) );
-		
+*/		
 		return itensDoRelatorioParaUmCampus;
 	}
 }

@@ -934,18 +934,25 @@ public class Professor
 	public static List<Professor> findProfessoresUteis(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Campus campus) {
+		
+		String campusQuery = campus == null ? "" : " AND cmp = :campus ";
+		String campusQuery2 = campus == null ? "" : ", IN (o.campi) cmp ";
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM Professor o, IN (o.campi) cmp " +
+			" SELECT o FROM Professor o " + campusQuery2 +
 			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario " +
-			" AND cmp = :campus " +
+			campusQuery +
 			" AND o.disciplinas IS NOT EMPTY " +
 			" AND o.horarios IS NOT EMPTY ");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "campus", campus );
 		q.setParameter( "cenario", cenario );
+		
+		if (campus != null)
+		{
+			q.setParameter( "campus", campus );
+		}
 
 		return q.getResultList();
 	}

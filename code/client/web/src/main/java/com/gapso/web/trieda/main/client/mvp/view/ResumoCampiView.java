@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.gapso.web.trieda.main.client.mvp.presenter.ResumoCampiPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -22,6 +23,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ResumoCampiView extends MyComposite
@@ -32,6 +34,7 @@ public class ResumoCampiView extends MyComposite
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenario;
+	private SimpleToolBar toolBar;
 
 	public ResumoCampiView(
 		CenarioDTO cenario )
@@ -47,7 +50,9 @@ public class ResumoCampiView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Resultados por Campus" );
+		panel.setHeadingHtml( "Master Data » Resumo por Campus" );
+		toolBar = new SimpleToolBar( false, false, false, false, true, this );
+		panel.setTopComponent(toolBar);
 	}
 
 	@Override
@@ -93,6 +98,18 @@ public class ResumoCampiView extends MyComposite
 	public TreePanel< TreeNodeDTO > getTree()
 	{
 		return tree;
+	}
+	
+	@Override
+	public MenuItem getExportXlsExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getExportXlsxExcelButton()
+	{
+		return (MenuItem) this.toolBar.getExportExcelButton().getMenu().getItem(1);
 	}
 
 	private void configureProxy()

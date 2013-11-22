@@ -1,7 +1,5 @@
 package com.gapso.web.trieda.shared.util.view;
 
-import java.util.List;
-
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -25,7 +23,6 @@ public abstract class RelatorioPresenter
 		TreeStore< RelatorioDTO > getStore();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
-		List<Button> getHistogramasButton();
 	}
 	
 	protected InstituicaoEnsinoDTO instituicaoEnsinoDTO;

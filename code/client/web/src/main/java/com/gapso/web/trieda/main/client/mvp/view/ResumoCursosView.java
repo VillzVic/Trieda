@@ -51,7 +51,7 @@ public class ResumoCursosView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Resultados por Cursos" );
+		panel.setHeadingHtml( "Master Data » Resumo por Cursos" );
 
 		createToolBar();
 		createForm();

@@ -187,4 +187,6 @@ public interface TriedaI18nConstants
 	String disciplinasCoRequisitos();
 	String codigoDisciplinaCoRequisito();
 	String alunosDisciplinasCursadas();
+	String resumoCenario();
+	String resumoCampi();
 }

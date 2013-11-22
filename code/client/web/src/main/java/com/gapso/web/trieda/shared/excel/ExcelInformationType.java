@@ -52,6 +52,8 @@ public enum ExcelInformationType
 	DIVISOES_CREDITO("Divisoes de Credito"),
 	CAMPI_DESLOCAMENTO("Deslocamento entre Campi"),
 	UNIDADES_DESLOCAMENTO("Deslocamento entre Unidades"),
+	RESUMO_CENARIO("Resumo por Cenario"),
+	RESUMO_CAMPI("Resumo por Campus"),
 	TODAS_TABELAS( "" ),
 	TODAS_GRADES_HORARIAS( "" ),
 	TODAS_VISAO_ALUNO( "" );

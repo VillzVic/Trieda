@@ -877,19 +877,41 @@ public class AtendimentoOperacional
 
 		return q.getResultList();
 	}
-
+	
 	public static int countTurma(
+			InstituicaoEnsino instituicaoEnsino, Campus campus )
+		{
+			Query q = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.turma FROM atendimento_operacional o " +
+				" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.turma " +
+				" UNION " +
+				" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_operacional o1 " +
+				" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
+				" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+				" GROUP BY o1.dis_substituta_id, o1.turma ");
+
+				q.setParameter( "campus", campus.getId() );
+				q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+
+				return q.getResultList().size();
+		}
+
+	public static int countTurmaProfessoresVirtuais(
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		Query q = entityManager().createNativeQuery(
 			" SELECT o.dis_id, o.turma FROM atendimento_operacional o " +
 			" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
 			" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+			" AND o.prv_id is not null " +
 			" GROUP BY o.dis_id, o.turma " +
 			" UNION " +
 			" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_operacional o1 " +
 			" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
 			" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+			" AND o1.prv_id is not null " +
 			" GROUP BY o1.dis_substituta_id, o1.turma ");
 
 			q.setParameter( "campus", campus.getId() );
@@ -897,6 +919,28 @@ public class AtendimentoOperacional
 
 			return q.getResultList().size();
 	}
+	
+	public static int countTurmaProfessoresInstituicao(
+			InstituicaoEnsino instituicaoEnsino, Campus campus )
+		{
+			Query q = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.turma FROM atendimento_operacional o " +
+				" WHERE o.ins_id = :instituicaoEnsino AND o.dis_substituta_id IS NULL" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" AND o.prv_id is null " +
+				" GROUP BY o.dis_id, o.turma " +
+				" UNION " +
+				" SELECT o1.dis_substituta_id, o1.turma FROM atendimento_operacional o1 " +
+				" WHERE o1.ins_id = :instituicaoEnsino  AND o1.dis_substituta_id IS NOT NULL " +
+				" AND o1.ofe_id IN (select f1.ofe_id from ofertas f1 where f1.cam_id = :campus)" +
+				" AND o1.prv_id is null " +
+				" GROUP BY o1.dis_substituta_id, o1.turma ");
+
+				q.setParameter( "campus", campus.getId() );
+				q.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+
+				return q.getResultList().size();
+		}
 	
 	public static double countTurmaByDisciplinas(
 			InstituicaoEnsino instituicaoEnsino, Campus campus, List< Disciplina > disciplinas )
@@ -1345,14 +1389,27 @@ public class AtendimentoOperacional
 	public static List<Professor> findProfessoresUtilizados(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Campus campus, Curso curso, Turno turno, Titulacao titulacao,
-			AreaTitulacao areaTitulacao, TipoContrato tipoContrato) {
+			AreaTitulacao areaTitulacao, TipoContrato tipoContrato, String cpf,
+			int firstResult, int maxResults, String orderBy) {
 		
 		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
 		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
 		String titulacaoQuery = titulacao == null ? "" : " AND o.professor.titulacao = :titulacao ";
 		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professor.areaTitulacao = :areaTitulacao ";
 		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professor.tipoContrato = :tipoContrato ";
-		
+		String cpfQuery = cpf == null ? "" : " AND o.cpf LIKE LOWER (:cpf)";
+		if ( orderBy != null )
+		{
+			if( orderBy.contains("notaDesempenho") )
+				orderBy = orderBy.replace("notaDesempenho", "ORDER BY AVG(d.nota)");
+			else
+				orderBy = " ORDER BY o." + orderBy.replace("String", "");
+		}
+		else
+		{
+			orderBy = "";
+		}
+
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT (o.professor) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.campus = :campus " +
@@ -1360,7 +1417,65 @@ public class AtendimentoOperacional
 			" AND o.cenario = :cenario " +
 			turnoQuery + cursoQuery + titulacaoQuery +
 			areaTitulacaoQuery + tipoContratoQuery +
-			" AND o.professor IS NOT NULL ");
+			cpfQuery +
+			" AND o.professor IS NOT NULL " +
+			orderBy);
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+		if (curso != null)
+		{
+			q.setParameter( "curso", curso );
+		}
+		if (turno != null)
+		{
+			q.setParameter( "turno", turno );
+		}
+		if (titulacao != null)
+		{
+			q.setParameter( "titulacao", titulacao );
+		}
+		if (areaTitulacao != null)
+		{
+			q.setParameter( "areaTitulacao", areaTitulacao );
+		}
+		if (tipoContrato != null)
+		{
+			q.setParameter( "tipoContrato", tipoContrato );
+		}
+		if (cpf != null)
+		{
+			q.setParameter( "cpf", cpf );
+		}
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Professor> findProfessoresUtilizados(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Campus campus, Curso curso, Turno turno, Titulacao titulacao,
+			AreaTitulacao areaTitulacao, TipoContrato tipoContrato, String cpf) {
+		
+		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
+		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
+		String titulacaoQuery = titulacao == null ? "" : " AND o.professor.titulacao = :titulacao ";
+		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professor.areaTitulacao = :areaTitulacao ";
+		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professor.tipoContrato = :tipoContrato ";
+		String cpfQuery = cpf == null ? "" : " AND o.cpf LIKE LOWER (:cpf)";
+
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT (o.professor) FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			turnoQuery + cursoQuery + titulacaoQuery +
+			areaTitulacaoQuery + tipoContratoQuery +
+			cpfQuery +
+			" AND o.professor IS NOT NULL " );
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
@@ -1385,6 +1500,10 @@ public class AtendimentoOperacional
 		{
 			q.setParameter( "tipoContrato", tipoContrato );
 		}
+		if (cpf != null)
+		{
+			q.setParameter( "cpf", cpf );
+		}
 
 		return q.getResultList();
 	}
@@ -1393,21 +1512,19 @@ public class AtendimentoOperacional
 	public static List<ProfessorVirtual> findProfessoresVirtuaisUtilizados(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Campus campus, Curso curso, Turno turno, Titulacao titulacao,
-			AreaTitulacao areaTitulacao, TipoContrato tipoContrato) {
+			AreaTitulacao areaTitulacao) {
 
 		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
 		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
 		String titulacaoQuery = titulacao == null ? "" : " AND o.professorVirtual.titulacao = :titulacao ";
 		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professorVirtual.areaTitulacao = :areaTitulacao ";
-		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professorVirtual.tipoContrato = :tipoContrato ";
 		
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT (o.professorVirtual) FROM AtendimentoOperacional o " +
 			" WHERE o.oferta.campus = :campus " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario " +
-			turnoQuery + cursoQuery + titulacaoQuery +
-			areaTitulacaoQuery + tipoContratoQuery +
+			turnoQuery + cursoQuery + titulacaoQuery + areaTitulacaoQuery +
 			" AND o.professor IS NULL ");
 
 		q.setParameter( "campus", campus );
@@ -1429,10 +1546,6 @@ public class AtendimentoOperacional
 		{
 			q.setParameter( "areaTitulacao", areaTitulacao );
 		}
-		if (tipoContrato != null)
-		{
-			q.setParameter( "tipoContrato", tipoContrato );
-		}
 
 		return q.getResultList();
 	}
@@ -1453,7 +1566,6 @@ public class AtendimentoOperacional
 		
 		String titulacaoVirtualQuery = titulacao == null ? "" : " AND o.professorVirtual.titulacao = :titulacao ";
 		String areaTitulacaoVirtualQuery = areaTitulacao == null ? "" : " AND o.professorVirtual.areaTitulacao = :areaTitulacao ";
-		String tipoContratoVirtualQuery = tipoContrato == null ? "" : " AND o.professorVirtual.tipoContrato = :tipoContrato ";
 		
 		Query q1 = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
@@ -1470,7 +1582,7 @@ public class AtendimentoOperacional
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario " +
 			turnoQuery + cursoQuery + titulacaoVirtualQuery +
-			areaTitulacaoVirtualQuery + tipoContratoVirtualQuery +
+			areaTitulacaoVirtualQuery +
 			" AND o.professor IS NULL ");
 		
 		q1.setParameter( "campus", campus );
@@ -1502,7 +1614,6 @@ public class AtendimentoOperacional
 		if (tipoContrato != null)
 		{
 			q1.setParameter( "tipoContrato", tipoContrato );
-			q2.setParameter( "tipoContrato", tipoContrato );
 		}
 
 		List<AtendimentoOperacional> result = new ArrayList<AtendimentoOperacional>();

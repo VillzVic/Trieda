@@ -935,8 +935,7 @@ public class AlunoDemanda
 			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.cenario = :cenario " +
-			campusQuery
-			);
+			campusQuery );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -946,5 +945,19 @@ public class AlunoDemanda
 		}
 
 		return q.getResultList();
+	}
+	
+	public static int countAlunosUteis(InstituicaoEnsino instituicaoEnsino, Cenario cenario)
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT (o.aluno) FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		
+		return q.getResultList().size();
 	}
 }

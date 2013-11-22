@@ -19,7 +19,6 @@ import com.gapso.web.trieda.main.client.mvp.view.AmbientesFaixaOcupacaoCapacidad
 import com.gapso.web.trieda.main.client.mvp.view.AreasTitulacaoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaCreditoView;
 import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaDisciplinaView;
-import com.gapso.web.trieda.main.client.mvp.view.AtendimentosFaixaTurmaView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
@@ -927,7 +926,7 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( MenuEvent ce )
 			{
-				Presenter presenter = new ResumoCenarioPresenter(
+				Presenter presenter = new ResumoCenarioPresenter( instituicaoEnsinoDTO,
 					cenarioDTO, new ResumoCenarioView( cenarioDTO ) );
 
 				presenter.go( gTab );
@@ -940,7 +939,7 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( MenuEvent ce )
 			{
-				Presenter presenter = new ResumoCampiPresenter(
+				Presenter presenter = new ResumoCampiPresenter( instituicaoEnsinoDTO,
 					cenarioDTO, new ResumoCampiView( cenarioDTO ) );
 
 				presenter.go( gTab );
@@ -980,7 +979,7 @@ public class ToolBarPresenter
 			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new RelatorioAlunosPresenter( instituicaoEnsinoDTO,
-						cenarioDTO, new RelatorioAlunosView( cenarioDTO ) );
+						cenarioDTO, new RelatorioAlunosView( instituicaoEnsinoDTO, cenarioDTO, gTab ) );
 					presenter.go( gTab );
 
 			}
@@ -993,7 +992,7 @@ public class ToolBarPresenter
 			public void componentSelected( MenuEvent ce )
 			{
 				Presenter presenter = new RelatorioProfessoresPresenter( instituicaoEnsinoDTO,
-						cenarioDTO, new RelatorioProfessoresView( cenarioDTO ) );
+						cenarioDTO, new RelatorioProfessoresView( instituicaoEnsinoDTO, cenarioDTO, gTab ) );
 					presenter.go( gTab );
 
 				}
@@ -1006,7 +1005,7 @@ public class ToolBarPresenter
 				public void componentSelected( MenuEvent ce )
 				{
 					Presenter presenter = new RelatorioSalasPresenter( instituicaoEnsinoDTO,
-							cenarioDTO, new RelatorioSalasView( cenarioDTO ) );
+							cenarioDTO, new RelatorioSalasView( instituicaoEnsinoDTO, cenarioDTO, gTab ) );
 						presenter.go( gTab );
 
 					}

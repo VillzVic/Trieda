@@ -243,7 +243,7 @@ public class AlunosServiceImpl
 		RelatorioDTO perfil = new RelatorioDTO( "<b>Perfil</b>");
 		perfil.add( new RelatorioDTO( "Total de Alunos Cadastrados: <b>" + numberFormatter.print(todosAlunos.size(),pt_BR)) );
 		perfil.add( new RelatorioDTO( "Total de Alunos Formandos: <b>" + numberFormatter.print(alunosFormandos,pt_BR)) );
-		perfil.add( new RelatorioDTO( "Total de Alunos Uteis: <b>" + numberFormatter.print(alunosUteis.size(),pt_BR)) );
+		perfil.add( new RelatorioDTO( "Total de Alunos Uteis (Alunos com Demanda): <b>" + numberFormatter.print(alunosUteis.size(),pt_BR)) );
 		currentNode.add(perfil);
 		
 		RelatorioDTO atendimento = new RelatorioDTO( "<b>Atendimento</b>");
@@ -255,6 +255,10 @@ public class AlunosServiceImpl
 		histograma1.setButtonText(histograma1.getText());
 		histograma1.setButtonIndex(0);
 		histogramas.add( histograma1 );
+		RelatorioDTO histograma2 = new RelatorioDTO( "Quantidade de Disciplinas Não Atendidas" );
+		histograma2.setButtonText(histograma2.getText());
+		histograma2.setButtonIndex(1);
+		histogramas.add( histograma2 );
 		currentNode.add(histogramas);
 	}
 }

@@ -52,4 +52,18 @@ public interface ProfessoresServiceAsync
 	void getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
 	void getProfessoresAreasConhecimento(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO,	AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
 	void getRelatorio( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro,	RelatorioDTO currentNode, AsyncCallback<List<RelatorioDTO>> callback );
+	void getBuscaListAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config,
+			AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListGradeCheia( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListBemAlocados( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListMalAlocados( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListComJanelas( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListDeslocamentoUnidades( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListDeslocamentoCampi( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
 }

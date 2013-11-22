@@ -53,5 +53,19 @@ public interface ProfessoresService
 	List<RelatorioQuantidadeDTO> getProfessoresTitulacoes( CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO );
 	List<RelatorioQuantidadeDTO> getProfessoresAreasConhecimento( CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO );
 	List<RelatorioDTO> getRelatorio( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro, RelatorioDTO currentNode );
+	PagingLoadResult<ProfessorDTO> getBuscaListAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config);
+	PagingLoadResult<ProfessorDTO> getBuscaListGradeCheia( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
+	PagingLoadResult<ProfessorDTO> getBuscaListBemAlocados( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
+	PagingLoadResult<ProfessorDTO> getBuscaListMalAlocados( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
+	PagingLoadResult<ProfessorDTO> getBuscaListComJanelas( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
+	PagingLoadResult<ProfessorDTO> getBuscaListDeslocamentoUnidades( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
+	PagingLoadResult<ProfessorDTO> getBuscaListDeslocamentoCampi( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
 	
 }

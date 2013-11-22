@@ -758,10 +758,10 @@ public class ProfessoresServiceImpl
 		List<Professor> professoresUteis = Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, campus);
 		
 		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario,
-				campus, curso, turno, titulacao, areaTitulacao, tipoContrato);
+				campus, curso, turno, titulacao, areaTitulacao, tipoContrato, null);
 		
 		List<ProfessorVirtual> professoresVirtuaisUtilizados = AtendimentoOperacional.findProfessoresVirtuaisUtilizados(getInstituicaoEnsinoUser(),
-				cenario, campus, curso, turno, titulacao, areaTitulacao, tipoContrato);
+				cenario, campus, curso, turno, titulacao, areaTitulacao);
 		
 		Map<Titulacao, Integer> docentesPorTitulacaoMap = new HashMap<Titulacao, Integer>();
 		Map<TipoContrato, Integer> docentesPorTipoContratoMap = new HashMap<TipoContrato, Integer>();
@@ -999,7 +999,7 @@ public class ProfessoresServiceImpl
 		RelatorioDTO professoresInstituicao = new RelatorioDTO("<b>PROFESSORES DA INSTITUIÇÃO</b>");
 		RelatorioDTO perfil = new RelatorioDTO( "<b>Perfil</b>");
 		perfil.add( new RelatorioDTO( " Total de Docentes Cadastrados: <b>" + numberFormatter.print(todosProfessores.size(),pt_BR) + "</b>") );
-		perfil.add( new RelatorioDTO( " Total de Docentes Uteis: <b>" + numberFormatter.print(professoresUteis.size(),pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " Total de Docentes Úteis: <b>" + numberFormatter.print(professoresUteis.size(),pt_BR) + "</b>") );
 		perfil.add( new RelatorioDTO( " Total e Percentual de Docentes por Titulação: ") );
 		for ( Entry<Titulacao, Integer> numDocentesPorCampo : docentesPorTitulacaoMap.entrySet())
 		{
@@ -1018,7 +1018,7 @@ public class ProfessoresServiceImpl
 			perfil.add( new RelatorioDTO( " |---" + numDocentesPorCampo.getKey().getCodigo() + ": <b>" + numDocentesPorCampo.getValue() + 
 					" (" + TriedaUtil.round(((double)numDocentesPorCampo.getValue())/((double)professoresUteis.size())*100.0,2) + "%)") );
 		}
-		perfil.add( new RelatorioDTO( " Media de Disciplinas Habilitadas por Docente: <b>" + numberFormatter.print(TriedaUtil.round(mediaDisciplinasHabilitadas, 2) ,pt_BR) + "</b>") );
+		perfil.add( new RelatorioDTO( " Média de Disciplinas Habilitadas por Docente: <b>" + numberFormatter.print(TriedaUtil.round(mediaDisciplinasHabilitadas, 2) ,pt_BR) + "</b>") );
 		perfil.add( new RelatorioDTO( " Custo Médio Docente Total: <b>" + currencyFormatter.print(custoMedioDocenteTotal/professoresUteis.size() ,pt_BR) + "</b>") );
 		perfil.add( new RelatorioDTO( " Custo Médio Docente por Titulação: ") );
 		for ( Entry<Titulacao, Double> custoPorCampo : custoPorTitulacaoMap.entrySet())
@@ -1048,19 +1048,47 @@ public class ProfessoresServiceImpl
 		atendimento.add( new RelatorioDTO( " Média de Turmas por Docente: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)totalTurmas/(double)professoresUtilizados.size(), 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Listas de Docentes: ") );
-		atendimento.add( new RelatorioDTO( " |---Todos Docentes: <b>" + numberFormatter.print(professoresUtilizados.size(),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " |---Docentes com Grade Cheia: <b>" + numberFormatter.print(professoresGradeCheia.size(),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " |---Docentes Bem Alocados: <b>" + numberFormatter.print(professoresBemAlocados.size(),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " |---Docentes Mal Alocados: <b>" + numberFormatter.print(professoresMalAlocados.size(),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " |---Docentes com 1 ou Mais Buracos na Grade: <b>" + numberFormatter.print(professoresComJanelas.size(),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " |---Docentes com deslocamentos entre unidades distintas: <b>" + numberFormatter.print(professoresComDeslocamentosUnidades.size(),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " |---Docentes com deslocamentos entre campi: <b>" + numberFormatter.print(professoresComDeslocamentosCampi.size(),pt_BR) + "</b>") );
+		RelatorioDTO todosDocentes = new RelatorioDTO( " Todos Docentes: " + numberFormatter.print(professoresUtilizados.size(),pt_BR));
+		todosDocentes.setButtonText(todosDocentes.getText());
+		todosDocentes.setButtonIndex(5);
+		todosDocentes.setCampusId(campus.getId());
+		atendimento.add( todosDocentes );
+		RelatorioDTO docentesGradeCheia = new RelatorioDTO( " Docentes com Grade Cheia: " + numberFormatter.print(professoresGradeCheia.size(),pt_BR));
+		docentesGradeCheia.setButtonText(docentesGradeCheia.getText());
+		docentesGradeCheia.setButtonIndex(6);
+		docentesGradeCheia.setCampusId(campus.getId());
+		atendimento.add( docentesGradeCheia );
+		RelatorioDTO docentesBemAlocados = new RelatorioDTO( " Docentes Bem Alocados: " + numberFormatter.print(professoresBemAlocados.size(),pt_BR));
+		docentesBemAlocados.setButtonText(docentesBemAlocados.getText());
+		docentesBemAlocados.setButtonIndex(7);
+		docentesBemAlocados.setCampusId(campus.getId());
+		atendimento.add( docentesBemAlocados );
+		RelatorioDTO docentesMalAlocados = new RelatorioDTO( " Docentes Mal Alocados: " + numberFormatter.print(professoresMalAlocados.size(),pt_BR));
+		docentesMalAlocados.setButtonText(docentesMalAlocados.getText());
+		docentesMalAlocados.setButtonIndex(8);
+		docentesMalAlocados.setCampusId(campus.getId());
+		atendimento.add( docentesMalAlocados );
+		RelatorioDTO docentesComJanelas = new RelatorioDTO( " Docentes com 1 ou Mais Buracos na Grade: " + numberFormatter.print(professoresComJanelas.size(),pt_BR));
+		docentesComJanelas.setButtonText(docentesComJanelas.getText());
+		docentesComJanelas.setButtonIndex(9);
+		docentesComJanelas.setCampusId(campus.getId());
+		atendimento.add( docentesComJanelas );
+		RelatorioDTO docentesDeslocamentoUnidades = new RelatorioDTO( " Docentes com Deslocamentos Entre Unidades Distintas: " + numberFormatter.print(professoresComDeslocamentosUnidades.size(),pt_BR));
+		docentesDeslocamentoUnidades.setButtonText(docentesDeslocamentoUnidades.getText());
+		docentesDeslocamentoUnidades.setButtonIndex(10);
+		docentesDeslocamentoUnidades.setCampusId(campus.getId());
+		atendimento.add( docentesDeslocamentoUnidades );
+		RelatorioDTO docentesDeslocamentoCampi = new RelatorioDTO( " Docentes com Deslocamentos Entre Campi: " + numberFormatter.print(professoresComDeslocamentosCampi.size(),pt_BR));
+		docentesDeslocamentoCampi.setButtonText(docentesDeslocamentoCampi.getText());
+		docentesDeslocamentoCampi.setButtonIndex(11);
+		docentesDeslocamentoCampi.setCampusId(campus.getId());
+		atendimento.add( docentesDeslocamentoCampi );
 		professoresInstituicao.add(atendimento);
 		RelatorioDTO professoresVirtuais = new RelatorioDTO("<b>PROFESSORES VIRTUAIS</b>");
 		RelatorioDTO atendimentoVirtual = new RelatorioDTO( "<b>Atendimento</b>");
 		atendimentoVirtual.add( new RelatorioDTO( " Total de Professores Virtuais Utilizados no Atendimento: <b>" + numberFormatter.print(professoresVirtuaisUtilizados.size(),pt_BR) + "</b>") );
 		atendimentoVirtual.add( new RelatorioDTO( " Média de Disciplinas por Professor Virtual: <b>" + numberFormatter.print(
-				TriedaUtil.round((double)totalDisciplinasProfessorVirtual.size()/(double)professoresUtilizados.size(), 2),pt_BR) + "</b>") );
+				TriedaUtil.round((double)totalDisciplinasProfessorVirtual.size()/(double)professoresVirtuaisUtilizados.size(), 2),pt_BR) + "</b>") );
 		atendimentoVirtual.add( new RelatorioDTO( " Média de Créditos Semanais por Professor Virtual: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)totalCreditosProfessorVirtual.size()/(double)professoresVirtuaisUtilizados.size(), 2),pt_BR) + "</b>") );
 		atendimentoVirtual.add( new RelatorioDTO( " Média de Turmas por Professor Virtual: <b>" + numberFormatter.print(
@@ -1079,11 +1107,11 @@ public class ProfessoresServiceImpl
 		histograma3.setButtonText(histograma3.getText());
 		histograma3.setButtonIndex(2);
 		histogramas.add( histograma3 );
-		RelatorioDTO histograma4 = new RelatorioDTO( "Titulação" );
+		RelatorioDTO histograma4 = new RelatorioDTO( "Professores por Titulação" );
 		histograma4.setButtonText(histograma4.getText());
 		histograma4.setButtonIndex(3);
 		histogramas.add( histograma4 );
-		RelatorioDTO histograma5 = new RelatorioDTO( "Área de Conhecimento" );
+		RelatorioDTO histograma5 = new RelatorioDTO( "Professores por Área de Conhecimento" );
 		histograma5.setButtonText(histograma5.getText());
 		histograma5.setButtonIndex(4);
 		histogramas.add( histograma5 );
@@ -1092,5 +1120,713 @@ public class ProfessoresServiceImpl
 		currentNode.add(professoresInstituicao);
 		currentNode.add(professoresVirtuais);
 		currentNode.add(histogramas);
+	}
+
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListAtendimentos( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		String orderBy = config.getSortField();
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+					&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
+			}
+		}
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		List< Professor > listDomains = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario,
+				campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf, config.getOffset(), config.getLimit(), orderBy );
+		
+		if ( listDomains != null )
+		{
+			for ( Professor professor : listDomains )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professor ) );
+			}
+		}
+
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( AtendimentoOperacional.findProfessoresUtilizados(
+				getInstituicaoEnsinoUser(), cenario,
+				campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf).size() );
+
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListGradeCheia( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		final String orderBy = config.getSortField();
+		final SortDir sortBy = config.getSortDir();
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<Professor, Set<HorarioDisponivelCenario>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()) == null)
+				{
+					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
+					novoHorarioList.add(atendimento.getHorarioDisponivelCenario());
+					professorToListHorarioDisponivelCenario.put(atendimento.getProfessor(), novoHorarioList);
+				}
+				else
+				{
+					professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()).add(atendimento.getHorarioDisponivelCenario());
+				}
+			}
+		}
+		
+		List<Professor> professoresGradeCheia = new ArrayList<Professor>();
+		for (Entry<Professor, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
+		{
+			if (professor.getKey().getHorarios().size() <= professor.getValue().size())
+			{
+				professoresGradeCheia.add(professor.getKey());
+			}
+			
+			Map<Semanas, List<HorarioDisponivelCenario>> diaMapHorarios = new HashMap<Semanas, List<HorarioDisponivelCenario>>();
+			
+			for (HorarioDisponivelCenario horario : professor.getValue())
+			{
+				if (diaMapHorarios.get(horario.getDiaSemana()) == null)
+				{
+					List<HorarioDisponivelCenario> novoHorario = new ArrayList<HorarioDisponivelCenario>();
+					novoHorario.add(horario);
+					diaMapHorarios.put(horario.getDiaSemana(), novoHorario);
+				}
+				else
+				{
+					diaMapHorarios.get(horario.getDiaSemana()).add(horario);
+				}
+			}
+		}
+		
+		Collections.sort(professoresGradeCheia, new Comparator<Professor>() {
+			@Override
+			public int compare(Professor arg1, Professor arg2) {
+				return compareProfessor(arg1, arg2, orderBy, sortBy);
+			}
+		});
+
+
+		if ( !professoresGradeCheia.isEmpty() )
+		{
+			for ( int i = config.getOffset(); (i < professoresGradeCheia.size() && i < (config.getOffset() + config.getLimit())); i++ )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professoresGradeCheia.get(i) ) );
+			}
+		}
+		
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( professoresGradeCheia.size() );
+
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListBemAlocados( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		final String orderBy = config.getSortField();
+		final SortDir sortBy = config.getSortDir();
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			String keyTurmas = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
+				atendimento.getDisciplina().getId()) + "-" +
+				atendimento.getTurma();
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professorToTurmasMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<String> novaTurma = new HashSet<String>();
+					novaTurma.add(keyTurmas);
+					professorToTurmasMap.put(atendimento.getProfessor(), novaTurma );
+				}
+				else
+				{
+					professorToTurmasMap.get(atendimento.getProfessor()).add(keyTurmas);
+				}
+			}
+		}
+		
+		List<Professor> professoresBemAlocados = new ArrayList<Professor>();
+		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
+		{
+			if (professorTurmas.getValue().size() >= 4)
+			{
+				professoresBemAlocados.add(professorTurmas.getKey());
+			}
+		}
+		
+		Collections.sort(professoresBemAlocados, new Comparator<Professor>() {
+			@Override
+			public int compare(Professor arg1, Professor arg2) {
+				return compareProfessor(arg1, arg2, orderBy, sortBy);
+			}
+		});
+
+		if ( !professoresBemAlocados.isEmpty() )
+		{
+			for ( int i = config.getOffset(); (i < professoresBemAlocados.size() && i < (config.getOffset() + config.getLimit())); i++ )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professoresBemAlocados.get(i) ) );
+			}
+		}
+
+		
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( professoresBemAlocados.size() );
+
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListMalAlocados( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		final String orderBy = config.getSortField();
+		final SortDir sortBy = config.getSortDir();
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			String keyTurmas = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
+				atendimento.getDisciplina().getId()) + "-" +
+				atendimento.getTurma();
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professorToTurmasMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<String> novaTurma = new HashSet<String>();
+					novaTurma.add(keyTurmas);
+					professorToTurmasMap.put(atendimento.getProfessor(), novaTurma );
+				}
+				else
+				{
+					professorToTurmasMap.get(atendimento.getProfessor()).add(keyTurmas);
+				}
+			}
+		}
+		
+		List<Professor> professoresMalAlocados = new ArrayList<Professor>();
+		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
+		{
+			if (professorTurmas.getValue().size() == 1)
+			{
+				professoresMalAlocados.add(professorTurmas.getKey());
+			}
+		}
+		
+		Collections.sort(professoresMalAlocados, new Comparator<Professor>() {
+			@Override
+			public int compare(Professor arg1, Professor arg2) {
+				return compareProfessor(arg1, arg2, orderBy, sortBy);
+			}
+		});
+
+		if ( !professoresMalAlocados.isEmpty() )
+		{
+			for ( int i = config.getOffset(); (i < professoresMalAlocados.size() && i < (config.getOffset() + config.getLimit())); i++ )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professoresMalAlocados.get(i) ) );
+			}
+		}
+
+		
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( professoresMalAlocados.size() );
+
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListComJanelas( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		final String orderBy = config.getSortField();
+		final SortDir sortBy = config.getSortDir();
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<Professor, Set<HorarioDisponivelCenario>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				
+				if (professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()) == null)
+				{
+					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
+					novoHorarioList.add(atendimento.getHorarioDisponivelCenario());
+					professorToListHorarioDisponivelCenario.put(atendimento.getProfessor(), novoHorarioList);
+				}
+				else
+				{
+					professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()).add(atendimento.getHorarioDisponivelCenario());
+				}
+			}
+		}
+		
+		List<Professor> professoresComJanelas = new ArrayList<Professor>();
+		for (Entry<Professor, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
+		{
+			Map<Semanas, List<HorarioDisponivelCenario>> diaMapHorarios = new HashMap<Semanas, List<HorarioDisponivelCenario>>();
+			
+			for (HorarioDisponivelCenario horario : professor.getValue())
+			{
+				if (diaMapHorarios.get(horario.getDiaSemana()) == null)
+				{
+					List<HorarioDisponivelCenario> novoHorario = new ArrayList<HorarioDisponivelCenario>();
+					novoHorario.add(horario);
+					diaMapHorarios.put(horario.getDiaSemana(), novoHorario);
+				}
+				else
+				{
+					diaMapHorarios.get(horario.getDiaSemana()).add(horario);
+				}
+			}
+			for (Entry<Semanas, List<HorarioDisponivelCenario>> horarioSemana : diaMapHorarios.entrySet())
+			{
+				int janelas = 0;
+				List<HorarioDisponivelCenario> horarioProfessorOrdenado = horarioSemana.getValue();
+				
+				Collections.sort(horarioProfessorOrdenado, new Comparator<HorarioDisponivelCenario>() {
+					@Override
+					public int compare(HorarioDisponivelCenario arg1, HorarioDisponivelCenario arg2) {
+						Calendar h1 = Calendar.getInstance();
+						h1.setTime(arg1.getHorarioAula().getHorario());
+						h1.set(1979,Calendar.NOVEMBER,6);
+						
+						Calendar h2 = Calendar.getInstance();
+						h2.setTime(arg2.getHorarioAula().getHorario());
+						h2.set(1979,Calendar.NOVEMBER,6);
+						
+						
+						return h1.compareTo(h2);
+					}
+				});
+				if (!horarioProfessorOrdenado.isEmpty())
+				{
+					Calendar h1 = Calendar.getInstance();
+					h1.setTime(horarioProfessorOrdenado.get(0).getHorarioAula().getHorario());
+					for (int i = 1; i < horarioProfessorOrdenado.size(); i++)
+					{
+						h1.add(Calendar.MINUTE,horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo());
+						Calendar h2 = Calendar.getInstance();
+						h2.setTime(horarioProfessorOrdenado.get(i).getHorarioAula().getHorario());
+						
+						if (h2.getTimeInMillis() - h1.getTimeInMillis() > (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000))
+						{
+							janelas++;
+						}
+					}
+				}
+				if (janelas >= 1)
+				{
+					professoresComJanelas.add(professor.getKey());
+				}
+			}
+		}
+		
+		Collections.sort(professoresComJanelas, new Comparator<Professor>() {
+			@Override
+			public int compare(Professor arg1, Professor arg2) {
+				return compareProfessor(arg1, arg2, orderBy, sortBy);
+			}
+		});
+
+		if ( !professoresComJanelas.isEmpty() )
+		{
+			for ( int i = config.getOffset(); (i < professoresComJanelas.size() && i < (config.getOffset() + config.getLimit())); i++ )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professoresComJanelas.get(i) ) );
+			}
+		}
+
+		
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( professoresComJanelas.size() );
+
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListDeslocamentoUnidades( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		final String orderBy = config.getSortField();
+		final SortDir sortBy = config.getSortDir();
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<Unidade> novaUnidade = new HashSet<Unidade>();
+					novaUnidade.add(atendimento.getSala().getUnidade());
+					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+				}
+				else
+				{
+					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+				}
+			}
+		}
+		
+		List<Professor> professoresComDeslocamentosUnidades = new ArrayList<Professor>();
+		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		{
+			Set<Campus> campi = new HashSet<Campus>();
+			if (professoresToUnidadesMap.values().size() > 1)
+			{
+				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
+				for (Unidade unidade : professorUnidades.getValue())
+				{
+					campi.add(unidade.getCampus());
+				}
+			}
+		}
+		
+		Collections.sort(professoresComDeslocamentosUnidades, new Comparator<Professor>() {
+			@Override
+			public int compare(Professor arg1, Professor arg2) {
+				return compareProfessor(arg1, arg2, orderBy, sortBy);
+			}
+		});
+
+		if ( !professoresComDeslocamentosUnidades.isEmpty() )
+		{
+			for ( int i = config.getOffset(); (i < professoresComDeslocamentosUnidades.size() && i < (config.getOffset() + config.getLimit())); i++ )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professoresComDeslocamentosUnidades.get(i) ) );
+			}
+		}
+
+		
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( professoresComDeslocamentosUnidades.size() );
+
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListDeslocamentoCampi( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		final String orderBy = config.getSortField();
+		final SortDir sortBy = config.getSortDir();
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<Unidade> novaUnidade = new HashSet<Unidade>();
+					novaUnidade.add(atendimento.getSala().getUnidade());
+					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+				}
+				else
+				{
+					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+				}
+			}
+		}
+		
+		List<Professor> professoresComDeslocamentosCampi = new ArrayList<Professor>();
+		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		{
+			Set<Campus> campi = new HashSet<Campus>();
+			if (campi.size() > 1)
+			{
+				professoresComDeslocamentosCampi.add(professorUnidades.getKey());
+			}
+		}
+		
+		Collections.sort(professoresComDeslocamentosCampi, new Comparator<Professor>() {
+			@Override
+			public int compare(Professor arg1, Professor arg2) {
+				return compareProfessor(arg1, arg2, orderBy, sortBy);
+			}
+		});
+
+		if ( !professoresComDeslocamentosCampi.isEmpty() )
+		{
+			for ( int i = config.getOffset(); (i < professoresComDeslocamentosCampi.size() && i < (config.getOffset() + config.getLimit())); i++ )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professoresComDeslocamentosCampi.get(i) ) );
+			}
+		}
+
+		
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( professoresComDeslocamentosCampi.size() );
+
+		return result;
+	}
+	
+	private int compareProfessor(Professor arg1, Professor arg2,
+			String orderBy, SortDir sortBy) {
+		
+		if (orderBy != null)
+		{
+			if (orderBy.equals(ProfessorDTO.PROPERTY_CPF))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getCpf().compareTo(arg1.getCpf());
+				}
+				return arg1.getCpf().compareTo(arg2.getCpf());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_NOME))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getNome().compareTo(arg1.getNome());
+				}
+				return arg1.getNome().compareTo(arg2.getNome());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getCargaHorariaMin().compareTo(arg1.getCargaHorariaMin());
+				}
+				return arg1.getCargaHorariaMin().compareTo(arg2.getCargaHorariaMin());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getCargaHorariaMax().compareTo(arg1.getCargaHorariaMax());
+				}
+				return arg1.getCargaHorariaMax().compareTo(arg2.getCargaHorariaMax());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_TITULACAO_STRING))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getTitulacao().getNome().compareTo(arg1.getTitulacao().getNome());
+				}
+				return arg1.getTitulacao().getNome().compareTo(arg2.getTitulacao().getNome());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_AREA_TITULACAO_STRING))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getAreaTitulacao().getCodigo().compareTo(arg1.getAreaTitulacao().getCodigo());
+				}
+				return arg1.getAreaTitulacao().getCodigo().compareTo(arg2.getAreaTitulacao().getCodigo());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_CREDITO_ANTERIOR))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getCreditoAnterior().compareTo(arg1.getCreditoAnterior());
+				}
+				return arg1.getCreditoAnterior().compareTo(arg2.getCreditoAnterior());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_VALOR_CREDITO))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getValorCredito().compareTo(arg1.getValorCredito());
+				}
+				return arg1.getValorCredito().compareTo(arg2.getValorCredito());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_MAX_DIAS_SEMANA))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getMaxDiasSemana().compareTo(arg1.getMaxDiasSemana());
+				}
+				return arg1.getMaxDiasSemana().compareTo(arg2.getMaxDiasSemana());
+			}
+			else if (orderBy.equals(ProfessorDTO.PROPERTY_MIN_CREDITOS_DIA))
+			{
+				if (sortBy.equals(SortDir.DESC))
+				{
+					return arg2.getMinCreditosDia().compareTo(arg1.getMinCreditosDia());
+				}
+				return arg1.getMinCreditosDia().compareTo(arg2.getMinCreditosDia());
+			}
+			else
+			{
+				return arg1.getId().compareTo(arg2.getId());
+			}
+		}
+		else
+		{
+			return arg1.getId().compareTo(arg2.getId());
+		}
 	}
 }

@@ -966,4 +966,14 @@ public class GTriedaI18nConstants
 	public String deslocamentoCampi() {
 		return this.languageManager.getText("deslocamentoCampi");
 	}
+
+	@Override
+	public String resumoCenario() {
+		return this.languageManager.getText("resumoCenario");
+	}
+
+	@Override
+	public String resumoCampi() {
+		return this.languageManager.getText("resumoCampi");
+	}
 }

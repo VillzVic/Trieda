@@ -503,9 +503,9 @@ public class SalasServiceImpl
 		
 		Turno turnoFiltro = salaFiltro.getTurno() == null ? null :
 			Turno.find(salaFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
-		int faixaSuperior = salaFiltro.getFaixaCapacidadeSala() == null ? null :
+		int faixaSuperior = salaFiltro.getFaixaCapacidadeSala() == null ? 0 :
 			salaFiltro.getFaixaCapacidadeSala().getFaixaSuperior();
-		int faixaInferior = salaFiltro.getFaixaCapacidadeSala() == null ? null :
+		int faixaInferior = salaFiltro.getFaixaCapacidadeSala() == null ? 0 :
 			salaFiltro.getFaixaCapacidadeSala().getFaixaInferior();
 		
 		List<Sala> todasSalas = Sala.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
@@ -550,9 +550,15 @@ public class SalasServiceImpl
 					}
 					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
 					
-					if (salaFiltro.getFaixaCapacidadeSala() != null && 
-							aula.getSala().getCapacidadeInstalada() >= faixaInferior && 
-								aula.getSala().getCapacidadeInstalada() <= faixaSuperior)
+					if (salaFiltro.getFaixaCapacidadeSala() != null)
+					{
+						if (aula.getSala().getCapacidadeInstalada() >= faixaInferior && 
+									aula.getSala().getCapacidadeInstalada() <= faixaSuperior)
+						{
+							salasUtilizadas.add(aula.getSala());
+						}
+					}
+					else
 					{
 						salasUtilizadas.add(aula.getSala());
 					}
@@ -569,9 +575,15 @@ public class SalasServiceImpl
 					}
 					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
 					
-					if (salaFiltro.getFaixaCapacidadeSala() != null && 
-							atendimento.getSala().getCapacidadeInstalada() >= faixaInferior && 
-									atendimento.getSala().getCapacidadeInstalada() <= faixaSuperior)
+					if (salaFiltro.getFaixaCapacidadeSala() != null)
+					{
+						if (atendimento.getSala().getCapacidadeInstalada() >= faixaInferior && 
+										atendimento.getSala().getCapacidadeInstalada() <= faixaSuperior)
+						{
+							salasUtilizadas.add(atendimento.getSala());
+						}
+					}
+					else
 					{
 						salasUtilizadas.add(atendimento.getSala());
 					}
@@ -748,11 +760,11 @@ public class SalasServiceImpl
 				TriedaUtil.round(mediaAlunosPorTurmaPorSala, 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Laboratório: <b>" + numberFormatter.print(
 				TriedaUtil.round(mediaAlunosPorTurmaPorLaboratorio, 2),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " Utilização Média da Capacidade dos Ambientes (%): <b>" + numberFormatter.print(
+		atendimento.add( new RelatorioDTO( " Ocupação Média da Capacidade dos Ambientes (%): <b>" + numberFormatter.print(
 				utilizacaoMediaDosAmbientes,pt_BR) + "%</b>") );
-		atendimento.add( new RelatorioDTO( " |--Utilização Média da Capacidade das Salas de Aula: <b>" + numberFormatter.print(
+		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade das Salas de Aula: <b>" + numberFormatter.print(
 				utilizacaoMediaDasSalasDeAula,pt_BR) + "%</b>") );
-		atendimento.add( new RelatorioDTO( " |--Utilização Média da Capacidade dos Laboratórios: <b>" + numberFormatter.print(
+		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade dos Laboratórios: <b>" + numberFormatter.print(
 				utilizacaoMediaDosLaboratorios,pt_BR) + "%</b>") );
 		atendimento.add( new RelatorioDTO( " Utilização Média dos Horários dos Ambientes (%): <b>" + numberFormatter.print(
 				mediaUtilizacaoHorarioAmbientes,pt_BR) + "%</b>") );
@@ -763,11 +775,11 @@ public class SalasServiceImpl
 		currentNode.add(atendimento);
 		
 		RelatorioDTO histogramas = new RelatorioDTO( "<b>Histogramas</b>");
-		RelatorioDTO histograma1 = new RelatorioDTO( "Faixa de Ocupação de Horários" );
+		RelatorioDTO histograma1 = new RelatorioDTO( "Utilização dos Horários" );
 		histograma1.setButtonText(histograma1.getText());
 		histograma1.setButtonIndex(0);
 		histogramas.add( histograma1 );
-		RelatorioDTO histograma2 = new RelatorioDTO( "Faixa de Utilização Média da Capacidade" );
+		RelatorioDTO histograma2 = new RelatorioDTO( "Ocupação da Capacidade" );
 		histograma2.setButtonText(histograma2.getText());
 		histograma2.setButtonIndex(1);
 		histogramas.add( histograma2 );
