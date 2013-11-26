@@ -1,17 +1,27 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.TriedaPar;
 import com.gapso.web.trieda.server.CampiServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
+import com.gapso.web.trieda.shared.dtos.ResumoDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -21,8 +31,8 @@ public class ResumoCampiExportExcel
 	extends AbstractExportExcel
 {
 	enum ExcelCellStyleReference {
-		TEXT(6, 2),
-		HEADER(5, 2);
+		HEADER(5, 5);
+		
 
 		private int row;
 		private int col;
@@ -44,6 +54,10 @@ public class ResumoCampiExportExcel
 	private CellStyle [] cellStyles;
 	private boolean removeUnusedSheets;
 	private int initialRow;
+	private int initialColumn;
+	private Set<Integer> rowsEspaco = new HashSet<Integer>();
+	private Map<Integer, TriedaPar<CellStyle, CellStyle>> rowToStylesmap = new HashMap<Integer, TriedaPar<CellStyle, CellStyle>>();
+	
 
 	public ResumoCampiExportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
@@ -56,11 +70,16 @@ public class ResumoCampiExportExcel
 		TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages,
 		InstituicaoEnsino instituicaoEnsino, String fileExtension )
 	{
-		super( true, ExcelInformationType.RESUMO_CAMPI.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
+		super( false, ExcelInformationType.RESUMO_CAMPI.getSheetName(), cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension );
 
 		this.cellStyles = new CellStyle[ ExcelCellStyleReference.values().length ];
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 5;
+		initialColumn = 0;
+		rowsEspaco.add(22);
+		rowsEspaco.add(29);
+		rowsEspaco.add(38);
+		rowsEspaco.add(45);
 	}
 
 	@Override
@@ -95,49 +114,96 @@ public class ResumoCampiExportExcel
 				removeUnusedSheets(this.getSheetName(),workbook);
 			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
-			if (isXls()) {
-				fillInCellStyles(sheet);
-			}
-			else {
-				Sheet templateSheet = templateWorkbook.getSheet(this.getSheetName());
-				fillInCellStyles(templateSheet);
-			}
+			Sheet templateSheet = null;
+			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
+			int nextColumn = this.initialColumn;
 			List<TreeNodeDTO> resumo = campiServiceImpl.getResumos(ConvertBeans.toCenarioDTO(getCenario()), null);
 			for (TreeNodeDTO node : resumo) {
 				List<TreeNodeDTO> campus = campiServiceImpl.getResumos(ConvertBeans.toCenarioDTO(getCenario()), node);
-				nextRow = writeHeader(node,nextRow,sheet);
+				nextColumn += 4;
+				nextRow = writeHeader(node,nextRow,nextColumn,sheet);
 				for (TreeNodeDTO node2 : campus)
 				{
-					nextRow = writeData(node2,nextRow,sheet);
+					if (rowsEspaco.contains(nextRow))
+					{
+						nextRow++;
+					}
+					nextRow = writeData(node2,nextRow, nextColumn, sheet, templateSheet);
 				}
 			}
-
+			autoSizeColumns((short)3, (short)20, sheet);
 			return true;
 		}
 
 		return false;
 	}
 
-	private int writeData(TreeNodeDTO node, int row, Sheet sheet) {
-		// Node
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],node.getText().replace("<b>", "").replace("</b>", ""));
+	private int writeData(TreeNodeDTO node, int row, int column, Sheet sheet, Sheet templateSheet) {
+		if (rowToStylesmap.get(row) == null)
+		{
+			CellStyle newStyle;
+			CellStyle newStyle2;
+			newStyle = getCell(row,column,sheet).getCellStyle();
+			newStyle2 = getCell(row,column+1,sheet).getCellStyle();
+
+			rowToStylesmap.put(row, TriedaPar.create(newStyle, newStyle2));
+		}
+					
+		
+		// Text
+		setCell(row,column,sheet,rowToStylesmap.get(row).getPrimeiro(),((ResumoDTO) node.getContent()).getLabel());
+		
+		setCell(row,column+1,sheet,rowToStylesmap.get(row).getSegundo(),((ResumoDTO) node.getContent()).getValor().replace("<b>", "").replace("</b>", ""));
 
 		row++;
 		return row;
 	}
 	
-	private int writeHeader(TreeNodeDTO campus, int row, Sheet sheet) {
+	private int writeHeader(TreeNodeDTO campus, int row, int column, Sheet sheet) {
 		// Node
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.HEADER.ordinal()],campus.getText().replace("<b>", "").replace("</b>", ""));
+		setCell(this.initialRow,column+1,sheet,cellStyles[ExcelCellStyleReference.HEADER.ordinal()],"Trieda\n" + getCenario().getNome());
 
-		row++;
-		return row;
+		return this.initialRow + 1;
 	}
 
 	private void fillInCellStyles(Sheet sheet) {
 		for (ExcelCellStyleReference cellStyleReference : ExcelCellStyleReference.values()) {
 			cellStyles[cellStyleReference.ordinal()] = getCell(cellStyleReference.getRow(),cellStyleReference.getCol(),sheet).getCellStyle();
 		}
+	}
+	
+	@Override
+	protected Workbook getExcelTemplate( String pathExcelTemplate )
+		throws IOException
+	{
+		final InputStream inTemplate
+			= ExportExcelServlet.class.getResourceAsStream( pathExcelTemplate );
+
+		Workbook workBook = null;
+		try
+		{
+			if ( fileExtension.equals("xls") )
+			{
+				workBook = new HSSFWorkbook( inTemplate );
+			}
+			else if ( fileExtension.equals("xlsx") )
+			{
+				workBook = new XSSFWorkbook(inTemplate);
+			}
+		}
+		catch ( IOException e )
+		{
+			throw e;
+		}
+		finally
+		{
+			if ( inTemplate != null )
+			{
+				inTemplate.close();
+			}
+		}
+
+		return workBook;
 	}
 }

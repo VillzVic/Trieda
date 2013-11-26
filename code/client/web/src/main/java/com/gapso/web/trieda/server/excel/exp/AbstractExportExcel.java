@@ -482,7 +482,7 @@ public abstract class AbstractExportExcel implements IExportExcel {
 		return cell;
 	}
 
-	private Workbook getExcelTemplate( String pathExcelTemplate )
+	protected Workbook getExcelTemplate( String pathExcelTemplate )
 		throws IOException
 	{
 		final InputStream inTemplate

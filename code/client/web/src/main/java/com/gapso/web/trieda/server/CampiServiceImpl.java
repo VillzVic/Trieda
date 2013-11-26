@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.format.number.CurrencyFormatter;
 import org.springframework.format.number.NumberFormatter;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -661,11 +660,6 @@ public class CampiServiceImpl extends RemoteService
 		Integer demandaNaoAtendidaQtdeAlunos = demandaTotalP1QtdeAlunos - demandaAtendidaQtdeAlunos;
 		demandaNaoAtendidaQtdeAlunos = (demandaNaoAtendidaQtdeAlunos < 0) ? 0 : demandaNaoAtendidaQtdeAlunos;
 		Double atendimentoPercent = TriedaUtil.round( qtdTotalAlunos == 0 ? 0.0 : (((double)qtdTotalAlunos)/qtdTotalAlunos)*100, 2 );
-		Double demandaTotalNaoPresencialP1Percent = TriedaUtil.round(((double)demandaTotalNaoPresencialP1QtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
-		Double demandaAtendidaP1Percent = TriedaUtil.round(((double)demandaAtendidaP1QtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
-		Double demandaAtendidaP2Percent = TriedaUtil.round(((double)demandaAtendidaP2QtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
-		Double demandaAtendidaPercent = TriedaUtil.round(((double)demandaAtendidaQtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
-		Double demandaNaoAtendidaPercent = TriedaUtil.round(((double)demandaNaoAtendidaQtdeAlunos)/((double)demandaTotalP1QtdeAlunos)*100.0,2);
 		Integer totalCreditosSemanaisAlunos = ehTatico ? AtendimentoTatico.sumCredAlunosAtendidos(getInstituicaoEnsinoUser(),campus) :
 			AtendimentoOperacional.sumCredAlunosAtendidos(getInstituicaoEnsinoUser(),campus);
 		
@@ -686,7 +680,6 @@ public class CampiServiceImpl extends RemoteService
 		
 		// disponibilização dos indicadores
 		Locale pt_BR = new Locale("pt","BR");
-		CurrencyFormatter currencyFormatter = new CurrencyFormatter();
 		NumberFormatter numberFormatter = new NumberFormatter();
 		List<TreeNodeDTO> itensDoRelatorioParaUmCampus = new ArrayList<TreeNodeDTO>();
 		
@@ -748,11 +741,11 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"% do custo docente sobre a receita: ", "<b>" + ((razaoCustoDocentePorReceitaSemestral == null) ? "n.d.a." : numberFormatter.print(razaoCustoDocentePorReceitaSemestral, pt_BR)) + "%</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"Ticket médio: ", "<b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes,pt_BR) + "</b>") ,currentNode, true) );
+				"Ticket médio: ", "<b>" + "-" + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Custo médio do crédito: ", "<b>" + numberFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"Custo médio docente (fornecido): ", "<b>" + "-" + "</b>") ,currentNode, true) );
+				"Custo médio docente (fornecido): ", "<b>" + numberFormatter.print(campus.getValorCredito(), pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Custo médio docente (real alocado): ", "<b>" + numberFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>") ,currentNode, true) );
 		
