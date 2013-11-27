@@ -231,11 +231,13 @@ public abstract class AbstractExportExcel implements IExportExcel {
 			
 			boolean isSheetUsed = false;
 			for (String usedSheetName : usedSheetsName) {
-				// é necessário utilizar o método contains no teste por conta da funcionalidade que utiliza
+				// é necessário verificar o caractere # para fazer a comparacao por conta da funcionalidade que utiliza
 				// mais de uma aba para exportar relatórios da versão XLS com mais do que 65.535 linhas, pois
 				// o nome das demais abas será o da aba original concatenado com "#1", "#2", ..., por exemplo, 
 				// "Demandas por Aluno", "Demandas por Aluno#1", "Demandas por Aluno#2", ...
-				if (sheet.getSheetName().contains(usedSheetName)) {
+				String realName = (sheet.getSheetName().indexOf("#") != -1) ? sheet.getSheetName().substring(0, usedSheetName.indexOf("#"))
+						: sheet.getSheetName();
+				if (realName.equals(usedSheetName)) {
 					isSheetUsed = true;
 					break;
 				}
