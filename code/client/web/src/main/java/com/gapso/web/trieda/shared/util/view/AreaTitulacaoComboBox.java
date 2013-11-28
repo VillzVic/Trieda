@@ -30,7 +30,7 @@ public class AreaTitulacaoComboBox
 		setStore( new ListStore< AreaTitulacaoDTO >(
 			new BaseListLoader< BaseListLoadResult< AreaTitulacaoDTO > >( proxy ) ) );
 
-		setFieldLabel( "Área de Titulação" );
+		setFieldLabel( "Área de Conhecimento" );
 		setDisplayField( AbstractDTO.PROPERTY_DISPLAY_TEXT );
 		setEditable( false );
 		setTriggerAction( TriggerAction.ALL );

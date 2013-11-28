@@ -145,13 +145,13 @@ public class ExportExcelFormView
 		areasTitulacaoExportExcelCB = new CheckBox();
 		areasTitulacaoExportExcelCB.setName(PlanilhasExportExcel.AREAS_TITULACAO);
 		areasTitulacaoExportExcelCB.setValue(false);
-		areasTitulacaoExportExcelCB.setFieldLabel("Áreas de Titulação");
+		areasTitulacaoExportExcelCB.setFieldLabel("Áreas de Conhecimento");
 		rightGeral.add(areasTitulacaoExportExcelCB, formData);
 		
 		cursoAreaTitulacaoExportExcelCB = new CheckBox();
 		cursoAreaTitulacaoExportExcelCB.setName(PlanilhasExportExcel.CURSO_AREAS_TITULACAO);
 		cursoAreaTitulacaoExportExcelCB.setValue(false);
-		cursoAreaTitulacaoExportExcelCB.setFieldLabel("Curso - Áreas de Titulação");
+		cursoAreaTitulacaoExportExcelCB.setFieldLabel("Curso - Áreas de Conhecimento");
 		leftGeral.add(cursoAreaTitulacaoExportExcelCB, formData);
 		
 		curriculosExportExcelCB = new CheckBox();

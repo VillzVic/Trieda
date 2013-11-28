@@ -57,11 +57,11 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Vincular Áreas de Titulação");
+		panel.setHeadingHtml("Master Data » Vincular Áreas de Conhecimento");
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Vincular Áreas de Titulação", Resources.DEFAULTS.areaTitulacao16());
+		tabItem = new GTabItem("Vincular Áreas de Conhecimento", Resources.DEFAULTS.areaTitulacao16());
 		tabItem.setContent(panel);
 	}
 	
@@ -93,7 +93,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		panelLists.setBodyBorder(false);
 		
 		ContentPanel naoVinculadaListPanel = new ContentPanel(new FitLayout());
-		naoVinculadaListPanel.setHeadingHtml("Área(s) de Titulação NÃO vinculada(s) ao Curso");
+		naoVinculadaListPanel.setHeadingHtml("Área(s) de Conhecimento NÃO vinculada(s) ao Curso");
 		naoVinculadaList = new ListView<AreaTitulacaoDTO>();
 		naoVinculadaList.disable();
 		naoVinculadaList.setDisplayProperty(AreaTitulacaoDTO.PROPERTY_DISPLAY_TEXT);
@@ -101,7 +101,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 		naoVinculadaListPanel.add(naoVinculadaList);
 		
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
-		vinculadaListPanel.setHeadingHtml("Área(s) de Titulação vinculada(s) ao Curso");
+		vinculadaListPanel.setHeadingHtml("Área(s) de Conhecimento vinculada(s) ao Curso");
 		vinculadaList = new ListView<AreaTitulacaoDTO>();
 		vinculadaList.disable();
 		vinculadaList.setDisplayProperty(AreaTitulacaoDTO.PROPERTY_DISPLAY_TEXT);

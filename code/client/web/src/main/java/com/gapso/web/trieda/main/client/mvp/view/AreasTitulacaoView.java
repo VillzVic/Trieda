@@ -43,7 +43,7 @@ public class AreasTitulacaoView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Áreas de Titulação" );
+		this.panel.setHeadingHtml( "Master Data » Áreas de Conhecimento" );
 
 		createToolBar();
 		createGrid();
@@ -54,7 +54,7 @@ public class AreasTitulacaoView
 
 	private void createTabItem()
 	{
-		this.tabItem = new GTabItem( "Áreas de Titulação",
+		this.tabItem = new GTabItem( "Áreas de Conhecimento",
 			Resources.DEFAULTS.areaTitulacao16() );
 
 		this.tabItem.setContent( this.panel );

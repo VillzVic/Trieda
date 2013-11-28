@@ -317,12 +317,12 @@ public class ToolBarView
 			"Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24() );
 		cursosToolBar.add( ofertasListCursosBt );
 
-		areasTitulacaoListCursosBt = createButton( "Áreas de<br />Titulação",
-			"Áreas de Titulação", Resources.DEFAULTS.areaTitulacao() );
+		areasTitulacaoListCursosBt = createButton( "Áreas de<br />Conhecimento",
+			"Áreas de Conhecimento", Resources.DEFAULTS.areaTitulacao() );
 		cursosToolBar.add( areasTitulacaoListCursosBt );
 
-		vincularAreasTitulacaoListCursosBt = createButton( "Vincular Áreas<br />de Titulação",
-			"Vincular Áreas de Titulação", Resources.DEFAULTS.vincularAreaTitulacao24() );
+		vincularAreasTitulacaoListCursosBt = createButton( "Vincular Áreas<br />de Conhecimento",
+			"Vincular Áreas de Conhecimento", Resources.DEFAULTS.vincularAreaTitulacao24() );
 		cursosToolBar.add( vincularAreasTitulacaoListCursosBt );
 
 		curriculosListCursosBt = createButton( "Matrizes<br />Curriculares",

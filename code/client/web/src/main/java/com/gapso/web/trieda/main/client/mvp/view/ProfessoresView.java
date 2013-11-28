@@ -133,7 +133,7 @@ public class ProfessoresView extends MyComposite
 			getI18nConstants().titulacao(), 60 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_AREA_TITULACAO_STRING,
-			getI18nConstants().areaTitulacao(), 100 ) );
+			getI18nConstants().areaTitulacao(), 120 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_NOTA_DESEMPENHO,
 			getI18nConstants().notaDesempenho(), 100 ) );
