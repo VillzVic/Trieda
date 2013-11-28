@@ -90,7 +90,7 @@ public class CompatibilidadesView extends MyComposite
 		cursoCB = new CursoComboBox( cenarioDTO );
 		formPanel.add( cursoCB, formData );
 
-		curriculoCB = new CurriculoComboBox( cenarioDTO, cursoCB );
+		curriculoCB = new CurriculoComboBox( cenarioDTO, cursoCB, false );
 		formPanel.add( curriculoCB, formData );
 
 		periodoCB = new PeriodoComboBox(curriculoCB,this);

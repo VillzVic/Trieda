@@ -1584,7 +1584,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	@Transactional
 	public Map<String, List<String>> saveContent(CenarioDTO cenarioDTO,Long round) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
-
+		
+		initProgressReport("chaveOtimizacao");
+		getProgressReport().setInitNewPartial("Carregando output");
+		
+		
 		Map<String, List<String>> ret = new HashMap<String, List<String>>(2);
 		ret.put("warning", new ArrayList<String>());
 		ret.put("error", new ArrayList<String>());
@@ -1592,9 +1596,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		try {
 			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
 
-			System.out.println("solverClient.getContent( round ) ...");// TODO:
+			System.out.println("Carregando xml( round ). Passo 1 de 4...");// TODO:
 			byte[] xmlBytes = solverClient.getContent(round);
-			System.out.println("solverClient.getContent( round ) FINALIZADO");// TODO:
 
 			if (xmlBytes == null) {
 				ret.get("error").add("Erro no servidor");
@@ -1603,13 +1606,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 
 			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.output");
 			Unmarshaller u = jc.createUnmarshaller();
-			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); ...");// TODO:
 			StringBuffer xmlStr = new StringBuffer(new String(xmlBytes));
-			System.out.println("StringBuffer xmlStr = new StringBuffer( new String( xmlBytes ) ); FINALIZADO");// TODO:
 
-			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); ...");// TODO:
 			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
-			System.out.println("u.unmarshal(new StreamSource(new StringReader(xmlStr.toString()))); FINALIZADO");// TODO:
 
 			for (ItemError erro : triedaOutput.getErrors().getError()) {
 				ret.get("error").add(erro.getMessage());
@@ -1623,28 +1622,29 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			}
 
 			Parametro parametro = cenario.getUltimoParametro(this.getInstituicaoEnsinoUser());
+			System.out.println("Carregando xml( round ). Passo 1 de 4 FINALIZADO");// TODO:
 
 			SolverOutput solverOutput = new SolverOutput(getInstituicaoEnsinoUser(), cenario, triedaOutput);
-			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); ...");// TODO:
+			System.out.println("Atualizando demandas de alunos. Passo 2 de 4");// TODO:
 			solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurnos());
-			System.out.println("solverOutput.atualizarAlunosDemanda(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO:
+			System.out.println("Atualizando demandas de alunos. Passo 2 de 4 FINALIZADO");// TODO:
 
 			if (parametro.isTatico()) {
-				System.out.println("solverOutput.generateAtendimentosTatico(); ...");// TODO:
+				System.out.println("Gerando atendimentos tatico. Passo 3 de 4");// TODO:
 				solverOutput.generateAtendimentosTatico(parametro.getTurnos());
-				System.out.println("solverOutput.generateAtendimentosTatico(); FINALIZADO");// TODO:
+				System.out.println("Gerando atendimentos tatico. Passo 3 de 4 FINALIZADO");// TODO:
 
-				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); ...");// TODO:
+				System.out.println("Salvando atendimentos tatico. Passo 4 de 4");// TODO:
 				solverOutput.salvarAtendimentosTatico(parametro.getCampi(),parametro.getTurnos());
-				System.out.println("solverOutput.salvarAtendimentosTatico(parametro.getCampus(),parametro.getTurno()); FINALIZADO");// TODO:
+				System.out.println("Salvando atendimentos tatico. Passo 4 de 4 FINALIZADO");// TODO:
 			} else {
-				System.out.println("solverOutput.generateAtendimentosOperacional(); ...");// TODO:
+				System.out.println("Gerando atendimentos operacional. Passo 3 de 4");// TODO:
 				solverOutput.generateAtendimentosOperacional(parametro.getTurnos());
-				System.out.println("solverOutput.generateAtendimentosOperacional(); FINALIZADO");// TODO:
+				System.out.println("Gerando atendimentos operacional. Passo 3 de 4 FINALIZADO");// TODO:
 
-				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); ...");// TODO:
+				System.out.println("Salvando atendimentos operacional. Passo 4 de 4");// TODO:
 				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(), parametro.getTurnos());
-				System.out.println("solverOutput.salvarAtendimentosOperacional(parametro.getCampi(),parametro.getTurno()); FINALIZADO");// TODO:
+				System.out.println("Salvando atendimentos operacional. Passo 4 de 4 FINALIZADO");// TODO:
 			}
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -1656,6 +1656,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			return ret;
 		}
 
+		
+		getProgressReport().setPartial("Etapa concluída");
+		getProgressReport().finish();
+		
 		return ret;
 	}
 

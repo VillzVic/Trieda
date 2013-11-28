@@ -30,7 +30,12 @@ public class RelatorioVisaoSalaFiltro extends RelatorioVisaoFiltro{
 		f.setFireChangeEventOnSetValue(true);
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			public void handleEvent(FieldEvent fe){
-				salaCodigo = ((SalaDTO) fe.getValue()).getCodigo();
+				if (fe.getValue() != null){
+					salaCodigo = ((SalaDTO) fe.getValue()).getCodigo();
+				}
+				else {
+					salaCodigo = null;
+				}
 			}
 		});
 	}

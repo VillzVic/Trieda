@@ -89,7 +89,7 @@ public class ResumoPercentMestresDoutoresView extends MyComposite
 		formPanel.setHeaderVisible( false );
 		formPanel.setAutoHeight( true );
 
-		this.campusCB = new CampusComboBox(cenarioDTO, null, true);
+		this.campusCB = new CampusComboBox(cenarioDTO, null, true, false);
 		formPanel.add( this.campusCB, formData );
 
 

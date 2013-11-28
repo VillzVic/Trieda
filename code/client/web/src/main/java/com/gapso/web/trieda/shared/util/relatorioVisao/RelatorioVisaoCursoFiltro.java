@@ -67,7 +67,14 @@ public class RelatorioVisaoCursoFiltro extends RelatorioVisaoFiltro{
 		f.addListener(Events.Change, new Listener<FieldEvent>(){
 			@SuppressWarnings("unchecked")
 			public void handleEvent(FieldEvent fe){
-				periodo = ((SimpleComboValue<Integer>) fe.getValue()).getValue();
+				if (fe.getValue() != null)
+				{
+					periodo = ((SimpleComboValue<Integer>) fe.getValue()).getValue();
+				}
+				else
+				{
+					periodo = null;
+				}
 			}
 		});
 	}

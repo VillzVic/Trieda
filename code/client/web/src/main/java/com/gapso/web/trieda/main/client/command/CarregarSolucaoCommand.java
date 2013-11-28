@@ -10,6 +10,8 @@ import com.gapso.web.trieda.shared.dtos.RequisicaoOtimizacaoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
+import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.googlecode.future.FutureResult;
 import com.googlecode.future.FutureSynchronizer;
 
@@ -57,7 +59,7 @@ public class CarregarSolucaoCommand implements ICommand {
 		if (round == null) {
 			round = roundGateway.getRound();
 		}
-		
+    	new AcompanhamentoPanelPresenter("chaveOtimizacao", new AcompanhamentoPanelView());
 		Services.otimizar().saveContent(cenarioDTO,round,futureBoolean);
 		
 		FutureSynchronizer synch = new FutureSynchronizer(futureBoolean);
