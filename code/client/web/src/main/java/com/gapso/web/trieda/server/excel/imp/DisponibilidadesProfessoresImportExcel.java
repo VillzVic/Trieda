@@ -171,7 +171,7 @@ public class DisponibilidadesProfessoresImportExcel extends AbstractImportExcel<
 			if (professoreToDisponibilidadesMap.containsKey(bean.getProfessor())) {
 				Boolean concatenouHorario = false;
 				for (TriedaTrio<Semanas,Calendar,Calendar> trio : professoreToDisponibilidadesMap.get(bean.getProfessor()) ) {
-					if (trio.getTerceiro().equals(disponibilidade.getSegundo())) {
+					if (trio.getTerceiro().equals(disponibilidade.getSegundo()) && trio.getPrimeiro() == disponibilidade.getPrimeiro()) {
 						trio.setTerceiro(disponibilidade.getTerceiro());
 						concatenouHorario = true;
 					}
