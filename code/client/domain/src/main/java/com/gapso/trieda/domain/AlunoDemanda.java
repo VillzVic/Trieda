@@ -615,32 +615,51 @@ public class AlunoDemanda
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByAlunos(
-		InstituicaoEnsino instituicaoEnsino, List<Aluno> alunos )
+		InstituicaoEnsino instituicaoEnsino, List<Aluno> alunos, Curso curso )
 	{
+		String cursoQuery = curso == null ? "" : "AND o.demanda.oferta.curso = :curso";
+		
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			cursoQuery +
 			" AND o.aluno IN ( :alunos ) GROUP BY o.aluno" );
 		
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "alunos", alunos );
+		if (curso != null)
+		{
+			q.setParameter("curso", curso);
+		}
 
 		return q.getResultList();
 	}
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByAlunosAtendidos(
-		InstituicaoEnsino instituicaoEnsino, List<Aluno> alunos )
+		InstituicaoEnsino instituicaoEnsino, List<Aluno> alunos, Curso curso, Boolean formando )
 	{
+		String cursoQuery = curso == null ? "" : " AND o.demanda.oferta.curso = :curso ";
+		String formandoQuery = formando == null ? "" : " AND o.aluno.formando = :formando ";
+ 		
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AlunoDemanda o " +
 			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			cursoQuery + formandoQuery +
 			" AND o.aluno IN ( :alunos ) AND o.atendido = TRUE GROUP BY o.aluno" );
 		
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "alunos", alunos );
+		if (curso != null)
+		{
+			q.setParameter( "curso", curso );
+		}
+		if (formando != null)
+		{
+			q.setParameter( "formando", formando );
+		}
 
 		return q.getResultList();
 	}

@@ -27,6 +27,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.services.AlunosService;
 import com.gapso.web.trieda.shared.util.view.RelatorioAlunoFiltro;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @Transactional
 public class AlunosServiceImpl
@@ -203,7 +204,7 @@ public class AlunosServiceImpl
 	}
 	
 	@Override
-	public List<RelatorioDTO> getRelatorio(CenarioDTO cenarioDTO, RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode) {
+	public List<RelatorioDTO> getRelatorio(CenarioDTO cenarioDTO, RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode) throws TriedaException {
 		List<RelatorioDTO> list = new ArrayList<RelatorioDTO>();
 		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
 		if (currentNode == null){
@@ -221,20 +222,25 @@ public class AlunosServiceImpl
 		return list;
 	}
 	
-	public void getRelatorioParaCampus(Cenario cenario, Campus campus, RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode) {
+	public void getRelatorioParaCampus(Cenario cenario, Campus campus, RelatorioAlunoFiltro alunoFiltro, RelatorioDTO currentNode) throws TriedaException {
 		
 		Curso curso = alunoFiltro.getCurso() != null ? 
 				Curso.find(alunoFiltro.getCurso().getId(), getInstituicaoEnsinoUser()) : null;
+		Boolean formando = alunoFiltro.getFormando() == true ? true : null;
 		
-		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
-				alunoFiltro.getFormando(), alunoFiltro.getPeriodo());
-		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
+		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
+				formando, alunoFiltro.getPeriodo());
+		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
 				true, alunoFiltro.getPeriodo()).size();
 		
 		List<AlunoDemanda> alunosUteis = todosAlunos.size() > 0 ?
-				AlunoDemanda.findByAlunos(getInstituicaoEnsinoUser(), todosAlunos) : new ArrayList<AlunoDemanda>();
+				AlunoDemanda.findByAlunos(getInstituicaoEnsinoUser(), todosAlunos, curso) : new ArrayList<AlunoDemanda>();
 		int alunosAtendidos = todosAlunos.size() > 0 ?
-				AlunoDemanda.findByAlunosAtendidos(getInstituicaoEnsinoUser(), todosAlunos).size() : 0;
+				AlunoDemanda.findByAlunosAtendidos(getInstituicaoEnsinoUser(), todosAlunos, curso, formando).size() : 0;
+		if (curso != null && alunosUteis.size() == 0)
+		{
+			throw new TriedaException("O curso filtrado não possui nenhuma demanda");
+		}
 
 		
 		Locale pt_BR = new Locale("pt","BR");

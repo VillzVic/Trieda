@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -47,7 +48,7 @@ public class RelatorioAlunosPresenter extends RelatorioPresenter
 				if (display.getPeriodoComboBox().getValue() != null){
 					display.getAlunoFiltro().setPeriodo(display.getPeriodoComboBox().getValue().intValue());
 				}
-				if (display.getFormandoCheckBox().getValue() != null && display.getFormandoCheckBox().getValue()){
+				if (display.getFormandoCheckBox().getValue() != null){
 					display.getAlunoFiltro().setFormando(display.getFormandoCheckBox().getValue());
 				}
 				
@@ -62,6 +63,14 @@ public class RelatorioAlunosPresenter extends RelatorioPresenter
 							display.getStore().add( list, true );
 							display.getTree().unmask();
 						}
+						
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert("Aviso!", caught.getMessage(), null);
+							display.getStore().removeAll();
+							display.getTree().unmask();
+						}
 					});
 			}
 		});
@@ -70,8 +79,11 @@ public class RelatorioAlunosPresenter extends RelatorioPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce){
 				display.getCursoComboBox().setValue(null);
+				display.getAlunoFiltro().setCurso(null);
 				display.getPeriodoComboBox().setValue(null);
+				display.getAlunoFiltro().setPeriodo(null);
 				display.getFormandoCheckBox().setValue(null);
+				display.getAlunoFiltro().setFormando(null);
 			}
 		});
 	}
