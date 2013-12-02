@@ -69,7 +69,11 @@ public class TriedaUtil
 	{
 		if ( precision != 0 )
 		{
-			double precisionFactor = ( precision * 10.0 );
+			double precisionFactor = 10.0;
+			for (int i = 1; i < precision; i++)
+			{
+				precisionFactor *= 10.0 ;
+			}
 			value = Math.round( value * precisionFactor );
 			return ( value / precisionFactor );
 		}

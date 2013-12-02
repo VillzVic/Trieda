@@ -911,7 +911,7 @@ public class ProfessoresServiceImpl
 		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
 		{
 			Set<Campus> campi = new HashSet<Campus>();
-			if (professoresToUnidadesMap.values().size() > 1)
+			if (professoresToUnidadesMap.get(professorUnidades.getKey()).size() > 1)
 			{
 				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
 				for (Unidade unidade : professorUnidades.getValue())
@@ -1045,9 +1045,11 @@ public class ProfessoresServiceImpl
 				TriedaUtil.round((double)professoresUtilizados.size()/(double)professoresUteis.size(), 2)*100,pt_BR) + "%</b>") );
 		atendimento.add( new RelatorioDTO( " Média de Créditos Semanais por Docente: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)creditos.size()/(double)professoresUtilizados.size(), 2),pt_BR) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Turmas Ministradas por Docentes da Instituição: <b>" + numberFormatter.print(
+				totalTurmas,pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Média de Turmas por Docente: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)totalTurmas/(double)professoresUtilizados.size(), 2),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " Listas de Docentes: ") );
+		atendimento.add( new RelatorioDTO( " Listas de Docentes Utilizados no Atendimento: ") );
 		RelatorioDTO todosDocentes = new RelatorioDTO( " Todos Docentes: " + numberFormatter.print(professoresUtilizados.size(),pt_BR));
 		todosDocentes.setButtonText(todosDocentes.getText());
 		todosDocentes.setButtonIndex(5);
@@ -1618,7 +1620,7 @@ public class ProfessoresServiceImpl
 		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
 		{
 			Set<Campus> campi = new HashSet<Campus>();
-			if (professoresToUnidadesMap.values().size() > 1)
+			if (professoresToUnidadesMap.get(professorUnidades.getKey()).size() > 1)
 			{
 				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
 				for (Unidade unidade : professorUnidades.getValue())
