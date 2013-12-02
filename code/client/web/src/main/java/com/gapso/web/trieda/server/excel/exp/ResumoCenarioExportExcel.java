@@ -12,6 +12,7 @@ import com.gapso.web.trieda.server.CenariosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
+import com.gapso.web.trieda.shared.dtos.ResumoDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -113,9 +114,11 @@ public class ResumoCenarioExportExcel
 	}
 
 	private int writeData(TreeNodeDTO node, int row, Sheet sheet) {
-		// Node
-		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],node.getText().replace("<b>", "").replace("</b>", ""));
-
+		// Text
+		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],((ResumoDTO) node.getContent()).getLabel());
+		
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],((ResumoDTO) node.getContent()).getValor().replace("<b>", "").replace("</b>", ""));
+		
 		row++;
 		return row;
 	}

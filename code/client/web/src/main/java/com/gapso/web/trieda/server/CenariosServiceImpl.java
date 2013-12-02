@@ -27,11 +27,13 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.CenarioUtil;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.dtos.ResumoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.services.CenariosService;
@@ -244,26 +246,27 @@ public class CenariosServiceImpl
 
 		List< TreeNodeDTO > list = new ArrayList< TreeNodeDTO >();
 
-		list.add( new TreeNodeDTO( "Total de Campi: <b>" + numberFormatter.print( Campus.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Cursos: <b>" +  numberFormatter.print( Curso.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Matrizes Curriculares: <b>" +  numberFormatter.print( Curriculo.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Disciplinas: <b>" +  numberFormatter.print( Disciplina.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Alunos: <b>" +  numberFormatter.print( Aluno.count( getInstituicaoEnsinoUser(), cenario, null, null ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "|--- Alunos com Pelo Menos Uma Demanda: <b>" +
-				numberFormatter.print( AlunoDemanda.countAlunosUteis( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Total de Professores: <b>" +  numberFormatter.print( Professor.count( getInstituicaoEnsinoUser(), cenario, null, null, null, null ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "|--- Professores Utilizados: <b>" +
-				numberFormatter.print( AtendimentoOperacional.countProfessores( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "|--- Professores Virtuais Utilizados: <b>" +
-				numberFormatter.print( AtendimentoOperacional.countProfessoresVirtuais( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "|--- Professores com Pelo Menos Uma Habilitação, Disponibilidade e Campus de Trabalho: <b>" +
-				numberFormatter.print( Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, null).size(),pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "Demanda Total: <b>" +  numberFormatter.print( Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + " Alunos</b>", null ) );
-		list.add( new TreeNodeDTO( "Total Ambientes: <b>" +  numberFormatter.print( totalAmbientes,pt_BR ), null ) );
-		list.add( new TreeNodeDTO( "|--- Total de Salas de Aula: <b>" +
-				 numberFormatter.print( totalSalas,pt_BR ) + "</b>", null ) );
-		list.add( new TreeNodeDTO( "|--- Total de Salas de Laborat&oacute;rio: <b>" +
-				 numberFormatter.print( totalLaboratorios,pt_BR ) + "</b>", null ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de campi ", "<b>" + numberFormatter.print( Campus.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de unidades ", "<b>" + numberFormatter.print( Unidade.findByCenario( getInstituicaoEnsinoUser(), cenario ).size(),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de cursos ", "<b>" +  numberFormatter.print( Curso.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de matrizes curriculares ", "<b>" +  numberFormatter.print( Curriculo.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de disciplinas ", "<b>" +  numberFormatter.print( Disciplina.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de alunos ", "<b>" +  numberFormatter.print( Aluno.count( getInstituicaoEnsinoUser(), cenario, null, null ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Alunos com pelo menos uma demanda ", "<b>" +
+				numberFormatter.print( AlunoDemanda.countAlunosUteis( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de professores ", "<b>" +  numberFormatter.print( Professor.count( getInstituicaoEnsinoUser(), cenario, null, null, null, null ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Professores com pelo menos uma habilitação, disponibilidade e campus de trabalho ", "<b>" +
+				numberFormatter.print( Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, null).size(),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Professores da instituição utilizados ", "<b>" +
+				numberFormatter.print( AtendimentoOperacional.countProfessores( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Professores virtuais utilizados ", "<b>" +
+				numberFormatter.print( AtendimentoOperacional.countProfessoresVirtuais( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Demanda total ", "<b>" +  numberFormatter.print( Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + " Alunos</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de ambientes ", "<b>" +  numberFormatter.print( totalAmbientes,pt_BR )), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Total de salas de aula ", "<b>" +
+				 numberFormatter.print( totalSalas,pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Total de laboratórios ", "<b>" +
+				 numberFormatter.print( totalLaboratorios,pt_BR ) + "</b>"), null, true ) );
 		
 		return list;
 	}
