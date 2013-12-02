@@ -92,6 +92,7 @@ public class ToolBarView
 	private Button professoresListprofessoresBt;
 	private Button professoresDisciplinaListprofessoresBt;
 	private Button professoresCampusListprofessoresBt;
+	private Button professoresListProfessoresVirtuaisBt;
 
 	// Relatórios
 	private Button gradeHorariaDropDownBt;
@@ -429,6 +430,10 @@ public class ToolBarView
 		professoresCampusListprofessoresBt = createButton( "Campi de<br />Trabalho",
 			"Campi de Trabalho", Resources.DEFAULTS.campiTrabalho24() );
 		professoresToolBar.add( professoresCampusListprofessoresBt );
+		
+		professoresListProfessoresVirtuaisBt = createButton( "Professores<br />Virtuais",
+				"Professores Virtuais", Resources.DEFAULTS.professorListar24() );
+			professoresToolBar.add( professoresListProfessoresVirtuaisBt );
 	}
 
 	private void createRelatorios()
@@ -754,6 +759,12 @@ public class ToolBarView
 	public Button getProfessoresCampusListprofessoresBt()
 	{
 		return professoresCampusListprofessoresBt;
+	}
+	
+	@Override
+	public Button getProfessoresListProfessoresVirtuaisBt()
+	{
+		return professoresListProfessoresVirtuaisBt;
 	}
 
 	@Override

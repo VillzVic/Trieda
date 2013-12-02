@@ -15,9 +15,11 @@ import java.util.TreeMap;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
@@ -35,6 +37,7 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.TriedaPar;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
@@ -59,6 +62,7 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -1266,6 +1270,52 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 
 		return new BaseListLoadResult< ProfessorVirtualDTO >( professoresVirtuaisDTO );
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
+			PagingLoadConfig config ) throws TriedaException
+	{
+		Titulacao titulacao = titulacaoDTO == null ? null : Titulacao.find(titulacaoDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		String orderBy = config.getSortField();
+		
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+					&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
+			}
+		}
+		
+		List< ProfessorVirtual > professoresVirtuais
+			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), cenario, titulacao, orderBy );
+
+		List< ProfessorVirtualDTO > professoresVirtuaisDTO
+			= new ArrayList< ProfessorVirtualDTO >();
+
+		for ( ProfessorVirtual professorVirtual : professoresVirtuais )
+		{
+			professoresVirtuaisDTO.add(
+				ConvertBeans.toProfessorVirtualDTO( professorVirtual ) );
+		}
+
+		BasePagingLoadResult< ProfessorVirtualDTO > result
+		= new BasePagingLoadResult< ProfessorVirtualDTO >( professoresVirtuaisDTO );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( ProfessorVirtual.findBy(
+				getInstituicaoEnsinoUser(), cenario, titulacao, orderBy ).size() );
+		
+		return result;
 	}
 
 	public int deslocarLinhasExportExcel(

@@ -3,6 +3,7 @@ package com.gapso.web.trieda.shared.services;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
@@ -13,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoCursoFiltro;
@@ -36,6 +38,9 @@ public interface AtendimentosServiceAsync {
 //		AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
 
 	void getProfessoresVirtuais( AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
+	
+	void getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
+			PagingLoadConfig config, AsyncCallback< PagingLoadResult< ProfessorVirtualDTO > > callback );
 
 	void getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
 			AsyncCallback<List<PercentMestresDoutoresDTO>> callback );

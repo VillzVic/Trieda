@@ -48,6 +48,7 @@ import com.gapso.web.trieda.main.client.mvp.view.ProfessoresDisciplinasLecionada
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresJanelasGradeView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresTitulacoesView;
 import com.gapso.web.trieda.main.client.mvp.view.ProfessoresView;
+import com.gapso.web.trieda.main.client.mvp.view.ProfessoresVirtuaisView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioAlunosView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioProfessoresView;
 import com.gapso.web.trieda.main.client.mvp.view.RelatorioSalasView;
@@ -152,6 +153,7 @@ public class ToolBarPresenter
 		Button getProfessoresListProfessoresButton();
 		Button getProfessoresDisciplinaListProfessoresButton();
 		Button getProfessoresCampusListprofessoresBt();
+		Button getProfessoresListProfessoresVirtuaisBt();
 
 		MenuItem getRelatorioVisaoSalaMenuItem();
 		MenuItem getRelatorioVisaoCursoMenuItem();
@@ -691,6 +693,20 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getProfessoresListProfessoresVirtuaisBt().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new ProfessoresVirtuaisPresenter(
+						instituicaoEnsinoDTO, cenarioDTO,
+						new ProfessoresVirtuaisView() );
+
+					presenter.go( gTab );
+				}
+			});
 
 		this.toolBar.getOfertasListCampiButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
