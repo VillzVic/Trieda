@@ -2,14 +2,12 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 
 import java.util.List;
 
-import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -28,7 +26,6 @@ import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.TipoProfessorComboBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ProfessoresTitulacoesPresenter
@@ -43,9 +40,6 @@ public class ProfessoresTitulacoesPresenter
 		ListStore< RelatorioQuantidadeDTO > getStore();
 		Component getComponent();
 		CampusComboBox getCampusComboBox();
-		Button getSubmitBuscaButton();
-		Button getResetBuscaButton();
-		TipoProfessorComboBox getTipoProfessorComboBox();
 	}
 	
 	private Display display;
@@ -78,7 +72,6 @@ public class ProfessoresTitulacoesPresenter
 				}
 				display.getGrid().mask( display.getI18nMessages().loading() );
 				Services.professores().getProfessoresTitulacoes( cenarioDTO, se.getSelectedItem(),
-					display.getTipoProfessorComboBox().getValue(),
 					new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
 				{
 					@Override
@@ -150,61 +143,6 @@ public class ProfessoresTitulacoesPresenter
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
-		
-		display.getResetBuscaButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
-			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					display.getTipoProfessorComboBox().setValue( null );
-					if ( display.getCampusComboBox() == null )
-					{
-						return;
-					}
-					display.getGrid().mask( display.getI18nMessages().loading() );
-					Services.professores().getProfessoresTitulacoes( cenarioDTO, display.getCampusComboBox().getValue(),
-							display.getTipoProfessorComboBox().getValue(),
-							new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
-					{
-						@Override
-						public void onSuccess(
-							List< RelatorioQuantidadeDTO > list )
-							{
-								display.getStore().removeAll();
-								display.getStore().add( list );
-								display.getGrid().unmask();
-							}
-					});
-				}
-			});
-	
-			display.getSubmitBuscaButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
-			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					if ( display.getCampusComboBox() == null )
-					{
-						return;
-					}
-					display.getGrid().mask( display.getI18nMessages().loading() );
-					Services.professores().getProfessoresTitulacoes( cenarioDTO, display.getCampusComboBox().getValue(),
-							display.getTipoProfessorComboBox().getValue(),
-							new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
-					{
-						@Override
-						public void onSuccess(
-							List< RelatorioQuantidadeDTO > list )
-							{
-								display.getStore().removeAll();
-								display.getStore().add( list );
-								display.getGrid().unmask();
-							}
-					});
-				}
-			});
 	}
 	
 	@Override

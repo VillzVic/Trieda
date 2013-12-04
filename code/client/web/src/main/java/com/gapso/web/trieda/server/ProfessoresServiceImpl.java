@@ -570,15 +570,13 @@ public class ProfessoresServiceImpl
 	}
 	
 	@Override
-	public List<RelatorioQuantidadeDTO> getProfessoresDisciplinasHabilitadas(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO)
+	public List<RelatorioQuantidadeDTO> getProfessoresDisciplinasHabilitadas(CenarioDTO cenarioDTO, CampusDTO campusDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
 		
 		List<RelatorioQuantidadeDTO> professoresDisciplinasHabilitadas = new ArrayList<RelatorioQuantidadeDTO>();
 		
-		if (tipoProfessorDTO == null || tipoProfessorDTO.getInstitucional())
-		{
 			List<Professor> professoresInstitucionaisList = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
 			for (Professor professor : professoresInstitucionaisList)
 			{
@@ -603,41 +601,12 @@ public class ProfessoresServiceImpl
 				}
 				professoresDisciplinasHabilitadas.get(numDisciplinas).setQuantidade(professoresDisciplinasHabilitadas.get(numDisciplinas).getQuantidade() + 1);
 			}
-		}
-		
-		if (tipoProfessorDTO == null || tipoProfessorDTO.getVirtual())
-		{
-			List<ProfessorVirtual> professoresVirtuaisList = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus) ;
-			for (ProfessorVirtual professor : professoresVirtuaisList)
-			{
-				int numDisciplinas = professor.getDisciplinas().size();
-				
-				if (professoresDisciplinasHabilitadas.size() <= numDisciplinas)
-				{
-					for (int i = professoresDisciplinasHabilitadas.size(); i <= numDisciplinas; i++)
-					{
-						String titulo = "";
-						if (i == 0)
-						{
-							titulo = "Nenhuma disciplina habilitada";
-						}
-						else
-						{
-							titulo = i + " disciplina" + ((i != 1) ? "s " : "") + " habilitada" + ((i != 1) ? "s " : "");
-						}
-						RelatorioQuantidadeDTO novaFaixa = new RelatorioQuantidadeDTO(titulo);
-						professoresDisciplinasHabilitadas.add(novaFaixa);
-					}
-				}
-				professoresDisciplinasHabilitadas.get(numDisciplinas).setQuantidade(professoresDisciplinasHabilitadas.get(numDisciplinas).getQuantidade() + 1);
-			}
-		}
 		return professoresDisciplinasHabilitadas;
 	}
 	
 
 	@Override
-	public List<RelatorioQuantidadeDTO> getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO)
+	public List<RelatorioQuantidadeDTO> getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
@@ -645,33 +614,29 @@ public class ProfessoresServiceImpl
 		List<RelatorioQuantidadeDTO> professoresTitulacoes = new ArrayList<RelatorioQuantidadeDTO>();
 		
 		Map<Titulacao, Integer> titulacoesToNumProfessoresMap = new HashMap<Titulacao, Integer>();
+		Map<Titulacao, Integer> titulacoesToNumProfessoresVirtuaisMap = new HashMap<Titulacao, Integer>();
 		for (Titulacao titulacao : Titulacao.findAll(getInstituicaoEnsinoUser()))
 		{
 			titulacoesToNumProfessoresMap.put(titulacao, 0);
+			titulacoesToNumProfessoresVirtuaisMap.put(titulacao, 0);
 		}
 		
-		if (tipoProfessorDTO == null || tipoProfessorDTO.getInstitucional())
+		List<Professor> professoresInstitucionaisList = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
+		for (Professor professor : professoresInstitucionaisList)
 		{
-			List<Professor> professoresInstitucionaisList = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
-			for (Professor professor : professoresInstitucionaisList)
-			{
-				titulacoesToNumProfessoresMap.put(professor.getTitulacao(), titulacoesToNumProfessoresMap.get(professor.getTitulacao())+1 );
-			}
+			titulacoesToNumProfessoresMap.put(professor.getTitulacao(), titulacoesToNumProfessoresMap.get(professor.getTitulacao())+1 );
 		}
-		
-		if (tipoProfessorDTO == null || tipoProfessorDTO.getVirtual())
+		List<ProfessorVirtual> professoresVirtuaisList = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus) ;
+		for (ProfessorVirtual professor : professoresVirtuaisList)
 		{
-			List<ProfessorVirtual> professoresVirtuaisList = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus) ;
-			for (ProfessorVirtual professor : professoresVirtuaisList)
-			{
-				titulacoesToNumProfessoresMap.put(professor.getTitulacao(), titulacoesToNumProfessoresMap.get(professor.getTitulacao())+1 );
-			}
+			titulacoesToNumProfessoresVirtuaisMap.put(professor.getTitulacao(), titulacoesToNumProfessoresVirtuaisMap.get(professor.getTitulacao())+1 );
 		}
 		
 		for (Entry<Titulacao, Integer> titulacao : titulacoesToNumProfessoresMap.entrySet())
 		{
 			RelatorioQuantidadeDTO novaFaixa = new RelatorioQuantidadeDTO(titulacao.getKey().getNome());
-			novaFaixa.setQuantidade(titulacao.getValue());
+			novaFaixa.setQuantidade2(titulacao.getValue());
+			novaFaixa.setQuantidade(titulacoesToNumProfessoresVirtuaisMap.get(titulacao.getKey()));
 			professoresTitulacoes.add(novaFaixa);
 		}
 		return professoresTitulacoes;

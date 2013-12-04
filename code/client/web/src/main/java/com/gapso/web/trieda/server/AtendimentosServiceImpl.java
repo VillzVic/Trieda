@@ -61,7 +61,6 @@ import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
-import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
@@ -1671,45 +1670,41 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	@Override
-	public List<RelatorioQuantidadeDTO> getProfessoresJanelasGrade(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO)
+	public List<RelatorioQuantidadeDTO> getProfessoresJanelasGrade(CenarioDTO cenarioDTO, CampusDTO campusDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
 		
 		List<AtendimentoOperacional> atendimentosList = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
 		
-		Map<String, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<String, Set<HorarioDisponivelCenario>>();
-		
+		Map<TriedaPar<String,Boolean>, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<TriedaPar<String,Boolean>, Set<HorarioDisponivelCenario>>();
+
 		for (AtendimentoOperacional atendimento : atendimentosList)
 		{
-			if (tipoProfessorDTO == null || (atendimento.getProfessor().getCpf() != null && tipoProfessorDTO.getInstitucional())
-					|| (atendimento.getProfessorVirtual() != null && tipoProfessorDTO.getVirtual()))
+			TriedaPar<String, Boolean> professor;
+			if (atendimento.getProfessorVirtual() != null)
 			{
-				String professor;
-				if (atendimento.getProfessorVirtual() != null)
-				{
-					professor = atendimento.getProfessorVirtual().getNome();
-				}
-				else
-				{
-					professor = atendimento.getProfessor().getNome();
-				}
-				if (professorToListHorarioDisponivelCenario.get(professor) == null)
-				{
-					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
-					novoHorarioList.add(atendimento.getHorarioDisponivelCenario());
-					professorToListHorarioDisponivelCenario.put(professor, novoHorarioList);
-				}
-				else
-				{
-					professorToListHorarioDisponivelCenario.get(professor).add(atendimento.getHorarioDisponivelCenario());
-				}
+				professor = TriedaPar.create(atendimento.getProfessorVirtual().getNome(), true);
+			}
+			else
+			{
+				professor = TriedaPar.create(atendimento.getProfessor().getNome(), false);
+			}
+			if (professorToListHorarioDisponivelCenario.get(professor) == null)
+			{
+				Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
+				novoHorarioList.add(atendimento.getHorarioDisponivelCenario());
+				professorToListHorarioDisponivelCenario.put(professor, novoHorarioList);
+			}
+			else
+			{
+				professorToListHorarioDisponivelCenario.get(professor).add(atendimento.getHorarioDisponivelCenario());
 			}
 		}
 		
 		List<RelatorioQuantidadeDTO> janelasGradeHorariaDocente = new ArrayList<RelatorioQuantidadeDTO>();
 		
-		for (Entry<String, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
+		for (Entry<TriedaPar<String,Boolean>, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
 		{
 			Map<Semanas, List<HorarioDisponivelCenario>> diaMapHorarios = new HashMap<Semanas, List<HorarioDisponivelCenario>>();
 					
@@ -1727,6 +1722,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 			}
 			int janelas = 0;
+
 			for (Entry<Semanas, List<HorarioDisponivelCenario>> horarioSemana : diaMapHorarios.entrySet())
 			{
 				List<HorarioDisponivelCenario> horarioProfessorOrdenado = horarioSemana.getValue();
@@ -1748,22 +1744,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				});
 				if (!horarioProfessorOrdenado.isEmpty())
 				{
-					Calendar h1 = Calendar.getInstance();
-					h1.setTime(horarioProfessorOrdenado.get(0).getHorarioAula().getHorario());
 					for (int i = 1; i < horarioProfessorOrdenado.size(); i++)
 					{
+						Calendar h1 = Calendar.getInstance();
+						h1.setTime(horarioProfessorOrdenado.get(i-1).getHorarioAula().getHorario());
 						h1.add(Calendar.MINUTE,horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo());
 						Calendar h2 = Calendar.getInstance();
 						h2.setTime(horarioProfessorOrdenado.get(i).getHorarioAula().getHorario());
-						
-						if (h2.getTimeInMillis() - h1.getTimeInMillis() > (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000))
+						if (h2.getTimeInMillis() - h1.getTimeInMillis() > (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().calculaMaiorIntervalo()))
 						{
 							janelas++;
 						}
 					}
 				}
 			}
-			
 			if (janelasGradeHorariaDocente.size() <= janelas)
 			{
 				for (int i = janelasGradeHorariaDocente.size(); i <= janelas; i++)
@@ -1781,13 +1775,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					janelasGradeHorariaDocente.add(novaFaixa);
 				}
 			}
-			janelasGradeHorariaDocente.get(janelas).setQuantidade(janelasGradeHorariaDocente.get(janelas).getQuantidade() + 1);
+			if (professor.getKey().getSegundo())
+			{
+				janelasGradeHorariaDocente.get(janelas).setQuantidade(janelasGradeHorariaDocente.get(janelas).getQuantidade() + 1);
+			}
+			else
+			{
+				janelasGradeHorariaDocente.get(janelas).setQuantidade2(janelasGradeHorariaDocente.get(janelas).getQuantidade2() + 1);
+			}
 		}
 		return janelasGradeHorariaDocente;
 	}
 	
 	@Override
-	public List<RelatorioQuantidadeDTO> getProfessoresDisciplinasLecionadas(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO)
+	public List<RelatorioQuantidadeDTO> getProfessoresDisciplinasLecionadas(CenarioDTO cenarioDTO, CampusDTO campusDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
@@ -1798,56 +1799,46 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		for (AtendimentoOperacional atendimento : atendimentosList)
 		{
-			if (tipoProfessorDTO == null || (atendimento.getProfessor().getCpf() != null && tipoProfessorDTO.getInstitucional())
-					|| (atendimento.getProfessorVirtual() != null && tipoProfessorDTO.getVirtual()))
+			String professor;
+			if (atendimento.getProfessorVirtual() != null)
 			{
-				String professor;
-				if (atendimento.getProfessorVirtual() != null)
-				{
-					professor = atendimento.getProfessorVirtual().getNome();
-				}
-				else
-				{
-					professor = atendimento.getProfessor().getNome();
-				}
-				if (professorToQtdeDisciplinasLecionadas.get(professor) == null)
-				{
-					Set<String> turmas = new HashSet<String>();
-					turmas.add((atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta() : atendimento.getDisciplina())
-							+ "-" + atendimento.getTurma());
-					professorToQtdeDisciplinasLecionadas.put(professor, turmas);
-				}
-				else
-				{
-					professorToQtdeDisciplinasLecionadas.get(professor).add(
-							(atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta() : atendimento.getDisciplina())
-							+ "-" + atendimento.getTurma());
-				}
+				professor = atendimento.getProfessorVirtual().getNome();
+			}
+			else
+			{
+				professor = atendimento.getProfessor().getNome();
+			}
+			if (professorToQtdeDisciplinasLecionadas.get(professor) == null)
+			{
+				Set<String> turmas = new HashSet<String>();
+				turmas.add((atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+						+ "-" + atendimento.getTurma());
+				professorToQtdeDisciplinasLecionadas.put(professor, turmas);
+			}
+			else
+			{
+				professorToQtdeDisciplinasLecionadas.get(professor).add(
+						(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+						+ "-" + atendimento.getTurma());
 			}
 		}
 		
 		List<RelatorioQuantidadeDTO> professoresDisciplinasLecionadas = new ArrayList<RelatorioQuantidadeDTO>();
 		
-		List<String> todosProfessoresList = new ArrayList<String>();
-		if (tipoProfessorDTO == null || tipoProfessorDTO.getInstitucional())
+		Map<String, Boolean> todosProfessoresMapVirtual = new HashMap<String, Boolean>();
+		for (Professor professorInstitucional : Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus))
 		{
-			for (Professor professorInstitucional : Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus))
-			{
-				todosProfessoresList.add(professorInstitucional.getNome());
-			}
+			todosProfessoresMapVirtual.put(professorInstitucional.getNome(), false);
 		}
-		if (tipoProfessorDTO == null || tipoProfessorDTO.getVirtual())
+		for (ProfessorVirtual professorVirtual : ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus))
 		{
-			for (ProfessorVirtual professorVirtual : ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus))
-			{
-				todosProfessoresList.add(professorVirtual.getNome());
-			}
+			todosProfessoresMapVirtual.put(professorVirtual.getNome(), true);
 		}
 		
-		for (String professor : todosProfessoresList )
+		for (Entry<String, Boolean> professor : todosProfessoresMapVirtual.entrySet() )
 		{
-			int qtdeDisciplinasLecionadas = professorToQtdeDisciplinasLecionadas.get(professor) == null
-					? 0 : professorToQtdeDisciplinasLecionadas.get(professor).size() ;
+			int qtdeDisciplinasLecionadas = professorToQtdeDisciplinasLecionadas.get(professor.getKey()) == null
+					? 0 : professorToQtdeDisciplinasLecionadas.get(professor.getKey()).size() ;
 			if (professoresDisciplinasLecionadas.size() <= qtdeDisciplinasLecionadas)
 			{
 				for (int i = professoresDisciplinasLecionadas.size(); i <= qtdeDisciplinasLecionadas; i++)
@@ -1865,7 +1856,14 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					professoresDisciplinasLecionadas.add(novaFaixa);
 				}
 			}
-			professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).setQuantidade(professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).getQuantidade() + 1);
+			if (professor.getValue())
+			{
+				professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).setQuantidade(professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).getQuantidade() + 1);
+			}
+			else
+			{
+				professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).setQuantidade2(professoresDisciplinasLecionadas.get(qtdeDisciplinasLecionadas).getQuantidade2() + 1);
+			}
 		}
 		return professoresDisciplinasLecionadas;
 	}

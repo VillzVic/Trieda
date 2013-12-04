@@ -134,7 +134,7 @@ public class ProfessoresDisciplinasHabilitadasExportExcel
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
 			relatorioDocenteDTO.addAll(
-					professoresServiceImpl.getProfessoresDisciplinasHabilitadas(ConvertBeans.toCenarioDTO(getCenario()), campusDTO, null) );
+					professoresServiceImpl.getProfessoresDisciplinasHabilitadas(ConvertBeans.toCenarioDTO(getCenario()), campusDTO) );
 		}
 
 		if ( !relatorioDocenteDTO.isEmpty() )

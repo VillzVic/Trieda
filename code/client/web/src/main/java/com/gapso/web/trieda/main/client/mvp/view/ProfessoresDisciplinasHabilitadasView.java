@@ -7,7 +7,6 @@ import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -25,9 +24,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
-import com.gapso.web.trieda.shared.util.view.TipoProfessorComboBox;
 import com.google.gwt.i18n.client.NumberFormat;
 
 public class ProfessoresDisciplinasHabilitadasView extends MyComposite
@@ -40,8 +37,6 @@ public class ProfessoresDisciplinasHabilitadasView extends MyComposite
 		private ContentPanel panel;
 	private GTabItem tabItem;
 	private CampusComboBox campusCB;
-	private SimpleFilter filter;
-	private TipoProfessorComboBox tipoProfessorCB;
 	private CenarioDTO cenarioDTO;
 	
 	public ProfessoresDisciplinasHabilitadasView(CenarioDTO cenarioDTO)
@@ -51,7 +46,6 @@ public class ProfessoresDisciplinasHabilitadasView extends MyComposite
 		createToolBar();
 		createForm();
 		createGrid();
-		createFilter();
 		createTabItem();
 		initComponent( this.tabItem );
 	}
@@ -119,22 +113,6 @@ public class ProfessoresDisciplinasHabilitadasView extends MyComposite
 	    this.panel.add( contentPanel, bld );
 	}
 	
-	private void createFilter()
-	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
-
-		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
-		bld.setCollapsible( true );
-
-		this.filter = new SimpleFilter();
-
-		this.tipoProfessorCB = new TipoProfessorComboBox();
-
-		this.filter.addField( this.tipoProfessorCB );
-
-		this.panel.add( this.filter, bld );
-	}
-	
 	public List< ColumnConfig > getColumnList()
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
@@ -185,23 +163,5 @@ public class ProfessoresDisciplinasHabilitadasView extends MyComposite
 	public CampusComboBox getCampusComboBox()
 	{
 		return this.campusCB;
-	}
-	
-	@Override
-	public Button getSubmitBuscaButton()
-	{
-		return this.filter.getSubmitButton();
-	}
-
-	@Override
-	public Button getResetBuscaButton()
-	{
-		return this.filter.getResetButton();
-	}
-	
-	@Override
-	public TipoProfessorComboBox getTipoProfessorComboBox()
-	{
-		return this.tipoProfessorCB;
 	}
 }

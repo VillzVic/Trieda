@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -529,6 +530,53 @@ public class SemanaLetiva
 		}
 
 		return Collections.max( countHorariosAula.values() );
+    }
+    
+    public long calculaMaiorIntervalo()
+    {
+		long maiorIntervalod = 0;
+		
+		Map<Semanas, List<HorarioAula>> semanaMapHorarios = new HashMap<Semanas, List<HorarioAula>>();
+		for (HorarioAula horario : this.getHorariosAula())
+		{
+			for (HorarioDisponivelCenario hdc : horario.getHorariosDisponiveisCenario())
+			{
+				if (semanaMapHorarios.get(hdc.getDiaSemana()) == null)
+				{
+					List<HorarioAula> newHorarios = new ArrayList<HorarioAula>();
+					newHorarios.add(horario);
+					semanaMapHorarios.put(hdc.getDiaSemana(), newHorarios);
+				}
+				else
+				{
+					semanaMapHorarios.get(hdc.getDiaSemana()).add(horario);
+				}
+			}
+		}
+		for (Entry<Semanas, List<HorarioAula>> horarioSemana : semanaMapHorarios.entrySet())
+		{
+		   	List<HorarioAula> horarioOrdenado = new ArrayList<HorarioAula>();
+	    	horarioOrdenado.addAll(horarioSemana.getValue());  	
+			Collections.sort(horarioOrdenado);	
+			if (!horarioOrdenado.isEmpty())
+			{
+				for (int i = 1; i < horarioOrdenado.size(); i++)
+				{
+					Calendar h1 = Calendar.getInstance();
+					h1.setTime(horarioOrdenado.get(i-1).getHorario());
+					h1.add(Calendar.MINUTE,horarioOrdenado.get(i-1).getSemanaLetiva().getTempo());
+					Calendar h2 = Calendar.getInstance();
+					h2.setTime(horarioOrdenado.get(i).getHorario());
+					
+					if (h2.getTimeInMillis() - h1.getTimeInMillis() > maiorIntervalod)
+					{
+						maiorIntervalod = h2.getTimeInMillis() - h1.getTimeInMillis();
+					}
+				}
+			}
+		}
+		
+		return maiorIntervalod;
     }
 
 	public String toString()

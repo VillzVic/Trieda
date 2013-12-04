@@ -13,7 +13,6 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
-import com.gapso.web.trieda.shared.dtos.TipoProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
@@ -50,9 +49,9 @@ public interface AtendimentosService extends RemoteService {
 
 	List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaDisciplina( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 
-	List<RelatorioQuantidadeDTO> getProfessoresJanelasGrade( CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO );
+	List<RelatorioQuantidadeDTO> getProfessoresJanelasGrade( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 
-	List<RelatorioQuantidadeDTO> getProfessoresDisciplinasLecionadas( CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO );
+	List<RelatorioQuantidadeDTO> getProfessoresDisciplinasLecionadas( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 
 	List<RelatorioQuantidadeDTO> getAmbientesFaixaOcupacaoHorarios( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 

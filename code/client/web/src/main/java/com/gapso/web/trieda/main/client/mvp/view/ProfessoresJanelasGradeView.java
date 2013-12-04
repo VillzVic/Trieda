@@ -7,7 +7,6 @@ import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -25,9 +24,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
-import com.gapso.web.trieda.shared.util.view.TipoProfessorComboBox;
 import com.google.gwt.i18n.client.NumberFormat;
 
 public class ProfessoresJanelasGradeView  extends MyComposite
@@ -40,8 +37,6 @@ public class ProfessoresJanelasGradeView  extends MyComposite
 		private ContentPanel panel;
 	private GTabItem tabItem;
 	private CampusComboBox campusCB;
-	private SimpleFilter filter;
-	private TipoProfessorComboBox tipoProfessorCB;
 	private CenarioDTO cenarioDTO;
 	
 	public ProfessoresJanelasGradeView(CenarioDTO cenarioDTO)
@@ -51,7 +46,6 @@ public class ProfessoresJanelasGradeView  extends MyComposite
 		createToolBar();
 		createForm();
 		createGrid();
-		createFilter();
 		createTabItem();
 		initComponent( this.tabItem );
 	}
@@ -105,22 +99,6 @@ public class ProfessoresJanelasGradeView  extends MyComposite
 		this.panel.add( formPanel, bld );
 	}
 	
-	private void createFilter()
-	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
-
-		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
-		bld.setCollapsible( true );
-
-		this.filter = new SimpleFilter();
-
-		this.tipoProfessorCB = new TipoProfessorComboBox();
-
-		this.filter.addField( this.tipoProfessorCB );
-
-		this.panel.add( this.filter, bld );
-	}
-	
 	private void createGrid()
 	{
 	    this.gridPanel = new Grid< RelatorioQuantidadeDTO >( this.getStore(), new ColumnModel( this.getColumnList()) );
@@ -140,7 +118,8 @@ public class ProfessoresJanelasGradeView  extends MyComposite
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 	
 		list.add( new ColumnConfig( RelatorioQuantidadeDTO.PROPERTY_FAIXA_CREDITO, "Quantidade de Janelas na Grade Horária", 240 ) );
-		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Professores (Qtde. Professores)", 170 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE, "Professores Virtuais", 170 ) );
+		list.add( createIntegerColumnConfig( RelatorioQuantidadeDTO.PROPERTY_QUANTIDADE2, "Professores da Instituição", 170 ) );
 		
 		return list;
 	}
@@ -185,23 +164,5 @@ public class ProfessoresJanelasGradeView  extends MyComposite
 	public CampusComboBox getCampusComboBox()
 	{
 		return this.campusCB;
-	}
-	
-	@Override
-	public Button getSubmitBuscaButton()
-	{
-		return this.filter.getSubmitButton();
-	}
-
-	@Override
-	public Button getResetBuscaButton()
-	{
-		return this.filter.getResetButton();
-	}
-	
-	@Override
-	public TipoProfessorComboBox getTipoProfessorComboBox()
-	{
-		return this.tipoProfessorCB;
 	}
 }
