@@ -65,7 +65,9 @@ public class RelatorioSalasPresenter  extends RelatorioPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce){
 				display.getTurnoComboBox().setValue(null);
+				display.getSalaFiltro().setTurno(null);
 				display.getFaixaCapacidadeSalaComboBox().setValue(null);
+				display.getSalaFiltro().setFaixaCapacidadeSala(null);
 			}
 		});
 	}

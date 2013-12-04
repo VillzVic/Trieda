@@ -80,10 +80,15 @@ public class RelatorioProfessoresPresenter extends RelatorioPresenter
 			@Override
 			public void componentSelected(ButtonEvent ce){
 				display.getCursoComboBox().setValue(null);
+				display.getProfessorFiltro().setCurso(null);
 				display.getTurnoComboBox().setValue(null);
+				display.getProfessorFiltro().setTurno(null);
 				display.getTitulacaoComboBox().setValue(null);
+				display.getProfessorFiltro().setTitulacao(null);
 				display.getAreaTitulacaoComboBox().setValue(null);
+				display.getProfessorFiltro().setAreaTitulacao(null);
 				display.getTipoContratoComboBox().setValue(null);
+				display.getProfessorFiltro().setTipoContrato(null);
 			}
 		});
 	}
