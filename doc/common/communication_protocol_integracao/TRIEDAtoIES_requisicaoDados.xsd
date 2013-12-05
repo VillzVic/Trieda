@@ -14,8 +14,16 @@ Este XSD define o protocolo de comunicação utilizado nos passos 1 e 3.</xs:doc
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="requisicaoDadosGerais" type="ItemRequisicaoDadosGerais" />
-        <xs:element minOccurs="0" name="requisicaoOfertasDemandas" type="ItemRequisicaoOfertasDemandas" />
+        <xs:element minOccurs="0" name="requisicaoDadosGerais" type="ItemRequisicaoDadosGerais">
+          <xs:annotation>
+            <xs:documentation>Parâmetros da requisição por informações de dados gerais.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="0" name="requisicaoOfertasDemandas" type="ItemRequisicaoOfertasDemandas">
+          <xs:annotation>
+            <xs:documentation>Parâmetros da requisição por informações de ofertas e demandas.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -151,17 +159,17 @@ Este XSD define o protocolo de comunicação utilizado nos passos 1 e 3.</xs:doc
     <xs:sequence>
       <xs:element name="filtroAno" type="xs:int">
         <xs:annotation>
-          <xs:documentation>ano</xs:documentation>
+          <xs:documentation>Determina o ano letivo da informação de demanda que se quer obter.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="filtroSemestre" type="xs:int">
         <xs:annotation>
-          <xs:documentation>semestre</xs:documentation>
+          <xs:documentation>Determina o semestre letivo da informação de demanda que se quer obter.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="filtroCampiTurnos" type="GrupoFiltroCampusTurno">
         <xs:annotation>
-          <xs:documentation>pares (campus, turno)</xs:documentation>
+          <xs:documentation>Determina os pares (campus, turno) para os quais se quer obter a informação de demanda.</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="alunos" type="xs:boolean">
@@ -190,7 +198,7 @@ Este XSD define o protocolo de comunicação utilizado nos passos 1 e 3.</xs:doc
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="filtroCampusTurno" type="ItemFiltroCampusTurno">
         <xs:annotation>
-          <xs:documentation>Identificador único do campus.</xs:documentation>
+          <xs:documentation>Representa um par (campus, turno) para o qual se quer obter a informação de demanda.</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
