@@ -10,7 +10,7 @@
 4). Sistema Educacional da Instituição de Ensino (IES) responde para o Trieda os dados de ofertas e demandas
 5). Trieda envia para Sistema Educacional da Instituição de Ensino (IES) as turmas criadas com as respectivas aulas (grades horárias)
 
-Este XSD define o protocolo de comunicação utilizado nos passos 1 e 3.</xs:documentation>
+Este XSD define o protocolo de comunicação utilizado nos passos 2 e 4.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
