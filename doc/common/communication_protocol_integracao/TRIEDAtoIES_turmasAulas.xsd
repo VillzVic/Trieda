@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="TRIEDAtoIES_turmasAulas">
+    <xs:annotation>
+      <xs:documentation>Este documento representa parte do protocolo de comunicação entre o Sistema Educacional da Instituição de Ensino (IES) e o TRIEDA. A sequência lógica de comunicação é a seguinte:
+1). Trieda solicita para Sistema Educacional da Instituição de Ensino (IES) os dados gerais, isto é, dados que costumam variar muito pouco de um semestre letivo para o outro, por exemplo; campi, unidades, salas, ....
+2). Sistema Educacional da Instituição de Ensino (IES) responde para o Trieda os dados gerais
+3). Trieda solicita para Sistema Educacional da Instituição de Ensino (IES) os dados de ofertas e demandas, isto é, dados que variam de um semestre letivo para o outro
+4). Sistema Educacional da Instituição de Ensino (IES) responde para o Trieda os dados de ofertas e demandas
+5). Trieda envia para Sistema Educacional da Instituição de Ensino (IES) as turmas criadas com as respectivas aulas (grades horárias)
+
+Este XSD define o protocolo de comunicação utilizado no passo 5.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ano" type="xs:int">
+          <xs:annotation>
+            <xs:documentation>Ano letivo das turmas geradas pelo trieda.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="semestre" type="xs:int">
+          <xs:annotation>
+            <xs:documentation>Semestre letivo das turmas geradas pelo trieda.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element minOccurs="1" name="turmas" type="GrupoTurma">
+          <xs:annotation>
+            <xs:documentation>Turmas geradas pelo Trieda.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ItemAlunoDemanda">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador único do aluno.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="matricula" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Matrícula do aluno.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador da disciplina na qual o aluno deveria ser originalmente atendido.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAula">
+    <xs:sequence>
+      <xs:element name="ambienteId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador do ambiente (sala de aula ou laboratório) no qual a aula em questão ocorre.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="diaSemanaId" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Um inteiro que representa o dia da semana em que a aula ocorre. Os valores possíveis são: (1 - Dom), (2 - Seg), (3 - Ter), (4 - Qua), (5 - Qui), (6 - Sex), (7 - Sab).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horarios" type="GrupoHorarioAula">
+        <xs:annotation>
+          <xs:documentation>Lista dos tempos de aula. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemHorarioAula">
+    <xs:sequence>
+      <xs:element name="horarioInicio" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Horário de início do tempo de aula no formato HH:MM.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="horarioFim" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Horário de término do tempo de aula no formato HH:MM.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="professorId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador do professor que foi alocado para ministrar o tempo de aula em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemTurma">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador único da turma.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinaAulaId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador da disciplina da aula da turma em questão.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="alunosDemandas" type="GrupoAlunoDemanda">
+        <xs:annotation>
+          <xs:documentation>Lista dos pares (aluno, disciplina), isto é, os alunos pertencentes a esta turma com a sua respectiva disciplina na qual deveria ser originalmente atendido. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="aulas" type="GrupoAula">
+        <xs:annotation>
+          <xs:documentation>Aulas da turma.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoAlunoDemanda">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="alunoDemanda" type="ItemAlunoDemanda">
+        <xs:annotation>
+          <xs:documentation>Representa um par (aluno, disciplina).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoAula">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="aula" type="ItemAula">
+        <xs:annotation>
+          <xs:documentation>Representa uma aula.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoHorarioAula">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="horarioAula" type="ItemHorarioAula">
+        <xs:annotation>
+          <xs:documentation>Representa um tempo de aula através da definição do seu horário de início e horário de término.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoTurma">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="turma" type="ItemTurma">
+        <xs:annotation>
+          <xs:documentation>Representa uma turma gerada pelo Trieda.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
