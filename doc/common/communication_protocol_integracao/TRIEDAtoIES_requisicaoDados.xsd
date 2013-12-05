@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.8.0 (http://www.liquid-technologies.com) -->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="TRIEDAtoIES_requisicaoDados">
+    <xs:annotation>
+      <xs:documentation>Este documento representa parte do protocolo de comunicação entre o Sistema Educacional da Instituição de Ensino (IES) e o TRIEDA. A sequência lógica de comunicação é a seguinte:
+1). Trieda solicita para Sistema Educacional da Instituição de Ensino (IES) os dados gerais, isto é, dados que costumam variar muito pouco de um semestre letivo para o outro, por exemplo; campi, unidades, salas, ....
+2). Sistema Educacional da Instituição de Ensino (IES) responde para o Trieda os dados gerais
+3). Trieda solicita para Sistema Educacional da Instituição de Ensino (IES) os dados de ofertas e demandas, isto é, dados que variam de um semestre letivo para o outro
+4). Sistema Educacional da Instituição de Ensino (IES) responde para o Trieda os dados de ofertas e demandas
+5). Trieda envia para Sistema Educacional da Instituição de Ensino (IES) as turmas criadas com as respectivas aulas (grades horárias)
+
+Este XSD define o protocolo de comunicação utilizado nos passos 1 e 3.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="requisicaoDadosGerais" type="ItemRequisicaoDadosGerais" />
+        <xs:element minOccurs="0" name="requisicaoOfertasDemandas" type="ItemRequisicaoOfertasDemandas" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ItemFiltroCampusTurno">
+    <xs:sequence>
+      <xs:element name="campusId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador único do campus.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="turnoId" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Identificador único do turno.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemRequisicaoDadosGerais">
+    <xs:sequence>
+      <xs:element name="filtroDataHora" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Instante de tempo (no formato, dd/mm/aaaa hh:mm:ss) a partir do qual deverão ser filtradas todas as informações que farão parte da resposta a esta requisição.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="turnos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de turnos deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="semanasLetivas" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de semanas letivas (ou grupos de horários) deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="campi" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de campi deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="deslocamentosCampi" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de deslocamentos entre campi deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="unidades" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de unidades (prédios) deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="deslocamentosUnidades" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de deslocamentos entre unidades deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ambientes" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de ambientes (salas de aula e laboratórios) deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="gruposAmbientes" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de grupos de ambientes (ou blocos) deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="regrasGeraisDivisaoCreditos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de regras de divisão de créditos deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinas" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de disciplinas deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinasAmbientes" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de relações válidas do tipo (disciplina, ambiente) deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinasGruposAmbientes" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de relações válidas do tipo (disciplina, ambiente) deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="disciplinasEquivalentes" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de equivalências entre disciplinas deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="tiposCurso" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de tipos de cursos deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="cursos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de cursos deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="curriculos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de matrizes curriculares deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="curriculosPreRequistos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de relações do tipo pré-requisitos por matriz curricular deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="curriculosCoRequistos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de relações do tipo corequisitos por matriz curricular deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="professores" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de professores deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="professoresDisciplinas" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de disciplinas que os professores podem ministrar deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="professoresCampi" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de relações válidas entre professor e campus de trabalho deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemRequisicaoOfertasDemandas">
+    <xs:sequence>
+      <xs:element name="filtroAno" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>ano</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="filtroSemestre" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>semestre</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="filtroCampiTurnos" type="GrupoFiltroCampusTurno">
+        <xs:annotation>
+          <xs:documentation>pares (campus, turno)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="alunos" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações de alunos deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="alunosDisciplinasCursadas" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações das disciplinas já cursadas pelos alunos deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ofertasCampiPrimaria" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações das ofertas de cursos em campi, com as respectivas demandas (alunos) por disciplina, deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" name="ofertasCampiSecundaria" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Define se as informações das ofertas de cursos em campi, com as respectivas demandas (alunos) por disciplina, deverão ser enviadas</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoFiltroCampusTurno">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="filtroCampusTurno" type="ItemFiltroCampusTurno">
+        <xs:annotation>
+          <xs:documentation>Identificador único do campus.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
