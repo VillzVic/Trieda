@@ -149,5 +149,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("habilitacao_professor_16.png") ImageResource habilitacaoProfessor16();
 	@Source("aluno_curriculo_16.png") ImageResource alunoCurriculo16();
 	@Source("disciplina_curriculo_16.png") ImageResource disciplinaCurriculo16();
+	@Source("senha_16.png") ImageResource senha16();
+	@Source("chave_16.png") ImageResource chave16();
 
 }

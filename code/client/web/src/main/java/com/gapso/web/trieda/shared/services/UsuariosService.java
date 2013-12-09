@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AlterarSenhaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -21,4 +23,5 @@ public interface UsuariosService
 		String email, PagingLoadConfig config );
 	UsuarioDTO getCurrentUser();
 	InstituicaoEnsinoDTO getInstituicaoEnsinoUserDTO();
+	void changePassword(UsuarioDTO usuarioDTO, AlterarSenhaDTO alterarSenhaDTO) throws TriedaException;
 }

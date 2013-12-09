@@ -1,9 +1,14 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import com.extjs.gxt.ui.client.event.MenuEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.ToolBarView;
+import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
@@ -12,10 +17,12 @@ import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,15 +40,31 @@ public class AppPresenter
 		Widget asWidget();
 		Component getComponent();
 		CenarioPanel getCenarioPanel();
+		MenuItem getGerenciarCenariosButton();
+		MenuItem getGerenciarRequisicoesCenariosButton();
+		MenuItem getListarUsuariosButton();
+		MenuItem getUsuariosAlterarSenhaButton();
+		MenuItem getUsuariosSairButton();
+		MenuItem getUsuariosNomeButton();
 	}
 
 	private Display viewport;
+	
+	private CenarioDTO cenario;
+	private InstituicaoEnsinoDTO instituicaoEnsino;
+	private UsuarioDTO usuario;
 
 	public AppPresenter( Display viewport )
 	{
 		this.viewport = viewport;
+		addListeners();
 	}
 	
+	private void addListeners() {
+
+		
+	}
+
 	// Código relacionado com a issue:
 	// http://jira.gapso.com.br/browse/TRIEDA-990
 	private void createThreadAvoidSessionExpire()
@@ -92,9 +115,9 @@ public class AppPresenter
 		synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(viewport) {
 			@Override
 			public void onSuccess(Boolean result) {
-				CenarioDTO cenario = futureCenarioDTO.result();
-				UsuarioDTO usuario = futureUsuarioDTO.result();
-				InstituicaoEnsinoDTO instituicaoEnsino =  futureInstituicaoEnsinoDTO.result();
+				cenario = futureCenarioDTO.result();
+				usuario = futureUsuarioDTO.result();
+				instituicaoEnsino =  futureInstituicaoEnsinoDTO.result();
 				Integer dbVersion = futureDBVersion.result();
 				Integer dbCurrentVersion = Integer.parseInt(viewport.getI18nConstants().dbVersion());
 				
@@ -110,6 +133,35 @@ public class AppPresenter
 
 				// Enquanto o browser estiver aberto, a sessão não irá expirar
 				createThreadAvoidSessionExpire();
+				
+				viewport.getUsuariosNomeButton().setText(usuario.getNome());
+				
+				viewport.getListarUsuariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected( MenuEvent ce ) {
+					Presenter presenter = new UsuariosPresenter( instituicaoEnsino,
+							cenario, new UsuariosView() );
+
+					presenter.go( viewport.getGTab() );
+					}
+				});
+				
+				viewport.getUsuariosAlterarSenhaButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected( MenuEvent ce ) {
+					Presenter presenter = new AlterarSenhaFormPresenter( instituicaoEnsino,
+							new AlterarSenhaFormView(usuario) );
+
+					presenter.go( viewport.getGTab() );
+					}
+				});
+				
+				viewport.getUsuariosSairButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected( MenuEvent ce ) {
+						Window.open("../resources/j_spring_security_logout"+TriedaUtil.paramsDebug(), "_self", "");
+					}
+				});
 			}
 		});
 	}

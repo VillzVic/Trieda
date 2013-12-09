@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AlterarSenhaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -18,4 +19,6 @@ public interface UsuariosServiceAsync
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< UsuarioDTO > > callback );
 	void getCurrentUser( AsyncCallback< UsuarioDTO > callback );
 	void getInstituicaoEnsinoUserDTO( AsyncCallback< InstituicaoEnsinoDTO > callback );
+	void changePassword(UsuarioDTO usuarioDTO, AlterarSenhaDTO alterarSenhaDTO,
+			AsyncCallback<Void> callback);
 }

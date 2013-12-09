@@ -13,10 +13,12 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Usuario;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Encryption;
+import com.gapso.web.trieda.shared.dtos.AlterarSenhaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.services.UsuariosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public class UsuariosServiceImpl
 	extends RemoteService
@@ -118,6 +120,22 @@ public class UsuariosServiceImpl
 			authority.setUsername( usuario.getUsername() );
 			authority.setInstituicaoEnsino(usuario.getInstituicaoEnsino());
 			authority.persist();
+		}
+	}
+	
+	@Override
+	public void changePassword( UsuarioDTO usuarioDTO, AlterarSenhaDTO alterarSenhaDTO ) throws TriedaException
+	{
+		Usuario usuario = Usuario.find( usuarioDTO.getUsername() );
+		
+		if (!alterarSenhaDTO.getSenhaAntiga().equals(usuario.getPassword()))
+		{
+			throw new TriedaException("Senha antiga foi digitada incorretamente.");
+		}
+		else
+		{
+			usuario.setPassword(alterarSenhaDTO.getSenhaNova());
+			usuario.merge();
 		}
 	}
 
