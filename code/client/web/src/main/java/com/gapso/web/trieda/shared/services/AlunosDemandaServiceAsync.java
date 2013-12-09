@@ -8,11 +8,14 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AlunosDemandaServiceAsync
@@ -27,4 +30,6 @@ public interface AlunosDemandaServiceAsync
 			PagingLoadConfig loadConfig, AsyncCallback<PagingLoadResult<ResumoMatriculaDTO>> callback );
 	void getResumoFaixaDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas,
 			AsyncCallback<List<AtendimentoFaixaDemandaDTO>> callback );
+	void getAlunosDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO,
+			DisciplinaDTO disciplinaDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<AlunoDemandaDTO>> callback );
 }

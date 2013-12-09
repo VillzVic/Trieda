@@ -27,6 +27,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CompatibilidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CursosView;
+import com.gapso.web.trieda.main.client.mvp.view.DemandasPorAlunoView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandasView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinasCoRequisitosView;
@@ -136,6 +137,7 @@ public class ToolBarPresenter
 		Button getDisciplinasNovoDisciplinasButton();
 		Button getDisciplinasListDisciplinasButton();
 		Button getDemandasDisciplinasButton();
+		Button getDemandasPorAlunoDisciplinasButton();
 		Button getAssociarDisciplinasSalasListDisciplinasButton();
 		Button getAssociarDisciplinasGruposSalasListDisciplinasButton();
 		Button getCurriculosListDisciplinasButton();
@@ -195,6 +197,8 @@ public class ToolBarPresenter
 		Button getCurriculosDisciplinasCoRequisitosDemandasButton();
 		Button getAlunosDisciplinasCursadasDemandasButton();
 		Button getParametrosGeracaoDemandaButton();
+		Button getDemandasDemandasButton();
+		Button getDemandasPorAlunoDemandasButton();
 
 		Button getSemanasLetivaListCampiButton();
 		Button getTurnosListCampiButton();
@@ -852,6 +856,19 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getDemandasPorAlunoDisciplinasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DemandasPorAlunoPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DemandasPorAlunoView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
 
 		this.toolBar.getRelatorioVisaoSalaMenuItem().addSelectionListener(
 			new SelectionListener< MenuEvent >()
@@ -1262,32 +1279,58 @@ public class ToolBarPresenter
 		});
 		
 		this.toolBar.getParametrosGeracaoDemandaButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
 			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					Services.demandas().getParametroGeracaoDemanda(
-							cenarioDTO, new AsyncCallback< ParametroGeracaoDemandaDTO >()
+				Services.demandas().getParametroGeracaoDemanda(
+						cenarioDTO, new AsyncCallback< ParametroGeracaoDemandaDTO >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
 						{
-							@Override
-							public void onFailure( Throwable caught )
-							{
-								MessageBox.alert( "ERRO!",
-									"Não foi possível abrir a tela de parâmetros", null );
-							}
+							MessageBox.alert( "ERRO!",
+								"Não foi possível abrir a tela de parâmetros", null );
+						}
 
-							@Override
-							public void onSuccess(ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO) {
-								Presenter presenter = new ParametrosGeracaoDemandaPresenter(
-										cenarioDTO, instituicaoEnsinoDTO,
-										new ParametrosGeracaoDemandaView(cenarioDTO, parametroGeracaoDemandaDTO) );
+						@Override
+						public void onSuccess(ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO) {
+							Presenter presenter = new ParametrosGeracaoDemandaPresenter(
+									cenarioDTO, instituicaoEnsinoDTO,
+									new ParametrosGeracaoDemandaView(cenarioDTO, parametroGeracaoDemandaDTO) );
 
-									presenter.go( gTab );
-							}
-						});
-				}
-			});
+								presenter.go( gTab );
+						}
+					});
+			}
+		});
+		
+		this.toolBar.getDemandasDemandasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DemandasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DemandasView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getDemandasPorAlunoDemandasButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DemandasPorAlunoPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DemandasPorAlunoView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
 	}
 
 	@Override

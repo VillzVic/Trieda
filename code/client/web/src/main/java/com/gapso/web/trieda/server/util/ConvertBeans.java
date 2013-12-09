@@ -3261,6 +3261,10 @@ public class ConvertBeans {
 		dto.setAlunoMatricula( domain.getAluno().getMatricula() );
 		
 		// Demanda
+		dto.setCampusString( domain.getDemanda().getOferta().getCampus().getCodigo() );
+		dto.setTurnoString( domain.getDemanda().getOferta().getTurno().getNome() );
+		dto.setCursoString( domain.getDemanda().getOferta().getCurriculo().getCodigo() );
+		dto.setCurriculoString( domain.getDemanda().getOferta().getCurriculo().getCodigo() );
 		dto.setDemandaId( domain.getDemanda().getId() );
 
 		String demandaStr = domain.getDemanda().getOferta().getCampus().getCodigo()

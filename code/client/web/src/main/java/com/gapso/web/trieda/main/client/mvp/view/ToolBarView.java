@@ -73,6 +73,7 @@ public class ToolBarView
 	private Button disciplinasNovoDisciplinasBt;
 	private Button disciplinasListDisciplinasBt;
 	private Button demandasDisciplinasBt;
+	private Button demandasPorAlunoDisciplinasBt;
 	private Button curriculosListDisciplinasBt;
 	private Button curriculosDisciplinasPreRequisitosListDisciplinasBt;
 	private Button curriculosDisciplinasCoRequisitosListDisciplinasBt;
@@ -112,6 +113,8 @@ public class ToolBarView
 	private Button curriculosDisciplinasCoRequisitosListDemandasBt;
 	private Button alunosDisciplinasCursadasDemandasBt;
 	private Button parametrosGeracaoDemandaBt;
+	private Button demandasDemandasBt;
+	private Button demandasPorAlunoDemandasBt;
 
 	// Calendário
 	private Button semanasLetivaListCampiBt;
@@ -377,10 +380,14 @@ public class ToolBarView
 				"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
 			disciplinasToolBar.add( curriculosDisciplinasCoRequisitosListDisciplinasBt );
 
-		demandasDisciplinasBt = createButton( "Previsão de<br />demanda",
+		demandasDisciplinasBt = createButton( "Ofertas e<br />Demandas",
 			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
 		disciplinasToolBar.add( demandasDisciplinasBt );
 
+		demandasPorAlunoDisciplinasBt = createButton( "Demandas por<br />Aluno",
+				"Previsão de demanda", Resources.DEFAULTS.demanda24() );
+		disciplinasToolBar.add( demandasPorAlunoDisciplinasBt );
+		
 		divisaoCreditosListDisciplinasBt = createButton( "Regras de Divisão<br />de Créditos",
 			"Regras de Divisão de Créditos", Resources.DEFAULTS.divisaoCredito24() );
 		disciplinasToolBar.add( divisaoCreditosListDisciplinasBt );
@@ -527,6 +534,13 @@ public class ToolBarView
 			"Parâmetros para Geração de Demanda", Resources.DEFAULTS.parametroPlanejamento24() );
 		geracaoDemandaToolBar.add( parametrosGeracaoDemandaBt );
 		
+		demandasDemandasBt = createButton( "Ofertas e<br />Demandas",
+			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
+		geracaoDemandaToolBar.add( demandasDemandasBt );
+
+		demandasPorAlunoDemandasBt = createButton( "Demandas por<br />Aluno",
+				"Previsão de demanda", Resources.DEFAULTS.demanda24() );
+		geracaoDemandaToolBar.add( demandasPorAlunoDemandasBt );
 	}
 
 	private void createCalendario()
@@ -711,6 +725,12 @@ public class ToolBarView
 	public Button getDemandasDisciplinasButton()
 	{
 		return demandasDisciplinasBt;
+	}
+	
+	@Override
+	public Button getDemandasPorAlunoDisciplinasButton()
+	{
+		return demandasPorAlunoDisciplinasBt;
 	}
 
 	@Override
@@ -1033,4 +1053,15 @@ public class ToolBarView
 		return parametrosGeracaoDemandaBt;
 	}
 
+	@Override
+	public Button getDemandasDemandasButton()
+	{
+		return demandasDemandasBt;
+	}
+	
+	@Override
+	public Button getDemandasPorAlunoDemandasButton()
+	{
+		return demandasPorAlunoDemandasBt;
+	}
 }

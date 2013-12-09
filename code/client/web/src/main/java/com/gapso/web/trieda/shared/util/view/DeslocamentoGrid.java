@@ -112,20 +112,20 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 				String stringColumn = "Tempo (min)";
 				list.add(createColumnConfig(idColumn, stringColumn, false, renderer));
 				
-				if(containsCusto) {
+/*				if(containsCusto) {
 					idColumn = "destinoCusto"+model.get("origemId");
 					stringColumn = "Custo (R$)";
 					list.add(createColumnConfig(idColumn, stringColumn, true, renderer));
-				}
+				}*/
 			}
 			columnModel = new ColumnModel(list);
 			for(int i = 0; i < models.size(); i++) {
 				String stringColumn = TriedaUtil.truncate((String) models.get(i).get("origemString"),15);
-				if(containsCusto) {
+/*				if(containsCusto) {
 					columnModel.addHeaderGroup(0, (i+1)*2-1, new HeaderGroupConfig(stringColumn, 1, 2));
-				} else {
+				} else {*/
 					columnModel.addHeaderGroup(0, i+1, new HeaderGroupConfig(stringColumn));
-				}
+/*				}*/
 			}
 			
 		} else {
@@ -161,11 +161,12 @@ public class DeslocamentoGrid<M extends BaseModel> extends ContentPanel {
 	}
 
 	private boolean isDiagonal(int rowIndex, int colIndex) {
-		return ((containsCusto && rowIndex == ((colIndex-1)/2)) || (!containsCusto && rowIndex == (colIndex-1)));
+/*		return ((containsCusto && rowIndex == ((colIndex-1)/2)) || (!containsCusto && rowIndex == (colIndex-1)));*/
+		return (rowIndex == (colIndex-1));
 	}
 	
 	private ColumnConfig createColumnConfig(String id, String columnString, Boolean allowDecimals, GridCellRenderer<M> renderer) {
-		ColumnConfig column = new ColumnConfig(id, columnString, containsCusto? 70 : 140);
+		ColumnConfig column = new ColumnConfig(id, columnString, containsCusto? 140 : 140);
 		column.setResizable(false);
 		column.setMenuDisabled(true);
 		column.setSortable(false);

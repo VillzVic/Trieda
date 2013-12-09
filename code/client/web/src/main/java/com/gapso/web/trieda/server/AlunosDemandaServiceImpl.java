@@ -22,20 +22,25 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
+import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoCargaHorariaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
+import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AlunosDemandaService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -89,6 +94,77 @@ public class AlunosDemandaServiceImpl
 		return result;
 	}
 
+	@Override
+	public PagingLoadResult< AlunoDemandaDTO > getAlunosDemandaList( CenarioDTO cenarioDTO,
+			CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
+			TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		String orderBy = config.getSortField();
+		
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+				&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
+			}
+		}
+
+		Campus campus = null;
+		if ( campusDTO != null )
+		{
+			campus = ConvertBeans.toCampus( campusDTO );
+		}
+		
+		Curso curso = null;
+		if ( cursoDTO != null )
+		{
+			curso = ConvertBeans.toCurso( cursoDTO );
+		}
+
+		Curriculo curriculo	= null;
+		if ( curriculoDTO != null )
+		{
+			curriculo = ConvertBeans.toCurriculo( curriculoDTO );
+		}
+
+		Turno turno = null;
+		if ( turnoDTO != null )
+		{
+			turno = ConvertBeans.toTurno( turnoDTO );
+		}
+
+		Disciplina disciplina = null;
+		if ( disciplinaDTO != null )
+		{
+			disciplina = ConvertBeans.toDisciplina( disciplinaDTO );
+		}
+		
+		List< AlunoDemandaDTO > list	
+			= new ArrayList< AlunoDemandaDTO >();
+	
+		List< AlunoDemanda > listDomains = AlunoDemanda.findBy( getInstituicaoEnsinoUser(),
+				cenario, campus, curso, curriculo, turno, disciplina,
+				config.getOffset(), config.getLimit(), orderBy );
+		
+		list.addAll( ConvertBeans.toListAlunoDemandaDTO(listDomains) );
+
+		BasePagingLoadResult< AlunoDemandaDTO > result
+			= new BasePagingLoadResult< AlunoDemandaDTO >( list );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( AlunoDemanda.count( getInstituicaoEnsinoUser(),
+			cenario, campus, curso, curriculo, turno, disciplina ) );
+	
+		return result;
+	}
+	
 	@Override
 	public void saveAlunoDemanda(
 		DemandaDTO demandaDTO, AlunoDemandaDTO alunoDemandaDTO ) throws TriedaException

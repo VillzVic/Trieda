@@ -1015,7 +1015,7 @@ public class ProfessoresServiceImpl
 		atendimento.add( new RelatorioDTO( " Média de Turmas por Docente: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)totalTurmas/(double)professoresUtilizados.size(), 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Listas de Docentes Utilizados no Atendimento: ") );
-		RelatorioDTO todosDocentes = new RelatorioDTO( " Todos Docentes: " + numberFormatter.print(professoresUtilizados.size(),pt_BR));
+		RelatorioDTO todosDocentes = new RelatorioDTO( " Todos os Docentes Utilizados no Atendimento: " + numberFormatter.print(professoresUtilizados.size(),pt_BR));
 		todosDocentes.setButtonText(todosDocentes.getText());
 		todosDocentes.setButtonIndex(5);
 		todosDocentes.setCampusId(campus.getId());

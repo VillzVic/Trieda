@@ -6,6 +6,10 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	private static final long serialVersionUID = -5134820110949139907L;
 
 	// Propriedades
+	public static final String PROPERTY_CAMPUS_STRING = "campusString";
+	public static final String PROPERTY_TURNO_STRING = "turnoString";
+	public static final String PROPERTY_CURSO_STRING = "cursoString";
+	public static final String PROPERTY_CURRICULO_STRING = "curriculoString";
 	public static final String PROPERTY_ALUNO_DEMANDA_ID = "alunoDemandaId";
 	public static final String PROPERTY_ALUNO_ID = "alunoId";
 	public static final String PROPERTY_ALUNO_STRING = "alunoString";
@@ -151,6 +155,46 @@ public class AlunoDemandaDTO extends AbstractDTO< String >
 	public void setDemandaString( String value )
 	{
 		set( PROPERTY_DEMANDA_STRING, value );
+	}
+	
+	public String getCampusString()
+	{
+		return get( PROPERTY_CAMPUS_STRING );
+	}
+
+	public void setCampusString( String value )
+	{
+		set( PROPERTY_CAMPUS_STRING, value );
+	}
+	
+	public String getTurnoString()
+	{
+		return get( PROPERTY_TURNO_STRING );
+	}
+
+	public void setTurnoString( String value )
+	{
+		set( PROPERTY_TURNO_STRING, value );
+	}
+	
+	public String getCursoString()
+	{
+		return get( PROPERTY_CURSO_STRING );
+	}
+
+	public void setCursoString( String value )
+	{
+		set( PROPERTY_CURSO_STRING, value );
+	}
+	
+	public String getCurriculoString()
+	{
+		return get( PROPERTY_CURRICULO_STRING );
+	}
+
+	public void setCurriculoString( String value )
+	{
+		set( PROPERTY_CURRICULO_STRING, value );
 	}
 
 	@Override

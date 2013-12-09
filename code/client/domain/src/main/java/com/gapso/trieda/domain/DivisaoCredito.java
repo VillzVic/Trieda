@@ -288,7 +288,8 @@ public class DivisaoCredito
 	public static List<DivisaoCredito> findByInstituicaoEnsino(InstituicaoEnsino instituicaoEnsino) { 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM DivisaoCredito o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino"
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino" +
+			" ORDER BY o.creditos"
 		);
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 

@@ -42,6 +42,7 @@ public class ExportExcelFactory {
 			case CURSOS: exporter = new CursosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case CURSO_AREAS_TITULACAO: exporter = new CursoAreasTitulacaoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case DEMANDAS: exporter = new DemandasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case DEMANDAS_POR_ALUNO: exporter = new AlunosDemandaExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case CAMPI_DESLOCAMENTO: exporter = new CampiDeslocamentoExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
 			case UNIDADES_DESLOCAMENTO: exporter = new UnidadesDeslocamentosExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case DISCIPLINAS: exporter = new DisciplinasExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
