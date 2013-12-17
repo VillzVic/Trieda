@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -53,12 +54,14 @@ public class UnidadesDeslocamentoPresenter
 	private Display display; 
 	private GTab gTab;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 
 	public UnidadesDeslocamentoPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-			Display display )
+			CenarioDTO cenarioDTO, Display display )
 	{
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 		//configureProxy();
 		setListeners();
 	}
@@ -144,7 +147,7 @@ public class UnidadesDeslocamentoPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.UNIDADES_DESLOCAMENTO, instituicaoEnsinoDTO );
+							ExcelInformationType.UNIDADES_DESLOCAMENTO, instituicaoEnsinoDTO, cenarioDTO );
 
 					ImportExcelFormView importExcelFormView
 						= new ImportExcelFormView( parametros, null );
@@ -162,7 +165,7 @@ public class UnidadesDeslocamentoPresenter
 					String fileExtension = "xls";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.UNIDADES_DESLOCAMENTO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.UNIDADES_DESLOCAMENTO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -181,7 +184,7 @@ public class UnidadesDeslocamentoPresenter
 					String fileExtension = "xlsx";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.UNIDADES_DESLOCAMENTO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.UNIDADES_DESLOCAMENTO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros, display.getI18nConstants(), display.getI18nMessages() );

@@ -20,6 +20,7 @@ import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -58,11 +59,14 @@ public class VincularAreasTitulacaoPresenter
 
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 
 	public VincularAreasTitulacaoPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO,
+		Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 
 		this.display = display;
 		configureProxy();
@@ -75,7 +79,7 @@ public class VincularAreasTitulacaoPresenter
 			@Override
 			public void load(Object loadConfig, AsyncCallback<List<AreaTitulacaoDTO>> callback) {
 				CursoDTO cursoDTO = display.getCursoComboBox().getValue();
-				service.getListNaoVinculadas(cursoDTO, callback);
+				service.getListNaoVinculadas(cenarioDTO, cursoDTO, callback);
 			}
 		};
 		display.getNaoVinculadaList().setStore(new ListStore<AreaTitulacaoDTO>(new BaseListLoader<ListLoadResult<AreaTitulacaoDTO>>(proxyNaoVinculada)));
@@ -152,7 +156,7 @@ public class VincularAreasTitulacaoPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO );
+					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, cenarioDTO );
 
 				ImportExcelFormView importExcelFormView
 					= new ImportExcelFormView( parametros, null );
@@ -167,7 +171,7 @@ public class VincularAreasTitulacaoPresenter
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -183,7 +187,7 @@ public class VincularAreasTitulacaoPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.CURSO_AREAS_TITULACAO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

@@ -2,6 +2,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.util.view.RelatorioProfessorFiltro;
 
 public class ProfessoresComJanelasListView
@@ -9,8 +10,8 @@ public class ProfessoresComJanelasListView
 {
 
 	public ProfessoresComJanelasListView(
-			RelatorioProfessorFiltro professorFiltro) {
-		super(professorFiltro);
+			CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro) {
+		super(cenarioDTO, professorFiltro);
 	}
 
 	@Override

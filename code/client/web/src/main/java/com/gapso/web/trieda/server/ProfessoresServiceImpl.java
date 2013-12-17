@@ -240,13 +240,15 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TipoContratoDTO > getTiposContratoAll()
+	public ListLoadResult< TipoContratoDTO > getTiposContratoAll( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< TipoContratoDTO > listDTO
 			= new ArrayList< TipoContratoDTO >();
 
 		List< TipoContrato > listTiposContrato
-			= TipoContrato.findAll( getInstituicaoEnsinoUser() );
+			= TipoContrato.findByCenario( getInstituicaoEnsinoUser(), cenario );
 
 		for ( TipoContrato tipoContrato : listTiposContrato )
 		{
@@ -267,10 +269,12 @@ public class ProfessoresServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TitulacaoDTO > getTitulacoesAll()
+	public ListLoadResult< TitulacaoDTO > getTitulacoesAll( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< TitulacaoDTO > listDTO = new ArrayList< TitulacaoDTO >();
-		List< Titulacao > list = Titulacao.findAll( this.getInstituicaoEnsinoUser() );
+		List< Titulacao > list = Titulacao.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
 
 		for ( Titulacao titulacao : list )
 		{
@@ -615,7 +619,7 @@ public class ProfessoresServiceImpl
 		
 		Map<Titulacao, Integer> titulacoesToNumProfessoresMap = new HashMap<Titulacao, Integer>();
 		Map<Titulacao, Integer> titulacoesToNumProfessoresVirtuaisMap = new HashMap<Titulacao, Integer>();
-		for (Titulacao titulacao : Titulacao.findAll(getInstituicaoEnsinoUser()))
+		for (Titulacao titulacao : Titulacao.findByCenario(getInstituicaoEnsinoUser(), cenario))
 		{
 			titulacoesToNumProfessoresMap.put(titulacao, 0);
 			titulacoesToNumProfessoresVirtuaisMap.put(titulacao, 0);
@@ -651,7 +655,7 @@ public class ProfessoresServiceImpl
 		List<RelatorioQuantidadeDTO> professoresTitulacoes = new ArrayList<RelatorioQuantidadeDTO>();
 		
 		Map<AreaTitulacao, Integer> areasTitulacaoToNumProfessoresMap = new HashMap<AreaTitulacao, Integer>();
-		for (AreaTitulacao areaTitulacao : AreaTitulacao.findAll(getInstituicaoEnsinoUser()))
+		for (AreaTitulacao areaTitulacao : AreaTitulacao.findByCenario(getInstituicaoEnsinoUser(), cenario))
 		{
 			areasTitulacaoToNumProfessoresMap.put(areaTitulacao, 0);
 		}

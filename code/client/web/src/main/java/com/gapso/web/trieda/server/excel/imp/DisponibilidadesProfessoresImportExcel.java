@@ -194,7 +194,7 @@ public class DisponibilidadesProfessoresImportExcel extends AbstractImportExcel<
 		}
 		
 		if (!professoreToDisponibilidadesMap.isEmpty()) {
-			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Professor.atualizaHorariosDosProfessores(professoreToDisponibilidadesMap,semanasLetivas);
 		}
 	}

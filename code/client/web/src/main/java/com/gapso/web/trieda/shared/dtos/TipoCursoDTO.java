@@ -12,6 +12,7 @@ public class TipoCursoDTO extends AbstractDTO<String> implements Comparable<Tipo
 	public static final String PROPERTY_DESCRICAO = "descricao";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	public TipoCursoDTO() {
 		super();
@@ -55,6 +56,13 @@ public class TipoCursoDTO extends AbstractDTO<String> implements Comparable<Tipo
 	@Override
 	public String getNaturalKey() {
 		return getCodigo();
+	}
+	
+	public void setCenarioId(Long value) {
+		set(PROPERTY_CENARIO_ID, value);
+	}
+	public Long getCenarioId() {
+		return get(PROPERTY_CENARIO_ID);
 	}
 
 	@Override

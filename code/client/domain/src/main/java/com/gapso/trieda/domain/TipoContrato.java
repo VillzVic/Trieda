@@ -42,6 +42,11 @@ public class TipoContrato
     @Column(name = "TCO_NOME")
     @Size(min = 1, max = 50)
     private String nome;
+    
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -68,6 +73,14 @@ public class TipoContrato
 	public void setId(Long id) {
         this.id = id;
     }
+	
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
+	}
 
 	public InstituicaoEnsino getInstituicaoEnsino() {
 		return instituicaoEnsino;
@@ -145,6 +158,21 @@ public class TipoContrato
     		" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
+    }
+	
+	@SuppressWarnings("unchecked")
+    public static List< TipoContrato > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM TipoContrato o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
         return q.getResultList();
     }

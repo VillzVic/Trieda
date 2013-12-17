@@ -456,7 +456,7 @@ public class Campus
 	public void preencheHorarios()
 	{
 		List< SemanaLetiva > listDomains
-			= SemanaLetiva.findAll( this.getInstituicaoEnsino() );
+			= SemanaLetiva.findByCenario( this.getInstituicaoEnsino(), this.getCenario() );
 
 		for ( SemanaLetiva semanaLetiva : listDomains )
 		{

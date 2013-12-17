@@ -42,7 +42,7 @@ public interface DisciplinasServiceAsync {
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< DisciplinaDTO > > callback );
 	void save( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
 	void remove( List< DisciplinaDTO > disciplinaDTOList, AsyncCallback< Void > callback );
-	void getTipoDisciplinaList( AsyncCallback< ListLoadResult< TipoDisciplinaDTO > > callback );
+	void getTipoDisciplinaList( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< TipoDisciplinaDTO > > callback );
 	void getTipoDisciplina( Long id, AsyncCallback< TipoDisciplinaDTO > callback );
 	void getListByCursoAndName( CenarioDTO cenarioDTO, List< CursoDTO > cursos, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getListByCurriculoIdAndName( CenarioDTO cenarioDTO, Long curriculoId, String name, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );

@@ -15,7 +15,7 @@ public class RelatorioVisaoSalaPresenter extends RelatorioVisaoPresenter{
 	public RelatorioVisaoSalaPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display)
 	{
-		super(instituicaoEnsinoDTO, display);
+		super(instituicaoEnsinoDTO, cenario, display);
 	}
 
 }

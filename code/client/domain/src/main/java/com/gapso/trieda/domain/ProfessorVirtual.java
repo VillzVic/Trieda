@@ -56,6 +56,11 @@ public class ProfessorVirtual
 	@Max( 999L )
 	private Integer cargaHorariaMax;
 
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
+	
 	@ManyToMany( cascade = { CascadeType.PERSIST,
 		CascadeType.MERGE, CascadeType.REFRESH } )
 	private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
@@ -79,6 +84,14 @@ public class ProfessorVirtual
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
 
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
+	}
+	
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();

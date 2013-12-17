@@ -76,7 +76,7 @@ public class SemanasLetivaPresenter
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
 
-				service.getBuscaList( codigo, descricao, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, codigo, descricao, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -92,7 +92,7 @@ public class SemanasLetivaPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new SemanaLetivaFormPresenter( instituicaoEnsinoDTO,
-					new SemanaLetivaFormView( cenario ), display.getGrid() );
+					cenario, new SemanaLetivaFormView( cenario ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -107,7 +107,7 @@ public class SemanasLetivaPresenter
 				SemanaLetivaDTO dto = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				Presenter presenter = new SemanaLetivaFormPresenter( instituicaoEnsinoDTO,
-					new SemanaLetivaFormView( dto, cenario ), display.getGrid() );
+					cenario, new SemanaLetivaFormView( dto, cenario ), display.getGrid() );
 
 				presenter.go( null );
 			}

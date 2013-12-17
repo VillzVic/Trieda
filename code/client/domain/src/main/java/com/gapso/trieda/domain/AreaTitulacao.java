@@ -50,6 +50,11 @@ public class AreaTitulacao
     @Size(min = 3, max = 255)
     private String descricao;
 
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
+    
     @ManyToMany
     private Set< Curso > cursos = new java.util.HashSet< Curso >();
 
@@ -88,6 +93,14 @@ public class AreaTitulacao
 	public void setId(Long id) {
         this.id = id;
     }
+	
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
+	}
 
 	public Integer getVersion() {
         return this.version;
@@ -122,8 +135,8 @@ public class AreaTitulacao
             List< Professor > verificaProfessres = this.getProfessores();
             if ( verificaProfessres != null && verificaProfessres.size() > 0 )
             {
-            	// Não posso remover a área de titulação,
-            	// pois há professores vinculados a ela
+            	// Nï¿½o posso remover a ï¿½rea de titulaï¿½ï¿½o,
+            	// pois hï¿½ professores vinculados a ela
             	return false;
             }
 
@@ -136,8 +149,8 @@ public class AreaTitulacao
             List< Professor > verificaProfessres = attached.getProfessores();
             if ( verificaProfessres != null && verificaProfessres.size() > 0 )
             {
-            	// Não posso remover a área de titulação,
-            	// pois há professores vinculados a ela
+            	// Nï¿½o posso remover a ï¿½rea de titulaï¿½ï¿½o,
+            	// pois hï¿½ professores vinculados a ela
             	return false;
             }
 
@@ -219,6 +232,19 @@ public class AreaTitulacao
         	.setParameter( "instituicaoEnsino", instituicaoEnsino )
         	.getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+    public static List< AreaTitulacao > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM AreaTitulacao o " +
+        	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.cenario = :cenario" )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setParameter("cenario", cenario)
+        	.getResultList();
+    }
 
 	public static AreaTitulacao find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
@@ -261,7 +287,7 @@ public class AreaTitulacao
     }
 
 	public static int count( InstituicaoEnsino instituicaoEnsino,
-		String codigo, String descricao )
+		Cenario cenario, String codigo, String descricao )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -277,9 +303,11 @@ public class AreaTitulacao
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM AreaTitulacao o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.cenario = :cenario " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " + descricaoQuery );
 
 		q.setParameter( "codigo", codigo );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( descricao != null )
@@ -292,7 +320,7 @@ public class AreaTitulacao
 
     @SuppressWarnings("unchecked")
     public static List< AreaTitulacao > findBy(
-    	InstituicaoEnsino instituicaoEnsino, String codigo,
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
     	String descricao, int firstResult, int maxResults, String orderBy )
     {
     	codigo = ( ( codigo == null ) ? "" : codigo );
@@ -311,11 +339,13 @@ public class AreaTitulacao
         Query q = entityManager().createQuery(
         	" SELECT o FROM AreaTitulacao o " +
         	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.cenario = :cenario " +
         	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
         	descricaoQuery + " " + orderBy );
 
         q.setParameter( "codigo", codigo );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
 
         if ( descricao != null )
         {

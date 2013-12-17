@@ -3,17 +3,20 @@ package com.gapso.web.trieda.shared.util.view;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TipoDisciplinaComboBox extends ComboBox<TipoDisciplinaDTO> {
 
-	public TipoDisciplinaComboBox() {
-		
+	private CenarioDTO cenarioDTO;
+	
+	public TipoDisciplinaComboBox( CenarioDTO cenario ) {
+		this.cenarioDTO = cenario;
 		final ListStore<TipoDisciplinaDTO> listStore = new ListStore<TipoDisciplinaDTO>();
 		
-		Services.disciplinas().getTipoDisciplinaList(new AsyncCallback<ListLoadResult<TipoDisciplinaDTO>>() {
+		Services.disciplinas().getTipoDisciplinaList(cenarioDTO, new AsyncCallback<ListLoadResult<TipoDisciplinaDTO>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();

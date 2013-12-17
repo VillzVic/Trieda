@@ -96,7 +96,7 @@ public class ResumoPercentMestresDoutoresPresenter
 				String fileExtension = "xls";
 
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.PERCENT_MESTRES_DOUTORES, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.PERCENT_MESTRES_DOUTORES, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -125,7 +125,7 @@ public class ResumoPercentMestresDoutoresPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.PERCENT_MESTRES_DOUTORES, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.PERCENT_MESTRES_DOUTORES, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

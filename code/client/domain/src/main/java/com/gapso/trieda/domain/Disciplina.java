@@ -395,7 +395,7 @@ public class Disciplina
 			= this.getTipoDisciplina().getInstituicaoEnsino();
 
 		List< SemanaLetiva > listDomains
-			= SemanaLetiva.findAll( instituicaoEnsino );
+			= SemanaLetiva.findByCenario( instituicaoEnsino, this.getCenario() );
 
 		for ( SemanaLetiva semanaLetiva : listDomains )
 		{

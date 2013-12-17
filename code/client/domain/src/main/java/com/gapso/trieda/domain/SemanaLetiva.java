@@ -69,6 +69,11 @@ public class SemanaLetiva
     @Min( 1L )
     @Max( 1000L )
     private Integer tempo;
+    
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
 	private Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
@@ -92,6 +97,14 @@ public class SemanaLetiva
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
+	}
+	
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
 	}
 
 	public Set< Curriculo > getCurriculos()
@@ -398,6 +411,32 @@ public class SemanaLetiva
 
 		return result;
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< SemanaLetiva > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM SemanaLetiva o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+		List< SemanaLetiva > result = null;
+
+		try
+		{
+			result = q.getResultList();
+		}
+		catch( Exception e )
+		{
+			result = null;
+		}
+
+		return result;
+	}
 
 	public static SemanaLetiva find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
@@ -447,7 +486,7 @@ public class SemanaLetiva
 
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino,
-		String codigo, String descricao )
+		Cenario cenario, String codigo, String descricao )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
@@ -458,19 +497,21 @@ public class SemanaLetiva
 		Query q = em.createQuery(
 			" SELECT COUNT ( o ) FROM SemanaLetiva o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
 			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< SemanaLetiva > findBy(
-		InstituicaoEnsino instituicaoEnsino, String codigo,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
 		String descricao, int firstResult, int maxResults, String orderBy )
 	{
 		codigo = ( ( codigo == null ) ? "" : codigo );
@@ -484,12 +525,14 @@ public class SemanaLetiva
 		Query q = em.createQuery(
 			" SELECT o FROM SemanaLetiva o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
 			" AND LOWER ( o.codigo ) LIKE  LOWER ( :codigo ) " +
 			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " + orderBy );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 

@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresVirtuaisPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -31,9 +32,11 @@ public class ProfessoresVirtuaisView extends MyComposite
 	private TitulacaoComboBox titulacaoBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 	
-	public ProfessoresVirtuaisView()
+	public ProfessoresVirtuaisView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 	
@@ -79,7 +82,7 @@ public class ProfessoresVirtuaisView extends MyComposite
 	
 		this.filter = new SimpleFilter();
 	
-		this.titulacaoBuscaCB = new TitulacaoComboBox();
+		this.titulacaoBuscaCB = new TitulacaoComboBox( cenarioDTO );
 	
 		this.filter.addField( this.titulacaoBuscaCB );
 	

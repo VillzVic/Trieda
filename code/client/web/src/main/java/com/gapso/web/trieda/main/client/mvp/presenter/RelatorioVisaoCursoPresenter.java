@@ -32,7 +32,7 @@ public class RelatorioVisaoCursoPresenter extends RelatorioVisaoPresenter{
 	public RelatorioVisaoCursoPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display)
 	{
-		super(instituicaoEnsinoDTO, display);
+		super(instituicaoEnsinoDTO, cenario, display);
 	}
 
 	protected void setListeners(){

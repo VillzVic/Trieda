@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AreaTitulacaoFormView;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -56,13 +57,16 @@ public class AreasTitulacaoPresenter
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
-	private Display display; 
+	private Display display;
+	private CenarioDTO cenarioDTO;
 
 	public AreasTitulacaoPresenter(
-		InstituicaoEnsinoDTO  instituicaoEnsinoDTO,Display display )
+		InstituicaoEnsinoDTO  instituicaoEnsinoDTO,
+		CenarioDTO cenarioDTO, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+		this.cenarioDTO = cenarioDTO;
 
 		configureProxy();
 		setListeners();
@@ -82,7 +86,7 @@ public class AreasTitulacaoPresenter
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
 
-				service.getBuscaList( codigo, descricao, (PagingLoadConfig)loadConfig, callback );
+				service.getBuscaList( cenarioDTO, codigo, descricao, (PagingLoadConfig)loadConfig, callback );
 			}
 		};
 
@@ -98,7 +102,7 @@ public class AreasTitulacaoPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new AreaTitulacaoFormPresenter( instituicaoEnsinoDTO,
-					new AreaTitulacaoFormView( new AreaTitulacaoDTO() ), display.getGrid() );
+					cenarioDTO, new AreaTitulacaoFormView( new AreaTitulacaoDTO() ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -114,7 +118,7 @@ public class AreasTitulacaoPresenter
 					= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
 
 				Presenter presenter = new AreaTitulacaoFormPresenter( instituicaoEnsinoDTO,
-					new AreaTitulacaoFormView( areaTitulacaoDTO ), display.getGrid() );
+					cenarioDTO, new AreaTitulacaoFormView( areaTitulacaoDTO ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -158,7 +162,7 @@ public class AreasTitulacaoPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.AREAS_TITULACAO , instituicaoEnsinoDTO );
+						ExcelInformationType.AREAS_TITULACAO , instituicaoEnsinoDTO, cenarioDTO );
 
 				ImportExcelFormView importExcelFormView
 					= new ImportExcelFormView( parametros,display.getGrid() );
@@ -176,7 +180,7 @@ public class AreasTitulacaoPresenter
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.AREAS_TITULACAO , instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.AREAS_TITULACAO , instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -195,7 +199,7 @@ public class AreasTitulacaoPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.AREAS_TITULACAO , instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.AREAS_TITULACAO , instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

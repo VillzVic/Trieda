@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.extjs.gxt.ui.client.widget.toolbar.ToolBar;
 import com.gapso.web.trieda.main.client.mvp.presenter.ToolBarPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.resources.client.ImageResource;
@@ -26,7 +27,10 @@ public class ToolBarView
 	extends MyComposite
 		implements ToolBarPresenter.Display
 {
+	private CenarioDTO cenarioDTO;
 	private LayoutContainer container;
+	private ContentPanel planejamentoPanel;
+	private TabItem nomeContexto;
 	private ToolBar campiToolBar;
 	private ToolBar unidadesToolBar;
 	private ToolBar salasToolBar;
@@ -125,8 +129,9 @@ public class ToolBarView
 	private Button parametrosBt;
 	private Button consultaRequisicoesOtimizacaoBt;
 
-	public ToolBarView()
+	public ToolBarView( CenarioDTO cenarioDTO)
 	{
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 
@@ -134,9 +139,17 @@ public class ToolBarView
 	{
 		container = new LayoutContainer( new HBoxLayout() );
 
-		ContentPanel planejamentoPanel = new ContentPanel();
-		planejamentoPanel.setHeadingHtml( "Planejamento" );
-		planejamentoPanel.setWidth( 270 );
+		planejamentoPanel = new ContentPanel();
+		planejamentoPanel.setHeadingHtml( "Contexto" );
+		planejamentoPanel.getHeader().setStyleAttribute("text-align", "center");
+		planejamentoPanel.setWidth( 100 );
+		planejamentoPanel.setHeight(92);
+		planejamentoPanel.addStyleName("cenarioName");
+		ToolBar title = new ToolBar();
+		nomeContexto = new TabItem("Nome Contexto");
+		nomeContexto.addText(cenarioDTO.getNome());
+		nomeContexto.setWidth(92);
+		title.add(nomeContexto);
 
 		ContentPanel masterDataPanel = new ContentPanel();
 		masterDataPanel.setHeaderVisible( false );
@@ -157,12 +170,13 @@ public class ToolBarView
 		TabItem disciplinasTabItem = new TabItem( "Disciplinas" );
 		TabItem alunosTabItem = new TabItem( "Alunos" );
 		TabItem professoresTabItem = new TabItem( "Professores" );
+		TabItem planejamentoTabItem = new TabItem( "Planejamento" );
 		TabItem relatoriosTabItem = new TabItem( "Relatórios" );
 		TabItem administracaoTabItem = new TabItem( "Administração" );
 		TabItem calendarioTabItem = new TabItem( "Calendário" );
 		TabItem geracaoDemandaTabItem = new TabItem( "Geração de Demanda" );
 
-		planejamentoToolBar = new ToolBar();
+		//planejamentoToolBar = new ToolBar();
 
 		campiToolBar = new ToolBar();
 		campiToolBar.setLayoutData( new FitLayout() );
@@ -173,6 +187,7 @@ public class ToolBarView
 		alunosToolBar = new ToolBar();
 		professoresToolBar = new ToolBar();
 		relatoriosToolBar = new ToolBar();
+		planejamentoToolBar = new ToolBar();
 		administracaoToolBar = new ToolBar();
 		geracaoDemandaToolBar = new ToolBar();
 		calendarioToolBar = new ToolBar();
@@ -184,6 +199,7 @@ public class ToolBarView
 		disciplinasTabItem.add( disciplinasToolBar );
 		alunosTabItem.add( alunosToolBar );
 		professoresTabItem.add( professoresToolBar );
+		planejamentoTabItem.add( planejamentoToolBar );
 		relatoriosTabItem.add( relatoriosToolBar );
 		calendarioTabItem.add( calendarioToolBar );
 		administracaoTabItem.add( administracaoToolBar );
@@ -196,7 +212,7 @@ public class ToolBarView
 		TabPanel masterDataTab = new TabPanel();
 		masterDataTab.addStyleName( "tabPanelMasterData" );
 		masterDataTab.setHeight( height );
-		planejamentoToolBar.setHeight( height - 26 );
+		title.setHeight(height - 26);
 
 		TabItem masterDataItem = new TabItem( "Master Data" );
 		masterDataItem.disable();
@@ -209,13 +225,14 @@ public class ToolBarView
 		masterDataTab.add( disciplinasTabItem );
 		masterDataTab.add( alunosTabItem );
 		masterDataTab.add( professoresTabItem );
+		masterDataTab.add( planejamentoTabItem );
 		masterDataTab.add( relatoriosTabItem );
 		masterDataTab.add( administracaoTabItem );
 		masterDataTab.add( geracaoDemandaTabItem );
 
 		masterDataTab.setSelection( calendarioTabItem );
 
-		planejamentoPanel.add( planejamentoToolBar );
+		planejamentoPanel.add( title );
 		masterDataPanel.setTopComponent( masterDataTab );
 
 		container.setHeight( height );
@@ -1063,5 +1080,17 @@ public class ToolBarView
 	public Button getDemandasPorAlunoDemandasButton()
 	{
 		return demandasPorAlunoDemandasBt;
+	}
+	
+	@Override
+	public ContentPanel getPlanejamentoPanel()
+	{
+		return planejamentoPanel;
+	}
+	
+	@Override
+	public TabItem getNomeContextoTabItem()
+	{
+		return nomeContexto;
 	}
 }

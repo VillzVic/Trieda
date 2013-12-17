@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -40,9 +41,11 @@ public class ProfessoresView extends MyComposite
 	private Button disponibilidadeBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 	
-	public ProfessoresView()
+	public ProfessoresView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
@@ -98,8 +101,8 @@ public class ProfessoresView extends MyComposite
 
 		this.cpfBuscaTF = new TextField< String >();
 		this.cpfBuscaTF.setFieldLabel( "CPF" );
-		this.tipoContratoBuscaCB = new TipoContratoComboBox();
-		this.titulacaoBuscaCB = new TitulacaoComboBox();
+		this.tipoContratoBuscaCB = new TipoContratoComboBox( cenarioDTO );
+		this.titulacaoBuscaCB = new TitulacaoComboBox( cenarioDTO );
 		this.areaTitulacaoBuscaCB = new AreaTitulacaoComboBox();
 
 		this.filter.addField( this.cpfBuscaTF );

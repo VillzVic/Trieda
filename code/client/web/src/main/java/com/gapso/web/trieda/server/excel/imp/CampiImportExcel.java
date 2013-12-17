@@ -277,7 +277,7 @@ public class CampiImportExcel
 		}
 		
 		if (!persistedCampi.isEmpty()) {
-			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Campus.preencheHorariosDosCampi(persistedCampi,semanasLetivas);
 		}
 	}

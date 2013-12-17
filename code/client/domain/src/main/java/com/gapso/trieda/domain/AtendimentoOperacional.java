@@ -1624,10 +1624,10 @@ public class AtendimentoOperacional
 	}
 	
 	public static Integer sumCredAlunosAtendidos(
-			InstituicaoEnsino instituicaoEnsino, Campus campus )
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus )
 		{
 			
-			List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+			List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findByCenario(instituicaoEnsino, cenario);
 			List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
 			for (TipoDisciplina td : tiposDisciplinas) {
 				if (td.ocupaGrade()) {

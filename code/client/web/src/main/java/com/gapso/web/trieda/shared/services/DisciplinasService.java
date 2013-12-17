@@ -70,7 +70,7 @@ public interface DisciplinasService
 		TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config );
 	void save( DisciplinaDTO disciplinaDTO );
 	void remove( List< DisciplinaDTO > disciplinaDTOList );
-	ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList();
+	ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList( CenarioDTO cenarioDTO );
 	TipoDisciplinaDTO getTipoDisciplina( Long id );
 	ListLoadResult< DisciplinaDTO > getListByCursoAndName( CenarioDTO cenarioDTO, List< CursoDTO > cursos, String name);
 	ListLoadResult< DisciplinaDTO > getListByCurriculoIdAndName( CenarioDTO cenarioDTO, Long curriculoId, String name);

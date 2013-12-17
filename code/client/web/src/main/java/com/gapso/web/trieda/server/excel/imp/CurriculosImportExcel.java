@@ -575,7 +575,7 @@ public class CurriculosImportExcel
 		// [ CodigoSemanaLetiva -> Semana Letiva ]
 		Map< String, SemanaLetiva > semanasLetivasBDMap
 			= SemanaLetiva.buildSemanaLetivaCodigoToSemanaLetivaMap(
-				SemanaLetiva.findAll( this.instituicaoEnsino ) );
+				SemanaLetiva.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors
 			= new ArrayList< Integer >();

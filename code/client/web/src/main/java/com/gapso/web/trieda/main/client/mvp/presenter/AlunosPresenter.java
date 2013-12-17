@@ -149,7 +149,7 @@ public class AlunosPresenter
 		this.display.getImportExcelButton().addSelectionListener(new SelectionListener< ButtonEvent >() {
 			@Override
 			public void componentSelected( ButtonEvent ce ) {
-				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO);
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO, cenarioDTO);
 				ImportExcelFormView importExcelFormView = new ImportExcelFormView(parametros,display.getGrid());
 				importExcelFormView.show();
 			}
@@ -159,7 +159,7 @@ public class AlunosPresenter
 			@Override
 			public void componentSelected( MenuEvent ce ) {
 				String fileExtension = "xls";
-				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO, fileExtension);
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO, cenarioDTO, fileExtension);
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(parametros,display.getI18nConstants(),display.getI18nMessages());
 				e.submit();
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
@@ -170,7 +170,7 @@ public class AlunosPresenter
 			@Override
 			public void componentSelected( MenuEvent ce ) {
 				String fileExtension = "xlsx";
-				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO, fileExtension);
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.ALUNOS,instituicaoEnsinoDTO, cenarioDTO, fileExtension);
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(parametros,display.getI18nConstants(),display.getI18nMessages());
 				e.submit();
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());

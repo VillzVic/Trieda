@@ -271,7 +271,7 @@ public class DivisoesCreditoImportExcel
 		List< DivisoesCreditoImportExcelBean > sheetContent )
 	{
 		Map< String, DivisaoCredito > divisoesBDMap = DivisaoCredito.buildDivisaoCreditoKeyToDivisaoCreditoMap(
-				DivisaoCredito.findByInstituicaoEnsino( this.instituicaoEnsino) );
+				DivisaoCredito.findByCenario( this.instituicaoEnsino, getCenario() ) );
 		
 		for ( DivisoesCreditoImportExcelBean divisaoExcel : sheetContent )
 		{

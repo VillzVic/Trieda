@@ -10,8 +10,10 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.services.TiposCursosService;
 
@@ -29,11 +31,13 @@ public class TiposCursosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TipoCursoDTO > getList()
+	public ListLoadResult< TipoCursoDTO > getList( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< TipoCursoDTO > list = new ArrayList< TipoCursoDTO >();
 		List< TipoCurso > listDomains
-			= TipoCurso.findAll( getUsuario().getInstituicaoEnsino() );
+			= TipoCurso.findByCenario( getUsuario().getInstituicaoEnsino(), cenario );
 
 		for ( TipoCurso tipoCurso : listDomains )
 		{
@@ -48,8 +52,9 @@ public class TiposCursosServiceImpl
 
 	@Override
 	public PagingLoadResult< TipoCursoDTO > getBuscaList(
-		String nome, String descricao, PagingLoadConfig config )
+		CenarioDTO cenarioDTO, String nome, String descricao, PagingLoadConfig config )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		List< TipoCursoDTO > list = new ArrayList< TipoCursoDTO >();
 		String orderBy = config.getSortField();
 
@@ -67,7 +72,7 @@ public class TiposCursosServiceImpl
 		}
 
 		List< TipoCurso > listTipos = TipoCurso.findBy(
-			nome, descricao, config.getOffset(), config.getLimit(),
+			cenario, nome, descricao, config.getOffset(), config.getLimit(),
 			orderBy, getUsuario().getInstituicaoEnsino() );
 
 		for ( TipoCurso tipoCurso : listTipos )
@@ -79,16 +84,16 @@ public class TiposCursosServiceImpl
 			= new BasePagingLoadResult< TipoCursoDTO >( list );
 
 		result.setOffset( config.getOffset() );
-		result.setTotalLength( TipoCurso.count(
+		result.setTotalLength( TipoCurso.count( cenario,
 			nome, descricao, getUsuario().getInstituicaoEnsino() ) );
 
 		return result;
 	}
 
 	@Override
-	public ListLoadResult< TipoCursoDTO > getList( BasePagingLoadConfig loadConfig )
+	public ListLoadResult< TipoCursoDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig )
 	{
-		return getBuscaList( loadConfig.get( "query" ).toString(), null, loadConfig );
+		return getBuscaList( cenarioDTO, loadConfig.get( "query" ).toString(), null, loadConfig );
 	}
 
 	@Override

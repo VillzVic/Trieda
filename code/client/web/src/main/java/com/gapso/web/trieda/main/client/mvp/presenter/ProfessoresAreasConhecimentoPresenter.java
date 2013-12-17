@@ -102,7 +102,7 @@ public class ProfessoresAreasConhecimentoPresenter
 				String fileExtension = "xls";
 	
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.PROFESSORES_AREAS_CONHECIMENTO, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.PROFESSORES_AREAS_CONHECIMENTO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 	
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -131,7 +131,7 @@ public class ProfessoresAreasConhecimentoPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.PROFESSORES_AREAS_CONHECIMENTO, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.PROFESSORES_AREAS_CONHECIMENTO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 	
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

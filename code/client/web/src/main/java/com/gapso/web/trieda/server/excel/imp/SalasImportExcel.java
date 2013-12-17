@@ -288,7 +288,7 @@ public class SalasImportExcel
 		// [ NomeTipoSala -> TipoSala ]
 		Map< String, TipoSala > tiposSalaBDMap
 			= TipoSala.buildTipoSalaNomeToTipoSalaMap(
-				TipoSala.findAll( instituicaoEnsino ) );
+				TipoSala.findByCenario( instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors
 			= new ArrayList< Integer >();
@@ -380,7 +380,7 @@ public class SalasImportExcel
 		}
 		
 		if (!persistedSalas.isEmpty()) {
-			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Sala.preencheHorariosDasSalas(persistedSalas,semanasLetivas);
 		}
 	}

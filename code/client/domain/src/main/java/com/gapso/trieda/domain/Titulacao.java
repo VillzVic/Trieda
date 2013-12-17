@@ -41,6 +41,11 @@ public class Titulacao
     @Column( name = "TIT_NOME" )
     @Size( min = 1, max = 50 )
     private String nome;
+    
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
 
 	public String toString()
 	{
@@ -96,6 +101,14 @@ public class Titulacao
 	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
+	}
+	
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
 	}
 
 	@Transactional
@@ -156,6 +169,19 @@ public class Titulacao
         	" SELECT o FROM Titulacao o " +
         	" WHERE o.instituicaoEnsino = :instituicaoEnsino " )
         	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.getResultList();
+    }
+	
+	@SuppressWarnings("unchecked")
+    public static List< Titulacao > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Titulacao o " +
+        	" WHERE o.instituicaoEnsino = :instituicaoEnsino" +
+        	" AND o.cenario = :cenario " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setParameter( "cenario", cenario )
         	.getResultList();
     }
 

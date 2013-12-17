@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
+import com.gapso.web.trieda.main.client.mvp.view.CenariosView;
 import com.gapso.web.trieda.main.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -53,6 +54,7 @@ public class AppPresenter
 	private CenarioDTO cenario;
 	private InstituicaoEnsinoDTO instituicaoEnsino;
 	private UsuarioDTO usuario;
+	private Presenter toolBar;
 
 	public AppPresenter( Display viewport )
 	{
@@ -106,7 +108,7 @@ public class AppPresenter
 		final FutureResult<InstituicaoEnsinoDTO> futureInstituicaoEnsinoDTO = new FutureResult<InstituicaoEnsinoDTO>();
 		final FutureResult<Integer> futureDBVersion = new FutureResult<Integer>();
 
-		cenarioService.getMasterData(futureCenarioDTO);
+		cenarioService.getCurrentCenario(futureCenarioDTO);
 		usuarioService.getCurrentUser(futureUsuarioDTO);
 		cenarioService.getInstituicaoEnsinoDTO(futureInstituicaoEnsinoDTO);
 		cenarioService.checkDBVersion(futureDBVersion);
@@ -126,8 +128,8 @@ public class AppPresenter
 							", porém a versão mais recente é " + dbCurrentVersion + "." , null );
 
 				RootPanel rp = (RootPanel) widget;
-				Presenter presenter = new ToolBarPresenter(instituicaoEnsino,cenario,usuario,viewport.getCenarioPanel(),new ToolBarView());
-				presenter.go(viewport.asWidget());
+				toolBar = new ToolBarPresenter(instituicaoEnsino,cenario,usuario,viewport.getCenarioPanel(),new ToolBarView(cenario));
+				toolBar.go(viewport.asWidget());
 				rp.add(viewport.asWidget());
 				RootPanel.get("loading").setVisible(false);
 
@@ -162,6 +164,55 @@ public class AppPresenter
 						Window.open("../resources/j_spring_security_logout"+TriedaUtil.paramsDebug(), "_self", "");
 					}
 				});
+				
+/*				viewport.getGerenciarCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected( MenuEvent ce ) {
+					Presenter presenter = new CenariosPresenter( instituicaoEnsino,
+							viewport.getCenarioPanel(), new CenariosView() );
+
+					presenter.go( viewport.getGTab() );
+					}
+				});*/
+				
+/*				viewport.getGerenciarRequisicoesCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected( MenuEvent ce ) {
+						CenariosServiceAsync service = Services.cenarios();
+						
+						service.setCurrentCenario(9L, new AsyncCallback<Void>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								MessageBox.alert( "ERRO!",
+										"Deu falha na conexão", null );
+							}
+
+							@Override
+							public void onSuccess(Void result) {
+								Services.cenarios().getCurrentCenario(new AsyncCallback<CenarioDTO>(){
+
+									@Override
+									public void onFailure(Throwable caught) {
+										MessageBox.alert( "ERRO!",
+												"Deu falha na conexão", null );
+										
+									}
+
+									@Override
+									public void onSuccess(CenarioDTO result) {
+										cenario = result;
+										((ToolBarPresenter) toolBar).changeCenario(result);
+										MessageBox.alert( "sucesso!",
+												"Mudou Cenario para" + result.getId(), null );
+									}
+									
+								});
+							}
+							
+						});
+					}
+				});*/
 			}
 		});
 	}

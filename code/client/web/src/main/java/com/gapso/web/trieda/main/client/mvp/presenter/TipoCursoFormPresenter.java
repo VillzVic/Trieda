@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -32,12 +33,14 @@ public class TipoCursoFormPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< TipoCursoDTO > gridPanel;
 	private Display display;
+	private CenarioDTO cenarioDTO;
 
 	public TipoCursoFormPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO,
 		Display display, SimpleGrid< TipoCursoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
 
@@ -93,6 +96,7 @@ public class TipoCursoFormPresenter
 		tipoCursoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		tipoCursoDTO.setCodigo( display.getCodigoTextField().getValue() );
 		tipoCursoDTO.setDescricao( display.getDescricaoTextField().getValue() );
+		tipoCursoDTO.setCenarioId( cenarioDTO.getId() );
 
 		return tipoCursoDTO;
 	}

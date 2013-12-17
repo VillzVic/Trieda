@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.CursosPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -39,9 +40,11 @@ public class CursosView
 	private Button curriculosBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public CursosView()
+	public CursosView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
@@ -111,7 +114,7 @@ public class CursosView
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
-		this.tipoCursoBuscaComboBox = new TipoCursoComboBox();
+		this.tipoCursoBuscaComboBox = new TipoCursoComboBox( cenarioDTO );
 		this.tipoCursoBuscaComboBox.setFieldLabel( "Tipo" );
 		this.nomeBuscaTextField = new TextField< String >();
 		this.nomeBuscaTextField.setFieldLabel( "Nome" );

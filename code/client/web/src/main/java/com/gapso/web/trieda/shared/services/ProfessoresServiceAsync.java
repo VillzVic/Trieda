@@ -28,9 +28,9 @@ public interface ProfessoresServiceAsync
 		AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config,
 		AsyncCallback< PagingLoadResult< ProfessorDTO > > callback );
 	void getTipoContrato( Long id, AsyncCallback< TipoContratoDTO > callback );
-	void getTiposContratoAll( AsyncCallback< ListLoadResult< TipoContratoDTO > > callback );
+	void getTiposContratoAll( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< TipoContratoDTO > > callback );
 	void getTitulacao( Long id, AsyncCallback< TitulacaoDTO > callback );
-	void getTitulacoesAll( AsyncCallback< ListLoadResult< TitulacaoDTO > > callback );
+	void getTitulacoesAll( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< TitulacaoDTO > > callback );
 	void save( ProfessorDTO professorDTO, AsyncCallback< Void > callback );
 	void remove( List< ProfessorDTO > professorDTOList, AsyncCallback< Void > callback );
 	void getHorariosDisponiveis( ProfessorDTO professorDTO, AsyncCallback< List< HorarioDisponivelCenarioDTO > > callback );

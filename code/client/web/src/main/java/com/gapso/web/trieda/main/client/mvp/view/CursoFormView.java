@@ -92,7 +92,7 @@ public class CursoFormView
 		nomeTF.setEmptyText("Preencha o nome");
 		formPanel.add(nomeTF, formData);
 
-		tipoCursoCB = new TipoCursoComboBox();
+		tipoCursoCB = new TipoCursoComboBox( cenarioDTO );
 		tipoCursoCB.setName("tipoCurso");
 		tipoCursoCB.setFieldLabel("Tipo");
 		tipoCursoCB.setAllowBlank(false);

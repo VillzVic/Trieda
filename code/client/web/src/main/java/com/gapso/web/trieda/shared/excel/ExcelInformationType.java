@@ -85,6 +85,11 @@ public enum ExcelInformationType
 		return "fileExtension";
 	}
 	
+	public static String getCenarioParameterName()
+	{
+		return "cenario";
+	}
+	
 	public static String prefixError()
 	{
 		return "@e@";

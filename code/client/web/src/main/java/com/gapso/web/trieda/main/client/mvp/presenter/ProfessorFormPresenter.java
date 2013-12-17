@@ -90,7 +90,7 @@ public class ProfessorFormPresenter
 				if ( isValid() )
 				{
 					final SemanasLetivaServiceAsync service = Services.semanasLetiva();
-					service.getList(new AsyncCallback<ListLoadResult<SemanaLetivaDTO>>() {
+					service.getList(cenario, new AsyncCallback<ListLoadResult<SemanaLetivaDTO>>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							MessageBox.alert( "ERRO!", "Erro no servidor", null );

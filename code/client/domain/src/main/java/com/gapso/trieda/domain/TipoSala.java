@@ -38,8 +38,8 @@ public class TipoSala
 	private static final long serialVersionUID = -1633461518380764117L;
 	
 	public static final String TIPO_SALA_DE_AULA = "Sala de Aula";
-	public static final String TIPO_LABORATORIO = "Laboratório";
-	public static final String TIPO_AUDITORIO = "Auditório";
+	public static final String TIPO_LABORATORIO = "LaboratÃ³rio";
+	public static final String TIPO_AUDITORIO = "AuditÃ³rio";
 
     @NotNull
     @Column(name = "TSA_NOME")
@@ -49,6 +49,11 @@ public class TipoSala
     @Column(name = "TSA_DESCRICAO")
     @Size(max = 255)
     private String descricao;
+    
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
 
 	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
@@ -64,6 +69,14 @@ public class TipoSala
 	public void setInstituicaoEnsino( InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
+	}
+	
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
 	}
 
 	public String toString()
@@ -186,6 +199,20 @@ public class TipoSala
     		" WHERE o.instituicaoEnsino = :instituicaoEnsino" );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+        return q.getResultList();
+    }
+	
+	@SuppressWarnings("unchecked")
+    public static List< TipoSala > findByCenario( InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+    		" SELECT o FROM TipoSala o " +
+    		" WHERE o.instituicaoEnsino = :instituicaoEnsino" +
+    		" AND o.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
         return q.getResultList();
     }

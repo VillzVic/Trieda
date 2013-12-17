@@ -323,6 +323,15 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	color: blue !important;
 }
 
+.cenarioName .x-component {
+	color: #15428b !important;
+	font-weight: bold !important;
+	font-size: 13px !important;
+	font-family: tahoma,arial,verdana,sans-serif !important;
+	white-space: normal;
+	text-align: center;
+}
+
 .corDisciplina0 { background-color: #FFDAAF; }
 .corDisciplina1 { background-color: #D2E1F0; }
 .corDisciplina2 { background-color: #CCCCFF; }

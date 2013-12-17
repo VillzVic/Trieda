@@ -78,8 +78,13 @@ public class ExportExcelServlet extends HttpServlet
 		catch(Exception e){
 			System.out.println("Não foi informado a instituição de ensino: " + informationToBeExported);
 		}
-
-		this.cenario = Cenario.findMasterData(instituicaoEnsino);
+		try{
+			Long cenarioId = Long.parseLong(request.getParameter(ExcelInformationType.getCenarioParameterName()));
+			this.cenario = Cenario.find(cenarioId, instituicaoEnsino);
+		}
+		catch(Exception e){
+			System.out.println("Não foi informado o cenário: " + informationToBeExported);
+		}
 
 		if(!informationToBeExported.isEmpty()){
 			ExportExcelFilter filter = ExportExcelFilterFactory.createExporter(informationToBeExported, request, instituicaoEnsino);

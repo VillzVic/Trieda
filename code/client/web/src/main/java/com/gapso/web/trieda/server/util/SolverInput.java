@@ -552,7 +552,7 @@ public class SolverInput
 	{
 		GrupoCalendario grupoCalendario = this.of.createGrupoCalendario();
 
-		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findAll( this.instituicaoEnsino );
+		List< SemanaLetiva > semanasLetivas = SemanaLetiva.findByCenario( this.instituicaoEnsino, cenario );
 		
 		Collections.sort(semanasLetivas); // para que as informações sejam impressas em ordem alfabética e, desse modo, facilitar a comparação entre dois XMLs de input 
 		for ( SemanaLetiva calendario : semanasLetivas )
@@ -660,7 +660,7 @@ public class SolverInput
 			= this.of.createGrupoTipoContrato();
 
 		List< TipoContrato > listTiposContrato
-			= TipoContrato.findAll( this.instituicaoEnsino );
+			= TipoContrato.findByCenario( this.instituicaoEnsino, cenario );
 
 		for ( TipoContrato tipo : listTiposContrato )
 		{
@@ -682,7 +682,7 @@ public class SolverInput
 			= this.of.createGrupoTipoTitulacao();
 
 		List< Titulacao > tipos
-			= Titulacao.findAll( this.instituicaoEnsino );
+			= Titulacao.findByCenario( this.instituicaoEnsino, cenario );
 
 		for ( Titulacao tipo : tipos )
 		{
@@ -703,7 +703,7 @@ public class SolverInput
 			= this.of.createGrupoAreaTitulacao();
 
 		List< AreaTitulacao > tipos
-			= AreaTitulacao.findAll( this.instituicaoEnsino );
+			= AreaTitulacao.findByCenario( this.instituicaoEnsino, cenario );
 
 		for ( AreaTitulacao tipo : tipos )
 		{
@@ -725,7 +725,7 @@ public class SolverInput
 			= this.of.createGrupoTipoDisciplina();
 
 		List< TipoDisciplina > tipos	
-			= TipoDisciplina.findAll( this.instituicaoEnsino );
+			= TipoDisciplina.findByCenario( this.instituicaoEnsino, cenario );
 
 		for ( TipoDisciplina tipo : tipos )
 		{
@@ -763,7 +763,7 @@ public class SolverInput
 	private void generateTiposCurso()
 	{
 		GrupoTipoCurso grupoTipoCurso = this.of.createGrupoTipoCurso();
-		List< TipoCurso > tipos = TipoCurso.findAll( this.instituicaoEnsino );
+		List< TipoCurso > tipos = TipoCurso.findByCenario( this.instituicaoEnsino, cenario );
 
 		for ( TipoCurso tipo : tipos )
 		{

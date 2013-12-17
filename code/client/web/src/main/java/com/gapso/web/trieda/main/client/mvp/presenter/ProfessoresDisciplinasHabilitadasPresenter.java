@@ -95,7 +95,7 @@ public class ProfessoresDisciplinasHabilitadasPresenter
 				String fileExtension = "xls";
 	
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.PROFESSORES_DISCIPLINAS_HABILITADAS, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.PROFESSORES_DISCIPLINAS_HABILITADAS, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 	
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -124,7 +124,7 @@ public class ProfessoresDisciplinasHabilitadasPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.PROFESSORES_DISCIPLINAS_HABILITADAS, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.PROFESSORES_DISCIPLINAS_HABILITADAS, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 	
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

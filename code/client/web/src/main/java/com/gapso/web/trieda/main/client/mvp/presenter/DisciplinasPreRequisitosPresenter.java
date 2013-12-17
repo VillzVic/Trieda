@@ -153,7 +153,7 @@ public class DisciplinasPreRequisitosPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.DISCIPLINAS_PRE_REQUISITOS, instituicaoEnsinoDTO );
+					ExcelInformationType.DISCIPLINAS_PRE_REQUISITOS, instituicaoEnsinoDTO, cenario );
 
 				ImportExcelFormView importExcelFormView
 					= new ImportExcelFormView( parametros, display.getGrid() );
@@ -171,7 +171,7 @@ public class DisciplinasPreRequisitosPresenter
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.DISCIPLINAS_PRE_REQUISITOS, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.DISCIPLINAS_PRE_REQUISITOS, instituicaoEnsinoDTO, cenario, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -190,7 +190,7 @@ public class DisciplinasPreRequisitosPresenter
 					String fileExtension = "xlsx";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.DISCIPLINAS_PRE_REQUISITOS, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.DISCIPLINAS_PRE_REQUISITOS, instituicaoEnsinoDTO, cenario, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros, display.getI18nConstants(), display.getI18nMessages() );

@@ -194,7 +194,7 @@ public class DisponibilidadesSalasImportExcel extends AbstractImportExcel<Dispon
 		}
 		
 		if (!salaToDisponibilidadesMap.isEmpty()) {
-			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Sala.atualizaHorariosDasSalas(salaToDisponibilidadesMap,semanasLetivas);
 		}
 	}

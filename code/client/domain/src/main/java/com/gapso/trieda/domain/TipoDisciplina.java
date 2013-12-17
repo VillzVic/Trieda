@@ -48,6 +48,11 @@ public class TipoDisciplina
 		CascadeType.MERGE, CascadeType.REFRESH }, targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
+	
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
@@ -58,6 +63,14 @@ public class TipoDisciplina
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		this.instituicaoEnsino = instituicaoEnsino;
+	}
+	
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
 	}
 
 	public String toString()
@@ -198,6 +211,22 @@ public class TipoDisciplina
 	    	" WHERE o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		List< TipoDisciplina > list = q.getResultList(); 
+        return list;
+    }
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< TipoDisciplina > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+	    	" SELECT o FROM TipoDisciplina o " +
+	    	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+	    	" AND o.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		List< TipoDisciplina > list = q.getResultList(); 
         return list;

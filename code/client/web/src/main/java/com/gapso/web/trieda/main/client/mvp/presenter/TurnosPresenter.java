@@ -147,7 +147,7 @@ public class TurnosPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.TURNOS, instituicaoEnsinoDTO );
+							ExcelInformationType.TURNOS, instituicaoEnsinoDTO, cenario );
 
 					ImportExcelFormView importExcelFormView
 						= new ImportExcelFormView( parametros, display.getGrid() );
@@ -165,7 +165,7 @@ public class TurnosPresenter
 					String fileExtension = "xls";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.TURNOS, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.TURNOS, instituicaoEnsinoDTO, cenario, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros,	display.getI18nConstants(), display.getI18nMessages() );
@@ -184,7 +184,7 @@ public class TurnosPresenter
 					String fileExtension = "xlsx";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.TURNOS, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.TURNOS, instituicaoEnsinoDTO, cenario, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros,	display.getI18nConstants(), display.getI18nMessages() );

@@ -32,6 +32,7 @@ public class HorarioDisponivelProfessorFormPresenter
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
+	private CenarioDTO cenario;
 
 	public HorarioDisponivelProfessorFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
@@ -39,6 +40,7 @@ public class HorarioDisponivelProfessorFormPresenter
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+		this.cenario = cenario;
 
 		configureProxy();
 		setListeners();
@@ -53,7 +55,7 @@ public class HorarioDisponivelProfessorFormPresenter
 			protected void load( Object loadConfig,
 				AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback )
 			{
-				Services.semanasLetiva().getAllHorariosDisponiveisCenario( callback );
+				Services.semanasLetiva().getAllHorariosDisponiveisCenario( cenario, callback );
 			}
 		};
 

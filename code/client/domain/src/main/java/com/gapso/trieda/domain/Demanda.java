@@ -297,6 +297,18 @@ public class Demanda
         	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " )
         	.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
     }
+	
+	@SuppressWarnings("unchecked")
+    public static List< Demanda > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+        return entityManager().createQuery(
+        	" SELECT o FROM Demanda o " +
+        	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.oferta.campus.cenario = :cenario " )
+        	.setParameter( "instituicaoEnsino", instituicaoEnsino )
+        	.setParameter( "cenario", cenario ).getResultList();
+    }
 
     public static Demanda findbyOfertaAndDisciplina(
     	InstituicaoEnsino instituicaoEnsino, Oferta oferta, Disciplina disciplina )

@@ -120,7 +120,7 @@ public class DisciplinaFormView
 		laboratorioCB.setFieldLabel("Usa Laboratório");
 		formPanel.add(laboratorioCB, formData);
 
-		tipoDisciplinaCB = new TipoDisciplinaComboBox();
+		tipoDisciplinaCB = new TipoDisciplinaComboBox(cenarioDTO);
 		tipoDisciplinaCB.setName("tipoDisciplina");
 		tipoDisciplinaCB.setFieldLabel("Tipo de Disciplina");
 		tipoDisciplinaCB.setAllowBlank(false);

@@ -179,7 +179,7 @@ public class CampiPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CAMPI, instituicaoEnsinoDTO );
+					ExcelInformationType.CAMPI, instituicaoEnsinoDTO, cenario );
 
 				ImportExcelFormView importExcelFormView
 					= new ImportExcelFormView( parametros, display.getGrid() );
@@ -197,7 +197,7 @@ public class CampiPresenter
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CAMPI, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.CAMPI, instituicaoEnsinoDTO, cenario, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -216,7 +216,7 @@ public class CampiPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.CAMPI, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.CAMPI, instituicaoEnsinoDTO, cenario, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -244,7 +244,7 @@ public class CampiPresenter
 							List<DeslocamentoUnidadeDTO> result )
 						{
 							Presenter presenter = new UnidadesDeslocamentoPresenter( instituicaoEnsinoDTO,
-								new UnidadesDeslocamentoView( cenario, campusDTO, result ) );
+								cenario, new UnidadesDeslocamentoView( cenario, campusDTO, result ) );
 
 							presenter.go( gTab );
 						}

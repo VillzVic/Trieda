@@ -199,7 +199,7 @@ public class CursoAreasTitulacaoImportExcel
 		// [ CódidoAreaTitulacao -> AreaTitulacao ]
 		Map< String, AreaTitulacao > areasBDMap
 			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(
-				AreaTitulacao.findAll( this.instituicaoEnsino ) );
+			AreaTitulacao.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 	

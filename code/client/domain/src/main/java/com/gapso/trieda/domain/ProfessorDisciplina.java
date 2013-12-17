@@ -165,6 +165,20 @@ public class ProfessorDisciplina
 			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " )
 			.setParameter( "instituicaoEnsino", instituicaoEnsino ).getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List< ProfessorDisciplina > findByCenario(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		return entityManager().createQuery(
+			" SELECT o FROM ProfessorDisciplina o " +
+			" WHERE o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professor.cenario = :cenario " +
+			" AND o.disciplina.cenario = :cenario ")
+			.setParameter( "instituicaoEnsino", instituicaoEnsino )
+			.setParameter( "cenario", cenario ).getResultList();
+	}
 
 	public static ProfessorDisciplina find(
 		Long id, InstituicaoEnsino instituicaoEnsino )

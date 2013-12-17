@@ -549,9 +549,10 @@ public class AlunoDemanda
 		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
 	}
 	
-	public static int sumDemandaPresencialPorPrioridade(InstituicaoEnsino instituicaoEnsino, Campus campus, int prioridade) {
+	public static int sumDemandaPresencialPorPrioridade(InstituicaoEnsino instituicaoEnsino, Cenario cenario, 
+			Campus campus, int prioridade) {
 		// obtem os tipos de disciplinas que ocupam grade
-		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findByCenario(instituicaoEnsino, cenario);
 		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
 		for (TipoDisciplina td : tiposDisciplinas) {
 			if (td.ocupaGrade()) {
@@ -707,7 +708,7 @@ public class AlunoDemanda
 			queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
 		}
 		
-		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findByCenario(instituicaoEnsino, cenario);
 		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
 		for (TipoDisciplina td : tiposDisciplinas) {
 			if (td.ocupaGrade()) {
@@ -768,7 +769,7 @@ public class AlunoDemanda
 			queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
 		}
 
-		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findByCenario(instituicaoEnsino, cenario);
 		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
 		for (TipoDisciplina td : tiposDisciplinas) {
 			if (td.ocupaGrade()) {
@@ -824,7 +825,7 @@ public class AlunoDemanda
 			queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
 		}
 		
-		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+		List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findByCenario(instituicaoEnsino, cenario);
 		List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
 		for (TipoDisciplina td : tiposDisciplinas) {
 			if (td.ocupaGrade()) {
@@ -878,7 +879,7 @@ public class AlunoDemanda
 				queryCurso = ( " o.demanda.oferta.curso = :curso AND " );
 			}
 			
-			List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findAll(instituicaoEnsino);
+			List<TipoDisciplina> tiposDisciplinas = TipoDisciplina.findByCenario(instituicaoEnsino, cenario);
 			List<TipoDisciplina> tiposDisciplinasPresenciais = new ArrayList<TipoDisciplina>(tiposDisciplinas.size());
 			for (TipoDisciplina td : tiposDisciplinas) {
 				if (td.ocupaGrade()) {

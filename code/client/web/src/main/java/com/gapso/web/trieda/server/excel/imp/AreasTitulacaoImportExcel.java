@@ -210,7 +210,7 @@ public class AreasTitulacaoImportExcel
 	{
 		Map< String, AreaTitulacao > areasTitulacaoBDMap
 			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(
-				AreaTitulacao.findAll( this.instituicaoEnsino ) );
+				AreaTitulacao.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( AreasTitulacaoImportExcelBean areaExcel : sheetContent )
 		{

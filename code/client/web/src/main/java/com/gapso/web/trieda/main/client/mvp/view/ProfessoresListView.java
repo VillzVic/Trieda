@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresListPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -42,8 +43,9 @@ public abstract class ProfessoresListView
 	protected ContentPanel panel;
 	private GTabItem tabItem;
 	private RelatorioProfessorFiltro professorFiltro;
+	private CenarioDTO cenarioDTO;
 	
-	public ProfessoresListView(RelatorioProfessorFiltro professorFiltro)
+	public ProfessoresListView( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro)
 	{
 		this.professorFiltro = professorFiltro;
 		this.initUI();
@@ -102,9 +104,9 @@ public abstract class ProfessoresListView
 
 		this.cpfBuscaTF = new TextField< String >();
 		this.cpfBuscaTF.setFieldLabel( "CPF" );
-		this.tipoContratoBuscaCB = new TipoContratoComboBox();
+		this.tipoContratoBuscaCB = new TipoContratoComboBox( cenarioDTO );
 		this.tipoContratoBuscaCB.setValue(professorFiltro.getTipoContrato());
-		this.titulacaoBuscaCB = new TitulacaoComboBox();
+		this.titulacaoBuscaCB = new TitulacaoComboBox( cenarioDTO );
 		this.titulacaoBuscaCB.setValue(professorFiltro.getTitulacao());
 		this.areaTitulacaoBuscaCB = new AreaTitulacaoComboBox();
 		this.areaTitulacaoBuscaCB.setValue(professorFiltro.getAreaTitulacao());

@@ -301,6 +301,25 @@ public class DivisaoCredito
 		return null;
 	}
 	
+	@SuppressWarnings( "unchecked" )
+	public static List<DivisaoCredito> findByCenario(InstituicaoEnsino instituicaoEnsino, Cenario cenario) { 
+		Query q = entityManager().createQuery(
+			" SELECT o FROM DivisaoCredito o, IN ( o.cenario ) c  " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino" +
+			" c = :cenario " +
+			" ORDER BY o.creditos"
+		);
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		try {
+			return q.getResultList();
+		}
+		catch ( EmptyResultDataAccessException e ) { }
+
+		return null;
+	}
+	
 	public static DivisaoCredito findByCredito(
 		Integer credito, InstituicaoEnsino instituicaoEnsino )
 	{ 

@@ -60,6 +60,20 @@ public class CenariosServiceImpl
 
 		return instituicaoEnsinoDTO;
 	}
+	
+	@Override
+	public CenarioDTO getCurrentCenario()
+	{
+		Cenario cenario = getCenario();
+				
+		return cenario == null ? getMasterData() : ConvertBeans.toCenarioDTO(cenario);
+	}
+	
+	@Override
+	public void setCurrentCenario(long cenarioId)
+	{
+		setCenario( cenarioId );
+	}
 
 	@Override
 	public CenarioDTO getMasterData()

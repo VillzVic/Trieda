@@ -189,7 +189,7 @@ public class UnidadesPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.UNIDADES, instituicaoEnsinoDTO );
+						ExcelInformationType.UNIDADES, instituicaoEnsinoDTO, cenario );
 
 				ImportExcelFormView importExcelFormView
 					= new ImportExcelFormView( parametros, display.getGrid() );
@@ -207,7 +207,7 @@ public class UnidadesPresenter
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.UNIDADES, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.UNIDADES, instituicaoEnsinoDTO, cenario, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros,	display.getI18nConstants(), display.getI18nMessages() );
@@ -226,7 +226,7 @@ public class UnidadesPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.UNIDADES, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.UNIDADES, instituicaoEnsinoDTO, cenario, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros,	display.getI18nConstants(), display.getI18nMessages() );
@@ -341,7 +341,7 @@ public class UnidadesPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new UnidadesDeslocamentoPresenter( instituicaoEnsinoDTO,
-					new UnidadesDeslocamentoView( cenario, null, null ) );
+					cenario, new UnidadesDeslocamentoView( cenario, null, null ) );
 
 				presenter.go( gTab );
 			}

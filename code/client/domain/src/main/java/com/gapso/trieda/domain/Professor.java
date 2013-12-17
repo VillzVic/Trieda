@@ -443,8 +443,8 @@ public class Professor
 
 	public void preencheHorarios()
 	{
-		List< SemanaLetiva > listDomains = SemanaLetiva.findAll(
-			this.getTipoContrato().getInstituicaoEnsino() );
+		List< SemanaLetiva > listDomains = SemanaLetiva.findByCenario(
+			this.getTipoContrato().getInstituicaoEnsino(), this.getCenario() );
 
 		for ( SemanaLetiva semanaLetiva : listDomains )
 		{

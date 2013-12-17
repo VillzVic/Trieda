@@ -10,6 +10,7 @@ public class TipoSalaDTO extends AbstractDTO<String> implements Comparable<TipoS
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_NOME = "nome";
 	public static final String PROPERTY_DESCRICAO = "descricao";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	
 	public TipoSalaDTO() {
 	}
@@ -47,6 +48,13 @@ public class TipoSalaDTO extends AbstractDTO<String> implements Comparable<TipoS
 	}
 	public String getDescricao() {
 		return get(PROPERTY_DESCRICAO);
+	}
+	
+	public void setCenarioId(Long value) {
+		set(PROPERTY_CENARIO_ID, value);
+	}
+	public Long getCenarioId() {
+		return get(PROPERTY_CENARIO_ID);
 	}
 	
 	@Override

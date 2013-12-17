@@ -340,10 +340,11 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TipoSalaDTO > getTipoSalaList()
+	public ListLoadResult< TipoSalaDTO > getTipoSalaList( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		InstituicaoEnsino instituicaoEnsino = getInstituicaoEnsinoUser();
-		List< TipoSala > list = TipoSala.findAll( instituicaoEnsino );
+		List< TipoSala > list = TipoSala.findByCenario( instituicaoEnsino, cenario );
 
 		if ( list.size() == 0 )
 		{
@@ -351,21 +352,24 @@ public class SalasServiceImpl
 			tipo1.setNome( TipoSala.TIPO_SALA_DE_AULA );
 			tipo1.setDescricao( TipoSala.TIPO_SALA_DE_AULA );
 			tipo1.setInstituicaoEnsino( instituicaoEnsino );
+			tipo1.setCenario(cenario);
 			tipo1.persist();
 
 			TipoSala tipo2 = new TipoSala();
 			tipo2.setNome( TipoSala.TIPO_LABORATORIO );
 			tipo2.setDescricao( TipoSala.TIPO_LABORATORIO );
 			tipo2.setInstituicaoEnsino( instituicaoEnsino );
+			tipo2.setCenario(cenario);
 			tipo2.persist();
 
 			TipoSala tipo3 = new TipoSala();
 			tipo3.setNome( "	" );
 			tipo3.setDescricao( "Auditório" );
 			tipo3.setInstituicaoEnsino( instituicaoEnsino );
+			tipo3.setCenario(cenario);
 			tipo3.persist();
 
-			list = TipoSala.findAll( getInstituicaoEnsinoUser() );
+			list = TipoSala.findByCenario( getInstituicaoEnsinoUser(), cenario );
 		}
 
 		List< TipoSalaDTO > listDTO = new ArrayList< TipoSalaDTO >();

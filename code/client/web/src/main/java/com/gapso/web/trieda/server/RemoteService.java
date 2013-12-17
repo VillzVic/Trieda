@@ -3,6 +3,7 @@ package com.gapso.web.trieda.server;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Usuario;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -26,6 +27,23 @@ public class RemoteService
 		return Usuario.find( username );
 	}
 
+	final protected Cenario getCenario()
+	{
+		if (getThreadLocalRequest().getSession().getAttribute("cenario") != null)
+		{
+			return Cenario.find((Long)getThreadLocalRequest().getSession().getAttribute("cenario"), getInstituicaoEnsinoUser());
+		}
+		else
+		{
+			return Cenario.findMasterData(getInstituicaoEnsinoUser());
+		}
+	}
+	
+	final protected void setCenario(long cenarioId)
+	{
+		 getThreadLocalRequest().getSession().setAttribute("cenario", cenarioId);
+	}
+	
 	protected boolean isProfessor()
 	{
 		return ( getUsuario().getProfessor() != null );

@@ -81,7 +81,7 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< AreaTitulacao > areas
-			= AreaTitulacao.findAll( this.instituicaoEnsino );
+			= AreaTitulacao.findByCenario( this.instituicaoEnsino, getCenario() );
 
 		if ( !areas.isEmpty() )
 		{

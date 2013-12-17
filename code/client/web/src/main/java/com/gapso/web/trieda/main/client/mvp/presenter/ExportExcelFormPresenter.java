@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -78,13 +79,16 @@ public class ExportExcelFormPresenter
 	
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
 	public ExportExcelFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenarioDTO,
 		Display display )
 	{
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 
 		setListeners();
 	}
@@ -100,7 +104,7 @@ public class ExportExcelFormPresenter
 					String fileExtension = "xls";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.TUDO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.TUDO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros, display.getI18nConstants(), display.getI18nMessages(), display.getFormPanel() );
@@ -122,7 +126,7 @@ public class ExportExcelFormPresenter
 					String fileExtension = "xlsx";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.TUDO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.TUDO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros, display.getI18nConstants(), display.getI18nMessages(), display.getFormPanel() );

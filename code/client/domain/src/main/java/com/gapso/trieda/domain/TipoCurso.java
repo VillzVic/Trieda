@@ -45,6 +45,11 @@ public class TipoCurso
     @Column(name = "TCU_DESCRICAO")
     @Size(min = 3, max = 255)
     private String descricao;
+    
+	@NotNull
+	@ManyToOne( targetEntity = Cenario.class )
+	@JoinColumn( name = "CEN_ID" )
+	private Cenario cenario;
 
 	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH },
@@ -62,6 +67,14 @@ public class TipoCurso
 		this.instituicaoEnsino = instituicaoEnsino;
 	}
 
+	public Cenario getCenario() {
+		return this.cenario;
+	}
+	
+	public void setCenario(Cenario cenario) {
+		this.cenario = cenario;
+	}
+	
 	public String toString()
 	{
         StringBuilder sb = new StringBuilder();
@@ -177,6 +190,22 @@ public class TipoCurso
 		List< TipoCurso > list = q.getResultList();
         return list;
     }
+	
+	@SuppressWarnings("unchecked")
+    public static List< TipoCurso > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+			" SELECT o FROM TipoCurso o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario" );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		List< TipoCurso > list = q.getResultList();
+        return list;
+    }
 
 	public static Map< String, TipoCurso > buildTipoCursoCodigoToTipoCursoMap(
 		List< TipoCurso > tiposCurso )
@@ -236,7 +265,7 @@ public class TipoCurso
 		return list;
     }
 
-	public static int count( String codigo, String descricao,
+	public static int count( Cenario cenario, String codigo, String descricao,
 		InstituicaoEnsino instituicaoEnsino )
 	{
 		codigo = ( ( codigo == null )? "" : codigo );
@@ -253,10 +282,12 @@ public class TipoCurso
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM TipoCurso o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.cenario = :cenario " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " + descricaoQuery );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
 
 		if ( descricao != null )
 		{
@@ -268,7 +299,7 @@ public class TipoCurso
 
     @SuppressWarnings("unchecked")
     public static List< TipoCurso > findBy(
-    	String codigo, String descricao, int firstResult,
+    	Cenario cenario, String codigo, String descricao, int firstResult,
     	int maxResults, String orderBy, InstituicaoEnsino instituicaoEnsino )
     {
     	codigo = ( ( codigo == null ) ? "" : codigo );
@@ -286,9 +317,11 @@ public class TipoCurso
         Query q = entityManager().createQuery(
         	" SELECT o FROM TipoCurso o " +
         	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.cenario = :cenario " +
         	" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " + descricaoQuery + " " + orderBy );
 
         q.setParameter( "codigo", codigo );
+        q.setParameter( "cenario", cenario );
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
         if ( descricao != null )

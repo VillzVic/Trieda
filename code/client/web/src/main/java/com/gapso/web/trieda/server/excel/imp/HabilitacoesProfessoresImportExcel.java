@@ -303,7 +303,7 @@ public class HabilitacoesProfessoresImportExcel
 	{
 		Map< String, ProfessorDisciplina > professoresDisciplinasBDMap
 			= ProfessorDisciplina.buildCursoNaturalKeyToProfessorDisciplinaMap(
-				ProfessorDisciplina.findAll( this.instituicaoEnsino ) );
+				ProfessorDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( HabilitacoesProfessoresImportExcelBean pdExcel : sheetContent )

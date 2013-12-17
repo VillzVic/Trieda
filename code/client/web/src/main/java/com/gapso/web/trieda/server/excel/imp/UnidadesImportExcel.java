@@ -280,7 +280,7 @@ public class UnidadesImportExcel
 		}
 		
 		if (!persistedUnidades.isEmpty()) {
-			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Unidade.preencheHorariosDasUnidades(persistedUnidades,semanasLetivas);
 		}
 	}

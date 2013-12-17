@@ -99,7 +99,7 @@ public class SalaFormView extends MyComposite implements
 		unidadeCB.setEmptyText( getI18nConstants().selecioneA() + getI18nConstants().unidade() );
 		formPanel.add( unidadeCB, formData );
 
-		tipoSalaCB = new TipoSalaComboBox();
+		tipoSalaCB = new TipoSalaComboBox( cenarioDTO );
 		tipoSalaCB.setName( "tipoSala" );
 		tipoSalaCB.setFieldLabel( getI18nConstants().tipo() );
 		tipoSalaCB.setAllowBlank( false );

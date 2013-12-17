@@ -36,12 +36,14 @@ public class HorarioDisponivelDisciplinaFormPresenter
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
+	private CenarioDTO cenario;
 
 	public HorarioDisponivelDisciplinaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
+		this.cenario = cenario;
 
 		configureProxy();
 		setListeners();
@@ -62,7 +64,7 @@ public class HorarioDisponivelDisciplinaFormPresenter
 						// TRIEDA-1154: Os "horarios disponiveis" de uma disciplina ja associada a alguma matriz curricular devem pertencer somente 'a semana letiva da matriz curricular correspondente
 						if (result.isEmpty() || result.size() > 1) {
 							// busca todos os horários de todas as semanas letivas
-							Services.semanasLetiva().getAllHorariosDisponiveisCenario(finalCallback);
+							Services.semanasLetiva().getAllHorariosDisponiveisCenario(cenario, finalCallback);
 						} else {
 							// obtém a única semana letiva associada com a disciplina
 							SemanaLetivaDTO semanaLetivaDTO = result.get(0);

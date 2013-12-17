@@ -30,7 +30,7 @@ public interface SalasService
 	ListLoadResult< SalaDTO > getList();
 	void save( SalaDTO salaDTO );
 	void remove( List< SalaDTO > salaDTOList );
-	ListLoadResult< TipoSalaDTO > getTipoSalaList();
+	ListLoadResult< TipoSalaDTO > getTipoSalaList( CenarioDTO cenarioDTO );
 	SalaDTO getSala( Long id );
 	TipoSalaDTO getTipoSala( Long id );
 	ListLoadResult< SalaDTO > getAndaresList();

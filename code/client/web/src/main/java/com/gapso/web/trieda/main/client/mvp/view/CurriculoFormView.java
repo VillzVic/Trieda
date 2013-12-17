@@ -78,7 +78,7 @@ public class CurriculoFormView extends MyComposite
 		cursoCB.setEmptyText( "Selecione o curso" );
 		formPanel.add( cursoCB, formData );
 
-		semanaLetivaCB = new SemanaLetivaComboBox();
+		semanaLetivaCB = new SemanaLetivaComboBox( cenarioDTO );
 		semanaLetivaCB.setName( "semanaLetiva" );
 		semanaLetivaCB.setFieldLabel("Semana Letiva");
 		semanaLetivaCB.setAllowBlank( false );

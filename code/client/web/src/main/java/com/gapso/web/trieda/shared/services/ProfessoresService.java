@@ -31,9 +31,9 @@ public interface ProfessoresService
 	PagingLoadResult< ProfessorDTO > getBuscaList( CenarioDTO cenarioDTO, String cpf, TipoContratoDTO tipoContratoDTO,
 		TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config );
 	TipoContratoDTO getTipoContrato( Long id );
-	ListLoadResult< TipoContratoDTO > getTiposContratoAll();
+	ListLoadResult< TipoContratoDTO > getTiposContratoAll( CenarioDTO cenarioDTO );
 	TitulacaoDTO getTitulacao( Long id );
-	ListLoadResult< TitulacaoDTO > getTitulacoesAll();
+	ListLoadResult< TitulacaoDTO > getTitulacoesAll( CenarioDTO cenarioDTO );
 	void save( ProfessorDTO professorDTO ) throws TriedaException;
 	void remove( List< ProfessorDTO > professorDTOList );
 	List< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( ProfessorDTO professorDTO );

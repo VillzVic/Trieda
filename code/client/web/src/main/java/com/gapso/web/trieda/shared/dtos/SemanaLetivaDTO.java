@@ -16,6 +16,7 @@ public class SemanaLetivaDTO
 	public static final String PROPERTY_DESCRICAO = "descricao";
 	public static final String PROPERTY_TEMPO = "tempo";
 	public static final String PROPERTY_MAX_CREDITOS = "maxCreditos";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	private Map< Long, String > horariosStringMap;
 	private Map< Long, Date > horariosInicioMap;
@@ -83,6 +84,16 @@ public class SemanaLetivaDTO
 	public Integer getMaxCreditos()
 	{
 		return get( PROPERTY_MAX_CREDITOS );
+	}
+	
+	public void setCenarioId( Long value )
+	{
+		set( PROPERTY_CENARIO_ID, value );
+	}
+
+	public Long getCenarioId()
+	{
+		return get( PROPERTY_CENARIO_ID );
 	}
 
 	public void setHorariosStringMap(

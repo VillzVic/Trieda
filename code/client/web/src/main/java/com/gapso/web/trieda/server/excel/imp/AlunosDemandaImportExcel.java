@@ -385,11 +385,11 @@ public class AlunosDemandaImportExcel
 	{
 		Map< String, Aluno > alunosBDMap
 			= Aluno.buildMatriculaAlunoToAlunoMap(
-				Aluno.findAll( this.instituicaoEnsino ) );
+				Aluno.findByCenario( this.instituicaoEnsino , getCenario()) );
 
 		Map< String, Demanda > demandasBDMap
 			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(
-				Demanda.findAll( this.instituicaoEnsino ) );
+				Demanda.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		Map< String, Oferta > ofertasBDMap
 			= Oferta.buildCampusTurnoCurriculoToOfertaMap(
@@ -397,11 +397,11 @@ public class AlunosDemandaImportExcel
 
 		Map< String, AlunoDemanda > alunosDemandaBD
 			= AlunoDemanda.buildCodAlunoCodDemandaToAlunosDemandasMap(
-				AlunoDemanda.findAll( this.instituicaoEnsino ) );
+				AlunoDemanda.findAll( this.instituicaoEnsino, getCenario() ) );
 
 		Map< String, CurriculoDisciplina > curriculosDisciplinaBD
 			= CurriculoDisciplina.buildCurriculoDisciplinaPeriodoMap(
-				CurriculoDisciplina.findAll( this.instituicaoEnsino ) );
+				CurriculoDisciplina.findByCenario( this.instituicaoEnsino , getCenario() ) );
 
 		int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( AlunosDemandaImportExcelBean alunosDemandaExcel : sheetContent )

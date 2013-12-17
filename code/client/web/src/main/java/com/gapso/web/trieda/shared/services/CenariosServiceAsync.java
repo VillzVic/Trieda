@@ -27,4 +27,6 @@ public interface CenariosServiceAsync
 	void remove( List< CenarioDTO > cenarioDTOList, AsyncCallback< Void > callback );
 	void getResumos( CenarioDTO cenario, AsyncCallback< List< TreeNodeDTO > > callback );
 	void checkDBVersion(AsyncCallback<Integer> callback);
+	void getCurrentCenario(AsyncCallback<CenarioDTO> callback);
+	void setCurrentCenario(long cenarioId, AsyncCallback<Void> callback);
 }

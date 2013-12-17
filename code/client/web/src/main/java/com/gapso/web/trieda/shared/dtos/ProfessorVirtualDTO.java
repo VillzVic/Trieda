@@ -19,6 +19,7 @@ public class ProfessorVirtualDTO extends AbstractDTO<Long> implements Comparable
 	public static final String PROPERTY_TITULACAO_ID = "titulacaoId";
 	public static final String PROPERTY_AREA_TITULACAO_STRING = "areaTitulacaoString";
 	public static final String PROPERTY_AREA_TITULACAO_ID = "areaTitulacaoId";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	
 	public ProfessorVirtualDTO()
 	{
@@ -100,6 +101,13 @@ public class ProfessorVirtualDTO extends AbstractDTO<Long> implements Comparable
 	}
 	public Long getAreaTitulacaoId() {
 		return get(PROPERTY_AREA_TITULACAO_ID);
+	}
+	
+	public void setCenarioId(Long value) {
+		set(PROPERTY_CENARIO_ID, value);
+	}
+	public Long getCenarioId() {
+		return get(PROPERTY_CENARIO_ID);
 	}
 
 	@Override

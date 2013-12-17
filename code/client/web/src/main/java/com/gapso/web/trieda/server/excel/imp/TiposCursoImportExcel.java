@@ -208,7 +208,7 @@ public class TiposCursoImportExcel
 		List< TiposCursoImportExcelBean > sheetContent )
 	{
 		Map< String, TipoCurso > tiposCursoBDMap = TipoCurso.buildTipoCursoCodigoToTipoCursoMap(
-			TipoCurso.findAll( this.instituicaoEnsino ) );
+			TipoCurso.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		for ( TiposCursoImportExcelBean tipoCursoExcel : sheetContent )
 		{

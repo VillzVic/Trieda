@@ -61,9 +61,7 @@ public class ImportExcelServlet
 
 			return;
 		}
-
-		this.cenario = Cenario.findMasterData( instituicaoEnsino );
-
+		
 		FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload( factory );
         InputStream inputStream = null;
@@ -75,6 +73,7 @@ public class ImportExcelServlet
         	String fileName = null;
         	String informationToBeImported = null;
         	String chaveRegistro = null;
+        	Long cenarioId = null;
 
 			for ( FileItem iten : itens )
 			{
@@ -89,10 +88,16 @@ public class ImportExcelServlet
 					fileName = iten.getName();
 					inputStream = iten.getInputStream();
 				}
+				else if(iten.getFieldName().equals(ExcelInformationType.getCenarioParameterName() ) )
+				{
+					cenarioId = Long.parseLong( iten.getString() );
+				}
 				else if(iten.getFieldName().equals("chaveRegistro")){
 					chaveRegistro = iten.getString();
 				}
 			}
+			
+			this.cenario = Cenario.find( cenarioId, instituicaoEnsino );
 
 			if ( inputStream != null && informationToBeImported != null )
 			{

@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.DisciplinasPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -42,9 +43,11 @@ public class DisciplinasView
 	private Button associarGruposSalasBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public DisciplinasView()
+	public DisciplinasView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
@@ -144,7 +147,7 @@ public class DisciplinasView
 		this.nomeBuscaTextField.setFieldLabel("Nome");
 		this.codigoBuscaTextField = new TextField<String>();
 		this.codigoBuscaTextField.setFieldLabel("Código");
-		this.tipoDisciplinaBuscaComboBox = new TipoDisciplinaComboBox();
+		this.tipoDisciplinaBuscaComboBox = new TipoDisciplinaComboBox(cenarioDTO);
 		this.tipoDisciplinaBuscaComboBox.setFieldLabel("Tipo de disciplina");
 		
 		this.filter.addField( this.nomeBuscaTextField );

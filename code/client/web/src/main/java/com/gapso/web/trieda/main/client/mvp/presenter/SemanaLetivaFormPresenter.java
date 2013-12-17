@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -34,14 +35,17 @@ public class SemanaLetivaFormPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< SemanaLetivaDTO > gridPanel;
 	private Display display;
+	private CenarioDTO cenarioDTO;
 
 	public SemanaLetivaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenarioDTO,
 		Display display, SimpleGrid< SemanaLetivaDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+		this.cenarioDTO = cenarioDTO;
 
 		setListeners();
 	}
@@ -95,6 +99,7 @@ public class SemanaLetivaFormPresenter
 	{
 		SemanaLetivaDTO dto = this.display.getSemanaLetivaDTO();
 
+		dto.setCenarioId( this.cenarioDTO.getId() );
 		dto.setInstituicaoEnsinoId( this.instituicaoEnsinoDTO.getId() );
 		dto.setCodigo( this.display.getCodigoTextField().getValue() );
 		dto.setDescricao( this.display.getDescricaoTextField().getValue() );

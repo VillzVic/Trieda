@@ -66,8 +66,8 @@ public class RelatorioProfessoresView extends RelatorioView
 		this.filtro = new RelatorioProfessorFiltro();
 		
 		turnoCB = new TurnoComboBox(cenarioDTO);
-		titulacaoCB = new TitulacaoComboBox();
-		tipoContratoCB = new TipoContratoComboBox();
+		titulacaoCB = new TitulacaoComboBox(cenarioDTO);
+		tipoContratoCB = new TipoContratoComboBox(cenarioDTO);
 		cursoCB = new CursoComboBox(cenarioDTO);
 		areaTitulacaoCB = new AreaTitulacaoComboBox();
 	}
@@ -181,7 +181,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresAtendimentosListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
-							cenarioDTO, new ProfessoresAtendimentosListView( getProfessorFiltro() ) );
+							cenarioDTO, new ProfessoresAtendimentosListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});
@@ -192,7 +192,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresGradeCheiaListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
-							cenarioDTO, new ProfessoresGradeCheiaListView( getProfessorFiltro() ) );
+							cenarioDTO, new ProfessoresGradeCheiaListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});
@@ -203,7 +203,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresBemAlocadosListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
-							cenarioDTO, new ProfessoresBemAlocadosListView( getProfessorFiltro() ) );
+							cenarioDTO, new ProfessoresBemAlocadosListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});
@@ -214,7 +214,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresMalAlocadosListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
-							cenarioDTO, new ProfessoresMalAlocadosListView( getProfessorFiltro() ) );
+							cenarioDTO, new ProfessoresMalAlocadosListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});
@@ -225,7 +225,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresComJanelasListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
-							cenarioDTO, new ProfessoresComJanelasListView( getProfessorFiltro() ) );
+							cenarioDTO, new ProfessoresComJanelasListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});
@@ -236,7 +236,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresDeslocamentoUnidadesListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
-							cenarioDTO, new ProfessoresDeslocamentoUnidadesListView( getProfessorFiltro() ) );
+							cenarioDTO, new ProfessoresDeslocamentoUnidadesListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});
@@ -247,7 +247,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresDeslocamentoCampiListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
-							cenarioDTO, new ProfessoresDeslocamentoCampiListView( getProfessorFiltro() ) );
+							cenarioDTO, new ProfessoresDeslocamentoCampiListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});

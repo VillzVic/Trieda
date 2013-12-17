@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -34,14 +35,16 @@ public class AreaTitulacaoFormPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< AreaTitulacaoDTO > gridPanel;
 	private Display display;
+	private CenarioDTO cenarioDTO;
 
 	public AreaTitulacaoFormPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO,
 		Display display, SimpleGrid< AreaTitulacaoDTO > gridPanel )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gridPanel = gridPanel;
 		this.display = display;
+		this.cenarioDTO = cenarioDTO;
 
 		setListeners();
 	}
@@ -78,6 +81,7 @@ public class AreaTitulacaoFormPresenter
 		areaTitulacaoDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		areaTitulacaoDTO.setCodigo( display.getCodigoTextField().getValue() );
 		areaTitulacaoDTO.setDescricao( display.getDescricaoTextField().getValue() );
+		areaTitulacaoDTO.setCenarioId( cenarioDTO.getId() );
 
 		return areaTitulacaoDTO;
 	}

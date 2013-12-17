@@ -16,9 +16,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
-import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
-import com.gapso.web.trieda.shared.util.view.RelatorioAlunoFiltro;
 import com.gapso.web.trieda.shared.util.view.RelatorioSalaFiltro;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -29,7 +27,7 @@ public interface SalasServiceAsync
 	void getList( AsyncCallback< ListLoadResult< SalaDTO > > callback );
 	void save( SalaDTO salaDTO, AsyncCallback< Void > callback );
 	void remove( List< SalaDTO > salaDTOList, AsyncCallback< Void > callback );
-	void getTipoSalaList( AsyncCallback< ListLoadResult< TipoSalaDTO > > callback );
+	void getTipoSalaList( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< TipoSalaDTO > > callback );
 	void getSala( Long id, AsyncCallback< SalaDTO > callback );
 	void getTipoSala( Long id, AsyncCallback< TipoSalaDTO > callback );
 	void getAndaresList( AsyncCallback<ListLoadResult< SalaDTO > > callback );

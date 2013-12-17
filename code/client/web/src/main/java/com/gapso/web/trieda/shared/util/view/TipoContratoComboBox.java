@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.services.Services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -13,8 +14,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class TipoContratoComboBox
 	extends ComboBox< TipoContratoDTO >
 {
-	public TipoContratoComboBox()
+	CenarioDTO cenarioDTO;
+	
+	public TipoContratoComboBox( CenarioDTO cenario )
 	{
+		cenarioDTO = cenario;
 		RpcProxy< ListLoadResult< TipoContratoDTO > > proxy =
 			new RpcProxy< ListLoadResult< TipoContratoDTO > >()
 		{
@@ -22,7 +26,7 @@ public class TipoContratoComboBox
 			public void load( Object loadConfig,
 				AsyncCallback< ListLoadResult< TipoContratoDTO > > callback )
 			{
-				Services.professores().getTiposContratoAll( callback );
+				Services.professores().getTiposContratoAll( cenarioDTO, callback );
 			}
 		};
 

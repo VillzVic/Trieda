@@ -32,7 +32,6 @@ public class ResumoCampiPresenter
 		MenuItem getExportXlsxExcelButton();
 	}
 
-	@SuppressWarnings( "unused" )
 	private CenarioDTO cenario;
 
 	private Display display;
@@ -60,7 +59,7 @@ public class ResumoCampiPresenter
 			@Override
 			public void componentSelected( MenuEvent ce ) {
 				String fileExtension = "xls";
-				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.RESUMO_CAMPI,instituicaoEnsinoDTO, fileExtension);
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.RESUMO_CAMPI,instituicaoEnsinoDTO, cenario, fileExtension);
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(parametros,display.getI18nConstants(),display.getI18nMessages());
 				e.submit();
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
@@ -71,7 +70,7 @@ public class ResumoCampiPresenter
 			@Override
 			public void componentSelected( MenuEvent ce ) {
 				String fileExtension = "xlsx";
-				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.RESUMO_CAMPI,instituicaoEnsinoDTO, fileExtension);
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.RESUMO_CAMPI,instituicaoEnsinoDTO, cenario, fileExtension);
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(parametros,display.getI18nConstants(),display.getI18nMessages());
 				e.submit();
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());

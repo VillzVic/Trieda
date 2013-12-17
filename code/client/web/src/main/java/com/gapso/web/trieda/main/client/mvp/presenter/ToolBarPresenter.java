@@ -6,7 +6,9 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
@@ -108,7 +110,9 @@ public class ToolBarPresenter
 		extends ITriedaI18nGateway
 	{
 		Component getComponent();
-
+		TabItem getNomeContextoTabItem();
+		ContentPanel getPlanejamentoPanel();
+		
 		Button getCampiNovoCampiButton();
 		Button getCampiListCampiButton();
 		Button getCampusDeslocamentoListCampiButton();
@@ -388,7 +392,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new TiposCursosPresenter(
-					instituicaoEnsinoDTO, new TiposCursosView() );
+					instituicaoEnsinoDTO, cenarioDTO, new TiposCursosView() );
 
 				presenter.go( gTab );
 			}
@@ -401,7 +405,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new AreasTitulacaoPresenter(
-					instituicaoEnsinoDTO, new AreasTitulacaoView() );
+					instituicaoEnsinoDTO, cenarioDTO, new AreasTitulacaoView() );
 
 				presenter.go( gTab );
 			}
@@ -414,7 +418,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new VincularAreasTitulacaoPresenter(
-						instituicaoEnsinoDTO, new VincularAreasTitulacaoView(cenarioDTO) );
+						instituicaoEnsinoDTO, cenarioDTO, new VincularAreasTitulacaoView(cenarioDTO) );
 
 				presenter.go( gTab );
 			}
@@ -427,7 +431,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new UnidadesDeslocamentoPresenter(
-					instituicaoEnsinoDTO, new UnidadesDeslocamentoView( cenarioDTO, null, null ) );
+					instituicaoEnsinoDTO, cenarioDTO, new UnidadesDeslocamentoView( cenarioDTO, null, null ) );
 
 				presenter.go( gTab );
 			}
@@ -482,7 +486,7 @@ public class ToolBarPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					Presenter presenter = new CursosPresenter(
-						instituicaoEnsinoDTO,  cenarioDTO, new CursosView() );
+						instituicaoEnsinoDTO,  cenarioDTO, new CursosView( cenarioDTO ) );
 
 					presenter.go( gTab );
 				}
@@ -508,7 +512,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new DisciplinasPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new DisciplinasView() );
+					instituicaoEnsinoDTO, cenarioDTO, new DisciplinasView(cenarioDTO) );
 
 				presenter.go( gTab );
 			}
@@ -664,7 +668,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new ProfessoresPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new ProfessoresView() );
+					instituicaoEnsinoDTO, cenarioDTO, new ProfessoresView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -706,7 +710,7 @@ public class ToolBarPresenter
 				{
 					Presenter presenter = new ProfessoresVirtuaisPresenter(
 						instituicaoEnsinoDTO, cenarioDTO,
-						new ProfessoresVirtuaisView() );
+						new ProfessoresVirtuaisView( cenarioDTO ) );
 
 					presenter.go( gTab );
 				}
@@ -749,7 +753,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.TUDO, instituicaoEnsinoDTO );
+					ExcelInformationType.TUDO, instituicaoEnsinoDTO, cenarioDTO );
 
 				ImportExcelFormView importExcelFormView
 					= new ImportExcelFormView( parametros, null );
@@ -765,7 +769,7 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new ExportExcelFormPresenter( instituicaoEnsinoDTO, new ExportExcelFormView() );
+				Presenter presenter = new ExportExcelFormPresenter( instituicaoEnsinoDTO, cenarioDTO, new ExportExcelFormView() );
 
 				presenter.go( null );
 			}
@@ -1331,6 +1335,14 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+	}
+	
+	public void changeCenario( CenarioDTO cenarioDTO )
+	{
+		this.cenarioDTO = cenarioDTO;
+		toolBar.getNomeContextoTabItem().removeAll();
+		toolBar.getNomeContextoTabItem().addText(cenarioDTO.getNome());
+		toolBar.getNomeContextoTabItem().layout();
 	}
 
 	@Override

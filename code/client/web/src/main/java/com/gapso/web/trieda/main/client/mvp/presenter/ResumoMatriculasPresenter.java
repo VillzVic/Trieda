@@ -131,7 +131,7 @@ public class ResumoMatriculasPresenter
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.ATENDIMENTOS_MATRICULA, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.ATENDIMENTOS_MATRICULA, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -150,7 +150,7 @@ public class ResumoMatriculasPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.ATENDIMENTOS_MATRICULA, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.ATENDIMENTOS_MATRICULA, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

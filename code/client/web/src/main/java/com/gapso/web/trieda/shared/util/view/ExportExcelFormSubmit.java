@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
 import com.extjs.gxt.ui.client.widget.form.HiddenField;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -18,12 +19,14 @@ public class ExportExcelFormSubmit
 {
 	private FormPanel formPanel;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	private HiddenField< String > chaveField;
 
 	public ExportExcelFormSubmit( ExcelParametros parametros,
 			TriedaI18nConstants i18nConstants, TriedaI18nMessages i18nMessages, FormPanel formPanel )
 	{
 		this.instituicaoEnsinoDTO = parametros.getInstituicaoEnsinoDTO();
+		this.cenarioDTO = parametros.getCenarioDTO();
 
 		this.formPanel = new FormPanel();
         this.formPanel.setMethod( Method.GET );
@@ -61,6 +64,10 @@ public class ExportExcelFormSubmit
         this.addParameter(
         	ExcelInformationType.getFileExtensionParameterName(),
         	parametros.getFileExtension() );
+        
+        this.addParameter(
+           	ExcelInformationType.getCenarioParameterName(),
+           	cenarioDTO.getId().toString() );
 
         // Deve ser setado em toda classe que realiza exportação de dados
 		addParameter( "instituicaoEnsinoId",

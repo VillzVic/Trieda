@@ -284,7 +284,7 @@ public class DisciplinasImportExcel
 		// [ NomeTipoDisciplina -> TipoDisciplina ]
 		Map< String, TipoDisciplina > tiposDisciplinaBDMap
 			= TipoDisciplina.buildTipoDisciplinaNomeToTipoDisciplinaMap(
-				TipoDisciplina.findAll( this.instituicaoEnsino ) );
+				TipoDisciplina.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 
@@ -376,7 +376,7 @@ public class DisciplinasImportExcel
 		}
 		
 		if (!persistedDisciplinas.isEmpty()) {
-			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Disciplina.preencheHorariosDasDisciplinas(persistedDisciplinas,semanasLetivas);
 		}
 	}

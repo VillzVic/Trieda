@@ -241,7 +241,7 @@ public class CursosImportExcel
 		// [ CódigoTipoCurso -> TipoCurso ]
 		Map< String, TipoCurso > tiposCursoBDMap
 			= TipoCurso.buildTipoCursoCodigoToTipoCursoMap(
-				TipoCurso.findAll( instituicaoEnsino ) );
+				TipoCurso.findByCenario( instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 		for ( CursosImportExcelBean bean : sheetContent )

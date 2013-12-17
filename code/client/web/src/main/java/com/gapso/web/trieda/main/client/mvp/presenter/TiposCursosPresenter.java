@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.TipoCursoFormView;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -55,12 +56,15 @@ public class TiposCursosPresenter
 
 	private Display display; 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 
 	public TiposCursosPresenter(
-		InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display )
+		InstituicaoEnsinoDTO instituicaoEnsinoDTO, 
+		CenarioDTO cenarioDTO, Display display )
 	{
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 
 		configureProxy();
 		setListeners();
@@ -80,7 +84,7 @@ public class TiposCursosPresenter
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
 
-				service.getBuscaList( codigo, descricao, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenarioDTO, codigo, descricao, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -95,7 +99,7 @@ public class TiposCursosPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new TipoCursoFormPresenter( instituicaoEnsinoDTO,
+				Presenter presenter = new TipoCursoFormPresenter( instituicaoEnsinoDTO, cenarioDTO,
 					new TipoCursoFormView(instituicaoEnsinoDTO, new TipoCursoDTO() ), display.getGrid() );
 
 				presenter.go( null );
@@ -109,7 +113,7 @@ public class TiposCursosPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				TipoCursoDTO tipoCursoDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-				Presenter presenter = new TipoCursoFormPresenter( instituicaoEnsinoDTO,
+				Presenter presenter = new TipoCursoFormPresenter( instituicaoEnsinoDTO, cenarioDTO,
 					new TipoCursoFormView( instituicaoEnsinoDTO, tipoCursoDTO ), display.getGrid() );
 
 				presenter.go( null );
@@ -150,7 +154,7 @@ public class TiposCursosPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.TIPOS_CURSO, instituicaoEnsinoDTO );
+							ExcelInformationType.TIPOS_CURSO, instituicaoEnsinoDTO, cenarioDTO );
 
 					ImportExcelFormView importExcelFormView
 						= new ImportExcelFormView( parametros, display.getGrid() );
@@ -168,7 +172,7 @@ public class TiposCursosPresenter
 					String fileExtension = "xls";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.TIPOS_CURSO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.TIPOS_CURSO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros,	display.getI18nConstants(), display.getI18nMessages() );
@@ -187,7 +191,7 @@ public class TiposCursosPresenter
 					String fileExtension = "xlsx";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.TIPOS_CURSO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.TIPOS_CURSO, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros,	display.getI18nConstants(), display.getI18nMessages() );

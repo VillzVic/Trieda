@@ -439,7 +439,7 @@ public class DemandasImportExcel
 	{
 		Map< String, Demanda > demandasBDMap
 			= Demanda.buildCampusTurnoCurriculoDisciplinaToDemandaMap(
-				Demanda.findAll( this.instituicaoEnsino ) );
+				Demanda.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		Map< String, Oferta > ofertasBDMap
 			= Oferta.buildCampusTurnoCurriculoToOfertaMap(

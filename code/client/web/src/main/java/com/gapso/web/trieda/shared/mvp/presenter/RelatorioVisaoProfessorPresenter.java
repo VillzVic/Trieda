@@ -26,7 +26,7 @@ public class RelatorioVisaoProfessorPresenter extends RelatorioVisaoPresenter{
 	public RelatorioVisaoProfessorPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenario, UsuarioDTO usuario,
 		Display display, boolean isVisaoProfessor)
 	{
-		super(instituicaoEnsinoDTO, display);
+		super(instituicaoEnsinoDTO, cenario, display);
 		this.isVisaoProfessor = isVisaoProfessor;
 	}
 

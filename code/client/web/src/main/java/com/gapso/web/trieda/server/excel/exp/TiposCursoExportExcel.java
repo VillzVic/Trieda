@@ -90,8 +90,8 @@ public class TiposCursoExportExcel
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
-		List< TipoCurso > tipoCurso = TipoCurso.findAll(
-		 	this.instituicaoEnsino);
+		List< TipoCurso > tipoCurso = TipoCurso.findByCenario(
+		 	this.instituicaoEnsino, getCenario());
 
 		if (!tipoCurso.isEmpty()) {
 			if (this.removeUnusedSheets) {

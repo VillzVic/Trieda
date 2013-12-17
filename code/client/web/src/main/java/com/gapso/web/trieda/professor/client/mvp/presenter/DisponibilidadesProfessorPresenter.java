@@ -69,7 +69,7 @@ public class DisponibilidadesProfessorPresenter
 			@Override
 			public void load( Object loadConfig, AsyncCallback< PagingLoadResult< SemanaLetivaDTO > > callback )
 			{
-				service.getBuscaList( "", "", (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, "", "", (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 

@@ -380,7 +380,7 @@ public class EquivalenciasImportExcel
 	{
 		Map< String, Equivalencia > equivalenciasBDMap
 			= Equivalencia.buildEquivalenciaCursouCodigoEliminaCodigoToEquivalenciaMap(
-				Equivalencia.findAll( this.instituicaoEnsino ) );
+				Equivalencia.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		//int count = 0, total=sheetContent.size(); System.out.print(" "+total);
 		for ( EquivalenciasImportExcelBean equivalenciaExcel : sheetContent )

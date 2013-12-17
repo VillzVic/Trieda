@@ -237,6 +237,21 @@ public class Equivalencia
 
         return q.getResultList();
     }
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< Equivalencia > findByCenario(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM Equivalencia o " +
+    		" WHERE o.cursou.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+    		" AND o.cursou.cenario = :cenario " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+        return q.getResultList();
+    }
 
 	public static Equivalencia find(
 		Long id, InstituicaoEnsino instituicaoEnsino )

@@ -106,7 +106,7 @@ public class CenarioCriarFormView extends MyComposite
 		semestreTF.setEmptyText("Preencha semestre letivo");
 		formPanel.add(semestreTF, formData);
 
-		semanaLetivaCB = new SemanaLetivaComboBox();
+		semanaLetivaCB = new SemanaLetivaComboBox( cenarioDTO );
 		semanaLetivaCB.setName( "semanaLetiva" );
 		semanaLetivaCB.setFieldLabel( "Semana Letiva" );
 		semanaLetivaCB.setAllowBlank( false );

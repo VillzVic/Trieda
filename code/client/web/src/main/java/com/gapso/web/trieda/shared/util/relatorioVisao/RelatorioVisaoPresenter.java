@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -31,9 +32,12 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 
 	protected InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	protected Display display;
+	protected CenarioDTO cenarioDTO;
 
-	public RelatorioVisaoPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display){
+	public RelatorioVisaoPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO, 
+			CenarioDTO cenarioDTO, Display display){
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 		this.display = display;
 		
 		this.setListeners();
@@ -53,7 +57,7 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					display.getFiltro().getExcelType(), instituicaoEnsinoDTO, fileExtension
+					display.getFiltro().getExcelType(), instituicaoEnsinoDTO, cenarioDTO, fileExtension
 				);
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
@@ -75,7 +79,7 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					display.getFiltro().getExcelType(), instituicaoEnsinoDTO, fileExtension
+					display.getFiltro().getExcelType(), instituicaoEnsinoDTO, cenarioDTO, fileExtension
 				);
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(

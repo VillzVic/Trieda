@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel.Encoding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
 import com.extjs.gxt.ui.client.widget.form.HiddenField;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -26,14 +27,17 @@ public class ImportExcelFormView
 	private FormPanel formPanel;
 	private HiddenField< String > hiddenField;
 	private HiddenField< String > chaveField;
+	private HiddenField< String > cenarioField;
 	private FileUploadField fileUploadField;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 
 	public ImportExcelFormView( ExcelParametros parametros,
 		SimpleGrid< ? extends AbstractDTO< ? > > gridToBeUpdated )
 	{
 		// Deve ser setado em toda classe que realiza importação de dados
 		this.instituicaoEnsinoDTO = parametros.getInstituicaoEnsinoDTO();
+		this.cenarioDTO = parametros.getCenarioDTO();
 
 		initUI( parametros.getInfo(), gridToBeUpdated );
 		initActions();
@@ -69,6 +73,10 @@ public class ImportExcelFormView
 		this.hiddenField.setName(
 			ExcelInformationType.getInformationParameterName() );
 		this.hiddenField.setValue( infoToBeImported.toString() );
+		this.cenarioField = new HiddenField< String >();
+		this.cenarioField.setName(
+			ExcelInformationType.getCenarioParameterName() );
+		this.cenarioField.setValue( cenarioDTO.getId().toString() );
 		chaveField = new HiddenField<String>();
 		chaveField.setName("chaveRegistro");
 		chaveField.setValue(null);
@@ -99,6 +107,7 @@ public class ImportExcelFormView
         this.formPanel.setButtonAlign( HorizontalAlignment.CENTER );
 
         this.formPanel.add( this.hiddenField );
+        this.formPanel.add( this.cenarioField );
         this.formPanel.add( this.chaveField );
         this.formPanel.add( this.fileUploadField );
 

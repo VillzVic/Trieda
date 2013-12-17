@@ -12,9 +12,11 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AreaTitulacao;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.services.AreasTitulacaoService;
 
@@ -32,8 +34,10 @@ public class AreasTitulacaoServiceImpl
 
 	@Override
 	public PagingLoadResult< AreaTitulacaoDTO > getBuscaList(
-		String nome, String descricao, PagingLoadConfig config )
+		CenarioDTO cenarioDTO, String nome, String descricao,
+		PagingLoadConfig config )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		List< AreaTitulacaoDTO > list = new ArrayList< AreaTitulacaoDTO >();
 		String orderBy = config.getSortField();
 
@@ -51,7 +55,7 @@ public class AreasTitulacaoServiceImpl
 		}
 
 		List< AreaTitulacao > listAreaTitulacao = AreaTitulacao.findBy(
-			this.getInstituicaoEnsinoUser(), nome, descricao,
+			this.getInstituicaoEnsinoUser(), cenario, nome, descricao,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( AreaTitulacao areaTitulacao : listAreaTitulacao )
@@ -64,7 +68,7 @@ public class AreasTitulacaoServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( AreaTitulacao.count(
-			this.getInstituicaoEnsinoUser(), nome, descricao ) );
+			this.getInstituicaoEnsinoUser(), cenario, nome, descricao ) );
 
 		return result;
 	}
@@ -73,8 +77,8 @@ public class AreasTitulacaoServiceImpl
 	public ListLoadResult< AreaTitulacaoDTO > getListAll()
 	{
 		List< AreaTitulacaoDTO > listDTO = new ArrayList< AreaTitulacaoDTO >();
-		List< AreaTitulacao > list = AreaTitulacao.findAll(
-			this.getInstituicaoEnsinoUser() );
+		List< AreaTitulacao > list = AreaTitulacao.findByCenario(
+			this.getInstituicaoEnsinoUser(), getCenario() );
 
 		for ( AreaTitulacao areaTitulacao : list )
 		{
@@ -140,8 +144,10 @@ public class AreasTitulacaoServiceImpl
 	}
 
 	@Override
-	public List< AreaTitulacaoDTO > getListNaoVinculadas( CursoDTO cursoDTO )
+	public List< AreaTitulacaoDTO > getListNaoVinculadas( CenarioDTO cenarioDTO, CursoDTO cursoDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		if ( cursoDTO == null )
 		{
 			return Collections.< AreaTitulacaoDTO >emptyList();
@@ -152,7 +158,7 @@ public class AreasTitulacaoServiceImpl
 
 		Set< AreaTitulacao > areaTitulacaoList = curso.getAreasTitulacao();
 		List< AreaTitulacao > naoAssociadasList
-			= AreaTitulacao.findAll( this.getInstituicaoEnsinoUser() );
+			= AreaTitulacao.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
 
 		naoAssociadasList.removeAll( areaTitulacaoList );
 

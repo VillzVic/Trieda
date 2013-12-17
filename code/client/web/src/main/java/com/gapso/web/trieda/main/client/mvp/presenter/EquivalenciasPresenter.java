@@ -167,7 +167,7 @@ public class EquivalenciasPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.EQUIVALENCIAS, instituicaoEnsinoDTO );
+					ExcelInformationType.EQUIVALENCIAS, instituicaoEnsinoDTO, cenarioDTO );
 
 				ImportExcelFormView importExcelFormView
 					= new ImportExcelFormView( parametros,display.getGrid() );
@@ -182,7 +182,7 @@ public class EquivalenciasPresenter
 				String fileExtension = "xls";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.EQUIVALENCIAS, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.EQUIVALENCIAS, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -198,7 +198,7 @@ public class EquivalenciasPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.EQUIVALENCIAS, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.EQUIVALENCIAS, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

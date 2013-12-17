@@ -114,7 +114,7 @@ public class ResumoAtendimentosFaixaDemandaPresenter
 				String fileExtension = "xls";
 
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.ATENDIMENTOS_FAIXA_DEMANDA, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.ATENDIMENTOS_FAIXA_DEMANDA, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );
@@ -143,7 +143,7 @@ public class ResumoAtendimentosFaixaDemandaPresenter
 				String fileExtension = "xlsx";
 				
 				ExcelParametros parametros = new ExcelParametros(
-					ExcelInformationType.ATENDIMENTOS_FAIXA_DEMANDA, instituicaoEnsinoDTO, fileExtension );
+					ExcelInformationType.ATENDIMENTOS_FAIXA_DEMANDA, instituicaoEnsinoDTO, cenarioDTO, fileExtension );
 
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 					parametros, display.getI18nConstants(), display.getI18nMessages() );

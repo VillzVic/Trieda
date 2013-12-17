@@ -286,7 +286,7 @@ public class ProfessoresImportExcel
 		// [ NomeTipoContrato -> TipoContrato ]
 		Map< String, TipoContrato > tiposContratoBDMap
 			= TipoContrato.buildTipoContratoNomeToTipoContratoMap(
-				TipoContrato.findAll( this.instituicaoEnsino ) );
+				TipoContrato.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors
 			= new ArrayList< Integer >();
@@ -319,7 +319,7 @@ public class ProfessoresImportExcel
 		// [ NomeTitulacao -> Titulacao ]
 		Map< String, Titulacao > titulacoesBDMap
 			= Titulacao.buildTitulacaoNomeToTitulacaoMap(
-				Titulacao.findAll( this.instituicaoEnsino ) );
+				Titulacao.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors
 			= new ArrayList< Integer >();
@@ -350,7 +350,7 @@ public class ProfessoresImportExcel
 		// [ CodigoAreaTitulacao -> AeraTitulacao ]
 		Map< String, AreaTitulacao > areasTitulacoesBDMap
 			= AreaTitulacao.buildAreaTitulacaoCodigoToAreaTitulacaoMap(
-				AreaTitulacao.findAll( this.instituicaoEnsino ) );
+				AreaTitulacao.findByCenario( this.instituicaoEnsino, getCenario() ) );
 
 		List< Integer > rowsWithErrors = new ArrayList< Integer >();
 
@@ -436,7 +436,7 @@ public class ProfessoresImportExcel
 		}
 		
 		if (!persistedProfessores.isEmpty()) {
-			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findAll(instituicaoEnsino);
+			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
 			Professor.preencheHorariosDosProfessores(persistedProfessores,semanasLetivas);
 		}
 	}

@@ -12,6 +12,7 @@ public class AreaTitulacaoDTO
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CODIGO = "codigo";
 	public static final String PROPERTY_DESCRICAO = "descricao";
+	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	public AreaTitulacaoDTO()
 	{
@@ -19,7 +20,8 @@ public class AreaTitulacaoDTO
 	}
 
 	public AreaTitulacaoDTO( Long id, String codigo, String descricao,
-		Integer version, Long instituicaoEnsinoId, String instituicaoEnsinoString )
+		Integer version, Long instituicaoEnsinoId, String instituicaoEnsinoString,
+		Long cenarioId )
 	{
 		setId( id );
 		setCodigo( codigo );
@@ -27,6 +29,7 @@ public class AreaTitulacaoDTO
 		setVersion( version );
 		setInstituicaoEnsinoId( instituicaoEnsinoId );
 		setInstituicaoEnsinoString( instituicaoEnsinoString );
+		setCenarioId(cenarioId);
 
 		setDisplayText( codigo + " (" + descricao + ")" );
 	}
@@ -69,6 +72,16 @@ public class AreaTitulacaoDTO
 	public void setDescricao( String value )
 	{
 		set( PROPERTY_DESCRICAO, value );
+	}
+	
+	public Long getCenarioId()
+	{
+		return get( PROPERTY_CENARIO_ID );
+	}
+
+	public void setCenarioId( Long value )
+	{
+		set( PROPERTY_CENARIO_ID, value );
 	}
 
 	@Override

@@ -440,12 +440,13 @@ public class DisciplinasServiceImpl
 	public void save( DisciplinaDTO disciplinaDTO )
 	{
 		Disciplina disciplina = ConvertBeans.toDisciplina( disciplinaDTO );
+		Cenario cenario = Cenario.find(disciplinaDTO.getCenarioId(), getInstituicaoEnsinoUser());
 
 		if ( disciplina.getId() != null && disciplina.getId() > 0 )
 		{
 		
 			List< SemanaLetiva > semanasLetivas
-			= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+			= SemanaLetiva.findByCenario( getInstituicaoEnsinoUser(), cenario );
 
 			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 	
@@ -485,7 +486,7 @@ public class DisciplinasServiceImpl
 			disciplina.persistAndPreencheHorarios();
 
 			List< SemanaLetiva > semanasLetivas
-				= SemanaLetiva.findAll( getInstituicaoEnsinoUser() );
+				= SemanaLetiva.findByCenario( getInstituicaoEnsinoUser(), cenario );
 
 			Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 
@@ -633,33 +634,38 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList()
+	public ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList( CenarioDTO cenarioDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		InstituicaoEnsino instituicaoEnsino
 			= getUsuario().getInstituicaoEnsino(); 
 
 		List< TipoDisciplina > listTiposDisciplinas
-			= TipoDisciplina.findAll( instituicaoEnsino );
+			= TipoDisciplina.findByCenario( instituicaoEnsino, cenario );
 
 		if ( listTiposDisciplinas.size() == 0 )
 		{
 			TipoDisciplina tipo1 = new TipoDisciplina();
 			tipo1.setNome( "Presencial" );
 			tipo1.setInstituicaoEnsino( instituicaoEnsino );
+			tipo1.setCenario(cenario);
 			tipo1.persist();
 
 			TipoDisciplina tipo2 = new TipoDisciplina();
 			tipo2.setNome( "Telepresencial" );
 			tipo2.setInstituicaoEnsino( instituicaoEnsino );
+			tipo2.setCenario(cenario);
 			tipo2.persist();
 
 			TipoDisciplina tipo3 = new TipoDisciplina();
 			tipo3.setNome( "Online" );
 			tipo3.setInstituicaoEnsino( instituicaoEnsino );
+			tipo3.setCenario(cenario);
 			tipo3.persist();
 
 			listTiposDisciplinas
-				= TipoDisciplina.findAll( instituicaoEnsino );
+				= TipoDisciplina.findByCenario( instituicaoEnsino, cenario );
 		}
 
 		List< TipoDisciplinaDTO > listDTO

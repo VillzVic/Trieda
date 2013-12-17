@@ -100,7 +100,7 @@ public class ProfessorFormView
 		this.nomeTF.setEmptyText( "Preencha o nome" );
 		this.formPanel.add( this.nomeTF, formData );
 
-		this.tipoContratoCB = new TipoContratoComboBox();
+		this.tipoContratoCB = new TipoContratoComboBox( cenarioDTO );
 		this.tipoContratoCB.setAllowBlank( false );
 		this.tipoContratoCB.setValue( this.tipoContratoDTO );
 		this.formPanel.add( this.tipoContratoCB, formData );
@@ -125,7 +125,7 @@ public class ProfessorFormView
 		this.cargaHorariaMinNF.setEmptyText( "Somente números" );
 		this.formPanel.add( this.cargaHorariaMinNF, formData );
 
-		this.titulacaoCB = new TitulacaoComboBox();
+		this.titulacaoCB = new TitulacaoComboBox( cenarioDTO );
 		this.titulacaoCB.setAllowBlank( false );
 		this.titulacaoCB.setValue( this.titulacaoDTO );
 		this.formPanel.add( this.titulacaoCB, formData );

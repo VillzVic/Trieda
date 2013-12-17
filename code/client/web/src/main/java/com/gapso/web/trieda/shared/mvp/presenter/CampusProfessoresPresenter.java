@@ -177,7 +177,7 @@ public class CampusProfessoresPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO );
+						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO, cenario );
 
 					ImportExcelFormView importExcelFormView = new ImportExcelFormView(
 						parametros,display.getGrid() );
@@ -194,7 +194,7 @@ public class CampusProfessoresPresenter
 					String fileExtension = "xls";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO, cenario, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit( parametros,
 						display.getI18nConstants(), display.getI18nMessages() );
@@ -212,7 +212,7 @@ public class CampusProfessoresPresenter
 					String fileExtension = "xlsx";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.CAMPI_TRABALHO, instituicaoEnsinoDTO, cenario, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit( parametros,
 						display.getI18nConstants(), display.getI18nMessages() );

@@ -153,7 +153,7 @@ public class DivisoesCreditosPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					ExcelParametros parametros = new ExcelParametros(
-							ExcelInformationType.DIVISOES_CREDITO, instituicaoEnsinoDTO );
+							ExcelInformationType.DIVISOES_CREDITO, instituicaoEnsinoDTO, cenario );
 
 					ImportExcelFormView importExcelFormView
 						= new ImportExcelFormView( parametros, display.getGrid() );
@@ -171,7 +171,7 @@ public class DivisoesCreditosPresenter
 					String fileExtension = "xls";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.DIVISOES_CREDITO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.DIVISOES_CREDITO, instituicaoEnsinoDTO, cenario, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros,	display.getI18nConstants(), display.getI18nMessages() );
@@ -190,7 +190,7 @@ public class DivisoesCreditosPresenter
 					String fileExtension = "xlsx";
 					
 					ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.DIVISOES_CREDITO, instituicaoEnsinoDTO, fileExtension );
+						ExcelInformationType.DIVISOES_CREDITO, instituicaoEnsinoDTO, cenario, fileExtension );
 
 					ExportExcelFormSubmit e = new ExportExcelFormSubmit(
 						parametros,	display.getI18nConstants(), display.getI18nMessages() );
