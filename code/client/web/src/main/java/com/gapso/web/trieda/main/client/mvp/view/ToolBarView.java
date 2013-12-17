@@ -148,7 +148,8 @@ public class ToolBarView
 		ToolBar title = new ToolBar();
 		nomeContexto = new TabItem("Nome Contexto");
 		nomeContexto.addText(cenarioDTO.getNome());
-		nomeContexto.setWidth(92);
+		nomeContexto.setWidth(90);
+		nomeContexto.setStyleAttribute("margin-top", "5px");
 		title.add(nomeContexto);
 
 		ContentPanel masterDataPanel = new ContentPanel();
