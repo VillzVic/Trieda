@@ -45,7 +45,7 @@ public class EquivalenciasView extends MyComposite implements EquivalenciasPrese
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Equivalências");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Equivalências");
 		createToolBar();
 		createGrid();
 		createFilter();

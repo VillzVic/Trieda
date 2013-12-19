@@ -54,7 +54,7 @@ public class ResumoAtendimentosFaixaDemandaView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Resumo de Atendimentos por Faixa de Demanda" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Resumo de Atendimentos por Faixa de Demanda" );
 	}
 	
 	private void createTabItem()

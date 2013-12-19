@@ -56,7 +56,7 @@ public class ResumoMatriculasView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Resumo de Atendimentos por Matrícula" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Resumo de Atendimentos por Matrícula" );
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public class RelatorioSalasView  extends RelatorioView
 	
 	@Override
 	protected String getHeadingPanel() {
-		return "Master Data » Relatório de Ambientes";
+		return cenarioDTO.getNome() + " Relatório de Ambientes";
 	}
 	
 	@Override

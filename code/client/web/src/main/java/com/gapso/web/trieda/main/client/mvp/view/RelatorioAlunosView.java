@@ -39,7 +39,7 @@ public class RelatorioAlunosView extends RelatorioView
 
 	@Override
 	protected String getHeadingPanel() {
-		return "Master Data » Relatório de Alunos";
+		return cenarioDTO.getNome() + " » Relatório de Alunos";
 	}
 
 	@Override

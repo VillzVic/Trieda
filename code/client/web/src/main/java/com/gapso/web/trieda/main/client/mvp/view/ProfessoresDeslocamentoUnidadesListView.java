@@ -17,7 +17,7 @@ public class ProfessoresDeslocamentoUnidadesListView
 	@Override
 	protected void createPanel() {
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Professores com Deslocamento Entre Unidades" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores com Deslocamento Entre Unidades" );
 	}
 
 }

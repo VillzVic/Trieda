@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.DivisoesCreditosPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -29,16 +30,18 @@ public class DivisoesCreditosView
 	private SimpleGrid< DivisaoCreditoDTO > gridPanel;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public DivisoesCreditosView()
+	public DivisoesCreditosView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Divisões de Créditos" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Divisões de Créditos" );
 
 		this.createToolBar();
 		this.createGrid();

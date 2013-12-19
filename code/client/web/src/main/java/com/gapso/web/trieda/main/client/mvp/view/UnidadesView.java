@@ -48,7 +48,7 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml(getI18nConstants().unidadesHeadingPanel());
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Unidades");
 		createToolBar();
 		createGrid();
 		createFilter();

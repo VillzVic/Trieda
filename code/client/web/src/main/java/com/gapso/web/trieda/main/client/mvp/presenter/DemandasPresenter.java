@@ -296,7 +296,7 @@ public class DemandasPresenter
 					@Override
 					public void onSuccess(Integer result) {
 						demandaDTO.setPeriodo(result);
-						Presenter presenter = new AlunosDemandaPresenter(instituicaoEnsinoDTO, cenarioDTO, new AlunoDemandaView(demandaDTO));
+						Presenter presenter = new AlunosDemandaPresenter(instituicaoEnsinoDTO, cenarioDTO, new AlunoDemandaView(cenarioDTO, demandaDTO));
 						presenter.go( gTab );
 					}
 				});

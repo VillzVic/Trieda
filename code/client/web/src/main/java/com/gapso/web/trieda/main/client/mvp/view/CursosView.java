@@ -51,7 +51,7 @@ public class CursosView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Cursos" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Cursos" );
 
 		createToolBar();
 		createGrid();

@@ -53,7 +53,7 @@ public class ProfessoresTitulacoesView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Professores por Titulações" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Titulações" );
 	}
 	
 	private void createTabItem()

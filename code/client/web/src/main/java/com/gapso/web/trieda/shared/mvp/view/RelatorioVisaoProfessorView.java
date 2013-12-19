@@ -48,7 +48,7 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 	
 	@Override
 	protected String getHeadingPanel(){
-		return "Master Data » Grade Horária Visão Professor";
+		return cenarioDTO.getNome() + " » Grade Horária Visão Professor";
 	}
 	
 	@Override

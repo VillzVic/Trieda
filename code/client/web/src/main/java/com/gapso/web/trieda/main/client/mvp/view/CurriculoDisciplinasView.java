@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.widget.grid.SummaryType;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.CurriculoDisciplinasPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -43,11 +44,13 @@ public class CurriculoDisciplinasView
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private RpcProxy< ListLoadResult< CurriculoDisciplinaDTO > > proxy;
-
-	public CurriculoDisciplinasView( CurriculoDTO curriculoDTO )
+	private CenarioDTO cenarioDTO;
+	
+	public CurriculoDisciplinasView( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO )
 	{
 		this.curriculoDTO = curriculoDTO;
-
+		this.cenarioDTO = cenarioDTO;
+		
 		initUI();
 	}
 	
@@ -70,7 +73,7 @@ public class CurriculoDisciplinasView
 			}
 		};
 
-		panel.setHeadingHtml( "Master Data » Disciplinas na Matriz Curricular " +
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Disciplinas na Matriz Curricular " +
 			"(" + curriculoDTO.getCodigo() +
 			" / " + curriculoDTO.getCursoString() + ")" );
 

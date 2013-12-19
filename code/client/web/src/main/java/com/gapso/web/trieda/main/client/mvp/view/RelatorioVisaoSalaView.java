@@ -27,7 +27,7 @@ public class RelatorioVisaoSalaView	extends RelatorioVisaoView	implements Relato
 
 	@Override
 	protected String getHeadingPanel(){
-		return "Master Data » Grade Horária Visão Sala";
+		return cenarioDTO.getNome() + " » Grade Horária Visão Sala";
 	}
 	
 	@Override

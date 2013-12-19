@@ -30,7 +30,6 @@ import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CargaHorariaComboBox;
 import com.gapso.web.trieda.shared.util.view.FuncaoObjetivoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ParametrosView extends MyComposite implements ParametrosPresenter.Display, ParametrosViewGateway {
@@ -113,7 +112,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 
 	private void createForm() {
 		this.form = new FormPanel();
-		this.form.setHeadingHtml("Master Data » Parâmetros de Planejamento");
+		this.form.setHeadingHtml(cenarioDTO.getNome() + " » Parâmetros de Planejamento");
 		this.form.setScrollMode(Scroll.AUTO);
 		this.form.setButtonAlign(HorizontalAlignment.RIGHT);
 		FormLayout formLayout = new FormLayout();

@@ -52,7 +52,7 @@ public class OfertasView
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
 		this.panel.setHeadingHtml(
-			"Master Data » Oferta de Cursos em Campi" );
+			cenarioDTO.getNome() + " » Oferta de Cursos em Campi" );
 
 		createToolBar();
 		createGrid();

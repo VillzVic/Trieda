@@ -50,7 +50,7 @@ public class AlunosDisciplinasCursadasView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Disciplinas Cursadas por Alunos" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Disciplinas Cursadas por Alunos" );
 	
 		createToolBar();
 		createGrid();

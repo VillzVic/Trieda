@@ -29,8 +29,9 @@ public class ToolBarView
 {
 	private CenarioDTO cenarioDTO;
 	private LayoutContainer container;
-	private ContentPanel planejamentoPanel;
 	private TabItem nomeContexto;
+	private Button carregarMasterDataBt;
+	private ToolBar importacoesToolBar;
 	private ToolBar campiToolBar;
 	private ToolBar unidadesToolBar;
 	private ToolBar salasToolBar;
@@ -39,16 +40,21 @@ public class ToolBarView
 	private ToolBar alunosToolBar;
 	private ToolBar professoresToolBar;
 	private ToolBar relatoriosToolBar;
-	private ToolBar administracaoToolBar;
-	private ToolBar geracaoDemandaToolBar;
+	private ToolBar exportacoesToolBar;
+	private ToolBar ofertasDemandasToolBar;
 	private ToolBar calendarioToolBar;
 	private ToolBar planejamentoToolBar;
+	private Button cenariosBt;
+	private Button administracaoBt;
+	private Button usuariosBt;
 
+	// Importacoes
+	private Button importarBt;
+	
 	// Campi
 	private Button campiNovoCampiBt;
 	private Button campiListCampiBt;
 	private Button campusDeslocamentoListCampiBt;
-	private Button ofertasListCampiBt;
 
 	// Unidades
 	private Button unidadesNovoUnidadesBt;
@@ -71,16 +77,10 @@ public class ToolBarView
 	private Button curriculosListCursosBt;
 	private Button curriculosDisciplinasPreRequisitosListCursosBt;
 	private Button curriculosDisciplinasCoRequisitosListCursosBt;
-	private Button ofertasListCursosBt;
 
 	// Disciplinas
 	private Button disciplinasNovoDisciplinasBt;
 	private Button disciplinasListDisciplinasBt;
-	private Button demandasDisciplinasBt;
-	private Button demandasPorAlunoDisciplinasBt;
-	private Button curriculosListDisciplinasBt;
-	private Button curriculosDisciplinasPreRequisitosListDisciplinasBt;
-	private Button curriculosDisciplinasCoRequisitosListDisciplinasBt;
 	private Button associarDisciplinasSalasListDisciplinasBt;
 	private Button associarDisciplinasGruposSalasListDisciplinasBt;
 	private Button divisaoCreditosListDisciplinasBt;
@@ -105,13 +105,12 @@ public class ToolBarView
 	private Button atendimentosDropDownBt;
 	private Button docentesDropDownBt;
 
-	// Administracao
-	private Button usuariosListBt;
-	private Button importarBt;
+	// Exportacoes
 	private Button exportarBt;
 	private Button carregarSolucaoBt;
 	
-	// Geracao de Demanda
+	// Ofertas e Demandas
+	private Button ofertasListDemandasBt;
 	private Button curriculosListDemandasBt;
 	private Button curriculosDisciplinasPreRequisitosListDemandasBt;
 	private Button curriculosDisciplinasCoRequisitosListDemandasBt;
@@ -137,33 +136,53 @@ public class ToolBarView
 
 	private void initUI()
 	{
-		container = new LayoutContainer( new HBoxLayout() );
+		container = new LayoutContainer();
 
-		planejamentoPanel = new ContentPanel();
-		planejamentoPanel.setHeadingHtml( "Contexto" );
-		planejamentoPanel.getHeader().setStyleAttribute("text-align", "center");
-		planejamentoPanel.setWidth( 100 );
-		planejamentoPanel.setHeight(92);
-		planejamentoPanel.addStyleName("cenarioName");
-		ToolBar title = new ToolBar();
-		nomeContexto = new TabItem("Nome Contexto");
-		nomeContexto.addText(cenarioDTO.getNome());
-		nomeContexto.setWidth(90);
-		nomeContexto.setStyleAttribute("margin-top", "5px");
-		title.add(nomeContexto);
+		carregarMasterDataBt = new Button();
+		carregarMasterDataBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.voltar16()));
+		carregarMasterDataBt.setToolTip("Carregar Master Data");
+		carregarMasterDataBt.setScale(ButtonScale.SMALL);
+		carregarMasterDataBt.setIconAlign(IconAlign.LEFT);
+		carregarMasterDataBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
+		carregarMasterDataBt.setHeight(24);
+		if (cenarioDTO.getMasterData())
+		{
+			carregarMasterDataBt.hide();
+		}
 
-		ContentPanel masterDataPanel = new ContentPanel();
-		masterDataPanel.setHeaderVisible( false );
+		ContentPanel masterDataPanel = new ContentPanel()
+		{
+			@Override
+			protected void afterRender()
+			{
+				super.afterRender();
+				getCollapseBtn().setStyleAttribute("margin-top", "4px");
+				getCollapseBtn().setStyleAttribute("margin-left", "15px");
 
-		planejamentoPanel.setBodyBorder( false );
+			}
+		};
+		masterDataPanel.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.logo()));
+		masterDataPanel.getHeader().addTool(carregarMasterDataBt);
+		masterDataPanel.getHeader().getTool(0).setStyleAttribute("margin-right", "759px");
+		masterDataPanel.getHeader().addTool(createCenariosButton());
+		masterDataPanel.getHeader().getTool(1).setStyleAttribute("margin-right", "10px");
+		masterDataPanel.getHeader().addTool(createAdministracaoButton());
+		masterDataPanel.getHeader().getTool(2).setStyleAttribute("margin-right", "10px");
+		masterDataPanel.getHeader().addTool(createUsuariosButton());
+		masterDataPanel.setHeadingHtml("Contexto: " + cenarioDTO.getNome());
+		masterDataPanel.getHeader().setStyleAttribute("line-height", "23px");
+		masterDataPanel.getHeader().setStyleAttribute("font-size", "14px");
+		masterDataPanel.setCollapsible(true);
+
 		masterDataPanel.setBodyBorder( false );
 
 		HBoxLayoutData flex = new HBoxLayoutData( new Margins( 0 ) );
 		flex.setFlex( 1 );  
-		container.add( planejamentoPanel,
-			new HBoxLayoutData( new Margins( 0 ) ) );
+		//container.add( planejamentoPanel,
+		//	new HBoxLayoutData( new Margins( 0 ) ) );
 		container.add( masterDataPanel, flex );
 
+		TabItem importacoesTabItem = new TabItem( "Importações" );
 		TabItem campiTabItem = new TabItem( "Campi" );
 		TabItem unidadesTabItem = new TabItem( "Unidades" );
 		TabItem salasTabItem = new TabItem( "Salas" );
@@ -173,12 +192,13 @@ public class ToolBarView
 		TabItem professoresTabItem = new TabItem( "Professores" );
 		TabItem planejamentoTabItem = new TabItem( "Planejamento" );
 		TabItem relatoriosTabItem = new TabItem( "Relatórios" );
-		TabItem administracaoTabItem = new TabItem( "Administração" );
+		TabItem exportacoesTabItem = new TabItem( "Exportações" );
 		TabItem calendarioTabItem = new TabItem( "Calendário" );
-		TabItem geracaoDemandaTabItem = new TabItem( "Geração de Demanda" );
+		TabItem ofertasDemandasTabItem = new TabItem( "Ofertas e Demandas" );
 
 		//planejamentoToolBar = new ToolBar();
 
+		importacoesToolBar = new ToolBar();
 		campiToolBar = new ToolBar();
 		campiToolBar.setLayoutData( new FitLayout() );
 		unidadesToolBar = new ToolBar();
@@ -189,10 +209,11 @@ public class ToolBarView
 		professoresToolBar = new ToolBar();
 		relatoriosToolBar = new ToolBar();
 		planejamentoToolBar = new ToolBar();
-		administracaoToolBar = new ToolBar();
-		geracaoDemandaToolBar = new ToolBar();
+		exportacoesToolBar = new ToolBar();
+		ofertasDemandasToolBar = new ToolBar();
 		calendarioToolBar = new ToolBar();
 
+		importacoesTabItem.add( importacoesToolBar );
 		campiTabItem.add( campiToolBar );
 		unidadesTabItem.add( unidadesToolBar );
 		salasTabItem.add( salasToolBar );
@@ -203,8 +224,8 @@ public class ToolBarView
 		planejamentoTabItem.add( planejamentoToolBar );
 		relatoriosTabItem.add( relatoriosToolBar );
 		calendarioTabItem.add( calendarioToolBar );
-		administracaoTabItem.add( administracaoToolBar );
-		geracaoDemandaTabItem.add( geracaoDemandaToolBar );
+		exportacoesTabItem.add( exportacoesToolBar );
+		ofertasDemandasTabItem.add( ofertasDemandasToolBar );
 
 		createGroups();
 
@@ -213,11 +234,8 @@ public class ToolBarView
 		TabPanel masterDataTab = new TabPanel();
 		masterDataTab.addStyleName( "tabPanelMasterData" );
 		masterDataTab.setHeight( height );
-		title.setHeight(height - 26);
 
-		TabItem masterDataItem = new TabItem( "Master Data" );
-		masterDataItem.disable();
-		masterDataTab.add( masterDataItem );
+		masterDataTab.add( importacoesTabItem );
 		masterDataTab.add( calendarioTabItem );
 		masterDataTab.add( campiTabItem );
 		masterDataTab.add( unidadesTabItem );
@@ -225,24 +243,24 @@ public class ToolBarView
 		masterDataTab.add( cursosTabItem );
 		masterDataTab.add( disciplinasTabItem );
 		masterDataTab.add( alunosTabItem );
+		masterDataTab.add( ofertasDemandasTabItem );
 		masterDataTab.add( professoresTabItem );
 		masterDataTab.add( planejamentoTabItem );
 		masterDataTab.add( relatoriosTabItem );
-		masterDataTab.add( administracaoTabItem );
-		masterDataTab.add( geracaoDemandaTabItem );
+		masterDataTab.add( exportacoesTabItem );
 
 		masterDataTab.setSelection( calendarioTabItem );
 
-		planejamentoPanel.add( title );
 		masterDataPanel.setTopComponent( masterDataTab );
 
 		container.setHeight( height );
 
-		initComponent( container );
+		initComponent( masterDataPanel );
 	}
 
 	private void createGroups()
 	{
+		createImportacoes();
 		createCampi();
 		createUnidades();
 		createSalas();
@@ -251,12 +269,21 @@ public class ToolBarView
 		createAlunos();
 		createProfessores();
 		createRelatorios();
-		createAdministracao();
-		createGeracaoDemanda();
+		createExportacoes();
+		createOfertasDemandas();
 		createCalendario();
 		createPlanejamento();
 	}
 
+	private void createImportacoes()
+	{
+		importarBt = createButton("Importar<br />(Excel)","Importar (Excel)",Resources.DEFAULTS.importar24());
+		importacoesToolBar.add(importarBt);
+				
+		carregarSolucaoBt = createButton("Carregar<br />Solução","Carregar Solução",Resources.DEFAULTS.trieda24());
+		importacoesToolBar.add(carregarSolucaoBt);
+	}
+	
 	private void createCampi()
 	{
 		campiNovoCampiBt = createButton( "Novo",
@@ -272,10 +299,6 @@ public class ToolBarView
 		campusDeslocamentoListCampiBt = createButton( "Deslocamento<br />entre Campi",
 			"Deslocamento entre Campi", Resources.DEFAULTS.deslocamentoCampi24() );
 		campiToolBar.add( campusDeslocamentoListCampiBt );
-		
-		ofertasListCampiBt = createButton( "Oferta de Cursos<br />em Campi",
-			"Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24() );
-		campiToolBar.add( ofertasListCampiBt );
 	}
 	
 	private void createUnidades()
@@ -334,18 +357,10 @@ public class ToolBarView
 		cursosToolBar.add( cursosListCursosBt );
 
 		cursosToolBar.add( new SeparatorToolItem() );
-
-		ofertasListCursosBt = createButton( "Oferta de Cursos<br />em Campi",
-			"Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24() );
-		cursosToolBar.add( ofertasListCursosBt );
-
-		areasTitulacaoListCursosBt = createButton( "Áreas de<br />Conhecimento",
-			"Áreas de Conhecimento", Resources.DEFAULTS.areaTitulacao() );
-		cursosToolBar.add( areasTitulacaoListCursosBt );
-
-		vincularAreasTitulacaoListCursosBt = createButton( "Vincular Áreas<br />de Conhecimento",
-			"Vincular Áreas de Conhecimento", Resources.DEFAULTS.vincularAreaTitulacao24() );
-		cursosToolBar.add( vincularAreasTitulacaoListCursosBt );
+		
+		tiposCursosListCursosBt = createButton( "Tipos de<br />Curso",
+			"Tipos de Curso", Resources.DEFAULTS.tipoCurso24() );
+		cursosToolBar.add( tiposCursosListCursosBt );
 
 		curriculosListCursosBt = createButton( "Matrizes<br />Curriculares",
 			"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
@@ -356,12 +371,18 @@ public class ToolBarView
 		cursosToolBar.add( curriculosDisciplinasPreRequisitosListCursosBt );
 		
 		curriculosDisciplinasCoRequisitosListCursosBt = createButton( "Disciplinas<br />Co-Requisitos",
-				"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
-			cursosToolBar.add( curriculosDisciplinasCoRequisitosListCursosBt );
+			"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+		cursosToolBar.add( curriculosDisciplinasCoRequisitosListCursosBt );
+		
+		cursosToolBar.add( new SeparatorToolItem() );
 
-		tiposCursosListCursosBt = createButton( "Tipos de<br />Curso",
-			"Tipos de Curso", Resources.DEFAULTS.tipoCurso24() );
-		cursosToolBar.add( tiposCursosListCursosBt );
+		areasTitulacaoListCursosBt = createButton( "Áreas de<br />Conhecimento",
+			"Áreas de Conhecimento", Resources.DEFAULTS.areaTitulacao() );
+		cursosToolBar.add( areasTitulacaoListCursosBt );
+
+		vincularAreasTitulacaoListCursosBt = createButton( "Vincular Áreas<br />de Conhecimento",
+			"Vincular Áreas de Conhecimento", Resources.DEFAULTS.vincularAreaTitulacao24() );
+		cursosToolBar.add( vincularAreasTitulacaoListCursosBt );
 	}
 
 	private void createDisciplinas()
@@ -375,6 +396,14 @@ public class ToolBarView
 		disciplinasToolBar.add( disciplinasListDisciplinasBt );
 
 		disciplinasToolBar.add( new SeparatorToolItem() );
+		
+		divisaoCreditosListDisciplinasBt = createButton( "Regras de Divisão<br />de Créditos",
+			"Regras de Divisão de Créditos", Resources.DEFAULTS.divisaoCredito24() );
+		disciplinasToolBar.add( divisaoCreditosListDisciplinasBt );
+		
+		equivalenciasListDisciplinasBt = createButton( "Equivalências",
+			"Equivalências", Resources.DEFAULTS.equivalencia24() );
+		disciplinasToolBar.add( equivalenciasListDisciplinasBt );
 
 		associarDisciplinasSalasListDisciplinasBt = createButton(
 			"Associação de<br />Disciplinas à Salas",
@@ -386,33 +415,7 @@ public class ToolBarView
 			"Associação de Disciplinas à Grupos Salas", Resources.DEFAULTS.grupoSala24() );
 		disciplinasToolBar.add( associarDisciplinasGruposSalasListDisciplinasBt );
 
-		curriculosListDisciplinasBt = createButton( "Matrizes<br />Curriculares",
-			"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
-		disciplinasToolBar.add( curriculosListDisciplinasBt );
-		
-		curriculosDisciplinasPreRequisitosListDisciplinasBt = createButton( "Disciplinas<br />Pré-Requisitos",
-			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
-		disciplinasToolBar.add( curriculosDisciplinasPreRequisitosListDisciplinasBt );
-		
-		curriculosDisciplinasCoRequisitosListDisciplinasBt = createButton( "Disciplinas<br />Co-Requisitos",
-				"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
-			disciplinasToolBar.add( curriculosDisciplinasCoRequisitosListDisciplinasBt );
-
-		demandasDisciplinasBt = createButton( "Ofertas e<br />Demandas",
-			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
-		disciplinasToolBar.add( demandasDisciplinasBt );
-
-		demandasPorAlunoDisciplinasBt = createButton( "Demandas por<br />Aluno",
-				"Previsão de demanda", Resources.DEFAULTS.demanda24() );
-		disciplinasToolBar.add( demandasPorAlunoDisciplinasBt );
-		
-		divisaoCreditosListDisciplinasBt = createButton( "Regras de Divisão<br />de Créditos",
-			"Regras de Divisão de Créditos", Resources.DEFAULTS.divisaoCredito24() );
-		disciplinasToolBar.add( divisaoCreditosListDisciplinasBt );
-
-		equivalenciasListDisciplinasBt = createButton( "Equivalências",
-			"Equivalências", Resources.DEFAULTS.equivalencia24() );
-		disciplinasToolBar.add( equivalenciasListDisciplinasBt );
+		disciplinasToolBar.add( new SeparatorToolItem() );
 
 		compatibilidadesListDisciplinasBt = createButton(
 			"Compatibilidade<br />entre disciplinas",
@@ -476,7 +479,7 @@ public class ToolBarView
 		resumosDropDownBt.setMenu(menuResumos);
 		relatoriosToolBar.add(resumosDropDownBt);
 		
-		atendimentosDropDownBt = createButton( "Relatórios<br />Atendimentos",
+		atendimentosDropDownBt = createButton( "Atendimentos",
 				"Relatórios Atendimentos", Resources.DEFAULTS.resumoFaixaDemanda24() );
 		Menu menuAtendimentos = new Menu();
 		menuAtendimentos.add( createMenuItem("Atendimentos por Matrícula", Resources.DEFAULTS.resumoMatricula16()) );
@@ -490,7 +493,7 @@ public class ToolBarView
 		atendimentosDropDownBt.setMenu(menuAtendimentos);
 		relatoriosToolBar.add(atendimentosDropDownBt);
 		
-		docentesDropDownBt = createButton( "Relatórios<br />de Docentes",
+		docentesDropDownBt = createButton( "Docentes",
 				"Relatórios de Docentes", Resources.DEFAULTS.resumoMatricula24() );
 		Menu menuDocentes = new Menu();
 		menuDocentes.add( createMenuItem("Porcentagem de Mestres e Doutores", Resources.DEFAULTS.resumoMatricula16()) );
@@ -504,7 +507,7 @@ public class ToolBarView
 
 		relatoriosToolBar.add( new SeparatorToolItem() );
 		
-		gradeHorariaDropDownBt = createButton( "Relatórios<br /> Grade Horária",
+		gradeHorariaDropDownBt = createButton( "Grade Horária",
 				"Relatórios Grade Horária", Resources.DEFAULTS.saidaCurso24() );
 		Menu menuGradeHoraria = new Menu();
 		menuGradeHoraria.add( createMenuItem("Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala16()) );
@@ -515,50 +518,48 @@ public class ToolBarView
 		relatoriosToolBar.add(gradeHorariaDropDownBt);
 	}
 
-	private void createAdministracao() {
+	private void createExportacoes() {
 		
-		usuariosListBt = createButton("Usuários","Usuários",Resources.DEFAULTS.turno24());
-		administracaoToolBar.add(usuariosListBt);
-
-		importarBt = createButton("Importar<br />Tudo","Importar Tudo",Resources.DEFAULTS.importar24());
-		administracaoToolBar.add(importarBt);
-
 		exportarBt = createButton("Exportar<br />para Excel","Exportar para Excel",Resources.DEFAULTS.exportar24());
-		administracaoToolBar.add(exportarBt);
-		
-		carregarSolucaoBt = createButton("Carregar<br />Solução","Carregar Solução",Resources.DEFAULTS.trieda24());
-		administracaoToolBar.add(carregarSolucaoBt);
+		exportacoesToolBar.add(exportarBt);
 	}
 	
-	private void createGeracaoDemanda() {
+	private void createOfertasDemandas() {
+		ofertasListDemandasBt = createButton( "Oferta de Cursos<br />em Campi",
+			"Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24() );
+		ofertasDemandasToolBar.add( ofertasListDemandasBt );		
 		
-		curriculosListDemandasBt = createButton( "Matrizes<br />Curriculares",
-				"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
-		geracaoDemandaToolBar.add( getCurriculosListDemandasButton() );
-			
-		curriculosDisciplinasPreRequisitosListDemandasBt = createButton( "Disciplinas<br />Pré-Requisitos",
-			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
-		geracaoDemandaToolBar.add( getCurriculosDisciplinasPreRequisitosDemandasButton() );
-			
-		curriculosDisciplinasCoRequisitosListDemandasBt = createButton( "Disciplinas<br />Co-Requisitos",
-			"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
-		geracaoDemandaToolBar.add( getCurriculosDisciplinasCoRequisitosDemandasButton() );
+		demandasPorAlunoDemandasBt = createButton( "Demandas por<br />Aluno",
+				"Previsão de demanda", Resources.DEFAULTS.demanda24() );
+		ofertasDemandasToolBar.add( demandasPorAlunoDemandasBt );
 		
-		alunosDisciplinasCursadasDemandasBt = createButton( "Disciplinas<br /> Cursadas",
-			"Disciplinas Cursadas", Resources.DEFAULTS.alunoCurriculo24() );
-		geracaoDemandaToolBar.add( alunosDisciplinasCursadasDemandasBt );
+		ofertasDemandasToolBar.add( new SeparatorToolItem() );
 		
 		parametrosGeracaoDemandaBt = createButton( "Parâmetros para<br /> Geração de Demanda",
 			"Parâmetros para Geração de Demanda", Resources.DEFAULTS.parametroPlanejamento24() );
-		geracaoDemandaToolBar.add( parametrosGeracaoDemandaBt );
+		ofertasDemandasToolBar.add( parametrosGeracaoDemandaBt );
+		
+		curriculosListDemandasBt = createButton( "Matrizes<br />Curriculares",
+				"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
+		ofertasDemandasToolBar.add( getCurriculosListDemandasButton() );
+			
+		curriculosDisciplinasPreRequisitosListDemandasBt = createButton( "Disciplinas<br />Pré-Requisitos",
+			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+		ofertasDemandasToolBar.add( getCurriculosDisciplinasPreRequisitosDemandasButton() );
+			
+		curriculosDisciplinasCoRequisitosListDemandasBt = createButton( "Disciplinas<br />Co-Requisitos",
+			"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
+		ofertasDemandasToolBar.add( getCurriculosDisciplinasCoRequisitosDemandasButton() );
+		
+		alunosDisciplinasCursadasDemandasBt = createButton( "Disciplinas<br /> Cursadas",
+			"Disciplinas Cursadas", Resources.DEFAULTS.alunoCurriculo24() );
+		ofertasDemandasToolBar.add( alunosDisciplinasCursadasDemandasBt );
+		
+		ofertasDemandasToolBar.add( new SeparatorToolItem() );
 		
 		demandasDemandasBt = createButton( "Ofertas e<br />Demandas",
 			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
-		geracaoDemandaToolBar.add( demandasDemandasBt );
-
-		demandasPorAlunoDemandasBt = createButton( "Demandas por<br />Aluno",
-				"Previsão de demanda", Resources.DEFAULTS.demanda24() );
-		geracaoDemandaToolBar.add( demandasPorAlunoDemandasBt );
+		ofertasDemandasToolBar.add( demandasDemandasBt );
 	}
 
 	private void createCalendario()
@@ -601,6 +602,58 @@ public class ToolBarView
 		MenuItem menuItem = new MenuItem( text, AbstractImagePrototype.create( icon ) );
 		
 		return menuItem;
+	}
+	
+	public Button createCenariosButton() {
+		cenariosBt = new Button();
+		cenariosBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.cenario16()));
+		cenariosBt.setText("Cenários");
+		cenariosBt.setToolTip("Cenários");
+		cenariosBt.setScale(ButtonScale.MEDIUM);
+		cenariosBt.setIconAlign(IconAlign.LEFT);
+		cenariosBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
+		cenariosBt.setHeight(24);
+		Menu menu = new Menu();
+		menu.add(new MenuItem("Gerenciar Cenários", AbstractImagePrototype.create(Resources.DEFAULTS.cenario16()) ));
+		menu.add(new MenuItem("Gerenciar Requisições de Otimização", AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeConsultaRequisicao16()) ));
+		cenariosBt.setMenu(menu);
+		return cenariosBt;
+	}
+	
+	public Button createUsuariosButton() {
+		usuariosBt = new Button();
+		usuariosBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.professor16()));
+		usuariosBt.setText("Usuários");
+		usuariosBt.setToolTip("Menu do Usuário");
+		usuariosBt.setScale(ButtonScale.MEDIUM);
+		usuariosBt.setIconAlign(IconAlign.LEFT);
+		usuariosBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
+		usuariosBt.setHeight(24);
+		
+		Menu menu = new Menu();
+		MenuItem menuItem = new MenuItem("Nome");
+		menuItem.disable();
+		menuItem.addStyleName("disabled-color");
+		menu.add(menuItem);
+		menu.add(new MenuItem("Alterar Senha", AbstractImagePrototype.create(Resources.DEFAULTS.senha16()) ));
+		menu.add(new MenuItem("Sair", AbstractImagePrototype.create(Resources.DEFAULTS.logout16()) ));
+		usuariosBt.setMenu(menu);
+		return usuariosBt;
+	}
+
+	public Button createAdministracaoButton() {
+		administracaoBt = new Button();
+		administracaoBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.chave16()));
+		administracaoBt.setText("Administração");
+		administracaoBt.setToolTip("Administração");
+		administracaoBt.setScale(ButtonScale.MEDIUM);
+		administracaoBt.setIconAlign(IconAlign.LEFT);
+		administracaoBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
+		administracaoBt.setHeight(24);
+		Menu menu = new Menu();
+		menu.add(new MenuItem("Usuários", AbstractImagePrototype.create(Resources.DEFAULTS.campiTrabalho16()) ));
+		administracaoBt.setMenu(menu);
+		return administracaoBt;
 	}
 	
 	@Override
@@ -699,15 +752,9 @@ public class ToolBarView
 	}
 
 	@Override
-	public Button getOfertasListCampiButton()
+	public Button getOfertasListDemandasButton()
 	{
-		return ofertasListCampiBt;
-	}
-
-	@Override
-	public Button getUsuariosListButton()
-	{
-		return usuariosListBt;
+		return ofertasListDemandasBt;
 	}
 
 	@Override
@@ -737,18 +784,6 @@ public class ToolBarView
 	public Button getAssociarDisciplinasGruposSalasListSalasButton()
 	{
 		return associarDisciplinasGruposSalasListSalasBt;
-	}
-
-	@Override
-	public Button getDemandasDisciplinasButton()
-	{
-		return demandasDisciplinasBt;
-	}
-	
-	@Override
-	public Button getDemandasPorAlunoDisciplinasButton()
-	{
-		return demandasPorAlunoDisciplinasBt;
 	}
 
 	@Override
@@ -986,12 +1021,6 @@ public class ToolBarView
 	}
 
 	@Override
-	public Button getOfertasListCursosButton()
-	{
-		return ofertasListCursosBt;
-	}
-
-	@Override
 	public Button getAssociarDisciplinasSalasListDisciplinasButton()
 	{
 		return associarDisciplinasSalasListDisciplinasBt;
@@ -1001,12 +1030,6 @@ public class ToolBarView
 	public Button getAssociarDisciplinasGruposSalasListDisciplinasButton()
 	{
 		return associarDisciplinasGruposSalasListDisciplinasBt;
-	}
-
-	@Override
-	public Button getCurriculosListDisciplinasButton()
-	{
-		return curriculosListDisciplinasBt;
 	}
 
 	@Override
@@ -1026,19 +1049,10 @@ public class ToolBarView
 		return curriculosDisciplinasPreRequisitosListCursosBt;
 	}
 
-	@Override
-	public Button getCurriculosDisciplinasPreRequisitosDisciplinasButton() {
-		return curriculosDisciplinasPreRequisitosListDisciplinasBt;
-	}
 	
 	@Override
 	public Button getCurriculosDisciplinasCoRequisitosCursosButton() {
 		return curriculosDisciplinasCoRequisitosListCursosBt;
-	}
-
-	@Override
-	public Button getCurriculosDisciplinasCoRequisitosDisciplinasButton() {
-		return curriculosDisciplinasCoRequisitosListDisciplinasBt;
 	}
 	
 	@Override
@@ -1084,14 +1098,50 @@ public class ToolBarView
 	}
 	
 	@Override
-	public ContentPanel getPlanejamentoPanel()
-	{
-		return planejamentoPanel;
-	}
-	
-	@Override
 	public TabItem getNomeContextoTabItem()
 	{
 		return nomeContexto;
+	}
+	
+	@Override
+	public Button getCarregarMasterDataButton()
+	{
+		return carregarMasterDataBt;
+	}
+	
+	@Override
+	public MenuItem getGerenciarCenariosButton() {
+		return (MenuItem) cenariosBt.getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getGerenciarRequisicoesCenariosButton() {
+		return (MenuItem) cenariosBt.getMenu().getItem(1);
+	}
+		
+	@Override
+	public MenuItem getListarUsuariosButton() {
+		return (MenuItem) administracaoBt.getMenu().getItem(0);
+	}
+	
+	@Override
+	public Button getUsuariosButton()
+	{
+		return usuariosBt;
+	}
+	
+	@Override
+	public MenuItem getUsuariosNomeButton() {
+		return (MenuItem) usuariosBt.getMenu().getItem(0);
+	}
+	
+	@Override
+	public MenuItem getUsuariosAlterarSenhaButton() {
+		return (MenuItem) usuariosBt.getMenu().getItem(1);
+	}
+	
+	@Override
+	public MenuItem getUsuariosSairButton() {
+		return (MenuItem) usuariosBt.getMenu().getItem(2);
 	}
 }

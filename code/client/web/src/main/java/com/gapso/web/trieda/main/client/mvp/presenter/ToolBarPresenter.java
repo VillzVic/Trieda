@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
+import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosDisciplinasCursadasView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosView;
@@ -95,11 +96,14 @@ import com.gapso.web.trieda.shared.mvp.view.CampusProfessoresView;
 import com.gapso.web.trieda.shared.mvp.view.ProfessoresDisciplinaView;
 import com.gapso.web.trieda.shared.mvp.view.RelatorioVisaoProfessorView;
 import com.gapso.web.trieda.shared.services.CampiServiceAsync;
+import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.gapso.web.trieda.shared.util.view.CenarioPanel;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -111,12 +115,21 @@ public class ToolBarPresenter
 	{
 		Component getComponent();
 		TabItem getNomeContextoTabItem();
-		ContentPanel getPlanejamentoPanel();
+		Button getCarregarMasterDataButton();
+		MenuItem getGerenciarCenariosButton();
+		MenuItem getGerenciarRequisicoesCenariosButton();
+		Button getUsuariosButton();
+		MenuItem getListarUsuariosButton();
+		MenuItem getUsuariosAlterarSenhaButton();
+		MenuItem getUsuariosSairButton();
+		MenuItem getUsuariosNomeButton();
+		
+		Button getImportarButton();
+		Button getCarregarSolucaoButton();
 		
 		Button getCampiNovoCampiButton();
 		Button getCampiListCampiButton();
 		Button getCampusDeslocamentoListCampiButton();
-		Button getOfertasListCampiButton();
 
 		Button getUnidadesNovoUnidadesButton();
 		Button getUnidadesListUnidadesButton();
@@ -136,17 +149,11 @@ public class ToolBarPresenter
 		Button getAreasTitulacaoListCursosButton();
 		Button getVincularAreasTitulacaoListCursosButton();
 		Button getTiposCursosListCursosButton();
-		Button getOfertasListCursosButton();
 
 		Button getDisciplinasNovoDisciplinasButton();
 		Button getDisciplinasListDisciplinasButton();
-		Button getDemandasDisciplinasButton();
-		Button getDemandasPorAlunoDisciplinasButton();
 		Button getAssociarDisciplinasSalasListDisciplinasButton();
 		Button getAssociarDisciplinasGruposSalasListDisciplinasButton();
-		Button getCurriculosListDisciplinasButton();
-		Button getCurriculosDisciplinasPreRequisitosDisciplinasButton();
-		Button getCurriculosDisciplinasCoRequisitosDisciplinasButton();
 		Button getDivisaoCreditosListDisciplinasButton();
 		Button getEquivalenciasListDisciplinasButton();
 		Button getCompatibilidadesListDisciplinasButton();
@@ -191,10 +198,7 @@ public class ToolBarPresenter
 		Button getParametrosButton();
 		Button getConsultaRequisicoesOtimizacaoBt();
 
-		Button getUsuariosListButton();
-		Button getImportarButton();
 		Button getExportarButton();
-		Button getCarregarSolucaoButton();
 		
 		Button getCurriculosListDemandasButton();
 		Button getCurriculosDisciplinasPreRequisitosDemandasButton();
@@ -203,6 +207,7 @@ public class ToolBarPresenter
 		Button getParametrosGeracaoDemandaButton();
 		Button getDemandasDemandasButton();
 		Button getDemandasPorAlunoDemandasButton();
+		Button getOfertasListDemandasButton();
 
 		Button getSemanasLetivaListCampiButton();
 		Button getTurnosListCampiButton();
@@ -249,7 +254,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new AlunosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new AlunosView() );
+					instituicaoEnsinoDTO, cenarioDTO, new AlunosView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -275,7 +280,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new TurnosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new TurnosView() );
+					instituicaoEnsinoDTO, cenarioDTO, new TurnosView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -288,7 +293,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new SemanasLetivaPresenter(
-					instituicaoEnsinoDTO,  cenarioDTO, new SemanasLetivaView() );
+					instituicaoEnsinoDTO,  cenarioDTO, new SemanasLetivaView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -314,7 +319,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new CampiPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new CampiView() );
+					instituicaoEnsinoDTO, cenarioDTO, new CampiView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -379,7 +384,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new GruposSalasPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new GruposSalasView() );
+					instituicaoEnsinoDTO, cenarioDTO, new GruposSalasView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -392,7 +397,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new TiposCursosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new TiposCursosView() );
+					instituicaoEnsinoDTO, cenarioDTO, new TiposCursosView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -405,7 +410,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new AreasTitulacaoPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new AreasTitulacaoView() );
+					instituicaoEnsinoDTO, cenarioDTO, new AreasTitulacaoView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -458,7 +463,7 @@ public class ToolBarPresenter
 					public void onSuccess( List< DeslocamentoCampusDTO > result )
 					{
 						Presenter presenter = new CampiDeslocamentoPresenter(
-							instituicaoEnsinoDTO, cenarioDTO, new CampiDeslocamentoView( result ) );
+							instituicaoEnsinoDTO, cenarioDTO, new CampiDeslocamentoView( cenarioDTO, result ) );
 
 						presenter.go( gTab );	
 					}
@@ -557,45 +562,6 @@ public class ToolBarPresenter
 				}
 			});
 
-		this.toolBar.getCurriculosListDisciplinasButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
-			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				Presenter presenter = new CurriculosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new CurriculosView(cenarioDTO) );
-
-				presenter.go( gTab );
-			}
-		});
-		
-		this.toolBar.getCurriculosDisciplinasPreRequisitosDisciplinasButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
-			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					Presenter presenter = new DisciplinasPreRequisitosPresenter(
-						instituicaoEnsinoDTO, cenarioDTO, new DisciplinasPreRequisitosView(cenarioDTO) );
-
-					presenter.go( gTab );
-				}
-			});
-		
-		this.toolBar.getCurriculosDisciplinasCoRequisitosDisciplinasButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
-			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					Presenter presenter = new DisciplinasCoRequisitosPresenter(
-						instituicaoEnsinoDTO, cenarioDTO, new DisciplinasCoRequisitosView(cenarioDTO) );
-
-					presenter.go( gTab );
-				}
-			});
-
 		this.toolBar.getDivisaoCreditosListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
@@ -603,7 +569,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new DivisoesCreditosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new DivisoesCreditosView() );
+					instituicaoEnsinoDTO, cenarioDTO, new DivisoesCreditosView( cenarioDTO ) );
 
 				presenter.go(gTab);
 			}
@@ -629,7 +595,7 @@ public class ToolBarPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				Presenter presenter = new FixacoesPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new FixacoesView() );
+					instituicaoEnsinoDTO, cenarioDTO, new FixacoesView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -716,7 +682,7 @@ public class ToolBarPresenter
 				}
 			});
 
-		this.toolBar.getOfertasListCampiButton().addSelectionListener(
+		this.toolBar.getOfertasListDemandasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -724,19 +690,6 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new OfertasPresenter(
 					instituicaoEnsinoDTO, cenarioDTO, new OfertasView( cenarioDTO ) );
-
-				presenter.go( gTab );
-			}
-		});
-
-		this.toolBar.getUsuariosListButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
-			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				Presenter presenter = new UsuariosPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new UsuariosView() );
 
 				presenter.go( gTab );
 			}
@@ -780,19 +733,6 @@ public class ToolBarPresenter
 			public void componentSelected(ButtonEvent ce) {
 				CarregarSolucaoView view = new CarregarSolucaoView(cenarioDTO);
 				view.show();
-			}
-		});
-
-		this.toolBar.getOfertasListCursosButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
-			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				Presenter presenter = new OfertasPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new OfertasView( cenarioDTO ) );
-
-				presenter.go( gTab );
 			}
 		});
 
@@ -843,32 +783,6 @@ public class ToolBarPresenter
 			{
 				Presenter presenter = new GruposSalasAssociarDisciplinaPresenter(
 						instituicaoEnsinoDTO, cenarioDTO, new GruposSalasAssociarDisciplinaView( cenarioDTO, new DisciplinaDTO() ) );
-
-				presenter.go( gTab );
-			}
-		});
-
-		this.toolBar.getDemandasDisciplinasButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
-			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				Presenter presenter = new DemandasPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new DemandasView( cenarioDTO ) );
-
-				presenter.go( gTab );
-			}
-		});
-		
-		this.toolBar.getDemandasPorAlunoDisciplinasButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
-			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				Presenter presenter = new DemandasPorAlunoPresenter(
-					instituicaoEnsinoDTO, cenarioDTO, new DemandasPorAlunoView( cenarioDTO ) );
 
 				presenter.go( gTab );
 			}
@@ -1335,6 +1249,124 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getCarregarMasterDataButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				CenariosServiceAsync service = Services.cenarios();
+				service.getMasterData( new AsyncCallback<CenarioDTO>(){
+
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert( "ERRO!",
+								"Deu falha na conexão", null );
+					}
+
+					@Override
+					public void onSuccess(CenarioDTO result) {
+						changeCenario(result);
+						Services.cenarios().setCurrentCenario(result.getId(), new AsyncCallback<Void>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								MessageBox.alert( "ERRO!",
+										"Deu falha na conexão", null );
+								
+							}
+
+							@Override
+							public void onSuccess(Void result) {
+								MessageBox.alert( "Cucesso!",
+										"Contexto alterado para Master Data.", null );
+							}
+							
+						});
+					}
+					
+				});
+			}
+		});
+		
+		this.toolBar.getUsuariosNomeButton().setText(usuarioDTO.getNome());
+		this.toolBar.getUsuariosButton().setText(usuarioDTO.getUsername());
+		
+		this.toolBar.getListarUsuariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+			Presenter presenter = new UsuariosPresenter( instituicaoEnsinoDTO,
+					cenarioDTO, new UsuariosView( cenarioDTO ) );
+
+			presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getUsuariosAlterarSenhaButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+			Presenter presenter = new AlterarSenhaFormPresenter( instituicaoEnsinoDTO,
+					new AlterarSenhaFormView(usuarioDTO) );
+
+			presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getUsuariosSairButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+				Window.open("../resources/j_spring_security_logout"+TriedaUtil.paramsDebug(), "_self", "");
+			}
+		});
+		
+/*				this.toolBar.getGerenciarCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+			Presenter presenter = new CenariosPresenter( instituicaoEnsino,
+					viewport.getCenarioPanel(), new CenariosView() );
+
+			presenter.go( gTab) );
+			}
+		});*/
+		
+		/*this.toolBar.getGerenciarRequisicoesCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+				CenariosServiceAsync service = Services.cenarios();
+				
+				service.setCurrentCenario(9L, new AsyncCallback<Void>(){
+
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert( "ERRO!",
+								"Deu falha na conexão", null );
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						Services.cenarios().getCurrentCenario(new AsyncCallback<CenarioDTO>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								MessageBox.alert( "ERRO!",
+										"Deu falha na conexão", null );
+								
+							}
+
+							@Override
+							public void onSuccess(CenarioDTO result) {
+								cenario = result;
+								((ToolBarPresenter) toolBar).changeCenario(result);
+								MessageBox.alert( "sucesso!",
+										"Mudou Cenario para " + result.getId(), null );
+							}
+							
+						});
+					}
+					
+				});
+			}
+		});*/
 	}
 	
 	public void changeCenario( CenarioDTO cenarioDTO )
@@ -1342,6 +1374,25 @@ public class ToolBarPresenter
 		this.cenarioDTO = cenarioDTO;
 		toolBar.getNomeContextoTabItem().removeAll();
 		toolBar.getNomeContextoTabItem().addText(cenarioDTO.getNome());
+		if (cenarioDTO.getNome().length() > 20)
+		{
+			toolBar.getNomeContextoTabItem().addStyleName("cenarioNameSmall");
+			toolBar.getNomeContextoTabItem().removeStyleName("cenarioName");
+		}
+		else
+		{
+			toolBar.getNomeContextoTabItem().addStyleName("cenarioName");
+			toolBar.getNomeContextoTabItem().removeStyleName("cenarioNameSmall");
+		}
+		if (!cenarioDTO.getMasterData())
+		{
+			toolBar.getNomeContextoTabItem().setStyleAttribute("margin-top", "5px");
+			toolBar.getNomeContextoTabItem().add(toolBar.getCarregarMasterDataButton());
+		}
+		else
+		{
+			toolBar.getNomeContextoTabItem().setStyleAttribute("margin-top", "14px");
+		}
 		toolBar.getNomeContextoTabItem().layout();
 	}
 

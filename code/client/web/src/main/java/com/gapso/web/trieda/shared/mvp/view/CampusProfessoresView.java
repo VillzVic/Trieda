@@ -46,8 +46,8 @@ public class CampusProfessoresView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		String title = ( ( usuario.isAdministrador() ) ?
-			"Professor » Campi de Trabalho" : "Master Data » Campi de Trabalho" );
+		String title = ( ( !usuario.isAdministrador() ) ?
+			"Professor » Campi de Trabalho" : cenarioDTO.getNome() + " » Campi de Trabalho" );
 
 		panel.setHeadingHtml( title );
 

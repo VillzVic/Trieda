@@ -61,7 +61,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Associação de Disciplinas à Grupos de Salas");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Associação de Disciplinas à Grupos de Salas");
 	}
 	
 	private void createTabItem() {

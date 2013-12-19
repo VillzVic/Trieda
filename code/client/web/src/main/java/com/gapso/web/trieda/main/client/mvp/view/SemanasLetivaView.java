@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.SemanasLetivaPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -35,16 +36,18 @@ public class SemanasLetivaView
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button diasDeAulaButton;
+	private CenarioDTO cenarioDTO;
 
-	public SemanasLetivaView()
+	public SemanasLetivaView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Semanas Letivas" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Semanas Letivas" );
 
 		createToolBar();
 		createGrid();

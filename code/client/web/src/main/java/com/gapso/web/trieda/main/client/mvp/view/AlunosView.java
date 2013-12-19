@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlunosPresenter;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -35,16 +36,18 @@ public class AlunosView
 	private TextField< String > matriculaBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public AlunosView()
+	public AlunosView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Alunos" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Alunos" );
 
 		createToolBar();
 		createGrid();

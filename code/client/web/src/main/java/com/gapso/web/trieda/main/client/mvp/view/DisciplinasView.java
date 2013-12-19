@@ -54,7 +54,7 @@ public class DisciplinasView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Disciplinas" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Disciplinas" );
 
 		createToolBar();
 		createGrid();

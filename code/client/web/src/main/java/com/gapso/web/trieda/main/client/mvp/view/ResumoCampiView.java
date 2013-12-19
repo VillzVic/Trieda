@@ -50,7 +50,7 @@ public class ResumoCampiView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Resumo por Campus" );
+		panel.setHeadingHtml( cenario.getNome() + " » Resumo por Campus" );
 		toolBar = new SimpleToolBar( false, false, false, false, true, this );
 		panel.setTopComponent(toolBar);
 	}

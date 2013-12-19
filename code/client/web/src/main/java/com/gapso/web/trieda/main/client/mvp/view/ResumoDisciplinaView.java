@@ -52,7 +52,7 @@ public class ResumoDisciplinaView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Resultados por Disciplina" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Resultados por Disciplina" );
 
 		createToolBar();
 		createForm();

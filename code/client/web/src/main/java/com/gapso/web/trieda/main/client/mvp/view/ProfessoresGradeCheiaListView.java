@@ -17,7 +17,7 @@ public class ProfessoresGradeCheiaListView
 	@Override
 	protected void createPanel() {
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Professores com Grade Horária Cheia" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores com Grade Horária Cheia" );
 	}
 
 }

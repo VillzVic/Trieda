@@ -63,7 +63,7 @@ public class SalasAssociarDisciplinaView extends MyComposite implements
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Associação de Disciplinas à Salas");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Associação de Disciplinas à Salas");
 	}
 	
 	private void createTabItem() {

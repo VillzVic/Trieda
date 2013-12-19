@@ -61,7 +61,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 		}
 		else
 		{
-			title = "Master Data » Habilitação dos Professores";
+			title = cenarioDTO.getNome() + " » Habilitação dos Professores";
 		}
 
 		panel.setHeadingHtml( title );

@@ -53,7 +53,7 @@ public class AtendimentosFaixaCreditoView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Atendimentos por Faixa de Crédito" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Atendimentos por Faixa de Crédito" );
 	}
 	
 	private void createTabItem()

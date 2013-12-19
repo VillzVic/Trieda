@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.CampiPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
@@ -42,16 +43,18 @@ public class CampiView
 	private Button disponibilidadeBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public CampiView()
+	public CampiView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( getI18nConstants().campiHeadingPanel() );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Campi" );
 
 		createToolBar();
 		createGrid();

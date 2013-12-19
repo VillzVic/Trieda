@@ -17,7 +17,7 @@ public class ProfessoresDeslocamentoCampiListView
 	@Override
 	protected void createPanel() {
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Professores com Deslocamento Entre Campi" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores com Deslocamento Entre Campi" );
 	}
 
 }

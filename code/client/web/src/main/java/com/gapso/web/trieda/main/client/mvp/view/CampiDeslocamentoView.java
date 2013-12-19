@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.CampiDeslocamentoPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -25,15 +26,17 @@ public class CampiDeslocamentoView extends MyComposite implements CampiDeslocame
 	
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public CampiDeslocamentoView(List<DeslocamentoCampusDTO> deslocamentoCampusDTOList) {
+	public CampiDeslocamentoView( CenarioDTO cenarioDTO, List<DeslocamentoCampusDTO> deslocamentoCampusDTOList) {
 		this.deslocamentoCampusDTOList = deslocamentoCampusDTOList;
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Deslocamentos entre Campi");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Deslocamentos entre Campi");
 		createToolBar();
 		createGrid();
 		createTabItem();

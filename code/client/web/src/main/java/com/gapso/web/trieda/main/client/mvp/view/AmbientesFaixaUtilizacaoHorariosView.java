@@ -53,7 +53,7 @@ public class AmbientesFaixaUtilizacaoHorariosView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Ambientes por Faixa de Utilização dos Horários" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Ambientes por Faixa de Utilização dos Horários" );
 	}
 	
 	private void createTabItem()

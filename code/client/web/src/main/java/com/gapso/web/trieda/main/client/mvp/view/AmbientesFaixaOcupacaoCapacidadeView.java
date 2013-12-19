@@ -53,7 +53,7 @@ public class AmbientesFaixaOcupacaoCapacidadeView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Ambientes por Faixa de Ocupação Média da Capacidade" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Ambientes por Faixa de Ocupação Média da Capacidade" );
 	}
 	
 	private void createTabItem()

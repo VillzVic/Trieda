@@ -53,7 +53,7 @@ public class ProfessoresDisciplinasLecionadasView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Professores por Quantidade de Disciplinas Lecionadas" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Quantidade de Disciplinas Lecionadas" );
 	}
 	
 	private void createTabItem()

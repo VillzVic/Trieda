@@ -50,7 +50,7 @@ public class DisciplinasCoRequisitosView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Disciplinas Co-Requisitos" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Disciplinas Co-Requisitos" );
 	
 		createToolBar();
 		createGrid();

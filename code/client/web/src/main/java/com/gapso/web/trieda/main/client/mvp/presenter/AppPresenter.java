@@ -5,6 +5,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CenariosView;
@@ -43,6 +44,7 @@ public class AppPresenter
 		CenarioPanel getCenarioPanel();
 		MenuItem getGerenciarCenariosButton();
 		MenuItem getGerenciarRequisicoesCenariosButton();
+		Button getUsuariosButton();
 		MenuItem getListarUsuariosButton();
 		MenuItem getUsuariosAlterarSenhaButton();
 		MenuItem getUsuariosSairButton();
@@ -137,12 +139,13 @@ public class AppPresenter
 				createThreadAvoidSessionExpire();
 				
 				viewport.getUsuariosNomeButton().setText(usuario.getNome());
+				viewport.getUsuariosButton().setText(usuario.getUsername());
 				
 				viewport.getListarUsuariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
 					@Override
 					public void componentSelected( MenuEvent ce ) {
 					Presenter presenter = new UsuariosPresenter( instituicaoEnsino,
-							cenario, new UsuariosView() );
+							cenario, new UsuariosView( cenario ) );
 
 					presenter.go( viewport.getGTab() );
 					}
@@ -175,7 +178,7 @@ public class AppPresenter
 					}
 				});*/
 				
-/*				viewport.getGerenciarRequisicoesCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+				/*viewport.getGerenciarRequisicoesCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
 					@Override
 					public void componentSelected( MenuEvent ce ) {
 						CenariosServiceAsync service = Services.cenarios();
@@ -204,7 +207,7 @@ public class AppPresenter
 										cenario = result;
 										((ToolBarPresenter) toolBar).changeCenario(result);
 										MessageBox.alert( "sucesso!",
-												"Mudou Cenario para" + result.getId(), null );
+												"Mudou Cenario para " + result.getId(), null );
 									}
 									
 								});

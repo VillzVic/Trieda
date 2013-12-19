@@ -55,7 +55,7 @@ public class DemandasView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Demandas" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Demandas" );
 
 		createToolBar();
 		createGrid();

@@ -326,10 +326,23 @@ table.cw-FlexTable td.cw-FlexTable-content {
 .cenarioName .x-component {
 	color: #15428b !important;
 	font-weight: bold !important;
-	font-size: 13px !important;
+	font-size: 13px;
 	font-family: tahoma,arial,verdana,sans-serif !important;
 	white-space: normal;
 	text-align: center;
+}
+
+.cenarioNameSmall .x-component {
+	color: #15428b !important;
+	font-weight: bold !important;
+	font-size: 11px;
+	font-family: tahoma,arial,verdana,sans-serif !important;
+	white-space: normal;
+	text-align: center;
+}
+
+.x-btn-text-icon .x-btn-icon-medium-left .x-btn-text {
+    padding-left: 18px;
 }
 
 .corDisciplina0 { background-color: #FFDAAF; }

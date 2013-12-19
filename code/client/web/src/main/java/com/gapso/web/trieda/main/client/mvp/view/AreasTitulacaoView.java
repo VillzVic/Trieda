@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.AreasTitulacaoPresenter;
 import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
@@ -34,16 +35,18 @@ public class AreasTitulacaoView
 	private TextField< String > descricaoBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 
-	public AreasTitulacaoView()
+	public AreasTitulacaoView( CenarioDTO cenarioDTO )
 	{
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Áreas de Conhecimento" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Áreas de Conhecimento" );
 
 		createToolBar();
 		createGrid();

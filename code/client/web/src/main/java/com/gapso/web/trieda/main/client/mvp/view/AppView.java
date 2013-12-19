@@ -52,6 +52,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 		panel.getHeader().getTool(1).setStyleAttribute("padding-right", "10px");
 		panel.getHeader().addTool(createUsuariosButton());
 		panel.getHeader().setTitle(i18nConstants.triedaVersion());
+		panel.getHeader().hide();
 		viewport.add(panel);
 		
 		createWest();
@@ -84,7 +85,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 		cenariosBt.setText("Cenários");
 		cenariosBt.setToolTip("Cenários");
 		cenariosBt.setScale(ButtonScale.MEDIUM);
-		cenariosBt.setIconAlign(IconAlign.RIGHT);
+		cenariosBt.setIconAlign(IconAlign.LEFT);
 		cenariosBt.setArrowAlign(ButtonArrowAlign.BOTTOM);
 		cenariosBt.setHeight(24);
 		Menu menu = new Menu();
@@ -97,6 +98,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	public Button createUsuariosButton() {
 		usuariosBt = new Button();
 		usuariosBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.professor16()));
+		usuariosBt.setText("Usuários");
 		usuariosBt.setToolTip("Menu do Usuário");
 		usuariosBt.setScale(ButtonScale.MEDIUM);
 		usuariosBt.setIconAlign(IconAlign.LEFT);
@@ -116,6 +118,7 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	public Button createAdministracaoButton() {
 		administracaoBt = new Button();
 		administracaoBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.chave16()));
+		administracaoBt.setText("Administração");
 		administracaoBt.setToolTip("Administração");
 		administracaoBt.setScale(ButtonScale.MEDIUM);
 		administracaoBt.setIconAlign(IconAlign.LEFT);
@@ -160,6 +163,12 @@ public class AppView extends MyComposite implements AppPresenter.Display {
 	@Override
 	public MenuItem getListarUsuariosButton() {
 		return (MenuItem) administracaoBt.getMenu().getItem(0);
+	}
+	
+	@Override
+	public Button getUsuariosButton()
+	{
+		return usuariosBt;
 	}
 	
 	@Override

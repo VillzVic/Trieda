@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.UsuariosPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -32,14 +33,16 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 	private TextField<String> emailBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 	
-	public UsuariosView() {
+	public UsuariosView( CenarioDTO cenarioDTO ) {
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Usuários");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Usuários");
 		createToolBar();
 		createGrid();
 		createFilter();
@@ -48,12 +51,13 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Usuários", Resources.DEFAULTS.turno16());
+		tabItem = new GTabItem("Usuários", Resources.DEFAULTS.campiTrabalho16());
 		tabItem.setContent(panel);
 	}
 	
 	private void createToolBar() {
-		toolBar = new SimpleToolBar(this);
+		toolBar = new SimpleToolBar(true, true,	true, false,
+				false, this);
 		panel.setTopComponent(toolBar);
 	}
 	

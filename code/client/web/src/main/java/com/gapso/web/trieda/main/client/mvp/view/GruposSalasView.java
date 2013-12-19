@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.GruposSalasPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -31,14 +32,16 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	private GTabItem tabItem;
 	private Button associarSalasBT;
 	private RowExpander expander;
+	private CenarioDTO cenarioDTO;
 	
-	public GruposSalasView() {
+	public GruposSalasView( CenarioDTO cenarioDTO ) {
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Grupos de Salas");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Grupos de Salas");
 		createToolBar();
 		createGrid();
 		createTabItem();

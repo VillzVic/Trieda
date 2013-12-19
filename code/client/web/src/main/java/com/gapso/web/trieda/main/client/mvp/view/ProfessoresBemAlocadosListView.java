@@ -17,7 +17,7 @@ public class ProfessoresBemAlocadosListView
 	@Override
 	protected void createPanel() {
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Professores Bem Alocados" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores Bem Alocados" );
 	}
 
 }

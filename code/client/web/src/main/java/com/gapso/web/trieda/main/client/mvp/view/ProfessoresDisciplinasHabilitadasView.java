@@ -53,7 +53,7 @@ public class ProfessoresDisciplinasHabilitadasView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Professores por Quantidade de Disciplinas Habilitadas" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Quantidade de Disciplinas Habilitadas" );
 	}
 	
 	private void createTabItem()

@@ -53,7 +53,7 @@ public class AtendimentosFaixaTurmaView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Atendimentos por Faixa de Turma" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Atendimentos por Faixa de Turma" );
 	}
 	
 	private void createTabItem()

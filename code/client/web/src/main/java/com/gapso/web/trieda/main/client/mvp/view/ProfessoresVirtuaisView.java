@@ -43,7 +43,7 @@ public class ProfessoresVirtuaisView extends MyComposite
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Professores Virtuais" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores Virtuais" );
 	
 		createToolBar();
 		createGrid();

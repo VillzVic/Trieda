@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.FixacoesPresenter;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.FixacaoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -30,14 +31,16 @@ public class FixacoesView extends MyComposite implements FixacoesPresenter.Displ
 	private TextField<String> codigoBuscaTextField;
 	private ContentPanel panel;
 	private GTabItem tabItem;
+	private CenarioDTO cenarioDTO;
 	
-	public FixacoesView() {
+	public FixacoesView( CenarioDTO cenarioDTO ) {
+		this.cenarioDTO = cenarioDTO;
 		initUI();
 	}
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Fixações");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Fixações");
 		createToolBar();
 		createGrid();
 		createFilter();

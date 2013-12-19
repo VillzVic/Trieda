@@ -17,7 +17,7 @@ public class ProfessoresAtendimentosListView
 	@Override
 	protected void createPanel() {
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Professores Utilizados no Atendimento" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores Utilizados no Atendimento" );
 	}
 
 }

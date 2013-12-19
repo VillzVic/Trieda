@@ -49,7 +49,7 @@ public class CompatibilidadesView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new RowLayout( Orientation.VERTICAL ) );
-		panel.setHeadingHtml( "Master Data » Compatibilidade entre disciplinas" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Compatibilidade entre disciplinas" );
 		panel.setBodyStyle( "background-color: transparent;" );
 	}
 

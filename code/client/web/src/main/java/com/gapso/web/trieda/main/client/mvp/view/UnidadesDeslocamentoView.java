@@ -44,7 +44,7 @@ public class UnidadesDeslocamentoView extends MyComposite implements UnidadesDes
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Deslocamentos entre Unidades");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Deslocamentos entre Unidades");
 		createFilter();
 		createToolBar();
 		createGrid();

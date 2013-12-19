@@ -53,7 +53,7 @@ public class ProfessoresJanelasGradeView  extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Professores por Quantidade de Janelas na Grade Horária" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Quantidade de Janelas na Grade Horária" );
 	}
 	
 	private void createTabItem()

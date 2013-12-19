@@ -56,7 +56,7 @@ public class DemandasPorAlunoView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Demandas por Aluno" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Demandas por Aluno" );
 	
 		createToolBar();
 		createGrid();

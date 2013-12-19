@@ -64,7 +64,7 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 
 	private void createForm() {
 		this.form = new FormPanel();
-		this.form.setHeadingHtml("Master Data » Parâmetros de Planejamento");
+		this.form.setHeadingHtml(cenarioDTO.getNome() + " » Parâmetros de Planejamento");
 		this.form.setScrollMode(Scroll.AUTO);
 		this.form.setButtonAlign(HorizontalAlignment.RIGHT);
 		FormLayout formLayout = new FormLayout();

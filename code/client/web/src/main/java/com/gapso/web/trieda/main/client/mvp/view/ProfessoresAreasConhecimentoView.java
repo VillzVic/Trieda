@@ -59,7 +59,7 @@ public class ProfessoresAreasConhecimentoView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Professores por Areas de Conhecimento" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Professores por Areas de Conhecimento" );
 	}
 	
 	private void createTabItem()

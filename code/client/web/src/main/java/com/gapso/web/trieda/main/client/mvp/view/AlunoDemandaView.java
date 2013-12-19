@@ -27,6 +27,7 @@ import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlunosDemandaPresenter;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -43,10 +44,13 @@ public class AlunoDemandaView
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private RpcProxy< ListLoadResult< AlunoDemandaDTO > > proxy;
+	
+	private CenarioDTO cenarioDTO;
 
-	public AlunoDemandaView( DemandaDTO demandaDTO )
+	public AlunoDemandaView( CenarioDTO cenarioDTO, DemandaDTO demandaDTO )
 	{
 		this.demandaDTO = demandaDTO;
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 	
@@ -69,7 +73,7 @@ public class AlunoDemandaView
 			}
 		};
 
-		this.panel.setHeadingHtml( "Master Data » Alunos relacionados à demanda " +
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Alunos relacionados à demanda " +
 			"(" + demandaDTO.getDisciplinaString() + ")" );
 
 		createToolBar();

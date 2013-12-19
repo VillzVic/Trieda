@@ -43,7 +43,7 @@ public abstract class ProfessoresListView
 	protected ContentPanel panel;
 	private GTabItem tabItem;
 	private RelatorioProfessorFiltro professorFiltro;
-	private CenarioDTO cenarioDTO;
+	protected CenarioDTO cenarioDTO;
 	
 	public ProfessoresListView( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro)
 	{

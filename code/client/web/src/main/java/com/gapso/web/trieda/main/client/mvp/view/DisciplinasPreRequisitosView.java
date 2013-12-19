@@ -50,7 +50,7 @@ public class DisciplinasPreRequisitosView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( "Master Data » Disciplinas Pré-Requisitos" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Disciplinas Pré-Requisitos" );
 	
 		createToolBar();
 		createGrid();

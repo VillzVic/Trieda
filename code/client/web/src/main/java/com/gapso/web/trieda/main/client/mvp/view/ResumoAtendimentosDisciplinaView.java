@@ -54,7 +54,7 @@ public class ResumoAtendimentosDisciplinaView extends MyComposite
 	private void initUI()
 	{
 		panel = new ContentPanel( new BorderLayout() );
-		panel.setHeadingHtml( "Master Data » Resumo de Atendimentos por Disciplina" );
+		panel.setHeadingHtml( cenarioDTO.getNome() + " » Resumo de Atendimentos por Disciplina" );
 	}
 
 	@Override

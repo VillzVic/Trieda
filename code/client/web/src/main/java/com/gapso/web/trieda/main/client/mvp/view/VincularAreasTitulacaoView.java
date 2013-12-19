@@ -57,7 +57,7 @@ public class VincularAreasTitulacaoView extends MyComposite implements VincularA
 
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml("Master Data » Vincular Áreas de Conhecimento");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Vincular Áreas de Conhecimento");
 	}
 
 	private void createTabItem() {
