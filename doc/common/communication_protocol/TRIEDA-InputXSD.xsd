@@ -1381,7 +1381,31 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>informa a quantidade de créditos práticos consumidos pela atendimento da oferta em questão</xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="horarioAula" type="GrupoIdentificador" />
+      <xs:element name="horarioAula" type="GrupoIdentificador">
+        <xs:annotation>
+          <xs:documentation>informa o id do Horario-Aula em que a aula se inicia</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="fixaAbertura" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>informa se na otimização no modo Tático a abertura da turma deve ou não ser fixada</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="fixaSala" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>informa se na otimização no modo Tático a turma deve ou não ter aulas fixadas na sala especificada</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="fixaDia" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>informa se na otimização no modo Tático a turma deve ou não ter aula fixada no dia especificado</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="fixaHorarios" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>informa se na otimização no modo Tático a turma deve ou não ter aula fixada no horário especificado</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAtendimentoCampusSolucao">
