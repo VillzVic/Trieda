@@ -8,7 +8,6 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
-import com.gapso.web.trieda.main.client.mvp.view.CenariosView;
 import com.gapso.web.trieda.main.client.mvp.view.ToolBarView;
 import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -130,7 +129,7 @@ public class AppPresenter
 							", porém a versão mais recente é " + dbCurrentVersion + "." , null );
 
 				RootPanel rp = (RootPanel) widget;
-				toolBar = new ToolBarPresenter(instituicaoEnsino,cenario,usuario,viewport.getCenarioPanel(),new ToolBarView(cenario));
+				toolBar = new ToolBarPresenter(instituicaoEnsino,cenario,usuario,viewport.getCenarioPanel(), viewport.getPanel(), new ToolBarView(cenario));
 				toolBar.go(viewport.asWidget());
 				rp.add(viewport.asWidget());
 				RootPanel.get("loading").setVisible(false);

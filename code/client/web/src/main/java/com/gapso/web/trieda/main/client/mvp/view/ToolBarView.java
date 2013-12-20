@@ -10,7 +10,6 @@ import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
-import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
@@ -30,6 +29,7 @@ public class ToolBarView
 	private CenarioDTO cenarioDTO;
 	private LayoutContainer container;
 	private TabItem nomeContexto;
+	private ContentPanel masterDataPanel;
 	private Button carregarMasterDataBt;
 	private ToolBar importacoesToolBar;
 	private ToolBar campiToolBar;
@@ -150,7 +150,7 @@ public class ToolBarView
 			carregarMasterDataBt.hide();
 		}
 
-		ContentPanel masterDataPanel = new ContentPanel()
+		masterDataPanel = new ContentPanel()
 		{
 			@Override
 			protected void afterRender()
@@ -173,7 +173,7 @@ public class ToolBarView
 		masterDataPanel.getHeader().setStyleAttribute("line-height", "23px");
 		masterDataPanel.getHeader().setStyleAttribute("font-size", "14px");
 		masterDataPanel.setCollapsible(true);
-
+		
 		masterDataPanel.setBodyBorder( false );
 
 		HBoxLayoutData flex = new HBoxLayoutData( new Margins( 0 ) );
@@ -1143,5 +1143,10 @@ public class ToolBarView
 	@Override
 	public MenuItem getUsuariosSairButton() {
 		return (MenuItem) usuariosBt.getMenu().getItem(2);
+	}
+	
+	@Override
+	public ContentPanel getMasterDataPanel() {
+		return masterDataPanel;
 	}
 }

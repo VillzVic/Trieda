@@ -3,6 +3,9 @@ package com.gapso.web.trieda.main.client.mvp.presenter;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
@@ -123,6 +126,7 @@ public class ToolBarPresenter
 		MenuItem getUsuariosAlterarSenhaButton();
 		MenuItem getUsuariosSairButton();
 		MenuItem getUsuariosNomeButton();
+		ContentPanel getMasterDataPanel();
 		
 		Button getImportarButton();
 		Button getCarregarSolucaoButton();
@@ -218,16 +222,18 @@ public class ToolBarPresenter
 	private UsuarioDTO usuarioDTO;
 	private Display toolBar;
 	private GTab gTab;
+	private ContentPanel panel;
 
 	public ToolBarPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO masterData, UsuarioDTO usuario,
-		CenarioPanel cenarioPanel, Display toolBar )
+		CenarioPanel cenarioPanel, ContentPanel mainPanel, Display toolBar )
 	{
 		this.cenarioDTO = masterData;
 		this.usuarioDTO = usuario;
 		this.toolBar = toolBar;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.panel = mainPanel;
 
 		addListeners();
 	}
@@ -1367,6 +1373,20 @@ public class ToolBarPresenter
 				});
 			}
 		});*/
+		
+		this.toolBar.getMasterDataPanel().addListener(Events.Collapse, new Listener<ComponentEvent>() {
+		@Override
+			public void handleEvent(ComponentEvent fe) {
+				panel.syncSize();
+		    }
+		});
+		
+		this.toolBar.getMasterDataPanel().addListener(Events.Expand, new Listener<ComponentEvent>() {
+		@Override
+			public void handleEvent(ComponentEvent fe) {
+				panel.syncSize();
+		    }
+		});
 	}
 	
 	public void changeCenario( CenarioDTO cenarioDTO )
