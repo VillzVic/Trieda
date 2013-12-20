@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -203,7 +204,29 @@ public class CenariosServiceImpl
 	public void editar( CenarioDTO cenarioDTO )
 	{
 		Cenario cenario = ConvertBeans.toCenario( cenarioDTO );
-		cenario.merge();
+
+		try
+		{
+			if ( cenario.getId() != null
+				&& cenario.getId() > 0 )
+			{
+				cenario.setAtualizadoPor(getUsuario());
+				cenario.setDataAtualizacao(new Date());
+				cenario.merge();
+			}
+			else
+			{
+				cenario.setCriadoPor(getUsuario());
+				cenario.setDataCriacao(new Date());
+				cenario.setAtualizadoPor(getUsuario());
+				cenario.setDataAtualizacao(new Date());
+				cenario.persist();
+			}			
+		}
+		catch( Exception e )
+		{
+			System.out.println( e.getCause() );
+		}
 	}
 
 	@Override

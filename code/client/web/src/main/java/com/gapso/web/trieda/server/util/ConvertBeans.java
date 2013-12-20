@@ -196,6 +196,10 @@ public class ConvertBeans {
 		dto.setAno( domain.getAno() );
 		dto.setSemestre( domain.getSemestre() );
 		dto.setComentario( domain.getComentario() );
+		dto.setCriadoUsuarioString( domain.getCriadoPor() == null ? null : domain.getCriadoPor().getNome() );
+		dto.setCriadoUsuarioDate( domain.getDataCriacao() );
+		dto.setAtualizadoUsuarioString( domain.getAtualizadoPor() == null ? null : domain.getAtualizadoPor().getNome() );
+		dto.setAtualizadoUsuarioDate( domain.getDataAtualizacao() );
 
 		if ( instituicaoEnsino != null )
 		{

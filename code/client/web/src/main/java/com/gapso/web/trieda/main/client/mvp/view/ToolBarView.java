@@ -50,6 +50,9 @@ public class ToolBarView
 
 	// Importacoes
 	private Button importarBt;
+	private Button importarBaseIntBt;
+	private Button importarOfertasIntBt;
+	private Button requisicoesIntBt;
 	
 	// Campi
 	private Button campiNovoCampiBt;
@@ -107,6 +110,8 @@ public class ToolBarView
 
 	// Exportacoes
 	private Button exportarBt;
+	private Button exportarGradesERPBt;
+	private Button exportarReqBt;
 	private Button carregarSolucaoBt;
 	
 	// Ofertas e Demandas
@@ -127,6 +132,10 @@ public class ToolBarView
 	private Button fixacoesListBt;
 	private Button parametrosBt;
 	private Button consultaRequisicoesOtimizacaoBt;
+	
+	TabItem ofertasDemandasTabItem;
+	TabItem planejamentoTabItem;
+	TabItem relatoriosTabItem;
 
 	public ToolBarView( CenarioDTO cenarioDTO)
 	{
@@ -163,7 +172,7 @@ public class ToolBarView
 		};
 		masterDataPanel.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.logo()));
 		masterDataPanel.getHeader().addTool(carregarMasterDataBt);
-		masterDataPanel.getHeader().getTool(0).setStyleAttribute("margin-right", "759px");
+		masterDataPanel.getHeader().getTool(0).setStyleAttribute("margin-right", "10px");
 		masterDataPanel.getHeader().addTool(createCenariosButton());
 		masterDataPanel.getHeader().getTool(1).setStyleAttribute("margin-right", "10px");
 		masterDataPanel.getHeader().addTool(createAdministracaoButton());
@@ -190,11 +199,11 @@ public class ToolBarView
 		TabItem disciplinasTabItem = new TabItem( "Disciplinas" );
 		TabItem alunosTabItem = new TabItem( "Alunos" );
 		TabItem professoresTabItem = new TabItem( "Professores" );
-		TabItem planejamentoTabItem = new TabItem( "Planejamento" );
-		TabItem relatoriosTabItem = new TabItem( "Relatórios" );
+		planejamentoTabItem = new TabItem( "Planejamento" );
+		relatoriosTabItem = new TabItem( "Relatórios" );
 		TabItem exportacoesTabItem = new TabItem( "Exportações" );
 		TabItem calendarioTabItem = new TabItem( "Calendário" );
-		TabItem ofertasDemandasTabItem = new TabItem( "Ofertas e Demandas" );
+		ofertasDemandasTabItem = new TabItem( "Ofertas e Demandas" );
 
 		//planejamentoToolBar = new ToolBar();
 
@@ -254,6 +263,29 @@ public class ToolBarView
 		masterDataPanel.setTopComponent( masterDataTab );
 
 		container.setHeight( height );
+		
+		if (cenarioDTO.getMasterData())
+		{
+			getCarregarMasterDataButton().hide();
+			getImportarOfertasButton().hide();
+			getExportarGradesERPButton().hide();
+			getExportarReqButton().hide();
+			getOfertasDemandasTabItem().getHeader().hide();
+			getProfessoresListProfessoresVirtuaisBt().hide();
+			getPlanejamentoTabItem().getHeader().hide();
+			getRelatoriosTabItem().getHeader().hide();
+		}
+		else
+		{
+			getCarregarMasterDataButton().show();
+			getExportarGradesERPButton().show();
+			getExportarReqButton().show();
+			getImportarOfertasButton().show();
+			getOfertasDemandasTabItem().getHeader().show();
+			getProfessoresListProfessoresVirtuaisBt().show();
+			getPlanejamentoTabItem().getHeader().show();
+			getRelatoriosTabItem().getHeader().show();
+		}
 
 		initComponent( masterDataPanel );
 	}
@@ -279,6 +311,23 @@ public class ToolBarView
 	{
 		importarBt = createButton("Importar<br />(Excel)","Importar (Excel)",Resources.DEFAULTS.importar24());
 		importacoesToolBar.add(importarBt);
+		
+		importarBaseIntBt = createButton("Importar Dados<br />Base (Integração)",
+				"Importar Dados Base (Integração)",Resources.DEFAULTS.integracao24());
+		importacoesToolBar.add(importarBaseIntBt);
+		importarBaseIntBt.disable();
+		
+		importarOfertasIntBt = createButton("Importar Ofertas/Demandas<br />(Integração)",
+				"Importar Ofertas/Demandas (Integração)",Resources.DEFAULTS.integracao24());
+		importacoesToolBar.add(importarOfertasIntBt);
+		importarOfertasIntBt.disable();
+		
+		requisicoesIntBt = createButton("Requisições de<br />Integração",
+				"Requisições de Integração",Resources.DEFAULTS.reqIntegracao24());
+		importacoesToolBar.add(requisicoesIntBt);
+		requisicoesIntBt.disable();
+		
+		importacoesToolBar.add( new SeparatorToolItem() );
 				
 		carregarSolucaoBt = createButton("Carregar<br />Solução","Carregar Solução",Resources.DEFAULTS.trieda24());
 		importacoesToolBar.add(carregarSolucaoBt);
@@ -330,15 +379,15 @@ public class ToolBarView
 		salasToolBar.add( salasListSalasBt );
 
 		salasToolBar.add( new SeparatorToolItem() );
-
-		gruposSalasListSalasBt = createButton( "Grupos de<br />Salas",
-			"Grupos de Salas", Resources.DEFAULTS.grupoSala24() );
-		salasToolBar.add( gruposSalasListSalasBt );
-
+		
 		associarDisciplinasSalasListSalasBt = createButton(
 			"Associação de<br />Disciplinas à Salas",
 			"Associação de Disciplinas à Salas", Resources.DEFAULTS.associacaoDisciplinaSala24() );
 		salasToolBar.add( associarDisciplinasSalasListSalasBt );
+
+		gruposSalasListSalasBt = createButton( "Grupos de<br />Salas",
+			"Grupos de Salas", Resources.DEFAULTS.grupoSala24() );
+		salasToolBar.add( gruposSalasListSalasBt );
 		
 		associarDisciplinasGruposSalasListSalasBt = createButton(
 				"Associação de Disciplinas<br />à Grupos de Salas",
@@ -366,22 +415,20 @@ public class ToolBarView
 			"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
 		cursosToolBar.add( curriculosListCursosBt );
 		
-		curriculosDisciplinasPreRequisitosListCursosBt = createButton( "Disciplinas<br />Pré-Requisitos",
+		curriculosDisciplinasPreRequisitosListCursosBt = createButton( "Pré-Requisitos",
 			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
 		cursosToolBar.add( curriculosDisciplinasPreRequisitosListCursosBt );
 		
-		curriculosDisciplinasCoRequisitosListCursosBt = createButton( "Disciplinas<br />Co-Requisitos",
+		curriculosDisciplinasCoRequisitosListCursosBt = createButton( "Co-Requisitos",
 			"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
 		cursosToolBar.add( curriculosDisciplinasCoRequisitosListCursosBt );
 		
-		cursosToolBar.add( new SeparatorToolItem() );
-
 		areasTitulacaoListCursosBt = createButton( "Áreas de<br />Conhecimento",
 			"Áreas de Conhecimento", Resources.DEFAULTS.areaTitulacao() );
 		cursosToolBar.add( areasTitulacaoListCursosBt );
 
-		vincularAreasTitulacaoListCursosBt = createButton( "Vincular Áreas<br />de Conhecimento",
-			"Vincular Áreas de Conhecimento", Resources.DEFAULTS.vincularAreaTitulacao24() );
+		vincularAreasTitulacaoListCursosBt = createButton( "Cursos e Áreas<br />de Conhecimento",
+			"Cursos e Áreas de Conhecimento", Resources.DEFAULTS.vincularAreaTitulacao24() );
 		cursosToolBar.add( vincularAreasTitulacaoListCursosBt );
 	}
 
@@ -415,12 +462,11 @@ public class ToolBarView
 			"Associação de Disciplinas à Grupos Salas", Resources.DEFAULTS.grupoSala24() );
 		disciplinasToolBar.add( associarDisciplinasGruposSalasListDisciplinasBt );
 
-		disciplinasToolBar.add( new SeparatorToolItem() );
-
 		compatibilidadesListDisciplinasBt = createButton(
 			"Compatibilidade<br />entre disciplinas",
 			"Compatibilidade entre disciplinas", Resources.DEFAULTS.compatibilidade24() );
 		disciplinasToolBar.add( compatibilidadesListDisciplinasBt );
+		compatibilidadesListDisciplinasBt.hide();
 	}
 
 	private void createAlunos()
@@ -432,6 +478,8 @@ public class ToolBarView
 		alunosListAlunosBt = createButton( "Listar",
 			"Listar Alunos", Resources.DEFAULTS.professorListar24() );
 		alunosToolBar.add( alunosListAlunosBt );
+		
+		alunosToolBar.add( new SeparatorToolItem() );
 		
 		alunosDisciplinasCursadasBt = createButton( "Disciplinas<br /> Cursadas",
 				"Disciplinas Cursadas", Resources.DEFAULTS.alunoCurriculo24() );
@@ -451,7 +499,7 @@ public class ToolBarView
 		professoresToolBar.add( new SeparatorToolItem() );
 
 		professoresDisciplinaListprofessoresBt = createButton(
-			"Habilitação<br />dos Professores", "Habilitação dos Professores",
+			"Habilitações", "Habilitação dos Professores",
 			Resources.DEFAULTS.habilitacaoProfessor24() );
 		professoresToolBar.add( professoresDisciplinaListprofessoresBt );
 
@@ -507,7 +555,7 @@ public class ToolBarView
 
 		relatoriosToolBar.add( new SeparatorToolItem() );
 		
-		gradeHorariaDropDownBt = createButton( "Grade Horária",
+		gradeHorariaDropDownBt = createButton( "Grades Horárias",
 				"Relatórios Grade Horária", Resources.DEFAULTS.saidaCurso24() );
 		Menu menuGradeHoraria = new Menu();
 		menuGradeHoraria.add( createMenuItem("Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala16()) );
@@ -522,12 +570,26 @@ public class ToolBarView
 		
 		exportarBt = createButton("Exportar<br />para Excel","Exportar para Excel",Resources.DEFAULTS.exportar24());
 		exportacoesToolBar.add(exportarBt);
+		
+		exportarGradesERPBt = createButton("Exportar Grades<br />Horárias (ERP)",
+				"Exportar Grades Horárias (ERP)",Resources.DEFAULTS.integracao24());
+		exportacoesToolBar.add(exportarGradesERPBt);
+		exportarGradesERPBt.disable();
+		
+		exportarReqBt = createButton("Requisições de<br />Integração",
+				"Requisições de Integração",Resources.DEFAULTS.reqIntegracao24());
+		exportacoesToolBar.add(exportarReqBt);
+		exportarReqBt.disable();
 	}
 	
 	private void createOfertasDemandas() {
 		ofertasListDemandasBt = createButton( "Oferta de Cursos<br />em Campi",
 			"Oferta de Cursos em Campi", Resources.DEFAULTS.ofertaCurso24() );
-		ofertasDemandasToolBar.add( ofertasListDemandasBt );		
+		ofertasDemandasToolBar.add( ofertasListDemandasBt );
+		
+		demandasDemandasBt = createButton( "Ofertas e<br />Demandas",
+			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
+		ofertasDemandasToolBar.add( demandasDemandasBt );
 		
 		demandasPorAlunoDemandasBt = createButton( "Demandas por<br />Aluno",
 				"Previsão de demanda", Resources.DEFAULTS.demanda24() );
@@ -535,7 +597,7 @@ public class ToolBarView
 		
 		ofertasDemandasToolBar.add( new SeparatorToolItem() );
 		
-		parametrosGeracaoDemandaBt = createButton( "Parâmetros para<br /> Geração de Demanda",
+		parametrosGeracaoDemandaBt = createButton( "Parâmetros<br />Geração de Demanda",
 			"Parâmetros para Geração de Demanda", Resources.DEFAULTS.parametroPlanejamento24() );
 		ofertasDemandasToolBar.add( parametrosGeracaoDemandaBt );
 		
@@ -543,23 +605,17 @@ public class ToolBarView
 				"Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
 		ofertasDemandasToolBar.add( getCurriculosListDemandasButton() );
 			
-		curriculosDisciplinasPreRequisitosListDemandasBt = createButton( "Disciplinas<br />Pré-Requisitos",
+		curriculosDisciplinasPreRequisitosListDemandasBt = createButton( "Pré-Requisitos",
 			"Disciplinas Pré-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
 		ofertasDemandasToolBar.add( getCurriculosDisciplinasPreRequisitosDemandasButton() );
 			
-		curriculosDisciplinasCoRequisitosListDemandasBt = createButton( "Disciplinas<br />Co-Requisitos",
+		curriculosDisciplinasCoRequisitosListDemandasBt = createButton( "Co-Requisitos",
 			"Disciplinas Co-Requisitos", Resources.DEFAULTS.disciplinaCurriculo24() );
 		ofertasDemandasToolBar.add( getCurriculosDisciplinasCoRequisitosDemandasButton() );
 		
 		alunosDisciplinasCursadasDemandasBt = createButton( "Disciplinas<br /> Cursadas",
 			"Disciplinas Cursadas", Resources.DEFAULTS.alunoCurriculo24() );
 		ofertasDemandasToolBar.add( alunosDisciplinasCursadasDemandasBt );
-		
-		ofertasDemandasToolBar.add( new SeparatorToolItem() );
-		
-		demandasDemandasBt = createButton( "Ofertas e<br />Demandas",
-			"Previsão de demanda", Resources.DEFAULTS.demanda24() );
-		ofertasDemandasToolBar.add( demandasDemandasBt );
 	}
 
 	private void createCalendario()
@@ -573,14 +629,14 @@ public class ToolBarView
 	}
 
 	private void createPlanejamento() {
-		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
-		planejamentoToolBar.add(fixacoesListBt);
-
 		parametrosBt = createButton("Parâmetros de<br />Planejamento","Parâmetros de Planejamento",Resources.DEFAULTS.parametroPlanejamento24());
 		planejamentoToolBar.add(parametrosBt);
 		
-		consultaRequisicoesOtimizacaoBt = createButton("Consulta Requisições<br />de Otimização","Consulta Requisições de Otimização",Resources.DEFAULTS.gerarGradeConsultaRequisicao24());
+		consultaRequisicoesOtimizacaoBt = createButton("Requisições<br />de Otimização","Requisições de Otimização",Resources.DEFAULTS.gerarGradeConsultaRequisicao24());
 		planejamentoToolBar.add(consultaRequisicoesOtimizacaoBt);
+		
+		fixacoesListBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.fixacao24());
+		planejamentoToolBar.add(fixacoesListBt);
 	}
 
 	private Button createButton( String text, String toolTip, ImageResource icon )
@@ -1143,6 +1199,36 @@ public class ToolBarView
 	@Override
 	public MenuItem getUsuariosSairButton() {
 		return (MenuItem) usuariosBt.getMenu().getItem(2);
+	}
+	
+	@Override
+	public Button getImportarOfertasButton() {
+		return importarOfertasIntBt;
+	}
+	
+	@Override
+	public Button getExportarGradesERPButton() {
+		return exportarGradesERPBt;
+	}
+	
+	@Override
+	public Button getExportarReqButton() {
+		return exportarReqBt;
+	}
+	
+	@Override 
+	public TabItem getOfertasDemandasTabItem() {
+		return ofertasDemandasTabItem;
+	}
+	
+	@Override 
+	public TabItem getRelatoriosTabItem() {
+		return relatoriosTabItem;
+	}
+	
+	@Override 
+	public TabItem getPlanejamentoTabItem() {
+		return planejamentoTabItem;
 	}
 	
 	@Override

@@ -299,28 +299,9 @@ table.cw-FlexTable td.cw-FlexTable-content {
 .GradeHorariaGrid .x-grid3-row-table .horario.s25 { left: 2407px; }
 .GradeHorariaGrid .x-grid3-row-table .horario.s26 { left: 2507px; }
 
-.tabPanelMasterData .x-item-disabled {
-	opacity: 1;
-}
-
-.tabPanelMasterData .x-item-disabled * {
-    opacity: 1;
-    color: #15428B !important;
-    font-family: tahoma,arial,verdana,sans-serif;
-    font-size: 11px;
-    font-weight: bold !important;
-    background-image: none;
-}
-.x-tab-strip .tabPanelMasterData .x-item-disabled span.x-tab-strip-text {
-	font-weight: bold;	
-}
 
 .errorList .x-panel-body {
 	padding: 10px;
-}
-
-.disabled-color {
-	color: blue !important;
 }
 
 .cenarioName .x-component {

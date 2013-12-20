@@ -31,7 +31,6 @@ public class CenariosView
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CenarioDTO> gridPanel;
 	private Button abrirCenarioBT;
-	private Button clonarCenarioBT;
 	private SimpleFilter filter;
 	private TextField< Integer > anoBuscaTextField;
 	private TextField< Integer > semestreBuscaTextField;
@@ -65,16 +64,11 @@ public class CenariosView
 	
 	private void createToolBar()
 	{
-		this.toolBar = new SimpleToolBar( this );
+		this.toolBar = new SimpleToolBar( true, true, true, false, false, this );
 		this.toolBar.add( new SeparatorToolItem() );
 
-		this.clonarCenarioBT = toolBar.createButton(
-			"Clonar cenário", Resources.DEFAULTS.cenarioClonar16() );
-
-		this.toolBar.add( this.clonarCenarioBT );
-
 		this.abrirCenarioBT = toolBar.createButton(
-			"Adicionar na árvore de cenários",
+			"Selecionar como Contexto Atual",
 			Resources.DEFAULTS.cenarioAbrir16() );
 
 		this.toolBar.add( this.abrirCenarioBT );
@@ -94,10 +88,16 @@ public class CenariosView
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
 
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_ID, "Id", 50 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_NOME, "Nome", 140 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_ANO, "Ano", 50 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_SEMESTRE, "Semestre", 70 ) );
 		list.add( new CheckColumnConfig( CenarioDTO.PROPERTY_OFICIAL, "Oficial", 40 ) );
-		list.add( new ColumnConfig( CenarioDTO.PROPERTY_NOME, "Nome", 100 ) );
-		list.add( new ColumnConfig( CenarioDTO.PROPERTY_ANO, "Ano", 100 ) );
-		list.add( new ColumnConfig( CenarioDTO.PROPERTY_SEMESTRE, "Semestre", 100 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_COMENTARIO, "Comentário", 100 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_CRIADO_USUARIO_DATE, "Data de Criação", 120 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_CRIADO_USUARIO_STRING, "Usuário de Criação", 120 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_ATUALIZADO_USUARIO_DATE, "Data de Atualização", 120 ) );
+		list.add( new ColumnConfig( CenarioDTO.PROPERTY_ATUALIZADO_USUARIO_STRING, "Usuário de Atualização", 140 ) );
 
 		return list;
 	}
@@ -178,11 +178,5 @@ public class CenariosView
 	public Button getAbrirCenarioButton()
 	{
 		return this.abrirCenarioBT;
-	}
-
-	@Override
-	public Button getClonarCenarioButton()
-	{
-		return this.clonarCenarioBT;
 	}
 }

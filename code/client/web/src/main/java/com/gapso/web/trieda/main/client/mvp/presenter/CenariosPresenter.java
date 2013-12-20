@@ -12,15 +12,12 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.gapso.web.trieda.main.client.mvp.view.CenarioCloneFormView;
-import com.gapso.web.trieda.main.client.mvp.view.CenarioCriarFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioEditarFormView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
-import com.gapso.web.trieda.shared.util.view.CenarioPanel;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -36,7 +33,6 @@ public class CenariosPresenter
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getAbrirCenarioButton();
-		Button getClonarCenarioButton();
 		TextField< Integer > getAnoBuscaTextField();
 		TextField< Integer > getSemestreBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -49,15 +45,15 @@ public class CenariosPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display; 
 	private GTab gTab;
-	private CenarioPanel cenarioPanel;
+	private ToolBarPresenter presenter;
 
 	public CenariosPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-		CenarioPanel cenarioPanel, Display display )
+		ToolBarPresenter presenter, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.display = display;
-		this.cenarioPanel = cenarioPanel;
+		this.presenter = presenter;
 
 		configureProxy();
 		setListeners();
@@ -93,8 +89,8 @@ public class CenariosPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Presenter presenter = new CenarioCriarFormPresenter( instituicaoEnsinoDTO,
-					new CenarioCriarFormView( new CenarioDTO() ), display.getGrid() );
+				Presenter presenter = new CenarioEditarFormPresenter( instituicaoEnsinoDTO,
+					new CenarioEditarFormView( new CenarioDTO() ), display.getGrid() );
 
 				presenter.go( null );
 			}
@@ -173,23 +169,40 @@ public class CenariosPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				CenarioDTO cenarioDTO = display.getGrid().getSelectionModel().getSelectedItem();
-				cenarioPanel.addCenario( cenarioDTO );
-			}
-		});
-
-		this.display.getClonarCenarioButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
-			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
+				CenariosServiceAsync service = Services.cenarios();
+				
 				CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+				
+				service.setCurrentCenario(cenarioDTO.getId(), new AsyncCallback<Void>(){
 
-				Presenter presenter = new CenarioCloneFormPresenter( instituicaoEnsinoDTO,
-					new CenarioCloneFormView( cenarioDTO ), display.getGrid() );
+					@Override
+					public void onFailure(Throwable caught) {
+						MessageBox.alert( "ERRO!",
+								"Deu falha na conexão", null );
+					}
 
-				presenter.go( null );
+					@Override
+					public void onSuccess(Void result) {
+						Services.cenarios().getCurrentCenario(new AsyncCallback<CenarioDTO>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								MessageBox.alert( "ERRO!",
+										"Deu falha na conexão", null );
+								
+							}
+
+							@Override
+							public void onSuccess(CenarioDTO result) {
+								presenter.changeCenario(result);
+								MessageBox.alert( "Contexto modificado!",
+										"Contexto alterado para " + result.getNome(), null );
+							}
+							
+						});
+					}
+					
+				});
 			}
 		});
 	}

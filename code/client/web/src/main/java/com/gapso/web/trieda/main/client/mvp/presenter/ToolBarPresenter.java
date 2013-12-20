@@ -29,6 +29,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CampiDeslocamentoView;
 import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CarregarSolucaoView;
+import com.gapso.web.trieda.main.client.mvp.view.CenariosView;
 import com.gapso.web.trieda.main.client.mvp.view.CompatibilidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
@@ -129,6 +130,7 @@ public class ToolBarPresenter
 		ContentPanel getMasterDataPanel();
 		
 		Button getImportarButton();
+		Button getImportarOfertasButton();
 		Button getCarregarSolucaoButton();
 		
 		Button getCampiNovoCampiButton();
@@ -203,6 +205,8 @@ public class ToolBarPresenter
 		Button getConsultaRequisicoesOtimizacaoBt();
 
 		Button getExportarButton();
+		Button getExportarGradesERPButton();
+		Button getExportarReqButton();
 		
 		Button getCurriculosListDemandasButton();
 		Button getCurriculosDisciplinasPreRequisitosDemandasButton();
@@ -215,6 +219,10 @@ public class ToolBarPresenter
 
 		Button getSemanasLetivaListCampiButton();
 		Button getTurnosListCampiButton();
+		
+		TabItem getOfertasDemandasTabItem();
+		TabItem getRelatoriosTabItem();
+		TabItem getPlanejamentoTabItem();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -1284,8 +1292,8 @@ public class ToolBarPresenter
 
 							@Override
 							public void onSuccess(Void result) {
-								MessageBox.alert( "Cucesso!",
-										"Contexto alterado para Master Data.", null );
+								MessageBox.alert( "Contexto modificado!",
+										"Contexto alterado para Master Data", null );
 							}
 							
 						});
@@ -1325,54 +1333,18 @@ public class ToolBarPresenter
 			}
 		});
 		
-/*				this.toolBar.getGerenciarCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+		this.toolBar.getGerenciarCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected( MenuEvent ce ) {
-			Presenter presenter = new CenariosPresenter( instituicaoEnsino,
-					viewport.getCenarioPanel(), new CenariosView() );
+			Presenter presenter = new CenariosPresenter( instituicaoEnsinoDTO, ToolBarPresenter.this, new CenariosView() );
 
-			presenter.go( gTab) );
+			presenter.go( gTab );
 			}
-		});*/
+		});
 		
-		/*this.toolBar.getGerenciarRequisicoesCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected( MenuEvent ce ) {
-				CenariosServiceAsync service = Services.cenarios();
-				
-				service.setCurrentCenario(9L, new AsyncCallback<Void>(){
-
-					@Override
-					public void onFailure(Throwable caught) {
-						MessageBox.alert( "ERRO!",
-								"Deu falha na conexão", null );
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-						Services.cenarios().getCurrentCenario(new AsyncCallback<CenarioDTO>(){
-
-							@Override
-							public void onFailure(Throwable caught) {
-								MessageBox.alert( "ERRO!",
-										"Deu falha na conexão", null );
-								
-							}
-
-							@Override
-							public void onSuccess(CenarioDTO result) {
-								cenario = result;
-								((ToolBarPresenter) toolBar).changeCenario(result);
-								MessageBox.alert( "sucesso!",
-										"Mudou Cenario para " + result.getId(), null );
-							}
-							
-						});
-					}
-					
-				});
-			}
-		});*/
+		this.toolBar.getGerenciarRequisicoesCenariosButton().addSelectionListener(CommandSelectionListener.<MenuEvent>create(
+				CommandFactory.createConsultarRequisicoesOtimizacaoCommand(true)
+		));
 		
 		this.toolBar.getMasterDataPanel().addListener(Events.Collapse, new Listener<ComponentEvent>() {
 		@Override
@@ -1392,7 +1364,7 @@ public class ToolBarPresenter
 	public void changeCenario( CenarioDTO cenarioDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
-		toolBar.getNomeContextoTabItem().removeAll();
+/*		toolBar.getNomeContextoTabItem().removeAll();
 		toolBar.getNomeContextoTabItem().addText(cenarioDTO.getNome());
 		if (cenarioDTO.getNome().length() > 20)
 		{
@@ -1412,8 +1384,36 @@ public class ToolBarPresenter
 		else
 		{
 			toolBar.getNomeContextoTabItem().setStyleAttribute("margin-top", "14px");
+		}*/
+		toolBar.getMasterDataPanel().setHeadingHtml("Contexto: " + cenarioDTO.getNome());
+		escondeBarrasMasterData( cenarioDTO );
+		toolBar.getMasterDataPanel().layout();
+	}
+	
+	private void escondeBarrasMasterData( CenarioDTO cenarioDTO )
+	{
+		if (cenarioDTO.getMasterData())
+		{
+			toolBar.getCarregarMasterDataButton().hide();
+			toolBar.getImportarOfertasButton().hide();
+			toolBar.getExportarGradesERPButton().hide();
+			toolBar.getExportarReqButton().hide();
+			toolBar.getOfertasDemandasTabItem().getHeader().hide();
+			toolBar.getProfessoresListProfessoresVirtuaisBt().hide();
+			toolBar.getPlanejamentoTabItem().getHeader().hide();
+			toolBar.getRelatoriosTabItem().getHeader().hide();
 		}
-		toolBar.getNomeContextoTabItem().layout();
+		else
+		{
+			toolBar.getCarregarMasterDataButton().show();
+			toolBar.getImportarOfertasButton().show();
+			toolBar.getExportarGradesERPButton().show();
+			toolBar.getExportarReqButton().show();
+			toolBar.getOfertasDemandasTabItem().getHeader().show();
+			toolBar.getProfessoresListProfessoresVirtuaisBt().show();
+			toolBar.getPlanejamentoTabItem().getHeader().show();
+			toolBar.getRelatoriosTabItem().getHeader().show();
+		}
 	}
 
 	@Override
