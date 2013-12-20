@@ -19,10 +19,12 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
+import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.UsuariosServiceAsync;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -85,6 +87,7 @@ public class Login
 
 	private void loadLogin()
 	{
+		TriedaI18nConstants i18nConstants = GWT.create(TriedaI18nConstants.class);
 		this.viewport = new Viewport();
 		this.viewport.setLayout( new FitLayout() );
 
@@ -158,11 +161,21 @@ public class Login
 			{
 				form.submit();
 			}
-		});
+		});		
 
 		setDefaultButton( form, enviarBt );
 		form.addButton( enviarBt );
 
+		LabelField versionLabel = new LabelField();
+		versionLabel.setValue("Sistema Analítico de Planejamento para Instituições de Ensino construído por " +
+				"<a href=\"http://www.trieda.com.br/\" target=\"_blank\">Trieda</a>. (" + i18nConstants.triedaVersion()+ ")");
+		versionLabel.setStyleAttribute("position", "absolute");
+		versionLabel.setStyleAttribute("margin-top", "60px");
+		versionLabel.setStyleAttribute("font-size", "9px");
+		versionLabel.setStyleAttribute("margin-left", "-128px");
+		versionLabel.setStyleAttribute("white-space", "nowrap");
+		
+		form.setBottomComponent(versionLabel);
 		panel.add( form );
 
 		this.viewport.add( panel );
