@@ -2384,16 +2384,12 @@ public class SolverInput
 	}
 	
 	private void generateEquivalencias() {
-		GrupoEquivalencia grupoEquivalencia
-			= this.of.createGrupoEquivalencia();
+		GrupoEquivalencia grupoEquivalencia = this.of.createGrupoEquivalencia();
 		
-		List< Equivalencia > equivalencias
-			= Equivalencia.findAll( this.instituicaoEnsino );
+		List< Equivalencia > equivalencias = Equivalencia.findByCenario(this.instituicaoEnsino,this.cenario);
 		
-		for ( Equivalencia equivalencia : equivalencias )
-		{
-			ItemEquivalencia itemEquivalencia
-				= this.of.createItemEquivalencia();
+		for (Equivalencia equivalencia : equivalencias) {
+			ItemEquivalencia itemEquivalencia = this.of.createItemEquivalencia();
 			
 			itemEquivalencia.setId( equivalencia.getId().intValue() );
 			itemEquivalencia.setDisciplinaCursouId( equivalencia.getCursou().getId().intValue() );
