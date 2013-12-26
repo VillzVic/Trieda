@@ -1075,7 +1075,7 @@ public class SolverInput
 				for ( ProfessorDisciplina professorDisciplina : professorDisciplinas )
 				{
 					// TRIEDA-1387: Se as equivalências estão sendo consideradas, o input gerado deve vir também com as disciplinas relacionadas nas equivalências.
-					if (this.parametro.getConsiderarEquivalencia() && !this.disciplinasComDemandaCurriculo.contains(professorDisciplina.getDisciplina())) {
+					if (!this.parametro.getConsiderarEquivalencia() && !this.disciplinasComDemandaCurriculo.contains(professorDisciplina.getDisciplina())) {
 						continue;
 					}
 

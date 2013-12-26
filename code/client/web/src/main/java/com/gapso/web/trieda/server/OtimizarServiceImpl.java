@@ -1016,7 +1016,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		// TRIEDA-1404: Notificar usuário da existência de regras de equivalência que levam para disciplinas disciplinas com total de créditos (teóricos + práticos) zerados
 		
 		StringBuffer equivalenciasStrBuffer = new StringBuffer("");
-		List<Equivalencia> equivalencias = Equivalencia.find(getInstituicaoEnsinoUser());
+		List<Equivalencia> equivalencias = Equivalencia.findByCenario(getInstituicaoEnsinoUser(),cenario);
 		for (Equivalencia eq : equivalencias) {
 			Disciplina discCursou = eq.getCursou();
 			if (!discCursou.ocupaGrade()) {

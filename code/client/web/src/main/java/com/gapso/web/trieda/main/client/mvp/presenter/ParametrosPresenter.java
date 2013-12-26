@@ -120,7 +120,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 					return;
 				}
 				
-				display.getCampiLabel().setHtml(parametroDTO.getCampi().size() + " campi selecionado(s).");
+				display.getCampiLabel().setHtml(parametroDTO.getCampi().size() + " camp(us)(i) selecionado(s).");
 				display.getTurnosLabel().setHtml(parametroDTO.getTurnos().size() + " turno(s) selecionado(s).");
 			}
 		});
