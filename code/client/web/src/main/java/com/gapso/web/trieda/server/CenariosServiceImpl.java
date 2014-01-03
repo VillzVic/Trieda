@@ -28,6 +28,10 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.TipoContrato;
+import com.gapso.trieda.domain.TipoDisciplina;
+import com.gapso.trieda.domain.TipoSala;
+import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.util.CenarioUtil;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -220,6 +224,10 @@ public class CenariosServiceImpl
 				cenario.setDataCriacao(new Date());
 				cenario.setAtualizadoPor(getUsuario());
 				cenario.setDataAtualizacao(new Date());
+				criarTiposContrato(cenario);
+				criarTiposDisciplina(cenario);
+				criarTiposSala(cenario);
+				criarTitulacoes(cenario);
 				cenario.persist();
 			}			
 		}
@@ -227,6 +235,88 @@ public class CenariosServiceImpl
 		{
 			System.out.println( e.getCause() );
 		}
+	}
+
+	private void criarTiposSala(Cenario cenario) {
+		TipoSala tipo1 = new TipoSala();
+		tipo1.setNome( TipoSala.TIPO_SALA_DE_AULA );
+		tipo1.setDescricao( TipoSala.TIPO_SALA_DE_AULA );
+		tipo1.setInstituicaoEnsino( getInstituicaoEnsinoUser() );
+		tipo1.setCenario(cenario);
+		tipo1.persist();
+
+		TipoSala tipo2 = new TipoSala();
+		tipo2.setNome( "Laboratório"  );
+		tipo2.setDescricao( "Laboratório"  );
+		tipo2.setInstituicaoEnsino( getInstituicaoEnsinoUser() );
+		tipo2.setCenario(cenario);
+		tipo2.persist();
+	}
+
+	private void criarTitulacoes(Cenario cenario) {
+		Titulacao titulacao1 = new Titulacao();
+		titulacao1.setCenario(cenario);
+		titulacao1.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		titulacao1.setNome("Licenciado");
+		titulacao1.persist();
+		
+		Titulacao titulacao2 = new Titulacao();
+		titulacao2.setCenario(cenario);
+		titulacao2.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		titulacao2.setNome("Bacharel");
+		titulacao2.persist();
+		
+		Titulacao titulacao3 = new Titulacao();
+		titulacao3.setCenario(cenario);
+		titulacao3.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		titulacao3.setNome("Especialista");
+		titulacao3.persist();
+		
+		Titulacao titulacao4 = new Titulacao();
+		titulacao4.setCenario(cenario);
+		titulacao4.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		titulacao4.setNome("Mestre");
+		titulacao4.persist();
+		
+		Titulacao titulacao5 = new Titulacao();
+		titulacao5.setCenario(cenario);
+		titulacao5.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		titulacao5.setNome("Doutor");
+		titulacao5.persist();
+	}
+
+	private void criarTiposDisciplina(Cenario cenario) {
+		TipoDisciplina tipo1 = new TipoDisciplina();
+		tipo1.setCenario(cenario);
+		tipo1.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		tipo1.setNome("Presencial");
+		tipo1.persist();
+		
+		TipoDisciplina tipo2 = new TipoDisciplina();
+		tipo2.setCenario(cenario);
+		tipo2.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		tipo2.setNome("Semipresencial");
+		tipo2.persist();
+		
+		TipoDisciplina tipo3 = new TipoDisciplina();
+		tipo3.setCenario(cenario);
+		tipo3.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		tipo3.setNome("Online");
+		tipo3.persist();
+	}
+
+	private void criarTiposContrato(Cenario cenario) {
+		TipoContrato tipo1 = new TipoContrato();
+		tipo1.setCenario(cenario);
+		tipo1.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		tipo1.setNome("Horista");
+		tipo1.persist();
+		
+		TipoContrato tipo2 = new TipoContrato();
+		tipo2.setCenario(cenario);
+		tipo2.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		tipo2.setNome("Mensalista");
+		tipo2.persist();		
 	}
 
 	@Override
