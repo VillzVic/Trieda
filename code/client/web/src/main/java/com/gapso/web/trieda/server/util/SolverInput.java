@@ -638,7 +638,7 @@ public class SolverInput
 			= this.of.createGrupoTipoSala();
 
 		List< TipoSala > tipos
-			= TipoSala.findAll( this.instituicaoEnsino );
+			= TipoSala.findByCenario( this.instituicaoEnsino, cenario );
 
 		for ( TipoSala tipo : tipos )
 		{
