@@ -361,18 +361,20 @@ public class DivisaoCredito
 
 	@SuppressWarnings( "unchecked" )
     public static List< DivisaoCredito > findByDias(
-    	InstituicaoEnsino instituicaoEnsino, int dia1, int dia2, int dia3, int dia4,
-    	int dia5, int dia6, int dia7)
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario, int dia1, int dia2,
+    	int dia3, int dia4, int dia5, int dia6, int dia7)
     {
         Query q = entityManager().createQuery(
-        	" SELECT o FROM DivisaoCredito o " +
+        	" SELECT o FROM DivisaoCredito o, IN ( o.cenario ) c " +
         	" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND c = :cenario " +
         	" AND o.dia1 = :dia1 AND o.dia2 = :dia2 AND o.dia3 = :dia3" +
         	" AND o.dia4 = :dia4 AND o.dia5 = :dia5 AND o.dia6 = :dia6" +
         	" AND o.dia7 = :dia7"
         	 );
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
         q.setParameter( "dia1", dia1 );
         q.setParameter( "dia2", dia2 );
         q.setParameter( "dia3", dia3 );

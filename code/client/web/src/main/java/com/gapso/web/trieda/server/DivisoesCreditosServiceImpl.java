@@ -66,6 +66,8 @@ public class DivisoesCreditosServiceImpl
 	@Override
 	public void save( DivisaoCreditoDTO divisaoCreditoDTO ) throws TriedaException
 	{
+		Cenario cenario = Cenario.find(divisaoCreditoDTO.getCenarioId(), getInstituicaoEnsinoUser());
+		
 		DivisaoCredito divisaoCredito
 			= ConvertBeans.toDivisaoCredito( divisaoCreditoDTO );
 
@@ -76,7 +78,7 @@ public class DivisoesCreditosServiceImpl
 		}
 		else
 		{
-			if (DivisaoCredito.findByDias(getInstituicaoEnsinoUser(), divisaoCredito.getDia1(), divisaoCredito.getDia2(),
+			if (DivisaoCredito.findByDias(getInstituicaoEnsinoUser(), cenario, divisaoCredito.getDia1(), divisaoCredito.getDia2(),
 					divisaoCredito.getDia3(), divisaoCredito.getDia4(), divisaoCredito.getDia5(), divisaoCredito.getDia6(),
 					divisaoCredito.getDia7()).isEmpty())
 				divisaoCredito.persist();
