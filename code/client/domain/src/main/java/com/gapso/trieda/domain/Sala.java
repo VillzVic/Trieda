@@ -479,7 +479,7 @@ public class Sala
 	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
-			" WHERE o.tipoSala.id = 2 " +
+			" WHERE o.tipoSala.nome = 'Laboratório' " +
 			" AND o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.unidade.campus.cenario = :cenario " );
 
@@ -495,7 +495,7 @@ public class Sala
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.tipoSala.id = 2 " +
+			" AND o.tipoSala.nome = 'Laboratório' " +
 			" AND o.unidade.campus = :campus " );
 
 		q.setParameter( "campus", campus );
@@ -510,7 +510,7 @@ public class Sala
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.tipoSala.id = 1 " +
+			" AND o.tipoSala.nome = 'Sala de Aula' " +
 			" AND o.unidade.campus.cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
@@ -525,7 +525,7 @@ public class Sala
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.tipoSala.id = 1 " +
+			" AND o.tipoSala.nome = 'Sala de Aula' " +
 			" AND o.unidade.campus = :campus " );
 
 		q.setParameter( "campus", campus );

@@ -270,7 +270,7 @@ public class Demanda
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
-		return ( (Number) q.getSingleResult() ).intValue();
+		return ( q.getSingleResult() == null ? 0 : (Number) q.getSingleResult() ).intValue();
 	}
 
 	public static int sumDemanda(
