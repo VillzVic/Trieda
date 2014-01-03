@@ -46,28 +46,30 @@ BEGIN
       /* TRIEDA-1684: Adicionar suporte a cenário nas telas do Trieda. */
       ALTER TABLE `trieda`.`areas_titulacao` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_ATT` FOREIGN KEY `FK_CEN_ID_ATT` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`areas_titulacao` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`areas_titulacao` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
 	  ALTER TABLE `trieda`.`professores_virtuais` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_PRV` FOREIGN KEY `FK_CEN_ID_PRV` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`professores_virtuais` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`professores_virtuais` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
 	  ALTER TABLE `trieda`.`semana_letiva` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_SLE` FOREIGN KEY `FK_CEN_ID_SLE` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`semana_letiva` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`semana_letiva` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
 	  ALTER TABLE `trieda`.`tipos_contrato` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_TCO` FOREIGN KEY `FK_CEN_ID_TCO` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`tipos_contrato` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`tipos_contrato` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
 	  ALTER TABLE `trieda`.`tipos_curso` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_TCU` FOREIGN KEY `FK_CEN_ID_TCU` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`tipos_curso` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`tipos_curso` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
 	  ALTER TABLE `trieda`.`tipos_disciplina` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_TDI` FOREIGN KEY `FK_CEN_ID_TDI` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`tipos_disciplina` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`tipos_disciplina` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
 	  ALTER TABLE `trieda`.`tipos_sala` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_TSA` FOREIGN KEY `FK_CEN_ID_TSA` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`tipos_sala` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`tipos_sala` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
 	  ALTER TABLE `trieda`.`titulacoes` ADD COLUMN `cen_id` BIGINT(20),
 	  	ADD CONSTRAINT `FK_CEN_ID_TIT` FOREIGN KEY `FK_CEN_ID_TIT` (`cen_id`) REFERENCES `cenarios` (`cen_id`);
-	  UPDATE `trieda`.`titulacoes` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1)
+	  UPDATE `trieda`.`titulacoes` d SET cen_id = (SELECT cen_id FROM `trieda`.`cenarios` WHERE `cen_masterdata` is TRUE LIMIT 1);
+	  DROP INDEX sle_codigo ON semana_letiva;
+	  CREATE INDEX sle_codigo ON semana_letiva (sle_codigo, cen_id);
 
 
 
