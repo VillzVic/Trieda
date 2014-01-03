@@ -22,6 +22,7 @@ import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Unidade;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -197,9 +198,11 @@ public class SemanasLetivaServiceImpl
 
 	@Override
 	public void saveHorariosDisponiveisCenario(
-		SemanaLetivaDTO semanaLetivaDTO,
+		CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< HorarioDisponivelCenario > listSelecionados
 			= ConvertBeans.toHorarioDisponivelCenario( listDTO );
 
@@ -233,18 +236,35 @@ public class SemanasLetivaServiceImpl
 
 		if ( adicionarList != null && adicionarList.size() > 0 )
 		{
-			List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
-			List< Unidade > unidades = Unidade.findAll( getInstituicaoEnsinoUser() );
-			List< Sala > salas = Sala.findAll( getInstituicaoEnsinoUser() );
-			List< Disciplina > disciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
-			List< Professor > professores = Professor.findAll( getInstituicaoEnsinoUser() );
+			List< Campus > campi = Campus.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
+			List< Unidade > unidades = Unidade.findByCenario( getInstituicaoEnsinoUser(), cenario );
+			List< Sala > salas = Sala.findByCenario( getInstituicaoEnsinoUser(), cenario );
+			List< Disciplina > disciplinas = Disciplina.findByCenario( getInstituicaoEnsinoUser(), cenario );
+			List< Professor > professores = Professor.findByCenario( getInstituicaoEnsinoUser(), cenario );
 	
 			for ( HorarioDisponivelCenario o : adicionarList )
 			{
 				o.getCampi().addAll( campi );
 				o.getUnidades().addAll( unidades );
 				o.getSalas().addAll( salas );
-				o.getDisciplinas().addAll( disciplinas );
+				for (Disciplina disciplina : disciplinas)
+				{
+					if (o.getDiaSemana() == Semanas.SAB)
+					{
+						if (disciplina.getUsaSabado())
+							o.getDisciplinas().add(disciplina);
+					}
+					else if (o.getDiaSemana() == Semanas.DOM)
+					{
+						
+						if (disciplina.getUsaDomingo())
+							o.getDisciplinas().add(disciplina);
+					}
+					else
+					{
+						o.getDisciplinas().add(disciplina);
+					}
+				}
 				o.getProfessores().addAll( professores );
 	
 				o.merge();

@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
+import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -20,6 +21,7 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -74,8 +76,10 @@ public class HorariosAulaServiceImpl
 	}
 
 	@Override
-	public void save( HorarioAulaDTO horarioAulaDTO )
+	public void save( CenarioDTO cenarioDTO, HorarioAulaDTO horarioAulaDTO )
 	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		HorarioAula horarioDeAula
 			= ConvertBeans.toHorarioAula( horarioAulaDTO );
 
@@ -88,11 +92,11 @@ public class HorariosAulaServiceImpl
 		{
 			horarioDeAula.persist();
 
-		    List< Campus > campi = Campus.findAll( this.getInstituicaoEnsinoUser() );
-		    List< Unidade > unidades = Unidade.findAll( getInstituicaoEnsinoUser() );
-		    List< Sala > salas = Sala.findAll( getInstituicaoEnsinoUser() );
-		    List< Disciplina > disciplinas = Disciplina.findAll( getInstituicaoEnsinoUser() );
-		    List< Professor > professores = Professor.findAll( getInstituicaoEnsinoUser() );
+			List< Campus > campi = Campus.findByCenario( this.getInstituicaoEnsinoUser(), cenario );
+			List< Unidade > unidades = Unidade.findByCenario( getInstituicaoEnsinoUser(), cenario );
+			List< Sala > salas = Sala.findByCenario( getInstituicaoEnsinoUser(), cenario );
+			List< Disciplina > disciplinas = Disciplina.findByCenario( getInstituicaoEnsinoUser(), cenario );
+			List< Professor > professores = Professor.findByCenario( getInstituicaoEnsinoUser(), cenario );
 
 			for ( Semanas semana : Semanas.values() )
 			{

@@ -33,7 +33,7 @@ public interface SemanasLetivaServiceAsync
 	void removeHorariosDisponiveisCenario(SemanaLetivaDTO semanaLetivaDTO,
 			List<HorarioDisponivelCenarioDTO> listDTO, AsyncCallback<Void> callback);
 	
-	void saveHorariosDisponiveisCenario( SemanaLetivaDTO semanaLetivaDTO,
+	void saveHorariosDisponiveisCenario( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO,
 		List< HorarioDisponivelCenarioDTO > listDTO, AsyncCallback< Void > callback );
 
 	void findSemanaLetiva( Long id, AsyncCallback< SemanaLetivaDTO > callback );

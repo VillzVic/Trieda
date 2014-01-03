@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -54,12 +55,15 @@ public class HorarioDisponivelCenarioFormPresenter
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private Display display;
 	private SemanaLetivaDTO semanaLetiva;
+	private CenarioDTO cenarioDTO;
 
 	public HorarioDisponivelCenarioFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+		CenarioDTO cenarioDTO,
 		SemanaLetivaDTO semanaLetiva, Display display )
 	{
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 		this.semanaLetiva = semanaLetiva;
 		this.display = display;
 
@@ -103,7 +107,7 @@ public class HorarioDisponivelCenarioFormPresenter
 					display.getStore().commitChanges();
 					final List<HorarioDisponivelCenarioDTO> hdcDTOList = display.getStore().getModels();
 	
-					Services.semanasLetiva().saveHorariosDisponiveisCenario( getDTO(), hdcDTOList,
+					Services.semanasLetiva().saveHorariosDisponiveisCenario( cenarioDTO, getDTO(), hdcDTOList,
 						new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display ){
 							@Override
 							public void onSuccess(Void result){
@@ -133,7 +137,7 @@ public class HorarioDisponivelCenarioFormPresenter
 	
 															@Override
 															public void onSuccess(Void v){
-																slsa.saveHorariosDisponiveisCenario(getDTO(), hdcDTOList,
+																slsa.saveHorariosDisponiveisCenario(cenarioDTO, getDTO(), hdcDTOList,
 																	new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display){
 																		@Override
 																		public void onSuccess(Void result){
@@ -169,7 +173,7 @@ public class HorarioDisponivelCenarioFormPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Services.horariosAula().save( getHorarioAulaDTO(),
+				Services.horariosAula().save( cenarioDTO, getHorarioAulaDTO(),
 					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
 				{
 					@Override
