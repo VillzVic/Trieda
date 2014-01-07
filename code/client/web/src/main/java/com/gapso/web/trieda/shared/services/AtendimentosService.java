@@ -10,10 +10,12 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoCursoFiltro;
@@ -58,4 +60,18 @@ public interface AtendimentosService extends RemoteService {
 	List<RelatorioQuantidadeDTO> getAmbientesFaixaUtilizacaoCapacidade( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 
 	List<AtendimentoFaixaTurmaDTO> getAtendimentosFaixaTurma( CenarioDTO cenarioDTO, CampusDTO campusDTO );
+
+	PagingLoadResult<ConfirmacaoTurmaDTO> getConfirmacaoTurmasList(
+			CenarioDTO cenarioDTO, PagingLoadConfig config);
+
+	void saveConfirmacoes(CenarioDTO cenarioDTO, List<ConfirmacaoTurmaDTO> list);
+
+	void confirmarTodasTurmas(CenarioDTO cenarioDTO);
+	void desconfirmarTodasTurmas(CenarioDTO cenarioDTO);
+	void confirmarTurmasComAlunosFormandos(CenarioDTO cenarioDTO);
+
+	void confirmarTurmasComNumAlunos(Integer qtdeAlunos, CenarioDTO cenarioDTO);
+	void desconfirmarTurmasComNumAlunos(Integer qtdeAlunos, CenarioDTO cenarioDTO);
+
+	TrioDTO<String, String, String> carregaIndicadores(CenarioDTO cenarioDTO);
 }

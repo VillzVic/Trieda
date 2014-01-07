@@ -128,10 +128,11 @@ public class ToolBarView
 	private Button semanasLetivaListCampiBt;
 	private Button turnosListCampiBt;
 
-	// Cenário
+	// Planejamento
 	private Button fixacoesListBt;
 	private Button parametrosBt;
 	private Button consultaRequisicoesOtimizacaoBt;
+	private Button confirmacaoTurmasBt;
 	
 	TabItem ofertasDemandasTabItem;
 	TabItem planejamentoTabItem;
@@ -635,8 +636,11 @@ public class ToolBarView
 		consultaRequisicoesOtimizacaoBt = createButton("Requisições<br />de Otimização","Requisições de Otimização",Resources.DEFAULTS.gerarGradeConsultaRequisicao24());
 		planejamentoToolBar.add(consultaRequisicoesOtimizacaoBt);
 		
-		fixacoesListBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.fixacao24());
+		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
 		planejamentoToolBar.add(fixacoesListBt);
+		
+		confirmacaoTurmasBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.confirmacao24());
+		planejamentoToolBar.add(confirmacaoTurmasBt);
 	}
 
 	private Button createButton( String text, String toolTip, ImageResource icon )
@@ -859,6 +863,13 @@ public class ToolBarView
 	{
 		return fixacoesListBt;
 	}
+	
+	@Override
+	public Button getConfirmacaoTurmasButton()
+	{
+		return confirmacaoTurmasBt;
+	}
+
 
 	@Override
 	public Button getCompatibilidadesListDisciplinasButton()

@@ -2025,7 +2025,8 @@ public class SolverInput
 			if (!this.parametro.getTurnos().contains(at.getOferta().getTurno()) || !this.parametro.getCampi().contains(at.getOferta().getCampus())) {
 				continue;
 			}
-			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda());
+			createItemAtendimentoTaticoSolucao(at.getSala(),at.getSemana(),at.getOferta(),at.getDisciplina(),at.getDisciplinaSubstituta(),at.getQuantidadeAlunos(),at.getTurma(),at.getCreditosTeorico(),at.getCreditosPratico(), at.getAlunosDemanda(),
+					at.getConfirmada());
 		}
 	}
 
@@ -2229,7 +2230,8 @@ public class SolverInput
 
 	private ItemAtendimentoTaticoSolucao createItemAtendimentoTaticoSolucao(
 		Sala sala, Semanas semana, Oferta oferta, Disciplina disciplina, Disciplina disciplinaSubstituta,
-		int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos, Set<AlunoDemanda> alunosDemanda)
+		int quantidade, String turma, int qtdCreditosTeoricos, int qtdCreditosPraticos, Set<AlunoDemanda> alunosDemanda,
+		boolean confirmada)
 	{
 		ItemAtendimentoDiaSemanaSolucao atDiaSemanaSolucao
 			= getItemAtendimentoDiaSemanaSolucao( sala, semana );
@@ -2266,7 +2268,11 @@ public class SolverInput
 		atTaticoSolucao.setQtdeCreditosPraticos( qtdCreditosPraticos );
 		atTaticoSolucao.setQtdeCreditosTeoricos( qtdCreditosTeoricos );
 		atTaticoSolucao.setHorariosAula(this.of.createGrupoIdentificador()); // TODO: finalizar implementação que trata horário no tático
-
+		if (confirmada)
+		{
+			atTaticoSolucao.setFixaAbertura(confirmada);
+		}
+		
 		if ( atDiaSemanaSolucao.getAtendimentosTatico() == null )
 		{
 			atDiaSemanaSolucao.setAtendimentosTatico(

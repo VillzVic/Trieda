@@ -27,6 +27,10 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="atendimentoOferta" type="{}ItemAtendimentoOfertaSolucao"/>
  *         &lt;element name="qtdeCreditosTeoricos" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="qtdeCreditosPraticos" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="fixaAbertura" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="fixaSala" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="fixaDia" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="fixaHorarios" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,7 +44,11 @@ import javax.xml.bind.annotation.XmlType;
     "atendimentoOferta",
     "qtdeCreditosTeoricos",
     "qtdeCreditosPraticos",
-    "horariosAula"
+    "horariosAula",
+    "fixaAbertura",
+    "fixaSala",
+    "fixaDia",
+    "fixaHorarios"
 })
 public class ItemAtendimentoTaticoSolucao {
 
@@ -49,6 +57,10 @@ public class ItemAtendimentoTaticoSolucao {
     protected int qtdeCreditosTeoricos;
     protected int qtdeCreditosPraticos;
     protected GrupoIdentificador horariosAula;
+    protected Boolean fixaAbertura;
+    protected Boolean fixaSala;
+    protected Boolean fixaDia;
+    protected Boolean fixaHorarios;
 
     /**
      * Gets the value of the atendimentoOferta property.
@@ -130,4 +142,67 @@ public class ItemAtendimentoTaticoSolucao {
         this.horariosAula = horariosAula;
     }
 
+    /**
+     * Sets the value of the fixaAbertura property.
+     * 
+     */
+    public void setFixaAbertura(Boolean value) {
+        this.fixaAbertura = value;
+    }
+
+    /**
+     * Gets the value of the fixaAbertura property.
+     * 
+     */
+    public Boolean getFixaAbertura() {
+        return fixaAbertura;
+    }
+    
+    /**
+     * Sets the value of the fixaSala property.
+     * 
+     */
+    public void setFixaSala(Boolean value) {
+        this.fixaSala = value;
+    }
+
+    /**
+     * Gets the value of the fixaSala property.
+     * 
+     */
+    public Boolean getFixaSala() {
+        return fixaSala;
+    }
+    
+    /**
+     * Sets the value of the fixaDia property.
+     * 
+     */
+    public void setFixaDia(Boolean value) {
+        this.fixaSala = value;
+    }
+
+    /**
+     * Gets the value of the fixaDia property.
+     * 
+     */
+    public Boolean getFixaDia() {
+        return fixaDia;
+    }
+    
+    /**
+     * Sets the value of the fixaHorarios property.
+     * 
+     */
+    public void setFixaHorarios(Boolean value) {
+        this.fixaHorarios = value;
+    }
+
+    /**
+     * Gets the value of the fixaHorarios property.
+     * 
+     */
+    public Boolean getFixaHorarios() {
+        return fixaHorarios;
+    }
 }

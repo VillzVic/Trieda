@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -8,12 +9,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.format.number.NumberFormatter;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
@@ -29,6 +33,8 @@ import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
@@ -50,6 +56,7 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -62,6 +69,7 @@ import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -353,6 +361,31 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	@Override
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro){
 		return getAtendimentosParaGradeHorariaVisaoCurso(filtro,getDAO());
+	}
+	
+	@Override
+	public void saveConfirmacoes(CenarioDTO cenarioDTO, List< ConfirmacaoTurmaDTO > list)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		for (ConfirmacaoTurmaDTO confirmacao : list)
+		{
+			Disciplina disciplina = Disciplina.find(confirmacao.getDisciplinaId(), getInstituicaoEnsinoUser());
+			List<AtendimentoOperacional> atendimentosOperacional = 
+					AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, confirmacao.getTurma());
+			for (AtendimentoOperacional atendimento : atendimentosOperacional)
+			{
+				atendimento.setConfirmada(confirmacao.getConfirmada());
+				atendimento.merge();
+			}
+			List<AtendimentoTatico> atendimentosTatico = 
+					AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, confirmacao.getTurma());
+			for (AtendimentoTatico atendimento : atendimentosTatico)
+			{
+				atendimento.setConfirmada(confirmacao.getConfirmada());
+				atendimento.merge();
+			}
+		}
 	}
 	
 	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor) throws TriedaException{
@@ -2300,5 +2333,710 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			List<AtendimentoTatico> atendimentosTatico) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public PagingLoadResult< ConfirmacaoTurmaDTO > getConfirmacaoTurmasList( CenarioDTO cenarioDTO, PagingLoadConfig config ) 
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		Map<String, TriedaPar<Set<String>, ConfirmacaoTurmaDTO>> turmaMapParOfertasConfirmacao = new HashMap<String, TriedaPar<Set<String>, ConfirmacaoTurmaDTO>>();
+		Map<String, Map<Semanas, Set<HorarioAula>>> turmaMapSemanaMapHorarios = new HashMap<String, Map<Semanas, Set<HorarioAula>>>();
+		Map<String, Set<String>> turmaMapSalaCodigo = new HashMap<String, Set<String>>();
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+				
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getTurma();
+					if (turmaMapSalaCodigo.get(key) == null)
+					{
+						Set<String> newSalas = new HashSet<String>();
+						newSalas.add(atendimento.getSala().getCodigo());
+						turmaMapSalaCodigo.put(key, newSalas);
+					}
+					else
+					{
+						turmaMapSalaCodigo.get(key).add(atendimento.getSala().getCodigo());
+					}
+					if (turmaMapSemanaMapHorarios.get(key) == null)
+					{
+						Map<Semanas, Set<HorarioAula>> newSemanaMapHorarios = new HashMap<Semanas, Set<HorarioAula>>();
+						Set<HorarioAula> newHorarios = new HashSet<HorarioAula>();
+						newHorarios.add(atendimento.getHorarioAula());
+						newSemanaMapHorarios.put(atendimento.getSemana(), newHorarios);
+						turmaMapSemanaMapHorarios.put(key, newSemanaMapHorarios);
+					}
+					else
+					{
+						if (turmaMapSemanaMapHorarios.get(key).get(atendimento.getSemana()) == null)
+						{
+							Set<HorarioAula> newHorarios = new HashSet<HorarioAula>();
+							newHorarios.add(atendimento.getHorarioAula());
+							turmaMapSemanaMapHorarios.get(key).put(atendimento.getSemana(), newHorarios);
+						}
+						else
+						{
+							turmaMapSemanaMapHorarios.get(key).get(atendimento.getSemana()).add(atendimento.getHorarioAula());
+						}
+					}
+					if (turmaMapParOfertasConfirmacao.get(key) == null)
+					{
+						Set<String> newOferta = new HashSet<String>();
+						newOferta.add(atendimento.getOferta().getId() + "-" + 
+								atendimento.getDisciplina().getCodigo());
+						ConfirmacaoTurmaDTO newConfirmacao = new ConfirmacaoTurmaDTO();
+						newConfirmacao.setConfirmada(atendimento.getConfirmada());
+						newConfirmacao.setTurma( atendimento.getTurma() );
+						newConfirmacao.setCreditosPratico(atendimento.getCreditosPratico());
+						newConfirmacao.setCreditosTeorico(atendimento.getCreditosTeorico());
+						newConfirmacao.setDisciplinaId(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getId() : atendimento.getDisciplina().getId());
+						newConfirmacao.setDisciplinaCodigo(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo());
+						newConfirmacao.setDisciplinaNome(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getNome() : atendimento.getDisciplina().getNome());
+						newConfirmacao.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
+						newConfirmacao.setSalaId(atendimento.getSala().getId());
+						turmaMapParOfertasConfirmacao.put(key, TriedaPar.create(newOferta, newConfirmacao));
+					}
+					else
+					{
+						if (!turmaMapParOfertasConfirmacao.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+								+ "-" + atendimento.getDisciplina().getCodigo()))
+						{
+							turmaMapParOfertasConfirmacao.get(key).getSegundo().setQuantidadeAlunos(
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().getQuantidadeAlunos() + atendimento.getQuantidadeAlunos());
+							turmaMapParOfertasConfirmacao.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+									+ "-" + atendimento.getDisciplina().getCodigo());
+						}
+					}
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+				
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getTurma();
+					if (turmaMapSalaCodigo.get(key) == null)
+					{
+						Set<String> newSalas = new HashSet<String>();
+						newSalas.add(atendimento.getSala().getCodigo());
+						turmaMapSalaCodigo.put(key, newSalas);
+					}
+					else
+					{
+						turmaMapSalaCodigo.get(key).add(atendimento.getSala().getCodigo());
+					}
+					if (turmaMapSemanaMapHorarios.get(key) == null)
+					{
+						Map<Semanas, Set<HorarioAula>> newSemanaMapHorarios = new HashMap<Semanas, Set<HorarioAula>>();
+						Set<HorarioAula> newHorarios = new HashSet<HorarioAula>();
+						newHorarios.add(atendimento.getHorarioDisponivelCenario().getHorarioAula());
+						newSemanaMapHorarios.put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), newHorarios);
+						turmaMapSemanaMapHorarios.put(key, newSemanaMapHorarios);
+					}
+					else
+					{
+						if (turmaMapSemanaMapHorarios.get(key).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()) == null)
+						{
+							Set<HorarioAula> newHorarios = new HashSet<HorarioAula>();
+							newHorarios.add(atendimento.getHorarioDisponivelCenario().getHorarioAula());
+							turmaMapSemanaMapHorarios.get(key).put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), newHorarios);
+						}
+						else
+						{
+							turmaMapSemanaMapHorarios.get(key).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()).add(atendimento.getHorarioDisponivelCenario().getHorarioAula());
+						}
+					}
+					if (turmaMapParOfertasConfirmacao.get(key) == null)
+					{
+						Set<String> newOferta = new HashSet<String>();
+						newOferta.add(atendimento.getOferta().getId() + "-" + 
+								atendimento.getDisciplina().getCodigo());
+						ConfirmacaoTurmaDTO newConfirmacao = new ConfirmacaoTurmaDTO();
+						newConfirmacao.setConfirmada( atendimento.getConfirmada() );
+						newConfirmacao.setTurma( atendimento.getTurma() );
+						newConfirmacao.setCreditosPratico(atendimento.getCreditoTeorico() ? 0 : 1);
+						newConfirmacao.setCreditosTeorico(atendimento.getCreditoTeorico() ? 1 : 0);
+						newConfirmacao.setDisciplinaId(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getId() : atendimento.getDisciplina().getId());
+						newConfirmacao.setDisciplinaCodigo(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo());
+						newConfirmacao.setDisciplinaNome(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getNome() : atendimento.getDisciplina().getNome());
+						newConfirmacao.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
+						newConfirmacao.setSalaId(atendimento.getSala().getId());
+						newConfirmacao.setProfessorId(atendimento.getProfessorVirtual() != null ?
+								atendimento.getProfessorVirtual().getId() : atendimento.getProfessor().getId());
+						newConfirmacao.setProfessorString(atendimento.getProfessorVirtual() != null ?
+								atendimento.getProfessorVirtual().getNome() : atendimento.getProfessor().getNome());
+						turmaMapParOfertasConfirmacao.put(key, TriedaPar.create(newOferta, newConfirmacao));
+					}
+					else
+					{
+						if (atendimento.getCreditoTeorico())
+						{
+							turmaMapParOfertasConfirmacao.get(key).getSegundo().setCreditosTeorico(
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().getCreditosTeorico() + 1);
+						}
+						else
+						{
+							turmaMapParOfertasConfirmacao.get(key).getSegundo().setCreditosPratico(
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().getCreditosPratico() + 1);
+						}
+						if (!turmaMapParOfertasConfirmacao.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+								+ "-" + atendimento.getDisciplina().getCodigo()))
+						{
+							turmaMapParOfertasConfirmacao.get(key).getSegundo().setQuantidadeAlunos(
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().getQuantidadeAlunos() + atendimento.getQuantidadeAlunos());
+							turmaMapParOfertasConfirmacao.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+									+ "-" + atendimento.getDisciplina().getCodigo());
+						}
+					}
+				}
+			}
+		}
+		
+		List<ConfirmacaoTurmaDTO> confirmacoes = new ArrayList<ConfirmacaoTurmaDTO>();
+		for (Entry<String, TriedaPar<Set<String>, ConfirmacaoTurmaDTO>> atendimento : turmaMapParOfertasConfirmacao.entrySet())
+		{
+			atendimento.getValue().getSegundo().setDiasHorarios(
+					escreveDiasEHorarios(turmaMapSemanaMapHorarios.get(atendimento.getKey())));
+			String salasString = "";
+			int numSalas = 0;
+			for (String salaCodigo : turmaMapSalaCodigo.get(atendimento.getKey()))
+			{
+				salasString += salaCodigo;
+				numSalas++;
+				if (numSalas < turmaMapSalaCodigo.get(atendimento.getKey()).size())
+				{
+					salasString += ", ";
+				}
+			}
+			atendimento.getValue().getSegundo().setSalaString(salasString);
+			confirmacoes.add(atendimento.getValue().getSegundo());
+		}
+		
+		List<ConfirmacaoTurmaDTO> confirmacoesPagina = new ArrayList<ConfirmacaoTurmaDTO>();
+		for (int i = config.getOffset(); (i < confirmacoes.size() && i < (config.getOffset() + config.getLimit())); i++ )
+		{
+			confirmacoesPagina.add(confirmacoes.get(i));
+		}
+		
+		BasePagingLoadResult< ConfirmacaoTurmaDTO > result
+		= new BasePagingLoadResult< ConfirmacaoTurmaDTO >( confirmacoesPagina );
+
+		result.setOffset( config.getOffset() );
+		result.setTotalLength( confirmacoes.size() );
+		
+		return result;
+	}
+
+	private String escreveDiasEHorarios(Map<Semanas, Set<HorarioAula>> map) {
+		SimpleDateFormat out = new SimpleDateFormat("HH:mm");   
+		String result = "";
+		for (Entry<Semanas, Set<HorarioAula>> horarioSemana : map.entrySet())
+		{
+			result += horarioSemana.getKey() + " ";
+			
+			List<HorarioAula> horarioOrdenado = new ArrayList<HorarioAula>();
+			horarioOrdenado.addAll(horarioSemana.getValue());
+			
+			Collections.sort(horarioOrdenado, new Comparator<HorarioAula>() {
+				@Override
+				public int compare(HorarioAula arg1, HorarioAula arg2) {
+					Calendar h1 = Calendar.getInstance();
+					h1.setTime(arg1.getHorario());
+					h1.set(1979,Calendar.NOVEMBER,6);
+					
+					Calendar h2 = Calendar.getInstance();
+					h2.setTime(arg2.getHorario());
+					h2.set(1979,Calendar.NOVEMBER,6);
+					
+					
+					return h1.compareTo(h2);
+				}
+			});
+			if (!horarioOrdenado.isEmpty())
+			{
+				result += out.format(horarioOrdenado.get(0).getHorario());
+				boolean novoHorario = false;
+				for (int i = 1; i < horarioOrdenado.size(); i++)
+				{
+					Calendar h1 = Calendar.getInstance();
+					h1.setTime(horarioOrdenado.get(i-1).getHorario());
+					h1.add(Calendar.MINUTE,horarioOrdenado.get(i-1).getSemanaLetiva().getTempo());
+					Calendar h2 = Calendar.getInstance();
+					h2.setTime(horarioOrdenado.get(i).getHorario());
+					if (novoHorario)
+					{
+						result += out.format(horarioOrdenado.get(i-1).getHorario());
+						novoHorario = false;
+					}
+					if (h2.getTimeInMillis() - h1.getTimeInMillis() != 0)
+					{
+						if (!novoHorario)
+						{
+							Calendar horarioFinal = Calendar.getInstance();
+							horarioFinal.setTime(horarioOrdenado.get(i-1).getHorario());
+							horarioFinal.add(Calendar.MINUTE,horarioOrdenado.get(i-1).getSemanaLetiva().getTempo());
+							result += " às " + out.format(horarioFinal.getTime()) + " ";
+							novoHorario = true;
+						}
+					}
+				}
+				Calendar horarioFinal = Calendar.getInstance();
+				horarioFinal.setTime(horarioOrdenado.get(horarioOrdenado.size()-1).getHorario());
+				horarioFinal.add(Calendar.MINUTE,horarioOrdenado.get(horarioOrdenado.size()-1).getSemanaLetiva().getTempo());
+				if (!novoHorario)
+				{
+					result += " às " + out.format(horarioFinal.getTime()) + " ";
+				}
+				else
+				{
+					result += out.format(horarioOrdenado.get(horarioOrdenado.size()-1).getHorario()) + 
+							" às " + out.format(horarioFinal.getTime()) + " ";
+				}
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	@Transactional
+	public void confirmarTodasTurmas( CenarioDTO cenarioDTO ) 
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					atendimento.setConfirmada(true);
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+				
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					atendimento.setConfirmada(true);
+				}
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void desconfirmarTodasTurmas( CenarioDTO cenarioDTO ) 
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					atendimento.setConfirmada(false);
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+				
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					atendimento.setConfirmada(false);
+				}
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void confirmarTurmasComAlunosFormandos( CenarioDTO cenarioDTO ) 
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					for (AlunoDemanda aluno : atendimento.getAlunosDemanda())
+					{
+						if (aluno.getAluno().getFormando())
+						{
+							atendimento.setConfirmada(true);
+							break;
+						}
+					}
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+				
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					for (AlunoDemanda aluno : atendimento.getAlunosDemanda())
+					{
+						if (aluno.getAluno().getFormando())
+						{
+							atendimento.setConfirmada(true);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void confirmarTurmasComNumAlunos( Integer qtdeAlunos, CenarioDTO cenarioDTO ) 
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		Map<String, TriedaPar<Set<String>, Integer>> turmaMapParOfertasQtdeAlunos = new HashMap<String, TriedaPar<Set<String>, Integer>>();
+		Map<String, List<AtendimentoTatico>> turmaMapAtendimentosTatico = new HashMap<String, List<AtendimentoTatico>>();
+		Map<String, List<AtendimentoOperacional>> turmaMapAtendimentosOperacional = new HashMap<String, List<AtendimentoOperacional>>();
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+				
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getTurma();
+					if (turmaMapAtendimentosTatico.get(key) == null)
+					{
+						List<AtendimentoTatico> newAtendimentos = new ArrayList<AtendimentoTatico>();
+						newAtendimentos.add(atendimento);
+						turmaMapAtendimentosTatico.put(key, newAtendimentos);
+					}
+					else
+					{
+						turmaMapAtendimentosTatico.get(key).add(atendimento);
+					}
+					if (turmaMapParOfertasQtdeAlunos.get(key) == null)
+					{
+						Set<String> newOferta = new HashSet<String>();
+						newOferta.add(atendimento.getOferta().getId() + "-" + 
+								atendimento.getDisciplina().getCodigo());
+						turmaMapParOfertasQtdeAlunos.put(key, TriedaPar.create(newOferta, atendimento.getQuantidadeAlunos()));
+					}
+					else
+					{
+						if (!turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+								+ "-" + atendimento.getDisciplina().getCodigo()))
+						{
+							turmaMapParOfertasQtdeAlunos.get(key).setSegundo(
+									turmaMapParOfertasQtdeAlunos.get(key).getSegundo() + atendimento.getQuantidadeAlunos());
+							turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+									+ "-" + atendimento.getDisciplina().getCodigo());
+						}
+					}
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+				
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getTurma();
+					if (turmaMapAtendimentosOperacional.get(key) == null)
+					{
+						List<AtendimentoOperacional> newAtendimentos = new ArrayList<AtendimentoOperacional>();
+						newAtendimentos.add(atendimento);
+						turmaMapAtendimentosOperacional.put(key, newAtendimentos);
+					}
+					else
+					{
+						turmaMapAtendimentosOperacional.get(key).add(atendimento);
+					}
+					if (turmaMapParOfertasQtdeAlunos.get(key) == null)
+					{
+						Set<String> newOferta = new HashSet<String>();
+						newOferta.add(atendimento.getOferta().getId() + "-" + 
+								atendimento.getDisciplina().getCodigo());
+						turmaMapParOfertasQtdeAlunos.put(key, TriedaPar.create(newOferta, atendimento.getQuantidadeAlunos()));
+					}
+					else
+					{
+						if (!turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+								+ "-" + atendimento.getDisciplina().getCodigo()))
+						{
+							turmaMapParOfertasQtdeAlunos.get(key).setSegundo(
+									turmaMapParOfertasQtdeAlunos.get(key).getSegundo() + atendimento.getQuantidadeAlunos());
+							turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+									+ "-" + atendimento.getDisciplina().getCodigo());
+						}
+					}
+				}
+			}
+		}
+		
+		for (Entry<String, TriedaPar<Set<String>, Integer>> atendimento : turmaMapParOfertasQtdeAlunos.entrySet())
+		{
+			if (atendimento.getValue().getSegundo() >= qtdeAlunos)
+			{
+				if (turmaMapAtendimentosTatico.get(atendimento.getKey()) != null)
+				{
+					for (AtendimentoTatico atendimentoTatico : turmaMapAtendimentosTatico.get(atendimento.getKey()))
+					{
+						atendimentoTatico.setConfirmada(true);
+					}
+				}
+				else if (turmaMapAtendimentosOperacional.get(atendimento.getKey()) != null)
+				{
+					for (AtendimentoOperacional atendimentoOperacional : turmaMapAtendimentosOperacional.get(atendimento.getKey()))
+					{
+						atendimentoOperacional.setConfirmada(true);
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void desconfirmarTurmasComNumAlunos( Integer qtdeAlunos, CenarioDTO cenarioDTO ) 
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		Map<String, TriedaPar<Set<String>, Integer>> turmaMapParOfertasQtdeAlunos = new HashMap<String, TriedaPar<Set<String>, Integer>>();
+		Map<String, List<AtendimentoTatico>> turmaMapAtendimentosTatico = new HashMap<String, List<AtendimentoTatico>>();
+		Map<String, List<AtendimentoOperacional>> turmaMapAtendimentosOperacional = new HashMap<String, List<AtendimentoOperacional>>();
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findAllByCampus(getInstituicaoEnsinoUser(), campus);
+				
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getTurma();
+					if (turmaMapAtendimentosTatico.get(key) == null)
+					{
+						List<AtendimentoTatico> newAtendimentos = new ArrayList<AtendimentoTatico>();
+						newAtendimentos.add(atendimento);
+						turmaMapAtendimentosTatico.put(key, newAtendimentos);
+					}
+					else
+					{
+						turmaMapAtendimentosTatico.get(key).add(atendimento);
+					}
+					if (turmaMapParOfertasQtdeAlunos.get(key) == null)
+					{
+						Set<String> newOferta = new HashSet<String>();
+						newOferta.add(atendimento.getOferta().getId() + "-" + 
+								atendimento.getDisciplina().getCodigo());
+						turmaMapParOfertasQtdeAlunos.put(key, TriedaPar.create(newOferta, atendimento.getQuantidadeAlunos()));
+					}
+					else
+					{
+						if (!turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+								+ "-" + atendimento.getDisciplina().getCodigo()))
+						{
+							turmaMapParOfertasQtdeAlunos.get(key).setSegundo(
+									turmaMapParOfertasQtdeAlunos.get(key).getSegundo() + atendimento.getQuantidadeAlunos());
+							turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+									+ "-" + atendimento.getDisciplina().getCodigo());
+						}
+					}
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAll(campus, cenario, getInstituicaoEnsinoUser());
+				
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getTurma();
+					if (turmaMapAtendimentosOperacional.get(key) == null)
+					{
+						List<AtendimentoOperacional> newAtendimentos = new ArrayList<AtendimentoOperacional>();
+						newAtendimentos.add(atendimento);
+						turmaMapAtendimentosOperacional.put(key, newAtendimentos);
+					}
+					else
+					{
+						turmaMapAtendimentosOperacional.get(key).add(atendimento);
+					}
+					if (turmaMapParOfertasQtdeAlunos.get(key) == null)
+					{
+						Set<String> newOferta = new HashSet<String>();
+						newOferta.add(atendimento.getOferta().getId() + "-" + 
+								atendimento.getDisciplina().getCodigo());
+						turmaMapParOfertasQtdeAlunos.put(key, TriedaPar.create(newOferta, atendimento.getQuantidadeAlunos()));
+					}
+					else
+					{
+						if (!turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+								+ "-" + atendimento.getDisciplina().getCodigo()))
+						{
+							turmaMapParOfertasQtdeAlunos.get(key).setSegundo(
+									turmaMapParOfertasQtdeAlunos.get(key).getSegundo() + atendimento.getQuantidadeAlunos());
+							turmaMapParOfertasQtdeAlunos.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+									+ "-" + atendimento.getDisciplina().getCodigo());
+						}
+					}
+				}
+			}
+		}
+		
+		for (Entry<String, TriedaPar<Set<String>, Integer>> atendimento : turmaMapParOfertasQtdeAlunos.entrySet())
+		{
+			if (atendimento.getValue().getSegundo() <= qtdeAlunos)
+			{
+				if (turmaMapAtendimentosTatico.get(atendimento.getKey()) != null)
+				{
+					for (AtendimentoTatico atendimentoTatico : turmaMapAtendimentosTatico.get(atendimento.getKey()))
+					{
+						atendimentoTatico.setConfirmada(false);
+					}
+				}
+				else if (turmaMapAtendimentosOperacional.get(atendimento.getKey()) != null)
+				{
+					for (AtendimentoOperacional atendimentoOperacional : turmaMapAtendimentosOperacional.get(atendimento.getKey()))
+					{
+						atendimentoOperacional.setConfirmada(false);
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	public TrioDTO<String, String, String> carregaIndicadores( CenarioDTO cenarioDTO )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		int totalTurmas = 0;
+		double creditosPagos = 0;
+		double creditosPagosProfessoresVirtuais = 0;
+		double creditosPagosProfessoresIntituicao = 0;
+		int DemandaAtendida = 0;
+		int numeroAlunos = 0;
+		double alunosPorTurma = 0.0;
+		int qtdAlunosAtendidos = 0;
+		
+		double receita = 0.0;
+		double custoDocente = 0.0;
+		double margemContribuicao = 0.0;
+		double custoMedioDocente = 0.0;
+		
+		int professores = 0;
+		double creditosPorProfessor = 0.0;
+		int professoresVirtuais = 0;
+		double creditosPorProfessorVirtual = 0.0;
+		
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			totalTurmas += ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
+			creditosPagosProfessoresVirtuais += ehTatico ? 0 : AtendimentoOperacional.countCreditosProfessoresVirtuais(getInstituicaoEnsinoUser(), campus);
+			creditosPagosProfessoresIntituicao += ehTatico ? 0 : AtendimentoOperacional.countCreditosProfessoresInstituicao(getInstituicaoEnsinoUser(), campus);
+			double creditosPagosCampus = ehTatico ? AtendimentoTatico.countCreditos(getInstituicaoEnsinoUser(), campus) : AtendimentoOperacional.countCreditos(getInstituicaoEnsinoUser(), campus);
+			creditosPagos += creditosPagosCampus;
+			DemandaAtendida += AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,1) + AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,2);
+			numeroAlunos += Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
+			
+			receita += (ehTatico) ? AtendimentoTatico.calcReceita(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.calcReceita(getInstituicaoEnsinoUser(),campus);
+			custoDocente += (ehTatico) ? (double)creditosPagosCampus * campus.getValorCredito() * 4.5 * 6 : AtendimentoOperacional.calcCustoDocente(getInstituicaoEnsinoUser(), campus);
+			
+			professores += ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
+					AtendimentoOperacional.countProfessores(getInstituicaoEnsinoUser(), campus) : 0);
+			professoresVirtuais += ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
+					AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
+			
+			DemandasServiceImpl demandasService = new DemandasServiceImpl();
+			ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
+			int qtdAlunosNaoAtendidos = pair.getSegundo();
+			qtdAlunosAtendidos += (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
+		}
+		
+		alunosPorTurma = (double)qtdAlunosAtendidos/totalTurmas;
+		
+		margemContribuicao = (double)receita - custoDocente;
+		custoMedioDocente = (professores + professoresVirtuais) == 0 ? 0 : custoDocente / (professores + professoresVirtuais);
+		
+		creditosPorProfessor = professores == 0 ? 0 : creditosPagosProfessoresIntituicao / professores;
+		creditosPorProfessorVirtual = professoresVirtuais  == 0 ? 0 : creditosPagosProfessoresVirtuais / professoresVirtuais;
+		
+		Locale pt_BR = new Locale("pt","BR");
+		NumberFormatter numberFormatter = new NumberFormatter();
+		
+		String leftResult = "Total de turmas: " + numberFormatter.print(totalTurmas,pt_BR) + "<br/>" +
+					   "Créditos pagos: " + numberFormatter.print(creditosPagos,pt_BR) + "<br/>" +
+				       "Demanda atendida: " + numberFormatter.print(DemandaAtendida,pt_BR) + "<br/>" + 
+				       "Número de alunos: " + numberFormatter.print(numeroAlunos,pt_BR) + "<br/>" +
+				       "Alunos por turma: "  + numberFormatter.print(TriedaUtil.round(alunosPorTurma,2),pt_BR);
+		
+		String centerResult = "Receita: " + numberFormatter.print(receita,pt_BR) + "<br/>" +
+					   "Custo docente: " + numberFormatter.print(custoDocente,pt_BR) + "<br/>" +
+				       "Margem de contribuição: " + numberFormatter.print(margemContribuicao,pt_BR) + "<br/>" + 
+				       "Custo docente / Receita: " + numberFormatter.print(TriedaUtil.round((((double)custoDocente / receita)*100.0),2),pt_BR) + "%<br/>" +
+				       "Custo médio docente: " + numberFormatter.print(TriedaUtil.round(custoMedioDocente,2),pt_BR);
+		
+		String rightResult = "Professores: " + numberFormatter.print(professores,pt_BR) + "<br/>" +
+				   "Créditos/professor: " + numberFormatter.print(TriedaUtil.round(creditosPorProfessor,2),pt_BR) + "<br/>" +
+			       "Professores virtuais: " + numberFormatter.print(professoresVirtuais,pt_BR) + "<br/>" + 
+			       "Créditos/professor virtual: " + numberFormatter.print(TriedaUtil.round(creditosPorProfessorVirtual,2),pt_BR) + "<br/>";
+		
+		return TrioDTO.create(leftResult, centerResult, rightResult);
 	}
 }

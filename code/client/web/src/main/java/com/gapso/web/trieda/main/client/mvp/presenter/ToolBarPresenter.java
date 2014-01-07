@@ -31,6 +31,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CarregarSolucaoView;
 import com.gapso.web.trieda.main.client.mvp.view.CenariosView;
 import com.gapso.web.trieda.main.client.mvp.view.CompatibilidadesView;
+import com.gapso.web.trieda.main.client.mvp.view.ConfirmacaoTurmasView;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CursosView;
@@ -203,6 +204,7 @@ public class ToolBarPresenter
 		Button getFixacoesListButton();
 		Button getParametrosButton();
 		Button getConsultaRequisicoesOtimizacaoBt();
+		Button getConfirmacaoTurmasButton();
 
 		Button getExportarButton();
 		Button getExportarGradesERPButton();
@@ -614,6 +616,19 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getConfirmacaoTurmasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new ConfirmacaoTurmasPresenter(
+						instituicaoEnsinoDTO, cenarioDTO, new ConfirmacaoTurmasView( cenarioDTO ) );
+
+					presenter.go( gTab );
+				}
+			});
 
 		this.toolBar.getCompatibilidadesListDisciplinasButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()

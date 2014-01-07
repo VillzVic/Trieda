@@ -118,6 +118,9 @@ public class AtendimentoTatico
 		CascadeType.MERGE, CascadeType.REFRESH }, targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
+	
+	@Column( name = "ATT_CONFIRMADA" )
+	private Boolean confirmada;
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
@@ -182,6 +185,16 @@ public class AtendimentoTatico
 	public void setVersion( Integer version )
 	{
 		this.version = version;
+	}
+	
+	public Boolean getConfirmada()
+	{
+		return this.confirmada;
+	}
+
+	public void setConfirmada( Boolean confirmada )
+	{
+		this.confirmada = confirmada;
 	}
 
 	@Transactional
@@ -629,6 +642,68 @@ public class AtendimentoTatico
 		int iP = ( ( srP == null ) ? 0 : ( (Number) qP.getSingleResult() ).intValue() );
 
 		return ( iT + iP );
+	}
+	
+	public static double countCreditos(
+			InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		double countCreditos = 0;
+		
+		Query q2 = entityManager().createNativeQuery(
+				" SELECT o.dis_id, o.dis_substituta_id, SUM(att_quantidade), o.att_cred_teorico, o.att_cred_pratico, o.semana, o.turma FROM atendimento_tatico o " +
+				" WHERE o.ins_id = :instituicaoEnsino" +
+				" AND o.ofe_id IN (select f.ofe_id from ofertas f where f.cam_id = :campus)" +
+				" GROUP BY o.dis_id, o.dis_substituta_id, o.att_cred_teorico, o.att_cred_pratico, o.semana, o.turma");
+
+		q2.setParameter( "campus", campus.getId() );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino.getId() );
+		
+		Map<String,Integer> tempoAulaIdToTotalAlnMap = new HashMap<String,Integer>();
+		Map<String,Map<Long,Integer>> tempoAulaIdToDisAlnMap = new HashMap<String,Map<Long,Integer>>();
+		for (Object registro : q2.getResultList()) {
+			Long disId = ((BigInteger)((Object[])registro)[0]).longValue();
+			Long disSubsId = (((Object[])registro)[1]) == null ? null : ((BigInteger)((Object[])registro)[1]).longValue();
+			int totalAlunos = ((BigDecimal)((Object[])registro)[2]).intValue();
+			int credPratico = ((Integer)((Object[])registro)[3]).intValue();
+			int credTeorico = ((Integer)((Object[])registro)[4]).intValue();
+			int semana = ((Integer)((Object[])registro)[5]).intValue();
+			String turma = ((String)((Object[])registro)[6]);
+			
+			Long disIdASerUsada = disSubsId != null ? disSubsId : disId;
+			String tempoAulaId = disIdASerUsada + "-" + credPratico + "-" + credTeorico + "-" + semana + "-" + turma;
+			
+			Map<Long,Integer> disToAlnMap = tempoAulaIdToDisAlnMap.get(tempoAulaId);
+			if (disToAlnMap == null) {
+				disToAlnMap = new HashMap<Long, Integer>();
+				tempoAulaIdToDisAlnMap.put(tempoAulaId,disToAlnMap);
+			}
+			disToAlnMap.put(disId,totalAlunos*(credTeorico+credPratico));
+			
+			Integer total = tempoAulaIdToTotalAlnMap.get(tempoAulaId);
+			total = (total == null) ? 0 : total;
+			tempoAulaIdToTotalAlnMap.put(tempoAulaId, total + totalAlunos);
+		}
+		
+		Map<Long,Double> disIdToTotalCred = new HashMap<Long, Double>();
+		for (Entry<String,Map<Long,Integer>> entry : tempoAulaIdToDisAlnMap.entrySet()) {
+			String tempoAulaId = entry.getKey();
+			int total = tempoAulaIdToTotalAlnMap.get(tempoAulaId);
+			for (Entry<Long,Integer> entry2 : entry.getValue().entrySet()) {
+				Long disId = entry2.getKey();
+				int parcialAlunos = entry2.getValue();
+				double contribTotalAlunos = (double)parcialAlunos / (double)total;
+				
+				Double value = disIdToTotalCred.get(disId);
+				value = (value == null) ? 0.0 : value;
+				disIdToTotalCred.put(disId, value + contribTotalAlunos);
+			}
+		}
+		
+		for (Entry<Long, Double> entry : disIdToTotalCred.entrySet()) {
+			countCreditos += entry.getValue();
+		}
+
+		return countCreditos;
 	}
 	
 	public static double countCreditosByTurmas(
@@ -1112,5 +1187,41 @@ public class AtendimentoTatico
 
 		return ( validaTurma && validaSala && validaSemana && validaOferta && validaDisciplina
 			&&  validaCreditoTeorico && validaCreditoPratico && validaInstituicaoEnsino );
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		Disciplina disciplina, String turma)
+	{
+		Query q1 = entityManager().createQuery(
+				" SELECT o FROM AtendimentoTatico o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				" AND o.turma = :turma" +
+				" AND o.disciplina = :disciplina " +
+				" AND o.disciplinaSubstituta IS NULL ");
+
+		Query q2 = entityManager().createQuery(
+				" SELECT o FROM AtendimentoTatico o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				" AND o.turma = :turma" +
+				" AND o.disciplinaSubstituta = :disciplina " +
+				" AND o.disciplinaSubstituta IS NOT NULL ");
+
+		q1.setParameter( "cenario", cenario );
+		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q1.setParameter( "disciplina", disciplina );
+		q1.setParameter( "turma", turma );
+		q2.setParameter( "cenario", cenario );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q2.setParameter( "disciplina", disciplina );
+		q2.setParameter( "turma", turma );
+		
+		List<AtendimentoTatico> result = new ArrayList<AtendimentoTatico>();
+		result.addAll(q1.getResultList());
+		result.addAll(q2.getResultList());
+		
+		return result;
 	}
 }
