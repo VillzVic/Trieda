@@ -31,10 +31,10 @@ public abstract class ProgressReportWriter extends ProgressReport{
 	public void start(){
 		super.start();
 		totalTime = 0;
-		if(ps != null){
+/*		if(ps != null){
 			antigo = System.out;
-			System.setOut(ps);
-		}
+			//System.setOut(ps);
+		}*/
 	}
 	
 	protected String descricaoTempo(int tempo){
@@ -65,10 +65,10 @@ public abstract class ProgressReportWriter extends ProgressReport{
 		writeMsg(msg);
 		writeMsg("<b>Tempo total: </b>" + descricaoTempo(totalTime));
 		writeMsg("$EOT$");
-		if(antigo != null){
-			System.setOut(antigo);
+/*		if(antigo != null){
+			//System.setOut(antigo);
 			antigo = null;
-		}
+		}*/
 	}
 	
 	public void setInitNewPartial(String msg){
