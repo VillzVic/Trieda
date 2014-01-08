@@ -649,7 +649,7 @@ public class CampiServiceImpl extends RemoteService
 		Double qtdMediaDeAlunosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)qtdAlunosAtendidos/qtdTurmasAbertas)),2);
 		Double custoMedioSemanalPorCredito = TriedaUtil.round(((totalCreditosSemanais != 0) ? custoDocenteSemanal/totalCreditosSemanais : 0.0),2);
 		Double custoDocenteSemestral = TriedaUtil.round((custoDocenteSemanal*4.5*6.0),2);
-		Double margemContribuicaoSemestral = TriedaUtil.round(receitaSemestral - custoDocenteSemanal, 2);
+		Double margemContribuicaoSemestral = TriedaUtil.round(receitaSemestral - custoDocenteSemestral, 2);
 		Double razaoCustoDocentePorReceitaSemestral = (receitaSemestral == 0.0) ? null : TriedaUtil.round((custoDocenteSemestral/receitaSemestral*100.0),2);
 		Integer demandaTotalP1QtdeAlunos = AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
 		Integer demandaTotalPresencialP1QtdeAlunos = AlunoDemanda.sumDemandaPresencialPorPrioridade(getInstituicaoEnsinoUser(),cenario,campus,1);

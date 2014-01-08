@@ -137,6 +137,7 @@ public class ToolBarView
 	TabItem ofertasDemandasTabItem;
 	TabItem planejamentoTabItem;
 	TabItem relatoriosTabItem;
+	TabItem calendarioTabItem;
 
 	public ToolBarView( CenarioDTO cenarioDTO)
 	{
@@ -203,7 +204,7 @@ public class ToolBarView
 		planejamentoTabItem = new TabItem( "Planejamento" );
 		relatoriosTabItem = new TabItem( "Relatórios" );
 		TabItem exportacoesTabItem = new TabItem( "Exportações" );
-		TabItem calendarioTabItem = new TabItem( "Calendário" );
+		calendarioTabItem = new TabItem( "Calendário" );
 		ofertasDemandasTabItem = new TabItem( "Ofertas e Demandas" );
 
 		//planejamentoToolBar = new ToolBar();
@@ -1240,6 +1241,11 @@ public class ToolBarView
 	@Override 
 	public TabItem getPlanejamentoTabItem() {
 		return planejamentoTabItem;
+	}
+	
+	@Override 
+	public TabItem getCalendarioTabItem() {
+		return calendarioTabItem;
 	}
 	
 	@Override

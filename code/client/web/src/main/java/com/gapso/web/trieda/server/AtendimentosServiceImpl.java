@@ -2985,28 +2985,31 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		for (Campus campus : campusList)
 		{
-			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
-			
-			totalTurmas += ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
-			creditosPagosProfessoresVirtuais += ehTatico ? 0 : AtendimentoOperacional.countCreditosProfessoresVirtuais(getInstituicaoEnsinoUser(), campus);
-			creditosPagosProfessoresIntituicao += ehTatico ? 0 : AtendimentoOperacional.countCreditosProfessoresInstituicao(getInstituicaoEnsinoUser(), campus);
-			double creditosPagosCampus = ehTatico ? AtendimentoTatico.countCreditos(getInstituicaoEnsinoUser(), campus) : AtendimentoOperacional.countCreditos(getInstituicaoEnsinoUser(), campus);
-			creditosPagos += creditosPagosCampus;
-			DemandaAtendida += AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,1) + AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,2);
-			numeroAlunos += Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
-			
-			receita += (ehTatico) ? AtendimentoTatico.calcReceita(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.calcReceita(getInstituicaoEnsinoUser(),campus);
-			custoDocente += (ehTatico) ? (double)creditosPagosCampus * campus.getValorCredito() * 4.5 * 6 : AtendimentoOperacional.calcCustoDocente(getInstituicaoEnsinoUser(), campus);
-			
-			professores += ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
-					AtendimentoOperacional.countProfessores(getInstituicaoEnsinoUser(), campus) : 0);
-			professoresVirtuais += ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
-					AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
-			
-			DemandasServiceImpl demandasService = new DemandasServiceImpl();
-			ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
-			int qtdAlunosNaoAtendidos = pair.getSegundo();
-			qtdAlunosAtendidos += (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
+			if (campus.isOtimizado(getInstituicaoEnsinoUser()))
+			{
+				boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+				
+				totalTurmas += ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
+				creditosPagosProfessoresVirtuais += ehTatico ? 0 : AtendimentoOperacional.countCreditosProfessoresVirtuais(getInstituicaoEnsinoUser(), campus);
+				creditosPagosProfessoresIntituicao += ehTatico ? 0 : AtendimentoOperacional.countCreditosProfessoresInstituicao(getInstituicaoEnsinoUser(), campus);
+				double creditosPagosCampus = ehTatico ? AtendimentoTatico.countCreditos(getInstituicaoEnsinoUser(), campus) : AtendimentoOperacional.countCreditos(getInstituicaoEnsinoUser(), campus);
+				creditosPagos += creditosPagosCampus;
+				DemandaAtendida += AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,1) + AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,2);
+				numeroAlunos += Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
+				
+				receita += (ehTatico) ? AtendimentoTatico.calcReceita(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.calcReceita(getInstituicaoEnsinoUser(),campus);
+				custoDocente += (ehTatico) ? (double)creditosPagosCampus * campus.getValorCredito() * 4.5 * 6 : AtendimentoOperacional.calcCustoDocente(getInstituicaoEnsinoUser(), campus);
+				
+				professores += ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
+						AtendimentoOperacional.countProfessores(getInstituicaoEnsinoUser(), campus) : 0);
+				professoresVirtuais += ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
+						AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
+				
+				DemandasServiceImpl demandasService = new DemandasServiceImpl();
+				ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
+				int qtdAlunosNaoAtendidos = pair.getSegundo();
+				qtdAlunosAtendidos += (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
+			}
 		}
 		
 		alunosPorTurma = (double)qtdAlunosAtendidos/totalTurmas;

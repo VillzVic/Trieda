@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
 import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
@@ -225,6 +226,7 @@ public class ToolBarPresenter
 		TabItem getOfertasDemandasTabItem();
 		TabItem getRelatoriosTabItem();
 		TabItem getPlanejamentoTabItem();
+		TabItem getCalendarioTabItem();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -1307,6 +1309,7 @@ public class ToolBarPresenter
 
 							@Override
 							public void onSuccess(Void result) {
+								((TabPanel) toolBar.getMasterDataPanel().getTopComponent()).setSelection(toolBar.getCalendarioTabItem());
 								MessageBox.alert( "Contexto modificado!",
 										"Contexto alterado para Master Data", null );
 							}

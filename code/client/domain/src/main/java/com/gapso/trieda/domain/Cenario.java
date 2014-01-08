@@ -1,6 +1,12 @@
 package com.gapso.trieda.domain;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -29,12 +35,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Configurable
 @Entity
@@ -241,6 +250,7 @@ public class Cenario
 		if ( this.entityManager.contains( this ) )
 		{
 			removeDivisoesCredito();
+			removeEntities(this);
 			this.entityManager.remove( this );
 		}
 		else
@@ -249,7 +259,62 @@ public class Cenario
 				this.getClass(), this.id );
 
 			attached.removeDivisoesCredito();
+			removeEntities(this);
 			this.entityManager.remove( attached );
+		}
+	}
+
+	private void removeEntities(Cenario cenario) {
+		List<Query> nativeQueries = new ArrayList<Query>();
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE ad FROM alunos_demanda ad JOIN demandas d ON ad.dem_id = d.dem_id JOIN ofertas o ON d.ofe_id = o.ofe_id JOIN campi c ON o.cam_id = c.cam_id WHERE c.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE d FROM demandas d JOIN ofertas o ON d.ofe_id = o.ofe_id JOIN campi c ON o.cam_id = c.cam_id WHERE c.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE o FROM ofertas o JOIN campi c ON o.cam_id = c.cam_id WHERE c.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE e FROM equivalencias e JOIN disciplinas d ON e.dis_cursou_id = d.dis_id WHERE d.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE d FROM deslocamentos_unidades d JOIN unidades u ON d.uni_dest_id = u.uni_id JOIN campi c ON u.cam_id = c.cam_id WHERE c.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE hs FROM horario_disponivel_cenario_salas hs JOIN salas s ON hs.salas = s.sal_id JOIN unidades u ON s.uni_id = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE hs FROM horario_disponivel_cenario_campi hs JOIN campi c ON hs.campi = c.cam_id WHERE c.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE hs FROM horario_disponivel_cenario_disciplinas hs JOIN disciplinas d ON hs.disciplinas = d.dis_id WHERE d.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE hs FROM horario_disponivel_cenario_fixacoes hs JOIN fixacoes f ON hs.fixacoes = f.fix_id JOIN campi c ON f.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE hs FROM horario_disponivel_cenario_professores hs JOIN professores p ON hs.professores = p.prf_id WHERE p.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE hs FROM horario_disponivel_cenario_unidades hs JOIN unidades u ON hs.unidades = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE ds FROM disciplinas_salas ds JOIN salas s ON s.sal_id = ds.sal_id JOIN unidades u ON s.uni_id = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE cd FROM curriculos_disciplinas cd JOIN disciplinas d ON cd.dis_id = d.dis_id WHERE d.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE s FROM salas s JOIN unidades u ON s.uni_id = u.uni_id join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE u FROM unidades u join campi c ON u.cam_id = c.cam_id WHERE c.cen_id =:cenario "));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE d FROM deslocamentos_campi d JOIN campi c ON d.cam_dest_id = c.cam_id WHERE c.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE a FROM atendimentos_faixa_demanda a JOIN campi c ON a.cam_id = c.cam_id WHERE c.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE hdc FROM horario_disponivel_cenario hdc JOIN horarios_aula ha ON hdc.hor_id = ha.hor_id JOIN turnos t ON ha.tur_id = t.tur_id WHERE t.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE ha FROM horarios_aula ha JOIN turnos t ON ha.tur_id = t.tur_id WHERE t.cen_id = :cenario"));
+		
+		List<Query> queries = new ArrayList<Query>();
+		queries.add(entityManager().createQuery( "DELETE FROM AtendimentoTatico WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM AtendimentoOperacional WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Turno WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Aluno WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Curriculo WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Professor WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM ProfessorVirtual WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Disciplina WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Curso WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Parametro WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Campus WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM TipoContrato WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM TipoDisciplina WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM TipoSala WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM TipoCurso WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM Titulacao WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM AreaTitulacao WHERE cenario = :cenario"));
+		queries.add(entityManager().createQuery( "DELETE FROM SemanaLetiva WHERE cenario = :cenario"));
+		for (Query q : nativeQueries)
+		{
+			q.setParameter( "cenario", cenario.getId() );
+			q.executeUpdate();
+		}
+		
+		for (Query q : queries)
+		{
+			q.setParameter( "cenario", cenario );
+			q.executeUpdate();
 		}
 	}
 
@@ -716,5 +781,29 @@ public class Cenario
 		}
 
 		return result;
+	}
+	
+	public static void executeSqlUpdate(Integer currentVer, Integer finalVer){
+		Query q = entityManager().createNativeQuery("BEGIN " + getSqlFileContents("convertDBFrom_Version013_To_Version014.sql") + " END;");
+		
+		q.executeUpdate();
+	}
+	
+	public static String getSqlFileContents(String fileName) {
+	    StringBuffer sb = new StringBuffer();
+	    try {
+	        Resource resource = new ClassPathResource(fileName);
+	        DataInputStream in = new DataInputStream(resource.getInputStream());
+	        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	        String strLine;
+	        while ((strLine = br.readLine()) != null) {
+	            sb.append(" " + strLine);
+	        }
+	    } catch (FileNotFoundException e) {
+	        e.printStackTrace();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    return sb.toString();
 	}
 }
