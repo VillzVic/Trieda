@@ -122,6 +122,11 @@
           <xs:documentation>Duração de uma aula (em minutos) do turno em questão, por exemplo, 50 minutos.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element minOccurs="0" name="permiteIntervaloEmAula" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Informa se é permitido que haja intervalo entre dois horários consecutivos de uma aula de 2 créditos</xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="turnos" type="GrupoTurno">
         <xs:annotation>
           <xs:documentation>a lista de turnos que fazem parte do calendário</xs:documentation>
