@@ -192,6 +192,11 @@
           <xs:documentation>nome do tipo de sala (as opções atualmente são: Sala de Aula, Laboratório, Auditório)</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="aceitaAulaPratica" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>O Trieda faz distinção entre créditos teóricos e práticos, por exemplo, disciplinas que exigem laboratório somente podem ter seus créditos práticos ministrados em ambientes do tipo laboratório (e não salas de aulas comuns). Dessa forma, dado um ambiente, o Trieda necessita saber se o mesmo é um Laboratório ou é uma Sala de Aula comum. Anteriormente, o Trieda simplesmente comparava o nome do tipo do ambiente com o valor "Laboratório" para detectar estes casos. No entanto, com a nova informação "aceitaAulaPratica" na tag "TipoSala" o Trieda passará a verificar este booleano e Laboratórios serão todos os tipos de sala cujo valor "aceitaAulaPratica" seja igual a TRUE.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemTipoContrato">
