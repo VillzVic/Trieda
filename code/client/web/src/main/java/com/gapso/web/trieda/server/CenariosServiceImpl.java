@@ -241,6 +241,7 @@ public class CenariosServiceImpl
 		TipoSala tipo1 = new TipoSala();
 		tipo1.setNome( TipoSala.TIPO_SALA_DE_AULA );
 		tipo1.setDescricao( TipoSala.TIPO_SALA_DE_AULA );
+		tipo1.setAceitaAulaPratica( false );
 		tipo1.setInstituicaoEnsino( getInstituicaoEnsinoUser() );
 		tipo1.setCenario(cenario);
 		tipo1.persist();
@@ -248,6 +249,7 @@ public class CenariosServiceImpl
 		TipoSala tipo2 = new TipoSala();
 		tipo2.setNome( "Laboratório"  );
 		tipo2.setDescricao( "Laboratório"  );
+		tipo2.setAceitaAulaPratica( true );
 		tipo2.setInstituicaoEnsino( getInstituicaoEnsinoUser() );
 		tipo2.setCenario(cenario);
 		tipo2.persist();

@@ -686,6 +686,7 @@ public class ConvertBeans {
 		domain.setDescricao( dto.getDescricao() );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 		domain.setTempo( dto.getTempo() );
+		domain.setPermiteIntervaloAula( dto.getPermiteIntervaloAula() );
 		domain.setCenario( cenario );
 
 		return domain;
@@ -731,6 +732,7 @@ public class ConvertBeans {
 		dto.setDescricao( domain.getDescricao() );
 		dto.setTempo( domain.getTempo() );
 		dto.setMaxCreditos( domain.getHorariosAula().size() );
+		dto.setPermiteIntervaloAula( domain.getPermiteIntervaloAula() );
 
 		Map< Long, String > horariosStringMap
 			= new HashMap< Long, String >();

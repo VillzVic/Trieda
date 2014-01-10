@@ -50,6 +50,9 @@ public class TipoSala
     @Size(max = 255)
     private String descricao;
     
+	@Column( name = "TSA_ACEITA_AULA_PRATICA" )
+	private Boolean aceitaAulaPratica;
+    
 	@NotNull
 	@ManyToOne( targetEntity = Cenario.class )
 	@JoinColumn( name = "CEN_ID" )
@@ -135,6 +138,14 @@ public class TipoSala
 	public void setVersion(Integer version) {
         this.version = version;
     }
+	
+	public Boolean getAceitaAulaPratica() {
+		return this.aceitaAulaPratica;
+	}
+	
+	public void setAceitaAulaPratica(Boolean aceitaAulaPratica) {
+		this.aceitaAulaPratica = aceitaAulaPratica;
+	}
 
 	@Transactional
     public void persist()

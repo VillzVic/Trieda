@@ -87,6 +87,9 @@ public class SemanaLetiva
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
+	
+	@Column( name = "SLE_PERMITE_INTERVALO_AULA" )
+	private Boolean permiteIntervaloAula;
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
@@ -167,6 +170,14 @@ public class SemanaLetiva
 			}
 		}
 		return totalCreditos;
+	}
+	
+	public Boolean getPermiteIntervaloAula() {
+		return permiteIntervaloAula;
+	}
+	
+	public void setPermiteIntervaloAula(Boolean permiteIntervaloAula) {
+		this.permiteIntervaloAula = permiteIntervaloAula;
 	}
 
 	@PersistenceContext

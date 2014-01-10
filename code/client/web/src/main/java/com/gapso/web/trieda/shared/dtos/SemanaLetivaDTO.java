@@ -16,6 +16,7 @@ public class SemanaLetivaDTO
 	public static final String PROPERTY_DESCRICAO = "descricao";
 	public static final String PROPERTY_TEMPO = "tempo";
 	public static final String PROPERTY_MAX_CREDITOS = "maxCreditos";
+	public static final String PROPERTY_PERMITE_INTERVALO_AULA = "permiteIntervaloAula";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	private Map< Long, String > horariosStringMap;
@@ -94,6 +95,16 @@ public class SemanaLetivaDTO
 	public Long getCenarioId()
 	{
 		return get( PROPERTY_CENARIO_ID );
+	}
+	
+	public Boolean getPermiteIntervaloAula()
+	{
+		return get( PROPERTY_PERMITE_INTERVALO_AULA );
+	}
+	
+	public void setPermiteIntervaloAula( Boolean value )
+	{
+		set( PROPERTY_PERMITE_INTERVALO_AULA, value);
 	}
 
 	public void setHorariosStringMap(

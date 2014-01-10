@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -90,6 +91,7 @@ public class SemanasLetivaView
 		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_CODIGO, "Codigo", 120 ) );
 		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_DESCRICAO, "Descrição", 150 ) );
 		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_TEMPO, "Tempo de Aula", 100 ) );
+		list.add( new CheckColumnConfig( SemanaLetivaDTO.PROPERTY_PERMITE_INTERVALO_AULA, "Permite Intervalo Entre Aulas", 150 ) );
 
 		return list;
 	}

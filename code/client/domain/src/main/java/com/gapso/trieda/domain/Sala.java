@@ -141,7 +141,7 @@ public class Sala
     private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
     
     public boolean isLaboratorio() {
-    	return getTipoSala().getNome().equals(TipoSala.TIPO_LABORATORIO);
+    	return getTipoSala().getAceitaAulaPratica();
     }
 
 	public String toString()
@@ -479,7 +479,7 @@ public class Sala
 	{
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
-			" WHERE o.tipoSala.nome = 'Laboratório' " +
+			" WHERE o.tipoSala.aceitaAulaPratica IS true " +
 			" AND o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.unidade.campus.cenario = :cenario " );
 
@@ -495,7 +495,7 @@ public class Sala
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.tipoSala.nome = 'Laboratório' " +
+			" AND o.tipoSala.aceitaAulaPratica IS true " +
 			" AND o.unidade.campus = :campus " );
 
 		q.setParameter( "campus", campus );
@@ -510,7 +510,7 @@ public class Sala
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.tipoSala.nome = 'Sala de Aula' " +
+			" AND o.tipoSala.aceitaAulaPratica IS false " +
 			" AND o.unidade.campus.cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
@@ -525,7 +525,7 @@ public class Sala
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.tipoSala.nome = 'Sala de Aula' " +
+			" AND o.tipoSala.aceitaAulaPratica IS false " +
 			" AND o.unidade.campus = :campus " );
 
 		q.setParameter( "campus", campus );

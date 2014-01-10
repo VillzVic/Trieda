@@ -563,6 +563,7 @@ public class SolverInput
 			itemCalendario.setId( calendario.getId().intValue() );
 			itemCalendario.setCodigo( calendario.getCodigo() );
 			itemCalendario.setTempoAula( calendario.getTempo() );
+			itemCalendario.setPermiteIntervaloEmAula( calendario.getPermiteIntervaloAula() );
 
 			GrupoTurno grupoTurno = this.of.createGrupoTurno();
 
@@ -647,6 +648,7 @@ public class SolverInput
 
 			itemTipoSala.setId( tipo.getId().intValue() );
 			itemTipoSala.setNome( tipo.getNome() );
+			itemTipoSala.setAceitaAulaPratica( tipo.getAceitaAulaPratica() );
 
 			grupoTipoSala.getTipoSala().add( itemTipoSala );
 		}

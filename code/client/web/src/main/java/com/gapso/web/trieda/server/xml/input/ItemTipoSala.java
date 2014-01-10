@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="aceitaAulaPratica" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,13 +38,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ItemTipoSala", propOrder = {
     "id",
-    "nome"
+    "nome",
+    "aceitaAulaPratica"
 })
 public class ItemTipoSala {
 
     protected int id;
     @XmlElement(required = true)
     protected String nome;
+    protected boolean aceitaAulaPratica;
 
     /**
      * Gets the value of the id property.
@@ -83,6 +86,22 @@ public class ItemTipoSala {
      */
     public void setNome(String value) {
         this.nome = value;
+    }
+    
+    /**
+     * Gets the value of the id property.
+     * 
+     */
+    public boolean getAceitaAulaPratica() {
+        return aceitaAulaPratica;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     */
+    public void setAceitaAulaPratica(boolean value) {
+        this.aceitaAulaPratica = value;
     }
 
 }

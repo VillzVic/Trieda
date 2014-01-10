@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
@@ -24,6 +25,7 @@ public class SemanaLetivaFormView
 	private TextField< String > codigoTF;
 	private TextField< String > descricaoTF;
 	private NumberField tempoNF;
+	private CheckBox permiteIntervaloCB;
 	private SemanaLetivaDTO semanaLetivaDTO;
 	private CenarioDTO cenarioDTO;
 
@@ -48,7 +50,7 @@ public class SemanaLetivaFormView
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.semanaLetiva16() );
-		this.simpleModal.setHeight( 200 );
+		this.simpleModal.setHeight( 230 );
 		this.createForm();
 
 		this.simpleModal.setContent( this.formPanel );
@@ -91,6 +93,12 @@ public class SemanaLetivaFormView
 		this.tempoNF.setMaxValue( 1000 );
 		this.tempoNF.setEmptyText( "Preencha a duração de aula da semana letiva" );
 		this.formPanel.add( this.tempoNF, formData );
+		
+		this.permiteIntervaloCB = new CheckBox();
+		this.permiteIntervaloCB.setName( SemanaLetivaDTO.PROPERTY_PERMITE_INTERVALO_AULA );
+		this.permiteIntervaloCB.setValue( this.semanaLetivaDTO.getPermiteIntervaloAula() );
+		this.permiteIntervaloCB.setFieldLabel("Permite Intervalo Entre Aulas");
+		formPanel.add( this.permiteIntervaloCB, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );
 		binding.addButton( this.simpleModal.getSalvarBt() );
@@ -137,5 +145,11 @@ public class SemanaLetivaFormView
 	public NumberField getTempoAulaNumberField()
 	{
 		return this.tempoNF;
+	}
+	
+	@Override
+	public CheckBox getPermiteIntervaloCheckBox()
+	{
+		return this.permiteIntervaloCB;
 	}
 }

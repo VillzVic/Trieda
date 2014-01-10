@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="codigo" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="tempoAula" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="turnos" type="{}GrupoTurno"/>
+ *         &lt;element name="permiteIntervaloEmAula" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,7 +42,8 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "codigo",
     "tempoAula",
-    "turnos"
+    "turnos",
+    "permiteIntervaloEmAula"
 })
 public class ItemCalendario {
 
@@ -51,6 +53,7 @@ public class ItemCalendario {
     protected int tempoAula;
     @XmlElement(required = true)
     protected GrupoTurno turnos;
+    protected boolean permiteIntervaloEmAula;
 
     /**
      * Gets the value of the id property.
@@ -130,6 +133,22 @@ public class ItemCalendario {
      */
     public void setTurnos(GrupoTurno value) {
         this.turnos = value;
+    }
+
+    /**
+     * Gets the value of the id property.
+     * 
+     */
+    public boolean getPermiteIntervaloEmAula() {
+        return permiteIntervaloEmAula;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     */
+    public void setPermiteIntervaloEmAula(boolean value) {
+        this.permiteIntervaloEmAula = value;
     }
 
 }
