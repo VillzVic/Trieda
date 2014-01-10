@@ -92,10 +92,11 @@ public class AlunosDisciplinasCursadasExportExcel
 		List< Object[] > curriculosDisciplinasPreRequisitos
 			= CurriculoDisciplina.findBy(instituicaoEnsino, getCenario(), null, null, null, "cursadoPor");
 
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(), workbook);
+		}
+		
 		if (!curriculosDisciplinasPreRequisitos.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(), workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

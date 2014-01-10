@@ -93,10 +93,11 @@ public class UnidadesExportExcel
 		List< Unidade > unidades = Unidade.findByCenario(
 		 	this.instituicaoEnsino, getCenario() );
 
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
+		
 		if (!unidades.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

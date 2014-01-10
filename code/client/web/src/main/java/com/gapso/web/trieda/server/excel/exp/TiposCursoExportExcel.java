@@ -93,10 +93,11 @@ public class TiposCursoExportExcel
 		List< TipoCurso > tipoCurso = TipoCurso.findByCenario(
 		 	this.instituicaoEnsino, getCenario());
 
+		System.out.print("Remove: " + this.removeUnusedSheets);
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (!tipoCurso.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

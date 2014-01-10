@@ -92,10 +92,11 @@ public class DivisoesCreditoExportExcel
 	{
 		List< DivisaoCredito > divisaoCredito = DivisaoCredito.findByInstituicaoEnsino(this.instituicaoEnsino);
 
+		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (!divisaoCredito.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

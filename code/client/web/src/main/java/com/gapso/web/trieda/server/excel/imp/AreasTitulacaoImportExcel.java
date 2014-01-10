@@ -230,6 +230,7 @@ public class AreasTitulacaoImportExcel
 				newArea.setCodigo( areaExcel.getCodigoStr() );
 				newArea.setDescricao( areaExcel.getDescricaoStr() );
 				newArea.setInstituicaoEnsino( instituicaoEnsino );
+				newArea.setCenario( getCenario() );
 				newArea.persist();
 			}
 		}

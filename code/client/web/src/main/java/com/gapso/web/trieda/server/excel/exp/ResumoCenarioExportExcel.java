@@ -89,11 +89,11 @@ public class ResumoCenarioExportExcel
 	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook ) {
 		CenariosServiceImpl cenariosServiceImpl = new CenariosServiceImpl();
 		List<TreeNodeDTO> resumo = cenariosServiceImpl.getResumos(ConvertBeans.toCenarioDTO(getCenario()));
-
+		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (!resumo.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

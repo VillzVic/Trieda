@@ -100,14 +100,13 @@ public class CurriculosExportExcel
 		List< Curriculo > curriculos
 			= Curriculo.findByCenario(
 				this.instituicaoEnsino, getCenario() );
-
+		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( curriculos != null && !curriculos.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);

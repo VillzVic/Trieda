@@ -216,6 +216,8 @@ public class ExportExcelServlet extends HttpServlet
 		parametros.put( PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO)) );
 		parametros.put( PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO)) );
 		parametros.put( PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO)) );
+		parametros.put( PlanilhasExportExcel.TURNOS, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.TURNOS)) );
+		parametros.put( PlanilhasExportExcel.TIPOS_CURSO, Boolean.parseBoolean(request.getParameter(PlanilhasExportExcel.TIPOS_CURSO)) );
 		
 		return parametros;
 		

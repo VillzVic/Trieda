@@ -101,11 +101,11 @@ public class CampiDeslocamentoExportExcel
 		Map<TriedaPar<Integer, Integer>, Integer> deslocamentosRowColumnMap =
 			criaDeslocamentoRowColumnMap(deslocamentos, campi);
 		
-
+		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (campi.size() > 1) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

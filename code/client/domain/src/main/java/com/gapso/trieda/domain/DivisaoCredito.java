@@ -306,7 +306,7 @@ public class DivisaoCredito
 		Query q = entityManager().createQuery(
 			" SELECT o FROM DivisaoCredito o, IN ( o.cenario ) c  " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino" +
-			" c = :cenario " +
+			" AND c = :cenario " +
 			" ORDER BY o.creditos"
 		);
 

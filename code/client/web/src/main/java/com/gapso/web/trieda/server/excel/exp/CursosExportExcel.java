@@ -86,10 +86,10 @@ public class CursosExportExcel extends AbstractExportExcel {
 		List< Curso > cursos = Curso.findByCenario(
 			this.instituicaoEnsino, getCenario() );
 		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (!cursos.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

@@ -94,10 +94,10 @@ public class DisciplinasCoRequisitosExportExcel
 		List< Object[] > curriculosDisciplinasPreRequisitos
 			= CurriculoDisciplina.findBy(instituicaoEnsino, getCenario(), null, null, null, "coRequisitos");
 
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(), workbook);
+		}
 		if (!curriculosDisciplinasPreRequisitos.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(), workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);
@@ -114,7 +114,7 @@ public class DisciplinasCoRequisitosExportExcel
 
 			return true;
 		}
-
+		
 		return false;
 	}
 

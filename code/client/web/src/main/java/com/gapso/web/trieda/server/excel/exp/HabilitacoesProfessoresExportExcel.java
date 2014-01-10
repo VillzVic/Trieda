@@ -103,14 +103,13 @@ public class HabilitacoesProfessoresExportExcel
 
 		Map< String, Boolean > registeredData
 			= new HashMap< String, Boolean >();
-
+		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !professoresDisciplinas.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);

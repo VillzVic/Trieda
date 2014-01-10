@@ -109,11 +109,6 @@ public class CampiTrabalhoExportExcel
 
 		if ( flag )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);
@@ -132,6 +127,11 @@ public class CampiTrabalhoExportExcel
 						professor.getNome(), nextRow, sheet );
 				}
 			}
+		}
+		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
 		}
 
 		return flag;

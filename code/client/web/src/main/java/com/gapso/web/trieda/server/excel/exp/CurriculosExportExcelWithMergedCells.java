@@ -97,14 +97,13 @@ public class CurriculosExportExcelWithMergedCells
 	{
 		List< Curriculo > curriculo
 			= Curriculo.findByCenario( this.instituicaoEnsino, getCenario() );
-
+		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !curriculo.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);

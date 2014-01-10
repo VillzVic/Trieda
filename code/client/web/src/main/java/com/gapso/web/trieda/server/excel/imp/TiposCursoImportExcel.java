@@ -228,7 +228,8 @@ public class TiposCursoImportExcel
 
 				newTipoCurso.setCodigo( tipoCursoExcel.getCodigoStr() );
 				newTipoCurso.setDescricao( tipoCursoExcel.getDescricaoStr() );
-				newTipoCurso.setInstituicaoEnsino(instituicaoEnsino);
+				newTipoCurso.setInstituicaoEnsino( instituicaoEnsino );
+				newTipoCurso.setCenario( getCenario() );
 
 				newTipoCurso.persist();
 			}

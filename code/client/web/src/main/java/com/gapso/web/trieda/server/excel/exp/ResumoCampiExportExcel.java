@@ -108,11 +108,11 @@ public class ResumoCampiExportExcel
 		List<Campus> campi = Campus.findAll(instituicaoEnsino);
 		
 		CampiServiceImpl campiServiceImpl = new CampiServiceImpl();
-
+		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (!campi.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			Sheet templateSheet = null;
 			fillInCellStyles(sheet);

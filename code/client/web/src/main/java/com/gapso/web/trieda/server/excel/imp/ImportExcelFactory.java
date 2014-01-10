@@ -43,6 +43,7 @@ public class ImportExcelFactory
 			case UNIDADES_DESLOCAMENTO: importer = new UnidadesDeslocamentoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case TIPOS_CURSO: importer = new TiposCursoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DIVISOES_CREDITO: importer = new DivisoesCreditoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case TURNOS: importer = new TurnosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 		}
 
 		return importer;

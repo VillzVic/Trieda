@@ -85,10 +85,10 @@ public class AlunosExportExcel extends AbstractExportExcel {
 	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook ) {
 		List<Aluno> alunos = Aluno.findByCenario(this.instituicaoEnsino,getCenario());
 
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (!alunos.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

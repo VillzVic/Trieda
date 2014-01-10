@@ -220,6 +220,8 @@ public class TurnosImportExcel
 				Turno newTurno = new Turno();
 
 				newTurno.setNome( turnoExcel.getNomeStr() );
+				newTurno.setCenario( getCenario() );
+				newTurno.setInstituicaoEnsino( instituicaoEnsino );
 
 				newTurno.persist();
 			}

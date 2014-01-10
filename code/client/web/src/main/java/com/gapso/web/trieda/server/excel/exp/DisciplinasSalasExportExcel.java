@@ -98,13 +98,12 @@ public class DisciplinasSalasExportExcel
 		List< Sala > salas = Sala.findByCenario(
 			this.instituicaoEnsino, getCenario() );
 		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !salas.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);

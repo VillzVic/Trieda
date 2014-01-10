@@ -127,9 +127,6 @@ public class UnidadesDeslocamentosExportExcel
 		}		
 
 		if (campusDTOList.size() >= 1) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);
@@ -158,8 +155,16 @@ public class UnidadesDeslocamentosExportExcel
 					writeData( d.getKey(), d.getValue(), sheet );
 				}
 			}
+			
+			if (this.removeUnusedSheets) {
+				removeUnusedSheets(this.getSheetName(),workbook);
+			}
 
 			return true;
+		}
+		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
 		}
 
 		return false;

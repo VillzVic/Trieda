@@ -83,13 +83,12 @@ public class AreasTitulacaoExportExcel extends AbstractExportExcel {
 		List< AreaTitulacao > areas
 			= AreaTitulacao.findByCenario( this.instituicaoEnsino, getCenario() );
 
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !areas.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);

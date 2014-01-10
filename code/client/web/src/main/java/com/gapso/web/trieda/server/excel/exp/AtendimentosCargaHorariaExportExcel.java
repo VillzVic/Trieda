@@ -110,7 +110,10 @@ public class AtendimentosCargaHorariaExportExcel
 		atendimentosCargaHoraria.addAll(
 			alunosDemandaServiceImpl.getAtendimentoCargaHoraria() );
 		
-		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !atendimentosCargaHoraria.isEmpty() )
 		{
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
@@ -128,11 +131,6 @@ public class AtendimentosCargaHorariaExportExcel
 			}
 
 			result = true;
-		}
-
-		if ( this.removeUnusedSheets )
-		{
-			removeUnusedSheets( this.getSheetName(), workbook );
 		}
 
 		return result;

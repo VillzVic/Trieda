@@ -221,11 +221,10 @@ public class AulasExportExcel extends AbstractExportExcel {
 		
 		List<AtendimentoServiceRelatorioResponse> structureReportControl = visaoCursoExpExcel.getStructureReportControl();
 		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (visaoCursoExpExcel.getAtendimentosRelatorioDTOList(structureReportControl)) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
-			
 			visaoCursoExpExcel.sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(visaoCursoExpExcel.sheet);

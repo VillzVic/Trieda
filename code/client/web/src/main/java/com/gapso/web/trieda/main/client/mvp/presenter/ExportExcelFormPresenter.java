@@ -73,6 +73,8 @@ public class ExportExcelFormPresenter
 		CheckBox getProfessoresAreasConhecimento();
 		CheckBox getAmbientesFaixaOcupacao();
 		CheckBox getAmbientesFaixaUtilizacao();
+		CheckBox getTurnos();
+		CheckBox getTiposCurso();
 		TextField<String> getNomeArquivoTextField();
 		FormPanel getFormPanel();
 	}

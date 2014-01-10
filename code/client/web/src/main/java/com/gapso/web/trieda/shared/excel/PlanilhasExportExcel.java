@@ -45,5 +45,7 @@ public class PlanilhasExportExcel {
 	public static final String PROFESSORES_AREAS_CONHECIMENTO = "ProfessoresAreasConhecimento";
 	public static final String AMBIENTES_FAIXA_OCUPACAO = "AmbientesFaixaOcupacao";
 	public static final String AMBIENTES_FAIXA_UTILIZACAO = "AmbientesFaixaUtilizacao";
+	public static final String TURNOS = "turnos";
+	public static final String TIPOS_CURSO = "tiposCurso";
 
 }

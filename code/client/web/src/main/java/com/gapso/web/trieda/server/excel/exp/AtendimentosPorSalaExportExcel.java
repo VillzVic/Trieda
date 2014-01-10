@@ -189,10 +189,10 @@ public class AtendimentosPorSalaExportExcel extends AbstractExportExcel {
 		
 		List<SextetoDTO<Integer,Integer,Integer,List<AtendimentoRelatorioDTO>,List<Integer>,List<String>>> structureReportControl = visaoSalaExpExcel.getStructureReportControl();
 		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (visaoSalaExpExcel.getAtendimentosRelatorioDTOList(structureReportControl)) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			
 			visaoSalaExpExcel.sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {

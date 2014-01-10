@@ -93,10 +93,11 @@ public class TurnosExportExcel
 		List< Turno > turnos = Turno.findByCenario(
 		 	this.instituicaoEnsino, getCenario() );
 
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
+		
 		if (!turnos.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);
@@ -113,7 +114,7 @@ public class TurnosExportExcel
 
 			return true;
 		}
-
+		
 		return false;
 	}
 

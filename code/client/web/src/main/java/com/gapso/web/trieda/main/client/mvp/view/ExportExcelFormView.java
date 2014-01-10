@@ -69,6 +69,8 @@ public class ExportExcelFormView
 	private CheckBox professoresAreasConhecimentoCB;
 	private CheckBox ambientesFaixaOcupacaoCB;
 	private CheckBox ambientesFaixaUtilizacaoCB;
+	private CheckBox turnosCB;
+	private CheckBox tiposCursoCB;
 	private TextField<String> nomeArquivoTF;
 	
 	public ExportExcelFormView()
@@ -81,7 +83,7 @@ public class ExportExcelFormView
 		String title = "Exportação Excel";
 		exportExcelModal = new ExportExcelModal(title, Resources.DEFAULTS.exportar16());
 		exportExcelModal.setHeight(600);
-		exportExcelModal.setWidth(500);
+		exportExcelModal.setWidth(600);
 		createForm();
 		exportExcelModal.setContent(formPanel);
 	}
@@ -97,6 +99,7 @@ public class ExportExcelFormView
 		formPanel.setScrollMode(Style.Scroll.AUTOY);
 		
 		LayoutContainer main = new LayoutContainer();
+		main.addStyleName("exportExcelForm");
 	    main.setLayout(new FormLayout());
 	    
 	    //Geral
@@ -107,7 +110,7 @@ public class ExportExcelFormView
 	    rightGeral.setLayout(new FormLayout());
 	    
 		FieldSet geralFS = new FieldSet();
-		geralFS.setWidth(440);
+		geralFS.setWidth(540);
 		geralFS.setCollapsible(true);
 		geralFS.setHeadingHtml("&nbsp;");
 		geralFS.setLayout(new ColumnLayout());
@@ -116,6 +119,7 @@ public class ExportExcelFormView
 		campiExportExcelCB.setName(PlanilhasExportExcel.CAMPI);
 		campiExportExcelCB.setValue(false);
 		campiExportExcelCB.setFieldLabel("Campi");
+		campiExportExcelCB.addInputStyleName("exportExcelForm");
 		leftGeral.add(campiExportExcelCB, formData);
 		
 		unidadesExportExcelCB = new CheckBox();
@@ -225,6 +229,18 @@ public class ExportExcelFormView
 	    habilitacaoProfessoresExportExcelCB.setValue(false);
 	    habilitacaoProfessoresExportExcelCB.setFieldLabel("Habilitação dos Professores");
 	    leftGeral.add(habilitacaoProfessoresExportExcelCB, formData);
+	    
+		turnosCB = new CheckBox();
+		turnosCB.setName(PlanilhasExportExcel.TURNOS);
+		turnosCB.setValue(false);
+		turnosCB.setFieldLabel("Turnos");
+		rightGeral.add(turnosCB, formData);
+		
+		tiposCursoCB = new CheckBox();
+		tiposCursoCB.setName(PlanilhasExportExcel.TIPOS_CURSO);
+		tiposCursoCB.setValue(false);
+		tiposCursoCB.setFieldLabel("Tipos Curso");
+		leftGeral.add(tiposCursoCB, formData);
 		
 		geralFS.add(leftGeral, new ColumnData(.5));
 		geralFS.add(rightGeral, new ColumnData(.5));
@@ -238,7 +254,7 @@ public class ExportExcelFormView
 	    rightProfessores.setLayout(new FormLayout());
 	    
 		FieldSet professoresFS = new FieldSet();
-		professoresFS.setWidth(440);
+		professoresFS.setWidth(540);
 		professoresFS.setHeadingHtml("&nbsp;");
 		professoresFS.setCollapsible(true);
 		professoresFS.setLayout(new ColumnLayout());
@@ -249,23 +265,25 @@ public class ExportExcelFormView
 		percentMestresDoutoresExportExcelCB.setFieldLabel("Porcentagem de Mestres e Doutores");
 		leftProfessores.add(percentMestresDoutoresExportExcelCB, formData);
 		
-		professoresDisciplinasHabilitadasCB = new CheckBox();
-		professoresDisciplinasHabilitadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS);
-		professoresDisciplinasHabilitadasCB.setValue(false);
-		professoresDisciplinasHabilitadasCB.setFieldLabel("Professores por Quantidade de Disciplinas Habilitadas");
-		rightProfessores.add(professoresDisciplinasHabilitadasCB, formData);
-		
-		professoresDisciplinasLecionadasCB = new CheckBox();
-		professoresDisciplinasLecionadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS);
-		professoresDisciplinasLecionadasCB.setValue(false);
-		professoresDisciplinasLecionadasCB.setFieldLabel("Professores por Quantidade de Disciplinas Lecionadas");
-		leftProfessores.add(professoresDisciplinasLecionadasCB, formData);
-		
 		professoresTitulacoesCB = new CheckBox();
 		professoresTitulacoesCB.setName(PlanilhasExportExcel.PROFESSORES_TITULACOES);
 		professoresTitulacoesCB.setValue(false);
 		professoresTitulacoesCB.setFieldLabel("Professores por Titulações");
 		rightProfessores.add(professoresTitulacoesCB, formData);
+		
+		professoresDisciplinasLecionadasCB = new CheckBox();
+		professoresDisciplinasLecionadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS);
+		professoresDisciplinasLecionadasCB.setValue(false);
+		professoresDisciplinasLecionadasCB.setFieldLabel("Professores por Qtde de Disciplinas Lecionadas");
+		professoresDisciplinasLecionadasCB.setLabelStyle("white-space: normal");
+		leftProfessores.add(professoresDisciplinasLecionadasCB, formData);
+		
+		professoresDisciplinasHabilitadasCB = new CheckBox();
+		professoresDisciplinasHabilitadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS);
+		professoresDisciplinasHabilitadasCB.setValue(false);
+		professoresDisciplinasHabilitadasCB.setFieldLabel("Professores por Qtde de Disciplinas Habilitadas");
+		professoresDisciplinasHabilitadasCB.setLabelStyle("white-space: normal");
+		rightProfessores.add(professoresDisciplinasHabilitadasCB, formData);
 		
 		professoresAreasConhecimentoCB = new CheckBox();
 		professoresAreasConhecimentoCB.setName(PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO);
@@ -276,7 +294,7 @@ public class ExportExcelFormView
 		professoresQuantidadeJanelasCB = new CheckBox();
 		professoresQuantidadeJanelasCB.setName(PlanilhasExportExcel.PROFESSORES_QUANTIDADE_JANELAS);
 		professoresQuantidadeJanelasCB.setValue(false);
-		professoresQuantidadeJanelasCB.setFieldLabel("Professores por Quantidade de Janelas");
+		professoresQuantidadeJanelasCB.setFieldLabel("Professores por Qtde de Janelas");
 		rightProfessores.add(professoresQuantidadeJanelasCB, formData);
 		
 		professoresFS.add(leftProfessores, new ColumnData(.5));
@@ -291,7 +309,7 @@ public class ExportExcelFormView
 	    rightResumos.setLayout(new FormLayout());
 	    
 		FieldSet resumoFS = new FieldSet();
-		resumoFS.setWidth(440);
+		resumoFS.setWidth(540);
 		resumoFS.setHeadingHtml("&nbsp;");
 		resumoFS.setCollapsible(true);
 		resumoFS.setLayout(new ColumnLayout());
@@ -320,7 +338,7 @@ public class ExportExcelFormView
 	    rightAtendimentos.setLayout(new FormLayout());
 	    
 		FieldSet atendimentosFS = new FieldSet();
-		atendimentosFS.setWidth(440);
+		atendimentosFS.setWidth(540);
 		atendimentosFS.setHeadingHtml("&nbsp;");
 		atendimentosFS.setCollapsible(true);
 		atendimentosFS.setLayout(new ColumnLayout());
@@ -379,7 +397,7 @@ public class ExportExcelFormView
 	    rightAmbientes.setLayout(new FormLayout());
 	    
 		FieldSet ambientesFS = new FieldSet();
-		ambientesFS.setWidth(440);
+		ambientesFS.setWidth(540);
 		ambientesFS.setHeadingHtml("&nbsp;");
 		ambientesFS.setCollapsible(true);
 		ambientesFS.setLayout(new ColumnLayout());
@@ -388,12 +406,14 @@ public class ExportExcelFormView
 		ambientesFaixaOcupacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO);
 		ambientesFaixaOcupacaoCB.setValue(false);
 		ambientesFaixaOcupacaoCB.setFieldLabel("Ambientes por Faixa de Ocupação de Horários");
+		ambientesFaixaOcupacaoCB.setLabelStyle("white-space: normal");
 		leftAmbientes.add(ambientesFaixaOcupacaoCB, formData);
 		
 		ambientesFaixaUtilizacaoCB = new CheckBox();
 		ambientesFaixaUtilizacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO);
 		ambientesFaixaUtilizacaoCB.setValue(false);
 		ambientesFaixaUtilizacaoCB.setFieldLabel("Ambientes por Faixa de Utilização da Capacidade");
+		ambientesFaixaUtilizacaoCB.setLabelStyle("white-space: normal");
 		rightAmbientes.add(ambientesFaixaUtilizacaoCB, formData);
 		
 		ambientesFS.add(leftAmbientes, new ColumnData(.5));
@@ -408,7 +428,7 @@ public class ExportExcelFormView
 	    rightGradeHoraria.setLayout(new FormLayout());
 	    
 		FieldSet gradeHorariaFS = new FieldSet();
-		gradeHorariaFS.setWidth(440);
+		gradeHorariaFS.setWidth(540);
 		gradeHorariaFS.setHeadingHtml("&nbsp;");
 		gradeHorariaFS.setCollapsible(true);
 		gradeHorariaFS.setLayout(new ColumnLayout());
@@ -449,7 +469,7 @@ public class ExportExcelFormView
 	    rightDisciplinas.setLayout(new FormLayout());
 	    
 		FieldSet disciplinasFS = new FieldSet();
-		disciplinasFS.setWidth(440);
+		disciplinasFS.setWidth(540);
 		disciplinasFS.setHeadingHtml("&nbsp;");
 		disciplinasFS.setCollapsible(true);
 		disciplinasFS.setLayout(new ColumnLayout());
@@ -739,6 +759,16 @@ public class ExportExcelFormView
 	@Override
 	public CheckBox getAmbientesFaixaUtilizacao() {
 		return ambientesFaixaUtilizacaoCB;
+	}
+	
+	@Override
+	public CheckBox getTurnos() {
+		return turnosCB;
+	}
+
+	@Override
+	public CheckBox getTiposCurso() {
+		return tiposCursoCB;
 	}
 
 }

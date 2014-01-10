@@ -84,13 +84,13 @@ public class SalasExportExcel extends AbstractExportExcel {
 	{
 		List< Sala > salas = Sala.findByCenario( this.instituicaoEnsino, getCenario() );
 
+		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !salas.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);

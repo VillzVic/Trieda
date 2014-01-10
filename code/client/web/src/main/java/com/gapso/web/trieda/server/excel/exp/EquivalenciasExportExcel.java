@@ -92,14 +92,13 @@ public class EquivalenciasExportExcel
 	{
 		List< Equivalencia > equivalencias
 			= Equivalencia.findAll( this.instituicaoEnsino );
-
+		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !equivalencias.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

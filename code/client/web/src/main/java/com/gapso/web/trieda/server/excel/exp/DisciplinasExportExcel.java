@@ -93,11 +93,11 @@ public class DisciplinasExportExcel
 	{
 		List< Disciplina > disciplinas
 			= Disciplina.findByCenario( this.instituicaoEnsino, getCenario() );
-
+		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(), workbook);
+		}
 		if (!disciplinas.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(), workbook);
-			}
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

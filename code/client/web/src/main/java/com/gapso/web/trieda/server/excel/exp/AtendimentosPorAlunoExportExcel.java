@@ -97,11 +97,11 @@ public class AtendimentosPorAlunoExportExcel extends AbstractExportExcel {
 		List<Oferta> ofertas = Oferta.findByCenario(instituicaoEnsino,getCenario());
 		Map<Demanda,Map<Atendimento,List<Aluno>>> demandaToAlunosPorAtendimentosMap = getMapDemandaToAlunosPorAtendimento(ofertas);
 
+		
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(),workbook);
+		}
 		if (!demandaToAlunosPorAtendimentosMap.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(),workbook);
-			}
-
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);

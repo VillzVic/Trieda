@@ -84,11 +84,10 @@ public class DisponibilidadesSalasExportExcel extends AbstractExportExcel {
 	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
 		List<Sala> salas = Sala.findByCenario(this.instituicaoEnsino,getCenario());
 
+		if (this.removeUnusedSheets) {
+			removeUnusedSheets(this.getSheetName(), workbook);
+		}
 		if (!salas.isEmpty()) {
-			if (this.removeUnusedSheets) {
-				removeUnusedSheets(this.getSheetName(), workbook);
-			}
-
 			Sheet sheet = workbook.getSheet(this.getSheetName());
 			if (isXls()) {
 				fillInCellStyles(sheet);
@@ -107,7 +106,7 @@ public class DisponibilidadesSalasExportExcel extends AbstractExportExcel {
 
 			return true;
 		}
-
+		
 		return false;
 	}
 

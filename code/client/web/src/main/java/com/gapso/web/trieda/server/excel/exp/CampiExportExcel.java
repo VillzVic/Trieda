@@ -96,13 +96,12 @@ public class CampiExportExcel
 		List< Campus > campi = Campus.findByCenario(
 			this.instituicaoEnsino, getCenario() );
 
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !campi.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);
@@ -120,7 +119,7 @@ public class CampiExportExcel
 
 			return true;
 		}
-
+		
 		return false;
 	}
 

@@ -160,6 +160,10 @@ public class TRIEDAExportExcel
 			exporters.add( new AmbientesFaixaOcupacaoCapacidadeExportExcel(false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO) )
 			exporters.add( new AmbientesFaixaUtilizacaoHorariosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.TURNOS) )
+			exporters.add( new TurnosExportExcel(false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.TIPOS_CURSO) )
+			exporters.add( new TiposCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 
 		Exception exception = null;
 		try {

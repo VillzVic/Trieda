@@ -92,14 +92,13 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< Professor > professores = Professor.findByCenario( this.instituicaoEnsino, getCenario() );
-
+		
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !professores.isEmpty() )
 		{
-			if ( this.removeUnusedSheets )
-			{
-				removeUnusedSheets( this.getSheetName(), workbook );
-			}
-
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
 			if (isXls()) {
 				fillInCellStyles(sheet);

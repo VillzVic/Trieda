@@ -149,6 +149,10 @@ public class ResumoCursoExportExcel
 			resumoCursoDTOList.addAll(cursosServiceImpl.getResumos(campusDTO));
 		}
 
+		if ( this.removeUnusedSheets )
+		{
+			removeUnusedSheets( this.getSheetName(), workbook );
+		}
 		if ( !resumoCursoDTOList.isEmpty() )
 		{
 			Sheet sheet = workbook.getSheet( this.getSheetName() );
@@ -173,11 +177,6 @@ public class ResumoCursoExportExcel
 			}
 
 			result = true;
-		}
-
-		if ( this.removeUnusedSheets )
-		{
-			removeUnusedSheets( this.getSheetName(), workbook );
 		}
 		
 		return result;
