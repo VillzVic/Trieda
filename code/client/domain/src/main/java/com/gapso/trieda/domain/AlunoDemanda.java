@@ -549,6 +549,23 @@ public class AlunoDemanda
 		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
 	}
 	
+	public static int sumDemandaPorPrioridade(InstituicaoEnsino instituicaoEnsino, Cenario cenario, int prioridade) {
+		Query q = entityManager().createQuery(
+			" SELECT COUNT(o) FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus.cenario = :cenario " +
+			" AND o.prioridade = :prioridade " 
+		);
+
+		q.setParameter("instituicaoEnsino",instituicaoEnsino);
+		q.setParameter("cenario",cenario);
+		q.setParameter("prioridade",prioridade);
+
+		Object rs = q.getSingleResult();
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
+	}
+	
 	public static int sumDemandaPresencialPorPrioridade(InstituicaoEnsino instituicaoEnsino, Cenario cenario, 
 			Campus campus, int prioridade) {
 		// obtem os tipos de disciplinas que ocupam grade
