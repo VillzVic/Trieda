@@ -119,6 +119,7 @@ public class CenariosPresenter
 			{
 				final CenariosServiceAsync service = Services.cenarios();
 				List< CenarioDTO > list = display.getGrid().getGrid().getSelectionModel().getSelectedItems();
+				display.getGrid().mask();
 
 				service.remove( list, new AsyncCallback< Void >()
 				{
@@ -133,6 +134,7 @@ public class CenariosPresenter
 					public void onSuccess( Void result )
 					{
 						display.getGrid().updateList();
+						display.getGrid().unmask();
 						Info.display( "Removido",
 							"Item removido com sucesso!" );
 					}

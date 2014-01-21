@@ -285,6 +285,7 @@ public class Cenario
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE a FROM atendimentos_faixa_demanda a JOIN campi c ON a.cam_id = c.cam_id WHERE c.cen_id = :cenario"));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE hdc FROM horario_disponivel_cenario hdc JOIN horarios_aula ha ON hdc.hor_id = ha.hor_id JOIN turnos t ON ha.tur_id = t.tur_id WHERE t.cen_id = :cenario"));
 		nativeQueries.add(entityManager().createNativeQuery( "DELETE ha FROM horarios_aula ha JOIN turnos t ON ha.tur_id = t.tur_id WHERE t.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE pt FROM parametros_turnos pt JOIN turnos t ON pt.tur_id = t.tur_id WHERE t.cen_id = :cenario"));
 		
 		List<Query> queries = new ArrayList<Query>();
 		queries.add(entityManager().createQuery( "DELETE FROM AtendimentoTatico WHERE cenario = :cenario"));
