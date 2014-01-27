@@ -133,8 +133,6 @@ são denotados por $t$.
 \item $o_{i,d,s}$ - binária que indica se a turma $i$ da disciplina $d$ foi alocada na sala $s$. 
 \item $c_{i,d,t}$ - indica a turma $i$ da disciplina $d$ foi alocada em 2 dias consecutivos a partir de $t$.
 \item $fd_{d,a}$ - variável de folga, indica que o aluno $a$ não teve a demanda da disciplina $d$ atendida.
-\item $fcm_{i,d,t}$ - variável de folga inferior para a restrição de fixação da distribuição de créditos por dia. 
-\item $fcp_{i,d,t}$ - variável de folga superior para a restrição de fixação da distribuição de créditos por dia. 
 \item $fkm_{d,i,t}$ - variável de folga inferior para a restrição de combinação de divisão de créditos. 
 \item $fkp_{d,i,t}$ - variável de folga superior para a restrição de combinação de divisão de créditos. 
 \item $m_{d,i,k}$ - variável binária que indica se a combinação de divisão de créditos $k$ foi escolhida para a turma $i$ da disciplina $d$.
@@ -168,12 +166,6 @@ $$
    \mbox{MIN} &
       \delta \cdot \sum\limits_{d \in D} 
 \sum\limits_{i \in I_{d}} \sum\limits_{t \in T-{1}} c_{i,d,t}
-      \\
-      &
-       + \xi \cdot \sum\limits_{d \in D} \sum\limits_{t \in T} fcm_{d,t}
-      \\
-      &
-       + \xi \cdot \sum\limits_{d \in D} \sum\limits_{t \in T} fcp_{d,t}
       \\
       &
        + \omega \cdot \sum\limits_{a \in A}\sum\limits_{d \in D} \cdot fd_{d,a}
@@ -425,19 +417,6 @@ c_{i,d,t}  \geq \sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits
 \forall i \in I_{d} \quad
 \forall (t \geq 2) \in T
 \forall cp \in CP \quad
-\end{eqnarray}
-
-
-
-\subsubsection{Fixação da distribuição de créditos por dia (*)}
-
-\begin{eqnarray}
-\sum\limits_{u \in U_{cp}} \sum\limits_{s \in S_{u}} \sum\limits_{hi \in H_{t}} \sum_{\substack {hf \in H_{d} \\ hi\le hf}}
-x_{i,d,u,s,hi,hf,t} + fcp_{i,d,t} - fcm_{i,d,t} = FC_{d,t} \cdot z_{i,d,cp}  \nonumber \qquad 
-\forall cp \in CP \quad
-\forall d \in D \quad
-\forall i \in I_{d} \quad
-\forall t \in T
 \end{eqnarray}
 
 
