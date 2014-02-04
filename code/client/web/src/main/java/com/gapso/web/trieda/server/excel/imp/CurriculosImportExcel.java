@@ -210,7 +210,9 @@ public class CurriculosImportExcel
 		// Verifica se há referência a alguma semana letiva não cadastrada
 		checkNonRegisteredSemanaLetiva( sheetContent );
 		
-		checkDisciplinasAssociadasAMaisDeUmaSemanaLetiva(sheetContent);
+		// TODO: Para a UNIT e a UniRitter a linha abaixo deve ser comentada
+		// a verificação tem que ser alterada para não permitir mais de uma semana letiva com durações diferentes
+		//checkDisciplinasAssociadasAMaisDeUmaSemanaLetiva(sheetContent);
 
 		return getErrors().isEmpty();
 	}
