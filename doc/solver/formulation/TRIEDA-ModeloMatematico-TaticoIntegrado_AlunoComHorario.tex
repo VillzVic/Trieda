@@ -57,6 +57,9 @@ denotados por $oft$.
 \item $O_{d}$ - Conjunto de ofertas de uma disciplina $d$. 
 Os elementos desse conjunto são denotados por $oft_{d}$.
 
+\item $Per_{oft}$ - Conjunto de períodos da matriz curricular associada à oferta $oft$. Os elementos desse conjunto são 
+denotados por $p$.
+
 \item $S_{u}$ - Conjunto de salas da unidade $u$. Os elementos desse conjunto são 
 denotados por $s$.
 
@@ -130,6 +133,7 @@ são denotados por $t$.
 
 \item $v_{a,i,d,s,t,hi,hf}$ - indica se o aluno $a$ está alocado na turma $i$ da disciplina $d$ foi alocada na unidade $u$ na sala $s$ do horário $hi$ ao horário $hf$ do dia $t$. 
 \item $x_{i,d,u,s,hi,hf,t}$ - indica se a turma $i$ da disciplina $d$ foi alocada na unidade $u$ na sala $s$ do horário $hi$ ao horário $hf$ do dia $t$. 
+\item $z_{i,d,cp}$ - binária que indica se a turma $i$ da disciplina $d$ no campus $cp$ foi aberta. 
 \item $o_{i,d,s}$ - binária que indica se a turma $i$ da disciplina $d$ foi alocada na sala $s$. 
 \item $c_{i,d,t}$ - indica a turma $i$ da disciplina $d$ foi alocada em 2 dias consecutivos a partir de $t$.
 \item $fd_{d,a}$ - variável de folga, indica que o aluno $a$ não teve a demanda da disciplina $d$ atendida.
@@ -154,6 +158,11 @@ com alunos de cursos diferentes é proibido.
 \item $fp_{d,t,h}$ - variável de folga inteira que indica se a disciplina $d$ tem aula no dia $t$ e horario $h$ e não possui professor real com disponibilidade nesse dia e horário para ministra-la.
 \item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
 \item $fos_{i,d,cp}$ - variável inteira de folga de ocupação de sala. Indica a diferença entre a capacidade da sala e o numero de alunos alocados na turma.
+\item $uu_{u,oft,p}$ - variável binária de uso de unidade por período de oferta. Indica que a unidade $u$ está sendo usada por alguma turma com alunos do período $p$ da oferta $oft$.
+\item $fuu_{oft,p}$ - variável inteira de folga de única unidade. Quando é usada, o seu valor indica o excesso de unidades usadas pelo período $p$ da oferta $oft$ que extrapola a exigência de unidade única para o período.
+\item $us_{s,oft,p}$ - variável binária de uso de sala por período de oferta. Indica que a sala $s$ está sendo usada por alguma turma com alunos do período $p$ da oferta $oft$.
+\item $fus_{oft,p}$ - variável inteira de folga de única sala. Quando é usada, o seu valor indica o excesso de salas usadas pelo período $p$ da oferta $oft$ que extrapola a exigência de sala única para o período.
+
 
 \end{itemize}
 
@@ -535,7 +544,7 @@ x_{i,d,s,t,hi,hf} - fp_{d,t,h} \le nProfs_{d,t,h} \nonumber \qquad
 
 \begin{eqnarray}
 \sum\limits_{d \in D} nCreds_{d} (1 - fd_{d,a}) \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
-\forall a \in Al \quad
+\forall a \in Al
 \end{eqnarray}
 
 
@@ -544,9 +553,55 @@ x_{i,d,s,t,hi,hf} - fp_{d,t,h} \le nProfs_{d,t,h} \nonumber \qquad
 
 \begin{eqnarray}
 \sum\limits_{s \in S} Cap_{s} \cdot o_{i,d,s} - \sum\limits_{a \in Al} s_{i,d,cp,a} = fos_{i,d,cp} \nonumber \qquad 
-\forall i \in I \quad
-\forall d \in D \quad
+\forall i \in I \qquad
+\forall d \in D \qquad
 \forall cp \in CP
+\end{eqnarray}
+
+
+	
+\subsubsection{Seta o uso da sala para cada periodo de oferta}
+
+\begin{eqnarray}
+\sum\limits_{a \in A}\sum\limits_{i \in I_{d}}\sum\limits_{d \in D}\sum\limits_{u \in U}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} v_{a,i,d,s,u,t,hi,hf} \le bigM \cdot us_{s,oft,p} \nonumber \qquad \\
+\mbox{ aonde a = aluno cujo AlunoDemanda (a,d) esteja associado ao período p da oferta oft} \qquad \\
+\forall oft \in O \qquad
+\forall p \in Per_{oft} \qquad
+\forall s \in S
+\end{eqnarray}
+
+
+
+\subsubsection{Seta o uso da unidade para cada periodo de oferta}
+
+\begin{eqnarray}
+\sum\limits_{a \in A}\sum\limits_{i \in I_{d}}\sum\limits_{d \in D}\sum\limits_{s \in S}\sum\limits_{t \in T}\sum\limits_{hi \in H}\sum\limits_{hf \in H} v_{a,i,d,s,u,t,hi,hf} \le bigM \cdot uu_{u,oft,p} \nonumber \qquad \\
+\mbox{ aonde a = aluno cujo AlunoDemanda (a,d) esteja associado ao período p da oferta oft} \qquad \\
+\forall oft \in O \qquad
+\forall p \in Per_{oft} \qquad
+\forall u \in U
+\end{eqnarray}
+
+
+
+\subsubsection{Limita as unidades usadas por cada período}
+
+\begin{eqnarray}
+\sum\limits_{u \in U} uu_{u,oft,p} + fuu_{oft,p} \le 1 \nonumber \qquad 
+\forall oft \in O \qquad
+\forall p \in Per_{oft}
+\\ \mbox{ sendo que a folga só existe caso haja possibilidade de compartilhamento de aulas do período com outra oferta.}
+\end{eqnarray}
+
+
+	
+\subsubsection{Limita as salas usadas por cada período}
+
+\begin{eqnarray}
+\sum\limits_{s \in S} us_{s,oft,p} + fus_{oft,p} \le 1 \nonumber \qquad 
+\forall oft \in O \qquad
+\forall p \in Per_{oft}
+\\ \mbox{ sendo que a folga só existe caso haja possibilidade de compartilhamento de aulas do período com outra oferta.}
 \end{eqnarray}
 
 
