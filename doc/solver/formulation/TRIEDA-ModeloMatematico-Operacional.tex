@@ -720,7 +720,7 @@ hip_{p,t} \le m(h) + M*( 1 - \sum\limits_{a \in A_{t}} x_{p,a,h} ) \nonumber \qq
 \subsubsection{Calcula tempo de fim da última aula do professor no dia}
 
 \begin{eqnarray}
-hfp_{p,t} \ge m(h) + \sum\limits_{a \in A_{t}} x_{p,a,h} \nonumber \qquad 
+hfp_{p,t} \ge m(h) \cdot \sum\limits_{a \in A_{t}} x_{p,a,h} \nonumber \qquad 
 \forall p \in P \quad
 \forall t \in T \quad
 \forall h \in H
@@ -801,10 +801,11 @@ hf \in H \mbox{, hf é o último horário do dia}
 \forall d \in D
 \end{eqnarray}    
 
+
 \subsubsection{Garante o máximo de disciplinas ministradas por um professor por curso}
 
 \begin{eqnarray}
-\sum\limits_{d \in C} dpc_{p,c,d} - fmdpc_{p,c} \le MaxDiscProfCurso_{p,c} \nonumber \qquad 
+\sum\limits_{d \in D_{c}} dpc_{p,c,d} - fmdpc_{p,c} \le MaxDiscProfCurso_{p,c} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
@@ -824,14 +825,24 @@ hf \in H \mbox{, hf é o último horário do dia}
 \end{eqnarray}
 
 
-\subsubsection{Alocação minima de demanda por aluno}
-
-\begin{eqnarray}
-\sum\limits_{ \substack{ d \in D \\ a \in (i,d,cp) } } nCreds_{d} \cdot \sum\limits_{p \in P} y_{p,d,i,cp} \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
-\forall a \in Al \quad
-\end{eqnarray}
+% Não deve precisar disso, já que o operacional tem que atender tudo, ainda que use prof virtual.
+%\subsubsection{Alocação minima de demanda por aluno}
+%
+%\begin{eqnarray}
+%\sum\limits_{ \substack{ d \in D \\ a \in (i,d,cp) } } nCreds_{d} \cdot \sum\limits_{p \in P} y_{p,d,i,cp} \ge MinAtendPerc \cdot TotalDemanda_{a} - fmd_{a} \nonumber \qquad 
+%\forall a \in Al \quad
+%\end{eqnarray}
 
 	
+
+\subsubsection{Garante interjornada mínima dos professores}
+
+\begin{eqnarray}
+\sum\limits_{a \in A_{t}} x_{p,a,hf} + \sum\limits_{a \in A_{t+1}} x_{p,a,hi} \le 1 \nonumber \qquad 
+\forall p \in P \quad
+\forall t \in T \\
+\forall \mbox{ (hf,t) e (hi,t+1) tal que } \Delta_{(hf,t), (hi,t+1)} < TempoInterjornada
+\end{eqnarray}
 
 	
 
