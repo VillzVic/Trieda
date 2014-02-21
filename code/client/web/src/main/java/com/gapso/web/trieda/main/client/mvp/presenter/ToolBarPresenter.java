@@ -32,7 +32,9 @@ import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CarregarSolucaoView;
 import com.gapso.web.trieda.main.client.mvp.view.CenariosView;
 import com.gapso.web.trieda.main.client.mvp.view.CompatibilidadesView;
+import com.gapso.web.trieda.main.client.mvp.view.ConfiguracoesView;
 import com.gapso.web.trieda.main.client.mvp.view.ConfirmacaoTurmasView;
+import com.gapso.web.trieda.main.client.mvp.view.CurriculoFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
 import com.gapso.web.trieda.main.client.mvp.view.CursoFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CursosView;
@@ -86,9 +88,11 @@ import com.gapso.web.trieda.main.client.mvp.view.UsuariosView;
 import com.gapso.web.trieda.main.client.mvp.view.VincularAreasTitulacaoView;
 import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroConfiguracaoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
@@ -126,6 +130,7 @@ public class ToolBarPresenter
 		MenuItem getGerenciarRequisicoesCenariosButton();
 		Button getUsuariosButton();
 		MenuItem getListarUsuariosButton();
+		MenuItem getConfiguracoesButton();
 		MenuItem getUsuariosAlterarSenhaButton();
 		MenuItem getUsuariosSairButton();
 		MenuItem getUsuariosNomeButton();
@@ -150,13 +155,15 @@ public class ToolBarPresenter
 		Button getAssociarDisciplinasGruposSalasListSalasButton();
 
 		Button getCursosNovoCursosButton();
-		Button getCurriculosListCursosButton();
-		Button getCurriculosDisciplinasPreRequisitosCursosButton();
-		Button getCurriculosDisciplinasCoRequisitosCursosButton();
 		Button getCursosListCursosButton();
 		Button getAreasTitulacaoListCursosButton();
 		Button getVincularAreasTitulacaoListCursosButton();
 		Button getTiposCursosListCursosButton();
+		
+		Button getMatrizesNovoMatrizesButton();
+		Button getMatrizesListMatrizesButton();
+		Button getCurriculosDisciplinasPreRequisitosMatrizesButton();
+		Button getCurriculosDisciplinasCoRequisitosMatrizesButton();
 
 		Button getDisciplinasNovoDisciplinasButton();
 		Button getDisciplinasListDisciplinasButton();
@@ -540,8 +547,21 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getMatrizesNovoMatrizesButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new CurriculoFormPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new CurriculoFormView(new CurriculoDTO(), null, cenarioDTO), null );
 
-		this.toolBar.getCurriculosListCursosButton().addSelectionListener(
+				presenter.go( gTab );
+			}
+		});
+
+		this.toolBar.getMatrizesListMatrizesButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -554,7 +574,7 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getCurriculosDisciplinasPreRequisitosCursosButton().addSelectionListener(
+		this.toolBar.getCurriculosDisciplinasPreRequisitosMatrizesButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{
 			@Override
@@ -567,7 +587,7 @@ public class ToolBarPresenter
 			}
 		});
 		
-		this.toolBar.getCurriculosDisciplinasCoRequisitosCursosButton().addSelectionListener(
+		this.toolBar.getCurriculosDisciplinasCoRequisitosMatrizesButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
 			{
 				@Override
@@ -1331,6 +1351,29 @@ public class ToolBarPresenter
 					cenarioDTO, new UsuariosView( cenarioDTO ) );
 
 			presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getConfiguracoesButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+				Services.instituicoesEnsino().getConfiguracoes(new AsyncCallback< ParametroConfiguracaoDTO >()
+				{
+					@Override
+					public void onFailure( Throwable caught )
+					{
+						MessageBox.alert( "ERRO!",
+							"Não foi possível abrir a tela de parâmetros", null );
+					}
+	
+					@Override
+					public void onSuccess(ParametroConfiguracaoDTO parametroConfiguracaoDTO) {
+						Presenter presenter = new ConfiguracoesPresenter( instituicaoEnsinoDTO,
+								cenarioDTO, new ConfiguracoesView( parametroConfiguracaoDTO ) );
+	
+						presenter.go( gTab );
+					}
+				});
 			}
 		});
 		

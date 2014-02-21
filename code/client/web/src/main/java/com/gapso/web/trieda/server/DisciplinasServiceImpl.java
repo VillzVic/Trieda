@@ -851,7 +851,7 @@ public class DisciplinasServiceImpl
 			resumoDTO.setCursoId(atendimento.getCursoId());
 			resumoDTO.setCurriculoId(atendimento.getCurriculoId());
 			resumoDTO.setDisciplinaIdDaAula( disciplinaDaAula.getId() );
-			resumoDTO.setDisciplinaStringDaAula( disciplinaDaAula.getCodigo() );
+			resumoDTO.setDisciplinaStringDaAula( disciplinaDaAula.getNome() + "(" + disciplinaDaAula.getCodigo() + ")");
 			resumoDTO.setDisciplinaIdDemandada( disciplinaDemandada.getId() );
 			resumoDTO.setDisciplinaStringDemandada( disciplinaDemandada.getCodigo() );
 			resumoDTO.setTurma( atendimento.getTurma() );

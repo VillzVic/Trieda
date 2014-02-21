@@ -164,6 +164,17 @@ public class TRIEDAExportExcel
 			exporters.add( new TurnosExportExcel(false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.TIPOS_CURSO) )
 			exporters.add( new TiposCursoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.DIVISAO_CREDITOS) )
+			exporters.add( new DivisoesCreditoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.RESUMO_CENARIO) )
+			exporters.add( new ResumoCenarioExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.RESUMO_CAMPUS) )
+			exporters.add( new ResumoCampiExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.SEMANAS_LETIVA) )
+		{
+			exporters.add( new SemanaLetivaExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+			exporters.add( new SemanaLetivaHorariosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		}
 
 		Exception exception = null;
 		try {

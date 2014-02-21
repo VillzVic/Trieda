@@ -101,7 +101,7 @@ public class AlunosDemandaExportExcel
 		boolean result = false;
 		
 		List< AlunoDemanda > alunosDemanda
-			= AlunoDemanda.findAll( this.instituicaoEnsino );
+			= AlunoDemanda.findAll( this.instituicaoEnsino, getCenario() );
 
 //		Set< AlunoDemanda > alunosDemanda
 //			= new HashSet< AlunoDemanda >( listAlunosDemanda );

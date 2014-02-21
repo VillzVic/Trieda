@@ -15,6 +15,7 @@ import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaUtilizadaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.util.view.RelatorioSalaFiltro;
@@ -48,4 +49,5 @@ public interface SalasService
 	List<SalaDTO> getListNaoVinculadas(CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO);
 	List<RelatorioDTO> getRelatorio( CenarioDTO cenarioDTO, RelatorioSalaFiltro salaFiltro, RelatorioDTO currentNode );
 	ListLoadResult<FaixaCapacidadeSalaDTO> getFaixasCapacidadeSala(CenarioDTO cenarioDTO,	Integer tamanhoFaixa);
+	PagingLoadResult<SalaUtilizadaDTO> getSalasUtilizadas( CenarioDTO cenarioDTO, Long campusDTO, RelatorioSalaFiltro salaFiltro, BasePagingLoadConfig loadConfig);
 }

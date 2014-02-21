@@ -2,10 +2,15 @@ package com.gapso.web.trieda.shared.util.relatorioVisao;
 
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.services.Services;
 
 public class GradeHorariaAlunoGrid extends GradeHorariaVisao{
+	public GradeHorariaAlunoGrid(CenarioDTO cenarioDTO) {
+		super(cenarioDTO);
+	}
+
 	private RelatorioVisaoAlunoFiltro filtro;
 
 	public void requestAtendimentos(){
@@ -13,7 +18,7 @@ public class GradeHorariaAlunoGrid extends GradeHorariaVisao{
 
 		this.grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 		
-		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoAluno(getFiltro(), this.getCallback());
+		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoAluno(cenarioDTO, getFiltro(), this.getCallback());
 	}
 	
 	protected TrioDTO<String, String, String> getHTMLInfo(AtendimentoRelatorioDTO atendimentoDTO){

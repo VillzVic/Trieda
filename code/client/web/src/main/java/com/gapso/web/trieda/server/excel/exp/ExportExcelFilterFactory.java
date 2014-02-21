@@ -30,6 +30,13 @@ public class ExportExcelFilterFactory{
 			case RESUMO_DISCIPLINA: return getExportResumoDisciplina(request, instituicaoEnsino.getId());
 			case RESUMO_CURSO: return getExportResumoCurso(request, instituicaoEnsino.getId());
 			case ATENDIMENTOS_FAIXA_DEMANDA: return getExportAtendimentosFaixaDemanda(request, instituicaoEnsino.getId());
+			case PROFESSORES_UTILIZADOS: return getExportProfessoresList(request, instituicaoEnsino.getId());
+			case PROFESSORES_GRADE_CHEIA: return getExportProfessoresList(request, instituicaoEnsino.getId());
+			case PROFESSORES_BEM_ALOCADOS: return getExportProfessoresList(request, instituicaoEnsino.getId());
+			case PROFESSORES_MAL_ALOCADOS: return getExportProfessoresList(request, instituicaoEnsino.getId());
+			case PROFESSORES_JANELAS: return getExportProfessoresList(request, instituicaoEnsino.getId());
+			case PROFESSORES_DESLOCAMENTO_UNIDADES: return getExportProfessoresList(request, instituicaoEnsino.getId());
+			case PROFESSORES_DESLOCAMENTO_CAMPI: return getExportProfessoresList(request, instituicaoEnsino.getId());
 		default:
 			break;
 		}
@@ -153,6 +160,22 @@ public class ExportExcelFilterFactory{
 		try{
 			Long campusId = Long.parseLong(request.getParameter("campusId"));
 			return new PercentMestresDoutoresFiltroExcel(instituicaoEnsinoId, campusId);
+		}
+		catch(Exception ex){
+			return null;
+		}
+	}
+	
+	private static ProfessoresListFiltroExcel getExportProfessoresList(HttpServletRequest request, Long instituicaoEnsinoId){
+		try{
+			Long campusId = (request.getParameter("campusId").isEmpty() ? null : Long.parseLong(request.getParameter("campusId")));
+			Long cursoId = (request.getParameter("cursoId").isEmpty() ? null : Long.parseLong(request.getParameter("cursoId")));
+			Long turnoId = (request.getParameter("turnoId").isEmpty() ? null : Long.parseLong(request.getParameter("turnoId")));
+			Long titulacaoId = (request.getParameter("titulacaoId").isEmpty() ? null : Long.parseLong(request.getParameter("titulacaoId")));
+			Long areaTitulacaoId = (request.getParameter("areaTitulacaoId").isEmpty() ? null : Long.parseLong(request.getParameter("areaTitulacaoId")));
+			Long tipoContratoId = (request.getParameter("tipoContratoId").isEmpty() ? null : Long.parseLong(request.getParameter("tipoContratoId")));
+			return new ProfessoresListFiltroExcel( instituicaoEnsinoId, campusId, cursoId, turnoId, titulacaoId,
+					areaTitulacaoId, tipoContratoId);
 		}
 		catch(Exception ex){
 			return null;

@@ -633,6 +633,50 @@ public class AtendimentoOperacional
 	}
 	
 	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findBySalaAndTurno(
+		Sala sala, Turno turno, SemanaLetiva semanaLetiva,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		String semanaLetivaQuery = "";
+
+		if ( semanaLetiva != null )
+		{
+			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
+		}
+		
+		String turnoQuery = "";
+		
+		if ( turno != null )
+		{
+			turnoQuery = " AND o.oferta.turno = :turno";
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o "
+			+ " WHERE o.sala = :sala "
+			+ " AND o.instituicaoEnsino = :instituicaoEnsino"
+			+ " AND o.cenario = :cenario "
+			+ turnoQuery
+			+ semanaLetivaQuery );
+
+		q.setParameter( "sala", sala );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+		if ( semanaLetiva != null )
+		{
+			q.setParameter( "semanaLetiva", semanaLetiva );
+		}
+		
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
+		}
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
 	public static List<AtendimentoOperacional> findBy(
 		Aluno aluno, Turno turno, Campus campus, InstituicaoEnsino instituicaoEnsino)
 	{
@@ -1492,7 +1536,7 @@ public class AtendimentoOperacional
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllByCampi(
-		InstituicaoEnsino instituicaoEnsino, List< Campus > campi )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, List< Campus > campi )
 	{
 		if (campi.isEmpty()) {
 			return new ArrayList< AtendimentoOperacional >();
@@ -1502,9 +1546,11 @@ public class AtendimentoOperacional
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.oferta.campus IN (:campi) " +
+			" AND o.cenario = :cenario " +
 			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "campi", campi );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();
@@ -1596,6 +1642,21 @@ public class AtendimentoOperacional
 			return q.getResultList().size();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> getAtendimentosByOferta(
+			InstituicaoEnsino instituicaoEnsino, Oferta oferta )
+		{
+			Query q = entityManager().createQuery(
+				" SELECT o FROM AtendimentoOperacional o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.oferta = :oferta " );
+
+				q.setParameter( "oferta", oferta );
+				q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+				return q.getResultList();
+		}
+	
 	public static int countProfessores(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 		{
@@ -1664,20 +1725,20 @@ public class AtendimentoOperacional
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 			Campus campus, Curso curso, Turno turno, Titulacao titulacao,
 			AreaTitulacao areaTitulacao, TipoContrato tipoContrato, String cpf,
-			int firstResult, int maxResults, String orderBy) {
+			Integer firstResult, Integer maxResults, String orderBy) {
 		
 		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
 		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
 		String titulacaoQuery = titulacao == null ? "" : " AND o.professor.titulacao = :titulacao ";
 		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professor.areaTitulacao = :areaTitulacao ";
 		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professor.tipoContrato = :tipoContrato ";
-		String cpfQuery = cpf == null ? "" : " AND o.cpf LIKE LOWER (:cpf)";
+		String cpfQuery = cpf == null ? "" : " AND o.professor.cpf LIKE LOWER (:cpf)";
 		if ( orderBy != null )
 		{
 			if( orderBy.contains("notaDesempenho") )
 				orderBy = orderBy.replace("notaDesempenho", "ORDER BY AVG(d.nota)");
 			else
-				orderBy = " ORDER BY o." + orderBy.replace("String", "");
+				orderBy = " ORDER BY o.professor." + orderBy.replace("String", "");
 		}
 		else
 		{
@@ -1685,7 +1746,8 @@ public class AtendimentoOperacional
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT (o.professor) FROM AtendimentoOperacional o " +
+			" SELECT o.professor FROM AtendimentoOperacional o " +
+			" LEFT JOIN o.professor.disciplinas d LEFT JOIN FETCH o.professor.atendimentosOperacionais " +
 			" WHERE o.oferta.campus = :campus " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario " +
@@ -1693,13 +1755,16 @@ public class AtendimentoOperacional
 			areaTitulacaoQuery + tipoContratoQuery +
 			cpfQuery +
 			" AND o.professor IS NOT NULL " +
+			" GROUP BY o.professor " +
 			orderBy);
 
 		q.setParameter( "campus", campus );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
-		q.setFirstResult( firstResult );
-		q.setMaxResults( maxResults );
+		if (firstResult != null)
+			q.setFirstResult( firstResult );
+		if (maxResults != null)
+			q.setMaxResults( maxResults );
 		if (curso != null)
 		{
 			q.setParameter( "curso", curso );
@@ -1739,10 +1804,10 @@ public class AtendimentoOperacional
 		String titulacaoQuery = titulacao == null ? "" : " AND o.professor.titulacao = :titulacao ";
 		String areaTitulacaoQuery = areaTitulacao == null ? "" : " AND o.professor.areaTitulacao = :areaTitulacao ";
 		String tipoContratoQuery = tipoContrato == null ? "" : " AND o.professor.tipoContrato = :tipoContrato ";
-		String cpfQuery = cpf == null ? "" : " AND o.cpf LIKE LOWER (:cpf)";
+		String cpfQuery = cpf == null ? "" : " AND o.professor.cpf LIKE LOWER (:cpf)";
 
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT (o.professor) FROM AtendimentoOperacional o " +
+			" SELECT DISTINCT (o.professor) FROM AtendimentoOperacional o LEFT JOIN FETCH o.professor.atendimentosOperacionais " +
 			" WHERE o.oferta.campus = :campus " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario " +

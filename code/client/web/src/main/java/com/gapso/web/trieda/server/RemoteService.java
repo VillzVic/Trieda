@@ -1,5 +1,15 @@
 package com.gapso.web.trieda.server;
 
+import java.util.Enumeration;
+
+import javax.activation.DataSource;
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+
+import org.mortbay.naming.NamingContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -37,6 +47,19 @@ public class RemoteService
 		{
 			return Cenario.findMasterData(getInstituicaoEnsinoUser());
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	final protected String getDataSourceName() throws NamingException
+	{
+		String result = "";
+		InitialContext ctx = new InitialContext();
+		NamingEnumeration<NameClassPair> list = ((NamingContext) ctx.lookup("jdbc")).list("");
+		if (list.hasMore()) {
+			result += list.next().getName();
+		}
+
+		return result;
 	}
 	
 	final protected void setCenario(long cenarioId)

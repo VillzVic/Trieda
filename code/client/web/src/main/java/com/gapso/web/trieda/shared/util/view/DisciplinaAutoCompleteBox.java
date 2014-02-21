@@ -108,7 +108,6 @@ public class DisciplinaAutoCompleteBox extends ComboBox<DisciplinaDTO> {
 		setEmptyText("Selecione uma disciplina");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
-		setHideTrigger(true);
 		setTriggerAction(TriggerAction.QUERY);
 		setMinChars(1);
 	}

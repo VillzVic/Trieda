@@ -45,16 +45,28 @@ public class ProfessoresTitulacoesPresenter
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenarioDTO;
+	private Long campusDTO;
+	private boolean somenteAlocados;
 	
 	public ProfessoresTitulacoesPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 			CenarioDTO cenarioDTO, Display display )
 	{
+		this (instituicaoEnsinoDTO, cenarioDTO, null, false, display);
+	}
+	
+	public ProfessoresTitulacoesPresenter(
+			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
+			CenarioDTO cenarioDTO, Long campusDTO, boolean somenteAlocados, Display display )
+	{
 			this.display = display;
 			this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 			this.cenarioDTO = cenarioDTO;
+			this.somenteAlocados = somenteAlocados;
+			this.campusDTO = campusDTO;
 	
 			setListeners();
+			setCampus();
 	}
 	
 	private void setListeners()
@@ -71,7 +83,7 @@ public class ProfessoresTitulacoesPresenter
 					return;
 				}
 				display.getGrid().mask( display.getI18nMessages().loading() );
-				Services.professores().getProfessoresTitulacoes( cenarioDTO, se.getSelectedItem(),
+				Services.professores().getProfessoresTitulacoes( cenarioDTO, se.getSelectedItem(), somenteAlocados,
 					new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
 				{
 					@Override
@@ -143,6 +155,22 @@ public class ProfessoresTitulacoesPresenter
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
 		});
+	}
+	
+	public void setCampus()
+	{
+		if (campusDTO != null)
+		{
+			Services.campi().getCampus(campusDTO, new AbstractAsyncCallbackWithDefaultOnFailure< CampusDTO >( display )
+			{
+				@Override
+				public void onSuccess(
+						CampusDTO campusDTO )
+					{
+					display.getCampusComboBox().setValue(campusDTO);
+					}
+			});
+		}
 	}
 	
 	@Override

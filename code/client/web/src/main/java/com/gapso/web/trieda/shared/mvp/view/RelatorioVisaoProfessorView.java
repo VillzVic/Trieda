@@ -58,7 +58,7 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 	
 	@Override
 	protected GradeHorariaProfessorGrid createGradeHorariaVisao(){
-		return new GradeHorariaProfessorGrid(isVisaoProfessor);
+		return new GradeHorariaProfessorGrid(cenarioDTO, isVisaoProfessor);
 	}
 
 	protected void createFilter(){

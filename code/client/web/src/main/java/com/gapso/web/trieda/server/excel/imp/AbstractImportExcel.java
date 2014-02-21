@@ -15,9 +15,11 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public abstract class AbstractImportExcel< ExcelBeanType >
 	implements IImportExcel
@@ -143,11 +145,13 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 			{
 				workbook = WorkbookFactory.create( inputStream );
 			}
-
+			if (checkInvalidSheet(workbook))
+			{
+				throw new TriedaException("Não foi encontrada uma aba válida para a importacao");
+			}
 			for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
 			{
 				Sheet sheet = workbook.getSheetAt( sheetIndex );
-
 				// Verifica se a aba deve ou não ser processada
 				if ( sheetMustBeProcessed( sheetIndex, sheet, workbook ) )
 				{
@@ -213,6 +217,22 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 		}
 
 		return excelBeansMap;
+	}
+
+	private boolean checkInvalidSheet(Workbook workbook) {
+		boolean nenhumaAbaValida = true;
+		for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
+		{
+			for (ExcelInformationType value : ExcelInformationType.values())
+			{
+				if (value.getSheetName().equals(workbook.getSheetName( sheetIndex )))
+				{
+					nenhumaAbaValida = false;
+				}
+			}
+		}
+		
+		return nenhumaAbaValida;
 	}
 
 	protected boolean isHeaderValid( Row candidateHeader, int sheetIndex,

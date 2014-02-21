@@ -317,8 +317,14 @@ public class CenariosServiceImpl
 		TipoContrato tipo2 = new TipoContrato();
 		tipo2.setCenario(cenario);
 		tipo2.setInstituicaoEnsino(getInstituicaoEnsinoUser());
-		tipo2.setNome("Mensalista");
-		tipo2.persist();		
+		tipo2.setNome("Tempo Parcial");
+		tipo2.persist();
+		
+		TipoContrato tipo3 = new TipoContrato();
+		tipo3.setCenario(cenario);
+		tipo3.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+		tipo3.setNome("Tempo Integral");
+		tipo3.persist();	
 	}
 
 	@Override
@@ -400,6 +406,14 @@ public class CenariosServiceImpl
 				 numberFormatter.print( totalLaboratorios,pt_BR ) + "</b>"), null, true ) );
 		
 		return list;
+	}
+	
+	@Override
+	public void limpaSolucoesCenario(CenarioDTO cenarioDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Cenario.limpaSolucoesCenario(cenario);
 	}
 	
 	public Integer checkDBVersion()

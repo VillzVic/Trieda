@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.web.trieda.server.excel.exp.SemanaLetivaExportExcel;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationImpl;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -56,6 +57,7 @@ public class TRIEDAImportExcel
 
 			List< IImportExcel > importers = new ArrayList< IImportExcel >();
 
+			importers.add( new SemanaLetivaImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new CampiImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new UnidadesImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new SalasImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );

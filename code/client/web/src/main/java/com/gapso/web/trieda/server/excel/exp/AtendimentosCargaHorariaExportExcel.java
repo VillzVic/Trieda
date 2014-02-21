@@ -108,7 +108,7 @@ public class AtendimentosCargaHorariaExportExcel
 			= new ArrayList< AtendimentoCargaHorariaDTO >();
 		AlunosDemandaServiceImpl alunosDemandaServiceImpl = new AlunosDemandaServiceImpl();
 		atendimentosCargaHoraria.addAll(
-			alunosDemandaServiceImpl.getAtendimentoCargaHoraria() );
+			alunosDemandaServiceImpl.getAtendimentoCargaHoraria(getCenario()) );
 		
 		if ( this.removeUnusedSheets )
 		{

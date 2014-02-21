@@ -41,7 +41,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml(cenarioDTO.getNome() + " » Grupos de Salas");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Grupos de Ambientes");
 		createToolBar();
 		createGrid();
 		createTabItem();
@@ -49,14 +49,14 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Grupos de Salas", Resources.DEFAULTS.grupoSala16());
+		tabItem = new GTabItem("Grupos de Ambientes", Resources.DEFAULTS.grupoSala16());
 		tabItem.setContent(panel);
 	}
 	
 	private void createToolBar() {
 		toolBar = new SimpleToolBar(this);
 		toolBar.add(new SeparatorToolItem());
-		associarSalasBT = toolBar.createButton("Associar Salas", Resources.DEFAULTS.sala16());
+		associarSalasBT = toolBar.createButton("Associar Ambientes", Resources.DEFAULTS.sala16());
 		toolBar.add(associarSalasBT);
 		panel.setTopComponent(toolBar);
 	}
@@ -71,7 +71,7 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-	    XTemplate tpl = XTemplate.create("<p><b>Salas: [Código] ([Número],[Capacidade])</b></p><p>{salasString}</p>");  
+	    XTemplate tpl = XTemplate.create("<p><b>Ambientes: [Código] ([Número],[Capacidade])</b></p><p>{salasString}</p>");  
 	    expander = new RowExpander();  
 	    expander.setTemplate(tpl);
 	    list.add(expander);

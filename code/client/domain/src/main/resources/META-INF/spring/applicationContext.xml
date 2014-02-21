@@ -18,6 +18,8 @@
 
 	<!-- development | production | otimization -->
 	<context:property-placeholder location="classpath*:META-INF/spring/trieda-development.properties" />
+ 	<!-- jdbc/triedaDevelDS | jdbc/triedaProdDS -->
+<!--        	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/triedaDevelDS">	</jee:jndi-lookup> -->
 
 	<context:spring-configured />
 
@@ -29,7 +31,7 @@
 	<aop:aspectj-autoproxy/>
 	<bean id="myAspect" class="com.gapso.web.trieda.server.util.progressReport.ProgressReportAspect" />
 
-	<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
+   	<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
 		<property name="driverClassName" value="${database.driverClassName}" />
 		<property name="url" value="${database.url}" />
 		<property name="username" value="${database.username}" />

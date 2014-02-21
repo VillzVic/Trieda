@@ -33,6 +33,7 @@ public class CenariosPresenter
 		Button getEditButton();
 		Button getRemoveButton();
 		Button getAbrirCenarioButton();
+		Button getLimparSolucaoButton();
 		TextField< Integer > getAnoBuscaTextField();
 		TextField< Integer > getSemestreBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -207,6 +208,35 @@ public class CenariosPresenter
 				});
 			}
 		});
+		
+		this.display.getLimparSolucaoButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					CenariosServiceAsync service = Services.cenarios();
+					
+					CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+					display.getGrid().mask();
+					service.limpaSolucoesCenario(cenarioDTO, new AsyncCallback<Void>(){
+
+						@Override
+						public void onFailure(Throwable caught) {
+							MessageBox.alert( "ERRO!",
+									"Deu falha na conexão", null );
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							display.getGrid().unmask();
+							Info.display( "Removido",
+								"Soluções Limpas com Sucesso!" );
+						}
+						
+					});
+				}
+			});
 	}
 
 	@Override

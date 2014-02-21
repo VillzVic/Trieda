@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.widget.form.Field;
 import com.gapso.web.trieda.main.client.mvp.presenter.AmbientesFaixaOcupacaoCapacidadePresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.AmbientesFaixaUtilizacaoHorariosPresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioSalasPresenter;
+import com.gapso.web.trieda.main.client.mvp.presenter.SalasUtilizadasPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
@@ -80,7 +81,7 @@ public class RelatorioSalasView  extends RelatorioView
 	}
 
 	@Override
-	protected void addListener(Button bt, RelatorioDTO model) {
+	protected void addListener(Button bt, final RelatorioDTO model) {
 		switch (model.getButtonIndex())
 		{
 		case 0:
@@ -100,6 +101,17 @@ public class RelatorioSalasView  extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new AmbientesFaixaOcupacaoCapacidadePresenter( instituicaoEnsinoDTO,
 							cenarioDTO, new AmbientesFaixaOcupacaoCapacidadeView( cenarioDTO ) );
+
+					presenter.go( gTab );
+				}
+			});
+			break;
+		case 2:
+			bt.addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce){
+					Presenter presenter = new SalasUtilizadasPresenter( instituicaoEnsinoDTO,
+							cenarioDTO, model.getCampusId(), filtro, new SalasUtilizadasView( cenarioDTO ) );
 
 					presenter.go( gTab );
 				}

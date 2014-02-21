@@ -134,7 +134,7 @@ public class ProfessoresAreasConhecimentoExportExcel
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
 			relatorioDocenteDTO.addAll(
-					professoresServiceImpl.getProfessoresAreasConhecimento(ConvertBeans.toCenarioDTO(getCenario()), campusDTO, null) );
+					professoresServiceImpl.getProfessoresAreasConhecimento(ConvertBeans.toCenarioDTO(getCenario()), campusDTO, null, false) );
 		}
 
 		if ( !relatorioDocenteDTO.isEmpty() )

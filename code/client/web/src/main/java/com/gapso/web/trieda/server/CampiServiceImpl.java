@@ -484,7 +484,8 @@ public class CampiServiceImpl extends RemoteService
 				}
 			} else {
 				// atendimentos operacionais
-				for (AtendimentoOperacional atendimento : oferta.getAtendimentosOperacionais()) {
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+				for (AtendimentoOperacional atendimento : atendimentos) {
 					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
 					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
 					if (atendimetosPorSalaTurno == null) {
@@ -546,14 +547,14 @@ public class CampiServiceImpl extends RemoteService
 						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
 						
 						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
-							somatorioDeAlunosDeTodasAsAulasEmAmbientes += aula.getQuantidadeAlunos();
-							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes += sala.getCapacidadeInstalada();
+							somatorioDeAlunosDeTodasAsAulasEmAmbientes += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+							somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
 							if (!sala.isLaboratorio()) {
-								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos();
-								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada();
+								somatorioDeAlunosDeTodasAsAulasEmSalasDeAula += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+								somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
 							} else {
-								somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos();
-								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada();
+								somatorioDeAlunosDeTodasAsAulasEmLaboratorios += aula.getQuantidadeAlunos() * aula.getTotalCreditos();
+								somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios += sala.getCapacidadeInstalada() * aula.getTotalCreditos();
 							}
 							totalCreditosSemanais += aula.getTotalCreditos();
 							totalCreditosSemanaisProfessores += (aula.getProfessorId() == null) ? 0 : aula.getTotalCreditos();
@@ -593,7 +594,6 @@ public class CampiServiceImpl extends RemoteService
 			for(Integer i : countHorariosAula.keySet()){
 				cargaHorariaSemanalEmMinutos += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
 			}
-			
 			for(Long salaId : salaIdToTempoUsoSemanalEmMinutosMap.keySet()){
 				Integer tempoUsoSalaSemanalEmMinutos = salaIdToTempoUsoSemanalEmMinutosMap.get(salaId);
 				mediaUtilizacaoHorarioSalas += ((double)tempoUsoSalaSemanalEmMinutos / cargaHorariaSemanalEmMinutos);
@@ -634,14 +634,13 @@ public class CampiServiceImpl extends RemoteService
 //				int qtdAlunosAtendidosDemanda = (demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda) - totalAlunosAtendidosComSubstituta;
 //				receitaSemestral += (demanda.getDisciplina().getCreditosTotal()*qtdAlunosAtendidosDemanda*demanda.getOferta().getReceita());
 //			}
-			
 			receitaSemestral = (ehTatico) ? AtendimentoTatico.calcReceita(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.calcReceita(getInstituicaoEnsinoUser(),campus);
 			receitaSemestral = TriedaUtil.round(receitaSemestral,2);
 		}
-		
 		// cálculo de outros indicadores
 		Integer qtdTotalAlunos = Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
 		Integer qtdTotalDocentes = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus).size();
+		Integer qtdDocentesHabilitados = Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, campus).size();
 		Integer qtdTurmasAbertasProfessoresVirtuais = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresVirtuais(getInstituicaoEnsinoUser(),campus);
 		Integer qtdTurmasAbertasProfessoresInstituicao = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresInstituicao(getInstituicaoEnsinoUser(),campus);
 		Integer qtdTurmasAbertas = ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
@@ -768,7 +767,7 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Docentes cadastrados:  ", "<b>" + numberFormatter.print(qtdTotalDocentes,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"Docentes habilitados e disponíveis: ", "<b>" + numberFormatter.print(utilizacaoMediaDosLaboratorios,pt_BR) + "</b>") ,currentNode, true) );
+				"Docentes habilitados e disponíveis: ", "<b>" + numberFormatter.print(qtdDocentesHabilitados,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Docentes utilizados (todos): ", "<b>" + numberFormatter.print(qtdDocentes,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(

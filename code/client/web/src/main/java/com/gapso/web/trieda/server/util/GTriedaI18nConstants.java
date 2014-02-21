@@ -100,6 +100,11 @@ public class GTriedaI18nConstants
 	public String cargaHorariaMinutos() {
 		return this.languageManager.getText("cargaHorariaMinutos");
 	}
+	
+	@Override
+	public String cargaHorariaSemanal() {
+		return this.languageManager.getText("cargaHorariaSemanal");
+	}
 
 	@Override
 	public String codigo() {
@@ -975,5 +980,10 @@ public class GTriedaI18nConstants
 	@Override
 	public String resumoCampi() {
 		return this.languageManager.getText("resumoCampi");
+	}
+
+	@Override
+	public String totalCreditosSemanais() {
+		return this.languageManager.getText("totalCreditosSemanais");
 	}
 }

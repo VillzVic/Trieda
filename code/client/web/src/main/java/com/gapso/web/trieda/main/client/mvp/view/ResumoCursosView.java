@@ -134,14 +134,14 @@ public class ResumoCursosView extends MyComposite
 		};
 
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
-		ColumnConfig campusColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_CAMPUS_STRING,getI18nConstants().campus(),80);
+		ColumnConfig campusColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_CAMPUS_STRING,getI18nConstants().campus(),160);
 		campusColumnConfig.setRenderer(new TreeGridCellRenderer< ResumoCursoDTO >());
 		list.add(campusColumnConfig);
 		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURNO_STRING,getI18nConstants().turno(),80));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CURSO_STRING,getI18nConstants().curso(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_CURSO_STRING,getI18nConstants().curso(),160));
 		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_MATRIZCURRICULAR_STRING,getI18nConstants().matrizCurricular(),80));
 		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_PERIODO_INT,getI18nConstants().periodo(),55));
-		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_DISCIPLINA_STRING,getI18nConstants().disciplina(),80));
+		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_DISCIPLINA_STRING,getI18nConstants().disciplina(),160));
 		list.add(new ColumnConfig(ResumoCursoDTO.PROPERTY_TURMA_STRING,getI18nConstants().turma(),80));
 		ColumnConfig tipoDeCreditoColumnConfig = new ColumnConfig(ResumoCursoDTO.PROPERTY_TIPO_CREDITO_TEORICO_BOOLEAN,getI18nConstants().TipoCredito(),80);
 		tipoDeCreditoColumnConfig.setRenderer(tipoDeCreditoRenderer);

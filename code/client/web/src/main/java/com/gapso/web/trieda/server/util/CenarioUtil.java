@@ -374,10 +374,10 @@ public class CenarioUtil
 	@Transactional
 	private void saveList()
 	{
-		this.semanaLetiva.persist();
+		//this.semanaLetiva.persist();
 		this.cenario.persist();
 
-		this.semanaLetiva.merge();
+		//this.semanaLetiva.merge();
 
 		for ( Turno o : this.turnoList )
 		{

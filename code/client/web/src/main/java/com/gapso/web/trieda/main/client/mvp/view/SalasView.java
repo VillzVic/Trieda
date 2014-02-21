@@ -39,7 +39,6 @@ public class SalasView
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button disciplinasAssociadasBT;
-	private Button gruposDeSalasBT;
 	private Button disponibilidadeBT;
 	private UnidadeComboBox unidadeCB;
 	private CampusComboBox campusCB;
@@ -66,7 +65,7 @@ public class SalasView
 	private void initUI()
 	{
 		this.panel = new ContentPanel( new BorderLayout() );
-		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Salas" );
+		this.panel.setHeadingHtml( cenarioDTO.getNome() + " » Ambientes" );
 
 		createToolBar();
 		createGrid();
@@ -93,12 +92,6 @@ public class SalasView
 			Resources.DEFAULTS.disciplina16() );
 
 		this.toolBar.add( this.disciplinasAssociadasBT );
-
-		this.gruposDeSalasBT = toolBar.createButton(
-			getI18nConstants().gruposSalas(),
-			Resources.DEFAULTS.sala16() );
-
-		this.toolBar.add( this.gruposDeSalasBT );
 		this.disponibilidadeBT = this.toolBar.createButton(
 			getI18nConstants().disponibilidadesSemanaLetiva(),
 			Resources.DEFAULTS.disponibilidade16() );
@@ -129,6 +122,8 @@ public class SalasView
 			getI18nConstants().codigoUnidade(), 100 ) );
 		list.add( new ColumnConfig( SalaDTO.PROPERTY_NUMERO,
 			getI18nConstants().numero(), 100 ) );
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_DESCRICAO,
+				getI18nConstants().descricao(), 100 ) );
 		list.add( new ColumnConfig( SalaDTO.PROPERTY_ANDAR,
 			getI18nConstants().andar(), 100 ) );
 		list.add( createIntegerColumnConfig( SalaDTO.PROPERTY_CAPACIDADE_INSTALADA,
@@ -239,12 +234,6 @@ public class SalasView
 	public Button getDisciplinasAssociadasButton()
 	{
 		return disciplinasAssociadasBT;
-	}
-
-	@Override
-	public Button getGruposDeSalasButton()
-	{
-		return gruposDeSalasBT;
 	}
 
 	@Override

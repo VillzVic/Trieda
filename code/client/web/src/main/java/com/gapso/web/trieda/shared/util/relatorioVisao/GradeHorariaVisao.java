@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -47,11 +48,12 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected TurnoDTO turnoDTO;
 	protected QuickTip quickTip;
 	protected List<Long> disciplinasCores = new ArrayList<Long>();
+	protected CenarioDTO cenarioDTO;
 
 	protected String emptyTextBeforeSearch = "Preencha o filtro acima";
 	protected String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
 	
-	public GradeHorariaVisao(){
+	public GradeHorariaVisao(CenarioDTO cenarioDTO){
 		super(new FitLayout());
 		this.temInfoDeHorarios = true;
 		this.mdcTemposAulaNumSemanasLetivas = ParDTO.create(1, false);
@@ -59,7 +61,13 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		this.labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
 		this.horariosDeInicioDeAula = new ArrayList<String>();
 		this.horarioEhIntervalo = new ArrayList<Boolean>();
+		this.cenarioDTO = cenarioDTO;
 		this.setHeaderVisible(false);
+	}
+	
+	protected String getEmptyTextAfterSearch()
+	{
+		return emptyTextAfterSearch;
 	}
 	
 	@Override
@@ -122,6 +130,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 
 			@Override
 			public void onSuccess(AtendimentoServiceRelatorioResponse result){
+				grid.getView().setEmptyText(getEmptyTextAfterSearch());
 				labelsDasLinhasDaGradeHoraria.clear();
 				horariosDeInicioDeAula.clear();
 				horarioEhIntervalo.clear();
@@ -144,7 +153,6 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					List<ColumnConfig> columns = getColumnList(result.getQtdColunasPorDiaSemana());
 					preencheCores();
 					grid.reconfigure(getListStore(), new ColumnModel(columns));
-					grid.getView().setEmptyText(emptyTextAfterSearch);
 					int totalLinhas = labelsDasLinhasDaGradeHoraria.size();
 					for(int row = 0; row < totalLinhas; row++){
 						if(horarioEhIntervalo.get(row) && !mdcTemposAulaNumSemanasLetivas.getSegundo()) {

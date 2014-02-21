@@ -90,7 +90,7 @@ public class DivisoesCreditoExportExcel
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
-		List< DivisaoCredito > divisaoCredito = DivisaoCredito.findByInstituicaoEnsino(this.instituicaoEnsino);
+		List< DivisaoCredito > divisaoCredito = DivisaoCredito.findByCenario(instituicaoEnsino, getCenario());
 
 		
 		if (this.removeUnusedSheets) {

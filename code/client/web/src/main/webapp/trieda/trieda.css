@@ -338,8 +338,14 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	width: 160px !important;
 }
 
-.exportExcelForm .x-form-checkbox  {
-	left: 70px !important;
+.boxLabel .x-form-cb-label  {
+	white-space: normal;
+	left: 0px !important;
+	top: 5px !important;
+}
+
+.boxLabel .x-form-checkbox  {
+	top: 6px !important;
 }
 
 .corDisciplina0 { background-color: #FFDAAF; }

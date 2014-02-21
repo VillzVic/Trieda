@@ -134,6 +134,7 @@ public class SolverOutput
 							atendimentoTatico.setDisciplinaSubstituta(disciplinaSubstituta);
 							atendimentoTatico.setQuantidadeAlunos( quantidade );
 							atendimentoTatico.setHorarioAula(menorHorarioAula);
+							atendimentoTatico.setConfirmada(false);
 							
 							Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta,alunosDemandaTatico,atendimentoTatico,alunoDemandaIdToAlunoDemandaMap);
 							atendimentoTatico.getAlunosDemanda().addAll(listAlunoDemanda);
@@ -273,7 +274,8 @@ public class SolverOutput
 									}
 									atendimentoOperacional.setCreditoTeorico(creditoTeorico);
 									atendimentoOperacional.setHorarioDisponivelCenario(horarioDisponivelCenario);//HorarioDisponivelCenario horarioDisponivelCenario= HorarioDisponivelCenario.findBy(this.instituicaoEnsino,horarioAula,diaSemana);
-
+									atendimentoOperacional.setConfirmada(false);
+									
 									Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta,alunosDemandaOperacional,atendimentoOperacional,alunoDemandaIdToAlunoDemandaMap);
 									atendimentoOperacional.getAlunosDemanda().addAll(listAlunoDemanda);
 									

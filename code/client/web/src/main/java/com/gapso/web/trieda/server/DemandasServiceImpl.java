@@ -79,7 +79,8 @@ public class DemandasServiceImpl
 				atendimentos.add(atendimento);
 			}
 			// atendimentos operacionais
-			for (AtendimentoOperacional atendimentoOperacional : oferta.getAtendimentosOperacionais()) {
+			List<AtendimentoOperacional> todosAtendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+			for (AtendimentoOperacional atendimentoOperacional : todosAtendimentos) {
 				Atendimento atendimento = new Atendimento(atendimentoOperacional);
 				String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
 				List<Atendimento> atendimentos = ofertaIdDisciplinaIdToAtendimentosMap.get(key);
@@ -156,7 +157,8 @@ public class DemandasServiceImpl
 				atendimentos.add(atendimento);
 			}
 			// atendimentos operacionais
-			for (AtendimentoOperacional atendimentoOperacional : oferta.getAtendimentosOperacionais()) {
+			List<AtendimentoOperacional> todosAtendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+			for (AtendimentoOperacional atendimentoOperacional : todosAtendimentos) {
 				Atendimento atendimento = new Atendimento(atendimentoOperacional);
 				String key = oferta.getId() + "-" + atendimento.getDisciplina().getId();
 				List<Atendimento> atendimentos = ofertaIdDisciplinaIdToAtendimentosMap.get(key);

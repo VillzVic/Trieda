@@ -47,5 +47,9 @@ public class PlanilhasExportExcel {
 	public static final String AMBIENTES_FAIXA_UTILIZACAO = "AmbientesFaixaUtilizacao";
 	public static final String TURNOS = "turnos";
 	public static final String TIPOS_CURSO = "tiposCurso";
+	public static final String DIVISAO_CREDITOS = "divisaoCreditos";
+	public static final String RESUMO_CENARIO = "resumoCenario";
+	public static final String RESUMO_CAMPUS = "resumoCampus";
+	public static final String SEMANAS_LETIVA = "semanasLetiva";
 
 }

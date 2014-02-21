@@ -51,7 +51,7 @@ public class UsuariosView extends MyComposite implements UsuariosPresenter.Displ
 	}
 
 	private void createTabItem() {
-		tabItem = new GTabItem("Usuários", Resources.DEFAULTS.campiTrabalho16());
+		tabItem = new GTabItem("Usuários", Resources.DEFAULTS.usuarios16());
 		tabItem.setContent(panel);
 	}
 	

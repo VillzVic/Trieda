@@ -359,7 +359,7 @@ public class Aluno
 	}
 	
 	public static Aluno findOneByNomeMatricula(
-		InstituicaoEnsino instituicaoEnsino,
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		String nome, String matricula )
 	{
 		String nomeQuery = "";
@@ -379,10 +379,12 @@ public class Aluno
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Aluno o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
 			nomeQuery + matriculaQuery );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-
+		q.setParameter( "cenario", cenario );
+		
 		if ( nome != null )
 		{
 			if ( !nome.isEmpty() )

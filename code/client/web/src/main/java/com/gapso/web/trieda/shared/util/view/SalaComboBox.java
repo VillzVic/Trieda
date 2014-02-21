@@ -40,8 +40,8 @@ public class SalaComboBox
 			new BaseListLoader< BaseListLoadResult< SalaDTO > >( proxy ) ) );
 
 		setDisplayField( SalaDTO.PROPERTY_DISPLAY_TEXT );
-		setFieldLabel( "Sala" );
-		setEmptyText( "Selecione a sala" );
+		setFieldLabel( "Ambiente" );
+		setEmptyText( "Selecione o ambiente" );
 		setSimpleTemplate( "{" + SalaDTO.PROPERTY_CODIGO + "}-{"
 			+ SalaDTO.PROPERTY_NUMERO + "}" );
 		setEditable( false );

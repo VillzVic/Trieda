@@ -49,8 +49,8 @@ public interface ProfessoresServiceAsync
 			AsyncCallback<ListLoadResult<ProfessorDTO>> callback);
 	void getProfessoresDisciplinasHabilitadas(CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
 	void getTiposProfessor(AsyncCallback<ListLoadResult<TipoProfessorDTO>> callback);
-	void getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
-	void getProfessoresAreasConhecimento(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO,	AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
+	void getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO, boolean somenteAlocados, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
+	void getProfessoresAreasConhecimento(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO, boolean somenteAlocados, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
 	void getRelatorio( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro,	RelatorioDTO currentNode, AsyncCallback<List<RelatorioDTO>> callback );
 	void getBuscaListAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config,
 			AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );

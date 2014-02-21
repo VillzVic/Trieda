@@ -163,4 +163,13 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("confirmar_qtde_alunos_16.png") ImageResource confirmarQtdeAlunos16();
 	@Source("desconfirmar_qtde_alunos_16.png") ImageResource desconfirmarQtdeAlunos16();
 	@Source("marcar_formandos_16.png") ImageResource marcarFormandos16();
+	@Source("info_16.png") ImageResource info16();
+	@Source("demanda_aluno_16.png") ImageResource demandaAluno16();
+	@Source("demanda_aluno_24.png") ImageResource demandaAluno24();
+	@Source("aluno_16.png") ImageResource aluno16();
+	@Source("aluno_24.png") ImageResource aluno24();
+	@Source("usuarios_16.png") ImageResource usuarios16();
+	@Source("usuarios_24.png") ImageResource usuarios24();
+	@Source("professor_virtual_16.png") ImageResource professorVirtual16();
+	@Source("professor_virtual_24.png") ImageResource professorVirtual24();
 }

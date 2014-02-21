@@ -93,7 +93,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 			try {
 				RelatorioVisaoSalaFiltro filter = (RelatorioVisaoSalaFiltro) this.getFilter();
 	
-				Sala sala = Sala.findByCodigo(this.instituicaoEnsino, filter.getSalaCodigo());
+				Sala sala = Sala.findByCodigo(this.instituicaoEnsino, cenario, filter.getSalaCodigo());
 	
 				atdTaticoList = AtendimentoTatico.findByCenario(this.instituicaoEnsino, cenario, sala, null);
 	
@@ -231,6 +231,8 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 				// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
 				Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(turnoId);
 				Turno turno = turnoIdToTurnoMap.get(turnoId);
+				Set<Long> turnosId = new HashSet<Long>();
+				turnosId.add(turnoId);
 				
 				Set<Long> semanasLetivasIDs = new HashSet<Long>();
 				List<AtendimentoRelatorioDTO> atendimentosDeTodasSemanasLetivas = new ArrayList<AtendimentoRelatorioDTO>();
@@ -241,7 +243,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 				}
 				
 				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-				QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnoId);
+				QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnosId);
 				ParDTO<Integer, Boolean> mdcTemposAula = quarteto.getPrimeiro();
 				List<String> horariosDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();

@@ -4,6 +4,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.gapso.web.trieda.main.client.mvp.presenter.SalaFormPresenter;
@@ -28,6 +29,7 @@ public class SalaFormView extends MyComposite implements
 	private FormPanel formPanel;
 	private TextField< String > codigoTF;
 	private TextField< String > numeroTF;
+	private TextArea descricaoTA;
 	private TextField< String > andarTF;
 	private NumberField capacidadeInstaladaNF;
 	private NumberField capacidadeMaxNF;
@@ -64,7 +66,7 @@ public class SalaFormView extends MyComposite implements
 			( getI18nConstants().edicaoDe() + getI18nConstants().sala() );
 
 		simpleModal = new SimpleModal( title, Resources.DEFAULTS.sala16() );
-		simpleModal.setHeight( 360 );
+		simpleModal.setHeight( 440 );
 		simpleModal.setWidth( 313 );
 
 		createForm();
@@ -116,6 +118,14 @@ public class SalaFormView extends MyComposite implements
 		numeroTF.setMaxLength( 20 );
 		numeroTF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().numero() );
 		formPanel.add( numeroTF, formData );
+
+		descricaoTA = new TextArea();
+		descricaoTA.setName( SalaDTO.PROPERTY_DESCRICAO );
+		descricaoTA.setValue( salaDTO.getDescricao() );
+		descricaoTA.setFieldLabel( getI18nConstants().descricao() );
+		descricaoTA.setMaxLength( 255 );
+		descricaoTA.setEmptyText( getI18nConstants().preenchaA() + getI18nConstants().descricao() );
+		formPanel.add( descricaoTA, formData );
 
 		andarTF = new TextField< String >();
 		andarTF.setName( SalaDTO.PROPERTY_ANDAR );
@@ -186,6 +196,12 @@ public class SalaFormView extends MyComposite implements
 	public TextField< String > getNumeroTextField()
 	{
 		return numeroTF;
+	}
+
+	@Override
+	public TextArea getDescricaoTextArea()
+	{
+		return descricaoTA;
 	}
 
 	@Override

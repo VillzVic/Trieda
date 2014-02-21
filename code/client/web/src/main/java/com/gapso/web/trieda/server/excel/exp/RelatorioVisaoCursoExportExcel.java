@@ -230,9 +230,9 @@ public class RelatorioVisaoCursoExportExcel	extends RelatorioVisaoExportExcel{
 			}
 
 			@Override
-			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(String alunoNome, String alunoMatricula) {return null;}
+			public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(Cenario cenario, String alunoNome, String alunoMatricula) {return null;}
 			@Override
-			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(String alunoNome, String alunoMatricula) {return null;}
+			public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(Cenario cenario, String alunoNome, String alunoMatricula) {return null;}
 
 			@Override
 			public Map<Long, SemanaLetiva> buscaSemanasLetivas() {

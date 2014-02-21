@@ -19,6 +19,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresGradeCheiaListP
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresJanelasGradePresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresMalAlocadosListPresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresTitulacoesPresenter;
+import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresVirtuaisPresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioProfessoresPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
@@ -160,7 +161,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				@Override
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresTitulacoesPresenter( instituicaoEnsinoDTO,
-							cenarioDTO, new ProfessoresTitulacoesView( cenarioDTO ) );
+							cenarioDTO, model.getCampusId(), true, new ProfessoresTitulacoesView( cenarioDTO ) );
 					presenter.go( gTab );
 				}
 			});
@@ -170,7 +171,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				@Override
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresAreasConhecimentoPresenter( instituicaoEnsinoDTO,
-							cenarioDTO, new ProfessoresAreasConhecimentoView( cenarioDTO ) );
+							cenarioDTO, model.getCampusId(), true, new ProfessoresAreasConhecimentoView( cenarioDTO ) );
 					presenter.go( gTab );
 				}
 			});
@@ -248,6 +249,16 @@ public class RelatorioProfessoresView extends RelatorioView
 					Presenter presenter = new ProfessoresDeslocamentoCampiListPresenter( instituicaoEnsinoDTO,
 							model.getCampusId(),
 							cenarioDTO, new ProfessoresDeslocamentoCampiListView( cenarioDTO, getProfessorFiltro() ) );
+					presenter.go( gTab );
+				}
+			});
+			break;
+		case 12:
+			bt.addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce){
+					Presenter presenter = new ProfessoresVirtuaisPresenter( instituicaoEnsinoDTO,
+							cenarioDTO, new ProfessoresVirtuaisView( cenarioDTO ) );
 					presenter.go( gTab );
 				}
 			});

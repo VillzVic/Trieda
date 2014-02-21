@@ -319,6 +319,22 @@ public class Cenario
 			q.executeUpdate();
 		}
 	}
+	
+	public static void limpaSolucoesCenario(Cenario cenario) {
+		List<Query> nativeQueries = new ArrayList<Query>();
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE adao FROM alunos_demanda_atendimentos_operacional adao JOIN atendimento_operacional ao ON adao.atendimentos_operacional = ao.atp_id WHERE ao.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE adat FROM alunos_demanda_atendimentos_tatico adat JOIN atendimento_tatico at ON adat.atendimentos_tatico = at.att_id WHERE at.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE adat FROM alunos_demanda_atendimentos_tatico adat JOIN atendimento_tatico at ON adat.atendimentos_tatico = at.att_id WHERE at.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE at FROM atendimento_tatico at WHERE at.cen_id = :cenario"));
+		nativeQueries.add(entityManager().createNativeQuery( "DELETE ao FROM atendimento_operacional ao WHERE ao.cen_id = :cenario"));
+		
+		for (Query q : nativeQueries)
+		{
+			q.setParameter( "cenario", cenario.getId() );
+			q.executeUpdate();
+		}
+		
+	}
 
 	@Transactional
 	public void removeDivisoesCredito()

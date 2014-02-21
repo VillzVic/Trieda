@@ -5,10 +5,15 @@ import java.util.List;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.services.Services;
 
 public class GradeHorariaCursoGrid extends GradeHorariaVisao{
+	public GradeHorariaCursoGrid(CenarioDTO cenarioDTO) {
+		super(cenarioDTO);
+	}
+
 	private RelatorioVisaoCursoFiltro filtro;
 	private List<Integer> qtdColunasPorDiaSemana;
 

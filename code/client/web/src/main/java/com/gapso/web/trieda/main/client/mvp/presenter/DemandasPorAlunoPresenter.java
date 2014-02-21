@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
@@ -7,6 +9,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
@@ -22,6 +25,7 @@ import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AlunosDemandaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
@@ -109,6 +113,30 @@ public class DemandasPorAlunoPresenter
 	
 	private void setListeners()
 	{	
+		this.display.getRemoveButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final AlunosDemandaServiceAsync service = Services.alunosDemanda();
+
+				List< AlunoDemandaDTO > list
+					= display.getGrid().getSelectionModel().getSelectedItems();
+
+				service.removeAlunosDemanda( list,
+					new AbstractAsyncCallbackWithDefaultOnFailure< Void >( display )
+				{
+					@Override
+					public void onSuccess( Void result )
+					{
+						display.getGrid().getGrid().getStore().getLoader().load();
+						Info.display( "Removido", "Item(ns) removido com sucesso!" );
+					}
+				});
+			}
+		});
+		
 		this.display.getImportExcelButton().addSelectionListener(
 			new SelectionListener< ButtonEvent >()
 		{

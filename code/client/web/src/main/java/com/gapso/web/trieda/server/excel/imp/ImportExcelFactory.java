@@ -44,6 +44,7 @@ public class ImportExcelFactory
 			case TIPOS_CURSO: importer = new TiposCursoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DIVISOES_CREDITO: importer = new DivisoesCreditoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case TURNOS: importer = new TurnosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
+			case SEMANA_LETIVA: importer = new MultiImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{SemanaLetivaImportExcel.class,SemanaLetivaHorariosImportExcel.class} ); break;
 		}
 
 		return importer;

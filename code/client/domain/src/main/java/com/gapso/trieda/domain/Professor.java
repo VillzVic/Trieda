@@ -697,7 +697,7 @@ public class Professor
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM Professor o LEFT JOIN o.disciplinas d" + where + "GROUP BY o " + orderBy);
+			" SELECT DISTINCT o FROM Professor o LEFT JOIN FETCH o.atendimentosOperacionais LEFT JOIN o.disciplinas d " + where + orderBy);
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
@@ -744,7 +744,7 @@ public class Professor
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT o FROM Professor o" +
+			" SELECT o FROM Professor o " +
 			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino" +
 			" AND o.cenario = :cenario" +
 			where 
@@ -768,7 +768,7 @@ public class Professor
 		return q.getResultList();
 	}
 	
-	public static Professor findByNomeCpf( InstituicaoEnsino instituicaoEnsino,
+	public static Professor findByNomeCpf( InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		String nome, String cpf)
 	{
 		if ( cpf == null && nome == null ) return null;
@@ -793,11 +793,13 @@ public class Professor
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Professor o" +
 			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino" +
+			" AND o.cenario = :cenario" +
 			nomeQuery +
 			cpfQuery);
 		
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		if ( cpf != null )
 		{

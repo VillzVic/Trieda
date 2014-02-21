@@ -260,6 +260,21 @@ public class Oferta
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< Oferta > findByCampus(
+		InstituicaoEnsino instituicaoEnsino, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Oferta o " +
+			" WHERE o.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.campus = :campus " );
+
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Oferta > findByCenario(

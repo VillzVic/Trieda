@@ -61,11 +61,11 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 	
 	private void initUI() {
 		panel = new ContentPanel(new BorderLayout());
-		panel.setHeadingHtml(cenarioDTO.getNome() + " » Associação de Disciplinas à Grupos de Salas");
+		panel.setHeadingHtml(cenarioDTO.getNome() + " » Associação de Disciplinas à Grupos de Ambientes");
 	}
 	
 	private void createTabItem() {
-		tabItem = new GTabItem("Associação de Disciplinas à Grupos de Salas", Resources.DEFAULTS.grupoSala16());
+		tabItem = new GTabItem("Associação de Disciplinas à Grupos de Ambientes", Resources.DEFAULTS.grupoSala16());
 		tabItem.setContent(panel);
 	}
 	
@@ -98,7 +98,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 		panelLists.setBodyBorder(false);
 		
 		ContentPanel naoVinculadaListPanel = new ContentPanel(new FitLayout());
-		naoVinculadaListPanel.setHeadingHtml("Grupo(s) de Salas NÃO vinculada(s) a Disciplina");
+		naoVinculadaListPanel.setHeadingHtml("Grupo(s) de Ambientes NÃO vinculada(s) a Disciplina");
 		naoVinculadaList = new ListView<GrupoSalaDTO>();
 		if(disciplinaDTO.getId() == null)
 			naoVinculadaList.disable();
@@ -107,7 +107,7 @@ public class GruposSalasAssociarDisciplinaView extends MyComposite implements
 		naoVinculadaListPanel.add(naoVinculadaList);
 		
 		ContentPanel vinculadaListPanel = new ContentPanel(new FitLayout());
-		vinculadaListPanel.setHeadingHtml("Grupo(s) de Salas vinculada(s) a Disciplina");
+		vinculadaListPanel.setHeadingHtml("Grupo(s) de Ambientes vinculada(s) a Disciplina");
 		vinculadaList = new ListView<GrupoSalaDTO>();
 		if(disciplinaDTO.getId() == null)
 			vinculadaList.disable();

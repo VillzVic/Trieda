@@ -39,6 +39,7 @@ public class ProfessoresView extends MyComposite
 	private TitulacaoComboBox titulacaoBuscaCB;
 	private AreaTitulacaoComboBox areaTitulacaoBuscaCB;
 	private Button disponibilidadeBT;
+	private Button gradeHorariaBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
@@ -76,8 +77,12 @@ public class ProfessoresView extends MyComposite
 		disponibilidadeBT = toolBar.createButton(
 			getI18nConstants().disponibilidadesSemanaLetiva(),
 			Resources.DEFAULTS.disponibilidade16() );
+		gradeHorariaBT = toolBar.createButton(
+				"Grade Horária do Professor",
+				Resources.DEFAULTS.saidaProfessor16() );
 
 		toolBar.add( disponibilidadeBT );
+		toolBar.add( gradeHorariaBT );
 		panel.setTopComponent( toolBar );
 	}
 
@@ -152,6 +157,12 @@ public class ProfessoresView extends MyComposite
 		
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_MIN_CREDITOS_DIA,
 				getI18nConstants().minCreditosDia(), 140 ) );
+		
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TOTAL_CRED,
+				getI18nConstants().totalCreditosSemanais(), 140 ) );
+		
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_SEMANAL,
+				getI18nConstants().cargaHorariaSemanal(), 140 ) );
 
 		return list;
 	}
@@ -244,5 +255,11 @@ public class ProfessoresView extends MyComposite
 	public Button getDisponibilidadeButton()
 	{
 		return this.disponibilidadeBT;
+	}
+	
+	@Override
+	public Button getGradeHorariaButton()
+	{
+		return this.gradeHorariaBT;
 	}
 }

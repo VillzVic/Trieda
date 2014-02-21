@@ -34,6 +34,7 @@ public interface TriedaI18nConstants
 	String cargaHorariaMax();
 	String cargaHorariaMin();
 	String cargaHorariaMinutos();
+	String cargaHorariaSemanal();
 	String codigo();
 	String codigoAreaTitulacao();
 	String codigoCampus();
@@ -189,4 +190,5 @@ public interface TriedaI18nConstants
 	String alunosDisciplinasCursadas();
 	String resumoCenario();
 	String resumoCampi();
+	String totalCreditosSemanais();
 }

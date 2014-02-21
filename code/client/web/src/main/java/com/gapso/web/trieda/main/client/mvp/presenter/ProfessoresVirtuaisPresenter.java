@@ -7,6 +7,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.gapso.web.trieda.main.client.mvp.view.GradeHorariaProfessorView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
@@ -32,6 +33,7 @@ public class ProfessoresVirtuaisPresenter
  		Button getResetBuscaButton();
  		SimpleGrid< ProfessorVirtualDTO > getGrid();
  		Component getComponent();
+ 		Button getGradeHorariaButton();
  		void setProxy( RpcProxy< PagingLoadResult< ProfessorVirtualDTO > > proxy );
  	}
 
@@ -95,6 +97,22 @@ public class ProfessoresVirtuaisPresenter
  				display.getGrid().updateList();
  			}
  		});
+ 		
+		display.getGradeHorariaButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					final ProfessorVirtualDTO professorVirtualDTO
+						= display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+
+					Presenter presenter = new GradeHorariaProfessorFormPresenter(
+						new GradeHorariaProfessorView( cenario, professorVirtualDTO ) );
+	
+					presenter.go( null );
+				}
+			});
  	}
 
  	@Override

@@ -654,10 +654,10 @@ public class AlunosDemandaServiceImpl
 		return result;
 	}
 	
-	public List< AtendimentoCargaHorariaDTO > getAtendimentoCargaHoraria() {
+	public List< AtendimentoCargaHorariaDTO > getAtendimentoCargaHoraria(Cenario cenario) {
 
 		Map< String,  AtendimentoCargaHorariaDTO> matriculaMapAtendimento = new HashMap< String, AtendimentoCargaHorariaDTO >();
-		List< Campus > todosCampi = Campus.findAllOtimized(getInstituicaoEnsinoUser());
+		List< Campus > todosCampi = Campus.findAllOtimized(getInstituicaoEnsinoUser(), cenario);
 		todosCampi.addAll( Campus.findAllOtimizedTatico(getInstituicaoEnsinoUser()) );
 		
 		if (!todosCampi.isEmpty()) {

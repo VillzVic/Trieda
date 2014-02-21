@@ -75,6 +75,10 @@ public class ExportExcelFormPresenter
 		CheckBox getAmbientesFaixaUtilizacao();
 		CheckBox getTurnos();
 		CheckBox getTiposCurso();
+		CheckBox getDivisaoCreditos();
+		CheckBox getResumoCenario();
+		CheckBox getResumoCampus();
+		CheckBox getSemanasLetiva();
 		TextField<String> getNomeArquivoTextField();
 		FormPanel getFormPanel();
 	}

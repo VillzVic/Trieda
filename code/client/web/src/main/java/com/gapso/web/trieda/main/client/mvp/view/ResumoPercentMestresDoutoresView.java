@@ -58,7 +58,7 @@ public class ResumoPercentMestresDoutoresView extends MyComposite
 	private void createTabItem()
 	{
 		tabItem = new GTabItem(
-			"Porcentagem de Mestrese Doutores", Resources.DEFAULTS.resumoMatricula16() );
+			"Porcentagem de Mestres Doutores", Resources.DEFAULTS.resumoMatricula16() );
 	
 		tabItem.setContent( panel );
 	}

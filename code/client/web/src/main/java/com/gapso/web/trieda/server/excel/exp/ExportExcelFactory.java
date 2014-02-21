@@ -76,6 +76,14 @@ public class ExportExcelFactory {
 			case TODAS_GRADES_HORARIAS:  exporter = new TRIEDAGradesHorariasExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino, fileExtension ); break;
 			case TODAS_VISAO_ALUNO:  exporter = new TRIEDAVisaoAlunoExportExcel(cenario, i18nConstants, i18nMessages, visaoProfessor, instituicaoEnsino, fileExtension ); break;
 			case TURNOS:  exporter = new TurnosExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension ); break;
+			case SEMANA_LETIVA:  exporter = new MultiExportExcel(cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{SemanaLetivaExportExcel.class,SemanaLetivaHorariosExportExcel.class}, fileExtension ); break;
+			case PROFESSORES_UTILIZADOS: exporter = new ProfessoresUtilizadosExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case PROFESSORES_GRADE_CHEIA: exporter = new ProfessoresGradeCheiaExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case PROFESSORES_BEM_ALOCADOS: exporter = new ProfessoresBemAlocadosExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case PROFESSORES_MAL_ALOCADOS: exporter = new ProfessoresMalAlocadosExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case PROFESSORES_JANELAS: exporter = new ProfessoresJanelaGradeExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case PROFESSORES_DESLOCAMENTO_UNIDADES: exporter = new ProfessoresDeslocamentoUnidadesExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case PROFESSORES_DESLOCAMENTO_CAMPI: exporter = new ProfessoresDeslocamentoCampiExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 		default:
 			break;
 		}

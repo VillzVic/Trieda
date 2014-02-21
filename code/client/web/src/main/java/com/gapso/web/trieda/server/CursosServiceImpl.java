@@ -296,17 +296,17 @@ public class CursosServiceImpl
 
 				resumoDTO.setOfertaId(oferta.getId());
 				resumoDTO.setCampusId(oferta.getCampus().getId());
-				resumoDTO.setCampusString(oferta.getCampus().getCodigo());
+				resumoDTO.setCampusString(oferta.getCampus().getNome() + "(" + oferta.getCampus().getCodigo() + ")");
 				resumoDTO.setTurnoId(aula.getTurnoId());
 				resumoDTO.setTurnoString(aula.getTurnoString());
 				resumoDTO.setCursoId(aula.getCursoId());
-				resumoDTO.setCursoString(aula.getCursoString());
+				resumoDTO.setCursoString(aula.getCursoNome() + "(" + aula.getCursoString() + ")");
 				resumoDTO.setMatrizCurricularId(aula.getCurriculoId());
 				resumoDTO.setMatrizCurricularString(aula.getCurriculoString());
 				resumoDTO.setPeriodo(Integer.valueOf(aula.getPeriodoString()));
 				resumoDTO.setQuantidadeAlunos(aula.getQuantidadeAlunos());
 				resumoDTO.setDisciplinaId(aula.getDisciplinaId());
-				resumoDTO.setDisciplinaString(aula.getDisciplinaString());
+				resumoDTO.setDisciplinaString(aula.getDisciplinaNome() + "(" + aula.getDisciplinaString() + ")");
 				resumoDTO.setTurma(aula.getTurma());
 				resumoDTO.setTipoCreditoTeorico(aula.isTeorico());
 				resumoDTO.setCreditos(aula.getTotalCreditos());

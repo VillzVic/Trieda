@@ -568,22 +568,14 @@ public class SemanaLetiva
 
     public int calculaMaxCreditos ()
     {
-    	Map< Integer, Integer > countHorariosAula
-    		= new HashMap< Integer, Integer >();
+    	int maxCreditos = 0;
 
 		for ( HorarioAula ha : this.getHorariosAula() )
 		{
-			for ( HorarioDisponivelCenario hdc
-				: ha.getHorariosDisponiveisCenario() )
-			{
-				int semanaInt = Semanas.toInt( hdc.getDiaSemana() );
-				Integer value = countHorariosAula.get( semanaInt );
-				value = ( ( value == null ) ? 0 : value );
-				countHorariosAula.put( semanaInt, value + 1 );
-			}
+			maxCreditos += ha.getHorariosDisponiveisCenario().size();
 		}
 
-		return Collections.max( countHorariosAula.values() );
+		return maxCreditos;
     }
     
     public long calculaMaiorIntervalo()

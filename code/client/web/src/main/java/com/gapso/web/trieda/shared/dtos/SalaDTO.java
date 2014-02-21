@@ -15,6 +15,7 @@ public class SalaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_UNIDADE_ID = "unidadeId";
 	public static final String PROPERTY_UNIDADE_STRING = "unidadeString";
 	public static final String PROPERTY_NUMERO = "numero";
+	public static final String PROPERTY_DESCRICAO = "descricao";
 	public static final String PROPERTY_ANDAR = "andar";
 	public static final String PROPERTY_TIPO_ID = "tipoSalaId";
 	public static final String PROPERTY_TIPO_STRING = "tipoSalaString";
@@ -77,6 +78,13 @@ public class SalaDTO extends AbstractDTO< String >
 	}
 	public void setNumero(String value) {
 		set(PROPERTY_NUMERO, value);
+	}
+	
+	public String getDescricao() {
+		return get(PROPERTY_DESCRICAO);
+	}
+	public void setDescricao(String value) {
+		set(PROPERTY_DESCRICAO, value);
 	}
 	
 	public String getAndar() {

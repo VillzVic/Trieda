@@ -495,6 +495,8 @@ public class AlunoDemanda
 			codigo += alunoDemanda.getAluno().getMatricula();
 			codigo += "-";
 			codigo += alunoDemanda.getDemanda().getId();
+			codigo += "-";
+			codigo += alunoDemanda.getPrioridade();
 
 			alunosDemandaMap.put( codigo, alunoDemanda );
 		}

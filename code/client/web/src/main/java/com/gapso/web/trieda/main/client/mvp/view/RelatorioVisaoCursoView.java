@@ -54,7 +54,7 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 	
 	@Override
 	protected GradeHorariaCursoGrid createGradeHorariaVisao(){
-		return new GradeHorariaCursoGrid();
+		return new GradeHorariaCursoGrid(cenarioDTO);
 	}
 
 	@Override

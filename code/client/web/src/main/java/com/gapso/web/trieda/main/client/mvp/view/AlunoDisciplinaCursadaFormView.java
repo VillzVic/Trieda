@@ -123,7 +123,7 @@ public class AlunoDisciplinaCursadaFormView
 		field.setEmptyText("Digite um ou mais periodos");
 		filter.add(field);
 		disciplinasListPanel.setTopComponent(filter);
-		disciplinasListPanel.setHeadingHtml("Disciplinas Não Cursadas");
+		disciplinasListPanel.setHeadingHtml("Marque abaixo as disciplinas já cursadas pelo aluno");
 		field.bind(store1);
 
 		panelLists.add(disciplinasListPanel, new HBoxLayoutData(new Margins(0, 0, 0,

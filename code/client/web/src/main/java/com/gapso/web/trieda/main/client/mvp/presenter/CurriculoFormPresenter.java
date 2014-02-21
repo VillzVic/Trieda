@@ -63,7 +63,9 @@ public class CurriculoFormPresenter
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
-							gridPanel.updateList();
+							if (gridPanel != null) {
+								gridPanel.updateList();
+							}
 							Info.display("Salvo","Item salvo com sucesso!");
 						}
 					});

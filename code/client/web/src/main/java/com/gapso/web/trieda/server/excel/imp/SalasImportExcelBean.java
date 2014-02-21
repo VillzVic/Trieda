@@ -12,6 +12,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 	private String codigoUnidadeStr;
 	private String tipoStr;
 	private String numeroStr;
+	private String desricaoStr;
 	private String andarStr;
 	private String capacidadeInstaladaStr;
 	private String capacidadeMaxStr;
@@ -68,6 +69,7 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 			&& isEmptyField( this.codigoUnidadeStr )
 			&& isEmptyField( this.tipoStr )
 			&& isEmptyField( this.numeroStr )
+			&& isEmptyField( this.desricaoStr )
 			&& isEmptyField( this.andarStr )
 			&& isEmptyField( this.capacidadeInstaladaStr ) );
 	}
@@ -110,6 +112,16 @@ public class SalasImportExcelBean extends AbstractImportExcelBean implements Com
 	public void setNumeroStr( String numeroStr )
 	{
 		this.numeroStr = numeroStr;
+	}
+	
+	public String getDescricaoStr()
+	{
+		return this.desricaoStr;
+	}
+
+	public void setDescricaoStr( String desricaoStr )
+	{
+		this.desricaoStr = desricaoStr;
 	}
 
 	public String getAndarStr()

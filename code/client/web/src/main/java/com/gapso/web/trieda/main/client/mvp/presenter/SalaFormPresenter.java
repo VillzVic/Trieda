@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
@@ -26,6 +27,7 @@ public class SalaFormPresenter implements Presenter
 		Button getSalvarButton();
 		TextField< String > getCodigoTextField();
 		TextField< String > getNumeroTextField();
+		TextArea getDescricaoTextArea();
 		TextField< String > getAndarTextField();
 		NumberField getCapacidadeInstaladaNumberField();
 		NumberField getCapacidadeMaxNumberField();
@@ -125,6 +127,7 @@ public class SalaFormPresenter implements Presenter
 
 		salaDTO.setCodigo( display.getCodigoTextField().getValue() );
 		salaDTO.setNumero( display.getNumeroTextField().getValue() );
+		salaDTO.setDescricao( display.getDescricaoTextArea().getValue() );
 		salaDTO.setAndar( display.getAndarTextField().getValue() );
 		salaDTO.setCapacidadeInstalada( display.getCapacidadeInstaladaNumberField().getValue().intValue() );
 		salaDTO.setCapacidadeMax( display.getCapacidadeMaxNumberField().getValue().intValue() );

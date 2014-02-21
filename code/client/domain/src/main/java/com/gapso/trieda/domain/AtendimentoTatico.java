@@ -320,6 +320,49 @@ public class AtendimentoTatico
 	}
 	
 	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoTatico > findBySalaAndTurno(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Sala sala,
+		Turno turno, SemanaLetiva semanaLetiva )
+	{
+		String semanaLetivaQuery = "";
+
+		if ( semanaLetiva != null )
+		{
+			semanaLetivaQuery = " AND o.oferta.curriculo.semanaLetiva = :semanaLetiva ";
+		}
+		
+		String turnoQuery = "";
+		
+		if ( turno != null )
+		{
+			turnoQuery = " AND o.oferta.turno = :turno ";
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.sala = :sala " +
+			" AND o.cenario = :cenario"
+			+ turnoQuery
+			+ semanaLetivaQuery );
+
+		q.setParameter( "sala", sala );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		if ( semanaLetiva != null )
+		{
+			q.setParameter( "semanaLetiva", semanaLetiva );
+		}
+		if( turno != null)
+		{
+			q.setParameter( "turno", turno );
+		}
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
 	public static List<AtendimentoTatico> findBy(
 		InstituicaoEnsino instituicaoEnsino, Aluno aluno, Turno turno, Campus campus)
 	{

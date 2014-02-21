@@ -206,7 +206,6 @@ public class ProfessoresServiceImpl
 				orderBy = ( orderBy + " desc" );
 			}
 		}
-
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		List< Professor > listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
 			cenario, cpf, tipoContrato, titulacao, areaTitulacao,
@@ -610,7 +609,7 @@ public class ProfessoresServiceImpl
 	
 
 	@Override
-	public List<RelatorioQuantidadeDTO> getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO)
+	public List<RelatorioQuantidadeDTO> getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO, boolean somenteAlocados)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
@@ -625,12 +624,22 @@ public class ProfessoresServiceImpl
 			titulacoesToNumProfessoresVirtuaisMap.put(titulacao, 0);
 		}
 		
-		List<Professor> professoresInstitucionaisList = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
+		List<Professor> professoresInstitucionaisList;
+		List<ProfessorVirtual> professoresVirtuaisList;
+		if (somenteAlocados)
+		{
+			professoresInstitucionaisList = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, null, null, null, null, null, null);
+			professoresVirtuaisList = AtendimentoOperacional.findProfessoresVirtuaisUtilizados(getInstituicaoEnsinoUser(), cenario, campus, null, null, null, null);
+		}
+		else
+		{
+			professoresInstitucionaisList = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
+			professoresVirtuaisList = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus) ;
+		}
 		for (Professor professor : professoresInstitucionaisList)
 		{
 			titulacoesToNumProfessoresMap.put(professor.getTitulacao(), titulacoesToNumProfessoresMap.get(professor.getTitulacao())+1 );
 		}
-		List<ProfessorVirtual> professoresVirtuaisList = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus) ;
 		for (ProfessorVirtual professor : professoresVirtuaisList)
 		{
 			titulacoesToNumProfessoresVirtuaisMap.put(professor.getTitulacao(), titulacoesToNumProfessoresVirtuaisMap.get(professor.getTitulacao())+1 );
@@ -647,7 +656,7 @@ public class ProfessoresServiceImpl
 	}
 	
 	@Override
-	public List<RelatorioQuantidadeDTO> getProfessoresAreasConhecimento(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO)
+	public List<RelatorioQuantidadeDTO> getProfessoresAreasConhecimento(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO, boolean somenteAlocados)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
@@ -662,7 +671,15 @@ public class ProfessoresServiceImpl
 		
 		if (tipoProfessorDTO == null || tipoProfessorDTO.getInstitucional())
 		{
-			List<Professor> professoresInstitucionaisList = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
+			List<Professor> professoresInstitucionaisList;
+			if (somenteAlocados)
+			{
+				professoresInstitucionaisList = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, null, null, null, null, null, null);
+			}
+			else
+			{
+				professoresInstitucionaisList = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
+			}
 			for (Professor professor : professoresInstitucionaisList)
 			{
 				areasTitulacaoToNumProfessoresMap.put(professor.getAreaTitulacao(), areasTitulacaoToNumProfessoresMap.get(professor.getAreaTitulacao())+1 );
@@ -671,7 +688,15 @@ public class ProfessoresServiceImpl
 		
 		if (tipoProfessorDTO == null || tipoProfessorDTO.getVirtual())
 		{
-			List<ProfessorVirtual> professoresVirtuaisList = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus) ;
+			List<ProfessorVirtual> professoresVirtuaisList;
+			if (somenteAlocados)
+			{
+				professoresVirtuaisList = AtendimentoOperacional.findProfessoresVirtuaisUtilizados(getInstituicaoEnsinoUser(), cenario, campus, null, null, null, null);
+			}
+			else
+			{
+				professoresVirtuaisList = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario, campus) ;
+			}
 			for (ProfessorVirtual professor : professoresVirtuaisList)
 			{
 				if (professor.getAreaTitulacao() != null)
@@ -1065,6 +1090,11 @@ public class ProfessoresServiceImpl
 		atendimentoVirtual.add( new RelatorioDTO( " Média de Turmas por Professor Virtual: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)totalTurmasProfessorVirtual.size()/(double)professoresVirtuaisUtilizados.size(), 2),pt_BR) + "</b>") );
 		professoresVirtuais.add(atendimentoVirtual);
+		RelatorioDTO docentesVirtuais = new RelatorioDTO( " Lista Professores Virtuais");
+		docentesVirtuais.setButtonText(docentesVirtuais.getText());
+		docentesVirtuais.setButtonIndex(12);
+		docentesVirtuais.setCampusId(campus.getId());
+		atendimentoVirtual.add( docentesVirtuais );
 		RelatorioDTO histogramas = new RelatorioDTO("<b>Histogramas</b>");
 		RelatorioDTO histograma1 = new RelatorioDTO( "Número de Buracos na Grade" );
 		histograma1.setButtonText(histograma1.getText());
@@ -1078,13 +1108,15 @@ public class ProfessoresServiceImpl
 		histograma3.setButtonText(histograma3.getText());
 		histograma3.setButtonIndex(2);
 		histogramas.add( histograma3 );
-		RelatorioDTO histograma4 = new RelatorioDTO( "Professores por Titulação" );
+		RelatorioDTO histograma4 = new RelatorioDTO( "Professores Alocados por Titulação" );
 		histograma4.setButtonText(histograma4.getText());
 		histograma4.setButtonIndex(3);
+		histograma4.setCampusId(campus.getId());
 		histogramas.add( histograma4 );
-		RelatorioDTO histograma5 = new RelatorioDTO( "Professores por Área de Conhecimento" );
+		RelatorioDTO histograma5 = new RelatorioDTO( "Professores Alocados por Área de Conhecimento" );
 		histograma5.setButtonText(histograma5.getText());
 		histograma5.setButtonIndex(4);
+		histograma5.setCampusId(campus.getId());
 		histogramas.add( histograma5 );
 		
 		
@@ -1227,11 +1259,18 @@ public class ProfessoresServiceImpl
 		});
 
 
+		//Map de professores porque eh necessario usar professores com fetch atendimentos para calcular carga horaria e credios
+		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf);
+		Map<Long, Professor> professorIdMapProfessor = new HashMap<Long, Professor>();
+		for (Professor professor : professoresUtilizados)
+		{
+			professorIdMapProfessor.put(professor.getId(), professor);
+		}
 		if ( !professoresGradeCheia.isEmpty() )
 		{
 			for ( int i = config.getOffset(); (i < professoresGradeCheia.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professoresGradeCheia.get(i) ) );
+				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresGradeCheia.get(i).getId()) ) );
 			}
 		}
 		
@@ -1244,6 +1283,69 @@ public class ProfessoresServiceImpl
 
 		return result;
 	}
+	
+	public List< Professor > getBuscaListGradeCheiaExport( Cenario cenario, Long campusDTO, RelatorioProfessorFiltro professorFiltro )
+	{
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<Professor, Set<HorarioDisponivelCenario>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()) == null)
+				{
+					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
+					novoHorarioList.add(atendimento.getHorarioDisponivelCenario());
+					professorToListHorarioDisponivelCenario.put(atendimento.getProfessor(), novoHorarioList);
+				}
+				else
+				{
+					professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()).add(atendimento.getHorarioDisponivelCenario());
+				}
+			}
+		}
+		
+		List<Professor> professoresGradeCheia = new ArrayList<Professor>();
+		for (Entry<Professor, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
+		{
+			if (professor.getKey().getHorarios().size() <= professor.getValue().size())
+			{
+				professoresGradeCheia.add(professor.getKey());
+			}
+			
+			Map<Semanas, List<HorarioDisponivelCenario>> diaMapHorarios = new HashMap<Semanas, List<HorarioDisponivelCenario>>();
+			
+			for (HorarioDisponivelCenario horario : professor.getValue())
+			{
+				if (diaMapHorarios.get(horario.getDiaSemana()) == null)
+				{
+					List<HorarioDisponivelCenario> novoHorario = new ArrayList<HorarioDisponivelCenario>();
+					novoHorario.add(horario);
+					diaMapHorarios.put(horario.getDiaSemana(), novoHorario);
+				}
+				else
+				{
+					diaMapHorarios.get(horario.getDiaSemana()).add(horario);
+				}
+			}
+		}
+		return professoresGradeCheia;
+	}
+
 	
 	@Override
 	public PagingLoadResult< ProfessorDTO > getBuscaListBemAlocados( CenarioDTO cenarioDTO, 
@@ -1308,11 +1410,18 @@ public class ProfessoresServiceImpl
 			}
 		});
 
+		//Map de professores porque eh necessario usar professores com fetch atendimentos para calcular carga horaria e credios
+		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf);
+		Map<Long, Professor> professorIdMapProfessor = new HashMap<Long, Professor>();
+		for (Professor professor : professoresUtilizados)
+		{
+			professorIdMapProfessor.put(professor.getId(), professor);
+		}
 		if ( !professoresBemAlocados.isEmpty() )
 		{
 			for ( int i = config.getOffset(); (i < professoresBemAlocados.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professoresBemAlocados.get(i) ) );
+				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresBemAlocados.get(i).getId()) ) );
 			}
 		}
 
@@ -1325,6 +1434,56 @@ public class ProfessoresServiceImpl
 		result.setTotalLength( professoresBemAlocados.size() );
 
 		return result;
+	}
+	
+	public List< Professor > getBuscaListBemAlocadosExport(	Cenario cenario, Long campusDTO, RelatorioProfessorFiltro professorFiltro )
+	{
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			String keyTurmas = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
+				atendimento.getDisciplina().getId()) + "-" +
+				atendimento.getTurma();
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professorToTurmasMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<String> novaTurma = new HashSet<String>();
+					novaTurma.add(keyTurmas);
+					professorToTurmasMap.put(atendimento.getProfessor(), novaTurma );
+				}
+				else
+				{
+					professorToTurmasMap.get(atendimento.getProfessor()).add(keyTurmas);
+				}
+			}
+		}
+		
+		List<Professor> professoresBemAlocados = new ArrayList<Professor>();
+		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
+		{
+			if (professorTurmas.getValue().size() >= 4)
+			{
+				professoresBemAlocados.add(professorTurmas.getKey());
+			}
+		}
+		
+		return professoresBemAlocados;
 	}
 	
 	@Override
@@ -1390,11 +1549,18 @@ public class ProfessoresServiceImpl
 			}
 		});
 
+		//Map de professores porque eh necessario usar professores com fetch atendimentos para calcular carga horaria e credios
+		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf);
+		Map<Long, Professor> professorIdMapProfessor = new HashMap<Long, Professor>();
+		for (Professor professor : professoresUtilizados)
+		{
+			professorIdMapProfessor.put(professor.getId(), professor);
+		}
 		if ( !professoresMalAlocados.isEmpty() )
 		{
 			for ( int i = config.getOffset(); (i < professoresMalAlocados.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professoresMalAlocados.get(i) ) );
+				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresMalAlocados.get(i).getId()) ) );
 			}
 		}
 
@@ -1407,6 +1573,57 @@ public class ProfessoresServiceImpl
 		result.setTotalLength( professoresMalAlocados.size() );
 
 		return result;
+	}
+	
+	public List< Professor > getBuscaListMalAlocadosExport( Cenario cenario, 
+			Long campusDTO, RelatorioProfessorFiltro professorFiltro )
+	{
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			String keyTurmas = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
+				atendimento.getDisciplina().getId()) + "-" +
+				atendimento.getTurma();
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professorToTurmasMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<String> novaTurma = new HashSet<String>();
+					novaTurma.add(keyTurmas);
+					professorToTurmasMap.put(atendimento.getProfessor(), novaTurma );
+				}
+				else
+				{
+					professorToTurmasMap.get(atendimento.getProfessor()).add(keyTurmas);
+				}
+			}
+		}
+		
+		List<Professor> professoresMalAlocados = new ArrayList<Professor>();
+		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
+		{
+			if (professorTurmas.getValue().size() == 1)
+			{
+				professoresMalAlocados.add(professorTurmas.getKey());
+			}
+		}
+		
+		return professoresMalAlocados;
 	}
 	
 	@Override
@@ -1472,9 +1689,9 @@ public class ProfessoresServiceImpl
 					diaMapHorarios.get(horario.getDiaSemana()).add(horario);
 				}
 			}
+			int janelas = 0;
 			for (Entry<Semanas, List<HorarioDisponivelCenario>> horarioSemana : diaMapHorarios.entrySet())
 			{
-				int janelas = 0;
 				List<HorarioDisponivelCenario> horarioProfessorOrdenado = horarioSemana.getValue();
 				
 				Collections.sort(horarioProfessorOrdenado, new Comparator<HorarioDisponivelCenario>() {
@@ -1508,10 +1725,10 @@ public class ProfessoresServiceImpl
 						}
 					}
 				}
-				if (janelas >= 1)
-				{
-					professoresComJanelas.add(professor.getKey());
-				}
+			}
+			if (janelas >= 1)
+			{
+				professoresComJanelas.add(professor.getKey());
 			}
 		}
 		
@@ -1522,15 +1739,20 @@ public class ProfessoresServiceImpl
 			}
 		});
 
+		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf);
+		Map<Long, Professor> professorIdMapProfessor = new HashMap<Long, Professor>();
+		for (Professor professor : professoresUtilizados)
+		{
+			professorIdMapProfessor.put(professor.getId(), professor);
+		}
 		if ( !professoresComJanelas.isEmpty() )
 		{
 			for ( int i = config.getOffset(); (i < professoresComJanelas.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professoresComJanelas.get(i) ) );
+				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresComJanelas.get(i).getId()) ) );
 			}
 		}
 
-		
 		BasePagingLoadResult< ProfessorDTO > result
 			= new BasePagingLoadResult< ProfessorDTO >( list );
 
@@ -1539,6 +1761,107 @@ public class ProfessoresServiceImpl
 		result.setTotalLength( professoresComJanelas.size() );
 
 		return result;
+	}
+	
+	public List< Professor > getBuscaListComJanelasExport( Cenario cenario, 
+			Long campusDTO, RelatorioProfessorFiltro professorFiltro )
+	{
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<Professor, Set<HorarioDisponivelCenario>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				
+				if (professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()) == null)
+				{
+					Set<HorarioDisponivelCenario> novoHorarioList = new HashSet<HorarioDisponivelCenario>();
+					novoHorarioList.add(atendimento.getHorarioDisponivelCenario());
+					professorToListHorarioDisponivelCenario.put(atendimento.getProfessor(), novoHorarioList);
+				}
+				else
+				{
+					professorToListHorarioDisponivelCenario.get(atendimento.getProfessor()).add(atendimento.getHorarioDisponivelCenario());
+				}
+			}
+		}
+		
+		List<Professor> professoresComJanelas = new ArrayList<Professor>();
+		for (Entry<Professor, Set<HorarioDisponivelCenario>> professor : professorToListHorarioDisponivelCenario.entrySet() )
+		{
+			Map<Semanas, List<HorarioDisponivelCenario>> diaMapHorarios = new HashMap<Semanas, List<HorarioDisponivelCenario>>();
+			
+			for (HorarioDisponivelCenario horario : professor.getValue())
+			{
+				if (diaMapHorarios.get(horario.getDiaSemana()) == null)
+				{
+					List<HorarioDisponivelCenario> novoHorario = new ArrayList<HorarioDisponivelCenario>();
+					novoHorario.add(horario);
+					diaMapHorarios.put(horario.getDiaSemana(), novoHorario);
+				}
+				else
+				{
+					diaMapHorarios.get(horario.getDiaSemana()).add(horario);
+				}
+			}
+			int janelas = 0;
+			for (Entry<Semanas, List<HorarioDisponivelCenario>> horarioSemana : diaMapHorarios.entrySet())
+			{
+				List<HorarioDisponivelCenario> horarioProfessorOrdenado = horarioSemana.getValue();
+				
+				Collections.sort(horarioProfessorOrdenado, new Comparator<HorarioDisponivelCenario>() {
+					@Override
+					public int compare(HorarioDisponivelCenario arg1, HorarioDisponivelCenario arg2) {
+						Calendar h1 = Calendar.getInstance();
+						h1.setTime(arg1.getHorarioAula().getHorario());
+						h1.set(1979,Calendar.NOVEMBER,6);
+						
+						Calendar h2 = Calendar.getInstance();
+						h2.setTime(arg2.getHorarioAula().getHorario());
+						h2.set(1979,Calendar.NOVEMBER,6);
+						
+						
+						return h1.compareTo(h2);
+					}
+				});
+				if (!horarioProfessorOrdenado.isEmpty())
+				{
+					Calendar h1 = Calendar.getInstance();
+					h1.setTime(horarioProfessorOrdenado.get(0).getHorarioAula().getHorario());
+					for (int i = 1; i < horarioProfessorOrdenado.size(); i++)
+					{
+						h1.add(Calendar.MINUTE,horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo());
+						Calendar h2 = Calendar.getInstance();
+						h2.setTime(horarioProfessorOrdenado.get(i).getHorarioAula().getHorario());
+						
+						if (h2.getTimeInMillis() - h1.getTimeInMillis() > (horarioProfessorOrdenado.get(i-1).getHorarioAula().getSemanaLetiva().getTempo() * 60000))
+						{
+							janelas++;
+						}
+					}
+				}
+			}
+			if (janelas >= 1)
+			{
+				professoresComJanelas.add(professor.getKey());
+			}
+		}
+		
+		return professoresComJanelas;
 	}
 	
 	@Override
@@ -1606,11 +1929,18 @@ public class ProfessoresServiceImpl
 			}
 		});
 
+		//Map de professores porque eh necessario usar professores com fetch atendimentos para calcular carga horaria e credios
+		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf);
+		Map<Long, Professor> professorIdMapProfessor = new HashMap<Long, Professor>();
+		for (Professor professor : professoresUtilizados)
+		{
+			professorIdMapProfessor.put(professor.getId(), professor);
+		}
 		if ( !professoresComDeslocamentosUnidades.isEmpty() )
 		{
 			for ( int i = config.getOffset(); (i < professoresComDeslocamentosUnidades.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professoresComDeslocamentosUnidades.get(i) ) );
+				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresComDeslocamentosUnidades.get(i).getId()) ) );
 			}
 		}
 
@@ -1623,6 +1953,59 @@ public class ProfessoresServiceImpl
 		result.setTotalLength( professoresComDeslocamentosUnidades.size() );
 
 		return result;
+	}
+	
+	public List< Professor > getBuscaListDeslocamentoUnidadesExport( Cenario cenario, 
+			Long campusDTO, RelatorioProfessorFiltro professorFiltro )
+	{
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<Unidade> novaUnidade = new HashSet<Unidade>();
+					novaUnidade.add(atendimento.getSala().getUnidade());
+					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+				}
+				else
+				{
+					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+				}
+			}
+		}
+		
+		List<Professor> professoresComDeslocamentosUnidades = new ArrayList<Professor>();
+		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		{
+			Set<Campus> campi = new HashSet<Campus>();
+			if (professoresToUnidadesMap.get(professorUnidades.getKey()).size() > 1)
+			{
+				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
+				for (Unidade unidade : professorUnidades.getValue())
+				{
+					campi.add(unidade.getCampus());
+				}
+			}
+		}
+		
+		return professoresComDeslocamentosUnidades;
 	}
 	
 	@Override
@@ -1686,11 +2069,18 @@ public class ProfessoresServiceImpl
 			}
 		});
 
+		//Map de professores porque eh necessario usar professores com fetch atendimentos para calcular carga horaria e credios
+		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario, campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf);
+		Map<Long, Professor> professorIdMapProfessor = new HashMap<Long, Professor>();
+		for (Professor professor : professoresUtilizados)
+		{
+			professorIdMapProfessor.put(professor.getId(), professor);
+		}
 		if ( !professoresComDeslocamentosCampi.isEmpty() )
 		{
 			for ( int i = config.getOffset(); (i < professoresComDeslocamentosCampi.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professoresComDeslocamentosCampi.get(i) ) );
+				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresComDeslocamentosCampi.get(i).getId()) ) );
 			}
 		}
 
@@ -1703,6 +2093,55 @@ public class ProfessoresServiceImpl
 		result.setTotalLength( professoresComDeslocamentosCampi.size() );
 
 		return result;
+	}
+
+	public List< Professor > getBuscaListDeslocamentoCampiExport( Cenario cenario, 
+			Long campusDTO, RelatorioProfessorFiltro professorFiltro )
+	{
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			if (atendimento.getProfessor().getCpf() != null)
+			{
+				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<Unidade> novaUnidade = new HashSet<Unidade>();
+					novaUnidade.add(atendimento.getSala().getUnidade());
+					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+				}
+				else
+				{
+					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+				}
+			}
+		}
+		
+		List<Professor> professoresComDeslocamentosCampi = new ArrayList<Professor>();
+		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		{
+			Set<Campus> campi = new HashSet<Campus>();
+			if (campi.size() > 1)
+			{
+				professoresComDeslocamentosCampi.add(professorUnidades.getKey());
+			}
+		}
+		
+		return professoresComDeslocamentosCampi;
 	}
 	
 	private int compareProfessor(Professor arg1, Professor arg2,

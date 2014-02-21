@@ -117,7 +117,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 				filtro.setAlunoNome(aluno.getNome());
 				
 				try {
-					quinteto = service.getAtendimentosParaGradeHorariaVisaoAluno(filtro,dao);
+					quinteto = service.getAtendimentosParaGradeHorariaVisaoAluno(ConvertBeans.toCenarioDTO(getCenario()), filtro,dao);
 				} catch (Exception e) {
 					String msg = "";
 					if (e instanceof EmptyResultDataAccessException) {
@@ -192,7 +192,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {return Collections.<AtendimentoOperacionalDTO>emptyList();}
 
 					@Override
-					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(String alunoNome, String alunoMatricula) {
+					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(Cenario cenario, String alunoNome, String alunoMatricula) {
 						List<AtendimentoTaticoDTO> atendimentosTaticoDTO = new ArrayList<AtendimentoTaticoDTO>();
 						String key = alunoNome + "-" + alunoMatricula;
 						List<AtendimentoRelatorioDTO> atendimentosDaKey = finalAtendimentosDTOMap.get(key);
@@ -205,7 +205,7 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 					}
 					
 					@Override
-					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(String alunoNome, String alunoMatricula) {return Collections.<AtendimentoOperacionalDTO>emptyList();}
+					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(Cenario cenario, String alunoNome, String alunoMatricula) {return Collections.<AtendimentoOperacionalDTO>emptyList();}
 					
 					@Override
 					public Map<Long,SemanaLetiva> buscaSemanasLetivas() {
@@ -244,10 +244,10 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 					@Override
 					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO) {return Collections.<AtendimentoOperacionalDTO>emptyList();}
 					@Override
-					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(String alunoNome, String alunoMatricula) {return Collections.<AtendimentoTaticoDTO>emptyList();}
+					public List<AtendimentoTaticoDTO> buscaDTOsDeAtendimentoTatico(Cenario cenario, String alunoNome, String alunoMatricula) {return Collections.<AtendimentoTaticoDTO>emptyList();}
 					
 					@Override
-					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(String alunoNome, String alunoMatricula) {
+					public List<AtendimentoOperacionalDTO> buscaDTOsDeAtendimentoOperacional(Cenario cenario, String alunoNome, String alunoMatricula) {
 						List<AtendimentoOperacionalDTO> atendimentosOpDTO = new ArrayList<AtendimentoOperacionalDTO>();
 						String key = alunoNome + "-" + alunoMatricula;
 						List<AtendimentoRelatorioDTO> atendimentosDaKey = finalAtendimentosDTOMap.get(key);
@@ -278,10 +278,10 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 			RelatorioVisaoAlunoFiltro filter = this.getFilter();
 			
 			try {
-				quinteto = service.getAtendimentosParaGradeHorariaVisaoAluno(filter);
+				quinteto = service.getAtendimentosParaGradeHorariaVisaoAluno(ConvertBeans.toCenarioDTO(getCenario()), filter);
 				
 				Map<Aluno, AtendimentoServiceRelatorioResponse> mapAluno = new HashMap<Aluno, AtendimentoServiceRelatorioResponse>();
-				mapAluno.put(Aluno.findOneByNomeMatricula(instituicaoEnsino, filter.getAlunoNome(), filter.getAlunoMatricula()), quinteto);
+				mapAluno.put(Aluno.findOneByNomeMatricula(instituicaoEnsino, getCenario(), filter.getAlunoNome(), filter.getAlunoMatricula()), quinteto);
 				Map<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>> mapTurnoControl = 
 					new HashMap<Turno, Map<Aluno, AtendimentoServiceRelatorioResponse>>();
 				mapTurnoControl.put(Turno.find(quinteto.getAtendimentosDTO().get(0).getTurnoId(), instituicaoEnsino), mapAluno);

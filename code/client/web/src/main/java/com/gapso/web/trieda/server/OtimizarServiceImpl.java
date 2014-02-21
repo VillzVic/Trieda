@@ -41,6 +41,7 @@ import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
+import com.gapso.trieda.domain.ParametroConfiguracao;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.RequisicaoOtimizacao;
 import com.gapso.trieda.domain.Sala;
@@ -351,7 +352,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 					m.setProperty(Marshaller.JAXB_ENCODING,"ISO-8859-1");
 					m.marshal(triedaInput,temp);
 					byte [] fileBytes = temp.toByteArray();
-					SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+					ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
+					SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 			
 					Long round = solverClient.requestOptimization(fileBytes);
 					
@@ -489,7 +491,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		List<RequisicaoOtimizacao> requisicoesOtimizacao = onlyCurrentUser ? RequisicaoOtimizacao.findBy(usuarioAtual) : RequisicaoOtimizacao.findAll();
 		// ...
 		List<RequisicaoOtimizacaoDTO> requisicoesOtimizacaoDTOs = new ArrayList<RequisicaoOtimizacaoDTO>();
-		SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+		ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
+		SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 		for (RequisicaoOtimizacao requisicaoOtimizacao : requisicoesOtimizacao) {
 			RequisicaoOtimizacaoDTO dto = ConvertBeans.toRequisicaoOtimizacaoDTO(requisicaoOtimizacao);
 			
@@ -515,7 +518,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	@Override
 	public boolean cancelaRequisicaoDeOtimizacao(Long round) throws TriedaException {
 		try {
-			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
+			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 			return solverClient.cancelOptimization(round);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -1576,7 +1580,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	@Override
 	public Boolean isOptimizing( Long round )
 	{
-		SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+		ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
+		SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 		return ( !solverClient.isFinished( round ) );
 	}
 
@@ -1594,9 +1599,16 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		ret.put("error", new ArrayList<String>());
 
 		try {
-			SolverClient solverClient = new SolverClient(linkSolverDefault,solverName);
+			ParametroConfiguracao config = ParametroConfiguracao.findConfiguracoes(getInstituicaoEnsinoUser());
+			SolverClient solverClient = new SolverClient(config.getUrlOtimizacao(),config.getNomeOtimizacao());
 
 			System.out.println("Carregando xml( round ). Passo 1 de 4...");// TODO:
+			
+			Parametro parametro1 = cenario.getUltimoParametro(this.getInstituicaoEnsinoUser());
+			for (Campus campus : parametro1.getCampi())
+			{
+				System.out.println("campus:" + campus.getNome());
+			}
 			byte[] xmlBytes = solverClient.getContent(round);
 
 			if (xmlBytes == null) {

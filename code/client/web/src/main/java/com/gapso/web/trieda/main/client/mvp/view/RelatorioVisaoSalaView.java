@@ -27,17 +27,17 @@ public class RelatorioVisaoSalaView	extends RelatorioVisaoView	implements Relato
 
 	@Override
 	protected String getHeadingPanel(){
-		return cenarioDTO.getNome() + " » Grade Horária Visão Sala";
+		return cenarioDTO.getNome() + " » Grade Horária Visão Ambiente";
 	}
 	
 	@Override
 	protected GTabItem createGTabItem(){
-		return new GTabItem("Grade Horária Visão Sala", Resources.DEFAULTS.saidaSala16());
+		return new GTabItem("Grade Horária Visão Ambiente", Resources.DEFAULTS.saidaSala16());
 	}
 	
 	@Override
 	protected GradeHorariaSalaGrid createGradeHorariaVisao(){
-		return new GradeHorariaSalaGrid();
+		return new GradeHorariaSalaGrid(cenarioDTO);
 	}
 	
 	@Override
@@ -47,9 +47,9 @@ public class RelatorioVisaoSalaView	extends RelatorioVisaoView	implements Relato
 		List<Field<?>> leftList = new ArrayList<Field<?>>();
 		
 		this.salaTF = new SalaAutoCompleteBox(cenarioDTO);
-		this.salaTF.setEmptyText("Digite codigo da sala");
+		this.salaTF.setEmptyText("Digite codigo do ambiente");
 		this.salaTF.setName("salaTF");
-		this.salaTF.setFieldLabel("Codigo da Sala");
+		this.salaTF.setFieldLabel("Codigo do Ambiente");
 		filtro.addSalaValueListener(salaTF);
 		leftList.add(this.salaTF);
 		

@@ -195,7 +195,32 @@ public enum ImportExcelError
 	UNIDADE_CODIGO_VAZIO,
 	UNIDADE_NOME_VAZIO,
 	
-	UNIDADES_DESLOCAMENTO_UNIDADE_ORIGEM_VAZIO;
+	UNIDADES_DESLOCAMENTO_UNIDADE_ORIGEM_VAZIO,
+	
+	SEMANA_LETIVA_CODIGO_VAZIO,
+	SEMANA_LETIVA_DURACAO_VAZIO,
+	SEMANA_LETIVA_PERMITE_INTERVALO_VAZIO,
+	SEMANA_LETIVA_DURACAO_FORMATO_INVALIDO,
+	SEMANA_LETIVA_DURACAO_VALOR_NEGATIVO,
+	SEMANA_LETIVA_FORMATO_INVALIDO,
+	
+	SEMANA_LETIVA_HORARIO_VAZIO,
+	SEMANA_LETIVA_TURNO_NOME_VAZIO,
+	SEMANA_LETIVA_SEGUNDA_VAZIO,
+	SEMANA_LETIVA_TERCA_VAZIO,
+	SEMANA_LETIVA_QUARTA_VAZIO,
+	SEMANA_LETIVA_QUINTA_VAZIO,
+	SEMANA_LETIVA_SEXTA_VAZIO,
+	SEMANA_LETIVA_SABADO_VAZIO,
+	SEMANA_LETIVA_DOMINGO_VAZIO,
+	SEMANA_LETIVA_HORARIO_FORMATO_INVALIDO,
+	SEMANA_LETIVA_SEGUNDA_FORMATO_INVALIDO,
+	SEMANA_LETIVA_TERCA_FORMATO_INVALIDO, 
+	SEMANA_LETIVA_QUARTA_FORMATO_INVALIDO,
+	SEMANA_LETIVA_QUINTA_FORMATO_INVALIDO, 
+	SEMANA_LETIVA_SEXTA_FORMATO_INVALIDO,
+	SEMANA_LETIVA_SABADO_FORMATO_INVALIDO,
+	SEMANA_LETIVA_DOMINGO_FORMATO_INVALIDO;
 
 	public String getMessage( String param1, TriedaI18nMessages i18nMessages )
 	{
@@ -386,6 +411,31 @@ public enum ImportExcelError
 			case UNIDADE_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,UnidadesImportExcel.NOME_COLUMN_NAME );
 			
 			case UNIDADES_DESLOCAMENTO_UNIDADE_ORIGEM_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,"Unidade de destino" );
+		
+			case SEMANA_LETIVA_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaImportExcel.CODIGO_COLUMN_NAME );
+			case SEMANA_LETIVA_DURACAO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaImportExcel.DURACAO_COLUMN_NAME );
+			case SEMANA_LETIVA_PERMITE_INTERVALO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaImportExcel.PERMITE_INTEVALO_COLUMN_NAME );
+			case SEMANA_LETIVA_DURACAO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaImportExcel.DURACAO_COLUMN_NAME);
+			case SEMANA_LETIVA_DURACAO_VALOR_NEGATIVO:  return i18nMessages.excelErroSintaticoValorNegativo(param1,SemanaLetivaImportExcel.DURACAO_COLUMN_NAME);
+			case SEMANA_LETIVA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaImportExcel.PERMITE_INTEVALO_COLUMN_NAME);
+		
+			case SEMANA_LETIVA_HORARIO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.HORARIO_COLUMN_NAME );
+			case SEMANA_LETIVA_TURNO_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.TURNO_COLUMN_NAME );
+			case SEMANA_LETIVA_SEGUNDA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.SEGUNDA_COLUMN_NAME );
+			case SEMANA_LETIVA_TERCA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.TERCA_COLUMN_NAME );
+			case SEMANA_LETIVA_QUARTA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.QUARTA_COLUMN_NAME );
+			case SEMANA_LETIVA_QUINTA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.QUINTA_COLUMN_NAME );
+			case SEMANA_LETIVA_SEXTA_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.SEXTA_COLUMN_NAME );
+			case SEMANA_LETIVA_SABADO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.SABADO_COLUMN_NAME );
+			case SEMANA_LETIVA_DOMINGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1,SemanaLetivaHorariosImportExcel.DOMINGO_COLUMN_NAME );
+			case SEMANA_LETIVA_HORARIO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.HORARIO_COLUMN_NAME);
+			case SEMANA_LETIVA_SEGUNDA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.SEGUNDA_COLUMN_NAME);
+			case SEMANA_LETIVA_TERCA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.TERCA_COLUMN_NAME);
+			case SEMANA_LETIVA_QUARTA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.QUARTA_COLUMN_NAME);
+			case SEMANA_LETIVA_QUINTA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.QUINTA_COLUMN_NAME);
+			case SEMANA_LETIVA_SEXTA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.SEXTA_COLUMN_NAME);
+			case SEMANA_LETIVA_SABADO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.SABADO_COLUMN_NAME);
+			case SEMANA_LETIVA_DOMINGO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,SemanaLetivaHorariosImportExcel.DOMINGO_COLUMN_NAME);
 		}
 
 		return "";

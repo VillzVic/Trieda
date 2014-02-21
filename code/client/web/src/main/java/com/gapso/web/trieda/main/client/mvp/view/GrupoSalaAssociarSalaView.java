@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+import com.extjs.gxt.ui.client.GXT;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.store.ListStore;
@@ -55,7 +56,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements
 		simpleModal = new SimpleModal("Associar Sala ao Grupo",
 				Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(500);
-		simpleModal.setWidth(585);
+		simpleModal.setWidth(685);
 	}
 
 	private void createForm() {
@@ -113,17 +114,20 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements
 		andaresListPanel.add(andaresList);
 
 		ContentPanel naoAssociadasListPanel = new ContentPanel(new FitLayout());
-		naoAssociadasListPanel.setWidth(190);
+		naoAssociadasListPanel.setWidth(240);
 		naoAssociadasListPanel.setHeight(320);
 		naoAssociadasListPanel.setHeadingHtml("Sala(s) não associadas ao Grupo");
 		store = new ListStore<SalaDTO>();
 		store.setDefaultSort(SalaDTO.PROPERTY_CODIGO, SortDir.ASC);
 		salasNaoPertencesList = new ListView<SalaDTO>(store);
 		salasNaoPertencesList.setDisplayProperty(SalaDTO.PROPERTY_CODIGO);
+		String aria = GXT.isAriaEnabled() ? " role='option' aria-selected='false' " : "";
+		salasNaoPertencesList.setTemplate("<tpl for=\".\"><div class='x-view-item' " + aria + ">{" + SalaDTO.PROPERTY_CODIGO 
+				+ "}({" + SalaDTO.PROPERTY_NUMERO + "} - {" + SalaDTO.PROPERTY_TIPO_STRING  + "} - {" + SalaDTO.PROPERTY_DESCRICAO + "})" + "</div></tpl>");
 		naoAssociadasListPanel.add(salasNaoPertencesList);
 
 		ContentPanel associadasListPanel = new ContentPanel(new FitLayout());
-		associadasListPanel.setWidth(190);
+		associadasListPanel.setWidth(240);
 		associadasListPanel.setHeight(320);
 		associadasListPanel.setHeadingHtml("Sala(s) associadas ao Grupo");
 		store = new ListStore<SalaDTO>();

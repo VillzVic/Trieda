@@ -27,6 +27,8 @@ public class ProfessorDTO extends AbstractDTO< String >
 	public static final String PROPERTY_VALOR_CREDITO = "valorCredito";
 	public static final String PROPERTY_MAX_DIAS_SEMANA = "maxDiasSemana";
 	public static final String PROPERTY_MIN_CREDITOS_DIA = "minCreditosDia";
+	public static final String PROPERTY_TOTAL_CRED = "totalCred";
+	public static final String PROPERTY_CARGA_HORARIA_SEMANAL = "cargaHorariaSemanal";
 
 	public ProfessorDTO()
 	{
@@ -175,6 +177,22 @@ public class ProfessorDTO extends AbstractDTO< String >
 
 	public Integer getMinCreditosDia() {
 		return get(PROPERTY_MIN_CREDITOS_DIA);
+	}
+	
+	public void setTotalCred(Integer value) {
+		set(PROPERTY_TOTAL_CRED, value);
+	}
+
+	public Integer getTotalCred() {
+		return get(PROPERTY_TOTAL_CRED);
+	}
+	
+	public void setCargaHorariaSemanal(Integer value) {
+		set(PROPERTY_CARGA_HORARIA_SEMANAL, value);
+	}
+
+	public Integer getCargaHorariaSemanal() {
+		return get(PROPERTY_CARGA_HORARIA_SEMANAL);
 	}
 
 	@Override

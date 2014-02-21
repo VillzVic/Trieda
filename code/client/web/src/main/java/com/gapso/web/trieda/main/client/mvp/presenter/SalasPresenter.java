@@ -56,7 +56,6 @@ public class SalasPresenter
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
 		Button getDisciplinasAssociadasButton();
-		Button getGruposDeSalasButton();
 		UnidadeComboBox getUnidadeCB();
 		CampusComboBox getCampusCB();
 		Button getSubmitBuscaButton();
@@ -145,7 +144,7 @@ public class SalasPresenter
 					public void onFailure( Throwable caught )
 					{
 						MessageBox.alert( "ERRO!",
-							"Não foi possível editar a sala", null );
+							"Não foi possível editar o ambiente", null );
 					}
 
 					public void onSuccess( Boolean result )
@@ -182,7 +181,7 @@ public class SalasPresenter
 					public void onFailure( Throwable caught )
 					{
 						MessageBox.alert( "ERRO!",
-							"Não foi possível remover a(s) sala(s)", null );
+							"Não foi possível remover o(s) ambiente(s)", null );
 					}
 
 					@Override

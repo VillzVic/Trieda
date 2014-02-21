@@ -1,10 +1,12 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.Method;
 import com.extjs.gxt.ui.client.widget.form.HiddenField;
+import com.extjs.gxt.ui.client.widget.form.CheckBoxGroup;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -40,7 +42,10 @@ public class ExportExcelFormSubmit
         			this.addParameter(f.getName(), (String) f.getValue());
         		}
         		else {
-        			this.addParameter(f.getName(), (Boolean) f.getValue());
+        			for (CheckBox checkBox : ((CheckBoxGroup) f).getValues())
+        			{
+            			this.addParameter(checkBox.getName(), checkBox.getValue());
+        			}
         		}
         	}
 		}

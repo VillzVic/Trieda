@@ -68,7 +68,7 @@ public class DemandasPorAlunoView
 	private void createTabItem()
 	{
 		this.tabItem = new GTabItem(
-			"Demandas", Resources.DEFAULTS.demanda16() );
+			"Demandas por Aluno", Resources.DEFAULTS.demandaAluno16() );
 	
 		this.tabItem.setContent( this.panel );
 	}
@@ -76,7 +76,7 @@ public class DemandasPorAlunoView
 	private void createToolBar()
 	{
 		this.toolBar = new SimpleToolBar( false, false,
-				false, true, true, this );
+				true, true, true, this );
 		
 		this.panel.setTopComponent( this.toolBar );
 	}

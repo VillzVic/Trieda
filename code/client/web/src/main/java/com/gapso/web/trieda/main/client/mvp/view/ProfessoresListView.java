@@ -39,7 +39,7 @@ public abstract class ProfessoresListView
 	private TipoContratoComboBox tipoContratoBuscaCB;
 	private TitulacaoComboBox titulacaoBuscaCB;
 	private AreaTitulacaoComboBox areaTitulacaoBuscaCB;
-	private Button disponibilidadeBT;
+	private Button gradeHorariaBT;
 	protected ContentPanel panel;
 	private GTabItem tabItem;
 	private RelatorioProfessorFiltro professorFiltro;
@@ -48,6 +48,7 @@ public abstract class ProfessoresListView
 	public ProfessoresListView( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro)
 	{
 		this.professorFiltro = professorFiltro;
+		this.cenarioDTO = cenarioDTO;
 		this.initUI();
 	}
 
@@ -74,13 +75,13 @@ public abstract class ProfessoresListView
 
 	private void createToolBar()
 	{
-		toolBar = new SimpleToolBar( false, true, true, false, true, this );
+		toolBar = new SimpleToolBar( false, false, false, false, true, this );
 		toolBar.add( new SeparatorToolItem() );
-		disponibilidadeBT = toolBar.createButton(
-			getI18nConstants().disponibilidadesSemanaLetiva(),
-			Resources.DEFAULTS.disponibilidade16() );
+		gradeHorariaBT = toolBar.createButton(
+				"Grade Horária do Professor",
+				Resources.DEFAULTS.saidaProfessor16() );
 
-		toolBar.add( disponibilidadeBT );
+		toolBar.add( gradeHorariaBT );
 		panel.setTopComponent( toolBar );
 	}
 
@@ -158,20 +159,14 @@ public abstract class ProfessoresListView
 		
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_MIN_CREDITOS_DIA,
 				getI18nConstants().minCreditosDia(), 140 ) );
+		
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TOTAL_CRED,
+				getI18nConstants().totalCreditosSemanais(), 140 ) );
+		
+		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_SEMANAL,
+				getI18nConstants().cargaHorariaSemanal(), 140 ) );
 
 		return list;
-	}
-
-	@Override
-	public Button getEditButton()
-	{
-		return this.toolBar.getEditButton();
-	}
-
-	@Override
-	public Button getRemoveButton()
-	{
-		return this.toolBar.getRemoveButton();
 	}
 
 	@Override
@@ -233,11 +228,11 @@ public abstract class ProfessoresListView
 	{
 		return this.filter.getResetButton();
 	}
-
+	
 	@Override
-	public Button getDisponibilidadeButton()
+	public Button getGradeHorariaButton()
 	{
-		return this.disponibilidadeBT;
+		return this.gradeHorariaBT;
 	}
 	
 	@Override

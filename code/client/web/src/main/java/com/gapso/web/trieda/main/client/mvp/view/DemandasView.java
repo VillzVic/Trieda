@@ -67,7 +67,7 @@ public class DemandasView
 	private void createTabItem()
 	{
 		this.tabItem = new GTabItem(
-			"Demandas", Resources.DEFAULTS.demanda16() );
+			"Ofertas e Demandas", Resources.DEFAULTS.demanda16() );
 
 		this.tabItem.setContent( this.panel );
 	}

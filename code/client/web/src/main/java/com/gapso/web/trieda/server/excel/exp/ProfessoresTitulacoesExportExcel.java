@@ -134,7 +134,7 @@ public class ProfessoresTitulacoesExportExcel
 		for ( CampusDTO campusDTO : campusDTOList )
 		{
 			relatorioDocenteDTO.addAll(
-					professoresServiceImpl.getProfessoresTitulacoes(ConvertBeans.toCenarioDTO(getCenario()), campusDTO) );
+					professoresServiceImpl.getProfessoresTitulacoes(ConvertBeans.toCenarioDTO(getCenario()), campusDTO, false) );
 		}
 
 		if ( !relatorioDocenteDTO.isEmpty() )

@@ -15,6 +15,7 @@ import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaUtilizadaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.util.view.RelatorioSalaFiltro;
@@ -47,4 +48,7 @@ public interface SalasServiceAsync
 	void getListNaoVinculadas(CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO, AsyncCallback<List<SalaDTO>> callback);
 	void getRelatorio(CenarioDTO cenarioDTO, RelatorioSalaFiltro salaFiltro, RelatorioDTO currentNode, AsyncCallback<List<RelatorioDTO>> callback);
 	void getFaixasCapacidadeSala(CenarioDTO cenarioDTO, Integer tamanhoFaixa, AsyncCallback<ListLoadResult<FaixaCapacidadeSalaDTO>> callback);
+	void getSalasUtilizadas(CenarioDTO cenarioDTO, Long campusDTO,
+			RelatorioSalaFiltro salaFiltro, BasePagingLoadConfig loadConfig,
+			AsyncCallback<PagingLoadResult<SalaUtilizadaDTO>> callback);
 }

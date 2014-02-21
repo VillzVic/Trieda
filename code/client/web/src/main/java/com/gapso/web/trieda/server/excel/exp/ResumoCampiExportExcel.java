@@ -117,11 +117,10 @@ public class ResumoCampiExportExcel
 			Sheet templateSheet = null;
 			fillInCellStyles(sheet);
 			int nextRow = this.initialRow;
-			int nextColumn = this.initialColumn;
+			int nextColumn = this.initialColumn + 4;
 			List<TreeNodeDTO> resumo = campiServiceImpl.getResumos(ConvertBeans.toCenarioDTO(getCenario()), null);
 			for (TreeNodeDTO node : resumo) {
 				List<TreeNodeDTO> campus = campiServiceImpl.getResumos(ConvertBeans.toCenarioDTO(getCenario()), node);
-				nextColumn += 4;
 				nextRow = writeHeader(node,nextRow,nextColumn,sheet);
 				for (TreeNodeDTO node2 : campus)
 				{
@@ -131,6 +130,7 @@ public class ResumoCampiExportExcel
 					}
 					nextRow = writeData(node2,nextRow, nextColumn, sheet, templateSheet);
 				}
+				nextColumn += 1;
 			}
 			autoSizeColumns((short)3, (short)20, sheet);
 			return true;
@@ -151,8 +151,8 @@ public class ResumoCampiExportExcel
 		}
 					
 		
-		// Text
-		setCell(row,column,sheet,rowToStylesmap.get(row).getPrimeiro(),((ResumoDTO) node.getContent()).getLabel());
+		if (column == this.initialColumn + 4)
+			setCell(row,column,sheet,rowToStylesmap.get(row).getPrimeiro(),((ResumoDTO) node.getContent()).getLabel());
 		
 		setCell(row,column+1,sheet,rowToStylesmap.get(row).getSegundo(),((ResumoDTO) node.getContent()).getValor().replace("<b>", "").replace("</b>", ""));
 
@@ -162,7 +162,7 @@ public class ResumoCampiExportExcel
 	
 	private int writeHeader(TreeNodeDTO campus, int row, int column, Sheet sheet) {
 		// Node
-		setCell(this.initialRow,column+1,sheet,cellStyles[ExcelCellStyleReference.HEADER.ordinal()],"Trieda\n" + getCenario().getNome());
+		setCell(this.initialRow,column+1,sheet,cellStyles[ExcelCellStyleReference.HEADER.ordinal()],getCenario().getNome() + "\n" + campus.getText());
 
 		return this.initialRow + 1;
 	}

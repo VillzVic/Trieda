@@ -244,7 +244,7 @@ public class CampiDeslocamentoImportExcel
 		{
 			if (sheetContent.get(i-1).getCampusOrigem() != null)
 			{
-				if (!sheetContent.get(i-1).getCampusOrigem().equals(campiOrigem.get(i)) )
+				if (!sheetContent.get(i-1).getCampusOrigem().getNome().equals(campiOrigem.get(i)) )
 				{
 					rowsWithErrors.add( sheetContent.get(i-1).getRow() );
 				}

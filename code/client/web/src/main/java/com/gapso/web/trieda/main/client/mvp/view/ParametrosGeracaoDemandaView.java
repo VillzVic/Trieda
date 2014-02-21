@@ -90,6 +90,7 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	private FieldSet criaParametros() {
 		this.usarDemandasPrioridade2CheckBox = createCheckBox("Usar demandas de prioridade 2 para maximzar o atendimento", 
 				parametroGeracaoDemandaDTO.getUsarDemandasDePrioridade2());
+		this.usarDemandasPrioridade2CheckBox.setToolTip("Teste de tooltip");
 		this.distanciaMaxEmPeriodosParaPrioridade2NumberField = new NumberField();
 		this.distanciaMaxEmPeriodosParaPrioridade2NumberField.setFieldLabel("Distância máxima (em períodos) do período atual do aluno");
 		this.distanciaMaxEmPeriodosParaPrioridade2NumberField.setLabelStyle("width: 330px; padding-left: 30px");

@@ -467,7 +467,6 @@ public class AlunosDemandaImportExcel
 			{
 				String codeAlunoDemanda = getCodeAlunoDemanda( alunoBD, demandaBD, alunosDemandaExcel.getPrioridade() );
 				AlunoDemanda alunoDemandaBD = alunosDemandaBD.get( codeAlunoDemanda );
-
 				if ( alunoDemandaBD != null )
 				{
 					// Update

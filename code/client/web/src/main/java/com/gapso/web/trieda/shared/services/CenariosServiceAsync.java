@@ -29,4 +29,6 @@ public interface CenariosServiceAsync
 	void checkDBVersion(AsyncCallback<Integer> callback);
 	void getCurrentCenario(AsyncCallback<CenarioDTO> callback);
 	void setCurrentCenario(long cenarioId, AsyncCallback<Void> callback);
+	void limpaSolucoesCenario(CenarioDTO cenarioDTO,
+			AsyncCallback<Void> callback);
 }

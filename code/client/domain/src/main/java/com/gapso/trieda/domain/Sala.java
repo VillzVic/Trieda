@@ -97,6 +97,10 @@ public class Sala
     @Column(name = "SAL_NUMERO")
     @Size(min = 1, max = 200)
     private String numero;
+    
+    @Column(name = "SAL_DESCRICAO")
+    @Size( max = 255 )
+    private String descricao;
 
     @NotNull
     @Column(name = "SAL_ANDAR")
@@ -679,15 +683,17 @@ public class Sala
     }
 
 	public static Sala findByCodigo(
-		InstituicaoEnsino instituicaoEnsino, String codigo )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Sala o " +
 			" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.unidade.campus.cenario = :cenario " +
 			" AND codigo = :codigo " );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return (Sala) q.getSingleResult();
 	}
@@ -910,6 +916,16 @@ public class Sala
 	public void setNumero( String numero )
 	{
         this.numero = numero;
+    }
+	
+	public String getDescricao()
+	{
+        return this.descricao;
+    }
+
+	public void setDescricao( String descricao )
+	{
+        this.descricao = descricao;
     }
 
 	public String getAndar()

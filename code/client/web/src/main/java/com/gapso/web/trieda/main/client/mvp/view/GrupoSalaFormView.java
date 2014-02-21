@@ -45,7 +45,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 	
 	private void initUI()
 	{
-		String title = ( !isEdited()? "Inserção de Grupo de Sala" : "Edição de Grupo de Sala" );
+		String title = ( !isEdited()? "Inserção de Grupo de Ambientes" : "Edição de Grupo de Ambientes" );
 		simpleModal = new SimpleModal( title, Resources.DEFAULTS.sala16() );
 		simpleModal.setHeight( 190 );
 		simpleModal.setWidth( 350 );
@@ -99,7 +99,7 @@ public class GrupoSalaFormView extends MyComposite implements GrupoSalaFormPrese
 		unidadeCB.setEnabled(!isEdited());
 		formPanel.add(unidadeCB, formData);
 		
-		salvarEAssociarBT = new Button("Salvar e Associar Salas", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
+		salvarEAssociarBT = new Button("Salvar e Associar Ambientes", AbstractImagePrototype.create(Resources.DEFAULTS.save16()));
 		simpleModal.addButton(salvarEAssociarBT);
 		
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

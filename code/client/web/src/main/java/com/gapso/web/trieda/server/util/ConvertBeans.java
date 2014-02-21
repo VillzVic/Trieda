@@ -42,6 +42,7 @@ import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
+import com.gapso.trieda.domain.ParametroConfiguracao;
 import com.gapso.trieda.domain.ParametroGeracaoDemanda;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorDisciplina;
@@ -84,6 +85,7 @@ import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
+import com.gapso.web.trieda.shared.dtos.ParametroConfiguracaoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorCampusDTO;
@@ -475,6 +477,7 @@ public class ConvertBeans {
 		domain.setVersion( dto.getVersion() );
 		domain.setCodigo( dto.getCodigo() );
 		domain.setNumero( dto.getNumero() );
+		domain.setDescricao( dto.getDescricao() );
 		domain.setAndar( dto.getAndar() );
 		domain.setCapacidadeInstalada( dto.getCapacidadeInstalada() );
 		domain.setCapacidadeMax( dto.getCapacidadeMax() );
@@ -505,6 +508,7 @@ public class ConvertBeans {
 		dto.setVersion( domain.getVersion() );
 		dto.setCodigo( domain.getCodigo() );
 		dto.setNumero( domain.getNumero() );
+		dto.setDescricao( domain.getDescricao() );
 		dto.setAndar( domain.getAndar() );
 		dto.setCapacidadeInstalada( domain.getCapacidadeInstalada() );
 		dto.setCapacidadeMax( domain.getCapacidadeMax() );
@@ -2683,6 +2687,8 @@ public class ConvertBeans {
 		dto.setNotaDesempenho( ConvertBeans.getNotaDesempenho( domain ).intValue() );
 		dto.setMaxDiasSemana(domain.getMaxDiasSemana());
 		dto.setMinCreditosDia(domain.getMinCreditosDia());
+		dto.setCargaHorariaSemanal( getCargaHorariaSemanal( domain ) );
+		dto.setTotalCred( getTotalCred( domain ) );
 
 		if ( instituicaoEnsino != null )
 		{
@@ -2691,6 +2697,35 @@ public class ConvertBeans {
 		}
 
 		return dto;
+	}
+	
+	private static Integer getCargaHorariaSemanal(Professor p) {
+		int totalCred = 0;
+		Set<String> creditos = new HashSet<String>();
+		for (AtendimentoOperacional atendimento : p.getAtendimentosOperacionais())
+		{
+			String key = atendimento.getTurma() + "-" + 
+					(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+						+ "-" + atendimento.getHorarioDisponivelCenario().getId();
+			if (!creditos.contains(key))
+			{
+				totalCred += atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo();
+				creditos.add(key);
+			}
+		}
+		return totalCred;
+	}
+
+	private static Integer getTotalCred(Professor p) {
+		Set<String> creditos = new HashSet<String>();
+		for (AtendimentoOperacional atendimento : p.getAtendimentosOperacionais())
+		{
+			creditos.add(atendimento.getTurma() + "-" + 
+					(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+						+ "-" + atendimento.getHorarioDisponivelCenario().getId());
+		}
+		
+		return creditos.size();
 	}
 
 	static private Double getNotaDesempenho( Professor p )
@@ -3622,5 +3657,30 @@ public class ConvertBeans {
 		domain.setFatorDeAumentoDeMaxCreditos(dto.getFatorDeAumentoDeMaxCreditos());
 		
 		return domain;
+	}
+	
+	public static ParametroConfiguracao toParametroConfiguracao( ParametroConfiguracaoDTO dto )
+	{
+		ParametroConfiguracao domain = new ParametroConfiguracao();
+		
+		InstituicaoEnsino instituicaoEnsino
+			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
+		
+		domain.setNomeOtimizacao( dto.getNomeOtimizacao() );
+		domain.setUrlOtimizacao( dto.getUrlOtimizacao() );
+		domain.setInstituicaoEnsino( instituicaoEnsino );
+		
+		return domain;
+	}
+	
+	public static ParametroConfiguracaoDTO toParametroConfiguracaoDTO( ParametroConfiguracao domain )
+	{
+		ParametroConfiguracaoDTO dto = new ParametroConfiguracaoDTO();
+		
+		dto.setInstituicaoEnsinoId( domain.getInstituicaoEnsino().getId() );
+		dto.setUrlOtimizacao( domain.getUrlOtimizacao() );
+		dto.setNomeOtimizacao( domain.getNomeOtimizacao() );
+		
+		return dto;
 	}
 }

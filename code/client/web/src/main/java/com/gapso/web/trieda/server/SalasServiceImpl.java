@@ -2,6 +2,7 @@ package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +49,9 @@ import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaUtilizadaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
+import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.SalasService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -356,8 +359,8 @@ public class SalasServiceImpl
 			tipo1.persist();
 
 			TipoSala tipo2 = new TipoSala();
-			tipo2.setNome( TipoSala.TIPO_LABORATORIO );
-			tipo2.setDescricao( TipoSala.TIPO_LABORATORIO );
+			tipo2.setNome( "Laboratório" );
+			tipo2.setDescricao( "Laboratório" );
 			tipo2.setInstituicaoEnsino( instituicaoEnsino );
 			tipo2.setCenario(cenario);
 			tipo2.persist();
@@ -570,7 +573,8 @@ public class SalasServiceImpl
 				}
 			} else {
 				// atendimentos operacionais
-				for (AtendimentoOperacional atendimento : oferta.getAtendimentosOperacionais()) {
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+				for (AtendimentoOperacional atendimento : atendimentos) {
 					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
 					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
 					if (atendimetosPorSalaTurno == null) {
@@ -776,6 +780,11 @@ public class SalasServiceImpl
 				mediaUtilizacaoHorarioSalas,pt_BR) + "%</b>") );
 		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários dos Laboratórios: <b>" + numberFormatter.print(
 				mediaUtilizacaoHorarioLaboratorios,pt_BR) + "%</b>") );
+		RelatorioDTO listaAmbientes = new RelatorioDTO( "Lista de Ambientes" );
+		listaAmbientes.setButtonText(listaAmbientes.getText());
+		listaAmbientes.setButtonIndex(2);
+		listaAmbientes.setCampusId(campus.getId());
+		atendimento.add( listaAmbientes );
 		currentNode.add(atendimento);
 		
 		RelatorioDTO histogramas = new RelatorioDTO( "<b>Histogramas</b>");
@@ -788,5 +797,259 @@ public class SalasServiceImpl
 		histograma2.setButtonIndex(1);
 		histogramas.add( histograma2 );
 		currentNode.add(histogramas);
+	}
+	
+	@Override
+	public PagingLoadResult<SalaUtilizadaDTO> getSalasUtilizadas(CenarioDTO cenarioDTO, Long campusDTO, RelatorioSalaFiltro salaFiltro, final BasePagingLoadConfig loadConfig)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		
+		Turno turnoFiltro = salaFiltro.getTurno() == null ? null :
+			Turno.find(salaFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		int faixaSuperior = salaFiltro.getFaixaCapacidadeSala() == null ? 0 :
+			salaFiltro.getFaixaCapacidadeSala().getFaixaSuperior();
+		int faixaInferior = salaFiltro.getFaixaCapacidadeSala() == null ? 0 :
+			salaFiltro.getFaixaCapacidadeSala().getFaixaInferior();
+		
+		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+		// cálculo dos indicadores de utilização das salas de aula e laboratórios
+		Set<Turno> turnosConsiderados = new HashSet<Turno>();
+		Set<Sala> salasUtilizadas = new HashSet<Sala>();
+		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
+		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
+		List<SalaUtilizadaDTO> salaUtilizadaDTOList = new ArrayList<SalaUtilizadaDTO>();
+		if (turnoFiltro != null )
+		{
+			turnosConsiderados.add(turnoFiltro);
+		}
+		for (Oferta oferta : campus.getOfertas()) {
+			if (turnoFiltro == null) {
+				turnosConsiderados.add(oferta.getTurno());
+			}
+			if (ehTatico) {
+				// atendimentos táticos
+				for (AtendimentoTatico aula : oferta.getAtendimentosTaticos()) {
+					String key = aula.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (aulasPorSalaTurno == null) {
+						aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
+					}
+					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
+					
+					if (salaFiltro.getFaixaCapacidadeSala() != null)
+					{
+						if (aula.getSala().getCapacidadeInstalada() >= faixaInferior && 
+									aula.getSala().getCapacidadeInstalada() <= faixaSuperior)
+						{
+							salasUtilizadas.add(aula.getSala());
+						}
+					}
+					else
+					{
+						salasUtilizadas.add(aula.getSala());
+					}
+					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			} else {
+				// atendimentos operacionais
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
+				for (AtendimentoOperacional atendimento : atendimentos) {
+					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
+					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimetosPorSalaTurno == null) {
+						atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+						salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
+					}
+					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
+					
+					if (salaFiltro.getFaixaCapacidadeSala() != null)
+					{
+						if (atendimento.getSala().getCapacidadeInstalada() >= faixaInferior && 
+										atendimento.getSala().getCapacidadeInstalada() <= faixaSuperior)
+						{
+							salasUtilizadas.add(atendimento.getSala());
+						}
+					}
+					else
+					{
+						salasUtilizadas.add(atendimento.getSala());
+					}
+					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
+				}
+			}
+		}
+		
+		//calculo do indicador de taxa de uso dos horarios das salas de aula
+		SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
+		Map<Integer, Integer> countHorariosAula = new HashMap<Integer, Integer>();
+		if (semanasLetivasUtilizadas.size() > 0)
+		{
+			for(HorarioAula ha : maiorSemanaLetiva.getHorariosAula()){
+				for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
+					int semanaInt = Semanas.toInt(hdc.getDiaSemana());
+					Integer value = countHorariosAula.get(semanaInt);
+					value = ((value == null) ? 0 : value);
+					countHorariosAula.put(semanaInt, value + 1);
+				}
+			}
+		}
+		int cargaHorariaSemanalEmMinutos = 0;
+		for(Integer i : countHorariosAula.keySet()){
+			cargaHorariaSemanalEmMinutos += countHorariosAula.get(i) * maiorSemanaLetiva.getTempo();
+		}
+		
+		Locale pt_BR = new Locale("pt","BR");
+		NumberFormatter numberFormatter = new NumberFormatter();
+		
+		Map<Sala, List<Integer>> mediaAlunosPorTurmaPorSalaMap =  new HashMap<Sala, List<Integer>>();
+		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
+			// [SalaId -> Tempo de uso (min) semanal]
+			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
+			for (Turno turno : turnosConsiderados) {
+				for (Sala sala : salasUtilizadas) {
+					double somatorioDeAlunos = 0.0;
+					double somatorioDaCapacidade = 0.0;
+					int cargaHoraria = 0;
+					double mediaUtilizacaoHorario = 0.0;
+					
+					String key = sala.getId() + "-" + turno.getId();
+					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+					if (atendimentosPorSalaTurno != null) {
+						List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
+						if (ehTatico) {
+							aulas.addAll(atendimentosPorSalaTurno);
+						} else {
+							List<AtendimentoOperacionalDTO> atendimentosOperacional = new ArrayList<AtendimentoOperacionalDTO>(atendimentosPorSalaTurno.size());
+							for (AtendimentoRelatorioDTO atendimento : atendimentosPorSalaTurno) {
+								atendimentosOperacional.add((AtendimentoOperacionalDTO)atendimento);
+							}
+							// processa os atendimentos do operacional e os transforma em aulas
+							List<AtendimentoOperacionalDTO> aulasOperacional = atService.extraiAulas(atendimentosOperacional);
+							// insere as aulas do modo operacional na lista de atendimentos
+							aulas.addAll(aulasOperacional);
+						}
+						
+						// trata compartilhamento de turmas entre cursos
+						List<AtendimentoRelatorioDTO> aulasComCompartilhamentos = atService.uneAulasQuePodemSerCompartilhadas(aulas);
+						
+						for (AtendimentoRelatorioDTO aula : aulasComCompartilhamentos) {
+							if (mediaAlunosPorTurmaPorSalaMap.get(sala) == null)
+							{
+								List<Integer> novaQuantidadeAlunos = new ArrayList<Integer>();
+								novaQuantidadeAlunos.add(aula.getQuantidadeAlunos());
+								mediaAlunosPorTurmaPorSalaMap.put(sala, novaQuantidadeAlunos);
+							}
+							else
+							{
+								mediaAlunosPorTurmaPorSalaMap.get(sala).add(aula.getQuantidadeAlunos());
+							}
+							
+							somatorioDeAlunos +=  aula.getQuantidadeAlunos();
+							somatorioDaCapacidade += sala.getCapacidadeInstalada();
+							
+							cargaHoraria += aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula();
+						}
+						mediaUtilizacaoHorario += (double) cargaHoraria / cargaHorariaSemanalEmMinutos;
+					}
+					SalaUtilizadaDTO novaSalaUtilizada = new SalaUtilizadaDTO();
+					novaSalaUtilizada.setId(sala.getId());
+					novaSalaUtilizada.setCodigo(sala.getCodigo());
+					novaSalaUtilizada.setCampus(sala.getUnidade().getCampus().getCodigo());
+					novaSalaUtilizada.setUnidadeString(sala.getUnidade().getCodigo());
+					novaSalaUtilizada.setAndar(sala.getAndar());
+					novaSalaUtilizada.setNumero(sala.getNumero());
+					novaSalaUtilizada.setCargaHoraria(cargaHoraria);
+					novaSalaUtilizada.setOcupacaoCapacidade(numberFormatter.print(TriedaUtil.round((double)somatorioDeAlunos/somatorioDaCapacidade * 100, 2), pt_BR) + "%");
+					novaSalaUtilizada.setUtilizacaoHorario(numberFormatter.print(TriedaUtil.round(mediaUtilizacaoHorario*100, 2), pt_BR) + "%");
+					
+					salaUtilizadaDTOList.add(novaSalaUtilizada);
+				}
+			}
+		}
+		final String orderBy = loadConfig.getSortField();
+		Collections.sort(salaUtilizadaDTOList,new Comparator<SalaUtilizadaDTO>() {
+			@Override
+			public int compare(SalaUtilizadaDTO o1, SalaUtilizadaDTO o2) {
+				if (orderBy == null)
+				{
+					return o1.getId().compareTo(o2.getId());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_CODIGO))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getCodigo().compareTo(o2.getCodigo());
+					else
+						return o2.getCodigo().compareTo(o1.getCodigo());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_CAMPUS))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getCampus().compareTo(o2.getCampus());
+					else
+						return o2.getCampus().compareTo(o1.getCampus());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_UNIDADE))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getUnidade().compareTo(o2.getUnidade());
+					else
+						return o2.getUnidade().compareTo(o1.getUnidade());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_ANDAR))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getAndar().compareTo(o2.getAndar());
+					else
+						return o2.getAndar().compareTo(o1.getAndar());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_NUMERO))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getNumero().compareTo(o2.getNumero());
+					else
+						return o2.getNumero().compareTo(o1.getNumero());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_CARGA_HORARIA))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getCargaHoraria().compareTo(o2.getCargaHoraria());
+					else
+						return o2.getCargaHoraria().compareTo(o1.getCargaHoraria());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_UTILZIACAO_HORARIO))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getUtilizacaoHorario().compareTo(o2.getUtilizacaoHorario());
+					else
+						return o2.getUtilizacaoHorario().compareTo(o1.getUtilizacaoHorario());
+				}
+				else if (orderBy.equals(SalaUtilizadaDTO.PROPERTY_OCUPACAO_CAPACIDADE))
+				{
+					if (loadConfig.getSortDir() == SortDir.ASC)
+						return o1.getOcupacaoCapacidade().compareTo(o2.getOcupacaoCapacidade());
+					else
+						return o2.getOcupacaoCapacidade().compareTo(o1.getOcupacaoCapacidade());
+				}
+				else
+				{
+					return o1.getId().compareTo(o2.getId());
+				}
+			}
+		});
+		
+		List<SalaUtilizadaDTO> salasPagina = new ArrayList<SalaUtilizadaDTO>();
+		for ( int i = loadConfig.getOffset(); (i < salaUtilizadaDTOList.size() && i < (loadConfig.getOffset() + loadConfig.getLimit())); i++ )
+		{
+			salasPagina.add( salaUtilizadaDTOList.get(i) );
+		}
+		
+		BasePagingLoadResult< SalaUtilizadaDTO > result
+		= new BasePagingLoadResult< SalaUtilizadaDTO >( salasPagina );
+		result.setOffset( loadConfig.getOffset() );
+		result.setTotalLength( salaUtilizadaDTOList.size() );
+		return result;
+		
 	}
 }

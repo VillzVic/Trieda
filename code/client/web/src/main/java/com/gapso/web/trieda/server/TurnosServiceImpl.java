@@ -93,7 +93,7 @@ public class TurnosServiceImpl
 		onlyProfessor();
 
 		List< Campus > campi = Campus.findAllOtimized(
-			this.getInstituicaoEnsinoUser() );
+			this.getInstituicaoEnsinoUser(), getCenario() );
 
 		List< Turno > turnos = null;
 

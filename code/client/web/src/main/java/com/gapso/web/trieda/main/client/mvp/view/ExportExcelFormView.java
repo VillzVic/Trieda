@@ -1,18 +1,19 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+
 import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.CheckBoxGroup;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.layout.ColumnData;
-import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.shared.excel.PlanilhasExportExcel;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -39,7 +40,7 @@ public class ExportExcelFormView
 	private CheckBox curriculosExportExcelCB;
 	private CheckBox ofertasDemandasExportExcelCB;
 	private CheckBox alunosExportExcelCB;
-	private CheckBox DemandasPorAlunoExportExcelCB;
+	private CheckBox demandasPorAlunoExportExcelCB;
 	private CheckBox professoresExportExcelCB;
 	private CheckBox disponibilidadesProfessoresExportExcelCB;
 	private CheckBox habilitacaoProfessoresExportExcelCB;
@@ -71,6 +72,10 @@ public class ExportExcelFormView
 	private CheckBox ambientesFaixaUtilizacaoCB;
 	private CheckBox turnosCB;
 	private CheckBox tiposCursoCB;
+	private CheckBox divisaoCreditosCB;
+	private CheckBox resumoCenarioCB;
+	private CheckBox resumoCampusCB;
+	private CheckBox semanaLetivaCB;
 	private TextField<String> nomeArquivoTF;
 	
 	public ExportExcelFormView()
@@ -83,425 +88,357 @@ public class ExportExcelFormView
 		String title = "Exportação Excel";
 		exportExcelModal = new ExportExcelModal(title, Resources.DEFAULTS.exportar16());
 		exportExcelModal.setHeight(600);
-		exportExcelModal.setWidth(600);
+		exportExcelModal.setWidth(610);
 		createForm();
 		exportExcelModal.setContent(formPanel);
 	}
 	
 	private void createForm()
 	{
-		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
 		formPanel.setFrame(true);
 		formPanel.setHeadingHtml("Escolha quais planilhas deseja exportar");
 		formPanel.setSize(600, -1);
-		formPanel.setButtonAlign(HorizontalAlignment.CENTER);
+		formPanel.setButtonAlign(HorizontalAlignment.LEFT);
 		formPanel.setScrollMode(Style.Scroll.AUTOY);
 		
 		LayoutContainer main = new LayoutContainer();
-		main.addStyleName("exportExcelForm");
 	    main.setLayout(new FormLayout());
 	    
 	    //Geral
-	    LayoutContainer leftGeral = new LayoutContainer();
-	    leftGeral.setLayout(new FormLayout());
-	    
-	    LayoutContainer rightGeral = new LayoutContainer();
-	    rightGeral.setLayout(new FormLayout());
-	    
 		FieldSet geralFS = new FieldSet();
-		geralFS.setWidth(540);
+		geralFS.setWidth(550);
 		geralFS.setCollapsible(true);
-		geralFS.setHeadingHtml("&nbsp;");
-		geralFS.setLayout(new ColumnLayout());
+		geralFS.setHeadingHtml("Dados de Entrada");
+		geralFS.setLayout(new RowLayout());
 		
-		campiExportExcelCB = new CheckBox();
-		campiExportExcelCB.setName(PlanilhasExportExcel.CAMPI);
-		campiExportExcelCB.setValue(false);
-		campiExportExcelCB.setFieldLabel("Campi");
-		campiExportExcelCB.addInputStyleName("exportExcelForm");
-		leftGeral.add(campiExportExcelCB, formData);
-		
-		unidadesExportExcelCB = new CheckBox();
-		unidadesExportExcelCB.setName(PlanilhasExportExcel.UNIDADES);
-		unidadesExportExcelCB.setValue(false);
-		unidadesExportExcelCB.setFieldLabel("Unidades");
-		rightGeral.add(unidadesExportExcelCB, formData);
-		
-		salasExportExcelCB = new CheckBox();
-		salasExportExcelCB.setName(PlanilhasExportExcel.SALAS);
-		salasExportExcelCB.setValue(false);
-		salasExportExcelCB.setFieldLabel("Salas");
-		leftGeral.add(salasExportExcelCB, formData);
-		
-		disponibilidadesSalasExportExcelCB = new CheckBox();
-		disponibilidadesSalasExportExcelCB.setName(PlanilhasExportExcel.DISPONIBILIDADES_SALAS);
-		disponibilidadesSalasExportExcelCB.setValue(false);
-		disponibilidadesSalasExportExcelCB.setFieldLabel("Disponibilidades das Salas");
-		rightGeral.add(disponibilidadesSalasExportExcelCB, formData);
-		
-		cursosExportExcelCB = new CheckBox();
-		cursosExportExcelCB.setName(PlanilhasExportExcel.CURSOS);
-		cursosExportExcelCB.setValue(false);
-		cursosExportExcelCB.setFieldLabel("Cursos");
-		leftGeral.add(cursosExportExcelCB, formData);
-		
-		areasTitulacaoExportExcelCB = new CheckBox();
-		areasTitulacaoExportExcelCB.setName(PlanilhasExportExcel.AREAS_TITULACAO);
-		areasTitulacaoExportExcelCB.setValue(false);
-		areasTitulacaoExportExcelCB.setFieldLabel("Áreas de Conhecimento");
-		rightGeral.add(areasTitulacaoExportExcelCB, formData);
-		
-		cursoAreaTitulacaoExportExcelCB = new CheckBox();
-		cursoAreaTitulacaoExportExcelCB.setName(PlanilhasExportExcel.CURSO_AREAS_TITULACAO);
-		cursoAreaTitulacaoExportExcelCB.setValue(false);
-		cursoAreaTitulacaoExportExcelCB.setFieldLabel("Curso - Áreas de Conhecimento");
-		leftGeral.add(cursoAreaTitulacaoExportExcelCB, formData);
-		
-		curriculosExportExcelCB = new CheckBox();
-		curriculosExportExcelCB.setName(PlanilhasExportExcel.CURRICULOS);
-		curriculosExportExcelCB.setValue(false);
-		curriculosExportExcelCB.setFieldLabel("Matrizes Curriculares");
-		rightGeral.add(curriculosExportExcelCB, formData);
-		
-		disciplinasExportExcelCB = new CheckBox();
-		disciplinasExportExcelCB.setName(PlanilhasExportExcel.DISCIPLINAS);
-		disciplinasExportExcelCB.setValue(false);
-		disciplinasExportExcelCB.setFieldLabel("Disciplinas");
-		leftGeral.add(disciplinasExportExcelCB, formData);
-		
-		disciplinasSalasExportExcelCB = new CheckBox();
-		disciplinasSalasExportExcelCB.setName(PlanilhasExportExcel.DISCIPLINAS_SALAS);
-		disciplinasSalasExportExcelCB.setValue(false);
-		disciplinasSalasExportExcelCB.setFieldLabel("Disciplinas-Salas");
-		rightGeral.add(disciplinasSalasExportExcelCB, formData);
-		
-		equivalenciasExportExcelCB = new CheckBox();
-		equivalenciasExportExcelCB.setName(PlanilhasExportExcel.EQUIVALENCIAS);
-		equivalenciasExportExcelCB.setValue(false);
-		equivalenciasExportExcelCB.setFieldLabel("Equivalências");
-		leftGeral.add(equivalenciasExportExcelCB, formData);
-		
-		alunosExportExcelCB = new CheckBox();
-		alunosExportExcelCB.setName(PlanilhasExportExcel.ALUNOS);
-		alunosExportExcelCB.setValue(false);
-		alunosExportExcelCB.setFieldLabel("Alunos");
-		rightGeral.add(alunosExportExcelCB, formData);
-		
-		ofertasDemandasExportExcelCB = new CheckBox();
-		ofertasDemandasExportExcelCB.setName(PlanilhasExportExcel.DEMANDAS);
-		ofertasDemandasExportExcelCB.setValue(false);
-		ofertasDemandasExportExcelCB.setFieldLabel("Ofertas e Demandas");
-		leftGeral.add(ofertasDemandasExportExcelCB, formData);
-		
-		DemandasPorAlunoExportExcelCB = new CheckBox();
-		DemandasPorAlunoExportExcelCB.setName(PlanilhasExportExcel.DEMANDAS_POR_ALUNO);
-		DemandasPorAlunoExportExcelCB.setValue(false);
-		DemandasPorAlunoExportExcelCB.setFieldLabel("Demandas por Aluno");
-		rightGeral.add(DemandasPorAlunoExportExcelCB, formData);
-		
-		aulasExportExcelCB = new CheckBox();
-		aulasExportExcelCB.setName(PlanilhasExportExcel.AULAS);
-		aulasExportExcelCB.setValue(false);
-		aulasExportExcelCB.setFieldLabel("Aulas");
-		leftGeral.add(aulasExportExcelCB, formData);
-		
-		professoresExportExcelCB = new CheckBox();
-		professoresExportExcelCB.setName(PlanilhasExportExcel.PROFESSORES);
-		professoresExportExcelCB.setValue(false);
-		professoresExportExcelCB.setFieldLabel("Professores");
-		rightGeral.add(professoresExportExcelCB, formData);
-		
-		disponibilidadesProfessoresExportExcelCB = new CheckBox();
-		disponibilidadesProfessoresExportExcelCB.setName(PlanilhasExportExcel.DISPONIBILIDADES_PROFESSORES);
-		disponibilidadesProfessoresExportExcelCB.setValue(false);
-		disponibilidadesProfessoresExportExcelCB.setFieldLabel("Disponibilidades dos Professores");
-		leftGeral.add(disponibilidadesProfessoresExportExcelCB, formData);
-		
-		campiTrabalhoExportExcelCB = new CheckBox();
-		campiTrabalhoExportExcelCB.setName(PlanilhasExportExcel.CAMPI_TRABALHO);
-		campiTrabalhoExportExcelCB.setValue(false);
-		campiTrabalhoExportExcelCB.setFieldLabel("Campi de Trabalho");
-		rightGeral.add(campiTrabalhoExportExcelCB, formData);
-		
-	    habilitacaoProfessoresExportExcelCB = new CheckBox();
-	    habilitacaoProfessoresExportExcelCB.setName(PlanilhasExportExcel.HABILITACAO_PROFESSORES);
-	    habilitacaoProfessoresExportExcelCB.setValue(false);
-	    habilitacaoProfessoresExportExcelCB.setFieldLabel("Habilitação dos Professores");
-	    leftGeral.add(habilitacaoProfessoresExportExcelCB, formData);
-	    
 		turnosCB = new CheckBox();
 		turnosCB.setName(PlanilhasExportExcel.TURNOS);
 		turnosCB.setValue(false);
-		turnosCB.setFieldLabel("Turnos");
-		rightGeral.add(turnosCB, formData);
+		turnosCB.setBoxLabel("Turnos");
+		
+		semanaLetivaCB = new CheckBox();
+		semanaLetivaCB.setName(PlanilhasExportExcel.SEMANAS_LETIVA);
+		semanaLetivaCB.setValue(false);
+		semanaLetivaCB.setBoxLabel("Semanas Letiva");
 		
 		tiposCursoCB = new CheckBox();
 		tiposCursoCB.setName(PlanilhasExportExcel.TIPOS_CURSO);
 		tiposCursoCB.setValue(false);
-		tiposCursoCB.setFieldLabel("Tipos Curso");
-		leftGeral.add(tiposCursoCB, formData);
+		tiposCursoCB.setBoxLabel("Tipos de Curso");
 		
-		geralFS.add(leftGeral, new ColumnData(.5));
-		geralFS.add(rightGeral, new ColumnData(.5));
-		main.add(geralFS, new FormData());
+		campiExportExcelCB = new CheckBox();
+		campiExportExcelCB.setName(PlanilhasExportExcel.CAMPI);
+		campiExportExcelCB.setValue(false);
+		campiExportExcelCB.setBoxLabel("Campi");
 		
-		//Professores
-	    LayoutContainer leftProfessores = new LayoutContainer();
-	    leftProfessores.setLayout(new FormLayout());
+		unidadesExportExcelCB = new CheckBox();
+		unidadesExportExcelCB.setName(PlanilhasExportExcel.UNIDADES);
+		unidadesExportExcelCB.setValue(false);
+		unidadesExportExcelCB.setBoxLabel("Unidades");
+		
+		salasExportExcelCB = new CheckBox();
+		salasExportExcelCB.setName(PlanilhasExportExcel.SALAS);
+		salasExportExcelCB.setValue(false);
+		salasExportExcelCB.setBoxLabel("Ambientes");
+		
+		disponibilidadesSalasExportExcelCB = new CheckBox();
+		disponibilidadesSalasExportExcelCB.setName(PlanilhasExportExcel.DISPONIBILIDADES_SALAS);
+		disponibilidadesSalasExportExcelCB.setValue(false);
+		disponibilidadesSalasExportExcelCB.setBoxLabel("Disponibilidades dos Ambientes");
+		
+		cursosExportExcelCB = new CheckBox();
+		cursosExportExcelCB.setName(PlanilhasExportExcel.CURSOS);
+		cursosExportExcelCB.setValue(false);
+		cursosExportExcelCB.setBoxLabel("Cursos");
+		
+		areasTitulacaoExportExcelCB = new CheckBox();
+		areasTitulacaoExportExcelCB.setName(PlanilhasExportExcel.AREAS_TITULACAO);
+		areasTitulacaoExportExcelCB.setValue(false);
+		areasTitulacaoExportExcelCB.setBoxLabel("Áreas de Conhecimento");
+		
+		cursoAreaTitulacaoExportExcelCB = new CheckBox();
+		cursoAreaTitulacaoExportExcelCB.setName(PlanilhasExportExcel.CURSO_AREAS_TITULACAO);
+		cursoAreaTitulacaoExportExcelCB.setValue(false);
+		cursoAreaTitulacaoExportExcelCB.setBoxLabel("Curso - Áreas de Conhecimento");
+		
+		curriculosExportExcelCB = new CheckBox();
+		curriculosExportExcelCB.setName(PlanilhasExportExcel.CURRICULOS);
+		curriculosExportExcelCB.setValue(false);
+		curriculosExportExcelCB.setBoxLabel("Matrizes Curriculares");
+		
+		disciplinasExportExcelCB = new CheckBox();
+		disciplinasExportExcelCB.setName(PlanilhasExportExcel.DISCIPLINAS);
+		disciplinasExportExcelCB.setValue(false);
+		disciplinasExportExcelCB.setBoxLabel("Disciplinas");
+		
+		disciplinasSalasExportExcelCB = new CheckBox();
+		disciplinasSalasExportExcelCB.setName(PlanilhasExportExcel.DISCIPLINAS_SALAS);
+		disciplinasSalasExportExcelCB.setValue(false);
+		disciplinasSalasExportExcelCB.setBoxLabel("Disciplinas-Ambientes");
+		
+		equivalenciasExportExcelCB = new CheckBox();
+		equivalenciasExportExcelCB.setName(PlanilhasExportExcel.EQUIVALENCIAS);
+		equivalenciasExportExcelCB.setValue(false);
+		equivalenciasExportExcelCB.setBoxLabel("Equivalências");
+		
+		alunosExportExcelCB = new CheckBox();
+		alunosExportExcelCB.setName(PlanilhasExportExcel.ALUNOS);
+		alunosExportExcelCB.setValue(false);
+		alunosExportExcelCB.setBoxLabel("Alunos");
+		
+		ofertasDemandasExportExcelCB = new CheckBox();
+		ofertasDemandasExportExcelCB.setName(PlanilhasExportExcel.DEMANDAS);
+		ofertasDemandasExportExcelCB.setValue(false);
+		ofertasDemandasExportExcelCB.setBoxLabel("Ofertas e Demandas");
+		
+		demandasPorAlunoExportExcelCB = new CheckBox();
+		demandasPorAlunoExportExcelCB.setName(PlanilhasExportExcel.DEMANDAS_POR_ALUNO);
+		demandasPorAlunoExportExcelCB.setValue(false);
+		demandasPorAlunoExportExcelCB.setBoxLabel("Demandas por Aluno");
+		
+		aulasExportExcelCB = new CheckBox();
+		aulasExportExcelCB.setName(PlanilhasExportExcel.AULAS);
+		aulasExportExcelCB.setValue(false);
+		aulasExportExcelCB.setBoxLabel("Aulas");
+		
+		professoresExportExcelCB = new CheckBox();
+		professoresExportExcelCB.setName(PlanilhasExportExcel.PROFESSORES);
+		professoresExportExcelCB.setValue(false);
+		professoresExportExcelCB.setBoxLabel("Professores");
+		
+		disponibilidadesProfessoresExportExcelCB = new CheckBox();
+		disponibilidadesProfessoresExportExcelCB.setName(PlanilhasExportExcel.DISPONIBILIDADES_PROFESSORES);
+		disponibilidadesProfessoresExportExcelCB.setValue(false);
+		disponibilidadesProfessoresExportExcelCB.setBoxLabel("Disponibilidades dos Professores");
+		
+		campiTrabalhoExportExcelCB = new CheckBox();
+		campiTrabalhoExportExcelCB.setName(PlanilhasExportExcel.CAMPI_TRABALHO);
+		campiTrabalhoExportExcelCB.setValue(false);
+		campiTrabalhoExportExcelCB.setBoxLabel("Campi de Trabalho");
+		
+	    habilitacaoProfessoresExportExcelCB = new CheckBox();
+	    habilitacaoProfessoresExportExcelCB.setName(PlanilhasExportExcel.HABILITACAO_PROFESSORES);
+	    habilitacaoProfessoresExportExcelCB.setValue(false);
+	    habilitacaoProfessoresExportExcelCB.setBoxLabel("Habilitação dos Professores");
 	    
-	    LayoutContainer rightProfessores = new LayoutContainer();
-	    rightProfessores.setLayout(new FormLayout());
+	    divisaoCreditosCB = new CheckBox();
+	    divisaoCreditosCB.setName(PlanilhasExportExcel.DIVISAO_CREDITOS);
+	    divisaoCreditosCB.setValue(false);
+	    divisaoCreditosCB.setBoxLabel("Regras de Divisão de Créditos");
 	    
-		FieldSet professoresFS = new FieldSet();
-		professoresFS.setWidth(540);
-		professoresFS.setHeadingHtml("&nbsp;");
-		professoresFS.setCollapsible(true);
-		professoresFS.setLayout(new ColumnLayout());
-		
-		percentMestresDoutoresExportExcelCB = new CheckBox();
-		percentMestresDoutoresExportExcelCB.setName(PlanilhasExportExcel.PERCENT_MESTRES_DOUTORES);
-		percentMestresDoutoresExportExcelCB.setValue(false);
-		percentMestresDoutoresExportExcelCB.setFieldLabel("Porcentagem de Mestres e Doutores");
-		leftProfessores.add(percentMestresDoutoresExportExcelCB, formData);
-		
-		professoresTitulacoesCB = new CheckBox();
-		professoresTitulacoesCB.setName(PlanilhasExportExcel.PROFESSORES_TITULACOES);
-		professoresTitulacoesCB.setValue(false);
-		professoresTitulacoesCB.setFieldLabel("Professores por Titulações");
-		rightProfessores.add(professoresTitulacoesCB, formData);
-		
-		professoresDisciplinasLecionadasCB = new CheckBox();
-		professoresDisciplinasLecionadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS);
-		professoresDisciplinasLecionadasCB.setValue(false);
-		professoresDisciplinasLecionadasCB.setFieldLabel("Professores por Qtde de Disciplinas Lecionadas");
-		professoresDisciplinasLecionadasCB.setLabelStyle("white-space: normal");
-		leftProfessores.add(professoresDisciplinasLecionadasCB, formData);
-		
-		professoresDisciplinasHabilitadasCB = new CheckBox();
-		professoresDisciplinasHabilitadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS);
-		professoresDisciplinasHabilitadasCB.setValue(false);
-		professoresDisciplinasHabilitadasCB.setFieldLabel("Professores por Qtde de Disciplinas Habilitadas");
-		professoresDisciplinasHabilitadasCB.setLabelStyle("white-space: normal");
-		rightProfessores.add(professoresDisciplinasHabilitadasCB, formData);
-		
-		professoresAreasConhecimentoCB = new CheckBox();
-		professoresAreasConhecimentoCB.setName(PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO);
-		professoresAreasConhecimentoCB.setValue(false);
-		professoresAreasConhecimentoCB.setFieldLabel("Professores por Areas de Conhecimento");
-		leftProfessores.add(professoresAreasConhecimentoCB, formData);
-		
-		professoresQuantidadeJanelasCB = new CheckBox();
-		professoresQuantidadeJanelasCB.setName(PlanilhasExportExcel.PROFESSORES_QUANTIDADE_JANELAS);
-		professoresQuantidadeJanelasCB.setValue(false);
-		professoresQuantidadeJanelasCB.setFieldLabel("Professores por Qtde de Janelas");
-		rightProfessores.add(professoresQuantidadeJanelasCB, formData);
-		
-		professoresFS.add(leftProfessores, new ColumnData(.5));
-		professoresFS.add(rightProfessores, new ColumnData(.5));
-		main.add(professoresFS, new FormData());
-		
-		//Resumo
-	    LayoutContainer leftResumos = new LayoutContainer();
-	    leftResumos.setLayout(new FormLayout());
-	    
-	    LayoutContainer rightResumos = new LayoutContainer();
-	    rightResumos.setLayout(new FormLayout());
-	    
-		FieldSet resumoFS = new FieldSet();
-		resumoFS.setWidth(540);
-		resumoFS.setHeadingHtml("&nbsp;");
-		resumoFS.setCollapsible(true);
-		resumoFS.setLayout(new ColumnLayout());
-		
-		resumoCursoExportExcelCB = new CheckBox();
-		resumoCursoExportExcelCB.setName(PlanilhasExportExcel.RESUMO_CURSO);
-		resumoCursoExportExcelCB.setValue(false);
-		resumoCursoExportExcelCB.setFieldLabel("Resumo por Curso");
-		leftResumos.add(resumoCursoExportExcelCB, formData);
-		
-		resumoDisciplinaExportExcelCB = new CheckBox();
-		resumoDisciplinaExportExcelCB.setName(PlanilhasExportExcel.RESUMO_DISCIPLINA);
-		resumoDisciplinaExportExcelCB.setValue(false);
-		resumoDisciplinaExportExcelCB.setFieldLabel("Resumo por Disciplina");
-		rightResumos.add(resumoDisciplinaExportExcelCB, formData);
-		
-		resumoFS.add(leftResumos, new ColumnData(.5));
-		resumoFS.add(rightResumos, new ColumnData(.5));
-		main.add(resumoFS, new FormData());
-		
-		//Atendimentos
-	    LayoutContainer leftAtendimentos = new LayoutContainer();
-	    leftAtendimentos.setLayout(new FormLayout());
-	    
-	    LayoutContainer rightAtendimentos = new LayoutContainer();
-	    rightAtendimentos.setLayout(new FormLayout());
-	    
-		FieldSet atendimentosFS = new FieldSet();
-		atendimentosFS.setWidth(540);
-		atendimentosFS.setHeadingHtml("&nbsp;");
-		atendimentosFS.setCollapsible(true);
-		atendimentosFS.setLayout(new ColumnLayout());
-		
-		atendimentosCargaHorariaExportExcelCB = new CheckBox();
-		atendimentosCargaHorariaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_CARGA_HORARIA);
-		atendimentosCargaHorariaExportExcelCB.setValue(false);
-		atendimentosCargaHorariaExportExcelCB.setFieldLabel("Atendimentos Por Carga Horária");
-		leftAtendimentos.add(atendimentosCargaHorariaExportExcelCB, formData);
-		
-		atendimentosMatriculaExportExcelCB = new CheckBox();
-		atendimentosMatriculaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_MATRICULA);
-		atendimentosMatriculaExportExcelCB.setValue(false);
-		atendimentosMatriculaExportExcelCB.setFieldLabel("Atendimentos por Matrícula");
-		rightAtendimentos.add(atendimentosMatriculaExportExcelCB, formData);
-		
-		atendimentosDisciplinaExportExcelCB = new CheckBox();
-		atendimentosDisciplinaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_DISCIPLINA);
-		atendimentosDisciplinaExportExcelCB.setValue(false);
-		atendimentosDisciplinaExportExcelCB.setFieldLabel("Atendimentos por Disciplina");
-		leftAtendimentos.add(atendimentosDisciplinaExportExcelCB, formData);
-		
-		atendimentosFaixaDemandaExportExcelCB = new CheckBox();
-		atendimentosFaixaDemandaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DEMANDA);
-		atendimentosFaixaDemandaExportExcelCB.setValue(false);
-		atendimentosFaixaDemandaExportExcelCB.setFieldLabel("Atendimentos Faixa de Demanda");
-		rightAtendimentos.add(atendimentosFaixaDemandaExportExcelCB, formData);
-		
-		atendimentosFaixaCreditoCB = new CheckBox();
-		atendimentosFaixaCreditoCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_CREDITO);
-		atendimentosFaixaCreditoCB.setValue(false);
-		atendimentosFaixaCreditoCB.setFieldLabel("Atendimentos por Faixa de Crédito");
-		leftAtendimentos.add(atendimentosFaixaCreditoCB, formData);
-		
-		atendimentosFaixaDisciplinaCB = new CheckBox();
-		atendimentosFaixaDisciplinaCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DISCIPLINA);
-		atendimentosFaixaDisciplinaCB.setValue(false);
-		atendimentosFaixaDisciplinaCB.setFieldLabel("Atendimentos por Faixa de Disciplina");
-		rightAtendimentos.add(atendimentosFaixaDisciplinaCB, formData);
-		
-		atendimentosPorAlunoExportExcelCB = new CheckBox();
-		atendimentosPorAlunoExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_POR_ALUNO);
-		atendimentosPorAlunoExportExcelCB.setValue(false);
-		atendimentosPorAlunoExportExcelCB.setFieldLabel("Atendimentos por Aluno");
-		leftAtendimentos.add(atendimentosPorAlunoExportExcelCB, formData);
-
-		atendimentosFS.add(leftAtendimentos, new ColumnData(.5));
-		atendimentosFS.add(rightAtendimentos, new ColumnData(.5));
-		main.add(atendimentosFS, new FormData());
-		
-		//Ambientes
-	    LayoutContainer leftAmbientes = new LayoutContainer();
-	    leftAmbientes.setLayout(new FormLayout());
-	    
-	    LayoutContainer rightAmbientes = new LayoutContainer();
-	    rightAmbientes.setLayout(new FormLayout());
-	    
-		FieldSet ambientesFS = new FieldSet();
-		ambientesFS.setWidth(540);
-		ambientesFS.setHeadingHtml("&nbsp;");
-		ambientesFS.setCollapsible(true);
-		ambientesFS.setLayout(new ColumnLayout());
-		
-		ambientesFaixaOcupacaoCB = new CheckBox();
-		ambientesFaixaOcupacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO);
-		ambientesFaixaOcupacaoCB.setValue(false);
-		ambientesFaixaOcupacaoCB.setFieldLabel("Ambientes por Faixa de Ocupação de Horários");
-		ambientesFaixaOcupacaoCB.setLabelStyle("white-space: normal");
-		leftAmbientes.add(ambientesFaixaOcupacaoCB, formData);
-		
-		ambientesFaixaUtilizacaoCB = new CheckBox();
-		ambientesFaixaUtilizacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO);
-		ambientesFaixaUtilizacaoCB.setValue(false);
-		ambientesFaixaUtilizacaoCB.setFieldLabel("Ambientes por Faixa de Utilização da Capacidade");
-		ambientesFaixaUtilizacaoCB.setLabelStyle("white-space: normal");
-		rightAmbientes.add(ambientesFaixaUtilizacaoCB, formData);
-		
-		ambientesFS.add(leftAmbientes, new ColumnData(.5));
-		ambientesFS.add(rightAmbientes, new ColumnData(.5));
-		main.add(ambientesFS, new FormData());
-		
-		//GradeHoraria
-	    LayoutContainer leftGradeHoraria = new LayoutContainer();
-	    leftGradeHoraria.setLayout(new FormLayout());
-	    
-	    LayoutContainer rightGradeHoraria = new LayoutContainer();
-	    rightGradeHoraria.setLayout(new FormLayout());
-	    
-		FieldSet gradeHorariaFS = new FieldSet();
-		gradeHorariaFS.setWidth(540);
-		gradeHorariaFS.setHeadingHtml("&nbsp;");
-		gradeHorariaFS.setCollapsible(true);
-		gradeHorariaFS.setLayout(new ColumnLayout());
-		
-		relatorioVisaoSalaExportExcelCB = new CheckBox();
-		relatorioVisaoSalaExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_SALA);
-		relatorioVisaoSalaExportExcelCB.setValue(false);
-		relatorioVisaoSalaExportExcelCB.setFieldLabel("Grade Horária Visão Sala");
-		leftGradeHoraria.add(relatorioVisaoSalaExportExcelCB, formData);
-		
-		relatorioVisaoProfessorExportExcelCB = new CheckBox();
-		relatorioVisaoProfessorExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_PROFESSOR);
-		relatorioVisaoProfessorExportExcelCB.setValue(false);
-		relatorioVisaoProfessorExportExcelCB.setFieldLabel("Grade Horária Visão Professor");
-		rightGradeHoraria.add(relatorioVisaoProfessorExportExcelCB, formData);
-		
-		relatorioVisaoCursoExportExcelCB = new CheckBox();
-		relatorioVisaoCursoExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_CURSO);
-		relatorioVisaoCursoExportExcelCB.setValue(false);
-		relatorioVisaoCursoExportExcelCB.setFieldLabel("Grade Horária Visão Curso");
-		leftGradeHoraria.add(relatorioVisaoCursoExportExcelCB, formData);
-		
-		relatorioVisaoAlunoExportExcelCB = new CheckBox();
-		relatorioVisaoAlunoExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_ALUNO);
-		relatorioVisaoAlunoExportExcelCB.setValue(false);
-		relatorioVisaoAlunoExportExcelCB.setFieldLabel("Grade Horária Visão Aluno");
-		rightGradeHoraria.add(relatorioVisaoAlunoExportExcelCB, formData);
-		
-		gradeHorariaFS.add(leftGradeHoraria, new ColumnData(.5));
-		gradeHorariaFS.add(rightGradeHoraria, new ColumnData(.5));
-		main.add(gradeHorariaFS, new FormData());
-		
-		//Disciplinas
-	    LayoutContainer leftDisciplinas = new LayoutContainer();
-	    leftDisciplinas.setLayout(new FormLayout());
-	    
-	    LayoutContainer rightDisciplinas = new LayoutContainer();
-	    rightDisciplinas.setLayout(new FormLayout());
-	    
-		FieldSet disciplinasFS = new FieldSet();
-		disciplinasFS.setWidth(540);
-		disciplinasFS.setHeadingHtml("&nbsp;");
-		disciplinasFS.setCollapsible(true);
-		disciplinasFS.setLayout(new ColumnLayout());
-		
 		disicplinasPreRequisitosCB = new CheckBox();
 		disicplinasPreRequisitosCB.setName(PlanilhasExportExcel.DISCIPLINAS_PRE_REQUISITOS);
 		disicplinasPreRequisitosCB.setValue(false);
-		disicplinasPreRequisitosCB.setFieldLabel("Disciplinas Pré-Requisitos");
-		leftDisciplinas.add(disicplinasPreRequisitosCB, formData);
+		disicplinasPreRequisitosCB.setBoxLabel("Disciplinas Pré-Requisitos");
 		
 		disicplinasCoRequisitosCB = new CheckBox();
 		disicplinasCoRequisitosCB.setName(PlanilhasExportExcel.DISCIPLINAS_CO_REQUISITOS);
 		disicplinasCoRequisitosCB.setValue(false);
-		disicplinasCoRequisitosCB.setFieldLabel("Disciplinas Co-Requisitos");
-		rightDisciplinas.add(disicplinasCoRequisitosCB, formData);
+		disicplinasCoRequisitosCB.setBoxLabel("Disciplinas Co-Requisitos");
 		
 		alunosDisciplinasCursadasCB = new CheckBox();
 		alunosDisciplinasCursadasCB.setName(PlanilhasExportExcel.ALUNOS_DISCIPLINAS_CURSADAS);
 		alunosDisciplinasCursadasCB.setValue(false);
-		alunosDisciplinasCursadasCB.setFieldLabel("Disciplinas Cursadas por Alunos");
-		leftDisciplinas.add(alunosDisciplinasCursadasCB, formData);
+		alunosDisciplinasCursadasCB.setBoxLabel("Disciplinas Cursadas por Alunos");
+	    
+		geralFS.add(createCheckBoxGroup(semanaLetivaCB, disciplinasSalasExportExcelCB));
+		geralFS.add(createCheckBoxGroup(turnosCB, equivalenciasExportExcelCB));
+		geralFS.add(createCheckBoxGroup(tiposCursoCB, alunosExportExcelCB));
+		geralFS.add(createCheckBoxGroup(divisaoCreditosCB, ofertasDemandasExportExcelCB));
+		geralFS.add(createCheckBoxGroup(campiExportExcelCB, demandasPorAlunoExportExcelCB));
+		geralFS.add(createCheckBoxGroup(unidadesExportExcelCB, professoresExportExcelCB));
+		geralFS.add(createCheckBoxGroup(salasExportExcelCB, disponibilidadesProfessoresExportExcelCB));
+		geralFS.add(createCheckBoxGroup(disponibilidadesSalasExportExcelCB, campiTrabalhoExportExcelCB));
+		geralFS.add(createCheckBoxGroup(cursosExportExcelCB, habilitacaoProfessoresExportExcelCB));
+		geralFS.add(createCheckBoxGroup(areasTitulacaoExportExcelCB, disciplinasExportExcelCB));
+		geralFS.add(createCheckBoxGroup(cursoAreaTitulacaoExportExcelCB, aulasExportExcelCB));
+		geralFS.add(createCheckBoxGroup(curriculosExportExcelCB, disicplinasPreRequisitosCB));
+		geralFS.add(createCheckBoxGroup(disicplinasCoRequisitosCB, alunosDisciplinasCursadasCB));
 		
-		disciplinasFS.add(leftDisciplinas, new ColumnData(.5));
-		disciplinasFS.add(rightDisciplinas, new ColumnData(.5));
-		main.add(disciplinasFS, new FormData());
+		main.add(geralFS, new FormData());
+
+		//Professores
+		FieldSet professoresFS = new FieldSet();
+		professoresFS.setWidth(550);
+		professoresFS.setHeadingHtml("Perfil de Docentes");
+		professoresFS.setCollapsible(true);
+		professoresFS.setLayout(new RowLayout());
+		
+		percentMestresDoutoresExportExcelCB = new CheckBox();
+		percentMestresDoutoresExportExcelCB.setName(PlanilhasExportExcel.PERCENT_MESTRES_DOUTORES);
+		percentMestresDoutoresExportExcelCB.setValue(false);
+		percentMestresDoutoresExportExcelCB.setBoxLabel("Porcentagem de Mestres e Doutores");
+		
+		professoresTitulacoesCB = new CheckBox();
+		professoresTitulacoesCB.setName(PlanilhasExportExcel.PROFESSORES_TITULACOES);
+		professoresTitulacoesCB.setValue(false);
+		professoresTitulacoesCB.setBoxLabel("Professores por Titulações");
+		
+		professoresDisciplinasLecionadasCB = new CheckBox();
+		professoresDisciplinasLecionadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_LECIONADAS);
+		professoresDisciplinasLecionadasCB.setValue(false);
+		professoresDisciplinasLecionadasCB.setBoxLabel("Professores por Qtde de Disciplinas Lecionadas");
+		
+		professoresDisciplinasHabilitadasCB = new CheckBox();
+		professoresDisciplinasHabilitadasCB.setName(PlanilhasExportExcel.PROFESSORES_DISCIPLINAS_HABILITADAS);
+		professoresDisciplinasHabilitadasCB.setValue(false);
+		professoresDisciplinasHabilitadasCB.setBoxLabel("Professores por Qtde de Disciplinas \nHabilitadas");
+		professoresDisciplinasHabilitadasCB.setStyleAttribute("height", "40");
+		professoresDisciplinasHabilitadasCB.addStyleName("boxLabel");
+		
+		professoresAreasConhecimentoCB = new CheckBox();
+		professoresAreasConhecimentoCB.setName(PlanilhasExportExcel.PROFESSORES_AREAS_CONHECIMENTO);
+		professoresAreasConhecimentoCB.setValue(false);
+		professoresAreasConhecimentoCB.setBoxLabel("Professores por Áreas de Conhecimento");
+		
+		professoresQuantidadeJanelasCB = new CheckBox();
+		professoresQuantidadeJanelasCB.setName(PlanilhasExportExcel.PROFESSORES_QUANTIDADE_JANELAS);
+		professoresQuantidadeJanelasCB.setValue(false);
+		professoresQuantidadeJanelasCB.setBoxLabel("Professores por Qtde de Janelas");
+		
+		professoresFS.add(createCheckBoxGroup(percentMestresDoutoresExportExcelCB, professoresDisciplinasLecionadasCB));
+		professoresFS.add(createCheckBoxGroup(professoresQuantidadeJanelasCB, professoresTitulacoesCB));
+		professoresFS.add(createCheckBoxGroup(professoresDisciplinasHabilitadasCB, professoresAreasConhecimentoCB));
+		main.add(professoresFS, new FormData());
+		
+		//Resumo
+		FieldSet resumoFS = new FieldSet();
+		resumoFS.setWidth(550);
+		resumoFS.setHeadingHtml("Resumos");
+		resumoFS.setCollapsible(true);
+		resumoFS.setLayout(new RowLayout());
+		
+		resumoCursoExportExcelCB = new CheckBox();
+		resumoCursoExportExcelCB.setName(PlanilhasExportExcel.RESUMO_CURSO);
+		resumoCursoExportExcelCB.setValue(false);
+		resumoCursoExportExcelCB.setBoxLabel("Resumo por Curso");
+		
+		resumoDisciplinaExportExcelCB = new CheckBox();
+		resumoDisciplinaExportExcelCB.setName(PlanilhasExportExcel.RESUMO_DISCIPLINA);
+		resumoDisciplinaExportExcelCB.setValue(false);
+		resumoDisciplinaExportExcelCB.setBoxLabel("Resumo por Disciplina");
+		
+		resumoCenarioCB = new CheckBox();
+		resumoCenarioCB.setName(PlanilhasExportExcel.RESUMO_CENARIO);
+		resumoCenarioCB.setValue(false);
+		resumoCenarioCB.setBoxLabel("Resumo do Cenário");
+		
+		resumoCampusCB = new CheckBox();
+		resumoCampusCB.setName(PlanilhasExportExcel.RESUMO_CAMPUS);
+		resumoCampusCB.setValue(false);
+		resumoCampusCB.setBoxLabel("Resumo por Campus");
+		
+		resumoFS.add(createCheckBoxGroup(resumoCenarioCB, resumoCursoExportExcelCB));
+		resumoFS.add(createCheckBoxGroup(resumoCampusCB, resumoDisciplinaExportExcelCB));
+		main.add(resumoFS, new FormData());
+		
+		//Atendimentos
+		FieldSet atendimentosFS = new FieldSet();
+		atendimentosFS.setWidth(550);
+		atendimentosFS.setHeadingHtml("Relatórios de Atendimentos");
+		atendimentosFS.setCollapsible(true);
+		atendimentosFS.setLayout(new RowLayout());
+		
+		atendimentosCargaHorariaExportExcelCB = new CheckBox();
+		atendimentosCargaHorariaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_CARGA_HORARIA);
+		atendimentosCargaHorariaExportExcelCB.setValue(false);
+		atendimentosCargaHorariaExportExcelCB.setBoxLabel("Atendimentos Por Carga Horária");
+		
+		atendimentosMatriculaExportExcelCB = new CheckBox();
+		atendimentosMatriculaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_MATRICULA);
+		atendimentosMatriculaExportExcelCB.setValue(false);
+		atendimentosMatriculaExportExcelCB.setBoxLabel("Atendimentos por Matrícula");
+		
+		atendimentosDisciplinaExportExcelCB = new CheckBox();
+		atendimentosDisciplinaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_DISCIPLINA);
+		atendimentosDisciplinaExportExcelCB.setValue(false);
+		atendimentosDisciplinaExportExcelCB.setBoxLabel("Atendimentos por Disciplina");
+		
+		atendimentosFaixaDemandaExportExcelCB = new CheckBox();
+		atendimentosFaixaDemandaExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DEMANDA);
+		atendimentosFaixaDemandaExportExcelCB.setValue(false);
+		atendimentosFaixaDemandaExportExcelCB.setBoxLabel("Atendimentos Faixa de Demanda");
+		
+		atendimentosFaixaCreditoCB = new CheckBox();
+		atendimentosFaixaCreditoCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_CREDITO);
+		atendimentosFaixaCreditoCB.setValue(false);
+		atendimentosFaixaCreditoCB.setBoxLabel("Atendimentos por Faixa de Crédito");
+		
+		atendimentosFaixaDisciplinaCB = new CheckBox();
+		atendimentosFaixaDisciplinaCB.setName(PlanilhasExportExcel.ATENDIMENTOS_FAIXA_DISCIPLINA);
+		atendimentosFaixaDisciplinaCB.setValue(false);
+		atendimentosFaixaDisciplinaCB.setBoxLabel("Atendimentos por Faixa de Disciplina");
+		
+		atendimentosPorAlunoExportExcelCB = new CheckBox();
+		atendimentosPorAlunoExportExcelCB.setName(PlanilhasExportExcel.ATENDIMENTOS_POR_ALUNO);
+		atendimentosPorAlunoExportExcelCB.setValue(false);
+		atendimentosPorAlunoExportExcelCB.setBoxLabel("Atendimentos por Aluno");
+
+		atendimentosFS.add(createCheckBoxGroup(atendimentosDisciplinaExportExcelCB, atendimentosFaixaDemandaExportExcelCB));
+		atendimentosFS.add(createCheckBoxGroup(atendimentosMatriculaExportExcelCB, atendimentosFaixaCreditoCB));
+		atendimentosFS.add(createCheckBoxGroup(atendimentosCargaHorariaExportExcelCB, atendimentosFaixaDisciplinaCB));
+		atendimentosFS.add(createCheckBoxGroup(atendimentosPorAlunoExportExcelCB, null));
+		main.add(atendimentosFS, new FormData());
+		
+		//Ambientes
+		FieldSet ambientesFS = new FieldSet();
+		ambientesFS.setWidth(550);
+		ambientesFS.setHeadingHtml("Ambientes");
+		ambientesFS.setCollapsible(true);
+		ambientesFS.setLayout(new RowLayout());
+		
+		ambientesFaixaOcupacaoCB = new CheckBox();
+		ambientesFaixaOcupacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO);
+		ambientesFaixaOcupacaoCB.setValue(false);
+		ambientesFaixaOcupacaoCB.setBoxLabel("Ambientes por Faixa de Ocupação de Horários");
+		
+		ambientesFaixaUtilizacaoCB = new CheckBox();
+		ambientesFaixaUtilizacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO);
+		ambientesFaixaUtilizacaoCB.setValue(false);
+		ambientesFaixaUtilizacaoCB.setBoxLabel("Ambientes por Faixa de Utilização da Capacidade");
+		ambientesFaixaUtilizacaoCB.setStyleAttribute("height", "40");
+		ambientesFaixaUtilizacaoCB.addStyleName("boxLabel");
+		
+		ambientesFS.add(createCheckBoxGroup(ambientesFaixaUtilizacaoCB, ambientesFaixaOcupacaoCB));
+		main.add(ambientesFS, new FormData());
+		
+		//GradeHoraria
+		FieldSet gradeHorariaFS = new FieldSet();
+		gradeHorariaFS.setWidth(550);
+		gradeHorariaFS.setHeadingHtml("Grades Horárias");
+		gradeHorariaFS.setCollapsible(true);
+		gradeHorariaFS.setLayout(new RowLayout());
+		
+		relatorioVisaoSalaExportExcelCB = new CheckBox();
+		relatorioVisaoSalaExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_SALA);
+		relatorioVisaoSalaExportExcelCB.setValue(false);
+		relatorioVisaoSalaExportExcelCB.setBoxLabel("Grade Horária Visão Ambiente");
+		
+		relatorioVisaoProfessorExportExcelCB = new CheckBox();
+		relatorioVisaoProfessorExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_PROFESSOR);
+		relatorioVisaoProfessorExportExcelCB.setValue(false);
+		relatorioVisaoProfessorExportExcelCB.setBoxLabel("Grade Horária Visão Professor");
+		
+		relatorioVisaoCursoExportExcelCB = new CheckBox();
+		relatorioVisaoCursoExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_CURSO);
+		relatorioVisaoCursoExportExcelCB.setValue(false);
+		relatorioVisaoCursoExportExcelCB.setBoxLabel("Grade Horária Visão Curso");
+		
+		relatorioVisaoAlunoExportExcelCB = new CheckBox();
+		relatorioVisaoAlunoExportExcelCB.setName(PlanilhasExportExcel.RELATORIO_VISAO_ALUNO);
+		relatorioVisaoAlunoExportExcelCB.setValue(false);
+		relatorioVisaoAlunoExportExcelCB.setBoxLabel("Grade Horária Visão Aluno");
+		
+		gradeHorariaFS.add(createCheckBoxGroup(relatorioVisaoSalaExportExcelCB, relatorioVisaoCursoExportExcelCB));
+		gradeHorariaFS.add(createCheckBoxGroup(relatorioVisaoProfessorExportExcelCB, relatorioVisaoAlunoExportExcelCB));
+		main.add(gradeHorariaFS, new FormData());
 		
 		nomeArquivoTF = new TextField<String>();
 		nomeArquivoTF.setEmptyText("digite um nome para a planilha a ser exportada");
 		nomeArquivoTF.setFieldLabel("Nome do Arquivo");
 		nomeArquivoTF.setName("nomeArquivo");
 		formPanel.add(nomeArquivoTF, new FormData("100%"));
-		
 	  
 	    formPanel.add(main, new FormData("100%"));  
 
@@ -512,6 +449,16 @@ public class ExportExcelFormView
 		exportExcelModal.setFocusWidget(aulasExportExcelCB);
 	}
 	
+	private CheckBoxGroup createCheckBoxGroup(CheckBox c1, CheckBox c2) {
+		CheckBoxGroup checkBoxGroup = new CheckBoxGroup();
+		c1.setWidth(250);
+		checkBoxGroup.add(c1);
+		if (c2 != null)
+			checkBoxGroup.add(c2);
+		
+		return checkBoxGroup;
+	}
+
 	public boolean isValid() {
 		return formPanel.isValid();
 	}
@@ -608,7 +555,7 @@ public class ExportExcelFormView
 
 	@Override
 	public CheckBox getDemandasPorAlunoExportExcelCheckBox() {
-		return DemandasPorAlunoExportExcelCB;
+		return demandasPorAlunoExportExcelCB;
 	}
 
 	@Override
@@ -769,6 +716,26 @@ public class ExportExcelFormView
 	@Override
 	public CheckBox getTiposCurso() {
 		return tiposCursoCB;
+	}
+	
+	@Override
+	public CheckBox getDivisaoCreditos() {
+		return divisaoCreditosCB;
+	}
+	
+	@Override
+	public CheckBox getResumoCenario() {
+		return resumoCenarioCB;
+	}
+	
+	@Override
+	public CheckBox getResumoCampus() {
+		return resumoCampusCB;
+	}
+	
+	@Override
+	public CheckBox getSemanasLetiva() {
+		return semanaLetivaCB;
 	}
 
 }

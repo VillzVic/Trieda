@@ -51,16 +51,28 @@ public class ProfessoresAreasConhecimentoPresenter
 	private Display display;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenarioDTO;
+	private Long campusDTO;
+	private boolean somenteAlocados;
 	
 	public ProfessoresAreasConhecimentoPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 			CenarioDTO cenarioDTO, Display display )
 	{
+			this (instituicaoEnsinoDTO, cenarioDTO, null, false, display);
+	}
+	
+	public ProfessoresAreasConhecimentoPresenter(
+			InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO,
+			Long campusDTO, boolean somenteAlocados, Display display )
+	{
 			this.display = display;
 			this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 			this.cenarioDTO = cenarioDTO;
+			this.campusDTO = campusDTO;
+			this.somenteAlocados = somenteAlocados;
 	
 			setListeners();
+			setCampus();
 	}
 	
 	private void setListeners()
@@ -78,7 +90,7 @@ public class ProfessoresAreasConhecimentoPresenter
 				}
 				display.getGrid().mask( display.getI18nMessages().loading() );
 				Services.professores().getProfessoresAreasConhecimento( cenarioDTO, se.getSelectedItem(),
-					display.getTipoProfessorComboBox().getValue(),
+					display.getTipoProfessorComboBox().getValue(), somenteAlocados,
 					new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
 				{
 					@Override
@@ -164,7 +176,7 @@ public class ProfessoresAreasConhecimentoPresenter
 					}
 					display.getGrid().mask( display.getI18nMessages().loading() );
 					Services.professores().getProfessoresAreasConhecimento( cenarioDTO, display.getCampusComboBox().getValue(),
-							display.getTipoProfessorComboBox().getValue(),
+							display.getTipoProfessorComboBox().getValue(), somenteAlocados,
 							new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
 					{
 						@Override
@@ -191,7 +203,7 @@ public class ProfessoresAreasConhecimentoPresenter
 					}
 					display.getGrid().mask( display.getI18nMessages().loading() );
 					Services.professores().getProfessoresAreasConhecimento( cenarioDTO, display.getCampusComboBox().getValue(),
-							display.getTipoProfessorComboBox().getValue(),
+							display.getTipoProfessorComboBox().getValue(), somenteAlocados,
 							new AbstractAsyncCallbackWithDefaultOnFailure< List < RelatorioQuantidadeDTO > >( display )
 					{
 						@Override
@@ -205,6 +217,22 @@ public class ProfessoresAreasConhecimentoPresenter
 					});
 				}
 			});
+	}
+	
+	public void setCampus()
+	{
+		if (campusDTO != null)
+		{
+			Services.campi().getCampus(campusDTO, new AbstractAsyncCallbackWithDefaultOnFailure< CampusDTO >( display )
+			{
+				@Override
+				public void onSuccess(
+						CampusDTO campusDTO )
+					{
+					display.getCampusComboBox().setValue(campusDTO);
+					}
+			});
+		}
 	}
 	
 	@Override

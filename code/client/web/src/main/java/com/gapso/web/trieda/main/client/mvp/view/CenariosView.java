@@ -31,6 +31,7 @@ public class CenariosView
 	private SimpleToolBar toolBar;
 	private SimpleGrid<CenarioDTO> gridPanel;
 	private Button abrirCenarioBT;
+	private Button limparSolucaoBt;
 	private SimpleFilter filter;
 	private TextField< Integer > anoBuscaTextField;
 	private TextField< Integer > semestreBuscaTextField;
@@ -70,8 +71,13 @@ public class CenariosView
 		this.abrirCenarioBT = toolBar.createButton(
 			"Selecionar como Contexto Atual",
 			Resources.DEFAULTS.cenarioAbrir16() );
+		
+		this.limparSolucaoBt = toolBar.createButton(
+				"Limpar Solucao do Cenário",
+				Resources.DEFAULTS.del16() );
 
 		this.toolBar.add( this.abrirCenarioBT );
+		this.toolBar.add( this.limparSolucaoBt );
 		this.panel.setTopComponent( this.toolBar );
 	}
 	
@@ -178,5 +184,11 @@ public class CenariosView
 	public Button getAbrirCenarioButton()
 	{
 		return this.abrirCenarioBT;
+	}
+	
+	@Override
+	public Button getLimparSolucaoButton()
+	{
+		return this.limparSolucaoBt;
 	}
 }

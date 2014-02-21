@@ -20,8 +20,8 @@ public class SalasExportExcel extends AbstractExportExcel {
 	
 	enum ExcelCellStyleReference {
 		TEXT(6,2),
-		NUMBER_INT(6,7),
-		NUMBER_DOUBLE( 6, 9 );
+		NUMBER_INT(6,8),
+		NUMBER_DOUBLE( 6, 10 );
 		private int row;
 		private int col;
 		private ExcelCellStyleReference(int row, int col) {
@@ -122,14 +122,16 @@ public class SalasExportExcel extends AbstractExportExcel {
 		setCell(row,4,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getUnidade().getCodigo());
 		// Numero
 		setCell(row,5,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getNumero());
+		// Descricao
+		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getDescricao());
 		// Andar
-		setCell(row,6,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getAndar());
+		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],sala.getAndar());
 		// Capacidade Instalada
-		setCell(row,7,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],sala.getCapacidadeInstalada());
+		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],sala.getCapacidadeInstalada());
 		// Capacidade Maxima
-		setCell(row,8,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],sala.getCapacidadeMax());
+		setCell(row,9,sheet,cellStyles[ExcelCellStyleReference.NUMBER_INT.ordinal()],sala.getCapacidadeMax());
 		// Custo de Operacao por Credito
-		setCell(row,9,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],sala.getCustoOperacaoCred());
+		setCell(row,10,sheet,cellStyles[ExcelCellStyleReference.NUMBER_DOUBLE.ordinal()],sala.getCustoOperacaoCred());
 		
 		row++;
 		return row;

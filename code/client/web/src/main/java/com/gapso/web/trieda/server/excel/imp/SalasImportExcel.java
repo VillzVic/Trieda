@@ -30,6 +30,7 @@ public class SalasImportExcel
 	static public String TIPO_COLUMN_NAME;
 	static public String UNIDADE_COLUMN_NAME;
 	static public String NUMERO_COLUMN_NAME;
+	static public String DESCRICAO_COLUMN_NAME;
 	static public String ANDAR_COLUMN_NAME;
 	static public String CAPACIDADE_INSTALADA_COLUMN_NAME;
 	static public String CAPACIDADE_MAX_COLUMN_NAME;
@@ -107,6 +108,10 @@ public class SalasImportExcel
 					else if ( NUMERO_COLUMN_NAME.endsWith( columnName ) )
 					{
 						bean.setNumeroStr( cellValue );
+					}
+					else if ( DESCRICAO_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setDescricaoStr( cellValue );
 					}
 					else if ( ANDAR_COLUMN_NAME.endsWith( columnName ) )
 					{
@@ -351,6 +356,7 @@ public class SalasImportExcel
 			{
 				// Update
 				salaBD.setNumero( salaExcel.getNumeroStr() );
+				salaBD.setDescricao(salaExcel.getDescricaoStr() );
 				salaBD.setAndar( salaExcel.getAndarStr() );
 				salaBD.setCapacidadeInstalada( salaExcel.getCapacidadeInstalada() );
 				salaBD.setCapacidadeMax( salaExcel.getCapacidadeMax() );
@@ -367,6 +373,7 @@ public class SalasImportExcel
 
 				newSala.setCodigo( salaExcel.getCodigoStr() );
 				newSala.setNumero( salaExcel.getNumeroStr() );
+				newSala.setDescricao(salaExcel.getDescricaoStr() );
 				newSala.setAndar( salaExcel.getAndarStr() );
 				newSala.setCapacidadeInstalada( salaExcel.getCapacidadeInstalada() );
 				newSala.setCapacidadeMax( salaExcel.getCapacidadeMax() );
@@ -393,6 +400,7 @@ public class SalasImportExcel
 			TIPO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().tipo() );
 			UNIDADE_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoUnidade() );
 			NUMERO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().numero() );
+			DESCRICAO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().descricao() );
 			ANDAR_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().andar() );
 			CAPACIDADE_INSTALADA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeInstaladaAlunos() );
 			CAPACIDADE_MAX_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().capacidadeMaxAlunos() );

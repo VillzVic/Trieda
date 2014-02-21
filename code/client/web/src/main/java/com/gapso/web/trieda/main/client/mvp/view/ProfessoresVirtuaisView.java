@@ -33,6 +33,7 @@ public class ProfessoresVirtuaisView extends MyComposite
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
+	private Button gradeHorariaBT;
 	
 	public ProfessoresVirtuaisView( CenarioDTO cenarioDTO )
 	{
@@ -55,13 +56,20 @@ public class ProfessoresVirtuaisView extends MyComposite
 	private void createTabItem()
 	{
 		this.tabItem = new GTabItem(
-			"Professores", Resources.DEFAULTS.professor16() );
+			"Professores", Resources.DEFAULTS.professorVirtual16() );
 	
 		this.tabItem.setContent( this.panel );
 	}
 	
 	private void createToolBar()
 	{
+		toolBar = new SimpleToolBar( false, false, false, false, false, this );
+		gradeHorariaBT = toolBar.createButton(
+				"Grade Horária do Professor",
+				Resources.DEFAULTS.saidaProfessor16() );
+
+		toolBar.add( gradeHorariaBT );
+		panel.setTopComponent( toolBar );
 	}
 	
 	private void createGrid()
@@ -130,5 +138,11 @@ public class ProfessoresVirtuaisView extends MyComposite
 	public Button getResetBuscaButton()
 	{
 		return this.filter.getResetButton();
+	}
+	
+	@Override
+	public Button getGradeHorariaButton()
+	{
+		return this.gradeHorariaBT;
 	}
 }

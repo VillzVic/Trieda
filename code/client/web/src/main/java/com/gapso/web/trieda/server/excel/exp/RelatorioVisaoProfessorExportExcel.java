@@ -116,7 +116,7 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		
 			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
 			try {
-				quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(filtro, this.isVisaoProfessor);
+				quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(ConvertBeans.toCenarioDTO(getCenario()), filtro, this.isVisaoProfessor);
 			} catch (Exception e) {
 				String msg = "";
 				if (e instanceof EmptyResultDataAccessException) {
@@ -149,11 +149,11 @@ public class RelatorioVisaoProfessorExportExcel	extends RelatorioVisaoByCampusTu
 		
 		try {
 			ProfessorWrapper professor = null;
-			Professor atProf = Professor.findByNomeCpf(instituicaoEnsino, this.relatorioFiltro.getProfessorNome(), this.relatorioFiltro.getProfessorCpf());
+			Professor atProf = Professor.findByNomeCpf(instituicaoEnsino, getCenario(), this.relatorioFiltro.getProfessorNome(), this.relatorioFiltro.getProfessorCpf());
 			if(atProf == null) professor = new ProfessorWrapper(ConvertBeans.toProfessorVirtual(this.relatorioFiltro.getProfessorVirtualDTO()));
 			else professor = new ProfessorWrapper(atProf);
 
-			quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(this.relatorioFiltro, this.isVisaoProfessor);
+			quinteto = service.getAtendimentosParaGradeHorariaVisaoProfessor(ConvertBeans.toCenarioDTO(getCenario()), this.relatorioFiltro, this.isVisaoProfessor);
 			Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse> mapAluno = new HashMap<ProfessorWrapper, AtendimentoServiceRelatorioResponse>();
 			mapAluno.put(professor, quinteto);
 			Map<Turno, Map<ProfessorWrapper, AtendimentoServiceRelatorioResponse>> mapTurnoControl = 

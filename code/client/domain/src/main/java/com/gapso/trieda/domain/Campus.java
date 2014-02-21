@@ -620,15 +620,17 @@ public class Campus
 
 	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findAllOtimized(
-		InstituicaoEnsino instituicaoEnsino )
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o.oferta.campus ) " +
 			" FROM AtendimentoOperacional o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.oferta.campus.cenario = :cenario " +
 			" AND o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
 
 		return q.getResultList();
 	}

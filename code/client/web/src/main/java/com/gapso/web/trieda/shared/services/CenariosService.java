@@ -30,4 +30,5 @@ public interface CenariosService
 	Integer checkDBVersion();
 	CenarioDTO getCurrentCenario();
 	void setCurrentCenario(long cenarioId);
+	void limpaSolucoesCenario(CenarioDTO cenarioDTO);
 }
