@@ -294,12 +294,6 @@ public class CenariosServiceImpl
 		tipo1.setNome("Presencial");
 		tipo1.persist();
 		
-		TipoDisciplina tipo2 = new TipoDisciplina();
-		tipo2.setCenario(cenario);
-		tipo2.setInstituicaoEnsino(getInstituicaoEnsinoUser());
-		tipo2.setNome("Semipresencial");
-		tipo2.persist();
-		
 		TipoDisciplina tipo3 = new TipoDisciplina();
 		tipo3.setCenario(cenario);
 		tipo3.setInstituicaoEnsino(getInstituicaoEnsinoUser());
