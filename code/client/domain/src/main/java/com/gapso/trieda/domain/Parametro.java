@@ -155,6 +155,8 @@ public class Parametro
     //Evitar alocação de professores no último horário do dia e primeiro do dia seguinte
     @Column(name = "PAR_EVITARULTIMOPRIHORPROF")
     private Boolean evitarUltimoEPrimeiroHorarioProfessor = false;
+    @Column(name = "PAR_EVITARULTIMOPRIHORPROFVALUE")
+    private Integer evitarUltimoEPrimeiroHorarioProfessorValue;
     
     //Considerar preferência de professores por disciplinas
     @Column(name = "PAR_PREFPROF")
@@ -232,6 +234,14 @@ public class Parametro
     //Considerar percentuais mínimos de doutores
     @Column(name = "PAR_PERCMINDOUT")
     private Boolean percentuaisMinimosDoutores = false;
+    
+    //Considerar percentuais mínimos de tempo parcial + integral
+    @Column(name = "PAR_PERCMINPARCINT")
+    private Boolean percentuaisMinimosParcialIntegral = false;
+
+    //Considerar percentuais mínimos de tempo integral
+    @Column(name = "PAR_PERCMININT")
+    private Boolean percentuaisMinimosIntegral = false;
 
     //Considerar áreas de titulação dos professores e cursos
     @Column(name = "PAR_AREATITPROFCUR")
@@ -488,6 +498,13 @@ public class Parametro
 	public void setEvitarUltimoEPrimeiroHorarioProfessor(Boolean editarUltimoEPrimeiroHorarioProfessor) {
 		this.evitarUltimoEPrimeiroHorarioProfessor = editarUltimoEPrimeiroHorarioProfessor;
 	}
+	
+	public Integer getEvitarUltimoEPrimeiroHorarioProfessorValue() {
+		return evitarUltimoEPrimeiroHorarioProfessorValue;
+	}
+	public void setEvitarUltimoEPrimeiroHorarioProfessorValue(Integer evitarUltimoEPrimeiroHorarioProfessorValue) {
+		this.evitarUltimoEPrimeiroHorarioProfessorValue = evitarUltimoEPrimeiroHorarioProfessorValue;
+	}
 
 	public Boolean getPreferenciaDeProfessores() {
 		return preferenciaDeProfessores;
@@ -622,6 +639,20 @@ public class Parametro
 		this.percentuaisMinimosDoutores = percentuaisMinimosDoutores;
 	}
 
+	public Boolean getPercentuaisMinimosParcialIntegral() {
+		return 	percentuaisMinimosParcialIntegral;
+	}
+	public void setPercentuaisMinimosParcialIntegral(Boolean percentuaisMinimosParcialIntegral) {
+		this.percentuaisMinimosParcialIntegral = percentuaisMinimosParcialIntegral;
+	}
+	
+	public Boolean getPercentuaisMinimosIntegral() {
+		return percentuaisMinimosIntegral;
+	}
+	public void setPercentuaisMinimosIntegral(Boolean percentuaisMinimosIntegral) {
+		this.percentuaisMinimosIntegral = percentuaisMinimosIntegral;
+	}
+	
 	public Boolean getAreaTitulacaoProfessoresECursos() {
 		return areaTitulacaoProfessoresECursos;
 	}

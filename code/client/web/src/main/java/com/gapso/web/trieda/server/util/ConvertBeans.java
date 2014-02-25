@@ -3095,6 +3095,7 @@ public class ConvertBeans {
 		domain.setEvitarReducaoCargaHorariaProfessor( dto.getEvitarReducaoCargaHorariaProfessor() );
 		domain.setEvitarReducaoCargaHorariaProfessorValue( dto.getEvitarReducaoCargaHorariaProfessorValue() );
 		domain.setEvitarUltimoEPrimeiroHorarioProfessor( dto.getEvitarUltimoEPrimeiroHorarioProfessor() );
+		domain.setEvitarUltimoEPrimeiroHorarioProfessorValue( dto.getEvitarUltimoEPrimeiroHorarioProfessorValue() );
 		domain.setPreferenciaDeProfessores( dto.getPreferenciaDeProfessores() );
 		domain.setAvaliacaoDesempenhoProfessor( dto.getAvaliacaoDesempenhoProfessor() );
 		domain.setConsiderarEquivalencia( dto.getConsiderarEquivalencia() );
@@ -3121,6 +3122,8 @@ public class ConvertBeans {
 		domain.setFuncaoObjetivo( dto.getFuncaoObjetivo() );
 		domain.setOtimizarPor(dto.getOtimizarPor());
 		domain.setCapacidadeMaxSalas(dto.getConsiderarCapacidadeMaxSalas());
+		domain.setPercentuaisMinimosParcialIntegral(dto.getPercentuaisMinimosParcialIntegral());
+		domain.setPercentuaisMinimosIntegral(dto.getPercentuaisMinimosIntegral());
 
 		for ( CursoDTO cursoDTO
 			: dto.getMaximizarNotaAvaliacaoCorpoDocenteList() )
@@ -3182,6 +3185,7 @@ public class ConvertBeans {
 		dto.setMinimizarGapProfessor( domain.getMinimizarGapProfessor() );
 		dto.setEvitarReducaoCargaHorariaProfessor( domain.getEvitarReducaoCargaHorariaProfessor() );
 		dto.setEvitarUltimoEPrimeiroHorarioProfessor( domain.getEvitarUltimoEPrimeiroHorarioProfessor() );
+		dto.setEvitarUltimoEPrimeiroHorarioProfessorValue( domain.getEvitarUltimoEPrimeiroHorarioProfessorValue() );
 		dto.setPreferenciaDeProfessores( domain.getPreferenciaDeProfessores() );
 		dto.setAvaliacaoDesempenhoProfessor( domain.getAvaliacaoDesempenhoProfessor() );
 		dto.setConsiderarEquivalencia( domain.getConsiderarEquivalencia() );
@@ -3210,6 +3214,8 @@ public class ConvertBeans {
 		dto.setFuncaoObjetivo( domain.getFuncaoObjetivo() );
 		dto.setOtimizarPor(domain.getOtimizarPor());
 		dto.setConsiderarCapacidadeMaxSalas(domain.getCapacidadeMaxSalas());
+		dto.setPercentuaisMinimosParcialIntegral(domain.getPercentuaisMinimosParcialIntegral());
+		dto.setPercentuaisMinimosIntegral(domain.getPercentuaisMinimosIntegral());
 
 		Set< Curso > cursosMaxNotaAvalList = domain.getCursosMaxNotaAval();
 		List< CursoDTO > cursosMaxNotaAvalDTOList

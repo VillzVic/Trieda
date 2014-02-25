@@ -35,6 +35,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSOR = "evitarreducaocargahorariaprofessor";
 	public static final String PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSORVALUE = "evitarreducaocargahorariaprofessorvalue";
 	public static final String PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSOR = "evitarultimoeprimeirohorarioprofessor";
+	public static final String PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSORVALUE = "evitarultimoeprimeirohorarioprofessorvalue";
 	public static final String PROPERTY_PREFERENCIADEPROFESSORES = "preferenciadeprofessores";
 	public static final String PROPERTY_AVALIACAODESEMPENHOPROFESSOR = "avaliacaodesempenhoprofessor";
 	public static final String PROPERTY_NIVELDIFICULDADEDISCIPLINA = "niveldificuldadedisciplina";
@@ -60,6 +61,8 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
 	public static final String PROPERTY_CONSIDERARDEMANDASDEPRIORIDADE2 = "considerarDemandasDePrioridade2";
 	public static final String PROPERTY_CONSIDERARCAPACIDADEMAXSALAS = "considerarCapacidadeMaxSalas";
+	public static final String PROPERTY_PERCENTUAISMINIMOSPARCIALINTEGRAL = "percentuaisminimosparcialintegral";
+	public static final String PROPERTY_PERCENTUAISMINIMOSINTEGRAL = "percentuaisminimosintegral";
 
 	public ParametroDTO() {
 		super();
@@ -198,6 +201,13 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public void setEvitarUltimoEPrimeiroHorarioProfessor(Boolean value) {
 		set(PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSOR, value);
 	}
+	
+	public Integer getEvitarUltimoEPrimeiroHorarioProfessorValue() {
+		return get(PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSORVALUE);
+	}
+	public void setEvitarUltimoEPrimeiroHorarioProfessorValue(Integer value) {
+		set(PROPERTY_EVITARULTIMOEPRIMEIROHORARIOPROFESSORVALUE, value);
+	}
 
 	public Boolean getPreferenciaDeProfessores() {
 		return get(PROPERTY_PREFERENCIADEPROFESSORES);
@@ -325,6 +335,20 @@ public class ParametroDTO extends AbstractDTO<Long>
 		set(PROPERTY_PERCENTUAISMINIMOSDOUTORES, value);
 	}
 
+	public Boolean getPercentuaisMinimosParcialIntegral() {
+		return get(PROPERTY_PERCENTUAISMINIMOSPARCIALINTEGRAL);
+	}
+	public void setPercentuaisMinimosParcialIntegral(Boolean value) {
+		set(PROPERTY_PERCENTUAISMINIMOSPARCIALINTEGRAL, value);
+	}
+	
+	public Boolean getPercentuaisMinimosIntegral() {
+		return get(	PROPERTY_PERCENTUAISMINIMOSINTEGRAL);
+	}
+	public void setPercentuaisMinimosIntegral(Boolean value) {
+		set(PROPERTY_PERCENTUAISMINIMOSINTEGRAL, value);
+	}
+	
 	public Boolean getAreaTitulacaoProfessoresECursos() {
 		return get(PROPERTY_AREATITULACAOPROFESSORESECURSOS);
 	}

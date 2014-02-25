@@ -63,6 +63,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="evitarReducaoCargaHorariaProf" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="evitarReducaoCargaHorariaProfValor" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="evitarProfUltimoPrimeiroHor" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="evitarProfUltimoPrimeiroHorValor" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="11"/>
  *         &lt;element name="preferenciaProfessorDisciplina" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="desempenhoProfDisponibilidade" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="funcaoObjetivo" type="{http://www.w3.org/2001/XMLSchema}int"/>
@@ -86,6 +87,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="maximoDisciplinasDeUmProfessorPorCurso" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="custoProfDisponibilidade" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="utilizarDemandasP2" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="percentuaisMinimoParcialIntegral" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="percentuaisMinimoIntegral" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -110,6 +113,7 @@ import javax.xml.bind.annotation.XmlType;
     "evitarReducaoCargaHorariaProf",
     "evitarReducaoCargaHorariaProfValor",
     "evitarProfUltimoPrimeiroHor",
+    "evitarProfUltimoPrimeiroHorValor",
     "preferenciaProfessorDisciplina",
     "desempenhoProfDisponibilidade",
     "funcaoObjetivo",
@@ -132,7 +136,9 @@ import javax.xml.bind.annotation.XmlType;
     "areaTitulacaoProfessorCurso",
     "maximoDisciplinasDeUmProfessorPorCurso",
     "custoProfDisponibilidade",
-    "utilizarDemandasP2"
+    "utilizarDemandasP2",
+    "percentuaisMinimoParcialIntegral",
+    "percentuaisMinimoIntegral"
 })
 public class ItemParametrosPlanejamento {
 
@@ -154,6 +160,7 @@ public class ItemParametrosPlanejamento {
     protected boolean evitarReducaoCargaHorariaProf;
     protected Integer evitarReducaoCargaHorariaProfValor;
     protected boolean evitarProfUltimoPrimeiroHor;
+    protected Integer evitarProfUltimoPrimeiroHorValor;
     protected boolean preferenciaProfessorDisciplina;
     protected boolean desempenhoProfDisponibilidade;
     protected int funcaoObjetivo;
@@ -178,6 +185,8 @@ public class ItemParametrosPlanejamento {
     protected boolean maximoDisciplinasDeUmProfessorPorCurso;
     protected boolean custoProfDisponibilidade;
     protected boolean utilizarDemandasP2;
+    protected boolean percentuaisMinimoParcialIntegral;
+    protected boolean percentuaisMinimoIntegral;
 
     /**
      * Gets the value of the modoOtimizacao property.
@@ -449,6 +458,22 @@ public class ItemParametrosPlanejamento {
      */
     public void setEvitarProfUltimoPrimeiroHor(boolean value) {
         this.evitarProfUltimoPrimeiroHor = value;
+    }
+    
+    /**
+     * Gets the value of the evitarProfUltimoPrimeiroHorValor property.
+     * 
+     */
+    public Integer isEvitarProfUltimoPrimeiroHorValor() {
+        return evitarProfUltimoPrimeiroHorValor;
+    }
+
+    /**
+     * Sets the value of the evitarProfUltimoPrimeiroHorValor property.
+     * 
+     */
+    public void setEvitarProfUltimoPrimeiroHorValor(Integer value) {
+        this.evitarProfUltimoPrimeiroHorValor = value;
     }
 
     /**
@@ -857,6 +882,38 @@ public class ItemParametrosPlanejamento {
      */
     public void setUtilizarDemandasP2(boolean value) {
         this.utilizarDemandasP2 = value;
+    }
+    
+    /**
+     * Gets the value of the percentuaisMinimoParcialIntegral property.
+     * 
+     */
+    public boolean isPercentuaisMinimoParcialIntegral() {
+        return percentuaisMinimoParcialIntegral;
+    }
+
+    /**
+     * Sets the value of the percentuaisMinimoParcialIntegral property.
+     * 
+     */
+    public void setPercentuaisMinimoParcialIntegral(boolean value) {
+        this.percentuaisMinimoParcialIntegral = value;
+    }
+    
+    /**
+     * Gets the value of the percentuaisMinimoIntegral property.
+     * 
+     */
+    public boolean isPercentuaisMinimoIntegral() {
+        return percentuaisMinimoIntegral;
+    }
+
+    /**
+     * Sets the value of the percentuaisMinimoIntegral property.
+     * 
+     */
+    public void setPercentuaisMinimoIntegral(boolean value) {
+        this.percentuaisMinimoIntegral = value;
     }
 
 

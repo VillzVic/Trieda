@@ -66,6 +66,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getEvitarReducaoCargaHorariaProfessorCheckBox();
 		NumberField getEvitarReducaoCargaHorariaProfessorNumberField();
 		CheckBox getEvitarUltimoEPrimeiroHorarioProfessorCheckBox();
+		NumberField getEvitarUltimoEPrimeiroHorarioProfessorNumberField();
 		CheckBox getPreferenciaDeProfessoresCheckBox();
 		CheckBox getAvaliacaoDesempenhoProfessorCheckBox();
 		CheckBox getNivelDificuldadeDisciplinaCheckBox();
@@ -88,6 +89,8 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getLimitarMaximoDisciplinaProfessorCheckBox();
 		CheckBox getConsiderarDemandasPrioridade2CheckBox();
 		CheckBox getConsiderarCapacidadeMaximaDasSalasCheckBox();
+		CheckBox getPercentuaisMinimosTempoParcialIntegralCheckBox();
+		CheckBox getPercentuaisMinimosTempoIntegralCheckBox();
 		FuncaoObjetivoComboBox getFuncaoObjetivoComboBox();
 		Button getMaximizarNotaAvaliacaoCorpoDocenteButton();
 		Button getMinimizarCustoDocenteCursosButton();
@@ -276,6 +279,8 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setCargaHorariaProfessorSel(this.display.getCargaHorariaProfessorComboBox().getValueString());
 		dto.setProfessorEmMuitosCampi(this.display.getProfessorEmMuitosCampiCheckBox().getValue());
 		dto.setMinimizarDeslocamentoProfessor(this.display.getMinimizarDeslocamentoProfessorCheckBox().getValue());
+		dto.setPercentuaisMinimosParcialIntegral(this.display.getPercentuaisMinimosTempoParcialIntegralCheckBox().getValue());
+		dto.setPercentuaisMinimosIntegral(this.display.getPercentuaisMinimosTempoIntegralCheckBox().getValue());
 
 		Number minimizarDeslocamentoProfessorValue = this.display.getMinimizarDeslocamentoProfessorNumberField().getValue();
 		if (minimizarDeslocamentoProfessorValue == null) {
@@ -293,6 +298,12 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setEvitarReducaoCargaHorariaProfessorValue(evitarReducaoCargaHorariaProfessorValue.intValue());
 
 		dto.setEvitarUltimoEPrimeiroHorarioProfessor(this.display.getEvitarUltimoEPrimeiroHorarioProfessorCheckBox().getValue());
+		Number evitarUltimoEPrimeiroHorarioProfessorValue = this.display.getEvitarUltimoEPrimeiroHorarioProfessorNumberField().getValue();
+		if (evitarUltimoEPrimeiroHorarioProfessorValue == null) {
+			evitarUltimoEPrimeiroHorarioProfessorValue = 11;
+		}
+		dto.setEvitarUltimoEPrimeiroHorarioProfessorValue(evitarUltimoEPrimeiroHorarioProfessorValue.intValue());
+		
 		dto.setPreferenciaDeProfessores(this.display.getPreferenciaDeProfessoresCheckBox().getValue());
 		dto.setAvaliacaoDesempenhoProfessor(this.display.getAvaliacaoDesempenhoProfessorCheckBox().getValue());
 		dto.setConsiderarEquivalencia(this.display.getConsiderarEquivalenciaCheckBox().getValue());

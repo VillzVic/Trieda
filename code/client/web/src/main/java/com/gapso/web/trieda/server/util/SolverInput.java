@@ -1838,6 +1838,9 @@ public class SolverInput
 
 		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHor(
 			this.parametro.getEvitarUltimoEPrimeiroHorarioProfessor() );
+		
+		itemParametrosPlanejamento.setEvitarProfUltimoPrimeiroHorValor(
+			this.parametro.getEvitarUltimoEPrimeiroHorarioProfessorValue() );
 
 		itemParametrosPlanejamento.setPreferenciaProfessorDisciplina(
 			this.parametro.getPreferenciaDeProfessores() );
@@ -1937,6 +1940,10 @@ public class SolverInput
 		itemParametrosPlanejamento.setCustoProfDisponibilidade( false );
 		
 		itemParametrosPlanejamento.setUtilizarDemandasP2(this.parametro.getUtilizarDemandasP2());
+		
+		itemParametrosPlanejamento.setPercentuaisMinimoParcialIntegral(this.parametro.getPercentuaisMinimosParcialIntegral());
+		
+		itemParametrosPlanejamento.setPercentuaisMinimoIntegral(this.parametro.getPercentuaisMinimosIntegral());
 
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}
