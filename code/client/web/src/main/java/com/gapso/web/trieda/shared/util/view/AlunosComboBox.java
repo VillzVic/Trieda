@@ -73,7 +73,6 @@ public class AlunosComboBox	extends ComboBox<AlunoDTO>{
 		setEmptyText("Digite o nome de um aluno");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
-		setHideTrigger(true);
 		setTriggerAction(TriggerAction.QUERY);
 		setMinChars(1);
 	}

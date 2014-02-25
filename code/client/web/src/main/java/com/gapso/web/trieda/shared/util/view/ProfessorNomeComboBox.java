@@ -72,7 +72,6 @@ public class ProfessorNomeComboBox extends ComboBox<ProfessorDTO>{
 		setEmptyText("Digite o nome do professor");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
-		setHideTrigger(true);
 		setTriggerAction(TriggerAction.QUERY);
 		setMinChars(1);
 	}

@@ -44,6 +44,7 @@ public class CurriculoDisciplinaFormView
 		simpleModal = new SimpleModal( title,
 			Resources.DEFAULTS.disciplina16() );
 		simpleModal.setHeight( 230 );
+		simpleModal.setWidth( 430 );
 		createForm();
 		simpleModal.setContent( formPanel );
 	}

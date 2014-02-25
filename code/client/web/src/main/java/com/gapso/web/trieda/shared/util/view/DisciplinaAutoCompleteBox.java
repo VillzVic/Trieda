@@ -68,7 +68,7 @@ public class DisciplinaAutoCompleteBox extends ComboBox<DisciplinaDTO> {
 						loadByCriteria((AbstractDTO) comboDep.getSelection().get(0), callback);
 					}
 					else{
-						Services.disciplinas().getList(cenarioDTO, (BasePagingLoadConfig)loadConfig, callback);
+						Services.disciplinas().getAutoCompleteList(cenarioDTO, (BasePagingLoadConfig)loadConfig, callback);
 					}
 				}
 			};

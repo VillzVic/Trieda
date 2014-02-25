@@ -72,7 +72,6 @@ public class SalaAutoCompleteBox extends ComboBox<SalaDTO> {
 		setEmptyText("Selecione um ambiente");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
-		setHideTrigger(true);
 		setTriggerAction(TriggerAction.QUERY);
 		setMinChars(1);
 	}

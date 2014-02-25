@@ -72,7 +72,6 @@ public class ProfessorCpfComboBox extends ComboBox<ProfessorDTO>{
 		setEmptyText("Digite o cpf do professor");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
-		setHideTrigger(true);
 		setTriggerAction(TriggerAction.QUERY);
 		setMinChars(1);
 	}

@@ -73,7 +73,6 @@ public class AlunosMatriculaComboBox	extends ComboBox<AlunoDTO>{
 		setEmptyText("Digite o número da matricula");
 		setTemplate(getTemplateCB());
 		setReadOnly(readOnly);
-		setHideTrigger(true);
 		setTriggerAction(TriggerAction.QUERY);
 		setMinChars(1);
 	}
