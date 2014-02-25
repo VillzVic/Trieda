@@ -382,6 +382,50 @@ public class DisciplinasServiceImpl
 		return getBuscaList( cenarioDTO, null, loadConfig.get(
 			"query" ).toString(), null, loadConfig );
 	}
+	
+	@Override
+	public ListLoadResult< DisciplinaDTO > getAutoCompleteList(
+			CenarioDTO cenarioDTO, PagingLoadConfig loadConfig)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List< DisciplinaDTO > list = new ArrayList< DisciplinaDTO >();
+		String orderBy = loadConfig.getSortField();
+
+		if ( orderBy != null )
+		{
+			if ( loadConfig.getSortDir() != null
+				&& loadConfig.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
+			}
+		}
+
+		List< Disciplina > disciplinas = Disciplina.findBy(
+			getInstituicaoEnsinoUser(), cenario, loadConfig.get(
+			"query" ).toString(), loadConfig.get("query" ).toString(),
+			loadConfig.getOffset(), loadConfig.getLimit(), orderBy );
+
+		for ( Disciplina disciplina : disciplinas )
+		{
+			DisciplinaDTO disciplinaDTO
+				= ConvertBeans.toDisciplinaDTO( disciplina );
+
+			list.add( disciplinaDTO );
+		}
+
+		BasePagingLoadResult< DisciplinaDTO > result
+			= new BasePagingLoadResult< DisciplinaDTO >( list );
+
+		result.setOffset( loadConfig.getOffset() );
+		result.setTotalLength( 10 );
+
+		return result;
+	}
 
 	@Override
 	public PagingLoadResult< DisciplinaDTO > getBuscaList(

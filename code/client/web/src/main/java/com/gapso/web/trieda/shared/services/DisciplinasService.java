@@ -85,4 +85,5 @@ public interface DisciplinasService
 	void removeDivisaoCredito( DisciplinaDTO disciplinaDTO );
 	ListLoadResult<DisciplinaDTO> getDisciplinaNaoAssociada( CenarioDTO cenarioDTO, ProfessorDTO professorDTO, String nome );
 	ListLoadResult<DisciplinaDTO> getListByCurriculoIdAndPeriodo( CenarioDTO cenarioDTO, Long curriculoId, Integer periodo );
+	ListLoadResult<DisciplinaDTO> getAutoCompleteList( CenarioDTO cenarioDTO, PagingLoadConfig loadConfig );
 }

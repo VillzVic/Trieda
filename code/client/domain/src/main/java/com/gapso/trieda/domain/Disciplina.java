@@ -869,6 +869,35 @@ public class Disciplina
 		return q.getResultList();
 	}
 	
+	@SuppressWarnings( "unchecked" )
+	public static List< Disciplina > findBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		String codigo, String nome,	int firstResult, int maxResults, String orderBy )
+	{
+		nome = ( ( nome == null ) ? "" : nome );
+		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
+		codigo = ( ( codigo == null ) ? "" : codigo );
+		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o." + orderBy.replace("String", "") : "" );
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Disciplina o " +
+			" WHERE o.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND ( LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
+			" OR LOWER ( o.codigo ) LIKE LOWER ( :codigo ) ) " + orderBy );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "nome", nome );
+		q.setParameter( "codigo", codigo );
+		q.setFirstResult( firstResult );
+		q.setMaxResults( maxResults );
+
+		return q.getResultList();
+	}
+	
 	private static Query findByEntityAndName(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo, String specificQuery)
 	{
