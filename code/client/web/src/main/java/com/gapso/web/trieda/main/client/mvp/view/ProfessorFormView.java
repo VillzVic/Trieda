@@ -69,7 +69,7 @@ public class ProfessorFormView
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		this.simpleModal.setHeight( 450 );
+		this.simpleModal.setHeight( 500 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
 	}
@@ -131,7 +131,6 @@ public class ProfessorFormView
 		this.formPanel.add( this.titulacaoCB, formData );
 
 		this.areaTitulacaoCB = new AreaTitulacaoComboBox();
-		this.areaTitulacaoCB.setAllowBlank( false );
 		this.areaTitulacaoCB.setValue( this.areaTitulacaoDTO );
 		this.formPanel.add( this.areaTitulacaoCB, formData );
 

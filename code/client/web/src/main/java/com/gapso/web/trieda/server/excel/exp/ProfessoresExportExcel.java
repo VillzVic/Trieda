@@ -175,7 +175,7 @@ public class ProfessoresExportExcel extends AbstractExportExcel
 		// Área de Titulação
 		setCell( row, 8, sheet,
 				 cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
-				 professor.getAreaTitulacao().getCodigo() );
+				 professor.getAreaTitulacao() == null ? "" : professor.getAreaTitulacao().getCodigo() );
 
 		/*
 		 * Código relacionado com a issue http://jira.gapso.com.br/browse/TRIEDA-1040

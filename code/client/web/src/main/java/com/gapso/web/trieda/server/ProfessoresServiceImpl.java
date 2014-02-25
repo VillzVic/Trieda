@@ -682,7 +682,10 @@ public class ProfessoresServiceImpl
 			}
 			for (Professor professor : professoresInstitucionaisList)
 			{
-				areasTitulacaoToNumProfessoresMap.put(professor.getAreaTitulacao(), areasTitulacaoToNumProfessoresMap.get(professor.getAreaTitulacao())+1 );
+				if (professor.getAreaTitulacao() != null)
+				{
+					areasTitulacaoToNumProfessoresMap.put(professor.getAreaTitulacao(), areasTitulacaoToNumProfessoresMap.get(professor.getAreaTitulacao())+1 );
+				}
 			}
 		}
 		
@@ -784,14 +787,25 @@ public class ProfessoresServiceImpl
 			{
 				docentesPorTipoContratoMap.put(professor.getTipoContrato(), docentesPorTipoContratoMap.get(professor.getTipoContrato()) + 1);
 			}
-			
-			if (docentesPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) == null)
+			if (professor.getAreaTitulacao() != null)
 			{
-				docentesPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), 1);
-			}
-			else
-			{
-				docentesPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), docentesPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) + 1);
+				if (docentesPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) == null)
+				{
+					docentesPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), 1);
+				}
+				else
+				{
+					docentesPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), docentesPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) + 1);
+				}
+				
+				if (custoPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) == null)
+				{
+					custoPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), professor.getValorCredito());
+				}
+				else
+				{
+					custoPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), custoPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) + professor.getValorCredito());
+				}
 			}
 			if (custoPorTitulacaoMap.get(professor.getTitulacao()) == null)
 			{
@@ -809,15 +823,6 @@ public class ProfessoresServiceImpl
 			else
 			{
 				custoPorTipoContratoMap.put(professor.getTipoContrato(), custoPorTipoContratoMap.get(professor.getTipoContrato()) + professor.getValorCredito());
-			}
-			
-			if (custoPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) == null)
-			{
-				custoPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), professor.getValorCredito());
-			}
-			else
-			{
-				custoPorAreaTitulacaoMap.put(professor.getAreaTitulacao(), custoPorAreaTitulacaoMap.get(professor.getAreaTitulacao()) + professor.getValorCredito());
 			}
 			custoMedioDocenteTotal += professor.getValorCredito();
 			mediaDisciplinasHabilitadas += professor.getDisciplinas().size();

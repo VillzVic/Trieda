@@ -156,8 +156,8 @@ public class ProfessorFormPresenter
 		professorDTO.setTitulacaoString( titulacaoDTO.getNome() );
 
 		AreaTitulacaoDTO areaTitulacaoDTO = display.getAreaTitulacaoComboBox().getValue();
-		professorDTO.setAreaTitulacaoId( areaTitulacaoDTO.getId() );
-		professorDTO.setAreaTitulacaoString( areaTitulacaoDTO.getCodigo() );
+		professorDTO.setAreaTitulacaoId( areaTitulacaoDTO == null ? null : areaTitulacaoDTO.getId() );
+		professorDTO.setAreaTitulacaoString( areaTitulacaoDTO == null ? null : areaTitulacaoDTO.getCodigo() );
 		professorDTO.setCreditoAnterior( display.getCreditoAnteriorNumberField().getValue().intValue() );
 		professorDTO.setValorCredito( TriedaUtil.parseTriedaCurrency(
 			display.getValorCreditoNumberField().getValue().doubleValue() ) );

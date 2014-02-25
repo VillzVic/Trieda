@@ -2679,8 +2679,8 @@ public class ConvertBeans {
 		dto.setCargaHorariaMin( domain.getCargaHorariaMin() );
 		dto.setTitulacaoId( domain.getTitulacao().getId() );
 		dto.setTitulacaoString( domain.getTitulacao().getNome() );
-		dto.setAreaTitulacaoId( domain.getAreaTitulacao().getId() );
-		dto.setAreaTitulacaoString( domain.getAreaTitulacao().getCodigo() );
+		dto.setAreaTitulacaoId( domain.getAreaTitulacao() == null ? null : domain.getAreaTitulacao().getId() );
+		dto.setAreaTitulacaoString( domain.getAreaTitulacao() == null ? null : domain.getAreaTitulacao().getCodigo() );
 		dto.setCreditoAnterior( domain.getCreditoAnterior() );
 		dto.setValorCredito( TriedaUtil.parseTriedaCurrency( domain.getValorCredito() ) );
 		dto.setDisplayText( domain.getNome() + " (" + domain.getCpf() + ")" );

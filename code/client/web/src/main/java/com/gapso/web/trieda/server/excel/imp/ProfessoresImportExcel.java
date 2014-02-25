@@ -356,16 +356,19 @@ public class ProfessoresImportExcel
 
 		for ( ProfessoresImportExcelBean bean : sheetContent )
 		{
-			AreaTitulacao areaTitulacao
-				= areasTitulacoesBDMap.get( bean.getAreaTitulacaoStr() );
-
-			if ( areaTitulacao != null )
+			if (!bean.getAreaTitulacaoStr().isEmpty())
 			{
-				bean.setAreaTitulacao( areaTitulacao );
-			}
-			else
-			{
-				rowsWithErrors.add( bean.getRow() );
+				AreaTitulacao areaTitulacao
+					= areasTitulacoesBDMap.get( bean.getAreaTitulacaoStr() );
+	
+				if ( areaTitulacao != null )
+				{
+					bean.setAreaTitulacao( areaTitulacao );
+				}
+				else
+				{
+					rowsWithErrors.add( bean.getRow() );
+				}
 			}
 		}
 

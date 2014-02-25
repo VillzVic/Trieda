@@ -66,7 +66,6 @@ public class Professor
 	@JoinColumn( name = "TIT_ID" )
 	private Titulacao titulacao;
 
-	@NotNull
 	@ManyToOne( targetEntity = AreaTitulacao.class )
 	@JoinColumn( name = "ATI_ID" )
 	private AreaTitulacao areaTitulacao;
