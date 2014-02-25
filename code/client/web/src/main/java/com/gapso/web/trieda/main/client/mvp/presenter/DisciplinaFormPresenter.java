@@ -125,16 +125,6 @@ public class DisciplinaFormPresenter
 					return false;
 				}
 			}
-			if (!display.getProfessorUnicoCheckBox().getValue().booleanValue()) {
-				if (display.getCreditosTeoricoTextField().getValue().intValue() <= 0 ||
-						display.getCreditosPraticoTextField().getValue().intValue() <= 0 ||
-						!display.getLaboratorioCheckBox().getValue().booleanValue() ) {
-					errorMessage = "Professor Único? Não selecionado - A disciplina deve conter creditos praticos e teoricos" +
-							" e usar laboratório";
-					return false;
-				}
-			}
-			return true;
 		}
 		else
 			errorMessage = "Verifique os campos digitados";
