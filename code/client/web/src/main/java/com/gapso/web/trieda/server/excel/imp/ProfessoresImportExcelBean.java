@@ -50,7 +50,6 @@ public class ProfessoresImportExcelBean
 			checkMandatoryField( this.tipoStr, ImportExcelError.PROFESSOR_TIPO_VAZIO, erros );
 			checkMandatoryField( this.cargaHorariaMaxStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_MAX_VAZIO, erros );
 			checkMandatoryField( this.cargaHorariaMinStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_MIN_VAZIO, erros );
-			checkMandatoryField( this.titulacaoStr, ImportExcelError.PROFESSOR_TITULACAO_VAZIO, erros );
 			checkMandatoryField( this.cargaHorariaAnteriorStr, ImportExcelError.PROFESSOR_CARGA_HORARIA_ANTERIOR_VAZIO, erros );
 			checkMandatoryField( this.valorCreditoStr, ImportExcelError.PROFESSOR_VALOR_CREDITO_VAZIO, erros );
 			checkMandatoryField( this.maxDiasSemanaStr, ImportExcelError.PROFESSOR_MAX_DIAS_SEMANA_VAZIO, erros );
