@@ -88,7 +88,7 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	}
 	
 	private FieldSet criaParametros() {
-		this.usarDemandasPrioridade2CheckBox = createCheckBox("Usar demandas de prioridade 2 para maximzar o atendimento", 
+		this.usarDemandasPrioridade2CheckBox = createCheckBox("Usar demandas de <u>prioridade 2</u> para maximzar o atendimento", 
 				parametroGeracaoDemandaDTO.getUsarDemandasDePrioridade2());
 		this.usarDemandasPrioridade2CheckBox.setToolTip("As demandas de prioridade 2 serão ofertadas para o aluno apenas após a alocação das demandas de prioridade 1, caso ainda haja espaço na grade horária do aluno");
 		this.distanciaMaxEmPeriodosParaPrioridade2NumberField = new NumberField();
@@ -120,7 +120,7 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		maxCreditosContainer.add(maxCreditosRadioGroup);
 		maxCreditosContainer.add(creditoManualNumberField);
 		
-		this.aumentaMaxCreditosParaAlunosComDisciplinasAtrasadasCheckBox = createCheckBox("Considerar acréscimo de máximo de créditos (em %) se o aluno estiver irregular",
+		this.aumentaMaxCreditosParaAlunosComDisciplinasAtrasadasCheckBox = createCheckBox("Considerar acréscimo de máximo de créditos (em %) se o aluno estiver <u>irregular</u>",
 				parametroGeracaoDemandaDTO.getAumentaMaxCreditosParaAlunosComDisciplinasAtrasadas());
 		this.aumentaMaxCreditosParaAlunosComDisciplinasAtrasadasCheckBox.setToolTip("O aluno apresenta-se em situação irregular quando há em seu histórico uma ou mais matérias de períodos passados ainda não concluídas.");
 		this.fatorAumentoDeMaxCreditosNumberField = new NumberField();
