@@ -125,10 +125,13 @@ public class DisciplinaFormPresenter
 					return false;
 				}
 			}
+			return true;
 		}
 		else
+		{
 			errorMessage = "Verifique os campos digitados";
 			return false;
+		}
 	}
 	
 	private DisciplinaDTO getDTO()
