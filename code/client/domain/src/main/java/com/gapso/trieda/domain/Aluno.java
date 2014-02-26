@@ -75,6 +75,14 @@ public class Aluno
     @Max( 100L )
     private Integer periodo;
     
+	@NotNull
+	@Column( name = "ALN_VIRTUAL" )
+	private Boolean virtual;
+	
+	@NotNull
+	@Column( name = "ALN_CRIADO_POR_TRIEDA" )
+	private Boolean criadoTrieda;
+    
     @ManyToMany( cascade = { CascadeType.PERSIST,
     CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
 	@JoinTable(name="curriculos_disciplinas_alunos",
@@ -123,10 +131,30 @@ public class Aluno
 	{
 		return this.formando;
 	}
-
+	
 	public void setFormando( Boolean formando )
 	{
 		this.formando = formando;
+	}
+
+	public void setVirtual( Boolean virtual )
+	{
+		this.virtual = virtual;
+	}
+	
+	public Boolean getVirtual()
+	{
+		return this.virtual;
+	}
+
+	public void setCriadoTrieda( Boolean criadoTrieda )
+	{
+		this.criadoTrieda = criadoTrieda;
+	}
+	
+	public Boolean getCriadoTrieda()
+	{
+		return this.criadoTrieda;
 	}
 
 	@PersistenceContext

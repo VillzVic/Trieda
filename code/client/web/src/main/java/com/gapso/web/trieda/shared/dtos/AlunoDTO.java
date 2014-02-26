@@ -13,6 +13,8 @@ public class AlunoDTO
 	public static final String PROPERTY_ALUNO_MATRICULA = "matricula";
 	public static final String PROPERTY_ALUNO_FORMANDO = "formando";
 	public static final String PROPERTY_ALUNO_PERIODO = "periodo";
+	public static final String PROPERTY_ALUNO_VIRTUAL = "virtual";
+	public static final String PROPERTY_ALUNO_CRIADO_TRIEDA = "criadoTrieda";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 
 	public AlunoDTO()
@@ -94,6 +96,26 @@ public class AlunoDTO
 	public String getNaturalKey()
 	{
 		return getInstituicaoEnsinoId() + "-" + getMatricula();
+	}
+	
+	public void setVirtual( Boolean value )
+	{
+		set( PROPERTY_ALUNO_VIRTUAL, value );
+	}
+
+	public Boolean getVirtual()
+	{
+		return get( PROPERTY_ALUNO_VIRTUAL );
+	}
+	
+	public void setCriadoTrieda( Boolean value )
+	{
+		set( PROPERTY_ALUNO_CRIADO_TRIEDA, value );
+	}
+
+	public Boolean getCriadoTrieda()
+	{
+		return get( PROPERTY_ALUNO_CRIADO_TRIEDA );
 	}
 
 	@Override

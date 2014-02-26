@@ -28,6 +28,7 @@ public class AlunosFormPresenter
 		UniqueTextField getMatriculaTextField();
 		TextField< String > getNomeTextField();
 		CheckBox getFormandoCheckBox();
+		CheckBox getVirtualCheckBox();
 		NumberField getPeriodoNumberField();
 		Button getSalvarButton();
 		AlunoDTO getAlunoDTO();
@@ -114,6 +115,8 @@ public class AlunosFormPresenter
 		alunoDTO.setNome( this.display.getNomeTextField().getValue() );
 		alunoDTO.setMatricula( this.display.getMatriculaTextField().getValue() );
 		alunoDTO.setFormando( this.display.getFormandoCheckBox().getValue() );
+		alunoDTO.setVirtual( this.display.getVirtualCheckBox().getValue() );
+		alunoDTO.setCriadoTrieda(false);
 		alunoDTO.setPeriodo( this.display.getPeriodoNumberField().getValue() != null ? 
 				this.display.getPeriodoNumberField().getValue().intValue() : null );
 		alunoDTO.setCenarioId( this.cenarioDTO.getId() );

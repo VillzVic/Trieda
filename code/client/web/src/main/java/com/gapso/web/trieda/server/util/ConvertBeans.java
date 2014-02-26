@@ -3459,6 +3459,8 @@ public class ConvertBeans {
 		domain.setMatricula( dto.getMatricula() );
 		domain.setFormando( dto.getFormando() );
 		domain.setPeriodo( dto.getPeriodo() );
+		domain.setVirtual( dto.getVirtual() );
+		domain.setCriadoTrieda( dto.getCriadoTrieda() );
 		domain.setCenario( cenario );
 		domain.setInstituicaoEnsino( instituicaoEnsino );
 
@@ -3475,6 +3477,8 @@ public class ConvertBeans {
 		dto.setMatricula( domain.getMatricula() );
 		dto.setFormando( domain.getFormando() );
 		dto.setPeriodo( domain.getPeriodo() );
+		dto.setVirtual( domain.getVirtual() );
+		dto.setCriadoTrieda( domain.getCriadoTrieda() );
 		dto.setCenarioId( domain.getCenario().getId() );
 		dto.setDisplayText( domain.getNome() );
 

@@ -25,6 +25,7 @@ public class AlunosFormView
 	private UniqueTextField matriculaTF;
 	private TextField< String > nomeTF;
 	private CheckBox formandoCB;
+	private CheckBox virtualCB;
 	private NumberField periodoNF;
 	private AlunoDTO alunoDTO;
 	private CenarioDTO cenarioDTO;
@@ -46,7 +47,7 @@ public class AlunosFormView
 		simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		simpleModal.setHeight( 185 );
+		simpleModal.setHeight( 225 );
 		createForm();
 		simpleModal.setContent( formPanel );
 	}
@@ -92,6 +93,19 @@ public class AlunosFormView
 		formandoCB.setValue(alunoDTO.getFormando());
 		formandoCB.setFieldLabel("Formando?");
 		formPanel.add( formandoCB, formData );
+		
+		virtualCB = new CheckBox();
+		virtualCB.setName(AlunoDTO.PROPERTY_ALUNO_VIRTUAL);
+		virtualCB.setValue(alunoDTO.getVirtual());
+		virtualCB.setFieldLabel("Virtual?");
+		virtualCB.setToolTip("Alunos virtuais são aqueles ainda inexistentes, porém, que a Instituição de Ensino" +
+				" deseja simular a sua presenção, por exemplo, alunos entrantes. Além disso, estes alunos virtuais" +
+				" podem ser criados automaticamente pelo Trieda através do Módulo de Geração de Demanda da aba de" +
+				" Ofertas e Demandas. Mais especificamente, ao informar uma quantidade de alunos através da tela de" +
+				" Ofertas e Demandas o Trieda irá criar, automaticamente, a quantidade informada de alunos." +
+				" Nestes casos, além do aluno ser considerado virtual o mesmo terá o campo Criado por Trieda? como marcado.");
+		formPanel.add( virtualCB, formData );
+
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );
 		binding.addButton( simpleModal.getSalvarBt() );
@@ -137,6 +151,11 @@ public class AlunosFormView
 	@Override
 	public CheckBox getFormandoCheckBox() {
 		return formandoCB;
+	}
+	
+	@Override
+	public CheckBox getVirtualCheckBox() {
+		return virtualCB;
 	}
 	
 	@Override

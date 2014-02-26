@@ -8,6 +8,8 @@ public enum ImportExcelError
 	ALUNO_NOME_VAZIO,
 	ALUNO_FORMANDO_VAZIO,
 	ALUNO_FORMANDO_FORMATO_INVALIDO,
+	ALUNO_VIRTUAL_VAZIO,
+	ALUNO_VIRTUAL_FORMATO_INVALIDO,
 	
 	ALUNO_DEMANDA_CAMPUS_VAZIO,
 	ALUNO_DEMANDA_CURSO_VAZIO,
@@ -230,6 +232,8 @@ public enum ImportExcelError
 			case ALUNO_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.NOME_COLUMN_NAME );
 			case ALUNO_FORMANDO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,AlunosImportExcel.FORMANDO_COLUMN_NAME);
 			case ALUNO_FORMANDO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.FORMANDO_COLUMN_NAME );
+			case ALUNO_VIRTUAL_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,AlunosImportExcel.VIRTUAL_COLUMN_NAME);
+			case ALUNO_VIRTUAL_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosImportExcel.VIRTUAL_COLUMN_NAME );
 		
 			case ALUNO_DEMANDA_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CAMPUS_COLUMN_NAME );
 			case ALUNO_DEMANDA_CURSO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, AlunosDemandaImportExcel.CURSO_COLUMN_NAME );

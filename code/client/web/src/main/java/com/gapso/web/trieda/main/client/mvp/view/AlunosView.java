@@ -91,6 +91,22 @@ public class AlunosView
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, "Matrícula" , 150 ) );
 		list.add( new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_FORMANDO, "Formando?" , 100 ) );
 		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_PERIODO, "Periodo" , 100 ) );
+		CheckColumnConfig column = new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_VIRTUAL, "Virtual?" , 60 );
+		column.setToolTip("Alunos virtuais são aqueles ainda inexistentes, porém, que a Instituição de Ensino" +
+				" deseja simular a sua presenção, por exemplo, alunos entrantes. Além disso, estes alunos virtuais" +
+				" podem ser criados automaticamente pelo Trieda através do Módulo de Geração de Demanda da aba de" +
+				" Ofertas e Demandas. Mais especificamente, ao informar uma quantidade de alunos através da tela de" +
+				" Ofertas e Demandas o Trieda irá criar, automaticamente, a quantidade informada de alunos." +
+				" Nestes casos, além do aluno ser considerado virtual o mesmo terá o campo Criado por Trieda? como marcado.");
+		list.add( column );
+		CheckColumnConfig column2 = new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_CRIADO_TRIEDA, "Criado por Trieda?" , 100 );
+		column2.setToolTip("Alunos virtuais são aqueles ainda inexistentes, porém, que a Instituição de Ensino" +
+				" deseja simular a sua presenção, por exemplo, alunos entrantes. Além disso, estes alunos virtuais" +
+				" podem ser criados automaticamente pelo Trieda através do Módulo de Geração de Demanda da aba de" +
+				" Ofertas e Demandas. Mais especificamente, ao informar uma quantidade de alunos através da tela de" +
+				" Ofertas e Demandas o Trieda irá criar, automaticamente, a quantidade informada de alunos." +
+				" Nestes casos, além do aluno ser considerado virtual o mesmo terá o campo Criado por Trieda? como marcado.");
+		list.add( column2 );
 
 		return list;
 	}

@@ -10,8 +10,10 @@ public class AlunosImportExcelBean
 	private String matriculaStr;
 	private String nomeStr;
 	private String formandoStr;
+	private String virtualStr;
 
 	private Boolean formando;
+	private Boolean virtual;
 
 	public AlunosImportExcelBean( int row )
 	{
@@ -27,8 +29,10 @@ public class AlunosImportExcelBean
 			checkMandatoryField( matriculaStr, ImportExcelError.ALUNO_MATRICULA_VAZIO, erros );
 			checkMandatoryField( nomeStr, ImportExcelError.ALUNO_NOME_VAZIO, erros );
 			checkMandatoryField( formandoStr, ImportExcelError.ALUNO_FORMANDO_VAZIO, erros );
+			checkMandatoryField( virtualStr, ImportExcelError.ALUNO_VIRTUAL_VAZIO, erros );
 
 			formando = checkBooleanField( formandoStr, ImportExcelError.ALUNO_FORMANDO_FORMATO_INVALIDO, erros );
+			virtual = checkBooleanField( virtualStr, ImportExcelError.ALUNO_VIRTUAL_FORMATO_INVALIDO, erros );
 		}
 		else
 		{
@@ -42,7 +46,8 @@ public class AlunosImportExcelBean
 	{
 		return ( isEmptyField( matriculaStr )
 			&& isEmptyField( nomeStr )
-			&& isEmptyField( formandoStr ) );
+			&& isEmptyField( formandoStr )
+			&& isEmptyField( virtualStr ) );
 	}
 
 	public String getMatriculaStr()
@@ -75,9 +80,24 @@ public class AlunosImportExcelBean
 		this.formandoStr = formandoStr;
 	}
 
+	public String getVirtualStr()
+	{
+		return virtualStr;
+	}
+
+	public void setVirtualStr( String virtualStr )
+	{
+		this.virtualStr = virtualStr;
+	}
+	
 	public Boolean getFormando()
 	{
 		return formando;
+	}
+	
+	public Boolean getVirtual()
+	{
+		return virtual;
 	}
 
 	@Override

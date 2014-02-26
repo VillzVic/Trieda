@@ -29,6 +29,7 @@ public class AlunosImportExcel
 	static public String MATRICULA_COLUMN_NAME;
 	static public String NOME_COLUMN_NAME;
 	static public String FORMANDO_COLUMN_NAME;
+	static public String VIRTUAL_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -94,6 +95,10 @@ public class AlunosImportExcel
 					else if ( FORMANDO_COLUMN_NAME.endsWith( columnName ) )
 					{
 						bean.setFormandoStr( cellValue );
+					}
+					else if ( VIRTUAL_COLUMN_NAME.endsWith( columnName ) )
+					{
+						bean.setVirtualStr( cellValue );
 					}
         		}
         	}
@@ -263,6 +268,7 @@ public class AlunosImportExcel
 			MATRICULA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().matriculaAluno() );
 			NOME_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().nomeAluno() );
 			FORMANDO_COLUMN_NAME = HtmlUtils.htmlUnescape( "Formando?" );
+			VIRTUAL_COLUMN_NAME = HtmlUtils.htmlUnescape( "Virtual?" );
 		}
 	}
 }
