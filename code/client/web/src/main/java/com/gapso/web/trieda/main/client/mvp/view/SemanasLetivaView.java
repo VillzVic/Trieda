@@ -91,8 +91,14 @@ public class SemanasLetivaView
 
 		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_CODIGO, "Codigo", 120 ) );
 		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_DESCRICAO, "Descrição", 150 ) );
-		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_TEMPO, "Tempo de Aula", 100 ) );
-		list.add( new CheckColumnConfig( SemanaLetivaDTO.PROPERTY_PERMITE_INTERVALO_AULA, "Permite Intervalo Entre Aulas", 150 ) );
+		list.add( new ColumnConfig( SemanaLetivaDTO.PROPERTY_TEMPO, "Duração do Tempo de Aula (min)", 130 ) );
+		
+		CheckColumnConfig column = new CheckColumnConfig( SemanaLetivaDTO.PROPERTY_PERMITE_INTERVALO_AULA, "Permite Intervalo Entre Aulas", 150 );
+		column.setToolTip("Quando o Trieda cria uma aula de dois tempos consecutivos (ou dois créditos), " +
+				"por padrão, não é permitido que haja um intervalo posicionado entre estes dois tempos de aula. No entanto, caso o parâmetro \"Permite Intervalo entre Aulas\"" +
+				" esteja marcado para a semana letiva em questão, então, o Trieda poderá criar aulas de dois tempos com um intervalo entre os tempos da aula.");
+		list.add( column );
+		
 
 		return list;
 	}

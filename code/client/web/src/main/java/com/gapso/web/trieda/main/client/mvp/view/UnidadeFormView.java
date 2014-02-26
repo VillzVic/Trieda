@@ -79,6 +79,7 @@ public class UnidadeFormView extends MyComposite
 		nomeTF.setMinLength(1);
 		nomeTF.setMaxLength(50);
 		nomeTF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().nome() );
+		nomeTF.setToolTip("Uma unidade representa um prédio ou bloco do campus. Um campus pode conter uma ou mais unidades");
 		formPanel.add(nomeTF, formData);
 
 		campusCB = new CampusComboBox(cenarioDTO);

@@ -54,7 +54,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 	{
 		String title = (ofertaDTO.getId() == null)? "Inserção de Oferta de Curso em Campus" : "Edição de Oferta de Curso em Campus";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.matrizCurricular16());
-		simpleModal.setHeight(200);
+		simpleModal.setHeight(220);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -92,7 +92,7 @@ public class OfertaFormView extends MyComposite implements OfertaFormPresenter.D
 		receitaNF = new NumberField();
 		receitaNF.setName(OfertaDTO.PROPERTY_RECEITA);
 		receitaNF.setValue(ofertaDTO.getReceita().getDoubleValue());
-		receitaNF.setFieldLabel("Receita (R$)");
+		receitaNF.setFieldLabel("Receita por Crédito (R$)");
 		receitaNF.setAllowBlank(false);
 		receitaNF.setAllowDecimals(true);
 		receitaNF.setMaxValue(999999);

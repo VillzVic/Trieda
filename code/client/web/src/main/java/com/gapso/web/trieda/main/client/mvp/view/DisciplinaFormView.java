@@ -118,6 +118,7 @@ public class DisciplinaFormView
 		laboratorioCB.setName(DisciplinaDTO.PROPERTY_LABORATORIO);
 		laboratorioCB.setValue(disciplinaDTO.getLaboratorio());
 		laboratorioCB.setFieldLabel("Usa Laboratório");
+		laboratorioCB.setToolTip("Se estiver marcada, o Trieda buscará associações desta disciplina à laboratórios para realizar a alocação. Caso não haja nenhum laboratório associado a esta disciplina o Trieda acusa um erro de cadastro e não permitirá que a otimização ocorra até que o erro seja resolvido.");
 		formPanel.add(laboratorioCB, formData);
 
 		tipoDisciplinaCB = new TipoDisciplinaComboBox(cenarioDTO);
@@ -126,6 +127,7 @@ public class DisciplinaFormView
 		tipoDisciplinaCB.setAllowBlank(false);
 		tipoDisciplinaCB.setValue(tipoDisciplinaDTO);
 		tipoDisciplinaCB.setEmptyText("Selecione o tipo de disciplina");
+		tipoDisciplinaCB.setToolTip("As disciplinas Presenciais serão alocadas pelo Trieda em salas e horários. As disciplinas Online não serão alocadas em salas nem horários pelo Trieda.");
 		formPanel.add(tipoDisciplinaCB, formData);
 
 		dificuldadeCB = new DificuldadeComboBox();
@@ -145,6 +147,7 @@ public class DisciplinaFormView
 		maxAlunosTeoricoTF.setMaxValue(999);
 		maxAlunosTeoricoTF
 				.setEmptyText("Preencha o número máximo de alunos teóricos");
+		maxAlunosTeoricoTF.setToolTip("(OPCIONAL) Restrição pedagógica do número máximo de alunos em sala de aula para uma disciplina específica. Quanto omitido, o TRIEDA assume a capacidade da sala alocada.");
 		formPanel.add(maxAlunosTeoricoTF, formData);
 
 		maxAlunosPraticoTF = new NumberField();
@@ -156,6 +159,7 @@ public class DisciplinaFormView
 		maxAlunosPraticoTF.setMaxValue(999);
 		maxAlunosPraticoTF
 				.setEmptyText("Preencha o número máximo de alunos práticos");
+		maxAlunosPraticoTF.setToolTip("(OPCIONAL) Restrição pedagógica do número máximo de alunos em laboratório para uma disciplina específica. Quanto omitido, o TRIEDA assume a capacidade do laboratório alocado.");
 		formPanel.add(maxAlunosPraticoTF, formData);
 		
 		cargaHorariaTF = new NumberField();
@@ -167,30 +171,35 @@ public class DisciplinaFormView
 		cargaHorariaTF.setMaxValue(999);
 		cargaHorariaTF
 				.setEmptyText("Preencha a carga horária");
+		cargaHorariaTF.hide();
 		formPanel.add(cargaHorariaTF, formData);
 		
 		aulasContinuasCB = new CheckBox();
 		aulasContinuasCB.setName(DisciplinaDTO.PROPERTY_AULAS_CONTINUAS);
 		aulasContinuasCB.setValue(disciplinaDTO.getAulasContinuas());
 		aulasContinuasCB.setFieldLabel("Aulas Continuas?");
+		aulasContinuasCB.setToolTip("(Apenas quando a disciplina tem créditos teóricos e práticos.) Determina se as aulas teóricas e práticas devem ser lecionadas em sequência.");
 		formPanel.add(aulasContinuasCB, formData);
 		
 		professorUnicoCB = new CheckBox();
 		professorUnicoCB.setName(DisciplinaDTO.PROPERTY_PROFESSOR_UNICO);
 		professorUnicoCB.setValue(disciplinaDTO.getProfessorUnico());
 		professorUnicoCB.setFieldLabel("Professor Único?");
+		professorUnicoCB.setToolTip("(Apenas quando a disciplina tem créditos teóricos e práticos.) Determina se o professor deve ser o mesmo para as aulas teóricas e práticas.");
 		formPanel.add(professorUnicoCB, formData);
 		
 		usaSabadoCB = new CheckBox();
 		usaSabadoCB.setName(DisciplinaDTO.PROPERTY_USA_SABADO);
 		usaSabadoCB.setValue(disciplinaDTO.getUsaSabado());
 		usaSabadoCB.setFieldLabel("Usa Sábado");
+		usaSabadoCB.setToolTip("Determina se a disciplina deverá herdar os horários das semanas letivas também no sábado.");
 		formPanel.add(usaSabadoCB, formData);
 
 		usaDomingoCB = new CheckBox();
 		usaDomingoCB.setName(DisciplinaDTO.PROPERTY_USA_DOMINGO);
 		usaDomingoCB.setValue(disciplinaDTO.getUsaDomingo());
 		usaDomingoCB.setFieldLabel("Usa Domingo");
+		usaDomingoCB.setToolTip("Determina se a disciplina deverá herdar os horários das semanas letivas também no domingo.");
 		formPanel.add(usaDomingoCB, formData);
 
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

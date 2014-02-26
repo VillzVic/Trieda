@@ -122,17 +122,32 @@ public class DisciplinasView
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CODIGO, getI18nConstants().codigoDisciplina(), 100 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CREDITOS_TEORICO, getI18nConstants().creditosTeoricos(), 100 ) );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CREDITOS_PRATICO, getI18nConstants().creditosPraticos(), 100 ) );
-		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_LABORATORIO, getI18nConstants().exigeLaboratorio(), 100 ) );
-		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_TIPO_STRING, getI18nConstants().tipoDisciplina(), 100 ) );
+		CheckColumnConfig column = new CheckColumnConfig( DisciplinaDTO.PROPERTY_LABORATORIO, getI18nConstants().exigeLaboratorio(), 100 );
+		column.setToolTip("Se estiver marcada, o Trieda buscará associações desta disciplina à laboratórios para realizar a alocação. Caso não haja nenhum laboratório associado a esta disciplina o Trieda acusa um erro de cadastro e não permitirá que a otimização ocorra até que o erro seja resolvido.");
+		list.add( column );
+		ColumnConfig column2 = new ColumnConfig( DisciplinaDTO.PROPERTY_TIPO_STRING, getI18nConstants().tipoDisciplina(), 100 );
+		column2.setToolTip("As disciplinas Presenciais serão alocadas pelo Trieda em salas e horários. As disciplinas Online não serão alocadas em salas nem horários pelo Trieda.");
+		list.add( column2 );
 		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_DIFICULDADE, getI18nConstants().nivelDificuldade(), 120 ) );
-		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, getI18nConstants().maxAlunosTeorico(), 120 ) );
-		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, getI18nConstants().maxAlunosPratico(), 120 ) );
-		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_AULAS_CONTINUAS, getI18nConstants().aulasContinuas(), 100 ) );
-		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_PROFESSOR_UNICO, getI18nConstants().professorUnico(), 100 ) );
-		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_SABADO, getI18nConstants().usaSabado(), 80 ) );
-		list.add( new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_DOMINGO, getI18nConstants().usaDomingo(), 80 ) );
-		list.add( new ColumnConfig( DisciplinaDTO.PROPERTY_CARGA_HORARIA, getI18nConstants().cargaHoraria(), 80 ) );
-
+		ColumnConfig column3 = new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO, getI18nConstants().maxAlunosTeorico(), 120 );
+		column3.setToolTip("(OPCIONAL) Restrição pedagógica do número máximo de alunos em sala de aula para uma disciplina específica. Quanto omitido, o TRIEDA assume a capacidade da sala alocada.");
+		list.add( column3 );
+		ColumnConfig column4 = new ColumnConfig( DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO, getI18nConstants().maxAlunosPratico(), 120 );
+		column4.setToolTip("(OPCIONAL) Restrição pedagógica do número máximo de alunos em laboratório para uma disciplina específica. Quanto omitido, o TRIEDA assume a capacidade do laboratório alocado.");
+		list.add( column4 );
+		CheckColumnConfig column5 = new CheckColumnConfig( DisciplinaDTO.PROPERTY_AULAS_CONTINUAS, getI18nConstants().aulasContinuas(), 100 );
+		column5.setToolTip("(Apenas quando a disciplina tem créditos teóricos e práticos.) Determina se as aulas teóricas e práticas devem ser lecionadas em sequência.");
+		list.add( column5 );
+		CheckColumnConfig column6 = new CheckColumnConfig( DisciplinaDTO.PROPERTY_PROFESSOR_UNICO, getI18nConstants().professorUnico(), 100 );
+		column6.setToolTip("(Apenas quando a disciplina tem créditos teóricos e práticos.) Determina se o professor deve ser o mesmo para as aulas teóricas e práticas.");
+		list.add( column6 );
+		CheckColumnConfig column7 = new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_SABADO, getI18nConstants().usaSabado(), 80 );
+		column7.setToolTip("Determina se a disciplina deverá herdar os horários das semanas letivas também no sábado.");
+		list.add( column7 );
+		CheckColumnConfig column8 = new CheckColumnConfig( DisciplinaDTO.PROPERTY_USA_DOMINGO, getI18nConstants().usaDomingo(), 80 );
+		column8.setToolTip("Determina se a disciplina deverá herdar os horários das semanas letivas também no domingo.");
+		list.add( column8 );
+		
 		return list;
 	}
 

@@ -505,7 +505,7 @@ public class DemandasImportExcel
 			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
 			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
 			DEMANDA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().demandaDeAlunos() );
-			RECEITA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().receita() );
+			RECEITA_COLUMN_NAME = HtmlUtils.htmlUnescape( "Receita por Crédito (R$)" );
 		}
 	}
 

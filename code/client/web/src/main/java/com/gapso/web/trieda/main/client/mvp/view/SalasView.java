@@ -127,11 +127,11 @@ public class SalasView
 		list.add( new ColumnConfig( SalaDTO.PROPERTY_ANDAR,
 			getI18nConstants().andar(), 100 ) );
 		list.add( createIntegerColumnConfig( SalaDTO.PROPERTY_CAPACIDADE_INSTALADA,
-			getI18nConstants().capacidadeInstaladaAlunos(), 160 ) );
+			getI18nConstants().capacidadeInstaladaAlunos(), 160, "É a capacidade do ambiente em número de alunos, em seu uso normal." ) );
 		list.add( createIntegerColumnConfig( SalaDTO.PROPERTY_CAPACIDADE_MAX,
-				getI18nConstants().capacidadeMaxAlunos(), 160 ) );
+				getI18nConstants().capacidadeMaxAlunos(), 160, "É a capacidade máxima do ambiente, em número de alunos, em situações extremas." ) );
 		list.add( createDecimalColumnConfig( SalaDTO.PROPERTY_CUSTO_OPERACAO_CRED,
-				getI18nConstants().custoOperacaoCred(), 185 ) );
+				getI18nConstants().custoOperacaoCred(), 185, "Custo de uso do ambiente por tempo de aula. Pode considerar custo de aluguel, limpeza, energia elétrica, móveis e equipamentos instalados, etc." ) );
 
 		return list;
 	}
@@ -156,21 +156,23 @@ public class SalasView
 	}
 	
 	private ColumnConfig createIntegerColumnConfig(
-			String id, String text, int width )
+			String id, String text, int width, String toolTip )
 	{
 		String pattern = "#,###";
 		ColumnConfig cc = new ColumnConfig( id, text, width );
 		cc.setNumberFormat(NumberFormat.getFormat(pattern));
+		cc.setToolTip(toolTip);
 
 		return cc;
 	}
 	
 	private ColumnConfig createDecimalColumnConfig(
-			String id, String text, int width)
+			String id, String text, int width, String toolTip)
 	{
 		String pattern = "#,##0.00";
 		ColumnConfig cc = new ColumnConfig( id, text, width );
 		cc.setNumberFormat(NumberFormat.getFormat(pattern));
+		cc.setToolTip(toolTip);
 
 		return cc;
 	}

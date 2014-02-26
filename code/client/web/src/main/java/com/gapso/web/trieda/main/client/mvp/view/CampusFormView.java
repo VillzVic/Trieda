@@ -58,7 +58,7 @@ public class CampusFormView
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.campus16() );
-		this.simpleModal.setHeight( 350 );
+		this.simpleModal.setHeight( 390 );
 		this.simpleModal.setWidth( 320 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
@@ -101,11 +101,12 @@ public class CampusFormView
 		this.valorCreditoNF = new NumberField();
 		this.valorCreditoNF.setName( CampusDTO.PROPERTY_VALOR_CREDITO );
 		this.valorCreditoNF.setValue( this.campusDTO.getValorCredito().getDoubleValue() );
-		this.valorCreditoNF.setFieldLabel( "Custo (R$)" );
+		this.valorCreditoNF.setFieldLabel( "Custo Médio do Crédito (R$)" );
 		this.valorCreditoNF.setAllowBlank( false );
 		this.valorCreditoNF.setAllowDecimals( true );
 		this.valorCreditoNF.setMaxValue( 999999 );
 		this.valorCreditoNF.setEmptyText( "Custo médio do crédito (R$)" );
+		this.valorCreditoNF.setToolTip("Representa o custo médio ponderado do tempo de aula, ou seja, o custo docente médio do campus, incluindo encargos.");
 		geralFS.add( this.valorCreditoNF, formData );
 
 		this.publicadoCB = new CheckBox();

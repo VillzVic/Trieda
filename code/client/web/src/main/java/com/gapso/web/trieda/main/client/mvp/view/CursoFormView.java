@@ -153,6 +153,7 @@ public class CursoFormView
 		maxDisciplinasPeloProfessorTF.setMaxValue(99);
 		maxDisciplinasPeloProfessorTF
 				.setEmptyText("Número máximo de disciplina por professor");
+		maxDisciplinasPeloProfessorTF.setToolTip("Determina o número máximo de disciplinas que um professor pode ministrar para um mesmo curso, a cada semestre. Caso não queria determinar um número máximo, usar 99.");
 		formPanel.add(maxDisciplinasPeloProfessorTF, formData);
 
 		admMaisDeUmDisciplinaCB = new CheckBox();

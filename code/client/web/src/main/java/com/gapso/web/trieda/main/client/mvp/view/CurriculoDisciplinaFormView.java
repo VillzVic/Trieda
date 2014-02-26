@@ -92,6 +92,7 @@ public class CurriculoDisciplinaFormView
 		maturidadeTF.setAllowDecimals( false );
 		maturidadeTF.setMaxValue( 999 );
 		maturidadeTF.setEmptyText( "Preencha a maturidade" );
+		maturidadeTF.setToolTip("É o número mínimo de horas que o aluno deve ter cursado para poder cursar a disciplina em questão.");
 		formPanel.add( maturidadeTF, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );

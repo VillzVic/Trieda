@@ -146,6 +146,7 @@ public class SalaFormView extends MyComposite implements
 		capacidadeInstaladaNF.setMinLength( 1 );
 		capacidadeInstaladaNF.setMaxLength( 20 );
 		capacidadeInstaladaNF.setEmptyText( getI18nConstants().preenchaA() + getI18nConstants().capacidadeInstalada() );
+		capacidadeInstaladaNF.setToolTip("É a capacidade do ambiente em número de alunos, em seu uso normal.");
 		formPanel.add( capacidadeInstaladaNF, formData );
 		
 		capacidadeMaxNF = new NumberField();
@@ -157,6 +158,7 @@ public class SalaFormView extends MyComposite implements
 		capacidadeMaxNF.setMinLength( 1 );
 		capacidadeMaxNF.setMaxLength( 20 );
 		capacidadeMaxNF.setEmptyText( getI18nConstants().preenchaA() + getI18nConstants().capacidadeMax() );
+		capacidadeMaxNF.setToolTip("É a capacidade máxima do ambiente, em número de alunos, em situações extremas.");
 		formPanel.add( capacidadeMaxNF, formData );
 		
 		custoOperacaoCredNF = new NumberField();
@@ -167,6 +169,7 @@ public class SalaFormView extends MyComposite implements
 		custoOperacaoCredNF.setAllowDecimals( true );
 		custoOperacaoCredNF.setMaxValue( 999999 );
 		custoOperacaoCredNF.setEmptyText( getI18nConstants().preenchaO() + getI18nConstants().custoOperacaoCred());
+		custoOperacaoCredNF.setToolTip("Custo de uso do ambiente por tempo de aula. Pode considerar custo de aluguel, limpeza, energia elétrica, móveis e equipamentos instalados, etc.");
 		formPanel.add( custoOperacaoCredNF, formData );
 
 		FormButtonBinding binding = new FormButtonBinding( formPanel );

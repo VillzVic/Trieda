@@ -101,7 +101,9 @@ public class CursosView
 		list.add( new ColumnConfig( CursoDTO.PROPERTY_NUM_MIN_MESTRES, getI18nConstants().minPercentualMestre(), 100 ) );
 		list.add( new ColumnConfig( CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL_PARCIAL, getI18nConstants().minTempoIntegralParcial(), 100 ) );
 		list.add( new ColumnConfig( CursoDTO.PROPERTY_MIN_TEMPO_INTEGRAL, getI18nConstants().minTempoIntegral(), 100 ) );
-		list.add( new ColumnConfig( CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR, getI18nConstants().maxDisciplinasProfessor(), 110 ) );
+		ColumnConfig column = new ColumnConfig( CursoDTO.PROPERTY_MAX_DISCIPLINAS_PELO_PROFESSOR, getI18nConstants().maxDisciplinasProfessor(), 110 );
+		column.setToolTip("Determina o número máximo de disciplinas que um professor pode ministrar para um mesmo curso, a cada semestre. Caso não queria determinar um número máximo, usar 99.");
+		list.add( column );
 		list.add( new CheckColumnConfig( CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA, getI18nConstants().maisDeUmaDisciplinaProfessor(), 200 ) );
 
 		return list;

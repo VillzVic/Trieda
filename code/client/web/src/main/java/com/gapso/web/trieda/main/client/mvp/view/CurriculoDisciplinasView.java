@@ -197,6 +197,7 @@ public class CurriculoDisciplinasView
 			CurriculoDisciplinaDTO.PROPERTY_MATURIDADE, "Maturidade", 100 );
 		cc2.setSummaryType( SummaryType.SUM );
 		cc2.setSummaryRenderer( blankRenderer );
+		cc2.setToolTip("É o número mínimo de horas que o aluno deve ter cursado para poder cursar a disciplina em questão.");
 		list.add( cc2 );
 
 		return list;

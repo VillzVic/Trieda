@@ -84,9 +84,14 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
 		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_CODIGO, getI18nConstants().codigoUnidade(), 100));
-		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_NOME, getI18nConstants().nome(), 100));
+		ColumnConfig column = new ColumnConfig(UnidadeDTO.PROPERTY_NOME, getI18nConstants().nome(), 100);
+		column.setToolTip("Uma unidade representa um prédio ou bloco do campus. Um campus pode conter uma ou mais unidades");
+		list.add(column);
 		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_CAMPUS_STRING, getI18nConstants().codigoCampus(), 100));
-		list.add(new ColumnConfig(UnidadeDTO.PROPERTY_CAPACIDADE_SALAS, getI18nConstants().capacidadeMediaSalas(), 200));
+		ColumnConfig column2 = new ColumnConfig(UnidadeDTO.PROPERTY_CAPACIDADE_SALAS, getI18nConstants().capacidadeMediaSalas(), 200);
+		column2.setToolTip("É a soma da capacidade de todos os ambientes da unidade, dividido pelo número de ambientes." +
+				" É calculado automaticamente pelo Trieda a partir do cadastro dos ambientes.");
+		list.add(column2);
 		return list;
 	}
 
