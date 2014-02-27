@@ -22,181 +22,183 @@
 
 \maketitle
 
-\section{Módulo Operacional - Heurística}
+%\section{Módulo Operacional - Heurística}
+%
+%\subsection{Notação}
+%
+%\subsubsection{Conjuntos}
+%
+%\begin{itemize}
+%
+%\item $CP$ - Conjunto de campus. Os elementos desse conjunto são denotados por $cp$.
+%
+%\item $U$ - Conjunto de unidades. Os elementos desse conjunto são denotados por $u$.
+%
+%\item $S_{u}$ - Conjunto de salas da unidade $u$. Os elementos desse conjunto são denotados por $s$.
+%
+%\item $SCAP_{u}$ - Conjunto de salas da unidade $u$ classificadas de acordo com as suas capacidades. Os elementos desse conjunto são denotados por $tps$.
+%
+%\item $T$ - Conjunto de dias letivos da semana. Os elementos desse conjunto são denotados por $t$.
+%
+%\item $C$ - Conjunto de cursos. Os elementos desse conjunto são denotados por $c$.
+%
+%\item $CC$ - Conjunto de cursos compatíveis.
+%
+%\item $D$ - Conjunto de disciplinas. Os elementos desse conjunto são denotados por $d$.
+%
+%\item $P$ - Conjunto de professores. Os elementos desse conjunto são denotados por $p$.
+%
+%\item $B$ - Conjunto de blocos curriculares. Os elementos desse conjunto são denotados por $bc$.
+%
+%\item $D_{bc}$ - Conjunto de disciplinas que pertencem ao bloco curricular $bc$. Os elementos desse conjunto são denotados por $d_{bc}$.
+%
+%\item $I_{bc}$ - conjunto de turmas de um bloco curricular $bc$. Os elementos desse conjunto são denotados por $i_{bc}$.
+%
+%\item $O$ - Conjunto de ofertas de cursos. Os elementos desse conjunto são denotados por $oft$.
+%
+%\item $D_{oft}$ - conjunto de disciplinas de uma oferta $oft$. Os elementos desse conjunto são denotados por $d_{oft}$.
+%
+%\item $O_{d}$ - conjunto de ofertas de uma uma disciplina $d$. Os elementos desse conjunto são denotados por $oft_{d}$.
+%
+%\item $K_{d}$ - conjunto de combinações possíveis de divisão de créditos de uma uma disciplina $d$. Os elementos desse conjunto são denotados por $k$.
+%
+%\end{itemize}
+%
+%\newpage
+%
+%\subsubsection{Dados do Modelo}
+%
+%\begin{itemize}
+%
+%\item $C_{d}$ - Total de créditos da disciplina $d$.
+%
+%\item $\overline{H_{d}}$ - máximo de créditos diários da disciplina $d$.
+%
+%\item $\underline{H_{d}}$ - mínimo de créditos diários da disciplina $d$.
+%
+%\item $I_{d}$ - máximo de turmas que podem ser abertas da disciplina $d$.
+%
+%\item $P_{d,c,cp}$ - demanda da disciplina $d$ no campus $cp$ para o curso $c$.
+%
+%\item $P_{d,oft}$ - demanda da disciplina $d$ da oferta $oft$.
+%
+%\item $Pmax_{d}$ - maior demanda da disciplina $d$.
+%
+%\item $H_{t}$ - máximo de créditos permitidos por dia $t$.
+%
+%\item $A_{u,s}$ - capacidade da sala $s$ da unidade $u$.
+%
+%\item $HTPS_{t,tps}$ - máximo de créditos permitidos por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
+%
+%\item $A_{u,tps} $ - capacidade total das salas de um conjunto de salas do tipo (capacidade) $tps$ da unidade $u$.
+%
+%\item $O_{cp}$ - conjunto de ofertas de um campus $cp$.
+%
+%\item $FC_{d,t}$ - número de créditos fixados para a disciplina $d$ no dia $t$.
+%
+%\item $N_{d,k,t}$ - número de créditos determinados para a disciplina $d$ no dia $t$ na combinação de divisão de crédito $k$.
+%
+%\item $M$ - big $M$.
+%
+%\end{itemize}
+%
+%\newpage
+%
+%\subsection{Algoritmo}
+%
+%\subsubsection{Representação da solução}
+%
+%A representação de uma solução para o problema operacional será feita através de uma matriz $Q_{p \times t}$. O valor $q_{p,t} \in \left\{0,1,...,i\right\}$ de cada elemento da matriz representa a turma para a qual o professor $p$ está lecionando no período $t$. Exemplo:
+%
+%\begin{table}[ht]
+%\centering % used for centering table
+%\begin{tabular}{|| c || c | c | c | c | c | c ||} 
+%\hline % inserts single horizontal line
+%Professor / Período & $1$ & $2$ & $3$ & $4$ & $5$ & $\cdots d \times h$ \\ [0.5ex] % inserts table
+%%heading
+%\hline % inserts single horizontal line
+%$1$ & $1$ & $0$ & $0$ & $2$ & $2$ & $\cdots$ \\ % inserting body of the table
+%$2$ & $0$ & $X$ & $X$ & $0$ & $1$ & $\cdots$ \\
+%$3$ & $X$ & $X$ & $1$ & $0$ & $3$ & $\cdots$ \\
+%$4$ & $0$ & $1$ & $0$ & $1$ & $0$ & $\cdots$ \\
+%$5$ & $0$ & $0$ & $2$ & $3$ & $X$ & $\cdots$ \\ [1ex] % [1ex] adds vertical space
+%\hline %inserts single line
+%\end{tabular}
+%\caption{Exemplo de matriz representando a solução} % title of Table
+%\label{table:nonlin} % is used to refer this table in the text
+%\end{table}
+%
+%\subsubsection{Construtivo}
+%
+%O algoritmo construtivo é bastante simples. A idéia é fazer sempre a alocação dos professores seguindo uma função de urgência que associa o professor $p$ a turma $i$ ($fu(p,i)$). A função de urgência vai retornar o professor mais difícil de ser alocado (segundo o critério adotado na mesma). Além disso, será inserido um fator de aletoriedade na função de forma a produzir soluções iniciais diversificadas.
+%
+%\subsubsection{Função de prioridade $fu(p,i)$}
+%
+%Essa função irá levar em conta os critérios definidos para dizer o quão difícil é alocar um professor a uma classe. A função é definida abaixo:
+%
+%$fu(p,i) = z_{1} \times \alpha(p,i) + z_{2} \times \beta(p,i) + z_{3} \times \delta(p) + z_{4} \times \gamma(p,i) $, sendo que:
+%
+%\begin{itemize}
+%
+%\item $\alpha$ - fixação do professor $p$ a turma $i$.
+%
+%\item $\beta(p,i)$ - preferência do professor $p$ para lecionar na turma $i$.
+%
+%\item $\delta(p)$ - disponibilidade do professor $p$.
+%
+%\item $\gamma(p,i)$ - disponibilidade do professor $p$ para lecionar na turma $i$.
+%
+%\item $z_{1}, z_{2}, z_{3}, z_{4}$ - pesos de cada fator da função de urgência.
+%
+%\end{itemize}
+%
+%
+%\subsubsection{Função de avaliação (FO)}
+%A função de avaliação é definida abaixo:
+%
+%$FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
+%
+%\begin{itemize}
+%
+%\item $x_{1}$ - Violação de restrição de fixação.
+%
+%\item $x_{2}$ - disciplina difícil em horários ruins.
+%
+%\item $x_{3}$ - Violação do tempo de deslocamento viável (solução inviável).
+%
+%\item $x_{4}$ - Tempo de deslocamento na solução.
+%
+%\item $x_{5}$ - Violação de deslocamento por professor.
+%
+%\item $x_{6}$ - Nota de avaliação do corpo docente.
+%
+%\item $x_{7}$ - Custo do corpo docente.
+%
+%\item $x_{8}$ - Gaps nos horários dos professores.
+%
+%\item $x_{9}$ - Dias em que os professores ministram aulas.
+%
+%\item $x_{10}$ - Violação da carga horária mínima do professor.
+%
+%\item $x_{11}$ - Violação da alocação do professor na última aula de $D$ e primeira de $D+1$.
+%
+%\item $x_{12}$ - Violação do percentual mínimo de mestres e doutores por curso.
+%
+%\item $x_{13}$ - Violação do máximo de disciplinas por professor por curso.
+%
+%\item $x_{14}$ - Violação da carga horária mínima por semana do professor.
+%
+%\item $x_{15}$ - Violação da carga horária máxima por semana do professor.
+%
+%\item $x_{16}$ - Violação da preferência para lecionar disciplinas.
+%
+%\item $c_{1}, c_{2}, \cdots, c_{16}$ - pesos associados a cada item da função objetivo.
+%
+%\end{itemize}
+%
+%\pagebreak
 
-\subsection{Notação}
 
-\subsubsection{Conjuntos}
-
-\begin{itemize}
-
-\item $CP$ - Conjunto de campus. Os elementos desse conjunto são denotados por $cp$.
-
-\item $U$ - Conjunto de unidades. Os elementos desse conjunto são denotados por $u$.
-
-\item $S_{u}$ - Conjunto de salas da unidade $u$. Os elementos desse conjunto são denotados por $s$.
-
-\item $SCAP_{u}$ - Conjunto de salas da unidade $u$ classificadas de acordo com as suas capacidades. Os elementos desse conjunto são denotados por $tps$.
-
-\item $T$ - Conjunto de dias letivos da semana. Os elementos desse conjunto são denotados por $t$.
-
-\item $C$ - Conjunto de cursos. Os elementos desse conjunto são denotados por $c$.
-
-\item $CC$ - Conjunto de cursos compatíveis.
-
-\item $D$ - Conjunto de disciplinas. Os elementos desse conjunto são denotados por $d$.
-
-\item $P$ - Conjunto de professores. Os elementos desse conjunto são denotados por $p$.
-
-\item $B$ - Conjunto de blocos curriculares. Os elementos desse conjunto são denotados por $bc$.
-
-\item $D_{bc}$ - Conjunto de disciplinas que pertencem ao bloco curricular $bc$. Os elementos desse conjunto são denotados por $d_{bc}$.
-
-\item $I_{bc}$ - conjunto de turmas de um bloco curricular $bc$. Os elementos desse conjunto são denotados por $i_{bc}$.
-
-\item $O$ - Conjunto de ofertas de cursos. Os elementos desse conjunto são denotados por $oft$.
-
-\item $D_{oft}$ - conjunto de disciplinas de uma oferta $oft$. Os elementos desse conjunto são denotados por $d_{oft}$.
-
-\item $O_{d}$ - conjunto de ofertas de uma uma disciplina $d$. Os elementos desse conjunto são denotados por $oft_{d}$.
-
-\item $K_{d}$ - conjunto de combinações possíveis de divisão de créditos de uma uma disciplina $d$. Os elementos desse conjunto são denotados por $k$.
-
-\end{itemize}
-
-\newpage
-
-\subsubsection{Dados do Modelo}
-
-\begin{itemize}
-
-\item $C_{d}$ - Total de créditos da disciplina $d$.
-
-\item $\overline{H_{d}}$ - máximo de créditos diários da disciplina $d$.
-
-\item $\underline{H_{d}}$ - mínimo de créditos diários da disciplina $d$.
-
-\item $I_{d}$ - máximo de turmas que podem ser abertas da disciplina $d$.
-
-\item $P_{d,c,cp}$ - demanda da disciplina $d$ no campus $cp$ para o curso $c$.
-
-\item $P_{d,oft}$ - demanda da disciplina $d$ da oferta $oft$.
-
-\item $Pmax_{d}$ - maior demanda da disciplina $d$.
-
-\item $H_{t}$ - máximo de créditos permitidos por dia $t$.
-
-\item $A_{u,s}$ - capacidade da sala $s$ da unidade $u$.
-
-\item $HTPS_{t,tps}$ - máximo de créditos permitidos por dia $t$ para o conjunto de salas do tipo (capacidade) $tps$.
-
-\item $A_{u,tps} $ - capacidade total das salas de um conjunto de salas do tipo (capacidade) $tps$ da unidade $u$.
-
-\item $O_{cp}$ - conjunto de ofertas de um campus $cp$.
-
-\item $FC_{d,t}$ - número de créditos fixados para a disciplina $d$ no dia $t$.
-
-\item $N_{d,k,t}$ - número de créditos determinados para a disciplina $d$ no dia $t$ na combinação de divisão de crédito $k$.
-
-\item $M$ - big $M$.
-
-\end{itemize}
-
-\newpage
-
-\subsection{Algoritmo}
-
-\subsubsection{Representação da solução}
-
-A representação de uma solução para o problema operacional será feita através de uma matriz $Q_{p \times t}$. O valor $q_{p,t} \in \left\{0,1,...,i\right\}$ de cada elemento da matriz representa a turma para a qual o professor $p$ está lecionando no período $t$. Exemplo:
-
-\begin{table}[ht]
-\centering % used for centering table
-\begin{tabular}{|| c || c | c | c | c | c | c ||} 
-\hline % inserts single horizontal line
-Professor / Período & $1$ & $2$ & $3$ & $4$ & $5$ & $\cdots d \times h$ \\ [0.5ex] % inserts table
-%heading
-\hline % inserts single horizontal line
-$1$ & $1$ & $0$ & $0$ & $2$ & $2$ & $\cdots$ \\ % inserting body of the table
-$2$ & $0$ & $X$ & $X$ & $0$ & $1$ & $\cdots$ \\
-$3$ & $X$ & $X$ & $1$ & $0$ & $3$ & $\cdots$ \\
-$4$ & $0$ & $1$ & $0$ & $1$ & $0$ & $\cdots$ \\
-$5$ & $0$ & $0$ & $2$ & $3$ & $X$ & $\cdots$ \\ [1ex] % [1ex] adds vertical space
-\hline %inserts single line
-\end{tabular}
-\caption{Exemplo de matriz representando a solução} % title of Table
-\label{table:nonlin} % is used to refer this table in the text
-\end{table}
-
-\subsubsection{Construtivo}
-
-O algoritmo construtivo é bastante simples. A idéia é fazer sempre a alocação dos professores seguindo uma função de urgência que associa o professor $p$ a turma $i$ ($fu(p,i)$). A função de urgência vai retornar o professor mais difícil de ser alocado (segundo o critério adotado na mesma). Além disso, será inserido um fator de aletoriedade na função de forma a produzir soluções iniciais diversificadas.
-
-\subsubsection{Função de prioridade $fu(p,i)$}
-
-Essa função irá levar em conta os critérios definidos para dizer o quão difícil é alocar um professor a uma classe. A função é definida abaixo:
-
-$fu(p,i) = z_{1} \times \alpha(p,i) + z_{2} \times \beta(p,i) + z_{3} \times \delta(p) + z_{4} \times \gamma(p,i) $, sendo que:
-
-\begin{itemize}
-
-\item $\alpha$ - fixação do professor $p$ a turma $i$.
-
-\item $\beta(p,i)$ - preferência do professor $p$ para lecionar na turma $i$.
-
-\item $\delta(p)$ - disponibilidade do professor $p$.
-
-\item $\gamma(p,i)$ - disponibilidade do professor $p$ para lecionar na turma $i$.
-
-\item $z_{1}, z_{2}, z_{3}, z_{4}$ - pesos de cada fator da função de urgência.
-
-\end{itemize}
-
-
-\subsubsection{Função de avaliação (FO)}
-A função de avaliação é definida abaixo:
-
-$FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
-
-\begin{itemize}
-
-\item $x_{1}$ - Violação de restrição de fixação.
-
-\item $x_{2}$ - disciplina difícil em horários ruins.
-
-\item $x_{3}$ - Violação do tempo de deslocamento viável (solução inviável).
-
-\item $x_{4}$ - Tempo de deslocamento na solução.
-
-\item $x_{5}$ - Violação de deslocamento por professor.
-
-\item $x_{6}$ - Nota de avaliação do corpo docente.
-
-\item $x_{7}$ - Custo do corpo docente.
-
-\item $x_{8}$ - Gaps nos horários dos professores.
-
-\item $x_{9}$ - Dias em que os professores ministram aulas.
-
-\item $x_{10}$ - Violação da carga horária mínima do professor.
-
-\item $x_{11}$ - Violação da alocação do professor na última aula de $D$ e primeira de $D+1$.
-
-\item $x_{12}$ - Violação do percentual mínimo de mestres e doutores por curso.
-
-\item $x_{13}$ - Violação do máximo de disciplinas por professor por curso.
-
-\item $x_{14}$ - Violação da carga horária mínima por semana do professor.
-
-\item $x_{15}$ - Violação da carga horária máxima por semana do professor.
-
-\item $x_{16}$ - Violação da preferência para lecionar disciplinas.
-
-\item $c_{1}, c_{2}, \cdots, c_{16}$ - pesos associados a cada item da função objetivo.
-
-\end{itemize}
-
-\pagebreak
 
 \section{Módulo Operacional - Modelo Matemático}
 
@@ -283,13 +285,6 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 \item $x_{pv,a,h}$ - variável binária indicando que o professor virtual $pv$ foi alocado a aula $a$ no horário $h$.
 \item $y_{p,d,i,cp}$ - variável binária indicando que o professor $p$ foi alocado a turma $i$ da disciplina $d$.
 \item $z_{d,i,h,cp}$ - variável binária indicando que o horário $h$ foi alocado para a turma $i$ da disciplina $d$.
-
-%\item $f1_{p,d,s,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, sala $s$, dia $t$ e horário $h$. 
-%\item $f2_{p,d,t,h}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$, dia $t$ e horário $h$. 
-%\item $f3_{p,d}$ - variável de folga para a restrição de fixação de professor $p$ e disciplina $d$. 
-%\item $f4_{p,d,s}$ - variável de folga para a restrição de fixação de professor $p$, disciplina $d$ e sala $s$. 
-%\item $f5_{p,s}$ - variável de folga para a restrição de fixação de professor $p$ e sala $s$. 
-
 \item $w_{p,c}$ - variável binária indicando que o professor $p$ ministra aula para o curso $c$.
 \item $fmm_{c}$ - variável de folga inteira para o mínimo de professores mestres em um curso $c$.
 \item $fmd_{c}$ - variável de folga inteira para o mínimo de professores doutores em um curso $c$. 
@@ -298,7 +293,8 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 \item $fchsp_{p}$ - variável de folga inteira para a carga horária máxima do professor $p$ na semana.
 \item $pt_{p,t}$ - variável binária que indica se o professor $p$ ministra aula no dia $t$.
 \item $dpc_{p,d,c}$ - variável binária que indica se o professor $p$ ministra alguma aula da disciplina $d$ para o curso $c$.
-\item $fmdpc_{p,c}$ - variável de folga inteira associada ao máximo de disciplinas que o professor $p$ pode ministrar para o curso $c$.
+\item $dpo_{p,d,o}$ - variável binária que indica se o professor $p$ ministra alguma aula da disciplina $d$ para a oferta $o$.
+%\item $fmdpc_{p,c}$ - variável de folga inteira associada ao máximo de disciplinas que o professor $p$ pode ministrar para o curso $c$.
 \item $fupap_{p,t}$ - variável de folga binária indicando se um professor $p$ ministra aula no último horário do dia $t$
  e no primeiro horário do dia seguinte $t+1$.
 \item $fd_{a}$ - variável binária de folga de demanda da aula $a$.
@@ -310,7 +306,7 @@ $FO = \min \sum\limits_{i \in 1,2, \cdots,16} c_{i} \times x{i}$, sendo que:
 \item $npvm_{c}$ - variável inteira que indica o número de professores virtuais mestres alocados para o curso $c$.
 \item $npvd_{c}$ - variável inteira que indica o número de professores virtuais doutores alocados para o curso $c$.
 \item $npvg_{c}$ - variável inteira que indica o número de professores virtuais gerais (nem mestres nem doutores) alocados para o curso $c$.
-\item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
+%\item $fmd_{a}$ - variável inteira de folga de mínimo de demanda por aluno. Indica o número de créditos faltantes (não atendidos) por aluno para que se cumprisse o mínimo percentual de atendimento exigido.
 
 
 \end{itemize}
@@ -342,9 +338,6 @@ $$
 %      &
        + \sum\limits_{p \in P} \sum\limits_{i \in I_{d}} \sum\limits_{d \in D}
        ( ( 10 - nota ) * pesoNota + ( 10 - preferencia ) * pesoPreferencia + custoCred * nCredsDisc ) \cdot y_{p,d,i}
-      \\ 
-      &
-       + \gamma \cdot \sum\limits_{p \in P} \sum\limits_{c \in C} fmdpc_{p,c}
       \\
       &
        + \gamma \cdot \sum\limits_{p \in P} fchmp_{p}
@@ -707,6 +700,14 @@ npvg_{c} + npvm_{c} + npvd_{c} = npv_{c} \nonumber \qquad
 \end{eqnarray}
 
 
+\subsubsection{Garante número mínimo de professores no curso (Somente para Rodada 1). É necessária devido à restrição de máximo de disciplinas ministradas por um professor por curso.}
+
+\begin{eqnarray}
+MaxDiscProfCurso_{c} \cdot (np_{c} + npv_{c}) \ge qtdDiscComAulas_{c} \nonumber \qquad 
+\forall c \in C \quad
+\end{eqnarray}
+
+
 \subsubsection{Calcula tempo de início da primeira aula do professor no dia}
 
 \begin{eqnarray}
@@ -747,16 +748,16 @@ hf \in H \mbox{, hf é o último horário do dia}
 \end{eqnarray}
 
 
-\subsubsection{Calcula se o professor está alocado para alguma aula do curso}
+\subsubsection{Calcula se o professor está alocado para alguma aula do curso (Seta $w_{p,c}$)}
 
 \begin{eqnarray}
-\sum\limits_{d \in D} dpc_{d,p,c} \le M \cdot w_{p,c} \nonumber \qquad 
+\sum\limits_{d \in D} \sum\limits_{i \in I_{d,c}} y_{p,d,i} \le nTurmas_{d} \cdot w_{p,c} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
 
 \begin{eqnarray}
-\sum\limits_{d \in D} dpc_{d,p,c} \ge w_{p,c} \nonumber \qquad 
+\sum\limits_{d \in D} \sum\limits_{i \in I_{d,c}} y_{p,d,i} \ge w_{p,c} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
@@ -785,27 +786,27 @@ hf \in H \mbox{, hf é o último horário do dia}
 \end{eqnarray}
 
 
-\subsubsection{Calcula se um professor ministra a disciplina para o curso}
+\subsubsection{Calcula se um professor ministra a disciplina para o curso (Seta $dpc_{p,c,d}$)}
 
 \begin{eqnarray}
-\sum\limits_{i \in I_{d,c}} y_{p,d,i} \le nTurmas_{d} \cdot dpc_{p,c,d} \nonumber \qquad 
+\sum\limits_{i \in I_{d,c} \cup I_{-d,c} } y_{p,d,i} \le nTurmas_{d} \cdot dpc_{p,c,d} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C \quad
-\forall d \in D
+\forall d \in D_{teoricas}
 \end{eqnarray}    
 
 \begin{eqnarray}
-\sum\limits_{i \in I_{d,c}} y_{p,d,i} \ge dpc_{p,c,d} \nonumber \qquad 
+\sum\limits_{i \in I_{d,c} \cup I_{-d,c} } y_{p,d,i} \ge dpc_{p,c,d} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C \quad
-\forall d \in D
+\forall d \in D_{teoricas}
 \end{eqnarray}    
 
 
 \subsubsection{Garante o máximo de disciplinas ministradas por um professor por curso}
 
 \begin{eqnarray}
-\sum\limits_{d \in D_{c}} dpc_{p,c,d} - fmdpc_{p,c} \le MaxDiscProfCurso_{p,c} \nonumber \qquad 
+\sum\limits_{d \in D_{c,teoricas}} dpc_{p,c,d} \le MaxDiscProfCurso_{c} \nonumber \qquad 
 \forall p \in P \quad
 \forall c \in C
 \end{eqnarray}
@@ -844,6 +845,33 @@ hf \in H \mbox{, hf é o último horário do dia}
 \forall \mbox{ (hf,t) e (hi,t+1) tal que } \Delta_{(hf,t), (hi,t+1)} < TempoInterjornada
 \end{eqnarray}
 
+
+\subsubsection{Calcula se um professor ministra a disciplina para a oferta (Seta $dpo_{p,o,d}$)}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d,o} \cup I_{-d,o} } y_{p,d,i} \le nTurmas_{d} \cdot dpo_{p,o,d} \nonumber \qquad 
+\forall p \in P \quad
+\forall o \in O \quad
+\forall d \in D_{teoricas}
+\end{eqnarray}
+
+\begin{eqnarray}
+\sum\limits_{i \in I_{d,o} \cup I_{-d,o} } y_{p,d,i} \ge dpo_{p,o,d} \nonumber \qquad 
+\forall p \in P \quad
+\forall o \in O \quad
+\forall d \in D_{teoricas}
+\end{eqnarray}
+
+
+\subsubsection{Garante o máximo de disciplinas ministradas por um professor por periodo de oferta}
+
+\begin{eqnarray}
+\sum\limits_{d \in D_{o,per,teoricas}} dpo_{p,o,d} \le MaxDiscProfPeriodoCurso_{c} \nonumber \qquad 
+\forall per \in Per \quad
+\forall p \in P \quad
+\forall o \in O \quad
+c \in C_{o}
+\end{eqnarray}
 	
 
 \clearpage
