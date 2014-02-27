@@ -356,7 +356,8 @@ public class ProfessoresImportExcel
 
 		for ( ProfessoresImportExcelBean bean : sheetContent )
 		{
-			if (!bean.getAreaTitulacaoStr().isEmpty())
+			String areaTitulacaoStr = bean.getAreaTitulacaoStr() != null ? bean.getAreaTitulacaoStr() : "";
+			if (!areaTitulacaoStr.isEmpty())
 			{
 				AreaTitulacao areaTitulacao
 					= areasTitulacoesBDMap.get( bean.getAreaTitulacaoStr() );

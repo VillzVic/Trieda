@@ -163,7 +163,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 						= getHeaderColumnsNames( sheetIndex, sheet, workbook );
 
 					int rowIndex = sheet.getFirstRowNum();
-	                Row header = sheet.getRow( rowIndex );
+	                Row header = sheet.getRow( rowIndex++ );
 
 	                boolean validHeader = isHeaderValid(
 	                	header, sheetIndex, sheet, workbook, headerColumnsNames );
