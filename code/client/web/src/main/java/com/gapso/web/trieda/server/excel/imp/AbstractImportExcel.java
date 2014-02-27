@@ -15,11 +15,9 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
-import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
-import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public abstract class AbstractImportExcel< ExcelBeanType >
 	implements IImportExcel
@@ -67,10 +65,10 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	{
 		this.errors.clear();
 		this.warnings.clear();
-
+		
 		Map< String, List< ExcelBeanType > > excelBeansMap
 			= readInputStream( fileName, null, workbook );
-
+		
 		if ( this.errors.isEmpty() )
 		{
 			try
@@ -96,7 +94,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 	{
 		this.errors.clear();
 		this.warnings.clear();
-
+		
 		Map< String, List< ExcelBeanType > > excelBeansMap
 			= readInputStream( fileName,inputStream, null );
 
@@ -144,11 +142,13 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 			if ( workbook == null )
 			{
 				workbook = WorkbookFactory.create( inputStream );
+				if (checkExistentSheet(workbook))
+				{
+					this.errors.add("Não foi encontrada a aba " + getSheetName() + " para a importação");
+					return excelBeansMap;
+				}
 			}
-			if (checkInvalidSheet(workbook))
-			{
-				throw new TriedaException("Não foi encontrada uma aba válida para a importacao");
-			}
+
 			for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
 			{
 				Sheet sheet = workbook.getSheetAt( sheetIndex );
@@ -218,23 +218,21 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 
 		return excelBeansMap;
 	}
-
-	private boolean checkInvalidSheet(Workbook workbook) {
+	
+	private boolean checkExistentSheet(Workbook workbook) {
 		boolean nenhumaAbaValida = true;
 		for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
 		{
-			for (ExcelInformationType value : ExcelInformationType.values())
+			System.out.println("sheets: " + getSheetName() +"-"+ workbook.getSheetName( sheetIndex ));
+			if (getSheetName().equals(workbook.getSheetName( sheetIndex )))
 			{
-				if (value.getSheetName().equals(workbook.getSheetName( sheetIndex )))
-				{
-					nenhumaAbaValida = false;
-				}
+				nenhumaAbaValida = false;
 			}
 		}
 		
 		return nenhumaAbaValida;
 	}
-
+	
 	protected boolean isHeaderValid( Row candidateHeader, int sheetIndex,
 		Sheet sheet, Workbook workbook, List< String > headerColumnsNames )
 	{

@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
-import com.gapso.web.trieda.server.excel.exp.SemanaLetivaExportExcel;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationImpl;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -54,6 +53,11 @@ public class TRIEDAImportExcel
 		try
 		{
 			Workbook workbook = WorkbookFactory.create( inputStream );
+			if (checkAnyValidSheet(workbook))
+			{
+				this.errors.add("Não foi encontrada nenhuma aba válida para a importação");
+				return false;
+			}
 
 			List< IImportExcel > importers = new ArrayList< IImportExcel >();
 
@@ -102,6 +106,21 @@ public class TRIEDAImportExcel
 		}
 
 		return flag;
+	}
+	
+	private boolean checkAnyValidSheet(Workbook workbook) {
+		boolean nenhumaAbaValida = true;
+		for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
+		{
+			for (ExcelInformationType value : ExcelInformationType.values())
+			{
+				if (value.getSheetName().equals(workbook.getSheetName( sheetIndex )))
+				{
+					nenhumaAbaValida = false;
+				}
+			}
+		}
+		return nenhumaAbaValida;
 	}
 
 	@Override

@@ -52,6 +52,19 @@ public class MultiImportExcel extends ProgressDeclarationImpl implements IImport
 				Constructor<? extends IImportExcel> constructor = c.getConstructor(new Class[]{Cenario.class,TriedaI18nConstants.class,TriedaI18nMessages.class,InstituicaoEnsino.class});
 				importers.add((IImportExcel)constructor.newInstance(this.cenario,this.i18nConstants,this.i18nMessages,this.instituicaoEnsino));
 			}
+			
+			boolean anyValidSheet = false;
+			for (IImportExcel importer : importers) {
+				if(checkExistentSheet(workbook, importer))
+				{
+					anyValidSheet = true;
+				}
+			}
+			if (!anyValidSheet)
+			{
+				this.errors.add("Não foi encontrada nenhuma aba válida para a importação");
+				return false;
+			}
 
 			for (IImportExcel importer : importers) {
 				getProgressReport().setInitNewPartial("Importando " + importer.getSheetName());
@@ -74,6 +87,19 @@ public class MultiImportExcel extends ProgressDeclarationImpl implements IImport
 		}
 
 		return flag;
+	}
+	
+	private boolean checkExistentSheet(Workbook workbook, IImportExcel importer) {
+		boolean sheetExists = false;
+		for ( int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++ )
+		{
+			if (importer.getSheetName().equals(workbook.getSheetName( sheetIndex )))
+			{
+				sheetExists = true;
+			}
+		}
+		
+		return sheetExists;
 	}
 
 	@Override

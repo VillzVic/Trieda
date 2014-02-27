@@ -156,6 +156,12 @@ public class ImportExcelServlet
 			response.setContentType( "text/html" );
 			response.getWriter().println(ExcelInformationType.prefixError()+i18nMessages.excelErroGenericoImportacao(errorMsg));
 		}
+        catch ( OutOfMemoryError e ) {
+			e.printStackTrace();
+			String errorMsg = "Erro de falta de memória";
+			response.setContentType( "text/html" );
+			response.getWriter().println(ExcelInformationType.prefixError()+i18nMessages.excelErroGenericoImportacao(errorMsg));
+		}
         finally
         {
 			if ( inputStream != null )
