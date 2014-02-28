@@ -10,6 +10,8 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
@@ -136,5 +138,15 @@ public class CursoComboBox
         setValue(null);
         clearInvalid();
         fireEvent(Events.TwinTriggerClick, ce);
+    }
+    
+    @Override
+    public void onLoad(StoreEvent<CursoDTO> se) {
+        super.onLoad(se);
+        System.out.println(getStore().getModels().size());
+        if(getStore().getModels().isEmpty())
+        {
+			MessageBox.alert("Aviso!","Não existem Cursos cadastrados", null);
+        }
     }
 }

@@ -8,6 +8,8 @@ import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
@@ -80,4 +82,13 @@ public class ProfessorComboBox extends ComboBox<ProfessorDTO>{
 		setUseQueryCache(false);
 	}
 	
+    @Override
+    public void onLoad(StoreEvent<ProfessorDTO> se) {
+        super.onLoad(se);
+        System.out.println(getStore().getModels().size());
+        if(getStore().getModels().isEmpty())
+        {
+			MessageBox.alert("Aviso!","Não existem Professores cadastrados", null);
+        }
+    }
 }

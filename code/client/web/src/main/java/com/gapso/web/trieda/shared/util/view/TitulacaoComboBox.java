@@ -2,6 +2,8 @@ package com.gapso.web.trieda.shared.util.view;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
@@ -32,4 +34,13 @@ public class TitulacaoComboBox extends ComboBox<TitulacaoDTO> {
 		setTriggerAction(TriggerAction.ALL);
 	}
 
+    @Override
+    public void onLoad(StoreEvent<TitulacaoDTO> se) {
+        super.onLoad(se);
+        System.out.println(getStore().getModels().size());
+        if(getStore().getModels().isEmpty())
+        {
+			MessageBox.alert("Aviso!","Não existem Titulações cadastradas", null);
+        }
+    }
 }

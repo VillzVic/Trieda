@@ -7,6 +7,8 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
@@ -62,4 +64,13 @@ public class GrupoSalaComboBox extends ComboBox<GrupoSalaDTO> {
 		].join("");
 	}-*/;
 	
+    @Override
+    public void onLoad(StoreEvent<GrupoSalaDTO> se) {
+        super.onLoad(se);
+        System.out.println(getStore().getModels().size());
+        if(getStore().getModels().isEmpty())
+        {
+			MessageBox.alert("Aviso!","Não existem Grupos de Ambientes cadastrados", null);
+        }
+    }
 }

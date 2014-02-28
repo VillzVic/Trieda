@@ -2,6 +2,8 @@ package com.gapso.web.trieda.shared.util.view;
 
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
@@ -35,4 +37,13 @@ public class TipoDisciplinaComboBox extends ComboBox<TipoDisciplinaDTO> {
 		setEditable(false);
 	}
 	
+    @Override
+    public void onLoad(StoreEvent<TipoDisciplinaDTO> se) {
+        super.onLoad(se);
+        System.out.println(getStore().getModels().size());
+        if(getStore().getModels().isEmpty())
+        {
+			MessageBox.alert("Aviso!","Não existem Tipos de Disciplina cadastrados", null);
+        }
+    }
 }

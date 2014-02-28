@@ -5,6 +5,8 @@ import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
@@ -41,4 +43,14 @@ public class SemanaLetivaComboBox
 		setEditable( false );
 		setTriggerAction( TriggerAction.ALL );
 	}
+    
+    @Override
+    public void onLoad(StoreEvent<SemanaLetivaDTO> se) {
+        super.onLoad(se);
+        System.out.println(getStore().getModels().size());
+        if(getStore().getModels().isEmpty())
+        {
+			MessageBox.alert("Aviso!","Não existem Semanas Letivas cadastradas", null);
+        }
+    }
 }
