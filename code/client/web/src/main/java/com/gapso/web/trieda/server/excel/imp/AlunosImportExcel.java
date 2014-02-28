@@ -237,6 +237,8 @@ public class AlunosImportExcel
 				// Update
 				alunoBD.setNome( alunoExcel.getNomeStr() );
 				alunoBD.setFormando( alunoExcel.getFormando() );
+				alunoBD.setVirtual( alunoExcel.getVirtual() );
+				alunoBD.setCriadoTrieda(false);
 				
 				alunoBD.merge();
 			}
@@ -250,6 +252,8 @@ public class AlunosImportExcel
 				newAluno.setMatricula( alunoExcel.getMatriculaStr() );
 				newAluno.setNome( alunoExcel.getNomeStr() );
 				newAluno.setFormando( alunoExcel.getFormando() );
+				newAluno.setVirtual( alunoExcel.getVirtual() );
+				newAluno.setCriadoTrieda(false);
 				
 				newAluno.persist();
 			}

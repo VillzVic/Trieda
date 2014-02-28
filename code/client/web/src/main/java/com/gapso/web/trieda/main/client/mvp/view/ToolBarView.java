@@ -251,6 +251,7 @@ public class ToolBarView
 		int height = 92;
 
 		TabPanel masterDataTab = new TabPanel();
+		masterDataTab.setTabScroll(true);
 		masterDataTab.addStyleName( "tabPanelMasterData" );
 		masterDataTab.setHeight( height );
 

@@ -100,7 +100,7 @@ public class DemandaFormView
 		this.formPanel.add( this.cursoTF, formData );
 
 		this.curriculoTF = new TextField<CurriculoDTO>();
-		this.curriculoTF.setFieldLabel("Currículo");
+		this.curriculoTF.setFieldLabel("Martiz Curricular");
 		this.curriculoTF.setAllowBlank( false );
 		this.curriculoTF.setValue( this.curriculoDTO );
 		this.curriculoTF.setReadOnly(true);
