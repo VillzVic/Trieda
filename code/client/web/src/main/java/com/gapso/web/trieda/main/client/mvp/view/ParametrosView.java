@@ -247,7 +247,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.minimizarGapProfessorCheckBox = createCheckBox("Minimizar Gaps nos Horários dos Professores",this.parametroDTO.getMinimizarGapProfessor());
 		this.evitarReducaoCargaHorariaProfessorCheckBox = createCheckBox("Evitar Redução de Carga Horária de Professor",this.parametroDTO.getEvitarReducaoCargaHorariaProfessor());
 		this.evitarReducaoCargaHorariaProfessorCheckBox.disable();
-		this.evitarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Considerar interjornada mínima",this.parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessor());
+		this.evitarUltimoEPrimeiroHorarioProfessorCheckBox = createCheckBox("Considerar interjornada mínima (em horas)",this.parametroDTO.getEvitarUltimoEPrimeiroHorarioProfessor());
 		this.preferenciaDeProfessoresCheckBox = createCheckBox("Considerar preferência de professores por disciplinas",this.parametroDTO.getPreferenciaDeProfessores());
 		this.preferenciaDeProfessoresCheckBox.disable();
 		this.avaliacaoDesempenhoProfessorCheckBox = createCheckBox("Considerar avaliação de desempenho de professores",this.parametroDTO.getAvaliacaoDesempenhoProfessor());
