@@ -37,7 +37,7 @@ public class CenarioEditarFormView
 
 	private void initUI()
 	{
-		String title = "Edição de Cenário";
+		String title = "Inserção de Cenário";
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.cenario16() );
