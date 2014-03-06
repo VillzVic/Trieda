@@ -60,17 +60,23 @@ public class CurriculoDisciplinaFormPresenter
 				if ( isValid() )
 				{
 					final CurriculosServiceAsync service = Services.curriculos();
-
-					service.saveDisciplina( display.getCurriculoDTO(), getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display)
+					if (getDTO().getDisciplinaId() != null)
 					{
-						@Override
-						public void onSuccess( Void result )
+						service.saveDisciplina( display.getCurriculoDTO(), getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display)
 						{
-							display.getSimpleModal().hide();
-							grid.getStore().getLoader().load();
-							Info.display( "Salvo", "Item salvo com sucesso!" );
-						}
-					});
+							@Override
+							public void onSuccess( Void result )
+							{
+								display.getSimpleModal().hide();
+								grid.getStore().getLoader().load();
+								Info.display( "Salvo", "Item salvo com sucesso!" );
+							}
+						});
+					}
+					else
+					{
+						MessageBox.alert( "ERRO!", "Disciplina inválida!", null );
+					}
 				}
 				else
 				{
@@ -90,14 +96,14 @@ public class CurriculoDisciplinaFormPresenter
 		CurriculoDisciplinaDTO curriculoDisciplinaDTO = display.getCurriculoDisciplinaDTO();
 
 		curriculoDisciplinaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
-		curriculoDisciplinaDTO.setDisciplinaId( display.getDisciplinaComboBox().getValue().getId() );
-		curriculoDisciplinaDTO.setDisciplinaString( display.getDisciplinaComboBox().getValue().getCodigo() );
+		curriculoDisciplinaDTO.setDisciplinaId( display.getDisciplinaComboBox().getValue() == null ? null : display.getDisciplinaComboBox().getValue().getId() );
+		curriculoDisciplinaDTO.setDisciplinaString( display.getDisciplinaComboBox().getValue() == null ? null : display.getDisciplinaComboBox().getValue().getCodigo() );
 		curriculoDisciplinaDTO.setPeriodo( display.getPeriodoTextField().getValue().intValue() );
 		curriculoDisciplinaDTO.setMaturidade( display.getMaturidadeTextField().getValue() != null ?
 				display.getMaturidadeTextField().getValue().intValue() : null);
 
-		Integer crTeorico = display.getDisciplinaComboBox().getValue().getCreditosTeorico();
-		Integer crPratico = display.getDisciplinaComboBox().getValue().getCreditosPratico();
+		Integer crTeorico = display.getDisciplinaComboBox().getValue() == null ? 0 : display.getDisciplinaComboBox().getValue().getCreditosTeorico();
+		Integer crPratico = display.getDisciplinaComboBox().getValue() == null ? 0 : display.getDisciplinaComboBox().getValue().getCreditosPratico();
 
 		curriculoDisciplinaDTO.setCreditosTeorico( crTeorico );
 		curriculoDisciplinaDTO.setCreditosPratico( crPratico );
