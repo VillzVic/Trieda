@@ -172,7 +172,7 @@ public class Parametro
     
     // Função objetivo
     @Column(name = "PAR_FUNCAOOBJETIVO")
-    private Integer funcaoObjetivo = 0;
+    private Integer funcaoObjetivo = 1;
     
     //Considerar Equivalências entre Disciplinas
     @Column(name = "PAR_CONSIDERAR_EQUIV")
