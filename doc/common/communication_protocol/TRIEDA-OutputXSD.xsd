@@ -27,6 +27,7 @@
           </xs:complexType>
         </xs:element>
         <xs:element name="professoresVirtuais" type="GrupoProfessoresVirtuais" />
+        <xs:element name="NaoAtendimentosTatico" type="GrupoFolgaAlunoDemanda" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -205,6 +206,22 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="horariosAula" type="GrupoHorarioAula" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemFolgaAlunoDemanda">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" />
+      <xs:element name="motivos" type="GrupoMotivos" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoFolgaAlunoDemanda">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="FolgaAlunoDemanda" type="ItemFolgaAlunoDemanda" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoMotivos">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="motivo" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAlunoDemanda">
