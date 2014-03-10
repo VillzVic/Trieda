@@ -305,7 +305,10 @@ public class DivisoesCreditoImportExcel
 				newDivisao.setDia6( divisaoExcel.getDia6() );
 				newDivisao.setDia7( divisaoExcel.getDia6() );
 	
+				newDivisao.getCenario().add(getCenario());
+				
 				newDivisao.persist();
+				
 			}
 		}
 	}
