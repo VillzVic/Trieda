@@ -37,7 +37,6 @@ public class TitulacaoComboBox extends ComboBox<TitulacaoDTO> {
     @Override
     public void onLoad(StoreEvent<TitulacaoDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Titulações cadastradas", null);

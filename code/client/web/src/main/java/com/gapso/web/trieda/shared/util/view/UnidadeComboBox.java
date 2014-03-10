@@ -59,7 +59,6 @@ public class UnidadeComboBox extends ComboBox<UnidadeDTO> {
     @Override
     public void onLoad(StoreEvent<UnidadeDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Unidades cadastradas", null);

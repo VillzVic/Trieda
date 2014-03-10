@@ -197,7 +197,6 @@ public class CampusComboBox
     @Override
     public void onLoad(StoreEvent<CampusDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Campus cadastrados", null);

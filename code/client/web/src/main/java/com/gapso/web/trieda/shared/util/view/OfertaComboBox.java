@@ -50,7 +50,6 @@ public class OfertaComboBox extends ComboBox<OfertaDTO>
     @Override
     public void onLoad(StoreEvent<OfertaDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Ofertas cadastradas", null);

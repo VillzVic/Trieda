@@ -184,7 +184,6 @@ public class CurriculoComboBox
     @Override
     public void onLoad(StoreEvent<CurriculoDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Matrzies Curriculares cadastradas", null);

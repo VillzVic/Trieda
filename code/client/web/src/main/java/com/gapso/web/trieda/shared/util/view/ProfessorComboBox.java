@@ -85,7 +85,6 @@ public class ProfessorComboBox extends ComboBox<ProfessorDTO>{
     @Override
     public void onLoad(StoreEvent<ProfessorDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Professores cadastrados", null);

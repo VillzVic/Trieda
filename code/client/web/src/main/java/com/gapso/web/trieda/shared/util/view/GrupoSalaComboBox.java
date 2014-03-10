@@ -67,7 +67,6 @@ public class GrupoSalaComboBox extends ComboBox<GrupoSalaDTO> {
     @Override
     public void onLoad(StoreEvent<GrupoSalaDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Grupos de Ambientes cadastrados", null);

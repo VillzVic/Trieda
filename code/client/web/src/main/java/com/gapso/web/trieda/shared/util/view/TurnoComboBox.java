@@ -201,7 +201,6 @@ public class TurnoComboBox
     @Override
     public void onLoad(StoreEvent<TurnoDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Turnos cadastrados", null);

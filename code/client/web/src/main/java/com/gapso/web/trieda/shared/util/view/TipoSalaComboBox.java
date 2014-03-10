@@ -34,7 +34,6 @@ public class TipoSalaComboBox extends ComboBox<TipoSalaDTO> {
     @Override
     public void onLoad(StoreEvent<TipoSalaDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Tipos de Sala cadastrados", null);

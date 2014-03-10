@@ -13,6 +13,8 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.gapso.web.trieda.shared.dtos.AbstractDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -119,4 +121,13 @@ public class DisciplinaAutoCompleteBox extends ComboBox<DisciplinaDTO> {
 			'</tpl>'
 		].join("");
 	}-*/;
+	
+    @Override
+    public void onLoad(StoreEvent<DisciplinaDTO> se) {
+        super.onLoad(se);
+        if(getStore().getModels().isEmpty())
+        {
+			MessageBox.alert("Aviso!","Não existem Disciplinas cadastradas", null);
+        }
+    }
 }

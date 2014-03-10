@@ -45,7 +45,6 @@ public class TipoContratoComboBox
     @Override
     public void onLoad(StoreEvent<TipoContratoDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Tipos de Contrato cadastrados", null);

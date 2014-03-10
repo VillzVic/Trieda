@@ -36,7 +36,6 @@ public class TipoProfessorComboBox extends ComboBox<TipoProfessorDTO> {
     @Override
     public void onLoad(StoreEvent<TipoProfessorDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Tipos de Professor cadastrados", null);

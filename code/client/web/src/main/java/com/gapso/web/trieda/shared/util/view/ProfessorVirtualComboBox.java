@@ -130,7 +130,6 @@ public class ProfessorVirtualComboBox
     @Override
     public void onLoad(StoreEvent<ProfessorVirtualDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Professores Virtuais cadastrados", null);

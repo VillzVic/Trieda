@@ -40,7 +40,6 @@ public class TipoDisciplinaComboBox extends ComboBox<TipoDisciplinaDTO> {
     @Override
     public void onLoad(StoreEvent<TipoDisciplinaDTO> se) {
         super.onLoad(se);
-        System.out.println(getStore().getModels().size());
         if(getStore().getModels().isEmpty())
         {
 			MessageBox.alert("Aviso!","Não existem Tipos de Disciplina cadastrados", null);
