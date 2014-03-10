@@ -55,7 +55,7 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements
 	}
 
 	private void initUI() {
-		simpleModal = new SimpleModal("Associar Sala ao Grupo",
+		simpleModal = new SimpleModal("Associar Ambiente ao Grupo",
 				Resources.DEFAULTS.sala16());
 		simpleModal.setHeight(520);
 		simpleModal.setWidth(685);
@@ -101,11 +101,11 @@ public class GrupoSalaAssociarSalaView extends MyComposite implements
 		leftLabel.addStyleName("associarSalaGrupoLeftLabel");
 		
 		LabelField centerLabel = new LabelField();
-		centerLabel.setValue("Selecione um ou mais ambientes e clique em \"<\" para selecioná-lo(s) e associá-lo(s) ao grupo");
+		centerLabel.setValue("Selecione um ou mais ambientes e clique em \">\" para selecioná-lo(s) e associá-lo(s) ao grupo");
 		centerLabel.addStyleName("associarSalaGrupoCenterLabel");
 		
 		LabelField rightLabel = new LabelField();
-		rightLabel.setValue("Para remover a associação de um ambiente a este grupo, marque e ambiente e clique em \">\"");
+		rightLabel.setValue("Para remover a associação de um ambiente a este grupo, marque e ambiente e clique em \"<\"");
 		rightLabel.addStyleName("associarSalaGrupoRightLabel");
 		
 		panelLists = new ContentPanel();
