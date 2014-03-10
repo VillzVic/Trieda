@@ -54,7 +54,6 @@ public class SimpleGrid< M extends BaseModel >
 		super.beforeRender();
 
 		this.loader = new BasePagingLoader< PagingLoadResult< ModelData > >( this.proxy );
-		this.loader.setRemoteSort( true );
 
 		ListStore< M > store = new ListStore< M >( this.loader );  
 
