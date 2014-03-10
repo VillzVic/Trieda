@@ -89,6 +89,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="utilizarDemandasP2" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="percentuaisMinimoParcialIntegral" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="percentuaisMinimoIntegral" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *     	   &lt;element name="priorizarCalouros" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -138,7 +139,8 @@ import javax.xml.bind.annotation.XmlType;
     "custoProfDisponibilidade",
     "utilizarDemandasP2",
     "percentuaisMinimoParcialIntegral",
-    "percentuaisMinimoIntegral"
+    "percentuaisMinimoIntegral",
+    "priorizarCalouros"
 })
 public class ItemParametrosPlanejamento {
 
@@ -187,6 +189,7 @@ public class ItemParametrosPlanejamento {
     protected boolean utilizarDemandasP2;
     protected boolean percentuaisMinimoParcialIntegral;
     protected boolean percentuaisMinimoIntegral;
+    protected boolean priorizarCalouros;
 
     /**
      * Gets the value of the modoOtimizacao property.
@@ -914,6 +917,22 @@ public class ItemParametrosPlanejamento {
      */
     public void setPercentuaisMinimoIntegral(boolean value) {
         this.percentuaisMinimoIntegral = value;
+    }
+    
+    /**
+     * Gets the value of the priorizarCalouros property.
+     * 
+     */
+    public boolean isPriorizarCalouros() {
+        return priorizarCalouros;
+    }
+
+    /**
+     * Sets the value of the priorizarCalouros property.
+     * 
+     */
+    public void setPriorizarCalouros(boolean value) {
+        this.priorizarCalouros = value;
     }
 
 

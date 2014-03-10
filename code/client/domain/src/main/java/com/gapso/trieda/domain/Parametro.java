@@ -120,6 +120,10 @@ public class Parametro
     //Minimizar Deslocamento de Alunos entre Campi
     @Column(name = "PAR_MINDESLALUNO")
     private Boolean minimizarDeslocamentoAluno = false;
+    
+    //Indicar se o atendimento de alunos calouros (de 1o periodo) deve ser prioritario
+    @Column(name = "PAR_PRIORIZARCALOUROS")
+    private Boolean priorizarCalouros = true;
 
     //////////////////////////////////////////////
 	// PREFERENCIAS DO PROFESSOR
@@ -455,6 +459,13 @@ public class Parametro
 	}
 	public void setMinimizarDeslocamentoAluno(Boolean minimizarDeslocamentoAluno) {
 		this.minimizarDeslocamentoAluno = minimizarDeslocamentoAluno;
+	}
+	
+	public Boolean getPriorizarCalouros() {
+		return priorizarCalouros;
+	}
+	public void setPriorizarCalouros(Boolean priorizarCalouros) {
+		this.priorizarCalouros = priorizarCalouros;
 	}
 
 	public Boolean getCargaHorariaProfessor() {

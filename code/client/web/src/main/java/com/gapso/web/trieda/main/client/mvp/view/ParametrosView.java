@@ -52,6 +52,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	private CheckBox alunoDePeriodoMesmaSalaCheckBox;
 	private CheckBox alunoEmMuitosCampiCheckBox;
 	private CheckBox minimizarDeslocamentoAlunoCheckBox;
+	private CheckBox priorizarCalourosCheckBox;
 
 	private CheckBox cargaHorariaProfessorCheckBox;
 	private CargaHorariaComboBox cargaHorariaProfessorComboBox;
@@ -309,6 +310,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.minimizarDeslocamentoAlunoCheckBox.disable();
 		this.cargaHorariaAlunoComboBox = createComboBox(this.parametroDTO.getCargaHorariaAlunoSel());
 		this.cargaHorariaAlunoComboBox.disable();
+		this.priorizarCalourosCheckBox = createCheckBox("Priorizar Calouros", this.parametroDTO.getPriorizarCalouros());
 		
 		LayoutContainer cargaHorariaSemanalAlunoContainer = new LayoutContainer(new ColumnLayout());
 		cargaHorariaSemanalAlunoContainer.add(this.cargaHorariaAlunoCheckBox);
@@ -322,6 +324,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		preferenciasAlunosFS.add(this.alunoDePeriodoMesmaSalaCheckBox);
 		preferenciasAlunosFS.add(this.alunoEmMuitosCampiCheckBox);
 		preferenciasAlunosFS.add(this.minimizarDeslocamentoAlunoCheckBox);
+		preferenciasAlunosFS.add(this.priorizarCalourosCheckBox);
 		
 		return preferenciasAlunosFS;
 	}
@@ -440,6 +443,12 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	public CargaHorariaComboBox getCargaHorariaAlunoComboBox()
 	{
 		return this.cargaHorariaAlunoComboBox;
+	}
+	
+	@Override
+	public CheckBox getPriorizarCalourosComboBox()
+	{
+		return this.priorizarCalourosCheckBox;
 	}
 
 	@Override

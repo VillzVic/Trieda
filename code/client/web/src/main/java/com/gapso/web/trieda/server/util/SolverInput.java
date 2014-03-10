@@ -1944,6 +1944,8 @@ public class SolverInput
 		itemParametrosPlanejamento.setPercentuaisMinimoParcialIntegral(this.parametro.getPercentuaisMinimosParcialIntegral());
 		
 		itemParametrosPlanejamento.setPercentuaisMinimoIntegral(this.parametro.getPercentuaisMinimosIntegral());
+		
+		itemParametrosPlanejamento.setPriorizarCalouros(this.parametro.getPriorizarCalouros());
 
 		this.triedaInput.setParametrosPlanejamento( itemParametrosPlanejamento );
 	}

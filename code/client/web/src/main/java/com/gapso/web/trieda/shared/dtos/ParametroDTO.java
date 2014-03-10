@@ -63,6 +63,7 @@ public class ParametroDTO extends AbstractDTO<Long>
 	public static final String PROPERTY_CONSIDERARCAPACIDADEMAXSALAS = "considerarCapacidadeMaxSalas";
 	public static final String PROPERTY_PERCENTUAISMINIMOSPARCIALINTEGRAL = "percentuaisminimosparcialintegral";
 	public static final String PROPERTY_PERCENTUAISMINIMOSINTEGRAL = "percentuaisminimosintegral";
+	public static final String PROPERTY_PRIORIZARCALOUROS = "priorizarcalouros";
 
 	public ParametroDTO() {
 		super();
@@ -404,6 +405,13 @@ public class ParametroDTO extends AbstractDTO<Long>
 	}
 	public void setEvitarReducaoCargaHorariaProfessorValue(Integer value) {
 		set(PROPERTY_EVITARREDUCAOCARGAHORARIAPROFESSORVALUE, value);
+	}
+	
+	public Boolean getPriorizarCalouros() {
+		return get(PROPERTY_PRIORIZARCALOUROS);
+	}
+	public void setPriorizarCalouros(Boolean value) {
+		set(PROPERTY_PRIORIZARCALOUROS, value);
 	}
 	
 	public Integer getFuncaoObjetivo() {

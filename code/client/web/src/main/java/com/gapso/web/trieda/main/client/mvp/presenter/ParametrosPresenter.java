@@ -95,6 +95,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		Button getMaximizarNotaAvaliacaoCorpoDocenteButton();
 		Button getMinimizarCustoDocenteCursosButton();
 		Button getCompartilharDisciplinasCampiButton();
+		CheckBox getPriorizarCalourosComboBox();
 		Button getSubmitButton();
 		Component getComponent();
 	}
@@ -333,6 +334,7 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		dto.setConsiderarDemandasDePrioridade2(this.display.getConsiderarDemandasPrioridade2CheckBox().getValue());
 		
 		dto.setConsiderarCapacidadeMaxSalas(this.display.getConsiderarCapacidadeMaximaDasSalasCheckBox().getValue());
+		dto.setPriorizarCalouros(this.display.getPriorizarCalourosComboBox().getValue());
 
 		return dto;
 	}

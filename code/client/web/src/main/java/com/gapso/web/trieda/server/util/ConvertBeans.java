@@ -3124,6 +3124,7 @@ public class ConvertBeans {
 		domain.setCapacidadeMaxSalas(dto.getConsiderarCapacidadeMaxSalas());
 		domain.setPercentuaisMinimosParcialIntegral(dto.getPercentuaisMinimosParcialIntegral());
 		domain.setPercentuaisMinimosIntegral(dto.getPercentuaisMinimosIntegral());
+		domain.setPriorizarCalouros(dto.getPriorizarCalouros());
 
 		for ( CursoDTO cursoDTO
 			: dto.getMaximizarNotaAvaliacaoCorpoDocenteList() )
@@ -3216,6 +3217,7 @@ public class ConvertBeans {
 		dto.setConsiderarCapacidadeMaxSalas(domain.getCapacidadeMaxSalas());
 		dto.setPercentuaisMinimosParcialIntegral(domain.getPercentuaisMinimosParcialIntegral());
 		dto.setPercentuaisMinimosIntegral(domain.getPercentuaisMinimosIntegral());
+		dto.setPriorizarCalouros(domain.getPriorizarCalouros());
 
 		Set< Curso > cursosMaxNotaAvalList = domain.getCursosMaxNotaAval();
 		List< CursoDTO > cursosMaxNotaAvalDTOList
