@@ -744,6 +744,7 @@ public class Professor
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM Professor o " +
+			" LEFT JOIN FETCH o.atendimentosOperacionais LEFT JOIN o.disciplinas d " +
 			" WHERE o.tipoContrato.instituicaoEnsino = :instituicaoEnsino" +
 			" AND o.cenario = :cenario" +
 			where 
