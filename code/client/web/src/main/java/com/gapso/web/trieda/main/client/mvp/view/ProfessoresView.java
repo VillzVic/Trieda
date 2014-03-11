@@ -6,6 +6,8 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -81,6 +83,8 @@ public class ProfessoresView extends MyComposite
 				"Grade Horária do Professor",
 				Resources.DEFAULTS.saidaProfessor16() );
 
+		disponibilidadeBT.disable();
+		gradeHorariaBT.disable();
 		toolBar.add( disponibilidadeBT );
 		toolBar.add( gradeHorariaBT );
 		panel.setTopComponent( toolBar );
@@ -91,7 +95,24 @@ public class ProfessoresView extends MyComposite
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 
-		this.gridPanel = new SimpleGrid< ProfessorDTO >( getColumnList(), this, this.toolBar );
+		this.gridPanel = new SimpleGrid< ProfessorDTO >( getColumnList(), this, this.toolBar ){
+			
+			@Override
+			protected void afterRender() {
+				super.afterRender();
+				
+				this.getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<ProfessorDTO>() {
+					
+					@Override
+				    public void selectionChanged(SelectionChangedEvent<ProfessorDTO> se) {
+						if(getSelectionModel().getSelectedItems().size() == 1) {
+				        	getGradeHorariaButton().enable();
+				        	getDisponibilidadeButton().enable();
+				        }
+				    }
+				});
+			}
+		};
 		this.panel.add( this.gridPanel, bld );
 	}
 
