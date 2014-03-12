@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -19,7 +20,7 @@ public interface DemandasServiceAsync
 	void getBuscaList( CenarioDTO cenarioDTO,CampusDTO campusDTO, CursoDTO cursoDTO,
 		CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< DemandaDTO > > callback );
-	void save( DemandaDTO demandaDTO, AsyncCallback< Void > callback );
+	void save( DemandaDTO demandaDTO, List<DisciplinaDemandaDTO> disciplinas, Integer periodo, AsyncCallback< Void > callback );
 	void remove( List< DemandaDTO > demandaDTOList, AsyncCallback< Void > callback );
 	void findPeriodo(DemandaDTO demandaDTO, AsyncCallback< Integer > callback );
 	void getParametroGeracaoDemanda(CenarioDTO cenarioDTO, AsyncCallback<ParametroGeracaoDemandaDTO> callback);

@@ -22,8 +22,10 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.web.trieda.server.DemandasServiceImpl;
+import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
 import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
+import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
@@ -239,7 +241,10 @@ public class DemandasExportExcel
 						Demanda demanda = demandasMap.get(
 							disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
 
-						int quantidade = ( demanda == null ? 0 : demanda.getQuantidade() );
+						DemandaDTO demandaDTO = ConvertBeans.toDemandaDTO(demanda);
+						int quantidadeReal = demandaDTO.getDemandaReal();
+						int quantidadeVirtual = demandaDTO.getDemandaVirtual();
+						int quantidade = quantidadeReal + quantidadeVirtual;
 
 						if ( quantidade == 0 )
 						{
@@ -293,17 +298,23 @@ public class DemandasExportExcel
 						setCell( row, 7, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
 							disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
 
-						// Demanda de Alunos
-						setCell( row, 8, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidade );
+						// Demanda de Alunos (Real)
+						setCell( row, 8, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeReal );
+						
+						// Demanda de Alunos (Virtual)
+						setCell( row, 9, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeVirtual );
+						
+						// Demanda de Alunos (Total)
+						setCell( row, 10, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeReal+quantidadeVirtual );
 						
 						// Receita
-						setCell( row, 9, sheet, this.cellStyles[ ExcelCellStyleReference.DOUBLE_NUMBER.ordinal() ], oferta.getReceita() );
+						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.DOUBLE_NUMBER.ordinal() ], oferta.getReceita() );
 						
 						// Demanda Atendida
-						setCell( row, 10, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], (quantidade - qtdNaoAtendida) );
+						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], (quantidade - qtdNaoAtendida) );
 						
 						// Demanda Não Atendida
-						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
+						setCell( row, 13, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
 						
 						// Disciplinas Substitutas
 						String disciplinasSubstitutasStr = "";
@@ -319,7 +330,7 @@ public class DemandasExportExcel
 							}
 							disciplinasSubstitutasStr = disciplinasSubstitutasStrB.substring(0, disciplinasSubstitutasStrB.length() - 2);
 						}
-						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], disciplinasSubstitutasStr);
+						setCell( row, 14, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], disciplinasSubstitutasStr);
 						
 						row++;
 					}

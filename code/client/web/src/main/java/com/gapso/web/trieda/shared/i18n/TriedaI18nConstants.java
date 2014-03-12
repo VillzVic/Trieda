@@ -191,4 +191,6 @@ public interface TriedaI18nConstants
 	String resumoCenario();
 	String resumoCampi();
 	String totalCreditosSemanais();
+	String demandaDeAlunosReal();
+	String demandaDeAlunosVirtual();
 }

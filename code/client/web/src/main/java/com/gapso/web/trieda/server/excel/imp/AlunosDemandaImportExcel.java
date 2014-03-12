@@ -438,7 +438,6 @@ public class AlunosDemandaImportExcel
 
 				demandaBD.setDisciplina( alunosDemandaExcel.getDisciplina() );
 				demandaBD.setOferta( ofertaBD );
-				demandaBD.setQuantidade( 1 );
 
 				demandaBD.persist();
 
@@ -560,7 +559,6 @@ public class AlunosDemandaImportExcel
 
 			if ( quantidade != 0 )
 			{
-				demanda.setQuantidade( quantidade );
 				demanda.merge();
 			}
 			

@@ -103,7 +103,10 @@ public class DemandasView
 		list.add( new ColumnConfig( DemandaDTO.PROPERTY_CURSO_STRING, "Curso", 250 ) );
 		list.add( new ColumnConfig( DemandaDTO.PROPERTY_CURRICULO_STRING, "Código de Matriz Curricular", 150 ) );
 		list.add( new ColumnConfig( DemandaDTO.PROPERTY_DISCIPLINA_STRING, "Disciplina", 100 ) );
-		list.add( new ColumnConfig( DemandaDTO.PROPERTY_DEMANDA, "Demanda de Alunos", 150 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_PERIODO, "Periodo", 100 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_DEMANDA_REAL, "Demanda de Alunos (Real)", 200 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_DEMANDA_VIRTUAL, "Demanda de Alunos (Virtual)", 200 ) );
+		list.add( new ColumnConfig( DemandaDTO.PROPERTY_DEMANDA, "Demanda de Alunos (Total)", 200 ) );
 
 		return list;
 	}

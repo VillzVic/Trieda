@@ -22,6 +22,8 @@ public class DemandaDTO
 	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_STRING = "disciplinaString";
 	public static final String PROPERTY_DEMANDA = "quantidade";
+	public static final String PROPERTY_DEMANDA_REAL = "quantidadeReal";
+	public static final String PROPERTY_DEMANDA_VIRTUAL = "quantidadeVirtual";
 	public static final String PROPERTY_QUANTIDADE_DEMANDA_ENABLE = "quantidadeDemandaEnable";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_ID = "instituicaoEnsinoId";
 	public static final String PROPERTY_INSTITUICAO_ENSINO_STRING = "instituicaoEnsinoString";
@@ -179,6 +181,26 @@ public class DemandaDTO
 	public Integer getDemanda()
 	{
 		return get( PROPERTY_DEMANDA );
+	}
+	
+	public void setDemandaReal( Integer value )
+	{
+		set( PROPERTY_DEMANDA_REAL, value );
+	}
+
+	public Integer getDemandaReal()
+	{
+		return get( PROPERTY_DEMANDA_REAL );
+	}
+	
+	public void setDemandaVirtual( Integer value )
+	{
+		set( PROPERTY_DEMANDA_VIRTUAL, value );
+	}
+
+	public Integer getDemandaVirtual()
+	{
+		return get( PROPERTY_DEMANDA_VIRTUAL );
 	}
 	
 	public void setPeriodo( Integer value )

@@ -49,6 +49,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -619,34 +620,69 @@ public class DemandasServiceImpl
 	}
 
 	@Override
-	public void save( DemandaDTO demandaDTO ) throws TriedaException
+	@Transactional
+	public void save( DemandaDTO demandaDTO, List<DisciplinaDemandaDTO> disciplinas, Integer periodo) throws TriedaException
 	{
 		try {
-			Demanda d = ConvertBeans.toDemanda( demandaDTO );
-	
-			if ( d.getId() != null && d.getId() > 0 )
+			Oferta oferta = Oferta.find(demandaDTO.getOfertaId(), getInstituicaoEnsinoUser());
+			Collections.sort(disciplinas, new Comparator<DisciplinaDemandaDTO>() {
+				@Override
+				public int compare(DisciplinaDemandaDTO o1, DisciplinaDemandaDTO o2) {
+					return o1.getNovaDemanda().compareTo(o2.getNovaDemanda());
+				}
+			});
+			
+			List<Aluno> alunos = new ArrayList<Aluno>();
+			for (DisciplinaDemandaDTO disciplinaDemanda : disciplinas)
 			{
-				d.merge();
+				if (disciplinaDemanda.getNovaDemanda() > 0)
+				{
+					Disciplina disciplina = Disciplina.find(disciplinaDemanda.getDisciplinaId(), getInstituicaoEnsinoUser());
+					Demanda demanda = Demanda.findbyOfertaAndDisciplina(getInstituicaoEnsinoUser(), oferta, disciplina);
+					if(demanda == null)
+					{
+						demanda = new Demanda();
+						demanda.setDisciplina(disciplina);
+						demanda.setOferta(oferta);
+						demanda.persist();
+					}
+					
+					int alunosCriados = alunos.size();
+					for (int i = alunosCriados; i < disciplinaDemanda.getNovaDemanda(); i++)
+					{
+						Aluno novoAluno = new Aluno();
+						novoAluno.setCenario(getCenario());
+						novoAluno.setInstituicaoEnsino(getInstituicaoEnsinoUser());
+						novoAluno.setNome("Aluno Virtual " + i);
+						novoAluno.setMatricula("Aluno Virtual " + i);
+						novoAluno.setFormando(false);
+						novoAluno.setVirtual(true);
+						novoAluno.setCriadoTrieda(true);
+						
+						novoAluno.persist();
+						
+						alunos.add(novoAluno);
+					}
+	
+					for (int i = 0; i < disciplinaDemanda.getNovaDemanda(); i++)
+					{
+						AlunoDemanda novoAlunoDemanda = new AlunoDemanda();
+						novoAlunoDemanda.setAluno(alunos.get(i));
+						novoAlunoDemanda.setDemanda(demanda);
+						novoAlunoDemanda.setPeriodo(periodo);
+						novoAlunoDemanda.setPrioridade(1);
+						novoAlunoDemanda.setAtendido(false);
+						
+						novoAlunoDemanda.persist();
+					}
+				}
 			}
-			else
+			for (Aluno aluno : alunos)
 			{
-				List< Demanda > demandas = Demanda.findBy( getInstituicaoEnsinoUser(),
-					d.getOferta().getCampus().getCenario(),	d.getOferta().getCampus(), d.getOferta().getCurriculo().getCurso(),
-					d.getOferta().getCurriculo(), d.getOferta().getTurno(), d.getDisciplina(), 0, 1, null );
-	
-				if ( !demandas.isEmpty() )
-				{
-					Integer qtd = d.getQuantidade();
-	
-					d = demandas.get( 0 );
-					d.setQuantidade( qtd );
-	
-					d.merge();
-				}
-				else
-				{
-					d.persist();
-				}
+				aluno.setNome("Aluno Virtual " + aluno.getId() + " " + oferta.getCurriculo().getCurso().getNome() + " " 
+						+ oferta.getCurriculo().getCodigo() + " " + periodo );
+				aluno.setMatricula( aluno.getId().toString() );
+				aluno.merge();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -850,7 +886,6 @@ public class DemandasServiceImpl
 				Demanda novaDemanda = new Demanda();
 				novaDemanda.setDisciplina(demanda.getKey().getDisciplina());
 				novaDemanda.setOferta(ofertasCurriculosMap.get(demanda.getKey().getCurriculo()));
-				novaDemanda.setQuantidade(demanda.getValue());
 				novaDemanda.persist();
 				for (Aluno aluno : alunosDemanda.get(demanda.getKey()))
 				{

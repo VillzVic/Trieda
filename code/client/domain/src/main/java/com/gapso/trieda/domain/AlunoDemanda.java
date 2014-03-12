@@ -302,6 +302,40 @@ public class AlunoDemanda
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByDemandaReal(
+		InstituicaoEnsino instituicaoEnsino, Demanda demanda )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda = :demanda " +
+			" AND o.aluno.criadoTrieda is FALSE" );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "demanda", demanda );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByDemandaVirtual(
+		InstituicaoEnsino instituicaoEnsino, Demanda demanda )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda = :demanda " +
+			" AND o.aluno.criadoTrieda is TRUE" );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "demanda", demanda );
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByCampusAndTurno(

@@ -3,6 +3,7 @@ package com.gapso.trieda.domain;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,12 +18,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
@@ -53,12 +53,9 @@ public class Demanda
     	CascadeType.REFRESH }, targetEntity = Disciplina.class )
     @JoinColumn( name = "DIS_ID" )
     private Disciplina disciplina;
-
-    @NotNull
-    @Column( name = "DEM_QUANTIDADE" )
-    @Min( 1L )
-    @Max( 999L )
-    private Integer quantidade;
+    
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "demanda" )
+	private Set< AlunoDemanda > alunosDemanda = new HashSet< AlunoDemanda >();
 
 	public Oferta getOferta()
 	{
@@ -82,12 +79,7 @@ public class Demanda
 
 	public Integer getQuantidade()
 	{
-        return this.quantidade;
-    }
-
-	public void setQuantidade( Integer quantidade )
-	{
-        this.quantidade = quantidade;
+        return this.alunosDemanda.size();
     }
 	
 	/**
@@ -263,9 +255,9 @@ public class Demanda
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT SUM ( o.quantidade ) FROM Demanda o " +
-			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.disciplina.cenario = :cenario " );
+			" SELECT COUNT ( o ) FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
@@ -277,9 +269,9 @@ public class Demanda
 		InstituicaoEnsino instituicaoEnsino, Campus campus )
 	{
 		Query q = entityManager().createQuery(
-			" SELECT SUM ( o.quantidade ) FROM Demanda o " +
-			" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.oferta.campus = :campus " );
+			" SELECT COUNT ( o ) FROM AlunoDemanda o " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.oferta.campus = :campus " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "campus", campus );
@@ -495,7 +487,7 @@ public class Demanda
     	
         if (orderBy != null)
         {
-        	if (orderBy.contains("quantidade") || orderBy.contains("disciplina"))
+        	if (orderBy.contains("disciplina"))
         		orderBy = "ORDER BY o." + orderBy.replace("String", "");
         	else
         		orderBy = "ORDER BY o.oferta." + orderBy.replace("String", "");

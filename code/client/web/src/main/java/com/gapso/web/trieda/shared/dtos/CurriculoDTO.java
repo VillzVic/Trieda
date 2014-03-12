@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import java.util.Set;
+
 public class CurriculoDTO extends AbstractDTO< String >
 	implements Comparable< CurriculoDTO >
 {
@@ -14,6 +16,7 @@ public class CurriculoDTO extends AbstractDTO< String >
 	public static final String PROPERTY_CURSO_ID = "cursoId";
 	public static final String PROPERTY_CURSO_STRING = "cursoString";
 	public static final String PROPERTY_PERIODOS = "periodos";
+	public static final String PROPERTY_PERIODOS_LIST = "periodosList";
 	public static final String PROPERTY_SEMANA_LETIVA_ID = "semanaLetivaId";
 	public static final String PROPERTY_SEMANA_LETIVA_STRING = "semanaLetivaString";
 
@@ -100,6 +103,16 @@ public class CurriculoDTO extends AbstractDTO< String >
 	public String getPeriodos()
 	{
 		return get( PROPERTY_PERIODOS );
+	}
+	
+	public void setPeriodosList( Set<Integer> value )
+	{
+		set( PROPERTY_PERIODOS_LIST, value );
+	}
+
+	public Set<Integer> getPeriodosList()
+	{
+		return get( PROPERTY_PERIODOS_LIST );
 	}
 
 	public void setSemanaLetivaId( Long value )

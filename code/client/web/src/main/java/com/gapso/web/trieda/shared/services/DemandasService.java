@@ -10,6 +10,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -24,7 +25,7 @@ public interface DemandasService extends RemoteService {
 
 	PagingLoadResult<DemandaDTO> getBuscaList(CenarioDTO cenarioDTO, CampusDTO campusDTO, CursoDTO cursoDTO, 
 			CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config);
-	void save(DemandaDTO demandaDTO) throws TriedaException;
+	void save(DemandaDTO demandaDTO, List<DisciplinaDemandaDTO> disciplinas, Integer periodo) throws TriedaException;
 	void remove(List<DemandaDTO> demandaDTOList);
 	Integer findPeriodo(DemandaDTO demandaDTO) throws TriedaException;
 	ParametroGeracaoDemandaDTO getParametroGeracaoDemanda(CenarioDTO cenarioDTO);

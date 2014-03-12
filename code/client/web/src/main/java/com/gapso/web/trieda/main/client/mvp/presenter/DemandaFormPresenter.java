@@ -1,18 +1,27 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -40,14 +49,20 @@ public class DemandaFormPresenter
 		TextField<TurnoDTO> getTurnoTextField();
 		DisciplinaAutoCompleteBox getDisciplinaComboBox();
 		NumberField getDemandaTextField();
+		SimpleComboBox<Integer> getPeriodoComboBox();
 		DemandaDTO getDemandaDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
+		ListStore< DisciplinaDemandaDTO > getStore();
+		EditorGrid<DisciplinaDemandaDTO> getGrid();
+		Button getPreencheTudoButton();
+		NumberField getPreencheTudoNumberField();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private SimpleGrid< DemandaDTO > gridPanel;
 	private Display display;
+	private String errorMsg = "Verifique os campos digitados";
 
 	public DemandaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
@@ -66,7 +81,7 @@ public class DemandaFormPresenter
 			public void componentSelected(ButtonEvent ce) {
 				if(isValid()) {
 					final DemandasServiceAsync service = Services.demandas();
-					service.save(getDTO(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().demanda()),display) {
+					service.save(getDTO(), display.getGrid().getStore().getModels(), display.getPeriodoComboBox().getValue().getValue(), new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display.getI18nMessages().erroAoSalvar(display.getI18nConstants().demanda()),display) {
 						@Override
 						public void onSuccess(Void result) {
 							display.getSimpleModal().hide();
@@ -75,7 +90,7 @@ public class DemandaFormPresenter
 						}
 					});
 				} else {
-					MessageBox.alert("ERRO!", "Verifique os campos digitados", null);
+					MessageBox.alert("ERRO!", errorMsg, null);
 				}
 			}
 		});
@@ -100,6 +115,10 @@ public class DemandaFormPresenter
 								display.getCursoTextField().setValue(result);
 							}
 						});
+						List<Integer> listPeriodos = new ArrayList<Integer>(result.getPeriodosList());
+						display.getPeriodoComboBox().removeAll();
+						display.getPeriodoComboBox().add(listPeriodos);
+						display.getPeriodoComboBox().enable();
 					}
 				});
 				Services.turnos().getTurno(ofertaDTO.getTurnoId(),new AbstractAsyncCallbackWithDefaultOnFailure<TurnoDTO>(display.getI18nMessages().falhaOperacao(),display) {
@@ -110,18 +129,56 @@ public class DemandaFormPresenter
 				});
 			}
 		});
+		
+		display.getPeriodoComboBox().addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<Integer>>() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent<SimpleComboValue<Integer>> se) {
+				display.getGrid().mask( display.getI18nMessages().loading() );
+				Services.ofertas().getDisciplinas(getDTO(), display.getOfertaComboBox().getValue(), se.getSelectedItem().getValue(), new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<DisciplinaDemandaDTO>>(display.getI18nMessages().falhaOperacao(),display) {
+					@Override
+					public void onSuccess(ListLoadResult<DisciplinaDemandaDTO> result) {
+						display.getStore().removeAll();
+						display.getStore().add( result.getData() );
+						display.getGrid().unmask();
+					}
+				});
+			}
+		});
+		
+		display.getPreencheTudoButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				if (display.getPreencheTudoNumberField().getValue() != null )
+				{
+					for (DisciplinaDemandaDTO model : display.getGrid().getStore().getModels())
+					{
+						display.getGrid().getStore().getRecord(model).set(DisciplinaDemandaDTO.PROPERTY_NOVA_DEMANDA, display.getPreencheTudoNumberField().getValue().intValue());
+					}
+				}
+			}
+		});
 	}
 	
 	private boolean isValid() {
-		return display.isValid();
+		if (display.isValid())
+		{
+			if (display.getGrid().getStore().getModifiedRecords().isEmpty())
+			{
+				errorMsg = "Nenhuma demanda foi alterada";
+				return false;
+			}
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	private DemandaDTO getDTO(){
 		DemandaDTO demandaDTO = display.getDemandaDTO();
 		demandaDTO.setInstituicaoEnsinoId(instituicaoEnsinoDTO.getId());
 		demandaDTO.setOfertaId(display.getOfertaComboBox().getValue().getId());
-		demandaDTO.setDemanda(display.getDemandaTextField().getValue().intValue());
-		demandaDTO.setDisciplinaId(display.getDisciplinaComboBox().getValue().getId());
 		
 		return demandaDTO;
 	}

@@ -12,10 +12,13 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
+import com.gapso.trieda.domain.CurriculoDisciplina;
 import com.gapso.trieda.domain.Curso;
+import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -23,6 +26,8 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DemandaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -130,6 +135,41 @@ public class OfertasServiceImpl
 		ListLoadResult< TreeNodeDTO > result
 			= new BaseListLoadResult< TreeNodeDTO >( treeNodesList );
 
+		return result;
+	}
+	
+	@Override
+	public ListLoadResult<DisciplinaDemandaDTO> getDisciplinas(DemandaDTO demandaDTO, OfertaDTO ofertaDTO, Integer periodo)
+	{
+		Oferta oferta = ConvertBeans.toOferta(ofertaDTO);
+		
+		List<DisciplinaDemandaDTO> disciplinasDemandaDTO = new ArrayList<DisciplinaDemandaDTO>();
+
+		for (CurriculoDisciplina curriculoDisciplina : oferta.getCurriculo().getCurriculoDisciplinas())
+		{
+			if (curriculoDisciplina.getPeriodo().equals(periodo) )
+			{
+				Demanda demanda = Demanda.findbyOfertaAndDisciplina(getInstituicaoEnsinoUser(), oferta, curriculoDisciplina.getDisciplina());
+				DisciplinaDemandaDTO novaDisciplina = new DisciplinaDemandaDTO();
+				novaDisciplina.setDisciplina(curriculoDisciplina.getDisciplina().getCodigo());
+				novaDisciplina.setDisciplinaId(curriculoDisciplina.getDisciplina().getId());
+				
+				Integer demandaReal = AlunoDemanda.findByDemandaReal(getInstituicaoEnsinoUser(), demanda).size();
+				Integer demandaVirtual = AlunoDemanda.findByDemandaVirtual(getInstituicaoEnsinoUser(), demanda).size();
+				
+				
+				novaDisciplina.setDemandaReal(demandaReal);
+				novaDisciplina.setDemandaVirtual(demandaVirtual);
+				novaDisciplina.setDemandaTotal(demandaReal+demandaVirtual);
+				
+				novaDisciplina.setNovaDemanda(0);
+				
+				disciplinasDemandaDTO.add(novaDisciplina);
+			}
+		}
+		
+		ListLoadResult< DisciplinaDemandaDTO > result
+			= new BaseListLoadResult< DisciplinaDemandaDTO >( disciplinasDemandaDTO );
 		return result;
 	}
 

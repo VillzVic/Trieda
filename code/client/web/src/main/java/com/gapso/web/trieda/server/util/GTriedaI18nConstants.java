@@ -986,4 +986,14 @@ public class GTriedaI18nConstants
 	public String totalCreditosSemanais() {
 		return this.languageManager.getText("totalCreditosSemanais");
 	}
+
+	@Override
+	public String demandaDeAlunosReal() {
+		return this.languageManager.getText("demandaDeAlunosReal");
+	}
+
+	@Override
+	public String demandaDeAlunosVirtual() {
+		return this.languageManager.getText("demandaDeAlunosVirtual");
+	}
 }

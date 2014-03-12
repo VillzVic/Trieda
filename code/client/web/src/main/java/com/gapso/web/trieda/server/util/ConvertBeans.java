@@ -1791,9 +1791,8 @@ public class ConvertBeans {
 		{
 			periodosSet.add( cd.getPeriodo() );
 		}
-
+		dto.setPeriodosList(periodosSet);
 		String periodos = "";
-
 		for ( Integer periodo : periodosSet )
 		{
 			periodos += ( periodo + ", " );
@@ -2007,7 +2006,6 @@ public class ConvertBeans {
 
 		domain.setDisciplina( Disciplina.find(
 			dto.getDisciplinaId(), instituicaoEnsino ) );
-		domain.setQuantidade( dto.getDemanda() );
 
 		return domain;
 	}
@@ -2052,19 +2050,17 @@ public class ConvertBeans {
 		// então a quantidade será dada pelo total de alunos associados a ela.
 		// Caso contrário, não havendo nenhum aluno associado, o valor exibido
 		// para a quantidade será o valor armazenado no banco de dados.
-		Integer alunosDemanda = AlunoDemanda.findByDemanda(
+		Integer alunosDemandaReal = AlunoDemanda.findByDemandaReal(
 			instituicaoEnsino, domain ).size();
+		Integer alunosDemandaVirtual = AlunoDemanda.findByDemandaVirtual(
+				instituicaoEnsino, domain ).size();
 
-		if ( alunosDemanda == 0 )
-		{
-			dto.setDemanda( domain.getQuantidade() );
-			dto.setQuantidadeDemandaEnable( true );
-		}
-		else
-		{
-			dto.setDemanda( alunosDemanda );
-			dto.setQuantidadeDemandaEnable( false );
-		}
+		dto.setDemanda( domain.getQuantidade() );
+		dto.setDemandaReal( alunosDemandaReal );
+		dto.setDemandaVirtual(alunosDemandaVirtual);
+		dto.setQuantidadeDemandaEnable( true );
+		
+		dto.setPeriodo(curriculo.getPeriodo(disciplina));
 
 		if ( instituicaoEnsino != null )
 		{

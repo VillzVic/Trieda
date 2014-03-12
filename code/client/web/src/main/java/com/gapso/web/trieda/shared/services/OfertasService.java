@@ -9,6 +9,8 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DemandaDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
@@ -28,5 +30,6 @@ public interface OfertasService extends RemoteService {
 	void save(OfertaDTO ofertaDTO);
 	void remove(List<OfertaDTO> ofertaDTOList);
 	ListLoadResult<TreeNodeDTO> getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO);
+	ListLoadResult<DisciplinaDemandaDTO> getDisciplinas(DemandaDTO demandaDTO, OfertaDTO ofertaDTO, Integer periodo);
 	
 }
