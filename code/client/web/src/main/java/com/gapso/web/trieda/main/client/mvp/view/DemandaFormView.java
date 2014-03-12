@@ -4,18 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
-import com.extjs.gxt.ui.client.data.BasePagingLoader;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.ModelData;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoader;
-import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -24,41 +16,27 @@ import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
-import com.extjs.gxt.ui.client.widget.grid.ColumnData;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
-import com.extjs.gxt.ui.client.widget.grid.Grid;
-import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.HeaderGroupConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
-import com.extjs.gxt.ui.client.widget.layout.RowLayout;
-import com.extjs.gxt.ui.client.widget.layout.VBoxLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandaFormPresenter;
-import com.gapso.web.trieda.shared.dtos.AbstractDTO;
-import com.gapso.web.trieda.shared.dtos.AlunoDisciplinaCursadaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
-import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
-import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
-import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
-import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.OfertaComboBox;
-import com.gapso.web.trieda.shared.util.view.PeriodoComboBox;
-import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DemandaFormView
 	extends MyComposite
@@ -79,7 +57,7 @@ public class DemandaFormView
 	private CursoDTO cursoDTO;
 	private CurriculoDTO curriculoDTO;
 	private TurnoDTO turnoDTO;
-	private DisciplinaDTO disciplinaDTO;
+	private OfertaDTO ofertaDTO;
 	private CenarioDTO cenarioDTO;
 	private NumberField preencheTudoNF;
 	private Button preencheTudoBT;
@@ -89,14 +67,14 @@ public class DemandaFormView
 
 	public DemandaFormView( CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
 		CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
-		TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO )
+		TurnoDTO turnoDTO, OfertaDTO ofertaDTO )
 	{
 		this.demandaDTO = demandaDTO;
 		this.campusDTO = campusDTO;
 		this.cursoDTO = cursoDTO;
 		this.curriculoDTO = curriculoDTO;
 		this.turnoDTO = turnoDTO;
-		this.disciplinaDTO = disciplinaDTO;
+		this.ofertaDTO = ofertaDTO;
 		this.cenarioDTO = cenarioDTO;
 
 		initUI();
@@ -128,7 +106,11 @@ public class DemandaFormView
 		ofertaFS.setLayout(new FormLayout());
 		
 		this.ofertaCB = new OfertaComboBox(cenarioDTO);
-		this.ofertaCB.setAllowBlank( true );
+		ofertaCB.setAllowBlank( true );
+		if (ofertaDTO != null)
+		{
+			ofertaCB.setValue(ofertaDTO);
+		}
 		ofertaFS.add( this.ofertaCB, formData );
 
 		this.turnoTF = new TextField<TurnoDTO>();
@@ -161,7 +143,14 @@ public class DemandaFormView
 		
 		periodoCB = new SimpleComboBox<Integer>();
 		periodoCB.setFieldLabel("Período");
-		periodoCB.disable();
+		if (demandaDTO.getId() != null)
+		{
+			periodoCB.add(demandaDTO.getPeriodo());
+		}
+		else
+		{
+			periodoCB.disable();
+		}
 		ofertaFS.add( periodoCB, formData );
 		
 		this.formPanel.add( ofertaFS, formData );

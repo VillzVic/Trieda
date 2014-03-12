@@ -21,6 +21,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
@@ -30,6 +31,7 @@ import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.CursosServiceAsync;
 import com.gapso.web.trieda.shared.services.DemandasServiceAsync;
 import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
+import com.gapso.web.trieda.shared.services.OfertasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
@@ -144,22 +146,22 @@ public class DemandasPresenter
 				final CursosServiceAsync cursosService = Services.cursos();
 				final CurriculosServiceAsync curriculosService = Services.curriculos();
 				final TurnosServiceAsync turnosService = Services.turnos();
-				final DisciplinasServiceAsync disciplinasService = Services.disciplinas();
+				final OfertasServiceAsync ofertasService = Services.ofertas();
 
 				final FutureResult< CampusDTO > futureCampusDTO = new FutureResult< CampusDTO >();
 				final FutureResult< CursoDTO > futureCursoDTO = new FutureResult< CursoDTO >();
 				final FutureResult< CurriculoDTO > futureCurriculoDTO = new FutureResult< CurriculoDTO >();
 				final FutureResult< TurnoDTO > futureTurnoDTO = new FutureResult< TurnoDTO >();
-				final FutureResult< DisciplinaDTO > futureDisciplinaDTO = new FutureResult< DisciplinaDTO >();
+				final FutureResult< OfertaDTO > futureOfertaDTO = new FutureResult< OfertaDTO >();
 
 				campiService.getCampus( demandaDTO.getCampusId(), futureCampusDTO );
 				cursosService.getCurso( demandaDTO.getCursoId(), futureCursoDTO );
 				curriculosService.getCurriculo( demandaDTO.getCurriculoId(), futureCurriculoDTO );
 				turnosService.getTurno( demandaDTO.getTurnoId(), futureTurnoDTO );
-				disciplinasService.getDisciplina( demandaDTO.getDisciplinaId(), futureDisciplinaDTO );
+				ofertasService.getOferta( demandaDTO.getOfertaId(), futureOfertaDTO );
 
 				FutureSynchronizer synch = new FutureSynchronizer( futureCampusDTO, futureCursoDTO,
-					futureCurriculoDTO, futureTurnoDTO, futureDisciplinaDTO );
+					futureCurriculoDTO, futureTurnoDTO, futureOfertaDTO );
 
 				synch.addCallback( new AbstractAsyncCallbackWithDefaultOnFailure< Boolean >( display )
 				{
@@ -170,11 +172,11 @@ public class DemandasPresenter
 						CursoDTO cursoDTO = futureCursoDTO.result();
 						CurriculoDTO curriculoDTO = futureCurriculoDTO.result();
 						TurnoDTO turnoDTO = futureTurnoDTO.result();
-						DisciplinaDTO disciplinaDTO = futureDisciplinaDTO.result();
+						OfertaDTO ofertaDTO = futureOfertaDTO.result();
 
 						Presenter presenter = new DemandaFormPresenter( instituicaoEnsinoDTO,
 							new DemandaFormView( cenarioDTO, demandaDTO, campusDTO, cursoDTO, curriculoDTO,
-									turnoDTO, disciplinaDTO ), display.getGrid() );
+									turnoDTO, ofertaDTO ), display.getGrid() );
 
 						presenter.go( null );	
 					}
