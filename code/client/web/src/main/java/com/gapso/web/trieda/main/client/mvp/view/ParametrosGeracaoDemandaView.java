@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.gapso.web.trieda.main.client.mvp.presenter.ParametrosGeracaoDemandaPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
@@ -42,6 +43,14 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	private NumberField creditoManualNumberField;
 	private CheckBox aumentaMaxCreditosParaAlunosComDisciplinasAtrasadasCheckBox;
 	private NumberField fatorAumentoDeMaxCreditosNumberField;
+	private Radio evolucaoRadio;
+	private Radio criacaoAutomaticaRadio;
+	private Radio criacaoDiretaRadio;
+	private RadioGroup metodoGeracaoRadioGroup;
+	private FormPanel panel;
+	private Button ofertasDemandasBt;
+	private Button demandasAlunoBt;
+	private LayoutContainer explicacaoMetodo;
 	
 	private CenarioDTO cenarioDTO;
 	private ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO;
@@ -68,23 +77,54 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		this.form.setScrollMode(Scroll.AUTO);
 		this.form.setButtonAlign(HorizontalAlignment.RIGHT);
 		FormLayout formLayout = new FormLayout();
-		formLayout.setLabelWidth(120);
+		formLayout.setLabelWidth(200);
 		this.form.setLayout(formLayout);
+		
+		FieldSet metodoFS = new FieldSet();
+		metodoFS.setHeadingHtml("Selecione o método de Geração de Demanda");
+		metodoFS.setLayout(new RowLayout());
+		metodoFS.setCollapsible(false);
+		metodoGeracaoRadioGroup = new RadioGroup();
+		metodoGeracaoRadioGroup.setFieldLabel("Metodo de Geração de Demanda");
+		this.evolucaoRadio = new Radio();  
+		this.evolucaoRadio.setBoxLabel("Evolução dos Alunos na Matriz Curricular");
+		this.evolucaoRadio.setValue(true);
+		metodoGeracaoRadioGroup.add(this.evolucaoRadio);
+		this.criacaoAutomaticaRadio = new Radio();  
+		this.criacaoAutomaticaRadio.setBoxLabel("Criação Automática de Alunos e Demandas a partir de Quantidades Informadas");
+		metodoGeracaoRadioGroup.add(this.criacaoAutomaticaRadio);
+		this.criacaoDiretaRadio = new Radio();
+		this.criacaoDiretaRadio.setBoxLabel("Criação Direta de Alunos e Demandas");
+		metodoGeracaoRadioGroup.add(this.criacaoDiretaRadio);
+		metodoFS.add(metodoGeracaoRadioGroup);
+		explicacaoMetodo = new LayoutContainer();
+		explicacaoMetodo.addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut sem sit amet justo fermentum lacinia non vitae massa. Sed enim libero, convallis at mi nec, vehicula venenatis mi. Phasellus interdum, libero eget dapibus sodales, neque quam aliquam tellus, et rutrum nisi nunc suscipit ligula. Fusce semper lectus viverra ornare consectetur. Proin porta tempor purus ac scelerisque. Suspendisse congue lorem quis tellus egestas, quis lobortis diam laoreet. Sed dapibus felis metus.");
+		metodoFS.add(explicacaoMetodo);
+		form.add(metodoFS);
+		
+		panel = new FormPanel();
+		panel.setBodyBorder(false);
+		panel.setHeaderVisible(false);
+		panel.setStyleAttribute("margin-top", "30px");
 		
 		// CAMPI
 		campusComboBox = new CampusComboBox(cenarioDTO);
 		campusComboBox.setFieldLabel("Campus");
-		this.form.add(campusComboBox);
+		panel.add(campusComboBox);
 
 		// TURNO
 		turnoComboBox = new TurnoComboBox(cenarioDTO);
 		turnoComboBox.setFieldLabel("Turno");
-		this.form.add(turnoComboBox);
+		panel.add(turnoComboBox);
 		
-		this.form.add(criaParametros());
+		panel.add(criaParametros());
 
+		this.ofertasDemandasBt = new Button("Ofertas e Demandas",AbstractImagePrototype.create(Resources.DEFAULTS.demanda16()));
+		this.demandasAlunoBt =  new Button("Demandas por Aluno",AbstractImagePrototype.create(Resources.DEFAULTS.demandaAluno16()));
 		this.submitBt = new Button("Gerar Demandas",AbstractImagePrototype.create(Resources.DEFAULTS.gerarGrade16()));
-		this.form.addButton(this.submitBt);
+		panel.addButton(this.submitBt);
+		
+		this.form.add(panel);
 	}
 	
 	private FieldSet criaParametros() {
@@ -173,6 +213,15 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		return submitBt;
 	}
 	
+	@Override
+	public Button getOfertasDemandasButton() {
+		return ofertasDemandasBt;
+	}
+	
+	@Override
+	public Button getDemandasAlunosButton() {
+		return demandasAlunoBt;
+	}
 
 	@Override
 	public CheckBox getUsarDemandasPrioridade2CheckBox() {
@@ -222,5 +271,57 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	@Override
 	public NumberField getFatorAumentoDeMaxCreditosNumberField() {
 		return fatorAumentoDeMaxCreditosNumberField;
+	}
+	
+	@Override
+	public RadioGroup getMetodoGeracaoRadioGroup() {
+		return metodoGeracaoRadioGroup;
+	}
+	
+	@Override
+	public Radio getEvolucaoRadio() {
+		return evolucaoRadio;
+	}
+
+	@Override
+	public Radio getCriacaoAutomaticaRadio() {
+		return criacaoAutomaticaRadio;
+	}
+	
+	@Override
+	public Radio getCriacaoDiretaRadio() {
+		return criacaoDiretaRadio;
+	}
+	
+	@Override
+	public void selecionaEvolucaoAlunos() {
+		explicacaoMetodo.removeAll();
+		explicacaoMetodo.addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut sem sit amet justo fermentum lacinia non vitae massa. Sed enim libero, convallis at mi nec, vehicula venenatis mi. Phasellus interdum, libero eget dapibus sodales, neque quam aliquam tellus, et rutrum nisi nunc suscipit ligula. Fusce semper lectus viverra ornare consectetur. Proin porta tempor purus ac scelerisque. Suspendisse congue lorem quis tellus egestas, quis lobortis diam laoreet. Sed dapibus felis metus.");
+		panel.removeAll();
+		panel.add(campusComboBox);
+		panel.add(turnoComboBox);
+		panel.add(criaParametros());
+		panel.getButtonBar().show();
+		form.layout();
+	}
+	
+	@Override
+	public void selecionaCriacaoAutomatica() {
+		explicacaoMetodo.removeAll();
+		explicacaoMetodo.addText("Texto 2");
+		panel.removeAll();
+		panel.getButtonBar().hide();
+		panel.add(ofertasDemandasBt);
+		form.layout();
+	}
+	
+	@Override
+	public void selecionaCriacaoDireta() {
+		explicacaoMetodo.removeAll();
+		explicacaoMetodo.addText("Texto 3");
+		panel.removeAll();
+		panel.getButtonBar().hide();
+		panel.add(demandasAlunoBt);
+		form.layout();
 	}
 }

@@ -12,6 +12,9 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.Radio;
+import com.extjs.gxt.ui.client.widget.form.RadioGroup;
+import com.gapso.web.trieda.main.client.mvp.view.DemandasPorAlunoView;
+import com.gapso.web.trieda.main.client.mvp.view.DemandasView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
@@ -34,6 +37,8 @@ public class ParametrosGeracaoDemandaPresenter
 	public interface Display extends ITriedaI18nGateway {
 		Component getComponent();
 		Button getSubmitButton();
+		Button getOfertasDemandasButton();
+		Button getDemandasAlunosButton();
 		TurnoComboBox getTurnoComboBox();
 		CampusComboBox getCampusComboBox();	
 		CheckBox getUsarDemandasPrioridade2CheckBox();
@@ -46,11 +51,19 @@ public class ParametrosGeracaoDemandaPresenter
 		CheckBox getAumentaMaxCreditosParaAlunosComDisciplinasAtrasadasCheckBox();
 		NumberField getFatorAumentoDeMaxCreditosNumberField();
 		NumberField getCreditoManualNumberField();
+		RadioGroup getMetodoGeracaoRadioGroup();
+		Radio getEvolucaoRadio();
+		Radio getCriacaoAutomaticaRadio();
+		Radio getCriacaoDiretaRadio();
+		void selecionaCriacaoAutomatica();
+		void selecionaCriacaoDireta();
+		void selecionaEvolucaoAlunos();
 	}
 	
 	private Display display; 
 	private CenarioDTO cenarioDTO;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private GTab gTab;
 
 	public ParametrosGeracaoDemandaPresenter(CenarioDTO cenarioDTO, InstituicaoEnsinoDTO instituicaoEnsinoDTO, Display display) {
 		this.cenarioDTO = cenarioDTO;
@@ -117,6 +130,50 @@ public class ParametrosGeracaoDemandaPresenter
 				display.getFatorAumentoDeMaxCreditosNumberField().setEnabled(value);
 			}
 		});
+		
+		this.display.getMetodoGeracaoRadioGroup().addListener(Events.Change,new Listener<BaseEvent>() {
+			@Override
+			public void handleEvent(BaseEvent be) {
+				if (display.getEvolucaoRadio().getValue())
+				{
+					display.selecionaEvolucaoAlunos();
+				}
+				else if (display.getCriacaoAutomaticaRadio().getValue())
+				{
+					display.selecionaCriacaoAutomatica();
+				}
+				else if (display.getCriacaoDiretaRadio().getValue())
+				{
+					display.selecionaCriacaoDireta();
+				}
+			}
+		});
+		
+		this.display.getOfertasDemandasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DemandasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DemandasView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
+		
+		this.display.getDemandasAlunosButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new DemandasPorAlunoPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new DemandasPorAlunoView( cenarioDTO ) );
+
+				presenter.go( gTab );
+			}
+		});
 	}
 	
 	public ParametroGeracaoDemandaDTO getDTO() {
@@ -139,8 +196,8 @@ public class ParametrosGeracaoDemandaPresenter
 	
 	@Override
 	public void go(Widget widget) {
-		GTab tab = (GTab) widget;
-		tab.add((GTabItem)this.display.getComponent());
+		gTab = (GTab) widget;
+		gTab.add((GTabItem)this.display.getComponent());
 	}
 	
 }
