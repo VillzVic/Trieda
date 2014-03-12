@@ -350,7 +350,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoAlocacoes">
     <xs:sequence>
-      <xs:element name="ItemAlocacao" />
+      <xs:element name="Alocacao" type="ItemAlocacao" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemAlocacao">
