@@ -340,11 +340,32 @@
       <xs:element name="titulacaoId" type="xs:int" />
       <xs:element minOccurs="0" name="areaTitulacaoId" type="xs:int" />
       <xs:element name="disciplinas" type="GrupoIdentificador" />
+      <xs:element name="alocacoes" type="GrupoAlocacoes" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoIdentificador">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="id" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoAlocacoes">
+    <xs:sequence>
+      <xs:element name="ItemAlocacao" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemAlocacao">
+    <xs:sequence>
+      <xs:element name="turma" type="xs:int" />
+      <xs:element name="disciplinaId" type="xs:int" />
+      <xs:element name="campusId" type="xs:int" />
+      <xs:element name="pratica" type="xs:boolean" />
+      <xs:element name="motivosDeUso" type="GrupoMotivos" />
+      <xs:element name="dicasEliminacao" type="GrupoDicasEliminacao" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoDicasEliminacao">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="dicaEliminacao" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoHorarioAula">
