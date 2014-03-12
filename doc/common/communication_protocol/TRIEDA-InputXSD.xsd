@@ -924,6 +924,7 @@
           <xs:documentation>evitar alocação simultânea do professor no último horário do dia e no primeiro horário do dia seguinte. Ver requisito RF-PP-10.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="evitarProfUltimoPrimeiroHorValor" type="xs:int" />
       <xs:element name="preferenciaProfessorDisciplina" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>Considerar preferência de professores por disciplinas</xs:documentation>
@@ -1027,6 +1028,9 @@ Maximizar/gerenciar a nota da avaliação institucional média coletiva do corpo
           <xs:documentation>Utiliza demandas de prioridade 2 caso não haja total atendimento das demandas de prioridade 1.</xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="percentuaisMinimoParcialIntegral" type="xs:boolean" />
+      <xs:element name="percentuaisMinimoIntegral" type="xs:boolean" />
+      <xs:element name="priorizarCalouros" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemNivelDificuldadeHorario">
