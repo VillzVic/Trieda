@@ -35,6 +35,7 @@ import com.gapso.web.trieda.server.xml.output.ItemAtendimentoSala;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTatico;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
+import com.gapso.web.trieda.server.xml.output.ItemFolgaAlunoDemanda;
 import com.gapso.web.trieda.server.xml.output.ItemProfessorVirtual;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 
@@ -63,6 +64,25 @@ public class SolverOutput
 		
 		this.alunosDemandaTatico = new HashMap<AlunoDemanda, List<AtendimentoTatico>>();
 		this.alunosDemandaOperacional = new HashMap<AlunoDemanda, List<AtendimentoOperacional>>();
+	}
+	
+	@Transactional
+	public void generateMotivosNaoAtendimento()
+	{
+		Map<Integer, AlunoDemanda> alunoDemandaIdMapAlunoDemanda = AlunoDemanda.buildAlunoDemandaIdToAlunoDemandaMap(instituicaoEnsino, cenario);
+		for (ItemFolgaAlunoDemanda motivosNaoAtendimento: this.triedaOutput.getFolgaAlunoDemanda().getFolgaAlunoDemanda())
+		{
+			AlunoDemanda alunoDemanda =  alunoDemandaIdMapAlunoDemanda.get(motivosNaoAtendimento.getId());
+			if (alunoDemanda != null)
+			{
+				String motivoString = "";
+				for (String motivo : motivosNaoAtendimento.getMotivos().getMotivo())
+				{
+					motivoString += motivo + "\n";
+				}
+				alunoDemanda.setMotivoNaoAtendimento(motivoString);
+			}
+		}
 	}
 
 	//@Transactional

@@ -6,6 +6,8 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -13,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.DemandasPorAlunoPresenter;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -46,6 +49,7 @@ public class DemandasPorAlunoView
 	private Button exportExcelAlunosDemandaBT;
 	private Button associarAlunosDemandaBT;
 	private CenarioDTO cenarioDTO;
+	private Button motivosNaoAtendimentoBT;
 	
 	public DemandasPorAlunoView( CenarioDTO cenarioDTO )
 	{
@@ -77,6 +81,11 @@ public class DemandasPorAlunoView
 	{
 		this.toolBar = new SimpleToolBar( false, false,
 				true, true, true, this );
+		this.toolBar.add( new SeparatorToolItem() );
+		
+		this.motivosNaoAtendimentoBT = this.toolBar.createButton("Motivos de Não Atendimento",Resources.DEFAULTS.alunoCurriculo16());
+		this.motivosNaoAtendimentoBT.disable();
+		this.toolBar.add( this.motivosNaoAtendimentoBT );
 		
 		this.panel.setTopComponent( this.toolBar );
 	}
@@ -88,7 +97,27 @@ public class DemandasPorAlunoView
 	
 	    bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 	
-	    this.gridPanel = new SimpleGrid< AlunoDemandaDTO >( getColumnList(), this, this.toolBar );
+	    this.gridPanel = new SimpleGrid< AlunoDemandaDTO >( getColumnList(), this, this.toolBar )
+	    {
+			@Override
+			public void afterRender()
+			{
+				super.afterRender();
+				
+				getGrid().getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<AlunoDemandaDTO>() {
+
+					@Override
+				    public void selectionChanged(SelectionChangedEvent<AlunoDemandaDTO> se) {
+				        if(getGrid().getSelectionModel().getSelectedItems().size() == 1) {
+				        	motivosNaoAtendimentoBT.enable();
+				        }
+				        else{
+				        	motivosNaoAtendimentoBT.disable();
+				        }
+				    }
+				});
+			}
+	    };
 	    this.panel.add( this.gridPanel, bld );
 	}
 	
@@ -251,5 +280,11 @@ public class DemandasPorAlunoView
 	public MenuItem getExportXlsxExcelAlunosDemandaBT()
 	{
 		return (MenuItem) this.exportExcelAlunosDemandaBT.getMenu().getItem(1);
+	}
+	
+	@Override
+	public Button getMotivosNaoAtendimentoButton()
+	{
+		return this.motivosNaoAtendimentoBT;
 	}
 }

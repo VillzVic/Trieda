@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.main.client.mvp.view.MotivosNaoAtendimentoView;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -67,6 +68,7 @@ public class DemandasPorAlunoPresenter
 		Button getResetBuscaButton();
 		SimpleGrid< AlunoDemandaDTO > getGrid();
 		Component getComponent();
+		Button getMotivosNaoAtendimentoButton();
 		void setProxy( RpcProxy< PagingLoadResult< AlunoDemandaDTO > > proxy );
 	}
 	
@@ -214,6 +216,19 @@ public class DemandasPorAlunoPresenter
 			public void componentSelected( ButtonEvent ce )
 			{
 				display.getGrid().updateList();
+			}
+		});
+		
+		this.display.getMotivosNaoAtendimentoButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				final AlunoDemandaDTO alunoDemandaDTO = display.getGrid().getSelectionModel().getSelectedItem();
+				
+				Presenter presenter = new MotivosNaoAtendimentoPresenter(new MotivosNaoAtendimentoView(cenarioDTO, alunoDemandaDTO));
+				presenter.go( gTab );
 			}
 		});
 	}

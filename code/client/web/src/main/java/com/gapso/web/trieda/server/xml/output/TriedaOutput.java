@@ -54,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  *           &lt;/complexType>
  *         &lt;/element>
  *         &lt;element name="professoresVirtuais" type="{}GrupoProfessoresVirtuais"/>
+ *         &lt;element name="NaoAtendimentosTatico" type="{}GrupoFolgaAlunoDemanda"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -68,7 +69,8 @@ import javax.xml.bind.annotation.XmlType;
     "warnings",
     "errors",
     "restricoesVioladas",
-    "professoresVirtuais"
+    "professoresVirtuais",
+    "folgaAlunoDemanda"
 })
 @XmlRootElement(name = "TriedaOutput")
 public class TriedaOutput {
@@ -83,6 +85,8 @@ public class TriedaOutput {
     protected TriedaOutput.RestricoesVioladas restricoesVioladas;
     @XmlElement(required = true)
     protected GrupoProfessoresVirtuais professoresVirtuais;
+    @XmlElement(name = "NaoAtendimentosTatico", required = true)
+    protected GrupoFolgaAlunoDemanda folgaAlunoDemanda;
 
     /**
      * Gets the value of the atendimentos property.
@@ -202,6 +206,30 @@ public class TriedaOutput {
      */
     public void setProfessoresVirtuais(GrupoProfessoresVirtuais value) {
         this.professoresVirtuais = value;
+    }
+    
+    /**
+     * Gets the value of the folgaAlunoDemanda property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoProfessoresVirtuais }
+     *     
+     */
+    public GrupoFolgaAlunoDemanda getFolgaAlunoDemanda() {
+        return folgaAlunoDemanda;
+    }
+
+    /**
+     * Sets the value of the folgaAlunoDemanda property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoProfessoresVirtuais }
+     *     
+     */
+    public void setFolgaAlunoDemanda(GrupoFolgaAlunoDemanda value) {
+        this.folgaAlunoDemanda = value;
     }
 
     /**

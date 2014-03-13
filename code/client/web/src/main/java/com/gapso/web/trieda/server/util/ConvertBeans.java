@@ -3372,6 +3372,7 @@ public class ConvertBeans {
 		dto.setIdAluno( domain.getAluno().getId() );
 		dto.setAlunoString( domain.getAluno().getNome() );
 		dto.setAlunoMatricula( domain.getAluno().getMatricula() );
+		dto.setMotivoNaoAtendimento( domain.getMotivoNaoAtendimento() );
 		
 		// Demanda
 		dto.setCampusString( domain.getDemanda().getOferta().getCampus().getCodigo() );

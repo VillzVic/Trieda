@@ -29,6 +29,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -91,6 +92,10 @@ public class AlunoDemanda
 	@Min( 0L )
 	@Max( 100L )
 	private Integer periodo;
+	
+	@Column(name = "ALD_MOTIVO_NAO_ATENDIMENTO")
+	@Type(type="text")
+	private String motivoNaoAtendimento;
 
 	public Long getId()
 	{
@@ -160,6 +165,16 @@ public class AlunoDemanda
 	public void setPeriodo( Integer periodo )
 	{
 		this.periodo = periodo;
+	}
+	
+	public String getMotivoNaoAtendimento()
+	{
+		return this.motivoNaoAtendimento;
+	}
+
+	public void setMotivoNaoAtendimento( String motivoNaoAtendimento )
+	{
+		this.motivoNaoAtendimento = motivoNaoAtendimento;
 	}
 	
 	public void setAtendimentosTatico(Set<AtendimentoTatico> atendimentosTatico){
@@ -566,6 +581,19 @@ public class AlunoDemanda
 		}
 		
 		return demandaKeyToQtdAlunosMap;
+	}
+	
+	public static Map<Integer,AlunoDemanda> buildAlunoDemandaIdToAlunoDemandaMap(InstituicaoEnsino instituicaoEnsino, Cenario cenario) {
+		// [OfertaId-DisciplinaId -> {totalDemandaP1,totalDemandaP2,totalDemanda}]
+		Map<Integer, AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = new HashMap<Integer, AlunoDemanda>();
+		
+		List<AlunoDemanda> alunosDemandas = AlunoDemanda.findAll(instituicaoEnsino,cenario);
+		
+		for (AlunoDemanda ad : alunosDemandas) {
+			alunoDemandaIdToAlunoDemandaMap.put(ad.getId().intValue(), ad);
+		}
+		
+		return alunoDemandaIdToAlunoDemandaMap;
 	}
 	
 	public static int sumDemandaPorPrioridade(InstituicaoEnsino instituicaoEnsino, Campus campus, int prioridade) {

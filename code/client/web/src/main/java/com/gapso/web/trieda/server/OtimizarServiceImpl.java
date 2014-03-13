@@ -1658,6 +1658,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 				solverOutput.salvarAtendimentosOperacional(parametro.getCampi(), parametro.getTurnos());
 				System.out.println("Salvando atendimentos operacional. Passo 4 de 4 FINALIZADO");// TODO:
 			}
+			System.out.println("Atualizando motivos de nao atendimento FINALIZADO");// TODO:
+			solverOutput.generateMotivosNaoAtendimento();
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			ret.get("error").add("Erro ao salvar o resultado na base de dados");

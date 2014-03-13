@@ -251,6 +251,10 @@ public class AlunosDemandaExportExcel
 		// Atendido
 		setCell( row, 11, sheet,
 			this.cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ], alunoAtendido );
+		
+		// Motivo Nao Atendimento
+		setCell( row, 12, sheet,
+			this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], alunoDemanda.getMotivoNaoAtendimento() );
 
 		row++;
 		return row;

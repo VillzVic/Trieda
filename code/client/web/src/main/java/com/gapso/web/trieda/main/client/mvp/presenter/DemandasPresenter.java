@@ -30,7 +30,6 @@ import com.gapso.web.trieda.shared.services.CampiServiceAsync;
 import com.gapso.web.trieda.shared.services.CurriculosServiceAsync;
 import com.gapso.web.trieda.shared.services.CursosServiceAsync;
 import com.gapso.web.trieda.shared.services.DemandasServiceAsync;
-import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.OfertasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.TurnosServiceAsync;
