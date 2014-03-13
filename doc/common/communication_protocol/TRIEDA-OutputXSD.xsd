@@ -214,14 +214,46 @@
       <xs:element name="motivos" type="GrupoMotivos" />
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="ItemAlocacao">
+    <xs:sequence>
+      <xs:element name="turma" type="xs:int" />
+      <xs:element name="disciplinaId" type="xs:int" />
+      <xs:element name="campusId" type="xs:int" />
+      <xs:element name="pratica" type="xs:boolean" />
+      <xs:element name="motivosDeUso" type="GrupoMotivos" />
+      <xs:element name="dicasEliminacao" type="GrupoDicasEliminacao" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemProfessorVirtual">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" />
+      <xs:element name="chMin" type="xs:int" />
+      <xs:element name="chMax" type="xs:int" />
+      <xs:element name="titulacaoId" type="xs:int" />
+      <xs:element minOccurs="0" name="areaTitulacaoId" type="xs:int" />
+      <xs:element name="disciplinas" type="GrupoIdentificador" />
+      <xs:element name="alocacoes" type="GrupoAlocacoes" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemWarning">
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" />
+      <xs:element name="Message" type="xs:string" />
+      <xs:element name="Detail" type="xs:string" />
+      <xs:element name="Location" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemError">
+    <xs:sequence>
+      <xs:element name="Code" type="xs:string" />
+      <xs:element name="Message" type="xs:string" />
+      <xs:element name="Detail" type="xs:string" />
+      <xs:element name="Location" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
   <xs:complexType name="GrupoFolgaAlunoDemanda">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="FolgaAlunoDemanda" type="ItemFolgaAlunoDemanda" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="GrupoMotivos">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="motivo" type="MotivoDeUso" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAlunoDemanda">
@@ -301,25 +333,9 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemWarning">
-    <xs:sequence>
-      <xs:element name="Code" type="xs:string" />
-      <xs:element name="Message" type="xs:string" />
-      <xs:element name="Detail" type="xs:string" />
-      <xs:element name="Location" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="GrupoWarning">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="Warning" type="ItemWarning" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemError">
-    <xs:sequence>
-      <xs:element name="Code" type="xs:string" />
-      <xs:element name="Message" type="xs:string" />
-      <xs:element name="Detail" type="xs:string" />
-      <xs:element name="Location" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoError">
@@ -327,25 +343,19 @@
       <xs:element name="Error" type="ItemError" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoProfessoresVirtuais">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="ProfessorVirtual" type="ItemProfessorVirtual" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ItemProfessorVirtual">
-    <xs:sequence>
-      <xs:element name="id" type="xs:int" />
-      <xs:element name="chMin" type="xs:int" />
-      <xs:element name="chMax" type="xs:int" />
-      <xs:element name="titulacaoId" type="xs:int" />
-      <xs:element minOccurs="0" name="areaTitulacaoId" type="xs:int" />
-      <xs:element name="disciplinas" type="GrupoIdentificador" />
-      <xs:element name="alocacoes" type="GrupoAlocacoes" />
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="GrupoIdentificador">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="id" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoHorarioAula">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="horarioAulaId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GrupoProfessoresVirtuais">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="ProfessorVirtual" type="ItemProfessorVirtual" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAlocacoes">
@@ -353,7 +363,12 @@
       <xs:element name="Alocacao" type="ItemAlocacao" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="MotivoDeUso">
+  <xs:complexType name="GrupoMotivos">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="motivo" type="ItemMotivoDeUso" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ItemMotivoDeUso">
     <xs:sequence>
       <xs:element minOccurs="0" name="profRealId" type="xs:int" />
       <xs:element name="descricoes">
@@ -365,24 +380,21 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ItemAlocacao">
-    <xs:sequence>
-      <xs:element name="turma" type="xs:int" />
-      <xs:element name="disciplinaId" type="xs:int" />
-      <xs:element name="campusId" type="xs:int" />
-      <xs:element name="pratica" type="xs:boolean" />
-      <xs:element name="motivosDeUso" type="GrupoMotivos" />
-      <xs:element name="dicasEliminacao" type="GrupoDicasEliminacao" />
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="GrupoDicasEliminacao">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="dicaEliminacao" type="xs:string" />
+      <xs:element name="dicaEliminacao" type="ItemDicaEliminacao" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="GrupoHorarioAula">
-    <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="horarioAulaId" type="xs:int" />
+  <xs:complexType name="ItemDicaEliminacao">
+    <xs:sequence>
+      <xs:element name="profRealId" type="xs:int" />
+      <xs:element name="alteracoesNecessarias">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="alteracao" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
