@@ -98,6 +98,8 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 		CheckBox getPriorizarCalourosComboBox();
 		Button getSubmitButton();
 		Component getComponent();
+		void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados);
+		void updateQuantidadeTurnosSelecionados(int qtdTurnosSelecionados);
 	}
 
 	private Display display; 
@@ -122,10 +124,9 @@ public class ParametrosPresenter extends AbstractRequisicaoOtimizacaoPresenter {
 			public void onSuccess(ParametroDTO parametroDTO) {
 				if (!parametroDTO.isValid()) {
 					return;
-				}
-				
-				display.getCampiLabel().setHtml(parametroDTO.getCampi().size() + " camp(us)(i) selecionado(s).");
-				display.getTurnosLabel().setHtml(parametroDTO.getTurnos().size() + " turno(s) selecionado(s).");
+				}				
+				display.updateQuantidadeCampiSelecionados(parametroDTO.getCampi().size());
+				display.updateQuantidadeTurnosSelecionados(parametroDTO.getTurnos().size());
 			}
 		});
 	}

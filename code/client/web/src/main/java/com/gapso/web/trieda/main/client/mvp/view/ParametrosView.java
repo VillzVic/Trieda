@@ -394,8 +394,8 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.otimizarPorAluno.setValue(otimizarPor);
 		this.otimizarPorBlocoCurricular.setValue(!otimizarPor);
 		this.funcaoObjetivoCheckBox.setValue(this.parametroDTO.getFuncaoObjetivo());
-		this.campiLabel.setHtml(this.parametroDTO.getCampi().isEmpty() ? "Nenhum campus selecionado" : (this.parametroDTO.getCampi().size() + " campi selecionado(s)"));
-		this.turnosLabel.setHtml(this.parametroDTO.getTurnos().isEmpty() ? "Nenhum turno selecionado" : (this.parametroDTO.getTurnos().size() + " turno(s) selecionado(s)"));
+		updateQuantidadeCampiSelecionados(this.parametroDTO.getCampi().size());
+		updateQuantidadeTurnosSelecionados(this.parametroDTO.getTurnos().size());
 	}
 
 	private CheckBox createCheckBox(
@@ -740,12 +740,24 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 	}
 
 	@Override
-	public void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados) {
-		this.campiLabel.setHtml(qtdCampiSelecionados == 0 ? "Nenhum campus selecionado" : (qtdCampiSelecionados + " campi selecionado(s)"));
+	public void updateQuantidadeCampiSelecionados(int qtdCampiSelecionados) { 
+		if (qtdCampiSelecionados <= 0) {
+			this.campiLabel.setHtml("Nenhum campus selecionado");
+		} else if (qtdCampiSelecionados == 1) {
+			this.campiLabel.setHtml(qtdCampiSelecionados + " campus selecionado");
+		} else {
+			this.campiLabel.setHtml(qtdCampiSelecionados + " campi selecionados");
+		}
 	}
 	
 	@Override
 	public void updateQuantidadeTurnosSelecionados(int qtdTurnosSelecionados) {
-		this.turnosLabel.setHtml(qtdTurnosSelecionados == 0 ? "Nenhum turno selecionado" : (qtdTurnosSelecionados + " turno(s) selecionado(s)"));
+		if (qtdTurnosSelecionados <= 0) {
+			this.turnosLabel.setHtml("Nenhum turno selecionado");
+		} else if (qtdTurnosSelecionados == 1) {
+			this.turnosLabel.setHtml(qtdTurnosSelecionados + " turno selecionado");
+		} else {
+			this.turnosLabel.setHtml(qtdTurnosSelecionados + " turnos selecionados");
+		}
 	}
 }
