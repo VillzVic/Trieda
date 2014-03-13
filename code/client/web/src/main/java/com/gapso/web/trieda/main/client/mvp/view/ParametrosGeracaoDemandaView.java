@@ -98,7 +98,15 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		metodoGeracaoRadioGroup.add(this.criacaoDiretaRadio);
 		metodoFS.add(metodoGeracaoRadioGroup);
 		explicacaoMetodo = new LayoutContainer();
-		explicacaoMetodo.addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut sem sit amet justo fermentum lacinia non vitae massa. Sed enim libero, convallis at mi nec, vehicula venenatis mi. Phasellus interdum, libero eget dapibus sodales, neque quam aliquam tellus, et rutrum nisi nunc suscipit ligula. Fusce semper lectus viverra ornare consectetur. Proin porta tempor purus ac scelerisque. Suspendisse congue lorem quis tellus egestas, quis lobortis diam laoreet. Sed dapibus felis metus.");
+		explicacaoMetodo.addText("As <i>demandas</i> representam o ponto de partida para o <b>Trieda</b> gerar as <i>Grades de Horário</i>" +
+				" de cada aluno, professor e ambiente. Uma <i>demanda</i> representa um par (aluno,disciplina) significando que o <b>Trieda</b>" +
+				" deve tentar gerar uma solução na qual o <i>aluno</i> assistirá às aulas da <i>disciplina</i>. Dessa forma, o método de geração" +
+				" de demanda denominado <b>Evolução dos Alunos na Matriz Curricular</b> irá gerar os pares (aluno,disciplina) com base na evolução" +
+				" de cada aluno em sua respectiva matriz curricular. Em outras palavras, a partir das <i>matrizes curriculares</i> e das" +
+				" <i>disciplinas já cursadas</i> por cada <i>aluno</i>, o <b>Trieda</b> determinará para cada <i>aluno</i>, de forma automática," +
+				" as próximas <i>disciplinas</i> que deveriam ser oferecidas ao <i>aluno</i> em questão. No entanto, esta determinação é controlada" +
+				" por pré-requisitos, co-requisitos, máximo de créditos por aluno entre outros. Vale notar que a utilização deste método pressupõe a" +
+				" existência dos alunos na base de dados do <b>Trieda</b>.");
 		metodoFS.add(explicacaoMetodo);
 		form.add(metodoFS);
 		
@@ -296,7 +304,15 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	@Override
 	public void selecionaEvolucaoAlunos() {
 		explicacaoMetodo.removeAll();
-		explicacaoMetodo.addText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut sem sit amet justo fermentum lacinia non vitae massa. Sed enim libero, convallis at mi nec, vehicula venenatis mi. Phasellus interdum, libero eget dapibus sodales, neque quam aliquam tellus, et rutrum nisi nunc suscipit ligula. Fusce semper lectus viverra ornare consectetur. Proin porta tempor purus ac scelerisque. Suspendisse congue lorem quis tellus egestas, quis lobortis diam laoreet. Sed dapibus felis metus.");
+		explicacaoMetodo.addText("As <i>demandas</i> representam o ponto de partida para o <b>Trieda</b> gerar as <i>Grades de Horário</i>" +
+				" de cada aluno, professor e ambiente. Uma <i>demanda</i> representa um par (aluno,disciplina) significando que o <b>Trieda</b>" +
+				" deve tentar gerar uma solução na qual o <i>aluno</i> assistirá às aulas da <i>disciplina</i>. Dessa forma, o método de geração" +
+				" de demanda denominado <b>Evolução dos Alunos na Matriz Curricular</b> irá gerar os pares (aluno,disciplina) com base na evolução" +
+				" de cada aluno em sua respectiva matriz curricular. Em outras palavras, a partir das <i>matrizes curriculares</i> e das" +
+				" <i>disciplinas já cursadas</i> por cada <i>aluno</i>, o <b>Trieda</b> determinará para cada <i>aluno</i>, de forma automática," +
+				" as próximas <i>disciplinas</i> que deveriam ser oferecidas ao <i>aluno</i> em questão. No entanto, esta determinação é controlada" +
+				" por pré-requisitos, co-requisitos, máximo de créditos por aluno entre outros. Vale notar que a utilização deste método pressupõe a" +
+				" existência dos alunos na base de dados do <b>Trieda</b>.");
 		panel.removeAll();
 		panel.add(campusComboBox);
 		panel.add(turnoComboBox);
@@ -308,7 +324,14 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	@Override
 	public void selecionaCriacaoAutomatica() {
 		explicacaoMetodo.removeAll();
-		explicacaoMetodo.addText("Texto 2");
+		explicacaoMetodo.addText("As <i>demandas</i> representam o ponto de partida para o <b>Trieda</b> gerar as <i>Grades de Horário</i> de cada aluno," +
+				" professor e ambiente. Uma <i>demanda</i> representa um par (aluno,disciplina) significando que o <b>Trieda</b> deve tentar gerar uma" +
+				" solução na qual o <i>aluno</i> assistirá às aulas da <i>disciplina</i>. Dessa forma, o método de geração de demanda denominado" +
+				" <b>Criação Automática de Alunos e Demandas a partir de Quantidades Informadas</b> irá gerar os pares (aluno,disciplina) com base" +
+				" em <i>quantidades de alunos<i> informadas por <i>disciplina</i>. Neste caso, <i>alunos virtuais</i> serão criados automaticamente pelo" +
+				" <b>Trieda</b>. Por exemplo, este método poderia ser utilizado para popular o <b>Trieda</b> com a previsão de alunos entrantes num" +
+				" determinado semestre letivo. Logo, vale notar que a utilização deste método <b>não</b> pressupõe a existência dos alunos na base de" +
+				" dados do <b>Trieda</b>.");
 		panel.removeAll();
 		panel.getButtonBar().hide();
 		panel.add(ofertasDemandasBt);
@@ -318,7 +341,11 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	@Override
 	public void selecionaCriacaoDireta() {
 		explicacaoMetodo.removeAll();
-		explicacaoMetodo.addText("Texto 3");
+		explicacaoMetodo.addText("As <i>demandas</i> representam o ponto de partida para o <b>Trieda</b> gerar as <i>Grades de Horário</i> de cada aluno, professor" +
+				" e ambiente. Uma <i>demanda</i> representa um par (aluno,disciplina) significando que o <b>Trieda</b> deve tentar gerar uma solução na qual o" +
+				" <i>aluno<i> assistirá às aulas da <i>disciplina</i>. Dessa forma, o método de geração de demanda denominado <b>Criação Direta de Alunos e Demandas</b>" +
+				" irá gerar os pares (aluno,disciplina) a partir da importação de uma planilha excel com estes pares. Vale notar que a utilização deste" +
+				" método pressupõe a existência dos alunos na base de dados do <b>Trieda</b>.");
 		panel.removeAll();
 		panel.getButtonBar().hide();
 		panel.add(demandasAlunoBt);
