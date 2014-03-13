@@ -152,7 +152,7 @@ public class ProfessorNomeComboBox extends ComboBox<ProfessorDTO>{
         
         DOM.sinkEvents(twinTrigger.dom, Event.ONCLICK | Event.MOUSEEVENTS);
         DOM.sinkEvents(wrap.dom, Event.FOCUSEVENTS);
-        DOM.sinkEvents(trigger.dom, Event.ONCLICK | Event.MOUSEEVENTS);
+       // DOM.sinkEvents(trigger.dom, Event.ONCLICK | Event.MOUSEEVENTS);
     }
     
     protected void onTwinTriggerClick(ComponentEvent ce) {
