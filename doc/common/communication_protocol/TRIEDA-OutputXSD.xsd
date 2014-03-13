@@ -221,7 +221,7 @@
   </xs:complexType>
   <xs:complexType name="GrupoMotivos">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="motivo" type="xs:string" />
+      <xs:element name="motivo" type="MotivoDeUso" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="GrupoAlunoDemanda">
@@ -351,6 +351,18 @@
   <xs:complexType name="GrupoAlocacoes">
     <xs:sequence>
       <xs:element name="Alocacao" type="ItemAlocacao" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MotivoDeUso">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="profRealId" type="xs:int" />
+      <xs:element name="descricoes">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="descricao" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ItemAlocacao">
