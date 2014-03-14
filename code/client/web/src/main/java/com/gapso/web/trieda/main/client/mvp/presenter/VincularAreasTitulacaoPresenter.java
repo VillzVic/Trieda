@@ -132,7 +132,7 @@ public class VincularAreasTitulacaoPresenter
 				Services.areasTitulacao().vincula(cursoDTO, areaTitulacaoDTOList, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
-						Info.display("Cadastrado", "Área Titulação vinculada com sucesso");
+						Info.display("Cadastrado", "Área de conhecimento vinculada com sucesso");
 					}
 				});
 			}
@@ -146,7 +146,7 @@ public class VincularAreasTitulacaoPresenter
 				Services.areasTitulacao().desvincula(cursoDTO, areaTitulacaoDTOList, new AbstractAsyncCallbackWithDefaultOnFailure<Void>(display) {
 					@Override
 					public void onSuccess(Void result) {
-						Info.display("Removido", "Área Titulação removida com sucesso");
+						Info.display("Removido", "Área de conhecimento removida com sucesso");
 					}
 				});
 			}
