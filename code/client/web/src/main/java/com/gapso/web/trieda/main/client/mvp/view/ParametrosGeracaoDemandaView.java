@@ -48,6 +48,7 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	private Radio criacaoDiretaRadio;
 	private RadioGroup metodoGeracaoRadioGroup;
 	private FormPanel panel;
+	private Button ofertasCursosBt;
 	private Button ofertasDemandasBt;
 	private Button demandasAlunoBt;
 	private LayoutContainer explicacaoMetodo;
@@ -98,6 +99,7 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		metodoGeracaoRadioGroup.add(this.criacaoDiretaRadio);
 		metodoFS.add(metodoGeracaoRadioGroup);
 		explicacaoMetodo = new LayoutContainer();
+		explicacaoMetodo.setStyleAttribute("margin-top", "17px");
 		explicacaoMetodo.addText("As <i>demandas</i> representam o ponto de partida para o <b>Trieda</b> gerar as <i>Grades de Horário</i>" +
 				" de cada aluno, professor e ambiente. Uma <i>demanda</i> representa um par (aluno,disciplina) significando que o <b>Trieda</b>" +
 				" deve tentar gerar uma solução na qual o <i>aluno</i> assistirá às aulas da <i>disciplina</i>. Dessa forma, o método de geração" +
@@ -113,7 +115,7 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		panel = new FormPanel();
 		panel.setBodyBorder(false);
 		panel.setHeaderVisible(false);
-		panel.setStyleAttribute("margin-top", "30px");
+		panel.setStyleAttribute("margin-top", "10px");
 		
 		// CAMPI
 		campusComboBox = new CampusComboBox(cenarioDTO);
@@ -127,8 +129,13 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 		
 		panel.add(criaParametros());
 
+		this.ofertasCursosBt = new Button("Ofertas de Cursos em Campi",AbstractImagePrototype.create(Resources.DEFAULTS.ofertaCurso16()));
+		ofertasCursosBt.setStyleAttribute("margin-top", "15px");
+		ofertasCursosBt.setStyleAttribute("margin-bottom", "45px");
 		this.ofertasDemandasBt = new Button("Ofertas e Demandas",AbstractImagePrototype.create(Resources.DEFAULTS.demanda16()));
+		ofertasDemandasBt.setStyleAttribute("margin-top", "15px");
 		this.demandasAlunoBt =  new Button("Demandas por Aluno",AbstractImagePrototype.create(Resources.DEFAULTS.demandaAluno16()));
+		this.demandasAlunoBt.setStyleAttribute("margin-top", "5px");
 		this.submitBt = new Button("Gerar Demandas",AbstractImagePrototype.create(Resources.DEFAULTS.gerarGrade16()));
 		panel.addButton(this.submitBt);
 		
@@ -219,6 +226,11 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 	@Override
 	public Button getSubmitButton() {
 		return submitBt;
+	}
+	
+	@Override
+	public Button getOfertasCursosButton() {
+		return ofertasCursosBt;
 	}
 	
 	@Override
@@ -334,6 +346,9 @@ public class ParametrosGeracaoDemandaView extends MyComposite
 				" dados do <b>Trieda</b>.");
 		panel.removeAll();
 		panel.getButtonBar().hide();
+		panel.addText("Primeiro, cadastrar as ofertas na tela Ofertas de Cursos em Campi. Uma oferta consiste de Turno + Campus + Curso + Matriz Curricular e da receita correspondente.");
+		panel.add(ofertasCursosBt);
+		panel.addText("Depois, cadastrar a demanda de cada oferta na tela Ofetas e Demandas.");
 		panel.add(ofertasDemandasBt);
 		form.layout();
 	}

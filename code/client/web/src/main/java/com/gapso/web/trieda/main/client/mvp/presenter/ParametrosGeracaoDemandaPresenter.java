@@ -15,6 +15,7 @@ import com.extjs.gxt.ui.client.widget.form.Radio;
 import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.gapso.web.trieda.main.client.mvp.view.DemandasPorAlunoView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandasView;
+import com.gapso.web.trieda.main.client.mvp.view.OfertasView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
@@ -37,6 +38,7 @@ public class ParametrosGeracaoDemandaPresenter
 	public interface Display extends ITriedaI18nGateway {
 		Component getComponent();
 		Button getSubmitButton();
+		Button getOfertasCursosButton();
 		Button getOfertasDemandasButton();
 		Button getDemandasAlunosButton();
 		TurnoComboBox getTurnoComboBox();
@@ -146,6 +148,19 @@ public class ParametrosGeracaoDemandaPresenter
 				{
 					display.selecionaCriacaoDireta();
 				}
+			}
+		});
+		
+		this.display.getOfertasDemandasButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				Presenter presenter = new OfertasPresenter(
+					instituicaoEnsinoDTO, cenarioDTO, new OfertasView( cenarioDTO ) );
+
+				presenter.go( gTab );
 			}
 		});
 		
