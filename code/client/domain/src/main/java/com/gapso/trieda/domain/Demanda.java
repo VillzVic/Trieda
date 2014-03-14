@@ -302,6 +302,7 @@ public class Demanda
         	.setParameter( "cenario", cenario ).getResultList();
     }
 
+	@SuppressWarnings("unchecked")
     public static Demanda findbyOfertaAndDisciplina(
     	InstituicaoEnsino instituicaoEnsino, Oferta oferta, Disciplina disciplina )
     {
@@ -316,7 +317,15 @@ public class Demanda
 		q.setParameter( "disciplina", disciplina );
 		q.setParameter( "oferta", oferta );
 
-        return (Demanda) q.getSingleResult();
+		List<Demanda> result = q.getResultList();
+		if (result.size() > 0)
+		{
+			return result.get(0);
+		}
+		else
+		{
+			return null;
+		}
     }
 
 	@SuppressWarnings("unchecked")

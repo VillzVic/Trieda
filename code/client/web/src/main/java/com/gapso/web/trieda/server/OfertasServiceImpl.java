@@ -154,8 +154,8 @@ public class OfertasServiceImpl
 				novaDisciplina.setDisciplina(curriculoDisciplina.getDisciplina().getCodigo());
 				novaDisciplina.setDisciplinaId(curriculoDisciplina.getDisciplina().getId());
 				
-				Integer demandaReal = AlunoDemanda.findByDemandaReal(getInstituicaoEnsinoUser(), demanda).size();
-				Integer demandaVirtual = AlunoDemanda.findByDemandaVirtual(getInstituicaoEnsinoUser(), demanda).size();
+				Integer demandaReal = demanda == null ? 0 : AlunoDemanda.findByDemandaReal(getInstituicaoEnsinoUser(), demanda).size();
+				Integer demandaVirtual = demanda == null ? 0 : AlunoDemanda.findByDemandaVirtual(getInstituicaoEnsinoUser(), demanda).size();
 				
 				
 				novaDisciplina.setDemandaReal(demandaReal);
