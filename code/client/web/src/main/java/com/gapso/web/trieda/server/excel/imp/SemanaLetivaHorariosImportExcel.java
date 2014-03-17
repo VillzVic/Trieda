@@ -284,26 +284,54 @@ public class SemanaLetivaHorariosImportExcel extends AbstractImportExcel<SemanaL
 
 			for ( Semanas semana : Semanas.values() )
 			{
-				if ( semana == Semanas.SAB
-					|| semana == Semanas.DOM )
+				
+				if(checkWeekDayEnable(semana,bean))
 				{
-					continue;
+					HorarioDisponivelCenario hdc = new HorarioDisponivelCenario();
+	
+					hdc.setDiaSemana( semana );
+					hdc.setHorarioAula( newHorario );
+	
+					hdc.getCampi().addAll( campi );
+					hdc.getUnidades().addAll( unidades );
+					hdc.getSalas().addAll( salas );
+					hdc.getDisciplinas().addAll( disciplinas );
+					hdc.getProfessores().addAll( professores );
+	
+					hdc.persist();
 				}
-
-				HorarioDisponivelCenario hdc = new HorarioDisponivelCenario();
-
-				hdc.setDiaSemana( semana );
-				hdc.setHorarioAula( newHorario );
-
-				hdc.getCampi().addAll( campi );
-				hdc.getUnidades().addAll( unidades );
-				hdc.getSalas().addAll( salas );
-				hdc.getDisciplinas().addAll( disciplinas );
-				hdc.getProfessores().addAll( professores );
-
-				hdc.persist();
 			}
 		}
+	}
+
+	private boolean checkWeekDayEnable(Semanas semana,
+			SemanaLetivaHorariosImportExcelBean bean) {
+		
+		boolean output = false;
+		switch (semana) {
+		case SEG:
+			output = bean.getSegunda();
+			break;
+		case TER:
+			output = bean.getTerca();
+			break;
+		case QUA:
+			output = bean.getQuarta();
+			break;
+		case QUI:
+			output = bean.getQuinta();
+			break;
+		case SEX:
+			output = bean.getSexta();
+			break;
+		case SAB:
+			output = bean.getSabado();
+			break;
+		case DOM:
+			output = bean.getDomingo();
+			break;
+		}
+		return output;
 	}
 
 	private void resolveHeaderColumnNames() {
