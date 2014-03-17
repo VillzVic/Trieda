@@ -33,6 +33,7 @@ public interface TriedaI18nMessages
 	String excelErroSintaticoLinhaVazia( String linhasComErro );
 	String excelErroSintaticoValorInvalido( String linhasComErro, String nomeColuna );
 	String excelErroSintaticoValorNegativo( String linhasComErro, String nomeColuna );
+	String excelErroCasasDecimaisInvalida( String nomeColuna );
 	String falhaOperacao();
 	String loading();
 	String ofertasNaoCadastradas( String campus );

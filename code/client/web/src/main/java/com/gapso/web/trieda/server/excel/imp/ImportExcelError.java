@@ -35,6 +35,7 @@ public enum ImportExcelError
 	CAMPUS_CUSTO_MEDIO_CREDITO_FORMATO_INVALIDO,
 	CAMPUS_CUSTO_MEDIO_CREDITO_VALOR_NEGATIVO,
 	CAMPUS_CUSTO_MEDIO_CREDITO_VAZIO,
+	CAMPUS_CUSTO_MEDIO_CREDITO_NUMERO_DECIMAL_INVALIDO,
 	CAMPUS_ESTADO_VALOR_INVALIDO,
 	CAMPUS_NOME_VAZIO,
 
@@ -258,6 +259,7 @@ public enum ImportExcelError
 			case CAMPUS_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, CampiImportExcel.CODIGO_COLUMN_NAME );
 			case CAMPUS_CUSTO_MEDIO_CREDITO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido( param1, CampiImportExcel.CUSTO_CREDITO_COLUMN_NAME );
 			case CAMPUS_CUSTO_MEDIO_CREDITO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo( param1, CampiImportExcel.CUSTO_CREDITO_COLUMN_NAME );
+			case CAMPUS_CUSTO_MEDIO_CREDITO_NUMERO_DECIMAL_INVALIDO: return i18nMessages.excelErroCasasDecimaisInvalida( CampiImportExcel.CUSTO_CREDITO_COLUMN_NAME );
 			case CAMPUS_CUSTO_MEDIO_CREDITO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, CampiImportExcel.CUSTO_CREDITO_COLUMN_NAME );
 			case CAMPUS_ESTADO_VALOR_INVALIDO: return i18nMessages.excelErroSintaticoValorInvalido( param1, CampiImportExcel.ESTADO_COLUMN_NAME );
 			case CAMPUS_NOME_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia( param1, CampiImportExcel.NOME_COLUMN_NAME );

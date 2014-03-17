@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server.excel.imp;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -73,7 +74,37 @@ public abstract class AbstractImportExcelBean {
 
 		return doubleValue;
 	}
+	
+	protected static Double checkDecimal(String value,ImportExcelError decimalErrorType, List<ImportExcelError> errorsList){
+		Double doubleValue = null;
+		
+		value = TriedaUtil.financialFormatToDoubleFormat(value);
+		
+		boolean contemVirgula = value.contains( "," );
+		boolean contemPonto = value.contains( "." );
+		
+		String split[] = null;
+		
+		if(contemVirgula){
+			split = value.split("\\.");
 
+		} else if(contemPonto){
+			split = value.split("\\.");
+		} else {
+			doubleValue = Double.valueOf(value);
+			return doubleValue;
+		}
+		
+		if(split[1].length() > 2){
+			errorsList.add(decimalErrorType);
+		} else {
+			doubleValue = Double.valueOf(value);
+		}
+		
+		return doubleValue;
+		
+	}
+	
 	protected Integer checkNonNegativeIntegerField(String value,
 			ImportExcelError integerErrorType,
 			ImportExcelError nonNegativeErrorType,

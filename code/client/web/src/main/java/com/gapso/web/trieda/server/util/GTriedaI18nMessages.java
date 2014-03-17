@@ -237,6 +237,16 @@ public class GTriedaI18nMessages
 		return this.languageManager.getFormattedText(
 			"excelErroSintaticoValorNegativo", params );
 	}
+	
+	@Override
+	public String excelErroCasasDecimaisInvalida(
+		String nomeColuna )
+	{
+		String [] params = { nomeColuna };
+
+		return this.languageManager.getFormattedText(
+			"excelErroCasasDecimaisInvalida", params );
+	}
 
 	@Override
 	public String falhaOperacao()

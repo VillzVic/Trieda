@@ -38,6 +38,10 @@ public class CampiImportExcelBean
 			this.custoMedioCredito = checkNonNegativeDoubleField( this.custoMedioCreditoStr,
 				ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_FORMATO_INVALIDO,
 				ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_VALOR_NEGATIVO, erros );
+			
+			this.custoMedioCredito = checkDecimal(this.custoMedioCreditoStr, 
+					ImportExcelError.CAMPUS_CUSTO_MEDIO_CREDITO_NUMERO_DECIMAL_INVALIDO,
+					erros);
 
 			this.estado = checkEnumField( this.estadoStr, Estados.class,
 				ImportExcelError.CAMPUS_ESTADO_VALOR_INVALIDO, erros );
