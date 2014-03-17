@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.CenarioEditarFormView;
@@ -138,6 +139,37 @@ public class CenariosPresenter
 						display.getGrid().unmask();
 						Info.display( "Removido",
 							"Item removido com sucesso!" );
+						CenariosServiceAsync service = Services.cenarios();
+						service.getMasterData( new AsyncCallback<CenarioDTO>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								MessageBox.alert( "ERRO!",
+										"Deu falha na conexão", null );
+							}
+
+							@Override
+							public void onSuccess(CenarioDTO result) {
+								presenter.changeCenario(result);
+								Services.cenarios().setCurrentCenario(result.getId(), new AsyncCallback<Void>(){
+
+									@Override
+									public void onFailure(Throwable caught) {
+										MessageBox.alert( "ERRO!",
+												"Deu falha na conexão", null );
+										
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										MessageBox.alert( "Contexto modificado!",
+												"Contexto alterado para Master Data", null );
+									}
+									
+								});
+							}
+							
+						});
 					}
 				});
 			}
