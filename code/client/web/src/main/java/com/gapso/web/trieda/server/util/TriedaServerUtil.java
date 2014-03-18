@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.server.util;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -7,6 +9,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -119,5 +122,13 @@ public class TriedaServerUtil{
 		minutos = c.get(Calendar.MINUTE);
 		
 		return (hora < 10 ? ("0"+hora) : hora) + ":" + (minutos < 10 ? ("0"+minutos) : minutos);
+	}
+	
+	public static String percentFormat(double value) {
+		Locale pt_BR = new Locale("pt","BR");
+		NumberFormat decimalFormat = DecimalFormat.getPercentInstance(pt_BR);
+		decimalFormat.setMaximumFractionDigits(2);
+		decimalFormat.setMinimumFractionDigits(2);
+		return decimalFormat.format(value);
 	}
 }

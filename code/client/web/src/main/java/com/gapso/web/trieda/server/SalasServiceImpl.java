@@ -51,7 +51,6 @@ import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SalaUtilizadaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
-import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.services.SalasService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -768,18 +767,18 @@ public class SalasServiceImpl
 				TriedaUtil.round(mediaAlunosPorTurmaPorSala, 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " |--Média de Alunos por Turma Alocada por Laboratório: <b>" + numberFormatter.print(
 				TriedaUtil.round(mediaAlunosPorTurmaPorLaboratorio, 2),pt_BR) + "</b>") );
-		atendimento.add( new RelatorioDTO( " Ocupação Média da Capacidade dos Ambientes (%): <b>" + numberFormatter.print(
-				utilizacaoMediaDosAmbientes,pt_BR) + "%</b>") );
-		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade das Salas de Aula: <b>" + numberFormatter.print(
-				utilizacaoMediaDasSalasDeAula,pt_BR) + "%</b>") );
-		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade dos Laboratórios: <b>" + numberFormatter.print(
-				utilizacaoMediaDosLaboratorios,pt_BR) + "%</b>") );
-		atendimento.add( new RelatorioDTO( " Utilização Média dos Horários dos Ambientes (%): <b>" + numberFormatter.print(
-				mediaUtilizacaoHorarioAmbientes,pt_BR) + "%</b>") );
-		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários das Salas de Aula: <b>" + numberFormatter.print(
-				mediaUtilizacaoHorarioSalas,pt_BR) + "%</b>") );
-		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários dos Laboratórios: <b>" + numberFormatter.print(
-				mediaUtilizacaoHorarioLaboratorios,pt_BR) + "%</b>") );
+		atendimento.add( new RelatorioDTO( " Ocupação Média da Capacidade dos Ambientes (%): <b>" + TriedaServerUtil.percentFormat(
+				utilizacaoMediaDosAmbientes) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade das Salas de Aula: <b>" + TriedaServerUtil.percentFormat(
+				utilizacaoMediaDasSalasDeAula) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Ocupação Média da Capacidade dos Laboratórios: <b>" + TriedaServerUtil.percentFormat(
+				utilizacaoMediaDosLaboratorios) + "</b>") );
+		atendimento.add( new RelatorioDTO( " Utilização Média dos Horários dos Ambientes (%): <b>" + TriedaServerUtil.percentFormat(
+				mediaUtilizacaoHorarioAmbientes) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários das Salas de Aula: <b>" + TriedaServerUtil.percentFormat(
+				mediaUtilizacaoHorarioSalas) + "</b>") );
+		atendimento.add( new RelatorioDTO( " |--Utilização Média dos Horários dos Laboratórios: <b>" + TriedaServerUtil.percentFormat(
+				mediaUtilizacaoHorarioLaboratorios) + "</b>") );
 		RelatorioDTO listaAmbientes = new RelatorioDTO( "Lista de Ambientes" );
 		listaAmbientes.setButtonText(listaAmbientes.getText());
 		listaAmbientes.setButtonIndex(2);
