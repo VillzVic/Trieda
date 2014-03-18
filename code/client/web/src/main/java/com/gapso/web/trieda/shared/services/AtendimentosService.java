@@ -11,6 +11,8 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
+import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
@@ -74,4 +76,12 @@ public interface AtendimentosService extends RemoteService {
 	void desconfirmarTurmasComNumAlunos(Integer qtdeAlunos, CenarioDTO cenarioDTO);
 
 	TrioDTO<String, String, String> carregaIndicadores(CenarioDTO cenarioDTO);
+
+	ListLoadResult<ConfirmacaoTurmaDTO> getTurmasProfessoresVirtuaisList(CenarioDTO cenarioDTO, ProfessorVirtualDTO professorVirtualDTO);
+
+	ListLoadResult<MotivoUsoProfessorVirtualDTO> getMotivosUsoProfessorVirtual(	CenarioDTO cenarioDTO, Long disciplinaId, String turma,
+			Boolean credTeorico);
+
+	ListLoadResult<DicaEliminacaoProfessorVirtualDTO> getDicasEliminacaoProfessorVirtual( CenarioDTO cenarioDTO, Long disciplinaId, String turma,
+			Boolean credTeorico);
 }

@@ -32,6 +32,7 @@ import com.gapso.trieda.domain.CursoDescompartilha;
 import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.DeslocamentoUnidade;
+import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.DivisaoCredito;
 import com.gapso.trieda.domain.Equivalencia;
@@ -40,6 +41,7 @@ import com.gapso.trieda.domain.GrupoSala;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.MotivoUsoProfessorVirtual;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
 import com.gapso.trieda.domain.ParametroConfiguracao;
@@ -76,6 +78,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDescompartilhaDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoCampusDTO;
 import com.gapso.web.trieda.shared.dtos.DeslocamentoUnidadeDTO;
+import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DivisaoCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.EquivalenciaDTO;
@@ -84,6 +87,7 @@ import com.gapso.web.trieda.shared.dtos.GrupoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroConfiguracaoDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroDTO;
@@ -2824,6 +2828,12 @@ public class ConvertBeans {
 
 		domain.setAreaTitulacao( AreaTitulacao.find(
 			dto.getAreaTitulacaoId(), instituicaoEnsino ) );
+		
+		domain.setAreaTitulacao( AreaTitulacao.find(
+				dto.getAreaTitulacaoId(), instituicaoEnsino ) );
+		
+		domain.setTipoContrato( TipoContrato.find(
+				dto.getTipoContratoId(), instituicaoEnsino ) );
 
 		return domain;
 	}
@@ -2853,6 +2863,14 @@ public class ConvertBeans {
 		{
 			dto.setAreaTitulacaoId( areaTitulacao.getId() );
 			dto.setAreaTitulacaoString( areaTitulacao.getCodigo() );
+		}
+		
+		TipoContrato tipoContrato = domain.getTipoContrato();
+		
+		if ( tipoContrato != null )
+		{
+			dto.setTipoContratoId( tipoContrato.getId() );
+			dto.setTipoContratoString( tipoContrato.getNome() );
 		}
 
 		InstituicaoEnsino instituicaoEnsino
@@ -3689,6 +3707,30 @@ public class ConvertBeans {
 		dto.setInstituicaoEnsinoId( domain.getInstituicaoEnsino().getId() );
 		dto.setUrlOtimizacao( domain.getUrlOtimizacao() );
 		dto.setNomeOtimizacao( domain.getNomeOtimizacao() );
+		
+		return dto;
+	}
+
+	public static MotivoUsoProfessorVirtualDTO toMotivoUsoProfessorVirtualDTO( MotivoUsoProfessorVirtual domain )
+	{
+		MotivoUsoProfessorVirtualDTO dto = new MotivoUsoProfessorVirtualDTO();
+		
+		dto.setId(domain.getId());
+		dto.setMotivo(domain.getMotivoUso());
+		dto.setProfessorCpf(domain.getProfessor() == null ? null : domain.getProfessor().getCpf());
+		dto.setProfessorString(domain.getProfessor() == null ? null : domain.getProfessor().getNome());
+		
+		return dto;
+	}
+	
+	public static DicaEliminacaoProfessorVirtualDTO toDicaEliminacaoProfessorVirtualDTO( DicaEliminacaoProfessorVirtual domain )
+	{
+		DicaEliminacaoProfessorVirtualDTO dto = new DicaEliminacaoProfessorVirtualDTO();
+		
+		dto.setId(domain.getId());
+		dto.setDica(domain.getDicaEliminacao());
+		dto.setProfessorCpf(domain.getProfessor() == null ? null : domain.getProfessor().getCpf());
+		dto.setProfessorString(domain.getProfessor() == null ? null : domain.getProfessor().getNome());
 		
 		return dto;
 	}

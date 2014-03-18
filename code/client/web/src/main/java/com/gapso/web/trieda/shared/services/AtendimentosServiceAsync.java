@@ -11,6 +11,8 @@ import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
+import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
@@ -43,8 +45,7 @@ public interface AtendimentosServiceAsync {
 	void getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
 			PagingLoadConfig config, AsyncCallback< PagingLoadResult< ProfessorVirtualDTO > > callback );
 
-	void getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
-			AsyncCallback<List<PercentMestresDoutoresDTO>> callback );
+	void getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO,	AsyncCallback<List<PercentMestresDoutoresDTO>> callback );
 
 	void getAtendimentosFaixaCredito( CenarioDTO cenarioDTO, CampusDTO campusDTO,
 			AsyncCallback<List<AtendimentoFaixaCreditoDTO>> callback );
@@ -85,4 +86,13 @@ public interface AtendimentosServiceAsync {
 
 	void carregaIndicadores(CenarioDTO cenarioDTO,
 			AsyncCallback<TrioDTO<String, String, String>> callback);
+
+	void getTurmasProfessoresVirtuaisList(CenarioDTO cenarioDTO, ProfessorVirtualDTO professorVirtualDTO,
+			AsyncCallback<ListLoadResult<ConfirmacaoTurmaDTO>> callback);
+
+	void getMotivosUsoProfessorVirtual(CenarioDTO cenarioDTO, Long disciplinaId, String turma, Boolean credTeorico,
+			AsyncCallback<ListLoadResult<MotivoUsoProfessorVirtualDTO>> callback);
+
+	void getDicasEliminacaoProfessorVirtual( CenarioDTO cenarioDTO, Long disciplinaId, String turma, Boolean credTeorico,
+			AsyncCallback<ListLoadResult<DicaEliminacaoProfessorVirtualDTO>> callback);
 }

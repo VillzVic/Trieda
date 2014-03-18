@@ -118,6 +118,12 @@ public class Professor
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
 	private Set< Usuario > usuario = new HashSet< Usuario >();
+	
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
+	private Set< MotivoUsoProfessorVirtual > motivosUsoProfessorVirtual = new HashSet< MotivoUsoProfessorVirtual >();
+	
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
+	private Set< DicaEliminacaoProfessorVirtual > dicasEliminacaoProfessorVirtual = new HashSet< DicaEliminacaoProfessorVirtual >();
 
 	public String toString()
 	{
@@ -957,5 +963,21 @@ public class Professor
 		}
 
 		return q.getResultList();
+	}
+
+	public Set< MotivoUsoProfessorVirtual > getMotivosUsoProfessorVirtual() {
+		return motivosUsoProfessorVirtual;
+	}
+
+	public void setMotivosUsoProfessorVirtual(Set< MotivoUsoProfessorVirtual > motivosUsoProfessorVirtual) {
+		this.motivosUsoProfessorVirtual = motivosUsoProfessorVirtual;
+	}
+
+	public Set< DicaEliminacaoProfessorVirtual > getDicasEliminacaoProfessorVirtual() {
+		return dicasEliminacaoProfessorVirtual;
+	}
+
+	public void setDicasEliminacaoProfessorVirtual(	Set< DicaEliminacaoProfessorVirtual > dicasEliminacaoProfessorVirtual) {
+		this.dicasEliminacaoProfessorVirtual = dicasEliminacaoProfessorVirtual;
 	}
 }

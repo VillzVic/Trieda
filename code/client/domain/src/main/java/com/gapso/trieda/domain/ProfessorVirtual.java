@@ -47,6 +47,10 @@ public class ProfessorVirtual
 	@ManyToOne( targetEntity = AreaTitulacao.class )
 	@JoinColumn( name = "ATI_ID" )
 	private AreaTitulacao areaTitulacao;
+	
+	@ManyToOne( targetEntity = TipoContrato.class )
+	@JoinColumn( name = "TCO_ID" )
+	private TipoContrato tipoContrato;
 
 	@Column( name = "PRF_CH_MIN" )
 	@Max( 999L )
@@ -371,5 +375,13 @@ public class ProfessorVirtual
 	public int compareTo( ProfessorVirtual o )
 	{
 		return this.getId().compareTo( o.getId() );
+	}
+
+	public TipoContrato getTipoContrato() {
+		return tipoContrato;
+	}
+
+	public void setTipoContrato(TipoContrato tipoContrato) {
+		this.tipoContrato = tipoContrato;
 	}
 }

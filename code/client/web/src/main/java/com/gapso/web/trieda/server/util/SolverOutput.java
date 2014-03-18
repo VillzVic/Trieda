@@ -14,10 +14,12 @@ import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.MotivoUsoProfessorVirtual;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
@@ -26,7 +28,9 @@ import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
+import com.gapso.web.trieda.server.xml.output.GrupoAlocacoes;
 import com.gapso.web.trieda.server.xml.output.GrupoHorarioAula;
+import com.gapso.web.trieda.server.xml.output.ItemAlocacao;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoCampus;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoDiaSemana;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoHorarioAula;
@@ -35,7 +39,9 @@ import com.gapso.web.trieda.server.xml.output.ItemAtendimentoSala;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTatico;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoTurno;
 import com.gapso.web.trieda.server.xml.output.ItemAtendimentoUnidade;
+import com.gapso.web.trieda.server.xml.output.ItemDicaEliminacao;
 import com.gapso.web.trieda.server.xml.output.ItemFolgaAlunoDemanda;
+import com.gapso.web.trieda.server.xml.output.ItemMotivoDeUso;
 import com.gapso.web.trieda.server.xml.output.ItemProfessorVirtual;
 import com.gapso.web.trieda.server.xml.output.TriedaOutput;
 
@@ -76,9 +82,12 @@ public class SolverOutput
 			if (alunoDemanda != null)
 			{
 				String motivoString = "";
-				for (String motivo : motivosNaoAtendimento.getMotivos().getMotivo())
+				for (ItemMotivoDeUso itemMotivo : motivosNaoAtendimento.getMotivos().getMotivo())
 				{
-					motivoString += motivo + "\n";
+					for (String motivo : itemMotivo.getDescricoes().getDescricao())
+					{
+						motivoString += motivo + "\n";
+					}
 				}
 				alunoDemanda.setMotivoNaoAtendimento(motivoString);
 			}
@@ -193,6 +202,7 @@ public class SolverOutput
 		
 		// [ProfessorVirtualId -> ProfessorVirtual]
 		Map<Long,ProfessorVirtual> professorVirtualIdToProfessorVirtualMap = new HashMap<Long,ProfessorVirtual>();
+		Map<Long, GrupoAlocacoes> professorVirtualIdMapEliminacoesMotivosUsoPar = new HashMap<Long, GrupoAlocacoes>();
 		for (ItemProfessorVirtual itemProfessorVirtual : this.triedaOutput.getProfessoresVirtuais().getProfessorVirtual()) {
 			Long id = Long.valueOf(-itemProfessorVirtual.getId());
 			if (!professorVirtualIdToProfessorVirtualMap.containsKey(id)) {
@@ -212,12 +222,15 @@ public class SolverOutput
 	
 				pv.persist();
 				
+				professorVirtualIdMapEliminacoesMotivosUsoPar.put(id, itemProfessorVirtual.getAlocacoes());
+				
 				professorVirtualIdToProfessorVirtualMap.put(id,pv);
 			}
 		}
 		
 		// [AlunoDemandaId -> AlunoDemanda]
 		Map<Long,AlunoDemanda> alunoDemandaIdToAlunoDemandaMap = createAlunoDemandasMap(turnosSelecionados);
+		Set<String> aulaKey = new HashSet<String>();
 		
 		List<ItemAtendimentoCampus> itemAtendimentoCampusList = this.triedaOutput.getAtendimentos().getAtendimentoCampus();
 		// para cada campi
@@ -298,6 +311,54 @@ public class SolverOutput
 									
 									Set<AlunoDemanda> listAlunoDemanda = atendimentoAlunoDemandaAssoc(itemAtendimentoOferta,alunosDemandaOperacional,atendimentoOperacional,alunoDemandaIdToAlunoDemandaMap);
 									atendimentoOperacional.getAlunosDemanda().addAll(listAlunoDemanda);
+									
+									if (itemAtendimentoHorarioAula.isVirtual())
+									{
+										if (professorVirtualIdMapEliminacoesMotivosUsoPar.get(Long.valueOf(-itemAtendimentoHorarioAula.getProfessorId())) != null)
+										{
+											GrupoAlocacoes alocacoes = professorVirtualIdMapEliminacoesMotivosUsoPar.get(Long.valueOf(-itemAtendimentoHorarioAula.getProfessorId()));
+											for (ItemAlocacao itemAlocacao : alocacoes.getAlocacao())
+											{
+												String alocacaoKey = turma + "-" + (disciplinaSubstituta == null ? disciplina.getId().intValue() : disciplinaSubstituta.getId().intValue())
+														+ "-" + oferta.getCampus().getId().intValue() + "-" + !creditoTeorico;
+												String itemAlocacaoKey = itemAlocacao.getTurma() + "-" + itemAlocacao.getDisciplinaId() + "-" + itemAlocacao.getCampusId() + "-"
+														+ itemAlocacao.getPratica();
+												
+												if (alocacaoKey.equals(itemAlocacaoKey) && !aulaKey.contains(alocacaoKey))
+												{
+													for (ItemDicaEliminacao dicas : itemAlocacao.getDicasEliminacao().getDicaEliminacao())
+													{
+														DicaEliminacaoProfessorVirtual newDica = new DicaEliminacaoProfessorVirtual();
+														newDica.setProfessor(professorIdToProfessorMap.get(dicas.getProfRealId()));
+														String dicaString = "";
+														for (String dica : dicas.getAlteracoesNecessarias().getAlteracao())
+														{
+															dicaString += dica + "\n";
+														}
+														newDica.setDicaEliminacao(dicaString);
+														atendimentoOperacional.getDicasEliminacaoProfessorVirtual().add(newDica);
+													}
+													
+													for (ItemMotivoDeUso motivos : itemAlocacao.getMotivosDeUso().getMotivo())
+													{
+														MotivoUsoProfessorVirtual newMotivo = new MotivoUsoProfessorVirtual();
+														Long profId = Long.valueOf(motivos.getProfRealId());
+														newMotivo.setProfessor(professorIdToProfessorMap.get(profId));
+														String motivoString = "";
+														for (String motivo : motivos.getDescricoes().getDescricao())
+														{
+															motivoString += motivo + "\n";
+														}
+														newMotivo.setMotivoUso(motivoString);
+														atendimentoOperacional.getMotivoUsoProfessorVirtual().add(newMotivo);
+													}
+													aulaKey.add(alocacaoKey);
+												}
+											}
+										}
+									}
+										
+										
 									
 									this.atendimentosOperacional.add(atendimentoOperacional);
 								}

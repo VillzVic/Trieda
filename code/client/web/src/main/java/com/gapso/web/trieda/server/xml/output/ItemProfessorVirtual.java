@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="titulacaoId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="areaTitulacaoId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="disciplinas" type="{}GrupoIdentificador"/>
+ *         &lt;element name="alocacoes" type="{}GrupoAlocacoes"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -45,7 +46,8 @@ import javax.xml.bind.annotation.XmlType;
     "chMax",
     "titulacaoId",
     "areaTitulacaoId",
-    "disciplinas"
+    "disciplinas",
+    "alocacoes"
 })
 public class ItemProfessorVirtual {
 
@@ -56,6 +58,8 @@ public class ItemProfessorVirtual {
     protected Integer areaTitulacaoId;
     @XmlElement(required = true)
     protected GrupoIdentificador disciplinas;
+    @XmlElement(required = true)
+    protected GrupoAlocacoes alocacoes;
 
     /**
      * Gets the value of the id property.
@@ -167,6 +171,30 @@ public class ItemProfessorVirtual {
      */
     public void setDisciplinas(GrupoIdentificador value) {
         this.disciplinas = value;
+    }
+    
+    /**
+     * Gets the value of the alocacoes property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link GrupoAlocacoes }
+     *     
+     */
+    public GrupoAlocacoes getAlocacoes() {
+        return alocacoes;
+    }
+
+    /**
+     * Sets the value of the alocacoes property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link GrupoAlocacoes }
+     *     
+     */
+    public void setAlocacoes(GrupoAlocacoes value) {
+        this.alocacoes = value;
     }
 
 }

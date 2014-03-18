@@ -20,6 +20,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
@@ -98,6 +99,18 @@ public class AtendimentoOperacional
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE},
 		mappedBy = "atendimentosOperacional")
 	private Set<AlunoDemanda> alunosDemanda = new HashSet<AlunoDemanda>();
+	
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="ATENDIMENTO_OPERACIONAL_MOTIVOS_USO",
+	joinColumns=@JoinColumn(name="ATP_ID"),
+	inverseJoinColumns=@JoinColumn(name="MOT_PRV_ID"))
+	private Set<MotivoUsoProfessorVirtual> motivosUsoProfessorVirtual = new HashSet<MotivoUsoProfessorVirtual>();
+	
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="ATENDIMENTO_OPERACIONAL_DICAS_ELIMINACAO",
+	joinColumns=@JoinColumn(name="ATP_ID"),
+	inverseJoinColumns=@JoinColumn(name="DIC_PRV_ID"))
+	private Set<DicaEliminacaoProfessorVirtual> dicasEliminacaoProfessorVirtual = new HashSet<DicaEliminacaoProfessorVirtual>();
 
 	@Column( name = "ATP_CREDITOTEOTICO" )
 	private Boolean creditoTeorico;
@@ -514,6 +527,25 @@ public class AtendimentoOperacional
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.cenario = :cenario ");
 
+		q.setParameter( "campus", campus );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllBy(
+		Campus campus, Cenario cenario, ProfessorVirtual professorVirtual, InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			" AND o.professorVirtual = :professorVirtual " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario ");
+
+		q.setParameter( "professorVirtual", professorVirtual );
 		q.setParameter( "campus", campus );
 		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
@@ -2023,5 +2055,28 @@ public class AtendimentoOperacional
 		result.addAll(q2.getResultList());
 		
 		return result;
+	}
+
+	public Set<MotivoUsoProfessorVirtual> getMotivoUsoProfessorVirtual() {
+		return motivosUsoProfessorVirtual;
+	}
+
+	public void setMotivoUsoProfessorVirtual(Set<MotivoUsoProfessorVirtual> motivosUsoProfessorVirtual) {
+		this.motivosUsoProfessorVirtual = motivosUsoProfessorVirtual;
+	}
+
+	public Set<DicaEliminacaoProfessorVirtual> getDicasEliminacaoProfessorVirtual() {
+		return dicasEliminacaoProfessorVirtual;
+	}
+
+	public void setDicasEliminacaoProfessorVirtual(Set<DicaEliminacaoProfessorVirtual> dicasEliminacaoProfessorVirtual) {
+		this.dicasEliminacaoProfessorVirtual = dicasEliminacaoProfessorVirtual;
+	}
+
+	public static List<MotivoUsoProfessorVirtual> findMotivosUsoProfessorVirtual(
+		InstituicaoEnsino instituicaoEnsinoUser, Cenario cenario2,
+		Long disciplinaId, Integer turma2, Boolean credTeorico) 
+	{
+		return null;
 	}
 }

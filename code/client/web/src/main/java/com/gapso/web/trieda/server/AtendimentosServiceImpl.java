@@ -34,10 +34,12 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
+import com.gapso.trieda.domain.MotivoUsoProfessorVirtual;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
@@ -59,6 +61,8 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
@@ -2356,6 +2360,136 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	@Override
+	public ListLoadResult< ConfirmacaoTurmaDTO > getTurmasProfessoresVirtuaisList( CenarioDTO cenarioDTO, ProfessorVirtualDTO professorVirtualDTO ) 
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		ProfessorVirtual professorVirtual = ProfessorVirtual.find(professorVirtualDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<Campus> campusList = Campus.findByCenario(getInstituicaoEnsinoUser(), cenario);
+		
+		Map<String, TriedaPar<Set<String>, ConfirmacaoTurmaDTO>> turmaMapParOfertasConfirmacao = new HashMap<String, TriedaPar<Set<String>, ConfirmacaoTurmaDTO>>();
+		Map<String, Map<Semanas, Set<HorarioAula>>> turmaMapSemanaMapHorarios = new HashMap<String, Map<Semanas, Set<HorarioAula>>>();
+		Map<String, Set<String>> turmaMapSalaCodigo = new HashMap<String, Set<String>>();
+		
+		for (Campus campus : campusList)
+		{
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (!ehTatico)
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, professorVirtual, getInstituicaoEnsinoUser());
+				
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getTurma() + "-" + atendimento.getCreditoTeorico();
+					if (turmaMapSalaCodigo.get(key) == null)
+					{
+						Set<String> newSalas = new HashSet<String>();
+						newSalas.add(atendimento.getSala().getCodigo());
+						turmaMapSalaCodigo.put(key, newSalas);
+					}
+					else
+					{
+						turmaMapSalaCodigo.get(key).add(atendimento.getSala().getCodigo());
+					}
+					if (turmaMapSemanaMapHorarios.get(key) == null)
+					{
+						Map<Semanas, Set<HorarioAula>> newSemanaMapHorarios = new HashMap<Semanas, Set<HorarioAula>>();
+						Set<HorarioAula> newHorarios = new HashSet<HorarioAula>();
+						newHorarios.add(atendimento.getHorarioDisponivelCenario().getHorarioAula());
+						newSemanaMapHorarios.put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), newHorarios);
+						turmaMapSemanaMapHorarios.put(key, newSemanaMapHorarios);
+					}
+					else
+					{
+						if (turmaMapSemanaMapHorarios.get(key).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()) == null)
+						{
+							Set<HorarioAula> newHorarios = new HashSet<HorarioAula>();
+							newHorarios.add(atendimento.getHorarioDisponivelCenario().getHorarioAula());
+							turmaMapSemanaMapHorarios.get(key).put(atendimento.getHorarioDisponivelCenario().getDiaSemana(), newHorarios);
+						}
+						else
+						{
+							turmaMapSemanaMapHorarios.get(key).get(atendimento.getHorarioDisponivelCenario().getDiaSemana()).add(atendimento.getHorarioDisponivelCenario().getHorarioAula());
+						}
+					}
+					if (turmaMapParOfertasConfirmacao.get(key) == null)
+					{
+						Set<String> newOferta = new HashSet<String>();
+						newOferta.add(atendimento.getOferta().getId() + "-" + 
+								atendimento.getDisciplina().getCodigo());
+						ConfirmacaoTurmaDTO newConfirmacao = new ConfirmacaoTurmaDTO();
+						newConfirmacao.setConfirmada( atendimento.getConfirmada() );
+						newConfirmacao.setTurma( atendimento.getTurma() );
+						newConfirmacao.setCreditosPratico(atendimento.getCreditoTeorico() ? 0 : 1);
+						newConfirmacao.setCreditosTeorico(atendimento.getCreditoTeorico() ? 1 : 0);
+						newConfirmacao.setDisciplinaId(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getId() : atendimento.getDisciplina().getId());
+						newConfirmacao.setDisciplinaCodigo(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo());
+						newConfirmacao.setDisciplinaNome(atendimento.getDisciplinaSubstituta() != null ?
+								atendimento.getDisciplinaSubstituta().getNome() : atendimento.getDisciplina().getNome());
+						newConfirmacao.setQuantidadeAlunos(atendimento.getQuantidadeAlunos());
+						newConfirmacao.setSalaId(atendimento.getSala().getId());
+						newConfirmacao.setProfessorId(atendimento.getProfessorVirtual() != null ?
+								atendimento.getProfessorVirtual().getId() : atendimento.getProfessor().getId());
+						newConfirmacao.setProfessorString(atendimento.getProfessorVirtual() != null ?
+								atendimento.getProfessorVirtual().getNome() : atendimento.getProfessor().getNome());
+						turmaMapParOfertasConfirmacao.put(key, TriedaPar.create(newOferta, newConfirmacao));
+					}
+					else
+					{
+						if (atendimento.getCreditoTeorico())
+						{
+							turmaMapParOfertasConfirmacao.get(key).getSegundo().setCreditosTeorico(
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().getCreditosTeorico() + 1);
+						}
+						else
+						{
+							turmaMapParOfertasConfirmacao.get(key).getSegundo().setCreditosPratico(
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().getCreditosPratico() + 1);
+						}
+						if (!turmaMapParOfertasConfirmacao.get(key).getPrimeiro().contains(atendimento.getOferta().getId()
+								+ "-" + atendimento.getDisciplina().getCodigo()))
+						{
+							turmaMapParOfertasConfirmacao.get(key).getSegundo().setQuantidadeAlunos(
+									turmaMapParOfertasConfirmacao.get(key).getSegundo().getQuantidadeAlunos() + atendimento.getQuantidadeAlunos());
+							turmaMapParOfertasConfirmacao.get(key).getPrimeiro().add(atendimento.getOferta().getId()
+									+ "-" + atendimento.getDisciplina().getCodigo());
+						}
+					}
+				}
+			}
+		}
+		
+		List<ConfirmacaoTurmaDTO> confirmacoes = new ArrayList<ConfirmacaoTurmaDTO>();
+		for (Entry<String, TriedaPar<Set<String>, ConfirmacaoTurmaDTO>> atendimento : turmaMapParOfertasConfirmacao.entrySet())
+		{
+			atendimento.getValue().getSegundo().setDiasHorarios(
+					escreveDiasEHorarios(turmaMapSemanaMapHorarios.get(atendimento.getKey())));
+			String salasString = "";
+			int numSalas = 0;
+			for (String salaCodigo : turmaMapSalaCodigo.get(atendimento.getKey()))
+			{
+				salasString += salaCodigo;
+				numSalas++;
+				if (numSalas < turmaMapSalaCodigo.get(atendimento.getKey()).size())
+				{
+					salasString += ", ";
+				}
+			}
+			atendimento.getValue().getSegundo().setSalaString(salasString);
+			confirmacoes.add(atendimento.getValue().getSegundo());
+		}
+		
+		BaseListLoadResult< ConfirmacaoTurmaDTO > result
+			= new BaseListLoadResult< ConfirmacaoTurmaDTO >( confirmacoes );
+		
+		return result;
+	}
+	
+	@Override
 	public PagingLoadResult< ConfirmacaoTurmaDTO > getConfirmacaoTurmasList( CenarioDTO cenarioDTO, PagingLoadConfig config ) 
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
@@ -3058,5 +3192,45 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			       "Créditos/professor virtual: " + numberFormatter.print(TriedaUtil.round(creditosPorProfessorVirtual,2),pt_BR) + "<br/>";
 		
 		return TrioDTO.create(leftResult, centerResult, rightResult);
+	}
+	
+	@Override
+	public ListLoadResult<MotivoUsoProfessorVirtualDTO> getMotivosUsoProfessorVirtual(CenarioDTO cenarioDTO, Long disciplinaId, String turma, Boolean credTeorico)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Disciplina disciplina = Disciplina.find(disciplinaId, getInstituicaoEnsinoUser());
+		List<AtendimentoOperacional> atendimentosOperacional = 
+				AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma);
+		
+		List<MotivoUsoProfessorVirtualDTO> result = new ArrayList<MotivoUsoProfessorVirtualDTO>();
+		for (AtendimentoOperacional atendimento : atendimentosOperacional)
+		{
+			for (MotivoUsoProfessorVirtual motivo : atendimento.getMotivoUsoProfessorVirtual())
+			{
+				result.add(ConvertBeans.toMotivoUsoProfessorVirtualDTO(motivo));
+			}
+		}
+		return new BaseListLoadResult< MotivoUsoProfessorVirtualDTO >( result );
+	}
+	
+	@Override
+	public ListLoadResult<DicaEliminacaoProfessorVirtualDTO> getDicasEliminacaoProfessorVirtual(CenarioDTO cenarioDTO, Long disciplinaId, String turma, Boolean credTeorico)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Disciplina disciplina = Disciplina.find(disciplinaId, getInstituicaoEnsinoUser());
+		List<AtendimentoOperacional> atendimentosOperacional = 
+				AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma);
+		
+		List<DicaEliminacaoProfessorVirtualDTO> result = new ArrayList<DicaEliminacaoProfessorVirtualDTO>();
+		for (AtendimentoOperacional atendimento : atendimentosOperacional)
+		{
+			for (DicaEliminacaoProfessorVirtual dica : atendimento.getDicasEliminacaoProfessorVirtual())
+			{
+				result.add(ConvertBeans.toDicaEliminacaoProfessorVirtualDTO(dica));
+			}
+		}
+		return new BaseListLoadResult< DicaEliminacaoProfessorVirtualDTO >( result );
 	}
 }

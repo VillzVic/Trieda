@@ -6,6 +6,8 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -34,6 +36,7 @@ public class ProfessoresVirtuaisView extends MyComposite
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
 	private Button gradeHorariaBT;
+	private Button motivosUsoBT;
 	
 	public ProfessoresVirtuaisView( CenarioDTO cenarioDTO )
 	{
@@ -67,8 +70,14 @@ public class ProfessoresVirtuaisView extends MyComposite
 		gradeHorariaBT = toolBar.createButton(
 				"Grade Horária do Professor",
 				Resources.DEFAULTS.saidaProfessor16() );
+		motivosUsoBT = toolBar.createButton(
+				"Motivos de Uso e Dicas de Eliminação",
+				Resources.DEFAULTS.motivosDicas16() );
+		motivosUsoBT.disable();
+		gradeHorariaBT.disable();
 
 		toolBar.add( gradeHorariaBT );
+		toolBar.add( motivosUsoBT );
 		panel.setTopComponent( toolBar );
 	}
 	
@@ -77,7 +86,29 @@ public class ProfessoresVirtuaisView extends MyComposite
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 	
-		this.gridPanel = new SimpleGrid< ProfessorVirtualDTO >( getColumnList(), this, this.toolBar );
+		this.gridPanel = new SimpleGrid< ProfessorVirtualDTO >( getColumnList(), this, this.toolBar )
+	    {
+			@Override
+			public void afterRender()
+			{
+				super.afterRender();
+				
+				getGrid().getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<ProfessorVirtualDTO>() {
+
+					@Override
+				    public void selectionChanged(SelectionChangedEvent<ProfessorVirtualDTO> se) {
+				        if(getGrid().getSelectionModel().getSelectedItems().size() == 1) {
+				        	motivosUsoBT.enable();
+				        	gradeHorariaBT.enable();
+				        }
+				        else{
+				        	motivosUsoBT.disable();
+				        	gradeHorariaBT.disable();
+				        }
+				    }
+				});
+			}
+	    };
 		this.panel.add( this.gridPanel, bld );
 	}
 	
@@ -106,6 +137,8 @@ public class ProfessoresVirtuaisView extends MyComposite
 	
 		list.add( new ColumnConfig( ProfessorVirtualDTO.PROPERTY_TITULACAO_STRING,
 			getI18nConstants().titulacao(), 115 ) );
+		list.add( new ColumnConfig( ProfessorVirtualDTO.PROPERTY_TIPO_CONTRATO_STRING,
+				getI18nConstants().tipoContrato(), 115 ) );
 	
 		return list;
 	}
@@ -144,5 +177,11 @@ public class ProfessoresVirtuaisView extends MyComposite
 	public Button getGradeHorariaButton()
 	{
 		return this.gradeHorariaBT;
+	}
+	
+	@Override
+	public Button getMotivoUsoButton()
+	{
+		return this.motivosUsoBT;
 	}
 }
