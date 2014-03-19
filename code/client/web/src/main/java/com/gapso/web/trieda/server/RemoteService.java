@@ -1,13 +1,9 @@
 package com.gapso.web.trieda.server;
 
-import java.util.Enumeration;
-
-import javax.activation.DataSource;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.servlet.ServletContext;
 
 import org.mortbay.naming.NamingContext;
 import org.springframework.security.core.context.SecurityContext;

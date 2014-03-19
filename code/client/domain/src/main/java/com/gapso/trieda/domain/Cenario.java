@@ -140,6 +140,12 @@ public class Cenario
 
 	@OneToMany( mappedBy = "cenario" )
 	private Set< Curriculo > curriculos = new HashSet< Curriculo >();
+	
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Turma > turmas = new HashSet< Turma >();
+	
+	@OneToMany( mappedBy = "cenario" )
+	private Set< Aula > aulas = new HashSet< Aula >();
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
 	private Set< AtendimentoOperacional > atendimentosOperacionais = new HashSet< AtendimentoOperacional >();
@@ -833,5 +839,21 @@ public class Cenario
 	        e.printStackTrace();
 	    }
 	    return sb.toString();
+	}
+
+	public Set< Turma > getTurmas() {
+		return turmas;
+	}
+
+	public void setTurmas(Set< Turma > turmas) {
+		this.turmas = turmas;
+	}
+
+	public Set< Aula > getAulas() {
+		return aulas;
+	}
+
+	public void setAulas(Set< Aula > aulas) {
+		this.aulas = aulas;
 	}
 }

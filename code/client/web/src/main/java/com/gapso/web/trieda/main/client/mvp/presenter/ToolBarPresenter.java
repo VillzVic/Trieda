@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.gapso.web.trieda.main.client.command.util.CommandFactory;
 import com.gapso.web.trieda.main.client.command.util.CommandSelectionListener;
+import com.gapso.web.trieda.main.client.mvp.view.AlocacaoManualDisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlterarSenhaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosDisciplinasCursadasView;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
@@ -213,6 +214,7 @@ public class ToolBarPresenter
 		Button getParametrosButton();
 		Button getConsultaRequisicoesOtimizacaoBt();
 		Button getConfirmacaoTurmasButton();
+		Button getAlocacaoManualButton();
 
 		Button getExportarButton();
 		Button getExportarGradesERPButton();
@@ -638,6 +640,19 @@ public class ToolBarPresenter
 				presenter.go( gTab );
 			}
 		});
+		
+		this.toolBar.getAlocacaoManualButton().addSelectionListener(
+				new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new AlocacaoManualDisciplinaFormPresenter(instituicaoEnsinoDTO,
+							cenarioDTO, new AlocacaoManualDisciplinaFormView( cenarioDTO ), gTab );
+
+						presenter.go( gTab );
+				}
+			});
 		
 		this.toolBar.getConfirmacaoTurmasButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()

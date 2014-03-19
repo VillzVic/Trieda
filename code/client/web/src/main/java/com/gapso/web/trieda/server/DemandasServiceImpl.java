@@ -52,6 +52,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.DemandasService;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -1206,6 +1207,18 @@ public class DemandasServiceImpl
 	
 	public ProgressReportWriter getProgressReport(){
 		return progressReport;
+	}
+	
+	@Override
+	public ParDTO<DemandaDTO, DisciplinaDTO> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(resumoMatriculaDTO.getCampusId(), getInstituicaoEnsinoUser());
+		Disciplina disciplina = Disciplina.find(resumoMatriculaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+		
+		Demanda demanda = Demanda.findBy(getInstituicaoEnsinoUser(), cenario, campus, disciplina);
+		
+		return ParDTO.create(ConvertBeans.toDemandaDTO(demanda), ConvertBeans.toDisciplinaDTO(disciplina));
 	}
 
 }

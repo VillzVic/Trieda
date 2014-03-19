@@ -166,6 +166,9 @@ public class Disciplina
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
 	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
+	
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "disciplina" )
+	private Set< Turma > turmas = new HashSet< Turma >();
 
 	@ManyToMany( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 		CascadeType.REFRESH }, mappedBy="disciplinas" )
@@ -1383,5 +1386,13 @@ public class Disciplina
 		q.setParameter( "professor", professor );
 
 		return q.getResultList();
+	}
+
+	public Set< Turma > getTurmas() {
+		return turmas;
+	}
+
+	public void setTurmas(Set< Turma > turmas) {
+		this.turmas = turmas;
 	}
 }

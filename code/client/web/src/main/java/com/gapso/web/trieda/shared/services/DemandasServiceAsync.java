@@ -11,7 +11,9 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -26,4 +28,7 @@ public interface DemandasServiceAsync
 	void getParametroGeracaoDemanda(CenarioDTO cenarioDTO, AsyncCallback<ParametroGeracaoDemandaDTO> callback);
 	void calculaPrioridadesParaDisciplinasNaoCursadasPorAluno(CenarioDTO cenarioDTO,
 			ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO, AsyncCallback<Void> callback);
+	void getDemandaDTO(CenarioDTO cenarioDTO,
+			ResumoMatriculaDTO resumoMatriculaDTO,
+			AsyncCallback<ParDTO<DemandaDTO, DisciplinaDTO>> callback);
 }

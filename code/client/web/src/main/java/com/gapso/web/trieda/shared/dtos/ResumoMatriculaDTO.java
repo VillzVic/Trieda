@@ -8,6 +8,7 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	
 	// Propriedades
 	public static final String PROPERTY_CAMPUS_STRING = "campusString";
+	public static final String PROPERTY_CAMPUS_ID = "campusId";
 	public static final String PROPERTY_ALUNO_MATRICULA = "alunoMatricula";
 	public static final String PROPERTY_CREDITO_DEMANDA_P1 = "credDemandaP1";
 	public static final String PROPERTY_CREDITO_ATENDIDOS_P1 = "credAtendidosP1";
@@ -20,6 +21,7 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	public static final String PROPERTY_CREDITO_EXCESSO_P2 = "credExcessoP2";
 
 	public static final String PROPERTY_CODIGO_DISCIPLINA = "codDisciplina";
+	public static final String PROPERTY_DISCIPLINA_ID = "disciplinaId";
 	public static final String PROPERTY_DISCIPLINA_ATENDIDOS_SOMA = "disAtendidosSoma";
 	public static final String PROPERTY_DISCIPLINA_DEMANDA_NAO_ATENDIDA = "disDemandaNaoAtendida"; 
 	
@@ -34,6 +36,14 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 
 	public String getCampusString() {
 		return get(PROPERTY_CAMPUS_STRING);
+	}
+	
+	public void setCampusId(Long value) {
+		set(PROPERTY_CAMPUS_ID, value);
+	}
+
+	public Long getCampusId() {
+		return get(PROPERTY_CAMPUS_ID);
 	}
 	
 	public void setAlunoMatricula(String value)	{
@@ -116,6 +126,14 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 		return get(PROPERTY_CREDITO_EXCESSO_P2);
 	}
 	
+	public void setDisciplinaId(Long value) {
+		set(PROPERTY_DISCIPLINA_ID, value);
+	}
+	
+	public Long getDisciplinaId(){
+		return get(PROPERTY_DISCIPLINA_ID);
+	}
+	
 	public void setCodDisciplina(String value) {
 		set(PROPERTY_CODIGO_DISCIPLINA, value);
 	}
@@ -142,11 +160,19 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	
 	@Override
 	public int compareTo(ResumoMatriculaDTO o) {
+		if ( getAlunoMatricula() == null)
+		{
+			return getCodDisciplina().compareTo(o.getCodDisciplina());
+		}
 		return getAlunoMatricula().compareTo(o.getAlunoMatricula());
 	}
 
 	@Override
 	public String getNaturalKey() {
+		if ( getAlunoMatricula() == null)
+		{
+			return getCodDisciplina();
+		}
 		return getAlunoMatricula();
 	}
 

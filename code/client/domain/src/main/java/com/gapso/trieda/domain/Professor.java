@@ -124,6 +124,9 @@ public class Professor
 	
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "professor" )
 	private Set< DicaEliminacaoProfessorVirtual > dicasEliminacaoProfessorVirtual = new HashSet< DicaEliminacaoProfessorVirtual >();
+	
+    @OneToMany( mappedBy="professor" )
+    private Set< Aula > aulas =  new HashSet< Aula >();
 
 	public String toString()
 	{
@@ -979,5 +982,13 @@ public class Professor
 
 	public void setDicasEliminacaoProfessorVirtual(	Set< DicaEliminacaoProfessorVirtual > dicasEliminacaoProfessorVirtual) {
 		this.dicasEliminacaoProfessorVirtual = dicasEliminacaoProfessorVirtual;
+	}
+
+	public Set< Aula > getAulas() {
+		return aulas;
+	}
+
+	public void setAulas(Set< Aula > aulas) {
+		this.aulas = aulas;
 	}
 }

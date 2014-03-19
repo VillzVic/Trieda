@@ -70,6 +70,9 @@ public class HorarioDisponivelCenario
 
     @OneToMany( mappedBy="HorarioDisponivelCenario" )
     private Set< AtendimentoOperacional > atendimentosOperacionais =  new HashSet< AtendimentoOperacional >();
+    
+    @OneToMany( mappedBy="horarioDisponivelCenario" )
+    private Set< Aula > aulas =  new HashSet< Aula >();
 
 	@PersistenceContext
     transient EntityManager entityManager;
@@ -407,7 +410,7 @@ public class HorarioDisponivelCenario
 			return false;
 		}
 
-		// Compara o horário de início da aula
+		// Compara o horï¿½rio de inï¿½cio da aula
 		if ( this.getHorarioAula() == null )
 		{
 			if ( other.getHorarioAula() != null )
@@ -421,5 +424,13 @@ public class HorarioDisponivelCenario
 		}
 
 		return true;
+	}
+
+	public Set< Aula > getAulas() {
+		return aulas;
+	}
+
+	public void setAulas(Set< Aula > aulas) {
+		this.aulas = aulas;
 	}
 }

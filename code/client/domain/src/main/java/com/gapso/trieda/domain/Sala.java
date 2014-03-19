@@ -144,6 +144,9 @@ public class Sala
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "sala")
     private Set< Fixacao > fixacoes = new HashSet< Fixacao >();
     
+    @OneToMany( mappedBy="sala" )
+    private Set< Aula > aulas =  new HashSet< Aula >();
+    
     public boolean isLaboratorio() {
     	return getTipoSala().getAceitaAulaPratica();
     }
@@ -1048,5 +1051,13 @@ public class Sala
        	q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
        	return (Integer) q.getSingleResult();
+	}
+
+	public Set< Aula > getAulas() {
+		return aulas;
+	}
+
+	public void setAulas(Set< Aula > aulas) {
+		this.aulas = aulas;
 	}
 }

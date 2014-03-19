@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
@@ -198,6 +199,119 @@ public class AlunosDemandaServiceImpl
 
 			alunoDemanda.remove();
 		}
+	}
+	
+	@Override
+	public ListLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList( CenarioDTO cenarioDTO, String codigo, 
+			CampusDTO campusDTO, CursoDTO cursoDTO ) {
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List< ResumoMatriculaDTO > list = new ArrayList< ResumoMatriculaDTO >();
+
+		Campus campus = null;
+		
+		if ( campusDTO != null )
+		{
+			campus = ConvertBeans.toCampus(campusDTO);
+		}
+		
+		Curso curso = null;
+		
+		if ( cursoDTO != null )
+		{
+			curso = ConvertBeans.toCurso(cursoDTO);
+		}
+		
+		// Conta numero total de matriculas (para ser mostrado na paginacao)
+		int numTotalDisciplinas = AlunoDemanda.countDisciplinas( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso );
+		
+		// Busca as disciplinas de acordo com a paginacao (offset e limit). No caso da exportacao excel o limite é o total de disciplinas.
+		List< AlunoDemanda > busca = AlunoDemanda.findDisciplinasBy( getInstituicaoEnsinoUser(), cenario, codigo, campus, curso,
+				0, numTotalDisciplinas, null );
+		
+		// Se a busca tiver um tamanho muito grande (por exemplo no caso da exportacao do excel). 
+		// Faz um pre-processamento antes para melhorar o desempenho.
+		Map< Long, List<AlunoDemanda> > demandaMapAluno = new HashMap< Long, List<AlunoDemanda> >();
+		if (numTotalDisciplinas > 100) 
+		{
+			List< AlunoDemanda > totalAlunoDemanda = AlunoDemanda.findAll( getInstituicaoEnsinoUser() );			
+			for (AlunoDemanda alunoDemanda : totalAlunoDemanda) {
+				long key = 31*(31 + alunoDemanda.getDemanda().getDisciplina().getId()) + alunoDemanda.getDemanda().getOferta().getCampus().getId();
+				if (demandaMapAluno.get(key) == null) {
+					List<AlunoDemanda> demandas = new ArrayList<AlunoDemanda>();
+					demandas.add(alunoDemanda);
+					demandaMapAluno.put(key, demandas);
+				}
+				else {
+					demandaMapAluno.get(key).add(alunoDemanda);
+				}
+			}
+		}
+		
+		List < AlunoDemanda > alunoDemanda;
+		for ( AlunoDemanda disciplinas : busca )
+		{
+			if (numTotalDisciplinas > 100)
+			{
+				alunoDemanda = demandaMapAluno.get( 31*(31 + disciplinas.getDemanda().getDisciplina().getId()) +
+						disciplinas.getDemanda().getOferta().getCampus().getId() );
+			}
+			else 
+			{
+				alunoDemanda = AlunoDemanda.findByDisciplinaAndCampus(getInstituicaoEnsinoUser(),
+						disciplinas.getDemanda().getDisciplina(), disciplinas.getDemanda().getOferta().getCampus());
+			}
+			ResumoMatriculaDTO resumoMatricula = new ResumoMatriculaDTO();
+			resumoMatricula.setCampusString(disciplinas.getDemanda().getOferta().getCampus().getNome());
+			resumoMatricula.setCampusId(disciplinas.getDemanda().getOferta().getCampus().getId());
+			resumoMatricula.setCodDisciplina(disciplinas.getDemanda().getDisciplina().getCodigo());
+			resumoMatricula.setDisciplinaId(disciplinas.getDemanda().getDisciplina().getId());
+			int disDemandaP1 = 0;
+			int disAtendidosP1 = 0;
+			int disNaoAtendidosP1 = 0;
+			int disAtendidosP2 = 0;
+			int disAtendidosSoma = 0;
+			int disDemandaNaoAtendida = 0;
+			for ( AlunoDemanda demandas : alunoDemanda )
+			{
+				if ( demandas.getDemanda().ocupaGrade() )
+				{
+					if ( demandas.getPrioridade() == 1 )
+					{
+						disDemandaP1++;
+						if ( demandas.getAtendido() )
+						{
+							disAtendidosP1++;
+						}
+						else
+						{
+							disNaoAtendidosP1++;
+						}
+					}
+					else
+					{
+						if ( demandas.getAtendido() )
+						{
+							disAtendidosP2++;
+						}
+					}
+				}
+				disAtendidosSoma = disAtendidosP1 + disAtendidosP2;
+				disDemandaNaoAtendida = disDemandaP1 - (disAtendidosSoma);
+			}
+			resumoMatricula.setDisDemandaP1(disDemandaP1);
+			resumoMatricula.setDisAtendidosP1(disAtendidosP1);
+			resumoMatricula.setDisNaoAtendidosP1(disNaoAtendidosP1);
+			resumoMatricula.setDisAtendidosP2(disAtendidosP2);
+			resumoMatricula.setDisAtendidosSoma(disAtendidosSoma);
+			resumoMatricula.setDisDemandaNaoAtendida(disDemandaNaoAtendida);
+			
+			list.add(resumoMatricula);
+		}
+		BaseListLoadResult< ResumoMatriculaDTO > result
+		= new BaseListLoadResult< ResumoMatriculaDTO >( list );
+
+		return result;
 	}
 	
 	@Override

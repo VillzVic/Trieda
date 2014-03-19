@@ -35,4 +35,5 @@ public interface AlunosDemandaService
 	List<AtendimentoFaixaDemandaDTO> getResumoFaixaDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas );
 	PagingLoadResult<AlunoDemandaDTO> getAlunosDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, CursoDTO cursoDTO,
 			CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config);
+	ListLoadResult<ResumoMatriculaDTO> getResumoAtendimentosDisciplinaList(	CenarioDTO cenarioDTO, String codigo, CampusDTO campusDTO, CursoDTO cursoDTO );
 }

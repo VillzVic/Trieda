@@ -729,4 +729,42 @@ public class Demanda
 
 		return existeDemanda;
 	}
+
+	public static Demanda findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus, Disciplina disciplina)
+	{
+		String queryCampus = "";
+		if ( campus != null )
+		{
+			queryCampus	= " o.oferta.campus = :campus AND ";
+		}
+
+		String queryDisciplina = "";
+		if ( disciplina != null )
+		{
+			queryDisciplina	= " o.disciplina = :disciplina AND ";
+		}
+
+        String queryString = queryCampus + queryDisciplina;
+
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM Demanda o " +
+        	" WHERE o.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.oferta.campus.cenario = :cenario " +
+        	" AND " + queryString + " 1=1 " );
+
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
+
+        if ( campus != null )
+        {
+        	q.setParameter( "campus", campus );
+        }
+
+        if ( disciplina != null )
+        {
+        	q.setParameter( "disciplina", disciplina );
+        }
+
+        return (Demanda) q.getSingleResult();
+	}
 }

@@ -71,6 +71,9 @@ public class ProfessorVirtual
 
 	@OneToMany( mappedBy = "professorVirtual", cascade = CascadeType.ALL )
 	private Set< AtendimentoOperacional > atendimentos = new HashSet< AtendimentoOperacional >();
+	
+    @OneToMany( mappedBy="professorVirtual" )
+    private Set< Aula > aulas =  new HashSet< Aula >();
 
 	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
@@ -383,5 +386,13 @@ public class ProfessorVirtual
 
 	public void setTipoContrato(TipoContrato tipoContrato) {
 		this.tipoContrato = tipoContrato;
+	}
+
+	public Set< Aula > getAulas() {
+		return aulas;
+	}
+
+	public void setAulas(Set< Aula > aulas) {
+		this.aulas = aulas;
 	}
 }

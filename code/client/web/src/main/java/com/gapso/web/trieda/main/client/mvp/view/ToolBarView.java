@@ -137,6 +137,7 @@ public class ToolBarView
 	private Button fixacoesListBt;
 	private Button parametrosBt;
 	private Button consultaRequisicoesOtimizacaoBt;
+	private Button alocacaoManualBt;
 	private Button confirmacaoTurmasBt;
 	
 	TabItem ofertasDemandasTabItem;
@@ -657,11 +658,18 @@ public class ToolBarView
 		consultaRequisicoesOtimizacaoBt = createButton("Requisições<br />de Otimização","Requisições de Otimização",Resources.DEFAULTS.gerarGradeConsultaRequisicao24());
 		planejamentoToolBar.add(consultaRequisicoesOtimizacaoBt);
 		
-		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
-		planejamentoToolBar.add(fixacoesListBt);
+		planejamentoToolBar.add( new SeparatorToolItem() );
 		
 		confirmacaoTurmasBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.confirmacao24());
 		planejamentoToolBar.add(confirmacaoTurmasBt);
+		
+		planejamentoToolBar.add( new SeparatorToolItem() );
+		
+		alocacaoManualBt = createButton("Alocação<br />Manual","Alocação Manual",Resources.DEFAULTS.confirmacao24());
+		planejamentoToolBar.add(alocacaoManualBt);
+		
+		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
+		planejamentoToolBar.add(fixacoesListBt);
 	}
 
 	private Button createButton( String text, String toolTip, ImageResource icon )
@@ -881,11 +889,16 @@ public class ToolBarView
 	}
 	
 	@Override
+	public Button getAlocacaoManualButton()
+	{
+		return alocacaoManualBt;
+	}
+	
+	@Override
 	public Button getConfirmacaoTurmasButton()
 	{
 		return confirmacaoTurmasBt;
 	}
-
 
 	@Override
 	public Button getCompatibilidadesListDisciplinasButton()
