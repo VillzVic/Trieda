@@ -165,6 +165,7 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		this.minAlunosParaAbrirTurmaValueNumberField.setValue(this.parametroDTO.getMinAlunosParaAbrirTurmaValue());
 		Button dificuldadeButton = createButton("Configurar níveis de dificuldade");
 		dificuldadeButton.disable();
+		dificuldadeButton.hide();
 		this.maximizarNotaAvaliacaoCorpoDocenteButton = createButton("Configurar cursos");
 		this.maximizarNotaAvaliacaoCorpoDocenteButton.disable();
 		this.minimizarCustoDocenteCursosButton = createButton("Configurar cursos");
@@ -192,9 +193,12 @@ public class ParametrosView extends MyComposite implements ParametrosPresenter.D
 		nivelDificuldadeDiscContainer.add(this.nivelDificuldadeDisciplinaCheckBox);
 		nivelDificuldadeDiscContainer.add(dificuldadeButton);
 		
+		
 		LayoutContainer compatibilidadeDiscContainer = new LayoutContainer(new ColumnLayout());
 		compatibilidadeDiscContainer.add(this.compatibilidadeDisciplinasMesmoDiaCheckBox);
-		compatibilidadeDiscContainer.add(createButton("Configurar compatibilidades"));
+		Button configurarCompatibilidades = createButton("Configurar compatibilidades");
+		configurarCompatibilidades.hide();
+		compatibilidadeDiscContainer.add(configurarCompatibilidades);
 		
 		LayoutContainer regrasGenDivCredContainer = new LayoutContainer(new ColumnLayout());
 		regrasGenDivCredContainer.add(this.regrasGenericasDivisaoCreditoCheckBox);
