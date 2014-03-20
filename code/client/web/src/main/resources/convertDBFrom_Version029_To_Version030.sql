@@ -53,8 +53,8 @@ BEGIN
         `cen_id` bigint(20),
         `version` INTEGER,
         PRIMARY KEY (`tur_id`),
-        KEY `FK_MOT_PRF_ID` (`dis_id`),
-        KEY `FK_MOT_PRF_ID` (`cen_id`),
+        KEY `FK_TUR_DIS_ID` (`dis_id`),
+        KEY `FK_TUR_CEN_ID` (`cen_id`),
         CONSTRAINT `FK_TUR_DIS_ID` FOREIGN KEY (`dis_id`) REFERENCES `disciplinas` (`dis_id`),
         CONSTRAINT `FK_TUR_CEN_ID` FOREIGN KEY (`cen_id`) REFERENCES `cenarios` (`cen_id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -63,12 +63,12 @@ BEGIN
         `tur_id` bigint(20) NOT NULL,
         `aln_id` bigint(20) NOT NULL,
         KEY `FK_TUR_ALD_TUR_ID` (`tur_id`),
-        KEY `FK_TUR_ALD_ALD_ID` (`ald_id`),
+        KEY `FK_TUR_ALD_ALD_ID` (`aln_id`),
         CONSTRAINT `FK_TUR_ALD_TUR_ID` FOREIGN KEY (`tur_id`) REFERENCES `turnos` (`tur_id`),
         CONSTRAINT `FK_TUR_ALD_ALD_ID` FOREIGN KEY (`aln_id`) REFERENCES `alunos` (`aln_id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
       DROP TABLE IF EXISTS `trieda`.`aulas`;
-      CREATE TABLE  `trieda`.`turmas` (
+      CREATE TABLE  `trieda`.`aulas` (
         `aul_id` bigint(20) NOT NULL AUTO_INCREMENT,
         `aul_qtd_cred_teoricos` INTEGER NOT NULL,
         `aul_qtd_cred_praticos` INTEGER NOT NULL,
