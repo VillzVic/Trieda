@@ -25,6 +25,7 @@ public abstract class RelatorioVisaoPresenter implements Presenter{
 		GradeHorariaVisao getGrid();
 		Component getComponent();
 		Button getSubmitBuscaButton();
+		Button getExportExcelButton();
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
 		RelatorioVisaoFiltro getFiltro();

@@ -110,11 +110,16 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		});
 
 		requestAtendimentos();
+		checkRegistered();
+		
 	}
 	
 	public abstract RelatorioVisaoFiltro getFiltro();
 	public abstract void setFiltro(RelatorioVisaoFiltro filtro);
 	public abstract void requestAtendimentos();
+	public abstract void checkRegistered();
+	
+	
 	
 	protected AsyncCallback<AtendimentoServiceRelatorioResponse> getCallback(){
 		return (AsyncCallback<AtendimentoServiceRelatorioResponse>) new AsyncCallback<AtendimentoServiceRelatorioResponse>(){
@@ -449,6 +454,10 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 			set("domingo", value);
 		}
 		
+	}
+	
+	public void setEmptyText(String text){
+		this.grid.getView().setEmptyText(text);
 	}
 	
 	public TurnoDTO getTurnoDTO(){

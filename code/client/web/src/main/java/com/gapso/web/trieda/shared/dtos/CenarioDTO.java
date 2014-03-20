@@ -22,6 +22,10 @@ public class CenarioDTO extends AbstractDTO<String> implements
 	public static final String PROPERTY_ATUALIZADO_USUARIO_STRING = "atualizadoUsuarioString";
 	public static final String PROPERTY_ATUALIZADO_USUARIO_DATE = "atualizadoUsuarioDate";
 	public static final String PROPERTY_COMENTARIO = "comentario";
+	public static final String PROPERTY_ALUNOS = "alunos";
+	public static final String PROPERTY_PROFESSORES = "professores";
+	public static final String PROPERTY_SALAS = "salas";
+	public static final String PROPERTY_OTIMIZADO= "otimizado";
 
 	public CenarioDTO()
 	{
@@ -139,6 +143,30 @@ public class CenarioDTO extends AbstractDTO<String> implements
 	public String getComentario() {
 		return get(PROPERTY_COMENTARIO);
 	}
+	
+	public void setAlunos(boolean value) {
+		set(PROPERTY_ALUNOS, value);
+	}
+	
+	public boolean hasAlunos(){
+		return get(PROPERTY_ALUNOS);
+	}
+	
+	public void setProfessores(boolean value){
+		set(PROPERTY_PROFESSORES, value);
+	}
+	
+	public boolean hasProfessores(){
+		return get(PROPERTY_PROFESSORES);
+	}
+	
+	public void setSalas(boolean value){
+		set(PROPERTY_SALAS, value);
+	}
+	
+	public boolean hasSalas(){
+		return get(PROPERTY_SALAS);
+	}
 
 	@Override
 	public String getNaturalKey() {
@@ -149,4 +177,16 @@ public class CenarioDTO extends AbstractDTO<String> implements
 	public int compareTo(CenarioDTO o) {
 		return getNome().compareTo(o.getNome());
 	}
+	
+	public void setOptimized(boolean value){
+		set(PROPERTY_OTIMIZADO, value);
+	}
+
+	public boolean isOptimized() {
+		return get(PROPERTY_OTIMIZADO);
+	}
+	
+	
+
+	
 }

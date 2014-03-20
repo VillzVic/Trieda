@@ -108,6 +108,40 @@ public class Cenario
 		targetEntity = InstituicaoEnsino.class )
 	@JoinColumn( name = "INS_ID" )
 	private InstituicaoEnsino instituicaoEnsino;
+	
+	public boolean hasAlunos(){
+		return !this.alunos.isEmpty();
+	}
+	
+	public boolean hasProfessores(){
+		return !this.professores.isEmpty();
+	}
+	
+	public boolean hasSalas(){
+		boolean output = false;
+		
+		for(Campus campus : this.campi){
+			for(Unidade unidade : campus.getUnidades() ){
+				if(!unidade.getSalas().isEmpty()){
+					output = true;
+				}
+			}
+		}
+		
+		return output;
+	}
+	
+	public boolean isOptimized(){
+		boolean output = false;
+		for(Campus campus : this.campi){
+			if(campus.isOtimizado(this.instituicaoEnsino)){
+				output = true;
+			}
+		}
+		
+		return output;
+		
+	}
 
 	public InstituicaoEnsino getInstituicaoEnsino()
 	{
@@ -152,6 +186,9 @@ public class Cenario
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
 	private Set< AtendimentoTatico > atendimentosTaticos = new HashSet< AtendimentoTatico >();
+	
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
+	private Set< Aluno > alunos = new HashSet< Aluno >();
 	
 	@OneToMany(mappedBy = "cenario")
 	private Set<RequisicaoOtimizacao> requisicoesDeOtimizacao = new HashSet<RequisicaoOtimizacao>();
@@ -776,6 +813,14 @@ public class Cenario
 		Set< Parametro > parametros )
 	{
 		this.parametros = parametros;
+	}
+	
+	public Set<Aluno> getAlunos() {
+		return alunos;
+	}
+
+	public void setAlunos(Set<Aluno> alunos) {
+		this.alunos = alunos;
 	}
 
 	@Override

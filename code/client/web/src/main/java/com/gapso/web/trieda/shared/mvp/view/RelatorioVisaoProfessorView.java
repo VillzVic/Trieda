@@ -125,4 +125,23 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		return this.professorVirtualCB;
 	}
 
+	@Override
+	public void disableView() {
+		getProfessorTextField().disable();
+		getCpfTextField().disable();
+		getProfessorVirtualComboBox().disable();
+		getExportXlsExcelButton().disable();
+		getExportXlsxExcelButton().disable();
+		getSubmitBuscaButton().disable();
+		getExportExcelButton().disable();
+		
+	}
+
+	@Override
+	public void checkRegistered() {
+		if(!cenarioDTO.hasProfessores()){
+			disableView();
+		}
+	}
+
 }

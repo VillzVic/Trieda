@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.menu.Menu;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
+import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoAlunoPresenter.Display;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -55,7 +56,10 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 		this.createFilter();
 		this.createTabItem();
 		this.initComponent(this.tabItem);
+		this.checkRegistered();
 	}
+	
+	public abstract void checkRegistered();
 
 	private void createTabItem(){
 		this.tabItem = this.createGTabItem();
@@ -138,6 +142,12 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 		return this.submitBt;
 	}
 
+	
+	@Override
+	public Button getExportExcelButton(){
+		return this.exportExcelBt;
+	}
+	
 	@Override
 	public MenuItem getExportXlsExcelButton(){
 		return (MenuItem) this.exportExcelBt.getMenu().getItem(0);
@@ -152,5 +162,7 @@ public abstract class RelatorioVisaoView extends MyComposite implements Relatori
 	
 	public abstract void setFiltro(RelatorioVisaoFiltro filtro);
 	
+	public abstract void disableView();
+		
 }
 

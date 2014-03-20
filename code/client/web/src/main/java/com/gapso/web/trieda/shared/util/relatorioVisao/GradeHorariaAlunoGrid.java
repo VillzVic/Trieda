@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.shared.util.relatorioVisao;
 
+import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoAlunoPresenter.Display;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -37,6 +38,15 @@ public class GradeHorariaAlunoGrid extends GradeHorariaVisao{
 	@Override
 	public void setFiltro(RelatorioVisaoFiltro filtro){
 		this.filtro = (RelatorioVisaoAlunoFiltro) filtro;
+	}
+	
+	@Override
+	public void checkRegistered() {
+		if(!cenarioDTO.hasAlunos()){
+			this.grid.getView().setEmptyText("Não há alunos cadastrados");
+		} else if(!cenarioDTO.isOptimized()){
+			this.grid.getView().setEmptyText("Cenário não foi otimizado");
+		}
 	}
 
 }

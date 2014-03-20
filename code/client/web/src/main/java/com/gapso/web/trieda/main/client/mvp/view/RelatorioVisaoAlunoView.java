@@ -97,4 +97,23 @@ public class RelatorioVisaoAlunoView extends RelatorioVisaoView implements Relat
 	public AlunosMatriculaComboBox getAlunoMatriculaTextField(){
 		return this.matriculaTF;
 	}
+
+	@Override
+	public void disableView() {
+		getAlunoMatriculaTextField().disable();
+		getAlunoTextField().disable();
+		getExportXlsExcelButton().disable();
+		getExportXlsxExcelButton().disable();
+		getSubmitBuscaButton().disable();
+		getExportExcelButton().disable();
+	}
+	
+	@Override
+	public void checkRegistered() {
+		if(!cenarioDTO.hasAlunos()){
+			disableView();
+		}
+	}
+
+	
 }

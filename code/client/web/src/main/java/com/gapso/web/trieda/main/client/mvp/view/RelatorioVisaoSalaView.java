@@ -86,4 +86,20 @@ public class RelatorioVisaoSalaView	extends RelatorioVisaoView	implements Relato
 		return this.salaTF;
 	}
 
+	@Override
+	public void disableView() {
+		getSalaTextField().disable();
+		getExportXlsExcelButton().disable();
+		getExportXlsxExcelButton().disable();
+		getSubmitBuscaButton().disable();
+		getExportExcelButton().disable();
+	}
+
+	@Override
+	public void checkRegistered() {
+		if(!cenarioDTO.hasSalas()){
+			disableView();
+		}
+	}
+
 }

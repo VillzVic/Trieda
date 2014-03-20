@@ -48,4 +48,14 @@ public class GradeHorariaSalaGrid extends GradeHorariaVisao{
 		this.filtro = (RelatorioVisaoSalaFiltro) filtro;
 	}
 
+	@Override
+	public void checkRegistered() {
+		if(!cenarioDTO.hasSalas()){
+			this.grid.getView().setEmptyText("Não há ambientes cadastrados");
+		} else if(!cenarioDTO.isOptimized()){
+			this.grid.getView().setEmptyText("Cenário não foi otimizado");
+		}
+		
+	}
+
 }

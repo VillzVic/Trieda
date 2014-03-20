@@ -82,5 +82,11 @@ public class GradeHorariaCursoGrid extends GradeHorariaVisao{
 	public void setFiltro(RelatorioVisaoFiltro filtro){
 		this.filtro = (RelatorioVisaoCursoFiltro) filtro;
 	}
+
+	@Override
+	public void checkRegistered() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

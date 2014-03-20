@@ -50,5 +50,14 @@ public class GradeHorariaProfessorGrid extends GradeHorariaVisao{
 	public void setFiltro(RelatorioVisaoFiltro filtro){
 		this.filtro = (RelatorioVisaoProfessorFiltro) filtro;
 	}
+
+	@Override
+	public void checkRegistered() {
+		if(!cenarioDTO.hasProfessores()){
+			this.grid.getView().setEmptyText("Não há professores cadastrados");
+		} else if(!cenarioDTO.isOptimized()){
+			this.grid.getView().setEmptyText("Cenário não foi otimizado");
+		}
+	}
 	
 }

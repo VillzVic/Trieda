@@ -220,4 +220,16 @@ public class RelatorioVisaoCursoView extends RelatorioVisaoView	implements Relat
 		return this.periodoCB;
 	}
 
+	@Override
+	public void checkRegistered() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disableView() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
