@@ -723,7 +723,6 @@ CREATE TABLE `demandas` (
   `version` int(11) DEFAULT NULL,
   `dis_id` bigint(20) NOT NULL,
   `ofe_id` bigint(20) NOT NULL,
-  `dem_quantidade` int(11) NOT NULL,
   PRIMARY KEY (`dem_id`),
   KEY `FK32558FBDEADC7214` (`dis_id`),
   KEY `FK32558FBD7A9BEDF9` (`ofe_id`),
