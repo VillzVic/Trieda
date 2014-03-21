@@ -81,6 +81,7 @@ public class MotivosUsoProfessorVirtualPresenter
 						new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<MotivoUsoProfessorVirtualDTO>>(display.getI18nMessages().falhaOperacao(),display) {
 					@Override
 					public void onSuccess(ListLoadResult<MotivoUsoProfessorVirtualDTO> result) {
+						display.getMotivosStore().removeAll();
 						display.getMotivosStore().add(result.getData());
 						display.getMotivosGrid().getView().refresh(false);
 						display.getMotivosGrid().unmask();
@@ -91,6 +92,7 @@ public class MotivosUsoProfessorVirtualPresenter
 						new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<DicaEliminacaoProfessorVirtualDTO>>(display.getI18nMessages().falhaOperacao(),display) {
 					@Override
 					public void onSuccess(ListLoadResult<DicaEliminacaoProfessorVirtualDTO> result) {
+						display.getDicasStore().removeAll();
 						display.getDicasStore().add(result.getData());
 						display.getDicasGrid().getView().refresh(false);
 						display.getDicasGrid().unmask();

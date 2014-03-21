@@ -329,7 +329,8 @@ public class SolverOutput
 													for (ItemDicaEliminacao dicas : itemAlocacao.getDicasEliminacao().getDicaEliminacao())
 													{
 														DicaEliminacaoProfessorVirtual newDica = new DicaEliminacaoProfessorVirtual();
-														newDica.setProfessor(professorIdToProfessorMap.get(dicas.getProfRealId()));
+														Long profId = Long.valueOf(dicas.getProfRealId());
+														newDica.setProfessor(professorIdToProfessorMap.get(profId));
 														String dicaString = "";
 														for (String dica : dicas.getAlteracoesNecessarias().getAlteracao())
 														{
