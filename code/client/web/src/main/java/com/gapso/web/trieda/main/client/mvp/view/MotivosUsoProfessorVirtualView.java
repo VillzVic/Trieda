@@ -169,14 +169,14 @@ public class MotivosUsoProfessorVirtualView
 		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_CREDITOS_TEORICO, "Teóricos", 60 ) );
 		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_CREDITOS_PRATICO, "Práticos", 60 ) );
 		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_TURMA, "Turma", 50 ) );
-		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_QUANTIDADE_ALUNOS, "Qtd Alunos", 70 ) );
+		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_QUANTIDADE_ALUNOS, "Qtde Alunos", 70 ) );
 		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_SALA_STRING, "Ambientes", 70 ) );
-		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_DIAS_HORARIOS, "Dias e Horarios de Aula", 125 ) );
+		list.add( new ColumnConfig( ConfirmacaoTurmaDTO.PROPERTY_DIAS_HORARIOS, "Dias e Horários de Aula", 125 ) );
 
 		ColumnModel cm = new ColumnModel(list);
 		
 		cm.addHeaderGroup(0, 0 , new HeaderGroupConfig("Disciplina", 1, 2));
-		cm.addHeaderGroup(0, 2, new HeaderGroupConfig("Qtd Créditos", 1, 2));
+		cm.addHeaderGroup(0, 2, new HeaderGroupConfig("Qtde Créditos", 1, 2));
 		cm.addHeaderGroup(0, 4, new HeaderGroupConfig("", 1, 4));
 		
 		return cm;

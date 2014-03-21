@@ -24,6 +24,7 @@ import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
+import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
@@ -82,12 +83,9 @@ public class SolverOutput
 			if (alunoDemanda != null)
 			{
 				String motivoString = "";
-				for (ItemMotivoDeUso itemMotivo : motivosNaoAtendimento.getMotivos().getMotivo())
+				for (String motivo : motivosNaoAtendimento.getMotivos().getMotivo())
 				{
-					for (String motivo : itemMotivo.getDescricoes().getDescricao())
-					{
-						motivoString += motivo + "\n";
-					}
+					motivoString += motivo + "\n";
 				}
 				alunoDemanda.setMotivoNaoAtendimento(motivoString);
 			}
@@ -200,6 +198,13 @@ public class SolverOutput
 			titulacaoIdToTitulacaoMap.put(titulacao.getId(),titulacao);
 		}
 		
+		// [TipoContratoId -> TipoContrato]
+		Map<Long,TipoContrato> tipoContratoIdToTipoContratoMap = new HashMap<Long,TipoContrato>();
+		List<TipoContrato> tiposContrato = TipoContrato.findAll(instituicaoEnsino);
+		for (TipoContrato tipoContrato : tiposContrato) {
+			tipoContratoIdToTipoContratoMap.put(tipoContrato.getId(),tipoContrato);
+		}
+		
 		// [ProfessorVirtualId -> ProfessorVirtual]
 		Map<Long,ProfessorVirtual> professorVirtualIdToProfessorVirtualMap = new HashMap<Long,ProfessorVirtual>();
 		Map<Long, GrupoAlocacoes> professorVirtualIdMapEliminacoesMotivosUsoPar = new HashMap<Long, GrupoAlocacoes>();
@@ -212,6 +217,7 @@ public class SolverOutput
 				pv.setCargaHorariaMin(itemProfessorVirtual.getChMin());
 				pv.setInstituicaoEnsino(this.instituicaoEnsino);
 				pv.setCenario(this.cenario);
+				pv.setTipoContrato(tipoContratoIdToTipoContratoMap.get(itemProfessorVirtual.getContratoId()));
 				pv.setTitulacao(titulacaoIdToTitulacaoMap.get(Long.valueOf(itemProfessorVirtual.getTitulacaoId())));// Titulacao.find(Integer.valueOf(itemProfessorVirtual.getTitulacaoId()).longValue(),this.instituicaoEnsino));
 				for (Integer disciplinaId : itemProfessorVirtual.getDisciplinas().getId()) {
 					Disciplina disciplina = disciplinaIdToDisciplinaMap.get(Long.valueOf(Math.abs(disciplinaId)));//Disciplina.find(Math.abs(disciplinaId.longValue()),this.instituicaoEnsino);

@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="chMax" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="titulacaoId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="areaTitulacaoId" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *         &lt;element name="contratoId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="disciplinas" type="{}GrupoIdentificador"/>
  *         &lt;element name="alocacoes" type="{}GrupoAlocacoes"/>
  *       &lt;/sequence>
@@ -46,6 +47,7 @@ import javax.xml.bind.annotation.XmlType;
     "chMax",
     "titulacaoId",
     "areaTitulacaoId",
+    "contratoId",
     "disciplinas",
     "alocacoes"
 })
@@ -56,6 +58,7 @@ public class ItemProfessorVirtual {
     protected int chMax;
     protected int titulacaoId;
     protected Integer areaTitulacaoId;
+    protected int contratoId;
     @XmlElement(required = true)
     protected GrupoIdentificador disciplinas;
     @XmlElement(required = true)
@@ -147,6 +150,30 @@ public class ItemProfessorVirtual {
      */
     public void setAreaTitulacaoId(Integer value) {
         this.areaTitulacaoId = value;
+    }
+    
+    /**
+     * Gets the value of the contratoId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link int }
+     *     
+     */
+    public int getContratoId() {
+        return contratoId;
+    }
+
+    /**
+     * Sets the value of the contratoId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link int }
+     *     
+     */
+    public void setContratoId(int value) {
+        this.contratoId = value;
     }
 
     /**
