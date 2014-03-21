@@ -16,7 +16,7 @@ public class RelatorioVisaoAlunoPresenter extends RelatorioVisaoPresenter{
 		AlunosComboBox getAlunoTextField();
 		AlunosMatriculaComboBox getAlunoMatriculaTextField();
 	}
-
+	
 	public RelatorioVisaoAlunoPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display)
 	{

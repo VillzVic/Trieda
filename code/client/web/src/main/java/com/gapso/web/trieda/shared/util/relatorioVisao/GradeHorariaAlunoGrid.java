@@ -1,6 +1,5 @@
 package com.gapso.web.trieda.shared.util.relatorioVisao;
 
-import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioVisaoAlunoPresenter.Display;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO.ReportType;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
