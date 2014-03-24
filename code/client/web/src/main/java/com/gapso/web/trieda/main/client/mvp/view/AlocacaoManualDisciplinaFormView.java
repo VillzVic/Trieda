@@ -55,8 +55,8 @@ public class AlocacaoManualDisciplinaFormView
 		this.simpleModal = new SimpleModal( title,
 			Resources.DEFAULTS.alunoCurriculo16() );
 	
-		this.simpleModal.setHeight( 300 );
-		this.simpleModal.setWidth( 600 );
+		this.simpleModal.setHeight( 400 );
+		this.simpleModal.setWidth( 800 );
 		createForm();
 		this.simpleModal.setContent( this.panel );
 	}
@@ -73,7 +73,7 @@ public class AlocacaoManualDisciplinaFormView
 		panel.getHeader().hide();
 		LayoutContainer top = new LayoutContainer();
 		
-		top.addText("Selecione uma lnha da tabela abaixo e acione o botão selecionar:");
+		top.addText("Selecione uma linha da tabela abaixo e acione o botão Selecionar:");
 		top.setStyleAttribute("margin-top", "5px");
 		top.setStyleAttribute("margin-left", "10px");
 		top.setStyleAttribute("font-size", "13px");
