@@ -129,6 +129,7 @@ public class TriedaServerUtil{
 		NumberFormat decimalFormat = DecimalFormat.getPercentInstance(pt_BR);
 		decimalFormat.setMaximumFractionDigits(2);
 		decimalFormat.setMinimumFractionDigits(2);
-		return decimalFormat.format(value);
+		return decimalFormat.format(value/100);
 	}
+	
 }
