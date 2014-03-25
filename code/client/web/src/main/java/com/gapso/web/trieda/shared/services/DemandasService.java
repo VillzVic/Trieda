@@ -11,8 +11,8 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
-import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
@@ -33,5 +33,5 @@ public interface DemandasService extends RemoteService {
 	ParametroGeracaoDemandaDTO getParametroGeracaoDemanda(CenarioDTO cenarioDTO);
 	void calculaPrioridadesParaDisciplinasNaoCursadasPorAluno(CenarioDTO cenarioDTO,
 			ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO);
-	ParDTO<DemandaDTO, DisciplinaDTO> getDemandaDTO(CenarioDTO cenarioDTO,	ResumoMatriculaDTO resumoMatriculaDTO);
+	QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO,	ResumoMatriculaDTO resumoMatriculaDTO);
 }

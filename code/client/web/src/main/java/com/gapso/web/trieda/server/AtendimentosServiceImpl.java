@@ -61,6 +61,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
+import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
@@ -74,6 +75,7 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
 import com.gapso.web.trieda.shared.util.TriedaUtil;
@@ -3232,5 +3234,141 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			}
 		}
 		return new BaseListLoadResult< DicaEliminacaoProfessorVirtualDTO >( result );
+	}
+	
+	@Override
+	public ListLoadResult<TurmaStatusDTO> getTurmasStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO)
+	{
+		Demanda demanda = ConvertBeans.toDemanda(demandaDTO);
+		
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+		List<AtendimentoTatico> atendimentosTatico = new ArrayList<AtendimentoTatico>();
+		List<AtendimentoOperacional> atendimentosOperacional = new ArrayList<AtendimentoOperacional>();
+		Map<String, TurmaStatusDTO> turmaKeyMapTurmaStatusDTO = new HashMap<String, TurmaStatusDTO>();
+		Map<String, Set<Oferta>> turmaKeyMapOferta = new HashMap<String, Set<Oferta>>();
+		List<TurmaStatusDTO> result = new ArrayList<TurmaStatusDTO>();
+		
+		if (ehTatico)
+		{
+			atendimentosTatico = AtendimentoTatico.findAllByDemanda(getInstituicaoEnsinoUser(), demanda);
+			
+			for (AtendimentoTatico atendimento : atendimentosTatico)
+			{
+				String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+						+ "-" + atendimento.getTurma();
+				
+				if (turmaKeyMapTurmaStatusDTO.get(key) == null)
+				{
+					TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
+					
+					newTurmaStatus.setNome("T"+atendimento.getTurma());
+					if (atendimento.getDisciplinaSubstituta() == null)
+						newTurmaStatus.setQtdeDiscSelecionada(atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setQtdeTotal(atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setStatus(atendimento.getConfirmada() ? "Planejada" : "Não Planejada");
+					newTurmaStatus.setDisciplinaId(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getId()
+							: atendimento.getDisciplina().getId());
+					newTurmaStatus.setTurma(atendimento.getTurma());
+					
+					turmaKeyMapTurmaStatusDTO.put(key, newTurmaStatus);
+					Set<Oferta> ofertas = new HashSet<Oferta>();
+					ofertas.add(atendimento.getOferta());
+					turmaKeyMapOferta.put(key, ofertas);
+				}
+				if(!turmaKeyMapOferta.get(key).contains(atendimento.getOferta()))
+				{
+					TurmaStatusDTO newTurmaStatus = turmaKeyMapTurmaStatusDTO.get(key);
+					if (atendimento.getDisciplinaSubstituta() == null)
+						newTurmaStatus.setQtdeDiscSelecionada(newTurmaStatus.getQtdeDiscSelecionada() + atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setQtdeTotal(newTurmaStatus.getQtdeTotal() + atendimento.getQuantidadeAlunos());
+					
+					turmaKeyMapTurmaStatusDTO.put(key, newTurmaStatus);
+					
+					turmaKeyMapOferta.get(key).add(atendimento.getOferta());
+				}
+			}
+		}
+		else
+		{
+			atendimentosOperacional = AtendimentoOperacional.findAllByDemanda(getInstituicaoEnsinoUser(), demanda);
+			
+			for (AtendimentoOperacional atendimento : atendimentosOperacional)
+			{
+				String key = (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+						+ "-" + atendimento.getTurma();
+				
+				if (turmaKeyMapTurmaStatusDTO.get(key) == null)
+				{
+					TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
+					
+					newTurmaStatus.setNome("T"+atendimento.getTurma());
+					if (atendimento.getDisciplinaSubstituta() == null)
+						newTurmaStatus.setQtdeDiscSelecionada(atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setQtdeTotal(atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setStatus(atendimento.getConfirmada() ? "Planejada" : "Não Planejada");
+					newTurmaStatus.setDisciplinaId(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getId()
+							: atendimento.getDisciplina().getId());
+					newTurmaStatus.setTurma(atendimento.getTurma());
+					
+					turmaKeyMapTurmaStatusDTO.put(key, newTurmaStatus);
+					Set<Oferta> ofertas = new HashSet<Oferta>();
+					ofertas.add(atendimento.getOferta());
+					turmaKeyMapOferta.put(key, ofertas);
+				}
+				if(!turmaKeyMapOferta.get(key).contains(atendimento.getOferta()))
+				{
+					TurmaStatusDTO newTurmaStatus = turmaKeyMapTurmaStatusDTO.get(key);
+					if (atendimento.getDisciplinaSubstituta() == null)
+						newTurmaStatus.setQtdeDiscSelecionada(newTurmaStatus.getQtdeDiscSelecionada() + atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setQtdeTotal(newTurmaStatus.getQtdeTotal() + atendimento.getQuantidadeAlunos());
+					
+					turmaKeyMapTurmaStatusDTO.put(key, newTurmaStatus);
+					
+					turmaKeyMapOferta.get(key).add(atendimento.getOferta());
+				}
+			}
+		}
+		
+		result.addAll(turmaKeyMapTurmaStatusDTO.values());
+		return new BaseListLoadResult< TurmaStatusDTO >( result );
+	}
+	
+	@Override
+	@Transactional
+	public void deleteTurmasStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, List<TurmaStatusDTO> turmasStatusDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Demanda demanda = ConvertBeans.toDemanda(demandaDTO);
+		
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		for (TurmaStatusDTO turma : turmasStatusDTO)
+		{
+			Disciplina disciplina = Disciplina.find(turma.getDisciplinaId(), getInstituicaoEnsinoUser());
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma.getTurma());
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+					{
+						alunoDemanda.setAtendido(false);
+					}
+					atendimento.remove();				
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma.getTurma());
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+					{
+						alunoDemanda.setAtendido(false);
+					}
+					atendimento.remove();
+				}
+			}
+		}
 	}
 }

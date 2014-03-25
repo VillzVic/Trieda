@@ -52,6 +52,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
+import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.DemandasService;
@@ -1210,7 +1211,7 @@ public class DemandasServiceImpl
 	}
 	
 	@Override
-	public ParDTO<DemandaDTO, DisciplinaDTO> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO)
+	public QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(resumoMatriculaDTO.getCampusId(), getInstituicaoEnsinoUser());
@@ -1218,7 +1219,31 @@ public class DemandasServiceImpl
 		
 		Demanda demanda = Demanda.findBy(getInstituicaoEnsinoUser(), cenario, campus, disciplina);
 		
-		return ParDTO.create(ConvertBeans.toDemandaDTO(demanda), ConvertBeans.toDisciplinaDTO(disciplina));
+		Set<AlunoDemanda> alunos = demanda.getAlunosDemanda();
+		int planejada  = 0;
+		int naoPlanejada = 0;
+		for(AlunoDemanda aluno : alunos)
+		{
+			boolean confirmada = false;
+			List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(aluno, getInstituicaoEnsinoUser());
+			for (AtendimentoOperacional atendimento : atendimentos)
+			{
+				if (atendimento.getConfirmada() == true)
+				{
+					confirmada = true;
+				}
+			}
+			if (confirmada)
+			{
+				planejada++;
+			}
+			else
+			{
+				naoPlanejada++;
+			}
+		}
+		
+		return QuartetoDTO.create(ConvertBeans.toDemandaDTO(demanda), ConvertBeans.toDisciplinaDTO(disciplina), planejada, naoPlanejada);
 	}
 
 }

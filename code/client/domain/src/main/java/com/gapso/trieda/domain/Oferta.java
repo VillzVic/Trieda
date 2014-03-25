@@ -609,6 +609,17 @@ public class Oferta
 		return this.getCampus().getNome().compareTo( o.getCampus().getNome() );
 	}
 	
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+
+		result = ( prime * result + ( ( this.id == null ) ? 0 : this.id.hashCode() ) );
+		result = ( prime * result + ( ( this.version == null ) ? 0 : this.version.hashCode() ) );
+
+		return result;
+	}
+	
 	static public Map<Long,Oferta> getOfertasMap(Collection<Oferta> ofertas) {
 		Map<Long,Oferta> map = new HashMap<Long, Oferta>();
 		for (Oferta oferta : ofertas) {

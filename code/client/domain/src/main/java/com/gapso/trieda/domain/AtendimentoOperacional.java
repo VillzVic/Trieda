@@ -100,13 +100,13 @@ public class AtendimentoOperacional
 		mappedBy = "atendimentosOperacional")
 	private Set<AlunoDemanda> alunosDemanda = new HashSet<AlunoDemanda>();
 	
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@JoinTable(name="ATENDIMENTO_OPERACIONAL_MOTIVOS_USO",
 	joinColumns=@JoinColumn(name="ATP_ID"),
 	inverseJoinColumns=@JoinColumn(name="MOT_PRV_ID"))
 	private Set<MotivoUsoProfessorVirtual> motivosUsoProfessorVirtual = new HashSet<MotivoUsoProfessorVirtual>();
 	
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@JoinTable(name="ATENDIMENTO_OPERACIONAL_DICAS_ELIMINACAO",
 	joinColumns=@JoinColumn(name="ATP_ID"),
 	inverseJoinColumns=@JoinColumn(name="DIC_PRV_ID"))
@@ -497,6 +497,21 @@ public class AtendimentoOperacional
 			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
 		q.setParameter( "curso", curso );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllBy(
+		AlunoDemanda alunoDemanda, InstituicaoEnsino instituicaoEnsino )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o, IN (o.alunosDemanda) ald " +
+			" WHERE ald = :alunoDemanda " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " );
+
+		q.setParameter( "alunoDemanda", alunoDemanda );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();

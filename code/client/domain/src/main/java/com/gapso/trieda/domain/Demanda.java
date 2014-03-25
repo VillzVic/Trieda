@@ -79,7 +79,7 @@ public class Demanda
 
 	public Integer getQuantidade()
 	{
-        return this.alunosDemanda.size();
+        return this.getAlunosDemanda().size();
     }
 	
 	/**
@@ -766,5 +766,13 @@ public class Demanda
         }
 
         return (Demanda) q.getSingleResult();
+	}
+
+	public Set< AlunoDemanda > getAlunosDemanda() {
+		return alunosDemanda;
+	}
+
+	public void setAlunosDemanda(Set< AlunoDemanda > alunosDemanda) {
+		this.alunosDemanda = alunosDemanda;
 	}
 }

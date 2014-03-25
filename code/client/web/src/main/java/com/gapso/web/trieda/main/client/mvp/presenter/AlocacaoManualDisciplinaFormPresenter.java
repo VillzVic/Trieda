@@ -8,14 +8,13 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.mvp.view.AlocacaoManualView;
-import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.ParDTO;
+import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -66,11 +65,11 @@ public class AlocacaoManualDisciplinaFormPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Services.demandas().getDemandaDTO(cenarioDTO, display.getGrid().getSelectionModel().getSelectedItem(),  new AbstractAsyncCallbackWithDefaultOnFailure<ParDTO<DemandaDTO, DisciplinaDTO>>(display.getI18nMessages().falhaOperacao(),display) {
+				Services.demandas().getDemandaDTO(cenarioDTO, display.getGrid().getSelectionModel().getSelectedItem(),  new AbstractAsyncCallbackWithDefaultOnFailure<QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer>>(display.getI18nMessages().falhaOperacao(),display) {
 					@Override
-					public void onSuccess(ParDTO<DemandaDTO, DisciplinaDTO> result) {
+					public void onSuccess(QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer> result) {
 						Presenter presenter = new AlocacaoManualPresenter( instituicaoEnsinoDTO, cenarioDTO,
-							new AlocacaoManualView( cenarioDTO, result.getPrimeiro(), result.getSegundo() ) );
+							new AlocacaoManualView( cenarioDTO, result, display.getGrid().getSelectionModel().getSelectedItem() ) );
 
 						presenter.go( gTab );
 						display.getSimpleModal().hide();
