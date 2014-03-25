@@ -180,6 +180,9 @@ public class Cenario
 	
 	@OneToMany( mappedBy = "cenario" )
 	private Set< Aula > aulas = new HashSet< Aula >();
+	
+	@OneToMany( mappedBy = "cenario" )
+	private Set< SemanaLetiva > semanasLetivas = new HashSet< SemanaLetiva >();
 
 	@OneToMany( cascade = CascadeType.ALL, mappedBy = "cenario" )
 	private Set< AtendimentoOperacional > atendimentosOperacionais = new HashSet< AtendimentoOperacional >();
@@ -901,4 +904,14 @@ public class Cenario
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;
 	}
+
+	public Set<SemanaLetiva> getSemanasLetivas() {
+		return semanasLetivas;
+	}
+
+	public void setSemanasLetivas(Set<SemanaLetiva> semanasLetivas) {
+		this.semanasLetivas = semanasLetivas;
+	}
+	
+	
 }

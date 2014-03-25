@@ -38,6 +38,7 @@ import com.gapso.trieda.domain.DeslocamentoCampus;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.Equivalencia;
 import com.gapso.trieda.domain.HorarioAula;
+import com.gapso.trieda.domain.HorarioDisponivelCenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Parametro;
@@ -48,6 +49,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Usuario;
+import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.Grafo;
 import com.gapso.web.trieda.server.util.Profundidade;
@@ -119,9 +121,13 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			// realiza verificações
 			
-			System.out.print("Checando disciplinas sem curriculos");long start = System.currentTimeMillis(); // TODO: retirar
-			checkDisciplinasSemCurriculo(parametro,warnings);
+			System.out.print("Checando semanas letivas");long start = System.currentTimeMillis(); // TODO: retirar
+			checkSemanasLetivas(parametro,warnings);
 			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
+			System.out.print("Checando disciplinas sem curriculos"); start = System.currentTimeMillis(); // TODO: retirar
+			checkDisciplinasSemCurriculo(parametro,warnings);
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			System.out.print("Checando disciplinas sem laboratorios");start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasSemLaboratorios(parametro,errors);
@@ -148,6 +154,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			System.out.print("Checando demandas com disciplinas sem curriculo");start = System.currentTimeMillis(); // TODO: retirar
 			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
 			
 //			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 //			checkSemanasLetivasIncompativeis(parametro, errors);
@@ -180,7 +187,6 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			if (parametro.getProfessorEmMuitosCampi()) {
 				checkCampiSemDeslocamentos(parametro,errors);
 			}
-			
 			checksCleiton();//TODO: revisar
 			
 			response.setErrors(errors);
@@ -593,6 +599,108 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 //				}
 //			}
 //		}
+	}
+	
+	private void checkSemanasLetivas(Parametro parametro, List<String> warnings){
+		Cenario cenario = parametro.getCenario();
+		Set<SemanaLetiva> semanasLetivas = cenario.getSemanasLetivas();
+		List<HorarioDisponivelCenario> horariosAulasAux = new ArrayList<HorarioDisponivelCenario>();
+		
+		if(horariosAulasAux != null){ 
+		if(!semanasLetivas.isEmpty()){
+			for(SemanaLetiva semanaLetiva : semanasLetivas){
+				if(!semanaLetiva.getHorariosAula().isEmpty()){
+					for(HorarioAula horarioAula : semanaLetiva.getHorariosAula()){
+						if(!horarioAula.getHorariosDisponiveisCenario().isEmpty()){
+							for(HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()){
+								horariosAulasAux.add(hdc);
+							}
+							
+						}
+						else{
+							warnings.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, nas semanas letivas do cenário " + cenario.getNome()  + " não foram cadastros os possíveis dias e horários de aula."));
+						}
+					}
+				} else {
+					warnings.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, nas semanas letivas do cenário " + cenario.getNome()  + " não foram cadastros os possíveis dias e horários de aula."));
+				}
+			}
+		} else {
+			warnings.add(HtmlUtils.htmlUnescape("Não é possível prosseguir com a otimização, pois, não há nenhuma semana letiva cadastrada no cenário [" + cenario.getNome() + " ]."));
+		}
+		
+		List<HorarioDisponivelCenario> horariosDisponiveisAll = HorarioDisponivelCenario.findAll(getInstituicaoEnsinoUser());
+		Map<Long, List<HorarioDisponivelCenario>> horariosDisponiveisMap = new HashMap<Long, List<HorarioDisponivelCenario>>();
+		
+		for(HorarioDisponivelCenario hdc : horariosDisponiveisAll){
+			for(Disciplina disciplina : hdc.getDisciplinas()){
+				if(horariosDisponiveisMap.get(disciplina.getId()) == null){
+					List<HorarioDisponivelCenario> horariosDisponiveisNew = new ArrayList<HorarioDisponivelCenario>();
+					horariosDisponiveisNew.add(hdc);
+					horariosDisponiveisMap.put(disciplina.getId(), horariosDisponiveisNew);
+				} else {
+					horariosDisponiveisMap.get(disciplina.getId()).add(hdc);
+				}
+					
+			}
+		}
+		
+		for (Disciplina disciplina : cenario.getDisciplinas()) {
+			List<HorarioDisponivelCenario> horariosDisponiveisBD = horariosDisponiveisMap.get(disciplina.getId());
+			
+			if(horariosDisponiveisBD != null){
+			// obtém as semanas letivas associadas com a disciplina em questão
+				Set<SemanaLetiva> semanasLetivasDis = disciplina.getSemanasLetivas();
+				// se necessário, filtra os horários discponíveis
+				if (!semanasLetivasDis.isEmpty()) {
+					// filtra os horários disponíveis da disciplina de acordo com as semanas letivas associadas com a disciplina
+					List<HorarioDisponivelCenario> horariosDisponiveisBDFiltrados = new ArrayList<HorarioDisponivelCenario>();
+					for (HorarioDisponivelCenario horario : horariosDisponiveisBD) {
+						if (semanasLetivasDis.contains(horario.getHorarioAula().getSemanaLetiva())) {
+							horariosDisponiveisBDFiltrados.add(horario);
+						}
+					}
+					
+					horariosDisponiveisBD.clear();
+					horariosDisponiveisBD.addAll(horariosDisponiveisBDFiltrados);
+				}
+			if(!disciplina.getUsaSabado()){
+				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+					if(Semanas.SAB.equals(hdc.getDiaSemana())){
+						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Não, está com disponibilidade no Sábado"));
+					}
+				}
+			} else {
+				boolean hasSat = false;
+				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+					if(Semanas.SAB.equals(hdc.getDiaSemana())){
+						hasSat = true;
+					}
+				}
+				if(hasSat){
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Sábado = Sim, não está com disponibilidade no Sábado"));
+				}
+			}
+			if(!disciplina.getUsaDomingo()){
+				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+					if(Semanas.DOM.equals(hdc.getDiaSemana())){
+						warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Não, está com disponibilidade no Sábado"));
+					}
+				}
+			} else {
+				boolean hasSat = false;
+				for(HorarioDisponivelCenario hdc : horariosDisponiveisBD){
+					if(Semanas.DOM.equals(hdc.getDiaSemana())){
+						hasSat = true;
+					}
+				}
+				if(hasSat){
+					warnings.add(HtmlUtils.htmlUnescape("A disciplina [" + disciplina.getNome() + "], cujo valor do atributo Usa Domingo = Sim, não está com disponibilidade no Sábado"));
+				}
+			}
+		}
+		}
+		}
 	}
 
 	private void checkDisciplinasSemCurriculo(Parametro parametro, List<String> warnings) {
