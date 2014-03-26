@@ -53,6 +53,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
+import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.DemandasService;
@@ -1211,7 +1212,7 @@ public class DemandasServiceImpl
 	}
 	
 	@Override
-	public QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO)
+	public QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(resumoMatriculaDTO.getCampusId(), getInstituicaoEnsinoUser());
@@ -1243,7 +1244,7 @@ public class DemandasServiceImpl
 			}
 		}
 		
-		return QuartetoDTO.create(ConvertBeans.toDemandaDTO(demanda), ConvertBeans.toDisciplinaDTO(disciplina), planejada, naoPlanejada);
+		return QuintetoDTO.create(ConvertBeans.toCampusDTO(campus), ConvertBeans.toDemandaDTO(demanda), ConvertBeans.toDisciplinaDTO(disciplina), planejada, naoPlanejada);
 	}
 
 }

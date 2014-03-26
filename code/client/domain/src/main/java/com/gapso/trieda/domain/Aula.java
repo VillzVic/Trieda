@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
@@ -51,7 +52,7 @@ public class Aula
 	private Integer creditosTeoricos;
 	
 	@Column( name = "AUL_QTD_CRED_PRATICOS" )
-	private Integer parcial;
+	private Integer creditosPraticos;
 	
 	@NotNull
 	@ManyToOne( cascade = { CascadeType.PERSIST, CascadeType.MERGE,
@@ -82,6 +83,9 @@ public class Aula
 	private Cenario cenario;
 	
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
+	@JoinTable(name="AULAS_TURMAS",
+	joinColumns=@JoinColumn(name="AUL_ID"),
+	inverseJoinColumns=@JoinColumn(name="TUR_ID"))
     private Set<Turma> turmas = new HashSet<Turma>();
 
 	public Long getId() {
@@ -108,12 +112,12 @@ public class Aula
 		this.creditosTeoricos = creditosTeoricos;
 	}
 
-	public Integer getParcial() {
-		return parcial;
+	public Integer getCreditosPraticos() {
+		return creditosPraticos;
 	}
 
-	public void setParcial(Integer parcial) {
-		this.parcial = parcial;
+	public void setCreditosPraticos(Integer creditosPraticos) {
+		this.creditosPraticos = creditosPraticos;
 	}
 
 	public HorarioDisponivelCenario getHorarioDisponivelCenario() {

@@ -5,16 +5,19 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
@@ -24,22 +27,25 @@ import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
-import com.extjs.gxt.ui.client.widget.toolbar.PagingToolBar;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlocacaoManualPresenter;
-import com.gapso.web.trieda.shared.dtos.AlunoDTO;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
-import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
+import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
-import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.SalaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.SimpleUnpagedGrid;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AlocacaoManualView
@@ -51,6 +57,7 @@ public class AlocacaoManualView
 	private CenarioDTO cenarioDTO;
 	private DemandaDTO demandaDTO;
 	private DisciplinaDTO disciplinaDTO;
+	private CampusDTO campusDTO;
 	private ResumoMatriculaDTO resumoMatriculaDTO;
 	private Integer atendimentoNaoPlanejado;
 	private Integer atendimentoPlanejado;
@@ -60,15 +67,25 @@ public class AlocacaoManualView
 	private LabelField naoPlanejadoLabel;
 	private LabelField naoAtendidoLabel;
 	private ContentPanel demandaPanel;
-
-	public AlocacaoManualView( CenarioDTO cenarioDTO, QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer> quarteto, ResumoMatriculaDTO resumoMatriculaDTO )
+	private TextField<String> novaTurmaNomeTF;
+	private Button novaTurmaBt;
+	private TurmaDTO turmaSelecionada;
+	private String turmaSelecionadaStatus;
+	private ContentPanel turmaSelecionadaPanel;
+	private LayoutContainer emptyText;
+	private Button salvarTurmaBt = new Button();
+	private Button editarTurmaBt = new Button();
+	private Button removerTurmaBt = new Button();
+	private Button selecionarTurmaBt;
+	public AlocacaoManualView( CenarioDTO cenarioDTO, QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> quinteto, ResumoMatriculaDTO resumoMatriculaDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
-		this.demandaDTO = quarteto.getPrimeiro();
-		this.disciplinaDTO = quarteto.getSegundo();
+		this.campusDTO = quinteto.getPrimeiro();
+		this.demandaDTO = quinteto.getSegundo();
+		this.disciplinaDTO = quinteto.getTerceiro();
 		this.resumoMatriculaDTO = resumoMatriculaDTO;
-		this.atendimentoNaoPlanejado = quarteto.getQuarto();
-		this.atendimentoPlanejado = quarteto.getTerceiro();
+		this.atendimentoNaoPlanejado = quinteto.getQuinto();
+		this.atendimentoPlanejado = quinteto.getQuarto();
 		this.initUI();
 	}
 
@@ -85,7 +102,7 @@ public class AlocacaoManualView
 	private void createTabItem()
 	{
 		this.tabItem = new GTabItem(
-			"Alocação Manual", Resources.DEFAULTS.confirmacao16() );
+			"Alocação Manual", Resources.DEFAULTS.alocacaoManual16() );
 
 		this.tabItem.setContent( this.panel );
 	}
@@ -108,8 +125,14 @@ public class AlocacaoManualView
 		bldCenter.setMargins( new Margins( 5, 5, 5, 5 ) );
 		bldCenter.setCollapsible(true);
 
-	    ContentPanel topPanel = new ContentPanel();
+	    ContentPanel topPanel = new ContentPanel(new BorderLayout());
 	    topPanel.setHeadingHtml("Turma");
+		BorderLayoutData bldNovaTurma = new BorderLayoutData( LayoutRegion.WEST );
+		bldNovaTurma.setMargins( new Margins( 5, 5, 5, 5 ) );
+	    topPanel.add(createNovaTurmaPanel(), bldNovaTurma);
+		BorderLayoutData bldTurmaSelecionada = new BorderLayoutData( LayoutRegion.CENTER );
+		bldTurmaSelecionada.setMargins( new Margins( 5, 5, 5, 5 ) );
+	    topPanel.add(createTurmaSelecionadaPanel(), bldTurmaSelecionada);
 	    
 	    ContentPanel leftPanel = new ContentPanel(new BorderLayout());
 	    BorderLayoutData bldDisciplina = new BorderLayoutData( LayoutRegion.NORTH );
@@ -119,7 +142,9 @@ public class AlocacaoManualView
 	    
 	    ContentPanel rightPanel = new ContentPanel();
 	    
-	    ContentPanel centerPanel = new ContentPanel();
+	    ContentPanel centerPanel = new ContentPanel(new FitLayout());
+	    centerPanel.setHeadingHtml("Grade Horária Visão Ambiente");
+	    centerPanel.add(createGradeHorariaPanel());
 	    
 
 	    this.panel.add( topPanel, bldNorth );
@@ -128,6 +153,73 @@ public class AlocacaoManualView
 	    this.panel.add( centerPanel, bldCenter );
 	}
 	
+	private Widget createGradeHorariaPanel() {
+		ContentPanel gradeHorariaPanel = new ContentPanel(new BorderLayout());
+		gradeHorariaPanel.setHeaderVisible(false);
+		gradeHorariaPanel.setBodyBorder(false);
+		
+		BorderLayoutData bldCenter = new BorderLayoutData( LayoutRegion.CENTER );
+		BorderLayoutData bldNorth = new BorderLayoutData( LayoutRegion.NORTH );
+		bldNorth.setSize(80);
+		bldNorth.setCollapsible(true);
+		ContentPanel filtro = new ContentPanel(new BorderLayout());
+		filtro.setHeadingHtml("Filtro");
+		filtro.setStyleAttribute("background", "none");
+		
+		LayoutContainer filtroContainer = new LayoutContainer();
+		filtroContainer.setWidth(200);
+		SalaAutoCompleteBox salaComboBox = new SalaAutoCompleteBox(cenarioDTO);
+		filtroContainer.add(salaComboBox);
+		filtro.add(filtroContainer, bldCenter);
+		
+		ContentPanel grade = new ContentPanel();
+		grade.setHeaderVisible(false);
+		
+		gradeHorariaPanel.add(filtro, bldNorth);
+		gradeHorariaPanel.add(grade, bldCenter);
+		
+		return gradeHorariaPanel;
+	}
+
+	private Widget createTurmaSelecionadaPanel() {
+		turmaSelecionadaPanel = new ContentPanel(new ColumnLayout());
+		turmaSelecionadaPanel.setHeaderVisible(false);
+		
+		emptyText = new LayoutContainer();
+		emptyText.addText("Crie uma nova turma definindo um nome para a mesma ou selecione uma turma existente.");
+		emptyText.setStyleAttribute("margin-left", "10px");
+		emptyText.setStyleAttribute("margin-top", "20px");
+		turmaSelecionadaPanel.add(emptyText);
+		
+		return turmaSelecionadaPanel;
+	}
+
+	private Widget createNovaTurmaPanel() {
+		ContentPanel novaTurmaPanel = new ContentPanel();
+		novaTurmaPanel.setHeaderVisible(false);
+		novaTurmaPanel.setWidth(200);
+		BorderLayoutData bldCenter = new BorderLayoutData( LayoutRegion.CENTER );
+		bldCenter.setMargins( new Margins( 5, 5, 5, 5 ) );
+		
+		novaTurmaNomeTF = new TextField<String>();
+		novaTurmaNomeTF.setStyleAttribute("margin", "4px");
+		novaTurmaNomeTF.setWidth(190);
+		novaTurmaNomeTF.setHeight(25);
+
+		novaTurmaBt = new Button();
+		novaTurmaBt.setText("Nova Turma");
+		novaTurmaBt.setWidth(190);
+		novaTurmaBt.setHeight(25);
+		novaTurmaBt.setStyleAttribute("margin", "4px");
+		novaTurmaBt.setIcon(AbstractImagePrototype.create(
+			Resources.DEFAULTS.add16() ));
+	
+		novaTurmaPanel.add(novaTurmaNomeTF);
+		novaTurmaPanel.add(novaTurmaBt);
+		
+		return novaTurmaPanel;
+	}
+
 	private Widget createDisciplinaDemandaPanel()
 	{
 		ContentPanel disciplinaDemandaPanel = new ContentPanel();
@@ -206,7 +298,36 @@ public class AlocacaoManualView
 		this.toolBar = new SimpleToolBar(
 				true, true, true, false, false, this );
 		
-	    this.turmasGrid = new SimpleUnpagedGrid< TurmaStatusDTO >( getColumnList(), this, this.toolBar );
+		selecionarTurmaBt = toolBar.createButton(
+			"Selecionar Turma",
+			Resources.DEFAULTS.selecionarTurma16() );
+		selecionarTurmaBt.disable();
+		
+		toolBar.add(new SeparatorToolItem());
+		
+		toolBar.add(selecionarTurmaBt);
+		
+	    this.turmasGrid = new SimpleUnpagedGrid< TurmaStatusDTO >( getColumnList(), this, this.toolBar )
+	    {
+			@Override
+			public void afterRender()
+			{
+				super.afterRender();
+				
+				getGrid().getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<TurmaStatusDTO>() {
+
+					@Override
+				    public void selectionChanged(SelectionChangedEvent<TurmaStatusDTO> se) {
+				        if(getGrid().getSelectionModel().getSelectedItems().size() == 1) {
+				        	selecionarTurmaBt.enable();
+				        }
+				        else{
+				        	selecionarTurmaBt.disable();
+				        }
+				    }
+				});
+			}
+	    };
 	    turmasGridPanel.setTopComponent(toolBar);
 	    turmasGridPanel.add(turmasGrid, bld);
 	    
@@ -232,7 +353,7 @@ public class AlocacaoManualView
 		          {
 		        	  style = "blue";
 		          }
-		          else if(val.equals("Pacial"))
+		          else if(val.equals("Parcial"))
 		          {
 		        	  style = "red";
 		          }
@@ -241,7 +362,7 @@ public class AlocacaoManualView
 		        	  style = "black";
 		          }
 		          return "<span style='color:" + style + "'>" + val + "</span>";
-			}  
+			}
 	    }; 
 		
 		list.add( new ColumnConfig( TurmaStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
@@ -273,9 +394,57 @@ public class AlocacaoManualView
 	}
 	
 	@Override
+	public Button getTurmasNewButton()
+	{
+		return this.toolBar.getNewButton();
+	}
+	
+	@Override
+	public Button getTurmasNewButton2()
+	{
+		return this.novaTurmaBt;
+	}
+	
+	@Override
+	public TextField<String> getNovaTurmaNomeTextField()
+	{
+		return this.novaTurmaNomeTF;
+	}
+	
+	@Override
 	public DemandaDTO getDemanda()
 	{
 		return demandaDTO;
+	}
+	
+	@Override
+	public DisciplinaDTO getDisciplinaDTO()
+	{
+		return disciplinaDTO;
+	}
+	
+	@Override
+	public CampusDTO getCampusDTO()
+	{
+		return campusDTO;
+	}
+	
+	@Override
+	public Button getSalvarTurmaButton()
+	{
+		return salvarTurmaBt;
+	}
+	
+	@Override
+	public Button getEditarTurmaButton()
+	{
+		return editarTurmaBt;
+	}
+	
+	@Override
+	public Button getRemoverTurmaButton()
+	{
+		return removerTurmaBt;
 	}
 	
 	@Override
@@ -285,5 +454,112 @@ public class AlocacaoManualView
 		naoPlanejadoLabel.setValue(Integer.valueOf((String)naoPlanejadoLabel.getValue()) + naoPlanejado);
 		naoAtendidoLabel.setValue(Integer.valueOf((String)naoAtendidoLabel.getValue()) + naoAtendido);
 		demandaPanel.layout();
+	}
+	
+	@Override
+	public void refreshTurmaSelecionadaPanel()
+	{
+		if (turmaSelecionada == null)
+		{
+			turmaSelecionadaPanel.removeAll();
+			turmaSelecionadaPanel.add(emptyText);
+			turmaSelecionadaPanel.layout();
+		}
+		else
+		{
+			turmaSelecionadaPanel.removeAll();
+			turmaSelecionadaPanel.add(createTurmaSubPanel());
+			turmaSelecionadaPanel.layout();
+		}
+	}
+	
+	@Override
+	public void setTurmaSelecionada(TurmaDTO turmaDTO, String status)
+	{
+		this.turmaSelecionada = turmaDTO;
+		this.turmaSelecionadaStatus = status;
+	}
+	
+	@Override
+	public String getTurmaSelecionadaStatus()
+	{
+		return this.turmaSelecionadaStatus;
+	}
+	
+	@Override
+	public TurmaDTO getTurmaSelecionada()
+	{
+		return this.turmaSelecionada;
+	}
+	
+	@Override
+	public Button getSelecionarTurmaButton()
+	{
+		return this.selecionarTurmaBt;
+	}
+
+	private Widget createTurmaSubPanel() {
+		ContentPanel turmaSubPanel = new ContentPanel();
+		turmaSubPanel.setHeaderVisible(false);
+		turmaSubPanel.setBodyBorder(false);
+		turmaSubPanel.setWidth(320);
+		
+		LayoutContainer textContainer = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
+		textContainer.addStyleName("alocacaoManualDemanda");
+		textContainer.setWidth(200);
+		LabelField turmaLabel = new LabelField();
+		turmaLabel.setFieldLabel("<b>Turma:</b>");
+		turmaLabel.setValue(turmaSelecionada.getNome() + " (" + (disciplinaDTO.getCodigo()) + ")");
+		
+		LabelField noAlunosLabel = new LabelField();
+		noAlunosLabel.setFieldLabel("<b>No Alunos:</b>");
+		noAlunosLabel.setValue(turmaSelecionada.getNoAlunos());
+		
+		LabelField credAlocadosLabel = new LabelField();
+		credAlocadosLabel.setFieldLabel("<b>Cred. Alocados:</b>");
+		credAlocadosLabel.setValue(turmaSelecionada.getCredAlocados() + " de " +
+				(disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico()) );
+		
+		textContainer.add(turmaLabel);
+		textContainer.add(noAlunosLabel);
+		textContainer.add(credAlocadosLabel);
+		
+		LayoutContainer rightContainer = new LayoutContainer(new RowLayout());
+		LayoutContainer buttonsContainer = new LayoutContainer(new ColumnLayout());
+		salvarTurmaBt.setIcon(AbstractImagePrototype.create(
+				Resources.DEFAULTS.disk16() ));
+		editarTurmaBt.setIcon(AbstractImagePrototype.create(
+				Resources.DEFAULTS.edit16() ));
+		removerTurmaBt.setIcon(AbstractImagePrototype.create(
+				Resources.DEFAULTS.del16() ));
+		LabelField statusLabel = new LabelField();
+		String tumaSelecionadaStatusColor;
+		if (turmaSelecionadaStatus.equals("Parcial"))
+		{
+			tumaSelecionadaStatusColor = "<span style='color: red'>" + turmaSelecionadaStatus + "</span>";
+		}
+		else if (turmaSelecionadaStatus.equals("Planejada"))
+		{
+			tumaSelecionadaStatusColor = "<span style='color: blue'>" + turmaSelecionadaStatus + "</span>";
+		}
+		else
+		{
+			tumaSelecionadaStatusColor = "<span style='color: black'>" + turmaSelecionadaStatus + "</span>";
+		}
+		statusLabel.setValue("<b>Status: </b>" + tumaSelecionadaStatusColor);
+		statusLabel.setStyleAttribute("font-size", "10px");
+		buttonsContainer.add(salvarTurmaBt);
+		buttonsContainer.add(editarTurmaBt);
+		buttonsContainer.add(removerTurmaBt);
+		rightContainer.add(buttonsContainer);
+		rightContainer.add(statusLabel);
+		
+		LayoutContainer container = new LayoutContainer(new ColumnLayout());
+		container.add(textContainer);
+		container.add(rightContainer);
+		
+		turmaSubPanel.add(container);
+		
+		return turmaSubPanel;
 	}
 }

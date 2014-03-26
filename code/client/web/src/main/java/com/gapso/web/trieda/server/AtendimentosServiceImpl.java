@@ -47,6 +47,7 @@ import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.TriedaPar;
+import com.gapso.trieda.domain.Turma;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -75,6 +76,7 @@ import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.AtendimentosService;
@@ -3328,6 +3330,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 			}
 		}
+		List<Turma> turmas = Turma.findBy(getInstituicaoEnsinoUser(), demanda.getDisciplina().getCenario(), demanda.getDisciplina(), null);
+		for (Turma turma : turmas)
+		{
+			TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
+
+			newTurmaStatus.setNome(turma.getNome());
+			newTurmaStatus.setQtdeDiscSelecionada(turma.getAlunos().size());
+			newTurmaStatus.setQtdeTotal(turma.getAlunos().size());
+			newTurmaStatus.setStatus("Parcial");
+			newTurmaStatus.setDisciplinaId(turma.getDisciplina().getId());
+			
+			result.add(newTurmaStatus);
+		}
+		
 		
 		result.addAll(turmaKeyMapTurmaStatusDTO.values());
 		return new BaseListLoadResult< TurmaStatusDTO >( result );
@@ -3342,33 +3358,126 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
 		
-		for (TurmaStatusDTO turma : turmasStatusDTO)
+		for (TurmaStatusDTO turmaStatusDTO : turmasStatusDTO)
 		{
-			Disciplina disciplina = Disciplina.find(turma.getDisciplinaId(), getInstituicaoEnsinoUser());
-			if (ehTatico)
+			Disciplina disciplina = Disciplina.find(turmaStatusDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+			if (turmaStatusDTO.getTurma() != null)
 			{
-				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma.getTurma());
-				for (AtendimentoTatico atendimento : atendimentos)
+				if (ehTatico)
 				{
-					for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+					List<AtendimentoTatico> atendimentos = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
+					for (AtendimentoTatico atendimento : atendimentos)
 					{
-						alunoDemanda.setAtendido(false);
+						for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+						{
+							alunoDemanda.setAtendido(false);
+						}
+						atendimento.remove();				
 					}
-					atendimento.remove();				
+				}
+				else
+				{
+					List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
+					for (AtendimentoOperacional atendimento : atendimentos)
+					{
+						for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+						{
+							alunoDemanda.setAtendido(false);
+						}
+						atendimento.remove();
+					}
 				}
 			}
 			else
 			{
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma.getTurma());
-				for (AtendimentoOperacional atendimento : atendimentos)
-				{
-					for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
-					{
-						alunoDemanda.setAtendido(false);
-					}
-					atendimento.remove();
-				}
+				Turma turma = Turma.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getNome()).get(0);
+				
+				turma.remove();
 			}
 		}
+	}
+	
+	@Override
+	@Transactional
+	public void saveTurma(TurmaDTO turmaDTO) throws TriedaException
+	{
+		Turma turma = ConvertBeans.toTurma(turmaDTO);
+		Campus campus = Campus.find(turmaDTO.getCampusId(), getInstituicaoEnsinoUser());
+		
+		List<AtendimentoOperacional> turmasOperacional = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, turma.getNome());
+		List<AtendimentoTatico> turmasTatico = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, turma.getNome());
+		List<Turma> turmas = Turma.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), turma.getNome());
+		
+		if (!turmasOperacional.isEmpty() || !turmasTatico.isEmpty() || !turmas.isEmpty())
+		{
+			throw new TriedaException("Já existe uma turma com esse nome");
+		}
+		
+		
+		turma.persist();
+	}
+	
+	@Override
+	public TurmaDTO selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO, DemandaDTO demandaDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Demanda demanda = ConvertBeans.toDemanda(demandaDTO);
+		
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+
+		Disciplina disciplina = Disciplina.find(turmaStatusDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+		if (turmaStatusDTO.getTurma() != null)
+		{
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
+				
+				return  ConvertBeans.toTurmaDTO(createTurmaTatico(atendimentos));
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
+
+				return  ConvertBeans.toTurmaDTO(createTurmaOperacional(atendimentos));
+			}
+		}
+		else
+		{
+			Turma turma = Turma.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getNome()).get(0);
+			
+			return ConvertBeans.toTurmaDTO(turma);
+		}
+	}
+
+	private Turma createTurmaOperacional(List<AtendimentoOperacional> atendimentos) {
+		Turma turma = new Turma();
+		
+		turma.setDisciplina(atendimentos.get(0).getDisciplinaSubstituta() == null ? atendimentos.get(0).getDisciplina() : atendimentos.get(0).getDisciplinaSubstituta());
+		turma.setCenario(atendimentos.get(0).getCenario());
+		turma.setNome(atendimentos.get(0).getTurma());
+		turma.setParcial(false);
+		
+		for (AtendimentoOperacional atendimento : atendimentos)
+		{
+			//TODO criar aulas e alunos
+		}
+		
+		return turma;
+	}
+	
+	private Turma createTurmaTatico(List<AtendimentoTatico> atendimentos) {
+		Turma turma = new Turma();
+		
+		turma.setDisciplina(atendimentos.get(0).getDisciplinaSubstituta() == null ? atendimentos.get(0).getDisciplina() : atendimentos.get(0).getDisciplinaSubstituta());
+		turma.setCenario(atendimentos.get(0).getCenario());
+		turma.setNome(atendimentos.get(0).getTurma());
+		turma.setParcial(false);
+		
+		for (AtendimentoTatico atendimento : atendimentos)
+		{
+			//TODO criar aulas e alunos
+		}
+		
+		return turma;
 	}
 }

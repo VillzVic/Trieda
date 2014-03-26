@@ -14,7 +14,7 @@ import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
-import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
+import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -65,9 +65,9 @@ public class AlocacaoManualDisciplinaFormPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Services.demandas().getDemandaDTO(cenarioDTO, display.getGrid().getSelectionModel().getSelectedItem(),  new AbstractAsyncCallbackWithDefaultOnFailure<QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer>>(display.getI18nMessages().falhaOperacao(),display) {
+				Services.demandas().getDemandaDTO(cenarioDTO, display.getGrid().getSelectionModel().getSelectedItem(),  new AbstractAsyncCallbackWithDefaultOnFailure<QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer>>(display.getI18nMessages().falhaOperacao(),display) {
 					@Override
-					public void onSuccess(QuartetoDTO<DemandaDTO, DisciplinaDTO, Integer, Integer> result) {
+					public void onSuccess(QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> result) {
 						Presenter presenter = new AlocacaoManualPresenter( instituicaoEnsinoDTO, cenarioDTO,
 							new AlocacaoManualView( cenarioDTO, result, display.getGrid().getSelectionModel().getSelectedItem() ) );
 

@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
@@ -25,6 +28,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configurable
 @Entity
@@ -144,5 +148,119 @@ public class Turma
 
 	public void setAulas(Set<Aula> aulas) {
 		this.aulas = aulas;
+	}
+	
+	@Transactional
+	public void detach()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.detach( this );
+	}
+
+	@Transactional
+	public void persist()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.persist( this );
+	}
+
+	@Transactional
+	public void remove()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		if ( this.entityManager.contains( this ) )
+		{
+			this.entityManager.remove( this );
+		}
+		else
+		{
+			Turma attached = this.entityManager.find(
+				this.getClass(), this.id );
+
+			if ( attached != null )
+			{
+				this.entityManager.remove( attached );
+			}
+		}
+	}
+
+	@Transactional
+	public void flush()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		this.entityManager.flush();
+	}
+
+	@Transactional
+	public Turma merge()
+	{
+		if ( this.entityManager == null )
+		{
+			this.entityManager = entityManager();
+		}
+
+		Turma merged = this.entityManager.merge( this );
+		this.entityManager.flush();
+		return merged;
+	}
+
+	public static final EntityManager entityManager()
+	{
+		EntityManager em = new Turma().entityManager;
+
+		if ( em == null )
+		{
+			throw new IllegalStateException(
+				" Entity manager has not been injected (is the Spring " +
+				" Aspects JAR configured as an AJC/AJDT aspects library?)" );
+		}
+
+		return em;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<Turma> findBy(InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, Disciplina disciplina,
+		String nome)
+	{
+		String nomeQuery = "";
+		if (nome != null)
+		{
+			nomeQuery = " AND o.nome = :nome";
+		}
+		
+		Query q = entityManager().createQuery(
+				" SELECT o FROM Turma o " +
+				" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				nomeQuery +
+				" AND o.disciplina = :disciplina ");
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "disciplina", disciplina );
+		if (nome != null)
+		{
+			q.setParameter( "nome", nome );
+		}
+		
+		
+		return q.getResultList();
 	}
 }

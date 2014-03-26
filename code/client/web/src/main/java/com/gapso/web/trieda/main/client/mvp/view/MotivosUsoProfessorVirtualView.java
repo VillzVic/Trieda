@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
+import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.HeaderGroupConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnData;
@@ -153,11 +154,14 @@ public class MotivosUsoProfessorVirtualView
 	    motivosProfessorGrid.setBorders(true);
 	    motivosProfessorGrid.setHeight(160);
 	    motivosProfessorGrid.setWidth(594);
+	    motivosProfessorGrid.getView().setEmptyText("Selecione uma turma na tabela acima");
+	    motivosProfessorGrid.setStyleAttribute("white-space", "normal");
 	    
 	    this.dicasProfessorGrid = new Grid<DicaEliminacaoProfessorVirtualDTO>( this.getDicasStore(),  getDicasColumnList() );
 	    dicasProfessorGrid.setBorders(true);
 	    dicasProfessorGrid.setHeight(160);
 	    dicasProfessorGrid.setWidth(594);
+	    dicasProfessorGrid.getView().setEmptyText("Selecione uma turma na tabela acima");
 	}
 	
 	private ColumnModel getTurmaColumnList()
@@ -185,8 +189,23 @@ public class MotivosUsoProfessorVirtualView
 	private ColumnModel getMotivosColumnList()
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+		
+	    GridCellRenderer<MotivoUsoProfessorVirtualDTO> change = new GridCellRenderer<MotivoUsoProfessorVirtualDTO>() {
 
-		list.add( new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_MOTIVO, "Motivo", 360 ) );
+			@Override
+			public Object render(MotivoUsoProfessorVirtualDTO model, String property,
+					com.extjs.gxt.ui.client.widget.grid.ColumnData config,
+					int rowIndex, int colIndex,
+					ListStore<MotivoUsoProfessorVirtualDTO> store, Grid<MotivoUsoProfessorVirtualDTO> grid) {
+			    
+		          String val = (String) model.get(property);  
+		          return "<span style='white-space: normal'>" + val + "</span>";
+			}
+	    }; 
+
+	    ColumnConfig nome = new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_MOTIVO, "Motivo", 360 );
+	    nome.setRenderer(change);
+		list.add( nome );
 		list.add( new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_PROFESSOR_CPF, "Nome", 100 ) );
 		list.add( new ColumnConfig( MotivoUsoProfessorVirtualDTO.PROPERTY_PROFESSOR_STRING, "Teóricos", 110 ) );
 
@@ -201,8 +220,23 @@ public class MotivosUsoProfessorVirtualView
 	private ColumnModel getDicasColumnList()
 	{
 		List< ColumnConfig > list = new ArrayList< ColumnConfig >();
+		
+	    GridCellRenderer<DicaEliminacaoProfessorVirtualDTO> change = new GridCellRenderer<DicaEliminacaoProfessorVirtualDTO>() {
 
-		list.add( new ColumnConfig( DicaEliminacaoProfessorVirtualDTO.PROPERTY_DICA, "Dica", 360 ) );
+			@Override
+			public Object render(DicaEliminacaoProfessorVirtualDTO model, String property,
+					com.extjs.gxt.ui.client.widget.grid.ColumnData config,
+					int rowIndex, int colIndex,
+					ListStore<DicaEliminacaoProfessorVirtualDTO> store, Grid<DicaEliminacaoProfessorVirtualDTO> grid) {
+			    
+		          String val = (String) model.get(property);  
+		          return "<span style='white-space: normal'>" + val + "</span>";
+			}
+	    };
+
+	    ColumnConfig nome = new ColumnConfig( DicaEliminacaoProfessorVirtualDTO.PROPERTY_DICA, "Dica", 360 );
+	    nome.setRenderer(change);
+		list.add( nome );
 		list.add( new ColumnConfig( DicaEliminacaoProfessorVirtualDTO.PROPERTY_PROFESSOR_CPF, "Cpf", 100 ) );
 		list.add( new ColumnConfig( DicaEliminacaoProfessorVirtualDTO.PROPERTY_PROFESSOR_STRING, "Nome", 110 ) );
 

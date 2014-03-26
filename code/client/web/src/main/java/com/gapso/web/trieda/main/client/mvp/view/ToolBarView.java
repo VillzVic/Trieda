@@ -665,7 +665,7 @@ public class ToolBarView
 		
 		planejamentoToolBar.add( new SeparatorToolItem() );
 		
-		alocacaoManualBt = createButton("Alocação<br />Manual","Alocação Manual",Resources.DEFAULTS.confirmacao24());
+		alocacaoManualBt = createButton("Alocação<br />Manual","Alocação Manual",Resources.DEFAULTS.alocacaoManual24());
 		planejamentoToolBar.add(alocacaoManualBt);
 		
 		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());

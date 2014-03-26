@@ -1267,4 +1267,44 @@ public class AtendimentoTatico
 		
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+		Disciplina disciplina, Campus campus, String turma)
+	{
+		Query q1 = entityManager().createQuery(
+				" SELECT o FROM AtendimentoTatico o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				" AND o.oferta.campus = :campus " +
+				" AND o.turma = :turma" +
+				" AND o.disciplina = :disciplina " +
+				" AND o.disciplinaSubstituta IS NULL ");
+
+		Query q2 = entityManager().createQuery(
+				" SELECT o FROM AtendimentoTatico o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				" AND o.oferta.campus = :campus " +
+				" AND o.turma = :turma" +
+				" AND o.disciplinaSubstituta = :disciplina " +
+				" AND o.disciplinaSubstituta IS NOT NULL ");
+
+		q1.setParameter( "cenario", cenario );
+		q1.setParameter( "campus", campus );
+		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q1.setParameter( "disciplina", disciplina );
+		q1.setParameter( "turma", turma );
+		q2.setParameter( "cenario", cenario );
+		q2.setParameter( "campus", campus );
+		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q2.setParameter( "disciplina", disciplina );
+		q2.setParameter( "turma", turma );
+		
+		List<AtendimentoTatico> result = new ArrayList<AtendimentoTatico>();
+		result.addAll(q1.getResultList());
+		result.addAll(q2.getResultList());
+		
+		return result;
+	}
 }

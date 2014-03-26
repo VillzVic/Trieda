@@ -19,6 +19,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
 import com.gapso.web.trieda.shared.util.relatorioVisao.AtendimentoServiceRelatorioResponse;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoAlunoFiltro;
@@ -103,4 +104,10 @@ public interface AtendimentosServiceAsync {
 
 	void deleteTurmasStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
 			List<TurmaStatusDTO> turmasStatusDTO, AsyncCallback<Void> callback);
+
+	void saveTurma(TurmaDTO turmaDTO, AsyncCallback<Void> callback);
+
+	void selecionarTurma(TurmaStatusDTO turmaStatusDTO,
+			CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
+			AsyncCallback<TurmaDTO> callback);
 }

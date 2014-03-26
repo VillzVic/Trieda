@@ -23,6 +23,7 @@ import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoFaixaDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Aula;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -57,6 +58,7 @@ import com.gapso.trieda.domain.TipoCurso;
 import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.trieda.domain.TipoSala;
 import com.gapso.trieda.domain.Titulacao;
+import com.gapso.trieda.domain.Turma;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.domain.Usuario;
@@ -104,6 +106,7 @@ import com.gapso.web.trieda.shared.dtos.TipoCursoDTO;
 import com.gapso.web.trieda.shared.dtos.TipoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
+import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
@@ -3737,5 +3740,50 @@ public class ConvertBeans {
 		dto.setProfessorString(domain.getProfessor() == null ? null : domain.getProfessor().getNome());
 		
 		return dto;
+	}
+	
+	public static TurmaDTO toTurmaDTO( Turma domain )
+	{
+		TurmaDTO dto = new TurmaDTO();
+		
+		dto.setNome(domain.getNome());
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
+		dto.setDisciplinaId(domain.getDisciplina().getId());
+		dto.setParcial(domain.getParcial());
+		dto.setNoAlunos(domain.getAlunos().size());
+		
+		Integer credAlocados = 0;
+		if (domain.getAulas().size() > 0)
+		{
+			for (Aula aula : domain.getAulas())
+			{
+				credAlocados += aula.getCreditosPraticos() + aula.getCreditosTeoricos();
+			}
+		}
+		dto.setCredAlocados(credAlocados);
+		
+		return dto;
+	}
+	
+	public static Turma toTurma( TurmaDTO dto )
+	{
+		Turma domain = new Turma();
+		
+		InstituicaoEnsino instituicaoEnsino
+			= InstituicaoEnsino.find( dto.getInstituicaoEnsinoId() );
+		Cenario cenario = Cenario.find(
+				dto.getCenarioId(), instituicaoEnsino );
+		Disciplina disciplina = Disciplina.find(dto.getDisciplinaId(), instituicaoEnsino);
+		
+		domain.setNome(dto.getNome());
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCenario(cenario);
+		domain.setDisciplina(disciplina);
+		domain.setParcial(dto.getParcial());
+		
+		return domain;
 	}
 }
