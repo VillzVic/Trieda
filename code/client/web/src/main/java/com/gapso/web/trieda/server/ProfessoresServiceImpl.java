@@ -754,6 +754,8 @@ public class ProfessoresServiceImpl
 		
 		List<Professor> professoresUteis = Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, campus);
 		
+		//List<Professor> professoresAlocados = Professor.findProfessoresAlocados(getInstituicaoEnsinoUser(), cenario, campus);
+		
 		List<Professor> professoresUtilizados = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario,
 				campus, curso, turno, titulacao, areaTitulacao, tipoContrato, null);
 		
@@ -838,6 +840,7 @@ public class ProfessoresServiceImpl
 		Set<Disciplina> totalDisciplinasProfessorVirtual = new HashSet<Disciplina>();
 		Set<String> totalCreditosProfessorVirtual = new HashSet<String>();
 		Set<String> totalTurmasProfessorVirtual = new HashSet<String>();
+		
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
 			String keyCreditos = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
@@ -890,12 +893,17 @@ public class ProfessoresServiceImpl
 					atendimento.getDisciplina());
 			}
 		}
-		int totalTurmas = 0;
+		
+		
+		Integer qtdProfessoresVirtuais = ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
+				AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
+		
+		int totalTurmasInstituicao = 0;
 		List<Professor> professoresBemAlocados = new ArrayList<Professor>();
 		List<Professor> professoresMalAlocados = new ArrayList<Professor>();
 		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
 		{
-			totalTurmas += professorTurmas.getValue().size();
+			totalTurmasInstituicao += professorTurmas.getValue().size();
 			if (professorTurmas.getValue().size() >= 4)
 			{
 				professoresBemAlocados.add(professorTurmas.getKey());
@@ -1045,9 +1053,10 @@ public class ProfessoresServiceImpl
 		atendimento.add( new RelatorioDTO( " Média de Créditos Semanais por Docente: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)creditos.size()/(double)professoresUtilizados.size(), 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Turmas Ministradas por Docentes da Instituição: <b>" + numberFormatter.print(
-				totalTurmas,pt_BR) + "</b>") );
+				totalTurmasInstituicao,pt_BR) + "</b>") );
+		
 		atendimento.add( new RelatorioDTO( " Média de Turmas por Docente: <b>" + numberFormatter.print(
-				TriedaUtil.round((double)totalTurmas/(double)professoresUtilizados.size(), 2),pt_BR) + "</b>") );
+				TriedaUtil.round((double)totalTurmasInstituicao/(double)professorToTurmasMap.size(), 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Listas de Docentes Utilizados no Atendimento: ") );
 		RelatorioDTO todosDocentes = new RelatorioDTO( " Todos os Docentes Utilizados no Atendimento: " + numberFormatter.print(professoresUtilizados.size(),pt_BR));
 		todosDocentes.setButtonText(todosDocentes.getText());
@@ -1093,7 +1102,7 @@ public class ProfessoresServiceImpl
 		atendimentoVirtual.add( new RelatorioDTO( " Média de Créditos Semanais por Professor Virtual: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)totalCreditosProfessorVirtual.size()/(double)professoresVirtuaisUtilizados.size(), 2),pt_BR) + "</b>") );
 		atendimentoVirtual.add( new RelatorioDTO( " Média de Turmas por Professor Virtual: <b>" + numberFormatter.print(
-				TriedaUtil.round((double)totalTurmasProfessorVirtual.size()/(double)professoresVirtuaisUtilizados.size(), 2),pt_BR) + "</b>") );
+				TriedaUtil.round((double)totalTurmasProfessorVirtual.size()/(double)qtdProfessoresVirtuais, 2),pt_BR) + "</b>") );
 		professoresVirtuais.add(atendimentoVirtual);
 		RelatorioDTO docentesVirtuais = new RelatorioDTO( " Lista Professores Virtuais");
 		docentesVirtuais.setButtonText(docentesVirtuais.getText());
