@@ -46,7 +46,7 @@ public interface AtendimentosService extends RemoteService {
 //	ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > getBusca(
 //		CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO );
 
-	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais();
+	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais(CenarioDTO cenarioDTO);
 	
 	PagingLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, PagingLoadConfig config ) throws TriedaException;
 

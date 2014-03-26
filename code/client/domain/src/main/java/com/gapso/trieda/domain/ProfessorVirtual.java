@@ -373,6 +373,22 @@ public class ProfessorVirtual
 		List< ProfessorVirtual > list = q.getResultList();
 		return list;
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< ProfessorVirtual > findBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+	{
+		Query q = entityManager().createQuery(
+				" SELECT o FROM ProfessorVirtual o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" and o.cenario = :cenario" );
+
+			q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+			q.setParameter( "cenario", cenario );
+
+		List< ProfessorVirtual > list = q.getResultList();
+		return list;
+	}
 
 	//@Override
 	public int compareTo( ProfessorVirtual o )

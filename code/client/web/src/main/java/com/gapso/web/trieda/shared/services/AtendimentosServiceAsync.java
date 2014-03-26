@@ -43,7 +43,7 @@ public interface AtendimentosServiceAsync {
 //	void getBusca( CurriculoDTO curriculoDTO, Integer periodo, TurnoDTO turnoDTO, CampusDTO campusDTO,
 //		AsyncCallback< ParDTO< List< AtendimentoRelatorioDTO >, List< Integer > > > callback );
 
-	void getProfessoresVirtuais( AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
+	void getProfessoresVirtuais(CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< ProfessorVirtualDTO > > callback );
 	
 	void getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
 			PagingLoadConfig config, AsyncCallback< PagingLoadResult< ProfessorVirtualDTO > > callback );

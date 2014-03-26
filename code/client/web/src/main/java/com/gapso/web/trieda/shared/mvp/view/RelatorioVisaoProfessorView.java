@@ -84,7 +84,7 @@ public class RelatorioVisaoProfessorView extends RelatorioVisaoView	implements R
 		
 		List<Field<?>> rightList = new ArrayList<Field<?>>();
 				
-		this.professorVirtualCB = new ProfessorVirtualComboBox();
+		this.professorVirtualCB = new ProfessorVirtualComboBox(cenarioDTO);
 		filtro.addProfessorVirtualValueListener(this.professorVirtualCB);
 		rightList.add(this.professorVirtualCB);
 		

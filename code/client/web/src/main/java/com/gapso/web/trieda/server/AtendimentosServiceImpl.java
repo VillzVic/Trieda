@@ -1313,10 +1313,13 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 
 	@Override
-	public ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais()
+	public ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais(CenarioDTO cenarioDTO)
 	{
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
 		List< ProfessorVirtual > professoresVirtuais
-			= ProfessorVirtual.findAll( getInstituicaoEnsinoUser() );
+			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), cenario );
 
 		List< ProfessorVirtualDTO > professoresVirtuaisDTO
 			= new ArrayList< ProfessorVirtualDTO >();
