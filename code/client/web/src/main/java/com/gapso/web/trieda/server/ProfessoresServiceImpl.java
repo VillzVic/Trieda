@@ -904,11 +904,11 @@ public class ProfessoresServiceImpl
 		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
 		{
 			totalTurmasInstituicao += professorTurmas.getValue().size();
-			if (professorTurmas.getValue().size() >= 4)
+			if (professorTurmas.getValue().size() >= 6)
 			{
 				professoresBemAlocados.add(professorTurmas.getKey());
 			}
-			else if (professorTurmas.getValue().size() == 1)
+			else if (professorTurmas.getValue().size() <= 2)
 			{
 				professoresMalAlocados.add(professorTurmas.getKey());
 			}
