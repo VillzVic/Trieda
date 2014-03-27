@@ -75,7 +75,7 @@ public class SemanaLetiva
 	@JoinColumn( name = "CEN_ID" )
 	private Cenario cenario;
 
-	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva" )
+	@OneToMany( cascade = CascadeType.ALL, mappedBy = "semanaLetiva")
 	private Set< HorarioAula > horariosAula = new HashSet< HorarioAula >();
 
 	@OneToMany( mappedBy = "semanaLetiva" )

@@ -1,6 +1,7 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -358,14 +359,37 @@ public class Disciplina
 	}
 	
 	@Transactional
-	static public void preencheHorariosDasDisciplinas(List<Disciplina> disciplinas, List<SemanaLetiva> semanasLetivas) {
+	static public void preencheHorariosDasDisciplinas(List<Disciplina> disciplinas, List<SemanaLetiva> semanasLetivas, InstituicaoEnsino instituicaoEnsino) {
 		int count = 0;
+		
+		Map<SemanaLetiva, List<HorarioAula>> mapSemanaLetivaHorarioAula = new HashMap<SemanaLetiva, List<HorarioAula>>();
+		for(HorarioAula ha : HorarioAula.findAll(instituicaoEnsino)){
+			if(mapSemanaLetivaHorarioAula.get(ha.getSemanaLetiva()) == null){
+				List<HorarioAula> listHa = new ArrayList<HorarioAula>();
+				listHa.add(ha);
+				mapSemanaLetivaHorarioAula.put(ha.getSemanaLetiva(), listHa);
+			}else {
+				mapSemanaLetivaHorarioAula.get(ha.getSemanaLetiva()).add(ha);
+			}
+		}
+		
+		Map<HorarioAula, List<HorarioDisponivelCenario>> mapHorarioAulaHorarioDisponivel = new HashMap<HorarioAula, List<HorarioDisponivelCenario>>();
+		for(HorarioDisponivelCenario ha : HorarioDisponivelCenario.findAll(instituicaoEnsino)){
+			if(mapHorarioAulaHorarioDisponivel.get(ha.getHorarioAula()) == null){
+				List<HorarioDisponivelCenario> listHa = new ArrayList<HorarioDisponivelCenario>();
+				listHa.add(ha);
+				mapHorarioAulaHorarioDisponivel.put(ha.getHorarioAula(), listHa);
+			}else {
+				mapHorarioAulaHorarioDisponivel.get(ha.getHorarioAula()).add(ha);
+			}
+		}
+		
 		for (SemanaLetiva semanaLetiva : semanasLetivas) {
-			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
-				for (HorarioDisponivelCenario hdc : horarioAula.getHorariosDisponiveisCenario()) {
+			for (HorarioAula horarioAula : mapSemanaLetivaHorarioAula.get(semanaLetiva)) {
+				for (HorarioDisponivelCenario hdc : mapHorarioAulaHorarioDisponivel.get(horarioAula)) {
 					//Remove as disciplinas para atualizar os horarios
 					hdc.getDisciplinas().removeAll(disciplinas);
-					//Verifica no domingo se existem disciplinas marcadas com usaSabado
+					//Verifica no sábado se existem disciplinas marcadas com usaSabado
 					if (hdc.getDiaSemana() == Semanas.SAB) {
 						for(Disciplina d : disciplinas) {
 							if (d.getUsaSabado()) {
@@ -386,7 +410,7 @@ public class Disciplina
 						hdc.getDisciplinas().addAll(disciplinas);
 					}
 					hdc.merge();
-					count++;if (count == 100) {System.out.println("   100 hor�rios de disciplinas processadas"); count = 0;}
+					count++;if (count == 100) {System.out.println("   100 horários de disciplinas processadas"); count = 0;}
 				}
 			}
 		}

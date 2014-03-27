@@ -52,6 +52,9 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	private String horarioAulaIdPropertyName;
 	private String lastTurno = "";
 	private String lastSemanaLetiva = "";
+	private boolean usaSabado = true;
+	private boolean usaDomingo = true;
+	
 
 	public SemanaLetivaDoCenarioGrid(
 		List< M > horariosDisponiveisDisponivel,
@@ -67,6 +70,23 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 		setBodyBorder( false );
 		createCheckboxs();
 	}
+	
+	public SemanaLetivaDoCenarioGrid(
+			List< M > horariosDisponiveisDisponivel,
+			String horarioAulaIdPropertyName, boolean usaSabado, boolean usaDomingo )
+		{
+			super( new FitLayout() );
+
+			this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
+			this.horarioAulaIdPropertyName = horarioAulaIdPropertyName;
+			this.checkHeader = new HashMap<Integer, Boolean>();
+			this.usaSabado = usaSabado;
+			this.usaDomingo = usaDomingo;
+
+			setHeaderVisible( false );
+			setBodyBorder( false );
+			createCheckboxs();
+		}
 
 	@Override
 	protected void beforeRender()
@@ -230,6 +250,13 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 
 				ToggleImageButton tb = new ToggleImageButton( flag, Resources.DEFAULTS.save16(), Resources.DEFAULTS.cancel16() );
 				tb.toggle(flag);
+				
+				if(!usaSabado && colIndex == 8 ){
+					tb.disable();
+				}
+				if(!usaDomingo && colIndex == 9 ){
+					tb.disable();
+				}
 
 				tb.addSelectionListener( new SelectionListener< ButtonEvent >()
 				{
@@ -446,5 +473,13 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 			tib.toggle(false);
 			tib.fireEvent(Events.Select);
 		}
+	}
+
+	public ToggleImageButton getSabCB() {
+		return sabCB;
+	}
+
+	public ToggleImageButton getDomCB() {
+		return domCB;
 	}
 }

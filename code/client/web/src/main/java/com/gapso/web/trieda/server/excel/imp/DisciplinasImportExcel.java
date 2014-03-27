@@ -377,7 +377,7 @@ public class DisciplinasImportExcel
 		
 		if (!persistedDisciplinas.isEmpty()) {
 			List<SemanaLetiva> semanasLetivas = SemanaLetiva.findByCenario(instituicaoEnsino, getCenario());
-			Disciplina.preencheHorariosDasDisciplinas(persistedDisciplinas,semanasLetivas);
+			Disciplina.preencheHorariosDasDisciplinas(persistedDisciplinas,semanasLetivas,instituicaoEnsino);
 		}
 	}
 

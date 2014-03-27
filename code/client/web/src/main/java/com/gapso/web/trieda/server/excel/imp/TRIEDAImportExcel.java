@@ -85,9 +85,6 @@ public class TRIEDAImportExcel
 			importers.add( new HabilitacoesProfessoresImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			importers.add( new DivisoesCreditoImportExcel( this.cenario, this.i18nConstants, this.i18nMessages, this.instituicaoEnsino ) );
 			
-			//SemanaLetivaHorariosImportExcel
-			//DivisoesCreditoImportExcel
-
 			for ( IImportExcel importer : importers )
 			{
 				getProgressReport().setInitNewPartial("Importando " + importer.getSheetName());

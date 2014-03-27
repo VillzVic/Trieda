@@ -105,8 +105,7 @@ public abstract class AbstractImportExcel< ExcelBeanType >
 				for ( Entry< String, List< ExcelBeanType > > entry
 					: excelBeansMap.entrySet() )
 				{
-					processSheetContent(
-						entry.getKey(), entry.getValue() );
+					processSheetContent(entry.getKey(), entry.getValue() );
 				}
 			}
 			catch (Exception e) {
