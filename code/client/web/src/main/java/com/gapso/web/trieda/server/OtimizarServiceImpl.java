@@ -121,13 +121,11 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			
 			// realiza verificações
 			
-			System.out.print("Checando semanas letivas");long start = System.currentTimeMillis(); // TODO: retirar
 			checkSemanasLetivas(parametro,warnings);
-			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
-			System.out.print("Checando disciplinas sem curriculos"); start = System.currentTimeMillis(); // TODO: retirar
+			System.out.print("Checando disciplinas sem curriculos");long start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasSemCurriculo(parametro,warnings);
-			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			System.out.print("Checando disciplinas sem laboratorios");start = System.currentTimeMillis(); // TODO: retirar
 			checkDisciplinasSemLaboratorios(parametro,errors);
@@ -153,6 +151,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 
 			System.out.print("Checando demandas com disciplinas sem curriculo");start = System.currentTimeMillis(); // TODO: retirar
 			checkDemandasComDisciplinasSemCurriculo(parametro,errors);
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
+			System.out.print("Checando professoress com Carga Horária Máxima zerada");start = System.currentTimeMillis(); // TODO: retirar
+			checkProfessorComCargaHorariaMaximaZerada(parametro,errors);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			
@@ -1027,6 +1029,16 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 						errors.add(HtmlUtils.htmlUnescape("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "]."));
 						System.out.println("A demanda [" + demanda.getNaturalKeyString() + "] é inválida pois a disciplina [" + demanda.getDisciplina().getCodigo() + "] não pertence a nenhum período da matriz curricular [" + curriculo.getCodigo() + "].");
 					}
+				}
+			}
+		}
+	}
+	
+	private void checkProfessorComCargaHorariaMaximaZerada(Parametro parametro, List<String> errors) {
+		for (Campus campus : parametro.getCampi()) {
+			for (Professor professor : campus.getProfessores()) {
+				if(professor.getCargaHorariaMax() == 0){
+					errors.add(HtmlUtils.htmlUnescape("O professor "+professor.getNome() + " de CPF "+professor.getCpf()+" está com carga horária máxima igual a zero e, portanto, não poderá ser utilizado"));
 				}
 			}
 		}
