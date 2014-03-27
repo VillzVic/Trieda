@@ -639,6 +639,10 @@ public class CampiServiceImpl extends RemoteService
 		}
 		// cálculo de outros indicadores
 		Integer qtdTotalAlunos = Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
+		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
+				null, null);
+		List<AlunoDemanda> alunosComDemanda = todosAlunos.size() > 0 ?
+				AlunoDemanda.findByAlunos(getInstituicaoEnsinoUser(), todosAlunos, null) : new ArrayList<AlunoDemanda>();
 		Integer qtdTotalDocentes = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus).size();
 		Integer qtdDocentesHabilitados = Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, campus).size();
 		Integer qtdTurmasAbertasProfessoresVirtuais = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresVirtuais(getInstituicaoEnsinoUser(),campus);
@@ -684,7 +688,7 @@ public class CampiServiceImpl extends RemoteService
 		
 		//Gerais
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"Número de alunos: ", "<b>" + numberFormatter.print(qtdTotalAlunos,pt_BR) + "</b>") ,currentNode, true) );
+				"Número de alunos: ", "<b>" + numberFormatter.print(alunosComDemanda.size(),pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Alunos atendidos (pelo menos 1 disc.): ", "<b>" + numberFormatter.print(qtdTotalAlunos,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
