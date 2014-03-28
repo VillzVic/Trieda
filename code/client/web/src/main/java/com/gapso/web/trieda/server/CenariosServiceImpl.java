@@ -390,9 +390,9 @@ public class CenariosServiceImpl
 				numberFormatter.print( AtendimentoOperacional.countProfessores( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Professores virtuais utilizados ", "<b>" +
 				numberFormatter.print( AtendimentoOperacional.countProfessoresVirtuais( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
-		list.add( new TreeNodeDTO( new ResumoDTO( "Demanda total ", "<b>" +  numberFormatter.print( Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b> pares (aluno, disciplina), onde:"), null, true ) );
-		list.add( new TreeNodeDTO( new ResumoDTO( "|--- ", "<b>" +  numberFormatter.print( AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),cenario,1),pt_BR ) + "</b> P1"), null, true ) );
-		list.add( new TreeNodeDTO( new ResumoDTO( "|---  ", "<b>" +  numberFormatter.print( AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),cenario,2),pt_BR ) + "</b> P2"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Demanda total(pares aluno-disciplina): ", "<b>" +  numberFormatter.print( Demanda.sumDemanda( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- P1 ", "<b>" +  numberFormatter.print( AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),cenario,1),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "|--- P2 ", "<b>" +  numberFormatter.print( AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),cenario,2),pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "Total de ambientes ", "<b>" +  numberFormatter.print( totalAmbientes,pt_BR )), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Total de salas de aula ", "<b>" +
 				 numberFormatter.print( totalSalas,pt_BR ) + "</b>"), null, true ) );
