@@ -240,6 +240,11 @@ public class DemandasExportExcel
 					{
 						Demanda demanda = demandasMap.get(
 							disciplinaDeUmPeriodo.getDisciplina().getCodigo() );
+						
+						if (demanda == null) {
+							// se entrou aqui significa que a disciplina (disciplinaDeUmPeriodo) da matriz curricular não tem demanda por aluno
+							continue;
+						}
 
 						DemandaDTO demandaDTO = ConvertBeans.toDemandaDTO(demanda);
 						int quantidadeReal = demandaDTO.getDemandaReal();
