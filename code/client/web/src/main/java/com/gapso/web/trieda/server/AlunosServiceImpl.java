@@ -228,9 +228,9 @@ public class AlunosServiceImpl
 				Curso.find(alunoFiltro.getCurso().getId(), getInstituicaoEnsinoUser()) : null;
 		Boolean formando = alunoFiltro.getFormando() == true ? true : null;
 		
-		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
+		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
 				formando, alunoFiltro.getPeriodo());
-		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
+		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
 				true, alunoFiltro.getPeriodo()).size();
 		
 		List<AlunoDemanda> alunosUteis = todosAlunos.size() > 0 ?
