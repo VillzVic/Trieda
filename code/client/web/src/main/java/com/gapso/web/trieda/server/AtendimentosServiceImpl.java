@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.server;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
+import com.gapso.trieda.domain.Aula;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -52,11 +54,13 @@ import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
+import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
@@ -3421,7 +3425,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	}
 	
 	@Override
-	public TurmaDTO selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO, DemandaDTO demandaDTO)
+	public ParDTO<TurmaDTO, List<AulaDTO>> selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO, DemandaDTO demandaDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Demanda demanda = ConvertBeans.toDemanda(demandaDTO);
@@ -3435,24 +3439,26 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			{
 				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
 				
-				return  ConvertBeans.toTurmaDTO(createTurmaTatico(atendimentos));
+				return  createTurmaTatico(atendimentos);
 			}
 			else
 			{
 				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
 
-				return  ConvertBeans.toTurmaDTO(createTurmaOperacional(atendimentos));
+				return  createTurmaOperacional(atendimentos);
 			}
 		}
 		else
 		{
 			Turma turma = Turma.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getNome()).get(0);
 			
-			return ConvertBeans.toTurmaDTO(turma);
+			
+			List<Aula> aulas = new ArrayList<Aula>(turma.getAulas());
+			return ParDTO.create(ConvertBeans.toTurmaDTO(turma), ConvertBeans.toListAulasDTO(aulas));
 		}
 	}
 
-	private Turma createTurmaOperacional(List<AtendimentoOperacional> atendimentos) {
+	private ParDTO<TurmaDTO, List<AulaDTO>> createTurmaOperacional(List<AtendimentoOperacional> atendimentos) {
 		Turma turma = new Turma();
 		
 		turma.setDisciplina(atendimentos.get(0).getDisciplinaSubstituta() == null ? atendimentos.get(0).getDisciplina() : atendimentos.get(0).getDisciplinaSubstituta());
@@ -3460,15 +3466,70 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		turma.setNome(atendimentos.get(0).getTurma());
 		turma.setParcial(false);
 		
-		for (AtendimentoOperacional atendimento : atendimentos)
+		List<AulaDTO> aulasDTO = new ArrayList<AulaDTO>();
+		List<AtendimentoOperacionalDTO> aulas = extraiAulas(ConvertBeans.toListAtendimentoOperacionalDTO(atendimentos));
+		int credAlocados = 0;
+		int noAlunos = 0;
+		Set<Long> ofertas = new HashSet<Long>();
+		for (AtendimentoOperacionalDTO aula : aulas)
 		{
-			//TODO criar aulas e alunos
+			AulaDTO aulaDTO = new AulaDTO();
+			aulaDTO.setCenarioId(aula.getCenarioId());
+			aulaDTO.setCreditosPraticos(aula.getCreditoTeoricoBoolean() ? 0 : aula.getTotalCreditos());
+			aulaDTO.setCreditosTeoricos(aula.getCreditoTeoricoBoolean() ? aula.getTotalCreditos() : 0);
+			aulaDTO.setSalaId(aula.getSalaId());
+			aulaDTO.setSalaString(aula.getSalaString());
+			aulaDTO.setHorarioDisponivelCenarioId(aula.getHorarioDisponivelCenarioId());
+			aulaDTO.setHorarioAulaId(aula.getHorarioAulaId());
+			aulaDTO.setSemana(aula.getSemana());
+			credAlocados += aula.getTotalCreditos();
+			if (!ofertas.contains(aula.getOfertaId()))
+			{
+				noAlunos += aula.getQuantidadeAlunos();
+				ofertas.add(aula.getOfertaId());
+			}
+			
+			HorarioDisponivelCenario hdc = HorarioDisponivelCenario.find(aula.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser());
+			DateFormat df = new SimpleDateFormat( "HH:mm" );
+			String inicio = df.format( hdc.getHorarioAula().getHorario() );
+
+			Calendar fimCal = Calendar.getInstance();
+			fimCal.setTime( hdc.getHorarioAula().getHorario() );
+
+			fimCal.add( Calendar.MINUTE, hdc.getHorarioAula().getSemanaLetiva().getTempo() );
+			String fim = df.format( fimCal.getTime() );
+
+			String tipoCredito = aula.getCreditoTeoricoBoolean() ? aula.getTotalCreditos() + "T" : aula.getTotalCreditos() + "P";
+			
+			String horarioString = Semanas.get(aula.getSemana()) + " " + inicio + "/" + fim + " " + tipoCredito;
+			
+			aulaDTO.setHorarioString(horarioString);
+
+			aulaDTO.setProfessorId(aula.getProfessorId());
+			String professorNome = "";
+			if (aula.getProfessorId() != null)
+			{
+				professorNome = aula.getProfessorString();
+			}
+			else if (aula.getProfessorVirtualId() != null)
+			{
+				professorNome = aula.getProfessorVirtualString();
+			}
+			
+			aulaDTO.setProfessorNome(professorNome);
+			aulaDTO.setProfessorVirtualId(aula.getProfessorVirtualId());
+			
+			aulasDTO.add(aulaDTO);
 		}
 		
-		return turma;
+		TurmaDTO turmaDTO = ConvertBeans.toTurmaDTO(turma);
+		turmaDTO.setCredAlocados(credAlocados);
+		turmaDTO.setNoAlunos(noAlunos);
+		
+		return ParDTO.create(turmaDTO, aulasDTO);
 	}
 	
-	private Turma createTurmaTatico(List<AtendimentoTatico> atendimentos) {
+	private ParDTO<TurmaDTO, List<AulaDTO>> createTurmaTatico(List<AtendimentoTatico> atendimentos) {
 		Turma turma = new Turma();
 		
 		turma.setDisciplina(atendimentos.get(0).getDisciplinaSubstituta() == null ? atendimentos.get(0).getDisciplina() : atendimentos.get(0).getDisciplinaSubstituta());
@@ -3476,11 +3537,96 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		turma.setNome(atendimentos.get(0).getTurma());
 		turma.setParcial(false);
 		
-		for (AtendimentoTatico atendimento : atendimentos)
+		List<AulaDTO> aulasDTO = new ArrayList<AulaDTO>();
+		int credAlocados = 0;
+		int noAlunos = 0;
+		Set<Long> ofertas = new HashSet<Long>();
+		for (AtendimentoTatico aula : atendimentos)
 		{
-			//TODO criar aulas e alunos
+			AulaDTO aulaDTO = new AulaDTO();
+			aulaDTO.setCenarioId(aula.getCenario().getId());
+			aulaDTO.setCreditosPraticos(aula.getCreditosPratico());
+			aulaDTO.setCreditosTeoricos(aula.getCreditosTeorico());
+			credAlocados += aula.getCreditosPratico() + aula.getCreditosTeorico();
+			if (!ofertas.contains(aula.getOferta().getId()))
+			{
+				noAlunos += aula.getQuantidadeAlunos();
+				ofertas.add(aula.getOferta().getId());
+			}
+			aulaDTO.setSalaId(aula.getSala().getId());
+			aulaDTO.setSalaString(aula.getSala().getCodigo());
+			aulaDTO.setHorarioDisponivelCenarioId(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), aula.getHorarioAula(), aula.getSemana()).getId());
+			aulaDTO.setHorarioAulaId(aula.getHorarioAula().getId());
+			aulaDTO.setSemana(aula.getSemana().ordinal());
+			
+			DateFormat df = new SimpleDateFormat( "HH:mm" );
+			String inicio = df.format( aula.getHorarioAula().getHorario() );
+
+			Calendar fimCal = Calendar.getInstance();
+			fimCal.setTime( aula.getHorarioAula().getHorario() );
+
+			fimCal.add( Calendar.MINUTE, aula.getHorarioAula().getSemanaLetiva().getTempo() );
+			String fim = df.format( fimCal.getTime() );
+
+			String tipoCredito = aula.getCreditosPratico() == 0 ? aula.getCreditosTeorico() + "T" : aula.getCreditosPratico() + "P";
+			
+			String horarioString = aula.getSemana().name() + " " + inicio + "/" + fim + " " + tipoCredito;
+			
+			aulaDTO.setHorarioString(horarioString);
+			
+			
+			aulasDTO.add(aulaDTO);
 		}
 		
-		return turma;
+		TurmaDTO turmaDTO = ConvertBeans.toTurmaDTO(turma);
+		turmaDTO.setCredAlocados(credAlocados);
+		turmaDTO.setNoAlunos(noAlunos);
+		
+		return ParDTO.create(turmaDTO, aulasDTO);
 	}
+	
+/*	@Override
+	public ListLoadResult<AlunoStatusDTO> getAlunosStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO)
+	{
+		Disciplina disciplina = Disciplina.find(turmaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+		Demanda demanda = Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser());
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		List<AlunoDemanda> alunosDemanda = new ArrayList<AlunoDemanda>();
+		alunosDemanda.addAll(demanda.getAlunosDemanda());
+		List<AlunoDemanda> alunosDiscEquivalentes =
+				AlunoDemanda.findAlunosEquivalentes(getInstituicaoEnsinoUser(), cenario, disciplina );
+				
+		for (AlunoDemanda alunoDemanda : demanda.getAlunosDemanda())
+		{
+			AlunoStatusDTO alunoStatusDTO = new AlunoStatusDTO();
+			
+			alunoStatusDTO.setAlunoDemandaId(alunoDemanda.getId());
+			alunoStatusDTO.setAlunoId(alunoDemanda.getAluno().getId());
+			alunoStatusDTO.setMarcado(alunoDemanda.getAtendido());
+			alunoStatusDTO.setMatricula(alunoDemanda.getAluno().getMatricula());
+			alunoStatusDTO.setNome(alunoDemanda.getAluno().getNome());
+			alunoStatusDTO.setStatus(alunoDemanda.getAluno().getNome());
+			
+			String status = "";
+			if (alunoDemanda.getAtendido())
+			{
+				status = "Alocado";
+			}
+			
+			List<AtendimentoTatico> atendimentosAluno
+			
+			
+			alunoStatusDTO.setFormando(alunoDemanda.getAluno().getFormando());
+		}
+		
+		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		if (ehTatico)
+		{
+		
+		
+	}*/
 }

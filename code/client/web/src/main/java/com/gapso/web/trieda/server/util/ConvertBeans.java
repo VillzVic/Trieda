@@ -71,6 +71,7 @@ import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
+import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -3786,4 +3787,68 @@ public class ConvertBeans {
 		
 		return domain;
 	}
+	
+	public static AulaDTO toAulaDTO(Aula domain)
+	{
+		AulaDTO dto = new AulaDTO();
+		
+		dto.setId(domain.getId());
+		dto.setVersion(domain.getVersion());
+		dto.setCenarioId(domain.getCenario().getId());
+		dto.setCreditosPraticos(domain.getCreditosPraticos());
+		dto.setCreditosTeoricos(domain.getCreditosTeoricos());
+		dto.setProfessorId(domain.getProfessor() == null ? null : domain.getProfessor().getId() );
+		dto.setProfessorVirtualId(domain.getProfessor() == null ? null : domain.getProfessor().getId() );
+		String professorNome = "";
+		if (domain.getProfessor() != null)
+		{
+			professorNome = domain.getProfessor().getNome();
+		}
+		else if (domain.getProfessorVirtual() != null)
+		{
+			professorNome = domain.getProfessorVirtual().getNome();
+		}
+		dto.setProfessorNome( professorNome );
+		dto.setSalaId(domain.getSala().getId());
+		dto.setSalaString(domain.getSala().getCodigo());
+		dto.setHorarioDisponivelCenarioId(domain.getHorarioDisponivelCenario().getId());
+		dto.setHorarioAulaId(domain.getHorarioDisponivelCenario().getHorarioAula().getId());
+		dto.setSemana(domain.getHorarioDisponivelCenario().getDiaSemana().ordinal());
+		
+		DateFormat df = new SimpleDateFormat( "HH:mm" );
+		String inicio = df.format( domain.getHorarioDisponivelCenario().getHorarioAula().getHorario() );
+
+		Calendar fimCal = Calendar.getInstance();
+		fimCal.setTime( domain.getHorarioDisponivelCenario().getHorarioAula().getHorario() );
+
+		fimCal.add( Calendar.MINUTE, domain.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo() );
+		String fim = df.format( fimCal.getTime() );
+
+		String tipoCredito = domain.getCreditosPraticos() == 0 ? domain.getCreditosTeoricos() + "T" : domain.getCreditosPraticos() + "P";
+		
+		String horarioString = domain.getHorarioDisponivelCenario().getDiaSemana().name() + " " + inicio + "/" + fim + " " + tipoCredito;
+		
+		dto.setHorarioString(horarioString);
+		
+		return dto;
+	}
+	
+	public static List < AulaDTO > toListAulasDTO(
+			List< Aula > listDomains )
+		{
+			if ( listDomains == null )
+			{
+				return Collections.< AulaDTO > emptyList();
+			}
+
+			List< AulaDTO > listDTOs
+				= new ArrayList< AulaDTO >();
+
+			for ( Aula dto : listDomains )
+			{
+				listDTOs.add( ConvertBeans.toAulaDTO( dto ) );
+			}
+
+			return listDTOs;
+		}
 }

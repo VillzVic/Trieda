@@ -12,17 +12,20 @@ import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.TabItem;
+import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
-import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.layout.CenterLayout;
 import com.extjs.gxt.ui.client.widget.layout.ColumnData;
 import com.extjs.gxt.ui.client.widget.layout.ColumnLayout;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
@@ -30,16 +33,19 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlocacaoManualPresenter;
+import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
+import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
-import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaSalaGrid;
+import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SalaAutoCompleteBox;
@@ -62,7 +68,10 @@ public class AlocacaoManualView
 	private Integer atendimentoNaoPlanejado;
 	private Integer atendimentoPlanejado;
 	private SimpleUnpagedGrid<TurmaStatusDTO> turmasGrid;
+	private SimpleUnpagedGrid<AlunoStatusDTO> alunosGrid;
 	private SimpleToolBar toolBar;
+	private SimpleToolBar alunosToolBar;
+	private SimpleToolBar professoresToolBar;
 	private LabelField planejadoLabel;
 	private LabelField naoPlanejadoLabel;
 	private LabelField naoAtendidoLabel;
@@ -70,13 +79,27 @@ public class AlocacaoManualView
 	private TextField<String> novaTurmaNomeTF;
 	private Button novaTurmaBt;
 	private TurmaDTO turmaSelecionada;
+	private List<AulaDTO> aulasSelecionadas;
 	private String turmaSelecionadaStatus;
 	private ContentPanel turmaSelecionadaPanel;
 	private LayoutContainer emptyText;
 	private Button salvarTurmaBt = new Button();
 	private Button editarTurmaBt = new Button();
 	private Button removerTurmaBt = new Button();
+	private List<Button> mostrarGradeBts;
+	private List<Button> editarAulaBts;
+	private List<Button> removerAulaBts;
 	private Button selecionarTurmaBt;
+	private SalaAutoCompleteBox salaComboBox;
+	private Button proxAmbienteBt;
+	private Button antAmbienteBt;
+	private Button filtrarBt;
+	private GradeHorariaSalaGrid salaGridPanel;
+	private RelatorioVisaoSalaFiltro salaFiltro;
+	private Button salvarMarcacoesAlunos;
+	private Button cancelarMarcacoesAlunos;
+	private Button marcarTodosAlunos;
+	private Button desmarcarTodosAlunos;
 	public AlocacaoManualView( CenarioDTO cenarioDTO, QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> quinteto, ResumoMatriculaDTO resumoMatriculaDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
@@ -140,7 +163,8 @@ public class AlocacaoManualView
 	    leftPanel.add(createDisciplinaDemandaPanel(), bldDisciplina);
 	    leftPanel.add(createTurmasGridPanel(), new BorderLayoutData( LayoutRegion.CENTER ));
 	    
-	    ContentPanel rightPanel = new ContentPanel();
+	    ContentPanel rightPanel = new ContentPanel(new FitLayout());
+	    rightPanel.add(createProfessoresAlunosPanel());
 	    
 	    ContentPanel centerPanel = new ContentPanel(new FitLayout());
 	    centerPanel.setHeadingHtml("Grade Horária Visão Ambiente");
@@ -153,6 +177,65 @@ public class AlocacaoManualView
 	    this.panel.add( centerPanel, bldCenter );
 	}
 	
+	private Widget createProfessoresAlunosPanel() {
+		TabPanel professoresAlunosTabPanel = new TabPanel();
+		
+		TabItem alunosTabItem = new TabItem( "Alunos" );
+		alunosTabItem.setLayout(new FitLayout());
+		TabItem professoresTabItem = new TabItem( "Professores" );
+		professoresTabItem.setLayout(new FitLayout());
+		
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
+		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
+		alunosTabItem.add(createAlunosGrid());
+		
+		professoresAlunosTabPanel.add(alunosTabItem);
+		professoresAlunosTabPanel.add(professoresTabItem);
+		
+		
+		return professoresAlunosTabPanel;
+	}
+	
+	private SimpleUnpagedGrid<AlunoStatusDTO> createAlunosGrid()
+	{
+		this.alunosToolBar = new SimpleToolBar(
+				false, false, false, false, false, this );
+		
+		salvarMarcacoesAlunos = alunosToolBar.createButton("Salvar marcações", Resources.DEFAULTS.salvarMarcacoes16());
+		cancelarMarcacoesAlunos = alunosToolBar.createButton("Cancelar marcações", Resources.DEFAULTS.cancelarMarcacoes16());
+		marcarTodosAlunos = alunosToolBar.createButton("Marcar todos alunos", Resources.DEFAULTS.marcarTodos16());
+		desmarcarTodosAlunos = alunosToolBar.createButton("Desmarcar todos alunos", Resources.DEFAULTS.marcarTodos16());
+		
+		alunosToolBar.add(salvarMarcacoesAlunos);
+		alunosToolBar.add(cancelarMarcacoesAlunos);
+		alunosToolBar.add(new SeparatorToolItem());
+		alunosToolBar.add(marcarTodosAlunos);
+		alunosToolBar.add(desmarcarTodosAlunos);
+		
+	    this.alunosGrid = new SimpleUnpagedGrid< AlunoStatusDTO >( getAlunosColumnList(), this, this.alunosToolBar )
+	    {
+			@Override
+			public void afterRender()
+			{
+				super.afterRender();
+				
+				getGrid().getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<AlunoStatusDTO>() {
+
+					@Override
+				    public void selectionChanged(SelectionChangedEvent<AlunoStatusDTO> se) {
+				        if(getGrid().getSelectionModel().getSelectedItems().size() == 1) {
+				        }
+				        else{
+				        }
+				    }
+				});
+			}
+	    };
+	    alunosGrid.setTopComponent(alunosToolBar);
+	    
+	    return alunosGrid;
+	}
+
 	private Widget createGradeHorariaPanel() {
 		ContentPanel gradeHorariaPanel = new ContentPanel(new BorderLayout());
 		gradeHorariaPanel.setHeaderVisible(false);
@@ -162,18 +245,48 @@ public class AlocacaoManualView
 		BorderLayoutData bldNorth = new BorderLayoutData( LayoutRegion.NORTH );
 		bldNorth.setSize(80);
 		bldNorth.setCollapsible(true);
-		ContentPanel filtro = new ContentPanel(new BorderLayout());
+		ContentPanel filtro = new ContentPanel(new CenterLayout())
+		{
+			@Override
+			public void afterRender()
+			{
+				super.afterRender();
+				
+				this.getBody().setStyleAttribute("background", "none");
+			}
+		};
 		filtro.setHeadingHtml("Filtro");
-		filtro.setStyleAttribute("background", "none");
 		
-		LayoutContainer filtroContainer = new LayoutContainer();
-		filtroContainer.setWidth(200);
-		SalaAutoCompleteBox salaComboBox = new SalaAutoCompleteBox(cenarioDTO);
+		LayoutContainer filtroContainer = new LayoutContainer(new ColumnLayout());
+		filtroContainer.setBorders(false);
+		salaComboBox = new SalaAutoCompleteBox(cenarioDTO);
+		getSalaComboBox().setWidth(200);
+		getSalaComboBox().setStyleAttribute("margin-left", "20px");
+		getSalaComboBox().setStyleAttribute("margin-right", "20px");
+		proxAmbienteBt = new Button();
+		proxAmbienteBt.disable();
+		antAmbienteBt = new Button();
+		antAmbienteBt.disable();
+		filtrarBt = new Button("Filtrar", AbstractImagePrototype.create(Resources.DEFAULTS.filter16()));
+		filtrarBt.setStyleAttribute("margin-right", "20px");
+		proxAmbienteBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.prox16()));
+		antAmbienteBt.setIcon(AbstractImagePrototype.create(Resources.DEFAULTS.ant16()));
+		filtroContainer.add(antAmbienteBt);
 		filtroContainer.add(salaComboBox);
+		filtroContainer.add(filtrarBt);
+		filtroContainer.add(proxAmbienteBt);
 		filtro.add(filtroContainer, bldCenter);
 		
-		ContentPanel grade = new ContentPanel();
+		ContentPanel grade = new ContentPanel(new FitLayout());
 		grade.setHeaderVisible(false);
+		grade.setBodyBorder(false);
+		
+		salaGridPanel = new GradeHorariaSalaGrid(cenarioDTO);
+		salaGridPanel.setEmptyTextBeforeSearch("Preencha o filtro acima e acione o" +
+				" botão filtrar para visualizar a grade horária do ambiente desejado.");
+		salaFiltro = new RelatorioVisaoSalaFiltro();
+		getSalaGridPanel().setFiltro(salaFiltro);
+		grade.add(salaGridPanel);
 		
 		gradeHorariaPanel.add(filtro, bldNorth);
 		gradeHorariaPanel.add(grade, bldCenter);
@@ -375,6 +488,49 @@ public class AlocacaoManualView
 		return list;
 	}
 	
+	private List< ColumnConfig > getAlunosColumnList()
+	{
+		List< ColumnConfig > list
+			= new ArrayList< ColumnConfig >();
+		
+	    GridCellRenderer<AlunoStatusDTO> change = new GridCellRenderer<AlunoStatusDTO>() {
+
+			@Override
+			public Object render(AlunoStatusDTO model, String property,
+					com.extjs.gxt.ui.client.widget.grid.ColumnData config,
+					int rowIndex, int colIndex,
+					ListStore<AlunoStatusDTO> store, Grid<AlunoStatusDTO> grid) {
+			    
+		          String val = (String) model.get(property);  
+		          String style = "";
+		          if (val.equals("Disponível"))
+		          {
+		        	  style = "green";
+		          }
+		          else if(val.equals("Conflito"))
+		          {
+		        	  style = "red";
+		          }
+		          else
+		          {
+		        	  style = "black";
+		          }
+		          return "<span style='color:" + style + "'>" + val + "</span>";
+			}
+	    }; 
+		
+		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_MARCADO, "", 30 ) );
+		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_MATRICULA, "Matrícula", 60 ) );
+		ColumnConfig column = new ColumnConfig( AlunoStatusDTO.PROPERTY_STATUS, "Status", 70 );
+		column.setRenderer(change);
+		list.add( column );
+		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_EQUIVALENCIA_STRING, "Equivalência", 60 ) );
+		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_FORMANDO, "Formando", 60 ) );
+		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
+		
+		return list;
+	}
+	
 	@Override
 	public SimpleUnpagedGrid< TurmaStatusDTO > getGrid()
 	{
@@ -382,9 +538,21 @@ public class AlocacaoManualView
 	}
 	
 	@Override
+	public SimpleUnpagedGrid< AlunoStatusDTO > getAlunosGrid()
+	{
+		return this.alunosGrid;
+	}
+	
+	@Override
 	public void setProxy( RpcProxy< ListLoadResult< TurmaStatusDTO > > proxy )
 	{
 		this.turmasGrid.setProxy( proxy );
+	}
+	
+	@Override
+	public void setAlunosProxy( RpcProxy< ListLoadResult< AlunoStatusDTO > > proxy )
+	{
+		this.alunosGrid.setProxy( proxy );
 	}
 	
 	@Override
@@ -469,15 +637,40 @@ public class AlocacaoManualView
 		{
 			turmaSelecionadaPanel.removeAll();
 			turmaSelecionadaPanel.add(createTurmaSubPanel());
+			criaBotoesAulas();
+			for (int i = 0; i < aulasSelecionadas.size(); i++)
+			{
+				turmaSelecionadaPanel.add(createSeparator());
+				turmaSelecionadaPanel.add(createAulasSubPanel(aulasSelecionadas.get(i), i));
+			}
+			turmaSelecionadaPanel.add(createSeparator());
+			turmaSelecionadaPanel.add(createNovaAulaSubPanel());
 			turmaSelecionadaPanel.layout();
 		}
 	}
 	
+	private void criaBotoesAulas() {
+		mostrarGradeBts = new ArrayList<Button>();
+		editarAulaBts = new ArrayList<Button>();
+		removerAulaBts = new ArrayList<Button>();
+		for (int i = 0; i < aulasSelecionadas.size(); i++)
+		{
+			mostrarGradeBts.add(new Button("", AbstractImagePrototype.create(
+				Resources.DEFAULTS.saidaSala16() )));
+			editarAulaBts.add(new Button("", AbstractImagePrototype.create(
+					Resources.DEFAULTS.edit16() )));
+			removerAulaBts.add(new Button("", AbstractImagePrototype.create(
+					Resources.DEFAULTS.del16() )));
+		}
+		
+	}
+
 	@Override
-	public void setTurmaSelecionada(TurmaDTO turmaDTO, String status)
+	public void setTurmaSelecionada(TurmaDTO turmaDTO, List<AulaDTO> aulas, String status)
 	{
 		this.turmaSelecionada = turmaDTO;
 		this.turmaSelecionadaStatus = status;
+		this.aulasSelecionadas = aulas;
 	}
 	
 	@Override
@@ -528,6 +721,11 @@ public class AlocacaoManualView
 		LayoutContainer buttonsContainer = new LayoutContainer(new ColumnLayout());
 		salvarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.disk16() ));
+		if (!((turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
+				&& turmaSelecionada.getNoAlunos() > 0))
+		{
+			salvarTurmaBt.disable();
+		}
 		editarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.edit16() ));
 		removerTurmaBt.setIcon(AbstractImagePrototype.create(
@@ -561,5 +759,138 @@ public class AlocacaoManualView
 		turmaSubPanel.add(container);
 		
 		return turmaSubPanel;
+	}
+	
+	private Widget createAulasSubPanel(AulaDTO aulaDTO, int index) {
+		ContentPanel aulaSubPanel = new ContentPanel();
+		aulaSubPanel.setHeaderVisible(false);
+		aulaSubPanel.setBodyBorder(false);
+		aulaSubPanel.setWidth(230);
+		
+		FormLayout layout = new FormLayout(LabelAlign.RIGHT);
+		layout.setLabelWidth(45);
+		LayoutContainer textContainer = new LayoutContainer(layout);
+		textContainer.addStyleName("alocacaoManualDemanda");
+		textContainer.setWidth(150);
+		LabelField horarioLabel = new LabelField();
+		horarioLabel.setFieldLabel(aulaDTO.getHorarioString());
+		horarioLabel.setLabelStyle("width: 115px");
+		
+		LabelField ambienteLabel = new LabelField();
+		ambienteLabel.setFieldLabel("<b>Amb.:</b>");
+		ambienteLabel.setValue(aulaDTO.getSalaString());
+		
+		LabelField professorLabel = new LabelField();
+		professorLabel.setFieldLabel("<b>Prof.:</b>");
+		professorLabel.setValue( aulaDTO.getProfessorNome() );
+		
+		textContainer.add(horarioLabel);
+		textContainer.add(ambienteLabel);
+		textContainer.add(professorLabel);
+		
+		LayoutContainer rightContainer = new LayoutContainer(new RowLayout());
+		LayoutContainer buttonsContainer = new LayoutContainer(new ColumnLayout());
+		buttonsContainer.add(mostrarGradeBts.get(index));
+		buttonsContainer.add(editarAulaBts.get(index));
+		buttonsContainer.add(removerAulaBts.get(index));
+		rightContainer.add(buttonsContainer);
+		
+		LayoutContainer container = new LayoutContainer(new ColumnLayout());
+		container.add(textContainer);
+		container.add(rightContainer);
+		
+		aulaSubPanel.add(container);
+		
+		return aulaSubPanel;
+	}
+	
+	private Widget createNovaAulaSubPanel() {
+		ContentPanel aulaSubPanel = new ContentPanel(new ColumnLayout());
+		aulaSubPanel.setHeaderVisible(false);
+		aulaSubPanel.setBodyBorder(false);
+		aulaSubPanel.setWidth(200);
+		
+		Button novaAulaBt = new Button();
+		novaAulaBt.setIcon(AbstractImagePrototype.create(
+				Resources.DEFAULTS.marcarFormandos16() ));
+		novaAulaBt.setStyleAttribute("margin-left", "5px");
+		
+		LabelField nome = new LabelField();
+		nome.setValue("Nova Aula");
+		nome.setStyleAttribute("margin-left", "5px");
+		
+		if (turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
+		{
+			novaAulaBt.disable();
+		}
+		
+		aulaSubPanel.add(novaAulaBt);
+		aulaSubPanel.add(nome);
+		
+		return aulaSubPanel;
+	}
+	
+	public Widget createSeparator()
+	{
+		ContentPanel separator = new ContentPanel();
+		separator.setHeight(50);
+		separator.setWidth(2);
+		separator.setHeaderVisible(false);
+		separator.setStyleAttribute("margin-top", "6px");
+		
+		return separator;
+	}
+
+	@Override
+	public SalaAutoCompleteBox getSalaComboBox() {
+		return salaComboBox;
+	}
+
+	public Button getProxAmbienteButton() {
+		return proxAmbienteBt;
+	}
+
+	@Override
+	public Button getAntAmbienteButton() {
+		return antAmbienteBt;
+	}
+
+	@Override
+	public Button getFiltrarButton() {
+		return filtrarBt;
+	}
+	
+	@Override
+	public GradeHorariaSalaGrid getSalaGridPanel() {
+		return salaGridPanel;
+	}
+
+	@Override
+	public RelatorioVisaoSalaFiltro getSalaFiltro() {
+		return salaFiltro;
+	}
+	
+	@Override
+	public List<AulaDTO> getAulasSelecionadas()
+	{
+		return aulasSelecionadas;
+	}
+	
+	@Override
+	public List<Button> getMostrarGradeBts()
+	{
+		return mostrarGradeBts;
+	}
+	
+	@Override
+	public List<Button> getEditarAulaBts()
+	{
+		return editarAulaBts;
+	}
+	
+	@Override
+	public List<Button> getRemoverAulaBts()
+	{
+		return removerAulaBts;
 	}
 }

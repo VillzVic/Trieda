@@ -1226,4 +1226,22 @@ public class AlunoDemanda
 
         return q.getResultList();
 	}
+
+	@SuppressWarnings("unchecked")
+	public static List<AlunoDemanda> findAlunosEquivalentes(
+			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+			Disciplina disciplina)
+	{
+        Query q = entityManager().createQuery(
+        	" SELECT o FROM AlunoDemanda o, IN (o.demanda.disciplina.eliminadasPor) eliminadasPor " +
+        	" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+        	" AND o.demanda.oferta.campus.cenario = :cenario " +
+        	" AND eliminadasPor = :disciplina ");
+        
+        q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+        q.setParameter( "cenario", cenario );
+        q.setParameter( "disciplina", disciplina );
+        
+        return q.getResultList();
+	}
 }

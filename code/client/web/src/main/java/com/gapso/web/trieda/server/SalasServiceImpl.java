@@ -1051,4 +1051,26 @@ public class SalasServiceImpl
 		return result;
 		
 	}
+	
+	@Override
+	public SalaDTO getProxSala( CenarioDTO cenarioDTO, SalaDTO salaDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Sala sala = Sala.find(salaDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Sala proxSala = Sala.findProx(getInstituicaoEnsinoUser(), cenario, sala);
+
+		return ConvertBeans.toSalaDTO(proxSala);
+	}
+	
+	@Override
+	public SalaDTO getAntSala( CenarioDTO cenarioDTO, SalaDTO salaDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Sala sala = Sala.find(salaDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Sala proxSala = Sala.findAnt(getInstituicaoEnsinoUser(), cenario, sala);
+
+		return ConvertBeans.toSalaDTO(proxSala);
+	}
 }

@@ -50,4 +50,6 @@ public interface SalasService
 	List<RelatorioDTO> getRelatorio( CenarioDTO cenarioDTO, RelatorioSalaFiltro salaFiltro, RelatorioDTO currentNode );
 	ListLoadResult<FaixaCapacidadeSalaDTO> getFaixasCapacidadeSala(CenarioDTO cenarioDTO,	Integer tamanhoFaixa);
 	PagingLoadResult<SalaUtilizadaDTO> getSalasUtilizadas( CenarioDTO cenarioDTO, Long campusDTO, RelatorioSalaFiltro salaFiltro, BasePagingLoadConfig loadConfig);
+	SalaDTO getProxSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
+	SalaDTO getAntSala(CenarioDTO cenarioDTO, SalaDTO salaDTO);
 }

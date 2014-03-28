@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.tips.QuickTip;
 import com.gapso.web.trieda.shared.dtos.AtendimentoRelatorioDTO;
+import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
@@ -49,9 +50,23 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected QuickTip quickTip;
 	protected List<Long> disciplinasCores = new ArrayList<Long>();
 	protected CenarioDTO cenarioDTO;
+	protected AulaDTO aulaDestaque;
 
 	protected String emptyTextBeforeSearch = "Preencha o filtro acima";
 	protected String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
+	
+	public GradeHorariaVisao(CenarioDTO cenarioDTO, AulaDTO aulaDestaque){
+		super(new FitLayout());
+		this.temInfoDeHorarios = true;
+		this.mdcTemposAulaNumSemanasLetivas = ParDTO.create(1, false);
+		this.tamanhoLinhaGradeHorariaEmPixels = 0;
+		this.labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
+		this.horariosDeInicioDeAula = new ArrayList<String>();
+		this.horarioEhIntervalo = new ArrayList<Boolean>();
+		this.cenarioDTO = cenarioDTO;
+		this.aulaDestaque = aulaDestaque;
+		this.setHeaderVisible(false);
+	}
 	
 	public GradeHorariaVisao(CenarioDTO cenarioDTO){
 		super(new FitLayout());
@@ -62,6 +77,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		this.horariosDeInicioDeAula = new ArrayList<String>();
 		this.horarioEhIntervalo = new ArrayList<Boolean>();
 		this.cenarioDTO = cenarioDTO;
+		this.aulaDestaque = null;
 		this.setHeaderVisible(false);
 	}
 	
@@ -278,6 +294,14 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 					}
 				};
 				html.addStyleName("horario");
+				if (aulaDestaque != null)
+				{
+					if (aulaDTO.getHorarioAulaId().equals(aulaDestaque.getHorarioAulaId())
+							&& aulaDTO.getSemana().equals(aulaDestaque.getSemana()))
+					{
+						html.addStyleName("horarioDestaque");
+					}
+				}
 				html.setStyleAttribute("top", ((rowIndex-getNumeroIntervalos(rowIndex)) * (tamanhoLinhaGradeHorariaEmPixels) + (12 * getNumeroIntervalos(rowIndex))) + "px");
 				// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
 				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAulaNumSemanasLetivas.getPrimeiro();
@@ -466,6 +490,14 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 
 	public void setTurnoDTO(TurnoDTO turnoDTO){
 		this.turnoDTO = turnoDTO;
+	}
+	
+	public void setEmptyTextBeforeSearch(String text){
+		this.emptyTextBeforeSearch = text;
+	}
+	
+	public void setAulaDestaque(AulaDTO aulaDTO){
+		this.aulaDestaque = aulaDTO;
 	}
 	
 }

@@ -179,4 +179,9 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("turma_add_24.png") ImageResource turmaAdd24();
 	@Source("disk_16.png") ImageResource disk16();
 	@Source("selecionar_turma_16.png") ImageResource selecionarTurma16();
+	@Source("ant_16.png") ImageResource ant16();
+	@Source("prox_16.png") ImageResource prox16();
+	@Source("salvar_marcacoes_16.png") ImageResource salvarMarcacoes16();
+	@Source("cancelar_marcacoes_16.png") ImageResource cancelarMarcacoes16();
+	@Source("marcar_todos_16.png") ImageResource marcarTodos16();
 }

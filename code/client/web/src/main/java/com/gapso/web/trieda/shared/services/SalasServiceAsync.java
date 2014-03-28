@@ -51,4 +51,8 @@ public interface SalasServiceAsync
 	void getSalasUtilizadas(CenarioDTO cenarioDTO, Long campusDTO,
 			RelatorioSalaFiltro salaFiltro, BasePagingLoadConfig loadConfig,
 			AsyncCallback<PagingLoadResult<SalaUtilizadaDTO>> callback);
+	void getProxSala(CenarioDTO cenarioDTO, SalaDTO salaDTO,
+			AsyncCallback<SalaDTO> callback);
+	void getAntSala(CenarioDTO cenarioDTO, SalaDTO salaDTO,
+			AsyncCallback<SalaDTO> callback);
 }

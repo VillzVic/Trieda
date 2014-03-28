@@ -1060,4 +1060,40 @@ public class Sala
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;
 	}
+
+	public static Sala findProx(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Sala sala) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Sala o " +
+    		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.unidade.campus.cenario = :cenario " +
+    		" AND o > :sala " +
+    		" ORDER BY o.codigo");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "sala", sala );
+		q.setMaxResults(1);
+
+        return (Sala)q.getSingleResult();
+	}
+	
+	public static Sala findAnt(InstituicaoEnsino instituicaoEnsino,
+			Cenario cenario, Sala sala) {
+		
+		Query q = entityManager().createQuery(
+	       	" SELECT o FROM Sala o " +
+    		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " + 
+    		" AND o.unidade.campus.cenario = :cenario " +
+    		" AND o < :sala " +
+    		" ORDER BY o.codigo");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "sala", sala );
+		q.setMaxResults(1);
+
+        return (Sala)q.getSingleResult();
+	}
 }
