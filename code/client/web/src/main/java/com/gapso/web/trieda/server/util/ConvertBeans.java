@@ -2928,9 +2928,11 @@ public class ConvertBeans {
 		dto.setId( domain.getId() );
 		dto.setVersion( domain.getVersion() );
 		dto.setCursouId( domain.getCursou().getId() );
-		dto.setCursouString( domain.getCursou().getNome() + "(" + domain.getCursou().getCodigo() + ")" );
+		dto.setCursouCodigo( domain.getCursou().getCodigo());
+		dto.setCursouNome( domain.getCursou().getNome());
 		dto.setEliminaId( domain.getElimina().getId()  );
-		dto.setEliminaString( domain.getElimina().getNome() + "(" + domain.getElimina().getCodigo() + ")" );
+		dto.setEliminaCodigo( domain.getElimina().getCodigo());
+		dto.setEliminaNome( domain.getElimina().getNome());
 		dto.setEquivalenciaGeral( domain.getEquivalenciaGeral() );
 		if ( domain.getCursos().isEmpty() || domain.getEquivalenciaGeral() )
 		{

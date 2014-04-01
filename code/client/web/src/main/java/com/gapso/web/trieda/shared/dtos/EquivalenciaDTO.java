@@ -9,8 +9,10 @@ public class EquivalenciaDTO extends AbstractDTO<String>
 	public static final String PROPERTY_ID = "id";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CURSOU_ID = "cursouId";
+	public static final String PROPERTY_CURSOU_CODIGO = "cursouCod";
 	public static final String PROPERTY_CURSOU_STRING = "cursouString";
 	public static final String PROPERTY_ELIMINA_ID = "eliminaId";
+	public static final String PROPERTY_ELIMINA_CODIGO= "eliminaCod";
 	public static final String PROPERTY_ELIMINA_STRING = "eliminaString";
 	public static final String PROPERTY_EQV_GERAL = "equivalenciaGeral";
 	public static final String PROPERTY_CURSO_ID = "cursoId";
@@ -39,11 +41,18 @@ public class EquivalenciaDTO extends AbstractDTO<String>
 	public Long getCursouId() {
 		return get(PROPERTY_CURSOU_ID);
 	}
+	
+	public void setCursouCodigo(String value) {
+		set(PROPERTY_CURSOU_CODIGO, value);
+	}
+	public String getCursouCodigo() {
+		return get(PROPERTY_CURSOU_CODIGO);
+	}
 
-	public void setCursouString(String value) {
+	public void setCursouNome(String value) {
 		set(PROPERTY_CURSOU_STRING, value);
 	}
-	public String getCursouString() {
+	public String getCursouNome() {
 		return get(PROPERTY_CURSOU_STRING);
 	}
 	
@@ -54,10 +63,17 @@ public class EquivalenciaDTO extends AbstractDTO<String>
 		return get(PROPERTY_ELIMINA_ID);
 	}
 	
-	public void setEliminaString(String value) {
+	public void setEliminaCodigo(String value) {
+		set(PROPERTY_ELIMINA_CODIGO, value);
+	}
+	public String getEliminaCodigo() {
+		return get(PROPERTY_ELIMINA_CODIGO);
+	}
+	
+	public void setEliminaNome(String value) {
 		set(PROPERTY_ELIMINA_STRING, value);
 	}
-	public String getEliminaString() {
+	public String getEliminaNome() {
 		return get(PROPERTY_ELIMINA_STRING);
 	}
 	
@@ -86,14 +102,14 @@ public class EquivalenciaDTO extends AbstractDTO<String>
 	
 	@Override
 	public String getNaturalKey() {
-		return getCursouString() + "-" + getEliminaString();
+		return getCursouNome() + "-" + getEliminaNome();
 	}
 
 	@Override
 	public int compareTo(EquivalenciaDTO o) {
-		int result = getCursouString().compareTo(o.getCursouString());
+		int result = getCursouNome().compareTo(o.getCursouNome());
 		if (result == 0) {
-			result = getEliminaString().compareTo(o.getEliminaString());
+			result = getEliminaNome().compareTo(o.getEliminaNome());
 		}
 		return result;
 	}

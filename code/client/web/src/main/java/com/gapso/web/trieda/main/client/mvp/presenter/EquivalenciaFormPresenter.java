@@ -181,9 +181,11 @@ public class EquivalenciaFormPresenter
 
 		equivalenciaDTO.setInstituicaoEnsinoId( instituicaoEnsinoDTO.getId() );
 		equivalenciaDTO.setCursouId( display.getDisciplinaCursouComboBox().getValue().getId() );
-		equivalenciaDTO.setCursouString( display.getDisciplinaCursouComboBox().getValue().getCodigo() );
+		equivalenciaDTO.setCursouCodigo( display.getDisciplinaCursouComboBox().getValue().getCodigo() );
+		equivalenciaDTO.setCursouNome( display.getDisciplinaCursouComboBox().getValue().getNome() );
 		equivalenciaDTO.setEliminaId( display.getDisciplinaEliminaComboBox().getValue().getId() );
-		equivalenciaDTO.setEliminaString( display.getDisciplinaEliminaComboBox().getValue().getCodigo() );
+		equivalenciaDTO.setEliminaCodigo( display.getDisciplinaEliminaComboBox().getValue().getCodigo() );
+		equivalenciaDTO.setEliminaNome( display.getDisciplinaEliminaComboBox().getValue().getNome() );
 		equivalenciaDTO.setEquivalenciaGeral( display.getEquivalenciaGeralCheckBox().getValue() );
 
 		return equivalenciaDTO;
