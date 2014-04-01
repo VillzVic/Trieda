@@ -51,6 +51,7 @@ public class SalasImportExcel
 		this.headerColumnsNames.add( TIPO_COLUMN_NAME );
 		this.headerColumnsNames.add( UNIDADE_COLUMN_NAME );
 		this.headerColumnsNames.add( NUMERO_COLUMN_NAME );
+		this.headerColumnsNames.add( DESCRICAO_COLUMN_NAME );
 		this.headerColumnsNames.add( ANDAR_COLUMN_NAME );
 		this.headerColumnsNames.add( CAPACIDADE_INSTALADA_COLUMN_NAME );
 		this.headerColumnsNames.add( CAPACIDADE_MAX_COLUMN_NAME );
