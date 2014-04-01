@@ -148,7 +148,7 @@ public class ExportExcelServlet extends HttpServlet
 			response.setContentType( "application/vnd.ms-excel" );
 		}
 		
-		response.setHeader( "Content-disposition", "attachment; filename=" + excelFileName + "." + fileExtension );
+		response.setHeader( "Content-disposition", "attachment; filename=\"" + excelFileName + "." + fileExtension+"\"" );
 
 		ServletOutputStream out = null;
 		try

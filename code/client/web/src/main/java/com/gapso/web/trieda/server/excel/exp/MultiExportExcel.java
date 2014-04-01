@@ -21,17 +21,20 @@ import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 public class MultiExportExcel extends AbstractExportExcel {
 	
 	private Class<? extends IExportExcel>[] arrayExporters;
+	private String nomeArquivo;
 	
 	public MultiExportExcel(Cenario cenario, TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages, InstituicaoEnsino instituicaoEnsino, 
-		Class<? extends IExportExcel>[] arrayExporters, String fileExtension) {
+		Class<? extends IExportExcel>[] arrayExporters, String fileExtension, String nomeArquivo) {
 		super(false, "", cenario, i18nConstants, i18nMessages, instituicaoEnsino, fileExtension);
 		this.arrayExporters = arrayExporters;
+		this.nomeArquivo = nomeArquivo;
 	}
 
 	@Override
-	public String getFileName() {
-		return getI18nConstants().trieda();
+	public String getFileName()
+	{
+		return (nomeArquivo.isEmpty() ? getI18nConstants().trieda() : nomeArquivo);
 	}
 
 	@Override
@@ -53,6 +56,9 @@ public class MultiExportExcel extends AbstractExportExcel {
 	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected boolean fillInExcel(Workbook workbook, Workbook templateWorkbook) {
 		List<IExportExcel> exporters = new ArrayList<IExportExcel>();
+		
+
+		
 		for (Class<? extends IExportExcel> c : this.arrayExporters) {
 			Constructor<? extends IExportExcel> constructor;
 			try {
@@ -108,6 +114,15 @@ public class MultiExportExcel extends AbstractExportExcel {
 				double time = (System.currentTimeMillis() - start) / 1000.0;
 				System.out.println(" tempo = " + time + " segundos");
 			}
+			
+			//Removendo planilhas nao utilizadas
+			List< String > nomesPlanilhas = new ArrayList< String >();
+			nomesPlanilhas.add(ExcelInformationType.PALETA_CORES
+							.getSheetName());
+			for(IExportExcel i : exporters) {
+				nomesPlanilhas.add( ((AbstractExportExcel) i).getSheetName() );
+			}
+			removeUnusedSheets(nomesPlanilhas, workbook);
 		} catch (Exception e) {
 			e.printStackTrace();
 			exception = e;
@@ -127,5 +142,6 @@ public class MultiExportExcel extends AbstractExportExcel {
 
 			return true;
 		}
+	
 	}
 }
