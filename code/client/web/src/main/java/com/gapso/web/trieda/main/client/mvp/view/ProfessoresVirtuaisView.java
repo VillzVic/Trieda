@@ -59,7 +59,7 @@ public class ProfessoresVirtuaisView extends MyComposite
 	private void createTabItem()
 	{
 		this.tabItem = new GTabItem(
-			"Professores", Resources.DEFAULTS.professorVirtual16() );
+			"Professores Virtuais", Resources.DEFAULTS.professorVirtual16() );
 	
 		this.tabItem.setContent( this.panel );
 	}

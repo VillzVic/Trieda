@@ -769,7 +769,7 @@ public class ProfessoresServiceImpl
 		SortedMap<AreaTitulacao, Integer> docentesPorAreaTitulacaoMap = new TreeMap<AreaTitulacao, Integer>();
 		Map<Titulacao, Double> custoPorTitulacaoMap = new HashMap<Titulacao, Double>();
 		Map<TipoContrato, Double> custoPorTipoContratoMap = new HashMap<TipoContrato, Double>();
-		Map<AreaTitulacao, Double> custoPorAreaTitulacaoMap = new HashMap<AreaTitulacao, Double>();
+		SortedMap<AreaTitulacao, Double> custoPorAreaTitulacaoMap = new TreeMap<AreaTitulacao, Double>();
 		double custoMedioDocenteTotal = 0;
 		double mediaDisciplinasHabilitadas = 0;
 		for (Professor professor : professoresUteis)
