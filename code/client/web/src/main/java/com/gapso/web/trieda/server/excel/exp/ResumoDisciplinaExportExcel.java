@@ -31,7 +31,7 @@ public class ResumoDisciplinaExportExcel
 	enum ExcelCellStyleReference
 	{
 		TEXT( 6, 2 ),
-		PERCENTE( 6, 11 ),
+		PERCENTE( 6, 12 ),
 		INTEGER( 6, 5 ),
 		DOUBLE( 6, 9 );
 
