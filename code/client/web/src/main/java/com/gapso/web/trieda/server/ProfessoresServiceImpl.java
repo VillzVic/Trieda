@@ -14,6 +14,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.springframework.format.number.CurrencyFormatter;
 import org.springframework.format.number.NumberFormatter;
@@ -764,7 +766,7 @@ public class ProfessoresServiceImpl
 		
 		Map<Titulacao, Integer> docentesPorTitulacaoMap = new HashMap<Titulacao, Integer>();
 		Map<TipoContrato, Integer> docentesPorTipoContratoMap = new HashMap<TipoContrato, Integer>();
-		Map<AreaTitulacao, Integer> docentesPorAreaTitulacaoMap = new HashMap<AreaTitulacao, Integer>();
+		SortedMap<AreaTitulacao, Integer> docentesPorAreaTitulacaoMap = new TreeMap<AreaTitulacao, Integer>();
 		Map<Titulacao, Double> custoPorTitulacaoMap = new HashMap<Titulacao, Double>();
 		Map<TipoContrato, Double> custoPorTipoContratoMap = new HashMap<TipoContrato, Double>();
 		Map<AreaTitulacao, Double> custoPorAreaTitulacaoMap = new HashMap<AreaTitulacao, Double>();

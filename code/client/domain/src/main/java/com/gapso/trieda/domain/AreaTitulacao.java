@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooEntity( identifierColumn = "ATI_ID" )
 @Table( name = "AREAS_TITULACAO" )
 public class AreaTitulacao
-	implements Serializable
+	implements Serializable, Comparable<AreaTitulacao>
 {
 	private static final long serialVersionUID = 8739246006672184100L;
 
@@ -413,4 +413,15 @@ public class AreaTitulacao
 	{
         this.cursos = cursos;
     }
+
+	public int compareTo(AreaTitulacao o) {
+		int compare = this.getCodigo().compareTo( o.getCodigo() );
+
+		if ( compare == 0 )
+		{
+			compare = this.getCodigo().compareTo( o.getCodigo() );
+		}
+
+		return compare;
+	}
 }
