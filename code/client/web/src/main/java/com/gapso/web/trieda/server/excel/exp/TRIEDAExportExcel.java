@@ -97,6 +97,8 @@ public class TRIEDAExportExcel
 			exporters.add( new CampiTrabalhoExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.CURRICULOS) )
 			exporters.add( new CurriculosExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
+		if( planilhasExportExcel.get(PlanilhasExportExcel.OFERTA_CURSOS_CAMPI) )
+			exporters.add( new OfertasCursosCampiExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.DEMANDAS) )
 			exporters.add( new DemandasExportExcel( false, getCenario(), getI18nConstants(), getI18nMessages(), this.instituicaoEnsino, fileExtension ) );
 		if( planilhasExportExcel.get(PlanilhasExportExcel.ALUNOS) )

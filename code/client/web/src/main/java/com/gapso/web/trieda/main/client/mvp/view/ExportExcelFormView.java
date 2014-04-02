@@ -38,6 +38,7 @@ public class ExportExcelFormView
 	private CheckBox equivalenciasExportExcelCB;
 	private CheckBox campiTrabalhoExportExcelCB;
 	private CheckBox curriculosExportExcelCB;
+	private CheckBox ofertasCursosCampiExportExcelCB;
 	private CheckBox ofertasDemandasExportExcelCB;
 	private CheckBox alunosExportExcelCB;
 	private CheckBox demandasPorAlunoExportExcelCB;
@@ -187,6 +188,11 @@ public class ExportExcelFormView
 		alunosExportExcelCB.setValue(false);
 		alunosExportExcelCB.setBoxLabel("Alunos");
 		
+		ofertasCursosCampiExportExcelCB = new CheckBox();
+		ofertasCursosCampiExportExcelCB.setName(PlanilhasExportExcel.OFERTA_CURSOS_CAMPI);
+		ofertasCursosCampiExportExcelCB.setValue(false);
+		ofertasCursosCampiExportExcelCB.setBoxLabel("Ofertas de Cursos em Campi");
+		
 		ofertasDemandasExportExcelCB = new CheckBox();
 		ofertasDemandasExportExcelCB.setName(PlanilhasExportExcel.DEMANDAS);
 		ofertasDemandasExportExcelCB.setValue(false);
@@ -242,9 +248,9 @@ public class ExportExcelFormView
 		alunosDisciplinasCursadasCB.setValue(false);
 		alunosDisciplinasCursadasCB.setBoxLabel("Disciplinas Cursadas por Alunos");
 	    
-		geralFS.add(createCheckBoxGroup(semanaLetivaCB, disciplinasSalasExportExcelCB));
-		geralFS.add(createCheckBoxGroup(turnosCB, equivalenciasExportExcelCB));
-		geralFS.add(createCheckBoxGroup(tiposCursoCB, alunosExportExcelCB));
+		geralFS.add(createCheckBoxGroup(semanaLetivaCB, equivalenciasExportExcelCB));
+		geralFS.add(createCheckBoxGroup(turnosCB, alunosExportExcelCB));
+		geralFS.add(createCheckBoxGroup(tiposCursoCB, ofertasCursosCampiExportExcelCB));
 		geralFS.add(createCheckBoxGroup(divisaoCreditosCB, ofertasDemandasExportExcelCB));
 		geralFS.add(createCheckBoxGroup(campiExportExcelCB, demandasPorAlunoExportExcelCB));
 		geralFS.add(createCheckBoxGroup(unidadesExportExcelCB, professoresExportExcelCB));
@@ -255,6 +261,7 @@ public class ExportExcelFormView
 		geralFS.add(createCheckBoxGroup(cursoAreaTitulacaoExportExcelCB, aulasExportExcelCB));
 		geralFS.add(createCheckBoxGroup(curriculosExportExcelCB, disicplinasPreRequisitosCB));
 		geralFS.add(createCheckBoxGroup(disicplinasCoRequisitosCB, alunosDisciplinasCursadasCB));
+		geralFS.add(createCheckBoxGroup(disciplinasSalasExportExcelCB, null));
 		
 		main.add(geralFS, new FormData());
 
@@ -541,6 +548,11 @@ public class ExportExcelFormView
 	@Override
 	public CheckBox getCurriculosExportExcelCheckBox() {
 		return curriculosExportExcelCB;
+	}
+	
+	@Override
+	public CheckBox getOfertasCursosCampiExportExcelCheckBox() {
+		return ofertasCursosCampiExportExcelCB;
 	}
 
 	@Override

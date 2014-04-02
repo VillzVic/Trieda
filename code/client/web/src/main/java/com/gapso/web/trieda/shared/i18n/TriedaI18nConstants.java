@@ -116,6 +116,7 @@ public interface TriedaI18nConstants
 	String nomeProfessor();
 	String notaDesempenho();
 	String numero();
+	String ofertasCursosCampi();
 	String ofertasEDemandas();
 	String otimizado();
 	String periodo();

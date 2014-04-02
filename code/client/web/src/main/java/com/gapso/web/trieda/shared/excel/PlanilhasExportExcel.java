@@ -7,6 +7,7 @@ public class PlanilhasExportExcel {
 	public static final String CURSOS = "cursos";
 	public static final String AREAS_TITULACAO = "areasTitulacao";
 	public static final String CURSO_AREAS_TITULACAO = "cursoAreasTitulacao";
+	public static final String OFERTA_CURSOS_CAMPI = "ofertasCursosCampi";
 	public static final String DEMANDAS = "ofertasDemandas";
 	public static final String DEMANDAS_POR_ALUNO = "demandasPorAluno";
 	public static final String DISCIPLINAS = "disciplinas";

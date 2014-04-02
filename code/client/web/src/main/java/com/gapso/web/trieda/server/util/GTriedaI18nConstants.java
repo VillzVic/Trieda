@@ -422,6 +422,11 @@ public class GTriedaI18nConstants
 	public String numero() {
 		return this.languageManager.getText("numero");
 	}
+	
+	@Override
+	public String ofertasCursosCampi() {
+		return this.languageManager.getText("ofertasCursosCampi");
+	}
 
 	@Override
 	public String ofertasEDemandas() {
@@ -996,4 +1001,6 @@ public class GTriedaI18nConstants
 	public String demandaDeAlunosVirtual() {
 		return this.languageManager.getText("demandaDeAlunosVirtual");
 	}
+
+
 }

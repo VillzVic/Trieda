@@ -41,6 +41,7 @@ public class ExportExcelFormPresenter
 		CheckBox getEquivalenciasExportExcelCheckBox();
 		CheckBox getCampiTrabalhoExportExcelCheckBox();
 		CheckBox getCurriculosExportExcelCheckBox();
+		CheckBox getOfertasCursosCampiExportExcelCheckBox();
 		CheckBox getOfertasDemandasExportExcelCheckBox();
 		CheckBox getAlunosExportExcelCheckBox();
 		CheckBox getDemandasPorAlunoExportExcelCheckBox();

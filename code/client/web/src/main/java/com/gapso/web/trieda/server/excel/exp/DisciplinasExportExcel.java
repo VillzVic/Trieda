@@ -168,12 +168,12 @@ public class DisciplinasExportExcel
 		// Usa Sábado?
 		setCell(row, 13, sheet,
 				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
-				(disciplina.usaSabado() ? getI18nConstants().sim()
+				(disciplina.getUsaSabado() ? getI18nConstants().sim()
 						: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 		// Usa Domingo?
 		setCell(row, 14, sheet,
 				cellStyles[ExcelCellStyleReference.TEXT.ordinal()],
-				(disciplina.usaDomingo() ? getI18nConstants().sim()
+				(disciplina.getUsaDomingo() ? getI18nConstants().sim()
 						: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 
 		row++;

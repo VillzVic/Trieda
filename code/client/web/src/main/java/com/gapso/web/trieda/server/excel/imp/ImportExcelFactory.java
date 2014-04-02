@@ -35,6 +35,7 @@ public class ImportExcelFactory
 			case CAMPI_TRABALHO: importer = new CampiTrabalhoImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case UNIDADES: importer = new UnidadesImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case SALAS: importer = new MultiImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino, new Class[]{SalasImportExcel.class,DisponibilidadesSalasImportExcel.class} ); break;
+			case OFERTAS_CURSOS_CAMPI: importer = new OfertasCursosCampiImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DEMANDAS: importer = new DemandasImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case ALUNOS: importer = new AlunosImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;
 			case DEMANDAS_POR_ALUNO: importer = new AlunosDemandaImportExcel( cenario, i18nConstants, i18nMessages, instituicaoEnsino ); break;

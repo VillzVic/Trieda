@@ -8,6 +8,7 @@ public enum ExcelInformationType
 	CURSOS( "Cursos" ),
 	AREAS_TITULACAO( "Areas de Conhecimento" ),
 	CURSO_AREAS_TITULACAO( "Curso - Area de Conhecimento" ),
+	OFERTAS_CURSOS_CAMPI( "Ofertas de Cursos em Campi" ),
 	DEMANDAS( "Ofertas e Demandas" ),
 	DEMANDAS_POR_ALUNO( "Demanda por Aluno" ),
 	DISCIPLINAS( "Disciplinas" ),
