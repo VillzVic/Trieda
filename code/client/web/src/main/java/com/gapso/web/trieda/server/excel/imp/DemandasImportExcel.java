@@ -42,7 +42,6 @@ public class DemandasImportExcel
 	static public String PERIODO_COLUMN_NAME;
 	static public String DISCIPLINA_COLUMN_NAME;
 	static public String DEMANDA_COLUMN_NAME;
-	static public String RECEITA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
 
@@ -62,7 +61,6 @@ public class DemandasImportExcel
 		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
 		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
 		this.headerColumnsNames.add( DEMANDA_COLUMN_NAME );
-		this.headerColumnsNames.add( RECEITA_COLUMN_NAME );
 	}
 
 	@Override
@@ -129,10 +127,6 @@ public class DemandasImportExcel
 					else if ( DEMANDA_COLUMN_NAME.equals( columnName ) )
 					{
 						bean.setDemandaStr( cellValue );
-					}
-					else if ( RECEITA_COLUMN_NAME.equals( columnName ) )
-					{
-						bean.setReceitaStr( cellValue );
 					}
         		}
         	}
@@ -461,26 +455,6 @@ public class DemandasImportExcel
 			Demanda demandaBD = demandasBDMap.get( codeDemanda );
 			Oferta oferta = ofertasBDMap.get( codeOferta );
 
-			if ( oferta == null )
-			{
-				oferta = new Oferta();
-
-				oferta.setCampus( demandasExcel.getCampus() );
-				oferta.setTurno( demandasExcel.getTurno() );
-				oferta.setCurriculo( demandasExcel.getMatrizCurricular() );
-				oferta.setCurso( demandasExcel.getCurso() );
-				oferta.setReceitaWithPrecision( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
-
-				oferta.persist();
-
-				Oferta.entityManager().refresh( oferta );
-				ofertasBDMap.put( codeOferta, oferta );
-			}
-			else
-			{
-				oferta.setReceitaWithPrecision( demandasExcel.getReceita() == null ? 0.0 : demandasExcel.getReceita() );
-				oferta.merge();
-			}
 			TriedaPar<Oferta, Integer> key = TriedaPar.create(oferta, demandasExcel.getPeriodo());
 			if ( demandaBD != null )
 			{
@@ -588,7 +562,6 @@ public class DemandasImportExcel
 			PERIODO_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().periodo() );
 			DISCIPLINA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().codigoDisciplina() );
 			DEMANDA_COLUMN_NAME = HtmlUtils.htmlUnescape( getI18nConstants().demandaDeAlunosVirtual() );
-			RECEITA_COLUMN_NAME = HtmlUtils.htmlUnescape( "Receita por Crédito (R$)" );
 		}
 	}
 

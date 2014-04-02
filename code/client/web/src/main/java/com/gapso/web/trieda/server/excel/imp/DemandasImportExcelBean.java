@@ -20,7 +20,6 @@ public class DemandasImportExcelBean
 	private String periodoStr;
 	private String disciplinaStr;
 	private String demandaStr;
-	private String receitaStr;
 
 	private Campus campus;
 	private Turno turno;
@@ -29,14 +28,11 @@ public class DemandasImportExcelBean
 	private Integer periodo;
 	private Disciplina disciplina;
 	private Integer demanda;
-	private Double receita;
 
 	public DemandasImportExcelBean( int row )
 	{
 		super( row );
 
-		this.receita = 0.0;
-		this.receitaStr = this.receita.toString();
 	}
 
 	public List< ImportExcelError > checkSyntacticErrors()
@@ -53,10 +49,6 @@ public class DemandasImportExcelBean
 			checkMandatoryField( this.periodoStr, ImportExcelError.DEMANDA_PERIODO_VAZIO, erros );
 			checkMandatoryField( this.disciplinaStr, ImportExcelError.DEMANDA_DISCIPLINA_VAZIO, erros );
 			checkMandatoryField( this.demandaStr, ImportExcelError.DEMANDA_DEMANDA_VAZIO, erros );
-
-			this.receita = checkNonNegativeDoubleField( this.receitaStr,
-				ImportExcelError.DEMANDA_RECEITA_FORMATO_INVALIDO,
-				ImportExcelError.DEMANDA_RECEITA_VALOR_NEGATIVO, erros );
 
 			this.periodo = checkNonNegativeIntegerField( this.periodoStr,
 				ImportExcelError.DEMANDA_PERIODO_FORMATO_INVALIDO,
@@ -82,29 +74,9 @@ public class DemandasImportExcelBean
 			&& isEmptyField( this.matrizCurricularStr )
 			&& isEmptyField( this.periodoStr )
 			&& isEmptyField( this.disciplinaStr )
-			&& isEmptyField( this.demandaStr )
-			&& isEmptyField( this.receitaStr ) );
+			&& isEmptyField( this.demandaStr ) );
 	}
 
-	public String getReceitaStr()
-	{
-		return this.receitaStr;
-	}
-
-	public void setReceitaStr( String receitaStr )
-	{
-		this.receitaStr = receitaStr;
-	}
-
-	public Double getReceita()
-	{
-		return this.receita;
-	}
-
-	public void setReceita( Double receita )
-	{
-		this.receita = receita;
-	}
 
 	public String getCampusStr()
 	{

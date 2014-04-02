@@ -38,8 +38,7 @@ public class DemandasExportExcel
 	enum ExcelCellStyleReference
 	{
 		TEXT( 6, 2 ),
-		NUMBER( 6, 6 ),
-		DOUBLE_NUMBER( 6, 9 );
+		NUMBER( 6, 6 );
 
 		private int row;
 		private int col;
@@ -312,14 +311,11 @@ public class DemandasExportExcel
 						// Demanda de Alunos (Total)
 						setCell( row, 10, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], quantidadeReal+quantidadeVirtual );
 						
-						// Receita
-						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.DOUBLE_NUMBER.ordinal() ], oferta.getReceita() );
-						
 						// Demanda Atendida
-						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], (quantidade - qtdNaoAtendida) );
+						setCell( row, 11, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], (quantidade - qtdNaoAtendida) );
 						
 						// Demanda Não Atendida
-						setCell( row, 13, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
+						setCell( row, 12, sheet, this.cellStyles[ ExcelCellStyleReference.NUMBER.ordinal() ], qtdNaoAtendida );
 						
 						// Disciplinas Substitutas
 						String disciplinasSubstitutasStr = "";
@@ -335,7 +331,7 @@ public class DemandasExportExcel
 							}
 							disciplinasSubstitutasStr = disciplinasSubstitutasStrB.substring(0, disciplinasSubstitutasStrB.length() - 2);
 						}
-						setCell( row, 14, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], disciplinasSubstitutasStr);
+						setCell( row, 13, sheet, this.cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ], disciplinasSubstitutasStr);
 						
 						row++;
 					}

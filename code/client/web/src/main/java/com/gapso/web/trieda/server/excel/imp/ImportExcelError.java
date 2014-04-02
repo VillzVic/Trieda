@@ -72,6 +72,13 @@ public enum ImportExcelError
 	CURSO_MAIS_DE_UMA_DISC_PROF_FORMATO_INVALIDO,
 	CURSO_MAIS_DE_UMA_DISC_PROF_VAZIO,
 	
+	OFERTA_CAMPUS_VAZIO,
+	OFERTA_CURSO_VAZIO,
+	OFERTA_MATRIZ_CURRICULAR_VAZIO,
+	OFERTA_RECEITA_FORMATO_INVALIDO,
+	OFERTA_RECEITA_VALOR_NEGATIVO,
+	OFERTA_TURNO_VAZIO,
+	
 	DEMANDA_CAMPUS_VAZIO,
 	DEMANDA_CURSO_VAZIO,
 	DEMANDA_DEMANDA_FORMATO_INVALIDO,
@@ -82,8 +89,6 @@ public enum ImportExcelError
 	DEMANDA_PERIODO_FORMATO_INVALIDO,
 	DEMANDA_PERIODO_VALOR_NEGATIVO,
 	DEMANDA_PERIODO_VAZIO,
-	DEMANDA_RECEITA_FORMATO_INVALIDO,
-	DEMANDA_RECEITA_VALOR_NEGATIVO,
 	DEMANDA_TURNO_VAZIO,
 	
 	DISCIPLINA_CODIGO_VAZIO,
@@ -296,6 +301,13 @@ public enum ImportExcelError
 			case CURSO_MAIS_DE_UMA_DISC_PROF_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,CursosImportExcel.MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
 			case CURSO_MAIS_DE_UMA_DISC_PROF_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,CursosImportExcel.MAIS_DE_UMA_DISC_PROF_COLUMN_NAME);
 			
+			case OFERTA_CAMPUS_VAZIO : return i18nMessages.excelErroSintaticoColunaVazia(param1,OfertasCursosCampiImportExcel.CAMPUS_COLUMN_NAME);
+			case OFERTA_CURSO_VAZIO : return i18nMessages.excelErroSintaticoColunaVazia(param1,OfertasCursosCampiImportExcel.CURSO_COLUMN_NAME);
+			case OFERTA_MATRIZ_CURRICULAR_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,OfertasCursosCampiImportExcel.MATRIZ_CURRICULAR_COLUMN_NAME);
+			case OFERTA_RECEITA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,OfertasCursosCampiImportExcel.RECEITA_COLUMN_NAME);
+			case OFERTA_RECEITA_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,OfertasCursosCampiImportExcel.RECEITA_COLUMN_NAME);
+			case OFERTA_TURNO_VAZIO : return i18nMessages.excelErroSintaticoColunaVazia(param1,OfertasCursosCampiImportExcel.TURNO_COLUMN_NAME);
+
 			case DEMANDA_CAMPUS_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.CAMPUS_COLUMN_NAME);
 			case DEMANDA_CURSO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.CURSO_COLUMN_NAME);
 			case DEMANDA_DEMANDA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DemandasImportExcel.DEMANDA_COLUMN_NAME);
@@ -306,8 +318,6 @@ public enum ImportExcelError
 			case DEMANDA_PERIODO_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DemandasImportExcel.PERIODO_COLUMN_NAME);
 			case DEMANDA_PERIODO_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DemandasImportExcel.PERIODO_COLUMN_NAME);
 			case DEMANDA_PERIODO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.PERIODO_COLUMN_NAME);
-			case DEMANDA_RECEITA_FORMATO_INVALIDO: return i18nMessages.excelErroSintaticoFormatoInvalido(param1,DemandasImportExcel.RECEITA_COLUMN_NAME);
-			case DEMANDA_RECEITA_VALOR_NEGATIVO: return i18nMessages.excelErroSintaticoValorNegativo(param1,DemandasImportExcel.RECEITA_COLUMN_NAME);
 			case DEMANDA_TURNO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DemandasImportExcel.TURNO_COLUMN_NAME);
 			
 			case DISCIPLINA_CODIGO_VAZIO: return i18nMessages.excelErroSintaticoColunaVazia(param1,DisciplinasImportExcel.CODIGO_COLUMN_NAME);

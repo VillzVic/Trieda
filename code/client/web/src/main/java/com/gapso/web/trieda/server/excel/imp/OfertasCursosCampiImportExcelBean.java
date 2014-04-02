@@ -40,14 +40,14 @@ implements Comparable< OfertasCursosCampiImportExcelBean >
 
 		if ( !tudoVazio() )
 		{
-			checkMandatoryField( this.campusStr, ImportExcelError.DEMANDA_CAMPUS_VAZIO, erros );
-			checkMandatoryField( this.turnoStr, ImportExcelError.DEMANDA_TURNO_VAZIO, erros );
-			checkMandatoryField( this.cursoStr, ImportExcelError.DEMANDA_CURSO_VAZIO, erros );
-			checkMandatoryField( this.matrizCurricularStr, ImportExcelError.DEMANDA_MATRIZ_CURRIULAR_VAZIO, erros );
+			checkMandatoryField( this.campusStr, ImportExcelError.OFERTA_CAMPUS_VAZIO, erros );
+			checkMandatoryField( this.turnoStr, ImportExcelError.OFERTA_TURNO_VAZIO, erros );
+			checkMandatoryField( this.cursoStr, ImportExcelError.OFERTA_CURSO_VAZIO, erros );
+			checkMandatoryField( this.matrizCurricularStr, ImportExcelError.OFERTA_MATRIZ_CURRICULAR_VAZIO, erros );
 
 			this.receita = checkNonNegativeDoubleField( this.receitaStr,
-				ImportExcelError.DEMANDA_RECEITA_FORMATO_INVALIDO,
-				ImportExcelError.DEMANDA_RECEITA_VALOR_NEGATIVO, erros );
+				ImportExcelError.OFERTA_RECEITA_FORMATO_INVALIDO,
+				ImportExcelError.OFERTA_RECEITA_VALOR_NEGATIVO, erros );
 
 		}
 		else
