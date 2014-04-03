@@ -559,8 +559,8 @@ public class ToolBarView
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Demanda", Resources.DEFAULTS.resumoFaixaDemanda16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Crédito", Resources.DEFAULTS.divisaoDeCreditos16()) );
 		menuAtendimentos.add( createMenuItem("Atendimentos por Faixa de Disciplina", Resources.DEFAULTS.resumoDisciplinas16()) );
-		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Ocupação dos Horários", Resources.DEFAULTS.sala16()) );
-		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Utilização Média da Capacidade", Resources.DEFAULTS.sala16()) );
+		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Utilização dos Horários", Resources.DEFAULTS.sala16()) );
+		menuAtendimentos.add( createMenuItem("Ambientes por Faixa de Ocupação Média da Capacidade", Resources.DEFAULTS.sala16()) );
 		atendimentosDropDownBt.setMenu(menuAtendimentos);
 		relatoriosToolBar.add(atendimentosDropDownBt);
 		
