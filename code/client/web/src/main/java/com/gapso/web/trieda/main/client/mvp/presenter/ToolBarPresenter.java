@@ -741,7 +741,7 @@ public class ToolBarPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					Presenter presenter = new ProfessoresVirtuaisPresenter(
-						instituicaoEnsinoDTO, cenarioDTO,
+						instituicaoEnsinoDTO, cenarioDTO, null,
 						new ProfessoresVirtuaisView( cenarioDTO ) );
 
 					presenter.go( gTab );

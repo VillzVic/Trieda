@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.mvp.view.GradeHorariaProfessorView;
 import com.gapso.web.trieda.main.client.mvp.view.MotivosUsoProfessorVirtualView;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
@@ -40,14 +41,16 @@ public class ProfessoresVirtuaisPresenter
  	}
 
  	private CenarioDTO cenario;
+ 	private Long campusId;
  	private Display display;
  	private GTab gTab;
 
  	public ProfessoresVirtuaisPresenter(
  		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
- 		CenarioDTO cenarioDTO, Display display )
+ 		CenarioDTO cenarioDTO, Long campusID, Display display )
  	{
  		this.cenario = cenarioDTO;
+ 		this.campusId = campusID;
  		this.display = display;
 
  		configureProxy();
@@ -68,9 +71,14 @@ public class ProfessoresVirtuaisPresenter
  				TitulacaoDTO titulacaoDTO
  					= display.getTitulacaoBuscaComboBox().getValue();
 
- 				service.getProfessoresVirtuais( cenario, titulacaoDTO, (PagingLoadConfig) loadConfig, callback );
+ 				if(campusId == null){
+ 					service.getProfessoresVirtuais( cenario, titulacaoDTO, (PagingLoadConfig) loadConfig, callback );
+ 				}else{
+ 					service.getProfessoresVirtuais( cenario, titulacaoDTO, campusId, (PagingLoadConfig) loadConfig, callback );
+ 				}
  				display.getGrid().getGrid().getView().setEmptyText("Não foram utilizados professores virtuais" +
  						" ou o modo de otimização utilizado não foi o operacional");
+ 				
  			}
  		};
 

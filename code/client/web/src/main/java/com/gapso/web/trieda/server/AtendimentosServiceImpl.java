@@ -1382,6 +1382,53 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		return result;
 	}
+	
+	@Override
+	public PagingLoadResult<ProfessorVirtualDTO> getProfessoresVirtuais(
+			CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
+			Long campusId, PagingLoadConfig config) {
+		Titulacao titulacao = titulacaoDTO == null ? null : Titulacao.find(titulacaoDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusId, getInstituicaoEnsinoUser());
+		
+		String orderBy = config.getSortField();
+		
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+					&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
+			}
+		}
+		
+		List< ProfessorVirtual > professoresVirtuais
+			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), cenario, titulacao, campus, orderBy );
+
+		List< ProfessorVirtualDTO > professoresVirtuaisDTO
+			= new ArrayList< ProfessorVirtualDTO >();
+
+		for ( ProfessorVirtual professorVirtual : professoresVirtuais )
+		{
+			professoresVirtuaisDTO.add(
+				ConvertBeans.toProfessorVirtualDTO( professorVirtual ) );
+		}
+
+		BasePagingLoadResult< ProfessorVirtualDTO > result
+		= new BasePagingLoadResult< ProfessorVirtualDTO >( professoresVirtuaisDTO );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( ProfessorVirtual.findBy(
+				getInstituicaoEnsinoUser(), cenario, titulacao, orderBy ).size() );
+		
+		return result;
+	}
 
 	public int deslocarLinhasExportExcel(
 		InstituicaoEnsino instituicaoEnsino,
@@ -3584,7 +3631,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		return ParDTO.create(turmaDTO, aulasDTO);
 	}
-	
+
 /*	@Override
 	public ListLoadResult<AlunoStatusDTO> getAlunosStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO)
 	{

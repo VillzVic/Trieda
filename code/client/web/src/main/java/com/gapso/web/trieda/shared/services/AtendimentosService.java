@@ -52,6 +52,8 @@ public interface AtendimentosService extends RemoteService {
 	
 	PagingLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, PagingLoadConfig config ) throws TriedaException;
 
+	PagingLoadResult<ProfessorVirtualDTO> getProfessoresVirtuais(CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, Long campusId, PagingLoadConfig config);
+
 	List< PercentMestresDoutoresDTO > getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 
 	List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaCredito( CenarioDTO cenarioDTO, CampusDTO campusDTO );
@@ -97,4 +99,5 @@ public interface AtendimentosService extends RemoteService {
 	void saveTurma(TurmaDTO turmaDTO) throws TriedaException;
 
 	ParDTO<TurmaDTO, List<AulaDTO>> selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO, DemandaDTO demandaDTO);
+
 }

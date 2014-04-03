@@ -50,6 +50,9 @@ public interface AtendimentosServiceAsync {
 	void getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
 			PagingLoadConfig config, AsyncCallback< PagingLoadResult< ProfessorVirtualDTO > > callback );
 
+	void getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, Long campusId,
+			PagingLoadConfig config, AsyncCallback< PagingLoadResult< ProfessorVirtualDTO > > callback );
+	
 	void getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO,	AsyncCallback<List<PercentMestresDoutoresDTO>> callback );
 
 	void getAtendimentosFaixaCredito( CenarioDTO cenarioDTO, CampusDTO campusDTO,

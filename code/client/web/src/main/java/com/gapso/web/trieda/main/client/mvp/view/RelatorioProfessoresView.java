@@ -258,7 +258,7 @@ public class RelatorioProfessoresView extends RelatorioView
 				@Override
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresVirtuaisPresenter( instituicaoEnsinoDTO,
-							cenarioDTO, new ProfessoresVirtuaisView( cenarioDTO ) );
+							cenarioDTO, model.getCampusId(), new ProfessoresVirtuaisView( cenarioDTO ) );
 					presenter.go( gTab );
 				}
 			});

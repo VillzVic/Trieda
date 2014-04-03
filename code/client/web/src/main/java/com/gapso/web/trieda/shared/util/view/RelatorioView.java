@@ -28,6 +28,7 @@ import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.extjs.gxt.ui.client.widget.treegrid.WidgetTreeGridCellRenderer;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.Joint;
+import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioDTO;
@@ -52,6 +53,7 @@ public abstract class RelatorioView extends MyComposite
 	LayoutContainer center;
 	private int numFiltros;
 	protected CenarioDTO cenarioDTO;
+	protected CampusDTO campusDTO;
 	protected GTab gTab;
 	protected InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	
