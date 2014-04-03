@@ -359,6 +359,34 @@ public class ProfessorVirtual
 
 		return q.getResultList();
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< ProfessorVirtual > findBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Titulacao titulacao, Campus campus, String orderBy )
+	{
+		String titulacaoQuery = titulacao == null ? "" : " AND o.professorVirtual.titulacao = :titulacao ";
+		
+		orderBy = ( ( orderBy != null ) ? " ORDER BY o.professorVirtual." + orderBy.replace("String", "").replace("nome", "id") : "" );
+		
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT o.professorVirtual " +
+			" FROM AtendimentoOperacional o " +
+			" WHERE o.cenario = :cenario " +
+			" and  o.oferta.campus = :campus " +
+			titulacaoQuery +
+			" AND o.instituicaoEnsino = :instituicaoEnsino "
+			+ orderBy);
+
+		if ( titulacao != null )
+		{
+			q.setParameter( "titulacao", titulacao );
+		}
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "campus", campus );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
 
 	@SuppressWarnings( "unchecked" )
 	public static List< ProfessorVirtual > findAll(
