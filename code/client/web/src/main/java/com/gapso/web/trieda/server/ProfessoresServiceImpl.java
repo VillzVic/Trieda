@@ -1060,11 +1060,11 @@ public class ProfessoresServiceImpl
 		atendimento.add( new RelatorioDTO( " Média de Turmas por Docente: <b>" + numberFormatter.print(
 				TriedaUtil.round((double)totalTurmasInstituicao/(double)professorToTurmasMap.size(), 2),pt_BR) + "</b>") );
 		atendimento.add( new RelatorioDTO( " Listas de Docentes Utilizados no Atendimento: ") );
-		RelatorioDTO todosDocentes = new RelatorioDTO( " Todos os Docentes Utilizados no Atendimento: " + numberFormatter.print(professoresUtilizados.size(),pt_BR));
-		todosDocentes.setButtonText(todosDocentes.getText());
-		todosDocentes.setButtonIndex(5);
-		todosDocentes.setCampusId(campus.getId());
-		atendimento.add( todosDocentes );
+		RelatorioDTO todosDaInstituicaoDocentes = new RelatorioDTO( " Docentes da Instituição Utilizados no Atendimento: " + numberFormatter.print(professoresUtilizados.size(),pt_BR));
+		todosDaInstituicaoDocentes.setButtonText(todosDaInstituicaoDocentes.getText());
+		todosDaInstituicaoDocentes.setButtonIndex(5);
+		todosDaInstituicaoDocentes.setCampusId(campus.getId());
+		atendimento.add( todosDaInstituicaoDocentes );
 		RelatorioDTO docentesGradeCheia = new RelatorioDTO( " Docentes com Grade Cheia: " + numberFormatter.print(professoresGradeCheia.size(),pt_BR));
 		docentesGradeCheia.setButtonText(docentesGradeCheia.getText());
 		docentesGradeCheia.setButtonIndex(6);
@@ -1112,28 +1112,34 @@ public class ProfessoresServiceImpl
 		docentesVirtuais.setCampusId(campus.getId());
 		atendimentoVirtual.add( docentesVirtuais );
 		RelatorioDTO histogramas = new RelatorioDTO("<b>Histogramas</b>");
-		RelatorioDTO histograma1 = new RelatorioDTO( "Número de Buracos na Grade" );
+		int todos = professoresUtilizados.size() + professoresVirtuaisUtilizados.size();
+		RelatorioDTO histograma1 = new RelatorioDTO( " Todos os Docentes Utilizados no Atendimento: " + numberFormatter.print(todos,pt_BR));
 		histograma1.setButtonText(histograma1.getText());
-		histograma1.setButtonIndex(0);
+		histograma1.setButtonIndex(13);
+		histograma1.setCampusId(campus.getId());
 		histogramas.add( histograma1 );
-		RelatorioDTO histograma2 = new RelatorioDTO( "Número de Disciplinas Habilitadas" );
+		RelatorioDTO histograma2 = new RelatorioDTO( "Número de Buracos na Grade" );
 		histograma2.setButtonText(histograma2.getText());
-		histograma2.setButtonIndex(1);
+		histograma2.setButtonIndex(0);
 		histogramas.add( histograma2 );
-		RelatorioDTO histograma3 = new RelatorioDTO( "Número de Disciplinas Lecionadas" );
+		RelatorioDTO histograma3 = new RelatorioDTO( "Número de Disciplinas Habilitadas" );
 		histograma3.setButtonText(histograma3.getText());
-		histograma3.setButtonIndex(2);
+		histograma3.setButtonIndex(1);
 		histogramas.add( histograma3 );
-		RelatorioDTO histograma4 = new RelatorioDTO( "Professores Alocados por Titulação" );
+		RelatorioDTO histograma4 = new RelatorioDTO( "Número de Disciplinas Lecionadas" );
 		histograma4.setButtonText(histograma4.getText());
-		histograma4.setButtonIndex(3);
-		histograma4.setCampusId(campus.getId());
+		histograma4.setButtonIndex(2);
 		histogramas.add( histograma4 );
-		RelatorioDTO histograma5 = new RelatorioDTO( "Professores Alocados por Área de Conhecimento" );
+		RelatorioDTO histograma5 = new RelatorioDTO( "Professores Alocados por Titulação" );
 		histograma5.setButtonText(histograma5.getText());
-		histograma5.setButtonIndex(4);
+		histograma5.setButtonIndex(3);
 		histograma5.setCampusId(campus.getId());
 		histogramas.add( histograma5 );
+		RelatorioDTO histograma6 = new RelatorioDTO( "Professores Alocados por Área de Conhecimento" );
+		histograma6.setButtonText(histograma6.getText());
+		histograma6.setButtonIndex(4);
+		histograma6.setCampusId(campus.getId());
+		histogramas.add( histograma6 );
 		
 		
 		currentNode.add(professoresInstituicao);
@@ -1185,6 +1191,74 @@ public class ProfessoresServiceImpl
 				list.add( ConvertBeans.toProfessorDTO( professor ) );
 			}
 		}
+
+		BasePagingLoadResult< ProfessorDTO > result
+			= new BasePagingLoadResult< ProfessorDTO >( list );
+
+		result.setOffset( config.getOffset() );
+
+		result.setTotalLength( AtendimentoOperacional.findProfessoresUtilizados(
+				getInstituicaoEnsinoUser(), cenario,
+				campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf).size() );
+
+		return result;
+	}
+	
+	@Override
+	public PagingLoadResult< ProfessorDTO > getBuscaListTodosAtendimentos( CenarioDTO cenarioDTO, 
+			String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
+			PagingLoadConfig config )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO, getInstituicaoEnsinoUser());
+		Curso curso = professorFiltro.getCurso() == null ? null :
+			Curso.find(professorFiltro.getCurso().getId(), getInstituicaoEnsinoUser());
+		Turno turno = professorFiltro.getTurno() == null ? null :
+			Turno.find(professorFiltro.getTurno().getId(), getInstituicaoEnsinoUser());
+		Titulacao titulacao = professorFiltro.getTitulacao() == null ? null :
+			Titulacao.find(professorFiltro.getTitulacao().getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = professorFiltro.getAreaTitulacao() == null ? null :
+			AreaTitulacao.find(professorFiltro.getAreaTitulacao().getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = professorFiltro.getTipoContrato() == null ? null :
+			TipoContrato.find(professorFiltro.getTipoContrato().getId(), getInstituicaoEnsinoUser());
+		
+		String orderBy = config.getSortField();
+
+		if ( orderBy != null )
+		{
+			if ( config.getSortDir() != null
+					&& config.getSortDir().equals( SortDir.DESC ) )
+			{
+				orderBy = ( orderBy + " asc" );
+			}
+			else
+			{
+				orderBy = ( orderBy + " desc" );
+			}
+		}
+		
+		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
+		List< Professor > listDomains = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario,
+				campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf, config.getOffset(), config.getLimit(), orderBy );
+		
+		List< ProfessorVirtual > professoresVirtuaisList = AtendimentoOperacional.findProfessoresVirtuaisUtilizados(getInstituicaoEnsinoUser(), cenario, campus, null, null, null, null);
+		
+		if ( listDomains != null )
+		{
+			for ( Professor professor : listDomains )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professor ) );
+			}
+		}
+		
+		if ( professoresVirtuaisList != null )
+		{
+			for ( ProfessorVirtual professor : professoresVirtuaisList )
+			{
+				list.add( ConvertBeans.toProfessorDTO( professor ) );
+			}
+		}
+
 
 		BasePagingLoadResult< ProfessorDTO > result
 			= new BasePagingLoadResult< ProfessorDTO >( list );

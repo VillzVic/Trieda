@@ -52,8 +52,8 @@ public interface ProfessoresServiceAsync
 	void getProfessoresTitulacoes(CenarioDTO cenarioDTO, CampusDTO campusDTO, boolean somenteAlocados, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
 	void getProfessoresAreasConhecimento(CenarioDTO cenarioDTO, CampusDTO campusDTO, TipoProfessorDTO tipoProfessorDTO, boolean somenteAlocados, AsyncCallback<List<RelatorioQuantidadeDTO>> callback);
 	void getRelatorio( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro,	RelatorioDTO currentNode, AsyncCallback<List<RelatorioDTO>> callback );
-	void getBuscaListAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config,
-			AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
+	void getBuscaListTodosAtendimentos( CenarioDTO cenario, String cpf,Long campusDTO, RelatorioProfessorFiltro professorFiltro,PagingLoadConfig config,AsyncCallback<PagingLoadResult<ProfessorDTO>> callback);
 	void getBuscaListGradeCheia( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,
 			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDTO>> callback );
 	void getBuscaListBemAlocados( CenarioDTO cenarioDTO, String cpf, Long campusDTO, RelatorioProfessorFiltro professorFiltro,

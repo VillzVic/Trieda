@@ -55,6 +55,8 @@ public interface ProfessoresService
 	List<RelatorioDTO> getRelatorio( CenarioDTO cenarioDTO, RelatorioProfessorFiltro professorFiltro, RelatorioDTO currentNode );
 	PagingLoadResult<ProfessorDTO> getBuscaListAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
 			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config);
+	PagingLoadResult<ProfessorDTO> getBuscaListTodosAtendimentos( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
+			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config);
 	PagingLoadResult<ProfessorDTO> getBuscaListGradeCheia( CenarioDTO cenarioDTO, String cpf, Long campusDTO,
 			RelatorioProfessorFiltro professorFiltro, PagingLoadConfig config );
 	PagingLoadResult<ProfessorDTO> getBuscaListBemAlocados( CenarioDTO cenarioDTO, String cpf, Long campusDTO,

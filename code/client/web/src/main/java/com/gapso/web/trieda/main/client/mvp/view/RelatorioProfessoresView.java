@@ -19,6 +19,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresGradeCheiaListP
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresJanelasGradePresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresMalAlocadosListPresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresTitulacoesPresenter;
+import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresTodosListPresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.ProfessoresVirtuaisPresenter;
 import com.gapso.web.trieda.main.client.mvp.presenter.RelatorioProfessoresPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
@@ -259,6 +260,17 @@ public class RelatorioProfessoresView extends RelatorioView
 				public void componentSelected(ButtonEvent ce){
 					Presenter presenter = new ProfessoresVirtuaisPresenter( instituicaoEnsinoDTO,
 							cenarioDTO, model.getCampusId(), new ProfessoresVirtuaisView( cenarioDTO ) );
+					presenter.go( gTab );
+				}
+			});
+			break;
+		case 13:
+			bt.addSelectionListener(new SelectionListener<ButtonEvent>(){
+				@Override
+				public void componentSelected(ButtonEvent ce){
+					Presenter presenter = new ProfessoresTodosListPresenter( instituicaoEnsinoDTO,
+							model.getCampusId(),
+							cenarioDTO, new ProfessoresTodosListView( cenarioDTO, getProfessorFiltro() ) );
 					presenter.go( gTab );
 				}
 			});

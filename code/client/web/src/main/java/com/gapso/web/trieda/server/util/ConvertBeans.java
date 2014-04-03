@@ -2663,6 +2663,21 @@ public class ConvertBeans {
 		
 		return domain;
 	}
+	
+	public static ProfessorDTO toProfessorDTO( ProfessorVirtual domain ){
+		ProfessorDTO dto = new ProfessorDTO();
+		
+		dto.setId( domain.getId() );
+		dto.setVersion( domain.getVersion() );
+		dto.setCenarioId( domain.getCenario().getId() );
+		dto.setNome( domain.getNome() );
+		dto.setCargaHorariaMax( domain.getCargaHorariaMax() );
+		dto.setCargaHorariaMin( domain.getCargaHorariaMin() );
+		
+		
+		return dto;
+	}
+	
 
 	public static ProfessorDTO toProfessorDTO( Professor domain )
 	{

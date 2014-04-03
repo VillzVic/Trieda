@@ -17,11 +17,11 @@ import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class ProfessoresAtendimentosListPresenter 
+public class ProfessoresTodosListPresenter 
 	extends ProfessoresListPresenter 
 {
 
-	public ProfessoresAtendimentosListPresenter(
+	public ProfessoresTodosListPresenter(
 			InstituicaoEnsinoDTO instituicaoEnsinoDTO, Long campusDTO,
 			CenarioDTO cenarioDTO, Display display) {
 		super(instituicaoEnsinoDTO, cenarioDTO, campusDTO, display);
@@ -44,7 +44,7 @@ public class ProfessoresAtendimentosListPresenter
 				display.getProfessorFiltro().setTitulacao(display.getTitulacaoBuscaComboBox().getValue());
 				display.getProfessorFiltro().setAreaTitulacao(display.getAreaTitulacaoBuscaComboBox().getValue());
 
-				service.getBuscaListAtendimentos(cenario, cpf, campusDTO, display.getProfessorFiltro(), (PagingLoadConfig) loadConfig, callback);
+				service.getBuscaListTodosAtendimentos(cenario, cpf, campusDTO, display.getProfessorFiltro(), (PagingLoadConfig) loadConfig, callback);
 			}
 		};
 
