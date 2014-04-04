@@ -1028,7 +1028,7 @@ public class AlunoDemanda
 		String campusQuery = "";
 		if (campus != null)
 		{
-			campusQuery = "AND o.demanda.disciplina.campus = :campus";
+			campusQuery = "AND o.demanda.oferta.campus = :campus";
 		}
 
 		Query q = entityManager().createQuery(

@@ -617,7 +617,7 @@ public class Campus
 
 		return q.getResultList();
 	}
-
+	
 	@SuppressWarnings( "unchecked" )
 	public static List< Campus > findAllOtimized(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario )
