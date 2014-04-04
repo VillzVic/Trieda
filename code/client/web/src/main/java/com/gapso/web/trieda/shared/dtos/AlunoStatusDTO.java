@@ -92,12 +92,12 @@ public class AlunoStatusDTO
 		return get( PROPERTY_EQUIVALENCIA_ID );
 	}
 	
-	public void setEquivalenciaSring( Long value )
+	public void setEquivalenciaSring( String value )
 	{
 		set( PROPERTY_EQUIVALENCIA_STRING, value );
 	}
 
-	public Long getEquivalenciaString()
+	public String getEquivalenciaString()
 	{
 		return get( PROPERTY_EQUIVALENCIA_STRING );
 	}

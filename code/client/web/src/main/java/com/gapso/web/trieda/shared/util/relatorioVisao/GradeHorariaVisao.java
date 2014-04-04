@@ -297,7 +297,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				if (aulaDestaque != null)
 				{
 					if (aulaDTO.getHorarioAulaId().equals(aulaDestaque.getHorarioAulaId())
-							&& aulaDTO.getSemana().equals(aulaDestaque.getSemana()))
+							&& aulaDTO.getDiaSemana().equals(aulaDestaque.getSemana()))
 					{
 						html.addStyleName("horarioDestaque");
 					}
@@ -496,8 +496,8 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		this.emptyTextBeforeSearch = text;
 	}
 	
-	public void setAulaDestaque(AulaDTO aulaDTO){
-		this.aulaDestaque = aulaDTO;
+	public void setAulaDestaque(AulaDTO aulaDestaque){
+		this.aulaDestaque = aulaDestaque;
 	}
 	
 }

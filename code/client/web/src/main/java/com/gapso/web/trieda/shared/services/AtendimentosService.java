@@ -5,6 +5,7 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
@@ -14,11 +15,16 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
@@ -37,7 +43,7 @@ public interface AtendimentosService extends RemoteService {
 
 	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro);
 
-	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(CenarioDTO cenarioDTO, RelatorioVisaoSalaFiltro filtro) throws TriedaException;
+	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(CenarioDTO cenarioDTO, RelatorioVisaoSalaFiltro filtro, boolean buscaAulasParciais) throws TriedaException;
 	
 	AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoProfessor(CenarioDTO cenarioDTO, RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor) throws TriedaException;
 	
@@ -100,4 +106,29 @@ public interface AtendimentosService extends RemoteService {
 
 	ParDTO<TurmaDTO, List<AulaDTO>> selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO, DemandaDTO demandaDTO);
 
+	ListLoadResult<AlunoStatusDTO> getAlunosStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, List<AulaDTO> aulasDTO);
+
+	ListLoadResult<ProfessorStatusDTO> getProfessoresStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO);
+
+	ListLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveisAula(CenarioDTO cenarioDTO, SalaDTO salaDTO,	DisciplinaDTO disciplinaDTO,
+			SemanaLetivaDTO semanaLetivaDTO, String semana);
+
+	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO);
+
+	void saveAula(TurmaDTO turmaDTO, AulaDTO aulaDTO);
+
+	void alocaAlunosTurma(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, List<AlunoStatusDTO> alunos);
+
+	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAulasNovosAlunos(
+			CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulasDTO,
+			List<AlunoStatusDTO> alunos);
+
+	void alocaProfessoresAula(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO,	ProfessorStatusDTO professorStatusDTO);
+
+	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAulasNovoProfessor( CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO,
+			ProfessorStatusDTO professorStatusDTO);
+
+	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeSalvarTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulasDTO);
+
+	void salvarTurma(TurmaDTO turmaDTO);
 }

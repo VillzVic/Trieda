@@ -14,6 +14,7 @@ public class HorarioDisponivelCenarioDTO
 	public static final String PROPERTY_TURNO_STRING = "turnoString";
 	public static final String PROPERTY_HORARIO_DATE = "horarioDate";
 	public static final String PROPERTY_HORARIO_STRING = "horarioString";
+	public static final String PROPERTY_HORARIO_INICIO_STRING = "horarioInicioString";
 	public static final String PROPERTY_SEGUNDA = "segunda";
 	public static final String PROPERTY_SEGUNDA_ID = "segundaId";
 	public static final String PROPERTY_TERCA = "terca";
@@ -84,6 +85,16 @@ public class HorarioDisponivelCenarioDTO
 	public String getHorarioString()
 	{
 		return get( PROPERTY_HORARIO_STRING );
+	}
+	
+	public void setHorarioInicioString( String value )
+	{
+		set( PROPERTY_HORARIO_INICIO_STRING, value );
+	}
+
+	public String getHorarioInicioString()
+	{
+		return get( PROPERTY_HORARIO_INICIO_STRING );
 	}
 
 	public void setSegunda( Boolean value )

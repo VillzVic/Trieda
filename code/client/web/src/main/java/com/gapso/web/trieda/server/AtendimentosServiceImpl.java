@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,6 +37,7 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
 import com.gapso.trieda.domain.Curso;
 import com.gapso.trieda.domain.Demanda;
+import com.gapso.trieda.domain.DeslocamentoUnidade;
 import com.gapso.trieda.domain.DicaEliminacaoProfessorVirtual;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
@@ -44,11 +46,13 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.MotivoUsoProfessorVirtual;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Professor;
+import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.TriedaPar;
+import com.gapso.trieda.domain.TriedaTrio;
 import com.gapso.trieda.domain.Turma;
 import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.misc.Semanas;
@@ -68,9 +72,13 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
@@ -178,7 +186,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	 * @see com.gapso.web.trieda.shared.services.AtendimentosService#getAtendimentosParaGradeHorariaVisaoSala(com.gapso.web.trieda.shared.dtos.SalaDTO, com.gapso.web.trieda.shared.dtos.TurnoDTO)
 	 */
 	@Override
-	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(CenarioDTO cenarioDTO, RelatorioVisaoSalaFiltro filtro) throws TriedaException{
+	public AtendimentoServiceRelatorioResponse getAtendimentosParaGradeHorariaVisaoSala(CenarioDTO cenarioDTO, RelatorioVisaoSalaFiltro filtro, boolean buscaAulasParciais) throws TriedaException{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		QuintetoDTO<List<AtendimentoRelatorioDTO>, ParDTO<Integer, Boolean>, List<String>, List<String>, List<String>> q;
 		List<AtendimentoRelatorioDTO> aulas = new ArrayList<AtendimentoRelatorioDTO>();
@@ -200,6 +208,10 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				List<AtendimentoOperacionalDTO> aulasOperacional = extraiAulas(atendimentosOperacionalDTO);
 				// insere as aulas do modo operacional na lista de atendimentos
 				aulas.addAll(aulasOperacional);
+			}
+			if (buscaAulasParciais)
+			{
+				aulas.addAll(getAulasParciais(cenario, filtro.getSalaCodigo()));
 			}
 			
 			if (!aulas.isEmpty()) {
@@ -233,6 +245,76 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return AtendimentoServiceRelatorioResponse.create(q);
 	}
 	
+	private List<AtendimentoOperacionalDTO> getAulasParciais(Cenario cenario, String salaCodigo) {
+		Sala sala = Sala.findByCodigo(getInstituicaoEnsinoUser(), cenario, salaCodigo);
+		
+		List<Aula> aulas = Aula.findBy(getInstituicaoEnsinoUser(), cenario, sala);
+		List<AtendimentoOperacionalDTO> result = new ArrayList<AtendimentoOperacionalDTO>();
+		for(Aula aula : aulas)
+		{
+			AtendimentoOperacionalDTO dto = new AtendimentoOperacionalDTO();
+
+			dto.setCenarioId( aula.getCenario().getId() );
+			dto.setCampusId( aula.getSala().getUnidade().getCampus().getId() );
+			dto.setCampusString( aula.getSala().getUnidade().getCampus().getCodigo() );
+			dto.setUnidadeId( aula.getSala().getUnidade().getId() );
+			dto.setUnidadeString( aula.getSala().getUnidade().getCodigo() );
+			dto.setSalaId( aula.getSala().getId() );
+			dto.setSalaString( aula.getSala().getCodigo() );
+
+			HorarioDisponivelCenario hdc = aula.getHorarioDisponivelCenario();
+			dto.setHorarioDisponivelCenarioId( hdc.getId() );
+			dto.setSemana( Semanas.toInt( hdc.getDiaSemana() ) );
+			dto.setDiaSemana( dto.getSemana() );
+
+			HorarioAula ha = hdc.getHorarioAula();
+			dto.setHorarioAulaId( ha.getId() );
+			dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );
+			dto.setTurnoId( ha.getTurno().getId() );
+			dto.setTurnoString( ha.getTurno().getNome() );
+
+			if ( aula.getProfessor() != null )
+			{
+				dto.setProfessorId( aula.getProfessor().getId() );
+				dto.setProfessorCPF( aula.getProfessor().getCpf() );
+				dto.setProfessorString( aula.getProfessor().getNome() );
+				dto.setProfessorCustoCreditoSemanal(aula.getProfessor().getValorCredito());
+			}
+			else if ( aula.getProfessorVirtual() != null )
+			{
+				dto.setProfessorVirtualId( aula.getProfessorVirtual().getId() );
+				dto.setProfessorCPF( aula.getProfessorVirtual().getId().toString() );
+				dto.setProfessorVirtualString("Professor Virtual " + aula.getProfessorVirtual().getId() );
+			}
+			
+			Iterator<Turma> iter = aula.getTurmas().iterator();
+
+			Turma turma = iter.next();
+
+			dto.setCreditoTeoricoBoolean( aula.getCreditosTeoricos() > 0 );
+			dto.setDisciplinaId( turma.getDisciplina().getId() );
+			dto.setDisciplinaString( turma.getDisciplina().getCodigo() );
+			dto.setDisciplinaNome( turma.getDisciplina().getNome() );
+			dto.setDisciplinaOriginalCodigo(turma.getDisciplina().getCodigo());
+			dto.setDisciplinaUsaLaboratorio(turma.getDisciplina().getLaboratorio());
+			dto.setTotalCreditosTeoricosDisciplina( turma.getDisciplina().getCreditosTeorico() );
+			dto.setTotalCreditosPraticosDisciplina( turma.getDisciplina().getCreditosPratico() );
+			dto.setTotalCreditoDisciplina( turma.getDisciplina().getTotalCreditos() );
+			dto.setQuantidadeAlunos( turma.getAlunos().size() );
+			dto.setQuantidadeAlunosString( String.valueOf(turma.getAlunos().size()) );
+			dto.setTurma( turma.getNome() );
+
+			dto.setTotalCreditos(aula.getCreditosPraticos() + aula.getCreditosTeoricos()); // todo atendimento operacional representa apenas 1 crédito atendido
+			dto.setDisplayText( dto.getNaturalKey() );
+			dto.setCompartilhamentoCursosString( "" );
+			dto.setSemanaLetivaId( aula.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getId() );
+			dto.setSemanaLetivaTempoAula( aula.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo());
+			
+			result.add(dto);
+		}
+		return result;
+	}
+
 	public QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulas, Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap, boolean temInfoDeHorario, Set<Long> turnoId) {
 		List<String> labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
 		List<String> horariosDeInicioDeAula = new ArrayList<String>();
@@ -3405,6 +3487,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		{
 			TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
 
+			newTurmaStatus.setId(turma.getId());
 			newTurmaStatus.setNome(turma.getNome());
 			newTurmaStatus.setQtdeDiscSelecionada(turma.getAlunos().size());
 			newTurmaStatus.setQtdeTotal(turma.getAlunos().size());
@@ -3474,8 +3557,8 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		Turma turma = ConvertBeans.toTurma(turmaDTO);
 		Campus campus = Campus.find(turmaDTO.getCampusId(), getInstituicaoEnsinoUser());
 		
-		List<AtendimentoOperacional> turmasOperacional = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, turma.getNome());
-		List<AtendimentoTatico> turmasTatico = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, turma.getNome());
+		List<AtendimentoOperacional> turmasOperacional = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, null, turma.getNome());
+		List<AtendimentoTatico> turmasTatico = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, null, turma.getNome());
 		List<Turma> turmas = Turma.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), turma.getNome());
 		
 		if (!turmasOperacional.isEmpty() || !turmasTatico.isEmpty() || !turmas.isEmpty())
@@ -3538,6 +3621,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		{
 			AulaDTO aulaDTO = new AulaDTO();
 			aulaDTO.setCenarioId(aula.getCenarioId());
+			aulaDTO.setInstituicaoEnsinoId(aula.getInstituicaoEnsinoId());
 			aulaDTO.setCreditosPraticos(aula.getCreditoTeoricoBoolean() ? 0 : aula.getTotalCreditos());
 			aulaDTO.setCreditosTeoricos(aula.getCreditoTeoricoBoolean() ? aula.getTotalCreditos() : 0);
 			aulaDTO.setSalaId(aula.getSalaId());
@@ -3545,6 +3629,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			aulaDTO.setHorarioDisponivelCenarioId(aula.getHorarioDisponivelCenarioId());
 			aulaDTO.setHorarioAulaId(aula.getHorarioAulaId());
 			aulaDTO.setSemana(aula.getSemana());
+			aulaDTO.setSemanaString(Semanas.get(aula.getSemana()).name());
 			credAlocados += aula.getTotalCreditos();
 			if (!ofertas.contains(aula.getOfertaId()))
 			{
@@ -3608,6 +3693,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		{
 			AulaDTO aulaDTO = new AulaDTO();
 			aulaDTO.setCenarioId(aula.getCenario().getId());
+			aulaDTO.setInstituicaoEnsinoId(aula.getInstituicaoEnsino().getId());
 			aulaDTO.setCreditosPraticos(aula.getCreditosPratico());
 			aulaDTO.setCreditosTeoricos(aula.getCreditosTeorico());
 			credAlocados += aula.getCreditosPratico() + aula.getCreditosTeorico();
@@ -3621,6 +3707,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			aulaDTO.setHorarioDisponivelCenarioId(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), aula.getHorarioAula(), aula.getSemana()).getId());
 			aulaDTO.setHorarioAulaId(aula.getHorarioAula().getId());
 			aulaDTO.setSemana(aula.getSemana().ordinal());
+			aulaDTO.setSemanaString(aula.getSemana().name());
 			
 			DateFormat df = new SimpleDateFormat( "HH:mm" );
 			String inicio = df.format( aula.getHorarioAula().getHorario() );
@@ -3648,48 +3735,631 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		return ParDTO.create(turmaDTO, aulasDTO);
 	}
 
-/*	@Override
-	public ListLoadResult<AlunoStatusDTO> getAlunosStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO)
+	@Override
+	public ListLoadResult<AlunoStatusDTO> getAlunosStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, List<AulaDTO> aulasDTO)
 	{
+		List<AlunoStatusDTO> result = new ArrayList<AlunoStatusDTO>();
+		if (turmaDTO == null)
+		{
+			return new BaseListLoadResult<AlunoStatusDTO>(result);
+		}
 		Disciplina disciplina = Disciplina.find(turmaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+		if (turmaDTO.getCredAlocados() < disciplina.getTotalCreditos())
+		{
+			return new BaseListLoadResult<AlunoStatusDTO>(result);
+		}
+		
 		Demanda demanda = Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser());
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
 		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
 		
 		List<AlunoDemanda> alunosDemanda = new ArrayList<AlunoDemanda>();
-		alunosDemanda.addAll(demanda.getAlunosDemanda());
+		alunosDemanda.addAll(AlunoDemanda.findByDemandaAndTurma(getInstituicaoEnsinoUser(), demanda, turmaDTO.getNome()));
 		List<AlunoDemanda> alunosDiscEquivalentes =
 				AlunoDemanda.findAlunosEquivalentes(getInstituicaoEnsinoUser(), cenario, disciplina );
-				
-		for (AlunoDemanda alunoDemanda : demanda.getAlunosDemanda())
+		alunosDemanda.addAll(alunosDiscEquivalentes);
+		for (AlunoDemanda alunoDemanda : alunosDemanda)
 		{
 			AlunoStatusDTO alunoStatusDTO = new AlunoStatusDTO();
 			
 			alunoStatusDTO.setAlunoDemandaId(alunoDemanda.getId());
 			alunoStatusDTO.setAlunoId(alunoDemanda.getAluno().getId());
-			alunoStatusDTO.setMarcado(alunoDemanda.getAtendido());
+			alunoStatusDTO.setMarcado(alunoDemanda.getAtendido() || !alunoDemanda.getTurmas().isEmpty());
 			alunoStatusDTO.setMatricula(alunoDemanda.getAluno().getMatricula());
 			alunoStatusDTO.setNome(alunoDemanda.getAluno().getNome());
 			alunoStatusDTO.setStatus(alunoDemanda.getAluno().getNome());
-			
-			String status = "";
-			if (alunoDemanda.getAtendido())
+			String status = "Hor. Livre";
+			if (alunoDemanda.getAtendido() || !alunoDemanda.getTurmas().isEmpty())
 			{
 				status = "Alocado";
 			}
-			
-			List<AtendimentoTatico> atendimentosAluno
-			
-			
+			else {
+				Set<HorarioDisponivelCenario> horariosDisponiveisAluno = findHorariosDisponiveis(alunoDemanda.getAluno(), ehTatico);
+				for (AulaDTO aula : aulasDTO)
+				{
+					if (horariosDisponiveisAluno.contains(HorarioDisponivelCenario.find(aula.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+					{
+						status = "Conflito";
+					}
+				}
+			}
+			alunoStatusDTO.setStatus(status);
 			alunoStatusDTO.setFormando(alunoDemanda.getAluno().getFormando());
+			if (!alunoDemanda.getDemanda().getDisciplina().equals(disciplina))
+			{
+				alunoStatusDTO.setEquivalenciaId(alunoDemanda.getDemanda().getDisciplina().getId());
+				alunoStatusDTO.setEquivalenciaSring(alunoDemanda.getDemanda().getDisciplina().getCodigo());
+			}
+			result.add(alunoStatusDTO);
 		}
-		
-		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
-		
+		return new BaseListLoadResult<AlunoStatusDTO>(result);
+	}
+
+	private Set<HorarioDisponivelCenario> findHorariosDisponiveis(Aluno aluno, boolean ehTatico)
+	{
+		Set<HorarioDisponivelCenario> horariosDisponiveis = new HashSet<HorarioDisponivelCenario>();
 		if (ehTatico)
 		{
+			List<AtendimentoTatico> atendimentos = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), aluno, null, null);
+			//TODO pensar em uma forma de adicionar num creditos tambem
+			for(AtendimentoTatico atendimento : atendimentos)
+			{
+				horariosDisponiveis.add(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), atendimento.getHorarioAula(), atendimento.getSemana()));
+			}
+		}
+		else
+		{
+			List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(aluno, null, null, getInstituicaoEnsinoUser());
+			
+			for(AtendimentoOperacional atendimento : atendimentos)
+			{
+				horariosDisponiveis.add(atendimento.getHorarioDisponivelCenario());
+			}
+		}
+		
+		return horariosDisponiveis;
+	}
+	
+	@Override
+	public ListLoadResult<ProfessorStatusDTO> getProfessoresStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO)
+	{
+		List<ProfessorStatusDTO> result = new ArrayList<ProfessorStatusDTO>();
+		if (turmaDTO == null || aulaDTO == null)
+		{
+			return new BaseListLoadResult<ProfessorStatusDTO>(result);
+		}
+		Disciplina disciplina = Disciplina.find(turmaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+		if (turmaDTO.getCredAlocados() < disciplina.getTotalCreditos())
+		{
+			return new BaseListLoadResult<ProfessorStatusDTO>(result);
+		}
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Demanda demanda = Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser());
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		List<ProfessorDisciplina> professoresDisciplinas = ProfessorDisciplina.findBy(getInstituicaoEnsinoUser(), cenario, disciplina);
+
+		for (ProfessorDisciplina professorDisciplina :  professoresDisciplinas)
+		{
+			ProfessorStatusDTO professorStatusDTO = new ProfessorStatusDTO();
+			ProfessorDTO professorDTO = ConvertBeans.toProfessorDTO(professorDisciplina.getProfessor());
+			
+			professorStatusDTO.setProfessorId(professorDTO.getId());
+			professorStatusDTO.setCpf(professorDTO.getCpf());
+			professorStatusDTO.setTitulacao(professorDTO.getTitulacaoString());
+			professorStatusDTO.setCusto(0);
+			professorStatusDTO.setMarcado(false);
+			professorStatusDTO.setNota(professorDTO.getNotaDesempenho());
+			professorStatusDTO.setPreferencia(professorDisciplina.getPreferencia());
+			professorStatusDTO.setNome(professorDTO.getNome());
+			
+			String status = "";
+			if (aulaDTO.getProfessorId() != null)
+			{
+				if (professorDTO.getId().equals(aulaDTO.getProfessorId()))
+				{
+					status = "Alocado";
+					professorStatusDTO.setMarcado(true);
+				}
+			}
+			if (!professorDisciplina.getProfessor().getHorarios().contains(HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+			{
+				status = "Indisponível";
+			}
+			else {
+				Set<HorarioDisponivelCenario> horariosDisponiveisAluno = findHorariosDisponiveis(cenario, professorDisciplina.getProfessor(), ehTatico);
+				if (horariosDisponiveisAluno.contains(HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+				{
+					status = "Conflito";
+				}
+				else
+				{
+					status = "Disponível";
+				}
+			}
+			
+			professorStatusDTO.setStatus(status);
+			
+			result.add(professorStatusDTO);
+		}
+		
+		List<ProfessorVirtual> professoresVirtuais = ProfessorVirtual.findBy(getInstituicaoEnsinoUser(), cenario);
+		for (ProfessorVirtual professorVirtual : professoresVirtuais)
+		{
+			if (professorVirtual.getDisciplinas().contains(disciplina))
+			{
+				ProfessorStatusDTO professorStatusDTO = new ProfessorStatusDTO();
+				ProfessorVirtualDTO professorDTO = ConvertBeans.toProfessorVirtualDTO(professorVirtual);
+				
+				professorStatusDTO.setProfessorVirtualId(professorDTO.getId());
+				professorStatusDTO.setCpf("");
+				professorStatusDTO.setTitulacao(professorDTO.getTitulacaoString());
+				professorStatusDTO.setCusto(0);
+				professorStatusDTO.setMarcado(false);
+				professorStatusDTO.setNota(null);
+				professorStatusDTO.setPreferencia(null);
+				professorStatusDTO.setNome(professorDTO.getNome());
+				
+				String status = "";
+				Set<HorarioDisponivelCenario> horariosProfessor = new HashSet<HorarioDisponivelCenario>();
+				for (AtendimentoOperacional atendimento : professorVirtual.getAtendimentos())
+				{
+					horariosProfessor.add(atendimento.getHorarioDisponivelCenario());
+				}
+
+				if (aulaDTO.getProfessorVirtualId() != null)
+				{
+					if (professorDTO.getId().equals(aulaDTO.getProfessorId()))
+					{
+						status = "Alocado";
+						professorStatusDTO.setMarcado(true);
+					}
+				}
+				if (!horariosProfessor.contains(HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+				{
+					status = "Conflito";
+				}
+				else
+				{
+					status = "Disponível";
+				}
+				
+				professorStatusDTO.setStatus(status);
+				
+				result.add(professorStatusDTO);
+			}
+		}
 		
 		
-	}*/
+		return new BaseListLoadResult<ProfessorStatusDTO>(result);
+	}
+	
+	private Set<HorarioDisponivelCenario> findHorariosDisponiveis(Cenario cenario, Professor professor, boolean ehTatico)
+	{
+		Set<HorarioDisponivelCenario> horariosDisponiveis = new HashSet<HorarioDisponivelCenario>();
+		if (!ehTatico)
+		{
+			List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(getInstituicaoEnsinoUser(), cenario, professor);
+			
+			for(AtendimentoOperacional atendimento : atendimentos)
+			{
+				horariosDisponiveis.add(atendimento.getHorarioDisponivelCenario());
+			}
+		}
+		
+		return horariosDisponiveis;
+	}
+	
+	@Override
+	public ListLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveisAula(CenarioDTO cenarioDTO, SalaDTO salaDTO, DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO, String semana)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Sala sala = Sala.find(salaDTO.getId(), getInstituicaoEnsinoUser());
+		Disciplina disciplina = Disciplina.find(disciplinaDTO.getId(), getInstituicaoEnsinoUser());
+		SemanaLetiva semanaLetiva = SemanaLetiva.find(semanaLetivaDTO.getId(), getInstituicaoEnsinoUser());
+		Semanas diaSemana = Semanas.get(semana);
+		
+		List<HorarioDisponivelCenario> hdc = HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), cenario, sala, disciplina, semanaLetiva, diaSemana);
+		return new BaseListLoadResult<HorarioDisponivelCenarioDTO>(ConvertBeans.toHorarioDisponivelCenarioDTO(hdc));
+	}
+	
+	@Override
+	public TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Turma turma = ConvertBeans.toTurma(turmaDTO);
+		Aula aula = ConvertBeans.toAula(aulaDTO);
+		
+		Map<String, Long> deslocamentoUnidadesMapTempo = DeslocamentoUnidade.buildDeslocamentoUnidadesMapTempo(getInstituicaoEnsinoUser(), cenario);
+		
+		TriedaTrio<Boolean, List<String>, List<String>> trio = aula.ehViavel(deslocamentoUnidadesMapTempo, turma, criaAulasAPartirDePossiveisAtendmentosConflitantes(aula, turma), cenario.getUltimoParametro(getInstituicaoEnsinoUser()));
+		
+		return TrioDTO.create(trio.getPrimeiro(), trio.getSegundo(), trio.getTerceiro());
+	}
+	
+	@Override
+	public TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAulasNovosAlunos(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulasDTO, List<AlunoStatusDTO> alunos)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Turma turma = ConvertBeans.toTurma(turmaDTO);
+		Map<String, Long> deslocamentoUnidadesMapTempo = DeslocamentoUnidade.buildDeslocamentoUnidadesMapTempo(getInstituicaoEnsinoUser(), cenario);
+		for (AlunoStatusDTO aluno : alunos)
+		{
+			turma.getAlunos().add(AlunoDemanda.find(aluno.getAlunoDemandaId(), getInstituicaoEnsinoUser()));
+		}
+		
+		List<String> errors = new ArrayList<String>();
+		List<String> warnings = new ArrayList<String>();
+		TriedaTrio<Boolean, List<String>, List<String>> result = TriedaTrio.create(true, errors, warnings);
+		for (AulaDTO aulaDTO : aulasDTO)
+		{
+			Aula aula = ConvertBeans.toAula(aulaDTO);
+			TriedaTrio<Boolean, List<String>, List<String>> trio = aula.ehViavel(deslocamentoUnidadesMapTempo, turma,
+					criaAulasAPartirDePossiveisAtendmentosConflitantes(aula, turma), cenario.getUltimoParametro(getInstituicaoEnsinoUser()));
+			if (!trio.getPrimeiro())
+				result.setPrimeiro(trio.getPrimeiro());
+			result.getSegundo().addAll(trio.getSegundo());
+			result.getTerceiro().addAll(trio.getTerceiro());
+		}
+		
+		return TrioDTO.create(result.getPrimeiro(), result.getSegundo(), result.getTerceiro());
+	}
+	
+	@Override
+	public TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAulasNovoProfessor(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO, ProfessorStatusDTO professorStatusDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Turma turma = ConvertBeans.toTurma(turmaDTO);
+		Aula aula = ConvertBeans.toAula(aulaDTO);
+		Map<String, Long> deslocamentoUnidadesMapTempo = DeslocamentoUnidade.buildDeslocamentoUnidadesMapTempo(getInstituicaoEnsinoUser(), cenario);
+		if (professorStatusDTO.getProfessorId() != null)
+		{
+			aula.setProfessor(Professor.find(professorStatusDTO.getProfessorId(), getInstituicaoEnsinoUser()));
+		}
+		else
+		{
+			aula.setProfessorVirtual(ProfessorVirtual.find(professorStatusDTO.getProfessorVirtualId(), getInstituicaoEnsinoUser()));
+		}
+
+		TriedaTrio<Boolean, List<String>, List<String>> trio = aula.ehViavel(deslocamentoUnidadesMapTempo, turma,
+				criaAulasAPartirDePossiveisAtendmentosConflitantes(aula, turma), cenario.getUltimoParametro(getInstituicaoEnsinoUser()));
+		
+		return TrioDTO.create(trio.getPrimeiro(), trio.getSegundo(), trio.getTerceiro());
+	}
+	
+	private List<Aula> criaAulasAPartirDePossiveisAtendmentosConflitantes(Aula aula, Turma turma) 
+	{
+		Set<AtendimentoOperacional> atendimentosSet = new HashSet<AtendimentoOperacional>();
+		List<Aula> result = new ArrayList<Aula>();
+		
+		if (aula.getProfessor() != null)
+		{
+			for(AtendimentoOperacional atendimento : AtendimentoOperacional.findAllBy(getInstituicaoEnsinoUser(), aula.getCenario(), aula.getProfessor()))
+			{
+				if (atendimento.getHorarioDisponivelCenario().getDiaSemana().equals(aula.getHorarioDisponivelCenario().getDiaSemana())
+						&& !atendimento.getTurma().equals(turma.getNome()) && !atendimento.getDisciplina().getId().equals(turma.getDisciplina().getId()))
+				{
+					atendimentosSet.add(atendimento);
+				}
+			}
+		}
+		else
+		{
+			for(AtendimentoOperacional atendimento : AtendimentoOperacional.findAllBy(getInstituicaoEnsinoUser(), aula.getCenario(), aula.getProfessorVirtual()))
+			{
+				if (atendimento.getHorarioDisponivelCenario().getDiaSemana().equals(aula.getHorarioDisponivelCenario().getDiaSemana())
+						&& !atendimento.getTurma().equals(turma.getNome()) && !atendimento.getDisciplina().getId().equals(turma.getDisciplina().getId()))
+				{
+					atendimentosSet.add(atendimento);
+				}
+			}
+		}
+		for(AtendimentoOperacional atendimento : AtendimentoOperacional.findByCenario(getInstituicaoEnsinoUser(), aula.getCenario(), aula.getSala(), null))
+		{
+			if (atendimento.getHorarioDisponivelCenario().getDiaSemana().equals(aula.getHorarioDisponivelCenario().getDiaSemana())
+					&& !atendimento.getTurma().equals(turma.getNome()) && !atendimento.getDisciplina().getId().equals(turma.getDisciplina().getId()))
+			{
+				atendimentosSet.add(atendimento);
+			}
+		}
+		
+		List<AtendimentoOperacional> atendimentos = new ArrayList<AtendimentoOperacional>(atendimentosSet);
+		List<AtendimentoOperacionalDTO> aulas = extraiAulas(ConvertBeans.toListAtendimentoOperacionalDTO(atendimentos));
+		
+		for (AtendimentoOperacionalDTO aulaAtendimento : aulas)
+		{
+			Aula newAula = new Aula();
+			
+			newAula.setCenario(aula.getCenario());
+			newAula.setSala(Sala.find(aulaAtendimento.getSalaId(), getInstituicaoEnsinoUser()));
+			newAula.setHorarioDisponivelCenario(HorarioDisponivelCenario.find(aulaAtendimento.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser()));
+			newAula.setCreditosPraticos(aulaAtendimento.getCreditoTeoricoBoolean() ? 0 : aulaAtendimento.getTotalCreditos());
+			newAula.setCreditosTeoricos(aulaAtendimento.getCreditoTeoricoBoolean() ? aulaAtendimento.getTotalCreditos() : 0);
+			
+			result.add(newAula);
+		}
+		return result;
+	}
+	
+	@Override
+	@Transactional
+	public void saveAula(TurmaDTO turmaDTO, AulaDTO aulaDTO)
+	{
+		Turma turma = Turma.find(turmaDTO.getId(), getInstituicaoEnsinoUser());
+		
+		Aula aula = ConvertBeans.toAula(aulaDTO);
+		
+		turma.getAulas().add(aula);
+		
+		aula.persist();
+	}
+	
+	@Override
+	@Transactional
+	public void alocaAlunosTurma(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, List<AlunoStatusDTO> alunos)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Demanda demanda = Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser());
+		
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		Map<AlunoDemanda, Boolean> alunosDemandaMapMarcado = new HashMap<AlunoDemanda, Boolean>();
+		for (AlunoStatusDTO aluno : alunos)
+		{
+			alunosDemandaMapMarcado.put(AlunoDemanda.find(aluno.getAlunoDemandaId(), getInstituicaoEnsinoUser()), aluno.getMarcado());
+		}
+		
+		if (turmaDTO.getId() == null)
+		{
+			if (ehTatico)
+			{
+				for (AtendimentoTatico atendimentos : AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, demanda.getDisciplina(),
+						demanda.getOferta().getCampus(), demanda.getOferta(), turmaDTO.getNome()))
+				{
+					for (Entry<AlunoDemanda, Boolean> alunoMarcado : alunosDemandaMapMarcado.entrySet())
+					{
+						if (alunoMarcado.getValue())
+						{
+							alunoMarcado.getKey().setAtendido(true);
+							atendimentos.setQuantidadeAlunos(atendimentos.getQuantidadeAlunos() + 1);
+							atendimentos.getAlunosDemanda().add(alunoMarcado.getKey());
+						}
+						else
+						{
+							alunoMarcado.getKey().setAtendido(false);
+							atendimentos.setQuantidadeAlunos(atendimentos.getQuantidadeAlunos() - 1);
+							atendimentos.getAlunosDemanda().remove(alunoMarcado.getKey());
+						}
+					}
+				}
+			}
+			else
+			{
+				for (AtendimentoOperacional atendimentos : AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, demanda.getDisciplina(),
+						demanda.getOferta().getCampus(), demanda.getOferta(), turmaDTO.getNome()))
+				{
+					for (Entry<AlunoDemanda, Boolean> alunoMarcado : alunosDemandaMapMarcado.entrySet())
+					{
+						if (alunoMarcado.getValue())
+						{
+							alunoMarcado.getKey().setAtendido(true);
+							atendimentos.setQuantidadeAlunos(atendimentos.getQuantidadeAlunos() + 1);
+							atendimentos.getAlunosDemanda().add(alunoMarcado.getKey());
+						}
+						else
+						{
+							alunoMarcado.getKey().setAtendido(false);
+							atendimentos.setQuantidadeAlunos(atendimentos.getQuantidadeAlunos() - 1);
+							atendimentos.getAlunosDemanda().remove(alunoMarcado.getKey());
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			Turma turma = Turma.find(turmaDTO.getId(), getInstituicaoEnsinoUser());
+			for (Entry<AlunoDemanda, Boolean> alunoMarcado : alunosDemandaMapMarcado.entrySet())
+			{
+				if (alunoMarcado.getValue())
+				{
+					turma.getAlunos().add(alunoMarcado.getKey());
+				}
+				else
+				{
+					turma.getAlunos().remove(alunoMarcado.getKey());
+				}
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void alocaProfessoresAula(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO, ProfessorStatusDTO professorStatusDTO )
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Demanda demanda = Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser());
+		
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+		if (turmaDTO.getId() == null)
+		{
+			if (!ehTatico)
+			{
+				List<AtendimentoOperacional> atendimentosTurma = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, demanda.getDisciplina(),
+						demanda.getOferta().getCampus(), demanda.getOferta(), turmaDTO.getNome());
+				for (AtendimentoOperacional atendimentos : extraiAtendimentosSequenciais(atendimentosTurma,
+						HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+				{
+					if (professorStatusDTO.getMarcado())
+					{
+						if (professorStatusDTO.getProfessorId() != null)
+						{
+							atendimentos.setProfessor(Professor.find(professorStatusDTO.getProfessorId(), getInstituicaoEnsinoUser()));
+						}
+						else
+						{
+							atendimentos.setProfessorVirtual(ProfessorVirtual.find(professorStatusDTO.getProfessorVirtualId(), getInstituicaoEnsinoUser()));
+						}
+					}
+				}
+			}
+
+		}
+		else
+		{
+			Aula aula = Aula.find(aulaDTO.getId(), getInstituicaoEnsinoUser());
+			if (professorStatusDTO.getProfessorId() != null)
+			{
+				aula.setProfessor(Professor.find(professorStatusDTO.getProfessorId(), getInstituicaoEnsinoUser()));
+			}
+			else
+			{
+				aula.setProfessorVirtual(ProfessorVirtual.find(professorStatusDTO.getProfessorVirtualId(), getInstituicaoEnsinoUser()));
+			}
+		}
+	}
+
+	private List<AtendimentoOperacional> extraiAtendimentosSequenciais(
+			List<AtendimentoOperacional> atendimentosTurma,
+			HorarioDisponivelCenario hdc)
+	{
+		List<AtendimentoOperacionalDTO> grupoAtendimentosOrdenadosPorHorario = ordenaPorHorarioAula(ConvertBeans.toListAtendimentoOperacionalDTO(atendimentosTurma));
+		
+		List<List<AtendimentoOperacionalDTO>> subgruposDeAtendimentosConsecutivos = separaAtendimentosNaoConsecutivos(grupoAtendimentosOrdenadosPorHorario);
+		
+		List<AtendimentoOperacional> result = new ArrayList<AtendimentoOperacional>();
+		for (List<AtendimentoOperacionalDTO> atendimentosDTO : subgruposDeAtendimentosConsecutivos)
+		{
+			if (atendimentosDTO.get(0).getHorarioDisponivelCenarioId().equals(hdc.getId()))
+			{
+				for (AtendimentoOperacionalDTO atedimentoDTO : atendimentosDTO)
+				{
+					result.add(AtendimentoOperacional.find(atedimentoDTO.getId(), getInstituicaoEnsinoUser()));
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeSalvarTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulasDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Turma turma = Turma.find(turmaDTO.getId(), getInstituicaoEnsinoUser());
+		Map<String, Long> deslocamentoUnidadesMapTempo = DeslocamentoUnidade.buildDeslocamentoUnidadesMapTempo(getInstituicaoEnsinoUser(), cenario);
+		
+		List<String> errors = new ArrayList<String>();
+		List<String> warnings = new ArrayList<String>();
+		TriedaTrio<Boolean, List<String>, List<String>> result = TriedaTrio.create(true, errors, warnings);
+		for (AulaDTO aulaDTO : aulasDTO)
+		{
+			Aula aula = Aula.find(aulaDTO.getId(), getInstituicaoEnsinoUser());
+			TriedaTrio<Boolean, List<String>, List<String>> trio = aula.ehViavel(deslocamentoUnidadesMapTempo, turma,
+					criaAulasAPartirDePossiveisAtendmentosConflitantes(aula, turma), cenario.getUltimoParametro(getInstituicaoEnsinoUser()));
+			if (!trio.getPrimeiro())
+				result.setPrimeiro(trio.getPrimeiro());
+			result.getSegundo().addAll(trio.getSegundo());
+			result.getTerceiro().addAll(trio.getTerceiro());
+		}
+		
+		return TrioDTO.create(result.getPrimeiro(), result.getSegundo(), result.getTerceiro());
+	}
+	
+	@Override
+	public void salvarTurma(TurmaDTO turmaDTO)
+	{
+		Turma turma = Turma.find(turmaDTO.getId(), getInstituicaoEnsinoUser());
+		
+		converteTurmaDeParcialParaNaoParcial(turma);
+	}
+	
+	@Transactional
+	boolean converteTurmaDeParcialParaNaoParcial(Turma turma) {	
+		// organiza os alunos_demanda da turma em questão por oferta e disciplina
+		Map<Oferta,Map<Disciplina,Set<AlunoDemanda>>> ofeToDiscSubstToAlnDemMap = new HashMap<Oferta,Map<Disciplina,Set<AlunoDemanda>>>();
+		for (AlunoDemanda ald : turma.getAlunos())
+		{
+			Oferta ald_ofe = ald.getDemanda().getOferta();
+			Disciplina ald_dis = ald.getDemanda().getDisciplina();
+			
+			Map<Disciplina,Set<AlunoDemanda>> discSubstToAlnDemMap = ofeToDiscSubstToAlnDemMap.get(ald_ofe);
+			if (discSubstToAlnDemMap == null) {
+				discSubstToAlnDemMap = new HashMap<Disciplina,Set<AlunoDemanda>>();
+				ofeToDiscSubstToAlnDemMap.put(ald_ofe,discSubstToAlnDemMap);
+			}		
+			
+			Set<AlunoDemanda> alnDem = discSubstToAlnDemMap.get(ald_dis);
+			if (alnDem == null) {
+				alnDem = new HashSet<AlunoDemanda>();
+				discSubstToAlnDemMap.put(ald_dis,alnDem);
+			}
+			alnDem.add(ald);
+		}
+		
+		// cria os atendimentos operacionais a partir das aulas
+		Set<AtendimentoOperacional> atendimentosOp = new HashSet<AtendimentoOperacional>();
+		Cenario cen = turma.getCenario();
+		Disciplina discDaTurma = turma.getDisciplina();
+		String turmaNome = turma.getNome();
+		for (Aula aul : turma.getAulas())
+		{
+			// obtém os horários da aula
+			List<HorarioDisponivelCenario> horariosHDC = aul.getHDCs();
+			// para cada oferta atendida pela aula
+			for (Oferta ofe : ofeToDiscSubstToAlnDemMap.keySet()) {
+				// para cada disciplina da oferta atendida pela aula
+				for (Disciplina dis : ofeToDiscSubstToAlnDemMap.get(ofe).keySet())
+				{
+					// para cada horário da aula
+					for (HorarioDisponivelCenario hdc : horariosHDC){
+						AtendimentoOperacional atp = new AtendimentoOperacional();
+						atp.setCreditoTeorico(aul.isTeorica());
+						atp.setQuantidadeAlunos(ofeToDiscSubstToAlnDemMap.get(ofe).get(dis).size());
+						atp.setTurma(turmaNome);
+						atp.setHorarioDisponivelCenario(hdc);
+						atp.setCenario(cen);            
+						atp.setOferta(ofe);
+						atp.setProfessor(aul.getProfessor());
+						atp.setProfessorVirtual(aul.getProfessorVirtual());
+						atp.setSala(aul.getSala());
+						atp.setInstituicaoEnsino(cen.getInstituicaoEnsino());
+						if (!discDaTurma.equals(dis)) {
+							atp.setDisciplina(dis);
+						   	atp.setDisciplinaSubstituta(discDaTurma);
+						} else {
+							atp.setDisciplina(discDaTurma);
+							atp.setDisciplinaSubstituta(null);
+						}
+						atp.setConfirmada(false);
+
+						atendimentosOp.add(atp);
+					}
+				}
+			}
+		}
+		
+		// insere os atendimentos operacionais no BD
+		Set<AtendimentoOperacional> atpsInseridos = new HashSet<AtendimentoOperacional>();
+		for (AtendimentoOperacional atendimento : atendimentosOp)
+		{
+			atendimento.persist();
+			atpsInseridos.add(atendimento);
+		}
+		
+		// cria as relações entre os atendimentos operacionais e os alunos demanda
+		for (AtendimentoOperacional atp : atpsInseridos )
+		{
+			for (AlunoDemanda ald : ofeToDiscSubstToAlnDemMap.get(atp.getOferta()).get(atp.getDisciplina())) {
+				ald.setAtendido(true);
+				atp.getAlunosDemanda().add(ald);
+			}
+		}
+		
+		// remove informações das tabelas de turmas parciais
+		turma.remove();
+		
+	    return true;
+	}
 }

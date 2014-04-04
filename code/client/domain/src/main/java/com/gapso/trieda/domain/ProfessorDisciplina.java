@@ -329,6 +329,39 @@ public class ProfessorDisciplina
 		return q.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public static List< ProfessorDisciplina > findBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Disciplina disciplina )
+	{
+		String where = " o.professor.tipoContrato.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professor.cenario = :cenario " +
+			" AND o.disciplina.cenario = :cenario AND ";
+
+		if ( disciplina != null )
+		{
+			where += ( " o.disciplina = :disciplina AND " );
+		}
+
+		if ( where.length() > 1 )
+		{
+			where = ( " WHERE " + where.substring( 0, where.length() - 4 ) );
+		}
+
+		Query q = entityManager().createQuery(
+			" SELECT o FROM ProfessorDisciplina o " + where );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+		if ( disciplina != null )
+		{
+			q.setParameter( "disciplina", disciplina );
+		}
+
+		return q.getResultList();
+	}
+
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();

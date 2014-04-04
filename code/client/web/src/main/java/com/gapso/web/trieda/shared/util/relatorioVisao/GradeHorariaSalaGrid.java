@@ -27,7 +27,7 @@ public class GradeHorariaSalaGrid extends GradeHorariaVisao{
 
 		this.grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 
-		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(cenarioDTO, getFiltro(), this.getCallback());
+		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(cenarioDTO, getFiltro(), aulaDestaque != null, this.getCallback());
 	}
 	
 	protected TrioDTO<String, String, String> getHTMLInfo(AtendimentoRelatorioDTO atendimentoDTO){

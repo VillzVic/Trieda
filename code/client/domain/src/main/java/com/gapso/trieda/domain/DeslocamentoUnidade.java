@@ -1,7 +1,9 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -229,6 +231,23 @@ public class DeslocamentoUnidade
 
         return q.getResultList();
     }
+	
+	@SuppressWarnings( "unchecked" )
+    public static List< DeslocamentoUnidade > findAll(
+    	InstituicaoEnsino instituicaoEnsino, Cenario cenario )
+    {
+		Query q = entityManager().createQuery(
+	        " SELECT o FROM DeslocamentoUnidade o " +
+	        " WHERE o.origem.campus.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.destino.campus.instituicaoEnsino = :instituicaoEnsino " +
+	        " AND o.origem.campus.cenario = :cenario " +
+	        " AND o.destino.campus.cenario = :cenario ");
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "cenario", cenario );
+
+        return q.getResultList();
+    }
 
 	public static DeslocamentoUnidade find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
@@ -302,6 +321,19 @@ public class DeslocamentoUnidade
 
         return q.getResultList();
     }
+	
+	public static Map<String, Long> buildDeslocamentoUnidadesMapTempo(InstituicaoEnsino instituicaoEnsino, Cenario cenario)
+	{
+		Map<String, Long> deslocamentoUnidadesMapTempo = new HashMap<String, Long>();
+		
+		List<DeslocamentoUnidade> deslocamentos  = DeslocamentoUnidade.findAll(instituicaoEnsino, cenario);
+		for(DeslocamentoUnidade deslocamento : deslocamentos)
+		{
+			deslocamentoUnidadesMapTempo.put(deslocamento.getOrigem().getId() + "-" + deslocamento.getDestino().getId() , Long.valueOf(deslocamento.getTempo()));
+		}
+		
+		return deslocamentoUnidadesMapTempo;
+	}
 
 	public String toString()
 	{

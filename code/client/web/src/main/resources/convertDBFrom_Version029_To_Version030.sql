@@ -61,11 +61,11 @@ BEGIN
       DROP TABLE IF EXISTS `trieda`.`turmas_alunos`;
       CREATE TABLE  `trieda`.`turmas_alunos` (
         `tur_id` bigint(20) NOT NULL,
-        `aln_id` bigint(20) NOT NULL,
+        `ald_id` bigint(20) NOT NULL,
         KEY `FK_TUR_ALD_TUR_ID` (`tur_id`),
-        KEY `FK_TUR_ALD_ALD_ID` (`aln_id`),
-        CONSTRAINT `FK_TUR_ALD_TUR_ID` FOREIGN KEY (`tur_id`) REFERENCES `turnos` (`tur_id`),
-        CONSTRAINT `FK_TUR_ALD_ALD_ID` FOREIGN KEY (`aln_id`) REFERENCES `alunos` (`aln_id`)
+        KEY `FK_TUR_ALD_ALD_ID` (`ald_id`),
+        CONSTRAINT `FK_TUR_ALD_TUR_ID` FOREIGN KEY (`tur_id`) REFERENCES `turmas` (`tur_id`),
+        CONSTRAINT `FK_TUR_ALD_ALD_ID` FOREIGN KEY (`ald_id`) REFERENCES `alunos_demanda` (`ald_id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
       DROP TABLE IF EXISTS `trieda`.`aulas`;
       CREATE TABLE  `trieda`.`aulas` (

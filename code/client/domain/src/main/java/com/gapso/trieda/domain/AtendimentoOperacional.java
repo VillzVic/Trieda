@@ -2074,14 +2074,21 @@ public class AtendimentoOperacional
 	
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findBy(InstituicaoEnsino instituicaoEnsino,
-			Cenario cenario, Disciplina disciplina, Campus campus, String turma) 
+			Cenario cenario, Disciplina disciplina, Campus campus, Oferta oferta, String turma) 
 	{
+		String ofertaString = "";
+		if (oferta != null)
+		{
+			ofertaString = " AND o.oferta = :oferta ";
+		}
+		
 		Query q1 = entityManager().createQuery(
 				" SELECT o FROM AtendimentoOperacional o " +
 				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 				" AND o.cenario = :cenario " +
 				" AND o.oferta.campus = :campus " +
 				" AND o.turma = :turma" +
+				ofertaString +
 				" AND o.disciplina = :disciplina " +
 				" AND o.disciplinaSubstituta IS NULL ");
 
@@ -2091,6 +2098,7 @@ public class AtendimentoOperacional
 				" AND o.cenario = :cenario " +
 				" AND o.oferta.campus = :campus " +
 				" AND o.turma = :turma" +
+				ofertaString +
 				" AND o.disciplinaSubstituta = :disciplina " +
 				" AND o.disciplinaSubstituta IS NOT NULL ");
 
@@ -2104,12 +2112,51 @@ public class AtendimentoOperacional
 		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q2.setParameter( "disciplina", disciplina );
 		q2.setParameter( "turma", turma );
+		if (oferta != null)
+		{
+			q1.setParameter( "oferta", oferta );
+			q2.setParameter( "oferta", oferta );
+		}
 		
 		List<AtendimentoOperacional> result = new ArrayList<AtendimentoOperacional>();
 		result.addAll(q1.getResultList());
 		result.addAll(q2.getResultList());
 		
 		return result;
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Professor professor )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.cenario = :cenario " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professor = :professor " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "professor", professor );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, ProfessorVirtual professorVirtual )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.cenario = :cenario " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.professorVirtual = :professorVirtual " );
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "professorVirtual", professorVirtual );
+
+		return q.getResultList();
 	}
 
 	public Set<MotivoUsoProfessorVirtual> getMotivoUsoProfessorVirtual() {

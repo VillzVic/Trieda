@@ -1193,6 +1193,7 @@ public class ConvertBeans {
 			String fim = df.format( fimCal.getTime() );
 
 			dto.setHorarioString( inicio + " / " + fim );
+			dto.setHorarioInicioString( inicio );
 			dto.setHorario( horarioAula.getHorario() );
 			dto.setDisplayText( dto.getHorarioString() );
 
@@ -3764,6 +3765,7 @@ public class ConvertBeans {
 	{
 		TurmaDTO dto = new TurmaDTO();
 		
+		dto.setInstituicaoEnsinoId(domain.getCenario().getInstituicaoEnsino().getId());
 		dto.setNome(domain.getNome());
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
@@ -3809,6 +3811,7 @@ public class ConvertBeans {
 	{
 		AulaDTO dto = new AulaDTO();
 		
+		dto.setInstituicaoEnsinoId(domain.getCenario().getInstituicaoEnsino().getId());
 		dto.setId(domain.getId());
 		dto.setVersion(domain.getVersion());
 		dto.setCenarioId(domain.getCenario().getId());
@@ -3830,7 +3833,8 @@ public class ConvertBeans {
 		dto.setSalaString(domain.getSala().getCodigo());
 		dto.setHorarioDisponivelCenarioId(domain.getHorarioDisponivelCenario().getId());
 		dto.setHorarioAulaId(domain.getHorarioDisponivelCenario().getHorarioAula().getId());
-		dto.setSemana(domain.getHorarioDisponivelCenario().getDiaSemana().ordinal());
+		dto.setSemana(Semanas.toInt(domain.getHorarioDisponivelCenario().getDiaSemana()));
+		dto.setSemanaString(domain.getHorarioDisponivelCenario().getDiaSemana().name());
 		
 		DateFormat df = new SimpleDateFormat( "HH:mm" );
 		String inicio = df.format( domain.getHorarioDisponivelCenario().getHorarioAula().getHorario() );
@@ -3848,6 +3852,33 @@ public class ConvertBeans {
 		dto.setHorarioString(horarioString);
 		
 		return dto;
+	}
+	
+	public static Aula toAula(AulaDTO dto)
+	{
+		Aula domain = new Aula();
+		
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(dto.getInstituicaoEnsinoId());
+		Cenario cenario = Cenario.find(dto.getCenarioId(), instituicaoEnsino);
+		HorarioAula horarioAula = HorarioAula.find(dto.getHorarioAulaId(), instituicaoEnsino);
+		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.findBy(instituicaoEnsino, horarioAula, Semanas.get(dto.getSemanaString()));
+		Sala sala = Sala.find(dto.getSalaId(), instituicaoEnsino);
+		Professor professor = Professor.find(dto.getProfessorId(), instituicaoEnsino);
+		ProfessorVirtual professorVirtual = ProfessorVirtual.find(dto.getProfessorVirtualId(), instituicaoEnsino);
+		
+		
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setCenario(cenario);
+		domain.setHorarioDisponivelCenario(hdc);
+		domain.setSala(sala);
+		domain.setProfessor(professor);
+		domain.setProfessorVirtual(professorVirtual);
+		domain.setCreditosPraticos(dto.getCreditosPraticos());
+		domain.setCreditosTeoricos(dto.getCreditosTeoricos());
+		
+		
+		return domain;
 	}
 	
 	public static List < AulaDTO > toListAulasDTO(

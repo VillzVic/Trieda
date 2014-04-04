@@ -251,6 +251,30 @@ public class HorarioDisponivelCenario
 
 		return (HorarioDisponivelCenario) q.getSingleResult();
 	}
+    
+    @SuppressWarnings("unchecked")
+	public static List<HorarioDisponivelCenario> findBy(
+        	InstituicaoEnsino instituicaoEnsino, Cenario cenario,
+        	Sala sala, Disciplina disciplina, SemanaLetiva semanaLetiva, Semanas semana )
+        {
+    		Query q = entityManager().createQuery(
+    			" SELECT o FROM HorarioDisponivelCenario o, IN (o.disciplinas) disciplinas, IN (o.salas) salas " +
+    			" WHERE o.horarioAula.semanaLetiva.instituicaoEnsino = :instituicaoEnsino " +
+    			" AND o.horarioAula.semanaLetiva.cenario = :cenario " +
+    			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
+    			" AND disciplinas = :disciplina " +
+    			" AND salas = :sala " +
+    			" AND o.diaSemana = :semana " );
+
+    		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+    		q.setParameter( "cenario", cenario );
+    		q.setParameter( "sala", sala );
+    		q.setParameter( "disciplina", disciplina );
+    		q.setParameter( "semanaLetiva", semanaLetiva );
+    		q.setParameter( "semana", semana );
+
+    		return q.getResultList();
+    	}
 
 	public Semanas getDiaSemana()
 	{

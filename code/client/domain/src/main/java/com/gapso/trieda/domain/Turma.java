@@ -1,7 +1,6 @@
 package com.gapso.trieda.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +28,8 @@ import org.springframework.roo.addon.entity.RooEntity;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gapso.trieda.misc.Semanas;
 
 @Configurable
 @Entity
@@ -77,10 +78,10 @@ public class Turma
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinTable(name="TURMAS_ALUNOS",
 	joinColumns=@JoinColumn(name="TUR_ID"),
-	inverseJoinColumns=@JoinColumn(name="ALN_ID"))
-	private Set<Aluno> alunos = new HashSet<Aluno>();
+	inverseJoinColumns=@JoinColumn(name="ALD_ID"))
+	private Set<AlunoDemanda> alunos = new HashSet<AlunoDemanda>();
 	
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@JoinTable(name="AULAS_TURMAS",
 	joinColumns=@JoinColumn(name="TUR_ID"),
 	inverseJoinColumns=@JoinColumn(name="AUL_ID"))
@@ -134,15 +135,27 @@ public class Turma
 		this.cenario = cenario;
 	}
 
-	public Set<Aluno> getAlunos() {
+	public Set<AlunoDemanda> getAlunos() {
 		return alunos;
 	}
 
-	public void setAlunos(Set<Aluno> alunos) {
+	public void setAlunos(Set<AlunoDemanda> alunos) {
 		this.alunos = alunos;
 	}
 
 	public Set<Aula> getAulas() {
+		return aulas;
+	}
+	
+	public Set<Aula> getAulas(Semanas semana) {
+		Set<Aula> aulas = new HashSet<Aula>();
+		for (Aula aula : getAulas())
+		{
+			if(aula.getHorarioDisponivelCenario().getDiaSemana().equals(semana))
+			{
+				aulas.add(aula);
+			}
+		}
 		return aulas;
 	}
 
@@ -232,6 +245,24 @@ public class Turma
 		}
 
 		return em;
+	}
+	
+	public static Turma find(
+		Long id, InstituicaoEnsino instituicaoEnsino )
+	{
+		if ( id == null || instituicaoEnsino == null )
+		{
+			return null;
+		}
+
+		Turma turma = entityManager().find( Turma.class, id );
+		
+		if (turma != null && turma.getCenario().getInstituicaoEnsino().equals(instituicaoEnsino))
+		{
+			return turma;
+		}
+
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

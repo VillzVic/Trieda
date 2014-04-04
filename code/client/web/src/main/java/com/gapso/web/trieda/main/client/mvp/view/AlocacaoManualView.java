@@ -9,6 +9,8 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreEvent;
+import com.extjs.gxt.ui.client.store.StoreListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
@@ -19,6 +21,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
@@ -39,6 +42,7 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
@@ -69,6 +73,7 @@ public class AlocacaoManualView
 	private Integer atendimentoPlanejado;
 	private SimpleUnpagedGrid<TurmaStatusDTO> turmasGrid;
 	private SimpleUnpagedGrid<AlunoStatusDTO> alunosGrid;
+	private SimpleUnpagedGrid<ProfessorStatusDTO> professoresGrid;
 	private SimpleToolBar toolBar;
 	private SimpleToolBar alunosToolBar;
 	private SimpleToolBar professoresToolBar;
@@ -78,8 +83,10 @@ public class AlocacaoManualView
 	private ContentPanel demandaPanel;
 	private TextField<String> novaTurmaNomeTF;
 	private Button novaTurmaBt;
+	private Button novaAulaBt;
 	private TurmaDTO turmaSelecionada;
 	private List<AulaDTO> aulasSelecionadas;
+	private AulaDTO aulaNaGrade;
 	private String turmaSelecionadaStatus;
 	private ContentPanel turmaSelecionadaPanel;
 	private LayoutContainer emptyText;
@@ -96,10 +103,14 @@ public class AlocacaoManualView
 	private Button filtrarBt;
 	private GradeHorariaSalaGrid salaGridPanel;
 	private RelatorioVisaoSalaFiltro salaFiltro;
-	private Button salvarMarcacoesAlunos;
-	private Button cancelarMarcacoesAlunos;
-	private Button marcarTodosAlunos;
-	private Button desmarcarTodosAlunos;
+	private Button salvarMarcacoesAlunosBt;
+	private Button cancelarMarcacoesAlunosBt;
+	private Button marcarTodosAlunosBt;
+	private Button desmarcarTodosAlunosBt;
+	private Button salvarMarcacoesProfessoresBt;
+	private Button cancelarMarcacoesProfessoresBt;
+	private CheckColumnConfig checkAlunoColumn;
+	private CheckColumnConfig checkProfessorColumn;
 	public AlocacaoManualView( CenarioDTO cenarioDTO, QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> quinteto, ResumoMatriculaDTO resumoMatriculaDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
@@ -188,6 +199,7 @@ public class AlocacaoManualView
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 		alunosTabItem.add(createAlunosGrid());
+		professoresTabItem.add(createProfessoresGrid());
 		
 		professoresAlunosTabPanel.add(alunosTabItem);
 		professoresAlunosTabPanel.add(professoresTabItem);
@@ -201,16 +213,18 @@ public class AlocacaoManualView
 		this.alunosToolBar = new SimpleToolBar(
 				false, false, false, false, false, this );
 		
-		salvarMarcacoesAlunos = alunosToolBar.createButton("Salvar marcações", Resources.DEFAULTS.salvarMarcacoes16());
-		cancelarMarcacoesAlunos = alunosToolBar.createButton("Cancelar marcações", Resources.DEFAULTS.cancelarMarcacoes16());
-		marcarTodosAlunos = alunosToolBar.createButton("Marcar todos alunos", Resources.DEFAULTS.marcarTodos16());
-		desmarcarTodosAlunos = alunosToolBar.createButton("Desmarcar todos alunos", Resources.DEFAULTS.marcarTodos16());
+		salvarMarcacoesAlunosBt = alunosToolBar.createButton("Salvar marcações", Resources.DEFAULTS.salvarMarcacoes16());
+		cancelarMarcacoesAlunosBt = alunosToolBar.createButton("Cancelar marcações", Resources.DEFAULTS.cancelarMarcacoes16());
+		marcarTodosAlunosBt = alunosToolBar.createButton("Marcar todos alunos", Resources.DEFAULTS.marcarTodos16());
+		desmarcarTodosAlunosBt = alunosToolBar.createButton("Desmarcar todos alunos", Resources.DEFAULTS.marcarTodos16());
+    	salvarMarcacoesAlunosBt.disable();
+    	cancelarMarcacoesAlunosBt.disable();
 		
-		alunosToolBar.add(salvarMarcacoesAlunos);
-		alunosToolBar.add(cancelarMarcacoesAlunos);
+		alunosToolBar.add(salvarMarcacoesAlunosBt);
+		alunosToolBar.add(cancelarMarcacoesAlunosBt);
 		alunosToolBar.add(new SeparatorToolItem());
-		alunosToolBar.add(marcarTodosAlunos);
-		alunosToolBar.add(desmarcarTodosAlunos);
+		alunosToolBar.add(marcarTodosAlunosBt);
+		alunosToolBar.add(desmarcarTodosAlunosBt);
 		
 	    this.alunosGrid = new SimpleUnpagedGrid< AlunoStatusDTO >( getAlunosColumnList(), this, this.alunosToolBar )
 	    {
@@ -219,21 +233,72 @@ public class AlocacaoManualView
 			{
 				super.afterRender();
 				
-				getGrid().getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<AlunoStatusDTO>() {
-
-					@Override
-				    public void selectionChanged(SelectionChangedEvent<AlunoStatusDTO> se) {
-				        if(getGrid().getSelectionModel().getSelectedItems().size() == 1) {
+				getGrid().getStore().addStoreListener(new StoreListener<AlunoStatusDTO>()
+			    {
+		    	 @Override
+		    	    public void storeUpdate(StoreEvent<AlunoStatusDTO> se) {
+				        if(getAlunosGrid().getGrid().getStore().getModifiedRecords().size() > 0)
+				        {
+				        	salvarMarcacoesAlunosBt.enable();
+				        	cancelarMarcacoesAlunosBt.enable();
 				        }
-				        else{
+				        else
+				        {
+				        	salvarMarcacoesAlunosBt.disable();
+				        	cancelarMarcacoesAlunosBt.disable();
 				        }
-				    }
-				});
+		    	    }
+			    });
 			}
 	    };
+	    alunosGrid.addPlugin(checkAlunoColumn);
 	    alunosGrid.setTopComponent(alunosToolBar);
 	    
 	    return alunosGrid;
+	}
+	
+	private SimpleUnpagedGrid<ProfessorStatusDTO> createProfessoresGrid()
+	{
+		this.professoresToolBar = new SimpleToolBar(
+				false, false, false, false, false, this );
+		
+		salvarMarcacoesProfessoresBt = alunosToolBar.createButton("Salvar marcações", Resources.DEFAULTS.salvarMarcacoes16());
+		cancelarMarcacoesProfessoresBt = alunosToolBar.createButton("Cancelar marcações", Resources.DEFAULTS.cancelarMarcacoes16());
+		salvarMarcacoesProfessoresBt.disable();
+		cancelarMarcacoesProfessoresBt.disable();
+		
+    	professoresToolBar.add(salvarMarcacoesProfessoresBt);
+    	professoresToolBar.add(cancelarMarcacoesProfessoresBt);
+		
+	    this.professoresGrid = new SimpleUnpagedGrid< ProfessorStatusDTO >( getProfessoresColumnList(), this, this.professoresToolBar )
+	    {
+			@Override
+			public void afterRender()
+			{
+				super.afterRender();
+				
+				getGrid().getStore().addStoreListener(new StoreListener<ProfessorStatusDTO>()
+				{
+			    	@Override
+			    	public void storeUpdate(StoreEvent<ProfessorStatusDTO> se) {
+				        if(getProfessoresGrid().getGrid().getStore().getModifiedRecords().size() > 0)
+				        {
+				        	salvarMarcacoesProfessoresBt.enable();
+				        	cancelarMarcacoesProfessoresBt.enable();
+				        }
+				        else
+				        {
+				        	salvarMarcacoesProfessoresBt.disable();
+				        	cancelarMarcacoesProfessoresBt.disable();
+				        }
+					}
+				});
+			}
+	    };
+	    professoresGrid.addPlugin(checkProfessorColumn);
+	    professoresGrid.setTopComponent(professoresToolBar);
+	    
+	    return professoresGrid;
 	}
 
 	private Widget createGradeHorariaPanel() {
@@ -503,7 +568,7 @@ public class AlocacaoManualView
 			    
 		          String val = (String) model.get(property);  
 		          String style = "";
-		          if (val.equals("Disponível"))
+		          if (val.equals("Hor. Disponível"))
 		          {
 		        	  style = "green";
 		          }
@@ -513,20 +578,77 @@ public class AlocacaoManualView
 		          }
 		          else
 		          {
-		        	  style = "black";
+		        	  style = "blue";
 		          }
 		          return "<span style='color:" + style + "'>" + val + "</span>";
 			}
 	    }; 
+	    
+	    checkAlunoColumn = new CheckColumnConfig( AlunoStatusDTO.PROPERTY_MARCADO, "", 30 );
+		CellEditor checkBoxEditor = new CellEditor(new CheckBox());
+		checkAlunoColumn.setEditor(checkBoxEditor);
 		
-		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_MARCADO, "", 30 ) );
+		list.add( checkAlunoColumn );
 		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_MATRICULA, "Matrícula", 60 ) );
 		ColumnConfig column = new ColumnConfig( AlunoStatusDTO.PROPERTY_STATUS, "Status", 70 );
 		column.setRenderer(change);
 		list.add( column );
 		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_EQUIVALENCIA_STRING, "Equivalência", 60 ) );
 		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_FORMANDO, "Formando", 60 ) );
-		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
+		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
+		
+		return list;
+	}
+	
+	private List< ColumnConfig > getProfessoresColumnList()
+	{
+		List< ColumnConfig > list
+			= new ArrayList< ColumnConfig >();
+		
+	    GridCellRenderer<ProfessorStatusDTO> change = new GridCellRenderer<ProfessorStatusDTO>() {
+
+			@Override
+			public Object render(ProfessorStatusDTO model, String property,
+					com.extjs.gxt.ui.client.widget.grid.ColumnData config,
+					int rowIndex, int colIndex,
+					ListStore<ProfessorStatusDTO> store, Grid<ProfessorStatusDTO> grid) {
+			    
+		          String val = (String) model.get(property);  
+		          String style = "";
+		          if (val.equals("Disponível"))
+		          {
+		        	  style = "green";
+		          }
+		          else if(val.equals("Conflito"))
+		          {
+		        	  style = "red";
+		          }
+		          else if(val.equals("Alocado"))
+		          {
+		        	  style = "blue";
+		          }
+		          else
+		          {
+		        	  style = "black";
+		          }
+		          return "<span style='color:" + style + "'>" + val + "</span>";
+			}
+	    }; 
+	    
+	    checkProfessorColumn = new CheckColumnConfig( ProfessorStatusDTO.PROPERTY_MARCADO, "", 30 );
+		CellEditor checkBoxEditor = new CellEditor(new CheckBox());        
+		checkProfessorColumn.setEditor(checkBoxEditor);
+		
+		list.add( checkAlunoColumn );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CPF, "Cpf", 60 ) );
+		ColumnConfig column = new ColumnConfig( ProfessorStatusDTO.PROPERTY_STATUS, "Status", 70 );
+		column.setRenderer(change);
+		list.add( column );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_TITULACAO, "Titulação", 60 ) );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CUSTO, "Custo", 60 ) );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOTA, "Nota", 60 ) );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_PREFERENCIA, "Pref.", 60 ) );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
 		
 		return list;
 	}
@@ -544,6 +666,12 @@ public class AlocacaoManualView
 	}
 	
 	@Override
+	public SimpleUnpagedGrid< ProfessorStatusDTO > getProfessoresGrid()
+	{
+		return this.professoresGrid;
+	}
+	
+	@Override
 	public void setProxy( RpcProxy< ListLoadResult< TurmaStatusDTO > > proxy )
 	{
 		this.turmasGrid.setProxy( proxy );
@@ -553,6 +681,12 @@ public class AlocacaoManualView
 	public void setAlunosProxy( RpcProxy< ListLoadResult< AlunoStatusDTO > > proxy )
 	{
 		this.alunosGrid.setProxy( proxy );
+	}
+	
+	@Override
+	public void setProfessoresProxy( RpcProxy< ListLoadResult< ProfessorStatusDTO > > proxy )
+	{
+		this.professoresGrid.setProxy( proxy );
 	}
 	
 	@Override
@@ -572,6 +706,13 @@ public class AlocacaoManualView
 	{
 		return this.novaTurmaBt;
 	}
+	
+	@Override
+	public Button getNovaAulaButton()
+	{
+		return this.novaAulaBt;
+	}
+	
 	
 	@Override
 	public TextField<String> getNovaTurmaNomeTextField()
@@ -810,7 +951,7 @@ public class AlocacaoManualView
 		aulaSubPanel.setBodyBorder(false);
 		aulaSubPanel.setWidth(200);
 		
-		Button novaAulaBt = new Button();
+		novaAulaBt = new Button();
 		novaAulaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.marcarFormandos16() ));
 		novaAulaBt.setStyleAttribute("margin-left", "5px");
@@ -821,7 +962,7 @@ public class AlocacaoManualView
 		
 		if (turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
 		{
-			novaAulaBt.disable();
+			//novaAulaBt.disable();
 		}
 		
 		aulaSubPanel.add(novaAulaBt);
@@ -892,5 +1033,53 @@ public class AlocacaoManualView
 	public List<Button> getRemoverAulaBts()
 	{
 		return removerAulaBts;
+	}
+	
+	@Override
+	public Button getSalvarMarcacoesAlunosButton()
+	{
+		return salvarMarcacoesAlunosBt;
+	}
+	
+	@Override
+	public Button getSalvarMarcacoesProfessoresButton()
+	{
+		return salvarMarcacoesProfessoresBt;
+	}
+	
+	@Override
+	public Button getCancelarMarcacoesAlunosButton()
+	{
+		return cancelarMarcacoesAlunosBt;
+	}
+	
+	@Override
+	public Button getMarcarTodosAlunosButton()
+	{
+		return marcarTodosAlunosBt;
+	}
+	
+	@Override
+	public Button getDesmarcarTodosAlunosButton()
+	{
+		return desmarcarTodosAlunosBt;
+	}
+	
+	@Override
+	public Button getCancelarMarcacoesProfessoresButton()
+	{
+		return cancelarMarcacoesProfessoresBt;
+	}
+	
+	@Override
+	public void setAulaNaGrade(AulaDTO aulaDTO)
+	{
+		aulaNaGrade = aulaDTO;
+	}
+	
+	@Override
+	public AulaDTO getAulaNaGrade()
+	{
+		return aulaNaGrade;
 	}
 }

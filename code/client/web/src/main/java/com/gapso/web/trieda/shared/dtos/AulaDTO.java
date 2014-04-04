@@ -21,6 +21,7 @@ public class AulaDTO
 	public static final String PROPERTY_PROFESSOR_NOME = "professorNome";
 	public static final String PROPERTY_PROFESSOR_VIRTUAL_ID = "professorVirtualId";
 	public static final String PROPERTY_SEMANA = "semana";
+	public static final String PROPERTY_SEMANA_STRING = "semanaString";
 	
 
 	public AulaDTO()
@@ -166,6 +167,16 @@ public class AulaDTO
 	public Integer getSemana()
 	{
 		return get( PROPERTY_SEMANA );
+	}
+	
+	public void setSemanaString( String value )
+	{
+		set( PROPERTY_SEMANA_STRING, value );
+	}
+
+	public String getSemanaString()
+	{
+		return get( PROPERTY_SEMANA_STRING );
 	}
 	
 	@Override

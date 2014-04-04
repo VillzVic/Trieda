@@ -1056,6 +1056,18 @@ public class Sala
 	public Set< Aula > getAulas() {
 		return aulas;
 	}
+	
+	public Set<Aula> getAulas(Semanas semana) {
+		Set<Aula> aulas = new HashSet<Aula>();
+		for (Aula aula : getAulas())
+		{
+			if(aula.getHorarioDisponivelCenario().getDiaSemana().equals(semana))
+			{
+				aulas.add(aula);
+			}
+		}
+		return aulas;
+	}
 
 	public void setAulas(Set< Aula > aulas) {
 		this.aulas = aulas;

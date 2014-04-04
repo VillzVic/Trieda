@@ -1234,13 +1234,16 @@ public class DemandasServiceImpl
 					confirmada = true;
 				}
 			}
-			if (confirmada)
+			if (aluno.getAtendido())
 			{
-				planejada++;
-			}
-			else
-			{
-				naoPlanejada++;
+				if (confirmada)
+				{
+					planejada++;
+				}
+				else
+				{
+					naoPlanejada++;
+				}
 			}
 		}
 		

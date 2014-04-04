@@ -678,4 +678,13 @@ public class SemanaLetiva
 
 		return result;
 	}
+
+	public HorarioDisponivelCenario getNextHorario(HorarioDisponivelCenario hdc) {
+		List<HorarioAula> horariosAula = new ArrayList<HorarioAula>(this.getHorariosAula());
+		
+		Collections.sort(horariosAula);
+		
+		return HorarioDisponivelCenario.findBy(getInstituicaoEnsino(), horariosAula.get(horariosAula.indexOf(hdc.getHorarioAula())+1), hdc.getDiaSemana());
+		
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
@@ -14,11 +15,16 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DicaEliminacaoProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
+import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
@@ -34,7 +40,9 @@ public interface AtendimentosServiceAsync {
 	
 	void getAtendimentosParaGradeHorariaVisaoCurso(RelatorioVisaoCursoFiltro filtro, AsyncCallback<AtendimentoServiceRelatorioResponse> callback);
 	
-	void getAtendimentosParaGradeHorariaVisaoSala(CenarioDTO cenarioDTO, RelatorioVisaoSalaFiltro filtro, AsyncCallback<AtendimentoServiceRelatorioResponse> callback);
+	void getAtendimentosParaGradeHorariaVisaoSala(CenarioDTO cenarioDTO,
+			RelatorioVisaoSalaFiltro filtro, boolean buscaAulasParciais,
+			AsyncCallback<AtendimentoServiceRelatorioResponse> callback);
 	
 	void getAtendimentosParaGradeHorariaVisaoProfessor(CenarioDTO cenarioDTO, RelatorioVisaoProfessorFiltro filtro, boolean isVisaoProfessor, AsyncCallback<AtendimentoServiceRelatorioResponse> callback);
 	
@@ -70,9 +78,7 @@ public interface AtendimentosServiceAsync {
 
 	void getAtendimentosFaixaTurma( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback<List<AtendimentoFaixaTurmaDTO>> callback );
 
-	void getConfirmacaoTurmasList(CenarioDTO cenarioDTO,
-			PagingLoadConfig config,
-			AsyncCallback<PagingLoadResult<ConfirmacaoTurmaDTO>> callback);
+	void getConfirmacaoTurmasList(CenarioDTO cenarioDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<ConfirmacaoTurmaDTO>> callback);
 
 	void saveConfirmacoes(CenarioDTO cenarioDTO,
 			List<ConfirmacaoTurmaDTO> list, AsyncCallback<Void> callback);
@@ -115,4 +121,48 @@ public interface AtendimentosServiceAsync {
 	void selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO,
 			DemandaDTO demandaDTO,
 			AsyncCallback<ParDTO<TurmaDTO, List<AulaDTO>>> callback);
+
+	void getAlunosStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
+			TurmaDTO turmaDTO, List<AulaDTO> aulasDTO,
+			AsyncCallback<ListLoadResult<AlunoStatusDTO>> callback);
+
+	void getProfessoresStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
+			TurmaDTO turmaDTO, AulaDTO aulaDTO,
+			AsyncCallback<ListLoadResult<ProfessorStatusDTO>> callback);
+
+	void getHorariosDisponiveisAula(CenarioDTO cenarioDTO, SalaDTO salaDTO,
+			DisciplinaDTO disciplinaDTO, SemanaLetivaDTO semanaLetivaDTO,
+			String semana,
+			AsyncCallback<ListLoadResult<HorarioDisponivelCenarioDTO>> callback);
+
+	void verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO,
+			AulaDTO aulaDTO,
+			AsyncCallback<TrioDTO<Boolean, List<String>, List<String>>> callback);
+
+	void saveAula(TurmaDTO turmaDTO, AulaDTO aulaDTO,
+			AsyncCallback<Void> callback);
+
+	void alocaAlunosTurma(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
+			TurmaDTO turmaDTO, List<AlunoStatusDTO> alunos,
+			AsyncCallback<Void> callback);
+
+	void verificaViabilidadeAulasNovosAlunos(CenarioDTO cenarioDTO,
+			TurmaDTO turmaDTO, List<AulaDTO> aulasDTO,
+			List<AlunoStatusDTO> alunos,
+			AsyncCallback<TrioDTO<Boolean, List<String>, List<String>>> callback);
+
+	void alocaProfessoresAula(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
+			TurmaDTO turmaDTO, AulaDTO aulaDTO,
+			ProfessorStatusDTO professorStatusDTO, AsyncCallback<Void> callback);
+
+	void verificaViabilidadeAulasNovoProfessor(CenarioDTO cenarioDTO,
+			TurmaDTO turmaDTO, AulaDTO aulaDTO,
+			ProfessorStatusDTO professorStatusDTO,
+			AsyncCallback<TrioDTO<Boolean, List<String>, List<String>>> callback);
+
+	void verificaViabilidadeSalvarTurma(CenarioDTO cenarioDTO,
+			TurmaDTO turmaDTO, List<AulaDTO> aulasDTO,
+			AsyncCallback<TrioDTO<Boolean, List<String>, List<String>>> callback);
+
+	void salvarTurma(TurmaDTO turmaDTO, AsyncCallback<Void> callback);
 }

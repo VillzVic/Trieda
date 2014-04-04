@@ -18,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
@@ -77,6 +78,12 @@ public class AlunoDemanda
     
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
     private Set<AtendimentoOperacional> atendimentosOperacional = new HashSet<AtendimentoOperacional>();
+    
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="TURMAS_ALUNOS",
+	joinColumns=@JoinColumn(name="ALD_ID"),
+	inverseJoinColumns=@JoinColumn(name="TUR_ID"))
+	private Set<Turma> turmas = new HashSet<Turma>();
 
 	@Column( name = "ALD_ATENDIDO" )
 	private Boolean atendido;
@@ -314,6 +321,28 @@ public class AlunoDemanda
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "demanda", demanda );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByDemandaAndTurma(
+		InstituicaoEnsino instituicaoEnsino, Demanda demanda, String turma )
+	{
+		List<AlunoDemanda> result = new ArrayList<AlunoDemanda>();
+
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT (o) FROM AlunoDemanda o LEFT JOIN o.atendimentosOperacional ao" +
+			" LEFT JOIN o.atendimentosTatico at LEFT JOIN o.turmas t" +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda = :demanda " +
+			" AND (ao.turma = :turma OR at.turma = :turma OR t.nome = :turma OR o.atendido is FALSE)" );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "demanda", demanda );
+		q.setParameter( "turma", turma );
+		result.addAll(q.getResultList());
 
 		return q.getResultList();
 	}
@@ -1236,12 +1265,20 @@ public class AlunoDemanda
         	" SELECT o FROM AlunoDemanda o, IN (o.demanda.disciplina.eliminadasPor) eliminadasPor " +
         	" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.demanda.oferta.campus.cenario = :cenario " +
-        	" AND eliminadasPor = :disciplina ");
+        	" AND eliminadasPor.cursou = :disciplina ");
         
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
         q.setParameter( "disciplina", disciplina );
         
         return q.getResultList();
+	}
+	
+	public Set<Turma> getTurmas() {
+		return turmas;
+	}
+
+	public void setTurmas(Set<Turma> turmas) {
+		this.turmas = turmas;
 	}
 }

@@ -1270,14 +1270,22 @@ public class AtendimentoTatico
 	
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoTatico> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Disciplina disciplina, Campus campus, String turma)
+		Disciplina disciplina, Campus campus, Oferta oferta, String turma)
 	{
+		String ofertaString = "";
+		if (oferta != null)
+		{
+			ofertaString = " AND o.oferta = :oferta";
+		}
+		
+		
 		Query q1 = entityManager().createQuery(
 				" SELECT o FROM AtendimentoTatico o " +
 				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 				" AND o.cenario = :cenario " +
 				" AND o.oferta.campus = :campus " +
 				" AND o.turma = :turma" +
+				ofertaString +
 				" AND o.disciplina = :disciplina " +
 				" AND o.disciplinaSubstituta IS NULL ");
 
@@ -1287,6 +1295,7 @@ public class AtendimentoTatico
 				" AND o.cenario = :cenario " +
 				" AND o.oferta.campus = :campus " +
 				" AND o.turma = :turma" +
+				ofertaString +
 				" AND o.disciplinaSubstituta = :disciplina " +
 				" AND o.disciplinaSubstituta IS NOT NULL ");
 
@@ -1300,6 +1309,11 @@ public class AtendimentoTatico
 		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q2.setParameter( "disciplina", disciplina );
 		q2.setParameter( "turma", turma );
+		if (oferta != null)
+		{
+			q1.setParameter( "oferta", oferta );
+			q2.setParameter( "oferta", oferta );
+		}
 		
 		List<AtendimentoTatico> result = new ArrayList<AtendimentoTatico>();
 		result.addAll(q1.getResultList());
