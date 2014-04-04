@@ -115,7 +115,7 @@ public class AmbientesFaixaOcupacaoCapacidadeExportExcel
 		if ( this.getFilter() == null
 			|| this.getFilter().getCampusDTO() == null )
 		{
-			List< Campus > campi = Campus.findAll( this.instituicaoEnsino );
+			List< Campus > campi = Campus.findByCenario( this.instituicaoEnsino, getCenario() );
 			campusDTOList = new ArrayList< CampusDTO >( campi.size() );
 			for ( Campus campus : campi )
 			{
@@ -167,6 +167,11 @@ public class AmbientesFaixaOcupacaoCapacidadeExportExcel
 	private int writeData( RelatorioQuantidadeDTO relatorioDocenteDTO, int row, Sheet sheet )
 	{
 		int i = 2;
+		
+		// Campus
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				relatorioDocenteDTO.getCampusNome() );
 		
 		// Faixa Credito
 		setCell( row, i++, sheet,

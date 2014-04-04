@@ -28,7 +28,7 @@ public class AtendimentosFaixaDisciplinaExportExcel
 	enum ExcelCellStyleReference
 	{
 		TEXT( 6, 2 ),
-		INTEGER( 6, 3 );
+		INTEGER( 6, 4 );
 
 		private int row;
 		private int col;
@@ -115,7 +115,7 @@ public class AtendimentosFaixaDisciplinaExportExcel
 		if ( this.getFilter() == null
 			|| this.getFilter().getCampusDTO() == null )
 		{
-			List< Campus > campi = Campus.findAll( this.instituicaoEnsino );
+			List< Campus > campi = Campus.findByCenario( this.instituicaoEnsino,getCenario() );
 			campusDTOList = new ArrayList< CampusDTO >( campi.size() );
 			for ( Campus campus : campi )
 			{
@@ -167,6 +167,11 @@ public class AtendimentosFaixaDisciplinaExportExcel
 	private int writeData( AtendimentoFaixaCreditoDTO resumoFaixaCreditoDTO, int row, Sheet sheet )
 	{
 		int i = 2;
+		
+		// Campus
+		setCell( row, i++, sheet,
+				cellStyles[ ExcelCellStyleReference.TEXT.ordinal() ],
+				resumoFaixaCreditoDTO.getCampusNome() );
 		
 		// Faixa Credito
 		setCell( row, i++, sheet,

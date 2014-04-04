@@ -1624,7 +1624,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	public List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaCredito(CenarioDTO cenarioDTO, CampusDTO campusDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
-		Campus campus = Campus.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
 		
 		List<AlunoDemanda> alunosDemandaList = AlunoDemanda.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);
 		
@@ -1651,6 +1651,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Entre 20 e 39% dos créditos atendidos"));
 		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Até 19% dos créditos atendidos"));
 		faixasCredito.add(new AtendimentoFaixaCreditoDTO("Nenhum crédito atendido"));
+		
+		for(AtendimentoFaixaCreditoDTO faixa : faixasCredito){
+			faixa.setCampusNome(campusDTO.getCodigo());
+		}
+		
 		for(Entry<Aluno, List<AlunoDemanda>> aluno : alunoToListAlunoDemandaMap.entrySet())
 		{
 			int totalCreditosP1 = 0;
@@ -1718,7 +1723,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	public List<AtendimentoFaixaCreditoDTO> getAtendimentosFaixaDisciplina(CenarioDTO cenarioDTO, CampusDTO campusDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
-		Campus campus = Campus.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Campus campus = Campus.find(campusDTO.getId(), getInstituicaoEnsinoUser());
 		
 		List<AlunoDemanda> alunosDemandaList = AlunoDemanda.findByCampus(getInstituicaoEnsinoUser(), cenario, campus);		
 		Map<Aluno, List<AlunoDemanda>> alunoToListAlunoDemandaMap = new HashMap<Aluno, List<AlunoDemanda>>();
@@ -1770,6 +1775,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 						titulo = i + " disciplina" + ((i != 1) ? "s " : "") + " nao atendida" + ((i != 1) ? "s" : "");
 					}
 					AtendimentoFaixaCreditoDTO novaFaixa = new AtendimentoFaixaCreditoDTO(titulo);
+					novaFaixa.setCampusNome(campus.getCodigo());
 					faixasCredito.add(novaFaixa);
 				}
 			}
@@ -2032,6 +2038,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 41% e 60%"));
 		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 21% e 40%"));
 		faixasOcupacaoHorario.add(new RelatorioQuantidadeDTO("Entre 0 e 20%"));
+		
+		for(RelatorioQuantidadeDTO faixa : faixasOcupacaoHorario){
+			faixa.setCampusNome(campusDTO.getCodigo());
+		}
+		
 		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
 			// [SalaId -> Tempo de uso (min) semanal]
 			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
@@ -2204,6 +2215,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 41% e 60%"));
 		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 21% e 40%"));
 		faixasUtilizacaoCapacidade.add(new RelatorioQuantidadeDTO("Entre 0 e 20%"));
+		
+		for(RelatorioQuantidadeDTO faixa : faixasUtilizacaoCapacidade){
+			faixa.setCampusNome(campusDTO.getCodigo());
+		}
+		
 		Map<Sala, List<Integer>> salasToQtdeAlunosPorAulaMap = new HashMap<Sala, List<Integer>>();
 		if (!salaIdTurnoIdToAtendimentosMap.isEmpty()) {
 			// [SalaId -> Tempo de uso (min) semanal]
