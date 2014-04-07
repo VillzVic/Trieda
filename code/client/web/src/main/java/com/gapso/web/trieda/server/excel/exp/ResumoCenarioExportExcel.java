@@ -23,7 +23,8 @@ public class ResumoCenarioExportExcel
 	extends AbstractExportExcel
 {
 	enum ExcelCellStyleReference {
-		TEXT(6, 2);
+		TEXT(6, 2),
+		TEXT_CENTER(6, 3);
 
 		private int row;
 		private int col;
@@ -117,7 +118,7 @@ public class ResumoCenarioExportExcel
 		// Text
 		setCell(row,2,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],((ResumoDTO) node.getContent()).getLabel());
 		
-		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT.ordinal()],((ResumoDTO) node.getContent()).getValor().replace("<b>", "").replace("</b>", ""));
+		setCell(row,3,sheet,cellStyles[ExcelCellStyleReference.TEXT_CENTER.ordinal()],((ResumoDTO) node.getContent()).getValor().replace("<b>", "").replace("</b>", ""));
 		
 		row++;
 		return row;
