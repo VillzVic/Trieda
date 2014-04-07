@@ -252,9 +252,11 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 				tb.toggle(flag);
 				
 				if(!usaSabado && colIndex == 8 ){
+					tb.toggle(false);
 					tb.disable();
 				}
 				if(!usaDomingo && colIndex == 9 ){
+					tb.toggle(false);
 					tb.disable();
 				}
 
@@ -401,11 +403,13 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 				}
 				else if ( cb.equals( sabCB ) )
 				{
-					selectWeek( "sabado", cb.isPressed() );
+					if(usaSabado)
+						selectWeek( "sabado", cb.isPressed() );
 				}
 				else if ( cb.equals( domCB ) )
 				{
-					selectWeek( "domingo", cb.isPressed() );
+					if(usaDomingo)
+						selectWeek( "domingo", cb.isPressed() );
 				}
 			}
 		};

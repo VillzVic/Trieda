@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -46,9 +47,13 @@ public class HorarioDisponivelDisciplinaFormView extends MyComposite implements 
 	    gridPanel = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(horariosDisponiveis,HorarioDisponivelCenarioDTO.PROPERTY_ID, disciplinaDTO.getUsaSabado(), disciplinaDTO.getUsaDomingo());
 	    
 	    if(!disciplinaDTO.getUsaSabado()){
+	    	gridPanel.getSabCB().toggle(false);
+	    	gridPanel.getSabCB().fireEvent(Events.Select);
 	    	gridPanel.getSabCB().disable();
 	    }
 	    if(!disciplinaDTO.getUsaDomingo()){
+	    	gridPanel.getDomCB().toggle(false);
+	    	gridPanel.getDomCB().fireEvent(Events.Select);
 	    	gridPanel.getDomCB().disable();
 	    }
 	    
