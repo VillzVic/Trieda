@@ -837,6 +837,7 @@ public class ProfessoresServiceImpl
 				turno, titulacao, areaTitulacao, tipoContrato);
 		Set<String> creditos = new HashSet<String>();
 		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
+		Map<Professor, Integer> professorToCreditosMap = new HashMap<Professor, Integer>();
 		Map<Professor, Set<HorarioDisponivelCenario>> professorToListHorarioDisponivelCenario = new HashMap<Professor, Set<HorarioDisponivelCenario>>();
 		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
 		Set<Disciplina> totalDisciplinasProfessorVirtual = new HashSet<Disciplina>();
@@ -886,6 +887,15 @@ public class ProfessoresServiceImpl
 				{
 					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
 				}
+				
+				if (professorToCreditosMap.get(atendimento.getProfessor()) == null)
+				{
+					professorToCreditosMap.put(atendimento.getProfessor(), 1 );
+				}
+				else
+				{
+					professorToCreditosMap.put(atendimento.getProfessor(), professorToCreditosMap.get(atendimento.getProfessor())+1);
+				}
 			}
 			else
 			{
@@ -901,20 +911,27 @@ public class ProfessoresServiceImpl
 				AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
 		
 		int totalTurmasInstituicao = 0;
-		List<Professor> professoresBemAlocados = new ArrayList<Professor>();
-		List<Professor> professoresMalAlocados = new ArrayList<Professor>();
+		
 		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
 		{
 			totalTurmasInstituicao += professorTurmas.getValue().size();
-			if (professorTurmas.getValue().size() >= 6)
+		}
+		
+		List<Professor> professoresBemAlocados = new ArrayList<Professor>();
+		List<Professor> professoresMalAlocados = new ArrayList<Professor>();
+		for (Entry<Professor, Integer> professorCreditos : professorToCreditosMap.entrySet())
+		{
+			if (professorCreditos.getValue() > 6)
 			{
-				professoresBemAlocados.add(professorTurmas.getKey());
-			}
-			else if (professorTurmas.getValue().size() <= 2)
+				professoresBemAlocados.add(professorCreditos.getKey());
+			} else if(professorCreditos.getValue() < 2)
 			{
-				professoresMalAlocados.add(professorTurmas.getKey());
+				professoresMalAlocados.add(professorCreditos.getKey());
 			}
 		}
+		
+		
+		
 		Set<Professor> professoresComDeslocamentosUnidades = new HashSet<Professor>();
 		Set<Professor> professoresComDeslocamentosCampi = new HashSet<Professor>();
 		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
@@ -1463,31 +1480,27 @@ public class ProfessoresServiceImpl
 		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
-		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
+		Map<Professor, Integer> professorToCreditosMap = new HashMap<Professor, Integer>();
+		
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
-			String keyTurmas = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
-				atendimento.getDisciplina().getId()) + "-" +
-				atendimento.getTurma();
 			if (atendimento.getProfessor().getCpf() != null)
 			{
-				if (professorToTurmasMap.get(atendimento.getProfessor()) == null)
+				if (professorToCreditosMap.get(atendimento.getProfessor()) == null)
 				{
-					Set<String> novaTurma = new HashSet<String>();
-					novaTurma.add(keyTurmas);
-					professorToTurmasMap.put(atendimento.getProfessor(), novaTurma );
+					professorToCreditosMap.put(atendimento.getProfessor(), 1 );
 				}
 				else
 				{
-					professorToTurmasMap.get(atendimento.getProfessor()).add(keyTurmas);
+					professorToCreditosMap.put(atendimento.getProfessor(), professorToCreditosMap.get(atendimento.getProfessor())+1);
 				}
 			}
 		}
 		
 		List<Professor> professoresBemAlocados = new ArrayList<Professor>();
-		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
+		for (Entry<Professor, Integer> professorTurmas : professorToCreditosMap.entrySet())
 		{
-			if (professorTurmas.getValue().size() >= 4)
+			if (professorTurmas.getValue() > 6)
 			{
 				professoresBemAlocados.add(professorTurmas.getKey());
 			}
@@ -1602,31 +1615,27 @@ public class ProfessoresServiceImpl
 		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
-		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
+		Map<Professor, Integer> professorToCreditosMap = new HashMap<Professor, Integer>();
+		
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
-			String keyTurmas = (atendimento.getDisciplina() == null ? atendimento.getDisciplinaSubstituta().getId() :
-				atendimento.getDisciplina().getId()) + "-" +
-				atendimento.getTurma();
 			if (atendimento.getProfessor().getCpf() != null)
 			{
-				if (professorToTurmasMap.get(atendimento.getProfessor()) == null)
+				if (professorToCreditosMap.get(atendimento.getProfessor()) == null)
 				{
-					Set<String> novaTurma = new HashSet<String>();
-					novaTurma.add(keyTurmas);
-					professorToTurmasMap.put(atendimento.getProfessor(), novaTurma );
+					professorToCreditosMap.put(atendimento.getProfessor(), 1 );
 				}
 				else
 				{
-					professorToTurmasMap.get(atendimento.getProfessor()).add(keyTurmas);
+					professorToCreditosMap.put(atendimento.getProfessor(), professorToCreditosMap.get(atendimento.getProfessor())+1);
 				}
 			}
 		}
 		
 		List<Professor> professoresMalAlocados = new ArrayList<Professor>();
-		for (Entry<Professor, Set<String>> professorTurmas : professorToTurmasMap.entrySet())
+		for (Entry<Professor, Integer> professorTurmas : professorToCreditosMap.entrySet())
 		{
-			if (professorTurmas.getValue().size() == 1)
+			if (professorTurmas.getValue() < 2)
 			{
 				professoresMalAlocados.add(professorTurmas.getKey());
 			}
