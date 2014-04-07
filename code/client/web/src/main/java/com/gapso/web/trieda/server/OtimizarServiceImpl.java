@@ -154,7 +154,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			System.out.print("Checando professoress com Carga Horária Máxima zerada");start = System.currentTimeMillis(); // TODO: retirar
-			checkProfessorComCargaHorariaMaximaZerada(parametro,errors);
+			checkProfessorComCargaHorariaMaximaZerada(parametro,errors, warnings);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
 			
@@ -1034,14 +1034,26 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		}
 	}
 	
-	private void checkProfessorComCargaHorariaMaximaZerada(Parametro parametro, List<String> errors) {
+	private void checkProfessorComCargaHorariaMaximaZerada(Parametro parametro, List<String> errors, List<String> warnings) {
+		
+		List<String> warningsAux = new ArrayList<String>();
+		
+		boolean todos = true;
+		
 		for (Campus campus : parametro.getCampi()) {
 			for (Professor professor : campus.getProfessores()) {
 				if(professor.getCargaHorariaMax() == 0){
-					errors.add(HtmlUtils.htmlUnescape("O professor "+professor.getNome() + " de CPF "+professor.getCpf()+" está com carga horária máxima igual a zero e, portanto, não poderá ser utilizado"));
+					warningsAux.add(HtmlUtils.htmlUnescape("O professor "+professor.getNome() + " de CPF "+professor.getCpf()+" está com carga horária máxima igual a zero e, portanto, não poderá ser utilizado"));
+				} else {
+					todos = false;
 				}
 			}
 		}
+		
+		if(todos){
+			errors.add(HtmlUtils.htmlUnescape("Todos os professores estão com a carga horária máxima zerada"));
+		} else
+			warnings.addAll(warningsAux);
 	}
 	
 	private void checkSemanasLetivasIncompativeis(Parametro parametro, List<String> errors) {
