@@ -473,7 +473,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		{
 			Disciplina disciplina = Disciplina.find(confirmacao.getDisciplinaId(), getInstituicaoEnsinoUser());
 			List<AtendimentoOperacional> atendimentosOperacional = 
-					AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, confirmacao.getTurma());
+					AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, confirmacao.getTurma(), null);
 			for (AtendimentoOperacional atendimento : atendimentosOperacional)
 			{
 				atendimento.setConfirmada(confirmacao.getConfirmada());
@@ -3356,14 +3356,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		Disciplina disciplina = Disciplina.find(disciplinaId, getInstituicaoEnsinoUser());
 		List<AtendimentoOperacional> atendimentosOperacional = 
-				AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma);
+				AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma, credTeorico);
 		
+		Set<String> motivosKeys = new HashSet<String>();
 		List<MotivoUsoProfessorVirtualDTO> result = new ArrayList<MotivoUsoProfessorVirtualDTO>();
 		for (AtendimentoOperacional atendimento : atendimentosOperacional)
 		{
 			for (MotivoUsoProfessorVirtual motivo : atendimento.getMotivoUsoProfessorVirtual())
 			{
-				result.add(ConvertBeans.toMotivoUsoProfessorVirtualDTO(motivo));
+				String key = motivo.getMotivoUso() + "-" + (motivo.getProfessor() != null ? motivo.getProfessor().getId() : "");
+				if (!motivosKeys.contains(key))
+				{
+					result.add(ConvertBeans.toMotivoUsoProfessorVirtualDTO(motivo));
+					motivosKeys.add(key);
+				}
 			}
 		}
 		return new BaseListLoadResult< MotivoUsoProfessorVirtualDTO >( result );
@@ -3376,14 +3382,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		Disciplina disciplina = Disciplina.find(disciplinaId, getInstituicaoEnsinoUser());
 		List<AtendimentoOperacional> atendimentosOperacional = 
-				AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma);
+				AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turma, credTeorico);
 		
+		Set<String> dicasKeys = new HashSet<String>();
 		List<DicaEliminacaoProfessorVirtualDTO> result = new ArrayList<DicaEliminacaoProfessorVirtualDTO>();
 		for (AtendimentoOperacional atendimento : atendimentosOperacional)
 		{
 			for (DicaEliminacaoProfessorVirtual dica : atendimento.getDicasEliminacaoProfessorVirtual())
 			{
-				result.add(ConvertBeans.toDicaEliminacaoProfessorVirtualDTO(dica));
+				String key = dica.getDicaEliminacao() + "-" + (dica.getProfessor() != null ? dica.getProfessor().getId() : "");
+				if (!dicasKeys.contains(key))
+				{
+					result.add(ConvertBeans.toDicaEliminacaoProfessorVirtualDTO(dica));
+					dicasKeys.add(key);
+				}
 			}
 		}
 		return new BaseListLoadResult< DicaEliminacaoProfessorVirtualDTO >( result );
@@ -3529,7 +3541,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 				else
 				{
-					List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
+					List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma(), null);
 					for (AtendimentoOperacional atendimento : atendimentos)
 					{
 						for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
@@ -3575,7 +3587,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			}
 			else
 			{
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaDTO.getNome());
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaDTO.getNome(), null);
 				for (AtendimentoOperacional atendimento : atendimentos)
 				{
 					for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
@@ -3675,7 +3687,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			}
 			else
 			{
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma());
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaStatusDTO.getTurma(), null);
 
 				return  createTurmaOperacional(atendimentos);
 			}

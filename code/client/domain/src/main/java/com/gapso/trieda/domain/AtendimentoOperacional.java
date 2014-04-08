@@ -2038,15 +2038,18 @@ public class AtendimentoOperacional
 
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findBy(InstituicaoEnsino instituicaoEnsino,
-			Cenario cenario, Disciplina disciplina, String turma) 
+			Cenario cenario, Disciplina disciplina, String turma, Boolean creditoTeorico) 
 	{
+		String creditoTeoricoString = creditoTeorico == null ? "" : " AND o.creditoTeorico = :creditoTeorico";
+		
 		Query q1 = entityManager().createQuery(
 				" SELECT o FROM AtendimentoOperacional o " +
 				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
 				" AND o.cenario = :cenario " +
 				" AND o.turma = :turma" +
 				" AND o.disciplina = :disciplina " +
-				" AND o.disciplinaSubstituta IS NULL ");
+				" AND o.disciplinaSubstituta IS NULL " +
+				creditoTeoricoString);
 
 		Query q2 = entityManager().createQuery(
 				" SELECT o FROM AtendimentoOperacional o " +
@@ -2054,7 +2057,8 @@ public class AtendimentoOperacional
 				" AND o.cenario = :cenario " +
 				" AND o.turma = :turma" +
 				" AND o.disciplinaSubstituta = :disciplina " +
-				" AND o.disciplinaSubstituta IS NOT NULL ");
+				" AND o.disciplinaSubstituta IS NOT NULL " +
+				creditoTeoricoString);
 
 		q1.setParameter( "cenario", cenario );
 		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
@@ -2064,6 +2068,11 @@ public class AtendimentoOperacional
 		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q2.setParameter( "disciplina", disciplina );
 		q2.setParameter( "turma", turma );
+		if (creditoTeorico != null)
+		{
+			q1.setParameter( "creditoTeorico", creditoTeorico );
+			q2.setParameter( "creditoTeorico", creditoTeorico );
+		}
 		
 		List<AtendimentoOperacional> result = new ArrayList<AtendimentoOperacional>();
 		result.addAll(q1.getResultList());

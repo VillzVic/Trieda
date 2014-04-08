@@ -132,11 +132,11 @@ public class ConfirmacaoTurmaDTO extends AbstractDTO< String >
 
 	@Override
 	public int compareTo(ConfirmacaoTurmaDTO o) {
-		return (getDisciplinaCodigo() + getTurma()).compareTo(o.getDisciplinaCodigo() + o.getTurma());
+		return (getNaturalKey()).compareTo(o.getNaturalKey());
 	}
 
 	@Override
 	public String getNaturalKey() {
-		return getDisciplinaCodigo() + getTurma();
+		return getDisciplinaCodigo() + "-" + getTurma() + "-" + getCreditosPratico() + "-" +  getCreditosTeorico();
 	}
 }
