@@ -44,7 +44,28 @@ public class DemandasImportExcel
 	static public String DEMANDA_COLUMN_NAME;
 
 	private List< String > headerColumnsNames;
+	private Boolean criarAlunosVirtuais;
 
+	public DemandasImportExcel( Cenario cenario,
+		TriedaI18nConstants i18nConstants,
+		TriedaI18nMessages i18nMessages,
+		InstituicaoEnsino instituicaoEnsino,
+		Boolean criarAlunosVirtuais )
+	{
+		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
+		resolveHeaderColumnNames();
+		this.criarAlunosVirtuais = criarAlunosVirtuais;
+
+		this.headerColumnsNames = new ArrayList< String >();
+		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
+		this.headerColumnsNames.add( TURNO_COLUMN_NAME );
+		this.headerColumnsNames.add( CURSO_COLUMN_NAME );
+		this.headerColumnsNames.add( MATRIZ_CURRICULAR_COLUMN_NAME );
+		this.headerColumnsNames.add( PERIODO_COLUMN_NAME );
+		this.headerColumnsNames.add( DISCIPLINA_COLUMN_NAME );
+		this.headerColumnsNames.add( DEMANDA_COLUMN_NAME );
+	}
+	
 	public DemandasImportExcel( Cenario cenario,
 		TriedaI18nConstants i18nConstants,
 		TriedaI18nMessages i18nMessages,
@@ -52,6 +73,7 @@ public class DemandasImportExcel
 	{
 		super( cenario, i18nConstants, i18nMessages, instituicaoEnsino );
 		resolveHeaderColumnNames();
+		this.criarAlunosVirtuais = true;
 
 		this.headerColumnsNames = new ArrayList< String >();
 		this.headerColumnsNames.add( CAMPUS_COLUMN_NAME );
@@ -497,56 +519,59 @@ public class DemandasImportExcel
 			}
 		}
 		//Criando Alunos Virtuais
-		for (Entry<TriedaPar<Oferta, Integer>, List<TriedaPar<Demanda, Integer>>> entry : ofertaParPeriodoMapDemandaParQuantidade.entrySet())
+		if (criarAlunosVirtuais)
 		{
-			List<TriedaPar<Demanda, Integer>> demandas = entry.getValue();
-			Collections.sort(demandas, new Comparator<TriedaPar<Demanda, Integer>>() {
-				@Override
-				public int compare(TriedaPar<Demanda, Integer> o1, TriedaPar<Demanda, Integer> o2) {
-					return o1.getSegundo().compareTo(o2.getSegundo());
-				}
-			});
-			List<Aluno> alunos = new ArrayList<Aluno>();
-			for (TriedaPar<Demanda, Integer> demanda : demandas)
+			for (Entry<TriedaPar<Oferta, Integer>, List<TriedaPar<Demanda, Integer>>> entry : ofertaParPeriodoMapDemandaParQuantidade.entrySet())
 			{
-				if (demanda.getSegundo() > 0)
+				List<TriedaPar<Demanda, Integer>> demandas = entry.getValue();
+				Collections.sort(demandas, new Comparator<TriedaPar<Demanda, Integer>>() {
+					@Override
+					public int compare(TriedaPar<Demanda, Integer> o1, TriedaPar<Demanda, Integer> o2) {
+						return o1.getSegundo().compareTo(o2.getSegundo());
+					}
+				});
+				List<Aluno> alunos = new ArrayList<Aluno>();
+				for (TriedaPar<Demanda, Integer> demanda : demandas)
 				{
-					int alunosCriados = alunos.size();
-					for (int i = alunosCriados; i < demanda.getSegundo(); i++)
+					if (demanda.getSegundo() > 0)
 					{
-						Aluno novoAluno = new Aluno();
-						novoAluno.setCenario(getCenario());
-						novoAluno.setInstituicaoEnsino(instituicaoEnsino);
-						novoAluno.setNome("Aluno Virtual " + i);
-						novoAluno.setMatricula("Aluno Virtual " + i);
-						novoAluno.setFormando(false);
-						novoAluno.setVirtual(true);
-						novoAluno.setCriadoTrieda(true);
-						
-						novoAluno.persist();
-						
-						alunos.add(novoAluno);
-					}
-	
-					for (int i = 0; i < demanda.getSegundo(); i++)
-					{
-						AlunoDemanda novoAlunoDemanda = new AlunoDemanda();
-						novoAlunoDemanda.setAluno(alunos.get(i));
-						novoAlunoDemanda.setDemanda(demanda.getPrimeiro());
-						novoAlunoDemanda.setPeriodo(entry.getKey().getSegundo());
-						novoAlunoDemanda.setPrioridade(1);
-						novoAlunoDemanda.setAtendido(false);
-						
-						novoAlunoDemanda.persist();
+						int alunosCriados = alunos.size();
+						for (int i = alunosCriados; i < demanda.getSegundo(); i++)
+						{
+							Aluno novoAluno = new Aluno();
+							novoAluno.setCenario(getCenario());
+							novoAluno.setInstituicaoEnsino(instituicaoEnsino);
+							novoAluno.setNome("Aluno Virtual " + i);
+							novoAluno.setMatricula("Aluno Virtual " + i);
+							novoAluno.setFormando(false);
+							novoAluno.setVirtual(true);
+							novoAluno.setCriadoTrieda(true);
+							
+							novoAluno.persist();
+							
+							alunos.add(novoAluno);
+						}
+		
+						for (int i = 0; i < demanda.getSegundo(); i++)
+						{
+							AlunoDemanda novoAlunoDemanda = new AlunoDemanda();
+							novoAlunoDemanda.setAluno(alunos.get(i));
+							novoAlunoDemanda.setDemanda(demanda.getPrimeiro());
+							novoAlunoDemanda.setPeriodo(entry.getKey().getSegundo());
+							novoAlunoDemanda.setPrioridade(1);
+							novoAlunoDemanda.setAtendido(false);
+							
+							novoAlunoDemanda.persist();
+						}
 					}
 				}
-			}
-			for (Aluno aluno : alunos)
-			{
-				aluno.setNome("Aluno Virtual " + aluno.getId() + " " + entry.getKey().getPrimeiro().getCurriculo().getCurso().getNome() + " " 
-						+  entry.getKey().getPrimeiro().getCurriculo().getCodigo() + " " +  entry.getKey().getSegundo() );
-				aluno.setMatricula( aluno.getId().toString() );
-				aluno.merge();
+				for (Aluno aluno : alunos)
+				{
+					aluno.setNome("Aluno Virtual " + aluno.getId() + " " + entry.getKey().getPrimeiro().getCurriculo().getCurso().getNome() + " " 
+							+  entry.getKey().getPrimeiro().getCurriculo().getCodigo() + " " +  entry.getKey().getSegundo() );
+					aluno.setMatricula( aluno.getId().toString() );
+					aluno.merge();
+				}
 			}
 		}
 	}
