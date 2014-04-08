@@ -228,9 +228,9 @@ public class AlunosServiceImpl
 				Curso.find(alunoFiltro.getCurso().getId(), getInstituicaoEnsinoUser()) : null;
 		Boolean formando = alunoFiltro.getFormando() == true ? true : null;
 		
-		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
+		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
 				formando, alunoFiltro.getPeriodo());
-		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, curso,
+		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
 				true, alunoFiltro.getPeriodo()).size();
 		
 		List<AlunoDemanda> alunosUteis = todosAlunos.size() > 0 ?
@@ -247,7 +247,10 @@ public class AlunosServiceImpl
 		NumberFormatter numberFormatter = new NumberFormatter();
 
 		RelatorioDTO perfil = new RelatorioDTO( "<b>Perfil</b>");
-		perfil.add( new RelatorioDTO( "Total de Alunos Cadastrados: <b>" + numberFormatter.print(todosAlunos.size(),pt_BR)) );
+		
+		if(curso == null)
+			perfil.add( new RelatorioDTO( "Total de Alunos Cadastrados: <b>" + numberFormatter.print(todosAlunos.size(),pt_BR)) );
+		
 		perfil.add( new RelatorioDTO( "Total de Alunos Formandos: <b>" + numberFormatter.print(alunosFormandos,pt_BR)) );
 		perfil.add( new RelatorioDTO( "Total de Alunos Uteis (Alunos com Demanda): <b>" + numberFormatter.print(alunosUteis.size(),pt_BR)) );
 		currentNode.add(perfil);
