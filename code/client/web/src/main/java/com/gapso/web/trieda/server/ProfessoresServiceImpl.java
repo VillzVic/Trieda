@@ -835,6 +835,8 @@ public class ProfessoresServiceImpl
 		
 		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
+		List<AtendimentoOperacional> atendimentosSemCampi = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
 		Set<String> creditos = new HashSet<String>();
 		Map<Professor, Set<String>> professorToTurmasMap = new HashMap<Professor, Set<String>>();
 		Map<Professor, Integer> professorToCreditosMap = new HashMap<Professor, Integer>();
@@ -843,6 +845,20 @@ public class ProfessoresServiceImpl
 		Set<Disciplina> totalDisciplinasProfessorVirtual = new HashSet<Disciplina>();
 		Set<String> totalCreditosProfessorVirtual = new HashSet<String>();
 		Set<String> totalTurmasProfessorVirtual = new HashSet<String>();
+	
+		for (AtendimentoOperacional atendimento : atendimentosSemCampi)
+		{
+			if(todosProfessores.contains(atendimento.getProfessor())){
+				if (professorToCreditosMap.get(atendimento.getProfessor()) == null)
+				{
+					professorToCreditosMap.put(atendimento.getProfessor(), 1 );
+				}
+				else
+				{
+					professorToCreditosMap.put(atendimento.getProfessor(), professorToCreditosMap.get(atendimento.getProfessor())+1);
+				}
+			}
+		}
 		
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
@@ -888,14 +904,7 @@ public class ProfessoresServiceImpl
 					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
 				}
 				
-				if (professorToCreditosMap.get(atendimento.getProfessor()) == null)
-				{
-					professorToCreditosMap.put(atendimento.getProfessor(), 1 );
-				}
-				else
-				{
-					professorToCreditosMap.put(atendimento.getProfessor(), professorToCreditosMap.get(atendimento.getProfessor())+1);
-				}
+
 			}
 			else
 			{
@@ -1477,7 +1486,7 @@ public class ProfessoresServiceImpl
 		
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		
-		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
 		Map<Professor, Integer> professorToCreditosMap = new HashMap<Professor, Integer>();
@@ -1612,7 +1621,7 @@ public class ProfessoresServiceImpl
 		
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		
-		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
 		Map<Professor, Integer> professorToCreditosMap = new HashMap<Professor, Integer>();
