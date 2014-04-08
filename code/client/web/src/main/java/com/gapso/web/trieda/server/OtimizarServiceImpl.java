@@ -156,7 +156,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			System.out.print("Checando professoress com Carga Horária Máxima zerada");start = System.currentTimeMillis(); // TODO: retirar
 			checkProfessorComCargaHorariaMaximaZerada(parametro,errors, warnings);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
-			
+
+			if(Parametro.OPERACIONAL.equals(parametro.getModoOtimizacao()))
+				checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
 			
 //			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 //			checkSemanasLetivasIncompativeis(parametro, errors);
@@ -1052,6 +1054,28 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		
 		if(todos){
 			errors.add(HtmlUtils.htmlUnescape("Todos os professores estão com a carga horária máxima zerada"));
+		} else
+			warnings.addAll(warningsAux);
+	}
+	
+	private void checkOfertaComCargaReceitaCreditoZerada(Parametro parametro, List<String> errors, List<String> warnings) {
+		
+		List<String> warningsAux = new ArrayList<String>();
+		
+		boolean todos = true;
+		
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				if(oferta.getReceita() == 0){
+					warningsAux.add(HtmlUtils.htmlUnescape("A oferta  [" + oferta.getNaturalKeyString() + "] está com receita de crétido igual a zero, o que prejudica a otimização"));
+				} else {
+					todos = false;
+				}
+			}
+		}
+		
+		if(todos){
+			errors.add(HtmlUtils.htmlUnescape("Todas as ofertas estão com a receita de crédito zerada"));
 		} else
 			warnings.addAll(warningsAux);
 	}
