@@ -216,7 +216,7 @@ public class AlocacaoManualView
 		salvarMarcacoesAlunosBt = alunosToolBar.createButton("Salvar marcações", Resources.DEFAULTS.salvarMarcacoes16());
 		cancelarMarcacoesAlunosBt = alunosToolBar.createButton("Cancelar marcações", Resources.DEFAULTS.cancelarMarcacoes16());
 		marcarTodosAlunosBt = alunosToolBar.createButton("Marcar todos alunos", Resources.DEFAULTS.marcarTodos16());
-		desmarcarTodosAlunosBt = alunosToolBar.createButton("Desmarcar todos alunos", Resources.DEFAULTS.marcarTodos16());
+		desmarcarTodosAlunosBt = alunosToolBar.createButton("Desmarcar todos alunos", Resources.DEFAULTS.desmarcarTodos16());
     	salvarMarcacoesAlunosBt.disable();
     	cancelarMarcacoesAlunosBt.disable();
 		
@@ -696,6 +696,12 @@ public class AlocacaoManualView
 	}
 	
 	@Override
+	public Button getTurmasEditarButton()
+	{
+		return this.toolBar.getEditButton();
+	}
+	
+	@Override
 	public Button getTurmasNewButton()
 	{
 		return this.toolBar.getNewButton();
@@ -799,9 +805,9 @@ public class AlocacaoManualView
 			mostrarGradeBts.add(new Button("", AbstractImagePrototype.create(
 				Resources.DEFAULTS.saidaSala16() )));
 			editarAulaBts.add(new Button("", AbstractImagePrototype.create(
-					Resources.DEFAULTS.edit16() )));
+					Resources.DEFAULTS.aulaEdit16() )));
 			removerAulaBts.add(new Button("", AbstractImagePrototype.create(
-					Resources.DEFAULTS.del16() )));
+					Resources.DEFAULTS.aulaDelete16() )));
 		}
 		
 	}
@@ -862,10 +868,12 @@ public class AlocacaoManualView
 		LayoutContainer buttonsContainer = new LayoutContainer(new ColumnLayout());
 		salvarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.disk16() ));
-		if (!((turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
-				&& turmaSelecionada.getNoAlunos() > 0))
+		salvarTurmaBt.disable();
+		if ((turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
+				&& turmaSelecionada.getNoAlunos() > 0
+				&& getTurmaSelecionadaStatus().equals("Parcial"))
 		{
-			salvarTurmaBt.disable();
+			salvarTurmaBt.enable();
 		}
 		editarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.edit16() ));
@@ -953,7 +961,7 @@ public class AlocacaoManualView
 		
 		novaAulaBt = new Button();
 		novaAulaBt.setIcon(AbstractImagePrototype.create(
-				Resources.DEFAULTS.marcarFormandos16() ));
+				Resources.DEFAULTS.novaTurma16() ));
 		novaAulaBt.setStyleAttribute("margin-left", "5px");
 		
 		LabelField nome = new LabelField();
@@ -962,7 +970,7 @@ public class AlocacaoManualView
 		
 		if (turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
 		{
-			//novaAulaBt.disable();
+			novaAulaBt.disable();
 		}
 		
 		aulaSubPanel.add(novaAulaBt);

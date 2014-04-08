@@ -34,22 +34,26 @@ implements Presenter
 		CampusDTO getCampusDTO();
 		boolean isValid();
 		SimpleModal getSimpleModal();
+		boolean getEdit();
 	}
 	
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private CenarioDTO cenario;
 	private SimpleUnpagedGrid< TurmaStatusDTO > gridPanel;
 	private Display display;
+	private AlocacaoManualPresenter alocacaoManualPresenter;
 	
 	public NovaTurmaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
 		CenarioDTO cenario, Display display,
-		SimpleUnpagedGrid< TurmaStatusDTO > gridPanel )
+		SimpleUnpagedGrid< TurmaStatusDTO > gridPanel,
+		AlocacaoManualPresenter alocacaoManualPresenter)
 	{
 		this.gridPanel = gridPanel;
 		this.display = display;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
+		this.alocacaoManualPresenter = alocacaoManualPresenter;
 		setListeners();
 	}
 	
@@ -64,25 +68,55 @@ implements Presenter
 				if ( isValid() )
 				{
 					final AtendimentosServiceAsync service = Services.atendimentos();
-					service.saveTurma(getDTO(), new AsyncCallback< Void >()
+					if (!display.getEdit())
 					{
-						@Override
-						public void onFailure( Throwable caught )
+						service.saveTurma(getDTO(), new AsyncCallback< TurmaDTO >()
 						{
-							if (caught instanceof TriedaException)
+							@Override
+							public void onFailure( Throwable caught )
+							{
+								if (caught instanceof TriedaException)
+									MessageBox.alert("ERRO!", caught.getMessage(), null);
+								else
+									MessageBox.alert( "ERRO!", "Não foi possível criar a Turma", null );
+							}
+	
+							@Override
+							public void onSuccess( TurmaDTO result )
+							{
+								display.getSimpleModal().hide();
+								gridPanel.updateList();
+								Info.display( "Salvo", "Item salvo com sucesso!" );
+							}
+						});
+					}
+					else
+					{
+						final String turmaEditadaNome = display.getTurmaDTO().getNome();
+						service.editTurma(getDTO(), new AsyncCallback< Void >()
+						{
+							@Override
+							public void onFailure( Throwable caught )
+							{
 								MessageBox.alert("ERRO!", caught.getMessage(), null);
-							else
-								MessageBox.alert( "ERRO!", "Não foi possível criar a Turma", null );
-						}
-
-						@Override
-						public void onSuccess( Void result )
-						{
-							display.getSimpleModal().hide();
-							gridPanel.updateList();
-							Info.display( "Salvo", "Item salvo com sucesso!" );
-						}
-					});
+							}
+	
+							@Override
+							public void onSuccess( Void result )
+							{
+								if (alocacaoManualPresenter.getDisplay().getTurmaSelecionada() != null
+										&& alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome().equals(turmaEditadaNome))
+								{
+									alocacaoManualPresenter.getDisplay().getTurmaSelecionada().setNome(getDTO().getNome());
+									alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
+									alocacaoManualPresenter.addAulasButtonsListeners();
+								}
+								display.getSimpleModal().hide();
+								gridPanel.updateList();
+								Info.display( "Salvo", "Item salvo com sucesso!" );
+							}
+						});
+					}
 				}
 				else
 				{

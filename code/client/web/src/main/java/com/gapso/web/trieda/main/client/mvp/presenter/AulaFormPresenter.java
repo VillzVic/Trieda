@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class AulaFormPresenter
 	implements Presenter
 {
+
 	public interface Display extends ITriedaI18nGateway
 	{
 		Button getSalvarButton();
@@ -122,8 +123,14 @@ public class AulaFormPresenter
 									@Override
 									public void onSuccess( Void result )
 									{
-										final TurmaStatusDTO turmaSelecionada = alocacaoManualPresenter.getDisplay().getGrid().getGrid().getSelectionModel().getSelectedItem();
-										
+										final TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
+										turmaSelecionada.setCenarioId(cenario.getId());
+										turmaSelecionada.setDisciplinaId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getDisciplinaId());
+										turmaSelecionada.setId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getId());
+										turmaSelecionada.setInstituicaoEnsinoId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getInstituicaoEnsinoId());
+										turmaSelecionada.setNome(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome());
+										turmaSelecionada.setTurma(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getId() == null ? alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome() : null);
+										turmaSelecionada.setStatus(alocacaoManualPresenter.getDisplay().getTurmaSelecionadaStatus());
 										service.selecionarTurma(turmaSelecionada, cenario, alocacaoManualPresenter.getDisplay().getDemanda(), new AsyncCallback< ParDTO<TurmaDTO, List<AulaDTO>> >()
 										{
 											@Override
@@ -136,9 +143,10 @@ public class AulaFormPresenter
 											public void onSuccess( ParDTO<TurmaDTO, List<AulaDTO>> result )
 											{
 												alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), turmaSelecionada.getStatus());
+												alocacaoManualPresenter.getDisplay().setAulaNaGrade(getDTO());
 												alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 												alocacaoManualPresenter.getDisplay().getAlunosGrid().updateList();
-												alocacaoManualPresenter.getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(getDTO().getSemanaString());
+												alocacaoManualPresenter.getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(getDTO().getSalaString());
 												alocacaoManualPresenter.getDisplay().getSalaGridPanel().setAulaDestaque(getDTO());
 												alocacaoManualPresenter.getDisplay().getSalaGridPanel().requestAtendimentos();
 												alocacaoManualPresenter.addAulasButtonsListeners();
@@ -266,6 +274,7 @@ public class AulaFormPresenter
 		aulaDTO.setSemanaString(display.getDiaSemanaRadioGroup().getValue().getBoxLabel());
 		aulaDTO.setSalaId(display.getSalaComboBox().getValue().getId());
 		aulaDTO.setSalaString(display.getSalaComboBox().getValue().getCodigo());
+		aulaDTO.setSemana(Integer.valueOf(display.getDiaSemanaRadioGroup().getValue().getItemId()));
 		if (display.getTipoCreditoRadioGroup().getValue().getBoxLabel().equals("Teórico"))
 		{
 			aulaDTO.setCreditosTeoricos(display.getQtdeCreditosComboBox().getSimpleValue());

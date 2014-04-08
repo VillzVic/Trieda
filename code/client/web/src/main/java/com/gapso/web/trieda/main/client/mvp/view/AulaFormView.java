@@ -43,7 +43,6 @@ implements AulaFormPresenter.Display
 	private SimpleComboBox<Integer> qtdeCreditosCB;
 	private RadioGroup diaSemanaRadioGroup;
 	private RadioGroup tipoCreditoRadioGroup;
-	private String diaSemanaSelecionada;
 	
 	
 	public AulaFormView( CenarioDTO cenarioDTO, CampusDTO campusDTO,
@@ -103,30 +102,37 @@ implements AulaFormPresenter.Display
 		Radio seg = new Radio();  
 		seg.setBoxLabel("SEG");
 		seg.setValue(seg.getBoxLabel().equals(aulaDTO.getSemanaString()));
+		seg.setItemId("2");
 		diaSemanaRadioGroup.add(seg);
 		Radio ter = new Radio();  
 		ter.setBoxLabel("TER");
 		ter.setValue(ter.getBoxLabel().equals(aulaDTO.getSemanaString()));
+		ter.setItemId("3");
 		diaSemanaRadioGroup.add(ter);
 		Radio qua = new Radio();  
 		qua.setBoxLabel("QUA");
 		qua.setValue(qua.getBoxLabel().equals(aulaDTO.getSemanaString()));
+		qua.setItemId("4");
 		diaSemanaRadioGroup.add(qua);
 		Radio qui = new Radio();  
 		qui.setBoxLabel("QUI");
 		qui.setValue(qui.getBoxLabel().equals(aulaDTO.getSemanaString()));
+		qui.setItemId("5");
 		diaSemanaRadioGroup.add(qui);
 		Radio sex = new Radio();  
 		sex.setBoxLabel("SEX");
 		sex.setValue(sex.getBoxLabel().equals(aulaDTO.getSemanaString()));
+		sex.setItemId("6");
 		diaSemanaRadioGroup.add(sex);
 		Radio sab = new Radio();  
 		sab.setBoxLabel("SAB");
 		sab.setValue(sab.getBoxLabel().equals(aulaDTO.getSemanaString()));
+		sab.setItemId("7");
 		diaSemanaRadioGroup.add(sab);
 		Radio dom = new Radio();  
 		dom.setBoxLabel("DOM");
 		dom.setValue(dom.getBoxLabel().equals(aulaDTO.getSemanaString()));
+		dom.setItemId("1");
 		diaSemanaRadioGroup.add(dom);
 		this.formPanel.add( diaSemanaRadioGroup, formData );
 		
@@ -176,7 +182,7 @@ implements AulaFormPresenter.Display
 	
 	public boolean isValid()
 	{
-		return this.formPanel.isValid();
+		return this.formPanel.isValid() &&  tipoCreditoRadioGroup.getValue() != null;
 	}
 	
 	@Override

@@ -102,7 +102,7 @@ public interface AtendimentosService extends RemoteService {
 
 	void deleteTurmasStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, List<TurmaStatusDTO> turmasStatusDTO);
 
-	void saveTurma(TurmaDTO turmaDTO) throws TriedaException;
+	TurmaDTO saveTurma(TurmaDTO turmaDTO) throws TriedaException;
 
 	ParDTO<TurmaDTO, List<AulaDTO>> selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO, DemandaDTO demandaDTO);
 
@@ -131,4 +131,8 @@ public interface AtendimentosService extends RemoteService {
 	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeSalvarTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, List<AulaDTO> aulasDTO);
 
 	void salvarTurma(TurmaDTO turmaDTO);
+
+	void deleteTurmaSelecionada(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO);
+
+	void editTurma(TurmaDTO turmaDTO);
 }

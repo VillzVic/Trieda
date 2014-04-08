@@ -77,7 +77,6 @@ import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.MotivoUsoProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.PercentMestresDoutoresDTO;
-import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
@@ -3415,7 +3414,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				{
 					TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
 					
-					newTurmaStatus.setNome("T"+atendimento.getTurma());
+					newTurmaStatus.setNome(atendimento.getTurma());
 					if (atendimento.getDisciplinaSubstituta() == null)
 						newTurmaStatus.setQtdeDiscSelecionada(atendimento.getQuantidadeAlunos());
 					newTurmaStatus.setQtdeTotal(atendimento.getQuantidadeAlunos());
@@ -3552,7 +3551,52 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	
 	@Override
 	@Transactional
-	public void saveTurma(TurmaDTO turmaDTO) throws TriedaException
+	public void deleteTurmaSelecionada(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Demanda demanda = ConvertBeans.toDemanda(demandaDTO);
+		
+		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
+		
+		Disciplina disciplina = Disciplina.find(turmaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+		if (turmaDTO.getId() == null)
+		{
+			if (ehTatico)
+			{
+				List<AtendimentoTatico> atendimentos = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaDTO.getNome());
+				for (AtendimentoTatico atendimento : atendimentos)
+				{
+					for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+					{
+						alunoDemanda.setAtendido(false);
+					}
+					atendimento.remove();				
+				}
+			}
+			else
+			{
+				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), cenario, disciplina, turmaDTO.getNome());
+				for (AtendimentoOperacional atendimento : atendimentos)
+				{
+					for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+					{
+						alunoDemanda.setAtendido(false);
+					}
+					atendimento.remove();
+				}
+			}
+		}
+		else
+		{
+			Turma turma = Turma.find(turmaDTO.getId(), getInstituicaoEnsinoUser());
+			
+			turma.remove();
+		}
+	}
+	
+	@Override
+	@Transactional
+	public TurmaDTO saveTurma(TurmaDTO turmaDTO) throws TriedaException
 	{
 		Turma turma = ConvertBeans.toTurma(turmaDTO);
 		Campus campus = Campus.find(turmaDTO.getCampusId(), getInstituicaoEnsinoUser());
@@ -3568,6 +3612,48 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		
 		turma.persist();
+		
+		return ConvertBeans.toTurmaDTO(turma);
+	}
+	
+	@Override
+	@Transactional
+	public void editTurma(TurmaDTO turmaDTO)
+	{
+		Campus campus = Campus.find(turmaDTO.getCampusId(), getInstituicaoEnsinoUser());
+		
+		if (turmaDTO.getId() != null
+			&& turmaDTO.getId() > 0)
+		{
+			Turma turma = Turma.find(turmaDTO.getId(), getInstituicaoEnsinoUser());
+			turma.setNome(turmaDTO.getNome());
+			turma.merge();
+		}
+		else
+		{
+			Turma turma = ConvertBeans.toTurma(turmaDTO);
+			List<AtendimentoOperacional> turmasOperacional = AtendimentoOperacional.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, null, turma.getNome());
+			List<AtendimentoTatico> turmasTatico = AtendimentoTatico.findBy(getInstituicaoEnsinoUser(), turma.getCenario(), turma.getDisciplina(), campus, null, turma.getNome());
+			
+			boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
+			
+			if (ehTatico)
+			{
+				for (AtendimentoTatico atendimento : turmasTatico)
+				{
+					atendimento.setTurma(turmaDTO.getNome());
+					atendimento.merge();
+				}
+			}
+			else
+			{
+				for (AtendimentoOperacional atendimento : turmasOperacional)
+				{
+					atendimento.setTurma(turmaDTO.getNome());
+					atendimento.merge();
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -3836,6 +3922,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Demanda demanda = Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser());
+		HorarioAula horarioAula = HorarioAula.find(aulaDTO.getHorarioAulaId(), getInstituicaoEnsinoUser());
 		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
 		
 		List<ProfessorDisciplina> professoresDisciplinas = ProfessorDisciplina.findBy(getInstituicaoEnsinoUser(), cenario, disciplina);
@@ -3843,27 +3930,26 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		for (ProfessorDisciplina professorDisciplina :  professoresDisciplinas)
 		{
 			ProfessorStatusDTO professorStatusDTO = new ProfessorStatusDTO();
-			ProfessorDTO professorDTO = ConvertBeans.toProfessorDTO(professorDisciplina.getProfessor());
 			
-			professorStatusDTO.setProfessorId(professorDTO.getId());
-			professorStatusDTO.setCpf(professorDTO.getCpf());
-			professorStatusDTO.setTitulacao(professorDTO.getTitulacaoString());
+			professorStatusDTO.setProfessorId(professorDisciplina.getProfessor().getId());
+			professorStatusDTO.setCpf(professorDisciplina.getProfessor().getCpf());
+			professorStatusDTO.setTitulacao(professorDisciplina.getProfessor().getTitulacao().getNome());
 			professorStatusDTO.setCusto(0);
 			professorStatusDTO.setMarcado(false);
-			professorStatusDTO.setNota(professorDTO.getNotaDesempenho());
+			professorStatusDTO.setNota(professorDisciplina.getNota());
 			professorStatusDTO.setPreferencia(professorDisciplina.getPreferencia());
-			professorStatusDTO.setNome(professorDTO.getNome());
-			
+			professorStatusDTO.setNome(professorDisciplina.getProfessor().getNome());
+
 			String status = "";
 			if (aulaDTO.getProfessorId() != null)
 			{
-				if (professorDTO.getId().equals(aulaDTO.getProfessorId()))
+				if (professorDisciplina.getProfessor().getId().equals(aulaDTO.getProfessorId()))
 				{
 					status = "Alocado";
 					professorStatusDTO.setMarcado(true);
 				}
 			}
-			if (!professorDisciplina.getProfessor().getHorarios().contains(HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+			else if (!professorDisciplina.getProfessor().getHorarios().contains(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), horarioAula, Semanas.get(aulaDTO.getSemana()))))
 			{
 				status = "Indisponível";
 			}
@@ -3878,7 +3964,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					status = "Disponível";
 				}
 			}
-			
 			professorStatusDTO.setStatus(status);
 			
 			result.add(professorStatusDTO);
@@ -3903,7 +3988,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				
 				String status = "";
 				Set<HorarioDisponivelCenario> horariosProfessor = new HashSet<HorarioDisponivelCenario>();
-				for (AtendimentoOperacional atendimento : professorVirtual.getAtendimentos())
+				for (AtendimentoOperacional atendimento : AtendimentoOperacional.findAllBy(demanda.getOferta().getCampus(), cenario, professorVirtual, getInstituicaoEnsinoUser()))
 				{
 					horariosProfessor.add(atendimento.getHorarioDisponivelCenario());
 				}
@@ -3916,7 +4001,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 						professorStatusDTO.setMarcado(true);
 					}
 				}
-				if (!horariosProfessor.contains(HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
+				else if (!horariosProfessor.contains(HorarioDisponivelCenario.find(aulaDTO.getHorarioDisponivelCenarioId(), getInstituicaoEnsinoUser())))
 				{
 					status = "Conflito";
 				}
@@ -4341,23 +4426,16 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		// insere os atendimentos operacionais no BD
-		Set<AtendimentoOperacional> atpsInseridos = new HashSet<AtendimentoOperacional>();
 		for (AtendimentoOperacional atendimento : atendimentosOp)
 		{
+			atendimento.getAlunosDemanda().addAll(ofeToDiscSubstToAlnDemMap.get(atendimento.getOferta()).get(atendimento.getDisciplina()));
 			atendimento.persist();
-			atpsInseridos.add(atendimento);
-		}
-		
-		// cria as relações entre os atendimentos operacionais e os alunos demanda
-		for (AtendimentoOperacional atp : atpsInseridos )
-		{
-			for (AlunoDemanda ald : ofeToDiscSubstToAlnDemMap.get(atp.getOferta()).get(atp.getDisciplina())) {
-				ald.setAtendido(true);
-				atp.getAlunosDemanda().add(ald);
+			for (AlunoDemanda alunoDemanda : atendimento.getAlunosDemanda())
+			{
+				alunoDemanda.setAtendido(true);
+				alunoDemanda.getAtendimentosOperacional().add(atendimento);
 			}
 		}
-		
-		// remove informações das tabelas de turmas parciais
 		turma.remove();
 		
 	    return true;

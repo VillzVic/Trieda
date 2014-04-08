@@ -25,20 +25,22 @@ public class NovaTurmaFormView extends MyComposite
 	private CenarioDTO cenarioDTO;
 	private CampusDTO campusDTO;
 	private DisciplinaDTO disciplinaDTO;
+	private boolean edit;
 	
 	public NovaTurmaFormView( CenarioDTO cenarioDTO, CampusDTO campusDTO,
-			DisciplinaDTO disciplinaDTO, TurmaDTO turmaDTO )
+			DisciplinaDTO disciplinaDTO, TurmaDTO turmaDTO, boolean edit )
 	{
 		this.turmaDTO = turmaDTO;
 		this.campusDTO = campusDTO;
 		this.cenarioDTO = cenarioDTO;
 		this.disciplinaDTO = disciplinaDTO;
+		this.edit = edit;
 		this.initUI();
 	}
 	
 	private void initUI()
 	{
-		String title = ( cenarioDTO.getNome() + " » " + (( this.turmaDTO.getId() == null ) ?
+		String title = ( cenarioDTO.getNome() + " » " + (!edit ?
 			"Inserção de Turma" : "Edição de Turma") );
 	
 		this.simpleModal = new SimpleModal(
@@ -85,6 +87,12 @@ public class NovaTurmaFormView extends MyComposite
 	public boolean isValid()
 	{
 		return this.formPanel.isValid();
+	}
+	
+	@Override
+	public boolean getEdit()
+	{
+		return edit;
 	}
 	
 	@Override

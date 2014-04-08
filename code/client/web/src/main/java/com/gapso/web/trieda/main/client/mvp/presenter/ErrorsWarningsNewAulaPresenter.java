@@ -209,11 +209,19 @@ public class ErrorsWarningsNewAulaPresenter
 								@Override
 								public void onSuccess( ParDTO<TurmaDTO, List<AulaDTO>> result )
 								{
-									alocacaoManualPresenter.getDisplay().getProfessoresGrid().updateList();
-									alocacaoManualPresenter.getDisplay().getGrid().updateList();
 									alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), alocacaoManualPresenter.getDisplay().getTurmaSelecionadaStatus());
+									if (professorStatusDTO.getProfessorId() != null)
+									{
+										alocacaoManualPresenter.getDisplay().getAulaNaGrade().setProfessorId(professorStatusDTO.getProfessorId());
+									}
+									else
+									{
+										alocacaoManualPresenter.getDisplay().getAulaNaGrade().setProfessorVirtualId(professorStatusDTO.getProfessorVirtualId());
+									}
 									alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 									alocacaoManualPresenter.addAulasButtonsListeners();
+									alocacaoManualPresenter.getDisplay().getProfessoresGrid().updateList();
+									alocacaoManualPresenter.getDisplay().getGrid().updateList();
 									Info.display( "Alocados", "Professor alocado a aula com sucesso!" );
 								}
 							});
@@ -255,7 +263,8 @@ public class ErrorsWarningsNewAulaPresenter
 								{
 									alocacaoManualPresenter.getDisplay().getProfessoresGrid().updateList();
 									alocacaoManualPresenter.getDisplay().getGrid().updateList();
-									alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), alocacaoManualPresenter.getDisplay().getTurmaSelecionadaStatus());
+									alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), "Não Planejada");
+									alocacaoManualPresenter.getDisplay().refreshDemandasPanel(0, -result.getPrimeiro().getNoAlunos(), result.getPrimeiro().getNoAlunos());
 									alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 									alocacaoManualPresenter.addAulasButtonsListeners();
 									Info.display( "Salvo", "Turma salva com sucesso!" );

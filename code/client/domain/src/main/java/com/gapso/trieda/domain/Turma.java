@@ -57,7 +57,7 @@ public class Turma
 	
 	@NotNull
 	@Column( name = "TUR_NOME" )
-	@Size( min = 3, max = 255 )
+	@Size( min = 1, max = 255 )
 	private String nome;
 	
 	@Column( name = "TUR_PARCIAL" )

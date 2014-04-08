@@ -116,7 +116,7 @@ public interface AtendimentosServiceAsync {
 	void deleteTurmasStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
 			List<TurmaStatusDTO> turmasStatusDTO, AsyncCallback<Void> callback);
 
-	void saveTurma(TurmaDTO turmaDTO, AsyncCallback<Void> callback);
+	void saveTurma(TurmaDTO turmaDTO, AsyncCallback<TurmaDTO> callback);
 
 	void selecionarTurma(TurmaStatusDTO turmaStatusDTO, CenarioDTO cenarioDTO,
 			DemandaDTO demandaDTO,
@@ -165,4 +165,9 @@ public interface AtendimentosServiceAsync {
 			AsyncCallback<TrioDTO<Boolean, List<String>, List<String>>> callback);
 
 	void salvarTurma(TurmaDTO turmaDTO, AsyncCallback<Void> callback);
+
+	void deleteTurmaSelecionada(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
+			TurmaDTO turmaDTO, AsyncCallback<Void> callback);
+
+	void editTurma(TurmaDTO turmaDTO, AsyncCallback<Void> callback);
 }
