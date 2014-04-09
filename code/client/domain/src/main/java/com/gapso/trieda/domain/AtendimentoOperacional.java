@@ -1943,6 +1943,7 @@ public class AtendimentoOperacional
 		Curso curso, Turno turno, Titulacao titulacao,
 		AreaTitulacao areaTitulacao, TipoContrato tipoContrato)
 	{
+		String campusQuery = campus == null ? "" : " AND o.oferta.campus = :campus ";
 		String cursoQuery = curso == null ? "" : " AND o.oferta.curso = :curso ";
 		String turnoQuery = turno == null ? "" : " AND o.oferta.turno = :turno ";
 		
@@ -1955,28 +1956,29 @@ public class AtendimentoOperacional
 		
 		Query q1 = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
-			" WHERE o.oferta.campus = :campus " +
-			" AND o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.cenario = :cenario " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " + campusQuery +
 			turnoQuery + cursoQuery + titulacaoProfessorQuery +
 			areaTitulacaoProfessorQuery + tipoContratoProfessorQuery +
 			" AND o.professor IS NOT NULL ");
 
 		Query q2 = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
-			" WHERE o.oferta.campus = :campus " +
-			" AND o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.cenario = :cenario " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " + campusQuery +
 			turnoQuery + cursoQuery + titulacaoVirtualQuery +
 			areaTitulacaoVirtualQuery +
 			" AND o.professor IS NULL ");
 		
-		q1.setParameter( "campus", campus );
 		q1.setParameter( "cenario", cenario );
 		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q2.setParameter( "campus", campus );
 		q2.setParameter( "cenario", cenario );
 		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		if( campus != null )
+		{
+			q1.setParameter( "campus", campus );
+			q2.setParameter( "campus", campus );
+		}
 		if (curso != null)
 		{
 			q1.setParameter( "curso", curso );
