@@ -230,8 +230,6 @@ public class AlunosServiceImpl
 		
 		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
 				formando, alunoFiltro.getPeriodo());
-		int alunosFormandos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
-				true, alunoFiltro.getPeriodo()).size();
 		
 		List<AlunoDemanda> alunosUteis = todosAlunos.size() > 0 ?
 				AlunoDemanda.findByAlunos(getInstituicaoEnsinoUser(), todosAlunos, curso) : new ArrayList<AlunoDemanda>();
@@ -240,6 +238,14 @@ public class AlunosServiceImpl
 		if (curso != null && alunosUteis.size() == 0)
 		{
 			throw new TriedaException("O curso filtrado não possui nenhuma demanda");
+		}
+		
+		int alunosFormandos = 0;
+		
+		for(AlunoDemanda ad : alunosUteis){
+			if(ad.getAluno().getFormando()){
+				alunosFormandos++;
+			}
 		}
 
 		
