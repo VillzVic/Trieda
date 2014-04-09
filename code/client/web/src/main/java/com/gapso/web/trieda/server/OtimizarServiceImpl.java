@@ -1,7 +1,9 @@
 package com.gapso.web.trieda.server;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -19,6 +21,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.util.StreamReaderDelegate;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.stereotype.Repository;
@@ -1774,9 +1780,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 
 			JAXBContext jc = JAXBContext.newInstance("com.gapso.web.trieda.server.xml.output");
 			Unmarshaller u = jc.createUnmarshaller();
-			StringBuffer xmlStr = new StringBuffer(new String(xmlBytes));
-
-			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(new StreamSource(new StringReader(xmlStr.toString())));
+			XMLInputFactory xif = XMLInputFactory.newInstance();
+			XMLStreamReader xsr = xif.createXMLStreamReader(new ByteArrayInputStream(xmlBytes));
+			
+			TriedaOutput triedaOutput = (TriedaOutput) u.unmarshal(xsr);
 
 			for (ItemError erro : triedaOutput.getErrors().getError()) {
 				ret.get("error").add(erro.getMessage());
