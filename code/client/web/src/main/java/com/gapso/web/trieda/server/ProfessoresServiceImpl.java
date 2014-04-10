@@ -1221,11 +1221,55 @@ public class ProfessoresServiceImpl
 		List< Professor > listDomains = AtendimentoOperacional.findProfessoresUtilizados(getInstituicaoEnsinoUser(), cenario,
 				campus, curso, turno, titulacao, areaTitulacao, tipoContrato, cpf, config.getOffset(), config.getLimit(), orderBy );
 		
+		
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
+				turno, titulacao, areaTitulacao, tipoContrato);
+		
+		Map<Professor, Set<String>> professorToCreditosMap = new HashMap<Professor, Set<String>>();
+		Map<Professor, Set<String>> professorToCargaHorariaMap = new HashMap<Professor, Set<String>>();
+		
+		for(AtendimentoOperacional atendimento : atendimentos){
+			if(listDomains.contains(atendimento.getProfessor())){
+				if (professorToCreditosMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<String> creditosProfessor = new HashSet<String>();
+					creditosProfessor.add(atendimento.getTurma() + "-" + 
+					(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+						+ "-" + atendimento.getHorarioDisponivelCenario().getId());
+					professorToCreditosMap.put(atendimento.getProfessor(), creditosProfessor );
+				}
+				else
+				{
+					professorToCreditosMap.get(atendimento.getProfessor()).add(atendimento.getTurma() + "-" + 
+							(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getHorarioDisponivelCenario().getId());
+				}
+			
+				if (professorToCargaHorariaMap.get(atendimento.getProfessor()) == null)
+				{
+					Set<String> cargaHoraria = new HashSet<String>();
+					cargaHoraria.add(atendimento.getTurma() + "-" + 
+							(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+								+ "-" + atendimento.getHorarioDisponivelCenario().getId());
+					professorToCargaHorariaMap.put(atendimento.getProfessor(), cargaHoraria);
+				}
+				else
+				{
+					professorToCargaHorariaMap.get(atendimento.getProfessor()).add(atendimento.getTurma() + "-" + 
+							(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
+							+ "-" + atendimento.getHorarioDisponivelCenario().getId());
+				}
+			}
+		}
+		
 		if ( listDomains != null )
 		{
 			for ( Professor professor : listDomains )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professor ) );
+				ProfessorDTO  dto = ConvertBeans.toProfessorDTO( professor );
+				dto.setTotalCred(professorToCreditosMap.get(professor).size());
+				dto.setCargaHorariaSemanal(professorToCargaHorariaMap.get(professor).size());
+				list.add(dto);
 			}
 		}
 
