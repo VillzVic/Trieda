@@ -237,6 +237,7 @@
       <xs:element name="chMax" type="xs:int" />
       <xs:element name="titulacaoId" type="xs:int" />
       <xs:element minOccurs="0" name="areaTitulacaoId" type="xs:int" />
+      <xs:element name="cursoId" type="xs:int" />
       <xs:element name="contratoId" type="xs:int" />
       <xs:element name="disciplinas" type="GrupoIdentificador" />
       <xs:element name="alocacoes" type="GrupoAlocacoes" />
