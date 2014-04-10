@@ -625,12 +625,12 @@ public class AlunosDemandaServiceImpl
 		
 		if ( faixas == null ) {
 			faixas = new ArrayList<ParDTO<Integer, Integer>>();
-			faixas.add(ParDTO.create(100, 0));
-			faixas.add(ParDTO.create(100, 76));
-			faixas.add(ParDTO.create(75, 51));
-			faixas.add(ParDTO.create(50, 31));
-			faixas.add(ParDTO.create(30, 14));
 			faixas.add(ParDTO.create(0, 14));
+			faixas.add(ParDTO.create(30, 14));
+			faixas.add(ParDTO.create(50, 31));
+			faixas.add(ParDTO.create(75, 51));
+			faixas.add(ParDTO.create(100, 76));
+			faixas.add(ParDTO.create(100, 0));
 		}
 		
 		int numFaixas = faixas.size();
@@ -732,7 +732,7 @@ public class AlunosDemandaServiceImpl
 				receita[i] = AtendimentoOperacional.calcReceita( getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i) );
 				custoDocente[i] = AtendimentoOperacional.calcCustoDocente(getInstituicaoEnsinoUser(), campus, listDisciplinas.get(i));
 			}
-			mediaTurma[i] = ( (double) atendimentoSoma[i] ) / turmasAbertas[i];
+			mediaTurma[i] = ( (double) demandaP1[i] ) / turmasAbertas[i];
 			demandaP1Acum[i] = (i == 0 ? demandaP1[i] : demandaP1[i] + demandaP1Acum[i-1]);
 			atendimentoSomaAcum[i] = (i == 0 ? atendimentoSoma[i] : atendimentoSoma[i] + atendimentoSomaAcum[i-1]);
 
