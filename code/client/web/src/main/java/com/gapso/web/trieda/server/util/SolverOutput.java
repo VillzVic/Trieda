@@ -217,7 +217,7 @@ public class SolverOutput
 				pv.setCargaHorariaMin(itemProfessorVirtual.getChMin());
 				pv.setInstituicaoEnsino(this.instituicaoEnsino);
 				pv.setCenario(this.cenario);
-				pv.setTipoContrato(tipoContratoIdToTipoContratoMap.get(itemProfessorVirtual.getContratoId()));
+				pv.setTipoContrato(tipoContratoIdToTipoContratoMap.get(Long.valueOf(itemProfessorVirtual.getContratoId())));
 				pv.setTitulacao(titulacaoIdToTitulacaoMap.get(Long.valueOf(itemProfessorVirtual.getTitulacaoId())));// Titulacao.find(Integer.valueOf(itemProfessorVirtual.getTitulacaoId()).longValue(),this.instituicaoEnsino));
 				for (Integer disciplinaId : itemProfessorVirtual.getDisciplinas().getId()) {
 					Disciplina disciplina = disciplinaIdToDisciplinaMap.get(Long.valueOf(Math.abs(disciplinaId)));//Disciplina.find(Math.abs(disciplinaId.longValue()),this.instituicaoEnsino);
