@@ -139,6 +139,9 @@ public class ProfessoresVirtuaisView extends MyComposite
 			getI18nConstants().titulacao(), 115 ) );
 		list.add( new ColumnConfig( ProfessorVirtualDTO.PROPERTY_TIPO_CONTRATO_STRING,
 				getI18nConstants().tipoContrato(), 115 ) );
+		
+		list.add( new ColumnConfig( ProfessorVirtualDTO.PROPERTY_AREA_TITULACAO_STRING,
+				getI18nConstants().areaTitulacao(), 115 ) );
 	
 		return list;
 	}
