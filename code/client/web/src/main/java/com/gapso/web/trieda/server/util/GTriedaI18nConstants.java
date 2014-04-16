@@ -1012,5 +1012,10 @@ public class GTriedaI18nConstants
 		return this.languageManager.getText("nomeAmbiente");
 	}
 
+	@Override
+	public String formando() {
+		return this.languageManager.getText("formando");
+	}
+
 
 }

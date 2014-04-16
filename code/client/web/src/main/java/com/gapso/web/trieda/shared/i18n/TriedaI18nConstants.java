@@ -84,6 +84,7 @@ public interface TriedaI18nConstants
 	String equivalencias();
 	String estado();
 	String exportarExcel();
+	String formando();
 	String habilitacaoProfessores();
 	String gruposSalas();
 	String horarios();

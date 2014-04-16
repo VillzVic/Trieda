@@ -439,6 +439,8 @@ public class RelatorioVisaoAlunoExportExcel	extends RelatorioVisaoExportExcel{
 		row = new ArrayList<TrioDTO<String, Integer, ?>>();
 		row.add(TrioDTO.create(this.getI18nConstants().nomeAluno(),3, aluno.getNome()));
 		row.add(TrioDTO.create(this.getI18nConstants().matriculaAluno(),6, aluno.getMatricula()));
+		row.add(TrioDTO.create(this.getI18nConstants().matriculaAluno(),8, aluno.getFormando() ? getI18nConstants().sim()
+				: HtmlUtils.htmlUnescape(getI18nConstants().nao())));
 		
 		list.add(row);
 		
