@@ -163,8 +163,7 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			checkProfessorComCargaHorariaMaximaZerada(parametro,errors, warnings);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 
-			if(Parametro.OPERACIONAL.equals(parametro.getModoOtimizacao()))
-				checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
+			checkOfertaComCargaReceitaCreditoZerada(parametro,errors, warnings);
 			
 //			System.out.print("checkSemanasLetivasIncompativeis(parametro,errors);");start = System.currentTimeMillis(); // TODO: retirar
 //			checkSemanasLetivasIncompativeis(parametro, errors);

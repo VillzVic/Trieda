@@ -1002,5 +1002,15 @@ public class GTriedaI18nConstants
 		return this.languageManager.getText("demandaDeAlunosVirtual");
 	}
 
+	@Override
+	public String idAmbiente() {
+		return this.languageManager.getText("idAmbiente");
+	}
+
+	@Override
+	public String nomeAmbiente() {
+		return this.languageManager.getText("nomeAmbiente");
+	}
+
 
 }

@@ -2062,7 +2062,7 @@ public class ProfessoresServiceImpl
 		
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		
-		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
 		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
@@ -2169,14 +2169,9 @@ public class ProfessoresServiceImpl
 		List<Professor> professoresComDeslocamentosUnidades = new ArrayList<Professor>();
 		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
 		{
-			Set<Campus> campi = new HashSet<Campus>();
 			if (professoresToUnidadesMap.get(professorUnidades.getKey()).size() > 1)
 			{
 				professoresComDeslocamentosUnidades.add(professorUnidades.getKey());
-				for (Unidade unidade : professorUnidades.getValue())
-				{
-					campi.add(unidade.getCampus());
-				}
 			}
 		}
 		
@@ -2206,34 +2201,38 @@ public class ProfessoresServiceImpl
 		
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
 		
-		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(campus, cenario, getInstituicaoEnsinoUser(), curso,
+		List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.findAllBy(null, cenario, getInstituicaoEnsinoUser(), curso,
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
-		Map<Professor, Set<Unidade>> professoresToUnidadesMap = new HashMap<Professor, Set<Unidade>>();
+		Map<Professor, Set<Campus>> professoresToCampiMap = new HashMap<Professor, Set<Campus>>();
 		for (AtendimentoOperacional atendimento : atendimentos)
 		{
 			if (atendimento.getProfessor().getCpf() != null)
 			{
-				if (professoresToUnidadesMap.get(atendimento.getProfessor()) == null)
+				if (professoresToCampiMap.get(atendimento.getProfessor()) == null)
 				{
-					Set<Unidade> novaUnidade = new HashSet<Unidade>();
-					novaUnidade.add(atendimento.getSala().getUnidade());
-					professoresToUnidadesMap.put(atendimento.getProfessor(), novaUnidade);
+					Set<Campus> novoCampus = new HashSet<Campus>();
+					novoCampus.add(atendimento.getSala().getUnidade().getCampus());
+					professoresToCampiMap.put(atendimento.getProfessor(), novoCampus);
 				}
 				else
 				{
-					professoresToUnidadesMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade());
+					professoresToCampiMap.get(atendimento.getProfessor()).add(atendimento.getSala().getUnidade().getCampus());
 				}
 			}
 		}
 		
 		List<Professor> professoresComDeslocamentosCampi = new ArrayList<Professor>();
-		for (Entry<Professor, Set<Unidade>> professorUnidades : professoresToUnidadesMap.entrySet())
+		for (Entry<Professor, Set<Campus>> professorCampus : professoresToCampiMap.entrySet())
 		{
 			Set<Campus> campi = new HashSet<Campus>();
-			if (campi.size() > 1)
+			if (professoresToCampiMap.get(professorCampus.getKey()).size() > 1)
 			{
-				professoresComDeslocamentosCampi.add(professorUnidades.getKey());
+				professoresComDeslocamentosCampi.add(professorCampus.getKey());
+				for (Campus unidade : professorCampus.getValue())
+				{
+					campi.add(unidade);
+				}
 			}
 		}
 		

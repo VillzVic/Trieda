@@ -21,7 +21,6 @@ import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
-import com.gapso.trieda.domain.Turno;
 import com.gapso.trieda.domain.Unidade;
 import com.gapso.web.trieda.server.AtendimentosServiceImpl;
 import com.gapso.web.trieda.server.util.ConvertBeans;
@@ -151,12 +150,10 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		// Estruturas auxiliares
 		// [SalaId -> Sala]
 		Map<Long,Sala> salaIdToSalaMap = new HashMap<Long,Sala>();
-		// [TurnoId -> Turno]
-		Map<Long,Turno> turnoIdToTurnoMap = new HashMap<Long,Turno>();
 		// [SemanaLetivaId -> SemanaLetiva]
 		Map<Long,SemanaLetiva> semanaLetivaIdTosemanaLetivaMap = new HashMap<Long,SemanaLetiva>();
-		// [SalaId -> [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]]
-		Map<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>> atendimentosPorSalaTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>>>();
+		// [SalaId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
+		Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> atendimentosPorSalaSemanaLetivaMap = new HashMap<Long,Map<Long,List<AtendimentoRelatorioDTO>>>();
 		// disciplinas
 		Set<Long> disciplinas = new HashSet<Long>();
 		
@@ -165,37 +162,27 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 			Long disciplinaId = atendimento.getDisciplinaSubstitutaId() != null ? atendimento.getDisciplinaSubstitutaId() : atendimento.getDisciplinaId();
 			disciplinas.add(disciplinaId);
 			
-			// preenche os maps salaIdToSalaMap, turnoIdToTurnoMap e semanaLetivaIdTosemanaLetivaMap
+			// preenche os maps salaIdToSalaMap e semanaLetivaIdTosemanaLetivaMap
 			if (!salaIdToSalaMap.containsKey(atendimento.getSalaId())) {
 				salaIdToSalaMap.put(atendimento.getSalaId(),Sala.find(atendimento.getSalaId(),this.instituicaoEnsino));
-			}
-			if (!turnoIdToTurnoMap.containsKey(atendimento.getTurnoId())) {
-				turnoIdToTurnoMap.put(atendimento.getTurnoId(),Turno.find(atendimento.getTurnoId(),this.instituicaoEnsino));
 			}
 			Long semanaLetivaASerConsideradaId = (atendimento.getDisciplinaSubstitutaSemanaLetivaId() != null) ? atendimento.getDisciplinaSubstitutaSemanaLetivaId() : atendimento.getSemanaLetivaId(); 
 			if (!semanaLetivaIdTosemanaLetivaMap.containsKey(semanaLetivaASerConsideradaId)) {
 				semanaLetivaIdTosemanaLetivaMap.put(semanaLetivaASerConsideradaId,SemanaLetiva.find(semanaLetivaASerConsideradaId,instituicaoEnsino));
 			}
 
-			// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
-			Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(atendimento.getSalaId());
-			if (salaAtendimentosPorTurnoSemanaLetivaMap == null) {
-				salaAtendimentosPorTurnoSemanaLetivaMap = new HashMap<Long,Map<Long,List<AtendimentoRelatorioDTO>>>();
-				atendimentosPorSalaTurnoSemanaLetivaMap.put(atendimento.getSalaId(),salaAtendimentosPorTurnoSemanaLetivaMap);
-			}
-
-			// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
-			Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(atendimento.getTurnoId());
-			if (turnoAtendimentosPorSemanaLetivaMap == null) {
-				turnoAtendimentosPorSemanaLetivaMap = new HashMap<Long,List<AtendimentoRelatorioDTO>>();
-				salaAtendimentosPorTurnoSemanaLetivaMap.put(atendimento.getTurnoId(),turnoAtendimentosPorSemanaLetivaMap);
+			//  [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
+			Map<Long,List<AtendimentoRelatorioDTO>> salaAtendimentosPorSemanaLetivaMap = atendimentosPorSalaSemanaLetivaMap.get(atendimento.getSalaId());
+			if (salaAtendimentosPorSemanaLetivaMap == null) {
+				salaAtendimentosPorSemanaLetivaMap = new HashMap<Long,List<AtendimentoRelatorioDTO>>();
+				atendimentosPorSalaSemanaLetivaMap.put(atendimento.getSalaId(),salaAtendimentosPorSemanaLetivaMap);
 			}
 
 			// armazena os atendimentos associados a uma dada sala, um dado turno e uma dada semana letiva
-			List<AtendimentoRelatorioDTO> atendimentos = turnoAtendimentosPorSemanaLetivaMap.get(semanaLetivaASerConsideradaId);
+			List<AtendimentoRelatorioDTO> atendimentos = salaAtendimentosPorSemanaLetivaMap.get(semanaLetivaASerConsideradaId);
 			if (atendimentos == null) {
 				atendimentos = new ArrayList<AtendimentoRelatorioDTO>();
-				turnoAtendimentosPorSemanaLetivaMap.put(semanaLetivaASerConsideradaId,atendimentos);
+				salaAtendimentosPorSemanaLetivaMap.put(semanaLetivaASerConsideradaId,atendimentos);
 			}
 			atendimentos.add(atendimento);
 		}
@@ -225,32 +212,25 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		// imprime uma grade de horários para cada sala
 		int count = 0, total=salasOrdenadasPorCampusEPelaCapacidade.size(); System.out.print(" "+total);//TODO: debug
 		for (Sala sala : salasOrdenadasPorCampusEPelaCapacidade) {
-			// [TurnoId -> [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]]
-			Map<Long,Map<Long,List<AtendimentoRelatorioDTO>>> salaAtendimentosPorTurnoSemanaLetivaMap = atendimentosPorSalaTurnoSemanaLetivaMap.get(sala.getId());
-			for (Long turnoId : salaAtendimentosPorTurnoSemanaLetivaMap.keySet()) {
-				// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
-				Map<Long,List<AtendimentoRelatorioDTO>> turnoAtendimentosPorSemanaLetivaMap = salaAtendimentosPorTurnoSemanaLetivaMap.get(turnoId);
-				Turno turno = turnoIdToTurnoMap.get(turnoId);
-				Set<Long> turnosId = new HashSet<Long>();
-				turnosId.add(turnoId);
-				
-				Set<Long> semanasLetivasIDs = new HashSet<Long>();
-				List<AtendimentoRelatorioDTO> atendimentosDeTodasSemanasLetivas = new ArrayList<AtendimentoRelatorioDTO>();
-				for (Long semLetId : turnoAtendimentosPorSemanaLetivaMap.keySet()) {
-					semanasLetivasIDs.add(semLetId);
-					// acumula os atendimentos das semanas letivas
-					atendimentosDeTodasSemanasLetivas.addAll(turnoAtendimentosPorSemanaLetivaMap.get(semLetId));
-				}
-				
-				AtendimentosServiceImpl service = new AtendimentosServiceImpl();
-				QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios,turnosId);
-				ParDTO<Integer, Boolean> mdcTemposAula = quarteto.getPrimeiro();
-				List<String> horariosDaGradeHoraria = quarteto.getSegundo();
-				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
-				List<String> horariosDeFimDeAula = quarteto.getQuarto();
-				
-				nextRow = writeSala(sala, turno, atendimentosDeTodasSemanasLetivas, nextRow, mdcTemposAula.getPrimeiro(), ehTatico, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
+			// [SemanaLetivaId -> List<AtendimentoRelatorioDTO>]
+			Map<Long,List<AtendimentoRelatorioDTO>> salaAtendimentosPorSemanaLetivaMap = atendimentosPorSalaSemanaLetivaMap.get(sala.getId());
+			
+			Set<Long> semanasLetivasIDs = new HashSet<Long>();
+			List<AtendimentoRelatorioDTO> atendimentosDeTodasSemanasLetivas = new ArrayList<AtendimentoRelatorioDTO>();
+			for (Long semLetId : salaAtendimentosPorSemanaLetivaMap.keySet()) {
+				semanasLetivasIDs.add(semLetId);
+				// acumula os atendimentos das semanas letivas
+				atendimentosDeTodasSemanasLetivas.addAll(salaAtendimentosPorSemanaLetivaMap.get(semLetId));
 			}
+			
+			AtendimentosServiceImpl service = new AtendimentosServiceImpl();
+			QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> quarteto = service.calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDs,semanaLetivaIdTosemanaLetivaMap,temInfoDeHorarios);
+			ParDTO<Integer, Boolean> mdcTemposAula = quarteto.getPrimeiro();
+			List<String> horariosDaGradeHoraria = quarteto.getSegundo();
+			List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
+			List<String> horariosDeFimDeAula = quarteto.getQuarto();
+			
+			nextRow = writeSala(sala, atendimentosDeTodasSemanasLetivas, nextRow, mdcTemposAula.getPrimeiro(), ehTatico, temInfoDeHorarios, horariosDaGradeHoraria, horariosDeInicioDeAula, horariosDeFimDeAula);
 			count++;total--;if (count == 100) {System.out.println("\t   Faltam "+total+" salas"); count = 0;}//TODO: debug
 		}
 	}
@@ -275,7 +255,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		hyperlinkInfo.clear();
 	}
 
-	private int writeSala(Sala sala, Turno turno, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
+	private int writeSala(Sala sala, List<AtendimentoRelatorioDTO> atendimentos, int row, int mdcTemposAula, 
 		boolean ehTatico, boolean temInfoDeHorarios, List<String> horariosDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula)
 	{
 		String[] sheetsTargets = {
@@ -291,7 +271,7 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 		);
 			
 		// escreve cabeçalho da grade horária da sala
-		row = writeHeader(getRowsHeadersPairs(sala, turno), row, temInfoDeHorarios);
+		row = writeHeader(getRowsHeadersPairs(sala), row, temInfoDeHorarios);
 		
 		// processa os atendimentos lidos do BD para que os mesmos sejam visualizados na visão sala
 		AtendimentosServiceImpl atendimentosService = new AtendimentosServiceImpl();
@@ -315,19 +295,19 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 			hyperlinkInfo.add(TrioDTO.create(row,col,(aula.isProfessorVirtual() ? aula.getProfessorVirtualId().toString()+"#" : aula.getProfessorId().toString())));
 	}
 	
-	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Sala sala, Turno turno){
+	protected List<List<ParDTO<String, ?>>> getRowsHeadersPairs(Sala sala){
 		List<List<ParDTO<String, ?>>> list = new ArrayList<List<ParDTO<String, ?>>>(); 
 		
 		List<ParDTO<String, ?>> row = new ArrayList<ParDTO<String, ?>>();
 		row.add(ParDTO.create(this.getI18nConstants().campus(), sala.getUnidade().getCampus().getCodigo()));
-		row.add(ParDTO.create(this.getI18nConstants().sala(), sala.getCodigo()));
+		row.add(ParDTO.create(this.getI18nConstants().idAmbiente(), sala.getCodigo()));
 		row.add(ParDTO.create(this.getI18nConstants().capacidadeInstalada(), sala.getCapacidadeInstalada()));
 		
 		list.add(row);
 		
 		row = new ArrayList<ParDTO<String, ?>>();
 		row.add(ParDTO.create(this.getI18nConstants().unidade(), sala.getUnidade().getCodigo()));
-		row.add(ParDTO.create(this.getI18nConstants().turno(), turno.getNome()));
+		row.add(ParDTO.create(this.getI18nConstants().nomeAmbiente(), sala.getNumero()));
 		row.add(ParDTO.create(this.getI18nConstants().tipo(), sala.getTipoSala().getNome()));
 		
 		list.add(row);

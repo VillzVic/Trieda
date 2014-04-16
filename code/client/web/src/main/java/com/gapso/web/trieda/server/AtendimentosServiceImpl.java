@@ -227,7 +227,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				{
 					turnosIDsDasAulas.add(aula.getTurnoId());
 				}
-				QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, turnosIDsDasAulas);
+				QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> quarteto = calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(semanasLetivasIDsDasAulasNaSala, semanaLetivaIdToSemanaLetivaMap, temInfoDeHorario, turnosIDsDasAulas); 
 				ParDTO<Integer, Boolean> mdcTemposAulaNumSemanasLetivas = quarteto.getPrimeiro();
 				List<String> labelsDasLinhasDaGradeHoraria = quarteto.getSegundo();
 				List<String> horariosDeInicioDeAula = quarteto.getTerceiro();
@@ -313,7 +313,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		return result;
 	}
-
+	
 	public QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulas, Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap, boolean temInfoDeHorario, Set<Long> turnoId) {
 		List<String> labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
 		List<String> horariosDeInicioDeAula = new ArrayList<String>();
@@ -351,6 +351,88 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					
 					horarios.add(Pair.create(hi,hf));
 				}
+			}
+		}
+		
+		List<Pair<Calendar,Calendar>> horariosOrdenados = new ArrayList<Pair<Calendar,Calendar>>(horarios);
+		// ordena os pares (HoraInicio,HoraFim)
+		TriedaServerUtil.ordenaParesDeHorarios(horariosOrdenados);
+		
+		// processa lista de pares de horários e une aqueles que possuem interseção em um único par (HorarioInicio,HorarioFim)
+		List<Pair<Calendar,Calendar>> horariosProcessados = new ArrayList<Pair<Calendar,Calendar>>();
+		for (Pair<Calendar,Calendar> parAtual : horariosOrdenados) {
+			horariosDeInicioDeAula.add(TriedaUtil.shortTimeString(parAtual.getLeft().getTime()));
+			horariosDeFimDeAula.add(TriedaUtil.shortTimeString(parAtual.getRight().getTime()));
+			
+			if (horariosProcessados.isEmpty()) {
+				horariosProcessados.add(parAtual);
+			} else {
+				Pair<Calendar,Calendar> parProcessado = horariosProcessados.get(horariosProcessados.size()-1);
+				if (temIntersecao(parProcessado,parAtual) || saoConsecutivos(parProcessado,parAtual)) {
+					if (parAtual.getRight().after(parProcessado.getRight())) {
+						parProcessado.getRight().setTime(parAtual.getRight().getTime());
+					}
+				} else {
+					horariosProcessados.add(parAtual);
+				}
+			}
+		}
+		
+		// escreve os labels de cada linha da grade de horários
+		Integer cargaHorariaAcumuladaEmMinutos = mdcTemposAula;
+		for (Pair<Calendar,Calendar> par : horariosProcessados) {
+			Calendar h = par.getLeft();
+			Calendar hf = par.getRight();
+			while (!h.equals(hf)) {
+				if (temInfoDeHorario) {
+					labelsDasLinhasDaGradeHoraria.add(TriedaUtil.shortTimeString(h.getTime()));
+				} else {
+					labelsDasLinhasDaGradeHoraria.add(cargaHorariaAcumuladaEmMinutos.toString()+" (min)");
+					cargaHorariaAcumuladaEmMinutos += mdcTemposAula;
+				}
+				h.add(Calendar.MINUTE,mdcTemposAula);
+			}
+			if (temInfoDeHorario) {
+				labelsDasLinhasDaGradeHoraria.add(TriedaUtil.shortTimeString(hf.getTime()));
+			}
+		}
+	}
+
+	public QuartetoDTO<ParDTO<Integer, Boolean>,List<String>,List<String>,List<String>> calcula_MDCTemposDeAula_SemanaLetivaComMaiorCargaHoraria_LabelsLinhasGradeHoraria(Set<Long> semanasLetivasIDsDasAulas, Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap, boolean temInfoDeHorario) {
+		List<String> labelsDasLinhasDaGradeHoraria = new ArrayList<String>();
+		List<String> horariosDeInicioDeAula = new ArrayList<String>();
+		List<String> horariosDeFimDeAula = new ArrayList<String>();
+		
+		if (!semanasLetivasIDsDasAulas.isEmpty()) {
+//			List<SemanaLetiva> todasSemanasLetivas = SemanaLetiva.findAll(getInstituicaoEnsinoUser());
+//			Map<Long,SemanaLetiva> semanaLetivaIdToSemanaLetivaMap = SemanaLetiva.buildSemanaLetivaIDToSemanaLetivaMap(todasSemanasLetivas);
+			List<SemanaLetiva> semanasLetivasDasAulas = new ArrayList<SemanaLetiva>();
+			for (Long semanaLetivaId : semanasLetivasIDsDasAulas) {
+				semanasLetivasDasAulas.add(semanaLetivaIdToSemanaLetivaMap.get(semanaLetivaId));
+			}
+			TriedaPar<Integer, Boolean> parMDCHorarioInteresecao= SemanaLetiva.caculaMaximoDivisorComumParaTemposDeAulaDasSemanasLetivas(semanasLetivasDasAulas);
+			ParDTO<Integer, Boolean> mdcTemposAulaNumSemanasLetivas = ParDTO.create(parMDCHorarioInteresecao.getPrimeiro(), parMDCHorarioInteresecao.getSegundo()) ;
+			
+			calculaLabelsDasLinhasDaGradeHoraria(temInfoDeHorario,semanasLetivasDasAulas,mdcTemposAulaNumSemanasLetivas.getPrimeiro(),labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+			
+			return QuartetoDTO.create(mdcTemposAulaNumSemanasLetivas,labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+		}
+		return QuartetoDTO.create(ParDTO.create(0, false),labelsDasLinhasDaGradeHoraria,horariosDeInicioDeAula,horariosDeFimDeAula);
+	}
+	
+	private void calculaLabelsDasLinhasDaGradeHoraria(boolean temInfoDeHorario, List<SemanaLetiva> semanasLetivasDasAulas, int mdcTemposAula,
+			List<String> labelsDasLinhasDaGradeHoraria, List<String> horariosDeInicioDeAula, List<String> horariosDeFimDeAula) {		
+		// coleta todos os pares (HoraInicio,HoraFim) dos horários de aula das semanas letivas
+		Set<Pair<Calendar,Calendar>> horarios = new HashSet<Pair<Calendar,Calendar>>();
+		for (SemanaLetiva semanaLetiva : semanasLetivasDasAulas) {
+			for (HorarioAula horarioAula : semanaLetiva.getHorariosAula()) {
+				Calendar hi = TriedaServerUtil.dateToCalendar(horarioAula.getHorario());
+				Calendar hf = Calendar.getInstance();
+				hf.clear();
+				hf.setTime(hi.getTime());
+				hf.add(Calendar.MINUTE,semanaLetiva.getTempo());
+				
+				horarios.add(Pair.create(hi,hf));
 			}
 		}
 		
