@@ -55,6 +55,7 @@ import com.gapso.trieda.domain.TriedaPar;
 import com.gapso.trieda.domain.TriedaTrio;
 import com.gapso.trieda.domain.Turma;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
@@ -2337,6 +2338,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		// cálculo dos indicadores de utilização das salas de aula e laboratórios
 		Set<Turno> turnosConsiderados = new HashSet<Turno>();
 		Set<Sala> salasUtilizadas = new HashSet<Sala>();
+		
+		Set<Sala> todasSalas = new HashSet<Sala>();
+		for(Unidade unidade : campus.getUnidades() ){
+			todasSalas.addAll(unidade.getSalas());
+		}
 		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
 		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
 		for (Oferta oferta : campus.getOfertas()) {
@@ -2389,7 +2395,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			// [SalaId -> Tempo de uso (min) semanal]
 			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
 			for (Turno turno : turnosConsiderados) {
-				for (Sala sala : salasUtilizadas) {
+				for (Sala sala : todasSalas) {
 					String key = sala.getId() + "-" + turno.getId();
 					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
 					if (atendimentosPorSalaTurno != null) {
@@ -2421,6 +2427,17 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 							{
 								salasToQtdeAlunosPorAulaMap.get(sala).add(aula.getQuantidadeAlunos());
 							}
+						}
+					} else {
+						if (salasToQtdeAlunosPorAulaMap.get(sala) == null )
+						{
+							List<Integer> alunosAula = new ArrayList<Integer>();
+							alunosAula.add(0);
+							salasToQtdeAlunosPorAulaMap.put(sala, alunosAula);
+						}
+						else
+						{
+							salasToQtdeAlunosPorAulaMap.get(sala).add(0);
 						}
 					}
 				}
