@@ -198,10 +198,11 @@ public class RelatorioVisaoSalaExportExcel extends RelatorioVisaoExportExcel{
 				Unidade u2 = o2.getUnidade();
 				Campus c1 = u1.getCampus();
 				Campus c2 = u2.getCampus();
-				int result = -(o1.getTipoSala().getId().compareTo(o2.getTipoSala().getId()));
-				if (result == 0) {
-					result = c1.getCodigo().compareTo(c2.getCodigo());
-				}
+				int result = c1.getCodigo().compareTo(c2.getCodigo());
+				if(result == 0)
+					result = u1.getCodigo().compareTo(u2.getCodigo());
+				if(result == 0)
+					result = -(o1.getTipoSala().getId().compareTo(o2.getTipoSala().getId()));
 				if (result == 0) {
 					result = -(o1.getCapacidadeInstalada().compareTo(o2.getCapacidadeInstalada())); 
 				}
