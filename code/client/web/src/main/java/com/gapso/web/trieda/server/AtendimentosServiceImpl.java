@@ -2245,12 +2245,13 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			SemanaLetiva maiorSemanaLetiva = SemanaLetiva.getSemanaLetivaComMaiorCargaHoraria(semanasLetivasUtilizadas);
 			Map<Integer, Integer> countHorariosAula = new HashMap<Integer, Integer>();
 			for(HorarioAula ha : maiorSemanaLetiva.getHorariosAula()){
-				for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
-					int semanaInt = Semanas.toInt(hdc.getDiaSemana());
-					Integer value = countHorariosAula.get(semanaInt);
-					value = ((value == null) ? 0 : value);
-					countHorariosAula.put(semanaInt, value + 1);
-				}
+				if(turnosConsiderados.contains(ha.getTurno()))
+					for(HorarioDisponivelCenario hdc : ha.getHorariosDisponiveisCenario()){
+						int semanaInt = Semanas.toInt(hdc.getDiaSemana());
+						Integer value = countHorariosAula.get(semanaInt);
+						value = ((value == null) ? 0 : value);
+						countHorariosAula.put(semanaInt, value + 1);
+					}
 			}
 			int cargaHorariaSemanalEmMinutos = 0;
 			for(Integer i : countHorariosAula.keySet()){
