@@ -2159,7 +2159,10 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		// cálculo dos indicadores de utilização das salas de aula e laboratórios
 		Set<Turno> turnosConsiderados = new HashSet<Turno>();
-		Set<Sala> salasUtilizadas = new HashSet<Sala>();
+		Set<Sala> todasSalas = new HashSet<Sala>();
+		for(Unidade unidade : campus.getUnidades() ){
+			todasSalas.addAll(unidade.getSalas());
+		}
 		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
 		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
 		for (Oferta oferta : campus.getOfertas()) {
@@ -2175,7 +2178,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					}
 					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
 					
-					salasUtilizadas.add(aula.getSala());
 					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
 				}
 			} else {
@@ -2190,7 +2192,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					}
 					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
 					
-					salasUtilizadas.add(atendimento.getSala());
 					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
 				}
 			}
@@ -2212,7 +2213,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			AtendimentosServiceImpl atService = new AtendimentosServiceImpl();
 			for (Turno turno : turnosConsiderados) {
-				for (Sala sala : salasUtilizadas) {
+				for (Sala sala : todasSalas) {
 					String key = sala.getId() + "-" + turno.getId();
 					List<AtendimentoRelatorioDTO> atendimentosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
 					if (atendimentosPorSalaTurno != null) {
@@ -2238,6 +2239,8 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 							if (tempoUsoSemanalEmMinutos == null) tempoUsoSemanalEmMinutos = 0;
 							salaIdToTempoUsoSemanalEmMinutosMap.put(aula.getSalaId(), tempoUsoSemanalEmMinutos + aula.getTotalCreditos()*aula.getSemanaLetivaTempoAula());
 						}
+					} else {
+							salaIdToTempoUsoSemanalEmMinutosMap.put(sala.getId(), 0);
 					}
 				}
 			}
@@ -2337,8 +2340,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		
 		// cálculo dos indicadores de utilização das salas de aula e laboratórios
 		Set<Turno> turnosConsiderados = new HashSet<Turno>();
-		Set<Sala> salasUtilizadas = new HashSet<Sala>();
-		
 		Set<Sala> todasSalas = new HashSet<Sala>();
 		for(Unidade unidade : campus.getUnidades() ){
 			todasSalas.addAll(unidade.getSalas());
@@ -2358,7 +2359,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					}
 					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
 					
-					salasUtilizadas.add(aula.getSala());
 					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
 				}
 			} else {
@@ -2373,7 +2373,6 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 					}
 					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
 					
-					salasUtilizadas.add(atendimento.getSala());
 					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
 				}
 			}
