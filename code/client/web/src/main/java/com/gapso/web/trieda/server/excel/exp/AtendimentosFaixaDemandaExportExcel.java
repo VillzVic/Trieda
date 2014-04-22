@@ -30,7 +30,8 @@ public class AtendimentosFaixaDemandaExportExcel
 		TEXT( 6, 2 ),
 		PERCENTE( 6, 11 ),
 		INTEGER( 6, 5 ),
-		DOUBLE( 6, 9 );
+		DOUBLE( 6, 9 ),
+		CURRENCY(6,15);
 
 		private int row;
 		private int col;
@@ -237,12 +238,12 @@ public class AtendimentosFaixaDemandaExportExcel
 		
 		// Receita Semanal
 		setCell( row, i++, sheet,
-			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 			resumoFaixaDemandaDTO.getReceitaSemanal() );
 		
 		// Custo Docente Semanal
 		setCell( row, i++, sheet,
-			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 			resumoFaixaDemandaDTO.getCustoDocenteSemanal() );
 		
 		// Custo Docente por Receita %
@@ -252,12 +253,12 @@ public class AtendimentosFaixaDemandaExportExcel
 		
 		// Receita Acumulada
 		setCell( row, i++, sheet,
-			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 			resumoFaixaDemandaDTO.getReceitaAcumulada() );
 		
 		// Custo Docente Acumulado
 		setCell( row, i++, sheet,
-			cellStyles[ ExcelCellStyleReference.DOUBLE.ordinal() ],
+			cellStyles[ ExcelCellStyleReference.CURRENCY.ordinal() ],
 			resumoFaixaDemandaDTO.getCustoDocenteAcumulado() );
 		
 		// Custo Docente Por Receita Acumulado %
