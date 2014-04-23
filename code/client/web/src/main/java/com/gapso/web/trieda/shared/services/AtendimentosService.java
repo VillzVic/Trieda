@@ -115,7 +115,7 @@ public interface AtendimentosService extends RemoteService {
 
 	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO);
 
-	void saveAula(TurmaDTO turmaDTO, AulaDTO aulaDTO);
+	TurmaDTO saveAula(DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO);
 
 	void alocaAlunosTurma(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO, List<AlunoStatusDTO> alunos);
 
@@ -134,5 +134,9 @@ public interface AtendimentosService extends RemoteService {
 
 	void deleteTurmaSelecionada(CenarioDTO cenarioDTO, DemandaDTO demandaDTO, TurmaDTO turmaDTO);
 
-	void editTurma(TurmaDTO turmaDTO);
+	void editTurma(TurmaDTO turmaDTO, String turmaEditadaNome);
+
+	void confirmarTurmaSelecionada(DemandaDTO demandaDTO, TurmaDTO turmaDTO);
+	
+	void desconfirmarTurmaSelecionada(DemandaDTO demandaDTO, TurmaDTO turmaDTO);
 }

@@ -378,6 +378,16 @@ table.cw-FlexTable td.cw-FlexTable-content {
 	margin-bottom: 0px !important;
 }
 
+.gradeVazia:hover {
+	background-color: #98c5f5;
+}
+
+.gradeVazia:hover::before{
+    content: 'Inserir aula usando clique duplo';
+	white-space: pre-wrap;
+}
+
+
 .corDisciplina0 { background-color: #FFDAAF; }
 .corDisciplina1 { background-color: #D2E1F0; }
 .corDisciplina2 { background-color: #CCCCFF; }

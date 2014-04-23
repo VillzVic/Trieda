@@ -3854,6 +3854,93 @@ public class ConvertBeans {
 		return dto;
 	}
 	
+	public static AulaDTO toAulaDTO(AtendimentoOperacionalDTO aula)
+	{
+		InstituicaoEnsino instituicaoEnsino = InstituicaoEnsino.find(aula.getInstituicaoEnsinoId());
+		
+		AulaDTO aulaDTO = new AulaDTO();
+		aulaDTO.setAtendimentosIds(aula.getIdsAtendimentosConcatenados());
+		aulaDTO.setCenarioId(aula.getCenarioId());
+		aulaDTO.setInstituicaoEnsinoId(aula.getInstituicaoEnsinoId());
+		aulaDTO.setCreditosPraticos(aula.getCreditoTeoricoBoolean() ? 0 : aula.getTotalCreditos());
+		aulaDTO.setCreditosTeoricos(aula.getCreditoTeoricoBoolean() ? aula.getTotalCreditos() : 0);
+		aulaDTO.setSalaId(aula.getSalaId());
+		aulaDTO.setSalaString(aula.getSalaString());
+		aulaDTO.setHorarioDisponivelCenarioId(aula.getHorarioDisponivelCenarioId());
+		aulaDTO.setHorarioAulaId(aula.getHorarioAulaId());
+		aulaDTO.setSemana(aula.getSemana());
+		aulaDTO.setSemanaString(Semanas.get(aula.getSemana()).name());
+		
+		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.find(aula.getHorarioDisponivelCenarioId(), instituicaoEnsino);
+		DateFormat df = new SimpleDateFormat( "HH:mm" );
+		String inicio = df.format( hdc.getHorarioAula().getHorario() );
+
+		Calendar fimCal = Calendar.getInstance();
+		fimCal.setTime( hdc.getHorarioAula().getHorario() );
+
+		fimCal.add( Calendar.MINUTE, hdc.getHorarioAula().getSemanaLetiva().getTempo() );
+		String fim = df.format( fimCal.getTime() );
+
+		String tipoCredito = aula.getCreditoTeoricoBoolean() ? aula.getTotalCreditos() + "T" : aula.getTotalCreditos() + "P";
+		
+		String horarioString = Semanas.get(aula.getSemana()) + " " + inicio + "/" + fim + " " + tipoCredito;
+		
+		aulaDTO.setHorarioString(horarioString);
+
+		aulaDTO.setProfessorId(aula.getProfessorId());
+		String professorNome = "";
+		if (aula.getProfessorId() != null)
+		{
+			professorNome = aula.getProfessorString();
+		}
+		else if (aula.getProfessorVirtualId() != null)
+		{
+			professorNome = aula.getProfessorVirtualString();
+		}
+		
+		aulaDTO.setProfessorNome(professorNome);
+		aulaDTO.setProfessorVirtualId(aula.getProfessorVirtualId());
+		
+		return aulaDTO;
+	}
+	
+	public static AulaDTO toAulaDTO(AtendimentoTatico aula)
+	{
+		AulaDTO aulaDTO = new AulaDTO();
+		Set<Long> atendimentosIds = new HashSet<Long>();
+		atendimentosIds.add(aula.getId());
+		
+		aulaDTO.setAtendimentosIds(atendimentosIds);
+		aulaDTO.setCenarioId(aula.getCenario().getId());
+		aulaDTO.setInstituicaoEnsinoId(aula.getInstituicaoEnsino().getId());
+		aulaDTO.setCreditosPraticos(aula.getCreditosPratico());
+		aulaDTO.setCreditosTeoricos(aula.getCreditosTeorico());
+		aulaDTO.setSalaId(aula.getSala().getId());
+		aulaDTO.setSalaString(aula.getSala().getCodigo());
+		aulaDTO.setHorarioDisponivelCenarioId(HorarioDisponivelCenario.findBy(aula.getInstituicaoEnsino(), aula.getHorarioAula(), aula.getSemana()).getId());
+		aulaDTO.setHorarioAulaId(aula.getHorarioAula().getId());
+		aulaDTO.setSemana(aula.getSemana().ordinal());
+		aulaDTO.setSemanaString(aula.getSemana().name());
+		
+		DateFormat df = new SimpleDateFormat( "HH:mm" );
+		String inicio = df.format( aula.getHorarioAula().getHorario() );
+
+		Calendar fimCal = Calendar.getInstance();
+		fimCal.setTime( aula.getHorarioAula().getHorario() );
+
+		fimCal.add( Calendar.MINUTE, aula.getHorarioAula().getSemanaLetiva().getTempo() );
+		String fim = df.format( fimCal.getTime() );
+
+		String tipoCredito = aula.getCreditosPratico() == 0 ? aula.getCreditosTeorico() + "T" : aula.getCreditosPratico() + "P";
+		
+		String horarioString = aula.getSemana().name() + " " + inicio + "/" + fim + " " + tipoCredito;
+		
+		aulaDTO.setHorarioString(horarioString);
+		
+		
+		return aulaDTO;
+	}
+	
 	public static Aula toAula(AulaDTO dto)
 	{
 		Aula domain = new Aula();

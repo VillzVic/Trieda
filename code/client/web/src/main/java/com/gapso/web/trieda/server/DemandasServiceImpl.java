@@ -52,7 +52,6 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ParametroGeracaoDemandaDTO;
-import com.gapso.web.trieda.shared.dtos.QuartetoDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;

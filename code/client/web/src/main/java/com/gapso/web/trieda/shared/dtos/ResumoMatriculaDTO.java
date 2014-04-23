@@ -162,7 +162,7 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	public int compareTo(ResumoMatriculaDTO o) {
 		if ( getAlunoMatricula() == null)
 		{
-			return getCodDisciplina().compareTo(o.getCodDisciplina());
+			return getNaturalKey().compareTo(o.getNaturalKey());
 		}
 		return getAlunoMatricula().compareTo(o.getAlunoMatricula());
 	}
@@ -171,7 +171,7 @@ public class ResumoMatriculaDTO extends AbstractDTO< String >
 	public String getNaturalKey() {
 		if ( getAlunoMatricula() == null)
 		{
-			return getCodDisciplina();
+			return getCodDisciplina() + getCampusString();
 		}
 		return getAlunoMatricula();
 	}

@@ -6,6 +6,9 @@ import java.util.List;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.GridEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -25,10 +28,12 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
@@ -38,7 +43,9 @@ import com.gapso.web.trieda.shared.services.AtendimentosServiceAsync;
 import com.gapso.web.trieda.shared.services.SalasServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaSalaGrid;
+import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaVisao.LinhaDeCredito;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
+import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SalaAutoCompleteBox;
@@ -46,6 +53,8 @@ import com.gapso.web.trieda.shared.util.view.SimpleUnpagedGrid;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.future.FutureResult;
+import com.googlecode.future.FutureSynchronizer;
 
 public class AlocacaoManualPresenter 
 	implements Presenter
@@ -97,6 +106,8 @@ public class AlocacaoManualPresenter
 		Button getNovaAulaButton();
 		Button getSalvarMarcacoesAlunosButton();
 		Button getSalvarMarcacoesProfessoresButton();
+		Button getConfirmarTurmaButton();
+		Button getDesconfirmarTurmaButton();
 	}
 	
 	private CenarioDTO cenarioDTO;
@@ -114,7 +125,7 @@ public class AlocacaoManualPresenter
 	}
 	
  	private void setListeners()
- 	{
+ 	{ 		
 		this.getDisplay().getTurmasRemoveButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
 			{
@@ -141,10 +152,15 @@ public class AlocacaoManualPresenter
 							for (TurmaStatusDTO turmas : list)
 							{
 								if (turmas.getStatus().equals("Planejada"))
+								{
 									planejadas -= turmas.getQtdeTotal();
+									naoAtendidas += turmas.getQtdeTotal();
+								}
 								else if (turmas.getStatus().equals("Não Planejada"))
+								{
 									naoPlanejadas -= turmas.getQtdeTotal();
-								naoAtendidas += turmas.getQtdeTotal();
+									naoAtendidas += turmas.getQtdeTotal();
+								}
 							}
 							getDisplay().refreshDemandasPanel(planejadas, naoPlanejadas, naoAtendidas);
 							getDisplay().getGrid().updateList();
@@ -685,6 +701,108 @@ public class AlocacaoManualPresenter
 					});
 				}
 			});
+			
+			getDisplay().getConfirmarTurmaButton().addSelectionListener(new SelectionListener<ButtonEvent>()
+			{
+				@Override
+				public void componentSelected(ButtonEvent ce)
+				{
+					final AtendimentosServiceAsync service = Services.atendimentos();
+					service.confirmarTurmaSelecionada(display.getDemanda(), display.getTurmaSelecionada(), new AsyncCallback< Void >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!", "Não foi possível salvar a turma", null );
+						}
+
+						@Override
+						public void onSuccess( Void result )
+						{
+							TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
+							turmaSelecionada.setCenarioId(cenarioDTO.getId());
+							turmaSelecionada.setDisciplinaId(display.getTurmaSelecionada().getDisciplinaId());
+							turmaSelecionada.setId(display.getTurmaSelecionada().getId());
+							turmaSelecionada.setInstituicaoEnsinoId(display.getTurmaSelecionada().getInstituicaoEnsinoId());
+							turmaSelecionada.setNome(display.getTurmaSelecionada().getNome());
+							turmaSelecionada.setTurma(display.getTurmaSelecionada().getNome());
+							turmaSelecionada.setStatus("Planejada");
+							
+							service.selecionarTurma(turmaSelecionada, cenarioDTO, getDisplay().getDemanda(), new AsyncCallback< ParDTO<TurmaDTO, List<AulaDTO>> >()
+							{
+								@Override
+								public void onFailure( Throwable caught )
+								{
+									MessageBox.alert( "ERRO!", "Não foi possível selecionar a turma", null );
+								}
+
+								@Override
+								public void onSuccess( ParDTO<TurmaDTO, List<AulaDTO>> result )
+								{
+									getDisplay().getAlunosGrid().updateList();
+									getDisplay().getGrid().updateList();
+									getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), "Planejada");
+									getDisplay().refreshDemandasPanel(result.getPrimeiro().getNoAlunos(), -result.getPrimeiro().getNoAlunos(), 0);
+									getDisplay().refreshTurmaSelecionadaPanel();
+									addAulasButtonsListeners();
+									Info.display( "Salvo", "Turma confirmada com sucesso!" );
+								}
+							});
+						}
+					});
+				}
+			});
+			
+			getDisplay().getDesconfirmarTurmaButton().addSelectionListener(new SelectionListener<ButtonEvent>()
+			{
+				@Override
+				public void componentSelected(ButtonEvent ce)
+				{
+					final AtendimentosServiceAsync service = Services.atendimentos();
+					service.desconfirmarTurmaSelecionada(display.getDemanda(), display.getTurmaSelecionada(), new AsyncCallback< Void >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!", "Não foi possível desconfirmar a turma", null );
+						}
+
+						@Override
+						public void onSuccess( Void result )
+						{
+							TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
+							turmaSelecionada.setCenarioId(cenarioDTO.getId());
+							turmaSelecionada.setDisciplinaId(display.getTurmaSelecionada().getDisciplinaId());
+							turmaSelecionada.setId(display.getTurmaSelecionada().getId());
+							turmaSelecionada.setInstituicaoEnsinoId(display.getTurmaSelecionada().getInstituicaoEnsinoId());
+							turmaSelecionada.setNome(display.getTurmaSelecionada().getNome());
+							turmaSelecionada.setTurma(display.getTurmaSelecionada().getNome());
+							turmaSelecionada.setStatus("Não Planejada");
+							
+							service.selecionarTurma(turmaSelecionada, cenarioDTO, getDisplay().getDemanda(), new AsyncCallback< ParDTO<TurmaDTO, List<AulaDTO>> >()
+							{
+								@Override
+								public void onFailure( Throwable caught )
+								{
+									MessageBox.alert( "ERRO!", "Não foi possível selecionar a turma", null );
+								}
+
+								@Override
+								public void onSuccess( ParDTO<TurmaDTO, List<AulaDTO>> result )
+								{
+									getDisplay().getAlunosGrid().updateList();
+									getDisplay().getGrid().updateList();
+									getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), "Não Planejada");
+									getDisplay().refreshDemandasPanel(-result.getPrimeiro().getNoAlunos(), result.getPrimeiro().getNoAlunos(), 0);
+									getDisplay().refreshTurmaSelecionadaPanel();
+									addAulasButtonsListeners();
+									Info.display( "Salvo", "Turma desconfirmada com sucesso!" );
+								}
+							});
+						}
+					});
+				}
+			});
 	}
 
 	private void configureProxy()
@@ -797,6 +915,47 @@ public class AlocacaoManualPresenter
 							@Override
 							public void onSuccess( SalaDTO result )
 							{
+								final SalaDTO salaDTO = result;
+								getDisplay().getSalaGridPanel().addGridListener(Events.CellDoubleClick, new Listener<GridEvent<LinhaDeCredito>>() {
+						            @Override
+						            public void handleEvent(final GridEvent<LinhaDeCredito> be) {
+						            	Integer semana = be.getColIndex() == 7 ? 1 : be.getColIndex() + 1;
+						            	Services.horariosAula().findHorarioDisponivelCenario(be.getModel().getDisplay().substring(0, 5), semana , display.getDemanda() , new AsyncCallback< TrioDTO<HorarioDisponivelCenarioDTO, String, SemanaLetivaDTO> >()
+											{
+											@Override
+											public void onFailure( Throwable caught )
+											{
+												if (caught instanceof TriedaException)
+												{
+													MessageBox.alert( "ERRO!", caught.getMessage(), null );
+												}
+												else
+													MessageBox.alert( "ERRO!", "Não foi possível obter o horario da grade", null );
+											}
+
+											@Override
+											public void onSuccess( TrioDTO<HorarioDisponivelCenarioDTO, String, SemanaLetivaDTO> result )
+											{
+												int creditosAlocadosPratico = 0;
+												int creditosAlocadosTeorico = 0;
+												for (AulaDTO aulaDTO : getDisplay().getAulasSelecionadas())
+												{
+													creditosAlocadosPratico += aulaDTO.getCreditosPraticos();
+													creditosAlocadosTeorico += aulaDTO.getCreditosTeoricos();
+												}
+												AulaDTO aulaDTO = new AulaDTO();
+												aulaDTO.setSemanaString(result.getSegundo());
+												Presenter presenter = new AulaFormPresenter( instituicaoEnsinoDTO,
+													cenarioDTO, creditosAlocadosPratico, creditosAlocadosTeorico, 
+													new AulaFormView( cenarioDTO, getDisplay().getCampusDTO(), getDisplay().getDisciplinaDTO(),
+													salaDTO, result.getTerceiro(), result.getPrimeiro(), getDisplay().getTurmaSelecionada(), aulaDTO ), AlocacaoManualPresenter.this);
+
+												presenter.go( null );
+											}
+										});
+						            }
+						            
+						        });
 								getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(result.getCodigo());
 								getDisplay().getSalaGridPanel().setAulaDestaque(aulaDTO);
 								getDisplay().setAulaNaGrade(aulaDTO);
@@ -807,6 +966,43 @@ public class AlocacaoManualPresenter
 						});
 					}
 				});
+			
+			getDisplay().getEditarAulaBts().get(i).addSelectionListener(
+					new SelectionListener< ButtonEvent >()
+					{
+						@Override
+						public void componentSelected( ButtonEvent ce )
+						{
+							final FutureResult<SalaDTO> futureSalaDTO = new FutureResult<SalaDTO>();
+							final FutureResult<ParDTO<HorarioDisponivelCenarioDTO, SemanaLetivaDTO>> futureHdcDTO =
+									new FutureResult<ParDTO<HorarioDisponivelCenarioDTO, SemanaLetivaDTO>>();
+							
+							Services.salas().getSala(aulaDTO.getSalaId(), futureSalaDTO);
+							Services.horariosAula().getHorarioDisponivelCenario(aulaDTO.getHorarioDisponivelCenarioId(), futureHdcDTO);
+							
+							FutureSynchronizer synch = new FutureSynchronizer(futureSalaDTO,futureHdcDTO);
+							synch.addCallback(new AbstractAsyncCallbackWithDefaultOnFailure<Boolean>(display) {
+								@Override
+								public void onSuccess(Boolean result)
+								{
+									int creditosAlocadosPratico = 0;
+									int creditosAlocadosTeorico = 0;
+									for (AulaDTO aulaDTO : getDisplay().getAulasSelecionadas())
+									{
+										creditosAlocadosPratico += aulaDTO.getCreditosPraticos();
+										creditosAlocadosTeorico += aulaDTO.getCreditosTeoricos();
+									}
+									Presenter presenter = new AulaFormPresenter( instituicaoEnsinoDTO,
+										cenarioDTO, creditosAlocadosPratico, creditosAlocadosTeorico, 
+										new AulaFormView( cenarioDTO, getDisplay().getCampusDTO(), getDisplay().getDisciplinaDTO(),
+										futureSalaDTO.result(), futureHdcDTO.result().getSegundo(), futureHdcDTO.result().getPrimeiro(),
+										getDisplay().getTurmaSelecionada(), aulaDTO ), AlocacaoManualPresenter.this);
+
+									presenter.go( null );
+								}
+							});
+						}
+					});
 		}
 		
 	}

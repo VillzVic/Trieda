@@ -241,11 +241,6 @@ public class AtendimentoOperacional
 
 		if ( this.entityManager.contains( this ) )
 		{
-			if ( this.professorVirtual != null )
-			{
-				this.professorVirtual.remove();
-			}
-
 			this.entityManager.remove( this );
 		}
 		else
@@ -255,11 +250,6 @@ public class AtendimentoOperacional
 
 			if ( attached != null )
 			{
-				if ( attached.professorVirtual != null )
-				{
-					attached.professorVirtual.remove();
-				}
-
 				this.entityManager.remove( attached );
 			}
 		}

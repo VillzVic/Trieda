@@ -754,6 +754,7 @@ public class Demanda
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
+        q.setMaxResults(1);
 
         if ( campus != null )
         {

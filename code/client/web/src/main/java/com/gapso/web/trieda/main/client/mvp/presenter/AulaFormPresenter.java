@@ -78,8 +78,31 @@ public class AulaFormPresenter
 		this.creditosAlocadosTeorico = creditosAlocadosTeorico;
 		this.alocacaoManualPresenter = alocacaoManualPresenter;
 		setListeners();
+		preencheCreditosComboBox();
 	}
 	
+	private void preencheCreditosComboBox()
+	{
+		if (display.getTipoCreditoRadioGroup().getValue() != null && 
+				display.getTipoCreditoRadioGroup().getValue().getBoxLabel().equals("Teórico"))
+		{
+			for (int i = 1; i <= (display.getDisciplinaDTO().getCreditosTeorico() - creditosAlocadosTeorico + display.getAulaDTO().getCreditosTeoricos()); i++)
+			{
+				display.getQtdeCreditosComboBox().add(i);
+			}
+			display.getQtdeCreditosComboBox().setSimpleValue(display.getAulaDTO().getCreditosTeoricos());
+		}
+		else if (display.getTipoCreditoRadioGroup().getValue() != null && 
+				display.getTipoCreditoRadioGroup().getValue().getBoxLabel().equals("Prático"))
+		{
+			for (int i = 1; i <= (display.getDisciplinaDTO().getCreditosPratico() - creditosAlocadosPratico + display.getAulaDTO().getCreditosPraticos()); i++)
+			{
+				display.getQtdeCreditosComboBox().add(i);
+			}
+			display.getQtdeCreditosComboBox().setSimpleValue(display.getAulaDTO().getCreditosPraticos());
+		}
+	}
+
 	private void setListeners()
 	{
 		this.display.getSalvarButton().addSelectionListener(
@@ -112,7 +135,7 @@ public class AulaFormPresenter
 							else
 							{
 								final AtendimentosServiceAsync service = Services.atendimentos();
-								service.saveAula(display.getTurmaDTO(), getDTO(), new AsyncCallback< Void >()
+								service.saveAula(display.getDisciplinaDTO(), display.getCampusDTO(), display.getTurmaDTO(), getDTO(), new AsyncCallback< TurmaDTO >()
 								{
 									@Override
 									public void onFailure( Throwable caught )
@@ -121,16 +144,17 @@ public class AulaFormPresenter
 									}
 
 									@Override
-									public void onSuccess( Void result )
+									public void onSuccess( TurmaDTO result )
 									{
 										final TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
+										alocacaoManualPresenter.getDisplay().getTurmaSelecionada().setId(result.getId());
 										turmaSelecionada.setCenarioId(cenario.getId());
 										turmaSelecionada.setDisciplinaId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getDisciplinaId());
-										turmaSelecionada.setId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getId());
+										turmaSelecionada.setId(result.getId());
 										turmaSelecionada.setInstituicaoEnsinoId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getInstituicaoEnsinoId());
 										turmaSelecionada.setNome(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome());
 										turmaSelecionada.setTurma(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getId() == null ? alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome() : null);
-										turmaSelecionada.setStatus(alocacaoManualPresenter.getDisplay().getTurmaSelecionadaStatus());
+										turmaSelecionada.setStatus(result.getParcial() ? "Parcial" : alocacaoManualPresenter.getDisplay().getTurmaSelecionadaStatus());
 										service.selecionarTurma(turmaSelecionada, cenario, alocacaoManualPresenter.getDisplay().getDemanda(), new AsyncCallback< ParDTO<TurmaDTO, List<AulaDTO>> >()
 										{
 											@Override
@@ -267,6 +291,7 @@ public class AulaFormPresenter
 	{
 		AulaDTO aulaDTO = new AulaDTO();
 		
+		aulaDTO.setAtendimentosIds(display.getAulaDTO().getAtendimentosIds());
 		aulaDTO.setInstituicaoEnsinoId(instituicaoEnsinoDTO.getId());
 		aulaDTO.setCenarioId(cenario.getId());
 		aulaDTO.setId(display.getAulaDTO().getId());

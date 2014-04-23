@@ -80,7 +80,7 @@ public class AlunoDemanda
     private Set<AtendimentoOperacional> atendimentosOperacional = new HashSet<AtendimentoOperacional>();
     
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinTable(name="TURMAS_ALUNOS",
+	@JoinTable(name="TURMAS_ALUNOS_DEMANDA",
 	joinColumns=@JoinColumn(name="ALD_ID"),
 	inverseJoinColumns=@JoinColumn(name="TUR_ID"))
 	private Set<Turma> turmas = new HashSet<Turma>();
@@ -326,8 +326,8 @@ public class AlunoDemanda
 	}
 	
 	@SuppressWarnings( "unchecked" )
-	public static List< AlunoDemanda > findByDemandaAndTurma(
-		InstituicaoEnsino instituicaoEnsino, Demanda demanda, String turma )
+	public static List< AlunoDemanda > findByDisciplinaCampusAndTurma(
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Campus campus, String turma )
 	{
 		List<AlunoDemanda> result = new ArrayList<AlunoDemanda>();
 
@@ -336,11 +336,14 @@ public class AlunoDemanda
 			" LEFT JOIN o.atendimentosTatico at LEFT JOIN o.turmas t" +
 			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.demanda = :demanda " +
-			" AND (ao.turma = :turma OR at.turma = :turma OR t.nome = :turma OR o.atendido is FALSE)" );
+			" AND o.demanda.disciplina = :disciplina " +
+			" AND o.demanda.oferta.campus = :campus " +
+			" AND (t.nome = :turma OR o.turmas IS EMPTY) " +
+			" AND (ao.turma = :turma OR at.turma = :turma OR o.atendido is FALSE)" );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
-		q.setParameter( "demanda", demanda );
+		q.setParameter( "disciplina", disciplina );
+		q.setParameter( "campus", campus );
 		q.setParameter( "turma", turma );
 		result.addAll(q.getResultList());
 

@@ -9,8 +9,10 @@ import com.extjs.gxt.ui.client.core.El;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.dnd.DragSource;
 import com.extjs.gxt.ui.client.dnd.GridDropTarget;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.DNDEvent;
 import com.extjs.gxt.ui.client.event.DNDListener;
+import com.extjs.gxt.ui.client.event.EventType;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
@@ -130,6 +132,15 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		
 	}
 	
+	public void addGridListener(EventType eventType, Listener<? extends BaseEvent> listener)
+	{
+		if (this.grid != null)
+		{
+			this.grid.removeAllListeners();
+			this.grid.addListener(eventType, listener);
+		}
+	}
+	
 	public abstract RelatorioVisaoFiltro getFiltro();
 	public abstract void setFiltro(RelatorioVisaoFiltro filtro);
 	public abstract void requestAtendimentos();
@@ -240,6 +251,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		int width = (name.equals("")) ? 0 : getWidth(id);
 
 		ColumnConfig column = new ColumnConfig(id, name, width);
+		
 		column.setRenderer(change);
 		column.setResizable(false);
 		column.setMenuDisabled(true);
@@ -278,7 +290,13 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				}
 
 				if (aulaDTO == null) {
-					return new Html("");
+					Html html = new Html("");
+					if (!model.getDisplay().isEmpty() && aulaDestaque != null)
+					{
+						html.setStyleAttribute("height", tamanhoLinhaGradeHorariaEmPixels - 5 + "px");
+						html.addStyleName("gradeVazia");
+					}
+					return html;
 				}
 				TrioDTO<String, String, String> htmlInfo = getHTMLInfo(aulaDTO);
 
@@ -498,6 +516,11 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	
 	public void setAulaDestaque(AulaDTO aulaDestaque){
 		this.aulaDestaque = aulaDestaque;
+	}
+	
+	public Grid<LinhaDeCredito> getGrid()
+	{
+		return this.grid;
 	}
 	
 }

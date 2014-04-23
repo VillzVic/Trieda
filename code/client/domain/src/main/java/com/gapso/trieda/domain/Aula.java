@@ -98,7 +98,7 @@ public class Aula
 	joinColumns=@JoinColumn(name="AUL_ID"),
 	inverseJoinColumns=@JoinColumn(name="TUR_ID"))
     private Set<Turma> turmas = new HashSet<Turma>();
-
+    
 	public Long getId() {
 		return id;
 	}
@@ -522,7 +522,7 @@ public class Aula
 		return TriedaTrio.create(true, motivoIncompatibilidade, incompatibilidadeForte);
 	}
 	
-	public TriedaTrio<Boolean,List<String>,List<String>> ehViavel(Map<String, Long> tempoDeslocamentoUnidades, Turma turma, List<Aula> possiveisAtendimentosConflitantes, Parametro parametros)
+	public TriedaTrio<Boolean,List<String>,List<String>> ehViavel(Map<String, Long> tempoDeslocamentoUnidades, Turma turma, Map<String, Aula> possiveisAtendimentosConflitantes, Parametro parametros)
 	{
 		List<String> conflitosFortes = new ArrayList<String>();
 		List<String> conflitosFracos = new ArrayList<String>();
@@ -551,7 +551,7 @@ public class Aula
 		
 	    // Colher aulas que podem ser conflitantes com a aula em questão
 		Set<Aula> aulasQuePodemSerConflitantes = new HashSet<Aula>();
-		aulasQuePodemSerConflitantes.addAll(possiveisAtendimentosConflitantes);
+		aulasQuePodemSerConflitantes.addAll(possiveisAtendimentosConflitantes.values());
 		// Colher aulas dos alunos (tem que buscar tanto aulas parciais quanto não-parciais, com exceção da aula em questã)
 		for (AlunoDemanda aluno : turma.getAlunos())
 		{
@@ -571,8 +571,11 @@ public class Aula
 		Aula aulaEmQuestao = null;
 		for (Aula aula : aulasQuePodemSerConflitantes)
 		{
-			if (aula.getId().equals(this.getId()))
+			String aulaKey = this.getSala().getId() + "-" + this.getHorarioDisponivelCenario().getId();
+			String aulaConflitanteKey = aula.getSala().getId() + "-" + aula.getHorarioDisponivelCenario().getId();
+			if (aulaKey.equals(aulaConflitanteKey))
 			{
+				System.out.println("Aula key " + aulaKey);
 				aulaEmQuestao = aula;
 			}
 		}

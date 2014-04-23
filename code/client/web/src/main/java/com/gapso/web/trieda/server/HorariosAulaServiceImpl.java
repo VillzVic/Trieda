@@ -1,9 +1,13 @@
 package com.gapso.web.trieda.server;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
@@ -11,6 +15,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
+import com.gapso.trieda.domain.Demanda;
 import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.HorarioAula;
 import com.gapso.trieda.domain.HorarioDisponivelCenario;
@@ -22,10 +27,15 @@ import com.gapso.trieda.domain.Unidade;
 import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.HorarioAulaDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
+import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.HorariosAulaService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 public class HorariosAulaServiceImpl
 	extends RemoteService implements HorariosAulaService
@@ -158,5 +168,52 @@ public class HorariosAulaServiceImpl
 				horarioAula.remove();
 			}
 		}
+	}
+	
+	@Override
+	public ParDTO<HorarioDisponivelCenarioDTO, SemanaLetivaDTO> getHorarioDisponivelCenario(
+		Long id )
+	{
+		HorarioDisponivelCenario hdc = HorarioDisponivelCenario.find(id, getInstituicaoEnsinoUser());
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>();
+		list.add(hdc);
+		return ParDTO.create(ConvertBeans.toHorarioDisponivelCenarioDTO(list).get(0),
+				ConvertBeans.toSemanaLetivaDTO(hdc.getHorarioAula().getSemanaLetiva()));
+	}
+	
+	@Override
+	public TrioDTO<HorarioDisponivelCenarioDTO, String, SemanaLetivaDTO> findHorarioDisponivelCenario(String horarioInicialString, Integer semana, DemandaDTO demandaDTO) throws TriedaException
+	{
+		Demanda demanda = Demanda.find(demandaDTO.getId(), getInstituicaoEnsinoUser());
+		DateFormat formatter = new SimpleDateFormat("HH:mm");
+		Date date;
+		try {
+			date = formatter.parse(horarioInicialString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new TriedaException("Erro ao fazer parsing do horário");
+		}
+		
+		Set<HorarioAula> horarios = demanda.getOferta().getCurriculo().getSemanaLetiva().getHorariosAula();
+		List<HorarioDisponivelCenario> list = new ArrayList<HorarioDisponivelCenario>();
+		for (HorarioAula horario : horarios)
+		{
+			if (formatter.format(horario.getHorario()).equals(formatter.format(date)))
+			{
+				try {
+					list.add(HorarioDisponivelCenario.findBy(getInstituicaoEnsinoUser(), horario, Semanas.get(semana)));
+				} catch (Exception e) {
+					throw new TriedaException("Nao existe este horário cadastrado na Semana Letiva");
+				}
+			}
+		}
+		
+		if (list.isEmpty())
+		{
+			throw new TriedaException("Nao existe este horário cadastrado na Semana Letiva");
+		}
+		
+		return TrioDTO.create(ConvertBeans.toHorarioDisponivelCenarioDTO(list).get(0), Semanas.get(semana).toString(),
+				ConvertBeans.toSemanaLetivaDTO(demanda.getOferta().getCurriculo().getSemanaLetiva()));
 	}
 }

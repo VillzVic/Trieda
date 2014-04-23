@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.shared.dtos;
 
+import java.util.Set;
+
 public class AulaDTO
 	extends AbstractDTO< String >
 	implements Comparable< AulaDTO >
@@ -8,6 +10,7 @@ public class AulaDTO
 	private static final long serialVersionUID = -4405054287109634889L;
 
 	public static final String PROPERTY_ID = "id";
+	public static final String PROPERTY_ATENDIMENTOS_IDS = "atendimentosIds";
 	public static final String PROPERTY_VERSION = "version";
 	public static final String PROPERTY_CENARIO_ID = "cenarioId";
 	public static final String PROPERTY_CREDITOS_TEORICOS = "creditosTeoricos";
@@ -37,6 +40,16 @@ public class AulaDTO
 	public Long getId()
 	{
 		return get( PROPERTY_ID );
+	}
+	
+	public void setAtendimentosIds( Set<Long> value )
+	{
+		set( PROPERTY_ATENDIMENTOS_IDS, value );
+	}
+
+	public Set<Long> getAtendimentosIds()
+	{
+		return get( PROPERTY_ATENDIMENTOS_IDS );
 	}
 
 	public void setVersion( Integer value )

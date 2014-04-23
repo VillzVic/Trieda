@@ -2,10 +2,15 @@ package com.gapso.web.trieda.main.client.mvp.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.GridEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
@@ -13,7 +18,9 @@ import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.store.StoreListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -26,6 +33,7 @@ import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
+import com.extjs.gxt.ui.client.widget.grid.GridViewConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.CenterLayout;
@@ -36,25 +44,34 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlocacaoManualPresenter;
+import com.gapso.web.trieda.main.client.mvp.presenter.AulaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
+import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
+import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
+import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaVisao.LinhaDeCredito;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SalaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.SimpleUnpagedGrid;
+import com.google.gwt.dev.protobuf.Service;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -91,6 +108,8 @@ public class AlocacaoManualView
 	private ContentPanel turmaSelecionadaPanel;
 	private LayoutContainer emptyText;
 	private Button salvarTurmaBt = new Button();
+	private Button confirmarTurmaBt = new Button();
+	private Button desconfirmarTurmaBt = new Button();
 	private Button editarTurmaBt = new Button();
 	private Button removerTurmaBt = new Button();
 	private List<Button> mostrarGradeBts;
@@ -347,6 +366,7 @@ public class AlocacaoManualView
 		grade.setBodyBorder(false);
 		
 		salaGridPanel = new GradeHorariaSalaGrid(cenarioDTO);
+		
 		salaGridPanel.setEmptyTextBeforeSearch("Preencha o filtro acima e acione o" +
 				" botão filtrar para visualizar a grade horária do ambiente desejado.");
 		salaFiltro = new RelatorioVisaoSalaFiltro();
@@ -751,6 +771,18 @@ public class AlocacaoManualView
 	}
 	
 	@Override
+	public Button getConfirmarTurmaButton()
+	{
+		return confirmarTurmaBt;
+	}
+	
+	@Override
+	public Button getDesconfirmarTurmaButton()
+	{
+		return desconfirmarTurmaBt;
+	}
+	
+	@Override
 	public Button getEditarTurmaButton()
 	{
 		return editarTurmaBt;
@@ -869,6 +901,11 @@ public class AlocacaoManualView
 		salvarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.disk16() ));
 		salvarTurmaBt.disable();
+		confirmarTurmaBt.setIcon(AbstractImagePrototype.create(
+				Resources.DEFAULTS.senha16() ));
+		desconfirmarTurmaBt.setIcon(AbstractImagePrototype.create(
+				Resources.DEFAULTS.desconfirmarTurma16() ));
+		
 		if ((turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
 				&& turmaSelecionada.getNoAlunos() > 0
 				&& getTurmaSelecionadaStatus().equals("Parcial"))
@@ -895,7 +932,18 @@ public class AlocacaoManualView
 		}
 		statusLabel.setValue("<b>Status: </b>" + tumaSelecionadaStatusColor);
 		statusLabel.setStyleAttribute("font-size", "10px");
-		buttonsContainer.add(salvarTurmaBt);
+		if (turmaSelecionadaStatus.equals("Parcial"))
+		{
+			buttonsContainer.add(salvarTurmaBt);
+		}
+		else if (turmaSelecionadaStatus.equals("Planejada"))
+		{
+			buttonsContainer.add(desconfirmarTurmaBt);
+		}
+		else
+		{
+			buttonsContainer.add(confirmarTurmaBt);
+		}
 		buttonsContainer.add(editarTurmaBt);
 		buttonsContainer.add(removerTurmaBt);
 		rightContainer.add(buttonsContainer);

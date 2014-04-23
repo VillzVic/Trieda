@@ -82,7 +82,8 @@ public class ErrorsWarningsNewAulaPresenter
 				final AtendimentosServiceAsync service = Services.atendimentos();
 				if (tipoModal.equals(TipoModal.AULA))
 				{
-					service.saveAula(turmaDTO, aulaDTO, new AsyncCallback< Void >()
+					service.saveAula(alocacaoManualPresenter.getDisplay().getDisciplinaDTO(), 
+							alocacaoManualPresenter.getDisplay().getCampusDTO(), turmaDTO, aulaDTO, new AsyncCallback< TurmaDTO >()
 					{
 						@Override
 						public void onFailure( Throwable caught )
@@ -91,9 +92,17 @@ public class ErrorsWarningsNewAulaPresenter
 						}
 	
 						@Override
-						public void onSuccess( Void result )
+						public void onSuccess( TurmaDTO result )
 						{
-							final TurmaStatusDTO turmaSelecionada = alocacaoManualPresenter.getDisplay().getGrid().getGrid().getSelectionModel().getSelectedItem();
+							final TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
+							alocacaoManualPresenter.getDisplay().getTurmaSelecionada().setId(result.getId());
+							turmaSelecionada.setCenarioId(cenarioDTO.getId());
+							turmaSelecionada.setDisciplinaId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getDisciplinaId());
+							turmaSelecionada.setId(result.getId());
+							turmaSelecionada.setInstituicaoEnsinoId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getInstituicaoEnsinoId());
+							turmaSelecionada.setNome(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome());
+							turmaSelecionada.setTurma(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getId() == null ? alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome() : null);
+							turmaSelecionada.setStatus(result.getParcial() ? "Parcial" : alocacaoManualPresenter.getDisplay().getTurmaSelecionadaStatus());
 							
 							service.selecionarTurma(turmaSelecionada, cenarioDTO, alocacaoManualPresenter.getDisplay().getDemanda(), new AsyncCallback< ParDTO<TurmaDTO, List<AulaDTO>> >()
 							{

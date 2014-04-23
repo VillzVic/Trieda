@@ -69,7 +69,8 @@ public class ProfessorVirtual
 		CascadeType.MERGE, CascadeType.REFRESH } )
 	private Set< Disciplina > disciplinas = new HashSet< Disciplina >();
 
-	@OneToMany( mappedBy = "professorVirtual", cascade = CascadeType.ALL )
+	@OneToMany( mappedBy = "professorVirtual", cascade = { CascadeType.PERSIST,
+			CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH } )
 	private Set< AtendimentoOperacional > atendimentos = new HashSet< AtendimentoOperacional >();
 	
     @OneToMany( mappedBy="professorVirtual" )

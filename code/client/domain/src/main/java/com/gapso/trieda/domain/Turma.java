@@ -76,7 +76,7 @@ public class Turma
 	private Cenario cenario;
 	
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinTable(name="TURMAS_ALUNOS",
+	@JoinTable(name="TURMAS_ALUNOS_DEMANDA",
 	joinColumns=@JoinColumn(name="TUR_ID"),
 	inverseJoinColumns=@JoinColumn(name="ALD_ID"))
 	private Set<AlunoDemanda> alunos = new HashSet<AlunoDemanda>();

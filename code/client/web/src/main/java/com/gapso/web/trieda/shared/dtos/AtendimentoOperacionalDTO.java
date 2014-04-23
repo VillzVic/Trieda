@@ -926,4 +926,11 @@ public class AtendimentoOperacionalDTO extends AbstractAtendimentoRelatorioDTO< 
 	public List<AlunoDemandaDTO> getAlunosDemandas() {
 		return alunosDemandasDTO;
 	}
+	
+	private Set< Long > idsAtendimentosConcatenados = new HashSet< Long >();
+	
+	public Set<Long> getIdsAtendimentosConcatenados()
+	{
+		return idsAtendimentosConcatenados;
+	}
 }

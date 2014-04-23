@@ -669,6 +669,7 @@ public class ToolBarView
 		planejamentoToolBar.add(alocacaoManualBt);
 		
 		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
+		fixacoesListBt.hide();
 		planejamentoToolBar.add(fixacoesListBt);
 	}
 

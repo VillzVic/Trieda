@@ -145,7 +145,7 @@ implements AulaFormPresenter.Display
 				diaSemanaRadioGroup.getValue() == null ? null : diaSemanaRadioGroup.getValue().getFieldLabel());
 		horarioCB.setValue(horarioDisponivelCenarioDTO);
 		horarioCB.setAllowBlank(false);
-		if (aulaDTO.getId() == null)
+		if (horarioDisponivelCenarioDTO == null)
 		{
 			horarioCB.disable();
 		}
@@ -155,11 +155,11 @@ implements AulaFormPresenter.Display
 		tipoCreditoRadioGroup.setFieldLabel("Tipo de Crédito");
 		Radio teorico = new Radio();  
 		teorico.setBoxLabel("Teórico");
-		teorico.setValue(false);
+		teorico.setValue(aulaDTO.getCreditosTeoricos() != null ? aulaDTO.getCreditosTeoricos() > 0 : false);
 		tipoCreditoRadioGroup.add(teorico);
 		Radio pratico = new Radio();  
 		pratico.setBoxLabel("Prático");
-		pratico.setValue(false);
+		pratico.setValue(aulaDTO.getCreditosPraticos() != null ? aulaDTO.getCreditosPraticos() > 0 : false);
 		tipoCreditoRadioGroup.add(pratico);
 		this.formPanel.add( tipoCreditoRadioGroup, formData );
 		
@@ -168,10 +168,11 @@ implements AulaFormPresenter.Display
 		qtdeCreditosCB.setSimpleValue(aulaDTO.getCreditosPraticos());
 		qtdeCreditosCB.setEditable(false);
 		qtdeCreditosCB.setAllowBlank(false);
-		if (aulaDTO.getId() == null)
+		if (aulaDTO.getCreditosPraticos() == null)
 		{
 			qtdeCreditosCB.disable();
 		}
+
 		this.formPanel.add( qtdeCreditosCB, formData );
 		
 		FormButtonBinding binding = new FormButtonBinding( this.formPanel );

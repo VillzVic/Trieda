@@ -188,4 +188,5 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("nova_turma_16.png") ImageResource novaTurma16();
 	@Source("aula_edit_16.png") ImageResource aulaEdit16();
 	@Source("aula_delete_16.png") ImageResource aulaDelete16();
+	@Source("desconfirmar_turma_16.png") ImageResource desconfirmarTurma16();
 }

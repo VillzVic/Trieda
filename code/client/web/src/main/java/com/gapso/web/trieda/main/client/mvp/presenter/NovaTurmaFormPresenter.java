@@ -42,6 +42,7 @@ implements Presenter
 	private SimpleUnpagedGrid< TurmaStatusDTO > gridPanel;
 	private Display display;
 	private AlocacaoManualPresenter alocacaoManualPresenter;
+	private String turmaSelecionada;
 	
 	public NovaTurmaFormPresenter(
 		InstituicaoEnsinoDTO instituicaoEnsinoDTO,
@@ -54,6 +55,8 @@ implements Presenter
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.cenario = cenario;
 		this.alocacaoManualPresenter = alocacaoManualPresenter;
+		this.turmaSelecionada = alocacaoManualPresenter.getDisplay().getTurmaSelecionada() != null ?
+			alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome() : "";
 		setListeners();
 	}
 	
@@ -93,7 +96,7 @@ implements Presenter
 					else
 					{
 						final String turmaEditadaNome = display.getTurmaDTO().getNome();
-						service.editTurma(getDTO(), new AsyncCallback< Void >()
+						service.editTurma(getDTO(), turmaEditadaNome, new AsyncCallback< Void >()
 						{
 							@Override
 							public void onFailure( Throwable caught )
@@ -104,8 +107,7 @@ implements Presenter
 							@Override
 							public void onSuccess( Void result )
 							{
-								if (alocacaoManualPresenter.getDisplay().getTurmaSelecionada() != null
-										&& alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNome().equals(turmaEditadaNome))
+								if (turmaSelecionada.equals(turmaEditadaNome))
 								{
 									alocacaoManualPresenter.getDisplay().getTurmaSelecionada().setNome(getDTO().getNome());
 									alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
