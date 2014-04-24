@@ -230,6 +230,7 @@ public class DemandasImportExcel
 		checkNonRegisteredDisciplina( sheetContent );
 		checkNonRegisteredCurriculo( sheetContent );
 		checkNonRegisteredDisciplinaEmCurricular( sheetContent );
+		checkNonRegisteredOfertas( sheetContent );
 
 		return getErrors().isEmpty();
 	}
@@ -422,6 +423,34 @@ public class DemandasImportExcel
 		{
 			getErrors().add( getI18nMessages().excelErroLogicoEntidadesNaoCadastradas(
 				MATRIZ_CURRICULAR_COLUMN_NAME, rowsWithErrors.toString() ) );
+		}
+	}
+	
+	private void checkNonRegisteredOfertas(
+			List< DemandasImportExcelBean > sheetContent )
+		{
+		
+		Map< String, Oferta > ofertasBDMap = Oferta.buildCampusTurnoCurriculoToOfertaMap(
+			Oferta.findByCenario( this.instituicaoEnsino, getCenario() ) );
+		
+		List< Integer > rowsWithErrors
+		= new ArrayList< Integer >();
+		
+		for ( DemandasImportExcelBean bean : sheetContent )
+		{
+			Oferta oferta = ofertasBDMap.get(
+					getCodeOferta(bean) );
+
+			if ( oferta == null )
+			{
+				rowsWithErrors.add( bean.getRow() );
+			}
+		}
+		
+		if ( !rowsWithErrors.isEmpty() )
+		{
+			getErrors().add( getI18nMessages().excelErroLogicoOfertasCursosCampiEmOfertasEDemandas(
+				rowsWithErrors.toString() ) );
 		}
 	}
 

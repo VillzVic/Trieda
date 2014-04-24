@@ -140,6 +140,9 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 			checkDisciplinasComCreditosZerados(parametro,warnings);
 			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 			
+			checkDisciplinasComMaxAlunosTeoricosZerados(parametro,errors);
+			checkDisciplinasComMaxAlunosPraticosZerados(parametro,errors);
+			
 			if (ParametroDTO.OTIMIZAR_POR_BLOCO.equals(parametro.getOtimizarPor())) {
 				System.out.print("Checando disciplinas repetidas por curriculo");start = System.currentTimeMillis(); // TODO: retirar
 				checkMaxCreditosSemanaisPorPeriodo_e_DisciplinasRepetidasPorCurriculo(parametro,getInstituicaoEnsinoUser(),errors,warnings);
@@ -871,6 +874,53 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		
 		if (!disciplinasComCreditosZerados.isEmpty()) {
 			warnings.add(HtmlUtils.htmlUnescape("A(s) disciplina(s) " + disciplinasComCreditosZerados + " apresentam total de créditos igual a zero e, por isso, serão desconsideradas da otimização."));
+		}
+	}
+	
+	private void checkDisciplinasComMaxAlunosTeoricosZerados(Parametro parametro, List<String> errors) {
+		// colhe as disciplinas de acordo com os campi selecionados para otimização
+		Set<Disciplina> disciplinasSelecionadas = new HashSet<Disciplina>();
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				for (Demanda demanda : oferta.getDemandas()) {
+					disciplinasSelecionadas.add(demanda.getDisciplina());
+				}
+			}
+		}
+		
+		List<String> disciplinasComCreditosTeoricosZerados = new ArrayList<String>();
+		for (Disciplina disciplina : disciplinasSelecionadas) {
+			if (disciplina.getCreditosTeorico() != 0 &&  disciplina.getMaxAlunosTeorico() == 0){
+				disciplinasComCreditosTeoricosZerados.add(disciplina.getCodigo());
+			}
+		}
+		
+		if (!disciplinasComCreditosTeoricosZerados.isEmpty()) {
+			errors.add(HtmlUtils.htmlUnescape("A(s) disciplina(s) " + disciplinasComCreditosTeoricosZerados + " possui créditos teóricos, porém o máximos de alunos teóricos é igual a zero."));
+		}
+		
+	}
+	
+	private void checkDisciplinasComMaxAlunosPraticosZerados(Parametro parametro, List<String> errors) {
+		// colhe as disciplinas de acordo com os campi selecionados para otimização
+		Set<Disciplina> disciplinasSelecionadas = new HashSet<Disciplina>();
+		for (Campus campus : parametro.getCampi()) {
+			for (Oferta oferta : campus.getOfertas()) {
+				for (Demanda demanda : oferta.getDemandas()) {
+					disciplinasSelecionadas.add(demanda.getDisciplina());
+				}
+			}
+		}
+		
+		List<String> disciplinasComCreditosPraticosZerados = new ArrayList<String>();
+		for (Disciplina disciplina : disciplinasSelecionadas) {
+			if (disciplina.getCreditosPratico() != 0 &&  disciplina.getMaxAlunosPratico() == 0){
+				disciplinasComCreditosPraticosZerados.add(disciplina.getCodigo());
+			}
+		}
+		
+		if (!disciplinasComCreditosPraticosZerados.isEmpty()) {
+			errors.add(HtmlUtils.htmlUnescape("A(s) disciplina(s) " + disciplinasComCreditosPraticosZerados + " possui créditos práticos, porém o máximos de alunos práticos é igual a zero."));
 		}
 	}
 	

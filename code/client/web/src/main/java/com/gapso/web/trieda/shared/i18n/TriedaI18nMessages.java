@@ -17,6 +17,7 @@ public interface TriedaI18nMessages
 	String excelErroImportadorNulo( String infoASerImportada );
 	String excelErroLogicoEntidadesNaoCadastradas( String nomeColuna, String linhasComErro );
 	String excelErroLogicoDisciplinaEmMatrizCurricular( String nomeColuna, String linhasComErro );
+	String excelErroLogicoOfertasCursosCampiEmOfertasEDemandas( String linhasComErro );
 	String excelErroLogicoDisciplinaSemCurriculo( String linhasComErro );
 	String excelErroLogicoDeslocamentoAssimetrico( String linhasComErro );
 	String excelErroLogicoEquivalenciaGeral( String linhasComErro );

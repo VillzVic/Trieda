@@ -94,6 +94,16 @@ public class GTriedaI18nMessages
 	}
 	
 	@Override
+	public String excelErroLogicoOfertasCursosCampiEmOfertasEDemandas(
+		 String linhasComErro )
+	{
+		String [] params = { linhasComErro };
+
+		return this.languageManager.getFormattedText(
+			"excelErroLogicoOfertasCursosCampiEmOfertasEDemandas", params );
+	}
+	
+	@Override
 	public String excelErroLogicoDisciplinaSemCurriculo( String linhasComErro ) {
 		String [] params = { linhasComErro };
 		return this.languageManager.getFormattedText("excelErroLogicoDisciplinaSemCurriculo",params);
