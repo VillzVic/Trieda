@@ -43,8 +43,11 @@ BEGIN
     IF actual_db_version = 29 THEN
       SET msg_status = 'Base de dados compativel com script de conversao, inicio processo conversao';
 
-      /* TRIEDA-1788: Motivos de Uso de Professores Virtuais */
+      DROP TABLE IF EXISTS `trieda`.`aulas_turmas`;
+      DROP TABLE IF EXISTS `trieda`.`aulas`;
+      DROP TABLE IF EXISTS `trieda`.`turmas_alunos`;
       DROP TABLE IF EXISTS `trieda`.`turmas`;
+
       CREATE TABLE  `trieda`.`turmas` (
         `tur_id` bigint(20) NOT NULL AUTO_INCREMENT,
         `tur_nome` VARCHAR(255) NOT NULL,
@@ -58,7 +61,7 @@ BEGIN
         CONSTRAINT `FK_TUR_DIS_ID` FOREIGN KEY (`dis_id`) REFERENCES `disciplinas` (`dis_id`),
         CONSTRAINT `FK_TUR_CEN_ID` FOREIGN KEY (`cen_id`) REFERENCES `cenarios` (`cen_id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-      DROP TABLE IF EXISTS `trieda`.`turmas_alunos`;
+
       CREATE TABLE  `trieda`.`turmas_alunos` (
         `tur_id` bigint(20) NOT NULL,
         `ald_id` bigint(20) NOT NULL,
@@ -67,7 +70,7 @@ BEGIN
         CONSTRAINT `FK_TUR_ALD_TUR_ID` FOREIGN KEY (`tur_id`) REFERENCES `turmas` (`tur_id`),
         CONSTRAINT `FK_TUR_ALD_ALD_ID` FOREIGN KEY (`ald_id`) REFERENCES `alunos_demanda` (`ald_id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-      DROP TABLE IF EXISTS `trieda`.`aulas`;
+
       CREATE TABLE  `trieda`.`aulas` (
         `aul_id` bigint(20) NOT NULL AUTO_INCREMENT,
         `aul_qtd_cred_teoricos` INTEGER NOT NULL,
@@ -90,7 +93,7 @@ BEGIN
         CONSTRAINT `FK_AUL_PRV_ID` FOREIGN KEY (`prv_id`) REFERENCES `professores_virtuais` (`prf_id`),
         CONSTRAINT `FK_AUL_CEN_ID` FOREIGN KEY (`cen_id`) REFERENCES `cenarios` (`cen_id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-      DROP TABLE IF EXISTS `trieda`.`aulas_turmas`;
+
       CREATE TABLE  `trieda`.`aulas_turmas` (
         `aul_id` bigint(20) NOT NULL,
         `tur_id` bigint(20) NOT NULL,
@@ -100,8 +103,11 @@ BEGIN
         CONSTRAINT `FK_AUL_TUR_TUR_ID` FOREIGN KEY (`tur_id`) REFERENCES `turmas` (`tur_id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+	  SET msg_status = 'Conversao realizada';
+	   
       INSERT INTO `trieda`.`db_version` (`db_version`) VALUES (30);
-      SET msg_status = 'Base de dados compativel com script de conversao, conversao realizada';
+      
+	  SET msg_status = 'Versao do BD incrementada';
     ELSE
       SET msg_status = 'Base de dados nao compativel com script de conversao, conversao nao efetuada';
     END IF;
