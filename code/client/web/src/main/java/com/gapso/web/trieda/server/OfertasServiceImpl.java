@@ -194,7 +194,14 @@ public class OfertasServiceImpl
 	{
 		for ( OfertaDTO ofertaDTO : ofertaDTOList )
 		{
-			ConvertBeans.toOferta( ofertaDTO ).remove();
+			Oferta o = Oferta.find(
+					ofertaDTO.getId(), getInstituicaoEnsinoUser() );
+
+				if ( o != null )
+				{
+					o.remove();
+				}
+			//ConvertBeans.toOferta( ofertaDTO ).remove();
 		}
 	}
 }

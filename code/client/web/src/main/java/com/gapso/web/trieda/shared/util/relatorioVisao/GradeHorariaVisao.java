@@ -182,6 +182,11 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 						}
 					}
 					tamanhoLinhaGradeHorariaEmPixels = (int)(GradeHoraria.PIXELS_POR_MINUTO * mdcTemposAulaNumSemanasLetivas.getPrimeiro());
+					
+					if(tamanhoLinhaGradeHorariaEmPixels < 20){
+						tamanhoLinhaGradeHorariaEmPixels = 20;
+					}
+					
 					List<ColumnConfig> columns = getColumnList(result.getQtdColunasPorDiaSemana());
 					preencheCores();
 					grid.reconfigure(getListStore(), new ColumnModel(columns));

@@ -1226,7 +1226,7 @@ public class ProfessoresServiceImpl
 				turno, titulacao, areaTitulacao, tipoContrato);
 		
 		Map<Professor, Set<String>> professorToCreditosMap = new HashMap<Professor, Set<String>>();
-		Map<Professor, Set<String>> professorToCargaHorariaMap = new HashMap<Professor, Set<String>>();
+		Map<Professor, Map<String, Integer>> professorToCargaHorariaMap = new HashMap<Professor, Map<String, Integer>>();
 		
 		for(AtendimentoOperacional atendimento : atendimentos){
 			if(listDomains.contains(atendimento.getProfessor())){
@@ -1247,17 +1247,20 @@ public class ProfessoresServiceImpl
 			
 				if (professorToCargaHorariaMap.get(atendimento.getProfessor()) == null)
 				{
-					Set<String> cargaHoraria = new HashSet<String>();
-					cargaHoraria.add(atendimento.getTurma() + "-" + 
+					Map<String, Integer> cargaHoraria = new HashMap<String, Integer>();
+					cargaHoraria.put(atendimento.getTurma() + "-" + 
 							(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
-								+ "-" + atendimento.getHorarioDisponivelCenario().getId());
+								+ "-" + atendimento.getHorarioDisponivelCenario().getId(),
+								atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo());
 					professorToCargaHorariaMap.put(atendimento.getProfessor(), cargaHoraria);
 				}
 				else
 				{
-					professorToCargaHorariaMap.get(atendimento.getProfessor()).add(atendimento.getTurma() + "-" + 
+					String key = atendimento.getTurma() + "-" + 
 							(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo() : atendimento.getDisciplina().getCodigo())
-							+ "-" + atendimento.getHorarioDisponivelCenario().getId());
+							+ "-" + atendimento.getHorarioDisponivelCenario().getId();
+					professorToCargaHorariaMap.get(atendimento.getProfessor()).put(key,
+							atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo());
 				}
 			}
 		}
@@ -1268,7 +1271,11 @@ public class ProfessoresServiceImpl
 			{
 				ProfessorDTO  dto = ConvertBeans.toProfessorDTO( professor );
 				dto.setTotalCred(professorToCreditosMap.get(professor).size());
-				dto.setCargaHorariaSemanal(professorToCargaHorariaMap.get(professor).size());
+				int cargaHorariaSemanalTotal = 0;
+				for ( Integer cargaHorariaSemanal : professorToCargaHorariaMap.get(professor).values()){
+					cargaHorariaSemanalTotal += cargaHorariaSemanal;
+				}
+				dto.setCargaHorariaSemanal(cargaHorariaSemanalTotal);
 				list.add(dto);
 			}
 		}

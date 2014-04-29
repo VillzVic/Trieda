@@ -2392,143 +2392,156 @@ public class ConvertBeans {
 	}
 
 	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTO(
-		AtendimentoOperacional domain )
-	{
-		AtendimentoOperacionalDTO dto = new AtendimentoOperacionalDTO();
-
-		InstituicaoEnsino instituicaoEnsino
-			= domain.getInstituicaoEnsino();
-
-		dto.setId( domain.getId() );
-		dto.setVersion( domain.getVersion() );
-		dto.setCenarioId( domain.getCenario().getId() );
-		dto.setCampusId( domain.getSala().getUnidade().getCampus().getId() );
-		dto.setCampusString( domain.getSala().getUnidade().getCampus().getCodigo() );
-		dto.setUnidadeId( domain.getSala().getUnidade().getId() );
-		dto.setUnidadeString( domain.getSala().getUnidade().getCodigo() );
-		dto.setSalaId( domain.getSala().getId() );
-		dto.setSalaString( domain.getSala().getCodigo() );
-
-		HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
-		dto.setHorarioDisponivelCenarioId( hdc.getId() );
-		dto.setSemana( Semanas.toInt( hdc.getDiaSemana() ) );
-		dto.setDiaSemana( dto.getSemana() );
-
-		HorarioAula ha = hdc.getHorarioAula();
-		dto.setHorarioAulaId( ha.getId() );
-		dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );
-		dto.setTurnoId( ha.getTurno().getId() );
-		dto.setTurnoString( ha.getTurno().getNome() );
-
-		if ( domain.getProfessorVirtual() == null )
+			AtendimentoOperacional domain )
 		{
-			dto.setProfessorId( domain.getProfessor().getId() );
-			dto.setProfessorCPF( domain.getProfessor().getCpf() );
-			dto.setProfessorString( domain.getProfessor().getNome() );
-			dto.setProfessorCustoCreditoSemanal(domain.getProfessor().getValorCredito());
-		}
-		else
-		{
-			dto.setProfessorVirtualId( domain.getProfessorVirtual().getId() );
-			dto.setProfessorCPF( domain.getProfessorVirtual().getId().toString() );
-			dto.setProfessorVirtualString("Professor Virtual " + domain.getProfessorVirtual().getId() );
-			dto.setProfessorCustoCreditoSemanal(domain.getOferta().getCampus().getValorCredito());
-		}
+			AtendimentoOperacionalDTO dto = new AtendimentoOperacionalDTO();
 
-		dto.setCreditoTeoricoBoolean( domain.getCreditoTeorico() );
-		dto.setOfertaId( domain.getOferta().getId() );
-		dto.setDisciplinaId( domain.getDisciplina().getId() );
-		dto.setDisciplinaString( domain.getDisciplina().getCodigo() );
-		dto.setDisciplinaNome( domain.getDisciplina().getNome() );
-		dto.setDisciplinaOriginalCodigo(domain.getDisciplina().getCodigo());
-		dto.setDisciplinaUsaLaboratorio(domain.getDisciplina().getLaboratorio());
-		if (domain.getDisciplinaSubstituta() != null) {
-			dto.setDisciplinaSubstitutaId( domain.getDisciplinaSubstituta().getId() );
-			dto.setDisciplinaSubstitutaString( domain.getDisciplinaSubstituta().getCodigo() );
-			dto.setDisciplinaSubstitutaNome( domain.getDisciplinaSubstituta().getNome() );
-			dto.setTotalCreditoDisciplinaSubstituta(domain.getDisciplinaSubstituta().getCreditosTotal());
-			if (!domain.getDisciplinaSubstituta().getCurriculos().isEmpty()) {
-				SemanaLetiva semanaLetivaDisciplinaSubstituta = domain.getDisciplinaSubstituta().getCurriculos().iterator().next().getCurriculo().getSemanaLetiva();
-				dto.setDisciplinaSubstitutaSemanaLetivaId(semanaLetivaDisciplinaSubstituta.getId());
-				dto.setDisciplinaSubstitutaSemanaLetivaTempoAula(semanaLetivaDisciplinaSubstituta.getTempo());
+			InstituicaoEnsino instituicaoEnsino
+				= domain.getInstituicaoEnsino();
+				
+			Sala sala = domain.getSala();
+			Unidade unidade = sala.getUnidade();
+			Campus campus = unidade.getCampus();
+
+			dto.setId( domain.getId() );
+			dto.setVersion( domain.getVersion() );
+			dto.setCenarioId( domain.getCenario().getId() );
+			dto.setCampusId( campus.getId() );
+			dto.setCampusString( unidade.getCodigo() );
+			dto.setUnidadeId( unidade.getId() );
+			dto.setUnidadeString( unidade.getCodigo() );
+			dto.setSalaId( sala.getId() );
+			dto.setSalaString( sala.getCodigo() );
+
+			HorarioDisponivelCenario hdc = domain.getHorarioDisponivelCenario();
+			dto.setHorarioDisponivelCenarioId( hdc.getId() );
+			dto.setSemana( Semanas.toInt( hdc.getDiaSemana() ) );
+			dto.setDiaSemana( dto.getSemana() );
+
+			HorarioAula ha = hdc.getHorarioAula();
+			dto.setHorarioAulaId( ha.getId() );
+			dto.setHorarioAulaString( TriedaUtil.shortTimeString( ha.getHorario() ) );
+			dto.setTurnoId( ha.getTurno().getId() );
+			dto.setTurnoString( ha.getTurno().getNome() );
+			
+			ProfessorVirtual professorVirtual = domain.getProfessorVirtual();
+			Oferta oferta = domain.getOferta();
+			Disciplina disciplinaSubstituta = domain.getDisciplinaSubstituta();
+			Disciplina disciplina = domain.getDisciplina();
+
+			if ( professorVirtual == null )
+			{
+				Professor professor = domain.getProfessor();
+				dto.setProfessorId( professor.getId() );
+				dto.setProfessorCPF( professor.getCpf() );
+				dto.setProfessorString( professor.getNome() );
+				dto.setProfessorCustoCreditoSemanal(professor.getValorCredito());
 			}
-		}
-		dto.setTotalCreditosTeoricosDisciplina( domain.getDisciplina().getCreditosTeorico() );
-		dto.setTotalCreditosPraticosDisciplina( domain.getDisciplina().getCreditosPratico() );
-		dto.setTotalCreditoDisciplina( domain.getDisciplina().getTotalCreditos() );
-		dto.setQuantidadeAlunos( domain.getQuantidadeAlunos() );
-		dto.setQuantidadeAlunosString( domain.getQuantidadeAlunos().toString() );
-		dto.setTurma( domain.getTurma() );
+			else
+			{
+				dto.setProfessorVirtualId( professorVirtual.getId() );
+				dto.setProfessorCPF( professorVirtual.getId().toString() );
+				dto.setProfessorVirtualString("Professor Virtual " + professorVirtual.getId() );
+				dto.setProfessorCustoCreditoSemanal(oferta.getCampus().getValorCredito());
+			}
 
-		dto.setCursoString( domain.getOferta().getCurriculo().getCurso().getCodigo() );
-		dto.setCursoNome( domain.getOferta().getCurriculo().getCurso().getNome() );
-		dto.setCursoId( domain.getOferta().getCurriculo().getCurso().getId() );
-		dto.setCurricularString( domain.getOferta().getCurriculo().getCodigo() );
-		dto.setCurricularId( domain.getOferta().getCurriculo().getId() );
+			dto.setCreditoTeoricoBoolean( domain.getCreditoTeorico() );
+			dto.setOfertaId( oferta.getId() );
+			dto.setDisciplinaId( disciplina.getId() );
+			dto.setDisciplinaString( disciplina.getCodigo() );
+			dto.setDisciplinaNome( disciplina.getNome() );
+			dto.setDisciplinaOriginalCodigo(disciplina.getCodigo());
+			dto.setDisciplinaUsaLaboratorio(disciplina.getLaboratorio());
+			if (disciplinaSubstituta != null) {
+				dto.setDisciplinaSubstitutaId( disciplinaSubstituta.getId() );
+				dto.setDisciplinaSubstitutaString( disciplinaSubstituta.getCodigo() );
+				dto.setDisciplinaSubstitutaNome( disciplinaSubstituta.getNome() );
+				dto.setTotalCreditoDisciplinaSubstituta(disciplinaSubstituta.getCreditosTotal());
+				if (!disciplinaSubstituta.getCurriculos().isEmpty()) {
+					SemanaLetiva semanaLetivaDisciplinaSubstituta = disciplinaSubstituta.getCurriculos().iterator().next().getCurriculo().getSemanaLetiva();
+					dto.setDisciplinaSubstitutaSemanaLetivaId(semanaLetivaDisciplinaSubstituta.getId());
+					dto.setDisciplinaSubstitutaSemanaLetivaTempoAula(semanaLetivaDisciplinaSubstituta.getTempo());
+				}
+			}
+			dto.setTotalCreditosTeoricosDisciplina( disciplina.getCreditosTeorico() );
+			dto.setTotalCreditosPraticosDisciplina( disciplina.getCreditosPratico() );
+			dto.setTotalCreditoDisciplina( disciplina.getTotalCreditos() );
+			dto.setQuantidadeAlunos( domain.getQuantidadeAlunos() );
+			dto.setQuantidadeAlunosString( domain.getQuantidadeAlunos().toString() );
+			dto.setTurma( domain.getTurma() );
+			
+			Curriculo curriculo = oferta.getCurriculo();
+			Curso curso = curriculo.getCurso();
+			SemanaLetiva semanaLetiva = curriculo.getSemanaLetiva();
 
-		int periodo = domain.getOferta().getCurriculo().getPeriodo(domain.getDisciplina());
+			dto.setCursoString( curso.getCodigo() );
+			dto.setCursoNome( curso.getNome() );
+			dto.setCursoId( curso.getId() );
+			dto.setCurricularString( curriculo.getCodigo() );
+			dto.setCurricularId( curriculo.getId() );
 
-		dto.setPeriodo( periodo );
-		dto.setPeriodoString( String.valueOf( periodo ) );
+			int periodo = curriculo.getPeriodo(disciplina);
 
-		dto.setTotalCreditos(1); // todo atendimento operacional representa apenas 1 crédito atendido
-		dto.setDisplayText( dto.getNaturalKey() );
-		dto.setCompartilhamentoCursosString( "" );
-		dto.setSemanaLetivaId( domain.getOferta().getCurriculo().getSemanaLetiva().getId() );
-		dto.setSemanaLetivaTempoAula(domain.getOferta().getCurriculo().getSemanaLetiva().getTempo());
+			dto.setPeriodo( periodo );
+			dto.setPeriodoString( String.valueOf( periodo ) );
 
-		if ( instituicaoEnsino != null )
-		{
-			dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
-			dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
-		}
-		
-		StringBuffer str = new StringBuffer("");
-		int totalAtendimentosP1 = 0;
-		int totalAtendimentosP2 = 0;
-		dto.getAlunosDemandas().clear();
-		for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
-			dto.getAlunosDemandas().add(toAlunoDemandaDTO(alunoDemanda));
-			Aluno aluno = alunoDemanda.getAluno();
-			str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
-			if (alunoDemanda.getPrioridade() == 1) {
-				totalAtendimentosP1++;	
+			dto.setTotalCreditos(1); // todo atendimento operacional representa apenas 1 crédito atendido
+			dto.setDisplayText( dto.getNaturalKey() );
+			dto.setCompartilhamentoCursosString( "" );
+			dto.setSemanaLetivaId( semanaLetiva.getId() );
+			dto.setSemanaLetivaTempoAula(semanaLetiva.getTempo());
+
+			if ( instituicaoEnsino != null )
+			{
+				dto.setInstituicaoEnsinoId( instituicaoEnsino.getId() );
+				dto.setInstituicaoEnsinoString( instituicaoEnsino.getNomeInstituicao() );
+			}
+			
+			StringBuffer str = new StringBuffer("");
+			int totalAtendimentosP1 = 0;
+			int totalAtendimentosP2 = 0;
+			dto.getAlunosDemandas().clear();
+			for (AlunoDemanda alunoDemanda : domain.getAlunosDemanda()) {
+				dto.getAlunosDemandas().add(toAlunoDemandaDTO(alunoDemanda));
+				Aluno aluno = alunoDemanda.getAluno();
+				str.append(aluno.getMatricula()+"-"+aluno.getNome()+", ");
+				if (alunoDemanda.getPrioridade() == 1) {
+					totalAtendimentosP1++;	
+				} else {
+					totalAtendimentosP2++;
+				}
+			}
+			if (str.length() > 1) {
+				dto.setNomesAlunos(str.toString().substring(0,str.length()-2));
 			} else {
-				totalAtendimentosP2++;
+				dto.setNomesAlunos("");
 			}
-		}
-		if (str.length() > 1) {
-			dto.setNomesAlunos(str.toString().substring(0,str.length()-2));
-		} else {
-			dto.setNomesAlunos("");
-		}
-		dto.setQuantidadeAlunosP1(totalAtendimentosP1);
-		dto.setQuantidadeAlunosP2(totalAtendimentosP2);
-		
-//		Demanda demanda = null;
-//		for (Demanda d : domain.getOferta().getDemandas()) {
-//			if (d.getDisciplina().getId().equals(domain.getDisciplina().getId())) {
-//				demanda = d;
-//				break;
+			dto.setQuantidadeAlunosP1(totalAtendimentosP1);
+			dto.setQuantidadeAlunosP2(totalAtendimentosP2);
+			
+//			Demanda demanda = null;
+//			for (Demanda d : oferta.getDemandas()) {
+//				if (d.getDisciplina().getId().equals(disciplina.getId())) {
+//					demanda = d;
+//					break;
+//				}
 //			}
-//		}
-//		List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByDemanda(instituicaoEnsino,demanda);
-//		int totalDemandaP1 = 0;
-//		int totalDemandaP2 = 0;
-//		for (AlunoDemanda ad : alunosDemanda) {
-//			if (ad.getPrioridade() == 1) {
-//				totalDemandaP1++;
-//			} else {
-//				totalDemandaP2++;
+//			List<AlunoDemanda> alunosDemanda = AlunoDemanda.findByDemanda(instituicaoEnsino,demanda);
+//			int totalDemandaP1 = 0;
+//			int totalDemandaP2 = 0;
+//			for (AlunoDemanda ad : alunosDemanda) {
+//				if (ad.getPrioridade() == 1) {
+//					totalDemandaP1++;
+//				} else {
+//					totalDemandaP2++;
+//				}
 //			}
-//		}
-//		dto.setQtdDemandaAlunosP1(totalDemandaP1);
-//		dto.setQtdDemandaAlunosP2(totalDemandaP2);
-//		dto.setQtdDemandaAlunosTotal(demanda.getQuantidade());
+//			dto.setQtdDemandaAlunosP1(totalDemandaP1);
+//			dto.setQtdDemandaAlunosP2(totalDemandaP2);
+//			dto.setQtdDemandaAlunosTotal(demanda.getQuantidade());
 
-		return dto;
-	}
-	
+			return dto;
+		}	
 	public static AtendimentoOperacionalDTO toAtendimentoOperacionalDTO(AtendimentoOperacional domain, Map<String,Integer[]> demandaKeyToQtdAlunosMap) {
 		AtendimentoOperacionalDTO dto = toAtendimentoOperacionalDTO(domain);
 		

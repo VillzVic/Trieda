@@ -462,50 +462,64 @@ public class CampiServiceImpl extends RemoteService
 		boolean ehTatico = campus.isOtimizadoTatico(getInstituicaoEnsinoUser());
 		
 		// cálculo dos indicadores de utilização das salas de aula e laboratórios
+		
+		long primeiro = System.currentTimeMillis(); 
 		Set<Turno> turnosConsiderados = new HashSet<Turno>();
 		Set<Sala> salasUtilizadas = new HashSet<Sala>();
 		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
 		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
-		for (Oferta oferta : campus.getOfertas()) {
-			turnosConsiderados.add(oferta.getTurno());
-			if (ehTatico) {
-				// atendimentos táticos
-				for (AtendimentoTatico aula : oferta.getAtendimentosTaticos()) {
-					String key = aula.getSala().getId() + "-" + oferta.getTurno().getId();
-					List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
-					if (aulasPorSalaTurno == null) {
-						aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
-						salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
-					}
-					aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(aula));
-					
-					salasUtilizadas.add(aula.getSala());
-					semanasLetivasUtilizadas.add(aula.getOferta().getCurriculo().getSemanaLetiva());
+		
+		
+		if (ehTatico) {
+			// atendimentos táticos
+			List<AtendimentoTatico> atendimentosTaticos = AtendimentoTatico.getAtendimentosTaticosByCampus(getInstituicaoEnsinoUser(), campus);
+			for (AtendimentoTatico atendimento : atendimentosTaticos) {
+				Oferta oferta = atendimento.getOferta();
+				turnosConsiderados.add(oferta.getTurno());
+				String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
+				List<AtendimentoRelatorioDTO> aulasPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+				if (aulasPorSalaTurno == null) {
+					aulasPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+					salaIdTurnoIdToAtendimentosMap.put(key,aulasPorSalaTurno);
 				}
-			} else {
-				// atendimentos operacionais
-				List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosByOferta(getInstituicaoEnsinoUser(), oferta);
-				for (AtendimentoOperacional atendimento : atendimentos) {
-					String key = atendimento.getSala().getId() + "-" + oferta.getTurno().getId();
-					List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
-					if (atendimetosPorSalaTurno == null) {
-						atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
-						salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
-					}
-					atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
-					
-					salasUtilizadas.add(atendimento.getSala());
-					semanasLetivasUtilizadas.add(atendimento.getOferta().getCurriculo().getSemanaLetiva());
-				}
+				aulasPorSalaTurno.add(ConvertBeans.toAtendimentoTaticoDTO(atendimento));
+				
+				salasUtilizadas.add(atendimento.getSala());
+				semanasLetivasUtilizadas.add(oferta.getCurriculo().getSemanaLetiva());
 			}
+		} else {
+			System.out.print("Checando atendimentos operacionais");long start = System.currentTimeMillis(); // TODO: retirar
+			// atendimentos operacionais
+			List<AtendimentoOperacional> atendimentos = AtendimentoOperacional.getAtendimentosOperacionaisByCampus(getInstituicaoEnsinoUser(), campus);
+			 long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+			
+			 System.out.print("Checando ConvertBeans.toAtendimentoOperacionalDTO(atendimento)"); start = System.currentTimeMillis(); // TODO: retirar
+			for (AtendimentoOperacional atendimento : atendimentos) {
+				Oferta oferta = atendimento.getOferta();
+				Turno turno = oferta.getTurno();
+				Sala sala = atendimento.getSala();
+				turnosConsiderados.add(turno);
+				String key = sala.getId() + "-" + turno.getId();
+				List<AtendimentoRelatorioDTO> atendimetosPorSalaTurno = salaIdTurnoIdToAtendimentosMap.get(key);
+				if (atendimetosPorSalaTurno == null) {
+					atendimetosPorSalaTurno = new ArrayList<AtendimentoRelatorioDTO>();
+					salaIdTurnoIdToAtendimentosMap.put(key,atendimetosPorSalaTurno);
+				}
+				atendimetosPorSalaTurno.add(ConvertBeans.toAtendimentoOperacionalDTO(atendimento));
+				
+				salasUtilizadas.add(sala);
+				semanasLetivasUtilizadas.add(oferta.getCurriculo().getSemanaLetiva());
+			}
+			time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
 		}
+		
 		
 		Integer totalCreditosSemanais = 0;
 		Integer totalCreditosSemanaisProfessores = 0;
 		Integer totalCreditosSemanaisProfessoresVirtuais = 0;
 		Double custoDocenteSemanal = 0.0;
-		Integer qtdAlunosAtendidos = 0;
-		Integer qtdAlunosNaoAtendidos = 0;
+		//Integer qtdAlunosAtendidos = 0;
+		//Integer qtdAlunosNaoAtendidos = 0;
 		double utilizacaoMediaDosAmbientes = 0.0;
 		double utilizacaoMediaDasSalasDeAula = 0.0;
 		double utilizacaoMediaDosLaboratorios = 0.0;
@@ -520,6 +534,7 @@ public class CampiServiceImpl extends RemoteService
 			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmAmbientes = 0.0;
 			double somatorioDaCapacidadeDasSalasParaTodasAsAulasEmSalasDeAula = 0.0;
 			double somatorioDaCapacidadeDosLaboratoriosParaTodasAsAulasEmLaboratorios = 0.0;
+			
 			// [SalaId -> Tempo de uso (min) semanal]
 			Map<Long,Integer> salaIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
 			Map<Long,Integer> laboratorioIdToTempoUsoSemanalEmMinutosMap = new HashMap<Long,Integer>();
@@ -609,67 +624,95 @@ public class CampiServiceImpl extends RemoteService
 			mediaUtilizacaoHorarioAmbientes = TriedaUtil.round(mediaUtilizacaoHorarioAmbientes / (laboratorioIdToTempoUsoSemanalEmMinutosMap.size()+salaIdToTempoUsoSemanalEmMinutosMap.size()) * 100, 2);
 			
 			// cálculo das quantidades de alunos atendidos e não atendidos
-			DemandasServiceImpl demandasService = new DemandasServiceImpl();
-			ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
-			qtdAlunosNaoAtendidos = pair.getSegundo();
-			qtdAlunosAtendidos = (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
-//			Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>> demandaToQtdAlunosNaoAtendidosMap = pair.getPrimeiro();
-	
-			// cálculo do indicador de receita semestral
-//			for (Demanda demanda : demandaToQtdAlunosNaoAtendidosMap.keySet()) {
-//				ParDTO<Integer,Map<Disciplina,Integer>> par = demandaToQtdAlunosNaoAtendidosMap.get(demanda);
-//				int qtdAlunosNaoAtendidosDemanda = par.getPrimeiro();
-//				Map<Disciplina,Integer> disciplinaSubstitutaToQtdAlunos = par.getSegundo();
-//				
-//				// calcula receita com uso de equivalências
-//				int totalAlunosAtendidosComSubstituta = 0;
-//				for (Entry<Disciplina, Integer> e : disciplinaSubstitutaToQtdAlunos.entrySet()) {
-//					Disciplina disciplinaSubstituta = e.getKey();
-//					int qtdAlunosAtendidosComSubstituta = e.getValue();
-//					receitaSemestral += (disciplinaSubstituta.getCreditosTotal()*qtdAlunosAtendidosComSubstituta*demanda.getOferta().getReceita());
-//					totalAlunosAtendidosComSubstituta += qtdAlunosAtendidosComSubstituta;
-//				}
-//				
-//				// calcula receita sem uso de equivalências
-//				int qtdAlunosAtendidosDemanda = (demanda.getQuantidade() - qtdAlunosNaoAtendidosDemanda) - totalAlunosAtendidosComSubstituta;
-//				receitaSemestral += (demanda.getDisciplina().getCreditosTotal()*qtdAlunosAtendidosDemanda*demanda.getOferta().getReceita());
-//			}
+			//DemandasServiceImpl demandasService = new DemandasServiceImpl();
+			//ParDTO<Map<Demanda,ParDTO<Integer,Map<Disciplina,Integer>>>,Integer> pair = demandasService.calculaQuantidadeDeNaoAtendimentosPorDemanda(campus.getOfertas());
+			//qtdAlunosNaoAtendidos = pair.getSegundo();
+			//qtdAlunosAtendidos = (Demanda.sumDemanda(getInstituicaoEnsinoUser(),campus ) - qtdAlunosNaoAtendidos);
+			
 			receitaSemestral = (ehTatico) ? AtendimentoTatico.calcReceita(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.calcReceita(getInstituicaoEnsinoUser(),campus);
 			receitaSemestral = TriedaUtil.round(receitaSemestral,2);
 		}
+		
 		// cálculo de outros indicadores
+		long startIndic = System.currentTimeMillis(); // TODO: retirar
+		System.out.print("Checando Aluno.findByCampus");long start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTotalAlunos = Aluno.findByCampus(getInstituicaoEnsinoUser(), campus, ehTatico).size();
-		List<Aluno> todosAlunos = Aluno.findBy(getInstituicaoEnsinoUser(), cenario, null,
-				null, null);
-		List<AlunoDemanda> alunosComDemanda = todosAlunos.size() > 0 ?
-				AlunoDemanda.findByAlunos(getInstituicaoEnsinoUser(), todosAlunos, null) : new ArrayList<AlunoDemanda>();
+		long time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando numAlunosComDemanda"); start = System.currentTimeMillis(); // TODO: retirar
+		int numAlunosComDemanda = AlunoDemanda.sumAlunosComDemanda(getInstituicaoEnsinoUser(), campus);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando Professor.findByCampus"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTotalDocentes = Professor.findByCampus(getInstituicaoEnsinoUser(), cenario, campus).size();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando Professor.findProfessoresUteis"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdDocentesHabilitados = Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, campus).size();
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando AtendimentoOperacional.countTurmaProfessoresVirtuais"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTurmasAbertasProfessoresVirtuais = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresVirtuais(getInstituicaoEnsinoUser(),campus);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando AtendimentoOperacional.countTurmaProfessoresInstituicao"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTurmasAbertasProfessoresInstituicao = ehTatico ? 0 : AtendimentoOperacional.countTurmaProfessoresInstituicao(getInstituicaoEnsinoUser(),campus);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando qtdTurmasAbertas"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdTurmasAbertas = ehTatico ? AtendimentoTatico.countTurma(getInstituicaoEnsinoUser(),campus) : AtendimentoOperacional.countTurma(getInstituicaoEnsinoUser(),campus);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
 		Double qtdMediaDeCreditosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)totalCreditosSemanais/qtdTurmasAbertas)),2);
-		Double qtdMediaDeAlunosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)qtdAlunosAtendidos/qtdTurmasAbertas)),2);
+		
+		System.out.print("Checando  AlunoDemanda.sumDemandaPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
+		Integer demandaTotalP1QtdeAlunos = AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando AlunoDemanda.sumDemandaPresencialPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
+		Integer demandaTotalPresencialP1QtdeAlunos = AlunoDemanda.sumDemandaPresencialPorPrioridade(getInstituicaoEnsinoUser(),cenario,campus,1);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		Integer demandaTotalNaoPresencialP1QtdeAlunos = demandaTotalP1QtdeAlunos-demandaTotalPresencialP1QtdeAlunos;
+		
+		System.out.print("Checando AlunoDemanda.sumDemandaAtendidaPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
+		Integer demandaAtendidaP1QtdeAlunos = AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando AlunoDemanda.sumDemandaAtendidaPorPrioridade"); start = System.currentTimeMillis(); // TODO: retirar
+		Integer demandaAtendidaP2QtdeAlunos = AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,2);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		Integer demandaAtendidaQtdeAlunos = demandaAtendidaP1QtdeAlunos + demandaAtendidaP2QtdeAlunos + demandaTotalNaoPresencialP1QtdeAlunos;
+		Double qtdMediaDeAlunosPorTurma = TriedaUtil.round(((qtdTurmasAbertas==0) ? 0.0 : ((double)demandaAtendidaQtdeAlunos/qtdTurmasAbertas)),2);
 		Double custoMedioSemanalPorCredito = TriedaUtil.round(((totalCreditosSemanais != 0) ? custoDocenteSemanal/totalCreditosSemanais : 0.0),2);
 		Double custoDocenteSemestral = TriedaUtil.round((custoDocenteSemanal*4.5*6.0),2);
+		
+		System.out.print("Checando  totalCreditosSemanaisAlunos"); start = System.currentTimeMillis(); // TODO: retirar
 		Double margemContribuicaoSemestral = TriedaUtil.round(receitaSemestral - custoDocenteSemestral, 2);
 		Double razaoCustoDocentePorReceitaSemestral = (receitaSemestral == 0.0) ? null : TriedaUtil.round((custoDocenteSemestral/receitaSemestral*100.0),2);
-		Integer demandaTotalP1QtdeAlunos = AlunoDemanda.sumDemandaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
-		Integer demandaTotalPresencialP1QtdeAlunos = AlunoDemanda.sumDemandaPresencialPorPrioridade(getInstituicaoEnsinoUser(),cenario,campus,1);
-		Integer demandaTotalNaoPresencialP1QtdeAlunos = demandaTotalP1QtdeAlunos-demandaTotalPresencialP1QtdeAlunos;
-		Integer demandaAtendidaP1QtdeAlunos = AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,1);
-		Integer demandaAtendidaP2QtdeAlunos = AlunoDemanda.sumDemandaAtendidaPorPrioridade(getInstituicaoEnsinoUser(),campus,2);
-		Integer demandaAtendidaQtdeAlunos = demandaAtendidaP1QtdeAlunos + demandaAtendidaP2QtdeAlunos + demandaTotalNaoPresencialP1QtdeAlunos;
 		Integer demandaNaoAtendidaQtdeAlunos = demandaTotalP1QtdeAlunos - demandaAtendidaQtdeAlunos;
 		demandaNaoAtendidaQtdeAlunos = (demandaNaoAtendidaQtdeAlunos < 0) ? 0 : demandaNaoAtendidaQtdeAlunos;
 		Double atendimentoPercent = TriedaUtil.round( qtdTotalAlunos == 0 ? 0.0 : (((double)qtdTotalAlunos)/qtdTotalAlunos)*100, 2 );
+		
 		Integer totalCreditosSemanaisAlunos = ehTatico ? AtendimentoTatico.sumCredAlunosAtendidos(getInstituicaoEnsinoUser(),cenario,campus) :
 			AtendimentoOperacional.sumCredAlunosAtendidos(getInstituicaoEnsinoUser(),cenario,campus);
 		
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando AtendimentoOperacional.countProfessores"); start = System.currentTimeMillis(); // TODO: retirar
 		Integer qtdProfessores = ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
 				AtendimentoOperacional.countProfessores(getInstituicaoEnsinoUser(), campus) : 0);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando AtendimentoOperacional.countProfessoresVirtuais"); start = System.currentTimeMillis(); // TODO: retirar
+		
 		Integer qtdProfessoresVirtuais = ( campus.isOtimizadoOperacional(getInstituicaoEnsinoUser()) ?
 				AtendimentoOperacional.countProfessoresVirtuais(getInstituicaoEnsinoUser(), campus) : 0);
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		
+		System.out.print("Checando somas finais"); start = System.currentTimeMillis(); // TODO: retirar
+		
 		Integer qtdDocentes = qtdProfessores + qtdProfessoresVirtuais;
 		
 		Double produtividadeTempoAula = TriedaUtil.round( totalCreditosSemanais == 0 ? 0.0 : ((double)totalCreditosSemanaisAlunos)/totalCreditosSemanais, 2 );
@@ -681,6 +724,9 @@ public class CampiServiceImpl extends RemoteService
 		Double mediaTurmasPorProfessor = TriedaUtil.round( qtdProfessores == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresInstituicao)/qtdProfessores, 2 );
 		Double mediaTurmasPorProfessorVirtual = TriedaUtil.round( qtdProfessoresVirtuais == 0 ? 0.0 : ((double)qtdTurmasAbertasProfessoresVirtuais)/qtdProfessoresVirtuais, 2 );
 		
+		time = (System.currentTimeMillis() - start)/1000;System.out.println(" tempo = " + time + " segundos"); // TODO: retirar
+		time = (System.currentTimeMillis() - startIndic)/1000;System.out.println("Checando indicadores tempo = " + time + " segundos"); // TODO: retirar
+		
 		// disponibilização dos indicadores
 		Locale pt_BR = new Locale("pt","BR");
 		NumberFormatter numberFormatter = new NumberFormatter();
@@ -688,7 +734,7 @@ public class CampiServiceImpl extends RemoteService
 		
 		//Gerais
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
-				"Número de alunos: ", "<b>" + numberFormatter.print(alunosComDemanda.size(),pt_BR) + "</b>") ,currentNode, true) );
+				"Número de alunos: ", "<b>" + numberFormatter.print(numAlunosComDemanda,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Alunos atendidos (pelo menos 1 disc.): ", "<b>" + numberFormatter.print(qtdTotalAlunos,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
@@ -803,36 +849,7 @@ public class CampiServiceImpl extends RemoteService
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Média de turmas por docente virtual: ", "<b>" + numberFormatter.print(mediaTurmasPorProfessorVirtual,pt_BR) + "</b>") ,currentNode, true) );
 		
-/*		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Demanda Não Atendida (Qtde Alunos): <b>" + numberFormatter.print(demandaNaoAtendidaQtdeAlunos,pt_BR) + "</b>  <b>(" + numberFormatter.print(demandaNaoAtendidaPercent, pt_BR) + "%)</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Docentes Utilizados: <b>" + numberFormatter.print(qtdDocentes,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Da Instituição: <b>" + numberFormatter.print(qtdProfessores,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Virtuais: <b>" + numberFormatter.print(qtdProfessoresVirtuais,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Média de Créditos Semanais por Docente: <b>" + numberFormatter.print(mediaCreditosPorDocente,pt_BR) + "</b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Da Instituição: <b>" + numberFormatter.print(mediaCreditosProfessores,pt_BR) + " </b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Virtuais: <b>" + numberFormatter.print(mediaCreditosProfessoresVirtuais,pt_BR) + " </b>",currentNode) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Turmas Abertas: <b>" + numberFormatter.print(qtdTurmasAbertas,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Docentes da Instituição <b>" + numberFormatter.print(qtdTurmasAbertasProfessoresInstituicao,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Docentes Virtuais <b>" + numberFormatter.print(qtdTurmasAbertasProfessoresVirtuais,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Créditos Semanais Docentes: <b>"	+ numberFormatter.print(totalCreditosSemanais,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|-- Créditos de Professores da Instituição <b>"	+ numberFormatter.print(totalCreditosSemanaisProfessores,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|-- Crédito de Professores Virtuais: <b>"	+ numberFormatter.print(totalCreditosSemanaisProfessoresVirtuais,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Créditos Semanais Alunos: <b>"	+ numberFormatter.print(totalCreditosSemanaisAlunos,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Média de Créditos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeCreditosPorTurma,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Média de Alunos por Turma: <b>"	+ numberFormatter.print(qtdMediaDeAlunosPorTurma,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Custo Médio do Crédito: <b> " + currencyFormatter.print(custoMedioSemanalPorCredito,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Custo Docente Semestral Estimado: <b> "	+ currencyFormatter.print(custoDocenteSemestral,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Receita Semestral Estimada: <b> " + currencyFormatter.print(receitaSemestral,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Margem Semestral Estimada: <b> " + currencyFormatter.print(receitaSemestral-custoDocenteSemestral,pt_BR) + "</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "% do Custo Docente sobre a Receita: <b> " + ((razaoCustoDocentePorReceitaSemestral == null) ? "n.d.a." : numberFormatter.print(razaoCustoDocentePorReceitaSemestral, pt_BR)) + "%</b>", currentNode));
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Ocupação Média da Capacidade dos Ambientes: <b>" + numberFormatter.print(utilizacaoMediaDosAmbientes, pt_BR) + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Ocupação Média da Capacidade das Salas de Aula: <b>" + numberFormatter.print(utilizacaoMediaDasSalasDeAula, pt_BR) + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Ocupação Média da Capacidade dos Laboratórios: <b>"	+ numberFormatter.print(utilizacaoMediaDosLaboratorios, pt_BR) + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Utilização Média dos Horários dos Ambientes: <b>" + numberFormatter.print(mediaUtilizacaoHorarioAmbientes, pt_BR) + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Utilização Média dos Horários das Salas de Aula: <b>" + numberFormatter.print(mediaUtilizacaoHorarioSalas, pt_BR) + "%</b>", currentNode ) );
-		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "|--- Utilização Média dos Horários dos Laboratórios: <b>" + numberFormatter.print(mediaUtilizacaoHorarioLaboratorios, pt_BR) + "%</b>", currentNode ) );
-		//itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Total de alunos atendidos: <b>"	+ numberFormatter.print(qtdAlunosAtendidos,pt_BR) + "</b>", currentNode ) );
-		//itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( "Total de alunos n&atilde;o atendidos: <b>" + numberFormatter.print(qtdAlunosNaoAtendidos,pt_BR) + "</b>", currentNode ) );
-*/		
+		time = (System.currentTimeMillis() - primeiro)/1000;System.out.println(" tempo total = " + time + " segundos"); // TODO: retirar
 		return itensDoRelatorioParaUmCampus;
 	}
 }
