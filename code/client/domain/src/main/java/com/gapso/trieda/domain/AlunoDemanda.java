@@ -645,6 +645,31 @@ public class AlunoDemanda
 		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
 	}
 	
+	public static int sumAlunosComDemanda(InstituicaoEnsino instituicaoEnsino, Campus campus) {
+		Query q = entityManager()
+				.createNativeQuery(
+						" select count(*) from (select distinct alunodeman0_.aln_id from alunos_demanda alunodeman0_" +
+						" join demandas demanda1_" +
+						" join ofertas oferta2_" +
+						" join campi campus3_" +
+						" join disciplinas disciplina5_" +
+						" join tipos_disciplina tipodiscip6_" +
+						" where alunodeman0_.dem_id=demanda1_.dem_id" +
+						" and demanda1_.ofe_id=oferta2_.ofe_id" +
+						" and oferta2_.cam_id=campus3_.cam_id" +
+						" and demanda1_.dis_id=disciplina5_.dis_id  " +
+						" and disciplina5_.tdi_id=tipodiscip6_.tdi_id and campus3_.ins_id=:instituicaoEnsino " +
+						" and tipodiscip6_.ins_id=:instituicaoEnsino and oferta2_.cam_id= :campus " +
+						" and alunodeman0_.ald_prioridade=:prioridade) as a;");
+
+		q.setParameter("instituicaoEnsino", instituicaoEnsino);
+		q.setParameter("campus",campus);
+		q.setParameter("prioridade",1);
+
+		Object rs = q.getSingleResult();
+		return ( rs == null ? 0 : ( (Number) rs ).intValue() );
+	}
+	
 	public static int sumDemandaPorPrioridade(InstituicaoEnsino instituicaoEnsino, Cenario cenario, int prioridade) {
 		Query q = entityManager().createQuery(
 			" SELECT COUNT(o) FROM AlunoDemanda o " +

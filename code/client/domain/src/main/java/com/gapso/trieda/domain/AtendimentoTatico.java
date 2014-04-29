@@ -1321,4 +1321,19 @@ public class AtendimentoTatico
 		
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoTatico> getAtendimentosTaticosByCampus(
+			InstituicaoEnsino instituicaoEnsino, Campus campus)
+		{
+			Query q = entityManager().createQuery(
+				" SELECT o FROM AtendimentoTatico o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.oferta.campus = :campus " );
+
+				q.setParameter( "campus", campus );
+				q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+				return q.getResultList();
+	}
 }

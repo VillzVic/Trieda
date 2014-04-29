@@ -1694,6 +1694,21 @@ public class AtendimentoOperacional
 				return q.getResultList();
 		}
 	
+	@SuppressWarnings("unchecked")
+	public static List<AtendimentoOperacional> getAtendimentosOperacionaisByCampus(
+			InstituicaoEnsino instituicaoEnsino, Campus campus)
+		{
+			Query q = entityManager().createQuery(
+				" SELECT o FROM AtendimentoOperacional o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.oferta.campus = :campus " );
+
+				q.setParameter( "campus", campus );
+				q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+				return q.getResultList();
+	}
+	
 	public static int countProfessores(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario )
 		{
