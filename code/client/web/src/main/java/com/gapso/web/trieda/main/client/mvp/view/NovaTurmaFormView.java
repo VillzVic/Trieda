@@ -46,7 +46,7 @@ public class NovaTurmaFormView extends MyComposite
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.turmaAdd16() );
 		this.simpleModal.setHeight( 180 );
-		this.simpleModal.setWidth( 300 );
+		this.simpleModal.setWidth( 400 );
 		createForm();
 	
 		this.simpleModal.setContent( this.formPanel );
@@ -71,7 +71,7 @@ public class NovaTurmaFormView extends MyComposite
 		this.nomeTF = new TextField< String >();
 		this.nomeTF.setName( TurmaDTO.PROPERTY_NOME );
 		this.nomeTF.setValue( this.turmaDTO.getNome() );
-		this.nomeTF.setFieldLabel( "Nome" );
+		this.nomeTF.setFieldLabel( "Nome da Turma" );
 		this.nomeTF.setAllowBlank( false );
 		this.nomeTF.setMinLength( 1 );
 		this.nomeTF.setMaxLength( 50 );

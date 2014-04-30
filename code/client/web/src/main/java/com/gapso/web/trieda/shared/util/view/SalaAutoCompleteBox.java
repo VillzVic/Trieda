@@ -67,7 +67,7 @@ public class SalaAutoCompleteBox extends ComboBox<SalaDTO> {
 	}
 	
 	private void configureView(boolean readOnly) {
-		setDisplayField(SalaDTO.PROPERTY_CODIGO);
+		setDisplayField(SalaDTO.PROPERTY_DISPLAY_TEXT);
 		setFieldLabel("Ambiente");
 		setEmptyText("Selecione um ambiente");
 		setTemplate(getTemplateCB());
@@ -79,7 +79,7 @@ public class SalaAutoCompleteBox extends ComboBox<SalaDTO> {
 	private native String getTemplateCB() /*-{
 		return  [
 			'<tpl for=".">',
-			'<div class="x-combo-list-item">{codigo} ({numero})</div>',
+			'<div class="x-combo-list-item">{codigo} ({numero}) ({capacidadeInstalada} lugares)</div>',
 			'</tpl>'
 		].join("");
 	}-*/;

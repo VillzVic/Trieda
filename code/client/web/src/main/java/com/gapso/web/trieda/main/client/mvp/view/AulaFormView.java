@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.view;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormButtonBinding;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -34,6 +36,7 @@ implements AulaFormPresenter.Display
 	private CampusDTO campusDTO;
 	private DisciplinaDTO disciplinaDTO;
 	private AulaDTO aulaDTO;
+	private List<AulaDTO> aulasTurma;
 	private SalaDTO salaDTO;
 	private SemanaLetivaDTO semanaLetivaDTO;
 	private HorarioDisponivelCenarioDTO horarioDisponivelCenarioDTO;
@@ -49,13 +52,14 @@ implements AulaFormPresenter.Display
 			DisciplinaDTO disciplinaDTO, SalaDTO salaDTO, 
 			SemanaLetivaDTO semanaLetivaDTO,
 			HorarioDisponivelCenarioDTO horarioDisponivelCenarioDTO,
-			TurmaDTO turmaDTO, AulaDTO aulaDTO )
+			TurmaDTO turmaDTO, AulaDTO aulaDTO, List<AulaDTO> aulasTurma )
 	{
 		this.turmaDTO = turmaDTO;
 		this.campusDTO = campusDTO;
 		this.cenarioDTO = cenarioDTO;
 		this.disciplinaDTO = disciplinaDTO;
 		this.aulaDTO = aulaDTO;
+		this.aulasTurma = aulasTurma;
 		this.salaDTO = salaDTO;
 		this.semanaLetivaDTO = semanaLetivaDTO;
 		this.horarioDisponivelCenarioDTO = horarioDisponivelCenarioDTO;
@@ -142,7 +146,7 @@ implements AulaFormPresenter.Display
 		this.formPanel.add( semanaLetivaCB, formData );
 		
 		horarioCB = new HorarioComboBox(cenarioDTO, salaDTO, disciplinaDTO, semanaLetivaDTO,
-				diaSemanaRadioGroup.getValue() == null ? null : diaSemanaRadioGroup.getValue().getFieldLabel());
+				aulaDTO.getSemanaString() == null ? null : aulaDTO.getSemanaString());
 		horarioCB.setValue(horarioDisponivelCenarioDTO);
 		horarioCB.setAllowBlank(false);
 		if (horarioDisponivelCenarioDTO == null)
@@ -208,6 +212,12 @@ implements AulaFormPresenter.Display
 	public AulaDTO getAulaDTO()
 	{
 		return this.aulaDTO;
+	}
+	
+	@Override
+	public List<AulaDTO> getAulasTurma()
+	{
+		return this.aulasTurma;
 	}
 	
 	@Override

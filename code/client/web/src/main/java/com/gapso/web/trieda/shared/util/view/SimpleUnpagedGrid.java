@@ -1,7 +1,9 @@
 package com.gapso.web.trieda.shared.util.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseListLoader;
@@ -17,7 +19,6 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ComponentPlugin;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
@@ -31,17 +32,18 @@ public class SimpleUnpagedGrid< M extends BaseModel >
 	private Grid< M > grid;
 	private RpcProxy<ListLoadResult<M>> proxy;
 	private ListLoader< ListLoadResult< ModelData > > loader;
-	private List< ColumnConfig > columnList;
+	private ColumnModel columnModel;
 	private List< ComponentPlugin > plugins = new ArrayList< ComponentPlugin >();
 	private ITriedaI18nGateway i18nGateway;
 	private SimpleToolBar toolBar;
+	private Map<String, SelectionChangedListener<M>> selecionTypeMapSelectionListener = new HashMap<String, SelectionChangedListener<M>>();
 	
-	public SimpleUnpagedGrid( List< ColumnConfig > columnList,
+	public SimpleUnpagedGrid( ColumnModel columnModel,
 		ITriedaI18nGateway i18nGateway, SimpleToolBar toolBar )
 	{
 		super( new FitLayout() );
 	
-		this.columnList = columnList;
+		this.columnModel = columnModel;
 		this.i18nGateway = i18nGateway;
 		this.toolBar = toolBar;
 		setHeaderVisible( false );
@@ -56,7 +58,7 @@ public class SimpleUnpagedGrid< M extends BaseModel >
 	
 		ListStore< M > store = new ListStore< M >( this.loader );  
 	
-		this.grid = new Grid< M >( store, new ColumnModel( this.columnList ) );
+		this.grid = new Grid< M >( store, columnModel );
 		this.grid.setStripeRows( true );
 		this.grid.setBorders( true );
 		this.grid.getSelectionModel().setSelectionMode( SelectionMode.MULTI );
@@ -101,6 +103,22 @@ public class SimpleUnpagedGrid< M extends BaseModel >
 		        }
 		    }
 		});
+		
+		for (SelectionChangedListener<M> listener : selecionTypeMapSelectionListener.values())
+		{
+			this.getGrid().getSelectionModel().addSelectionChangedListener(listener);
+		}
+	}
+	
+	public void addLoadListener(LoadListener listener)
+	{
+		if (this.loader != null)
+			this.loader.addLoadListener(listener);
+	}
+	
+	public void addGridSelectionChangedListener(String type, SelectionChangedListener<M> listener)
+	{
+		selecionTypeMapSelectionListener.put(type, listener);
 	}
 	
 	@Override

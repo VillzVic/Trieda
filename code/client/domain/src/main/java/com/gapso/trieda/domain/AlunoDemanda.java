@@ -420,6 +420,64 @@ public class AlunoDemanda
 		return q.getResultList();
 	}
 	
+	public static Map<Long, AlunoDemanda> buildIdMapAlunoDemandaFetchAtendimentoOperacional(
+			InstituicaoEnsino instituicaoEnsino, Collection<Long> ids)
+	{
+		Map<Long, AlunoDemanda> idMapAlunoDemanda = new HashMap<Long, AlunoDemanda>();
+		for (AlunoDemanda alunoDemanda : 
+			findByIdsFetchAtendimentoOperacional(instituicaoEnsino, ids))
+		{
+			idMapAlunoDemanda.put(alunoDemanda.getId(), alunoDemanda);
+		}
+		
+		return idMapAlunoDemanda;
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByIdsFetchAtendimentoOperacional(
+		InstituicaoEnsino instituicaoEnsino, Collection<Long> ids)
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT o FROM AlunoDemanda o LEFT JOIN FETCH o.atendimentosOperacional " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.id IN ( :ids ) " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "ids", ids );
+
+		return q.getResultList();
+	}
+	
+	public static Map<Long, AlunoDemanda> buildIdMapAlunoDemandaFetchAtendimentoTatico(
+			InstituicaoEnsino instituicaoEnsino, Collection<Long> ids)
+	{
+		Map<Long, AlunoDemanda> idMapAlunoDemanda = new HashMap<Long, AlunoDemanda>();
+		for (AlunoDemanda alunoDemanda : 
+			findByIdsFetchAtendimentoTatico(instituicaoEnsino, ids))
+		{
+			idMapAlunoDemanda.put(alunoDemanda.getId(), alunoDemanda);
+		}
+		
+		return idMapAlunoDemanda;
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AlunoDemanda > findByIdsFetchAtendimentoTatico(
+		InstituicaoEnsino instituicaoEnsino, Collection<Long> ids)
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT o FROM AlunoDemanda o LEFT JOIN FETCH o.atendimentosTatico " +
+			" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.id IN ( :ids ) " );
+
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "ids", ids );
+
+		return q.getResultList();
+	}
+	
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByCampusAndTurnoFetchAtendimentoTatico(
 		InstituicaoEnsino instituicaoEnsino, Collection<Campus> campi, Set<Turno> turnos )

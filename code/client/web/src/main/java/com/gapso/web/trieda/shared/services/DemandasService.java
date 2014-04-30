@@ -33,5 +33,5 @@ public interface DemandasService extends RemoteService {
 	ParametroGeracaoDemandaDTO getParametroGeracaoDemanda(CenarioDTO cenarioDTO);
 	void calculaPrioridadesParaDisciplinasNaoCursadasPorAluno(CenarioDTO cenarioDTO,
 			ParametroGeracaoDemandaDTO parametroGeracaoDemandaDTO);
-	QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO,	ResumoMatriculaDTO resumoMatriculaDTO);
+	QuintetoDTO<CampusDTO, List<DemandaDTO>, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO);
 }

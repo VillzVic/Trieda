@@ -31,5 +31,5 @@ public interface DemandasServiceAsync
 	void getDemandaDTO(
 			CenarioDTO cenarioDTO,
 			ResumoMatriculaDTO resumoMatriculaDTO,
-			AsyncCallback<QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer>> callback);
+			AsyncCallback<QuintetoDTO<CampusDTO, List<DemandaDTO>, DisciplinaDTO, Integer, Integer>> callback);
 }

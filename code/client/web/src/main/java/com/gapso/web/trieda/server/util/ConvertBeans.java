@@ -530,7 +530,7 @@ public class ConvertBeans {
 		dto.setCampusId( domain.getUnidade().getCampus().getId() );
 		dto.setUnidadeId( domain.getUnidade().getId() );
 		dto.setUnidadeString( domain.getUnidade().getCodigo() );
-		dto.setDisplayText( domain.getCodigo() + " (" + domain.getNumero() + ")" );
+		dto.setDisplayText( domain.getCodigo() + " (" + domain.getNumero() + ")" + " (" + domain.getCapacidadeInstalada() + " lugares)");
 		
 		if ( instituicaoEnsino != null )
 		{
@@ -2085,6 +2085,25 @@ public class ConvertBeans {
 
 		return dto;
 	}
+	
+	public static List < DemandaDTO > toListDemandaDTO(
+			List< Demanda > listDomains )
+		{
+			if ( listDomains == null )
+			{
+				return Collections.< DemandaDTO > emptyList();
+			}
+
+			List< DemandaDTO > listDTOs
+				= new ArrayList< DemandaDTO >();
+
+			for ( Demanda domain : listDomains )
+			{
+				listDTOs.add( ConvertBeans.toDemandaDTO( domain ) );
+			}
+
+			return listDTOs;
+		}
 
 	// ATENDIMENTO TÁTICO
 	public static AtendimentoTatico toAtendimentoTatico( AtendimentoTaticoDTO dto )
@@ -3934,6 +3953,7 @@ public class ConvertBeans {
 		aulaDTO.setHorarioAulaId(aula.getHorarioAula().getId());
 		aulaDTO.setSemana(aula.getSemana().ordinal());
 		aulaDTO.setSemanaString(aula.getSemana().name());
+		aulaDTO.setProfessorNome("");
 		
 		DateFormat df = new SimpleDateFormat( "HH:mm" );
 		String inicio = df.format( aula.getHorarioAula().getHorario() );

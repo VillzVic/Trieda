@@ -77,7 +77,7 @@ public class MotivosUsoProfessorVirtualPresenter
 				ConfirmacaoTurmaDTO turma = display.getTurmaGrid().getSelectionModel().getSelectedItem();
 				display.getMotivosGrid().mask( display.getI18nMessages().loading(), "loading" );
 				display.getDicasGrid().mask( display.getI18nMessages().loading(), "loading" );
-				service.getMotivosUsoProfessorVirtual(cenarioDTO, turma.getDisciplinaId(), turma.getTurma(), (turma.getCreditosTeorico() > 0),
+				service.getMotivosUsoProfessorVirtual(cenarioDTO, turma.getDisciplinaId(), turma.getSalaId(), turma.getTurma(), (turma.getCreditosTeorico() > 0),
 						new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<MotivoUsoProfessorVirtualDTO>>(display.getI18nMessages().falhaOperacao(),display) {
 					@Override
 					public void onSuccess(ListLoadResult<MotivoUsoProfessorVirtualDTO> result) {
@@ -88,7 +88,7 @@ public class MotivosUsoProfessorVirtualPresenter
 					}
 				});
 				
-				service.getDicasEliminacaoProfessorVirtual(cenarioDTO, turma.getDisciplinaId(), turma.getTurma(), (turma.getCreditosTeorico() > 0),
+				service.getDicasEliminacaoProfessorVirtual(cenarioDTO, turma.getDisciplinaId(), turma.getSalaId(), turma.getTurma(), (turma.getCreditosTeorico() > 0),
 						new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<DicaEliminacaoProfessorVirtualDTO>>(display.getI18nMessages().falhaOperacao(),display) {
 					@Override
 					public void onSuccess(ListLoadResult<DicaEliminacaoProfessorVirtualDTO> result) {

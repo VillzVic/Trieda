@@ -199,7 +199,28 @@ public class AulaDTO
 
 	@Override
 	public String getNaturalKey() {
-		return this.getHorarioDisponivelCenarioId() + "-" + this.getSalaId();
+		return this.getHorarioAulaId() + "-" + this.getSalaId();
+	}
+	
+	public String getIdKey() {
+		
+		if (this.getId() != null)
+		{
+			return this.getId().toString();
+		}
+		else if (this.getAtendimentosIds() != null)
+		{
+			String idKey = "";
+			for (Long id : this.getAtendimentosIds())
+			{
+				idKey += id.toString() + "-";
+			}
+			return idKey;
+		}
+		else
+		{
+			return "";
+		}
 	}
 
 }

@@ -2,25 +2,18 @@ package com.gapso.web.trieda.main.client.mvp.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.RpcProxy;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.GridEvent;
-import com.extjs.gxt.ui.client.event.Listener;
-import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
-import com.extjs.gxt.ui.client.event.SelectionChangedListener;
+import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreEvent;
 import com.extjs.gxt.ui.client.store.StoreListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.LayoutContainer;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -31,9 +24,10 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
+import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
-import com.extjs.gxt.ui.client.widget.grid.GridViewConfig;
+import com.extjs.gxt.ui.client.widget.grid.HeaderGroupConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.CenterLayout;
@@ -44,34 +38,27 @@ import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.SeparatorToolItem;
 import com.gapso.web.trieda.main.client.mvp.presenter.AlocacaoManualPresenter;
-import com.gapso.web.trieda.main.client.mvp.presenter.AulaFormPresenter;
 import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
 import com.gapso.web.trieda.shared.dtos.AulaDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DemandaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
-import com.gapso.web.trieda.shared.dtos.HorarioDisponivelCenarioDTO;
-import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
-import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
-import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaSalaGrid;
 import com.gapso.web.trieda.shared.util.relatorioVisao.RelatorioVisaoSalaFiltro;
-import com.gapso.web.trieda.shared.util.relatorioVisao.GradeHorariaVisao.LinhaDeCredito;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SalaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.gapso.web.trieda.shared.util.view.SimpleUnpagedGrid;
-import com.google.gwt.dev.protobuf.Service;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -82,7 +69,7 @@ public class AlocacaoManualView
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
-	private DemandaDTO demandaDTO;
+	private List<DemandaDTO> demandasDTO;
 	private DisciplinaDTO disciplinaDTO;
 	private CampusDTO campusDTO;
 	private ResumoMatriculaDTO resumoMatriculaDTO;
@@ -115,7 +102,6 @@ public class AlocacaoManualView
 	private List<Button> mostrarGradeBts;
 	private List<Button> editarAulaBts;
 	private List<Button> removerAulaBts;
-	private Button selecionarTurmaBt;
 	private SalaAutoCompleteBox salaComboBox;
 	private Button proxAmbienteBt;
 	private Button antAmbienteBt;
@@ -128,13 +114,15 @@ public class AlocacaoManualView
 	private Button desmarcarTodosAlunosBt;
 	private Button salvarMarcacoesProfessoresBt;
 	private Button cancelarMarcacoesProfessoresBt;
+	private Button alocacoesAtalhoBt;
 	private CheckColumnConfig checkAlunoColumn;
 	private CheckColumnConfig checkProfessorColumn;
-	public AlocacaoManualView( CenarioDTO cenarioDTO, QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> quinteto, ResumoMatriculaDTO resumoMatriculaDTO )
+	private LabelField numAlunosMarcados;
+	public AlocacaoManualView( CenarioDTO cenarioDTO, QuintetoDTO<CampusDTO, List<DemandaDTO>, DisciplinaDTO, Integer, Integer> quinteto, ResumoMatriculaDTO resumoMatriculaDTO )
 	{
 		this.cenarioDTO = cenarioDTO;
 		this.campusDTO = quinteto.getPrimeiro();
-		this.demandaDTO = quinteto.getSegundo();
+		this.demandasDTO = quinteto.getSegundo();
 		this.disciplinaDTO = quinteto.getTerceiro();
 		this.resumoMatriculaDTO = resumoMatriculaDTO;
 		this.atendimentoNaoPlanejado = quinteto.getQuinto();
@@ -179,7 +167,7 @@ public class AlocacaoManualView
 		bldCenter.setCollapsible(true);
 
 	    ContentPanel topPanel = new ContentPanel(new BorderLayout());
-	    topPanel.setHeadingHtml("Turma");
+	    topPanel.setHeadingHtml("Turmas do Campus " + campusDTO.getNome() + "(" + campusDTO.getCodigo() + ")");
 		BorderLayoutData bldNovaTurma = new BorderLayoutData( LayoutRegion.WEST );
 		bldNovaTurma.setMargins( new Margins( 5, 5, 5, 5 ) );
 	    topPanel.add(createNovaTurmaPanel(), bldNovaTurma);
@@ -245,16 +233,15 @@ public class AlocacaoManualView
 		alunosToolBar.add(marcarTodosAlunosBt);
 		alunosToolBar.add(desmarcarTodosAlunosBt);
 		
-	    this.alunosGrid = new SimpleUnpagedGrid< AlunoStatusDTO >( getAlunosColumnList(), this, this.alunosToolBar )
+	    this.alunosGrid = new SimpleUnpagedGrid< AlunoStatusDTO >( new ColumnModel(getAlunosColumnList()), this, this.alunosToolBar )
 	    {
 			@Override
 			public void afterRender()
 			{
 				super.afterRender();
-				
 				getGrid().getStore().addStoreListener(new StoreListener<AlunoStatusDTO>()
 			    {
-		    	 @Override
+		    		@Override
 		    	    public void storeUpdate(StoreEvent<AlunoStatusDTO> se) {
 				        if(getAlunosGrid().getGrid().getStore().getModifiedRecords().size() > 0)
 				        {
@@ -266,14 +253,52 @@ public class AlocacaoManualView
 				        	salvarMarcacoesAlunosBt.disable();
 				        	cancelarMarcacoesAlunosBt.disable();
 				        }
+				        atualizaNumAlunosMarcados();
 		    	    }
 			    });
+				
+				this.addLoadListener( new LoadListener()
+				{
+					@Override
+					public void loaderLoad( LoadEvent le )
+					{
+						atualizaNumAlunosMarcados();
+					}
+				});
 			}
 	    };
 	    alunosGrid.addPlugin(checkAlunoColumn);
 	    alunosGrid.setTopComponent(alunosToolBar);
+	    numAlunosMarcados = new LabelField();
+	    numAlunosMarcados.setStyleAttribute("margin-left", "75px");
+	    numAlunosMarcados.setValue(getNumAlunosMarcados()+"/ "+getNumAlunosTotal() + " alunos");
+	    alunosToolBar.add(numAlunosMarcados);
 	    
 	    return alunosGrid;
+	}
+	
+	public String getNumAlunosMarcados()
+	{
+		int numAlunosMarcados = 0;
+		if (alunosGrid.getGrid() != null)
+		{
+			for (AlunoStatusDTO model : alunosGrid.getGrid().getStore().getModels())
+			{
+				if (model.getMarcado())
+					numAlunosMarcados++;
+			}
+		}
+		return NumberFormat.getFormat("00").format(numAlunosMarcados);
+	}
+	
+	public String getNumAlunosTotal()
+	{
+		int numAlunosTotal = 0;
+		if (alunosGrid.getGrid() != null)
+		{
+			numAlunosTotal = alunosGrid.getGrid().getStore().getModels().size();
+		}
+		return NumberFormat.getFormat("00").format(numAlunosTotal);
 	}
 	
 	private SimpleUnpagedGrid<ProfessorStatusDTO> createProfessoresGrid()
@@ -289,7 +314,7 @@ public class AlocacaoManualView
     	professoresToolBar.add(salvarMarcacoesProfessoresBt);
     	professoresToolBar.add(cancelarMarcacoesProfessoresBt);
 		
-	    this.professoresGrid = new SimpleUnpagedGrid< ProfessorStatusDTO >( getProfessoresColumnList(), this, this.professoresToolBar )
+	    this.professoresGrid = new SimpleUnpagedGrid< ProfessorStatusDTO >( new ColumnModel(getProfessoresColumnList()), this, this.professoresToolBar )
 	    {
 			@Override
 			public void afterRender()
@@ -365,7 +390,7 @@ public class AlocacaoManualView
 		grade.setHeaderVisible(false);
 		grade.setBodyBorder(false);
 		
-		salaGridPanel = new GradeHorariaSalaGrid(cenarioDTO);
+		salaGridPanel = new GradeHorariaSalaGrid(cenarioDTO, true);
 		
 		salaGridPanel.setEmptyTextBeforeSearch("Preencha o filtro acima e acione o" +
 				" botão filtrar para visualizar a grade horária do ambiente desejado.");
@@ -403,6 +428,7 @@ public class AlocacaoManualView
 		novaTurmaNomeTF.setStyleAttribute("margin", "4px");
 		novaTurmaNomeTF.setWidth(190);
 		novaTurmaNomeTF.setHeight(25);
+		novaTurmaNomeTF.setEmptyText("Coloque o nome da turma");
 
 		novaTurmaBt = new Button();
 		novaTurmaBt.setText("Nova Turma");
@@ -432,12 +458,17 @@ public class AlocacaoManualView
 
 	private Widget createDisciplinaPanel() {
 		ContentPanel disciplinaPanel = new ContentPanel();
-		disciplinaPanel.setHeadingHtml(" Disciplina (" + demandaDTO.getDisciplinaString() + ")");
+		disciplinaPanel.setHeadingHtml(" Disciplina (" + demandasDTO.get(0).getDisciplinaString() + ")");
 		disciplinaPanel.addText(disciplinaDTO.getNome());
+		alocacoesAtalhoBt = createButton("Abrir Janela de Alocação Manual", Resources.DEFAULTS.alocacaoManual16());
+		alocacoesAtalhoBt.setWidth(24);
+		alocacoesAtalhoBt.setHeight(20);
+		alocacoesAtalhoBt.setStyleAttribute("margin-top", "-4px");
+		disciplinaPanel.getHeader().addTool(alocacoesAtalhoBt);
 		
 		LayoutContainer container = new LayoutContainer(new ColumnLayout());
 		LabelField creditos = new LabelField();
-		creditos.setValue("Créd: " + disciplinaDTO.getCreditosTeorico() + "Teo " + disciplinaDTO.getCreditosPratico() + "Pra");
+		creditos.setValue("Créd: " + disciplinaDTO.getCreditosTeorico() + " Teo " + disciplinaDTO.getCreditosPratico() + " Prát");
 		creditos.setStyleAttribute("margin-top", "2px");
 		CheckBox cb = new CheckBox();
 		cb.setHideLabel( true );
@@ -457,22 +488,24 @@ public class AlocacaoManualView
 		demandaPanel = new ContentPanel();
 		demandaPanel.setHeadingHtml("Demanda");
 		
-		LayoutContainer container = new LayoutContainer(new FormLayout(LabelAlign.RIGHT));
+		FormLayout formLayout = new FormLayout(LabelAlign.RIGHT);
+		formLayout.setLabelWidth(170);
+		LayoutContainer container = new LayoutContainer(formLayout);
 		container.addStyleName("alocacaoManualDemanda");
 		LabelField total = new LabelField();
 		total.setFieldLabel("<b>Total:</b>");
 		total.setValue(resumoMatriculaDTO.getDisDemandaP1());
 		
 		planejadoLabel = new LabelField();
-		planejadoLabel.setFieldLabel("<b>Atend. Plan.:</b>");
+		planejadoLabel.setFieldLabel("<b>Atendimento Planejado:</b>");
 		planejadoLabel.setValue(atendimentoPlanejado);
 		
 		naoPlanejadoLabel = new LabelField();
-		naoPlanejadoLabel.setFieldLabel("<b>Atend. Não Plan.:</b>");
+		naoPlanejadoLabel.setFieldLabel("<b>Atendimento Não Planejado:</b>");
 		naoPlanejadoLabel.setValue(atendimentoNaoPlanejado);
 		
 		naoAtendidoLabel = new LabelField();
-		naoAtendidoLabel.setFieldLabel("<b>Não Atend.:</b>");
+		naoAtendidoLabel.setFieldLabel("<b>Não Atendimento:</b>");
 		naoAtendidoLabel.setValue(resumoMatriculaDTO.getDisNaoAtendidosP1());
 		
 		container.add(total);
@@ -496,43 +529,14 @@ public class AlocacaoManualView
 		this.toolBar = new SimpleToolBar(
 				true, true, true, false, false, this );
 		
-		selecionarTurmaBt = toolBar.createButton(
-			"Selecionar Turma",
-			Resources.DEFAULTS.selecionarTurma16() );
-		selecionarTurmaBt.disable();
-		
-		toolBar.add(new SeparatorToolItem());
-		
-		toolBar.add(selecionarTurmaBt);
-		
-	    this.turmasGrid = new SimpleUnpagedGrid< TurmaStatusDTO >( getColumnList(), this, this.toolBar )
-	    {
-			@Override
-			public void afterRender()
-			{
-				super.afterRender();
-				
-				getGrid().getSelectionModel().addSelectionChangedListener(new SelectionChangedListener<TurmaStatusDTO>() {
-
-					@Override
-				    public void selectionChanged(SelectionChangedEvent<TurmaStatusDTO> se) {
-				        if(getGrid().getSelectionModel().getSelectedItems().size() == 1) {
-				        	selecionarTurmaBt.enable();
-				        }
-				        else{
-				        	selecionarTurmaBt.disable();
-				        }
-				    }
-				});
-			}
-	    };
+	    this.turmasGrid = new SimpleUnpagedGrid< TurmaStatusDTO >( getColumnList(), this, this.toolBar );
 	    turmasGridPanel.setTopComponent(toolBar);
 	    turmasGridPanel.add(turmasGrid, bld);
 	    
 	    return turmasGridPanel;
 	}
 	
-	private List< ColumnConfig > getColumnList()
+	private ColumnModel getColumnList()
 	{
 		List< ColumnConfig > list
 			= new ArrayList< ColumnConfig >();
@@ -570,7 +574,13 @@ public class AlocacaoManualView
 		column.setRenderer(change);
 		list.add( column );
 		
-		return list;
+		ColumnModel cm = new ColumnModel(list);
+		
+		cm.addHeaderGroup(0, 0 , new HeaderGroupConfig("", 1, 1));
+		cm.addHeaderGroup(0, 1, new HeaderGroupConfig("Qtd. Alunos", 1, 2));
+		cm.addHeaderGroup(0, 3, new HeaderGroupConfig("", 1, 1));
+		
+		return cm;
 	}
 	
 	private List< ColumnConfig > getAlunosColumnList()
@@ -615,7 +625,7 @@ public class AlocacaoManualView
 		list.add( column );
 		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_EQUIVALENCIA_STRING, "Equivalência", 60 ) );
 		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_FORMANDO, "Formando", 60 ) );
-		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
+		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 120 ) );
 		
 		return list;
 	}
@@ -749,7 +759,7 @@ public class AlocacaoManualView
 	@Override
 	public DemandaDTO getDemanda()
 	{
-		return demandaDTO;
+		return demandasDTO.get(0);
 	}
 	
 	@Override
@@ -834,12 +844,12 @@ public class AlocacaoManualView
 		removerAulaBts = new ArrayList<Button>();
 		for (int i = 0; i < aulasSelecionadas.size(); i++)
 		{
-			mostrarGradeBts.add(new Button("", AbstractImagePrototype.create(
-				Resources.DEFAULTS.saidaSala16() )));
-			editarAulaBts.add(new Button("", AbstractImagePrototype.create(
-					Resources.DEFAULTS.aulaEdit16() )));
-			removerAulaBts.add(new Button("", AbstractImagePrototype.create(
-					Resources.DEFAULTS.aulaDelete16() )));
+			mostrarGradeBts.add(toolBar.createButton("Mostrar na Grade Horária", 
+				Resources.DEFAULTS.saidaSala16() ));
+			editarAulaBts.add(toolBar.createButton("Editar Aula",
+					Resources.DEFAULTS.aulaEdit16() ));
+			removerAulaBts.add(toolBar.createButton("Remover Aula",
+					Resources.DEFAULTS.aulaDelete16() ));
 		}
 		
 	}
@@ -864,12 +874,6 @@ public class AlocacaoManualView
 		return this.turmaSelecionada;
 	}
 	
-	@Override
-	public Button getSelecionarTurmaButton()
-	{
-		return this.selecionarTurmaBt;
-	}
-
 	private Widget createTurmaSubPanel() {
 		ContentPanel turmaSubPanel = new ContentPanel();
 		turmaSubPanel.setHeaderVisible(false);
@@ -884,7 +888,7 @@ public class AlocacaoManualView
 		turmaLabel.setValue(turmaSelecionada.getNome() + " (" + (disciplinaDTO.getCodigo()) + ")");
 		
 		LabelField noAlunosLabel = new LabelField();
-		noAlunosLabel.setFieldLabel("<b>No Alunos:</b>");
+		noAlunosLabel.setFieldLabel("<b>Nº Alunos:</b>");
 		noAlunosLabel.setValue(turmaSelecionada.getNoAlunos());
 		
 		LabelField credAlocadosLabel = new LabelField();
@@ -1037,6 +1041,16 @@ public class AlocacaoManualView
 		
 		return separator;
 	}
+	
+	public Button createButton( String toolTip, ImageResource img )
+	{
+		Button bt = new Button();
+
+		bt.setIcon( AbstractImagePrototype.create( img ) );
+		bt.setToolTip( toolTip );
+
+		return bt;
+	}
 
 	@Override
 	public SalaAutoCompleteBox getSalaComboBox() {
@@ -1128,6 +1142,12 @@ public class AlocacaoManualView
 	}
 	
 	@Override
+	public Button getAlocacoesAtalhoButton()
+	{
+		return alocacoesAtalhoBt;
+	}
+	
+	@Override
 	public void setAulaNaGrade(AulaDTO aulaDTO)
 	{
 		aulaNaGrade = aulaDTO;
@@ -1137,5 +1157,12 @@ public class AlocacaoManualView
 	public AulaDTO getAulaNaGrade()
 	{
 		return aulaNaGrade;
+	}
+	
+	@Override
+	public void atualizaNumAlunosMarcados()
+	{
+		numAlunosMarcados.setValue(getNumAlunosMarcados()+"/ "+getNumAlunosTotal() + " alunos");
+		alunosToolBar.layout();
 	}
 }

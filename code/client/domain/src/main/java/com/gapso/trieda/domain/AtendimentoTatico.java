@@ -968,11 +968,11 @@ public class AtendimentoTatico
 	{
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoTatico o " +
-			" WHERE o.oferta = :oferta " +
+			" WHERE o.oferta.campus = :campus " +
 			" AND o.disciplina = :disciplina " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " );
 
-		q.setParameter( "oferta", demanda.getOferta() );
+		q.setParameter( "campus", demanda.getOferta().getCampus() );
 		q.setParameter( "disciplina", demanda.getDisciplina() );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
@@ -1234,7 +1234,7 @@ public class AtendimentoTatico
 
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoTatico> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-		Disciplina disciplina, String turma)
+		Disciplina disciplina, Campus campus, String turma)
 	{
 		Query q1 = entityManager().createQuery(
 				" SELECT o FROM AtendimentoTatico o " +
@@ -1242,6 +1242,7 @@ public class AtendimentoTatico
 				" AND o.cenario = :cenario " +
 				" AND o.turma = :turma" +
 				" AND o.disciplina = :disciplina " +
+				" AND o.oferta.campus = :campus " +
 				" AND o.disciplinaSubstituta IS NULL ");
 
 		Query q2 = entityManager().createQuery(
@@ -1250,16 +1251,19 @@ public class AtendimentoTatico
 				" AND o.cenario = :cenario " +
 				" AND o.turma = :turma" +
 				" AND o.disciplinaSubstituta = :disciplina " +
+				" AND o.oferta.campus = :campus " +
 				" AND o.disciplinaSubstituta IS NOT NULL ");
 
 		q1.setParameter( "cenario", cenario );
 		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q1.setParameter( "disciplina", disciplina );
 		q1.setParameter( "turma", turma );
+		q1.setParameter( "campus", campus );
 		q2.setParameter( "cenario", cenario );
 		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q2.setParameter( "disciplina", disciplina );
 		q2.setParameter( "turma", turma );
+		q2.setParameter( "campus", campus );
 		
 		List<AtendimentoTatico> result = new ArrayList<AtendimentoTatico>();
 		result.addAll(q1.getResultList());

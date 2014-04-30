@@ -118,7 +118,7 @@ public class ErrorsWarningsNewAulaPresenter
 									alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), turmaSelecionada.getStatus());
 									alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 									alocacaoManualPresenter.getDisplay().getAlunosGrid().updateList();
-									alocacaoManualPresenter.getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(aulaDTO.getSemanaString());
+									alocacaoManualPresenter.getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(aulaDTO.getSalaString());
 									alocacaoManualPresenter.getDisplay().getSalaGridPanel().setAulaDestaque(aulaDTO);
 									alocacaoManualPresenter.getDisplay().getSalaGridPanel().requestAtendimentos();
 									alocacaoManualPresenter.addAulasButtonsListeners();
@@ -133,14 +133,9 @@ public class ErrorsWarningsNewAulaPresenter
 				}
 				else if(tipoModal.equals(TipoModal.ALUNO))
 				{
-					List<Record> records = alocacaoManualPresenter.getDisplay().getAlunosGrid().getGrid().getStore().getModifiedRecords();
-					final List<AlunoStatusDTO> list = new ArrayList<AlunoStatusDTO>();
-					for(Record record : records)
-					{
-						list.add((AlunoStatusDTO) record.getModel());
-					}
+					final int noAlunosAtuais = alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getNoAlunos();
 					service.alocaAlunosTurma(cenarioDTO, alocacaoManualPresenter.getDisplay().getDemanda(), alocacaoManualPresenter.getDisplay().getTurmaSelecionada(),
-							list, new AsyncCallback< Void >()
+							alocacaoManualPresenter.getAlunosStatusModificados(), new AsyncCallback< Void >()
 					{
 						@Override
 						public void onFailure( Throwable caught )
@@ -151,7 +146,7 @@ public class ErrorsWarningsNewAulaPresenter
 						@Override
 						public void onSuccess( Void result )
 						{
-							TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
+							final TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
 							turmaSelecionada.setCenarioId(cenarioDTO.getId());
 							turmaSelecionada.setDisciplinaId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getDisciplinaId());
 							turmaSelecionada.setId(alocacaoManualPresenter.getDisplay().getTurmaSelecionada().getId());
@@ -173,6 +168,21 @@ public class ErrorsWarningsNewAulaPresenter
 								{
 									alocacaoManualPresenter.getDisplay().getAlunosGrid().updateList();
 									alocacaoManualPresenter.getDisplay().getGrid().updateList();
+									int planejadas = 0;
+									int naoPlanejadas = 0;
+									if (turmaSelecionada.getStatus().equals("Planejada"))
+									{
+										planejadas = result.getPrimeiro().getNoAlunos() - noAlunosAtuais;
+									}
+									else if (turmaSelecionada.getStatus().equals("Não Planejada"))
+									{
+										naoPlanejadas = result.getPrimeiro().getNoAlunos() - noAlunosAtuais;
+									}
+									alocacaoManualPresenter.getDisplay().refreshDemandasPanel(planejadas, naoPlanejadas, 0);
+									if (alocacaoManualPresenter.getDisplay().getAulaNaGrade() != null)
+									{
+										alocacaoManualPresenter.getDisplay().getSalaGridPanel().requestAtendimentos();
+									}
 									alocacaoManualPresenter.getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), alocacaoManualPresenter.getDisplay().getTurmaSelecionadaStatus());
 									alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 									alocacaoManualPresenter.addAulasButtonsListeners();

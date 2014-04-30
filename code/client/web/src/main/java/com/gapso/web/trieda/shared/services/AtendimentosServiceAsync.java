@@ -104,10 +104,10 @@ public interface AtendimentosServiceAsync {
 	void getTurmasProfessoresVirtuaisList(CenarioDTO cenarioDTO, ProfessorVirtualDTO professorVirtualDTO,
 			AsyncCallback<ListLoadResult<ConfirmacaoTurmaDTO>> callback);
 
-	void getMotivosUsoProfessorVirtual(CenarioDTO cenarioDTO, Long disciplinaId, String turma, Boolean credTeorico,
+	void getMotivosUsoProfessorVirtual(CenarioDTO cenarioDTO, Long disciplinaId, Long salaId, String turma, Boolean credTeorico,
 			AsyncCallback<ListLoadResult<MotivoUsoProfessorVirtualDTO>> callback);
 
-	void getDicasEliminacaoProfessorVirtual( CenarioDTO cenarioDTO, Long disciplinaId, String turma, Boolean credTeorico,
+	void getDicasEliminacaoProfessorVirtual( CenarioDTO cenarioDTO, Long disciplinaId, Long salaId, String turma, Boolean credTeorico,
 			AsyncCallback<ListLoadResult<DicaEliminacaoProfessorVirtualDTO>> callback);
 
 	void getTurmasStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO,
@@ -136,7 +136,7 @@ public interface AtendimentosServiceAsync {
 			AsyncCallback<ListLoadResult<HorarioDisponivelCenarioDTO>> callback);
 
 	void verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO,
-			AulaDTO aulaDTO,
+			AulaDTO aulaDTO, List<AulaDTO> aulasTurma,
 			AsyncCallback<TrioDTO<Boolean, List<String>, List<String>>> callback);
 
 	void saveAula(DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO,
@@ -176,5 +176,8 @@ public interface AtendimentosServiceAsync {
 			AsyncCallback<Void> callback);
 	
 	void desconfirmarTurmaSelecionada(DemandaDTO demandaDTO, TurmaDTO turmaDTO,
+			AsyncCallback<Void> callback);
+
+	void removeAula(TurmaDTO turmaDTO, AulaDTO aulaDTO,
 			AsyncCallback<Void> callback);
 }

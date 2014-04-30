@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.event.BaseEvent;
@@ -47,6 +48,7 @@ public class AulaFormPresenter
 		Button getSalvarButton();
 		TurmaDTO getTurmaDTO();
 		AulaDTO getAulaDTO();
+		List<AulaDTO> getAulasTurma();
 		DisciplinaDTO getDisciplinaDTO();
 		CampusDTO getCampusDTO();
 		boolean isValid();
@@ -113,7 +115,7 @@ public class AulaFormPresenter
 			{
 				if ( isValid() )
 				{
-					Services.atendimentos().verificaViabilidadeAula(cenario, display.getTurmaDTO(), getDTO(), new AsyncCallback< TrioDTO<Boolean, List<String>, List<String>> >()
+					Services.atendimentos().verificaViabilidadeAula(cenario, display.getTurmaDTO(), getDTO(), getOutrasAulasTurmaParaVerificacao(), new AsyncCallback< TrioDTO<Boolean, List<String>, List<String>> >()
 					{
 						@Override
 						public void onFailure( Throwable caught )
@@ -170,6 +172,7 @@ public class AulaFormPresenter
 												alocacaoManualPresenter.getDisplay().setAulaNaGrade(getDTO());
 												alocacaoManualPresenter.getDisplay().refreshTurmaSelecionadaPanel();
 												alocacaoManualPresenter.getDisplay().getAlunosGrid().updateList();
+												alocacaoManualPresenter.getDisplay().getSalaComboBox().setValue(display.getSalaComboBox().getValue());
 												alocacaoManualPresenter.getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(getDTO().getSalaString());
 												alocacaoManualPresenter.getDisplay().getSalaGridPanel().setAulaDestaque(getDTO());
 												alocacaoManualPresenter.getDisplay().getSalaGridPanel().requestAtendimentos();
@@ -293,6 +296,7 @@ public class AulaFormPresenter
 		
 		aulaDTO.setAtendimentosIds(display.getAulaDTO().getAtendimentosIds());
 		aulaDTO.setInstituicaoEnsinoId(instituicaoEnsinoDTO.getId());
+		aulaDTO.setVersion(display.getAulaDTO().getVersion());
 		aulaDTO.setCenarioId(cenario.getId());
 		aulaDTO.setId(display.getAulaDTO().getId());
 		aulaDTO.setHorarioAulaId(display.getHorarioComboBox().getValue().getHorarioDeAulaId());
@@ -312,6 +316,26 @@ public class AulaFormPresenter
 		}
 	
 		return aulaDTO;
+	}
+	
+	private List<AulaDTO> getOutrasAulasTurmaParaVerificacao()
+	{
+		List<AulaDTO> aulasTurma = new ArrayList<AulaDTO>();
+		// Se for edicao remove a aula a ser editada para ela nao ser comparada
+		for (AulaDTO aulaDTO : display.getAulasTurma())
+		{
+			if (!getDTO().getIdKey().isEmpty())
+			{
+				if (!getDTO().getIdKey().equals(aulaDTO.getIdKey()))
+					aulasTurma.add(aulaDTO);
+			}
+			else
+			{
+				aulasTurma.add(aulaDTO);
+			}
+		}
+		
+		return aulasTurma;
 	}
 	
 	@Override

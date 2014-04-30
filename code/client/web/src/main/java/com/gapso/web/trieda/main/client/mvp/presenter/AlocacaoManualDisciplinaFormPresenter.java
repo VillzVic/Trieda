@@ -1,5 +1,7 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.util.List;
+
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -65,9 +67,9 @@ public class AlocacaoManualDisciplinaFormPresenter
 			@Override
 			public void componentSelected( ButtonEvent ce )
 			{
-				Services.demandas().getDemandaDTO(cenarioDTO, display.getGrid().getSelectionModel().getSelectedItem(),  new AbstractAsyncCallbackWithDefaultOnFailure<QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer>>(display.getI18nMessages().falhaOperacao(),display) {
+				Services.demandas().getDemandaDTO(cenarioDTO, display.getGrid().getSelectionModel().getSelectedItem(),  new AbstractAsyncCallbackWithDefaultOnFailure<QuintetoDTO<CampusDTO, List<DemandaDTO>, DisciplinaDTO, Integer, Integer>>(display.getI18nMessages().falhaOperacao(),display) {
 					@Override
-					public void onSuccess(QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> result) {
+					public void onSuccess(QuintetoDTO<CampusDTO, List<DemandaDTO>, DisciplinaDTO, Integer, Integer> result) {
 						Presenter presenter = new AlocacaoManualPresenter( instituicaoEnsinoDTO, cenarioDTO,
 							new AlocacaoManualView( cenarioDTO, result, display.getGrid().getSelectionModel().getSelectedItem() ) );
 

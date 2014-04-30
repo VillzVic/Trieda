@@ -1211,15 +1211,19 @@ public class DemandasServiceImpl
 	}
 	
 	@Override
-	public QuintetoDTO<CampusDTO, DemandaDTO, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO)
+	public QuintetoDTO<CampusDTO, List<DemandaDTO>, DisciplinaDTO, Integer, Integer> getDemandaDTO(CenarioDTO cenarioDTO, ResumoMatriculaDTO resumoMatriculaDTO)
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(resumoMatriculaDTO.getCampusId(), getInstituicaoEnsinoUser());
 		Disciplina disciplina = Disciplina.find(resumoMatriculaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
 		
-		Demanda demanda = Demanda.findBy(getInstituicaoEnsinoUser(), cenario, campus, disciplina);
+		List<Demanda> demandas = Demanda.findBy(getInstituicaoEnsinoUser(), cenario, campus, disciplina);
+		Set<AlunoDemanda> alunos = new HashSet<AlunoDemanda>();
+		for(Demanda demanda : demandas)
+		{
+			alunos.addAll(demanda.getAlunosDemanda());
+		}
 		
-		Set<AlunoDemanda> alunos = demanda.getAlunosDemanda();
 		int planejada  = 0;
 		int naoPlanejada = 0;
 		for(AlunoDemanda aluno : alunos)
@@ -1246,7 +1250,7 @@ public class DemandasServiceImpl
 			}
 		}
 		
-		return QuintetoDTO.create(ConvertBeans.toCampusDTO(campus), ConvertBeans.toDemandaDTO(demanda), ConvertBeans.toDisciplinaDTO(disciplina), planejada, naoPlanejada);
+		return QuintetoDTO.create(ConvertBeans.toCampusDTO(campus), ConvertBeans.toListDemandaDTO(demandas), ConvertBeans.toDisciplinaDTO(disciplina), planejada, naoPlanejada);
 	}
 
 }

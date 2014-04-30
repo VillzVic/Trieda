@@ -557,9 +557,11 @@ public class SemanaLetiva
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM SemanaLetiva o " +
 			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.codigo = :codigo " );
+			" AND o.codigo = :codigo " +
+			" AND o.cenario = :cenario " );
 
 		q.setParameter( "codigo", codigo );
+		q.setParameter( "cenario", cenario );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		Number size = ( (Number) ( q.setMaxResults( 1 ).getSingleResult() ) );

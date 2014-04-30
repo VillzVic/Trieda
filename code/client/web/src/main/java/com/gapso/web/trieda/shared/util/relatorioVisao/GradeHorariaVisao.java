@@ -53,11 +53,12 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected List<Long> disciplinasCores = new ArrayList<Long>();
 	protected CenarioDTO cenarioDTO;
 	protected AulaDTO aulaDestaque;
+	protected boolean gradeHorariaAlocacaoManual;
 
 	protected String emptyTextBeforeSearch = "Preencha o filtro acima";
 	protected String emptyTextAfterSearch = "Não foi encontrado nenhuma Grade Horária para este filtro";
 	
-	public GradeHorariaVisao(CenarioDTO cenarioDTO, AulaDTO aulaDestaque){
+	public GradeHorariaVisao(CenarioDTO cenarioDTO, boolean gradeHorariaAlocacaoManual){
 		super(new FitLayout());
 		this.temInfoDeHorarios = true;
 		this.mdcTemposAulaNumSemanasLetivas = ParDTO.create(1, false);
@@ -66,7 +67,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		this.horariosDeInicioDeAula = new ArrayList<String>();
 		this.horarioEhIntervalo = new ArrayList<Boolean>();
 		this.cenarioDTO = cenarioDTO;
-		this.aulaDestaque = aulaDestaque;
+		this.gradeHorariaAlocacaoManual = gradeHorariaAlocacaoManual;
 		this.setHeaderVisible(false);
 	}
 	
@@ -79,7 +80,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 		this.horariosDeInicioDeAula = new ArrayList<String>();
 		this.horarioEhIntervalo = new ArrayList<Boolean>();
 		this.cenarioDTO = cenarioDTO;
-		this.aulaDestaque = null;
+		this.gradeHorariaAlocacaoManual = false;
 		this.setHeaderVisible(false);
 	}
 	
@@ -167,8 +168,15 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				horariosDeInicioDeAula.clear();
 				horarioEhIntervalo.clear();
 				atendimentoDTO = result.getAtendimentosDTO();
-				if(!atendimentoDTO.isEmpty()){
-					temInfoDeHorarios = (atendimentoDTO.iterator().next().getHorarioAulaId() != null);
+				if(!atendimentoDTO.isEmpty() || gradeHorariaAlocacaoManual){
+					if (atendimentoDTO.isEmpty())
+					{
+						temInfoDeHorarios = true;
+					}
+					else
+					{
+						temInfoDeHorarios = (atendimentoDTO.iterator().next().getHorarioAulaId() != null);
+					}
 					mdcTemposAulaNumSemanasLetivas = result.getMdcTemposAulaNumSemanasLetivas();
 					if (temInfoDeHorarios) {
 						TrioDTO<List<String>,List<String>, List<Boolean>> trioDTO = GradeHoraria.processaLabelsDasLinhasDaGradeHoraria(result.getLabelsDasLinhasDaGradeHoraria(),result.getHorariosDeInicioDeAula(),result.getHorariosDeFimDeAula());
@@ -283,7 +291,7 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 			}
 
 			private Html content(LinhaDeCredito model, int rowIndex, int colIndex){
-				if(atendimentoDTO == null || atendimentoDTO.isEmpty()) return new Html("");
+				if((atendimentoDTO == null || atendimentoDTO.isEmpty()) && !gradeHorariaAlocacaoManual) return new Html("");
 
 				int semana = getSemana(colIndex);
 
@@ -293,10 +301,9 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				} else {
 					aulaDTO = getProximaAula(rowIndex+1,semana);
 				}
-
 				if (aulaDTO == null) {
 					Html html = new Html("");
-					if (!model.getDisplay().isEmpty() && aulaDestaque != null)
+					if (!model.getDisplay().isEmpty() && gradeHorariaAlocacaoManual)
 					{
 						html.setStyleAttribute("height", tamanhoLinhaGradeHorariaEmPixels - 5 + "px");
 						html.addStyleName("gradeVazia");
@@ -328,7 +335,8 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				html.setStyleAttribute("top", ((rowIndex-getNumeroIntervalos(rowIndex)) * (tamanhoLinhaGradeHorariaEmPixels) + (12 * getNumeroIntervalos(rowIndex))) + "px");
 				// calcula a quantidade de linhas, para cada crédito, que a aula em questão ocupa na grade horária
 				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAulaNumSemanasLetivas.getPrimeiro();
-				html.setStyleAttribute("height", (aulaDTO.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula * tamanhoLinhaGradeHorariaEmPixels - 3) + "px");
+				int qtdIntervalosNaAula = getNumeroIntervalos(rowIndex+aulaDTO.getTotalCreditos()) - getNumeroIntervalos(rowIndex);
+				html.setStyleAttribute("height", (aulaDTO.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula * tamanhoLinhaGradeHorariaEmPixels - 3 + (qtdIntervalosNaAula*10)) + "px");
 				html.addStyleName("s" + aulaDTO.getSemana()); // Posiciona na coluna ( dia semana )
 				html.addStyleName(getCssDisciplina(aulaDTO.getDisciplinaId()));
 

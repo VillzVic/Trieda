@@ -961,11 +961,11 @@ public class AtendimentoOperacional
 	{
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
-			" WHERE o.oferta = :oferta " +
+			" WHERE o.oferta.campus = :campus " +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.disciplina = :disciplina " );
 
-		q.setParameter( "oferta", demanda.getOferta() );
+		q.setParameter( "campus", demanda.getOferta().getCampus() );
 		q.setParameter( "disciplina", demanda.getDisciplina() );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
@@ -2045,7 +2045,7 @@ public class AtendimentoOperacional
 
 	@SuppressWarnings("unchecked")
 	public static List<AtendimentoOperacional> findBy(InstituicaoEnsino instituicaoEnsino,
-			Cenario cenario, Disciplina disciplina, String turma, Boolean creditoTeorico) 
+			Cenario cenario, Disciplina disciplina, Campus campus, String turma, Boolean creditoTeorico) 
 	{
 		String creditoTeoricoString = creditoTeorico == null ? "" : " AND o.creditoTeorico = :creditoTeorico";
 		
@@ -2055,6 +2055,7 @@ public class AtendimentoOperacional
 				" AND o.cenario = :cenario " +
 				" AND o.turma = :turma" +
 				" AND o.disciplina = :disciplina " +
+				" AND o.oferta.campus = :campus " +
 				" AND o.disciplinaSubstituta IS NULL " +
 				creditoTeoricoString);
 
@@ -2064,6 +2065,7 @@ public class AtendimentoOperacional
 				" AND o.cenario = :cenario " +
 				" AND o.turma = :turma" +
 				" AND o.disciplinaSubstituta = :disciplina " +
+				" AND o.oferta.campus = :campus " +
 				" AND o.disciplinaSubstituta IS NOT NULL " +
 				creditoTeoricoString);
 
@@ -2071,10 +2073,12 @@ public class AtendimentoOperacional
 		q1.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q1.setParameter( "disciplina", disciplina );
 		q1.setParameter( "turma", turma );
+		q1.setParameter( "campus", campus );
 		q2.setParameter( "cenario", cenario );
 		q2.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q2.setParameter( "disciplina", disciplina );
 		q2.setParameter( "turma", turma );
+		q2.setParameter( "campus", campus );
 		if (creditoTeorico != null)
 		{
 			q1.setParameter( "creditoTeorico", creditoTeorico );

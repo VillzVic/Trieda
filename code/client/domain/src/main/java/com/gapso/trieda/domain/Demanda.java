@@ -730,7 +730,8 @@ public class Demanda
 		return existeDemanda;
 	}
 
-	public static Demanda findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus, Disciplina disciplina)
+	@SuppressWarnings("unchecked")
+	public static List<Demanda> findBy(InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus, Disciplina disciplina)
 	{
 		String queryCampus = "";
 		if ( campus != null )
@@ -754,7 +755,6 @@ public class Demanda
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
-        q.setMaxResults(1);
 
         if ( campus != null )
         {
@@ -766,7 +766,7 @@ public class Demanda
         	q.setParameter( "disciplina", disciplina );
         }
 
-        return (Demanda) q.getSingleResult();
+        return q.getResultList();
 	}
 
 	public Set< AlunoDemanda > getAlunosDemanda() {

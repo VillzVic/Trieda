@@ -92,11 +92,11 @@ public interface AtendimentosService extends RemoteService {
 
 	ListLoadResult<ConfirmacaoTurmaDTO> getTurmasProfessoresVirtuaisList(CenarioDTO cenarioDTO, ProfessorVirtualDTO professorVirtualDTO);
 
-	ListLoadResult<MotivoUsoProfessorVirtualDTO> getMotivosUsoProfessorVirtual(	CenarioDTO cenarioDTO, Long disciplinaId, String turma,
-			Boolean credTeorico);
+	ListLoadResult<MotivoUsoProfessorVirtualDTO> getMotivosUsoProfessorVirtual(	CenarioDTO cenarioDTO, Long disciplinaId, Long salaId,
+			String turma, Boolean credTeorico);
 
-	ListLoadResult<DicaEliminacaoProfessorVirtualDTO> getDicasEliminacaoProfessorVirtual( CenarioDTO cenarioDTO, Long disciplinaId, String turma,
-			Boolean credTeorico);
+	ListLoadResult<DicaEliminacaoProfessorVirtualDTO> getDicasEliminacaoProfessorVirtual( CenarioDTO cenarioDTO, Long disciplinaId,
+			Long salaId, String turma, Boolean credTeorico);
 
 	ListLoadResult<TurmaStatusDTO> getTurmasStatus(CenarioDTO cenarioDTO, DemandaDTO demandaDTO);
 
@@ -113,7 +113,7 @@ public interface AtendimentosService extends RemoteService {
 	ListLoadResult<HorarioDisponivelCenarioDTO> getHorariosDisponiveisAula(CenarioDTO cenarioDTO, SalaDTO salaDTO,	DisciplinaDTO disciplinaDTO,
 			SemanaLetivaDTO semanaLetivaDTO, String semana);
 
-	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO);
+	TrioDTO<Boolean, List<String>, List<String>> verificaViabilidadeAula(CenarioDTO cenarioDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO, List<AulaDTO> aulasTurma);
 
 	TurmaDTO saveAula(DisciplinaDTO disciplinaDTO, CampusDTO campusDTO, TurmaDTO turmaDTO, AulaDTO aulaDTO);
 
@@ -139,4 +139,6 @@ public interface AtendimentosService extends RemoteService {
 	void confirmarTurmaSelecionada(DemandaDTO demandaDTO, TurmaDTO turmaDTO);
 	
 	void desconfirmarTurmaSelecionada(DemandaDTO demandaDTO, TurmaDTO turmaDTO);
+
+	void removeAula(TurmaDTO turmaDTO, AulaDTO aulaDTO);
 }

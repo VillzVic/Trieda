@@ -264,7 +264,8 @@ public class HorarioDisponivelCenario
     			" AND o.horarioAula.semanaLetiva = :semanaLetiva " +
     			" AND disciplinas = :disciplina " +
     			" AND salas = :sala " +
-    			" AND o.diaSemana = :semana " );
+    			" AND o.diaSemana = :semana " +
+    			" ORDER BY o.horarioAula.horario ASC" );
 
     		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
     		q.setParameter( "cenario", cenario );

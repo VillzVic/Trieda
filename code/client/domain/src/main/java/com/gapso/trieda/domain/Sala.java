@@ -1099,7 +1099,7 @@ public class Sala
     		" WHERE o.unidade.campus.instituicaoEnsino = :instituicaoEnsino " + 
     		" AND o.unidade.campus.cenario = :cenario " +
     		" AND o < :sala " +
-    		" ORDER BY o.codigo");
+    		" ORDER BY o.codigo DESC");
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );

@@ -19,6 +19,7 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.presenter.ErrorsWarningsNewAulaPresenter.TipoModal;
+import com.gapso.web.trieda.main.client.mvp.view.AlocacaoManualDisciplinaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.AulaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.ErrorsWarningsNewAulaView;
 import com.gapso.web.trieda.main.client.mvp.view.NovaTurmaFormView;
@@ -61,6 +62,7 @@ public class AlocacaoManualPresenter
 {
 
 	private Display display;
+	private GTab gTab;
 	
 	public interface Display extends ITriedaI18nGateway {
 		Component getComponent();
@@ -83,7 +85,6 @@ public class AlocacaoManualPresenter
 		Button getRemoverTurmaButton();
 		TurmaDTO getTurmaSelecionada();
 		String getTurmaSelecionadaStatus();
-		Button getSelecionarTurmaButton();
 		SalaAutoCompleteBox getSalaComboBox();
 		Button getProxAmbienteButton();
 		Button getAntAmbienteButton();
@@ -108,6 +109,8 @@ public class AlocacaoManualPresenter
 		Button getSalvarMarcacoesProfessoresButton();
 		Button getConfirmarTurmaButton();
 		Button getDesconfirmarTurmaButton();
+		Button getAlocacoesAtalhoButton();
+		public void atualizaNumAlunosMarcados();
 	}
 	
 	private CenarioDTO cenarioDTO;
@@ -317,13 +320,14 @@ public class AlocacaoManualPresenter
 				}
 			});
 		
-		this.getDisplay().getSelecionarTurmaButton().addSelectionListener(
-				new SelectionListener< ButtonEvent >()
+		this.getDisplay().getGrid().addGridSelectionChangedListener("selecionarTurma", new SelectionChangedListener<TurmaStatusDTO>()
+		{
+			@Override
+		    public void selectionChanged(SelectionChangedEvent<TurmaStatusDTO> se)
 			{
-				@Override
-				public void componentSelected( ButtonEvent ce )
-				{
-					final TurmaStatusDTO turmaSelecionada = getDisplay().getGrid().getGrid().getSelectionModel().getSelectedItem();
+		        if(display.getGrid().getSelectionModel().getSelectedItems().size() == 1)
+		        {
+					final TurmaStatusDTO turmaSelecionada = se.getSelectedItem();
 					final AtendimentosServiceAsync service = Services.atendimentos();
 					
 					service.selecionarTurma(turmaSelecionada, cenarioDTO, getDisplay().getDemanda(), new AsyncCallback< ParDTO<TurmaDTO, List<AulaDTO>> >()
@@ -346,7 +350,8 @@ public class AlocacaoManualPresenter
 						}
 					});
 				}
-			});
+			}
+		});
 		
 		this.getDisplay().getFiltrarButton().addSelectionListener(
 				new SelectionListener< ButtonEvent >()
@@ -358,6 +363,57 @@ public class AlocacaoManualPresenter
 					{
 						getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(getDisplay().getSalaComboBox().getValue().getCodigo());
 						getDisplay().getSalaGridPanel().requestAtendimentos();
+						getDisplay().getProxAmbienteButton().enable();
+						getDisplay().getAntAmbienteButton().enable();
+						getDisplay().getSalaGridPanel().addGridListener(Events.CellDoubleClick, new Listener<GridEvent<LinhaDeCredito>>()
+						{
+				            @Override
+				            public void handleEvent(final GridEvent<LinhaDeCredito> be)
+				            {
+								if (getDisplay().getTurmaSelecionada() != null)
+								{
+					            	Integer semana = be.getColIndex() == 7 ? 1 : be.getColIndex() + 1;
+					            	Services.horariosAula().findHorarioDisponivelCenario(be.getModel().getDisplay().substring(0, 5), semana , display.getDemanda() , new AsyncCallback< TrioDTO<HorarioDisponivelCenarioDTO, String, SemanaLetivaDTO> >()
+									{
+										@Override
+										public void onFailure( Throwable caught )
+										{
+											if (caught instanceof TriedaException)
+											{
+												MessageBox.alert( "ERRO!", caught.getMessage(), null );
+											}
+											else
+												MessageBox.alert( "ERRO!", "Não foi possível obter o horario da grade", null );
+										}
+			
+										@Override
+										public void onSuccess( TrioDTO<HorarioDisponivelCenarioDTO, String, SemanaLetivaDTO> result )
+										{
+											int creditosAlocadosPratico = 0;
+											int creditosAlocadosTeorico = 0;
+											for (AulaDTO aulaDTO : getDisplay().getAulasSelecionadas())
+											{
+												creditosAlocadosPratico += aulaDTO.getCreditosPraticos();
+												creditosAlocadosTeorico += aulaDTO.getCreditosTeoricos();
+											}
+											AulaDTO aulaDTO = new AulaDTO();
+											aulaDTO.setSemanaString(result.getSegundo());
+											Presenter presenter = new AulaFormPresenter( instituicaoEnsinoDTO,
+												cenarioDTO, creditosAlocadosPratico, creditosAlocadosTeorico, 
+												new AulaFormView( cenarioDTO, getDisplay().getCampusDTO(), getDisplay().getDisciplinaDTO(),
+												getDisplay().getSalaComboBox().getValue(), result.getTerceiro(), result.getPrimeiro(), getDisplay().getTurmaSelecionada(), aulaDTO, getDisplay().getAulasSelecionadas() ), AlocacaoManualPresenter.this);
+			
+											presenter.go( null );
+										}
+									});
+								}
+				            }
+						});
+					}
+					else
+					{
+						getDisplay().getProxAmbienteButton().disable();
+						getDisplay().getAntAmbienteButton().disable();
 					}
 				}
 			});
@@ -370,12 +426,7 @@ public class AlocacaoManualPresenter
 					SelectionChangedEvent< SalaDTO > se )
 				{
 					final SalaDTO salaDTO = se.getSelectedItem();
-					if ( salaDTO != null )
-					{
-						getDisplay().getProxAmbienteButton().enable();
-						getDisplay().getAntAmbienteButton().enable();
-					}
-					else
+					if ( salaDTO == null )
 					{
 						getDisplay().getProxAmbienteButton().disable();
 						getDisplay().getAntAmbienteButton().disable();
@@ -403,6 +454,18 @@ public class AlocacaoManualPresenter
 							@Override
 							public void onSuccess(SalaDTO result) {
 								getDisplay().getSalaComboBox().setValue(result);
+								if (getDisplay().getSalaComboBox().getValue() != null)
+								{
+									getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(getDisplay().getSalaComboBox().getValue().getCodigo());
+									getDisplay().getSalaGridPanel().requestAtendimentos();
+									getDisplay().getProxAmbienteButton().enable();
+									getDisplay().getAntAmbienteButton().enable();
+								}
+								else
+								{
+									getDisplay().getProxAmbienteButton().disable();
+									getDisplay().getAntAmbienteButton().disable();
+								}
 							}
 						});
 					}
@@ -429,6 +492,18 @@ public class AlocacaoManualPresenter
 							@Override
 							public void onSuccess(SalaDTO result) {
 								getDisplay().getSalaComboBox().setValue(result);
+								if (getDisplay().getSalaComboBox().getValue() != null)
+								{
+									getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(getDisplay().getSalaComboBox().getValue().getCodigo());
+									getDisplay().getSalaGridPanel().requestAtendimentos();
+									getDisplay().getProxAmbienteButton().enable();
+									getDisplay().getAntAmbienteButton().enable();
+								}
+								else
+								{
+									getDisplay().getProxAmbienteButton().disable();
+									getDisplay().getAntAmbienteButton().disable();
+								}
 							}
 						});
 					}
@@ -470,14 +545,9 @@ public class AlocacaoManualPresenter
 			getDisplay().getSalvarMarcacoesAlunosButton().addSelectionListener(new SelectionListener<ButtonEvent>(){
 				@Override
 				public void componentSelected(ButtonEvent ce) {
-					List<Record> records = getDisplay().getAlunosGrid().getGrid().getStore().getModifiedRecords();
-					final List<AlunoStatusDTO> list = new ArrayList<AlunoStatusDTO>();
-					for(Record record : records)
-					{
-						list.add((AlunoStatusDTO) record.getModel());
-					}
 					final AtendimentosServiceAsync service = Services.atendimentos();
-					service.verificaViabilidadeAulasNovosAlunos(cenarioDTO, display.getTurmaSelecionada(), display.getAulasSelecionadas(), list, new AsyncCallback< TrioDTO<Boolean, List<String>, List<String>> >()
+					final int noAlunosAtuais = getDisplay().getTurmaSelecionada().getNoAlunos();
+					service.verificaViabilidadeAulasNovosAlunos(cenarioDTO, display.getTurmaSelecionada(), display.getAulasSelecionadas(), getAlunosStatusMarcados(), new AsyncCallback< TrioDTO<Boolean, List<String>, List<String>> >()
 					{
 						@Override
 						public void onFailure( Throwable caught )
@@ -498,7 +568,7 @@ public class AlocacaoManualPresenter
 							}
 							else
 							{
-								service.alocaAlunosTurma(cenarioDTO, getDisplay().getDemanda(), display.getTurmaSelecionada(), list, new AsyncCallback< Void >()
+								service.alocaAlunosTurma(cenarioDTO, getDisplay().getDemanda(), display.getTurmaSelecionada(), getAlunosStatusModificados(), new AsyncCallback< Void >()
 								{
 									@Override
 									public void onFailure( Throwable caught )
@@ -509,7 +579,7 @@ public class AlocacaoManualPresenter
 									@Override
 									public void onSuccess( Void result )
 									{
-										TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
+										final TurmaStatusDTO turmaSelecionada = new TurmaStatusDTO();
 										turmaSelecionada.setCenarioId(cenarioDTO.getId());
 										turmaSelecionada.setDisciplinaId(display.getTurmaSelecionada().getDisciplinaId());
 										turmaSelecionada.setId(display.getTurmaSelecionada().getId());
@@ -531,6 +601,21 @@ public class AlocacaoManualPresenter
 											{
 												getDisplay().getAlunosGrid().updateList();
 												getDisplay().getGrid().updateList();
+												int planejadas = 0;
+												int naoPlanejadas = 0;
+												if (turmaSelecionada.getStatus().equals("Planejada"))
+												{
+													planejadas = result.getPrimeiro().getNoAlunos() - noAlunosAtuais;
+												}
+												else if (turmaSelecionada.getStatus().equals("Não Planejada"))
+												{
+													naoPlanejadas = result.getPrimeiro().getNoAlunos() - noAlunosAtuais;
+												}
+												getDisplay().refreshDemandasPanel(planejadas, naoPlanejadas, 0);
+												if (getDisplay().getAulaNaGrade() != null)
+												{
+													getDisplay().getSalaGridPanel().requestAtendimentos();
+												}
 												getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), getDisplay().getTurmaSelecionadaStatus());
 												getDisplay().refreshTurmaSelecionadaPanel();
 												addAulasButtonsListeners();
@@ -803,6 +888,19 @@ public class AlocacaoManualPresenter
 					});
 				}
 			});
+			
+			this.display.getAlocacoesAtalhoButton().addSelectionListener(
+					new SelectionListener< ButtonEvent >()
+				{
+					@Override
+					public void componentSelected( ButtonEvent ce )
+					{
+						Presenter presenter = new AlocacaoManualDisciplinaFormPresenter(instituicaoEnsinoDTO,
+								cenarioDTO, new AlocacaoManualDisciplinaFormView( cenarioDTO ), gTab );
+
+							presenter.go( gTab );
+					}
+				});
 	}
 
 	private void configureProxy()
@@ -888,7 +986,7 @@ public class AlocacaoManualPresenter
 					Presenter presenter = new AulaFormPresenter( instituicaoEnsinoDTO,
 						cenarioDTO, creditosAlocadosPratico, creditosAlocadosTeorico, 
 						new AulaFormView( cenarioDTO, getDisplay().getCampusDTO(), getDisplay().getDisciplinaDTO(),
-						null, null, null, getDisplay().getTurmaSelecionada(), new AulaDTO() ), AlocacaoManualPresenter.this);
+						null, null, null, getDisplay().getTurmaSelecionada(), new AulaDTO(), getDisplay().getAulasSelecionadas() ), AlocacaoManualPresenter.this);
 
 					presenter.go( null );
 				}
@@ -948,7 +1046,7 @@ public class AlocacaoManualPresenter
 												Presenter presenter = new AulaFormPresenter( instituicaoEnsinoDTO,
 													cenarioDTO, creditosAlocadosPratico, creditosAlocadosTeorico, 
 													new AulaFormView( cenarioDTO, getDisplay().getCampusDTO(), getDisplay().getDisciplinaDTO(),
-													salaDTO, result.getTerceiro(), result.getPrimeiro(), getDisplay().getTurmaSelecionada(), aulaDTO ), AlocacaoManualPresenter.this);
+													salaDTO, result.getTerceiro(), result.getPrimeiro(), getDisplay().getTurmaSelecionada(), aulaDTO, getDisplay().getAulasSelecionadas() ), AlocacaoManualPresenter.this);
 
 												presenter.go( null );
 											}
@@ -956,6 +1054,7 @@ public class AlocacaoManualPresenter
 						            }
 						            
 						        });
+								getDisplay().getSalaComboBox().setValue(salaDTO);
 								getDisplay().getSalaGridPanel().getFiltro().setSalaCodigo(result.getCodigo());
 								getDisplay().getSalaGridPanel().setAulaDestaque(aulaDTO);
 								getDisplay().setAulaNaGrade(aulaDTO);
@@ -996,25 +1095,86 @@ public class AlocacaoManualPresenter
 										cenarioDTO, creditosAlocadosPratico, creditosAlocadosTeorico, 
 										new AulaFormView( cenarioDTO, getDisplay().getCampusDTO(), getDisplay().getDisciplinaDTO(),
 										futureSalaDTO.result(), futureHdcDTO.result().getSegundo(), futureHdcDTO.result().getPrimeiro(),
-										getDisplay().getTurmaSelecionada(), aulaDTO ), AlocacaoManualPresenter.this);
+										getDisplay().getTurmaSelecionada(), aulaDTO, getDisplay().getAulasSelecionadas() ), AlocacaoManualPresenter.this);
 
 									presenter.go( null );
 								}
 							});
 						}
 					});
+			
+			getDisplay().getRemoverAulaBts().get(i).addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					final AtendimentosServiceAsync service = Services.atendimentos();
+					service.removeAula(display.getTurmaSelecionada(), aulaDTO, new AsyncCallback< Void >()
+					{
+						@Override
+						public void onFailure( Throwable caught )
+						{
+							MessageBox.alert( "ERRO!", "Não foi possível remover a aula", null );
+						}
+
+						@Override
+						public void onSuccess( Void result )
+						{
+							if (getDisplay().getAulaNaGrade() != null 
+									&& getDisplay().getAulaNaGrade().getNaturalKey().equals(aulaDTO.getNaturalKey()))
+							{
+								getDisplay().setAulaNaGrade(null);
+								getDisplay().getSalaGridPanel().setAulaDestaque(null);
+								getDisplay().getSalaGridPanel().requestAtendimentos();
+							}
+							getDisplay().getTurmaSelecionada().setCredAlocados(getDisplay().getTurmaSelecionada().getCredAlocados()
+									- (aulaDTO.getCreditosPraticos() + aulaDTO.getCreditosTeoricos()));
+							getDisplay().getAulasSelecionadas().remove(aulaDTO);
+							getDisplay().refreshTurmaSelecionadaPanel();
+							addAulasButtonsListeners();
+							getDisplay().getAlunosGrid().updateList();
+							if (getDisplay().getProfessoresGrid().isRendered())
+								getDisplay().getProfessoresGrid().updateList();
+						}
+					});
+				}
+			});
 		}
-		
 	}
 	
 	@Override
 	public void go( Widget widget )
 	{
-		GTab tab = (GTab) widget;
-		tab.add( (GTabItem) this.getDisplay().getComponent() );
+		gTab = (GTab) widget;
+		gTab.add( (GTabItem) this.getDisplay().getComponent() );
 	}
 
 	public Display getDisplay() {
 		return display;
+	}
+	
+	public List<AlunoStatusDTO> getAlunosStatusMarcados()
+	{
+		final List<AlunoStatusDTO> result = new ArrayList<AlunoStatusDTO>();
+		for(AlunoStatusDTO model : getDisplay().getAlunosGrid().getGrid().getStore().getModels())
+		{
+			if (model.getMarcado())
+				result.add(model);
+		}
+		
+		return result;
+	}
+	
+	public List<AlunoStatusDTO> getAlunosStatusModificados()
+	{
+		List<Record> records = getDisplay().getAlunosGrid().getGrid().getStore().getModifiedRecords();
+		final List<AlunoStatusDTO> result = new ArrayList<AlunoStatusDTO>();
+		for(Record record : records)
+		{
+			result.add((AlunoStatusDTO) record.getModel());
+		}
+		
+		return result;
 	}
 }

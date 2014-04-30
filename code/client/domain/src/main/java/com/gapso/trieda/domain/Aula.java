@@ -526,10 +526,14 @@ public class Aula
 	{
 		List<String> conflitosFortes = new ArrayList<String>();
 		List<String> conflitosFracos = new ArrayList<String>();
+		DateFormat df = new SimpleDateFormat( "HH:mm" );
+		String aulaString = "Aula (" + this.getHorarioDisponivelCenario().getDiaSemana().toString() + "-" + df.format(this.getHorarioDisponivelCenario().getHorarioAula().getHorario()) + ") : ";
 		
 		// Verificar se o ambiente suporta a quantidade de alunos alocados à aula
 		if (getSala().getCapacidadeInstalada() < turma.getAlunos().size()) {
-			conflitosFortes.add("Capacidade maxima alcançada");
+			conflitosFortes.add(aulaString +
+					"O ambiente " + sala.getCodigo() + " possui capacidade de "
+					+ sala.getCapacidadeInstalada() + " alunos, mas " + turma.getAlunos().size() + " alunos foram selecionados");
 			return TriedaTrio.create(false,conflitosFortes, conflitosFracos);
 		}
 		
@@ -544,7 +548,8 @@ public class Aula
 		if (!turma.getAulas().contains(this))
 		{
 			if (getCreditosTeoricos() > 0 ? numCreditosTeoricoTurma + getCreditosTeoricos() > turma.getDisciplina().getCreditosTeorico() : numCreditosPraticoTurma + getCreditosPraticos() > turma.getDisciplina().getCreditosPratico()) {
-				conflitosFortes.add("Numero de creditos nao suportados");
+				conflitosFortes.add(aulaString +
+						"Numero de creditos nao suportados");
 				return TriedaTrio.create(false,conflitosFortes, conflitosFracos);
 			}
 		}
@@ -571,11 +576,8 @@ public class Aula
 		Aula aulaEmQuestao = null;
 		for (Aula aula : aulasQuePodemSerConflitantes)
 		{
-			String aulaKey = this.getSala().getId() + "-" + this.getHorarioDisponivelCenario().getId();
-			String aulaConflitanteKey = aula.getSala().getId() + "-" + aula.getHorarioDisponivelCenario().getId();
-			if (aulaKey.equals(aulaConflitanteKey))
+			if (this.getId() != null && this.getId().equals(aula.getId()))
 			{
-				System.out.println("Aula key " + aulaKey);
 				aulaEmQuestao = aula;
 			}
 		}

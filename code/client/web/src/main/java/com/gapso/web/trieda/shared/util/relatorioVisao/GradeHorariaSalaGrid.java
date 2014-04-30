@@ -13,6 +13,10 @@ public class GradeHorariaSalaGrid extends GradeHorariaVisao{
 	public GradeHorariaSalaGrid(CenarioDTO cenarioDTO) {
 		super(cenarioDTO);
 	}
+	
+	public GradeHorariaSalaGrid(CenarioDTO cenarioDTO, boolean gradeHorariaAlocacaoManual) {
+		super(cenarioDTO, gradeHorariaAlocacaoManual);
+	}
 
 	private RelatorioVisaoSalaFiltro filtro;
 	
@@ -27,7 +31,7 @@ public class GradeHorariaSalaGrid extends GradeHorariaVisao{
 
 		this.grid.mask("Carregando os dados, aguarde alguns instantes", "loading");
 
-		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(cenarioDTO, getFiltro(), aulaDestaque != null, this.getCallback());
+		Services.atendimentos().getAtendimentosParaGradeHorariaVisaoSala(cenarioDTO, getFiltro(), gradeHorariaAlocacaoManual, this.getCallback());
 	}
 	
 	protected TrioDTO<String, String, String> getHTMLInfo(AtendimentoRelatorioDTO atendimentoDTO){
