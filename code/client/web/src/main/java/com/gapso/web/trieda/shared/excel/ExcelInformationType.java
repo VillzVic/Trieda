@@ -64,6 +64,7 @@ public enum ExcelInformationType
 	PROFESSORES_JANELAS("Professores"),
 	PROFESSORES_DESLOCAMENTO_UNIDADES("Professores"),
 	PROFESSORES_DESLOCAMENTO_CAMPI("Professores"),
+	COMPARAR_CENARIOS("Comparacao Cenarios"),
 	TODAS_TABELAS( "" ),
 	TODAS_GRADES_HORARIAS( "" ),
 	TODAS_VISAO_ALUNO( "" );

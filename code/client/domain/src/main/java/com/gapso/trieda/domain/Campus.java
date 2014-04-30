@@ -664,6 +664,22 @@ public class Campus
 
 		return q.getResultList();
 	}
+	
+	public static Campus findBy(
+		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM Campus o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND o.codigo = :codigo ");
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "codigo", codigo );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return (Campus) q.getSingleResult();
+	}
 
 	public static Map< String, Campus > buildCampusCodigoToCampusMap( 
 		List< Campus > campi )

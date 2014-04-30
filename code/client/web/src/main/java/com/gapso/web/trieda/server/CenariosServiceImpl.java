@@ -12,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
@@ -102,8 +104,8 @@ public class CenariosServiceImpl
 			// Semana letiva padrão do novo cenário
 			SemanaLetiva semanaLetivaCenario = new SemanaLetiva();
 
-			semanaLetivaCenario.setCodigo( HtmlUtils.htmlUnescape( "Semana Padr&atilde;o" ) );
-			semanaLetivaCenario.setDescricao( HtmlUtils.htmlUnescape( "Semana Letiva Padr&atilde;o" ) );
+			semanaLetivaCenario.setCodigo( HtmlUtils.htmlUnescape( "Semana Padrão" ) );
+			semanaLetivaCenario.setDescricao( HtmlUtils.htmlUnescape( "Semana Letiva Padrão" ) );
 			semanaLetivaCenario.setInstituicaoEnsino( instituicaoEnsino );
 
 			Set< Campus > campi = new HashSet< Campus >(
@@ -202,6 +204,23 @@ public class CenariosServiceImpl
 
 		return result;
 	}
+	
+	@Override
+	public ListLoadResult< CenarioDTO > getCenarios()
+	{
+		List< CenarioDTO > list = new ArrayList< CenarioDTO >();
+
+		List< Cenario > listCenarios = Cenario.findAll(getInstituicaoEnsinoUser());
+		for ( Cenario cenario : listCenarios )
+		{
+			list.add( ConvertBeans.toCenarioDTO( cenario ) );
+		}
+
+		BaseListLoadResult< CenarioDTO > result
+			= new BaseListLoadResult< CenarioDTO >( list );
+
+		return result;
+	}
 
 	@Override
 	@Transactional
@@ -256,12 +275,6 @@ public class CenariosServiceImpl
 	}
 
 	private void criarTitulacoes(Cenario cenario) {
-		Titulacao titulacao1 = new Titulacao();
-		titulacao1.setCenario(cenario);
-		titulacao1.setInstituicaoEnsino(getInstituicaoEnsinoUser());
-		titulacao1.setNome("Licenciado");
-		titulacao1.persist();
-		
 		Titulacao titulacao2 = new Titulacao();
 		titulacao2.setCenario(cenario);
 		titulacao2.setInstituicaoEnsino(getInstituicaoEnsinoUser());

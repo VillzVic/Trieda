@@ -3,6 +3,7 @@ package com.gapso.web.trieda.shared.services;
 import java.util.List;
 import java.util.Set;
 
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -31,4 +32,5 @@ public interface CenariosServiceAsync
 	void setCurrentCenario(long cenarioId, AsyncCallback<Void> callback);
 	void limpaSolucoesCenario(CenarioDTO cenarioDTO,
 			AsyncCallback<Void> callback);
+	void getCenarios(AsyncCallback<ListLoadResult<CenarioDTO>> callback);
 }

@@ -3,6 +3,7 @@ package com.gapso.web.trieda.shared.services;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
+import com.extjs.gxt.ui.client.data.BaseTreeModel;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -37,4 +38,5 @@ public interface CampiServiceAsync {
 		AsyncCallback< PagingLoadResult< HorarioDisponivelCenarioDTO > > callback );
 	void getListByCurriculo( CenarioDTO cenarioDTO, CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CampusDTO > > callback );
 	void getListAllCampiTodos( CenarioDTO cenarioDTO, AsyncCallback<ListLoadResult<CampusDTO>> callback );
+	void getCenariosComparados(List<CenarioDTO> cenariosDTO, AsyncCallback<List<BaseTreeModel>> callback);
 }

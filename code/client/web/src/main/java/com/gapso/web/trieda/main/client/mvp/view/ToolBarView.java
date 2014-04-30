@@ -660,13 +660,13 @@ public class ToolBarView
 		
 		planejamentoToolBar.add( new SeparatorToolItem() );
 		
-		confirmacaoTurmasBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.confirmacao24());
-		planejamentoToolBar.add(confirmacaoTurmasBt);
+		alocacaoManualBt = createButton("Alocação<br />Manual","Alocação Manual",Resources.DEFAULTS.alocacaoManual24());
+		planejamentoToolBar.add(alocacaoManualBt);
 		
 		planejamentoToolBar.add( new SeparatorToolItem() );
 		
-		alocacaoManualBt = createButton("Alocação<br />Manual","Alocação Manual",Resources.DEFAULTS.alocacaoManual24());
-		planejamentoToolBar.add(alocacaoManualBt);
+		confirmacaoTurmasBt = createButton("Confirmação<br />de Turmas","Confirmação de Turmas",Resources.DEFAULTS.confirmacao24());
+		planejamentoToolBar.add(confirmacaoTurmasBt);
 		
 		fixacoesListBt = createButton("Fixações","Fixações",Resources.DEFAULTS.fixacao24());
 		fixacoesListBt.hide();
@@ -705,6 +705,7 @@ public class ToolBarView
 		cenariosBt.setHeight(24);
 		Menu menu = new Menu();
 		menu.add(new MenuItem("Gerenciar Cenários", AbstractImagePrototype.create(Resources.DEFAULTS.cenario16()) ));
+		menu.add(new MenuItem("Comparar Cenários", AbstractImagePrototype.create(Resources.DEFAULTS.cenario16()) ));
 		menu.add(new MenuItem("Gerenciar Requisições de Otimização", AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeConsultaRequisicao16()) ));
 		cenariosBt.setMenu(menu);
 		return cenariosBt;
@@ -1222,8 +1223,13 @@ public class ToolBarView
 	}
 	
 	@Override
-	public MenuItem getGerenciarRequisicoesCenariosButton() {
+	public MenuItem getCompararCenariosButton() {
 		return (MenuItem) cenariosBt.getMenu().getItem(1);
+	}
+	
+	@Override
+	public MenuItem getGerenciarRequisicoesCenariosButton() {
+		return (MenuItem) cenariosBt.getMenu().getItem(2);
 	}
 		
 	@Override

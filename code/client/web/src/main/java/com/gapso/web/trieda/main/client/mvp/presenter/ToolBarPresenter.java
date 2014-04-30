@@ -32,6 +32,7 @@ import com.gapso.web.trieda.main.client.mvp.view.CampiView;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CarregarSolucaoView;
 import com.gapso.web.trieda.main.client.mvp.view.CenariosView;
+import com.gapso.web.trieda.main.client.mvp.view.CompararCenariosFormView;
 import com.gapso.web.trieda.main.client.mvp.view.CompatibilidadesView;
 import com.gapso.web.trieda.main.client.mvp.view.ConfiguracoesView;
 import com.gapso.web.trieda.main.client.mvp.view.ConfirmacaoTurmasView;
@@ -128,6 +129,7 @@ public class ToolBarPresenter
 		TabItem getNomeContextoTabItem();
 		Button getCarregarMasterDataButton();
 		MenuItem getGerenciarCenariosButton();
+		MenuItem getCompararCenariosButton();
 		MenuItem getGerenciarRequisicoesCenariosButton();
 		Button getUsuariosButton();
 		MenuItem getListarUsuariosButton();
@@ -1413,6 +1415,15 @@ public class ToolBarPresenter
 			@Override
 			public void componentSelected( MenuEvent ce ) {
 			Presenter presenter = new CenariosPresenter( instituicaoEnsinoDTO, ToolBarPresenter.this, new CenariosView() );
+
+			presenter.go( gTab );
+			}
+		});
+		
+		this.toolBar.getCompararCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected( MenuEvent ce ) {
+			Presenter presenter = new CompararCenariosFormPresenter( new CompararCenariosFormView(), gTab );
 
 			presenter.go( gTab );
 			}

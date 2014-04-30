@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseListLoadResult;
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.BaseTreeModel;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
@@ -851,5 +852,68 @@ public class CampiServiceImpl extends RemoteService
 		
 		time = (System.currentTimeMillis() - primeiro)/1000;System.out.println(" tempo total = " + time + " segundos"); // TODO: retirar
 		return itensDoRelatorioParaUmCampus;
+	}
+	
+	@Override
+	public List<BaseTreeModel> getCenariosComparados(List<CenarioDTO> cenariosDTO)
+	{
+		List<BaseTreeModel> result = new ArrayList<BaseTreeModel>();
+		
+		Map<String, Set<Cenario>> campusCodigoMapCenarios = new HashMap<String, Set<Cenario>>();
+		for (CenarioDTO cenarioDTO : cenariosDTO)
+		{
+			Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+			
+			for (Campus campus : cenario.getCampi())
+			{
+				if (campusCodigoMapCenarios.get(campus.getCodigo()) == null)
+				{
+					Set<Cenario> newCenarios = new HashSet<Cenario>();
+					newCenarios.add(cenario);
+					campusCodigoMapCenarios.put(campus.getCodigo(), newCenarios);
+				}
+				else
+				{
+					campusCodigoMapCenarios.get(campus.getCodigo()).add(cenario);
+				}
+			}
+		}
+		
+		for (String campusCodigo : campusCodigoMapCenarios.keySet())
+		{
+			BaseTreeModel campusBaseTree = new BaseTreeModel();
+			campusBaseTree.set("label", campusCodigo);
+			List<BaseTreeModel> rows = new ArrayList<BaseTreeModel>();
+			for (Cenario cenario : campusCodigoMapCenarios.get(campusCodigo))
+			{
+				TreeNodeDTO nodeDTO = new TreeNodeDTO(null,campusCodigo,"",false,true,null);
+				int i = 0;
+				for (TreeNodeDTO resumoCampus : 
+					getResumoParaCampus(Campus.findBy(getInstituicaoEnsinoUser(), cenario, campusCodigo), cenario, null) )
+				{
+					if (rows.size() <= i)
+					{
+						BaseTreeModel rowComparacao = new BaseTreeModel();
+						rowComparacao.set("label", ((ResumoDTO) resumoCampus.getContent()).getLabel());
+						rowComparacao.set(cenario.getNome(), ((ResumoDTO) resumoCampus.getContent()).getValor());
+						rows.add(rowComparacao);
+					}
+					else
+					{
+						rows.get(i).set(cenario.getNome(), ((ResumoDTO) resumoCampus.getContent()).getValor());
+					}
+					i++;
+				}
+			}
+			for (BaseTreeModel row : rows)
+			{
+				campusBaseTree.add(row);
+			}
+			
+			result.add(campusBaseTree);
+		}
+		
+		return result;
+		
 	}
 }
