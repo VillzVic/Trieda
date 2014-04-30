@@ -880,11 +880,10 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 	private void checkDisciplinasComMaxAlunosTeoricosZerados(Parametro parametro, List<String> errors) {
 		// colhe as disciplinas de acordo com os campi selecionados para otimização
 		Set<Disciplina> disciplinasSelecionadas = new HashSet<Disciplina>();
+		
 		for (Campus campus : parametro.getCampi()) {
-			for (Oferta oferta : campus.getOfertas()) {
-				for (Demanda demanda : oferta.getDemandas()) {
-					disciplinasSelecionadas.add(demanda.getDisciplina());
-				}
+			for (Disciplina disciplina : campus.getCenario().getDisciplinas()) {
+				disciplinasSelecionadas.add(disciplina);
 			}
 		}
 		
@@ -905,10 +904,8 @@ public class OtimizarServiceImpl extends RemoteService implements OtimizarServic
 		// colhe as disciplinas de acordo com os campi selecionados para otimização
 		Set<Disciplina> disciplinasSelecionadas = new HashSet<Disciplina>();
 		for (Campus campus : parametro.getCampi()) {
-			for (Oferta oferta : campus.getOfertas()) {
-				for (Demanda demanda : oferta.getDemandas()) {
-					disciplinasSelecionadas.add(demanda.getDisciplina());
-				}
+			for (Disciplina disciplina : campus.getCenario().getDisciplinas()) {
+				disciplinasSelecionadas.add(disciplina);
 			}
 		}
 		
