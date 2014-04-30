@@ -13,6 +13,8 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.AlunoDemanda;
+import com.gapso.trieda.domain.AtendimentoOperacional;
+import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Campus;
 import com.gapso.trieda.domain.Cenario;
 import com.gapso.trieda.domain.Curriculo;
@@ -32,6 +34,7 @@ import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
 import com.gapso.web.trieda.shared.services.OfertasService;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 
 @Transactional
 public class OfertasServiceImpl
@@ -190,18 +193,18 @@ public class OfertasServiceImpl
 	}
 
 	@Override
-	public void remove( List< OfertaDTO > ofertaDTOList )
+	public void remove( List< OfertaDTO > ofertaDTOList ) throws TriedaException
 	{
 		for ( OfertaDTO ofertaDTO : ofertaDTOList )
 		{
-			Oferta o = Oferta.find(
-					ofertaDTO.getId(), getInstituicaoEnsinoUser() );
-
-				if ( o != null )
-				{
-					o.remove();
-				}
-			//ConvertBeans.toOferta( ofertaDTO ).remove();
+			Oferta oferta = ConvertBeans.toOferta( ofertaDTO );
+			List<AtendimentoOperacional> aos = AtendimentoOperacional.findAllBy(oferta, getInstituicaoEnsinoUser());
+			List<AtendimentoTatico> aot = AtendimentoTatico.findAllBy(getInstituicaoEnsinoUser(), oferta);
+			if(aos.isEmpty() && aot.isEmpty()){
+				oferta.remove();
+			} else {
+				throw new TriedaException("Oferta nao pode ser removida, pois possui atendimentos relacionados a ela.");
+			}
 		}
 	}
 }

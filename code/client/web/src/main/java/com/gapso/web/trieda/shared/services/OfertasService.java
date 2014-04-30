@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDemandaDTO;
 import com.gapso.web.trieda.shared.dtos.OfertaDTO;
 import com.gapso.web.trieda.shared.dtos.TreeNodeDTO;
 import com.gapso.web.trieda.shared.dtos.TurnoDTO;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -28,7 +29,7 @@ public interface OfertasService extends RemoteService {
 	PagingLoadResult<OfertaDTO> getBuscaList(CenarioDTO cenarioDTO,TurnoDTO turnoDTO, CampusDTO campusDTO,
 			CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config);
 	void save(OfertaDTO ofertaDTO);
-	void remove(List<OfertaDTO> ofertaDTOList);
+	void remove(List<OfertaDTO> ofertaDTOList) throws TriedaException;
 	ListLoadResult<TreeNodeDTO> getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO);
 	ListLoadResult<DisciplinaDemandaDTO> getDisciplinas(DemandaDTO demandaDTO, OfertaDTO ofertaDTO, Integer periodo);
 	

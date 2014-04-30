@@ -1951,7 +1951,7 @@ public class ConvertBeans {
 		Double receita = ( dto.getReceita().getDoubleValue() == null ?
 			0.0 : dto.getReceita().getDoubleValue() );
 		domain.setReceita( receita );
-
+		
 		return domain;
 	}
 

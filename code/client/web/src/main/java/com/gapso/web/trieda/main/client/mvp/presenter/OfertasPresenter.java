@@ -40,6 +40,7 @@ import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -184,7 +185,12 @@ public class OfertasPresenter
 					@Override
 					public void onFailure( Throwable caught )
 					{
-						MessageBox.alert( "ERRO!", "Deu falha na conexão", null );
+						
+						if (caught instanceof TriedaException)
+							MessageBox.alert("ERRO!", caught.getMessage(), null);
+						else
+							MessageBox.alert( "ERRO!", "Não foi remover a Oferta", null );
+						
 					}
 
 					@Override
