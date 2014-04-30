@@ -398,12 +398,12 @@ public class ExportExcelFormView
 		ambientesFaixaOcupacaoCB = new CheckBox();
 		ambientesFaixaOcupacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO);
 		ambientesFaixaOcupacaoCB.setValue(false);
-		ambientesFaixaOcupacaoCB.setBoxLabel("Ambientes por Faixa de Ocupação de Horários");
+		ambientesFaixaOcupacaoCB.setBoxLabel("Ambientes por Faixa de Utilização dos Horários");
 		
 		ambientesFaixaUtilizacaoCB = new CheckBox();
 		ambientesFaixaUtilizacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO);
 		ambientesFaixaUtilizacaoCB.setValue(false);
-		ambientesFaixaUtilizacaoCB.setBoxLabel("Ambientes por Faixa de Utilização da Capacidade");
+		ambientesFaixaUtilizacaoCB.setBoxLabel("Ambientes por Faixa de Ocupação da Capacidade");
 		ambientesFaixaUtilizacaoCB.setStyleAttribute("height", "40");
 		ambientesFaixaUtilizacaoCB.addStyleName("boxLabel");
 		
