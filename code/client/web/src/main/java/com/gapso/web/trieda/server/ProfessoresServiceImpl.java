@@ -1602,6 +1602,7 @@ public class ProfessoresServiceImpl
 		{
 			for ( int i = config.getOffset(); (i < professoresBemAlocados.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
+				if(professorIdMapProfessor.get(professoresBemAlocados.get(i).getId()) != null)
 					list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresBemAlocados.get(i).getId())) );
 			}
 		}
@@ -1742,7 +1743,8 @@ public class ProfessoresServiceImpl
 		{
 			for ( int i = config.getOffset(); (i < professoresMalAlocados.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresMalAlocados.get(i).getId()) ) );
+				if(professorIdMapProfessor.get(professoresMalAlocados.get(i).getId()) != null)
+					list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresMalAlocados.get(i).getId()) ) );
 			}
 		}
 
@@ -2122,7 +2124,8 @@ public class ProfessoresServiceImpl
 		{
 			for ( int i = config.getOffset(); (i < professoresComDeslocamentosUnidades.size() && i < (config.getOffset() + config.getLimit())); i++ )
 			{
-				list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresComDeslocamentosUnidades.get(i).getId()) ) );
+				if(professorIdMapProfessor.get(professoresComDeslocamentosUnidades.get(i).getId()) != null)
+					list.add( ConvertBeans.toProfessorDTO( professorIdMapProfessor.get(professoresComDeslocamentosUnidades.get(i).getId()) ) );
 			}
 		}
 

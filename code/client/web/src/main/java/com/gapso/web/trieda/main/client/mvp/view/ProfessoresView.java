@@ -156,7 +156,7 @@ public class ProfessoresView extends MyComposite
 			getI18nConstants().cargaHorariaMin(), 100 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_MAX,
-			getI18nConstants().cargaHorariaMax(), 110 ) );
+			getI18nConstants().cargaHorariaMax(), 170 ) );
 
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_TITULACAO_STRING,
 			getI18nConstants().titulacao(), 60 ) );
@@ -183,7 +183,7 @@ public class ProfessoresView extends MyComposite
 				getI18nConstants().totalCreditosSemanais(), 140 ) );
 		
 		list.add( new ColumnConfig( ProfessorDTO.PROPERTY_CARGA_HORARIA_SEMANAL,
-				getI18nConstants().cargaHorariaSemanal(), 140 ) );
+				getI18nConstants().cargaHorariaSemanal(), 190 ) );
 
 		return list;
 	}
