@@ -58,7 +58,7 @@ public class CampusFormView
 
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.campus16() );
-		this.simpleModal.setHeight( 390 );
+		this.simpleModal.setHeight( 360 );
 		this.simpleModal.setWidth( 320 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
@@ -118,6 +118,7 @@ public class CampusFormView
 
 		this.publicadoCB.setFieldLabel( "Publicar?" );
 		this.publicadoCB.setLabelSeparator( "" );
+		this.publicadoCB.hide();
 		geralFS.add( this.publicadoCB, formData );
 
 		this.formPanel.add( geralFS, formData );

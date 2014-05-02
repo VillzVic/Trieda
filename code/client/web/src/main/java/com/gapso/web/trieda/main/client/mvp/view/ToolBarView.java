@@ -705,7 +705,7 @@ public class ToolBarView
 		cenariosBt.setHeight(24);
 		Menu menu = new Menu();
 		menu.add(new MenuItem("Gerenciar Cenários", AbstractImagePrototype.create(Resources.DEFAULTS.cenario16()) ));
-		menu.add(new MenuItem("Comparar Cenários", AbstractImagePrototype.create(Resources.DEFAULTS.cenario16()) ));
+		menu.add(new MenuItem("Comparar Cenários", AbstractImagePrototype.create(Resources.DEFAULTS.compararCenarios16()) ));
 		menu.add(new MenuItem("Gerenciar Requisições de Otimização", AbstractImagePrototype.create(Resources.DEFAULTS.gerarGradeConsultaRequisicao16()) ));
 		cenariosBt.setMenu(menu);
 		return cenariosBt;

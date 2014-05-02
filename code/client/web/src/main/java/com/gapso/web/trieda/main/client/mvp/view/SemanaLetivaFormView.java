@@ -51,6 +51,7 @@ public class SemanaLetivaFormView
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.semanaLetiva16() );
 		this.simpleModal.setHeight( 230 );
+		this.simpleModal.setWidth( 300 );
 		this.createForm();
 
 		this.simpleModal.setContent( this.formPanel );
@@ -66,7 +67,7 @@ public class SemanaLetivaFormView
 			this.cenarioDTO, UniqueDomain.SEMANA_LETIVA );
 		this.codigoTF.setName( SemanaLetivaDTO.PROPERTY_CODIGO );
 		this.codigoTF.setValue( this.semanaLetivaDTO.getCodigo() );
-		this.codigoTF.setFieldLabel( "Codigo" );
+		this.codigoTF.setFieldLabel( "Código" );
 		this.codigoTF.setAllowBlank( false );
 		this.codigoTF.setMinLength( 1 );
 		this.codigoTF.setMaxLength( 20 );
@@ -97,7 +98,7 @@ public class SemanaLetivaFormView
 		this.permiteIntervaloCB = new CheckBox();
 		this.permiteIntervaloCB.setName( SemanaLetivaDTO.PROPERTY_PERMITE_INTERVALO_AULA );
 		this.permiteIntervaloCB.setValue( this.semanaLetivaDTO.getPermiteIntervaloAula() );
-		this.permiteIntervaloCB.setFieldLabel("Permite Intervalo Entre Aulas");
+		this.permiteIntervaloCB.setFieldLabel("Permite Intervalo entre Aulas");
 		this.permiteIntervaloCB.setToolTip("Quando o Trieda cria uma aula de dois tempos consecutivos (ou dois créditos), " +
 				"por padrão, não é permitido que haja um intervalo posicionado entre estes dois tempos de aula. No entanto, caso o parâmetro \"Permite Intervalo entre Aulas\"" +
 				" esteja marcado para a semana letiva em questão, então, o Trieda poderá criar aulas de dois tempos com um intervalo entre os tempos da aula.");

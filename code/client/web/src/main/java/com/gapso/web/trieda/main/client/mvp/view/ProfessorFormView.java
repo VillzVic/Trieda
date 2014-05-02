@@ -69,7 +69,8 @@ public class ProfessorFormView
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		this.simpleModal.setHeight( 500 );
+		this.simpleModal.setHeight( 480 );
+		this.simpleModal.setWidth( 300 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
 	}
@@ -118,7 +119,7 @@ public class ProfessorFormView
 		this.cargaHorariaMinNF = new NumberField();
 		this.cargaHorariaMinNF.setName( ProfessorDTO.PROPERTY_CARGA_HORARIA_MIN );
 		this.cargaHorariaMinNF.setValue( this.professorDTO.getCargaHorariaMin() );
-		this.cargaHorariaMinNF.setFieldLabel( "Carga Horária Min." );
+		this.cargaHorariaMinNF.setFieldLabel( "Carga Horária Mín." );
 		this.cargaHorariaMinNF.setAllowBlank( false );
 		this.cargaHorariaMinNF.setAllowDecimals( false );
 		this.cargaHorariaMinNF.setMaxValue( 99 );
@@ -147,7 +148,7 @@ public class ProfessorFormView
 		this.valorCreditoNF = new NumberField();
 		this.valorCreditoNF.setName( ProfessorDTO.PROPERTY_VALOR_CREDITO );
 		this.valorCreditoNF.setValue( this.professorDTO.getValorCredito().getDoubleValue() );
-		this.valorCreditoNF.setFieldLabel( "Crédito (R$)" );
+		this.valorCreditoNF.setFieldLabel( "Custo do Crédito Semanal (R$)" );
 		this.valorCreditoNF.setAllowBlank( false );
 		this.valorCreditoNF.setAllowDecimals( true );
 		this.valorCreditoNF.setMaxValue( 999999 );
@@ -167,7 +168,7 @@ public class ProfessorFormView
 		this.minCreditosDiaNF = new NumberField();
 		this.minCreditosDiaNF.setName( ProfessorDTO.PROPERTY_MIN_CREDITOS_DIA );
 		this.minCreditosDiaNF.setValue( this.professorDTO.getMinCreditosDia() );
-		this.minCreditosDiaNF.setFieldLabel( "Min. Creditos Diários" );
+		this.minCreditosDiaNF.setFieldLabel( "Mín. Creditos Diários" );
 		this.minCreditosDiaNF.setAllowBlank( false );
 		this.minCreditosDiaNF.setAllowDecimals( false );
 		this.minCreditosDiaNF.setMaxValue( 100 );

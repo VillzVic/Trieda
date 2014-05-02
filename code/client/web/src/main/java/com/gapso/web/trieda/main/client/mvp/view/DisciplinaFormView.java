@@ -62,7 +62,8 @@ public class DisciplinaFormView
 		String title = (disciplinaDTO.getId() == null) ? "Inserção de Disciplina"
 				: "Edição de Disciplina";
 		simpleModal = new SimpleModal(title, Resources.DEFAULTS.disciplina16());
-		simpleModal.setHeight(580);
+		simpleModal.setHeight(430);
+		simpleModal.setWidth(400);
 		createForm();
 		simpleModal.setContent(formPanel);
 	}
@@ -70,6 +71,7 @@ public class DisciplinaFormView
 	private void createForm() {
 		FormData formData = new FormData("-20");
 		formPanel = new FormPanel();
+		formPanel.setLabelWidth(130);
 		formPanel.setHeaderVisible(false);
 
 		codigoTF = new UniqueTextField( cenarioDTO, UniqueDomain.DISCIPLINA );

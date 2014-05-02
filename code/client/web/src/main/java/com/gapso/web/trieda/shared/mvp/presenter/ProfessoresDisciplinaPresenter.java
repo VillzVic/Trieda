@@ -22,6 +22,7 @@ import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.view.ProfessorDisciplinaFormView;
+import com.gapso.web.trieda.shared.mvp.view.ProfessorDisciplinasFormView;
 import com.gapso.web.trieda.shared.services.DisciplinasServiceAsync;
 import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaServiceAsync;
 import com.gapso.web.trieda.shared.services.ProfessoresServiceAsync;
@@ -59,6 +60,7 @@ public class ProfessoresDisciplinaPresenter
 		Button getResetBuscaButton();
 		SimpleGrid< ProfessorDisciplinaDTO > getGrid();
 		Component getComponent();
+		Button getAssociarMassaButton();
 		void setProxy( RpcProxy< PagingLoadResult< ProfessorDisciplinaDTO > > proxy );
 	}
 
@@ -273,6 +275,18 @@ public class ProfessoresDisciplinaPresenter
 						= new ImportExcelFormView( parametros, display.getGrid() );
 
 					importExcelFormView.show();
+				}
+			});
+			
+			display.getAssociarMassaButton().addSelectionListener( new SelectionListener< ButtonEvent >()
+			{
+				@Override
+				public void componentSelected( ButtonEvent ce )
+				{
+					Presenter presenter = new ProfessorDisciplinasFormPresenter( instituicaoEnsinoDTO, cenarioDTO,
+						usuario, new ProfessorDisciplinasFormView( cenarioDTO, usuario ), display.getGrid() );
+
+					presenter.go( null );
 				}
 			});
 		}

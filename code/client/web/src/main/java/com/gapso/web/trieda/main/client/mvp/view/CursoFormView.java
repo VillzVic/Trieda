@@ -161,7 +161,7 @@ public class CursoFormView
 				.setName(CursoDTO.PROPERTY_ADM_MAIS_DE_UMA_DISCIPLINA);
 		admMaisDeUmDisciplinaCB.setValue(cursoDTO.getAdmMaisDeUmDisciplina());
 		admMaisDeUmDisciplinaCB
-				.setFieldLabel("Permite mais de uma Disc. por Prof.?");
+				.setFieldLabel("Permite mais de uma Disc. por Prof. por Período?");
 		formPanel.add(admMaisDeUmDisciplinaCB, formData);
 
 		FormButtonBinding binding = new FormButtonBinding(formPanel);

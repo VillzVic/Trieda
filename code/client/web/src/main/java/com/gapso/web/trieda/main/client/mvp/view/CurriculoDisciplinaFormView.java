@@ -40,7 +40,7 @@ public class CurriculoDisciplinaFormView
 
 	private void initUI()
 	{
-		String title = "Inserção de Disciplina no Curriculo";
+		String title = "Inserção de Disciplina na Matriz Curricular";
 		simpleModal = new SimpleModal( title,
 			Resources.DEFAULTS.disciplina16() );
 		simpleModal.setHeight( 230 );
@@ -57,7 +57,7 @@ public class CurriculoDisciplinaFormView
 
 		TextField< String > curriculoTF = new TextField< String >();
 		curriculoTF.setValue( curriculoDTO.getCodigo() );
-		curriculoTF.setFieldLabel( "Matriz Curriculo" );
+		curriculoTF.setFieldLabel( "Matriz Curricular" );
 		curriculoTF.setReadOnly( true );
 		formPanel.add( curriculoTF, formData );
 

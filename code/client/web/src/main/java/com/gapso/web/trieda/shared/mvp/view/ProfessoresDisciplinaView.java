@@ -6,11 +6,8 @@ import java.util.List;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
-import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -20,9 +17,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.UsuarioDTO;
 import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
-import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.resources.Resources;
-import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
@@ -42,6 +37,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 	private GTabItem tabItem;
 	private UsuarioDTO usuario;
 	private CenarioDTO cenarioDTO;
+	private Button associarMassaBt;
 
 	public ProfessoresDisciplinaView( CenarioDTO cenarioDTO, UsuarioDTO usuario )
 	{
@@ -96,6 +92,8 @@ public class ProfessoresDisciplinaView extends MyComposite
 		else
 		{
 			toolBar = new SimpleToolBar( this );
+			associarMassaBt = toolBar.createButton("Associar em Massa", Resources.DEFAULTS.add216());
+			toolBar.add(associarMassaBt);
 		}
 
 		panel.setTopComponent( toolBar );
@@ -212,5 +210,11 @@ public class ProfessoresDisciplinaView extends MyComposite
 	public Button getResetBuscaButton()
 	{
 		return filter.getResetButton();
+	}
+	
+	@Override
+	public Button getAssociarMassaButton()
+	{
+		return associarMassaBt;
 	}
 }

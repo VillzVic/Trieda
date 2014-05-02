@@ -625,7 +625,7 @@ public class AlocacaoManualView
 		list.add( column );
 		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_EQUIVALENCIA_STRING, "Equivalência", 60 ) );
 		list.add( new CheckColumnConfig( AlunoStatusDTO.PROPERTY_FORMANDO, "Formando", 60 ) );
-		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 120 ) );
+		list.add( new ColumnConfig( AlunoStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
 		
 		return list;
 	}
@@ -678,7 +678,7 @@ public class AlocacaoManualView
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_CUSTO, "Custo", 60 ) );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOTA, "Nota", 60 ) );
 		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_PREFERENCIA, "Pref.", 60 ) );
-		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
+		list.add( new ColumnConfig( ProfessorStatusDTO.PROPERTY_NOME, "Nome", 200 ) );
 		
 		return list;
 	}
@@ -904,11 +904,14 @@ public class AlocacaoManualView
 		LayoutContainer buttonsContainer = new LayoutContainer(new ColumnLayout());
 		salvarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.disk16() ));
+		salvarTurmaBt.setToolTip("Salvar Turma");
 		salvarTurmaBt.disable();
 		confirmarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.senha16() ));
+		confirmarTurmaBt.setToolTip("Confirmar Turma");
 		desconfirmarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.desconfirmarTurma16() ));
+		desconfirmarTurmaBt.setToolTip("Desconfirmar Turma");
 		
 		if ((turmaSelecionada.getCredAlocados() == disciplinaDTO.getCreditosPratico() + disciplinaDTO.getCreditosTeorico())
 				&& turmaSelecionada.getNoAlunos() > 0

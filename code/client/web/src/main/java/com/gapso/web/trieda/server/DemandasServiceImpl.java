@@ -701,7 +701,21 @@ public class DemandasServiceImpl
 
 			if ( demanda != null )
 			{
+				removeAlunosVirtuais(demanda);
 				demanda.remove();
+			}
+		}
+	}
+	
+	@Transactional
+	private void removeAlunosVirtuais(Demanda demanda)
+	{
+		for (AlunoDemanda alunoDemanda : demanda.getAlunosDemanda())
+		{
+			if (alunoDemanda.getAluno().getNome().contains("Aluno Virtual")
+					&& AlunoDemanda.findByAluno(getInstituicaoEnsinoUser(), alunoDemanda.getAluno()).size() == 1)
+			{
+				alunoDemanda.getAluno().remove();
 			}
 		}
 	}

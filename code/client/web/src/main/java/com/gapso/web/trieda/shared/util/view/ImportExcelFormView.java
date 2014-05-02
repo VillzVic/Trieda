@@ -132,6 +132,7 @@ public class ImportExcelFormView
 		    	  {
 		    		  return;
 		    	  }
+		    	  simpleModal.getSalvarBt().mask();
 
 		    	  formPanel.submit();
 		    	  

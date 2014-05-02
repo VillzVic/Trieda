@@ -71,13 +71,13 @@ public class GruposSalasView extends MyComposite implements GruposSalasPresenter
 
 	public List<ColumnConfig> getColumnList() {
 		List<ColumnConfig> list = new ArrayList<ColumnConfig>();
-	    XTemplate tpl = XTemplate.create("<p><b>Ambientes: [Código] ([Número],[Capacidade])</b></p><p>{salasString}</p>");  
+	    XTemplate tpl = XTemplate.create("<p><b>Cód. Ambiente (Número, Capacidade)</b></p><p>{salasString}</p>");  
 	    expander = new RowExpander();  
 	    expander.setTemplate(tpl);
 	    list.add(expander);
-		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_CODIGO, "Código", 100));
-		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_NOME, "Nome", 100));
-		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_UNIDADE_STRING, "Unidade", 100));
+		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_CODIGO, "Código", 200));
+		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_NOME, "Nome", 300));
+		list.add(new ColumnConfig(GrupoSalaDTO.PROPERTY_UNIDADE_STRING, "Unidade", 250));
 		return list;
 	}
 

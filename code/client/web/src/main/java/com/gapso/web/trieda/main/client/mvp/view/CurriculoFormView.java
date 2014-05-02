@@ -90,8 +90,7 @@ public class CurriculoFormView extends MyComposite
 		descricaoTF.setValue( curriculoDTO.getDescricao() );
 		descricaoTF.setFieldLabel( "Descrição" );
 		descricaoTF.setAllowBlank( false );
-		descricaoTF.setMinLength( 5 );
-		descricaoTF.setMaxLength( 20 );
+		descricaoTF.setMaxLength( 100 );
 		descricaoTF.setEmptyText( "Preencha um comentário" );
 		formPanel.add( descricaoTF, formData );
 

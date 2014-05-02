@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -21,5 +22,7 @@ public interface ProfessoresDisciplinaService extends RemoteService {
 	PagingLoadResult<ProfessorDisciplinaDTO> getBuscaList(CenarioDTO cenarioDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config);
 	void save(ProfessorDisciplinaDTO professorDisciplinaDTO);
 	void remove(List<ProfessorDisciplinaDTO> professorDisciplinaDTOList);
+	void save(ProfessorDTO professorDTO, List<ProfessorDisciplinaDTO> professorDisciplinasDTO);
+	ParDTO<List<DisciplinaDTO>, List<DisciplinaDTO>> getDisciplinasAssociadas(CenarioDTO cenarioDTO, ProfessorDTO professorDTO);
 	
 }

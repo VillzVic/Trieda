@@ -14,6 +14,7 @@ import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
+import com.gapso.web.trieda.shared.dtos.ParDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorDisciplinaDTO;
 import com.gapso.web.trieda.shared.services.ProfessoresDisciplinaService;
@@ -77,6 +78,53 @@ public class ProfessoresDisciplinaServiceImpl
 			getInstituicaoEnsinoUser(), cenario, professor, disciplina ) );
 
 		return result;
+	}
+	
+	@Override
+	public ParDTO<List<DisciplinaDTO>, List<DisciplinaDTO>> getDisciplinasAssociadas(CenarioDTO cenarioDTO, ProfessorDTO professorDTO)
+	{
+		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
+		Professor professor = Professor.find(professorDTO.getId(), getInstituicaoEnsinoUser());
+		
+		List<DisciplinaDTO> disciplinasAssociadas = new ArrayList<DisciplinaDTO>();
+		List<DisciplinaDTO> disciplinasNaoAssociadas = new ArrayList<DisciplinaDTO>();
+		for (Disciplina disciplina : Disciplina.findByCenario(getInstituicaoEnsinoUser(), cenario))
+		{
+			boolean associadoAoProfessor = false;
+			for (ProfessorDisciplina professorDisciplina : disciplina.getProfessores())
+			{
+				if (professorDisciplina.getProfessor().equals(professor))
+				{
+					associadoAoProfessor = true;
+				}
+			}
+			if (associadoAoProfessor)
+			{
+				disciplinasAssociadas.add(ConvertBeans.toDisciplinaDTO(disciplina));
+			}
+			else
+			{
+				disciplinasNaoAssociadas.add(ConvertBeans.toDisciplinaDTO(disciplina));
+			}
+		}
+		
+		return ParDTO.create(disciplinasAssociadas, disciplinasNaoAssociadas);
+	}
+	
+	@Override
+	public void save(ProfessorDTO professorDTO, List<ProfessorDisciplinaDTO> professorDisciplinasDTO) {
+		Professor professor = Professor.find(professorDTO.getId(), getInstituicaoEnsinoUser());
+		professor.getDisciplinas().clear();
+		for (ProfessorDisciplinaDTO professorDisciplinaDTO : professorDisciplinasDTO)
+		{
+			ProfessorDisciplina professorDisciplina = ConvertBeans.toProfessorDisciplina(professorDisciplinaDTO);
+			professor.getDisciplinas().add(professorDisciplina);
+			if(professorDisciplina.getId() != null && professorDisciplina.getId() > 0) {
+				professorDisciplina.merge();
+			} else {
+				professorDisciplina.persist();
+			}
+		}
 	}
 
 	@Override

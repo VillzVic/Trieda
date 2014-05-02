@@ -87,7 +87,7 @@ public class AlocacaoManualDisciplinaFormView
 		
 		this.filter = new SimpleFilter();
 		this.codigoBuscaTextField = new TextField<String>();
-		this.codigoBuscaTextField.setFieldLabel("Codigo da Disciplina");
+		this.codigoBuscaTextField.setFieldLabel("Código da Disciplina");
 		this.cursoBuscaComboBox = new CursoComboBox(cenarioDTO);
 		this.cursoBuscaComboBox.setFieldLabel("Curso");
 		this.campusBuscaComboBox = new CampusComboBox(cenarioDTO);
