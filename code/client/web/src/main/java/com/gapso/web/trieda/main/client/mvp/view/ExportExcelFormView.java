@@ -395,19 +395,19 @@ public class ExportExcelFormView
 		ambientesFS.setCollapsible(true);
 		ambientesFS.setLayout(new RowLayout());
 		
-		ambientesFaixaOcupacaoCB = new CheckBox();
-		ambientesFaixaOcupacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO);
-		ambientesFaixaOcupacaoCB.setValue(false);
-		ambientesFaixaOcupacaoCB.setBoxLabel("Ambientes por Faixa de Utilização dos Horários");
-		
 		ambientesFaixaUtilizacaoCB = new CheckBox();
 		ambientesFaixaUtilizacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_UTILIZACAO);
 		ambientesFaixaUtilizacaoCB.setValue(false);
-		ambientesFaixaUtilizacaoCB.setBoxLabel("Ambientes por Faixa de Ocupação da Capacidade");
-		ambientesFaixaUtilizacaoCB.setStyleAttribute("height", "40");
-		ambientesFaixaUtilizacaoCB.addStyleName("boxLabel");
+		ambientesFaixaUtilizacaoCB.setBoxLabel("Ambientes por Faixa de Utilização dos Horários");
 		
-		ambientesFS.add(createCheckBoxGroup(ambientesFaixaUtilizacaoCB, ambientesFaixaOcupacaoCB));
+		ambientesFaixaOcupacaoCB = new CheckBox();
+		ambientesFaixaOcupacaoCB.setName(PlanilhasExportExcel.AMBIENTES_FAIXA_OCUPACAO);
+		ambientesFaixaOcupacaoCB.setValue(false);
+		ambientesFaixaOcupacaoCB.setBoxLabel("Ambientes por Faixa de Ocupação da Capacidade");
+		ambientesFaixaOcupacaoCB.setStyleAttribute("height", "40");
+		ambientesFaixaOcupacaoCB.addStyleName("boxLabel");
+		
+		ambientesFS.add(createCheckBoxGroup(ambientesFaixaOcupacaoCB, ambientesFaixaUtilizacaoCB));
 		main.add(ambientesFS, new FormData());
 		
 		//GradeHoraria

@@ -6,6 +6,8 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
@@ -247,26 +249,40 @@ public class CenariosPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
-					CenariosServiceAsync service = Services.cenarios();
 					
-					CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
-					display.getGrid().mask();
-					service.limpaSolucoesCenario(cenarioDTO, new AsyncCallback<Void>(){
-
+					MessageBox.confirm("Confirmação","Tem certeza que deseja limpar as soluções do cenário selecionado.", new Listener<MessageBoxEvent>() {
 						@Override
-						public void onFailure(Throwable caught) {
-							MessageBox.alert( "ERRO!",
-									"Deu falha na conexão", null );
-						}
+						public void handleEvent(MessageBoxEvent be) {
+							if(be.getButtonClicked().getHtml().equalsIgnoreCase("yes") ||
+									be.getButtonClicked().getHtml().equalsIgnoreCase("sim")) {
+								
+								CenariosServiceAsync service = Services.cenarios();
+								
+								CenarioDTO cenarioDTO = display.getGrid().getGrid().getSelectionModel().getSelectedItem();
+								display.getGrid().mask();
+								service.limpaSolucoesCenario(cenarioDTO, new AsyncCallback<Void>(){
 
-						@Override
-						public void onSuccess(Void result) {
-							display.getGrid().unmask();
-							Info.display( "Removido",
-								"Soluções Limpas com Sucesso!" );
+									@Override
+									public void onFailure(Throwable caught) {
+										MessageBox.alert( "ERRO!",
+												"Deu falha na conexão", null );
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										display.getGrid().unmask();
+										Info.display( "Removido",
+											"Soluções Limpas com Sucesso!" );
+									}
+									
+								});
+								
+							}
 						}
-						
 					});
+					
+					
+
 				}
 			});
 	}

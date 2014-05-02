@@ -19,10 +19,12 @@ import com.gapso.web.trieda.main.client.mvp.presenter.CenariosPresenter;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.ConfirmationButton;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class CenariosView
 	extends MyComposite
@@ -72,9 +74,7 @@ public class CenariosView
 			"Selecionar como Contexto Atual",
 			Resources.DEFAULTS.cenarioAbrir16() );
 		
-		this.limparSolucaoBt = toolBar.createButton(
-				"Limpar Solucao do Cenário",
-				Resources.DEFAULTS.del16() );
+		this.limparSolucaoBt = toolBar.createButton("Limpar Solucao do Cenário",Resources.DEFAULTS.limpaSolucao16() );
 
 		this.toolBar.add( this.abrirCenarioBT );
 		this.toolBar.add( this.limparSolucaoBt );

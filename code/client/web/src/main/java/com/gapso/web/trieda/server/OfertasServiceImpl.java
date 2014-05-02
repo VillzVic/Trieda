@@ -203,7 +203,7 @@ public class OfertasServiceImpl
 			if(aos.isEmpty() && aot.isEmpty()){
 				oferta.remove();
 			} else {
-				throw new TriedaException("Oferta nao pode ser removida, pois possui atendimentos relacionados a ela.");
+				throw new TriedaException("Não foi possível remover a Oferta. 2");
 			}
 		}
 	}

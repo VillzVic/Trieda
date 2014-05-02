@@ -189,6 +189,7 @@ public interface DefaultsIcons extends ClientBundle  {
 	@Source("aula_edit_16.png") ImageResource aulaEdit16();
 	@Source("aula_delete_16.png") ImageResource aulaDelete16();
 	@Source("desconfirmar_turma_16.png") ImageResource desconfirmarTurma16();
+	@Source("limpa_solucao_16.png") ImageResource limpaSolucao16();
 	@Source("add2_16.png") ImageResource add216();
 	@Source("comparar_cenarios_16.png") ImageResource compararCenarios16();
 }

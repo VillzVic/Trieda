@@ -189,7 +189,7 @@ public class OfertasPresenter
 						if (caught instanceof TriedaException)
 							MessageBox.alert("ERRO!", caught.getMessage(), null);
 						else
-							MessageBox.alert( "ERRO!", "Não foi remover a Oferta", null );
+							MessageBox.alert( "ERRO!", "Não foi possível remover a Oferta. 1", null );
 						
 					}
 
