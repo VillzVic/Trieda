@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.widget.ListView;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.gapso.web.trieda.main.client.mvp.view.CompararCenariosView;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.CenariosServiceAsync;
@@ -36,10 +37,14 @@ public class CompararCenariosFormPresenter implements Presenter {
 	
 	private Display display;
 	private GTab gTab;
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
+	private CenarioDTO cenarioDTO;
 	
-	public CompararCenariosFormPresenter(Display display, GTab gTab) {
+	public CompararCenariosFormPresenter(InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO, Display display, GTab gTab) {
 		this.display = display;
 		this.gTab = gTab;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
+		this.cenarioDTO = cenarioDTO;
 
 		configureProxy();
 		setListeners();
@@ -84,7 +89,7 @@ public class CompararCenariosFormPresenter implements Presenter {
 		display.getFecharBT().addSelectionListener(new SelectionListener<ButtonEvent>(){
 			@Override
 			public void componentSelected(ButtonEvent ce) {
-				Presenter presenter = new CompararCenariosPresenter( new CompararCenariosView(display.getSelecionadoList().getStore().getModels()) );
+				Presenter presenter = new CompararCenariosPresenter( instituicaoEnsinoDTO, cenarioDTO, new CompararCenariosView(display.getSelecionadoList().getStore().getModels()) );
 
 				presenter.go( gTab );
 

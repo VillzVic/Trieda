@@ -1,5 +1,8 @@
 package com.gapso.web.trieda.server.excel.exp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.gapso.trieda.domain.Campus;
@@ -37,6 +40,7 @@ public class ExportExcelFilterFactory{
 			case PROFESSORES_JANELAS: return getExportProfessoresList(request, instituicaoEnsino.getId());
 			case PROFESSORES_DESLOCAMENTO_UNIDADES: return getExportProfessoresList(request, instituicaoEnsino.getId());
 			case PROFESSORES_DESLOCAMENTO_CAMPI: return getExportProfessoresList(request, instituicaoEnsino.getId());
+			case COMPARAR_CENARIOS: return getExportCompararCenarios(request, instituicaoEnsino.getId());
 		default:
 			break;
 		}
@@ -176,6 +180,25 @@ public class ExportExcelFilterFactory{
 			Long tipoContratoId = (request.getParameter("tipoContratoId").isEmpty() ? null : Long.parseLong(request.getParameter("tipoContratoId")));
 			return new ProfessoresListFiltroExcel( instituicaoEnsinoId, campusId, cursoId, turnoId, titulacaoId,
 					areaTitulacaoId, tipoContratoId);
+		}
+		catch(Exception ex){
+			return null;
+		}
+	}
+	
+	private static CompararCenariosFiltroExcel getExportCompararCenarios(HttpServletRequest request, Long instituicaoEnsinoId){
+		try{
+			//ids dos cenarios separados por "-"
+			String cenariosIdsString = (request.getParameter("cenariosIds").isEmpty() ? null : request.getParameter("cenariosIds"));
+			List<Long> cenariosIds = new ArrayList<Long>();
+			if (cenariosIdsString != null)
+			{
+				for (String string : cenariosIdsString.split("@-@"))
+				{
+					cenariosIds.add(Long.parseLong(string));
+				}
+			}
+			return new CompararCenariosFiltroExcel( instituicaoEnsinoId, cenariosIds );
 		}
 		catch(Exception ex){
 			return null;

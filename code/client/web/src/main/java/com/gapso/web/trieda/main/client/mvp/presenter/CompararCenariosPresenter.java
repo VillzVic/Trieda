@@ -1,5 +1,6 @@
 package com.gapso.web.trieda.main.client.mvp.presenter;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BaseTreeModel;
@@ -10,6 +11,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.extjs.gxt.ui.client.widget.treegrid.TreeGrid;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
+import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -39,10 +41,14 @@ public class CompararCenariosPresenter
 
 
 	private Display display;
+	private CenarioDTO cenarioDTO;
+	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	
-	public CompararCenariosPresenter( Display display )
+	public CompararCenariosPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO, CenarioDTO cenarioDTO, Display display )
 	{
 		this.display = display;
+		this.cenarioDTO = cenarioDTO;
+		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		setListeners();
 		load();
 	}
@@ -75,8 +81,21 @@ public class CompararCenariosPresenter
 			@Override
 			public void componentSelected( MenuEvent ce ) {
 				String fileExtension = "xls";
-				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.RESUMO_CAMPI,null, null, fileExtension);
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.COMPARAR_CENARIOS,instituicaoEnsinoDTO, cenarioDTO, fileExtension);
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(parametros,display.getI18nConstants(),display.getI18nMessages());
+				
+				String parameter = "";
+				Iterator<CenarioDTO> iterator = display.getCenarios().iterator();
+				while (iterator.hasNext())
+				{
+					parameter += iterator.next().getId();
+					if (iterator.hasNext())
+					{
+						parameter += "@-@";
+					}
+				}
+				e.addParameter("cenariosIds", parameter);
+				
 				e.submit();
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}
@@ -86,8 +105,22 @@ public class CompararCenariosPresenter
 			@Override
 			public void componentSelected( MenuEvent ce ) {
 				String fileExtension = "xlsx";
-				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.RESUMO_CAMPI,null, null, fileExtension);
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.COMPARAR_CENARIOS,instituicaoEnsinoDTO, cenarioDTO, fileExtension);
 				ExportExcelFormSubmit e = new ExportExcelFormSubmit(parametros,display.getI18nConstants(),display.getI18nMessages());
+				
+				String parameter = "";
+				Iterator<CenarioDTO> iterator = display.getCenarios().iterator();
+				while (iterator.hasNext())
+				{
+					parameter += iterator.next().getId();
+					if (iterator.hasNext())
+					{
+						parameter += "-";
+					}
+				}
+				
+				e.addParameter("cenariosIds", parameter);
+				
 				e.submit();
 				new AcompanhamentoPanelPresenter(e.getChaveRegistro(), new AcompanhamentoPanelView());
 			}

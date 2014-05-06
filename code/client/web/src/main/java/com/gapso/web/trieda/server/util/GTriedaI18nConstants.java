@@ -986,6 +986,11 @@ public class GTriedaI18nConstants
 	public String resumoCampi() {
 		return this.languageManager.getText("resumoCampi");
 	}
+	
+	@Override
+	public String compararCenarios() {
+		return this.languageManager.getText("compararCenarios");
+	}
 
 	@Override
 	public String totalCreditosSemanais() {

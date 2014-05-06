@@ -85,6 +85,7 @@ public class ExportExcelFactory {
 			case PROFESSORES_JANELAS: exporter = new ProfessoresJanelaGradeExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case PROFESSORES_DESLOCAMENTO_UNIDADES: exporter = new ProfessoresDeslocamentoUnidadesExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 			case PROFESSORES_DESLOCAMENTO_CAMPI: exporter = new ProfessoresDeslocamentoCampiExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
+			case COMPARAR_CENARIOS: exporter = new CompararCenariosExportExcel(cenario, i18nConstants, i18nMessages, filter, instituicaoEnsino, fileExtension ); break;
 		default:
 			break;
 		}
