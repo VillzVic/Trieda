@@ -26,6 +26,7 @@ import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnF
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
+import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleModal;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -47,14 +48,16 @@ public class AlocacaoManualDisciplinaFormPresenter
 	private CenarioDTO cenarioDTO;
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
 	private GTab gTab;
+	private GTabItem gTabItem;
 	
 	public AlocacaoManualDisciplinaFormPresenter( InstituicaoEnsinoDTO instituicaoEnsinoDTO,
-			CenarioDTO cenarioDTO, Display display, GTab gTab )
+			CenarioDTO cenarioDTO, Display display, GTab gTab, GTabItem gTabItem )
 	{
 		this.display = display;
 		this.cenarioDTO = cenarioDTO;
 		this.instituicaoEnsinoDTO = instituicaoEnsinoDTO;
 		this.gTab = gTab;
+		this.gTabItem = gTabItem;
 		load();
 		setListeners();
 
@@ -73,7 +76,16 @@ public class AlocacaoManualDisciplinaFormPresenter
 						Presenter presenter = new AlocacaoManualPresenter( instituicaoEnsinoDTO, cenarioDTO,
 							new AlocacaoManualView( cenarioDTO, result, display.getGrid().getSelectionModel().getSelectedItem() ) );
 
-						presenter.go( gTab );
+						if (gTabItem != null)
+						{
+							gTab.remove(gTabItem);
+							presenter.go( gTab );
+							
+						}
+						else
+						{
+							presenter.go( gTab );
+						}
 						display.getSimpleModal().hide();
 					}
 				});
@@ -91,6 +103,7 @@ public class AlocacaoManualDisciplinaFormPresenter
 		CursoDTO cursoDTO
 			= display.getCursoBuscaComboBox().getValue();
 		
+		display.getGrid().mask( display.getI18nMessages().loading(), "loading" );
 		AlunosDemandaServiceAsync service = Services.alunosDemanda();
 		service.getResumoAtendimentosDisciplinaList( cenarioDTO, codigo, campusDTO,
 				cursoDTO, new AbstractAsyncCallbackWithDefaultOnFailure<ListLoadResult<ResumoMatriculaDTO>>(display.getI18nMessages().falhaOperacao(),display) {

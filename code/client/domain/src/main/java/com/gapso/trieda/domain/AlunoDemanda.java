@@ -327,10 +327,16 @@ public class AlunoDemanda
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AlunoDemanda > findByDisciplinaCampusAndTurma(
-		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Campus campus, String turma )
+		InstituicaoEnsino instituicaoEnsino, Disciplina disciplina, Campus campus, String turma, Long turmaId )
 	{
 		List<AlunoDemanda> result = new ArrayList<AlunoDemanda>();
 
+		String turmaQuery = "";
+		if(turmaId != null)
+		{
+			turmaQuery = "t.id = :turmaId OR ";
+		}
+		
 		Query q = entityManager().createQuery(
 			" SELECT DISTINCT (o) FROM AlunoDemanda o LEFT JOIN o.atendimentosOperacional ao" +
 			" LEFT JOIN o.atendimentosTatico at LEFT JOIN o.turmas t" +
@@ -338,13 +344,19 @@ public class AlunoDemanda
 			" AND o.demanda.disciplina.tipoDisciplina.instituicaoEnsino = :instituicaoEnsino " +
 			" AND o.demanda.disciplina = :disciplina " +
 			" AND o.demanda.oferta.campus = :campus " +
-			" AND (t.nome = :turma OR o.turmas IS EMPTY) " +
-			" AND (ao.turma = :turma OR at.turma = :turma OR o.atendido is FALSE)" );
+			" AND (" + turmaQuery + "o.turmas IS EMPTY) " +
+			" AND (ao.turma = :turma OR at.turma = :turma OR o.atendido is FALSE) " +
+			" AND (ao.disciplinaSubstituta IS NULL) " +
+			" AND (at.disciplinaSubstituta IS NULL) " );
 
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "disciplina", disciplina );
 		q.setParameter( "campus", campus );
 		q.setParameter( "turma", turma );
+		if(turmaId != null)
+		{
+			q.setParameter( "turmaId", turmaId );
+		}
 		result.addAll(q.getResultList());
 
 		return q.getResultList();
@@ -1345,17 +1357,32 @@ public class AlunoDemanda
 	@SuppressWarnings("unchecked")
 	public static List<AlunoDemanda> findAlunosEquivalentes(
 			InstituicaoEnsino instituicaoEnsino, Cenario cenario,
-			Disciplina disciplina)
+			Disciplina disciplina, String turma, Long turmaId)
 	{
+		String turmaQuery = "";
+		if (turmaId != null)
+		{
+			turmaQuery = "t.id = :turmaId OR ";
+		}
         Query q = entityManager().createQuery(
-        	" SELECT o FROM AlunoDemanda o, IN (o.demanda.disciplina.eliminadasPor) eliminadasPor " +
+        	" SELECT DISTINCT(o) FROM AlunoDemanda o, IN (o.demanda.disciplina.eliminadasPor) eliminadasPor " +
+        	" LEFT JOIN o.atendimentosOperacional ao LEFT JOIN o.atendimentosTatico at LEFT JOIN o.turmas t" +
         	" WHERE o.demanda.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
         	" AND o.demanda.oferta.campus.cenario = :cenario " +
-        	" AND eliminadasPor.cursou = :disciplina ");
+        	" AND eliminadasPor.cursou = :disciplina " +
+			" AND (" +turmaQuery + "o.turmas IS EMPTY) " +
+			" AND ((ao.turma = :turma AND ao.disciplinaSubstituta = :disciplina) " +
+			"      OR (at.turma = :turma AND at.disciplinaSubstituta = :disciplina) OR o.atendido is FALSE) ");
         
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
         q.setParameter( "disciplina", disciplina );
+        q.setParameter( "turma", turma );
+        
+        if (turmaId != null)
+        {
+            q.setParameter( "turmaId", turmaId );
+        }
         
         return q.getResultList();
 	}

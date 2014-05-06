@@ -135,10 +135,12 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	
 	public void addGridListener(EventType eventType, Listener<? extends BaseEvent> listener)
 	{
-		if (this.grid != null)
+		if (this.grid != null && this.grid.getListeners(eventType).isEmpty())
 		{
-			this.grid.removeAllListeners();
 			this.grid.addListener(eventType, listener);
+		}
+		else
+		{
 		}
 	}
 	
@@ -337,7 +339,10 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 				int qtdLinhasNaGradeHorariaPorCreditoDaAula = aulaDTO.getDuracaoDeUmaAulaEmMinutos() / mdcTemposAulaNumSemanasLetivas.getPrimeiro();
 				int qtdIntervalosNaAula = getNumeroIntervalos(rowIndex+aulaDTO.getTotalCreditos()) - getNumeroIntervalos(rowIndex);
 				html.setStyleAttribute("height", (aulaDTO.getTotalCreditos() * qtdLinhasNaGradeHorariaPorCreditoDaAula * tamanhoLinhaGradeHorariaEmPixels - 3 + (qtdIntervalosNaAula*10)) + "px");
-				html.addStyleName("s" + aulaDTO.getSemana()); // Posiciona na coluna ( dia semana )
+				if (!gradeHorariaAlocacaoManual)
+				{
+					html.addStyleName("s" + aulaDTO.getSemana()); // Posiciona na coluna ( dia semana )
+				}
 				html.addStyleName(getCssDisciplina(aulaDTO.getDisciplinaId()));
 
 				new DragSource(html){
@@ -376,6 +381,10 @@ public abstract class GradeHorariaVisao extends ContentPanel{
 	protected abstract TrioDTO<String, String, String> getHTMLInfo(AtendimentoRelatorioDTO atendimentoDTO);
 	
 	protected AtendimentoRelatorioDTO getAulaPorHorario(int linhaGradeHoraria, int colunaGradeHoraria){
+		if (gradeHorariaAlocacaoManual)
+		{
+			colunaGradeHoraria += 1;
+		}
 		if(this.atendimentoDTO != null){
 			String labelHorario = horariosDeInicioDeAula.get(linhaGradeHoraria);
 			for(AtendimentoRelatorioDTO aula : this.atendimentoDTO){

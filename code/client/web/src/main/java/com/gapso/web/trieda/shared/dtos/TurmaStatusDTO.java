@@ -66,7 +66,7 @@ public class TurmaStatusDTO
 	@Override
 	public String getNaturalKey()
 	{
-		return this.getNome();
+		return this.getDisplayText();
 	}
 	
 	public void setQtdeDiscSelecionada( Integer value )
@@ -122,6 +122,6 @@ public class TurmaStatusDTO
 	@Override
 	public int compareTo( TurmaStatusDTO o )
 	{
-		return this.getNome().compareTo( o.getNome() );
+		return this.getDisplayText().compareTo( o.getDisplayText() );
 	}
 }

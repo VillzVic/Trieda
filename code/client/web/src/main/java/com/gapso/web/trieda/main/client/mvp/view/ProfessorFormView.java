@@ -69,8 +69,8 @@ public class ProfessorFormView
 		this.simpleModal = new SimpleModal(
 			title, Resources.DEFAULTS.professor16() );
 
-		this.simpleModal.setHeight( 480 );
-		this.simpleModal.setWidth( 300 );
+		this.simpleModal.setHeight( 390 );
+		this.simpleModal.setWidth( 400 );
 		createForm();
 		this.simpleModal.setContent( this.formPanel );
 	}
@@ -80,6 +80,7 @@ public class ProfessorFormView
 		FormData formData = new FormData( "-20" );
 		this.formPanel = new FormPanel();
 		this.formPanel.setHeaderVisible( false );
+		formPanel.setLabelWidth(150);
 
 		this.cpfTF = new UniqueTextField( this.cenarioDTO, UniqueDomain.PROFESSOR );
 		this.cpfTF.setName( ProfessorDTO.PROPERTY_CPF );

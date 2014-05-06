@@ -3538,15 +3538,30 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		Demanda demanda = ConvertBeans.toDemanda(demandaDTO);
 		
 		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
-		List<AtendimentoTatico> atendimentosTatico = new ArrayList<AtendimentoTatico>();
-		List<AtendimentoOperacional> atendimentosOperacional = new ArrayList<AtendimentoOperacional>();
+		Set<AtendimentoTatico> atendimentosTatico = new HashSet<AtendimentoTatico>();
+		Set<AtendimentoOperacional> atendimentosOperacional = new HashSet<AtendimentoOperacional>();
 		Map<String, TurmaStatusDTO> turmaKeyMapTurmaStatusDTO = new HashMap<String, TurmaStatusDTO>();
 		Map<String, Set<Oferta>> turmaKeyMapOferta = new HashMap<String, Set<Oferta>>();
 		List<TurmaStatusDTO> result = new ArrayList<TurmaStatusDTO>();
 		
 		if (ehTatico)
 		{
-			atendimentosTatico = AtendimentoTatico.findAllByDemanda(getInstituicaoEnsinoUser(), demanda);
+			atendimentosTatico.addAll(AtendimentoTatico.findAllByDemanda(getInstituicaoEnsinoUser(), demanda));
+
+			Set<String> turmaEquivaleciaKey = new HashSet<String>();
+			Set<AtendimentoTatico> atendimentosEquivalentes = new HashSet<AtendimentoTatico>();
+			for (AtendimentoTatico atendimento : atendimentosTatico)
+			{
+				String key = atendimento.getHorarioAula().getId() + "-" + atendimento.getSemana() + "-" + atendimento.getSala();
+				if (!turmaEquivaleciaKey.contains(key))
+				{
+					atendimentosEquivalentes.addAll(AtendimentoTatico.findAllBy(getInstituicaoEnsinoUser(), atendimento.getHorarioAula(),
+							atendimento.getSemana(), atendimento.getSala(), atendimento.getOferta().getCampus()));
+					
+					turmaEquivaleciaKey.add(key);
+				}
+			}
+			atendimentosTatico.addAll(atendimentosEquivalentes);
 			
 			for (AtendimentoTatico atendimento : atendimentosTatico)
 			{
@@ -3557,9 +3572,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				{
 					TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
 					
+					newTurmaStatus.setDisplayText(atendimento.getTurma() + " (" + (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo()
+							: atendimento.getDisciplina().getCodigo()) + ")");
 					newTurmaStatus.setNome(atendimento.getTurma());
-					if (atendimento.getDisciplinaSubstituta() == null)
-						newTurmaStatus.setQtdeDiscSelecionada(atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setQtdeDiscSelecionada(0);
+					if (atendimento.getDisciplina().equals(demanda.getDisciplina()))
+						newTurmaStatus.setQtdeDiscSelecionada(newTurmaStatus.getQtdeDiscSelecionada() + atendimento.getQuantidadeAlunos());
 					newTurmaStatus.setQtdeTotal(atendimento.getQuantidadeAlunos());
 					newTurmaStatus.setStatus(atendimento.getConfirmada() ? "Planejada" : "Não Planejada");
 					newTurmaStatus.setDisciplinaId(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getId()
@@ -3574,7 +3592,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				if(!turmaKeyMapOferta.get(key).contains(atendimento.getOferta()))
 				{
 					TurmaStatusDTO newTurmaStatus = turmaKeyMapTurmaStatusDTO.get(key);
-					if (atendimento.getDisciplinaSubstituta() == null)
+					if (atendimento.getDisciplina().equals(demanda.getDisciplina()))
 						newTurmaStatus.setQtdeDiscSelecionada(newTurmaStatus.getQtdeDiscSelecionada() + atendimento.getQuantidadeAlunos());
 					newTurmaStatus.setQtdeTotal(newTurmaStatus.getQtdeTotal() + atendimento.getQuantidadeAlunos());
 					
@@ -3586,7 +3604,22 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		else
 		{
-			atendimentosOperacional = AtendimentoOperacional.findAllByDemanda(getInstituicaoEnsinoUser(), demanda);
+			atendimentosOperacional.addAll(AtendimentoOperacional.findAllByDemanda(getInstituicaoEnsinoUser(), demanda));
+			
+			Set<String> turmaEquivaleciaKey = new HashSet<String>();
+			Set<AtendimentoOperacional> atendimentosEquivalentes = new HashSet<AtendimentoOperacional>();
+			for (AtendimentoOperacional atendimento : atendimentosOperacional)
+			{
+				String key = atendimento.getHorarioDisponivelCenario().getId() + "-" + atendimento.getSala();
+				if (!turmaEquivaleciaKey.contains(key))
+				{
+					atendimentosEquivalentes.addAll(AtendimentoOperacional.findAllBy(getInstituicaoEnsinoUser(), atendimento.getHorarioDisponivelCenario()
+							, atendimento.getSala(), atendimento.getOferta().getCampus()));
+					
+					turmaEquivaleciaKey.add(key);
+				}
+			}
+			atendimentosOperacional.addAll(atendimentosEquivalentes);
 			
 			for (AtendimentoOperacional atendimento : atendimentosOperacional)
 			{
@@ -3597,9 +3630,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				{
 					TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
 					
+					newTurmaStatus.setDisplayText(atendimento.getTurma() + " (" + (atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getCodigo()
+							: atendimento.getDisciplina().getCodigo()) + ")");
 					newTurmaStatus.setNome(atendimento.getTurma());
-					if (atendimento.getDisciplinaSubstituta() == null)
-						newTurmaStatus.setQtdeDiscSelecionada(atendimento.getQuantidadeAlunos());
+					newTurmaStatus.setQtdeDiscSelecionada(0);
+					if (atendimento.getDisciplina().equals(demanda.getDisciplina()))
+						newTurmaStatus.setQtdeDiscSelecionada(newTurmaStatus.getQtdeDiscSelecionada() + atendimento.getQuantidadeAlunos());
 					newTurmaStatus.setQtdeTotal(atendimento.getQuantidadeAlunos());
 					newTurmaStatus.setStatus(atendimento.getConfirmada() ? "Planejada" : "Não Planejada");
 					newTurmaStatus.setDisciplinaId(atendimento.getDisciplinaSubstituta() != null ? atendimento.getDisciplinaSubstituta().getId()
@@ -3614,7 +3650,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				if(!turmaKeyMapOferta.get(key).contains(atendimento.getOferta()))
 				{
 					TurmaStatusDTO newTurmaStatus = turmaKeyMapTurmaStatusDTO.get(key);
-					if (atendimento.getDisciplinaSubstituta() == null)
+					if (atendimento.getDisciplina().equals(demanda.getDisciplina()))
 						newTurmaStatus.setQtdeDiscSelecionada(newTurmaStatus.getQtdeDiscSelecionada() + atendimento.getQuantidadeAlunos());
 					newTurmaStatus.setQtdeTotal(newTurmaStatus.getQtdeTotal() + atendimento.getQuantidadeAlunos());
 					
@@ -3624,14 +3660,23 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 				}
 			}
 		}
-		List<Turma> turmas = Turma.findBy(getInstituicaoEnsinoUser(), demanda.getDisciplina().getCenario(), demanda.getDisciplina(), null);
+		Set<Turma> turmas = new HashSet<Turma>();
+		turmas.addAll(Turma.findBy(getInstituicaoEnsinoUser(), demanda.getDisciplina().getCenario(), demanda.getDisciplina(), null));
+		turmas.addAll(Turma.findByEquivalencia(getInstituicaoEnsinoUser(), demanda.getDisciplina().getCenario(), demanda.getDisciplina(), demanda.getOferta().getCampus()));
 		for (Turma turma : turmas)
 		{
 			TurmaStatusDTO newTurmaStatus = new TurmaStatusDTO();
 
 			newTurmaStatus.setId(turma.getId());
+			newTurmaStatus.setDisplayText(turma.getNome() + " (" + turma.getDisciplina().getCodigo() + ")");
 			newTurmaStatus.setNome(turma.getNome());
-			newTurmaStatus.setQtdeDiscSelecionada(turma.getAlunos().size());
+			int alunosDiscSelecionada = turma.getAlunos().size();
+			for (AlunoDemanda alunoDemanda : turma.getAlunos())
+			{
+				if (!alunoDemanda.getDemanda().getDisciplina().equals(demanda.getDisciplina()))
+					alunosDiscSelecionada--;
+			}
+			newTurmaStatus.setQtdeDiscSelecionada(alunosDiscSelecionada);
 			newTurmaStatus.setQtdeTotal(turma.getAlunos().size());
 			newTurmaStatus.setStatus("Parcial");
 			newTurmaStatus.setDisciplinaId(turma.getDisciplina().getId());
@@ -3847,16 +3892,20 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		int credAlocados = 0;
 		int noAlunos = 0;
 		Set<Long> ofertas = new HashSet<Long>();
+		Set<String> horarioSemanaKey = new HashSet<String>();
 		for (AtendimentoOperacionalDTO aula : aulas)
 		{
-			credAlocados += aula.getTotalCreditos();
 			if (!ofertas.contains(aula.getOfertaId()))
 			{
 				noAlunos += aula.getQuantidadeAlunos();
 				ofertas.add(aula.getOfertaId());
 			}
-			
-			aulasDTO.add(ConvertBeans.toAulaDTO(aula));
+			if (!horarioSemanaKey.contains(aula.getHorarioAulaId() + "-" + aula.getSemana()))
+			{
+				aulasDTO.add(ConvertBeans.toAulaDTO(aula));
+				credAlocados += aula.getTotalCreditos();
+				horarioSemanaKey.add(aula.getHorarioAulaId() + "-" + aula.getSemana());
+			}
 		}
 		
 		TurmaDTO turmaDTO = ConvertBeans.toTurmaDTO(turma);
@@ -3921,10 +3970,10 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		boolean ehTatico = demanda.getOferta().getCampus().isOtimizadoTatico(getInstituicaoEnsinoUser());
 		
 		List<AlunoDemanda> alunosDemanda = new ArrayList<AlunoDemanda>();
-		alunosDemanda.addAll(AlunoDemanda.findByDisciplinaCampusAndTurma(getInstituicaoEnsinoUser(), demanda.getDisciplina(), 
-				demanda.getOferta().getCampus(), turmaDTO.getNome()));
+		alunosDemanda.addAll(AlunoDemanda.findByDisciplinaCampusAndTurma(getInstituicaoEnsinoUser(), disciplina, 
+				demanda.getOferta().getCampus(), turmaDTO.getNome(), turmaDTO.getId()));
 		List<AlunoDemanda> alunosDiscEquivalentes =
-				AlunoDemanda.findAlunosEquivalentes(getInstituicaoEnsinoUser(), cenario, disciplina );
+				AlunoDemanda.findAlunosEquivalentes(getInstituicaoEnsinoUser(), cenario, disciplina, turmaDTO.getNome(), turmaDTO.getId() );
 		alunosDemanda.addAll(alunosDiscEquivalentes);
 		for (AlunoDemanda alunoDemanda : alunosDemanda)
 		{
@@ -3986,6 +4035,22 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		return horariosDisponiveis;
+	}
+	
+	@Override
+	public ListLoadResult<SalaDTO> getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO)
+	{
+		List<SalaDTO> result = new ArrayList<SalaDTO>();
+		if (turmaDTO == null)
+		{
+			return new BaseListLoadResult<SalaDTO>(result);
+		}
+		Disciplina disciplina = Disciplina.find(turmaDTO.getDisciplinaId(), getInstituicaoEnsinoUser());
+		for (Sala sala : disciplina.getSalas())
+		{
+			result.add(ConvertBeans.toSalaDTO(sala));
+		}
+		return new BaseListLoadResult<SalaDTO>(result);
 	}
 	
 	@Override

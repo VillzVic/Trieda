@@ -141,4 +141,7 @@ public interface AtendimentosService extends RemoteService {
 	void desconfirmarTurmaSelecionada(DemandaDTO demandaDTO, TurmaDTO turmaDTO);
 
 	void removeAula(TurmaDTO turmaDTO, AulaDTO aulaDTO);
+
+	ListLoadResult<SalaDTO> getAmbientesTurma(CenarioDTO cenarioDTO,
+			TurmaDTO turmaDTO);
 }

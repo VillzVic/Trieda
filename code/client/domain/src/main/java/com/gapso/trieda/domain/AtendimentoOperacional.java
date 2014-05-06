@@ -575,6 +575,26 @@ public class AtendimentoOperacional
 	
 	@SuppressWarnings( "unchecked" )
 	public static List< AtendimentoOperacional > findAllBy(
+			InstituicaoEnsino instituicaoEnsino, HorarioDisponivelCenario horarioDisponivelCenario,
+			Sala sala, Campus campus)
+	{
+		Query q = entityManager().createQuery(
+			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
+			" WHERE o.HorarioDisponivelCenario = :horarioDisponivelCenario " +
+			" AND o.instituicaoEnsino = :instituicaoEnsino" +
+			" AND o.sala = :sala" +
+			" AND o.oferta.campus = :campus ");
+
+		q.setParameter( "horarioDisponivelCenario", horarioDisponivelCenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "sala", sala );
+		q.setParameter( "campus", campus );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoOperacional > findAllBy(
 		Campus campus, Turno turno, InstituicaoEnsino instituicaoEnsino )
 	{
 		Query q = entityManager().createQuery(
@@ -766,27 +786,56 @@ public class AtendimentoOperacional
 
 		if ( curso != null )
 		{
-			cursoQuery = " AND o.oferta.curso = :curso ";
+			cursoQuery = "AND o.oferta.curso = :curso ";
+		}
+		String curriculoQuery = "";
+		if ( curriculo != null )
+		{
+			curriculoQuery = "AND o.oferta.curriculo = :curriculo ";
+		}
+		String turnoQuery = "";
+		if ( turno != null )
+		{
+			turnoQuery = "AND o.oferta.turno = :turno ";
+		}
+		String periodoQuery = "";
+		String periodoCurriculoQuery = "";
+		if ( periodo != null )
+		{
+			if ( curriculo != null )
+			{
+				periodoCurriculoQuery = "d.curriculo = :curriculo AND ";
+			}
+			periodoQuery = " AND o.disciplina IN (  SELECT d.disciplina FROM CurriculoDisciplina d "
+					 + " WHERE " + periodoCurriculoQuery + "d.periodo = :periodo ) ";
 		}
 
 		Query q = entityManager().createQuery(
-			" SELECT DISTINCT ( o ) FROM AtendimentoOperacional o " +
-			" WHERE o.oferta.curriculo = :curriculo " +
-			" AND o.oferta.campus = :campus " + cursoQuery +
-			" AND o.oferta.turno = :turno " +
+			" SELECT o FROM AtendimentoOperacional o " +
+			" WHERE o.oferta.campus = :campus " +
+			curriculoQuery + cursoQuery +
+			turnoQuery +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.disciplina IN ( SELECT d.disciplina FROM CurriculoDisciplina d " +
-								  " WHERE d.curriculo = :curriculo AND d.periodo = :periodo ) " );
+			periodoQuery );
 
 		q.setParameter( "campus", campus );
-		q.setParameter( "curriculo", curriculo );
-		q.setParameter( "periodo", periodo );
-		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( curso != null )
 		{
 			q.setParameter( "curso", curso );
+		}
+		if ( curriculo != null )
+		{
+			q.setParameter( "curriculo", curriculo );
+		}
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
+		}
+		if ( periodo != null )
+		{
+			q.setParameter( "periodo", periodo );
 		}
 
 		return q.getResultList();

@@ -143,7 +143,7 @@ public class DisciplinaFormView
 		maxAlunosTeoricoTF = new NumberField();
 		maxAlunosTeoricoTF.setName(DisciplinaDTO.PROPERTY_MAX_ALUNOS_TEORICO);
 		maxAlunosTeoricoTF.setValue(disciplinaDTO.getMaxAlunosTeorico());
-		maxAlunosTeoricoTF.setFieldLabel("Max. Alunos - Teórico");
+		maxAlunosTeoricoTF.setFieldLabel("Máx. Alunos - Teórico");
 		maxAlunosTeoricoTF.setAllowBlank(false);
 		maxAlunosTeoricoTF.setAllowDecimals(false);
 		maxAlunosTeoricoTF.setMaxValue(999);
@@ -155,7 +155,7 @@ public class DisciplinaFormView
 		maxAlunosPraticoTF = new NumberField();
 		maxAlunosPraticoTF.setName(DisciplinaDTO.PROPERTY_MAX_ALUNOS_PRATICO);
 		maxAlunosPraticoTF.setValue(disciplinaDTO.getMaxAlunosPratico());
-		maxAlunosPraticoTF.setFieldLabel("Max. Alunos - Prático");
+		maxAlunosPraticoTF.setFieldLabel("Máx. Alunos - Prático");
 		maxAlunosPraticoTF.setAllowBlank(false);
 		maxAlunosPraticoTF.setAllowDecimals(false);
 		maxAlunosPraticoTF.setMaxValue(999);
@@ -179,7 +179,7 @@ public class DisciplinaFormView
 		aulasContinuasCB = new CheckBox();
 		aulasContinuasCB.setName(DisciplinaDTO.PROPERTY_AULAS_CONTINUAS);
 		aulasContinuasCB.setValue(disciplinaDTO.getAulasContinuas());
-		aulasContinuasCB.setFieldLabel("Aulas Continuas?");
+		aulasContinuasCB.setFieldLabel("Aulas Contínuas?");
 		aulasContinuasCB.setToolTip("(Apenas quando a disciplina tem créditos teóricos e práticos.) Determina se as aulas teóricas e práticas devem ser lecionadas em sequência.");
 		formPanel.add(aulasContinuasCB, formData);
 		

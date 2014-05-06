@@ -247,6 +247,31 @@ public class Turma
 		return em;
 	}
 	
+	@Override
+	public boolean equals( Object obj )
+	{
+		if ( obj == null || !( obj instanceof InstituicaoEnsino ) )
+		{
+			return false;
+		}
+
+		Turma other = (Turma) obj;
+
+		if ( id == null )
+		{
+			if ( other.id != null )
+			{
+				return false;
+			}
+		}
+		else if ( !id.equals( other.id ) )
+		{
+			return false;
+		}
+
+		return true;
+	}
+	
 	public static Turma find(
 		Long id, InstituicaoEnsino instituicaoEnsino )
 	{
@@ -291,6 +316,27 @@ public class Turma
 			q.setParameter( "nome", nome );
 		}
 		
+		
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Turma> findByEquivalencia(InstituicaoEnsino instituicaoEnsino,
+		Cenario cenario, Disciplina disciplina,
+		Campus campus)
+	{
+		
+		Query q = entityManager().createQuery(
+				" SELECT DISTINCT (o) FROM Turma o, IN (o.alunos) alunos " +
+				" WHERE o.cenario.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				" AND alunos.demanda.disciplina = :disciplina " +
+				" AND alunos.demanda.oferta.campus = :campus ");
+
+		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+		q.setParameter( "disciplina", disciplina );
+		q.setParameter( "campus", campus );
 		
 		return q.getResultList();
 	}

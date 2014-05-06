@@ -47,6 +47,7 @@ import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorStatusDTO;
 import com.gapso.web.trieda.shared.dtos.QuintetoDTO;
 import com.gapso.web.trieda.shared.dtos.ResumoMatriculaDTO;
+import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaStatusDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
@@ -78,6 +79,7 @@ public class AlocacaoManualView
 	private SimpleUnpagedGrid<TurmaStatusDTO> turmasGrid;
 	private SimpleUnpagedGrid<AlunoStatusDTO> alunosGrid;
 	private SimpleUnpagedGrid<ProfessorStatusDTO> professoresGrid;
+	private SimpleUnpagedGrid<SalaDTO> ambientesGrid;
 	private SimpleToolBar toolBar;
 	private SimpleToolBar alunosToolBar;
 	private SimpleToolBar professoresToolBar;
@@ -202,17 +204,29 @@ public class AlocacaoManualView
 		alunosTabItem.setLayout(new FitLayout());
 		TabItem professoresTabItem = new TabItem( "Professores" );
 		professoresTabItem.setLayout(new FitLayout());
+		TabItem ambientesTabItem = new TabItem( "Ambientes" );
+		ambientesTabItem.setLayout(new FitLayout());
 		
 		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.CENTER );
 		bld.setMargins( new Margins( 5, 5, 5, 5 ) );
 		alunosTabItem.add(createAlunosGrid());
 		professoresTabItem.add(createProfessoresGrid());
+		ambientesTabItem.add(createAmbientesGrid());
 		
 		professoresAlunosTabPanel.add(alunosTabItem);
 		professoresAlunosTabPanel.add(professoresTabItem);
+		professoresAlunosTabPanel.add(ambientesTabItem);
 		
 		
 		return professoresAlunosTabPanel;
+	}
+	
+	private SimpleUnpagedGrid<SalaDTO> createAmbientesGrid()
+	{
+	    this.ambientesGrid = new SimpleUnpagedGrid< SalaDTO >( new ColumnModel(getAmbientesColumnList()), this, new SimpleToolBar(
+				false, false, false, false, false, this ) );
+	    
+	    return ambientesGrid;
 	}
 	
 	private SimpleUnpagedGrid<AlunoStatusDTO> createAlunosGrid()
@@ -567,7 +581,7 @@ public class AlocacaoManualView
 			}
 	    }; 
 		
-		list.add( new ColumnConfig( TurmaStatusDTO.PROPERTY_NOME, "Nome", 60 ) );
+		list.add( new ColumnConfig( TurmaStatusDTO.PROPERTY_DISPLAY_TEXT, "Nome", 60 ) );
 		list.add( new ColumnConfig( TurmaStatusDTO.PROPERTY_QTDE_DISC_SELECIONADA, "Da Disc. Selec.", 90 ) );
 		list.add( new ColumnConfig( TurmaStatusDTO.PROPERTY_QTDE_TOTAL, "Total", 50 ) );
 		ColumnConfig column = new ColumnConfig( TurmaStatusDTO.PROPERTY_STATUS, "Status", 50 );
@@ -581,6 +595,18 @@ public class AlocacaoManualView
 		cm.addHeaderGroup(0, 3, new HeaderGroupConfig("", 1, 1));
 		
 		return cm;
+	}
+	
+	private List< ColumnConfig > getAmbientesColumnList()
+	{
+		List< ColumnConfig > list
+			= new ArrayList< ColumnConfig >();
+
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_CODIGO, "Ambiente", 100 ) );
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_CAPACIDADE_INSTALADA, "Capacidade", 80 ) );
+		list.add( new ColumnConfig( SalaDTO.PROPERTY_TIPO_STRING, "Tipo do Ambiente", 120 ) );
+		
+		return list;
 	}
 	
 	private List< ColumnConfig > getAlunosColumnList()
@@ -690,6 +716,12 @@ public class AlocacaoManualView
 	}
 	
 	@Override
+	public SimpleUnpagedGrid< SalaDTO > getAmbientesGrid()
+	{
+		return this.ambientesGrid;
+	}
+	
+	@Override
 	public SimpleUnpagedGrid< AlunoStatusDTO > getAlunosGrid()
 	{
 		return this.alunosGrid;
@@ -705,6 +737,12 @@ public class AlocacaoManualView
 	public void setProxy( RpcProxy< ListLoadResult< TurmaStatusDTO > > proxy )
 	{
 		this.turmasGrid.setProxy( proxy );
+	}
+	
+	@Override
+	public void setAmbientesProxy( RpcProxy< ListLoadResult< SalaDTO > > proxy )
+	{
+		this.ambientesGrid.setProxy( proxy );
 	}
 	
 	@Override
@@ -885,7 +923,7 @@ public class AlocacaoManualView
 		textContainer.setWidth(200);
 		LabelField turmaLabel = new LabelField();
 		turmaLabel.setFieldLabel("<b>Turma:</b>");
-		turmaLabel.setValue(turmaSelecionada.getNome() + " (" + (disciplinaDTO.getCodigo()) + ")");
+		turmaLabel.setValue(turmasGrid.getSelectionModel().getSelectedItem().getDisplayText());
 		
 		LabelField noAlunosLabel = new LabelField();
 		noAlunosLabel.setFieldLabel("<b>Nº Alunos:</b>");
@@ -921,8 +959,10 @@ public class AlocacaoManualView
 		}
 		editarTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.edit16() ));
+		editarTurmaBt.setToolTip("Editar Turma");
 		removerTurmaBt.setIcon(AbstractImagePrototype.create(
 				Resources.DEFAULTS.del16() ));
+		removerTurmaBt.setToolTip("Remover Turma");
 		LabelField statusLabel = new LabelField();
 		String tumaSelecionadaStatusColor;
 		if (turmaSelecionadaStatus.equals("Parcial"))
@@ -1167,5 +1207,11 @@ public class AlocacaoManualView
 	{
 		numAlunosMarcados.setValue(getNumAlunosMarcados()+"/ "+getNumAlunosTotal() + " alunos");
 		alunosToolBar.layout();
+	}
+	
+	@Override
+	public ContentPanel getTurmaSelecionadaPanel()
+	{
+		return turmaSelecionadaPanel;
 	}
 }

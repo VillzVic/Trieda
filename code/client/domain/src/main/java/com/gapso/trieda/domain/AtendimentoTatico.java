@@ -416,25 +416,54 @@ public class AtendimentoTatico
 		{
 			cursoQuery = "AND o.oferta.curso = :curso ";
 		}
+		String curriculoQuery = "";
+		if ( curriculo != null )
+		{
+			curriculoQuery = "AND o.oferta.curriculo = :curriculo ";
+		}
+		String turnoQuery = "";
+		if ( turno != null )
+		{
+			turnoQuery = "AND o.oferta.turno = :turno ";
+		}
+		String periodoQuery = "";
+		String periodoCurriculoQuery = "";
+		if ( periodo != null )
+		{
+			if ( curriculo != null )
+			{
+				periodoCurriculoQuery = "d.curriculo = :curriculo AND ";
+			}
+			periodoQuery = " AND o.disciplina IN (  SELECT d.disciplina FROM CurriculoDisciplina d "
+					 + " WHERE " + periodoCurriculoQuery + "d.periodo = :periodo ) ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT o FROM AtendimentoTatico o " +
-			" WHERE o.oferta.curriculo = :curriculo " +
-			" AND o.oferta.campus = :campus " + cursoQuery +
-			" AND o.oferta.turno = :turno " +
+			" WHERE o.oferta.campus = :campus " +
+			curriculoQuery + cursoQuery +
+			turnoQuery +
 			" AND o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.disciplina IN (  SELECT d.disciplina FROM CurriculoDisciplina d "
-								 + " WHERE d.curriculo = :curriculo AND d.periodo = :periodo ) " );
+			periodoQuery );
 
 		q.setParameter( "campus", campus );
-		q.setParameter( "curriculo", curriculo );
-		q.setParameter( "periodo", periodo );
-		q.setParameter( "turno", turno );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		if ( curso != null )
 		{
 			q.setParameter( "curso", curso );
+		}
+		if ( curriculo != null )
+		{
+			q.setParameter( "curriculo", curriculo );
+		}
+		if ( turno != null )
+		{
+			q.setParameter( "turno", turno );
+		}
+		if ( periodo != null )
+		{
+			q.setParameter( "periodo", periodo );
 		}
 
 		return q.getResultList();
@@ -450,6 +479,28 @@ public class AtendimentoTatico
 			" AND cenario = :cenario " );
 
 		q.setParameter( "cenario", cenario );
+		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
+
+		return q.getResultList();
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public static List< AtendimentoTatico > findAllBy(
+		InstituicaoEnsino instituicaoEnsino, HorarioAula horarioAula,
+		Semanas semana, Sala sala, Campus campus )
+	{
+		Query q = entityManager().createQuery(
+			" SELECT o FROM AtendimentoTatico o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.sala = :sala " + 
+			" AND o.horarioAula = :horarioAula " + 
+			" AND o.semana = :semana " + 
+			" AND o.oferta.campus = :campus ");
+
+		q.setParameter( "sala", sala );
+		q.setParameter( "horarioAula", horarioAula );
+		q.setParameter( "semana", semana );
+		q.setParameter( "campus", campus );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 
 		return q.getResultList();

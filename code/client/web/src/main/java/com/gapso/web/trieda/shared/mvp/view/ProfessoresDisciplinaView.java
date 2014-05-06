@@ -93,7 +93,7 @@ public class ProfessoresDisciplinaView extends MyComposite
 		{
 			toolBar = new SimpleToolBar( this );
 			associarMassaBt = toolBar.createButton("Associar em Massa", Resources.DEFAULTS.add216());
-			toolBar.add(associarMassaBt);
+			toolBar.insert(associarMassaBt, 1);
 		}
 
 		panel.setTopComponent( toolBar );

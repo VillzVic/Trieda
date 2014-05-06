@@ -14,6 +14,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.Record;
 import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -63,11 +64,13 @@ public class AlocacaoManualPresenter
 
 	private Display display;
 	private GTab gTab;
+	private GTabItem gTabItem;
 	
 	public interface Display extends ITriedaI18nGateway {
 		Component getComponent();
 		SimpleUnpagedGrid< TurmaStatusDTO > getGrid();
 		SimpleUnpagedGrid< AlunoStatusDTO > getAlunosGrid();
+		SimpleUnpagedGrid< SalaDTO > getAmbientesGrid();
 		void setProxy( RpcProxy< ListLoadResult< TurmaStatusDTO > > proxy );
 		DemandaDTO getDemanda();
 		CampusDTO getCampusDTO();
@@ -95,6 +98,7 @@ public class AlocacaoManualPresenter
 		List<Button> getEditarAulaBts();
 		List<Button> getRemoverAulaBts();
 		List<AulaDTO> getAulasSelecionadas();
+		void setAmbientesProxy( RpcProxy< ListLoadResult< SalaDTO > > proxy );
 		void setAlunosProxy( RpcProxy< ListLoadResult< AlunoStatusDTO > > proxy );
 		void setProfessoresProxy( RpcProxy< ListLoadResult< ProfessorStatusDTO > > proxy );
 		Button getCancelarMarcacoesAlunosButton();
@@ -111,6 +115,7 @@ public class AlocacaoManualPresenter
 		Button getDesconfirmarTurmaButton();
 		Button getAlocacoesAtalhoButton();
 		public void atualizaNumAlunosMarcados();
+		ContentPanel getTurmaSelecionadaPanel();
 	}
 	
 	private CenarioDTO cenarioDTO;
@@ -137,6 +142,7 @@ public class AlocacaoManualPresenter
 				{
 					final List< TurmaStatusDTO > list = getDisplay().getGrid().getGrid().getSelectionModel().getSelectedItems();
 					final AtendimentosServiceAsync service = Services.atendimentos();
+					getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 					service.deleteTurmasStatus(cenarioDTO, getDisplay().getDemanda(), list, new AsyncCallback< Void >()
 					{
 						@Override
@@ -169,9 +175,12 @@ public class AlocacaoManualPresenter
 							getDisplay().getGrid().updateList();
 							getDisplay().setTurmaSelecionada(null, null, "");
 							getDisplay().refreshTurmaSelecionadaPanel();
+							getDisplay().getTurmaSelecionadaPanel().unmask();
 							getDisplay().getAlunosGrid().updateList();
 							if (getDisplay().getProfessoresGrid().isRendered())
 								getDisplay().getProfessoresGrid().updateList();
+							if (getDisplay().getAmbientesGrid().isRendered())
+								getDisplay().getAmbientesGrid().updateList();
 							Info.display( "Removido", "Turma(s) removida(s) com sucesso!" );
 						}
 					});
@@ -185,6 +194,7 @@ public class AlocacaoManualPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
+					getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 					final AtendimentosServiceAsync service = Services.atendimentos();
 					service.deleteTurmaSelecionada(cenarioDTO, getDisplay().getDemanda(), getDisplay().getTurmaSelecionada(), new AsyncCallback< Void >()
 					{
@@ -208,9 +218,12 @@ public class AlocacaoManualPresenter
 							getDisplay().getGrid().updateList();
 							getDisplay().setTurmaSelecionada(null, new ArrayList<AulaDTO>(), null);
 							getDisplay().refreshTurmaSelecionadaPanel();
+							getDisplay().getTurmaSelecionadaPanel().unmask();
 							getDisplay().getAlunosGrid().updateList();
 							if (getDisplay().getProfessoresGrid().isRendered())
 								getDisplay().getProfessoresGrid().updateList();
+							if (getDisplay().getAmbientesGrid().isRendered())
+								getDisplay().getAmbientesGrid().updateList();
 							Info.display( "Removido", "Turma(s) removida(s) com sucesso!" );
 						}
 					});
@@ -271,6 +284,7 @@ public class AlocacaoManualPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
+					getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 					final AtendimentosServiceAsync service = Services.atendimentos();
 					if (getDisplay().getNovaTurmaNomeTextField().getValue() != null)
 					{
@@ -303,9 +317,12 @@ public class AlocacaoManualPresenter
 								getDisplay().setTurmaSelecionada(result, new ArrayList<AulaDTO>(), "Parcial");
 								getDisplay().refreshTurmaSelecionadaPanel();
 								addAulasButtonsListeners();
+								getDisplay().getTurmaSelecionadaPanel().unmask();
 								getDisplay().getAlunosGrid().updateList();
 								if (getDisplay().getProfessoresGrid().isRendered())
 									getDisplay().getProfessoresGrid().updateList();
+								if (getDisplay().getAmbientesGrid().isRendered())
+									getDisplay().getAmbientesGrid().updateList();
 								Info.display( "Salvo!", "Turma criada com sucesso!" );
 							}
 						});
@@ -329,7 +346,7 @@ public class AlocacaoManualPresenter
 		        {
 					final TurmaStatusDTO turmaSelecionada = se.getSelectedItem();
 					final AtendimentosServiceAsync service = Services.atendimentos();
-					
+					getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 					service.selecionarTurma(turmaSelecionada, cenarioDTO, getDisplay().getDemanda(), new AsyncCallback< ParDTO<TurmaDTO, List<AulaDTO>> >()
 					{
 						@Override
@@ -344,9 +361,12 @@ public class AlocacaoManualPresenter
 							getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), turmaSelecionada.getStatus());
 							getDisplay().refreshTurmaSelecionadaPanel();
 							addAulasButtonsListeners();
+							getDisplay().getTurmaSelecionadaPanel().unmask();
 							getDisplay().getAlunosGrid().updateList();
 							if (getDisplay().getProfessoresGrid().isRendered())
 								getDisplay().getProfessoresGrid().updateList();
+							if (getDisplay().getAmbientesGrid().isRendered())
+								getDisplay().getAmbientesGrid().updateList();
 						}
 					});
 				}
@@ -568,6 +588,7 @@ public class AlocacaoManualPresenter
 							}
 							else
 							{
+								getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 								service.alocaAlunosTurma(cenarioDTO, getDisplay().getDemanda(), display.getTurmaSelecionada(), getAlunosStatusModificados(), new AsyncCallback< Void >()
 								{
 									@Override
@@ -619,6 +640,7 @@ public class AlocacaoManualPresenter
 												getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), getDisplay().getTurmaSelecionadaStatus());
 												getDisplay().refreshTurmaSelecionadaPanel();
 												addAulasButtonsListeners();
+												getDisplay().getTurmaSelecionadaPanel().unmask();
 												Info.display( "Alocados", "Aluno(s) alocado(s) a turma com sucesso!" );
 											}
 										});
@@ -657,6 +679,7 @@ public class AlocacaoManualPresenter
 							}
 							else
 							{
+								getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 								service.alocaProfessoresAula(cenarioDTO, getDisplay().getDemanda(), display.getTurmaSelecionada(), display.getAulaNaGrade(), professorStatusDTO, new AsyncCallback< Void >()
 								{
 									@Override
@@ -699,6 +722,7 @@ public class AlocacaoManualPresenter
 												}
 												getDisplay().refreshTurmaSelecionadaPanel();
 												addAulasButtonsListeners();
+												getDisplay().getTurmaSelecionadaPanel().unmask();
 												getDisplay().getProfessoresGrid().updateList();
 												getDisplay().getGrid().updateList();
 												Info.display( "Alocados", "Professor alocado a aula com sucesso!" );
@@ -739,6 +763,7 @@ public class AlocacaoManualPresenter
 							}
 							else
 							{
+								getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 								service.salvarTurma(display.getTurmaSelecionada(), new AsyncCallback< Void >()
 								{
 									@Override
@@ -776,6 +801,7 @@ public class AlocacaoManualPresenter
 												getDisplay().refreshDemandasPanel(0, result.getPrimeiro().getNoAlunos(), -result.getPrimeiro().getNoAlunos());
 												getDisplay().refreshTurmaSelecionadaPanel();
 												addAulasButtonsListeners();
+												getDisplay().getTurmaSelecionadaPanel().unmask();
 												Info.display( "Salvo", "Turma salva com sucesso!" );
 											}
 										});
@@ -792,6 +818,7 @@ public class AlocacaoManualPresenter
 				@Override
 				public void componentSelected(ButtonEvent ce)
 				{
+					getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 					final AtendimentosServiceAsync service = Services.atendimentos();
 					service.confirmarTurmaSelecionada(display.getDemanda(), display.getTurmaSelecionada(), new AsyncCallback< Void >()
 					{
@@ -830,6 +857,7 @@ public class AlocacaoManualPresenter
 									getDisplay().refreshDemandasPanel(result.getPrimeiro().getNoAlunos(), -result.getPrimeiro().getNoAlunos(), 0);
 									getDisplay().refreshTurmaSelecionadaPanel();
 									addAulasButtonsListeners();
+									getDisplay().getTurmaSelecionadaPanel().unmask();
 									Info.display( "Salvo", "Turma confirmada com sucesso!" );
 								}
 							});
@@ -843,6 +871,7 @@ public class AlocacaoManualPresenter
 				@Override
 				public void componentSelected(ButtonEvent ce)
 				{
+					getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 					final AtendimentosServiceAsync service = Services.atendimentos();
 					service.desconfirmarTurmaSelecionada(display.getDemanda(), display.getTurmaSelecionada(), new AsyncCallback< Void >()
 					{
@@ -880,6 +909,7 @@ public class AlocacaoManualPresenter
 									getDisplay().setTurmaSelecionada(result.getPrimeiro(), result.getSegundo(), "Não Planejada");
 									getDisplay().refreshDemandasPanel(-result.getPrimeiro().getNoAlunos(), result.getPrimeiro().getNoAlunos(), 0);
 									getDisplay().refreshTurmaSelecionadaPanel();
+									getDisplay().getTurmaSelecionadaPanel().unmask();
 									addAulasButtonsListeners();
 									Info.display( "Salvo", "Turma desconfirmada com sucesso!" );
 								}
@@ -896,9 +926,9 @@ public class AlocacaoManualPresenter
 					public void componentSelected( ButtonEvent ce )
 					{
 						Presenter presenter = new AlocacaoManualDisciplinaFormPresenter(instituicaoEnsinoDTO,
-								cenarioDTO, new AlocacaoManualDisciplinaFormView( cenarioDTO ), gTab );
+								cenarioDTO, new AlocacaoManualDisciplinaFormView( cenarioDTO ), gTab, gTabItem );
 
-							presenter.go( gTab );
+						presenter.go( gTab );
 					}
 				});
 	}
@@ -918,6 +948,25 @@ public class AlocacaoManualPresenter
  			}
  		};
  		
+ 		RpcProxy< ListLoadResult< SalaDTO > > ambientesProxy =
+ 			new RpcProxy< ListLoadResult< SalaDTO > >()
+ 		{
+ 			@Override
+ 			public void load( Object loadConfig,
+ 				AsyncCallback< ListLoadResult< SalaDTO > > callback)
+ 			{
+ 				if (getDisplay().getTurmaSelecionada() == null)
+ 				{
+ 					getDisplay().getAmbientesGrid().getGrid().getView().setEmptyText("Ainda não é possível exibir os ambientes associados a disciplina da turma, pois não há uma turma selecionada.");
+ 				}
+ 				else
+ 				{
+ 	 				getDisplay().getAmbientesGrid().getGrid().getView().setEmptyText("Não existem ambientes relacionados a esta disciplina");
+ 				}
+ 				service.getAmbientesTurma(cenarioDTO, getDisplay().getTurmaSelecionada(), callback);
+ 			}
+ 		};
+ 		
  		RpcProxy< ListLoadResult< AlunoStatusDTO > > alunosProxy =
  			new RpcProxy< ListLoadResult< AlunoStatusDTO > >()
  		{
@@ -934,6 +983,12 @@ public class AlocacaoManualPresenter
  					getDisplay().getAlunosGrid().getGrid().getView().setEmptyText("Ainda não é possível associar alunos à turma," +
  							" pois, não foi definida uma quantidade de aulas suficiente para completar o total de créditos da disciplina.");
  				}
+ 				else
+ 				{
+ 					getDisplay().getAlunosGrid().getGrid().getView().setEmptyText("Não foram encontrados alunos com demanda para esta disciplina. Ou" +
+ 							"todos os alunos já foram atendidos por outra turma");
+ 				}
+ 				
  				service.getAlunosStatus(cenarioDTO, getDisplay().getDemanda(), getDisplay().getTurmaSelecionada(), getDisplay().getAulasSelecionadas(), callback);
  			}
  		};
@@ -963,6 +1018,7 @@ public class AlocacaoManualPresenter
  	 			}
  	 		};
 
+ 	 	getDisplay().setAmbientesProxy( ambientesProxy );
  		getDisplay().setAlunosProxy(alunosProxy);
  		getDisplay().setProfessoresProxy(professoresProxy);
  		getDisplay().setProxy( proxy );
@@ -1061,6 +1117,8 @@ public class AlocacaoManualPresenter
 								getDisplay().getSalaGridPanel().requestAtendimentos();
 								if (getDisplay().getProfessoresGrid().isRendered())
 									getDisplay().getProfessoresGrid().updateList();
+								if (getDisplay().getAmbientesGrid().isRendered())
+									getDisplay().getAmbientesGrid().updateList();
 							}
 						});
 					}
@@ -1109,6 +1167,7 @@ public class AlocacaoManualPresenter
 				@Override
 				public void componentSelected( ButtonEvent ce )
 				{
+					getDisplay().getTurmaSelecionadaPanel().mask(getDisplay().getI18nMessages().loading(), "loading");
 					final AtendimentosServiceAsync service = Services.atendimentos();
 					service.removeAula(display.getTurmaSelecionada(), aulaDTO, new AsyncCallback< Void >()
 					{
@@ -1133,9 +1192,12 @@ public class AlocacaoManualPresenter
 							getDisplay().getAulasSelecionadas().remove(aulaDTO);
 							getDisplay().refreshTurmaSelecionadaPanel();
 							addAulasButtonsListeners();
+							getDisplay().getTurmaSelecionadaPanel().unmask();
 							getDisplay().getAlunosGrid().updateList();
 							if (getDisplay().getProfessoresGrid().isRendered())
 								getDisplay().getProfessoresGrid().updateList();
+							if (getDisplay().getAmbientesGrid().isRendered())
+								getDisplay().getAmbientesGrid().updateList();
 						}
 					});
 				}
@@ -1147,7 +1209,8 @@ public class AlocacaoManualPresenter
 	public void go( Widget widget )
 	{
 		gTab = (GTab) widget;
-		gTab.add( (GTabItem) this.getDisplay().getComponent() );
+		gTabItem = (GTabItem) this.getDisplay().getComponent();
+		gTab.add( gTabItem );
 	}
 
 	public Display getDisplay() {

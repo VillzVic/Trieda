@@ -650,7 +650,7 @@ public class ToolBarPresenter
 				public void componentSelected( ButtonEvent ce )
 				{
 					Presenter presenter = new AlocacaoManualDisciplinaFormPresenter(instituicaoEnsinoDTO,
-							cenarioDTO, new AlocacaoManualDisciplinaFormView( cenarioDTO ), gTab );
+							cenarioDTO, new AlocacaoManualDisciplinaFormView( cenarioDTO ), gTab, null );
 
 						presenter.go( gTab );
 				}
@@ -1423,7 +1423,7 @@ public class ToolBarPresenter
 		this.toolBar.getCompararCenariosButton().addSelectionListener(new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected( MenuEvent ce ) {
-			Presenter presenter = new CompararCenariosFormPresenter( new CompararCenariosFormView(), gTab );
+			Presenter presenter = new CompararCenariosFormPresenter( instituicaoEnsinoDTO, cenarioDTO, new CompararCenariosFormView(), gTab );
 
 			presenter.go( gTab );
 			}
