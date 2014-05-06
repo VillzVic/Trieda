@@ -100,8 +100,11 @@ public class CenariosServiceImpl
 			cenario.setAno( 1 );
 			cenario.setSemestre( 1 );
 			cenario.setComentario( "MASTER DATA" );
+			cenario.setInstituicaoEnsino(instituicaoEnsino);
+			
+			cenario.persist();
 
-			// Semana letiva padrão do novo cenário
+/*			// Semana letiva padrão do novo cenário
 			SemanaLetiva semanaLetivaCenario = new SemanaLetiva();
 
 			semanaLetivaCenario.setCodigo( HtmlUtils.htmlUnescape( "Semana Padrão" ) );
@@ -112,7 +115,7 @@ public class CenariosServiceImpl
 				Campus.findAll( instituicaoEnsino ) );
 
 			CenarioUtil util = new CenarioUtil();
-			util.criarCenario( cenario, semanaLetivaCenario, campi );
+			util.criarCenario( cenario, semanaLetivaCenario, campi );*/
 
 			cenario = Cenario.findMasterData( this.getInstituicaoEnsinoUser() );
 		}
