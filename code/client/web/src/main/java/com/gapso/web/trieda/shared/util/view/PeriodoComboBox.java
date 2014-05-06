@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
+import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.services.Services;
@@ -19,10 +20,18 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class PeriodoComboBox extends SimpleComboBox<Integer> {
 	
 	private CurriculoComboBox curriculoComboBox;
+	private CenarioDTO cenarioDTO;
 	private ITriedaI18nGateway i18nGateway;
 	
 	public PeriodoComboBox(CurriculoComboBox curriculoCB, ITriedaI18nGateway i18nGateway) {
 		this.curriculoComboBox = curriculoCB;
+		this.i18nGateway = i18nGateway;
+		configureView();
+		configureContentOfComboBox();
+	}
+	
+	public PeriodoComboBox(CenarioDTO cenarioDTO, ITriedaI18nGateway i18nGateway) {
+		this.cenarioDTO = cenarioDTO;
 		this.i18nGateway = i18nGateway;
 		configureView();
 		configureContentOfComboBox();
@@ -46,21 +55,32 @@ public class PeriodoComboBox extends SimpleComboBox<Integer> {
 				}
 			});
 		}
+		else
+		{
+			RpcProxy<ListLoadResult<Integer>> proxy = new RpcProxy<ListLoadResult<Integer>>() {
+				@Override
+				public void load(Object loadConfig, AsyncCallback<ListLoadResult<Integer>> callback) {
+					PeriodoComboBox.this.reloadContent(null);
+				}
+			};
+			
+			setStore(new ListStore<SimpleComboValue<Integer>>(new BaseListLoader<BaseListLoadResult<Integer>>(proxy)));
+		}
 	}
 	
 	private void configureView() {
 		setFieldLabel("Período");
 		setEmptyText("Selecione um período");
 		setEditable(false);
-		setEnabled(false);
+		setEnabled(cenarioDTO != null || curriculoComboBox != null);
 		setAutoWidth(true);
 	}
 	
 	private void reloadContent(CurriculoDTO curriculoDTO) {
 		getStore().removeAll();
-		setEnabled(curriculoDTO != null);
-		if(curriculoDTO != null) {
-			Services.curriculos().getPeriodos(curriculoDTO,new AbstractAsyncCallbackWithDefaultOnFailure<List<Integer>>(i18nGateway) {
+		setEnabled(cenarioDTO != null || curriculoDTO != null);
+		if(cenarioDTO != null || curriculoDTO != null) {
+			Services.curriculos().getPeriodos(curriculoDTO, cenarioDTO, new AbstractAsyncCallbackWithDefaultOnFailure<List<Integer>>(i18nGateway) {
 				@Override
 				public void onSuccess(List<Integer> result) {
 					PeriodoComboBox.this.add(result);

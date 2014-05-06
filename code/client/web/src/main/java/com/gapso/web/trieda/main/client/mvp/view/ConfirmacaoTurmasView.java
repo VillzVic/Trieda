@@ -30,7 +30,10 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ConfirmacaoTurmaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.PeriodoComboBox;
+import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
 import com.google.gwt.resources.client.ImageResource;
@@ -41,6 +44,9 @@ public class ConfirmacaoTurmasView extends MyComposite
 {
 	private SimpleToolBar toolBar;
 	private SimpleGrid< ConfirmacaoTurmaDTO > gridPanel;
+	private SimpleFilter filter;
+	private CursoComboBox cursoCB;
+	private PeriodoComboBox periodoCB;
 	private CheckColumnConfig checkColumn;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -70,6 +76,7 @@ public class ConfirmacaoTurmasView extends MyComposite
 	
 		createToolBar();
 		createGrid();
+		createFilter();
 		createPainelIndicadores();
 		createTabItem();
 		initComponent( this.tabItem );
@@ -122,7 +129,7 @@ public class ConfirmacaoTurmasView extends MyComposite
 	private void createPainelIndicadores()
 	{
 		painelIndicadores = new FormPanel();
-		painelIndicadores.setHeadingHtml( "Painel de Indicadores" );
+		painelIndicadores.setHeadingHtml( "Painel de Indicadores Gerais" );
 		
 		final LayoutContainer main = new LayoutContainer(new ColumnLayout())
 		{
@@ -154,9 +161,30 @@ public class ConfirmacaoTurmasView extends MyComposite
 	    BorderLayoutData bld = new BorderLayoutData( LayoutRegion.SOUTH );
 	    bld.setMargins( new Margins( 5 ) );
 	    bld.setSize(120);
+	    bld.setCollapsible(true);
 	    
 	    painelIndicadores.add(main, new FormData("100%"));
 	    panel.add( painelIndicadores, bld );
+	}
+	
+	private void createFilter()
+	{
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
+		bld.setCollapsible( true );
+
+		this.filter = new SimpleFilter();
+		this.cursoCB = new CursoComboBox( cenarioDTO );
+		this.cursoCB.disable();
+		this.periodoCB = new PeriodoComboBox( cenarioDTO, this);
+		this.periodoCB.disable();
+		this.filter.getSubmitButton().disable();
+		this.filter.getResetButton().disable();
+
+		this.filter.addField( this.cursoCB );
+		this.filter.addField( this.periodoCB );
+
+		this.panel.add( this.filter, bld );
 	}
 
 	public List< ColumnConfig > getColumnList()
@@ -261,5 +289,29 @@ public class ConfirmacaoTurmasView extends MyComposite
 	public void setProxy( RpcProxy< PagingLoadResult< ConfirmacaoTurmaDTO > > proxy )
 	{
 		this.gridPanel.setProxy( proxy );
+	}
+	
+	@Override
+	public CursoComboBox getCursoComboBox()
+	{
+		return this.cursoCB;
+	}
+	
+	@Override
+	public PeriodoComboBox getPeriodoComboBox()
+	{
+		return this.periodoCB;
+	}
+	
+	@Override
+	public Button getSubmitBuscaButton()
+	{
+		return this.filter.getSubmitButton();
+	}
+
+	@Override
+	public Button getResetBuscaButton()
+	{
+		return this.filter.getResetButton();
 	}
 }

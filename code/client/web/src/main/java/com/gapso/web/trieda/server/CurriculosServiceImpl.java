@@ -1,6 +1,7 @@
 package com.gapso.web.trieda.server;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -258,17 +259,27 @@ public class CurriculosServiceImpl
 	}
 
 	@Override
-	public List< Integer > getPeriodos( CurriculoDTO curriculoDTO )
+	public List< Integer > getPeriodos( CurriculoDTO curriculoDTO, CenarioDTO cenarioDTO )
 	{
-		Curriculo curriculo = Curriculo.find(
-			curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+		Cenario cenario = Cenario.find(
+			cenarioDTO.getId(), getInstituicaoEnsinoUser());
 
-		if ( curriculo == null )
+		if ( curriculoDTO == null )
 		{
-			return new ArrayList< Integer >();
+			Set<Integer> periodos = new HashSet<Integer>();
+			List<CurriculoDisciplina> curriculosDisciplina = CurriculoDisciplina.findByCenario(getInstituicaoEnsinoUser(), cenario);
+			for (CurriculoDisciplina curriculoDisciplina : curriculosDisciplina)
+			{
+				periodos.add(curriculoDisciplina.getPeriodo());
+			}
+			return new ArrayList<Integer>(periodos);
 		}
-
-		return curriculo.getPeriodos();
+		else
+		{
+			Curriculo curriculo = Curriculo.find(
+					curriculoDTO.getId(), getInstituicaoEnsinoUser() );
+			return curriculo.getPeriodos();
+		}
 	}
 
 	@Override

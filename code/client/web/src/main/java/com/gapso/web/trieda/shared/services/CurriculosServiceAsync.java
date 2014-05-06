@@ -31,7 +31,8 @@ public interface CurriculosServiceAsync {
 	void remove( List< CurriculoDTO> curriculoDTOList, AsyncCallback< Void > callback );
 	void getDisciplinasList( CurriculoDTO curriculoDTO, AsyncCallback< ListLoadResult< CurriculoDisciplinaDTO > > callback );
 	void removeDisciplina( List< CurriculoDisciplinaDTO > curriculoDisciplinaDTOList, AsyncCallback< Void > callback );
-	void getPeriodos( CurriculoDTO curriculoDTO, AsyncCallback< List< Integer > > callback );
+	void getPeriodos(CurriculoDTO curriculoDTO, CenarioDTO cenarioDTO,
+			AsyncCallback<List<Integer>> callback);
 	void getListByCurso( CursoDTO cursoDTO, AsyncCallback< ListLoadResult< CurriculoDTO > > callback );
 	void getListAll(  CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< CurriculoDTO > > callback );
 	void getDisciplinasPreRequisitosList( CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO,

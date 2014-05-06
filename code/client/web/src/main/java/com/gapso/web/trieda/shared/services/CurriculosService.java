@@ -50,7 +50,7 @@ public interface CurriculosService
 	void remove( List< CurriculoDTO > curriculoDTOList );
 	ListLoadResult< CurriculoDisciplinaDTO > getDisciplinasList( CurriculoDTO curriculoDTO );
 	void removeDisciplina( List< CurriculoDisciplinaDTO > curriculoDisciplinaDTOList );
-	List< Integer > getPeriodos( CurriculoDTO curriculoDTO );
+	List< Integer > getPeriodos( CurriculoDTO curriculoDTO, CenarioDTO cenarioDTO );
 	ListLoadResult< CurriculoDTO > getListByCurso( CursoDTO cursoDTO );
 	ListLoadResult< CurriculoDTO > getListAll( CenarioDTO cenarioDTO );
 	PagingLoadResult<DisciplinaRequisitoDTO> getDisciplinasPreRequisitosList( CenarioDTO cenarioDTO,

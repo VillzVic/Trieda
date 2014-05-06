@@ -23,8 +23,10 @@ import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AtendimentosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.PeriodoComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,6 +49,10 @@ public class ConfirmacaoTurmasPresenter implements Presenter
 		SimpleGrid< ConfirmacaoTurmaDTO > getGrid();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< ConfirmacaoTurmaDTO > > proxy );
+		CursoComboBox getCursoComboBox();
+		PeriodoComboBox getPeriodoComboBox();
+		Button getSubmitBuscaButton();
+		Button getResetBuscaButton();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -183,6 +189,31 @@ public class ConfirmacaoTurmasPresenter implements Presenter
 				presenter.go( null );
 			}
 		});
+		
+		this.display.getResetBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getCursoComboBox().setValue( null );
+				display.getPeriodoComboBox().setValue( null );
+
+				display.getGrid().updateList();
+			}
+		});
+
+		this.display.getSubmitBuscaButton().addSelectionListener(
+			new SelectionListener< ButtonEvent >()
+		{
+			@Override
+			public void componentSelected( ButtonEvent ce )
+			{
+				display.getGrid().updateList();
+			}
+		});
+	
+		
 	}
 	
 	public void loadIndicadores()

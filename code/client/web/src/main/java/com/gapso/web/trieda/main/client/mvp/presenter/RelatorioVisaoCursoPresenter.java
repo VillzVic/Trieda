@@ -52,7 +52,7 @@ public class RelatorioVisaoCursoPresenter extends RelatorioVisaoPresenter{
 				if(curriculoDTO != null){
 					CurriculosServiceAsync service = Services.curriculos();
 
-					service.getPeriodos(curriculoDTO, new AsyncCallback<List<Integer>>(){
+					service.getPeriodos(curriculoDTO, cenarioDTO, new AsyncCallback<List<Integer>>(){
 						@Override
 						public void onFailure(Throwable caught){
 							MessageBox.alert( "Erro", "Erro no servidor ao pegar os períodos da Matriz Curricular", null);
