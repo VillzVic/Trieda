@@ -78,10 +78,10 @@ public interface AtendimentosServiceAsync {
 
 	void getAtendimentosFaixaTurma( CenarioDTO cenarioDTO, CampusDTO campusDTO, AsyncCallback<List<AtendimentoFaixaTurmaDTO>> callback );
 
-	void getConfirmacaoTurmasList(CenarioDTO cenarioDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<ConfirmacaoTurmaDTO>> callback);
+	void getConfirmacaoTurmasList(CenarioDTO cenarioDTO, PagingLoadConfig config,
+			AsyncCallback<PagingLoadResult<ConfirmacaoTurmaDTO>> callback);
 
-	void saveConfirmacoes(CenarioDTO cenarioDTO,
-			List<ConfirmacaoTurmaDTO> list, AsyncCallback<Void> callback);
+	void saveConfirmacoes(CenarioDTO cenarioDTO, List<ConfirmacaoTurmaDTO> list, AsyncCallback<Void> callback);
 
 	void confirmarTodasTurmas(CenarioDTO cenarioDTO,
 			AsyncCallback<Void> callback);
@@ -180,4 +180,7 @@ public interface AtendimentosServiceAsync {
 
 	void removeAula(TurmaDTO turmaDTO, AulaDTO aulaDTO,
 			AsyncCallback<Void> callback);
+
+	void getAmbientesTurma(CenarioDTO cenarioDTO, TurmaDTO turmaDTO,
+			AsyncCallback<ListLoadResult<SalaDTO>> callback);
 }
