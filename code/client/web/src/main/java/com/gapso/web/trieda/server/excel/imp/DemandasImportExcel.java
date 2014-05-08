@@ -28,10 +28,13 @@ import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.TriedaPar;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class DemandasImportExcel
 	extends AbstractImportExcel< DemandasImportExcelBean >
 {
@@ -170,6 +173,7 @@ public class DemandasImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent( String sheetName,
 		List< DemandasImportExcelBean > sheetContent )
 	{
@@ -184,7 +188,7 @@ public class DemandasImportExcel
 		List< DemandasImportExcelBean > sheetContent )
 	{
 		// Map utilizado para associar um erro às linhas do arquivo onde o mesmo ocorre
-		// [ ImportExcelError -> Lista de linhas onde o erro ocorre ]
+		// [ ImportExcelError' -> Lista de linhas onde o erro ocorre ]
 		Map< ImportExcelError, List< Integer > > syntacticErrorsMap
 			= new HashMap< ImportExcelError, List< Integer > >();
 
@@ -484,6 +488,7 @@ public class DemandasImportExcel
 	}
 
 	@Transactional
+	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
 	private void updateDataBase( String sheetName,
 		List< DemandasImportExcelBean > sheetContent )
 	{

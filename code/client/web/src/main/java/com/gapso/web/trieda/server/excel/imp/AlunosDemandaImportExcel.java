@@ -27,10 +27,13 @@ import com.gapso.trieda.domain.Disciplina;
 import com.gapso.trieda.domain.InstituicaoEnsino;
 import com.gapso.trieda.domain.Oferta;
 import com.gapso.trieda.domain.Turno;
+import com.gapso.web.trieda.server.util.progressReport.ProgressDeclarationAnnotation;
+import com.gapso.web.trieda.server.util.progressReport.ProgressReportMethodScan;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nConstants;
 import com.gapso.web.trieda.shared.i18n.TriedaI18nMessages;
 
+@ProgressDeclarationAnnotation
 public class AlunosDemandaImportExcel
 	extends AbstractImportExcel< AlunosDemandaImportExcelBean >
 {
@@ -161,6 +164,7 @@ public class AlunosDemandaImportExcel
 	}
 
 	@Override
+	@ProgressReportMethodScan(texto = "Processando conteúdo da planilha")
 	protected void processSheetContent(
 		String sheetName, List< AlunosDemandaImportExcelBean > sheetContent )
 	{
@@ -380,6 +384,7 @@ public class AlunosDemandaImportExcel
 	}
 
 	@Transactional
+	@ProgressReportMethodScan(texto = "Atualizando banco de dados")
 	private void updateDataBase(
 		String sheetName, List< AlunosDemandaImportExcelBean > sheetContent )
 	{

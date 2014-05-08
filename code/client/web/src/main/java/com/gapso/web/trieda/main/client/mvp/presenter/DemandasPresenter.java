@@ -204,18 +204,11 @@ public class DemandasPresenter
 			}
 		});
 
-		this.display.getImportExcelButton().addSelectionListener(
-			new SelectionListener< ButtonEvent >()
-		{
+		this.display.getImportExcelButton().addSelectionListener(new SelectionListener< ButtonEvent >()	{
 			@Override
-			public void componentSelected( ButtonEvent ce )
-			{
-				ExcelParametros parametros = new ExcelParametros(
-						ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO, cenarioDTO );
-
-				ImportExcelFormView importExcelFormView
-					= new ImportExcelFormView( parametros,display.getGrid() );
-
+			public void componentSelected( ButtonEvent ce )			{
+				ExcelParametros parametros = new ExcelParametros(ExcelInformationType.DEMANDAS, instituicaoEnsinoDTO, cenarioDTO );
+				ImportExcelFormView importExcelFormView	= new ImportExcelFormView( parametros,display.getGrid() );
 				importExcelFormView.show();
 			}
 		});
