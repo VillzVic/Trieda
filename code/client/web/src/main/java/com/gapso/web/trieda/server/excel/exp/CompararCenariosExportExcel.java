@@ -79,10 +79,10 @@ public class CompararCenariosExportExcel
 		this.removeUnusedSheets = removeUnusedSheets;
 		this.initialRow = 4;
 		initialColumn = 0;
-		rowsEspaco.add(22);
-		rowsEspaco.add(29);
-		rowsEspaco.add(38);
-		rowsEspaco.add(45);
+		rowsEspaco.add(23);
+		rowsEspaco.add(30);
+		rowsEspaco.add(39);
+		rowsEspaco.add(46);
 		this.setFilter( filter );
 	}
 

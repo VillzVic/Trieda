@@ -469,7 +469,19 @@ public class CampiServiceImpl extends RemoteService
 		Set<Sala> salasUtilizadas = new HashSet<Sala>();
 		Set<SemanaLetiva> semanasLetivasUtilizadas = new HashSet<SemanaLetiva>();
 		Map<String,List<AtendimentoRelatorioDTO>> salaIdTurnoIdToAtendimentosMap = new HashMap<String,List<AtendimentoRelatorioDTO>>();
-		
+		String statusOtimizacao = "";
+		if (!campus.isOtimizado(getInstituicaoEnsinoUser()))
+		{
+			statusOtimizacao = "Não Otimizado";
+		}
+		else if (ehTatico)
+		{
+			statusOtimizacao = "Tático";
+		}
+		else
+		{
+			statusOtimizacao = "Operacional";
+		}
 		
 		if (ehTatico) {
 			// atendimentos táticos
@@ -734,6 +746,8 @@ public class CampiServiceImpl extends RemoteService
 		List<TreeNodeDTO> itensDoRelatorioParaUmCampus = new ArrayList<TreeNodeDTO>();
 		
 		//Gerais
+		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
+				"Status de Otimização: ", "<b>" + statusOtimizacao) ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
 				"Número de alunos: ", "<b>" + numberFormatter.print(numAlunosComDemanda,pt_BR) + "</b>") ,currentNode, true) );
 		itensDoRelatorioParaUmCampus.add( new TreeNodeDTO( new ResumoDTO(
