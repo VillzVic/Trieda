@@ -9,6 +9,7 @@ import java.util.Map;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
+import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
@@ -17,6 +18,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -26,6 +28,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.user.client.Element;
 
@@ -37,6 +40,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	private PagingLoader< PagingLoadResult< ModelData > > loader;
 	private List< M > horariosDisponiveisDisponivel;
 	private Map< String, List< ToggleImageButton > > comboboxWeek;
+	private ITriedaI18nGateway i18nGateway;
 
 	private ToggleImageButton segCB;
 	private ToggleImageButton terCB;
@@ -58,13 +62,14 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 
 	public SemanaLetivaDoCenarioGrid(
 		List< M > horariosDisponiveisDisponivel,
-		String horarioAulaIdPropertyName )
+		String horarioAulaIdPropertyName, ITriedaI18nGateway i18nGateway )
 	{
 		super( new FitLayout() );
 
 		this.horariosDisponiveisDisponivel = horariosDisponiveisDisponivel;
 		this.horarioAulaIdPropertyName = horarioAulaIdPropertyName;
 		this.checkHeader = new HashMap<Integer, Boolean>();
+		this.i18nGateway = i18nGateway;
 
 		setHeaderVisible( false );
 		setBodyBorder( false );
@@ -73,7 +78,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 	
 	public SemanaLetivaDoCenarioGrid(
 			List< M > horariosDisponiveisDisponivel,
-			String horarioAulaIdPropertyName, boolean usaSabado, boolean usaDomingo )
+			String horarioAulaIdPropertyName, boolean usaSabado, boolean usaDomingo, ITriedaI18nGateway i18nGateway  )
 		{
 			super( new FitLayout() );
 
@@ -82,6 +87,7 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 			this.checkHeader = new HashMap<Integer, Boolean>();
 			this.usaSabado = usaSabado;
 			this.usaDomingo = usaDomingo;
+			this.i18nGateway = i18nGateway;
 
 			setHeaderVisible( false );
 			setBodyBorder( false );
@@ -117,7 +123,27 @@ public class SemanaLetivaDoCenarioGrid< M extends BaseModel >
 			}
 		});
 
+		addLoadingListener();
 		add( this.grid );
+	}
+	
+	private void addLoadingListener()
+	{
+		this.loader.addLoadListener( new LoadListener()
+		{
+			@Override
+			public void loaderBeforeLoad( LoadEvent le )
+			{
+				grid.mask( i18nGateway.getI18nMessages().loading(), "loading" );
+			}
+
+			@Override
+			public void loaderLoad( LoadEvent le )
+			{
+				grid.unmask();
+			}
+		});
+		
 	}
 
 	@Override

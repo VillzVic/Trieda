@@ -198,4 +198,6 @@ public interface TriedaI18nConstants
 	String demandaDeAlunosVirtual();
 	String idAmbiente();
 	String nomeAmbiente();
+	
+	String permiteIntervaloAula();
 }

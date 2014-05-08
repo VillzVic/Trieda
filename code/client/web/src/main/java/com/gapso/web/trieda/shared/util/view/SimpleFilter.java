@@ -9,10 +9,11 @@ import com.extjs.gxt.ui.client.widget.LayoutContainer;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.Field;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.MultiField;
+import com.extjs.gxt.ui.client.widget.layout.BoxLayout.BoxLayoutPack;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
-import com.extjs.gxt.ui.client.widget.layout.BoxLayout.BoxLayoutPack;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
@@ -48,7 +49,20 @@ public class SimpleFilter
 	{
 		insert( field, getItemCount() - 1, formDataFilter );
 	}
-
+	
+	public void addMultiField( Field< ? > field1, Field< ? > field2  )
+	{
+		MultiField<Field<?>> multiField;
+		
+		multiField = new MultiField<Field<?>>();
+		multiField.setFieldLabel(field1.getFieldLabel());
+		multiField.setSpacing(5);
+		multiField.add(field1);
+		multiField.add(field2);
+		
+		insert( multiField, getItemCount() - 1, formDataFilter );
+	}
+	
 	private void createButtons()
 	{
 		LayoutContainer lc = new LayoutContainer();

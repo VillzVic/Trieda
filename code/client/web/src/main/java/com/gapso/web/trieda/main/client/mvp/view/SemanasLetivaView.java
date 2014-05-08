@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -21,7 +22,9 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -35,6 +38,9 @@ public class SemanasLetivaView
 	private SimpleFilter filter;
 	private TextField< String > codigoBuscaTextField;
 	private TextField< String > descricaoBuscaTextField;
+	private NumberField tempoBuscaTextField;
+	private OperadorComboBox tempoBuscaCB;
+	private ComboBoxBoolean permiteIntervaloAulaBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button diasDeAulaButton;
@@ -106,7 +112,7 @@ public class SemanasLetivaView
 	private void createFilter()
 	{
 		BorderLayoutData bld
-			= new BorderLayoutData( LayoutRegion.EAST );
+			= new BorderLayoutData( LayoutRegion.EAST, 350 );
 
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
@@ -116,8 +122,20 @@ public class SemanasLetivaView
 		this.codigoBuscaTextField.setFieldLabel( "Código" );
 		this.descricaoBuscaTextField = new TextField< String >();
 		this.descricaoBuscaTextField.setFieldLabel( "Descrição" );
+		this.tempoBuscaCB = new OperadorComboBox();
+		this.tempoBuscaCB.setFieldLabel("Tempo");
+		this.tempoBuscaCB.setWidth(100);
+		this.tempoBuscaTextField = new NumberField();
+		this.tempoBuscaTextField.setWidth( "75" );
+		this.permiteIntervaloAulaBuscaCB = new ComboBoxBoolean();
+		this.permiteIntervaloAulaBuscaCB.setFieldLabel(getI18nConstants().permiteIntervaloAula());
+		//"Permite Intervalo Aula ?"
+		
+		
 		this.filter.addField( this.codigoBuscaTextField );
 		this.filter.addField( this.descricaoBuscaTextField );
+		this.filter.addField( this.permiteIntervaloAulaBuscaCB );
+		this.filter.addMultiField( this.tempoBuscaCB, this.tempoBuscaTextField );
 
 		this.panel.add( this.filter, bld );
 	}
@@ -199,5 +217,20 @@ public class SemanasLetivaView
 	public Button getResetBuscaButton()
 	{
 		return this.filter.getResetButton();
+	}
+
+	@Override
+	public NumberField getTempoBuscaTextField() {
+		return this.tempoBuscaTextField;
+	}
+
+	@Override
+	public OperadorComboBox getTempoBuscaCB() {
+		return this.tempoBuscaCB;
+	}
+
+	@Override
+	public ComboBoxBoolean getPermiteIntervaloAulaBuscaCB() {
+		return this.permiteIntervaloAulaBuscaCB;
 	}
 }

@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -21,8 +22,10 @@ import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -39,6 +42,10 @@ public class CampiView
 	private EstadoComboBox estadoBuscaComboBox;
 	private TextField< String > municipioBuscaTextField;
 	private TextField< String > bairroBuscaTextField;
+	private NumberField custoMedioCreditoBuscaTextField;
+	private OperadorComboBox custoMedioCreditoBuscaOperadorCB;
+	private ComboBoxBoolean otimizadoTaticoBuscaCB;
+	private ComboBoxBoolean otimizadoOperacionalBuscaCB;
 	private Button unidadesDeslocamentoBT;
 	private Button disponibilidadeBT;
 	private ContentPanel panel;
@@ -127,7 +134,7 @@ public class CampiView
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
@@ -147,11 +154,28 @@ public class CampiView
 
 		this.bairroBuscaTextField = new TextField< String >();
 		this.bairroBuscaTextField.setFieldLabel( getI18nConstants().bairro() );
+		
+		this.custoMedioCreditoBuscaOperadorCB = new OperadorComboBox();
+		this.custoMedioCreditoBuscaOperadorCB.setFieldLabel(getI18nConstants().custoMedioCredito());
+		this.custoMedioCreditoBuscaOperadorCB.setWidth(100);
+		
+		this.custoMedioCreditoBuscaTextField = new NumberField();
+		this.custoMedioCreditoBuscaTextField.setWidth( "75" );
+		
+		this.otimizadoTaticoBuscaCB = new ComboBoxBoolean();
+		this.otimizadoTaticoBuscaCB.setFieldLabel(getI18nConstants().otimizadoTatico());
+		
+		this.otimizadoOperacionalBuscaCB = new ComboBoxBoolean();
+		this.otimizadoOperacionalBuscaCB.setFieldLabel(getI18nConstants().otimizadoOperacional());
 
 		this.filter.addField( nomeBuscaTextField );
 		this.filter.addField( codigoBuscaTextField ); 
 		this.filter.addField( municipioBuscaTextField ); 
+		//this.filter.addField( estadoBuscaComboBox ); 
 		this.filter.addField( bairroBuscaTextField ); 
+		//this.filter.addMultiField(this.custoMedioCreditoBuscaOperadorCB, this.custoMedioCreditoBuscaTextField);
+		//this.filter.addField( otimizadoTaticoBuscaCB ); 
+		//this.filter.addField( otimizadoOperacionalBuscaCB ); 
 
 		this.panel.add( this.filter, bld );
 	}

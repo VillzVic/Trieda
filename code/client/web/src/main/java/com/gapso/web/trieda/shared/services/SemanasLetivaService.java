@@ -20,7 +20,7 @@ public interface SemanasLetivaService
 	ListLoadResult< SemanaLetivaDTO > getList( CenarioDTO cenarioDTO, 
 		BasePagingLoadConfig loadConfig );
 	PagingLoadResult<SemanaLetivaDTO> getBuscaList( CenarioDTO cenarioDTO,
-		String codigo, String descricao, PagingLoadConfig config );
+		String codigo, String descricao, String operadorTempo, Integer tempo, Boolean permite, PagingLoadConfig config );
 	void save( SemanaLetivaDTO semanaLetivaDTO );
 	void remove( List< SemanaLetivaDTO > semanaLetivaDTOList );
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveisCenario(

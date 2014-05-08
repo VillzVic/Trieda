@@ -18,7 +18,7 @@ public interface SemanasLetivaServiceAsync
 	void getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig,
 		AsyncCallback< ListLoadResult< SemanaLetivaDTO > > callback );
 
-	void getBuscaList( CenarioDTO cenarioDTO, String codigo, String descricao, PagingLoadConfig config,
+	void getBuscaList( CenarioDTO cenarioDTO, String codigo, String descricao, String operadorTempo, Integer tempo, Boolean permite,  PagingLoadConfig config,
 		AsyncCallback< PagingLoadResult< SemanaLetivaDTO > > callback );
 
 	void save( SemanaLetivaDTO semanaLetivaDTO, AsyncCallback< Void > callback );

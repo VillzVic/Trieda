@@ -9,6 +9,10 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.Field;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
+import com.extjs.gxt.ui.client.widget.form.MultiField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -23,6 +27,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -42,6 +47,8 @@ public class SalasView
 	private Button disponibilidadeBT;
 	private UnidadeComboBox unidadeCB;
 	private CampusComboBox campusCB;
+	private OperadorComboBox operadorCapacidadeInstaladaCB;
+	private TextField< String > capacitadeInstaladaTF;
 
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
@@ -138,7 +145,7 @@ public class SalasView
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 275 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
@@ -148,9 +155,23 @@ public class SalasView
 		this.campusCB.setValue( this.campusDTO );
 		this.unidadeCB = new UnidadeComboBox( this.campusCB );
 		this.unidadeCB.setValue( this.unidadeDTO );
+		this.operadorCapacidadeInstaladaCB = new OperadorComboBox();
+		this.operadorCapacidadeInstaladaCB.setWidth(100);
+		this.capacitadeInstaladaTF = new TextField< String >();
+		this.capacitadeInstaladaTF.setWidth(75);
 
 		this.filter.addField( this.campusCB );
 		this.filter.addField( this.unidadeCB );
+			
+		MultiField<Field<?>> multiField = new MultiField<Field<?>>();
+		multiField.setFieldLabel(getI18nConstants().capacidadeInstaladaAlunos());
+		multiField.setSpacing(5);
+		multiField.add(this.operadorCapacidadeInstaladaCB);
+		multiField.add(this.capacitadeInstaladaTF );
+		
+		
+		
+		this.filter.addField(multiField );
 
 		this.panel.add( this.filter, bld );
 	}

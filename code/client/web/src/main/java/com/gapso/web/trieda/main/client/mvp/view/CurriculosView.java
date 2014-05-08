@@ -35,6 +35,7 @@ public class CurriculosView extends MyComposite
 	private SimpleFilter filter;
 	private TextField< String > codigoBuscaTextField;
 	private TextField< String > descricaoBuscaTextField;
+	private TextField< String > periodoTextField;
 	private CursoComboBox cursoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -130,10 +131,13 @@ public class CurriculosView extends MyComposite
 		codigoBuscaTextField.setFieldLabel( "Código" );
 		descricaoBuscaTextField = new TextField< String >();
 		descricaoBuscaTextField.setFieldLabel( "Descricao" );
+		periodoTextField = new TextField< String >();
+		periodoTextField.setFieldLabel( "Período" );
 
 		filter.addField( cursoBuscaComboBox );
 		filter.addField( codigoBuscaTextField );
 		filter.addField( descricaoBuscaTextField );
+		filter.addField( periodoTextField );
 
 		panel.add( filter, bld );
 	}

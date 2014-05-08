@@ -66,7 +66,7 @@ public class HorarioDisponivelCenarioFormView
 
 	private void createGrid()
 	{
-		this.gridPanel = new SemanaLetivaGrid< HorarioDisponivelCenarioDTO >();
+		this.gridPanel = new SemanaLetivaGrid< HorarioDisponivelCenarioDTO >(this);
 		this.gridPanel.setBodyStyle( "background-color: #FFFFFF;" );
 
 		FormPanel formPanel = new FormPanel();

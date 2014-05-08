@@ -140,7 +140,7 @@ public class FixacaoFormView extends MyComposite implements
 		formPanel.add(salaCB, formData);
 
 		grid = new SemanaLetivaDoCenarioGrid<HorarioDisponivelCenarioDTO>(
-				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID);
+				listHorarios, HorarioDisponivelCenarioDTO.PROPERTY_ID, this);
 		grid.setSelectDefault(selectDefault);
 		
 		grid.addListener(Events.Render, new Listener<ComponentEvent>(){

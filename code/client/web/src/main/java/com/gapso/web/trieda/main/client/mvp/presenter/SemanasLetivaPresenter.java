@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelCenarioFormView;
@@ -26,11 +27,13 @@ import com.gapso.web.trieda.shared.services.SemanasLetivaServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,6 +52,9 @@ public class SemanasLetivaPresenter
 		Button getDiasDeAulaButton();
 		TextField< String > getCodigoBuscaTextField();
 		TextField< String > getDescricaoBuscaTextField();
+		NumberField getTempoBuscaTextField();
+		OperadorComboBox getTempoBuscaCB();
+		ComboBoxBoolean getPermiteIntervaloAulaBuscaCB();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< SemanaLetivaDTO > getGrid();
@@ -85,8 +91,12 @@ public class SemanasLetivaPresenter
 			{
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
+				String operadorTempo = (display.getTempoBuscaCB().getValue()==null)?null: display.getTempoBuscaCB().getValue().getValue().getOperadorSQL();
+				Integer tempo = display.getTempoBuscaTextField().getValue() == null?null:display.getTempoBuscaTextField().getValue().intValue();
+				Boolean permiteIntervaloAula = (display.getPermiteIntervaloAulaBuscaCB().getValue()==null)?null:display.getPermiteIntervaloAulaBuscaCB().getValue().getValue().getValue();
+				
 
-				service.getBuscaList( cenario, codigo, descricao, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, codigo, descricao, operadorTempo, tempo, permiteIntervaloAula, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -205,6 +215,9 @@ public class SemanasLetivaPresenter
 			{
 				display.getCodigoBuscaTextField().setValue( null );
 				display.getDescricaoBuscaTextField().setValue( null );
+				display.getPermiteIntervaloAulaBuscaCB().setValue( null);
+				display.getTempoBuscaCB().setValue( null );
+				display.getTempoBuscaTextField().setValue( null );
 				display.getGrid().updateList();
 			}
 		});

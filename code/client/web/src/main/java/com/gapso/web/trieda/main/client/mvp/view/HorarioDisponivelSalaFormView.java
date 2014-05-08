@@ -52,7 +52,7 @@ public class HorarioDisponivelSalaFormView
 		this.contentPanel.setHeaderVisible( false );
 		this.contentPanel.setBodyBorder( false );
 		this.gridPanel = new SemanaLetivaDoCenarioGrid< HorarioDisponivelCenarioDTO >(
-			this.horariosDisponiveis, HorarioDisponivelCenarioDTO.PROPERTY_ID );
+			this.horariosDisponiveis, HorarioDisponivelCenarioDTO.PROPERTY_ID, this );
 
 		this.contentPanel.add( this.gridPanel );
 		this.simpleModal.setContent( this.contentPanel );

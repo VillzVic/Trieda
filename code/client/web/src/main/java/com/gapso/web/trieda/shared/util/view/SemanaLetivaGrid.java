@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BasePagingLoader;
+import com.extjs.gxt.ui.client.data.LoadEvent;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoader;
@@ -13,6 +14,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.LoadListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -23,6 +25,7 @@ import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.widget.grid.GridCellRenderer;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.google.gwt.user.client.Element;
 
@@ -33,10 +36,12 @@ public class SemanaLetivaGrid< M extends BaseModel >
 	private RpcProxy< PagingLoadResult< M > > proxy;
 	private PagingLoader< PagingLoadResult< ModelData > > loader;
 	private ListStore< M > store;
+	private ITriedaI18nGateway i18nGateway;
 
-	public SemanaLetivaGrid()
+	public SemanaLetivaGrid(ITriedaI18nGateway i18nGateway)
 	{
 		super( new FitLayout() );
+		this.i18nGateway = i18nGateway;
 		setHeaderVisible( false );
 	}
 
@@ -70,7 +75,27 @@ public class SemanaLetivaGrid< M extends BaseModel >
 			}
 		});
 
+		addLoadingListener();
 		add( this.grid );
+	}
+	
+	private void addLoadingListener()
+	{
+		this.loader.addLoadListener( new LoadListener()
+		{
+			@Override
+			public void loaderBeforeLoad( LoadEvent le )
+			{
+				grid.mask( i18nGateway.getI18nMessages().loading(), "loading" );
+			}
+
+			@Override
+			public void loaderLoad( LoadEvent le )
+			{
+				grid.unmask();
+			}
+		});
+		
 	}
 
 	@Override

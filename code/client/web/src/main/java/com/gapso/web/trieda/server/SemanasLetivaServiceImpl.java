@@ -39,12 +39,13 @@ public class SemanasLetivaServiceImpl
 	@Override
 	public ListLoadResult< SemanaLetivaDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig )
 	{
-		return getBuscaList( cenarioDTO, loadConfig.get( "query" ).toString(), null, loadConfig );
+		return getBuscaList( cenarioDTO, loadConfig.get( "query" ).toString(), null, null, null, null, loadConfig );
 	}
 
 	@Override
 	public PagingLoadResult< SemanaLetivaDTO > getBuscaList(
-		CenarioDTO cenarioDTO, String codigo, String descricao, PagingLoadConfig config )
+		CenarioDTO cenarioDTO, String codigo, String descricao,
+		String operadorTempo, Integer tempo, Boolean permite, PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
@@ -67,7 +68,7 @@ public class SemanasLetivaServiceImpl
 		}
 
 		List< SemanaLetiva > listDomains = SemanaLetiva.findBy(
-			getInstituicaoEnsinoUser(), cenario, codigo, descricao,
+			getInstituicaoEnsinoUser(), cenario, codigo, descricao, operadorTempo, tempo, permite,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( SemanaLetiva semanaLetiva : listDomains )
@@ -80,7 +81,8 @@ public class SemanasLetivaServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( SemanaLetiva.count(
-			getInstituicaoEnsinoUser(), cenario, codigo, descricao ) );
+			getInstituicaoEnsinoUser(), cenario, codigo, descricao,
+			operadorTempo, tempo, permite) );
 
 		return result;
 	}

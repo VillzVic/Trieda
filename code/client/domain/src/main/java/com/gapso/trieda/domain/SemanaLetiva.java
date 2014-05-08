@@ -497,25 +497,42 @@ public class SemanaLetiva
 
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino,
-		Cenario cenario, String codigo, String descricao )
+		Cenario cenario, String codigo, String descricao,
+		String operadorTempo, Integer tempo, Boolean permiteIntervaloAula)
 	{
+		String sql = " SELECT COUNT ( o ) FROM SemanaLetiva o " +
+				" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+				" AND o.cenario = :cenario " +
+				" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
+				" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) ";
+		
+		if(permiteIntervaloAula != null){
+			sql += " and o.permiteIntervaloAula = :permite";
+		}
+		
+		if(tempo != null){
+			sql += " and tempo " + operadorTempo + " :tempo ";
+		}
+		
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 		descricao = ( ( descricao == null ) ? "" : descricao );
 		descricao = ( "%" + descricao.replace( '*', '%' ) + "%" );
 
 		EntityManager em = Turno.entityManager();
-		Query q = em.createQuery(
-			" SELECT COUNT ( o ) FROM SemanaLetiva o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.cenario = :cenario " +
-			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
-			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " );
+		Query q = em.createQuery(sql );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
+		if(permiteIntervaloAula != null){
+			q.setParameter( "permite", permiteIntervaloAula );
+			
+		}
+		if( tempo != null){
+			q.setParameter("tempo", tempo);
+		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
@@ -523,8 +540,28 @@ public class SemanaLetiva
 	@SuppressWarnings( "unchecked" )
 	public static List< SemanaLetiva > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario, String codigo,
-		String descricao, int firstResult, int maxResults, String orderBy )
+		String descricao, 
+		String operadorTempo, Integer tempo, Boolean permiteIntervaloAula,
+		int firstResult, int maxResults, String orderBy )
 	{
+		
+		String sql = " SELECT o FROM SemanaLetiva o " +
+			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
+			" AND o.cenario = :cenario " +
+			" AND LOWER ( o.codigo ) LIKE  LOWER ( :codigo ) " +
+			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) ";
+		
+		if(permiteIntervaloAula != null){
+			sql += " and o.permiteIntervaloAula = :permite";
+		}
+		
+		if(tempo != null){
+			if(operadorTempo != null)
+				sql += " and tempo " + operadorTempo + " :tempo ";
+			else
+				sql += " and tempo = :tempo ";
+		}
+		
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
 		descricao = ( ( descricao == null ) ? "" : descricao );
@@ -533,17 +570,20 @@ public class SemanaLetiva
 		EntityManager em = Turno.entityManager();
 		orderBy = ( ( orderBy != null ) ? "ORDER BY o." + orderBy : "" );
 
-		Query q = em.createQuery(
-			" SELECT o FROM SemanaLetiva o " +
-			" WHERE o.instituicaoEnsino = :instituicaoEnsino " +
-			" AND o.cenario = :cenario " +
-			" AND LOWER ( o.codigo ) LIKE  LOWER ( :codigo ) " +
-			" AND LOWER ( o.descricao ) LIKE LOWER ( :descricao ) " + orderBy );
+		Query q = em.createQuery(sql + orderBy );
 
 		q.setParameter( "codigo", codigo );
 		q.setParameter( "descricao", descricao );
 		q.setParameter( "instituicaoEnsino", instituicaoEnsino );
 		q.setParameter( "cenario", cenario );
+		if(permiteIntervaloAula != null){
+			q.setParameter( "permite", permiteIntervaloAula );
+			
+		}
+		if( tempo != null){
+			q.setParameter("tempo", tempo);
+		}
+		
 		q.setFirstResult( firstResult );
 		q.setMaxResults( maxResults );
 
