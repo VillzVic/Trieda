@@ -185,7 +185,7 @@ table.cw-FlexTable td.cw-FlexTable-content {
 }
 
 .GradeHorariaGrid .x-grid3-row-table .horarioDestaque {
-	border-width: 2px !important;
+	border: solid red 2px;
 	z-index: 1;
 }
 

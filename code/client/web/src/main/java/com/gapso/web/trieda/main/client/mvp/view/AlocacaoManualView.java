@@ -3,6 +3,7 @@ package com.gapso.web.trieda.main.client.mvp.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.LoadEvent;
@@ -421,6 +422,7 @@ public class AlocacaoManualView
 	private Widget createTurmaSelecionadaPanel() {
 		turmaSelecionadaPanel = new ContentPanel(new ColumnLayout());
 		turmaSelecionadaPanel.setHeaderVisible(false);
+		turmaSelecionadaPanel.setScrollMode(Style.Scroll.AUTO);
 		
 		emptyText = new LayoutContainer();
 		emptyText.addText("Crie uma nova turma definindo um nome para a mesma ou selecione uma turma existente.");
