@@ -349,11 +349,13 @@ public class ToolBarView
 	
 	private void createCampi()
 	{
+	
 		campiNovoCampiBt = createButton( "Novo",
 			"Adicionar um campus", Resources.DEFAULTS.campusNovo24() );
 		campiToolBar.add( campiNovoCampiBt );
+		campiNovoCampiBt.hide();
 
-		campiListCampiBt = createButton( "Listar",
+		campiListCampiBt = createButton( "Campi",
 			"Listar Campi", Resources.DEFAULTS.campusListar24() );
 		campiToolBar.add( campiListCampiBt );
 
@@ -369,8 +371,9 @@ public class ToolBarView
 		unidadesNovoUnidadesBt = createButton( "Nova",
 			"Adicionar uma Unidade", Resources.DEFAULTS.unidadeNovo24() ); 
 		unidadesToolBar.add( unidadesNovoUnidadesBt );
+		unidadesNovoUnidadesBt.hide();
 
-		unidadesListUnidadesBt = createButton("Listar",
+		unidadesListUnidadesBt = createButton("Unidades",
 			"Listar Unidades", Resources.DEFAULTS.unidadeListar24() );
 		unidadesToolBar.add( unidadesListUnidadesBt );
 
@@ -387,8 +390,9 @@ public class ToolBarView
 		salasNovoSalasBt = createButton( "Novo",
 			"Adicionar um Ambiente", Resources.DEFAULTS.salaNovo24() );
 		salasToolBar.add( salasNovoSalasBt );
+		salasNovoSalasBt.hide();
 
-		salasListSalasBt = createButton( "Listar",
+		salasListSalasBt = createButton( "Ambientes",
 			"Listar Ambientes", Resources.DEFAULTS.salaListar24() );
 		salasToolBar.add( salasListSalasBt );
 
@@ -414,8 +418,9 @@ public class ToolBarView
 		cursosNovoCursosBt = createButton( "Novo",
 			"Adicionar um Curso", Resources.DEFAULTS.cursoNovo24() );
 		cursosToolBar.add( cursosNovoCursosBt );
+		cursosNovoCursosBt.hide();
 
-		cursosListCursosBt = createButton( "Listar",
+		cursosListCursosBt = createButton( "Cursos",
 			"Listar Cursos", Resources.DEFAULTS.cursoListar24() );
 		cursosToolBar.add( cursosListCursosBt );
 
@@ -439,8 +444,9 @@ public class ToolBarView
 		matrizesNovoMatrizesBt = createButton( "Novo",
 			"Adicionar uma Matriz Curricular", Resources.DEFAULTS.matrizCurricular24() );
 		matrizesToolBar.add( matrizesNovoMatrizesBt );
+		matrizesNovoMatrizesBt.hide();
 
-		matrizesListMatrizesBt = createButton( "Listar",
+		matrizesListMatrizesBt = createButton( "Matrizes Curriculares",
 			"Listar Matrizes Curriculares", Resources.DEFAULTS.matrizCurricular24() );
 		matrizesToolBar.add( matrizesListMatrizesBt );
 		
@@ -460,8 +466,9 @@ public class ToolBarView
 		disciplinasNovoDisciplinasBt = createButton( "Novo",
 			"Adicionar um Curso", Resources.DEFAULTS.disciplinaNovo24() );
 		disciplinasToolBar.add( disciplinasNovoDisciplinasBt );
+		disciplinasNovoDisciplinasBt.hide();
 
-		disciplinasListDisciplinasBt = createButton( "Listar",
+		disciplinasListDisciplinasBt = createButton( "Disciplinas",
 			"Listar Disciplinas", Resources.DEFAULTS.disciplinaListar24() );
 		disciplinasToolBar.add( disciplinasListDisciplinasBt );
 
@@ -497,8 +504,9 @@ public class ToolBarView
 		alunosNovoAlunoBt = createButton( "Novo",
 			"Adicionar Novo Aluno", Resources.DEFAULTS.professorNovo24() );
 		alunosToolBar.add( alunosNovoAlunoBt );
+		alunosNovoAlunoBt.hide();
 
-		alunosListAlunosBt = createButton( "Listar",
+		alunosListAlunosBt = createButton( "Alunos",
 			"Listar Alunos", Resources.DEFAULTS.professorListar24() );
 		alunosToolBar.add( alunosListAlunosBt );
 		
@@ -514,8 +522,9 @@ public class ToolBarView
 		professoresNovoProfessoresBt = createButton( "Novo",
 			"Adicionar Novo Professor", Resources.DEFAULTS.professorNovo24() );
 		professoresToolBar.add( professoresNovoProfessoresBt );
+		professoresNovoProfessoresBt.hide();
 
-		professoresListprofessoresBt = createButton( "Listar",
+		professoresListprofessoresBt = createButton( "Professores",
 			"Listar Professores", Resources.DEFAULTS.professorListar24() );
 		professoresToolBar.add( professoresListprofessoresBt );
 
