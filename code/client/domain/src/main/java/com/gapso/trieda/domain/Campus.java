@@ -789,12 +789,54 @@ public class Campus
 	public static int count(
 		InstituicaoEnsino instituicaoEnsino,
 		Cenario cenario, String nome, String codigo,
-		Estados estado, String municipio, String bairro )
+		Estados estado, String municipio, String bairro,
+		String operadorCustoMedioCredito, Double custoMedioCredito, Boolean otimizadoOperacional, Boolean otimizadoTatico)
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+		
+		String operadorCustoMedioCreditoStr = "";
+		
+		if(custoMedioCredito != null){
+			if(operadorCustoMedioCredito != null)
+				operadorCustoMedioCreditoStr = " valorCredito " + operadorCustoMedioCredito + " :valorCredito and ";
+			else
+				operadorCustoMedioCreditoStr = " valorCredito = :valorCredito and ";
+		}
+		
+		String otiOperacionalStr = "";
+		String otiTaticoStr = "";
+		
+		if(otimizadoOperacional != null){
+			if(otimizadoOperacional){
+				otiOperacionalStr = " (SELECT COUNT ( a ) FROM AtendimentoOperacional a " +
+						" WHERE a.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.oferta.campus = o )  > 0 and ";
+			} else {
+				otiOperacionalStr = " (SELECT COUNT ( a ) FROM AtendimentoOperacional a " +
+						" WHERE a.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.oferta.campus = o )  = 0 and ";
+			}
+		}
+		
+		if(otimizadoTatico != null){
+			if(otimizadoTatico){
+				otiTaticoStr = "  (SELECT COUNT ( t ) FROM AtendimentoTatico t " +
+						" WHERE t.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.oferta.campus = o )  > 0 and ";
+			} else {
+				otiTaticoStr = "  (SELECT COUNT ( t ) FROM AtendimentoTatico t " +
+						" WHERE t.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.oferta.campus = o )  = 0 and ";
+			}
+		}
+		
 
 		String municipioQuery = "";
 		if ( municipio != null )
@@ -819,7 +861,8 @@ public class Campus
 			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
 			" AND o.cenario = :cenario " +
-			" AND " + estadoQuery +	bairroQuery + municipioQuery + " 1=1 " );
+			" AND " + estadoQuery +	bairroQuery + municipioQuery
+			 + operadorCustoMedioCreditoStr + otiOperacionalStr + otiTaticoStr + " 1=1 " );
 
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );
@@ -840,6 +883,10 @@ public class Campus
 		{
 			q.setParameter( "bairro", bairro );
 		}
+		
+		if( custoMedioCredito != null){
+			q.setParameter("valorCredito", custoMedioCredito);
+		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
 	}
@@ -848,12 +895,54 @@ public class Campus
 	public static List< Campus > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario,
 		String nome, String codigo, Estados estado, String municipio,
-		String bairro, int firstResult, int maxResults, String orderBy )
+		String bairro,
+		String operadorCustoMedioCredito, Double custoMedioCredito, Boolean otimizadoOperacional, Boolean otimizadoTatico,
+		int firstResult, int maxResults, String orderBy )
 	{
 		nome = ( ( nome == null ) ? "" : nome );
 		nome = ( "%" + nome.replace( '*', '%' ) + "%" );
 		codigo = ( ( codigo == null ) ? "" : codigo );
 		codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+		
+		String operadorCustoMedioCreditoStr = "";
+		
+		if(custoMedioCredito != null){
+			if(operadorCustoMedioCredito != null)
+				operadorCustoMedioCreditoStr = " valorCredito " + operadorCustoMedioCredito + " :valorCredito and ";
+			else
+				operadorCustoMedioCreditoStr = " valorCredito = :valorCredito and ";
+		}
+		
+		String otiOperacionalStr = "";
+		String otiTaticoStr = "";
+		
+		if(otimizadoOperacional != null){
+			if(otimizadoOperacional){
+				otiOperacionalStr = " (SELECT COUNT ( a ) FROM AtendimentoOperacional a " +
+						" WHERE a.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.oferta.campus = o )  > 0 and ";
+			} else {
+				otiOperacionalStr = " (SELECT COUNT ( a ) FROM AtendimentoOperacional a " +
+						" WHERE a.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.instituicaoEnsino = :instituicaoEnsino " +
+						" AND a.oferta.campus = o )  = 0 and ";
+			}
+		}
+		
+		if(otimizadoTatico != null){
+			if(otimizadoTatico){
+				otiTaticoStr = "  (SELECT COUNT ( t ) FROM AtendimentoTatico t " +
+						" WHERE t.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.oferta.campus = o )  > 0 and ";
+			} else {
+				otiTaticoStr = "  (SELECT COUNT ( t ) FROM AtendimentoTatico t " +
+						" WHERE t.oferta.campus.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.instituicaoEnsino = :instituicaoEnsino " +
+						" AND t.oferta.campus = o )  = 0 and ";
+			}
+		}
 
 		String municipioQuery = "";
 		if ( municipio != null )
@@ -878,7 +967,7 @@ public class Campus
 			" AND LOWER ( o.nome ) LIKE LOWER ( :nome ) " +
 			" AND LOWER ( o.codigo ) LIKE LOWER ( :codigo ) " +
 			" AND o.cenario = :cenario " +
-			" AND " + estadoQuery + bairroQuery + municipioQuery + " 1=1 " + orderBy );
+			" AND " + estadoQuery + bairroQuery + municipioQuery + operadorCustoMedioCreditoStr +  otiOperacionalStr + otiTaticoStr + " 1=1 " + orderBy );
 
 		q.setParameter( "nome", nome );
 		q.setParameter( "codigo", codigo );
@@ -898,6 +987,10 @@ public class Campus
 		if ( bairro != null )
 		{
 			q.setParameter( "bairro", bairro );
+		}
+		
+		if( custoMedioCredito != null){
+			q.setParameter("valorCredito", custoMedioCredito);
 		}
 
 		q.setFirstResult( firstResult );

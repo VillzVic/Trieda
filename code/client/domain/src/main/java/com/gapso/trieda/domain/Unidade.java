@@ -498,13 +498,25 @@ public class Unidade implements Serializable
     }
 
     public static int count( InstituicaoEnsino instituicaoEnsino,
-    	Cenario cenario, Campus campus, String nome, String codigo )
+    	Cenario cenario, Campus campus, String nome, String codigo, String operadorCapSalas, Double capSalas )
     {
         nome = ( ( nome == null ) ? "" : nome );
         nome = ( "%" + nome.replace( '*', '%' ) + "%" );
         codigo = ( ( codigo == null ) ? "" : codigo );
         codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
-
+        
+        String operadorCapSalasStr = "";
+        
+		if(capSalas != null){
+			if(operadorCapSalas != null)
+				operadorCapSalasStr = " (SELECT AVG ( s.capacidadeInstalada ) FROM Sala s " +
+			    		" WHERE s.unidade = unidade " +
+			    		" AND s.unidade.campus.instituicaoEnsino = :instituicaoEnsino ) " + operadorCapSalas + " :capSalas  and ";
+			else
+				operadorCapSalasStr = " (SELECT AVG ( s.capacidadeInstalada ) FROM Sala s " +
+			    		" WHERE s.unidade = unidade " +
+			    		" AND s.unidade.campus.instituicaoEnsino = :instituicaoEnsino ) = :capSalas  and ";
+    	}
         String queryCampus = "";
         if ( campus != null )
         {
@@ -513,7 +525,7 @@ public class Unidade implements Serializable
 
         Query q = entityManager().createQuery(
         	" SELECT COUNT ( Unidade ) FROM Unidade AS unidade " +
-        	" WHERE " + queryCampus +
+        	" WHERE " + queryCampus + operadorCapSalasStr +
         	" LOWER ( unidade.nome ) LIKE LOWER ( :nome ) " +
         	" AND unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
           	" AND unidade.campus.cenario = :cenario " +
@@ -523,6 +535,10 @@ public class Unidade implements Serializable
         {
         	q.setParameter( "campus", campus );
         }
+        
+		if( capSalas != null){
+			q.setParameter("capSalas", capSalas);
+		}
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
@@ -535,12 +551,25 @@ public class Unidade implements Serializable
     @SuppressWarnings("unchecked")
 	public static List< Unidade > findBy(
 		InstituicaoEnsino instituicaoEnsino, Cenario cenario, Campus campus,
-		String nome, String codigo, int firstResult, int maxResults, String orderBy )
+		String nome, String codigo, String operadorCapSalas, Double capSalas, int firstResult, int maxResults, String orderBy )
 	{
         nome = ( ( nome == null )? "" : nome );
         nome = ( "%" + nome.replace( '*', '%' ) + "%" );
         codigo = ( ( codigo == null )? "" : codigo );
         codigo = ( "%" + codigo.replace( '*', '%' ) + "%" );
+        
+        String operadorCapSalasStr = "";
+        
+		if(capSalas != null){
+			if(operadorCapSalas != null)
+				operadorCapSalasStr = " (SELECT AVG ( s.capacidadeInstalada ) FROM Sala s " +
+			    		" WHERE s.unidade = unidade " +
+			    		" AND s.unidade.campus.instituicaoEnsino = :instituicaoEnsino ) " + operadorCapSalas + " :capSalas  and ";
+			else
+				operadorCapSalasStr = " (SELECT AVG ( s.capacidadeInstalada ) FROM Sala s " +
+			    		" WHERE s.unidade = unidade " +
+			    		" AND s.unidade.campus.instituicaoEnsino = :instituicaoEnsino ) = :capSalas  and ";
+    	}
 
         if (orderBy == null) {
         	orderBy = "";
@@ -560,7 +589,7 @@ public class Unidade implements Serializable
 
         Query q = entityManager().createQuery(
         	"SELECT Unidade FROM Unidade AS unidade LEFT JOIN unidade.salas s" +
-        	" WHERE " + queryCampus +
+        	" WHERE " + queryCampus + operadorCapSalasStr +
         	" LOWER ( unidade.nome ) LIKE LOWER ( :nome ) " +
         	" AND unidade.campus.instituicaoEnsino = :instituicaoEnsino " +
         	" AND unidade.campus.cenario = :cenario" +
@@ -570,6 +599,11 @@ public class Unidade implements Serializable
         {
         	q.setParameter( "campus", campus );
         }
+        
+		if( capSalas != null){
+			q.setParameter("capSalas", capSalas);
+		}
+
 
         q.setParameter( "instituicaoEnsino", instituicaoEnsino );
         q.setParameter( "cenario", cenario );
