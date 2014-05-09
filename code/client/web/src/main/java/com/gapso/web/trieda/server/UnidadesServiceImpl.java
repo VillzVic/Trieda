@@ -118,13 +118,14 @@ public class UnidadesServiceImpl
 		}
 
 		return getBuscaList( cenarioDTO, campusDTO, null,
-			loadConfig.get( "query" ).toString(), loadConfig );
+			loadConfig.get( "query" ).toString(),  null, null, loadConfig );
 	}
 	
 	@Override
 	public PagingLoadResult< UnidadeDTO > getBuscaList(
 		CenarioDTO cenarioDTO, CampusDTO campusDTO, String nome,
-		String codigo, PagingLoadConfig config )
+		String codigo,	String operadorCapSalas, Double capSalas,
+		PagingLoadConfig config )
 	{
 		List< UnidadeDTO > list = new ArrayList< UnidadeDTO >();
 		String orderBy = config.getSortField();
@@ -152,7 +153,7 @@ public class UnidadesServiceImpl
 
 		List< Unidade > listUnidades = Unidade.findBy(
 			getInstituicaoEnsinoUser(), cenario, campus, nome,
-			codigo, config.getOffset(), config.getLimit(), orderBy );
+			codigo, operadorCapSalas, capSalas, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Unidade unidade : listUnidades )
 		{
@@ -168,7 +169,7 @@ public class UnidadesServiceImpl
 			= new BasePagingLoadResult< UnidadeDTO >( list );
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Unidade.count(
-			getInstituicaoEnsinoUser(), cenario, campus, nome, codigo ) );
+			getInstituicaoEnsinoUser(), cenario, campus, nome, codigo, operadorCapSalas, capSalas ) );
 
 		return result;
 	}

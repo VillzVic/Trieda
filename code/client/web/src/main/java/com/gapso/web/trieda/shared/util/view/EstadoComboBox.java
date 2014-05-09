@@ -31,10 +31,36 @@ public class EstadoComboBox
 
 		setDisplayField( "value" );
 	}
+	
+	public EstadoComboBox(boolean incluirVazio)
+	{
+		List< Estado > enumList = Arrays.asList( Estado.values() );
+		add( enumList );
+		if(incluirVazio){
+			setEmptyText("Selecione o Estado");
+			setSimpleValue( null );
+		} else{
+			setSimpleValue( enumList.get( 0 ) );
+		}
+		setLazyRender( false );
+		setEditable( false );
+		setTriggerAction( TriggerAction.ALL );
+
+		setPropertyEditor( new ListModelPropertyEditor< SimpleComboValue< Estado > >()
+		{
+			@Override
+			public String getStringValue( SimpleComboValue< Estado > value )
+			{
+				return value.getValue().getNome();
+			}
+		});
+
+		setDisplayField( "value" );
+	}
 
 	public void setValue( String valueString )
 	{
-		if ( valueString == null )
+		if ( valueString == null || valueString == "" )
 		{
 			setValueField( null );
 		}

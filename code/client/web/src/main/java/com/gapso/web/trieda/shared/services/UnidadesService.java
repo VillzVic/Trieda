@@ -23,7 +23,7 @@ public interface UnidadesService
 	void save( UnidadeDTO unidadeDTO );
 	void remove( List< UnidadeDTO > unidadeDTOList ) throws TriedaException;
 	PagingLoadResult< UnidadeDTO > getBuscaList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
-		String nome, String codigo, PagingLoadConfig config );
+		String nome, String codigo, String operadorCapSalas, Double capSalas,PagingLoadConfig config );
 	ListLoadResult< UnidadeDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig );
 	UnidadeDTO getUnidade( Long id );
 	List< DeslocamentoUnidadeDTO > getDeslocamento( CampusDTO campusDTO );

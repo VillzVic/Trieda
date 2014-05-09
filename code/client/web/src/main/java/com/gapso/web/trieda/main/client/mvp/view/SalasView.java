@@ -22,6 +22,7 @@ import com.gapso.web.trieda.main.client.mvp.presenter.SalasPresenter;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
+import com.gapso.web.trieda.shared.dtos.TipoSalaDTO;
 import com.gapso.web.trieda.shared.dtos.UnidadeDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
@@ -31,6 +32,7 @@ import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.util.view.TipoSalaComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.i18n.client.NumberFormat;
 
@@ -47,12 +49,21 @@ public class SalasView
 	private Button disponibilidadeBT;
 	private UnidadeComboBox unidadeCB;
 	private CampusComboBox campusCB;
+	private TipoSalaComboBox tipoSalaCB;
 	private OperadorComboBox operadorCapacidadeInstaladaCB;
+	private OperadorComboBox operadorCapacidadeMaximaCB;
+	private OperadorComboBox operadorCustoOperacaoCB;
 	private TextField< String > capacitadeInstaladaTF;
+	private TextField< String > capacitadeMaximaTF;
+	private TextField< String > custoOperacaoTF;
+	private TextField< String > numeroTF;
+	private TextField< String > descricaoTF;
+	private TextField< String > andarTF;
 
 	private CampusDTO campusDTO;
 	private UnidadeDTO unidadeDTO;
 	private CenarioDTO cenarioDTO;
+	private TipoSalaDTO tipoSalaDTO; 
 
 	public SalasView( CenarioDTO cenarioDTO )
 	{
@@ -145,33 +156,54 @@ public class SalasView
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 275 );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350);
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
 
 		this.campusCB = new CampusComboBox(cenarioDTO);
 		this.campusCB.setValue( this.campusDTO );
 		this.unidadeCB = new UnidadeComboBox( this.campusCB );
 		this.unidadeCB.setValue( this.unidadeDTO );
+		this.tipoSalaCB = new TipoSalaComboBox(cenarioDTO);
+		this.tipoSalaCB.setValue(this.tipoSalaDTO);
 		this.operadorCapacidadeInstaladaCB = new OperadorComboBox();
 		this.operadorCapacidadeInstaladaCB.setWidth(100);
+		this.operadorCapacidadeInstaladaCB.setFieldLabel(getI18nConstants().capacidadeInstaladaAlunos());
 		this.capacitadeInstaladaTF = new TextField< String >();
 		this.capacitadeInstaladaTF.setWidth(75);
+		
+		this.operadorCapacidadeMaximaCB = new OperadorComboBox();
+		this.operadorCapacidadeMaximaCB.setWidth(100);
+		this.operadorCapacidadeMaximaCB.setFieldLabel(getI18nConstants().capacidadeMaxAlunos());
+		this.capacitadeMaximaTF = new TextField< String >();
+		this.capacitadeMaximaTF.setWidth(75);
+		
+		this.operadorCustoOperacaoCB = new OperadorComboBox();
+		this.operadorCustoOperacaoCB.setWidth(100);
+		this.operadorCustoOperacaoCB.setFieldLabel(getI18nConstants().capacidadeMaxAlunos());
+		this.custoOperacaoTF = new TextField< String >();
+		this.custoOperacaoTF.setWidth(75);
+		
+		this.numeroTF = new TextField< String >();
+		this.numeroTF.setFieldLabel(getI18nConstants().numero());
+		this.descricaoTF = new TextField< String >();
+		this.descricaoTF.setFieldLabel(getI18nConstants().descricao());
+		this.andarTF = new TextField< String >();
+		this.andarTF.setFieldLabel(getI18nConstants().andar());
 
 		this.filter.addField( this.campusCB );
 		this.filter.addField( this.unidadeCB );
-			
-		MultiField<Field<?>> multiField = new MultiField<Field<?>>();
-		multiField.setFieldLabel(getI18nConstants().capacidadeInstaladaAlunos());
-		multiField.setSpacing(5);
-		multiField.add(this.operadorCapacidadeInstaladaCB);
-		multiField.add(this.capacitadeInstaladaTF );
+		/*this.filter.addField( this.tipoSalaCB );
+		this.filter.addField( this.numeroTF );
+		this.filter.addField( this.descricaoTF );
+		this.filter.addField( this.andarTF );
+		this.filter.addMultiField(operadorCapacidadeInstaladaCB, capacitadeInstaladaTF);
+		this.filter.addMultiField(operadorCapacidadeMaximaCB, capacitadeMaximaTF);
+		this.filter.addMultiField(operadorCustoOperacaoCB, custoOperacaoTF);*/
 		
-		
-		
-		this.filter.addField(multiField );
 
 		this.panel.add( this.filter, bld );
 	}
@@ -287,5 +319,55 @@ public class SalasView
 	public Button getResetBuscaButton()
 	{
 		return filter.getResetButton();
+	}
+
+	@Override
+	public OperadorComboBox getOperadorCapacidadeInstaladaCB() {
+		return operadorCapacidadeInstaladaCB;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorCapacidadeMaximaCB() {
+		return operadorCapacidadeMaximaCB;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorCustoOperacaoCB() {
+		return operadorCustoOperacaoCB;
+	}
+
+	@Override
+	public TextField<String> getCapacitadeInstaladaTF() {
+		return capacitadeInstaladaTF;
+	}
+
+	@Override
+	public TextField<String> getCapacitadeMaximaTF() {
+		return capacitadeMaximaTF;
+	}
+
+	@Override
+	public TextField<String> getCustoOperacaoTF() {
+		return custoOperacaoTF;
+	}
+
+	@Override
+	public TextField<String> getNumeroTF() {
+		return numeroTF;
+	}
+
+	@Override
+	public TextField<String> getDescricaoTF() {
+		return descricaoTF;
+	}
+
+	@Override
+	public TextField<String> getAndarTF() {
+		return andarTF;
+	}
+	
+	@Override
+	public TipoSalaComboBox getTipoSalaCB() {
+		return tipoSalaCB;
 	}
 }

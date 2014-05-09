@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelSalaFormView;
 import com.gapso.web.trieda.main.client.mvp.view.SalaFormView;
@@ -36,7 +37,9 @@ import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.TipoSalaComboBox;
 import com.gapso.web.trieda.shared.util.view.UnidadeComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -65,6 +68,16 @@ public class SalasPresenter
 		Button getDisponibilidadeButton();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< SalaDTO > > proxy );
+		 OperadorComboBox getOperadorCapacidadeInstaladaCB();
+		 OperadorComboBox getOperadorCapacidadeMaximaCB();
+		 OperadorComboBox getOperadorCustoOperacaoCB();
+		 TextField<String> getCapacitadeInstaladaTF();
+		 TextField<String> getCapacitadeMaximaTF();
+		 TextField<String> getCustoOperacaoTF();
+		 TextField<String> getNumeroTF();
+		 TextField<String> getDescricaoTF(); 
+		 TextField<String> getAndarTF();
+		 TipoSalaComboBox getTipoSalaCB();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -96,6 +109,17 @@ public class SalasPresenter
 			{
 				CampusDTO campusDTO = display.getCampusCB().getValue();
 				UnidadeDTO unidadeDTO = display.getUnidadeCB().getValue();
+				TipoSalaDTO tipoSalaDTO = display.getTipoSalaCB().getValue();
+				 display.getOperadorCapacidadeInstaladaCB().clearSelections();
+				 display.getOperadorCapacidadeMaximaCB().clearSelections();
+				 display.getOperadorCustoOperacaoCB().clearSelections();
+				 display.getCapacitadeInstaladaTF().setValue(null);
+				 display.getCapacitadeMaximaTF().setValue(null);
+				 display.getCustoOperacaoTF().setValue(null);
+				 display.getNumeroTF().setValue(null);
+				 display.getDescricaoTF().setValue(null);
+				 display.getAndarTF().setValue(null);
+				
 
 				service.getList( cenario, campusDTO, unidadeDTO,
 					(PagingLoadConfig) loadConfig, callback );
@@ -302,6 +326,16 @@ public class SalasPresenter
 			{
 				display.getUnidadeCB().setValue( null );
 				display.getCampusCB().setValue( null );
+				display.getTipoSalaCB().clearSelections();
+				 display.getOperadorCapacidadeInstaladaCB().clearSelections();
+				 display.getOperadorCapacidadeMaximaCB().clearSelections();
+				 display.getOperadorCustoOperacaoCB().clearSelections();
+				 display.getCapacitadeInstaladaTF().setValue(null);
+				 display.getCapacitadeMaximaTF().setValue(null);
+				 display.getCustoOperacaoTF().setValue(null);
+				 display.getNumeroTF().setValue(null);
+				 display.getDescricaoTF().setValue(null);
+				 display.getAndarTF().setValue(null);
 
 				display.getGrid().updateList();
 			}

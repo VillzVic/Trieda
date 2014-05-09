@@ -139,6 +139,7 @@ public class CampiView
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
 
 		this.nomeBuscaTextField = new TextField< String >();
 		this.nomeBuscaTextField.setFieldLabel( getI18nConstants().nome() );
@@ -146,7 +147,7 @@ public class CampiView
 		this.codigoBuscaTextField = new TextField< String >();
 		this.codigoBuscaTextField.setFieldLabel( getI18nConstants().codigo() );
 
-		this.estadoBuscaComboBox = new EstadoComboBox();
+		this.estadoBuscaComboBox = new EstadoComboBox(true);
 		this.estadoBuscaComboBox.setFieldLabel( getI18nConstants().estado() );
 
 		this.municipioBuscaTextField = new TextField< String >();
@@ -171,11 +172,11 @@ public class CampiView
 		this.filter.addField( nomeBuscaTextField );
 		this.filter.addField( codigoBuscaTextField ); 
 		this.filter.addField( municipioBuscaTextField ); 
-		//this.filter.addField( estadoBuscaComboBox ); 
+		this.filter.addField( estadoBuscaComboBox ); 
 		this.filter.addField( bairroBuscaTextField ); 
-		//this.filter.addMultiField(this.custoMedioCreditoBuscaOperadorCB, this.custoMedioCreditoBuscaTextField);
-		//this.filter.addField( otimizadoTaticoBuscaCB ); 
-		//this.filter.addField( otimizadoOperacionalBuscaCB ); 
+		this.filter.addMultiField(this.custoMedioCreditoBuscaOperadorCB, this.custoMedioCreditoBuscaTextField);
+		this.filter.addField( otimizadoTaticoBuscaCB ); 
+		this.filter.addField( otimizadoOperacionalBuscaCB ); 
 
 		this.panel.add( this.filter, bld );
 	}
@@ -281,5 +282,25 @@ public class CampiView
 	public Button getDisponibilidadeButton()
 	{
 		return this.disponibilidadeBT;
+	}
+
+	@Override
+	public NumberField getCustoMedioCreditoBuscaTextField() {
+		return custoMedioCreditoBuscaTextField;
+	}
+
+	@Override
+	public OperadorComboBox getCustoMedioCreditoBuscaOperadorCB() {
+		return custoMedioCreditoBuscaOperadorCB;
+	}
+
+	@Override
+	public ComboBoxBoolean getOtimizadoTaticoBuscaCB() {
+		return otimizadoTaticoBuscaCB;
+	}
+
+	@Override
+	public ComboBoxBoolean getOtimizadoOperacionalBuscaCB() {
+		return otimizadoOperacionalBuscaCB;
 	}
 }

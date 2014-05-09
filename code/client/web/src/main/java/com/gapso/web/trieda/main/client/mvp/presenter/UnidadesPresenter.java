@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelUnidadeFormView;
@@ -38,6 +39,7 @@ import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -67,6 +69,8 @@ public class UnidadesPresenter
 		SimpleGrid< UnidadeDTO > getGrid();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< UnidadeDTO > > proxy );
+		NumberField getCapSalasBuscaTextField();
+		OperadorComboBox getCapSalasBuscaOperadorCB();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -99,8 +103,10 @@ public class UnidadesPresenter
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				CampusDTO campusDTO = display.getCampusBuscaComboBox().getValue();
+				String operadorCustoMedioCredito = (display.getCapSalasBuscaOperadorCB().getValue()==null)?null: display.getCapSalasBuscaOperadorCB().getValue().getValue().getOperadorSQL();
+				Double custoMedioCredito = display.getCapSalasBuscaTextField().getValue() == null?null:display.getCapSalasBuscaTextField().getValue().doubleValue();
 			
-				service.getBuscaList( cenario, campusDTO, nome, codigo, (PagingLoadConfig)loadConfig, callback );
+				service.getBuscaList( cenario, campusDTO, nome, codigo, operadorCustoMedioCredito, custoMedioCredito,  (PagingLoadConfig)loadConfig, callback );
 			}
 		};
 
@@ -245,6 +251,8 @@ public class UnidadesPresenter
 				display.getNomeBuscaTextField().setValue( null );
 				display.getCodigoBuscaTextField().setValue( null );
 				display.getCampusBuscaComboBox().setValue( null );
+				display.getCapSalasBuscaTextField().setValue( null );
+				display.getCapSalasBuscaOperadorCB().setValue( null );
 
 				display.getGrid().updateList();
 			}

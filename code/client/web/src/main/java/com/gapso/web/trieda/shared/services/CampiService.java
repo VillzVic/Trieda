@@ -28,7 +28,9 @@ public interface CampiService
 	void save( CampusDTO campusDTO );
 	void remove( List< CampusDTO > campusDTOList );
 	PagingLoadResult<CampusDTO> getBuscaList( CenarioDTO cenario, String nome, String codigo,
-		String estadoString, String municipio, String bairro, PagingLoadConfig config );
+		String estadoString, String municipio, String bairro,
+		String operadorCustoMedioCredito, Double custoMedioCredito, Boolean otimizadoOperacional, Boolean otimizadoTatico,
+		PagingLoadConfig config );
 	CampusDTO getCampus( Long id );
 	List< DeslocamentoCampusDTO > getDeslocamentos( CenarioDTO cenarioDTO );
 	PagingLoadResult< HorarioDisponivelCenarioDTO > getHorariosDisponiveis( CampusDTO campusDTO );

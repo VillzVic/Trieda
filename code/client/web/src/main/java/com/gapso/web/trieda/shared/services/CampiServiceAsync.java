@@ -26,7 +26,9 @@ public interface CampiServiceAsync {
 	void save( CampusDTO campusDTO, AsyncCallback< Void > callback );
 	void remove( List< CampusDTO > campusDTOList, AsyncCallback< Void > callback );
 	void getBuscaList( CenarioDTO cenario, String nome, String codigo, String estadoString,
-		String municipio, String bairro, PagingLoadConfig config,
+		String municipio, String bairro,
+		String operadorCustoMedioCredito, Double custoMedioCredito, Boolean otimizadoOperacional, Boolean otimizadoTatico,
+		PagingLoadConfig config,
 		AsyncCallback< PagingLoadResult< CampusDTO > > callback );
 	void getCampus( Long id, AsyncCallback< CampusDTO > callback );
 	void getDeslocamentos( CenarioDTO cenarioDTO, AsyncCallback< List< DeslocamentoCampusDTO > > callback );

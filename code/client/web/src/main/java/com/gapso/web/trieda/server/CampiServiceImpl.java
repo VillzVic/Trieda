@@ -279,13 +279,14 @@ public class CampiServiceImpl extends RemoteService
 
 		return getBuscaList( cenarioDTO, null,
 			loadConfig.get( "query" ).toString(),
-			null, null, null, loadConfig);
+			null, null, null,null, null, null, null, loadConfig);
 	}
 
 	@Override
 	public PagingLoadResult< CampusDTO > getBuscaList( CenarioDTO cenarioDTO,
-		String nome, String codigo, String estadoString, String municipio,
-		String bairro, PagingLoadConfig config )
+		String nome, String codigo, String estadoString, String municipio,	String bairro,
+		String operadorCustoMedioCredito, Double custoMedioCredito, Boolean otimizadoOperacional, Boolean otimizadoTatico,
+		PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(
 			cenarioDTO.getId(), this.getInstituicaoEnsinoUser() );
@@ -322,7 +323,9 @@ public class CampiServiceImpl extends RemoteService
 
 		List< Campus > campi = Campus.findBy(
 			this.getInstituicaoEnsinoUser(), cenario, nome, codigo, estadoDomain,
-			municipio, bairro, config.getOffset(), config.getLimit(), orderBy );
+			municipio, bairro,
+			operadorCustoMedioCredito, custoMedioCredito, otimizadoOperacional, otimizadoTatico,
+			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Campus campus : campi )
 		{
@@ -335,7 +338,8 @@ public class CampiServiceImpl extends RemoteService
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Campus.count(
 			this.getInstituicaoEnsinoUser(), cenario,
-			nome, codigo, estadoDomain, municipio, bairro ) );
+			nome, codigo, estadoDomain, municipio, bairro,
+			operadorCustoMedioCredito, custoMedioCredito, otimizadoOperacional, otimizadoTatico) );
 
 		return result;
 	}

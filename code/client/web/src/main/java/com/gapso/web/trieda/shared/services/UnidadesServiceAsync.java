@@ -19,6 +19,7 @@ public interface UnidadesServiceAsync
 	void save( UnidadeDTO unidadeDTO, AsyncCallback< Void > callback );
 	void remove( List< UnidadeDTO > unidadeDTOList, AsyncCallback< Void > callback );
 	void getBuscaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, String nome, String codigo,
+			String operadorCapSalas, Double capSalas,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< UnidadeDTO > > callback );
 	void getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< UnidadeDTO > > callback );
 	void getUnidade( Long id, AsyncCallback< UnidadeDTO > callback );

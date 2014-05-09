@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.CampusFormView;
@@ -31,12 +32,14 @@ import com.gapso.web.trieda.shared.services.UnidadesServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.EstadoComboBox;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -58,6 +61,10 @@ public class CampiPresenter
 		TextField< String > getCodigoBuscaTextField();
 		TextField< String > getNomeBuscaTextField();
 		EstadoComboBox getEstadoBuscaComboBox();
+		ComboBoxBoolean getOtimizadoTaticoBuscaCB();
+		ComboBoxBoolean getOtimizadoOperacionalBuscaCB();
+		OperadorComboBox getCustoMedioCreditoBuscaOperadorCB();
+		NumberField getCustoMedioCreditoBuscaTextField();
 		TextField< String > getMunicipioBuscaTextField();
 		TextField< String > getBairroBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -97,12 +104,17 @@ public class CampiPresenter
 			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
-				String estado = null;
+				String estado = (display.getEstadoBuscaComboBox().getValue() == null)?"":display.getEstadoBuscaComboBox().getValue().getValue().name();
 				String municipio = display.getMunicipioBuscaTextField().getValue();
 				String bairro = display.getBairroBuscaTextField().getValue();
+				String operadorCustoMedioCredito = (display.getCustoMedioCreditoBuscaOperadorCB().getValue()==null)?null: display.getCustoMedioCreditoBuscaOperadorCB().getValue().getValue().getOperadorSQL();
+				Double custoMedioCredito = display.getCustoMedioCreditoBuscaTextField().getValue() == null?null:display.getCustoMedioCreditoBuscaTextField().getValue().doubleValue();
+				Boolean otimizadoOperacional= (display.getOtimizadoOperacionalBuscaCB().getValue()==null)?null:display.getOtimizadoOperacionalBuscaCB().getValue().getValue().getValue();
+				Boolean otimizadoTatico  = (display.getOtimizadoTaticoBuscaCB().getValue()==null)?null:display.getOtimizadoTaticoBuscaCB().getValue().getValue().getValue();
 
-				service.getBuscaList( cenario, nome, codigo, estado, municipio,
-					bairro, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, nome, codigo, estado, municipio,	bairro,
+						operadorCustoMedioCredito, custoMedioCredito, otimizadoOperacional, otimizadoTatico,
+						(PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -293,10 +305,13 @@ public class CampiPresenter
 				{
 					display.getNomeBuscaTextField().setValue( null );
 					display.getCodigoBuscaTextField().setValue( null );
-					display.getEstadoBuscaComboBox().setValueField( null );
+					display.getEstadoBuscaComboBox().clearSelections();
 					display.getMunicipioBuscaTextField().setValue( null );
 					display.getBairroBuscaTextField().setValue( null );
-
+					display.getOtimizadoTaticoBuscaCB().setValue( null );
+					display.getOtimizadoOperacionalBuscaCB().setValue( null );
+					display.getCustoMedioCreditoBuscaOperadorCB().setValue( null );
+					display.getCustoMedioCreditoBuscaTextField().setValue( null );
 					display.getGrid().updateList();
 				}
 			});

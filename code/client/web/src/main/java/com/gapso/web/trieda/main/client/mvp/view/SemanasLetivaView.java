@@ -118,6 +118,7 @@ public class SemanasLetivaView
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
 		this.codigoBuscaTextField = new TextField< String >();
 		this.codigoBuscaTextField.setFieldLabel( "Código" );
 		this.descricaoBuscaTextField = new TextField< String >();
@@ -129,7 +130,6 @@ public class SemanasLetivaView
 		this.tempoBuscaTextField.setWidth( "75" );
 		this.permiteIntervaloAulaBuscaCB = new ComboBoxBoolean();
 		this.permiteIntervaloAulaBuscaCB.setFieldLabel(getI18nConstants().permiteIntervaloAula());
-		//"Permite Intervalo Aula ?"
 		
 		
 		this.filter.addField( this.codigoBuscaTextField );

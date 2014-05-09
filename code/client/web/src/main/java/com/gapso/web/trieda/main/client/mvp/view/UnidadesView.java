@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -22,6 +23,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -34,6 +36,8 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	private TextField<String> nomeBuscaTextField;
 	private TextField<String> codigoBuscaTextField;
 	private CampusComboBox campusBuscaComboBox;
+	private NumberField capSalasBuscaTextField;
+	private OperadorComboBox capSalasBuscaOperadorCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button deslocamentoUnidadesBT;
@@ -96,11 +100,13 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	}
 
 	private void createFilter() {
-		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST);
+		BorderLayoutData bld = new BorderLayoutData(LayoutRegion.EAST, 350 );
 		bld.setMargins(new Margins(5, 5, 5, 0));
 		bld.setCollapsible(true);
 		
 		filter = new SimpleFilter();
+		filter.setLabelWidth(150);
+		
 		campusBuscaComboBox = new CampusComboBox(cenarioDTO);
 		campusBuscaComboBox.setFieldLabel(getI18nConstants().campus());
 		nomeBuscaTextField = new TextField<String>();
@@ -108,9 +114,17 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 		codigoBuscaTextField = new TextField<String>();
 		codigoBuscaTextField.setFieldLabel(getI18nConstants().codigo());
 		
+		capSalasBuscaOperadorCB = new OperadorComboBox();
+		capSalasBuscaOperadorCB.setFieldLabel(getI18nConstants().capacidadeMediaSalas());
+		capSalasBuscaOperadorCB.setWidth(100);
+		
+		capSalasBuscaTextField = new NumberField();
+		capSalasBuscaTextField.setWidth( "75" );
+		
 		filter.addField(campusBuscaComboBox);
 		filter.addField(nomeBuscaTextField);
 		filter.addField(codigoBuscaTextField);
+		filter.addMultiField(capSalasBuscaOperadorCB, capSalasBuscaTextField);
 		
 		panel.add(filter, bld);
 	}
@@ -193,5 +207,15 @@ public class UnidadesView extends MyComposite implements UnidadesPresenter.Displ
 	@Override
 	public Button getDisponibilidadeButton() {
 		return disponibilidadeBT;
+	}
+
+	@Override
+	public NumberField getCapSalasBuscaTextField() {
+		return capSalasBuscaTextField;
+	}
+
+	@Override
+	public OperadorComboBox getCapSalasBuscaOperadorCB() {
+		return capSalasBuscaOperadorCB;
 	}
 }
