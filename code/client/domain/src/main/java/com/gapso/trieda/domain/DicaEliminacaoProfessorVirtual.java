@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.PersistenceContext;
@@ -60,6 +61,9 @@ public class DicaEliminacaoProfessorVirtual
     private Professor professor;
     
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH })
+	@JoinTable(name="ATENDIMENTO_OPERACIONAL_DICAS_ELIMINACAO",
+	joinColumns=@JoinColumn(name="DIC_PRV_ID"),
+	inverseJoinColumns=@JoinColumn(name="ATP_ID"))
     private Set<AtendimentoOperacional> atendimentosOperacional = new HashSet<AtendimentoOperacional>();
 
 	public Long getId() {
