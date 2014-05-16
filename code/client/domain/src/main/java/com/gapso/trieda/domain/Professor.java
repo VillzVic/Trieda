@@ -655,8 +655,6 @@ public class Professor
 				where += "  (select AVG(nota) from ProfessorDisciplina p where p.professor = o) = :notaDesempenho and ";
 		}
 		
-		
-		
 		if(cargaHorariaAnterior != null){
 			if(operadorCargaHorariaAnterior != null)
 				where += "  o.creditoAnterior " + operadorCargaHorariaAnterior + " :creditoAnterior and ";
@@ -685,7 +683,19 @@ public class Professor
 				where += "  o.minCreditosDia = :minCreditosDia and ";
 		}
 		
-		//String operadorTotalCreditosSemanais,Integer totalCreditosSemanais, String operadorCargaHorariaSemanal, Integer cargaHorariaSemanal,
+		if(totalCreditosSemanais != null){
+			if(operadorTotalCreditosSemanais != null)
+				where += " (select count(p) from AtendimentoOperacional p where p.professor = o )  " + operadorTotalCreditosSemanais + " :totalCreditosSemanais and ";
+			else
+				where += " (select count(p) from AtendimentoOperacional p where p.professor = o ) = :totalCreditosSemanais and ";
+		}
+		
+		if(cargaHorariaSemanal != null){
+			if(operadorCargaHorariaSemanal != null)
+				where += " (select sum(a.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) from AtendimentoOperacional a where a.professor = o )  " + operadorCargaHorariaSemanal + " :cargaHorariaSemanal and ";
+			else
+				where += " (select sum(a.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) from AtendimentoOperacional a where a.professor = o ) = :cargaHorariaSemanal and ";
+		}
 
 		Query q = entityManager().createQuery(
 			" SELECT COUNT ( o ) FROM Professor o " +
@@ -747,6 +757,14 @@ public class Professor
 		
 		if(minCreditosSemanais != null){
 			q.setParameter("minCreditosDia", minCreditosSemanais);
+		}
+		
+		if(totalCreditosSemanais != null){
+			q.setParameter("totalCreditosSemanais", totalCreditosSemanais);
+		}
+		
+		if(cargaHorariaSemanal != null){
+			q.setParameter("cargaHorariaSemanal", cargaHorariaSemanal);
 		}
 
 		return ( (Number) q.getSingleResult() ).intValue();
@@ -844,9 +862,9 @@ public class Professor
 		
 		if(totalCreditosSemanais != null){
 			if(operadorTotalCreditosSemanais != null)
-				where += " (select sum(p) from AtendimentoOperacional p where p.professor = o )  " + operadorTotalCreditosSemanais + " :totalCreditosSemanais and ";
+				where += " (select count(p) from AtendimentoOperacional p where p.professor = o )  " + operadorTotalCreditosSemanais + " :totalCreditosSemanais and ";
 			else
-				where += " (select sum(p) from AtendimentoOperacional p where p.professor = o ) = :totalCreditosSemanais and ";
+				where += " (select count(p) from AtendimentoOperacional p where p.professor = o ) = :totalCreditosSemanais and ";
 		}
 		
 		if(cargaHorariaSemanal != null){
@@ -855,8 +873,6 @@ public class Professor
 			else
 				where += " (select sum(a.HorarioDisponivelCenario.horarioAula.semanaLetiva.tempo) from AtendimentoOperacional a where a.professor = o ) = :cargaHorariaSemanal and ";
 		}
-		//atendimento.getHorarioDisponivelCenario().getHorarioAula().getSemanaLetiva().getTempo();
-		//String operadorTotalCreditosSemanais,Integer totalCreditosSemanais, String operadorCargaHorariaSemanal, Integer cargaHorariaSemanal,
 
 		if ( orderBy != null )
 		{
