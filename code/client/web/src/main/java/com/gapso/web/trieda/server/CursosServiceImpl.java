@@ -129,13 +129,21 @@ public class CursosServiceImpl
 
 	@Override
 	public ListLoadResult<CursoDTO> getList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig) {
-		return getBuscaList(cenarioDTO, null, loadConfig.get("query").toString(), null,
+		return getBuscaList(cenarioDTO, null, loadConfig.get("query").toString(), null, 
+				null, null, null, null, null, null, null, null, null, null, null,
 				loadConfig);
 	}
 
 	@Override
 	public PagingLoadResult< CursoDTO > getBuscaList( CenarioDTO cenarioDTO, String nome,
-		String codigo, TipoCursoDTO tipoCursoDTO, PagingLoadConfig config )
+		String codigo, TipoCursoDTO tipoCursoDTO, 
+		String operadorMinPercentualDoutor, Integer minPercentualDoutor,
+		String operadorMinPercentualMestre, Integer minPercentualMestre,
+		String operadorMinTempoIntegralParcial, Integer minTempoIntegralParcial,
+		String operadorMinTempoIntegral, Integer minTempoIntegral,
+		String operadorMaxDisciplinasProfessor, Integer maxDisciplinasProfessor,
+		Boolean maisDeUmaDisciplinaProfessor,
+		PagingLoadConfig config )
 	{
 		List< CursoDTO > list = new ArrayList< CursoDTO >();
 		String orderBy = config.getSortField();
@@ -162,7 +170,14 @@ public class CursosServiceImpl
 		}
 
 		List< Curso > listDomains = Curso.findBy( getInstituicaoEnsinoUser(), cenario,
-			codigo, nome, tipoCurso, config.getOffset(), config.getLimit(), orderBy );
+			codigo, nome, tipoCurso, 
+			operadorMinPercentualDoutor, minPercentualDoutor,
+			operadorMinPercentualMestre, minPercentualMestre,
+			operadorMinTempoIntegralParcial, minTempoIntegralParcial,
+			operadorMinTempoIntegral, minTempoIntegral,
+			operadorMaxDisciplinasProfessor, maxDisciplinasProfessor,
+			maisDeUmaDisciplinaProfessor,
+			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Curso curso : listDomains )
 		{
@@ -176,7 +191,13 @@ public class CursosServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Curso.count(
-			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoCurso ) );
+			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoCurso,
+			operadorMinPercentualDoutor, minPercentualDoutor,
+			operadorMinPercentualMestre, minPercentualMestre,
+			operadorMinTempoIntegralParcial, minTempoIntegralParcial,
+			operadorMinTempoIntegral, minTempoIntegral,
+			operadorMaxDisciplinasProfessor, maxDisciplinasProfessor,
+			maisDeUmaDisciplinaProfessor) );
 
 		return result;
 	}

@@ -19,7 +19,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface ProfessoresDisciplinaService extends RemoteService {
 
 	ProfessorDisciplinaDTO getProfessorDisciplina(Long id);
-	PagingLoadResult<ProfessorDisciplinaDTO> getBuscaList(CenarioDTO cenarioDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config);
+	PagingLoadResult<ProfessorDisciplinaDTO> getBuscaList(CenarioDTO cenarioDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, 
+			String cpf, String nome,String  operadorPreferencia,Integer preferencia,String  operadorNotaDesempenho, Integer notaDesempenho, PagingLoadConfig config);
 	void save(ProfessorDisciplinaDTO professorDisciplinaDTO);
 	void remove(List<ProfessorDisciplinaDTO> professorDisciplinaDTOList);
 	void save(ProfessorDTO professorDTO, List<ProfessorDisciplinaDTO> professorDisciplinasDTO);

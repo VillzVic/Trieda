@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaRequisitoDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CurriculosServiceAsync {
@@ -24,8 +25,9 @@ public interface CurriculosServiceAsync {
 	void saveDisciplina(CurriculoDTO curriculoDTO, CurriculoDisciplinaDTO curriculoDisciplinaDTO, AsyncCallback<Void> callback);
 	
 	void getCurriculo( Long id, AsyncCallback< CurriculoDTO > callback );
-	void getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CurriculoDTO > > callback );
-	void getBuscaList( CenarioDTO cenarioDTO, CursoDTO cursoDTO, String codigo, String descricao,
+	void getList( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO, BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CurriculoDTO > > callback );
+	void getBuscaList( CenarioDTO cenarioDTO, CursoDTO cursoDTO, SemanaLetivaDTO semanaLetivaDTO, String codigo, String descricao,
+			String periodo, 
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< CurriculoDTO > > callback );
 	void save( CurriculoDTO curriculoDTO, AsyncCallback< Void > callback );
 	void remove( List< CurriculoDTO> curriculoDTOList, AsyncCallback< Void > callback );
@@ -48,6 +50,7 @@ public interface CurriculosServiceAsync {
 	void removeDisciplinasCoRequisitos(CenarioDTO cenarioDTO, List<DisciplinaRequisitoDTO> disciplinasRequisitosDTO,
 			AsyncCallback<Void> callback);
 	void getAlunosDisciplinasCursadasList(CenarioDTO cenarioDTO, DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO,
+			CursoDTO curso, String matricula,
 			Integer periodo, PagingLoadConfig config, AsyncCallback<PagingLoadResult<AlunoDisciplinaCursadaDTO>> callback);
 	void saveAlunoDisciplinaCursada(CenarioDTO cenarioDTO, AlunoDTO alunoDTO,
 			List<CurriculoDisciplinaDTO> curriculosDisciplinasDTO, AsyncCallback<Void> callback);

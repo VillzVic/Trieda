@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.OfertaFormView;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
@@ -39,6 +40,7 @@ import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
@@ -63,6 +65,8 @@ public class OfertasPresenter
 		CampusComboBox getCampusBuscaComboBox();
 		CursoComboBox getCursoBuscaComboBox();
 		CurriculoComboBox getCurriculoBuscaComboBox();
+		NumberField getReceitaCreditoField();
+		OperadorComboBox getReceitaCreditoOperadorCB();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< OfertaDTO > getGrid();
@@ -100,9 +104,12 @@ public class OfertasPresenter
 				CampusDTO campusDTO = display.getCampusBuscaComboBox().getValue();
 				CursoDTO cursoDTO = display.getCursoBuscaComboBox().getValue();
 				CurriculoDTO curriculoDTO = display.getCurriculoBuscaComboBox().getValue();
+				String receitaCreditoOperador = (display.getReceitaCreditoOperadorCB().getValue()==null)?null: display.getReceitaCreditoOperadorCB().getValue().getValue().getOperadorSQL();
+				Double receitaCredito = display.getReceitaCreditoField().getValue() == null?null:display.getReceitaCreditoField().getValue().doubleValue();
+				
 
 				service.getBuscaList( cenarioDTO, turnoDTO, campusDTO, cursoDTO,
-					curriculoDTO, (PagingLoadConfig) loadConfig, callback );
+					curriculoDTO,receitaCreditoOperador, receitaCredito, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -267,6 +274,8 @@ public class OfertasPresenter
 				display.getCampusBuscaComboBox().setValue( null );
 				display.getCursoBuscaComboBox().setValue( null );
 				display.getCurriculoBuscaComboBox().setValue( null );
+				display.getReceitaCreditoField().setValue( null );
+				display.getReceitaCreditoOperadorCB().setValue( null );
 				display.getGrid().updateList();
 			}
 		});

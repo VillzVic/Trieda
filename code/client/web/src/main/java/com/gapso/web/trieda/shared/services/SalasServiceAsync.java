@@ -24,7 +24,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface SalasServiceAsync
 {
 	void getList( CenarioDTO cenarioDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO,
-		PagingLoadConfig config, AsyncCallback< PagingLoadResult< SalaDTO > > callback );
+			TipoSalaDTO tipoSalaDTO, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
+			String operadorCapacidadeMaxima, Integer capacidadeMaxima, String operadorCustoOperacao, Double custoOperacao,
+			String  numero, String descricao, String andar,
+			PagingLoadConfig config, AsyncCallback< PagingLoadResult< SalaDTO > > callback );
 	void getList( AsyncCallback< ListLoadResult< SalaDTO > > callback );
 	void save( SalaDTO salaDTO, AsyncCallback< Void > callback );
 	void remove( List< SalaDTO > salaDTOList, AsyncCallback< Void > callback );

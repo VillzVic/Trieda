@@ -24,9 +24,19 @@ public interface ProfessoresServiceAsync
 {
 	void getProfessor( Long id, AsyncCallback< ProfessorDTO > callback );
 	void getList( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< ProfessorDTO > > callback );
-	void getBuscaList( CenarioDTO cenarioDTO, String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
-		AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config,
-		AsyncCallback< PagingLoadResult< ProfessorDTO > > callback );
+
+	void getBuscaList(CenarioDTO cenarioDTO, String cpf, String nome,
+			TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
+			AreaTitulacaoDTO areaTitulacaoDTO, String operadorCargaHorariaMin,
+			Integer cargaHorariaMin, String operadorCargaHorariaMax,
+			Integer cargaHorariaMax, String operadorNotaDesempenho,
+			Double notaDesempenho, String operadorCargaHorariaAnterior,
+			Integer cargaHorariaAnterior, String operadorCustoCreditoSemanal,
+			Double custoCreditoSemanal, String operadorMaxDiasSemana,
+			Integer maxDiasSemana, String operadorMinCreditosSemanais,Integer minCreditosSemanais,
+			String operadorTotalCreditosSemanais,Long totalCreditosSemanais, String operadorCargaHorariaSemanal, Long cargaHorariaSemanal,
+			PagingLoadConfig config,
+			AsyncCallback<PagingLoadResult<ProfessorDTO>> callback);
 	void getTipoContrato( Long id, AsyncCallback< TipoContratoDTO > callback );
 	void getTiposContratoAll( CenarioDTO cenarioDTO, AsyncCallback< ListLoadResult< TipoContratoDTO > > callback );
 	void getTitulacao( Long id, AsyncCallback< TitulacaoDTO > callback );

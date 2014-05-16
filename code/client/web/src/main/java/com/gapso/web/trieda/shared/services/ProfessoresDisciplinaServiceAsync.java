@@ -15,7 +15,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ProfessoresDisciplinaServiceAsync {
 
 	void getProfessorDisciplina(Long id, AsyncCallback<ProfessorDisciplinaDTO> callback);
-	void getBuscaList(CenarioDTO cenarioDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDisciplinaDTO>> callback);
+	void getBuscaList(CenarioDTO cenarioDTO, ProfessorDTO professorDTO, DisciplinaDTO disciplinaDTO, 
+			String cpf, String nome,String  operadorPreferencia,Integer preferencia,String  operadorNotaDesempenho, Integer notaDesempenho,
+			PagingLoadConfig config, AsyncCallback<PagingLoadResult<ProfessorDisciplinaDTO>> callback);
 	void save(ProfessorDisciplinaDTO professorDisciplinaDTO, AsyncCallback<Void> callback);
 	void remove(List<ProfessorDisciplinaDTO> professorDisciplinaDTOList, AsyncCallback<Void> callback);
 	void save(ProfessorDTO professorDTO, List<ProfessorDisciplinaDTO> professorDisciplinasDTO, AsyncCallback<Void> callback);

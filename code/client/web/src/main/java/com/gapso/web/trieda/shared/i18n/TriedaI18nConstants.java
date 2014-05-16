@@ -61,6 +61,7 @@ public interface TriedaI18nConstants
 	String custoMedioCredito();
 	String custoMedioCreditoExcel();
 	String custoOperacaoCred();
+	String criadoPeloTrieda();
 	String dbVersion();
 	String demanda();
 	String demandaDeAlunos();
@@ -177,6 +178,7 @@ public interface TriedaI18nConstants
 	String usaSabado();
 	String usaDomingo();
 	String valorCredito();
+	String virtual();
 	String otimizadoTatico();
 	String otimizadoOperacional();
 	String tipoDisciplina();

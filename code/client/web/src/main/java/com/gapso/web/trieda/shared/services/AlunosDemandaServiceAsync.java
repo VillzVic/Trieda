@@ -31,7 +31,8 @@ public interface AlunosDemandaServiceAsync
 	void getResumoFaixaDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, List<ParDTO<Integer, Integer>> faixas,
 			AsyncCallback<List<AtendimentoFaixaDemandaDTO>> callback );
 	void getAlunosDemandaList( CenarioDTO cenarioDTO, CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO, TurnoDTO turnoDTO,
-			DisciplinaDTO disciplinaDTO, PagingLoadConfig config, AsyncCallback<PagingLoadResult<AlunoDemandaDTO>> callback );
+			DisciplinaDTO disciplinaDTO, Integer  periodo,String matricula,String nome,
+			Integer alunoPrioridade, Boolean atendido, PagingLoadConfig config, AsyncCallback<PagingLoadResult<AlunoDemandaDTO>> callback );
 	void getResumoAtendimentosDisciplinaList( CenarioDTO cenarioDTO, String codigo, CampusDTO campusDTO, CursoDTO cursoDTO,
 			AsyncCallback<ListLoadResult<ResumoMatriculaDTO>> callback );
 }

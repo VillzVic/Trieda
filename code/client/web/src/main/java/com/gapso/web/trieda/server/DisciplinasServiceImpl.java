@@ -380,7 +380,7 @@ public class DisciplinasServiceImpl
 		CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig )
 	{
 		return getBuscaList( cenarioDTO, null, loadConfig.get(
-			"query" ).toString(), null, loadConfig );
+			"query" ).toString(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, loadConfig );
 	}
 	
 	@Override
@@ -428,9 +428,12 @@ public class DisciplinasServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult< DisciplinaDTO > getBuscaList(
-		CenarioDTO cenarioDTO, String nome, String codigo,
+	public PagingLoadResult< DisciplinaDTO > getBuscaList(	CenarioDTO cenarioDTO, String nome, String codigo,
 		TipoDisciplinaDTO tipoDisciplinaDTO,
+		String operadorCreditosTeorico, Integer creditosTeorico, String  operadorCreditosPratico,Integer creditosPratico,
+		Boolean exigeLaboratorio,String operadorMaxAlunosTeorico,Integer maxAlunosTeorico, 
+		String  operadorMaxAlunosPratico,Integer maxAlunosPratico,
+		Boolean aulasContinuas, Boolean professorUnico,  Boolean usaSabado,Boolean usaDomingo, String dificuldade,
 		PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
@@ -460,6 +463,9 @@ public class DisciplinasServiceImpl
 
 		List< Disciplina > disciplinas = Disciplina.findBy(
 			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoDisciplina,
+			operadorCreditosTeorico, creditosTeorico, operadorCreditosPratico, creditosPratico,
+			exigeLaboratorio, operadorMaxAlunosTeorico, maxAlunosTeorico, operadorMaxAlunosPratico, maxAlunosPratico,
+			aulasContinuas, professorUnico, usaSabado, usaDomingo, dificuldade,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Disciplina disciplina : disciplinas )
@@ -475,7 +481,10 @@ public class DisciplinasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Disciplina.count(
-			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoDisciplina ) );
+			getInstituicaoEnsinoUser(), cenario, codigo, nome, tipoDisciplina,
+			operadorCreditosTeorico, creditosTeorico, operadorCreditosPratico, creditosPratico,
+			exigeLaboratorio, operadorMaxAlunosTeorico, maxAlunosTeorico, operadorMaxAlunosPratico, maxAlunosPratico,
+			aulasContinuas, professorUnico, usaSabado, usaDomingo, dificuldade) );
 
 		return result;
 	}

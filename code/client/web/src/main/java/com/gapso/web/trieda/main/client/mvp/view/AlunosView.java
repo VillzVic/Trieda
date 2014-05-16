@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -20,6 +21,7 @@ import com.gapso.web.trieda.shared.dtos.AlunoDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -34,6 +36,10 @@ public class AlunosView
 	private SimpleFilter filter;
 	private TextField< String > nomeBuscaTextField;
 	private TextField< String > matriculaBuscaTextField;
+	private ComboBoxBoolean formando;
+	private ComboBoxBoolean virtual;
+	private NumberField periodoField;
+	private ComboBoxBoolean criadoPeloTrieda;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
@@ -87,11 +93,11 @@ public class AlunosView
 		List< ColumnConfig > list
 			= new ArrayList< ColumnConfig >();
 
-		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_NOME, "Nome", 400 ) );
-		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, "Matrícula" , 150 ) );
-		list.add( new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_FORMANDO, "Formando?" , 100 ) );
-		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_PERIODO, "Periodo" , 100 ) );
-		CheckColumnConfig column = new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_VIRTUAL, "Virtual?" , 60 );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_NOME, getI18nConstants().nome(), 400 ) );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_MATRICULA, getI18nConstants().matriculaAluno() , 150 ) );
+		list.add( new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_FORMANDO, getI18nConstants().formando() , 100 ) );
+		list.add( new ColumnConfig( AlunoDTO.PROPERTY_ALUNO_PERIODO, getI18nConstants().periodo() , 100 ) );
+		CheckColumnConfig column = new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_VIRTUAL, getI18nConstants().virtual() , 60 );
 		column.setToolTip("Alunos virtuais são aqueles ainda inexistentes, porém, que a Instituição de Ensino" +
 				" deseja simular a sua presenção, por exemplo, alunos entrantes. Além disso, estes alunos virtuais" +
 				" podem ser criados automaticamente pelo Trieda através do Módulo de Geração de Demanda da aba de" +
@@ -99,7 +105,7 @@ public class AlunosView
 				" Ofertas e Demandas o Trieda irá criar, automaticamente, a quantidade informada de alunos." +
 				" Nestes casos, além do aluno ser considerado virtual o mesmo terá o campo Criado por Trieda? como marcado.");
 		list.add( column );
-		CheckColumnConfig column2 = new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_CRIADO_TRIEDA, "Criado por Trieda?" , 100 );
+		CheckColumnConfig column2 = new CheckColumnConfig( AlunoDTO.PROPERTY_ALUNO_CRIADO_TRIEDA, getI18nConstants().criadoPeloTrieda() , 100 );
 		column2.setToolTip("Alunos virtuais são aqueles ainda inexistentes, porém, que a Instituição de Ensino" +
 				" deseja simular a sua presenção, por exemplo, alunos entrantes. Além disso, estes alunos virtuais" +
 				" podem ser criados automaticamente pelo Trieda através do Módulo de Geração de Demanda da aba de" +
@@ -113,11 +119,13 @@ public class AlunosView
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
+		
 
 		this.nomeBuscaTextField = new TextField< String >();
 		this.nomeBuscaTextField.setFieldLabel( "Nome" );
@@ -126,6 +134,26 @@ public class AlunosView
 		this.matriculaBuscaTextField = new TextField< String >();
 		this.matriculaBuscaTextField.setFieldLabel( "Matricula" );
 		this.filter.addField( this.matriculaBuscaTextField );
+		
+		this.formando = new ComboBoxBoolean();
+		this.formando.setFieldLabel(getI18nConstants().formando());
+		
+		this.periodoField = new NumberField();
+		this.periodoField.setFieldLabel(getI18nConstants().periodo());
+		
+		this.virtual = new ComboBoxBoolean();
+		this.virtual.setFieldLabel(getI18nConstants().virtual());
+		
+		this.criadoPeloTrieda = new ComboBoxBoolean();
+		this.criadoPeloTrieda.setFieldLabel(getI18nConstants().criadoPeloTrieda());
+		
+		this.matriculaBuscaTextField = new TextField< String >();
+		this.matriculaBuscaTextField.setFieldLabel( "Matricula" );
+		this.filter.addField( this.matriculaBuscaTextField );
+		this.filter.addField( this.formando );
+		this.filter.addField( this.periodoField );
+		this.filter.addField( this.virtual );
+		this.filter.addField( this.criadoPeloTrieda );
 
 		this.panel.add( this.filter, bld );
 	}
@@ -201,5 +229,25 @@ public class AlunosView
 	public Button getResetBuscaButton()
 	{
 		return this.filter.getResetButton();
+	}
+
+	@Override
+	public ComboBoxBoolean getFormando() {
+		return formando;
+	}
+
+	@Override
+	public ComboBoxBoolean getVirtual() {
+		return virtual;
+	}
+
+	@Override
+	public NumberField getPeriodoField() {
+		return periodoField;
+	}
+
+	@Override
+	public ComboBoxBoolean getCriadoPeloTrieda() {
+		return criadoPeloTrieda;
 	}
 }

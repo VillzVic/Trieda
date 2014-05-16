@@ -98,7 +98,9 @@ public class AlunosDemandaServiceImpl
 	@Override
 	public PagingLoadResult< AlunoDemandaDTO > getAlunosDemandaList( CenarioDTO cenarioDTO,
 			CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
-			TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config )
+			TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO,
+			 Integer  periodo,String matricula,String nome,
+				Integer alunoPrioridade, Boolean atendido, PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
@@ -152,6 +154,7 @@ public class AlunosDemandaServiceImpl
 	
 		List< AlunoDemanda > listDomains = AlunoDemanda.findBy( getInstituicaoEnsinoUser(),
 				cenario, campus, curso, curriculo, turno, disciplina,
+				 periodo, matricula, nome, alunoPrioridade, atendido,
 				config.getOffset(), config.getLimit(), orderBy );
 		
 		list.addAll( ConvertBeans.toListAlunoDemandaDTO(listDomains) );
@@ -161,7 +164,8 @@ public class AlunosDemandaServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( AlunoDemanda.count( getInstituicaoEnsinoUser(),
-			cenario, campus, curso, curriculo, turno, disciplina ) );
+			cenario, campus, curso, curriculo, turno, disciplina,
+			 periodo, matricula, nome, alunoPrioridade, atendido) );
 	
 		return result;
 	}

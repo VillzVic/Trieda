@@ -28,8 +28,20 @@ public interface ProfessoresService
 {
 	ProfessorDTO getProfessor( Long id );
 	ListLoadResult< ProfessorDTO > getList( CenarioDTO cenarioDTO );
-	PagingLoadResult< ProfessorDTO > getBuscaList( CenarioDTO cenarioDTO, String cpf, TipoContratoDTO tipoContratoDTO,
-		TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config );
+
+	PagingLoadResult<ProfessorDTO> getBuscaList(CenarioDTO cenarioDTO,
+			String cpf, String nome, TipoContratoDTO tipoContratoDTO,
+			TitulacaoDTO titulacaoDTO, AreaTitulacaoDTO areaTitulacaoDTO,
+			String operadorCargaHorariaMin, Integer cargaHorariaMin,
+			String operadorCargaHorariaMax, Integer cargaHorariaMax,
+			String operadorNotaDesempenho, Double notaDesempenho,
+			String operadorCargaHorariaAnterior, Integer cargaHorariaAnterior,
+			String operadorCustoCreditoSemanal, Double custoCreditoSemanal,
+			String operadorMaxDiasSemana, Integer maxDiasSemana,
+			String operadorMinCreditosSemanais, Integer minCreditosSemanais,
+			String operadorTotalCreditosSemanais,
+			Long totalCreditosSemanais, String operadorCargaHorariaSemanal,
+			Long cargaHorariaSemanal, PagingLoadConfig config);
 	TipoContratoDTO getTipoContrato( Long id );
 	ListLoadResult< TipoContratoDTO > getTiposContratoAll( CenarioDTO cenarioDTO );
 	TitulacaoDTO getTitulacao( Long id );

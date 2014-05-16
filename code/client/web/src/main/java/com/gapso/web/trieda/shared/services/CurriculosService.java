@@ -14,6 +14,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaRequisitoDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -44,9 +45,9 @@ public interface CurriculosService
 	void save(CurriculoDTO curriculoDTO) throws TriedaException;
 	
 	CurriculoDTO getCurriculo( Long id );
-	ListLoadResult< CurriculoDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig );
-	PagingLoadResult< CurriculoDTO > getBuscaList( CenarioDTO cenarioDTO, CursoDTO cursoDTO,
-		String codigo, String descricao, PagingLoadConfig config );
+	ListLoadResult< CurriculoDTO > getList( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO, BasePagingLoadConfig loadConfig );
+	PagingLoadResult< CurriculoDTO > getBuscaList( CenarioDTO cenarioDTO, CursoDTO cursoDTO, SemanaLetivaDTO semanaLetivaDTO,
+		String codigo, String descricao, String periodo,   PagingLoadConfig config );
 	void remove( List< CurriculoDTO > curriculoDTOList );
 	ListLoadResult< CurriculoDisciplinaDTO > getDisciplinasList( CurriculoDTO curriculoDTO );
 	void removeDisciplina( List< CurriculoDisciplinaDTO > curriculoDisciplinaDTOList );
@@ -64,7 +65,8 @@ public interface CurriculosService
 			DisciplinaDTO disciplinaDTO);
 	void removeDisciplinasCoRequisitos(CenarioDTO cenarioDTO, List<DisciplinaRequisitoDTO> disciplinasRequisitosDTO);
 	PagingLoadResult<AlunoDisciplinaCursadaDTO> getAlunosDisciplinasCursadasList( CenarioDTO cenarioDTO,
-			DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO, Integer periodo, PagingLoadConfig config );
+			DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO, 
+			CursoDTO curso, String matricula, Integer periodo, PagingLoadConfig config );
 	void saveAlunoDisciplinaCursada(CenarioDTO cenarioDTO, AlunoDTO alunoDTO,
 			List<CurriculoDisciplinaDTO> curriculosDisciplinasDTO);
 	void removeAlunosDisciplinasCursadas(CenarioDTO cenarioDTO,

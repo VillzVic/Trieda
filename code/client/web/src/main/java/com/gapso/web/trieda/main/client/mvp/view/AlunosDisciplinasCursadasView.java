@@ -10,6 +10,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -21,6 +22,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
@@ -37,6 +39,8 @@ public class AlunosDisciplinasCursadasView
 	private NumberField periodoBuscaTextField;
 	private DisciplinaAutoCompleteBox disciplinaBuscaComboBox;
 	private CurriculoComboBox curriculoBuscaComboBox;
+	private TextField<String> matriculaBuscaTextField;
+	private CursoComboBox cursoBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
@@ -101,21 +105,28 @@ public class AlunosDisciplinasCursadasView
 	
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 	
 		this.filter = new SimpleFilter();
+		this.filter.setFieldWidth(125);
+		
 		this.periodoBuscaTextField = new NumberField();
 		this.periodoBuscaTextField.setFieldLabel("Periodo");
 		this.disciplinaBuscaComboBox = new DisciplinaAutoCompleteBox( cenarioDTO );
 		this.disciplinaBuscaComboBox.setFieldLabel("Disciplina");
 		this.curriculoBuscaComboBox = new CurriculoComboBox( cenarioDTO );
 		this.curriculoBuscaComboBox.setFieldLabel("Currículo");
+		this.matriculaBuscaTextField = new TextField< String >();
+		this.matriculaBuscaTextField.setFieldLabel( "Matricula" );
+		this.cursoBuscaCB = new CursoComboBox( cenarioDTO );
 		
 		this.filter.addField( this.periodoBuscaTextField );
 		this.filter.addField( this.disciplinaBuscaComboBox );
 		this.filter.addField( this.curriculoBuscaComboBox );
+		this.filter.addField( this.matriculaBuscaTextField );
+		this.filter.addField( this.cursoBuscaCB );
 	
 		this.panel.add( this.filter, bld );
 	}
@@ -191,5 +202,15 @@ public class AlunosDisciplinasCursadasView
 	public Button getResetBuscaButton()
 	{
 		return this.filter.getResetButton();
+	}
+
+	@Override
+	public TextField<String> getMatriculaBuscaTextField() {
+		return matriculaBuscaTextField;
+	}
+
+	@Override
+	public CursoComboBox getCursoBuscaCB() {
+		return cursoBuscaCB;
 	}
 }

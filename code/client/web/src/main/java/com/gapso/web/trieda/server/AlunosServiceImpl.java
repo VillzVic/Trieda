@@ -56,7 +56,8 @@ public class AlunosServiceImpl
 	}
 	
 	@Override
-	public PagingLoadResult<AlunoDTO> getBuscaList(CenarioDTO cenarioDTO, String nome, String matricula, PagingLoadConfig config) {
+	public PagingLoadResult<AlunoDTO> getBuscaList(CenarioDTO cenarioDTO, String nome, String matricula,
+			Boolean formando,Integer periodo,Boolean virtual,Boolean criadoPeloTrieda,PagingLoadConfig config) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId(),this.getInstituicaoEnsinoUser());
 
 		List<AlunoDTO> list = new ArrayList<AlunoDTO>();
@@ -71,14 +72,14 @@ public class AlunosServiceImpl
 			}
 		}
 
-		List<Aluno> alunos = Aluno.findBy(this.getInstituicaoEnsinoUser(),cenario,nome,matricula,config.getOffset(),config.getLimit(),orderBy);
+		List<Aluno> alunos = Aluno.findBy(this.getInstituicaoEnsinoUser(),cenario,nome,matricula,formando,periodo,virtual,criadoPeloTrieda,config.getOffset(),config.getLimit(),orderBy);
 		for (Aluno aluno : alunos) {
 			list.add(ConvertBeans.toAlunoDTO(aluno));
 		}
 
 		BasePagingLoadResult<AlunoDTO> result = new BasePagingLoadResult<AlunoDTO> (list);
 		result.setOffset(config.getOffset());
-		result.setTotalLength(Aluno.count(this.getInstituicaoEnsinoUser(),cenario,nome,matricula));
+		result.setTotalLength(Aluno.count(this.getInstituicaoEnsinoUser(),cenario,nome,matricula,formando,periodo,virtual,criadoPeloTrieda));
 
 		return result;
 	}

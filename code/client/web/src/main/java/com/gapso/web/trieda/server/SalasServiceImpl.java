@@ -169,8 +169,11 @@ public class SalasServiceImpl
 	}
 
 	@Override
-	public PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, CampusDTO campusDTO,
-		UnidadeDTO unidadeDTO, PagingLoadConfig config )
+	public PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO, 
+			TipoSalaDTO tipoSalaDTO, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
+			String operadorCapacidadeMaxima, Integer capacidadeMaxima, String operadorCustoOperacao, Double custoOperacao,
+			String  numero, String descricao, String andar,
+		PagingLoadConfig config )
 	{
 		List< SalaDTO > list = new ArrayList< SalaDTO >();
 		String orderBy = config.getSortField();
@@ -194,9 +197,15 @@ public class SalasServiceImpl
 
 		Unidade unidade = unidadeDTO == null ? null :
 			Unidade.find( unidadeDTO.getId(), getInstituicaoEnsinoUser() );
+		
+		TipoSala tipoSala = tipoSalaDTO == null ? null :
+			TipoSala.find(tipoSalaDTO.getId(), getInstituicaoEnsinoUser());
 
 		List< Sala > listDomains = Sala.find( getInstituicaoEnsinoUser(), cenario,
-			campus, unidade, config.getOffset(), config.getLimit(), orderBy );
+			campus, unidade, tipoSala, operadorCapacidadeInstalada, capacidadeInstalada,
+			 operadorCapacidadeMaxima,  capacidadeMaxima,  operadorCustoOperacao, custoOperacao,
+			 numero,  descricao,  andar, 
+			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Sala sala : listDomains )
 		{
@@ -207,7 +216,10 @@ public class SalasServiceImpl
 			= new BasePagingLoadResult< SalaDTO >( list );
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Sala.count(
-				getInstituicaoEnsinoUser(), cenario, campus, unidade ) );
+				getInstituicaoEnsinoUser(), cenario, campus, unidade,
+				tipoSala, operadorCapacidadeInstalada, capacidadeInstalada,
+				 operadorCapacidadeMaxima,  capacidadeMaxima,  operadorCustoOperacao, custoOperacao,
+				 numero,  descricao,  andar) );
 		return result;
 	}
 

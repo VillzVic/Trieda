@@ -20,7 +20,7 @@ public interface AlunosService
 	extends RemoteService
 {
 	AlunoDTO getAluno( Long id );
-	PagingLoadResult<AlunoDTO> getBuscaList(CenarioDTO cenario, String nome, String matricula, PagingLoadConfig config);
+	PagingLoadResult<AlunoDTO> getBuscaList(CenarioDTO cenario, String nome, String matricula,Boolean  formando,Integer periodo,Boolean virtual,Boolean criadoPeloTrieda, PagingLoadConfig config);
 	PagingLoadResult< AlunoDTO > getAlunosList( String nome, String cpf );
 	PagingLoadResult< AlunoDTO > getAlunosListByCampus(CampusDTO campusDTO);
 	void saveAluno( AlunoDTO alunoDTO );

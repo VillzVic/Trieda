@@ -180,8 +180,17 @@ public class ProfessoresServiceImpl
 	
 	@Override
 	public PagingLoadResult< ProfessorDTO > getBuscaList( CenarioDTO cenarioDTO, 
-		String cpf, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
-		AreaTitulacaoDTO areaTitulacaoDTO, PagingLoadConfig config )
+		String cpf, String nome, TipoContratoDTO tipoContratoDTO, TitulacaoDTO titulacaoDTO,
+		AreaTitulacaoDTO areaTitulacaoDTO,String operadorCargaHorariaMin,
+		Integer cargaHorariaMin, String operadorCargaHorariaMax,
+		Integer cargaHorariaMax, String operadorNotaDesempenho,
+		Double notaDesempenho, String operadorCargaHorariaAnterior,
+		Integer cargaHorariaAnterior, String operadorCustoCreditoSemanal,
+		Double custoCreditoSemanal, String operadorMaxDiasSemana,
+		Integer maxDiasSemana, String operadorMinCreditosSemanais,
+		Integer minCreditosSemanais, String operadorTotalCreditosSemanais,
+		Long totalCreditosSemanais, String operadorCargaHorariaSemanal,
+		Long cargaHorariaSemanal, PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
@@ -209,9 +218,18 @@ public class ProfessoresServiceImpl
 			}
 		}
 		List< ProfessorDTO > list = new ArrayList< ProfessorDTO >();
-		List< Professor > listDomains = Professor.findBy( getInstituicaoEnsinoUser(),
-			cenario, cpf, tipoContrato, titulacao, areaTitulacao,
-			config.getOffset(), config.getLimit(), orderBy );
+		List<Professor> listDomains = Professor.findBy(
+				getInstituicaoEnsinoUser(), cenario, cpf, nome, tipoContrato,
+				titulacao, areaTitulacao, operadorCargaHorariaMin,
+				cargaHorariaMin, operadorCargaHorariaMax, cargaHorariaMax,
+				operadorNotaDesempenho, notaDesempenho,
+				operadorCargaHorariaAnterior, cargaHorariaAnterior,
+				operadorCustoCreditoSemanal, custoCreditoSemanal,
+				operadorMaxDiasSemana, maxDiasSemana,
+				operadorMinCreditosSemanais, minCreditosSemanais,
+				operadorTotalCreditosSemanais, totalCreditosSemanais,
+				operadorCargaHorariaSemanal, cargaHorariaSemanal,
+				config.getOffset(), config.getLimit(), orderBy);
 
 		if ( listDomains != null )
 		{
@@ -227,8 +245,16 @@ public class ProfessoresServiceImpl
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( Professor.count(
-			getInstituicaoEnsinoUser(), cenario, cpf,
-			tipoContrato, titulacao, areaTitulacao ) );
+			getInstituicaoEnsinoUser(), cenario, cpf, nome,
+			tipoContrato, titulacao, areaTitulacao, operadorCargaHorariaMin,
+			cargaHorariaMin, operadorCargaHorariaMax, cargaHorariaMax,
+			operadorNotaDesempenho, notaDesempenho,
+			operadorCargaHorariaAnterior, cargaHorariaAnterior,
+			operadorCustoCreditoSemanal, custoCreditoSemanal,
+			operadorMaxDiasSemana, maxDiasSemana,
+			operadorMinCreditosSemanais, minCreditosSemanais,
+			operadorTotalCreditosSemanais, totalCreditosSemanais,
+			operadorCargaHorariaSemanal, cargaHorariaSemanal ) );
 
 		return result;
 	}

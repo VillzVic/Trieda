@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.gapso.trieda.domain.TipoDisciplina;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
@@ -66,8 +67,12 @@ public interface DisciplinasService
 	
 	DisciplinaDTO getDisciplina( Long id );
 	ListLoadResult< DisciplinaDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig );
-	PagingLoadResult<DisciplinaDTO> getBuscaList( CenarioDTO cenarioDTO, String nome, String codigo,
-		TipoDisciplinaDTO tipoDisciplinaDTO, PagingLoadConfig config );
+	PagingLoadResult<DisciplinaDTO> getBuscaList( CenarioDTO cenarioDTO, String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO, 
+			String operadorCreditosTeorico, Integer creditosTeorico, String  operadorCreditosPratico,Integer creditosPratico,
+			Boolean exigeLaboratorio,String operadorMaxAlunosTeorico,Integer maxAlunosTeorico, 
+			String  operadorMaxAlunosPratico,Integer maxAlunosPratico,
+			Boolean aulasContinuas, Boolean professorUnico, Boolean usaSabado,Boolean usaDomingo, String dificuldade,
+			PagingLoadConfig config );
 	void save( DisciplinaDTO disciplinaDTO );
 	void remove( List< DisciplinaDTO > disciplinaDTOList );
 	ListLoadResult< TipoDisciplinaDTO > getTipoDisciplinaList( CenarioDTO cenarioDTO );

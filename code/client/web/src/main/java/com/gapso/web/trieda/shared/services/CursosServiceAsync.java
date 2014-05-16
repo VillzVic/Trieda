@@ -35,6 +35,12 @@ public interface CursosServiceAsync {
 	void getCurso( Long id, AsyncCallback< CursoDTO > callback );
 	void getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< CursoDTO > > callback );
 	void getBuscaList( CenarioDTO cenarioDTO, String nome, String codigo, TipoCursoDTO tipoCurso,
+			String operadorMinPercentualDoutor, Integer minPercentualDoutor,
+			String operadorMinPercentualMestre, Integer minPercentualMestre,
+			String operadorMinTempoIntegralParcial, Integer minTempoIntegralParcial,
+			String operadorMinTempoIntegral, Integer minTempoIntegral,
+			String operadorMaxDisciplinasProfessor, Integer maxDisciplinasProfessor,
+			Boolean maisDeUmaDisciplinaProfessor,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< CursoDTO > > callback );
 	void save( CursoDTO cursoDTO, AsyncCallback< Void > callback );
 	void remove( List< CursoDTO > cursoDTOList, AsyncCallback< Void > callback );

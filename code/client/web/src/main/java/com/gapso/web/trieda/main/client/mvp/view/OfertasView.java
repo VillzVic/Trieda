@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -22,6 +23,7 @@ import com.gapso.web.trieda.shared.util.view.CampusComboBox;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -38,6 +40,8 @@ public class OfertasView
 	private CampusComboBox campusBuscaComboBox;
 	private CursoComboBox cursoBuscaComboBox;
 	private CurriculoComboBox curriculoBuscaComboBox;
+	private NumberField receitaCreditoField;
+	private OperadorComboBox receitaCreditoOperadorCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
@@ -99,11 +103,12 @@ public class OfertasView
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
 		this.turnoBuscaComboBox = new TurnoComboBox( cenarioDTO );
 		this.turnoBuscaComboBox.setFieldLabel( "Turno" );
 		this.campusBuscaComboBox = new CampusComboBox(cenarioDTO);
@@ -112,11 +117,18 @@ public class OfertasView
 		this.cursoBuscaComboBox.setFieldLabel( "Curso" );
 		this.curriculoBuscaComboBox = new CurriculoComboBox(cenarioDTO);
 		this.curriculoBuscaComboBox.setFieldLabel( "Matriz Curricular" );
+		this.receitaCreditoOperadorCB = new OperadorComboBox();
+		this.receitaCreditoOperadorCB.setFieldLabel(getI18nConstants().receita());
+		this.receitaCreditoOperadorCB.setWidth(100);
+		
+		this.receitaCreditoField = new NumberField();
+		this.receitaCreditoField.setWidth( "75" );
 
 		this.filter.addField( this.turnoBuscaComboBox );
 		this.filter.addField( this.campusBuscaComboBox );
 		this.filter.addField( this.cursoBuscaComboBox );
 		this.filter.addField( this.curriculoBuscaComboBox );
+		this.filter.addMultiField(this.receitaCreditoOperadorCB, this.receitaCreditoField);
 
 		this.panel.add( this.filter, bld );
 	}
@@ -204,5 +216,15 @@ public class OfertasView
 	public Button getResetBuscaButton()
 	{
 		return this.filter.getResetButton();
+	}
+
+	@Override
+	public NumberField getReceitaCreditoField() {
+		return receitaCreditoField;
+	}
+
+	@Override
+	public OperadorComboBox getReceitaCreditoOperadorCB() {
+		return receitaCreditoOperadorCB;
 	}
 }

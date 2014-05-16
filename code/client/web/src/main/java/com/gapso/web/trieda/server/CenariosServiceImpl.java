@@ -396,10 +396,10 @@ public class CenariosServiceImpl
 		list.add( new TreeNodeDTO( new ResumoDTO( "Total de cursos ", "<b>" +  numberFormatter.print( Curso.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "Total de matrizes curriculares ", "<b>" +  numberFormatter.print( Curriculo.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "Total de disciplinas ", "<b>" +  numberFormatter.print( Disciplina.count( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
-		list.add( new TreeNodeDTO( new ResumoDTO( "Total de alunos ", "<b>" +  numberFormatter.print( Aluno.count( getInstituicaoEnsinoUser(), cenario, null, null ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de alunos ", "<b>" +  numberFormatter.print( Aluno.count( getInstituicaoEnsinoUser(), cenario, null, null, null, null, null, null ),pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Alunos com pelo menos uma demanda ", "<b>" +
 				numberFormatter.print( AlunoDemanda.countAlunosUteis( getInstituicaoEnsinoUser(), cenario ),pt_BR ) + "</b>"), null, true ) );
-		list.add( new TreeNodeDTO( new ResumoDTO( "Total de professores ", "<b>" +  numberFormatter.print( Professor.count( getInstituicaoEnsinoUser(), cenario, null, null, null, null ),pt_BR ) + "</b>"), null, true ) );
+		list.add( new TreeNodeDTO( new ResumoDTO( "Total de professores ", "<b>" +  numberFormatter.print( Professor.count( getInstituicaoEnsinoUser(), cenario, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null ),pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Professores com pelo menos uma habilitação, disponibilidade e campus de trabalho ", "<b>" +
 				numberFormatter.print( Professor.findProfessoresUteis(getInstituicaoEnsinoUser(), cenario, null).size(),pt_BR ) + "</b>"), null, true ) );
 		list.add( new TreeNodeDTO( new ResumoDTO( "|--- Professores da instituição utilizados ", "<b>" +

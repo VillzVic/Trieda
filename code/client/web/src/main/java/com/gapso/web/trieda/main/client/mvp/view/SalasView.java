@@ -9,9 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.Field;
-import com.extjs.gxt.ui.client.widget.form.LabelField;
-import com.extjs.gxt.ui.client.widget.form.MultiField;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -53,9 +51,9 @@ public class SalasView
 	private OperadorComboBox operadorCapacidadeInstaladaCB;
 	private OperadorComboBox operadorCapacidadeMaximaCB;
 	private OperadorComboBox operadorCustoOperacaoCB;
-	private TextField< String > capacitadeInstaladaTF;
-	private TextField< String > capacitadeMaximaTF;
-	private TextField< String > custoOperacaoTF;
+	private NumberField capacidadeInstalada;
+	private NumberField capacidadeMaxima;
+	private NumberField custoOperacao;
 	private TextField< String > numeroTF;
 	private TextField< String > descricaoTF;
 	private TextField< String > andarTF;
@@ -172,20 +170,20 @@ public class SalasView
 		this.operadorCapacidadeInstaladaCB = new OperadorComboBox();
 		this.operadorCapacidadeInstaladaCB.setWidth(100);
 		this.operadorCapacidadeInstaladaCB.setFieldLabel(getI18nConstants().capacidadeInstaladaAlunos());
-		this.capacitadeInstaladaTF = new TextField< String >();
-		this.capacitadeInstaladaTF.setWidth(75);
+		this.capacidadeInstalada = new NumberField();
+		this.capacidadeInstalada.setWidth(75);
 		
 		this.operadorCapacidadeMaximaCB = new OperadorComboBox();
 		this.operadorCapacidadeMaximaCB.setWidth(100);
 		this.operadorCapacidadeMaximaCB.setFieldLabel(getI18nConstants().capacidadeMaxAlunos());
-		this.capacitadeMaximaTF = new TextField< String >();
-		this.capacitadeMaximaTF.setWidth(75);
+		this.capacidadeMaxima = new NumberField();
+		this.capacidadeMaxima.setWidth(75);
 		
 		this.operadorCustoOperacaoCB = new OperadorComboBox();
 		this.operadorCustoOperacaoCB.setWidth(100);
-		this.operadorCustoOperacaoCB.setFieldLabel(getI18nConstants().capacidadeMaxAlunos());
-		this.custoOperacaoTF = new TextField< String >();
-		this.custoOperacaoTF.setWidth(75);
+		this.operadorCustoOperacaoCB.setFieldLabel(getI18nConstants().custoOperacaoCred());
+		this.custoOperacao = new NumberField();
+		this.custoOperacao.setWidth(75);
 		
 		this.numeroTF = new TextField< String >();
 		this.numeroTF.setFieldLabel(getI18nConstants().numero());
@@ -196,13 +194,13 @@ public class SalasView
 
 		this.filter.addField( this.campusCB );
 		this.filter.addField( this.unidadeCB );
-		/*this.filter.addField( this.tipoSalaCB );
+		this.filter.addField( this.tipoSalaCB );
 		this.filter.addField( this.numeroTF );
 		this.filter.addField( this.descricaoTF );
 		this.filter.addField( this.andarTF );
-		this.filter.addMultiField(operadorCapacidadeInstaladaCB, capacitadeInstaladaTF);
-		this.filter.addMultiField(operadorCapacidadeMaximaCB, capacitadeMaximaTF);
-		this.filter.addMultiField(operadorCustoOperacaoCB, custoOperacaoTF);*/
+		this.filter.addMultiField(operadorCapacidadeInstaladaCB, capacidadeInstalada);
+		this.filter.addMultiField(operadorCapacidadeMaximaCB, capacidadeMaxima);
+		this.filter.addMultiField(operadorCustoOperacaoCB, custoOperacao);
 		
 
 		this.panel.add( this.filter, bld );
@@ -337,18 +335,18 @@ public class SalasView
 	}
 
 	@Override
-	public TextField<String> getCapacitadeInstaladaTF() {
-		return capacitadeInstaladaTF;
+	public NumberField getCapacidadeInstalada() {
+		return capacidadeInstalada;
 	}
 
 	@Override
-	public TextField<String> getCapacitadeMaximaTF() {
-		return capacitadeMaximaTF;
+	public NumberField  getCapacidadeMaxima() {
+		return capacidadeMaxima;
 	}
 
 	@Override
-	public TextField<String> getCustoOperacaoTF() {
-		return custoOperacaoTF;
+	public NumberField  getCustoOperacao() {
+		return custoOperacao;
 	}
 
 	@Override

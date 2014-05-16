@@ -9,6 +9,8 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -20,6 +22,7 @@ import com.gapso.web.trieda.shared.mvp.presenter.ProfessoresDisciplinaPresenter;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
@@ -31,6 +34,12 @@ public class ProfessoresDisciplinaView extends MyComposite
 	private SimpleToolBar toolBar;
 	private SimpleGrid< ProfessorDisciplinaDTO > gridPanel;
 	private SimpleFilter filter;
+	private TextField< String > cpfBuscaTF;
+	private TextField< String > nomeBuscaTF;
+	private NumberField preferenciaField;
+	private OperadorComboBox preferenciaOperadorCB;
+	private NumberField notaDesempenhoBuscaField;
+	private OperadorComboBox notaDesempenhoOperadorCB;
 	private ProfessorComboBox professorBuscaCB;
 	private DisciplinaAutoCompleteBox disciplinaBuscaCB;
 	private ContentPanel panel;
@@ -123,18 +132,42 @@ public class ProfessoresDisciplinaView extends MyComposite
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		filter = new SimpleFilter();
+		filter.setLabelWidth(150);
+		
+		this.cpfBuscaTF = new TextField< String >();
+		this.cpfBuscaTF.setFieldLabel( "CPF" );
+		this.nomeBuscaTF = new TextField< String >();
+		this.nomeBuscaTF.setFieldLabel( "Nome" );
 		professorBuscaCB = new ProfessorComboBox( cenarioDTO );
 		professorBuscaCB.setAllowBlank( false );
 		disciplinaBuscaCB = new DisciplinaAutoCompleteBox( cenarioDTO );
 		disciplinaBuscaCB.setAllowBlank( false );
+		
+		this.preferenciaOperadorCB = new OperadorComboBox();
+		this.preferenciaOperadorCB.setFieldLabel(getI18nConstants().preferencia());
+		this.preferenciaOperadorCB.setWidth(100);
+		
+		this.preferenciaField = new NumberField();
+		this.preferenciaField.setWidth( "75" );
+		
+		this.notaDesempenhoOperadorCB = new OperadorComboBox();
+		this.notaDesempenhoOperadorCB.setFieldLabel(getI18nConstants().notaDesempenho());
+		this.notaDesempenhoOperadorCB.setWidth(100);
+		
+		this.notaDesempenhoBuscaField = new NumberField();
+		this.notaDesempenhoBuscaField.setWidth( "75" );
 
+		this.filter.addField( this.cpfBuscaTF );
+		this.filter.addField( this.nomeBuscaTF );
 		filter.addField( professorBuscaCB );
 		filter.addField( disciplinaBuscaCB );
+		this.filter.addMultiField(this.preferenciaOperadorCB, this.preferenciaField);
+		this.filter.addMultiField(this.notaDesempenhoOperadorCB, this.notaDesempenhoBuscaField);
 
 		panel.add( filter, bld );
 	}
@@ -217,4 +250,37 @@ public class ProfessoresDisciplinaView extends MyComposite
 	{
 		return associarMassaBt;
 	}
+	
+	@Override
+	public TextField< String > getCpfBuscaTextField()
+	{
+		return this.cpfBuscaTF;
+	}
+
+	@Override
+	public TextField<String> getNomeBuscaTF() {
+		return nomeBuscaTF;
+	}
+
+	@Override
+	public NumberField getPreferenciaField() {
+		return preferenciaField;
+	}
+
+	@Override
+	public OperadorComboBox getPreferenciaOperadorCB() {
+		return preferenciaOperadorCB;
+	}
+
+	@Override
+	public NumberField getNotaDesempenhoBuscaField() {
+		return notaDesempenhoBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getNotaDesempenhoOperadorCB() {
+		return notaDesempenhoOperadorCB;
+	}
+	
+	
 }

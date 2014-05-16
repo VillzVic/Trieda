@@ -30,6 +30,7 @@ import com.gapso.web.trieda.shared.dtos.CurriculoDisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaRequisitoDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.services.CurriculosService;
 import com.gapso.web.trieda.shared.util.view.TriedaException;
 
@@ -176,16 +177,18 @@ public class CurriculosServiceImpl
 	}
 
 	@Override
-	public ListLoadResult< CurriculoDTO > getList( CenarioDTO cenarioDTO, BasePagingLoadConfig config )
+	public ListLoadResult< CurriculoDTO > getList( CenarioDTO cenarioDTO, SemanaLetivaDTO semanaLetivaDTO,
+			BasePagingLoadConfig config )
 	{
 		CursoDTO cursoDTO = config.get( "cursoDTO" );
 
-		return getBuscaList( cenarioDTO, cursoDTO, config.get( "query" ).toString(), null, config );
+		return getBuscaList( cenarioDTO, cursoDTO, semanaLetivaDTO, config.get( "query" ).toString(), null, null,  config );
 	}
 
 	@Override
 	public PagingLoadResult< CurriculoDTO > getBuscaList( CenarioDTO cenarioDTO, 
-		CursoDTO cursoDTO, String codigo, String descricao, PagingLoadConfig config )
+		CursoDTO cursoDTO, SemanaLetivaDTO semanaLetivaDTO, String codigo, String descricao, 
+		String periodo, PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
@@ -210,9 +213,14 @@ public class CurriculosServiceImpl
 		{
 			curso = ConvertBeans.toCurso( cursoDTO );
 		}
+		
+		SemanaLetiva semanaLetiva = null;
+		if(semanaLetivaDTO != null){
+			semanaLetiva = ConvertBeans.toSemanaLetiva(semanaLetivaDTO);
+		}
 
 		List< Curriculo > listCurriculos = Curriculo.findBy( getInstituicaoEnsinoUser(),
-			cenario, curso, codigo, descricao, config.getOffset(), config.getLimit(), orderBy );
+			cenario, curso, semanaLetiva, codigo, descricao, periodo, config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Curriculo curriculo : listCurriculos )
 		{
@@ -224,7 +232,7 @@ public class CurriculosServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Curriculo.count(
-			getInstituicaoEnsinoUser(), cenario, curso, codigo, descricao ) );
+			getInstituicaoEnsinoUser(), cenario, curso, semanaLetiva, codigo, descricao, periodo) );
 
 		return result;
 	}
@@ -360,7 +368,7 @@ public class CurriculosServiceImpl
 		}
 
 		List< Object[] > listCurriculoDisciplinaRequisito = findCurriculosDisciplinasAssociacao( 
-				cenario, disciplina, curriculo, periodo, "preRequisitos", config);
+				cenario, disciplina, curriculo, null, null, periodo, "preRequisitos", config);
 		
 		List< DisciplinaRequisitoDTO > disciplinasRequisitoDTO = new ArrayList<DisciplinaRequisitoDTO>();
 
@@ -375,7 +383,7 @@ public class CurriculosServiceImpl
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( 
-				CurriculoDisciplina.count(getInstituicaoEnsinoUser(), cenario, curriculo, disciplina, periodo, "preRequisitos"));
+				CurriculoDisciplina.count(getInstituicaoEnsinoUser(), cenario, curriculo, disciplina, null, null,  periodo, "preRequisitos"));
 		
 		return result;
 	}
@@ -401,7 +409,7 @@ public class CurriculosServiceImpl
 		}
 		
 		List< Object[] > listCurriculoDisciplinaRequisito = findCurriculosDisciplinasAssociacao( 
-				cenario, disciplina, curriculo, periodo, "coRequisitos" ,config);
+				cenario, disciplina, curriculo, null, null, periodo, "coRequisitos" ,config);
 		
 		List< DisciplinaRequisitoDTO > disciplinasRequisitoDTO = new ArrayList<DisciplinaRequisitoDTO>();
 
@@ -416,14 +424,15 @@ public class CurriculosServiceImpl
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( 
-				CurriculoDisciplina.count(getInstituicaoEnsinoUser(), cenario, curriculo, disciplina, periodo, "coRequisitos") );
+				CurriculoDisciplina.count(getInstituicaoEnsinoUser(), cenario, curriculo, disciplina, null, null, periodo, "coRequisitos") );
 		
 		return result;
 	}
 	
 	@Override
 	public PagingLoadResult< AlunoDisciplinaCursadaDTO > getAlunosDisciplinasCursadasList( CenarioDTO cenarioDTO,
-			DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO, Integer periodo, PagingLoadConfig config )
+			DisciplinaDTO disciplinaDTO, CurriculoDTO curriculoDTO, 
+			CursoDTO cursoDTO, String matricula, Integer periodo, PagingLoadConfig config )
 	{	
 		Cenario cenario = ConvertBeans.toCenario(cenarioDTO);
 		
@@ -441,8 +450,13 @@ public class CurriculosServiceImpl
 			disciplina = ConvertBeans.toDisciplina(disciplinaDTO);
 		}
 		
+		Curso curso = null;
+		if(cursoDTO != null){
+			curso = ConvertBeans.toCurso(cursoDTO);
+		}
+		
 		List< Object[] > listCurriculoDisciplinaAluno = findCurriculosDisciplinasAssociacao( 
-				cenario, disciplina, curriculo, periodo, "cursadoPor", config);
+				cenario, disciplina, curriculo, curso, matricula, periodo, "cursadoPor", config);
 		
 		List< AlunoDisciplinaCursadaDTO > alunosDisciplinasCursadasDTO = new ArrayList<AlunoDisciplinaCursadaDTO>();
 
@@ -457,7 +471,7 @@ public class CurriculosServiceImpl
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( 
-				CurriculoDisciplina.count(getInstituicaoEnsinoUser(), cenario, curriculo, disciplina, periodo, "cursadoPor") );
+				CurriculoDisciplina.count(getInstituicaoEnsinoUser(), cenario, curriculo, disciplina, curso, matricula, periodo, "cursadoPor") );
 		
 		return result;
 	}
@@ -487,7 +501,7 @@ public class CurriculosServiceImpl
 	}
 	
 	private List< Object[] > findCurriculosDisciplinasAssociacao( Cenario cenario,
-			Disciplina disciplina, Curriculo curriculo, Integer periodo, String associacao,
+			Disciplina disciplina, Curriculo curriculo, Curso curso, String matricula, Integer periodo, String associacao,
 			PagingLoadConfig config  )
 	{
 		String orderBy = config == null ? null : config.getSortField();
@@ -507,6 +521,7 @@ public class CurriculosServiceImpl
 
 		List< Object[] > listCurriculoDisciplinaAssociacao
 			= CurriculoDisciplina.findBy(getInstituicaoEnsinoUser(), cenario, curriculo, disciplina,
+					curso, matricula,
 					periodo, associacao, orderBy, config.getOffset(), config.getLimit() );
 		
 		return listCurriculoDisciplinaAssociacao;

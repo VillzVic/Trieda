@@ -11,6 +11,8 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.MotivosNaoAtendimentoView;
 import com.gapso.web.trieda.shared.dtos.AlunoDemandaDTO;
@@ -30,6 +32,7 @@ import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnF
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
@@ -70,6 +73,11 @@ public class DemandasPorAlunoPresenter
 		Component getComponent();
 		Button getMotivosNaoAtendimentoButton();
 		void setProxy( RpcProxy< PagingLoadResult< AlunoDemandaDTO > > proxy );
+		NumberField getPeriodoField();
+		TextField<String> getMatriculaBuscaTextField();
+		TextField<String> getNomeTextField();
+		NumberField getAlunoPrioridadeField();
+		ComboBoxBoolean getAtentido();
 	}
 	
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -104,9 +112,15 @@ public class DemandasPorAlunoPresenter
 				CurriculoDTO curriculo = display.getCurriculoBuscaComboBox().getValue();
 				TurnoDTO turno = display.getTurnoBuscaComboBox().getValue();
 				DisciplinaDTO disciplina = display.getDisciplinaBuscaComboBox().getValue();
+				
+				Integer periodo = ( display.getPeriodoField().getValue() == null ) ? null : display.getPeriodoField().getValue().intValue();
+				String matricula = display.getMatriculaBuscaTextField().getValue();
+				String nome = display.getNomeTextField().getValue();
+				Integer alunoPrioridade = ( display.getAlunoPrioridadeField().getValue() == null ) ? null : display.getAlunoPrioridadeField().getValue().intValue();
+				Boolean atendido = (display.getAtentido().getValue()==null)?null:display.getAtentido().getValue().getValue().getValue();
 	
 				service.getAlunosDemandaList( cenarioDTO, campus, curso, curriculo, turno,
-					disciplina, (PagingLoadConfig) loadConfig, callback );
+					disciplina, periodo, matricula, nome, alunoPrioridade, atendido, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 	
@@ -197,6 +211,11 @@ public class DemandasPorAlunoPresenter
 				display.getCurriculoBuscaComboBox().setValue( null );
 				display.getTurnoBuscaComboBox().setValue( null );
 				display.getDisciplinaBuscaComboBox().setValue( null );
+				display.getPeriodoField().setValue( null );
+				display.getMatriculaBuscaTextField().setValue( null );
+				display.getNomeTextField().setValue( null );
+				display.getAlunoPrioridadeField().setValue( null );
+				display.getAtentido().setValue( null );
 	
 				display.getGrid().updateList();
 			}

@@ -42,7 +42,7 @@ public class CampiView
 	private EstadoComboBox estadoBuscaComboBox;
 	private TextField< String > municipioBuscaTextField;
 	private TextField< String > bairroBuscaTextField;
-	private NumberField custoMedioCreditoBuscaTextField;
+	private NumberField custoMedioCreditoBuscaField;
 	private OperadorComboBox custoMedioCreditoBuscaOperadorCB;
 	private ComboBoxBoolean otimizadoTaticoBuscaCB;
 	private ComboBoxBoolean otimizadoOperacionalBuscaCB;
@@ -160,8 +160,8 @@ public class CampiView
 		this.custoMedioCreditoBuscaOperadorCB.setFieldLabel(getI18nConstants().custoMedioCredito());
 		this.custoMedioCreditoBuscaOperadorCB.setWidth(100);
 		
-		this.custoMedioCreditoBuscaTextField = new NumberField();
-		this.custoMedioCreditoBuscaTextField.setWidth( "75" );
+		this.custoMedioCreditoBuscaField = new NumberField();
+		this.custoMedioCreditoBuscaField.setWidth( "75" );
 		
 		this.otimizadoTaticoBuscaCB = new ComboBoxBoolean();
 		this.otimizadoTaticoBuscaCB.setFieldLabel(getI18nConstants().otimizadoTatico());
@@ -174,7 +174,7 @@ public class CampiView
 		this.filter.addField( municipioBuscaTextField ); 
 		this.filter.addField( estadoBuscaComboBox ); 
 		this.filter.addField( bairroBuscaTextField ); 
-		this.filter.addMultiField(this.custoMedioCreditoBuscaOperadorCB, this.custoMedioCreditoBuscaTextField);
+		this.filter.addMultiField(this.custoMedioCreditoBuscaOperadorCB, this.custoMedioCreditoBuscaField);
 		this.filter.addField( otimizadoTaticoBuscaCB ); 
 		this.filter.addField( otimizadoOperacionalBuscaCB ); 
 
@@ -285,8 +285,8 @@ public class CampiView
 	}
 
 	@Override
-	public NumberField getCustoMedioCreditoBuscaTextField() {
-		return custoMedioCreditoBuscaTextField;
+	public NumberField getCustoMedioCreditoBuscaField() {
+		return custoMedioCreditoBuscaField;
 	}
 
 	@Override

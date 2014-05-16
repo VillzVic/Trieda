@@ -21,7 +21,8 @@ public interface OfertasServiceAsync
 	void getListAll( CenarioDTO cenarioDTO, AsyncCallback<ListLoadResult< OfertaDTO > > callback );
 	void getOferta( Long id, AsyncCallback< OfertaDTO > callback );
 	void getBuscaList( CenarioDTO cenarioDTO, TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO, 
-		CurriculoDTO curriculoDTO, PagingLoadConfig config, AsyncCallback< PagingLoadResult< OfertaDTO > > callback );
+		CurriculoDTO curriculoDTO, 
+		String receitaCreditoOperador,Double receitaCredito, PagingLoadConfig config, AsyncCallback< PagingLoadResult< OfertaDTO > > callback );
 	void save( OfertaDTO ofertaDTO, AsyncCallback<Void> callback);
 	void remove( List< OfertaDTO > ofertaDTOList, AsyncCallback< Void > callback);
 	void getListByCampusAndTurno( CampusDTO campusDTO, TurnoDTO turnoDTO,

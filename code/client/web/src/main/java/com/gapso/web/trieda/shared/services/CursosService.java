@@ -47,7 +47,14 @@ public interface CursosService extends RemoteService {
 	
 	CursoDTO getCurso(Long id);
 	ListLoadResult<CursoDTO> getList(CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig);
-	PagingLoadResult<CursoDTO> getBuscaList(CenarioDTO cenarioDTO, String nome, String codigo, TipoCursoDTO tipoCurso, PagingLoadConfig config);
+	PagingLoadResult<CursoDTO> getBuscaList(CenarioDTO cenarioDTO, String nome, String codigo, TipoCursoDTO tipoCurso, 
+			String operadorMinPercentualDoutor, Integer minPercentualDoutor,
+			String operadorMinPercentualMestre, Integer minPercentualMestre,
+			String operadorMinTempoIntegralParcial, Integer minTempoIntegralParcial,
+			String operadorMinTempoIntegral, Integer minTempoIntegral,
+			String operadorMaxDisciplinasProfessor, Integer maxDisciplinasProfessor,
+			Boolean maisDeUmaDisciplinaProfessor,
+			PagingLoadConfig config);
 	void save(CursoDTO cursoDTO);
 	void remove(List<CursoDTO> cursoDTOList);
 	ListLoadResult<CursoDTO> getListAll(CenarioDTO cenarioDTO);

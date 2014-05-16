@@ -552,7 +552,10 @@ public class DemandasServiceImpl
 	@Override
 	public PagingLoadResult< DemandaDTO > getBuscaList( CenarioDTO cenarioDTO,
 		CampusDTO campusDTO, CursoDTO cursoDTO, CurriculoDTO curriculoDTO,
-		TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, PagingLoadConfig config )
+		TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO, 
+		Integer periodo, String demandaRealOperador, Long demandaReal, String demandaVirtualOperador, 
+		Long demandaVirtual, String demandaTotalOperador,Long  demandaTotal,
+		PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
@@ -604,6 +607,7 @@ public class DemandasServiceImpl
 
 		List< Demanda > listDomains = Demanda.findBy( getInstituicaoEnsinoUser(),
 			cenario, campus, curso, curriculo, turno, disciplina,
+			 periodo, demandaRealOperador, demandaReal, demandaVirtualOperador, demandaVirtual, demandaTotalOperador, demandaTotal,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Demanda demanda : listDomains )
@@ -616,7 +620,8 @@ public class DemandasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Demanda.count( getInstituicaoEnsinoUser(),
-			cenario, campus, curso, curriculo, turno, disciplina ) );
+			cenario, campus, curso, curriculo, turno, disciplina,
+			 periodo, demandaRealOperador, demandaReal, demandaVirtualOperador, demandaVirtual, demandaTotalOperador, demandaTotal) );
 
 		return result;
 	}

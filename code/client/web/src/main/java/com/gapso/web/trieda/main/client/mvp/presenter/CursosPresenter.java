@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.CurriculosView;
@@ -29,11 +30,13 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.services.TiposCursosServiceAsync;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.TipoCursoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -60,6 +63,17 @@ public class CursosPresenter
 		SimpleGrid< CursoDTO > getGrid();
 		Component getComponent();
 		void setProxy( RpcProxy< PagingLoadResult< CursoDTO > > proxy );
+		OperadorComboBox getOperadorMinPercentualDoutor();
+		OperadorComboBox getOperadorMinPercentualMestre();
+		OperadorComboBox getOperadorMinTempoIntegralParcial();
+		OperadorComboBox getOperadorMinTempoIntegral();
+		OperadorComboBox getOperadorMaxDisciplinasProfessor();
+		NumberField getMinPercentualDoutor();
+		NumberField getMinPercentualMestre();
+		NumberField getMinTempoIntegralParcial();
+		NumberField getMinTempoIntegral();
+		NumberField getMaxDisciplinasProfessor();
+		ComboBoxBoolean getMaisDeUmaDisciplinaProfessor();
 	}
 
 	private InstituicaoEnsinoDTO instituicaoEnsinoDTO;
@@ -93,8 +107,28 @@ public class CursosPresenter
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				TipoCursoDTO tipoCursoDTO = display.getTipoCursoBuscaComboBox().getValue();
+				
+				String operadorMinPercentualDoutor = (display.getOperadorMinPercentualDoutor().getValue()==null)?null: display.getOperadorMinPercentualDoutor().getValue().getValue().getOperadorSQL();
+				Integer minPercentualDoutor = display.getMinPercentualDoutor().getValue() == null?null:display.getMinPercentualDoutor().getValue().intValue();
+				String operadorMinPercentualMestre = (display.getOperadorMinPercentualMestre().getValue()==null)?null: display.getOperadorMinPercentualMestre().getValue().getValue().getOperadorSQL();
+				Integer minPercentualMestre = display.getMinPercentualMestre().getValue() == null?null:display.getMinPercentualMestre().getValue().intValue();
+				String operadorMinTempoIntegralParcial = (display.getOperadorMinTempoIntegralParcial().getValue()==null)?null: display.getOperadorMinTempoIntegralParcial().getValue().getValue().getOperadorSQL();
+				Integer minTempoIntegralParcial = display.getMinTempoIntegralParcial().getValue() == null?null:display.getMinTempoIntegralParcial().getValue().intValue();
+				String operadorMinTempoIntegral= (display.getOperadorMinTempoIntegral().getValue()==null)?null: display.getOperadorMinTempoIntegral().getValue().getValue().getOperadorSQL();
+				Integer minTempoIntegral = display.getMinTempoIntegral().getValue() == null?null:display.getMinTempoIntegral().getValue().intValue();
+				String operadorMaxDisciplinasProfessor= (display.getOperadorMaxDisciplinasProfessor().getValue()==null)?null: display.getOperadorMaxDisciplinasProfessor().getValue().getValue().getOperadorSQL();
+				Integer maxDisciplinasProfessor = display.getMaxDisciplinasProfessor().getValue() == null?null:display.getMaxDisciplinasProfessor().getValue().intValue();
+				
+				Boolean maisDeUmaDisciplinaProfessor= (display.getMaisDeUmaDisciplinaProfessor().getValue()==null)?null:display.getMaisDeUmaDisciplinaProfessor().getValue().getValue().getValue();
 
-				service.getBuscaList( cenario, nome, codigo, tipoCursoDTO, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, nome, codigo, tipoCursoDTO, 
+						operadorMinPercentualDoutor, minPercentualDoutor,
+						operadorMinPercentualMestre, minPercentualMestre,
+						operadorMinTempoIntegralParcial, minTempoIntegralParcial,
+						operadorMinTempoIntegral, minTempoIntegral,
+						operadorMaxDisciplinasProfessor, maxDisciplinasProfessor,
+						maisDeUmaDisciplinaProfessor,
+						(PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -235,6 +269,17 @@ public class CursosPresenter
 				display.getNomeBuscaTextField().setValue( null );
 				display.getCodigoBuscaTextField().setValue( null );
 				display.getTipoCursoBuscaComboBox().setValue( null );
+				display.getOperadorMinPercentualDoutor().setValue( null );
+				display.getOperadorMinPercentualMestre().setValue( null );
+				display.getOperadorMinTempoIntegralParcial().setValue( null );
+				display.getOperadorMinTempoIntegral().setValue( null );
+				display.getOperadorMaxDisciplinasProfessor().setValue( null );
+				display.getMinPercentualDoutor().setValue( null );
+				display.getMinPercentualMestre().setValue( null );
+				display.getMinTempoIntegralParcial().setValue( null );
+				display.getMinTempoIntegral().setValue( null );
+				display.getMaxDisciplinasProfessor().setValue( null );
+				display.getMaisDeUmaDisciplinaProfessor().setValue( null );
 
 				display.getGrid().updateList();
 			}

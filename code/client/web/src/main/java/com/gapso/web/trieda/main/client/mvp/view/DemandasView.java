@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -24,6 +25,7 @@ import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -41,6 +43,14 @@ public class DemandasView
 	private CurriculoComboBox curriculoBuscaCB;
 	private TurnoComboBox turnoBuscaCB;
 	private DisciplinaAutoCompleteBox disciplinaBuscaCB;
+	private NumberField periodoField;
+	private NumberField demandaRealField;
+	private NumberField demandaVirtualField;
+	private NumberField demandaTotalField;
+	private OperadorComboBox demandaRealOperadorComboBox;
+	private OperadorComboBox demandaVirtualOperadorComboBox;
+	private OperadorComboBox demandaTotalOperadorComboBox;
+	
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button associarAlunosDemandaBT;
@@ -114,12 +124,13 @@ public class DemandasView
 	private void createFilter()
 	{
 		BorderLayoutData bld
-			= new BorderLayoutData( LayoutRegion.EAST );
+			= new BorderLayoutData( LayoutRegion.EAST, 350 );
 
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
 
 		this.campusBuscaCB = new CampusComboBox( cenarioDTO );
 		this.filter.addField( this.campusBuscaCB );
@@ -135,6 +146,36 @@ public class DemandasView
 
 		this.disciplinaBuscaCB = new DisciplinaAutoCompleteBox( cenarioDTO );
 		this.filter.addField( this.disciplinaBuscaCB );
+
+		this.periodoField = new NumberField();
+		this.periodoField.setFieldLabel(getI18nConstants().periodo());
+		this.periodoField.setWidth( "75" );
+		//this.filter.addField(periodoField);
+		
+		this.demandaRealOperadorComboBox = new OperadorComboBox();
+		this.demandaRealOperadorComboBox.setFieldLabel(getI18nConstants().demandaDeAlunosReal());
+		this.demandaRealOperadorComboBox.setWidth(100);
+		
+		this.demandaRealField = new NumberField();
+		this.demandaRealField.setWidth( "75" );
+		this.filter.addMultiField(demandaRealOperadorComboBox, demandaRealField);
+		
+		this.demandaVirtualOperadorComboBox = new OperadorComboBox();
+		this.demandaVirtualOperadorComboBox.setFieldLabel(getI18nConstants().demandaDeAlunosVirtual());
+		this.demandaVirtualOperadorComboBox.setWidth(100);
+		
+		this.demandaVirtualField = new NumberField();
+		this.demandaVirtualField.setWidth( "75" );
+		this.filter.addMultiField(demandaVirtualOperadorComboBox, demandaVirtualField);
+		
+		this.demandaTotalOperadorComboBox = new OperadorComboBox();
+		this.demandaTotalOperadorComboBox.setFieldLabel(getI18nConstants().demandaDeAlunos());
+		this.demandaTotalOperadorComboBox.setWidth(100);
+		
+		this.demandaTotalField = new NumberField();
+		this.demandaTotalField.setWidth( "75" );
+		this.filter.addMultiField(demandaTotalOperadorComboBox, demandaTotalField);
+		
 
 		this.panel.add( this.filter, bld );
 	}
@@ -234,5 +275,40 @@ public class DemandasView
 	public Button getAssociarAlunosDemanda()
 	{
 		return this.associarAlunosDemandaBT;
+	}
+
+	@Override
+	public NumberField getPeriodoField() {
+		return periodoField;
+	}
+
+	@Override
+	public NumberField getDemandaRealField() {
+		return demandaRealField;
+	}
+
+	@Override
+	public NumberField getDemandaVirtualField() {
+		return demandaVirtualField;
+	}
+
+	@Override
+	public NumberField getDemandaTotalField() {
+		return demandaTotalField;
+	}
+
+	@Override
+	public OperadorComboBox getDemandaRealOperadorComboBox() {
+		return demandaRealOperadorComboBox;
+	}
+
+	@Override
+	public OperadorComboBox getDemandaVirtualOperadorComboBox() {
+		return demandaVirtualOperadorComboBox;
+	}
+
+	@Override
+	public OperadorComboBox getDemandaTotalOperadorComboBox() {
+		return demandaTotalOperadorComboBox;
 	}
 }

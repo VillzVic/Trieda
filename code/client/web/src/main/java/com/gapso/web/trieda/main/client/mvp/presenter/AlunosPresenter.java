@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AlunosFormView;
@@ -25,6 +26,7 @@ import com.gapso.web.trieda.shared.services.AlunosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
@@ -46,6 +48,10 @@ public class AlunosPresenter
 		MenuItem getExportXlsxExcelButton();
 		TextField< String > getNomeBuscaTextField();
 		TextField< String > getMatriculaBuscaTextField();
+		ComboBoxBoolean getFormando();
+		ComboBoxBoolean getVirtual();
+		NumberField getPeriodoField();
+		ComboBoxBoolean getCriadoPeloTrieda();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< AlunoDTO > getGrid();
@@ -82,8 +88,12 @@ public class AlunosPresenter
 			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				String matricula = display.getMatriculaBuscaTextField().getValue();
+				Boolean formando = (display.getFormando().getValue()==null)?null:display.getFormando().getValue().getValue().getValue();
+				Boolean virtual = (display.getVirtual().getValue()==null)?null:display.getVirtual().getValue().getValue().getValue();
+				Boolean criadoPeloTrieda= (display.getCriadoPeloTrieda().getValue()==null)?null:display.getCriadoPeloTrieda().getValue().getValue().getValue();
+				Integer periodo = ( display.getPeriodoField().getValue() == null ) ? null : display.getPeriodoField().getValue().intValue();
 
-				service.getBuscaList(cenarioDTO,nome,matricula,(PagingLoadConfig) loadConfig,callback);
+				service.getBuscaList(cenarioDTO,nome,matricula,formando,periodo,virtual,criadoPeloTrieda,(PagingLoadConfig) loadConfig,callback);
 			}
 		};
 
@@ -185,6 +195,10 @@ public class AlunosPresenter
 			{
 				display.getNomeBuscaTextField().setValue( null );
 				display.getMatriculaBuscaTextField().setValue( null );
+				display.getFormando().setValue( null );
+				display.getVirtual().setValue( null );
+				display.getPeriodoField().setValue( null );
+				display.getCriadoPeloTrieda().setValue( null );
 				display.getGrid().updateList();
 			}
 		});

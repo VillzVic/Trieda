@@ -1027,5 +1027,15 @@ public class GTriedaI18nConstants
 		return this.languageManager.getText("formando");
 	}
 
+	@Override
+	public String criadoPeloTrieda() {
+		return this.languageManager.getText("criadoPeloTrieda");
+	}
+
+	@Override
+	public String virtual() {
+		return this.languageManager.getText("virtual");
+	}
+
 
 }

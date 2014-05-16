@@ -13,11 +13,13 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AlunoDisciplinaCursadaFormView;
 import com.gapso.web.trieda.shared.dtos.AlunoDisciplinaCursadaDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
+import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
@@ -28,6 +30,7 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
+import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
@@ -52,6 +55,8 @@ public class AlunosDisciplinasCursadasPresenter
 		NumberField getPeriodoBuscaTextField();
 		DisciplinaAutoCompleteBox getDisciplinaBuscaComboBox();
 		CurriculoComboBox getCurriculoBuscaComboBox();
+		TextField<String> getMatriculaBuscaTextField();
+		CursoComboBox getCursoBuscaCB();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< AlunoDisciplinaCursadaDTO > getGrid();
@@ -90,12 +95,12 @@ public class AlunosDisciplinasCursadasPresenter
 				Integer periodo = display.getPeriodoBuscaTextField().getValue() != null ?
 						display.getPeriodoBuscaTextField().getValue().intValue() : null;
 				DisciplinaDTO disciplinaDTO = display.getDisciplinaBuscaComboBox().getValue();
+				CurriculoDTO curriculoDTO = display.getCurriculoBuscaComboBox().getValue();
+				CursoDTO curso = display.getCursoBuscaCB().getValue();
+				String matricula = display.getMatriculaBuscaTextField().getValue();
 
-				CurriculoDTO curriculoDTO
-					= display.getCurriculoBuscaComboBox().getValue();
-
-				service.getAlunosDisciplinasCursadasList( cenario, disciplinaDTO, curriculoDTO, periodo,
-					(PagingLoadConfig) loadConfig, callback );
+				service.getAlunosDisciplinasCursadasList( cenario, disciplinaDTO, curriculoDTO,curso,matricula, periodo,
+						(PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -209,6 +214,8 @@ public class AlunosDisciplinasCursadasPresenter
 				display.getDisciplinaBuscaComboBox().setValue( null );
 				display.getCurriculoBuscaComboBox().setValue( null );
 				display.getPeriodoBuscaTextField().setValue( null );
+				display.getMatriculaBuscaTextField().setValue( null );
+				display.getCursoBuscaCB().setValue( null );
 
 				display.getGrid().updateList();
 			}

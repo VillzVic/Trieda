@@ -39,6 +39,10 @@ public interface DisciplinasServiceAsync {
 	void getDisciplina( Long id, AsyncCallback< DisciplinaDTO > callback );
 	void getList( CenarioDTO cenarioDTO, BasePagingLoadConfig loadConfig, AsyncCallback< ListLoadResult< DisciplinaDTO > > callback );
 	void getBuscaList( CenarioDTO cenarioDTO, String nome, String codigo, TipoDisciplinaDTO tipoDisciplinaDTO,
+			String operadorCreditosTeoricos, Integer creditosTeoricos, String  operadorCreditosPraticos,Integer creditosPraticos,
+			Boolean exigeLaboratorio,String operadorMaxAlunosTeoricos,Integer maxAlunosTeoricosField, 
+			String  operadorMaxAlunosPraticos,Integer maxAlunosPraticosField,
+			Boolean aulasContinuas, Boolean professorUnico, Boolean usaSabado,Boolean usaDomingo, String dificuldade,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< DisciplinaDTO > > callback );
 	void save( DisciplinaDTO disciplinaDTO, AsyncCallback< Void > callback );
 	void remove( List< DisciplinaDTO > disciplinaDTOList, AsyncCallback< Void > callback );

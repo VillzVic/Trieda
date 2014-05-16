@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -21,7 +22,10 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
+import com.gapso.web.trieda.shared.util.view.DificuldadeComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -37,6 +41,20 @@ public class DisciplinasView
 	private TextField< String > nomeBuscaTextField;
 	private TextField< String > codigoBuscaTextField;
 	private TipoDisciplinaComboBox tipoDisciplinaBuscaComboBox;
+	private NumberField creditosTeoricosField;
+	private OperadorComboBox operadorCreditosTeoricos;
+	private NumberField creditosPraticosField;
+	private OperadorComboBox operadorCreditosPraticos;
+	private ComboBoxBoolean exigeLaboratorio;
+	private DificuldadeComboBox nivelDificuldade;
+	private NumberField maxAlunosTeoricosField;
+	private OperadorComboBox operadorMaxAlunosTeoricos;
+	private NumberField maxAlunosPraticosField;
+	private OperadorComboBox operadorMaxAlunosPraticos;
+	private ComboBoxBoolean aulasContinuas;
+	private ComboBoxBoolean professorUnico;
+	private ComboBoxBoolean usaSabado;
+	private ComboBoxBoolean usaDomingo;
 	private Button disponibilidadeBT;
 	private Button divisaoCreditoBT;
 	private Button associarSalasBT;
@@ -153,11 +171,12 @@ public class DisciplinasView
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
 		this.nomeBuscaTextField = new TextField<String>();
 		this.nomeBuscaTextField.setFieldLabel("Nome");
 		this.codigoBuscaTextField = new TextField<String>();
@@ -165,9 +184,61 @@ public class DisciplinasView
 		this.tipoDisciplinaBuscaComboBox = new TipoDisciplinaComboBox(cenarioDTO);
 		this.tipoDisciplinaBuscaComboBox.setFieldLabel("Tipo de disciplina");
 		
+		this.operadorCreditosTeoricos = new OperadorComboBox();
+		this.operadorCreditosTeoricos.setWidth(100);
+		this.operadorCreditosTeoricos.setFieldLabel(getI18nConstants().creditosTeoricos());
+		this.creditosTeoricosField = new NumberField();
+		this.creditosTeoricosField.setWidth(75);
+		
+		this.operadorCreditosPraticos = new OperadorComboBox();
+		this.operadorCreditosPraticos.setWidth(100);
+		this.operadorCreditosPraticos.setFieldLabel(getI18nConstants().creditosPraticos());
+		this.creditosPraticosField = new NumberField();
+		this.creditosPraticosField.setWidth(75);
+		
+		this.exigeLaboratorio = new ComboBoxBoolean();
+		this.exigeLaboratorio.setFieldLabel(getI18nConstants().exigeLaboratorio());
+		
+		this.nivelDificuldade = new DificuldadeComboBox(true);
+		this.nivelDificuldade.setFieldLabel(getI18nConstants().nivelDificuldade());
+		
+		this.operadorMaxAlunosTeoricos = new OperadorComboBox();
+		this.operadorMaxAlunosTeoricos.setWidth(100);
+		this.operadorMaxAlunosTeoricos.setFieldLabel(getI18nConstants().maxAlunosTeorico());
+		this.maxAlunosTeoricosField = new NumberField();
+		this.maxAlunosTeoricosField.setWidth(75);
+		
+		this.operadorMaxAlunosPraticos = new OperadorComboBox();
+		this.operadorMaxAlunosPraticos.setWidth(100);
+		this.operadorMaxAlunosPraticos.setFieldLabel(getI18nConstants().maxAlunosPratico());
+		this.maxAlunosPraticosField = new NumberField();
+		this.maxAlunosPraticosField.setWidth(75);
+		
+		this.aulasContinuas = new ComboBoxBoolean();
+		this.aulasContinuas.setFieldLabel(getI18nConstants().aulasContinuas());
+		
+		this.professorUnico = new ComboBoxBoolean();
+		this.professorUnico.setFieldLabel(getI18nConstants().professorUnico());
+		
+		this.usaSabado = new ComboBoxBoolean();
+		this.usaSabado.setFieldLabel(getI18nConstants().usaSabado());
+		
+		this.usaDomingo = new ComboBoxBoolean();
+		this.usaDomingo.setFieldLabel(getI18nConstants().usaDomingo());
+		
 		this.filter.addField( this.nomeBuscaTextField );
 		this.filter.addField( this.codigoBuscaTextField );
 		this.filter.addField( this.tipoDisciplinaBuscaComboBox );
+		this.filter.addMultiField(this.operadorCreditosTeoricos, this.creditosTeoricosField);
+		this.filter.addMultiField(this.operadorCreditosPraticos, this.creditosPraticosField);
+		this.filter.addField( this.exigeLaboratorio );
+		this.filter.addField( this.nivelDificuldade );
+		this.filter.addMultiField(this.operadorMaxAlunosTeoricos, this.maxAlunosTeoricosField);
+		this.filter.addMultiField(this.operadorMaxAlunosPraticos, this.maxAlunosPraticosField);
+		this.filter.addField( this.aulasContinuas );
+		this.filter.addField( this.professorUnico );
+		this.filter.addField( this.usaSabado );
+		this.filter.addField( this.usaDomingo );
 
 		this.panel.add( this.filter, bld );
 	}
@@ -273,5 +344,75 @@ public class DisciplinasView
 	public Button getAssociarGruposSalasButton()
 	{
 		return this.associarGruposSalasBT;
+	}
+
+	@Override
+	public NumberField getCreditosTeoricosField() {
+		return creditosTeoricosField;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorCreditosTeoricos() {
+		return operadorCreditosTeoricos;
+	}
+
+	@Override
+	public NumberField getCreditosPraticosField() {
+		return creditosPraticosField;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorCreditosPraticos() {
+		return operadorCreditosPraticos;
+	}
+
+	@Override
+	public ComboBoxBoolean getExigeLaboratorio() {
+		return exigeLaboratorio;
+	}
+
+	@Override
+	public DificuldadeComboBox getNivelDificuldade() {
+		return nivelDificuldade;
+	}
+
+	@Override
+	public NumberField getMaxAlunosTeoricosField() {
+		return maxAlunosTeoricosField;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorMaxAlunosTeoricos() {
+		return operadorMaxAlunosTeoricos;
+	}
+
+	@Override
+	public NumberField getMaxAlunosPraticosField() {
+		return maxAlunosPraticosField;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorMaxAlunosPraticos() {
+		return operadorMaxAlunosPraticos;
+	}
+
+	@Override
+	public ComboBoxBoolean getUsaSabado() {
+		return usaSabado;
+	}
+
+	@Override
+	public ComboBoxBoolean getUsaDomingo() {
+		return usaDomingo;
+	}
+
+	@Override
+	public ComboBoxBoolean getAulasContinuas() {
+		return aulasContinuas;
+	}
+
+	@Override
+	public ComboBoxBoolean getProfessorUnico() {
+		return professorUnico;
 	}
 }

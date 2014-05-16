@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -19,10 +20,12 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.AreaTitulacaoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
+import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
 
 public class ProfessoresVirtuaisView extends MyComposite
@@ -31,7 +34,10 @@ public class ProfessoresVirtuaisView extends MyComposite
 	private SimpleToolBar toolBar;
 	private SimpleGrid< ProfessorVirtualDTO > gridPanel;
 	private SimpleFilter filter;
+	private TextField< String > nomeBuscaTF;
+	private TipoContratoComboBox tipoContratoBuscaCB;
 	private TitulacaoComboBox titulacaoBuscaCB;
+	private AreaTitulacaoComboBox areaTitulacaoBuscaCB;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private CenarioDTO cenarioDTO;
@@ -114,15 +120,26 @@ public class ProfessoresVirtuaisView extends MyComposite
 	
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 	
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 	
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
+		this.nomeBuscaTF = new TextField< String >();
+		this.nomeBuscaTF.setFieldLabel( "Nome" );
 	
+		this.tipoContratoBuscaCB = new TipoContratoComboBox( cenarioDTO );
 		this.titulacaoBuscaCB = new TitulacaoComboBox( cenarioDTO );
+		this.areaTitulacaoBuscaCB = new AreaTitulacaoComboBox();
+		
+		this.filter.addField( this.nomeBuscaTF );
+		this.filter.addField( this.tipoContratoBuscaCB );
+		this.filter.addField( this.titulacaoBuscaCB );
+		this.filter.addField( this.areaTitulacaoBuscaCB );
 	
+		this.filter.addField( this.nomeBuscaTF );
 		this.filter.addField( this.titulacaoBuscaCB );
 	
 		this.panel.add( this.filter, bld );
@@ -186,5 +203,20 @@ public class ProfessoresVirtuaisView extends MyComposite
 	public Button getMotivoUsoButton()
 	{
 		return this.motivosUsoBT;
+	}
+
+	@Override
+	public TextField<String> getNomeBuscaTF() {
+		return nomeBuscaTF;
+	}
+
+	@Override
+	public TipoContratoComboBox getTipoContratoBuscaCB() {
+		return tipoContratoBuscaCB;
+	}
+
+	@Override
+	public AreaTitulacaoComboBox getAreaTitulacaoBuscaCB() {
+		return areaTitulacaoBuscaCB;
 	}
 }

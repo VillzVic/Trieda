@@ -92,7 +92,7 @@ public class DisciplinasPreRequisitosExportExcel
 	protected boolean fillInExcel( Workbook workbook, Workbook templateWorkbook )
 	{
 		List< Object[] > curriculosDisciplinasPreRequisitos
-			= CurriculoDisciplina.findBy(instituicaoEnsino, getCenario(), null, null, null, "preRequisitos");
+			= CurriculoDisciplina.findBy(instituicaoEnsino, getCenario(), null, null, null,  null, null, "preRequisitos");
 		
 		if (this.removeUnusedSheets) {
 			removeUnusedSheets(this.getSheetName(), workbook);

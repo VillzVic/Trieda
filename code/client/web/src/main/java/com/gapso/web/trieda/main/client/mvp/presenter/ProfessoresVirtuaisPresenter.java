@@ -7,20 +7,25 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.gapso.web.trieda.main.client.mvp.view.GradeHorariaProfessorView;
 import com.gapso.web.trieda.main.client.mvp.view.MotivosUsoProfessorVirtualView;
+import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.CampusDTO;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
 import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
+import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
 import com.gapso.web.trieda.shared.services.AtendimentosServiceAsync;
 import com.gapso.web.trieda.shared.services.Services;
+import com.gapso.web.trieda.shared.util.view.AreaTitulacaoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
+import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,6 +38,9 @@ public class ProfessoresVirtuaisPresenter
  		TitulacaoComboBox getTitulacaoBuscaComboBox();
  		Button getSubmitBuscaButton();
  		Button getResetBuscaButton();
+ 		TextField<String> getNomeBuscaTF();
+ 		TipoContratoComboBox getTipoContratoBuscaCB();
+ 		AreaTitulacaoComboBox getAreaTitulacaoBuscaCB();
  		SimpleGrid< ProfessorVirtualDTO > getGrid();
  		Component getComponent();
  		Button getGradeHorariaButton();
@@ -70,11 +78,15 @@ public class ProfessoresVirtuaisPresenter
  			{
  				TitulacaoDTO titulacaoDTO
  					= display.getTitulacaoBuscaComboBox().getValue();
-
+ 				
+				String nome = display.getNomeBuscaTF().getValue();
+				TipoContratoDTO tipoContratoDTO = display.getTipoContratoBuscaCB().getValue();
+				AreaTitulacaoDTO areaTitulacaoDTO = display.getAreaTitulacaoBuscaCB().getValue();
+				
  				if(campusId == null){
- 					service.getProfessoresVirtuais( cenario, titulacaoDTO, (PagingLoadConfig) loadConfig, callback );
+ 					service.getProfessoresVirtuais( cenario, titulacaoDTO, tipoContratoDTO, areaTitulacaoDTO, nome, (PagingLoadConfig) loadConfig, callback );
  				}else{
- 					service.getProfessoresVirtuais( cenario, titulacaoDTO, campusId, (PagingLoadConfig) loadConfig, callback );
+ 					service.getProfessoresVirtuais( cenario, titulacaoDTO, tipoContratoDTO, areaTitulacaoDTO, nome, campusId, (PagingLoadConfig) loadConfig, callback );
  				}
  				display.getGrid().getGrid().getView().setEmptyText("Não foram utilizados professores virtuais" +
  						" ou o modo de otimização utilizado não foi o operacional");
@@ -94,6 +106,9 @@ public class ProfessoresVirtuaisPresenter
  			public void componentSelected( ButtonEvent ce )
  			{
  				display.getTitulacaoBuscaComboBox().setValue( null );
+ 				display.getNomeBuscaTF().setValue( null );
+ 		 		display.getTipoContratoBuscaCB().setValue( null );
+ 		 		display.getAreaTitulacaoBuscaCB().setValue( null );
  				display.getGrid().updateList();
  			}
  		});

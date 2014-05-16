@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.GradeHorariaProfessorView;
@@ -39,6 +40,7 @@ import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.TipoContratoComboBox;
 import com.gapso.web.trieda.shared.util.view.TitulacaoComboBox;
@@ -58,9 +60,29 @@ public class ProfessoresPresenter implements Presenter
 		MenuItem getExportXlsExcelButton();
 		MenuItem getExportXlsxExcelButton();
 		TextField< String > getCpfBuscaTextField();
+		TextField< String > getNomeBuscaTextField();
 		TipoContratoComboBox getTipoContratoBuscaComboBox();
 		TitulacaoComboBox getTitulacaoBuscaComboBox();
 		AreaTitulacaoComboBox getAreaTitulacaoBuscaComboBox();
+		NumberField getCargaHorariaMinBuscaField();
+		OperadorComboBox getCargaHorariaMinOperadorCB();
+		NumberField getCargaHorariaMaxBuscaField();
+		OperadorComboBox getCargaHorariaMaxOperadorCB();
+		NumberField getNotaDesempenhoBuscaField();
+		OperadorComboBox getNotaDesempenhoBuscaOperadorCB();
+		NumberField getCargaHorariaAnteriorBuscaField();
+		OperadorComboBox getCargaHorariaAnteriorOperadorCB();
+		NumberField getCustoCreditoSemanalBuscaField();
+		OperadorComboBox getCustoCreditoSemanalBuscaOperadorCB();
+		NumberField getMaxDiasSemanaBuscaField();
+		OperadorComboBox getMaxDiasSemanaOperadorCB();
+		NumberField getMinCreditosSemanaisBuscaField();
+		OperadorComboBox getMinCreditosSemanaisOperadorCB();
+		NumberField getTotalCreditosSemanaisBuscaField();
+		OperadorComboBox getTotalCreditosSemanaisBuscaOperadorCB();
+		NumberField getCargaHorariaSemanalBuscaField();
+		OperadorComboBox getCargaHorariaSemanalOperadorCB();
+
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		Button getDisponibilidadeButton();
@@ -99,18 +121,36 @@ public class ProfessoresPresenter implements Presenter
 				AsyncCallback< PagingLoadResult< ProfessorDTO > > callback)
 			{
 				String cpf = display.getCpfBuscaTextField().getValue();
+				String nome = display.getNomeBuscaTextField().getValue();
+				TipoContratoDTO tipoContratoDTO = display.getTipoContratoBuscaComboBox().getValue();
+				TitulacaoDTO titulacaoDTO = display.getTitulacaoBuscaComboBox().getValue();
+				String operadorCargaHorariaMin = (display.getCargaHorariaMinOperadorCB().getValue()==null)?null: display.getCargaHorariaMinOperadorCB().getValue().getValue().getOperadorSQL();
+				Integer cargaHorariaMin = display.getCargaHorariaMinBuscaField().getValue() == null?null:display.getCargaHorariaMinBuscaField().getValue().intValue();
+				String operadorCargaHorariaMax = (display.getCargaHorariaMaxOperadorCB().getValue()==null)?null: display.getCargaHorariaMaxOperadorCB().getValue().getValue().getOperadorSQL();
+				Integer cargaHorariaMax = display.getCargaHorariaMaxBuscaField().getValue() == null?null:display.getCargaHorariaMaxBuscaField().getValue().intValue();
+				String operadorNotaDesempenho = (display.getNotaDesempenhoBuscaOperadorCB().getValue()==null)?null: display.getNotaDesempenhoBuscaOperadorCB().getValue().getValue().getOperadorSQL();
+				Double notaDesempenho = display.getNotaDesempenhoBuscaField().getValue() == null?null:display.getNotaDesempenhoBuscaField().getValue().doubleValue();
+				String operadorCargaHorariaAnterior = (display.getCargaHorariaAnteriorOperadorCB().getValue()==null)?null: display.getCargaHorariaAnteriorOperadorCB().getValue().getValue().getOperadorSQL();
+				Integer cargaHorariaAnterior = display.getCargaHorariaAnteriorBuscaField().getValue() == null?null:display.getCargaHorariaAnteriorBuscaField().getValue().intValue();
+				String operadorCustoCreditoSemanal = (display.getCustoCreditoSemanalBuscaOperadorCB().getValue()==null)?null: display.getCustoCreditoSemanalBuscaOperadorCB().getValue().getValue().getOperadorSQL();
+				Double custoCreditoSemanal = display.getCustoCreditoSemanalBuscaField().getValue() == null?null:display.getCustoCreditoSemanalBuscaField().getValue().doubleValue();
+				String operadorMaxDiasSemana = (display.getMaxDiasSemanaOperadorCB().getValue()==null)?null: display.getMaxDiasSemanaOperadorCB().getValue().getValue().getOperadorSQL();
+				Integer maxDiasSemana = display.getMaxDiasSemanaBuscaField().getValue() == null?null:display.getMaxDiasSemanaBuscaField().getValue().intValue();
+				String operadorMinCreditosSemanais = (display.getMinCreditosSemanaisOperadorCB().getValue()==null)?null: display.getMinCreditosSemanaisOperadorCB().getValue().getValue().getOperadorSQL();
+				Integer minCreditosSemanais = display.getMinCreditosSemanaisBuscaField().getValue() == null?null:display.getMinCreditosSemanaisBuscaField().getValue().intValue();
+				String operadorTotalCreditosSemanais = (display.getTotalCreditosSemanaisBuscaOperadorCB().getValue()==null)?null: display.getTotalCreditosSemanaisBuscaOperadorCB().getValue().getValue().getOperadorSQL();
+				Long totalCreditosSemanais = display.getTotalCreditosSemanaisBuscaField().getValue() == null?null:display.getTotalCreditosSemanaisBuscaField().getValue().longValue();
+				String operadorCargaHorariaSemanal = (display.getCargaHorariaSemanalOperadorCB().getValue()==null)?null: display.getCargaHorariaSemanalOperadorCB().getValue().getValue().getOperadorSQL();
+				Long cargaHorariaSemanal = display.getCargaHorariaSemanalBuscaField().getValue() == null?null:display.getCargaHorariaSemanalBuscaField().getValue().longValue();
+				
+				AreaTitulacaoDTO areaTitulacaoDTO = display.getAreaTitulacaoBuscaComboBox().getValue();
 
-				TipoContratoDTO tipoContratoDTO
-					= display.getTipoContratoBuscaComboBox().getValue();
-
-				TitulacaoDTO titulacaoDTO
-					= display.getTitulacaoBuscaComboBox().getValue();
-
-				AreaTitulacaoDTO areaTitulacaoDTO
-					= display.getAreaTitulacaoBuscaComboBox().getValue();
-
-				service.getBuscaList( cenario, cpf, tipoContratoDTO, titulacaoDTO,
-					areaTitulacaoDTO, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, cpf,	nome, tipoContratoDTO, titulacaoDTO, areaTitulacaoDTO,
+						operadorCargaHorariaMin,cargaHorariaMin,operadorCargaHorariaMax,cargaHorariaMax,operadorNotaDesempenho,notaDesempenho,
+						operadorCargaHorariaAnterior,cargaHorariaAnterior,operadorCustoCreditoSemanal,custoCreditoSemanal,
+						operadorMaxDiasSemana,maxDiasSemana,operadorMinCreditosSemanais,minCreditosSemanais,
+						operadorTotalCreditosSemanais,totalCreditosSemanais,operadorCargaHorariaSemanal,cargaHorariaSemanal,
+					 (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -328,6 +368,24 @@ public class ProfessoresPresenter implements Presenter
 				display.getTipoContratoBuscaComboBox().setValue( null );
 				display.getTitulacaoBuscaComboBox().setValue( null );
 				display.getAreaTitulacaoBuscaComboBox().setValue( null );
+				display.getCargaHorariaMinBuscaField().setValue( null );
+				display.getCargaHorariaMinOperadorCB().setValue( null );
+				display.getCargaHorariaMaxBuscaField().setValue( null );
+				display.getCargaHorariaMaxOperadorCB().setValue( null );
+				display.getNotaDesempenhoBuscaField().setValue( null );
+				display.getNotaDesempenhoBuscaOperadorCB().setValue( null );
+				display.getCargaHorariaAnteriorBuscaField().setValue( null );
+				display.getCargaHorariaAnteriorOperadorCB().setValue( null );
+				display.getCustoCreditoSemanalBuscaField().setValue( null );
+				display.getCustoCreditoSemanalBuscaOperadorCB().setValue( null );
+				display.getMaxDiasSemanaBuscaField().setValue( null );
+				display.getMaxDiasSemanaOperadorCB().setValue( null );
+				display.getMinCreditosSemanaisBuscaField().setValue( null );
+				display.getMinCreditosSemanaisOperadorCB().setValue( null );
+				display.getTotalCreditosSemanaisBuscaField().setValue( null );
+				display.getTotalCreditosSemanaisBuscaOperadorCB().setValue( null );
+				display.getCargaHorariaSemanalBuscaField().setValue( null );
+				display.getCargaHorariaSemanalOperadorCB().setValue( null );
 				display.getGrid().updateList();
 			}
 		});

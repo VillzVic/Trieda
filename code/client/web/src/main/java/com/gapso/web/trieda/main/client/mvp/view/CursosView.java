@@ -9,6 +9,7 @@ import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.CheckColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
@@ -21,7 +22,9 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -37,6 +40,17 @@ public class CursosView
 	private TextField< String > nomeBuscaTextField;
 	private TextField< String > codigoBuscaTextField;
 	private TipoCursoComboBox tipoCursoBuscaComboBox;
+	private OperadorComboBox operadorMinPercentualDoutor;
+	private OperadorComboBox operadorMinPercentualMestre;
+	private OperadorComboBox operadorMinTempoIntegralParcial;
+	private OperadorComboBox operadorMinTempoIntegral;
+	private OperadorComboBox operadorMaxDisciplinasProfessor;
+	private NumberField minPercentualDoutor;
+	private NumberField minPercentualMestre;
+	private NumberField minTempoIntegralParcial;
+	private NumberField minTempoIntegral;
+	private NumberField maxDisciplinasProfessor;
+	private ComboBoxBoolean maisDeUmaDisciplinaProfessor;
 	private Button curriculosBT;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -111,21 +125,61 @@ public class CursosView
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(150);
 		this.tipoCursoBuscaComboBox = new TipoCursoComboBox( cenarioDTO );
 		this.tipoCursoBuscaComboBox.setFieldLabel( "Tipo" );
 		this.nomeBuscaTextField = new TextField< String >();
 		this.nomeBuscaTextField.setFieldLabel( "Nome" );
 		this.codigoBuscaTextField = new TextField< String >();
 		this.codigoBuscaTextField.setFieldLabel( "Código" );
-
+		
+		this.operadorMinPercentualDoutor = new OperadorComboBox();
+		this.operadorMinPercentualDoutor.setWidth(100);
+		this.operadorMinPercentualDoutor.setFieldLabel(getI18nConstants().minPercentualDoutor());
+		this.minPercentualDoutor = new NumberField();
+		this.minPercentualDoutor.setWidth(75);
+		
+		this.operadorMinPercentualMestre = new OperadorComboBox();
+		this.operadorMinPercentualMestre.setWidth(100);
+		this.operadorMinPercentualMestre.setFieldLabel(getI18nConstants().minPercentualMestre());
+		this.minPercentualMestre = new NumberField();
+		this.minPercentualMestre.setWidth(75);
+		
+		this.operadorMinTempoIntegralParcial = new OperadorComboBox();
+		this.operadorMinTempoIntegralParcial.setWidth(100);
+		this.operadorMinTempoIntegralParcial.setFieldLabel(getI18nConstants().minTempoIntegralParcial());
+		this.minTempoIntegralParcial = new NumberField();
+		this.minTempoIntegralParcial.setWidth(75);
+		
+		this.operadorMinTempoIntegral= new OperadorComboBox();
+		this.operadorMinTempoIntegral.setWidth(100);
+		this.operadorMinTempoIntegral.setFieldLabel(getI18nConstants().minTempoIntegral());
+		this.minTempoIntegral = new NumberField();
+		this.minTempoIntegral.setWidth(75);
+		
+		this.operadorMaxDisciplinasProfessor= new OperadorComboBox();
+		this.operadorMaxDisciplinasProfessor.setWidth(100);
+		this.operadorMaxDisciplinasProfessor.setFieldLabel(getI18nConstants().maxDisciplinasProfessor());
+		this.maxDisciplinasProfessor = new NumberField();
+		this.maxDisciplinasProfessor.setWidth(75);
+		
+		this.maisDeUmaDisciplinaProfessor = new ComboBoxBoolean();
+		this.maisDeUmaDisciplinaProfessor.setFieldLabel(getI18nConstants().maisDeUmaDisciplinaProfessor());
+		
 		this.filter.addField( this.tipoCursoBuscaComboBox );
 		this.filter.addField( this.nomeBuscaTextField );
 		this.filter.addField( this.codigoBuscaTextField );
+		this.filter.addMultiField( this.operadorMinPercentualDoutor, this.minPercentualDoutor );
+		this.filter.addMultiField( this.operadorMinPercentualMestre, this.minPercentualMestre );
+		this.filter.addMultiField( this.operadorMinTempoIntegralParcial, this.minTempoIntegralParcial);
+		this.filter.addMultiField( this.operadorMinTempoIntegral, this.minTempoIntegral);
+		this.filter.addMultiField( this.operadorMaxDisciplinasProfessor, this.maxDisciplinasProfessor );
+		this.filter.addField( this.maisDeUmaDisciplinaProfessor );
 
 		this.panel.add( this.filter, bld );
 	}
@@ -213,5 +267,60 @@ public class CursosView
 	public Button getCurriculosButton()
 	{
 		return this.curriculosBT;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorMinPercentualDoutor() {
+		return operadorMinPercentualDoutor;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorMinPercentualMestre() {
+		return operadorMinPercentualMestre;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorMinTempoIntegralParcial() {
+		return operadorMinTempoIntegralParcial;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorMinTempoIntegral() {
+		return operadorMinTempoIntegral;
+	}
+
+	@Override
+	public OperadorComboBox getOperadorMaxDisciplinasProfessor() {
+		return operadorMaxDisciplinasProfessor;
+	}
+
+	@Override
+	public NumberField getMinPercentualDoutor() {
+		return minPercentualDoutor;
+	}
+
+	@Override
+	public NumberField getMinPercentualMestre() {
+		return minPercentualMestre;
+	}
+
+	@Override
+	public NumberField getMinTempoIntegralParcial() {
+		return minTempoIntegralParcial;
+	}
+
+	@Override
+	public NumberField getMinTempoIntegral() {
+		return minTempoIntegral;
+	}
+
+	@Override
+	public NumberField getMaxDisciplinasProfessor() {
+		return maxDisciplinasProfessor;
+	}
+
+	@Override
+	public ComboBoxBoolean getMaisDeUmaDisciplinaProfessor() {
+		return maisDeUmaDisciplinaProfessor;
 	}
 }

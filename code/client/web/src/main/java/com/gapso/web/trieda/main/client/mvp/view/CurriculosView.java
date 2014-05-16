@@ -23,6 +23,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -36,6 +37,7 @@ public class CurriculosView extends MyComposite
 	private TextField< String > codigoBuscaTextField;
 	private TextField< String > descricaoBuscaTextField;
 	private TextField< String > periodoTextField;
+	private SemanaLetivaComboBox semanaLetivaComboBox;
 	private CursoComboBox cursoBuscaComboBox;
 	private ContentPanel panel;
 	private GTabItem tabItem;
@@ -119,11 +121,12 @@ public class CurriculosView extends MyComposite
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 350 );
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		filter = new SimpleFilter();
+		filter.setLabelWidth(125);
 		cursoBuscaComboBox = new CursoComboBox( cenarioDTO );
 		cursoBuscaComboBox.setFieldLabel( "Curso" );
 		cursoBuscaComboBox.setValue( cursoDTO );
@@ -133,11 +136,15 @@ public class CurriculosView extends MyComposite
 		descricaoBuscaTextField.setFieldLabel( "Descricao" );
 		periodoTextField = new TextField< String >();
 		periodoTextField.setFieldLabel( "Período" );
+		semanaLetivaComboBox = new SemanaLetivaComboBox(cenarioDTO);
+		semanaLetivaComboBox.setFieldLabel(getI18nConstants().semanaLetiva());
+		
 
 		filter.addField( cursoBuscaComboBox );
 		filter.addField( codigoBuscaTextField );
 		filter.addField( descricaoBuscaTextField );
 		filter.addField( periodoTextField );
+		filter.addField( semanaLetivaComboBox );
 
 		panel.add( filter, bld );
 	}
@@ -224,5 +231,15 @@ public class CurriculosView extends MyComposite
 	public Button getAssociarDisciplinasButton()
 	{
 		return associarDisciplinasBT;
+	}
+
+	@Override
+	public SemanaLetivaComboBox getSemanaLetivaComboBox() {
+		return semanaLetivaComboBox;
+	}
+	
+	@Override
+	public TextField<String> getPeriodoTextField() {
+		return periodoTextField;
 	}
 }

@@ -13,6 +13,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.DisciplinaFormView;
@@ -34,11 +35,15 @@ import com.gapso.web.trieda.shared.services.Services;
 import com.gapso.web.trieda.shared.util.view.AbstractAsyncCallbackWithDefaultOnFailure;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelPresenter;
 import com.gapso.web.trieda.shared.util.view.AcompanhamentoPanelView;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
+import com.gapso.web.trieda.shared.util.view.DificuldadeComboBox;
+import com.gapso.web.trieda.shared.util.view.DificuldadeComboBox.Dificuldade;
 import com.gapso.web.trieda.shared.util.view.ExcelParametros;
 import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.TipoDisciplinaComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -61,6 +66,20 @@ implements Presenter
 		TextField< String > getNomeBuscaTextField();
 		TextField< String > getCodigoBuscaTextField();
 		TipoDisciplinaComboBox getTipoDisciplinaBuscaComboBox();
+		NumberField getCreditosTeoricosField();
+		OperadorComboBox getOperadorCreditosTeoricos();
+		NumberField getCreditosPraticosField();
+		OperadorComboBox getOperadorCreditosPraticos();
+		ComboBoxBoolean getExigeLaboratorio();
+		DificuldadeComboBox getNivelDificuldade();
+		NumberField getMaxAlunosTeoricosField();
+		OperadorComboBox getOperadorMaxAlunosTeoricos();
+		NumberField getMaxAlunosPraticosField();
+		OperadorComboBox getOperadorMaxAlunosPraticos();
+		ComboBoxBoolean getAulasContinuas();
+		ComboBoxBoolean getProfessorUnico();
+		ComboBoxBoolean getUsaSabado();
+		ComboBoxBoolean getUsaDomingo();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		Button getAssociarSalasButton();
@@ -100,11 +119,32 @@ implements Presenter
 			{
 				String nome = display.getNomeBuscaTextField().getValue();
 				String codigo = display.getCodigoBuscaTextField().getValue();
+				String operadorCreditosTeorico = (display.getOperadorCreditosTeoricos().getValue()==null)?null: display.getOperadorCreditosTeoricos().getValue().getValue().getOperadorSQL();
+				Integer creditosTeorico = display.getCreditosTeoricosField().getValue() == null?null:display.getCreditosTeoricosField().getValue().intValue();
+				String operadorCreditosPratico = (display.getOperadorCreditosPraticos().getValue()==null)?null: display.getOperadorCreditosPraticos().getValue().getValue().getOperadorSQL();
+				Integer creditosPratico = display.getCreditosPraticosField().getValue() == null?null:display.getCreditosPraticosField().getValue().intValue();
+				Boolean exigeLaboratorio = (display.getExigeLaboratorio().getValue()==null)?null:display.getExigeLaboratorio().getValue().getValue().getValue();
+
+				String operadorMaxAlunosTeorico = (display.getOperadorMaxAlunosTeoricos().getValue()==null)?null: display.getOperadorMaxAlunosTeoricos().getValue().getValue().getOperadorSQL();
+				Integer maxAlunosTeorico = display.getMaxAlunosTeoricosField().getValue() == null?null:display.getMaxAlunosTeoricosField().getValue().intValue();
+				String operadorMaxAlunosPratico = (display.getOperadorMaxAlunosPraticos().getValue()==null)?null: display.getOperadorMaxAlunosPraticos().getValue().getValue().getOperadorSQL();
+				Integer maxAlunosPratico = display.getMaxAlunosPraticosField().getValue() == null?null:display.getMaxAlunosPraticosField().getValue().intValue();
+				Boolean aulasContinuas = (display.getAulasContinuas().getValue()==null)?null:display.getAulasContinuas().getValue().getValue().getValue();
+				Boolean professorUnico = (display.getProfessorUnico().getValue()==null)?null:display.getProfessorUnico().getValue().getValue().getValue();
+				Boolean usaSabado = (display.getUsaSabado().getValue()==null)?null:display.getUsaSabado().getValue().getValue().getValue();
+				Boolean usaDomingo = (display.getUsaDomingo().getValue()==null)?null:display.getUsaDomingo().getValue().getValue().getValue();
+
+				
+				String dificuldade =  (display.getNivelDificuldade().getValue()==null)?null:display.getNivelDificuldade().getValue().getValue().name();
+				
 
 				TipoDisciplinaDTO tipoDisciplinaDTO
 					= display.getTipoDisciplinaBuscaComboBox().getValue();
 
-				service.getBuscaList( cenario, nome, codigo, tipoDisciplinaDTO,
+				service.getBuscaList( cenario, nome, codigo, tipoDisciplinaDTO, 
+						operadorCreditosTeorico, creditosTeorico, operadorCreditosPratico, creditosPratico,
+						exigeLaboratorio, operadorMaxAlunosTeorico, maxAlunosTeorico, operadorMaxAlunosPratico, maxAlunosPratico,
+						aulasContinuas, professorUnico, usaSabado, usaDomingo, dificuldade,
 					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
@@ -332,6 +372,20 @@ implements Presenter
 				display.getNomeBuscaTextField().setValue( null );
 				display.getCodigoBuscaTextField().setValue( null );
 				display.getTipoDisciplinaBuscaComboBox().setValue( null );
+				display.getCreditosTeoricosField().setValue( null );
+				display.getOperadorCreditosTeoricos().setValue( null );
+				display.getCreditosPraticosField().setValue( null );
+				display.getOperadorCreditosPraticos().setValue( null );
+				display.getExigeLaboratorio().setValue( null );
+				display.getNivelDificuldade().clearSelections();
+				display.getMaxAlunosTeoricosField().setValue( null );
+				display.getOperadorMaxAlunosTeoricos().setValue( null );
+				display.getMaxAlunosPraticosField().setValue( null );
+				display.getOperadorMaxAlunosPraticos().setValue( null );
+				display.getAulasContinuas().setValue( null);
+				display.getProfessorUnico().setValue( null );
+				display.getUsaSabado().setValue( null );
+				display.getUsaDomingo().setValue( null );
 
 				display.getGrid().updateList();
 			}

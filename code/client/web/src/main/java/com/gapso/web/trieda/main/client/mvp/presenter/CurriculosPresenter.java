@@ -20,6 +20,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.CurriculoDTO;
 import com.gapso.web.trieda.shared.dtos.CursoDTO;
 import com.gapso.web.trieda.shared.dtos.InstituicaoEnsinoDTO;
+import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.excel.ExcelInformationType;
 import com.gapso.web.trieda.shared.i18n.ITriedaI18nGateway;
 import com.gapso.web.trieda.shared.mvp.presenter.Presenter;
@@ -34,6 +35,7 @@ import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.SemanaLetivaComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -58,6 +60,8 @@ public class CurriculosPresenter
 		Button getResetBuscaButton();
 		SimpleGrid< CurriculoDTO > getGrid();
 		Component getComponent();
+		TextField<String> getPeriodoTextField();
+		SemanaLetivaComboBox getSemanaLetivaComboBox();
 		void setProxy( RpcProxy< PagingLoadResult< CurriculoDTO > > proxy );
 	}
 
@@ -90,8 +94,10 @@ public class CurriculosPresenter
 				String codigo = display.getCodigoBuscaTextField().getValue();
 				String descricao = display.getDescricaoBuscaTextField().getValue();
 				CursoDTO cursoDTO = display.getCursoBuscaComboBox().getValue();
+				String periodo = display.getPeriodoTextField().getValue();
+				SemanaLetivaDTO semanaLetivaDTO = display.getSemanaLetivaComboBox().getValue();
 
-				service.getBuscaList( cenario, cursoDTO, codigo, descricao, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenario, cursoDTO, semanaLetivaDTO, codigo, descricao, periodo, (PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -232,6 +238,8 @@ public class CurriculosPresenter
 					display.getCodigoBuscaTextField().setValue( null );
 					display.getDescricaoBuscaTextField().setValue( null );
 					display.getCursoBuscaComboBox().setValue( null );
+					display.getSemanaLetivaComboBox().setValue( null );
+					display.getPeriodoTextField().setValue( null );
 					display.getGrid().updateList();
 				}
 		});

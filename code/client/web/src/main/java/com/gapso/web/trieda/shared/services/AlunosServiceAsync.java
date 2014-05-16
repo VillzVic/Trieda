@@ -16,7 +16,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface AlunosServiceAsync
 {
 	void getAluno( Long id, AsyncCallback< AlunoDTO > callback );
-	void getBuscaList(CenarioDTO cenario, String nome, String matricula, PagingLoadConfig config, AsyncCallback<PagingLoadResult<AlunoDTO>> callback);
+	void getBuscaList(CenarioDTO cenario, String nome, String matricula,Boolean  formando,Integer periodo,Boolean virtual,Boolean criadoPeloTrieda, PagingLoadConfig config, AsyncCallback<PagingLoadResult<AlunoDTO>> callback);
 	void getAlunosList( String nome, String cpf, AsyncCallback< PagingLoadResult< AlunoDTO > > callback );
 	void getAlunosListByCampus(CampusDTO campusDTO, AsyncCallback<PagingLoadResult<AlunoDTO>> callback);
 	void saveAluno( AlunoDTO alunoDTO, AsyncCallback< Void > callback );

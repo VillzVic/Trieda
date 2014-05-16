@@ -28,6 +28,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.trieda.domain.Aluno;
 import com.gapso.trieda.domain.AlunoDemanda;
+import com.gapso.trieda.domain.AreaTitulacao;
 import com.gapso.trieda.domain.AtendimentoOperacional;
 import com.gapso.trieda.domain.AtendimentoTatico;
 import com.gapso.trieda.domain.Aula;
@@ -49,6 +50,7 @@ import com.gapso.trieda.domain.ProfessorDisciplina;
 import com.gapso.trieda.domain.ProfessorVirtual;
 import com.gapso.trieda.domain.Sala;
 import com.gapso.trieda.domain.SemanaLetiva;
+import com.gapso.trieda.domain.TipoContrato;
 import com.gapso.trieda.domain.Titulacao;
 import com.gapso.trieda.domain.TriedaPar;
 import com.gapso.trieda.domain.TriedaTrio;
@@ -59,6 +61,7 @@ import com.gapso.trieda.misc.Semanas;
 import com.gapso.web.trieda.server.util.ConvertBeans;
 import com.gapso.web.trieda.server.util.TriedaServerUtil;
 import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
+import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoOperacionalDTO;
@@ -85,6 +88,7 @@ import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
 import com.gapso.web.trieda.shared.dtos.SextetoDTO;
+import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
@@ -1531,9 +1535,12 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	
 	@Override
 	public PagingLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
+			 TipoContratoDTO tipoContratoDTO, AreaTitulacaoDTO areaTitulacaoDTO,String nome, 
 			PagingLoadConfig config ) throws TriedaException
 	{
 		Titulacao titulacao = titulacaoDTO == null ? null : Titulacao.find(titulacaoDTO.getId(), getInstituicaoEnsinoUser());
+		AreaTitulacao areaTitulacao = areaTitulacaoDTO == null ? null : AreaTitulacao.find(areaTitulacaoDTO.getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = tipoContratoDTO == null ? null : TipoContrato.find(tipoContratoDTO.getId(), getInstituicaoEnsinoUser());
 		
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
@@ -1553,7 +1560,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		List< ProfessorVirtual > professoresVirtuais
-			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), cenario, titulacao, orderBy );
+			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), cenario, titulacao, tipoContrato, areaTitulacao, nome,  orderBy );
 
 		List< ProfessorVirtualDTO > professoresVirtuaisDTO
 			= new ArrayList< ProfessorVirtualDTO >();
@@ -1570,7 +1577,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( ProfessorVirtual.findBy(
-				getInstituicaoEnsinoUser(), cenario, titulacao, orderBy ).size() );
+				getInstituicaoEnsinoUser(), cenario, titulacao, tipoContrato, areaTitulacao, nome,  orderBy ).size() );
 		
 		return result;
 	}
@@ -1578,9 +1585,11 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 	@Override
 	public PagingLoadResult<ProfessorVirtualDTO> getProfessoresVirtuais(
 			CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO,
+			 TipoContratoDTO tipoContratoDTO, AreaTitulacaoDTO areaTitulacaoDTO, String nome, 
 			Long campusId, PagingLoadConfig config) {
 		Titulacao titulacao = titulacaoDTO == null ? null : Titulacao.find(titulacaoDTO.getId(), getInstituicaoEnsinoUser());
-		
+		AreaTitulacao areaTitulacao = areaTitulacaoDTO == null ? null : AreaTitulacao.find(areaTitulacaoDTO.getId(), getInstituicaoEnsinoUser());
+		TipoContrato tipoContrato = tipoContratoDTO == null ? null : TipoContrato.find(tipoContratoDTO.getId(), getInstituicaoEnsinoUser());
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		Campus campus = Campus.find(campusId, getInstituicaoEnsinoUser());
 		
@@ -1600,7 +1609,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		}
 		
 		List< ProfessorVirtual > professoresVirtuais
-			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), cenario, titulacao, campus, orderBy );
+			= ProfessorVirtual.findBy( getInstituicaoEnsinoUser(), cenario, titulacao, tipoContrato, areaTitulacao, nome, campus, orderBy );
 
 		List< ProfessorVirtualDTO > professoresVirtuaisDTO
 			= new ArrayList< ProfessorVirtualDTO >();
@@ -1617,7 +1626,7 @@ public class AtendimentosServiceImpl extends RemoteService implements Atendiment
 		result.setOffset( config.getOffset() );
 
 		result.setTotalLength( ProfessorVirtual.findBy(
-				getInstituicaoEnsinoUser(), cenario, titulacao, orderBy ).size() );
+				getInstituicaoEnsinoUser(), cenario, titulacao, tipoContrato, areaTitulacao, nome,  orderBy ).size() );
 		
 		return result;
 	}

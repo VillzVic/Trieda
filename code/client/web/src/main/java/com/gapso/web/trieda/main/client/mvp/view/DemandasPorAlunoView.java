@@ -11,6 +11,8 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
@@ -22,6 +24,7 @@ import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.CampusComboBox;
+import com.gapso.web.trieda.shared.util.view.ComboBoxBoolean;
 import com.gapso.web.trieda.shared.util.view.CurriculoComboBox;
 import com.gapso.web.trieda.shared.util.view.CursoComboBox;
 import com.gapso.web.trieda.shared.util.view.DisciplinaAutoCompleteBox;
@@ -43,6 +46,11 @@ public class DemandasPorAlunoView
 	private CurriculoComboBox curriculoBuscaCB;
 	private TurnoComboBox turnoBuscaCB;
 	private DisciplinaAutoCompleteBox disciplinaBuscaCB;
+	private NumberField periodoField;
+	private TextField< String > matriculaBuscaTextField;
+	private TextField< String > nomeTextField;
+	private NumberField alunoPrioridadeField;
+	private ComboBoxBoolean atentido;
 	private ContentPanel panel;
 	private GTabItem tabItem;
 	private Button importExcelAlunosDemandaBT;
@@ -142,12 +150,13 @@ public class DemandasPorAlunoView
 	private void createFilter()
 	{
 		BorderLayoutData bld
-			= new BorderLayoutData( LayoutRegion.EAST );
+			= new BorderLayoutData( LayoutRegion.EAST, 350 );
 	
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 	
 		this.filter = new SimpleFilter();
+		this.filter.setFieldWidth(150);
 	
 		this.campusBuscaCB = new CampusComboBox( cenarioDTO );
 		this.filter.addField( this.campusBuscaCB );
@@ -163,6 +172,28 @@ public class DemandasPorAlunoView
 	
 		this.disciplinaBuscaCB = new DisciplinaAutoCompleteBox( cenarioDTO );
 		this.filter.addField( this.disciplinaBuscaCB );
+		
+		this.periodoField = new NumberField();
+		this.periodoField.setFieldLabel(getI18nConstants().periodo());
+		this.periodoField.setWidth( "75" );
+		this.filter.addField(periodoField);
+		
+		this.matriculaBuscaTextField = new TextField< String >();
+		this.matriculaBuscaTextField.setFieldLabel( "Matricula" );
+		this.filter.addField( this.matriculaBuscaTextField );
+		
+		this.nomeTextField = new TextField< String >();
+		this.nomeTextField.setFieldLabel( "Nome" );
+		this.filter.addField( this.nomeTextField );
+		
+		this.alunoPrioridadeField = new NumberField();
+		this.alunoPrioridadeField.setFieldLabel(getI18nConstants().prioridadeAlunoDemanda());
+		this.alunoPrioridadeField.setWidth( "75" );
+		this.filter.addField(alunoPrioridadeField);
+		
+		this.atentido = new ComboBoxBoolean();
+		this.atentido.setFieldLabel("Atendido");
+		this.filter.addField(atentido);
 	
 		this.panel.add( this.filter, bld );
 	}
@@ -286,5 +317,26 @@ public class DemandasPorAlunoView
 	public Button getMotivosNaoAtendimentoButton()
 	{
 		return this.motivosNaoAtendimentoBT;
+	}
+
+	@Override
+	public NumberField getPeriodoField() {
+		return periodoField;
+	}
+
+	public TextField<String> getMatriculaBuscaTextField() {
+		return matriculaBuscaTextField;
+	}
+
+	public TextField<String> getNomeTextField() {
+		return nomeTextField;
+	}
+
+	public NumberField getAlunoPrioridadeField() {
+		return alunoPrioridadeField;
+	}
+
+	public ComboBoxBoolean getAtentido() {
+		return atentido;
 	}
 }

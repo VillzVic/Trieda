@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
@@ -24,6 +25,7 @@ import com.gapso.web.trieda.shared.mvp.view.MyComposite;
 import com.gapso.web.trieda.shared.util.resources.Resources;
 import com.gapso.web.trieda.shared.util.view.AreaTitulacaoComboBox;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleFilter;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.SimpleToolBar;
@@ -37,6 +39,25 @@ public class ProfessoresView extends MyComposite
 	private SimpleGrid< ProfessorDTO > gridPanel;
 	private SimpleFilter filter;
 	private TextField< String > cpfBuscaTF;
+	private TextField< String > nomeBuscaTF;
+	private NumberField cargaHorariaMinBuscaField;
+	private OperadorComboBox cargaHorariaMinOperadorCB;
+	private NumberField cargaHorariaMaxBuscaField;
+	private OperadorComboBox cargaHorariaMaxOperadorCB;
+	private NumberField notaDesempenhoBuscaField;
+	private OperadorComboBox notaDesempenhoBuscaOperadorCB;
+	private NumberField cargaHorariaAnteriorBuscaField;
+	private OperadorComboBox cargaHorariaAnteriorOperadorCB;
+	private NumberField custoCreditoSemanalBuscaField;
+	private OperadorComboBox custoCreditoSemanalBuscaOperadorCB;
+	private NumberField maxDiasSemanaBuscaField;
+	private OperadorComboBox maxDiasSemanaOperadorCB;
+	private NumberField minCreditosSemanaisBuscaField;
+	private OperadorComboBox minCreditosSemanaisOperadorCB;
+	private NumberField totalCreditosSemanaisBuscaField;
+	private OperadorComboBox totalCreditosSemanaisBuscaOperadorCB;
+	private NumberField cargaHorariaSemanalBuscaField;
+	private OperadorComboBox cargaHorariaSemanalOperadorCB;
 	private TipoContratoComboBox tipoContratoBuscaCB;
 	private TitulacaoComboBox titulacaoBuscaCB;
 	private AreaTitulacaoComboBox areaTitulacaoBuscaCB;
@@ -118,23 +139,100 @@ public class ProfessoresView extends MyComposite
 
 	private void createFilter()
 	{
-		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST );
+		BorderLayoutData bld = new BorderLayoutData( LayoutRegion.EAST, 450 );
 
 		bld.setMargins( new Margins( 5, 5, 5, 0 ) );
 		bld.setCollapsible( true );
 
 		this.filter = new SimpleFilter();
+		this.filter.setLabelWidth(205);
 
 		this.cpfBuscaTF = new TextField< String >();
 		this.cpfBuscaTF.setFieldLabel( "CPF" );
+		this.nomeBuscaTF = new TextField< String >();
+		this.nomeBuscaTF.setFieldLabel( "Nome" );
 		this.tipoContratoBuscaCB = new TipoContratoComboBox( cenarioDTO );
 		this.titulacaoBuscaCB = new TitulacaoComboBox( cenarioDTO );
 		this.areaTitulacaoBuscaCB = new AreaTitulacaoComboBox();
-
+		
 		this.filter.addField( this.cpfBuscaTF );
+		this.filter.addField( this.nomeBuscaTF );
 		this.filter.addField( this.tipoContratoBuscaCB );
 		this.filter.addField( this.titulacaoBuscaCB );
 		this.filter.addField( this.areaTitulacaoBuscaCB );
+
+		this.cargaHorariaMinOperadorCB = new OperadorComboBox();
+		this.cargaHorariaMinOperadorCB.setFieldLabel(getI18nConstants().cargaHorariaMin());
+		this.cargaHorariaMinOperadorCB.setWidth(100);
+		
+		this.cargaHorariaMinBuscaField = new NumberField();
+		this.cargaHorariaMinBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.cargaHorariaMinOperadorCB, this.cargaHorariaMinBuscaField);
+		
+		this.cargaHorariaMaxOperadorCB = new OperadorComboBox();
+		this.cargaHorariaMaxOperadorCB.setFieldLabel(getI18nConstants().cargaHorariaMax());
+		this.cargaHorariaMaxOperadorCB.setWidth(100);
+		
+		this.cargaHorariaMaxBuscaField = new NumberField();
+		this.cargaHorariaMaxBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.cargaHorariaMaxOperadorCB, this.cargaHorariaMaxBuscaField);
+		
+		this.notaDesempenhoBuscaOperadorCB = new OperadorComboBox();
+		this.notaDesempenhoBuscaOperadorCB.setFieldLabel(getI18nConstants().notaDesempenho());
+		this.notaDesempenhoBuscaOperadorCB.setWidth(100);
+		
+		this.notaDesempenhoBuscaField = new NumberField();
+		this.notaDesempenhoBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.notaDesempenhoBuscaOperadorCB, this.notaDesempenhoBuscaField);
+		
+		this.cargaHorariaAnteriorOperadorCB = new OperadorComboBox();
+		this.cargaHorariaAnteriorOperadorCB.setFieldLabel(getI18nConstants().cargaHorariaAnterior());
+		this.cargaHorariaAnteriorOperadorCB.setWidth(100);
+		
+		this.cargaHorariaAnteriorBuscaField = new NumberField();
+		this.cargaHorariaAnteriorBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.cargaHorariaAnteriorOperadorCB, this.cargaHorariaAnteriorBuscaField);
+		
+		this.custoCreditoSemanalBuscaOperadorCB = new OperadorComboBox();
+		this.custoCreditoSemanalBuscaOperadorCB.setFieldLabel(getI18nConstants().valorCredito());
+		this.custoCreditoSemanalBuscaOperadorCB.setWidth(100);
+		
+		this.custoCreditoSemanalBuscaField = new NumberField();
+		this.custoCreditoSemanalBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.custoCreditoSemanalBuscaOperadorCB, this.custoCreditoSemanalBuscaField);
+		
+		this.maxDiasSemanaOperadorCB = new OperadorComboBox();
+		this.maxDiasSemanaOperadorCB.setFieldLabel(getI18nConstants().maxDiasSemana());
+		this.maxDiasSemanaOperadorCB.setWidth(100);
+		
+		this.maxDiasSemanaBuscaField = new NumberField();
+		this.maxDiasSemanaBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.maxDiasSemanaOperadorCB, this.maxDiasSemanaBuscaField);
+		
+		this.minCreditosSemanaisOperadorCB = new OperadorComboBox();
+		this.minCreditosSemanaisOperadorCB.setFieldLabel(getI18nConstants().minCreditosDia());
+		this.minCreditosSemanaisOperadorCB.setWidth(100);
+		
+		this.minCreditosSemanaisBuscaField = new NumberField();
+		this.minCreditosSemanaisBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.minCreditosSemanaisOperadorCB, this.minCreditosSemanaisBuscaField);
+		
+		this.totalCreditosSemanaisBuscaOperadorCB = new OperadorComboBox();
+		this.totalCreditosSemanaisBuscaOperadorCB.setFieldLabel(getI18nConstants().totalCreditosSemanais());
+		this.totalCreditosSemanaisBuscaOperadorCB.setWidth(100);
+		
+		this.totalCreditosSemanaisBuscaField = new NumberField();
+		this.totalCreditosSemanaisBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.totalCreditosSemanaisBuscaOperadorCB, this.totalCreditosSemanaisBuscaField);
+
+		this.cargaHorariaSemanalOperadorCB = new OperadorComboBox();
+		this.cargaHorariaSemanalOperadorCB.setFieldLabel(getI18nConstants().cargaHorariaSemanal());
+		this.cargaHorariaSemanalOperadorCB.setWidth(100);
+		
+		this.cargaHorariaSemanalBuscaField = new NumberField();
+		this.cargaHorariaSemanalBuscaField.setWidth( "75" );
+		this.filter.addMultiField(this.cargaHorariaSemanalOperadorCB, this.cargaHorariaSemanalBuscaField);
+
 
 		this.panel.add( this.filter, bld );
 	}
@@ -282,5 +380,100 @@ public class ProfessoresView extends MyComposite
 	public Button getGradeHorariaButton()
 	{
 		return this.gradeHorariaBT;
+	}
+
+	@Override
+	public NumberField getCargaHorariaMinBuscaField() {
+		return cargaHorariaMinBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getCargaHorariaMinOperadorCB() {
+		return cargaHorariaMinOperadorCB;
+	}
+
+	@Override
+	public NumberField getCargaHorariaMaxBuscaField() {
+		return cargaHorariaMaxBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getCargaHorariaMaxOperadorCB() {
+		return cargaHorariaMaxOperadorCB;
+	}
+
+	@Override
+	public NumberField getNotaDesempenhoBuscaField() {
+		return notaDesempenhoBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getNotaDesempenhoBuscaOperadorCB() {
+		return notaDesempenhoBuscaOperadorCB;
+	}
+
+	@Override
+	public NumberField getCargaHorariaAnteriorBuscaField() {
+		return cargaHorariaAnteriorBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getCargaHorariaAnteriorOperadorCB() {
+		return cargaHorariaAnteriorOperadorCB;
+	}
+
+	@Override
+	public NumberField getCustoCreditoSemanalBuscaField() {
+		return custoCreditoSemanalBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getCustoCreditoSemanalBuscaOperadorCB() {
+		return custoCreditoSemanalBuscaOperadorCB;
+	}
+
+	@Override
+	public NumberField getMaxDiasSemanaBuscaField() {
+		return maxDiasSemanaBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getMaxDiasSemanaOperadorCB() {
+		return maxDiasSemanaOperadorCB;
+	}
+
+	@Override
+	public NumberField getMinCreditosSemanaisBuscaField() {
+		return minCreditosSemanaisBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getMinCreditosSemanaisOperadorCB() {
+		return minCreditosSemanaisOperadorCB;
+	}
+
+	@Override
+	public NumberField getTotalCreditosSemanaisBuscaField() {
+		return totalCreditosSemanaisBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getTotalCreditosSemanaisBuscaOperadorCB() {
+		return totalCreditosSemanaisBuscaOperadorCB;
+	}
+
+	@Override
+	public NumberField getCargaHorariaSemanalBuscaField() {
+		return cargaHorariaSemanalBuscaField;
+	}
+
+	@Override
+	public OperadorComboBox getCargaHorariaSemanalOperadorCB() {
+		return cargaHorariaSemanalOperadorCB;
+	}
+
+	@Override
+	public TextField<String> getNomeBuscaTextField() {
+		return nomeBuscaTF;
 	}
 }

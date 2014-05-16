@@ -27,6 +27,29 @@ public class DificuldadeComboBox extends SimpleComboBox<Dificuldade> {
 		setDisplayField("value");
 
 	}
+	
+	public DificuldadeComboBox(boolean incluirVazio) {
+		List<Dificuldade> enumList = Arrays.asList(Dificuldade.values());
+		add(enumList);
+		if(incluirVazio){
+			setEmptyText("Selecione");
+			setSimpleValue( null );
+		} else{
+			setSimpleValue( enumList.get( 0 ) );
+		}
+		setLazyRender(false);
+		setEditable(false);
+		setTriggerAction(TriggerAction.ALL);
+	
+		setPropertyEditor(new ListModelPropertyEditor<SimpleComboValue<Dificuldade>>() {
+			@Override
+			public String getStringValue(SimpleComboValue<Dificuldade> value) {
+				return value.getValue().getNome();
+			}
+		});
+		setDisplayField("value");
+
+	}
 
 	public void setValue(String valueString) {
 		if(valueString == null) setValueField(null); 

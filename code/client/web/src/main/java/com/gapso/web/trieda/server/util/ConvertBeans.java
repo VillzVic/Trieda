@@ -2012,7 +2012,7 @@ public class ConvertBeans {
 			Turno turno = Turno.find( dto.getTurnoId(), instituicaoEnsino );
 
 			List< Oferta > ofertas = Oferta.findBy( instituicaoEnsino, cenario,
-				turno, campus, curso, curriculo, 0, 1, null );
+				turno, campus, curso, curriculo, null,null, 0, 1, null );
 
 			domain.setOferta( ( ofertas == null || ofertas.size() == 0 ) ? null : ofertas.get( 0 ) );
 		}

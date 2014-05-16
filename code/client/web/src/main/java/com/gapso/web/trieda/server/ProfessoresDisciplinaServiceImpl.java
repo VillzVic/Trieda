@@ -34,7 +34,9 @@ public class ProfessoresDisciplinaServiceImpl
 	
 	@Override
 	public PagingLoadResult<ProfessorDisciplinaDTO> getBuscaList(CenarioDTO cenarioDTO, ProfessorDTO professorDTO, 
-			DisciplinaDTO disciplinaDTO, PagingLoadConfig config) {
+			DisciplinaDTO disciplinaDTO, 
+			String cpf, String nome,String  operadorPreferencia,Integer preferencia,String  operadorNotaDesempenho, Integer notaDesempenho,
+			PagingLoadConfig config) {
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
 		Professor professor = (professorDTO == null)? null :
@@ -63,6 +65,7 @@ public class ProfessoresDisciplinaServiceImpl
 
 		List< ProfessorDisciplina > listDomains = ProfessorDisciplina.findBy(
 			getInstituicaoEnsinoUser(), cenario, professor, disciplina,
+			cpf, nome,  operadorPreferencia, preferencia, operadorNotaDesempenho,notaDesempenho,
 			config.getOffset(), config.getLimit(), orderBy );
 
 		for ( ProfessorDisciplina professorDisciplina : listDomains )
@@ -75,7 +78,8 @@ public class ProfessoresDisciplinaServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( ProfessorDisciplina.count(
-			getInstituicaoEnsinoUser(), cenario, professor, disciplina ) );
+			getInstituicaoEnsinoUser(), cenario, professor, disciplina,
+			cpf, nome,  operadorPreferencia, preferencia, operadorNotaDesempenho,notaDesempenho) );
 
 		return result;
 	}

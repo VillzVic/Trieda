@@ -12,6 +12,8 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.shared.dtos.CenarioDTO;
 import com.gapso.web.trieda.shared.dtos.DisciplinaDTO;
@@ -35,6 +37,7 @@ import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.ProfessorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -56,6 +59,12 @@ public class ProfessoresDisciplinaPresenter
 		MenuItem getExportXlsxExcelButton();
 		ProfessorComboBox getProfessorBuscaComboBox();
 		DisciplinaAutoCompleteBox getDisciplinaBuscaComboBox();
+		TextField< String > getCpfBuscaTextField();
+		TextField<String> getNomeBuscaTF();
+		NumberField getPreferenciaField();
+		OperadorComboBox getPreferenciaOperadorCB();
+		NumberField getNotaDesempenhoBuscaField();
+		OperadorComboBox getNotaDesempenhoOperadorCB();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< ProfessorDisciplinaDTO > getGrid();
@@ -92,23 +101,39 @@ public class ProfessoresDisciplinaPresenter
 			@Override
 			public void load( Object loadConfig, AsyncCallback< PagingLoadResult< ProfessorDisciplinaDTO > > callback )
 			{
+				String cpf = null;
+				String nome = null;
 				ProfessorDTO professorDTO = null;
 				DisciplinaDTO disciplinaDTO = null;
+				String operadorPreferencia = null;
+				Integer preferencia = null;
+				String operadorNotaDesempenho = null; 
+				Integer notaDesempenho = null;
 
 				if ( usuario.isAdministrador() )
 				{
 					professorDTO = display.getProfessorBuscaComboBox().getValue();
 					disciplinaDTO = display.getDisciplinaBuscaComboBox().getValue();
+					cpf = display.getCpfBuscaTextField().getValue();
+					nome = display.getNomeBuscaTF().getValue();
+					operadorPreferencia = (display.getPreferenciaOperadorCB().getValue()==null)?null: display.getPreferenciaOperadorCB().getValue().getValue().getOperadorSQL();
+					preferencia = display.getPreferenciaField().getValue() == null?null:display.getPreferenciaField().getValue().intValue();
+					operadorNotaDesempenho = (display.getNotaDesempenhoOperadorCB().getValue()==null)?null: display.getNotaDesempenhoOperadorCB().getValue().getValue().getOperadorSQL();
+					 notaDesempenho = display.getNotaDesempenhoBuscaField().getValue() == null?null:display.getNotaDesempenhoBuscaField().getValue().intValue();
 				}
 				else
 				{
 					professorDTO = new ProfessorDTO();
 					professorDTO.setId( usuario.getProfessorId() );
+					cpf = null;
+					nome = null;
 					disciplinaDTO = null;
 				}
 
 				Services.professoresDisciplina().getBuscaList(
-					cenarioDTO, professorDTO, disciplinaDTO, (PagingLoadConfig) loadConfig, callback );
+					cenarioDTO, professorDTO, disciplinaDTO, 
+					cpf, nome,  operadorPreferencia, preferencia, operadorNotaDesempenho,notaDesempenho,
+					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -214,6 +239,12 @@ public class ProfessoresDisciplinaPresenter
 				{
 					display.getProfessorBuscaComboBox().setValue( null );
 					display.getDisciplinaBuscaComboBox().setValue( null );
+					display.getCpfBuscaTextField().setValue( null );
+					display.getNomeBuscaTF().setValue( null );
+					display.getPreferenciaField().setValue( null );
+					display.getPreferenciaOperadorCB().setValue( null );
+					display.getNotaDesempenhoBuscaField().setValue( null );
+					display.getNotaDesempenhoOperadorCB().setValue( null );
 					display.getGrid().updateList();
 				}
 			});

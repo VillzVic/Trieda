@@ -12,6 +12,7 @@ import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.HorarioDisponivelSalaFormView;
@@ -71,9 +72,9 @@ public class SalasPresenter
 		 OperadorComboBox getOperadorCapacidadeInstaladaCB();
 		 OperadorComboBox getOperadorCapacidadeMaximaCB();
 		 OperadorComboBox getOperadorCustoOperacaoCB();
-		 TextField<String> getCapacitadeInstaladaTF();
-		 TextField<String> getCapacitadeMaximaTF();
-		 TextField<String> getCustoOperacaoTF();
+		 NumberField getCapacidadeInstalada();
+		 NumberField  getCapacidadeMaxima();
+		 NumberField  getCustoOperacao();
 		 TextField<String> getNumeroTF();
 		 TextField<String> getDescricaoTF(); 
 		 TextField<String> getAndarTF();
@@ -110,18 +111,23 @@ public class SalasPresenter
 				CampusDTO campusDTO = display.getCampusCB().getValue();
 				UnidadeDTO unidadeDTO = display.getUnidadeCB().getValue();
 				TipoSalaDTO tipoSalaDTO = display.getTipoSalaCB().getValue();
-				 display.getOperadorCapacidadeInstaladaCB().clearSelections();
-				 display.getOperadorCapacidadeMaximaCB().clearSelections();
-				 display.getOperadorCustoOperacaoCB().clearSelections();
-				 display.getCapacitadeInstaladaTF().setValue(null);
-				 display.getCapacitadeMaximaTF().setValue(null);
-				 display.getCustoOperacaoTF().setValue(null);
-				 display.getNumeroTF().setValue(null);
-				 display.getDescricaoTF().setValue(null);
-				 display.getAndarTF().setValue(null);
+				String operadorCapacidadeInstalada = (display.getOperadorCapacidadeInstaladaCB().getValue()==null)?null: display.getOperadorCapacidadeInstaladaCB().getValue().getValue().getOperadorSQL();
+				Integer capacidadeInstalada = display.getCapacidadeInstalada().getValue() == null?null:display.getCapacidadeInstalada().getValue().intValue();
+				String operadorCapacidadeMaxima = (display.getOperadorCapacidadeMaximaCB().getValue()==null)?null: display.getOperadorCapacidadeMaximaCB().getValue().getValue().getOperadorSQL();
+				Integer capacidadeMaxima = display.getCapacidadeMaxima().getValue() == null?null:display.getCapacidadeMaxima().getValue().intValue();
+				
+				String operadorCustoOperacao = (display.getOperadorCustoOperacaoCB().getValue()==null)?null: display.getOperadorCustoOperacaoCB().getValue().getValue().getOperadorSQL();
+				Double custoOperacao = display.getCustoOperacao().getValue() == null?null:display.getCustoOperacao().getValue().doubleValue();
+				
+				String numero =  display.getNumeroTF().getValue();
+				String descricao = display.getDescricaoTF().getValue();
+				String andar = display.getAndarTF().getValue();
 				
 
 				service.getList( cenario, campusDTO, unidadeDTO,
+						tipoSalaDTO, operadorCapacidadeInstalada, capacidadeInstalada,
+						operadorCapacidadeMaxima, capacidadeMaxima, operadorCustoOperacao, custoOperacao,
+						numero, descricao, andar,
 					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
@@ -330,9 +336,9 @@ public class SalasPresenter
 				 display.getOperadorCapacidadeInstaladaCB().clearSelections();
 				 display.getOperadorCapacidadeMaximaCB().clearSelections();
 				 display.getOperadorCustoOperacaoCB().clearSelections();
-				 display.getCapacitadeInstaladaTF().setValue(null);
-				 display.getCapacitadeMaximaTF().setValue(null);
-				 display.getCustoOperacaoTF().setValue(null);
+				 display.getCapacidadeInstalada().setValue(null);
+				 display.getCapacidadeMaxima().setValue(null);
+				 display.getCustoOperacao().setValue(null);
 				 display.getNumeroTF().setValue(null);
 				 display.getDescricaoTF().setValue(null);
 				 display.getAndarTF().setValue(null);

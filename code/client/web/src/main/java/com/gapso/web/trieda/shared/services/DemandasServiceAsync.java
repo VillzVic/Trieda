@@ -21,6 +21,8 @@ public interface DemandasServiceAsync
 {
 	void getBuscaList( CenarioDTO cenarioDTO,CampusDTO campusDTO, CursoDTO cursoDTO,
 		CurriculoDTO curriculoDTO, TurnoDTO turnoDTO, DisciplinaDTO disciplinaDTO,
+		 Integer periodo, String demandaRealOperador, Long demandaReal, String demandaVirtualOperador, 
+		 Long demandaVirtual, String demandaTotalOperador,Long demandaTotal,
 		PagingLoadConfig config, AsyncCallback< PagingLoadResult< DemandaDTO > > callback );
 	void save( DemandaDTO demandaDTO, List<DisciplinaDemandaDTO> disciplinas, Integer periodo, AsyncCallback< Void > callback );
 	void remove( List< DemandaDTO > demandaDTOList, AsyncCallback< Void > callback );

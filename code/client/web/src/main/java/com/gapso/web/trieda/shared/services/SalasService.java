@@ -26,8 +26,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SalasService
 	extends RemoteService
 {
-	PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, 
-		CampusDTO campusDTO, UnidadeDTO unidadeDTO, PagingLoadConfig config );
+	PagingLoadResult< SalaDTO > getList( CenarioDTO cenarioDTO, CampusDTO campusDTO, UnidadeDTO unidadeDTO,
+			TipoSalaDTO tipoSalaDTO, String operadorCapacidadeInstalada, Integer capacidadeInstalada,
+			String operadorCapacidadeMaxima, Integer capacidadeMaxima, String operadorCustoOperacao, Double custoOperacao,
+			String  numero, String descricao, String andar,	 PagingLoadConfig config );
 	ListLoadResult< SalaDTO > getList();
 	void save( SalaDTO salaDTO );
 	void remove( List< SalaDTO > salaDTOList );

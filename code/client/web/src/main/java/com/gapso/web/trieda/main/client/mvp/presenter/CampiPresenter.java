@@ -64,7 +64,7 @@ public class CampiPresenter
 		ComboBoxBoolean getOtimizadoTaticoBuscaCB();
 		ComboBoxBoolean getOtimizadoOperacionalBuscaCB();
 		OperadorComboBox getCustoMedioCreditoBuscaOperadorCB();
-		NumberField getCustoMedioCreditoBuscaTextField();
+		NumberField getCustoMedioCreditoBuscaField();
 		TextField< String > getMunicipioBuscaTextField();
 		TextField< String > getBairroBuscaTextField();
 		Button getSubmitBuscaButton();
@@ -108,7 +108,7 @@ public class CampiPresenter
 				String municipio = display.getMunicipioBuscaTextField().getValue();
 				String bairro = display.getBairroBuscaTextField().getValue();
 				String operadorCustoMedioCredito = (display.getCustoMedioCreditoBuscaOperadorCB().getValue()==null)?null: display.getCustoMedioCreditoBuscaOperadorCB().getValue().getValue().getOperadorSQL();
-				Double custoMedioCredito = display.getCustoMedioCreditoBuscaTextField().getValue() == null?null:display.getCustoMedioCreditoBuscaTextField().getValue().doubleValue();
+				Double custoMedioCredito = display.getCustoMedioCreditoBuscaField().getValue() == null?null:display.getCustoMedioCreditoBuscaField().getValue().doubleValue();
 				Boolean otimizadoOperacional= (display.getOtimizadoOperacionalBuscaCB().getValue()==null)?null:display.getOtimizadoOperacionalBuscaCB().getValue().getValue().getValue();
 				Boolean otimizadoTatico  = (display.getOtimizadoTaticoBuscaCB().getValue()==null)?null:display.getOtimizadoTaticoBuscaCB().getValue().getValue().getValue();
 
@@ -311,7 +311,7 @@ public class CampiPresenter
 					display.getOtimizadoTaticoBuscaCB().setValue( null );
 					display.getOtimizadoOperacionalBuscaCB().setValue( null );
 					display.getCustoMedioCreditoBuscaOperadorCB().setValue( null );
-					display.getCustoMedioCreditoBuscaTextField().setValue( null );
+					display.getCustoMedioCreditoBuscaField().setValue( null );
 					display.getGrid().updateList();
 				}
 			});

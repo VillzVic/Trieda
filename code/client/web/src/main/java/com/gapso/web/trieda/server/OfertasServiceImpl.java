@@ -73,7 +73,7 @@ public class OfertasServiceImpl
 	@Override
 	public PagingLoadResult< OfertaDTO > getBuscaList( CenarioDTO cenarioDTO, 
 		TurnoDTO turnoDTO, CampusDTO campusDTO, CursoDTO cursoDTO,
-		CurriculoDTO curriculoDTO, PagingLoadConfig config )
+		CurriculoDTO curriculoDTO, String receitaCreditoOperador,Double receitaCredito, PagingLoadConfig config )
 	{
 		Cenario cenario = Cenario.find(cenarioDTO.getId(), getInstituicaoEnsinoUser());
 		
@@ -99,7 +99,7 @@ public class OfertasServiceImpl
 		Curriculo curriculo = ( ( curriculoDTO != null ) ? ConvertBeans.toCurriculo( curriculoDTO ) : null );
 
 		List< Oferta > listOfertas = Oferta.findBy( getInstituicaoEnsinoUser(), cenario,
-			turno, campus, curso, curriculo, config.getOffset(), config.getLimit(), orderBy );
+			turno, campus, curso, curriculo,  receitaCreditoOperador, receitaCredito,config.getOffset(), config.getLimit(), orderBy );
 
 		for ( Oferta oferta : listOfertas )
 		{
@@ -111,7 +111,7 @@ public class OfertasServiceImpl
 
 		result.setOffset( config.getOffset() );
 		result.setTotalLength( Oferta.count(
-			getInstituicaoEnsinoUser(), cenario, turno, campus, curso, curriculo ) );
+			getInstituicaoEnsinoUser(), cenario, turno, campus, curso, curriculo,  receitaCreditoOperador, receitaCredito ) );
 
 		return result;
 	}

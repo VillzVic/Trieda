@@ -11,6 +11,7 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Component;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.gapso.web.trieda.main.client.mvp.view.AlunoDemandaView;
 import com.gapso.web.trieda.main.client.mvp.view.DemandaFormView;
@@ -45,6 +46,7 @@ import com.gapso.web.trieda.shared.util.view.ExportExcelFormSubmit;
 import com.gapso.web.trieda.shared.util.view.GTab;
 import com.gapso.web.trieda.shared.util.view.GTabItem;
 import com.gapso.web.trieda.shared.util.view.ImportExcelFormView;
+import com.gapso.web.trieda.shared.util.view.OperadorComboBox;
 import com.gapso.web.trieda.shared.util.view.SimpleGrid;
 import com.gapso.web.trieda.shared.util.view.TurnoComboBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -70,6 +72,13 @@ public class DemandasPresenter
 		CurriculoComboBox getCurriculoBuscaComboBox();
 		TurnoComboBox getTurnoBuscaComboBox();
 		DisciplinaAutoCompleteBox getDisciplinaBuscaComboBox();
+		NumberField getPeriodoField();
+		NumberField getDemandaRealField();
+		NumberField getDemandaVirtualField();
+		NumberField getDemandaTotalField();
+		OperadorComboBox getDemandaRealOperadorComboBox();
+		OperadorComboBox getDemandaVirtualOperadorComboBox();
+		OperadorComboBox getDemandaTotalOperadorComboBox();
 		Button getSubmitBuscaButton();
 		Button getResetBuscaButton();
 		SimpleGrid< DemandaDTO > getGrid();
@@ -109,9 +118,18 @@ public class DemandasPresenter
 				CurriculoDTO curriculo = display.getCurriculoBuscaComboBox().getValue();
 				TurnoDTO turno = display.getTurnoBuscaComboBox().getValue();
 				DisciplinaDTO disciplina = display.getDisciplinaBuscaComboBox().getValue();
+				
+				Integer periodo = ( display.getPeriodoField().getValue() == null ) ? null : display.getPeriodoField().getValue().intValue();
+				Long demandaReal = ( display.getDemandaRealField().getValue() == null ) ? null : display.getDemandaRealField().getValue().longValue();
+				Long demandaVirtual = ( display.getDemandaVirtualField().getValue() == null ) ? null : display.getDemandaVirtualField().getValue().longValue();
+				Long demandaTotal = ( display.getDemandaTotalField().getValue() == null ) ? null : display.getDemandaTotalField().getValue().longValue();
+				String demandaRealOperador = (display.getDemandaRealOperadorComboBox().getValue()==null)?null: display.getDemandaRealOperadorComboBox().getValue().getValue().getOperadorSQL();
+				String demandaVirtualOperador = (display.getDemandaVirtualOperadorComboBox().getValue()==null)?null: display.getDemandaVirtualOperadorComboBox().getValue().getValue().getOperadorSQL();
+				String demandaTotalOperador = (display.getDemandaTotalOperadorComboBox().getValue()==null)?null: display.getDemandaTotalOperadorComboBox().getValue().getValue().getOperadorSQL();
 
-				service.getBuscaList( cenarioDTO, campus, curso, curriculo, turno,
-					disciplina, (PagingLoadConfig) loadConfig, callback );
+				service.getBuscaList( cenarioDTO, campus, curso, curriculo, turno,	disciplina, 
+					periodo, demandaRealOperador, demandaReal, demandaVirtualOperador, demandaVirtual, demandaTotalOperador, demandaTotal,
+					(PagingLoadConfig) loadConfig, callback );
 			}
 		};
 
@@ -262,6 +280,13 @@ public class DemandasPresenter
 				display.getCurriculoBuscaComboBox().setValue( null );
 				display.getTurnoBuscaComboBox().setValue( null );
 				display.getDisciplinaBuscaComboBox().setValue( null );
+				display.getPeriodoField().setValue( null );
+				display.getDemandaRealField().setValue( null );
+				display.getDemandaVirtualField().setValue( null );
+				display.getDemandaTotalField().setValue( null );
+				display.getDemandaRealOperadorComboBox().setValue( null );
+				display.getDemandaVirtualOperadorComboBox().setValue( null );
+				display.getDemandaTotalOperadorComboBox().setValue( null );
 
 				display.getGrid().updateList();
 			}

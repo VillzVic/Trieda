@@ -6,6 +6,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.gapso.web.trieda.shared.dtos.AlunoStatusDTO;
+import com.gapso.web.trieda.shared.dtos.AreaTitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaCreditoDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoFaixaTurmaDTO;
 import com.gapso.web.trieda.shared.dtos.AtendimentoTaticoDTO;
@@ -25,6 +26,7 @@ import com.gapso.web.trieda.shared.dtos.ProfessorVirtualDTO;
 import com.gapso.web.trieda.shared.dtos.RelatorioQuantidadeDTO;
 import com.gapso.web.trieda.shared.dtos.SalaDTO;
 import com.gapso.web.trieda.shared.dtos.SemanaLetivaDTO;
+import com.gapso.web.trieda.shared.dtos.TipoContratoDTO;
 import com.gapso.web.trieda.shared.dtos.TitulacaoDTO;
 import com.gapso.web.trieda.shared.dtos.TrioDTO;
 import com.gapso.web.trieda.shared.dtos.TurmaDTO;
@@ -56,9 +58,11 @@ public interface AtendimentosService extends RemoteService {
 
 	ListLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais(CenarioDTO cenarioDTO);
 	
-	PagingLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, PagingLoadConfig config ) throws TriedaException;
+	PagingLoadResult< ProfessorVirtualDTO > getProfessoresVirtuais( CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, 
+			 TipoContratoDTO tipoContratoDTO, AreaTitulacaoDTO areaTitulacaoDTO,String nome,  PagingLoadConfig config ) throws TriedaException;
 
-	PagingLoadResult<ProfessorVirtualDTO> getProfessoresVirtuais(CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, Long campusId, PagingLoadConfig config);
+	PagingLoadResult<ProfessorVirtualDTO> getProfessoresVirtuais(CenarioDTO cenarioDTO, TitulacaoDTO titulacaoDTO, 
+			 TipoContratoDTO tipoContratoDTO, AreaTitulacaoDTO areaTitulacaoDTO,String nome,  Long campusId, PagingLoadConfig config);
 
 	List< PercentMestresDoutoresDTO > getPercentMestresDoutoresList( CenarioDTO cenarioDTO, CampusDTO campusDTO );
 

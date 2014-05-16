@@ -27,7 +27,8 @@ public interface OfertasService extends RemoteService {
 	ListLoadResult<OfertaDTO> getListAll( CenarioDTO cenarioDTO );
 	OfertaDTO getOferta(Long id);
 	PagingLoadResult<OfertaDTO> getBuscaList(CenarioDTO cenarioDTO,TurnoDTO turnoDTO, CampusDTO campusDTO,
-			CursoDTO cursoDTO, CurriculoDTO curriculoDTO, PagingLoadConfig config);
+			CursoDTO cursoDTO, CurriculoDTO curriculoDTO, 
+			String receitaCreditoOperador,Double receitaCredito, PagingLoadConfig config);
 	void save(OfertaDTO ofertaDTO);
 	void remove(List<OfertaDTO> ofertaDTOList) throws TriedaException;
 	ListLoadResult<TreeNodeDTO> getListByCampusAndTurno(CampusDTO campusDTO, TurnoDTO turnoDTO);
